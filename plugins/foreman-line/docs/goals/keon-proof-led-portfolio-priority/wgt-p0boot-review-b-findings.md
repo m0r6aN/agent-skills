@@ -1,10 +1,45 @@
 # WGT-P0BOOT independent review B findings
 
-Date: 2026-08-01  
-Reviewer: independent review B — plugin/package integrity  
-Reviewed commit: `23fa60bdf0314ff21ab33e60af14ddac3f49ee6a`  
-Baseline / merge-base: `260d1eb5afa554ac23ff440a7dd6f92510381113`  
-Verdict: **HOLD**
+Date: 2026-08-01
+Reviewer: independent review B — plugin/package integrity
+Initially reviewed commit: `23fa60bdf0314ff21ab33e60af14ddac3f49ee6a`
+Baseline / merge-base: `260d1eb5afa554ac23ff440a7dd6f92510381113`
+Initial verdict: **HOLD**
+
+## Follow-up review — exact head `5e6fab6d6f74ff0d624dae9924a0c02f447784da`
+
+Follow-up verdict: **PASS**
+
+The contract amendment resolves Blocker B-1 without creating a broad waiver:
+
+- The pre-merge exception names only
+  `approval/tests/canonical-parity.test.ts` —
+  `AC2: no modification to receipts/ since the branch fork point` and
+  `projection/tests/input-consumption.test.ts` —
+  `AC3: no file under shaping/ is modified by this parcel since the branch fork point`.
+- Each exception is green only when its diff is limited to byte-frozen paths
+  from the durable 649-file manifest in its named subtree. Independent
+  enumeration at `5e6fab6...` found exactly 63 `receipts/` paths and 23
+  `shaping/` paths; zero path was outside its named subtree and zero path was
+  absent from the frozen manifest.
+- Every other test and command remains mandatory pre-merge. The root-package
+  checks are not waived.
+- After merge, no exception remains: a fresh `origin/main` checkout must pass
+  the complete 14-workspace matrix, including both named tests. Any remaining
+  failure keeps WGT-P0A locked and requires rollback or a separately authorized
+  repair.
+- The verification plan independently repeats that unqualified post-merge
+  matrix before WGT-P0A may unlock.
+
+Commit `5e6fab6...` changes only the active bootstrap spec, its builder
+transcript, and the two authorized review records relative to `23fa60b...`.
+It does not edit frozen product/source, plugin manifests, package manifests,
+lockfiles, tests, or generators. The original provenance, manifest, JSON,
+skill, and package-inventory evidence therefore remains applicable.
+
+Current findings: Blocker B-1 **resolved**; no unresolved Blocker, High, or
+Medium findings. The historical HOLD analysis against `23fa60b...` is retained
+below as the evidence that motivated the narrow amendment.
 
 ## Disposition
 

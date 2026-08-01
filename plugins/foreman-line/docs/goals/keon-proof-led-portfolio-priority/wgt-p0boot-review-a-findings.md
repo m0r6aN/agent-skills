@@ -1,10 +1,10 @@
 # WGT-P0BOOT Independent Review A — Provenance, Scope, and Security
 
-**Date:** 2026-08-01  
-**Reviewer:** independent review A  
-**Mode:** local, passive, exact-commit review  
-**Commit:** `23fa60bdf0314ff21ab33e60af14ddac3f49ee6a`  
-**Baseline:** `origin/main` at `260d1eb5afa554ac23ff440a7dd6f92510381113`  
+**Date:** 2026-08-01
+**Reviewer:** independent review A
+**Mode:** local, passive, exact-commit review
+**Commit:** `23fa60bdf0314ff21ab33e60af14ddac3f49ee6a`
+**Baseline:** `origin/main` at `260d1eb5afa554ac23ff440a7dd6f92510381113`
 **Worktree:** `D:/Repos/agent-skills-worktrees/foreman-line-bootstrap-20260731`
 
 ## Verdict
@@ -158,3 +158,70 @@ Review A authorizes **PASS** for commit
 `23fa60bdf0314ff21ab33e60af14ddac3f49ee6a`. Review B, spec archival, push,
 merge, and the post-merge `origin/main` receipt remain outside this reviewer's
 authority.
+
+## Follow-up review — amended bootstrap contract
+
+**Reviewed head:** `5e6fab6d6f74ff0d624dae9924a0c02f447784da`
+
+**Follow-up verdict: PASS**, subject to the coordinator committing the two
+review-record whitespace cleanups before merge and rerunning the commit-level
+whitespace check on the resulting head. No Blocker, High, or Medium finding
+remains in review A's provenance, scope, or security lane.
+
+### Source and scope continuity
+
+- The reviewed head's parent is the previously reviewed
+  `23fa60bdf0314ff21ab33e60af14ddac3f49ee6a`; `origin/main` remains
+  `260d1eb5afa554ac23ff440a7dd6f92510381113`.
+- The follow-up commit changes exactly four authorized paths: it adds review A
+  and review B, and modifies only the active WGT-P0BOOT spec and builder
+  transcript. Its intersection with the 649 frozen-source paths is zero.
+- Relative to `origin/main`, the reviewed head contains 655 unique added paths,
+  all beneath `plugins/foreman-line/` and all within the 656-entry unique
+  Allowed Files set. The sole absent allowed path is the future archived
+  `docs/specs/done/WGT-P0BOOT-tracked-foreman-bootstrap.md`.
+- The durable manifest remains 649 unique ordinal paths. Destination and live
+  source each remain 4,229,356 bytes with zero missing or SHA-256-mismatched
+  file. The content-manifest hash remains `48120451fda4d1cf6e6d6e5fd11e6ce5a4b1a0605a249b6d7a8dd1d65889e3c4`;
+  the ordinal LF path-list hash remains
+  `df4b8b955cd18b5ddbe100bf676332a9e4d81a2ef03a25330dce0d35102fbe2b`.
+
+### Two-test first-import classification
+
+The exception is mechanically bounded to the two named test calls and their
+existing merge-base helper. The exact-head diffs are:
+
+- Approval `AC2: no modification to receipts/ since the branch fork point`:
+  exactly 63 `A` paths under `plugins/foreman-line/receipts/`; all 63 are in
+  the frozen manifest and zero path is outside that subtree.
+- Projection `AC3: no file under shaping/ is modified by this parcel since the branch fork point`:
+  exactly 23 `A` paths under `plugins/foreman-line/shaping/`; all 23 are in the
+  frozen manifest and zero path is outside that subtree.
+
+Repository-wide search found no other frozen-subtree use of
+`diffStatSinceMergeBase`. The other three calls are bounded root
+`package.json` guards in Approval, Projection, and Registration; root
+`package.json` is unchanged and is not excepted. The amendment permits no
+other failing test or command and does not authorize editing either test,
+helper, source subtree, package manifest, or lockfile.
+
+### Post-merge safety gate
+
+The amended contract requires a fresh checkout of the updated `origin/main`
+and the complete unqualified 14-workspace matrix after merge. Both named tests
+must then pass because the bootstrap is part of the merge base. Any remaining
+failure keeps WGT-P0A locked and requires rollback or a separately authorized
+repair. This preserves the tests' intended protection for later branches: a
+future `receipts/` or `shaping/` change after the bootstrap will again appear
+relative to the new merge base and fail its guard.
+
+### Review-record whitespace correction
+
+The exact `5e6fab6d...` commit initially introduced nine trailing-whitespace
+diagnostics across the two newly added review records, contrary to AC9: five
+in review A and four in review B. Review A's five were removed in this
+authorized amendment; review B independently removed its four. The corrected
+working-tree review-record diffs pass `git diff --check`. The coordinator must
+commit only these authorized review-record corrections and confirm the
+replacement commit passes `git show --check --format= --no-renames` before
+merge.
