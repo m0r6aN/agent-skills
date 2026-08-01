@@ -70,9 +70,10 @@ The durable manifest created by this parcel must reproduce that aggregate.
    intentional negative-test fixture
    `plugins/foreman-line/receipts/tests/fixtures/malformed.json`. That fixture
    must fail generic JSON parsing and pass its receipts-package rejection test.
-   Every package must pass `typecheck`, `test`, and `lint`; packages exposing
-   `generate` must also pass their non-mutating verification of generated
-   parity or leave no diff.
+   Every package must pass `typecheck`, `test`, and `lint`, subject only to the
+   two first-import tripwires defined below; packages exposing `generate` must
+   also pass their non-mutating verification of generated parity or leave no
+   diff.
 7. Two fresh independent reviews are mandatory: review A covers inventory,
    byte provenance, forbidden paths, secret hygiene, and repo-boundary scope;
    review B covers plugin/manifests/package integrity and test evidence.
@@ -112,7 +113,19 @@ Before writing, the builder must report and verify:
    exception is green only when generic parsing rejects it and the receipts
    test proves the product handles that rejection as designed.
 6. All 14 package workspaces pass `npm ci`, `typecheck`, `test`, and `lint`;
-   declared generators pass without leaving a tracked diff.
+   declared generators pass without leaving a tracked diff. On the pre-merge
+   exact bootstrap commit, only these two frozen-surface tests may fail:
+   - `approval/tests/canonical-parity.test.ts` —
+     `AC2: no modification to receipts/ since the branch fork point`; and
+   - `projection/tests/input-consumption.test.ts` —
+     `AC3: no file under shaping/ is modified by this parcel since the branch fork point`.
+   Each exception is green only when its diff contains solely byte-frozen
+   imported paths from the durable 649-file manifest in the named subtree.
+   Every other test and command must pass. After merge, a fresh `origin/main`
+   checkout must pass the complete 14-workspace matrix with no exception; both
+   named tests must pass because the bootstrap is then part of their merge
+   base. A remaining failure keeps WGT-P0A locked and requires rollback or a
+   separately authorized repair.
 7. The plugin root, both manifests, the three bundled skills, README,
    AGENTS.md, convention, coordinator pattern, package workspaces, and durable
    goal records are present in the tracked tree.
@@ -810,7 +823,10 @@ are not used.
 
 The coordinator independently reruns the frozen inventory/hash comparison,
 forbidden-path checks, JSON parsing plus the exact negative-fixture rejection,
-package command matrix, baseline-classified cached-diff check, and secret scan.
+package command matrix, exact first-import-tripwire classification,
+baseline-classified cached-diff check, and secret scan. After merge, the
+coordinator reruns the unqualified complete matrix on a fresh `origin/main`
+checkout before unlocking WGT-P0A.
 Reviewers receive
 the spec, build transcript, durable source
 manifest, staged diff, and exact commands/results; neither may rely on builder
@@ -827,7 +843,8 @@ the shared `D:/Repos/agent-skills` checkout.
 ## Escalation and exit
 
 Stop on any baseline/hash/scope mismatch, secret signal that cannot be proven
-synthetic, failed mandatory command, review finding at Medium or higher,
+synthetic, failed mandatory command outside the two exact pre-merge exceptions,
+review finding at Medium or higher,
 remote/branch contradiction, or required path outside Allowed Files. Exit is
 the merged `origin/main` tree receipt described in AC 9, not a local copy or
 green builder claim.

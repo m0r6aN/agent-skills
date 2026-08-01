@@ -36,11 +36,24 @@ Final clean base: `origin/main` at `260d1eb5afa554ac23ff440a7dd6f92510381113`
 - Declared `generate`: PASS in all six exposing workspaces (`contracts`,
   `permission-profiles`, `receipts`, `routing-policy`, `skill-injection`, and
   `spec-linter`).
-- Fresh final `typecheck`, `test`, and `lint`: PASS in all 14 workspaces:
+- Fresh pre-commit `typecheck`, `test`, and `lint`: PASS in all 14 workspaces:
   `approval`, `contracts`, `dispatch`, `integration`, `permission-profiles`,
   `projection`, `receipts`, `registration`, `routing-policy`,
   `schema-scaffold`, `shaping`, `skill-injection`, `spec-linter`, and
   `verification`.
+- Independent review B established that this pre-commit matrix was blind to
+  staged imported files in two merge-base safeguards. At exact committed head
+  `23fa60bdf0314ff21ab33e60af14ddac3f49ee6a`, exactly these tests necessarily
+  reject the first tracked import:
+  - Approval: `AC2: no modification to receipts/ since the branch fork point`
+    reports the 63 byte-frozen imported `receipts/` paths only.
+  - Projection:
+    `AC3: no file under shaping/ is modified by this parcel since the branch fork point`
+    reports the 23 byte-frozen imported `shaping/` paths only.
+  This is a bootstrap test-context condition, not a product/source defect.
+  The amended contract permits only those exact pre-merge failures and
+  requires the entire unqualified 14-workspace matrix, including both tests,
+  to pass from a fresh post-merge `origin/main` checkout before WGT-P0A unlocks.
 - The active WGT-P0BOOT spec passed the shipped spec-linter CLI.
 
 ## Content, hygiene, and scope checks
@@ -81,7 +94,9 @@ Final clean base: `origin/main` at `260d1eb5afa554ac23ff440a7dd6f92510381113`
 
 ## Builder disposition
 
-Builder verification is green. This commit may contain only the 649 frozen
+Builder source/provenance verification is green. Pre-merge package acceptance
+is green only under the amended two-test first-import classification above.
+This commit may contain only the 649 frozen
 source files and the currently created allowed contract/evidence records.
 Independent review A, independent review B, final spec archival, push, merge,
 and the post-merge `origin/main` receipt remain coordinator-owned stages.
