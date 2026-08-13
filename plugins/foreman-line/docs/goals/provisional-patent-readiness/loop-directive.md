@@ -1,6 +1,6 @@
 # Loop Directive: Provisional Patent Readiness
 
-Status: active — OR-P23R accepted; W0-P01 retry under W0-P01-A1 pending
+Status: stopped — W0-P01 retry hit Windows PowerShell compatibility before copying; new-output-root amendment required
 Coordinator ownership: this Codex task is the sole queue owner. Ownership transfers only at a parcel boundary recorded in this file. If ownership is ambiguous, stop and report.
 
 ## Standing authority
@@ -43,6 +43,12 @@ The builder performed Step 0 and observed that `patents/discovery-round-1/_orche
 OR-P23R-A1 is ratified. The named object may be removed only as the observed external Windows junction, under every otherwise unchanged OR-P23R constraint. OR-P23R retry is now authorized; W0-P01 remains blocked until OR-P23R is accepted.
 
 OR-P23R is accepted: local commit `c452668651c902203412bbf241921ab0a8f7e478` changed only root `.gitignore` and `_orchestration/README.md`; its independent review confirmed junction absence and preserved inventory. W0-P01 retry is authorized under W0-P01-A1, with a new output root. The original partial output remains untouched.
+
+## W0-P01 retry stop record — 2026-08-13
+
+The W0-P01 retry created `D:/Repos/keon-omega-preserve/provisional-patent-readiness-20260813-w0-p01-custody-snapshot-retry-20260813-01/` but stopped before source traversal or copy because the Windows PowerShell runtime lacks `[IO.Path]::GetRelativePath`. The partial root contains only `snapshot.ps1` and an empty `payload/`; no manifest, sidecar, or source payload exists. The builder corrected its audit script within the permitted output root, then stopped because the frozen no-reuse rule prohibits reusing that partial root. It reported no source/Git/remote mutation; the original partial root remains intact.
+
+Required targeted ruling: authorize W0-P01-A2 to use a newly named, initially absent output root and the Windows PowerShell-compatible relative-path implementation, retaining every other W0-P01-A1 constraint. Do not clean, reuse, or alter either partial root.
 
 ## Loop protocol
 
