@@ -67,7 +67,7 @@ OR-P23 relocation; any other cleanup; W0-P01 retry; patent/doctrine analysis; li
 
 Before touching a file, restate the three exact allowed paths; that only the named symbolic link may be removed; its resolved target may not be opened or changed; all 517 regular files and 48 directories remain untouched; and only `.gitignore` plus README may be pathspec-staged and committed. Stop unless true.
 
-Verify the named object is a symbolic link and record its path, type, and target as metadata without accessing the target. Remove the link itself only. Do not remove its parent or target.
+Verify the named object is an external Windows directory reparse point with `LinkType=Junction` and record its path, type, and target as metadata without accessing the target. Remove the junction itself only. Do not remove its parent or target.
 
 Retain root `.gitignore`'s existing `node_modules/` rule and add exactly these approved root patterns if absent: `bin/`, `obj/`, `.next/`, `.artifacts/`, `.vs/`, `.venv/`, `dist/`, `packages/`, `.turbo/`, `.nuget/`, and `TestResults/`.
 
@@ -77,7 +77,7 @@ Stage only the exact `.gitignore` and README paths. Before committing, prove the
 
 ## Required Tests
 
-- Preflight proves the named path is a symbolic link and reports its target as metadata.
+- Preflight proves the named path is a Windows junction and reports its target as metadata.
 - After removal, the named path no longer exists; the target remains unaccessed.
 - `.gitignore` contains the approved ephemera patterns once each.
 - README exists and includes directory purpose, custody rationale, and link removal record.
@@ -123,4 +123,4 @@ No remote push or PR. The local commit is expressly authorized only for the two 
 
 ## Stop-and-Report Rule
 
-Stop if the named object is not a symbolic link, any path outside Allowed Files would change, the count check differs, the staged/committed list is not exactly two paths, the target would need access, a remote operation is needed, or any preservation/Hard Rule Zero condition fires.
+Stop if the named object is not a Windows junction, any path outside Allowed Files would change, the count check differs, the staged/committed list is not exactly two paths, the target would need access, a remote operation is needed, or any preservation/Hard Rule Zero condition fires.

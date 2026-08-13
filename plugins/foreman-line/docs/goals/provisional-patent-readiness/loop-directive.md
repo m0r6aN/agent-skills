@@ -1,6 +1,6 @@
 # Loop Directive: Provisional Patent Readiness
 
-Status: stopped — OR-P23R discovered the named external link is a junction, not a symbolic link; targeted amendment required
+Status: active — OR-P23R-A1 ratified; OR-P23R retry pending
 Coordinator ownership: this Codex task is the sole queue owner. Ownership transfers only at a parcel boundary recorded in this file. If ownership is ambiguous, stop and report.
 
 ## Standing authority
@@ -40,7 +40,7 @@ W0-P01-A1 is ratified. Its class exclusions, opaque-link entries, and internal-l
 
 The builder performed Step 0 and observed that `patents/discovery-round-1/_orchestration/spreadsheet-work/e-c2-20260712/node_modules` has Windows attributes `Directory, ReparsePoint`, `LinkType=Junction`, and target metadata `C:/Users/clint/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules`. The frozen OR-P23R contract called it a symbolic link. The builder stopped before inventory or any mutation: no link removal, `.gitignore` edit, README creation, staging, commit, or remote operation.
 
-The required targeted ruling is whether OR-P23R may remove this exact external **junction** under the otherwise unchanged contract. No retry or cleanup is authorized until the frozen spec is amended and ratified.
+OR-P23R-A1 is ratified. The named object may be removed only as the observed external Windows junction, under every otherwise unchanged OR-P23R constraint. OR-P23R retry is now authorized; W0-P01 remains blocked until OR-P23R is accepted.
 
 ## Loop protocol
 
