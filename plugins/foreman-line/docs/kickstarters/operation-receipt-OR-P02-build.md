@@ -1,6 +1,6 @@
 # OR-P02 Builder Kickstarter
 
-You are the architecture-risk builder for Operation Receipt parcel OR-P02. Your sole source of truth is `plugins/foreman-line/docs/specs/active/OR-P02-collective-build-integrity.md`, active at Foreman control commit `25b82e8`. Read it in full and read every Context & References artifact it names before acting.
+You are the architecture-risk builder for Operation Receipt parcel OR-P02. Your sole source of truth is `plugins/foreman-line/docs/specs/active/OR-P02-collective-build-integrity.md` at the Foreman control commit containing this third-attempt authorization. Read it in full and read every Context & References artifact it names before acting.
 
 Standing constraints apply — `plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md`.
 
@@ -29,7 +29,14 @@ Before any write, build, test, evidence mutation, or commit:
 
 Do not edit or rerun the build during Step 0. A real gap becomes a Coordinator amendment committed before code. After acknowledgment, implement only the minimum contract restoration in the Allowed File, read it back, and run the exact verification. If another file, schema decision, dependency update, test waiver, or base dispute is needed, stop and report without expanding scope.
 
-**Coordinator deterministic-verification amendment (2026-08-13):** after an owned timed-out parallel build left MSBuild/compiler-server processes and produced a `CS2012` PDB collision, the Coordinator terminated only that recorded process tree and amended the active spec to use `-m:1 -p:UseSharedCompilation=false -nr:false` for build and test. One controlled retry under those exact commands is authorized; a second tripwire stops the parcel.
+**Human-authorized third-attempt amendment (2026-08-13):** after an owned timed-out parallel build left MSBuild/compiler-server processes and produced a `CS2012` PDB collision, the Coordinator terminated only that recorded process tree and amended the active spec to use serialized, non-reusing compilation. The next retry then stopped before compilation because the RTK shim rewrote `-m:1` and `-nr:false`, producing `MSB1008`. Clinton Morgan explicitly authorized one additional attempt using the following verbatim commands:
+
+```powershell
+rtk proxy dotnet build Keon.Collective.slnx -m:1 --configuration Release --nologo -p:UseSharedCompilation=false -nr:false
+rtk proxy dotnet test Keon.Collective.slnx -m:1 --configuration Release --no-build --nologo -p:UseSharedCompilation=false -nr:false --logger "console;verbosity=normal"
+```
+
+Run the test command only if the build succeeds. Do not change spelling, argument order, quoting, transport, or syntax. This is the sole authorized third attempt. Any failure stops the parcel immediately; no fourth attempt is authorized.
 
 ## Completion claim
 

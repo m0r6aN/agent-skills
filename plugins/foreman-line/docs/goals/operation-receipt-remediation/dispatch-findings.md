@@ -34,6 +34,20 @@ The single authorized amended retry then failed before compilation because the R
 
 Per the charter, the loop is stopped. The recommended human ruling is whether to authorize one additional OR-P02 verification attempt using `rtk proxy dotnet ...`, which preserves the colon-bearing MSBuild arguments verbatim. No third attempt is inferred from technical obviousness.
 
+### OR-P02 third-attempt ruling
+
+**Status:** AUTHORIZED
+**Date:** 2026-08-13
+
+Clinton Morgan explicitly stated: **“Authorize one additional OR-P02 verification attempt using verbatim rtk proxy dotnet commands.”** The loop resumes for this one attempt only. The exact authorized sequence is:
+
+```powershell
+rtk proxy dotnet build Keon.Collective.slnx -m:1 --configuration Release --nologo -p:UseSharedCompilation=false -nr:false
+rtk proxy dotnet test Keon.Collective.slnx -m:1 --configuration Release --no-build --nologo -p:UseSharedCompilation=false -nr:false --logger "console;verbosity=normal"
+```
+
+The test command runs only after a green build. No alternate syntax, transport, or fourth attempt is authorized. Before dispatch, read-only reconciliation reconfirmed the exact branch and base, the sole 93-line Allowed-File diff, SHA-256 `4A1EFFBA9613589E01DE43319FD2CAA2B2561692B0D09D50FE142096523B037A`, a clean diff check, no active .NET/MSBuild/compiler-server process, and no `next dev` process.
+
 ## OR-P01 — paused at Step 0
 
 The fresh Codex verifier completed its read-only Step 0 after the loop stop and received no execution acknowledgment. It confirmed the exact branch/base, empty repository Allowed Files, absence of a `next dev` process, the 15 + 12 + 22 = 49 test-count contract, and the external-only evidence root. It explicitly disclaimed any enforcement from the tracked Claude allowlist. Direct reconciliation after the session proved the worktree remains clean at the pinned SHA and the tracked settings file remains at SHA-256 `369872DBD960CA3D383368BC7D74633B5FA8470AD46185D3E50E0F5E6E2F6398`.
