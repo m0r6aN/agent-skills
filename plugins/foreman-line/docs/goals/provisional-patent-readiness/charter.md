@@ -1,6 +1,6 @@
 # Goal Charter: Provisional Patent Readiness
 
-Status: **DRAFT — Gate 1 ratification required; no parcel is authorized**  
+Status: **Gate 1 ratified 2026-08-13 — mandatory plan review pending; no parcel is authorized**  
 Initiative ID: `provisional-patent-readiness`  
 Parent: `operation-receipt-remediation` (subsumed; OR-P22 dissolved)  
 Coordinator control worktree: `D:/Repos/agent-skills-worktrees/provisional-patent-readiness-20260813`  
@@ -110,13 +110,15 @@ For each retained mechanism, write an enabling, auditor-grade technical descript
 
 ## Requested standing authorizations
 
-- Gate 2: dispatch the named W0–W4 queue without per-parcel approval, subject to every stop condition and W0/W1 dependencies.
-- Gate 3: local-only merges only behind the ratified branch rule and a complete green chain. No remote operation is authorized.
+- Gate 2: **granted 2026-08-13** for the named W0–W4 queue, subject to every stop condition and W0/W1 dependencies.
+- Gate 3: **not yet granted**. The ratified ruling holds local-only merges until effective branch rules and distinct-agent bypass authority are evidenced. No remote operation is authorized.
 
 ## Stop conditions
 
 Stop and report immediately for a Hard Rule Zero violation; a proposed destructive action in T-patent or T-doctrine; a W1 scope mismatch; inability to write an enabling description without inventing behavior; a human legal/ratification/merge decision; a frozen-spec amendment; or a developer stop instruction.
 
-## Gate 1 request
+## Gate 1 record
 
-Ratify or amend D6–D12 and decide whether the two requested standing authorizations are granted. Silence is not ratification. After ratification, this charter receives mandatory independent plan-level adversarial review before any parcel shaping or dispatch.
+The developer explicitly ratified D6–D12 and granted blanket authority for non-destructive actions on 2026-08-13. D10 remains an evidence-first route, not a substantive semantic ruling; D12 remains contingent on the bounded W0 search. Gate 2 is granted as recorded above. Gate 3 remains held under the ratified fail-closed condition above.
+
+The next required action is an independent plan-level adversarial review. No parcel shaping or dispatch may occur until its findings are triaged; any finding that changes a decision re-opens Gate 1 only for that decision.
