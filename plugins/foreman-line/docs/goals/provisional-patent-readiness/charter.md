@@ -1,6 +1,6 @@
 # Goal Charter: Provisional Patent Readiness
 
-Status: **Gate 1 ratified 2026-08-13 — plan review triaged and targeted amendments ratified; W0-P01 may be shaped**  
+Status: **Gate 1 ratified 2026-08-13 — plan review triaged and targeted amendments ratified; W0-P01 may be shaped**
 Initiative ID: `provisional-patent-readiness`  
 Parent: `operation-receipt-remediation` (subsumed; OR-P22 dissolved)  
 Coordinator control worktree: `D:/Repos/agent-skills-worktrees/provisional-patent-readiness-20260813`  

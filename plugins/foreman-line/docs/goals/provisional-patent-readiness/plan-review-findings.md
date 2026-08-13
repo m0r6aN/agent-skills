@@ -1,6 +1,6 @@
 # Plan Review Findings: Provisional Patent Readiness
 
-Status: **Independent review complete — triage ratified 2026-08-13**  
+Status: **Independent review complete — triage ratified 2026-08-13**
 Reviewer: fresh read-only adversarial session  
 Review mandate: decomposition coherence, boundaries, missing parcels, load-bearing decisions, collisions, W1 read-only integrity, and Evidence Vault sizing.
 
