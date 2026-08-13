@@ -140,4 +140,3 @@ Stop and report when any charter stop condition fires, including:
 ## Wakeup pacing
 
 Work while dependency-ready work exists. When blocked only on active agents, wait for completion notifications with a long fallback; do not poll. On restart or human nudge, inspect agent/session state before accepting disk changes. A stopped or missing agent without a completion claim is not complete.
-
