@@ -10,10 +10,10 @@ Standing constraints apply — `plugins/foreman-line/docs/kickstarters/STANDING-
 - Worktree: `D:/Repos/keon-omega/_worktrees/or-p01-keon-systems-build-integrity`
 - Branch: `feat/foreman-line-OR-P01`
 - Pinned commit: `2b6c75536f50f125155ee697446cec89f70f2fec`
-- Emitted profile: `reviewer-readonly`
+- Intended profile: `reviewer-readonly`; tracked-file collision invokes the active spec's Coordinator-ratified Codex fallback
 - Repository mutation authority: none
 
-The emitted settings file must exist before this session begins. If the host session does not mechanically load it, say so; never overclaim enforcement. The spec's empty Allowed Files authority, publication freeze, and post-session Git detection remain binding.
+The pinned base tracks `.claude/settings.local.json`, preventing profile replacement without a forbidden repository mutation. Preserve that file byte-for-byte. This fresh Codex subagent runs under the active spec's ratified fallback: do not claim that the tracked Claude allowlist is a reviewer envelope or that it constrains this session. The empty Allowed Files authority, publication freeze, external-only evidence destination, and post-session Git detection remain binding. Any repository diff or untracked path invalidates the run.
 
 ## Step 0 — restate and STOP
 

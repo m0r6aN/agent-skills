@@ -14,7 +14,7 @@ The emitter invocation timed out at its outer command wrapper. Read-only reconci
 
 Replacing or deleting the tracked file would be a repository mutation outside OR-P01's empty Allowed Files authority and would dirty a verification-only worktree. Launching without the envelope would violate the ratified dispatch contract. The Coordinator therefore failed closed and recorded a dispatch-tooling blocker rather than bypassing the profile.
 
-**Resolution condition:** a ratified recovery must preserve the tracked repository artifact while producing a mechanically loaded reviewer profile, or explicitly authorize a different independent-verification lane. Any spec/Allowed Files amendment or profile waiver requires a recorded ruling before OR-P01 resumes.
+**Resolution:** on 2026-08-13 the Coordinator ratified a governance-only fallback in the active OR-P01 spec. The tracked file remains byte-for-byte unchanged. A fresh Codex verification subagent may run with empty repository Allowed Files, external-only evidence output, no profile-enforcement claim, and Coordinator-run before/after Git detection. Any repository diff or untracked path invalidates the run. This fallback is limited to the verification-only OR-P01 parcel and grants no mutation authority.
 
 ## OR-P02 — dispatch succeeded
 
