@@ -1,6 +1,6 @@
 # Loop Directive: Provisional Patent Readiness
 
-Status: stopped — W0-P01 encountered a reparse point; frozen-spec amendment and targeted ratification required  
+Status: stopped — W0-P01 encountered a reparse point; frozen-spec amendment and targeted ratification required
 Coordinator ownership: this Codex task is the sole queue owner. Ownership transfers only at a parcel boundary recorded in this file. If ownership is ambiguous, stop and report.
 
 ## Standing authority
