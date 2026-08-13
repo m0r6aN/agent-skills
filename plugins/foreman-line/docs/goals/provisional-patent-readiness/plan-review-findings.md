@@ -1,6 +1,6 @@
 # Plan Review Findings: Provisional Patent Readiness
 
-Status: **Independent review complete — targeted Gate 1 re-ratification pending**  
+Status: **Independent review complete — triage ratified 2026-08-13**  
 Reviewer: fresh read-only adversarial session  
 Review mandate: decomposition coherence, boundaries, missing parcels, load-bearing decisions, collisions, W1 read-only integrity, and Evidence Vault sizing.
 
@@ -33,3 +33,7 @@ Review mandate: decomposition coherence, boundaries, missing parcels, load-beari
 3. **D15 — retained mechanisms:** after W1, retain a mechanism only when implementation evidence and an enabling description both exist. A prose-only or unresolved mechanism is explicitly excluded from the first filing and remains eligible for a subsequent provisional.
 
 These amendments do not weaken Hard Rule Zero, the patent/doctrine preservation constraint, or the Gate 3 fail-closed condition.
+
+## Ratification record
+
+The developer explicitly ratified D13, D14, D15, and every listed fix on 2026-08-13. The coordinator may now shape W0-P01 only. W0 remains serial; no other preservation, reconciliation, implementation, doctrine, or filing-assembly parcel may dispatch until W0-P01 is accepted under the normal builder/evidence/review chain.
