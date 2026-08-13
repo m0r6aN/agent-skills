@@ -10,7 +10,7 @@
 **Private state:** `C:/Users/clint/.codex/visualizations/2026/08/11/019ff142-0b35-7040-98c2-e36420c5f77b/operation-receipt-coordinator/`
 **Charter:** `plugins/foreman-line/docs/goals/operation-receipt-remediation/charter.md`
 **Plan review:** `plugins/foreman-line/docs/goals/operation-receipt-remediation/plan-review-findings.md`
-**State:** ACTIVE — on 2026-08-13 Clinton Morgan explicitly authorized one additional OR-P02 verification attempt using verbatim `rtk proxy dotnet` commands. This is the sole authorized third attempt; any failure stops OR-P02 without a fourth attempt. Wave 0 remains open, and OR-P01 remains paused at Step 0 until the OR-P02 attempt is dispatched.
+**State:** STOPPED — the sole human-authorized third OR-P02 attempt failed before restore or compilation on 2026-08-13 because `rtk proxy` still transformed `-m:1` to `-m 1` and `-nr:false` to `-nr False`, producing `MSB1008`. No fourth attempt is authorized. Wave 0 remains open, OR-P02 retains its exact uncommitted one-file repair, and OR-P01 remains paused at Step 0 without execution. Resume requires a fresh Clinton ruling on OR-P02's command transport or disposition.
 
 ## Role
 

@@ -48,6 +48,15 @@ rtk proxy dotnet test Keon.Collective.slnx -m:1 --configuration Release --no-bui
 
 The test command runs only after a green build. No alternate syntax, transport, or fourth attempt is authorized. Before dispatch, read-only reconciliation reconfirmed the exact branch and base, the sole 93-line Allowed-File diff, SHA-256 `4A1EFFBA9613589E01DE43319FD2CAA2B2561692B0D09D50FE142096523B037A`, a clean diff check, no active .NET/MSBuild/compiler-server process, and no `next dev` process.
 
+### OR-P02 third-attempt outcome
+
+**Status:** FAILED — STOPPED
+**Date:** 2026-08-13
+
+The builder ran the authorized build command verbatim through `rtk proxy`. It exited `1` before restore or compilation with `MSB1008: Only one project can be specified`. The observed MSBuild command line again contained `-m 1` and `-nr False`; the compatibility layer still transformed the colon-bearing arguments even in proxy mode, and MSBuild treated `1` as a second project.
+
+The test command did not run. The builder made no further edit, retry, alternate-syntax attempt, or commit. Coordinator closure-checks reconfirmed `HEAD` `c42230c83d525e1586635885c040eb7972d8c6ac`, branch `feat/foreman-line-OR-P02`, exactly the sole 93-line Allowed-File diff, the expected SHA-256, a clean diff check, an empty exclusion diff, byte-unchanged `LICENSE`, and no active .NET/MSBuild/compiler-server process. No fourth attempt is authorized; the loop is stopped for a fresh Clinton ruling.
+
 ## OR-P01 — paused at Step 0
 
 The fresh Codex verifier completed its read-only Step 0 after the loop stop and received no execution acknowledgment. It confirmed the exact branch/base, empty repository Allowed Files, absence of a `next dev` process, the 15 + 12 + 22 = 49 test-count contract, and the external-only evidence root. It explicitly disclaimed any enforcement from the tracked Claude allowlist. Direct reconciliation after the session proved the worktree remains clean at the pinned SHA and the tracked settings file remains at SHA-256 `369872DBD960CA3D383368BC7D74633B5FA8470AD46185D3E50E0F5E6E2F6398`.

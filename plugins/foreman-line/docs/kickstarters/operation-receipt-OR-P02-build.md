@@ -38,6 +38,8 @@ rtk proxy dotnet test Keon.Collective.slnx -m:1 --configuration Release --no-bui
 
 Run the test command only if the build succeeds. Do not change spelling, argument order, quoting, transport, or syntax. This is the sole authorized third attempt. Any failure stops the parcel immediately; no fourth attempt is authorized.
 
+**Outcome:** the exact build command failed before restore or compilation with `MSB1008` because proxy mode still transformed the colon-bearing arguments. The test command did not run. This builder lane is stopped; do not execute another build or test command without a new Clinton ruling committed into the control plane.
+
 ## Completion claim
 
 Map every acceptance criterion to files, commands, counts, and artifacts. Report source/ending SHA, branch/worktree, exact diff, toolchain, build warnings/errors, per-project and aggregate test counts, readback, pathspec-scoped commit, the `NU1903` out-of-scope finding, final status, blockers, and next safe action. Do not push, open a PR, merge, publish, deploy, touch `LICENSE`, or decide closure.
