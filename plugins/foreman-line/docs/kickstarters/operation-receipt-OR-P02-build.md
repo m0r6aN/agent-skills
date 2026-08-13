@@ -29,6 +29,8 @@ Before any write, build, test, evidence mutation, or commit:
 
 Do not edit or rerun the build during Step 0. A real gap becomes a Coordinator amendment committed before code. After acknowledgment, implement only the minimum contract restoration in the Allowed File, read it back, and run the exact verification. If another file, schema decision, dependency update, test waiver, or base dispute is needed, stop and report without expanding scope.
 
+**Coordinator deterministic-verification amendment (2026-08-13):** after an owned timed-out parallel build left MSBuild/compiler-server processes and produced a `CS2012` PDB collision, the Coordinator terminated only that recorded process tree and amended the active spec to use `-m:1 -p:UseSharedCompilation=false -nr:false` for build and test. One controlled retry under those exact commands is authorized; a second tripwire stops the parcel.
+
 ## Completion claim
 
 Map every acceptance criterion to files, commands, counts, and artifacts. Report source/ending SHA, branch/worktree, exact diff, toolchain, build warnings/errors, per-project and aggregate test counts, readback, pathspec-scoped commit, the `NU1903` out-of-scope finding, final status, blockers, and next safe action. Do not push, open a PR, merge, publish, deploy, touch `LICENSE`, or decide closure.
