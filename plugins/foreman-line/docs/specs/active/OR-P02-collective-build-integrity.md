@@ -26,7 +26,7 @@ Restore compilation and full-suite test integrity for `keon.collective` at the r
 ## Constraints
 
 - Target repository: `D:/Repos/keon-omega/keon.collective`.
-- Future parcel branch: `codex/or-p02-collective-build-integrity-20260813`.
+- Future parcel branch: `feat/foreman-line-OR-P02`, the deterministic branch derived by the mandatory permission-profile emitter.
 - Future parcel worktree: `D:/Repos/keon-omega/keon.collective-worktrees/or-p02-collective-build-integrity-20260813`.
 - Exact base: `c42230c83d525e1586635885c040eb7972d8c6ac` on local branch `temp`. The amended charter records this commit as the current Collective state. It is three commits ahead of `origin/temp`, contains the ratified legal changes and the removal of the superseded `CognitiveHeatEngine`, and has `merge-base(origin/main,c42230c)=3a5d60fa9ae1cd44f52175ec51aeaa3bf9414cc6`. For this parcel, that specific ratified authority controls over the generic repository instruction to branch from `origin/main`; silently dropping to `origin/main` would omit ratified current state. Any dispute about this base is a stop condition, not builder discretion.
 - Step 0 is mandatory. Before any mutation, the builder must state the parcel ID, objective, exact base, branch, worktree, the one Allowed File, the verification commands, and every stop condition, then stop for Coordinator confirmation. The builder must not edit during Step 0.

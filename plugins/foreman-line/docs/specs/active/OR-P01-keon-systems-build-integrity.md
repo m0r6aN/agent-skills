@@ -35,7 +35,7 @@ builder lane; it does not enlarge OR-P01.
 
 - Target repository: `D:/Repos/keon-omega/keon-systems`.
 - Pinned base: `2b6c75536f50f125155ee697446cec89f70f2fec`, currently local `main`, three commits ahead of `origin/main`. Remote state is not the verification base.
-- Future parcel branch: `codex/or-p01-keon-systems-build-integrity`.
+- Future parcel branch: `feat/foreman-line-OR-P01`, the deterministic branch derived by the mandatory permission-profile emitter.
 - Future parcel worktree: `D:/Repos/keon-omega/_worktrees/or-p01-keon-systems-build-integrity`.
 - Do not create that branch or worktree during shaping. At dispatch, create both from the pinned base only after Coordinator factual lint and permission-profile emission.
 - The authoritative solution is root `Keon.sln`. The authoritative test project is `tests/Keon.Runtime.Tests/Keon.Runtime.Tests.csproj`; do not substitute the distinct legacy project at `src/Keon.Runtime.Tests/Keon.Runtime.Tests.csproj`.
@@ -56,7 +56,7 @@ builder lane; it does not enlarge OR-P01.
 ## Acceptance Criteria
 
 1. **Step 0 restate-and-stop is acknowledged.** Before any restore/build/test command, the dispatched verifier restates: parcel ID and verification-only intent; exact base SHA; branch and worktree; the empty repository Allowed Files authority; exact solution/project/class filters; external evidence root; publication freeze; no-`LICENSE`; no-Docker-retry; Coordinator-is-not-verifier; and Gate 3 human ownership. It then stops until the Coordinator explicitly acknowledges the restatement.
-2. **Pinned clean start.** In the isolated worktree, `HEAD` equals `2b6c75536f50f125155ee697446cec89f70f2fec`, the branch is `codex/or-p01-keon-systems-build-integrity`, and `rtk git status --porcelain=v1` is empty before restore.
+2. **Pinned clean start.** In the isolated worktree, `HEAD` equals `2b6c75536f50f125155ee697446cec89f70f2fec`, the branch is `feat/foreman-line-OR-P01`, and `rtk git status --porcelain=v1` is empty before restore.
 3. **Environment evidence is complete.** The packet records exact outputs from `dotnet --version`, `dotnet --list-sdks`, `dotnet --list-runtimes`, `pwsh --version`, Windows version, and process/OS architecture. The selected SDK is `10.0.x`; any different major/minor SDK is a stop.
 4. **Root solution builds cleanly.** After an explicit restore to the external artifacts root, `Keon.sln` builds in Release with `-m:1`, `--no-restore`, and exit code `0`. The evidence records elapsed time plus the build summary with `0 Warning(s)` and `0 Error(s)`. Any warning, error, skipped build, or fallback to a narrower project is red.
 5. **`AuthoritativeReceiptOutboxContractTests` passes independently.** The fully qualified class filter discovers and executes exactly 15 test cases at the pinned base, with 15 passed, 0 failed, and 0 skipped. The TRX and exact console summary are retained. The 15-case shaping baseline is 14 theory rows across both implementations plus one SQLite-only fact; the runner result is the authoritative execution evidence.
