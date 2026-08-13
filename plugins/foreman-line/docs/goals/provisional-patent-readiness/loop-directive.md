@@ -1,6 +1,6 @@
 # Loop Directive: Provisional Patent Readiness
 
-Status: stopped — W0-P01 encountered a reparse point; frozen-spec amendment and targeted ratification required
+Status: active — OR-P23R executes before W0-P01 retry
 Coordinator ownership: this Codex task is the sole queue owner. Ownership transfers only at a parcel boundary recorded in this file. If ownership is ambiguous, stop and report.
 
 ## Standing authority
@@ -20,6 +20,7 @@ Coordinator ownership: this Codex task is the sole queue owner. Ownership transf
 ## Queue
 
 1. W0-P01 — copy-only custody snapshot for preservation-critical state. Shape, then dispatch one builder. Required review class: standard, one independent reviewer after builder evidence.
+1a. OR-P23R — remove one external-cache symbolic link, update root ephemera ignores, and explain `_orchestration` custody. This narrowly authorized pre-retry parcel must be accepted before W0-P01 retry.
 2. W0-P02 — local Git bundle capture. Blocked by W0-P01 acceptance.
 3. W0-P03 — baseline and Stage Zero drift record. Blocked by W0-P02 acceptance.
 4. W0-P04 — shadow-worktree/ARO premise finding. Blocked by W0-P03 acceptance.
@@ -33,7 +34,7 @@ W2, W3, and W4 are not dispatchable until W1 creates the source-backed catalog a
 
 W0-P01 builder stopped before payload copy after detecting a reparse point at `D:/Repos/keon-omega/keon-docs-internal/patents/discovery-round-1/_orchestration/spreadsheet-work/e-c2-20260712/node_modules/`. The output root `D:/Repos/keon-omega-preserve/provisional-patent-readiness-20260813-w0-p01-custody-snapshot/` was created once and contains only the allowed `snapshot.ps1`; no payload, manifest, or sidecar was created. The builder reported no remote operation and no source or Git mutation.
 
-The frozen W0-P01 spec requires an immediate stop on any reparse point. Do not dispatch a reviewer, retry, alter the partial output, or advance W0. Required human ruling: whether the snapshot must preserve the reparse-point directory as an opaque link record, exclude it with an evidence entry, or copy its resolved target under an explicitly approved confined path. The coordinator must amend the W0-P01 contract and obtain targeted ratification before resumption.
+W0-P01-A1 is ratified. Its class exclusions, opaque-link entries, and internal-link escalation replace the former all-reparse stop. The specified `node_modules` link is excluded and OR-P23R removes only that external-cache link before the retry. Do not alter the partial output or advance past W0-P01 until OR-P23R is accepted.
 
 ## Loop protocol
 
