@@ -25,3 +25,11 @@ Replacing or deleting the tracked file would be a repository mutation outside OR
 **Base:** `c42230c83d525e1586635885c040eb7972d8c6ac`
 
 The mandatory emitter created the lane and wrote `.claude/settings.local.json` with the `builder-architecture` envelope. Read-only checks confirmed the exact branch, base commit, clean Git state, and projected deny rules before the fresh builder's Step 0 session launched. P02 is orthogonal to the P01 reviewer-profile collision and remains within the ratified Gate 2 authorization.
+
+### OR-P02 second-tripwire stop
+
+The builder restored exactly the 93-line S-M contract block deleted by commit `56536b8` in the sole Allowed File and verified strict UTF-8 readback plus SHA-256 `4A1EFFBA9613589E01DE43319FD2CAA2B2561692B0D09D50FE142096523B037A`. The initial build wrapper timed out and left its owned MSBuild/compiler-server process tree alive; a controlled identical rerun then failed with `CS2012` because that tree held the generated PDB. The Coordinator terminated only the recorded owned processes and committed a deterministic amendment using serialized, non-reusing compilation.
+
+The single authorized amended retry then failed before compilation because the RTK shim transformed `-m:1` to `-m 1` and `-nr:false` to `-nr False`; MSBuild treated `1` as a second project and returned `MSB1008`. This is the second parcel tripwire. The builder stopped without tests or commit. The working diff remains exactly the sole Allowed File; exclusion diff and `LICENSE` checks pass.
+
+Per the charter, the loop is stopped. The recommended human ruling is whether to authorize one additional OR-P02 verification attempt using `rtk proxy dotnet ...`, which preserves the colon-bearing MSBuild arguments verbatim. No third attempt is inferred from technical obviousness.
