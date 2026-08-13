@@ -4,7 +4,7 @@
 **Coordinator:** Codex task `019ff142-0b35-7040-98c2-e36420c5f77b`
 **Created:** 2026-08-12
 **Mode:** Multi-Project Initiative
-**Status:** GATE 1 REOPENED — plan-review amendments awaiting ratification
+**Status:** RATIFIED AS AMENDED — Gate 1 closed 2026-08-13
 **Directive:** `COORDINATOR DIRECTIVE: OPERATION RECEIPT — REMEDIATION`, version 1.0, issued 2026-08-11
 **Discovery snapshot:** `C:/Users/clint/.codex/visualizations/2026/08/11/019ff142-0b35-7040-98c2-e36420c5f77b/operation-receipt-stage-zero-discovery.md`
 
@@ -24,6 +24,8 @@ This approval supplied the design inputs below. It did not itself close Gate 1.
 On 2026-08-12, after the complete charter was presented, Clinton Morgan explicitly stated: **“Ratify the Operation Receipt charter at Gate 1.”** This ratified D1–D16, the OR-P01–OR-P22 decomposition, dependency graph, mechanism-ruling ownership, standing authorizations, exit criterion, and stop conditions as written. Any later change reopens Gate 1 only for the affected decision and downstream work.
 
 The mandatory fresh plan review then returned `REOPEN GATE1 — not executable`. Coordinator triage accepted six load-bearing corrections and one non-gate operational clarification. Gate 1 is therefore reopened only for D10, D12, D13, D15, OR-P02, OR-P07, OR-P08, OR-P13, OR-P16, OR-P21, and their dependency/authorization/exit representations. All other ratified decisions remain locked. No parcel may dispatch until Clinton ratifies these amendments.
+
+On 2026-08-13, Clinton Morgan explicitly stated: **“Ratify the Operation Receipt plan-review amendments at Gate 1.”** This ratified the accepted amendments to D10, D12, D13, D15, OR-P02, OR-P07, OR-P08, OR-P13, OR-P16, OR-P21, and their dependency/authorization/exit representations. Gate 1 is closed on the charter as amended; all previously ratified unaffected decisions remain locked.
 
 ## Objective
 
@@ -218,4 +220,4 @@ Stop and return to Clinton when:
 
 ## Gate 1
 
-**REOPENED — AWAITING AMENDMENT RATIFICATION.** The original charter was ratified on 2026-08-12. Mandatory plan-review triage changed only D10, D12, D13, D15, OR-P02, OR-P07, OR-P08, OR-P13, OR-P16, OR-P21, and their dependency/authorization/exit representations. All other decisions remain ratified. No parcel dispatch is authorized until Clinton explicitly ratifies these amendments.
+**CLOSED — RATIFIED AS AMENDED 2026-08-13.** The original charter was ratified on 2026-08-12. Clinton Morgan explicitly ratified the mandatory plan-review amendments to D10, D12, D13, D15, OR-P02, OR-P07, OR-P08, OR-P13, OR-P16, OR-P21, and their dependency/authorization/exit representations on 2026-08-13. All other decisions retain their original ratification. The Coordinator may now generate the loop directive and begin shaping OR-P01 and OR-P02 under Gate 2; Gate 3 remains human-owned unless the D15 merge-time delegation proof exists.

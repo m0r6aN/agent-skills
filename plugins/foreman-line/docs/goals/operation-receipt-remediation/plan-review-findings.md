@@ -4,7 +4,7 @@
 **Completed review:** fresh frontier session `/root/operation_receipt_plan_review_2`
 **Verdict:** `REOPEN GATE1 — not executable`
 **Coordinator triage:** all seven findings accepted
-**Dispatch state:** frozen pending narrow Gate 1 amendment ratification
+**Dispatch state:** Gate 1 amendments ratified 2026-08-13; loop generation and authorized shaping may proceed
 
 The first assigned review session exceeded its timebox and returned no findings. It is not counted as review evidence. The completed replacement review was read-only and compared the ratified charter literally with the remediation directive and governing Foreman canon.
 
@@ -26,4 +26,4 @@ The reviewer affirmed OR-P11 → OR-P04: backend parity must precede freezing AR
 
 ## Gate result
 
-Gate 1 is reopened only for the accepted amendments listed above. All other decisions ratified on 2026-08-12 remain locked. The loop directive, SQLite control plane, shaping, and parcel dispatch remain blocked until Clinton explicitly ratifies the amended decisions.
+Gate 1 reopened only for the accepted amendments listed above. All other decisions ratified on 2026-08-12 remained locked. On 2026-08-13, Clinton Morgan explicitly stated: **“Ratify the Operation Receipt plan-review amendments at Gate 1.”** Gate 1 is therefore closed on the amended charter. Loop generation and Gate 2 shaping/dispatch may proceed; Gate 3 remains human-owned unless the charter's D15 merge-time delegation proof exists.
