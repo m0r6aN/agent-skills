@@ -1,6 +1,6 @@
 # Loop Directive: Provisional Patent Readiness
 
-Status: active — OR-P23R executes before W0-P01 retry
+Status: stopped — OR-P23R discovered the named external link is a junction, not a symbolic link; targeted amendment required
 Coordinator ownership: this Codex task is the sole queue owner. Ownership transfers only at a parcel boundary recorded in this file. If ownership is ambiguous, stop and report.
 
 ## Standing authority
@@ -35,6 +35,12 @@ W2, W3, and W4 are not dispatchable until W1 creates the source-backed catalog a
 W0-P01 builder stopped before payload copy after detecting a reparse point at `D:/Repos/keon-omega/keon-docs-internal/patents/discovery-round-1/_orchestration/spreadsheet-work/e-c2-20260712/node_modules/`. The output root `D:/Repos/keon-omega-preserve/provisional-patent-readiness-20260813-w0-p01-custody-snapshot/` was created once and contains only the allowed `snapshot.ps1`; no payload, manifest, or sidecar was created. The builder reported no remote operation and no source or Git mutation.
 
 W0-P01-A1 is ratified. Its class exclusions, opaque-link entries, and internal-link escalation replace the former all-reparse stop. The specified `node_modules` link is excluded and OR-P23R removes only that external-cache link before the retry. Do not alter the partial output or advance past W0-P01 until OR-P23R is accepted.
+
+## OR-P23R stop record — 2026-08-13
+
+The builder performed Step 0 and observed that `patents/discovery-round-1/_orchestration/spreadsheet-work/e-c2-20260712/node_modules` has Windows attributes `Directory, ReparsePoint`, `LinkType=Junction`, and target metadata `C:/Users/clint/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules`. The frozen OR-P23R contract called it a symbolic link. The builder stopped before inventory or any mutation: no link removal, `.gitignore` edit, README creation, staging, commit, or remote operation.
+
+The required targeted ruling is whether OR-P23R may remove this exact external **junction** under the otherwise unchanged contract. No retry or cleanup is authorized until the frozen spec is amended and ratified.
 
 ## Loop protocol
 
