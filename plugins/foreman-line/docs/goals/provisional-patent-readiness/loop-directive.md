@@ -1,6 +1,6 @@
 # Loop Directive: Provisional Patent Readiness
 
-Status: active — W0-P01 shaping only  
+Status: stopped — W0-P01 encountered a reparse point; frozen-spec amendment and targeted ratification required  
 Coordinator ownership: this Codex task is the sole queue owner. Ownership transfers only at a parcel boundary recorded in this file. If ownership is ambiguous, stop and report.
 
 ## Standing authority
@@ -28,6 +28,12 @@ Coordinator ownership: this Codex task is the sole queue owner. Ownership transf
 7. W1 — all seven delta parcels. Blocked until all W0 items are accepted; exact artifacts and worktrees must come from the W0 ledger.
 
 W2, W3, and W4 are not dispatchable until W1 creates the source-backed catalog and D15 retained-set record. Evidence Vault remains planned/unimplemented until its separately ratified sub-wave is approved.
+
+## Active stop record — 2026-08-13
+
+W0-P01 builder stopped before payload copy after detecting a reparse point at `D:/Repos/keon-omega/keon-docs-internal/patents/discovery-round-1/_orchestration/spreadsheet-work/e-c2-20260712/node_modules/`. The output root `D:/Repos/keon-omega-preserve/provisional-patent-readiness-20260813-w0-p01-custody-snapshot/` was created once and contains only the allowed `snapshot.ps1`; no payload, manifest, or sidecar was created. The builder reported no remote operation and no source or Git mutation.
+
+The frozen W0-P01 spec requires an immediate stop on any reparse point. Do not dispatch a reviewer, retry, alter the partial output, or advance W0. Required human ruling: whether the snapshot must preserve the reparse-point directory as an opaque link record, exclude it with an evidence entry, or copy its resolved target under an explicitly approved confined path. The coordinator must amend the W0-P01 contract and obtain targeted ratification before resumption.
 
 ## Loop protocol
 
