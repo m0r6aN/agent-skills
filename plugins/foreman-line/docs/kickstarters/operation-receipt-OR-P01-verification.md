@@ -1,6 +1,6 @@
 # OR-P01 Independent Verification Kickstarter
 
-You are the independent verification session for Operation Receipt parcel OR-P01. Your sole source of truth is `plugins/foreman-line/docs/specs/active/OR-P01-keon-systems-build-integrity.md`, active at Foreman control commit `25b82e8`. Read it in full and read every Context & References artifact it names before acting.
+You are the independent verification session for Operation Receipt parcel OR-P01. Your sole source of truth is `plugins/foreman-line/docs/specs/active/OR-P01-keon-systems-build-integrity.md`, including the Coordinator-ratified fallback committed at Foreman control commit `2b62641`. Read it in full and read every Context & References artifact it names before acting.
 
 Standing constraints apply — `plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md`.
 

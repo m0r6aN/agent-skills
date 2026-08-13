@@ -33,3 +33,9 @@ The builder restored exactly the 93-line S-M contract block deleted by commit `5
 The single authorized amended retry then failed before compilation because the RTK shim transformed `-m:1` to `-m 1` and `-nr:false` to `-nr False`; MSBuild treated `1` as a second project and returned `MSB1008`. This is the second parcel tripwire. The builder stopped without tests or commit. The working diff remains exactly the sole Allowed File; exclusion diff and `LICENSE` checks pass.
 
 Per the charter, the loop is stopped. The recommended human ruling is whether to authorize one additional OR-P02 verification attempt using `rtk proxy dotnet ...`, which preserves the colon-bearing MSBuild arguments verbatim. No third attempt is inferred from technical obviousness.
+
+## OR-P01 — paused at Step 0
+
+The fresh Codex verifier completed its read-only Step 0 after the loop stop and received no execution acknowledgment. It confirmed the exact branch/base, empty repository Allowed Files, absence of a `next dev` process, the 15 + 12 + 22 = 49 test-count contract, and the external-only evidence root. It explicitly disclaimed any enforcement from the tracked Claude allowlist. Direct reconciliation after the session proved the worktree remains clean at the pinned SHA and the tracked settings file remains at SHA-256 `369872DBD960CA3D383368BC7D74633B5FA8470AD46185D3E50E0F5E6E2F6398`.
+
+The Step 0 report found one stale control reference: the kickstarter still named pre-fallback control commit `25b82e8`. The Coordinator corrected it to fallback commit `2b62641`. OR-P01 remains paused and unexecuted until the loop resumes.
