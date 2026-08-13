@@ -4,7 +4,7 @@
 **Coordinator:** Codex task `019ff142-0b35-7040-98c2-e36420c5f77b`
 **Created:** 2026-08-12
 **Mode:** Multi-Project Initiative
-**Status:** RATIFIED — Gate 1 closed 2026-08-12
+**Status:** GATE 1 REOPENED — plan-review amendments awaiting ratification
 **Directive:** `COORDINATOR DIRECTIVE: OPERATION RECEIPT — REMEDIATION`, version 1.0, issued 2026-08-11
 **Discovery snapshot:** `C:/Users/clint/.codex/visualizations/2026/08/11/019ff142-0b35-7040-98c2-e36420c5f77b/operation-receipt-stage-zero-discovery.md`
 
@@ -22,6 +22,8 @@ On 2026-08-12, Clinton Morgan explicitly approved all six Stage Zero recommendat
 This approval supplied the design inputs below. It did not itself close Gate 1.
 
 On 2026-08-12, after the complete charter was presented, Clinton Morgan explicitly stated: **“Ratify the Operation Receipt charter at Gate 1.”** This ratified D1–D16, the OR-P01–OR-P22 decomposition, dependency graph, mechanism-ruling ownership, standing authorizations, exit criterion, and stop conditions as written. Any later change reopens Gate 1 only for the affected decision and downstream work.
+
+The mandatory fresh plan review then returned `REOPEN GATE1 — not executable`. Coordinator triage accepted six load-bearing corrections and one non-gate operational clarification. Gate 1 is therefore reopened only for D10, D12, D13, D15, OR-P02, OR-P07, OR-P08, OR-P13, OR-P16, OR-P21, and their dependency/authorization/exit representations. All other ratified decisions remain locked. No parcel may dispatch until Clinton ratifies these amendments.
 
 ## Objective
 
@@ -75,12 +77,12 @@ Specification drafting is not part of this goal. The drafting log is a claim-sup
 | D7 | No behavioral change may weaken a fail-closed path. Uncertainty remains deny/invalid; missing review or unverifiable lineage cannot become permit; Cognitive Heat promotion to `Critical` remains immediate; hysteresis may delay cooling only. | Carries C-7 and the directive's Critical-latency requirement through every implementation and review. |
 | D8 | Every OR parcel receives an exact Allowed Files spec before dispatch. Every repository mutation uses one parcel-owned branch and worktree based on an explicitly recorded local commit. Cross-repository parcels use separately named repo-local lanes under one OR parent and never share a worktree. Dirty ambient checkouts are read-only. Commits are pathspec-scoped and every write is read back. | Applies PDD isolation and C-4/C-5 without pretending a multi-repo parcel can inhabit one Git worktree. |
 | D9 | The Coordinator never supplies the verification evidence it consumes. Fresh sessions produce build/test claims; the Coordinator closure-checks those claims against disk before any deterministic rerun. Architecture, crypto, replay, tenancy, evidence, legal/doctrine, and claim-surface parcels receive two independent frontier adversarial reviews; standard build/evidence parcels receive one. | Enforces Coordinator ≠ Verifier and samples review variance on every load-bearing surface. |
-| D10 | Wave 0 is a hard barrier: OR-P01 and OR-P02 run first and in parallel, and no later parcel dispatches until both are independently green. OR-P11 additionally depends on OR-P04 because ARO cannot be frozen before backend parity is corrected. The directive's literal OR-P13 dependency on OR-P06/P07/P08 is preserved even though its stated heat-paragraph rationale appears mismatched; the mandatory plan review must adjudicate that edge before loop generation. The Cognitive Heat ruling is a composite closure artifact after OR-P06/P07/P08; OR-P09 remains required for goal closure but is not filing-blocking. | Prevents confirmation against uncompilable or soon-to-change code, closes the otherwise missing seventh-ruling vehicle, and exposes rather than silently repairs the directive's suspicious hard edge. |
+| D10 | Wave 0 is a hard barrier: OR-P01 and OR-P02 run first and in parallel, and no later parcel dispatches until both are independently green. OR-P02 is green only when the repository compiles and the suite has zero failures, or Clinton ratifies an evidence-backed allowlist of pre-existing failures that do not intersect any relied-on mechanism. OR-P11 additionally depends on OR-P04 because ARO cannot be frozen before backend parity is corrected. OR-P13 depends only on the Wave 0 barrier; the directive's OR-P06/P07/P08 edge is recorded as a parcel-reference defect because its heat rationale belongs to doctrine reconciliation, not Decision Receipt + Spine. OR-P08 is the dispatchable Cognitive Heat ruling vehicle and depends on OR-P06 and OR-P07. OR-P09 remains required for goal closure but is not filing-blocking. | Makes the build barrier deterministic, gives the seventh ruling an authorized owner, preserves the sound ARO parity edge, and removes a demonstrably misattached dependency without weakening the heat-to-doctrine freeze. |
 | D11 | Each mechanism ruling is exactly one of `CONFIRMED`, qualified `SPEC-ONLY`, or `EXCLUDED`. `CONFIRMED` requires enumerated file-level implementation and test evidence plus applicability limits. `SPEC-ONLY` names every unsupported portion and must not imply implementation. `EXCLUDED` requires Clinton's R-6 ruling. Once a ruling and drafting-log entry are frozen, any code or doctrine change triggers a logged re-confirmation cycle. | Makes the directive's evidence vocabulary fail-closed and enforces C-6. |
-| D12 | Doctrine reconciliation changes text to match verified mechanism reality; it does not change code merely to preserve marketing wording. Every mechanical whitepaper statement is mapped to evidence or marked `SPEC-ONLY`. Undisclosed strengths are inventor-review assets, not automatically adopted filing claims. No specification prose is drafted. | Corrects the established pattern of absolute marketing language outrunning implementation without turning this remediation into drafting. |
-| D13 | Durable operational state uses a local SQLite coordinator database in the task's private artifact workspace; human-reviewable Foreman Markdown is committed only on the goal-owned local branch. Patent evidence/drafting artifacts are committed only in exact-path, goal-owned `keon-docs-internal` worktrees. Generated views are not hand-edited. | Satisfies Initiative Coordination persistence while keeping binary/runtime state out of product repositories and preserving dirty work. |
+| D12 | Doctrine reconciliation changes text to match verified mechanism reality; it does not change code merely to preserve marketing wording. Every mechanical whitepaper statement is mapped to evidence or marked `SPEC-ONLY`. OR-P21 starts from a versioned input-corpus manifest covering every in-scope doctrine, ruling, drafting, and provenance artifact; each claim-adjacent statement receives a stable ID and resolves to exact evidence, qualified `SPEC-ONLY`, or an R-6-backed exclusion. Undisclosed strengths are inventor-review assets, not automatically adopted filing claims. No specification prose is drafted. | Corrects the established pattern of absolute marketing language outrunning implementation and makes the §112 self-check independently bounded without turning this remediation into drafting. |
+| D13 | Durable operational state uses a local SQLite coordinator database in the task's private artifact workspace; human-reviewable Foreman Markdown is committed only on the goal-owned local branch. Patent evidence/drafting artifacts are committed only in exact-path, goal-owned `keon-docs-internal` worktrees. Before cross-repository shaping, generated views must include the track registry, parcel/dependency view, integration-surface inventory, integration-scenario matrix, environment-readiness matrix, security/release-gate map, evidence index, decision log, risk/blocker register, and session-handoff log. Generated views are not hand-edited. | Satisfies Initiative Coordination persistence while keeping binary/runtime state out of product repositories and preserving dirty work. |
 | D14 | Gate 2 standing dispatch authorization is granted for exactly OR-P01 through OR-P22 in the ratified dependency order. It covers shaping, builder, verifier, reviewer, and bounded rework sessions for those parents. It does not cover a new top-level parcel, a new outward action, or a scope amendment outside exact Allowed Files. | Records Clinton's approved dispatch scope without allowing discovery to become silent expansion. |
-| D15 | Gate 3 standing authorization is granted only for a parcel whose complete chain is green and only to locally integrate its reviewed commits into a goal-owned local integration branch/worktree. It never authorizes push, PR creation/update, deployment, publication, package release, or merge into an ordinary local default/shared branch. Dirty documentation repositories require an exact-path integration plan and clean goal-owned worktree before any local merge. Any red, unknown, skipped mandatory check, disputed finding, or scope amendment voids Gate 3 for that parcel. | Preserves a usable local integration path without breaching the publication freeze or contaminating user work. |
+| D15 | Gate 3 remains human-owned for every merge or cherry-pick unless, at merge time, the target repository's effective branch rules prove that the agent's distinct identity is an authorized bypass actor. Missing rules, an empty bypass list, a human-authenticated agent session, or an unavailable ruleset query fails closed to a fresh Clinton approval before the merge call. Any approved local integration is limited to a green-chain parcel and a goal-owned local integration branch/worktree; it never authorizes push, PR creation/update, deployment, publication, package release, or merge into an ordinary local default/shared branch. Dirty documentation repositories require an exact-path integration plan and clean goal-owned worktree. Any red, unknown, skipped mandatory check, disputed finding, or scope amendment voids Gate 3. | Conforms to Foreman Gate 3 identity proof while retaining the publication freeze and dirty-work protections. |
 | D16 | Human rulings are recorded distinctly: R-1 = no push under this goal; R-2 and R-3 = resolved by D5/D6; R-4 (SDK Apache-2.0 posture) and R-5 (assignment timing) remain pending human decisions and stop only work that would depend on them; R-6 is required if any mechanism returns `EXCLUDED`. No agent infers R-4, R-5, or R-6. | Keeps unrelated legal decisions from blocking orthogonal local evidence work while preventing the Coordinator from ruling on inventor/legal authority. |
 
 ## Project tracks
@@ -104,26 +106,26 @@ All rows are parents authorized by D14. Shaping may split a cross-repository par
 | Parcel | Output | Risk / routing | Depends on |
 |---|---|---|---|
 | OR-P01 | Independent `keon-systems` build plus the three named ARO test suites, with commit/environment/test-count evidence | elevated; frontier verifier; dual review of evidence sufficiency | Gate 1 |
-| OR-P02 | `keon.collective` compiles, its suite executes, and every failure is enumerated and triaged | elevated / architecture-risk; frontier builder; dual review | Gate 1 |
+| OR-P02 | `keon.collective` compiles and its suite executes with zero failures; alternatively, Clinton ratifies an evidence-backed allowlist of pre-existing failures proven not to intersect any relied-on mechanism | elevated / architecture-risk; frontier builder; dual review | Gate 1 |
 | OR-P03 | PolicyHash v2 domain separation, versioned vectors, four suites, and red-team 01–03 | critical / architecture-risk/crypto; frontier; dual review | OR-P01 + OR-P02 barrier |
 | OR-P04 | In-memory and SQLite ARO idempotency verification parity with shared mismatch contract tests | critical / architecture-risk/security; frontier; dual review | OR-P01 + OR-P02 barrier |
 | OR-P05 | Shadow ARO worktree divergence proven reconciled or safely retired, with no unlabeled load-bearing copy | elevated / repository-integrity; frontier; dual review | OR-P01 + OR-P02 barrier |
 | OR-P06 | Independent quiescence signal drives Dream Offerings without Heat coupling and preserves CH-3 | critical / architecture-risk; frontier; dual review | OR-P02 + OR-P01 barrier |
-| OR-P07 | `Cool`→`Cold` emission plus permanent dual-label replay compatibility and Defense Pack/doctrine vocabulary alignment | critical / architecture-risk/replay; frontier; dual review | OR-P02 + OR-P01 barrier |
-| OR-P08 | The reason-count classifier is renamed/folded so exactly one implemented concept is named Cognitive Heat | elevated / architecture-risk/doctrine; frontier; dual review | OR-P07 |
+| OR-P07 | `Cool`→`Cold` emission plus permanent dual-label replay compatibility, historical event-ID preservation, and current Defense Pack output vocabulary; no whitepaper mutation | critical / architecture-risk/replay; frontier; dual review | OR-P02 + OR-P01 barrier |
+| OR-P08 | The reason-count classifier is renamed/folded so exactly one implemented concept is named Cognitive Heat, then the complete D11 Cognitive Heat ruling is produced with evidence, applicability limits, independent verification, dual review, and a freeze entry | critical / architecture-risk/doctrine/evidence; frontier; dual review | OR-P06 + OR-P07 |
 | OR-P09 | Dual-threshold hysteresis and minimum dwell delay cooling only; oscillation stable; Critical promotion immediate | critical / architecture-risk/safety; frontier; dual review | OR-P02 + OR-P01 barrier |
 | OR-P10 | Complete typed/nullability inventory of the actual `PolicyEvaluationRecord` hash input and quantified whitepaper divergence | elevated / evidence/claim surface; frontier reviewer; dual review | OR-P03 |
 | OR-P11 | ARO lease/crash recovery, conflict, apply-failure, and duplicate-effect prevention evidence closes §4 | critical / architecture-risk/persistence; frontier; dual review | OR-P04 |
 | OR-P12 | Temporal Echo / Reality Boundary ruling covers IDs, ancestry, winner record, atomic collapse, stale/concurrent rejection, and cache invalidation | critical / architecture-risk; frontier; dual review | OR-P02 + OR-P01 barrier |
-| OR-P13 | Decision Receipt + Spine ruling covers envelope, nonce/time, sequence/partition ordering, conflicts, causal parents, and crypto agility | critical / architecture-risk/crypto; frontier; dual review | OR-P01, OR-P02, OR-P06, OR-P07, OR-P08 |
+| OR-P13 | Decision Receipt + Spine ruling covers envelope, nonce/time, sequence/partition ordering, conflicts, causal parents, and crypto agility | critical / architecture-risk/crypto; frontier; dual review | OR-P01 + OR-P02 barrier |
 | OR-P14 | Evidence Pack ruling covers schema, trust anchors, offline algorithm, missing artifacts, chain recomputation, verifier versioning, and vault applicability | critical / architecture-risk/evidence; frontier; dual review | OR-P01 + OR-P02 barrier |
 | OR-P15 | Tenant ruling enumerates derivation, object-reference rejection, enforcement call sites, cache/admin paths, and tenant-bound idempotency | critical / security/tenancy; frontier; dual review | OR-P01 + OR-P02 barrier |
-| OR-P16 | Whitepaper sweep maps every mechanical claim to code/test evidence or qualified `SPEC-ONLY`, including all known divergences | critical / legal/doctrine/public-claim; frontier; dual review | all seven mechanism rulings |
+| OR-P16 | Sole whitepaper mutation owner: sweep and map every mechanical claim to code/test evidence or qualified `SPEC-ONLY`, including the `Cool`/`Cold` correction that the directive misassigned to OR-P12 | critical / legal/doctrine/public-claim; frontier; dual review | all seven mechanism rulings |
 | OR-P17 | Undisclosed-strength inventory with file evidence, applicability limits, and no automatic claim adoption | elevated / IP evidence; frontier; dual review | all seven mechanism rulings |
 | OR-P18 | Located capability registry becomes schema-versioned, status-split, dated, and fail-closed; absent registry is reported rather than invented | critical / governance truth; frontier; dual review | all seven mechanism rulings |
 | OR-P19 | Contradictory BSL/Apache compliance report is retired or reconciled without touching any `LICENSE` | critical / legal/doctrine; frontier; dual review | all seven mechanism rulings; R-4 if SDK posture changes |
 | OR-P20 | Conception Provenance Log reconstructs dated human rulings, alternatives, corrections, and overrides per mechanism | critical / inventorship/IP provenance; frontier; dual review | OR-P16–OR-P19; R-5 if assignment language is implicated |
-| OR-P21 | Drafting log maps every claim-adjacent statement to exact file evidence or qualified `SPEC-ONLY`, with no unmapped statements | critical / §112/claim support; frontier; dual review | OR-P16–OR-P20 |
+| OR-P21 | Versioned input-corpus manifest plus stable statement IDs map every in-scope claim-adjacent statement to exact file evidence, qualified `SPEC-ONLY`, or an R-6-backed exclusion, with no unresolved manifest entry | critical / §112/claim support; frontier; dual review | OR-P16–OR-P20 |
 | OR-P22 | Manual read-only verification distinguishes OpenClaw committed history, dirty filesystem state, and remote visibility | elevated / external-state evidence; frontier reviewer; single independent review | OR-P16–OR-P19 |
 
 ## Dependency graph
@@ -133,14 +135,11 @@ Gate 1
   -> OR-P01 || OR-P02
 OR-P01 + OR-P02 green
   -> OR-P03, OR-P04, OR-P05, OR-P06, OR-P07, OR-P09
-OR-P07 -> OR-P08
+OR-P06 + OR-P07 -> OR-P08 and Cognitive Heat ruling
 OR-P03 -> OR-P10
 OR-P04 -> OR-P11
-OR-P02 -> OR-P12
-OR-P01 + OR-P06 + OR-P07 + OR-P08 -> OR-P13
-OR-P01 -> OR-P14, OR-P15
-OR-P06 + OR-P07 + OR-P08 -> Cognitive Heat composite ruling
-OR-P10 + OR-P11 + OR-P12 + OR-P13 + OR-P14 + OR-P15 + Cognitive Heat ruling
+OR-P01 + OR-P02 -> OR-P12, OR-P13, OR-P14, OR-P15
+OR-P10 + OR-P11 + OR-P12 + OR-P13 + OR-P14 + OR-P15 + OR-P08 Cognitive Heat ruling
   -> OR-P16, OR-P17, OR-P18, OR-P19
 OR-P16 + OR-P17 + OR-P18 + OR-P19 -> OR-P20
 OR-P16 + OR-P17 + OR-P18 + OR-P19 -> OR-P22
@@ -154,16 +153,16 @@ OR-P09 is required before goal exit but has no filing-readiness dependency edge.
 |---|---|---|
 | PolicyHash | OR-P10 | OR-P03 |
 | ARO | OR-P11 | OR-P04 |
-| Cognitive Heat | Composite ruling artifact produced after OR-P06/OR-P07/OR-P08 | OR-P06, OR-P07, OR-P08; OR-P09 separately required for goal closure |
+| Cognitive Heat | OR-P08 | OR-P06, OR-P07, and OR-P08 classifier reconciliation; OR-P09 separately required for goal closure |
 | Temporal Echo / Reality Boundary | OR-P12 | build barrier; any discovered heat/collapse collision stops for amendment |
-| Decision Receipt + Spine | OR-P13 | directive's literal OR-P06/OR-P07/OR-P08 edge preserved pending plan review |
+| Decision Receipt + Spine | OR-P13 | Wave 0 barrier; directive heat edge corrected as a parcel-reference defect |
 | Evidence Pack | OR-P14 | build barrier and evidence-vault applicability inventory |
 | Tenant enforcement | OR-P15 | build barrier and cross-repo call-site inventory |
 
 ## Standing authorizations
 
 1. **Gate 2 — GRANTED for exactly OR-P01 through OR-P22.** Dispatch occurs only after Gate 1, mandatory plan review, shaping, Coordinator factual lint, dependency satisfaction, exact Allowed Files, named worktree/branch, and a Step 0 restate-and-stop gate. New top-level work or a product/legal decision is not covered.
-2. **Gate 3 — GRANTED for green-chain local integration only.** The target must be a goal-owned local integration branch/worktree. Any red, unknown, skipped mandatory check, unresolved or disputed finding, tripwire, or unratified amendment voids the authorization. No default/shared local branch is a permitted target.
+2. **Gate 3 — HUMAN-OWNED unless delegation is proven at merge time.** Every merge or cherry-pick stops for Clinton's approval unless effective target-branch rules name the agent's distinct identity as an authorized bypass actor and that proof is captured immediately before the merge call. Missing or unavailable proof fails closed. Any approved target must be a goal-owned local integration branch/worktree; no default/shared local branch is permitted.
 3. **External actions — NOT GRANTED.** No push, PR, publication, deployment, distribution, package release, filing, assignment execution, customer/third-party communication, or `LICENSE` modification.
 
 ## Verification and evidence requirements
@@ -176,6 +175,7 @@ OR-P09 is required before goal exit but has no filing-readiness dependency edge.
 - A newly discovered divergence is reported as a finding and is not silently absorbed into the parcel.
 - Wrong-shaped or incomplete evidence is presumptively empty.
 - A produced artifact requirement is satisfied only by the real artifact, not a fixture imitating it.
+- Before monorepo reads, each affected spec and kickstarter repeats C-8 verbatim: **“Kill any running Next.js dev server before file reads in the monorepo — a live server hangs file reads ~4 minutes.”** This does not authorize stopping a production server.
 
 ## Exit criterion
 
@@ -188,7 +188,7 @@ This goal is complete only when current evidence proves all of the following:
 5. The capability-registry truth pass is completed against the actual located registry, or absence is escalated and resolved by Clinton rather than papered over with a new unratified registry.
 6. The contradictory license-compliance report is reconciled or retired without changing a `LICENSE` file and without inferring R-4.
 7. The Conception Provenance Log contains one section per confirmed mechanism and clearly distinguishes human conception/rulings from AI-assisted implementation history.
-8. The drafting log contains no unmapped claim-adjacent statement and uses only exact file evidence or qualified `SPEC-ONLY` designations.
+8. The versioned input-corpus manifest is complete, every claim-adjacent statement has a stable ID, and the drafting log resolves every manifest entry to exact file evidence, qualified `SPEC-ONLY`, or an R-6-backed exclusion.
 9. OpenClaw committed history, local filesystem state, and remote visibility are separately verified and recorded.
 10. All parcel specs, handoffs, evidence indexes, review findings, triage records, local commits, and Stage F closures are complete; the coordinator database and generated views agree with repository reality.
 11. R-4 and R-5 are recorded before any output that depends on SDK posture or assignment timing is finalized; R-6 is recorded for every `EXCLUDED` result.
@@ -218,4 +218,4 @@ Stop and return to Clinton when:
 
 ## Gate 1
 
-**CLOSED — RATIFIED 2026-08-12.** Clinton Morgan explicitly ratified D1–D16, the wave/parcel decomposition, dependency graph, mechanism-ruling ownership, standing authorizations, exit criterion, and stop conditions. The mandatory fresh plan-level adversarial review is the next step. If its triage changes a locked decision, Gate 1 reopens only for that decision and the downstream work it blocks.
+**REOPENED — AWAITING AMENDMENT RATIFICATION.** The original charter was ratified on 2026-08-12. Mandatory plan-review triage changed only D10, D12, D13, D15, OR-P02, OR-P07, OR-P08, OR-P13, OR-P16, OR-P21, and their dependency/authorization/exit representations. All other decisions remain ratified. No parcel dispatch is authorized until Clinton explicitly ratifies these amendments.
