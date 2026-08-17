@@ -1,6 +1,6 @@
 # Loop Directive: Provisional Patent Readiness
 
-Status: active — W0-P01-A3 ratified; fresh custody retry pending
+Status: stopped — W0-P01 implementation tripwire fired; no further retry authorized
 Coordinator ownership: this Codex task is the sole queue owner. Ownership transfers only at a parcel boundary recorded in this file. If ownership is ambiguous, stop and report.
 
 ## Standing authority
@@ -55,6 +55,12 @@ W0-P01-A2 is ratified. The retry may use the newly named, initially absent outpu
 The A2 builder created `D:/Repos/keon-omega-preserve/provisional-patent-readiness-20260817-w0-p01-custody-snapshot-retry-01/` after an absent-root preflight, then stopped during the first patent payload entry because its manifest object lacked a writable `payloadSha256` property. The root is preserved with `snapshot.ps1`, `payload/keon-docs-internal-patents/`, two regular files total, and 75 directories; no manifest or sidecar exists. It reported no source/Git/remote mutation.
 
 W0-P01-A3 is ratified. The retry may use the new initially absent output root and must initialize/assign/read `payloadSha256` before source traversal, retaining all W0-P01-A1/A2 constraints. Do not alter any earlier partial root.
+
+## W0-P01-A3 execution stop and tripwire — 2026-08-17
+
+The A3 builder created `D:/Repos/keon-omega-preserve/provisional-patent-readiness-20260817-w0-p01-custody-snapshot-retry-02/` after confirming it was absent. Static parsing and unsupported-API checks passed, but execution returned `System.ArgumentException: Argument types do not match` before source payload creation. The root contains only `snapshot.ps1` and empty `payload/`, with no manifest or sidecar. The builder reported no source/Git/remote mutation; all prior partial roots remain untouched.
+
+This is the third technical execution stop in W0-P01's custody-tool path after the initial reparse ruling. The coordinator tripwire is therefore fired. Do not issue another fresh-root retry under W0-P01. Required human action: ratify a replacement custody-tool design parcel that proves all object construction, relative-path, manifest-schema, exclusion/link classification, and copy-loop behavior against a synthetic local fixture before it is permitted to read a preservation-critical source root. The replacement must name a new output root and retain every existing preservation constraint.
 
 ## Loop protocol
 
