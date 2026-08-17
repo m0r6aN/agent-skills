@@ -34,7 +34,7 @@ W0-P01 (first, serial)
 
 - Read-only patent root: `D:/Repos/keon-omega/keon-docs-internal/patents/`.
 - Read-only doctrine root: `D:/Repos/keon-omega/keon-doctrine/`.
-- Local retry output root, absent at coordinator preflight: `D:/Repos/keon-omega-preserve/provisional-patent-readiness-20260817-w0-p01-custody-snapshot-retry-01/`.
+- Local retry output root, absent at coordinator preflight: `D:/Repos/keon-omega-preserve/provisional-patent-readiness-20260817-w0-p01-custody-snapshot-retry-02/`.
 
 ## Security Gate
 
@@ -56,7 +56,7 @@ Non-mutating local Git reads only, limited to classification of those two exact 
 
 Create/write only beneath this exact initially absent root:
 
-- `D:/Repos/keon-omega-preserve/provisional-patent-readiness-20260817-w0-p01-custody-snapshot-retry-01/`
+- `D:/Repos/keon-omega-preserve/provisional-patent-readiness-20260817-w0-p01-custody-snapshot-retry-02/`
 
 The output root may contain only `payload/`, `custody-manifest.json`, `custody-manifest.sha256`, and `snapshot.ps1`. `snapshot.ps1` is a local audit artifact, not executable source material for any product. The original partial output root remains untouched.
 
@@ -84,7 +84,7 @@ Before any write, restate Hard Rule Zero; both exact source roots; the exact ret
 
 ### Snapshot
 
-Create the retry output directory once, without overwrite behavior. Copy every regular on-disk file and empty directory below each source root, preserving relative paths and bytes, into `payload/keon-docs-internal-patents/` and `payload/keon-doctrine/`. Use a Windows PowerShell-compatible relative-path implementation that rejects paths outside each exact source root; do not use `[IO.Path]::GetRelativePath`. Do not copy `.git` or dereference reparse points. Apply W0-P01-A1: listed build-ephemera directory names are `EXCLUDED` / `BUILD_EPHEMERA` with only nonrecursive immediate-child count or enumeration error; external reparse points outside that class are `LINK_OPAQUE` with no traversal; an internal reparse point outside that class is `LINK_INTERNAL` and stops for ruling. Every exclusion/link entry must appear in the manifest.
+Create the retry output directory once, without overwrite behavior. Before source traversal, initialize the manifest-entry schema with a writable `payloadSha256` field and run an in-memory schema smoke check that assigns and reads it. Copy every regular on-disk file and empty directory below each source root, preserving relative paths and bytes, into `payload/keon-docs-internal-patents/` and `payload/keon-doctrine/`. Use a Windows PowerShell-compatible relative-path implementation that rejects paths outside each exact source root; do not use `[IO.Path]::GetRelativePath`. Do not copy `.git` or dereference reparse points. Apply W0-P01-A1: listed build-ephemera directory names are `EXCLUDED` / `BUILD_EPHEMERA` with only nonrecursive immediate-child count or enumeration error; external reparse points outside that class are `LINK_OPAQUE` with no traversal; an internal reparse point outside that class is `LINK_INTERNAL` and stops for ruling. Every exclusion/link entry must appear in the manifest.
 
 Record pre- and post-copy inventories. The JSON manifest must give each source and copied entry's relative path, type, byte length, SHA-256 where a regular file exists, copy result, source/payload counts, source stability result, and aggregate hash comparison. It must also record local HEAD, tracked/untracked/ignored/staged-dirty/unstaged-dirty/deleted classifications where applicable, timestamps, output-parent owner/ACL observation, builder/session identity, and `remoteOperations: false`. A tracked-but-deleted worktree file is recorded as an absent manifest entry, never fabricated in payload.
 
