@@ -1,6 +1,6 @@
 # Loop Directive: Provisional Patent Readiness
 
-Status: active — W0-P01-A2 ratified; fresh custody retry pending
+Status: stopped — W0-P01-A2 manifest-object initialization failure; fresh-output-root amendment required
 Coordinator ownership: this Codex task is the sole queue owner. Ownership transfers only at a parcel boundary recorded in this file. If ownership is ambiguous, stop and report.
 
 ## Standing authority
@@ -49,6 +49,12 @@ OR-P23R is accepted: local commit `c452668651c902203412bbf241921ab0a8f7e478` cha
 The W0-P01 retry created `D:/Repos/keon-omega-preserve/provisional-patent-readiness-20260813-w0-p01-custody-snapshot-retry-20260813-01/` but stopped before source traversal or copy because the Windows PowerShell runtime lacks `[IO.Path]::GetRelativePath`. The partial root contains only `snapshot.ps1` and an empty `payload/`; no manifest, sidecar, or source payload exists. The builder corrected its audit script within the permitted output root, then stopped because the frozen no-reuse rule prohibits reusing that partial root. It reported no source/Git/remote mutation; the original partial root remains intact.
 
 W0-P01-A2 is ratified. The retry may use the newly named, initially absent output root and Windows PowerShell-compatible relative-path implementation, retaining every W0-P01-A1 constraint. Do not clean, reuse, or alter either prior partial root.
+
+## W0-P01-A2 execution stop record — 2026-08-17
+
+The A2 builder created `D:/Repos/keon-omega-preserve/provisional-patent-readiness-20260817-w0-p01-custody-snapshot-retry-01/` after an absent-root preflight, then stopped during the first patent payload entry because its manifest object lacked a writable `payloadSha256` property. The root is preserved with `snapshot.ps1`, `payload/keon-docs-internal-patents/`, two regular files total, and 75 directories; no manifest or sidecar exists. It reported no source/Git/remote mutation.
+
+Required targeted ruling: authorize W0-P01-A3 to use a new initially absent output root and initialize the payload-hash field before copy, retaining all W0-P01-A1/A2 constraints. Do not alter any earlier partial root.
 
 ## Loop protocol
 
