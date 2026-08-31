@@ -1,3 +1,4 @@
+import { execFileSync } from 'node:child_process'
 import { readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -442,6 +443,43 @@ function classificationFor(sourceId: string, itemId: string): RuleClassification
   return 'narrative-provenance'
 }
 
+function authorityIdentityFor(
+  sourceId: string,
+  itemId: string,
+): {
+  authoritySubject: string
+  authorityClaim: string
+} {
+  const atomicClaims: Readonly<Record<string, string>> = {
+    'item.d1': 'separate-foreman-kernel-goal',
+    'item.d2': 'shared-schema-boundary',
+    'item.d3': 'kernel-state-authority',
+    'item.d4': 'adapter-provider-neutrality',
+    'item.d5': 'receipt-validation-boundary',
+    'item.d6': 'structural-receipt-label',
+    'item.d7': 'profile-not-enforcement',
+    'item.d8': 'shadow-before-enforcement',
+    'item.d9': 'three-gate-ownership',
+    'item.d10': 'exact-parcel-mutation-scope',
+    'item.d11': 'independent-verification-required',
+    'item.d12': 'serialized-shared-files',
+    'item.d13': 'post-review-diff-detection',
+    'item.d14': 'git-canon-authority',
+    'item.d15': 'external-effects-refused',
+    'item.d16': 'caller-authority-refused',
+    'item.d17': 'versioned-tool-contracts',
+    'item.d18': 'evidence-not-authority',
+    'item.d19': 'read-only-degraded-mode',
+    'item.d20': 'unsupported-host-honesty',
+  }
+  const suffix = itemId.replace(/^item\./, '')
+  return {
+    authoritySubject:
+      sourceId === 'fk-charter' ? `foreman-kernel.${suffix}` : `${sourceId}.${suffix}`,
+    authorityClaim: atomicClaims[itemId] ?? `requires-${suffix}`,
+  }
+}
+
 function applicabilityFor(
   classification: RuleClassification,
   goals: SourceDefinition['scope'],
@@ -497,6 +535,174 @@ function applicabilityFor(
       }
     >
   > = {
+    'item.constraint-1': {
+      roles: ['builder'],
+      stages: ['build'],
+      operations: ['repo-mutation'],
+      hosts: allHosts,
+    },
+    'item.constraint-2': {
+      roles: ['builder'],
+      stages: ['build'],
+      operations: ['repo-mutation'],
+      hosts: allHosts,
+    },
+    'item.constraint-3': {
+      roles: ['builder'],
+      stages: ['deterministic-verify'],
+      operations: ['control-call'],
+      hosts: allHosts,
+    },
+    'item.constraint-4': {
+      roles: ['builder'],
+      stages: ['build'],
+      operations: ['control-call'],
+      hosts: allHosts,
+    },
+    'item.constraint-5': {
+      roles: ['builder'],
+      stages: ['build', 'deterministic-verify'],
+      operations: ['repo-mutation'],
+      hosts: allHosts,
+    },
+    'item.constraint-6': {
+      roles: ['builder'],
+      stages: ['build'],
+      operations: ['source-inventory'],
+      hosts: allHosts,
+    },
+    'item.constraint-7': {
+      roles: ['builder'],
+      stages: ['build'],
+      operations: ['control-call'],
+      hosts: allHosts,
+    },
+    'item.constraint-8': {
+      roles: ['reviewer'],
+      stages: ['adversarial-review'],
+      operations: ['repo-mutation'],
+      hosts: allHosts,
+    },
+    'item.constraint-9': {
+      roles: ['reviewer'],
+      stages: ['adversarial-review'],
+      operations: ['repo-read'],
+      hosts: allHosts,
+    },
+    'item.constraint-10': {
+      roles: ['reviewer'],
+      stages: ['adversarial-review'],
+      operations: ['repo-read'],
+      hosts: allHosts,
+    },
+    'item.constraint-11': {
+      roles: ['reviewer'],
+      stages: ['adversarial-review'],
+      operations: ['repo-read'],
+      hosts: allHosts,
+    },
+    'item.constraint-12': {
+      roles: ['builder'],
+      stages: ['deterministic-verify'],
+      operations: ['repo-mutation'],
+      hosts: allHosts,
+    },
+    'item.constraint-13': {
+      roles: ['builder'],
+      stages: ['build'],
+      operations: ['repo-mutation'],
+      hosts: allHosts,
+    },
+    'item.hard-rule-1': {
+      roles: ['coordinator', 'shaper', 'builder'],
+      stages: ['step-zero', 'build'],
+      operations: ['spec-mutation'],
+      hosts: allHosts,
+    },
+    'item.hard-rule-2': {
+      roles: ['coordinator', 'builder'],
+      stages: ['build'],
+      operations: ['repo-mutation'],
+      hosts: allHosts,
+    },
+    'item.hard-rule-3': {
+      roles: ['builder', 'reviewer'],
+      stages: ['build', 'adversarial-review'],
+      operations: ['repo-mutation'],
+      hosts: allHosts,
+    },
+    'item.hard-rule-4': {
+      roles: ['coordinator', 'builder'],
+      stages: ['step-zero', 'build'],
+      operations: ['repo-mutation'],
+      hosts: allHosts,
+    },
+    'item.hard-rule-5': {
+      roles: ['coordinator', 'builder'],
+      stages: ['build'],
+      operations: ['repo-mutation'],
+      hosts: allHosts,
+    },
+    'item.hard-rule-6': {
+      roles: ['coordinator'],
+      stages: ['build'],
+      operations: ['repo-mutation'],
+      hosts: allHosts,
+    },
+    'item.hard-rule-7': {
+      roles: ['builder', 'ci'],
+      stages: ['deterministic-verify'],
+      operations: ['repo-read'],
+      hosts: allHosts,
+    },
+    'item.hard-rule-8': {
+      roles: ['coordinator', 'builder'],
+      stages: ['step-zero'],
+      operations: ['repo-mutation'],
+      hosts: allHosts,
+    },
+    'item.hard-rule-9': {
+      roles: ['coordinator', 'builder'],
+      stages: ['build'],
+      operations: ['repo-mutation'],
+      hosts: allHosts,
+    },
+    'item.hard-rule-10': {
+      roles: ['coordinator', 'builder'],
+      stages: ['step-zero'],
+      operations: ['spec-mutation'],
+      hosts: allHosts,
+    },
+    'item.hard-rule-11': {
+      roles: ['builder', 'reviewer'],
+      stages: ['build', 'adversarial-review'],
+      operations: ['repo-mutation'],
+      hosts: allHosts,
+    },
+    'item.hard-rule-12': {
+      roles: ['reviewer'],
+      stages: ['adversarial-review'],
+      operations: ['repo-read'],
+      hosts: allHosts,
+    },
+    'item.hard-rule-13': {
+      roles: ['coordinator'],
+      stages: ['closure'],
+      operations: ['state-transition'],
+      hosts: allHosts,
+    },
+    'item.hard-rule-14': {
+      roles: ['coordinator', 'builder', 'reviewer'],
+      stages: ['build', 'deterministic-verify', 'adversarial-review'],
+      operations: ['external-write'],
+      hosts: allHosts,
+    },
+    'item.hard-rule-15': {
+      roles: ['coordinator', 'builder', 'reviewer'],
+      stages: ['build', 'deterministic-verify', 'adversarial-review'],
+      operations: ['receipt-validation'],
+      hosts: allHosts,
+    },
     'item.d3': {
       roles: ['coordinator', 'builder', 'reviewer', 'host-adapter', 'kernel'],
       stages: ['build', 'runtime'],
@@ -738,6 +944,7 @@ function buildSource(definition: SourceDefinition): {
         : baseSemantics
     const baseRule: AuthorityRule = {
       ruleId,
+      ...authorityIdentityFor(definition.sourceId, itemId),
       normalizedStatement: normalizedExcerpt,
       sourceRefs: [sourceRef],
       applicability: applicabilityFor(classification, definition.scope, itemId),
@@ -786,20 +993,11 @@ function buildSource(definition: SourceDefinition): {
   }
 }
 
-function firstRef(source: CanonSource): SourceRef {
-  const item = source.inventoryItems[0]
-  if (item === undefined) throw new Error(`source '${source.sourceId}' has no inventory`)
-  return {
-    sourceId: source.sourceId,
-    itemId: item.itemId,
-    locatorDigest: locatorDigestFor(item.locator),
-    valueDigest: item.valueDigest,
-  }
-}
-
 interface OperationEvidence {
-  readonly gate: SourceRef
-  readonly verification: SourceRef
+  readonly gate1: readonly SourceRef[]
+  readonly gate2: readonly SourceRef[]
+  readonly gate3: readonly SourceRef[]
+  readonly verification: readonly SourceRef[]
   readonly closure: readonly SourceRef[]
 }
 
@@ -808,7 +1006,7 @@ function operationAuthority(evidence: OperationEvidence): OperationAuthority[] {
     {
       operationId: 'gate1.ratify',
       allowedPrincipals: ['human-developer'],
-      requiredGitEvidence: [evidence.gate],
+      requiredGitEvidence: evidence.gate1,
       missingEvidenceDecision: 'REQUIRE_HUMAN',
       agentCallable: false,
       operationalStateMaySatisfy: false,
@@ -816,8 +1014,8 @@ function operationAuthority(evidence: OperationEvidence): OperationAuthority[] {
     },
     {
       operationId: 'gate2.dispatch',
-      allowedPrincipals: ['coordinator', 'builder'],
-      requiredGitEvidence: [evidence.gate],
+      allowedPrincipals: ['coordinator'],
+      requiredGitEvidence: evidence.gate2,
       missingEvidenceDecision: 'REFUSE',
       agentCallable: true,
       operationalStateMaySatisfy: false,
@@ -826,7 +1024,7 @@ function operationAuthority(evidence: OperationEvidence): OperationAuthority[] {
     {
       operationId: 'gate3.merge',
       allowedPrincipals: ['human-developer'],
-      requiredGitEvidence: [evidence.gate],
+      requiredGitEvidence: evidence.gate3,
       missingEvidenceDecision: 'REQUIRE_HUMAN',
       agentCallable: false,
       operationalStateMaySatisfy: false,
@@ -835,7 +1033,7 @@ function operationAuthority(evidence: OperationEvidence): OperationAuthority[] {
     {
       operationId: 'verification.issue',
       allowedPrincipals: ['independent-reviewer'],
-      requiredGitEvidence: [evidence.verification],
+      requiredGitEvidence: evidence.verification,
       missingEvidenceDecision: 'REFUSE',
       agentCallable: false,
       operationalStateMaySatisfy: false,
@@ -843,7 +1041,7 @@ function operationAuthority(evidence: OperationEvidence): OperationAuthority[] {
     },
     {
       operationId: 'closure.record',
-      allowedPrincipals: ['human-developer'],
+      allowedPrincipals: ['coordinator'],
       requiredGitEvidence: evidence.closure,
       missingEvidenceDecision: 'REFUSE',
       agentCallable: false,
@@ -885,42 +1083,6 @@ function refFor(sources: readonly CanonSource[], sourceId: string, itemId: strin
   }
 }
 
-function reconciliation(
-  reconciliationId: string,
-  topic: string,
-  evidence: SourceRef,
-  ruleId: string,
-  status: 'open' | 'resolved-for-fk',
-  disposition: string,
-  consequence: string,
-  evidenceKind: 'source-ref' | 'missing-path' = 'source-ref',
-): ReconciliationRecord {
-  const reference =
-    evidenceKind === 'missing-path'
-      ? 'docs/transcripts/defects_lessons.md'
-      : `${evidence.sourceId}:${evidence.itemId}`
-  return {
-    reconciliationId,
-    topic,
-    observedRefs: [evidence],
-    observedEvidence: [
-      {
-        kind: evidenceKind,
-        reference,
-        digest:
-          evidenceKind === 'missing-path'
-            ? sha256(canonicalJson({ path: reference, sourceSnapshotCommit: SNAPSHOT }))
-            : sha256(canonicalJson(evidence)),
-      },
-    ],
-    authoritativeRuleIds: [ruleId],
-    scopedDisposition: disposition,
-    unresolvedConsequence: consequence,
-    migrationStatus: status,
-    supersedingEvidence: null,
-  }
-}
-
 function reconciliationMany(
   reconciliationId: string,
   topic: string,
@@ -933,14 +1095,14 @@ function reconciliationMany(
 ): ReconciliationRecord {
   const observedEvidence: ReconciliationEvidence[] = observedRefs.map((reference) => ({
     kind: 'source-ref' as const,
-    reference: `${reference.sourceId}:${reference.itemId}`,
+    reference: canonicalJson(reference),
     digest: sha256(canonicalJson(reference)),
   }))
   if (missingPath !== undefined) {
     observedEvidence.push({
       kind: 'missing-path' as const,
       reference: missingPath,
-      digest: sha256(canonicalJson({ path: missingPath, sourceSnapshotCommit: SNAPSHOT })),
+      digest: sha256(missingPath),
     })
   }
   return {
@@ -1040,6 +1202,24 @@ function requiredReconciliations(
   const standing = Array.from({ length: 13 }, (_, index) =>
     get('standing-constraints', `item.constraint-${index + 1}`),
   )
+  const priorManifest = '1fe3a7c66241904445021c97db68065961a3bf5beceb654faff4b552b4de79b2'
+  const supersedingManifest = '48a82df7d6da19352e4c9d2d99195835743a27f163a5d13a4f8d5b2a76a75a61'
+  const commandEvidence = (commandId: string, inputDigest: string, resultDigest: string) =>
+    canonicalJson({
+      tool: '@foreman-line/authority-registry',
+      toolVersion: '0.1.0',
+      commandId,
+      inputDigest,
+      resultDigest,
+      exitCode: 0,
+      actorClass: 'coordinator',
+    })
+  const priorCommand = commandEvidence('registry-binding-manifest', sha256(SNAPSHOT), priorManifest)
+  const supersedingCommand = commandEvidence(
+    'superseding-binding-manifest',
+    priorManifest,
+    supersedingManifest,
+  )
   return [
     reconciliationMany(
       'gate-namespace-count',
@@ -1122,28 +1302,26 @@ function requiredReconciliations(
         {
           kind: 'git-commit',
           reference: '4666ea15caee8b231137f23325d14ea4526e338a',
-          digest: sha256('4666ea15caee8b231137f23325d14ea4526e338a'),
+          digest: sha256(
+            execFileSync('git', ['cat-file', '-p', '4666ea15caee8b231137f23325d14ea4526e338a'], {
+              cwd: repoRoot,
+            }),
+          ),
         },
         {
           kind: 'git-commit',
           reference: SNAPSHOT,
-          digest: sha256(SNAPSHOT),
+          digest: sha256(execFileSync('git', ['cat-file', '-p', SNAPSHOT], { cwd: repoRoot })),
         },
         {
           kind: 'command-result',
-          reference:
-            'registry-binding-manifest:1fe3a7c66241904445021c97db68065961a3bf5beceb654faff4b552b4de79b2',
-          digest: sha256(
-            'registry-binding-manifest:1fe3a7c66241904445021c97db68065961a3bf5beceb654faff4b552b4de79b2',
-          ),
+          reference: priorCommand,
+          digest: sha256(priorCommand),
         },
         {
           kind: 'command-result',
-          reference:
-            'superseding-binding-manifest:75bdf0dd34ea853ff5861a9500c56e967d18082f15f2ba2591899e3e98b62ddf',
-          digest: sha256(
-            'superseding-binding-manifest:75bdf0dd34ea853ff5861a9500c56e967d18082f15f2ba2591899e3e98b62ddf',
-          ),
+          reference: supersedingCommand,
+          digest: sha256(supersedingCommand),
         },
       ],
       authoritativeRuleIds: [charterAllowed.ruleId],
@@ -1161,8 +1339,6 @@ function buildRegistry(): AuthorityEnforcementRegistry {
   const built = SOURCE_DEFINITIONS.map(buildSource)
   const sources = built.map((entry) => entry.source)
   const rules = built.flatMap((entry) => entry.rules)
-  const gateEvidence = refFor(sources, 'fk-charter', 'item.d9')
-  const verificationEvidence = refFor(sources, 'fk-charter', 'item.d11')
   return {
     schemaVersion: '0.1.0',
     registryId: 'foreman-kernel-authority-enforcement',
@@ -1170,102 +1346,33 @@ function buildRegistry(): AuthorityEnforcementRegistry {
     sources,
     rules,
     operationAuthority: operationAuthority({
-      gate: gateEvidence,
-      verification: verificationEvidence,
-      closure: [gateEvidence, verificationEvidence],
+      gate1: [
+        refFor(sources, 'fk-charter', 'item.d9'),
+        refFor(sources, 'fk-charter', 'item.4f436ba95f57'),
+      ],
+      gate2: [
+        refFor(sources, 'fk-charter', 'item.afbcffd2d557'),
+        refFor(sources, 'fk-loop-directive', 'item.bfffee6d7c1f'),
+      ],
+      gate3: [
+        refFor(sources, 'fk-charter', 'item.ef74f9b402bf'),
+        refFor(sources, 'fk-loop-directive', 'item.7eb6018d9e57'),
+      ],
+      verification: [
+        refFor(sources, 'fk-charter', 'item.d11'),
+        refFor(sources, 'fk-loop-directive', 'item.ce9042d917b2'),
+      ],
+      closure: [
+        refFor(sources, 'fk-charter', 'item.e9ec57edc0a2'),
+        refFor(sources, 'fk-loop-directive', 'item.e3065db62b43'),
+      ],
     }),
     reconciliations: requiredReconciliations(sources, rules),
   }
 }
 
-const RULE_ORDER: readonly RuleClassification[] = [
-  'pre-action-refusal',
-  'post-action-detection',
-  'ci-static-check',
-  'independent-review-human-judgment',
-  'narrative-provenance',
-  'unsupported',
-]
-
 function buildMinimal(full: AuthorityEnforcementRegistry): AuthorityEnforcementRegistry {
-  const selectedRules = RULE_ORDER.map((classification) =>
-    full.rules.find((rule) => rule.classification === classification),
-  )
-  if (selectedRules.some((rule) => rule === undefined)) {
-    throw new Error('full registry does not exercise every required classification')
-  }
-  const rules = selectedRules as AuthorityRule[]
-  const selectedSources = rules.map((rule) => {
-    const ref = rule.sourceRefs[0]
-    if (ref === undefined) throw new Error(`rule '${rule.ruleId}' has no source`)
-    const source = full.sources.find((candidate) => candidate.sourceId === ref.sourceId)
-    const item = source?.inventoryItems.find((candidate) => candidate.itemId === ref.itemId)
-    if (source === undefined || item === undefined)
-      throw new Error(`rule '${rule.ruleId}' source is missing`)
-    return { ...source, inventoryItems: [{ ...item, ruleIds: [rule.ruleId] }] }
-  })
-  const uniqueSources = [...new Set(selectedSources.map((source) => source.sourceId))].map(
-    (sourceId) => {
-      const candidates = selectedSources.filter((source) => source.sourceId === sourceId)
-      const first = candidates[0]
-      if (first === undefined) throw new Error(`minimal source '${sourceId}' is missing`)
-      return {
-        ...first,
-        inventoryItems: candidates.flatMap((source) => source.inventoryItems),
-      }
-    },
-  )
-  const evidence = firstRef(uniqueSources[0] as CanonSource)
-  const evidenceRule = rules.find((rule) => rule.sourceRefs[0]?.sourceId === evidence.sourceId)
-  if (evidenceRule === undefined) throw new Error('minimal evidence rule missing')
-  const reconciliations = [
-    [
-      'gate-namespace-count',
-      'Historical two-gate and stage approval terms versus FK Gate 1, Gate 2, and Gate 3.',
-    ],
-    [
-      'gate3-delegation',
-      'Generic contingent Gate 3 delegation versus FK nondelegated human merge authority.',
-    ],
-    [
-      'spec-linter-profile-behavior',
-      'Live six-profile enum behavior versus stale deferred-registry explanation.',
-    ],
-    [
-      'surfaces-allowed-files',
-      'Routing metadata surfaces versus exact body-level Allowed Files authority.',
-    ],
-    [
-      'permission-profile-enforcement-bound',
-      'Loaded mediated profile denial versus unenrolled and residual shell capability.',
-    ],
-    [
-      'missing-provenance-reference',
-      'Standing constraints name a provenance ledger absent at the source snapshot.',
-    ],
-  ].map(([id, topic], index) =>
-    reconciliation(
-      id as string,
-      topic as string,
-      evidence,
-      evidenceRule.ruleId,
-      index === 5 ? 'open' : 'resolved-for-fk',
-      'Fixture disposition.',
-      'Fixture consequence.',
-      index === 5 ? 'missing-path' : 'source-ref',
-    ),
-  )
-  return {
-    ...full,
-    sources: uniqueSources,
-    rules,
-    operationAuthority: operationAuthority({
-      gate: evidence,
-      verification: evidence,
-      closure: [evidence],
-    }),
-    reconciliations,
-  }
+  return structuredClone(full)
 }
 
 function writeYaml(path: string, document: unknown): void {
@@ -1314,7 +1421,7 @@ function writeFixtures(full: AuthorityEnforcementRegistry): void {
   const conflictingBase: AuthorityRule = {
     ...structuredClone(original),
     ruleId: `${original.ruleId}.conflict`,
-    decision: original.decision === 'REFUSE' ? 'ALLOW' : 'REFUSE',
+    authorityClaim: `${original.authorityClaim}-conflict`,
   }
   const conflicting = { ...conflictingBase, bindingDigest: bindingDigestFor(conflictingBase) }
   ;(contradiction.rules as AuthorityRule[]).push(conflicting)

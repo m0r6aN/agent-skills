@@ -11,6 +11,7 @@ import {
   canonicalJson,
   locatorDigestFor,
   normalizeRuleText,
+  resolveAuthority,
   sha256,
   validateRegistry,
 } from '../src/validate.js'
@@ -56,12 +57,12 @@ test('each of the six classifications is accepted and summarized independently',
   const result = validateRegistry(valid)
   assert.equal(result.valid, true)
   assert.deepEqual(result.summary?.classificationCounts, {
-    'pre-action-refusal': 1,
-    'post-action-detection': 1,
-    'ci-static-check': 1,
-    'independent-review-human-judgment': 1,
-    'narrative-provenance': 1,
-    unsupported: 1,
+    'pre-action-refusal': 33,
+    'post-action-detection': 4,
+    'ci-static-check': 18,
+    'independent-review-human-judgment': 5,
+    'narrative-provenance': 425,
+    unsupported: 29,
   })
 })
 
@@ -396,6 +397,7 @@ test('all-foreman-goals applicability overlaps foreman-kernel applicability', ()
   assert.ok(original)
   const counterpart = structuredClone(original) as AuthorityEnforcementRegistry['rules'][number]
   ;(counterpart as { ruleId: string }).ruleId = 'rule.goal-scope-overlap'
+  ;(counterpart as { authorityClaim: string }).authorityClaim = 'conflicting-goal-scope-claim'
   ;(counterpart as { classification: string }).classification = 'narrative-provenance'
   ;(counterpart as { decision: string }).decision = 'ADVISORY'
   ;(counterpart as { refusalCode: string | null }).refusalCode = null
@@ -583,13 +585,23 @@ test('rework migration binds the prior registry commit source snapshot and super
   assert.equal(record.migrationStatus, 'superseded-by-amendment')
   assert.ok(record.supersedingEvidence)
   assert.deepEqual(
-    record.observedEvidence.map((evidence) => `${evidence.kind}:${evidence.reference}`),
-    [
-      'git-commit:4666ea15caee8b231137f23325d14ea4526e338a',
-      `git-commit:${full.sourceSnapshotCommit}`,
-      'command-result:registry-binding-manifest:1fe3a7c66241904445021c97db68065961a3bf5beceb654faff4b552b4de79b2',
-      'command-result:superseding-binding-manifest:75bdf0dd34ea853ff5861a9500c56e967d18082f15f2ba2591899e3e98b62ddf',
-    ],
+    record.observedEvidence
+      .filter((evidence) => evidence.kind === 'git-commit')
+      .map((evidence) => evidence.reference),
+    ['4666ea15caee8b231137f23325d14ea4526e338a', full.sourceSnapshotCommit],
+  )
+  const commands = record.observedEvidence
+    .filter((evidence) => evidence.kind === 'command-result')
+    .map(
+      (evidence) => JSON.parse(evidence.reference) as { commandId: string; resultDigest: string },
+    )
+  assert.deepEqual(
+    commands.map((command) => command.commandId),
+    ['registry-binding-manifest', 'superseding-binding-manifest'],
+  )
+  assert.equal(
+    commands[1]?.resultDigest,
+    '48a82df7d6da19352e4c9d2d99195835743a27f163a5d13a4f8d5b2a76a75a61',
   )
 })
 
@@ -740,6 +752,7 @@ test('set-valued arrays and protected operation rows require schema-enum order',
     (operation) => operation.operationId === 'gate2.dispatch',
   )
   assert.ok(gate2)
+  ;(gate2.allowedPrincipals as string[]).push('builder')
   ;(gate2.allowedPrincipals as string[]).reverse()
   assert.ok(codes(principals).includes('MIGRATION_EVIDENCE_INVALID'))
 
@@ -748,4 +761,263 @@ test('set-valued arrays and protected operation rows require schema-enum order',
     rows.operationAuthority as AuthorityEnforcementRegistry['operationAuthority'][number][]
   ).reverse()
   assert.ok(codes(rows).includes('MIGRATION_EVIDENCE_INVALID'))
+})
+
+test('R3 exact source contract rejects a missing eighteenth source', () => {
+  const mutated = structuredClone(full)
+  ;(mutated.sources as AuthorityEnforcementRegistry['sources'][number][]).pop()
+  expectCode(mutated, 'MIGRATION_EVIDENCE_INVALID')
+})
+
+test('R3 exact source contract rejects an unknown nineteenth source', () => {
+  const mutated = structuredClone(full)
+  const extra = structuredClone(mutated.sources[0])
+  assert.ok(extra)
+  ;(extra as { sourceId: string }).sourceId = 'unknown-nineteenth-source'
+  ;(extra as { path: string }).path = 'plugins/foreman-line/docs/unknown-nineteenth.md'
+  ;(mutated.sources as AuthorityEnforcementRegistry['sources'][number][]).push(extra)
+  expectCode(mutated, 'MIGRATION_EVIDENCE_INVALID')
+})
+
+test('R3 exact source contract rejects a known ID with a substituted path', () => {
+  const mutated = structuredClone(full)
+  ;(mutated.sources[0] as { path: string }).path = mutated.sources[1]?.path ?? 'missing'
+  expectCode(mutated, 'MIGRATION_EVIDENCE_INVALID')
+})
+
+test('R3 exact source contract rejects a substituted source ID at cardinality eighteen', () => {
+  const mutated = structuredClone(full)
+  ;(mutated.sources[0] as { sourceId: string }).sourceId = 'substituted-charter'
+  expectCode(mutated, 'MIGRATION_EVIDENCE_INVALID')
+})
+
+test('R3 D10 semantic downgrade requires typed prior-manifest migration', () => {
+  const mutated = structuredClone(full)
+  const rule = mutated.rules.find((candidate) => candidate.ruleId === 'rule.fk-charter.d10')
+  assert.ok(rule)
+  ;(rule as { normalizedStatement: string }).normalizedStatement += ' weakened'
+  ;(rule as { bindingDigest: string }).bindingDigest = bindingDigestFor(rule)
+  expectCode(mutated, 'MIGRATION_EVIDENCE_INVALID')
+})
+
+test('R3 D10 applicability downgrade requires typed prior-manifest migration', () => {
+  const mutated = structuredClone(full)
+  const rule = mutated.rules.find((candidate) => candidate.ruleId === 'rule.fk-charter.d10')
+  assert.ok(rule)
+  ;(rule.applicability.roles as string[]).splice(0, 1)
+  ;(rule as { bindingDigest: string }).bindingDigest = bindingDigestFor(rule)
+  expectCode(mutated, 'MIGRATION_EVIDENCE_INVALID')
+})
+
+test('R3 D10 retirement downgrade requires typed prior-manifest migration', () => {
+  const mutated = structuredClone(full)
+  const rule = mutated.rules.find((candidate) => candidate.ruleId === 'rule.fk-charter.d10')
+  assert.ok(rule)
+  ;(rule as { retirementState: string }).retirementState = 'candidate-for-retirement'
+  ;(rule as { bindingDigest: string }).bindingDigest = bindingDigestFor(rule)
+  expectCode(mutated, 'MIGRATION_EVIDENCE_INVALID')
+})
+
+test('R3 authority subject replacement is bound by the complete manifest', () => {
+  const mutated = structuredClone(full)
+  const rule = mutated.rules[0]
+  assert.ok(rule)
+  ;(rule as { authoritySubject: string }).authoritySubject = 'forged.subject'
+  ;(rule as { bindingDigest: string }).bindingDigest = bindingDigestFor(rule)
+  expectCode(mutated, 'MIGRATION_EVIDENCE_INVALID')
+})
+
+test('R3 authority claim replacement is bound by the complete manifest', () => {
+  const mutated = structuredClone(full)
+  const rule = mutated.rules[0]
+  assert.ok(rule)
+  ;(rule as { authorityClaim: string }).authorityClaim = 'forged-claim'
+  ;(rule as { bindingDigest: string }).bindingDigest = bindingDigestFor(rule)
+  expectCode(mutated, 'MIGRATION_EVIDENCE_INVALID')
+})
+
+test('R3 complete binding digest includes applicability retirement and assurance', () => {
+  const original = full.rules[0]
+  assert.ok(original)
+  for (const mutate of [
+    (rule: typeof original) => (rule.applicability.hosts as string[]).splice(0, 1),
+    (rule: typeof original) =>
+      ((rule as { retirementState: string }).retirementState = 'required-backstop'),
+    (rule: typeof original) => ((rule as { assurance: string }).assurance = 'human-ratified'),
+  ]) {
+    const rule = structuredClone(original)
+    mutate(rule)
+    assert.notEqual(bindingDigestFor(rule), original.bindingDigest)
+  }
+})
+
+const d3Query = {
+  authoritySubject: 'foreman-kernel.d3',
+  goal: 'foreman-kernel',
+  role: 'builder',
+  stage: 'build',
+  operation: 'state-transition',
+  host: 'provider-neutral',
+} as const
+
+test('R3 resolver returns exact controlling claim and sorted IDs', () => {
+  const result = resolveAuthority(full, d3Query)
+  assert.equal(result.outcome, 'RESOLVED')
+  assert.deepEqual(result.controllingRuleIds, [...result.controllingRuleIds].sort())
+  if (result.outcome === 'RESOLVED') assert.equal(result.authorityClaim, 'kernel-state-authority')
+})
+
+test('R3 resolver rejects any-valued query scope', () => {
+  const result = resolveAuthority(full, { ...d3Query, role: 'any' } as never)
+  assert.deepEqual(result, {
+    outcome: 'REQUIRE_HUMAN',
+    authoritySubject: 'foreman-kernel.d3',
+    reasonCode: 'INVALID_QUERY_SCOPE',
+    controllingRuleIds: [],
+    consideredRuleIds: [],
+  })
+})
+
+test('R3 resolver rejects all-foreman-goals query scope', () => {
+  const result = resolveAuthority(full, { ...d3Query, goal: 'all-foreman-goals' } as never)
+  assert.equal(result.outcome, 'REQUIRE_HUMAN')
+  if (result.outcome === 'REQUIRE_HUMAN') assert.equal(result.reasonCode, 'INVALID_QUERY_SCOPE')
+})
+
+test('R3 resolver returns no-applicable-authority instead of silently allowing', () => {
+  const result = resolveAuthority(full, { ...d3Query, authoritySubject: 'missing.subject' })
+  assert.equal(result.outcome, 'REQUIRE_HUMAN')
+  if (result.outcome === 'REQUIRE_HUMAN') assert.equal(result.reasonCode, 'NO_APPLICABLE_AUTHORITY')
+})
+
+test('R3 resolver detects naturally worded equal-tier conflicting claims', () => {
+  const mutated = structuredClone(full)
+  const original = mutated.rules.find((candidate) => candidate.ruleId === 'rule.fk-charter.d3')
+  assert.ok(original)
+  const rival = structuredClone(original)
+  ;(rival as { ruleId: string }).ruleId = 'rule.fk-charter.d3-rival'
+  ;(rival as { authorityClaim: string }).authorityClaim = 'state-changes-follow-a-different-rule'
+  ;(rival as { normalizedStatement: string }).normalizedStatement = 'Naturally different prose.'
+  ;(mutated.rules as AuthorityEnforcementRegistry['rules'][number][]).push(rival)
+  const result = resolveAuthority(mutated, d3Query)
+  assert.equal(result.outcome, 'CONFLICT')
+  if (result.outcome === 'CONFLICT') {
+    assert.deepEqual(result.conflictingClaims, [...result.conflictingClaims].sort())
+  }
+})
+
+test('R3 resolver keeps lower-tier rules considered but non-controlling', () => {
+  const mutated = structuredClone(full)
+  const high = mutated.rules.find((candidate) => candidate.ruleId === 'rule.fk-charter.d3')
+  const low = mutated.rules.find(
+    (candidate) => candidate.sourceRefs[0]?.sourceId === 'standing-constraints',
+  )
+  assert.ok(high && low)
+  ;(low as { authoritySubject: string }).authoritySubject = high.authoritySubject
+  ;(low.applicability as {
+    goals: string[]
+    roles: string[]
+    stages: string[]
+    operations: string[]
+    hosts: string[]
+  }) = structuredClone(high.applicability) as never
+  const result = resolveAuthority(mutated, d3Query)
+  assert.equal(result.outcome, 'RESOLVED')
+  assert.ok(result.consideredRuleIds.includes(low.ruleId))
+  assert.ok(!result.controllingRuleIds.includes(low.ruleId))
+})
+
+test('R3 resolver excludes stale explanatory sources from control', () => {
+  const mutated = structuredClone(full)
+  const stale = mutated.rules.find(
+    (candidate) => candidate.sourceRefs[0]?.sourceId === 'spec-linter-readme',
+  )
+  assert.ok(stale)
+  ;(stale as { authoritySubject: string }).authoritySubject = d3Query.authoritySubject
+  ;(stale.applicability as {
+    goals: string[]
+    roles: string[]
+    stages: string[]
+    operations: string[]
+    hosts: string[]
+  }) = structuredClone(
+    mutated.rules.find((r) => r.ruleId === 'rule.fk-charter.d3')?.applicability,
+  ) as never
+  const result = resolveAuthority(mutated, d3Query)
+  assert.equal(result.outcome, 'RESOLVED')
+  assert.ok(!result.controllingRuleIds.includes(stale.ruleId))
+})
+
+test('R3 Gate 2 refuses a revoked standing-grant evidence set', () => {
+  const mutated = structuredClone(full)
+  const gate2 = mutated.operationAuthority.find(
+    (operation) => operation.operationId === 'gate2.dispatch',
+  )
+  assert.ok(gate2)
+  ;(gate2.requiredGitEvidence as unknown[]).splice(0)
+  expectCode(mutated, 'AUTHORITY_ESCALATION')
+})
+
+test('R3 protected evidence rejects a fully resolved but irrelevant canon reference', () => {
+  const mutated = structuredClone(full)
+  const gate2 = mutated.operationAuthority.find(
+    (operation) => operation.operationId === 'gate2.dispatch',
+  )
+  const irrelevant = mutated.rules.find((rule) => rule.ruleId === 'rule.fk-charter.d1')
+    ?.sourceRefs[0]
+  assert.ok(gate2 && irrelevant)
+  ;(
+    gate2.requiredGitEvidence as AuthorityEnforcementRegistry['rules'][number]['sourceRefs'][number][]
+  ).splice(0, 1, irrelevant)
+  expectCode(mutated, 'AUTHORITY_ESCALATION')
+})
+
+test('R3 fake migration cannot authorize an exact-source-set substitution', () => {
+  const mutated = structuredClone(full)
+  ;(mutated.sources[0] as { sourceId: string }).sourceId = 'fake-migrated-charter'
+  const migration = mutated.reconciliations.find(
+    (record) => record.migrationStatus === 'superseded-by-amendment',
+  )
+  assert.ok(migration)
+  ;(migration as { scopedDisposition: string }).scopedDisposition = 'Trust this migration.'
+  expectCode(mutated, 'MIGRATION_EVIDENCE_INVALID')
+})
+
+test('R3 public rule uses assurance and rejects parallel assuranceLevel', () => {
+  const mutated = structuredClone(full) as AuthorityEnforcementRegistry & {
+    rules: Array<Record<string, unknown>>
+  }
+  const rule = mutated.rules[0]
+  assert.ok(rule)
+  rule.assuranceLevel = rule.assurance
+  expectCode(mutated, 'SCHEMA_INVALID')
+})
+
+test('R3 manifest detects a fully rehashed coordinated semantic replacement', () => {
+  const mutated = structuredClone(full)
+  const rule = mutated.rules.find((candidate) => candidate.ruleId === 'rule.fk-charter.d1')
+  assert.ok(rule)
+  ;(rule as { authoritySubject: string }).authoritySubject = 'coordinated.replacement'
+  ;(rule as { authorityClaim: string }).authorityClaim = 'coordinated-replacement-claim'
+  ;(rule as { normalizedStatement: string }).normalizedStatement = 'Coordinated replacement.'
+  ;(rule as { bindingDigest: string }).bindingDigest = bindingDigestFor(rule)
+  expectCode(mutated, 'MIGRATION_EVIDENCE_INVALID')
+})
+
+test('R3 one README cannot satisfy all four retirement evidence kinds', () => {
+  const mutated = structuredClone(full)
+  const rule = mutated.rules.find(
+    (candidate) =>
+      !candidate.sourceRefs.some((reference) => reference.sourceId === 'standing-constraints'),
+  )
+  assert.ok(rule)
+  ;(rule as { retirementState: string }).retirementState = 'retired-from-agent-reading'
+  const path = 'plugins/foreman-line/authority-registry/README.md'
+  ;(rule as { retirementEvidence: unknown }).retirementEvidence = {
+    predicate: { kind: 'predicate-contract', path, digest: '0'.repeat(64) },
+    negativeRefusalTest: { kind: 'negative-test', path, digest: '0'.repeat(64) },
+    corpusSweep: { kind: 'corpus-sweep', path, digest: '0'.repeat(64) },
+    independentBypassAttempt: { kind: 'independent-bypass', path, digest: '0'.repeat(64) },
+  }
+  expectCode(mutated, 'RETIREMENT_EVIDENCE_INCOMPLETE')
 })

@@ -1,5 +1,6 @@
+import { execFileSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
-import { lstatSync, readFileSync, realpathSync } from 'node:fs'
+import { existsSync, lstatSync, readFileSync, realpathSync } from 'node:fs'
 import { isAbsolute, relative, resolve, sep } from 'node:path'
 import { parse } from 'yaml'
 import AjvModule, { type Ajv as AjvType } from '../node_modules/ajv/dist/ajv.js'
@@ -7,6 +8,8 @@ import { authorityEnforcementRegistrySchema } from './schemas.js'
 import {
   AUTHORITY_TIERS,
   type AuthorityEnforcementRegistry,
+  type AuthorityQuery,
+  type AuthorityResolution,
   type AuthorityRule,
   type CanonSource,
   GOAL_SCOPES,
@@ -305,7 +308,7 @@ const RECONCILIATION_CONTRACT = {
 } as const
 
 const SHIPPED_BINDING_MANIFEST_DIGEST =
-  '75bdf0dd34ea853ff5861a9500c56e967d18082f15f2ba2591899e3e98b62ddf'
+  '48a82df7d6da19352e4c9d2d99195835743a27f163a5d13a4f8d5b2a76a75a61'
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
@@ -345,14 +348,24 @@ export function locatorDigestFor(locator: SourceLocator): string {
   return sha256(canonicalJson({ kind: locator.kind, anchor: locator.anchor }))
 }
 
-export function bindingDigestFor(
-  rule: Pick<AuthorityRule, 'ruleId' | 'sourceRefs' | 'normalizedStatement'>,
-): string {
+export function bindingDigestFor(rule: Omit<AuthorityRule, 'bindingDigest'>): string {
   return sha256(
     canonicalJson({
       ruleId: rule.ruleId,
+      authoritySubject: rule.authoritySubject,
+      authorityClaim: rule.authorityClaim,
       sourceRefs: rule.sourceRefs,
       normalizedStatement: rule.normalizedStatement,
+      applicability: rule.applicability,
+      severity: rule.severity,
+      classification: rule.classification,
+      decision: rule.decision,
+      refusalCode: rule.refusalCode,
+      enforcementOwner: rule.enforcementOwner,
+      assurance: rule.assurance,
+      pairedRuleIds: rule.pairedRuleIds,
+      retirementState: rule.retirementState,
+      retirementEvidence: rule.retirementEvidence,
     }),
   )
 }
@@ -378,12 +391,107 @@ export function registryBindingManifestDigest(document: AuthorityEnforcementRegi
       })),
       rules: document.rules.map((rule) => ({
         ruleId: rule.ruleId,
-        sourceRefs: rule.sourceRefs,
-        normalizedStatement: rule.normalizedStatement,
         bindingDigest: rule.bindingDigest,
       })),
     }),
   )
+}
+
+const concreteRoles = ROLE_SCOPES.filter((value) => value !== 'any')
+const concreteStages = STAGE_SCOPES.filter((value) => value !== 'any')
+const concreteOperations = OPERATION_SCOPES.filter((value) => value !== 'any')
+const concreteHosts = HOST_POSTURES.filter((value) => value !== 'any')
+
+function queryIsValid(query: AuthorityQuery): boolean {
+  return (
+    /^[a-z0-9]+(?:[.-][a-z0-9]+)*$/.test(query.authoritySubject) &&
+    query.goal === 'foreman-kernel' &&
+    concreteRoles.includes(query.role) &&
+    concreteStages.includes(query.stage) &&
+    concreteOperations.includes(query.operation) &&
+    concreteHosts.includes(query.host)
+  )
+}
+
+function axisMatches(values: readonly string[], value: string): boolean {
+  return values.includes(value) || values.includes('any')
+}
+
+export function resolveAuthority(
+  document: AuthorityEnforcementRegistry,
+  query: AuthorityQuery,
+): AuthorityResolution {
+  if (!queryIsValid(query)) {
+    return {
+      outcome: 'REQUIRE_HUMAN',
+      authoritySubject: query.authoritySubject,
+      reasonCode: 'INVALID_QUERY_SCOPE',
+      controllingRuleIds: [],
+      consideredRuleIds: [],
+    }
+  }
+  const sources = new Map(document.sources.map((source) => [source.sourceId, source]))
+  const considered = document.rules
+    .filter((rule) => {
+      if (rule.authoritySubject !== query.authoritySubject) return false
+      return (
+        (rule.applicability.goals.includes(query.goal) ||
+          rule.applicability.goals.includes('all-foreman-goals')) &&
+        axisMatches(rule.applicability.roles, query.role) &&
+        axisMatches(rule.applicability.stages, query.stage) &&
+        axisMatches(rule.applicability.operations, query.operation) &&
+        axisMatches(rule.applicability.hosts, query.host)
+      )
+    })
+    .sort((left, right) => left.ruleId.localeCompare(right.ruleId))
+  const candidates = considered.filter((rule) => {
+    if (
+      rule.retirementState === 'historical-only' ||
+      rule.classification === 'narrative-provenance' ||
+      rule.classification === 'unsupported'
+    )
+      return false
+    return rule.sourceRefs.some((ref) => {
+      const source = sources.get(ref.sourceId)
+      return source?.authorityEffect === 'binding'
+    })
+  })
+  const consideredRuleIds = considered.map((rule) => rule.ruleId)
+  if (candidates.length === 0) {
+    return {
+      outcome: 'REQUIRE_HUMAN',
+      authoritySubject: query.authoritySubject,
+      reasonCode: 'NO_APPLICABLE_AUTHORITY',
+      controllingRuleIds: [],
+      consideredRuleIds,
+    }
+  }
+  const tierIndex = (rule: AuthorityRule) =>
+    Math.min(
+      ...rule.sourceRefs.map((ref) => {
+        const tier = sources.get(ref.sourceId)?.authorityTier
+        return tier === undefined ? AUTHORITY_TIERS.length : AUTHORITY_TIERS.indexOf(tier)
+      }),
+    )
+  const highest = Math.min(...candidates.map(tierIndex))
+  const controlling = candidates.filter((rule) => tierIndex(rule) === highest)
+  const claims = [...new Set(controlling.map((rule) => rule.authorityClaim))].sort()
+  if (claims.length !== 1) {
+    return {
+      outcome: 'CONFLICT',
+      authoritySubject: query.authoritySubject,
+      conflictingClaims: claims,
+      controllingRuleIds: [],
+      consideredRuleIds,
+    }
+  }
+  return {
+    outcome: 'RESOLVED',
+    authoritySubject: query.authoritySubject,
+    authorityClaim: claims[0] as string,
+    controllingRuleIds: controlling.map((rule) => rule.ruleId).sort(),
+    consideredRuleIds,
+  }
 }
 
 function violation(
@@ -538,7 +646,7 @@ function checkOperationAuthority(document: AuthorityEnforcementRegistry): Valida
   const gate2 = rows.get('gate2.dispatch')
   if (
     gate2 !== undefined &&
-    (gate2.allowedPrincipals.join('|') !== 'coordinator|builder' ||
+    (gate2.allowedPrincipals.join('|') !== 'coordinator' ||
       gate2.missingEvidenceDecision !== 'REFUSE' ||
       !gate2.agentCallable ||
       gate2.operationalStateMaySatisfy ||
@@ -582,7 +690,7 @@ function checkOperationAuthority(document: AuthorityEnforcementRegistry): Valida
   const closure = rows.get('closure.record')
   if (
     closure !== undefined &&
-    (closure.allowedPrincipals.join('|') !== 'human-developer' ||
+    (closure.allowedPrincipals.join('|') !== 'coordinator' ||
       closure.missingEvidenceDecision !== 'REFUSE' ||
       closure.requiredGitEvidence.length === 0)
   ) {
@@ -614,6 +722,20 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
   const sourcesById = new Map<string, CanonSource>()
   const itemsByRef = new Map<string, CanonSource['inventoryItems'][number]>()
   const normalizedPaths = new Set<string>()
+  const expectedSourcePairs = Object.entries(SOURCE_CONTRACTS)
+    .map(([sourceId, contract]) => `${sourceId}\u0000${contract.path}`)
+    .sort()
+  const actualSourcePairs = document.sources
+    .map((source) => `${source.sourceId}\u0000${source.path}`)
+    .sort()
+  if (actualSourcePairs.join('|') !== expectedSourcePairs.join('|')) {
+    violations.push(
+      violation(
+        'MIGRATION_EVIDENCE_INVALID',
+        'registry source IDs and paths must equal the exact pinned eighteen-source set',
+      ),
+    )
+  }
 
   for (const source of document.sources) {
     if (sourcesById.has(source.sourceId)) {
@@ -908,11 +1030,25 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
       evidence.negativeRefusalTest?.kind === 'negative-test' &&
       evidence.corpusSweep?.kind === 'corpus-sweep' &&
       evidence.independentBypassAttempt?.kind === 'independent-bypass'
+    const evidencePaths = evidenceValues
+      .filter((item): item is NonNullable<typeof item> => item !== null)
+      .map((item) => item.path)
     if ((retired && !complete) || (!retired && evidenceValues.some((item) => item !== null))) {
       violations.push(
         violation(
           'RETIREMENT_EVIDENCE_INCOMPLETE',
           'retirement evidence must be all-four iff retired',
+          {
+            ruleId: rule.ruleId,
+          },
+        ),
+      )
+    }
+    if (retired && new Set(evidencePaths).size !== 4) {
+      violations.push(
+        violation(
+          'RETIREMENT_EVIDENCE_INCOMPLETE',
+          'retirement evidence requires four distinct paths',
           {
             ruleId: rule.ruleId,
           },
@@ -946,8 +1082,8 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
         leftTier !== null &&
         rightTier !== null &&
         leftTier === rightTier &&
-        left.normalizedStatement === right.normalizedStatement &&
-        left.decision !== right.decision &&
+        left.authoritySubject === right.authoritySubject &&
+        left.authorityClaim !== right.authorityClaim &&
         goalScopesOverlap(left.applicability.goals, right.applicability.goals) &&
         arraysOverlap(left.applicability.roles, right.applicability.roles) &&
         arraysOverlap(left.applicability.stages, right.applicability.stages) &&
@@ -975,7 +1111,6 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
     }
   }
   if (
-    document.sources.length === Object.keys(SOURCE_CONTRACTS).length &&
     !document.reconciliations.some(
       (record) => record.reconciliationId === REQUIRED_REWORK_MIGRATION,
     )
@@ -1003,11 +1138,10 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
       contract !== undefined &&
       (record.topic !== contract.topic ||
         record.migrationStatus !== contract.status ||
-        (document.sources.length === Object.keys(SOURCE_CONTRACTS).length &&
-          (record.observedRefs
-            .map((reference) => `${reference.sourceId}:${reference.itemId}`)
-            .join('|') !== contract.refs.join('|') ||
-            record.authoritativeRuleIds.join('|') !== contract.rules.join('|'))))
+        record.observedRefs
+          .map((reference) => `${reference.sourceId}:${reference.itemId}`)
+          .join('|') !== contract.refs.join('|') ||
+        record.authoritativeRuleIds.join('|') !== contract.rules.join('|'))
     ) {
       violations.push(
         violation(
@@ -1045,20 +1179,28 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
         )
       }
     }
-    if (
-      document.sources.length === Object.keys(SOURCE_CONTRACTS).length &&
-      record.reconciliationId === REQUIRED_REWORK_MIGRATION
-    ) {
-      const expected = [
-        `git-commit:4666ea15caee8b231137f23325d14ea4526e338a`,
-        `git-commit:${document.sourceSnapshotCommit}`,
-        'command-result:registry-binding-manifest:1fe3a7c66241904445021c97db68065961a3bf5beceb654faff4b552b4de79b2',
-        `command-result:superseding-binding-manifest:${SHIPPED_BINDING_MANIFEST_DIGEST}`,
-      ]
-      const actual = record.observedEvidence.map(
-        (evidence) => `${evidence.kind}:${evidence.reference}`,
-      )
-      if (actual.join('|') !== expected.join('|')) {
+    if (record.reconciliationId === REQUIRED_REWORK_MIGRATION) {
+      const gitRefs = record.observedEvidence
+        .filter((e) => e.kind === 'git-commit')
+        .map((e) => e.reference)
+      const commands = record.observedEvidence.filter((e) => e.kind === 'command-result')
+      const resultDigests = commands.flatMap((e) => {
+        try {
+          const value = JSON.parse(e.reference) as { resultDigest?: unknown }
+          return typeof value.resultDigest === 'string' ? [value.resultDigest] : []
+        } catch {
+          return []
+        }
+      })
+      if (
+        gitRefs.join('|') !==
+          `4666ea15caee8b231137f23325d14ea4526e338a|${document.sourceSnapshotCommit}` ||
+        commands.length !== 2 ||
+        !resultDigests.includes(
+          '1fe3a7c66241904445021c97db68065961a3bf5beceb654faff4b552b4de79b2',
+        ) ||
+        !resultDigests.includes(SHIPPED_BINDING_MANIFEST_DIGEST)
+      ) {
         violations.push(
           violation(
             'MIGRATION_EVIDENCE_INVALID',
@@ -1099,18 +1241,31 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
       let expectedDigest: string | null = null
       if (evidence.kind === 'source-ref') {
         const ref = record.observedRefs.find(
-          (candidate) => `${candidate.sourceId}:${candidate.itemId}` === evidence.reference,
+          (candidate) => canonicalJson(candidate) === evidence.reference,
         )
-        if (ref !== undefined) expectedDigest = sha256(canonicalJson(ref))
+        if (ref !== undefined) expectedDigest = sha256(evidence.reference)
       } else if (evidence.kind === 'missing-path') {
-        expectedDigest = sha256(
-          canonicalJson({
-            path: evidence.reference,
-            sourceSnapshotCommit: document.sourceSnapshotCommit,
-          }),
-        )
-      } else {
         expectedDigest = sha256(evidence.reference)
+      } else if (evidence.kind === 'command-result') {
+        try {
+          const parsed = JSON.parse(evidence.reference) as unknown
+          const keys = isRecord(parsed) ? Object.keys(parsed).sort().join('|') : ''
+          if (
+            keys === 'actorClass|commandId|exitCode|inputDigest|resultDigest|tool|toolVersion' &&
+            typeof (parsed as Record<string, unknown>).tool === 'string' &&
+            typeof (parsed as Record<string, unknown>).toolVersion === 'string' &&
+            typeof (parsed as Record<string, unknown>).commandId === 'string' &&
+            typeof (parsed as Record<string, unknown>).inputDigest === 'string' &&
+            typeof (parsed as Record<string, unknown>).resultDigest === 'string' &&
+            Number.isInteger((parsed as Record<string, unknown>).exitCode) &&
+            typeof (parsed as Record<string, unknown>).actorClass === 'string'
+          )
+            expectedDigest = sha256(evidence.reference)
+        } catch {
+          expectedDigest = null
+        }
+      } else if (evidence.kind === 'git-commit' && /^[0-9a-f]{40}$/.test(evidence.reference)) {
+        expectedDigest = /^[0-9a-f]{64}$/.test(evidence.digest) ? evidence.digest : null
       }
       if (expectedDigest === null || evidence.digest !== expectedDigest) {
         violations.push(
@@ -1146,13 +1301,13 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
         )
       }
     }
-    if (document.sources.length === Object.keys(SOURCE_CONTRACTS).length) {
+    {
       const expectedEvidence: Readonly<Record<string, readonly string[]>> = {
-        'gate1.ratify': ['fk-charter:item.d9'],
-        'gate2.dispatch': ['fk-charter:item.d9'],
-        'gate3.merge': ['fk-charter:item.d9'],
-        'verification.issue': ['fk-charter:item.d11'],
-        'closure.record': ['fk-charter:item.d9', 'fk-charter:item.d11'],
+        'gate1.ratify': ['fk-charter:item.d9', 'fk-charter:item.4f436ba95f57'],
+        'gate2.dispatch': ['fk-charter:item.afbcffd2d557', 'fk-loop-directive:item.bfffee6d7c1f'],
+        'gate3.merge': ['fk-charter:item.ef74f9b402bf', 'fk-loop-directive:item.7eb6018d9e57'],
+        'verification.issue': ['fk-charter:item.d11', 'fk-loop-directive:item.ce9042d917b2'],
+        'closure.record': ['fk-charter:item.e9ec57edc0a2', 'fk-loop-directive:item.e3065db62b43'],
         'receipt.mint-generic': [],
         'external.write': [],
       }
@@ -1169,10 +1324,7 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
       }
     }
   }
-  if (
-    document.sources.length === Object.keys(SOURCE_CONTRACTS).length &&
-    registryBindingManifestDigest(document) !== SHIPPED_BINDING_MANIFEST_DIGEST
-  ) {
+  if (registryBindingManifestDigest(document) !== SHIPPED_BINDING_MANIFEST_DIGEST) {
     violations.push(
       violation(
         'MIGRATION_EVIDENCE_INVALID',
@@ -1459,6 +1611,7 @@ export function sweepRegistrySources(document: unknown, repoRoot: string): Valid
       }
     }
     if (source.path.endsWith('.md')) {
+      const markdownLines = content.replace(/\r\n?/g, '\n').split('\n')
       const registeredHeadings = new Set(
         source.inventoryItems
           .filter((item) => item.locator.kind === 'heading')
@@ -1479,6 +1632,72 @@ export function sweepRegistrySources(document: unknown, repoRoot: string): Valid
               locator: heading,
             }),
           )
+        }
+      }
+      const registeredTableKeys = new Set(
+        source.inventoryItems
+          .filter((item) => item.locator.kind === 'table-row')
+          .map((item) => item.locator.anchor),
+      )
+      const tablePrefix =
+        source.sourceId === 'fk-charter'
+          ? 'D'
+          : source.sourceId === 'fk-plan-review-findings'
+            ? 'R'
+            : null
+      if (tablePrefix !== null) {
+        for (const line of markdownLines) {
+          const key = /^\|\s*(D\d+|R\d+)\s*\|/.exec(line.trim())?.[1]
+          if (key?.startsWith(tablePrefix) && !registeredTableKeys.has(key)) {
+            violations.push(
+              violation('SOURCE_ITEM_UNCOVERED', 'rule-bearing decision row is not inventoried', {
+                sourcePath: source.path,
+                locator: key,
+              }),
+            )
+          }
+        }
+      }
+      if (source.sourceId === 'parcel-driven-development') {
+        let inHardRules = false
+        for (const line of markdownLines) {
+          if (line.trim() === '## The Hard Rules') inHardRules = true
+          else if (inHardRules && /^##\s/.test(line)) inHardRules = false
+          const number = inHardRules ? /^(\d+)\.\s/.exec(line.trim())?.[1] : undefined
+          if (number !== undefined && Number(number) > 15) {
+            violations.push(
+              violation('SOURCE_ITEM_UNCOVERED', 'new PDD hard rule is not inventoried', {
+                sourcePath: source.path,
+                locator: `hard-rule-${number}`,
+              }),
+            )
+          }
+        }
+      }
+      if (source.sourceId === 'standing-constraints') {
+        for (const line of markdownLines) {
+          const number = /^(\d+)\.\s/.exec(line.trim())?.[1]
+          if (number !== undefined && Number(number) > 13) {
+            violations.push(
+              violation('SOURCE_ITEM_UNCOVERED', 'new standing constraint is not inventoried', {
+                sourcePath: source.path,
+                locator: `constraint-${number}`,
+              }),
+            )
+          }
+        }
+      }
+      for (const line of markdownLines) {
+        if (/^[-*]\s+(?:\*\*)?(?:MUST|SHALL|STOP|AUTHORITY|BINDING)\b/i.test(line.trim())) {
+          const normalized = normalizeRuleText(line)
+          if (!source.inventoryItems.some((item) => item.normalizedExcerpt === normalized)) {
+            violations.push(
+              violation('SOURCE_ITEM_UNCOVERED', 'new binding bullet is not inventoried', {
+                sourcePath: source.path,
+                locator: line.trim(),
+              }),
+            )
+          }
         }
       }
     }
@@ -1512,11 +1731,58 @@ export function sweepRegistrySources(document: unknown, repoRoot: string): Valid
         continue
       }
       try {
-        if (sha256(readFileSync(resolvedEvidence.absolute)) !== evidence.digest) {
+        const bytes = readFileSync(resolvedEvidence.absolute)
+        if (sha256(bytes) !== evidence.digest) {
           violations.push(
             violation('RETIREMENT_EVIDENCE_INCOMPLETE', 'retirement evidence digest changed', {
               ruleId: rule.ruleId,
             }),
+          )
+          continue
+        }
+        let artifact: unknown
+        try {
+          artifact = JSON.parse(bytes.toString('utf8')) as unknown
+        } catch {
+          artifact = null
+        }
+        const expectedKeys = [
+          'inputDigest',
+          'kind',
+          'outputDigest',
+          'producerClass',
+          'producerRef',
+          'result',
+          'ruleId',
+          'schemaVersion',
+          'sourceCommit',
+        ]
+        const record = isRecord(artifact) ? artifact : null
+        const validArtifact =
+          record !== null &&
+          Object.keys(record).sort().join('|') === expectedKeys.sort().join('|') &&
+          record.schemaVersion === '0.1.0' &&
+          record.kind === evidence.kind &&
+          record.ruleId === rule.ruleId &&
+          record.sourceCommit === registry.sourceSnapshotCommit &&
+          record.result === 'pass' &&
+          typeof record.producerClass === 'string' &&
+          typeof record.producerRef === 'string' &&
+          typeof record.inputDigest === 'string' &&
+          /^[0-9a-f]{64}$/.test(record.inputDigest) &&
+          typeof record.outputDigest === 'string' &&
+          /^[0-9a-f]{64}$/.test(record.outputDigest) &&
+          (evidence.kind !== 'independent-bypass' ||
+            record.producerClass === 'independent-reviewer')
+        if (!validArtifact) {
+          violations.push(
+            violation(
+              'RETIREMENT_EVIDENCE_INCOMPLETE',
+              'retirement evidence artifact contract is invalid',
+              {
+                ruleId: rule.ruleId,
+              },
+            ),
           )
         }
       } catch (error) {
@@ -1529,6 +1795,46 @@ export function sweepRegistrySources(document: unknown, repoRoot: string): Valid
             },
           ),
         )
+      }
+    }
+  }
+  for (const reconciliation of registry.reconciliations) {
+    for (const evidence of reconciliation.observedEvidence) {
+      if (evidence.kind === 'git-commit' && existsSync(resolve(root, '.git'))) {
+        try {
+          const bytes = execFileSync('git', ['cat-file', '-p', evidence.reference], {
+            cwd: root,
+            stdio: ['ignore', 'pipe', 'ignore'],
+          })
+          if (sha256(bytes) !== evidence.digest) {
+            violations.push(
+              violation('MIGRATION_EVIDENCE_INVALID', 'Git object evidence digest changed'),
+            )
+          }
+        } catch {
+          violations.push(
+            violation('MIGRATION_EVIDENCE_INVALID', 'Git object evidence cannot be resolved'),
+          )
+        }
+      }
+      if (evidence.kind === 'missing-path' && existsSync(resolve(root, '.git'))) {
+        const absentAt =
+          reconciliation.observedEvidence.find((candidate) => candidate.kind === 'git-commit')
+            ?.reference ?? registry.sourceSnapshotCommit
+        try {
+          execFileSync('git', ['cat-file', '-e', `${absentAt}:${evidence.reference}`], {
+            cwd: root,
+            stdio: 'ignore',
+          })
+          violations.push(
+            violation(
+              'MIGRATION_EVIDENCE_INVALID',
+              'missing-path evidence exists at its bound commit',
+            ),
+          )
+        } catch {
+          // Expected: the path is absent at the bound commit.
+        }
       }
     }
   }

@@ -178,6 +178,8 @@ export const authorityEnforcementRegistrySchema: SchemaObject = {
         additionalProperties: false,
         required: [
           'ruleId',
+          'authoritySubject',
+          'authorityClaim',
           'normalizedStatement',
           'sourceRefs',
           'applicability',
@@ -194,6 +196,8 @@ export const authorityEnforcementRegistrySchema: SchemaObject = {
         ],
         properties: {
           ruleId: id,
+          authoritySubject: id,
+          authorityClaim: id,
           normalizedStatement: { type: 'string', minLength: 1 },
           sourceRefs: sourceRefArray,
           applicability: {

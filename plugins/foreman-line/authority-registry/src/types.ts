@@ -212,6 +212,8 @@ export interface RetirementEvidence {
 }
 export interface AuthorityRule {
   readonly ruleId: string
+  readonly authoritySubject: string
+  readonly authorityClaim: string
   readonly normalizedStatement: string
   readonly sourceRefs: readonly SourceRef[]
   readonly applicability: Applicability
@@ -226,6 +228,36 @@ export interface AuthorityRule {
   readonly retirementEvidence: RetirementEvidence
   readonly bindingDigest: string
 }
+export interface AuthorityQuery {
+  readonly authoritySubject: string
+  readonly goal: 'foreman-kernel'
+  readonly role: Exclude<RoleScope, 'any'>
+  readonly stage: Exclude<StageScope, 'any'>
+  readonly operation: Exclude<OperationScope, 'any'>
+  readonly host: Exclude<HostPosture, 'any'>
+}
+export type AuthorityResolution =
+  | {
+      readonly outcome: 'RESOLVED'
+      readonly authoritySubject: string
+      readonly authorityClaim: string
+      readonly controllingRuleIds: string[]
+      readonly consideredRuleIds: string[]
+    }
+  | {
+      readonly outcome: 'REQUIRE_HUMAN'
+      readonly authoritySubject: string
+      readonly reasonCode: 'INVALID_QUERY_SCOPE' | 'NO_APPLICABLE_AUTHORITY'
+      readonly controllingRuleIds: []
+      readonly consideredRuleIds: string[]
+    }
+  | {
+      readonly outcome: 'CONFLICT'
+      readonly authoritySubject: string
+      readonly conflictingClaims: string[]
+      readonly controllingRuleIds: []
+      readonly consideredRuleIds: string[]
+    }
 export type OperationId =
   | 'gate1.ratify'
   | 'gate2.dispatch'

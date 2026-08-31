@@ -39,7 +39,9 @@ Each rule independently binds:
 lines, joins remaining lines with one ASCII space, and collapses remaining Unicode whitespace.
 `lineHint` is review assistance only and is excluded from identity and digests.
 
-The rule `bindingDigest` covers canonical JSON of `{ ruleId, sourceRefs, normalizedStatement }`.
+The rule `bindingDigest` covers the complete normative record: subject, claim, statement, source
+references, applicability, severity, classification, decision, refusal code, owner, assurance,
+paired rules, retirement state, and retirement evidence, as well as the rule ID.
 Canonical JSON uses NFC strings, recursively sorted object keys, preserved array order, and no
 insignificant whitespace. These digests are integrity checks only—not receipts, signatures,
 approval, verification verdicts, merge authorization, or closure evidence.
@@ -70,12 +72,14 @@ post-review Git detection. Missing enrollment is never described as a refusal.
 
 - Gate 1 ratification/amendment is human-developer only and returns `REQUIRE_HUMAN` without the
   required Git evidence. It is never agent-callable, state-satisfiable, or tool-issued.
-- Gate 2 dispatch is agent-callable only after exact charter-scoped Git authorization exists.
+- Gate 2 dispatch admits only the coordinator and is agent-callable only after exact
+  charter-scoped Git authorization exists.
   State may record consumption but cannot mint the grant.
 - FK Gate 3 merge is nondelegated and human-developer owned.
 - Verification evidence requires an independent-reviewer principal; builders and coordinators
   cannot verify their own work.
-- Closure records report a real human merge and its prerequisites; they cannot authorize them.
+- Closure records admit only the coordinator after a real human merge and its prerequisites;
+  they cannot authorize those prerequisites.
 - Generic receipt minting is absent/refused in this release and admits zero principals.
 - External writes—including Jira, SCM, cloud, signing, deployment, publication, billing,
   credentials, Docker socket, and repository settings—admit zero principals and remain
@@ -106,8 +110,18 @@ ship another coordinator-ratified typed migration; rewriting internally consiste
 enough.
 
 A rule can become `retired-from-agent-reading` only when all four correctly typed evidence
-references exist: predicate contract, negative-refusal test, corpus sweep, and an independent
-bypass attempt. Rationale and provenance remain mapped after retirement.
+references resolve to distinct digest-bound JSON artifacts: predicate contract, negative-refusal
+test, corpus sweep, and an independent-reviewer bypass attempt. Rationale and provenance remain
+mapped after retirement.
+
+## Authority resolution
+
+`resolveAuthority(document, query)` is a pure, read-only registry lookup. Queries are concrete;
+`any` and `all-foreman-goals` are invalid query values. It filters non-controlling source effects
+and classifications, applies exact scope matching, selects the highest applicable tier, and
+returns an uppercase `RESOLVED`, `REQUIRE_HUMAN`, or `CONFLICT` outcome with sorted rule IDs.
+It does not authorize actions or replace Git evidence. No applicable candidate returns
+`REQUIRE_HUMAN / NO_APPLICABLE_AUTHORITY`.
 
 ## CLI
 

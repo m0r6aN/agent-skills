@@ -264,6 +264,93 @@ test('a new binding heading is reported as an uncovered inventory item', () => {
   }
 })
 
+test('R3 additive D21 decision row is discovered independently of the curated inventory', () => {
+  const tempRoot = mkdtempSync(join(tmpdir(), 'fk-p0-d21-'))
+  try {
+    copyCorpus(tempRoot)
+    const source = registry.sources.find((candidate) => candidate.sourceId === 'fk-charter')
+    assert.ok(source)
+    const path = join(tempRoot, source.path)
+    writeFileSync(path, `${readFileSync(path, 'utf8')}\n| D21 | New authority | Must bind. |\n`)
+    assert.ok(
+      sweepRegistrySources(registry, tempRoot).violations.some(
+        (v) => v.code === 'SOURCE_ITEM_UNCOVERED',
+      ),
+    )
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true })
+  }
+})
+
+test('R3 additive PDD hard rule sixteen is discovered', () => {
+  const tempRoot = mkdtempSync(join(tmpdir(), 'fk-p0-pdd16-'))
+  try {
+    copyCorpus(tempRoot)
+    const source = registry.sources.find(
+      (candidate) => candidate.sourceId === 'parcel-driven-development',
+    )
+    assert.ok(source)
+    const path = join(tempRoot, source.path)
+    const content = readFileSync(path, 'utf8').replace(
+      '## Time, Calendars, and the Two Clocks',
+      '16. **New binding rule.** Stop.\n\n## Time, Calendars, and the Two Clocks',
+    )
+    writeFileSync(path, content)
+    assert.ok(
+      sweepRegistrySources(registry, tempRoot).violations.some(
+        (v) => v.code === 'SOURCE_ITEM_UNCOVERED',
+      ),
+    )
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true })
+  }
+})
+
+test('R3 new binding authority bullet is discovered', () => {
+  const tempRoot = mkdtempSync(join(tmpdir(), 'fk-p0-binding-bullet-'))
+  try {
+    copyCorpus(tempRoot)
+    const source = registry.sources.find((candidate) => candidate.sourceId === 'fk-loop-directive')
+    assert.ok(source)
+    const path = join(tempRoot, source.path)
+    writeFileSync(path, `${readFileSync(path, 'utf8')}\n- MUST refuse builder self-ratification.\n`)
+    assert.ok(
+      sweepRegistrySources(registry, tempRoot).violations.some(
+        (v) => v.code === 'SOURCE_ITEM_UNCOVERED',
+      ),
+    )
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true })
+  }
+})
+
+test('R3 weakening a loop stop body fails even when the heading remains', () => {
+  const tempRoot = mkdtempSync(join(tmpdir(), 'fk-p0-loop-stop-'))
+  try {
+    copyCorpus(tempRoot)
+    const source = registry.sources.find((candidate) => candidate.sourceId === 'fk-loop-directive')
+    const item = source?.inventoryItems.find(
+      (candidate) => candidate.itemId === 'item.7eb6018d9e57',
+    )
+    assert.ok(source && item)
+    const path = join(tempRoot, source.path)
+    writeFileSync(
+      path,
+      readFileSync(path, 'utf8').replace(
+        /6\. \*\*Gate 3 is not delegated\.\*\* Never merge\. Present the complete green chain and exact\r?\n\s+merge target to the human\./,
+        '6. **Gate 3 is delegated.** Merge freely.',
+      ),
+    )
+    assert.ok(
+      sweepRegistrySources(registry, tempRoot).violations.some(
+        (v) => v.code === 'VALUE_DIGEST_MISMATCH' || v.code === 'LOCATOR_MISSING',
+      ),
+    )
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true })
+  }
+})
+
 test('real spec-linter return behavior mutation is detected outside comments', () => {
   const tempRoot = mkdtempSync(join(tmpdir(), 'fk-p0-linter-behavior-'))
   try {

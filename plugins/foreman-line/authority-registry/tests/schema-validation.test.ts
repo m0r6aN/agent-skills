@@ -103,3 +103,18 @@ test('CLI bad invocation and unreadable input return exit 2', () => {
   assert.equal(runCli(['sweep', 'authority-enforcement-registry.yaml']).status, 2)
   assert.equal(runCli(['validate', join(fixtures, 'does-not-exist.yaml')]).status, 2)
 })
+
+test('R3 sweep with a missing repository root returns operational exit 2', () => {
+  const result = runCli([
+    'sweep',
+    'authority-enforcement-registry.yaml',
+    '--repo-root',
+    join(packageRoot, 'tests', 'fixtures', 'missing-repository-root'),
+  ])
+  assert.equal(result.status, 2, result.stderr || result.stdout)
+  assert.ok(
+    JSON.parse(result.stdout).violations.some(
+      (violation: { code: string }) => violation.code === 'IO_ERROR',
+    ),
+  )
+})

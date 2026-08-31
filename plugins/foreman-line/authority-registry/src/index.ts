@@ -7,6 +7,7 @@ export {
   locatorDigestFor,
   normalizeRuleText,
   parseRegistry,
+  resolveAuthority,
   sha256,
   sweepRegistrySources,
   validateRegistry,

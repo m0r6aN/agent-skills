@@ -69,7 +69,15 @@ function run(argv: readonly string[]): number {
       ? validateRegistry(loaded.document)
       : sweepRegistrySources(loaded.document, repoRoot as string)
   emit(result)
-  return result.valid ? 0 : 1
+  if (result.valid) return 0
+  return result.violations.some(
+    (violation) =>
+      violation.code === 'IO_ERROR' ||
+      violation.code === 'PARSE_ERROR' ||
+      violation.code === 'USAGE_ERROR',
+  )
+    ? 2
+    : 1
 }
 
 process.exitCode = run(process.argv.slice(2))
