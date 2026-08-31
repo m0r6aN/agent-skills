@@ -110,7 +110,10 @@ test('R4 natural binding prose added under a curated authority section is discov
       ),
     )
     const result = sweepRegistrySources(registry, tempRoot)
-    assert.ok(result.violations.some((violation) => violation.code === 'SOURCE_ITEM_UNCOVERED'))
+    assert.ok(
+      result.violations.some((violation) => violation.code === 'SOURCE_ITEM_UNCOVERED'),
+      JSON.stringify(result.violations, null, 2),
+    )
   } finally {
     rmSync(tempRoot, { recursive: true, force: true })
   }
@@ -126,7 +129,10 @@ test('R4 inserted top-level executable function is discovered without keyword ma
       `${readFileSync(path, 'utf8')}\nfunction bypassEverything() { return true }\n`,
     )
     const result = sweepRegistrySources(registry, tempRoot)
-    assert.ok(result.violations.some((violation) => violation.code === 'SOURCE_ITEM_UNCOVERED'))
+    assert.ok(
+      result.violations.some((violation) => violation.code === 'SOURCE_ITEM_UNCOVERED'),
+      JSON.stringify(result.violations, null, 2),
+    )
   } finally {
     rmSync(tempRoot, { recursive: true, force: true })
   }
@@ -292,7 +298,7 @@ test('unrelated bytes outside every registered locator stay green', () => {
           ? '// UNRELATED_BYTES_OUTSIDE_REGISTERED_LOCATORS\n'
           : source.path.endsWith('.yaml')
             ? '# UNRELATED_BYTES_OUTSIDE_REGISTERED_LOCATORS\n'
-            : 'UNRELATED_BYTES_OUTSIDE_REGISTERED_LOCATORS\n'
+            : '<!-- UNRELATED_BYTES_OUTSIDE_REGISTERED_LOCATORS -->\n'
       writeFileSync(destination, `${prefix}${content}`, 'utf8')
     }
     assert.equal(sweepRegistrySources(registry, tempRoot).valid, true)
@@ -599,4 +605,159 @@ test('multiple corpus violations are deterministically ordered by path, locator,
     first.violations.map((item) => item.sourcePath),
     [...first.violations.map((item) => item.sourcePath)].sort(),
   )
+})
+
+test('R5 Markdown numbered-item locators survive physical line wrapping', () => {
+  const tempRoot = mkdtempSync(join(tmpdir(), 'fk-p0-wrap-'))
+  try {
+    copyCorpus(tempRoot)
+    const path = join(tempRoot, 'plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md')
+    const content = readFileSync(path, 'utf8')
+    writeFileSync(
+      path,
+      content.replace(
+        'Every external call (third-party library, Node.js I/O, network)',
+        'Every external call\n   (third-party library, Node.js I/O, network)',
+      ),
+    )
+    const result = sweepRegistrySources(registry, tempRoot)
+    assert.equal(result.valid, true, JSON.stringify(result.violations, null, 2))
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true })
+  }
+})
+
+test('R5 unnumbered charter prose outside keyword-selected sections is discovered', () => {
+  const tempRoot = mkdtempSync(join(tmpdir(), 'fk-p0-complete-charter-'))
+  try {
+    copyCorpus(tempRoot)
+    const path = join(tempRoot, 'plugins/foreman-line/docs/goals/foreman-kernel/charter.md')
+    const content = readFileSync(path, 'utf8')
+    const changed = content.replace(
+      '## 2. Problem statement',
+      '## 2. Problem statement\n\nThe coordinator alone may activate an unregistered authority path.',
+    )
+    assert.notEqual(changed, content)
+    writeFileSync(path, changed)
+    const result = sweepRegistrySources(registry, tempRoot)
+    assert.ok(
+      result.violations.some((violation) => violation.code === 'SOURCE_ITEM_UNCOVERED'),
+      JSON.stringify(result.violations, null, 2),
+    )
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true })
+  }
+})
+
+test('R5 fenced Markdown prose cannot impersonate a live authority binding', () => {
+  const tempRoot = mkdtempSync(join(tmpdir(), 'fk-p0-markdown-fence-'))
+  try {
+    copyCorpus(tempRoot)
+    const path = join(tempRoot, 'plugins/foreman-line/docs/goals/foreman-kernel/charter.md')
+    const content = readFileSync(path, 'utf8')
+    writeFileSync(
+      path,
+      `~~~text\nThe coordinator may bypass every protected operation.\n~~~\n${content}`,
+    )
+    const result = sweepRegistrySources(registry, tempRoot)
+    assert.equal(result.valid, true, JSON.stringify(result.violations, null, 2))
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true })
+  }
+})
+
+const r5TypeScriptAdditions = {
+  function: 'function r5FunctionProbe() { return true }',
+  const: 'const r5ConstProbe = 1',
+  let: 'let r5LetProbe = 1',
+  var: 'var r5VarProbe = 1',
+  class: 'class R5ClassProbe { method() { return true } }',
+  'default-export': 'export default function r5DefaultProbe() { return true }',
+  method: 'class R5MethodProbe { r5Method() { return true } }',
+  arrow: 'const r5ArrowProbe = () => true',
+  'top-level-call': 'r5UnregisteredCall()',
+} as const
+
+for (const [form, addition] of Object.entries(r5TypeScriptAdditions)) {
+  test(`R5 TypeScript compiler AST discovers additive ${form} form`, () => {
+    const tempRoot = mkdtempSync(join(tmpdir(), `fk-p0-ts-${form}-`))
+    try {
+      copyCorpus(tempRoot)
+      const path = join(tempRoot, 'plugins/foreman-line/spec-linter/src/validate.ts')
+      writeFileSync(path, `${readFileSync(path, 'utf8')}\n${addition}\n`)
+      const result = sweepRegistrySources(registry, tempRoot)
+      assert.ok(result.violations.some((violation) => violation.code === 'SOURCE_ITEM_UNCOVERED'))
+    } finally {
+      rmSync(tempRoot, { recursive: true, force: true })
+    }
+  })
+}
+
+test('R5 TypeScript compiler AST detects a nested branch mutation', () => {
+  const tempRoot = mkdtempSync(join(tmpdir(), 'fk-p0-ts-nested-'))
+  try {
+    copyCorpus(tempRoot)
+    const path = join(tempRoot, 'plugins/foreman-line/spec-linter/src/validate.ts')
+    const content = readFileSync(path, 'utf8')
+    writeFileSync(
+      path,
+      content.replace(
+        'export function validateSpecFrontmatter(doc: unknown, options?: ValidateOptions): ValidationResult {',
+        'export function validateSpecFrontmatter(doc: unknown, options?: ValidateOptions): ValidationResult {\n  if (Date.now() > 0) { return { valid: true, errors: [], warnings: [] } }',
+      ),
+    )
+    const result = sweepRegistrySources(registry, tempRoot)
+    assert.ok(result.violations.some((violation) => violation.code === 'VALUE_DIGEST_MISMATCH'))
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true })
+  }
+})
+
+for (const [form, mutate] of [
+  [
+    'comment',
+    (content: string) =>
+      content.replace(
+        'export function validateSpecFrontmatter(doc: unknown, options?: ValidateOptions): ValidationResult {',
+        'export function validateSpecFrontmatter(doc: unknown, options?: ValidateOptions): ValidationResult {\n  // R5 benign comment',
+      ),
+  ],
+  [
+    'whitespace',
+    (content: string) =>
+      content.replace('  const errors: string[] = []', '    const errors: string[] = []'),
+  ],
+  [
+    'import-order',
+    (content: string) =>
+      content.replace(
+        "import { Ajv, type SchemaObject } from 'ajv'\nimport { parse } from 'yaml'",
+        "import { parse } from 'yaml'\nimport { Ajv, type SchemaObject } from 'ajv'",
+      ),
+  ],
+] as const) {
+  test(`R5 TypeScript semantic inventory ignores benign ${form} changes`, () => {
+    const tempRoot = mkdtempSync(join(tmpdir(), `fk-p0-ts-benign-${form}-`))
+    try {
+      copyCorpus(tempRoot)
+      const path = join(tempRoot, 'plugins/foreman-line/spec-linter/src/validate.ts')
+      const original = readFileSync(path, 'utf8')
+      const changed = mutate(original)
+      assert.notEqual(changed, original, `${form} control must alter source bytes`)
+      writeFileSync(path, changed)
+      const result = sweepRegistrySources(registry, tempRoot)
+      assert.equal(result.valid, true, JSON.stringify(result.violations, null, 2))
+    } finally {
+      rmSync(tempRoot, { recursive: true, force: true })
+    }
+  })
+}
+
+test('R5 sweep verifies declared snapshot bytes at the bound Git commit', () => {
+  const mutated = structuredClone(registry)
+  const source = mutated.sources[0]
+  assert.ok(source)
+  ;(source.snapshotEvidence as { fullFileSha256: string }).fullFileSha256 = '0'.repeat(64)
+  const result = sweepRegistrySources(mutated, repoRoot)
+  assert.ok(result.violations.some((violation) => violation.code === 'MIGRATION_EVIDENCE_INVALID'))
 })

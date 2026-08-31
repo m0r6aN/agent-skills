@@ -57,12 +57,12 @@ test('each of the six classifications is accepted and summarized independently',
   const result = validateRegistry(valid)
   assert.equal(result.valid, true)
   assert.deepEqual(result.summary?.classificationCounts, {
-    'pre-action-refusal': 47,
+    'pre-action-refusal': 59,
     'post-action-detection': 4,
-    'ci-static-check': 28,
+    'ci-static-check': 40,
     'independent-review-human-judgment': 5,
-    'narrative-provenance': 537,
-    unsupported: 29,
+    'narrative-provenance': 428,
+    unsupported: 14,
   })
 })
 
@@ -1050,6 +1050,20 @@ test('R4 every rule has one basis ref contained in its source refs', () => {
 
 test('R4 shipped reconciliation rules share semantic subjects', () => {
   for (const reconciliation of full.reconciliations.slice(0, 6)) {
+    if (reconciliation.reconciliationId === 'missing-provenance-reference') {
+      const provenance = full.rules.filter(
+        (rule) => rule.authoritySubject === 'standing.provenance',
+      )
+      assert.equal(provenance.length, 1)
+      assert.ok(
+        reconciliation.observedRefs.some(
+          (reference) =>
+            reference.sourceId === provenance[0]?.sourceRefs[0]?.sourceId &&
+            reference.itemId === provenance[0]?.sourceRefs[0]?.itemId,
+        ),
+      )
+      continue
+    }
     const subjects = new Map<string, number>()
     for (const reference of reconciliation.observedRefs) {
       const item = full.sources
@@ -1133,7 +1147,7 @@ const shippedResolverVectors = [
     stage: 'build',
     operation: 'repo-mutation',
     host: 'provider-neutral',
-    outcome: 'RESOLVED',
+    outcome: 'REQUIRE_HUMAN',
     claim: 'inline-rules-required-until-provenance-restored',
   },
 ] as const
@@ -1214,7 +1228,7 @@ test('R4 missing-path evidence uses commit-bound canonical JSON', () => {
   const reference = JSON.parse(evidence.reference) as { commit: string; path: string }
   assert.deepEqual(reference, {
     commit: full.sourceSnapshotCommit,
-    path: 'docs/transcripts/defects_lessons.md',
+    path: 'plugins/foreman-line/docs/transcripts/defects_lessons.md',
   })
 })
 
@@ -1226,9 +1240,9 @@ const applicabilityVectors = [
   })),
   ...Array.from({ length: 15 }, (_, index) => ({
     ruleId: `rule.parcel-driven-development.hard-rule-${index + 1}`,
-    positiveRole:
-      index === 11 ? 'reviewer' : index === 5 || index === 12 ? 'coordinator' : 'builder',
-    negativeRole: index === 11 ? 'builder' : index === 5 || index === 12 ? 'reviewer' : 'operator',
+    positiveRole: index === 5 || index === 11 || index === 12 ? 'coordinator' : 'builder',
+    negativeRole:
+      index === 9 ? null : index === 5 || index === 11 || index === 12 ? 'reviewer' : 'operator',
   })),
 ]
 
@@ -1237,7 +1251,21 @@ for (const vector of applicabilityVectors) {
     const rule = full.rules.find((candidate) => candidate.ruleId === vector.ruleId)
     assert.ok(rule)
     assert.ok(rule.applicability.roles.includes(vector.positiveRole as never))
-    assert.ok(!rule.applicability.roles.includes(vector.negativeRole as never))
+    if (vector.negativeRole === null) {
+      assert.deepEqual(rule.applicability.roles, [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ])
+    } else {
+      assert.ok(!rule.applicability.roles.includes(vector.negativeRole as never))
+    }
   })
 }
 
@@ -1250,3 +1278,248 @@ test('R4 PDD hard rule 10 applies to ordinary builder build repo mutation', () =
   assert.ok(rule.applicability.stages.includes('build'))
   assert.ok(rule.applicability.operations.includes('repo-mutation'))
 })
+
+test('R5 standing rules have thirteen distinct operative semantic subjects', () => {
+  const rules = full.rules.filter((rule) =>
+    /^rule\.standing-constraints\.constraint-(?:[1-9]|1[0-3])$/.test(rule.ruleId),
+  )
+  assert.equal(rules.length, 13)
+  assert.equal(new Set(rules.map((rule) => rule.authoritySubject)).size, 13)
+  assert.equal(
+    rules.some((rule) => rule.authoritySubject === 'standing.provenance'),
+    false,
+  )
+})
+
+test('R5 every authority basis is substantive source text rather than a heading', () => {
+  for (const rule of full.rules) {
+    const source = full.sources.find(
+      (candidate) => candidate.sourceId === rule.authorityBasisRef.sourceId,
+    )
+    const item = source?.inventoryItems.find(
+      (candidate) => candidate.itemId === rule.authorityBasisRef.itemId,
+    )
+    assert.ok(item, rule.ruleId)
+    assert.notEqual(item.locator.kind, 'heading', rule.ruleId)
+    assert.equal(
+      normalizeRuleText(item.normalizedExcerpt),
+      normalizeRuleText(rule.normalizedStatement),
+    )
+  }
+})
+
+test('R5 permission-profile reconciliation is grounded in charter D7 not D9', () => {
+  const record = full.reconciliations.find(
+    (candidate) => candidate.reconciliationId === 'permission-profile-enforcement-bound',
+  )
+  assert.ok(record)
+  const refs = record.observedRefs.map((reference) => `${reference.sourceId}:${reference.itemId}`)
+  assert.ok(refs.includes('fk-charter:item.d7'))
+  assert.equal(refs.includes('fk-charter:item.d9'), false)
+  assert.ok(record.authoritativeRuleIds.includes('rule.fk-charter.d7'))
+  assert.equal(record.authoritativeRuleIds.includes('rule.fk-charter.d9'), false)
+})
+
+for (const reconciliationId of [
+  'gate-namespace-count',
+  'gate3-delegation',
+  'spec-linter-profile-behavior',
+  'surfaces-allowed-files',
+  'permission-profile-enforcement-bound',
+  'missing-provenance-reference',
+] as const) {
+  test(`R5 reconciliation ${reconciliationId} binds its exact observedEvidence set`, () => {
+    const mutated = structuredClone(full)
+    const record = mutated.reconciliations.find(
+      (candidate) => candidate.reconciliationId === reconciliationId,
+    )
+    assert.ok(record)
+    ;(record.observedEvidence as unknown[]).splice(0, 1)
+    expectCode(mutated, 'MIGRATION_EVIDENCE_INVALID')
+  })
+}
+
+test('R5 missing provenance evidence uses the exact repository-relative absent path', () => {
+  const record = full.reconciliations.find(
+    (candidate) => candidate.reconciliationId === 'missing-provenance-reference',
+  )
+  const evidence = record?.observedEvidence.find((candidate) => candidate.kind === 'missing-path')
+  assert.ok(evidence)
+  assert.deepEqual(JSON.parse(evidence.reference), {
+    commit: full.sourceSnapshotCommit,
+    path: 'plugins/foreman-line/docs/transcripts/defects_lessons.md',
+  })
+})
+
+test('R5 source baseline manifest rejects a recomputed snapshot hash mutation', () => {
+  const mutated = structuredClone(full)
+  const source = mutated.sources[0]
+  assert.ok(source)
+  ;(source.snapshotEvidence as { fullFileSha256: string }).fullFileSha256 = '0'.repeat(64)
+  expectCode(mutated, 'MIGRATION_EVIDENCE_INVALID')
+})
+
+const r5ApplicabilityManifest = {
+  'rule.standing-constraints.constraint-1': [['builder'], ['build'], ['repo-mutation']],
+  'rule.standing-constraints.constraint-2': [['builder'], ['build'], ['repo-mutation']],
+  'rule.standing-constraints.constraint-3': [
+    ['builder'],
+    ['deterministic-verify'],
+    ['control-call'],
+  ],
+  'rule.standing-constraints.constraint-4': [['builder'], ['build'], ['control-call']],
+  'rule.standing-constraints.constraint-5': [
+    ['builder'],
+    ['build', 'deterministic-verify'],
+    ['repo-mutation'],
+  ],
+  'rule.standing-constraints.constraint-6': [['builder'], ['build'], ['source-inventory']],
+  'rule.standing-constraints.constraint-7': [['builder'], ['build'], ['control-call']],
+  'rule.standing-constraints.constraint-8': [
+    ['reviewer'],
+    ['adversarial-review'],
+    ['repo-mutation'],
+  ],
+  'rule.standing-constraints.constraint-9': [['reviewer'], ['adversarial-review'], ['repo-read']],
+  'rule.standing-constraints.constraint-10': [['reviewer'], ['adversarial-review'], ['repo-read']],
+  'rule.standing-constraints.constraint-11': [['reviewer'], ['adversarial-review'], ['repo-read']],
+  'rule.standing-constraints.constraint-12': [
+    ['builder'],
+    ['deterministic-verify'],
+    ['repo-mutation'],
+  ],
+  'rule.standing-constraints.constraint-13': [['builder'], ['build'], ['repo-mutation']],
+  'rule.parcel-driven-development.hard-rule-1': [
+    ['coordinator', 'shaper', 'builder'],
+    ['step-zero', 'build'],
+    ['spec-mutation'],
+  ],
+  'rule.parcel-driven-development.hard-rule-2': [
+    ['shaper', 'builder', 'reviewer'],
+    ['shaping', 'build', 'adversarial-review'],
+    ['repo-mutation'],
+  ],
+  'rule.parcel-driven-development.hard-rule-3': [
+    ['builder', 'reviewer'],
+    ['build', 'adversarial-review'],
+    ['repo-mutation'],
+  ],
+  'rule.parcel-driven-development.hard-rule-4': [
+    ['coordinator', 'builder'],
+    ['step-zero', 'build'],
+    ['repo-mutation'],
+  ],
+  'rule.parcel-driven-development.hard-rule-5': [
+    ['coordinator', 'builder'],
+    ['build'],
+    ['repo-mutation'],
+  ],
+  'rule.parcel-driven-development.hard-rule-6': [['coordinator'], ['build'], ['repo-mutation']],
+  'rule.parcel-driven-development.hard-rule-7': [
+    ['builder', 'ci'],
+    ['deterministic-verify'],
+    ['repo-read'],
+  ],
+  'rule.parcel-driven-development.hard-rule-8': [['builder'], ['build'], ['repo-mutation']],
+  'rule.parcel-driven-development.hard-rule-9': [
+    ['coordinator', 'builder'],
+    ['build'],
+    ['repo-mutation'],
+  ],
+  'rule.parcel-driven-development.hard-rule-10': [
+    [
+      'developer',
+      'coordinator',
+      'shaper',
+      'builder',
+      'reviewer',
+      'ci',
+      'host-adapter',
+      'kernel',
+      'operator',
+    ],
+    [
+      'stage-zero',
+      'shaping',
+      'step-zero',
+      'build',
+      'deterministic-verify',
+      'adversarial-review',
+      'merge',
+      'closure',
+      'runtime',
+    ],
+    [
+      'source-inventory',
+      'spec-mutation',
+      'repo-read',
+      'repo-mutation',
+      'state-transition',
+      'control-call',
+      'receipt-validation',
+      'external-write',
+    ],
+  ],
+  'rule.parcel-driven-development.hard-rule-11': [
+    ['builder', 'reviewer'],
+    ['build', 'adversarial-review'],
+    ['repo-mutation'],
+  ],
+  'rule.parcel-driven-development.hard-rule-12': [['coordinator'], ['merge'], ['state-transition']],
+  'rule.parcel-driven-development.hard-rule-13': [
+    ['coordinator'],
+    ['build', 'closure'],
+    ['state-transition'],
+  ],
+  'rule.parcel-driven-development.hard-rule-14': [
+    ['coordinator', 'builder', 'reviewer'],
+    ['deterministic-verify', 'adversarial-review'],
+    ['source-inventory'],
+  ],
+  'rule.parcel-driven-development.hard-rule-15': [
+    ['coordinator', 'builder', 'reviewer'],
+    ['deterministic-verify', 'adversarial-review', 'merge'],
+    ['source-inventory', 'state-transition'],
+  ],
+} as const
+
+for (const [ruleId, expected] of Object.entries(r5ApplicabilityManifest)) {
+  test(`R5 complete five-axis resolver applicability ${ruleId}`, () => {
+    const rule = full.rules.find((candidate) => candidate.ruleId === ruleId)
+    assert.ok(rule)
+    assert.deepEqual(rule.applicability.goals, ['all-foreman-goals'])
+    assert.deepEqual(rule.applicability.roles, expected[0])
+    assert.deepEqual(rule.applicability.stages, expected[1])
+    assert.deepEqual(rule.applicability.operations, expected[2])
+    assert.deepEqual(rule.applicability.hosts, [
+      'provider-neutral',
+      'claude-windows-docker-loaded',
+      'claude-windows-docker-unenrolled',
+      'unsupported-host',
+      'ci',
+    ])
+    const positive = resolveAuthority(full, {
+      authoritySubject: rule.authoritySubject,
+      goal: 'foreman-kernel',
+      role: expected[0][0],
+      stage: expected[1][0],
+      operation: expected[2][0],
+      host: 'provider-neutral',
+    })
+    assert.equal(positive.outcome, 'RESOLVED')
+    if (positive.outcome === 'RESOLVED') assert.deepEqual(positive.controllingRuleIds, [ruleId])
+    const universalRoleSet = expected[0].includes('operator' as never)
+    const negativeRole = universalRoleSet ? expected[0][0] : 'operator'
+    const negative = resolveAuthority(full, {
+      authoritySubject: universalRoleSet
+        ? `${rule.authoritySubject}.absent`
+        : rule.authoritySubject,
+      goal: 'foreman-kernel',
+      role: negativeRole,
+      stage: expected[1][0],
+      operation: expected[2][0],
+      host: 'provider-neutral',
+    })
+    assert.equal(negative.outcome, 'REQUIRE_HUMAN')
+  })
+}

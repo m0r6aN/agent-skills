@@ -25,6 +25,7 @@ import {
   locatorDigestFor,
   normalizeRuleText,
   sha256,
+  typescriptConstructMap,
 } from './validate.js'
 
 const SNAPSHOT = '51857a3a7796b393c0c0a68712f98c06e7015d79'
@@ -106,6 +107,9 @@ const SOURCE_DEFINITIONS: readonly SourceDefinition[] = [
   },
   {
     sourceId: 'standing-constraints',
+    additionalAnchors: [
+      'Every builder and reviewer kickstarter includes this file by reference (one line: "Standing constraints apply — `plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md`"). Each rule below was earned on a real defect; the lesson number links to `docs/transcripts/defects_lessons.md` for provenance. Coordinator-side rules (shell discipline, closure checks, pre-PR gates) live in the coordinator carryover and COORDINATOR-PATTERN.md, not here.',
+    ],
     path: 'plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md',
     sourceKind: 'standing-constraint',
     authorityTier: 'standing-role',
@@ -288,8 +292,15 @@ function numberedItems(content: string): LocatedText[] {
   const lines = content.replace(/\r\n?/g, '\n').split('\n')
   const stack: { level: number; heading: string }[] = []
   const items: { index: number; indent: number; anchor: string }[] = []
+  const occurrences = new Map<string, number>()
+  let inFence = false
   for (let index = 0; index < lines.length; index += 1) {
     const line = lines[index] ?? ''
+    if (/^\s*(?:```|~~~)/.test(line)) {
+      inFence = !inFence
+      continue
+    }
+    if (inFence) continue
     const heading = /^(#{1,6})\s+.+/.exec(line)
     if (heading !== null) {
       const level = heading[1]?.length ?? 6
@@ -297,13 +308,19 @@ function numberedItems(content: string): LocatedText[] {
       stack.push({ level, heading: line.trim() })
       continue
     }
-    const numbered = /^(\s*)\d+\.\s+\S/.exec(line)
+    const numbered = /^(\s*)(\d+)\.\s+\S/.exec(line)
     if (numbered === null) continue
     const prefix = stack.map((item) => item.heading)
+    const semanticKey = `${prefix.join(' > ')}\u0000${numbered[1]?.length ?? 0}\u0000${numbered[2] as string}`
+    const occurrence = (occurrences.get(semanticKey) ?? 0) + 1
+    occurrences.set(semanticKey, occurrence)
     items.push({
       index,
       indent: numbered[1]?.length ?? 0,
-      anchor: [...prefix, line.trim()].join(' > '),
+      anchor: [
+        ...prefix,
+        `list-item:${numbered[1]?.length ?? 0}:${numbered[2] as string}:${occurrence}`,
+      ].join(' > '),
     })
   }
   return items.map((item) => {
@@ -314,7 +331,7 @@ function numberedItems(content: string): LocatedText[] {
         end = index
         break
       }
-      const next = /^(\s*)\d+\.\s+\S/.exec(line)
+      const next = /^(\s*)(\d+)\.\s+\S/.exec(line)
       if (next !== null && (next[1]?.length ?? 0) <= item.indent) {
         end = index
         break
@@ -342,164 +359,89 @@ function tableRows(content: string, keys: readonly string[]): LocatedText[] {
   })
 }
 
-const BINDING_SECTIONS: Readonly<Record<string, readonly string[]>> = {
-  'fk-charter': [
-    '## 3. Authority hierarchy',
-    '## 10. Human gates and standing authorizations requested',
-    '## 11. Stop conditions',
-    '## 13. Gate 1 decision list',
-  ],
-  'fk-loop-directive': [
-    '## COORDINATOR OWNERSHIP — read before dispatching anything',
-    '## Standing authorizations and their limits',
-    '## Per-parcel algorithm',
-    '## Stop conditions',
-  ],
-}
-
 function markdownBindingBlocks(content: string, sourceId: string): LocatedText[] {
-  const targets = new Set(BINDING_SECTIONS[sourceId] ?? [])
-  if (targets.size === 0) return []
+  if (sourceId !== 'fk-charter' && sourceId !== 'fk-loop-directive') return []
   const lines = content.replace(/\r\n?/g, '\n').split('\n')
-  const ranges: { start: number; end: number }[] = []
-  for (let index = 0; index < lines.length; index += 1) {
-    const heading = /^(#{2,6})\s+.+/.exec(lines[index] ?? '')
-    if (heading === null || !targets.has((lines[index] ?? '').trim())) continue
-    const level = heading[1]?.length ?? 6
-    let end = lines.length
-    for (let cursor = index + 1; cursor < lines.length; cursor += 1) {
-      const next = /^(#{1,6})\s+/.exec(lines[cursor] ?? '')
-      if (next !== null && (next[1]?.length ?? 6) <= level) {
-        end = cursor
-        break
-      }
-    }
-    ranges.push({ start: index + 1, end })
-  }
+  const headings: { level: number; text: string }[] = []
+  const occurrences = new Map<string, number>()
   const blocks: LocatedText[] = []
-  for (const range of ranges) {
-    let cursor = range.start
-    while (cursor < range.end) {
-      const line = lines[cursor] ?? ''
-      if (line.trim() === '' || /^#{1,6}\s+/.test(line)) {
-        cursor += 1
-        continue
-      }
-      if (/^\s*\|/.test(line)) {
-        if (!/^\s*\|?\s*:?-{3}/.test(line)) {
-          blocks.push({
-            locator: { kind: 'line-excerpt', anchor: line, lineHint: cursor + 1 },
-            text: line,
-          })
-        }
-        cursor += 1
-        continue
-      }
-      const list = /^\s*(?:[-*+] |\d+\. )/.test(line)
-      let end = cursor + 1
-      while (end < range.end) {
+  let cursor = 0
+  let inFence = false
+  let inHtmlComment = false
+  while (cursor < lines.length) {
+    const line = lines[cursor] ?? ''
+    if (/^\s*(?:```|~~~)/.test(line)) {
+      inFence = !inFence
+      cursor += 1
+      continue
+    }
+    if (inFence) {
+      cursor += 1
+      continue
+    }
+    if (inHtmlComment || line.includes('<!--')) {
+      inHtmlComment = !line.includes('-->')
+      cursor += 1
+      continue
+    }
+    const heading = /^(#{1,6})\s+.+/.exec(line)
+    if (heading !== null) {
+      const level = heading[1]?.length ?? 6
+      while ((headings.at(-1)?.level ?? 0) >= level) headings.pop()
+      headings.push({ level, text: line.trim() })
+      cursor += 1
+      continue
+    }
+    if (line.trim() === '' || line.trim() === '---') {
+      cursor += 1
+      continue
+    }
+    const table = /^\s*\|/.test(line)
+    if (table && /^\s*\|?\s*:?-{3}/.test(line)) {
+      cursor += 1
+      continue
+    }
+    const list = /^\s*(?:[-*+] |\d+\. )/.test(line)
+    let end = cursor + 1
+    if (!table) {
+      while (end < lines.length) {
         const next = lines[end] ?? ''
-        if (next.trim() === '' || /^#{1,6}\s+/.test(next) || /^\s*\|/.test(next)) break
+        if (
+          next.trim() === '' ||
+          /^#{1,6}\s+/.test(next) ||
+          /^\s*\|/.test(next) ||
+          /^\s*(?:```|~~~)/.test(next) ||
+          next.includes('<!--')
+        )
+          break
         if (list && /^\s*(?:[-*+] |\d+\. )/.test(next)) break
         end += 1
       }
-      const text = lines.slice(cursor, end).join('\n')
-      blocks.push({
-        locator: { kind: 'line-excerpt', anchor: text, lineHint: cursor + 1 },
-        text,
-      })
-      cursor = end
     }
+    const text = lines.slice(cursor, end).join('\n')
+    const headingPath = headings.map((item) => item.text).join(' > ') || '(preamble)'
+    const kind = table ? 'table-row' : list ? 'list-item' : 'paragraph'
+    const semanticKey = `${headingPath}\u0000${kind}\u0000${sha256(normalizeRuleText(text)).slice(0, 12)}`
+    const occurrence = (occurrences.get(semanticKey) ?? 0) + 1
+    occurrences.set(semanticKey, occurrence)
+    blocks.push({
+      locator: {
+        kind: 'line-excerpt',
+        anchor: `md-block:${headingPath}:${kind}:${semanticKey.slice(-12)}:${occurrence}`,
+        lineHint: cursor + 1,
+      },
+      text,
+    })
+    cursor = end
   }
   return blocks
 }
 
-function maskNonCode(content: string): string {
-  let output = ''
-  let quote: string | null = null
-  let lineComment = false
-  let blockComment = false
-  for (let index = 0; index < content.length; index += 1) {
-    const char = content[index] ?? ''
-    const next = content[index + 1] ?? ''
-    if (lineComment) {
-      if (char === '\n') {
-        lineComment = false
-        output += '\n'
-      } else output += ' '
-      continue
-    }
-    if (blockComment) {
-      if (char === '*' && next === '/') {
-        output += '  '
-        index += 1
-        blockComment = false
-      } else output += char === '\n' ? '\n' : ' '
-      continue
-    }
-    if (quote !== null) {
-      if (char === '\\') {
-        output += '  '
-        index += 1
-      } else if (char === quote) {
-        output += ' '
-        quote = null
-      } else output += char === '\n' ? '\n' : ' '
-      continue
-    }
-    if (char === '/' && next === '/') {
-      output += '  '
-      index += 1
-      lineComment = true
-    } else if (char === '/' && next === '*') {
-      output += '  '
-      index += 1
-      blockComment = true
-    } else if (char === '"' || char === "'" || char === '`') {
-      output += ' '
-      quote = char
-    } else output += char
-  }
-  return output
-}
-
 function tsConstructs(content: string): LocatedText[] {
-  const original = content.replace(/\r\n?/g, '\n').split('\n')
-  const masked = maskNonCode(content.replace(/\r\n?/g, '\n')).split('\n')
-  const result: LocatedText[] = []
-  for (let start = 0; start < masked.length; start += 1) {
-    const line = masked[start] ?? ''
-    const match = /^(?:export\s+)?(?:(?:async\s+)?function|const)\s+([A-Za-z_$][\w$]*)\b/.exec(line)
-    if (match === null) continue
-    let curly = 0
-    let square = 0
-    let paren = 0
-    let opened = false
-    let end = start
-    for (; end < masked.length; end += 1) {
-      for (const char of masked[end] ?? '') {
-        if (char === '{') curly += 1
-        else if (char === '}') curly -= 1
-        else if (char === '[') square += 1
-        else if (char === ']') square -= 1
-        else if (char === '(') paren += 1
-        else if (char === ')') paren -= 1
-      }
-      opened ||=
-        masked
-          .slice(start, end + 1)
-          .join('\n')
-          .includes('=') || curly > 0
-      if (opened && curly === 0 && square === 0 && paren === 0) break
-    }
-    const anchor = `ts-construct:${match[1] as string}`
-    result.push({
-      locator: { kind: 'symbol', anchor, lineHint: start + 1 },
-      text: original.slice(start, end + 1).join('\n'),
-    })
-    start = end
-  }
-  return result
+  return [...typescriptConstructMap(content)].map(([anchor, text], index) => ({
+    locator: { kind: 'symbol', anchor, lineHint: index + 1 },
+    text,
+  }))
 }
 
 function jsonConstraints(content: string): LocatedText[] {
@@ -525,6 +467,32 @@ function jsonConstraints(content: string): LocatedText[] {
 }
 
 function itemIdFor(definition: SourceDefinition, located: LocatedText): string {
+  const legacyProtectedTextIds: Readonly<Record<string, string>> = {
+    '1. **Human gate: the merge.** A human owns every merge. Deliberate, permanent.':
+      'item.c92333c21e64',
+    '1. a live interactive TTY (`process.stdin.isTTY`), and': 'item.4261d18b3243',
+    '2. a **typed confirmation phrase** — the human must type the exact `<slug>` being approved, compared with a linear-time exact-string check (`===`) — no regex, no backtracking risk. `--approver <name>` is **required**; omitting it refuses with exit `2` before either gate check runs (deterministic, auditable approver identity — never inferred from the OS user). There is **no** `--yes`/`--force`/auto-approve flag of any kind, and no environment variable can substitute for either gate. If stdin is **not** a TTY (CI, pipe, redirect), `approve` refuses with exit code `2` and **mints nothing** — no receipt file, no approval record, no partial write. Both gate checks, in order, are the *only* path in this package that reaches the mint/write step. - **`reject <slug|path> [--epic-title <title>] [--reason <text>]`** — records a rejection (`decision: "rejected"`, optional reason, ISO-UTC timestamp, and the subject hash **for reference only**) to `active/<slug>.rejection.json`. Mints **no receipt** and produces **no** `approvedHash` binding — the receipt chain begins only at approval. `--repo-root <path>` (all three verbs, optional) overrides the filesystem root every call resolves paths against; it never touches approval authorization, the TTY check, or the confirmation check.':
+      'item.ff6f38f088ae',
+    '1. **Gate 2 dispatch** is authorized for exactly FK-P0–FK-P21, in the ratified dependency order. A new parcel or changed dependency graph reopens Gate 1.':
+      'item.bfffee6d7c1f',
+    '11. nondelegated human Gate 3 for every merge.': 'item.b1ac4aa9eddf',
+    '11. nondelegated human Gate 3 for every merge. **Gate 1 record:** Clinton Morgan explicitly ratified the original list and authorized the contingent Gate 2 dispatch grant on 2026-08-31, then explicitly re-ratified plan-review amendments R1–R13 and resumed Gate 2 on 2026-08-31. Parcel shaping and dispatch may now proceed in dependency order under the stated contingencies.':
+      'item.b1ac4aa9eddf',
+    '10. standing Gate-2 dispatch authorization under the stated contingencies; and':
+      'item.afbcffd2d557',
+    '6. **Gate 3 is not delegated.** Never merge. Present the complete green chain and exact merge target to the human.':
+      'item.7eb6018d9e57',
+    '10. When green, prepare the verification-chain table and PR material. Stop at the human Gate 3 before merge.':
+      'item.2743c2f8c558',
+    '8. Every Foreman Kernel parcel is architecture/risk or critical unless its ratified spec says otherwise. Architecture/risk receives **two independent fresh reviews**. Reviewers never fix or commit and are explicitly licensed for hostile-input and mutation probing.':
+      'item.ce9042d917b2',
+    '1. Waves 0–4 and FK-P0 through FK-P21 are merged through the required human Gate 3 process.':
+      'item.e9ec57edc0a2',
+    '11. After a human merge, perform Stage F: spec to `done/`, lessons with dispositions, evidence index, worktree/branch cleanup, and this state block update.':
+      'item.e3065db62b43',
+  }
+  const legacyId = legacyProtectedTextIds[normalizeRuleText(located.text)]
+  if (legacyId !== undefined) return legacyId
   if (definition.sourceId === 'fk-charter' && located.locator.kind === 'table-row') {
     return `item.${located.locator.anchor.toLowerCase()}`
   }
@@ -537,7 +505,7 @@ function itemIdFor(definition: SourceDefinition, located: LocatedText): string {
   ) {
     return 'item.two-gate-thesis'
   }
-  const numbered = /(?:^| > )(\d+)\.\s/.exec(located.locator.anchor)
+  const numbered = /(?:^| > )list-item:\d+:(\d+):\d+$/.exec(located.locator.anchor)
   if (definition.sourceId === 'standing-constraints' && numbered?.[1] !== undefined) {
     return `item.constraint-${numbered[1]}`
   }
@@ -559,7 +527,7 @@ function classificationFor(sourceId: string, itemId: string): RuleClassification
     'item.d4': 'narrative-provenance',
     'item.d5': 'pre-action-refusal',
     'item.d6': 'narrative-provenance',
-    'item.d7': 'unsupported',
+    'item.d7': 'narrative-provenance',
     'item.d8': 'post-action-detection',
     'item.d9': 'independent-review-human-judgment',
     'item.d10': 'pre-action-refusal',
@@ -611,8 +579,8 @@ function classificationFor(sourceId: string, itemId: string): RuleClassification
     'item.hard-rule-10': 'pre-action-refusal',
     'item.hard-rule-11': 'ci-static-check',
     'item.hard-rule-12': 'independent-review-human-judgment',
-    'item.hard-rule-13': 'narrative-provenance',
-    'item.hard-rule-14': 'narrative-provenance',
+    'item.hard-rule-13': 'pre-action-refusal',
+    'item.hard-rule-14': 'ci-static-check',
     'item.hard-rule-15': 'ci-static-check',
     'item.b1ac4aa9eddf': 'pre-action-refusal',
   }
@@ -644,6 +612,10 @@ function authorityIdentityFor(
     ],
     'fk-charter:item.d18': ['kernel.authorize-action-owner', 'provider-neutral-policy-engine'],
     'fk-charter:item.d19': ['repository.read-confidentiality', 'admission-bound-contained-read'],
+    'fk-charter:item.d7': [
+      'permission-profile.enforcement-bound',
+      'loaded-adapter-refusal-unenrolled-detection',
+    ],
     'foreman-line-plan:item.two-gate-thesis': ['gate.namespace', 'historical-two-stage-gates'],
     'approval-readme:item.a7e48d46fe37': ['gate.namespace', 'historical-two-stage-gates'],
     'approval-readme:item.4261d18b3243': ['gate.namespace', 'historical-two-stage-gates'],
@@ -667,39 +639,109 @@ function authorityIdentityFor(
       'frontmatter-only-no-body-compiler',
     ],
     'fk-charter:item.d10': ['spec.mutation-authority', 'exact-allowed-files-required'],
+    'standing-constraints:item.c5880644c95c': [
+      'standing.provenance',
+      'inline-rules-required-until-provenance-restored',
+    ],
   }
   const exactIdentity = exact[`${sourceId}:${itemId}`]
   if (exactIdentity !== undefined) {
     return { authoritySubject: exactIdentity[0], authorityClaim: exactIdentity[1] }
   }
-  if (
-    sourceId === 'spec-frontmatter-schema' ||
-    sourceId === 'spec-linter-validator' ||
-    sourceId === 'spec-linter-readme' ||
-    (sourceId === 'spec-convention' && itemId === 'item.e6f5fa8543a1')
-  ) {
+  const profileRegistryLive = new Set([
+    'spec-frontmatter-schema:item.860f1c1146f4',
+    'spec-frontmatter-schema:item.1dddb8e0edae',
+    'spec-frontmatter-schema:item.fbc219d0ff13',
+    'spec-frontmatter-schema:item.cc7db94c11c2',
+    'spec-frontmatter-schema:item.7443d95fc46b',
+    'spec-frontmatter-schema:item.0a36842682ef',
+    'spec-frontmatter-schema:item.d6246c2593db',
+    'spec-linter-validator:item.092d2fc43a32',
+    'spec-linter-validator:item.fb7d76a32df4',
+    'spec-linter-validator:item.80563af1788e',
+  ])
+  const profileRegistryDeferred = new Set([
+    'spec-linter-readme:item.9a889881a236',
+    'spec-linter-readme:item.b4f5d76d68ec',
+    'spec-convention:item.e6f5fa8543a1',
+  ])
+  const identityKey = `${sourceId}:${itemId}`
+  if (profileRegistryLive.has(identityKey) || profileRegistryDeferred.has(identityKey)) {
     return {
       authoritySubject: 'permission-profile.registry-state',
-      authorityClaim:
-        sourceId === 'spec-linter-readme' || sourceId === 'spec-convention'
-          ? 'deferred-profile-registry'
-          : 'six-profile-live-enum',
+      authorityClaim: profileRegistryDeferred.has(identityKey)
+        ? 'deferred-profile-registry'
+        : 'six-profile-live-enum',
     }
   }
-  if (sourceId.startsWith('permission-profiles-') || sourceId === 'permission-profiles-registry') {
+  const mediatedProfileEnforcement = new Set([
+    'permission-profiles-registry:item.0f7efe94f551',
+    'permission-profiles-registry:item.5b5fd0863539',
+    'permission-profiles-registry:item.ffd2209ab94a',
+    'permission-profiles-registry:item.86618990c615',
+    'permission-profiles-registry:item.514a38aa8311',
+    'permission-profiles-registry:item.a61f76b791df',
+    'permission-profiles-registry:item.ff2ab3fa7a40',
+    'permission-profiles-validator:item.dcd8638af4a4',
+    'permission-profiles-validator:item.9c3c17055384',
+    'permission-profiles-validator:item.4da758cc157c',
+    'permission-profiles-validator:item.ffd598413a66',
+  ])
+  const residualProfileEnforcement = new Set([
+    'permission-profiles-types:item.0b9706b5a9bf',
+    'permission-profiles-types:item.bc257b03aa99',
+    'permission-profiles-readme:item.729be3615f8d',
+    'permission-profiles-readme:item.d11b9d38f924',
+    'permission-profiles-readme:item.1101805f1c9e',
+    'permission-profiles-readme:item.415efa3f5e3b',
+  ])
+  if (mediatedProfileEnforcement.has(identityKey) || residualProfileEnforcement.has(identityKey)) {
     return {
       authoritySubject: 'permission-profile.enforcement-bound',
-      authorityClaim:
-        sourceId === 'permission-profiles-validator' || sourceId === 'permission-profiles-registry'
-          ? 'loaded-session-mediated-denial'
-          : 'unenrolled-or-shell-residual',
+      authorityClaim: mediatedProfileEnforcement.has(identityKey)
+        ? 'loaded-session-mediated-denial'
+        : 'unenrolled-or-shell-residual',
     }
   }
-  if (sourceId === 'standing-constraints') {
-    return {
-      authoritySubject: 'standing.provenance',
-      authorityClaim: 'inline-rules-required-until-provenance-restored',
-    }
+  const standingIdentities: Readonly<Record<string, readonly [string, string]>> = {
+    'item.constraint-1': ['external-boundary.error-contract', 'typed-module-error-required'],
+    'item.constraint-2': ['untested-seam.return-trust', 'unknown-until-normalized'],
+    'item.constraint-3': ['default-deny.structural-testing', 'each-invariant-tested-independently'],
+    'item.constraint-4': ['line-protocol.emission-safety', 'external-data-sanitized'],
+    'item.constraint-5': ['untrusted-text.parse-complexity', 'linear-time-required'],
+    'item.constraint-6': ['classifier.fixture-coverage', 'real-naming-and-false-negatives-covered'],
+    'item.constraint-7': ['kompress.payload-ceiling', 'oversize-requires-coordinator-ruling'],
+    'item.constraint-8': ['review.hostile-probing', 'one-off-live-probes-licensed'],
+    'item.constraint-9': ['review.prose-ambiguity', 'naive-reading-must-be-excluded'],
+    'item.constraint-10': ['review.worktree-integrity', 'post-review-git-detection-required'],
+    'item.constraint-11': ['review.assertion-binding', 'mutation-probe-required'],
+    'item.constraint-12': ['parcel.byte-freeze-placement', 'parcel-time-only'],
+    'item.constraint-13': ['allowlist.binding-dimensions', 'identity-location-value-required'],
+  }
+  if (sourceId === 'standing-constraints' && standingIdentities[itemId] !== undefined) {
+    const identity = standingIdentities[itemId] as readonly [string, string]
+    return { authoritySubject: identity[0], authorityClaim: identity[1] }
+  }
+  const pddIdentities: Readonly<Record<string, readonly [string, string]>> = {
+    'item.hard-rule-1': ['parcel.contract-sequencing', 'contracts-before-parallel-work'],
+    'item.hard-rule-2': ['parcel.execution-isolation', 'one-branch-one-worktree'],
+    'item.hard-rule-3': ['parcel.review-independence', 'independently-reviewable'],
+    'item.hard-rule-4': ['parcel.mutation-authority', 'exact-files-required'],
+    'item.hard-rule-5': ['parcel.shared-file-serialization', 'serialization-required'],
+    'item.hard-rule-6': ['parcel.pre-pr-base', 'rebase-before-pr'],
+    'item.hard-rule-7': ['parcel.verification', 'verification-required'],
+    'item.hard-rule-8': ['parcel.missing-product-decision', 'stop-and-escalate'],
+    'item.hard-rule-9': ['parcel.contract-amendment', 'no-silent-contract-change'],
+    'item.hard-rule-10': ['parcel.sensitive-data-safety', 'no-secrets-pii-or-payload-dumps'],
+    'item.hard-rule-11': ['integration-surface.scenarios', 'positive-negative-failure-required'],
+    'item.hard-rule-12': ['release.security-gate', 'security-evidence-blocks-release'],
+    'item.hard-rule-13': ['coordination.persistence', 'durable-state-before-closure'],
+    'item.hard-rule-14': ['scenario.environment-identity', 'environment-build-config-bound'],
+    'item.hard-rule-15': ['release.claim-evidence', 'evidence-required-for-claim'],
+  }
+  if (sourceId === 'parcel-driven-development' && pddIdentities[itemId] !== undefined) {
+    const identity = pddIdentities[itemId] as readonly [string, string]
+    return { authoritySubject: identity[0], authorityClaim: identity[1] }
   }
   const atomicClaims: Readonly<Record<string, string>> = {
     'item.d1': 'separate-foreman-kernel-goal',
@@ -871,8 +913,8 @@ function applicabilityFor(
       hosts: allHosts,
     },
     'item.hard-rule-2': {
-      roles: ['coordinator', 'builder'],
-      stages: ['build'],
+      roles: ['shaper', 'builder', 'reviewer'],
+      stages: ['shaping', 'build', 'adversarial-review'],
       operations: ['repo-mutation'],
       hosts: allHosts,
     },
@@ -907,8 +949,8 @@ function applicabilityFor(
       hosts: allHosts,
     },
     'item.hard-rule-8': {
-      roles: ['coordinator', 'builder'],
-      stages: ['step-zero'],
+      roles: ['builder'],
+      stages: ['build'],
       operations: ['repo-mutation'],
       hosts: allHosts,
     },
@@ -919,16 +961,8 @@ function applicabilityFor(
       hosts: allHosts,
     },
     'item.hard-rule-10': {
-      roles: ['coordinator', 'shaper', 'builder', 'reviewer', 'ci'],
-      stages: [
-        'shaping',
-        'step-zero',
-        'build',
-        'deterministic-verify',
-        'adversarial-review',
-        'merge',
-        'closure',
-      ],
+      roles: allRoles,
+      stages: allStages,
       operations: allOperations,
       hosts: allHosts,
     },
@@ -963,27 +997,27 @@ function applicabilityFor(
       hosts: allHosts,
     },
     'item.hard-rule-12': {
-      roles: ['reviewer'],
-      stages: ['adversarial-review'],
-      operations: ['repo-read'],
+      roles: ['coordinator'],
+      stages: ['merge'],
+      operations: ['state-transition'],
       hosts: allHosts,
     },
     'item.hard-rule-13': {
       roles: ['coordinator'],
-      stages: ['closure'],
+      stages: ['build', 'closure'],
       operations: ['state-transition'],
       hosts: allHosts,
     },
     'item.hard-rule-14': {
       roles: ['coordinator', 'builder', 'reviewer'],
-      stages: ['build', 'deterministic-verify', 'adversarial-review'],
-      operations: ['external-write'],
+      stages: ['deterministic-verify', 'adversarial-review'],
+      operations: ['source-inventory'],
       hosts: allHosts,
     },
     'item.hard-rule-15': {
       roles: ['coordinator', 'builder', 'reviewer'],
-      stages: ['build', 'deterministic-verify', 'adversarial-review'],
-      operations: ['receipt-validation'],
+      stages: ['deterministic-verify', 'adversarial-review', 'merge'],
+      operations: ['source-inventory', 'state-transition'],
       hosts: allHosts,
     },
     'item.d3': {
@@ -1158,7 +1192,12 @@ function buildSource(definition: SourceDefinition): {
   const content = bytes.toString('utf8')
   const baseLocated =
     definition.anchors === undefined
-      ? [...headingLocators(content), ...numberedItems(content)]
+      ? [
+          ...headingLocators(content),
+          ...(definition.sourceId === 'fk-charter' || definition.sourceId === 'fk-loop-directive'
+            ? []
+            : numberedItems(content)),
+        ]
       : definition.anchors.map((anchor, index) => ({
           locator: { kind: 'line-excerpt', anchor, lineHint: index + 1 } as SourceLocator,
           text: anchor,
@@ -1209,8 +1248,20 @@ function buildSource(definition: SourceDefinition): {
     const { locator, text } = entry
     const normalizedExcerpt = normalizeRuleText(text)
     const itemId = itemIdFor(definition, entry)
-    const ruleId = `rule.${definition.sourceId}.${itemId.replace(/^item\./, '')}`
     const valueDigest = sha256(normalizedExcerpt)
+    if (locator.kind === 'heading') {
+      return {
+        itemId,
+        locator,
+        normalizedExcerpt,
+        valueDigest,
+        ruleIds: [],
+        exclusionDisposition: 'not-rule' as const,
+        rationale:
+          'The heading is structural navigation; its complete body items carry the operative rules.',
+      }
+    }
+    const ruleId = `rule.${definition.sourceId}.${itemId.replace(/^item\./, '')}`
     const sourceRef: SourceRef = {
       sourceId: definition.sourceId,
       itemId,
@@ -1438,11 +1489,11 @@ function requiredReconciliations(
   }
   const plan = get('foreman-line-plan', 'item.two-gate-thesis')
   const approval = [
-    get('approval-readme', 'item.a7e48d46fe37'),
     get('approval-readme', 'item.4261d18b3243'),
     get('approval-readme', 'item.ff6f38f088ae'),
   ]
   const charterGate = get('fk-charter', 'item.d9')
+  const charterProfileBoundary = get('fk-charter', 'item.d7')
   const charterGate3 = get('fk-charter', 'item.b1ac4aa9eddf')
   const charterAllowed = get('fk-charter', 'item.d10')
   const charterOperationalBoundary = get('fk-charter', 'item.d2')
@@ -1498,9 +1549,11 @@ function requiredReconciliations(
   const standing = Array.from({ length: 13 }, (_, index) =>
     get('standing-constraints', `item.constraint-${index + 1}`),
   )
+  const standingProvenance = get('standing-constraints', 'item.c5880644c95c')
   const priorManifest = '1fe3a7c66241904445021c97db68065961a3bf5beceb654faff4b552b4de79b2'
   const supersedingManifest = '48a82df7d6da19352e4c9d2d99195835743a27f163a5d13a4f8d5b2a76a75a61'
   const r4Manifest = '375ea566b2858d3204d17e0625332167a373b555db6d3a8b741af88f1390e082'
+  const r5Manifest = '589c6c3ea98147a951ab8887fd70a1a1c50e8b84953abcbe51b152a256da6ad9'
   const commandEvidence = (commandId: string, inputDigest: string, resultDigest: string) =>
     canonicalJson({
       tool: '@foreman-line/authority-registry',
@@ -1573,9 +1626,9 @@ function requiredReconciliations(
         ...profileTypes.map((item) => item.ref),
         ...profileValidator.map((item) => item.ref),
         ...profileReadme.map((item) => item.ref),
-        charterGate.ref,
+        charterProfileBoundary.ref,
       ],
-      [...profileValidator.map((item) => item.ruleId), charterGate.ruleId],
+      [...profileValidator.map((item) => item.ruleId), charterProfileBoundary.ruleId],
       'resolved-for-fk',
       'Mediated denial, post-review detection, and unsupported bypass cases are separate classifications.',
       'Missing enrollment must never be reported as a pre-action refusal.',
@@ -1583,12 +1636,12 @@ function requiredReconciliations(
     reconciliationMany(
       'missing-provenance-reference',
       'Standing constraints name a provenance ledger absent at the source snapshot.',
-      standing.map((item) => item.ref),
+      [standingProvenance.ref, ...standing.map((item) => item.ref)],
       standing.map((item) => item.ruleId),
       'open',
       'All thirteen inline rules remain mapped from the standing-constraints source.',
       'The standing rules cannot retire from agent reading until provenance is restored or amended.',
-      'docs/transcripts/defects_lessons.md',
+      'plugins/foreman-line/docs/transcripts/defects_lessons.md',
     ),
     {
       reconciliationId: 'registry-rework-6eb1c25',
@@ -1678,6 +1731,48 @@ function requiredReconciliations(
         'Future binding changes require another typed prior-to-new migration record.',
       migrationStatus: 'superseded-by-amendment',
       supersedingEvidence: charterOperationalBoundary.ref,
+    },
+    {
+      reconciliationId: 'registry-rework-6f45963',
+      topic: 'R4 registry bindings superseded by the coordinator-ratified FK-P0 R5 amendment.',
+      observedRefs: [charterProfileBoundary.ref],
+      observedEvidence: [
+        {
+          kind: 'git-commit',
+          reference: 'f73a3846e436dcf25d80618aedd88170b0888770',
+          digest: sha256(
+            execFileSync('git', ['cat-file', '-p', 'f73a3846e436dcf25d80618aedd88170b0888770'], {
+              cwd: repoRoot,
+            }),
+          ),
+        },
+        {
+          kind: 'git-commit',
+          reference: SNAPSHOT,
+          digest: sha256(execFileSync('git', ['cat-file', '-p', SNAPSHOT], { cwd: repoRoot })),
+        },
+        {
+          kind: 'command-result',
+          reference: commandEvidence('registry-binding-manifest-r4', sha256(SNAPSHOT), r4Manifest),
+          digest: sha256(
+            commandEvidence('registry-binding-manifest-r4', sha256(SNAPSHOT), r4Manifest),
+          ),
+        },
+        {
+          kind: 'command-result',
+          reference: commandEvidence('superseding-binding-manifest-r5', r4Manifest, r5Manifest),
+          digest: sha256(
+            commandEvidence('superseding-binding-manifest-r5', r4Manifest, r5Manifest),
+          ),
+        },
+      ],
+      authoritativeRuleIds: [charterProfileBoundary.ruleId],
+      scopedDisposition:
+        'The R5 item-curated semantic, baseline, locator, and compiler-AST contract supersedes the R4 registry bindings in FK scope.',
+      unresolvedConsequence:
+        'Future binding changes require another typed prior-to-new migration record.',
+      migrationStatus: 'superseded-by-amendment',
+      supersedingEvidence: charterProfileBoundary.ref,
     },
   ]
 }

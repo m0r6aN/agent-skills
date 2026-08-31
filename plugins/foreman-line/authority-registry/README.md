@@ -47,9 +47,11 @@ Canonical JSON uses NFC strings, recursively sorted object keys, preserved array
 insignificant whitespace. These digests are integrity checks only—not receipts, signatures,
 approval, verification verdicts, merge authorization, or closure evidence.
 
-The full-file SHA-256 values and `sourceSnapshotCommit` record the FK-P0 dispatch baseline. The
-shipped sweep deliberately does not compare whole-file hashes. Unrelated bytes outside registered
-locators remain valid; a missing/moved locator or changed normalized operative value fails and
+The complete exact 18-source ID/path set, full-file SHA-256 values, and `sourceSnapshotCommit`
+record the FK-P0 dispatch baseline. The sweep resolves every declared snapshot path from that
+commit and compares its bytes with the declared hash. It does not require the current worktree's
+whole-file hash to remain frozen: unrelated local bytes outside discovered/inventoried constructs
+remain valid, while a missing/moved locator or changed normalized operative value fails and
 requires a typed migration chain. This is the Standing Constraint 12 boundary.
 
 ## Rule classifications
@@ -98,13 +100,13 @@ Six required typed records reconcile without rewriting historical sources:
 3. the live six-profile linter enum versus stale deferred-registry prose;
 4. routing-only `surfaces:` metadata versus exact body-level Allowed Files;
 5. loaded permission-profile mediation versus unenrolled/bypass and residual shell cases; and
-6. the absent `docs/transcripts/defects_lessons.md` provenance target.
+6. the absent `plugins/foreman-line/docs/transcripts/defects_lessons.md` provenance target.
 
 `resolved-for-fk` means downstream FK consumers have one scoped rule; it does not mean older canon
 was edited or globally invalidated. The missing provenance record stays `open`, preserves all
 thirteen standing rules, and prevents their retirement.
 
-Two additional `superseded-by-amendment` records bind the R2 and R4 reworks to their prior
+Three additional `superseded-by-amendment` records bind the R2, R4, and R5 reworks to their prior
 registry commits, the pinned source snapshot, prior binding-manifest digests, superseding
 manifests, and complete controlling `SourceRef` values. A future coordinated
 identity/location/value change must
@@ -146,9 +148,12 @@ absolute/traversal paths, containment escape, duplicate normalized paths, symlin
 non-regular files, missing or duplicate locators, and changed normalized values. It does not use
 the clock, randomness, network, environment-derived identity, or Git mutation.
 Git-backed reconciliation evidence additionally requires the exact root of a real worktree,
-commit-typed objects, and commit-bound canonical missing-path evidence. Curated goal binding
-sections and inventoried TypeScript/JSON-schema sources use complete prose/construct discovery;
-this is a bounded source-aware inventory, not a general Markdown or TypeScript compiler.
+commit-typed objects, and commit-bound canonical missing-path evidence. The charter and loop
+directive use complete paragraph/list/table discovery with wrapping-stable semantic locators.
+Inventoried TypeScript sources use the TypeScript 7 compiler syntax tree for operative top-level
+statements plus nested callable bodies; type-only declarations and imports are intentionally
+non-operative. JSON schema leaves and permission-profile entries have their own source-aware
+inventories. These are bounded source-specific claims, not a general Markdown policy compiler.
 
 Stable codes are closed to those exported by `RESULT_CODES` in `src/types.ts`.
 
@@ -156,8 +161,8 @@ Stable codes are closed to those exported by `RESULT_CODES` in `src/types.ts`.
 
 `npm run generate` deterministically regenerates the committed schema, curated source-bound
 registry, and named mutation fixtures from the pinned local corpus. It is an authoring command,
-not part of the read-only validator/CLI surface. Runtime dependencies are exactly `ajv@8.20.0`
-and `yaml@2.9.0`;
+not part of the read-only validator/CLI surface. Runtime dependencies are exactly `ajv@8.20.0`,
+`typescript@7.0.2`, and `yaml@2.9.0`;
 the only sibling boundary is the exact relative source-time `schema-scaffold` import.
 
 Run the parcel verification sequentially:

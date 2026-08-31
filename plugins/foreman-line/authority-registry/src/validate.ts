@@ -2,6 +2,8 @@ import { execFileSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
 import { existsSync, lstatSync, readFileSync, realpathSync } from 'node:fs'
 import { isAbsolute, relative, resolve, sep } from 'node:path'
+import * as ts from 'typescript/unstable/ast'
+import { API as TypeScriptApi } from 'typescript/unstable/sync'
 import { parse } from 'yaml'
 import AjvModule, { type Ajv as AjvType } from '../node_modules/ajv/dist/ajv.js'
 import { authorityEnforcementRegistrySchema } from './schemas.js'
@@ -38,7 +40,11 @@ const REQUIRED_RECONCILIATIONS = [
   'permission-profile-enforcement-bound',
   'missing-provenance-reference',
 ] as const
-const REQUIRED_REWORK_MIGRATIONS = ['registry-rework-6eb1c25', 'registry-rework-9285945'] as const
+const REQUIRED_REWORK_MIGRATIONS = [
+  'registry-rework-6eb1c25',
+  'registry-rework-9285945',
+  'registry-rework-6f45963',
+] as const
 const REQUIRED_OPERATIONS = [
   'gate1.ratify',
   'gate2.dispatch',
@@ -193,7 +199,6 @@ const RECONCILIATION_CONTRACT = {
     status: 'resolved-for-fk',
     refs: [
       'foreman-line-plan:item.two-gate-thesis',
-      'approval-readme:item.a7e48d46fe37',
       'approval-readme:item.4261d18b3243',
       'approval-readme:item.ff6f38f088ae',
       'fk-charter:item.d9',
@@ -279,23 +284,26 @@ const RECONCILIATION_CONTRACT = {
       'permission-profiles-readme:item.d11b9d38f924',
       'permission-profiles-readme:item.1101805f1c9e',
       'permission-profiles-readme:item.415efa3f5e3b',
-      'fk-charter:item.d9',
+      'fk-charter:item.d7',
     ],
     rules: [
       'rule.permission-profiles-validator.dcd8638af4a4',
       'rule.permission-profiles-validator.9c3c17055384',
       'rule.permission-profiles-validator.4da758cc157c',
       'rule.permission-profiles-validator.ffd598413a66',
-      'rule.fk-charter.d9',
+      'rule.fk-charter.d7',
     ],
   },
   'missing-provenance-reference': {
     topic: 'Standing constraints name a provenance ledger absent at the source snapshot.',
     status: 'open',
-    refs: Array.from(
-      { length: 13 },
-      (_, index) => `standing-constraints:item.constraint-${index + 1}`,
-    ),
+    refs: [
+      'standing-constraints:item.c5880644c95c',
+      ...Array.from(
+        { length: 13 },
+        (_, index) => `standing-constraints:item.constraint-${index + 1}`,
+      ),
+    ],
     rules: Array.from(
       { length: 13 },
       (_, index) => `rule.standing-constraints.constraint-${index + 1}`,
@@ -313,12 +321,20 @@ const RECONCILIATION_CONTRACT = {
     refs: ['fk-charter:item.d2'],
     rules: ['rule.fk-charter.d2'],
   },
+  'registry-rework-6f45963': {
+    topic: 'R4 registry bindings superseded by the coordinator-ratified FK-P0 R5 amendment.',
+    status: 'superseded-by-amendment',
+    refs: ['fk-charter:item.d7'],
+    rules: ['rule.fk-charter.d7'],
+  },
 } as const
 
 const SHIPPED_BINDING_MANIFEST_DIGEST =
-  '375ea566b2858d3204d17e0625332167a373b555db6d3a8b741af88f1390e082'
+  '589c6c3ea98147a951ab8887fd70a1a1c50e8b84953abcbe51b152a256da6ad9'
 const PRIOR_R3_BINDING_MANIFEST_DIGEST =
   '48a82df7d6da19352e4c9d2d99195835743a27f163a5d13a4f8d5b2a76a75a61'
+const PRIOR_R4_BINDING_MANIFEST_DIGEST =
+  '375ea566b2858d3204d17e0625332167a373b555db6d3a8b741af88f1390e082'
 
 const RECONCILIATION_PROSE: Readonly<Record<string, readonly [string, string]>> = {
   'gate-namespace-count': [
@@ -351,6 +367,10 @@ const RECONCILIATION_PROSE: Readonly<Record<string, readonly [string, string]>> 
   ],
   'registry-rework-9285945': [
     'The R4 source-bound semantic and discovery contract supersedes the R3 registry bindings in FK scope.',
+    'Future binding changes require another typed prior-to-new migration record.',
+  ],
+  'registry-rework-6f45963': [
+    'The R5 item-curated semantic, baseline, locator, and compiler-AST contract supersedes the R4 registry bindings in FK scope.',
     'Future binding changes require another typed prior-to-new migration record.',
   ],
 }
@@ -427,6 +447,7 @@ export function registryBindingManifestDigest(document: AuthorityEnforcementRegi
         authorityTier: source.authorityTier,
         authorityEffect: source.authorityEffect,
         scope: source.scope,
+        snapshotEvidence: source.snapshotEvidence,
         inventoryItems: source.inventoryItems.map((item) => ({
           itemId: item.itemId,
           locatorDigest: locatorDigestFor(item.locator),
@@ -1235,6 +1256,42 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
         ),
       )
     }
+    if ((REQUIRED_RECONCILIATIONS as readonly string[]).includes(record.reconciliationId)) {
+      const expectedEvidence = record.observedRefs.map((reference) => {
+        const canonicalReference = canonicalJson(reference)
+        return {
+          kind: 'source-ref',
+          reference: canonicalReference,
+          digest: sha256(canonicalReference),
+        }
+      })
+      if (record.reconciliationId === 'missing-provenance-reference') {
+        const missingReference = canonicalJson({
+          commit: document.sourceSnapshotCommit,
+          path: 'plugins/foreman-line/docs/transcripts/defects_lessons.md',
+        })
+        expectedEvidence.push(
+          {
+            kind: 'git-commit',
+            reference: document.sourceSnapshotCommit,
+            digest: '35b6b805e4ad81c9b4cb4c1f5dc346c431e55e6823690e93d4ad61a969767cad',
+          },
+          {
+            kind: 'missing-path',
+            reference: missingReference,
+            digest: sha256(missingReference),
+          },
+        )
+      }
+      if (canonicalJson(record.observedEvidence) !== canonicalJson(expectedEvidence)) {
+        violations.push(
+          violation(
+            'MIGRATION_EVIDENCE_INVALID',
+            `reconciliation '${record.reconciliationId}' observedEvidence set changed`,
+          ),
+        )
+      }
+    }
     if (
       (record.migrationStatus === 'superseded-by-amendment') !==
       (record.supersedingEvidence !== null)
@@ -1312,12 +1369,40 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
         gitRefs.join('|') !==
           `87237a868a0da8e1a57fc8ce9d400509b2a09c5d|${document.sourceSnapshotCommit}` ||
         !resultDigests.includes(PRIOR_R3_BINDING_MANIFEST_DIGEST) ||
-        !resultDigests.includes(SHIPPED_BINDING_MANIFEST_DIGEST)
+        !resultDigests.includes(PRIOR_R4_BINDING_MANIFEST_DIGEST)
       ) {
         violations.push(
           violation(
             'MIGRATION_EVIDENCE_INVALID',
             'R4 migration does not bind the prior R3 registry commit, source snapshot, and superseding manifest',
+          ),
+        )
+      }
+    }
+    if (record.reconciliationId === 'registry-rework-6f45963') {
+      const gitRefs = record.observedEvidence
+        .filter((e) => e.kind === 'git-commit')
+        .map((e) => e.reference)
+      const resultDigests = record.observedEvidence
+        .filter((e) => e.kind === 'command-result')
+        .flatMap((e) => {
+          try {
+            const value = JSON.parse(e.reference) as { resultDigest?: unknown }
+            return typeof value.resultDigest === 'string' ? [value.resultDigest] : []
+          } catch {
+            return []
+          }
+        })
+      if (
+        gitRefs.join('|') !==
+          `f73a3846e436dcf25d80618aedd88170b0888770|${document.sourceSnapshotCommit}` ||
+        !resultDigests.includes(PRIOR_R4_BINDING_MANIFEST_DIGEST) ||
+        !resultDigests.includes(SHIPPED_BINDING_MANIFEST_DIGEST)
+      ) {
+        violations.push(
+          violation(
+            'MIGRATION_EVIDENCE_INVALID',
+            'R5 migration does not bind the prior R4 registry commit, source snapshot, and superseding manifest',
           ),
         )
       }
@@ -1509,149 +1594,186 @@ export function parseRegistry(content: string): ValidationResult {
   }
 }
 
-const BINDING_SECTIONS: Readonly<Record<string, readonly string[]>> = {
-  'fk-charter': [
-    '## 3. Authority hierarchy',
-    '## 10. Human gates and standing authorizations requested',
-    '## 11. Stop conditions',
-    '## 13. Gate 1 decision list',
-  ],
-  'fk-loop-directive': [
-    '## COORDINATOR OWNERSHIP — read before dispatching anything',
-    '## Standing authorizations and their limits',
-    '## Per-parcel algorithm',
-    '## Stop conditions',
-  ],
-}
-
-function discoveredBindingBlocks(content: string, sourceId: string): string[] {
-  const targets = new Set(BINDING_SECTIONS[sourceId] ?? [])
-  if (targets.size === 0) return []
+function markdownBlockMap(content: string, sourceId: string): Map<string, string> {
+  const result = new Map<string, string>()
+  if (sourceId !== 'fk-charter' && sourceId !== 'fk-loop-directive') return result
   const lines = content.replace(/\r\n?/g, '\n').split('\n')
-  const blocks: string[] = []
-  for (let index = 0; index < lines.length; index += 1) {
-    const heading = /^(#{2,6})\s+.+/.exec(lines[index] ?? '')
-    if (heading === null || !targets.has((lines[index] ?? '').trim())) continue
-    const level = heading[1]?.length ?? 6
-    let endSection = lines.length
-    for (let cursor = index + 1; cursor < lines.length; cursor += 1) {
-      const next = /^(#{1,6})\s+/.exec(lines[cursor] ?? '')
-      if (next !== null && (next[1]?.length ?? 6) <= level) {
-        endSection = cursor
-        break
-      }
+  const headings: { level: number; text: string }[] = []
+  const occurrences = new Map<string, number>()
+  let cursor = 0
+  let inFence = false
+  let inHtmlComment = false
+  while (cursor < lines.length) {
+    const line = lines[cursor] ?? ''
+    if (/^\s*(?:```|~~~)/.test(line)) {
+      inFence = !inFence
+      cursor += 1
+      continue
     }
-    let cursor = index + 1
-    while (cursor < endSection) {
-      const line = lines[cursor] ?? ''
-      if (line.trim() === '' || /^#{1,6}\s+/.test(line)) {
-        cursor += 1
-        continue
-      }
-      if (/^\s*\|/.test(line)) {
-        if (!/^\s*\|?\s*:?-{3}/.test(line)) blocks.push(normalizeRuleText(line))
-        cursor += 1
-        continue
-      }
-      const list = /^\s*(?:[-*+] |\d+\. )/.test(line)
-      let end = cursor + 1
-      while (end < endSection) {
+    if (inFence) {
+      cursor += 1
+      continue
+    }
+    if (inHtmlComment || line.includes('<!--')) {
+      inHtmlComment = !line.includes('-->')
+      cursor += 1
+      continue
+    }
+    const heading = /^(#{1,6})\s+.+/.exec(line)
+    if (heading !== null) {
+      const level = heading[1]?.length ?? 6
+      while ((headings.at(-1)?.level ?? 0) >= level) headings.pop()
+      headings.push({ level, text: line.trim() })
+      cursor += 1
+      continue
+    }
+    if (line.trim() === '' || line.trim() === '---') {
+      cursor += 1
+      continue
+    }
+    const table = /^\s*\|/.test(line)
+    if (table && /^\s*\|?\s*:?-{3}/.test(line)) {
+      cursor += 1
+      continue
+    }
+    const list = /^\s*(?:[-*+] |\d+\. )/.test(line)
+    let end = cursor + 1
+    if (!table) {
+      while (end < lines.length) {
         const next = lines[end] ?? ''
-        if (next.trim() === '' || /^#{1,6}\s+/.test(next) || /^\s*\|/.test(next)) break
+        if (
+          next.trim() === '' ||
+          /^#{1,6}\s+/.test(next) ||
+          /^\s*\|/.test(next) ||
+          /^\s*(?:```|~~~)/.test(next) ||
+          next.includes('<!--')
+        )
+          break
         if (list && /^\s*(?:[-*+] |\d+\. )/.test(next)) break
         end += 1
       }
-      blocks.push(normalizeRuleText(lines.slice(cursor, end).join('\n')))
-      cursor = end
     }
-    index = endSection - 1
+    const headingPath = headings.map((item) => item.text).join(' > ') || '(preamble)'
+    const kind = table ? 'table-row' : list ? 'list-item' : 'paragraph'
+    const text = lines.slice(cursor, end).join('\n')
+    const semanticKey = `${headingPath}\u0000${kind}\u0000${sha256(normalizeRuleText(text)).slice(0, 12)}`
+    const occurrence = (occurrences.get(semanticKey) ?? 0) + 1
+    occurrences.set(semanticKey, occurrence)
+    result.set(`md-block:${headingPath}:${kind}:${semanticKey.slice(-12)}:${occurrence}`, text)
+    cursor = end
   }
-  return blocks
+  return result
 }
 
-function maskNonCode(content: string): string {
-  let output = ''
-  let quote: string | null = null
-  let lineComment = false
-  let blockComment = false
-  for (let index = 0; index < content.length; index += 1) {
-    const char = content[index] ?? ''
-    const next = content[index + 1] ?? ''
-    if (lineComment) {
-      if (char === '\n') {
-        lineComment = false
-        output += '\n'
-      } else output += ' '
-      continue
-    }
-    if (blockComment) {
-      if (char === '*' && next === '/') {
-        output += '  '
-        index += 1
-        blockComment = false
-      } else output += char === '\n' ? '\n' : ' '
-      continue
-    }
-    if (quote !== null) {
-      if (char === '\\') {
-        output += '  '
-        index += 1
-      } else if (char === quote) {
-        output += ' '
-        quote = null
-      } else output += char === '\n' ? '\n' : ' '
-      continue
-    }
-    if (char === '/' && next === '/') {
-      output += '  '
-      index += 1
-      lineComment = true
-    } else if (char === '/' && next === '*') {
-      output += '  '
-      index += 1
-      blockComment = true
-    } else if (char === '"' || char === "'" || char === '`') {
-      output += ' '
-      quote = char
-    } else output += char
+function tsNodeName(node: ts.Node): string | null {
+  const named = node as ts.Node & { readonly name?: ts.Node }
+  if (named.name !== undefined) return named.name.getText()
+  if (ts.isVariableStatement(node)) {
+    return node.declarationList.declarations
+      .map((declaration) => declaration.name.getText())
+      .join(',')
   }
-  return output
+  return null
 }
 
-function tsConstructMap(content: string): Map<string, string> {
-  const normalized = content.replace(/\r\n?/g, '\n')
-  const original = normalized.split('\n')
-  const masked = maskNonCode(normalized).split('\n')
+function isTypeOnlyTopLevel(node: ts.Statement): boolean {
+  return (
+    ts.isImportDeclaration(node) ||
+    ts.isImportEqualsDeclaration(node) ||
+    ts.isInterfaceDeclaration(node) ||
+    ts.isTypeAliasDeclaration(node) ||
+    (ts.isExportDeclaration(node) && node.isTypeOnly) ||
+    (ts.isVariableStatement(node) &&
+      node.declarationList.declarations.every(
+        (declaration) => declaration.initializer === undefined && declaration.type !== undefined,
+      ))
+  )
+}
+
+function tsSemanticValue(node: ts.Node, sourceFile: ts.SourceFile): string {
+  const tokens: string[] = []
+  const scanner = ts.createScanner(true, ts.LanguageVariant.Standard, node.getText(sourceFile))
+  for (;;) {
+    const kind = scanner.scan()
+    if (kind === ts.SyntaxKind.EndOfFile) break
+    tokens.push(`${ts.SyntaxKind[kind]}:${scanner.getTokenText()}`)
+  }
+  return canonicalJson(tokens)
+}
+
+function hasCallableBody(node: ts.Node): node is ts.Node & { readonly body: ts.Node } {
+  const candidate = node as ts.Node & { readonly body?: ts.Node }
+  return (
+    candidate.body !== undefined &&
+    (ts.isFunctionDeclaration(node) ||
+      ts.isFunctionExpression(node) ||
+      ts.isArrowFunction(node) ||
+      ts.isMethodDeclaration(node) ||
+      ts.isConstructorDeclaration(node) ||
+      ts.isGetAccessorDeclaration(node) ||
+      ts.isSetAccessorDeclaration(node))
+  )
+}
+
+const typescriptConstructCache = new Map<string, ReadonlyMap<string, string>>()
+
+export function typescriptConstructMap(content: string): Map<string, string> {
+  const contentDigest = sha256(content)
+  const cached = typescriptConstructCache.get(contentDigest)
+  if (cached !== undefined) return new Map(cached)
+  const virtualPath = `c:/fk-p0-ast/${contentDigest}.ts`
+  type VirtualFs = {
+    readonly readFile: (path: string) => string | undefined
+    readonly fileExists: (path: string) => boolean | undefined
+    readonly directoryExists: (path: string) => boolean | undefined
+    readonly realpath: (path: string) => string
+  }
+  const virtualFs: VirtualFs = {
+    readFile: (path) => (path.toLowerCase() === virtualPath ? content : undefined),
+    fileExists: (path) => (path.toLowerCase() === virtualPath ? true : undefined),
+    directoryExists: (path) =>
+      path.toLowerCase() === 'c:/fk-p0-ast' || path.toLowerCase() === 'c:' ? true : undefined,
+    realpath: (path) => path.toLowerCase(),
+  }
+  const api = new TypeScriptApi({ cwd: 'c:/fk-p0-ast', fs: virtualFs })
+  const snapshot = api.updateSnapshot({ openFiles: [virtualPath] })
+  const sourceFile = snapshot
+    .getDefaultProjectForFile(virtualPath)
+    ?.program.getSourceFile(virtualPath)
+  if (sourceFile === undefined) {
+    snapshot.dispose()
+    api.close()
+    throw new Error('TypeScript compiler did not return a syntax tree')
+  }
   const result = new Map<string, string>()
-  for (let start = 0; start < masked.length; start += 1) {
-    const match = /^(?:export\s+)?(?:(?:async\s+)?function|const)\s+([A-Za-z_$][\w$]*)\b/.exec(
-      masked[start] ?? '',
-    )
-    if (match === null) continue
-    let curly = 0
-    let square = 0
-    let paren = 0
-    let opened = false
-    let end = start
-    for (; end < masked.length; end += 1) {
-      for (const char of masked[end] ?? '') {
-        if (char === '{') curly += 1
-        else if (char === '}') curly -= 1
-        else if (char === '[') square += 1
-        else if (char === ']') square -= 1
-        else if (char === '(') paren += 1
-        else if (char === ')') paren -= 1
+  const operative = sourceFile.statements.filter((statement) => !isTypeOnlyTopLevel(statement))
+  operative.forEach((statement, topIndex) => {
+    const name = tsNodeName(statement)
+    const topAnchor =
+      name === null ? `ts-top:${topIndex}:${ts.SyntaxKind[statement.kind]}` : `ts-construct:${name}`
+    result.set(topAnchor, tsSemanticValue(statement, sourceFile))
+    const visit = (node: ts.Node, path: string): void => {
+      if (hasCallableBody(node)) {
+        const namePart = tsNodeName(node) ?? 'anonymous'
+        result.set(
+          `ts-body:${topAnchor}:${path}:${ts.SyntaxKind[node.kind]}:${namePart}`,
+          tsSemanticValue(node.body, sourceFile),
+        )
       }
-      opened ||=
-        masked
-          .slice(start, end + 1)
-          .join('\n')
-          .includes('=') || curly > 0
-      if (opened && curly === 0 && square === 0 && paren === 0) break
+      node.forEachChild((child) => {
+        let childIndex = 0
+        node.forEachChild((candidate) => {
+          if (candidate === child) return
+          if (candidate.pos < child.pos) childIndex += 1
+        })
+        visit(child, `${path}.${childIndex}`)
+      })
     }
-    result.set(`ts-construct:${match[1] as string}`, original.slice(start, end + 1).join('\n'))
-    start = end
-  }
+    visit(statement, String(topIndex))
+  })
+  snapshot.dispose()
+  api.close()
+  typescriptConstructCache.set(contentDigest, new Map(result))
   return result
 }
 
@@ -1675,8 +1797,20 @@ function jsonConstraintMap(content: string): Map<string, string> {
 
 function extractLocator(content: string, locator: SourceLocator): { count: number; value: string } {
   const lines = content.replace(/\r\n?/g, '\n').split('\n')
-  if (locator.kind === 'symbol' && locator.anchor.startsWith('ts-construct:')) {
-    const value = tsConstructMap(content).get(locator.anchor)
+  if (locator.kind === 'line-excerpt' && locator.anchor.startsWith('md-block:')) {
+    const sourceId = locator.anchor.includes('# Foreman Kernel')
+      ? 'fk-charter'
+      : 'fk-loop-directive'
+    const value = markdownBlockMap(content, sourceId).get(locator.anchor)
+    return { count: value === undefined ? 0 : 1, value: value ?? '' }
+  }
+  if (
+    locator.kind === 'symbol' &&
+    (locator.anchor.startsWith('ts-construct:') ||
+      locator.anchor.startsWith('ts-top:') ||
+      locator.anchor.startsWith('ts-body:'))
+  ) {
+    const value = typescriptConstructMap(content).get(locator.anchor)
     return { count: value === undefined ? 0 : 1, value: value ?? '' }
   }
   if (locator.kind === 'symbol' && locator.anchor.startsWith('json-pointer:')) {
@@ -1732,8 +1866,15 @@ function extractLocator(content: string, locator: SourceLocator): { count: numbe
   if (locator.kind === 'numbered-item') {
     const stack: { level: number; heading: string }[] = []
     const matches: { index: number; indent: number }[] = []
+    const occurrences = new Map<string, number>()
+    let inFence = false
     for (let index = 0; index < lines.length; index += 1) {
       const line = lines[index] ?? ''
+      if (/^\s*(?:```|~~~)/.test(line)) {
+        inFence = !inFence
+        continue
+      }
+      if (inFence) continue
       const heading = /^(#{1,6})\s+.+/.exec(line)
       if (heading !== null) {
         const level = heading[1]?.length ?? 6
@@ -1741,9 +1882,15 @@ function extractLocator(content: string, locator: SourceLocator): { count: numbe
         stack.push({ level, heading: line.trim() })
         continue
       }
-      const numbered = /^(\s*)\d+\.\s+\S/.exec(line)
+      const numbered = /^(\s*)(\d+)\.\s+\S/.exec(line)
       if (numbered === null) continue
-      const anchor = [...stack.map((item) => item.heading), line.trim()].join(' > ')
+      const semanticKey = `${stack.map((item) => item.heading).join(' > ')}\u0000${numbered[1]?.length ?? 0}\u0000${numbered[2] as string}`
+      const occurrence = (occurrences.get(semanticKey) ?? 0) + 1
+      occurrences.set(semanticKey, occurrence)
+      const anchor = [
+        ...stack.map((item) => item.heading),
+        `list-item:${numbered[1]?.length ?? 0}:${numbered[2] as string}:${occurrence}`,
+      ].join(' > ')
       if (anchor === locator.anchor) {
         matches.push({ index, indent: numbered[1]?.length ?? 0 })
       }
@@ -1758,7 +1905,7 @@ function extractLocator(content: string, locator: SourceLocator): { count: numbe
         end = index
         break
       }
-      const next = /^(\s*)\d+\.\s+\S/.exec(line)
+      const next = /^(\s*)(\d+)\.\s+\S/.exec(line)
       if (next !== null && (next[1]?.length ?? 0) <= match.indent) {
         end = index
         break
@@ -1909,6 +2056,38 @@ export function sweepRegistrySources(document: unknown, repoRoot: string): Valid
       continue
     }
     normalizedPaths.add(normalized)
+    if (gitReady) {
+      try {
+        const objectType = execFileSync('git', ['cat-file', '-t', source.snapshotEvidence.commit], {
+          cwd: root,
+          stdio: ['ignore', 'pipe', 'ignore'],
+          encoding: 'utf8',
+        }).trim()
+        if (objectType !== 'commit') throw new Error(`snapshot object type is '${objectType}'`)
+        const committedBytes = execFileSync(
+          'git',
+          ['cat-file', '-p', `${source.snapshotEvidence.commit}:${source.path}`],
+          { cwd: root, stdio: ['ignore', 'pipe', 'ignore'] },
+        )
+        if (sha256(committedBytes) !== source.snapshotEvidence.fullFileSha256) {
+          violations.push(
+            violation(
+              'MIGRATION_EVIDENCE_INVALID',
+              'declared source snapshot hash does not match committed source bytes',
+              { sourcePath: source.path },
+            ),
+          )
+        }
+      } catch (error) {
+        violations.push(
+          violation(
+            'MIGRATION_EVIDENCE_INVALID',
+            `declared source snapshot cannot be resolved: ${(error as Error).message}`,
+            { sourcePath: source.path },
+          ),
+        )
+      }
+    }
     const resolvedSource = resolveRegularFile(root, source.path)
     if (resolvedSource.code !== undefined) {
       violations.push(
@@ -1955,12 +2134,12 @@ export function sweepRegistrySources(document: unknown, repoRoot: string): Valid
         )
       }
     }
-    for (const block of discoveredBindingBlocks(content, source.sourceId)) {
-      if (!source.inventoryItems.some((item) => item.normalizedExcerpt === block)) {
+    for (const [anchor] of markdownBlockMap(content, source.sourceId)) {
+      if (!source.inventoryItems.some((item) => item.locator.anchor === anchor)) {
         violations.push(
           violation('SOURCE_ITEM_UNCOVERED', 'binding prose block is not inventoried', {
             sourcePath: source.path,
-            locator: block,
+            locator: anchor,
           }),
         )
       }
@@ -1971,7 +2150,7 @@ export function sweepRegistrySources(document: unknown, repoRoot: string): Valid
           .filter((item) => item.locator.kind === 'symbol')
           .map((item) => item.locator.anchor),
       )
-      for (const anchor of tsConstructMap(content).keys()) {
+      for (const anchor of typescriptConstructMap(content).keys()) {
         if (!registered.has(anchor)) {
           violations.push(
             violation(
