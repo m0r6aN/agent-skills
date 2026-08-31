@@ -380,6 +380,27 @@ item hash/suffix, `requires-<hash>`, or a source-ID-plus-item namespace is inval
 rejects any rule absent from the curated manifest and any manifest entry whose basis text does
 not substantively support its semantics.
 
+The curation manifest has one explicit entry per published source/item; source-wide or multi-item
+omnibus branches are prohibited. Two different normalized statements may share a subject because
+they answer the same question, but they may share a claim only when a separate closed
+`semanticEquivalence` manifest names both rule IDs and explains their equivalent meaning. Without
+that record, distinct statements require distinct human-readable claims. At minimum, distinct
+`SPEC-CONVENTION` lifecycle, status/folder, mutation-authority, approval, and validation statements
+are independently curated rather than labeled with one omnibus lifecycle claim.
+
+Exclusions use one closed code plus an item-specific rationale:
+`heading-only | table-header | structural-ast | schema-container | duplicate-exact-statement |
+non-normative-explanation | example-only | fenced-code | type-only`. The generic phrase
+“metadata, explanatory context, or duplicate provenance” and any combined catch-all rationale are
+forbidden. A duplicate exclusion names the exact published rule with byte-equivalent normalized
+meaning. D/R rows, numbered standing/PDD rules, ratification/grant/merge/verification records,
+binding MUST/required/prohibited statements, exit criteria, and stop conditions cannot be
+excluded. Validation rejects exclusion of these protected normative item classes. Every binding
+charter decision D1-D20 is published with a binding basis and active semantics; shipped resolver
+tests prove at least D2 and D18 return `RESOLVED` with their exact claims in natural FK queries.
+`narrative-provenance` is reserved for provenance/history/rationale text and cannot classify an
+operative binding requirement merely because no enforcement mechanism exists yet.
+
 `EvidenceRef` is exactly `{ kind, path, digest }`, where `kind` is
 `predicate-contract | negative-test | corpus-sweep | independent-bypass`, `path` is an exact
 repo-relative non-glob path, and `digest` is a SHA-256 over that evidence artifact's bytes. The
@@ -429,6 +450,14 @@ record, never merely to its heading:
 Every required `SourceRef` must resolve across source ID, item ID, locator digest, and value
 digest to the named fact. A generic policy statement, irrelevant rule, or self-hashed claim is
 not evidence of a grant, verdict, merge, or closure prerequisite.
+
+Protected evidence is tested against its resolved normalized text, not a frozen but semantically
+wrong item ID. Gate 1 includes both the original 2026-08-31 “Ratify Gate 1 and authorize Gate 2
+dispatches” record and the scoped “Re-ratify Gate 1 amendments R1-R13 and resume Gate 2” record,
+plus the nondelegability statement. Gate 2 includes the actual standing grant text that explicitly
+authorizes coordinator dispatch after ratification and the operative loop authorization—not an
+abbreviated decision-list summary. Gate 3 and verification use their exact operative records as
+already specified. Removing any named fact, or substituting a nearby heading/list summary, fails.
 
 The following protected operations are mandatory matrix rows and semantic invariants:
 
@@ -559,8 +588,16 @@ diagnostic fails.
   allowlists do not decide whether natural prose is binding.
 - Markdown comment handling removes only the exact characters inside properly paired HTML comment
   spans and preserves visible text before and after a same-line comment. Multi-line comment state
-  is tracked until the matching close. A line is excluded only when no visible normalized text
-  remains. Fenced code remains non-operative. A closed comment prefix cannot hide visible prose.
+  is tracked only when a matching close exists. An unmatched `<!--` is not treated as a
+  comment-to-EOF and cannot hide following prose; it is inventoried as visible malformed content
+  or produces an uncovered-item violation. A line is excluded only when no visible normalized
+  text remains. A closed comment prefix cannot hide visible prose.
+- Fenced code follows CommonMark fence boundaries: the opener has at most three leading spaces,
+  uses backticks or tildes, and records delimiter kind and run length; only the same delimiter
+  with at least the opener's run length and at most three leading spaces closes it. Mixed
+  delimiters and four-space-indented pseudo-fences do not toggle state. Only content inside a
+  correctly paired fence is non-operative; an unclosed opener cannot suppress later visible
+  authority prose without a typed uncovered/malformed result.
 - TypeScript discovery uses the TypeScript compiler syntax tree, not a regular-expression list of
   declaration spellings. Inventory every non-import top-level statement and each complete
   function/method/constructor/accessor/arrow body, including function, const, let, var, class,
@@ -589,7 +626,16 @@ diagnostic fails.
   TypeScript discovery contract. Runtime imports are operative inventory items: side-effect
   imports and every module specifier/binding of value imports are set-bound, so changing or adding
   one fails while reordering the identical import set remains green. Only declarations proven
-  `import type`/type-only by the syntax tree are excluded.
+  `import type`/type-only by the syntax tree are excluded. The canonical value-import record sorts
+  named/default/namespace runtime bindings independently of source clause order and omits type-
+  only specifiers, so `{Ajv, type SchemaObject}` and `{type SchemaObject, Ajv}` are identical.
+  Ambient `declare` functions/classes/namespaces/modules and exported ambient variants are
+  type-only/non-operative; runtime namespaces, enums, static blocks, object methods, IIFEs, and
+  dynamic imports remain operative.
+- Permission-profile YAML discovery inventories each profile plus every canonical nested
+  `allow`, `ask`, `deny`, and network rule path/value. Adding, deleting, retargeting, or moving a
+  rule between profiles changes coverage; profile-name presence or one command anchor is not
+  sufficient. Ordering-only YAML changes with identical canonical rule sets remain benign.
 
 ## Allowed Files
 
@@ -737,7 +783,8 @@ a competing owner for `authority-registry`, or relies on self-asserted authority
     checks as its own text states;
   - PDD rules 1, 3, 4, 5, and 11 include shaper/shaping and builder/step-zero/build contexts;
     rule 2 covers coordinator, shaper, builder, and reviewer across their parcel stages; rule 7
-    includes builder/build verification; rules 8-10 retain the scopes above; and
+    includes builder/build verification; rule 6 covers the builder who must rebase as well as
+    coordinator integration; rules 8-10 retain the scopes above; and
   - PDD rules 12-15 include coordinator/merge/state-transition or verification/release contexts
     required by their text, with reviewer/CI participation where the rule names security or
     evidence verification.
@@ -759,10 +806,19 @@ a competing owner for `authority-registry`, or relies on self-asserted authority
 - Markdown controls place visible binding prose before and after same-line HTML comments and
   across multi-line comments. TypeScript controls add/retarget side-effect and value imports;
   those fail, while type-only imports and reordering an unchanged runtime-import set stay green.
+- Markdown controls also cover unmatched comments, mixed backtick/tilde fences, longer/shorter
+  closing runs, and four-space-indented pseudo-fences. Profile controls add, delete, retarget, and
+  move nested allow/ask/deny/network entries. TypeScript controls prove ambient declarations stay
+  benign while runtime namespaces/enums/static blocks/object methods/IIFEs/dynamic imports fail.
 - Curated-rule controls reject every hash-derived/fallback subject or claim and prove every
-  non-normative inventory item is explicitly excluded rather than emitted as a pseudo-rule.
+  non-normative inventory item is explicitly excluded rather than emitted as a pseudo-rule. They
+  reject generic/combined exclusion rationales, protected normative exclusions, unlisted shared
+  claims, and omnibus source-wide semantic mappings; D2 and D18 resolve actively.
 - Reconciliation controls mutate, duplicate, append, remove, and substitute evidence in both the
   original six records and every `registry-rework-*` record; all fail exact record binding.
+- Protected-operation tests resolve and assert the exact Gate 1 original/scoped ratification and
+  nondelegability text and exact Gate 2 standing-grant/loop text; nearby summaries are negative
+  controls. PDD rule 6 resolves for a builder/build/repo-mutation query.
 - Source-manifest controls mutate each `snapshotEvidence` commit/hash field and prove failure,
   while current unrelated bytes outside semantic locators do not become a full-file byte freeze.
 - Determinism/write-sentinel test: repeated validate/sweep calls produce identical ordered
