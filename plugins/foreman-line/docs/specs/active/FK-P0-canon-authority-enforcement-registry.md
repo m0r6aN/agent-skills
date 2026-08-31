@@ -256,7 +256,8 @@ reported only in parcel-time evidence and never becomes a shipped byte-freeze te
 - `bindingDigest`, recomputed from canonical JSON of the **complete normative rule record**:
   `{ruleId, authoritySubject, authorityClaim, normalizedStatement, sourceRefs,
   applicability, severity, classification, decision, refusalCode, enforcementOwner,
-  assuranceLevel, pairedRuleIds, retirementState, retirementEvidence}`. Omitting a normative
+  assurance, pairedRuleIds, retirementState, retirementEvidence}`. `assurance` is the public
+  field whose value is an `AssuranceLevel`; no parallel `assuranceLevel` field exists. Omitting a normative
   field from this digest is prohibited. Canonical JSON is UTF-8 JSON with Unicode NFC strings,
   recursively lexicographically sorted object keys, array order preserved, and no insignificant
   whitespace. The registry validator also binds the exact source-ID/path set and every complete
@@ -273,6 +274,48 @@ contradictions return `CONFLICT`. Narrative, historical, stale, retired, and uns
 remain visible but cannot control active authority. Export a pure `resolveAuthority(document,
 query)` that returns the controlling rule IDs and claim, `REQUIRE_HUMAN`, or `CONFLICT`; absence
 of a reported conflict is not itself a precedence result.
+
+`AuthorityQuery` is exactly `{ authoritySubject, goal, role, stage, operation, host }`.
+`authoritySubject` follows the common ID pattern. Query applicability is always concrete:
+`goal` is `foreman-kernel`; `role`, `stage`, `operation`, and `host` use their corresponding
+scope enums with `any` excluded. A rule matches when its axis contains the exact query value or
+`any`; `all-foreman-goals` also matches `foreman-kernel`. Query inputs containing `any` or
+`all-foreman-goals` are invalid and return `REQUIRE_HUMAN` with
+`reasonCode: INVALID_QUERY_SCOPE`.
+
+`AuthorityResolution` is exactly one of:
+
+```ts
+type AuthorityResolution =
+  | {
+      outcome: 'RESOLVED'
+      authoritySubject: string
+      authorityClaim: string
+      controllingRuleIds: string[]
+      consideredRuleIds: string[]
+    }
+  | {
+      outcome: 'REQUIRE_HUMAN'
+      authoritySubject: string
+      reasonCode: 'INVALID_QUERY_SCOPE' | 'NO_APPLICABLE_AUTHORITY'
+      controllingRuleIds: []
+      consideredRuleIds: string[]
+    }
+  | {
+      outcome: 'CONFLICT'
+      authoritySubject: string
+      conflictingClaims: string[]
+      controllingRuleIds: []
+      consideredRuleIds: string[]
+    }
+```
+
+All ID arrays and claims are unique and lexicographically sorted. The resolver first filters to
+matching, non-historical/non-stale, non-`historical-only`, non-narrative, non-unsupported rules
+from binding sources, then selects the highest applicable `AuthorityTier`. Multiple highest-tier
+rules with one claim resolve together; multiple claims return `CONFLICT`. No candidate returns
+`REQUIRE_HUMAN / NO_APPLICABLE_AUTHORITY`. Lower-tier rules remain in `consideredRuleIds` but
+cannot override the selected tier.
 
 `EvidenceRef` is exactly `{ kind, path, digest }`, where `kind` is
 `predicate-contract | negative-test | corpus-sweep | independent-bypass`, `path` is an exact
