@@ -2,7 +2,7 @@
 
 **Created:** 2026-08-30
 **Owner:** Clinton Morgan
-**Status:** ratified — Gate 1 cleared and standing Gate 2 authorization granted 2026-08-31
+**Status:** ratified with scoped Gate 1 re-open pending — plan review amendments R1–R13 require re-ratification
 **Coordinator:** primary Codex coordinator session that created this charter
 **Mode:** Repo-Local Parcel Mode
 
@@ -63,47 +63,53 @@ stops and requests a charter or contract amendment.
 
 The developer confirmed the Stage Zero recommendations on 2026-08-30 and explicitly
 ratified this charter on 2026-08-31 with: “Ratify Gate 1 and authorize Gate 2
-dispatches.” D1–D17 are binding.
+dispatches.” D1–D17 were ratified. The required fresh plan review returned
+`REQUEST CHANGES` on 2026-08-31. The coordinator accepted six BLOCKERs and seven
+SHOULD-FIX findings; D3, D7–D9, D13–D17, new D18–D20, the parcel graph, and affected
+exit criteria are under a scoped Gate 1 re-open until explicitly re-ratified.
 
 | ID | Decision | Reasoning |
 |---|---|---|
 | D1 | This is a new goal, `foreman-kernel`, separate from `plugin-packaging-and-scaffolder`. | The packaging/scaffolder goal owns distribution and canon scaffolding. This goal owns runtime contracts, evaluation, operational state, and hook enforcement. Shared manifests and other serialization points are explicitly sequenced rather than casually co-owned. |
 | D2 | Git remains authoritative for ratified charters, specs, policies, reviews, human-gate artifacts, and committed proof. SQLite becomes authoritative only for operational state: revision, lease, pending transition, wakeup/handoff, evidence index, and projection cursor. | A running process must not become hidden product or approval authority. Operational state needs concurrency and restart safety that Markdown cannot provide; ratified canon must remain diff-reviewable. |
-| D3 | The kernel is divided into a provider-neutral trust core, a read-only MCP surface, a separately registered control surface, and thin host adapters. | An arbitrary harness should be able to discover validators without discovering state-changing tools. Host quirks must not leak into policy semantics. |
+| D3 | The kernel is divided into a provider-neutral trust core, a read-only MCP surface, an admission-protected control surface, and thin host adapters. The control surface uses a distinct local endpoint/socket plus a narrowly issued host-local capability bound to a mechanically distinct principal. | Separate discovery catalogs are not an authorization boundary. An unauthenticated verifier client must be unable to list or call control tools, claim leases, or request transitions. Host quirks must not leak into policy semantics. |
 | D4 | First release scope is: compiled constraints, pure evaluators, read-only Docker MCP, durable operational state, one hook adapter in shadow mode, and enforcement of independently proven refusal classes. | This is the minimum vertical slice that eliminates install friction and memory-only enforcement without prematurely centralizing external authority. |
 | D5 | There is no generic `mintReceipt` tool in the first release. No agent-callable tool may mint Gate-1 approval, independent-verification, merge, or closure authority. | Current receipt validation is structural, current receipt builders trust caller-supplied custody inputs, and current merge metadata is not source-control authenticated. Publishing those surfaces would create an authority oracle. |
 | D6 | Receipt tools exposed in the first release are explicitly labeled structural. Authoritative stage-specific issuance is a follow-on goal gated on canonical hash recomputation, trusted-key verification, legal-transition checks, evidence-derived subjects, atomic append, and live source-control binding. | Tool names and assurance labels must not overclaim what existing validators prove. |
-| D7 | One portable MCP contract is primary. Claude Code receives the first lifecycle-hook adapter; Codex and other harness adapters follow only where capability probes demonstrate equivalent lifecycle mediation. | The repo already documents that some plugin/session surfaces ignore hook, MCP, or permission frontmatter. Portability belongs in the protocol, not in a false claim that all hosts enforce equally. |
-| D8 | Hooks begin in shadow mode. After negative tests, bypass probes, and corpus reconciliation, governed mutations fail closed when the kernel is unavailable. Read-only work may continue only in an explicit degraded mode that records the missing assurance. | Failing open makes enforcement claims false; failing every operation closed makes Docker a development-wide outage. The boundary must be explicit and testable. |
-| D9 | Human authority is preserved: Gate 1 is nondelegable; Gate 2 may be delegated only by an explicit charter-scoped standing authorization; Gate 3 remains human-owned unless a distinct agent identity is mechanically authorized and verified live. | Hooks and MCP are enforcement mechanisms, not new authority sources. Human-only conditions produce `awaiting_human` stop reports rather than unfinishable stop-hook loops. |
+| D7 | One portable MCP contract is primary. Claude Code on the declared Windows/Docker Desktop matrix receives the first lifecycle adapter. Codex and other hosts receive an adapter only where a real capability probe demonstrates equivalent mediation. Bypass attempts visible to a loaded adapter may be refused; hook absence or non-enrollment is detected by enrollment heartbeat and CI and is never claimed as a hook refusal. | The repo documents that some plugin/session surfaces ignore hooks, MCP, or permission frontmatter. Portability belongs in the protocol and capability matrix, not in a universal enforcement claim. |
+| D8 | Hooks begin in shadow mode. After negative tests, mediated-bypass probes, enrollment detection, and corpus reconciliation, governed mutations fail closed when the loaded adapter cannot reach the kernel. Read-only work may continue only in an explicit degraded mode that records the missing assurance. Enforcement cannot be promoted before independent CI backstops are green. | Failing open makes enforcement claims false; failing every operation closed makes Docker a development-wide outage; promoting before CI leaves unmediated channels without the promised detector. |
+| D9 | Human authority is preserved: Gate 1 is nondelegable; Gate 2 may be delegated only by an explicit charter-scoped standing authorization; Gate 3 remains human-owned unless a distinct agent identity is mechanically authorized and verified live. Human-gate satisfaction is derived from canonical, digest-bound Git artifacts and cannot be written as ordinary operational state. | Hooks, MCP, leases, and a local control capability are enforcement mechanisms, not new authority sources. Human-only conditions produce `awaiting_human` stop reports rather than unfinishable stop-hook loops. |
 | D10 | Exact `Allowed Files` is compiled from the spec body before path refusal is implemented. `surfaces:` remains routing/audit metadata and never substitutes for mutation authority. | The existing frontmatter linter does not provide the exact path contract needed by hooks. Enforcing a different field would mechanize the wrong rule. |
 | D11 | A defect class is retired from the agent reading path only after: a deterministic predicate exists, a negative test proves refusal, the existing corpus is swept, and an independent bypass attempt fails. Provenance and rationale remain in the lessons record. | Removing prose before enforcement is proven merely hides the rule. Installing a future rule without reconciling existing instances leaves the class alive. |
 | D12 | Hooks are adapters, not policy engines. They normalize lifecycle events, call `authorizeAction`, honor the structured decision, and report observed effects. All policy IDs, refusal codes, state transitions, and evidence rules live in the kernel contract. | This prevents host-specific shell scripts from becoming a second, drifting policy implementation. |
-| D13 | Pre-action path checks are backed by post-action realpath-aware Git-diff detection and CI. Reviewer sessions fail closed on opaque mutation-capable shell; builder shell limitations are disclosed rather than described as complete containment. | Shells, generators, subprocesses, custom tools, symlinks, and external applications defeat universal tool-call parsing. Layered detection is honest; unsupported containment claims are not. |
-| D14 | Operational state uses SQLite WAL with schema migrations, foreign keys, append-only events, single-writer goal leases, optimistic expected revisions, idempotency keys, and deterministic generated Markdown views. The process may cache state but is never the only copy. | One process in front of durable state improves resume cost; one process holding ephemeral truth creates a single point of loss and split-brain risk. |
-| D15 | The first container has no Jira, SCM, cloud, signing, Docker-socket, or other external-write credential. Repository access is read-only until a later parcel explicitly introduces a narrowly authorized effect. | The portable verifier should not inherit unrelated blast radius. State mutation is not permission to mutate external systems or Git canon. |
+| D13 | Pre-action path checks are backed by post-action realpath-aware Git-diff detection and CI, and CI lands before enforcement promotion. Reviewer sessions fail closed on opaque mutation-capable shell; builder shell limitations are disclosed rather than described as complete containment. A missing/non-loaded hook is detected through enrollment/CI, not described as refused. | Shells, generators, subprocesses, custom tools, symlinks, and external applications defeat universal tool-call parsing. Layered prevention plus detection is honest; unsupported containment claims are not. |
+| D14 | Operational state uses SQLite WAL with versioned transactional migrations, foreign keys, append-only events, single-writer leases, trusted lease-time semantics, optimistic revisions, principal/operation/idempotency keys bound to input digests, transactional state/event/cursor updates, and deterministic Markdown views. Git wins ratification and human-gate facts; SQLite wins leases, revisions, idempotency, wakeups, and projection cursor after a one-time digest-bound cutover. Divergence stops rather than overwrites. | One process in front of durable state improves resume cost; vague dual authority, process-only truth, or unbound idempotency creates split brain and replay risk. |
+| D15 | The first container has no Jira, SCM, cloud, signing, Docker-socket, or other external-system credential. A narrow host-local control capability is permitted only for admission to the local control surface. The read-only server cannot read the state volume, and repository access is capability-bound and read-only. | The portable verifier should not inherit unrelated blast radius or disclose state. A local admission capability is not authority to mutate external systems or Git canon. |
 | D16 | Existing mixed functions are split before exposure: routing and skill selection become pure decisions plus separately authorized recorders. Routing/skill sidecars do not share a directory interpreted as a receipt chain. | Current functions mix calculation, timestamps, directory creation, and overwriteable files. Exposing them unchanged would make a supposedly read-only tool mutate the repo and can poison receipt-directory validation. |
-| D17 | Every public tool has a versioned input/output schema, stable refusal codes, input/policy digests, explicit assurance level, bounded payloads, and consistent decision semantics. Policy refusal is a successful structured result; malformed protocol or kernel failure is an MCP error. | Hooks and harnesses must distinguish deliberate refusal from process failure without parsing free-form prose. |
+| D17 | Every public tool has a versioned input/output schema, stable refusal codes, authenticated-principal/admission provenance where applicable, request/input/policy digests, idempotency binding, explicit assurance level, bounded payloads, and consistent decision semantics. Policy refusal is a successful structured result; malformed protocol or kernel failure is an MCP error. | Hooks and harnesses must distinguish deliberate refusal from process failure without parsing free-form prose, and control decisions must never trust caller-self-asserted identity. |
+| D18 | `authorizeAction` is a dedicated provider-neutral policy engine, not a hook or control-handler implementation detail. It combines authenticated principal, repository/worktree identity, compiled Allowed Files, role posture, leases/revisions, gate evidence, outage mode, and post-diff obligations against golden lifecycle vectors. | Without an owning engine parcel, thin adapters or the control catalog would have to reimplement policy and violate D12. |
+| D19 | Public read APIs are content-only by default. Any repository read uses an admission-bound `repoId` plus exact relative path resolved inside one mounted read-only root, with canonical containment, symlink/reparse refusal, regular-file checks, and byte limits. Arbitrary host paths are forbidden. | Read-only access can still disclose unrelated source, secrets, container files, or the SQLite volume. Mutation authority and read confidentiality are separate boundaries. |
+| D20 | First-release enforcement is claimed only for Claude Code on Windows 11 with Docker Desktop and the tested plugin/launcher shape. The MCP protocol and Linux container image remain provider-neutral; native-Linux-host or Codex enforcement is not claimed until separate process-boundary evidence exists. | Two harness shapes do not prove host, path, filesystem, or lifecycle parity. The claim must match the demonstrated platform matrix. |
 
 ## 5. First-release architecture
 
 ```text
-Claude hook adapter
+Claude adapter + enrollment heartbeat
         |
         v
-authorizeAction lifecycle contract -----> control MCP catalog
-        |                                  - leases / CAS transitions
-        |                                  - evidence refs / projections
+host-local capability admission -------> authorizeAction policy engine
+        |                                  - principal / repo / role
+        |                                  - compiled scope / gates
+        |                                  - leases / revisions / obligations
         v
-provider-neutral trust core ------------> read-only MCP catalog
-                                           - lintSpec / compileAllowedFiles
-                                           - previewRouting / resolveSkills
-                                           - validate policy / registry / matrix
-                                           - structuralValidateReceipt/Chain
-                                           - audit and branch-posture evaluation
+control MCP catalog -------------------> SQLite event ledger
+        |                                  - transitions / evidence refs
+        |                                  - deterministic projections
         |
-        v
-SQLite event ledger + generated Markdown projections
+provider-neutral trust core -----------> read-only MCP catalog
+                                           - content-only by default
+                                           - capability-bound repo reads
+                                           - no state-volume access
 
 Git canon remains outside the kernel's unilateral authority.
 CI and source-control rules remain independent backstops.
@@ -116,7 +122,8 @@ Every tool result follows one versioned shape with:
 - `apiVersion` and `toolVersion`;
 - `decision`: `ALLOW | REFUSE | ADVISORY | APPLIED | NOOP | CONFLICT | REQUIRE_HUMAN`;
 - stable `code` and structured `violations[]`;
-- `inputDigest`, `policyDigest`, and, where applicable, `goalRevision`;
+- `requestDigest`, `inputDigest`, `policyDigest`, authenticated `principalRef` or
+  anonymous-read classification, and, where applicable, `goalRevision`;
 - an explicit `assuranceLevel`; and
 - obligations such as post-diff inspection, fresh SCM proof, or stop-report emission.
 
@@ -131,8 +138,12 @@ mediated lifecycle:
 1. `WORKTREE_MISMATCH` / `BRANCH_MISMATCH`;
 2. `PATH_OUTSIDE_ALLOWED_FILES` / `FROZEN_SURFACE_MUTATION`;
 3. `REVIEWER_MUTATION_FORBIDDEN` / `REVIEW_WORKTREE_DIRTY`;
-4. `POLICY_SELF_MODIFICATION` / `BYPASS_MODE_FORBIDDEN`; and
+4. `POLICY_SELF_MODIFICATION` / `MEDIATED_BYPASS_MODE_FORBIDDEN`; and
 5. `OWNER_LEASE_MISMATCH` / `STATE_REVISION_STALE` / `GATE_NOT_SATISFIED`.
+
+`SESSION_ENROLLMENT_MISSING`, disabled hooks, ignored plugin frontmatter, and launch
+outside the governed adapter are detected by enrollment heartbeat and CI. They are
+recorded as detected-only controls and are never counted as hook refusals.
 
 Semantic standing constraints—typed boundary errors, adequate hostile fixtures,
 linear-time parsing, mutation-test quality, and naïve-reading review—remain deterministic
@@ -150,7 +161,7 @@ reviews.
 | Parcel | Outcome | Risk / routing | Dependencies |
 |---|---|---|---|
 | FK-P0 — Canon authority and enforcement registry | Reconciles operative gate/authority statements; defines the structured constraint taxonomy and operation authority matrix; inventories every standing rule by enforcement destination. | critical / architecture-risk | none |
-| FK-P1 — Lifecycle and decision contracts | Versioned lifecycle event, `authorizeAction`, decision envelope, refusal-code, assurance-level, repository-identity, and path-normalization schemas with golden vectors. | critical / architecture-risk | FK-P0 |
+| FK-P1 — Lifecycle, admission, and decision contracts | Versioned lifecycle event, authenticated-principal/local-capability admission, `authorizeAction`, decision envelope, refusal-code, assurance-level, repository identity, content/read-capability boundary, host-path normalization split, and golden vectors. | critical / architecture-risk | FK-P0 |
 | FK-P2 — Spec-body compiler | Parses required spec sections and compiles exact non-glob Allowed Files plus frozen/forbidden surfaces; rejects ambiguity, traversal, equivalent-path, symlink/reparse escape, and missing authority. | critical / architecture-risk | FK-P0, FK-P1 |
 
 **Wave 0 exit:** contracts and fixtures are merged; exact path authority can be compiled
@@ -162,47 +173,56 @@ unresolved implementation consequence.
 | Parcel | Outcome | Risk / routing | Dependencies |
 |---|---|---|---|
 | FK-P3 — Pure dispatch decisions | Splits routing and skill resolution into deterministic no-I/O decision functions with injected validated policy and stable digests; legacy writers remain compatibility adapters. | elevated / architecture-risk | FK-P1 |
-| FK-P4 — Verifier facade | One provider-neutral library facade over immediate validators/evaluators; chain results say `STRUCTURAL`; content inputs are preferred over arbitrary host paths. | elevated / architecture-risk | FK-P1, FK-P2, FK-P3 |
+| FK-P4 — Verifier facade | One provider-neutral library facade over immediate validators/evaluators; chain results say `STRUCTURAL`; public calls are content-only or use the D19 capability-bound repository reader. | elevated / architecture-risk | FK-P1, FK-P2, FK-P3 |
 | FK-P5 — Clean-room trust-core spike | Runs the facade against an unrelated fixture repository, including positive, negative, malformed, hostile-path, and degraded-assurance cases. | elevated / standard-feature | FK-P4 |
 
 **Wave 1 exit:** every first-release evaluator is deterministic, no-I/O unless explicitly
 documented, contract-tested, and proven against an unrelated repository.
 
-### Wave 2 — Read-only MCP and container
+### Wave 2 — Stateless read-only MCP and container
 
 | Parcel | Outcome | Risk / routing | Dependencies |
 |---|---|---|---|
 | FK-P6 — Read-only MCP server | Registers the versioned read-only catalog, strict schemas, payload limits, health/readiness/version endpoints, and semantic-parity tests against the library facade. | critical / architecture-risk | FK-P4, FK-P5 |
-| FK-P7 — Reproducible Docker image and launcher | Multi-stage Node image with one dependency graph, non-root runtime, read-only root filesystem/repo mount, no external credentials, named persistent volume, explicit named-container launcher and labels. | elevated / architecture-risk | FK-P6 |
-| FK-P8 — Harness portability proof | Calls the same image from at least two independent harness shapes without package-local installs and records tool/version/policy digests. | elevated / standard-feature | FK-P7 |
+| FK-P7 — Stateless verifier image and launcher | Multi-stage Node image with one dependency graph, non-root runtime, read-only root filesystem and capability-bound repo mount, no state volume or external credentials, explicit named-container launcher and labels. | elevated / architecture-risk | FK-P6 |
+| FK-P8 — Stateless harness portability proof | Calls the same verifier image from at least two independent harness shapes without package-local installs; proves read confidentiality, records tool/version/policy/image digests, and makes no stateful-container claim. | elevated / standard-feature | FK-P7 |
 
-**Wave 2 exit:** a pinned container serves the read-only verifier to independent
-harnesses and survives a clean-room launch without package-local installation.
+**Wave 2 exit:** a pinned stateless container serves the read-only verifier to
+independent harnesses, cannot read the future state volume, and survives a clean-room
+launch without package-local installation.
 
 ### Wave 3 — Durable operational state
 
 | Parcel | Outcome | Risk / routing | Dependencies |
 |---|---|---|---|
-| FK-P9 — State schema and transition engine | SQLite migrations, events, goals, leases, artifact refs, projections, CAS revisions, idempotency, WAL/busy policy, backup/recovery, and crash/concurrency tests. | critical / architecture-risk | FK-P1 |
-| FK-P10 — Control MCP catalog | Separately registered state/control tools for get/claim/renew/release/transition/evidence/project; no external or Git mutation. | critical / architecture-risk | FK-P9, FK-P6 |
-| FK-P11 — Markdown import and projection | Explicitly imports legacy operational state without manufacturing approvals, dual-reads during shadow migration, reports divergence, and deterministically projects reviewable Markdown. | critical / architecture-risk | FK-P9, FK-P10 |
+| FK-P9 — SQLite storage and migration ABI | Owns schema migrations, events/goals/artifact tables, WAL/busy policy, transactional migration startup, newer-schema/corruption refusal, online backup/checkpoint recovery, and the storage package exports. | critical / architecture-risk | FK-P1 |
+| FK-P10 — Lease and transition engine | Owns trusted lease time, CAS revisions, principal/operation/idempotency binding, transactional event/state updates, legal transition invariants, and real process-boundary crash/concurrency tests. | critical / architecture-risk | FK-P9 |
+| FK-P11 — Legacy import and projection engine | One-time digest/commit-bound import without manufactured approvals; field-level authority reconciliation; deterministic Markdown projection; cutover epoch and divergence-stop behavior. | critical / architecture-risk | FK-P9, FK-P10 |
+| FK-P12 — Authorization policy engine | Implements `authorizeAction` over authenticated admission, repository/worktree identity, compiled scopes, roles, leases/revisions, gate evidence, outage mode, and post-diff obligations; one golden negative vector per initial refusal code. | critical / architecture-risk | FK-P2, FK-P10 |
+| FK-P13 — Admission-protected control catalog | Registers get/claim/renew/release/transition/evidence/project tools behind the distinct local capability; binds every request to principal and digest; proves anonymous verifier clients cannot list or call control tools. | critical / architecture-risk | FK-P6, FK-P10, FK-P11, FK-P12 |
+| FK-P14 — Stateful image composition and operator lifecycle | Rebuilds/composes the final image and launcher with separate read/control endpoints, non-root UID, state-volume ABI, migrations, health/version negotiation, backup/restore, bounded shutdown, and no read-surface access to state. | critical / architecture-risk | FK-P7, FK-P13 |
+| FK-P15 — Stateful restart and admission proof | Clean-room process-boundary proof of restart recovery, split-brain refusal, stale CAS, idempotency conflict, migration crash/recovery, anonymous-control denial, and digest-pinned projections. | critical / architecture-risk | FK-P14 |
 
-**Wave 3 exit:** two simulated coordinators cannot split ownership; restart reconstructs
-state from SQLite; stale revisions conflict; repeated requests are idempotent; projections
-are byte-deterministic and Git evidence wins reconciliation.
+**Wave 3 exit:** two distinct principals cannot split ownership; restart reconstructs
+state from SQLite; stale revisions and same-key/different-payload calls conflict; crash
+points and migrations recover or fail closed; projections are deterministic; and the
+field-level Git/SQLite authority matrix stops on divergence rather than overwriting.
 
 ### Wave 4 — Hook adapter and enforcement promotion
 
 | Parcel | Outcome | Risk / routing | Dependencies |
 |---|---|---|---|
-| FK-P12 — Claude lifecycle adapter, shadow mode | Capability-preflighted SessionStart/PreToolUse/PostToolUse/Stop adapter that normalizes events and records would-allow/would-refuse decisions without blocking. | critical / architecture-risk | FK-P2, FK-P10, FK-P11 |
-| FK-P13 — Bypass and outage harness | Exercises shell, subprocess, custom-tool/MCP, symlink/reparse, subagent, bypass-mode, stale-state, service-timeout, and container-restart cases; produces a coverage and limitation matrix. | critical / architecture-risk | FK-P12 |
-| FK-P14 — High-confidence refusal enforcement | Promotes only the five initial classes whose negative controls and corpus sweeps pass; implements explicit degraded read-only mode and fail-closed governed mutation. | critical / architecture-risk | FK-P13 |
-| FK-P15 — CI backstops and second-host feasibility | Mirrors exact-scope and state/evidence invariants in CI; probes Codex lifecycle capabilities and either ships a thin adapter with parity evidence or records the precise unsupported gap without overclaiming. | elevated / architecture-risk | FK-P14 |
+| FK-P16 — Claude lifecycle adapter, shadow mode | Capability-preflighted SessionStart/PreToolUse/PostToolUse/Stop adapter for the D20 matrix; enrollment heartbeat; host-path normalization; calls FK-P12 and records would-allow/would-refuse/detected-only results. Owns Claude hook registration, not Codex or shared Docker files. | critical / architecture-risk | FK-P12, FK-P13, FK-P15 |
+| FK-P17 — Bypass and outage harness | Exercises shell, subprocess, custom-tool/MCP, symlink/reparse, subagent, mediated bypass, hook non-enrollment, stale state, service timeout, and restart; produces the mechanical/detected/unsupported matrix. | critical / architecture-risk | FK-P16 |
+| FK-P18 — CI scope and state-evidence backstops | Mirrors exact-scope, enrollment, state/evidence, and dirty-reviewer invariants in CI; negative control intentionally bypasses the hook and must fail CI before enforcement can promote. Owns only its named workflow/CI integration points. | critical / architecture-risk | FK-P17 |
+| FK-P19 — High-confidence refusal enforcement | Promotes only the five mediated classes whose negative controls, corpus sweeps, authorization-engine vectors, and FK-P18 CI backstops pass; implements degraded read-only mode and fail-closed governed mutation. | critical / architecture-risk | FK-P17, FK-P18 |
+| FK-P20 — Second-host feasibility and host registration | Probes Codex lifecycle capabilities; either ships a thin adapter with process-boundary parity or records the unsupported gap. Owns Codex manifest changes; no Claude-hook or Docker-file edits. | elevated / architecture-risk | FK-P19 |
+| FK-P21 — Exit evidence manifest and clean-room proof | Produces the committed evidence manifest binding source SHA, stateless/stateful image digests, tool/schema/policy digests, host/harness versions, corpus inventory/count, reviewer-session identities, commands/results, and named mutation controls. | critical / architecture-risk | FK-P19, FK-P20 |
 
-**Wave 4 exit:** selected violations are mechanically refused on the proven host,
-unmediated changes are detected by diff/CI, service outages have bounded recovery, and
-host portability claims match demonstrated capability.
+**Wave 4 exit:** selected mediated violations are mechanically refused on the proven
+host; non-enrollment and unmediated changes are detected by heartbeat/diff/CI; CI was
+green before enforcement promotion; service outages have bounded recovery; and host
+claims plus all proof identities are bound in the evidence manifest.
 
 ## 7. Explicitly not doing in this goal
 
@@ -228,58 +248,79 @@ The goal is not complete until all scenarios have durable evidence:
 
 1. **Clean-room lint:** an unrelated repository submits valid and invalid specs; exact
    Allowed Files compile; traversal and ambiguous authority refuse.
-2. **Pure routing:** repeated identical routing and skill inputs return identical decisions
+2. **Read confidentiality:** an anonymous verifier can submit bounded content but cannot
+   read arbitrary host paths, the state volume, a second repository, a symlink/reparse
+   escape, a non-regular file, or an over-limit file.
+3. **Pure routing:** repeated identical routing and skill inputs return identical decisions
    and digests with zero repository writes.
-3. **Structural honesty:** a structurally valid but tampered receipt chain is never reported
+4. **Structural honesty:** a structurally valid but tampered receipt chain is never reported
    as cryptographically verified or Gate-3-ready.
-4. **Restart recovery:** the container restarts and reconstructs the same goal revision,
+5. **Control admission:** an anonymous/read-only client cannot list or call control tools;
+   an authenticated local principal can act only within its capability and request digest.
+6. **Restart recovery:** the container restarts and reconstructs the same goal revision,
    lease history, evidence index, and Markdown projection.
-5. **Split-brain refusal:** two coordinator identities race for one goal; exactly one lease
-   wins and stale transitions conflict.
-6. **Scope refusal:** a structured write outside Allowed Files is refused before execution;
+7. **Split-brain refusal:** two authenticated coordinator principals race for one goal;
+   exactly one lease wins and stale transitions conflict.
+8. **Scope refusal:** a structured write outside Allowed Files is refused before execution;
    shell-mediated drift is caught post-action and by CI.
-7. **Reviewer posture:** structured mutation and opaque mutation-capable shell refuse;
+9. **Reviewer posture:** structured mutation and opaque mutation-capable shell refuse;
    a dirty review worktree blocks completion.
-8. **Human gate:** a human-only state produces `REQUIRE_HUMAN` plus an agent-completable
-   stop report; the Stop hook does not loop.
-9. **Outage posture:** kernel loss blocks governed mutation, permits only recorded degraded
+10. **Human gate:** a human-only state produces `REQUIRE_HUMAN` from digest-bound Git
+    evidence plus an agent-completable stop report; the Stop hook does not loop.
+11. **Outage posture:** kernel loss blocks governed mutation, permits only recorded degraded
    read-only work, and recovers without manufactured events.
-10. **Host capability:** each supported adapter passes a real process-boundary capability
-    probe; unsupported lifecycle events are reported as gaps.
+12. **Enrollment honesty:** mediated bypass is refused when the adapter runs; missing or
+    disabled enrollment is detected by heartbeat/CI and is not reported as a refusal.
+13. **Host capability:** each supported adapter passes a real process-boundary capability
+    probe on its declared host/filesystem matrix; unsupported lifecycle events are
+    reported as gaps.
 
 ## 9. Goal exit criterion
 
 This goal exits only when:
 
-1. Waves 0–4 are merged through the required human Gate 3 process.
-2. The container exposes versioned read-only and control catalogs without per-package
-   installs, and the catalogs are not discoverable interchangeably.
-3. The clean-room and harness-portability scenarios pass against a pinned image digest.
-4. SQLite state survives restart; lease/CAS/idempotency/crash/concurrency tests pass; and
-   generated Markdown reconciles deterministically to Git evidence.
-5. The five initial refusal classes have negative tests, bypass probes, corpus sweeps, and
-   independent review evidence before enforcement is enabled.
-6. CI catches an intentionally introduced out-of-scope mutation that bypasses the hook.
+1. Waves 0–4 and FK-P0 through FK-P21 are merged through the required human Gate 3
+   process.
+2. Pinned stateless and stateful images expose versioned read-only and admission-protected
+   control catalogs without package-local installs; anonymous verifier clients cannot list
+   or call control tools and the read surface cannot access the state volume.
+3. Clean-room, read-confidentiality, stateless portability, and stateful admission scenarios
+   pass against their respective image digests on the D20 platform matrix.
+4. SQLite state survives restart; principal/lease/CAS/idempotency/crash/concurrency/
+   migration/backup-recovery tests pass at a real process boundary; generated Markdown
+   follows the field-level authority matrix and stops on divergence.
+5. The five initial mediated refusal classes have authorization-engine vectors, negative
+   tests, bypass probes, corpus sweeps, and independent review evidence before enforcement
+   is enabled; hook non-enrollment is separately proven detectable.
+6. CI backstops are green before enforcement promotion and catch an intentionally
+   introduced out-of-scope mutation plus missing enrollment that bypass the hook.
 7. No first-release tool can mint approval, independent-verification, merge, or closure
-   authority, and no container credential permits external mutation.
-8. The final report separates mechanically enforced, detected-only, CI-enforced,
-   human-judgment, unsupported-host, and deferred-receipt controls.
+   authority; human-gate satisfaction is evidence-derived; and no container credential
+   permits external mutation.
+8. A committed evidence manifest binds source SHA, image/tool/schema/policy digests,
+   host/harness versions, corpus inventory/count, reviewer-session distinction, commands,
+   results, and named mutation controls.
+9. The final report separates mechanically enforced, detected-only, CI-enforced,
+   human-judgment, unsupported-host, and deferred-receipt controls without claiming Codex
+   or native-Linux-host enforcement absent process-boundary evidence.
 
 ## 10. Human gates and standing authorizations requested
 
 ### Gate 1 — charter ratification
 
-**CLEARED 2026-08-31 — nondelegable developer ratification recorded.** Ratification
-locks D1–D17, the parcel graph, first-release boundary, exit criterion, and stop
-conditions.
+**ORIGINAL GATE 1 CLEARED 2026-08-31 — nondelegable developer ratification recorded.**
+The fresh plan review then returned six decision-changing BLOCKERs. A scoped Gate 1
+re-open is pending for amended D3, D7–D9, D13–D17, new D18–D20, FK-P0–FK-P21, the
+affected wave exits, scenarios, and goal exit criteria. Unaffected decisions remain
+ratified.
 
 ### Gate 2 — parcel dispatch
 
-**AUTHORIZED 2026-08-31 as a standing Gate 2 grant:** after the plan-level adversarial
-review is triaged and any decision-changing amendment is re-ratified, the coordinator may
-shape and dispatch FK-P0 through FK-P15 in dependency order. Authorization is void for any
-parcel whose spec changes a locked decision, widens external effects, or omits exact
-Allowed Files.
+**AUTHORIZED 2026-08-31 as a standing Gate 2 grant, CURRENTLY SUSPENDED by the scoped
+Gate 1 re-open:** after the amended decisions and graph are re-ratified, the coordinator
+may shape and dispatch FK-P0 through FK-P21 in dependency order. Authorization is void
+for any parcel whose spec changes a locked decision, widens external effects, or omits
+exact Allowed Files.
 
 ### Gate 3 — merge
 
@@ -292,7 +333,8 @@ present the green chain for the human merge action.
 The coordinator stops and reports if any of the following occurs:
 
 - Gate 1 is not explicit or a locked decision becomes ambiguous;
-- a fresh plan review changes D1–D17 or the exit criterion without re-ratification;
+- a fresh plan review changes a locked decision, parcel graph, or exit criterion without
+  scoped re-ratification;
 - an existing goal or parcel owns a required serialization point and no safe sequence is
   ratified;
 - implementation requires changing ratified Foreman stage contracts outside a named
@@ -304,6 +346,9 @@ The coordinator stops and reports if any of the following occurs:
 - a proposed tool can manufacture human approval, independent-verifier evidence, merge
   authorization, or closure authority;
 - a container requires Jira, SCM, cloud, signing, Docker-socket, or broad-host access;
+- a control request relies on self-asserted identity or a read-only client can discover or
+  call control tools;
+- a read-only request can select an arbitrary host path or access the state volume;
 - state migration would manufacture or infer a historical approval/authorization;
 - a security boundary cannot be closed inside its parcel;
 - the same tripwire or rework cap fires as defined by the parcel contract;
@@ -320,30 +365,42 @@ The coordinator stops and reports if any of the following occurs:
 - Plugin manifests, marketplace metadata, root workflow files, shared package manifests,
   receipt schemas, `SPEC-CONVENTION.md`, and barrel exports are serialization points and
   are assigned to only one active parcel at a time.
+- FK-P6 owns the read-only server package manifest; FK-P7 owns stateless Docker/launcher
+  files; FK-P9 owns state migrations/storage exports; FK-P14 owns final stateful
+  Docker/launcher composition; FK-P16 owns Claude hook registration and the Claude
+  manifest only; FK-P18 owns its exact CI files; FK-P20 owns Codex manifest changes.
+  Other parcels emit fragments/fixtures and do not edit those serialization points.
 - `plugin-packaging-and-scaffolder` remains a separate goal. Before any manifest or
   packaging edit, the coordinator reconciles that goal's live status and ownership.
 - The first image is built from committed source and pinned policies. It does not read
   mutable policy from arbitrary target repositories unless a contract explicitly allows a
   validated, digest-bound override.
+- First-release enforcement evidence targets Windows 11 + Docker Desktop + Claude Code.
+  POSIX, drive-letter, UNC, case-folding, separator, reserved-name, symlink, and reparse
+  vectors are contract fixtures, but no native-Linux-host or Codex enforcement claim is
+  made without a separate real process-boundary run.
 
 ## 13. Gate 1 decision list
 
 Ratifying this charter confirms:
 
-1. the authority split and separate `foreman-kernel` goal (D1–D3);
+1. the authority split, authenticated control admission, and separate `foreman-kernel`
+   goal (D1–D3, D18);
 2. the bounded first-release scope and no-generic-mint boundary (D4–D6);
-3. portable MCP with host-specific adapters and shadow-first enforcement (D7–D8);
-4. preserved human gates (D9);
+3. portable MCP with the bounded D20 platform matrix, host-specific adapters,
+   enrollment detection, and shadow-first enforcement (D7–D8, D20);
+4. preserved human gates and evidence-derived human-gate state (D9);
 5. the Allowed-Files compiler and rule-retirement standard (D10–D13);
-6. durable SQLite state, credential-free first container, and pure/effect separation
-   (D14–D16);
-7. versioned typed tool contracts (D17);
-8. the FK-P0 through FK-P15 dependency graph and Wave 0–4 exit criteria;
-9. the explicit out-of-scope list and ten integration scenarios;
+6. durable field-authoritative SQLite state, local control capability, read-volume
+   isolation, and pure/effect separation (D14–D16);
+7. versioned typed tool contracts plus the read-confidentiality boundary (D17, D19);
+8. the FK-P0 through FK-P21 dependency graph and Wave 0–4 exit criteria;
+9. the explicit out-of-scope list and thirteen integration scenarios;
 10. standing Gate-2 dispatch authorization under the stated contingencies; and
 11. nondelegated human Gate 3 for every merge.
 
-**Gate 1 record:** Clinton Morgan explicitly ratified this list and authorized the
-contingent Gate 2 dispatch grant on 2026-08-31. No parcel may be shaped or dispatched
-until the required plan-level adversarial review is triaged; any decision-changing
-finding reopens Gate 1 only for the affected decision.
+**Gate 1 record:** Clinton Morgan explicitly ratified the original list and authorized
+the contingent Gate 2 dispatch grant on 2026-08-31. The required fresh review changed
+only the decisions and graph enumerated above. No parcel may be shaped or dispatched
+until the developer explicitly re-ratifies this scoped amendment; the original Gate 2
+grant resumes automatically only after that re-ratification.
