@@ -368,6 +368,18 @@ separate provenance rule and never replaces the thirteen operative standing-rule
 The permission-profile enforcement reconciliation uses charter D7's loaded/enrollment boundary,
 not D9's human-gate boundary.
 
+Inventory coverage and authority-rule publication are deliberately different. Every discovered
+semantic source item is inventoried, but only a genuinely normative unit becomes an
+`AuthorityRule`. Headings, metadata, isolated schema scalar leaves, structural AST coverage
+items, explanatory fragments, and other non-normative items use the existing explicit exclusion
+disposition plus a specific rationale. They are still source-bound and sweep-visible; they do not
+receive invented authority semantics. Every published rule appears in a closed curated identity
+manifest keyed by exact source/item with its human-readable subject, claim, classification, and
+applicability. There is no fallback subject/claim generator. A subject or claim containing an
+item hash/suffix, `requires-<hash>`, or a source-ID-plus-item namespace is invalid. Validation
+rejects any rule absent from the curated manifest and any manifest entry whose basis text does
+not substantively support its semantics.
+
 `EvidenceRef` is exactly `{ kind, path, digest }`, where `kind` is
 `predicate-contract | negative-test | corpus-sweep | independent-bypass`, `path` is an exact
 repo-relative non-glob path, and `digest` is a SHA-256 over that evidence artifact's bytes. The
@@ -509,6 +521,14 @@ specific commit tree. Missing Git metadata, a blob/tree/tag substituted for a co
 unresolvable object, or an unbound missing-path commit is `MIGRATION_EVIDENCE_INVALID` and fails
 closed.
 
+Exact reconciliation binding applies to **every** shipped record, including each
+`registry-rework-*` migration, not only the original six topics. A closed reconciliation manifest
+binds the complete canonical record digest for every reconciliation ID. No extra, duplicated,
+removed, reordered-as-set, or substituted evidence entry is allowed. Rework command evidence is
+exactly bound across tool, toolVersion, commandId, inputDigest, resultDigest, exitCode, and
+actorClass; retaining one expected digest while changing provenance or appending a self-hashed
+diagnostic fails.
+
 ### Validator and CLI boundary
 
 - Export pure `validateRegistry(document)` and a read-only
@@ -537,6 +557,10 @@ closed.
   decisions, gates, authority, dispatch grants, stop conditions, and newly added unnumbered prose
   all receive the same discovery treatment. Headings alone are never coverage, and keyword
   allowlists do not decide whether natural prose is binding.
+- Markdown comment handling removes only the exact characters inside properly paired HTML comment
+  spans and preserves visible text before and after a same-line comment. Multi-line comment state
+  is tracked until the matching close. A line is excluded only when no visible normalized text
+  remains. Fenced code remains non-operative. A closed comment prefix cannot hide visible prose.
 - TypeScript discovery uses the TypeScript compiler syntax tree, not a regular-expression list of
   declaration spellings. Inventory every non-import top-level statement and each complete
   function/method/constructor/accessor/arrow body, including function, const, let, var, class,
@@ -562,7 +586,10 @@ closed.
 - Runtime dependencies are exactly `ajv`, `yaml`, and `typescript`; `typescript` is pinned to
   `7.0.2` and supplies the syntax-tree inventory. A dependency-allowlist test enforces the exact
   set. No general parser implemented with declaration-matching regular expressions satisfies the
-  TypeScript discovery contract.
+  TypeScript discovery contract. Runtime imports are operative inventory items: side-effect
+  imports and every module specifier/binding of value imports are set-bound, so changing or adding
+  one fails while reordering the identical import set remains green. Only declarations proven
+  `import type`/type-only by the syntax tree are excluded.
 
 ## Allowed Files
 
@@ -695,6 +722,29 @@ a competing owner for `authority-registry`, or relies on self-asserted authority
   covers coordinator/merge/state-transition release gating; hard rule 13 covers coordinator
   multi-session state-transition before closure; and hard rules 14 and 15 cover their verification
   and release-claim contexts rather than only external write or closure.
+
+  Applicability is never narrowed merely to make one exemplar query pass. For standing/PDD rules,
+  goal is `all-foreman-goals` and host is `any` unless the source expressly narrows them. An axis
+  the source does not narrow uses `any`; `any` is the correct representation for a universal
+  axis, not a prohibited shortcut. Negative queries exist only where the source text expressly
+  excludes a role/stage/operation/host. The exact minimum semantic coverage is:
+
+  - standing builder-universal rules 1-5 and 13 cover builder work across stages/operations;
+    conditional rules 6-7 retain their named condition but do not invent an unrelated stage;
+  - standing reviewer rules 8-11 cover reviewer/adversarial work across relevant operations,
+    including `control-call` for live-process probing and mutation checks; standing rule 12 covers
+    coordinator deterministic/adversarial Stage-D/E source-inventory, repo-read, and repo-mutation
+    checks as its own text states;
+  - PDD rules 1, 3, 4, 5, and 11 include shaper/shaping and builder/step-zero/build contexts;
+    rule 2 covers coordinator, shaper, builder, and reviewer across their parcel stages; rule 7
+    includes builder/build verification; rules 8-10 retain the scopes above; and
+  - PDD rules 12-15 include coordinator/merge/state-transition or verification/release contexts
+    required by their text, with reviewer/CI participation where the rule names security or
+    evidence verification.
+
+  Tests enumerate every concrete query in each declared axis cross-product and assert resolution
+  for the curated rule. They also include the named natural queries from review, rather than only
+  comparing the registry against a second hardcoded copy of itself.
 - Reconciliation negative controls mutate each normalized `scopedDisposition` and
   `unresolvedConsequence`, sweep a copied corpus without Git metadata, substitute a blob for a
   commit, and bind a missing path to the wrong commit; every case fails closed.
@@ -706,6 +756,13 @@ a competing owner for `authority-registry`, or relies on self-asserted authority
   export/method/arrow forms, add unnumbered prose under locked decisions, and insert a nested
   branch into an existing function. All operative additions fail; comment-only, whitespace,
   import-order, and Markdown-wrap-only changes remain green.
+- Markdown controls place visible binding prose before and after same-line HTML comments and
+  across multi-line comments. TypeScript controls add/retarget side-effect and value imports;
+  those fail, while type-only imports and reordering an unchanged runtime-import set stay green.
+- Curated-rule controls reject every hash-derived/fallback subject or claim and prove every
+  non-normative inventory item is explicitly excluded rather than emitted as a pseudo-rule.
+- Reconciliation controls mutate, duplicate, append, remove, and substitute evidence in both the
+  original six records and every `registry-rework-*` record; all fail exact record binding.
 - Source-manifest controls mutate each `snapshotEvidence` commit/hash field and prove failure,
   while current unrelated bytes outside semantic locators do not become a full-file byte freeze.
 - Determinism/write-sentinel test: repeated validate/sweep calls produce identical ordered
