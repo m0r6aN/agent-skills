@@ -39,8 +39,9 @@ Each rule independently binds:
 lines, joins remaining lines with one ASCII space, and collapses remaining Unicode whitespace.
 `lineHint` is review assistance only and is excluded from identity and digests.
 
-The rule `bindingDigest` covers the complete normative record: subject, claim, statement, source
-references, applicability, severity, classification, decision, refusal code, owner, assurance,
+The rule `bindingDigest` covers the complete normative record: subject, claim, statement, the
+single source-contained `authorityBasisRef`, source references, applicability, severity,
+classification, decision, refusal code, owner, assurance,
 paired rules, retirement state, and retirement evidence, as well as the rule ID.
 Canonical JSON uses NFC strings, recursively sorted object keys, preserved array order, and no
 insignificant whitespace. These digests are integrity checks only—not receipts, signatures,
@@ -103,9 +104,10 @@ Six required typed records reconcile without rewriting historical sources:
 was edited or globally invalidated. The missing provenance record stays `open`, preserves all
 thirteen standing rules, and prevents their retirement.
 
-A seventh `superseded-by-amendment` record binds this rework to the rejected prior registry
-commit, the pinned source snapshot, the prior binding-manifest digest, the superseding manifest,
-and a complete controlling `SourceRef`. A future coordinated identity/location/value change must
+Two additional `superseded-by-amendment` records bind the R2 and R4 reworks to their prior
+registry commits, the pinned source snapshot, prior binding-manifest digests, superseding
+manifests, and complete controlling `SourceRef` values. A future coordinated
+identity/location/value change must
 ship another coordinator-ratified typed migration; rewriting internally consistent YAML is not
 enough.
 
@@ -143,6 +145,10 @@ The sweep accepts only exact repo-relative source paths below the supplied root 
 absolute/traversal paths, containment escape, duplicate normalized paths, symlink/reparse targets,
 non-regular files, missing or duplicate locators, and changed normalized values. It does not use
 the clock, randomness, network, environment-derived identity, or Git mutation.
+Git-backed reconciliation evidence additionally requires the exact root of a real worktree,
+commit-typed objects, and commit-bound canonical missing-path evidence. Curated goal binding
+sections and inventoried TypeScript/JSON-schema sources use complete prose/construct discovery;
+this is a bounded source-aware inventory, not a general Markdown or TypeScript compiler.
 
 Stable codes are closed to those exported by `RESULT_CODES` in `src/types.ts`.
 

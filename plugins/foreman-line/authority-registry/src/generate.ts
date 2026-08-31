@@ -342,6 +342,188 @@ function tableRows(content: string, keys: readonly string[]): LocatedText[] {
   })
 }
 
+const BINDING_SECTIONS: Readonly<Record<string, readonly string[]>> = {
+  'fk-charter': [
+    '## 3. Authority hierarchy',
+    '## 10. Human gates and standing authorizations requested',
+    '## 11. Stop conditions',
+    '## 13. Gate 1 decision list',
+  ],
+  'fk-loop-directive': [
+    '## COORDINATOR OWNERSHIP — read before dispatching anything',
+    '## Standing authorizations and their limits',
+    '## Per-parcel algorithm',
+    '## Stop conditions',
+  ],
+}
+
+function markdownBindingBlocks(content: string, sourceId: string): LocatedText[] {
+  const targets = new Set(BINDING_SECTIONS[sourceId] ?? [])
+  if (targets.size === 0) return []
+  const lines = content.replace(/\r\n?/g, '\n').split('\n')
+  const ranges: { start: number; end: number }[] = []
+  for (let index = 0; index < lines.length; index += 1) {
+    const heading = /^(#{2,6})\s+.+/.exec(lines[index] ?? '')
+    if (heading === null || !targets.has((lines[index] ?? '').trim())) continue
+    const level = heading[1]?.length ?? 6
+    let end = lines.length
+    for (let cursor = index + 1; cursor < lines.length; cursor += 1) {
+      const next = /^(#{1,6})\s+/.exec(lines[cursor] ?? '')
+      if (next !== null && (next[1]?.length ?? 6) <= level) {
+        end = cursor
+        break
+      }
+    }
+    ranges.push({ start: index + 1, end })
+  }
+  const blocks: LocatedText[] = []
+  for (const range of ranges) {
+    let cursor = range.start
+    while (cursor < range.end) {
+      const line = lines[cursor] ?? ''
+      if (line.trim() === '' || /^#{1,6}\s+/.test(line)) {
+        cursor += 1
+        continue
+      }
+      if (/^\s*\|/.test(line)) {
+        if (!/^\s*\|?\s*:?-{3}/.test(line)) {
+          blocks.push({
+            locator: { kind: 'line-excerpt', anchor: line, lineHint: cursor + 1 },
+            text: line,
+          })
+        }
+        cursor += 1
+        continue
+      }
+      const list = /^\s*(?:[-*+] |\d+\. )/.test(line)
+      let end = cursor + 1
+      while (end < range.end) {
+        const next = lines[end] ?? ''
+        if (next.trim() === '' || /^#{1,6}\s+/.test(next) || /^\s*\|/.test(next)) break
+        if (list && /^\s*(?:[-*+] |\d+\. )/.test(next)) break
+        end += 1
+      }
+      const text = lines.slice(cursor, end).join('\n')
+      blocks.push({
+        locator: { kind: 'line-excerpt', anchor: text, lineHint: cursor + 1 },
+        text,
+      })
+      cursor = end
+    }
+  }
+  return blocks
+}
+
+function maskNonCode(content: string): string {
+  let output = ''
+  let quote: string | null = null
+  let lineComment = false
+  let blockComment = false
+  for (let index = 0; index < content.length; index += 1) {
+    const char = content[index] ?? ''
+    const next = content[index + 1] ?? ''
+    if (lineComment) {
+      if (char === '\n') {
+        lineComment = false
+        output += '\n'
+      } else output += ' '
+      continue
+    }
+    if (blockComment) {
+      if (char === '*' && next === '/') {
+        output += '  '
+        index += 1
+        blockComment = false
+      } else output += char === '\n' ? '\n' : ' '
+      continue
+    }
+    if (quote !== null) {
+      if (char === '\\') {
+        output += '  '
+        index += 1
+      } else if (char === quote) {
+        output += ' '
+        quote = null
+      } else output += char === '\n' ? '\n' : ' '
+      continue
+    }
+    if (char === '/' && next === '/') {
+      output += '  '
+      index += 1
+      lineComment = true
+    } else if (char === '/' && next === '*') {
+      output += '  '
+      index += 1
+      blockComment = true
+    } else if (char === '"' || char === "'" || char === '`') {
+      output += ' '
+      quote = char
+    } else output += char
+  }
+  return output
+}
+
+function tsConstructs(content: string): LocatedText[] {
+  const original = content.replace(/\r\n?/g, '\n').split('\n')
+  const masked = maskNonCode(content.replace(/\r\n?/g, '\n')).split('\n')
+  const result: LocatedText[] = []
+  for (let start = 0; start < masked.length; start += 1) {
+    const line = masked[start] ?? ''
+    const match = /^(?:export\s+)?(?:(?:async\s+)?function|const)\s+([A-Za-z_$][\w$]*)\b/.exec(line)
+    if (match === null) continue
+    let curly = 0
+    let square = 0
+    let paren = 0
+    let opened = false
+    let end = start
+    for (; end < masked.length; end += 1) {
+      for (const char of masked[end] ?? '') {
+        if (char === '{') curly += 1
+        else if (char === '}') curly -= 1
+        else if (char === '[') square += 1
+        else if (char === ']') square -= 1
+        else if (char === '(') paren += 1
+        else if (char === ')') paren -= 1
+      }
+      opened ||=
+        masked
+          .slice(start, end + 1)
+          .join('\n')
+          .includes('=') || curly > 0
+      if (opened && curly === 0 && square === 0 && paren === 0) break
+    }
+    const anchor = `ts-construct:${match[1] as string}`
+    result.push({
+      locator: { kind: 'symbol', anchor, lineHint: start + 1 },
+      text: original.slice(start, end + 1).join('\n'),
+    })
+    start = end
+  }
+  return result
+}
+
+function jsonConstraints(content: string): LocatedText[] {
+  const root = JSON.parse(content) as unknown
+  const result: LocatedText[] = []
+  const visit = (value: unknown, path: string): void => {
+    if (Array.isArray(value) || value === null || typeof value !== 'object') {
+      result.push({
+        locator: { kind: 'symbol', anchor: `json-pointer:${path}`, lineHint: 1 },
+        text: canonicalJson(value),
+      })
+      return
+    }
+    for (const key of Object.keys(value as Record<string, unknown>).sort()) {
+      visit(
+        (value as Record<string, unknown>)[key],
+        `${path}/${key.replace(/~/g, '~0').replace(/\//g, '~1')}`,
+      )
+    }
+  }
+  visit(root, '')
+  return result
+}
+
 function itemIdFor(definition: SourceDefinition, located: LocatedText): string {
   if (definition.sourceId === 'fk-charter' && located.locator.kind === 'table-row') {
     return `item.${located.locator.anchor.toLowerCase()}`
@@ -432,6 +614,7 @@ function classificationFor(sourceId: string, itemId: string): RuleClassification
     'item.hard-rule-13': 'narrative-provenance',
     'item.hard-rule-14': 'narrative-provenance',
     'item.hard-rule-15': 'ci-static-check',
+    'item.b1ac4aa9eddf': 'pre-action-refusal',
   }
   if (explicit[itemId] !== undefined) return explicit[itemId]
   if (sourceId === 'spec-linter-validator' || sourceId === 'spec-linter-cli')
@@ -450,6 +633,74 @@ function authorityIdentityFor(
   authoritySubject: string
   authorityClaim: string
 } {
+  const exact: Readonly<Record<string, readonly [string, string]>> = {
+    'fk-charter:item.d2': [
+      'canon.operational-authority-boundary',
+      'git-canon-sqlite-operational-split',
+    ],
+    'fk-charter:item.d3': [
+      'kernel.surface-admission-separation',
+      'read-control-admission-separated',
+    ],
+    'fk-charter:item.d18': ['kernel.authorize-action-owner', 'provider-neutral-policy-engine'],
+    'fk-charter:item.d19': ['repository.read-confidentiality', 'admission-bound-contained-read'],
+    'foreman-line-plan:item.two-gate-thesis': ['gate.namespace', 'historical-two-stage-gates'],
+    'approval-readme:item.a7e48d46fe37': ['gate.namespace', 'historical-two-stage-gates'],
+    'approval-readme:item.4261d18b3243': ['gate.namespace', 'historical-two-stage-gates'],
+    'approval-readme:item.ff6f38f088ae': ['gate.namespace', 'historical-two-stage-gates'],
+    'fk-charter:item.d9': ['gate.namespace', 'fk-three-gate-ownership'],
+    'coordinator-pattern:item.f7686ab58db7': ['gate3.merge-authority', 'contingent-delegation'],
+    'spec-convention:item.022fc00afe7b': ['gate3.merge-authority', 'human-unless-live-proof'],
+    'fk-charter:item.b1ac4aa9eddf': ['gate3.merge-authority', 'human-owned-nondelegated'],
+    'foreman-line-plan:item.c92333c21e64': ['gate3.merge-authority', 'human-owned-nondelegated'],
+    'spec-convention:item.ac5ff7afd06f': ['spec.mutation-authority', 'surfaces-routing-only'],
+    'spec-convention:item.5145ab15549c': [
+      'spec.mutation-authority',
+      'exact-allowed-files-required',
+    ],
+    'spec-convention:item.fd82127bf9f9': [
+      'spec.mutation-authority',
+      'exact-allowed-files-required',
+    ],
+    'spec-linter-validator:item.80563af1788e': [
+      'spec.mutation-authority',
+      'frontmatter-only-no-body-compiler',
+    ],
+    'fk-charter:item.d10': ['spec.mutation-authority', 'exact-allowed-files-required'],
+  }
+  const exactIdentity = exact[`${sourceId}:${itemId}`]
+  if (exactIdentity !== undefined) {
+    return { authoritySubject: exactIdentity[0], authorityClaim: exactIdentity[1] }
+  }
+  if (
+    sourceId === 'spec-frontmatter-schema' ||
+    sourceId === 'spec-linter-validator' ||
+    sourceId === 'spec-linter-readme' ||
+    (sourceId === 'spec-convention' && itemId === 'item.e6f5fa8543a1')
+  ) {
+    return {
+      authoritySubject: 'permission-profile.registry-state',
+      authorityClaim:
+        sourceId === 'spec-linter-readme' || sourceId === 'spec-convention'
+          ? 'deferred-profile-registry'
+          : 'six-profile-live-enum',
+    }
+  }
+  if (sourceId.startsWith('permission-profiles-') || sourceId === 'permission-profiles-registry') {
+    return {
+      authoritySubject: 'permission-profile.enforcement-bound',
+      authorityClaim:
+        sourceId === 'permission-profiles-validator' || sourceId === 'permission-profiles-registry'
+          ? 'loaded-session-mediated-denial'
+          : 'unenrolled-or-shell-residual',
+    }
+  }
+  if (sourceId === 'standing-constraints') {
+    return {
+      authoritySubject: 'standing.provenance',
+      authorityClaim: 'inline-rules-required-until-provenance-restored',
+    }
+  }
   const atomicClaims: Readonly<Record<string, string>> = {
     'item.d1': 'separate-foreman-kernel-goal',
     'item.d2': 'shared-schema-boundary',
@@ -668,9 +919,41 @@ function applicabilityFor(
       hosts: allHosts,
     },
     'item.hard-rule-10': {
-      roles: ['coordinator', 'builder'],
-      stages: ['step-zero'],
-      operations: ['spec-mutation'],
+      roles: ['coordinator', 'shaper', 'builder', 'reviewer', 'ci'],
+      stages: [
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+      ],
+      operations: allOperations,
+      hosts: allHosts,
+    },
+    'item.b1ac4aa9eddf': {
+      roles: ['coordinator'],
+      stages: ['merge'],
+      operations: ['state-transition'],
+      hosts: allHosts,
+    },
+    'item.f7686ab58db7': {
+      roles: ['coordinator'],
+      stages: ['merge'],
+      operations: ['state-transition'],
+      hosts: allHosts,
+    },
+    'item.022fc00afe7b': {
+      roles: ['coordinator'],
+      stages: ['merge'],
+      operations: ['state-transition'],
+      hosts: allHosts,
+    },
+    'item.c92333c21e64': {
+      roles: ['coordinator'],
+      stages: ['merge'],
+      operations: ['state-transition'],
       hosts: allHosts,
     },
     'item.hard-rule-11': {
@@ -885,6 +1168,9 @@ function buildSource(definition: SourceDefinition): {
     text: anchor,
   }))
   const curated = [...baseLocated, ...additional]
+  curated.push(...markdownBindingBlocks(content, definition.sourceId))
+  if (definition.path.endsWith('.ts')) curated.push(...tsConstructs(content))
+  if (definition.path.endsWith('.json')) curated.push(...jsonConstraints(content))
   if (definition.sourceId === 'fk-charter') {
     curated.unshift(
       ...tableRows(
@@ -947,6 +1233,7 @@ function buildSource(definition: SourceDefinition): {
       ...authorityIdentityFor(definition.sourceId, itemId),
       normalizedStatement: normalizedExcerpt,
       sourceRefs: [sourceRef],
+      authorityBasisRef: sourceRef,
       applicability: applicabilityFor(classification, definition.scope, itemId),
       severity: classification === 'pre-action-refusal' ? 'critical' : 'medium',
       classification,
@@ -1099,10 +1386,16 @@ function reconciliationMany(
     digest: sha256(canonicalJson(reference)),
   }))
   if (missingPath !== undefined) {
+    const missingReference = canonicalJson({ commit: SNAPSHOT, path: missingPath })
+    observedEvidence.push({
+      kind: 'git-commit' as const,
+      reference: SNAPSHOT,
+      digest: sha256(execFileSync('git', ['cat-file', '-p', SNAPSHOT], { cwd: repoRoot })),
+    })
     observedEvidence.push({
       kind: 'missing-path' as const,
-      reference: missingPath,
-      digest: sha256(missingPath),
+      reference: missingReference,
+      digest: sha256(missingReference),
     })
   }
   return {
@@ -1150,9 +1443,12 @@ function requiredReconciliations(
     get('approval-readme', 'item.ff6f38f088ae'),
   ]
   const charterGate = get('fk-charter', 'item.d9')
+  const charterGate3 = get('fk-charter', 'item.b1ac4aa9eddf')
   const charterAllowed = get('fk-charter', 'item.d10')
+  const charterOperationalBoundary = get('fk-charter', 'item.d2')
   const coordinatorGate3 = get('coordinator-pattern', 'item.f7686ab58db7')
   const conventionGate3 = get('spec-convention', 'item.022fc00afe7b')
+  const historicalGate3 = get('foreman-line-plan', 'item.c92333c21e64')
   const conventionProfile = get('spec-convention', 'item.e6f5fa8543a1')
   const conventionSurfaces = get('spec-convention', 'item.ac5ff7afd06f')
   const conventionAllowed = get('spec-convention', 'item.5145ab15549c')
@@ -1204,6 +1500,7 @@ function requiredReconciliations(
   )
   const priorManifest = '1fe3a7c66241904445021c97db68065961a3bf5beceb654faff4b552b4de79b2'
   const supersedingManifest = '48a82df7d6da19352e4c9d2d99195835743a27f163a5d13a4f8d5b2a76a75a61'
+  const r4Manifest = '375ea566b2858d3204d17e0625332167a373b555db6d3a8b741af88f1390e082'
   const commandEvidence = (commandId: string, inputDigest: string, resultDigest: string) =>
     canonicalJson({
       tool: '@foreman-line/authority-registry',
@@ -1233,8 +1530,8 @@ function requiredReconciliations(
     reconciliationMany(
       'gate3-delegation',
       'Generic contingent Gate 3 delegation versus FK nondelegated human merge authority.',
-      [coordinatorGate3.ref, conventionGate3.ref, charterGate.ref],
-      [charterGate.ruleId],
+      [coordinatorGate3.ref, conventionGate3.ref, historicalGate3.ref, charterGate3.ref],
+      [charterGate3.ruleId],
       'resolved-for-fk',
       'Goal-charter scope withholds Gate 3 delegation for Foreman Kernel.',
       'Generic delegation text remains valid only outside the controlling FK scope.',
@@ -1332,6 +1629,56 @@ function requiredReconciliations(
       migrationStatus: 'superseded-by-amendment',
       supersedingEvidence: charterAllowed.ref,
     },
+    {
+      reconciliationId: 'registry-rework-9285945',
+      topic: 'R3 registry bindings superseded by the coordinator-ratified FK-P0 R4 amendment.',
+      observedRefs: [charterOperationalBoundary.ref],
+      observedEvidence: [
+        {
+          kind: 'git-commit',
+          reference: '87237a868a0da8e1a57fc8ce9d400509b2a09c5d',
+          digest: sha256(
+            execFileSync('git', ['cat-file', '-p', '87237a868a0da8e1a57fc8ce9d400509b2a09c5d'], {
+              cwd: repoRoot,
+            }),
+          ),
+        },
+        {
+          kind: 'git-commit',
+          reference: SNAPSHOT,
+          digest: sha256(execFileSync('git', ['cat-file', '-p', SNAPSHOT], { cwd: repoRoot })),
+        },
+        {
+          kind: 'command-result',
+          reference: commandEvidence(
+            'registry-binding-manifest-r3',
+            sha256(SNAPSHOT),
+            supersedingManifest,
+          ),
+          digest: sha256(
+            commandEvidence('registry-binding-manifest-r3', sha256(SNAPSHOT), supersedingManifest),
+          ),
+        },
+        {
+          kind: 'command-result',
+          reference: commandEvidence(
+            'superseding-binding-manifest-r4',
+            supersedingManifest,
+            r4Manifest,
+          ),
+          digest: sha256(
+            commandEvidence('superseding-binding-manifest-r4', supersedingManifest, r4Manifest),
+          ),
+        },
+      ],
+      authoritativeRuleIds: [charterOperationalBoundary.ruleId],
+      scopedDisposition:
+        'The R4 source-bound semantic and discovery contract supersedes the R3 registry bindings in FK scope.',
+      unresolvedConsequence:
+        'Future binding changes require another typed prior-to-new migration record.',
+      migrationStatus: 'superseded-by-amendment',
+      supersedingEvidence: charterOperationalBoundary.ref,
+    },
   ]
 }
 
@@ -1346,17 +1693,15 @@ function buildRegistry(): AuthorityEnforcementRegistry {
     sources,
     rules,
     operationAuthority: operationAuthority({
-      gate1: [
-        refFor(sources, 'fk-charter', 'item.d9'),
-        refFor(sources, 'fk-charter', 'item.4f436ba95f57'),
-      ],
+      gate1: [refFor(sources, 'fk-charter', 'item.b1ac4aa9eddf')],
       gate2: [
         refFor(sources, 'fk-charter', 'item.afbcffd2d557'),
         refFor(sources, 'fk-loop-directive', 'item.bfffee6d7c1f'),
       ],
       gate3: [
-        refFor(sources, 'fk-charter', 'item.ef74f9b402bf'),
+        refFor(sources, 'fk-charter', 'item.b1ac4aa9eddf'),
         refFor(sources, 'fk-loop-directive', 'item.7eb6018d9e57'),
+        refFor(sources, 'fk-loop-directive', 'item.2743c2f8c558'),
       ],
       verification: [
         refFor(sources, 'fk-charter', 'item.d11'),
@@ -1417,7 +1762,9 @@ function writeFixtures(full: AuthorityEnforcementRegistry): void {
   writeYaml(join(fixturesDir, 'reject-duplicate-rule.yaml'), duplicate)
 
   const contradiction = structuredClone(pass)
-  const original = contradiction.rules[0] as AuthorityRule
+  const original = contradiction.rules.find(
+    (candidate) => candidate.ruleId === 'rule.fk-charter.d3',
+  ) as AuthorityRule
   const conflictingBase: AuthorityRule = {
     ...structuredClone(original),
     ruleId: `${original.ruleId}.conflict`,
@@ -1425,7 +1772,9 @@ function writeFixtures(full: AuthorityEnforcementRegistry): void {
   }
   const conflicting = { ...conflictingBase, bindingDigest: bindingDigestFor(conflictingBase) }
   ;(contradiction.rules as AuthorityRule[]).push(conflicting)
-  const conflictingItem = contradiction.sources[0]?.inventoryItems[0]
+  const conflictingItem = contradiction.sources
+    .find((source) => source.sourceId === 'fk-charter')
+    ?.inventoryItems.find((item) => item.itemId === 'item.d3')
   if (conflictingItem === undefined) throw new Error('contradiction fixture item is missing')
   ;(conflictingItem.ruleIds as string[]).push(conflicting.ruleId)
   writeYaml(join(fixturesDir, 'reject-contradictory-authority.yaml'), contradiction)

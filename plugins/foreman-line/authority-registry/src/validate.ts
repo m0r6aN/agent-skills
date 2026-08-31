@@ -15,6 +15,7 @@ import {
   GOAL_SCOPES,
   HOST_POSTURES,
   OPERATION_SCOPES,
+  type OperationId,
   PRINCIPAL_CLASSES,
   type RegistrySummary,
   type ResultCode,
@@ -37,7 +38,7 @@ const REQUIRED_RECONCILIATIONS = [
   'permission-profile-enforcement-bound',
   'missing-provenance-reference',
 ] as const
-const REQUIRED_REWORK_MIGRATION = 'registry-rework-6eb1c25'
+const REQUIRED_REWORK_MIGRATIONS = ['registry-rework-6eb1c25', 'registry-rework-9285945'] as const
 const REQUIRED_OPERATIONS = [
   'gate1.ratify',
   'gate2.dispatch',
@@ -205,9 +206,10 @@ const RECONCILIATION_CONTRACT = {
     refs: [
       'coordinator-pattern:item.f7686ab58db7',
       'spec-convention:item.022fc00afe7b',
-      'fk-charter:item.d9',
+      'foreman-line-plan:item.c92333c21e64',
+      'fk-charter:item.b1ac4aa9eddf',
     ],
-    rules: ['rule.fk-charter.d9'],
+    rules: ['rule.fk-charter.b1ac4aa9eddf'],
   },
   'spec-linter-profile-behavior': {
     topic: 'Live six-profile enum behavior versus stale deferred-registry explanation.',
@@ -305,10 +307,53 @@ const RECONCILIATION_CONTRACT = {
     refs: ['fk-charter:item.d10'],
     rules: ['rule.fk-charter.d10'],
   },
+  'registry-rework-9285945': {
+    topic: 'R3 registry bindings superseded by the coordinator-ratified FK-P0 R4 amendment.',
+    status: 'superseded-by-amendment',
+    refs: ['fk-charter:item.d2'],
+    rules: ['rule.fk-charter.d2'],
+  },
 } as const
 
 const SHIPPED_BINDING_MANIFEST_DIGEST =
+  '375ea566b2858d3204d17e0625332167a373b555db6d3a8b741af88f1390e082'
+const PRIOR_R3_BINDING_MANIFEST_DIGEST =
   '48a82df7d6da19352e4c9d2d99195835743a27f163a5d13a4f8d5b2a76a75a61'
+
+const RECONCILIATION_PROSE: Readonly<Record<string, readonly [string, string]>> = {
+  'gate-namespace-count': [
+    'Historical pipeline vocabulary remains visible; the FK goal three-gate namespace controls FK work.',
+    'Naive consumers must retain the namespace and scope when interpreting gate numbers.',
+  ],
+  'gate3-delegation': [
+    'Goal-charter scope withholds Gate 3 delegation for Foreman Kernel.',
+    'Generic delegation text remains valid only outside the controlling FK scope.',
+  ],
+  'spec-linter-profile-behavior': [
+    'Live schema behavior is recorded as binding and contradictory explanation as stale.',
+    'FK-P0 does not edit the linter or convention prose.',
+  ],
+  'surfaces-allowed-files': [
+    'surfaces is routing metadata only; Allowed Files remains the mutation boundary.',
+    'Mechanical body compilation remains a declared FK-P2 gap.',
+  ],
+  'permission-profile-enforcement-bound': [
+    'Mediated denial, post-review detection, and unsupported bypass cases are separate classifications.',
+    'Missing enrollment must never be reported as a pre-action refusal.',
+  ],
+  'missing-provenance-reference': [
+    'All thirteen inline rules remain mapped from the standing-constraints source.',
+    'The standing rules cannot retire from agent reading until provenance is restored or amended.',
+  ],
+  'registry-rework-6eb1c25': [
+    'The curated atomic registry supersedes the rejected generated bindings in FK scope.',
+    'Future binding changes require another typed prior-to-new migration record.',
+  ],
+  'registry-rework-9285945': [
+    'The R4 source-bound semantic and discovery contract supersedes the R3 registry bindings in FK scope.',
+    'Future binding changes require another typed prior-to-new migration record.',
+  ],
+}
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
@@ -355,6 +400,7 @@ export function bindingDigestFor(rule: Omit<AuthorityRule, 'bindingDigest'>): st
       authoritySubject: rule.authoritySubject,
       authorityClaim: rule.authorityClaim,
       sourceRefs: rule.sourceRefs,
+      authorityBasisRef: rule.authorityBasisRef,
       normalizedStatement: rule.normalizedStatement,
       applicability: rule.applicability,
       severity: rule.severity,
@@ -417,6 +463,21 @@ function axisMatches(values: readonly string[], value: string): boolean {
   return values.includes(value) || values.includes('any')
 }
 
+function isActiveAuthorityRule(
+  rule: AuthorityRule,
+  sources: ReadonlyMap<string, CanonSource>,
+): boolean {
+  if (
+    rule.retirementState === 'historical-only' ||
+    rule.retirementState === 'retired-from-agent-reading' ||
+    rule.classification === 'narrative-provenance' ||
+    rule.classification === 'unsupported'
+  ) {
+    return false
+  }
+  return sources.get(rule.authorityBasisRef.sourceId)?.authorityEffect === 'binding'
+}
+
 export function resolveAuthority(
   document: AuthorityEnforcementRegistry,
   query: AuthorityQuery,
@@ -444,18 +505,7 @@ export function resolveAuthority(
       )
     })
     .sort((left, right) => left.ruleId.localeCompare(right.ruleId))
-  const candidates = considered.filter((rule) => {
-    if (
-      rule.retirementState === 'historical-only' ||
-      rule.classification === 'narrative-provenance' ||
-      rule.classification === 'unsupported'
-    )
-      return false
-    return rule.sourceRefs.some((ref) => {
-      const source = sources.get(ref.sourceId)
-      return source?.authorityEffect === 'binding'
-    })
-  })
+  const candidates = considered.filter((rule) => isActiveAuthorityRule(rule, sources))
   const consideredRuleIds = considered.map((rule) => rule.ruleId)
   if (candidates.length === 0) {
     return {
@@ -467,12 +517,10 @@ export function resolveAuthority(
     }
   }
   const tierIndex = (rule: AuthorityRule) =>
-    Math.min(
-      ...rule.sourceRefs.map((ref) => {
-        const tier = sources.get(ref.sourceId)?.authorityTier
-        return tier === undefined ? AUTHORITY_TIERS.length : AUTHORITY_TIERS.indexOf(tier)
-      }),
-    )
+    (() => {
+      const tier = sources.get(rule.authorityBasisRef.sourceId)?.authorityTier
+      return tier === undefined ? AUTHORITY_TIERS.length : AUTHORITY_TIERS.indexOf(tier)
+    })()
   const highest = Math.min(...candidates.map(tierIndex))
   const controlling = candidates.filter((rule) => tierIndex(rule) === highest)
   const claims = [...new Set(controlling.map((rule) => rule.authorityClaim))].sort()
@@ -558,22 +606,11 @@ function activeAuthorityTier(
   rule: AuthorityRule,
   sourcesById: ReadonlyMap<string, CanonSource>,
 ): number | null {
-  if (
-    rule.retirementState === 'retired-from-agent-reading' ||
-    rule.retirementState === 'historical-only'
-  ) {
-    return null
-  }
-  const activeTiers = rule.sourceRefs
-    .map((reference) => sourcesById.get(reference.sourceId))
-    .filter(
-      (source): source is CanonSource =>
-        source !== undefined &&
-        (source.authorityEffect === 'binding' || source.authorityEffect === 'corroborating'),
-    )
-    .map((source) => AUTHORITY_TIERS.indexOf(source.authorityTier))
-    .filter((index) => index >= 0)
-  return activeTiers.length === 0 ? null : Math.min(...activeTiers)
+  if (!isActiveAuthorityRule(rule, sourcesById)) return null
+  const basis = sourcesById.get(rule.authorityBasisRef.sourceId)
+  if (basis === undefined) return null
+  const tier = AUTHORITY_TIERS.indexOf(basis.authorityTier)
+  return tier < 0 ? null : tier
 }
 
 function followsEnumOrder(values: readonly string[], order: readonly string[]): boolean {
@@ -589,10 +626,36 @@ function followsEnumOrder(values: readonly string[], order: readonly string[]): 
 function checkOperationAuthority(document: AuthorityEnforcementRegistry): ValidationViolation[] {
   const violations: ValidationViolation[] = []
   const rows = new Map(document.operationAuthority.map((row) => [row.operationId, row]))
+  const evidenceContract: Readonly<Record<string, readonly string[]>> = {
+    'gate1.ratify': ['fk-charter:item.b1ac4aa9eddf'],
+    'gate2.dispatch': ['fk-charter:item.afbcffd2d557', 'fk-loop-directive:item.bfffee6d7c1f'],
+    'gate3.merge': [
+      'fk-charter:item.b1ac4aa9eddf',
+      'fk-loop-directive:item.7eb6018d9e57',
+      'fk-loop-directive:item.2743c2f8c558',
+    ],
+    'verification.issue': ['fk-charter:item.d11', 'fk-loop-directive:item.ce9042d917b2'],
+    'closure.record': ['fk-charter:item.e9ec57edc0a2', 'fk-loop-directive:item.e3065db62b43'],
+    'receipt.mint-generic': [],
+    'external.write': [],
+  }
   for (const operationId of REQUIRED_OPERATIONS) {
     if (!rows.has(operationId)) {
       violations.push(
         violation('AUTHORITY_ESCALATION', `required operation row '${operationId}' is missing`),
+      )
+    }
+  }
+  for (const [operationId, expected] of Object.entries(evidenceContract)) {
+    const actual = rows
+      .get(operationId as OperationId)
+      ?.requiredGitEvidence.map((reference) => `${reference.sourceId}:${reference.itemId}`)
+    if (actual !== undefined && actual.join('|') !== expected.join('|')) {
+      violations.push(
+        violation(
+          'AUTHORITY_ESCALATION',
+          `${operationId} evidence does not equal the operative canon reference set`,
+        ),
       )
     }
   }
@@ -895,6 +958,26 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
         }),
       )
     }
+    const basisItem = itemsByRef.get(
+      referenceKey(rule.authorityBasisRef.sourceId, rule.authorityBasisRef.itemId),
+    )
+    if (
+      !rule.sourceRefs.some(
+        (reference) => canonicalJson(reference) === canonicalJson(rule.authorityBasisRef),
+      ) ||
+      basisItem === undefined ||
+      locatorDigestFor(basisItem.locator) !== rule.authorityBasisRef.locatorDigest ||
+      basisItem.valueDigest !== rule.authorityBasisRef.valueDigest ||
+      normalizeRuleText(rule.normalizedStatement) !== normalizeRuleText(basisItem.normalizedExcerpt)
+    ) {
+      violations.push(
+        violation(
+          'MIGRATION_EVIDENCE_INVALID',
+          `rule '${rule.ruleId}' authorityBasisRef is not a complete binding source reference`,
+          { ruleId: rule.ruleId },
+        ),
+      )
+    }
     const classificationContract = CLASSIFICATION_CONTRACT[rule.classification]
     const isLoadedProfileRefusal = rule.sourceRefs.some(
       (reference) => reference.sourceId === 'permission-profiles-validator',
@@ -1110,17 +1193,15 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
       )
     }
   }
-  if (
-    !document.reconciliations.some(
-      (record) => record.reconciliationId === REQUIRED_REWORK_MIGRATION,
-    )
-  ) {
-    violations.push(
-      violation(
-        'RECONCILIATION_MISSING',
-        `required rework migration '${REQUIRED_REWORK_MIGRATION}' is missing`,
-      ),
-    )
+  for (const migrationId of REQUIRED_REWORK_MIGRATIONS) {
+    if (!document.reconciliations.some((record) => record.reconciliationId === migrationId)) {
+      violations.push(
+        violation(
+          'RECONCILIATION_MISSING',
+          `required rework migration '${migrationId}' is missing`,
+        ),
+      )
+    }
   }
   for (const record of document.reconciliations) {
     if (reconciliationIds.has(record.reconciliationId)) {
@@ -1134,6 +1215,7 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
     reconciliationIds.add(record.reconciliationId)
     const contract =
       RECONCILIATION_CONTRACT[record.reconciliationId as keyof typeof RECONCILIATION_CONTRACT]
+    const prose = RECONCILIATION_PROSE[record.reconciliationId]
     if (
       contract !== undefined &&
       (record.topic !== contract.topic ||
@@ -1141,7 +1223,10 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
         record.observedRefs
           .map((reference) => `${reference.sourceId}:${reference.itemId}`)
           .join('|') !== contract.refs.join('|') ||
-        record.authoritativeRuleIds.join('|') !== contract.rules.join('|'))
+        record.authoritativeRuleIds.join('|') !== contract.rules.join('|') ||
+        prose === undefined ||
+        record.scopedDisposition !== prose[0] ||
+        record.unresolvedConsequence !== prose[1])
     ) {
       violations.push(
         violation(
@@ -1179,7 +1264,7 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
         )
       }
     }
-    if (record.reconciliationId === REQUIRED_REWORK_MIGRATION) {
+    if (record.reconciliationId === 'registry-rework-6eb1c25') {
       const gitRefs = record.observedEvidence
         .filter((e) => e.kind === 'git-commit')
         .map((e) => e.reference)
@@ -1199,12 +1284,40 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
         !resultDigests.includes(
           '1fe3a7c66241904445021c97db68065961a3bf5beceb654faff4b552b4de79b2',
         ) ||
-        !resultDigests.includes(SHIPPED_BINDING_MANIFEST_DIGEST)
+        !resultDigests.includes(PRIOR_R3_BINDING_MANIFEST_DIGEST)
       ) {
         violations.push(
           violation(
             'MIGRATION_EVIDENCE_INVALID',
             'rework migration does not bind the prior registry commit, source snapshot, and superseding manifest',
+          ),
+        )
+      }
+    }
+    if (record.reconciliationId === 'registry-rework-9285945') {
+      const gitRefs = record.observedEvidence
+        .filter((e) => e.kind === 'git-commit')
+        .map((e) => e.reference)
+      const resultDigests = record.observedEvidence
+        .filter((e) => e.kind === 'command-result')
+        .flatMap((e) => {
+          try {
+            const value = JSON.parse(e.reference) as { resultDigest?: unknown }
+            return typeof value.resultDigest === 'string' ? [value.resultDigest] : []
+          } catch {
+            return []
+          }
+        })
+      if (
+        gitRefs.join('|') !==
+          `87237a868a0da8e1a57fc8ce9d400509b2a09c5d|${document.sourceSnapshotCommit}` ||
+        !resultDigests.includes(PRIOR_R3_BINDING_MANIFEST_DIGEST) ||
+        !resultDigests.includes(SHIPPED_BINDING_MANIFEST_DIGEST)
+      ) {
+        violations.push(
+          violation(
+            'MIGRATION_EVIDENCE_INVALID',
+            'R4 migration does not bind the prior R3 registry commit, source snapshot, and superseding manifest',
           ),
         )
       }
@@ -1245,7 +1358,26 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
         )
         if (ref !== undefined) expectedDigest = sha256(evidence.reference)
       } else if (evidence.kind === 'missing-path') {
-        expectedDigest = sha256(evidence.reference)
+        try {
+          const parsed = JSON.parse(evidence.reference) as unknown
+          if (
+            isRecord(parsed) &&
+            Object.keys(parsed).sort().join('|') === 'commit|path' &&
+            typeof parsed.commit === 'string' &&
+            /^[0-9a-f]{40}$/.test(parsed.commit) &&
+            parsed.commit === document.sourceSnapshotCommit &&
+            typeof parsed.path === 'string' &&
+            pathProblem(parsed.path) === null &&
+            record.observedEvidence.some(
+              (candidate) =>
+                candidate.kind === 'git-commit' && candidate.reference === parsed.commit,
+            )
+          ) {
+            expectedDigest = sha256(evidence.reference)
+          }
+        } catch {
+          expectedDigest = null
+        }
       } else if (evidence.kind === 'command-result') {
         try {
           const parsed = JSON.parse(evidence.reference) as unknown
@@ -1303,9 +1435,13 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
     }
     {
       const expectedEvidence: Readonly<Record<string, readonly string[]>> = {
-        'gate1.ratify': ['fk-charter:item.d9', 'fk-charter:item.4f436ba95f57'],
+        'gate1.ratify': ['fk-charter:item.b1ac4aa9eddf'],
         'gate2.dispatch': ['fk-charter:item.afbcffd2d557', 'fk-loop-directive:item.bfffee6d7c1f'],
-        'gate3.merge': ['fk-charter:item.ef74f9b402bf', 'fk-loop-directive:item.7eb6018d9e57'],
+        'gate3.merge': [
+          'fk-charter:item.b1ac4aa9eddf',
+          'fk-loop-directive:item.7eb6018d9e57',
+          'fk-loop-directive:item.2743c2f8c558',
+        ],
         'verification.issue': ['fk-charter:item.d11', 'fk-loop-directive:item.ce9042d917b2'],
         'closure.record': ['fk-charter:item.e9ec57edc0a2', 'fk-loop-directive:item.e3065db62b43'],
         'receipt.mint-generic': [],
@@ -1373,8 +1509,184 @@ export function parseRegistry(content: string): ValidationResult {
   }
 }
 
+const BINDING_SECTIONS: Readonly<Record<string, readonly string[]>> = {
+  'fk-charter': [
+    '## 3. Authority hierarchy',
+    '## 10. Human gates and standing authorizations requested',
+    '## 11. Stop conditions',
+    '## 13. Gate 1 decision list',
+  ],
+  'fk-loop-directive': [
+    '## COORDINATOR OWNERSHIP — read before dispatching anything',
+    '## Standing authorizations and their limits',
+    '## Per-parcel algorithm',
+    '## Stop conditions',
+  ],
+}
+
+function discoveredBindingBlocks(content: string, sourceId: string): string[] {
+  const targets = new Set(BINDING_SECTIONS[sourceId] ?? [])
+  if (targets.size === 0) return []
+  const lines = content.replace(/\r\n?/g, '\n').split('\n')
+  const blocks: string[] = []
+  for (let index = 0; index < lines.length; index += 1) {
+    const heading = /^(#{2,6})\s+.+/.exec(lines[index] ?? '')
+    if (heading === null || !targets.has((lines[index] ?? '').trim())) continue
+    const level = heading[1]?.length ?? 6
+    let endSection = lines.length
+    for (let cursor = index + 1; cursor < lines.length; cursor += 1) {
+      const next = /^(#{1,6})\s+/.exec(lines[cursor] ?? '')
+      if (next !== null && (next[1]?.length ?? 6) <= level) {
+        endSection = cursor
+        break
+      }
+    }
+    let cursor = index + 1
+    while (cursor < endSection) {
+      const line = lines[cursor] ?? ''
+      if (line.trim() === '' || /^#{1,6}\s+/.test(line)) {
+        cursor += 1
+        continue
+      }
+      if (/^\s*\|/.test(line)) {
+        if (!/^\s*\|?\s*:?-{3}/.test(line)) blocks.push(normalizeRuleText(line))
+        cursor += 1
+        continue
+      }
+      const list = /^\s*(?:[-*+] |\d+\. )/.test(line)
+      let end = cursor + 1
+      while (end < endSection) {
+        const next = lines[end] ?? ''
+        if (next.trim() === '' || /^#{1,6}\s+/.test(next) || /^\s*\|/.test(next)) break
+        if (list && /^\s*(?:[-*+] |\d+\. )/.test(next)) break
+        end += 1
+      }
+      blocks.push(normalizeRuleText(lines.slice(cursor, end).join('\n')))
+      cursor = end
+    }
+    index = endSection - 1
+  }
+  return blocks
+}
+
+function maskNonCode(content: string): string {
+  let output = ''
+  let quote: string | null = null
+  let lineComment = false
+  let blockComment = false
+  for (let index = 0; index < content.length; index += 1) {
+    const char = content[index] ?? ''
+    const next = content[index + 1] ?? ''
+    if (lineComment) {
+      if (char === '\n') {
+        lineComment = false
+        output += '\n'
+      } else output += ' '
+      continue
+    }
+    if (blockComment) {
+      if (char === '*' && next === '/') {
+        output += '  '
+        index += 1
+        blockComment = false
+      } else output += char === '\n' ? '\n' : ' '
+      continue
+    }
+    if (quote !== null) {
+      if (char === '\\') {
+        output += '  '
+        index += 1
+      } else if (char === quote) {
+        output += ' '
+        quote = null
+      } else output += char === '\n' ? '\n' : ' '
+      continue
+    }
+    if (char === '/' && next === '/') {
+      output += '  '
+      index += 1
+      lineComment = true
+    } else if (char === '/' && next === '*') {
+      output += '  '
+      index += 1
+      blockComment = true
+    } else if (char === '"' || char === "'" || char === '`') {
+      output += ' '
+      quote = char
+    } else output += char
+  }
+  return output
+}
+
+function tsConstructMap(content: string): Map<string, string> {
+  const normalized = content.replace(/\r\n?/g, '\n')
+  const original = normalized.split('\n')
+  const masked = maskNonCode(normalized).split('\n')
+  const result = new Map<string, string>()
+  for (let start = 0; start < masked.length; start += 1) {
+    const match = /^(?:export\s+)?(?:(?:async\s+)?function|const)\s+([A-Za-z_$][\w$]*)\b/.exec(
+      masked[start] ?? '',
+    )
+    if (match === null) continue
+    let curly = 0
+    let square = 0
+    let paren = 0
+    let opened = false
+    let end = start
+    for (; end < masked.length; end += 1) {
+      for (const char of masked[end] ?? '') {
+        if (char === '{') curly += 1
+        else if (char === '}') curly -= 1
+        else if (char === '[') square += 1
+        else if (char === ']') square -= 1
+        else if (char === '(') paren += 1
+        else if (char === ')') paren -= 1
+      }
+      opened ||=
+        masked
+          .slice(start, end + 1)
+          .join('\n')
+          .includes('=') || curly > 0
+      if (opened && curly === 0 && square === 0 && paren === 0) break
+    }
+    result.set(`ts-construct:${match[1] as string}`, original.slice(start, end + 1).join('\n'))
+    start = end
+  }
+  return result
+}
+
+function jsonConstraintMap(content: string): Map<string, string> {
+  const result = new Map<string, string>()
+  const visit = (value: unknown, path: string): void => {
+    if (Array.isArray(value) || value === null || typeof value !== 'object') {
+      result.set(`json-pointer:${path}`, canonicalJson(value))
+      return
+    }
+    for (const key of Object.keys(value as Record<string, unknown>).sort()) {
+      visit(
+        (value as Record<string, unknown>)[key],
+        `${path}/${key.replace(/~/g, '~0').replace(/\//g, '~1')}`,
+      )
+    }
+  }
+  visit(JSON.parse(content) as unknown, '')
+  return result
+}
+
 function extractLocator(content: string, locator: SourceLocator): { count: number; value: string } {
   const lines = content.replace(/\r\n?/g, '\n').split('\n')
+  if (locator.kind === 'symbol' && locator.anchor.startsWith('ts-construct:')) {
+    const value = tsConstructMap(content).get(locator.anchor)
+    return { count: value === undefined ? 0 : 1, value: value ?? '' }
+  }
+  if (locator.kind === 'symbol' && locator.anchor.startsWith('json-pointer:')) {
+    try {
+      const value = jsonConstraintMap(content).get(locator.anchor)
+      return { count: value === undefined ? 0 : 1, value: value ?? '' }
+    } catch {
+      return { count: 0, value: '' }
+    }
+  }
   if (locator.kind === 'table-row') {
     const matches = lines.filter((line) => {
       const cells = line
@@ -1387,6 +1699,11 @@ function extractLocator(content: string, locator: SourceLocator): { count: numbe
     return { count: matches.length, value: matches.length === 1 ? (matches[0] ?? '') : '' }
   }
   if (locator.kind === 'line-excerpt') {
+    if (locator.anchor.includes('\n')) {
+      const normalizedContent = content.replace(/\r\n?/g, '\n')
+      const matches = normalizedContent.split(locator.anchor).length - 1
+      return { count: matches, value: matches === 1 ? locator.anchor : '' }
+    }
     const expected = locator.anchor.trim()
     const matches = lines.filter((line) => {
       const trimmed = line.trim()
@@ -1543,6 +1860,34 @@ export function sweepRegistrySources(document: unknown, repoRoot: string): Valid
   const registry = document as AuthorityEnforcementRegistry
   const violations = [...base.violations]
   const root = resolve(repoRoot)
+  let gitReady = false
+  try {
+    const canonicalRoot = realpathSync(root)
+    const worktreeRoot = realpathSync(
+      execFileSync('git', ['rev-parse', '--show-toplevel'], {
+        cwd: canonicalRoot,
+        stdio: ['ignore', 'pipe', 'ignore'],
+        encoding: 'utf8',
+      }).trim(),
+    )
+    gitReady = canonicalRoot.toLowerCase() === worktreeRoot.toLowerCase()
+    if (!gitReady) {
+      violations.push(
+        violation(
+          'MIGRATION_EVIDENCE_INVALID',
+          'repository root is not the exact root of a real Git worktree',
+        ),
+      )
+    }
+  } catch (error) {
+    const rootExists = existsSync(root)
+    violations.push(
+      violation(
+        rootExists ? 'MIGRATION_EVIDENCE_INVALID' : 'IO_ERROR',
+        `repository root lacks mandatory real-Git evidence: ${(error as Error).message}`,
+      ),
+    )
+  }
   const normalizedPaths = new Set<string>()
   for (const source of registry.sources) {
     const invalidPath = pathProblem(source.path)
@@ -1606,6 +1951,84 @@ export function sweepRegistrySources(document: unknown, repoRoot: string): Valid
           violation('VALUE_DIGEST_MISMATCH', 'operative normalized source value changed', {
             sourcePath: source.path,
             locator: item.locator.anchor,
+          }),
+        )
+      }
+    }
+    for (const block of discoveredBindingBlocks(content, source.sourceId)) {
+      if (!source.inventoryItems.some((item) => item.normalizedExcerpt === block)) {
+        violations.push(
+          violation('SOURCE_ITEM_UNCOVERED', 'binding prose block is not inventoried', {
+            sourcePath: source.path,
+            locator: block,
+          }),
+        )
+      }
+    }
+    if (source.path.endsWith('.ts')) {
+      const registered = new Set(
+        source.inventoryItems
+          .filter((item) => item.locator.kind === 'symbol')
+          .map((item) => item.locator.anchor),
+      )
+      for (const anchor of tsConstructMap(content).keys()) {
+        if (!registered.has(anchor)) {
+          violations.push(
+            violation(
+              'SOURCE_ITEM_UNCOVERED',
+              'top-level executable construct is not inventoried',
+              {
+                sourcePath: source.path,
+                locator: anchor,
+              },
+            ),
+          )
+        }
+      }
+    }
+    if (source.path.endsWith('.json')) {
+      const registered = new Set(
+        source.inventoryItems
+          .filter((item) => item.locator.kind === 'symbol')
+          .map((item) => item.locator.anchor),
+      )
+      try {
+        for (const anchor of jsonConstraintMap(content).keys()) {
+          if (!registered.has(anchor)) {
+            violations.push(
+              violation('SOURCE_ITEM_UNCOVERED', 'JSON schema constraint is not inventoried', {
+                sourcePath: source.path,
+                locator: anchor,
+              }),
+            )
+          }
+        }
+      } catch {
+        violations.push(
+          violation('VALUE_DIGEST_MISMATCH', 'inventoried JSON schema cannot be parsed', {
+            sourcePath: source.path,
+          }),
+        )
+      }
+    }
+    if (source.sourceId === 'permission-profiles-registry') {
+      try {
+        const parsed = parse(content) as { profiles?: Record<string, unknown> }
+        for (const profile of Object.keys(parsed.profiles ?? {})) {
+          const anchor = `${profile}:`
+          if (!source.inventoryItems.some((item) => item.locator.anchor.trim() === anchor)) {
+            violations.push(
+              violation('SOURCE_ITEM_UNCOVERED', 'permission profile is not inventoried', {
+                sourcePath: source.path,
+                locator: anchor,
+              }),
+            )
+          }
+        }
+      } catch {
+        violations.push(
+          violation('VALUE_DIGEST_MISMATCH', 'permission profile registry cannot be parsed', {
+            sourcePath: source.path,
           }),
         )
       }
@@ -1800,8 +2223,14 @@ export function sweepRegistrySources(document: unknown, repoRoot: string): Valid
   }
   for (const reconciliation of registry.reconciliations) {
     for (const evidence of reconciliation.observedEvidence) {
-      if (evidence.kind === 'git-commit' && existsSync(resolve(root, '.git'))) {
+      if (evidence.kind === 'git-commit' && gitReady) {
         try {
+          const objectType = execFileSync('git', ['cat-file', '-t', evidence.reference], {
+            cwd: root,
+            stdio: ['ignore', 'pipe', 'ignore'],
+            encoding: 'utf8',
+          }).trim()
+          if (objectType !== 'commit') throw new Error(`object type is '${objectType}'`)
           const bytes = execFileSync('git', ['cat-file', '-p', evidence.reference], {
             cwd: root,
             stdio: ['ignore', 'pipe', 'ignore'],
@@ -1817,12 +2246,10 @@ export function sweepRegistrySources(document: unknown, repoRoot: string): Valid
           )
         }
       }
-      if (evidence.kind === 'missing-path' && existsSync(resolve(root, '.git'))) {
-        const absentAt =
-          reconciliation.observedEvidence.find((candidate) => candidate.kind === 'git-commit')
-            ?.reference ?? registry.sourceSnapshotCommit
+      if (evidence.kind === 'missing-path' && gitReady) {
         try {
-          execFileSync('git', ['cat-file', '-e', `${absentAt}:${evidence.reference}`], {
+          const parsed = JSON.parse(evidence.reference) as { commit: string; path: string }
+          execFileSync('git', ['cat-file', '-e', `${parsed.commit}:${parsed.path}`], {
             cwd: root,
             stdio: 'ignore',
           })

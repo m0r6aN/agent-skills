@@ -57,11 +57,11 @@ test('each of the six classifications is accepted and summarized independently',
   const result = validateRegistry(valid)
   assert.equal(result.valid, true)
   assert.deepEqual(result.summary?.classificationCounts, {
-    'pre-action-refusal': 33,
+    'pre-action-refusal': 47,
     'post-action-detection': 4,
-    'ci-static-check': 18,
+    'ci-static-check': 28,
     'independent-review-human-judgment': 5,
-    'narrative-provenance': 425,
+    'narrative-provenance': 537,
     unsupported: 29,
   })
 })
@@ -393,22 +393,17 @@ test('role stage operation and host axes can make active rules scope-disjoint', 
 
 test('all-foreman-goals applicability overlaps foreman-kernel applicability', () => {
   const mutated = structuredClone(valid)
-  const original = mutated.rules[0]
+  const original = mutated.rules.find((candidate) => candidate.ruleId === 'rule.fk-charter.d3')
   assert.ok(original)
   const counterpart = structuredClone(original) as AuthorityEnforcementRegistry['rules'][number]
   ;(counterpart as { ruleId: string }).ruleId = 'rule.goal-scope-overlap'
   ;(counterpart as { authorityClaim: string }).authorityClaim = 'conflicting-goal-scope-claim'
-  ;(counterpart as { classification: string }).classification = 'narrative-provenance'
-  ;(counterpart as { decision: string }).decision = 'ADVISORY'
-  ;(counterpart as { refusalCode: string | null }).refusalCode = null
-  ;(counterpart as { enforcementOwner: string }).enforcementOwner = 'provenance-only'
-  ;(counterpart as { assurance: string }).assurance = 'narrative'
   ;(counterpart.applicability.goals as string[]).splice(0, 1, 'all-foreman-goals')
   ;(counterpart as { bindingDigest: string }).bindingDigest = bindingDigestFor(counterpart)
   ;(mutated.rules as AuthorityEnforcementRegistry['rules'][number][]).push(counterpart)
-  const item = mutated.sources[0]?.inventoryItems.find(
-    (candidate) => candidate.itemId === counterpart.sourceRefs[0]?.itemId,
-  )
+  const item = mutated.sources
+    .find((source) => source.sourceId === counterpart.sourceRefs[0]?.sourceId)
+    ?.inventoryItems.find((candidate) => candidate.itemId === counterpart.sourceRefs[0]?.itemId)
   assert.ok(item)
   ;(item.ruleIds as string[]).push(counterpart.ruleId)
   expectCode(mutated, 'RULE_CONFLICT')
@@ -852,7 +847,7 @@ test('R3 complete binding digest includes applicability retirement and assurance
 })
 
 const d3Query = {
-  authoritySubject: 'foreman-kernel.d3',
+  authoritySubject: 'kernel.surface-admission-separation',
   goal: 'foreman-kernel',
   role: 'builder',
   stage: 'build',
@@ -864,14 +859,15 @@ test('R3 resolver returns exact controlling claim and sorted IDs', () => {
   const result = resolveAuthority(full, d3Query)
   assert.equal(result.outcome, 'RESOLVED')
   assert.deepEqual(result.controllingRuleIds, [...result.controllingRuleIds].sort())
-  if (result.outcome === 'RESOLVED') assert.equal(result.authorityClaim, 'kernel-state-authority')
+  if (result.outcome === 'RESOLVED')
+    assert.equal(result.authorityClaim, 'read-control-admission-separated')
 })
 
 test('R3 resolver rejects any-valued query scope', () => {
   const result = resolveAuthority(full, { ...d3Query, role: 'any' } as never)
   assert.deepEqual(result, {
     outcome: 'REQUIRE_HUMAN',
-    authoritySubject: 'foreman-kernel.d3',
+    authoritySubject: 'kernel.surface-admission-separation',
     reasonCode: 'INVALID_QUERY_SCOPE',
     controllingRuleIds: [],
     consideredRuleIds: [],
@@ -1020,4 +1016,237 @@ test('R3 one README cannot satisfy all four retirement evidence kinds', () => {
     independentBypassAttempt: { kind: 'independent-bypass', path, digest: '0'.repeat(64) },
   }
   expectCode(mutated, 'RETIREMENT_EVIDENCE_INCOMPLETE')
+})
+
+test('R4 exact D2 D3 D18 and D19 semantic identities are shipped', () => {
+  const expected = {
+    'rule.fk-charter.d2': [
+      'canon.operational-authority-boundary',
+      'git-canon-sqlite-operational-split',
+    ],
+    'rule.fk-charter.d3': [
+      'kernel.surface-admission-separation',
+      'read-control-admission-separated',
+    ],
+    'rule.fk-charter.d18': ['kernel.authorize-action-owner', 'provider-neutral-policy-engine'],
+    'rule.fk-charter.d19': ['repository.read-confidentiality', 'admission-bound-contained-read'],
+  } as const
+  for (const [ruleId, identity] of Object.entries(expected)) {
+    const rule = full.rules.find((candidate) => candidate.ruleId === ruleId)
+    assert.ok(rule)
+    assert.deepEqual([rule.authoritySubject, rule.authorityClaim], identity)
+  }
+})
+
+test('R4 every rule has one basis ref contained in its source refs', () => {
+  for (const rule of full.rules) {
+    const basis = (rule as typeof rule & { authorityBasisRef?: unknown }).authorityBasisRef
+    assert.ok(basis)
+    assert.ok(
+      rule.sourceRefs.some((reference) => canonicalJson(reference) === canonicalJson(basis)),
+    )
+  }
+})
+
+test('R4 shipped reconciliation rules share semantic subjects', () => {
+  for (const reconciliation of full.reconciliations.slice(0, 6)) {
+    const subjects = new Map<string, number>()
+    for (const reference of reconciliation.observedRefs) {
+      const item = full.sources
+        .find((source) => source.sourceId === reference.sourceId)
+        ?.inventoryItems.find((candidate) => candidate.itemId === reference.itemId)
+      for (const ruleId of item?.ruleIds ?? []) {
+        const rule = full.rules.find((candidate) => candidate.ruleId === ruleId)
+        if (rule)
+          subjects.set(rule.authoritySubject, (subjects.get(rule.authoritySubject) ?? 0) + 1)
+      }
+    }
+    assert.ok(
+      [...subjects.values()].some((count) => count > 1),
+      reconciliation.reconciliationId,
+    )
+  }
+})
+
+test('R4 shipped Gate 3 competitors resolve without test-time subject rewriting', () => {
+  const result = resolveAuthority(full, {
+    authoritySubject: 'gate3.merge-authority',
+    goal: 'foreman-kernel',
+    role: 'coordinator',
+    stage: 'merge',
+    operation: 'state-transition',
+    host: 'provider-neutral',
+  })
+  assert.equal(result.outcome, 'RESOLVED')
+  if (result.outcome === 'RESOLVED') assert.equal(result.authorityClaim, 'human-owned-nondelegated')
+})
+
+const shippedResolverVectors = [
+  {
+    subject: 'gate.namespace',
+    role: 'developer',
+    stage: 'stage-zero',
+    operation: 'state-transition',
+    host: 'provider-neutral',
+    outcome: 'RESOLVED',
+    claim: 'fk-three-gate-ownership',
+  },
+  {
+    subject: 'gate3.merge-authority',
+    role: 'coordinator',
+    stage: 'merge',
+    operation: 'state-transition',
+    host: 'provider-neutral',
+    outcome: 'RESOLVED',
+    claim: 'human-owned-nondelegated',
+  },
+  {
+    subject: 'permission-profile.registry-state',
+    role: 'ci',
+    stage: 'deterministic-verify',
+    operation: 'source-inventory',
+    host: 'ci',
+    outcome: 'RESOLVED',
+    claim: 'six-profile-live-enum',
+  },
+  {
+    subject: 'spec.mutation-authority',
+    role: 'builder',
+    stage: 'build',
+    operation: 'repo-mutation',
+    host: 'provider-neutral',
+    outcome: 'RESOLVED',
+    claim: 'exact-allowed-files-required',
+  },
+  {
+    subject: 'permission-profile.enforcement-bound',
+    role: 'builder',
+    stage: 'build',
+    operation: 'repo-mutation',
+    host: 'provider-neutral',
+    outcome: 'RESOLVED',
+    claim: 'loaded-session-mediated-denial',
+  },
+  {
+    subject: 'standing.provenance',
+    role: 'builder',
+    stage: 'build',
+    operation: 'repo-mutation',
+    host: 'provider-neutral',
+    outcome: 'RESOLVED',
+    claim: 'inline-rules-required-until-provenance-restored',
+  },
+] as const
+
+for (const vector of shippedResolverVectors) {
+  test(`R4 shipped-data resolver vector ${vector.subject}`, () => {
+    const result = resolveAuthority(full, {
+      authoritySubject: vector.subject,
+      goal: 'foreman-kernel',
+      role: vector.role,
+      stage: vector.stage,
+      operation: vector.operation,
+      host: vector.host,
+    })
+    assert.equal(result.outcome, vector.outcome)
+    if (result.outcome === 'RESOLVED') assert.equal(result.authorityClaim, vector.claim)
+  })
+}
+
+test('R4 corroborating source ref cannot promote a rule above its authority basis', () => {
+  const mutated = structuredClone(full)
+  const rule = mutated.rules.find(
+    (candidate) =>
+      candidate.authoritySubject === 'permission-profile.enforcement-bound' &&
+      candidate.classification === 'pre-action-refusal',
+  )
+  const corroborating = mutated.rules.find(
+    (candidate) => candidate.sourceRefs[0]?.sourceId === 'standing-constraints',
+  )?.sourceRefs[0]
+  assert.ok(rule)
+  assert.ok(corroborating)
+  ;(rule.sourceRefs as (typeof rule.sourceRefs)[number][]).push(corroborating)
+  const result = resolveAuthority(mutated, {
+    authoritySubject: rule.authoritySubject,
+    goal: 'foreman-kernel',
+    role: 'builder',
+    stage: 'build',
+    operation: 'repo-mutation',
+    host: 'provider-neutral',
+  })
+  assert.equal(result.outcome, 'RESOLVED')
+  if (result.outcome === 'RESOLVED') assert.equal(result.authorityClaim, rule.authorityClaim)
+})
+
+test('R4 retired-from-agent-reading rules never control authority', () => {
+  const mutated = structuredClone(full)
+  const rule = mutated.rules.find((candidate) => candidate.ruleId === 'rule.fk-charter.d3')
+  assert.ok(rule)
+  ;(rule as { retirementState: string }).retirementState = 'retired-from-agent-reading'
+  const result = resolveAuthority(mutated, {
+    authoritySubject: rule.authoritySubject,
+    goal: 'foreman-kernel',
+    role: 'builder',
+    stage: 'build',
+    operation: 'state-transition',
+    host: 'provider-neutral',
+  })
+  assert.equal(result.outcome, 'REQUIRE_HUMAN')
+})
+
+test('R4 reconciliation disposition and consequence are immutable', () => {
+  for (const field of ['scopedDisposition', 'unresolvedConsequence'] as const) {
+    const mutated = structuredClone(full)
+    const record = mutated.reconciliations[0]
+    assert.ok(record)
+    ;(record as unknown as Record<string, string>)[field] =
+      'Delegated merge without human evidence.'
+    expectCode(mutated, 'MIGRATION_EVIDENCE_INVALID')
+  }
+})
+
+test('R4 missing-path evidence uses commit-bound canonical JSON', () => {
+  const record = full.reconciliations.find(
+    (candidate) => candidate.reconciliationId === 'missing-provenance-reference',
+  )
+  const evidence = record?.observedEvidence.find((candidate) => candidate.kind === 'missing-path')
+  assert.ok(evidence)
+  const reference = JSON.parse(evidence.reference) as { commit: string; path: string }
+  assert.deepEqual(reference, {
+    commit: full.sourceSnapshotCommit,
+    path: 'docs/transcripts/defects_lessons.md',
+  })
+})
+
+const applicabilityVectors = [
+  ...Array.from({ length: 13 }, (_, index) => ({
+    ruleId: `rule.standing-constraints.constraint-${index + 1}`,
+    positiveRole: index >= 7 && index <= 10 ? 'reviewer' : 'builder',
+    negativeRole: index >= 7 && index <= 10 ? 'builder' : 'reviewer',
+  })),
+  ...Array.from({ length: 15 }, (_, index) => ({
+    ruleId: `rule.parcel-driven-development.hard-rule-${index + 1}`,
+    positiveRole:
+      index === 11 ? 'reviewer' : index === 5 || index === 12 ? 'coordinator' : 'builder',
+    negativeRole: index === 11 ? 'builder' : index === 5 || index === 12 ? 'reviewer' : 'operator',
+  })),
+]
+
+for (const vector of applicabilityVectors) {
+  test(`R4 source-derived applicability vector ${vector.ruleId}`, () => {
+    const rule = full.rules.find((candidate) => candidate.ruleId === vector.ruleId)
+    assert.ok(rule)
+    assert.ok(rule.applicability.roles.includes(vector.positiveRole as never))
+    assert.ok(!rule.applicability.roles.includes(vector.negativeRole as never))
+  })
+}
+
+test('R4 PDD hard rule 10 applies to ordinary builder build repo mutation', () => {
+  const rule = full.rules.find(
+    (candidate) => candidate.ruleId === 'rule.parcel-driven-development.hard-rule-10',
+  )
+  assert.ok(rule)
+  assert.ok(rule.applicability.roles.includes('builder'))
+  assert.ok(rule.applicability.stages.includes('build'))
+  assert.ok(rule.applicability.operations.includes('repo-mutation'))
 })

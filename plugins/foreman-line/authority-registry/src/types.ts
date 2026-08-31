@@ -216,6 +216,7 @@ export interface AuthorityRule {
   readonly authorityClaim: string
   readonly normalizedStatement: string
   readonly sourceRefs: readonly SourceRef[]
+  readonly authorityBasisRef: SourceRef
   readonly applicability: Applicability
   readonly severity: Severity
   readonly classification: RuleClassification

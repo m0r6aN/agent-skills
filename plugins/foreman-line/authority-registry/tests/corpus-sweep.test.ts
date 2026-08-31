@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict'
+import { execFileSync } from 'node:child_process'
 import {
   mkdirSync,
   mkdtempSync,
@@ -14,7 +15,7 @@ import { test } from 'node:test'
 import { fileURLToPath } from 'node:url'
 import { parse } from 'yaml'
 import type { AuthorityEnforcementRegistry } from '../src/types.js'
-import { sweepRegistrySources } from '../src/validate.js'
+import { canonicalJson, sha256, sweepRegistrySources } from '../src/validate.js'
 
 const packageRoot = join(dirname(fileURLToPath(import.meta.url)), '..')
 const repoRoot = join(packageRoot, '..', '..', '..')
@@ -22,13 +23,173 @@ const registry = parse(
   readFileSync(join(packageRoot, 'authority-enforcement-registry.yaml'), 'utf8'),
 ) as AuthorityEnforcementRegistry
 
-function copyCorpus(tempRoot: string): void {
+function copyCorpus(tempRoot: string, withGit = true): void {
+  if (withGit) {
+    execFileSync('git', ['clone', '--quiet', '--no-checkout', '--shared', repoRoot, tempRoot], {
+      stdio: 'ignore',
+    })
+  }
   for (const source of registry.sources) {
     const destination = join(tempRoot, source.path)
     mkdirSync(dirname(destination), { recursive: true })
     writeFileSync(destination, readFileSync(join(repoRoot, source.path)))
   }
 }
+
+test('R4 copied corpus without Git metadata fails closed', () => {
+  const tempRoot = mkdtempSync(join(tmpdir(), 'fk-p0-no-git-'))
+  try {
+    copyCorpus(tempRoot, false)
+    const result = sweepRegistrySources(registry, tempRoot)
+    assert.ok(
+      result.violations.some((violation) => violation.code === 'MIGRATION_EVIDENCE_INVALID'),
+    )
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true })
+  }
+})
+
+test('R4 blob object cannot impersonate commit migration evidence', () => {
+  const mutated = structuredClone(registry)
+  const record = mutated.reconciliations.find(
+    (candidate) => candidate.reconciliationId === 'registry-rework-6eb1c25',
+  )
+  const evidence = record?.observedEvidence.find((candidate) => candidate.kind === 'git-commit')
+  assert.ok(evidence)
+  const blob = execFileSync(
+    'git',
+    [
+      'rev-parse',
+      `${registry.sourceSnapshotCommit}:plugins/foreman-line/docs/goals/foreman-kernel/charter.md`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  ).trim()
+  ;(evidence as { reference: string }).reference = blob
+  ;(evidence as { digest: string }).digest = sha256(
+    execFileSync('git', ['cat-file', '-p', blob], { cwd: repoRoot }),
+  )
+  const result = sweepRegistrySources(mutated, repoRoot)
+  assert.ok(result.violations.some((violation) => violation.code === 'MIGRATION_EVIDENCE_INVALID'))
+})
+
+test('R4 missing-path evidence rejects a non-snapshot commit even when that commit is real', () => {
+  const mutated = structuredClone(registry)
+  const record = mutated.reconciliations.find(
+    (candidate) => candidate.reconciliationId === 'missing-provenance-reference',
+  )
+  const evidence = record?.observedEvidence.find((candidate) => candidate.kind === 'missing-path')
+  assert.ok(record)
+  assert.ok(evidence)
+  const wrongCommit = '4666ea15caee8b231137f23325d14ea4526e338a'
+  const reference = canonicalJson({
+    commit: wrongCommit,
+    path: 'docs/transcripts/defects_lessons.md',
+  })
+  ;(evidence as { reference: string }).reference = reference
+  ;(evidence as { digest: string }).digest = sha256(reference)
+  ;(record.observedEvidence as { kind: string; reference: string; digest: string }[]).push({
+    kind: 'git-commit',
+    reference: wrongCommit,
+    digest: sha256(execFileSync('git', ['cat-file', '-p', wrongCommit], { cwd: repoRoot })),
+  })
+  const result = sweepRegistrySources(mutated, repoRoot)
+  assert.ok(result.violations.some((violation) => violation.code === 'MIGRATION_EVIDENCE_INVALID'))
+})
+
+test('R4 natural binding prose added under a curated authority section is discovered', () => {
+  const tempRoot = mkdtempSync(join(tmpdir(), 'fk-p0-binding-prose-'))
+  try {
+    copyCorpus(tempRoot)
+    const path = join(tempRoot, 'plugins/foreman-line/docs/goals/foreman-kernel/loop-directive.md')
+    const content = readFileSync(path, 'utf8')
+    writeFileSync(
+      path,
+      content.replace(
+        '## Standing authorizations and their limits',
+        '## Standing authorizations and their limits\n\nOnly the coordinator may begin a parcel after the recorded record exists.',
+      ),
+    )
+    const result = sweepRegistrySources(registry, tempRoot)
+    assert.ok(result.violations.some((violation) => violation.code === 'SOURCE_ITEM_UNCOVERED'))
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true })
+  }
+})
+
+test('R4 inserted top-level executable function is discovered without keyword matching', () => {
+  const tempRoot = mkdtempSync(join(tmpdir(), 'fk-p0-ts-construct-'))
+  try {
+    copyCorpus(tempRoot)
+    const path = join(tempRoot, 'plugins/foreman-line/spec-linter/src/validate.ts')
+    writeFileSync(
+      path,
+      `${readFileSync(path, 'utf8')}\nfunction bypassEverything() { return true }\n`,
+    )
+    const result = sweepRegistrySources(registry, tempRoot)
+    assert.ok(result.violations.some((violation) => violation.code === 'SOURCE_ITEM_UNCOVERED'))
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true })
+  }
+})
+
+test('R4 early return inside an inventoried function changes its complete construct digest', () => {
+  const tempRoot = mkdtempSync(join(tmpdir(), 'fk-p0-ts-return-'))
+  try {
+    copyCorpus(tempRoot)
+    const path = join(tempRoot, 'plugins/foreman-line/spec-linter/src/validate.ts')
+    const content = readFileSync(path, 'utf8')
+    writeFileSync(
+      path,
+      content.replace(
+        'export function validateSpecFrontmatter(doc: unknown, options?: ValidateOptions): ValidationResult {',
+        'export function validateSpecFrontmatter(doc: unknown, options?: ValidateOptions): ValidationResult {\n  return { valid: true, errors: [], warnings: [] }',
+      ),
+    )
+    const result = sweepRegistrySources(registry, tempRoot)
+    assert.ok(
+      result.violations.some(
+        (violation) =>
+          violation.code === 'VALUE_DIGEST_MISMATCH' || violation.code === 'LOCATOR_MISSING',
+      ),
+    )
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true })
+  }
+})
+
+test('R4 additive JSON schema constraint is discovered', () => {
+  const tempRoot = mkdtempSync(join(tmpdir(), 'fk-p0-json-constraint-'))
+  try {
+    copyCorpus(tempRoot)
+    const path = join(
+      tempRoot,
+      'plugins/foreman-line/spec-linter/schemas/spec-frontmatter.schema.json',
+    )
+    const schema = JSON.parse(readFileSync(path, 'utf8')) as Record<string, unknown>
+    schema['x-r4-probe'] = true
+    writeFileSync(path, JSON.stringify(schema, null, 2))
+    const result = sweepRegistrySources(registry, tempRoot)
+    assert.ok(result.violations.some((violation) => violation.code === 'SOURCE_ITEM_UNCOVERED'))
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true })
+  }
+})
+
+test('R4 additive permission profile is discovered', () => {
+  const tempRoot = mkdtempSync(join(tmpdir(), 'fk-p0-profile-'))
+  try {
+    copyCorpus(tempRoot)
+    const path = join(tempRoot, 'plugins/foreman-line/permission-profiles/permission-profiles.yaml')
+    writeFileSync(
+      path,
+      `${readFileSync(path, 'utf8')}\n  r4-unknown-profile:\n    description: probe\n    envelope:\n      deny: []\n      ask: []\n      allow: []\n`,
+    )
+    const result = sweepRegistrySources(registry, tempRoot)
+    assert.ok(result.violations.some((violation) => violation.code === 'SOURCE_ITEM_UNCOVERED'))
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true })
+  }
+})
 
 test('shipped registry sweeps the complete pinned corpus with no gaps or conflicts', () => {
   const result = sweepRegistrySources(registry, repoRoot)
@@ -125,7 +286,14 @@ test('unrelated bytes outside every registered locator stay green', () => {
     for (const source of registry.sources) {
       const destination = join(tempRoot, source.path)
       const content = readFileSync(destination, 'utf8')
-      writeFileSync(destination, `UNRELATED_BYTES_OUTSIDE_REGISTERED_LOCATORS\n${content}`, 'utf8')
+      const prefix = source.path.endsWith('.json')
+        ? '\n'
+        : source.path.endsWith('.ts')
+          ? '// UNRELATED_BYTES_OUTSIDE_REGISTERED_LOCATORS\n'
+          : source.path.endsWith('.yaml')
+            ? '# UNRELATED_BYTES_OUTSIDE_REGISTERED_LOCATORS\n'
+            : 'UNRELATED_BYTES_OUTSIDE_REGISTERED_LOCATORS\n'
+      writeFileSync(destination, `${prefix}${content}`, 'utf8')
     }
     assert.equal(sweepRegistrySources(registry, tempRoot).valid, true)
   } finally {

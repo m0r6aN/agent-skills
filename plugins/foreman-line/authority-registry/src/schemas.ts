@@ -182,6 +182,7 @@ export const authorityEnforcementRegistrySchema: SchemaObject = {
           'authorityClaim',
           'normalizedStatement',
           'sourceRefs',
+          'authorityBasisRef',
           'applicability',
           'severity',
           'classification',
@@ -200,6 +201,7 @@ export const authorityEnforcementRegistrySchema: SchemaObject = {
           authorityClaim: id,
           normalizedStatement: { type: 'string', minLength: 1 },
           sourceRefs: sourceRefArray,
+          authorityBasisRef: sourceRefSchema,
           applicability: {
             type: 'object',
             additionalProperties: false,
