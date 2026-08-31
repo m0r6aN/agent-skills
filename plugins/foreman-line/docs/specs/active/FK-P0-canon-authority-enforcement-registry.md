@@ -238,7 +238,8 @@ reported only in parcel-time evidence and never becomes a shipped byte-freeze te
 
 `AuthorityRule` must carry:
 
-- immutable semantic `ruleId` independent of line number; `normalizedStatement`;
+- immutable semantic `ruleId` independent of line number; `authoritySubject` and
+  `authorityClaim` stable lower-case ID tokens; `normalizedStatement`;
   `sourceRefs: SourceRef[]`; closed `applicability` with non-empty unique arrays of
   `GoalScope`, `RoleScope`, `StageScope`, `OperationScope`, and `HostPosture`; `Severity`;
 - exactly one primary classification:
@@ -252,18 +253,40 @@ reported only in parcel-time evidence and never becomes a shipped byte-freeze te
   `predicate`, `negativeRefusalTest`, `corpusSweep`, and `independentBypassAttempt`. All four are
   non-null only when state is `retired-from-agent-reading`; rationale/provenance remains mapped;
   and
-- `bindingDigest`, recomputed from canonical JSON of `{ruleId, sourceRefs,
-  normalizedStatement}`. Canonical JSON is UTF-8 JSON with Unicode NFC strings, recursively
-  lexicographically sorted object keys, array order preserved, and no insignificant whitespace.
-  It is an integrity checksum only, never a receipt, signature,
+- `bindingDigest`, recomputed from canonical JSON of the **complete normative rule record**:
+  `{ruleId, authoritySubject, authorityClaim, normalizedStatement, sourceRefs,
+  applicability, severity, classification, decision, refusalCode, enforcementOwner,
+  assuranceLevel, pairedRuleIds, retirementState, retirementEvidence}`. Omitting a normative
+  field from this digest is prohibited. Canonical JSON is UTF-8 JSON with Unicode NFC strings,
+  recursively lexicographically sorted object keys, array order preserved, and no insignificant
+  whitespace. The registry validator also binds the exact source-ID/path set and every complete
+  rule binding digest in a shipped manifest independent of input array cardinality; unknown or
+  missing sources and coordinated semantic changes fail unless a typed migration record binds
+  the prior committed manifest and superseding rules. The digest is an integrity checksum only,
+  never a receipt, signature,
   approval, verification verdict, merge authorization, or closure artifact.
+
+Rules with overlapping applicability and the same `authoritySubject` but different
+`authorityClaim` values are semantic contradictions. Active higher-tier binding authority may
+control only in its overlapping scope; equal-tier contradictions and unlisted lower/higher-tier
+contradictions return `CONFLICT`. Narrative, historical, stale, retired, and unsupported rules
+remain visible but cannot control active authority. Export a pure `resolveAuthority(document,
+query)` that returns the controlling rule IDs and claim, `REQUIRE_HUMAN`, or `CONFLICT`; absence
+of a reported conflict is not itself a precedence result.
 
 `EvidenceRef` is exactly `{ kind, path, digest }`, where `kind` is
 `predicate-contract | negative-test | corpus-sweep | independent-bypass`, `path` is an exact
 repo-relative non-glob path, and `digest` is a SHA-256 over that evidence artifact's bytes. The
 four retirement fields require their matching `kind`; a rule is
 `retired-from-agent-reading` if and only if all four references are present and independently
-resolvable. Evidence digests bind evidence identity; they do not freeze unrelated canon files.
+resolvable. The four paths must be distinct. Each target is a UTF-8 JSON evidence artifact with
+closed shape `{schemaVersion:'0.1.0', kind, ruleId, sourceCommit, result:'pass', producerClass,
+producerRef, inputDigest, outputDigest}`; its `kind` and `ruleId` must match the referencing slot
+and rule. `independent-bypass` requires `producerClass: independent-reviewer`; no one file,
+self-label, README, source file, or unrelated test can satisfy multiple classes. The sweep walks
+every path component, rejects links/reparse points/non-files/escape, hashes the bytes, parses the
+artifact, and validates this semantic contract. Evidence digests bind evidence identity; they do
+not freeze unrelated canon files.
 
 `OperationAuthority` must distinguish authenticated admission from authority and is exactly:
 `{ operationId, allowedPrincipals, requiredGitEvidence, missingEvidenceDecision,
@@ -275,6 +298,27 @@ operation, but must be empty for `receipt.mint-generic` and `external.write`; no
 principal may be inserted to satisfy schema shape. `requiredGitEvidence` is a unique
 `SourceRef[]`; `missingEvidenceDecision` is `REFUSE | CONFLICT | REQUIRE_HUMAN`; and the final
 three fields are booleans. Principal identity is admission-derived, never caller-self-asserted.
+
+The seven rows are exact and immutable:
+
+- `gate1.ratify`: principals `[human-developer]`, exact charter ratification plus nondelegable
+  Gate-1 canon refs, missing decision `REQUIRE_HUMAN`, all three booleans false;
+- `gate2.dispatch`: principals `[coordinator]`, exact charter standing Gate-2 grant plus loop
+  dispatch-authorization refs, missing decision `REFUSE`, `agentCallable: true`, other booleans
+  false. Builder execution after dispatch is a separate downstream operation and is not a
+  dispatch principal;
+- `gate3.merge`: principals `[human-developer]`, exact human-owned FK Gate-3 canon refs, missing
+  decision `REQUIRE_HUMAN`, all booleans false;
+- `verification.issue`: principals `[independent-reviewer]`, exact independent-review and
+  coordinator-consumes-verification canon refs, missing decision `REFUSE`, all booleans false;
+- `closure.record`: principals `[coordinator]`, exact real-human-merge prerequisite and Stage-F
+  closure canon refs, missing decision `REFUSE`, all booleans false; and
+- `receipt.mint-generic` and `external.write`: empty principals/evidence, missing decision
+  `REFUSE`, all booleans false.
+
+Every required `SourceRef` must resolve across source ID, item ID, locator digest, and value
+digest to the named fact. A generic policy statement, irrelevant rule, or self-hashed claim is
+not evidence of a grant, verdict, merge, or closure prerequisite.
 
 The following protected operations are mandatory matrix rows and semantic invariants:
 
@@ -337,11 +381,25 @@ required only for `superseded-by-amendment`. `resolved-for-fk` means runtime-con
 have one unambiguous FK rule; it does not mean the older artifact was changed or globally
 invalidated. An unlisted contradiction between active rules is a validation failure.
 
+Evidence-kind semantics are exact. `source-ref.reference` is canonical JSON for a complete
+resolving `SourceRef`. `git-commit.reference` is a 40-character commit SHA and the sweep verifies
+its Git object bytes/digest. `missing-path.reference` is an exact repo-relative path and the
+sweep verifies absence at the record's commit evidence. `command-result.reference` is canonical
+JSON containing `{tool, toolVersion, commandId, inputDigest, resultDigest, exitCode,
+actorClass}`; it is supporting diagnostics only and cannot by itself resolve or supersede an
+authority conflict. All evidence digests are recomputed over their canonical reference or Git
+object. The six required reconciliations have topic-specific exact observed source/reference
+sets and controlling rule IDs; arbitrary substitutions, duplicate IDs, self-hashed prose, and
+an incorrect topic/status fail. A `superseded-by-amendment` migration additionally requires the
+prior registry commit Git object, prior manifest digest, changed identity/location/value or
+semantic bindings, and the complete superseding `SourceRef`.
+
 ### Validator and CLI boundary
 
 - Export pure `validateRegistry(document)` and a read-only
   `sweepRegistrySources(document, repoRoot)`; all failures use typed result objects with stable
   codes. Do not write receipts, sidecars, timestamps, caches, source files, or registry updates.
+- Export pure `resolveAuthority(document, query)` with the subject/claim semantics above.
 - CLI commands are only `validate <registry-path>` and
   `sweep <registry-path> --repo-root <path>`. Exit `0` means valid/fully bound, `1` means schema
   or semantic/corpus violation, and `2` means usage/read/parse failure. All violations are
@@ -350,6 +408,14 @@ invalidated. An unlisted contradiction between active rules is a validation fail
   supplied repository root; it rejects absolute paths, traversal, containment escape,
   symlink/reparse targets, non-regular files, duplicate normalized paths, missing/moved
   locators, and changed normalized-value digests. It does not compare full-file snapshot hashes.
+- The initial corpus is the exact eighteen source IDs and paths enumerated in this spec. The
+  schema/validator reject any missing, duplicate, substituted, or nineteenth source regardless
+  of array length. Expansion requires a spec amendment and typed registry migration.
+- Source-aware discovery must fail on any new or collapsed `D<number>`/`R<number>` table row,
+  numbered standing/PDD rule, binding gate/grant/stop/authority bullet or prose block in the goal
+  canon, material JSON-schema enum/constraint, permission-profile rule/deny, or operative
+  validator/CLI branch in the inventoried live sources. Heading labels, arbitrary substring
+  anchors, comments, and preserved dead-code lines are not proof of operative behavior.
 - Validation is deterministic: identical registry/source bytes return byte-identical ordered
   results. No clock, randomness, network, environment-derived identity, or Git mutation is used.
 - Stable result codes are closed to: `SCHEMA_INVALID | SOURCE_PATH_INVALID |
@@ -359,7 +425,9 @@ invalidated. An unlisted contradiction between active rules is a validation fail
   SOURCE_ITEM_UNCOVERED | RULE_SOURCE_MISSING | RULE_CONFLICT | AUTHORITY_ESCALATION |
   RETIREMENT_EVIDENCE_INCOMPLETE | RECONCILIATION_MISSING | MIGRATION_EVIDENCE_INVALID |
   IO_ERROR | PARSE_ERROR | USAGE_ERROR`. Schema/semantic/corpus codes exit `1`; the final three
-  operational/protocol codes exit `2`. Multiple violations are ordered by source path, locator,
+  operational/protocol codes exit `2`; any sweep containing `IO_ERROR`, `PARSE_ERROR`, or
+  `USAGE_ERROR` exits `2` even when semantic violations are also present. Multiple violations
+  are ordered by source path, locator,
   rule ID, then code.
 - Runtime dependencies are exactly `ajv` and `yaml`, pinned to the versions used by current
   sibling validators. A dependency-allowlist test enforces the exact set.
@@ -459,7 +527,8 @@ a competing owner for `authority-registry`, or relies on self-asserted authority
 - One independent negative control for each required classification, authority tier/effect,
   protected operation, retirement precondition, and migration status.
 - Golden mutation controls that independently mutate identity, source location, and normalized
-  value and prove each axis fails without updating its binding evidence.
+  value, complete normative semantics, source-set membership, and authority subject/claim and
+  prove each axis fails without typed prior-to-new migration evidence.
 - Explicit stale-source, duplicate-rule, contradictory-authority, missing-source, uncovered-
   inventory-item, orphan-rule, traversal, absolute-path, normalized-path-collision,
   symlink/reparse, non-regular-file, locator-digest, and normalized-value-digest rejections.
@@ -467,9 +536,18 @@ a competing owner for `authority-registry`, or relies on self-asserted authority
   shipped sweep remains green, while a normalized operative-value change without migration
   fails. This test is mandatory evidence that Standing Constraint #12 is honored.
 - Protected-operation mutations proving agent-callable/control-state/tool-issued/self-asserted
-  Gate 1, FK Gate 3, independent-verifier, closure, and generic-mint authority all fail.
+  Gate 1, dispatch, FK Gate 3, independent-verifier, closure, generic-mint, and external-write
+  authority all fail; exact evidence references and coordinator-only dispatch are mutation-bound.
 - Gate vocabulary, Gate 3 scope, linter/profile, `surfaces:`/Allowed Files, permission-profile
   limitation, and missing-provenance reconciliation records are required and mutation-bound.
+- Negative controls add a nineteenth source; downgrade classification/applicability/retirement;
+  add D/R table rows, numbered hard rules, binding bullets/prose, and live executable behavior;
+  preserve an anchor in dead code/comment; reuse one unrelated evidence file for all retirement
+  classes; substitute self-hashed reconciliation prose; and use a missing repo root. Every case
+  fails with its named semantic or operational code.
+- Resolver tests use explicit `authoritySubject`/`authorityClaim` values for higher-tier,
+  equal-tier, scope-disjoint, historical/stale, and naturally differently worded contradictions;
+  they assert the selected controlling IDs/claim or `CONFLICT`, not only absence of violations.
 - Determinism/write-sentinel test: repeated validate/sweep calls produce identical ordered
   results and no repository changes.
 - Dependency allowlist and no-bare-specifier tests.
@@ -487,12 +565,14 @@ a competing owner for `authority-registry`, or relies on self-asserted authority
    missing/moved locators, stale normalized values, duplicate normalized paths, or unknown
    mappings. Full-file hashes at `51857a3a7796b393c0c0a68712f98c06e7015d79` are captured only
    as parcel-time evidence and are not a shipped validation predicate.
-4. Every rule has stable identity, exact source binding, applicability, severity, one of the six
-   required classifications, decision semantics, enforcement owner, assurance, retirement
-   state, and corpus-sweep evidence appropriate to that state.
-5. Precedence is scope-aware and fail-closed: a higher-tier FK rule controls an in-scope conflict;
-   historical/generic rules remain visible; an unlisted or equal-authority contradiction returns
-   `CONFLICT` and cannot be selected silently.
+4. Every rule has stable identity, authority subject/claim, exact source binding, applicability,
+   severity, one of the six required classifications, decision semantics, enforcement owner,
+   assurance, retirement state, and corpus-sweep evidence appropriate to that state. The shipped
+   manifest binds the full normative rule record and exact eighteen-source set without a
+   cardinality-conditioned bypass.
+5. `resolveAuthority` makes precedence scope-aware and fail-closed: a higher-tier FK rule controls
+   an in-scope subject/claim contradiction; historical/generic rules remain visible; an unlisted
+   or equal-authority contradiction returns `CONFLICT` and cannot be selected silently.
 6. The operation matrix enforces the protected rows exactly as stated in Constraints. No
    registry mutation can make human approval, FK merge, independent-verifier evidence, closure
    authority, or generic receipt minting ordinary agent-callable/control-state authority.
@@ -503,8 +583,9 @@ a competing owner for `authority-registry`, or relies on self-asserted authority
    compiler is recorded as a gap owned by FK-P2, not misclassified as a current refusal.
 9. Permission-profile rules distinguish loaded mediated denial, post-review Git detection,
    detected-only non-enrollment, and unsupported residual shell/bypass cases without overclaim.
-10. No rule reaches `retired-from-agent-reading` without all four D11 evidence classes; the
-    missing provenance target prevents retirement of the thirteen standing constraints.
+10. No rule reaches `retired-from-agent-reading` without four distinct, content-typed, digest-
+    verified D11 evidence artifacts bound to that rule; the missing provenance target prevents
+    retirement of the thirteen standing constraints.
 11. All required negative fixtures and mutation controls fail for their named invariant, and
     reviewer mutation of each named axis makes the corresponding formerly-green test fail.
 12. Both CLI commands honor the `0/1/2` contract, return all ordered violations, remain read-only,
