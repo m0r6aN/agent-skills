@@ -239,7 +239,9 @@ reported only in parcel-time evidence and never becomes a shipped byte-freeze te
 `AuthorityRule` must carry:
 
 - immutable semantic `ruleId` independent of line number; `authoritySubject` and
-  `authorityClaim` stable lower-case ID tokens; `normalizedStatement`;
+  `authorityClaim` stable lower-case ID tokens; `normalizedStatement`; exactly one
+  `authorityBasisRef` that is also present in `sourceRefs` and names the binding source text
+  whose tier controls this rule;
   `sourceRefs: SourceRef[]`; closed `applicability` with non-empty unique arrays of
   `GoalScope`, `RoleScope`, `StageScope`, `OperationScope`, and `HostPosture`; `Severity`;
 - exactly one primary classification:
@@ -254,7 +256,7 @@ reported only in parcel-time evidence and never becomes a shipped byte-freeze te
   non-null only when state is `retired-from-agent-reading`; rationale/provenance remains mapped;
   and
 - `bindingDigest`, recomputed from canonical JSON of the **complete normative rule record**:
-  `{ruleId, authoritySubject, authorityClaim, normalizedStatement, sourceRefs,
+  `{ruleId, authoritySubject, authorityClaim, normalizedStatement, authorityBasisRef, sourceRefs,
   applicability, severity, classification, decision, refusalCode, enforcementOwner,
   assurance, pairedRuleIds, retirementState, retirementEvidence}`. `assurance` is the public
   field whose value is an `AssuranceLevel`; no parallel `assuranceLevel` field exists. Omitting a normative
@@ -317,6 +319,32 @@ rules with one claim resolve together; multiple claims return `CONFLICT`. No can
 `REQUIRE_HUMAN / NO_APPLICABLE_AUTHORITY`. Lower-tier rules remain in `consideredRuleIds` but
 cannot override the selected tier.
 
+`authoritySubject` is a curated semantic question, never a source ID, item ID, locator hash, or
+per-rule namespace. Statements in different sources that answer the same authority question use
+the same subject even when their wording differs. The shipped identity manifest binds the exact
+subject/claim mapping for every rule and must contain repeated subjects for every required
+reconciliation; an all-unique subject graph is invalid. At minimum, the generic coordinator,
+`SPEC-CONVENTION`, historical plan, and FK charter statements about Gate 3 share
+`gate3.merge-authority`. The four charter mappings found incorrect by R3 review are exactly:
+
+- D2: subject `canon.operational-authority-boundary`, claim
+  `git-canon-sqlite-operational-split`;
+- D3: subject `kernel.surface-admission-separation`, claim
+  `read-control-admission-separated`;
+- D18: subject `kernel.authorize-action-owner`, claim
+  `provider-neutral-policy-engine`; and
+- D19: subject `repository.read-confidentiality`, claim
+  `admission-bound-contained-read`.
+
+Every required reconciliation has a shipped-data resolver vector that proves its real competing
+rules meet on a shared subject and either resolve to the stated higher-tier claim or return the
+required conflict. Synthetic tests that rewrite subjects at test time do not satisfy this
+requirement. Authority tier is derived only from `authorityBasisRef`; corroborating, narrative,
+historical, or nonbinding `sourceRefs` cannot promote a rule. The basis ref must resolve to a
+binding source and to text that states the rule's claim. `retired-from-agent-reading` is excluded
+from active resolver candidates exactly like `historical-only`; validation and resolution share
+one active-authority predicate.
+
 `EvidenceRef` is exactly `{ kind, path, digest }`, where `kind` is
 `predicate-contract | negative-test | corpus-sweep | independent-bypass`, `path` is an exact
 repo-relative non-glob path, and `digest` is a SHA-256 over that evidence artifact's bytes. The
@@ -342,18 +370,22 @@ principal may be inserted to satisfy schema shape. `requiredGitEvidence` is a un
 `SourceRef[]`; `missingEvidenceDecision` is `REFUSE | CONFLICT | REQUIRE_HUMAN`; and the final
 three fields are booleans. Principal identity is admission-derived, never caller-self-asserted.
 
-The seven rows are exact and immutable:
+The seven rows are exact and immutable. Evidence must resolve to the operative sentence or
+record, never merely to its heading:
 
-- `gate1.ratify`: principals `[human-developer]`, exact charter ratification plus nondelegable
+- `gate1.ratify`: principals `[human-developer]`, the exact 2026-08-31 ratification and scoped
+  re-ratification records plus nondelegable
   Gate-1 canon refs, missing decision `REQUIRE_HUMAN`, all three booleans false;
 - `gate2.dispatch`: principals `[coordinator]`, exact charter standing Gate-2 grant plus loop
   dispatch-authorization refs, missing decision `REFUSE`, `agentCallable: true`, other booleans
   false. Builder execution after dispatch is a separate downstream operation and is not a
   dispatch principal;
-- `gate3.merge`: principals `[human-developer]`, exact human-owned FK Gate-3 canon refs, missing
+- `gate3.merge`: principals `[human-developer]`, exact human-owned FK Gate-3 decision and stop/
+  dispatch canon refs, missing
   decision `REQUIRE_HUMAN`, all booleans false;
-- `verification.issue`: principals `[independent-reviewer]`, exact independent-review and
-  coordinator-consumes-verification canon refs, missing decision `REFUSE`, all booleans false;
+- `verification.issue`: principals `[independent-reviewer]`, exact mechanically-distinct fresh
+  reviewer requirement and coordinator-consumes-but-never-produces-verification canon refs,
+  missing decision `REFUSE`, all booleans false;
 - `closure.record`: principals `[coordinator]`, exact real-human-merge prerequisite and Stage-F
   closure canon refs, missing decision `REFUSE`, all booleans false; and
 - `receipt.mint-generic` and `external.write`: empty principals/evidence, missing decision
@@ -437,6 +469,18 @@ an incorrect topic/status fail. A `superseded-by-amendment` migration additional
 prior registry commit Git object, prior manifest digest, changed identity/location/value or
 semantic bindings, and the complete superseding `SourceRef`.
 
+The complete expected reconciliation record is immutable, including `scopedDisposition` and
+`unresolvedConsequence`; validator comparison binds both normalized prose fields, not only IDs,
+refs, and status. A delegated-merge or no-human-evidence rewrite therefore fails even when all
+digests are recomputed. Git-dependent evidence is never optional: `sweep` requires that
+`repoRoot` resolve to a real Git worktree whenever any reconciliation contains `git-commit` or
+`missing-path` evidence. It verifies `git cat-file -t <sha>` is exactly `commit` before hashing
+the commit object. `missing-path.reference` is canonical JSON
+`{commit:<verified-commit-sha>,path:<exact-repo-relative-path>}` and absence is checked in that
+specific commit tree. Missing Git metadata, a blob/tree/tag substituted for a commit, an
+unresolvable object, or an unbound missing-path commit is `MIGRATION_EVIDENCE_INVALID` and fails
+closed.
+
 ### Validator and CLI boundary
 
 - Export pure `validateRegistry(document)` and a read-only
@@ -459,6 +503,14 @@ semantic bindings, and the complete superseding `SourceRef`.
   canon, material JSON-schema enum/constraint, permission-profile rule/deny, or operative
   validator/CLI branch in the inventoried live sources. Heading labels, arbitrary substring
   anchors, comments, and preserved dead-code lines are not proof of operative behavior.
+- For goal charter and loop-directive binding sections, inventory every complete paragraph,
+  list item, and table row beneath gate, grant, authority, and stop-condition headings; headings
+  alone are never coverage. Keyword allowlists are not permitted to decide whether natural
+  binding prose is inventoried. For inventoried TypeScript and JSON Schema sources, bind complete
+  operative function/schema-constraint blocks and a deterministic top-level executable-construct
+  inventory so an inserted early return, allow/refuse branch, enum/constraint, or new operative
+  declaration fails even when old anchors remain. Comments and dead code do not satisfy the
+  construct inventory.
 - Validation is deterministic: identical registry/source bytes return byte-identical ordered
   results. No clock, randomness, network, environment-derived identity, or Git mutation is used.
 - Stable result codes are closed to: `SCHEMA_INVALID | SOURCE_PATH_INVALID |
@@ -591,6 +643,20 @@ a competing owner for `authority-registry`, or relies on self-asserted authority
 - Resolver tests use explicit `authoritySubject`/`authorityClaim` values for higher-tier,
   equal-tier, scope-disjoint, historical/stale, and naturally differently worded contradictions;
   they assert the selected controlling IDs/claim or `CONFLICT`, not only absence of violations.
+- Shipped-data resolver tests exercise every required reconciliation without rewriting subjects;
+  assert the exact D2, D3, D18, and D19 mappings; prove a corroborating ref cannot promote tier;
+  and prove `retired-from-agent-reading` can never control.
+- Applicability tests provide source-derived positive and negative query vectors for each of the
+  thirteen standing constraints and fifteen PDD hard rules. PDD hard rule 10 applies to every
+  parcel regardless of scope and therefore matches ordinary builder/build/repo-mutation queries,
+  not only Step 0/spec mutation.
+- Reconciliation negative controls mutate each normalized `scopedDisposition` and
+  `unresolvedConsequence`, sweep a copied corpus without Git metadata, substitute a blob for a
+  commit, and bind a missing path to the wrong commit; every case fails closed.
+- Protected-operation evidence tests assert the normalized meaning of every resolved evidence
+  item, including the exact Gate-1 ratification records, human-owned Gate-3 statement, and
+  coordinator-consumes-but-never-produces independent-verification statement. Heading-only or
+  semantically irrelevant evidence fails.
 - Determinism/write-sentinel test: repeated validate/sweep calls produce identical ordered
   results and no repository changes.
 - Dependency allowlist and no-bare-specifier tests.
@@ -616,6 +682,8 @@ a competing owner for `authority-registry`, or relies on self-asserted authority
 5. `resolveAuthority` makes precedence scope-aware and fail-closed: a higher-tier FK rule controls
    an in-scope subject/claim contradiction; historical/generic rules remain visible; an unlisted
    or equal-authority contradiction returns `CONFLICT` and cannot be selected silently.
+   Real shipped competing statements share curated subjects, tier comes only from the exact
+   binding `authorityBasisRef`, and retired rules never control.
 6. The operation matrix enforces the protected rows exactly as stated in Constraints. No
    registry mutation can make human approval, FK merge, independent-verifier evidence, closure
    authority, or generic receipt minting ordinary agent-callable/control-state authority.
