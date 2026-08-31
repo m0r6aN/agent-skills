@@ -1,0 +1,459 @@
+schemaVersion: 0.1.0
+registryId: foreman-kernel-authority-enforcement
+sourceSnapshotCommit: 51857a3a7796b393c0c0a68712f98c06e7015d79
+sources:
+  - sourceId: fk-charter
+    path: plugins/foreman-line/docs/goals/foreman-kernel/charter.md
+    sourceKind: goal-charter
+    authorityTier: goal-charter
+    authorityEffect: binding
+    scope:
+      - foreman-kernel
+    snapshotEvidence:
+      commit: 51857a3a7796b393c0c0a68712f98c06e7015d79
+      fullFileSha256: a69b19d69106243a918b2b228b29b8a85d854c8966e3d578ed1036105c90cc84
+    inventoryItems:
+      - itemId: item.cb21b44ff80f
+        locator:
+          kind: heading
+          anchor: "# Goal Charter — Foreman Kernel > ## 1. Objective"
+          lineHint: 11
+        normalizedExcerpt: "## 1. Objective Turn Foreman Line's strongest procedural controls into a portable governed runtime: 1. deterministic policy and verification capabilities callable through a versioned Docker-hosted MCP surface without package-local installs; 2. durable, revisioned operational goal state that survives process and session restarts while preserving Git as the authority for ratified canon; and 3. thin host hooks that consult the same kernel to observe and, after shadow-mode proof, mechanically refuse a bounded set of high-confidence violations. The first release is successful when an unrelated clean-room repository can use the containerized verifier, resume goal state after a container restart, and prove selected hook refusals without giving the kernel approval, merge, external-write, or generic receipt-minting authority. changed"
+        valueDigest: ed423c1c6649e64ace2cb2137ef3f1aed69cba7620c1823bb6871b1ee2775420
+        ruleIds:
+          - rule.fk-charter.cb21b44ff80f
+        exclusionDisposition: null
+        rationale: Rule-bearing section or live behavior is mapped to an explicit source-bound rule.
+      - itemId: item.17323e36a0c4
+        locator:
+          kind: numbered-item
+          anchor: "# Goal Charter — Foreman Kernel > ## 13. Gate 1 decision list > 3. portable MCP with the bounded D20 platform matrix, host-specific adapters,"
+          lineHint: 390
+        normalizedExcerpt: 3. portable MCP with the bounded D20 platform matrix, host-specific adapters, enrollment detection, and shadow-first enforcement (D7–D8, D20);
+        valueDigest: 062a5216e4541786bf0bd0e5fc65160b94c0e99a05bcfcf0935854eda9a2dcd2
+        ruleIds:
+          - rule.fk-charter.17323e36a0c4
+        exclusionDisposition: null
+        rationale: Rule-bearing section or live behavior is mapped to an explicit source-bound rule.
+      - itemId: item.7c611ad6ad15
+        locator:
+          kind: heading
+          anchor: "# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 1 — Pure trust core"
+          lineHint: 173
+        normalizedExcerpt: "### Wave 1 — Pure trust core | Parcel | Outcome | Risk / routing | Dependencies | |---|---|---|---| | FK-P3 — Pure dispatch decisions | Splits routing and skill resolution into deterministic no-I/O decision functions with injected validated policy and stable digests; legacy writers remain compatibility adapters. | elevated / architecture-risk | FK-P1 | | FK-P4 — Verifier facade | One provider-neutral library facade over immediate validators/evaluators; chain results say `STRUCTURAL`; public calls are content-only or use the D19 capability-bound repository reader. | elevated / architecture-risk | FK-P1, FK-P2, FK-P3 | | FK-P5 — Clean-room trust-core spike | Runs the facade against an unrelated fixture repository, including positive, negative, malformed, hostile-path, and degraded-assurance cases. | elevated / standard-feature | FK-P4 | **Wave 1 exit:** every first-release evaluator is deterministic, no-I/O unless explicitly documented, contract-tested, and proven against an unrelated repository."
+        valueDigest: a360acec1f51ee9cd09e5510d6e67f3a7421a7192b036e3cd2f5ee91c4012389
+        ruleIds:
+          - rule.fk-charter.7c611ad6ad15
+        exclusionDisposition: null
+        rationale: Rule-bearing section or live behavior is mapped to an explicit source-bound rule.
+      - itemId: item.388a6fe1b0b3
+        locator:
+          kind: heading
+          anchor: "# Goal Charter — Foreman Kernel > ## 2. Problem statement"
+          lineHint: 27
+        normalizedExcerpt: '## 2. Problem statement Foreman Line already contains substantial deterministic machinery, but its operating controls are split across prose, package-local CLIs, worktree-local permission files, Markdown ownership blocks, and host-specific session behavior. That produces five costs this goal addresses: - agents must reread and remember standing constraints; - permission profiles reduce capability only when the host/session loads them; - exact `Allowed Files` authority is present in spec prose but is not compiled for machine enforcement; - reusable evaluators require per-package dependency installation and some attractive "evaluation" functions also write timestamped artifacts; and - operational goal state is repeatedly reconstructed from Markdown rather than served from a single durable, concurrency-safe ledger. The goal is not to make hooks omnipotent. Hooks mediate only the channels the host exposes. CI, source-control rules, deterministic verification, and human gates remain independent enforcement layers.'
+        valueDigest: ab606bccc1af57a41f180846c4e478f2b63c065f74902b40588d3337f5be9170
+        ruleIds:
+          - rule.fk-charter.388a6fe1b0b3
+        exclusionDisposition: null
+        rationale: Rule-bearing section or live behavior is mapped to an explicit source-bound rule.
+      - itemId: item.b95669aefb57
+        locator:
+          kind: heading
+          anchor: "# Goal Charter — Foreman Kernel > ## 3. Authority hierarchy"
+          lineHint: 47
+        normalizedExcerpt: "## 3. Authority hierarchy When artifacts disagree, authority resolves in this order: 1. explicit developer ratification or amendment for this goal; 2. this charter's locked decisions; 3. ratified Foreman contracts and `SPEC-CONVENTION.md`; 4. `COORDINATOR-PATTERN.md` and the `goal` skill; 5. parcel specs created under this charter; 6. standing constraints and role kickstarters; 7. generated projections, caches, and advisory documentation. No implementation parcel may silently choose among contradictory authorities. It stops and requests a charter or contract amendment."
+        valueDigest: 38545df6582d76da9a9f5d448e4b7d5793dad1df1de7c92325c397a526e2de1f
+        ruleIds:
+          - rule.fk-charter.b95669aefb57
+        exclusionDisposition: null
+        rationale: Rule-bearing section or live behavior is mapped to an explicit source-bound rule.
+      - itemId: item.6486ca2f9352
+        locator:
+          kind: heading
+          anchor: "# Goal Charter — Foreman Kernel > ## 4. Locked decisions"
+          lineHint: 62
+        normalizedExcerpt: "## 4. Locked decisions The developer confirmed the Stage Zero recommendations on 2026-08-30 and explicitly ratified this charter on 2026-08-31 with: “Ratify Gate 1 and authorize Gate 2 dispatches.” D1–D17 were ratified. The required fresh plan review returned `REQUEST CHANGES` on 2026-08-31. The coordinator accepted six BLOCKERs and seven SHOULD-FIX findings; D3, D7–D9, D13–D17, new D18–D20, the parcel graph, and affected exit criteria were placed under a scoped Gate 1 re-open. The developer explicitly re-ratified them on 2026-08-31 with: “Re-ratify Gate 1 amendments R1–R13 and resume Gate 2.” D1–D20 and the amended graph/exits are binding. | ID | Decision | Reasoning | |---|---|---| | D1 | This is a new goal, `foreman-kernel`, separate from `plugin-packaging-and-scaffolder`. | The packaging/scaffolder goal owns distribution and canon scaffolding. This goal owns runtime contracts, evaluation, operational state, and hook enforcement. Shared manifests and other serialization points are explicitly sequenced rather than casually co-owned. | | D2 | Git remains authoritative for ratified charters, specs, policies, reviews, human-gate artifacts, and committed proof. SQLite becomes authoritative only for operational state: revision, lease, pending transition, wakeup/handoff, evidence index, and projection cursor. | A running process must not become hidden product or approval authority. Operational state needs concurrency and restart safety that Markdown cannot provide; ratified canon must remain diff-reviewable. | | D3 | The kernel is divided into a provider-neutral trust core, a read-only MCP surface, an admission-protected control surface, and thin host adapters. The control surface uses a distinct local endpoint/socket plus a narrowly issued host-local capability bound to a mechanically distinct principal. | Separate discovery catalogs are not an authorization boundary. An unauthenticated verifier client must be unable to list or call control tools, claim leases, or request transitions. Host quirks must not leak into policy semantics. | | D4 | First release scope is: compiled constraints, pure evaluators, read-only Docker MCP, durable operational state, one hook adapter in shadow mode, and enforcement of independently proven refusal classes. | This is the minimum vertical slice that eliminates install friction and memory-only enforcement without prematurely centralizing external authority. | | D5 | There is no generic `mintReceipt` tool in the first release. No agent-callable tool may mint Gate-1 approval, independent-verification, merge, or closure authority. | Current receipt validation is structural, current receipt builders trust caller-supplied custody inputs, and current merge metadata is not source-control authenticated. Publishing those surfaces would create an authority oracle. | | D6 | Receipt tools exposed in the first release are explicitly labeled structural. Authoritative stage-specific issuance is a follow-on goal gated on canonical hash recomputation, trusted-key verification, legal-transition checks, evidence-derived subjects, atomic append, and live source-control binding. | Tool names and assurance labels must not overclaim what existing validators prove. | | D7 | One portable MCP contract is primary. Claude Code on the declared Windows/Docker Desktop matrix receives the first lifecycle adapter. Codex and other hosts receive an adapter only where a real capability probe demonstrates equivalent mediation. Bypass attempts visible to a loaded adapter may be refused; hook absence or non-enrollment is detected by enrollment heartbeat and CI and is never claimed as a hook refusal. | The repo documents that some plugin/session surfaces ignore hooks, MCP, or permission frontmatter. Portability belongs in the protocol and capability matrix, not in a universal enforcement claim. | | D8 | Hooks begin in shadow mode. After negative tests, mediated-bypass probes, enrollment detection, and corpus reconciliation, governed mutations fail closed when the loaded adapter cannot reach the kernel. Read-only work may continue only in an explicit degraded mode that records the missing assurance. Enforcement cannot be promoted before independent CI backstops are green. | Failing open makes enforcement claims false; failing every operation closed makes Docker a development-wide outage; promoting before CI leaves unmediated channels without the promised detector. | | D9 | Human authority is preserved: Gate 1 is nondelegable; Gate 2 may be delegated only by an explicit charter-scoped standing authorization; Gate 3 remains human-owned unless a distinct agent identity is mechanically authorized and verified live. Human-gate satisfaction is derived from canonical, digest-bound Git artifacts and cannot be written as ordinary operational state. | Hooks, MCP, leases, and a local control capability are enforcement mechanisms, not new authority sources. Human-only conditions produce `awaiting_human` stop reports rather than unfinishable stop-hook loops. | | D10 | Exact `Allowed Files` is compiled from the spec body before path refusal is implemented. `surfaces:` remains routing/audit metadata and never substitutes for mutation authority. | The existing frontmatter linter does not provide the exact path contract needed by hooks. Enforcing a different field would mechanize the wrong rule. | | D11 | A defect class is retired from the agent reading path only after: a deterministic predicate exists, a negative test proves refusal, the existing corpus is swept, and an independent bypass attempt fails. Provenance and rationale remain in the lessons record. | Removing prose before enforcement is proven merely hides the rule. Installing a future rule without reconciling existing instances leaves the class alive. | | D12 | Hooks are adapters, not policy engines. They normalize lifecycle events, call `authorizeAction`, honor the structured decision, and report observed effects. All policy IDs, refusal codes, state transitions, and evidence rules live in the kernel contract. | This prevents host-specific shell scripts from becoming a second, drifting policy implementation. | | D13 | Pre-action path checks are backed by post-action realpath-aware Git-diff detection and CI, and CI lands before enforcement promotion. Reviewer sessions fail closed on opaque mutation-capable shell; builder shell limitations are disclosed rather than described as complete containment. A missing/non-loaded hook is detected through enrollment/CI, not described as refused. | Shells, generators, subprocesses, custom tools, symlinks, and external applications defeat universal tool-call parsing. Layered prevention plus detection is honest; unsupported containment claims are not. | | D14 | Operational state uses SQLite WAL with versioned transactional migrations, foreign keys, append-only events, single-writer leases, trusted lease-time semantics, optimistic revisions, principal/operation/idempotency keys bound to input digests, transactional state/event/cursor updates, and deterministic Markdown views. Git wins ratification and human-gate facts; SQLite wins leases, revisions, idempotency, wakeups, and projection cursor after a one-time digest-bound cutover. Divergence stops rather than overwrites. | One process in front of durable state improves resume cost; vague dual authority, process-only truth, or unbound idempotency creates split brain and replay risk. | | D15 | The first container has no Jira, SCM, cloud, signing, Docker-socket, or other external-system credential. A narrow host-local control capability is permitted only for admission to the local control surface. The read-only server cannot read the state volume, and repository access is capability-bound and read-only. | The portable verifier should not inherit unrelated blast radius or disclose state. A local admission capability is not authority to mutate external systems or Git canon. | | D16 | Existing mixed functions are split before exposure: routing and skill selection become pure decisions plus separately authorized recorders. Routing/skill sidecars do not share a directory interpreted as a receipt chain. | Current functions mix calculation, timestamps, directory creation, and overwriteable files. Exposing them unchanged would make a supposedly read-only tool mutate the repo and can poison receipt-directory validation. | | D17 | Every public tool has a versioned input/output schema, stable refusal codes, authenticated-principal/admission provenance where applicable, request/input/policy digests, idempotency binding, explicit assurance level, bounded payloads, and consistent decision semantics. Policy refusal is a successful structured result; malformed protocol or kernel failure is an MCP error. | Hooks and harnesses must distinguish deliberate refusal from process failure without parsing free-form prose, and control decisions must never trust caller-self-asserted identity. | | D18 | `authorizeAction` is a dedicated provider-neutral policy engine, not a hook or control-handler implementation detail. It combines authenticated principal, repository/worktree identity, compiled Allowed Files, role posture, leases/revisions, gate evidence, outage mode, and post-diff obligations against golden lifecycle vectors. | Without an owning engine parcel, thin adapters or the control catalog would have to reimplement policy and violate D12. | | D19 | Public read APIs are content-only by default. Any repository read uses an admission-bound `repoId` plus exact relative path resolved inside one mounted read-only root, with canonical containment, symlink/reparse refusal, regular-file checks, and byte limits. Arbitrary host paths are forbidden. | Read-only access can still disclose unrelated source, secrets, container files, or the SQLite volume. Mutation authority and read confidentiality are separate boundaries. | | D20 | First-release enforcement is claimed only for Claude Code on Windows 11 with Docker Desktop and the tested plugin/launcher shape. The MCP protocol and Linux container image remain provider-neutral; native-Linux-host or Codex enforcement is not claimed until separate process-boundary evidence exists. | Two harness shapes do not prove host, path, filesystem, or lifecycle parity. The claim must match the demonstrated platform matrix. |"
+        valueDigest: 46eaeda3021f150b5a44c5f03492e39fbd287753d68f0e927b7dd13d81da4454
+        ruleIds:
+          - rule.fk-charter.6486ca2f9352
+        exclusionDisposition: null
+        rationale: Rule-bearing section or live behavior is mapped to an explicit source-bound rule.
+rules:
+  - ruleId: rule.fk-charter.cb21b44ff80f
+    normalizedStatement: "## 1. Objective Turn Foreman Line's strongest procedural controls into a portable governed runtime: 1. deterministic policy and verification capabilities callable through a versioned Docker-hosted MCP surface without package-local installs; 2. durable, revisioned operational goal state that survives process and session restarts while preserving Git as the authority for ratified canon; and 3. thin host hooks that consult the same kernel to observe and, after shadow-mode proof, mechanically refuse a bounded set of high-confidence violations. The first release is successful when an unrelated clean-room repository can use the containerized verifier, resume goal state after a container restart, and prove selected hook refusals without giving the kernel approval, merge, external-write, or generic receipt-minting authority."
+    sourceRefs:
+      - sourceId: fk-charter
+        itemId: item.cb21b44ff80f
+        locatorDigest: 02ff4b612abb1bbcc8f01fdf7296d449537c38f3a223c9e215a5254c60d730d8
+        valueDigest: ed423c1c6649e64ace2cb2137ef3f1aed69cba7620c1823bb6871b1ee2775420
+    applicability:
+      goals:
+        - foreman-kernel
+      roles:
+        - any
+      stages:
+        - any
+      operations:
+        - any
+      hosts:
+        - any
+    severity: critical
+    classification: pre-action-refusal
+    decision: REFUSE
+    refusalCode: FK_CANON_RULE_REFUSED
+    enforcementOwner: kernel-policy
+    assurance: structural
+    pairedRuleIds: []
+    retirementState: active-reading
+    retirementEvidence:
+      predicate: null
+      negativeRefusalTest: null
+      corpusSweep: null
+      independentBypassAttempt: null
+    bindingDigest: 556644ae9aec8dddb27f2961b970a55bbbe398f4138ec126dfbee708421bf07e
+  - ruleId: rule.fk-charter.17323e36a0c4
+    normalizedStatement: 3. portable MCP with the bounded D20 platform matrix, host-specific adapters, enrollment detection, and shadow-first enforcement (D7–D8, D20);
+    sourceRefs:
+      - sourceId: fk-charter
+        itemId: item.17323e36a0c4
+        locatorDigest: a244e7acf7a9ff97bbced291763ba9ea5ffc513df15a0785b76ca949822219f7
+        valueDigest: 062a5216e4541786bf0bd0e5fc65160b94c0e99a05bcfcf0935854eda9a2dcd2
+    applicability:
+      goals:
+        - foreman-kernel
+      roles:
+        - any
+      stages:
+        - any
+      operations:
+        - any
+      hosts:
+        - any
+    severity: medium
+    classification: post-action-detection
+    decision: ADVISORY
+    refusalCode: null
+    enforcementOwner: coordinator
+    assurance: detected
+    pairedRuleIds: []
+    retirementState: active-reading
+    retirementEvidence:
+      predicate: null
+      negativeRefusalTest: null
+      corpusSweep: null
+      independentBypassAttempt: null
+    bindingDigest: fde29e11095972be2bc7d67e488e82e13225aab582a3a955d23283ab23f1941c
+  - ruleId: rule.fk-charter.7c611ad6ad15
+    normalizedStatement: "### Wave 1 — Pure trust core | Parcel | Outcome | Risk / routing | Dependencies | |---|---|---|---| | FK-P3 — Pure dispatch decisions | Splits routing and skill resolution into deterministic no-I/O decision functions with injected validated policy and stable digests; legacy writers remain compatibility adapters. | elevated / architecture-risk | FK-P1 | | FK-P4 — Verifier facade | One provider-neutral library facade over immediate validators/evaluators; chain results say `STRUCTURAL`; public calls are content-only or use the D19 capability-bound repository reader. | elevated / architecture-risk | FK-P1, FK-P2, FK-P3 | | FK-P5 — Clean-room trust-core spike | Runs the facade against an unrelated fixture repository, including positive, negative, malformed, hostile-path, and degraded-assurance cases. | elevated / standard-feature | FK-P4 | **Wave 1 exit:** every first-release evaluator is deterministic, no-I/O unless explicitly documented, contract-tested, and proven against an unrelated repository."
+    sourceRefs:
+      - sourceId: fk-charter
+        itemId: item.7c611ad6ad15
+        locatorDigest: 344114b46b2b1f6f176b97d223ece3c0fe553bf89f5b2c508723e67db4bf916f
+        valueDigest: a360acec1f51ee9cd09e5510d6e67f3a7421a7192b036e3cd2f5ee91c4012389
+    applicability:
+      goals:
+        - foreman-kernel
+      roles:
+        - any
+      stages:
+        - any
+      operations:
+        - any
+      hosts:
+        - any
+    severity: medium
+    classification: ci-static-check
+    decision: ADVISORY
+    refusalCode: null
+    enforcementOwner: ci
+    assurance: detected
+    pairedRuleIds: []
+    retirementState: active-reading
+    retirementEvidence:
+      predicate: null
+      negativeRefusalTest: null
+      corpusSweep: null
+      independentBypassAttempt: null
+    bindingDigest: ae81952f3bff04f215171614ab001b2f32129ecfad08792ce95fa78d3128df79
+  - ruleId: rule.fk-charter.388a6fe1b0b3
+    normalizedStatement: '## 2. Problem statement Foreman Line already contains substantial deterministic machinery, but its operating controls are split across prose, package-local CLIs, worktree-local permission files, Markdown ownership blocks, and host-specific session behavior. That produces five costs this goal addresses: - agents must reread and remember standing constraints; - permission profiles reduce capability only when the host/session loads them; - exact `Allowed Files` authority is present in spec prose but is not compiled for machine enforcement; - reusable evaluators require per-package dependency installation and some attractive "evaluation" functions also write timestamped artifacts; and - operational goal state is repeatedly reconstructed from Markdown rather than served from a single durable, concurrency-safe ledger. The goal is not to make hooks omnipotent. Hooks mediate only the channels the host exposes. CI, source-control rules, deterministic verification, and human gates remain independent enforcement layers.'
+    sourceRefs:
+      - sourceId: fk-charter
+        itemId: item.388a6fe1b0b3
+        locatorDigest: 7953d986515763db4e6c283bbfc5a06dbfe59a476c42b3b76a718d1bdc67c3ae
+        valueDigest: ab606bccc1af57a41f180846c4e478f2b63c065f74902b40588d3337f5be9170
+    applicability:
+      goals:
+        - foreman-kernel
+      roles:
+        - any
+      stages:
+        - any
+      operations:
+        - any
+      hosts:
+        - any
+    severity: medium
+    classification: independent-review-human-judgment
+    decision: REQUIRE_HUMAN
+    refusalCode: null
+    enforcementOwner: independent-reviewer
+    assurance: independently-verified
+    pairedRuleIds: []
+    retirementState: active-reading
+    retirementEvidence:
+      predicate: null
+      negativeRefusalTest: null
+      corpusSweep: null
+      independentBypassAttempt: null
+    bindingDigest: 87cf458a9ec9d336c47593f8bbd4adadacb2e4e8a8715b79f33d7a6fca8416ab
+  - ruleId: rule.fk-charter.b95669aefb57
+    normalizedStatement: "## 3. Authority hierarchy When artifacts disagree, authority resolves in this order: 1. explicit developer ratification or amendment for this goal; 2. this charter's locked decisions; 3. ratified Foreman contracts and `SPEC-CONVENTION.md`; 4. `COORDINATOR-PATTERN.md` and the `goal` skill; 5. parcel specs created under this charter; 6. standing constraints and role kickstarters; 7. generated projections, caches, and advisory documentation. No implementation parcel may silently choose among contradictory authorities. It stops and requests a charter or contract amendment."
+    sourceRefs:
+      - sourceId: fk-charter
+        itemId: item.b95669aefb57
+        locatorDigest: d7266f97774c9ab56bc5e74ea9b3927287b2c7817ef8031c23e986a9eb4904c2
+        valueDigest: 38545df6582d76da9a9f5d448e4b7d5793dad1df1de7c92325c397a526e2de1f
+    applicability:
+      goals:
+        - foreman-kernel
+      roles:
+        - any
+      stages:
+        - any
+      operations:
+        - any
+      hosts:
+        - any
+    severity: medium
+    classification: narrative-provenance
+    decision: ADVISORY
+    refusalCode: null
+    enforcementOwner: provenance-only
+    assurance: narrative
+    pairedRuleIds: []
+    retirementState: active-reading
+    retirementEvidence:
+      predicate: null
+      negativeRefusalTest: null
+      corpusSweep: null
+      independentBypassAttempt: null
+    bindingDigest: dbee463753171d8c7253d66208783c48ef135c6fd11f91fd7967111b40143b08
+  - ruleId: rule.fk-charter.6486ca2f9352
+    normalizedStatement: "## 4. Locked decisions The developer confirmed the Stage Zero recommendations on 2026-08-30 and explicitly ratified this charter on 2026-08-31 with: “Ratify Gate 1 and authorize Gate 2 dispatches.” D1–D17 were ratified. The required fresh plan review returned `REQUEST CHANGES` on 2026-08-31. The coordinator accepted six BLOCKERs and seven SHOULD-FIX findings; D3, D7–D9, D13–D17, new D18–D20, the parcel graph, and affected exit criteria were placed under a scoped Gate 1 re-open. The developer explicitly re-ratified them on 2026-08-31 with: “Re-ratify Gate 1 amendments R1–R13 and resume Gate 2.” D1–D20 and the amended graph/exits are binding. | ID | Decision | Reasoning | |---|---|---| | D1 | This is a new goal, `foreman-kernel`, separate from `plugin-packaging-and-scaffolder`. | The packaging/scaffolder goal owns distribution and canon scaffolding. This goal owns runtime contracts, evaluation, operational state, and hook enforcement. Shared manifests and other serialization points are explicitly sequenced rather than casually co-owned. | | D2 | Git remains authoritative for ratified charters, specs, policies, reviews, human-gate artifacts, and committed proof. SQLite becomes authoritative only for operational state: revision, lease, pending transition, wakeup/handoff, evidence index, and projection cursor. | A running process must not become hidden product or approval authority. Operational state needs concurrency and restart safety that Markdown cannot provide; ratified canon must remain diff-reviewable. | | D3 | The kernel is divided into a provider-neutral trust core, a read-only MCP surface, an admission-protected control surface, and thin host adapters. The control surface uses a distinct local endpoint/socket plus a narrowly issued host-local capability bound to a mechanically distinct principal. | Separate discovery catalogs are not an authorization boundary. An unauthenticated verifier client must be unable to list or call control tools, claim leases, or request transitions. Host quirks must not leak into policy semantics. | | D4 | First release scope is: compiled constraints, pure evaluators, read-only Docker MCP, durable operational state, one hook adapter in shadow mode, and enforcement of independently proven refusal classes. | This is the minimum vertical slice that eliminates install friction and memory-only enforcement without prematurely centralizing external authority. | | D5 | There is no generic `mintReceipt` tool in the first release. No agent-callable tool may mint Gate-1 approval, independent-verification, merge, or closure authority. | Current receipt validation is structural, current receipt builders trust caller-supplied custody inputs, and current merge metadata is not source-control authenticated. Publishing those surfaces would create an authority oracle. | | D6 | Receipt tools exposed in the first release are explicitly labeled structural. Authoritative stage-specific issuance is a follow-on goal gated on canonical hash recomputation, trusted-key verification, legal-transition checks, evidence-derived subjects, atomic append, and live source-control binding. | Tool names and assurance labels must not overclaim what existing validators prove. | | D7 | One portable MCP contract is primary. Claude Code on the declared Windows/Docker Desktop matrix receives the first lifecycle adapter. Codex and other hosts receive an adapter only where a real capability probe demonstrates equivalent mediation. Bypass attempts visible to a loaded adapter may be refused; hook absence or non-enrollment is detected by enrollment heartbeat and CI and is never claimed as a hook refusal. | The repo documents that some plugin/session surfaces ignore hooks, MCP, or permission frontmatter. Portability belongs in the protocol and capability matrix, not in a universal enforcement claim. | | D8 | Hooks begin in shadow mode. After negative tests, mediated-bypass probes, enrollment detection, and corpus reconciliation, governed mutations fail closed when the loaded adapter cannot reach the kernel. Read-only work may continue only in an explicit degraded mode that records the missing assurance. Enforcement cannot be promoted before independent CI backstops are green. | Failing open makes enforcement claims false; failing every operation closed makes Docker a development-wide outage; promoting before CI leaves unmediated channels without the promised detector. | | D9 | Human authority is preserved: Gate 1 is nondelegable; Gate 2 may be delegated only by an explicit charter-scoped standing authorization; Gate 3 remains human-owned unless a distinct agent identity is mechanically authorized and verified live. Human-gate satisfaction is derived from canonical, digest-bound Git artifacts and cannot be written as ordinary operational state. | Hooks, MCP, leases, and a local control capability are enforcement mechanisms, not new authority sources. Human-only conditions produce `awaiting_human` stop reports rather than unfinishable stop-hook loops. | | D10 | Exact `Allowed Files` is compiled from the spec body before path refusal is implemented. `surfaces:` remains routing/audit metadata and never substitutes for mutation authority. | The existing frontmatter linter does not provide the exact path contract needed by hooks. Enforcing a different field would mechanize the wrong rule. | | D11 | A defect class is retired from the agent reading path only after: a deterministic predicate exists, a negative test proves refusal, the existing corpus is swept, and an independent bypass attempt fails. Provenance and rationale remain in the lessons record. | Removing prose before enforcement is proven merely hides the rule. Installing a future rule without reconciling existing instances leaves the class alive. | | D12 | Hooks are adapters, not policy engines. They normalize lifecycle events, call `authorizeAction`, honor the structured decision, and report observed effects. All policy IDs, refusal codes, state transitions, and evidence rules live in the kernel contract. | This prevents host-specific shell scripts from becoming a second, drifting policy implementation. | | D13 | Pre-action path checks are backed by post-action realpath-aware Git-diff detection and CI, and CI lands before enforcement promotion. Reviewer sessions fail closed on opaque mutation-capable shell; builder shell limitations are disclosed rather than described as complete containment. A missing/non-loaded hook is detected through enrollment/CI, not described as refused. | Shells, generators, subprocesses, custom tools, symlinks, and external applications defeat universal tool-call parsing. Layered prevention plus detection is honest; unsupported containment claims are not. | | D14 | Operational state uses SQLite WAL with versioned transactional migrations, foreign keys, append-only events, single-writer leases, trusted lease-time semantics, optimistic revisions, principal/operation/idempotency keys bound to input digests, transactional state/event/cursor updates, and deterministic Markdown views. Git wins ratification and human-gate facts; SQLite wins leases, revisions, idempotency, wakeups, and projection cursor after a one-time digest-bound cutover. Divergence stops rather than overwrites. | One process in front of durable state improves resume cost; vague dual authority, process-only truth, or unbound idempotency creates split brain and replay risk. | | D15 | The first container has no Jira, SCM, cloud, signing, Docker-socket, or other external-system credential. A narrow host-local control capability is permitted only for admission to the local control surface. The read-only server cannot read the state volume, and repository access is capability-bound and read-only. | The portable verifier should not inherit unrelated blast radius or disclose state. A local admission capability is not authority to mutate external systems or Git canon. | | D16 | Existing mixed functions are split before exposure: routing and skill selection become pure decisions plus separately authorized recorders. Routing/skill sidecars do not share a directory interpreted as a receipt chain. | Current functions mix calculation, timestamps, directory creation, and overwriteable files. Exposing them unchanged would make a supposedly read-only tool mutate the repo and can poison receipt-directory validation. | | D17 | Every public tool has a versioned input/output schema, stable refusal codes, authenticated-principal/admission provenance where applicable, request/input/policy digests, idempotency binding, explicit assurance level, bounded payloads, and consistent decision semantics. Policy refusal is a successful structured result; malformed protocol or kernel failure is an MCP error. | Hooks and harnesses must distinguish deliberate refusal from process failure without parsing free-form prose, and control decisions must never trust caller-self-asserted identity. | | D18 | `authorizeAction` is a dedicated provider-neutral policy engine, not a hook or control-handler implementation detail. It combines authenticated principal, repository/worktree identity, compiled Allowed Files, role posture, leases/revisions, gate evidence, outage mode, and post-diff obligations against golden lifecycle vectors. | Without an owning engine parcel, thin adapters or the control catalog would have to reimplement policy and violate D12. | | D19 | Public read APIs are content-only by default. Any repository read uses an admission-bound `repoId` plus exact relative path resolved inside one mounted read-only root, with canonical containment, symlink/reparse refusal, regular-file checks, and byte limits. Arbitrary host paths are forbidden. | Read-only access can still disclose unrelated source, secrets, container files, or the SQLite volume. Mutation authority and read confidentiality are separate boundaries. | | D20 | First-release enforcement is claimed only for Claude Code on Windows 11 with Docker Desktop and the tested plugin/launcher shape. The MCP protocol and Linux container image remain provider-neutral; native-Linux-host or Codex enforcement is not claimed until separate process-boundary evidence exists. | Two harness shapes do not prove host, path, filesystem, or lifecycle parity. The claim must match the demonstrated platform matrix. |"
+    sourceRefs:
+      - sourceId: fk-charter
+        itemId: item.6486ca2f9352
+        locatorDigest: deaa495545d9d3a475661bef83b1259d8937f2eda1de4c3dc373781a8b3665b4
+        valueDigest: 46eaeda3021f150b5a44c5f03492e39fbd287753d68f0e927b7dd13d81da4454
+    applicability:
+      goals:
+        - foreman-kernel
+      roles:
+        - any
+      stages:
+        - any
+      operations:
+        - any
+      hosts:
+        - any
+    severity: medium
+    classification: unsupported
+    decision: ADVISORY
+    refusalCode: null
+    enforcementOwner: none
+    assurance: narrative
+    pairedRuleIds: []
+    retirementState: active-reading
+    retirementEvidence:
+      predicate: null
+      negativeRefusalTest: null
+      corpusSweep: null
+      independentBypassAttempt: null
+    bindingDigest: ccc0e879d062649ff75c0d2db21fe22333bb1f05dbce5202010b909207c8ebcf
+operationAuthority:
+  - operationId: gate1.ratify
+    allowedPrincipals:
+      - human-developer
+    requiredGitEvidence:
+      - sourceId: fk-charter
+        itemId: item.cb21b44ff80f
+        locatorDigest: 02ff4b612abb1bbcc8f01fdf7296d449537c38f3a223c9e215a5254c60d730d8
+        valueDigest: ed423c1c6649e64ace2cb2137ef3f1aed69cba7620c1823bb6871b1ee2775420
+    missingEvidenceDecision: REQUIRE_HUMAN
+    agentCallable: false
+    operationalStateMaySatisfy: false
+    toolMayIssueAuthorityEvidence: false
+  - operationId: gate2.dispatch
+    allowedPrincipals:
+      - coordinator
+      - builder
+    requiredGitEvidence:
+      - sourceId: fk-charter
+        itemId: item.cb21b44ff80f
+        locatorDigest: 02ff4b612abb1bbcc8f01fdf7296d449537c38f3a223c9e215a5254c60d730d8
+        valueDigest: ed423c1c6649e64ace2cb2137ef3f1aed69cba7620c1823bb6871b1ee2775420
+    missingEvidenceDecision: REFUSE
+    agentCallable: true
+    operationalStateMaySatisfy: false
+    toolMayIssueAuthorityEvidence: false
+  - operationId: gate3.merge
+    allowedPrincipals:
+      - human-developer
+    requiredGitEvidence:
+      - sourceId: fk-charter
+        itemId: item.cb21b44ff80f
+        locatorDigest: 02ff4b612abb1bbcc8f01fdf7296d449537c38f3a223c9e215a5254c60d730d8
+        valueDigest: ed423c1c6649e64ace2cb2137ef3f1aed69cba7620c1823bb6871b1ee2775420
+    missingEvidenceDecision: REQUIRE_HUMAN
+    agentCallable: false
+    operationalStateMaySatisfy: false
+    toolMayIssueAuthorityEvidence: false
+  - operationId: verification.issue
+    allowedPrincipals:
+      - independent-reviewer
+    requiredGitEvidence:
+      - sourceId: fk-charter
+        itemId: item.cb21b44ff80f
+        locatorDigest: 02ff4b612abb1bbcc8f01fdf7296d449537c38f3a223c9e215a5254c60d730d8
+        valueDigest: ed423c1c6649e64ace2cb2137ef3f1aed69cba7620c1823bb6871b1ee2775420
+    missingEvidenceDecision: REFUSE
+    agentCallable: false
+    operationalStateMaySatisfy: false
+    toolMayIssueAuthorityEvidence: false
+  - operationId: closure.record
+    allowedPrincipals:
+      - human-developer
+    requiredGitEvidence:
+      - sourceId: fk-charter
+        itemId: item.cb21b44ff80f
+        locatorDigest: 02ff4b612abb1bbcc8f01fdf7296d449537c38f3a223c9e215a5254c60d730d8
+        valueDigest: ed423c1c6649e64ace2cb2137ef3f1aed69cba7620c1823bb6871b1ee2775420
+    missingEvidenceDecision: REFUSE
+    agentCallable: false
+    operationalStateMaySatisfy: false
+    toolMayIssueAuthorityEvidence: false
+  - operationId: receipt.mint-generic
+    allowedPrincipals:
+      - kernel-operator
+    requiredGitEvidence: []
+    missingEvidenceDecision: REFUSE
+    agentCallable: false
+    operationalStateMaySatisfy: false
+    toolMayIssueAuthorityEvidence: false
+  - operationId: external.write
+    allowedPrincipals:
+      - human-developer
+    requiredGitEvidence:
+      - sourceId: fk-charter
+        itemId: item.cb21b44ff80f
+        locatorDigest: 02ff4b612abb1bbcc8f01fdf7296d449537c38f3a223c9e215a5254c60d730d8
+        valueDigest: ed423c1c6649e64ace2cb2137ef3f1aed69cba7620c1823bb6871b1ee2775420
+    missingEvidenceDecision: REQUIRE_HUMAN
+    agentCallable: false
+    operationalStateMaySatisfy: false
+    toolMayIssueAuthorityEvidence: false
+reconciliations:
+  - reconciliationId: gate-namespace-count
+    topic: Gate namespace
+    observedRefs:
+      - sourceId: fk-charter
+        itemId: item.cb21b44ff80f
+        locatorDigest: 02ff4b612abb1bbcc8f01fdf7296d449537c38f3a223c9e215a5254c60d730d8
+        valueDigest: ed423c1c6649e64ace2cb2137ef3f1aed69cba7620c1823bb6871b1ee2775420
+    observedEvidence:
+      - kind: source-ref
+        reference: fk-charter:item.cb21b44ff80f
+        digest: f309e837413429197e105e6bf0bee923b2e0034ccb72f565691cccf3e2e0516a
+    authoritativeRuleIds:
+      - rule.fk-charter.cb21b44ff80f
+    scopedDisposition: Fixture disposition.
+    unresolvedConsequence: Fixture consequence.
+    migrationStatus: resolved-for-fk
+    supersedingEvidence: null
+  - reconciliationId: gate3-delegation
+    topic: Gate 3 delegation
+    observedRefs:
+      - sourceId: fk-charter
+        itemId: item.cb21b44ff80f
+        locatorDigest: 02ff4b612abb1bbcc8f01fdf7296d449537c38f3a223c9e215a5254c60d730d8
+        valueDigest: ed423c1c6649e64ace2cb2137ef3f1aed69cba7620c1823bb6871b1ee2775420
+    observedEvidence:
+      - kind: source-ref
+        reference: fk-charter:item.cb21b44ff80f
+        digest: f309e837413429197e105e6bf0bee923b2e0034ccb72f565691cccf3e2e0516a
+    authoritativeRuleIds:
+      - rule.fk-charter.cb21b44ff80f
+    scopedDisposition: Fixture disposition.
+    unresolvedConsequence: Fixture consequence.
+    migrationStatus: resolved-for-fk
+    supersedingEvidence: null
+  - reconciliationId: spec-linter-profile-behavior
+    topic: Spec linter profile behavior
+    observedRefs:
+      - sourceId: fk-charter
+        itemId: item.cb21b44ff80f
+        locatorDigest: 02ff4b612abb1bbcc8f01fdf7296d449537c38f3a223c9e215a5254c60d730d8
+        valueDigest: ed423c1c6649e64ace2cb2137ef3f1aed69cba7620c1823bb6871b1ee2775420
+    observedEvidence:
+      - kind: source-ref
+        reference: fk-charter:item.cb21b44ff80f
+        digest: f309e837413429197e105e6bf0bee923b2e0034ccb72f565691cccf3e2e0516a
+    authoritativeRuleIds:
+      - rule.fk-charter.cb21b44ff80f
+    scopedDisposition: Fixture disposition.
+    unresolvedConsequence: Fixture consequence.
+    migrationStatus: resolved-for-fk
+    supersedingEvidence: null
+  - reconciliationId: surfaces-allowed-files
+    topic: surfaces versus Allowed Files
+    observedRefs:
+      - sourceId: fk-charter
+        itemId: item.cb21b44ff80f
+        locatorDigest: 02ff4b612abb1bbcc8f01fdf7296d449537c38f3a223c9e215a5254c60d730d8
+        valueDigest: ed423c1c6649e64ace2cb2137ef3f1aed69cba7620c1823bb6871b1ee2775420
+    observedEvidence:
+      - kind: source-ref
+        reference: fk-charter:item.cb21b44ff80f
+        digest: f309e837413429197e105e6bf0bee923b2e0034ccb72f565691cccf3e2e0516a
+    authoritativeRuleIds:
+      - rule.fk-charter.cb21b44ff80f
+    scopedDisposition: Fixture disposition.
+    unresolvedConsequence: Fixture consequence.
+    migrationStatus: resolved-for-fk
+    supersedingEvidence: null
+  - reconciliationId: permission-profile-enforcement-bound
+    topic: Permission profile boundary
+    observedRefs:
+      - sourceId: fk-charter
+        itemId: item.cb21b44ff80f
+        locatorDigest: 02ff4b612abb1bbcc8f01fdf7296d449537c38f3a223c9e215a5254c60d730d8
+        valueDigest: ed423c1c6649e64ace2cb2137ef3f1aed69cba7620c1823bb6871b1ee2775420
+    observedEvidence:
+      - kind: source-ref
+        reference: fk-charter:item.cb21b44ff80f
+        digest: f309e837413429197e105e6bf0bee923b2e0034ccb72f565691cccf3e2e0516a
+    authoritativeRuleIds:
+      - rule.fk-charter.cb21b44ff80f
+    scopedDisposition: Fixture disposition.
+    unresolvedConsequence: Fixture consequence.
+    migrationStatus: resolved-for-fk
+    supersedingEvidence: null
+  - reconciliationId: missing-provenance-reference
+    topic: Missing provenance reference
+    observedRefs:
+      - sourceId: fk-charter
+        itemId: item.cb21b44ff80f
+        locatorDigest: 02ff4b612abb1bbcc8f01fdf7296d449537c38f3a223c9e215a5254c60d730d8
+        valueDigest: ed423c1c6649e64ace2cb2137ef3f1aed69cba7620c1823bb6871b1ee2775420
+    observedEvidence:
+      - kind: missing-path
+        reference: docs/transcripts/defects_lessons.md
+        digest: 64415fda350a585aa0082258f448946ac7dda88e52598f866198765083981985
+    authoritativeRuleIds:
+      - rule.fk-charter.cb21b44ff80f
+    scopedDisposition: Fixture disposition.
+    unresolvedConsequence: Fixture consequence.
+    migrationStatus: open
+    supersedingEvidence: null
