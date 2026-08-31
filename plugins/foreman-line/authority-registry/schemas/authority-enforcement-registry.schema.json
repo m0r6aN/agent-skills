@@ -630,7 +630,6 @@
                 "kernel-operator"
               ]
             },
-            "minItems": 1,
             "uniqueItems": true
           },
           "requiredGitEvidence": {

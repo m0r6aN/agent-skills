@@ -5,6 +5,7 @@ import { dirname, join } from 'node:path'
 import { test } from 'node:test'
 import { fileURLToPath } from 'node:url'
 import { parse } from 'yaml'
+import type { AuthorityEnforcementRegistry } from '../src/types.js'
 import { parseRegistry, validateRegistry } from '../src/validate.js'
 
 const packageRoot = join(dirname(fileURLToPath(import.meta.url)), '..')
@@ -17,6 +18,22 @@ function load(name: string): unknown {
 
 test('accepts the minimal contract fixture', () => {
   assert.equal(validateRegistry(load('pass-minimal.yaml')).valid, true)
+})
+
+test('schema admits empty principal sets for explicitly unavailable operations', () => {
+  const document = load('pass-minimal.yaml') as AuthorityEnforcementRegistry
+  const mutated = structuredClone(document)
+  for (const operationId of ['receipt.mint-generic', 'external.write']) {
+    const row = mutated.operationAuthority.find(
+      (candidate) => candidate.operationId === operationId,
+    )
+    assert.ok(row)
+    ;(row.allowedPrincipals as string[]).splice(0)
+  }
+  assert.equal(
+    validateRegistry(mutated).violations.some((violation) => violation.code === 'SCHEMA_INVALID'),
+    false,
+  )
 })
 
 for (const [name, code] of [

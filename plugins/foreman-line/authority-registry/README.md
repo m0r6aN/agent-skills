@@ -1,8 +1,8 @@
 # Foreman Kernel Authority Registry
 
-`@foreman-line/authority-registry` is the source-bound FK-P0 contract for deciding which
-Foreman rules are operative, whose authority they express, and what enforcement posture can be
-claimed honestly. It is a registry, schema, deterministic validator, and read-only source sweep.
+`@foreman-line/authority-registry` is the source-bound FK-P0 model of which inventoried Foreman
+rules are operative, whose authority they express, and what enforcement posture can be claimed.
+It is a curated registry, schema, deterministic validator, and read-only source sweep.
 It is not a runtime policy engine, hook, admission service, receipt issuer, or authorization API.
 
 ## Authority hierarchy
@@ -10,9 +10,11 @@ It is not a runtime policy engine, hook, admission service, receipt issuer, or a
 The registry preserves this scope-aware order, highest first: explicit developer ratification;
 the Foreman Kernel goal charter; ratified Foreman contracts and `SPEC-CONVENTION.md`;
 `COORDINATOR-PATTERN.md` and the `goal` skill; parcel specs; standing constraints and role
-kickstarters; generated projections, caches, and advisory documents. A higher FK-specific rule
-controls an in-scope conflict without deleting a lower generic rule outside that scope. An
-unlisted or equal-tier contradiction fails closed as `RULE_CONFLICT`.
+kickstarters; generated projections, caches, and advisory documents. A higher active FK-specific
+rule controls an in-scope conflict without deleting a lower generic rule outside that scope.
+Applicability is compared across goal, role, stage, operation, and host; historical, stale,
+superseded, advisory, and retired readings do not become active authority. An unlisted equal-tier
+active contradiction fails closed as `RULE_CONFLICT`.
 
 Git remains authoritative for ratified canon, reviews, human gates, merge evidence, and committed
 proof. Registry records, checksums, validator output, profiles, admission capabilities, control
@@ -22,8 +24,10 @@ state, MCP responses, hooks, and receipt-shaped objects cannot create or replace
 
 `authority-enforcement-registry.yaml` has a closed draft-07 shape with schema version `0.1.0`.
 Every source records its exact repo-relative path, kind, tier, effect, scope, parcel-time snapshot
-evidence, and an ordered inventory. Every inventory item either maps one or more rule IDs or has
-one explicit exclusion disposition.
+evidence, and an ordered curated inventory. Every registered inventory item either maps one or
+more rule IDs or has one explicit exclusion disposition. The sweep proves that declared locators
+remain bound; completeness of the natural-language inventory still requires two independent
+reviews and is not proved by a self-authored manifest.
 
 Each rule independently binds:
 
@@ -49,14 +53,16 @@ requires a typed migration chain. This is the Standing Constraint 12 boundary.
 
 Every rule has exactly one primary classification:
 
-- `pre-action-refusal`: a mechanically mediated default-deny predicate with a stable refusal code.
+- `pre-action-refusal`: a declared default-deny rule with `REFUSE` and a stable refusal code;
+  `structural` versus `mediated` assurance states what the registered source actually proves.
 - `post-action-detection`: evidence that detects a violation after mutation or execution.
 - `ci-static-check`: deterministic static or CI evidence; it is not human authority.
 - `independent-review-human-judgment`: a fresh mechanically distinct reviewer/verifier decision.
 - `narrative-provenance`: mapped context or authority provenance without mechanical enforcement.
 - `unsupported`: an honest host, enrollment, bypass, or residual-capability limitation.
 
-Permission-profile denial is `mediated` only when the emitted worktree-local settings were loaded.
+Loaded permission-profile denial is host-adapter-owned and `mediated` only when the emitted
+worktree-local settings were loaded.
 Unenrolled/bypass cases are unsupported, and reviewer residual shell capability is checked by
 post-review Git detection. Missing enrollment is never described as a refusal.
 
@@ -70,16 +76,17 @@ post-review Git detection. Missing enrollment is never described as a refusal.
 - Verification evidence requires an independent-reviewer principal; builders and coordinators
   cannot verify their own work.
 - Closure records report a real human merge and its prerequisites; they cannot authorize them.
-- Generic receipt minting is absent/refused in this release.
+- Generic receipt minting is absent/refused in this release and admits zero principals.
 - External writes—including Jira, SCM, cloud, signing, deployment, publication, billing,
-  credentials, Docker socket, and repository settings—remain unauthorized by this goal.
+  credentials, Docker socket, and repository settings—admit zero principals and remain
+  unauthorized by this goal.
 
 Principal identity is admission-derived and never caller-self-asserted. The semantic validator
 rejects operation-row mutations that promote protected operations into ordinary control state.
 
 ## Reconciliation and migration
 
-Six typed records reconcile without rewriting historical sources:
+Six required typed records reconcile without rewriting historical sources:
 
 1. historical two-gate/stage vocabulary versus the FK Gate 1/2/3 namespace;
 2. generic contingent Gate 3 delegation versus FK's human-only merge;
@@ -91,6 +98,12 @@ Six typed records reconcile without rewriting historical sources:
 `resolved-for-fk` means downstream FK consumers have one scoped rule; it does not mean older canon
 was edited or globally invalidated. The missing provenance record stays `open`, preserves all
 thirteen standing rules, and prevents their retirement.
+
+A seventh `superseded-by-amendment` record binds this rework to the rejected prior registry
+commit, the pinned source snapshot, the prior binding-manifest digest, the superseding manifest,
+and a complete controlling `SourceRef`. A future coordinated identity/location/value change must
+ship another coordinator-ratified typed migration; rewriting internally consistent YAML is not
+enough.
 
 A rule can become `retired-from-agent-reading` only when all four correctly typed evidence
 references exist: predicate contract, negative-refusal test, corpus sweep, and an independent
@@ -121,9 +134,10 @@ Stable codes are closed to those exported by `RESULT_CODES` in `src/types.ts`.
 
 ## Generation and verification
 
-`npm run generate` deterministically regenerates the committed schema, source-bound registry, and
-named mutation fixtures from the pinned local corpus. It is an authoring command, not part of the
-read-only validator/CLI surface. Runtime dependencies are exactly `ajv@8.20.0` and `yaml@2.9.0`;
+`npm run generate` deterministically regenerates the committed schema, curated source-bound
+registry, and named mutation fixtures from the pinned local corpus. It is an authoring command,
+not part of the read-only validator/CLI surface. Runtime dependencies are exactly `ajv@8.20.0`
+and `yaml@2.9.0`;
 the only sibling boundary is the exact relative source-time `schema-scaffold` import.
 
 Run the parcel verification sequentially:

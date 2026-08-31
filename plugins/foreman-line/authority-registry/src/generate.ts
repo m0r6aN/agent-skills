@@ -11,6 +11,7 @@ import type {
   AuthorityTier,
   CanonSource,
   OperationAuthority,
+  ReconciliationEvidence,
   ReconciliationRecord,
   RuleClassification,
   SourceKind,
@@ -38,6 +39,7 @@ interface SourceDefinition {
   readonly authorityEffect: AuthorityEffect
   readonly scope: readonly ('foreman-kernel' | 'all-foreman-goals')[]
   readonly anchors?: readonly string[]
+  readonly additionalAnchors?: readonly string[]
 }
 
 const SOURCE_DEFINITIONS: readonly SourceDefinition[] = [
@@ -67,6 +69,13 @@ const SOURCE_DEFINITIONS: readonly SourceDefinition[] = [
   },
   {
     sourceId: 'spec-convention',
+    additionalAnchors: [
+      "- **`permission_profile:`** — **Optional until the permission-profile registry ships.** A name referencing a profile in a reviewed permission-profile registry (a separate, deferred parcel). Never inline permission rules directly in a spec — a self-describing document must not be its own security authority. Lint behavior: if present, the value must be a non-empty, non-whitespace-only string (rejected otherwise); if absent, the spec-linter emits a non-blocking advisory warning to stderr (exit code remains `0`). The linter CLI exposes a `--no-permission-profile-warning` flag to suppress this advisory. When the registry ships, it will add enum validation as a non-breaking additive change to this field's contract.",
+      '- `surfaces:` is broad routing and audit metadata.',
+      "- `Allowed Files` is the parcel's mutation authority.",
+      'If implementation requires a path not listed in `Allowed Files`, work stops',
+      "4. **Gate 3 is human-owned unless delegation is proven at merge time.** Delegation is valid only when the target repository's effective branch rules name the agent's distinct identity as a bypass actor. The coordinator must query that rule at merge time and stop before any merge call when it cannot be proven. Missing configuration, an empty bypass list, a human-authenticated agent session, or an unavailable ruleset query all fail closed to human ownership.",
+    ],
     path: 'plugins/foreman-line/docs/SPEC-CONVENTION.md',
     sourceKind: 'foreman-contract',
     authorityTier: 'ratified-contract',
@@ -75,6 +84,11 @@ const SOURCE_DEFINITIONS: readonly SourceDefinition[] = [
   },
   {
     sourceId: 'coordinator-pattern',
+    additionalAnchors: [
+      '| 1    | Charter ratification (Stage Zero exit)       | **Never**                                                                                                                           |',
+      "| 2    | Dispatch approval (parcel-set + kickstarter) | Yes - standing authorization scoped to the charter's named parcels, granted at ratification or later                                |",
+      '| 3    | Merge                                        | Yes - standing authorization ("merge it" rule), always contingent on the full verification chain being green; any red step voids it |',
+    ],
     path: 'plugins/foreman-line/docs/COORDINATOR-PATTERN.md',
     sourceKind: 'coordinator-pattern',
     authorityTier: 'coordinator-pattern',
@@ -150,6 +164,7 @@ const SOURCE_DEFINITIONS: readonly SourceDefinition[] = [
       "if (doc.status === 'superseded' && doc.superseded_by === null) {",
       "if (!options?.noPermissionProfileWarning && !('permission_profile' in doc)) {",
       "'advisory: permission_profile is absent; set it to a registry profile name when the registry ships',",
+      'return { valid: errors.length === 0, errors, warnings }',
     ],
   },
   {
@@ -168,6 +183,10 @@ const SOURCE_DEFINITIONS: readonly SourceDefinition[] = [
   },
   {
     sourceId: 'spec-linter-readme',
+    additionalAnchors: [
+      '| `permission_profile:` | No (interim) | If present: non-empty, non-whitespace-only string. If absent: passes, with a non-blocking advisory warning. `null` is rejected (a schema violation, distinct from key-absent). |',
+      '**`permission_profile:` interim behavior.** The permission-profile registry is a deferred parcel. Until it ships, this field is optional and unconstrained beyond "non-empty string if present." Every spec missing it gets one advisory warning per validation — not a failure. Once the registry lands, it will add enum validation as a non-breaking additive change.',
+    ],
     path: 'plugins/foreman-line/spec-linter/README.md',
     sourceKind: 'generated-advisory',
     authorityTier: 'generated-advisory',
@@ -188,6 +207,7 @@ const SOURCE_DEFINITIONS: readonly SourceDefinition[] = [
       '  reviewer-readonly:',
       '  shaping-agent:',
       '  builder-deps:',
+      '        - Bash(git commit*)',
     ],
   },
   {
@@ -223,6 +243,12 @@ const SOURCE_DEFINITIONS: readonly SourceDefinition[] = [
   },
   {
     sourceId: 'permission-profiles-readme',
+    additionalAnchors: [
+      '`deny`/`ask` are **the** restriction mechanism; `allow` is documentation of',
+      'A profile only constrains a session that actually **loads** the emitted',
+      '- **Void under bypass mode:** `--dangerously-skip-permissions` skips deny',
+      '- **Bash/PowerShell residual:** reduced, not eliminated, fix/commit',
+    ],
     path: 'plugins/foreman-line/permission-profiles/README.md',
     sourceKind: 'generated-advisory',
     authorityTier: 'generated-advisory',
@@ -236,7 +262,7 @@ interface LocatedText {
   readonly text: string
 }
 
-function headingSections(content: string): LocatedText[] {
+function headingLocators(content: string): LocatedText[] {
   const lines = content.replace(/\r\n?/g, '\n').split('\n')
   const stack: { level: number; heading: string }[] = []
   const headings: { index: number; level: number; anchor: string }[] = []
@@ -251,20 +277,10 @@ function headingSections(content: string): LocatedText[] {
       headings.push({ index, level, anchor: stack.map((item) => item.heading).join(' > ') })
     }
   }
-  return headings.map((heading) => {
-    let end = lines.length
-    for (let index = heading.index + 1; index < lines.length; index += 1) {
-      const nextLevel = /^(#{1,6})\s+/.exec(lines[index] ?? '')?.[1]?.length
-      if (nextLevel !== undefined && nextLevel <= heading.level) {
-        end = index
-        break
-      }
-    }
-    return {
-      locator: { kind: 'heading', anchor: heading.anchor, lineHint: heading.index + 1 },
-      text: lines.slice(heading.index, end).join('\n'),
-    }
-  })
+  return headings.map((heading) => ({
+    locator: { kind: 'heading', anchor: heading.anchor, lineHint: heading.index + 1 },
+    text: lines[heading.index] ?? '',
+  }))
 }
 
 function numberedItems(content: string): LocatedText[] {
@@ -310,21 +326,285 @@ function numberedItems(content: string): LocatedText[] {
   })
 }
 
-function classify(text: string): RuleClassification {
-  const lower = text.toLowerCase()
-  if (/unsupported|cannot enforce|bypass|unenrolled|limitation|inert/.test(lower))
+function tableRows(content: string, keys: readonly string[]): LocatedText[] {
+  const lines = content.replace(/\r\n?/g, '\n').split('\n')
+  return keys.map((key) => {
+    const matches = lines
+      .map((line, index) => ({ line, index }))
+      .filter(({ line }) => line.trim().split('|').slice(1, -1)[0]?.trim() === key)
+    if (matches.length !== 1) throw new Error(`table row '${key}' is not unique`)
+    const match = matches[0] as { line: string; index: number }
+    return {
+      locator: { kind: 'table-row', anchor: key, lineHint: match.index + 1 },
+      text: match.line,
+    }
+  })
+}
+
+function itemIdFor(definition: SourceDefinition, located: LocatedText): string {
+  if (definition.sourceId === 'fk-charter' && located.locator.kind === 'table-row') {
+    return `item.${located.locator.anchor.toLowerCase()}`
+  }
+  if (definition.sourceId === 'fk-plan-review-findings' && located.locator.kind === 'table-row') {
+    return `item.${located.locator.anchor.toLowerCase()}`
+  }
+  if (
+    definition.sourceId === 'foreman-line-plan' &&
+    located.locator.anchor.startsWith('**Thesis:**')
+  ) {
+    return 'item.two-gate-thesis'
+  }
+  const numbered = /(?:^| > )(\d+)\.\s/.exec(located.locator.anchor)
+  if (definition.sourceId === 'standing-constraints' && numbered?.[1] !== undefined) {
+    return `item.constraint-${numbered[1]}`
+  }
+  if (
+    definition.sourceId === 'parcel-driven-development' &&
+    located.locator.anchor.includes('## The Hard Rules') &&
+    numbered?.[1] !== undefined
+  ) {
+    return `item.hard-rule-${numbered[1]}`
+  }
+  return `item.${shortId(located.locator.anchor)}`
+}
+
+function classificationFor(sourceId: string, itemId: string): RuleClassification {
+  const explicit: Readonly<Record<string, RuleClassification>> = {
+    'item.d1': 'narrative-provenance',
+    'item.d2': 'narrative-provenance',
+    'item.d3': 'pre-action-refusal',
+    'item.d4': 'narrative-provenance',
+    'item.d5': 'pre-action-refusal',
+    'item.d6': 'narrative-provenance',
+    'item.d7': 'unsupported',
+    'item.d8': 'post-action-detection',
+    'item.d9': 'independent-review-human-judgment',
+    'item.d10': 'pre-action-refusal',
+    'item.d11': 'ci-static-check',
+    'item.d12': 'pre-action-refusal',
+    'item.d13': 'post-action-detection',
+    'item.d14': 'narrative-provenance',
+    'item.d15': 'pre-action-refusal',
+    'item.d16': 'pre-action-refusal',
+    'item.d17': 'pre-action-refusal',
+    'item.d18': 'narrative-provenance',
+    'item.d19': 'pre-action-refusal',
+    'item.d20': 'unsupported',
+    'item.r1': 'narrative-provenance',
+    'item.r2': 'pre-action-refusal',
+    'item.r3': 'narrative-provenance',
+    'item.r4': 'unsupported',
+    'item.r5': 'ci-static-check',
+    'item.r6': 'pre-action-refusal',
+    'item.r7': 'narrative-provenance',
+    'item.r8': 'narrative-provenance',
+    'item.r9': 'ci-static-check',
+    'item.r10': 'unsupported',
+    'item.r11': 'ci-static-check',
+    'item.r12': 'post-action-detection',
+    'item.r13': 'pre-action-refusal',
+    'item.constraint-1': 'pre-action-refusal',
+    'item.constraint-2': 'pre-action-refusal',
+    'item.constraint-3': 'pre-action-refusal',
+    'item.constraint-4': 'pre-action-refusal',
+    'item.constraint-5': 'ci-static-check',
+    'item.constraint-6': 'pre-action-refusal',
+    'item.constraint-7': 'pre-action-refusal',
+    'item.constraint-8': 'independent-review-human-judgment',
+    'item.constraint-9': 'independent-review-human-judgment',
+    'item.constraint-10': 'post-action-detection',
+    'item.constraint-11': 'independent-review-human-judgment',
+    'item.constraint-12': 'ci-static-check',
+    'item.constraint-13': 'pre-action-refusal',
+    'item.hard-rule-1': 'pre-action-refusal',
+    'item.hard-rule-2': 'pre-action-refusal',
+    'item.hard-rule-3': 'pre-action-refusal',
+    'item.hard-rule-4': 'pre-action-refusal',
+    'item.hard-rule-5': 'pre-action-refusal',
+    'item.hard-rule-6': 'pre-action-refusal',
+    'item.hard-rule-7': 'ci-static-check',
+    'item.hard-rule-8': 'pre-action-refusal',
+    'item.hard-rule-9': 'pre-action-refusal',
+    'item.hard-rule-10': 'pre-action-refusal',
+    'item.hard-rule-11': 'ci-static-check',
+    'item.hard-rule-12': 'independent-review-human-judgment',
+    'item.hard-rule-13': 'narrative-provenance',
+    'item.hard-rule-14': 'narrative-provenance',
+    'item.hard-rule-15': 'ci-static-check',
+  }
+  if (explicit[itemId] !== undefined) return explicit[itemId]
+  if (sourceId === 'spec-linter-validator' || sourceId === 'spec-linter-cli')
+    return 'ci-static-check'
+  if (sourceId === 'permission-profiles-validator') return 'pre-action-refusal'
+  if (sourceId === 'spec-linter-readme' || sourceId === 'permission-profiles-readme') {
     return 'unsupported'
-  if (/independent review|independent-review|human judgment|human gate|reviewer/.test(lower)) {
-    return 'independent-review-human-judgment'
-  }
-  if (/\bci\b|lint|test|verification command|static check/.test(lower)) return 'ci-static-check'
-  if (/git status|post-review|detect|after the action|after assembly/.test(lower)) {
-    return 'post-action-detection'
-  }
-  if (/must not|never |forbidden|\bstop\b|reject|refuse|cannot |do not /.test(lower)) {
-    return 'pre-action-refusal'
   }
   return 'narrative-provenance'
+}
+
+function applicabilityFor(
+  classification: RuleClassification,
+  goals: SourceDefinition['scope'],
+  itemId: string,
+) {
+  const allRoles = [
+    'developer',
+    'coordinator',
+    'shaper',
+    'builder',
+    'reviewer',
+    'ci',
+    'host-adapter',
+    'kernel',
+    'operator',
+  ] as const
+  const allHosts = [
+    'provider-neutral',
+    'claude-windows-docker-loaded',
+    'claude-windows-docker-unenrolled',
+    'unsupported-host',
+    'ci',
+  ] as const
+  const allStages = [
+    'stage-zero',
+    'shaping',
+    'step-zero',
+    'build',
+    'deterministic-verify',
+    'adversarial-review',
+    'merge',
+    'closure',
+    'runtime',
+  ] as const
+  const allOperations = [
+    'source-inventory',
+    'spec-mutation',
+    'repo-read',
+    'repo-mutation',
+    'state-transition',
+    'control-call',
+    'receipt-validation',
+    'external-write',
+  ] as const
+  const targeted: Readonly<
+    Record<
+      string,
+      {
+        roles: readonly (typeof allRoles)[number][]
+        stages: readonly (typeof allStages)[number][]
+        operations: readonly (typeof allOperations)[number][]
+        hosts: readonly (typeof allHosts)[number][]
+      }
+    >
+  > = {
+    'item.d3': {
+      roles: ['coordinator', 'builder', 'reviewer', 'host-adapter', 'kernel'],
+      stages: ['build', 'runtime'],
+      operations: ['state-transition', 'control-call'],
+      hosts: ['provider-neutral', 'claude-windows-docker-loaded'],
+    },
+    'item.d5': {
+      roles: allRoles,
+      stages: ['build', 'deterministic-verify', 'runtime'],
+      operations: ['receipt-validation'],
+      hosts: allHosts,
+    },
+    'item.d7': {
+      roles: ['builder', 'reviewer', 'host-adapter', 'kernel'],
+      stages: ['build', 'deterministic-verify', 'runtime'],
+      operations: ['repo-mutation', 'control-call'],
+      hosts: [
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+      ],
+    },
+    'item.d9': {
+      roles: ['developer', 'coordinator', 'builder', 'reviewer', 'kernel', 'operator'],
+      stages: ['stage-zero', 'step-zero', 'adversarial-review', 'merge', 'closure'],
+      operations: ['state-transition', 'control-call'],
+      hosts: allHosts,
+    },
+    'item.d10': {
+      roles: ['coordinator', 'builder', 'reviewer', 'kernel'],
+      stages: ['step-zero', 'build', 'deterministic-verify'],
+      operations: ['spec-mutation', 'repo-mutation'],
+      hosts: allHosts,
+    },
+    'item.d11': {
+      roles: ['coordinator', 'builder', 'reviewer', 'ci', 'kernel'],
+      stages: ['deterministic-verify', 'adversarial-review'],
+      operations: ['source-inventory', 'repo-mutation'],
+      hosts: ['provider-neutral', 'claude-windows-docker-loaded', 'ci'],
+    },
+    'item.d13': {
+      roles: ['builder', 'reviewer', 'ci', 'host-adapter', 'kernel'],
+      stages: ['build', 'deterministic-verify', 'adversarial-review', 'merge', 'runtime'],
+      operations: ['repo-mutation'],
+      hosts: allHosts,
+    },
+    'item.d15': {
+      roles: allRoles,
+      stages: allStages,
+      operations: ['external-write'],
+      hosts: allHosts,
+    },
+    'item.d17': {
+      roles: ['coordinator', 'builder', 'reviewer', 'host-adapter', 'kernel', 'operator'],
+      stages: ['build', 'deterministic-verify', 'adversarial-review', 'runtime'],
+      operations: ['control-call', 'receipt-validation'],
+      hosts: allHosts,
+    },
+    'item.d19': {
+      roles: ['builder', 'reviewer', 'host-adapter', 'kernel'],
+      stages: ['build', 'deterministic-verify', 'runtime'],
+      operations: ['repo-read'],
+      hosts: allHosts,
+    },
+    'item.d20': {
+      roles: [
+        'developer',
+        'coordinator',
+        'builder',
+        'reviewer',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: ['deterministic-verify', 'adversarial-review', 'runtime'],
+      operations: ['repo-read', 'repo-mutation', 'control-call'],
+      hosts: ['claude-windows-docker-loaded', 'unsupported-host'],
+    },
+  }
+  if (targeted[itemId] !== undefined) return { goals, ...targeted[itemId] }
+  if (classification === 'ci-static-check') {
+    return {
+      goals,
+      roles: ['ci'] as const,
+      stages: ['deterministic-verify'] as const,
+      operations: allOperations,
+      hosts: ['ci'] as const,
+    }
+  }
+  if (classification === 'independent-review-human-judgment') {
+    return {
+      goals,
+      roles: ['reviewer'] as const,
+      stages: ['adversarial-review', 'merge'] as const,
+      operations: allOperations,
+      hosts: allHosts,
+    }
+  }
+  if (classification === 'post-action-detection') {
+    return {
+      goals,
+      roles: ['coordinator', 'reviewer', 'ci'] as const,
+      stages: ['deterministic-verify', 'adversarial-review', 'merge'] as const,
+      operations: allOperations,
+      hosts: allHosts,
+    }
+  }
+  return { goals, roles: allRoles, stages: allStages, operations: allOperations, hosts: allHosts }
 }
 
 function ruleShape(
@@ -387,20 +667,57 @@ function buildSource(definition: SourceDefinition): {
   const absolutePath = join(repoRoot, ...definition.path.split('/'))
   const bytes = readFileSync(absolutePath)
   const content = bytes.toString('utf8')
-  const located =
+  const baseLocated =
     definition.anchors === undefined
-      ? [...headingSections(content), ...numberedItems(content)]
+      ? [...headingLocators(content), ...numberedItems(content)]
       : definition.anchors.map((anchor, index) => ({
           locator: { kind: 'line-excerpt', anchor, lineHint: index + 1 } as SourceLocator,
           text: anchor,
         }))
+  const additional = (definition.additionalAnchors ?? []).map((anchor, index) => ({
+    locator: { kind: 'line-excerpt', anchor, lineHint: index + 1 } as SourceLocator,
+    text: anchor,
+  }))
+  const curated = [...baseLocated, ...additional]
+  if (definition.sourceId === 'fk-charter') {
+    curated.unshift(
+      ...tableRows(
+        content,
+        Array.from({ length: 20 }, (_, index) => `D${index + 1}`),
+      ),
+    )
+  }
+  if (definition.sourceId === 'fk-plan-review-findings') {
+    curated.unshift(
+      ...tableRows(
+        content,
+        Array.from({ length: 13 }, (_, index) => `R${index + 1}`),
+      ),
+    )
+  }
+  if (definition.sourceId === 'foreman-line-plan') {
+    const thesis = content
+      .replace(/\r\n?/g, '\n')
+      .split('\n')
+      .find((line) => line.startsWith('**Thesis:**'))
+    if (thesis === undefined) throw new Error('historical two-gate thesis is missing')
+    curated.unshift({
+      locator: { kind: 'line-excerpt', anchor: thesis, lineHint: 1 },
+      text: thesis,
+    })
+  }
+  const unique = new Map<string, LocatedText>()
+  for (const entry of curated) {
+    unique.set(`${entry.locator.kind}\u0000${entry.locator.anchor}`, entry)
+  }
+  const located = [...unique.values()]
   if (located.length === 0) throw new Error(`source '${definition.path}' has no inventory locators`)
   const rules: AuthorityRule[] = []
-  const inventoryItems = located.map(({ locator, text }) => {
+  const inventoryItems = located.map((entry) => {
+    const { locator, text } = entry
     const normalizedExcerpt = normalizeRuleText(text)
-    const suffix = shortId(locator.anchor)
-    const itemId = `item.${suffix}`
-    const ruleId = `rule.${definition.sourceId}.${suffix}`
+    const itemId = itemIdFor(definition, entry)
+    const ruleId = `rule.${definition.sourceId}.${itemId.replace(/^item\./, '')}`
     const valueDigest = sha256(normalizedExcerpt)
     const sourceRef: SourceRef = {
       sourceId: definition.sourceId,
@@ -408,19 +725,22 @@ function buildSource(definition: SourceDefinition): {
       locatorDigest: locatorDigestFor(locator),
       valueDigest,
     }
-    const classification = classify(normalizedExcerpt)
-    const semantics = ruleShape(classification)
+    const classification = classificationFor(definition.sourceId, itemId)
+    const baseSemantics = ruleShape(classification)
+    const semantics =
+      definition.sourceId === 'permission-profiles-validator' &&
+      classification === 'pre-action-refusal'
+        ? {
+            ...baseSemantics,
+            enforcementOwner: 'host-adapter' as const,
+            assurance: 'mediated' as const,
+          }
+        : baseSemantics
     const baseRule: AuthorityRule = {
       ruleId,
       normalizedStatement: normalizedExcerpt,
       sourceRefs: [sourceRef],
-      applicability: {
-        goals: definition.scope,
-        roles: ['any'],
-        stages: ['any'],
-        operations: ['any'],
-        hosts: ['any'],
-      },
+      applicability: applicabilityFor(classification, definition.scope, itemId),
       severity: classification === 'pre-action-refusal' ? 'critical' : 'medium',
       classification,
       ...semantics,
@@ -477,12 +797,18 @@ function firstRef(source: CanonSource): SourceRef {
   }
 }
 
-function operationAuthority(evidence: SourceRef): OperationAuthority[] {
+interface OperationEvidence {
+  readonly gate: SourceRef
+  readonly verification: SourceRef
+  readonly closure: readonly SourceRef[]
+}
+
+function operationAuthority(evidence: OperationEvidence): OperationAuthority[] {
   return [
     {
       operationId: 'gate1.ratify',
       allowedPrincipals: ['human-developer'],
-      requiredGitEvidence: [evidence],
+      requiredGitEvidence: [evidence.gate],
       missingEvidenceDecision: 'REQUIRE_HUMAN',
       agentCallable: false,
       operationalStateMaySatisfy: false,
@@ -491,7 +817,7 @@ function operationAuthority(evidence: SourceRef): OperationAuthority[] {
     {
       operationId: 'gate2.dispatch',
       allowedPrincipals: ['coordinator', 'builder'],
-      requiredGitEvidence: [evidence],
+      requiredGitEvidence: [evidence.gate],
       missingEvidenceDecision: 'REFUSE',
       agentCallable: true,
       operationalStateMaySatisfy: false,
@@ -500,7 +826,7 @@ function operationAuthority(evidence: SourceRef): OperationAuthority[] {
     {
       operationId: 'gate3.merge',
       allowedPrincipals: ['human-developer'],
-      requiredGitEvidence: [evidence],
+      requiredGitEvidence: [evidence.gate],
       missingEvidenceDecision: 'REQUIRE_HUMAN',
       agentCallable: false,
       operationalStateMaySatisfy: false,
@@ -509,7 +835,7 @@ function operationAuthority(evidence: SourceRef): OperationAuthority[] {
     {
       operationId: 'verification.issue',
       allowedPrincipals: ['independent-reviewer'],
-      requiredGitEvidence: [evidence],
+      requiredGitEvidence: [evidence.verification],
       missingEvidenceDecision: 'REFUSE',
       agentCallable: false,
       operationalStateMaySatisfy: false,
@@ -518,7 +844,7 @@ function operationAuthority(evidence: SourceRef): OperationAuthority[] {
     {
       operationId: 'closure.record',
       allowedPrincipals: ['human-developer'],
-      requiredGitEvidence: [evidence],
+      requiredGitEvidence: evidence.closure,
       missingEvidenceDecision: 'REFUSE',
       agentCallable: false,
       operationalStateMaySatisfy: false,
@@ -526,7 +852,7 @@ function operationAuthority(evidence: SourceRef): OperationAuthority[] {
     },
     {
       operationId: 'receipt.mint-generic',
-      allowedPrincipals: ['kernel-operator'],
+      allowedPrincipals: [],
       requiredGitEvidence: [],
       missingEvidenceDecision: 'REFUSE',
       agentCallable: false,
@@ -535,14 +861,28 @@ function operationAuthority(evidence: SourceRef): OperationAuthority[] {
     },
     {
       operationId: 'external.write',
-      allowedPrincipals: ['human-developer'],
-      requiredGitEvidence: [evidence],
-      missingEvidenceDecision: 'REQUIRE_HUMAN',
+      allowedPrincipals: [],
+      requiredGitEvidence: [],
+      missingEvidenceDecision: 'REFUSE',
       agentCallable: false,
       operationalStateMaySatisfy: false,
       toolMayIssueAuthorityEvidence: false,
     },
   ]
+}
+
+function refFor(sources: readonly CanonSource[], sourceId: string, itemId: string): SourceRef {
+  const source = sources.find((candidate) => candidate.sourceId === sourceId)
+  const item = source?.inventoryItems.find((candidate) => candidate.itemId === itemId)
+  if (source === undefined || item === undefined) {
+    throw new Error(`required evidence '${sourceId}:${itemId}' is missing`)
+  }
+  return {
+    sourceId,
+    itemId,
+    locatorDigest: locatorDigestFor(item.locator),
+    valueDigest: item.valueDigest,
+  }
 }
 
 function reconciliation(
@@ -563,11 +903,55 @@ function reconciliation(
     reconciliationId,
     topic,
     observedRefs: [evidence],
-    observedEvidence: [{ kind: evidenceKind, reference, digest: sha256(reference) }],
+    observedEvidence: [
+      {
+        kind: evidenceKind,
+        reference,
+        digest:
+          evidenceKind === 'missing-path'
+            ? sha256(canonicalJson({ path: reference, sourceSnapshotCommit: SNAPSHOT }))
+            : sha256(canonicalJson(evidence)),
+      },
+    ],
     authoritativeRuleIds: [ruleId],
     scopedDisposition: disposition,
     unresolvedConsequence: consequence,
     migrationStatus: status,
+    supersedingEvidence: null,
+  }
+}
+
+function reconciliationMany(
+  reconciliationId: string,
+  topic: string,
+  observedRefs: readonly SourceRef[],
+  authoritativeRuleIds: readonly string[],
+  migrationStatus: 'open' | 'resolved-for-fk',
+  scopedDisposition: string,
+  unresolvedConsequence: string,
+  missingPath?: string,
+): ReconciliationRecord {
+  const observedEvidence: ReconciliationEvidence[] = observedRefs.map((reference) => ({
+    kind: 'source-ref' as const,
+    reference: `${reference.sourceId}:${reference.itemId}`,
+    digest: sha256(canonicalJson(reference)),
+  }))
+  if (missingPath !== undefined) {
+    observedEvidence.push({
+      kind: 'missing-path' as const,
+      reference: missingPath,
+      digest: sha256(canonicalJson({ path: missingPath, sourceSnapshotCommit: SNAPSHOT })),
+    })
+  }
+  return {
+    reconciliationId,
+    topic,
+    observedRefs,
+    observedEvidence,
+    authoritativeRuleIds,
+    scopedDisposition,
+    unresolvedConsequence,
+    migrationStatus,
     supersedingEvidence: null,
   }
 }
@@ -577,78 +961,199 @@ function requiredReconciliations(
   rules: readonly AuthorityRule[],
 ): ReconciliationRecord[] {
   const byId = new Map(sources.map((source) => [source.sourceId, source]))
-  const get = (sourceId: string): { ref: SourceRef; ruleId: string } => {
+  const get = (sourceId: string, itemId?: string): { ref: SourceRef; ruleId: string } => {
     const source = byId.get(sourceId)
     if (source === undefined) throw new Error(`missing reconciliation source '${sourceId}'`)
-    const ref = firstRef(source)
-    const ruleId = source.inventoryItems[0]?.ruleIds[0]
+    const item =
+      itemId === undefined
+        ? source.inventoryItems[0]
+        : source.inventoryItems.find((candidate) => candidate.itemId === itemId)
+    if (item === undefined) throw new Error(`missing reconciliation item '${sourceId}:${itemId}'`)
+    const ref: SourceRef = {
+      sourceId,
+      itemId: item.itemId,
+      locatorDigest: locatorDigestFor(item.locator),
+      valueDigest: item.valueDigest,
+    }
+    const ruleId = item.ruleIds[0]
     if (ruleId === undefined || !rules.some((rule) => rule.ruleId === ruleId)) {
       throw new Error(`missing reconciliation rule for '${sourceId}'`)
     }
     return { ref, ruleId }
   }
-  const plan = get('foreman-line-plan')
-  const coordinator = get('coordinator-pattern')
-  const linter = get('spec-frontmatter-schema')
-  const convention = get('spec-convention')
-  const profiles = get('permission-profiles-registry')
-  const standing = get('standing-constraints')
+  const plan = get('foreman-line-plan', 'item.two-gate-thesis')
+  const approval = [
+    get('approval-readme', 'item.a7e48d46fe37'),
+    get('approval-readme', 'item.4261d18b3243'),
+    get('approval-readme', 'item.ff6f38f088ae'),
+  ]
+  const charterGate = get('fk-charter', 'item.d9')
+  const charterAllowed = get('fk-charter', 'item.d10')
+  const coordinatorGate3 = get('coordinator-pattern', 'item.f7686ab58db7')
+  const conventionGate3 = get('spec-convention', 'item.022fc00afe7b')
+  const conventionProfile = get('spec-convention', 'item.e6f5fa8543a1')
+  const conventionSurfaces = get('spec-convention', 'item.ac5ff7afd06f')
+  const conventionAllowed = get('spec-convention', 'item.5145ab15549c')
+  const conventionStop = get('spec-convention', 'item.fd82127bf9f9')
+  const linter = [
+    'item.860f1c1146f4',
+    'item.1dddb8e0edae',
+    'item.fbc219d0ff13',
+    'item.cc7db94c11c2',
+    'item.7443d95fc46b',
+    'item.0a36842682ef',
+    'item.d6246c2593db',
+  ].map((itemId) => get('spec-frontmatter-schema', itemId))
+  const linterProfileMissing = get('spec-linter-validator', 'item.092d2fc43a32')
+  const linterProfileWarning = get('spec-linter-validator', 'item.fb7d76a32df4')
+  const linterReturn = get('spec-linter-validator', 'item.80563af1788e')
+  const linterValidator = [linterProfileMissing, linterProfileWarning, linterReturn]
+  const linterReadme = [
+    get('spec-linter-readme', 'item.9a889881a236'),
+    get('spec-linter-readme', 'item.b4f5d76d68ec'),
+  ]
+  const profiles = [
+    'item.0f7efe94f551',
+    'item.5b5fd0863539',
+    'item.ffd2209ab94a',
+    'item.86618990c615',
+    'item.514a38aa8311',
+    'item.a61f76b791df',
+    'item.ff2ab3fa7a40',
+  ].map((itemId) => get('permission-profiles-registry', itemId))
+  const profileTypes = [
+    get('permission-profiles-types', 'item.0b9706b5a9bf'),
+    get('permission-profiles-types', 'item.bc257b03aa99'),
+  ]
+  const profileValidator = [
+    get('permission-profiles-validator', 'item.dcd8638af4a4'),
+    get('permission-profiles-validator', 'item.9c3c17055384'),
+    get('permission-profiles-validator', 'item.4da758cc157c'),
+    get('permission-profiles-validator', 'item.ffd598413a66'),
+  ]
+  const profileReadme = [
+    get('permission-profiles-readme', 'item.729be3615f8d'),
+    get('permission-profiles-readme', 'item.d11b9d38f924'),
+    get('permission-profiles-readme', 'item.1101805f1c9e'),
+    get('permission-profiles-readme', 'item.415efa3f5e3b'),
+  ]
+  const standing = Array.from({ length: 13 }, (_, index) =>
+    get('standing-constraints', `item.constraint-${index + 1}`),
+  )
   return [
-    reconciliation(
+    reconciliationMany(
       'gate-namespace-count',
       'Historical two-gate and stage approval terms versus FK Gate 1, Gate 2, and Gate 3.',
-      plan.ref,
-      plan.ruleId,
+      [plan.ref, ...approval.map((item) => item.ref), charterGate.ref],
+      [charterGate.ruleId],
       'resolved-for-fk',
       'Historical pipeline vocabulary remains visible; the FK goal three-gate namespace controls FK work.',
       'Naive consumers must retain the namespace and scope when interpreting gate numbers.',
     ),
-    reconciliation(
+    reconciliationMany(
       'gate3-delegation',
       'Generic contingent Gate 3 delegation versus FK nondelegated human merge authority.',
-      coordinator.ref,
-      coordinator.ruleId,
+      [coordinatorGate3.ref, conventionGate3.ref, charterGate.ref],
+      [charterGate.ruleId],
       'resolved-for-fk',
       'Goal-charter scope withholds Gate 3 delegation for Foreman Kernel.',
       'Generic delegation text remains valid only outside the controlling FK scope.',
     ),
-    reconciliation(
+    reconciliationMany(
       'spec-linter-profile-behavior',
       'Live six-profile enum behavior versus stale deferred-registry explanation.',
-      linter.ref,
-      linter.ruleId,
+      [
+        ...linter.map((item) => item.ref),
+        ...linterValidator.map((item) => item.ref),
+        ...linterReadme.map((item) => item.ref),
+        conventionProfile.ref,
+      ],
+      [...linter.map((item) => item.ruleId), ...linterValidator.map((item) => item.ruleId)],
       'resolved-for-fk',
       'Live schema behavior is recorded as binding and contradictory explanation as stale.',
       'FK-P0 does not edit the linter or convention prose.',
     ),
-    reconciliation(
+    reconciliationMany(
       'surfaces-allowed-files',
       'Routing metadata surfaces versus exact body-level Allowed Files authority.',
-      convention.ref,
-      convention.ruleId,
+      [
+        conventionSurfaces.ref,
+        conventionAllowed.ref,
+        conventionStop.ref,
+        linterReturn.ref,
+        charterAllowed.ref,
+      ],
+      [conventionAllowed.ruleId, conventionStop.ruleId, charterAllowed.ruleId],
       'resolved-for-fk',
       'surfaces is routing metadata only; Allowed Files remains the mutation boundary.',
       'Mechanical body compilation remains a declared FK-P2 gap.',
     ),
-    reconciliation(
+    reconciliationMany(
       'permission-profile-enforcement-bound',
       'Loaded mediated profile denial versus unenrolled and residual shell capability.',
-      profiles.ref,
-      profiles.ruleId,
+      [
+        ...profiles.map((item) => item.ref),
+        ...profileTypes.map((item) => item.ref),
+        ...profileValidator.map((item) => item.ref),
+        ...profileReadme.map((item) => item.ref),
+        charterGate.ref,
+      ],
+      [...profileValidator.map((item) => item.ruleId), charterGate.ruleId],
       'resolved-for-fk',
       'Mediated denial, post-review detection, and unsupported bypass cases are separate classifications.',
       'Missing enrollment must never be reported as a pre-action refusal.',
     ),
-    reconciliation(
+    reconciliationMany(
       'missing-provenance-reference',
       'Standing constraints name a provenance ledger absent at the source snapshot.',
-      standing.ref,
-      standing.ruleId,
+      standing.map((item) => item.ref),
+      standing.map((item) => item.ruleId),
       'open',
       'All thirteen inline rules remain mapped from the standing-constraints source.',
       'The standing rules cannot retire from agent reading until provenance is restored or amended.',
-      'missing-path',
+      'docs/transcripts/defects_lessons.md',
     ),
+    {
+      reconciliationId: 'registry-rework-6eb1c25',
+      topic:
+        'Prior committed registry bindings superseded by the coordinator-ratified FK-P0 rework.',
+      observedRefs: [charterAllowed.ref],
+      observedEvidence: [
+        {
+          kind: 'git-commit',
+          reference: '4666ea15caee8b231137f23325d14ea4526e338a',
+          digest: sha256('4666ea15caee8b231137f23325d14ea4526e338a'),
+        },
+        {
+          kind: 'git-commit',
+          reference: SNAPSHOT,
+          digest: sha256(SNAPSHOT),
+        },
+        {
+          kind: 'command-result',
+          reference:
+            'registry-binding-manifest:1fe3a7c66241904445021c97db68065961a3bf5beceb654faff4b552b4de79b2',
+          digest: sha256(
+            'registry-binding-manifest:1fe3a7c66241904445021c97db68065961a3bf5beceb654faff4b552b4de79b2',
+          ),
+        },
+        {
+          kind: 'command-result',
+          reference:
+            'superseding-binding-manifest:75bdf0dd34ea853ff5861a9500c56e967d18082f15f2ba2591899e3e98b62ddf',
+          digest: sha256(
+            'superseding-binding-manifest:75bdf0dd34ea853ff5861a9500c56e967d18082f15f2ba2591899e3e98b62ddf',
+          ),
+        },
+      ],
+      authoritativeRuleIds: [charterAllowed.ruleId],
+      scopedDisposition:
+        'The curated atomic registry supersedes the rejected generated bindings in FK scope.',
+      unresolvedConsequence:
+        'Future binding changes require another typed prior-to-new migration record.',
+      migrationStatus: 'superseded-by-amendment',
+      supersedingEvidence: charterAllowed.ref,
+    },
   ]
 }
 
@@ -656,14 +1161,19 @@ function buildRegistry(): AuthorityEnforcementRegistry {
   const built = SOURCE_DEFINITIONS.map(buildSource)
   const sources = built.map((entry) => entry.source)
   const rules = built.flatMap((entry) => entry.rules)
-  const gateEvidence = firstRef(sources[0] as CanonSource)
+  const gateEvidence = refFor(sources, 'fk-charter', 'item.d9')
+  const verificationEvidence = refFor(sources, 'fk-charter', 'item.d11')
   return {
     schemaVersion: '0.1.0',
     registryId: 'foreman-kernel-authority-enforcement',
     sourceSnapshotCommit: SNAPSHOT,
     sources,
     rules,
-    operationAuthority: operationAuthority(gateEvidence),
+    operationAuthority: operationAuthority({
+      gate: gateEvidence,
+      verification: verificationEvidence,
+      closure: [gateEvidence, verificationEvidence],
+    }),
     reconciliations: requiredReconciliations(sources, rules),
   }
 }
@@ -709,12 +1219,30 @@ function buildMinimal(full: AuthorityEnforcementRegistry): AuthorityEnforcementR
   const evidenceRule = rules.find((rule) => rule.sourceRefs[0]?.sourceId === evidence.sourceId)
   if (evidenceRule === undefined) throw new Error('minimal evidence rule missing')
   const reconciliations = [
-    ['gate-namespace-count', 'Gate namespace'],
-    ['gate3-delegation', 'Gate 3 delegation'],
-    ['spec-linter-profile-behavior', 'Spec linter profile behavior'],
-    ['surfaces-allowed-files', 'surfaces versus Allowed Files'],
-    ['permission-profile-enforcement-bound', 'Permission profile boundary'],
-    ['missing-provenance-reference', 'Missing provenance reference'],
+    [
+      'gate-namespace-count',
+      'Historical two-gate and stage approval terms versus FK Gate 1, Gate 2, and Gate 3.',
+    ],
+    [
+      'gate3-delegation',
+      'Generic contingent Gate 3 delegation versus FK nondelegated human merge authority.',
+    ],
+    [
+      'spec-linter-profile-behavior',
+      'Live six-profile enum behavior versus stale deferred-registry explanation.',
+    ],
+    [
+      'surfaces-allowed-files',
+      'Routing metadata surfaces versus exact body-level Allowed Files authority.',
+    ],
+    [
+      'permission-profile-enforcement-bound',
+      'Loaded mediated profile denial versus unenrolled and residual shell capability.',
+    ],
+    [
+      'missing-provenance-reference',
+      'Standing constraints name a provenance ledger absent at the source snapshot.',
+    ],
   ].map(([id, topic], index) =>
     reconciliation(
       id as string,
@@ -731,7 +1259,11 @@ function buildMinimal(full: AuthorityEnforcementRegistry): AuthorityEnforcementR
     ...full,
     sources: uniqueSources,
     rules,
-    operationAuthority: operationAuthority(evidence),
+    operationAuthority: operationAuthority({
+      gate: evidence,
+      verification: evidence,
+      closure: [evidence],
+    }),
     reconciliations,
   }
 }
