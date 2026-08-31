@@ -1,8 +1,8 @@
 # Goal Charter — Foreman Kernel
 
 **Created:** 2026-08-30
-**Owner:** Clinton Morgan
-**Status:** ratified with scoped Gate 1 re-open pending — plan review amendments R1–R13 require re-ratification
+**Owner:** Clinton Morgangit
+**Status:** fully ratified as amended — scoped Gate 1 re-cleared and standing Gate 2 resumed 2026-08-31
 **Coordinator:** primary Codex coordinator session that created this charter
 **Mode:** Repo-Local Parcel Mode
 
@@ -66,7 +66,9 @@ ratified this charter on 2026-08-31 with: “Ratify Gate 1 and authorize Gate 2
 dispatches.” D1–D17 were ratified. The required fresh plan review returned
 `REQUEST CHANGES` on 2026-08-31. The coordinator accepted six BLOCKERs and seven
 SHOULD-FIX findings; D3, D7–D9, D13–D17, new D18–D20, the parcel graph, and affected
-exit criteria are under a scoped Gate 1 re-open until explicitly re-ratified.
+exit criteria were placed under a scoped Gate 1 re-open. The developer explicitly
+re-ratified them on 2026-08-31 with: “Re-ratify Gate 1 amendments R1–R13 and resume
+Gate 2.” D1–D20 and the amended graph/exits are binding.
 
 | ID | Decision | Reasoning |
 |---|---|---|
@@ -308,19 +310,17 @@ This goal exits only when:
 
 ### Gate 1 — charter ratification
 
-**ORIGINAL GATE 1 CLEARED 2026-08-31 — nondelegable developer ratification recorded.**
-The fresh plan review then returned six decision-changing BLOCKERs. A scoped Gate 1
-re-open is pending for amended D3, D7–D9, D13–D17, new D18–D20, FK-P0–FK-P21, the
-affected wave exits, scenarios, and goal exit criteria. Unaffected decisions remain
-ratified.
+**RE-CLEARED 2026-08-31 — nondelegable developer re-ratification recorded.** The
+original Gate 1 was cleared, the fresh plan review returned six decision-changing
+BLOCKERs, and the resulting scoped re-open for R1–R13 was explicitly re-ratified. D1–D20,
+FK-P0–FK-P21, the amended wave exits, scenarios, and goal exit criteria are in force.
 
 ### Gate 2 — parcel dispatch
 
-**AUTHORIZED 2026-08-31 as a standing Gate 2 grant, CURRENTLY SUSPENDED by the scoped
-Gate 1 re-open:** after the amended decisions and graph are re-ratified, the coordinator
-may shape and dispatch FK-P0 through FK-P21 in dependency order. Authorization is void
-for any parcel whose spec changes a locked decision, widens external effects, or omits
-exact Allowed Files.
+**AUTHORIZED AND RESUMED 2026-08-31 as a standing Gate 2 grant:** the coordinator may
+shape and dispatch FK-P0 through FK-P21 in dependency order. Authorization is void for
+any parcel whose spec changes a locked decision, widens external effects, or omits exact
+Allowed Files.
 
 ### Gate 3 — merge
 
@@ -400,7 +400,6 @@ Ratifying this charter confirms:
 11. nondelegated human Gate 3 for every merge.
 
 **Gate 1 record:** Clinton Morgan explicitly ratified the original list and authorized
-the contingent Gate 2 dispatch grant on 2026-08-31. The required fresh review changed
-only the decisions and graph enumerated above. No parcel may be shaped or dispatched
-until the developer explicitly re-ratifies this scoped amendment; the original Gate 2
-grant resumes automatically only after that re-ratification.
+the contingent Gate 2 dispatch grant on 2026-08-31, then explicitly re-ratified plan-review
+amendments R1–R13 and resumed Gate 2 on 2026-08-31. Parcel shaping and dispatch may now
+proceed in dependency order under the stated contingencies.

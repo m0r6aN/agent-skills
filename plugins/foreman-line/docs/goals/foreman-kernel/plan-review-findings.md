@@ -6,8 +6,8 @@
 **Reviewer verdict:** `REQUEST CHANGES`
 **Coordinator triage:** six BLOCKERs fixed in the charter amendment; seven SHOULD-FIX
 findings fixed or made binding on parcel specs; three findings accepted/informational
-**Gate effect:** scoped Gate 1 re-open; standing Gate 2 authorization suspended until
-the developer re-ratifies the affected decisions and graph
+**Gate effect:** scoped Gate 1 re-open re-cleared 2026-08-31; developer explicitly
+re-ratified R1–R13 and resumed the standing Gate 2 authorization
 
 The reviewer was dispatched after the original Gate 1 ratification with no coordinator
 context beyond the committed charter and repo canon. It made no file or Git changes.
@@ -77,6 +77,7 @@ D1, D2, D4–D6, D10–D12, the explicit no-generic-mint boundary, human-owned G
 and the goal’s external-effect exclusions remain ratified except where the amendments
 clarify their implementation boundary.
 
-No parcel may be shaped or dispatched until the developer explicitly re-ratifies this
-scoped amendment. After re-ratification, the existing standing Gate 2 authorization
-resumes for FK-P0–FK-P21 under its original contingencies.
+**Re-ratification record:** Clinton Morgan explicitly instructed: “Re-ratify Gate 1
+amendments R1–R13 and resume Gate 2” on 2026-08-31. The scoped re-open is closed and the
+existing standing Gate 2 authorization is active for FK-P0–FK-P21 under its original
+contingencies.
