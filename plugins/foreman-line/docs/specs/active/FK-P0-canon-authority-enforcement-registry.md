@@ -270,7 +270,9 @@ resolvable. Evidence digests bind evidence identity; they do not freeze unrelate
 agentCallable, operationalStateMaySatisfy, toolMayIssueAuthorityEvidence }`.
 `operationId` is one of `gate1.ratify | gate2.dispatch | gate3.merge |
 verification.issue | closure.record | receipt.mint-generic | external.write`;
-`allowedPrincipals` is a unique non-empty `PrincipalClass[]`; `requiredGitEvidence` is a unique
+`allowedPrincipals` is a unique `PrincipalClass[]`. It is non-empty for every executable
+operation, but must be empty for `receipt.mint-generic` and `external.write`; no placeholder
+principal may be inserted to satisfy schema shape. `requiredGitEvidence` is a unique
 `SourceRef[]`; `missingEvidenceDecision` is `REFUSE | CONFLICT | REQUIRE_HUMAN`; and the final
 three fields are booleans. Principal identity is admission-derived, never caller-self-asserted.
 
@@ -283,8 +285,8 @@ The following protected operations are mandatory matrix rows and semantic invari
 | Gate 3 merge | Human-owned and nondelegated for `foreman-kernel`; never agent-callable or tool-issued. |
 | Independent verification/verdict | A mechanically distinct fresh verifier/reviewer principal; builder and coordinator cannot issue evidence for their own work. |
 | Closure authority | Derived only after the real human merge and required evidence; a closure record reports history and cannot authorize its prerequisite. |
-| Generic receipt minting | Absent/refused in first release; no agent-callable generic mint operation may exist. |
-| External writes | Jira, SCM, cloud, signing, deployment, publication, billing, credentials, Docker socket, and repo settings remain unauthorized in this goal. |
+| Generic receipt minting | Absent/refused in first release; `allowedPrincipals` is empty and no agent-callable generic mint operation may exist. |
+| External writes | `allowedPrincipals` is empty; Jira, SCM, cloud, signing, deployment, publication, billing, credentials, Docker socket, and repo settings remain unauthorized in this goal. |
 
 Any matrix mutation that makes a protected operation agent-callable, control-state satisfiable,
 self-asserted, or tool-issued must fail validation. A local control capability proves admission
