@@ -267,8 +267,32 @@ interface LocatedText {
   readonly text: string
 }
 
+function stripMarkdownHtmlComments(content: string): string {
+  let visible = ''
+  let cursor = 0
+  let inComment = false
+  while (cursor < content.length) {
+    if (!inComment && content.startsWith('<!--', cursor)) {
+      visible += '    '
+      cursor += 4
+      inComment = true
+      continue
+    }
+    if (inComment && content.startsWith('-->', cursor)) {
+      visible += '   '
+      cursor += 3
+      inComment = false
+      continue
+    }
+    const character = content[cursor] as string
+    visible += inComment && character !== '\n' && character !== '\r' ? ' ' : character
+    cursor += 1
+  }
+  return visible
+}
+
 function headingLocators(content: string): LocatedText[] {
-  const lines = content.replace(/\r\n?/g, '\n').split('\n')
+  const lines = stripMarkdownHtmlComments(content).replace(/\r\n?/g, '\n').split('\n')
   const stack: { level: number; heading: string }[] = []
   const headings: { index: number; level: number; anchor: string }[] = []
   for (let index = 0; index < lines.length; index += 1) {
@@ -289,7 +313,7 @@ function headingLocators(content: string): LocatedText[] {
 }
 
 function numberedItems(content: string): LocatedText[] {
-  const lines = content.replace(/\r\n?/g, '\n').split('\n')
+  const lines = stripMarkdownHtmlComments(content).replace(/\r\n?/g, '\n').split('\n')
   const stack: { level: number; heading: string }[] = []
   const items: { index: number; indent: number; anchor: string }[] = []
   const occurrences = new Map<string, number>()
@@ -345,7 +369,7 @@ function numberedItems(content: string): LocatedText[] {
 }
 
 function tableRows(content: string, keys: readonly string[]): LocatedText[] {
-  const lines = content.replace(/\r\n?/g, '\n').split('\n')
+  const lines = stripMarkdownHtmlComments(content).replace(/\r\n?/g, '\n').split('\n')
   return keys.map((key) => {
     const matches = lines
       .map((line, index) => ({ line, index }))
@@ -361,13 +385,12 @@ function tableRows(content: string, keys: readonly string[]): LocatedText[] {
 
 function markdownBindingBlocks(content: string, sourceId: string): LocatedText[] {
   if (sourceId !== 'fk-charter' && sourceId !== 'fk-loop-directive') return []
-  const lines = content.replace(/\r\n?/g, '\n').split('\n')
+  const lines = stripMarkdownHtmlComments(content).replace(/\r\n?/g, '\n').split('\n')
   const headings: { level: number; text: string }[] = []
   const occurrences = new Map<string, number>()
   const blocks: LocatedText[] = []
   let cursor = 0
   let inFence = false
-  let inHtmlComment = false
   while (cursor < lines.length) {
     const line = lines[cursor] ?? ''
     if (/^\s*(?:```|~~~)/.test(line)) {
@@ -376,11 +399,6 @@ function markdownBindingBlocks(content: string, sourceId: string): LocatedText[]
       continue
     }
     if (inFence) {
-      cursor += 1
-      continue
-    }
-    if (inHtmlComment || line.includes('<!--')) {
-      inHtmlComment = !line.includes('-->')
       cursor += 1
       continue
     }
@@ -410,8 +428,7 @@ function markdownBindingBlocks(content: string, sourceId: string): LocatedText[]
           next.trim() === '' ||
           /^#{1,6}\s+/.test(next) ||
           /^\s*\|/.test(next) ||
-          /^\s*(?:```|~~~)/.test(next) ||
-          next.includes('<!--')
+          /^\s*(?:```|~~~)/.test(next)
         )
           break
         if (list && /^\s*(?:[-*+] |\d+\. )/.test(next)) break
@@ -600,7 +617,7 @@ function authorityIdentityFor(
 ): {
   authoritySubject: string
   authorityClaim: string
-} {
+} | null {
   const exact: Readonly<Record<string, readonly [string, string]>> = {
     'fk-charter:item.d2': [
       'canon.operational-authority-boundary',
@@ -743,34 +760,245 @@ function authorityIdentityFor(
     const identity = pddIdentities[itemId] as readonly [string, string]
     return { authoritySubject: identity[0], authorityClaim: identity[1] }
   }
-  const atomicClaims: Readonly<Record<string, string>> = {
-    'item.d1': 'separate-foreman-kernel-goal',
-    'item.d2': 'shared-schema-boundary',
-    'item.d3': 'kernel-state-authority',
-    'item.d4': 'adapter-provider-neutrality',
-    'item.d5': 'receipt-validation-boundary',
-    'item.d6': 'structural-receipt-label',
-    'item.d7': 'profile-not-enforcement',
-    'item.d8': 'shadow-before-enforcement',
-    'item.d9': 'three-gate-ownership',
-    'item.d10': 'exact-parcel-mutation-scope',
-    'item.d11': 'independent-verification-required',
-    'item.d12': 'serialized-shared-files',
-    'item.d13': 'post-review-diff-detection',
-    'item.d14': 'git-canon-authority',
-    'item.d15': 'external-effects-refused',
-    'item.d16': 'caller-authority-refused',
-    'item.d17': 'versioned-tool-contracts',
-    'item.d18': 'evidence-not-authority',
-    'item.d19': 'read-only-degraded-mode',
-    'item.d20': 'unsupported-host-honesty',
+  const charterDecisions: Readonly<Record<string, readonly [string, string]>> = {
+    'item.d1': ['goal.separation', 'separate-foreman-kernel-goal'],
+    'item.d4': [
+      'kernel.first-release-scope',
+      'provider-neutral-trust-core-with-one-shadow-adapter',
+    ],
+    'item.d5': ['receipt.mint-authority', 'no-generic-agent-callable-mint'],
+    'item.d6': ['receipt.authority-label', 'first-release-receipts-are-structural'],
+    'item.d8': ['enforcement.promotion', 'shadow-proofs-before-fail-closed-enforcement'],
+    'item.d9': ['gate.namespace', 'fk-three-gate-ownership'],
+    'item.d10': ['spec.mutation-authority', 'exact-allowed-files-required'],
+    'item.d11': ['defect.retirement', 'four-independent-evidence-kinds-required'],
+    'item.d12': ['hook.policy-boundary', 'hooks-normalize-but-do-not-decide-policy'],
+    'item.d13': ['repository.mutation-detection', 'post-action-git-and-ci-backstop-required'],
+    'item.d14': ['operational-state.authority', 'sqlite-transactional-single-writer-authority'],
+    'item.d15': ['external-effects.boundary', 'first-container-has-no-external-credentials'],
+    'item.d16': ['caller.asserted-authority', 'self-asserted-authority-is-refused'],
+    'item.d17': ['tool.public-contract', 'versioned-schema-provenance-and-stable-codes'],
+    'item.d20': ['host.support-claim', 'first-release-enforcement-is-host-specific'],
   }
-  const suffix = itemId.replace(/^item\./, '')
-  return {
-    authoritySubject:
-      sourceId === 'fk-charter' ? `foreman-kernel.${suffix}` : `${sourceId}.${suffix}`,
-    authorityClaim: atomicClaims[itemId] ?? `requires-${suffix}`,
+  if (sourceId === 'fk-charter' && charterDecisions[itemId] !== undefined) {
+    const identity = charterDecisions[itemId] as readonly [string, string]
+    return { authoritySubject: identity[0], authorityClaim: identity[1] }
   }
+  const reviewFindings: Readonly<Record<string, readonly [string, string]>> = {
+    'item.r1': ['authorization.engine-placement', 'dedicated-policy-engine-parcel-added'],
+    'item.r2': ['control.admission', 'authenticated-local-admission-required'],
+    'item.r3': ['image.proof-separation', 'stateless-and-stateful-proofs-separated'],
+    'item.r4': ['bypass.enrollment-separation', 'refusal-and-absence-detection-separated'],
+    'item.r5': ['enforcement.ci-order', 'ci-backstop-precedes-promotion'],
+    'item.r6': ['repository.read-boundary', 'confidential-read-and-state-isolation-added'],
+    'item.r7': ['parcel.wave-boundaries', 'wave-three-serialization-redrawn'],
+    'item.r8': ['state.authority-fields', 'git-sqlite-cutover-semantics-added'],
+    'item.r9': ['state.failure-tests', 'lease-crash-migration-backup-tests-required'],
+    'item.r10': ['host.claim-matrix', 'first-release-host-filesystem-matrix-added'],
+    'item.r11': ['exit.evidence-manifest', 'exact-proof-identities-required'],
+    'item.r12': ['mixed-entrypoint.sentinel', 'enumeration-and-write-sentinels-bind-shaping'],
+    'item.r13': ['shared-file.serialization', 'every-shared-surface-has-an-owner'],
+  }
+  if (sourceId === 'fk-plan-review-findings' && reviewFindings[itemId] !== undefined) {
+    const identity = reviewFindings[itemId] as readonly [string, string]
+    return { authoritySubject: identity[0], authorityClaim: identity[1] }
+  }
+  const curatedGroups: readonly {
+    readonly sourceId: string
+    readonly itemIds: readonly string[]
+    readonly authoritySubject: string
+    readonly authorityClaim: string
+  }[] = [
+    {
+      sourceId: 'fk-loop-directive',
+      itemIds: [
+        'item.7a05d374a3b1',
+        'item.b81725578197',
+        'item.aac2d1258986',
+        'item.4f0fb14fbd95',
+        'item.47a75730afd6',
+        'item.08b3cbb91027',
+        'item.ae7854c7dad1',
+      ],
+      authoritySubject: 'goal.queue-authority',
+      authorityClaim: 'single-coordinator-ratified-state',
+    },
+    {
+      sourceId: 'fk-loop-directive',
+      itemIds: [
+        'item.dd8203551518',
+        'item.ebdd14e6f524',
+        'item.a59b01361dc6',
+        'item.734b79ca0bb8',
+        'item.51f7dbbba473',
+        'item.d69eca1ec1f6',
+        'item.fc3ea1441f92',
+        'item.15e5fcbdbe13',
+      ],
+      authoritySubject: 'coordinator.required-reading',
+      authorityClaim: 'read-controlling-sources-each-iteration',
+    },
+    {
+      sourceId: 'fk-loop-directive',
+      itemIds: [
+        'item.bfffee6d7c1f',
+        'item.431228393540',
+        'item.be7691d170a9',
+        'item.9935b3499764',
+        'item.64341d1e8b82',
+        'item.7eb6018d9e57',
+        'item.7aa2dd930e35',
+      ],
+      authoritySubject: 'goal.standing-authorization',
+      authorityClaim: 'bounded-local-work-without-external-effects-or-merge',
+    },
+    {
+      sourceId: 'fk-loop-directive',
+      itemIds: [
+        'item.8c0b09120ff1',
+        'item.d3b0e9dd63d0',
+        'item.f7e8dffebadc',
+        'item.1157c2a03bbe',
+        'item.bdd56a126b79',
+        'item.ed8d7888ce8c',
+        'item.6ea9ce2b9573',
+        'item.ce9042d917b2',
+        'item.d978784bc1b7',
+        'item.2743c2f8c558',
+        'item.e3065db62b43',
+      ],
+      authoritySubject: 'coordinator.parcel-loop',
+      authorityClaim: 'verify-shape-build-review-and-stop-at-human-merge',
+    },
+    {
+      sourceId: 'fk-loop-directive',
+      itemIds: ['item.1576c95260b6'],
+      authoritySubject: 'parcel.shared-file-serialization',
+      authorityClaim: 'parallelize-only-after-contracts-and-without-shared-points',
+    },
+    {
+      sourceId: 'fk-loop-directive',
+      itemIds: [
+        'item.8f98d5e3e61a',
+        'item.4f26e86b0870',
+        'item.5909432cc1a7',
+        'item.b2e02392e4e5',
+        'item.ec3e0d0130ff',
+        'item.e7e5c2483975',
+        'item.c6c0339a5001',
+        'item.78a9d344c4c6',
+      ],
+      authoritySubject: 'registry.delivery-contract',
+      authorityClaim: 'source-bound-classified-non-escalating-registry-only',
+    },
+    {
+      sourceId: 'fk-loop-directive',
+      itemIds: [
+        'item.5820c7f79bef',
+        'item.7f72e946ccbe',
+        'item.23f92834c1c8',
+        'item.6151d43333aa',
+        'item.c708d8f95113',
+        'item.adee76eb5f43',
+        'item.52f524327994',
+        'item.37f78aa591c5',
+        'item.d7945b743a67',
+        'item.80f2c4a08e42',
+        'item.c55a33cc847f',
+        'item.237865e0993f',
+      ],
+      authoritySubject: 'coordinator.stop-conditions',
+      authorityClaim: 'stop-on-authority-scope-security-or-ownership-failure',
+    },
+    {
+      sourceId: 'fk-loop-directive',
+      itemIds: ['item.7ad3390acb6b'],
+      authoritySubject: 'coordinator.session-wakeup',
+      authorityClaim: 'completion-notifications-before-fallback-waits',
+    },
+    {
+      sourceId: 'spec-convention',
+      itemIds: [
+        'item.fd5d51dd4808',
+        'item.f2172f28e7fc',
+        'item.71d77f22d163',
+        'item.ea0314db8499',
+        'item.d2b2084774b8',
+        'item.910181940014',
+        'item.c9b45d54e97b',
+        'item.4fa776b35f0b',
+        'item.4886c52fa322',
+        'item.74a07f6879cc',
+        'item.03f0830cd693',
+        'item.7a55cf4f2295',
+        'item.efb0769d6ff2',
+        'item.513e18f22be3',
+        'item.6dbbca88286f',
+        'item.ac5ff7afd06f',
+        'item.5145ab15549c',
+        'item.fd82127bf9f9',
+      ],
+      authoritySubject: 'parcel.spec-convention',
+      authorityClaim: 'follow-versioned-spec-lifecycle-and-exact-mutation-authority',
+    },
+    {
+      sourceId: 'coordinator-pattern',
+      itemIds: [
+        'item.38dbf3185a76',
+        'item.84b4e388c06b',
+        'item.d62734f662a0',
+        'item.00f63e7818bc',
+        'item.a3d15fe678e1',
+        'item.dedbefc1b097',
+        'item.91dd60b00fd6',
+      ],
+      authoritySubject: 'goal.coordination-model',
+      authorityClaim: 'mutual-decisions-ratified-before-dispatch',
+    },
+    {
+      sourceId: 'goal-skill',
+      itemIds: ['item.02636597cc8d', 'item.fa27a05811dd', 'item.8fda5f4d9776'],
+      authoritySubject: 'goal.ratification-lifecycle',
+      authorityClaim: 'interrogate-charter-and-obtain-explicit-gate-one',
+    },
+    {
+      sourceId: 'parcel-driven-development',
+      itemIds: [
+        'item.b7563a79cc57',
+        'item.400cc2cfd0d5',
+        'item.303fe3f67dae',
+        'item.f1add5311b6c',
+        'item.9d8d06d91590',
+        'item.dbee4594f901',
+        'item.7a8af4ddaa1e',
+        'item.98f93a29441d',
+        'item.e4751682430a',
+        'item.72c60fa596e7',
+        'item.754e096cfecf',
+        'item.876882377a6a',
+      ],
+      authoritySubject: 'parcel.review-checklist',
+      authorityClaim: 'verify-contract-scope-safety-evidence-and-handoff',
+    },
+    {
+      sourceId: 'spec-linter-validator',
+      itemIds: ['item.c6669b61c6f0', 'item.256b9064bc47'],
+      authoritySubject: 'spec.validation-behavior',
+      authorityClaim: 'schema-and-supersession-invariants-enforced',
+    },
+    {
+      sourceId: 'spec-linter-cli',
+      itemIds: ['item.0479c603add5', 'item.fb268f5c5eb4', 'item.66fec8a20db5', 'item.39787f778432'],
+      authoritySubject: 'spec-linter.exit-contract',
+      authorityClaim: 'zero-valid-one-invalid-two-usage',
+    },
+  ]
+  const group = curatedGroups.find(
+    (candidate) => candidate.sourceId === sourceId && candidate.itemIds.includes(itemId),
+  )
+  return group === undefined
+    ? null
+    : { authoritySubject: group.authoritySubject, authorityClaim: group.authorityClaim }
 }
 
 function applicabilityFor(
@@ -821,150 +1049,150 @@ function applicabilityFor(
     Record<
       string,
       {
-        roles: readonly (typeof allRoles)[number][]
-        stages: readonly (typeof allStages)[number][]
-        operations: readonly (typeof allOperations)[number][]
-        hosts: readonly (typeof allHosts)[number][]
+        roles: AuthorityRule['applicability']['roles']
+        stages: AuthorityRule['applicability']['stages']
+        operations: AuthorityRule['applicability']['operations']
+        hosts: AuthorityRule['applicability']['hosts']
       }
     >
   > = {
     'item.constraint-1': {
       roles: ['builder'],
-      stages: ['build'],
-      operations: ['repo-mutation'],
-      hosts: allHosts,
+      stages: ['any'],
+      operations: ['any'],
+      hosts: ['any'],
     },
     'item.constraint-2': {
       roles: ['builder'],
-      stages: ['build'],
-      operations: ['repo-mutation'],
-      hosts: allHosts,
+      stages: ['any'],
+      operations: ['any'],
+      hosts: ['any'],
     },
     'item.constraint-3': {
       roles: ['builder'],
-      stages: ['deterministic-verify'],
-      operations: ['control-call'],
-      hosts: allHosts,
+      stages: ['any'],
+      operations: ['any'],
+      hosts: ['any'],
     },
     'item.constraint-4': {
       roles: ['builder'],
-      stages: ['build'],
-      operations: ['control-call'],
-      hosts: allHosts,
+      stages: ['any'],
+      operations: ['any'],
+      hosts: ['any'],
     },
     'item.constraint-5': {
       roles: ['builder'],
-      stages: ['build', 'deterministic-verify'],
-      operations: ['repo-mutation'],
-      hosts: allHosts,
+      stages: ['any'],
+      operations: ['any'],
+      hosts: ['any'],
     },
     'item.constraint-6': {
       roles: ['builder'],
-      stages: ['build'],
-      operations: ['source-inventory'],
-      hosts: allHosts,
+      stages: ['any'],
+      operations: ['any'],
+      hosts: ['any'],
     },
     'item.constraint-7': {
       roles: ['builder'],
-      stages: ['build'],
+      stages: ['any'],
       operations: ['control-call'],
-      hosts: allHosts,
+      hosts: ['any'],
     },
     'item.constraint-8': {
       roles: ['reviewer'],
       stages: ['adversarial-review'],
-      operations: ['repo-mutation'],
-      hosts: allHosts,
+      operations: ['repo-read', 'repo-mutation', 'control-call'],
+      hosts: ['any'],
     },
     'item.constraint-9': {
       roles: ['reviewer'],
       stages: ['adversarial-review'],
-      operations: ['repo-read'],
-      hosts: allHosts,
+      operations: ['repo-read', 'repo-mutation', 'control-call'],
+      hosts: ['any'],
     },
     'item.constraint-10': {
       roles: ['reviewer'],
       stages: ['adversarial-review'],
-      operations: ['repo-read'],
-      hosts: allHosts,
+      operations: ['repo-read', 'repo-mutation', 'control-call'],
+      hosts: ['any'],
     },
     'item.constraint-11': {
       roles: ['reviewer'],
       stages: ['adversarial-review'],
-      operations: ['repo-read'],
-      hosts: allHosts,
+      operations: ['repo-read', 'repo-mutation', 'control-call'],
+      hosts: ['any'],
     },
     'item.constraint-12': {
-      roles: ['builder'],
-      stages: ['deterministic-verify'],
-      operations: ['repo-mutation'],
-      hosts: allHosts,
+      roles: ['coordinator'],
+      stages: ['deterministic-verify', 'adversarial-review'],
+      operations: ['source-inventory', 'repo-read', 'repo-mutation'],
+      hosts: ['any'],
     },
     'item.constraint-13': {
       roles: ['builder'],
-      stages: ['build'],
-      operations: ['repo-mutation'],
-      hosts: allHosts,
+      stages: ['any'],
+      operations: ['any'],
+      hosts: ['any'],
     },
     'item.hard-rule-1': {
-      roles: ['coordinator', 'shaper', 'builder'],
-      stages: ['step-zero', 'build'],
-      operations: ['spec-mutation'],
-      hosts: allHosts,
+      roles: ['shaper', 'builder'],
+      stages: ['shaping', 'step-zero', 'build'],
+      operations: ['any'],
+      hosts: ['any'],
     },
     'item.hard-rule-2': {
-      roles: ['shaper', 'builder', 'reviewer'],
-      stages: ['shaping', 'build', 'adversarial-review'],
-      operations: ['repo-mutation'],
-      hosts: allHosts,
+      roles: ['coordinator', 'shaper', 'builder', 'reviewer'],
+      stages: ['shaping', 'step-zero', 'build', 'adversarial-review'],
+      operations: ['any'],
+      hosts: ['any'],
     },
     'item.hard-rule-3': {
-      roles: ['builder', 'reviewer'],
-      stages: ['build', 'adversarial-review'],
-      operations: ['repo-mutation'],
-      hosts: allHosts,
+      roles: ['shaper', 'builder'],
+      stages: ['shaping', 'step-zero', 'build'],
+      operations: ['any'],
+      hosts: ['any'],
     },
     'item.hard-rule-4': {
-      roles: ['coordinator', 'builder'],
-      stages: ['step-zero', 'build'],
+      roles: ['shaper', 'builder'],
+      stages: ['shaping', 'step-zero', 'build'],
       operations: ['repo-mutation'],
-      hosts: allHosts,
+      hosts: ['any'],
     },
     'item.hard-rule-5': {
-      roles: ['coordinator', 'builder'],
-      stages: ['build'],
+      roles: ['shaper', 'builder'],
+      stages: ['shaping', 'step-zero', 'build'],
       operations: ['repo-mutation'],
-      hosts: allHosts,
+      hosts: ['any'],
     },
     'item.hard-rule-6': {
       roles: ['coordinator'],
       stages: ['build'],
       operations: ['repo-mutation'],
-      hosts: allHosts,
+      hosts: ['any'],
     },
     'item.hard-rule-7': {
       roles: ['builder', 'ci'],
-      stages: ['deterministic-verify'],
-      operations: ['repo-read'],
-      hosts: allHosts,
+      stages: ['build', 'deterministic-verify'],
+      operations: ['any'],
+      hosts: ['any'],
     },
     'item.hard-rule-8': {
       roles: ['builder'],
       stages: ['build'],
       operations: ['repo-mutation'],
-      hosts: allHosts,
+      hosts: ['any'],
     },
     'item.hard-rule-9': {
       roles: ['coordinator', 'builder'],
       stages: ['build'],
       operations: ['repo-mutation'],
-      hosts: allHosts,
+      hosts: ['any'],
     },
     'item.hard-rule-10': {
-      roles: allRoles,
-      stages: allStages,
-      operations: allOperations,
-      hosts: allHosts,
+      roles: ['any'],
+      stages: ['any'],
+      operations: ['any'],
+      hosts: ['any'],
     },
     'item.b1ac4aa9eddf': {
       roles: ['coordinator'],
@@ -991,34 +1219,34 @@ function applicabilityFor(
       hosts: allHosts,
     },
     'item.hard-rule-11': {
-      roles: ['builder', 'reviewer'],
-      stages: ['build', 'adversarial-review'],
-      operations: ['repo-mutation'],
-      hosts: allHosts,
+      roles: ['shaper', 'builder', 'reviewer'],
+      stages: ['shaping', 'step-zero', 'build', 'adversarial-review'],
+      operations: ['any'],
+      hosts: ['any'],
     },
     'item.hard-rule-12': {
-      roles: ['coordinator'],
-      stages: ['merge'],
+      roles: ['coordinator', 'reviewer', 'ci'],
+      stages: ['deterministic-verify', 'adversarial-review', 'merge'],
       operations: ['state-transition'],
-      hosts: allHosts,
+      hosts: ['any'],
     },
     'item.hard-rule-13': {
       roles: ['coordinator'],
-      stages: ['build', 'closure'],
+      stages: ['build', 'merge', 'closure'],
       operations: ['state-transition'],
-      hosts: allHosts,
+      hosts: ['any'],
     },
     'item.hard-rule-14': {
-      roles: ['coordinator', 'builder', 'reviewer'],
-      stages: ['deterministic-verify', 'adversarial-review'],
-      operations: ['source-inventory'],
-      hosts: allHosts,
-    },
-    'item.hard-rule-15': {
-      roles: ['coordinator', 'builder', 'reviewer'],
+      roles: ['coordinator', 'builder', 'reviewer', 'ci'],
       stages: ['deterministic-verify', 'adversarial-review', 'merge'],
       operations: ['source-inventory', 'state-transition'],
-      hosts: allHosts,
+      hosts: ['any'],
+    },
+    'item.hard-rule-15': {
+      roles: ['coordinator', 'builder', 'reviewer', 'ci'],
+      stages: ['deterministic-verify', 'adversarial-review', 'merge'],
+      operations: ['source-inventory', 'state-transition'],
+      hosts: ['any'],
     },
     'item.d3': {
       roles: ['coordinator', 'builder', 'reviewer', 'host-adapter', 'kernel'],
@@ -1261,6 +1489,23 @@ function buildSource(definition: SourceDefinition): {
           'The heading is structural navigation; its complete body items carry the operative rules.',
       }
     }
+    const authorityIdentity = authorityIdentityFor(definition.sourceId, itemId)
+    if (authorityIdentity === null) {
+      const structuralCoverage =
+        locator.kind === 'symbol' &&
+        (locator.anchor.startsWith('ts-') || locator.anchor.startsWith('json-pointer:'))
+      return {
+        itemId,
+        locator,
+        normalizedExcerpt,
+        valueDigest,
+        ruleIds: [],
+        exclusionDisposition: 'not-rule' as const,
+        rationale: structuralCoverage
+          ? 'This complete syntax or schema item is inventory coverage for change detection; it does not independently grant, refuse, or require authority.'
+          : 'This source-bound item is metadata, explanatory context, or duplicate provenance and does not state an independent normative authority rule.',
+      }
+    }
     const ruleId = `rule.${definition.sourceId}.${itemId.replace(/^item\./, '')}`
     const sourceRef: SourceRef = {
       sourceId: definition.sourceId,
@@ -1281,7 +1526,7 @@ function buildSource(definition: SourceDefinition): {
         : baseSemantics
     const baseRule: AuthorityRule = {
       ruleId,
-      ...authorityIdentityFor(definition.sourceId, itemId),
+      ...authorityIdentity,
       normalizedStatement: normalizedExcerpt,
       sourceRefs: [sourceRef],
       authorityBasisRef: sourceRef,
@@ -1554,6 +1799,7 @@ function requiredReconciliations(
   const supersedingManifest = '48a82df7d6da19352e4c9d2d99195835743a27f163a5d13a4f8d5b2a76a75a61'
   const r4Manifest = '375ea566b2858d3204d17e0625332167a373b555db6d3a8b741af88f1390e082'
   const r5Manifest = '589c6c3ea98147a951ab8887fd70a1a1c50e8b84953abcbe51b152a256da6ad9'
+  const r6Manifest = '644e1336c2e4309bc75954cb24e921d4cf6d3a75b0ccc7cb926de34a8ca553c6'
   const commandEvidence = (commandId: string, inputDigest: string, resultDigest: string) =>
     canonicalJson({
       tool: '@foreman-line/authority-registry',
@@ -1773,6 +2019,48 @@ function requiredReconciliations(
         'Future binding changes require another typed prior-to-new migration record.',
       migrationStatus: 'superseded-by-amendment',
       supersedingEvidence: charterProfileBoundary.ref,
+    },
+    {
+      reconciliationId: 'registry-rework-b414d06',
+      topic: 'R5 registry bindings superseded by the coordinator-ratified FK-P0 R6 amendment.',
+      observedRefs: [charterAllowed.ref],
+      observedEvidence: [
+        {
+          kind: 'git-commit',
+          reference: 'a61eb08da6e7826d2e30bc0210434330184522da',
+          digest: sha256(
+            execFileSync('git', ['cat-file', '-p', 'a61eb08da6e7826d2e30bc0210434330184522da'], {
+              cwd: repoRoot,
+            }),
+          ),
+        },
+        {
+          kind: 'git-commit',
+          reference: SNAPSHOT,
+          digest: sha256(execFileSync('git', ['cat-file', '-p', SNAPSHOT], { cwd: repoRoot })),
+        },
+        {
+          kind: 'command-result',
+          reference: commandEvidence('registry-binding-manifest-r5', sha256(SNAPSHOT), r5Manifest),
+          digest: sha256(
+            commandEvidence('registry-binding-manifest-r5', sha256(SNAPSHOT), r5Manifest),
+          ),
+        },
+        {
+          kind: 'command-result',
+          reference: commandEvidence('superseding-binding-manifest-r6', r5Manifest, r6Manifest),
+          digest: sha256(
+            commandEvidence('superseding-binding-manifest-r6', r5Manifest, r6Manifest),
+          ),
+        },
+      ],
+      authoritativeRuleIds: [charterAllowed.ruleId],
+      scopedDisposition:
+        'The R6 curated publication, source-honest applicability, and complete reconciliation contract supersedes the R5 registry bindings in FK scope.',
+      unresolvedConsequence:
+        'Future binding changes require another typed prior-to-new migration record.',
+      migrationStatus: 'superseded-by-amendment',
+      supersedingEvidence: charterAllowed.ref,
     },
   ]
 }

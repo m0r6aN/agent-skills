@@ -269,10 +269,15 @@ test('operative rules do not use blanket any applicability shortcuts', () => {
   for (const rule of registry.rules.filter(
     (candidate) => candidate.retirementState !== 'historical-only',
   )) {
-    assert.equal(rule.applicability.roles.includes('any'), false, rule.ruleId)
-    assert.equal(rule.applicability.stages.includes('any'), false, rule.ruleId)
-    assert.equal(rule.applicability.operations.includes('any'), false, rule.ruleId)
-    assert.equal(rule.applicability.hosts.includes('any'), false, rule.ruleId)
+    for (const axis of [
+      rule.applicability.roles,
+      rule.applicability.stages,
+      rule.applicability.operations,
+      rule.applicability.hosts,
+    ]) {
+      assert.ok(axis.length > 0, rule.ruleId)
+      if (axis.includes('any' as never)) assert.deepEqual(axis, ['any'], rule.ruleId)
+    }
   }
 })
 
@@ -760,4 +765,145 @@ test('R5 sweep verifies declared snapshot bytes at the bound Git commit', () => 
   ;(source.snapshotEvidence as { fullFileSha256: string }).fullFileSha256 = '0'.repeat(64)
   const result = sweepRegistrySources(mutated, repoRoot)
   assert.ok(result.violations.some((violation) => violation.code === 'MIGRATION_EVIDENCE_INVALID'))
+})
+
+test('R6 visible prose before a same-line HTML comment is discovered', () => {
+  const tempRoot = mkdtempSync(join(tmpdir(), 'fk-p0-html-prefix-'))
+  try {
+    copyCorpus(tempRoot)
+    const path = join(tempRoot, 'plugins/foreman-line/docs/goals/foreman-kernel/loop-directive.md')
+    const content = readFileSync(path, 'utf8')
+    writeFileSync(
+      path,
+      content.replace(
+        '## Standing authorizations and their limits',
+        '## Standing authorizations and their limits\n\nOnly the coordinator may mint this new grant. <!-- R6 hidden note -->',
+      ),
+    )
+    const result = sweepRegistrySources(registry, tempRoot)
+    assert.ok(result.violations.some((violation) => violation.code === 'SOURCE_ITEM_UNCOVERED'))
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true })
+  }
+})
+
+test('R6 visible prose after a same-line HTML comment is discovered', () => {
+  const tempRoot = mkdtempSync(join(tmpdir(), 'fk-p0-html-suffix-'))
+  try {
+    copyCorpus(tempRoot)
+    const path = join(tempRoot, 'plugins/foreman-line/docs/goals/foreman-kernel/loop-directive.md')
+    const content = readFileSync(path, 'utf8')
+    writeFileSync(
+      path,
+      content.replace(
+        '## Standing authorizations and their limits',
+        '## Standing authorizations and their limits\n\n<!-- R6 hidden note --> Only the coordinator may mint this new grant.',
+      ),
+    )
+    const result = sweepRegistrySources(registry, tempRoot)
+    assert.ok(result.violations.some((violation) => violation.code === 'SOURCE_ITEM_UNCOVERED'))
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true })
+  }
+})
+
+test('R6 visible prose after a multiline HTML comment close is discovered', () => {
+  const tempRoot = mkdtempSync(join(tmpdir(), 'fk-p0-html-multiline-'))
+  try {
+    copyCorpus(tempRoot)
+    const path = join(tempRoot, 'plugins/foreman-line/docs/goals/foreman-kernel/loop-directive.md')
+    const content = readFileSync(path, 'utf8')
+    writeFileSync(
+      path,
+      content.replace(
+        '## Standing authorizations and their limits',
+        '## Standing authorizations and their limits\n\n<!-- R6 hidden\nnote --> Only the coordinator may mint this new grant.',
+      ),
+    )
+    const result = sweepRegistrySources(registry, tempRoot)
+    assert.ok(result.violations.some((violation) => violation.code === 'SOURCE_ITEM_UNCOVERED'))
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true })
+  }
+})
+
+test('R6 comment-only Markdown remains non-operative', () => {
+  const tempRoot = mkdtempSync(join(tmpdir(), 'fk-p0-html-only-'))
+  try {
+    copyCorpus(tempRoot)
+    const path = join(tempRoot, 'plugins/foreman-line/docs/goals/foreman-kernel/loop-directive.md')
+    writeFileSync(
+      path,
+      `${readFileSync(path, 'utf8')}\n<!-- Only the coordinator may mint this hidden grant. -->\n`,
+    )
+    const result = sweepRegistrySources(registry, tempRoot)
+    assert.equal(result.valid, true, JSON.stringify(result.violations, null, 2))
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true })
+  }
+})
+
+test('R6 additive TypeScript side-effect import is discovered', () => {
+  const tempRoot = mkdtempSync(join(tmpdir(), 'fk-p0-side-effect-import-'))
+  try {
+    copyCorpus(tempRoot)
+    const path = join(tempRoot, 'plugins/foreman-line/spec-linter/src/validate.ts')
+    writeFileSync(path, `import 'node:diagnostics_channel'\n${readFileSync(path, 'utf8')}`)
+    const result = sweepRegistrySources(registry, tempRoot)
+    assert.ok(result.violations.some((violation) => violation.code === 'SOURCE_ITEM_UNCOVERED'))
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true })
+  }
+})
+
+test('R6 additive TypeScript value import binding is discovered', () => {
+  const tempRoot = mkdtempSync(join(tmpdir(), 'fk-p0-value-import-'))
+  try {
+    copyCorpus(tempRoot)
+    const path = join(tempRoot, 'plugins/foreman-line/spec-linter/src/validate.ts')
+    writeFileSync(
+      path,
+      `import { basename as r6Probe } from 'node:path'\n${readFileSync(path, 'utf8')}`,
+    )
+    const result = sweepRegistrySources(registry, tempRoot)
+    assert.ok(result.violations.some((violation) => violation.code === 'SOURCE_ITEM_UNCOVERED'))
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true })
+  }
+})
+
+test('R6 TypeScript value import module retargeting changes operative inventory', () => {
+  const tempRoot = mkdtempSync(join(tmpdir(), 'fk-p0-value-import-retarget-'))
+  try {
+    copyCorpus(tempRoot)
+    const path = join(tempRoot, 'plugins/foreman-line/spec-linter/src/cli.ts')
+    const content = readFileSync(path, 'utf8')
+    assert.ok(content.includes("from 'node:path'"))
+    writeFileSync(path, content.replace("from 'node:path'", "from 'node:path/posix'"))
+    const result = sweepRegistrySources(registry, tempRoot)
+    assert.ok(
+      result.violations.some(
+        (violation) =>
+          violation.code === 'VALUE_DIGEST_MISMATCH' || violation.code === 'SOURCE_ITEM_UNCOVERED',
+      ),
+    )
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true })
+  }
+})
+
+test('R6 additive TypeScript type-only import remains non-operative', () => {
+  const tempRoot = mkdtempSync(join(tmpdir(), 'fk-p0-type-import-'))
+  try {
+    copyCorpus(tempRoot)
+    const path = join(tempRoot, 'plugins/foreman-line/spec-linter/src/validate.ts')
+    writeFileSync(
+      path,
+      `import type { Stats as R6Stats } from 'node:fs'\n${readFileSync(path, 'utf8')}`,
+    )
+    const result = sweepRegistrySources(registry, tempRoot)
+    assert.equal(result.valid, true, JSON.stringify(result.violations, null, 2))
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true })
+  }
 })

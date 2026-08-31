@@ -44,6 +44,7 @@ const REQUIRED_REWORK_MIGRATIONS = [
   'registry-rework-6eb1c25',
   'registry-rework-9285945',
   'registry-rework-6f45963',
+  'registry-rework-b414d06',
 ] as const
 const REQUIRED_OPERATIONS = [
   'gate1.ratify',
@@ -327,14 +328,22 @@ const RECONCILIATION_CONTRACT = {
     refs: ['fk-charter:item.d7'],
     rules: ['rule.fk-charter.d7'],
   },
+  'registry-rework-b414d06': {
+    topic: 'R5 registry bindings superseded by the coordinator-ratified FK-P0 R6 amendment.',
+    status: 'superseded-by-amendment',
+    refs: ['fk-charter:item.d10'],
+    rules: ['rule.fk-charter.d10'],
+  },
 } as const
 
 const SHIPPED_BINDING_MANIFEST_DIGEST =
-  '589c6c3ea98147a951ab8887fd70a1a1c50e8b84953abcbe51b152a256da6ad9'
+  '644e1336c2e4309bc75954cb24e921d4cf6d3a75b0ccc7cb926de34a8ca553c6'
 const PRIOR_R3_BINDING_MANIFEST_DIGEST =
   '48a82df7d6da19352e4c9d2d99195835743a27f163a5d13a4f8d5b2a76a75a61'
 const PRIOR_R4_BINDING_MANIFEST_DIGEST =
   '375ea566b2858d3204d17e0625332167a373b555db6d3a8b741af88f1390e082'
+const PRIOR_R5_BINDING_MANIFEST_DIGEST =
+  '589c6c3ea98147a951ab8887fd70a1a1c50e8b84953abcbe51b152a256da6ad9'
 
 const RECONCILIATION_PROSE: Readonly<Record<string, readonly [string, string]>> = {
   'gate-namespace-count': [
@@ -373,6 +382,26 @@ const RECONCILIATION_PROSE: Readonly<Record<string, readonly [string, string]>> 
     'The R5 item-curated semantic, baseline, locator, and compiler-AST contract supersedes the R4 registry bindings in FK scope.',
     'Future binding changes require another typed prior-to-new migration record.',
   ],
+  'registry-rework-b414d06': [
+    'The R6 curated publication, source-honest applicability, and complete reconciliation contract supersedes the R5 registry bindings in FK scope.',
+    'Future binding changes require another typed prior-to-new migration record.',
+  ],
+}
+
+const RECONCILIATION_RECORD_DIGESTS: Readonly<Record<string, string>> = {
+  'gate-namespace-count': '23f3549859f81eddfd5645dc3de3ffe07997c624cd75d61d3410645b710968d3',
+  'gate3-delegation': '13f5094dc781381ad5c1124f094af5f6f57b462c73df3fd3925e2b844c3f53c6',
+  'spec-linter-profile-behavior':
+    '80632188d2e21684ca3cf458a567fabba5b5b3fb2caaaed470dbd77bed8efb95',
+  'surfaces-allowed-files': '472c152d6cfea31b5ab41b61d66e877106f2512c61dc36918511d89a301467cd',
+  'permission-profile-enforcement-bound':
+    '68fa04781f9d90da1b5d3c03f104c53b8423ef051851143ea008a2b09032d298',
+  'missing-provenance-reference':
+    'ed49c8796d80a450fbb272d7aaba9c1159225e54bbf5d96e0a441cf757135b80',
+  'registry-rework-6eb1c25': 'c2b4971fd67a81df51ab33931fda17122c06de67ce5cc6ef857380704348fd6d',
+  'registry-rework-9285945': 'fc10cc1e7f98635521a8fbc65ba34895415b8901d62c49790b8b3e7337fd3fb1',
+  'registry-rework-6f45963': '3954ba2fc23122f82f6d68e294a180b8dc789983e2bb3da0198c79f8550513d9',
+  'registry-rework-b414d06': '8a7c1fdd61cbb664d6c9b1b0aefcba1dc35dc26873eff711bbfada8480247d7f',
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -972,6 +1001,20 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
   }
 
   for (const rule of document.rules) {
+    const sourceNamespace = rule.ruleId.split('.').slice(1, -1).join('.')
+    if (
+      /(?:^|\.)[0-9a-f]{12}(?:$|\.)/.test(rule.authoritySubject) ||
+      /^requires-[0-9a-f]{12}$/.test(rule.authorityClaim) ||
+      (sourceNamespace.length > 0 && rule.authoritySubject.startsWith(`${sourceNamespace}.`))
+    ) {
+      violations.push(
+        violation(
+          'RULE_SEMANTICS_UNCURATED',
+          `rule '${rule.ruleId}' uses a generated or source-item-derived authority identity`,
+          { ruleId: rule.ruleId },
+        ),
+      )
+    }
     if (bindingDigestFor(rule) !== rule.bindingDigest) {
       violations.push(
         violation('MIGRATION_EVIDENCE_INVALID', 'rule bindingDigest is stale', {
@@ -1234,6 +1277,17 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
       )
     }
     reconciliationIds.add(record.reconciliationId)
+    if (
+      RECONCILIATION_RECORD_DIGESTS[record.reconciliationId] === undefined ||
+      sha256(canonicalJson(record)) !== RECONCILIATION_RECORD_DIGESTS[record.reconciliationId]
+    ) {
+      violations.push(
+        violation(
+          'MIGRATION_EVIDENCE_INVALID',
+          `reconciliation '${record.reconciliationId}' differs from its complete canonical record manifest`,
+        ),
+      )
+    }
     const contract =
       RECONCILIATION_CONTRACT[record.reconciliationId as keyof typeof RECONCILIATION_CONTRACT]
     const prose = RECONCILIATION_PROSE[record.reconciliationId]
@@ -1397,7 +1451,7 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
         gitRefs.join('|') !==
           `f73a3846e436dcf25d80618aedd88170b0888770|${document.sourceSnapshotCommit}` ||
         !resultDigests.includes(PRIOR_R4_BINDING_MANIFEST_DIGEST) ||
-        !resultDigests.includes(SHIPPED_BINDING_MANIFEST_DIGEST)
+        !resultDigests.includes(PRIOR_R5_BINDING_MANIFEST_DIGEST)
       ) {
         violations.push(
           violation(
@@ -1594,15 +1648,38 @@ export function parseRegistry(content: string): ValidationResult {
   }
 }
 
+function stripMarkdownHtmlComments(content: string): string {
+  let visible = ''
+  let cursor = 0
+  let inComment = false
+  while (cursor < content.length) {
+    if (!inComment && content.startsWith('<!--', cursor)) {
+      visible += '    '
+      cursor += 4
+      inComment = true
+      continue
+    }
+    if (inComment && content.startsWith('-->', cursor)) {
+      visible += '   '
+      cursor += 3
+      inComment = false
+      continue
+    }
+    const character = content[cursor] as string
+    visible += inComment && character !== '\n' && character !== '\r' ? ' ' : character
+    cursor += 1
+  }
+  return visible
+}
+
 function markdownBlockMap(content: string, sourceId: string): Map<string, string> {
   const result = new Map<string, string>()
   if (sourceId !== 'fk-charter' && sourceId !== 'fk-loop-directive') return result
-  const lines = content.replace(/\r\n?/g, '\n').split('\n')
+  const lines = stripMarkdownHtmlComments(content).replace(/\r\n?/g, '\n').split('\n')
   const headings: { level: number; text: string }[] = []
   const occurrences = new Map<string, number>()
   let cursor = 0
   let inFence = false
-  let inHtmlComment = false
   while (cursor < lines.length) {
     const line = lines[cursor] ?? ''
     if (/^\s*(?:```|~~~)/.test(line)) {
@@ -1611,11 +1688,6 @@ function markdownBlockMap(content: string, sourceId: string): Map<string, string
       continue
     }
     if (inFence) {
-      cursor += 1
-      continue
-    }
-    if (inHtmlComment || line.includes('<!--')) {
-      inHtmlComment = !line.includes('-->')
       cursor += 1
       continue
     }
@@ -1645,8 +1717,7 @@ function markdownBlockMap(content: string, sourceId: string): Map<string, string
           next.trim() === '' ||
           /^#{1,6}\s+/.test(next) ||
           /^\s*\|/.test(next) ||
-          /^\s*(?:```|~~~)/.test(next) ||
-          next.includes('<!--')
+          /^\s*(?:```|~~~)/.test(next)
         )
           break
         if (list && /^\s*(?:[-*+] |\d+\. )/.test(next)) break
@@ -1677,9 +1748,20 @@ function tsNodeName(node: ts.Node): string | null {
 }
 
 function isTypeOnlyTopLevel(node: ts.Statement): boolean {
+  if (ts.isImportDeclaration(node)) {
+    const clause = node.importClause
+    if (clause === undefined) return false
+    if (/^type\b/.test(clause.getText())) return true
+    if (clause.name !== undefined) return false
+    return (
+      clause.namedBindings !== undefined &&
+      ts.isNamedImports(clause.namedBindings) &&
+      clause.namedBindings.elements.length > 0 &&
+      clause.namedBindings.elements.every((element) => element.isTypeOnly)
+    )
+  }
+  if (ts.isImportEqualsDeclaration(node)) return node.isTypeOnly
   return (
-    ts.isImportDeclaration(node) ||
-    ts.isImportEqualsDeclaration(node) ||
     ts.isInterfaceDeclaration(node) ||
     ts.isTypeAliasDeclaration(node) ||
     (ts.isExportDeclaration(node) && node.isTypeOnly) ||
@@ -1749,8 +1831,15 @@ export function typescriptConstructMap(content: string): Map<string, string> {
   const operative = sourceFile.statements.filter((statement) => !isTypeOnlyTopLevel(statement))
   operative.forEach((statement, topIndex) => {
     const name = tsNodeName(statement)
-    const topAnchor =
+    let topAnchor =
       name === null ? `ts-top:${topIndex}:${ts.SyntaxKind[statement.kind]}` : `ts-construct:${name}`
+    if (ts.isImportDeclaration(statement)) {
+      const moduleName = statement.moduleSpecifier.getText(sourceFile).slice(1, -1)
+      const clause = statement.importClause?.getText(sourceFile) ?? '(side-effect)'
+      topAnchor = `ts-import:${moduleName}:${normalizeRuleText(clause)}`
+    } else if (ts.isImportEqualsDeclaration(statement)) {
+      topAnchor = `ts-import-equals:${normalizeRuleText(statement.getText(sourceFile))}`
+    }
     result.set(topAnchor, tsSemanticValue(statement, sourceFile))
     const visit = (node: ts.Node, path: string): void => {
       if (hasCallableBody(node)) {
@@ -1807,6 +1896,8 @@ function extractLocator(content: string, locator: SourceLocator): { count: numbe
   if (
     locator.kind === 'symbol' &&
     (locator.anchor.startsWith('ts-construct:') ||
+      locator.anchor.startsWith('ts-import:') ||
+      locator.anchor.startsWith('ts-import-equals:') ||
       locator.anchor.startsWith('ts-top:') ||
       locator.anchor.startsWith('ts-body:'))
   ) {

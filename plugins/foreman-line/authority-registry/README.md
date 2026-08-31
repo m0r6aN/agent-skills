@@ -106,7 +106,7 @@ Six required typed records reconcile without rewriting historical sources:
 was edited or globally invalidated. The missing provenance record stays `open`, preserves all
 thirteen standing rules, and prevents their retirement.
 
-Three additional `superseded-by-amendment` records bind the R2, R4, and R5 reworks to their prior
+Four additional `superseded-by-amendment` records bind the R2, R4, R5, and R6 reworks to their prior
 registry commits, the pinned source snapshot, prior binding-manifest digests, superseding
 manifests, and complete controlling `SourceRef` values. A future coordinated
 identity/location/value change must
@@ -151,9 +151,11 @@ Git-backed reconciliation evidence additionally requires the exact root of a rea
 commit-typed objects, and commit-bound canonical missing-path evidence. The charter and loop
 directive use complete paragraph/list/table discovery with wrapping-stable semantic locators.
 Inventoried TypeScript sources use the TypeScript 7 compiler syntax tree for operative top-level
-statements plus nested callable bodies; type-only declarations and imports are intentionally
-non-operative. JSON schema leaves and permission-profile entries have their own source-aware
-inventories. These are bounded source-specific claims, not a general Markdown policy compiler.
+statements, runtime value and side-effect imports, and nested callable bodies. Compiler-recognized
+type-only declarations and imports are intentionally non-operative, and import order is ignored
+only when the runtime module/binding set is unchanged. JSON schema leaves and permission-profile
+entries have their own source-aware inventories. These are bounded source-specific claims, not a
+general Markdown policy compiler.
 
 Stable codes are closed to those exported by `RESULT_CODES` in `src/types.ts`.
 
