@@ -236,12 +236,24 @@ whitespace to one ASCII space. An operative normalized-value change without a ma
 migration fails. A missing/moved locator fails its location binding. Full-file snapshot drift is
 reported only in parcel-time evidence and never becomes a shipped byte-freeze test.
 
+The validator nevertheless binds the declared baseline evidence in an exact source manifest over
+`{sourceId,path,sourceKind,authorityTier,authorityEffect,scope,snapshotEvidence}`. For each source,
+the sweep reads the path from `snapshotEvidence.commit` with Git, hashes those committed bytes,
+and requires equality with `snapshotEvidence.fullFileSha256`; it does not compare that hash to
+the current worktree file. A recomputed or zeroed declared snapshot hash therefore fails while
+ordinary current-source changes outside registered semantic locators remain permitted.
+
+Locator identity is independent of physical Markdown wrapping. A numbered item or bullet locator
+uses its semantic list identity and aggregates all continuation lines before normalization; it
+never incorporates the first physical line's complete text. Reflowing unchanged normalized text
+across lines must preserve item ID, locator digest, and value digest.
+
 `AuthorityRule` must carry:
 
 - immutable semantic `ruleId` independent of line number; `authoritySubject` and
   `authorityClaim` stable lower-case ID tokens; `normalizedStatement`; exactly one
-  `authorityBasisRef` that is also present in `sourceRefs` and names the binding source text
-  whose tier controls this rule;
+  `authorityBasisRef` that is also present in `sourceRefs` and names the source text that
+  substantively states this rule's semantic claim;
   `sourceRefs: SourceRef[]`; closed `applicability` with non-empty unique arrays of
   `GoalScope`, `RoleScope`, `StageScope`, `OperationScope`, and `HostPosture`; `Severity`;
 - exactly one primary classification:
@@ -339,11 +351,22 @@ reconciliation; an all-unique subject graph is invalid. At minimum, the generic 
 Every required reconciliation has a shipped-data resolver vector that proves its real competing
 rules meet on a shared subject and either resolve to the stated higher-tier claim or return the
 required conflict. Synthetic tests that rewrite subjects at test time do not satisfy this
-requirement. Authority tier is derived only from `authorityBasisRef`; corroborating, narrative,
-historical, or nonbinding `sourceRefs` cannot promote a rule. The basis ref must resolve to a
-binding source and to text that states the rule's claim. `retired-from-agent-reading` is excluded
-from active resolver candidates exactly like `historical-only`; validation and resolution share
-one active-authority predicate.
+requirement. Authority tier and effect are derived only from `authorityBasisRef`; other
+`sourceRefs` cannot promote a rule. The basis ref may be binding, corroborating, historical,
+stale, or advisory according to its real source; only a rule whose basis source is binding may
+enter the active resolver candidate set. Narrative/historical rules therefore retain honest
+nonbinding bases and visibility without acquiring authority. The basis text must substantively
+state the rule's exact subject/claim; a source-wide default label or unrelated schema leaf is
+invalid. `retired-from-agent-reading` is excluded from active resolver candidates exactly like
+`historical-only`; validation and resolution share one active-authority predicate.
+
+Subject and claim assignment is curated per inventory item. Distinct operative standing rules,
+PDD rules, schema constraints, linter branches, and permission-profile rules do not share one
+catch-all subject/claim merely because they share a source. Two rules may share a subject only
+when their basis texts genuinely answer the same semantic question. Standing provenance is a
+separate provenance rule and never replaces the thirteen operative standing-rule identities.
+The permission-profile enforcement reconciliation uses charter D7's loaded/enrollment boundary,
+not D9's human-gate boundary.
 
 `EvidenceRef` is exactly `{ kind, path, digest }`, where `kind` is
 `predicate-contract | negative-test | corpus-sweep | independent-bypass`, `path` is an exact
@@ -471,8 +494,13 @@ semantic bindings, and the complete superseding `SourceRef`.
 
 The complete expected reconciliation record is immutable, including `scopedDisposition` and
 `unresolvedConsequence`; validator comparison binds both normalized prose fields, not only IDs,
-refs, and status. A delegated-merge or no-human-evidence rewrite therefore fails even when all
-digests are recomputed. Git-dependent evidence is never optional: `sweep` requires that
+refs, and status. It also binds the exact ordered-as-set `observedEvidence` entries: kind,
+canonical reference, digest, cardinality, and topic-specific membership. Removing one evidence
+entry or substituting any other valid source ref, commit, command result, or absent path fails.
+For `missing-provenance-reference`, the only missing path is exactly
+`plugins/foreman-line/docs/transcripts/defects_lessons.md` at the explicitly bound snapshot
+commit. A delegated-merge, no-human-evidence, or arbitrary-absent-path rewrite therefore fails
+even when all digests are recomputed. Git-dependent evidence is never optional: `sweep` requires that
 `repoRoot` resolve to a real Git worktree whenever any reconciliation contains `git-commit` or
 `missing-path` evidence. It verifies `git cat-file -t <sha>` is exactly `commit` before hashing
 the commit object. `missing-path.reference` is canonical JSON
@@ -503,14 +531,21 @@ closed.
   canon, material JSON-schema enum/constraint, permission-profile rule/deny, or operative
   validator/CLI branch in the inventoried live sources. Heading labels, arbitrary substring
   anchors, comments, and preserved dead-code lines are not proof of operative behavior.
-- For goal charter and loop-directive binding sections, inventory every complete paragraph,
-  list item, and table row beneath gate, grant, authority, and stop-condition headings; headings
-  alone are never coverage. Keyword allowlists are not permitted to decide whether natural
-  binding prose is inventoried. For inventoried TypeScript and JSON Schema sources, bind complete
-  operative function/schema-constraint blocks and a deterministic top-level executable-construct
-  inventory so an inserted early return, allow/refuse branch, enum/constraint, or new operative
-  declaration fails even when old anchors remain. Comments and dead code do not satisfy the
-  construct inventory.
+- For the complete goal charter and loop directive, inventory every paragraph, list item, and
+  table row unless a shipped exact exclusion manifest identifies that item and gives a
+  non-normative rationale. Section-number or heading-name allowlists are prohibited: locked
+  decisions, gates, authority, dispatch grants, stop conditions, and newly added unnumbered prose
+  all receive the same discovery treatment. Headings alone are never coverage, and keyword
+  allowlists do not decide whether natural prose is binding.
+- TypeScript discovery uses the TypeScript compiler syntax tree, not a regular-expression list of
+  declaration spellings. Inventory every non-import top-level statement and each complete
+  function/method/constructor/accessor/arrow body, including function, const, let, var, class,
+  default/named export, expression/call, and anonymous forms. Serialize a deterministic semantic
+  token/AST representation that ignores comments, whitespace, line wrapping, and import order
+  while preserving operative syntax and nesting. An inserted early return, branch, method,
+  class, top-level call, or declaration must add/change an inventory item even when old anchors
+  remain. JSON Schema discovery analogously inventories every constraint node. Comments, type-
+  only declarations, and unreachable text cannot satisfy an operative construct locator.
 - Validation is deterministic: identical registry/source bytes return byte-identical ordered
   results. No clock, randomness, network, environment-derived identity, or Git mutation is used.
 - Stable result codes are closed to: `SCHEMA_INVALID | SOURCE_PATH_INVALID |
@@ -524,8 +559,10 @@ closed.
   `USAGE_ERROR` exits `2` even when semantic violations are also present. Multiple violations
   are ordered by source path, locator,
   rule ID, then code.
-- Runtime dependencies are exactly `ajv` and `yaml`, pinned to the versions used by current
-  sibling validators. A dependency-allowlist test enforces the exact set.
+- Runtime dependencies are exactly `ajv`, `yaml`, and `typescript`; `typescript` is pinned to
+  `7.0.2` and supplies the syntax-tree inventory. A dependency-allowlist test enforces the exact
+  set. No general parser implemented with declaration-matching regular expressions satisfies the
+  TypeScript discovery contract.
 
 ## Allowed Files
 
@@ -647,9 +684,17 @@ a competing owner for `authority-registry`, or relies on self-asserted authority
   assert the exact D2, D3, D18, and D19 mappings; prove a corroborating ref cannot promote tier;
   and prove `retired-from-agent-reading` can never control.
 - Applicability tests provide source-derived positive and negative query vectors for each of the
-  thirteen standing constraints and fifteen PDD hard rules. PDD hard rule 10 applies to every
-  parcel regardless of scope and therefore matches ordinary builder/build/repo-mutation queries,
-  not only Step 0/spec mutation.
+  thirteen standing constraints and fifteen PDD hard rules. A hand-curated applicability
+  manifest binds the complete five-axis record for each rule; generator heuristics based only on
+  item number or classification are prohibited. Each positive and negative test is a complete
+  resolver query covering goal, role, stage, operation, and host and asserts the exact resolved
+  rule, not merely array membership or one role axis. PDD hard rule 10 applies to every parcel
+  regardless of scope and therefore matches ordinary builder/build/repo-mutation queries, not
+  only Step 0/spec mutation. At minimum, hard rule 2 covers shaper, builder, and reviewer agents;
+  hard rule 8 covers builder/build/repo-mutation when a product decision is missing; hard rule 12
+  covers coordinator/merge/state-transition release gating; hard rule 13 covers coordinator
+  multi-session state-transition before closure; and hard rules 14 and 15 cover their verification
+  and release-claim contexts rather than only external write or closure.
 - Reconciliation negative controls mutate each normalized `scopedDisposition` and
   `unresolvedConsequence`, sweep a copied corpus without Git metadata, substitute a blob for a
   commit, and bind a missing path to the wrong commit; every case fails closed.
@@ -657,6 +702,12 @@ a competing owner for `authority-registry`, or relies on self-asserted authority
   item, including the exact Gate-1 ratification records, human-owned Gate-3 statement, and
   coordinator-consumes-but-never-produces independent-verification statement. Heading-only or
   semantically irrelevant evidence fails.
+- Discovery controls append a top-level call and each of function/const/let/var/class/default-
+  export/method/arrow forms, add unnumbered prose under locked decisions, and insert a nested
+  branch into an existing function. All operative additions fail; comment-only, whitespace,
+  import-order, and Markdown-wrap-only changes remain green.
+- Source-manifest controls mutate each `snapshotEvidence` commit/hash field and prove failure,
+  while current unrelated bytes outside semantic locators do not become a full-file byte freeze.
 - Determinism/write-sentinel test: repeated validate/sweep calls produce identical ordered
   results and no repository changes.
 - Dependency allowlist and no-bare-specifier tests.
@@ -665,7 +716,11 @@ a competing owner for `authority-registry`, or relies on self-asserted authority
 
 1. The exact Allowed Files produce a repo-contained `@foreman-line/authority-registry` contract
    package with only the declared relative source-time `schema-scaffold` boundary; no
-   pre-existing file changes and no unlisted file is created.
+   pre-existing file changes and no unlisted file is created. Parcel implementation scope is
+   measured from the immediately preceding coordinator-owned spec-amendment commit to the builder
+   commit. Coordinator-authored active-spec commits may exist earlier on the same parcel branch
+   and are reported separately; they are not builder mutation authority and do not make the
+   builder's Allowed Files diff a 29-file parcel.
 2. The shipped YAML validates against the closed draft-07 schema and the semantic validator;
    generated schema bytes match the committed schema and TypeScript/JSON-Schema fixtures agree.
 3. Every rule-bearing inventory item in the exact source corpus is mapped or explicitly
@@ -679,6 +734,9 @@ a competing owner for `authority-registry`, or relies on self-asserted authority
    assurance, retirement state, and corpus-sweep evidence appropriate to that state. The shipped
    manifest binds the full normative rule record and exact eighteen-source set without a
    cardinality-conditioned bypass.
+   Each subject/claim is item-curated and substantively supported by its authority basis; source-
+   wide catch-all semantic identities are invalid. The complete declared source baseline,
+   including snapshot evidence, is independently manifest-bound.
 5. `resolveAuthority` makes precedence scope-aware and fail-closed: a higher-tier FK rule controls
    an in-scope subject/claim contradiction; historical/generic rules remain visible; an unlisted
    or equal-authority contradiction returns `CONFLICT` and cannot be selected silently.
