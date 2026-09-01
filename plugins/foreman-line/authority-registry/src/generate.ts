@@ -1,10 +1,14 @@
 import { execFileSync } from 'node:child_process'
 import { readFileSync, writeFileSync } from 'node:fs'
-import { dirname, join } from 'node:path'
+import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { stringify } from 'yaml'
+import { parse, stringify } from 'yaml'
 import { generate } from '../../schema-scaffold/src/generate.js'
-import { allSchemaFiles } from './registry.js'
+import {
+  allSchemaFiles,
+  R12_LEGACY_MARKDOWN_RULE_TARGETS,
+  R12_PRIOR_REGISTRY_COMMIT,
+} from './registry.js'
 import type {
   AuthorityEffect,
   AuthorityEnforcementRegistry,
@@ -25,16 +29,16 @@ import {
   locatorDigestFor,
   normalizeRuleText,
   permissionProfileRuleMap,
+  registryBindingManifestDigest,
   sha256,
   typescriptConstructMap,
 } from './validate.js'
 
 const SNAPSHOT = '51857a3a7796b393c0c0a68712f98c06e7015d79'
-const R11_GATE2_ALLOW_ITEMS = new Set([
+const R12_GATE2_ALLOW_ITEMS = new Set([
   'fk-charter:item.15a44cf50bc6',
   'fk-loop-directive:item.47a75730afd6',
   'fk-loop-directive:item.bfffee6d7c1f',
-  'coordinator-pattern:item.91dd60b00fd6',
 ])
 const here = dirname(fileURLToPath(import.meta.url))
 const packageRoot = join(here, '..')
@@ -48,7 +52,6 @@ interface SourceDefinition {
   readonly authorityEffect: AuthorityEffect
   readonly scope: readonly ('foreman-kernel' | 'all-foreman-goals')[]
   readonly anchors?: readonly string[]
-  readonly additionalAnchors?: readonly string[]
 }
 
 const SOURCE_DEFINITIONS: readonly SourceDefinition[] = [
@@ -78,13 +81,6 @@ const SOURCE_DEFINITIONS: readonly SourceDefinition[] = [
   },
   {
     sourceId: 'spec-convention',
-    additionalAnchors: [
-      "- **`permission_profile:`** — **Optional until the permission-profile registry ships.** A name referencing a profile in a reviewed permission-profile registry (a separate, deferred parcel). Never inline permission rules directly in a spec — a self-describing document must not be its own security authority. Lint behavior: if present, the value must be a non-empty, non-whitespace-only string (rejected otherwise); if absent, the spec-linter emits a non-blocking advisory warning to stderr (exit code remains `0`). The linter CLI exposes a `--no-permission-profile-warning` flag to suppress this advisory. When the registry ships, it will add enum validation as a non-breaking additive change to this field's contract.",
-      '- `surfaces:` is broad routing and audit metadata.',
-      "- `Allowed Files` is the parcel's mutation authority.",
-      'If implementation requires a path not listed in `Allowed Files`, work stops',
-      "4. **Gate 3 is human-owned unless delegation is proven at merge time.** Delegation is valid only when the target repository's effective branch rules name the agent's distinct identity as a bypass actor. The coordinator must query that rule at merge time and stop before any merge call when it cannot be proven. Missing configuration, an empty bypass list, a human-authenticated agent session, or an unavailable ruleset query all fail closed to human ownership.",
-    ],
     path: 'plugins/foreman-line/docs/SPEC-CONVENTION.md',
     sourceKind: 'foreman-contract',
     authorityTier: 'ratified-contract',
@@ -93,11 +89,6 @@ const SOURCE_DEFINITIONS: readonly SourceDefinition[] = [
   },
   {
     sourceId: 'coordinator-pattern',
-    additionalAnchors: [
-      '| 1    | Charter ratification (Stage Zero exit)       | **Never**                                                                                                                           |',
-      "| 2    | Dispatch approval (parcel-set + kickstarter) | Yes - standing authorization scoped to the charter's named parcels, granted at ratification or later                                |",
-      '| 3    | Merge                                        | Yes - standing authorization ("merge it" rule), always contingent on the full verification chain being green; any red step voids it |',
-    ],
     path: 'plugins/foreman-line/docs/COORDINATOR-PATTERN.md',
     sourceKind: 'coordinator-pattern',
     authorityTier: 'coordinator-pattern',
@@ -114,9 +105,6 @@ const SOURCE_DEFINITIONS: readonly SourceDefinition[] = [
   },
   {
     sourceId: 'standing-constraints',
-    additionalAnchors: [
-      'Every builder and reviewer kickstarter includes this file by reference (one line: "Standing constraints apply — `plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md`"). Each rule below was earned on a real defect; the lesson number links to `docs/transcripts/defects_lessons.md` for provenance. Coordinator-side rules (shell discipline, closure checks, pre-PR gates) live in the coordinator carryover and COORDINATOR-PATTERN.md, not here.',
-    ],
     path: 'plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md',
     sourceKind: 'standing-constraint',
     authorityTier: 'standing-role',
@@ -186,10 +174,6 @@ const SOURCE_DEFINITIONS: readonly SourceDefinition[] = [
   },
   {
     sourceId: 'spec-linter-readme',
-    additionalAnchors: [
-      '| `permission_profile:` | No (interim) | If present: non-empty, non-whitespace-only string. If absent: passes, with a non-blocking advisory warning. `null` is rejected (a schema violation, distinct from key-absent). |',
-      '**`permission_profile:` interim behavior.** The permission-profile registry is a deferred parcel. Until it ships, this field is optional and unconstrained beyond "non-empty string if present." Every spec missing it gets one advisory warning per validation — not a failure. Once the registry lands, it will add enum validation as a non-breaking additive change.',
-    ],
     path: 'plugins/foreman-line/spec-linter/README.md',
     sourceKind: 'generated-advisory',
     authorityTier: 'generated-advisory',
@@ -246,12 +230,6 @@ const SOURCE_DEFINITIONS: readonly SourceDefinition[] = [
   },
   {
     sourceId: 'permission-profiles-readme',
-    additionalAnchors: [
-      '`deny`/`ask` are **the** restriction mechanism; `allow` is documentation of',
-      'A profile only constrains a session that actually **loads** the emitted',
-      '- **Void under bypass mode:** `--dangerously-skip-permissions` skips deny',
-      '- **Bash/PowerShell residual:** reduced, not eliminated, fix/commit',
-    ],
     path: 'plugins/foreman-line/permission-profiles/README.md',
     sourceKind: 'generated-advisory',
     authorityTier: 'generated-advisory',
@@ -263,7 +241,6 @@ const SOURCE_DEFINITIONS: readonly SourceDefinition[] = [
 interface LocatedText {
   readonly locator: SourceLocator
   readonly text: string
-  readonly curationItemId?: string
 }
 
 function stripMarkdownHtmlComments(content: string): string {
@@ -358,61 +335,6 @@ function headingLocators(document: MarkdownDocumentMap): LocatedText[] {
   }))
 }
 
-function numberedItems(document: MarkdownDocumentMap): LocatedText[] {
-  const { lines, fenced } = document
-  const stack: { level: number; heading: string }[] = []
-  const items: { index: number; indent: number; anchor: string }[] = []
-  const occurrences = new Map<string, number>()
-  for (let index = 0; index < lines.length; index += 1) {
-    const line = lines[index] ?? ''
-    if (fenced.has(index)) continue
-    const heading = /^(#{1,6})\s+.+/.exec(line)
-    if (heading !== null) {
-      const level = heading[1]?.length ?? 6
-      while ((stack.at(-1)?.level ?? 0) >= level) stack.pop()
-      stack.push({ level, heading: line.trim() })
-      continue
-    }
-    const numbered = /^(\s*)(\d+)[.)]\s+\S/.exec(line)
-    if (numbered === null) continue
-    const prefix = stack.map((item) => item.heading)
-    const semanticKey = `${prefix.join(' > ')}\u0000${numbered[1]?.length ?? 0}\u0000${numbered[2] as string}`
-    const occurrence = (occurrences.get(semanticKey) ?? 0) + 1
-    occurrences.set(semanticKey, occurrence)
-    items.push({
-      index,
-      indent: numbered[1]?.length ?? 0,
-      anchor: [
-        ...prefix,
-        `list-item:${numbered[1]?.length ?? 0}:${numbered[2] as string}:${occurrence}`,
-      ].join(' > '),
-    })
-  }
-  return items.map((item) => {
-    let end = lines.length
-    for (let index = item.index + 1; index < lines.length; index += 1) {
-      if (fenced.has(index)) {
-        end = index
-        break
-      }
-      const line = lines[index] ?? ''
-      if (/^#{1,6}\s+/.test(line)) {
-        end = index
-        break
-      }
-      const next = /^(\s*)(\d+)[.)]\s+\S/.exec(line)
-      if (next !== null && (next[1]?.length ?? 0) <= item.indent) {
-        end = index
-        break
-      }
-    }
-    return {
-      locator: { kind: 'numbered-item', anchor: item.anchor, lineHint: item.index + 1 },
-      text: lines.slice(item.index, end).join('\n'),
-    }
-  })
-}
-
 function tableRows(document: MarkdownDocumentMap, keys: readonly string[]): LocatedText[] {
   const { lines, fenced } = document
   return keys.map((key) => {
@@ -435,7 +357,7 @@ function markdownBindingBlocks(document: MarkdownDocumentMap): LocatedText[] {
   const { lines, fenced } = document
   const headings: { level: number; text: string }[] = []
   const structuralOccurrences = new Map<string, number>()
-  const legacyOccurrences = new Map<string, number>()
+  const tableKeys = new Map<string, number>()
   const blocks: LocatedText[] = []
   let cursor = 0
   while (cursor < lines.length) {
@@ -461,14 +383,24 @@ function markdownBindingBlocks(document: MarkdownDocumentMap): LocatedText[] {
       cursor += 1
       continue
     }
+    if (table && /^\s*\|?\s*:?-{3}/.test(lines[cursor + 1] ?? '')) {
+      cursor += 1
+      continue
+    }
     const list = /^\s*(?:[-*+] |\d+[.)] )/.test(line)
     let end = cursor + 1
     if (!table) {
       while (end < lines.length) {
         const next = lines[end] ?? ''
-        if (next.trim() === '' || /^#{1,6}\s+/.test(next) || /^\s*\|/.test(next) || fenced.has(end))
+        if (
+          next.trim() === '' ||
+          next.trim() === '---' ||
+          /^#{1,6}\s+/.test(next) ||
+          /^\s*\|/.test(next) ||
+          fenced.has(end)
+        )
           break
-        if (list && /^\s*(?:[-*+] |\d+[.)] )/.test(next)) break
+        if (/^\s*(?:[-*+] |\d+[.)] )/.test(next)) break
         end += 1
       }
     }
@@ -478,22 +410,103 @@ function markdownBindingBlocks(document: MarkdownDocumentMap): LocatedText[] {
     const structuralKey = `${headingPath}\u0000${kind}`
     const structuralOrdinal = (structuralOccurrences.get(structuralKey) ?? 0) + 1
     structuralOccurrences.set(structuralKey, structuralOrdinal)
-    const legacySemanticKey = `${structuralKey}\u0000${sha256(normalizeRuleText(text)).slice(0, 12)}`
-    const legacyOccurrence = (legacyOccurrences.get(legacySemanticKey) ?? 0) + 1
-    legacyOccurrences.set(legacySemanticKey, legacyOccurrence)
-    const legacyAnchor = `md-block:${headingPath}:${kind}:${legacySemanticKey.slice(-12)}:${legacyOccurrence}`
+    const tableKey = table ? line.trim().split('|').slice(1, -1)[0]?.trim() : undefined
+    if (table && (tableKey === undefined || tableKey === '')) {
+      throw new Error(`Markdown table row at line ${cursor + 1} has no first-column key`)
+    }
+    const tableIdentity = `${headingPath}\u0000${tableKey ?? ''}`
+    const tableKeyOccurrence = table ? (tableKeys.get(tableIdentity) ?? 0) + 1 : 0
+    if (table) tableKeys.set(tableIdentity, tableKeyOccurrence)
+    const tablePrefix =
+      table && tableKeyOccurrence > 1 ? `${headingPath} > table:${tableKeyOccurrence}` : headingPath
+    const anchor = `md-block:${tablePrefix}:${kind}:${table ? tableKey : structuralOrdinal}`
     blocks.push({
       locator: {
-        kind: 'line-excerpt',
-        anchor: `md-block:${headingPath}:${kind}:${structuralOrdinal}`,
+        kind: table ? 'table-row' : list ? 'numbered-item' : 'line-excerpt',
+        anchor,
         lineHint: cursor + 1,
       },
       text,
-      curationItemId: `item.${shortId(legacyAnchor)}`,
     })
     cursor = end
   }
   return blocks
+}
+
+const priorR11Registry = parse(
+  execFileSync(
+    'git',
+    [
+      'show',
+      `${R12_PRIOR_REGISTRY_COMMIT}:plugins/foreman-line/authority-registry/authority-enforcement-registry.yaml`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 },
+  ),
+) as AuthorityEnforcementRegistry
+
+function priorStructuralAnchor(
+  item: CanonSource['inventoryItems'][number],
+  ordinal: number,
+): string | null {
+  const match = /^(md-block:.*):(paragraph|list-item|table-row):[0-9a-f]{12}:\d+$/.exec(
+    item.locator.anchor,
+  )
+  if (match === null)
+    return item.locator.anchor.startsWith('md-block:') ? item.locator.anchor : null
+  if (match[2] === 'table-row') {
+    const key = item.normalizedExcerpt.trim().split('|').slice(1, -1)[0]?.trim()
+    if (key === undefined || key === '') return null
+    return `${match[1]}:table-row:${key}`
+  }
+  return `${match[1]}:${match[2]}:${ordinal}`
+}
+
+const frozenMarkdownItemIds = new Map<string, string>()
+for (const source of priorR11Registry.sources) {
+  const ordinals = new Map<string, number>()
+  for (const item of source.inventoryItems) {
+    const match = /^(md-block:.*):(paragraph|list-item|table-row):[0-9a-f]{12}:\d+$/.exec(
+      item.locator.anchor,
+    )
+    const ordinalKey = match === null ? item.locator.anchor : `${match[1]}\u0000${match[2]}`
+    const ordinal = (ordinals.get(ordinalKey) ?? 0) + 1
+    ordinals.set(ordinalKey, ordinal)
+    const anchor = priorStructuralAnchor(item, ordinal)
+    if (anchor === null) continue
+    const preferred = source.inventoryItems.find(
+      (candidate) =>
+        candidate !== item &&
+        candidate.locator.lineHint === item.locator.lineHint &&
+        candidate.ruleIds.length > 0,
+    )
+    if (preferred === undefined && item.ruleIds.length === 0) continue
+    const candidateId = preferred?.itemId ?? item.itemId
+    const aliasesForCandidate = Object.entries(R12_LEGACY_MARKDOWN_RULE_TARGETS).filter(
+      ([ruleId]) => ruleId.endsWith(candidateId.replace(/^item\./, '')),
+    )
+    if (aliasesForCandidate.some(([, target]) => target.anchor !== anchor)) continue
+    frozenMarkdownItemIds.set(`${source.sourceId}\u0000${anchor}`, candidateId)
+  }
+}
+
+for (const source of priorR11Registry.sources.filter((candidate) =>
+  candidate.path.endsWith('.md'),
+)) {
+  const content = readFileSync(join(repoRoot, ...source.path.split('/')), 'utf8')
+  for (const block of markdownBindingBlocks(markdownDocumentMap(content))) {
+    const candidate = source.inventoryItems.find((item) => {
+      if (item.locator.lineHint !== block.locator.lineHint || item.ruleIds.length === 0)
+        return false
+      return !Object.entries(R12_LEGACY_MARKDOWN_RULE_TARGETS).some(
+        ([ruleId, target]) =>
+          item.ruleIds.includes(ruleId) &&
+          (target.sourceId !== source.sourceId || target.anchor !== block.locator.anchor),
+      )
+    })
+    if (candidate !== undefined) {
+      frozenMarkdownItemIds.set(`${source.sourceId}\u0000${block.locator.anchor}`, candidate.itemId)
+    }
+  }
 }
 
 function tsConstructs(content: string): LocatedText[] {
@@ -533,41 +546,29 @@ function permissionProfileRules(content: string): LocatedText[] {
 }
 
 function itemIdFor(definition: SourceDefinition, located: LocatedText): string {
-  const legacyProtectedTextIds: Readonly<Record<string, string>> = {
-    '1. **Human gate: the merge.** A human owns every merge. Deliberate, permanent.':
-      'item.c92333c21e64',
-    '1. a live interactive TTY (`process.stdin.isTTY`), and': 'item.4261d18b3243',
-    '2. a **typed confirmation phrase** — the human must type the exact `<slug>` being approved, compared with a linear-time exact-string check (`===`) — no regex, no backtracking risk. `--approver <name>` is **required**; omitting it refuses with exit `2` before either gate check runs (deterministic, auditable approver identity — never inferred from the OS user). There is **no** `--yes`/`--force`/auto-approve flag of any kind, and no environment variable can substitute for either gate. If stdin is **not** a TTY (CI, pipe, redirect), `approve` refuses with exit code `2` and **mints nothing** — no receipt file, no approval record, no partial write. Both gate checks, in order, are the *only* path in this package that reaches the mint/write step. - **`reject <slug|path> [--epic-title <title>] [--reason <text>]`** — records a rejection (`decision: "rejected"`, optional reason, ISO-UTC timestamp, and the subject hash **for reference only**) to `active/<slug>.rejection.json`. Mints **no receipt** and produces **no** `approvedHash` binding — the receipt chain begins only at approval. `--repo-root <path>` (all three verbs, optional) overrides the filesystem root every call resolves paths against; it never touches approval authorization, the TTY check, or the confirmation check.':
-      'item.ff6f38f088ae',
-    '1. **Gate 2 dispatch** is authorized for exactly FK-P0–FK-P21, in the ratified dependency order. A new parcel or changed dependency graph reopens Gate 1.':
-      'item.bfffee6d7c1f',
-    '11. nondelegated human Gate 3 for every merge.': 'item.b1ac4aa9eddf',
-    '11. nondelegated human Gate 3 for every merge. **Gate 1 record:** Clinton Morgan explicitly ratified the original list and authorized the contingent Gate 2 dispatch grant on 2026-08-31, then explicitly re-ratified plan-review amendments R1–R13 and resumed Gate 2 on 2026-08-31. Parcel shaping and dispatch may now proceed in dependency order under the stated contingencies.':
-      'item.b1ac4aa9eddf',
-    '10. standing Gate-2 dispatch authorization under the stated contingencies; and':
-      'item.afbcffd2d557',
-    '6. **Gate 3 is not delegated.** Never merge. Present the complete green chain and exact merge target to the human.':
-      'item.7eb6018d9e57',
-    '10. When green, prepare the verification-chain table and PR material. Stop at the human Gate 3 before merge.':
-      'item.2743c2f8c558',
-    '8. Every Foreman Kernel parcel is architecture/risk or critical unless its ratified spec says otherwise. Architecture/risk receives **two independent fresh reviews**. Reviewers never fix or commit and are explicitly licensed for hostile-input and mutation probing.':
-      'item.ce9042d917b2',
-    '1. Waves 0–4 and FK-P0 through FK-P21 are merged through the required human Gate 3 process.':
-      'item.e9ec57edc0a2',
-    '11. After a human merge, perform Stage F: spec to `done/`, lessons with dispositions, evidence index, worktree/branch cleanup, and this state block update.':
-      'item.e3065db62b43',
+  if (
+    definition.sourceId === 'foreman-line-plan' &&
+    located.locator.anchor ===
+      R12_LEGACY_MARKDOWN_RULE_TARGETS['rule.foreman-line-plan.two-gate-thesis']?.anchor
+  ) {
+    return 'item.two-gate-thesis'
   }
-  const legacyId =
-    located.locator.anchor.startsWith('md-block:') &&
-    (definition.sourceId === 'approval-readme' || definition.sourceId === 'foreman-line-plan')
-      ? undefined
-      : legacyProtectedTextIds[normalizeRuleText(located.text)]
-  if (legacyId !== undefined) return legacyId
-  if (located.curationItemId !== undefined) return located.curationItemId
-  if (definition.sourceId === 'fk-charter' && located.locator.kind === 'table-row') {
+  const frozenId = frozenMarkdownItemIds.get(
+    `${definition.sourceId}\u0000${located.locator.anchor}`,
+  )
+  if (frozenId !== undefined) return frozenId
+  if (
+    definition.sourceId === 'fk-charter' &&
+    located.locator.kind === 'table-row' &&
+    /^D\d+$/.test(located.locator.anchor)
+  ) {
     return `item.${located.locator.anchor.toLowerCase()}`
   }
-  if (definition.sourceId === 'fk-plan-review-findings' && located.locator.kind === 'table-row') {
+  if (
+    definition.sourceId === 'fk-plan-review-findings' &&
+    located.locator.kind === 'table-row' &&
+    /^R\d+$/.test(located.locator.anchor)
+  ) {
     return `item.${located.locator.anchor.toLowerCase()}`
   }
   if (
@@ -576,18 +577,9 @@ function itemIdFor(definition: SourceDefinition, located: LocatedText): string {
   ) {
     return 'item.two-gate-thesis'
   }
-  const numbered = /(?:^| > )list-item:\d+:(\d+):\d+$/.exec(located.locator.anchor)
-  if (definition.sourceId === 'standing-constraints' && numbered?.[1] !== undefined) {
-    return `item.constraint-${numbered[1]}`
-  }
-  if (
-    definition.sourceId === 'parcel-driven-development' &&
-    located.locator.anchor.includes('## The Hard Rules') &&
-    numbered?.[1] !== undefined
-  ) {
-    return `item.hard-rule-${numbered[1]}`
-  }
-  return `item.${shortId(located.locator.anchor)}`
+  return located.locator.anchor.startsWith('md-block:')
+    ? `item.${shortId(canonicalJson({ sourceId: definition.sourceId, locator: located.locator }))}`
+    : `item.${shortId(located.locator.anchor)}`
 }
 
 const R11_CURATED_ITEM_SEMANTICS: Readonly<
@@ -2063,7 +2055,6 @@ const CURATED_ITEM_CLASSIFICATIONS: Readonly<Record<string, RuleClassification>>
   'spec-linter-cli:item.39787f778432': 'ci-static-check',
   'spec-linter-readme:item.9a889881a236': 'unsupported',
   'spec-linter-readme:item.b4f5d76d68ec': 'unsupported',
-  'permission-profiles-registry:item.ffd2209ab94a': 'narrative-provenance',
   'permission-profiles-registry:item.1ec33a4741eb': 'ci-static-check',
   'permission-profiles-registry:item.7faf78a6f54a': 'pre-action-refusal',
   'permission-profiles-registry:item.26c5e2b211da': 'pre-action-refusal',
@@ -2906,10 +2897,6 @@ const CURATED_ITEM_IDENTITIES: Readonly<Record<string, readonly [string, string]
   'spec-linter-readme:item.b4f5d76d68ec': [
     'permission-profile.registry-state',
     'readme-deferred-enum-promotion',
-  ],
-  'permission-profiles-registry:item.ffd2209ab94a': [
-    'permission-profile.reviewer-deny-git-commit',
-    'bash-git-commit-is-configured-denied',
   ],
   'permission-profiles-types:item.0b9706b5a9bf': [
     'permission-profile.supported-modes',
@@ -7488,48 +7475,6 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'permission-profiles-registry:item.ffd2209ab94a': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
   'permission-profiles-registry:item.1ec33a4741eb': {
     goals: ['all-foreman-goals'],
     roles: ['ci'],
@@ -10946,7 +10891,7 @@ function ruleShape(
 ): Pick<AuthorityRule, 'decision' | 'refusalCode' | 'enforcementOwner' | 'assurance'> {
   switch (classification) {
     case 'pre-action-refusal':
-      if (R11_GATE2_ALLOW_ITEMS.has(sourceItemKey)) {
+      if (R12_GATE2_ALLOW_ITEMS.has(sourceItemKey)) {
         return {
           decision: 'ALLOW',
           refusalCode: null,
@@ -11002,6 +10947,75 @@ function shortId(value: string): string {
   return sha256(value).slice(0, 12)
 }
 
+const priorR11RulesById = new Map(priorR11Registry.rules.map((rule) => [rule.ruleId, rule]))
+
+function legacyRuleIdsFor(sourceId: string, locator: SourceLocator): string[] {
+  return Object.entries(R12_LEGACY_MARKDOWN_RULE_TARGETS)
+    .filter(
+      ([, target]) =>
+        target.sourceId === sourceId &&
+        target.kind === locator.kind &&
+        target.anchor === locator.anchor,
+    )
+    .map(([ruleId]) => ruleId)
+}
+
+export function markdownIdentityProjectionForTesting(sourceId: string, content: string) {
+  const definition = SOURCE_DEFINITIONS.find((candidate) => candidate.sourceId === sourceId)
+  if (definition === undefined || !definition.path.endsWith('.md')) {
+    throw new Error(`Markdown source '${sourceId}' is not declared`)
+  }
+  return markdownBindingBlocks(markdownDocumentMap(content)).map((located) => {
+    const itemId = itemIdFor(definition, located)
+    const legacyRuleIds = legacyRuleIdsFor(sourceId, located.locator)
+    const compound = R11_COMPOUND_ITEM_SEMANTICS[`${sourceId}:${itemId}`]
+    const generatedRuleIds =
+      compound !== undefined
+        ? compound.map(
+            (entry) => `rule.${sourceId}.${itemId.replace(/^item\./, '')}.${entry.suffix}`,
+          )
+        : authorityIdentityFor(sourceId, itemId) === null
+          ? []
+          : [`rule.${sourceId}.${itemId.replace(/^item\./, '')}`]
+    return {
+      itemId,
+      locator: located.locator,
+      locatorDigest: locatorDigestFor(located.locator),
+      normalizedExcerpt: normalizeRuleText(located.text),
+      valueDigest: sha256(normalizeRuleText(located.text)),
+      ruleIds: [...new Set([...legacyRuleIds, ...generatedRuleIds])],
+    }
+  })
+}
+
+function migratedLegacyRule(
+  ruleId: string,
+  sourceRef: SourceRef,
+  normalizedStatement: string,
+): AuthorityRule {
+  const prior = priorR11RulesById.get(ruleId)
+  if (prior === undefined) throw new Error(`R12 legacy rule '${ruleId}' is absent from R11`)
+  const coordinatorAdvisory = ruleId === 'rule.coordinator-pattern.91dd60b00fd6'
+  const base: AuthorityRule = {
+    ...structuredClone(prior),
+    normalizedStatement,
+    sourceRefs: [sourceRef],
+    authorityBasisRef: sourceRef,
+    ...(coordinatorAdvisory
+      ? {
+          severity: 'medium' as const,
+          classification: 'narrative-provenance' as const,
+          decision: 'ADVISORY' as const,
+          refusalCode: null,
+          enforcementOwner: 'provenance-only' as const,
+          assurance: 'narrative' as const,
+        }
+      : {}),
+    bindingDigest: '',
+  }
+  return { ...base, bindingDigest: bindingDigestFor(base) }
+}
+
 function buildSource(definition: SourceDefinition): {
   source: CanonSource
   rules: AuthorityRule[]
@@ -11014,21 +11028,12 @@ function buildSource(definition: SourceDefinition): {
     definition.anchors === undefined
       ? markdown === null
         ? []
-        : [
-            ...headingLocators(markdown),
-            ...(definition.sourceId === 'fk-charter' || definition.sourceId === 'fk-loop-directive'
-              ? []
-              : numberedItems(markdown)),
-          ]
+        : [...headingLocators(markdown)]
       : definition.anchors.map((anchor, index) => ({
           locator: { kind: 'line-excerpt', anchor, lineHint: index + 1 } as SourceLocator,
           text: anchor,
         }))
-  const additional = (definition.additionalAnchors ?? []).map((anchor, index) => ({
-    locator: { kind: 'line-excerpt', anchor, lineHint: index + 1 } as SourceLocator,
-    text: anchor,
-  }))
-  const curated = [...baseLocated, ...additional]
+  const curated = [...baseLocated]
   if (markdown !== null) curated.push(...markdownBindingBlocks(markdown))
   if (definition.path.endsWith('.ts')) curated.push(...tsConstructs(content))
   if (definition.path.endsWith('.json')) curated.push(...jsonConstraints(content))
@@ -11053,16 +11058,6 @@ function buildSource(definition: SourceDefinition): {
       ),
     )
   }
-  if (definition.sourceId === 'foreman-line-plan') {
-    const thesis = markdown?.lines.find(
-      (line, index) => !markdown.fenced.has(index) && line.startsWith('**Thesis:**'),
-    )
-    if (thesis === undefined) throw new Error('historical two-gate thesis is missing')
-    curated.unshift({
-      locator: { kind: 'line-excerpt', anchor: thesis, lineHint: 1 },
-      text: thesis,
-    })
-  }
   const unique = new Map<string, LocatedText>()
   for (const entry of curated) {
     unique.set(`${entry.locator.kind}\u0000${entry.locator.anchor}`, entry)
@@ -11070,12 +11065,13 @@ function buildSource(definition: SourceDefinition): {
   const explicitTableStatements = new Set(
     [...unique.values()]
       .filter((entry) => entry.locator.kind === 'table-row')
+      .filter((entry) => !entry.locator.anchor.startsWith('md-block:'))
       .map((entry) => normalizeRuleText(entry.text)),
   )
   const located = [...unique.values()].filter(
     (entry) =>
       !(
-        entry.locator.kind === 'line-excerpt' &&
+        entry.locator.anchor.startsWith('md-block:') &&
         entry.locator.anchor.includes(':table-row:') &&
         explicitTableStatements.has(normalizeRuleText(entry.text))
       ),
@@ -11099,9 +11095,20 @@ function buildSource(definition: SourceDefinition): {
         rationale: `Heading ${locator.anchor} is structural navigation; its complete body items carry the operative rules.`,
       }
     }
+    const sourceRef: SourceRef = {
+      sourceId: definition.sourceId,
+      itemId,
+      locatorDigest: locatorDigestFor(locator),
+      valueDigest,
+    }
+    const legacyRuleIds = legacyRuleIdsFor(definition.sourceId, locator)
     const authorityIdentity = authorityIdentityFor(definition.sourceId, itemId)
     const compoundSemantics = R11_COMPOUND_ITEM_SEMANTICS[`${definition.sourceId}:${itemId}`]
-    if (authorityIdentity === null && compoundSemantics === undefined) {
+    if (
+      authorityIdentity === null &&
+      compoundSemantics === undefined &&
+      legacyRuleIds.length === 0
+    ) {
       const duplicateRuleId = publishedByStatement.get(normalizedExcerpt)
       const structuralCoverage =
         (definition.sourceId === 'spec-linter-validator' && itemId === 'item.80563af1788e') ||
@@ -11130,14 +11137,12 @@ function buildSource(definition: SourceDefinition): {
       }
     }
     const ruleId = `rule.${definition.sourceId}.${itemId.replace(/^item\./, '')}`
-    const sourceRef: SourceRef = {
-      sourceId: definition.sourceId,
-      itemId,
-      locatorDigest: locatorDigestFor(locator),
-      valueDigest,
-    }
+    const migratedRules = legacyRuleIds.map((legacyRuleId) =>
+      migratedLegacyRule(legacyRuleId, sourceRef, normalizedExcerpt),
+    )
+    rules.push(...migratedRules)
     if (compoundSemantics !== undefined) {
-      const ruleIds: string[] = []
+      const ruleIds: string[] = [...legacyRuleIds]
       for (const compound of compoundSemantics) {
         const ruleId = `rule.${definition.sourceId}.${itemId.replace(/^item\./, '')}.${compound.suffix}`
         const shape = ruleShape(
@@ -11166,8 +11171,10 @@ function buildSource(definition: SourceDefinition): {
           bindingDigest: '',
         }
         const rule = { ...baseRule, bindingDigest: bindingDigestFor(baseRule) }
-        rules.push(rule)
-        ruleIds.push(ruleId)
+        if (!ruleIds.includes(ruleId)) {
+          rules.push(rule)
+          ruleIds.push(ruleId)
+        }
       }
       publishedByStatement.set(normalizedExcerpt, ruleIds[0] as string)
       return {
@@ -11182,7 +11189,28 @@ function buildSource(definition: SourceDefinition): {
       }
     }
     if (authorityIdentity === null) {
-      throw new Error(`published item '${definition.sourceId}:${itemId}' lacks authority identity`)
+      publishedByStatement.set(normalizedExcerpt, legacyRuleIds[0] as string)
+      return {
+        itemId,
+        locator,
+        normalizedExcerpt,
+        valueDigest,
+        ruleIds: legacyRuleIds,
+        exclusionDisposition: null,
+        rationale: 'R12 frozen legacy rule identity is rebound to this canonical structural item.',
+      }
+    }
+    if (legacyRuleIds.includes(ruleId)) {
+      publishedByStatement.set(normalizedExcerpt, ruleId)
+      return {
+        itemId,
+        locator,
+        normalizedExcerpt,
+        valueDigest,
+        ruleIds: legacyRuleIds,
+        exclusionDisposition: null,
+        rationale: 'R12 frozen legacy rule identity is rebound to this canonical structural item.',
+      }
     }
     const classification = curatedClassificationFor(definition.sourceId, itemId)
     const baseSemantics = ruleShape(classification, `${definition.sourceId}:${itemId}`)
@@ -11228,7 +11256,7 @@ function buildSource(definition: SourceDefinition): {
       locator,
       normalizedExcerpt,
       valueDigest,
-      ruleIds: [ruleId],
+      ruleIds: [...legacyRuleIds, ruleId],
       exclusionDisposition: null,
       rationale:
         'Rule-bearing section or live behavior is mapped to an explicit source-bound rule.',
@@ -11380,7 +11408,7 @@ function reconciliationMany(
   }
 }
 
-function requiredReconciliations(
+function _requiredReconciliations(
   sources: readonly CanonSource[],
   rules: readonly AuthorityRule[],
 ): ReconciliationRecord[] {
@@ -12006,36 +12034,93 @@ function buildRegistry(): AuthorityEnforcementRegistry {
   const built = SOURCE_DEFINITIONS.map(buildSource)
   const sources = built.map((entry) => entry.source)
   const rules = built.flatMap((entry) => entry.rules)
-  return {
+  const operation = operationAuthority({
+    gate1: [
+      refFor(sources, 'fk-charter', 'item.cd014d6d90c5'),
+      refFor(sources, 'fk-charter', 'item.d9'),
+    ],
+    gate2: [
+      refFor(sources, 'fk-charter', 'item.15a44cf50bc6'),
+      refFor(sources, 'fk-loop-directive', 'item.bfffee6d7c1f'),
+    ],
+    gate3: [
+      refFor(sources, 'fk-charter', 'item.b1ac4aa9eddf'),
+      refFor(sources, 'fk-loop-directive', 'item.7eb6018d9e57'),
+      refFor(sources, 'fk-loop-directive', 'item.2743c2f8c558'),
+    ],
+    verification: [
+      refFor(sources, 'spec-convention', 'item.03f0830cd693'),
+      refFor(sources, 'fk-loop-directive', 'item.dd8203551518'),
+    ],
+    closure: [
+      refFor(sources, 'fk-charter', 'item.e9ec57edc0a2'),
+      refFor(sources, 'fk-loop-directive', 'item.e3065db62b43'),
+    ],
+  })
+  const provisional: AuthorityEnforcementRegistry = {
     schemaVersion: '0.1.0',
     registryId: 'foreman-kernel-authority-enforcement',
     sourceSnapshotCommit: SNAPSHOT,
     sources,
     rules,
-    operationAuthority: operationAuthority({
-      gate1: [
-        refFor(sources, 'fk-charter', 'item.cd014d6d90c5'),
-        refFor(sources, 'fk-charter', 'item.d9'),
-      ],
-      gate2: [
-        refFor(sources, 'fk-charter', 'item.15a44cf50bc6'),
-        refFor(sources, 'fk-loop-directive', 'item.bfffee6d7c1f'),
-      ],
-      gate3: [
-        refFor(sources, 'fk-charter', 'item.b1ac4aa9eddf'),
-        refFor(sources, 'fk-loop-directive', 'item.7eb6018d9e57'),
-        refFor(sources, 'fk-loop-directive', 'item.2743c2f8c558'),
-      ],
-      verification: [
-        refFor(sources, 'spec-convention', 'item.03f0830cd693'),
-        refFor(sources, 'fk-loop-directive', 'item.dd8203551518'),
-      ],
-      closure: [
-        refFor(sources, 'fk-charter', 'item.e9ec57edc0a2'),
-        refFor(sources, 'fk-loop-directive', 'item.e3065db62b43'),
-      ],
-    }),
-    reconciliations: requiredReconciliations(sources, rules),
+    operationAuthority: operation,
+    reconciliations: structuredClone(priorR11Registry.reconciliations),
+  }
+  const r12Manifest = registryBindingManifestDigest(provisional)
+  const priorManifest = registryBindingManifestDigest(priorR11Registry)
+  const basisRule = rules.find((rule) => rule.ruleId === 'rule.spec-convention.c4828bcd6dfa')
+  if (basisRule === undefined) throw new Error('R12 migration basis rule is missing')
+  const commandEvidence = (commandId: string, inputDigest: string, resultDigest: string) =>
+    canonicalJson({
+      tool: '@foreman-line/authority-registry',
+      toolVersion: '0.1.0',
+      commandId,
+      inputDigest,
+      resultDigest,
+      exitCode: 0,
+      actorClass: 'coordinator',
+    })
+  const priorCommand = commandEvidence(
+    'registry-binding-manifest-r11',
+    sha256(R12_PRIOR_REGISTRY_COMMIT),
+    priorManifest,
+  )
+  const currentCommand = commandEvidence(
+    'superseding-binding-manifest-r12',
+    priorManifest,
+    r12Manifest,
+  )
+  const r12Migration: ReconciliationRecord = {
+    reconciliationId: 'registry-rework-544d8a3',
+    topic: 'R11 registry bindings superseded by the coordinator-ratified FK-P0 R12 amendment.',
+    observedRefs: [basisRule.authorityBasisRef],
+    observedEvidence: [
+      {
+        kind: 'git-commit',
+        reference: R12_PRIOR_REGISTRY_COMMIT,
+        digest: sha256(
+          execFileSync('git', ['cat-file', '-p', R12_PRIOR_REGISTRY_COMMIT], { cwd: repoRoot }),
+        ),
+      },
+      {
+        kind: 'git-commit',
+        reference: SNAPSHOT,
+        digest: sha256(execFileSync('git', ['cat-file', '-p', SNAPSHOT], { cwd: repoRoot })),
+      },
+      { kind: 'command-result', reference: priorCommand, digest: sha256(priorCommand) },
+      { kind: 'command-result', reference: currentCommand, digest: sha256(currentCommand) },
+    ],
+    authoritativeRuleIds: [basisRule.ruleId],
+    scopedDisposition:
+      'The R12 end-to-end structural Markdown identity, exact binding Gate 2 grant set, profile-container exclusion, and typed migration contract supersede the R11 registry bindings in FK scope.',
+    unresolvedConsequence:
+      'Future binding changes require another typed prior-to-new migration record.',
+    migrationStatus: 'superseded-by-amendment',
+    supersedingEvidence: basisRule.authorityBasisRef,
+  }
+  return {
+    ...provisional,
+    reconciliations: [...provisional.reconciliations, r12Migration],
   }
 }
 
@@ -12110,14 +12195,18 @@ function writeFixtures(full: AuthorityEnforcementRegistry): void {
   writeYaml(join(fixturesDir, 'reject-missing-source.yaml'), missing)
 }
 
-generate(allSchemaFiles, join(packageRoot, 'schemas'))
-const registry = buildRegistry()
-writeYaml(join(packageRoot, 'authority-enforcement-registry.yaml'), registry)
-writeFixtures(registry)
-process.stdout.write(
-  `${canonicalJson({
-    sources: registry.sources.length,
-    items: registry.sources.reduce((sum, source) => sum + source.inventoryItems.length, 0),
-    rules: registry.rules.length,
-  })}\n`,
-)
+function main(): void {
+  generate(allSchemaFiles, join(packageRoot, 'schemas'))
+  const registry = buildRegistry()
+  writeYaml(join(packageRoot, 'authority-enforcement-registry.yaml'), registry)
+  writeFixtures(registry)
+  process.stdout.write(
+    `${canonicalJson({
+      sources: registry.sources.length,
+      items: registry.sources.reduce((sum, source) => sum + source.inventoryItems.length, 0),
+      rules: registry.rules.length,
+    })}\n`,
+  )
+}
+
+if (resolve(process.argv[1] ?? '') === fileURLToPath(import.meta.url)) main()

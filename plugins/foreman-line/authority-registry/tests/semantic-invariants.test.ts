@@ -67,7 +67,7 @@ test('each of the six classifications is accepted and summarized independently',
   const result = validateRegistry(valid)
   assert.equal(result.valid, true)
   assert.deepEqual(result.summary?.classificationCounts, {
-    'pre-action-refusal': 205,
+    'pre-action-refusal': 204,
     'post-action-detection': 8,
     'ci-static-check': 85,
     'independent-review-human-judgment': 15,
@@ -1058,7 +1058,7 @@ test('R4 every rule has one basis ref contained in its source refs', () => {
   }
 })
 
-test('R4 shipped reconciliation rules share semantic subjects', () => {
+test('R4 shipped reconciliation rules retain repeated current semantic subjects', () => {
   for (const reconciliation of full.reconciliations.slice(0, 6)) {
     if (reconciliation.reconciliationId === 'missing-provenance-reference') {
       const provenance = full.rules.filter(
@@ -1068,22 +1068,21 @@ test('R4 shipped reconciliation rules share semantic subjects', () => {
       assert.ok(
         reconciliation.observedRefs.some(
           (reference) =>
-            reference.sourceId === provenance[0]?.sourceRefs[0]?.sourceId &&
-            reference.itemId === provenance[0]?.sourceRefs[0]?.itemId,
+            reference.sourceId === 'standing-constraints' &&
+            reference.itemId === 'item.c5880644c95c',
         ),
       )
       continue
     }
     const subjects = new Map<string, number>()
-    for (const reference of reconciliation.observedRefs) {
-      const item = full.sources
-        .find((source) => source.sourceId === reference.sourceId)
-        ?.inventoryItems.find((candidate) => candidate.itemId === reference.itemId)
-      for (const ruleId of item?.ruleIds ?? []) {
-        const rule = full.rules.find((candidate) => candidate.ruleId === ruleId)
-        if (rule)
-          subjects.set(rule.authoritySubject, (subjects.get(rule.authoritySubject) ?? 0) + 1)
-      }
+    for (const ruleId of reconciliation.authoritativeRuleIds) {
+      const rule = full.rules.find((candidate) => candidate.ruleId === ruleId)
+      if (rule)
+        subjects.set(
+          rule.authoritySubject,
+          full.rules.filter((candidate) => candidate.authoritySubject === rule.authoritySubject)
+            .length,
+        )
     }
     assert.ok(
       [...subjects.values()].some((count) => count > 1),
@@ -1867,16 +1866,21 @@ test('R10 coordinator Gate 1 rule is nondelegable and precisely scoped', () => {
   assert.deepEqual(rule.applicability.operations, ['state-transition'])
 })
 
-test('R10 coordinator Gate 2 rule is an operative scoped dispatch grant', () => {
+test('R10 coordinator Gate 2 prose is superseded by the R12 advisory non-grant', () => {
   const rule = publishedRuleContaining(
     'coordinator-pattern',
     'standing authorization scoped to the charter',
   )
   assert.equal(rule.authoritySubject, 'gate2.dispatch-grant')
-  assert.equal(rule.classification, 'pre-action-refusal')
-  assert.equal(
-    resolveNatural(rule.authoritySubject, 'coordinator', 'shaping', 'state-transition').outcome,
-    'RESOLVED',
+  assert.equal(rule.classification, 'narrative-provenance')
+  assert.equal(rule.decision, 'ADVISORY')
+  assert.ok(
+    !resolveNatural(
+      rule.authoritySubject,
+      'coordinator',
+      'shaping',
+      'state-transition',
+    ).consideredRuleIds.includes(rule.ruleId),
   )
 })
 
@@ -2357,15 +2361,14 @@ for (const vector of [
   })
 }
 
-const r11Gate2RuleIds = [
+const r12Gate2RuleIds = [
   'rule.fk-charter.15a44cf50bc6',
   'rule.fk-loop-directive.47a75730afd6',
   'rule.fk-loop-directive.bfffee6d7c1f',
-  'rule.coordinator-pattern.91dd60b00fd6',
 ] as const
 
-test('R11 exact bounded Gate 2 rules use ALLOW with no refusal code', () => {
-  for (const ruleId of r11Gate2RuleIds) {
+test('R12 exact three binding Gate 2 rules use ALLOW with no refusal code', () => {
+  for (const ruleId of r12Gate2RuleIds) {
     const rule = full.rules.find((candidate) => candidate.ruleId === ruleId)
     assert.ok(rule, ruleId)
     assert.equal(rule.decision, 'ALLOW', ruleId)
@@ -2422,7 +2425,7 @@ test('R11 validator rejects any unapproved ALLOW rule', () => {
   const rule = mutated.rules.find(
     (candidate) =>
       candidate.classification === 'pre-action-refusal' &&
-      !r11Gate2RuleIds.includes(candidate.ruleId as (typeof r11Gate2RuleIds)[number]),
+      !r12Gate2RuleIds.includes(candidate.ruleId as (typeof r12Gate2RuleIds)[number]),
   )
   assert.ok(rule)
   ;(rule as { decision: string }).decision = 'ALLOW'
@@ -2430,6 +2433,208 @@ test('R11 validator rejects any unapproved ALLOW rule', () => {
   ;(rule as { bindingDigest: string }).bindingDigest = bindingDigestFor(rule)
   expectCode(mutated, 'AUTHORITY_ESCALATION')
 })
+
+test('R12 the complete ALLOW set contains exactly the three binding Gate 2 grants', () => {
+  assert.deepEqual(
+    full.rules.filter((rule) => rule.decision === 'ALLOW').map((rule) => rule.ruleId),
+    [...r12Gate2RuleIds],
+  )
+})
+
+test('R12 coordinator-pattern delegation guidance remains an advisory non-grant', () => {
+  const rule = full.rules.find(
+    (candidate) => candidate.ruleId === 'rule.coordinator-pattern.91dd60b00fd6',
+  )
+  assert.ok(rule)
+  assert.equal(rule.classification, 'narrative-provenance')
+  assert.equal(rule.decision, 'ADVISORY')
+  assert.equal(rule.enforcementOwner, 'provenance-only')
+  assert.equal(rule.assurance, 'narrative')
+  const resolution = resolveNatural(
+    'gate2.dispatch-grant',
+    'coordinator',
+    'shaping',
+    'state-transition',
+  )
+  assert.ok(!resolution.consideredRuleIds.includes(rule.ruleId))
+})
+
+test('R12 a fourth corroborating or unratified ALLOW is rejected', () => {
+  const mutated = structuredClone(full)
+  const rule = mutated.rules.find(
+    (candidate) => candidate.ruleId === 'rule.coordinator-pattern.91dd60b00fd6',
+  )
+  assert.ok(rule)
+  ;(rule as { classification: string }).classification = 'pre-action-refusal'
+  ;(rule as { decision: string }).decision = 'ALLOW'
+  ;(rule as { refusalCode: string | null }).refusalCode = null
+  ;(rule as { enforcementOwner: string }).enforcementOwner = 'kernel-policy'
+  ;(rule as { assurance: string }).assurance = 'structural'
+  ;(rule as { bindingDigest: string }).bindingDigest = bindingDigestFor(rule)
+  expectCode(mutated, 'AUTHORITY_ESCALATION')
+})
+
+function r12ProfileSource() {
+  const source = full.sources.find(
+    (candidate) => candidate.sourceId === 'permission-profiles-registry',
+  )
+  assert.ok(source)
+  return source
+}
+
+test('R12 every permission-profile header and container is structural excluded inventory', () => {
+  const source = r12ProfileSource()
+  const headers = source.inventoryItems.filter((item) =>
+    /^\s{2}[a-z][a-z-]+:$/.test(item.locator.anchor),
+  )
+  assert.equal(headers.length, 6)
+  for (const item of headers) {
+    assert.deepEqual(item.ruleIds, [], item.itemId)
+    assert.equal(item.exclusionDisposition, 'non-normative-explanation', item.itemId)
+  }
+})
+
+test('R12 obsolete builder-architecture profile-header rule is absent', () => {
+  const source = r12ProfileSource()
+  const header = source.inventoryItems.find((item) => item.itemId === 'item.ffd2209ab94a')
+  assert.ok(header)
+  assert.deepEqual(header.ruleIds, [])
+  assert.equal(header.normalizedExcerpt, 'builder-architecture:')
+  assert.ok(
+    !full.rules.some((rule) => rule.ruleId === 'rule.permission-profiles-registry.ffd2209ab94a'),
+  )
+})
+
+test('R12 reviewer git-commit denial binds only its canonical YAML rule item', () => {
+  const source = r12ProfileSource()
+  const item = source.inventoryItems.find((candidate) => candidate.itemId === 'item.35cf0f58fc34')
+  const rule = full.rules.find(
+    (candidate) => candidate.ruleId === 'rule.permission-profiles-registry.35cf0f58fc34',
+  )
+  assert.ok(item)
+  assert.ok(rule)
+  assert.equal(item.locator.kind, 'symbol')
+  assert.equal(item.locator.anchor, 'yaml-rule:reviewer-readonly:deny:"Bash(git commit*)"')
+  assert.equal(item.normalizedExcerpt, '"Bash(git commit*)"')
+  assert.equal(rule.authorityBasisRef.itemId, item.itemId)
+  assert.equal(rule.authorityBasisRef.locatorDigest, locatorDigestFor(item.locator))
+  assert.deepEqual(item.ruleIds, [rule.ruleId])
+})
+
+test('R12 a permission-profile claim based on a structural header is rejected', () => {
+  const mutated = structuredClone(full)
+  const source = mutated.sources.find(
+    (candidate) => candidate.sourceId === 'permission-profiles-registry',
+  )
+  const header = source?.inventoryItems.find(
+    (candidate) => candidate.itemId === 'item.ffd2209ab94a',
+  )
+  const rule = mutated.rules.find(
+    (candidate) => candidate.ruleId === 'rule.permission-profiles-registry.35cf0f58fc34',
+  )
+  assert.ok(source)
+  assert.ok(header)
+  assert.ok(rule)
+  const headerRef = {
+    sourceId: source.sourceId,
+    itemId: header.itemId,
+    locatorDigest: locatorDigestFor(header.locator),
+    valueDigest: header.valueDigest,
+  }
+  ;(rule as { authorityBasisRef: typeof headerRef }).authorityBasisRef = headerRef
+  ;(rule.sourceRefs as (typeof headerRef)[]).splice(0, 1, headerRef)
+  ;(rule as { normalizedStatement: string }).normalizedStatement = header.normalizedExcerpt
+  ;(rule as { bindingDigest: string }).bindingDigest = bindingDigestFor(rule)
+  expectCode(mutated, 'AUTHORITY_ESCALATION')
+})
+
+test('R12 rejects a content-derived legacy item ID on a published Markdown rule', () => {
+  const mutated = structuredClone(full)
+  const source = mutated.sources.find((candidate) => candidate.sourceId === 'coordinator-pattern')
+  const item = source?.inventoryItems.find((candidate) =>
+    candidate.normalizedExcerpt.includes('One goal, one coordinator:'),
+  )
+  assert.ok(item)
+  const legacyItemId = `item.${sha256(item.normalizedExcerpt).slice(0, 12)}`
+  const originalItemId = item.itemId
+  ;(item as { itemId: string }).itemId = legacyItemId
+  for (const rule of mutated.rules.filter(
+    (candidate) => candidate.authorityBasisRef.itemId === originalItemId,
+  )) {
+    const replacement = {
+      ...rule.authorityBasisRef,
+      itemId: legacyItemId,
+    }
+    ;(rule as { authorityBasisRef: typeof replacement }).authorityBasisRef = replacement
+    ;(rule.sourceRefs as (typeof replacement)[]).splice(0, 1, replacement)
+    ;(rule as { bindingDigest: string }).bindingDigest = bindingDigestFor(rule)
+  }
+  expectCode(mutated, 'MIGRATION_EVIDENCE_INVALID')
+})
+
+test('R12 preserves every R1-R11 reconciliation record byte-semantically', () => {
+  const expected: Readonly<Record<string, string>> = {
+    'gate-namespace-count': '23f3549859f81eddfd5645dc3de3ffe07997c624cd75d61d3410645b710968d3',
+    'gate3-delegation': '13f5094dc781381ad5c1124f094af5f6f57b462c73df3fd3925e2b844c3f53c6',
+    'spec-linter-profile-behavior':
+      '48c147ae850d5779e763c187ee9381bc2b824e299764eeb15869f57dce2e553c',
+    'surfaces-allowed-files': 'c7addc8070757f6da21ae15354139d2a39c6f5db2dc164d2534305e0f944d7c1',
+    'permission-profile-enforcement-bound':
+      '6558689b94ae965d85c60cef8cc7d9086278f38c755276b74953d2613440eda2',
+    'missing-provenance-reference':
+      'ed49c8796d80a450fbb272d7aaba9c1159225e54bbf5d96e0a441cf757135b80',
+    'registry-rework-6eb1c25': 'c2b4971fd67a81df51ab33931fda17122c06de67ce5cc6ef857380704348fd6d',
+    'registry-rework-9285945': 'fc10cc1e7f98635521a8fbc65ba34895415b8901d62c49790b8b3e7337fd3fb1',
+    'registry-rework-6f45963': '3954ba2fc23122f82f6d68e294a180b8dc789983e2bb3da0198c79f8550513d9',
+    'registry-rework-b414d06': '8a7c1fdd61cbb664d6c9b1b0aefcba1dc35dc26873eff711bbfada8480247d7f',
+    'registry-rework-00b41b7': '7113ebbad6811a3dfd4f14302f736ac11074c04943686eea28a1de820c75e9c9',
+    'registry-rework-37afc65': '5f3bba04f9177884da88d21a8535d3ebc04557252aa27b30cbb191824e0b0f17',
+    'registry-rework-91145d7': '6b6e2dbd3b009428c647ed8947ba5d7008445dabdcccdde7d135466b9f46f3e3',
+    'registry-rework-1b42f4b': '14bb9b5739d37281619e6ace7ea9e5d0f6fd0febeecf3facc892e1a606795a56',
+    'registry-rework-ee29973': 'b9a3ed7f9eaa25468df8557fb812ae343910a481450411928b8abe5d4e216bb3',
+  }
+  assert.deepEqual(
+    Object.fromEntries(
+      full.reconciliations
+        .filter((record) => expected[record.reconciliationId] !== undefined)
+        .map((record) => [record.reconciliationId, sha256(canonicalJson(record))]),
+    ),
+    expected,
+  )
+})
+
+test('R12 ships an exact typed migration from the R11 registry snapshot', () => {
+  const record = full.reconciliations.find(
+    (candidate) => candidate.reconciliationId === 'registry-rework-544d8a3',
+  )
+  assert.ok(record)
+  assert.equal(record.migrationStatus, 'superseded-by-amendment')
+  assert.deepEqual(
+    record.observedEvidence
+      .filter((evidence) => evidence.kind === 'git-commit')
+      .map((evidence) => evidence.reference),
+    ['9059bb249f75805b34a68397d53dfa5608fd6ad4', '51857a3a7796b393c0c0a68712f98c06e7015d79'],
+  )
+  const commands = record.observedEvidence
+    .filter((evidence) => evidence.kind === 'command-result')
+    .map((evidence) => JSON.parse(evidence.reference) as { commandId: string })
+  assert.deepEqual(
+    commands.map((command) => command.commandId),
+    ['registry-binding-manifest-r11', 'superseding-binding-manifest-r12'],
+  )
+})
+
+for (const [name, mutate] of r10EvidenceMutations) {
+  test(`R12 registry-rework-544d8a3 rejects ${name} evidence`, () => {
+    const mutated = structuredClone(full)
+    const record = mutated.reconciliations.find(
+      (candidate) => candidate.reconciliationId === 'registry-rework-544d8a3',
+    )
+    assert.ok(record)
+    mutate(record.observedEvidence as unknown[])
+    expectCode(mutated, 'MIGRATION_EVIDENCE_INVALID')
+  })
+}
 
 test('R11 ships an exact typed migration from the R10 registry snapshot', () => {
   const record = full.reconciliations.find(
@@ -2545,6 +2750,8 @@ test('R9 gives every published item one literal curated classification entry', (
   assert.match(generator, /const CURATED_ITEM_CLASSIFICATIONS/)
   for (const rule of full.rules) {
     const basis = rule.authorityBasisRef
+    const itemBoundRuleId = `rule.${basis.sourceId}.${basis.itemId.replace(/^item\./, '')}`
+    if (rule.ruleId !== itemBoundRuleId && !rule.ruleId.startsWith(`${itemBoundRuleId}.`)) continue
     const key = `${basis.sourceId}:${basis.itemId}`
     const scalar = new RegExp(`'${key.replaceAll('.', '\\.')}'\\s*:\\s*'${rule.classification}'`)
     if (scalar.test(generator)) continue
@@ -2766,7 +2973,7 @@ test('R8 publishes all nine charter goal-exit requirements individually', () => 
   assert.ok(source)
   const items = source.inventoryItems.filter(
     (item) =>
-      item.locator.kind === 'line-excerpt' &&
+      item.locator.kind === 'numbered-item' &&
       item.locator.anchor.includes('## 9. Goal exit criterion') &&
       /^\d+\./.test(item.normalizedExcerpt),
   )
@@ -2779,7 +2986,7 @@ test('R8 publishes all seventeen charter stop-condition bullets individually', (
   assert.ok(source)
   const items = source.inventoryItems.filter(
     (item) =>
-      item.locator.kind === 'line-excerpt' &&
+      item.locator.kind === 'numbered-item' &&
       item.locator.anchor.includes('## 11. Stop conditions') &&
       item.normalizedExcerpt.startsWith('- '),
   )

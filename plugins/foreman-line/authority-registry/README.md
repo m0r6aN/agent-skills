@@ -61,8 +61,10 @@ per-item curation entry; source-wide, keyword-derived, default, and terminal fal
 permitted:
 
 - `pre-action-refusal`: the pre-action policy layer. Ordinary denials use `REFUSE` and a stable
-  refusal code. Only the exact bounded Gate 2 dispatch grants may use `ALLOW`, with a null refusal
-  code; no permission-profile allow entry or other positive statement becomes authorization.
+  refusal code. Only `rule.fk-charter.15a44cf50bc6`,
+  `rule.fk-loop-directive.47a75730afd6`, and `rule.fk-loop-directive.bfffee6d7c1f` may use
+  `ALLOW`, with a null refusal code; no permission-profile allow entry or corroborating
+  coordinator-pattern statement becomes authorization.
   `structural` versus `mediated` assurance states what the registered source actually proves.
 - `post-action-detection`: evidence that detects a violation after mutation or execution.
 - `ci-static-check`: deterministic static or CI evidence; it is not human authority.
@@ -77,6 +79,9 @@ post-review Git detection. Missing enrollment is never described as a refusal.
 All 52 configured deny entries and both restrictive `network.egress: denied` entries have their
 own literal classification and five-axis applicability record for the exact profile role on
 `claude-windows-docker-loaded`; profile allow entries remain advisory documentation.
+The six profile mapping headers are structural containers with no rules. In particular,
+`builder-architecture:` is not the reviewer Git-commit denial; that denial binds only the literal
+`yaml-rule:reviewer-readonly:deny:"Bash(git commit*)"` item.
 
 ## Protected operation matrix
 
@@ -113,12 +118,13 @@ Six required typed records reconcile without rewriting historical sources:
 was edited or globally invalidated. The missing provenance record stays `open`, preserves all
 thirteen standing rules, and prevents their retirement.
 
-Nine additional `superseded-by-amendment` records bind the R2 and R4-R11 reworks to their prior
+Ten additional `superseded-by-amendment` records bind the R2 and R4-R12 reworks to their prior
 registry commits, the pinned source snapshot, prior binding-manifest digests, superseding
 manifests, and complete controlling `SourceRef` values. The R10 migration starts from exact R9
 commit `89d7e4853a8fb0af3db68e9262e38833062fba77`; the R11 migration starts from exact R10
-commit `f3366be12175acb4fd4aeb32c301c845b906a5da`. Both preserve the preceding migration chain. A
-future coordinated identity/location/value change must
+commit `f3366be12175acb4fd4aeb32c301c845b906a5da`; the R12 migration starts from exact R11
+commit `9059bb249f75805b34a68397d53dfa5608fd6ad4`. R12 preserves every R1-R11 record unchanged and
+adds its own typed prior-to-new evidence. A future coordinated identity/location/value change must
 ship another coordinator-ratified typed migration; rewriting internally consistent YAML is not
 enough.
 
@@ -161,11 +167,13 @@ the clock, randomness, network, environment-derived identity, or Git mutation.
 Git-backed reconciliation evidence additionally requires the exact root of a real worktree,
 commit-typed objects, and commit-bound canonical missing-path evidence. Every Markdown source in
 the 18-source corpus uses the same complete paragraph/list/table discovery with structural,
-content-independent locators of the form
-`md-block:<heading-path>:<paragraph|list-item|table-row>:<one-based-ordinal>`; locator anchors
-contain no content hash or token. Changing text at the same structural position therefore retains
-the locator and fails as `VALUE_DIGEST_MISMATCH`, while moving the block is a separate location
-mutation. There is no source, section, heading, or keyword allowlist.
+content-independent locators. Paragraphs and list items use
+`md-block:<heading-path>:<paragraph|list-item>:<one-based-ordinal>`; table rows use the stable
+first-column key instead of mutable row text. Locator anchors contain no content hash, first-line
+excerpt, or list-marker value. Changing text or renumbering an ordered marker at the same
+structural position therefore retains the locator and fails as `VALUE_DIGEST_MISMATCH`, while
+moving the block is a separate location mutation. There is no raw Markdown additional-anchor
+escape or source, section, heading, or keyword allowlist.
 Properly paired HTML comments and CommonMark-compatible fence boundaries are the only Markdown
 spans suppressed by that discovery; visible text around comments, unmatched comments, mixed fence
 delimiters, four-space pseudo-fences, and backtick-fence info strings containing a backtick remain

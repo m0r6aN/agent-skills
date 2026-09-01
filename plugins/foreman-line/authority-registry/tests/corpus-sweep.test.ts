@@ -14,6 +14,8 @@ import { dirname, join } from 'node:path'
 import { test } from 'node:test'
 import { fileURLToPath } from 'node:url'
 import { parse } from 'yaml'
+import { markdownIdentityProjectionForTesting } from '../src/generate.js'
+import { R12_LEGACY_MARKDOWN_RULE_TARGETS } from '../src/registry.js'
 import type { AuthorityEnforcementRegistry } from '../src/types.js'
 import { canonicalJson, sha256, sweepRegistrySources } from '../src/validate.js'
 
@@ -1117,13 +1119,17 @@ test('R10 validator constructs Markdown block custody without a source-ID allowl
   assert.doesNotMatch(validator, /markdownDocumentMap\(content,\s*source\.sourceId\)/)
 })
 
-test('R11 Markdown block anchors contain only structural heading kind and ordinal identity', () => {
+test('R11 Markdown block anchors contain only structural heading kind and stable identity', () => {
   const markdownItems = registry.sources.flatMap((source) =>
     source.inventoryItems.filter((item) => item.locator.anchor.startsWith('md-block:')),
   )
   assert.ok(markdownItems.length > 0)
   for (const item of markdownItems) {
-    assert.match(item.locator.anchor, /^md-block:.*:(?:paragraph|list-item|table-row):[1-9]\d*$/)
+    if (item.locator.kind === 'table-row') {
+      assert.match(item.locator.anchor, /^md-block:.*:table-row:.+$/)
+    } else {
+      assert.match(item.locator.anchor, /^md-block:.*:(?:paragraph|list-item):[1-9]\d*$/)
+    }
     assert.doesNotMatch(item.locator.anchor, /:[0-9a-f]{12}:/)
   }
 })
@@ -1225,6 +1231,228 @@ test('R11 CommonMark parenthesized ordered items produce two independent uncover
   } finally {
     rmSync(tempRoot, { recursive: true, force: true })
   }
+})
+
+const r12LegacyRawMarkdownRuleIds = [
+  'rule.spec-convention.e6f5fa8543a1',
+  'rule.spec-convention.ac5ff7afd06f',
+  'rule.spec-convention.5145ab15549c',
+  'rule.spec-convention.fd82127bf9f9',
+  'rule.spec-convention.022fc00afe7b',
+  'rule.coordinator-pattern.dedbefc1b097',
+  'rule.coordinator-pattern.91dd60b00fd6',
+  'rule.coordinator-pattern.f7686ab58db7',
+  'rule.standing-constraints.c5880644c95c',
+  'rule.foreman-line-plan.two-gate-thesis',
+  'rule.spec-linter-readme.9a889881a236',
+  'rule.spec-linter-readme.b4f5d76d68ec',
+  'rule.permission-profiles-readme.729be3615f8d',
+  'rule.permission-profiles-readme.d11b9d38f924',
+  'rule.permission-profiles-readme.1101805f1c9e',
+  'rule.permission-profiles-readme.415efa3f5e3b',
+] as const
+
+test('R12 every published Markdown paragraph and list rule uses one structural canonical locator', () => {
+  const markdownSourceIds = new Set(
+    registry.sources
+      .filter((source) => source.path.endsWith('.md'))
+      .map((source) => source.sourceId),
+  )
+  const published = registry.sources.flatMap((source) =>
+    markdownSourceIds.has(source.sourceId)
+      ? source.inventoryItems.filter((item) => item.ruleIds.length > 0)
+      : [],
+  )
+  assert.ok(published.length > 0)
+  for (const item of published) {
+    if (item.locator.kind === 'line-excerpt') {
+      assert.match(item.locator.anchor, /^md-block:.*:paragraph:[1-9]\d*$/, item.itemId)
+    } else if (item.locator.kind === 'numbered-item') {
+      assert.match(item.locator.anchor, /^md-block:.*:list-item:[1-9]\d*$/, item.itemId)
+    } else if (item.locator.kind === 'table-row') {
+      assert.ok(item.locator.anchor.length > 0, item.itemId)
+      assert.doesNotMatch(item.locator.anchor, /^\|.*\|$/, item.itemId)
+    } else {
+      assert.fail(`published Markdown item ${item.itemId} has nonstructural ${item.locator.kind}`)
+    }
+  }
+})
+
+test('R12 no published Markdown rule uses a raw-text line-excerpt or additional-anchor escape', () => {
+  const markdownSourceIds = new Set(
+    registry.sources
+      .filter((source) => source.path.endsWith('.md'))
+      .map((source) => source.sourceId),
+  )
+  for (const rule of registry.rules) {
+    if (!markdownSourceIds.has(rule.authorityBasisRef.sourceId)) continue
+    const source = registry.sources.find(
+      (candidate) => candidate.sourceId === rule.authorityBasisRef.sourceId,
+    )
+    const item = source?.inventoryItems.find(
+      (candidate) => candidate.itemId === rule.authorityBasisRef.itemId,
+    )
+    assert.ok(item, rule.ruleId)
+    assert.ok(
+      item.locator.kind !== 'line-excerpt' || item.locator.anchor.startsWith('md-block:'),
+      rule.ruleId,
+    )
+  }
+  const generator = readFileSync(join(packageRoot, 'src', 'generate.ts'), 'utf8')
+  assert.doesNotMatch(generator, /additionalAnchors/)
+})
+
+test('R12 all sixteen R11 raw-text Markdown rules migrate to structural canonical items', () => {
+  assert.equal(r12LegacyRawMarkdownRuleIds.length, 16)
+  for (const ruleId of r12LegacyRawMarkdownRuleIds) {
+    const rule = registry.rules.find((candidate) => candidate.ruleId === ruleId)
+    assert.ok(rule, ruleId)
+    const source = registry.sources.find(
+      (candidate) => candidate.sourceId === rule.authorityBasisRef.sourceId,
+    )
+    const item = source?.inventoryItems.find(
+      (candidate) => candidate.itemId === rule.authorityBasisRef.itemId,
+    )
+    assert.ok(item, ruleId)
+    assert.ok(
+      item.locator.kind === 'numbered-item' ||
+        item.locator.kind === 'table-row' ||
+        item.locator.anchor.startsWith('md-block:'),
+      ruleId,
+    )
+    assert.doesNotMatch(item.locator.anchor, /^\s*(?:[-*+] |\|)/, ruleId)
+  }
+})
+
+test('R12 published Markdown table rules use stable first-column keys', () => {
+  const expectations = [
+    ['rule.coordinator-pattern.dedbefc1b097', ':table-row:1'],
+    ['rule.coordinator-pattern.91dd60b00fd6', ':table-row:2'],
+    ['rule.coordinator-pattern.f7686ab58db7', ':table-row:3'],
+    ['rule.spec-linter-readme.9a889881a236', ':table-row:`permission_profile:`'],
+  ] as const
+  for (const [ruleId, suffix] of expectations) {
+    const rule = registry.rules.find((candidate) => candidate.ruleId === ruleId)
+    assert.ok(rule, ruleId)
+    const source = registry.sources.find(
+      (candidate) => candidate.sourceId === rule.authorityBasisRef.sourceId,
+    )
+    const item = source?.inventoryItems.find(
+      (candidate) => candidate.itemId === rule.authorityBasisRef.itemId,
+    )
+    assert.ok(item, ruleId)
+    assert.equal(item.locator.kind, 'table-row', ruleId)
+    assert.ok(item.locator.anchor.endsWith(suffix), `${ruleId}: ${item.locator.anchor}`)
+    assert.notEqual(item.locator.anchor, item.normalizedExcerpt, ruleId)
+  }
+})
+
+test('R12 active standing-rule marker renumbering is a value mismatch without locator loss', () => {
+  const tempRoot = mkdtempSync(join(tmpdir(), 'fk-p0-r12-standing-marker-'))
+  try {
+    copyCorpus(tempRoot)
+    const source = registry.sources.find(
+      (candidate) => candidate.sourceId === 'standing-constraints',
+    )
+    const item = source?.inventoryItems.find(
+      (candidate) => candidate.itemId === 'item.constraint-1',
+    )
+    assert.ok(source)
+    assert.ok(item)
+    const path = join(tempRoot, source.path)
+    const content = readFileSync(path, 'utf8')
+    const changed = content.replace(
+      '1. **Typed try-catch at every external boundary a public API exposes.**',
+      '9. **Typed try-catch at every external boundary a public API exposes.**',
+    )
+    assert.notEqual(changed, content)
+    writeFileSync(path, changed)
+    const result = sweepRegistrySources(registry, tempRoot)
+    assert.ok(
+      result.violations.some(
+        (violation) =>
+          violation.code === 'VALUE_DIGEST_MISMATCH' && violation.locator === item.locator.anchor,
+      ),
+      JSON.stringify(result.violations, null, 2),
+    )
+    assert.ok(
+      !result.violations.some(
+        (violation) =>
+          violation.code === 'LOCATOR_MISSING' && violation.locator === item.locator.anchor,
+      ),
+      JSON.stringify(result.violations, null, 2),
+    )
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true })
+  }
+})
+
+test('R12 active ordered rules have no excluded structural duplicate substitute', () => {
+  const source = registry.sources.find((candidate) => candidate.sourceId === 'standing-constraints')
+  const matching = source?.inventoryItems.filter((candidate) =>
+    candidate.normalizedExcerpt.includes(
+      'Typed try-catch at every external boundary a public API exposes.',
+    ),
+  )
+  assert.ok(matching)
+  assert.equal(matching.length, 1)
+  assert.equal(matching[0]?.itemId, 'item.constraint-1')
+  assert.equal(matching[0]?.locator.kind, 'numbered-item')
+  assert.equal(matching[0]?.exclusionDisposition, null)
+  assert.deepEqual(matching[0]?.ruleIds, ['rule.standing-constraints.constraint-1'])
+})
+
+test('R12 ordered marker mutation preserves structural item rule and locator identity', () => {
+  const source = registry.sources.find((candidate) => candidate.sourceId === 'standing-constraints')
+  assert.ok(source)
+  const content = readFileSync(join(repoRoot, source.path), 'utf8')
+  const mutated = content.replace(
+    '1. **Typed try-catch at every external boundary a public API exposes.**',
+    '9. **Typed try-catch at every external boundary a public API exposes.**',
+  )
+  const anchor =
+    'md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:1'
+  const before = markdownIdentityProjectionForTesting(source.sourceId, content).find(
+    (item) => item.locator.anchor === anchor,
+  )
+  const after = markdownIdentityProjectionForTesting(source.sourceId, mutated).find(
+    (item) => item.locator.anchor === anchor,
+  )
+  assert.ok(before)
+  assert.ok(after)
+  assert.deepEqual(
+    [after.itemId, after.ruleIds, after.locator, after.locatorDigest],
+    [before.itemId, before.ruleIds, before.locator, before.locatorDigest],
+  )
+  assert.notEqual(after.valueDigest, before.valueDigest)
+})
+
+test('R12 compound block value mutation preserves structural item rule and locator identity', () => {
+  const source = registry.sources.find((candidate) => candidate.sourceId === 'spec-convention')
+  assert.ok(source)
+  const content = readFileSync(join(repoRoot, source.path), 'utf8')
+  const mutated = content.replace(
+    /work stops\r?\nuntil the coordinator/,
+    'work halts\nuntil the coordinator',
+  )
+  assert.notEqual(mutated, content)
+  const target = R12_LEGACY_MARKDOWN_RULE_TARGETS['rule.spec-convention.fd82127bf9f9']
+  assert.ok(target)
+  const anchor = target.anchor
+  const before = markdownIdentityProjectionForTesting(source.sourceId, content).find(
+    (item) => item.locator.anchor === anchor,
+  )
+  const after = markdownIdentityProjectionForTesting(source.sourceId, mutated).find(
+    (item) => item.locator.anchor === anchor,
+  )
+  assert.ok(before)
+  assert.ok(after)
+  assert.ok(before.ruleIds.length >= 2)
+  assert.deepEqual(
+    [after.itemId, after.ruleIds, after.locator, after.locatorDigest],
+    [before.itemId, before.ruleIds, before.locator, before.locatorDigest],
+  )
+  assert.notEqual(after.valueDigest, before.valueDigest)
 })
 
 for (const baseline of [
