@@ -108,9 +108,10 @@ Six required typed records reconcile without rewriting historical sources:
 was edited or globally invalidated. The missing provenance record stays `open`, preserves all
 thirteen standing rules, and prevents their retirement.
 
-Seven additional `superseded-by-amendment` records bind the R2, R4, R5, R6, R7, R8, and R9 reworks to their prior
+Eight additional `superseded-by-amendment` records bind the R2 and R4-R10 reworks to their prior
 registry commits, the pinned source snapshot, prior binding-manifest digests, superseding
-manifests, and complete controlling `SourceRef` values. A future coordinated
+manifests, and complete controlling `SourceRef` values. The R10 migration starts from exact R9
+commit `89d7e4853a8fb0af3db68e9262e38833062fba77` without rewriting the preserved R9 record. A future coordinated
 identity/location/value change must
 ship another coordinator-ratified typed migration; rewriting internally consistent YAML is not
 enough.
@@ -150,8 +151,9 @@ absolute/traversal paths, containment escape, duplicate normalized paths, symlin
 non-regular files, missing or duplicate locators, and changed normalized values. It does not use
 the clock, randomness, network, environment-derived identity, or Git mutation.
 Git-backed reconciliation evidence additionally requires the exact root of a real worktree,
-commit-typed objects, and commit-bound canonical missing-path evidence. The charter and loop
-directive use complete paragraph/list/table discovery with wrapping-stable semantic locators.
+commit-typed objects, and commit-bound canonical missing-path evidence. Every Markdown source in
+the 18-source corpus uses the same complete paragraph/list/table discovery with wrapping-stable
+semantic locators; there is no source, section, heading, or keyword allowlist.
 Properly paired HTML comments and CommonMark-compatible fence boundaries are the only Markdown
 spans suppressed by that discovery; visible text around comments, unmatched comments, mixed fence
 delimiters, four-space pseudo-fences, and backtick-fence info strings containing a backtick remain
@@ -160,8 +162,13 @@ fence map suppresses numbered standing-constraint discovery inside valid fenced 
 goal exits, all seventeen charter stop bullets, all thirteen integration scenarios, all five
 refusal-class rows, all twenty-two parcel contracts, and the five literal Wave 0–4 exit contracts
 are published individually; loop completion and gate bodies are separate operative rules where
-the source states them. Gate 2 dispatch, Gate 3 merge, and verification custody use shared
-cross-source authority subjects with role-, stage-, operation-, and host-specific applicability.
+the source states them. Goal-skill and coordinator-pattern rules have item-specific, basis-honest
+classification, identity, and five-axis applicability; their corroborating basis remains visible
+to resolution without being promoted into binding authority. Gate 2 dispatch, Gate 3 merge, and
+verification custody use shared cross-source authority subjects with role-, stage-, operation-,
+and host-specific applicability. FK Gate 3 agent-side refusals apply only to coordinator merge
+repo mutations and state transitions; builder runtime external writes and CI reads remain outside
+that rule scope.
 Inventoried TypeScript sources use the
 TypeScript 7 compiler syntax tree for operative top-level statements, runtime value and side-effect
 imports, and nested callable bodies. Compiler-recognized ambient and type-only declarations or

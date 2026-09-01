@@ -1100,3 +1100,121 @@ for (const [name, mutation] of [
     }
   })
 }
+
+test('R10 generator constructs Markdown block custody without a source-ID allowlist', () => {
+  const generator = readFileSync(join(packageRoot, 'src', 'generate.ts'), 'utf8')
+  const blockBuilder = /function markdownBindingBlocks[\s\S]*?\n}/.exec(generator)?.[0]
+  assert.ok(blockBuilder)
+  assert.doesNotMatch(blockBuilder, /sourceId|fk-charter|fk-loop-directive/)
+  assert.doesNotMatch(generator, /markdownBindingBlocks\(markdown,\s*definition\.sourceId\)/)
+})
+
+test('R10 validator constructs Markdown block custody without a source-ID allowlist', () => {
+  const validator = readFileSync(join(packageRoot, 'src', 'validate.ts'), 'utf8')
+  const blockBuilder = /function markdownDocumentMap[\s\S]*?\n}/.exec(validator)?.[0]
+  assert.ok(blockBuilder)
+  assert.doesNotMatch(blockBuilder, /sourceId|fk-charter|fk-loop-directive/)
+  assert.doesNotMatch(validator, /markdownDocumentMap\(content,\s*source\.sourceId\)/)
+})
+
+for (const baseline of [
+  {
+    name: 'goal skill verification custody',
+    sourceId: 'goal-skill',
+    fragment: 'You consume verification results; you never produce them.',
+  },
+  {
+    name: 'goal skill human-gate stop custody',
+    sourceId: 'goal-skill',
+    fragment: 'Human gates (ratification, one-tap approval, merges',
+  },
+  {
+    name: 'goal skill loop-stop custody',
+    sourceId: 'goal-skill',
+    fragment: 'Stop the loop (ScheduleWakeup stop:true)',
+  },
+  {
+    name: 'coordinator pattern ownership stop',
+    sourceId: 'coordinator-pattern',
+    fragment: 'One goal, one coordinator:',
+  },
+  {
+    name: 'coordinator pattern universal-stop custody',
+    sourceId: 'coordinator-pattern',
+    fragment: 'Universal stop conditions:',
+  },
+  {
+    name: 'coordinator pattern scoped-Gate-1 custody',
+    sourceId: 'coordinator-pattern',
+    fragment: 'When triage re-opens Gate 1 for specific decisions',
+  },
+  {
+    name: 'PDD branch isolation',
+    sourceId: 'parcel-driven-development',
+    fragment: 'Each agent works in its own directory.',
+  },
+  {
+    name: 'PDD serialization custody',
+    sourceId: 'parcel-driven-development',
+    fragment: 'Shared integration files are serialized.',
+  },
+  {
+    name: 'SPEC-CONVENTION ordinary mutation authority',
+    sourceId: 'spec-convention',
+    fragment: 'If implementation requires a path not listed in `Allowed Files`, work stops',
+  },
+] as const) {
+  test(`R10 baseline block custody: ${baseline.name}`, () => {
+    const source = registry.sources.find((candidate) => candidate.sourceId === baseline.sourceId)
+    assert.ok(source)
+    assert.ok(
+      source.inventoryItems.some(
+        (item) =>
+          item.locator.anchor.startsWith('md-block:') &&
+          item.normalizedExcerpt.includes(baseline.fragment),
+      ),
+      `${baseline.sourceId}:${baseline.fragment}`,
+    )
+  })
+}
+
+for (const probe of [
+  {
+    name: 'goal skill',
+    sourceId: 'goal-skill',
+    prose: 'R10 ordinary prose probe requires a newly curated goal transition.',
+  },
+  {
+    name: 'coordinator pattern',
+    sourceId: 'coordinator-pattern',
+    prose: 'R10 ordinary prose probe requires a newly curated coordinator transition.',
+  },
+  {
+    name: 'PDD',
+    sourceId: 'parcel-driven-development',
+    prose: 'R10 ordinary prose probe requires a newly curated parcel transition.',
+  },
+  {
+    name: 'SPEC-CONVENTION',
+    sourceId: 'spec-convention',
+    prose: 'R10 ordinary prose probe requires a newly curated specification transition.',
+  },
+] as const) {
+  test(`R10 additive ordinary prose is discovered in ${probe.name}`, () => {
+    const tempRoot = mkdtempSync(join(tmpdir(), `fk-p0-r10-${probe.sourceId}-`))
+    try {
+      copyCorpus(tempRoot)
+      const source = registry.sources.find((candidate) => candidate.sourceId === probe.sourceId)
+      assert.ok(source)
+      const path = join(tempRoot, source.path)
+      writeFileSync(path, `${readFileSync(path, 'utf8')}\n\n${probe.prose}\n`)
+      const result = sweepRegistrySources(registry, tempRoot)
+      assert.ok(
+        result.violations.some((violation) => violation.code === 'SOURCE_ITEM_UNCOVERED'),
+        JSON.stringify(result.violations, null, 2),
+      )
+    } finally {
+      rmSync(tempRoot, { recursive: true, force: true })
+    }
+  })
+}

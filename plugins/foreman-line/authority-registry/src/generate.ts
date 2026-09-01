@@ -424,8 +424,7 @@ function tableRows(document: MarkdownDocumentMap, keys: readonly string[]): Loca
   })
 }
 
-function markdownBindingBlocks(document: MarkdownDocumentMap, sourceId: string): LocatedText[] {
-  if (sourceId !== 'fk-charter' && sourceId !== 'fk-loop-directive') return []
+function markdownBindingBlocks(document: MarkdownDocumentMap): LocatedText[] {
   const { lines, fenced } = document
   const headings: { level: number; text: string }[] = []
   const occurrences = new Map<string, number>()
@@ -545,7 +544,11 @@ function itemIdFor(definition: SourceDefinition, located: LocatedText): string {
     '11. After a human merge, perform Stage F: spec to `done/`, lessons with dispositions, evidence index, worktree/branch cleanup, and this state block update.':
       'item.e3065db62b43',
   }
-  const legacyId = legacyProtectedTextIds[normalizeRuleText(located.text)]
+  const legacyId =
+    located.locator.anchor.startsWith('md-block:') &&
+    (definition.sourceId === 'approval-readme' || definition.sourceId === 'foreman-line-plan')
+      ? undefined
+      : legacyProtectedTextIds[normalizeRuleText(located.text)]
   if (legacyId !== undefined) return legacyId
   if (definition.sourceId === 'fk-charter' && located.locator.kind === 'table-row') {
     return `item.${located.locator.anchor.toLowerCase()}`
@@ -571,6 +574,457 @@ function itemIdFor(definition: SourceDefinition, located: LocatedText): string {
     return `item.hard-rule-${numbered[1]}`
   }
   return `item.${shortId(located.locator.anchor)}`
+}
+
+const R10_CURATED_ITEM_SEMANTICS: Readonly<
+  Record<
+    string,
+    {
+      readonly classification: RuleClassification
+      readonly identity: readonly [string, string]
+      readonly applicability: AuthorityRule['applicability']
+    }
+  >
+> = {
+  'goal-skill:item.02636597cc8d': {
+    classification: 'pre-action-refusal',
+    identity: ['goal.stage-zero-intake', 'explicit-design-questions-before-ratification'],
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['coordinator'],
+      stages: ['stage-zero'],
+      operations: ['spec-mutation'],
+      hosts: ['any'],
+    },
+  },
+  'goal-skill:item.fa27a05811dd': {
+    classification: 'ci-static-check',
+    identity: ['goal.charter-shape', 'charter-records-decisions-graph-exits-gates-and-stops'],
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['coordinator'],
+      stages: ['stage-zero'],
+      operations: ['spec-mutation'],
+      hosts: ['any'],
+    },
+  },
+  'goal-skill:item.8fda5f4d9776': {
+    classification: 'pre-action-refusal',
+    identity: ['gate1.ratification-authority', 'explicit-developer-ratification-required'],
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['coordinator'],
+      stages: ['stage-zero'],
+      operations: ['state-transition'],
+      hosts: ['any'],
+    },
+  },
+  'goal-skill:item.100b2d3e99ce': {
+    classification: 'pre-action-refusal',
+    identity: ['verification.issue-authority', 'coordinator-consumes-but-does-not-produce'],
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['coordinator'],
+      stages: ['deterministic-verify', 'adversarial-review', 'merge', 'closure'],
+      operations: ['state-transition', 'receipt-validation'],
+      hosts: ['any'],
+    },
+  },
+  'goal-skill:item.60b00947c4b6': {
+    classification: 'pre-action-refusal',
+    identity: ['goal.coordinator-ownership', 'stop-when-another-live-owner-is-named'],
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['coordinator'],
+      stages: ['stage-zero', 'shaping', 'build', 'closure', 'runtime'],
+      operations: ['state-transition'],
+      hosts: ['any'],
+    },
+  },
+  'goal-skill:item.da6c6e8b8123': {
+    classification: 'pre-action-refusal',
+    identity: ['goal.input-required', 'stop-until-a-goal-concept-exists'],
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['coordinator'],
+      stages: ['stage-zero'],
+      operations: ['state-transition'],
+      hosts: ['any'],
+    },
+  },
+  'goal-skill:item.3924cf25d478': {
+    classification: 'independent-review-human-judgment',
+    identity: ['goal.plan-review', 'fresh-plan-review-and-scoped-reratification-required'],
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['coordinator', 'reviewer'],
+      stages: ['stage-zero', 'adversarial-review'],
+      operations: ['source-inventory', 'state-transition'],
+      hosts: ['any'],
+    },
+  },
+  'goal-skill:item.95e72aecfbf6': {
+    classification: 'ci-static-check',
+    identity: ['goal.loop-directive', 'ownership-authorizations-queue-and-stops-required'],
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['coordinator'],
+      stages: ['stage-zero'],
+      operations: ['spec-mutation'],
+      hosts: ['any'],
+    },
+  },
+  'goal-skill:item.aa7f78b70702': {
+    classification: 'ci-static-check',
+    identity: ['goal.loop-pacing', 'completion-signals-and-long-fallbacks-without-polling'],
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['coordinator'],
+      stages: ['runtime'],
+      operations: ['state-transition'],
+      hosts: ['any'],
+    },
+  },
+  'goal-skill:item.a970cabbcc75': {
+    classification: 'ci-static-check',
+    identity: ['goal.parcel-cycle', 'complete-governed-parcel-cycle-required'],
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['coordinator'],
+      stages: [
+        'shaping',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+      ],
+      operations: ['source-inventory', 'repo-read', 'repo-mutation', 'state-transition'],
+      hosts: ['any'],
+    },
+  },
+  'goal-skill:item.0b5cc2b60d89': {
+    classification: 'pre-action-refusal',
+    identity: ['goal.human-gate-stop', 'human-gates-require-agent-completable-stop-reports'],
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['coordinator', 'host-adapter'],
+      stages: ['merge', 'closure', 'runtime'],
+      operations: ['state-transition', 'control-call'],
+      hosts: ['any'],
+    },
+  },
+  'goal-skill:item.fd22c7f94502': {
+    classification: 'pre-action-refusal',
+    identity: ['goal.loop-stop', 'stop-on-exit-stop-condition-or-developer-direction'],
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['coordinator'],
+      stages: ['closure', 'runtime'],
+      operations: ['state-transition'],
+      hosts: ['any'],
+    },
+  },
+  'coordinator-pattern:item.38dbf3185a76': {
+    classification: 'pre-action-refusal',
+    identity: ['goal.stage-zero-intake', 'scope-constraints-and-canon-interrogated'],
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['coordinator'],
+      stages: ['stage-zero'],
+      operations: ['spec-mutation'],
+      hosts: ['any'],
+    },
+  },
+  'coordinator-pattern:item.84b4e388c06b': {
+    classification: 'pre-action-refusal',
+    identity: ['goal.design-decision-authority', 'developer-disposes-explicit-decisions'],
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['coordinator'],
+      stages: ['stage-zero'],
+      operations: ['state-transition'],
+      hosts: ['any'],
+    },
+  },
+  'coordinator-pattern:item.d62734f662a0': {
+    classification: 'pre-action-refusal',
+    identity: ['canon.commentary-mutation-authority', 'explicit-targeted-direction-required'],
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['coordinator'],
+      stages: ['stage-zero', 'shaping', 'build'],
+      operations: ['spec-mutation', 'state-transition'],
+      hosts: ['any'],
+    },
+  },
+  'coordinator-pattern:item.00f63e7818bc': {
+    classification: 'ci-static-check',
+    identity: ['goal.charter-shape', 'charter-records-governed-goal-structure'],
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['coordinator'],
+      stages: ['stage-zero'],
+      operations: ['spec-mutation'],
+      hosts: ['any'],
+    },
+  },
+  'coordinator-pattern:item.a3d15fe678e1': {
+    classification: 'pre-action-refusal',
+    identity: ['gate1.ratification-authority', 'explicit-developer-ratification-required'],
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['coordinator'],
+      stages: ['stage-zero'],
+      operations: ['state-transition'],
+      hosts: ['any'],
+    },
+  },
+  'coordinator-pattern:item.dedbefc1b097': {
+    classification: 'pre-action-refusal',
+    identity: ['gate1.ratification-delegability', 'gate-one-never-delegable'],
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['coordinator'],
+      stages: ['stage-zero'],
+      operations: ['state-transition'],
+      hosts: ['any'],
+    },
+  },
+  'coordinator-pattern:item.91dd60b00fd6': {
+    classification: 'pre-action-refusal',
+    identity: ['gate2.dispatch-grant', 'charter-scoped-standing-dispatch-authorization'],
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['coordinator'],
+      stages: ['shaping'],
+      operations: ['state-transition'],
+      hosts: ['any'],
+    },
+  },
+  'coordinator-pattern:item.f7686ab58db7': {
+    classification: 'pre-action-refusal',
+    identity: ['gate3.merge-authority', 'contingent-delegation'],
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['coordinator'],
+      stages: ['merge'],
+      operations: ['state-transition'],
+      hosts: ['any'],
+    },
+  },
+  'coordinator-pattern:item.a18d27d46b1e': {
+    classification: 'pre-action-refusal',
+    identity: ['verification.issue-authority', 'coordinator-consumes-but-does-not-produce'],
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['coordinator'],
+      stages: ['deterministic-verify', 'adversarial-review', 'merge', 'closure'],
+      operations: ['state-transition', 'receipt-validation'],
+      hosts: ['any'],
+    },
+  },
+  'coordinator-pattern:item.d7759c5e4d44': {
+    classification: 'independent-review-human-judgment',
+    identity: ['goal.plan-review', 'fresh-plan-review-before-first-parcel'],
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['coordinator', 'reviewer'],
+      stages: ['stage-zero', 'adversarial-review'],
+      operations: ['source-inventory', 'state-transition'],
+      hosts: ['any'],
+    },
+  },
+  'coordinator-pattern:item.27e4a58df78c': {
+    classification: 'independent-review-human-judgment',
+    identity: ['goal.plan-review-focus', 'decomposition-boundary-decision-and-collision-review'],
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['reviewer'],
+      stages: ['adversarial-review'],
+      operations: ['source-inventory'],
+      hosts: ['any'],
+    },
+  },
+  'coordinator-pattern:item.a90198c811be': {
+    classification: 'pre-action-refusal',
+    identity: ['gate1.scoped-reopen', 'decision-changing-triage-reopens-gate-one'],
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['coordinator'],
+      stages: ['stage-zero'],
+      operations: ['state-transition'],
+      hosts: ['any'],
+    },
+  },
+  'coordinator-pattern:item.44badf453ad6': {
+    classification: 'independent-review-human-judgment',
+    identity: ['goal.plan-review-universality', 'plan-review-runs-for-every-goal'],
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['coordinator', 'reviewer'],
+      stages: ['stage-zero', 'adversarial-review'],
+      operations: ['state-transition'],
+      hosts: ['any'],
+    },
+  },
+  'coordinator-pattern:item.c9bfcc35b53e': {
+    classification: 'pre-action-refusal',
+    identity: ['goal.gate-record', 'gates-live-in-directives-not-permission-prompts'],
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['coordinator'],
+      stages: ['shaping', 'merge'],
+      operations: ['state-transition'],
+      hosts: ['any'],
+    },
+  },
+  'coordinator-pattern:item.6fa5b60d426b': {
+    classification: 'post-action-detection',
+    identity: ['permission-profile.enforcement-bound', 'loaded-session-mediation-is-incomplete'],
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['coordinator', 'builder', 'reviewer'],
+      stages: ['build', 'adversarial-review'],
+      operations: ['repo-mutation', 'control-call'],
+      hosts: ['any'],
+    },
+  },
+  'coordinator-pattern:item.7e0b48ad8223': {
+    classification: 'ci-static-check',
+    identity: ['routing.coordinator-session', 'frontier-long-running-goal-session'],
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['coordinator'],
+      stages: ['any'],
+      operations: ['source-inventory'],
+      hosts: ['any'],
+    },
+  },
+  'coordinator-pattern:item.199277d75b40': {
+    classification: 'ci-static-check',
+    identity: ['routing.builder-standard', 'standard-builder-isolated-parcel-session'],
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['builder'],
+      stages: ['step-zero', 'build'],
+      operations: ['source-inventory'],
+      hosts: ['any'],
+    },
+  },
+  'coordinator-pattern:item.986daac0fa56': {
+    classification: 'ci-static-check',
+    identity: ['routing.builder-architecture', 'architecture-builder-uses-frontier-isolation'],
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['builder'],
+      stages: ['step-zero', 'build'],
+      operations: ['source-inventory'],
+      hosts: ['any'],
+    },
+  },
+  'coordinator-pattern:item.c64915fec3a9': {
+    classification: 'post-action-detection',
+    identity: ['routing.reviewer-posture', 'fresh-reviewer-mutation-reduced-not-eliminated'],
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['reviewer'],
+      stages: ['adversarial-review'],
+      operations: ['repo-mutation', 'control-call'],
+      hosts: ['any'],
+    },
+  },
+  'coordinator-pattern:item.a0945ba49018': {
+    classification: 'pre-action-refusal',
+    identity: ['routing.shaper-posture', 'fresh-shaper-docs-only-writes'],
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['shaper'],
+      stages: ['shaping'],
+      operations: ['repo-mutation'],
+      hosts: ['any'],
+    },
+  },
+  'coordinator-pattern:item.c5bd4203e8bf': {
+    classification: 'pre-action-refusal',
+    identity: [
+      'goal.dispatch-mechanics',
+      'step-zero-isolation-complete-rework-and-two-review-controls',
+    ],
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['coordinator'],
+      stages: ['shaping', 'step-zero', 'build', 'adversarial-review'],
+      operations: ['source-inventory', 'repo-mutation', 'state-transition'],
+      hosts: ['any'],
+    },
+  },
+  'coordinator-pattern:item.47b2eaa2f9ef': {
+    classification: 'pre-action-refusal',
+    identity: ['goal.coordinator-ownership', 'single-owner-transfer-only-at-parcel-boundaries'],
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['coordinator'],
+      stages: ['runtime'],
+      operations: ['state-transition'],
+      hosts: ['any'],
+    },
+  },
+  'coordinator-pattern:item.ebd83f2562f3': {
+    classification: 'pre-action-refusal',
+    identity: ['gate1.scoped-reopen', 'only-affected-irreversible-work-is-held'],
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['coordinator'],
+      stages: ['stage-zero'],
+      operations: ['state-transition'],
+      hosts: ['any'],
+    },
+  },
+  'coordinator-pattern:item.0d38fd58e6b8': {
+    classification: 'ci-static-check',
+    identity: ['verification.coordinator-spine', 'disk-closure-determinism-and-tripwires-required'],
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['coordinator'],
+      stages: ['deterministic-verify', 'adversarial-review'],
+      operations: ['source-inventory', 'repo-read'],
+      hosts: ['any'],
+    },
+  },
+  'coordinator-pattern:item.d83180642e4d': {
+    classification: 'ci-static-check',
+    identity: ['goal.exit-custody', 'word-exact-exits-require-real-artifacts'],
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['coordinator'],
+      stages: ['shaping', 'deterministic-verify', 'closure'],
+      operations: ['source-inventory', 'spec-mutation', 'state-transition'],
+      hosts: ['any'],
+    },
+  },
+  'coordinator-pattern:item.3d29095eda6a': {
+    classification: 'ci-static-check',
+    identity: ['goal.lessons-discipline', 'lessons-remain-provenance-with-narrow-installation'],
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['coordinator'],
+      stages: ['closure'],
+      operations: ['spec-mutation', 'state-transition'],
+      hosts: ['any'],
+    },
+  },
+  'coordinator-pattern:item.0890828ec6f8': {
+    classification: 'ci-static-check',
+    identity: ['goal.pattern-extraction', 'promote-only-after-repeated-shipped-practice'],
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['coordinator'],
+      stages: ['closure'],
+      operations: ['spec-mutation'],
+      hosts: ['any'],
+    },
+  },
 }
 
 const CURATED_ITEM_CLASSIFICATIONS: Readonly<Record<string, RuleClassification>> = {
@@ -914,7 +1368,9 @@ const CURATED_ITEM_CLASSIFICATIONS: Readonly<Record<string, RuleClassification>>
 }
 
 function curatedClassificationFor(sourceId: string, itemId: string): RuleClassification {
-  const classification = CURATED_ITEM_CLASSIFICATIONS[`${sourceId}:${itemId}`]
+  const key = `${sourceId}:${itemId}`
+  const classification =
+    R10_CURATED_ITEM_SEMANTICS[key]?.classification ?? CURATED_ITEM_CLASSIFICATIONS[key]
   if (classification === undefined) {
     throw new Error(`published item '${sourceId}:${itemId}' lacks literal curated classification`)
   }
@@ -2113,7 +2569,8 @@ function authorityIdentityFor(
   authoritySubject: string
   authorityClaim: string
 } | null {
-  const identity = CURATED_ITEM_IDENTITIES[`${sourceId}:${itemId}`]
+  const key = `${sourceId}:${itemId}`
+  const identity = R10_CURATED_ITEM_SEMANTICS[key]?.identity ?? CURATED_ITEM_IDENTITIES[key]
   return identity === undefined
     ? null
     : { authoritySubject: identity[0], authorityClaim: identity[1] }
@@ -2653,45 +3110,10 @@ const CURATED_ITEM_APPLICABILITY = {
   },
   'fk-charter:item.c74628d41600': {
     goals: ['foreman-kernel'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
+    roles: ['coordinator'],
+    stages: ['merge'],
+    operations: ['repo-mutation', 'state-transition'],
+    hosts: ['any'],
   },
   'fk-charter:item.d9921c51d7ea': {
     goals: ['foreman-kernel'],
@@ -2824,13 +3246,7 @@ const CURATED_ITEM_APPLICABILITY = {
     roles: ['coordinator'],
     stages: ['merge'],
     operations: ['state-transition'],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
+    hosts: ['any'],
   },
   'fk-charter:item.b0a3e204145f': {
     goals: ['foreman-kernel'],
@@ -9691,8 +10107,10 @@ const CURATED_ITEM_APPLICABILITY = {
 } as const satisfies Readonly<Record<string, AuthorityRule['applicability']>>
 
 function curatedApplicabilityFor(sourceId: string, itemId: string): AuthorityRule['applicability'] {
+  const key = `${sourceId}:${itemId}`
   const applicability =
-    CURATED_ITEM_APPLICABILITY[`${sourceId}:${itemId}` as keyof typeof CURATED_ITEM_APPLICABILITY]
+    R10_CURATED_ITEM_SEMANTICS[key]?.applicability ??
+    CURATED_ITEM_APPLICABILITY[key as keyof typeof CURATED_ITEM_APPLICABILITY]
   if (applicability === undefined) {
     throw new Error(`published item '${sourceId}:${itemId}' lacks literal curated applicability`)
   }
@@ -9779,7 +10197,7 @@ function buildSource(definition: SourceDefinition): {
     text: anchor,
   }))
   const curated = [...baseLocated, ...additional]
-  if (markdown !== null) curated.push(...markdownBindingBlocks(markdown, definition.sourceId))
+  if (markdown !== null) curated.push(...markdownBindingBlocks(markdown))
   if (definition.path.endsWith('.ts')) curated.push(...tsConstructs(content))
   if (definition.path.endsWith('.json')) curated.push(...jsonConstraints(content))
   if (definition.sourceId === 'permission-profiles-registry') {
@@ -9832,6 +10250,7 @@ function buildSource(definition: SourceDefinition): {
   )
   if (located.length === 0) throw new Error(`source '${definition.path}' has no inventory locators`)
   const rules: AuthorityRule[] = []
+  const publishedByStatement = new Map<string, string>()
   const inventoryItems = located.map((entry) => {
     const { locator, text } = entry
     const normalizedExcerpt = normalizeRuleText(text)
@@ -9850,6 +10269,7 @@ function buildSource(definition: SourceDefinition): {
     }
     const authorityIdentity = authorityIdentityFor(definition.sourceId, itemId)
     if (authorityIdentity === null) {
+      const duplicateRuleId = publishedByStatement.get(normalizedExcerpt)
       const structuralCoverage =
         (definition.sourceId === 'spec-linter-validator' && itemId === 'item.80563af1788e') ||
         (locator.kind === 'symbol' &&
@@ -9860,14 +10280,20 @@ function buildSource(definition: SourceDefinition): {
         normalizedExcerpt,
         valueDigest,
         ruleIds: [],
-        exclusionDisposition: structuralCoverage
-          ? locator.anchor.startsWith('json-pointer:')
-            ? ('schema-container' as const)
-            : ('structural-ast' as const)
-          : ('non-normative-explanation' as const),
-        rationale: structuralCoverage
-          ? `Inventory item ${itemId} at ${locator.anchor} provides structural change coverage and does not independently state authority.`
-          : `Inventory item ${itemId} at ${locator.anchor} is explanatory context and does not state an independent normative authority rule.`,
+        exclusionDisposition:
+          duplicateRuleId !== undefined
+            ? ('duplicate-exact-statement' as const)
+            : structuralCoverage
+              ? locator.anchor.startsWith('json-pointer:')
+                ? ('schema-container' as const)
+                : ('structural-ast' as const)
+              : ('non-normative-explanation' as const),
+        rationale:
+          duplicateRuleId !== undefined
+            ? `Inventory item ${itemId} at ${locator.anchor} duplicates the normalized meaning of ${duplicateRuleId}.`
+            : structuralCoverage
+              ? `Inventory item ${itemId} at ${locator.anchor} provides structural change coverage and does not independently state authority.`
+              : `Inventory item ${itemId} at ${locator.anchor} is explanatory context and does not state an independent normative authority rule.`,
       }
     }
     const ruleId = `rule.${definition.sourceId}.${itemId.replace(/^item\./, '')}`
@@ -9914,6 +10340,7 @@ function buildSource(definition: SourceDefinition): {
     }
     const rule = { ...baseRule, bindingDigest: bindingDigestFor(baseRule) }
     rules.push(rule)
+    publishedByStatement.set(normalizedExcerpt, ruleId)
     return {
       itemId,
       locator,
@@ -10121,6 +10548,7 @@ function requiredReconciliations(
   const charterAllowed = get('fk-charter', 'item.d10')
   const charterOperationalBoundary = get('fk-charter', 'item.d2')
   const charterVerification = get('fk-charter', 'item.5c1f19dd9911')
+  const coordinatorCommentary = get('coordinator-pattern', 'item.d62734f662a0')
   const coordinatorGate3 = get('coordinator-pattern', 'item.f7686ab58db7')
   const conventionGate3 = get('spec-convention', 'item.022fc00afe7b')
   const historicalGate3 = get('foreman-line-plan', 'item.c92333c21e64')
@@ -10174,6 +10602,7 @@ function requiredReconciliations(
   const r7Manifest = '2a12cde0f3ae481462c74cb5c0cb2377514f628cb0091c26f916705a4778de77'
   const r8Manifest = 'dc213f213342f6ac744bf4ece7c3c322315d6946f894b7bfbd37db96954d0002'
   const r9Manifest = '825b3a04cdd506762cba1bbb6c7d007dd4b163e40be5dad733b97482d92f9df6'
+  const r10Manifest = '99d9bed01cd5a7957457e24c82cbcc3645ebf591415d6072c26130d3b8a2e8d7'
   const commandEvidence = (commandId: string, inputDigest: string, resultDigest: string) =>
     canonicalJson({
       tool: '@foreman-line/authority-registry',
@@ -10589,6 +11018,48 @@ function requiredReconciliations(
         'Future binding changes require another typed prior-to-new migration record.',
       migrationStatus: 'superseded-by-amendment',
       supersedingEvidence: charterVerification.ref,
+    },
+    {
+      reconciliationId: 'registry-rework-1b42f4b',
+      topic: 'R9 registry bindings superseded by the coordinator-ratified FK-P0 R10 amendment.',
+      observedRefs: [coordinatorCommentary.ref],
+      observedEvidence: [
+        {
+          kind: 'git-commit',
+          reference: '89d7e4853a8fb0af3db68e9262e38833062fba77',
+          digest: sha256(
+            execFileSync('git', ['cat-file', '-p', '89d7e4853a8fb0af3db68e9262e38833062fba77'], {
+              cwd: repoRoot,
+            }),
+          ),
+        },
+        {
+          kind: 'git-commit',
+          reference: SNAPSHOT,
+          digest: sha256(execFileSync('git', ['cat-file', '-p', SNAPSHOT], { cwd: repoRoot })),
+        },
+        {
+          kind: 'command-result',
+          reference: commandEvidence('registry-binding-manifest-r9', sha256(SNAPSHOT), r9Manifest),
+          digest: sha256(
+            commandEvidence('registry-binding-manifest-r9', sha256(SNAPSHOT), r9Manifest),
+          ),
+        },
+        {
+          kind: 'command-result',
+          reference: commandEvidence('superseding-binding-manifest-r10', r9Manifest, r10Manifest),
+          digest: sha256(
+            commandEvidence('superseding-binding-manifest-r10', r9Manifest, r10Manifest),
+          ),
+        },
+      ],
+      authoritativeRuleIds: [coordinatorCommentary.ruleId],
+      scopedDisposition:
+        'The R10 universal Markdown custody, source-honest goal and coordinator semantics, precise Gate 3 scope, and complete rework-evidence contract supersede the R9 registry bindings in FK scope.',
+      unresolvedConsequence:
+        'Future binding changes require another typed prior-to-new migration record.',
+      migrationStatus: 'superseded-by-amendment',
+      supersedingEvidence: coordinatorCommentary.ref,
     },
   ]
 }

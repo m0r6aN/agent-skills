@@ -5,7 +5,12 @@ import { test } from 'node:test'
 import { fileURLToPath } from 'node:url'
 import { parse } from 'yaml'
 import type { AuthorityEnforcementRegistry, AuthorityQuery, InventoryItem } from '../src/types.js'
-import { AUTHORITY_EFFECTS, AUTHORITY_TIERS, RULE_CLASSIFICATIONS } from '../src/types.js'
+import {
+  AUTHORITY_EFFECTS,
+  AUTHORITY_TIERS,
+  ROLE_SCOPES,
+  RULE_CLASSIFICATIONS,
+} from '../src/types.js'
 import {
   bindingDigestFor,
   canonicalJson,
@@ -57,11 +62,11 @@ test('each of the six classifications is accepted and summarized independently',
   const result = validateRegistry(valid)
   assert.equal(result.valid, true)
   assert.deepEqual(result.summary?.classificationCounts, {
-    'pre-action-refusal': 174,
-    'post-action-detection': 6,
-    'ci-static-check': 74,
-    'independent-review-human-judgment': 11,
-    'narrative-provenance': 60,
+    'pre-action-refusal': 195,
+    'post-action-detection': 8,
+    'ci-static-check': 86,
+    'independent-review-human-judgment': 15,
+    'narrative-provenance': 49,
     unsupported: 12,
   })
 })
@@ -1717,6 +1722,347 @@ for (const vector of [
   })
 }
 
+function publishedRuleContaining(sourceId: string, fragment: string) {
+  const source = full.sources.find((candidate) => candidate.sourceId === sourceId)
+  assert.ok(source)
+  const matches = source.inventoryItems.filter(
+    (item) => item.normalizedExcerpt.includes(fragment) && item.ruleIds.length === 1,
+  )
+  assert.equal(matches.length, 1, `${sourceId}:${fragment}`)
+  const rule = full.rules.find((candidate) => candidate.ruleId === matches[0]?.ruleIds[0])
+  assert.ok(rule)
+  return rule
+}
+
+function resolveNatural(
+  authoritySubject: string,
+  role: AuthorityQuery['role'],
+  stage: AuthorityQuery['stage'],
+  operation: AuthorityQuery['operation'],
+  host: AuthorityQuery['host'] = 'provider-neutral',
+) {
+  return resolveAuthority(full, {
+    authoritySubject,
+    goal: 'foreman-kernel',
+    role,
+    stage,
+    operation,
+    host,
+  })
+}
+
+test('R10 goal skill Gate 1 is an operative nondelegable coordinator refusal', () => {
+  const rule = publishedRuleContaining('goal-skill', 'This gate is never delegable')
+  assert.equal(rule.authoritySubject, 'gate1.ratification-authority')
+  assert.equal(rule.classification, 'pre-action-refusal')
+  assert.deepEqual(rule.applicability, {
+    goals: ['all-foreman-goals'],
+    roles: ['coordinator'],
+    stages: ['stage-zero'],
+    operations: ['state-transition'],
+    hosts: ['any'],
+  })
+  const positive = resolveNatural(
+    rule.authoritySubject,
+    'coordinator',
+    'stage-zero',
+    'state-transition',
+    'ci',
+  )
+  assert.equal(positive.outcome, 'REQUIRE_HUMAN')
+  assert.ok(positive.consideredRuleIds.includes(rule.ruleId))
+  assert.equal(
+    resolveNatural(
+      rule.authoritySubject,
+      'builder',
+      'runtime',
+      'external-write',
+      'unsupported-host',
+    ).outcome,
+    'REQUIRE_HUMAN',
+  )
+})
+
+test('R10 goal skill verification custody is an operative coordinator refusal', () => {
+  const rule = publishedRuleContaining(
+    'goal-skill',
+    'You consume verification results; you never produce them.',
+  )
+  assert.equal(rule.authoritySubject, 'verification.issue-authority')
+  assert.equal(rule.classification, 'pre-action-refusal')
+  assert.equal(
+    resolveNatural(
+      rule.authoritySubject,
+      'coordinator',
+      'deterministic-verify',
+      'receipt-validation',
+    ).outcome,
+    'RESOLVED',
+  )
+})
+
+test('R10 goal skill human-gate hook condition requires an agent-completable stop report', () => {
+  const rule = publishedRuleContaining(
+    'goal-skill',
+    'Human gates (ratification, one-tap approval, merges, GitHub ruleset promotion, OAuth consent)',
+  )
+  assert.equal(rule.authoritySubject, 'goal.human-gate-stop')
+  assert.equal(rule.classification, 'pre-action-refusal')
+  const positive = resolveNatural(rule.authoritySubject, 'coordinator', 'merge', 'state-transition')
+  assert.equal(positive.outcome, 'REQUIRE_HUMAN')
+  assert.ok(positive.consideredRuleIds.includes(rule.ruleId))
+})
+
+test('R10 goal skill stop rule is operative and coordinator-scoped', () => {
+  const rule = publishedRuleContaining('goal-skill', 'Stop the loop (ScheduleWakeup stop:true)')
+  assert.equal(rule.classification, 'pre-action-refusal')
+  assert.deepEqual(rule.applicability.roles, ['coordinator'])
+  assert.equal(
+    resolveNatural(
+      rule.authoritySubject,
+      'builder',
+      'runtime',
+      'external-write',
+      'unsupported-host',
+    ).outcome,
+    'REQUIRE_HUMAN',
+  )
+})
+
+test('R10 coordinator commentary cannot mutate ratified authority', () => {
+  const rule = publishedRuleContaining('coordinator-pattern', 'Commentary is not a change request')
+  assert.equal(rule.authoritySubject, 'canon.commentary-mutation-authority')
+  assert.equal(rule.classification, 'pre-action-refusal')
+  const positive = resolveNatural(
+    rule.authoritySubject,
+    'coordinator',
+    'stage-zero',
+    'spec-mutation',
+  )
+  assert.equal(positive.outcome, 'REQUIRE_HUMAN')
+  assert.ok(positive.consideredRuleIds.includes(rule.ruleId))
+  assert.equal(
+    resolveNatural(
+      rule.authoritySubject,
+      'builder',
+      'runtime',
+      'external-write',
+      'unsupported-host',
+    ).outcome,
+    'REQUIRE_HUMAN',
+  )
+})
+
+test('R10 coordinator Gate 1 rule is nondelegable and precisely scoped', () => {
+  const rule = publishedRuleContaining('coordinator-pattern', 'This gate can never be delegated')
+  assert.equal(rule.authoritySubject, 'gate1.ratification-authority')
+  assert.equal(rule.classification, 'pre-action-refusal')
+  assert.deepEqual(rule.applicability.roles, ['coordinator'])
+  assert.deepEqual(rule.applicability.stages, ['stage-zero'])
+  assert.deepEqual(rule.applicability.operations, ['state-transition'])
+})
+
+test('R10 coordinator Gate 2 rule is an operative scoped dispatch grant', () => {
+  const rule = publishedRuleContaining(
+    'coordinator-pattern',
+    'standing authorization scoped to the charter',
+  )
+  assert.equal(rule.authoritySubject, 'gate2.dispatch-grant')
+  assert.equal(rule.classification, 'pre-action-refusal')
+  assert.equal(
+    resolveNatural(rule.authoritySubject, 'coordinator', 'shaping', 'state-transition').outcome,
+    'RESOLVED',
+  )
+})
+
+test('R10 coordinator verification custody cannot be narrative advice', () => {
+  const rule = publishedRuleContaining(
+    'coordinator-pattern',
+    'it never produces verification of its own work',
+  )
+  assert.equal(rule.authoritySubject, 'verification.issue-authority')
+  assert.equal(rule.classification, 'pre-action-refusal')
+  assert.equal(
+    resolveNatural(
+      rule.authoritySubject,
+      'coordinator',
+      'deterministic-verify',
+      'receipt-validation',
+    ).outcome,
+    'RESOLVED',
+  )
+})
+
+test('R10 coordinator ownership rule is an operative state-transition refusal', () => {
+  const rule = publishedRuleContaining('coordinator-pattern', 'One goal, one coordinator:')
+  assert.equal(rule.authoritySubject, 'goal.coordinator-ownership')
+  assert.equal(rule.classification, 'pre-action-refusal')
+  const positive = resolveNatural(
+    rule.authoritySubject,
+    'coordinator',
+    'runtime',
+    'state-transition',
+  )
+  assert.equal(positive.outcome, 'REQUIRE_HUMAN')
+  assert.ok(positive.consideredRuleIds.includes(rule.ruleId))
+})
+
+test('R10 scoped Gate 1 reopening is operative rather than blanket narrative advice', () => {
+  const rule = publishedRuleContaining(
+    'coordinator-pattern',
+    'When triage re-opens Gate 1 for specific decisions, the re-open is scoped',
+  )
+  assert.equal(rule.authoritySubject, 'gate1.scoped-reopen')
+  assert.equal(rule.classification, 'pre-action-refusal')
+  const positive = resolveNatural(
+    rule.authoritySubject,
+    'coordinator',
+    'stage-zero',
+    'state-transition',
+  )
+  assert.equal(positive.outcome, 'REQUIRE_HUMAN')
+  assert.ok(positive.consideredRuleIds.includes(rule.ruleId))
+})
+
+const r10GoalCoordinatorRules = full.rules.filter(
+  (rule) =>
+    (rule.authorityBasisRef.sourceId === 'goal-skill' ||
+      rule.authorityBasisRef.sourceId === 'coordinator-pattern') &&
+    rule.classification !== 'narrative-provenance' &&
+    rule.classification !== 'unsupported',
+)
+
+function firstConcrete<T extends string>(values: readonly string[], fallback: T): T {
+  return (values.includes('any') ? fallback : values[0]) as T
+}
+
+test('R10 every operative goal and coordinator rule has a source-derived positive resolver vector', () => {
+  for (const rule of r10GoalCoordinatorRules) {
+    const query: AuthorityQuery = {
+      authoritySubject: rule.authoritySubject,
+      goal: 'foreman-kernel',
+      role: firstConcrete(rule.applicability.roles, 'coordinator'),
+      stage: firstConcrete(rule.applicability.stages, 'runtime'),
+      operation: firstConcrete(rule.applicability.operations, 'state-transition'),
+      host: firstConcrete(rule.applicability.hosts, 'provider-neutral'),
+    }
+    const result = resolveAuthority(full, query)
+    assert.notEqual(result.outcome, 'CONFLICT', rule.ruleId)
+    assert.ok(result.consideredRuleIds.includes(rule.ruleId), rule.ruleId)
+  }
+})
+
+test('R10 every operative goal and coordinator rule has a source-derived negative resolver vector', () => {
+  const concreteRoles = ROLE_SCOPES.filter((role) => role !== 'any')
+  for (const rule of r10GoalCoordinatorRules) {
+    const excludedRole = concreteRoles.find((role) => !rule.applicability.roles.includes(role))
+    assert.ok(excludedRole, `${rule.ruleId} must preserve a source-narrowed role boundary`)
+    const result = resolveAuthority(full, {
+      authoritySubject: rule.authoritySubject,
+      goal: 'foreman-kernel',
+      role: excludedRole,
+      stage: firstConcrete(rule.applicability.stages, 'runtime'),
+      operation: firstConcrete(rule.applicability.operations, 'state-transition'),
+      host: firstConcrete(rule.applicability.hosts, 'provider-neutral'),
+    })
+    assert.ok(!result.consideredRuleIds.includes(rule.ruleId), rule.ruleId)
+  }
+})
+
+for (const vector of [
+  { name: 'repo mutation', operation: 'repo-mutation' },
+  { name: 'state transition', operation: 'state-transition' },
+] as const) {
+  test(`R10 Gate 3 resolves the coordinator merge ${vector.name} refusal`, () => {
+    const result = resolveNatural('gate3.merge-authority', 'coordinator', 'merge', vector.operation)
+    assert.equal(result.outcome, 'RESOLVED')
+    if (result.outcome === 'RESOLVED') {
+      assert.equal(result.authorityClaim, 'human-owned-nondelegated')
+    }
+  })
+}
+
+test('R10 Gate 3 does not resolve for builder runtime external writes', () => {
+  assert.equal(
+    resolveNatural(
+      'gate3.merge-authority',
+      'builder',
+      'runtime',
+      'external-write',
+      'unsupported-host',
+    ).outcome,
+    'REQUIRE_HUMAN',
+  )
+})
+
+test('R10 Gate 3 does not resolve for CI deterministic read queries', () => {
+  assert.equal(
+    resolveNatural('gate3.merge-authority', 'ci', 'deterministic-verify', 'repo-read', 'ci')
+      .outcome,
+    'REQUIRE_HUMAN',
+  )
+})
+
+test('R10 ships an exact typed migration from the R9 registry snapshot', () => {
+  const record = full.reconciliations.find(
+    (candidate) => candidate.reconciliationId === 'registry-rework-1b42f4b',
+  )
+  assert.ok(record)
+  assert.equal(record.migrationStatus, 'superseded-by-amendment')
+  assert.deepEqual(
+    record.observedEvidence
+      .filter((evidence) => evidence.kind === 'git-commit')
+      .map((evidence) => evidence.reference),
+    ['89d7e4853a8fb0af3db68e9262e38833062fba77', '51857a3a7796b393c0c0a68712f98c06e7015d79'],
+  )
+  assert.equal(record.supersedingEvidence?.sourceId, 'coordinator-pattern')
+})
+
+const reworkIds = full.reconciliations
+  .map((record) => record.reconciliationId)
+  .filter((reconciliationId) => reconciliationId.startsWith('registry-rework-'))
+assert.ok(reworkIds.includes('registry-rework-91145d7'))
+
+const r10EvidenceMutations = [
+  ['append', (items: unknown[]) => items.push(structuredClone(items[0]))],
+  ['remove', (items: unknown[]) => items.splice(0, 1)],
+  ['duplicate', (items: unknown[]) => items.splice(1, 0, structuredClone(items[0]))],
+  [
+    'substitute',
+    (items: unknown[]) => {
+      const evidence = items[0] as { kind: string; reference: string; digest: string }
+      const reference = `${evidence.reference}#r10-substituted`
+      items[0] = { kind: evidence.kind, reference, digest: sha256(reference) }
+    },
+  ],
+] as const
+
+for (const [name, mutate] of r10EvidenceMutations) {
+  test(`R10 registry-rework-91145d7 rejects ${name} evidence`, () => {
+    const mutated = structuredClone(full)
+    const record = mutated.reconciliations.find(
+      (candidate) => candidate.reconciliationId === 'registry-rework-91145d7',
+    )
+    assert.ok(record)
+    mutate(record.observedEvidence as unknown[])
+    expectCode(mutated, 'MIGRATION_EVIDENCE_INVALID')
+  })
+}
+
+for (const [name, mutate] of r10EvidenceMutations) {
+  test(`R10 source-derived registry-rework loop rejects ${name} evidence`, () => {
+    for (const reconciliationId of reworkIds) {
+      const mutated = structuredClone(full)
+      const record = mutated.reconciliations.find(
+        (candidate) => candidate.reconciliationId === reconciliationId,
+      )
+      assert.ok(record)
+      mutate(record.observedEvidence as unknown[])
+      expectCode(mutated, 'MIGRATION_EVIDENCE_INVALID')
+    }
+  })
+}
+
 function publishedRuleFor(sourceId: string, itemId: string) {
   const source = full.sources.find((candidate) => candidate.sourceId === sourceId)
   const item = source?.inventoryItems.find((candidate) => candidate.itemId === itemId)
@@ -1791,13 +2137,14 @@ test('R9 gives every published item one literal curated classification entry', (
   assert.match(generator, /const CURATED_ITEM_CLASSIFICATIONS/)
   for (const rule of full.rules) {
     const basis = rule.authorityBasisRef
-    assert.match(
-      generator,
-      new RegExp(
-        `'${basis.sourceId}:${basis.itemId.replaceAll('.', '\\.')}'\\s*:\\s*'${rule.classification}'`,
-      ),
-      `${basis.sourceId}:${basis.itemId}`,
-    )
+    const key = `${basis.sourceId}:${basis.itemId}`
+    const scalar = new RegExp(`'${key.replaceAll('.', '\\.')}'\\s*:\\s*'${rule.classification}'`)
+    if (scalar.test(generator)) continue
+    const entryStart = generator.indexOf(`  '${key}': {`)
+    assert.notEqual(entryStart, -1, key)
+    const entryEnd = generator.indexOf("\n  '", entryStart + 4)
+    const entry = generator.slice(entryStart, entryEnd === -1 ? undefined : entryEnd)
+    assert.match(entry, new RegExp(`classification:\\s*'${rule.classification}'`), key)
   }
 })
 
@@ -1942,6 +2289,10 @@ test('R9 shared semantic identities are limited to the exact curated equivalent 
       .sort(([left], [right]) => left.localeCompare(right)),
     [
       [
+        'gate1.ratification-authority|explicit-developer-ratification-required',
+        ['rule.coordinator-pattern.a3d15fe678e1', 'rule.goal-skill.8fda5f4d9776'],
+      ],
+      [
         'gate2.dispatch-grant|coordinator-may-dispatch-fk-p0-through-fk-p21-conditionally',
         [
           'rule.fk-charter.15a44cf50bc6',
@@ -1979,6 +2330,10 @@ test('R9 shared semantic identities are limited to the exact curated equivalent 
       [
         'verification.issue-authority|architecture-risk-two-fresh-independent-reviews-required',
         ['rule.fk-charter.5c1f19dd9911', 'rule.fk-loop-directive.ce9042d917b2'],
+      ],
+      [
+        'verification.issue-authority|coordinator-consumes-but-does-not-produce',
+        ['rule.coordinator-pattern.a18d27d46b1e', 'rule.goal-skill.100b2d3e99ce'],
       ],
     ],
   )
