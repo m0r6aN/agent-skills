@@ -46,6 +46,7 @@ const REQUIRED_REWORK_MIGRATIONS = [
   'registry-rework-6f45963',
   'registry-rework-b414d06',
   'registry-rework-00b41b7',
+  'registry-rework-37afc65',
 ] as const
 const REQUIRED_OPERATIONS = [
   'gate1.ratify',
@@ -244,7 +245,6 @@ const RECONCILIATION_CONTRACT = {
       'spec-convention:item.ac5ff7afd06f',
       'spec-convention:item.5145ab15549c',
       'spec-convention:item.fd82127bf9f9',
-      'spec-linter-validator:item.80563af1788e',
       'fk-charter:item.d10',
     ],
     rules: [
@@ -329,10 +329,16 @@ const RECONCILIATION_CONTRACT = {
     refs: ['fk-charter:item.d2'],
     rules: ['rule.fk-charter.d2'],
   },
+  'registry-rework-37afc65': {
+    topic: 'R7 registry bindings superseded by the coordinator-ratified FK-P0 R8 amendment.',
+    status: 'superseded-by-amendment',
+    refs: ['fk-charter:item.d10'],
+    rules: ['rule.fk-charter.d10'],
+  },
 } as const
 
 const SHIPPED_BINDING_MANIFEST_DIGEST =
-  '2a12cde0f3ae481462c74cb5c0cb2377514f628cb0091c26f916705a4778de77'
+  'dc213f213342f6ac744bf4ece7c3c322315d6946f894b7bfbd37db96954d0002'
 const SEMANTIC_EQUIVALENCE: readonly {
   readonly authoritySubject: string
   readonly authorityClaim: string
@@ -368,6 +374,8 @@ const PRIOR_R5_BINDING_MANIFEST_DIGEST =
   '589c6c3ea98147a951ab8887fd70a1a1c50e8b84953abcbe51b152a256da6ad9'
 const PRIOR_R6_BINDING_MANIFEST_DIGEST =
   '644e1336c2e4309bc75954cb24e921d4cf6d3a75b0ccc7cb926de34a8ca553c6'
+const PRIOR_R7_BINDING_MANIFEST_DIGEST =
+  '2a12cde0f3ae481462c74cb5c0cb2377514f628cb0091c26f916705a4778de77'
 
 const RECONCILIATION_PROSE: Readonly<Record<string, readonly [string, string]>> = {
   'gate-namespace-count': [
@@ -414,6 +422,10 @@ const RECONCILIATION_PROSE: Readonly<Record<string, readonly [string, string]>> 
     'The R7 item-specific curation, protected evidence, and complete discovery contract supersedes the R6 registry bindings in FK scope.',
     'Future binding changes require another typed prior-to-new migration record.',
   ],
+  'registry-rework-37afc65': [
+    'The R8 protected exits, literal applicability, evidence, and unified Markdown discovery contract supersedes the R7 registry bindings in FK scope.',
+    'Future binding changes require another typed prior-to-new migration record.',
+  ],
 }
 
 const RECONCILIATION_RECORD_DIGESTS: Readonly<Record<string, string>> = {
@@ -421,7 +433,7 @@ const RECONCILIATION_RECORD_DIGESTS: Readonly<Record<string, string>> = {
   'gate3-delegation': '13f5094dc781381ad5c1124f094af5f6f57b462c73df3fd3925e2b844c3f53c6',
   'spec-linter-profile-behavior':
     '48c147ae850d5779e763c187ee9381bc2b824e299764eeb15869f57dce2e553c',
-  'surfaces-allowed-files': '472c152d6cfea31b5ab41b61d66e877106f2512c61dc36918511d89a301467cd',
+  'surfaces-allowed-files': 'c7addc8070757f6da21ae15354139d2a39c6f5db2dc164d2534305e0f944d7c1',
   'permission-profile-enforcement-bound':
     '6558689b94ae965d85c60cef8cc7d9086278f38c755276b74953d2613440eda2',
   'missing-provenance-reference':
@@ -431,6 +443,7 @@ const RECONCILIATION_RECORD_DIGESTS: Readonly<Record<string, string>> = {
   'registry-rework-6f45963': '3954ba2fc23122f82f6d68e294a180b8dc789983e2bb3da0198c79f8550513d9',
   'registry-rework-b414d06': '8a7c1fdd61cbb664d6c9b1b0aefcba1dc35dc26873eff711bbfada8480247d7f',
   'registry-rework-00b41b7': '7113ebbad6811a3dfd4f14302f736ac11074c04943686eea28a1de820c75e9c9',
+  'registry-rework-37afc65': '5f3bba04f9177884da88d21a8535d3ebc04557252aa27b30cbb191824e0b0f17',
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -713,7 +726,10 @@ function checkOperationAuthority(document: AuthorityEnforcementRegistry): Valida
       'fk-loop-directive:item.7eb6018d9e57',
       'fk-loop-directive:item.2743c2f8c558',
     ],
-    'verification.issue': ['fk-charter:item.d11', 'fk-loop-directive:item.ce9042d917b2'],
+    'verification.issue': [
+      'spec-convention:item.03f0830cd693',
+      'fk-loop-directive:item.dd8203551518',
+    ],
     'closure.record': ['fk-charter:item.e9ec57edc0a2', 'fk-loop-directive:item.e3065db62b43'],
     'receipt.mint-generic': [],
     'external.write': [],
@@ -982,6 +998,12 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
           (/^item\.(?:d(?:[1-9]|1\d|20)|r(?:[1-9]|1[0-3])|constraint-(?:[1-9]|1[0-3])|hard-rule-(?:[1-9]|1[0-5]))$/.test(
             item.itemId,
           ) ||
+            (source.sourceId === 'fk-charter' &&
+              ((item.locator.anchor.includes('## 9. Goal exit criterion') &&
+                /^\d+\./.test(item.normalizedExcerpt)) ||
+                (item.locator.anchor.includes('## 11. Stop conditions') &&
+                  item.normalizedExcerpt.startsWith('- ')) ||
+                /^\*\*Wave [0-4] exit:\*\*/.test(item.normalizedExcerpt))) ||
             ((item.locator.kind === 'line-excerpt' ||
               item.locator.kind === 'numbered-item' ||
               item.locator.kind === 'table-row') &&
@@ -1434,6 +1456,28 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
           },
         )
       }
+      if (record.reconciliationId === 'surfaces-allowed-files') {
+        const commandReference = canonicalJson({
+          tool: '@foreman-line/authority-registry',
+          toolVersion: '0.1.0',
+          commandId: 'allowed-files-body-compiler-absence',
+          inputDigest: sha256(canonicalJson(record.observedRefs.slice(0, 3))),
+          resultDigest: sha256(
+            canonicalJson({
+              compiler: 'spec-linter',
+              bodySection: 'Allowed Files',
+              present: false,
+            }),
+          ),
+          exitCode: 0,
+          actorClass: 'coordinator',
+        })
+        expectedEvidence.push({
+          kind: 'command-result',
+          reference: commandReference,
+          digest: sha256(commandReference),
+        })
+      }
       if (canonicalJson(record.observedEvidence) !== canonicalJson(expectedEvidence)) {
         violations.push(
           violation(
@@ -1576,12 +1620,40 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
           `6123474485ef836fc7250df9c15695aaff44fe45|${document.sourceSnapshotCommit}` ||
         commands.length !== 2 ||
         !resultDigests.includes(PRIOR_R6_BINDING_MANIFEST_DIGEST) ||
-        !resultDigests.includes(SHIPPED_BINDING_MANIFEST_DIGEST)
+        !resultDigests.includes(PRIOR_R7_BINDING_MANIFEST_DIGEST)
       ) {
         violations.push(
           violation(
             'MIGRATION_EVIDENCE_INVALID',
             'R7 migration does not bind the prior R6 registry commit, source snapshot, and superseding manifest',
+          ),
+        )
+      }
+    }
+    if (record.reconciliationId === 'registry-rework-37afc65') {
+      const gitRefs = record.observedEvidence
+        .filter((e) => e.kind === 'git-commit')
+        .map((e) => e.reference)
+      const commands = record.observedEvidence.filter((e) => e.kind === 'command-result')
+      const resultDigests = commands.flatMap((e) => {
+        try {
+          const value = JSON.parse(e.reference) as { resultDigest?: unknown }
+          return typeof value.resultDigest === 'string' ? [value.resultDigest] : []
+        } catch {
+          return []
+        }
+      })
+      if (
+        gitRefs.join('|') !==
+          `5d7ca990574eb8416a1fc5ac40b90d9aec975b2b|${document.sourceSnapshotCommit}` ||
+        commands.length !== 2 ||
+        !resultDigests.includes(PRIOR_R7_BINDING_MANIFEST_DIGEST) ||
+        !resultDigests.includes(SHIPPED_BINDING_MANIFEST_DIGEST)
+      ) {
+        violations.push(
+          violation(
+            'MIGRATION_EVIDENCE_INVALID',
+            'R8 migration does not bind the prior R7 registry commit, source snapshot, and superseding manifest',
           ),
         )
       }
@@ -1706,7 +1778,10 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
           'fk-loop-directive:item.7eb6018d9e57',
           'fk-loop-directive:item.2743c2f8c558',
         ],
-        'verification.issue': ['fk-charter:item.d11', 'fk-loop-directive:item.ce9042d917b2'],
+        'verification.issue': [
+          'spec-convention:item.03f0830cd693',
+          'fk-loop-directive:item.dd8203551518',
+        ],
         'closure.record': ['fk-charter:item.e9ec57edc0a2', 'fk-loop-directive:item.e3065db62b43'],
         'receipt.mint-generic': [],
         'external.write': [],
@@ -1806,6 +1881,10 @@ function pairedFenceLines(lines: readonly string[]): Set<number> {
     }
     const delimiter = opener[2] as string
     const marker = delimiter[0] as string
+    if (marker === '`' && (opener[3] ?? '').includes('`')) {
+      cursor += 1
+      continue
+    }
     let close = -1
     for (let index = cursor + 1; index < lines.length; index += 1) {
       const candidate = /^( {0,3})(`{3,}|~{3,})\s*$/.exec(lines[index] ?? '')
@@ -1828,13 +1907,21 @@ function pairedFenceLines(lines: readonly string[]): Set<number> {
   return fenced
 }
 
-function markdownBlockMap(content: string, sourceId: string): Map<string, string> {
-  const result = new Map<string, string>()
-  if (sourceId !== 'fk-charter' && sourceId !== 'fk-loop-directive') return result
+interface MarkdownDocumentMap {
+  readonly lines: readonly string[]
+  readonly fenced: ReadonlySet<number>
+  readonly blocks: ReadonlyMap<string, string>
+}
+
+function markdownDocumentMap(content: string, sourceId: string): MarkdownDocumentMap {
+  const blocks = new Map<string, string>()
   const lines = stripMarkdownHtmlComments(content).replace(/\r\n?/g, '\n').split('\n')
+  const fenced = pairedFenceLines(lines)
+  if (sourceId !== 'fk-charter' && sourceId !== 'fk-loop-directive') {
+    return { lines, fenced, blocks }
+  }
   const headings: { level: number; text: string }[] = []
   const occurrences = new Map<string, number>()
-  const fenced = pairedFenceLines(lines)
   let cursor = 0
   while (cursor < lines.length) {
     const line = lines[cursor] ?? ''
@@ -1876,10 +1963,10 @@ function markdownBlockMap(content: string, sourceId: string): Map<string, string
     const semanticKey = `${headingPath}\u0000${kind}\u0000${sha256(normalizeRuleText(text)).slice(0, 12)}`
     const occurrence = (occurrences.get(semanticKey) ?? 0) + 1
     occurrences.set(semanticKey, occurrence)
-    result.set(`md-block:${headingPath}:${kind}:${semanticKey.slice(-12)}:${occurrence}`, text)
+    blocks.set(`md-block:${headingPath}:${kind}:${semanticKey.slice(-12)}:${occurrence}`, text)
     cursor = end
   }
-  return result
+  return { lines, fenced, blocks }
 }
 
 function tsNodeName(node: ts.Node): string | null {
@@ -2105,13 +2192,16 @@ export function permissionProfileRuleMap(content: string): Map<string, string> {
   return result
 }
 
-function extractLocator(content: string, locator: SourceLocator): { count: number; value: string } {
+function extractLocator(
+  content: string,
+  locator: SourceLocator,
+  markdown?: MarkdownDocumentMap,
+): { count: number; value: string } {
   const lines = content.replace(/\r\n?/g, '\n').split('\n')
+  const markdownLines = markdown?.lines ?? lines
+  const fenced = markdown?.fenced ?? new Set<number>()
   if (locator.kind === 'line-excerpt' && locator.anchor.startsWith('md-block:')) {
-    const sourceId = locator.anchor.includes('# Foreman Kernel')
-      ? 'fk-charter'
-      : 'fk-loop-directive'
-    const value = markdownBlockMap(content, sourceId).get(locator.anchor)
+    const value = markdown?.blocks.get(locator.anchor)
     return { count: value === undefined ? 0 : 1, value: value ?? '' }
   }
   if (
@@ -2142,7 +2232,8 @@ function extractLocator(content: string, locator: SourceLocator): { count: numbe
     }
   }
   if (locator.kind === 'table-row') {
-    const matches = lines.filter((line) => {
+    const matches = markdownLines.filter((line, index) => {
+      if (fenced.has(index)) return false
       const cells = line
         .trim()
         .split('|')
@@ -2168,8 +2259,9 @@ function extractLocator(content: string, locator: SourceLocator): { count: numbe
   if (locator.kind === 'heading') {
     const stack: { level: number; heading: string }[] = []
     const matches: { index: number; level: number }[] = []
-    for (let index = 0; index < lines.length; index += 1) {
-      const line = lines[index] ?? ''
+    for (let index = 0; index < markdownLines.length; index += 1) {
+      if (fenced.has(index)) continue
+      const line = markdownLines[index] ?? ''
       const heading = /^(#{1,6})\s+.+/.exec(line)
       if (heading === null) continue
       const level = heading[1]?.length ?? 6
@@ -2181,20 +2273,15 @@ function extractLocator(content: string, locator: SourceLocator): { count: numbe
     }
     if (matches.length !== 1) return { count: matches.length, value: '' }
     const start = matches[0]?.index ?? 0
-    return { count: 1, value: lines[start] ?? '' }
+    return { count: 1, value: markdownLines[start] ?? '' }
   }
   if (locator.kind === 'numbered-item') {
     const stack: { level: number; heading: string }[] = []
     const matches: { index: number; indent: number }[] = []
     const occurrences = new Map<string, number>()
-    let inFence = false
-    for (let index = 0; index < lines.length; index += 1) {
-      const line = lines[index] ?? ''
-      if (/^\s*(?:```|~~~)/.test(line)) {
-        inFence = !inFence
-        continue
-      }
-      if (inFence) continue
+    for (let index = 0; index < markdownLines.length; index += 1) {
+      if (fenced.has(index)) continue
+      const line = markdownLines[index] ?? ''
       const heading = /^(#{1,6})\s+.+/.exec(line)
       if (heading !== null) {
         const level = heading[1]?.length ?? 6
@@ -2218,9 +2305,13 @@ function extractLocator(content: string, locator: SourceLocator): { count: numbe
     if (matches.length !== 1) return { count: matches.length, value: '' }
     const match = matches[0]
     if (match === undefined) return { count: 0, value: '' }
-    let end = lines.length
-    for (let index = match.index + 1; index < lines.length; index += 1) {
-      const line = lines[index] ?? ''
+    let end = markdownLines.length
+    for (let index = match.index + 1; index < markdownLines.length; index += 1) {
+      if (fenced.has(index)) {
+        end = index
+        break
+      }
+      const line = markdownLines[index] ?? ''
       if (/^#{1,6}\s+/.test(line)) {
         end = index
         break
@@ -2231,7 +2322,7 @@ function extractLocator(content: string, locator: SourceLocator): { count: numbe
         break
       }
     }
-    return { count: 1, value: lines.slice(match.index, end).join('\n') }
+    return { count: 1, value: markdownLines.slice(match.index, end).join('\n') }
   }
   if (locator.kind === 'symbol') {
     const matches = lines
@@ -2429,8 +2520,11 @@ export function sweepRegistrySources(document: unknown, repoRoot: string): Valid
       )
       continue
     }
+    const markdown = source.path.endsWith('.md')
+      ? markdownDocumentMap(content, source.sourceId)
+      : undefined
     for (const item of source.inventoryItems) {
-      const extracted = extractLocator(content, item.locator)
+      const extracted = extractLocator(content, item.locator, markdown)
       if (extracted.count === 0) {
         violations.push(
           violation('LOCATOR_MISSING', 'registered locator is missing', {
@@ -2454,7 +2548,7 @@ export function sweepRegistrySources(document: unknown, repoRoot: string): Valid
         )
       }
     }
-    for (const [anchor, discoveredValue] of markdownBlockMap(content, source.sourceId)) {
+    for (const [anchor, discoveredValue] of markdown?.blocks ?? []) {
       const coveredByExactTableItem =
         anchor.includes(':table-row:') &&
         source.inventoryItems.some(
@@ -2558,19 +2652,21 @@ export function sweepRegistrySources(document: unknown, repoRoot: string): Valid
       }
     }
     if (source.path.endsWith('.md')) {
-      const markdownLines = content.replace(/\r\n?/g, '\n').split('\n')
+      const markdownLines = markdown?.lines ?? []
+      const fenced = markdown?.fenced ?? new Set<number>()
       const registeredHeadings = new Set(
         source.inventoryItems
           .filter((item) => item.locator.kind === 'heading')
           .map((item) => item.locator.anchor.split(' > ').at(-1)),
       )
-      const bindingHeadings = content
-        .replace(/\r\n?/g, '\n')
-        .split('\n')
-        .map((line) => line.trim())
-        .filter((line) =>
-          /^#{2,6}\s+.*\b(binding|authority|constraint|decision|gate|stop)\b/i.test(line),
+      const bindingHeadings = markdownLines
+        .map((line, index) => ({ line: line.trim(), index }))
+        .filter(
+          ({ line, index }) =>
+            !fenced.has(index) &&
+            /^#{2,6}\s+.*\b(binding|authority|constraint|decision|gate|stop)\b/i.test(line),
         )
+        .map(({ line }) => line)
       for (const heading of bindingHeadings) {
         if (!registeredHeadings.has(heading)) {
           violations.push(
@@ -2593,7 +2689,9 @@ export function sweepRegistrySources(document: unknown, repoRoot: string): Valid
             ? 'R'
             : null
       if (tablePrefix !== null) {
-        for (const line of markdownLines) {
+        for (let index = 0; index < markdownLines.length; index += 1) {
+          if (fenced.has(index)) continue
+          const line = markdownLines[index] ?? ''
           const key = /^\|\s*(D\d+|R\d+)\s*\|/.exec(line.trim())?.[1]
           if (key?.startsWith(tablePrefix) && !registeredTableKeys.has(key)) {
             violations.push(
@@ -2607,7 +2705,9 @@ export function sweepRegistrySources(document: unknown, repoRoot: string): Valid
       }
       if (source.sourceId === 'parcel-driven-development') {
         let inHardRules = false
-        for (const line of markdownLines) {
+        for (let index = 0; index < markdownLines.length; index += 1) {
+          if (fenced.has(index)) continue
+          const line = markdownLines[index] ?? ''
           if (line.trim() === '## The Hard Rules') inHardRules = true
           else if (inHardRules && /^##\s/.test(line)) inHardRules = false
           const number = inHardRules ? /^(\d+)\.\s/.exec(line.trim())?.[1] : undefined
@@ -2634,7 +2734,9 @@ export function sweepRegistrySources(document: unknown, repoRoot: string): Valid
           }
         }
       }
-      for (const line of markdownLines) {
+      for (let index = 0; index < markdownLines.length; index += 1) {
+        if (fenced.has(index)) continue
+        const line = markdownLines[index] ?? ''
         if (/^[-*]\s+(?:\*\*)?(?:MUST|SHALL|STOP|AUTHORITY|BINDING)\b/i.test(line.trim())) {
           const normalized = normalizeRuleText(line)
           if (!source.inventoryItems.some((item) => item.normalizedExcerpt === normalized)) {

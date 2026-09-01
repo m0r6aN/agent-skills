@@ -925,9 +925,10 @@ sources:
           lineHint: 169
         normalizedExcerpt: "**Wave 0 exit:** contracts and fixtures are merged; exact path authority can be compiled without reading `surfaces:` as mutation permission; plan-level contradictions have no unresolved implementation consequence."
         valueDigest: 7c88634c4e90618ffc4c2f417f988d9ce9a2ed597dadda424fc28f54a91b6c6c
-        ruleIds: []
-        exclusionDisposition: non-normative-explanation
-        rationale: "Inventory item item.7d74bdcd5bb3 at md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 0 — Authority and contracts:paragraph:7c88634c4e90:1 is explanatory context and does not state an independent normative authority rule."
+        ruleIds:
+          - rule.fk-charter.7d74bdcd5bb3
+        exclusionDisposition: null
+        rationale: Rule-bearing section or live behavior is mapped to an explicit source-bound rule.
       - itemId: item.b37e60e8696a
         locator:
           kind: line-excerpt
@@ -975,9 +976,10 @@ sources:
           lineHint: 181
         normalizedExcerpt: "**Wave 1 exit:** every first-release evaluator is deterministic, no-I/O unless explicitly documented, contract-tested, and proven against an unrelated repository."
         valueDigest: a28ac1154138a0df62f72225c5046b5bcd28e760df00b5f5a9429fa53d3823de
-        ruleIds: []
-        exclusionDisposition: non-normative-explanation
-        rationale: "Inventory item item.5f823cd304d6 at md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 1 — Pure trust core:paragraph:a28ac1154138:1 is explanatory context and does not state an independent normative authority rule."
+        ruleIds:
+          - rule.fk-charter.5f823cd304d6
+        exclusionDisposition: null
+        rationale: Rule-bearing section or live behavior is mapped to an explicit source-bound rule.
       - itemId: item.b2267ae8bb07
         locator:
           kind: line-excerpt
@@ -1025,9 +1027,10 @@ sources:
           lineHint: 192
         normalizedExcerpt: "**Wave 2 exit:** a pinned stateless container serves the read-only verifier to independent harnesses, cannot read the future state volume, and survives a clean-room launch without package-local installation."
         valueDigest: bf4e35807f376279713e2d734550b24beab061786a8c0da2fbc019ac78cce8a4
-        ruleIds: []
-        exclusionDisposition: non-normative-explanation
-        rationale: "Inventory item item.f1439c7e3a90 at md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 2 — Stateless read-only MCP and container:paragraph:bf4e35807f37:1 is explanatory context and does not state an independent normative authority rule."
+        ruleIds:
+          - rule.fk-charter.f1439c7e3a90
+        exclusionDisposition: null
+        rationale: Rule-bearing section or live behavior is mapped to an explicit source-bound rule.
       - itemId: item.cea04dd016a1
         locator:
           kind: line-excerpt
@@ -1115,9 +1118,10 @@ sources:
           lineHint: 208
         normalizedExcerpt: "**Wave 3 exit:** two distinct principals cannot split ownership; restart reconstructs state from SQLite; stale revisions and same-key/different-payload calls conflict; crash points and migrations recover or fail closed; projections are deterministic; and the field-level Git/SQLite authority matrix stops on divergence rather than overwriting."
         valueDigest: a30990b15e42f4c14c3f18862be7b98fb9c94b922fa06e986a2c5e30014688cb
-        ruleIds: []
-        exclusionDisposition: non-normative-explanation
-        rationale: "Inventory item item.fec816847e8e at md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:paragraph:a30990b15e42:1 is explanatory context and does not state an independent normative authority rule."
+        ruleIds:
+          - rule.fk-charter.fec816847e8e
+        exclusionDisposition: null
+        rationale: Rule-bearing section or live behavior is mapped to an explicit source-bound rule.
       - itemId: item.2b94b6804eb4
         locator:
           kind: line-excerpt
@@ -1196,9 +1200,10 @@ sources:
           lineHint: 224
         normalizedExcerpt: "**Wave 4 exit:** selected mediated violations are mechanically refused on the proven host; non-enrollment and unmediated changes are detected by heartbeat/diff/CI; CI was green before enforcement promotion; service outages have bounded recovery; and host claims plus all proof identities are bound in the evidence manifest."
         valueDigest: 5597e9f57af65aae2dbdf71718c152ce8e3123a35fbc740030c80f7626189d22
-        ruleIds: []
-        exclusionDisposition: non-normative-explanation
-        rationale: "Inventory item item.10bcdc2cae49 at md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:paragraph:5597e9f57af6:1 is explanatory context and does not state an independent normative authority rule."
+        ruleIds:
+          - rule.fk-charter.10bcdc2cae49
+        exclusionDisposition: null
+        rationale: Rule-bearing section or live behavior is mapped to an explicit source-bound rule.
       - itemId: item.33b0fe096139
         locator:
           kind: line-excerpt
@@ -1467,9 +1472,10 @@ sources:
           lineHint: 286
         normalizedExcerpt: 2. Pinned stateless and stateful images expose versioned read-only and admission-protected control catalogs without package-local installs; anonymous verifier clients cannot list or call control tools and the read surface cannot access the state volume.
         valueDigest: a0229fca74998509557bf4f5a4acaa65f941b9ca314262508bbbba88906511c8
-        ruleIds: []
-        exclusionDisposition: non-normative-explanation
-        rationale: "Inventory item item.eddc1a2874a3 at md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:a0229fca7499:1 is explanatory context and does not state an independent normative authority rule."
+        ruleIds:
+          - rule.fk-charter.eddc1a2874a3
+        exclusionDisposition: null
+        rationale: Rule-bearing section or live behavior is mapped to an explicit source-bound rule.
       - itemId: item.248b8ef73429
         locator:
           kind: line-excerpt
@@ -1477,9 +1483,10 @@ sources:
           lineHint: 289
         normalizedExcerpt: 3. Clean-room, read-confidentiality, stateless portability, and stateful admission scenarios pass against their respective image digests on the D20 platform matrix.
         valueDigest: 8b54f64081757e7a14b516a1b06f3ff242d3189bb0afb879f0f3f3f0d45c3344
-        ruleIds: []
-        exclusionDisposition: non-normative-explanation
-        rationale: "Inventory item item.248b8ef73429 at md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:8b54f6408175:1 is explanatory context and does not state an independent normative authority rule."
+        ruleIds:
+          - rule.fk-charter.248b8ef73429
+        exclusionDisposition: null
+        rationale: Rule-bearing section or live behavior is mapped to an explicit source-bound rule.
       - itemId: item.7854414d4093
         locator:
           kind: line-excerpt
@@ -1487,9 +1494,10 @@ sources:
           lineHint: 291
         normalizedExcerpt: 4. SQLite state survives restart; principal/lease/CAS/idempotency/crash/concurrency/ migration/backup-recovery tests pass at a real process boundary; generated Markdown follows the field-level authority matrix and stops on divergence.
         valueDigest: edbeb67a6d54e7d8b6a2e87d6e806ba9a7ec5489d2717c119764860c1e2536bf
-        ruleIds: []
-        exclusionDisposition: non-normative-explanation
-        rationale: "Inventory item item.7854414d4093 at md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:edbeb67a6d54:1 is explanatory context and does not state an independent normative authority rule."
+        ruleIds:
+          - rule.fk-charter.7854414d4093
+        exclusionDisposition: null
+        rationale: Rule-bearing section or live behavior is mapped to an explicit source-bound rule.
       - itemId: item.a0d98411d75e
         locator:
           kind: line-excerpt
@@ -1497,9 +1505,10 @@ sources:
           lineHint: 294
         normalizedExcerpt: 5. The five initial mediated refusal classes have authorization-engine vectors, negative tests, bypass probes, corpus sweeps, and independent review evidence before enforcement is enabled; hook non-enrollment is separately proven detectable.
         valueDigest: 18ed2daf1e1cb32a8dacfe70970ea19a9ba3e00ff7421a35d6dbd5980f44719c
-        ruleIds: []
-        exclusionDisposition: non-normative-explanation
-        rationale: "Inventory item item.a0d98411d75e at md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:18ed2daf1e1c:1 is explanatory context and does not state an independent normative authority rule."
+        ruleIds:
+          - rule.fk-charter.a0d98411d75e
+        exclusionDisposition: null
+        rationale: Rule-bearing section or live behavior is mapped to an explicit source-bound rule.
       - itemId: item.fec95f508418
         locator:
           kind: line-excerpt
@@ -1507,9 +1516,10 @@ sources:
           lineHint: 297
         normalizedExcerpt: 6. CI backstops are green before enforcement promotion and catch an intentionally introduced out-of-scope mutation plus missing enrollment that bypass the hook.
         valueDigest: d6dcca2f24ef5e93b7dd1455d49a7d191961133cfe59761495a34aa29ef6a0b5
-        ruleIds: []
-        exclusionDisposition: non-normative-explanation
-        rationale: "Inventory item item.fec95f508418 at md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:d6dcca2f24ef:1 is explanatory context and does not state an independent normative authority rule."
+        ruleIds:
+          - rule.fk-charter.fec95f508418
+        exclusionDisposition: null
+        rationale: Rule-bearing section or live behavior is mapped to an explicit source-bound rule.
       - itemId: item.4910b2a0a7a3
         locator:
           kind: line-excerpt
@@ -1517,9 +1527,10 @@ sources:
           lineHint: 299
         normalizedExcerpt: 7. No first-release tool can mint approval, independent-verification, merge, or closure authority; human-gate satisfaction is evidence-derived; and no container credential permits external mutation.
         valueDigest: 067440bd9b4b15f23bac951d2b6f6d2267f9f737aa1daf9cdf9b3c6051e27bf7
-        ruleIds: []
-        exclusionDisposition: non-normative-explanation
-        rationale: "Inventory item item.4910b2a0a7a3 at md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:067440bd9b4b:1 is explanatory context and does not state an independent normative authority rule."
+        ruleIds:
+          - rule.fk-charter.4910b2a0a7a3
+        exclusionDisposition: null
+        rationale: Rule-bearing section or live behavior is mapped to an explicit source-bound rule.
       - itemId: item.4d6ea442cfff
         locator:
           kind: line-excerpt
@@ -1527,9 +1538,10 @@ sources:
           lineHint: 302
         normalizedExcerpt: 8. A committed evidence manifest binds source SHA, image/tool/schema/policy digests, host/harness versions, corpus inventory/count, reviewer-session distinction, commands, results, and named mutation controls.
         valueDigest: 55b9809c44cb222beeb8313c6109fff79f57262fa97222616075426718460f48
-        ruleIds: []
-        exclusionDisposition: non-normative-explanation
-        rationale: "Inventory item item.4d6ea442cfff at md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:55b9809c44cb:1 is explanatory context and does not state an independent normative authority rule."
+        ruleIds:
+          - rule.fk-charter.4d6ea442cfff
+        exclusionDisposition: null
+        rationale: Rule-bearing section or live behavior is mapped to an explicit source-bound rule.
       - itemId: item.49288a83830e
         locator:
           kind: line-excerpt
@@ -1537,9 +1549,10 @@ sources:
           lineHint: 305
         normalizedExcerpt: 9. The final report separates mechanically enforced, detected-only, CI-enforced, human-judgment, unsupported-host, and deferred-receipt controls without claiming Codex or native-Linux-host enforcement absent process-boundary evidence.
         valueDigest: 23b19f8351758ce25c26c5556881b061886d3efa6a388e7b8dfa6d6caa4a5add
-        ruleIds: []
-        exclusionDisposition: non-normative-explanation
-        rationale: "Inventory item item.49288a83830e at md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:23b19f835175:1 is explanatory context and does not state an independent normative authority rule."
+        ruleIds:
+          - rule.fk-charter.49288a83830e
+        exclusionDisposition: null
+        rationale: Rule-bearing section or live behavior is mapped to an explicit source-bound rule.
       - itemId: item.8cf027fc811e
         locator:
           kind: line-excerpt
@@ -1601,9 +1614,10 @@ sources:
           lineHint: 336
         normalizedExcerpt: "- a fresh plan review changes a locked decision, parcel graph, or exit criterion without scoped re-ratification;"
         valueDigest: e64ace8cbdc0dad31cb91fc3e626a882eaacea628970bfdbadc895a0049bf3ab
-        ruleIds: []
-        exclusionDisposition: non-normative-explanation
-        rationale: "Inventory item item.41b4b3dccd81 at md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:e64ace8cbdc0:1 is explanatory context and does not state an independent normative authority rule."
+        ruleIds:
+          - rule.fk-charter.41b4b3dccd81
+        exclusionDisposition: null
+        rationale: Rule-bearing section or live behavior is mapped to an explicit source-bound rule.
       - itemId: item.0afd841f51f8
         locator:
           kind: line-excerpt
@@ -1622,9 +1636,10 @@ sources:
           lineHint: 340
         normalizedExcerpt: "- implementation requires changing ratified Foreman stage contracts outside a named contract amendment;"
         valueDigest: 220c9bbe97ed95f36ef6fcbff98b14f79599c332aa99bec66129e1ff3343d93a
-        ruleIds: []
-        exclusionDisposition: non-normative-explanation
-        rationale: "Inventory item item.c80d986d4cfe at md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:220c9bbe97ed:1 is explanatory context and does not state an independent normative authority rule."
+        ruleIds:
+          - rule.fk-charter.c80d986d4cfe
+        exclusionDisposition: null
+        rationale: Rule-bearing section or live behavior is mapped to an explicit source-bound rule.
       - itemId: item.ab729d219bbb
         locator:
           kind: line-excerpt
@@ -1632,9 +1647,10 @@ sources:
           lineHint: 342
         normalizedExcerpt: "- a parcel needs a file outside its exact Allowed Files;"
         valueDigest: 9b50b9c3a95d718f4a876c1e5cfb2f0cc5402715325bd30a16f76415a1603c91
-        ruleIds: []
-        exclusionDisposition: non-normative-explanation
-        rationale: "Inventory item item.ab729d219bbb at md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:9b50b9c3a95d:1 is explanatory context and does not state an independent normative authority rule."
+        ruleIds:
+          - rule.fk-charter.ab729d219bbb
+        exclusionDisposition: null
+        rationale: Rule-bearing section or live behavior is mapped to an explicit source-bound rule.
       - itemId: item.1c42ce2f7e94
         locator:
           kind: line-excerpt
@@ -1642,9 +1658,10 @@ sources:
           lineHint: 343
         normalizedExcerpt: "- exact path authority cannot be compiled without interpreting `surfaces:` as permission;"
         valueDigest: 0b10cb77206cadc329b3d0cdec97e92350bf5a60377d276e4f0991d0c5e94e49
-        ruleIds: []
-        exclusionDisposition: non-normative-explanation
-        rationale: "Inventory item item.1c42ce2f7e94 at md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:0b10cb77206c:1 is explanatory context and does not state an independent normative authority rule."
+        ruleIds:
+          - rule.fk-charter.1c42ce2f7e94
+        exclusionDisposition: null
+        rationale: Rule-bearing section or live behavior is mapped to an explicit source-bound rule.
       - itemId: item.28ec67f3ddb4
         locator:
           kind: line-excerpt
@@ -1652,9 +1669,10 @@ sources:
           lineHint: 344
         normalizedExcerpt: "- a hook or server design requires claiming complete mediation of arbitrary shell or unsupported host behavior;"
         valueDigest: bee6d846d01c3ea8ffbf203d5eac8ec832448557b54e4110ebe212456c2e343d
-        ruleIds: []
-        exclusionDisposition: non-normative-explanation
-        rationale: "Inventory item item.28ec67f3ddb4 at md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:bee6d846d01c:1 is explanatory context and does not state an independent normative authority rule."
+        ruleIds:
+          - rule.fk-charter.28ec67f3ddb4
+        exclusionDisposition: null
+        rationale: Rule-bearing section or live behavior is mapped to an explicit source-bound rule.
       - itemId: item.5138fd735a8a
         locator:
           kind: line-excerpt
@@ -1662,9 +1680,10 @@ sources:
           lineHint: 346
         normalizedExcerpt: "- a proposed tool can manufacture human approval, independent-verifier evidence, merge authorization, or closure authority;"
         valueDigest: 59e4f36854d7e4edd25f9dbadcd70c8195a81150f26a450bbd2ef4544af73b03
-        ruleIds: []
-        exclusionDisposition: non-normative-explanation
-        rationale: "Inventory item item.5138fd735a8a at md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:59e4f36854d7:1 is explanatory context and does not state an independent normative authority rule."
+        ruleIds:
+          - rule.fk-charter.5138fd735a8a
+        exclusionDisposition: null
+        rationale: Rule-bearing section or live behavior is mapped to an explicit source-bound rule.
       - itemId: item.6aae5fe2d602
         locator:
           kind: line-excerpt
@@ -1672,9 +1691,10 @@ sources:
           lineHint: 348
         normalizedExcerpt: "- a container requires Jira, SCM, cloud, signing, Docker-socket, or broad-host access;"
         valueDigest: ddfa5e9f869493c2b3906d92f38ab0cb5072720fcf417160ffd937977766aa09
-        ruleIds: []
-        exclusionDisposition: non-normative-explanation
-        rationale: "Inventory item item.6aae5fe2d602 at md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:ddfa5e9f8694:1 is explanatory context and does not state an independent normative authority rule."
+        ruleIds:
+          - rule.fk-charter.6aae5fe2d602
+        exclusionDisposition: null
+        rationale: Rule-bearing section or live behavior is mapped to an explicit source-bound rule.
       - itemId: item.fc4a386b94fe
         locator:
           kind: line-excerpt
@@ -1682,9 +1702,10 @@ sources:
           lineHint: 349
         normalizedExcerpt: "- a control request relies on self-asserted identity or a read-only client can discover or call control tools;"
         valueDigest: 4a5529e47a7a0ae1cfc5eca3f9f4d93c9e1d88586e5470cd6fe097314a58970a
-        ruleIds: []
-        exclusionDisposition: non-normative-explanation
-        rationale: "Inventory item item.fc4a386b94fe at md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:4a5529e47a7a:1 is explanatory context and does not state an independent normative authority rule."
+        ruleIds:
+          - rule.fk-charter.fc4a386b94fe
+        exclusionDisposition: null
+        rationale: Rule-bearing section or live behavior is mapped to an explicit source-bound rule.
       - itemId: item.42e05d00c67a
         locator:
           kind: line-excerpt
@@ -1692,9 +1713,10 @@ sources:
           lineHint: 351
         normalizedExcerpt: "- a read-only request can select an arbitrary host path or access the state volume;"
         valueDigest: 4e91722aadd28fb0924942fa6ff9bcd4951169dd5700cf28c48427e4359d8825
-        ruleIds: []
-        exclusionDisposition: non-normative-explanation
-        rationale: "Inventory item item.42e05d00c67a at md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:4e91722aadd2:1 is explanatory context and does not state an independent normative authority rule."
+        ruleIds:
+          - rule.fk-charter.42e05d00c67a
+        exclusionDisposition: null
+        rationale: Rule-bearing section or live behavior is mapped to an explicit source-bound rule.
       - itemId: item.07490af17320
         locator:
           kind: line-excerpt
@@ -1702,9 +1724,10 @@ sources:
           lineHint: 352
         normalizedExcerpt: "- state migration would manufacture or infer a historical approval/authorization;"
         valueDigest: 56b5836773886c8eaf6fb588cc5eece5d46db7d4c98fd4d766bfbd33503c4147
-        ruleIds: []
-        exclusionDisposition: non-normative-explanation
-        rationale: "Inventory item item.07490af17320 at md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:56b583677388:1 is explanatory context and does not state an independent normative authority rule."
+        ruleIds:
+          - rule.fk-charter.07490af17320
+        exclusionDisposition: null
+        rationale: Rule-bearing section or live behavior is mapped to an explicit source-bound rule.
       - itemId: item.b5bad0475a3e
         locator:
           kind: line-excerpt
@@ -1712,9 +1735,10 @@ sources:
           lineHint: 353
         normalizedExcerpt: "- a security boundary cannot be closed inside its parcel;"
         valueDigest: 83a2c78119775e6dac151bcc3607a36bb18c4f0cd7271af2683b2c2bc870cbaa
-        ruleIds: []
-        exclusionDisposition: non-normative-explanation
-        rationale: "Inventory item item.b5bad0475a3e at md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:83a2c7811977:1 is explanatory context and does not state an independent normative authority rule."
+        ruleIds:
+          - rule.fk-charter.b5bad0475a3e
+        exclusionDisposition: null
+        rationale: Rule-bearing section or live behavior is mapped to an explicit source-bound rule.
       - itemId: item.e86843a842bc
         locator:
           kind: line-excerpt
@@ -1722,9 +1746,10 @@ sources:
           lineHint: 354
         normalizedExcerpt: "- the same tripwire or rework cap fires as defined by the parcel contract;"
         valueDigest: 8c81655503620f0dc467d45df9172c38dd7c037cd40b20d3f919e9c37864133a
-        ruleIds: []
-        exclusionDisposition: non-normative-explanation
-        rationale: "Inventory item item.e86843a842bc at md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:8c8165550362:1 is explanatory context and does not state an independent normative authority rule."
+        ruleIds:
+          - rule.fk-charter.e86843a842bc
+        exclusionDisposition: null
+        rationale: Rule-bearing section or live behavior is mapped to an explicit source-bound rule.
       - itemId: item.98b291e68000
         locator:
           kind: line-excerpt
@@ -1732,9 +1757,10 @@ sources:
           lineHint: 355
         normalizedExcerpt: "- a reviewer or builder modifies the ambient dirty checkout or another goal's worktree;"
         valueDigest: 49d2ad080e0bc780411cfe832e1e9a05fcd92184743b392fcbd364fada388955
-        ruleIds: []
-        exclusionDisposition: non-normative-explanation
-        rationale: "Inventory item item.98b291e68000 at md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:49d2ad080e0b:1 is explanatory context and does not state an independent normative authority rule."
+        ruleIds:
+          - rule.fk-charter.98b291e68000
+        exclusionDisposition: null
+        rationale: Rule-bearing section or live behavior is mapped to an explicit source-bound rule.
       - itemId: item.2cbbc7ae0192
         locator:
           kind: line-excerpt
@@ -1753,9 +1779,10 @@ sources:
           lineHint: 357
         normalizedExcerpt: "- the queue is empty and the exit criterion is not fully evidenced."
         valueDigest: 0447666a5a2373f22ff85ef23055539409da77eca56494e72327c1e41c2f8b89
-        ruleIds: []
-        exclusionDisposition: non-normative-explanation
-        rationale: "Inventory item item.76049b5d2003 at md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:0447666a5a23:1 is explanatory context and does not state an independent normative authority rule."
+        ruleIds:
+          - rule.fk-charter.76049b5d2003
+        exclusionDisposition: null
+        rationale: Rule-bearing section or live behavior is mapped to an explicit source-bound rule.
       - itemId: item.b92f8936e7a1
         locator:
           kind: line-excerpt
@@ -3240,156 +3267,156 @@ sources:
         ruleIds: []
         exclusionDisposition: heading-only
         rationale: "Heading # Spec-Driven Development Convention > ## 4. Required Spec Schema is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.1370e3df653a
+      - itemId: item.d4cf28331274
         locator:
           kind: heading
-          anchor: "# --- schema v0.2 fields (frozen by W0-P2) --- > ### 4.6 Schema v0.2 Fields (added W0-P2)"
+          anchor: "# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.6 Schema v0.2 Fields (added W0-P2)"
           lineHint: 94
         normalizedExcerpt: "### 4.6 Schema v0.2 Fields (added W0-P2)"
         valueDigest: f0862b930e24083ebacc74105f72b2d9e8f5a2b35eca584fed3609fd10751068
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # --- schema v0.2 fields (frozen by W0-P2) --- > ### 4.6 Schema v0.2 Fields (added W0-P2) is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.4f43f8e3ca5c
+        rationale: "Heading # Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.6 Schema v0.2 Fields (added W0-P2) is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.5792428ce682
         locator:
           kind: heading
-          anchor: "# --- schema v0.2 fields (frozen by W0-P2) --- > ### 4.7 `surfaces:` Canonical Vocabulary (added W0-P2)"
+          anchor: "# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.7 `surfaces:` Canonical Vocabulary (added W0-P2)"
           lineHint: 108
         normalizedExcerpt: "### 4.7 `surfaces:` Canonical Vocabulary (added W0-P2)"
         valueDigest: 04a899c107753d18f733bc2256ba551d6a4e0a2562019ead677da6c77453d59a
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # --- schema v0.2 fields (frozen by W0-P2) --- > ### 4.7 `surfaces:` Canonical Vocabulary (added W0-P2) is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.714d8874386a
+        rationale: "Heading # Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.7 `surfaces:` Canonical Vocabulary (added W0-P2) is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.116ad6f77da7
         locator:
           kind: heading
-          anchor: "# --- schema v0.2 fields (frozen by W0-P2) --- > ### 4.8 `Allowed Files` Mutation Authority"
+          anchor: "# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.8 `Allowed Files` Mutation Authority"
           lineHint: 122
         normalizedExcerpt: "### 4.8 `Allowed Files` Mutation Authority"
         valueDigest: d1295bc30cfa7463c5a5d30dc74f59d2a9105c8c64b462a549742af0daefd030
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # --- schema v0.2 fields (frozen by W0-P2) --- > ### 4.8 `Allowed Files` Mutation Authority is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.ab003b5caa63
+        rationale: "Heading # Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.8 `Allowed Files` Mutation Authority is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.5e5746c6f3e6
         locator:
           kind: heading
-          anchor: "# --- schema v0.2 fields (frozen by W0-P2) --- > ### 4.1 Intent"
+          anchor: "# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.1 Intent"
           lineHint: 139
         normalizedExcerpt: "### 4.1 Intent"
         valueDigest: 2d9990395b662b16f48e2f9fbc5311d90cfaeedb60d3caf65596c5b1b0ed2ab4
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # --- schema v0.2 fields (frozen by W0-P2) --- > ### 4.1 Intent is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.cd2314875a19
+        rationale: "Heading # Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.1 Intent is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.3a687ab4cdfa
         locator:
           kind: heading
-          anchor: "# --- schema v0.2 fields (frozen by W0-P2) --- > ### 4.2 Constraints"
+          anchor: "# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.2 Constraints"
           lineHint: 142
         normalizedExcerpt: "### 4.2 Constraints"
         valueDigest: 8f632b4cee24ebf73b5f426951d0686a097b5ca677e9c450e74f88090a97f334
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # --- schema v0.2 fields (frozen by W0-P2) --- > ### 4.2 Constraints is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.e0797c428f8c
+        rationale: "Heading # Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.2 Constraints is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.1bbbac0fb934
         locator:
           kind: heading
-          anchor: "# --- schema v0.2 fields (frozen by W0-P2) --- > ### 4.3 Acceptance Criteria"
+          anchor: "# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.3 Acceptance Criteria"
           lineHint: 145
         normalizedExcerpt: "### 4.3 Acceptance Criteria"
         valueDigest: 584226605876e0d8eb84e7372f27276670b1f7e39fa0cf620386345ef4e6d3ab
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # --- schema v0.2 fields (frozen by W0-P2) --- > ### 4.3 Acceptance Criteria is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.7a36577f18d7
+        rationale: "Heading # Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.3 Acceptance Criteria is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.53b326918893
         locator:
           kind: heading
-          anchor: "# --- schema v0.2 fields (frozen by W0-P2) --- > ### 4.4 Out of Scope"
+          anchor: "# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.4 Out of Scope"
           lineHint: 148
         normalizedExcerpt: "### 4.4 Out of Scope"
         valueDigest: faff1ae85d5064dcbe750556de9d683a3375cfae0c85f25953ab4c59e9deba35
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # --- schema v0.2 fields (frozen by W0-P2) --- > ### 4.4 Out of Scope is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.e97d2ab2b480
+        rationale: "Heading # Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.4 Out of Scope is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.9d5cdca98a27
         locator:
           kind: heading
-          anchor: "# --- schema v0.2 fields (frozen by W0-P2) --- > ### 4.5 Context & References"
+          anchor: "# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.5 Context & References"
           lineHint: 151
         normalizedExcerpt: "### 4.5 Context & References"
         valueDigest: 79397a2e7249d57c9712e38ba3ab7ef319144f78f56f29754cd72bc8c50bf599
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # --- schema v0.2 fields (frozen by W0-P2) --- > ### 4.5 Context & References is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.8273b2b59159
+        rationale: "Heading # Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.5 Context & References is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.b59cdb68f39c
         locator:
           kind: heading
-          anchor: "# --- schema v0.2 fields (frozen by W0-P2) --- > ## 5. The Spec ↔ Jira Contract"
+          anchor: "# Spec-Driven Development Convention > ## 5. The Spec ↔ Jira Contract"
           lineHint: 160
         normalizedExcerpt: "## 5. The Spec ↔ Jira Contract"
         valueDigest: b35a8a6ab6878547bd5a29043f52815ba0c813b92618d587615a2154afb78bfb
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # --- schema v0.2 fields (frozen by W0-P2) --- > ## 5. The Spec ↔ Jira Contract is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.570c564f4fff
+        rationale: "Heading # Spec-Driven Development Convention > ## 5. The Spec ↔ Jira Contract is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.dc386e74518c
         locator:
           kind: heading
-          anchor: "# --- schema v0.2 fields (frozen by W0-P2) --- > ## 6. Context Budget Discipline"
+          anchor: "# Spec-Driven Development Convention > ## 6. Context Budget Discipline"
           lineHint: 178
         normalizedExcerpt: "## 6. Context Budget Discipline"
         valueDigest: 64fe7fb9f05e09e92c7c7733989b38aedd0140d97285a473dcb7b0a47145f371
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # --- schema v0.2 fields (frozen by W0-P2) --- > ## 6. Context Budget Discipline is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.1112d3cdf75f
+        rationale: "Heading # Spec-Driven Development Convention > ## 6. Context Budget Discipline is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.5ef875ece51b
         locator:
           kind: heading
-          anchor: "# --- schema v0.2 fields (frozen by W0-P2) --- > ## 7. Security & Content Rules"
+          anchor: "# Spec-Driven Development Convention > ## 7. Security & Content Rules"
           lineHint: 188
         normalizedExcerpt: "## 7. Security & Content Rules"
         valueDigest: 78797b475e8939087ad2a4dfa3f35f6ba70ac5a5b3b843e48dcf6a6d940751c8
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # --- schema v0.2 fields (frozen by W0-P2) --- > ## 7. Security & Content Rules is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.384529d08e35
+        rationale: "Heading # Spec-Driven Development Convention > ## 7. Security & Content Rules is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.1f01b16f4acb
         locator:
           kind: heading
-          anchor: "# --- schema v0.2 fields (frozen by W0-P2) --- > ## 8. Dispatch Model (How Agents Consume Specs)"
+          anchor: "# Spec-Driven Development Convention > ## 8. Dispatch Model (How Agents Consume Specs)"
           lineHint: 202
         normalizedExcerpt: "## 8. Dispatch Model (How Agents Consume Specs)"
         valueDigest: 05b5ab8b80391a92cbb18ace6b8cdae5e0a46f8beb065d4adee30ceea3e47e81
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # --- schema v0.2 fields (frozen by W0-P2) --- > ## 8. Dispatch Model (How Agents Consume Specs) is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.1dd1c4644aac
+        rationale: "Heading # Spec-Driven Development Convention > ## 8. Dispatch Model (How Agents Consume Specs) is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.4930a75b4bd7
         locator:
           kind: heading
-          anchor: "# --- schema v0.2 fields (frozen by W0-P2) --- > ## 9. Known Trade-offs (Honest Ledger)"
+          anchor: "# Spec-Driven Development Convention > ## 9. Known Trade-offs (Honest Ledger)"
           lineHint: 213
         normalizedExcerpt: "## 9. Known Trade-offs (Honest Ledger)"
         valueDigest: 7d284543fd1f7c72b5b68e30fd387a6cd9545d2808e89470f1fe12ebe6048851
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # --- schema v0.2 fields (frozen by W0-P2) --- > ## 9. Known Trade-offs (Honest Ledger) is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.5c5e72673a3a
+        rationale: "Heading # Spec-Driven Development Convention > ## 9. Known Trade-offs (Honest Ledger) is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.0b98a13f5830
         locator:
           kind: heading
-          anchor: "# --- schema v0.2 fields (frozen by W0-P2) --- > ## 10. Adoption Path"
+          anchor: "# Spec-Driven Development Convention > ## 10. Adoption Path"
           lineHint: 225
         normalizedExcerpt: "## 10. Adoption Path"
         valueDigest: a78207ea95db2a37e716d3fa1f8794fca654390c63d4e20119df32eebaf620ff
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # --- schema v0.2 fields (frozen by W0-P2) --- > ## 10. Adoption Path is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.dac600b0faaf
+        rationale: "Heading # Spec-Driven Development Convention > ## 10. Adoption Path is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.807a7f8e95dc
         locator:
           kind: heading
-          anchor: "# --- schema v0.2 fields (frozen by W0-P2) --- > ## 11. Coordinator-Ratified Amendment Pattern (added W0-P2)"
+          anchor: "# Spec-Driven Development Convention > ## 11. Coordinator-Ratified Amendment Pattern (added W0-P2)"
           lineHint: 234
         normalizedExcerpt: "## 11. Coordinator-Ratified Amendment Pattern (added W0-P2)"
         valueDigest: 48dfe07d2bd17d477dd223c0ef34c23751d113a0eac8d8743cc724465e4c97ed
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # --- schema v0.2 fields (frozen by W0-P2) --- > ## 11. Coordinator-Ratified Amendment Pattern (added W0-P2) is structural navigation; its complete body items carry the operative rules."
+        rationale: "Heading # Spec-Driven Development Convention > ## 11. Coordinator-Ratified Amendment Pattern (added W0-P2) is structural navigation; its complete body items carry the operative rules."
       - itemId: item.fd5d51dd4808
         locator:
           kind: numbered-item
@@ -4350,766 +4377,456 @@ sources:
         ruleIds: []
         exclusionDisposition: heading-only
         rationale: "Heading # Parcel-Driven Development Skill > ## Phase -2: Initiative Classification is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.e2efebc3842d
+      - itemId: item.9f957216f8f7
         locator:
           kind: heading
-          anchor: "# Initiative Classification > ## Phase -1: Repo and Project Discovery"
+          anchor: "# Parcel-Driven Development Skill > ## Phase -1: Repo and Project Discovery"
           lineHint: 251
         normalizedExcerpt: "## Phase -1: Repo and Project Discovery"
         valueDigest: ca3ad86968137175e7971e8beb681b03d36de91923921ba28f78fd81201866f5
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # Initiative Classification > ## Phase -1: Repo and Project Discovery is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.1d8ce8626546
+        rationale: "Heading # Parcel-Driven Development Skill > ## Phase -1: Repo and Project Discovery is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.c09c27ccdb52
         locator:
           kind: heading
-          anchor: "# Initiative Classification > ## Phase 0: Initiative Strategy"
+          anchor: "# Parcel-Driven Development Skill > ## Phase 0: Initiative Strategy"
           lineHint: 272
         normalizedExcerpt: "## Phase 0: Initiative Strategy"
         valueDigest: e84f08b4cf5ca11d0fd3c69a5cf7fab9a1d734c5f3df969b11c27323637205ff
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # Initiative Classification > ## Phase 0: Initiative Strategy is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.80e50dc1a0f2
+        rationale: "Heading # Parcel-Driven Development Skill > ## Phase 0: Initiative Strategy is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.5b882bda3e03
         locator:
           kind: heading
-          anchor: "# Initiative Classification > ## Phase 1: Contracts PR"
+          anchor: "# Parcel-Driven Development Skill > ## Phase 1: Contracts PR"
           lineHint: 301
         normalizedExcerpt: "## Phase 1: Contracts PR"
         valueDigest: a265ee3a78ebea3afacc6cef7de713a40c8ed9f0bfcbbd9019d8a25366fcf631
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # Initiative Classification > ## Phase 1: Contracts PR is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.14cfd16481c1
+        rationale: "Heading # Parcel-Driven Development Skill > ## Phase 1: Contracts PR is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.56a8e54a74ce
         locator:
           kind: heading
-          anchor: "# Initiative Classification > ## Phase 2: Thin Vertical Spike"
+          anchor: "# Parcel-Driven Development Skill > ## Phase 2: Thin Vertical Spike"
           lineHint: 325
         normalizedExcerpt: "## Phase 2: Thin Vertical Spike"
         valueDigest: fd8bf7ff686d1ee86c1854373f57f75458854560a4ba4f16ec8b4f6705104743
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # Initiative Classification > ## Phase 2: Thin Vertical Spike is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.875616a3de32
+        rationale: "Heading # Parcel-Driven Development Skill > ## Phase 2: Thin Vertical Spike is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.5d67cdde2376
         locator:
           kind: heading
-          anchor: "# Initiative Classification > ## Phase 3: Parallel Parcel Dispatch"
+          anchor: "# Parcel-Driven Development Skill > ## Phase 3: Parallel Parcel Dispatch"
           lineHint: 343
         normalizedExcerpt: "## Phase 3: Parallel Parcel Dispatch"
         valueDigest: 80b27d8bdaab6931ae5857c926c0517d793bae06709757881bb8c72063079a6b
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # Initiative Classification > ## Phase 3: Parallel Parcel Dispatch is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.868a9ab539f5
+        rationale: "Heading # Parcel-Driven Development Skill > ## Phase 3: Parallel Parcel Dispatch is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.7a9947098af4
         locator:
           kind: heading
-          anchor: "# Initiative Classification > ## Phase 4: Assembly and Integration"
+          anchor: "# Parcel-Driven Development Skill > ## Phase 4: Assembly and Integration"
           lineHint: 372
         normalizedExcerpt: "## Phase 4: Assembly and Integration"
         valueDigest: d33563c694c19d3bcc9a09d2163153bc3b651465fbdb3929e6609e1b93e32413
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # Initiative Classification > ## Phase 4: Assembly and Integration is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.cc33dd0d18dd
+        rationale: "Heading # Parcel-Driven Development Skill > ## Phase 4: Assembly and Integration is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.12653dfe249c
         locator:
           kind: heading
-          anchor: "# Initiative Classification > ## Phase 5: Hardening and Release Readiness"
+          anchor: "# Parcel-Driven Development Skill > ## Phase 5: Hardening and Release Readiness"
           lineHint: 393
         normalizedExcerpt: "## Phase 5: Hardening and Release Readiness"
         valueDigest: 304785e783a514c1addd05ba5419575f3e5445025a887e46f4f3e5df0538b22c
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # Initiative Classification > ## Phase 5: Hardening and Release Readiness is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.c95c6008efc3
+        rationale: "Heading # Parcel-Driven Development Skill > ## Phase 5: Hardening and Release Readiness is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.3c25378db1ae
         locator:
           kind: heading
-          anchor: "# Initiative Classification > ## Multi-Project Initiative Artifacts"
+          anchor: "# Parcel-Driven Development Skill > ## Multi-Project Initiative Artifacts"
           lineHint: 419
         normalizedExcerpt: "## Multi-Project Initiative Artifacts"
         valueDigest: 7c355b7e9dff68b5b37168d6fdebb254f87e25580b908627cb8e20947e085ff3
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # Initiative Classification > ## Multi-Project Initiative Artifacts is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.f1a9fa6181f1
+        rationale: "Heading # Parcel-Driven Development Skill > ## Multi-Project Initiative Artifacts is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.6b1f916d08ae
         locator:
           kind: heading
-          anchor: "# Initiative Classification > ## Persistence Layer"
+          anchor: "# Parcel-Driven Development Skill > ## Persistence Layer"
           lineHint: 441
         normalizedExcerpt: "## Persistence Layer"
         valueDigest: bd78e4eef7b5a1e056209de2997641d811439b8cd50a5d7805129e53f4b951f3
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # Initiative Classification > ## Persistence Layer is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.5a18443a9322
+        rationale: "Heading # Parcel-Driven Development Skill > ## Persistence Layer is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.2caf5fd79cdd
         locator:
           kind: heading
-          anchor: "# Initiative Classification > ## Integration Surface Template"
+          anchor: "# Parcel-Driven Development Skill > ## Integration Surface Template"
           lineHint: 504
         normalizedExcerpt: "## Integration Surface Template"
         valueDigest: 081217e6957aabafcc50de307692a705e968f2110ddbb0bbec12a2125beadf15
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # Initiative Classification > ## Integration Surface Template is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.b6aaab84f8fd
+        rationale: "Heading # Parcel-Driven Development Skill > ## Integration Surface Template is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.998952440a9b
         locator:
           kind: heading
-          anchor: "# Initiative Classification > ## Integration Scenario Matrix"
+          anchor: "# Parcel-Driven Development Skill > ## Integration Scenario Matrix"
           lineHint: 510
         normalizedExcerpt: "## Integration Scenario Matrix"
         valueDigest: 24b0d56e6ac965a340eb5230c772071174b6baf0648f62a5ca120a6c1a42e0e9
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # Initiative Classification > ## Integration Scenario Matrix is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.5ac07850e39b
+        rationale: "Heading # Parcel-Driven Development Skill > ## Integration Scenario Matrix is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.5030cca637b7
         locator:
           kind: heading
-          anchor: "# Initiative Classification > ## Environment Readiness Matrix"
+          anchor: "# Parcel-Driven Development Skill > ## Environment Readiness Matrix"
           lineHint: 516
         normalizedExcerpt: "## Environment Readiness Matrix"
         valueDigest: 015d2739b2bf5135bd2648811fabf87d74a6817aaa5a109224c14e26da17b7c8
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # Initiative Classification > ## Environment Readiness Matrix is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.0637f2cf2ae7
+        rationale: "Heading # Parcel-Driven Development Skill > ## Environment Readiness Matrix is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.3e7fbcce4deb
         locator:
           kind: heading
-          anchor: "# Initiative Classification > ## Security Gate Orchestration"
+          anchor: "# Parcel-Driven Development Skill > ## Security Gate Orchestration"
           lineHint: 522
         normalizedExcerpt: "## Security Gate Orchestration"
         valueDigest: 3836e369da53f41fca6fc2ba7c5f2e86211bf79b413e4c43e960dc0e64215a61
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # Initiative Classification > ## Security Gate Orchestration is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.7a3178002760
+        rationale: "Heading # Parcel-Driven Development Skill > ## Security Gate Orchestration is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.6ee8db27b69e
         locator:
           kind: heading
-          anchor: "# Initiative Classification > ## Release Gates"
+          anchor: "# Parcel-Driven Development Skill > ## Release Gates"
           lineHint: 530
         normalizedExcerpt: "## Release Gates"
         valueDigest: ce41887e685b0a9ba13b5b68a2abfde6e22220c42886df0ccd667a5e88bc8573
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # Initiative Classification > ## Release Gates is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.b133642e8c8e
+        rationale: "Heading # Parcel-Driven Development Skill > ## Release Gates is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.05753dbb9098
         locator:
           kind: heading
-          anchor: "# Initiative Classification > ## Parcel Shape Guidance"
+          anchor: "# Parcel-Driven Development Skill > ## Parcel Shape Guidance"
           lineHint: 536
         normalizedExcerpt: "## Parcel Shape Guidance"
         valueDigest: 8aed73ee3ed8ed4664047b0dc93ecc340f05d41cfb91322add6c4ba97f738a49
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # Initiative Classification > ## Parcel Shape Guidance is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.04e8ba7f4eba
+        rationale: "Heading # Parcel-Driven Development Skill > ## Parcel Shape Guidance is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.c598796e96b3
         locator:
           kind: heading
-          anchor: "# Initiative Classification > ## Parcel Shape Guidance > ### Good parcel types"
+          anchor: "# Parcel-Driven Development Skill > ## Parcel Shape Guidance > ### Good parcel types"
           lineHint: 538
         normalizedExcerpt: "### Good parcel types"
         valueDigest: 08ed961fab83a6514f27940e124ec2d4bce341ba9170d3df55bc284add1d6032
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # Initiative Classification > ## Parcel Shape Guidance > ### Good parcel types is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.d2230e6339d6
+        rationale: "Heading # Parcel-Driven Development Skill > ## Parcel Shape Guidance > ### Good parcel types is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.22e7ac1cbd14
         locator:
           kind: heading
-          anchor: "# Initiative Classification > ## Parcel Shape Guidance > ### Bad parcel types"
+          anchor: "# Parcel-Driven Development Skill > ## Parcel Shape Guidance > ### Bad parcel types"
           lineHint: 559
         normalizedExcerpt: "### Bad parcel types"
         valueDigest: 2bd30de5b7a447a52670fe9e7ab960df86a7dcf1b59e2c3dfba9d5c35b36c08b
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # Initiative Classification > ## Parcel Shape Guidance > ### Bad parcel types is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.e24d183834fc
+        rationale: "Heading # Parcel-Driven Development Skill > ## Parcel Shape Guidance > ### Bad parcel types is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.916f9ced3a10
         locator:
           kind: heading
-          anchor: "# Initiative Classification > ## Parcel Shape Guidance > ### Sizing"
+          anchor: "# Parcel-Driven Development Skill > ## Parcel Shape Guidance > ### Sizing"
           lineHint: 572
         normalizedExcerpt: "### Sizing"
         valueDigest: bb65a5e9e531bb141be1772dfb8ba01ee6dd92534dad81b9f15c7d673252e68e
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # Initiative Classification > ## Parcel Shape Guidance > ### Sizing is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.1542f57dbc77
+        rationale: "Heading # Parcel-Driven Development Skill > ## Parcel Shape Guidance > ### Sizing is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.1d91531bb33f
         locator:
           kind: heading
-          anchor: "# Initiative Classification > ## Parcel Spec Template"
+          anchor: "# Parcel-Driven Development Skill > ## Parcel Spec Template"
           lineHint: 581
         normalizedExcerpt: "## Parcel Spec Template"
         valueDigest: 1f2bd4b1e0cd8b4f939fd1ba450669e83765fb5a945a9518fcc4d8f758f526e8
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # Initiative Classification > ## Parcel Spec Template is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.13ea6df7826d
+        rationale: "Heading # Parcel-Driven Development Skill > ## Parcel Spec Template is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.4f616bce7a5a
         locator:
           kind: heading
-          anchor: "# Parcel: <parcel-id> > ## Goal"
-          lineHint: 588
-        normalizedExcerpt: "## Goal"
-        valueDigest: 3eed03b9f55ea7abe5a257dd9cc6443fc956fe43942fea21f8471f2b8ae7ff6a
-        ruleIds: []
-        exclusionDisposition: heading-only
-        rationale: "Heading # Parcel: <parcel-id> > ## Goal is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.bda4610e3ee3
-        locator:
-          kind: heading
-          anchor: "# Parcel: <parcel-id> > ## Initiative"
-          lineHint: 591
-        normalizedExcerpt: "## Initiative"
-        valueDigest: f8ddf59b596d7d4013120eeb4d7336ddaed2d72ca0a3736ce5e3896c41ea5ecc
-        ruleIds: []
-        exclusionDisposition: heading-only
-        rationale: "Heading # Parcel: <parcel-id> > ## Initiative is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.450d374972ed
-        locator:
-          kind: heading
-          anchor: "# Parcel: <parcel-id> > ## Project Track"
-          lineHint: 594
-        normalizedExcerpt: "## Project Track"
-        valueDigest: 580d5be99021735ab033321f83eee796330115e1841ee4f638ad015b11aeaa16
-        ruleIds: []
-        exclusionDisposition: heading-only
-        rationale: "Heading # Parcel: <parcel-id> > ## Project Track is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.390569868948
-        locator:
-          kind: heading
-          anchor: "# Parcel: <parcel-id> > ## Wave"
-          lineHint: 597
-        normalizedExcerpt: "## Wave"
-        valueDigest: 08f6dbb34f0006248341aacd3b33f2664a8c88afbfaa9a37574c10124d8a5e0a
-        ruleIds: []
-        exclusionDisposition: heading-only
-        rationale: "Heading # Parcel: <parcel-id> > ## Wave is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.60e03ffd5816
-        locator:
-          kind: heading
-          anchor: "# Parcel: <parcel-id> > ## Branch"
-          lineHint: 600
-        normalizedExcerpt: "## Branch"
-        valueDigest: 812c8ce256e92058e7d5deff4eaf41eda88dbcf02d3f425ee1c715db6741270a
-        ruleIds: []
-        exclusionDisposition: heading-only
-        rationale: "Heading # Parcel: <parcel-id> > ## Branch is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.3e23fdb52b5f
-        locator:
-          kind: heading
-          anchor: "# Parcel: <parcel-id> > ## Worktree"
-          lineHint: 603
-        normalizedExcerpt: "## Worktree"
-        valueDigest: b9ad6677f2f3144e49891dd122bb6b38dd10be69d43b455b8ddf14509c9a607b
-        ruleIds: []
-        exclusionDisposition: heading-only
-        rationale: "Heading # Parcel: <parcel-id> > ## Worktree is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.6b86faab8eed
-        locator:
-          kind: heading
-          anchor: "# Parcel: <parcel-id> > ## Dependencies"
-          lineHint: 606
-        normalizedExcerpt: "## Dependencies"
-        valueDigest: d461ba473854420e8c58aee1cda74996f20a809a2fcfdcd6c3a1673d3f1054ad
-        ruleIds: []
-        exclusionDisposition: heading-only
-        rationale: "Heading # Parcel: <parcel-id> > ## Dependencies is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.bc7cbddbc822
-        locator:
-          kind: heading
-          anchor: "# Parcel: <parcel-id> > ## Integration Surfaces"
-          lineHint: 609
-        normalizedExcerpt: "## Integration Surfaces"
-        valueDigest: 3895ad969481e57054395d7aee5bc6c0ffc8d727b028503e21c629e575ce3383
-        ruleIds: []
-        exclusionDisposition: heading-only
-        rationale: "Heading # Parcel: <parcel-id> > ## Integration Surfaces is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.9e26a17e25f0
-        locator:
-          kind: heading
-          anchor: "# Parcel: <parcel-id> > ## Security Gate"
-          lineHint: 612
-        normalizedExcerpt: "## Security Gate"
-        valueDigest: 25fcbece8d00858d501fc39baa51719fda7f5a4b475007cbaae6fa529741daf7
-        ruleIds: []
-        exclusionDisposition: heading-only
-        rationale: "Heading # Parcel: <parcel-id> > ## Security Gate is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.0a88a8608a05
-        locator:
-          kind: heading
-          anchor: "# Parcel: <parcel-id> > ## Allowed Files"
-          lineHint: 615
-        normalizedExcerpt: "## Allowed Files"
-        valueDigest: 4a5fbac7ae8309f016086421bca1d68cd07f6a98c00788d1e90aa1251ca57e74
-        ruleIds: []
-        exclusionDisposition: heading-only
-        rationale: "Heading # Parcel: <parcel-id> > ## Allowed Files is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.3110f7f7c53b
-        locator:
-          kind: heading
-          anchor: "# Parcel: <parcel-id> > ## Forbidden"
-          lineHint: 621
-        normalizedExcerpt: "## Forbidden"
-        valueDigest: 109899cacd215620678734a36eeeca4b00c7ce4ce0f83973d57c39fd4d4600f5
-        ruleIds: []
-        exclusionDisposition: heading-only
-        rationale: "Heading # Parcel: <parcel-id> > ## Forbidden is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.03d1e03da27a
-        locator:
-          kind: heading
-          anchor: "# Parcel: <parcel-id> > ## Out of Scope"
-          lineHint: 625
-        normalizedExcerpt: "## Out of Scope"
-        valueDigest: 4a6db3ead11f8798bb331cda0384effc8fac3a768f7df470ad7d67ae4f115fcf
-        ruleIds: []
-        exclusionDisposition: heading-only
-        rationale: "Heading # Parcel: <parcel-id> > ## Out of Scope is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.15d49b1c7fad
-        locator:
-          kind: heading
-          anchor: "# Parcel: <parcel-id> > ## Existing Patterns To Follow"
-          lineHint: 630
-        normalizedExcerpt: "## Existing Patterns To Follow"
-        valueDigest: 75a97e1ed612c6705b2decb05efdd4124d8c4f43ad78d5cd44f399e850031000
-        ruleIds: []
-        exclusionDisposition: heading-only
-        rationale: "Heading # Parcel: <parcel-id> > ## Existing Patterns To Follow is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.815ccc7f20b0
-        locator:
-          kind: heading
-          anchor: "# Parcel: <parcel-id> > ## Contract"
-          lineHint: 633
-        normalizedExcerpt: "## Contract"
-        valueDigest: a6a679b6345a7affced0e169de1b57e1c2d55a39fbd2ae38c26d6dce98e569bd
-        ruleIds: []
-        exclusionDisposition: heading-only
-        rationale: "Heading # Parcel: <parcel-id> > ## Contract is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.3f9b63bd9e2b
-        locator:
-          kind: heading
-          anchor: "# Parcel: <parcel-id> > ## Required Tests"
-          lineHint: 636
-        normalizedExcerpt: "## Required Tests"
-        valueDigest: 5592035c8ac56edcee7e3fee85522be4c4a69beed90ea0ceb7e0740c0e8cfc5a
-        ruleIds: []
-        exclusionDisposition: heading-only
-        rationale: "Heading # Parcel: <parcel-id> > ## Required Tests is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.d8b4f27f4545
-        locator:
-          kind: heading
-          anchor: "# Parcel: <parcel-id> > ## Acceptance Criteria"
-          lineHint: 641
-        normalizedExcerpt: "## Acceptance Criteria"
-        valueDigest: 3d59422936fade4892269df4116b940eb112ae1951a400c998ca2455ab9ba703
-        ruleIds: []
-        exclusionDisposition: heading-only
-        rationale: "Heading # Parcel: <parcel-id> > ## Acceptance Criteria is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.d0d9c475b4cb
-        locator:
-          kind: heading
-          anchor: "# Parcel: <parcel-id> > ## Verification"
-          lineHint: 645
-        normalizedExcerpt: "## Verification"
-        valueDigest: 80937328f4f7b2400b498c2e504a90057378843e8c8870ab4738c70572fefef7
-        ruleIds: []
-        exclusionDisposition: heading-only
-        rationale: "Heading # Parcel: <parcel-id> > ## Verification is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.a69ca00e790a
-        locator:
-          kind: heading
-          anchor: "# Parcel: <parcel-id> > ## Evidence Required"
-          lineHint: 649
-        normalizedExcerpt: "## Evidence Required"
-        valueDigest: 8e547111966391d7ec4c528e4521e666c30f7c35742f6402b731d70284577f1a
-        ruleIds: []
-        exclusionDisposition: heading-only
-        rationale: "Heading # Parcel: <parcel-id> > ## Evidence Required is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.9bed571c4807
-        locator:
-          kind: heading
-          anchor: "# Parcel: <parcel-id> > ## Collision Risk"
-          lineHint: 656
-        normalizedExcerpt: "## Collision Risk"
-        valueDigest: 1f52985082830d0919ab409bb98fd9469f5a2dfcf9231b747739d88ea08cb700
-        ruleIds: []
-        exclusionDisposition: heading-only
-        rationale: "Heading # Parcel: <parcel-id> > ## Collision Risk is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.4b7d5a1ecac3
-        locator:
-          kind: heading
-          anchor: "# Parcel: <parcel-id> > ## PR Notes"
-          lineHint: 661
-        normalizedExcerpt: "## PR Notes"
-        valueDigest: f331f8b1a8308052e1dfda4b4196f0f21129e9c3052bf58a83bfa843e779e777
-        ruleIds: []
-        exclusionDisposition: heading-only
-        rationale: "Heading # Parcel: <parcel-id> > ## PR Notes is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.c94d7617b18f
-        locator:
-          kind: heading
-          anchor: "# Parcel: <parcel-id> > ## Session Handoff"
-          lineHint: 668
-        normalizedExcerpt: "## Session Handoff"
-        valueDigest: 01a5c9445d8bdfbd75bfa9fe7e3c971e593e33ee186de540847f2f3834857869
-        ruleIds: []
-        exclusionDisposition: heading-only
-        rationale: "Heading # Parcel: <parcel-id> > ## Session Handoff is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.7b3103358f61
-        locator:
-          kind: heading
-          anchor: "# Parcel: <parcel-id> > ## Stop-and-Report Rule"
-          lineHint: 680
-        normalizedExcerpt: "## Stop-and-Report Rule"
-        valueDigest: 63a670ebd8b2e9962cf39b52521f190973665f37376e70610657340ee5de541e
-        ruleIds: []
-        exclusionDisposition: heading-only
-        rationale: "Heading # Parcel: <parcel-id> > ## Stop-and-Report Rule is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.eb8e60aec820
-        locator:
-          kind: heading
-          anchor: "# Parcel: <parcel-id> > ## Parcel Index Document"
+          anchor: "# Parcel-Driven Development Skill > ## Parcel Index Document"
           lineHint: 690
         normalizedExcerpt: "## Parcel Index Document"
         valueDigest: 318e5b8c4124d7e851b0929a0ed8a6351482f532b772bf1ac0383c204f6eb6d2
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # Parcel: <parcel-id> > ## Parcel Index Document is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.851ff6b51cd0
+        rationale: "Heading # Parcel-Driven Development Skill > ## Parcel Index Document is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.69d29949d974
         locator:
           kind: heading
-          anchor: "# Parcel Index: <Feature or Initiative Name> > ## Status"
-          lineHint: 699
-        normalizedExcerpt: "## Status"
-        valueDigest: 8b1501efecf5aaab88f0940d5804c94111b5c227a27bc5fd9a3e96cca6744236
-        ruleIds: []
-        exclusionDisposition: heading-only
-        rationale: "Heading # Parcel Index: <Feature or Initiative Name> > ## Status is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.9bf51bdb4be0
-        locator:
-          kind: heading
-          anchor: "# Parcel Index: <Feature or Initiative Name> > ## Dependency Graph"
-          lineHint: 706
-        normalizedExcerpt: "## Dependency Graph"
-        valueDigest: 61c1ff1b8e3579a68dee1e97c51cc30af4a6624031b6ebdb40f1371dc9100acc
-        ruleIds: []
-        exclusionDisposition: heading-only
-        rationale: "Heading # Parcel Index: <Feature or Initiative Name> > ## Dependency Graph is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.0219ec3fb3c7
-        locator:
-          kind: heading
-          anchor: "# Parcel Index: <Feature or Initiative Name> > ## Collision-Risk Files"
-          lineHint: 712
-        normalizedExcerpt: "## Collision-Risk Files"
-        valueDigest: b1735d20dd6d7b04c4cd8be6ec2d40febf6591548b755b10a284fa778d569b41
-        ruleIds: []
-        exclusionDisposition: heading-only
-        rationale: "Heading # Parcel Index: <Feature or Initiative Name> > ## Collision-Risk Files is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.7060aa2d93df
-        locator:
-          kind: heading
-          anchor: "# Parcel Index: <Feature or Initiative Name> > ## Integration Surfaces"
-          lineHint: 718
-        normalizedExcerpt: "## Integration Surfaces"
-        valueDigest: 3895ad969481e57054395d7aee5bc6c0ffc8d727b028503e21c629e575ce3383
-        ruleIds: []
-        exclusionDisposition: heading-only
-        rationale: "Heading # Parcel Index: <Feature or Initiative Name> > ## Integration Surfaces is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.c8dea6191583
-        locator:
-          kind: heading
-          anchor: "# Parcel Index: <Feature or Initiative Name> > ## Wave Status"
-          lineHint: 724
-        normalizedExcerpt: "## Wave Status"
-        valueDigest: 9ad2cf7f5c4c33e0a490e9137286f585cb9d53f2048da3e309984f1f3b55fb23
-        ruleIds: []
-        exclusionDisposition: heading-only
-        rationale: "Heading # Parcel Index: <Feature or Initiative Name> > ## Wave Status is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.4352d4e7f5d0
-        locator:
-          kind: heading
-          anchor: "# Parcel Index: <Feature or Initiative Name> > ## Contract Amendments"
-          lineHint: 738
-        normalizedExcerpt: "## Contract Amendments"
-        valueDigest: 3d11be2033cfe10ec7d2d265da791bb14ca5e33ae5afc19c8437dbc77a633a78
-        ruleIds: []
-        exclusionDisposition: heading-only
-        rationale: "Heading # Parcel Index: <Feature or Initiative Name> > ## Contract Amendments is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.9855014a9896
-        locator:
-          kind: heading
-          anchor: "# Parcel Index: <Feature or Initiative Name> > ## Open Decisions Needed"
-          lineHint: 744
-        normalizedExcerpt: "## Open Decisions Needed"
-        valueDigest: 9dcd7284c8f731e7d884723e24cb1132852af1fbc1f47e63751f5734c9309ab7
-        ruleIds: []
-        exclusionDisposition: heading-only
-        rationale: "Heading # Parcel Index: <Feature or Initiative Name> > ## Open Decisions Needed is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.0768577cccbb
-        locator:
-          kind: heading
-          anchor: "# Parcel Index: <Feature or Initiative Name> > ## Blockers"
-          lineHint: 748
-        normalizedExcerpt: "## Blockers"
-        valueDigest: 9c4d20072ac3833a5003bf0460338c8820f613e422384eea505d69caef2f9b0e
-        ruleIds: []
-        exclusionDisposition: heading-only
-        rationale: "Heading # Parcel Index: <Feature or Initiative Name> > ## Blockers is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.fdbcc4ec08e7
-        locator:
-          kind: heading
-          anchor: "# Parcel Index: <Feature or Initiative Name> > ## Evidence Index"
-          lineHint: 752
-        normalizedExcerpt: "## Evidence Index"
-        valueDigest: 518b70d0188809a2e585e2ae504bba952937fe91aa22ea83f2790ab94b3e5261
-        ruleIds: []
-        exclusionDisposition: heading-only
-        rationale: "Heading # Parcel Index: <Feature or Initiative Name> > ## Evidence Index is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.598820e189c0
-        locator:
-          kind: heading
-          anchor: "# Parcel Index: <Feature or Initiative Name> > ## Branch and Worktree Hygiene"
+          anchor: "# Parcel-Driven Development Skill > ## Branch and Worktree Hygiene"
           lineHint: 758
         normalizedExcerpt: "## Branch and Worktree Hygiene"
         valueDigest: 60c353b44426d739b356183ecc7f309a6b6acf1ae62960176d743c3d95997c98
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # Parcel Index: <Feature or Initiative Name> > ## Branch and Worktree Hygiene is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.dea0196db749
+        rationale: "Heading # Parcel-Driven Development Skill > ## Branch and Worktree Hygiene is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.570feaca07c5
         locator:
           kind: heading
-          anchor: "# Parcel Index: <Feature or Initiative Name> > ## Branch and Worktree Hygiene > ### Local pattern"
+          anchor: "# Parcel-Driven Development Skill > ## Branch and Worktree Hygiene > ### Local pattern"
           lineHint: 760
         normalizedExcerpt: "### Local pattern"
         valueDigest: dd6f4cff1aa3287ee2ac52f5750b22ff02e8eafe4cc8c957b6f7527c1cb402a8
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # Parcel Index: <Feature or Initiative Name> > ## Branch and Worktree Hygiene > ### Local pattern is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.eb937b914e32
+        rationale: "Heading # Parcel-Driven Development Skill > ## Branch and Worktree Hygiene > ### Local pattern is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.ec3a9b4de07f
         locator:
           kind: heading
-          anchor: "# Create a worktree per active parcel. > ### Merge pattern"
+          anchor: "# Parcel-Driven Development Skill > ## Branch and Worktree Hygiene > ### Merge pattern"
           lineHint: 776
         normalizedExcerpt: "### Merge pattern"
         valueDigest: bae12d9d496f883a2eed4a30c58f737b59eea8ad2fca656701bc5fc5c6670e5e
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # Create a worktree per active parcel. > ### Merge pattern is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.74e3cc0ab005
+        rationale: "Heading # Parcel-Driven Development Skill > ## Branch and Worktree Hygiene > ### Merge pattern is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.ba9d358a70f5
         locator:
           kind: heading
-          anchor: "# Resolve conflicts, rerun verification, then push. > ## Serialization Points"
+          anchor: "# Parcel-Driven Development Skill > ## Serialization Points"
           lineHint: 793
         normalizedExcerpt: "## Serialization Points"
         valueDigest: 76ea17ec32cf0a472b104d1786e87e286fda46df01695f2e33203d92b8e72153
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # Resolve conflicts, rerun verification, then push. > ## Serialization Points is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.51958598755b
+        rationale: "Heading # Parcel-Driven Development Skill > ## Serialization Points is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.66aae9a5652a
         locator:
           kind: heading
-          anchor: "# Resolve conflicts, rerun verification, then push. > ## Contract Amendment Rule"
+          anchor: "# Parcel-Driven Development Skill > ## Contract Amendment Rule"
           lineHint: 819
         normalizedExcerpt: "## Contract Amendment Rule"
         valueDigest: be5af7eb29170c325e04bad268217b112374347dd74a44a14859cb8c782bd156
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # Resolve conflicts, rerun verification, then push. > ## Contract Amendment Rule is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.289d94674467
+        rationale: "Heading # Parcel-Driven Development Skill > ## Contract Amendment Rule is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.807467d973c3
         locator:
           kind: heading
-          anchor: "# Resolve conflicts, rerun verification, then push. > ## Session Handoff"
+          anchor: "# Parcel-Driven Development Skill > ## Session Handoff"
           lineHint: 831
         normalizedExcerpt: "## Session Handoff"
         valueDigest: 01a5c9445d8bdfbd75bfa9fe7e3c971e593e33ee186de540847f2f3834857869
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # Resolve conflicts, rerun verification, then push. > ## Session Handoff is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.647e50ca27ea
+        rationale: "Heading # Parcel-Driven Development Skill > ## Session Handoff is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.5cb7ceb77bb4
         locator:
           kind: heading
-          anchor: "# Resolve conflicts, rerun verification, then push. > ## Review Workflow"
+          anchor: "# Parcel-Driven Development Skill > ## Review Workflow"
           lineHint: 839
         normalizedExcerpt: "## Review Workflow"
         valueDigest: a327b5afddc6995324ac51d46dc0a77563dac73364ba2a44daa0626d528f85cc
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # Resolve conflicts, rerun verification, then push. > ## Review Workflow is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.4536da702f26
+        rationale: "Heading # Parcel-Driven Development Skill > ## Review Workflow is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.8a362fad0100
         locator:
           kind: heading
-          anchor: "# Resolve conflicts, rerun verification, then push. > ## Dispatch Patterns"
+          anchor: "# Parcel-Driven Development Skill > ## Dispatch Patterns"
           lineHint: 862
         normalizedExcerpt: "## Dispatch Patterns"
         valueDigest: bf01cfd081a025055c9e6b214ce837dd8f3ed91a6d8d51a1953b9a0fc34e86ba
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # Resolve conflicts, rerun verification, then push. > ## Dispatch Patterns is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.aa29cc8f8651
+        rationale: "Heading # Parcel-Driven Development Skill > ## Dispatch Patterns is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.5aef23f9da92
         locator:
           kind: heading
-          anchor: "# Resolve conflicts, rerun verification, then push. > ## Dispatch Patterns > ### Pattern: Wave 1 foundation dispatch"
+          anchor: "# Parcel-Driven Development Skill > ## Dispatch Patterns > ### Pattern: Wave 1 foundation dispatch"
           lineHint: 864
         normalizedExcerpt: "### Pattern: Wave 1 foundation dispatch"
         valueDigest: 203f617265a658a319c587954df928d1ce66dae6525fb4b4f8b8043ba8ce15a6
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # Resolve conflicts, rerun verification, then push. > ## Dispatch Patterns > ### Pattern: Wave 1 foundation dispatch is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.5afd29e669b9
+        rationale: "Heading # Parcel-Driven Development Skill > ## Dispatch Patterns > ### Pattern: Wave 1 foundation dispatch is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.38c473687833
         locator:
           kind: heading
-          anchor: "# Resolve conflicts, rerun verification, then push. > ## Dispatch Patterns > ### Pattern: Wave 2 assembly dispatch"
+          anchor: "# Parcel-Driven Development Skill > ## Dispatch Patterns > ### Pattern: Wave 2 assembly dispatch"
           lineHint: 873
         normalizedExcerpt: "### Pattern: Wave 2 assembly dispatch"
         valueDigest: 84e90d8290b4aa9f8b09394f8de71a30b746e7c1f1890f2fd61ccca34f2f0bbf
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # Resolve conflicts, rerun verification, then push. > ## Dispatch Patterns > ### Pattern: Wave 2 assembly dispatch is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.4e205b22cd1d
+        rationale: "Heading # Parcel-Driven Development Skill > ## Dispatch Patterns > ### Pattern: Wave 2 assembly dispatch is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.94d609300d5c
         locator:
           kind: heading
-          anchor: "# Resolve conflicts, rerun verification, then push. > ## Dispatch Patterns > ### Pattern: Integration dispatch"
+          anchor: "# Parcel-Driven Development Skill > ## Dispatch Patterns > ### Pattern: Integration dispatch"
           lineHint: 879
         normalizedExcerpt: "### Pattern: Integration dispatch"
         valueDigest: 11f476da635c0df57a4af17fee0774e8795d8af98b0cb5321c7590b96c4acb5a
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # Resolve conflicts, rerun verification, then push. > ## Dispatch Patterns > ### Pattern: Integration dispatch is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.c29370f5c2a2
+        rationale: "Heading # Parcel-Driven Development Skill > ## Dispatch Patterns > ### Pattern: Integration dispatch is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.c020f69832d2
         locator:
           kind: heading
-          anchor: "# Resolve conflicts, rerun verification, then push. > ## Dispatch Patterns > ### Pattern: Wave 3 hardening dispatch"
+          anchor: "# Parcel-Driven Development Skill > ## Dispatch Patterns > ### Pattern: Wave 3 hardening dispatch"
           lineHint: 887
         normalizedExcerpt: "### Pattern: Wave 3 hardening dispatch"
         valueDigest: 3e7855d8cded05dc16d9d7e71cee0f62a58ad2ddb24cb631f18aa6ee5c0120f0
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # Resolve conflicts, rerun verification, then push. > ## Dispatch Patterns > ### Pattern: Wave 3 hardening dispatch is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.bb79dbe04612
+        rationale: "Heading # Parcel-Driven Development Skill > ## Dispatch Patterns > ### Pattern: Wave 3 hardening dispatch is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.0dbceaf20100
         locator:
           kind: heading
-          anchor: "# Resolve conflicts, rerun verification, then push. > ## Dispatch Patterns > ### Pattern: Release gate pass"
+          anchor: "# Parcel-Driven Development Skill > ## Dispatch Patterns > ### Pattern: Release gate pass"
           lineHint: 894
         normalizedExcerpt: "### Pattern: Release gate pass"
         valueDigest: 0af613240ba8fa82cc29e7bb5d7e39ff8b815e698e42753c735798234d72b853
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # Resolve conflicts, rerun verification, then push. > ## Dispatch Patterns > ### Pattern: Release gate pass is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.07697026310b
+        rationale: "Heading # Parcel-Driven Development Skill > ## Dispatch Patterns > ### Pattern: Release gate pass is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.c7df47b68ea6
         locator:
           kind: heading
-          anchor: "# Resolve conflicts, rerun verification, then push. > ## When Things Go Wrong"
+          anchor: "# Parcel-Driven Development Skill > ## When Things Go Wrong"
           lineHint: 904
         normalizedExcerpt: "## When Things Go Wrong"
         valueDigest: e7ac2762b03d4c0db88f9c289dd04b7bb61b29327066a290bbec05fd1c2fbb58
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # Resolve conflicts, rerun verification, then push. > ## When Things Go Wrong is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.447334f6e6ec
+        rationale: "Heading # Parcel-Driven Development Skill > ## When Things Go Wrong is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.e5bce1d97790
         locator:
           kind: heading
-          anchor: "# Resolve conflicts, rerun verification, then push. > ## When Things Go Wrong > ### Contract was wrong"
+          anchor: "# Parcel-Driven Development Skill > ## When Things Go Wrong > ### Contract was wrong"
           lineHint: 906
         normalizedExcerpt: "### Contract was wrong"
         valueDigest: cbcf77b84bf9d4677227440cad9db1ba3398bf38b19672f3ae2320f56c584a62
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # Resolve conflicts, rerun verification, then push. > ## When Things Go Wrong > ### Contract was wrong is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.5d3fdec9bc63
+        rationale: "Heading # Parcel-Driven Development Skill > ## When Things Go Wrong > ### Contract was wrong is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.440f1bda9500
         locator:
           kind: heading
-          anchor: "# Resolve conflicts, rerun verification, then push. > ## When Things Go Wrong > ### Agent expanded scope"
+          anchor: "# Parcel-Driven Development Skill > ## When Things Go Wrong > ### Agent expanded scope"
           lineHint: 913
         normalizedExcerpt: "### Agent expanded scope"
         valueDigest: 2a19356a1674d4fcda9a101e0e5a9b33019e761a0467f2f2ac6e05153ee7f124
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # Resolve conflicts, rerun verification, then push. > ## When Things Go Wrong > ### Agent expanded scope is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.22161071c0a1
+        rationale: "Heading # Parcel-Driven Development Skill > ## When Things Go Wrong > ### Agent expanded scope is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.87a8fa88fd49
         locator:
           kind: heading
-          anchor: "# Resolve conflicts, rerun verification, then push. > ## When Things Go Wrong > ### Two parcels collided on a serialization point"
+          anchor: "# Parcel-Driven Development Skill > ## When Things Go Wrong > ### Two parcels collided on a serialization point"
           lineHint: 919
         normalizedExcerpt: "### Two parcels collided on a serialization point"
         valueDigest: 1117dbf9f010622a87050de16231ed02b17e0c2c0132cd337f5367a2f67ad378
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # Resolve conflicts, rerun verification, then push. > ## When Things Go Wrong > ### Two parcels collided on a serialization point is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.ce4886fe96f7
+        rationale: "Heading # Parcel-Driven Development Skill > ## When Things Go Wrong > ### Two parcels collided on a serialization point is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.ccf243e35202
         locator:
           kind: heading
-          anchor: "# Resolve conflicts, rerun verification, then push. > ## When Things Go Wrong > ### Agent made a silent product decision"
+          anchor: "# Parcel-Driven Development Skill > ## When Things Go Wrong > ### Agent made a silent product decision"
           lineHint: 926
         normalizedExcerpt: "### Agent made a silent product decision"
         valueDigest: 61e2e0b073f90b2326266e17b00bfffb9e84dd2259242b248f952dc391b9d799
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # Resolve conflicts, rerun verification, then push. > ## When Things Go Wrong > ### Agent made a silent product decision is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.ccfbc0323f46
+        rationale: "Heading # Parcel-Driven Development Skill > ## When Things Go Wrong > ### Agent made a silent product decision is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.3671eb24e9e7
         locator:
           kind: heading
-          anchor: "# Resolve conflicts, rerun verification, then push. > ## When Things Go Wrong > ### Integration scenario fails"
+          anchor: "# Parcel-Driven Development Skill > ## When Things Go Wrong > ### Integration scenario fails"
           lineHint: 932
         normalizedExcerpt: "### Integration scenario fails"
         valueDigest: 0482ee20d85f324749e069777b01f404d69310f533263a3065c429be1e1719fe
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # Resolve conflicts, rerun verification, then push. > ## When Things Go Wrong > ### Integration scenario fails is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.8f81334ac072
+        rationale: "Heading # Parcel-Driven Development Skill > ## When Things Go Wrong > ### Integration scenario fails is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.b00315623c79
         locator:
           kind: heading
-          anchor: "# Resolve conflicts, rerun verification, then push. > ## When Things Go Wrong > ### Security gate fails"
+          anchor: "# Parcel-Driven Development Skill > ## When Things Go Wrong > ### Security gate fails"
           lineHint: 940
         normalizedExcerpt: "### Security gate fails"
         valueDigest: a43ca7a621aba09d5b7b2e44f18ec0ee871ca704a0b96de969e44ec5bebeaebf
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # Resolve conflicts, rerun verification, then push. > ## When Things Go Wrong > ### Security gate fails is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.db89e064fac1
+        rationale: "Heading # Parcel-Driven Development Skill > ## When Things Go Wrong > ### Security gate fails is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.397239af14b4
         locator:
           kind: heading
-          anchor: "# Resolve conflicts, rerun verification, then push. > ## When Things Go Wrong > ### Persistent state drifts from repo reality"
+          anchor: "# Parcel-Driven Development Skill > ## When Things Go Wrong > ### Persistent state drifts from repo reality"
           lineHint: 948
         normalizedExcerpt: "### Persistent state drifts from repo reality"
         valueDigest: c786f91d811462500c08a28bd8fe407fd505210e658840b678e2b883d2f84ffb
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # Resolve conflicts, rerun verification, then push. > ## When Things Go Wrong > ### Persistent state drifts from repo reality is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.15714f55220f
+        rationale: "Heading # Parcel-Driven Development Skill > ## When Things Go Wrong > ### Persistent state drifts from repo reality is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.47f5f84d100c
         locator:
           kind: heading
-          anchor: "# Resolve conflicts, rerun verification, then push. > ## Anti-Patterns to Avoid"
+          anchor: "# Parcel-Driven Development Skill > ## Anti-Patterns to Avoid"
           lineHint: 955
         normalizedExcerpt: "## Anti-Patterns to Avoid"
         valueDigest: cf2d73008819ee63d64611aa40eb31a5b7cfec729e847b67d7f4e1c688866943
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # Resolve conflicts, rerun verification, then push. > ## Anti-Patterns to Avoid is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.f2406c76d3f0
+        rationale: "Heading # Parcel-Driven Development Skill > ## Anti-Patterns to Avoid is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.d3e591257c8c
         locator:
           kind: heading
-          anchor: "# Resolve conflicts, rerun verification, then push. > ## Output Artifacts From This Skill"
+          anchor: "# Parcel-Driven Development Skill > ## Output Artifacts From This Skill"
           lineHint: 968
         normalizedExcerpt: "## Output Artifacts From This Skill"
         valueDigest: 4e2945ff931e133f8ea2877ed30598aa0b19f894137b48a57e303e27ad11b329
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # Resolve conflicts, rerun verification, then push. > ## Output Artifacts From This Skill is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.61d14e2b1eaf
+        rationale: "Heading # Parcel-Driven Development Skill > ## Output Artifacts From This Skill is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.cc9eeec9afd1
         locator:
           kind: heading
-          anchor: "# Resolve conflicts, rerun verification, then push. > ## Keon Example: RC Integration Readiness"
+          anchor: "# Parcel-Driven Development Skill > ## Keon Example: RC Integration Readiness"
           lineHint: 997
         normalizedExcerpt: "## Keon Example: RC Integration Readiness"
         valueDigest: 33ce61f08a8042b6cd788edadce9b0179e56a5ed1233a038c15e24f751b7abb2
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # Resolve conflicts, rerun verification, then push. > ## Keon Example: RC Integration Readiness is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.4a3b1762c902
+        rationale: "Heading # Parcel-Driven Development Skill > ## Keon Example: RC Integration Readiness is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.bbcfba8aa297
         locator:
           kind: heading
-          anchor: "# Resolve conflicts, rerun verification, then push. > ## Final Notes"
+          anchor: "# Parcel-Driven Development Skill > ## Final Notes"
           lineHint: 1060
         normalizedExcerpt: "## Final Notes"
         valueDigest: d3df29d77c7040eb80540bfc72d4c3b8c256413ce1d8d3efdca43478e9d60c20
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # Resolve conflicts, rerun verification, then push. > ## Final Notes is structural navigation; its complete body items carry the operative rules."
+        rationale: "Heading # Parcel-Driven Development Skill > ## Final Notes is structural navigation; its complete body items carry the operative rules."
       - itemId: item.hard-rule-1
         locator:
           kind: numbered-item
@@ -5749,136 +5466,136 @@ sources:
         ruleIds: []
         exclusionDisposition: heading-only
         rationale: "Heading # The Foreman Line — Master Plugin Plan > ## 5. Model Routing Policy (v0 shape) is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.7af93d06b81e
+      - itemId: item.c1a0e0ed25bc
         locator:
           kind: heading
-          anchor: "# illustrative > ## 5a. Skill Injection Policy (the execution-plane library)"
+          anchor: "# The Foreman Line — Master Plugin Plan > ## 5a. Skill Injection Policy (the execution-plane library)"
           lineHint: 139
         normalizedExcerpt: "## 5a. Skill Injection Policy (the execution-plane library)"
         valueDigest: 44ea06e73ead0ad6c0f14d9a66cf95719e959937f1d467eed5363a8d0e8d7bb5
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # illustrative > ## 5a. Skill Injection Policy (the execution-plane library) is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.4ef7bf3a9d50
+        rationale: "Heading # The Foreman Line — Master Plugin Plan > ## 5a. Skill Injection Policy (the execution-plane library) is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.37c307cd429b
         locator:
           kind: heading
-          anchor: '# illustrative — skill-injection.yaml > ## 6. Risk-Driven Audit Triggers (killing the "somehow")'
+          anchor: '# The Foreman Line — Master Plugin Plan > ## 6. Risk-Driven Audit Triggers (killing the "somehow")'
           lineHint: 170
         normalizedExcerpt: '## 6. Risk-Driven Audit Triggers (killing the "somehow")'
         valueDigest: a9c3872892b2e3504fbdcc53474dff301881b6698637a8fcec5a9953105aa29d
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: 'Heading # illustrative — skill-injection.yaml > ## 6. Risk-Driven Audit Triggers (killing the "somehow") is structural navigation; its complete body items carry the operative rules.'
-      - itemId: item.7b00a894b7d9
+        rationale: 'Heading # The Foreman Line — Master Plugin Plan > ## 6. Risk-Driven Audit Triggers (killing the "somehow") is structural navigation; its complete body items carry the operative rules.'
+      - itemId: item.2010f537517c
         locator:
           kind: heading
-          anchor: "# illustrative — skill-injection.yaml > ## 7. Open Questions (decide before W1 exit)"
+          anchor: "# The Foreman Line — Master Plugin Plan > ## 7. Open Questions (decide before W1 exit)"
           lineHint: 190
         normalizedExcerpt: "## 7. Open Questions (decide before W1 exit)"
         valueDigest: 64cbe684f16e204308f0ef8efdf212efd253a665d5e7ec96997f28f87a4dc63b
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # illustrative — skill-injection.yaml > ## 7. Open Questions (decide before W1 exit) is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.ed96d8a5c66e
+        rationale: "Heading # The Foreman Line — Master Plugin Plan > ## 7. Open Questions (decide before W1 exit) is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.c88d881ba155
         locator:
           kind: heading
-          anchor: "# illustrative — skill-injection.yaml > ## 7. Open Questions (decide before W1 exit) > ### 7a. DocSpine Transfer Checklist (evening before demo)"
+          anchor: "# The Foreman Line — Master Plugin Plan > ## 7. Open Questions (decide before W1 exit) > ### 7a. DocSpine Transfer Checklist (evening before demo)"
           lineHint: 199
         normalizedExcerpt: "### 7a. DocSpine Transfer Checklist (evening before demo)"
         valueDigest: 1d81fb4021f004a91422861d01b435494b6c5e5554ec71e50b33d103bf677fe6
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # illustrative — skill-injection.yaml > ## 7. Open Questions (decide before W1 exit) > ### 7a. DocSpine Transfer Checklist (evening before demo) is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.dd2f9952f6b2
+        rationale: "Heading # The Foreman Line — Master Plugin Plan > ## 7. Open Questions (decide before W1 exit) > ### 7a. DocSpine Transfer Checklist (evening before demo) is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.94a81eb1af71
         locator:
           kind: heading
-          anchor: "# illustrative — skill-injection.yaml > ## 8. Build Plan — Waves & Parcels"
+          anchor: "# The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels"
           lineHint: 212
         normalizedExcerpt: "## 8. Build Plan — Waves & Parcels"
         valueDigest: cf9967464472d441c8e322d643be9f50e705da447dbcb54ccfc4b5bc0a264357
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # illustrative — skill-injection.yaml > ## 8. Build Plan — Waves & Parcels is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.b119715b2f88
+        rationale: "Heading # The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.fc2dab449617
         locator:
           kind: heading
-          anchor: "# illustrative — skill-injection.yaml > ## 8. Build Plan — Waves & Parcels > ### W0 — Contracts (foundation, no runtime)"
+          anchor: "# The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### W0 — Contracts (foundation, no runtime)"
           lineHint: 216
         normalizedExcerpt: "### W0 — Contracts (foundation, no runtime)"
         valueDigest: 1bdcf704dee3a17987547cc633074845ace771c8d51bb5c59d4cd780af05940b
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # illustrative — skill-injection.yaml > ## 8. Build Plan — Waves & Parcels > ### W0 — Contracts (foundation, no runtime) is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.3cfcc1c00ff3
+        rationale: "Heading # The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### W0 — Contracts (foundation, no runtime) is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.8cc25aa6c62a
         locator:
           kind: heading
-          anchor: "# illustrative — skill-injection.yaml > ## 8. Build Plan — Waves & Parcels > ### W1 — Intake & Registration"
+          anchor: "# The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### W1 — Intake & Registration"
           lineHint: 224
         normalizedExcerpt: "### W1 — Intake & Registration"
         valueDigest: f11d7718cf1fe3af9c64a3e8bbc423ab7a371112ff48b1ca4908aad273414c5b
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # illustrative — skill-injection.yaml > ## 8. Build Plan — Waves & Parcels > ### W1 — Intake & Registration is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.a17d593348eb
+        rationale: "Heading # The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### W1 — Intake & Registration is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.63d6e41e2272
         locator:
           kind: heading
-          anchor: "# illustrative — skill-injection.yaml > ## 8. Build Plan — Waves & Parcels > ### W2 — Dispatch"
+          anchor: "# The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### W2 — Dispatch"
           lineHint: 231
         normalizedExcerpt: "### W2 — Dispatch"
         valueDigest: f0a2d6601efd34ed78decc1ab5f0966eaf9584829320f5119f66233f051ab5da
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # illustrative — skill-injection.yaml > ## 8. Build Plan — Waves & Parcels > ### W2 — Dispatch is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.ea143c5ae87e
+        rationale: "Heading # The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### W2 — Dispatch is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.e76207e2ea52
         locator:
           kind: heading
-          anchor: "# illustrative — skill-injection.yaml > ## 8. Build Plan — Waves & Parcels > ### W3 — Verification"
+          anchor: "# The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### W3 — Verification"
           lineHint: 239
         normalizedExcerpt: "### W3 — Verification"
         valueDigest: 9b9e0de5fbf53feffef40731f92a1d138287f6b270d48be90fa1e6d1850f8367
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # illustrative — skill-injection.yaml > ## 8. Build Plan — Waves & Parcels > ### W3 — Verification is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.e1793e301c9f
+        rationale: "Heading # The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### W3 — Verification is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.9e399390fff6
         locator:
           kind: heading
-          anchor: "# illustrative — skill-injection.yaml > ## 8. Build Plan — Waves & Parcels > ### W4 — CI Integration"
+          anchor: "# The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### W4 — CI Integration"
           lineHint: 246
         normalizedExcerpt: "### W4 — CI Integration"
         valueDigest: c00f857179d6fe77d93b9b3a2b8b340fe48baefc2e8305c101211de931bfc7fe
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # illustrative — skill-injection.yaml > ## 8. Build Plan — Waves & Parcels > ### W4 — CI Integration is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.b212490f4fc1
+        rationale: "Heading # The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### W4 — CI Integration is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.571b5e11daf7
         locator:
           kind: heading
-          anchor: "# illustrative — skill-injection.yaml > ## 8. Build Plan — Waves & Parcels > ### W5 — Smart Triage Assignment"
+          anchor: "# The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### W5 — Smart Triage Assignment"
           lineHint: 253
         normalizedExcerpt: "### W5 — Smart Triage Assignment"
         valueDigest: d8a83ca0cb7c1b1ccb2fa6a8c42d6558bea3d4780a8e6b94f16bbdec33c2887d
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # illustrative — skill-injection.yaml > ## 8. Build Plan — Waves & Parcels > ### W5 — Smart Triage Assignment is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.8fc63f649baa
+        rationale: "Heading # The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### W5 — Smart Triage Assignment is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.6b3f698f1614
         locator:
           kind: heading
-          anchor: "# illustrative — skill-injection.yaml > ## 8. Build Plan — Waves & Parcels > ### Sequencing notes"
+          anchor: "# The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### Sequencing notes"
           lineHint: 260
         normalizedExcerpt: "### Sequencing notes"
         valueDigest: 20d538a6386a51e2d10ede33f5b16e7bfcffbc4bac9db2d62e0b92030c97a7d1
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # illustrative — skill-injection.yaml > ## 8. Build Plan — Waves & Parcels > ### Sequencing notes is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.fdb4b7c59232
+        rationale: "Heading # The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### Sequencing notes is structural navigation; its complete body items carry the operative rules."
+      - itemId: item.c27b2ff91b6e
         locator:
           kind: heading
-          anchor: "# illustrative — skill-injection.yaml > ## 9. Risks — Honest Ledger"
+          anchor: "# The Foreman Line — Master Plugin Plan > ## 9. Risks — Honest Ledger"
           lineHint: 267
         normalizedExcerpt: "## 9. Risks — Honest Ledger"
         valueDigest: 6935e98b73bfdd2018d553b51cd2ba9fb706c7f3e8593616c2d3c40434a0c2ba
         ruleIds: []
         exclusionDisposition: heading-only
-        rationale: "Heading # illustrative — skill-injection.yaml > ## 9. Risks — Honest Ledger is structural navigation; its complete body items carry the operative rules."
+        rationale: "Heading # The Foreman Line — Master Plugin Plan > ## 9. Risks — Honest Ledger is structural navigation; its complete body items carry the operative rules."
       - itemId: item.6643e47d75fa
         locator:
           kind: numbered-item
@@ -6800,10 +6517,9 @@ sources:
           lineHint: 5
         normalizedExcerpt: "return { valid: errors.length === 0, errors, warnings }"
         valueDigest: 80563af1788e33bcf9620117e6878a20ab9a71633143aa5e938d074e02697a70
-        ruleIds:
-          - rule.spec-linter-validator.80563af1788e
-        exclusionDisposition: null
-        rationale: Rule-bearing section or live behavior is mapped to an explicit source-bound rule.
+        ruleIds: []
+        exclusionDisposition: structural-ast
+        rationale: "Inventory item item.80563af1788e at return { valid: errors.length === 0, errors, warnings } provides structural change coverage and does not independently state authority."
       - itemId: item.364f716f50ef
         locator:
           kind: symbol
@@ -10357,6 +10073,174 @@ rules:
       corpusSweep: null
       independentBypassAttempt: null
     bindingDigest: 9a13e3e245cbd6519a8e7e5f168da6c4db33d8e8302f72bd6dcc603bd2faad19
+  - ruleId: rule.fk-charter.7d74bdcd5bb3
+    authoritySubject: wave-exit.authority-contracts
+    authorityClaim: wave-zero-contracts-path-authority-and-reconciliations-complete
+    normalizedStatement: "**Wave 0 exit:** contracts and fixtures are merged; exact path authority can be compiled without reading `surfaces:` as mutation permission; plan-level contradictions have no unresolved implementation consequence."
+    sourceRefs:
+      - sourceId: fk-charter
+        itemId: item.7d74bdcd5bb3
+        locatorDigest: 9793517efde9ef2afaf5b3f4851a816e596ab10d0e42432bfb7ee22bfcdb7d8f
+        valueDigest: 7c88634c4e90618ffc4c2f417f988d9ce9a2ed597dadda424fc28f54a91b6c6c
+    authorityBasisRef:
+      sourceId: fk-charter
+      itemId: item.7d74bdcd5bb3
+      locatorDigest: 9793517efde9ef2afaf5b3f4851a816e596ab10d0e42432bfb7ee22bfcdb7d8f
+      valueDigest: 7c88634c4e90618ffc4c2f417f988d9ce9a2ed597dadda424fc28f54a91b6c6c
+    applicability:
+      goals:
+        - foreman-kernel
+      roles:
+        - coordinator
+      stages:
+        - deterministic-verify
+        - merge
+        - closure
+      operations:
+        - source-inventory
+        - state-transition
+      hosts:
+        - any
+    severity: medium
+    classification: ci-static-check
+    decision: ADVISORY
+    refusalCode: null
+    enforcementOwner: ci
+    assurance: detected
+    pairedRuleIds: []
+    retirementState: active-reading
+    retirementEvidence:
+      predicate: null
+      negativeRefusalTest: null
+      corpusSweep: null
+      independentBypassAttempt: null
+    bindingDigest: 7768300c2de5c04729404e64a54f71e4d174840addbbf98ff3e65139af3b93b5
+  - ruleId: rule.fk-charter.5f823cd304d6
+    authoritySubject: wave-exit.pure-trust-core
+    authorityClaim: wave-one-evaluators-deterministic-contracted-and-clean-room-proven
+    normalizedStatement: "**Wave 1 exit:** every first-release evaluator is deterministic, no-I/O unless explicitly documented, contract-tested, and proven against an unrelated repository."
+    sourceRefs:
+      - sourceId: fk-charter
+        itemId: item.5f823cd304d6
+        locatorDigest: 01572764bb076b0b446445a1db3af6401e7d4a41c7769da62af1f1548229de06
+        valueDigest: a28ac1154138a0df62f72225c5046b5bcd28e760df00b5f5a9429fa53d3823de
+    authorityBasisRef:
+      sourceId: fk-charter
+      itemId: item.5f823cd304d6
+      locatorDigest: 01572764bb076b0b446445a1db3af6401e7d4a41c7769da62af1f1548229de06
+      valueDigest: a28ac1154138a0df62f72225c5046b5bcd28e760df00b5f5a9429fa53d3823de
+    applicability:
+      goals:
+        - foreman-kernel
+      roles:
+        - coordinator
+      stages:
+        - deterministic-verify
+        - merge
+        - closure
+      operations:
+        - source-inventory
+        - state-transition
+      hosts:
+        - any
+    severity: medium
+    classification: ci-static-check
+    decision: ADVISORY
+    refusalCode: null
+    enforcementOwner: ci
+    assurance: detected
+    pairedRuleIds: []
+    retirementState: active-reading
+    retirementEvidence:
+      predicate: null
+      negativeRefusalTest: null
+      corpusSweep: null
+      independentBypassAttempt: null
+    bindingDigest: 260b0a30f2ae3ab3ebe804f970edeb95f9a075c2758375060e2f5ae41d319c5e
+  - ruleId: rule.fk-charter.f1439c7e3a90
+    authoritySubject: wave-exit.stateless-verifier
+    authorityClaim: wave-two-pinned-read-only-image-portable-and-state-confined
+    normalizedStatement: "**Wave 2 exit:** a pinned stateless container serves the read-only verifier to independent harnesses, cannot read the future state volume, and survives a clean-room launch without package-local installation."
+    sourceRefs:
+      - sourceId: fk-charter
+        itemId: item.f1439c7e3a90
+        locatorDigest: 45cbca71f62b78030dad407d43f77f6304cafb9b027125b89e8ed36602d59f72
+        valueDigest: bf4e35807f376279713e2d734550b24beab061786a8c0da2fbc019ac78cce8a4
+    authorityBasisRef:
+      sourceId: fk-charter
+      itemId: item.f1439c7e3a90
+      locatorDigest: 45cbca71f62b78030dad407d43f77f6304cafb9b027125b89e8ed36602d59f72
+      valueDigest: bf4e35807f376279713e2d734550b24beab061786a8c0da2fbc019ac78cce8a4
+    applicability:
+      goals:
+        - foreman-kernel
+      roles:
+        - coordinator
+      stages:
+        - deterministic-verify
+        - merge
+        - closure
+      operations:
+        - source-inventory
+        - state-transition
+      hosts:
+        - any
+    severity: medium
+    classification: ci-static-check
+    decision: ADVISORY
+    refusalCode: null
+    enforcementOwner: ci
+    assurance: detected
+    pairedRuleIds: []
+    retirementState: active-reading
+    retirementEvidence:
+      predicate: null
+      negativeRefusalTest: null
+      corpusSweep: null
+      independentBypassAttempt: null
+    bindingDigest: 70dfa005cea7acc27d75ef4b215defec8f4c2123ca85c777886768d59fc0c28d
+  - ruleId: rule.fk-charter.fec816847e8e
+    authoritySubject: wave-exit.durable-state
+    authorityClaim: wave-three-ownership-recovery-idempotency-and-projection-invariants-hold
+    normalizedStatement: "**Wave 3 exit:** two distinct principals cannot split ownership; restart reconstructs state from SQLite; stale revisions and same-key/different-payload calls conflict; crash points and migrations recover or fail closed; projections are deterministic; and the field-level Git/SQLite authority matrix stops on divergence rather than overwriting."
+    sourceRefs:
+      - sourceId: fk-charter
+        itemId: item.fec816847e8e
+        locatorDigest: 84529e70c12f0eb0ddd081be70948c85cfb3aa0688d0e3b3780d27a3c0b78a46
+        valueDigest: a30990b15e42f4c14c3f18862be7b98fb9c94b922fa06e986a2c5e30014688cb
+    authorityBasisRef:
+      sourceId: fk-charter
+      itemId: item.fec816847e8e
+      locatorDigest: 84529e70c12f0eb0ddd081be70948c85cfb3aa0688d0e3b3780d27a3c0b78a46
+      valueDigest: a30990b15e42f4c14c3f18862be7b98fb9c94b922fa06e986a2c5e30014688cb
+    applicability:
+      goals:
+        - foreman-kernel
+      roles:
+        - coordinator
+      stages:
+        - deterministic-verify
+        - merge
+        - closure
+      operations:
+        - source-inventory
+        - state-transition
+      hosts:
+        - any
+    severity: medium
+    classification: ci-static-check
+    decision: ADVISORY
+    refusalCode: null
+    enforcementOwner: ci
+    assurance: detected
+    pairedRuleIds: []
+    retirementState: active-reading
+    retirementEvidence:
+      predicate: null
+      negativeRefusalTest: null
+      corpusSweep: null
+      independentBypassAttempt: null
+    bindingDigest: e6aa717f55427fbd496a5148e9715e006ec29c75fa50c5e6e36d88fe03625544
   - ruleId: rule.fk-charter.a087b0ab4c3b
     authoritySubject: parcel.fk-p18-ci-backstop
     authorityClaim: negative-hook-bypass-must-fail-before-promotion
@@ -10403,6 +10287,48 @@ rules:
       corpusSweep: null
       independentBypassAttempt: null
     bindingDigest: 1df846f165209c04145cf7cea62a4237e3bef86b17632fca49b4ac0f0162d59f
+  - ruleId: rule.fk-charter.10bcdc2cae49
+    authoritySubject: wave-exit.enforcement-promotion
+    authorityClaim: wave-four-refusal-detection-recovery-and-evidence-claims-are-bound
+    normalizedStatement: "**Wave 4 exit:** selected mediated violations are mechanically refused on the proven host; non-enrollment and unmediated changes are detected by heartbeat/diff/CI; CI was green before enforcement promotion; service outages have bounded recovery; and host claims plus all proof identities are bound in the evidence manifest."
+    sourceRefs:
+      - sourceId: fk-charter
+        itemId: item.10bcdc2cae49
+        locatorDigest: a46b8bd2344f1e3b32b81b240066979904f48d70fa5137f24603ecbc626d4556
+        valueDigest: 5597e9f57af65aae2dbdf71718c152ce8e3123a35fbc740030c80f7626189d22
+    authorityBasisRef:
+      sourceId: fk-charter
+      itemId: item.10bcdc2cae49
+      locatorDigest: a46b8bd2344f1e3b32b81b240066979904f48d70fa5137f24603ecbc626d4556
+      valueDigest: 5597e9f57af65aae2dbdf71718c152ce8e3123a35fbc740030c80f7626189d22
+    applicability:
+      goals:
+        - foreman-kernel
+      roles:
+        - coordinator
+      stages:
+        - deterministic-verify
+        - merge
+        - closure
+      operations:
+        - source-inventory
+        - state-transition
+      hosts:
+        - any
+    severity: medium
+    classification: ci-static-check
+    decision: ADVISORY
+    refusalCode: null
+    enforcementOwner: ci
+    assurance: detected
+    pairedRuleIds: []
+    retirementState: active-reading
+    retirementEvidence:
+      predicate: null
+      negativeRefusalTest: null
+      corpusSweep: null
+      independentBypassAttempt: null
+    bindingDigest: 2b0b11ee482aafe7fd953e30e64f3a9c9c25fc6dee1ba2c6c567bc458ec41716
   - ruleId: rule.fk-charter.e9ec57edc0a2
     authoritySubject: goal.exit-merge
     authorityClaim: all-parcels-require-human-gate3-merge
@@ -10469,6 +10395,342 @@ rules:
       corpusSweep: null
       independentBypassAttempt: null
     bindingDigest: aab617f7dea90ec81e80c1b2eb049da698caaabead37d7efb1089dc5b95cb893
+  - ruleId: rule.fk-charter.eddc1a2874a3
+    authoritySubject: goal-exit.control-catalogs
+    authorityClaim: pinned-images-expose-separated-catalogs-with-read-confidentiality
+    normalizedStatement: 2. Pinned stateless and stateful images expose versioned read-only and admission-protected control catalogs without package-local installs; anonymous verifier clients cannot list or call control tools and the read surface cannot access the state volume.
+    sourceRefs:
+      - sourceId: fk-charter
+        itemId: item.eddc1a2874a3
+        locatorDigest: bc45e3fbb227087d46e70fb1c4917d3f1ddd706fabd21d8bbb9cc5714c9d88a8
+        valueDigest: a0229fca74998509557bf4f5a4acaa65f941b9ca314262508bbbba88906511c8
+    authorityBasisRef:
+      sourceId: fk-charter
+      itemId: item.eddc1a2874a3
+      locatorDigest: bc45e3fbb227087d46e70fb1c4917d3f1ddd706fabd21d8bbb9cc5714c9d88a8
+      valueDigest: a0229fca74998509557bf4f5a4acaa65f941b9ca314262508bbbba88906511c8
+    applicability:
+      goals:
+        - foreman-kernel
+      roles:
+        - coordinator
+      stages:
+        - deterministic-verify
+        - merge
+        - closure
+      operations:
+        - source-inventory
+        - state-transition
+      hosts:
+        - any
+    severity: medium
+    classification: ci-static-check
+    decision: ADVISORY
+    refusalCode: null
+    enforcementOwner: ci
+    assurance: detected
+    pairedRuleIds: []
+    retirementState: active-reading
+    retirementEvidence:
+      predicate: null
+      negativeRefusalTest: null
+      corpusSweep: null
+      independentBypassAttempt: null
+    bindingDigest: 82c381851523e3e478b3828638ee33c81fa92767c3312671bb99298f653e877a
+  - ruleId: rule.fk-charter.248b8ef73429
+    authoritySubject: goal-exit.scenario-proof
+    authorityClaim: clean-room-confidentiality-portability-and-admission-scenarios-pass
+    normalizedStatement: 3. Clean-room, read-confidentiality, stateless portability, and stateful admission scenarios pass against their respective image digests on the D20 platform matrix.
+    sourceRefs:
+      - sourceId: fk-charter
+        itemId: item.248b8ef73429
+        locatorDigest: 67c40cfde8c28ff4b80c2783da90a54ff8bc2676430cc63c0abad4cb656d100f
+        valueDigest: 8b54f64081757e7a14b516a1b06f3ff242d3189bb0afb879f0f3f3f0d45c3344
+    authorityBasisRef:
+      sourceId: fk-charter
+      itemId: item.248b8ef73429
+      locatorDigest: 67c40cfde8c28ff4b80c2783da90a54ff8bc2676430cc63c0abad4cb656d100f
+      valueDigest: 8b54f64081757e7a14b516a1b06f3ff242d3189bb0afb879f0f3f3f0d45c3344
+    applicability:
+      goals:
+        - foreman-kernel
+      roles:
+        - coordinator
+      stages:
+        - deterministic-verify
+        - merge
+        - closure
+      operations:
+        - source-inventory
+        - state-transition
+      hosts:
+        - any
+    severity: medium
+    classification: ci-static-check
+    decision: ADVISORY
+    refusalCode: null
+    enforcementOwner: ci
+    assurance: detected
+    pairedRuleIds: []
+    retirementState: active-reading
+    retirementEvidence:
+      predicate: null
+      negativeRefusalTest: null
+      corpusSweep: null
+      independentBypassAttempt: null
+    bindingDigest: e256cca98df3f20b56f477344a49711ae6fc6624fc38546bb4f0aec85d45a0d7
+  - ruleId: rule.fk-charter.7854414d4093
+    authoritySubject: goal-exit.durable-state
+    authorityClaim: sqlite-recovery-concurrency-and-projection-evidence-pass
+    normalizedStatement: 4. SQLite state survives restart; principal/lease/CAS/idempotency/crash/concurrency/ migration/backup-recovery tests pass at a real process boundary; generated Markdown follows the field-level authority matrix and stops on divergence.
+    sourceRefs:
+      - sourceId: fk-charter
+        itemId: item.7854414d4093
+        locatorDigest: 81f93f7038ad6739b17ab36a4585c76d9e687f60f249f236bd27aa4baa981302
+        valueDigest: edbeb67a6d54e7d8b6a2e87d6e806ba9a7ec5489d2717c119764860c1e2536bf
+    authorityBasisRef:
+      sourceId: fk-charter
+      itemId: item.7854414d4093
+      locatorDigest: 81f93f7038ad6739b17ab36a4585c76d9e687f60f249f236bd27aa4baa981302
+      valueDigest: edbeb67a6d54e7d8b6a2e87d6e806ba9a7ec5489d2717c119764860c1e2536bf
+    applicability:
+      goals:
+        - foreman-kernel
+      roles:
+        - coordinator
+      stages:
+        - deterministic-verify
+        - merge
+        - closure
+      operations:
+        - source-inventory
+        - state-transition
+      hosts:
+        - any
+    severity: medium
+    classification: ci-static-check
+    decision: ADVISORY
+    refusalCode: null
+    enforcementOwner: ci
+    assurance: detected
+    pairedRuleIds: []
+    retirementState: active-reading
+    retirementEvidence:
+      predicate: null
+      negativeRefusalTest: null
+      corpusSweep: null
+      independentBypassAttempt: null
+    bindingDigest: 5c4baf7e6ca358d72e8e77cb3ba499b48271595cdfdfc29dfd8bed3f8bb91ed5
+  - ruleId: rule.fk-charter.a0d98411d75e
+    authoritySubject: goal-exit.enforcement-promotion
+    authorityClaim: refusal-vectors-bypass-sweeps-and-independent-review-precede-enforcement
+    normalizedStatement: 5. The five initial mediated refusal classes have authorization-engine vectors, negative tests, bypass probes, corpus sweeps, and independent review evidence before enforcement is enabled; hook non-enrollment is separately proven detectable.
+    sourceRefs:
+      - sourceId: fk-charter
+        itemId: item.a0d98411d75e
+        locatorDigest: ebf8603567cebf6e2403ee7e723104f434026bb2b301b16214975215ba0e5b91
+        valueDigest: 18ed2daf1e1cb32a8dacfe70970ea19a9ba3e00ff7421a35d6dbd5980f44719c
+    authorityBasisRef:
+      sourceId: fk-charter
+      itemId: item.a0d98411d75e
+      locatorDigest: ebf8603567cebf6e2403ee7e723104f434026bb2b301b16214975215ba0e5b91
+      valueDigest: 18ed2daf1e1cb32a8dacfe70970ea19a9ba3e00ff7421a35d6dbd5980f44719c
+    applicability:
+      goals:
+        - foreman-kernel
+      roles:
+        - coordinator
+      stages:
+        - deterministic-verify
+        - merge
+        - closure
+      operations:
+        - source-inventory
+        - state-transition
+      hosts:
+        - any
+    severity: medium
+    classification: ci-static-check
+    decision: ADVISORY
+    refusalCode: null
+    enforcementOwner: ci
+    assurance: detected
+    pairedRuleIds: []
+    retirementState: active-reading
+    retirementEvidence:
+      predicate: null
+      negativeRefusalTest: null
+      corpusSweep: null
+      independentBypassAttempt: null
+    bindingDigest: 9daaa55744418c3ce532be0c5a7636311f1d7cb27de54b07c096768200272042
+  - ruleId: rule.fk-charter.fec95f508418
+    authoritySubject: goal-exit.ci-backstop
+    authorityClaim: ci-catches-out-of-scope-mutation-and-missing-enrollment-before-promotion
+    normalizedStatement: 6. CI backstops are green before enforcement promotion and catch an intentionally introduced out-of-scope mutation plus missing enrollment that bypass the hook.
+    sourceRefs:
+      - sourceId: fk-charter
+        itemId: item.fec95f508418
+        locatorDigest: 833312569f7c424885076d8a8dd3bc1fca4840efd5f29f81849ffac9aa89e329
+        valueDigest: d6dcca2f24ef5e93b7dd1455d49a7d191961133cfe59761495a34aa29ef6a0b5
+    authorityBasisRef:
+      sourceId: fk-charter
+      itemId: item.fec95f508418
+      locatorDigest: 833312569f7c424885076d8a8dd3bc1fca4840efd5f29f81849ffac9aa89e329
+      valueDigest: d6dcca2f24ef5e93b7dd1455d49a7d191961133cfe59761495a34aa29ef6a0b5
+    applicability:
+      goals:
+        - foreman-kernel
+      roles:
+        - coordinator
+      stages:
+        - deterministic-verify
+        - merge
+        - closure
+      operations:
+        - source-inventory
+        - state-transition
+      hosts:
+        - any
+    severity: medium
+    classification: ci-static-check
+    decision: ADVISORY
+    refusalCode: null
+    enforcementOwner: ci
+    assurance: detected
+    pairedRuleIds: []
+    retirementState: active-reading
+    retirementEvidence:
+      predicate: null
+      negativeRefusalTest: null
+      corpusSweep: null
+      independentBypassAttempt: null
+    bindingDigest: 9a59efe18f355fba9398ed018f6c57846a782a561b00ec8581e42e3c0bb8ab8c
+  - ruleId: rule.fk-charter.4910b2a0a7a3
+    authoritySubject: goal-exit.authority-nonmanufacture
+    authorityClaim: tools-and-container-credentials-cannot-manufacture-protected-authority-or-effects
+    normalizedStatement: 7. No first-release tool can mint approval, independent-verification, merge, or closure authority; human-gate satisfaction is evidence-derived; and no container credential permits external mutation.
+    sourceRefs:
+      - sourceId: fk-charter
+        itemId: item.4910b2a0a7a3
+        locatorDigest: b0ac2610416a141c3c2da15a87b1c84d251c0466633e31fd87ca7640c2b298d9
+        valueDigest: 067440bd9b4b15f23bac951d2b6f6d2267f9f737aa1daf9cdf9b3c6051e27bf7
+    authorityBasisRef:
+      sourceId: fk-charter
+      itemId: item.4910b2a0a7a3
+      locatorDigest: b0ac2610416a141c3c2da15a87b1c84d251c0466633e31fd87ca7640c2b298d9
+      valueDigest: 067440bd9b4b15f23bac951d2b6f6d2267f9f737aa1daf9cdf9b3c6051e27bf7
+    applicability:
+      goals:
+        - foreman-kernel
+      roles:
+        - coordinator
+      stages:
+        - deterministic-verify
+        - merge
+        - closure
+      operations:
+        - source-inventory
+        - state-transition
+      hosts:
+        - any
+    severity: medium
+    classification: ci-static-check
+    decision: ADVISORY
+    refusalCode: null
+    enforcementOwner: ci
+    assurance: detected
+    pairedRuleIds: []
+    retirementState: active-reading
+    retirementEvidence:
+      predicate: null
+      negativeRefusalTest: null
+      corpusSweep: null
+      independentBypassAttempt: null
+    bindingDigest: bb36f69fdea75ff9b11664a2d82707a2fc267f04f27daf1f1afeced7aa243539
+  - ruleId: rule.fk-charter.4d6ea442cfff
+    authoritySubject: goal-exit.evidence-manifest
+    authorityClaim: committed-manifest-binds-source-artifact-host-review-and-mutation-evidence
+    normalizedStatement: 8. A committed evidence manifest binds source SHA, image/tool/schema/policy digests, host/harness versions, corpus inventory/count, reviewer-session distinction, commands, results, and named mutation controls.
+    sourceRefs:
+      - sourceId: fk-charter
+        itemId: item.4d6ea442cfff
+        locatorDigest: 66375089254935aa2890d07c65127aa07c644aee01e2580c83599f244846de48
+        valueDigest: 55b9809c44cb222beeb8313c6109fff79f57262fa97222616075426718460f48
+    authorityBasisRef:
+      sourceId: fk-charter
+      itemId: item.4d6ea442cfff
+      locatorDigest: 66375089254935aa2890d07c65127aa07c644aee01e2580c83599f244846de48
+      valueDigest: 55b9809c44cb222beeb8313c6109fff79f57262fa97222616075426718460f48
+    applicability:
+      goals:
+        - foreman-kernel
+      roles:
+        - coordinator
+      stages:
+        - deterministic-verify
+        - merge
+        - closure
+      operations:
+        - source-inventory
+        - state-transition
+      hosts:
+        - any
+    severity: medium
+    classification: ci-static-check
+    decision: ADVISORY
+    refusalCode: null
+    enforcementOwner: ci
+    assurance: detected
+    pairedRuleIds: []
+    retirementState: active-reading
+    retirementEvidence:
+      predicate: null
+      negativeRefusalTest: null
+      corpusSweep: null
+      independentBypassAttempt: null
+    bindingDigest: 39e6a6d9bf9b7f4fe0eeed11e691ad4cf47aa635ce1ed0a8e924d78f657ac227
+  - ruleId: rule.fk-charter.49288a83830e
+    authoritySubject: goal-exit.honest-reporting
+    authorityClaim: final-report-separates-assurance-and-unsupported-host-claims
+    normalizedStatement: 9. The final report separates mechanically enforced, detected-only, CI-enforced, human-judgment, unsupported-host, and deferred-receipt controls without claiming Codex or native-Linux-host enforcement absent process-boundary evidence.
+    sourceRefs:
+      - sourceId: fk-charter
+        itemId: item.49288a83830e
+        locatorDigest: 4c1440f10b1f22ecb8f80fdd7b6333360a74641b0669b4ee8a88ba05311fb42e
+        valueDigest: 23b19f8351758ce25c26c5556881b061886d3efa6a388e7b8dfa6d6caa4a5add
+    authorityBasisRef:
+      sourceId: fk-charter
+      itemId: item.49288a83830e
+      locatorDigest: 4c1440f10b1f22ecb8f80fdd7b6333360a74641b0669b4ee8a88ba05311fb42e
+      valueDigest: 23b19f8351758ce25c26c5556881b061886d3efa6a388e7b8dfa6d6caa4a5add
+    applicability:
+      goals:
+        - foreman-kernel
+      roles:
+        - coordinator
+      stages:
+        - deterministic-verify
+        - merge
+        - closure
+      operations:
+        - source-inventory
+        - state-transition
+      hosts:
+        - any
+    severity: medium
+    classification: ci-static-check
+    decision: ADVISORY
+    refusalCode: null
+    enforcementOwner: ci
+    assurance: detected
+    pairedRuleIds: []
+    retirementState: active-reading
+    retirementEvidence:
+      predicate: null
+      negativeRefusalTest: null
+      corpusSweep: null
+      independentBypassAttempt: null
+    bindingDigest: d039522b31def81cf7e4230cbf6a19406511158a4d8cc293df8ef65fda8d1da6
   - ruleId: rule.fk-charter.8cf027fc811e
     authoritySubject: gate1.reratification-status
     authorityClaim: scoped-r1-r13-reratification-is-in-force
@@ -10538,40 +10800,14 @@ rules:
       goals:
         - foreman-kernel
       roles:
-        - developer
         - coordinator
-        - shaper
-        - builder
-        - reviewer
-        - ci
-        - host-adapter
-        - kernel
-        - operator
       stages:
-        - stage-zero
         - shaping
         - step-zero
-        - build
-        - deterministic-verify
-        - adversarial-review
-        - merge
-        - closure
-        - runtime
       operations:
-        - source-inventory
-        - spec-mutation
-        - repo-read
-        - repo-mutation
         - state-transition
-        - control-call
-        - receipt-validation
-        - external-write
       hosts:
         - provider-neutral
-        - claude-windows-docker-loaded
-        - claude-windows-docker-unenrolled
-        - unsupported-host
-        - ci
     severity: critical
     classification: pre-action-refusal
     decision: REFUSE
@@ -10585,7 +10821,7 @@ rules:
       negativeRefusalTest: null
       corpusSweep: null
       independentBypassAttempt: null
-    bindingDigest: 9ee997ffcb8243b0b685d631e6e3c11b81f99acaf584749429f6453acf73c002
+    bindingDigest: 30e0aeb71b66919fb480a6cd5bba314c75ece7509dc11d91a64eee1095fa0c65
   - ruleId: rule.fk-charter.c74628d41600
     authoritySubject: gate3.merge-authority
     authorityClaim: human-owned-nondelegated
@@ -10718,6 +10954,45 @@ rules:
       corpusSweep: null
       independentBypassAttempt: null
     bindingDigest: 603b0b05ad4e1eb539027da1a6947d4de920e422823785065041d44d2b48f945
+  - ruleId: rule.fk-charter.41b4b3dccd81
+    authoritySubject: goal-stop.ratification-drift
+    authorityClaim: stop-on-unratified-review-change
+    normalizedStatement: "- a fresh plan review changes a locked decision, parcel graph, or exit criterion without scoped re-ratification;"
+    sourceRefs:
+      - sourceId: fk-charter
+        itemId: item.41b4b3dccd81
+        locatorDigest: 142214043335e06edc4ff4b845bd4c3d12be6853f0b07738970dff2d16d6be28
+        valueDigest: e64ace8cbdc0dad31cb91fc3e626a882eaacea628970bfdbadc895a0049bf3ab
+    authorityBasisRef:
+      sourceId: fk-charter
+      itemId: item.41b4b3dccd81
+      locatorDigest: 142214043335e06edc4ff4b845bd4c3d12be6853f0b07738970dff2d16d6be28
+      valueDigest: e64ace8cbdc0dad31cb91fc3e626a882eaacea628970bfdbadc895a0049bf3ab
+    applicability:
+      goals:
+        - foreman-kernel
+      roles:
+        - coordinator
+      stages:
+        - any
+      operations:
+        - any
+      hosts:
+        - any
+    severity: critical
+    classification: pre-action-refusal
+    decision: REFUSE
+    refusalCode: FK_CANON_RULE_REFUSED
+    enforcementOwner: kernel-policy
+    assurance: structural
+    pairedRuleIds: []
+    retirementState: active-reading
+    retirementEvidence:
+      predicate: null
+      negativeRefusalTest: null
+      corpusSweep: null
+      independentBypassAttempt: null
+    bindingDigest: d1ba98ed4e57940527dedafb1430525a5842df9422f5a74640becf84aac42e5d
   - ruleId: rule.fk-charter.0afd841f51f8
     authoritySubject: goal.stop.serialization-ownership
     authorityClaim: stop-when-owned-serialization-point-has-no-ratified-sequence
@@ -10784,6 +11059,474 @@ rules:
       corpusSweep: null
       independentBypassAttempt: null
     bindingDigest: b1b1186128f1a6f6ca3eb135ea45582eb4603a78ff13139d5f1cd01a4cf9390d
+  - ruleId: rule.fk-charter.c80d986d4cfe
+    authoritySubject: goal-stop.stage-contract-boundary
+    authorityClaim: stop-on-out-of-parcel-stage-contract-change
+    normalizedStatement: "- implementation requires changing ratified Foreman stage contracts outside a named contract amendment;"
+    sourceRefs:
+      - sourceId: fk-charter
+        itemId: item.c80d986d4cfe
+        locatorDigest: 93d1dd81bc86df8ebb79b91ee71d4375e64537915c537ef7a3b35725a81d0d64
+        valueDigest: 220c9bbe97ed95f36ef6fcbff98b14f79599c332aa99bec66129e1ff3343d93a
+    authorityBasisRef:
+      sourceId: fk-charter
+      itemId: item.c80d986d4cfe
+      locatorDigest: 93d1dd81bc86df8ebb79b91ee71d4375e64537915c537ef7a3b35725a81d0d64
+      valueDigest: 220c9bbe97ed95f36ef6fcbff98b14f79599c332aa99bec66129e1ff3343d93a
+    applicability:
+      goals:
+        - foreman-kernel
+      roles:
+        - coordinator
+      stages:
+        - any
+      operations:
+        - any
+      hosts:
+        - any
+    severity: critical
+    classification: pre-action-refusal
+    decision: REFUSE
+    refusalCode: FK_CANON_RULE_REFUSED
+    enforcementOwner: kernel-policy
+    assurance: structural
+    pairedRuleIds: []
+    retirementState: active-reading
+    retirementEvidence:
+      predicate: null
+      negativeRefusalTest: null
+      corpusSweep: null
+      independentBypassAttempt: null
+    bindingDigest: fea34cff7d2ef2387350493b3a8eca3cd88591b5284310f459aec16b0211b956
+  - ruleId: rule.fk-charter.ab729d219bbb
+    authoritySubject: goal-stop.allowed-files
+    authorityClaim: stop-on-unlisted-required-file
+    normalizedStatement: "- a parcel needs a file outside its exact Allowed Files;"
+    sourceRefs:
+      - sourceId: fk-charter
+        itemId: item.ab729d219bbb
+        locatorDigest: a879a4fe95b0f07f5d713bc2ec106c3f4928bb2c4a380a1060bbf6d1b7407ca3
+        valueDigest: 9b50b9c3a95d718f4a876c1e5cfb2f0cc5402715325bd30a16f76415a1603c91
+    authorityBasisRef:
+      sourceId: fk-charter
+      itemId: item.ab729d219bbb
+      locatorDigest: a879a4fe95b0f07f5d713bc2ec106c3f4928bb2c4a380a1060bbf6d1b7407ca3
+      valueDigest: 9b50b9c3a95d718f4a876c1e5cfb2f0cc5402715325bd30a16f76415a1603c91
+    applicability:
+      goals:
+        - foreman-kernel
+      roles:
+        - coordinator
+      stages:
+        - any
+      operations:
+        - any
+      hosts:
+        - any
+    severity: critical
+    classification: pre-action-refusal
+    decision: REFUSE
+    refusalCode: FK_CANON_RULE_REFUSED
+    enforcementOwner: kernel-policy
+    assurance: structural
+    pairedRuleIds: []
+    retirementState: active-reading
+    retirementEvidence:
+      predicate: null
+      negativeRefusalTest: null
+      corpusSweep: null
+      independentBypassAttempt: null
+    bindingDigest: 83c9ef27902204b41d7df8a6e0caf63b9cc0463961b739f3658d955f89186c38
+  - ruleId: rule.fk-charter.1c42ce2f7e94
+    authoritySubject: goal-stop.surfaces-authority-confusion
+    authorityClaim: stop-if-exact-paths-require-treating-surfaces-as-permission
+    normalizedStatement: "- exact path authority cannot be compiled without interpreting `surfaces:` as permission;"
+    sourceRefs:
+      - sourceId: fk-charter
+        itemId: item.1c42ce2f7e94
+        locatorDigest: 0660446e4769924e7ee9e368d272b2b961f1f486c729682e7eb8adf9c974e8af
+        valueDigest: 0b10cb77206cadc329b3d0cdec97e92350bf5a60377d276e4f0991d0c5e94e49
+    authorityBasisRef:
+      sourceId: fk-charter
+      itemId: item.1c42ce2f7e94
+      locatorDigest: 0660446e4769924e7ee9e368d272b2b961f1f486c729682e7eb8adf9c974e8af
+      valueDigest: 0b10cb77206cadc329b3d0cdec97e92350bf5a60377d276e4f0991d0c5e94e49
+    applicability:
+      goals:
+        - foreman-kernel
+      roles:
+        - coordinator
+      stages:
+        - any
+      operations:
+        - any
+      hosts:
+        - any
+    severity: critical
+    classification: pre-action-refusal
+    decision: REFUSE
+    refusalCode: FK_CANON_RULE_REFUSED
+    enforcementOwner: kernel-policy
+    assurance: structural
+    pairedRuleIds: []
+    retirementState: active-reading
+    retirementEvidence:
+      predicate: null
+      negativeRefusalTest: null
+      corpusSweep: null
+      independentBypassAttempt: null
+    bindingDigest: fd921ed6f130bdb539eff36931090371b50205eb556407408534effa73576316
+  - ruleId: rule.fk-charter.28ec67f3ddb4
+    authoritySubject: goal-stop.mediation-overclaim
+    authorityClaim: stop-on-complete-shell-or-unsupported-host-mediation-claim
+    normalizedStatement: "- a hook or server design requires claiming complete mediation of arbitrary shell or unsupported host behavior;"
+    sourceRefs:
+      - sourceId: fk-charter
+        itemId: item.28ec67f3ddb4
+        locatorDigest: adcfcccb65dd8a03b332a8f6003ae01e75054f7b9b3159a25cc6b3a51592cfea
+        valueDigest: bee6d846d01c3ea8ffbf203d5eac8ec832448557b54e4110ebe212456c2e343d
+    authorityBasisRef:
+      sourceId: fk-charter
+      itemId: item.28ec67f3ddb4
+      locatorDigest: adcfcccb65dd8a03b332a8f6003ae01e75054f7b9b3159a25cc6b3a51592cfea
+      valueDigest: bee6d846d01c3ea8ffbf203d5eac8ec832448557b54e4110ebe212456c2e343d
+    applicability:
+      goals:
+        - foreman-kernel
+      roles:
+        - coordinator
+      stages:
+        - any
+      operations:
+        - any
+      hosts:
+        - any
+    severity: critical
+    classification: pre-action-refusal
+    decision: REFUSE
+    refusalCode: FK_CANON_RULE_REFUSED
+    enforcementOwner: kernel-policy
+    assurance: structural
+    pairedRuleIds: []
+    retirementState: active-reading
+    retirementEvidence:
+      predicate: null
+      negativeRefusalTest: null
+      corpusSweep: null
+      independentBypassAttempt: null
+    bindingDigest: 35d463e46253d35432cf5223f925cb6e2c37bef9ca8da2bcf1a581fe0046e579
+  - ruleId: rule.fk-charter.5138fd735a8a
+    authoritySubject: goal-stop.protected-authority-mint
+    authorityClaim: stop-on-tool-manufactured-human-independent-merge-or-closure-authority
+    normalizedStatement: "- a proposed tool can manufacture human approval, independent-verifier evidence, merge authorization, or closure authority;"
+    sourceRefs:
+      - sourceId: fk-charter
+        itemId: item.5138fd735a8a
+        locatorDigest: fa64df6af2ee55b0634f891ecf3d3679cbf5e7a69b7680a732ad159fd6a77f7b
+        valueDigest: 59e4f36854d7e4edd25f9dbadcd70c8195a81150f26a450bbd2ef4544af73b03
+    authorityBasisRef:
+      sourceId: fk-charter
+      itemId: item.5138fd735a8a
+      locatorDigest: fa64df6af2ee55b0634f891ecf3d3679cbf5e7a69b7680a732ad159fd6a77f7b
+      valueDigest: 59e4f36854d7e4edd25f9dbadcd70c8195a81150f26a450bbd2ef4544af73b03
+    applicability:
+      goals:
+        - foreman-kernel
+      roles:
+        - coordinator
+      stages:
+        - any
+      operations:
+        - any
+      hosts:
+        - any
+    severity: critical
+    classification: pre-action-refusal
+    decision: REFUSE
+    refusalCode: FK_CANON_RULE_REFUSED
+    enforcementOwner: kernel-policy
+    assurance: structural
+    pairedRuleIds: []
+    retirementState: active-reading
+    retirementEvidence:
+      predicate: null
+      negativeRefusalTest: null
+      corpusSweep: null
+      independentBypassAttempt: null
+    bindingDigest: 18a2c89cf7fe2cbce8854edf295e8c0cec84b4e8392d678ec725a7fe4ca5dd0a
+  - ruleId: rule.fk-charter.6aae5fe2d602
+    authoritySubject: goal-stop.external-capability
+    authorityClaim: stop-on-container-external-or-broad-host-capability
+    normalizedStatement: "- a container requires Jira, SCM, cloud, signing, Docker-socket, or broad-host access;"
+    sourceRefs:
+      - sourceId: fk-charter
+        itemId: item.6aae5fe2d602
+        locatorDigest: 53e3b7e7b76a6918dba27b5b9481553394b865c92c64b630deb1ac61248a555e
+        valueDigest: ddfa5e9f869493c2b3906d92f38ab0cb5072720fcf417160ffd937977766aa09
+    authorityBasisRef:
+      sourceId: fk-charter
+      itemId: item.6aae5fe2d602
+      locatorDigest: 53e3b7e7b76a6918dba27b5b9481553394b865c92c64b630deb1ac61248a555e
+      valueDigest: ddfa5e9f869493c2b3906d92f38ab0cb5072720fcf417160ffd937977766aa09
+    applicability:
+      goals:
+        - foreman-kernel
+      roles:
+        - coordinator
+      stages:
+        - any
+      operations:
+        - any
+      hosts:
+        - any
+    severity: critical
+    classification: pre-action-refusal
+    decision: REFUSE
+    refusalCode: FK_CANON_RULE_REFUSED
+    enforcementOwner: kernel-policy
+    assurance: structural
+    pairedRuleIds: []
+    retirementState: active-reading
+    retirementEvidence:
+      predicate: null
+      negativeRefusalTest: null
+      corpusSweep: null
+      independentBypassAttempt: null
+    bindingDigest: e0dd06a98277ad0b963880189015a9e3e645da4b0f90e6f2f349695b11b6a62a
+  - ruleId: rule.fk-charter.fc4a386b94fe
+    authoritySubject: goal-stop.identity-and-control-admission
+    authorityClaim: stop-on-self-asserted-identity-or-read-client-control-discovery
+    normalizedStatement: "- a control request relies on self-asserted identity or a read-only client can discover or call control tools;"
+    sourceRefs:
+      - sourceId: fk-charter
+        itemId: item.fc4a386b94fe
+        locatorDigest: b9547561a9d36d0094ba41f09170006a1fbc597de49c17b34d7ccd16116d16b7
+        valueDigest: 4a5529e47a7a0ae1cfc5eca3f9f4d93c9e1d88586e5470cd6fe097314a58970a
+    authorityBasisRef:
+      sourceId: fk-charter
+      itemId: item.fc4a386b94fe
+      locatorDigest: b9547561a9d36d0094ba41f09170006a1fbc597de49c17b34d7ccd16116d16b7
+      valueDigest: 4a5529e47a7a0ae1cfc5eca3f9f4d93c9e1d88586e5470cd6fe097314a58970a
+    applicability:
+      goals:
+        - foreman-kernel
+      roles:
+        - coordinator
+      stages:
+        - any
+      operations:
+        - any
+      hosts:
+        - any
+    severity: critical
+    classification: pre-action-refusal
+    decision: REFUSE
+    refusalCode: FK_CANON_RULE_REFUSED
+    enforcementOwner: kernel-policy
+    assurance: structural
+    pairedRuleIds: []
+    retirementState: active-reading
+    retirementEvidence:
+      predicate: null
+      negativeRefusalTest: null
+      corpusSweep: null
+      independentBypassAttempt: null
+    bindingDigest: 387e8f2f3be8d62c11a714f67685cb9c8411e9f1f23105f1d5171db57980ecbe
+  - ruleId: rule.fk-charter.42e05d00c67a
+    authoritySubject: goal-stop.read-confinement
+    authorityClaim: stop-on-arbitrary-host-path-or-state-volume-read
+    normalizedStatement: "- a read-only request can select an arbitrary host path or access the state volume;"
+    sourceRefs:
+      - sourceId: fk-charter
+        itemId: item.42e05d00c67a
+        locatorDigest: 5445a6db2ba38178d439a3ada283467328a2cdf863b74cdeaad0f6a43405d2de
+        valueDigest: 4e91722aadd28fb0924942fa6ff9bcd4951169dd5700cf28c48427e4359d8825
+    authorityBasisRef:
+      sourceId: fk-charter
+      itemId: item.42e05d00c67a
+      locatorDigest: 5445a6db2ba38178d439a3ada283467328a2cdf863b74cdeaad0f6a43405d2de
+      valueDigest: 4e91722aadd28fb0924942fa6ff9bcd4951169dd5700cf28c48427e4359d8825
+    applicability:
+      goals:
+        - foreman-kernel
+      roles:
+        - coordinator
+      stages:
+        - any
+      operations:
+        - any
+      hosts:
+        - any
+    severity: critical
+    classification: pre-action-refusal
+    decision: REFUSE
+    refusalCode: FK_CANON_RULE_REFUSED
+    enforcementOwner: kernel-policy
+    assurance: structural
+    pairedRuleIds: []
+    retirementState: active-reading
+    retirementEvidence:
+      predicate: null
+      negativeRefusalTest: null
+      corpusSweep: null
+      independentBypassAttempt: null
+    bindingDigest: 405da6c02c2cc1abdeec81c46880a1edaf6bcdec0e6821240a87ab58485bf7f3
+  - ruleId: rule.fk-charter.07490af17320
+    authoritySubject: goal-stop.migration-history
+    authorityClaim: stop-on-manufactured-historical-approval-or-authorization
+    normalizedStatement: "- state migration would manufacture or infer a historical approval/authorization;"
+    sourceRefs:
+      - sourceId: fk-charter
+        itemId: item.07490af17320
+        locatorDigest: f9c0198855833b3028c5f69d2ca1af5308ef62d3db644fc8689ea924746bc4fc
+        valueDigest: 56b5836773886c8eaf6fb588cc5eece5d46db7d4c98fd4d766bfbd33503c4147
+    authorityBasisRef:
+      sourceId: fk-charter
+      itemId: item.07490af17320
+      locatorDigest: f9c0198855833b3028c5f69d2ca1af5308ef62d3db644fc8689ea924746bc4fc
+      valueDigest: 56b5836773886c8eaf6fb588cc5eece5d46db7d4c98fd4d766bfbd33503c4147
+    applicability:
+      goals:
+        - foreman-kernel
+      roles:
+        - coordinator
+      stages:
+        - any
+      operations:
+        - any
+      hosts:
+        - any
+    severity: critical
+    classification: pre-action-refusal
+    decision: REFUSE
+    refusalCode: FK_CANON_RULE_REFUSED
+    enforcementOwner: kernel-policy
+    assurance: structural
+    pairedRuleIds: []
+    retirementState: active-reading
+    retirementEvidence:
+      predicate: null
+      negativeRefusalTest: null
+      corpusSweep: null
+      independentBypassAttempt: null
+    bindingDigest: a76e78fe1946dd3609636798898b2de4dc2bf619589bd170b9e3a397fe8b34af
+  - ruleId: rule.fk-charter.b5bad0475a3e
+    authoritySubject: goal-stop.security-boundary
+    authorityClaim: stop-on-security-boundary-that-cannot-close-in-parcel
+    normalizedStatement: "- a security boundary cannot be closed inside its parcel;"
+    sourceRefs:
+      - sourceId: fk-charter
+        itemId: item.b5bad0475a3e
+        locatorDigest: 95ad479a2d9befe23bb86f9d67c6a8f62d1251ddb9dd4ee222708188a714f8c0
+        valueDigest: 83a2c78119775e6dac151bcc3607a36bb18c4f0cd7271af2683b2c2bc870cbaa
+    authorityBasisRef:
+      sourceId: fk-charter
+      itemId: item.b5bad0475a3e
+      locatorDigest: 95ad479a2d9befe23bb86f9d67c6a8f62d1251ddb9dd4ee222708188a714f8c0
+      valueDigest: 83a2c78119775e6dac151bcc3607a36bb18c4f0cd7271af2683b2c2bc870cbaa
+    applicability:
+      goals:
+        - foreman-kernel
+      roles:
+        - coordinator
+      stages:
+        - any
+      operations:
+        - any
+      hosts:
+        - any
+    severity: critical
+    classification: pre-action-refusal
+    decision: REFUSE
+    refusalCode: FK_CANON_RULE_REFUSED
+    enforcementOwner: kernel-policy
+    assurance: structural
+    pairedRuleIds: []
+    retirementState: active-reading
+    retirementEvidence:
+      predicate: null
+      negativeRefusalTest: null
+      corpusSweep: null
+      independentBypassAttempt: null
+    bindingDigest: e8f7452a0ff2a6a257fc203e345af58bb4975a19e503e156ee51b872a4f14614
+  - ruleId: rule.fk-charter.e86843a842bc
+    authoritySubject: goal-stop.tripwire
+    authorityClaim: stop-on-repeated-tripwire-or-rework-cap
+    normalizedStatement: "- the same tripwire or rework cap fires as defined by the parcel contract;"
+    sourceRefs:
+      - sourceId: fk-charter
+        itemId: item.e86843a842bc
+        locatorDigest: d8a76dc368d179050fc620a039c65f658795bd783df93915f2ebb681518155dc
+        valueDigest: 8c81655503620f0dc467d45df9172c38dd7c037cd40b20d3f919e9c37864133a
+    authorityBasisRef:
+      sourceId: fk-charter
+      itemId: item.e86843a842bc
+      locatorDigest: d8a76dc368d179050fc620a039c65f658795bd783df93915f2ebb681518155dc
+      valueDigest: 8c81655503620f0dc467d45df9172c38dd7c037cd40b20d3f919e9c37864133a
+    applicability:
+      goals:
+        - foreman-kernel
+      roles:
+        - coordinator
+      stages:
+        - any
+      operations:
+        - any
+      hosts:
+        - any
+    severity: critical
+    classification: pre-action-refusal
+    decision: REFUSE
+    refusalCode: FK_CANON_RULE_REFUSED
+    enforcementOwner: kernel-policy
+    assurance: structural
+    pairedRuleIds: []
+    retirementState: active-reading
+    retirementEvidence:
+      predicate: null
+      negativeRefusalTest: null
+      corpusSweep: null
+      independentBypassAttempt: null
+    bindingDigest: c171337907a8284fe79ca91d4d135136807458191e25a6eef3079b6a46fa1139
+  - ruleId: rule.fk-charter.98b291e68000
+    authoritySubject: goal-stop.worktree-isolation
+    authorityClaim: stop-on-ambient-or-other-worktree-mutation
+    normalizedStatement: "- a reviewer or builder modifies the ambient dirty checkout or another goal's worktree;"
+    sourceRefs:
+      - sourceId: fk-charter
+        itemId: item.98b291e68000
+        locatorDigest: 738c35846aa2079770088b7e318fd789e6d16586c1b0577060dfab98f9c1535b
+        valueDigest: 49d2ad080e0bc780411cfe832e1e9a05fcd92184743b392fcbd364fada388955
+    authorityBasisRef:
+      sourceId: fk-charter
+      itemId: item.98b291e68000
+      locatorDigest: 738c35846aa2079770088b7e318fd789e6d16586c1b0577060dfab98f9c1535b
+      valueDigest: 49d2ad080e0bc780411cfe832e1e9a05fcd92184743b392fcbd364fada388955
+    applicability:
+      goals:
+        - foreman-kernel
+      roles:
+        - coordinator
+      stages:
+        - any
+      operations:
+        - any
+      hosts:
+        - any
+    severity: critical
+    classification: pre-action-refusal
+    decision: REFUSE
+    refusalCode: FK_CANON_RULE_REFUSED
+    enforcementOwner: kernel-policy
+    assurance: structural
+    pairedRuleIds: []
+    retirementState: active-reading
+    retirementEvidence:
+      predicate: null
+      negativeRefusalTest: null
+      corpusSweep: null
+      independentBypassAttempt: null
+    bindingDigest: 3e3ddcad8b521715174db68ea7fdade4c01450384cd79716dcdaf7bac2348cac
   - ruleId: rule.fk-charter.2cbbc7ae0192
     authoritySubject: goal.stop.user-change-collision
     authorityClaim: stop-on-user-owned-required-file-collision
@@ -10850,6 +11593,45 @@ rules:
       corpusSweep: null
       independentBypassAttempt: null
     bindingDigest: 6b12f4696531a516ee47d7738313e60d5265bc41d6f4b9bcd711a9aba5d3f637
+  - ruleId: rule.fk-charter.76049b5d2003
+    authoritySubject: goal-stop.exit-evidence
+    authorityClaim: stop-on-empty-queue-with-unproved-exit
+    normalizedStatement: "- the queue is empty and the exit criterion is not fully evidenced."
+    sourceRefs:
+      - sourceId: fk-charter
+        itemId: item.76049b5d2003
+        locatorDigest: 324bd0a17aaad35a769fa7a4d40a2c64c990f59ec0ef22beb00117d53abb5abc
+        valueDigest: 0447666a5a2373f22ff85ef23055539409da77eca56494e72327c1e41c2f8b89
+    authorityBasisRef:
+      sourceId: fk-charter
+      itemId: item.76049b5d2003
+      locatorDigest: 324bd0a17aaad35a769fa7a4d40a2c64c990f59ec0ef22beb00117d53abb5abc
+      valueDigest: 0447666a5a2373f22ff85ef23055539409da77eca56494e72327c1e41c2f8b89
+    applicability:
+      goals:
+        - foreman-kernel
+      roles:
+        - coordinator
+      stages:
+        - any
+      operations:
+        - any
+      hosts:
+        - any
+    severity: critical
+    classification: pre-action-refusal
+    decision: REFUSE
+    refusalCode: FK_CANON_RULE_REFUSED
+    enforcementOwner: kernel-policy
+    assurance: structural
+    pairedRuleIds: []
+    retirementState: active-reading
+    retirementEvidence:
+      predicate: null
+      negativeRefusalTest: null
+      corpusSweep: null
+      independentBypassAttempt: null
+    bindingDigest: 0b0463f007560036fe6ba1766019072273bbf103685f623132980da9fc9f807a
   - ruleId: rule.fk-charter.b1ac4aa9eddf
     authoritySubject: gate3.merge-authority
     authorityClaim: human-owned-nondelegated
@@ -20127,52 +20909,6 @@ rules:
       corpusSweep: null
       independentBypassAttempt: null
     bindingDigest: 78ba98336f908ceb5a8b05b7df7df27e0bfc50d3d500fb86d5a54aab865e405a
-  - ruleId: rule.spec-linter-validator.80563af1788e
-    authoritySubject: spec.mutation-authority
-    authorityClaim: frontmatter-only-no-body-compiler
-    normalizedStatement: "return { valid: errors.length === 0, errors, warnings }"
-    sourceRefs:
-      - sourceId: spec-linter-validator
-        itemId: item.80563af1788e
-        locatorDigest: 2f9e75b909be75a8811108728026dbe439a0419385e992fd536bc972339a3a54
-        valueDigest: 80563af1788e33bcf9620117e6878a20ab9a71633143aa5e938d074e02697a70
-    authorityBasisRef:
-      sourceId: spec-linter-validator
-      itemId: item.80563af1788e
-      locatorDigest: 2f9e75b909be75a8811108728026dbe439a0419385e992fd536bc972339a3a54
-      valueDigest: 80563af1788e33bcf9620117e6878a20ab9a71633143aa5e938d074e02697a70
-    applicability:
-      goals:
-        - all-foreman-goals
-      roles:
-        - ci
-      stages:
-        - deterministic-verify
-      operations:
-        - source-inventory
-        - spec-mutation
-        - repo-read
-        - repo-mutation
-        - state-transition
-        - control-call
-        - receipt-validation
-        - external-write
-      hosts:
-        - ci
-    severity: medium
-    classification: ci-static-check
-    decision: ADVISORY
-    refusalCode: null
-    enforcementOwner: ci
-    assurance: detected
-    pairedRuleIds: []
-    retirementState: active-reading
-    retirementEvidence:
-      predicate: null
-      negativeRefusalTest: null
-      corpusSweep: null
-      independentBypassAttempt: null
-    bindingDigest: 81d9627161b1b917a51c3c98a12990dac7249c617435c3e3d553b39090cda12b
   - ruleId: rule.spec-linter-cli.0479c603add5
     authoritySubject: spec-linter.exit-code.zero
     authorityClaim: valid-specs-exit-zero-despite-advisory-warnings
@@ -25474,14 +26210,14 @@ operationAuthority:
     allowedPrincipals:
       - independent-reviewer
     requiredGitEvidence:
-      - sourceId: fk-charter
-        itemId: item.d11
-        locatorDigest: cc1274d93173279640dff87fbd70e0cccb28d3356508187f79f4527af0dcbc18
-        valueDigest: afd1359afbfe84dcc0f26fc24f0fef2a16a29b0ffaeaeee5599a9d1531a2bbc0
+      - sourceId: spec-convention
+        itemId: item.03f0830cd693
+        locatorDigest: 3fde70b7b099eb794a7ed75ace1beca56296716102472c7b45afedf7c27859c9
+        valueDigest: 46e11a18b178256203b1c7b97313b22fa8da5be5114b34bc07aa0db930630b8e
       - sourceId: fk-loop-directive
-        itemId: item.ce9042d917b2
-        locatorDigest: 1117241384bb59dfee66afecc4990c0f126556babeb120c143b1e35ae5915e92
-        valueDigest: db05b0dbc2f3348b26893cc1b9f1f383450f8a96f0ae224cc5cafb082146aac7
+        itemId: item.dd8203551518
+        locatorDigest: b2fc591d9a184280eaa3643fc0b117b8daffe5212575b09dc743758805a19bd3
+        valueDigest: 25ba8e8ebb127292879aa5767bd1389fb5795b2b8759516f7d1cf099f57784e6
     missingEvidenceDecision: REFUSE
     agentCallable: false
     operationalStateMaySatisfy: false
@@ -25670,10 +26406,6 @@ reconciliations:
         itemId: item.fd82127bf9f9
         locatorDigest: 191e303788bc4e811b4945a05a0b77edbf853e88f5e004f9dcad1a844f2ac8cf
         valueDigest: fd82127bf9f91c2bf2754cd09074a955e222096fbb20178e662483c4c4da1e62
-      - sourceId: spec-linter-validator
-        itemId: item.80563af1788e
-        locatorDigest: 2f9e75b909be75a8811108728026dbe439a0419385e992fd536bc972339a3a54
-        valueDigest: 80563af1788e33bcf9620117e6878a20ab9a71633143aa5e938d074e02697a70
       - sourceId: fk-charter
         itemId: item.d10
         locatorDigest: 3f31f6a6731c274204cf00321a72576c77db57eb68bd2df59a76055c077ac653
@@ -25689,11 +26421,11 @@ reconciliations:
         reference: '{"itemId":"item.fd82127bf9f9","locatorDigest":"191e303788bc4e811b4945a05a0b77edbf853e88f5e004f9dcad1a844f2ac8cf","sourceId":"spec-convention","valueDigest":"fd82127bf9f91c2bf2754cd09074a955e222096fbb20178e662483c4c4da1e62"}'
         digest: 61903ba9265b2d331bc297d083afc8697256dfe7df5dc23cc0fdbaa8f92895a9
       - kind: source-ref
-        reference: '{"itemId":"item.80563af1788e","locatorDigest":"2f9e75b909be75a8811108728026dbe439a0419385e992fd536bc972339a3a54","sourceId":"spec-linter-validator","valueDigest":"80563af1788e33bcf9620117e6878a20ab9a71633143aa5e938d074e02697a70"}'
-        digest: e37b4b307c46cc9184a3a7370ca5d281731ad65d176331de3f466cdc45b94fab
-      - kind: source-ref
         reference: '{"itemId":"item.d10","locatorDigest":"3f31f6a6731c274204cf00321a72576c77db57eb68bd2df59a76055c077ac653","sourceId":"fk-charter","valueDigest":"d535c93ccef2b060a284629002a37d97e4efb6b5a9c09daaa123ac49bd51f9ef"}'
         digest: a802ebb17bcbaac7101d20b3f706b539c1badd9c7ff6e49ade89bed4a1c46d3f
+      - kind: command-result
+        reference: '{"actorClass":"coordinator","commandId":"allowed-files-body-compiler-absence","exitCode":0,"inputDigest":"6b2c1d5a5ef245a52c53581509a2358b6af78ff5b3ace3110c33e274db5a16bc","resultDigest":"b362be51b1fb24a6e51eae331235de0edfb1643c0ff33610a122b9b22151e5ab","tool":"@foreman-line/authority-registry","toolVersion":"0.1.0"}'
+        digest: 25ae129a01f3a5d5ca96afac1e71e6323d115614f10e3c72f73a54702c2788bd
     authoritativeRuleIds:
       - rule.spec-convention.5145ab15549c
       - rule.spec-convention.fd82127bf9f9
@@ -26118,3 +26850,33 @@ reconciliations:
       itemId: item.d2
       locatorDigest: a193e5ebab5d40ebdfb371d5cd279d5b129aa917566e43babc0df4ad67f78260
       valueDigest: 101bf48e995bdabd0bf14bfddb8e1102041d57d66c5b9d06491b86c24930b015
+  - reconciliationId: registry-rework-37afc65
+    topic: R7 registry bindings superseded by the coordinator-ratified FK-P0 R8 amendment.
+    observedRefs:
+      - sourceId: fk-charter
+        itemId: item.d10
+        locatorDigest: 3f31f6a6731c274204cf00321a72576c77db57eb68bd2df59a76055c077ac653
+        valueDigest: d535c93ccef2b060a284629002a37d97e4efb6b5a9c09daaa123ac49bd51f9ef
+    observedEvidence:
+      - kind: git-commit
+        reference: 5d7ca990574eb8416a1fc5ac40b90d9aec975b2b
+        digest: dfcfdb520eae8243c57a7d02e609ce00b99b3e215e9f0d2097dd0d936167f479
+      - kind: git-commit
+        reference: 51857a3a7796b393c0c0a68712f98c06e7015d79
+        digest: 35b6b805e4ad81c9b4cb4c1f5dc346c431e55e6823690e93d4ad61a969767cad
+      - kind: command-result
+        reference: '{"actorClass":"coordinator","commandId":"registry-binding-manifest-r7","exitCode":0,"inputDigest":"41ba3a51c7cf78338762d2bfa2cbde911b6a6cfab239c62e704a32fd0e8feb7b","resultDigest":"2a12cde0f3ae481462c74cb5c0cb2377514f628cb0091c26f916705a4778de77","tool":"@foreman-line/authority-registry","toolVersion":"0.1.0"}'
+        digest: 346667d5813ff66a1b298102b6cee017bb66eb2a3475e98c350aa37c513d66dc
+      - kind: command-result
+        reference: '{"actorClass":"coordinator","commandId":"superseding-binding-manifest-r8","exitCode":0,"inputDigest":"2a12cde0f3ae481462c74cb5c0cb2377514f628cb0091c26f916705a4778de77","resultDigest":"dc213f213342f6ac744bf4ece7c3c322315d6946f894b7bfbd37db96954d0002","tool":"@foreman-line/authority-registry","toolVersion":"0.1.0"}'
+        digest: 736548d33dbbf77fc171a0a461577ab183f9f204c76afc3f21a979049df2cb80
+    authoritativeRuleIds:
+      - rule.fk-charter.d10
+    scopedDisposition: The R8 protected exits, literal applicability, evidence, and unified Markdown discovery contract supersedes the R7 registry bindings in FK scope.
+    unresolvedConsequence: Future binding changes require another typed prior-to-new migration record.
+    migrationStatus: superseded-by-amendment
+    supersedingEvidence:
+      sourceId: fk-charter
+      itemId: item.d10
+      locatorDigest: 3f31f6a6731c274204cf00321a72576c77db57eb68bd2df59a76055c077ac653
+      valueDigest: d535c93ccef2b060a284629002a37d97e4efb6b5a9c09daaa123ac49bd51f9ef

@@ -940,6 +940,48 @@ test('R7 four-space pseudo-fences cannot hide binding prose', () => {
   }
 })
 
+test('R8 backtick in backtick-fence info is visible and cannot hide binding prose', () => {
+  const tempRoot = mkdtempSync(join(tmpdir(), 'fk-p0-backtick-info-'))
+  try {
+    copyCorpus(tempRoot)
+    const path = join(tempRoot, 'plugins/foreman-line/docs/goals/foreman-kernel/loop-directive.md')
+    writeFileSync(
+      path,
+      `${readFileSync(path, 'utf8')}\n\`\`\`lang\`bad\nOnly the coordinator may mint this new grant.\n\`\`\`\n`,
+    )
+    const result = sweepRegistrySources(registry, tempRoot)
+    assert.ok(result.violations.some((violation) => violation.code === 'SOURCE_ITEM_UNCOVERED'))
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true })
+  }
+})
+
+for (const [name, fencedBody] of [
+  ['heading', '## Binding new authority'],
+  ['D row', '| D21 | New binding decision | MUST bind. |'],
+  ['R row', '| R14 | New binding review rule | MUST bind. |'],
+  ['numbered hard rule', '16. **MUST bind this example.**'],
+] as const) {
+  test(`R8 valid fenced ${name} is ignored by every Markdown discovery layer`, () => {
+    const tempRoot = mkdtempSync(join(tmpdir(), 'fk-p0-fenced-layer-'))
+    try {
+      copyCorpus(tempRoot)
+      const sourcePath =
+        name === 'numbered hard rule'
+          ? 'plugins/foreman-line/skills/parcel-driven-development/SKILL.md'
+          : name === 'R row'
+            ? 'plugins/foreman-line/docs/goals/foreman-kernel/plan-review-findings.md'
+            : 'plugins/foreman-line/docs/goals/foreman-kernel/charter.md'
+      const path = join(tempRoot, sourcePath)
+      writeFileSync(path, `${readFileSync(path, 'utf8')}\n\`\`\`text\n${fencedBody}\n\`\`\`\n`)
+      const result = sweepRegistrySources(registry, tempRoot)
+      assert.equal(result.valid, true, JSON.stringify(result.violations, null, 2))
+    } finally {
+      rmSync(tempRoot, { recursive: true, force: true })
+    }
+  })
+}
+
 test('R7 mixed fence delimiters do not close a correctly paired fence', () => {
   const tempRoot = mkdtempSync(join(tmpdir(), 'fk-p0-mixed-fence-'))
   try {

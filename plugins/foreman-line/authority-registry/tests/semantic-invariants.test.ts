@@ -4,7 +4,7 @@ import { dirname, join } from 'node:path'
 import { test } from 'node:test'
 import { fileURLToPath } from 'node:url'
 import { parse } from 'yaml'
-import type { AuthorityEnforcementRegistry, AuthorityQuery } from '../src/types.js'
+import type { AuthorityEnforcementRegistry, AuthorityQuery, InventoryItem } from '../src/types.js'
 import { AUTHORITY_EFFECTS, AUTHORITY_TIERS, RULE_CLASSIFICATIONS } from '../src/types.js'
 import {
   bindingDigestFor,
@@ -57,9 +57,9 @@ test('each of the six classifications is accepted and summarized independently',
   const result = validateRegistry(valid)
   assert.equal(result.valid, true)
   assert.deepEqual(result.summary?.classificationCounts, {
-    'pre-action-refusal': 94,
+    'pre-action-refusal': 108,
     'post-action-detection': 5,
-    'ci-static-check': 40,
+    'ci-static-check': 52,
     'independent-review-human-judgment': 8,
     'narrative-provenance': 113,
     unsupported: 12,
@@ -1809,6 +1809,199 @@ test('R7 all charter decisions D1 through D20 publish active non-narrative autho
     assert.notEqual(rule.classification, 'unsupported', `D${index}`)
   }
 })
+
+test('R8 publishes all nine charter goal-exit requirements individually', () => {
+  const source = full.sources.find((candidate) => candidate.sourceId === 'fk-charter')
+  assert.ok(source)
+  const items = source.inventoryItems.filter(
+    (item) =>
+      item.locator.kind === 'line-excerpt' &&
+      item.locator.anchor.includes('## 9. Goal exit criterion') &&
+      /^\d+\./.test(item.normalizedExcerpt),
+  )
+  assert.equal(items.length, 9)
+  assert.ok(items.every((item) => item.ruleIds.length === 1 && item.exclusionDisposition === null))
+})
+
+test('R8 publishes all seventeen charter stop-condition bullets individually', () => {
+  const source = full.sources.find((candidate) => candidate.sourceId === 'fk-charter')
+  assert.ok(source)
+  const items = source.inventoryItems.filter(
+    (item) =>
+      item.locator.kind === 'line-excerpt' &&
+      item.locator.anchor.includes('## 11. Stop conditions') &&
+      item.normalizedExcerpt.startsWith('- '),
+  )
+  assert.equal(items.length, 17)
+  assert.ok(items.every((item) => item.ruleIds.length === 1 && item.exclusionDisposition === null))
+})
+
+test('R8 publishes all five literal charter wave-exit contracts individually', () => {
+  const source = full.sources.find((candidate) => candidate.sourceId === 'fk-charter')
+  assert.ok(source)
+  const items = source.inventoryItems.filter((item) =>
+    /^\*\*Wave [0-4] exit:\*\*/.test(item.normalizedExcerpt),
+  )
+  assert.equal(items.length, 5)
+  assert.ok(items.every((item) => item.ruleIds.length === 1 && item.exclusionDisposition === null))
+})
+
+test('R8 loop completion and gate requirement bodies remain independently published', () => {
+  const required = [
+    'item.bfffee6d7c1f',
+    'item.7eb6018d9e57',
+    'item.6ea9ce2b9573',
+    'item.2743c2f8c558',
+    'item.e3065db62b43',
+    'item.237865e0993f',
+  ]
+  const source = full.sources.find((candidate) => candidate.sourceId === 'fk-loop-directive')
+  assert.ok(source)
+  for (const itemId of required) {
+    const inventoryItem: InventoryItem | undefined = source.inventoryItems.find(
+      (candidate) => candidate.itemId === itemId,
+    )
+    assert.ok(inventoryItem, itemId)
+    assert.equal(inventoryItem.ruleIds.length, 1, itemId)
+    assert.equal(inventoryItem.exclusionDisposition, null, itemId)
+  }
+})
+
+test('R8 generation has no classification or default applicability fallback', () => {
+  const source = readFileSync(join(packageRoot, 'src', 'generate.ts'), 'utf8')
+  assert.doesNotMatch(source, /function applicabilityFor\s*\(/)
+  assert.match(source, /CURATED_ITEM_APPLICABILITY/)
+})
+
+test('R8 Gate 2 grant is out of scope for builder runtime external write on unsupported host', () => {
+  const result = resolveAuthority(full, {
+    authoritySubject: 'gate2.dispatch-grant',
+    goal: 'foreman-kernel',
+    role: 'builder',
+    stage: 'runtime',
+    operation: 'external-write',
+    host: 'unsupported-host',
+  })
+  assert.deepEqual(result, {
+    outcome: 'REQUIRE_HUMAN',
+    authoritySubject: 'gate2.dispatch-grant',
+    reasonCode: 'NO_APPLICABLE_AUTHORITY',
+    controllingRuleIds: [],
+    consideredRuleIds: [],
+  })
+})
+
+test('R8 unrelated linter return remains structural and cannot publish absence authority', () => {
+  assert.equal(
+    full.rules.some((rule) => rule.authorityClaim === 'frontmatter-only-no-body-compiler'),
+    false,
+  )
+  const source = full.sources.find((candidate) => candidate.sourceId === 'spec-linter-validator')
+  const item = source?.inventoryItems.find((candidate) => candidate.itemId === 'item.80563af1788e')
+  assert.ok(item)
+  assert.deepEqual(item.ruleIds, [])
+  assert.equal(item.exclusionDisposition, 'structural-ast')
+})
+
+test('R8 Allowed Files absence is carried only by exact reconciliation evidence', () => {
+  const record = full.reconciliations.find(
+    (candidate) => candidate.reconciliationId === 'surfaces-allowed-files',
+  )
+  assert.ok(record)
+  assert.doesNotMatch(canonicalJson(record.observedRefs), /item\.80563af1788e/)
+  assert.ok(record.observedEvidence.some((evidence) => evidence.kind === 'command-result'))
+  assert.match(record.unresolvedConsequence, /FK-P2 gap/)
+})
+
+test('R8 verification operation binds exact anti-self-production canon', () => {
+  const operation = full.operationAuthority.find((row) => row.operationId === 'verification.issue')
+  assert.ok(operation)
+  assert.deepEqual(
+    operation.requiredGitEvidence.map((reference) => `${reference.sourceId}:${reference.itemId}`),
+    ['spec-convention:item.03f0830cd693', 'fk-loop-directive:item.dd8203551518'],
+  )
+})
+
+test('R8 verification evidence resolves the exact independent-review meaning', () => {
+  const operation = full.operationAuthority.find((row) => row.operationId === 'verification.issue')
+  assert.ok(operation)
+  const statements = operation.requiredGitEvidence.map((reference) => {
+    const source = full.sources.find((candidate) => candidate.sourceId === reference.sourceId)
+    return source?.inventoryItems.find((item) => item.itemId === reference.itemId)
+      ?.normalizedExcerpt
+  })
+  assert.ok(statements.some((text) => text?.includes('No agent verifies its own claim')))
+  assert.ok(
+    statements.some((text) =>
+      text?.includes(
+        'coordinator consumes verification; it never produces independent verification',
+      ),
+    ),
+  )
+})
+
+test('R8 verification evidence rejects a corroborative two-review substitution', () => {
+  const mutated = structuredClone(full)
+  const operation = mutated.operationAuthority.find(
+    (row) => row.operationId === 'verification.issue',
+  )
+  assert.ok(operation)
+  const substitute = mutated.rules
+    .find((rule) => rule.ruleId === 'rule.fk-charter.d11')
+    ?.sourceRefs.at(0)
+  assert.ok(substitute)
+  ;(operation.requiredGitEvidence as (typeof substitute)[])[0] = substitute
+  expectCode(mutated, 'AUTHORITY_ESCALATION')
+})
+
+test('R8 RULE_SEMANTICS_UNCURATED is a closed ratified result code', () => {
+  const mutated = structuredClone(full)
+  const rule = mutated.rules.find((candidate) => candidate.ruleId === 'rule.fk-charter.d2')
+  assert.ok(rule)
+  ;(rule as { authoritySubject: string }).authoritySubject = 'fk-charter.d2'
+  ;(rule as { bindingDigest: string }).bindingDigest = bindingDigestFor(rule)
+  expectCode(mutated, 'RULE_SEMANTICS_UNCURATED')
+})
+
+test('R8 ships a typed migration from the R7 registry snapshot', () => {
+  const record = full.reconciliations.find(
+    (candidate) => candidate.reconciliationId === 'registry-rework-37afc65',
+  )
+  assert.ok(record)
+  assert.equal(record.migrationStatus, 'superseded-by-amendment')
+  assert.ok(
+    record.observedEvidence.some(
+      (evidence) =>
+        evidence.kind === 'git-commit' &&
+        evidence.reference === '5d7ca990574eb8416a1fc5ac40b90d9aec975b2b',
+    ),
+  )
+  assert.ok(record.supersedingEvidence)
+})
+
+for (const [name, mutate] of [
+  ['append', (items: unknown[]) => items.push(structuredClone(items[0]))],
+  ['remove', (items: unknown[]) => items.splice(0, 1)],
+  ['duplicate', (items: unknown[]) => items.splice(1, 0, structuredClone(items[0]))],
+  [
+    'substitute',
+    (items: unknown[]) => {
+      const evidence = items[0] as { kind: string; reference: string; digest: string }
+      const reference = `${evidence.reference}#substituted`
+      items[0] = { kind: evidence.kind, reference, digest: sha256(reference) }
+    },
+  ],
+] as const) {
+  test(`R8 migration rejects ${name} evidence`, () => {
+    const mutated = structuredClone(full)
+    const record = mutated.reconciliations.find(
+      (candidate) => candidate.reconciliationId === 'registry-rework-37afc65',
+    )
+    assert.ok(record)
+    mutate(record.observedEvidence as unknown[])
+    expectCode(mutated, 'MIGRATION_EVIDENCE_INVALID')
+  })
+}
 
 for (const vector of [
   {

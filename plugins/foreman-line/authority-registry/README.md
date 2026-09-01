@@ -106,7 +106,7 @@ Six required typed records reconcile without rewriting historical sources:
 was edited or globally invalidated. The missing provenance record stays `open`, preserves all
 thirteen standing rules, and prevents their retirement.
 
-Five additional `superseded-by-amendment` records bind the R2, R4, R5, R6, and R7 reworks to their prior
+Six additional `superseded-by-amendment` records bind the R2, R4, R5, R6, R7, and R8 reworks to their prior
 registry commits, the pinned source snapshot, prior binding-manifest digests, superseding
 manifests, and complete controlling `SourceRef` values. A future coordinated
 identity/location/value change must
@@ -152,7 +152,10 @@ commit-typed objects, and commit-bound canonical missing-path evidence. The char
 directive use complete paragraph/list/table discovery with wrapping-stable semantic locators.
 Properly paired HTML comments and CommonMark-compatible fence boundaries are the only Markdown
 spans suppressed by that discovery; visible text around comments, unmatched comments, mixed fence
-delimiters, and four-space pseudo-fences remain visible. Inventoried TypeScript sources use the
+delimiters, four-space pseudo-fences, and backtick-fence info strings containing a backtick remain
+visible. All nine goal exits, all seventeen charter stop bullets, and the five literal Wave 0–4
+exit contracts are published individually; loop completion and gate bodies are separate rules
+where the source states them. Inventoried TypeScript sources use the
 TypeScript 7 compiler syntax tree for operative top-level statements, runtime value and side-effect
 imports, and nested callable bodies. Compiler-recognized ambient and type-only declarations or
 imports are intentionally non-operative, and import order is ignored only when the canonical
