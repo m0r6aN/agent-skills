@@ -956,6 +956,38 @@ test('R8 backtick in backtick-fence info is visible and cannot hide binding pros
   }
 })
 
+test('R9 raw mixed comment and backtick info cannot become a hiding fence after comment masking', () => {
+  const tempRoot = mkdtempSync(join(tmpdir(), 'fk-p0-raw-fence-comment-'))
+  try {
+    copyCorpus(tempRoot)
+    const path = join(tempRoot, 'plugins/foreman-line/docs/goals/foreman-kernel/loop-directive.md')
+    writeFileSync(
+      path,
+      `${readFileSync(path, 'utf8')}\n\`\`\`lang<!--\`-->\nOnly the coordinator may mint this new grant.\n\`\`\`\n`,
+    )
+    const result = sweepRegistrySources(registry, tempRoot)
+    assert.ok(result.violations.some((violation) => violation.code === 'SOURCE_ITEM_UNCOVERED'))
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true })
+  }
+})
+
+test('R9 valid fenced standing-constraint number is ignored by the shared Markdown map', () => {
+  const tempRoot = mkdtempSync(join(tmpdir(), 'fk-p0-fenced-standing-'))
+  try {
+    copyCorpus(tempRoot)
+    const path = join(tempRoot, 'plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md')
+    writeFileSync(
+      path,
+      `${readFileSync(path, 'utf8')}\n\`\`\`text\n14. **MUST remain a fenced example.**\n\`\`\`\n`,
+    )
+    const result = sweepRegistrySources(registry, tempRoot)
+    assert.equal(result.valid, true, JSON.stringify(result.violations, null, 2))
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true })
+  }
+})
+
 for (const [name, fencedBody] of [
   ['heading', '## Binding new authority'],
   ['D row', '| D21 | New binding decision | MUST bind. |'],

@@ -47,6 +47,7 @@ const REQUIRED_REWORK_MIGRATIONS = [
   'registry-rework-b414d06',
   'registry-rework-00b41b7',
   'registry-rework-37afc65',
+  'registry-rework-91145d7',
 ] as const
 const REQUIRED_OPERATIONS = [
   'gate1.ratify',
@@ -57,6 +58,49 @@ const REQUIRED_OPERATIONS = [
   'receipt.mint-generic',
   'external.write',
 ] as const
+
+const R9_PROTECTED_CHARTER_ITEMS = new Set([
+  'item.863fbb9202f0',
+  'item.420807aa841c',
+  'item.0b65a783a0be',
+  'item.8d204432b7c7',
+  'item.e7be31fb263e',
+  'item.7983e741c7aa',
+  'item.ba4689f0d16e',
+  'item.144bb836f528',
+  'item.e64616afcaf9',
+  'item.01fc2f9fcdd0',
+  'item.9aee50455247',
+  'item.6427173452f4',
+  'item.d6c307d21998',
+  'item.9e512e70b8f5',
+  'item.d4059b59ac59',
+  'item.f4e2ba3acfd6',
+  'item.d92a7c500de4',
+  'item.dc8cc83e01e7',
+  'item.387fb9c622d2',
+  'item.9efe42c4e01c',
+  'item.dde24d4c9b7c',
+  'item.ce7c8467ddb3',
+  'item.8e9428543291',
+  'item.a087b0ab4c3b',
+  'item.c9611681dcca',
+  'item.1cf05e6b7716',
+  'item.5c24c3ef6591',
+  'item.ec0f6225e0a6',
+  'item.0689031c79ed',
+  'item.349023b0246d',
+  'item.9308bed876c7',
+  'item.612528548655',
+  'item.102464b0e25b',
+  'item.e1b224d7294b',
+  'item.501441d1853e',
+  'item.fc74f0320a1c',
+  'item.7eba1cb561c5',
+  'item.eb56a1ab24d9',
+  'item.8843a7774432',
+  'item.10f729956b77',
+])
 
 const SOURCE_CONTRACTS: Readonly<
   Record<string, Pick<CanonSource, 'path' | 'sourceKind' | 'authorityTier' | 'authorityEffect'>>
@@ -335,10 +379,16 @@ const RECONCILIATION_CONTRACT = {
     refs: ['fk-charter:item.d10'],
     rules: ['rule.fk-charter.d10'],
   },
+  'registry-rework-91145d7': {
+    topic: 'R8 registry bindings superseded by the coordinator-ratified FK-P0 R9 amendment.',
+    status: 'superseded-by-amendment',
+    refs: ['fk-charter:item.5c1f19dd9911'],
+    rules: ['rule.fk-charter.5c1f19dd9911'],
+  },
 } as const
 
 const SHIPPED_BINDING_MANIFEST_DIGEST =
-  'dc213f213342f6ac744bf4ece7c3c322315d6946f894b7bfbd37db96954d0002'
+  '825b3a04cdd506762cba1bbb6c7d007dd4b163e40be5dad733b97482d92f9df6'
 const SEMANTIC_EQUIVALENCE: readonly {
   readonly authoritySubject: string
   readonly authorityClaim: string
@@ -356,14 +406,49 @@ const SEMANTIC_EQUIVALENCE: readonly {
     rationale: 'Each item independently requires exact Allowed Files as parcel mutation authority.',
   },
   {
+    authoritySubject: 'gate2.dispatch-grant',
+    authorityClaim: 'coordinator-may-dispatch-fk-p0-through-fk-p21-conditionally',
+    ruleIds: [
+      'rule.fk-charter.15a44cf50bc6',
+      'rule.fk-loop-directive.47a75730afd6',
+      'rule.fk-loop-directive.bfffee6d7c1f',
+    ],
+    rationale:
+      'The charter and loop restatements preserve the same conditional coordinator dispatch grant.',
+  },
+  {
     authoritySubject: 'gate3.merge-authority',
     authorityClaim: 'human-owned-nondelegated',
     ruleIds: [
       'rule.fk-charter.b1ac4aa9eddf',
       'rule.fk-charter.c74628d41600',
+      'rule.fk-loop-directive.08b3cbb91027',
+      'rule.fk-loop-directive.7eb6018d9e57',
+      'rule.fk-loop-directive.2743c2f8c558',
       'rule.foreman-line-plan.c92333c21e64',
     ],
-    rationale: 'Both items state that the merge decision remains human-owned.',
+    rationale: 'Each item states that the merge decision remains human-owned.',
+  },
+  {
+    authoritySubject: 'verification.issue-authority',
+    authorityClaim: 'architecture-risk-two-fresh-independent-reviews-required',
+    ruleIds: ['rule.fk-charter.5c1f19dd9911', 'rule.fk-loop-directive.ce9042d917b2'],
+    rationale:
+      'The charter and loop restatements require the same two fresh independent reviews for architecture-risk parcels.',
+  },
+  {
+    authoritySubject: 'goal.stop.serialization-ownership',
+    authorityClaim: 'stop-when-owned-serialization-point-has-no-ratified-sequence',
+    ruleIds: ['rule.fk-charter.0afd841f51f8', 'rule.fk-loop-directive.c708d8f95113'],
+    rationale:
+      'The charter and loop restatements impose the same serialization-ownership stop condition.',
+  },
+  {
+    authoritySubject: 'goal.stop.user-change-collision',
+    authorityClaim: 'stop-on-user-owned-required-file-collision',
+    ruleIds: ['rule.fk-charter.2cbbc7ae0192', 'rule.fk-loop-directive.c55a33cc847f'],
+    rationale:
+      'The charter and loop restatements impose the same user-owned required-file collision stop condition.',
   },
 ]
 const PRIOR_R3_BINDING_MANIFEST_DIGEST =
@@ -376,6 +461,8 @@ const PRIOR_R6_BINDING_MANIFEST_DIGEST =
   '644e1336c2e4309bc75954cb24e921d4cf6d3a75b0ccc7cb926de34a8ca553c6'
 const PRIOR_R7_BINDING_MANIFEST_DIGEST =
   '2a12cde0f3ae481462c74cb5c0cb2377514f628cb0091c26f916705a4778de77'
+const PRIOR_R8_BINDING_MANIFEST_DIGEST =
+  'dc213f213342f6ac744bf4ece7c3c322315d6946f894b7bfbd37db96954d0002'
 
 const RECONCILIATION_PROSE: Readonly<Record<string, readonly [string, string]>> = {
   'gate-namespace-count': [
@@ -426,6 +513,10 @@ const RECONCILIATION_PROSE: Readonly<Record<string, readonly [string, string]>> 
     'The R8 protected exits, literal applicability, evidence, and unified Markdown discovery contract supersedes the R7 registry bindings in FK scope.',
     'Future binding changes require another typed prior-to-new migration record.',
   ],
+  'registry-rework-91145d7': [
+    'The R9 protected publications, per-item classification, loop semantics, and raw-fence contract supersede the R8 registry bindings in FK scope.',
+    'Future binding changes require another typed prior-to-new migration record.',
+  ],
 }
 
 const RECONCILIATION_RECORD_DIGESTS: Readonly<Record<string, string>> = {
@@ -444,6 +535,7 @@ const RECONCILIATION_RECORD_DIGESTS: Readonly<Record<string, string>> = {
   'registry-rework-b414d06': '8a7c1fdd61cbb664d6c9b1b0aefcba1dc35dc26873eff711bbfada8480247d7f',
   'registry-rework-00b41b7': '7113ebbad6811a3dfd4f14302f736ac11074c04943686eea28a1de820c75e9c9',
   'registry-rework-37afc65': '5f3bba04f9177884da88d21a8535d3ebc04557252aa27b30cbb191824e0b0f17',
+  'registry-rework-91145d7': '6b6e2dbd3b009428c647ed8947ba5d7008445dabdcccdde7d135466b9f46f3e3',
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -999,8 +1091,9 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
             item.itemId,
           ) ||
             (source.sourceId === 'fk-charter' &&
-              ((item.locator.anchor.includes('## 9. Goal exit criterion') &&
-                /^\d+\./.test(item.normalizedExcerpt)) ||
+              (R9_PROTECTED_CHARTER_ITEMS.has(item.itemId) ||
+                (item.locator.anchor.includes('## 9. Goal exit criterion') &&
+                  /^\d+\./.test(item.normalizedExcerpt)) ||
                 (item.locator.anchor.includes('## 11. Stop conditions') &&
                   item.normalizedExcerpt.startsWith('- ')) ||
                 /^\*\*Wave [0-4] exit:\*\*/.test(item.normalizedExcerpt))) ||
@@ -1648,12 +1741,40 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
           `5d7ca990574eb8416a1fc5ac40b90d9aec975b2b|${document.sourceSnapshotCommit}` ||
         commands.length !== 2 ||
         !resultDigests.includes(PRIOR_R7_BINDING_MANIFEST_DIGEST) ||
-        !resultDigests.includes(SHIPPED_BINDING_MANIFEST_DIGEST)
+        !resultDigests.includes(PRIOR_R8_BINDING_MANIFEST_DIGEST)
       ) {
         violations.push(
           violation(
             'MIGRATION_EVIDENCE_INVALID',
             'R8 migration does not bind the prior R7 registry commit, source snapshot, and superseding manifest',
+          ),
+        )
+      }
+    }
+    if (record.reconciliationId === 'registry-rework-91145d7') {
+      const gitRefs = record.observedEvidence
+        .filter((e) => e.kind === 'git-commit')
+        .map((e) => e.reference)
+      const commands = record.observedEvidence.filter((e) => e.kind === 'command-result')
+      const resultDigests = commands.flatMap((e) => {
+        try {
+          const value = JSON.parse(e.reference) as { resultDigest?: unknown }
+          return typeof value.resultDigest === 'string' ? [value.resultDigest] : []
+        } catch {
+          return []
+        }
+      })
+      if (
+        gitRefs.join('|') !==
+          `84d5c7c0fd2ef074dab06770f14e87012619a213|${document.sourceSnapshotCommit}` ||
+        commands.length !== 2 ||
+        !resultDigests.includes(PRIOR_R8_BINDING_MANIFEST_DIGEST) ||
+        !resultDigests.includes(SHIPPED_BINDING_MANIFEST_DIGEST)
+      ) {
+        violations.push(
+          violation(
+            'MIGRATION_EVIDENCE_INVALID',
+            'R9 migration does not bind the prior R8 registry commit, source snapshot, and superseding manifest',
           ),
         )
       }
@@ -1915,8 +2036,9 @@ interface MarkdownDocumentMap {
 
 function markdownDocumentMap(content: string, sourceId: string): MarkdownDocumentMap {
   const blocks = new Map<string, string>()
+  const rawLines = content.replace(/\r\n?/g, '\n').split('\n')
   const lines = stripMarkdownHtmlComments(content).replace(/\r\n?/g, '\n').split('\n')
-  const fenced = pairedFenceLines(lines)
+  const fenced = pairedFenceLines(rawLines)
   if (sourceId !== 'fk-charter' && sourceId !== 'fk-loop-directive') {
     return { lines, fenced, blocks }
   }
@@ -2722,7 +2844,9 @@ export function sweepRegistrySources(document: unknown, repoRoot: string): Valid
         }
       }
       if (source.sourceId === 'standing-constraints') {
-        for (const line of markdownLines) {
+        for (let index = 0; index < markdownLines.length; index += 1) {
+          if (fenced.has(index)) continue
+          const line = markdownLines[index] ?? ''
           const number = /^(\d+)\.\s/.exec(line.trim())?.[1]
           if (number !== undefined && Number(number) > 13) {
             violations.push(

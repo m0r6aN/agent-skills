@@ -57,11 +57,11 @@ test('each of the six classifications is accepted and summarized independently',
   const result = validateRegistry(valid)
   assert.equal(result.valid, true)
   assert.deepEqual(result.summary?.classificationCounts, {
-    'pre-action-refusal': 108,
-    'post-action-detection': 5,
-    'ci-static-check': 52,
-    'independent-review-human-judgment': 8,
-    'narrative-provenance': 113,
+    'pre-action-refusal': 174,
+    'post-action-detection': 6,
+    'ci-static-check': 74,
+    'independent-review-human-judgment': 11,
+    'narrative-provenance': 60,
     unsupported: 12,
   })
 })
@@ -1717,6 +1717,167 @@ for (const vector of [
   })
 }
 
+function publishedRuleFor(sourceId: string, itemId: string) {
+  const source = full.sources.find((candidate) => candidate.sourceId === sourceId)
+  const item = source?.inventoryItems.find((candidate) => candidate.itemId === itemId)
+  assert.ok(item, `${sourceId}:${itemId}`)
+  assert.equal(item.ruleIds.length, 1, `${sourceId}:${itemId}`)
+  assert.equal(item.exclusionDisposition, null, `${sourceId}:${itemId}`)
+  const rule = full.rules.find((candidate) => candidate.ruleId === item.ruleIds[0])
+  assert.ok(rule, `${sourceId}:${itemId}`)
+  return rule
+}
+
+test('R9 publishes all thirteen charter integration scenarios individually', () => {
+  const itemIds = [
+    'item.ec0f6225e0a6',
+    'item.0689031c79ed',
+    'item.349023b0246d',
+    'item.9308bed876c7',
+    'item.612528548655',
+    'item.102464b0e25b',
+    'item.e1b224d7294b',
+    'item.501441d1853e',
+    'item.fc74f0320a1c',
+    'item.7eba1cb561c5',
+    'item.eb56a1ab24d9',
+    'item.8843a7774432',
+    'item.10f729956b77',
+  ]
+  assert.equal(itemIds.map((itemId) => publishedRuleFor('fk-charter', itemId)).length, 13)
+})
+
+test('R9 publishes all five charter refusal-class rows individually', () => {
+  const itemIds = [
+    'item.863fbb9202f0',
+    'item.420807aa841c',
+    'item.0b65a783a0be',
+    'item.8d204432b7c7',
+    'item.e7be31fb263e',
+  ]
+  assert.equal(itemIds.map((itemId) => publishedRuleFor('fk-charter', itemId)).length, 5)
+})
+
+test('R9 publishes all twenty-two charter parcel contracts individually', () => {
+  const itemIds = [
+    'item.7983e741c7aa',
+    'item.ba4689f0d16e',
+    'item.144bb836f528',
+    'item.e64616afcaf9',
+    'item.01fc2f9fcdd0',
+    'item.9aee50455247',
+    'item.6427173452f4',
+    'item.d6c307d21998',
+    'item.9e512e70b8f5',
+    'item.d4059b59ac59',
+    'item.f4e2ba3acfd6',
+    'item.d92a7c500de4',
+    'item.dc8cc83e01e7',
+    'item.387fb9c622d2',
+    'item.9efe42c4e01c',
+    'item.dde24d4c9b7c',
+    'item.ce7c8467ddb3',
+    'item.8e9428543291',
+    'item.a087b0ab4c3b',
+    'item.c9611681dcca',
+    'item.1cf05e6b7716',
+    'item.5c24c3ef6591',
+  ]
+  assert.equal(itemIds.map((itemId) => publishedRuleFor('fk-charter', itemId)).length, 22)
+})
+
+test('R9 gives every published item one literal curated classification entry', () => {
+  const generator = readFileSync(join(packageRoot, 'src', 'generate.ts'), 'utf8')
+  assert.match(generator, /const CURATED_ITEM_CLASSIFICATIONS/)
+  for (const rule of full.rules) {
+    const basis = rule.authorityBasisRef
+    assert.match(
+      generator,
+      new RegExp(
+        `'${basis.sourceId}:${basis.itemId.replaceAll('.', '\\.')}'\\s*:\\s*'${rule.classification}'`,
+      ),
+      `${basis.sourceId}:${basis.itemId}`,
+    )
+  }
+})
+
+test('R9 classification curation has no source-wide keyword or terminal fallback', () => {
+  const generator = readFileSync(join(packageRoot, 'src', 'generate.ts'), 'utf8')
+  assert.doesNotMatch(generator, /function classificationFor\s*\(/)
+  const curation = /function curatedClassificationFor[\s\S]*?\n}/.exec(generator)?.[0]
+  assert.ok(curation)
+  assert.match(curation, /lacks literal curated classification/)
+  assert.doesNotMatch(
+    curation,
+    /sourceId\s*===|switch\s*\(|default\s*:|return 'narrative-provenance'/,
+  )
+})
+
+test('R9 loop Gate 2 shares the charter subject with precise dispatch applicability', () => {
+  const rule = publishedRuleFor('fk-loop-directive', 'item.bfffee6d7c1f')
+  assert.equal(rule.authoritySubject, 'gate2.dispatch-grant')
+  assert.equal(rule.classification, 'pre-action-refusal')
+  assert.deepEqual(rule.applicability, {
+    goals: ['foreman-kernel'],
+    roles: ['coordinator'],
+    stages: ['shaping'],
+    operations: ['state-transition'],
+    hosts: ['provider-neutral'],
+  })
+  const outOfScope = resolveAuthority(full, {
+    authoritySubject: 'gate2.dispatch-grant',
+    goal: 'foreman-kernel',
+    role: 'builder',
+    stage: 'runtime',
+    operation: 'external-write',
+    host: 'unsupported-host',
+  })
+  assert.equal(outOfScope.outcome, 'REQUIRE_HUMAN')
+})
+
+test('R9 loop Gate 3 shares the charter subject with coordinator merge refusal scope', () => {
+  const rule = publishedRuleFor('fk-loop-directive', 'item.7eb6018d9e57')
+  assert.equal(rule.authoritySubject, 'gate3.merge-authority')
+  assert.equal(rule.classification, 'pre-action-refusal')
+  assert.deepEqual(rule.applicability, {
+    goals: ['foreman-kernel'],
+    roles: ['coordinator'],
+    stages: ['merge'],
+    operations: ['repo-mutation'],
+    hosts: ['any'],
+  })
+})
+
+test('R9 exact coordinator verification custody is an operative refusal on the shared subject', () => {
+  const rule = publishedRuleFor('fk-loop-directive', 'item.dd8203551518')
+  assert.equal(rule.authoritySubject, 'verification.issue-authority')
+  assert.equal(rule.classification, 'pre-action-refusal')
+  assert.deepEqual(rule.applicability, {
+    goals: ['foreman-kernel'],
+    roles: ['coordinator'],
+    stages: ['deterministic-verify', 'adversarial-review', 'merge', 'closure'],
+    operations: ['state-transition', 'receipt-validation'],
+    hosts: ['any'],
+  })
+  assert.match(rule.normalizedStatement, /never produces independent verification/)
+})
+
+test('R9 loop stop and completion rules retain operative classifications and narrow scope', () => {
+  for (const itemId of [
+    'item.7f72e946ccbe',
+    'item.6151d43333aa',
+    'item.adee76eb5f43',
+    'item.237865e0993f',
+    'item.e3065db62b43',
+  ]) {
+    const rule = publishedRuleFor('fk-loop-directive', itemId)
+    assert.notEqual(rule.classification, 'narrative-provenance', itemId)
+    assert.deepEqual(rule.applicability.roles, ['coordinator'], itemId)
+    assert.ok(!rule.applicability.stages.includes('runtime'), itemId)
+    assert.ok(!rule.applicability.operations.includes('external-write'), itemId)
+  }
+})
+
 test('R7 Gate 1 binds original ratification scoped re-ratification and nondelegability', () => {
   const operation = full.operationAuthority.find((row) => row.operationId === 'gate1.ratify')
   assert.ok(operation)
@@ -1766,7 +1927,7 @@ test('R7 every exclusion uses the closed item-specific code vocabulary', () => {
   }
 })
 
-test('R7 shared semantic identities are limited to the two curated equivalent claims', () => {
+test('R9 shared semantic identities are limited to the exact curated equivalent claims', () => {
   const groups = new Map<string, string[]>()
   for (const rule of full.rules) {
     const key = `${rule.authoritySubject}|${rule.authorityClaim}`
@@ -1781,12 +1942,31 @@ test('R7 shared semantic identities are limited to the two curated equivalent cl
       .sort(([left], [right]) => left.localeCompare(right)),
     [
       [
+        'gate2.dispatch-grant|coordinator-may-dispatch-fk-p0-through-fk-p21-conditionally',
+        [
+          'rule.fk-charter.15a44cf50bc6',
+          'rule.fk-loop-directive.47a75730afd6',
+          'rule.fk-loop-directive.bfffee6d7c1f',
+        ],
+      ],
+      [
         'gate3.merge-authority|human-owned-nondelegated',
         [
           'rule.fk-charter.b1ac4aa9eddf',
           'rule.fk-charter.c74628d41600',
+          'rule.fk-loop-directive.08b3cbb91027',
+          'rule.fk-loop-directive.2743c2f8c558',
+          'rule.fk-loop-directive.7eb6018d9e57',
           'rule.foreman-line-plan.c92333c21e64',
         ],
+      ],
+      [
+        'goal.stop.serialization-ownership|stop-when-owned-serialization-point-has-no-ratified-sequence',
+        ['rule.fk-charter.0afd841f51f8', 'rule.fk-loop-directive.c708d8f95113'],
+      ],
+      [
+        'goal.stop.user-change-collision|stop-on-user-owned-required-file-collision',
+        ['rule.fk-charter.2cbbc7ae0192', 'rule.fk-loop-directive.c55a33cc847f'],
       ],
       [
         'spec.mutation-authority|exact-allowed-files-required',
@@ -1795,6 +1975,10 @@ test('R7 shared semantic identities are limited to the two curated equivalent cl
           'rule.spec-convention.5145ab15549c',
           'rule.spec-convention.fd82127bf9f9',
         ],
+      ],
+      [
+        'verification.issue-authority|architecture-risk-two-fresh-independent-reviews-required',
+        ['rule.fk-charter.5c1f19dd9911', 'rule.fk-loop-directive.ce9042d917b2'],
       ],
     ],
   )
@@ -1977,6 +2161,22 @@ test('R8 ships a typed migration from the R7 registry snapshot', () => {
     ),
   )
   assert.ok(record.supersedingEvidence)
+})
+
+test('R9 ships an exact typed migration from the R8 registry snapshot', () => {
+  const record = full.reconciliations.find(
+    (candidate) => candidate.reconciliationId === 'registry-rework-91145d7',
+  )
+  assert.ok(record)
+  assert.equal(record.migrationStatus, 'superseded-by-amendment')
+  assert.deepEqual(
+    record.observedEvidence
+      .filter((evidence) => evidence.kind === 'git-commit')
+      .map((evidence) => evidence.reference),
+    ['84d5c7c0fd2ef074dab06770f14e87012619a213', '51857a3a7796b393c0c0a68712f98c06e7015d79'],
+  )
+  assert.equal(record.supersedingEvidence?.sourceId, 'fk-charter')
+  assert.equal(record.supersedingEvidence?.itemId, 'item.5c1f19dd9911')
 })
 
 for (const [name, mutate] of [

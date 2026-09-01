@@ -56,7 +56,9 @@ requires a typed migration chain. This is the Standing Constraint 12 boundary.
 
 ## Rule classifications
 
-Every rule has exactly one primary classification:
+Every rule has exactly one primary classification. The generator assigns it through an explicit
+per-item curation entry; source-wide, keyword-derived, default, and terminal fallbacks are not
+permitted:
 
 - `pre-action-refusal`: a declared default-deny rule with `REFUSE` and a stable refusal code;
   `structural` versus `mediated` assurance states what the registered source actually proves.
@@ -106,7 +108,7 @@ Six required typed records reconcile without rewriting historical sources:
 was edited or globally invalidated. The missing provenance record stays `open`, preserves all
 thirteen standing rules, and prevents their retirement.
 
-Six additional `superseded-by-amendment` records bind the R2, R4, R5, R6, R7, and R8 reworks to their prior
+Seven additional `superseded-by-amendment` records bind the R2, R4, R5, R6, R7, R8, and R9 reworks to their prior
 registry commits, the pinned source snapshot, prior binding-manifest digests, superseding
 manifests, and complete controlling `SourceRef` values. A future coordinated
 identity/location/value change must
@@ -153,9 +155,14 @@ directive use complete paragraph/list/table discovery with wrapping-stable seman
 Properly paired HTML comments and CommonMark-compatible fence boundaries are the only Markdown
 spans suppressed by that discovery; visible text around comments, unmatched comments, mixed fence
 delimiters, four-space pseudo-fences, and backtick-fence info strings containing a backtick remain
-visible. All nine goal exits, all seventeen charter stop bullets, and the five literal Wave 0–4
-exit contracts are published individually; loop completion and gate bodies are separate rules
-where the source states them. Inventoried TypeScript sources use the
+visible. Fence validity is determined from the raw line before HTML-comment masking, and the same
+fence map suppresses numbered standing-constraint discovery inside valid fenced blocks. All nine
+goal exits, all seventeen charter stop bullets, all thirteen integration scenarios, all five
+refusal-class rows, all twenty-two parcel contracts, and the five literal Wave 0–4 exit contracts
+are published individually; loop completion and gate bodies are separate operative rules where
+the source states them. Gate 2 dispatch, Gate 3 merge, and verification custody use shared
+cross-source authority subjects with role-, stage-, operation-, and host-specific applicability.
+Inventoried TypeScript sources use the
 TypeScript 7 compiler syntax tree for operative top-level statements, runtime value and side-effect
 imports, and nested callable bodies. Compiler-recognized ambient and type-only declarations or
 imports are intentionally non-operative, and import order is ignored only when the canonical
