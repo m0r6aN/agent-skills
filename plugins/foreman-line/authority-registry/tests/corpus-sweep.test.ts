@@ -1455,6 +1455,107 @@ test('R12 compound block value mutation preserves structural item rule and locat
   assert.notEqual(after.valueDigest, before.valueDigest)
 })
 
+test('R13 lineHint changes do not change Markdown item or locator identity', () => {
+  const source = registry.sources.find((candidate) => candidate.sourceId === 'coordinator-pattern')
+  assert.ok(source)
+  const content = readFileSync(join(repoRoot, source.path), 'utf8')
+  const before = markdownIdentityProjectionForTesting(source.sourceId, content).find(
+    (item) => item.itemId === 'item.47b2eaa2f9ef',
+  )
+  const after = markdownIdentityProjectionForTesting(source.sourceId, `\n${content}`).find(
+    (item) => item.itemId === 'item.47b2eaa2f9ef',
+  )
+  assert.ok(before)
+  assert.ok(after)
+  assert.notEqual(after.locator.lineHint, before.locator.lineHint)
+  assert.deepEqual(
+    [after.itemId, after.ruleIds, after.locator.anchor, after.locatorDigest, after.valueDigest],
+    [
+      before.itemId,
+      before.ruleIds,
+      before.locator.anchor,
+      before.locatorDigest,
+      before.valueDigest,
+    ],
+  )
+})
+
+test('R13 leading blank lines preserve every published Markdown identity', () => {
+  const source = registry.sources.find((candidate) => candidate.sourceId === 'coordinator-pattern')
+  assert.ok(source)
+  const content = readFileSync(join(repoRoot, source.path), 'utf8')
+  const project = (value: string) =>
+    markdownIdentityProjectionForTesting(source.sourceId, value)
+      .filter((item) => item.ruleIds.length > 0)
+      .map((item) => [
+        item.itemId,
+        item.ruleIds,
+        item.locator.anchor,
+        item.locatorDigest,
+        item.valueDigest,
+      ])
+  assert.deepEqual(project(`\n\n${content}`), project(content))
+})
+
+test('R13 actual compound coordinator value mutation preserves all six rule identities', () => {
+  const source = registry.sources.find((candidate) => candidate.sourceId === 'coordinator-pattern')
+  assert.ok(source)
+  const content = readFileSync(join(repoRoot, source.path), 'utf8')
+  const mutated = content.replace('runs as a self-pacing loop', 'runs as one self-pacing loop')
+  assert.notEqual(mutated, content)
+  const before = markdownIdentityProjectionForTesting(source.sourceId, content).find(
+    (item) => item.itemId === 'item.47b2eaa2f9ef',
+  )
+  const after = markdownIdentityProjectionForTesting(source.sourceId, mutated).find(
+    (item) => item.itemId === 'item.47b2eaa2f9ef',
+  )
+  assert.ok(before)
+  assert.ok(after)
+  assert.deepEqual(before.ruleIds, [
+    'rule.coordinator-pattern.47b2eaa2f9ef.ownership',
+    'rule.coordinator-pattern.47b2eaa2f9ef.frozen-contract',
+    'rule.coordinator-pattern.47b2eaa2f9ef.tripwire',
+    'rule.coordinator-pattern.47b2eaa2f9ef.security-boundary',
+    'rule.coordinator-pattern.47b2eaa2f9ef.external-capability',
+    'rule.coordinator-pattern.47b2eaa2f9ef.empty-queue',
+  ])
+  assert.deepEqual(
+    [after.itemId, after.ruleIds, after.locator.anchor, after.locatorDigest],
+    [before.itemId, before.ruleIds, before.locator.anchor, before.locatorDigest],
+  )
+  assert.notEqual(after.valueDigest, before.valueDigest)
+})
+
+function duplicateCoordinatorGate2Result() {
+  const tempRoot = mkdtempSync(join(tmpdir(), 'fk-p0-r13-duplicate-gate2-'))
+  try {
+    copyCorpus(tempRoot)
+    const path = join(tempRoot, 'plugins/foreman-line/docs/COORDINATOR-PATTERN.md')
+    const content = readFileSync(path, 'utf8')
+    const row =
+      "| 2    | Dispatch approval (parcel-set + kickstarter) | Yes - standing authorization scoped to the charter's named parcels, granted at ratification or later                                |"
+    assert.ok(content.includes(row))
+    writeFileSync(path, content.replace(row, `${row}\n${row}`))
+    return sweepRegistrySources(registry, tempRoot)
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true })
+  }
+}
+
+test('R13 duplicate identical Gate 2 keyed row emits LOCATOR_DUPLICATE', () => {
+  const result = duplicateCoordinatorGate2Result()
+  assert.ok(
+    result.violations.some((violation) => violation.code === 'LOCATOR_DUPLICATE'),
+    JSON.stringify(result.violations, null, 2),
+  )
+})
+
+test('R13 duplicate table text cannot bypass structural coverage', () => {
+  const result = duplicateCoordinatorGate2Result()
+  assert.equal(result.valid, false)
+  assert.ok(result.violations.some((violation) => violation.code === 'LOCATOR_DUPLICATE'))
+})
+
 for (const baseline of [
   {
     name: 'goal skill verification custody',

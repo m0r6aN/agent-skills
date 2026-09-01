@@ -11,7 +11,8 @@
     "sources",
     "rules",
     "operationAuthority",
-    "reconciliations"
+    "reconciliations",
+    "normativeMarkdownAudit"
   ],
   "properties": {
     "schemaVersion": {
@@ -877,6 +878,69 @@
                 "type": "null"
               }
             ]
+          }
+        }
+      }
+    },
+    "normativeMarkdownAudit": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "sourceId",
+          "itemId",
+          "valueDigest",
+          "disposition",
+          "ruleIds",
+          "exclusionCode",
+          "rationale"
+        ],
+        "properties": {
+          "sourceId": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:[.-][a-z0-9]+)*$"
+          },
+          "itemId": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:[.-][a-z0-9]+)*$"
+          },
+          "valueDigest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "disposition": {
+            "enum": [
+              "publish",
+              "exclude"
+            ]
+          },
+          "ruleIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z0-9]+(?:[.-][a-z0-9]+)*$"
+            },
+            "uniqueItems": true
+          },
+          "exclusionCode": {
+            "enum": [
+              "heading-only",
+              "table-header",
+              "structural-ast",
+              "schema-container",
+              "duplicate-exact-statement",
+              "non-normative-explanation",
+              "example-only",
+              "fenced-code",
+              "type-only",
+              null
+            ]
+          },
+          "rationale": {
+            "type": "string",
+            "minLength": 1
           }
         }
       }

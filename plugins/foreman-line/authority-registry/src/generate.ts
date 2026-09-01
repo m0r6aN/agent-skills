@@ -8,6 +8,9 @@ import {
   allSchemaFiles,
   R12_LEGACY_MARKDOWN_RULE_TARGETS,
   R12_PRIOR_REGISTRY_COMMIT,
+  R13_NORMATIVE_MARKDOWN_AUDIT_KEYS,
+  R13_NORMATIVE_MARKDOWN_PUBLICATION_KEYS,
+  R13_PRIOR_REGISTRY_COMMIT,
 } from './registry.js'
 import type {
   AuthorityEffect,
@@ -15,6 +18,7 @@ import type {
   AuthorityRule,
   AuthorityTier,
   CanonSource,
+  NormativeMarkdownAuditRecord,
   OperationAuthority,
   ReconciliationEvidence,
   ReconciliationRecord,
@@ -357,7 +361,7 @@ function markdownBindingBlocks(document: MarkdownDocumentMap): LocatedText[] {
   const { lines, fenced } = document
   const headings: { level: number; text: string }[] = []
   const structuralOccurrences = new Map<string, number>()
-  const tableKeys = new Map<string, number>()
+  const tableGroups = new Map<string, number>()
   const blocks: LocatedText[] = []
   let cursor = 0
   while (cursor < lines.length) {
@@ -384,6 +388,8 @@ function markdownBindingBlocks(document: MarkdownDocumentMap): LocatedText[] {
       continue
     }
     if (table && /^\s*\|?\s*:?-{3}/.test(lines[cursor + 1] ?? '')) {
+      const headingPath = headings.map((item) => item.text).join(' > ') || '(preamble)'
+      tableGroups.set(headingPath, (tableGroups.get(headingPath) ?? 0) + 1)
       cursor += 1
       continue
     }
@@ -414,11 +420,9 @@ function markdownBindingBlocks(document: MarkdownDocumentMap): LocatedText[] {
     if (table && (tableKey === undefined || tableKey === '')) {
       throw new Error(`Markdown table row at line ${cursor + 1} has no first-column key`)
     }
-    const tableIdentity = `${headingPath}\u0000${tableKey ?? ''}`
-    const tableKeyOccurrence = table ? (tableKeys.get(tableIdentity) ?? 0) + 1 : 0
-    if (table) tableKeys.set(tableIdentity, tableKeyOccurrence)
+    const tableGroup = tableGroups.get(headingPath) ?? 1
     const tablePrefix =
-      table && tableKeyOccurrence > 1 ? `${headingPath} > table:${tableKeyOccurrence}` : headingPath
+      table && tableGroup > 1 ? `${headingPath} > table-group:${tableGroup}` : headingPath
     const anchor = `md-block:${tablePrefix}:${kind}:${table ? tableKey : structuralOrdinal}`
     blocks.push({
       locator: {
@@ -439,6 +443,17 @@ const priorR11Registry = parse(
     [
       'show',
       `${R12_PRIOR_REGISTRY_COMMIT}:plugins/foreman-line/authority-registry/authority-enforcement-registry.yaml`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 },
+  ),
+) as AuthorityEnforcementRegistry
+
+const priorR13Registry = parse(
+  execFileSync(
+    'git',
+    [
+      'show',
+      `${R13_PRIOR_REGISTRY_COMMIT}:plugins/foreman-line/authority-registry/authority-enforcement-registry.yaml`,
     ],
     { cwd: repoRoot, encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 },
   ),
@@ -506,6 +521,15 @@ for (const source of priorR11Registry.sources.filter((candidate) =>
     if (candidate !== undefined) {
       frozenMarkdownItemIds.set(`${source.sourceId}\u0000${block.locator.anchor}`, candidate.itemId)
     }
+  }
+}
+
+for (const source of priorR13Registry.sources.filter((candidate) =>
+  candidate.path.endsWith('.md'),
+)) {
+  for (const item of source.inventoryItems) {
+    if (!item.locator.anchor.startsWith('md-block:')) continue
+    frozenMarkdownItemIds.set(`${source.sourceId}\u0000${item.locator.anchor}`, item.itemId)
   }
 }
 
@@ -10943,6 +10967,85 @@ function ruleShape(
   }
 }
 
+function permissionProfileApplicability(anchor: string): AuthorityRule['applicability'] {
+  const profile = /^yaml-rule:([^:]+):/.exec(anchor)?.[1]
+  const roles: AuthorityRule['applicability']['roles'] =
+    profile === 'coordinator'
+      ? ['coordinator']
+      : profile === 'reviewer-readonly'
+        ? ['reviewer']
+        : profile === 'shaping-agent'
+          ? ['shaper']
+          : ['builder']
+  const stages: AuthorityRule['applicability']['stages'] =
+    profile === 'coordinator'
+      ? [
+          'stage-zero',
+          'shaping',
+          'deterministic-verify',
+          'adversarial-review',
+          'merge',
+          'closure',
+          'runtime',
+        ]
+      : profile === 'reviewer-readonly'
+        ? ['adversarial-review']
+        : profile === 'shaping-agent'
+          ? ['shaping']
+          : ['step-zero', 'build']
+  return {
+    goals: ['all-foreman-goals'],
+    roles,
+    stages,
+    operations: ['repo-read'],
+    hosts: ['claude-windows-docker-loaded'],
+  }
+}
+
+function r13MarkdownApplicability(sourceId: string): AuthorityRule['applicability'] {
+  return {
+    goals: sourceId === 'fk-charter' ? ['foreman-kernel'] : ['all-foreman-goals'],
+    roles: [
+      'coordinator',
+      'shaper',
+      'builder',
+      'reviewer',
+      'ci',
+      'host-adapter',
+      'kernel',
+      'operator',
+    ],
+    stages: [
+      'stage-zero',
+      'shaping',
+      'step-zero',
+      'build',
+      'deterministic-verify',
+      'adversarial-review',
+      'merge',
+      'closure',
+      'runtime',
+    ],
+    operations: [
+      'source-inventory',
+      'spec-mutation',
+      'repo-read',
+      'repo-mutation',
+      'state-transition',
+      'control-call',
+      'receipt-validation',
+      'external-write',
+    ],
+    hosts: [
+      'provider-neutral',
+      'claude-windows-docker-loaded',
+      'claude-windows-docker-unenrolled',
+      'unsupported-host',
+      'ci',
+    ],
+  }
+}
+
 function shortId(value: string): string {
   return sha256(value).slice(0, 12)
 }
@@ -11095,11 +11198,110 @@ function buildSource(definition: SourceDefinition): {
         rationale: `Heading ${locator.anchor} is structural navigation; its complete body items carry the operative rules.`,
       }
     }
+    if (
+      definition.sourceId === 'permission-profiles-registry' &&
+      (locator.anchor.startsWith('yaml-container:') || /:ask:\[\]$/.test(locator.anchor))
+    ) {
+      return {
+        itemId,
+        locator,
+        normalizedExcerpt,
+        valueDigest,
+        ruleIds: [],
+        exclusionDisposition: 'schema-container' as const,
+        rationale: `Inventory item ${itemId} at ${locator.anchor} is a path-keyed YAML structural container and does not independently grant or restrict authority.`,
+      }
+    }
     const sourceRef: SourceRef = {
       sourceId: definition.sourceId,
       itemId,
       locatorDigest: locatorDigestFor(locator),
       valueDigest,
+    }
+    const sourceItemKey = `${definition.sourceId}:${itemId}`
+    if (R13_NORMATIVE_MARKDOWN_PUBLICATION_KEYS.has(sourceItemKey)) {
+      const ruleId = `rule.${definition.sourceId}.${itemId.replace(/^item\./, '')}`
+      const baseRule: AuthorityRule = {
+        ruleId,
+        authoritySubject: `normative-markdown.${definition.sourceId}.item-${itemId.replace(/^item\./, '')}`,
+        authorityClaim: 'source-authored-operative-constraint',
+        normalizedStatement: normalizedExcerpt,
+        sourceRefs: [sourceRef],
+        authorityBasisRef: sourceRef,
+        applicability: r13MarkdownApplicability(definition.sourceId),
+        severity: 'critical',
+        classification: 'pre-action-refusal',
+        decision: 'REFUSE',
+        refusalCode: `NORMATIVE_${definition.sourceId.replace(/-/g, '_').toUpperCase()}_${itemId.replace(/^item\./, '').toUpperCase()}`,
+        enforcementOwner: 'kernel-policy',
+        assurance: 'structural',
+        pairedRuleIds: [],
+        retirementState: 'active-reading',
+        retirementEvidence: {
+          predicate: null,
+          negativeRefusalTest: null,
+          corpusSweep: null,
+          independentBypassAttempt: null,
+        },
+        bindingDigest: '',
+      }
+      const rule = { ...baseRule, bindingDigest: bindingDigestFor(baseRule) }
+      rules.push(rule)
+      publishedByStatement.set(normalizedExcerpt, ruleId)
+      return {
+        itemId,
+        locator,
+        normalizedExcerpt,
+        valueDigest,
+        ruleIds: [ruleId],
+        exclusionDisposition: null,
+        rationale: `R13 normative Markdown candidate ${itemId} is published as an exact source-bound refusal rule.`,
+      }
+    }
+    if (
+      definition.sourceId === 'permission-profiles-registry' &&
+      (locator.anchor.includes(':allow:') ||
+        locator.anchor === 'yaml-rule:builder-deps:network/egress' ||
+        locator.anchor === 'yaml-rule:builder-deps:network/notes')
+    ) {
+      const ruleId = `rule.${definition.sourceId}.${itemId.replace(/^item\./, '')}`
+      const profile = /^yaml-rule:([^:]+):/.exec(locator.anchor)?.[1] ?? 'unknown'
+      const baseRule: AuthorityRule = {
+        ruleId,
+        authoritySubject: `permission-profile.${profile}.documentation`,
+        authorityClaim: `documents-${sha256(locator.anchor).slice(0, 16)}`,
+        normalizedStatement: normalizedExcerpt,
+        sourceRefs: [sourceRef],
+        authorityBasisRef: sourceRef,
+        applicability: permissionProfileApplicability(locator.anchor),
+        severity: 'medium',
+        classification: 'narrative-provenance',
+        decision: 'ADVISORY',
+        refusalCode: null,
+        enforcementOwner: 'provenance-only',
+        assurance: 'narrative',
+        pairedRuleIds: [],
+        retirementState: 'active-reading',
+        retirementEvidence: {
+          predicate: null,
+          negativeRefusalTest: null,
+          corpusSweep: null,
+          independentBypassAttempt: null,
+        },
+        bindingDigest: '',
+      }
+      const rule = { ...baseRule, bindingDigest: bindingDigestFor(baseRule) }
+      rules.push(rule)
+      publishedByStatement.set(normalizedExcerpt, ruleId)
+      return {
+        itemId,
+        locator,
+        normalizedExcerpt,
+        valueDigest,
+        ruleIds: [ruleId],
+        exclusionDisposition: null,
+        rationale: `Permission profile ${profile} documentation is published as nonbinding narrative provenance.`,
+      }
     }
     const legacyRuleIds = legacyRuleIdsFor(definition.sourceId, locator)
     const authorityIdentity = authorityIdentityFor(definition.sourceId, itemId)
@@ -12057,6 +12259,26 @@ function buildRegistry(): AuthorityEnforcementRegistry {
       refFor(sources, 'fk-loop-directive', 'item.e3065db62b43'),
     ],
   })
+  const normativeMarkdownAudit = R13_NORMATIVE_MARKDOWN_AUDIT_KEYS.map((key) => {
+    const separator = key.indexOf(':')
+    const sourceId = key.slice(0, separator)
+    const itemId = key.slice(separator + 1)
+    const source = sources.find((candidate) => candidate.sourceId === sourceId)
+    const item = source?.inventoryItems.find((candidate) => candidate.itemId === itemId)
+    if (item === undefined) throw new Error(`R13 audit candidate '${key}' is missing`)
+    const published = item.ruleIds.length > 0
+    return {
+      sourceId,
+      itemId,
+      valueDigest: item.valueDigest,
+      disposition: published ? 'publish' : 'exclude',
+      ruleIds: item.ruleIds,
+      exclusionCode: published ? null : item.exclusionDisposition,
+      rationale: published
+        ? `Audit candidate ${itemId} is published by its exact source-bound rule set.`
+        : `Audit candidate ${itemId} is excluded as ${item.exclusionDisposition}; this exact source item does not independently impose an operative FK rule.`,
+    } as NormativeMarkdownAuditRecord
+  })
   const provisional: AuthorityEnforcementRegistry = {
     schemaVersion: '0.1.0',
     registryId: 'foreman-kernel-authority-enforcement',
@@ -12064,12 +12286,13 @@ function buildRegistry(): AuthorityEnforcementRegistry {
     sources,
     rules,
     operationAuthority: operation,
-    reconciliations: structuredClone(priorR11Registry.reconciliations),
+    reconciliations: structuredClone(priorR13Registry.reconciliations),
+    normativeMarkdownAudit,
   }
-  const r12Manifest = registryBindingManifestDigest(provisional)
-  const priorManifest = registryBindingManifestDigest(priorR11Registry)
-  const basisRule = rules.find((rule) => rule.ruleId === 'rule.spec-convention.c4828bcd6dfa')
-  if (basisRule === undefined) throw new Error('R12 migration basis rule is missing')
+  const r13Manifest = registryBindingManifestDigest(provisional)
+  const priorManifest = registryBindingManifestDigest(priorR13Registry)
+  const basisRule = rules.find((rule) => rule.ruleId === 'rule.fk-charter.2a524c1ea63f')
+  if (basisRule === undefined) throw new Error('R13 migration basis rule is missing')
   const commandEvidence = (commandId: string, inputDigest: string, resultDigest: string) =>
     canonicalJson({
       tool: '@foreman-line/authority-registry',
@@ -12081,25 +12304,25 @@ function buildRegistry(): AuthorityEnforcementRegistry {
       actorClass: 'coordinator',
     })
   const priorCommand = commandEvidence(
-    'registry-binding-manifest-r11',
-    sha256(R12_PRIOR_REGISTRY_COMMIT),
+    'registry-binding-manifest-r12',
+    sha256(R13_PRIOR_REGISTRY_COMMIT),
     priorManifest,
   )
   const currentCommand = commandEvidence(
-    'superseding-binding-manifest-r12',
+    'superseding-binding-manifest-r13',
     priorManifest,
-    r12Manifest,
+    r13Manifest,
   )
-  const r12Migration: ReconciliationRecord = {
-    reconciliationId: 'registry-rework-544d8a3',
-    topic: 'R11 registry bindings superseded by the coordinator-ratified FK-P0 R12 amendment.',
+  const r13Migration: ReconciliationRecord = {
+    reconciliationId: 'registry-rework-0683bc0',
+    topic: 'R12 registry bindings superseded by the coordinator-ratified FK-P0 R13 amendment.',
     observedRefs: [basisRule.authorityBasisRef],
     observedEvidence: [
       {
         kind: 'git-commit',
-        reference: R12_PRIOR_REGISTRY_COMMIT,
+        reference: R13_PRIOR_REGISTRY_COMMIT,
         digest: sha256(
-          execFileSync('git', ['cat-file', '-p', R12_PRIOR_REGISTRY_COMMIT], { cwd: repoRoot }),
+          execFileSync('git', ['cat-file', '-p', R13_PRIOR_REGISTRY_COMMIT], { cwd: repoRoot }),
         ),
       },
       {
@@ -12112,7 +12335,7 @@ function buildRegistry(): AuthorityEnforcementRegistry {
     ],
     authoritativeRuleIds: [basisRule.ruleId],
     scopedDisposition:
-      'The R12 end-to-end structural Markdown identity, exact binding Gate 2 grant set, profile-container exclusion, and typed migration contract supersede the R11 registry bindings in FK scope.',
+      'The R13 normative Markdown audit, fail-closed public resolver, structural YAML profile model, lineHint-free identity, and duplicate keyed-table refusal supersede the R12 registry bindings in FK scope.',
     unresolvedConsequence:
       'Future binding changes require another typed prior-to-new migration record.',
     migrationStatus: 'superseded-by-amendment',
@@ -12120,7 +12343,7 @@ function buildRegistry(): AuthorityEnforcementRegistry {
   }
   return {
     ...provisional,
-    reconciliations: [...provisional.reconciliations, r12Migration],
+    reconciliations: [...provisional.reconciliations, r13Migration],
   }
 }
 

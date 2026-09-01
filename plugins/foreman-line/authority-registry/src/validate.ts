@@ -6,7 +6,12 @@ import * as ts from 'typescript/unstable/ast'
 import { API as TypeScriptApi } from 'typescript/unstable/sync'
 import { parse } from 'yaml'
 import AjvModule, { type Ajv as AjvType } from '../node_modules/ajv/dist/ajv.js'
-import { R12_LEGACY_MARKDOWN_RULE_TARGETS, R12_PRIOR_REGISTRY_COMMIT } from './registry.js'
+import {
+  R12_LEGACY_MARKDOWN_RULE_TARGETS,
+  R12_PRIOR_REGISTRY_COMMIT,
+  R13_NORMATIVE_MARKDOWN_AUDIT_KEYS,
+  R13_PRIOR_REGISTRY_COMMIT,
+} from './registry.js'
 import { authorityEnforcementRegistrySchema } from './schemas.js'
 import {
   AUTHORITY_TIERS,
@@ -53,6 +58,7 @@ const REQUIRED_REWORK_MIGRATIONS = [
   'registry-rework-1b42f4b',
   'registry-rework-ee29973',
   'registry-rework-544d8a3',
+  'registry-rework-0683bc0',
 ] as const
 const REQUIRED_OPERATIONS = [
   'gate1.ratify',
@@ -425,11 +431,19 @@ const RECONCILIATION_CONTRACT = {
     refs: ['spec-convention:item.c4828bcd6dfa'],
     rules: ['rule.spec-convention.c4828bcd6dfa'],
   },
+  'registry-rework-0683bc0': {
+    topic: 'R12 registry bindings superseded by the coordinator-ratified FK-P0 R13 amendment.',
+    status: 'superseded-by-amendment',
+    refs: ['fk-charter:item.2a524c1ea63f'],
+    rules: ['rule.fk-charter.2a524c1ea63f'],
+  },
 } as const
 
 const PRIOR_R11_BINDING_MANIFEST_DIGEST =
   'dd775924c5fe88f24f3aa1c545e2501fe9ca3ef8f9cedb0541cf043d0ae36257'
 const SHIPPED_BINDING_MANIFEST_DIGEST =
+  'f753296b78bcf4d8de9e603e8e347286519a26694c2241ae4a00a05676388e2f'
+const PRIOR_R12_BINDING_MANIFEST_DIGEST =
   '1186818bad7da994a1a5b3572211bebe059a64d8ca6ba0d5845d5eca5c9e137a'
 const SEMANTIC_EQUIVALENCE: readonly {
   readonly authoritySubject: string
@@ -589,6 +603,10 @@ const RECONCILIATION_PROSE: Readonly<Record<string, readonly [string, string]>> 
     'The R12 end-to-end structural Markdown identity, exact binding Gate 2 grant set, profile-container exclusion, and typed migration contract supersede the R11 registry bindings in FK scope.',
     'Future binding changes require another typed prior-to-new migration record.',
   ],
+  'registry-rework-0683bc0': [
+    'The R13 normative Markdown audit, fail-closed public resolver, structural YAML profile model, lineHint-free identity, and duplicate keyed-table refusal supersede the R12 registry bindings in FK scope.',
+    'Future binding changes require another typed prior-to-new migration record.',
+  ],
 }
 
 const RECONCILIATION_RECORD_DIGESTS: Readonly<Record<string, string>> = {
@@ -611,6 +629,7 @@ const RECONCILIATION_RECORD_DIGESTS: Readonly<Record<string, string>> = {
   'registry-rework-1b42f4b': '14bb9b5739d37281619e6ace7ea9e5d0f6fd0febeecf3facc892e1a606795a56',
   'registry-rework-ee29973': 'b9a3ed7f9eaa25468df8557fb812ae343910a481450411928b8abe5d4e216bb3',
   'registry-rework-544d8a3': 'd04e710f14c6f7b9978662161c1bba011a11fe862138dd73e5e477594751fd9d',
+  'registry-rework-0683bc0': 'f1a7ee84cb618300079786833537fef4494e093970cffc1ead8d1d66e2bd6aa9',
 }
 
 const LEGACY_RECONCILIATION_SOURCE_REFS: Readonly<Record<string, readonly SourceRef[]>> = {
@@ -717,6 +736,7 @@ export function registryBindingManifestDigest(document: AuthorityEnforcementRegi
         ruleId: rule.ruleId,
         bindingDigest: rule.bindingDigest,
       })),
+      normativeMarkdownAudit: document.normativeMarkdownAudit,
     }),
   )
 }
@@ -756,7 +776,7 @@ function isActiveAuthorityRule(
   return sources.get(rule.authorityBasisRef.sourceId)?.authorityEffect === 'binding'
 }
 
-export function resolveAuthority(
+function resolveValidatedAuthority(
   document: AuthorityEnforcementRegistry,
   query: AuthorityQuery,
 ): AuthorityResolution {
@@ -825,6 +845,21 @@ export function resolveAuthority(
     controllingRuleIds: controlling.map((rule) => rule.ruleId).sort(),
     consideredRuleIds,
   }
+}
+
+export function resolveAuthority(document: unknown, query: AuthorityQuery): AuthorityResolution {
+  const authoritySubject =
+    typeof query?.authoritySubject === 'string' ? query.authoritySubject : 'invalid.query'
+  if (!validateRegistry(document).valid) {
+    return {
+      outcome: 'REQUIRE_HUMAN',
+      authoritySubject,
+      reasonCode: 'REGISTRY_INVALID',
+      controllingRuleIds: [],
+      consideredRuleIds: [],
+    }
+  }
+  return resolveValidatedAuthority(document as AuthorityEnforcementRegistry, query)
 }
 
 function violation(
@@ -1301,6 +1336,19 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
     const reviewerDenialRule = document.rules.find(
       (rule) => rule.ruleId === 'rule.permission-profiles-registry.35cf0f58fc34',
     )
+    const profileRules = document.rules.filter(
+      (rule) => rule.authorityBasisRef.sourceId === 'permission-profiles-registry',
+    )
+    const containers = profileSource.inventoryItems.filter(
+      (item) =>
+        item.locator.anchor.startsWith('yaml-container:') &&
+        item.exclusionDisposition === 'schema-container',
+    )
+    const emptyAsks = profileSource.inventoryItems.filter((item) =>
+      /:ask:\[\]$/.test(item.locator.anchor),
+    )
+    const restrictions = profileRules.filter((rule) => rule.classification === 'pre-action-refusal')
+    const narrative = profileRules.filter((rule) => rule.classification === 'narrative-provenance')
     if (
       profileHeaders.length !== 6 ||
       profileHeaders.some(
@@ -1312,7 +1360,18 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
       ) ||
       reviewerDenial?.locator.anchor !== 'yaml-rule:reviewer-readonly:deny:"Bash(git commit*)"' ||
       reviewerDenial.ruleIds.join('|') !== 'rule.permission-profiles-registry.35cf0f58fc34' ||
-      reviewerDenialRule?.authorityBasisRef.itemId !== reviewerDenial.itemId
+      reviewerDenialRule?.authorityBasisRef.itemId !== reviewerDenial.itemId ||
+      containers.length !== 34 ||
+      emptyAsks.length !== 6 ||
+      emptyAsks.some(
+        (item) => item.exclusionDisposition !== 'schema-container' || item.ruleIds.length !== 0,
+      ) ||
+      restrictions.length !== 54 ||
+      restrictions.some(
+        (rule) => rule.enforcementOwner !== 'host-adapter' || rule.assurance !== 'mediated',
+      ) ||
+      narrative.length !== 51 ||
+      profileRules.some((rule) => rule.classification === 'ci-static-check')
     ) {
       violations.push(
         violation(
@@ -1321,6 +1380,37 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
         ),
       )
     }
+  }
+
+  const expectedNormativeMarkdownAudit = R13_NORMATIVE_MARKDOWN_AUDIT_KEYS.map((key) => {
+    const separator = key.indexOf(':')
+    const sourceId = key.slice(0, separator)
+    const itemId = key.slice(separator + 1)
+    const item = itemsByRef.get(referenceKey(sourceId, itemId))
+    if (item === undefined) return null
+    const published = item.ruleIds.length > 0
+    return {
+      sourceId,
+      itemId,
+      valueDigest: item.valueDigest,
+      disposition: published ? 'publish' : 'exclude',
+      ruleIds: item.ruleIds,
+      exclusionCode: published ? null : item.exclusionDisposition,
+      rationale: published
+        ? `Audit candidate ${itemId} is published by its exact source-bound rule set.`
+        : `Audit candidate ${itemId} is excluded as ${item.exclusionDisposition}; this exact source item does not independently impose an operative FK rule.`,
+    }
+  })
+  if (
+    expectedNormativeMarkdownAudit.some((record) => record === null) ||
+    canonicalJson(document.normativeMarkdownAudit) !== canonicalJson(expectedNormativeMarkdownAudit)
+  ) {
+    violations.push(
+      violation(
+        'RULE_SEMANTICS_UNCURATED',
+        'normative Markdown audit must equal the exact 146 item-specific source-authored dispositions',
+      ),
+    )
   }
 
   for (const [key, expectedStatement] of Object.entries(R11_PROTECTED_NORMATIVE_ITEMS)) {
@@ -2124,12 +2214,44 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
         !parsedCommands.some(
           (command) => command.resultDigest === PRIOR_R11_BINDING_MANIFEST_DIGEST,
         ) ||
-        !parsedCommands.some((command) => command.resultDigest === SHIPPED_BINDING_MANIFEST_DIGEST)
+        !parsedCommands.some(
+          (command) => command.resultDigest === PRIOR_R12_BINDING_MANIFEST_DIGEST,
+        )
       ) {
         violations.push(
           violation(
             'MIGRATION_EVIDENCE_INVALID',
             'R12 migration does not bind the exact R11 registry commit, source snapshot, and superseding manifest',
+          ),
+        )
+      }
+    }
+    if (record.reconciliationId === 'registry-rework-0683bc0') {
+      const gitRefs = record.observedEvidence
+        .filter((e) => e.kind === 'git-commit')
+        .map((e) => e.reference)
+      const commands = record.observedEvidence.filter((e) => e.kind === 'command-result')
+      const parsedCommands = commands.flatMap((e) => {
+        try {
+          return [JSON.parse(e.reference) as { commandId?: unknown; resultDigest?: unknown }]
+        } catch {
+          return []
+        }
+      })
+      if (
+        gitRefs.join('|') !== `${R13_PRIOR_REGISTRY_COMMIT}|${document.sourceSnapshotCommit}` ||
+        commands.length !== 2 ||
+        parsedCommands.map((command) => command.commandId).join('|') !==
+          'registry-binding-manifest-r12|superseding-binding-manifest-r13' ||
+        !parsedCommands.some(
+          (command) => command.resultDigest === PRIOR_R12_BINDING_MANIFEST_DIGEST,
+        ) ||
+        !parsedCommands.some((command) => command.resultDigest === SHIPPED_BINDING_MANIFEST_DIGEST)
+      ) {
+        violations.push(
+          violation(
+            'MIGRATION_EVIDENCE_INVALID',
+            'R13 migration does not bind the exact R12 registry commit, source snapshot, and superseding manifest',
           ),
         )
       }
@@ -2389,16 +2511,18 @@ interface MarkdownDocumentMap {
   readonly lines: readonly string[]
   readonly fenced: ReadonlySet<number>
   readonly blocks: ReadonlyMap<string, string>
+  readonly blockCounts: ReadonlyMap<string, number>
 }
 
 function markdownDocumentMap(content: string): MarkdownDocumentMap {
   const blocks = new Map<string, string>()
+  const blockCounts = new Map<string, number>()
   const rawLines = content.replace(/\r\n?/g, '\n').split('\n')
   const lines = stripMarkdownHtmlComments(content).replace(/\r\n?/g, '\n').split('\n')
   const fenced = pairedFenceLines(rawLines)
   const headings: { level: number; text: string }[] = []
   const occurrences = new Map<string, number>()
-  const tableKeys = new Map<string, number>()
+  const tableGroups = new Map<string, number>()
   let cursor = 0
   while (cursor < lines.length) {
     const line = lines[cursor] ?? ''
@@ -2424,6 +2548,8 @@ function markdownDocumentMap(content: string): MarkdownDocumentMap {
       continue
     }
     if (table && /^\s*\|?\s*:?-{3}/.test(lines[cursor + 1] ?? '')) {
+      const headingPath = headings.map((item) => item.text).join(' > ') || '(preamble)'
+      tableGroups.set(headingPath, (tableGroups.get(headingPath) ?? 0) + 1)
       cursor += 1
       continue
     }
@@ -2451,15 +2577,15 @@ function markdownDocumentMap(content: string): MarkdownDocumentMap {
     const occurrence = (occurrences.get(structuralKey) ?? 0) + 1
     occurrences.set(structuralKey, occurrence)
     const tableKey = table ? line.trim().split('|').slice(1, -1)[0]?.trim() : undefined
-    const tableIdentity = `${headingPath}\u0000${tableKey ?? ''}`
-    const tableKeyOccurrence = table ? (tableKeys.get(tableIdentity) ?? 0) + 1 : 0
-    if (table) tableKeys.set(tableIdentity, tableKeyOccurrence)
+    const tableGroup = tableGroups.get(headingPath) ?? 1
     const tablePrefix =
-      table && tableKeyOccurrence > 1 ? `${headingPath} > table:${tableKeyOccurrence}` : headingPath
-    blocks.set(`md-block:${tablePrefix}:${kind}:${table ? tableKey : occurrence}`, text)
+      table && tableGroup > 1 ? `${headingPath} > table-group:${tableGroup}` : headingPath
+    const anchor = `md-block:${tablePrefix}:${kind}:${table ? tableKey : occurrence}`
+    blockCounts.set(anchor, (blockCounts.get(anchor) ?? 0) + 1)
+    if (!blocks.has(anchor)) blocks.set(anchor, text)
     cursor = end
   }
-  return { lines, fenced, blocks }
+  return { lines, fenced, blocks, blockCounts }
 }
 
 function tsNodeName(node: ts.Node): string | null {
@@ -2654,11 +2780,28 @@ function jsonConstraintMap(content: string): Map<string, string> {
 
 export function permissionProfileRuleMap(content: string): Map<string, string> {
   const parsed = parse(content) as {
-    profiles?: Record<string, { envelope?: Record<string, unknown> }>
+    profiles?: Record<string, { description?: unknown; envelope?: Record<string, unknown> }>
   }
   const result = new Map<string, string>()
-  for (const profileName of Object.keys(parsed.profiles ?? {}).sort()) {
-    const envelope = parsed.profiles?.[profileName]?.envelope ?? {}
+  const profiles = parsed.profiles ?? {}
+  result.set('yaml-container:profiles', canonicalJson(profiles))
+  for (const profileName of Object.keys(profiles).sort()) {
+    const profile = profiles[profileName] ?? {}
+    const envelope = profile.envelope ?? {}
+    result.set(`yaml-container:profiles/${profileName}`, canonicalJson(profile))
+    result.set(
+      `yaml-container:profiles/${profileName}/description`,
+      canonicalJson(profile.description),
+    )
+    result.set(`yaml-container:profiles/${profileName}/envelope`, canonicalJson(envelope))
+    for (const key of ['deny', 'allow', 'network']) {
+      if (key in envelope) {
+        result.set(
+          `yaml-container:profiles/${profileName}/envelope/${key}`,
+          canonicalJson(envelope[key]),
+        )
+      }
+    }
     const visit = (value: unknown, path: string): void => {
       if (Array.isArray(value)) {
         if (value.length === 0) {
@@ -2695,7 +2838,7 @@ function extractLocator(
   const fenced = markdown?.fenced ?? new Set<number>()
   if (locator.anchor.startsWith('md-block:')) {
     const value = markdown?.blocks.get(locator.anchor)
-    return { count: value === undefined ? 0 : 1, value: value ?? '' }
+    return { count: markdown?.blockCounts.get(locator.anchor) ?? 0, value: value ?? '' }
   }
   if (
     locator.kind === 'symbol' &&
@@ -2716,7 +2859,10 @@ function extractLocator(
       return { count: 0, value: '' }
     }
   }
-  if (locator.kind === 'symbol' && locator.anchor.startsWith('yaml-rule:')) {
+  if (
+    locator.kind === 'symbol' &&
+    (locator.anchor.startsWith('yaml-rule:') || locator.anchor.startsWith('yaml-container:'))
+  ) {
     try {
       const value = permissionProfileRuleMap(content).get(locator.anchor)
       return { count: value === undefined ? 0 : 1, value: value ?? '' }
@@ -3039,13 +3185,14 @@ export function sweepRegistrySources(document: unknown, repoRoot: string): Valid
         )
       }
     }
-    for (const [anchor, discoveredValue] of markdown?.blocks ?? []) {
+    for (const [anchor] of markdown?.blocks ?? []) {
+      const tableKey = anchor.includes(':table-row:')
+        ? anchor.slice(anchor.lastIndexOf(':table-row:') + ':table-row:'.length)
+        : null
       const coveredByExactTableItem =
-        anchor.includes(':table-row:') &&
+        tableKey !== null &&
         source.inventoryItems.some(
-          (item) =>
-            item.locator.kind === 'table-row' &&
-            item.normalizedExcerpt === normalizeRuleText(discoveredValue),
+          (item) => item.locator.kind === 'table-row' && item.locator.anchor === tableKey,
         )
       if (
         !coveredByExactTableItem &&
@@ -3121,7 +3268,11 @@ export function sweepRegistrySources(document: unknown, repoRoot: string): Valid
         }
         const registeredRules = new Set(
           source.inventoryItems
-            .filter((item) => item.locator.anchor.startsWith('yaml-rule:'))
+            .filter(
+              (item) =>
+                item.locator.anchor.startsWith('yaml-rule:') ||
+                item.locator.anchor.startsWith('yaml-container:'),
+            )
             .map((item) => item.locator.anchor),
         )
         for (const anchor of permissionProfileRuleMap(content).keys()) {

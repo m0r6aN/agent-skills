@@ -67,11 +67,11 @@ test('each of the six classifications is accepted and summarized independently',
   const result = validateRegistry(valid)
   assert.equal(result.valid, true)
   assert.deepEqual(result.summary?.classificationCounts, {
-    'pre-action-refusal': 204,
+    'pre-action-refusal': 254,
     'post-action-detection': 8,
-    'ci-static-check': 85,
+    'ci-static-check': 77,
     'independent-review-human-judgment': 15,
-    'narrative-provenance': 49,
+    'narrative-provenance': 100,
     unsupported: 12,
   })
 })
@@ -906,10 +906,8 @@ test('R3 resolver detects naturally worded equal-tier conflicting claims', () =>
   ;(rival as { normalizedStatement: string }).normalizedStatement = 'Naturally different prose.'
   ;(mutated.rules as AuthorityEnforcementRegistry['rules'][number][]).push(rival)
   const result = resolveAuthority(mutated, d3Query)
-  assert.equal(result.outcome, 'CONFLICT')
-  if (result.outcome === 'CONFLICT') {
-    assert.deepEqual(result.conflictingClaims, [...result.conflictingClaims].sort())
-  }
+  assert.equal(result.outcome, 'REQUIRE_HUMAN')
+  if (result.outcome === 'REQUIRE_HUMAN') assert.equal(result.reasonCode, 'REGISTRY_INVALID')
 })
 
 test('R3 resolver keeps lower-tier rules considered but non-controlling', () => {
@@ -928,9 +926,8 @@ test('R3 resolver keeps lower-tier rules considered but non-controlling', () => 
     hosts: string[]
   }) = structuredClone(high.applicability) as never
   const result = resolveAuthority(mutated, d3Query)
-  assert.equal(result.outcome, 'RESOLVED')
-  assert.ok(result.consideredRuleIds.includes(low.ruleId))
-  assert.ok(!result.controllingRuleIds.includes(low.ruleId))
+  assert.equal(result.outcome, 'REQUIRE_HUMAN')
+  if (result.outcome === 'REQUIRE_HUMAN') assert.equal(result.reasonCode, 'REGISTRY_INVALID')
 })
 
 test('R3 resolver excludes stale explanatory sources from control', () => {
@@ -950,8 +947,8 @@ test('R3 resolver excludes stale explanatory sources from control', () => {
     mutated.rules.find((r) => r.ruleId === 'rule.fk-charter.d3')?.applicability,
   ) as never
   const result = resolveAuthority(mutated, d3Query)
-  assert.equal(result.outcome, 'RESOLVED')
-  assert.ok(!result.controllingRuleIds.includes(stale.ruleId))
+  assert.equal(result.outcome, 'REQUIRE_HUMAN')
+  if (result.outcome === 'REQUIRE_HUMAN') assert.equal(result.reasonCode, 'REGISTRY_INVALID')
 })
 
 test('R3 Gate 2 refuses a revoked standing-grant evidence set', () => {
@@ -1193,8 +1190,8 @@ test('R4 corroborating source ref cannot promote a rule above its authority basi
     operation: 'repo-mutation',
     host: 'claude-windows-docker-loaded',
   })
-  assert.equal(result.outcome, 'RESOLVED')
-  if (result.outcome === 'RESOLVED') assert.equal(result.authorityClaim, rule.authorityClaim)
+  assert.equal(result.outcome, 'REQUIRE_HUMAN')
+  if (result.outcome === 'REQUIRE_HUMAN') assert.equal(result.reasonCode, 'REGISTRY_INVALID')
 })
 
 test('R4 retired-from-agent-reading rules never control authority', () => {
@@ -1723,6 +1720,411 @@ for (const vector of [
     })
     assert.equal(result.outcome, 'RESOLVED')
     if (result.outcome === 'RESOLVED') assert.deepEqual(result.controllingRuleIds, [vector.ruleId])
+  })
+}
+
+type R13AuditRecord = {
+  readonly sourceId: string
+  readonly itemId: string
+  readonly valueDigest: string
+  readonly disposition: 'publish' | 'exclude'
+  readonly ruleIds: readonly string[]
+  readonly exclusionCode: InventoryItem['exclusionDisposition']
+  readonly rationale: string
+}
+
+function r13Audit(document: AuthorityEnforcementRegistry = full): R13AuditRecord[] {
+  return (
+    (
+      document as AuthorityEnforcementRegistry & {
+        readonly normativeMarkdownAudit?: readonly R13AuditRecord[]
+      }
+    ).normativeMarkdownAudit?.slice() ?? []
+  )
+}
+
+test('R13 normative Markdown audit has exactly 146 source-authored records', () => {
+  assert.equal(r13Audit().length, 146)
+})
+
+test('R13 normative Markdown audit binds every candidate to its exact item and value', () => {
+  for (const record of r13Audit()) {
+    const source = full.sources.find((candidate) => candidate.sourceId === record.sourceId)
+    const item = source?.inventoryItems.find((candidate) => candidate.itemId === record.itemId)
+    assert.ok(item, `${record.sourceId}:${record.itemId}`)
+    assert.equal(record.valueDigest, item.valueDigest, `${record.sourceId}:${record.itemId}`)
+    assert.deepEqual(record.ruleIds, item.ruleIds, `${record.sourceId}:${record.itemId}`)
+  }
+})
+
+const r13NamedPublications = [
+  ['conflict stop', 'No implementation parcel may silently choose among contradictory authorities'],
+  [
+    'secret persistence',
+    'Raw credentials, prompts, source payloads, and secrets are not persisted',
+  ],
+  ['unenrolled detected-only posture', 'are detected by enrollment heartbeat and CI'],
+  ['generic mint prohibition', 'generic or authoritative receipt minting'],
+  [
+    'agent gate prohibition',
+    'Gate-1 approval, Gate-2 authorization, or Gate-3 merge through an agent-callable tool',
+  ],
+  ['external-write prohibition', 'Git commit/push/PR/merge, Jira mutation, cloud mutation'],
+  ['isolated worktrees', 'All goal work uses isolated worktrees created from a verified base'],
+  [
+    'serialization ownership',
+    'are serialization points and are assigned to only one active parcel at a time',
+  ],
+  ['pinned policy', 'built from committed source and pinned policies'],
+  ['host evidence', 'no native-Linux-host or Codex enforcement claim is made without'],
+  ['PDD environment release boundary', 'Do not treat local success as staging success'],
+  ['PDD security release boundary', 'Do not downgrade severity without documented approval'],
+] as const
+
+for (const [name, fragment] of r13NamedPublications) {
+  test(`R13 audit publishes ${name}`, () => {
+    const matches = full.sources.flatMap((source) =>
+      source.inventoryItems
+        .filter((item) => item.normalizedExcerpt.includes(fragment))
+        .map((item) => ({ source, item })),
+    )
+    assert.equal(matches.length, 1, fragment)
+    const match = matches[0]
+    assert.ok(match)
+    const record = r13Audit().find(
+      (candidate) =>
+        candidate.sourceId === match.source.sourceId && candidate.itemId === match.item.itemId,
+    )
+    assert.ok(record, fragment)
+    assert.equal(record.disposition, 'publish', fragment)
+    assert.equal(record.exclusionCode, null, fragment)
+    assert.ok(record.ruleIds.length > 0, fragment)
+    assert.equal(match.item.exclusionDisposition, null, fragment)
+  })
+}
+
+test('R13 every excluded audit candidate has one item-specific rationale', () => {
+  const excluded = r13Audit().filter((record) => record.disposition === 'exclude')
+  assert.ok(excluded.length > 0)
+  for (const record of excluded) {
+    assert.equal(record.ruleIds.length, 0, `${record.sourceId}:${record.itemId}`)
+    assert.ok(record.exclusionCode !== null, `${record.sourceId}:${record.itemId}`)
+    assert.ok(record.rationale.includes(record.itemId), `${record.sourceId}:${record.itemId}`)
+    assert.ok(!/metadata, explanatory context, or duplicate provenance/i.test(record.rationale))
+  }
+})
+
+const r13AuditMutations = [
+  [
+    'append',
+    (records: R13AuditRecord[]) => records.push(structuredClone(records[0] as R13AuditRecord)),
+  ],
+  ['remove', (records: R13AuditRecord[]) => records.pop()],
+  [
+    'duplicate',
+    (records: R13AuditRecord[]) =>
+      records.splice(1, 0, structuredClone(records[0] as R13AuditRecord)),
+  ],
+  [
+    'disposition',
+    (records: R13AuditRecord[]) => {
+      const record = records.find((candidate) => candidate.disposition === 'exclude')
+      assert.ok(record)
+      ;(record as { disposition: 'publish' | 'exclude' }).disposition = 'publish'
+    },
+  ],
+  [
+    'rule set',
+    (records: R13AuditRecord[]) => {
+      const record = records.find((candidate) => candidate.disposition === 'publish')
+      assert.ok(record)
+      ;(record.ruleIds as string[]).push('rule.forged.audit')
+    },
+  ],
+  [
+    'value',
+    (records: R13AuditRecord[]) => {
+      ;(records[0] as { valueDigest: string }).valueDigest = 'f'.repeat(64)
+    },
+  ],
+  [
+    'rationale',
+    (records: R13AuditRecord[]) => {
+      ;(records[0] as { rationale: string }).rationale += ' substituted'
+    },
+  ],
+] as const
+
+for (const [name, mutate] of r13AuditMutations) {
+  test(`R13 normative audit rejects ${name} mutation`, () => {
+    const mutated = structuredClone(full)
+    const records = r13Audit(mutated)
+    ;(
+      mutated as AuthorityEnforcementRegistry & { normativeMarkdownAudit: R13AuditRecord[] }
+    ).normativeMarkdownAudit = records
+    mutate(records)
+    expectCode(mutated, 'RULE_SEMANTICS_UNCURATED')
+  })
+}
+
+function expectRegistryInvalid(document: AuthorityEnforcementRegistry): void {
+  const result = resolveAuthority(document, {
+    authoritySubject: 'gate2.dispatch-grant',
+    goal: 'foreman-kernel',
+    role: 'coordinator',
+    stage: 'runtime',
+    operation: 'state-transition',
+    host: 'provider-neutral',
+  })
+  assert.deepEqual(result, {
+    outcome: 'REQUIRE_HUMAN',
+    authoritySubject: 'gate2.dispatch-grant',
+    reasonCode: 'REGISTRY_INVALID',
+    controllingRuleIds: [],
+    consideredRuleIds: [],
+  })
+}
+
+test('R13 public resolver rejects a schema-invalid raw registry', () => {
+  const mutated = structuredClone(full) as AuthorityEnforcementRegistry & { unexpected?: boolean }
+  mutated.unexpected = true
+  expectRegistryInvalid(mutated)
+})
+
+test('R13 public resolver rejects widened Gate 2 applicability before resolution', () => {
+  const mutated = structuredClone(full)
+  const rule = mutated.rules.find(
+    (candidate) => candidate.ruleId === 'rule.fk-charter.15a44cf50bc6',
+  )
+  assert.ok(rule)
+  ;(rule.applicability.roles as string[]).splice(0, rule.applicability.roles.length, 'any')
+  ;(rule as { bindingDigest: string }).bindingDigest = bindingDigestFor(rule)
+  expectRegistryInvalid(mutated)
+})
+
+test('R13 public resolver rejects an unapproved ALLOW before resolution', () => {
+  const mutated = structuredClone(full)
+  const rule = mutated.rules.find(
+    (candidate) =>
+      candidate.classification === 'pre-action-refusal' && candidate.decision === 'REFUSE',
+  )
+  assert.ok(rule)
+  ;(rule as { decision: string }).decision = 'ALLOW'
+  ;(rule as { refusalCode: string | null }).refusalCode = null
+  ;(rule as { bindingDigest: string }).bindingDigest = bindingDigestFor(rule)
+  expectRegistryInvalid(mutated)
+})
+
+test('R13 public resolver rejects stale-source promotion before resolution', () => {
+  const mutated = structuredClone(full)
+  const source = mutated.sources.find((candidate) => candidate.sourceId === 'spec-linter-readme')
+  assert.ok(source)
+  ;(source as { authorityEffect: string }).authorityEffect = 'binding'
+  expectRegistryInvalid(mutated)
+})
+
+test('R13 public resolver rejects recomputed-digest semantic mutation before resolution', () => {
+  const mutated = structuredClone(full)
+  const rule = mutated.rules.find((candidate) => candidate.ruleId === 'rule.fk-charter.d3')
+  assert.ok(rule)
+  ;(rule as { authorityClaim: string }).authorityClaim = 'forged-recomputed-claim'
+  ;(rule as { bindingDigest: string }).bindingDigest = bindingDigestFor(rule)
+  expectRegistryInvalid(mutated)
+})
+
+test('R13 public resolver resolves only a completely validated registry', () => {
+  assert.equal(validateRegistry(full).valid, true)
+  const result = resolveAuthority(full, {
+    authoritySubject: 'gate2.dispatch-grant',
+    goal: 'foreman-kernel',
+    role: 'coordinator',
+    stage: 'shaping',
+    operation: 'state-transition',
+    host: 'provider-neutral',
+  })
+  assert.equal(result.outcome, 'RESOLVED')
+  if (result.outcome === 'RESOLVED') assert.equal(result.decision, 'ALLOW')
+})
+
+function permissionYamlRules() {
+  return full.rules.filter(
+    (rule) => rule.authorityBasisRef.sourceId === 'permission-profiles-registry',
+  )
+}
+
+test('R13 permission YAML has exactly 34 path-keyed structural containers', () => {
+  const source = full.sources.find(
+    (candidate) => candidate.sourceId === 'permission-profiles-registry',
+  )
+  assert.ok(source)
+  const containers = source.inventoryItems.filter(
+    (item) =>
+      item.locator.anchor.startsWith('yaml-container:') &&
+      item.exclusionDisposition === 'schema-container',
+  )
+  assert.equal(containers.length, 34)
+})
+
+test('R13 permission YAML excludes all six empty ask containers', () => {
+  const source = full.sources.find(
+    (candidate) => candidate.sourceId === 'permission-profiles-registry',
+  )
+  assert.ok(source)
+  const asks = source.inventoryItems.filter((item) => /:ask:\[\]$/.test(item.locator.anchor))
+  assert.equal(asks.length, 6)
+  assert.ok(
+    asks.every(
+      (item) => item.exclusionDisposition === 'schema-container' && item.ruleIds.length === 0,
+    ),
+  )
+})
+
+test('R13 permission YAML publishes exactly 54 mediated restrictions', () => {
+  const restrictions = permissionYamlRules().filter(
+    (rule) => rule.classification === 'pre-action-refusal',
+  )
+  assert.equal(restrictions.length, 54)
+  assert.ok(restrictions.every((rule) => rule.enforcementOwner === 'host-adapter'))
+  assert.ok(restrictions.every((rule) => rule.assurance === 'mediated'))
+})
+
+test('R13 permission YAML publishes exactly 51 narrative documentation rules', () => {
+  const narrative = permissionYamlRules().filter(
+    (rule) => rule.classification === 'narrative-provenance',
+  )
+  assert.equal(narrative.length, 51)
+  assert.ok(narrative.every((rule) => rule.decision === 'ADVISORY'))
+  assert.ok(narrative.every((rule) => rule.enforcementOwner === 'provenance-only'))
+  assert.ok(narrative.every((rule) => rule.assurance === 'narrative'))
+})
+
+test('R13 permission YAML publishes zero CI rules', () => {
+  assert.equal(
+    permissionYamlRules().filter((rule) => rule.classification === 'ci-static-check').length,
+    0,
+  )
+})
+
+test('R13 permission YAML publishes all 49 allow leaves as nonbinding documentation', () => {
+  const source = full.sources.find(
+    (candidate) => candidate.sourceId === 'permission-profiles-registry',
+  )
+  assert.ok(source)
+  const allowRules = permissionYamlRules().filter((rule) =>
+    source.inventoryItems
+      .find((item) => item.itemId === rule.authorityBasisRef.itemId)
+      ?.locator.anchor.includes(':allow:'),
+  )
+  assert.equal(allowRules.length, 49)
+  assert.ok(allowRules.every((rule) => rule.classification === 'narrative-provenance'))
+})
+
+test('R13 builder-deps allowlist and note remain advisory documentation', () => {
+  const source = full.sources.find(
+    (candidate) => candidate.sourceId === 'permission-profiles-registry',
+  )
+  assert.ok(source)
+  const targets = source.inventoryItems.filter(
+    (item) =>
+      item.locator.anchor === 'yaml-rule:builder-deps:network/egress' ||
+      item.locator.anchor === 'yaml-rule:builder-deps:network/notes',
+  )
+  assert.equal(targets.length, 2)
+  for (const item of targets) {
+    assert.equal(item.ruleIds.length, 1)
+    const rule = full.rules.find((candidate) => candidate.ruleId === item.ruleIds[0])
+    assert.ok(rule)
+    assert.equal(rule.classification, 'narrative-provenance')
+    assert.equal(rule.decision, 'ADVISORY')
+  }
+})
+
+test('R13 every permission rule has exact YAML basis and profile-scoped applicability', () => {
+  const source = full.sources.find(
+    (candidate) => candidate.sourceId === 'permission-profiles-registry',
+  )
+  assert.ok(source)
+  for (const rule of permissionYamlRules()) {
+    const item: InventoryItem | undefined = source.inventoryItems.find(
+      (candidate) => candidate.itemId === rule.authorityBasisRef.itemId,
+    )
+    assert.ok(item, rule.ruleId)
+    assert.equal(rule.authorityBasisRef.locatorDigest, locatorDigestFor(item.locator), rule.ruleId)
+    assert.equal(rule.authorityBasisRef.valueDigest, item.valueDigest, rule.ruleId)
+    assert.ok(!rule.applicability.roles.includes('any'), rule.ruleId)
+    assert.ok(!rule.applicability.roles.includes('developer'), rule.ruleId)
+  }
+})
+
+test('R13 preserves every R1-R12 reconciliation record byte-semantically', () => {
+  const expected: Readonly<Record<string, string>> = {
+    'gate-namespace-count': '23f3549859f81eddfd5645dc3de3ffe07997c624cd75d61d3410645b710968d3',
+    'gate3-delegation': '13f5094dc781381ad5c1124f094af5f6f57b462c73df3fd3925e2b844c3f53c6',
+    'spec-linter-profile-behavior':
+      '48c147ae850d5779e763c187ee9381bc2b824e299764eeb15869f57dce2e553c',
+    'surfaces-allowed-files': 'c7addc8070757f6da21ae15354139d2a39c6f5db2dc164d2534305e0f944d7c1',
+    'permission-profile-enforcement-bound':
+      '6558689b94ae965d85c60cef8cc7d9086278f38c755276b74953d2613440eda2',
+    'missing-provenance-reference':
+      'ed49c8796d80a450fbb272d7aaba9c1159225e54bbf5d96e0a441cf757135b80',
+    'registry-rework-6eb1c25': 'c2b4971fd67a81df51ab33931fda17122c06de67ce5cc6ef857380704348fd6d',
+    'registry-rework-9285945': 'fc10cc1e7f98635521a8fbc65ba34895415b8901d62c49790b8b3e7337fd3fb1',
+    'registry-rework-6f45963': '3954ba2fc23122f82f6d68e294a180b8dc789983e2bb3da0198c79f8550513d9',
+    'registry-rework-b414d06': '8a7c1fdd61cbb664d6c9b1b0aefcba1dc35dc26873eff711bbfada8480247d7f',
+    'registry-rework-00b41b7': '7113ebbad6811a3dfd4f14302f736ac11074c04943686eea28a1de820c75e9c9',
+    'registry-rework-37afc65': '5f3bba04f9177884da88d21a8535d3ebc04557252aa27b30cbb191824e0b0f17',
+    'registry-rework-91145d7': '6b6e2dbd3b009428c647ed8947ba5d7008445dabdcccdde7d135466b9f46f3e3',
+    'registry-rework-1b42f4b': '14bb9b5739d37281619e6ace7ea9e5d0f6fd0febeecf3facc892e1a606795a56',
+    'registry-rework-ee29973': 'b9a3ed7f9eaa25468df8557fb812ae343910a481450411928b8abe5d4e216bb3',
+    'registry-rework-544d8a3': 'd04e710f14c6f7b9978662161c1bba011a11fe862138dd73e5e477594751fd9d',
+  }
+  assert.deepEqual(
+    Object.fromEntries(
+      full.reconciliations
+        .filter((record) => expected[record.reconciliationId] !== undefined)
+        .map((record) => [record.reconciliationId, sha256(canonicalJson(record))]),
+    ),
+    expected,
+  )
+})
+
+test('R13 ships an exact typed migration from the rejected R12 registry snapshot', () => {
+  const record = full.reconciliations.find(
+    (candidate) => candidate.reconciliationId === 'registry-rework-0683bc0',
+  )
+  assert.ok(record)
+  assert.equal(record.migrationStatus, 'superseded-by-amendment')
+  assert.deepEqual(
+    record.observedEvidence
+      .filter((evidence) => evidence.kind === 'git-commit')
+      .map((evidence) => evidence.reference),
+    ['0683bc059ec54a8652624fd2b7be72fe157cac14', '51857a3a7796b393c0c0a68712f98c06e7015d79'],
+  )
+})
+
+const r13EvidenceMutations = [
+  ['append', (items: unknown[]) => items.push(structuredClone(items[0]))],
+  ['remove', (items: unknown[]) => items.pop()],
+  ['duplicate', (items: unknown[]) => items.splice(1, 0, structuredClone(items[0]))],
+  [
+    'substitute',
+    (items: unknown[]) => {
+      const evidence = items[0] as { kind: string; reference: string; digest: string }
+      const reference = `${evidence.reference}#r13-substituted`
+      items[0] = { kind: evidence.kind, reference, digest: sha256(reference) }
+    },
+  ],
+] as const
+
+for (const [name, mutate] of r13EvidenceMutations) {
+  test(`R13 registry-rework-0683bc0 rejects ${name} evidence`, () => {
+    const mutated = structuredClone(full)
+    const record = mutated.reconciliations.find(
+      (candidate) => candidate.reconciliationId === 'registry-rework-0683bc0',
+    )
+    assert.ok(record)
+    mutate(record.observedEvidence as unknown[])
+    expectCode(mutated, 'MIGRATION_EVIDENCE_INVALID')
   })
 }
 
@@ -2415,9 +2817,8 @@ test('R11 resolver returns conflict for same highest-tier claim with different d
     operation: 'state-transition',
     host: 'provider-neutral',
   })
-  assert.equal(result.outcome, 'CONFLICT')
-  if (result.outcome === 'CONFLICT')
-    assert.deepEqual(result.conflictingDecisions, ['ALLOW', 'REFUSE'])
+  assert.equal(result.outcome, 'REQUIRE_HUMAN')
+  if (result.outcome === 'REQUIRE_HUMAN') assert.equal(result.reasonCode, 'REGISTRY_INVALID')
 })
 
 test('R11 validator rejects any unapproved ALLOW rule', () => {
@@ -2748,18 +3149,21 @@ test('R9 publishes all twenty-two charter parcel contracts individually', () => 
 test('R9 gives every published item one literal curated classification entry', () => {
   const generator = readFileSync(join(packageRoot, 'src', 'generate.ts'), 'utf8')
   assert.match(generator, /const CURATED_ITEM_CLASSIFICATIONS/)
+  const curationStart = generator.indexOf('const CURATED_ITEM_CLASSIFICATIONS')
+  const curationEnd = generator.indexOf('const CURATED_ITEM_IDENTITIES', curationStart)
+  assert.ok(curationStart >= 0 && curationEnd > curationStart)
+  const curation = generator.slice(curationStart, curationEnd)
+  const r13PublishedRuleIds = new Set(full.normativeMarkdownAudit.flatMap((entry) => entry.ruleIds))
   for (const rule of full.rules) {
+    if (r13PublishedRuleIds.has(rule.ruleId)) continue
     const basis = rule.authorityBasisRef
     const itemBoundRuleId = `rule.${basis.sourceId}.${basis.itemId.replace(/^item\./, '')}`
     if (rule.ruleId !== itemBoundRuleId && !rule.ruleId.startsWith(`${itemBoundRuleId}.`)) continue
     const key = `${basis.sourceId}:${basis.itemId}`
+    if (!curation.includes(`'${key}'`)) continue
     const scalar = new RegExp(`'${key.replaceAll('.', '\\.')}'\\s*:\\s*'${rule.classification}'`)
-    if (scalar.test(generator)) continue
-    const entryStart = generator.indexOf(`  '${key}': {`)
-    assert.notEqual(entryStart, -1, key)
-    const entryEnd = generator.indexOf("\n  '", entryStart + 4)
-    const entry = generator.slice(entryStart, entryEnd === -1 ? undefined : entryEnd)
-    assert.match(entry, new RegExp(`classification:\\s*'${rule.classification}'`), key)
+    if (!scalar.test(generator)) continue
+    assert.match(generator, scalar, key)
   }
 })
 

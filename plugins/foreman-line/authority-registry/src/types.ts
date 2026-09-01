@@ -187,6 +187,16 @@ export interface InventoryItem {
     | null
   readonly rationale: string
 }
+export type NormativeMarkdownAuditExclusion = Exclude<InventoryItem['exclusionDisposition'], null>
+export interface NormativeMarkdownAuditRecord {
+  readonly sourceId: string
+  readonly itemId: string
+  readonly valueDigest: string
+  readonly disposition: 'publish' | 'exclude'
+  readonly ruleIds: readonly string[]
+  readonly exclusionCode: NormativeMarkdownAuditExclusion | null
+  readonly rationale: string
+}
 export interface CanonSource {
   readonly sourceId: string
   readonly path: string
@@ -259,7 +269,7 @@ export type AuthorityResolution =
   | {
       readonly outcome: 'REQUIRE_HUMAN'
       readonly authoritySubject: string
-      readonly reasonCode: 'INVALID_QUERY_SCOPE' | 'NO_APPLICABLE_AUTHORITY'
+      readonly reasonCode: 'REGISTRY_INVALID' | 'INVALID_QUERY_SCOPE' | 'NO_APPLICABLE_AUTHORITY'
       readonly controllingRuleIds: []
       readonly consideredRuleIds: string[]
     }
@@ -317,6 +327,7 @@ export interface AuthorityEnforcementRegistry {
   readonly rules: readonly AuthorityRule[]
   readonly operationAuthority: readonly OperationAuthority[]
   readonly reconciliations: readonly ReconciliationRecord[]
+  readonly normativeMarkdownAudit: readonly NormativeMarkdownAuditRecord[]
 }
 
 export const RESULT_CODES = [

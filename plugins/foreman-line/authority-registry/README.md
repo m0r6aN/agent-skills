@@ -29,6 +29,12 @@ more rule IDs or has one explicit exclusion disposition. The sweep proves that d
 remain bound; completeness of the natural-language inventory still requires two independent
 reviews and is not proved by a self-authored manifest.
 
+The closed top-level `normativeMarkdownAudit` contains exactly 146 source-authored Markdown
+candidate dispositions. Each record binds the exact source/item/value triple and either the
+complete published rule set or one item-specific exclusion code and rationale. The validator
+rejects additions, omissions, duplicates, substituted values, changed dispositions, changed rule
+sets, and changed rationales as `RULE_SEMANTICS_UNCURATED`.
+
 Each rule independently binds:
 
 - stable identity (`sourceId` plus `itemId`);
@@ -78,8 +84,11 @@ Unenrolled/bypass cases are unsupported, and reviewer residual shell capability 
 post-review Git detection. Missing enrollment is never described as a refusal.
 All 52 configured deny entries and both restrictive `network.egress: denied` entries have their
 own literal classification and five-axis applicability record for the exact profile role on
-`claude-windows-docker-loaded`; profile allow entries remain advisory documentation.
-The six profile mapping headers are structural containers with no rules. In particular,
+`claude-windows-docker-loaded`. The 49 allow leaves and the builder-deps egress/notes leaves are
+51 nonbinding narrative rules; no permission-YAML item is classified as a CI rule. The structural
+inventory contains exactly 34 path-keyed YAML containers, and all six empty `ask` arrays are
+excluded as schema containers. The six legacy profile mapping headers remain compatibility-only
+structural records with no rules. In particular,
 `builder-architecture:` is not the reviewer Git-commit denial; that denial binds only the literal
 `yaml-rule:reviewer-readonly:deny:"Bash(git commit*)"` item.
 
@@ -118,12 +127,13 @@ Six required typed records reconcile without rewriting historical sources:
 was edited or globally invalidated. The missing provenance record stays `open`, preserves all
 thirteen standing rules, and prevents their retirement.
 
-Ten additional `superseded-by-amendment` records bind the R2 and R4-R12 reworks to their prior
+Eleven additional `superseded-by-amendment` records bind the R2 and R4-R13 reworks to their prior
 registry commits, the pinned source snapshot, prior binding-manifest digests, superseding
 manifests, and complete controlling `SourceRef` values. The R10 migration starts from exact R9
 commit `89d7e4853a8fb0af3db68e9262e38833062fba77`; the R11 migration starts from exact R10
 commit `f3366be12175acb4fd4aeb32c301c845b906a5da`; the R12 migration starts from exact R11
-commit `9059bb249f75805b34a68397d53dfa5608fd6ad4`. R12 preserves every R1-R11 record unchanged and
+commit `9059bb249f75805b34a68397d53dfa5608fd6ad4`; and the R13 migration starts from exact rejected
+R12 commit `0683bc059ec54a8652624fd2b7be72fe157cac14`. R13 preserves every R1-R12 record unchanged and
 adds its own typed prior-to-new evidence. A future coordinated identity/location/value change must
 ship another coordinator-ratified typed migration; rewriting internally consistent YAML is not
 enough.
@@ -135,7 +145,10 @@ mapped after retirement.
 
 ## Authority resolution
 
-`resolveAuthority(document, query)` is a pure, read-only registry lookup. Queries are concrete;
+`resolveAuthority(document, query)` is a pure, read-only registry lookup. It first runs complete
+schema and semantic validation over the raw document. Any invalid registry fails closed as
+`REQUIRE_HUMAN / REGISTRY_INVALID` with empty controlling and considered rule sets; query
+resolution never runs against partially trusted registry data. Queries are concrete;
 `any` and `all-foreman-goals` are invalid query values. It filters non-controlling source effects
 and classifications, applies exact scope matching, selects the highest applicable tier, and
 returns an uppercase `RESOLVED`, `REQUIRE_HUMAN`, or `CONFLICT` outcome with sorted rule IDs.
@@ -174,6 +187,8 @@ excerpt, or list-marker value. Changing text or renumbering an ordered marker at
 structural position therefore retains the locator and fails as `VALUE_DIGEST_MISMATCH`, while
 moving the block is a separate location mutation. There is no raw Markdown additional-anchor
 escape or source, section, heading, or keyword allowlist.
+Duplicate keyed table rows retain the same structural anchor, increment its occurrence count, and
+fail as `LOCATOR_DUPLICATE`; duplicate text never creates a secondary ordinal or bypasses coverage.
 Properly paired HTML comments and CommonMark-compatible fence boundaries are the only Markdown
 spans suppressed by that discovery; visible text around comments, unmatched comments, mixed fence
 delimiters, four-space pseudo-fences, and backtick-fence info strings containing a backtick remain

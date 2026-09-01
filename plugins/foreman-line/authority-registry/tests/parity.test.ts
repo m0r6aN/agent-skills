@@ -41,3 +41,20 @@ test('closed schema rejects unknown nested properties', () => {
   const validate = new Ajv({ allErrors: true }).compile(schema)
   assert.equal(validate(sample), false)
 })
+
+test('R13 schema requires the closed normative Markdown audit top-level contract', () => {
+  const schema = allSchemaFiles[0]?.schema as {
+    required?: string[]
+    properties?: Record<string, unknown>
+  }
+  assert.ok(schema)
+  assert.ok(schema.required?.includes('normativeMarkdownAudit'))
+  assert.ok(schema.properties?.normativeMarkdownAudit)
+})
+
+test('R13 typed canonical sample carries the normative Markdown audit contract', () => {
+  const sample = parse(
+    readFileSync(join(packageRoot, 'tests', 'fixtures', 'pass-minimal.yaml'), 'utf8'),
+  ) as AuthorityEnforcementRegistry & { normativeMarkdownAudit?: unknown[] }
+  assert.equal(sample.normativeMarkdownAudit?.length, 146)
+})
