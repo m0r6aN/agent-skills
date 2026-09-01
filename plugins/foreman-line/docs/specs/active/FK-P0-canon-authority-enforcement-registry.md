@@ -515,7 +515,7 @@ subject.
 Permission-profile authority is limited to the mediation that actually exists. Every configured
 deny or restrictive network entry is curated to the role represented by its exact profile, the
 relevant operation/stage, and host `claude-windows-docker-loaded`; its enforcement owner is
-`host-adapter` and its assurance is `mediated`. The 53 shipped permission-profile registry rules
+`host-adapter` and its assurance is `mediated`. The 54 shipped permission-profile registry rules
 must each have an item-specific five-axis record rather than one full cross-product. Profile
 `allow` entries remain nonbinding documentation (`narrative-provenance`/`ADVISORY`) and never
 authorize an operation. An unenrolled session, unsupported host, CI host, or wrong role has no
@@ -939,7 +939,7 @@ negative queries for each of those six rules; publication and full-block basis o
 `SPEC-CONVENTION` blocks and both named PDD blocks; rejection of exclusion, truncation, and nearby-
 item substitution for those blocks; loaded-host positive permission-profile mediation; unenrolled,
 unsupported-host, CI-host, and wrong-role negative queries; precise per-item applicability for all
-53 permission-profile rules; Gate 2 rules using `decision: ALLOW`; resolver propagation of the
+54 permission-profile rules; Gate 2 rules using `decision: ALLOW`; resolver propagation of the
 controlling decision; same-highest-tier same-claim/different-decision conflict; and rejection of
 any unapproved `ALLOW`. R11 also has independently named happy, append, remove, duplicate, and
 substitute controls for its migration record, and the all-rework-record loop continues to exercise
