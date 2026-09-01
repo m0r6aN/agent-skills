@@ -257,6 +257,25 @@ identity. A normalized-value-only edit therefore resolves the same locator and e
 `VALUE_DIGEST_MISMATCH`, never `LOCATOR_MISSING` plus `SOURCE_ITEM_UNCOVERED`. Moving a block or
 inserting another same-kind block before it is a location mutation and is tested separately.
 
+R12 applies that independence end-to-end. Every published Markdown paragraph/list item and its
+inventory record use the structural block locator as the single canonical item; a legacy numbered
+item or full-text `additionalAnchors` entry cannot remain as the active rule-bearing duplicate.
+Every Markdown `itemId` is either derived from `{sourceId,kind,structuralAnchor}` or bound by an
+explicit frozen structural-anchor-to-item-ID manifest. It never derives from normalized text, a
+content hash, a legacy content-bearing anchor, a list marker number, or the first physical line.
+Published `ruleId` values are likewise curated stable identities and cannot be regenerated from
+changed normalized text. A value-only regeneration preserves `itemId`, `ruleId`, locator, and
+locator digest while changing only normalized value/value digest.
+
+This applies globally across every Markdown source and every published rule, not only anchors that
+already begin `md-block:`. Markdown full-text `line-excerpt` anchors and Markdown
+`additionalAnchors` content-identity escape hatches are prohibited. A list marker change such as
+`1.` to `9.` without moving the block is a value mutation on the active item. A Markdown table row
+uses `table-row` plus a stable row key such as `D1`, `R1`, or the first-column gate ID; the complete
+row text belongs only in normalized value. Structural headings retain `heading` locators. R12
+migration evidence preserves the exact historical R1-R11 records that referenced legacy locators
+without allowing those legacy references to control the current inventory.
+
 `AuthorityRule` must carry:
 
 - immutable semantic `ruleId` independent of line number; `authoritySubject` and
@@ -300,6 +319,21 @@ cannot become `ALLOW` authority. The exact Gate 2 coordinator-dispatch grants ar
 minting, external writes, Gate 1, Gate 3, independent-verification issuance, merge, and closure do
 not acquire `ALLOW` rules in R11. Any positive grant beyond the exact Gate 2 rules requires a
 future coordinator-ratified contract amendment with precise principal and operation semantics.
+
+The exact R12 `ALLOW` set contains only these three binding records and no others:
+
+- `rule.fk-charter.15a44cf50bc6`, whose basis explicitly says the standing Gate 2 grant is
+  authorized and resumed;
+- `rule.fk-loop-directive.47a75730afd6`, whose basis says standing Gate 2 is active; and
+- `rule.fk-loop-directive.bfffee6d7c1f`, whose basis explicitly authorizes Gate 2 dispatch.
+
+`rule.coordinator-pattern.91dd60b00fd6` describes that dispatch approval is delegable when a
+charter-scoped standing authorization is granted at ratification or later; it does not itself
+perform that ratification or grant. It remains visible as corroborating non-grant guidance with
+`narrative-provenance` / `ADVISORY` / `provenance-only` / `narrative`, and must never be `ALLOW` or
+enter the active resolver candidate set. The validator binds the exact three-rule `ALLOW` set and
+rejects any fourth record even when its subject is `gate2.dispatch-grant` or its source is
+corroborating.
 
 Rules with overlapping applicability and the same `authoritySubject` but different
 `authorityClaim` values are semantic contradictions. Rules at the selected highest tier with the
@@ -523,6 +557,14 @@ applicable permission-profile authority and returns `REQUIRE_HUMAN / NO_APPLICAB
 no other binding rule applies. Post-action Git detection and CI checks, when supported by their own
 source basis, are separate rules and never masquerade as loaded-session refusals.
 
+Permission-profile section headers and YAML container labels are structural inventory only and
+cannot substantiate a configured denial, prompt, grant, or network claim. In particular,
+`item.ffd2209ab94a` is the literal `builder-architecture:` header and is explicitly excluded;
+obsolete `rule.permission-profiles-registry.ffd2209ab94a` is absent. The actual reviewer
+`Bash(git commit*)` denial remains bound only to its exact canonical YAML rule item. Validation and
+tests reject any rule whose permission-profile basis is only a profile/header/container label,
+even when that rule is merely advisory.
+
 Every active `gate3.merge-authority` rule that expresses this goal's nondelegated human merge
 boundary uses precise merge applicability. Agent-side refusal records apply to the coordinator at
 the merge stage for merge-related `repo-mutation` and/or `state-transition` operations on host
@@ -712,6 +754,13 @@ commit's registry, whose source snapshot remains exactly
 `51857a3a7796b393c0c0a68712f98c06e7015d79`, and whose superseding manifest and complete changed
 semantic bindings are exact. R11 preserves every R1-R10 rework/reconciliation record; it may not
 rewrite or omit prior history to make the new model validate.
+
+R12 ships a typed `registry-rework-*` migration whose prior commit is exactly
+`9059bb249f75805b34a68397d53dfa5608fd6ad4`, whose prior manifest digest is recomputed from that
+commit's registry, whose source snapshot remains exactly
+`51857a3a7796b393c0c0a68712f98c06e7015d79`, and whose superseding manifest and complete changed
+semantic bindings are exact. R12 preserves every R1-R11 rework/reconciliation record byte-
+semantically; locator modernization does not rewrite historical evidence.
 
 ### Validator and CLI boundary
 
@@ -945,6 +994,24 @@ any unapproved `ALLOW`. R11 also has independently named happy, append, remove, 
 substitute controls for its migration record, and the all-rework-record loop continues to exercise
 every prior record. Tests may not derive expected natural queries, decisions, subjects, or clause
 counts from the registry data under test.
+
+R12 starts from the coordinator-verified R11 baseline of 447 passing tests. The builder adds at
+least twenty independently named R12 controls and the final combined suite contains at least 467
+tests. They separately cover: a global assertion that every published Markdown paragraph/list rule
+uses one structural canonical locator; no Markdown raw-text `line-excerpt` or `additionalAnchors`
+escape; migration of all sixteen R11 published raw-text Markdown rules; stable keyed table-row
+identity; active standing-rule marker renumbering as `VALUE_DIGEST_MISMATCH` without locator loss;
+no excluded structural duplicate substituting for the active ordered item; generator-level value-
+only stability of item ID, rule ID, locator, and locator digest for both an ordered rule and the
+compound coordinator paragraph; rejection of a content-derived legacy item ID; exact three-rule
+Gate 2 `ALLOW` set; coordinator-pattern delegation guidance as advisory non-grant; rejection of a
+fourth/corroborating/unratified `ALLOW`; exclusion of every permission-profile header/container;
+absence of `rule.permission-profiles-registry.ffd2209ab94a`; exact binding of reviewer git-commit
+denial to its canonical YAML rule; rejection of any profile claim based on a structural header;
+exact R1-R11 record preservation; and independently named R12 migration happy, append, remove,
+duplicate, and substitute controls. Tests examine the complete Markdown/profile inventory and
+exact approved sets; they may not filter to already-compliant anchors or derive expected identity
+from the generated registry under test.
 
 - Schema acceptance/rejection and TypeScript/JSON-Schema parity.
 - Shipped full-registry validation and exact locator/value coverage of the source corpus; a
