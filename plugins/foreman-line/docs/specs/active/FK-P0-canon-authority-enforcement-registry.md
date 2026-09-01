@@ -401,6 +401,23 @@ tests prove at least D2 and D18 return `RESOLVED` with their exact claims in nat
 `narrative-provenance` is reserved for provenance/history/rationale text and cannot classify an
 operative binding requirement merely because no enforcement mechanism exists yet.
 
+All nine numbered goal-exit requirements and all seventeen charter stop-condition bullets are
+protected normative items and must be published individually; headings/intros may be excluded,
+but no exit/stop body may be `non-normative-explanation`. Wave exit contracts in the loop
+directive are likewise published when they state required completion or gate conditions.
+
+Each curation entry contains a literal complete five-axis applicability record. No helper may
+derive applicability from classification, decision, source kind, or a default “all axes” branch;
+there is no applicability fallback. Validation binds that per-entry literal and tests natural
+out-of-scope queries for protected grants. In particular, the Gate 2 coordinator-dispatch grant
+does not resolve for builder/runtime/external-write/unsupported-host.
+
+An absence claim such as “no Allowed Files body compiler exists” cannot use one unrelated return
+statement as its authority basis. Such a claim is represented only by its exact reconciliation
+record with source/command evidence that establishes the absence; structural return/AST items
+remain excluded as `structural-ast`. Remove the shipped
+`frontmatter-only-no-body-compiler` rule unless its basis itself states that claim.
+
 `EvidenceRef` is exactly `{ kind, path, digest }`, where `kind` is
 `predicate-contract | negative-test | corpus-sweep | independent-bypass`, `path` is an exact
 repo-relative non-glob path, and `digest` is a SHA-256 over that evidence artifact's bytes. The
@@ -458,6 +475,11 @@ plus the nondelegability statement. Gate 2 includes the actual standing grant te
 authorizes coordinator dispatch after ratification and the operative loop authorization—not an
 abbreviated decision-list summary. Gate 3 and verification use their exact operative records as
 already specified. Removing any named fact, or substituting a nearby heading/list summary, fails.
+
+`verification.issue` additionally includes the exact loop-directive sentence that the
+coordinator consumes but never produces independent verification. D11 retirement criteria or a
+two-review count may corroborate reviewer independence, but neither substitutes for that
+anti-self-verification statement.
 
 The following protected operations are mandatory matrix rows and semantic invariants:
 
@@ -598,6 +620,11 @@ diagnostic fails.
   delimiters and four-space-indented pseudo-fences do not toggle state. Only content inside a
   correctly paired fence is non-operative; an unclosed opener cannot suppress later visible
   authority prose without a typed uncovered/malformed result.
+  A backtick-fence info string containing any backtick is not a valid opener; it remains visible
+  Markdown and cannot begin fence state. Tilde info strings follow CommonMark independently.
+  Every Markdown discovery pass—paragraphs, headings, numbered rules, tables, and additive
+  D/R/PDD/gate checks—consumes the same paired-fence/comment-aware block map. No secondary raw-line
+  scanner may rediscover valid fenced examples as operative headings or numbered rules.
 - TypeScript discovery uses the TypeScript compiler syntax tree, not a regular-expression list of
   declaration spellings. Inventory every non-import top-level statement and each complete
   function/method/constructor/accessor/arrow body, including function, const, let, var, class,
@@ -613,7 +640,8 @@ diagnostic fails.
   SOURCE_PATH_ESCAPE | SOURCE_NOT_REGULAR | SOURCE_SYMLINK_FORBIDDEN |
   SOURCE_DUPLICATE_PATH | LOCATOR_MISSING | LOCATOR_DUPLICATE |
   LOCATOR_DIGEST_MISMATCH | VALUE_DIGEST_MISMATCH | RULE_DUPLICATE | RULE_ORPHANED |
-  SOURCE_ITEM_UNCOVERED | RULE_SOURCE_MISSING | RULE_CONFLICT | AUTHORITY_ESCALATION |
+  SOURCE_ITEM_UNCOVERED | RULE_SEMANTICS_UNCURATED | RULE_SOURCE_MISSING | RULE_CONFLICT |
+  AUTHORITY_ESCALATION |
   RETIREMENT_EVIDENCE_INCOMPLETE | RECONCILIATION_MISSING | MIGRATION_EVIDENCE_INVALID |
   IO_ERROR | PARSE_ERROR | USAGE_ERROR`. Schema/semantic/corpus codes exit `1`; the final three
   operational/protocol codes exit `2`; any sweep containing `IO_ERROR`, `PARSE_ERROR`, or
@@ -810,6 +838,9 @@ a competing owner for `authority-registry`, or relies on self-asserted authority
   closing runs, and four-space-indented pseudo-fences. Profile controls add, delete, retarget, and
   move nested allow/ask/deny/network entries. TypeScript controls prove ambient declarations stay
   benign while runtime namespaces/enums/static blocks/object methods/IIFEs/dynamic imports fail.
+- Fence controls reject a backtick info string containing a backtick and prove visible following
+  prose is inventoried. Valid fenced headings, D/R rows, and numbered PDD examples remain ignored
+  by every discovery layer, not re-scanned as raw Markdown.
 - Curated-rule controls reject every hash-derived/fallback subject or claim and prove every
   non-normative inventory item is explicitly excluded rather than emitted as a pseudo-rule. They
   reject generic/combined exclusion rationales, protected normative exclusions, unlisted shared
@@ -818,7 +849,14 @@ a competing owner for `authority-registry`, or relies on self-asserted authority
   original six records and every `registry-rework-*` record; all fail exact record binding.
 - Protected-operation tests resolve and assert the exact Gate 1 original/scoped ratification and
   nondelegability text and exact Gate 2 standing-grant/loop text; nearby summaries are negative
-  controls. PDD rule 6 resolves for a builder/build/repo-mutation query.
+  controls. Verification tests require the exact coordinator-consumes-but-never-produces sentence.
+  PDD rule 6 resolves for a builder/build/repo-mutation query.
+- Curation tests require publication of all nine goal-exit requirements, all seventeen charter
+  stop bullets, and every normative wave-exit body. They reject any classification/default-based
+  applicability fallback, assert each published entry carries literal applicability, and prove
+  the Gate 2 grant does not resolve in a builder/runtime/external-write/unsupported-host query.
+- The unrelated linter return statement is excluded and cannot substantiate the absence of an
+  Allowed Files body compiler; the reconciliation remains the only carrier of that scoped finding.
 - Source-manifest controls mutate each `snapshotEvidence` commit/hash field and prove failure,
   while current unrelated bytes outside semantic locators do not become a full-file byte freeze.
 - Determinism/write-sentinel test: repeated validate/sweep calls produce identical ordered
