@@ -4,7 +4,7 @@ title: Foreman Kernel - canon authority and enforcement registry
 status: active
 owner: clinton.morgan
 created: 2026-08-31
-updated: 2026-08-31
+updated: 2026-09-01
 supersedes: null
 superseded_by: null
 risk: critical
@@ -388,6 +388,16 @@ verification-custody requirements, stop conditions, completion conditions, and r
 exits must carry their honest operative classification rather than inheriting narrative status
 from their source.
 
+Literal curation is not sufficient when its semantics are source-dishonest. Every published
+`goal-skill` and `coordinator-pattern` rule receives a basis-supported operative classification,
+decision, owner, assurance, subject/claim, and precise five-axis applicability. In particular,
+explicit Gate-1 nondelegability, Gate-2 authorization, commentary-not-being-canon-authority,
+verification custody, human-completable gate stops, ownership stops, and scoped Gate-1 reopening
+cannot be `narrative-provenance`/`ADVISORY` merely because their source is a skill or coordinator
+pattern. They cannot enumerate every concrete role, stage, operation, and host unless their basis
+expressly makes each axis universal. Source-derived positive and negative natural queries bind
+the intended semantics of every operative rule from those two sources.
+
 The curation manifest has one explicit entry per published source/item; source-wide or multi-item
 omnibus branches are prohibited. Two different normalized statements may share a subject because
 they answer the same question, but they may share a claim only when a separate closed
@@ -438,6 +448,15 @@ all roles/stages/operations/hosts merely because it came from the loop source. T
 query must stay out of scope after considering every rule under the shared
 `gate2.dispatch-grant` subject, not by filtering a narrative classification or using a different
 subject.
+
+Every active `gate3.merge-authority` rule that expresses this goal's nondelegated human merge
+boundary uses precise merge applicability. Agent-side refusal records apply to the coordinator at
+the merge stage for merge-related `repo-mutation` and/or `state-transition` operations on host
+`any`; they do not include `developer` inside a `pre-action-refusal`/`REFUSE` rule and do not
+resolve for builder/runtime/external-write/unsupported-host or
+ci/deterministic-verify/repo-read/ci. Both coordinator/merge/repo-mutation/any and
+coordinator/merge/state-transition/any are positive resolver vectors across the shared subject;
+the protected-operation matrix, not an overbroad rule, preserves the human-developer principal.
 
 An absence claim such as “no Allowed Files body compiler exists” cannot use one unrelated return
 statement as its authority basis. Such a claim is represented only by its exact reconciliation
@@ -607,6 +626,12 @@ exactly bound across tool, toolVersion, commandId, inputDigest, resultDigest, ex
 actorClass; retaining one expected digest while changing provenance or appending a self-hashed
 diagnostic fails.
 
+R10 ships a typed `registry-rework-*` migration whose prior commit is exactly
+`89d7e4853a8fb0af3db68e9262e38833062fba77`, whose prior manifest digest is recomputed from that
+commit's registry, whose source snapshot remains exactly
+`51857a3a7796b393c0c0a68712f98c06e7015d79`, and whose superseding manifest and complete changed
+semantic bindings are exact. R10 cannot rewrite or omit the R9 migration record.
+
 ### Validator and CLI boundary
 
 - Export pure `validateRegistry(document)` and a read-only
@@ -629,12 +654,19 @@ diagnostic fails.
   canon, material JSON-schema enum/constraint, permission-profile rule/deny, or operative
   validator/CLI branch in the inventoried live sources. Heading labels, arbitrary substring
   anchors, comments, and preserved dead-code lines are not proof of operative behavior.
-- For the complete goal charter and loop directive, inventory every paragraph, list item, and
-  table row unless a shipped exact exclusion manifest identifies that item and gives a
-  non-normative rationale. Section-number or heading-name allowlists are prohibited: locked
-  decisions, gates, authority, dispatch grants, stop conditions, and newly added unnumbered prose
-  all receive the same discovery treatment. Headings alone are never coverage, and keyword
-  allowlists do not decide whether natural prose is binding.
+- For every Markdown source in the complete source corpus, inventory every visible paragraph,
+  list item, and table row unless a shipped exact exclusion manifest identifies that item and
+  gives an item-specific non-normative rationale. The shared fence/comment-aware block builder
+  runs for every Markdown source; source-ID allowlists or early returns that limit prose blocks to
+  the charter and loop directive are prohibited. Section-number, heading-name, and keyword
+  allowlists are likewise prohibited: locked decisions, gates, authority, dispatch grants, stop
+  conditions, branch/serialization requirements, and newly added unnumbered prose all receive the
+  same discovery treatment. Headings alone are never coverage.
+  Baseline controls prove exact custody for the goal skill's verification, human-gate-stop, and
+  loop-stop prose; the coordinator pattern's ownership/universal-stop and scoped-Gate-1 prose;
+  PDD's branch and serialization requirements; and ordinary operative prose in
+  `SPEC-CONVENTION`. Equivalent ordinary-prose additions to each of those four sources fail the
+  sweep until explicitly curated or item-specifically excluded.
 - Markdown comment handling removes only the exact characters inside properly paired HTML comment
   spans and preserves visible text before and after a same-line comment. Multi-line comment state
   is tracked only when a matching close exists. An unmatched `<!--` is not treated as a
@@ -799,6 +831,19 @@ custody; operative loop stop/completion semantics; the raw mixed comment/backtic
 case; and a valid fenced standing-constraint number. A combined count-only assertion cannot
 replace any named control.
 
+R10 starts from the independently verified R9 baseline of 362 passing tests. The builder adds at
+least twenty-two independently named R10 controls and the final combined suite contains at least
+384 tests. Those controls separately cover: universal Markdown block-map construction with no
+source-ID allowlist; baseline goal-skill, coordinator-pattern, PDD, and `SPEC-CONVENTION` block
+custody; additive ordinary prose in each of those four sources; source-honest classification and
+positive/negative resolver vectors for every operative goal/coordinator rule; named Gate-1,
+Gate-2, commentary-authority, verification-custody, and human-gate-stop semantics; positive
+coordinator merge queries for both repo mutation and state transition; negative Gate-3 builder
+runtime/external-write and CI/read queries; and independently named append, remove, duplicate,
+and substitute mutations of `registry-rework-91145d7`. A source-derived loop must also prove those
+four mutations apply to every shipped `registry-rework-*` record. Count-only, map-length, or
+happy-path-only assertions do not satisfy these controls.
+
 - Schema acceptance/rejection and TypeScript/JSON-Schema parity.
 - Shipped full-registry validation and exact locator/value coverage of the source corpus; a
   separate parcel-time check records full-file snapshot hashes without shipping a byte freeze.
@@ -895,6 +940,10 @@ replace any named control.
   claims, and omnibus source-wide semantic mappings; D2 and D18 resolve actively.
 - Reconciliation controls mutate, duplicate, append, remove, and substitute evidence in both the
   original six records and every `registry-rework-*` record; all fail exact record binding.
+  The test matrix derives the complete shipped `registry-rework-*` ID set from the registry and
+  exercises append, remove, duplicate, and substitute as independently named controls for every
+  record. A hardcoded list ending at an earlier amendment or a happy-path-only assertion for the
+  newest record is invalid.
 - Protected-operation tests resolve and assert the exact Gate 1 original/scoped ratification and
   nondelegability text and exact Gate 2 standing-grant/loop text; nearby summaries are negative
   controls. Verification tests require the exact coordinator-consumes-but-never-produces sentence.
