@@ -159,8 +159,16 @@ interface AuthorityEnforcementRegistry {
   readonly rules: readonly AuthorityRule[]
   readonly operationAuthority: readonly OperationAuthority[]
   readonly reconciliations: readonly ReconciliationRecord[]
+  readonly normativeMarkdownAudit: readonly NormativeMarkdownAuditRecord[]
 }
 ```
+
+`NormativeMarkdownAuditRecord` is closed and exactly
+`{sourceId,itemId,valueDigest,disposition,ruleIds,exclusionCode,rationale}`. `disposition` is
+`publish | exclude`. Published records have non-empty exact `ruleIds` and null `exclusionCode`;
+excluded records have empty `ruleIds` and one existing closed exclusion code. Every record has a
+non-empty item-specific rationale. The array is ordered by source corpus then inventory order and
+contains exactly the R13 candidate set described below.
 
 Every nested object is closed (`additionalProperties: false` in JSON Schema). TypeScript and
 draft-07 JSON Schema are hand-authored dual representations and parity-tested; ajv
@@ -276,6 +284,12 @@ row text belongs only in normalized value. Structural headings retain `heading` 
 migration evidence preserves the exact historical R1-R11 records that referenced legacy locators
 without allowing those legacy references to control the current inventory.
 
+`lineHint` is never part of item identity, including inside `itemIdFor`, frozen-alias lookup, or
+curation matching. New structural IDs hash exactly canonical `{sourceId,kind,anchor}`; frozen
+aliases are keyed by that same triple. Inserting blank lines or prose of a different block kind
+before an otherwise unchanged block therefore preserves item ID, rule ID, locator digest, and
+value digest when the structural anchor is unchanged.
+
 `AuthorityRule` must carry:
 
 - immutable semantic `ruleId` independent of line number; `authoritySubject` and
@@ -368,7 +382,7 @@ type AuthorityResolution =
   | {
       outcome: 'REQUIRE_HUMAN'
       authoritySubject: string
-      reasonCode: 'INVALID_QUERY_SCOPE' | 'NO_APPLICABLE_AUTHORITY'
+      reasonCode: 'INVALID_QUERY_SCOPE' | 'NO_APPLICABLE_AUTHORITY' | 'REGISTRY_INVALID'
       controllingRuleIds: []
       consideredRuleIds: string[]
     }
@@ -389,6 +403,14 @@ rules with one claim and one decision resolve together and return that controlli
 multiple claims or multiple decisions at that tier return `CONFLICT`. No candidate returns
 `REQUIRE_HUMAN / NO_APPLICABLE_AUTHORITY`. Lower-tier rules remain in `consideredRuleIds` but
 cannot override the selected tier.
+
+The public `resolveAuthority(document, query)` never trusts an unvalidated raw document. It first
+runs the same complete schema and semantic validation used by `validateRegistry`; any violation
+returns `REQUIRE_HUMAN / REGISTRY_INVALID` with empty controlling and considered rule IDs. To avoid
+recursive validation, implementation may use a private resolver that accepts only an internally
+validated/branded document, but that helper is not exported. `parseRegistry` cannot expose a raw
+document as resolution-ready. A consumer mutation that widens a Gate 2 grant must therefore fail
+closed in both validation and the public resolver even when binding digests are recomputed.
 
 `authoritySubject` is a curated semantic question, never a source ID, item ID, locator hash, or
 per-rule namespace. Statements in different sources that answer the same authority question use
@@ -522,6 +544,25 @@ lines. A truncated physical first line cannot substitute for the block. These ar
 protected items, not the output of a source-wide keyword heuristic; exclusion, truncation, or
 replacement with a nearby explanatory item fails validation and the sweep.
 
+R13 closes the remaining semantic-completeness gap with a closed, item-specific normative audit
+over the R12 baseline's 146 excluded Markdown blocks that contain modal, authority, security,
+gate, stop, serialization, or prohibition language. Keyword matching may nominate this exact
+candidate set for human curation but cannot decide publication or classification. A shipped
+`NORMATIVE_MARKDOWN_AUDIT` manifest binds every candidate by source ID, structural item ID and
+value digest to exactly `publish` or `exclude`, with an item-specific source-grounded rationale.
+Every `publish` candidate maps to one or more honest rules; every `exclude` candidate retains an
+allowed exclusion code and explains why the complete block is not independently operative. Missing,
+extra, content-substituted, source-wide, keyword-defaulted, or generic-rationale audit entries fail.
+
+At minimum, the audit publishes the charter blocks that: require stop/report rather than silently
+choosing among conflicts; prohibit secret persistence; limit unenrolled enforcement to detected-
+only with no hook-refusal claim; prohibit generic minting, agent-performed human gate operations,
+and external writes; and require isolated worktrees, serialization ownership, pinned policy, and
+host-evidence boundaries. It also publishes the PDD security/release directives at source lines
+885 and 934-953 as complete semantic blocks. Nearby headings or broad out-of-scope summaries cannot
+substitute. Independent review must inspect the full 146-entry disposition, not only these named
+minimums, before accepting completeness.
+
 All nine numbered goal-exit requirements and all seventeen charter stop-condition bullets are
 protected normative items and must be published individually; headings/intros may be excluded,
 but no exit/stop body may be `non-normative-explanation`. Wave exit contracts in the loop
@@ -564,6 +605,19 @@ obsolete `rule.permission-profiles-registry.ffd2209ab94a` is absent. The actual 
 `Bash(git commit*)` denial remains bound only to its exact canonical YAML rule item. Validation and
 tests reject any rule whose permission-profile basis is only a profile/header/container label,
 even when that rule is merely advisory.
+
+R13 inventories the complete permission-profile YAML structure honestly. Exactly 34 structural
+container items—root `profiles`, six profile names, six `envelope` mappings, eighteen
+`deny`/`ask`/`allow` containers, and three `network` mappings—use stable path-keyed symbol locators
+and explicit `schema-container` exclusions. The six `ask: []` values are empty containers, not CI
+checks. The YAML publishes exactly 54 loaded mediated restriction rules (52 deny leaves plus two
+`egress: denied` leaves) and exactly 51 nonbinding documentation rules (49 allow leaves plus the
+builder-deps `egress: allowlist` and its documentation-only note). Those 51 rules are
+`narrative-provenance` / `ADVISORY` / `provenance-only` / `narrative`, with item-specific profile
+role/applicability, and never enter resolution. The permission-profile YAML publishes zero
+`ci-static-check` rules: no `ask: []`, allowlist label, or text explicitly saying “not proven to
+gate” may claim CI/detected assurance. CI/post-action rules require a distinct substantive live
+implementation basis.
 
 Every active `gate3.merge-authority` rule that expresses this goal's nondelegated human merge
 boundary uses precise merge applicability. Agent-side refusal records apply to the coordinator at
@@ -762,6 +816,13 @@ commit's registry, whose source snapshot remains exactly
 semantic bindings are exact. R12 preserves every R1-R11 rework/reconciliation record byte-
 semantically; locator modernization does not rewrite historical evidence.
 
+R13 ships a typed `registry-rework-*` migration whose prior commit is exactly
+`0683bc059ec54a8652624fd2b7be72fe157cac14`, whose prior manifest digest is recomputed from that
+commit's registry, whose source snapshot remains exactly
+`51857a3a7796b393c0c0a68712f98c06e7015d79`, and whose superseding manifest and complete changed
+semantic bindings are exact. R13 preserves every R1-R12 rework/reconciliation record byte-
+semantically; normative publication and resolver hardening cannot rewrite historical evidence.
+
 ### Validator and CLI boundary
 
 - Export pure `validateRegistry(document)` and a read-only
@@ -801,6 +862,12 @@ semantically; locator modernization does not rewrite historical evidence.
   independent inventory item per list item with its continuation lines. Appending two consecutive
   parenthesized items to a Markdown source outside the charter produces two distinct uncovered
   list-item violations, not one paragraph violation.
+- Markdown table keys are unique within their structural heading path. A duplicate
+  `(headingPath,firstColumnKey)`—including a byte-identical duplicated operative row—emits
+  `LOCATOR_DUPLICATE` and fails the sweep; discovery never invents a secondary ordinal namespace.
+  Coverage is by exact structural source item, never by normalized-text equality with some other
+  registered row. An unregistered discovered row cannot be suppressed because its text duplicates
+  a covered rule or exclusion.
 - Markdown comment handling removes only the exact characters inside properly paired HTML comment
   spans and preserves visible text before and after a same-line comment. Multi-line comment state
   is tracked only when a matching close exists. An unmatched `<!--` is not treated as a
@@ -1012,6 +1079,27 @@ exact R1-R11 record preservation; and independently named R12 migration happy, a
 duplicate, and substitute controls. Tests examine the complete Markdown/profile inventory and
 exact approved sets; they may not filter to already-compliant anchors or derive expected identity
 from the generated registry under test.
+
+R13 starts from the coordinator-verified R12 baseline of 469 passing tests. The builder adds at
+least thirty-five independently named R13 controls and the final combined suite contains at least
+504 tests. They separately cover: exact 146-record normative-audit cardinality, schema/type parity,
+and complete item/value binding; independently named publication controls for conflict stop, secret
+persistence, unenrolled detected-only posture, generic mint prohibition, agent-gate prohibition,
+external-write prohibition, isolated worktrees, serialization ownership, pinned policy,
+host-evidence, and both named PDD security/release areas; item-specific exclusion controls for all
+remaining audit candidates; audit append, remove, duplicate, disposition, rule-set, value, and
+rationale substitutions; `lineHint`/leading-blank-line item-ID stability; public resolver refusal
+of invalid schema, widened Gate 2 applicability, unapproved ALLOW, stale promotion, and recomputed-
+digest raw documents with exact `REGISTRY_INVALID`; proof that only an internal validated path can
+resolve; duplicate identical Gate 2 keyed row producing `LOCATOR_DUPLICATE`; no text-only duplicate
+coverage bypass; exact 34 YAML containers; six empty asks excluded; exact 54 mediated restrictions;
+exact 51 narrative documentation rules; zero permission-YAML CI rules; 49 allow-leaf publication;
+builder-deps allowlist/note advisory posture; exact source basis and profile applicability for each
+profile rule; the generator-level value-stability probe against the actual compound coordinator
+paragraph and all six of its rule IDs; exact R1-R12 history preservation; and independently named
+R13 migration happy, append, remove, duplicate, and substitute controls. Candidate expectations,
+normative dispositions, and profile counts are source-authored constants, never derived from the
+registry under test.
 
 - Schema acceptance/rejection and TypeScript/JSON-Schema parity.
 - Shipped full-registry validation and exact locator/value coverage of the source corpus; a
