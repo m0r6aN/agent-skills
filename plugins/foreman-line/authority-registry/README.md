@@ -60,7 +60,9 @@ Every rule has exactly one primary classification. The generator assigns it thro
 per-item curation entry; source-wide, keyword-derived, default, and terminal fallbacks are not
 permitted:
 
-- `pre-action-refusal`: a declared default-deny rule with `REFUSE` and a stable refusal code;
+- `pre-action-refusal`: the pre-action policy layer. Ordinary denials use `REFUSE` and a stable
+  refusal code. Only the exact bounded Gate 2 dispatch grants may use `ALLOW`, with a null refusal
+  code; no permission-profile allow entry or other positive statement becomes authorization.
   `structural` versus `mediated` assurance states what the registered source actually proves.
 - `post-action-detection`: evidence that detects a violation after mutation or execution.
 - `ci-static-check`: deterministic static or CI evidence; it is not human authority.
@@ -72,6 +74,9 @@ Loaded permission-profile denial is host-adapter-owned and `mediated` only when 
 worktree-local settings were loaded.
 Unenrolled/bypass cases are unsupported, and reviewer residual shell capability is checked by
 post-review Git detection. Missing enrollment is never described as a refusal.
+All 52 configured deny entries and both restrictive `network.egress: denied` entries have their
+own literal classification and five-axis applicability record for the exact profile role on
+`claude-windows-docker-loaded`; profile allow entries remain advisory documentation.
 
 ## Protected operation matrix
 
@@ -108,11 +113,12 @@ Six required typed records reconcile without rewriting historical sources:
 was edited or globally invalidated. The missing provenance record stays `open`, preserves all
 thirteen standing rules, and prevents their retirement.
 
-Eight additional `superseded-by-amendment` records bind the R2 and R4-R10 reworks to their prior
+Nine additional `superseded-by-amendment` records bind the R2 and R4-R11 reworks to their prior
 registry commits, the pinned source snapshot, prior binding-manifest digests, superseding
 manifests, and complete controlling `SourceRef` values. The R10 migration starts from exact R9
-commit `89d7e4853a8fb0af3db68e9262e38833062fba77` without rewriting the preserved R9 record. A future coordinated
-identity/location/value change must
+commit `89d7e4853a8fb0af3db68e9262e38833062fba77`; the R11 migration starts from exact R10
+commit `f3366be12175acb4fd4aeb32c301c845b906a5da`. Both preserve the preceding migration chain. A
+future coordinated identity/location/value change must
 ship another coordinator-ratified typed migration; rewriting internally consistent YAML is not
 enough.
 
@@ -127,6 +133,8 @@ mapped after retirement.
 `any` and `all-foreman-goals` are invalid query values. It filters non-controlling source effects
 and classifications, applies exact scope matching, selects the highest applicable tier, and
 returns an uppercase `RESOLVED`, `REQUIRE_HUMAN`, or `CONFLICT` outcome with sorted rule IDs.
+`RESOLVED` includes the controlling decision. Highest-tier rules that share a claim but split on
+decision return `CONFLICT`, just as highest-tier competing claims do.
 It does not authorize actions or replace Git evidence. No applicable candidate returns
 `REQUIRE_HUMAN / NO_APPLICABLE_AUTHORITY`.
 
@@ -152,8 +160,12 @@ non-regular files, missing or duplicate locators, and changed normalized values.
 the clock, randomness, network, environment-derived identity, or Git mutation.
 Git-backed reconciliation evidence additionally requires the exact root of a real worktree,
 commit-typed objects, and commit-bound canonical missing-path evidence. Every Markdown source in
-the 18-source corpus uses the same complete paragraph/list/table discovery with wrapping-stable
-semantic locators; there is no source, section, heading, or keyword allowlist.
+the 18-source corpus uses the same complete paragraph/list/table discovery with structural,
+content-independent locators of the form
+`md-block:<heading-path>:<paragraph|list-item|table-row>:<one-based-ordinal>`; locator anchors
+contain no content hash or token. Changing text at the same structural position therefore retains
+the locator and fails as `VALUE_DIGEST_MISMATCH`, while moving the block is a separate location
+mutation. There is no source, section, heading, or keyword allowlist.
 Properly paired HTML comments and CommonMark-compatible fence boundaries are the only Markdown
 spans suppressed by that discovery; visible text around comments, unmatched comments, mixed fence
 delimiters, four-space pseudo-fences, and backtick-fence info strings containing a backtick remain
@@ -169,6 +181,11 @@ verification custody use shared cross-source authority subjects with role-, stag
 and host-specific applicability. FK Gate 3 agent-side refusals apply only to coordinator merge
 repo mutations and state transitions; builder runtime external writes and CI reads remain outside
 that rule scope.
+The compound coordinator-loop paragraph publishes six independently curated rules—ownership
+transfer, frozen-contract, repeated-tripwire, in-parcel security, outward capability, and empty
+queue—while retaining one complete source block as their common basis. The complete Allowed Files
+and stop/no-self-expansion blocks in `SPEC-CONVENTION.md`, and the approved-contract and mandatory
+handoff blocks in the PDD skill, are protected published units rather than first-line substitutes.
 Inventoried TypeScript sources use the
 TypeScript 7 compiler syntax tree for operative top-level statements, runtime value and side-effect
 imports, and nested callable bodies. Compiler-recognized ambient and type-only declarations or

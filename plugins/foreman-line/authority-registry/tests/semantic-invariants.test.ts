@@ -4,7 +4,12 @@ import { dirname, join } from 'node:path'
 import { test } from 'node:test'
 import { fileURLToPath } from 'node:url'
 import { parse } from 'yaml'
-import type { AuthorityEnforcementRegistry, AuthorityQuery, InventoryItem } from '../src/types.js'
+import type {
+  AuthorityEnforcementRegistry,
+  AuthorityQuery,
+  AuthorityRule,
+  InventoryItem,
+} from '../src/types.js'
 import {
   AUTHORITY_EFFECTS,
   AUTHORITY_TIERS,
@@ -62,9 +67,9 @@ test('each of the six classifications is accepted and summarized independently',
   const result = validateRegistry(valid)
   assert.equal(result.valid, true)
   assert.deepEqual(result.summary?.classificationCounts, {
-    'pre-action-refusal': 195,
+    'pre-action-refusal': 205,
     'post-action-detection': 8,
-    'ci-static-check': 86,
+    'ci-static-check': 85,
     'independent-review-human-judgment': 15,
     'narrative-provenance': 49,
     unsupported: 12,
@@ -1312,10 +1317,10 @@ test('R5 every authority basis is substantive source text rather than a heading'
     )
     assert.ok(item, rule.ruleId)
     assert.notEqual(item.locator.kind, 'heading', rule.ruleId)
-    assert.equal(
-      normalizeRuleText(item.normalizedExcerpt),
-      normalizeRuleText(rule.normalizedStatement),
-    )
+    const basis = normalizeRuleText(item.normalizedExcerpt)
+    const statement = normalizeRuleText(rule.normalizedStatement)
+    if (item.ruleIds.length > 1) assert.ok(basis.includes(statement), rule.ruleId)
+    else assert.equal(basis, statement)
   }
 })
 
@@ -1894,7 +1899,10 @@ test('R10 coordinator verification custody cannot be narrative advice', () => {
 })
 
 test('R10 coordinator ownership rule is an operative state-transition refusal', () => {
-  const rule = publishedRuleContaining('coordinator-pattern', 'One goal, one coordinator:')
+  const rule = full.rules.find(
+    (candidate) => candidate.ruleId === 'rule.coordinator-pattern.47b2eaa2f9ef.ownership',
+  )
+  assert.ok(rule)
   assert.equal(rule.authoritySubject, 'goal.coordinator-ownership')
   assert.equal(rule.classification, 'pre-action-refusal')
   const positive = resolveNatural(
@@ -1903,8 +1911,9 @@ test('R10 coordinator ownership rule is an operative state-transition refusal', 
     'runtime',
     'state-transition',
   )
-  assert.equal(positive.outcome, 'REQUIRE_HUMAN')
+  assert.equal(positive.outcome, 'RESOLVED')
   assert.ok(positive.consideredRuleIds.includes(rule.ruleId))
+  if (positive.outcome === 'RESOLVED') assert.equal(positive.decision, 'REFUSE')
 })
 
 test('R10 scoped Gate 1 reopening is operative rather than blanket narrative advice', () => {
@@ -2042,6 +2051,405 @@ for (const [name, mutate] of r10EvidenceMutations) {
     const mutated = structuredClone(full)
     const record = mutated.reconciliations.find(
       (candidate) => candidate.reconciliationId === 'registry-rework-91145d7',
+    )
+    assert.ok(record)
+    mutate(record.observedEvidence as unknown[])
+    expectCode(mutated, 'MIGRATION_EVIDENCE_INVALID')
+  })
+}
+
+test('R11 preserves every R1-R10 reconciliation record exactly', () => {
+  const priorRecordDigests: Readonly<Record<string, string>> = {
+    'gate-namespace-count': '23f3549859f81eddfd5645dc3de3ffe07997c624cd75d61d3410645b710968d3',
+    'gate3-delegation': '13f5094dc781381ad5c1124f094af5f6f57b462c73df3fd3925e2b844c3f53c6',
+    'spec-linter-profile-behavior':
+      '48c147ae850d5779e763c187ee9381bc2b824e299764eeb15869f57dce2e553c',
+    'surfaces-allowed-files': 'c7addc8070757f6da21ae15354139d2a39c6f5db2dc164d2534305e0f944d7c1',
+    'permission-profile-enforcement-bound':
+      '6558689b94ae965d85c60cef8cc7d9086278f38c755276b74953d2613440eda2',
+    'missing-provenance-reference':
+      'ed49c8796d80a450fbb272d7aaba9c1159225e54bbf5d96e0a441cf757135b80',
+    'registry-rework-6eb1c25': 'c2b4971fd67a81df51ab33931fda17122c06de67ce5cc6ef857380704348fd6d',
+    'registry-rework-9285945': 'fc10cc1e7f98635521a8fbc65ba34895415b8901d62c49790b8b3e7337fd3fb1',
+    'registry-rework-6f45963': '3954ba2fc23122f82f6d68e294a180b8dc789983e2bb3da0198c79f8550513d9',
+    'registry-rework-b414d06': '8a7c1fdd61cbb664d6c9b1b0aefcba1dc35dc26873eff711bbfada8480247d7f',
+    'registry-rework-00b41b7': '7113ebbad6811a3dfd4f14302f736ac11074c04943686eea28a1de820c75e9c9',
+    'registry-rework-37afc65': '5f3bba04f9177884da88d21a8535d3ebc04557252aa27b30cbb191824e0b0f17',
+    'registry-rework-91145d7': '6b6e2dbd3b009428c647ed8947ba5d7008445dabdcccdde7d135466b9f46f3e3',
+    'registry-rework-1b42f4b': '14bb9b5739d37281619e6ace7ea9e5d0f6fd0febeecf3facc892e1a606795a56',
+  }
+
+  assert.deepEqual(
+    Object.fromEntries(
+      full.reconciliations
+        .filter((record) => priorRecordDigests[record.reconciliationId] !== undefined)
+        .map((record) => [record.reconciliationId, sha256(canonicalJson(record))]),
+    ),
+    priorRecordDigests,
+  )
+})
+
+const r11CompoundClauses = [
+  {
+    suffix: 'ownership',
+    subject: 'goal.coordinator-ownership',
+    positive: {
+      role: 'coordinator',
+      stage: 'runtime',
+      operation: 'state-transition',
+    },
+  },
+  {
+    suffix: 'frozen-contract',
+    subject: 'goal.stop.ratified-boundary',
+    positive: { role: 'coordinator', stage: 'runtime', operation: 'spec-mutation' },
+  },
+  {
+    suffix: 'tripwire',
+    subject: 'goal.stop.tripwire',
+    positive: {
+      role: 'coordinator',
+      stage: 'runtime',
+      operation: 'state-transition',
+    },
+  },
+  {
+    suffix: 'security-boundary',
+    subject: 'goal.stop.security-boundary',
+    positive: {
+      role: 'coordinator',
+      stage: 'runtime',
+      operation: 'state-transition',
+    },
+  },
+  {
+    suffix: 'external-capability',
+    subject: 'goal-stop.external-capability',
+    positive: { role: 'coordinator', stage: 'runtime', operation: 'external-write' },
+  },
+  {
+    suffix: 'empty-queue',
+    subject: 'goal.stop.incomplete-empty-queue',
+    positive: {
+      role: 'coordinator',
+      stage: 'runtime',
+      operation: 'state-transition',
+    },
+  },
+] as const satisfies readonly {
+  suffix: string
+  subject: string
+  positive: {
+    role: AuthorityQuery['role']
+    stage: AuthorityQuery['stage']
+    operation: AuthorityQuery['operation']
+  }
+}[]
+
+function r11CompoundItem() {
+  const source = full.sources.find((candidate) => candidate.sourceId === 'coordinator-pattern')
+  const item = source?.inventoryItems.find((candidate) => candidate.itemId === 'item.47b2eaa2f9ef')
+  assert.ok(item)
+  return item
+}
+
+for (const clause of r11CompoundClauses) {
+  test(`R11 compound coordinator paragraph publishes ${clause.suffix} independently`, () => {
+    const item = r11CompoundItem()
+    const ruleId = `rule.coordinator-pattern.47b2eaa2f9ef.${clause.suffix}`
+    assert.ok(item.ruleIds.includes(ruleId))
+    const rule = full.rules.find((candidate) => candidate.ruleId === ruleId)
+    assert.ok(rule)
+    assert.equal(rule.authoritySubject, clause.subject)
+    assert.equal(rule.classification, 'pre-action-refusal')
+    assert.equal(rule.decision, 'REFUSE')
+  })
+
+  test(`R11 compound coordinator ${clause.suffix} has an explicit source-authored positive query`, () => {
+    const ruleId = `rule.coordinator-pattern.47b2eaa2f9ef.${clause.suffix}`
+    const result = resolveAuthority(full, {
+      authoritySubject: clause.subject,
+      goal: 'foreman-kernel',
+      ...clause.positive,
+      host: 'provider-neutral',
+    })
+    assert.equal(result.outcome, 'RESOLVED')
+    assert.ok(result.consideredRuleIds.includes(ruleId))
+  })
+
+  test(`R11 compound coordinator ${clause.suffix} has an explicit source-authored negative query`, () => {
+    const ruleId = `rule.coordinator-pattern.47b2eaa2f9ef.${clause.suffix}`
+    const result = resolveAuthority(full, {
+      authoritySubject: clause.subject,
+      goal: 'foreman-kernel',
+      role: 'builder',
+      stage: 'runtime',
+      operation: clause.positive.operation,
+      host: 'provider-neutral',
+    })
+    assert.ok(!result.consideredRuleIds.includes(ruleId))
+  })
+}
+
+const r11ProtectedBlocks = [
+  {
+    name: 'SPEC-CONVENTION exact Allowed Files block',
+    sourceId: 'spec-convention',
+    itemId: 'item.276e79bdc002',
+    complete:
+      'Entries are exact repo-relative paths; globs and directory-wide shorthand are prohibited.',
+  },
+  {
+    name: 'SPEC-CONVENTION stop and no-self-expansion block',
+    sourceId: 'spec-convention',
+    itemId: 'item.c4828bcd6dfa',
+    complete: 'An agent must not expand its own authority because a related edit appears useful.',
+  },
+  {
+    name: 'PDD approved-contract mutation block',
+    sourceId: 'parcel-driven-development',
+    itemId: 'item.78ff0093607e',
+    complete: 'Agents do not edit approved contracts directly from parcel branches.',
+  },
+  {
+    name: 'PDD mandatory session-handoff block',
+    sourceId: 'parcel-driven-development',
+    itemId: 'item.cef628a1fce0',
+    complete:
+      'Every agent session that changes code, docs, config, contracts, or evidence must produce a session handoff.',
+  },
+] as const
+
+for (const block of r11ProtectedBlocks) {
+  test(`R11 publishes the complete protected block: ${block.name}`, () => {
+    const source = full.sources.find((candidate) => candidate.sourceId === block.sourceId)
+    const item = source?.inventoryItems.find((candidate) => candidate.itemId === block.itemId)
+    assert.ok(item)
+    assert.equal(item.exclusionDisposition, null)
+    assert.ok(item.ruleIds.length > 0)
+    assert.ok(item.normalizedExcerpt.includes(block.complete))
+    const rule = full.rules.find((candidate) => candidate.ruleId === item.ruleIds[0])
+    assert.ok(rule)
+    assert.equal(rule.authorityBasisRef.itemId, block.itemId)
+    assert.equal(rule.normalizedStatement, item.normalizedExcerpt)
+  })
+}
+
+test('R11 protected normative blocks reject exclusion', () => {
+  const mutated = structuredClone(full)
+  const source = mutated.sources.find((candidate) => candidate.sourceId === 'spec-convention')
+  const item = source?.inventoryItems.find((candidate) => candidate.itemId === 'item.276e79bdc002')
+  assert.ok(item)
+  ;(item.ruleIds as string[]).splice(0)
+  ;(item as { exclusionDisposition: string | null }).exclusionDisposition =
+    'non-normative-explanation'
+  expectCode(mutated, 'MIGRATION_EVIDENCE_INVALID')
+})
+
+test('R11 protected normative blocks reject first-line truncation', () => {
+  const mutated = structuredClone(full)
+  const source = mutated.sources.find((candidate) => candidate.sourceId === 'spec-convention')
+  const item = source?.inventoryItems.find((candidate) => candidate.itemId === 'item.c4828bcd6dfa')
+  assert.ok(item)
+  ;(item as { normalizedExcerpt: string }).normalizedExcerpt =
+    'If implementation requires a path not listed in `Allowed Files`, work stops'
+  ;(item as { valueDigest: string }).valueDigest = sha256(item.normalizedExcerpt)
+  expectCode(mutated, 'MIGRATION_EVIDENCE_INVALID')
+})
+
+test('R11 protected normative blocks reject a nearby-item authority-basis substitution', () => {
+  const mutated = structuredClone(full)
+  const source = mutated.sources.find(
+    (candidate) => candidate.sourceId === 'parcel-driven-development',
+  )
+  const protectedItem = source?.inventoryItems.find(
+    (candidate) => candidate.itemId === 'item.cef628a1fce0',
+  )
+  const nearby = source?.inventoryItems.find(
+    (candidate) => candidate.itemId !== protectedItem?.itemId && candidate.ruleIds.length > 0,
+  )
+  const rule = mutated.rules.find((candidate) => candidate.ruleId === protectedItem?.ruleIds[0])
+  assert.ok(source)
+  assert.ok(protectedItem)
+  assert.ok(nearby)
+  assert.ok(rule)
+  const substitute = {
+    sourceId: source.sourceId,
+    itemId: nearby.itemId,
+    locatorDigest: locatorDigestFor(nearby.locator),
+    valueDigest: nearby.valueDigest,
+  }
+  ;(rule as { authorityBasisRef: typeof substitute }).authorityBasisRef = substitute
+  ;(rule.sourceRefs as (typeof substitute)[]).splice(0, 1, substitute)
+  ;(rule as { bindingDigest: string }).bindingDigest = bindingDigestFor(rule)
+  expectCode(mutated, 'MIGRATION_EVIDENCE_INVALID')
+})
+
+function r11ProfileRestrictions() {
+  const source = full.sources.find(
+    (candidate) => candidate.sourceId === 'permission-profiles-registry',
+  )
+  assert.ok(source)
+  return full.rules.filter((rule) => {
+    if (rule.authorityBasisRef.sourceId !== source.sourceId) return false
+    const item = source.inventoryItems.find(
+      (candidate) => candidate.itemId === rule.authorityBasisRef.itemId,
+    )
+    return (
+      item?.locator.anchor.includes(':deny:') === true ||
+      (item?.locator.anchor.endsWith(':network/egress') === true &&
+        item.normalizedExcerpt === '"denied"')
+    )
+  })
+}
+
+test('R11 all 54 permission-profile restrictions have precise mediated loaded-host scope', () => {
+  const restrictions = r11ProfileRestrictions()
+  assert.equal(restrictions.length, 54)
+  for (const rule of restrictions) {
+    assert.equal(rule.classification, 'pre-action-refusal', rule.ruleId)
+    assert.equal(rule.decision, 'REFUSE', rule.ruleId)
+    assert.equal(rule.enforcementOwner, 'host-adapter', rule.ruleId)
+    assert.equal(rule.assurance, 'mediated', rule.ruleId)
+    assert.deepEqual(rule.applicability.hosts, ['claude-windows-docker-loaded'], rule.ruleId)
+    assert.equal(rule.applicability.roles.length, 1, rule.ruleId)
+    assert.ok(!rule.applicability.stages.includes('any'), rule.ruleId)
+    assert.equal(rule.applicability.operations.length, 1, rule.ruleId)
+  }
+})
+
+const r11ProfileRuleId = 'rule.permission-profiles-registry.7faf78a6f54a'
+
+test('R11 loaded builder profile denial resolves only through mediated host authority', () => {
+  const rule = full.rules.find((candidate) => candidate.ruleId === r11ProfileRuleId)
+  assert.ok(rule)
+  const result = resolveAuthority(full, {
+    authoritySubject: rule.authoritySubject,
+    goal: 'foreman-kernel',
+    role: 'builder',
+    stage: 'build',
+    operation: 'external-write',
+    host: 'claude-windows-docker-loaded',
+  })
+  assert.equal(result.outcome, 'RESOLVED')
+  assert.ok(result.controllingRuleIds.includes(rule.ruleId))
+})
+
+for (const vector of [
+  { name: 'unenrolled host', role: 'builder', host: 'claude-windows-docker-unenrolled' },
+  { name: 'unsupported host', role: 'builder', host: 'unsupported-host' },
+  { name: 'CI host', role: 'builder', host: 'ci' },
+  { name: 'wrong role', role: 'developer', host: 'claude-windows-docker-loaded' },
+] as const) {
+  test(`R11 permission-profile authority excludes ${vector.name}`, () => {
+    const rule = full.rules.find((candidate) => candidate.ruleId === r11ProfileRuleId)
+    assert.ok(rule)
+    const result = resolveAuthority(full, {
+      authoritySubject: rule.authoritySubject,
+      goal: 'foreman-kernel',
+      role: vector.role,
+      stage: 'build',
+      operation: 'external-write',
+      host: vector.host,
+    })
+    assert.equal(result.outcome, 'REQUIRE_HUMAN')
+    assert.ok(!result.consideredRuleIds.includes(rule.ruleId))
+  })
+}
+
+const r11Gate2RuleIds = [
+  'rule.fk-charter.15a44cf50bc6',
+  'rule.fk-loop-directive.47a75730afd6',
+  'rule.fk-loop-directive.bfffee6d7c1f',
+  'rule.coordinator-pattern.91dd60b00fd6',
+] as const
+
+test('R11 exact bounded Gate 2 rules use ALLOW with no refusal code', () => {
+  for (const ruleId of r11Gate2RuleIds) {
+    const rule = full.rules.find((candidate) => candidate.ruleId === ruleId)
+    assert.ok(rule, ruleId)
+    assert.equal(rule.decision, 'ALLOW', ruleId)
+    assert.equal(rule.refusalCode, null, ruleId)
+  }
+})
+
+test('R11 resolver propagates the controlling Gate 2 ALLOW decision', () => {
+  const result = resolveNatural(
+    'gate2.dispatch-grant',
+    'coordinator',
+    'shaping',
+    'state-transition',
+  )
+  assert.equal(result.outcome, 'RESOLVED')
+  if (result.outcome === 'RESOLVED') assert.equal(result.decision, 'ALLOW')
+})
+
+test('R11 resolver returns conflict for same highest-tier claim with different decisions', () => {
+  const mutated = structuredClone(full)
+  const original = mutated.rules.find(
+    (candidate) => candidate.ruleId === 'rule.fk-charter.15a44cf50bc6',
+  )
+  assert.ok(original)
+  const conflicting = structuredClone(original)
+  ;(conflicting as { ruleId: string }).ruleId = `${original.ruleId}.decision-conflict`
+  ;(conflicting as { decision: string }).decision = 'REFUSE'
+  ;(conflicting as { refusalCode: string | null }).refusalCode = 'FK_GATE2_CONFLICT_REFUSED'
+  ;(conflicting as { bindingDigest: string }).bindingDigest = bindingDigestFor(conflicting)
+  ;(mutated.rules as AuthorityRule[]).push(conflicting)
+  const source = mutated.sources.find(
+    (candidate) => candidate.sourceId === original.authorityBasisRef.sourceId,
+  )
+  const item = source?.inventoryItems.find(
+    (candidate) => candidate.itemId === original.authorityBasisRef.itemId,
+  )
+  assert.ok(item)
+  ;(item.ruleIds as string[]).push(conflicting.ruleId)
+  const result = resolveAuthority(mutated, {
+    authoritySubject: original.authoritySubject,
+    goal: 'foreman-kernel',
+    role: 'coordinator',
+    stage: 'shaping',
+    operation: 'state-transition',
+    host: 'provider-neutral',
+  })
+  assert.equal(result.outcome, 'CONFLICT')
+  if (result.outcome === 'CONFLICT')
+    assert.deepEqual(result.conflictingDecisions, ['ALLOW', 'REFUSE'])
+})
+
+test('R11 validator rejects any unapproved ALLOW rule', () => {
+  const mutated = structuredClone(full)
+  const rule = mutated.rules.find(
+    (candidate) =>
+      candidate.classification === 'pre-action-refusal' &&
+      !r11Gate2RuleIds.includes(candidate.ruleId as (typeof r11Gate2RuleIds)[number]),
+  )
+  assert.ok(rule)
+  ;(rule as { decision: string }).decision = 'ALLOW'
+  ;(rule as { refusalCode: string | null }).refusalCode = null
+  ;(rule as { bindingDigest: string }).bindingDigest = bindingDigestFor(rule)
+  expectCode(mutated, 'AUTHORITY_ESCALATION')
+})
+
+test('R11 ships an exact typed migration from the R10 registry snapshot', () => {
+  const record = full.reconciliations.find(
+    (candidate) => candidate.reconciliationId === 'registry-rework-ee29973',
+  )
+  assert.ok(record)
+  assert.equal(record.migrationStatus, 'superseded-by-amendment')
+  assert.deepEqual(
+    record.observedEvidence
+      .filter((evidence) => evidence.kind === 'git-commit')
+      .map((evidence) => evidence.reference),
+    ['f3366be12175acb4fd4aeb32c301c845b906a5da', '51857a3a7796b393c0c0a68712f98c06e7015d79'],
+  )
+})
+
+for (const [name, mutate] of r10EvidenceMutations) {
+  test(`R11 registry-rework-ee29973 rejects ${name} evidence`, () => {
+    const mutated = structuredClone(full)
+    const record = mutated.reconciliations.find(
+      (candidate) => candidate.reconciliationId === 'registry-rework-ee29973',
     )
     assert.ok(record)
     mutate(record.observedEvidence as unknown[])
@@ -2220,7 +2628,11 @@ test('R9 loop stop and completion rules retain operative classifications and nar
     const rule = publishedRuleFor('fk-loop-directive', itemId)
     assert.notEqual(rule.classification, 'narrative-provenance', itemId)
     assert.deepEqual(rule.applicability.roles, ['coordinator'], itemId)
-    assert.ok(!rule.applicability.stages.includes('runtime'), itemId)
+    if (itemId === 'item.237865e0993f') {
+      assert.ok(rule.applicability.stages.includes('runtime'), itemId)
+    } else {
+      assert.ok(!rule.applicability.stages.includes('runtime'), itemId)
+    }
     assert.ok(!rule.applicability.operations.includes('external-write'), itemId)
   }
 })

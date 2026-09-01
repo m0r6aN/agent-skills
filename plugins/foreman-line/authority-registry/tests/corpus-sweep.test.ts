@@ -1117,6 +1117,116 @@ test('R10 validator constructs Markdown block custody without a source-ID allowl
   assert.doesNotMatch(validator, /markdownDocumentMap\(content,\s*source\.sourceId\)/)
 })
 
+test('R11 Markdown block anchors contain only structural heading kind and ordinal identity', () => {
+  const markdownItems = registry.sources.flatMap((source) =>
+    source.inventoryItems.filter((item) => item.locator.anchor.startsWith('md-block:')),
+  )
+  assert.ok(markdownItems.length > 0)
+  for (const item of markdownItems) {
+    assert.match(item.locator.anchor, /^md-block:.*:(?:paragraph|list-item|table-row):[1-9]\d*$/)
+    assert.doesNotMatch(item.locator.anchor, /:[0-9a-f]{12}:/)
+  }
+})
+
+test('R11 a Markdown value-only edit resolves the same locator as VALUE_DIGEST_MISMATCH', () => {
+  const tempRoot = mkdtempSync(join(tmpdir(), 'fk-p0-r11-value-only-'))
+  try {
+    copyCorpus(tempRoot)
+    const source = registry.sources.find(
+      (candidate) => candidate.sourceId === 'coordinator-pattern',
+    )
+    const item = source?.inventoryItems.find(
+      (candidate) =>
+        candidate.locator.anchor.startsWith('md-block:') &&
+        candidate.normalizedExcerpt.includes('One goal, one coordinator:'),
+    )
+    assert.ok(source)
+    assert.ok(item)
+    const path = join(tempRoot, source.path)
+    const content = readFileSync(path, 'utf8')
+    const changed = content.replace(
+      'One goal, one coordinator:',
+      'One goal, exactly one coordinator:',
+    )
+    assert.notEqual(changed, content)
+    writeFileSync(path, changed)
+    const result = sweepRegistrySources(registry, tempRoot)
+    assert.ok(
+      result.violations.some(
+        (violation) =>
+          violation.code === 'VALUE_DIGEST_MISMATCH' && violation.locator === item.locator.anchor,
+      ),
+      JSON.stringify(result.violations, null, 2),
+    )
+    assert.ok(
+      !result.violations.some(
+        (violation) =>
+          violation.code === 'LOCATOR_MISSING' && violation.locator === item.locator.anchor,
+      ),
+      JSON.stringify(result.violations, null, 2),
+    )
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true })
+  }
+})
+
+test('R11 inserting a same-kind Markdown block is a separate location mutation', () => {
+  const tempRoot = mkdtempSync(join(tmpdir(), 'fk-p0-r11-location-'))
+  try {
+    copyCorpus(tempRoot)
+    const source = registry.sources.find(
+      (candidate) => candidate.sourceId === 'coordinator-pattern',
+    )
+    const item = source?.inventoryItems.find(
+      (candidate) =>
+        candidate.locator.anchor.startsWith('md-block:') &&
+        candidate.normalizedExcerpt.includes('One goal, one coordinator:'),
+    )
+    assert.ok(source)
+    assert.ok(item)
+    const path = join(tempRoot, source.path)
+    const content = readFileSync(path, 'utf8')
+    const changed = content.replace(
+      item.normalizedExcerpt,
+      `R11 inserted structural paragraph.\n\n${item.normalizedExcerpt}`,
+    )
+    assert.notEqual(changed, content)
+    writeFileSync(path, changed)
+    const result = sweepRegistrySources(registry, tempRoot)
+    assert.ok(
+      result.violations.some(
+        (violation) =>
+          violation.code === 'VALUE_DIGEST_MISMATCH' || violation.code === 'LOCATOR_MISSING',
+      ),
+      JSON.stringify(result.violations, null, 2),
+    )
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true })
+  }
+})
+
+test('R11 CommonMark parenthesized ordered items produce two independent uncovered items', () => {
+  const tempRoot = mkdtempSync(join(tmpdir(), 'fk-p0-r11-parenthesized-list-'))
+  try {
+    copyCorpus(tempRoot)
+    const source = registry.sources.find((candidate) => candidate.sourceId === 'approval-readme')
+    assert.ok(source)
+    const path = join(tempRoot, source.path)
+    writeFileSync(
+      path,
+      `${readFileSync(path, 'utf8')}\n\n1) R11 first parenthesized binding item.\n2) R11 second parenthesized binding item.\n`,
+    )
+    const result = sweepRegistrySources(registry, tempRoot)
+    const uncovered = result.violations.filter(
+      (violation) =>
+        violation.code === 'SOURCE_ITEM_UNCOVERED' && violation.sourcePath === source.path,
+    )
+    assert.equal(uncovered.length, 2, JSON.stringify(result.violations, null, 2))
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true })
+  }
+})
+
 for (const baseline of [
   {
     name: 'goal skill verification custody',

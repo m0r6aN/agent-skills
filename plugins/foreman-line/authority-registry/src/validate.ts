@@ -24,6 +24,7 @@ import {
   ROLE_SCOPES,
   RULE_CLASSIFICATIONS,
   type SourceLocator,
+  type SourceRef,
   STAGE_SCOPES,
   type ValidationResult,
   type ValidationViolation,
@@ -49,6 +50,7 @@ const REQUIRED_REWORK_MIGRATIONS = [
   'registry-rework-37afc65',
   'registry-rework-91145d7',
   'registry-rework-1b42f4b',
+  'registry-rework-ee29973',
 ] as const
 const REQUIRED_OPERATIONS = [
   'gate1.ratify',
@@ -241,6 +243,24 @@ const CLASSIFICATION_CONTRACT = {
   unsupported: { decision: 'ADVISORY', enforcementOwner: 'none', assurance: 'narrative' },
 } as const
 
+const R11_GATE2_ALLOW_RULE_IDS = new Set([
+  'rule.fk-charter.15a44cf50bc6',
+  'rule.fk-loop-directive.47a75730afd6',
+  'rule.fk-loop-directive.bfffee6d7c1f',
+  'rule.coordinator-pattern.91dd60b00fd6',
+])
+
+const R11_PROTECTED_NORMATIVE_ITEMS: Readonly<Record<string, string>> = {
+  'spec-convention:item.276e79bdc002':
+    'Every dispatchable spec must contain an `## Allowed Files` body section listing each file the parcel may create, edit, move, or delete. Entries are exact repo-relative paths; globs and directory-wide shorthand are prohibited.',
+  'spec-convention:item.c4828bcd6dfa':
+    'If implementation requires a path not listed in `Allowed Files`, work stops until the coordinator ratifies a spec amendment. An agent must not expand its own authority because a related edit appears useful.',
+  'parcel-driven-development:item.78ff0093607e':
+    'Agents do not edit approved contracts directly from parcel branches.',
+  'parcel-driven-development:item.cef628a1fce0':
+    'Every agent session that changes code, docs, config, contracts, or evidence must produce a session handoff.',
+}
+
 const RECONCILIATION_CONTRACT = {
   'gate-namespace-count': {
     topic: 'Historical two-gate and stage approval terms versus FK Gate 1, Gate 2, and Gate 3.',
@@ -392,10 +412,16 @@ const RECONCILIATION_CONTRACT = {
     refs: ['coordinator-pattern:item.d62734f662a0'],
     rules: ['rule.coordinator-pattern.d62734f662a0'],
   },
+  'registry-rework-ee29973': {
+    topic: 'R10 registry bindings superseded by the coordinator-ratified FK-P0 R11 amendment.',
+    status: 'superseded-by-amendment',
+    refs: ['spec-convention:item.c4828bcd6dfa'],
+    rules: ['rule.spec-convention.c4828bcd6dfa'],
+  },
 } as const
 
 const SHIPPED_BINDING_MANIFEST_DIGEST =
-  '99d9bed01cd5a7957457e24c82cbcc3645ebf591415d6072c26130d3b8a2e8d7'
+  'dd775924c5fe88f24f3aa1c545e2501fe9ca3ef8f9cedb0541cf043d0ae36257'
 const SEMANTIC_EQUIVALENCE: readonly {
   readonly authoritySubject: string
   readonly authorityClaim: string
@@ -486,6 +512,8 @@ const PRIOR_R8_BINDING_MANIFEST_DIGEST =
   'dc213f213342f6ac744bf4ece7c3c322315d6946f894b7bfbd37db96954d0002'
 const PRIOR_R9_BINDING_MANIFEST_DIGEST =
   '825b3a04cdd506762cba1bbb6c7d007dd4b163e40be5dad733b97482d92f9df6'
+const PRIOR_R10_BINDING_MANIFEST_DIGEST =
+  '99d9bed01cd5a7957457e24c82cbcc3645ebf591415d6072c26130d3b8a2e8d7'
 
 const RECONCILIATION_PROSE: Readonly<Record<string, readonly [string, string]>> = {
   'gate-namespace-count': [
@@ -544,6 +572,10 @@ const RECONCILIATION_PROSE: Readonly<Record<string, readonly [string, string]>> 
     'The R10 universal Markdown custody, source-honest goal and coordinator semantics, precise Gate 3 scope, and complete rework-evidence contract supersede the R9 registry bindings in FK scope.',
     'Future binding changes require another typed prior-to-new migration record.',
   ],
+  'registry-rework-ee29973': [
+    'The R11 structural Markdown identity, atomic compound semantics, protected normative blocks, mediated profile scope, and explicit Gate 2 decision contract supersede the R10 registry bindings in FK scope.',
+    'Future binding changes require another typed prior-to-new migration record.',
+  ],
 }
 
 const RECONCILIATION_RECORD_DIGESTS: Readonly<Record<string, string>> = {
@@ -564,6 +596,26 @@ const RECONCILIATION_RECORD_DIGESTS: Readonly<Record<string, string>> = {
   'registry-rework-37afc65': '5f3bba04f9177884da88d21a8535d3ebc04557252aa27b30cbb191824e0b0f17',
   'registry-rework-91145d7': '6b6e2dbd3b009428c647ed8947ba5d7008445dabdcccdde7d135466b9f46f3e3',
   'registry-rework-1b42f4b': '14bb9b5739d37281619e6ace7ea9e5d0f6fd0febeecf3facc892e1a606795a56',
+  'registry-rework-ee29973': 'b9a3ed7f9eaa25468df8557fb812ae343910a481450411928b8abe5d4e216bb3',
+}
+
+const LEGACY_RECONCILIATION_SOURCE_REFS: Readonly<Record<string, readonly SourceRef[]>> = {
+  'gate3-delegation': [
+    {
+      sourceId: 'fk-charter',
+      itemId: 'item.b1ac4aa9eddf',
+      locatorDigest: 'f8ffc0669f2e67b5d14d6916c639d77d2d1170f687d2da78aee73d35eec09cbf',
+      valueDigest: '4d67d991b566cac23d275df38b820b75259a5d273e7e506f3aaf53fea3a2666f',
+    },
+  ],
+  'registry-rework-91145d7': [
+    {
+      sourceId: 'fk-charter',
+      itemId: 'item.5c1f19dd9911',
+      locatorDigest: 'd696d9d5da3531f0be97ae65cb027077c47a113eeefc0de56d5f0ea56dcd8232',
+      valueDigest: '0ea8cda783fed8e481cfcd52c013825f674c6acfc5eb4c5214d1748f55b62b34',
+    },
+  ],
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -736,11 +788,16 @@ export function resolveAuthority(
   const highest = Math.min(...candidates.map(tierIndex))
   const controlling = candidates.filter((rule) => tierIndex(rule) === highest)
   const claims = [...new Set(controlling.map((rule) => rule.authorityClaim))].sort()
-  if (claims.length !== 1) {
+  const decisions = [...new Set(controlling.map((rule) => rule.decision))].sort()
+  if (claims.length !== 1 || decisions.length !== 1) {
     return {
       outcome: 'CONFLICT',
       authoritySubject: query.authoritySubject,
       conflictingClaims: claims,
+      conflictingDecisions: decisions.filter(
+        (decision): decision is 'ALLOW' | 'REFUSE' | 'ADVISORY' | 'REQUIRE_HUMAN' =>
+          decision !== 'CONFLICT',
+      ),
       controllingRuleIds: [],
       consideredRuleIds,
     }
@@ -749,6 +806,7 @@ export function resolveAuthority(
     outcome: 'RESOLVED',
     authoritySubject: query.authoritySubject,
     authorityClaim: claims[0] as string,
+    decision: decisions[0] as 'ALLOW' | 'REFUSE' | 'ADVISORY' | 'REQUIRE_HUMAN',
     controllingRuleIds: controlling.map((rule) => rule.ruleId).sort(),
     consideredRuleIds,
   }
@@ -798,6 +856,12 @@ function summaryFor(
 
 function referenceKey(sourceId: string, itemId: string): string {
   return `${sourceId}\u0000${itemId}`
+}
+
+function isLegacyReconciliationSourceRef(reconciliationId: string, sourceRef: SourceRef): boolean {
+  return (LEGACY_RECONCILIATION_SOURCE_REFS[reconciliationId] ?? []).some(
+    (expected) => canonicalJson(expected) === canonicalJson(sourceRef),
+  )
 }
 
 function arraysOverlap(left: readonly string[], right: readonly string[]): boolean {
@@ -1160,6 +1224,25 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
     }
   }
 
+  for (const [key, expectedStatement] of Object.entries(R11_PROTECTED_NORMATIVE_ITEMS)) {
+    const separator = key.indexOf(':')
+    const item = itemsByRef.get(referenceKey(key.slice(0, separator), key.slice(separator + 1)))
+    if (
+      item === undefined ||
+      item.exclusionDisposition !== null ||
+      item.ruleIds.length === 0 ||
+      normalizeRuleText(item.normalizedExcerpt) !== normalizeRuleText(expectedStatement)
+    ) {
+      violations.push(
+        violation(
+          'MIGRATION_EVIDENCE_INVALID',
+          `protected normative block '${key}' must publish its complete exact semantic block`,
+          { locator: item?.locator.anchor },
+        ),
+      )
+    }
+  }
+
   const rulesById = new Map<string, AuthorityRule>()
   for (const rule of document.rules) {
     const applicabilitySets: readonly [readonly string[], readonly string[], string][] = [
@@ -1259,6 +1342,14 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
     const basisItem = itemsByRef.get(
       referenceKey(rule.authorityBasisRef.sourceId, rule.authorityBasisRef.itemId),
     )
+    const basisStatementMatches =
+      basisItem !== undefined &&
+      (normalizeRuleText(rule.normalizedStatement) ===
+        normalizeRuleText(basisItem.normalizedExcerpt) ||
+        (basisItem.ruleIds.length > 1 &&
+          normalizeRuleText(basisItem.normalizedExcerpt).includes(
+            normalizeRuleText(rule.normalizedStatement),
+          )))
     if (
       !rule.sourceRefs.some(
         (reference) => canonicalJson(reference) === canonicalJson(rule.authorityBasisRef),
@@ -1266,7 +1357,7 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
       basisItem === undefined ||
       locatorDigestFor(basisItem.locator) !== rule.authorityBasisRef.locatorDigest ||
       basisItem.valueDigest !== rule.authorityBasisRef.valueDigest ||
-      normalizeRuleText(rule.normalizedStatement) !== normalizeRuleText(basisItem.normalizedExcerpt)
+      !basisStatementMatches
     ) {
       violations.push(
         violation(
@@ -1278,15 +1369,20 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
     }
     const classificationContract = CLASSIFICATION_CONTRACT[rule.classification]
     const isLoadedProfileRefusal = rule.sourceRefs.some(
-      (reference) => reference.sourceId === 'permission-profiles-validator',
+      (reference) =>
+        reference.sourceId === 'permission-profiles-validator' ||
+        (reference.sourceId === 'permission-profiles-registry' &&
+          rule.classification === 'pre-action-refusal'),
     )
+    const approvedAllow = R11_GATE2_ALLOW_RULE_IDS.has(rule.ruleId)
+    const expectedDecision = approvedAllow ? 'ALLOW' : classificationContract.decision
     const validPreActionShape =
       rule.classification !== 'pre-action-refusal' ||
       (isLoadedProfileRefusal
         ? rule.enforcementOwner === 'host-adapter' && rule.assurance === 'mediated'
         : rule.enforcementOwner === 'kernel-policy' && rule.assurance === 'structural')
     if (
-      rule.decision !== classificationContract.decision ||
+      rule.decision !== expectedDecision ||
       !validPreActionShape ||
       (classificationContract.enforcementOwner !== null &&
         rule.enforcementOwner !== classificationContract.enforcementOwner) ||
@@ -1301,11 +1397,38 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
         ),
       )
     }
-    if (rule.classification === 'pre-action-refusal' && rule.refusalCode === null) {
+    if (
+      rule.authorityBasisRef.sourceId === 'permission-profiles-registry' &&
+      rule.classification === 'pre-action-refusal' &&
+      (rule.applicability.hosts.join('|') !== 'claude-windows-docker-loaded' ||
+        rule.applicability.roles.length !== 1 ||
+        rule.applicability.roles.includes('any') ||
+        rule.applicability.stages.length === 0 ||
+        rule.applicability.stages.includes('any') ||
+        rule.applicability.operations.length !== 1 ||
+        rule.applicability.operations.includes('any'))
+    ) {
       violations.push(
-        violation('MIGRATION_EVIDENCE_INVALID', 'pre-action-refusal requires refusalCode', {
-          ruleId: rule.ruleId,
-        }),
+        violation(
+          'AUTHORITY_ESCALATION',
+          'permission-profile refusal must be item-specific to one profile role, concrete stages and operation, and the loaded mediated host',
+          { ruleId: rule.ruleId },
+        ),
+      )
+    }
+    if (
+      rule.classification === 'pre-action-refusal' &&
+      ((approvedAllow && rule.refusalCode !== null) ||
+        (!approvedAllow && rule.refusalCode === null))
+    ) {
+      violations.push(
+        violation(
+          'MIGRATION_EVIDENCE_INVALID',
+          approvedAllow
+            ? 'approved pre-action ALLOW requires null refusalCode'
+            : 'pre-action REFUSE requires refusalCode',
+          { ruleId: rule.ruleId },
+        ),
       )
     }
     if (rule.classification !== 'pre-action-refusal' && rule.refusalCode !== null) {
@@ -1354,7 +1477,12 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
         item.valueDigest === sourceRef.valueDigest
       ) {
         const expectedRuleId = `rule.${sourceRef.sourceId}.${item.itemId.replace(/^item\./, '')}`
-        if (rule.sourceRefs.length === 1 && rule.ruleId !== expectedRuleId) {
+        const expectedCompoundPrefix = `${expectedRuleId}.`
+        if (
+          rule.sourceRefs.length === 1 &&
+          ((item.ruleIds.length === 1 && rule.ruleId !== expectedRuleId) ||
+            (item.ruleIds.length > 1 && !rule.ruleId.startsWith(expectedCompoundPrefix)))
+        ) {
           violations.push(
             violation(
               'MIGRATION_EVIDENCE_INVALID',
@@ -1364,7 +1492,14 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
           )
         }
         if (
-          normalizeRuleText(rule.normalizedStatement) !== normalizeRuleText(item.normalizedExcerpt)
+          normalizeRuleText(rule.normalizedStatement) !==
+            normalizeRuleText(item.normalizedExcerpt) &&
+          !(
+            item.ruleIds.length > 1 &&
+            normalizeRuleText(item.normalizedExcerpt).includes(
+              normalizeRuleText(rule.normalizedStatement),
+            )
+          )
         ) {
           violations.push(
             violation(
@@ -1464,7 +1599,7 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
         rightTier !== null &&
         leftTier === rightTier &&
         left.authoritySubject === right.authoritySubject &&
-        left.authorityClaim !== right.authorityClaim &&
+        (left.authorityClaim !== right.authorityClaim || left.decision !== right.decision) &&
         goalScopesOverlap(left.applicability.goals, right.applicability.goals) &&
         arraysOverlap(left.applicability.roles, right.applicability.roles) &&
         arraysOverlap(left.applicability.stages, right.applicability.stages) &&
@@ -1617,10 +1752,15 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
       const item = itemsByRef.get(
         referenceKey(record.supersedingEvidence.sourceId, record.supersedingEvidence.itemId),
       )
+      const legacySourceRef = isLegacyReconciliationSourceRef(
+        record.reconciliationId,
+        record.supersedingEvidence,
+      )
       if (
         item === undefined ||
-        locatorDigestFor(item.locator) !== record.supersedingEvidence.locatorDigest ||
         item.valueDigest !== record.supersedingEvidence.valueDigest ||
+        (locatorDigestFor(item.locator) !== record.supersedingEvidence.locatorDigest &&
+          !legacySourceRef) ||
         !record.observedEvidence.some((evidence) => evidence.kind === 'git-commit')
       ) {
         violations.push(
@@ -1819,12 +1959,40 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
           `89d7e4853a8fb0af3db68e9262e38833062fba77|${document.sourceSnapshotCommit}` ||
         commands.length !== 2 ||
         !resultDigests.includes(PRIOR_R9_BINDING_MANIFEST_DIGEST) ||
-        !resultDigests.includes(SHIPPED_BINDING_MANIFEST_DIGEST)
+        !resultDigests.includes(PRIOR_R10_BINDING_MANIFEST_DIGEST)
       ) {
         violations.push(
           violation(
             'MIGRATION_EVIDENCE_INVALID',
             'R10 migration does not bind the prior R9 registry commit, source snapshot, and superseding manifest',
+          ),
+        )
+      }
+    }
+    if (record.reconciliationId === 'registry-rework-ee29973') {
+      const gitRefs = record.observedEvidence
+        .filter((e) => e.kind === 'git-commit')
+        .map((e) => e.reference)
+      const commands = record.observedEvidence.filter((e) => e.kind === 'command-result')
+      const resultDigests = commands.flatMap((e) => {
+        try {
+          const value = JSON.parse(e.reference) as { resultDigest?: unknown }
+          return typeof value.resultDigest === 'string' ? [value.resultDigest] : []
+        } catch {
+          return []
+        }
+      })
+      if (
+        gitRefs.join('|') !==
+          `f3366be12175acb4fd4aeb32c301c845b906a5da|${document.sourceSnapshotCommit}` ||
+        commands.length !== 2 ||
+        !resultDigests.includes(PRIOR_R10_BINDING_MANIFEST_DIGEST) ||
+        !resultDigests.includes(SHIPPED_BINDING_MANIFEST_DIGEST)
+      ) {
+        violations.push(
+          violation(
+            'MIGRATION_EVIDENCE_INVALID',
+            'R11 migration does not bind the prior R10 registry commit, source snapshot, and superseding manifest',
           ),
         )
       }
@@ -1844,10 +2012,11 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
     }
     for (const sourceRef of record.observedRefs) {
       const item = itemsByRef.get(referenceKey(sourceRef.sourceId, sourceRef.itemId))
+      const legacySourceRef = isLegacyReconciliationSourceRef(record.reconciliationId, sourceRef)
       if (
         item === undefined ||
-        locatorDigestFor(item.locator) !== sourceRef.locatorDigest ||
-        item.valueDigest !== sourceRef.valueDigest
+        item.valueDigest !== sourceRef.valueDigest ||
+        (locatorDigestFor(item.locator) !== sourceRef.locatorDigest && !legacySourceRef)
       ) {
         violations.push(
           violation(
@@ -2115,24 +2284,24 @@ function markdownDocumentMap(content: string): MarkdownDocumentMap {
       cursor += 1
       continue
     }
-    const list = /^\s*(?:[-*+] |\d+\. )/.test(line)
+    const list = /^\s*(?:[-*+] |\d+[.)] )/.test(line)
     let end = cursor + 1
     if (!table) {
       while (end < lines.length) {
         const next = lines[end] ?? ''
         if (next.trim() === '' || /^#{1,6}\s+/.test(next) || /^\s*\|/.test(next) || fenced.has(end))
           break
-        if (list && /^\s*(?:[-*+] |\d+\. )/.test(next)) break
+        if (list && /^\s*(?:[-*+] |\d+[.)] )/.test(next)) break
         end += 1
       }
     }
     const headingPath = headings.map((item) => item.text).join(' > ') || '(preamble)'
     const kind = table ? 'table-row' : list ? 'list-item' : 'paragraph'
     const text = lines.slice(cursor, end).join('\n')
-    const semanticKey = `${headingPath}\u0000${kind}\u0000${sha256(normalizeRuleText(text)).slice(0, 12)}`
-    const occurrence = (occurrences.get(semanticKey) ?? 0) + 1
-    occurrences.set(semanticKey, occurrence)
-    blocks.set(`md-block:${headingPath}:${kind}:${semanticKey.slice(-12)}:${occurrence}`, text)
+    const structuralKey = `${headingPath}\u0000${kind}`
+    const occurrence = (occurrences.get(structuralKey) ?? 0) + 1
+    occurrences.set(structuralKey, occurrence)
+    blocks.set(`md-block:${headingPath}:${kind}:${occurrence}`, text)
     cursor = end
   }
   return { lines, fenced, blocks }
@@ -2458,7 +2627,7 @@ function extractLocator(
         stack.push({ level, heading: line.trim() })
         continue
       }
-      const numbered = /^(\s*)(\d+)\.\s+\S/.exec(line)
+      const numbered = /^(\s*)(\d+)[.)]\s+\S/.exec(line)
       if (numbered === null) continue
       const semanticKey = `${stack.map((item) => item.heading).join(' > ')}\u0000${numbered[1]?.length ?? 0}\u0000${numbered[2] as string}`
       const occurrence = (occurrences.get(semanticKey) ?? 0) + 1
@@ -2485,7 +2654,7 @@ function extractLocator(
         end = index
         break
       }
-      const next = /^(\s*)(\d+)\.\s+\S/.exec(line)
+      const next = /^(\s*)(\d+)[.)]\s+\S/.exec(line)
       if (next !== null && (next[1]?.length ?? 0) <= match.indent) {
         end = index
         break

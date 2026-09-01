@@ -252,6 +252,7 @@ export type AuthorityResolution =
       readonly outcome: 'RESOLVED'
       readonly authoritySubject: string
       readonly authorityClaim: string
+      readonly decision: 'ALLOW' | 'REFUSE' | 'ADVISORY' | 'REQUIRE_HUMAN'
       readonly controllingRuleIds: string[]
       readonly consideredRuleIds: string[]
     }
@@ -266,6 +267,7 @@ export type AuthorityResolution =
       readonly outcome: 'CONFLICT'
       readonly authoritySubject: string
       readonly conflictingClaims: string[]
+      readonly conflictingDecisions: ('ALLOW' | 'REFUSE' | 'ADVISORY' | 'REQUIRE_HUMAN')[]
       readonly controllingRuleIds: []
       readonly consideredRuleIds: string[]
     }

@@ -30,6 +30,12 @@ import {
 } from './validate.js'
 
 const SNAPSHOT = '51857a3a7796b393c0c0a68712f98c06e7015d79'
+const R11_GATE2_ALLOW_ITEMS = new Set([
+  'fk-charter:item.15a44cf50bc6',
+  'fk-loop-directive:item.47a75730afd6',
+  'fk-loop-directive:item.bfffee6d7c1f',
+  'coordinator-pattern:item.91dd60b00fd6',
+])
 const here = dirname(fileURLToPath(import.meta.url))
 const packageRoot = join(here, '..')
 const repoRoot = join(packageRoot, '..', '..', '..')
@@ -257,6 +263,7 @@ const SOURCE_DEFINITIONS: readonly SourceDefinition[] = [
 interface LocatedText {
   readonly locator: SourceLocator
   readonly text: string
+  readonly curationItemId?: string
 }
 
 function stripMarkdownHtmlComments(content: string): string {
@@ -366,7 +373,7 @@ function numberedItems(document: MarkdownDocumentMap): LocatedText[] {
       stack.push({ level, heading: line.trim() })
       continue
     }
-    const numbered = /^(\s*)(\d+)\.\s+\S/.exec(line)
+    const numbered = /^(\s*)(\d+)[.)]\s+\S/.exec(line)
     if (numbered === null) continue
     const prefix = stack.map((item) => item.heading)
     const semanticKey = `${prefix.join(' > ')}\u0000${numbered[1]?.length ?? 0}\u0000${numbered[2] as string}`
@@ -393,7 +400,7 @@ function numberedItems(document: MarkdownDocumentMap): LocatedText[] {
         end = index
         break
       }
-      const next = /^(\s*)(\d+)\.\s+\S/.exec(line)
+      const next = /^(\s*)(\d+)[.)]\s+\S/.exec(line)
       if (next !== null && (next[1]?.length ?? 0) <= item.indent) {
         end = index
         break
@@ -427,7 +434,8 @@ function tableRows(document: MarkdownDocumentMap, keys: readonly string[]): Loca
 function markdownBindingBlocks(document: MarkdownDocumentMap): LocatedText[] {
   const { lines, fenced } = document
   const headings: { level: number; text: string }[] = []
-  const occurrences = new Map<string, number>()
+  const structuralOccurrences = new Map<string, number>()
+  const legacyOccurrences = new Map<string, number>()
   const blocks: LocatedText[] = []
   let cursor = 0
   while (cursor < lines.length) {
@@ -453,30 +461,35 @@ function markdownBindingBlocks(document: MarkdownDocumentMap): LocatedText[] {
       cursor += 1
       continue
     }
-    const list = /^\s*(?:[-*+] |\d+\. )/.test(line)
+    const list = /^\s*(?:[-*+] |\d+[.)] )/.test(line)
     let end = cursor + 1
     if (!table) {
       while (end < lines.length) {
         const next = lines[end] ?? ''
         if (next.trim() === '' || /^#{1,6}\s+/.test(next) || /^\s*\|/.test(next) || fenced.has(end))
           break
-        if (list && /^\s*(?:[-*+] |\d+\. )/.test(next)) break
+        if (list && /^\s*(?:[-*+] |\d+[.)] )/.test(next)) break
         end += 1
       }
     }
     const text = lines.slice(cursor, end).join('\n')
     const headingPath = headings.map((item) => item.text).join(' > ') || '(preamble)'
     const kind = table ? 'table-row' : list ? 'list-item' : 'paragraph'
-    const semanticKey = `${headingPath}\u0000${kind}\u0000${sha256(normalizeRuleText(text)).slice(0, 12)}`
-    const occurrence = (occurrences.get(semanticKey) ?? 0) + 1
-    occurrences.set(semanticKey, occurrence)
+    const structuralKey = `${headingPath}\u0000${kind}`
+    const structuralOrdinal = (structuralOccurrences.get(structuralKey) ?? 0) + 1
+    structuralOccurrences.set(structuralKey, structuralOrdinal)
+    const legacySemanticKey = `${structuralKey}\u0000${sha256(normalizeRuleText(text)).slice(0, 12)}`
+    const legacyOccurrence = (legacyOccurrences.get(legacySemanticKey) ?? 0) + 1
+    legacyOccurrences.set(legacySemanticKey, legacyOccurrence)
+    const legacyAnchor = `md-block:${headingPath}:${kind}:${legacySemanticKey.slice(-12)}:${legacyOccurrence}`
     blocks.push({
       locator: {
         kind: 'line-excerpt',
-        anchor: `md-block:${headingPath}:${kind}:${semanticKey.slice(-12)}:${occurrence}`,
+        anchor: `md-block:${headingPath}:${kind}:${structuralOrdinal}`,
         lineHint: cursor + 1,
       },
       text,
+      curationItemId: `item.${shortId(legacyAnchor)}`,
     })
     cursor = end
   }
@@ -550,6 +563,7 @@ function itemIdFor(definition: SourceDefinition, located: LocatedText): string {
       ? undefined
       : legacyProtectedTextIds[normalizeRuleText(located.text)]
   if (legacyId !== undefined) return legacyId
+  if (located.curationItemId !== undefined) return located.curationItemId
   if (definition.sourceId === 'fk-charter' && located.locator.kind === 'table-row') {
     return `item.${located.locator.anchor.toLowerCase()}`
   }
@@ -574,6 +588,806 @@ function itemIdFor(definition: SourceDefinition, located: LocatedText): string {
     return `item.hard-rule-${numbered[1]}`
   }
   return `item.${shortId(located.locator.anchor)}`
+}
+
+const R11_CURATED_ITEM_SEMANTICS: Readonly<
+  Record<
+    string,
+    {
+      readonly classification: RuleClassification
+      readonly identity: readonly [string, string]
+      readonly applicability: AuthorityRule['applicability']
+    }
+  >
+> = {
+  'spec-convention:item.276e79bdc002': {
+    classification: 'pre-action-refusal',
+    identity: ['spec.allowed-files-schema', 'exact-paths-and-no-globs'],
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['coordinator', 'shaper', 'builder'],
+      stages: ['shaping', 'step-zero', 'build'],
+      operations: ['spec-mutation', 'repo-mutation'],
+      hosts: ['any'],
+    },
+  },
+  'spec-convention:item.c4828bcd6dfa': {
+    classification: 'pre-action-refusal',
+    identity: [
+      'spec.unlisted-path-amendment',
+      'stop-and-coordinator-ratification-no-self-expansion',
+    ],
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['builder'],
+      stages: ['step-zero', 'build'],
+      operations: ['spec-mutation', 'repo-mutation'],
+      hosts: ['any'],
+    },
+  },
+  'parcel-driven-development:item.78ff0093607e': {
+    classification: 'pre-action-refusal',
+    identity: ['spec.contract-amendment-authority', 'parcel-agent-cannot-edit-approved-contract'],
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['builder'],
+      stages: ['build'],
+      operations: ['spec-mutation', 'repo-mutation'],
+      hosts: ['any'],
+    },
+  },
+  'parcel-driven-development:item.cef628a1fce0': {
+    classification: 'ci-static-check',
+    identity: ['parcel.session-handoff', 'changed-session-requires-handoff'],
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['coordinator', 'shaper', 'builder', 'reviewer'],
+      stages: ['shaping', 'build', 'adversarial-review', 'closure'],
+      operations: ['repo-mutation', 'state-transition'],
+      hosts: ['any'],
+    },
+  },
+}
+
+const R11_COMPOUND_ITEM_SEMANTICS: Readonly<
+  Record<
+    string,
+    readonly {
+      readonly suffix: string
+      readonly normalizedStatement: string
+      readonly identity: readonly [string, string]
+      readonly applicability: AuthorityRule['applicability']
+    }[]
+  >
+> = {
+  'coordinator-pattern:item.47b2eaa2f9ef': [
+    {
+      suffix: 'ownership',
+      normalizedStatement:
+        'One goal, one coordinator: the loop directive carries an ownership block, and ownership transfers only at parcel boundaries via that block',
+      identity: ['goal.coordinator-ownership', 'single-owner-transfer-only-at-parcel-boundaries'],
+      applicability: {
+        goals: ['all-foreman-goals'],
+        roles: ['coordinator'],
+        stages: ['runtime'],
+        operations: ['state-transition'],
+        hosts: ['provider-neutral'],
+      },
+    },
+    {
+      suffix: 'frozen-contract',
+      normalizedStatement: 'a frozen contract needs modification',
+      identity: ['goal.stop.ratified-boundary', 'stop-when-frozen-contract-needs-modification'],
+      applicability: {
+        goals: ['all-foreman-goals'],
+        roles: ['coordinator'],
+        stages: ['runtime'],
+        operations: ['spec-mutation'],
+        hosts: ['provider-neutral'],
+      },
+    },
+    {
+      suffix: 'tripwire',
+      normalizedStatement: 'a tripwire fires twice on one parcel',
+      identity: ['goal.stop.tripwire', 'stop-when-tripwire-fires-twice'],
+      applicability: {
+        goals: ['all-foreman-goals'],
+        roles: ['coordinator'],
+        stages: ['runtime'],
+        operations: ['state-transition'],
+        hosts: ['provider-neutral'],
+      },
+    },
+    {
+      suffix: 'security-boundary',
+      normalizedStatement: "a security finding can't close in-parcel",
+      identity: [
+        'goal.stop.security-boundary',
+        'stop-when-security-finding-cannot-close-in-parcel',
+      ],
+      applicability: {
+        goals: ['all-foreman-goals'],
+        roles: ['coordinator'],
+        stages: ['runtime'],
+        operations: ['state-transition'],
+        hosts: ['provider-neutral'],
+      },
+    },
+    {
+      suffix: 'external-capability',
+      normalizedStatement: 'anything outward-facing beyond the standing authorizations',
+      identity: [
+        'goal-stop.external-capability',
+        'stop-outward-facing-beyond-standing-authorization',
+      ],
+      applicability: {
+        goals: ['all-foreman-goals'],
+        roles: ['coordinator'],
+        stages: ['runtime'],
+        operations: ['external-write'],
+        hosts: ['provider-neutral'],
+      },
+    },
+    {
+      suffix: 'empty-queue',
+      normalizedStatement: 'queue empty',
+      identity: ['goal.stop.incomplete-empty-queue', 'stop-when-queue-empty-before-exit'],
+      applicability: {
+        goals: ['all-foreman-goals'],
+        roles: ['coordinator'],
+        stages: ['runtime'],
+        operations: ['state-transition'],
+        hosts: ['provider-neutral'],
+      },
+    },
+  ],
+}
+
+const R11_APPLICABILITY_OVERRIDES: Readonly<Record<string, AuthorityRule['applicability']>> = {
+  'fk-loop-directive:item.7a05d374a3b1': {
+    goals: ['foreman-kernel'],
+    roles: ['coordinator'],
+    stages: [
+      'stage-zero',
+      'shaping',
+      'step-zero',
+      'build',
+      'deterministic-verify',
+      'adversarial-review',
+      'merge',
+      'closure',
+      'runtime',
+    ],
+    operations: ['state-transition'],
+    hosts: ['any'],
+  },
+  'fk-loop-directive:item.23f92834c1c8': {
+    goals: ['foreman-kernel'],
+    roles: ['coordinator'],
+    stages: ['shaping', 'runtime'],
+    operations: ['spec-mutation'],
+    hosts: ['any'],
+  },
+  'fk-loop-directive:item.d7945b743a67': {
+    goals: ['foreman-kernel'],
+    roles: ['coordinator'],
+    stages: ['build', 'deterministic-verify', 'adversarial-review', 'runtime'],
+    operations: ['state-transition'],
+    hosts: ['any'],
+  },
+  'fk-loop-directive:item.37f78aa591c5': {
+    goals: ['foreman-kernel'],
+    roles: ['coordinator'],
+    stages: ['shaping', 'build', 'adversarial-review', 'runtime'],
+    operations: ['state-transition'],
+    hosts: ['any'],
+  },
+  'fk-loop-directive:item.237865e0993f': {
+    goals: ['foreman-kernel'],
+    roles: ['coordinator'],
+    stages: ['closure', 'runtime'],
+    operations: ['state-transition'],
+    hosts: ['any'],
+  },
+}
+
+const R11_PERMISSION_PROFILE_CURATION: Readonly<
+  Record<
+    string,
+    {
+      readonly classification: RuleClassification
+      readonly applicability: AuthorityRule['applicability']
+    }
+  >
+> = {
+  'permission-profiles-registry:item.7faf78a6f54a': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['builder'],
+      stages: ['step-zero', 'build'],
+      operations: ['external-write'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.26c5e2b211da': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['builder'],
+      stages: ['step-zero', 'build'],
+      operations: ['external-write'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.1d221ed65b72': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['builder'],
+      stages: ['step-zero', 'build'],
+      operations: ['repo-mutation'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.1ce0fd439b3e': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['builder'],
+      stages: ['step-zero', 'build'],
+      operations: ['external-write'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.39e65fb31709': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['builder'],
+      stages: ['step-zero', 'build'],
+      operations: ['external-write'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.ffd949ad76c3': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['builder'],
+      stages: ['step-zero', 'build'],
+      operations: ['repo-mutation'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.c9cb62068f14': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['builder'],
+      stages: ['step-zero', 'build'],
+      operations: ['external-write'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.0ed672bcdee8': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['builder'],
+      stages: ['step-zero', 'build'],
+      operations: ['external-write'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.947d19fbeb35': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['builder'],
+      stages: ['step-zero', 'build'],
+      operations: ['external-write'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.5a359d80896b': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['builder'],
+      stages: ['step-zero', 'build'],
+      operations: ['external-write'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.ee0641be06f2': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['builder'],
+      stages: ['step-zero', 'build'],
+      operations: ['repo-mutation'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.cf29180bce81': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['builder'],
+      stages: ['step-zero', 'build'],
+      operations: ['external-write'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.4f213acde8e0': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['builder'],
+      stages: ['step-zero', 'build'],
+      operations: ['external-write'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.397a3eb4c7ad': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['builder'],
+      stages: ['step-zero', 'build'],
+      operations: ['repo-mutation'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.b9e7c5644f49': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['builder'],
+      stages: ['step-zero', 'build'],
+      operations: ['external-write'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.861d14c80da2': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['builder'],
+      stages: ['step-zero', 'build'],
+      operations: ['external-write'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.fe1bbb0564f6': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['builder'],
+      stages: ['step-zero', 'build'],
+      operations: ['repo-mutation'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.803732fe3411': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['builder'],
+      stages: ['step-zero', 'build'],
+      operations: ['external-write'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.b77e9988c19d': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['builder'],
+      stages: ['step-zero', 'build'],
+      operations: ['external-write'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.8cf9d57aa29c': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['builder'],
+      stages: ['step-zero', 'build'],
+      operations: ['repo-mutation'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.b01d14453456': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['coordinator'],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: ['external-write'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.315ebd655fbe': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['coordinator'],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: ['external-write'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.8e8e3c78500b': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['coordinator'],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: ['repo-mutation'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.4c9cd1062bc6': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['coordinator'],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: ['external-write'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.060989ad78ea': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['coordinator'],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: ['external-write'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.30b62f67dc13': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['coordinator'],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: ['repo-mutation'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.f7f03a01fd3a': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['reviewer'],
+      stages: ['adversarial-review'],
+      operations: ['repo-mutation'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.35cf0f58fc34': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['reviewer'],
+      stages: ['adversarial-review'],
+      operations: ['repo-mutation'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.dedb7349c943': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['reviewer'],
+      stages: ['adversarial-review'],
+      operations: ['repo-mutation'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.b7ab94d73ef4': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['reviewer'],
+      stages: ['adversarial-review'],
+      operations: ['external-write'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.9ab0d5db8ebf': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['reviewer'],
+      stages: ['adversarial-review'],
+      operations: ['repo-mutation'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.ea8666a98ca1': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['reviewer'],
+      stages: ['adversarial-review'],
+      operations: ['repo-mutation'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.3a54e390a3e1': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['reviewer'],
+      stages: ['adversarial-review'],
+      operations: ['repo-mutation'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.eb314ad28f5e': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['reviewer'],
+      stages: ['adversarial-review'],
+      operations: ['repo-mutation'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.14569d4abb87': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['reviewer'],
+      stages: ['adversarial-review'],
+      operations: ['repo-mutation'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.7943c5773fba': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['reviewer'],
+      stages: ['adversarial-review'],
+      operations: ['repo-mutation'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.2ca898541627': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['reviewer'],
+      stages: ['adversarial-review'],
+      operations: ['external-write'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.23838f138908': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['reviewer'],
+      stages: ['adversarial-review'],
+      operations: ['repo-mutation'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.6d850a4b4948': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['reviewer'],
+      stages: ['adversarial-review'],
+      operations: ['repo-mutation'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.f1d63df02914': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['reviewer'],
+      stages: ['adversarial-review'],
+      operations: ['repo-mutation'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.60eb2cbc6f43': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['shaper'],
+      stages: ['shaping'],
+      operations: ['external-write'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.1e0db040f9d8': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['shaper'],
+      stages: ['shaping'],
+      operations: ['external-write'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.e477240aeb8e': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['shaper'],
+      stages: ['shaping'],
+      operations: ['repo-mutation'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.074c70cc9d55': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['shaper'],
+      stages: ['shaping'],
+      operations: ['repo-mutation'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.5705a054df96': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['shaper'],
+      stages: ['shaping'],
+      operations: ['repo-mutation'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.b6db9d1f4737': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['shaper'],
+      stages: ['shaping'],
+      operations: ['repo-mutation'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.92b60e67dfba': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['shaper'],
+      stages: ['shaping'],
+      operations: ['repo-mutation'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.b8a82b2446d9': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['shaper'],
+      stages: ['shaping'],
+      operations: ['external-write'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.1fa440b2fe59': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['shaper'],
+      stages: ['shaping'],
+      operations: ['external-write'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.3641610e292b': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['shaper'],
+      stages: ['shaping'],
+      operations: ['repo-mutation'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.854101218a6d': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['shaper'],
+      stages: ['shaping'],
+      operations: ['repo-mutation'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.e4d0bc5dc904': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['shaper'],
+      stages: ['shaping'],
+      operations: ['repo-mutation'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.7b5310ad887b': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['shaper'],
+      stages: ['shaping'],
+      operations: ['repo-mutation'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:item.6ac66b888a40': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['shaper'],
+      stages: ['shaping'],
+      operations: ['repo-mutation'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
 }
 
 const R10_CURATED_ITEM_SEMANTICS: Readonly<
@@ -1370,7 +2184,10 @@ const CURATED_ITEM_CLASSIFICATIONS: Readonly<Record<string, RuleClassification>>
 function curatedClassificationFor(sourceId: string, itemId: string): RuleClassification {
   const key = `${sourceId}:${itemId}`
   const classification =
-    R10_CURATED_ITEM_SEMANTICS[key]?.classification ?? CURATED_ITEM_CLASSIFICATIONS[key]
+    R11_PERMISSION_PROFILE_CURATION[key]?.classification ??
+    R11_CURATED_ITEM_SEMANTICS[key]?.classification ??
+    R10_CURATED_ITEM_SEMANTICS[key]?.classification ??
+    CURATED_ITEM_CLASSIFICATIONS[key]
   if (classification === undefined) {
     throw new Error(`published item '${sourceId}:${itemId}' lacks literal curated classification`)
   }
@@ -2570,7 +3387,10 @@ function authorityIdentityFor(
   authorityClaim: string
 } | null {
   const key = `${sourceId}:${itemId}`
-  const identity = R10_CURATED_ITEM_SEMANTICS[key]?.identity ?? CURATED_ITEM_IDENTITIES[key]
+  const identity =
+    R11_CURATED_ITEM_SEMANTICS[key]?.identity ??
+    R10_CURATED_ITEM_SEMANTICS[key]?.identity ??
+    CURATED_ITEM_IDENTITIES[key]
   return identity === undefined
     ? null
     : { authoritySubject: identity[0], authorityClaim: identity[1] }
@@ -10109,6 +10929,9 @@ const CURATED_ITEM_APPLICABILITY = {
 function curatedApplicabilityFor(sourceId: string, itemId: string): AuthorityRule['applicability'] {
   const key = `${sourceId}:${itemId}`
   const applicability =
+    R11_PERMISSION_PROFILE_CURATION[key]?.applicability ??
+    R11_CURATED_ITEM_SEMANTICS[key]?.applicability ??
+    R11_APPLICABILITY_OVERRIDES[key] ??
     R10_CURATED_ITEM_SEMANTICS[key]?.applicability ??
     CURATED_ITEM_APPLICABILITY[key as keyof typeof CURATED_ITEM_APPLICABILITY]
   if (applicability === undefined) {
@@ -10119,9 +10942,18 @@ function curatedApplicabilityFor(sourceId: string, itemId: string): AuthorityRul
 
 function ruleShape(
   classification: RuleClassification,
+  sourceItemKey: string,
 ): Pick<AuthorityRule, 'decision' | 'refusalCode' | 'enforcementOwner' | 'assurance'> {
   switch (classification) {
     case 'pre-action-refusal':
+      if (R11_GATE2_ALLOW_ITEMS.has(sourceItemKey)) {
+        return {
+          decision: 'ALLOW',
+          refusalCode: null,
+          enforcementOwner: 'kernel-policy',
+          assurance: 'structural',
+        }
+      }
       return {
         decision: 'REFUSE',
         refusalCode: 'FK_CANON_RULE_REFUSED',
@@ -10268,7 +11100,8 @@ function buildSource(definition: SourceDefinition): {
       }
     }
     const authorityIdentity = authorityIdentityFor(definition.sourceId, itemId)
-    if (authorityIdentity === null) {
+    const compoundSemantics = R11_COMPOUND_ITEM_SEMANTICS[`${definition.sourceId}:${itemId}`]
+    if (authorityIdentity === null && compoundSemantics === undefined) {
       const duplicateRuleId = publishedByStatement.get(normalizedExcerpt)
       const structuralCoverage =
         (definition.sourceId === 'spec-linter-validator' && itemId === 'item.80563af1788e') ||
@@ -10303,10 +11136,59 @@ function buildSource(definition: SourceDefinition): {
       locatorDigest: locatorDigestFor(locator),
       valueDigest,
     }
+    if (compoundSemantics !== undefined) {
+      const ruleIds: string[] = []
+      for (const compound of compoundSemantics) {
+        const ruleId = `rule.${definition.sourceId}.${itemId.replace(/^item\./, '')}.${compound.suffix}`
+        const shape = ruleShape(
+          'pre-action-refusal',
+          `${definition.sourceId}:${itemId}:${compound.suffix}`,
+        )
+        const baseRule: AuthorityRule = {
+          ruleId,
+          authoritySubject: compound.identity[0],
+          authorityClaim: compound.identity[1],
+          normalizedStatement: normalizeRuleText(compound.normalizedStatement),
+          sourceRefs: [sourceRef],
+          authorityBasisRef: sourceRef,
+          applicability: compound.applicability,
+          severity: 'critical',
+          classification: 'pre-action-refusal',
+          ...shape,
+          pairedRuleIds: [],
+          retirementState: 'active-reading',
+          retirementEvidence: {
+            predicate: null,
+            negativeRefusalTest: null,
+            corpusSweep: null,
+            independentBypassAttempt: null,
+          },
+          bindingDigest: '',
+        }
+        const rule = { ...baseRule, bindingDigest: bindingDigestFor(baseRule) }
+        rules.push(rule)
+        ruleIds.push(ruleId)
+      }
+      publishedByStatement.set(normalizedExcerpt, ruleIds[0] as string)
+      return {
+        itemId,
+        locator,
+        normalizedExcerpt,
+        valueDigest,
+        ruleIds,
+        exclusionDisposition: null,
+        rationale:
+          'Compound normative source block is mapped to distinct source-bound rules for each independently operative clause.',
+      }
+    }
+    if (authorityIdentity === null) {
+      throw new Error(`published item '${definition.sourceId}:${itemId}' lacks authority identity`)
+    }
     const classification = curatedClassificationFor(definition.sourceId, itemId)
-    const baseSemantics = ruleShape(classification)
+    const baseSemantics = ruleShape(classification, `${definition.sourceId}:${itemId}`)
     const semantics =
-      definition.sourceId === 'permission-profiles-validator' &&
+      (definition.sourceId === 'permission-profiles-validator' ||
+        R11_PERMISSION_PROFILE_CURATION[`${definition.sourceId}:${itemId}`] !== undefined) &&
       classification === 'pre-action-refusal'
         ? {
             ...baseSemantics,
@@ -10548,6 +11430,14 @@ function requiredReconciliations(
   const charterAllowed = get('fk-charter', 'item.d10')
   const charterOperationalBoundary = get('fk-charter', 'item.d2')
   const charterVerification = get('fk-charter', 'item.5c1f19dd9911')
+  const legacyCharterGate3Ref: SourceRef = {
+    ...charterGate3.ref,
+    locatorDigest: 'f8ffc0669f2e67b5d14d6916c639d77d2d1170f687d2da78aee73d35eec09cbf',
+  }
+  const legacyCharterVerificationRef: SourceRef = {
+    ...charterVerification.ref,
+    locatorDigest: 'd696d9d5da3531f0be97ae65cb027077c47a113eeefc0de56d5f0ea56dcd8232',
+  }
   const coordinatorCommentary = get('coordinator-pattern', 'item.d62734f662a0')
   const coordinatorGate3 = get('coordinator-pattern', 'item.f7686ab58db7')
   const conventionGate3 = get('spec-convention', 'item.022fc00afe7b')
@@ -10556,6 +11446,7 @@ function requiredReconciliations(
   const conventionSurfaces = get('spec-convention', 'item.ac5ff7afd06f')
   const conventionAllowed = get('spec-convention', 'item.5145ab15549c')
   const conventionStop = get('spec-convention', 'item.fd82127bf9f9')
+  const r11ProtectedStop = get('spec-convention', 'item.c4828bcd6dfa')
   const linter = [get('spec-frontmatter-schema', 'item.bdf997c3cd45')]
   const linterProfileMissing = get('spec-linter-validator', 'item.092d2fc43a32')
   const linterProfileWarning = get('spec-linter-validator', 'item.fb7d76a32df4')
@@ -10603,6 +11494,7 @@ function requiredReconciliations(
   const r8Manifest = 'dc213f213342f6ac744bf4ece7c3c322315d6946f894b7bfbd37db96954d0002'
   const r9Manifest = '825b3a04cdd506762cba1bbb6c7d007dd4b163e40be5dad733b97482d92f9df6'
   const r10Manifest = '99d9bed01cd5a7957457e24c82cbcc3645ebf591415d6072c26130d3b8a2e8d7'
+  const r11Manifest = 'dd775924c5fe88f24f3aa1c545e2501fe9ca3ef8f9cedb0541cf043d0ae36257'
   const commandEvidence = (commandId: string, inputDigest: string, resultDigest: string) =>
     canonicalJson({
       tool: '@foreman-line/authority-registry',
@@ -10643,7 +11535,7 @@ function requiredReconciliations(
     reconciliationMany(
       'gate3-delegation',
       'Generic contingent Gate 3 delegation versus FK nondelegated human merge authority.',
-      [coordinatorGate3.ref, conventionGate3.ref, historicalGate3.ref, charterGate3.ref],
+      [coordinatorGate3.ref, conventionGate3.ref, historicalGate3.ref, legacyCharterGate3Ref],
       [charterGate3.ruleId],
       'resolved-for-fk',
       'Goal-charter scope withholds Gate 3 delegation for Foreman Kernel.',
@@ -10980,7 +11872,7 @@ function requiredReconciliations(
     {
       reconciliationId: 'registry-rework-91145d7',
       topic: 'R8 registry bindings superseded by the coordinator-ratified FK-P0 R9 amendment.',
-      observedRefs: [charterVerification.ref],
+      observedRefs: [legacyCharterVerificationRef],
       observedEvidence: [
         {
           kind: 'git-commit',
@@ -11017,7 +11909,7 @@ function requiredReconciliations(
       unresolvedConsequence:
         'Future binding changes require another typed prior-to-new migration record.',
       migrationStatus: 'superseded-by-amendment',
-      supersedingEvidence: charterVerification.ref,
+      supersedingEvidence: legacyCharterVerificationRef,
     },
     {
       reconciliationId: 'registry-rework-1b42f4b',
@@ -11060,6 +11952,52 @@ function requiredReconciliations(
         'Future binding changes require another typed prior-to-new migration record.',
       migrationStatus: 'superseded-by-amendment',
       supersedingEvidence: coordinatorCommentary.ref,
+    },
+    {
+      reconciliationId: 'registry-rework-ee29973',
+      topic: 'R10 registry bindings superseded by the coordinator-ratified FK-P0 R11 amendment.',
+      observedRefs: [r11ProtectedStop.ref],
+      observedEvidence: [
+        {
+          kind: 'git-commit',
+          reference: 'f3366be12175acb4fd4aeb32c301c845b906a5da',
+          digest: sha256(
+            execFileSync('git', ['cat-file', '-p', 'f3366be12175acb4fd4aeb32c301c845b906a5da'], {
+              cwd: repoRoot,
+            }),
+          ),
+        },
+        {
+          kind: 'git-commit',
+          reference: SNAPSHOT,
+          digest: sha256(execFileSync('git', ['cat-file', '-p', SNAPSHOT], { cwd: repoRoot })),
+        },
+        {
+          kind: 'command-result',
+          reference: commandEvidence(
+            'registry-binding-manifest-r10',
+            sha256(SNAPSHOT),
+            r10Manifest,
+          ),
+          digest: sha256(
+            commandEvidence('registry-binding-manifest-r10', sha256(SNAPSHOT), r10Manifest),
+          ),
+        },
+        {
+          kind: 'command-result',
+          reference: commandEvidence('superseding-binding-manifest-r11', r10Manifest, r11Manifest),
+          digest: sha256(
+            commandEvidence('superseding-binding-manifest-r11', r10Manifest, r11Manifest),
+          ),
+        },
+      ],
+      authoritativeRuleIds: [r11ProtectedStop.ruleId],
+      scopedDisposition:
+        'The R11 structural Markdown identity, atomic compound semantics, protected normative blocks, mediated profile scope, and explicit Gate 2 decision contract supersede the R10 registry bindings in FK scope.',
+      unresolvedConsequence:
+        'Future binding changes require another typed prior-to-new migration record.',
+      migrationStatus: 'superseded-by-amendment',
+      supersedingEvidence: r11ProtectedStop.ref,
     },
   ]
 }
