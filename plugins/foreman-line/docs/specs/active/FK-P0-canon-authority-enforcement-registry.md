@@ -380,6 +380,14 @@ item hash/suffix, `requires-<hash>`, or a source-ID-plus-item namespace is inval
 rejects any rule absent from the curated manifest and any manifest entry whose basis text does
 not substantively support its semantics.
 
+Classification is a literal required field in every per-item curation entry. No source-wide
+branch, source-kind branch, keyword rule, or terminal default may assign classification; absence
+of an exact curated classification fails closed. This prohibition includes a terminal
+`narrative-provenance` fallback. Operative loop-directive grants, gates,
+verification-custody requirements, stop conditions, completion conditions, and required wave
+exits must carry their honest operative classification rather than inheriting narrative status
+from their source.
+
 The curation manifest has one explicit entry per published source/item; source-wide or multi-item
 omnibus branches are prohibited. Two different normalized statements may share a subject because
 they answer the same question, but they may share a claim only when a separate closed
@@ -387,6 +395,12 @@ they answer the same question, but they may share a claim only when a separate c
 that record, distinct statements require distinct human-readable claims. At minimum, distinct
 `SPEC-CONVENTION` lifecycle, status/folder, mutation-authority, approval, and validation statements
 are independently curated rather than labeled with one omnibus lifecycle claim.
+Charter and loop-directive statements that answer the same authority question use the same
+authority subject even when their claims remain distinct. In particular, the loop Gate 2 grant,
+human-owned Gate 3 rule, and coordinator verification-custody rule align respectively with
+`gate2.dispatch-grant`, `gate3.merge-authority`, and the exact charter verification subject; a
+source-local queue/authorization subject may not fragment those questions or make an
+out-of-scope query pass by subject mismatch.
 
 Exclusions use one closed code plus an item-specific rationale:
 `heading-only | table-header | structural-ast | schema-container | duplicate-exact-statement |
@@ -405,12 +419,25 @@ All nine numbered goal-exit requirements and all seventeen charter stop-conditio
 protected normative items and must be published individually; headings/intros may be excluded,
 but no exit/stop body may be `non-normative-explanation`. Wave exit contracts in the loop
 directive are likewise published when they state required completion or gate conditions.
+The charter's thirteen integration scenarios, five initial refusal-class rows, and all twenty-two
+ratified parcel-graph rows are also protected normative items. Each scenario's required outcome,
+each refusal class's initial classification/evidence duty, and each parcel's owner/dependency or
+serialization contract is individually published with a basis-supported classification,
+authority subject/claim, and literal applicability. They cannot be excluded as
+`non-normative-explanation`, collapsed into a table container, or represented only by the two
+currently active/next queue rows.
 
 Each curation entry contains a literal complete five-axis applicability record. No helper may
 derive applicability from classification, decision, source kind, or a default “all axes” branch;
 there is no applicability fallback. Validation binds that per-entry literal and tests natural
 out-of-scope queries for protected grants. In particular, the Gate 2 coordinator-dispatch grant
 does not resolve for builder/runtime/external-write/unsupported-host.
+This applies to every published loop-directive rule as well as charter, standing, PDD, linter,
+schema, and profile rules. A loop grant, gate, stop, completion, or verification rule cannot use
+all roles/stages/operations/hosts merely because it came from the loop source. The Gate 2 negative
+query must stay out of scope after considering every rule under the shared
+`gate2.dispatch-grant` subject, not by filtering a narrative classification or using a different
+subject.
 
 An absence claim such as “no Allowed Files body compiler exists” cannot use one unrelated return
 statement as its authority basis. Such a claim is represented only by its exact reconciliation
@@ -614,6 +641,12 @@ diagnostic fails.
   comment-to-EOF and cannot hide following prose; it is inventoried as visible malformed content
   or produces an uncovered-item violation. A line is excluded only when no visible normalized
   text remains. A closed comment prefix cannot hide visible prose.
+- Fence opener and closer validity is determined from the raw normalized Markdown lines before
+  HTML comment masking. The resulting paired-fence line set is then combined with the visible-text
+  view for block discovery. Comment removal may never delete a backtick from a backtick fence info
+  string and thereby turn a raw invalid opener into a valid hiding fence. Specifically, a raw
+  backtick opener whose info text is `lang<!--` followed by a backtick and `-->` remains invalid
+  and cannot suppress the following prose.
 - Fenced code follows CommonMark fence boundaries: the opener has at most three leading spaces,
   uses backticks or tildes, and records delimiter kind and run length; only the same delimiter
   with at least the opener's run length and at most three leading spaces closes it. Mixed
@@ -624,7 +657,9 @@ diagnostic fails.
   Markdown and cannot begin fence state. Tilde info strings follow CommonMark independently.
   Every Markdown discovery pass—paragraphs, headings, numbered rules, tables, and additive
   D/R/PDD/gate checks—consumes the same paired-fence/comment-aware block map. No secondary raw-line
-  scanner may rediscover valid fenced examples as operative headings or numbered rules.
+  scanner may rediscover valid fenced examples as operative headings or numbered rules. Every
+  numbered-rule scanner iterates by line index and skips the shared fenced-line set, including the
+  standing-constraints additive scanner as well as PDD and goal/loop scans.
 - TypeScript discovery uses the TypeScript compiler syntax tree, not a regular-expression list of
   declaration spellings. Inventory every non-import top-level statement and each complete
   function/method/constructor/accessor/arrow body, including function, const, let, var, class,
@@ -754,6 +789,16 @@ a competing owner for `authority-registry`, or relies on self-asserted authority
 
 ## Required Tests
 
+R9 starts from the independently verified R8 baseline of 350 passing tests. The builder adds at
+least eleven independently named R9 controls and the final combined suite contains at least 361
+tests. The R9 controls separately cover: thirteen scenario publications; five refusal-row
+publications; twenty-two parcel-row publications; literal classification on every curated rule;
+absence of source/default classification fallback; loop Gate 2 subject/classification/
+applicability; loop Gate 3 subject/classification/applicability; exact coordinator verification
+custody; operative loop stop/completion semantics; the raw mixed comment/backtick info-string
+case; and a valid fenced standing-constraint number. A combined count-only assertion cannot
+replace any named control.
+
 - Schema acceptance/rejection and TypeScript/JSON-Schema parity.
 - Shipped full-registry validation and exact locator/value coverage of the source corpus; a
   separate parcel-time check records full-file snapshot hashes without shipping a byte freeze.
@@ -839,8 +884,11 @@ a competing owner for `authority-registry`, or relies on self-asserted authority
   move nested allow/ask/deny/network entries. TypeScript controls prove ambient declarations stay
   benign while runtime namespaces/enums/static blocks/object methods/IIFEs/dynamic imports fail.
 - Fence controls reject a backtick info string containing a backtick and prove visible following
-  prose is inventoried. Valid fenced headings, D/R rows, and numbered PDD examples remain ignored
-  by every discovery layer, not re-scanned as raw Markdown.
+  prose is inventoried. A backtick opener whose info text contains the mixed
+  `lang<!--` + backtick + `-->` sequence is a required negative control: comment masking cannot
+  make it valid, and following binding prose produces the stable uncovered result. Valid fenced
+  headings, D/R rows, numbered PDD examples, and a standing-constraints `14. **MUST ...**`
+  example remain ignored by every discovery layer, not re-scanned as raw Markdown.
 - Curated-rule controls reject every hash-derived/fallback subject or claim and prove every
   non-normative inventory item is explicitly excluded rather than emitted as a pseudo-rule. They
   reject generic/combined exclusion rationales, protected normative exclusions, unlisted shared
@@ -855,6 +903,12 @@ a competing owner for `authority-registry`, or relies on self-asserted authority
   stop bullets, and every normative wave-exit body. They reject any classification/default-based
   applicability fallback, assert each published entry carries literal applicability, and prove
   the Gate 2 grant does not resolve in a builder/runtime/external-write/unsupported-host query.
+  They also require all thirteen integration scenarios, all five initial refusal-class rows, and
+  all twenty-two parcel-graph contracts to be individually published; reject every source-wide or
+  terminal classification fallback; require literal curated classification for every published
+  item; and assert the loop Gate 2, Gate 3, verification, stop, and completion rules have honest
+  classifications, shared authority subjects where they answer the charter's question, and
+  precise per-item applicability.
 - The unrelated linter return statement is excluded and cannot substantiate the absence of an
   Allowed Files body compiler; the reconciliation remains the only carrier of that scoped finding.
 - Source-manifest controls mutate each `snapshotEvidence` commit/hash field and prove failure,
