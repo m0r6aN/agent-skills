@@ -174,7 +174,17 @@ export interface InventoryItem {
   readonly normalizedExcerpt: string
   readonly valueDigest: string
   readonly ruleIds: readonly string[]
-  readonly exclusionDisposition: 'not-rule' | 'duplicate-provenance' | 'out-of-scope' | null
+  readonly exclusionDisposition:
+    | 'heading-only'
+    | 'table-header'
+    | 'structural-ast'
+    | 'schema-container'
+    | 'duplicate-exact-statement'
+    | 'non-normative-explanation'
+    | 'example-only'
+    | 'fenced-code'
+    | 'type-only'
+    | null
   readonly rationale: string
 }
 export interface CanonSource {

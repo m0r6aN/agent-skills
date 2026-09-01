@@ -178,9 +178,15 @@
                 },
                 "exclusionDisposition": {
                   "enum": [
-                    "not-rule",
-                    "duplicate-provenance",
-                    "out-of-scope",
+                    "heading-only",
+                    "table-header",
+                    "structural-ast",
+                    "schema-container",
+                    "duplicate-exact-statement",
+                    "non-normative-explanation",
+                    "example-only",
+                    "fenced-code",
+                    "type-only",
                     null
                   ]
                 },

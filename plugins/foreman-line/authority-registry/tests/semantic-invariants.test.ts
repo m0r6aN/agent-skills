@@ -57,12 +57,12 @@ test('each of the six classifications is accepted and summarized independently',
   const result = validateRegistry(valid)
   assert.equal(result.valid, true)
   assert.deepEqual(result.summary?.classificationCounts, {
-    'pre-action-refusal': 33,
-    'post-action-detection': 4,
-    'ci-static-check': 19,
-    'independent-review-human-judgment': 5,
-    'narrative-provenance': 130,
-    unsupported: 9,
+    'pre-action-refusal': 94,
+    'post-action-detection': 5,
+    'ci-static-check': 40,
+    'independent-review-human-judgment': 8,
+    'narrative-provenance': 113,
+    unsupported: 12,
   })
 })
 
@@ -1137,9 +1137,9 @@ const shippedResolverVectors = [
     role: 'builder',
     stage: 'build',
     operation: 'repo-mutation',
-    host: 'provider-neutral',
+    host: 'claude-windows-docker-loaded',
     outcome: 'RESOLVED',
-    claim: 'loaded-session-mediated-denial',
+    claim: 'loaded-refusal-versus-unenrollment-detection-boundary',
   },
   {
     subject: 'standing.provenance',
@@ -1169,11 +1169,7 @@ for (const vector of shippedResolverVectors) {
 
 test('R4 corroborating source ref cannot promote a rule above its authority basis', () => {
   const mutated = structuredClone(full)
-  const rule = mutated.rules.find(
-    (candidate) =>
-      candidate.authoritySubject === 'permission-profile.enforcement-bound' &&
-      candidate.classification === 'pre-action-refusal',
-  )
+  const rule = mutated.rules.find((candidate) => candidate.ruleId === 'rule.fk-charter.d7')
   const corroborating = mutated.rules.find(
     (candidate) => candidate.sourceRefs[0]?.sourceId === 'standing-constraints',
   )?.sourceRefs[0]
@@ -1186,7 +1182,7 @@ test('R4 corroborating source ref cannot promote a rule above its authority basi
     role: 'builder',
     stage: 'build',
     operation: 'repo-mutation',
-    host: 'provider-neutral',
+    host: 'claude-windows-docker-loaded',
   })
   assert.equal(result.outcome, 'RESOLVED')
   if (result.outcome === 'RESOLVED') assert.equal(result.authorityClaim, rule.authorityClaim)
@@ -1245,7 +1241,7 @@ const applicabilityVectors = [
       ['builder', 'reviewer'],
       ['builder', 'coordinator'],
       ['builder', 'coordinator'],
-      ['coordinator', 'builder'],
+      ['builder', 'reviewer'],
       ['builder', 'reviewer'],
       ['builder', 'reviewer'],
       ['builder', 'reviewer'],
@@ -1428,7 +1424,11 @@ const r5ApplicabilityManifest = {
     ['shaping', 'step-zero', 'build'],
     ['repo-mutation'],
   ],
-  'rule.parcel-driven-development.hard-rule-6': [['coordinator'], ['build'], ['repo-mutation']],
+  'rule.parcel-driven-development.hard-rule-6': [
+    ['coordinator', 'builder'],
+    ['build'],
+    ['repo-mutation'],
+  ],
   'rule.parcel-driven-development.hard-rule-7': [
     ['builder', 'ci'],
     ['build', 'deterministic-verify'],
@@ -1583,7 +1583,7 @@ test('R6 structural TypeScript coverage items are exclusions, not pseudo-authori
   assert.ok(imports.length > 0)
   for (const item of imports) {
     assert.deepEqual(item.ruleIds, [])
-    assert.equal(item.exclusionDisposition, 'not-rule')
+    assert.equal(item.exclusionDisposition, 'structural-ast')
   }
 })
 
@@ -1608,6 +1608,7 @@ for (const reconciliationId of [
   'registry-rework-9285945',
   'registry-rework-6f45963',
   'registry-rework-b414d06',
+  'registry-rework-00b41b7',
 ] as const) {
   test(`R6 reconciliation ${reconciliationId} rejects appended evidence`, () => {
     const mutated = structuredClone(full)
@@ -1713,5 +1714,138 @@ for (const vector of [
     })
     assert.equal(result.outcome, 'RESOLVED')
     if (result.outcome === 'RESOLVED') assert.deepEqual(result.controllingRuleIds, [vector.ruleId])
+  })
+}
+
+test('R7 Gate 1 binds original ratification scoped re-ratification and nondelegability', () => {
+  const operation = full.operationAuthority.find((row) => row.operationId === 'gate1.ratify')
+  assert.ok(operation)
+  const statements = operation.requiredGitEvidence.map((reference) => {
+    const source = full.sources.find((candidate) => candidate.sourceId === reference.sourceId)
+    return source?.inventoryItems.find((item) => item.itemId === reference.itemId)
+      ?.normalizedExcerpt
+  })
+  assert.ok(statements.some((text) => text?.includes('Ratify Gate 1 and authorize Gate 2')))
+  assert.ok(statements.some((text) => text?.includes('Re-ratify Gate 1 amendments R1–R13')))
+  assert.ok(statements.some((text) => text?.includes('Gate 1 is nondelegable')))
+})
+
+test('R7 Gate 2 binds the standing charter grant and operative loop authorization', () => {
+  const operation = full.operationAuthority.find((row) => row.operationId === 'gate2.dispatch')
+  assert.ok(operation)
+  const statements = operation.requiredGitEvidence.map((reference) => {
+    const source = full.sources.find((candidate) => candidate.sourceId === reference.sourceId)
+    return source?.inventoryItems.find((item) => item.itemId === reference.itemId)
+      ?.normalizedExcerpt
+  })
+  assert.ok(statements.some((text) => text?.includes('AUTHORIZED AND RESUMED 2026-08-31')))
+  assert.ok(
+    statements.some((text) => text?.includes('Gate 2 dispatch') && text.includes('FK-P0–FK-P21')),
+  )
+})
+
+test('R7 every exclusion uses the closed item-specific code vocabulary', () => {
+  const allowed = new Set([
+    'heading-only',
+    'table-header',
+    'structural-ast',
+    'schema-container',
+    'duplicate-exact-statement',
+    'non-normative-explanation',
+    'example-only',
+    'fenced-code',
+    'type-only',
+  ])
+  for (const source of full.sources) {
+    for (const item of source.inventoryItems.filter(
+      (candidate) => candidate.ruleIds.length === 0,
+    )) {
+      assert.ok(allowed.has(item.exclusionDisposition ?? ''), `${source.sourceId}:${item.itemId}`)
+      assert.doesNotMatch(item.rationale, /metadata, explanatory context, or duplicate provenance/i)
+    }
+  }
+})
+
+test('R7 shared semantic identities are limited to the two curated equivalent claims', () => {
+  const groups = new Map<string, string[]>()
+  for (const rule of full.rules) {
+    const key = `${rule.authoritySubject}|${rule.authorityClaim}`
+    const ruleIds = groups.get(key) ?? []
+    ruleIds.push(rule.ruleId)
+    groups.set(key, ruleIds)
+  }
+  assert.deepEqual(
+    [...groups.entries()]
+      .filter(([, ruleIds]) => ruleIds.length > 1)
+      .map(([key, ruleIds]) => [key, ruleIds.sort()] as const)
+      .sort(([left], [right]) => left.localeCompare(right)),
+    [
+      [
+        'gate3.merge-authority|human-owned-nondelegated',
+        [
+          'rule.fk-charter.b1ac4aa9eddf',
+          'rule.fk-charter.c74628d41600',
+          'rule.foreman-line-plan.c92333c21e64',
+        ],
+      ],
+      [
+        'spec.mutation-authority|exact-allowed-files-required',
+        [
+          'rule.fk-charter.d10',
+          'rule.spec-convention.5145ab15549c',
+          'rule.spec-convention.fd82127bf9f9',
+        ],
+      ],
+    ],
+  )
+})
+
+test('R7 all charter decisions D1 through D20 publish active non-narrative authority', () => {
+  for (let index = 1; index <= 20; index += 1) {
+    const rule = full.rules.find((candidate) => candidate.ruleId === `rule.fk-charter.d${index}`)
+    assert.ok(rule, `D${index}`)
+    assert.equal(rule.retirementState, 'active-reading', `D${index}`)
+    assert.notEqual(rule.classification, 'narrative-provenance', `D${index}`)
+    assert.notEqual(rule.classification, 'unsupported', `D${index}`)
+  }
+})
+
+for (const vector of [
+  {
+    name: 'D2 canon and operational authority split',
+    subject: 'canon.operational-authority-boundary',
+    claim: 'git-canon-sqlite-operational-split',
+    ruleId: 'rule.fk-charter.d2',
+    role: 'builder',
+  },
+  {
+    name: 'D18 provider-neutral authorizeAction owner',
+    subject: 'kernel.authorize-action-owner',
+    claim: 'provider-neutral-policy-engine',
+    ruleId: 'rule.fk-charter.d18',
+    role: 'builder',
+  },
+  {
+    name: 'PDD6 builder pre-PR rebase',
+    subject: 'parcel.pre-pr-base',
+    claim: 'rebase-before-pr',
+    ruleId: 'rule.parcel-driven-development.hard-rule-6',
+    role: 'builder',
+  },
+] as const) {
+  test(`R7 natural resolution: ${vector.name}`, () => {
+    const result = resolveAuthority(full, {
+      authoritySubject: vector.subject,
+      goal: 'foreman-kernel',
+      role: vector.role,
+      stage: 'build',
+      operation: 'repo-mutation',
+      host: 'provider-neutral',
+    })
+    assert.equal(result.outcome, 'RESOLVED')
+    if (result.outcome === 'RESOLVED') {
+      assert.equal(result.authorityClaim, vector.claim)
+      assert.deepEqual(result.controllingRuleIds, [vector.ruleId])
+    }
   })
 }

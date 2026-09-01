@@ -45,6 +45,7 @@ const REQUIRED_REWORK_MIGRATIONS = [
   'registry-rework-9285945',
   'registry-rework-6f45963',
   'registry-rework-b414d06',
+  'registry-rework-00b41b7',
 ] as const
 const REQUIRED_OPERATIONS = [
   'gate1.ratify',
@@ -221,13 +222,7 @@ const RECONCILIATION_CONTRACT = {
     topic: 'Live six-profile enum behavior versus stale deferred-registry explanation.',
     status: 'resolved-for-fk',
     refs: [
-      'spec-frontmatter-schema:item.860f1c1146f4',
-      'spec-frontmatter-schema:item.1dddb8e0edae',
-      'spec-frontmatter-schema:item.fbc219d0ff13',
-      'spec-frontmatter-schema:item.cc7db94c11c2',
-      'spec-frontmatter-schema:item.7443d95fc46b',
-      'spec-frontmatter-schema:item.0a36842682ef',
-      'spec-frontmatter-schema:item.d6246c2593db',
+      'spec-frontmatter-schema:item.bdf997c3cd45',
       'spec-linter-validator:item.092d2fc43a32',
       'spec-linter-validator:item.fb7d76a32df4',
       'spec-linter-validator:item.80563af1788e',
@@ -236,16 +231,10 @@ const RECONCILIATION_CONTRACT = {
       'spec-convention:item.e6f5fa8543a1',
     ],
     rules: [
-      'rule.spec-frontmatter-schema.860f1c1146f4',
-      'rule.spec-frontmatter-schema.1dddb8e0edae',
-      'rule.spec-frontmatter-schema.fbc219d0ff13',
-      'rule.spec-frontmatter-schema.cc7db94c11c2',
-      'rule.spec-frontmatter-schema.7443d95fc46b',
-      'rule.spec-frontmatter-schema.0a36842682ef',
-      'rule.spec-frontmatter-schema.d6246c2593db',
-      'rule.spec-linter-validator.092d2fc43a32',
-      'rule.spec-linter-validator.fb7d76a32df4',
-      'rule.spec-linter-validator.80563af1788e',
+      'rule.spec-frontmatter-schema.bdf997c3cd45',
+      'rule.spec-linter-readme.9a889881a236',
+      'rule.spec-linter-readme.b4f5d76d68ec',
+      'rule.spec-convention.e6f5fa8543a1',
     ],
   },
   'surfaces-allowed-files': {
@@ -288,10 +277,10 @@ const RECONCILIATION_CONTRACT = {
       'fk-charter:item.d7',
     ],
     rules: [
-      'rule.permission-profiles-validator.dcd8638af4a4',
-      'rule.permission-profiles-validator.9c3c17055384',
-      'rule.permission-profiles-validator.4da758cc157c',
-      'rule.permission-profiles-validator.ffd598413a66',
+      'rule.permission-profiles-readme.729be3615f8d',
+      'rule.permission-profiles-readme.d11b9d38f924',
+      'rule.permission-profiles-readme.1101805f1c9e',
+      'rule.permission-profiles-readme.415efa3f5e3b',
       'rule.fk-charter.d7',
     ],
   },
@@ -334,16 +323,51 @@ const RECONCILIATION_CONTRACT = {
     refs: ['fk-charter:item.d10'],
     rules: ['rule.fk-charter.d10'],
   },
+  'registry-rework-00b41b7': {
+    topic: 'R6 registry bindings superseded by the coordinator-ratified FK-P0 R7 amendment.',
+    status: 'superseded-by-amendment',
+    refs: ['fk-charter:item.d2'],
+    rules: ['rule.fk-charter.d2'],
+  },
 } as const
 
 const SHIPPED_BINDING_MANIFEST_DIGEST =
-  '644e1336c2e4309bc75954cb24e921d4cf6d3a75b0ccc7cb926de34a8ca553c6'
+  '2a12cde0f3ae481462c74cb5c0cb2377514f628cb0091c26f916705a4778de77'
+const SEMANTIC_EQUIVALENCE: readonly {
+  readonly authoritySubject: string
+  readonly authorityClaim: string
+  readonly ruleIds: readonly string[]
+  readonly rationale: string
+}[] = [
+  {
+    authoritySubject: 'spec.mutation-authority',
+    authorityClaim: 'exact-allowed-files-required',
+    ruleIds: [
+      'rule.fk-charter.d10',
+      'rule.spec-convention.5145ab15549c',
+      'rule.spec-convention.fd82127bf9f9',
+    ],
+    rationale: 'Each item independently requires exact Allowed Files as parcel mutation authority.',
+  },
+  {
+    authoritySubject: 'gate3.merge-authority',
+    authorityClaim: 'human-owned-nondelegated',
+    ruleIds: [
+      'rule.fk-charter.b1ac4aa9eddf',
+      'rule.fk-charter.c74628d41600',
+      'rule.foreman-line-plan.c92333c21e64',
+    ],
+    rationale: 'Both items state that the merge decision remains human-owned.',
+  },
+]
 const PRIOR_R3_BINDING_MANIFEST_DIGEST =
   '48a82df7d6da19352e4c9d2d99195835743a27f163a5d13a4f8d5b2a76a75a61'
 const PRIOR_R4_BINDING_MANIFEST_DIGEST =
   '375ea566b2858d3204d17e0625332167a373b555db6d3a8b741af88f1390e082'
 const PRIOR_R5_BINDING_MANIFEST_DIGEST =
   '589c6c3ea98147a951ab8887fd70a1a1c50e8b84953abcbe51b152a256da6ad9'
+const PRIOR_R6_BINDING_MANIFEST_DIGEST =
+  '644e1336c2e4309bc75954cb24e921d4cf6d3a75b0ccc7cb926de34a8ca553c6'
 
 const RECONCILIATION_PROSE: Readonly<Record<string, readonly [string, string]>> = {
   'gate-namespace-count': [
@@ -386,22 +410,27 @@ const RECONCILIATION_PROSE: Readonly<Record<string, readonly [string, string]>> 
     'The R6 curated publication, source-honest applicability, and complete reconciliation contract supersedes the R5 registry bindings in FK scope.',
     'Future binding changes require another typed prior-to-new migration record.',
   ],
+  'registry-rework-00b41b7': [
+    'The R7 item-specific curation, protected evidence, and complete discovery contract supersedes the R6 registry bindings in FK scope.',
+    'Future binding changes require another typed prior-to-new migration record.',
+  ],
 }
 
 const RECONCILIATION_RECORD_DIGESTS: Readonly<Record<string, string>> = {
   'gate-namespace-count': '23f3549859f81eddfd5645dc3de3ffe07997c624cd75d61d3410645b710968d3',
   'gate3-delegation': '13f5094dc781381ad5c1124f094af5f6f57b462c73df3fd3925e2b844c3f53c6',
   'spec-linter-profile-behavior':
-    '80632188d2e21684ca3cf458a567fabba5b5b3fb2caaaed470dbd77bed8efb95',
+    '48c147ae850d5779e763c187ee9381bc2b824e299764eeb15869f57dce2e553c',
   'surfaces-allowed-files': '472c152d6cfea31b5ab41b61d66e877106f2512c61dc36918511d89a301467cd',
   'permission-profile-enforcement-bound':
-    '68fa04781f9d90da1b5d3c03f104c53b8423ef051851143ea008a2b09032d298',
+    '6558689b94ae965d85c60cef8cc7d9086278f38c755276b74953d2613440eda2',
   'missing-provenance-reference':
     'ed49c8796d80a450fbb272d7aaba9c1159225e54bbf5d96e0a441cf757135b80',
   'registry-rework-6eb1c25': 'c2b4971fd67a81df51ab33931fda17122c06de67ce5cc6ef857380704348fd6d',
   'registry-rework-9285945': 'fc10cc1e7f98635521a8fbc65ba34895415b8901d62c49790b8b3e7337fd3fb1',
   'registry-rework-6f45963': '3954ba2fc23122f82f6d68e294a180b8dc789983e2bb3da0198c79f8550513d9',
   'registry-rework-b414d06': '8a7c1fdd61cbb664d6c9b1b0aefcba1dc35dc26873eff711bbfada8480247d7f',
+  'registry-rework-00b41b7': '7113ebbad6811a3dfd4f14302f736ac11074c04943686eea28a1de820c75e9c9',
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -677,8 +706,8 @@ function checkOperationAuthority(document: AuthorityEnforcementRegistry): Valida
   const violations: ValidationViolation[] = []
   const rows = new Map(document.operationAuthority.map((row) => [row.operationId, row]))
   const evidenceContract: Readonly<Record<string, readonly string[]>> = {
-    'gate1.ratify': ['fk-charter:item.b1ac4aa9eddf'],
-    'gate2.dispatch': ['fk-charter:item.afbcffd2d557', 'fk-loop-directive:item.bfffee6d7c1f'],
+    'gate1.ratify': ['fk-charter:item.cd014d6d90c5', 'fk-charter:item.d9'],
+    'gate2.dispatch': ['fk-charter:item.15a44cf50bc6', 'fk-loop-directive:item.bfffee6d7c1f'],
     'gate3.merge': [
       'fk-charter:item.b1ac4aa9eddf',
       'fk-loop-directive:item.7eb6018d9e57',
@@ -939,6 +968,46 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
           ),
         )
       }
+      if (item.exclusionDisposition !== null) {
+        if (/metadata, explanatory context, or duplicate provenance/i.test(item.rationale)) {
+          violations.push(
+            violation('RULE_SEMANTICS_UNCURATED', 'exclusion rationale uses a generic catch-all', {
+              sourcePath: source.path,
+              locator: item.locator.anchor,
+            }),
+          )
+        }
+        const protectedNormative =
+          item.locator.kind !== 'heading' &&
+          (/^item\.(?:d(?:[1-9]|1\d|20)|r(?:[1-9]|1[0-3])|constraint-(?:[1-9]|1[0-3])|hard-rule-(?:[1-9]|1[0-5]))$/.test(
+            item.itemId,
+          ) ||
+            ((item.locator.kind === 'line-excerpt' ||
+              item.locator.kind === 'numbered-item' ||
+              item.locator.kind === 'table-row') &&
+              /\b(?:MUST|required|prohibited|stop condition|Gate [123])\b/i.test(
+                item.normalizedExcerpt,
+              )))
+        if (protectedNormative) {
+          violations.push(
+            violation('RULE_SEMANTICS_UNCURATED', 'protected normative item cannot be excluded', {
+              sourcePath: source.path,
+              locator: item.locator.anchor,
+            }),
+          )
+        }
+        if (
+          item.exclusionDisposition === 'duplicate-exact-statement' &&
+          !/rule\.[a-z0-9.-]+/.test(item.rationale)
+        ) {
+          violations.push(
+            violation('RULE_SEMANTICS_UNCURATED', 'duplicate exclusion must name the exact rule', {
+              sourcePath: source.path,
+              locator: item.locator.anchor,
+            }),
+          )
+        }
+      }
       if (sha256(normalizeRuleText(item.normalizedExcerpt)) !== item.valueDigest) {
         violations.push(
           violation(
@@ -982,6 +1051,34 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
       )
     }
     rulesById.set(rule.ruleId, rule)
+  }
+
+  const semanticGroups = new Map<string, AuthorityRule[]>()
+  for (const rule of document.rules) {
+    const key = `${rule.authoritySubject}\u0000${rule.authorityClaim}`
+    const group = semanticGroups.get(key) ?? []
+    group.push(rule)
+    semanticGroups.set(key, group)
+  }
+  for (const group of semanticGroups.values()) {
+    if (group.length < 2 || new Set(group.map((rule) => rule.normalizedStatement)).size < 2)
+      continue
+    const ruleIds = group.map((rule) => rule.ruleId).sort()
+    const equivalence = SEMANTIC_EQUIVALENCE.find(
+      (entry) =>
+        entry.authoritySubject === group[0]?.authoritySubject &&
+        entry.authorityClaim === group[0]?.authorityClaim &&
+        [...entry.ruleIds].sort().join('|') === ruleIds.join('|'),
+    )
+    if (equivalence === undefined) {
+      violations.push(
+        violation(
+          'RULE_SEMANTICS_UNCURATED',
+          'distinct statements share one claim without exact semantic equivalence',
+          { ruleId: ruleIds[0] },
+        ),
+      )
+    }
   }
 
   for (const source of document.sources) {
@@ -1461,6 +1558,34 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
         )
       }
     }
+    if (record.reconciliationId === 'registry-rework-00b41b7') {
+      const gitRefs = record.observedEvidence
+        .filter((e) => e.kind === 'git-commit')
+        .map((e) => e.reference)
+      const commands = record.observedEvidence.filter((e) => e.kind === 'command-result')
+      const resultDigests = commands.flatMap((e) => {
+        try {
+          const value = JSON.parse(e.reference) as { resultDigest?: unknown }
+          return typeof value.resultDigest === 'string' ? [value.resultDigest] : []
+        } catch {
+          return []
+        }
+      })
+      if (
+        gitRefs.join('|') !==
+          `6123474485ef836fc7250df9c15695aaff44fe45|${document.sourceSnapshotCommit}` ||
+        commands.length !== 2 ||
+        !resultDigests.includes(PRIOR_R6_BINDING_MANIFEST_DIGEST) ||
+        !resultDigests.includes(SHIPPED_BINDING_MANIFEST_DIGEST)
+      ) {
+        violations.push(
+          violation(
+            'MIGRATION_EVIDENCE_INVALID',
+            'R7 migration does not bind the prior R6 registry commit, source snapshot, and superseding manifest',
+          ),
+        )
+      }
+    }
     for (const ruleId of record.authoritativeRuleIds) {
       if (!rulesById.has(ruleId)) {
         violations.push(
@@ -1574,8 +1699,8 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
     }
     {
       const expectedEvidence: Readonly<Record<string, readonly string[]>> = {
-        'gate1.ratify': ['fk-charter:item.b1ac4aa9eddf'],
-        'gate2.dispatch': ['fk-charter:item.afbcffd2d557', 'fk-loop-directive:item.bfffee6d7c1f'],
+        'gate1.ratify': ['fk-charter:item.cd014d6d90c5', 'fk-charter:item.d9'],
+        'gate2.dispatch': ['fk-charter:item.15a44cf50bc6', 'fk-loop-directive:item.bfffee6d7c1f'],
         'gate3.merge': [
           'fk-charter:item.b1ac4aa9eddf',
           'fk-loop-directive:item.7eb6018d9e57',
@@ -1651,25 +1776,56 @@ export function parseRegistry(content: string): ValidationResult {
 function stripMarkdownHtmlComments(content: string): string {
   let visible = ''
   let cursor = 0
-  let inComment = false
   while (cursor < content.length) {
-    if (!inComment && content.startsWith('<!--', cursor)) {
-      visible += '    '
-      cursor += 4
-      inComment = true
+    if (content.startsWith('<!--', cursor)) {
+      const close = content.indexOf('-->', cursor + 4)
+      if (close < 0) {
+        visible += content[cursor]
+        cursor += 1
+        continue
+      }
+      const span = content.slice(cursor, close + 3)
+      visible += span.replace(/[^\r\n]/g, ' ')
+      cursor = close + 3
       continue
     }
-    if (inComment && content.startsWith('-->', cursor)) {
-      visible += '   '
-      cursor += 3
-      inComment = false
-      continue
-    }
-    const character = content[cursor] as string
-    visible += inComment && character !== '\n' && character !== '\r' ? ' ' : character
+    visible += content[cursor]
     cursor += 1
   }
   return visible
+}
+
+function pairedFenceLines(lines: readonly string[]): Set<number> {
+  const fenced = new Set<number>()
+  let cursor = 0
+  while (cursor < lines.length) {
+    const opener = /^( {0,3})(`{3,}|~{3,})(.*)$/.exec(lines[cursor] ?? '')
+    if (opener === null) {
+      cursor += 1
+      continue
+    }
+    const delimiter = opener[2] as string
+    const marker = delimiter[0] as string
+    let close = -1
+    for (let index = cursor + 1; index < lines.length; index += 1) {
+      const candidate = /^( {0,3})(`{3,}|~{3,})\s*$/.exec(lines[index] ?? '')
+      if (
+        candidate !== null &&
+        candidate[2]?.[0] === marker &&
+        (candidate[2]?.length ?? 0) >= delimiter.length
+      ) {
+        close = index
+        break
+      }
+    }
+    if (close < 0) {
+      cursor += 1
+      continue
+    }
+    for (let index = cursor; index <= close; index += 1) fenced.add(index)
+    cursor = close + 1
+  }
+  return fenced
 }
 
 function markdownBlockMap(content: string, sourceId: string): Map<string, string> {
@@ -1678,16 +1834,11 @@ function markdownBlockMap(content: string, sourceId: string): Map<string, string
   const lines = stripMarkdownHtmlComments(content).replace(/\r\n?/g, '\n').split('\n')
   const headings: { level: number; text: string }[] = []
   const occurrences = new Map<string, number>()
+  const fenced = pairedFenceLines(lines)
   let cursor = 0
-  let inFence = false
   while (cursor < lines.length) {
     const line = lines[cursor] ?? ''
-    if (/^\s*(?:```|~~~)/.test(line)) {
-      inFence = !inFence
-      cursor += 1
-      continue
-    }
-    if (inFence) {
+    if (fenced.has(cursor)) {
       cursor += 1
       continue
     }
@@ -1713,12 +1864,7 @@ function markdownBlockMap(content: string, sourceId: string): Map<string, string
     if (!table) {
       while (end < lines.length) {
         const next = lines[end] ?? ''
-        if (
-          next.trim() === '' ||
-          /^#{1,6}\s+/.test(next) ||
-          /^\s*\|/.test(next) ||
-          /^\s*(?:```|~~~)/.test(next)
-        )
+        if (next.trim() === '' || /^#{1,6}\s+/.test(next) || /^\s*\|/.test(next) || fenced.has(end))
           break
         if (list && /^\s*(?:[-*+] |\d+\. )/.test(next)) break
         end += 1
@@ -1748,6 +1894,11 @@ function tsNodeName(node: ts.Node): string | null {
 }
 
 function isTypeOnlyTopLevel(node: ts.Statement): boolean {
+  const modifiers = (node as ts.Statement & { readonly modifiers?: readonly ts.ModifierLike[] })
+    .modifiers
+  if (modifiers?.some((modifier) => modifier.kind === ts.SyntaxKind.DeclareKeyword)) {
+    return true
+  }
   if (ts.isImportDeclaration(node)) {
     const clause = node.importClause
     if (clause === undefined) return false
@@ -1770,6 +1921,42 @@ function isTypeOnlyTopLevel(node: ts.Statement): boolean {
         (declaration) => declaration.initializer === undefined && declaration.type !== undefined,
       ))
   )
+}
+
+function runtimeImportRecord(node: ts.ImportDeclaration): {
+  readonly anchor: string
+  readonly value: string
+} {
+  const moduleName = (node.moduleSpecifier as ts.StringLiteral).text
+  const clause = node.importClause
+  if (clause === undefined) {
+    const value = canonicalJson({ module: moduleName, sideEffect: true })
+    return { anchor: `ts-import:${moduleName}:side-effect`, value }
+  }
+  const defaultBinding = clause.name?.text ?? null
+  let namespaceBinding: string | null = null
+  const namedBindings: string[] = []
+  if (clause.namedBindings !== undefined) {
+    if (ts.isNamespaceImport(clause.namedBindings)) {
+      namespaceBinding = clause.namedBindings.name.text
+    } else {
+      for (const element of clause.namedBindings.elements) {
+        if (element.isTypeOnly) continue
+        const imported = element.propertyName?.text ?? element.name.text
+        namedBindings.push(
+          imported === element.name.text ? imported : `${imported} as ${element.name.text}`,
+        )
+      }
+    }
+  }
+  namedBindings.sort()
+  const value = canonicalJson({
+    defaultBinding,
+    module: moduleName,
+    namedBindings,
+    namespaceBinding,
+  })
+  return { anchor: `ts-import:${moduleName}:${value}`, value }
 }
 
 function tsSemanticValue(node: ts.Node, sourceFile: ts.SourceFile): string {
@@ -1834,13 +2021,14 @@ export function typescriptConstructMap(content: string): Map<string, string> {
     let topAnchor =
       name === null ? `ts-top:${topIndex}:${ts.SyntaxKind[statement.kind]}` : `ts-construct:${name}`
     if (ts.isImportDeclaration(statement)) {
-      const moduleName = statement.moduleSpecifier.getText(sourceFile).slice(1, -1)
-      const clause = statement.importClause?.getText(sourceFile) ?? '(side-effect)'
-      topAnchor = `ts-import:${moduleName}:${normalizeRuleText(clause)}`
+      const canonicalImport = runtimeImportRecord(statement)
+      topAnchor = canonicalImport.anchor
+      result.set(topAnchor, canonicalImport.value)
     } else if (ts.isImportEqualsDeclaration(statement)) {
       topAnchor = `ts-import-equals:${normalizeRuleText(statement.getText(sourceFile))}`
     }
-    result.set(topAnchor, tsSemanticValue(statement, sourceFile))
+    if (!ts.isImportDeclaration(statement))
+      result.set(topAnchor, tsSemanticValue(statement, sourceFile))
     const visit = (node: ts.Node, path: string): void => {
       if (hasCallableBody(node)) {
         const namePart = tsNodeName(node) ?? 'anonymous'
@@ -1884,6 +2072,39 @@ function jsonConstraintMap(content: string): Map<string, string> {
   return result
 }
 
+export function permissionProfileRuleMap(content: string): Map<string, string> {
+  const parsed = parse(content) as {
+    profiles?: Record<string, { envelope?: Record<string, unknown> }>
+  }
+  const result = new Map<string, string>()
+  for (const profileName of Object.keys(parsed.profiles ?? {}).sort()) {
+    const envelope = parsed.profiles?.[profileName]?.envelope ?? {}
+    const visit = (value: unknown, path: string): void => {
+      if (Array.isArray(value)) {
+        if (value.length === 0) {
+          result.set(`yaml-rule:${profileName}:${path}:[]`, '[]')
+          return
+        }
+        for (const member of [...value].map(canonicalJson).sort()) {
+          result.set(`yaml-rule:${profileName}:${path}:${member}`, member)
+        }
+        return
+      }
+      if (value !== null && typeof value === 'object') {
+        for (const key of Object.keys(value as Record<string, unknown>).sort()) {
+          visit((value as Record<string, unknown>)[key], `${path}/${key}`)
+        }
+        return
+      }
+      result.set(`yaml-rule:${profileName}:${path}`, canonicalJson(value))
+    }
+    for (const key of ['allow', 'ask', 'deny', 'network']) {
+      if (key in envelope) visit(envelope[key], key)
+    }
+  }
+  return result
+}
+
 function extractLocator(content: string, locator: SourceLocator): { count: number; value: string } {
   const lines = content.replace(/\r\n?/g, '\n').split('\n')
   if (locator.kind === 'line-excerpt' && locator.anchor.startsWith('md-block:')) {
@@ -1907,6 +2128,14 @@ function extractLocator(content: string, locator: SourceLocator): { count: numbe
   if (locator.kind === 'symbol' && locator.anchor.startsWith('json-pointer:')) {
     try {
       const value = jsonConstraintMap(content).get(locator.anchor)
+      return { count: value === undefined ? 0 : 1, value: value ?? '' }
+    } catch {
+      return { count: 0, value: '' }
+    }
+  }
+  if (locator.kind === 'symbol' && locator.anchor.startsWith('yaml-rule:')) {
+    try {
+      const value = permissionProfileRuleMap(content).get(locator.anchor)
       return { count: value === undefined ? 0 : 1, value: value ?? '' }
     } catch {
       return { count: 0, value: '' }
@@ -2225,8 +2454,18 @@ export function sweepRegistrySources(document: unknown, repoRoot: string): Valid
         )
       }
     }
-    for (const [anchor] of markdownBlockMap(content, source.sourceId)) {
-      if (!source.inventoryItems.some((item) => item.locator.anchor === anchor)) {
+    for (const [anchor, discoveredValue] of markdownBlockMap(content, source.sourceId)) {
+      const coveredByExactTableItem =
+        anchor.includes(':table-row:') &&
+        source.inventoryItems.some(
+          (item) =>
+            item.locator.kind === 'table-row' &&
+            item.normalizedExcerpt === normalizeRuleText(discoveredValue),
+        )
+      if (
+        !coveredByExactTableItem &&
+        !source.inventoryItems.some((item) => item.locator.anchor === anchor)
+      ) {
         violations.push(
           violation('SOURCE_ITEM_UNCOVERED', 'binding prose block is not inventoried', {
             sourcePath: source.path,
@@ -2289,6 +2528,21 @@ export function sweepRegistrySources(document: unknown, repoRoot: string): Valid
           if (!source.inventoryItems.some((item) => item.locator.anchor.trim() === anchor)) {
             violations.push(
               violation('SOURCE_ITEM_UNCOVERED', 'permission profile is not inventoried', {
+                sourcePath: source.path,
+                locator: anchor,
+              }),
+            )
+          }
+        }
+        const registeredRules = new Set(
+          source.inventoryItems
+            .filter((item) => item.locator.anchor.startsWith('yaml-rule:'))
+            .map((item) => item.locator.anchor),
+        )
+        for (const anchor of permissionProfileRuleMap(content).keys()) {
+          if (!registeredRules.has(anchor)) {
+            violations.push(
+              violation('SOURCE_ITEM_UNCOVERED', 'permission profile rule is not inventoried', {
                 sourcePath: source.path,
                 locator: anchor,
               }),

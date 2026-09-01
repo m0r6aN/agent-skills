@@ -907,3 +907,122 @@ test('R6 additive TypeScript type-only import remains non-operative', () => {
     rmSync(tempRoot, { recursive: true, force: true })
   }
 })
+
+test('R7 unmatched HTML comment cannot hide following binding prose', () => {
+  const tempRoot = mkdtempSync(join(tmpdir(), 'fk-p0-unmatched-comment-'))
+  try {
+    copyCorpus(tempRoot)
+    const path = join(tempRoot, 'plugins/foreman-line/docs/goals/foreman-kernel/loop-directive.md')
+    writeFileSync(
+      path,
+      `${readFileSync(path, 'utf8')}\n<!-- unmatched\nOnly the coordinator may mint this new grant.\n`,
+    )
+    const result = sweepRegistrySources(registry, tempRoot)
+    assert.ok(result.violations.some((violation) => violation.code === 'SOURCE_ITEM_UNCOVERED'))
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true })
+  }
+})
+
+test('R7 four-space pseudo-fences cannot hide binding prose', () => {
+  const tempRoot = mkdtempSync(join(tmpdir(), 'fk-p0-indented-fence-'))
+  try {
+    copyCorpus(tempRoot)
+    const path = join(tempRoot, 'plugins/foreman-line/docs/goals/foreman-kernel/loop-directive.md')
+    writeFileSync(
+      path,
+      `${readFileSync(path, 'utf8')}\n    \`\`\`text\nOnly the coordinator may mint this new grant.\n    \`\`\`\n`,
+    )
+    const result = sweepRegistrySources(registry, tempRoot)
+    assert.ok(result.violations.some((violation) => violation.code === 'SOURCE_ITEM_UNCOVERED'))
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true })
+  }
+})
+
+test('R7 mixed fence delimiters do not close a correctly paired fence', () => {
+  const tempRoot = mkdtempSync(join(tmpdir(), 'fk-p0-mixed-fence-'))
+  try {
+    copyCorpus(tempRoot)
+    const path = join(tempRoot, 'plugins/foreman-line/docs/goals/foreman-kernel/loop-directive.md')
+    writeFileSync(
+      path,
+      `${readFileSync(path, 'utf8')}\n~~~text\n\`\`\`\nOnly the coordinator may mint this fenced example.\n~~~\n`,
+    )
+    const result = sweepRegistrySources(registry, tempRoot)
+    assert.equal(result.valid, true, JSON.stringify(result.violations, null, 2))
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true })
+  }
+})
+
+test('R7 mixed type and value import order is semantically stable', () => {
+  const tempRoot = mkdtempSync(join(tmpdir(), 'fk-p0-mixed-import-order-'))
+  try {
+    copyCorpus(tempRoot)
+    const path = join(tempRoot, 'plugins/foreman-line/spec-linter/src/validate.ts')
+    const content = readFileSync(path, 'utf8')
+    const changed = content.replace('{ Ajv, type SchemaObject }', '{ type SchemaObject, Ajv }')
+    assert.notEqual(changed, content)
+    writeFileSync(path, changed)
+    const result = sweepRegistrySources(registry, tempRoot)
+    assert.equal(result.valid, true, JSON.stringify(result.violations, null, 2))
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true })
+  }
+})
+
+test('R7 ambient declarations remain non-operative', () => {
+  const tempRoot = mkdtempSync(join(tmpdir(), 'fk-p0-ambient-declare-'))
+  try {
+    copyCorpus(tempRoot)
+    const path = join(tempRoot, 'plugins/foreman-line/spec-linter/src/validate.ts')
+    writeFileSync(
+      path,
+      `${readFileSync(path, 'utf8')}\ndeclare function r7AmbientProbe(): void\ndeclare namespace R7Ambient { interface Value { ok: true } }\n`,
+    )
+    const result = sweepRegistrySources(registry, tempRoot)
+    assert.equal(result.valid, true, JSON.stringify(result.violations, null, 2))
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true })
+  }
+})
+
+for (const [name, mutation] of [
+  ['add', (text: string) => text.replace('deny:', "deny:\n        - 'Bash(r7-new-deny*)'")],
+  ['delete', (text: string) => text.replace(/\n\s+- Bash\(git push\*\)/, '')],
+  ['retarget', (text: string) => text.replace('Bash(git push*)', 'Bash(git push --force*)')],
+  [
+    'move',
+    (text: string) =>
+      text
+        .replace("        - 'Bash(git push*)'", '')
+        .replace('ask:', "ask:\n        - 'Bash(git push*)'"),
+  ],
+] as const) {
+  test(`R7 permission-profile nested ${name} mutation is discovered`, () => {
+    const tempRoot = mkdtempSync(join(tmpdir(), `fk-p0-profile-${name}-`))
+    try {
+      copyCorpus(tempRoot)
+      const path = join(
+        tempRoot,
+        'plugins/foreman-line/permission-profiles/permission-profiles.yaml',
+      )
+      const content = readFileSync(path, 'utf8')
+      const changed = mutation(content)
+      assert.notEqual(changed, content)
+      writeFileSync(path, changed)
+      const result = sweepRegistrySources(registry, tempRoot)
+      assert.ok(
+        result.violations.some(
+          (violation) =>
+            violation.code === 'SOURCE_ITEM_UNCOVERED' ||
+            violation.code === 'VALUE_DIGEST_MISMATCH' ||
+            violation.code === 'LOCATOR_MISSING',
+        ),
+      )
+    } finally {
+      rmSync(tempRoot, { recursive: true, force: true })
+    }
+  })
+}

@@ -106,7 +106,7 @@ Six required typed records reconcile without rewriting historical sources:
 was edited or globally invalidated. The missing provenance record stays `open`, preserves all
 thirteen standing rules, and prevents their retirement.
 
-Four additional `superseded-by-amendment` records bind the R2, R4, R5, and R6 reworks to their prior
+Five additional `superseded-by-amendment` records bind the R2, R4, R5, R6, and R7 reworks to their prior
 registry commits, the pinned source snapshot, prior binding-manifest digests, superseding
 manifests, and complete controlling `SourceRef` values. A future coordinated
 identity/location/value change must
@@ -150,12 +150,15 @@ the clock, randomness, network, environment-derived identity, or Git mutation.
 Git-backed reconciliation evidence additionally requires the exact root of a real worktree,
 commit-typed objects, and commit-bound canonical missing-path evidence. The charter and loop
 directive use complete paragraph/list/table discovery with wrapping-stable semantic locators.
-Inventoried TypeScript sources use the TypeScript 7 compiler syntax tree for operative top-level
-statements, runtime value and side-effect imports, and nested callable bodies. Compiler-recognized
-type-only declarations and imports are intentionally non-operative, and import order is ignored
-only when the runtime module/binding set is unchanged. JSON schema leaves and permission-profile
-entries have their own source-aware inventories. These are bounded source-specific claims, not a
-general Markdown policy compiler.
+Properly paired HTML comments and CommonMark-compatible fence boundaries are the only Markdown
+spans suppressed by that discovery; visible text around comments, unmatched comments, mixed fence
+delimiters, and four-space pseudo-fences remain visible. Inventoried TypeScript sources use the
+TypeScript 7 compiler syntax tree for operative top-level statements, runtime value and side-effect
+imports, and nested callable bodies. Compiler-recognized ambient and type-only declarations or
+imports are intentionally non-operative, and import order is ignored only when the canonical
+runtime module/binding set is unchanged. JSON schema leaves and every permission-profile `allow`,
+`ask`, `deny`, and `network` entry have source-aware inventories. These are bounded source-specific
+claims, not a general Markdown policy compiler.
 
 Stable codes are closed to those exported by `RESULT_CODES` in `src/types.ts`.
 

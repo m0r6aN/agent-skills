@@ -24,6 +24,7 @@ import {
   canonicalJson,
   locatorDigestFor,
   normalizeRuleText,
+  permissionProfileRuleMap,
   sha256,
   typescriptConstructMap,
 } from './validate.js'
@@ -147,15 +148,6 @@ const SOURCE_DEFINITIONS: readonly SourceDefinition[] = [
     authorityTier: 'ratified-contract',
     authorityEffect: 'binding',
     scope: ['all-foreman-goals'],
-    anchors: [
-      '"permission_profile": {',
-      '"reviewer-readonly",',
-      '"builder-architecture",',
-      '"builder-standard",',
-      '"shaping-agent",',
-      '"builder-deps"',
-      '"coordinator",',
-    ],
   },
   {
     sourceId: 'spec-linter-validator',
@@ -270,25 +262,56 @@ interface LocatedText {
 function stripMarkdownHtmlComments(content: string): string {
   let visible = ''
   let cursor = 0
-  let inComment = false
   while (cursor < content.length) {
-    if (!inComment && content.startsWith('<!--', cursor)) {
-      visible += '    '
-      cursor += 4
-      inComment = true
+    if (content.startsWith('<!--', cursor)) {
+      const close = content.indexOf('-->', cursor + 4)
+      if (close < 0) {
+        visible += content[cursor]
+        cursor += 1
+        continue
+      }
+      const span = content.slice(cursor, close + 3)
+      visible += span.replace(/[^\r\n]/g, ' ')
+      cursor = close + 3
       continue
     }
-    if (inComment && content.startsWith('-->', cursor)) {
-      visible += '   '
-      cursor += 3
-      inComment = false
-      continue
-    }
-    const character = content[cursor] as string
-    visible += inComment && character !== '\n' && character !== '\r' ? ' ' : character
+    visible += content[cursor]
     cursor += 1
   }
   return visible
+}
+
+function pairedFenceLines(lines: readonly string[]): Set<number> {
+  const fenced = new Set<number>()
+  let cursor = 0
+  while (cursor < lines.length) {
+    const opener = /^( {0,3})(`{3,}|~{3,})(.*)$/.exec(lines[cursor] ?? '')
+    if (opener === null) {
+      cursor += 1
+      continue
+    }
+    const delimiter = opener[2] as string
+    const marker = delimiter[0] as string
+    let close = -1
+    for (let index = cursor + 1; index < lines.length; index += 1) {
+      const candidate = /^( {0,3})(`{3,}|~{3,})\s*$/.exec(lines[index] ?? '')
+      if (
+        candidate !== null &&
+        candidate[2]?.[0] === marker &&
+        (candidate[2]?.length ?? 0) >= delimiter.length
+      ) {
+        close = index
+        break
+      }
+    }
+    if (close < 0) {
+      cursor += 1
+      continue
+    }
+    for (let index = cursor; index <= close; index += 1) fenced.add(index)
+    cursor = close + 1
+  }
+  return fenced
 }
 
 function headingLocators(content: string): LocatedText[] {
@@ -317,14 +340,10 @@ function numberedItems(content: string): LocatedText[] {
   const stack: { level: number; heading: string }[] = []
   const items: { index: number; indent: number; anchor: string }[] = []
   const occurrences = new Map<string, number>()
-  let inFence = false
+  const fenced = pairedFenceLines(lines)
   for (let index = 0; index < lines.length; index += 1) {
     const line = lines[index] ?? ''
-    if (/^\s*(?:```|~~~)/.test(line)) {
-      inFence = !inFence
-      continue
-    }
-    if (inFence) continue
+    if (fenced.has(index)) continue
     const heading = /^(#{1,6})\s+.+/.exec(line)
     if (heading !== null) {
       const level = heading[1]?.length ?? 6
@@ -389,16 +408,11 @@ function markdownBindingBlocks(content: string, sourceId: string): LocatedText[]
   const headings: { level: number; text: string }[] = []
   const occurrences = new Map<string, number>()
   const blocks: LocatedText[] = []
+  const fenced = pairedFenceLines(lines)
   let cursor = 0
-  let inFence = false
   while (cursor < lines.length) {
     const line = lines[cursor] ?? ''
-    if (/^\s*(?:```|~~~)/.test(line)) {
-      inFence = !inFence
-      cursor += 1
-      continue
-    }
-    if (inFence) {
+    if (fenced.has(cursor)) {
       cursor += 1
       continue
     }
@@ -424,12 +438,7 @@ function markdownBindingBlocks(content: string, sourceId: string): LocatedText[]
     if (!table) {
       while (end < lines.length) {
         const next = lines[end] ?? ''
-        if (
-          next.trim() === '' ||
-          /^#{1,6}\s+/.test(next) ||
-          /^\s*\|/.test(next) ||
-          /^\s*(?:```|~~~)/.test(next)
-        )
+        if (next.trim() === '' || /^#{1,6}\s+/.test(next) || /^\s*\|/.test(next) || fenced.has(end))
           break
         if (list && /^\s*(?:[-*+] |\d+\. )/.test(next)) break
         end += 1
@@ -481,6 +490,13 @@ function jsonConstraints(content: string): LocatedText[] {
   }
   visit(root, '')
   return result
+}
+
+function permissionProfileRules(content: string): LocatedText[] {
+  return [...permissionProfileRuleMap(content)].map(([anchor, text], index) => ({
+    locator: { kind: 'symbol', anchor, lineHint: index + 1 },
+    text,
+  }))
 }
 
 function itemIdFor(definition: SourceDefinition, located: LocatedText): string {
@@ -538,26 +554,26 @@ function itemIdFor(definition: SourceDefinition, located: LocatedText): string {
 
 function classificationFor(sourceId: string, itemId: string): RuleClassification {
   const explicit: Readonly<Record<string, RuleClassification>> = {
-    'item.d1': 'narrative-provenance',
-    'item.d2': 'narrative-provenance',
+    'item.d1': 'ci-static-check',
+    'item.d2': 'ci-static-check',
     'item.d3': 'pre-action-refusal',
-    'item.d4': 'narrative-provenance',
+    'item.d4': 'ci-static-check',
     'item.d5': 'pre-action-refusal',
-    'item.d6': 'narrative-provenance',
-    'item.d7': 'narrative-provenance',
+    'item.d6': 'ci-static-check',
+    'item.d7': 'post-action-detection',
     'item.d8': 'post-action-detection',
     'item.d9': 'independent-review-human-judgment',
     'item.d10': 'pre-action-refusal',
     'item.d11': 'ci-static-check',
     'item.d12': 'pre-action-refusal',
     'item.d13': 'post-action-detection',
-    'item.d14': 'narrative-provenance',
+    'item.d14': 'ci-static-check',
     'item.d15': 'pre-action-refusal',
     'item.d16': 'pre-action-refusal',
     'item.d17': 'pre-action-refusal',
-    'item.d18': 'narrative-provenance',
+    'item.d18': 'ci-static-check',
     'item.d19': 'pre-action-refusal',
-    'item.d20': 'unsupported',
+    'item.d20': 'ci-static-check',
     'item.r1': 'narrative-provenance',
     'item.r2': 'pre-action-refusal',
     'item.r3': 'narrative-provenance',
@@ -600,8 +616,101 @@ function classificationFor(sourceId: string, itemId: string): RuleClassification
     'item.hard-rule-14': 'ci-static-check',
     'item.hard-rule-15': 'ci-static-check',
     'item.b1ac4aa9eddf': 'pre-action-refusal',
+    'item.bdf997c3cd45': 'ci-static-check',
+    'item.a583b7f02950': 'narrative-provenance',
+    'item.93d5d3978e5f': 'pre-action-refusal',
+    'item.cd014d6d90c5': 'independent-review-human-judgment',
+    'item.144bb836f528': 'pre-action-refusal',
+    'item.a087b0ab4c3b': 'ci-static-check',
+    'item.e9ec57edc0a2': 'pre-action-refusal',
+    'item.8cf027fc811e': 'independent-review-human-judgment',
+    'item.15a44cf50bc6': 'pre-action-refusal',
+    'item.c74628d41600': 'pre-action-refusal',
+    'item.d9921c51d7ea': 'pre-action-refusal',
+    'item.0afd841f51f8': 'pre-action-refusal',
+    'item.2cbbc7ae0192': 'pre-action-refusal',
+    'item.b0a3e204145f': 'narrative-provenance',
+    'item.1de06653021c': 'narrative-provenance',
+    'item.0979dba6c958': 'ci-static-check',
+    'item.75569dd4ae1a': 'independent-review-human-judgment',
+    'item.56a15a2f3220': 'ci-static-check',
+    'item.760cf6497075': 'pre-action-refusal',
+    'item.b3183ee0b5ab': 'unsupported',
+    'item.f8c108b3b431': 'unsupported',
+    'item.a26beda5342d': 'unsupported',
+    'item.27ce8e0a4adc': 'unsupported',
   }
   if (explicit[itemId] !== undefined) return explicit[itemId]
+  const profileRuleClassifications: Readonly<Record<string, RuleClassification>> = {
+    'item.1ec33a4741eb': 'ci-static-check',
+    'item.7faf78a6f54a': 'pre-action-refusal',
+    'item.26c5e2b211da': 'pre-action-refusal',
+    'item.1d221ed65b72': 'pre-action-refusal',
+    'item.1ce0fd439b3e': 'pre-action-refusal',
+    'item.39e65fb31709': 'pre-action-refusal',
+    'item.ffd949ad76c3': 'pre-action-refusal',
+    'item.c9cb62068f14': 'ci-static-check',
+    'item.13033f70c124': 'ci-static-check',
+    'item.947d19fbeb35': 'pre-action-refusal',
+    'item.5a359d80896b': 'pre-action-refusal',
+    'item.ee0641be06f2': 'pre-action-refusal',
+    'item.cf29180bce81': 'pre-action-refusal',
+    'item.4f213acde8e0': 'pre-action-refusal',
+    'item.397a3eb4c7ad': 'pre-action-refusal',
+    'item.f0613939994f': 'ci-static-check',
+    'item.58ef984a0faa': 'ci-static-check',
+    'item.50cd9c68ff51': 'ci-static-check',
+    'item.b9e7c5644f49': 'pre-action-refusal',
+    'item.861d14c80da2': 'pre-action-refusal',
+    'item.fe1bbb0564f6': 'pre-action-refusal',
+    'item.803732fe3411': 'pre-action-refusal',
+    'item.b77e9988c19d': 'pre-action-refusal',
+    'item.8cf9d57aa29c': 'pre-action-refusal',
+    'item.0ed672bcdee8': 'ci-static-check',
+    'item.bbb2cdb40927': 'ci-static-check',
+    'item.b01d14453456': 'pre-action-refusal',
+    'item.315ebd655fbe': 'pre-action-refusal',
+    'item.8e8e3c78500b': 'pre-action-refusal',
+    'item.4c9cd1062bc6': 'pre-action-refusal',
+    'item.060989ad78ea': 'pre-action-refusal',
+    'item.30b62f67dc13': 'pre-action-refusal',
+    'item.7417033cefc7': 'ci-static-check',
+    'item.f7f03a01fd3a': 'pre-action-refusal',
+    'item.35cf0f58fc34': 'pre-action-refusal',
+    'item.dedb7349c943': 'pre-action-refusal',
+    'item.b7ab94d73ef4': 'pre-action-refusal',
+    'item.9ab0d5db8ebf': 'pre-action-refusal',
+    'item.ea8666a98ca1': 'pre-action-refusal',
+    'item.3a54e390a3e1': 'pre-action-refusal',
+    'item.eb314ad28f5e': 'pre-action-refusal',
+    'item.14569d4abb87': 'pre-action-refusal',
+    'item.7943c5773fba': 'pre-action-refusal',
+    'item.2ca898541627': 'pre-action-refusal',
+    'item.23838f138908': 'pre-action-refusal',
+    'item.6d850a4b4948': 'pre-action-refusal',
+    'item.f1d63df02914': 'pre-action-refusal',
+    'item.8c5085e2ff63': 'ci-static-check',
+    'item.60eb2cbc6f43': 'pre-action-refusal',
+    'item.1e0db040f9d8': 'pre-action-refusal',
+    'item.e477240aeb8e': 'pre-action-refusal',
+    'item.074c70cc9d55': 'pre-action-refusal',
+    'item.5705a054df96': 'pre-action-refusal',
+    'item.b6db9d1f4737': 'pre-action-refusal',
+    'item.92b60e67dfba': 'pre-action-refusal',
+    'item.b8a82b2446d9': 'pre-action-refusal',
+    'item.1fa440b2fe59': 'pre-action-refusal',
+    'item.3641610e292b': 'pre-action-refusal',
+    'item.854101218a6d': 'pre-action-refusal',
+    'item.e4d0bc5dc904': 'pre-action-refusal',
+    'item.7b5310ad887b': 'pre-action-refusal',
+    'item.6ac66b888a40': 'pre-action-refusal',
+  }
+  if (
+    sourceId === 'permission-profiles-registry' &&
+    profileRuleClassifications[itemId] !== undefined
+  ) {
+    return profileRuleClassifications[itemId]
+  }
   if (sourceId === 'spec-linter-validator' || sourceId === 'spec-linter-cli')
     return 'ci-static-check'
   if (sourceId === 'permission-profiles-validator') return 'pre-action-refusal'
@@ -611,6 +720,1007 @@ function classificationFor(sourceId: string, itemId: string): RuleClassification
   return 'narrative-provenance'
 }
 
+const CURATED_ITEM_IDENTITIES: Readonly<Record<string, readonly [string, string]>> = {
+  'fk-charter:item.d1': ['goal.separation', 'separate-foreman-kernel-goal'],
+  'fk-charter:item.d2': [
+    'canon.operational-authority-boundary',
+    'git-canon-sqlite-operational-split',
+  ],
+  'fk-charter:item.d3': ['kernel.surface-admission-separation', 'read-control-admission-separated'],
+  'fk-charter:item.d4': [
+    'kernel.first-release-scope',
+    'provider-neutral-trust-core-with-one-shadow-adapter',
+  ],
+  'fk-charter:item.d5': ['receipt.mint-authority', 'no-generic-agent-callable-mint'],
+  'fk-charter:item.d6': ['receipt.authority-label', 'first-release-receipts-are-structural'],
+  'fk-charter:item.d7': [
+    'permission-profile.enforcement-bound',
+    'loaded-refusal-versus-unenrollment-detection-boundary',
+  ],
+  'fk-charter:item.d8': ['enforcement.promotion', 'shadow-proofs-before-fail-closed-enforcement'],
+  'fk-charter:item.d9': ['gate.namespace', 'fk-three-gate-ownership'],
+  'fk-charter:item.d10': ['spec.mutation-authority', 'exact-allowed-files-required'],
+  'fk-charter:item.d11': ['defect.retirement', 'four-independent-evidence-kinds-required'],
+  'fk-charter:item.d12': ['hook.policy-boundary', 'hooks-normalize-but-do-not-decide-policy'],
+  'fk-charter:item.d13': [
+    'repository.mutation-detection',
+    'post-action-git-and-ci-backstop-required',
+  ],
+  'fk-charter:item.d14': [
+    'operational-state.authority',
+    'sqlite-transactional-single-writer-authority',
+  ],
+  'fk-charter:item.d15': [
+    'external-effects.boundary',
+    'first-container-has-no-external-credentials',
+  ],
+  'fk-charter:item.d16': ['caller.asserted-authority', 'self-asserted-authority-is-refused'],
+  'fk-charter:item.d17': ['tool.public-contract', 'versioned-schema-provenance-and-stable-codes'],
+  'fk-charter:item.d18': ['kernel.authorize-action-owner', 'provider-neutral-policy-engine'],
+  'fk-charter:item.d19': ['repository.read-confidentiality', 'admission-bound-contained-read'],
+  'fk-charter:item.d20': ['host.support-claim', 'first-release-enforcement-is-host-specific'],
+  'fk-charter:item.b1ac4aa9eddf': ['gate3.merge-authority', 'human-owned-nondelegated'],
+  'fk-plan-review-findings:item.r1': [
+    'authorization.engine-placement',
+    'dedicated-policy-engine-parcel-added',
+  ],
+  'fk-plan-review-findings:item.r2': [
+    'control.admission',
+    'authenticated-local-admission-required',
+  ],
+  'fk-plan-review-findings:item.r3': [
+    'image.proof-separation',
+    'stateless-and-stateful-proofs-separated',
+  ],
+  'fk-plan-review-findings:item.r4': [
+    'bypass.enrollment-separation',
+    'refusal-and-absence-detection-separated',
+  ],
+  'fk-plan-review-findings:item.r5': ['enforcement.ci-order', 'ci-backstop-precedes-promotion'],
+  'fk-plan-review-findings:item.r6': [
+    'repository.read-boundary',
+    'confidential-read-and-state-isolation-added',
+  ],
+  'fk-plan-review-findings:item.r7': ['parcel.wave-boundaries', 'wave-three-serialization-redrawn'],
+  'fk-plan-review-findings:item.r8': [
+    'state.authority-fields',
+    'git-sqlite-cutover-semantics-added',
+  ],
+  'fk-plan-review-findings:item.r9': [
+    'state.failure-tests',
+    'lease-crash-migration-backup-tests-required',
+  ],
+  'fk-plan-review-findings:item.r10': [
+    'host.claim-matrix',
+    'first-release-host-filesystem-matrix-added',
+  ],
+  'fk-plan-review-findings:item.r11': ['exit.evidence-manifest', 'exact-proof-identities-required'],
+  'fk-plan-review-findings:item.r12': [
+    'mixed-entrypoint.sentinel',
+    'enumeration-and-write-sentinels-bind-shaping',
+  ],
+  'fk-plan-review-findings:item.r13': [
+    'shared-file.serialization',
+    'every-shared-surface-has-an-owner',
+  ],
+  'fk-loop-directive:item.7a05d374a3b1': [
+    'goal.queue-authority',
+    'single-coordinator-ratified-state-queue-owner-primary-codex-coordinator-session-task-where-clinton-morgan-ratified-foreman',
+  ],
+  'fk-loop-directive:item.b81725578197': [
+    'goal.queue-authority',
+    'single-coordinator-ratified-state-original-gate-1-charter-commit',
+  ],
+  'fk-loop-directive:item.aac2d1258986': [
+    'goal.queue-authority',
+    'single-coordinator-ratified-state-plan-review-triage-commit',
+  ],
+  'fk-loop-directive:item.4f0fb14fbd95': [
+    'goal.queue-authority',
+    'single-coordinator-ratified-state-scoped-gate-1-re-ratification-commit',
+  ],
+  'fk-loop-directive:item.47a75730afd6': [
+    'goal.queue-authority',
+    'single-coordinator-ratified-state-standing-gate-2-active-fk-p0-through-fk-p21-under-charter-contingencies',
+  ],
+  'fk-loop-directive:item.08b3cbb91027': [
+    'goal.queue-authority',
+    'single-coordinator-ratified-state-gate-3-not-delegated-every-merge-human-action',
+  ],
+  'fk-loop-directive:item.ae7854c7dad1': [
+    'goal.queue-authority',
+    'single-coordinator-ratified-state-state-2026-08-31-stage-zero-complete-original-gate-1-scoped-re',
+  ],
+  'fk-loop-directive:item.dd8203551518': [
+    'coordinator.required-reading',
+    'read-controlling-sources-each-iteration-coordinator-consumes-verification-never-produces-independent-verification-its-own-work-every-iteration',
+  ],
+  'fk-loop-directive:item.ebdd14e6f524': [
+    'coordinator.required-reading',
+    'read-controlling-sources-each-iteration-1',
+  ],
+  'fk-loop-directive:item.a59b01361dc6': [
+    'coordinator.required-reading',
+    'read-controlling-sources-each-iteration-2-directive',
+  ],
+  'fk-loop-directive:item.734b79ca0bb8': [
+    'coordinator.required-reading',
+    'read-controlling-sources-each-iteration-3-active-parcel-spec-kickstarter-handoff-review-findings',
+  ],
+  'fk-loop-directive:item.51f7dbbba473': [
+    'coordinator.required-reading',
+    'read-controlling-sources-each-iteration-4',
+  ],
+  'fk-loop-directive:item.d69eca1ec1f6': [
+    'coordinator.required-reading',
+    'read-controlling-sources-each-iteration-5',
+  ],
+  'fk-loop-directive:item.fc3ea1441f92': [
+    'coordinator.required-reading',
+    'read-controlling-sources-each-iteration-6',
+  ],
+  'fk-loop-directive:item.15e5fcbdbe13': [
+    'coordinator.required-reading',
+    'read-controlling-sources-each-iteration-plan-review-transcript',
+  ],
+  'fk-loop-directive:item.bfffee6d7c1f': [
+    'goal.standing-authorization',
+    'bounded-local-work-without-external-effects-or-merge-1-gate-2-dispatch-authorized-exactly-fk-p0-fk-p21-ratified-dependency',
+  ],
+  'fk-loop-directive:item.431228393540': [
+    'goal.standing-authorization',
+    'bounded-local-work-without-external-effects-or-merge-2-shaping-coordinator-lint-may-proceed-when-dependencies-satisfied',
+  ],
+  'fk-loop-directive:item.be7691d170a9': [
+    'goal.standing-authorization',
+    'bounded-local-work-without-external-effects-or-merge-3-local-isolated-worktrees-branches-commits-tests-review-artifacts-authorized-named-parcel',
+  ],
+  'fk-loop-directive:item.9935b3499764': [
+    'goal.standing-authorization',
+    'bounded-local-work-without-external-effects-or-merge-4-step-0-rulings-stay-coordinator-unless-flag-changes-locked-decision-external',
+  ],
+  'fk-loop-directive:item.64341d1e8b82': [
+    'goal.standing-authorization',
+    'bounded-local-work-without-external-effects-or-merge-5-no-external-system-effects-no-jira-cloud-deployment-publication-external-communication',
+  ],
+  'fk-loop-directive:item.7eb6018d9e57': [
+    'goal.standing-authorization',
+    'bounded-local-work-without-external-effects-or-merge-6-gate-3-not-delegated-never-merge-present-complete-green-chain-exact',
+  ],
+  'fk-loop-directive:item.7aa2dd930e35': [
+    'goal.standing-authorization',
+    'bounded-local-work-without-external-effects-or-merge-7-push-pr-may-occur-only-when-active-parcel-contract-developer-authority',
+  ],
+  'fk-loop-directive:item.8c0b09120ff1': [
+    'coordinator.parcel-loop',
+    'verify-shape-build-review-and-stop-at-human-merge-1-verify-current-queue-item-all-dependencies-against-git-not-memory',
+  ],
+  'fk-loop-directive:item.d3b0e9dd63d0': [
+    'coordinator.parcel-loop',
+    'verify-shape-build-review-and-stop-at-human-merge-2-dispatch-fresh-shaping-session-docs-only-mode-drafts-one-spec-exact',
+  ],
+  'fk-loop-directive:item.f7e8dffebadc': [
+    'coordinator.parcel-loop',
+    'verify-shape-build-review-and-stop-at-human-merge-3-coordinator-lint-every-factual-claim-disk-check-spec-against-charter-word',
+  ],
+  'fk-loop-directive:item.1157c2a03bbe': [
+    'coordinator.parcel-loop',
+    'verify-shape-build-review-and-stop-at-human-merge-4-gate-2-already-active-only-if-spec-stays-within-charter-create',
+  ],
+  'fk-loop-directive:item.bdd56a126b79': [
+    'coordinator.parcel-loop',
+    'verify-shape-build-review-and-stop-at-human-merge-5-dispatch-fresh-builder-its-first-action-step-0-restate-stop-scope',
+  ],
+  'fk-loop-directive:item.ed8d7888ce8c': [
+    'coordinator.parcel-loop',
+    'verify-shape-build-review-and-stop-at-human-merge-6-verify-builder-s-committed-sha-completion-claim-disk-before-accepting-wrong',
+  ],
+  'fk-loop-directive:item.6ea9ce2b9573': [
+    'coordinator.parcel-loop',
+    'verify-shape-build-review-and-stop-at-human-merge-7-run-parcel-s-deterministic-pass-coordinator-environment-capture-complete-command-output',
+  ],
+  'fk-loop-directive:item.ce9042d917b2': [
+    'coordinator.parcel-loop',
+    'verify-shape-build-review-and-stop-at-human-merge-8-every-foreman-kernel-parcel-architecture-risk-critical-unless-its-ratified-spec',
+  ],
+  'fk-loop-directive:item.d978784bc1b7': [
+    'coordinator.parcel-loop',
+    'verify-shape-build-review-and-stop-at-human-merge-9-triage-findings-fix-accept-documented-informational-reproduce-disputed-blockers-before-ruling',
+  ],
+  'fk-loop-directive:item.2743c2f8c558': [
+    'coordinator.parcel-loop',
+    'verify-shape-build-review-and-stop-at-human-merge-10-when-green-prepare-verification-chain-table-pr-material-stop-at-human',
+  ],
+  'fk-loop-directive:item.e3065db62b43': [
+    'coordinator.parcel-loop',
+    'verify-shape-build-review-and-stop-at-human-merge-11-after-human-merge-perform-stage-f-spec-lessons-dispositions-evidence-index',
+  ],
+  'fk-loop-directive:item.1576c95260b6': [
+    'parcel.shared-file-serialization',
+    'parallelize-only-after-contracts-and-without-shared-points',
+  ],
+  'fk-loop-directive:item.8f98d5e3e61a': [
+    'registry.delivery-contract',
+    'source-bound-classified-non-escalating-registry-only-fk-p0-produces-canonical-authority-enforcement-registry-reconciles-operative-contradictions-before-any',
+  ],
+  'fk-loop-directive:item.4f26e86b0870': [
+    'registry.delivery-contract',
+    'source-bound-classified-non-escalating-registry-only-inventory-every-standing-builder-reviewer-coordinator-gate-stop-authority-rule',
+  ],
+  'fk-loop-directive:item.5909432cc1a7': [
+    'registry.delivery-contract',
+    'source-bound-classified-non-escalating-registry-only-classify-each-rule-pre-action-refusal-post-action-detection-ci-static-check',
+  ],
+  'fk-loop-directive:item.b2e02392e4e5': [
+    'registry.delivery-contract',
+    'source-bound-classified-non-escalating-registry-only-define-precedence-stable-rule-identity-source-locator-digest-applicability-severity-decision-semantics',
+  ],
+  'fk-loop-directive:item.ec3e0d0130ff': [
+    'registry.delivery-contract',
+    'source-bound-classified-non-escalating-registry-only-reconcile-gate-count-language-current-spec-linter-profile-behavior-live-vs-stale',
+  ],
+  'fk-loop-directive:item.e7e5c2483975': [
+    'registry.delivery-contract',
+    'source-bound-classified-non-escalating-registry-only-mechanically-prohibit-human-approval-independent-verifier-evidence-merge-authority-closure-authority-generic',
+  ],
+  'fk-loop-directive:item.c6c0339a5001': [
+    'registry.delivery-contract',
+    'source-bound-classified-non-escalating-registry-only-define-golden-registry-fixtures-mutation-controls-identity-location-value-stale-source-duplicate',
+  ],
+  'fk-loop-directive:item.78a9d344c4c6': [
+    'registry.delivery-contract',
+    'source-bound-classified-non-escalating-registry-only-remain-contract-docs-only-no-hooks-mcp-server-sqlite-runtime-docker-external',
+  ],
+  'fk-loop-directive:item.5820c7f79bef': [
+    'coordinator.stop-conditions',
+    'stop-on-authority-scope-security-or-ownership-failure-stop-report-if',
+  ],
+  'fk-loop-directive:item.7f72e946ccbe': [
+    'coordinator.stop-conditions',
+    'stop-on-authority-scope-security-or-ownership-failure-ownership-ambiguous-another-live-coordinator-named',
+  ],
+  'fk-loop-directive:item.23f92834c1c8': [
+    'coordinator.stop-conditions',
+    'stop-on-authority-scope-security-or-ownership-failure-locked-decision-parcel-graph-exit-criterion-external-effect-boundary-human-gate-needs',
+  ],
+  'fk-loop-directive:item.6151d43333aa': [
+    'coordinator.stop-conditions',
+    'stop-on-authority-scope-security-or-ownership-failure-required-file-falls-outside-exact-allowed-files',
+  ],
+  'fk-loop-directive:item.c708d8f95113': [
+    'coordinator.stop-conditions',
+    'stop-on-authority-scope-security-or-ownership-failure-current-goal-parcel-owns-required-serialization-point-sequencing-unresolved',
+  ],
+  'fk-loop-directive:item.adee76eb5f43': [
+    'coordinator.stop-conditions',
+    'stop-on-authority-scope-security-or-ownership-failure-proposed-control-trusts-self-asserted-identity-can-manufacture-human-independent-authority',
+  ],
+  'fk-loop-directive:item.52f524327994': [
+    'coordinator.stop-conditions',
+    'stop-on-authority-scope-security-or-ownership-failure-read-only-path-can-escape-its-admitted-repository-reach-state-volume',
+  ],
+  'fk-loop-directive:item.37f78aa591c5': [
+    'coordinator.stop-conditions',
+    'stop-on-authority-scope-security-or-ownership-failure-security-finding-cannot-close-inside-parcel',
+  ],
+  'fk-loop-directive:item.d7945b743a67': [
+    'coordinator.stop-conditions',
+    'stop-on-authority-scope-security-or-ownership-failure-same-tripwire-rework-cap-fires-defined-parcel',
+  ],
+  'fk-loop-directive:item.80f2c4a08e42': [
+    'coordinator.stop-conditions',
+    'stop-on-authority-scope-security-or-ownership-failure-reviewer-builder-modifies-ambient-checkout-another-worktree',
+  ],
+  'fk-loop-directive:item.c55a33cc847f': [
+    'coordinator.stop-conditions',
+    'stop-on-authority-scope-security-or-ownership-failure-user-owned-change-collides-parcel',
+  ],
+  'fk-loop-directive:item.237865e0993f': [
+    'coordinator.stop-conditions',
+    'stop-on-authority-scope-security-or-ownership-failure-queue-empty-without-every-goal-exit-criterion-evidenced',
+  ],
+  'fk-loop-directive:item.7ad3390acb6b': [
+    'coordinator.session-wakeup',
+    'completion-notifications-before-fallback-waits',
+  ],
+  'spec-convention:item.fd5d51dd4808': [
+    'parcel.spec-convention',
+    'follow-versioned-spec-lifecycle-and-exact-mutation-authority-1-state-lives-frontmatter-folder-location-they-must-agree-folder-authoritative-agent',
+  ],
+  'spec-convention:item.f2172f28e7fc': [
+    'parcel.spec-convention',
+    'follow-versioned-spec-lifecycle-and-exact-mutation-authority-2-when-work-merges-spec-moves-same-pr-immediate-follow-up-merge',
+  ],
+  'spec-convention:item.71d77f22d163': [
+    'parcel.spec-convention',
+    'follow-versioned-spec-lifecycle-and-exact-mutation-authority-3-material-changes-spec-require-comment-linked-jira-ticket-see-5',
+  ],
+  'spec-convention:item.ea0314db8499': [
+    'parcel.spec-convention',
+    'follow-versioned-spec-lifecycle-and-exact-mutation-authority-4-agents-load-only-spec-their-assigned-ticket-b-nothing-else-ever',
+  ],
+  'spec-convention:item.d2b2084774b8': [
+    'parcel.spec-convention',
+    'follow-versioned-spec-lifecycle-and-exact-mutation-authority-1-every-spec-carries-jira-key-frontmatter-filename',
+  ],
+  'spec-convention:item.910181940014': [
+    'parcel.spec-convention',
+    'follow-versioned-spec-lifecycle-and-exact-mutation-authority-2-every-linked-jira-ticket-carries-link-spec-path-at-specific-commit',
+  ],
+  'spec-convention:item.c9b45d54e97b': [
+    'parcel.spec-convention',
+    'follow-versioned-spec-lifecycle-and-exact-mutation-authority-3-when-spec-s-date-bumps-material-change-ticket-gets-comment-spec',
+  ],
+  'spec-convention:item.4fa776b35f0b': [
+    'parcel.spec-convention',
+    'follow-versioned-spec-lifecycle-and-exact-mutation-authority-4-conflicts-resolve-follows-jira-wins-delivery-state-priority-schedule-assignment-spec',
+  ],
+  'spec-convention:item.4886c52fa322': [
+    'parcel.spec-convention',
+    'follow-versioned-spec-lifecycle-and-exact-mutation-authority-1-one-spec-one-agent-one-isolated-branch-worktree-no-shared-working',
+  ],
+  'spec-convention:item.74a07f6879cc': [
+    'parcel.spec-convention',
+    'follow-versioned-spec-lifecycle-and-exact-mutation-authority-2-scope-pinning-at-dispatch-step-0-agent-s-first-act-restate',
+  ],
+  'spec-convention:item.03f0830cd693': [
+    'parcel.spec-convention',
+    'follow-versioned-spec-lifecycle-and-exact-mutation-authority-3-agents-claim-completion-against-acceptance-criteria-verification-external-no-agent-verifies',
+  ],
+  'spec-convention:item.7a55cf4f2295': [
+    'parcel.spec-convention',
+    'follow-versioned-spec-lifecycle-and-exact-mutation-authority-4-gate-3-human-owned-unless-delegation-proven-at-merge-time-delegation',
+  ],
+  'spec-convention:item.efb0769d6ff2': [
+    'parcel.spec-convention',
+    'follow-versioned-spec-lifecycle-and-exact-mutation-authority-1-exact-replacement-text-supplied-coordinator-coordinator-provides-literal-text-land-document',
+  ],
+  'spec-convention:item.513e18f22be3': [
+    'parcel.spec-convention',
+    'follow-versioned-spec-lifecycle-and-exact-mutation-authority-2-committed-alone-parcel-worktree-before-any-implementing-code-amendment-commit-touches',
+  ],
+  'spec-convention:item.6dbbca88286f': [
+    'parcel.spec-convention',
+    'follow-versioned-spec-lifecycle-and-exact-mutation-authority-3-commit-message-explicitly-identifies-coordinator-amendment-not-generic-message-message-must',
+  ],
+  'spec-convention:item.e6f5fa8543a1': [
+    'permission-profile.registry-state',
+    'convention-deferred-registry-and-self-authority-boundary',
+  ],
+  'spec-convention:item.ac5ff7afd06f': ['spec.mutation-authority', 'surfaces-routing-only'],
+  'spec-convention:item.5145ab15549c': ['spec.mutation-authority', 'exact-allowed-files-required'],
+  'spec-convention:item.fd82127bf9f9': ['spec.mutation-authority', 'exact-allowed-files-required'],
+  'spec-convention:item.022fc00afe7b': ['gate3.merge-authority', 'human-unless-live-proof'],
+  'coordinator-pattern:item.38dbf3185a76': [
+    'goal.coordination-model',
+    'mutual-decisions-ratified-before-dispatch-1-intake-developer-brings-concept-sentence-page-coordinator-interrogates-what-does-done',
+  ],
+  'coordinator-pattern:item.84b4e388c06b': [
+    'goal.coordination-model',
+    'mutual-decisions-ratified-before-dispatch-2-ideation-mutual-coordinator-proposes-developer-disposes-open-design-questions-surfaced-explicit',
+  ],
+  'coordinator-pattern:item.d62734f662a0': [
+    'goal.coordination-model',
+    'mutual-decisions-ratified-before-dispatch-3-commentary-not-change-request-treat-developer-s-reaction-rationale-question-preference',
+  ],
+  'coordinator-pattern:item.00f63e7818bc': [
+    'goal.coordination-model',
+    'mutual-decisions-ratified-before-dispatch-4-output-goal-charter-one-document-containing-objective-locked-decisions-d1-dn',
+  ],
+  'coordinator-pattern:item.a3d15fe678e1': [
+    'goal.coordination-model',
+    'mutual-decisions-ratified-before-dispatch-5-gate-1-ratification-developer-approves-charter-explicitly-gate-can-never-delegated',
+  ],
+  'coordinator-pattern:item.dedbefc1b097': [
+    'goal.coordination-model',
+    'mutual-decisions-ratified-before-dispatch-1-charter-ratification-stage-zero-exit-never',
+  ],
+  'coordinator-pattern:item.91dd60b00fd6': [
+    'goal.coordination-model',
+    'mutual-decisions-ratified-before-dispatch-2-dispatch-approval-parcel-set-kickstarter-yes-standing-authorization-scoped-charter-s',
+  ],
+  'coordinator-pattern:item.f7686ab58db7': ['gate3.merge-authority', 'contingent-delegation'],
+  'goal-skill:item.02636597cc8d': [
+    'goal.ratification-lifecycle',
+    'interrogate-charter-and-obtain-explicit-gate-one-1-interrogate-concept-what-does-done-mean-who-consumes-result-what-deliberately',
+  ],
+  'goal-skill:item.fa27a05811dd': [
+    'goal.ratification-lifecycle',
+    'interrogate-charter-and-obtain-explicit-gate-one-2-draft-goal-charter-at-objective-locked-decisions-d1-dn-reasoning-wave',
+  ],
+  'goal-skill:item.8fda5f4d9776': [
+    'goal.ratification-lifecycle',
+    'interrogate-charter-and-obtain-explicit-gate-one-3-gate-1-present-charter-s-decision-list-developer-explicit-ratification-gate',
+  ],
+  'standing-constraints:item.constraint-1': [
+    'external-boundary.error-contract',
+    'typed-module-error-required',
+  ],
+  'standing-constraints:item.constraint-2': [
+    'untested-seam.return-trust',
+    'unknown-until-normalized',
+  ],
+  'standing-constraints:item.constraint-3': [
+    'default-deny.structural-testing',
+    'each-invariant-tested-independently',
+  ],
+  'standing-constraints:item.constraint-4': [
+    'line-protocol.emission-safety',
+    'external-data-sanitized',
+  ],
+  'standing-constraints:item.constraint-5': [
+    'untrusted-text.parse-complexity',
+    'linear-time-required',
+  ],
+  'standing-constraints:item.constraint-12': ['parcel.byte-freeze-placement', 'parcel-time-only'],
+  'standing-constraints:item.constraint-13': [
+    'allowlist.binding-dimensions',
+    'identity-location-value-required',
+  ],
+  'standing-constraints:item.constraint-6': [
+    'classifier.fixture-coverage',
+    'real-naming-and-false-negatives-covered',
+  ],
+  'standing-constraints:item.constraint-7': [
+    'kompress.payload-ceiling',
+    'oversize-requires-coordinator-ruling',
+  ],
+  'standing-constraints:item.constraint-8': [
+    'review.hostile-probing',
+    'one-off-live-probes-licensed',
+  ],
+  'standing-constraints:item.constraint-9': [
+    'review.prose-ambiguity',
+    'naive-reading-must-be-excluded',
+  ],
+  'standing-constraints:item.constraint-10': [
+    'review.worktree-integrity',
+    'post-review-git-detection-required',
+  ],
+  'standing-constraints:item.constraint-11': [
+    'review.assertion-binding',
+    'mutation-probe-required',
+  ],
+  'standing-constraints:item.c5880644c95c': [
+    'standing.provenance',
+    'inline-rules-required-until-provenance-restored',
+  ],
+  'parcel-driven-development:item.hard-rule-1': [
+    'parcel.contract-sequencing',
+    'contracts-before-parallel-work',
+  ],
+  'parcel-driven-development:item.hard-rule-2': [
+    'parcel.execution-isolation',
+    'one-branch-one-worktree',
+  ],
+  'parcel-driven-development:item.hard-rule-3': [
+    'parcel.review-independence',
+    'independently-reviewable',
+  ],
+  'parcel-driven-development:item.hard-rule-4': [
+    'parcel.mutation-authority',
+    'exact-files-required',
+  ],
+  'parcel-driven-development:item.hard-rule-5': [
+    'parcel.shared-file-serialization',
+    'serialization-required',
+  ],
+  'parcel-driven-development:item.hard-rule-6': ['parcel.pre-pr-base', 'rebase-before-pr'],
+  'parcel-driven-development:item.hard-rule-7': ['parcel.verification', 'verification-required'],
+  'parcel-driven-development:item.hard-rule-8': [
+    'parcel.missing-product-decision',
+    'stop-and-escalate',
+  ],
+  'parcel-driven-development:item.hard-rule-9': [
+    'parcel.contract-amendment',
+    'no-silent-contract-change',
+  ],
+  'parcel-driven-development:item.hard-rule-10': [
+    'parcel.sensitive-data-safety',
+    'no-secrets-pii-or-payload-dumps',
+  ],
+  'parcel-driven-development:item.hard-rule-11': [
+    'integration-surface.scenarios',
+    'positive-negative-failure-required',
+  ],
+  'parcel-driven-development:item.hard-rule-12': [
+    'release.security-gate',
+    'security-evidence-blocks-release',
+  ],
+  'parcel-driven-development:item.hard-rule-13': [
+    'coordination.persistence',
+    'durable-state-before-closure',
+  ],
+  'parcel-driven-development:item.hard-rule-14': [
+    'scenario.environment-identity',
+    'environment-build-config-bound',
+  ],
+  'parcel-driven-development:item.hard-rule-15': [
+    'release.claim-evidence',
+    'evidence-required-for-claim',
+  ],
+  'parcel-driven-development:item.b7563a79cc57': [
+    'parcel.review-checklist',
+    'verify-contract-scope-safety-evidence-and-handoff-1-does-implementation-match-contract',
+  ],
+  'parcel-driven-development:item.400cc2cfd0d5': [
+    'parcel.review-checklist',
+    'verify-contract-scope-safety-evidence-and-handoff-2-only-allowed-files-touched',
+  ],
+  'parcel-driven-development:item.303fe3f67dae': [
+    'parcel.review-checklist',
+    'verify-contract-scope-safety-evidence-and-handoff-3-were-forbidden-items-respected',
+  ],
+  'parcel-driven-development:item.f1add5311b6c': [
+    'parcel.review-checklist',
+    'verify-contract-scope-safety-evidence-and-handoff-4-did-parcel-respect-out-scope',
+  ],
+  'parcel-driven-development:item.9d8d06d91590': [
+    'parcel.review-checklist',
+    'verify-contract-scope-safety-evidence-and-handoff-5-did-agent-avoid-silent-product-decisions',
+  ],
+  'parcel-driven-development:item.dbee4594f901': [
+    'parcel.review-checklist',
+    'verify-contract-scope-safety-evidence-and-handoff-6-were-required-tests-manual-verification-completed-exactly-specified',
+  ],
+  'parcel-driven-development:item.7a8af4ddaa1e': [
+    'parcel.review-checklist',
+    'verify-contract-scope-safety-evidence-and-handoff-7-did-parcel-avoid-secrets-pii-unsafe-logs-payload-dumps',
+  ],
+  'parcel-driven-development:item.98f93a29441d': [
+    'parcel.review-checklist',
+    'verify-contract-scope-safety-evidence-and-handoff-8-if-crossing-supportability-boundaries-were-logs-metrics-traces-handled-appropriately',
+  ],
+  'parcel-driven-development:item.e4751682430a': [
+    'parcel.review-checklist',
+    'verify-contract-scope-safety-evidence-and-handoff-9-if-crossing-integration-boundaries-was-relevant-surface-updated-referenced',
+  ],
+  'parcel-driven-development:item.72c60fa596e7': [
+    'parcel.review-checklist',
+    'verify-contract-scope-safety-evidence-and-handoff-10-if-security-gate-applies-was-required-security-evidence-produced-tracked',
+  ],
+  'parcel-driven-development:item.754e096cfecf': [
+    'parcel.review-checklist',
+    'verify-contract-scope-safety-evidence-and-handoff-11-was-session-handoff-completed',
+  ],
+  'parcel-driven-development:item.876882377a6a': [
+    'parcel.review-checklist',
+    'verify-contract-scope-safety-evidence-and-handoff-12-was-persistent-coordinator-state-updated-if-required-parcel-fails-gets-sent',
+  ],
+  'foreman-line-plan:item.two-gate-thesis': ['gate.namespace', 'historical-two-stage-gates'],
+  'foreman-line-plan:item.c92333c21e64': ['gate3.merge-authority', 'human-owned-nondelegated'],
+  'approval-readme:item.4261d18b3243': [
+    'stage-approval.tty-presence',
+    'live-interactive-tty-required',
+  ],
+  'approval-readme:item.ff6f38f088ae': [
+    'stage-approval.confirmation-and-mint',
+    'typed-confirmation-and-approver-required-before-mint',
+  ],
+  'spec-frontmatter-schema:item.bdf997c3cd45': [
+    'permission-profile.registry-state',
+    'six-profile-live-enum',
+  ],
+  'spec-linter-validator:item.c6669b61c6f0': [
+    'spec.validation.ajv-configuration',
+    'all-schema-errors-are-collected',
+  ],
+  'spec-linter-validator:item.256b9064bc47': [
+    'spec.validation.supersession-invariant',
+    'superseded-status-requires-a-replacement',
+  ],
+  'spec-linter-validator:item.092d2fc43a32': [
+    'permission-profile.missing-field-warning',
+    'absence-emits-advisory-unless-suppressed',
+  ],
+  'spec-linter-validator:item.fb7d76a32df4': [
+    'permission-profile.missing-field-warning-text',
+    'advisory-points-to-registry-profile-name',
+  ],
+  'spec-linter-validator:item.80563af1788e': [
+    'spec.mutation-authority',
+    'frontmatter-only-no-body-compiler',
+  ],
+  'spec-linter-cli:item.0479c603add5': [
+    'spec-linter.exit-code.zero',
+    'valid-specs-exit-zero-despite-advisory-warnings',
+  ],
+  'spec-linter-cli:item.fb268f5c5eb4': [
+    'spec-linter.exit-code.one',
+    'schema-or-semantic-violations-exit-one',
+  ],
+  'spec-linter-cli:item.66fec8a20db5': [
+    'spec-linter.exit-code.two',
+    'usage-and-input-errors-exit-two',
+  ],
+  'spec-linter-cli:item.39787f778432': [
+    'spec-linter.process-entrypoint',
+    'process-exit-code-is-set-from-cli-run-result',
+  ],
+  'spec-linter-readme:item.9a889881a236': [
+    'permission-profile.registry-state',
+    'readme-interim-optional-nonempty-string',
+  ],
+  'spec-linter-readme:item.b4f5d76d68ec': [
+    'permission-profile.registry-state',
+    'readme-deferred-enum-promotion',
+  ],
+  'permission-profiles-registry:item.ffd2209ab94a': [
+    'permission-profile.reviewer-deny-git-commit',
+    'bash-git-commit-is-configured-denied',
+  ],
+  'permission-profiles-types:item.0b9706b5a9bf': [
+    'permission-profile.supported-modes',
+    'default-accept-edits-and-plan-only',
+  ],
+  'permission-profiles-types:item.bc257b03aa99': [
+    'permission-profile.names',
+    'six-profile-name-constant-is-exported',
+  ],
+  'permission-profiles-validator:item.dcd8638af4a4': [
+    'permission-profile.reviewer-mutation-commands',
+    'five-git-mutation-verbs-are-enumerated',
+  ],
+  'permission-profiles-validator:item.9c3c17055384': [
+    'permission-profile.bypass-mode',
+    'bypass-permissions-mode-is-rejected',
+  ],
+  'permission-profiles-validator:item.4da758cc157c': [
+    'permission-profile.reviewer-restriction-completeness',
+    'reviewer-deny-set-is-checked-for-edit-write-and-git-mutations',
+  ],
+  'permission-profiles-validator:item.ffd598413a66': [
+    'permission-profile.reviewer-shell-preservation',
+    'bare-bash-and-powershell-denial-is-rejected',
+  ],
+  'permission-profiles-readme:item.729be3615f8d': [
+    'permission-profile.enforcement-bound',
+    'deny-and-ask-are-restriction-mechanisms',
+  ],
+  'permission-profiles-readme:item.d11b9d38f924': [
+    'permission-profile.enforcement-bound',
+    'profile-constrains-only-loaded-sessions',
+  ],
+  'permission-profiles-readme:item.1101805f1c9e': [
+    'permission-profile.enforcement-bound',
+    'bypass-mode-voids-denials',
+  ],
+  'permission-profiles-readme:item.415efa3f5e3b': [
+    'permission-profile.enforcement-bound',
+    'shell-residual-is-reduced-not-eliminated',
+  ],
+  'permission-profiles-registry:item.1ec33a4741eb': [
+    'permission-profile.builder-architecture.ask.empty-set',
+    'configured-human-prompt',
+  ],
+  'permission-profiles-registry:item.7faf78a6f54a': [
+    'permission-profile.builder-architecture.deny.bash-git-push-force',
+    'configured-denial',
+  ],
+  'permission-profiles-registry:item.26c5e2b211da': [
+    'permission-profile.builder-architecture.deny.bash-git-push-f',
+    'configured-denial',
+  ],
+  'permission-profiles-registry:item.1d221ed65b72': [
+    'permission-profile.builder-architecture.deny.edit-claude',
+    'configured-denial',
+  ],
+  'permission-profiles-registry:item.1ce0fd439b3e': [
+    'permission-profile.builder-architecture.deny.powershell-git-push-force',
+    'configured-denial',
+  ],
+  'permission-profiles-registry:item.39e65fb31709': [
+    'permission-profile.builder-architecture.deny.powershell-git-push-f',
+    'configured-denial',
+  ],
+  'permission-profiles-registry:item.ffd949ad76c3': [
+    'permission-profile.builder-architecture.deny.write-claude',
+    'configured-denial',
+  ],
+  'permission-profiles-registry:item.c9cb62068f14': [
+    'permission-profile.builder-architecture.network-egress.empty-set',
+    'configured-network-posture',
+  ],
+  'permission-profiles-registry:item.13033f70c124': [
+    'permission-profile.builder-deps.ask.empty-set',
+    'configured-human-prompt',
+  ],
+  'permission-profiles-registry:item.947d19fbeb35': [
+    'permission-profile.builder-deps.deny.bash-git-push-force',
+    'configured-denial',
+  ],
+  'permission-profiles-registry:item.5a359d80896b': [
+    'permission-profile.builder-deps.deny.bash-git-push-f',
+    'configured-denial',
+  ],
+  'permission-profiles-registry:item.ee0641be06f2': [
+    'permission-profile.builder-deps.deny.edit-claude',
+    'configured-denial',
+  ],
+  'permission-profiles-registry:item.cf29180bce81': [
+    'permission-profile.builder-deps.deny.powershell-git-push-force',
+    'configured-denial',
+  ],
+  'permission-profiles-registry:item.4f213acde8e0': [
+    'permission-profile.builder-deps.deny.powershell-git-push-f',
+    'configured-denial',
+  ],
+  'permission-profiles-registry:item.397a3eb4c7ad': [
+    'permission-profile.builder-deps.deny.write-claude',
+    'configured-denial',
+  ],
+  'permission-profiles-registry:item.f0613939994f': [
+    'permission-profile.builder-deps.network-egress.empty-set',
+    'configured-network-posture',
+  ],
+  'permission-profiles-registry:item.58ef984a0faa': [
+    'permission-profile.builder-deps.network-notes.empty-set',
+    'configured-network-posture',
+  ],
+  'permission-profiles-registry:item.50cd9c68ff51': [
+    'permission-profile.builder-standard.ask.empty-set',
+    'configured-human-prompt',
+  ],
+  'permission-profiles-registry:item.b9e7c5644f49': [
+    'permission-profile.builder-standard.deny.bash-git-push-force',
+    'configured-denial',
+  ],
+  'permission-profiles-registry:item.861d14c80da2': [
+    'permission-profile.builder-standard.deny.bash-git-push-f',
+    'configured-denial',
+  ],
+  'permission-profiles-registry:item.fe1bbb0564f6': [
+    'permission-profile.builder-standard.deny.edit-claude',
+    'configured-denial',
+  ],
+  'permission-profiles-registry:item.803732fe3411': [
+    'permission-profile.builder-standard.deny.powershell-git-push-force',
+    'configured-denial',
+  ],
+  'permission-profiles-registry:item.b77e9988c19d': [
+    'permission-profile.builder-standard.deny.powershell-git-push-f',
+    'configured-denial',
+  ],
+  'permission-profiles-registry:item.8cf9d57aa29c': [
+    'permission-profile.builder-standard.deny.write-claude',
+    'configured-denial',
+  ],
+  'permission-profiles-registry:item.0ed672bcdee8': [
+    'permission-profile.builder-standard.network-egress.empty-set',
+    'configured-network-posture',
+  ],
+  'permission-profiles-registry:item.bbb2cdb40927': [
+    'permission-profile.coordinator.ask.empty-set',
+    'configured-human-prompt',
+  ],
+  'permission-profiles-registry:item.b01d14453456': [
+    'permission-profile.coordinator.deny.bash-git-push-force',
+    'configured-denial',
+  ],
+  'permission-profiles-registry:item.315ebd655fbe': [
+    'permission-profile.coordinator.deny.bash-git-push-f',
+    'configured-denial',
+  ],
+  'permission-profiles-registry:item.8e8e3c78500b': [
+    'permission-profile.coordinator.deny.edit-claude',
+    'configured-denial',
+  ],
+  'permission-profiles-registry:item.4c9cd1062bc6': [
+    'permission-profile.coordinator.deny.powershell-git-push-force',
+    'configured-denial',
+  ],
+  'permission-profiles-registry:item.060989ad78ea': [
+    'permission-profile.coordinator.deny.powershell-git-push-f',
+    'configured-denial',
+  ],
+  'permission-profiles-registry:item.30b62f67dc13': [
+    'permission-profile.coordinator.deny.write-claude',
+    'configured-denial',
+  ],
+  'permission-profiles-registry:item.7417033cefc7': [
+    'permission-profile.reviewer-readonly.ask.empty-set',
+    'configured-human-prompt',
+  ],
+  'permission-profiles-registry:item.f7f03a01fd3a': [
+    'permission-profile.reviewer-readonly.deny.bash-git-apply',
+    'configured-denial',
+  ],
+  'permission-profiles-registry:item.35cf0f58fc34': [
+    'permission-profile.reviewer-readonly.deny.bash-git-commit',
+    'configured-denial',
+  ],
+  'permission-profiles-registry:item.dedb7349c943': [
+    'permission-profile.reviewer-readonly.deny.bash-git-merge',
+    'configured-denial',
+  ],
+  'permission-profiles-registry:item.b7ab94d73ef4': [
+    'permission-profile.reviewer-readonly.deny.bash-git-push',
+    'configured-denial',
+  ],
+  'permission-profiles-registry:item.9ab0d5db8ebf': [
+    'permission-profile.reviewer-readonly.deny.bash-git-stash',
+    'configured-denial',
+  ],
+  'permission-profiles-registry:item.ea8666a98ca1': [
+    'permission-profile.reviewer-readonly.deny.edit',
+    'configured-denial',
+  ],
+  'permission-profiles-registry:item.3a54e390a3e1': [
+    'permission-profile.reviewer-readonly.deny.edit-claude',
+    'configured-denial',
+  ],
+  'permission-profiles-registry:item.eb314ad28f5e': [
+    'permission-profile.reviewer-readonly.deny.powershell-git-apply',
+    'configured-denial',
+  ],
+  'permission-profiles-registry:item.14569d4abb87': [
+    'permission-profile.reviewer-readonly.deny.powershell-git-commit',
+    'configured-denial',
+  ],
+  'permission-profiles-registry:item.7943c5773fba': [
+    'permission-profile.reviewer-readonly.deny.powershell-git-merge',
+    'configured-denial',
+  ],
+  'permission-profiles-registry:item.2ca898541627': [
+    'permission-profile.reviewer-readonly.deny.powershell-git-push',
+    'configured-denial',
+  ],
+  'permission-profiles-registry:item.23838f138908': [
+    'permission-profile.reviewer-readonly.deny.powershell-git-stash',
+    'configured-denial',
+  ],
+  'permission-profiles-registry:item.6d850a4b4948': [
+    'permission-profile.reviewer-readonly.deny.write',
+    'configured-denial',
+  ],
+  'permission-profiles-registry:item.f1d63df02914': [
+    'permission-profile.reviewer-readonly.deny.write-claude',
+    'configured-denial',
+  ],
+  'permission-profiles-registry:item.8c5085e2ff63': [
+    'permission-profile.shaping-agent.ask.empty-set',
+    'configured-human-prompt',
+  ],
+  'permission-profiles-registry:item.60eb2cbc6f43': [
+    'permission-profile.shaping-agent.deny.bash-git-push-force',
+    'configured-denial',
+  ],
+  'permission-profiles-registry:item.1e0db040f9d8': [
+    'permission-profile.shaping-agent.deny.bash-git-push-f',
+    'configured-denial',
+  ],
+  'permission-profiles-registry:item.e477240aeb8e': [
+    'permission-profile.shaping-agent.deny.edit-claude',
+    'configured-denial',
+  ],
+  'permission-profiles-registry:item.074c70cc9d55': [
+    'permission-profile.shaping-agent.deny.edit-apps',
+    'configured-denial',
+  ],
+  'permission-profiles-registry:item.5705a054df96': [
+    'permission-profile.shaping-agent.deny.edit-config',
+    'configured-denial',
+  ],
+  'permission-profiles-registry:item.b6db9d1f4737': [
+    'permission-profile.shaping-agent.deny.edit-plugins',
+    'configured-denial',
+  ],
+  'permission-profiles-registry:item.92b60e67dfba': [
+    'permission-profile.shaping-agent.deny.edit-skills',
+    'configured-denial',
+  ],
+  'permission-profiles-registry:item.b8a82b2446d9': [
+    'permission-profile.shaping-agent.deny.powershell-git-push-force',
+    'configured-denial',
+  ],
+  'permission-profiles-registry:item.1fa440b2fe59': [
+    'permission-profile.shaping-agent.deny.powershell-git-push-f',
+    'configured-denial',
+  ],
+  'permission-profiles-registry:item.3641610e292b': [
+    'permission-profile.shaping-agent.deny.write-claude',
+    'configured-denial',
+  ],
+  'permission-profiles-registry:item.854101218a6d': [
+    'permission-profile.shaping-agent.deny.write-apps',
+    'configured-denial',
+  ],
+  'permission-profiles-registry:item.e4d0bc5dc904': [
+    'permission-profile.shaping-agent.deny.write-config',
+    'configured-denial',
+  ],
+  'permission-profiles-registry:item.7b5310ad887b': [
+    'permission-profile.shaping-agent.deny.write-plugins',
+    'configured-denial',
+  ],
+  'permission-profiles-registry:item.6ac66b888a40': [
+    'permission-profile.shaping-agent.deny.write-skills',
+    'configured-denial',
+  ],
+  'fk-charter:item.a583b7f02950': [
+    'goal.ratification-status',
+    'fully-ratified-with-scoped-gate1-and-standing-gate2',
+  ],
+  'fk-charter:item.93d5d3978e5f': [
+    'standing-constraints.read-obligation',
+    'agents-reread-and-remember-standing-constraints',
+  ],
+  'fk-charter:item.cd014d6d90c5': [
+    'gate1.ratification-record',
+    'original-and-scoped-reratification-bind-d1-through-d20',
+  ],
+  'fk-charter:item.144bb836f528': [
+    'parcel.fk-p2-spec-compiler',
+    'compile-exact-allowed-files-and-reject-path-ambiguity',
+  ],
+  'fk-charter:item.a087b0ab4c3b': [
+    'parcel.fk-p18-ci-backstop',
+    'negative-hook-bypass-must-fail-before-promotion',
+  ],
+  'fk-charter:item.e9ec57edc0a2': ['goal.exit-merge', 'all-parcels-require-human-gate3-merge'],
+  'fk-charter:item.8cf027fc811e': [
+    'gate1.reratification-status',
+    'scoped-r1-r13-reratification-is-in-force',
+  ],
+  'fk-charter:item.15a44cf50bc6': [
+    'gate2.dispatch-grant',
+    'coordinator-may-dispatch-fk-p0-through-fk-p21-conditionally',
+  ],
+  'fk-charter:item.c74628d41600': ['gate3.merge-authority', 'human-owned-nondelegated'],
+  'fk-charter:item.d9921c51d7ea': [
+    'goal.stop.gate1-ambiguity',
+    'stop-when-gate1-or-locked-decision-is-ambiguous',
+  ],
+  'fk-charter:item.0afd841f51f8': [
+    'goal.stop.serialization-ownership',
+    'stop-when-owned-serialization-point-has-no-ratified-sequence',
+  ],
+  'fk-charter:item.2cbbc7ae0192': [
+    'goal.stop.user-change-collision',
+    'stop-on-user-owned-required-file-collision',
+  ],
+  'fk-charter:item.b0a3e204145f': [
+    'gate1.decision-list-record',
+    'ratification-and-dispatch-history-recorded',
+  ],
+  'fk-plan-review-findings:item.1de06653021c': [
+    'gate1.review-reratification-record',
+    'r1-through-r13-reopen-closed-and-gate2-active',
+  ],
+  'spec-convention:item.0979dba6c958': [
+    'spec-linter.adoption-standard',
+    'org-wide-ci-lint-required-for-specs',
+  ],
+  'foreman-line-plan:item.75569dd4ae1a': [
+    'pipeline.verification-human-review',
+    'human-review-required-before-ticket-update',
+  ],
+  'foreman-line-plan:item.56a15a2f3220': [
+    'pipeline.integration-gates',
+    'security-scans-and-reviews-required',
+  ],
+  'foreman-line-plan:item.760cf6497075': [
+    'deployment.environment-separation',
+    'dogfood-and-customer-tenants-must-not-share-blast-radius',
+  ],
+  'permission-profiles-readme:item.b3183ee0b5ab': [
+    'permission-profile.profile-set',
+    'keys-must-exactly-equal-profile-names',
+  ],
+  'permission-profiles-readme:item.f8c108b3b431': [
+    'permission-profile.self-modification-guard',
+    'every-profile-denies-edit-and-write-for-claude',
+  ],
+  'permission-profiles-readme:item.a26beda5342d': [
+    'permission-profile.reviewer-restrictions',
+    'deny-edit-write-and-enumerated-git-mutations',
+  ],
+  'permission-profiles-readme:item.27ce8e0a4adc': [
+    'permission-profile.reviewer-shell-access',
+    'bare-shell-denial-prohibited-for-hostile-probing',
+  ],
+}
+
 function authorityIdentityFor(
   sourceId: string,
   itemId: string,
@@ -618,389 +1728,11 @@ function authorityIdentityFor(
   authoritySubject: string
   authorityClaim: string
 } | null {
-  const exact: Readonly<Record<string, readonly [string, string]>> = {
-    'fk-charter:item.d2': [
-      'canon.operational-authority-boundary',
-      'git-canon-sqlite-operational-split',
-    ],
-    'fk-charter:item.d3': [
-      'kernel.surface-admission-separation',
-      'read-control-admission-separated',
-    ],
-    'fk-charter:item.d18': ['kernel.authorize-action-owner', 'provider-neutral-policy-engine'],
-    'fk-charter:item.d19': ['repository.read-confidentiality', 'admission-bound-contained-read'],
-    'fk-charter:item.d7': [
-      'permission-profile.enforcement-bound',
-      'loaded-adapter-refusal-unenrolled-detection',
-    ],
-    'foreman-line-plan:item.two-gate-thesis': ['gate.namespace', 'historical-two-stage-gates'],
-    'approval-readme:item.a7e48d46fe37': ['gate.namespace', 'historical-two-stage-gates'],
-    'approval-readme:item.4261d18b3243': ['gate.namespace', 'historical-two-stage-gates'],
-    'approval-readme:item.ff6f38f088ae': ['gate.namespace', 'historical-two-stage-gates'],
-    'fk-charter:item.d9': ['gate.namespace', 'fk-three-gate-ownership'],
-    'coordinator-pattern:item.f7686ab58db7': ['gate3.merge-authority', 'contingent-delegation'],
-    'spec-convention:item.022fc00afe7b': ['gate3.merge-authority', 'human-unless-live-proof'],
-    'fk-charter:item.b1ac4aa9eddf': ['gate3.merge-authority', 'human-owned-nondelegated'],
-    'foreman-line-plan:item.c92333c21e64': ['gate3.merge-authority', 'human-owned-nondelegated'],
-    'spec-convention:item.ac5ff7afd06f': ['spec.mutation-authority', 'surfaces-routing-only'],
-    'spec-convention:item.5145ab15549c': [
-      'spec.mutation-authority',
-      'exact-allowed-files-required',
-    ],
-    'spec-convention:item.fd82127bf9f9': [
-      'spec.mutation-authority',
-      'exact-allowed-files-required',
-    ],
-    'spec-linter-validator:item.80563af1788e': [
-      'spec.mutation-authority',
-      'frontmatter-only-no-body-compiler',
-    ],
-    'fk-charter:item.d10': ['spec.mutation-authority', 'exact-allowed-files-required'],
-    'standing-constraints:item.c5880644c95c': [
-      'standing.provenance',
-      'inline-rules-required-until-provenance-restored',
-    ],
-  }
-  const exactIdentity = exact[`${sourceId}:${itemId}`]
-  if (exactIdentity !== undefined) {
-    return { authoritySubject: exactIdentity[0], authorityClaim: exactIdentity[1] }
-  }
-  const profileRegistryLive = new Set([
-    'spec-frontmatter-schema:item.860f1c1146f4',
-    'spec-frontmatter-schema:item.1dddb8e0edae',
-    'spec-frontmatter-schema:item.fbc219d0ff13',
-    'spec-frontmatter-schema:item.cc7db94c11c2',
-    'spec-frontmatter-schema:item.7443d95fc46b',
-    'spec-frontmatter-schema:item.0a36842682ef',
-    'spec-frontmatter-schema:item.d6246c2593db',
-    'spec-linter-validator:item.092d2fc43a32',
-    'spec-linter-validator:item.fb7d76a32df4',
-    'spec-linter-validator:item.80563af1788e',
-  ])
-  const profileRegistryDeferred = new Set([
-    'spec-linter-readme:item.9a889881a236',
-    'spec-linter-readme:item.b4f5d76d68ec',
-    'spec-convention:item.e6f5fa8543a1',
-  ])
-  const identityKey = `${sourceId}:${itemId}`
-  if (profileRegistryLive.has(identityKey) || profileRegistryDeferred.has(identityKey)) {
-    return {
-      authoritySubject: 'permission-profile.registry-state',
-      authorityClaim: profileRegistryDeferred.has(identityKey)
-        ? 'deferred-profile-registry'
-        : 'six-profile-live-enum',
-    }
-  }
-  const mediatedProfileEnforcement = new Set([
-    'permission-profiles-registry:item.0f7efe94f551',
-    'permission-profiles-registry:item.5b5fd0863539',
-    'permission-profiles-registry:item.ffd2209ab94a',
-    'permission-profiles-registry:item.86618990c615',
-    'permission-profiles-registry:item.514a38aa8311',
-    'permission-profiles-registry:item.a61f76b791df',
-    'permission-profiles-registry:item.ff2ab3fa7a40',
-    'permission-profiles-validator:item.dcd8638af4a4',
-    'permission-profiles-validator:item.9c3c17055384',
-    'permission-profiles-validator:item.4da758cc157c',
-    'permission-profiles-validator:item.ffd598413a66',
-  ])
-  const residualProfileEnforcement = new Set([
-    'permission-profiles-types:item.0b9706b5a9bf',
-    'permission-profiles-types:item.bc257b03aa99',
-    'permission-profiles-readme:item.729be3615f8d',
-    'permission-profiles-readme:item.d11b9d38f924',
-    'permission-profiles-readme:item.1101805f1c9e',
-    'permission-profiles-readme:item.415efa3f5e3b',
-  ])
-  if (mediatedProfileEnforcement.has(identityKey) || residualProfileEnforcement.has(identityKey)) {
-    return {
-      authoritySubject: 'permission-profile.enforcement-bound',
-      authorityClaim: mediatedProfileEnforcement.has(identityKey)
-        ? 'loaded-session-mediated-denial'
-        : 'unenrolled-or-shell-residual',
-    }
-  }
-  const standingIdentities: Readonly<Record<string, readonly [string, string]>> = {
-    'item.constraint-1': ['external-boundary.error-contract', 'typed-module-error-required'],
-    'item.constraint-2': ['untested-seam.return-trust', 'unknown-until-normalized'],
-    'item.constraint-3': ['default-deny.structural-testing', 'each-invariant-tested-independently'],
-    'item.constraint-4': ['line-protocol.emission-safety', 'external-data-sanitized'],
-    'item.constraint-5': ['untrusted-text.parse-complexity', 'linear-time-required'],
-    'item.constraint-6': ['classifier.fixture-coverage', 'real-naming-and-false-negatives-covered'],
-    'item.constraint-7': ['kompress.payload-ceiling', 'oversize-requires-coordinator-ruling'],
-    'item.constraint-8': ['review.hostile-probing', 'one-off-live-probes-licensed'],
-    'item.constraint-9': ['review.prose-ambiguity', 'naive-reading-must-be-excluded'],
-    'item.constraint-10': ['review.worktree-integrity', 'post-review-git-detection-required'],
-    'item.constraint-11': ['review.assertion-binding', 'mutation-probe-required'],
-    'item.constraint-12': ['parcel.byte-freeze-placement', 'parcel-time-only'],
-    'item.constraint-13': ['allowlist.binding-dimensions', 'identity-location-value-required'],
-  }
-  if (sourceId === 'standing-constraints' && standingIdentities[itemId] !== undefined) {
-    const identity = standingIdentities[itemId] as readonly [string, string]
-    return { authoritySubject: identity[0], authorityClaim: identity[1] }
-  }
-  const pddIdentities: Readonly<Record<string, readonly [string, string]>> = {
-    'item.hard-rule-1': ['parcel.contract-sequencing', 'contracts-before-parallel-work'],
-    'item.hard-rule-2': ['parcel.execution-isolation', 'one-branch-one-worktree'],
-    'item.hard-rule-3': ['parcel.review-independence', 'independently-reviewable'],
-    'item.hard-rule-4': ['parcel.mutation-authority', 'exact-files-required'],
-    'item.hard-rule-5': ['parcel.shared-file-serialization', 'serialization-required'],
-    'item.hard-rule-6': ['parcel.pre-pr-base', 'rebase-before-pr'],
-    'item.hard-rule-7': ['parcel.verification', 'verification-required'],
-    'item.hard-rule-8': ['parcel.missing-product-decision', 'stop-and-escalate'],
-    'item.hard-rule-9': ['parcel.contract-amendment', 'no-silent-contract-change'],
-    'item.hard-rule-10': ['parcel.sensitive-data-safety', 'no-secrets-pii-or-payload-dumps'],
-    'item.hard-rule-11': ['integration-surface.scenarios', 'positive-negative-failure-required'],
-    'item.hard-rule-12': ['release.security-gate', 'security-evidence-blocks-release'],
-    'item.hard-rule-13': ['coordination.persistence', 'durable-state-before-closure'],
-    'item.hard-rule-14': ['scenario.environment-identity', 'environment-build-config-bound'],
-    'item.hard-rule-15': ['release.claim-evidence', 'evidence-required-for-claim'],
-  }
-  if (sourceId === 'parcel-driven-development' && pddIdentities[itemId] !== undefined) {
-    const identity = pddIdentities[itemId] as readonly [string, string]
-    return { authoritySubject: identity[0], authorityClaim: identity[1] }
-  }
-  const charterDecisions: Readonly<Record<string, readonly [string, string]>> = {
-    'item.d1': ['goal.separation', 'separate-foreman-kernel-goal'],
-    'item.d4': [
-      'kernel.first-release-scope',
-      'provider-neutral-trust-core-with-one-shadow-adapter',
-    ],
-    'item.d5': ['receipt.mint-authority', 'no-generic-agent-callable-mint'],
-    'item.d6': ['receipt.authority-label', 'first-release-receipts-are-structural'],
-    'item.d8': ['enforcement.promotion', 'shadow-proofs-before-fail-closed-enforcement'],
-    'item.d9': ['gate.namespace', 'fk-three-gate-ownership'],
-    'item.d10': ['spec.mutation-authority', 'exact-allowed-files-required'],
-    'item.d11': ['defect.retirement', 'four-independent-evidence-kinds-required'],
-    'item.d12': ['hook.policy-boundary', 'hooks-normalize-but-do-not-decide-policy'],
-    'item.d13': ['repository.mutation-detection', 'post-action-git-and-ci-backstop-required'],
-    'item.d14': ['operational-state.authority', 'sqlite-transactional-single-writer-authority'],
-    'item.d15': ['external-effects.boundary', 'first-container-has-no-external-credentials'],
-    'item.d16': ['caller.asserted-authority', 'self-asserted-authority-is-refused'],
-    'item.d17': ['tool.public-contract', 'versioned-schema-provenance-and-stable-codes'],
-    'item.d20': ['host.support-claim', 'first-release-enforcement-is-host-specific'],
-  }
-  if (sourceId === 'fk-charter' && charterDecisions[itemId] !== undefined) {
-    const identity = charterDecisions[itemId] as readonly [string, string]
-    return { authoritySubject: identity[0], authorityClaim: identity[1] }
-  }
-  const reviewFindings: Readonly<Record<string, readonly [string, string]>> = {
-    'item.r1': ['authorization.engine-placement', 'dedicated-policy-engine-parcel-added'],
-    'item.r2': ['control.admission', 'authenticated-local-admission-required'],
-    'item.r3': ['image.proof-separation', 'stateless-and-stateful-proofs-separated'],
-    'item.r4': ['bypass.enrollment-separation', 'refusal-and-absence-detection-separated'],
-    'item.r5': ['enforcement.ci-order', 'ci-backstop-precedes-promotion'],
-    'item.r6': ['repository.read-boundary', 'confidential-read-and-state-isolation-added'],
-    'item.r7': ['parcel.wave-boundaries', 'wave-three-serialization-redrawn'],
-    'item.r8': ['state.authority-fields', 'git-sqlite-cutover-semantics-added'],
-    'item.r9': ['state.failure-tests', 'lease-crash-migration-backup-tests-required'],
-    'item.r10': ['host.claim-matrix', 'first-release-host-filesystem-matrix-added'],
-    'item.r11': ['exit.evidence-manifest', 'exact-proof-identities-required'],
-    'item.r12': ['mixed-entrypoint.sentinel', 'enumeration-and-write-sentinels-bind-shaping'],
-    'item.r13': ['shared-file.serialization', 'every-shared-surface-has-an-owner'],
-  }
-  if (sourceId === 'fk-plan-review-findings' && reviewFindings[itemId] !== undefined) {
-    const identity = reviewFindings[itemId] as readonly [string, string]
-    return { authoritySubject: identity[0], authorityClaim: identity[1] }
-  }
-  const curatedGroups: readonly {
-    readonly sourceId: string
-    readonly itemIds: readonly string[]
-    readonly authoritySubject: string
-    readonly authorityClaim: string
-  }[] = [
-    {
-      sourceId: 'fk-loop-directive',
-      itemIds: [
-        'item.7a05d374a3b1',
-        'item.b81725578197',
-        'item.aac2d1258986',
-        'item.4f0fb14fbd95',
-        'item.47a75730afd6',
-        'item.08b3cbb91027',
-        'item.ae7854c7dad1',
-      ],
-      authoritySubject: 'goal.queue-authority',
-      authorityClaim: 'single-coordinator-ratified-state',
-    },
-    {
-      sourceId: 'fk-loop-directive',
-      itemIds: [
-        'item.dd8203551518',
-        'item.ebdd14e6f524',
-        'item.a59b01361dc6',
-        'item.734b79ca0bb8',
-        'item.51f7dbbba473',
-        'item.d69eca1ec1f6',
-        'item.fc3ea1441f92',
-        'item.15e5fcbdbe13',
-      ],
-      authoritySubject: 'coordinator.required-reading',
-      authorityClaim: 'read-controlling-sources-each-iteration',
-    },
-    {
-      sourceId: 'fk-loop-directive',
-      itemIds: [
-        'item.bfffee6d7c1f',
-        'item.431228393540',
-        'item.be7691d170a9',
-        'item.9935b3499764',
-        'item.64341d1e8b82',
-        'item.7eb6018d9e57',
-        'item.7aa2dd930e35',
-      ],
-      authoritySubject: 'goal.standing-authorization',
-      authorityClaim: 'bounded-local-work-without-external-effects-or-merge',
-    },
-    {
-      sourceId: 'fk-loop-directive',
-      itemIds: [
-        'item.8c0b09120ff1',
-        'item.d3b0e9dd63d0',
-        'item.f7e8dffebadc',
-        'item.1157c2a03bbe',
-        'item.bdd56a126b79',
-        'item.ed8d7888ce8c',
-        'item.6ea9ce2b9573',
-        'item.ce9042d917b2',
-        'item.d978784bc1b7',
-        'item.2743c2f8c558',
-        'item.e3065db62b43',
-      ],
-      authoritySubject: 'coordinator.parcel-loop',
-      authorityClaim: 'verify-shape-build-review-and-stop-at-human-merge',
-    },
-    {
-      sourceId: 'fk-loop-directive',
-      itemIds: ['item.1576c95260b6'],
-      authoritySubject: 'parcel.shared-file-serialization',
-      authorityClaim: 'parallelize-only-after-contracts-and-without-shared-points',
-    },
-    {
-      sourceId: 'fk-loop-directive',
-      itemIds: [
-        'item.8f98d5e3e61a',
-        'item.4f26e86b0870',
-        'item.5909432cc1a7',
-        'item.b2e02392e4e5',
-        'item.ec3e0d0130ff',
-        'item.e7e5c2483975',
-        'item.c6c0339a5001',
-        'item.78a9d344c4c6',
-      ],
-      authoritySubject: 'registry.delivery-contract',
-      authorityClaim: 'source-bound-classified-non-escalating-registry-only',
-    },
-    {
-      sourceId: 'fk-loop-directive',
-      itemIds: [
-        'item.5820c7f79bef',
-        'item.7f72e946ccbe',
-        'item.23f92834c1c8',
-        'item.6151d43333aa',
-        'item.c708d8f95113',
-        'item.adee76eb5f43',
-        'item.52f524327994',
-        'item.37f78aa591c5',
-        'item.d7945b743a67',
-        'item.80f2c4a08e42',
-        'item.c55a33cc847f',
-        'item.237865e0993f',
-      ],
-      authoritySubject: 'coordinator.stop-conditions',
-      authorityClaim: 'stop-on-authority-scope-security-or-ownership-failure',
-    },
-    {
-      sourceId: 'fk-loop-directive',
-      itemIds: ['item.7ad3390acb6b'],
-      authoritySubject: 'coordinator.session-wakeup',
-      authorityClaim: 'completion-notifications-before-fallback-waits',
-    },
-    {
-      sourceId: 'spec-convention',
-      itemIds: [
-        'item.fd5d51dd4808',
-        'item.f2172f28e7fc',
-        'item.71d77f22d163',
-        'item.ea0314db8499',
-        'item.d2b2084774b8',
-        'item.910181940014',
-        'item.c9b45d54e97b',
-        'item.4fa776b35f0b',
-        'item.4886c52fa322',
-        'item.74a07f6879cc',
-        'item.03f0830cd693',
-        'item.7a55cf4f2295',
-        'item.efb0769d6ff2',
-        'item.513e18f22be3',
-        'item.6dbbca88286f',
-        'item.ac5ff7afd06f',
-        'item.5145ab15549c',
-        'item.fd82127bf9f9',
-      ],
-      authoritySubject: 'parcel.spec-convention',
-      authorityClaim: 'follow-versioned-spec-lifecycle-and-exact-mutation-authority',
-    },
-    {
-      sourceId: 'coordinator-pattern',
-      itemIds: [
-        'item.38dbf3185a76',
-        'item.84b4e388c06b',
-        'item.d62734f662a0',
-        'item.00f63e7818bc',
-        'item.a3d15fe678e1',
-        'item.dedbefc1b097',
-        'item.91dd60b00fd6',
-      ],
-      authoritySubject: 'goal.coordination-model',
-      authorityClaim: 'mutual-decisions-ratified-before-dispatch',
-    },
-    {
-      sourceId: 'goal-skill',
-      itemIds: ['item.02636597cc8d', 'item.fa27a05811dd', 'item.8fda5f4d9776'],
-      authoritySubject: 'goal.ratification-lifecycle',
-      authorityClaim: 'interrogate-charter-and-obtain-explicit-gate-one',
-    },
-    {
-      sourceId: 'parcel-driven-development',
-      itemIds: [
-        'item.b7563a79cc57',
-        'item.400cc2cfd0d5',
-        'item.303fe3f67dae',
-        'item.f1add5311b6c',
-        'item.9d8d06d91590',
-        'item.dbee4594f901',
-        'item.7a8af4ddaa1e',
-        'item.98f93a29441d',
-        'item.e4751682430a',
-        'item.72c60fa596e7',
-        'item.754e096cfecf',
-        'item.876882377a6a',
-      ],
-      authoritySubject: 'parcel.review-checklist',
-      authorityClaim: 'verify-contract-scope-safety-evidence-and-handoff',
-    },
-    {
-      sourceId: 'spec-linter-validator',
-      itemIds: ['item.c6669b61c6f0', 'item.256b9064bc47'],
-      authoritySubject: 'spec.validation-behavior',
-      authorityClaim: 'schema-and-supersession-invariants-enforced',
-    },
-    {
-      sourceId: 'spec-linter-cli',
-      itemIds: ['item.0479c603add5', 'item.fb268f5c5eb4', 'item.66fec8a20db5', 'item.39787f778432'],
-      authoritySubject: 'spec-linter.exit-contract',
-      authorityClaim: 'zero-valid-one-invalid-two-usage',
-    },
-  ]
-  const group = curatedGroups.find(
-    (candidate) => candidate.sourceId === sourceId && candidate.itemIds.includes(itemId),
-  )
-  return group === undefined
+  const identity = CURATED_ITEM_IDENTITIES[`${sourceId}:${itemId}`]
+  return identity === undefined
     ? null
-    : { authoritySubject: group.authoritySubject, authorityClaim: group.authorityClaim }
+    : { authoritySubject: identity[0], authorityClaim: identity[1] }
 }
-
 function applicabilityFor(
   classification: RuleClassification,
   goals: SourceDefinition['scope'],
@@ -1165,7 +1897,7 @@ function applicabilityFor(
       hosts: ['any'],
     },
     'item.hard-rule-6': {
-      roles: ['coordinator'],
+      roles: ['coordinator', 'builder'],
       stages: ['build'],
       operations: ['repo-mutation'],
       hosts: ['any'],
@@ -1253,6 +1985,18 @@ function applicabilityFor(
       stages: ['build', 'runtime'],
       operations: ['state-transition', 'control-call'],
       hosts: ['provider-neutral', 'claude-windows-docker-loaded'],
+    },
+    'item.d2': {
+      roles: ['builder', 'reviewer', 'kernel'],
+      stages: ['build', 'deterministic-verify', 'runtime'],
+      operations: ['repo-mutation', 'state-transition'],
+      hosts: ['any'],
+    },
+    'item.d18': {
+      roles: ['builder', 'reviewer', 'host-adapter', 'kernel'],
+      stages: ['build', 'deterministic-verify', 'runtime'],
+      operations: ['repo-mutation', 'control-call'],
+      hosts: ['any'],
     },
     'item.d5': {
       roles: allRoles,
@@ -1438,6 +2182,9 @@ function buildSource(definition: SourceDefinition): {
   curated.push(...markdownBindingBlocks(content, definition.sourceId))
   if (definition.path.endsWith('.ts')) curated.push(...tsConstructs(content))
   if (definition.path.endsWith('.json')) curated.push(...jsonConstraints(content))
+  if (definition.sourceId === 'permission-profiles-registry') {
+    curated.push(...permissionProfileRules(content))
+  }
   if (definition.sourceId === 'fk-charter') {
     curated.unshift(
       ...tableRows(
@@ -1469,7 +2216,19 @@ function buildSource(definition: SourceDefinition): {
   for (const entry of curated) {
     unique.set(`${entry.locator.kind}\u0000${entry.locator.anchor}`, entry)
   }
-  const located = [...unique.values()]
+  const explicitTableStatements = new Set(
+    [...unique.values()]
+      .filter((entry) => entry.locator.kind === 'table-row')
+      .map((entry) => normalizeRuleText(entry.text)),
+  )
+  const located = [...unique.values()].filter(
+    (entry) =>
+      !(
+        entry.locator.kind === 'line-excerpt' &&
+        entry.locator.anchor.includes(':table-row:') &&
+        explicitTableStatements.has(normalizeRuleText(entry.text))
+      ),
+  )
   if (located.length === 0) throw new Error(`source '${definition.path}' has no inventory locators`)
   const rules: AuthorityRule[] = []
   const inventoryItems = located.map((entry) => {
@@ -1484,9 +2243,8 @@ function buildSource(definition: SourceDefinition): {
         normalizedExcerpt,
         valueDigest,
         ruleIds: [],
-        exclusionDisposition: 'not-rule' as const,
-        rationale:
-          'The heading is structural navigation; its complete body items carry the operative rules.',
+        exclusionDisposition: 'heading-only' as const,
+        rationale: `Heading ${locator.anchor} is structural navigation; its complete body items carry the operative rules.`,
       }
     }
     const authorityIdentity = authorityIdentityFor(definition.sourceId, itemId)
@@ -1500,10 +2258,14 @@ function buildSource(definition: SourceDefinition): {
         normalizedExcerpt,
         valueDigest,
         ruleIds: [],
-        exclusionDisposition: 'not-rule' as const,
+        exclusionDisposition: structuralCoverage
+          ? locator.anchor.startsWith('json-pointer:')
+            ? ('schema-container' as const)
+            : ('structural-ast' as const)
+          : ('non-normative-explanation' as const),
         rationale: structuralCoverage
-          ? 'This complete syntax or schema item is inventory coverage for change detection; it does not independently grant, refuse, or require authority.'
-          : 'This source-bound item is metadata, explanatory context, or duplicate provenance and does not state an independent normative authority rule.',
+          ? `Inventory item ${itemId} at ${locator.anchor} provides structural change coverage and does not independently state authority.`
+          : `Inventory item ${itemId} at ${locator.anchor} is explanatory context and does not state an independent normative authority rule.`,
       }
     }
     const ruleId = `rule.${definition.sourceId}.${itemId.replace(/^item\./, '')}`
@@ -1732,6 +2494,20 @@ function requiredReconciliations(
     }
     return { ref, ruleId }
   }
+  const getInventory = (sourceId: string, itemId: string): { ref: SourceRef } => {
+    const source = byId.get(sourceId)
+    if (source === undefined) throw new Error(`missing reconciliation source '${sourceId}'`)
+    const item = source.inventoryItems.find((candidate) => candidate.itemId === itemId)
+    if (item === undefined) throw new Error(`missing reconciliation item '${sourceId}:${itemId}'`)
+    return {
+      ref: {
+        sourceId,
+        itemId: item.itemId,
+        locatorDigest: locatorDigestFor(item.locator),
+        valueDigest: item.valueDigest,
+      },
+    }
+  }
   const plan = get('foreman-line-plan', 'item.two-gate-thesis')
   const approval = [
     get('approval-readme', 'item.4261d18b3243'),
@@ -1749,15 +2525,7 @@ function requiredReconciliations(
   const conventionSurfaces = get('spec-convention', 'item.ac5ff7afd06f')
   const conventionAllowed = get('spec-convention', 'item.5145ab15549c')
   const conventionStop = get('spec-convention', 'item.fd82127bf9f9')
-  const linter = [
-    'item.860f1c1146f4',
-    'item.1dddb8e0edae',
-    'item.fbc219d0ff13',
-    'item.cc7db94c11c2',
-    'item.7443d95fc46b',
-    'item.0a36842682ef',
-    'item.d6246c2593db',
-  ].map((itemId) => get('spec-frontmatter-schema', itemId))
+  const linter = [get('spec-frontmatter-schema', 'item.bdf997c3cd45')]
   const linterProfileMissing = get('spec-linter-validator', 'item.092d2fc43a32')
   const linterProfileWarning = get('spec-linter-validator', 'item.fb7d76a32df4')
   const linterReturn = get('spec-linter-validator', 'item.80563af1788e')
@@ -1774,7 +2542,7 @@ function requiredReconciliations(
     'item.514a38aa8311',
     'item.a61f76b791df',
     'item.ff2ab3fa7a40',
-  ].map((itemId) => get('permission-profiles-registry', itemId))
+  ].map((itemId) => getInventory('permission-profiles-registry', itemId))
   const profileTypes = [
     get('permission-profiles-types', 'item.0b9706b5a9bf'),
     get('permission-profiles-types', 'item.bc257b03aa99'),
@@ -1800,6 +2568,7 @@ function requiredReconciliations(
   const r4Manifest = '375ea566b2858d3204d17e0625332167a373b555db6d3a8b741af88f1390e082'
   const r5Manifest = '589c6c3ea98147a951ab8887fd70a1a1c50e8b84953abcbe51b152a256da6ad9'
   const r6Manifest = '644e1336c2e4309bc75954cb24e921d4cf6d3a75b0ccc7cb926de34a8ca553c6'
+  const r7Manifest = '2a12cde0f3ae481462c74cb5c0cb2377514f628cb0091c26f916705a4778de77'
   const commandEvidence = (commandId: string, inputDigest: string, resultDigest: string) =>
     canonicalJson({
       tool: '@foreman-line/authority-registry',
@@ -1844,7 +2613,11 @@ function requiredReconciliations(
         ...linterReadme.map((item) => item.ref),
         conventionProfile.ref,
       ],
-      [...linter.map((item) => item.ruleId), ...linterValidator.map((item) => item.ruleId)],
+      [
+        ...linter.map((item) => item.ruleId),
+        ...linterReadme.map((item) => item.ruleId),
+        conventionProfile.ruleId,
+      ],
       'resolved-for-fk',
       'Live schema behavior is recorded as binding and contradictory explanation as stale.',
       'FK-P0 does not edit the linter or convention prose.',
@@ -1874,7 +2647,7 @@ function requiredReconciliations(
         ...profileReadme.map((item) => item.ref),
         charterProfileBoundary.ref,
       ],
-      [...profileValidator.map((item) => item.ruleId), charterProfileBoundary.ruleId],
+      [...profileReadme.map((item) => item.ruleId), charterProfileBoundary.ruleId],
       'resolved-for-fk',
       'Mediated denial, post-review detection, and unsupported bypass cases are separate classifications.',
       'Missing enrollment must never be reported as a pre-action refusal.',
@@ -2062,6 +2835,48 @@ function requiredReconciliations(
       migrationStatus: 'superseded-by-amendment',
       supersedingEvidence: charterAllowed.ref,
     },
+    {
+      reconciliationId: 'registry-rework-00b41b7',
+      topic: 'R6 registry bindings superseded by the coordinator-ratified FK-P0 R7 amendment.',
+      observedRefs: [charterOperationalBoundary.ref],
+      observedEvidence: [
+        {
+          kind: 'git-commit',
+          reference: '6123474485ef836fc7250df9c15695aaff44fe45',
+          digest: sha256(
+            execFileSync('git', ['cat-file', '-p', '6123474485ef836fc7250df9c15695aaff44fe45'], {
+              cwd: repoRoot,
+            }),
+          ),
+        },
+        {
+          kind: 'git-commit',
+          reference: SNAPSHOT,
+          digest: sha256(execFileSync('git', ['cat-file', '-p', SNAPSHOT], { cwd: repoRoot })),
+        },
+        {
+          kind: 'command-result',
+          reference: commandEvidence('registry-binding-manifest-r6', sha256(SNAPSHOT), r6Manifest),
+          digest: sha256(
+            commandEvidence('registry-binding-manifest-r6', sha256(SNAPSHOT), r6Manifest),
+          ),
+        },
+        {
+          kind: 'command-result',
+          reference: commandEvidence('superseding-binding-manifest-r7', r6Manifest, r7Manifest),
+          digest: sha256(
+            commandEvidence('superseding-binding-manifest-r7', r6Manifest, r7Manifest),
+          ),
+        },
+      ],
+      authoritativeRuleIds: [charterOperationalBoundary.ruleId],
+      scopedDisposition:
+        'The R7 item-specific curation, protected evidence, and complete discovery contract supersedes the R6 registry bindings in FK scope.',
+      unresolvedConsequence:
+        'Future binding changes require another typed prior-to-new migration record.',
+      migrationStatus: 'superseded-by-amendment',
+      supersedingEvidence: charterOperationalBoundary.ref,
+    },
   ]
 }
 
@@ -2076,9 +2891,12 @@ function buildRegistry(): AuthorityEnforcementRegistry {
     sources,
     rules,
     operationAuthority: operationAuthority({
-      gate1: [refFor(sources, 'fk-charter', 'item.b1ac4aa9eddf')],
+      gate1: [
+        refFor(sources, 'fk-charter', 'item.cd014d6d90c5'),
+        refFor(sources, 'fk-charter', 'item.d9'),
+      ],
       gate2: [
-        refFor(sources, 'fk-charter', 'item.afbcffd2d557'),
+        refFor(sources, 'fk-charter', 'item.15a44cf50bc6'),
         refFor(sources, 'fk-loop-directive', 'item.bfffee6d7c1f'),
       ],
       gate3: [
