@@ -248,6 +248,15 @@ uses its semantic list identity and aggregates all continuation lines before nor
 never incorporates the first physical line's complete text. Reflowing unchanged normalized text
 across lines must preserve item ID, locator digest, and value digest.
 
+For every Markdown paragraph or list item, the `anchor` is also independent of its semantic value.
+It is exactly the structural heading path plus block kind plus the one-based ordinal of that block
+kind inside the heading container; it contains no normalized-text fragment, digest, slug, or other
+content-derived token. `line-excerpt` is the locator kind used for an ordinary Markdown paragraph;
+its anchor still follows this structural rule and is not permission to use excerpt text as
+identity. A normalized-value-only edit therefore resolves the same locator and emits
+`VALUE_DIGEST_MISMATCH`, never `LOCATOR_MISSING` plus `SOURCE_ITEM_UNCOVERED`. Moving a block or
+inserting another same-kind block before it is a location mutation and is tested separately.
+
 `AuthorityRule` must carry:
 
 - immutable semantic `ruleId` independent of line number; `authoritySubject` and
@@ -261,7 +270,7 @@ across lines must preserve item ID, locator digest, and value digest.
   independent-review-human-judgment | narrative-provenance | unsupported`;
 - common decision semantics using only
   `ALLOW | REFUSE | ADVISORY | CONFLICT | REQUIRE_HUMAN`; enforcement owner; stable refusal
-  code when classification is `pre-action-refusal`; `EnforcementOwner`; `AssuranceLevel`;
+  code; `EnforcementOwner`; `AssuranceLevel`;
   unique paired/backstop rule IDs;
 - `RetirementState` and closed `retirementEvidence` with nullable `EvidenceRef` values for
   `predicate`, `negativeRefusalTest`, `corpusSweep`, and `independentBypassAttempt`. All four are
@@ -278,11 +287,24 @@ across lines must preserve item ID, locator digest, and value digest.
   rule binding digest in a shipped manifest independent of input array cardinality; unknown or
   missing sources and coordinated semantic changes fail unless a typed migration record binds
   the prior committed manifest and superseding rules. The digest is an integrity checksum only,
-  never a receipt, signature,
-  approval, verification verdict, merge authorization, or closure artifact.
+  never a receipt, signature, approval, verification verdict, merge authorization, or closure
+  artifact.
+
+The six-classification set remains closed. `pre-action-refusal` names the pre-action policy layer,
+not an invariant that every controlling record says `REFUSE`: it may use `decision: ALLOW` only for
+an exact, bounded positive authorization grant already stated by binding canon. Ordinary denial
+records remain `REFUSE`. A `pre-action-refusal`/`REFUSE` record has a non-null stable
+`refusalCode`; a `pre-action-refusal`/`ALLOW` record has `refusalCode: null`. No other decision is
+valid for that classification. Permission-profile `allow` entries are documentation of intent and
+cannot become `ALLOW` authority. The exact Gate 2 coordinator-dispatch grants are `ALLOW`; generic
+minting, external writes, Gate 1, Gate 3, independent-verification issuance, merge, and closure do
+not acquire `ALLOW` rules in R11. Any positive grant beyond the exact Gate 2 rules requires a
+future coordinator-ratified contract amendment with precise principal and operation semantics.
 
 Rules with overlapping applicability and the same `authoritySubject` but different
-`authorityClaim` values are semantic contradictions. Active higher-tier binding authority may
+`authorityClaim` values are semantic contradictions. Rules at the selected highest tier with the
+same subject and claim but different decisions are also contradictions; a claim label cannot hide
+an allow/refuse split. Active higher-tier binding authority may
 control only in its overlapping scope; equal-tier contradictions and unlisted lower/higher-tier
 contradictions return `CONFLICT`. Narrative, historical, stale, retired, and unsupported rules
 remain visible but cannot control active authority. Export a pure `resolveAuthority(document,
@@ -305,6 +327,7 @@ type AuthorityResolution =
       outcome: 'RESOLVED'
       authoritySubject: string
       authorityClaim: string
+      decision: 'ALLOW' | 'REFUSE' | 'ADVISORY' | 'REQUIRE_HUMAN'
       controllingRuleIds: string[]
       consideredRuleIds: string[]
     }
@@ -319,6 +342,7 @@ type AuthorityResolution =
       outcome: 'CONFLICT'
       authoritySubject: string
       conflictingClaims: string[]
+      conflictingDecisions: ('ALLOW' | 'REFUSE' | 'ADVISORY' | 'REQUIRE_HUMAN')[]
       controllingRuleIds: []
       consideredRuleIds: string[]
     }
@@ -327,7 +351,8 @@ type AuthorityResolution =
 All ID arrays and claims are unique and lexicographically sorted. The resolver first filters to
 matching, non-historical/non-stale, non-`historical-only`, non-narrative, non-unsupported rules
 from binding sources, then selects the highest applicable `AuthorityTier`. Multiple highest-tier
-rules with one claim resolve together; multiple claims return `CONFLICT`. No candidate returns
+rules with one claim and one decision resolve together and return that controlling decision;
+multiple claims or multiple decisions at that tier return `CONFLICT`. No candidate returns
 `REQUIRE_HUMAN / NO_APPLICABLE_AUTHORITY`. Lower-tier rules remain in `consideredRuleIds` but
 cannot override the selected tier.
 
@@ -412,6 +437,28 @@ human-owned Gate 3 rule, and coordinator verification-custody rule align respect
 source-local queue/authorization subject may not fragment those questions or make an
 out-of-scope query pass by subject mismatch.
 
+One Markdown inventory item may map to multiple distinct `AuthorityRule` records when its source
+block contains independently operative clauses. Each rule has its own curated subject, claim,
+classification, decision, owner, assurance, and applicability while sharing the same exact basis
+item. Collapsing a compound normative block into one catch-all rule is invalid. In particular, the
+paragraph in `COORDINATOR-PATTERN.md` under `The long-running loop` publishes six distinct rules:
+
+- ownership transfer only at parcel boundaries under `goal.coordinator-ownership`;
+- frozen-contract modification stop under `goal.stop.ratified-boundary`;
+- twice-fired tripwire stop under `goal.stop.tripwire`;
+- unclosed in-parcel security finding stop under `goal.stop.security-boundary`;
+- outward-facing work beyond standing authorization stop under `goal-stop.external-capability`;
+  and
+- empty-queue stop under `goal.stop.incomplete-empty-queue`.
+
+The six rules align with the existing charter/loop rules under those shared semantic questions;
+they are not six aliases of the ownership subject. Independently written source-derived resolver
+vectors cover, respectively, coordinator/runtime state transition, coordinator/runtime spec
+mutation, coordinator/runtime state transition, coordinator/runtime state transition,
+coordinator/runtime external write, and coordinator/runtime state transition on a
+`provider-neutral` host. Matching negative vectors are written from source meaning, not generated
+from the shipped rule's own applicability arrays.
+
 Exclusions use one closed code plus an item-specific rationale:
 `heading-only | table-header | structural-ast | schema-container | duplicate-exact-statement |
 non-normative-explanation | example-only | fenced-code | type-only`. The generic phrase
@@ -424,6 +471,22 @@ charter decision D1-D20 is published with a binding basis and active semantics; 
 tests prove at least D2 and D18 return `RESOLVED` with their exact claims in natural FK queries.
 `narrative-provenance` is reserved for provenance/history/rationale text and cannot classify an
 operative binding requirement merely because no enforcement mechanism exists yet.
+
+The protected normative manifest additionally binds these four complete Markdown blocks as
+published operative rules, never exclusions or first-line substitutes:
+
+- `SPEC-CONVENTION.md` / `Allowed Files Mutation Authority`: the three-line exact-path/glob
+  prohibition beginning “Every dispatchable spec must contain”; and the three-line stop,
+  coordinator-ratification, and no-self-expansion block beginning “If implementation requires”;
+- `parcel-driven-development/SKILL.md` / `Contract Amendment Rule`: “Agents do not edit approved
+  contracts directly from parcel branches.”; and
+- `parcel-driven-development/SKILL.md` / `Session Handoff`: the complete mandatory handoff
+  sentence beginning “Every agent session that changes”.
+
+Their normalized statements are built from the complete semantic block, including continuation
+lines. A truncated physical first line cannot substitute for the block. These are explicit curated
+protected items, not the output of a source-wide keyword heuristic; exclusion, truncation, or
+replacement with a nearby explanatory item fails validation and the sweep.
 
 All nine numbered goal-exit requirements and all seventeen charter stop-condition bullets are
 protected normative items and must be published individually; headings/intros may be excluded,
@@ -448,6 +511,17 @@ all roles/stages/operations/hosts merely because it came from the loop source. T
 query must stay out of scope after considering every rule under the shared
 `gate2.dispatch-grant` subject, not by filtering a narrative classification or using a different
 subject.
+
+Permission-profile authority is limited to the mediation that actually exists. Every configured
+deny or restrictive network entry is curated to the role represented by its exact profile, the
+relevant operation/stage, and host `claude-windows-docker-loaded`; its enforcement owner is
+`host-adapter` and its assurance is `mediated`. The 53 shipped permission-profile registry rules
+must each have an item-specific five-axis record rather than one full cross-product. Profile
+`allow` entries remain nonbinding documentation (`narrative-provenance`/`ADVISORY`) and never
+authorize an operation. An unenrolled session, unsupported host, CI host, or wrong role has no
+applicable permission-profile authority and returns `REQUIRE_HUMAN / NO_APPLICABLE_AUTHORITY` when
+no other binding rule applies. Post-action Git detection and CI checks, when supported by their own
+source basis, are separate rules and never masquerade as loaded-session refusals.
 
 Every active `gate3.merge-authority` rule that expresses this goal's nondelegated human merge
 boundary uses precise merge applicability. Agent-side refusal records apply to the coordinator at
@@ -632,6 +706,13 @@ commit's registry, whose source snapshot remains exactly
 `51857a3a7796b393c0c0a68712f98c06e7015d79`, and whose superseding manifest and complete changed
 semantic bindings are exact. R10 cannot rewrite or omit the R9 migration record.
 
+R11 ships a typed `registry-rework-*` migration whose prior commit is exactly
+`f3366be12175acb4fd4aeb32c301c845b906a5da`, whose prior manifest digest is recomputed from that
+commit's registry, whose source snapshot remains exactly
+`51857a3a7796b393c0c0a68712f98c06e7015d79`, and whose superseding manifest and complete changed
+semantic bindings are exact. R11 preserves every R1-R10 rework/reconciliation record; it may not
+rewrite or omit prior history to make the new model validate.
+
 ### Validator and CLI boundary
 
 - Export pure `validateRegistry(document)` and a read-only
@@ -667,6 +748,10 @@ semantic bindings are exact. R10 cannot rewrite or omit the R9 migration record.
   PDD's branch and serialization requirements; and ordinary operative prose in
   `SPEC-CONVENTION`. Equivalent ordinary-prose additions to each of those four sources fail the
   sweep until explicitly curated or item-specifically excluded.
+- Ordered Markdown list discovery accepts both CommonMark delimiters, `1.` and `1)`, and emits one
+  independent inventory item per list item with its continuation lines. Appending two consecutive
+  parenthesized items to a Markdown source outside the charter produces two distinct uncovered
+  list-item violations, not one paragraph violation.
 - Markdown comment handling removes only the exact characters inside properly paired HTML comment
   spans and preserves visible text before and after a same-line comment. Multi-line comment state
   is tracked only when a matching close exists. An unmatched `<!--` is not treated as a
@@ -844,6 +929,23 @@ and substitute mutations of `registry-rework-91145d7`. A source-derived loop mus
 four mutations apply to every shipped `registry-rework-*` record. Count-only, map-length, or
 happy-path-only assertions do not satisfy these controls.
 
+R11 starts from the coordinator-verified R10 baseline of 402 passing tests. The builder adds at
+least thirty independently named R11 controls and the final combined suite contains at least 432
+tests. They separately cover: content-independent Markdown anchors with no content hash/token;
+value-only mutation resolving the same locator and producing `VALUE_DIGEST_MISMATCH`; a separate
+move/location mutation; two independent `1)`/`2)` uncovered list items in another Markdown source;
+all six rules from the compound coordinator-loop paragraph; explicit source-authored positive and
+negative queries for each of those six rules; publication and full-block basis of both named
+`SPEC-CONVENTION` blocks and both named PDD blocks; rejection of exclusion, truncation, and nearby-
+item substitution for those blocks; loaded-host positive permission-profile mediation; unenrolled,
+unsupported-host, CI-host, and wrong-role negative queries; precise per-item applicability for all
+53 permission-profile rules; Gate 2 rules using `decision: ALLOW`; resolver propagation of the
+controlling decision; same-highest-tier same-claim/different-decision conflict; and rejection of
+any unapproved `ALLOW`. R11 also has independently named happy, append, remove, duplicate, and
+substitute controls for its migration record, and the all-rework-record loop continues to exercise
+every prior record. Tests may not derive expected natural queries, decisions, subjects, or clause
+counts from the registry data under test.
+
 - Schema acceptance/rejection and TypeScript/JSON-Schema parity.
 - Shipped full-registry validation and exact locator/value coverage of the source corpus; a
   separate parcel-time check records full-file snapshot hashes without shipping a byte freeze.
@@ -995,7 +1097,9 @@ happy-path-only assertions do not satisfy these controls.
    an in-scope subject/claim contradiction; historical/generic rules remain visible; an unlisted
    or equal-authority contradiction returns `CONFLICT` and cannot be selected silently.
    Real shipped competing statements share curated subjects, tier comes only from the exact
-   binding `authorityBasisRef`, and retired rules never control.
+   binding `authorityBasisRef`, and retired rules never control. A resolved result exposes its
+   controlling decision; a highest-tier decision split returns `CONFLICT` even when the claim text
+   is identical. Exact bounded Gate 2 dispatch grants resolve `ALLOW`.
 6. The operation matrix enforces the protected rows exactly as stated in Constraints. No
    registry mutation can make human approval, FK merge, independent-verifier evidence, closure
    authority, or generic receipt minting ordinary agent-callable/control-state authority.
@@ -1006,6 +1110,9 @@ happy-path-only assertions do not satisfy these controls.
    compiler is recorded as a gap owned by FK-P2, not misclassified as a current refusal.
 9. Permission-profile rules distinguish loaded mediated denial, post-review Git detection,
    detected-only non-enrollment, and unsupported residual shell/bypass cases without overclaim.
+   Profile authority applies only to the actual profile role on
+   `claude-windows-docker-loaded`; unenrolled, unsupported, CI, and wrong-role queries do not
+   inherit a configured profile refusal or grant.
 10. No rule reaches `retired-from-agent-reading` without four distinct, content-typed, digest-
     verified D11 evidence artifacts bound to that rule; the missing provenance target prevents
     retirement of the thirteen standing constraints.
