@@ -1244,7 +1244,16 @@ registry under test.
    severity, one of the six required classifications, decision semantics, enforcement owner,
    assurance, retirement state, and corpus-sweep evidence appropriate to that state. The shipped
    manifest binds the full normative rule record and exact eighteen-source set without a
-   cardinality-conditioned bypass.
+   cardinality-conditioned bypass. Binding is established either by a pinned constant or by
+   structural position in the migration chain: the single chain head - the one record from which
+   no other record chains - is bound instead to the manifest recomputed live from the document it
+   sits in, and every other record is bound to its pinned digest. This is not a
+   cardinality-conditioned bypass: the head is identified by chain topology rather than by
+   counting, and it is bound more tightly than a constant rather than exempted, because a constant
+   asserts only "these are the bytes I remember" while the live recomputation asserts "this record
+   accurately describes the document containing it". A document is invalid if it has zero chain
+   heads, more than one chain head, or any reconciliation record that does not lie on the single
+   genesis-to-head path.
    Each subject/claim is item-curated and substantively supported by its authority basis; source-
    wide catch-all semantic identities are invalid. The complete declared source baseline,
    including snapshot evidence, is independently manifest-bound.
