@@ -325,3 +325,93 @@ Recorded because the coordinator committed C5's hypothesis into the goal record 
 the measurement existed. The builder produced the measurement, contradicted itself, and reported it
 — the second time in this round it has withdrawn its own claim when data disagreed. That behaviour
 is worth more than the individual findings.
+
+## C10 — baseline established, and the 504 claim was never broken
+
+**The first complete, trustworthy run of this suite by anyone.** Machine verified quiesced, TAP
+reporter, full untruncated output.
+
+```
+1..518
+# tests 518   # pass 500   # fail 18   # cancelled 0   # skipped 0   # todo 0
+# duration_ms 1426411.4822   (23.8 minutes)   EXIT=1   stderr 0 bytes
+```
+
+**Tripwire baseline, both halves:**
+
+| Segment | Tests | Result |
+|---|---|---|
+| Five files other than `semantic-invariants` | 133 | 115 pass, 18 fail |
+| `semantic-invariants.test.ts` | **385** | **385 pass, 0 fail** |
+| **Total** | **518** | 500 pass, 18 fail |
+
+After rework the five files must return to 133 passing and `semantic-invariants` must not fall
+below 385. **Reducing test count to gain speed trips the tripwire**; where a performance change
+costs coverage, coverage wins.
+
+### CORRECTION: the 504 claim is satisfied, and the wrong number was the coordinator's
+
+F9 and R15's closing note both recorded the spec's "504 tests" as an **unmet historical claim**.
+That was wrong, and the error originated in the rework directive, not with the builder.
+
+The measured suite is **518 tests**, so spec line 1085's "at least 504" **is satisfied**, and so is
+line 1026's "at least 361". They are not contradictory — 361 is a floor and 504 a later, higher
+floor, and both hold.
+
+The wrong figure was the directive's **~330** estimate, which extrapolated from top-level `test(`
+declarations and undercounted badly, because node counts nested subtests that a declaration count
+cannot see. `semantic-invariants` alone yields 385.
+
+**There is no broken spec claim to report.** F9's instruction to report 504 as unmet is withdrawn.
+
+### `semantic-invariants` completed — first time observed
+
+385 tests, all green, ~9.4 minutes, no output lost, stderr empty.
+
+**No conclusion drawn about the historical deaths.** n=1, and Reviewer B ruled out the two
+mechanisms contention would most obviously work through. The precise statement: on an idle machine
+the file completes reliably and the historical `pass 0 / fail 1 / no output` signature did not
+reproduce. Contention remains the leading hypothesis; it is **not established** and the question
+stays open. What *is* established is why those runs were unreadable — node's per-file buffering —
+and that is what fix 20 addresses.
+
+### The 18 failures span two files, not one
+
+17 in `corpus-sweep`, plus `CLI validate and sweep return exit 0 with machine-readable summaries` in
+`schema-validation.test.ts`, which shells out to `sweep --repo-root ../../..` against the real
+corpus and fails for the identical reason. One root cause, two affected files.
+
+### Final timing attribution
+
+| | |
+|---|---|
+| Total wall clock | 1428 s |
+| Sum of all test bodies | 1388.1 s (**97.2 %**) |
+| Module evaluation + overhead | ~40 s (**2.8 %**) |
+| `corpus-sweep` | 795.9 s — 55.7 %, 107 tests |
+| `semantic-invariants` | 561.6 s — 39.3 %, 385 tests (~1.46 s/test) |
+| `semantic-invariants` own module eval | **~1.4 s** |
+
+**This splits fix 21 in two, and vindicates the directive's original framing for one of them:**
+
+- **`corpus-sweep`** — filesystem and process work in test *bodies*: 48 git clones plus 50
+  temp-corpus cycles, 77 tests over 5 s, worst 22.4 s. The memory framing does not apply here at
+  all. Clone-once-and-reuse plus `-c core.fsmonitor=false`. **This is where fix 21's effort goes.**
+- **`semantic-invariants`** — roughly the directive's *original* `structuredClone` +
+  `validateRegistry` diagnosis, at ~1.46 s/test. Fix 15's smaller fixtures should help as a side
+  effect; not to be chased further.
+
+The "three ~2.1 MB parses are a major cost" claim is **withdrawn entirely** — the `yaml` parser is
+far faster than either the builder or the coordinator assumed. Worth doing as hygiene, nothing more.
+
+## C11 — the daemon leak, cleared
+
+With the machine verified idle: **81 git processes stopped, 891 threads and 667.5 MB reclaimed.**
+Both worktrees healthy afterwards; the builder's three modified files intact and uncommitted; the
+user-owned `routing-policy.yaml` change untouched.
+
+Cleanup was deliberately sequenced *after* the builder's baseline run rather than before, so no
+measurement was contaminated by it — the mistake recorded in C4, not repeated.
+
+The leak is still fixed at source in the rework (`-c core.fsmonitor=false` plus
+clone-once-and-reuse); this cleanup only clears the five-day accumulation.
