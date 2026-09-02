@@ -968,6 +968,13 @@ If any required file is not listed above, stop and request a coordinator-ratifie
 before editing or creating it. Globs, directory-wide authority, and implied adjacent files are
 not permitted.
 
+This list is a permission ceiling, not a manifest of required artifacts: it bounds which paths may
+be created, edited, moved, or deleted, and it does not oblige any listed path to exist in the
+shipped result. In particular the negative fixtures may be **generated at test time** rather than
+committed, provided each one is still constructed for its named axis and its test still asserts the
+specific violation code that axis produces. AC11 is satisfied by that behaviour, not by the presence
+of a file on disk, and a listed path that no longer exists is not a scope violation.
+
 ## Forbidden
 
 - Editing this spec, the charter, plan review, loop directive, historical plan, convention,
