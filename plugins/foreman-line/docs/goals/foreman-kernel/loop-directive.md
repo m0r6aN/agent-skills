@@ -50,10 +50,31 @@ ruling of 2026-09-01** after four drafts and five independent reviews all return
 REQUEST CHANGES; its subject is recorded as a known unowned risk per A2's own rejection
 clause, not silently dropped.
 
-**FK-P0 is built but unmerged**, on branch `codex/fk-p0-canon-authority-enforcement-registry`
-at `df8155a`. **NEXT: deterministic pass on this coordinator's environment, then two fresh
-independent adversarial reviews** (architecture/risk + `risk: critical`), because no
-inherited review evidence survives. Gate 3 remains a human action.
+**FK-P0 is in rework round 1 of a maximum 2**, on branch
+`codex/fk-p0-canon-authority-enforcement-registry`, base `1cd25b1`.
+
+Round-1 chain to date: coordinator closure check (diff exactly the 28 Allowed Files,
+additions-only; `tsc` 0; `biome` 0) -> two independent fresh adversarial reviews, both completed,
+satisfying AC15 -> Reviewer A **REWORK REQUIRED** (2 BLOCKER / 8 SHOULD-FIX / 6 INFO), Reviewer B
+**SHIP WITH FOLLOW-UPS** (1 BLOCKER / 5 SHOULD-FIX / 7 INFO), later placed on hold by its own
+correction -> coordinator triage: **REWORK REQUIRED**, 22 findings dispositioned -> coordinator-
+ratified spec amendment **R14** committed alone (`df639f1`) -> goal branch merged onto the parcel
+branch (`a703941`) to resolve the charter-binding precondition -> rework directive issued
+(`1cd25b1`), builder dispatched and holding at Step 0.
+
+**The reviewers converged on facts and split on severity.** Four defects were found independently
+by both sessions. The coordinator ruled for Reviewer A on the pivotal one, on a ground neither
+reviewer cited: the spec forbids the manifest pin **twice** (Constraints line 97, and AC3), which
+makes it a spec-conformance failure rather than a design choice.
+
+**Open and genuinely unresolved: does `npm test` pass?** One full run returned exit 0; four others,
+including an unmutated pristine control, died identically with `semantic-invariants.test.ts` as a
+single failing test, `pass 0`, no per-test output, after 23-38 minutes. Every failing run had other
+heavy node processes live. The builder's first task after Step 0 is to settle this on an idle
+machine. **133 is not the baseline** -- it counts only the five other files.
+
+Gate 3 remains a human action, and now covers **one** merge rather than two, since the goal branch
+was merged onto the parcel branch.
 
 The ambient `D:/Repos/agent-skills` checkout has a user-owned change at
 `plugins/foreman-line/routing-policy/routing-policy.yaml`; never touch or absorb it.
