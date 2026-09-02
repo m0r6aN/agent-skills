@@ -1510,3 +1510,64 @@ After correcting it twice I stopped asking and **removed the dependency**: the s
 fixed path I read directly, so the builder's reporting cadence is no longer the channel the evidence
 travels through. Two corrections were feedback; a third would have been my failure to change the
 system. Worth recording because the same principle is what R20 did for the progress log.
+
+## C38 — the same measurement read two ways, and a README sentence that was simply false
+
+The builder ran a construction to answer my regeneration question: does a corpus change still produce a
+valid artifact without a `validate.ts` edit? Its answer — **yes, the generator re-emits the same head
+id with a recomputed manifest, 18→18, no code change needed** — was correct, and it labelled it
+precisely as *a simulation of the generator's documented emission shape, not an `npm run generate`
+invocation*, because running it would rewrite the shipped YAML.
+
+That labelling is the only reason the next question was askable. I ran the identical construction as an
+**attack**:
+
+```
+in-place RE-ANCHOR, prose intact, 7 gate3 rules retired
+  topic preserved: "R13 registry bindings superseded by the coordinator-ratifi…"
+  -> valid:true, 0 violations
+  resolveAuthority(gate3.merge-authority) -> REQUIRE_HUMAN / NO_APPLICABLE_AUTHORITY controlling=[]
+  reconciliations: 18 (unchanged); no record appended, none deleted
+```
+
+The head's topic still reads *"R13 registry bindings superseded by the coordinator-ratified…"* while
+attesting a registry in which every rule asserting merges are human-owned has been silently retired.
+
+**The builder's own summary is the durable form:** *"My regeneration confirmation and your attack are
+the same measurement. Same bytes, same result, opposite conclusions — and mine was the incomplete one.
+That is the argument for the residual being stated by capability rather than by intent."*
+
+**Adopted as a standing rule for this goal: state a residual by capability, never by intent.** A
+validator cannot read intent, so a limit phrased around what a legitimate operator would do is not a
+limit at all.
+
+### Ruling: not a blocker, and R22 is not amended
+
+It sits inside the ratified residual's capability envelope — file-edit access, visible in a `git diff` —
+and it violates none of R22's obligations. Obligation 7 requires that erasing an attestation never be
+cheaper than extending the chain: hollowing the prose **is** refused (P1-d), extending **is** admitted.
+In-place re-anchor is a third operation neither clause names. **Obligation 7 is incomplete, not false**,
+and I am not amending it — writing a fourth chain amendment to cover a capability that breaks no
+obligation is how R16 and R19 got their holes.
+
+### What changed instead: the README, and one sentence that was false
+
+The residual paragraph now states all three facts together — what is **admitted** (append a chained new
+head, *or* re-anchor the existing head in place with id, topic, contract fields and prose untouched),
+what is **refused** (hollowing the attestation: deletion, substitution and prose rewrite), and that
+**the second admitted move is the generator's own legitimate operation**, byte-for-byte identical. The
+validator cannot distinguish honest regeneration from dishonest re-anchoring, and no obligation claims
+it can.
+
+The builder also deleted a sentence of its own that was **outright false**: *"a tamper must add to the
+record rather than rewrite it."* An in-place re-anchor is a rewrite. It recorded the deletion as an
+error rather than quietly correcting it.
+
+### Both of this parcel's README errors failed in the flattering direction
+
+- The **append-depth limit** was stated *wider* than the truth — the builder found and narrowed it.
+- The **residual** was stated *narrower* than the truth — I found it and the builder widened it.
+
+Opposite directions, same defect, and both flattered us. That is worth more than either individual fix:
+in a parcel whose purpose is representing honestly where enforcement is real, the error mode is not
+carelessness but optimism, and it shows up in the documentation before it shows up in the code.
