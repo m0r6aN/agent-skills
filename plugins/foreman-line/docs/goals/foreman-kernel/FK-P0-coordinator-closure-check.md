@@ -1124,3 +1124,68 @@ I do not get to hand C4 and C23 back — the kills were mine and C23's mischarac
 "a concurrent run corrupts evidence" was a defect in the package the whole time, and I attributed it
 entirely to my own judgment because the package gave me no way to see otherwise. Both are now R20
 obligations rather than folklore about being careful.
+
+## C31 — the Step 0 gate caught two coordinator errors before a line of code was written
+
+The rework-2 builder stopped at Step 0 as instructed and pushed back on two of my rulings. **Both
+pushbacks were right.** I verified every claim myself rather than accepting the report:
+
+| claim | verified |
+|---|---|
+| `git-commit` entries satisfying `digest === sha256(reference)` | **0 of 25** |
+| `source-ref` / `command-result` / `missing-path` | 51/51, 25/25, 1/1 |
+| O6 (prior command `inputDigest` = sha256 of a same-record git ref) already holding | **12 of 12** |
+| duplicate evidence entries across all reconciliations | **0** |
+| head in `REQUIRED_REWORK_MIGRATIONS` | **no** |
+
+**Error 1 — R19's obligation 4 invalidates the shipped registry.** "For every observed-evidence entry
+of every kind, the recorded digest is the SHA-256 of the recorded reference." Three kinds already
+comply; `git-commit` never has, because its digest attests the commit *object body*. Literal
+compliance means regenerating and rewriting twelve entries of the pin table `generate.ts:45` says
+"must NOT advance: rewriting it would rewrite history" — to satisfy a sentence I wrote. And the
+builder's second point is one I had exactly backwards: literal-O4 is a **downgrade**. `sha256` of a
+40-hex string proves nothing about a commit; the current digest at least attests the object body.
+
+**This is the second time in this parcel I have ratified an amendment whose literal wording would
+invalidate the shipped registry.** R16 did it and R17 corrected it. R19 did it and R21 corrects it.
+Same round, same cause both times: a rule that sounded airtight, never evaluated against the artifact
+it governs. That is precisely the failure this parcel exists to catch, committed by the person
+writing the parcel's rules, twice.
+
+**Error 2 — "BLOCKER 1 closes `:3311` ×3" was false.** The builder evaluated O1–O4 as predicates
+against those exact mutated heads, with a guard asserting the evidence array actually changed. All
+three mutations touch only `git-commit` entries: a duplicated one breaks no cardinality rule (O1
+counts *chain commands*), a removed one leaves another 40-hex behind so the shape still passes, and
+the pin rule does not apply to the head. **O1, O2 and O3 fire on none of them.** Two further
+obligations were needed and both are free against the shipped artifact.
+
+### The one that matters most
+
+The builder will key "a pinned record is never the head" on **ID presence in the pin table, never on
+byte-match**, because byte-match would let a tamperer mutate a pinned record *first* — breaking its
+match — and then delete the head to promote it.
+
+**That is the identical depth-one reasoning error I made in C28**, where I ran five attack variants,
+saw them refused, and stopped one step short of both live routes. The difference is that this time it
+was caught *before* the code existed rather than by two adversarial reviewers afterwards. That is what
+the Step 0 restate-and-stop gate is for, and it has now paid for itself in a single use.
+
+### Rulings issued
+
+**R21 ratified and committed alone** (`ebc1dc5`), before any dependent code: obligation 4 replaced with
+the principle rather than the mechanism — *every reference is bound by some digest computed over it,
+and where it is not, that is stated rather than disguised as a check* — and obligation 5 added
+(distinctness by kind + reference + digest). The self-comparison at `src/validate.ts:2688-2690` still
+goes, regardless of kind; that is what R19 was actually reaching for.
+
+`:400` split approved (required IDs → `RECONCILIATION_MISSING`, head → `MIGRATION_EVIDENCE_INVALID`);
+adding the head to `REQUIRED_REWORK_MIGRATIONS` rejected, since breaking four `rechain()` tests to
+satisfy one assertion is the wrong trade. `stale-source` fixture cut as the builder scoped it, keeping
+the `identity-mutation` repair and the `CONFLICT` tautology replacement.
+
+On the two `markdownIdentityProjectionForTesting` tests: **satisfy R20's letter and stop.** R20's
+obligation is no repository I/O at *import* time, which is what actually blocked both reviewers — they
+could not load the file at all. Injecting an empty frozen map would change what those tests assert,
+and a weaker test bought with a spec technicality is not a fix. Document the residual by name so a
+reviewer skips two named tests instead of a whole file. The builder flagged this rather than deciding
+it, which is the correct instinct.
