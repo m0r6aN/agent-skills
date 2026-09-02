@@ -1358,3 +1358,31 @@ looks easy.
 
 **Not merged. Not green in the sense that matters.** The suite result is real and the blockers found in
 round 1 are genuinely closed; a green suite does not close a tamper route no test covers.
+
+## C36 — the authoritative deterministic pass, and four independent runs that agree
+
+**Coordinator run, `4c53cd8`, parcel worktree, 14:12:48 → 14:32:19, exit 0, stderr empty:**
+
+| file | tests | pass | fail |
+|---|---|---|---|
+| bare-specifier | 1 | 1 | 0 |
+| corpus-sweep | 113 | 113 | 0 |
+| dependency-allowlist | 1 | 1 | 0 |
+| parity | 5 | 5 | 0 |
+| schema-validation | 23 | 23 | 0 |
+| semantic-invariants | 420 | 420 | 0 |
+| **total** | **563** | **563** | **0** |
+
+Zero `not ok` lines. **AC13 closes on this run, not on the builder's.**
+
+Four independent executions now agree on `semantic-invariants` at 420/420: the builder's, Reviewer A's
+in `revA2`, Reviewer B's in `revB2`, and mine. Two of those ran in directories where `git rev-parse`
+fails, and B's ran concurrently with mine on the same file with neither truncating the other's progress
+log. R20's two failure modes are reproduced as non-failures under exactly the concurrency that
+corrupted evidence twice this round.
+
+Trajectory across this owner's tenure: **518 with 18 failures → 405/395/10 → 563/563/0.**
+
+**And none of it closes the blocker.** All four of Reviewer A's findings reproduce against this green
+suite, because the AC4 chain-head block covers O2's promoted-pinned-record route and not head
+deletion-and-substitution. A green suite is evidence about the fixture space. The stop stands.
