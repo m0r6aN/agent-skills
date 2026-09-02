@@ -106,3 +106,37 @@ established that at least seven `schema-validation.test.ts` assertions and five 
 `semantic-invariants` subset pass *solely because of the B1 manifest pin*, not because the
 invariant they name holds. The suite going green is therefore not evidence of correctness for
 those items. This is recorded so the eventual green chain is not read as a refutation of B1.
+
+## C4 — the suite's runtime is unexplained, and the coordinator caused a false alarm
+
+**Coordinator error, recorded because it corrupted evidence.** To clear the machine for the
+builder's control run, this coordinator killed orphaned node processes. Both reviewers had
+completed their turns but remained resumable; the kills woke them, they observed their runs die,
+and they relaunched — two of them **inside the builder's parcel worktree**. The builder's census
+caught this within two minutes of starting its control run, before writing a single byte, and
+stopped rather than proceeding on a contaminated baseline.
+
+Both reviewers are now hard-stopped via `TaskStop`. Their orphan trees were killed by exact PID
+with the builder's tree verified alive afterwards. Standing practice for the remainder of this
+goal: **reviewers run the suite only in their own copies, never in a parcel worktree.**
+
+### The open question this exposed
+
+Reviewer B's final measurement before it was stopped:
+
+> heap is stable (~90–140 MB, GC reclaiming) and `validateRegistry` averages **0.16 s** — 92 calls
+> is ~15 seconds, not 16 minutes. **OOM and slow validation are both ruled out.**
+
+That 0.16 s corroborates Reviewer A's independent 133 ms figure, so the per-call cost is solid. But
+it means **contention and memory pressure do not explain either the ~23–38 minute runtime or the
+opaque `pass 0 / fail 1 / 'test failed'` deaths.** The obvious hypothesis — that the deaths were a
+contention artifact and the suite is honestly green — is *not* established, and the coordinator has
+directed the builder not to conclude it from a quiesced run passing.
+
+**Where the time actually goes is now an open question**, not a curiosity. Reviewer B's next
+planned probe — isolating module evaluation from test bodies — is the right one and was not
+completed. Carried as an open item into the builder's baseline task.
+
+**Evidence status for AC13:** one full `npm test` returned exit 0 under partial contention. Five
+other full runs died at the file level. No trustworthy test count exists yet. The builder's clean
+control, on a machine verified quiesced PID-by-PID, is the evidence of record and has not yet run.
