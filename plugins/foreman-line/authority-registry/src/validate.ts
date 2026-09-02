@@ -2753,7 +2753,10 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
       }
     }
   }
-  violations.push(...verifyMigrationChain(document).violations)
+  // Reuse the single walk performed above. Calling `verifyMigrationChain` a second time here was
+  // my own instance of the defect fix 16 removed: duplicated work on the path `resolveAuthority`
+  // invokes for every query.
+  violations.push(...migrationChain.violations)
   violations.push(...checkOperationAuthority(document))
   return violations
 }
