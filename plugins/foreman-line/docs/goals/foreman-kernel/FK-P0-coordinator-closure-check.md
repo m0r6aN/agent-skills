@@ -1189,3 +1189,75 @@ could not load the file at all. Injecting an empty frozen map would change what 
 and a weaker test bought with a spec technicality is not a fix. Document the residual by name so a
 reviewer skips two named tests instead of a whole file. The builder flagged this rather than deciding
 it, which is the correct instinct.
+
+## C32 — the hang is established; the rule for when it hangs is not. Both of us over-claimed.
+
+The builder reported it could not reproduce R20's hang and inferred a Node-version artifact. I told it
+the trigger was the *shape* — multi-line, nested call chain — and reproduced the failure in isolation
+to prove the hang was real. **Both halves of that exchange contained an over-claim, and the measured
+result refutes mine as well as its.**
+
+What is established, one variable between the arms:
+
+| arm | result |
+|---|---|
+| real `:2495` assertion, pre-rework `semantic-invariants`, bare `assert.ok` | **HUNG, 150 s, no result** |
+| same file, same test, assertion routed through the helper | **reported, 1.8 s** |
+
+Reproduced independently by me (>120 s, single test by name pattern) and by the builder. Under the
+shimmed census the same test reports in **79 ms**.
+
+What is **not** established — the builder's two negatives, which refute my explanation:
+
+- a *synthetic* multi-line nested expression at line 4370 of the same file — 6.9 s, reported
+- the real `corpus-sweep.test.ts:660` shape, same family as `:2495`, made to fail — 1.6 s, reported
+
+So neither shape alone nor file size alone predicts it. I had an inspector stack showing
+`findColumn` → `parseCode` → `parseExpressionAt` recursion on the live worker, plus reproductions of
+**one instance**. That establishes *the hang*. It does not establish *the rule for when it hangs*, and
+I stated the second as though I had the first.
+
+**Ratified record:** the sweep closes an observed, twice-reproduced hang in
+`tests/semantic-invariants.test.ts`; the same class is removed prophylactically from the other three
+files, which is what R20 mandates; **the precise trigger condition is uncharacterised**; and **no hang
+is claimed in `corpus-sweep`**, because none could be produced. Both negatives and the one-line control
+stay in the record.
+
+**The scoreboard on tidy theories in this round is now: builder three (module evaluation, git-clone
+cost, "environmental"), coordinator four (`structuredClone` memory pressure, adopting git-clone as
+settled, "a missing guard not a hole", and this).** The builder named its own first and in the same
+direction — one clean negative generalised into "Node-version artifact". Neither of us needed a
+reviewer to catch this one; we caught each other, which is cheaper.
+
+The instruction that keeps earning its keep: **state what closes a defect, not what causes it, unless
+you measured the cause.**
+
+## C33 — round-2 suite, partial and honestly bounded
+
+Five of six files complete from output: **143 tests, 143 pass, 0 fail** — bare-specifier 1,
+corpus-sweep 113, dependency-allowlist 1, parity 5, **schema-validation 23**. That last is up from 21,
+confirming the `identity-mutation` split landed as two tests and the stale-`bindingDigest` axis is
+exercised for the first time in this parcel's life.
+
+Trajectory across the round: **133 with 18 failures → 141/141 → 143/143.**
+
+`semantic-invariants` mid-run. The builder reported its progress log at 162 completions and explicitly
+declined to read pass/fail into it, citing the standing warning that the log counts completions only.
+That is the exact claim I accepted uncritically at C23 and had to withdraw at C28; it is now being
+refused at source by the party who would benefit from making it.
+
+## C34 — plan for AC15 after round 2, and why it is not a third full review
+
+AC15 requires two independent fresh reviews returning **no unresolved blocker**. Both post-rework
+reviews returned blockers; those blockers are now the subject of R19/R20/R21 and the round-2 fixes. A
+third fresh review would restart the find-fix-review cycle with no defined stopping point.
+
+**Instead: resume both original reviewers with their context intact** and scope each to a single
+question — *is your own blocker closed, and did the fix open anything new in that same area?* Each
+reviewer verifies its own findings, which is the narrowest question that can honestly close AC15,
+keeps both parties independent of each other, and does not reset the clock. Reviewer A verifies the
+`.find` shadow-link route; Reviewer B verifies the delete-and-promote route and the repo-root exit
+code; both re-probe the head shape obligations they did not design.
+
+If either finds its blocker still open, that is a stop condition and the parcel goes to the developer
+as it stands — the tripwire allows no third rework round from this owner.
