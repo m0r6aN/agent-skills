@@ -1386,3 +1386,127 @@ Trajectory across this owner's tenure: **518 with 18 failures → 405/395/10 →
 **And none of it closes the blocker.** All four of Reviewer A's findings reproduce against this green
 suite, because the AC4 chain-head block covers O2's promoted-pinned-record route and not head
 deletion-and-substitution. A green suite is evidence about the fixture space. The stop stands.
+
+## C37 — round 3: the developer lifted the tripwire, and the Step 0 gate earned its keep twice more
+
+The two-rework tripwire was **my** stop condition. The developer lifted it explicitly and authorised
+this round. I did not resume on my own judgment.
+
+### The structural change that made this round work
+
+I did not write the rule. After R16 (mine, admitted a tampered registry), R19 (mine, needed narrowing
+twice) and my own stop-report remedy, the round-3 kickstarter said in terms: **the builder proposes
+the design and I ratify what survives verification.** Candidate designs with *measured* answers, then
+stop.
+
+That inverted the failure mode, and it paid immediately.
+
+### P1-d — the route that defeats the remedy I gave the developer
+
+My stop report told the developer the fix was to *"require that the departing head's absence
+invalidate."* **The head does not have to depart.** The builder found a third route at Step 0; I
+reproduced it against pristine `4c53cd8`:
+
+```
+P1-d  head hollowed IN PLACE (same id) + 7 gate3 rules retired
+      -> valid:true, 0 violations
+      resolveAuthority -> REQUIRE_HUMAN / NO_APPLICABLE_AUTHORITY  controlling=[]
+      head record still present: true;  reconciliations: 18
+      R14 attestation topic: "R13 registry bindings superseded by the coordinator-ratified…" -> "x"
+```
+
+Record present, id unchanged, count unchanged, attestation erased, payload delivered. **A
+presence-only obligation misses it entirely** — which is exactly what I would have ratified had the
+builder implemented my remedy instead of measuring first.
+
+### The structural root, counted by me rather than taken from the report
+
+`RECONCILIATION_RECORD_DIGESTS`, `RECONCILIATION_CONTRACT`, `RECONCILIATION_PROSE` and
+`REQUIRED_REWORK_MIGRATIONS` hold the same set; the head is in **none** of them. R19's obligation 2
+says *pinned ⇒ not head*; `validate.ts:2354` says *not head ⇒ pinned*. Together: **`head ⟺ unpinned`**.
+
+Reviewer A's "no pin-table state where both hold" is exact, and the reason is that **the pin table is
+the wrong lever** — every binding it offers depends on head position, and the attacker chooses head
+position. The builder's seven-word statement of it is the durable form: **a pin binds only a record
+still present.**
+
+### R22, and why it is written differently
+
+Ratified and committed alone at `a3d3ad6`, before any dependent code. **Stated as attacks that must be
+refused and states that must be admitted, not as a mechanism** — because a mechanism I specify is a
+mechanism nobody has measured, and that is precisely how R16, R19 and my stop-report remedy each
+failed.
+
+Three obligations verified **free against the shipped registry before ratifying** — the check R19
+skipped: obligation 3's narrowing 24/24; obligation 5's two narrowings 12/12 and 12/12.
+
+One narrowing explicitly **not** adopted: binding a `git-commit` reference to the snapshot commit. The
+builder measured 13 of 24 qualifying; **I measured 15 of 24** with a slightly different predicate. The
+numbers disagree; the conclusion does not. Recorded as a discrepancy rather than resolved to the
+tidier figure, with only "not free" treated as established.
+
+### My independent attack battery against the implementation
+
+None of these are the builder's tests; all are the probes that originally found the defects.
+
+| | at `4c53cd8` | round-3 implementation |
+|---|---|---|
+| P1-b delete + substitute, no payload | `valid:true`, 0 | `RECONCILIATION_MISSING` |
+| P1-c delete + substitute + payload | `valid:true`, 0 | `RECONCILIATION_MISSING` |
+| **P1-d in-place rewrite, same id** | `valid:true`, 0 | `MIGRATION_EVIDENCE_INVALID` |
+| O3 decoy command (Reviewer B's N1) | `valid:true`, 0 | `MIGRATION_EVIDENCE_INVALID` |
+| Route A shadow link (Reviewer A) | refused | refused |
+| Route B ×3 (Reviewer B) | refused | refused |
+| 12 × 4 evidence matrix | UNCAUGHT 0 | **UNCAUGHT 0** |
+| **amend-then-append** | refused — the regression | **valid:true, `df8155a` PRESERVED** |
+
+### P2 — I could not construct it, and said so
+
+My append probe cloned the head keeping its `prevDigest`, so it forked for **my construction's**
+reason. I reported that as an unverified gap rather than reading it as a defect, and flagged the
+dangerous alternative reading: that an appended record might now need contract/prose entries it cannot
+have, which would mean only someone who can edit `validate.ts` could extend the chain.
+
+The builder supplied the correction — **chain from the head's `resultDigest`, not its `inputDigest`** —
+and with it I reproduce the result exactly: step 1 alone refused, amend-then-append `valid:true` at 19
+reconciliations with the old head preserved. **My alternative reading is disproved and withdrawn:** the
+contract check is guarded on `contract !== undefined`, so a fresh id skips it.
+
+### The builder caught its own README flattering us
+
+It found that a file-only editor can extend the chain **once**, not indefinitely — the first appended
+record, once demoted, has no record-digest binding until someone pins it in `validate.ts`. Its README
+had stated the limit *wider* than the truth. It narrowed the statement and pinned the real boundary
+with a test.
+
+Its reasoning is adopted as a standing rule: **a limit stated wider than the truth is the same defect
+as one stated narrower, just failing in the flattering direction.** Every prior instance in this parcel
+failed in the narrow direction. This is the first that failed in our favour, and the builder caught it
+itself.
+
+### Candidate 4 is dead on both axes
+
+Adding the head to `RECONCILIATION_RECORD_DIGESTS` — Reviewer A's suggested move, which the builder
+correctly declined to hand back unverified in Step 0 and then measured: shipped registry
+**`valid:FALSE`**, *and* delete-and-substitute still **`valid:TRUE`, 0 violations**. Worse than either
+of us reasoned, on both axes at once.
+
+### Lesson 32, found while measuring something else
+
+Run 1 broke only 2 of 4 `rechain()` sites. The other two assert *specific codes are present*, so adding
+`RECONCILIATION_MISSING` left them passing — **against a document invalid for a reason the test never
+names.** I widened the remedy from those two sites to the *premise*: every test whose setup is "valid
+apart from the thing under test" must assert the violation set exactly or guard that nothing beyond the
+named codes fired. Deliberately **not** a global conversion of `expectCode` to equality, which would
+manufacture brittle tests where several violations are legitimate.
+
+### The reporting failure, and the structural fix
+
+Three consecutive one-line reports — "Standing by", "Waiting on the final suite", "Standing by" — each
+after an hour of real work. The builder had diagnosed this in itself once already (*"I had these
+measurements by 17:10 and then spent four turns polling"*) and repeated it.
+
+After correcting it twice I stopped asking and **removed the dependency**: the suite now writes to a
+fixed path I read directly, so the builder's reporting cadence is no longer the channel the evidence
+travels through. Two corrections were feedback; a third would have been my failure to change the
+system. Worth recording because the same principle is what R20 did for the progress log.
