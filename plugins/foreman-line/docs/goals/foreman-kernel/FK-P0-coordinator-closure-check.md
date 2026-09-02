@@ -859,3 +859,85 @@ cleared daemons.
 
 **Dispatch is held until the authoritative suite run completes** — reviewer scratch-copy probes spawn
 node processes, and this round has already lost evidence to contention twice.
+
+## C25 — the suite does not hang because it is slow; it hangs because a test FAILS
+
+The authoritative run reached **289 of ~405** tests in `semantic-invariants.test.ts` by 11:04 and then
+sat at **96 % CPU for 87 minutes** without advancing a single test. The coordinator did not guess this
+time. It attached node's inspector to the live worker (`process._debugProcess`, then CDP
+`Debugger.pause`) and took the stack:
+
+```
+at nextLineBreak / getLineInfo / pp$4.raise / pp$9.unexpected / parseExprAtomDefault …
+at parseExpressionAt → parseCode → findColumn → findColumn → findColumn  (×10+)
+```
+
+That is `node:internal/assert/utils`. **A bare `assert.ok(expr)` had failed**, and node was
+reconstructing the expression text by re-parsing the source with acorn — `findColumn` recursing and
+re-parsing at each level. In a 3,000-line test file this does not terminate in any useful time.
+
+**Two distinct defects, and they compound:**
+
+**(a) A real test failure.** Test 290 —
+`R10 coordinator Gate 2 prose is superseded by the R12 advisory non-grant`
+(`tests/semantic-invariants.test.ts:2487`) — asserts the ADVISORY `narrative-provenance` rule
+`rule.coordinator-pattern.91dd60b00fd6` is **absent** from `consideredRuleIds`. Reproduced standalone
+against a pristine registry in under a second: the resolver returns `RESOLVED`, `considered = 4`, and
+**the rule is present**.
+
+**The spec settles which side is wrong, and it is the test.** AC5 as amended by **R14 — my own
+amendment** — now reads: *"historical/generic rules remain visible and appear in `consideredRuleIds`
+**without exception or hand-placed exclusion**"*. The test encodes the pre-R14 semantics it was
+written under. The code is right.
+
+This is the amendment-versus-test collision class I should have swept for when R14 landed. R14
+changed an observable of the resolver, and I did not ask which existing assertions depended on the
+old observable. The builder did not either. It landed in a file that cannot report its own failures.
+
+**(b) The suite cannot report a failure in this file at all.** 274 `assert.ok(` calls in
+`semantic-invariants.test.ts`, most without a message string. **Any** bare one that fails hangs the
+runner instead of failing it — and because node buffers a file's reporter output until the file
+completes, *all* results for the file are then lost. That is Lesson #32's shape inverted: not a test
+that passes for the wrong reason, but a suite that cannot tell you it failed.
+
+It also retroactively explains the observability hole that consumed most of this round. Fix 20 was
+built to survive exactly this crash and it worked — the progress log is the only reason test 290 was
+identifiable at all. Fix 20 has now paid for itself twice.
+
+**Correction to C23, in my favour and I will state it anyway:** the builder's earlier run at test 169
+was *not* this hang. 169/170 is inside the five-axis applicability block, and my run passed straight
+through it to 289. That run was slow, exactly as C23 concluded. C23 stands unchanged.
+
+**Disposition: REWORK ROUND 2.** Both defects are small, sharply bounded and test-only. The ratified
+tripwire allows this owner two rework rounds; this is the second and last.
+
+**Not merged, not green, and I will not represent it as either.** The five completed files stand at
+141/141 (`1 + 113 + 1 + 5 + 21`, timings recovered from the captured TAP). `semantic-invariants` is
+**unknown** — 289 started, at least one failed, ~115 never ran.
+
+I killed the hung run at 12:35. It could not terminate; waiting longer was not a strategy. This was
+my own run, no other party's work was in flight, and I am recording the kill rather than leaving it
+to be inferred — which is the practice C23 says I broke.
+
+## C26 — a census, so rework round 2 gets the whole list at once
+
+Discovering these one at a time costs ~90 minutes per failure. Instead: a **throwaway** copy of the
+package (`scratchpad/census/`, never committed, `node_modules` junctioned read-only) with
+`assert.ok` shimmed to throw a plain `Error` — which bypasses node's message generator entirely and
+converts every hang into a reported failure. Running the file end to end there yields the complete
+failure list in one pass.
+
+This is diagnosis, not a fix: it lands nowhere, and the builder owns the actual remedy. The
+distinction matters — invariant D4 says the coordinator consumes verification rather than producing
+it, and a scratch harness that never touches the parcel is instrumentation, not work product.
+
+## C27 — the post-rework adversarial review is dispatched, two independent reviewers
+
+Held since C24 to avoid contention; released now that the killed run has freed the machine. Both
+carry the committed mandate verbatim, pinned to code commit `0ad7ee3` / branch HEAD `63fe955`, each
+confined to its own scratch copy, both barred from running the full suite.
+
+Both are told about (a) and (b) above and instructed **not** to report them — a review round is worth
+spending on what nobody has examined, and the chain is that. They are pointed at the live question
+those defects raise instead: **did R14's considered-rules change break anything in `src/`, rather
+than only in tests?**
