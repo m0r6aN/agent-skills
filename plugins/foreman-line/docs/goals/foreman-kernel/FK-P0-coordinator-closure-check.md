@@ -1261,3 +1261,100 @@ code; both re-probe the head shape obligations they did not design.
 
 If either finds its blocker still open, that is a stop condition and the parcel goes to the developer
 as it stands — the tripwire allows no third rework round from this owner.
+
+## C35 — both reviewers returned CLOSED WITH NEW FINDING. One of the new findings is blocker-grade, and the tripwire has fired.
+
+Both original reviewers were resumed with context intact and scoped to one question: is your own blocker
+closed, and did the fix open anything new in that area. **Both confirmed their blockers closed.** Both
+also found something new. **I reproduced every claim below myself against pristine `src/` at `4c53cd8`.**
+
+### What is genuinely closed — verified, not accepted
+
+| construction | at `63fe955` | at `4c53cd8` |
+|---|---|---|
+| A: shadow `superseding-binding-manifest` unshifted onto the head | `valid:true`, 0 | refused — "declares 1 prior and 2 superseding … exactly one of each is required" |
+| B: F1/F2 stub head, 1-char prose, `actorClass:'anonymous'`, no git evidence | `valid:true`, 0 | refused, 5 violations |
+| B: P2/P2c/P2d delete head + repoint the promoted **pinned** record | `valid:true`, 0 | refused — presence-keyed pin rule |
+| B: byte-match evasion — mutate the pinned record *first*, then delete the head | (new) | refused, and B asserted on the **message**, not the exit |
+| head evidence append / remove / duplicate, 12 × 4 matrix | 3 uncaught | **UNCAUGHT 0** |
+| `validate --repo-root <bad>`, both shapes | exit 1 | exit **2** |
+
+O2's presence-keyed design — mine, adopted from the builder — holds in the implementation and not just
+in the comment. B verified the exact attack that a byte-match implementation would have admitted.
+
+### The blocker-grade finding — Reviewer A, reproduced by me
+
+**Head deletion-and-substitution still validates green.** O2 closed the *promote-a-pinned-record* half
+and left the other half open: the head is neither pinned nor required, so it can be **replaced** rather
+than promoted into. Delete `registry-rework-df8155a`, insert a structural copy under a **fresh id** that
+is therefore not in the pin table, re-anchor its superseding digest:
+
+```
+delete+substitute, no payload                        -> valid:true, 0 violations
+delete+substitute + payload (7 gate3 rules retired)  -> valid:true, 0 violations
+     resolveAuthority(gate3.merge-authority) -> REQUIRE_HUMAN / NO_APPLICABLE_AUTHORITY controlling=[]
+     reconciliations: 18; 'registry-rework-df8155a' present: false
+```
+
+Same payload, same end state, same silently-deleted rules asserting that **merges are human-owned and
+nondelegated**. The R14 attestation record is simply gone and the count still reads 18.
+
+**This is not the accepted residual. It is a conformance failure against R19's own ratified text**,
+which says in terms: *"removing the head must invalidate the document, never promote a pinned record out
+of its pin."* The document is not invalidated. I wrote that sentence and the implementation satisfies
+only its second clause.
+
+### The compounding regression — round 2 broke the legitimate path
+
+Appending a properly chained new head is now **refused**: once demoted, the old head needs a pin entry it
+does not have. Reviewer A isolated this by injecting the head's canonical digest into the pin table in a
+separate scratch copy — **with** the entry, append is accepted but the pristine shipped registry becomes
+invalid; **without** it, the registry is valid but append is refused. There is no state of the pin table
+in which both hold.
+
+Three shipped claims are false as a result — the `verifyMigrationChain` docstring, `README.md:162-163`,
+and the ratified residual at `README.md:190-192`, all of which promise that a correctly re-digested
+registry **appending** a properly chained record is admitted.
+
+**The accepted residual has been converted from append-only and history-preserving into
+history-destroying.** The cheapest file-only route that now passes is the one that erases the R14
+attestation. That is the exact opposite of R19's intent, and it degrades the human-review-of-git-history
+backstop the residual explicitly leans on.
+
+### The other new findings, both reproduced
+
+- **Reviewer B — obligation 3 is satisfiable by a decoy.** The coordinator/tool/exit-0 check is `.some()`
+  over every `command-result` on the record rather than over the two chain commands. Verified:
+  ```
+  CONTROL  2 chain commands gutted (anonymous, exit 137, tool 'attacker')  -> MIGRATION_EVIDENCE_INVALID
+  N1       same + 1 coordinator decoy appended                             -> valid:true, 0 violations
+  FREE?    chain commands already tool+coordinator+exitCode0: 24 of 24
+  ```
+  B rated it SHOULD-FIX and invited overrule: neither exploit route returns, the security delta is ~zero,
+  and **the implementation is faithful to R19's ratified wording** — so this is a spec-wording gap as much
+  as a code gap.
+- **Reviewer A — the stated git-commit residual is narrower than the real one.** Four further head-only
+  edits are accepted that the README says are not: repointing or deleting the *unbound* second git-commit,
+  adding a fabricated one, and duplicating the bound reference with a varied digest (obligation 5's
+  identity triple includes the digest, so varying one field defeats it). A also built a head whose entire
+  Git provenance is fabricated with `inputDigest` set to `sha256(fabricated-reference)` — accepted, because
+  the attacker controls both sides. The binding is real against one-sided repointing (A's R1 proves it) but
+  it binds the reference to the record, not to reality.
+
+### Disposition — I stop here
+
+**R19 has now needed narrowing twice** — R21 for obligation 4, and obligation 2 is incomplete and
+obligation 3 is loose. I wrote it fast, under pressure, at the point in the round where I had just been
+proven wrong about the same mechanism. That is a pattern, not an incident.
+
+The ratified loop directive allows this owner **two** rework rounds. Both are spent. A blocker-grade
+tamper route remains open, and the last round introduced a regression in the sanctioned path. **The stop
+condition has fired and the parcel goes to the developer as it stands.**
+
+I said twice this round that no third rework round follows. Starting one now — on a fix that looks small,
+in an area where my last three "small and safe" judgments were each wrong — is precisely what the tripwire
+exists to prevent. The correct action is to stop and hand over, not to keep going because the next step
+looks easy.
+
+**Not merged. Not green in the sense that matters.** The suite result is real and the blockers found in
+round 1 are genuinely closed; a green suite does not close a tamper route no test covers.
