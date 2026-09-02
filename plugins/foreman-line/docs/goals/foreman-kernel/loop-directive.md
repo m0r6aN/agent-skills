@@ -41,6 +41,33 @@ occurred.** FK-P0 re-enters adversarial review from zero under this owner.
 
 ## Current state — update at every stop or parcel closure
 
+**STATE 2026-09-02 — STOPPED AT A RATIFIED STOP CONDITION. This owner is no longer
+advancing FK-P0.** The tripwire in this directive allows this owner **two rework
+rounds** on FK-P0. Both are spent. After round 2 both independent reviewers confirmed
+their original blockers closed, and one found a **new blocker-grade tamper route**
+(head deletion-and-substitution validates green, delivering the same payload that
+silently retires the human-owned-merge rules), together with a regression that closed
+the legitimate append path. Both reproduced by this owner against pristine `src/`.
+
+**Read `FK-P0-STOP-REPORT-for-developer.md` first.** It carries the blocker, the
+regression, everything verified fixed, the eight decisions that are the developer's,
+and this owner's error ledger.
+
+- Parcel branch `codex/fk-p0-canon-authority-enforcement-registry` at `4c53cd8`,
+  worktree clean, **not pushed**. Registry YAML byte-unchanged.
+- Amendments R14–R21 each committed alone before dependent code (SPEC-CONVENTION §11).
+- Suite 563/563, `tsc`/`biome`/`validate`/`sweep` clean. **A green suite does not close
+  a tamper route no test covers**, and this stop is not contradicted by it.
+- Spec remains in `docs/specs/active/`. **Stage F closure deliberately NOT run** — it
+  would assert a completion that has not happened.
+- **Gate 3 was never presented as ready and no merge was performed.**
+
+**A new owner resuming this goal must not treat FK-P0 as one narrow fix away.** R19 is
+this owner's amendment and has needed narrowing twice; the head-exemption design has
+now admitted a tampered registry twice under two different owners' hardening. Re-enter
+at triage, not at build.
+
+
 **State 2026-09-01 (this owner).** Stage Zero complete; original Gate 1 and scoped
 re-ratification complete; plan-level adversarial review complete and triaged. Amendment
 **A1 is ratified and committed** (`16d90e5`). Amendment **A1.8 is applied to the working
