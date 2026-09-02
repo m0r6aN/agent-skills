@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import { execFileSync } from 'node:child_process'
 import {
+  appendFileSync,
   mkdirSync,
   mkdtempSync,
   readFileSync,
@@ -11,13 +12,53 @@ import {
 } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
-import { test } from 'node:test'
+import { test as nodeTest } from 'node:test'
 import { fileURLToPath } from 'node:url'
 import { parse } from 'yaml'
 import { markdownIdentityProjectionForTesting } from '../src/generate.js'
 import { R12_LEGACY_MARKDOWN_RULE_TARGETS } from '../src/registry.js'
 import type { AuthorityEnforcementRegistry } from '../src/types.js'
 import { canonicalJson, sha256, sweepRegistrySources } from '../src/validate.js'
+
+/**
+ * R14 fix 20 - per-test progress that survives a crash.
+ *
+ * node's test runner BUFFERS a file's reporter output until that file completes, so when this file
+ * died the whole suite reported `pass 0 / fail 1 / 'test failed'` naming no invariant and every one
+ * of its results was lost. Switching to the TAP reporter does NOT fix that - the buffering is in
+ * the runner's per-file output ordering, not the reporter - and neither does writing to
+ * `process.stderr` or even raw fd 2, because the runner intercepts both streams to attribute output
+ * to tests. All three were measured on controlled probes before settling on this.
+ *
+ * Appending to a file outside the repository DOES escape, and it survives a non-graceful exit. The
+ * log is written to the OS temp directory, never into the package, so no unlisted file is created.
+ * If this file dies again, the last line names the last test that completed.
+ */
+const progressLogPath = join(tmpdir(), `fk-p0-progress-corpus-sweep.log`)
+try {
+  writeFileSync(progressLogPath, '')
+} catch {
+  // A progress log is a diagnostic aid; never fail a test run because it could not be written.
+}
+let completedTests = 0
+function test(name: string, fn: () => void | Promise<void>): void {
+  void nodeTest(name, async () => {
+    try {
+      await fn()
+    } finally {
+      completedTests += 1
+      try {
+        appendFileSync(
+          progressLogPath,
+          `${completedTests}	${name}
+`,
+        )
+      } catch {
+        // ignore
+      }
+    }
+  })
+}
 
 const packageRoot = join(dirname(fileURLToPath(import.meta.url)), '..')
 const repoRoot = join(packageRoot, '..', '..', '..')
@@ -1657,3 +1698,88 @@ for (const probe of [
     }
   })
 }
+
+// R14 fix 17: NTFS alternate-data-stream syntax. `file.md:stream` and `file.md::$DATA` name
+// alternate streams, and `::$DATA` resolves to the file's DEFAULT stream, so such a path reads real
+// content under a name the registry never declared. All four shapes were already refused before
+// this fix, but only incidentally - by failing to resolve - which is refusal by accident rather
+// than by policy. `pathProblem` now rejects any interior colon, so each shape is refused as
+// SOURCE_PATH_INVALID. Each is an independently named control per Standing Constraint #3.
+for (const suffix of [':$DATA', '::$DATA', ':hidden', ':hidden:$DATA'] as const) {
+  test(`R14 an NTFS alternate-data-stream source path ending ${suffix} is refused by policy`, () => {
+    const mutated = structuredClone(registry)
+    const source = mutated.sources[0]
+    assert.ok(source)
+    ;(source as { path: string }).path = `${source.path}${suffix}`
+    const result = sweepRegistrySources(mutated, repoRoot)
+    assert.equal(result.valid, false)
+    assert.ok(
+      result.violations.some((violation) => violation.code === 'SOURCE_PATH_INVALID'),
+      `expected SOURCE_PATH_INVALID; observed ${result.violations.map((v) => v.code).join(',')}`,
+    )
+  })
+}
+
+test('R14 an interior colon is refused in any path segment, not only the last', () => {
+  const mutated = structuredClone(registry)
+  const source = mutated.sources[0]
+  assert.ok(source)
+  ;(source as { path: string }).path = source.path.replace(
+    'plugins/foreman-line',
+    'plugins:stream/foreman-line',
+  )
+  const result = sweepRegistrySources(mutated, repoRoot)
+  assert.equal(result.valid, false)
+  assert.ok(result.violations.some((violation) => violation.code === 'SOURCE_PATH_INVALID'))
+})
+
+// R14 fix 12 (amended AC12): the shipped inert-bytes test exercises only the four shapes that
+// happen to be ignored - comments, blank lines, fenced blocks and headings - so it could not detect
+// the discrepancy it was written to guard. AC12 as amended requires the suite to assert that ADDED
+// NARRATIVE PROSE in a Markdown source IS detected, because new prose in a governed document
+// requires disposition rather than silent acceptance. The behaviour is correct and deliberate; it
+// was the criterion and the test that were wrong.
+test('R14 added narrative prose in a Markdown source is detected as SOURCE_ITEM_UNCOVERED', () => {
+  const tempRoot = mkdtempSync(join(tmpdir(), 'fk-p0-added-prose-'))
+  try {
+    copyCorpus(tempRoot)
+    const source = registry.sources.find((candidate) => candidate.path.endsWith('.md'))
+    assert.ok(source)
+    const destination = join(tempRoot, source.path)
+    const content = readFileSync(destination, 'utf8')
+    writeFileSync(
+      destination,
+      `${content}\n\nThis added narrative paragraph states no rule, but a governed document cannot absorb new prose silently.\n`,
+      'utf8',
+    )
+    const result = sweepRegistrySources(registry, tempRoot)
+    assert.equal(result.valid, false)
+    assert.ok(
+      result.violations.some((violation) => violation.code === 'SOURCE_ITEM_UNCOVERED'),
+      `expected SOURCE_ITEM_UNCOVERED; observed ${result.violations.map((v) => v.code).join(',')}`,
+    )
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true })
+  }
+})
+
+test('R14 an added heading stays inert while a paragraph beneath it does not', () => {
+  const tempRoot = mkdtempSync(join(tmpdir(), 'fk-p0-inert-vs-prose-'))
+  try {
+    copyCorpus(tempRoot)
+    const source = registry.sources.find((candidate) => candidate.path.endsWith('.md'))
+    assert.ok(source)
+    const destination = join(tempRoot, source.path)
+    const original = readFileSync(destination, 'utf8')
+    writeFileSync(destination, `${original}\n\n## An added heading\n`, 'utf8')
+    assert.equal(sweepRegistrySources(registry, tempRoot).valid, true)
+    writeFileSync(
+      destination,
+      `${original}\n\n## An added heading\n\nAnd a paragraph beneath it.\n`,
+      'utf8',
+    )
+    assert.equal(sweepRegistrySources(registry, tempRoot).valid, false)
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true })
+  }
+})

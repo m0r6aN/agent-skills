@@ -1518,9 +1518,10 @@ sources:
           lineHint: 303
         normalizedExcerpt: 14. **Decision-path latency:** on the D20 platform, a warm kernel serves a representative governed-mutation decision within the D21 budget for both measured spans; the first-call-after-start figure is recorded separately; a decision exceeding the hard deadline is reported as kernel-unreachable and inherits the D8 outage posture without failing open; and an authorization cache entry whose `goalRevision`, `policyDigest`, or compiled-scope digest no longer matches produces `STATE_REVISION_STALE` rather than a stale ALLOW.
         valueDigest: 00d00f41d915f0d64eec83652adbac10b29ccf70d175562fa3aa5475f853b451
-        ruleIds: []
-        exclusionDisposition: non-normative-explanation
-        rationale: "Inventory item item.ff0f88a958e0 at md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:14 is explanatory context and does not state an independent normative authority rule."
+        ruleIds:
+          - rule.fk-charter.ff0f88a958e0
+        exclusionDisposition: null
+        rationale: Rule-bearing section or live behavior is mapped to an explicit source-bound rule.
       - itemId: item.6116f0dd5f60
         locator:
           kind: line-excerpt
@@ -19461,6 +19462,45 @@ rules:
       corpusSweep: null
       independentBypassAttempt: null
     bindingDigest: b30518b56f3021c28ba0c2a6735a00c839d6129504c71e8b4dd524b082530561
+  - ruleId: rule.fk-charter.ff0f88a958e0
+    authoritySubject: integration-scenario.decision-path-latency
+    authorityClaim: warm-kernel-meets-the-d21-budget-with-outage-and-stale-cache-evidence
+    normalizedStatement: 14. **Decision-path latency:** on the D20 platform, a warm kernel serves a representative governed-mutation decision within the D21 budget for both measured spans; the first-call-after-start figure is recorded separately; a decision exceeding the hard deadline is reported as kernel-unreachable and inherits the D8 outage posture without failing open; and an authorization cache entry whose `goalRevision`, `policyDigest`, or compiled-scope digest no longer matches produces `STATE_REVISION_STALE` rather than a stale ALLOW.
+    sourceRefs:
+      - sourceId: fk-charter
+        itemId: item.ff0f88a958e0
+        locatorDigest: 00e847cc369683866f6184df0d1bf77bd07fb81b2300999de85705eaff3a6233
+        valueDigest: 00d00f41d915f0d64eec83652adbac10b29ccf70d175562fa3aa5475f853b451
+    authorityBasisRef:
+      sourceId: fk-charter
+      itemId: item.ff0f88a958e0
+      locatorDigest: 00e847cc369683866f6184df0d1bf77bd07fb81b2300999de85705eaff3a6233
+      valueDigest: 00d00f41d915f0d64eec83652adbac10b29ccf70d175562fa3aa5475f853b451
+    applicability:
+      goals:
+        - foreman-kernel
+      roles:
+        - ci
+      stages:
+        - deterministic-verify
+      operations:
+        - control-call
+      hosts:
+        - claude-windows-docker-loaded
+    severity: medium
+    classification: ci-static-check
+    decision: ADVISORY
+    refusalCode: null
+    enforcementOwner: ci
+    assurance: detected
+    pairedRuleIds: []
+    retirementState: active-reading
+    retirementEvidence:
+      predicate: null
+      negativeRefusalTest: null
+      corpusSweep: null
+      independentBypassAttempt: null
+    bindingDigest: 812efa00ccb51b3a9c60789356a2b7e3014483ffc796666fa262324f7aa58e66
   - ruleId: rule.fk-charter.e9ec57edc0a2
     authoritySubject: goal.exit-merge
     authorityClaim: all-parcels-require-human-gate3-merge
@@ -39070,8 +39110,8 @@ reconciliations:
         reference: '{"actorClass":"coordinator","commandId":"registry-binding-manifest-r13","exitCode":0,"inputDigest":"714b6640bea095ce3d71aac6109d788c64c1f517cfb67461392a6f0291fd2da4","resultDigest":"f753296b78bcf4d8de9e603e8e347286519a26694c2241ae4a00a05676388e2f","tool":"@foreman-line/authority-registry","toolVersion":"0.1.0"}'
         digest: e1f6ac48bd6efc54842a9431c81d519197553ca64d8e6acb0b2c0c758824ab5d
       - kind: command-result
-        reference: '{"actorClass":"coordinator","commandId":"superseding-binding-manifest-r14","exitCode":0,"inputDigest":"f753296b78bcf4d8de9e603e8e347286519a26694c2241ae4a00a05676388e2f","resultDigest":"7047597b87a1ea371faf7a537d6f9c92d1af463c15ce1a6b75504d6848c9825b","tool":"@foreman-line/authority-registry","toolVersion":"0.1.0"}'
-        digest: 11b6d59de48a7a75356f8f563eae6054335d0ab2116004cd403224f2765110e7
+        reference: '{"actorClass":"coordinator","commandId":"superseding-binding-manifest-r14","exitCode":0,"inputDigest":"f753296b78bcf4d8de9e603e8e347286519a26694c2241ae4a00a05676388e2f","resultDigest":"767dabec7dce1bcd9c1436fab93107d049747d1e20d60d6715a3af06e015775a","tool":"@foreman-line/authority-registry","toolVersion":"0.1.0"}'
+        digest: 2dfaa1509c61fe980d6a35341e7be2e87dbbf974ecfcf167f2ced15049fc1dfa
     authoritativeRuleIds:
       - rule.fk-charter.2a524c1ea63f
     scopedDisposition: The R14 genesis-anchored migration chain, digest-verified retirement evidence, fail-closed resolver query guard, and re-bound charter and loop-directive sources supersede the R13 registry bindings in FK scope.

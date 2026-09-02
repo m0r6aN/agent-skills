@@ -141,7 +141,47 @@ enough.
 A rule can become `retired-from-agent-reading` only when all four correctly typed evidence
 references resolve to distinct digest-bound JSON artifacts: predicate contract, negative-refusal
 test, corpus sweep, and an independent-reviewer bypass attempt. Rationale and provenance remain
-mapped after retirement.
+mapped after retirement. Those digests are verified against the filesystem, and a retirement that
+cannot be verified makes the registry invalid rather than quietly taking effect.
+
+### The binding-manifest migration chain
+
+Registry-wide identity is bound by a **chain**, not by a frozen copy of one document. A single
+genesis digest is pinned in `src/validate.ts`; every migration record declares the manifest it
+supersedes from and the manifest it supersedes to; and the chain head — the one record from which
+no other record chains — is bound to the manifest recomputed live from the document it sits in.
+
+Binding is therefore established either by a pinned constant or by structural position: every
+record except the head is bound to its pinned digest, and the head is bound to the live corpus.
+That is a stricter assertion than a constant, not an exemption from one — a constant says only
+"these are the bytes I remember", while the live recomputation says "this record accurately
+describes the document containing it". A document is invalid if it has zero chain heads, more than
+one head (a fork), a cycle, or a migration record that does not lie on the single genesis-to-head
+path.
+
+The practical consequence is that a correctly re-digested registry is **admitted** as long as it
+appends a properly chained migration record, and refused when it does not. A change to any bound
+value therefore requires a typed prior-to-new record — which is the migration discipline the spec
+defines, now enforced rather than approximated by a hardcoded whole-corpus constant.
+
+**The honest limit.** This makes silent substitution *detectable*, not impossible. Anyone who can
+edit the registry file can also append a well-formed head record declaring the manifest of a
+tampered registry, and validation will pass. The registry is a contract, not a trust root. Real
+anti-tamper is Git history plus human review; the chain's job is to make an undeclared change
+fail loudly, not to make a declared-but-illegitimate one impossible.
+
+### Bound sources change, and that is a deliberate act
+
+Every one of the eighteen sources is digest-bound, so changing one requires regenerating the
+registry. This is the mechanism working, not a defect in it: a source-bound registry *should*
+require that amending canon is a deliberate, reviewed step.
+
+`loop-directive.md` changes most often, because it carries the coordinator ownership block and a
+"current state" section that is updated at every stop or parcel closure. A regeneration triggered
+only by those blocks is a mechanical re-digest rather than a canon change — but it is still a
+deliberate, reviewed act, and the sweep will refuse the registry until it happens. Note also that
+adding ordinary narrative prose to a Markdown source is reported as `SOURCE_ITEM_UNCOVERED`: new
+prose in a governed document requires disposition rather than silent acceptance.
 
 ## Authority resolution
 
@@ -151,9 +191,17 @@ schema and semantic validation over the raw document. Any invalid registry fails
 resolution never runs against partially trusted registry data. Queries are concrete;
 `any` and `all-foreman-goals` are invalid query values. It filters non-controlling source effects
 and classifications, applies exact scope matching, selects the highest applicable tier, and
-returns an uppercase `RESOLVED`, `REQUIRE_HUMAN`, or `CONFLICT` outcome with sorted rule IDs.
-`RESOLVED` includes the controlling decision. Highest-tier rules that share a claim but split on
-decision return `CONFLICT`, just as highest-tier competing claims do.
+returns an uppercase `RESOLVED` or `REQUIRE_HUMAN` outcome with sorted rule IDs.
+`RESOLVED` includes the controlling decision together with the classification, assurance, and
+enforcement owner behind it, so a structural refusal from a kernel that does not exist cannot be
+read as a mediated one.
+
+**There is no `CONFLICT` outcome, because no input can reach one.** A highest-tier claim or
+decision split is exactly the `RULE_CONFLICT` predicate, which is validity-blocking, and resolution
+never runs against an invalid registry — so such a contradiction surfaces as
+`REQUIRE_HUMAN / REGISTRY_INVALID` with `RULE_CONFLICT` among the violations, not as a per-query
+outcome. Historical and generic rules remain visible in `consideredRuleIds` without exception or
+hand-placed exclusion; being considered is not being controlling.
 It does not authorize actions or replace Git evidence. No applicable candidate returns
 `REQUIRE_HUMAN / NO_APPLICABLE_AUTHORITY`.
 
@@ -163,16 +211,59 @@ From this package:
 
 ```powershell
 npx tsx src/cli.ts validate authority-enforcement-registry.yaml
+npx tsx src/cli.ts validate authority-enforcement-registry.yaml --repo-root ../../../
 npx tsx src/cli.ts sweep authority-enforcement-registry.yaml --repo-root ../../../
 ```
 
 Both commands emit one deterministic JSON result to stdout and perform no writes. Exit codes are:
 
 - `0`: structurally, semantically, and—when sweeping—source-bound valid;
-- `1`: schema, semantic, conflict, or corpus violation; and
-- `2`: usage, I/O, or parse failure.
+- `1`: schema, semantic, conflict, or corpus violation — that is, **the registry is invalid**; and
+- `2`: usage, I/O, parse failure, or operator misconfiguration.
+
+Exit `1` is reserved for "the registry is invalid" and is never returned for operator error. A
+`--repo-root` that does not exist returns `IO_ERROR`, and one that exists but is not the root of a
+real Git worktree returns `REPO_ROOT_INVALID`; both are exit `2`, because returning exit `1` for a
+mistyped path would be a false accusation against canon.
+
+`--repo-root` is optional on `validate` and required on `sweep`. It is what lets `validate`
+digest-verify D11 retirement evidence against the filesystem. Without it, a registry containing a
+`retired-from-agent-reading` rule is **invalid** with `RETIREMENT_EVIDENCE_UNVERIFIED` rather than
+silently accepted: retirement removes enforcement, so an unverifiable retirement must not take
+effect. `resolveAuthority` never performs I/O and therefore never honours an unverified retirement,
+because it only ever resolves against a validated registry.
 
 Violations are returned together and ordered by source path, locator, rule ID, then stable code.
+
+## What the sweep does NOT establish
+
+The corpus sweep verifies that the registry's declared bindings still match the eighteen sources
+it names. It establishes nothing about any file it does not name.
+
+- **It cannot detect binding canon introduced in an undeclared file.** A new, unregistered
+  Markdown document asserting merge authority is invisible to the sweep and the registry alike.
+  Completeness of the declared source set is a human and independent-review obligation, not a
+  mechanical one. The sweep proves registry-to-source binding; it does not prove that the registry
+  author noticed every rule-bearing statement in the repository, nor that the eighteen sources are
+  the right eighteen.
+- **A passing sweep is not gate evidence.** It is not Gate 1, 2, or 3 evidence, not a receipt, not
+  a signature, and not independent verification. A validator result is control state, and control
+  state can never substitute for the Git-canon and human authority the registry itself records.
+- **A green suite is not proof that a rule is enforced.** 254 of the rules are `pre-action-refusal`
+  attributed to `kernel-policy` / `structural` assurance while no kernel exists to perform the
+  refusal. That is why a resolved result exposes classification, assurance, and enforcement owner:
+  so a consumer can tell a structural claim from a mediated one.
+
+### Limits of specific tests, stated plainly
+
+- Three self-tests in `tests/corpus-sweep.test.ts` (around the `sourceId`-allowlist and
+  `additionalAnchors` checks) are `assert.doesNotMatch` over the **source text** of this package.
+  They are lint rules, not behavioural tests: they are defeated by trivial rewrites such as
+  `source['sourceId']`, and they must **not** be counted as R10 evidence.
+- The seven named negative axes in `tests/schema-validation.test.ts` exercise **five** distinct
+  predicates, not seven: the identity and location fixtures both bind `LOCATOR_DIGEST_MISMATCH`,
+  and the value and stale-source fixtures both bind `VALUE_DIGEST_MISMATCH`. Downstream parcels
+  must not read the seven fixtures as seven independent guarantees.
 The sweep accepts only exact repo-relative source paths below the supplied root and refuses
 absolute/traversal paths, containment escape, duplicate normalized paths, symlink/reparse targets,
 non-regular files, missing or duplicate locators, and changed normalized values. It does not use
@@ -194,7 +285,7 @@ spans suppressed by that discovery; visible text around comments, unmatched comm
 delimiters, four-space pseudo-fences, and backtick-fence info strings containing a backtick remain
 visible. Fence validity is determined from the raw line before HTML-comment masking, and the same
 fence map suppresses numbered standing-constraint discovery inside valid fenced blocks. All nine
-goal exits, all seventeen charter stop bullets, all thirteen integration scenarios, all five
+goal exits, all seventeen charter stop bullets, all fourteen integration scenarios, all five
 refusal-class rows, all twenty-two parcel contracts, and the five literal Wave 0–4 exit contracts
 are published individually; loop completion and gate bodies are separate operative rules where
 the source states them. Goal-skill and coordinator-pattern rules have item-specific, basis-honest

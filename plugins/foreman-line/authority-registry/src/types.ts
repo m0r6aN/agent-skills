@@ -257,12 +257,31 @@ export interface AuthorityQuery {
   readonly operation: Exclude<OperationScope, 'any'>
   readonly host: Exclude<HostPosture, 'any'>
 }
+/**
+ * Result of an authority resolution.
+ *
+ * There is deliberately NO `CONFLICT` outcome. A highest-tier claim or decision split is exactly
+ * the `RULE_CONFLICT` predicate, which is validity-blocking, and resolution never runs against an
+ * invalid registry - so no input can reach one. Such a contradiction surfaces as
+ * `REQUIRE_HUMAN` / `REGISTRY_INVALID`.
+ */
 export type AuthorityResolution =
   | {
       readonly outcome: 'RESOLVED'
       readonly authoritySubject: string
       readonly authorityClaim: string
       readonly decision: 'ALLOW' | 'REFUSE' | 'ADVISORY' | 'REQUIRE_HUMAN'
+      /**
+       * The honesty fields. A `REFUSE` attributed to `kernel-policy` with `structural` assurance
+       * is a claim about a kernel that does not exist yet; a `REFUSE` from a loaded permission
+       * profile is mediated and real. Without these a consumer cannot tell them apart, and 254 of
+       * the shipped rules are in the first category. Consumers MUST read `assurance` and
+       * `enforcementOwner` before treating a decision as enforced.
+       */
+      readonly classification: RuleClassification
+      readonly assurance: AssuranceLevel
+      readonly enforcementOwner: EnforcementOwner
+      readonly severity: Severity
       readonly controllingRuleIds: string[]
       readonly consideredRuleIds: string[]
     }
@@ -270,14 +289,6 @@ export type AuthorityResolution =
       readonly outcome: 'REQUIRE_HUMAN'
       readonly authoritySubject: string
       readonly reasonCode: 'REGISTRY_INVALID' | 'INVALID_QUERY_SCOPE' | 'NO_APPLICABLE_AUTHORITY'
-      readonly controllingRuleIds: []
-      readonly consideredRuleIds: string[]
-    }
-  | {
-      readonly outcome: 'CONFLICT'
-      readonly authoritySubject: string
-      readonly conflictingClaims: string[]
-      readonly conflictingDecisions: ('ALLOW' | 'REFUSE' | 'ADVISORY' | 'REQUIRE_HUMAN')[]
       readonly controllingRuleIds: []
       readonly consideredRuleIds: string[]
     }

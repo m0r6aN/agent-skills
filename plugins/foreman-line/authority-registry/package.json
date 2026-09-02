@@ -16,8 +16,10 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "generate": "tsx src/generate.ts",
-    "test": "tsx --test --test-concurrency=1 tests/*.test.ts",
-    "lint": "biome check ."
+    "test": "node --input-type=commonjs -e \"const{spawnSync}=require('child_process'),fs=require('fs');let failed=[];for(const f of fs.readdirSync('tests').filter(n=>n.endsWith('.test.ts')).sort()){const r=spawnSync(process.execPath,['node_modules/tsx/dist/cli.mjs','--test','--test-reporter=tap','--test-concurrency=1','tests/'+f],{stdio:'inherit'});if(r.status!==0)failed.push(f);}if(failed.length){console.error('FAILED FILES: '+failed.join(', '));process.exit(1);}\"",
+    "lint": "biome check .",
+    "test:all-in-one": "tsx --test --test-reporter=tap --test-concurrency=1 tests/*.test.ts",
+    "test:file": "tsx --test --test-reporter=tap --test-concurrency=1"
   },
   "dependencies": {
     "ajv": "8.20.0",

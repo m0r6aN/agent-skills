@@ -14,6 +14,7 @@ import {
 } from './registry.js'
 import { authorityEnforcementRegistrySchema } from './schemas.js'
 import {
+  ASSURANCE_LEVELS,
   AUTHORITY_TIERS,
   type AuthorityEnforcementRegistry,
   type AuthorityQuery,
@@ -30,6 +31,7 @@ import {
   type ResultCode,
   ROLE_SCOPES,
   RULE_CLASSIFICATIONS,
+  SEVERITIES,
   type SourceLocator,
   type SourceRef,
   STAGE_SCOPES,
@@ -252,11 +254,57 @@ const CLASSIFICATION_CONTRACT = {
   unsupported: { decision: 'ADVISORY', enforcementOwner: 'none', assurance: 'narrative' },
 } as const
 
-const R12_GATE2_ALLOW_RULE_IDS = new Set([
-  'rule.fk-charter.15a44cf50bc6',
-  'rule.fk-loop-directive.47a75730afd6',
-  'rule.fk-loop-directive.bfffee6d7c1f',
-])
+/**
+ * The exact three ratified Gate 2 `ALLOW` grants.
+ *
+ * Standing Constraint #13: an allowlist pins identity, LOCATION and VALUE. Keying on the rule ID
+ * alone would let any future artifact wearing one of these names inherit the only `ALLOW` in the
+ * registry, and would forgive a changed grant rather than only the historical one. So each entry
+ * additionally pins the source and item the grant is bound to, the exact normalized value digest
+ * of that item, and the exact authority claim. Every axis must match; failing any one of them
+ * makes the rule an ordinary rule whose `ALLOW` is then refused as an escalation.
+ */
+const R12_GATE2_ALLOW_GRANTS: Readonly<
+  Record<
+    string,
+    {
+      readonly sourceId: string
+      readonly itemId: string
+      readonly valueDigest: string
+      readonly authorityClaim: string
+    }
+  >
+> = {
+  'rule.fk-charter.15a44cf50bc6': {
+    sourceId: 'fk-charter',
+    itemId: 'item.15a44cf50bc6',
+    valueDigest: '7b1455e4deea2f7a7227ec6bc8a68ebfcf1afe7b0ff3c7614c048ddeaf1e67e0',
+    authorityClaim: 'coordinator-may-dispatch-fk-p0-through-fk-p21-conditionally',
+  },
+  'rule.fk-loop-directive.47a75730afd6': {
+    sourceId: 'fk-loop-directive',
+    itemId: 'item.47a75730afd6',
+    valueDigest: '6143d020d8b0b5b150b75982630714dd81d76d6e0cbbec796a6cb5bc0090831a',
+    authorityClaim: 'coordinator-may-dispatch-fk-p0-through-fk-p21-conditionally',
+  },
+  'rule.fk-loop-directive.bfffee6d7c1f': {
+    sourceId: 'fk-loop-directive',
+    itemId: 'item.bfffee6d7c1f',
+    valueDigest: '0b622848f73f596b86715d031dc5bb3495de074d7304f527d1590042110ed75b',
+    authorityClaim: 'coordinator-may-dispatch-fk-p0-through-fk-p21-conditionally',
+  },
+}
+
+function isApprovedGate2Allow(rule: AuthorityRule): boolean {
+  const grant = R12_GATE2_ALLOW_GRANTS[rule.ruleId]
+  if (grant === undefined) return false
+  return (
+    rule.authorityBasisRef.sourceId === grant.sourceId &&
+    rule.authorityBasisRef.itemId === grant.itemId &&
+    rule.authorityBasisRef.valueDigest === grant.valueDigest &&
+    rule.authorityClaim === grant.authorityClaim
+  )
+}
 
 const R11_PROTECTED_NORMATIVE_ITEMS: Readonly<Record<string, string>> = {
   'spec-convention:item.276e79bdc002':
@@ -1087,11 +1135,31 @@ function resolveValidatedAuthority(
       consideredRuleIds,
     }
   }
+  // Amended AC5: a resolved result exposes its controlling decision TOGETHER WITH the
+  // classification, assurance and enforcement owner behind it, so a structural refusal from a
+  // kernel that does not exist cannot be read as a mediated one. The controlling set shares one
+  // claim and one decision by construction; where the controlling rules disagree on these
+  // honesty fields, the weakest is reported, because the strongest would overclaim.
+  const first = controlling[0] as AuthorityRule
+  const weakestBy = <T>(order: readonly T[], values: readonly T[]): T =>
+    values.reduce((weakest, value) =>
+      order.indexOf(value) < order.indexOf(weakest) ? value : weakest,
+    )
   return {
     outcome: 'RESOLVED',
     authoritySubject: query.authoritySubject,
     authorityClaim: claims[0] as string,
     decision: decisions[0] as 'ALLOW' | 'REFUSE' | 'ADVISORY' | 'REQUIRE_HUMAN',
+    classification: first.classification,
+    assurance: weakestBy(
+      ASSURANCE_LEVELS,
+      controlling.map((rule) => rule.assurance),
+    ),
+    enforcementOwner: first.enforcementOwner,
+    severity: weakestBy(
+      SEVERITIES,
+      controlling.map((rule) => rule.severity),
+    ),
     controllingRuleIds: controlling.map((rule) => rule.ruleId).sort(),
     consideredRuleIds,
   }
@@ -1827,7 +1895,7 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
         (reference.sourceId === 'permission-profiles-registry' &&
           rule.classification === 'pre-action-refusal'),
     )
-    const approvedAllow = R12_GATE2_ALLOW_RULE_IDS.has(rule.ruleId)
+    const approvedAllow = isApprovedGate2Allow(rule)
     const expectedDecision = approvedAllow ? 'ALLOW' : classificationContract.decision
     const validPreActionShape =
       rule.classification !== 'pre-action-refusal' ||
@@ -3266,6 +3334,54 @@ function extractLocator(
   return { count: 0, value: '' }
 }
 
+/**
+ * Memoised `git` invocation, keyed by repository root and exact argument vector.
+ *
+ * `sweepRegistrySources` spawns roughly 87 git subprocesses per call - two per source snapshot
+ * commit, two per reconciliation git-commit evidence ref, plus the worktree probe - and on Windows
+ * each spawn costs on the order of 100 ms. Measured: one sweep took 10.5 s, and a CPU profile
+ * attributed 98.6% of it to idle time blocked on `spawn`, not to parsing or validation. The shipped
+ * suite performs 62 sweeps, which accounted for essentially all of `corpus-sweep.test.ts`'s
+ * ~13 minutes.
+ *
+ * Caching is sound because the answers are immutable: a Git object's type and content are fixed by
+ * its sha, and the worktree root of a given directory does not change within a process. Failures
+ * are cached too, since a missing object stays missing for that root. The key includes the root, so
+ * the copied-corpus and missing-metadata tests - which sweep DIFFERENT roots - are unaffected.
+ *
+ * This changes no result. It is not a general performance optimisation of the decision path, which
+ * remains out of scope and owned by FK-P1.
+ */
+const gitResultCache = new Map<
+  string,
+  { readonly ok: true; readonly value: Buffer } | { readonly ok: false; readonly error: Error }
+>()
+
+function runGit(root: string, args: readonly string[]): Buffer {
+  const key = JSON.stringify([root, ...args])
+  const cached = gitResultCache.get(key)
+  if (cached !== undefined) {
+    if (cached.ok) return cached.value
+    throw cached.error
+  }
+  try {
+    const value = execFileSync('git', [...args], {
+      cwd: root,
+      stdio: ['ignore', 'pipe', 'ignore'],
+      maxBuffer: 64 * 1024 * 1024,
+    })
+    gitResultCache.set(key, { ok: true, value })
+    return value
+  } catch (error) {
+    gitResultCache.set(key, { ok: false, error: error as Error })
+    throw error
+  }
+}
+
+function runGitText(root: string, args: readonly string[]): string {
+  return runGit(root, args).toString('utf8')
+}
+
 function pathProblem(path: string): ResultCode | null {
   const segments = path.split('/')
   if (
@@ -3275,6 +3391,12 @@ function pathProblem(path: string): ResultCode | null {
     path.includes('\\') ||
     path.includes('*') ||
     path.includes('?') ||
+    // Any interior colon. On NTFS `file.md:stream` and `file.md::$DATA` name alternate data
+    // streams, and `file.md::$DATA` resolves to the file's DEFAULT stream - so such a path reads
+    // real content under a name the registry never declared. Segment-wise `realpathSync` kept all
+    // four probed shapes contained and every one was already refused, but only INCIDENTALLY, by
+    // failing to resolve. A registered locator must be refused by policy, not by accident.
+    segments.some((segment) => segment.includes(':')) ||
     segments.some((segment) => segment.length === 0 || segment === '.' || segment === '..')
   ) {
     return 'SOURCE_PATH_INVALID'
@@ -3358,11 +3480,7 @@ export function sweepRegistrySources(document: unknown, repoRoot: string): Valid
   try {
     const canonicalRoot = realpathSync(root)
     const worktreeRoot = realpathSync(
-      execFileSync('git', ['rev-parse', '--show-toplevel'], {
-        cwd: canonicalRoot,
-        stdio: ['ignore', 'pipe', 'ignore'],
-        encoding: 'utf8',
-      }).trim(),
+      runGitText(canonicalRoot, ['rev-parse', '--show-toplevel']).trim(),
     )
     gitReady = canonicalRoot.toLowerCase() === worktreeRoot.toLowerCase()
     if (!gitReady) {
@@ -3699,16 +3817,9 @@ export function sweepRegistrySources(document: unknown, repoRoot: string): Valid
     for (const evidence of reconciliation.observedEvidence) {
       if (evidence.kind === 'git-commit' && gitReady) {
         try {
-          const objectType = execFileSync('git', ['cat-file', '-t', evidence.reference], {
-            cwd: root,
-            stdio: ['ignore', 'pipe', 'ignore'],
-            encoding: 'utf8',
-          }).trim()
+          const objectType = runGitText(root, ['cat-file', '-t', evidence.reference]).trim()
           if (objectType !== 'commit') throw new Error(`object type is '${objectType}'`)
-          const bytes = execFileSync('git', ['cat-file', '-p', evidence.reference], {
-            cwd: root,
-            stdio: ['ignore', 'pipe', 'ignore'],
-          })
+          const bytes = runGit(root, ['cat-file', '-p', evidence.reference])
           if (sha256(bytes) !== evidence.digest) {
             violations.push(
               violation('MIGRATION_EVIDENCE_INVALID', 'Git object evidence digest changed'),
@@ -3723,10 +3834,7 @@ export function sweepRegistrySources(document: unknown, repoRoot: string): Valid
       if (evidence.kind === 'missing-path' && gitReady) {
         try {
           const parsed = JSON.parse(evidence.reference) as { commit: string; path: string }
-          execFileSync('git', ['cat-file', '-e', `${parsed.commit}:${parsed.path}`], {
-            cwd: root,
-            stdio: 'ignore',
-          })
+          runGit(root, ['cat-file', '-e', `${parsed.commit}:${parsed.path}`])
           violations.push(
             violation(
               'MIGRATION_EVIDENCE_INVALID',

@@ -1,12 +1,13 @@
 import assert from 'node:assert/strict'
 import { spawnSync } from 'node:child_process'
-import { readFileSync } from 'node:fs'
+import { readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { test } from 'node:test'
 import { fileURLToPath } from 'node:url'
-import { parse } from 'yaml'
-import type { AuthorityEnforcementRegistry } from '../src/types.js'
-import { parseRegistry, validateRegistry } from '../src/validate.js'
+import { parse, stringify } from 'yaml'
+import type { AuthorityEnforcementRegistry, AuthorityRule } from '../src/types.js'
+import { bindingDigestFor, parseRegistry, sha256, validateRegistry } from '../src/validate.js'
 
 const packageRoot = join(dirname(fileURLToPath(import.meta.url)), '..')
 const fixtures = join(packageRoot, 'tests', 'fixtures')
@@ -36,30 +37,6 @@ test('schema admits empty principal sets for explicitly unavailable operations',
   )
 })
 
-/**
- * The seven negative fixtures and the exact violation code each one is named for. Shared by the
- * in-process loop and the CLI loop below so both assert the SAME named invariant: the CLI loop
- * previously asserted only `status === 1` and `violations.length > 0`, which any validation
- * failure satisfies, so all seven stayed green when every code was relabelled to junk.
- */
-const negativeFixtures = [
-  ['reject-identity-mutation.yaml', 'LOCATOR_DIGEST_MISMATCH'],
-  ['reject-location-mutation.yaml', 'LOCATOR_DIGEST_MISMATCH'],
-  ['reject-value-mutation.yaml', 'VALUE_DIGEST_MISMATCH'],
-  ['reject-stale-source.yaml', 'VALUE_DIGEST_MISMATCH'],
-  ['reject-duplicate-rule.yaml', 'RULE_DUPLICATE'],
-  ['reject-contradictory-authority.yaml', 'RULE_CONFLICT'],
-  ['reject-missing-source.yaml', 'RULE_SOURCE_MISSING'],
-] as const
-
-for (const [name, code] of negativeFixtures) {
-  test(`${name} rejects with ${code}`, () => {
-    const result = validateRegistry(load(name))
-    assert.equal(result.valid, false)
-    assert.ok(result.violations.some((violation) => violation.code === code))
-  })
-}
-
 test('parseRegistry distinguishes parse failures from validation failures', () => {
   assert.equal(parseRegistry('not: [valid').violations[0]?.code, 'PARSE_ERROR')
   assert.equal(parseRegistry('{}').violations[0]?.code, 'SCHEMA_INVALID')
@@ -87,23 +64,6 @@ test('CLI validate and sweep return exit 0 with machine-readable summaries', () 
   assert.equal(JSON.parse(sweep.stdout).summary.sourceCount, 18)
 })
 
-for (const [name, code] of negativeFixtures) {
-  test(`CLI negative fixture ${name} returns exit 1 with ${code}`, () => {
-    const result = runCli(['validate', join(fixtures, name)])
-    assert.equal(result.status, 1, result.stderr || result.stdout)
-    const output = JSON.parse(result.stdout) as {
-      valid: boolean
-      violations: { code: string }[]
-    }
-    assert.equal(output.valid, false)
-    assert.ok(output.violations.length > 0)
-    assert.ok(
-      output.violations.some((violation) => violation.code === code),
-      `expected ${code} from ${name}; observed ${output.violations.map((v) => v.code).join(',')}`,
-    )
-  })
-}
-
 test('CLI bad invocation and unreadable input return exit 2', () => {
   assert.equal(runCli(['validate']).status, 2)
   assert.equal(runCli(['unknown', 'authority-enforcement-registry.yaml']).status, 2)
@@ -123,5 +83,159 @@ test('R3 sweep with a missing repository root returns operational exit 2', () =>
     JSON.parse(result.stdout).violations.some(
       (violation: { code: string }) => violation.code === 'IO_ERROR',
     ),
+  )
+})
+
+/**
+ * R14 fix 15 - the seven reject fixtures are GENERATED here, not committed.
+ *
+ * They used to be seven committed ~39,897-line YAML files, each a full copy of the shipped registry
+ * carrying one small mutation: about 245,000 lines encoding roughly 100 lines of intent, and a
+ * standing drift channel, because nothing asserted that the copies still matched the registry they
+ * were derived from.
+ *
+ * Deriving them at test time from the shipped registry removes the bulk and kills the drift channel
+ * outright - there is no second copy left to drift. Each mutation is a named function and each test
+ * asserts the exact violation code that mutation is named for, so a fixture cannot quietly stop
+ * testing its invariant. Fixtures that also trip unrelated violations do not weaken the assertion,
+ * because the assertion is on the NAMED code rather than on mere invalidity.
+ */
+const rejectMutations: readonly (readonly [
+  string,
+  string,
+  (document: AuthorityEnforcementRegistry) => void,
+])[] = [
+  [
+    'identity-mutation',
+    'LOCATOR_DIGEST_MISMATCH',
+    (document) => {
+      const rule = document.rules[0]
+      assert.ok(rule)
+      ;(rule.sourceRefs[0] as { locatorDigest: string }).locatorDigest = '0'.repeat(64)
+      ;(rule as { bindingDigest: string }).bindingDigest = bindingDigestFor(rule)
+    },
+  ],
+  [
+    'location-mutation',
+    'LOCATOR_DIGEST_MISMATCH',
+    (document) => {
+      const item = document.sources[0]?.inventoryItems[0]
+      assert.ok(item)
+      ;(item.locator as { anchor: string }).anchor += '-moved'
+    },
+  ],
+  [
+    'value-mutation',
+    'VALUE_DIGEST_MISMATCH',
+    (document) => {
+      const item = document.sources[0]?.inventoryItems[0]
+      assert.ok(item)
+      ;(item as { normalizedExcerpt: string }).normalizedExcerpt += ' changed'
+    },
+  ],
+  [
+    'stale-source',
+    'VALUE_DIGEST_MISMATCH',
+    (document) => {
+      const item = document.sources[0]?.inventoryItems[0]
+      const rule = document.rules[0]
+      assert.ok(item && rule)
+      ;(item as { valueDigest: string }).valueDigest = 'f'.repeat(64)
+      ;(rule.sourceRefs[0] as { valueDigest: string }).valueDigest = 'f'.repeat(64)
+      ;(rule as { bindingDigest: string }).bindingDigest = bindingDigestFor(rule)
+    },
+  ],
+  [
+    'duplicate-rule',
+    'RULE_DUPLICATE',
+    (document) => {
+      const rule = document.rules[0]
+      assert.ok(rule)
+      ;(document.rules as AuthorityRule[]).push(structuredClone(rule))
+    },
+  ],
+  [
+    'contradictory-authority',
+    'RULE_CONFLICT',
+    (document) => {
+      const original = document.rules.find((rule) => rule.ruleId === 'rule.fk-charter.d3')
+      assert.ok(original)
+      const base = {
+        ...structuredClone(original),
+        ruleId: 'rule.fk-charter.d3-contradiction',
+        authorityClaim: 'state-changes-need-no-separate-admission',
+        normalizedStatement: 'Contradictory shipped statement for the negative fixture.',
+      }
+      const conflicting = { ...base, bindingDigest: bindingDigestFor(base) }
+      ;(document.rules as AuthorityRule[]).push(conflicting)
+      const item = document.sources
+        .find((source) => source.sourceId === 'fk-charter')
+        ?.inventoryItems.find((candidate) => candidate.itemId === 'item.d3')
+      assert.ok(item)
+      ;(item.ruleIds as string[]).push(conflicting.ruleId)
+    },
+  ],
+  [
+    'missing-source',
+    'RULE_SOURCE_MISSING',
+    (document) => {
+      const rule = document.rules[0]
+      assert.ok(rule)
+      ;(rule.sourceRefs[0] as { sourceId: string }).sourceId = 'missing-source'
+      ;(rule as { bindingDigest: string }).bindingDigest = bindingDigestFor(rule)
+    },
+  ],
+]
+
+function rejectDocument(mutate: (document: AuthorityEnforcementRegistry) => void) {
+  const document = parse(
+    readFileSync(join(packageRoot, 'authority-enforcement-registry.yaml'), 'utf8'),
+  ) as AuthorityEnforcementRegistry
+  mutate(document)
+  return document
+}
+
+for (const [name, code, mutate] of rejectMutations) {
+  test(`reject-${name} rejects with ${code}`, () => {
+    const result = validateRegistry(rejectDocument(mutate))
+    assert.equal(result.valid, false)
+    assert.ok(
+      result.violations.some((violation) => violation.code === code),
+      `expected ${code}; observed ${result.violations.map((v) => v.code).join(',')}`,
+    )
+  })
+}
+
+for (const [name, code, mutate] of rejectMutations) {
+  test(`CLI reject-${name} returns exit 1 with ${code}`, () => {
+    const path = join(tmpdir(), `fk-p0-reject-${name}.yaml`)
+    try {
+      writeFileSync(path, stringify(rejectDocument(mutate)), 'utf8')
+      const result = runCli(['validate', path])
+      assert.equal(result.status, 1, result.stderr || result.stdout)
+      const output = JSON.parse(result.stdout) as {
+        valid: boolean
+        violations: { code: string }[]
+      }
+      assert.equal(output.valid, false)
+      assert.ok(
+        output.violations.some((violation) => violation.code === code),
+        `expected ${code}; observed ${output.violations.map((v) => v.code).join(',')}`,
+      )
+    } finally {
+      rmSync(path, { force: true })
+    }
+  })
+}
+
+// The drift channel the committed copies created: `pass-minimal.yaml` is byte-identical to the
+// shipped registry by construction, and nothing asserted it. This is not a "whole-file byte pin"
+// of the kind Standing Constraint #12 forbids - it does not freeze a moving external file, it
+// asserts that two artifacts THIS package regenerates together have not drifted apart.
+test('the positive fixture has not drifted from the registry it is derived from', () => {
+  assert.equal(
+    sha256(readFileSync(join(packageRoot, 'tests', 'fixtures', 'pass-minimal.yaml'))),
+    sha256(readFileSync(join(packageRoot, 'authority-enforcement-registry.yaml'))),
+    'pass-minimal.yaml has drifted from authority-enforcement-registry.yaml; run `npm run generate`',
   )
 })

@@ -2282,6 +2282,8 @@ const CURATED_ITEM_CLASSIFICATIONS: Readonly<Record<string, RuleClassification>>
   'fk-charter:item.eb56a1ab24d9': 'ci-static-check',
   'fk-charter:item.8843a7774432': 'ci-static-check',
   'fk-charter:item.10f729956b77': 'ci-static-check',
+  // Integration scenario 14 (decision-path latency), added by ratified amendment A1.
+  'fk-charter:item.ff0f88a958e0': 'ci-static-check',
 }
 
 function curatedClassificationFor(sourceId: string, itemId: string): RuleClassification {
@@ -3475,6 +3477,10 @@ const CURATED_ITEM_IDENTITIES: Readonly<Record<string, readonly [string, string]
   'fk-charter:item.10f729956b77': [
     'integration-scenario.host-capability',
     'supported-host-probe-and-gap-reporting',
+  ],
+  'fk-charter:item.ff0f88a958e0': [
+    'integration-scenario.decision-path-latency',
+    'warm-kernel-meets-the-d21-budget-with-outage-and-stale-cache-evidence',
   ],
 }
 
@@ -10981,6 +10987,15 @@ const CURATED_ITEM_APPLICABILITY = {
     operations: ['control-call'],
     hosts: ['claude-windows-docker-loaded'],
   },
+  // Scenario 14 is proved on the D20 platform like every other scenario, so it carries the same
+  // CI / deterministic-verify / control-call applicability as scenario 13.
+  'fk-charter:item.ff0f88a958e0': {
+    goals: ['foreman-kernel'],
+    roles: ['ci'],
+    stages: ['deterministic-verify'],
+    operations: ['control-call'],
+    hosts: ['claude-windows-docker-loaded'],
+  },
 } as const satisfies Readonly<Record<string, AuthorityRule['applicability']>>
 
 function curatedApplicabilityFor(sourceId: string, itemId: string): AuthorityRule['applicability'] {
@@ -12517,58 +12532,12 @@ function writeFixtures(full: AuthorityEnforcementRegistry): void {
   const pass = buildMinimal(full)
   writeYaml(join(fixturesDir, 'pass-minimal.yaml'), pass)
 
-  const identity = structuredClone(pass)
-  ;(identity.rules[0]?.sourceRefs[0] as { locatorDigest: string }).locatorDigest = '0'.repeat(64)
-  ;(identity.rules[0] as { bindingDigest: string }).bindingDigest = bindingDigestFor(
-    identity.rules[0] as AuthorityRule,
-  )
-  writeYaml(join(fixturesDir, 'reject-identity-mutation.yaml'), identity)
-
-  const location = structuredClone(pass)
-  ;(location.sources[0]?.inventoryItems[0]?.locator as { anchor: string }).anchor += '-moved'
-  writeYaml(join(fixturesDir, 'reject-location-mutation.yaml'), location)
-
-  const value = structuredClone(pass)
-  ;(value.sources[0]?.inventoryItems[0] as { normalizedExcerpt: string }).normalizedExcerpt +=
-    ' changed'
-  writeYaml(join(fixturesDir, 'reject-value-mutation.yaml'), value)
-
-  const stale = structuredClone(pass)
-  ;(stale.sources[0]?.inventoryItems[0] as { valueDigest: string }).valueDigest = 'f'.repeat(64)
-  ;(stale.rules[0]?.sourceRefs[0] as { valueDigest: string }).valueDigest = 'f'.repeat(64)
-  ;(stale.rules[0] as { bindingDigest: string }).bindingDigest = bindingDigestFor(
-    stale.rules[0] as AuthorityRule,
-  )
-  writeYaml(join(fixturesDir, 'reject-stale-source.yaml'), stale)
-
-  const duplicate = structuredClone(pass)
-  ;(duplicate.rules as AuthorityRule[]).push(structuredClone(duplicate.rules[0] as AuthorityRule))
-  writeYaml(join(fixturesDir, 'reject-duplicate-rule.yaml'), duplicate)
-
-  const contradiction = structuredClone(pass)
-  const original = contradiction.rules.find(
-    (candidate) => candidate.ruleId === 'rule.fk-charter.d3',
-  ) as AuthorityRule
-  const conflictingBase: AuthorityRule = {
-    ...structuredClone(original),
-    ruleId: `${original.ruleId}.conflict`,
-    authorityClaim: `${original.authorityClaim}-conflict`,
-  }
-  const conflicting = { ...conflictingBase, bindingDigest: bindingDigestFor(conflictingBase) }
-  ;(contradiction.rules as AuthorityRule[]).push(conflicting)
-  const conflictingItem = contradiction.sources
-    .find((source) => source.sourceId === 'fk-charter')
-    ?.inventoryItems.find((item) => item.itemId === 'item.d3')
-  if (conflictingItem === undefined) throw new Error('contradiction fixture item is missing')
-  ;(conflictingItem.ruleIds as string[]).push(conflicting.ruleId)
-  writeYaml(join(fixturesDir, 'reject-contradictory-authority.yaml'), contradiction)
-
-  const missing = structuredClone(pass)
-  ;(missing.rules[0]?.sourceRefs[0] as { sourceId: string }).sourceId = 'missing-source'
-  ;(missing.rules[0] as { bindingDigest: string }).bindingDigest = bindingDigestFor(
-    missing.rules[0] as AuthorityRule,
-  )
-  writeYaml(join(fixturesDir, 'reject-missing-source.yaml'), missing)
+  // The seven reject fixtures are no longer written. They were seven ~39,897-line copies of the
+  // shipped registry, each carrying one small mutation - about 245,000 committed lines encoding
+  // roughly 100 lines of intent, plus a standing drift channel because nothing asserted the copies
+  // still matched the registry they came from. `tests/schema-validation.test.ts` now derives each
+  // one at test time from the shipped registry via a named mutation function, which removes the
+  // bulk and leaves no second copy to drift.
 }
 
 function main(): void {

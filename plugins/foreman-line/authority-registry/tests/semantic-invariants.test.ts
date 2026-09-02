@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict'
-import { readFileSync } from 'node:fs'
+import { appendFileSync, readFileSync, writeFileSync } from 'node:fs'
+import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
-import { test } from 'node:test'
+import { test as nodeTest } from 'node:test'
 import { fileURLToPath } from 'node:url'
 import { parse } from 'yaml'
 import type {
@@ -26,6 +27,46 @@ import {
   sha256,
   validateRegistry,
 } from '../src/validate.js'
+
+/**
+ * R14 fix 20 - per-test progress that survives a crash.
+ *
+ * node's test runner BUFFERS a file's reporter output until that file completes, so when this file
+ * died the whole suite reported `pass 0 / fail 1 / 'test failed'` naming no invariant and every one
+ * of its results was lost. Switching to the TAP reporter does NOT fix that - the buffering is in
+ * the runner's per-file output ordering, not the reporter - and neither does writing to
+ * `process.stderr` or even raw fd 2, because the runner intercepts both streams to attribute output
+ * to tests. All three were measured on controlled probes before settling on this.
+ *
+ * Appending to a file outside the repository DOES escape, and it survives a non-graceful exit. The
+ * log is written to the OS temp directory, never into the package, so no unlisted file is created.
+ * If this file dies again, the last line names the last test that completed.
+ */
+const progressLogPath = join(tmpdir(), `fk-p0-progress-semantic-invariants.log`)
+try {
+  writeFileSync(progressLogPath, '')
+} catch {
+  // A progress log is a diagnostic aid; never fail a test run because it could not be written.
+}
+let completedTests = 0
+function test(name: string, fn: () => void | Promise<void>): void {
+  void nodeTest(name, async () => {
+    try {
+      await fn()
+    } finally {
+      completedTests += 1
+      try {
+        appendFileSync(
+          progressLogPath,
+          `${completedTests}	${name}
+`,
+        )
+      } catch {
+        // ignore
+      }
+    }
+  })
+}
 
 const packageRoot = join(dirname(fileURLToPath(import.meta.url)), '..')
 const valid = parse(
@@ -3821,3 +3862,105 @@ for (const vector of [
     }
   })
 }
+
+// R14 fix 13 (amended AC5): a resolved result must expose the classification, assurance and
+// enforcement owner behind its decision, so a structural refusal from a kernel that does not exist
+// cannot be read as a mediated one. 254 of the shipped rules are pre-action-refusal attributed to
+// kernel-policy/structural while no kernel exists.
+test('R14 a resolved result exposes classification, assurance, enforcement owner and severity', () => {
+  const result = resolveAuthority(full, {
+    authoritySubject: 'gate3.merge-authority',
+    goal: 'foreman-kernel',
+    role: 'coordinator',
+    stage: 'merge',
+    operation: 'repo-mutation',
+    host: 'provider-neutral',
+  })
+  assert.equal(result.outcome, 'RESOLVED')
+  if (result.outcome !== 'RESOLVED') return
+  assert.equal(result.decision, 'REFUSE')
+  assert.ok(RULE_CLASSIFICATIONS.includes(result.classification))
+  // The honesty signal: this REFUSE is structural, owned by a kernel that does not exist yet.
+  assert.equal(result.assurance, 'structural')
+  assert.equal(result.enforcementOwner, 'kernel-policy')
+  assert.equal(result.severity, 'critical')
+})
+
+test('R14 a resolved result reports the assurance of its controlling rules, not a default', () => {
+  const result = resolveAuthority(full, {
+    authoritySubject: 'gate2.dispatch-grant',
+    goal: 'foreman-kernel',
+    role: 'coordinator',
+    stage: 'shaping',
+    operation: 'state-transition',
+    host: 'provider-neutral',
+  })
+  assert.equal(result.outcome, 'RESOLVED')
+  if (result.outcome !== 'RESOLVED') return
+  assert.equal(result.decision, 'ALLOW')
+  const controlling = result.controllingRuleIds.map((ruleId) => {
+    const rule = full.rules.find((candidate) => candidate.ruleId === ruleId)
+    assert.ok(rule)
+    return rule
+  })
+  assert.ok(controlling.every((rule) => rule.assurance === result.assurance))
+  assert.ok(controlling.every((rule) => rule.enforcementOwner === result.enforcementOwner))
+})
+
+// R14 fix 14: Standing Constraint #13 requires an allowlist to pin identity, LOCATION and VALUE.
+// The Gate 2 ALLOW waiver was keyed on the rule ID alone, so any future artifact wearing one of
+// those names would have inherited the only ALLOW in the registry. Each axis is tested for refusal
+// independently, because checking one while assuming the rest is default-deny-with-exception.
+for (const [axis, mutate] of [
+  [
+    'source',
+    (rule: AuthorityRule) => {
+      ;(rule.authorityBasisRef as { sourceId: string }).sourceId = 'spec-convention'
+    },
+  ],
+  [
+    'item',
+    (rule: AuthorityRule) => {
+      ;(rule.authorityBasisRef as { itemId: string }).itemId = 'item.000000000000'
+    },
+  ],
+  [
+    'value digest',
+    (rule: AuthorityRule) => {
+      ;(rule.authorityBasisRef as { valueDigest: string }).valueDigest = '0'.repeat(64)
+    },
+  ],
+  [
+    'authority claim',
+    (rule: AuthorityRule) => {
+      ;(rule as { authorityClaim: string }).authorityClaim = 'coordinator-may-dispatch-anything'
+    },
+  ],
+] as const) {
+  test(`R14 a Gate 2 ALLOW whose ${axis} no longer matches the ratified grant is refused`, () => {
+    const mutated = structuredClone(full)
+    const rule = mutated.rules.find(
+      (candidate) => candidate.ruleId === 'rule.fk-charter.15a44cf50bc6',
+    )
+    assert.ok(rule)
+    assert.equal(rule.decision, 'ALLOW')
+    mutate(rule)
+    ;(rule as { bindingDigest: string }).bindingDigest = bindingDigestFor(rule)
+    expectCode(mutated, 'AUTHORITY_ESCALATION')
+  })
+}
+
+test('R14 a new rule wearing an approved Gate 2 rule name cannot inherit its ALLOW', () => {
+  const mutated = structuredClone(full)
+  const squatter = mutated.rules.find(
+    (candidate) => candidate.ruleId === 'rule.fk-charter.15a44cf50bc6',
+  )
+  assert.ok(squatter)
+  // Same name, different binding: a squatted waiver is exactly what Standing Constraint #13's
+  // location and value axes exist to refuse.
+  ;(squatter.authorityBasisRef as { sourceId: string }).sourceId = 'standing-constraints'
+  ;(squatter.authorityBasisRef as { itemId: string }).itemId = 'item.deadbeef0000'
+  ;(squatter.authorityBasisRef as { valueDigest: string }).valueDigest = 'f'.repeat(64)
+  ;(squatter as { bindingDigest: string }).bindingDigest = bindingDigestFor(squatter)
+  expectCode(mutated, 'AUTHORITY_ESCALATION')
+})
