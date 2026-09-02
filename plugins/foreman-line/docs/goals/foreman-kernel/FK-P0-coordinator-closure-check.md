@@ -941,3 +941,97 @@ Both are told about (a) and (b) above and instructed **not** to report them — 
 spending on what nobody has examined, and the chain is that. They are pointed at the live question
 those defects raise instead: **did R14's considered-rules change break anything in `src/`, rather
 than only in tests?**
+
+## C28 — the census: 405 tests, 395 pass, **10 fail**. And a claim I accepted that could never have been true.
+
+The shimmed census copy ran the file end to end in 9 minutes and returned the whole list at once.
+
+### The correction I owe first
+
+C23 recorded `semantic-invariants`: **"169 passed, 0 failures, terminated before completion."** That
+was the builder's figure and **I accepted it. It could not have been true, and I had the code in
+front of me.** The fix-20 wrapper logs in a `finally`:
+
+```ts
+try { await fn() } finally { completedTests += 1; appendFileSync(progressLogPath, …) }
+```
+
+A **failing** test appends exactly like a passing one. The progress log counts *completions*; it
+carries no pass/fail signal whatsoever. "169 passed, 0 failures" was a count of lines in a file that
+does not record the thing being claimed — the precise wrong-shaped claim invariant D4 tells me to
+treat as presumptively empty, and I let it through because it was the number I wanted.
+
+The census settles it: **six of the ten failures occur before test 169.** That run was not 169-green.
+It was 169-completed with six already failed. C23's other conclusions stand; this figure does not,
+and every downstream statement of mine that leaned on it is withdrawn.
+
+### The ten, triaged
+
+**Class A — the ratified amendments moved, the tests did not. Code right, test stale. I rule these.**
+
+| # | Line | What it asserts | Superseded by |
+|---|---|---|---|
+| 3 | `:186` | classification counts totalling **466** | D21 curation + integration scenario 14 (C17, R15). I counted **469** independently in C18 |
+| 290 | `:2495` | an ADVISORY rule is **absent** from `consideredRuleIds` | **R14**'s AC5: such rules appear there "without exception or hand-placed exclusion" |
+| 38 | `:709` | source-snapshot commit `7e7dc7d…` | **R16/R17** legacy decoupling; registry carries `51857a3a…` = `LEGACY_SOURCE_SNAPSHOT_COMMIT` |
+| 107 | `:1397` | same | same |
+| 146 | `:1526` | same | same |
+
+Three of these five point at **my own amendments**. R14 changed an observable of the resolver and
+R16/R17 changed which commit historical assertions bind to; in neither case did I ask which existing
+assertions depended on the old answer. That question is now a standing obligation on every future
+amendment in this goal.
+
+The builder must still confirm, per assertion, that each of 38/107/146 is genuinely legacy-decoupled
+rather than one that should still track live HEAD. It must not assume my ruling generalises.
+
+**Class B — genuinely open. The builder determines which side is wrong; it does not assume the test is.**
+
+- **#23 (`:400`)** — removing a reconciliation no longer yields `RECONCILIATION_MISSING`.
+- **#104 (`:1328`)** — a test that deliberately calls `rechain()` to stay VALID gets
+  `MIGRATION_EVIDENCE_INVALID` + `RULE_ORPHANED`. **`rechain()` is not broadly broken** — I checked,
+  because if it were, every test using it would be inert in the Lesson-32 sense: 4 call sites, 3
+  pass. This failure is specific to pushing a corroborating `sourceRef`, and the code may well be
+  right to refuse it.
+- **#360/361/362 (`:3311`)** — see below.
+
+### #360–362: reproduced by me, against pristine code, and bounded
+
+The test loops every `registry-rework-` record × {append, remove, duplicate, substitute} on
+`observedEvidence` and requires `MIGRATION_EVIDENCE_INVALID`. I re-ran that matrix directly against
+the worktree's `src/` and shipped registry — not against my census copy:
+
+| Records | append | remove | duplicate | substitute |
+|---|---|---|---|---|
+| 11 historical (pinned) | OK | OK | OK | OK |
+| **`registry-rework-df8155a` — the chain HEAD** | **none** | **none** | **none** | OK |
+
+Zero violations of any kind. Exactly the record that R16 exempted from `RECONCILIATION_RECORD_DIGESTS`
+and bound instead to the live manifest: its evidence *multiset* is unconstrained.
+
+**Is it a bypass? No — I tested that rather than asserting it.** Escalating a rule `REFUSE → ALLOW`
+and then attacking the head:
+
+```
+tamper only                 -> AUTHORITY_ESCALATION, MIGRATION_EVIDENCE_INVALID
+tamper + head append        -> AUTHORITY_ESCALATION, MIGRATION_EVIDENCE_INVALID
+tamper + head remove[0]     -> AUTHORITY_ESCALATION, MIGRATION_EVIDENCE_INVALID
+tamper + head remove ALL    -> SCHEMA_INVALID
+tamper + DELETE head record -> AUTHORITY_ESCALATION, MIGRATION_EVIDENCE_INVALID
+```
+
+No route laundered a tampered registry. So this is a **missing guard, not a hole** — the head accepts
+noise in its evidence list that every historical record refuses. It is a SHOULD-FIX in `src/`, and
+it is the first defect in this parcel that is in the code rather than the tests.
+
+It also sits precisely where both post-rework reviewers are working (mandate Priority 1, items 1–3).
+I am sending it to them as evidence, not as a verdict — it sharpens their question rather than
+answering it.
+
+### Why the builder is NOT dispatched yet
+
+The tripwire allows this owner **two** rework rounds and this is the second. It has to carry the
+complete list, so it waits for the reviewers rather than starting on a list I already know is
+partial. The reviewers are inside the exact mechanism that produced #360–362; dispatching now would
+also put a builder's commits under two reviewers pinned to `0ad7ee3`, which is the contention
+mistake this round has already made twice.
