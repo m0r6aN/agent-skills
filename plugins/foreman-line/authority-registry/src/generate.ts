@@ -11,6 +11,7 @@ import {
   R13_NORMATIVE_MARKDOWN_AUDIT_KEYS,
   R13_NORMATIVE_MARKDOWN_PUBLICATION_KEYS,
   R13_PRIOR_REGISTRY_COMMIT,
+  R14_PRIOR_REGISTRY_COMMIT,
 } from './registry.js'
 import type {
   AuthorityEffect,
@@ -38,7 +39,25 @@ import {
   typescriptConstructMap,
 } from './validate.js'
 
+/**
+ * The snapshot the R1-R13 migration records were authored against. Historical records embed this
+ * commit as their own Git evidence and are byte-frozen by validate.ts's
+ * `RECONCILIATION_RECORD_DIGESTS`, so it must NOT advance: rewriting it would rewrite history and
+ * break the exact R1-R12 record preservation the Required Tests mandate.
+ */
 const SNAPSHOT = '51857a3a7796b393c0c0a68712f98c06e7015d79'
+
+/**
+ * The commit whose corpus bytes THIS generation hashed, and therefore the document's live
+ * `sourceSnapshotCommit` and every per-source `snapshotEvidence.commit`.
+ *
+ * The spec calls the initial commit's full-file hashes "parcel-time evidence only, not a permanent
+ * shipped freeze" (Constraints) and "not a shipped validation predicate" (AC3), so the literal
+ * 51857a3 is descriptive of the initial dispatch rather than a binding target. Binding a hash to a
+ * commit whose bytes were not the ones hashed would be a knowingly false statement, so this
+ * advances and the advance is recorded as a typed migration record.
+ */
+const CURRENT_SNAPSHOT = '7e7dc7dbb90317a5a2cd69c21a8b86c4a3a4e1e2'
 const R12_GATE2_ALLOW_ITEMS = new Set([
   'fk-charter:item.15a44cf50bc6',
   'fk-loop-directive:item.47a75730afd6',
@@ -504,11 +523,34 @@ for (const source of priorR11Registry.sources) {
   }
 }
 
+// R13's map is ANCHOR-keyed and therefore independent of where content sits in the file, so it is
+// authoritative and is built FIRST. Every identity it establishes is reserved.
+const frozenMarkdownItemIdsInUse = new Set<string>()
+for (const source of priorR13Registry.sources.filter((candidate) =>
+  candidate.path.endsWith('.md'),
+)) {
+  for (const item of source.inventoryItems) {
+    if (!item.locator.anchor.startsWith('md-block:')) continue
+    frozenMarkdownItemIds.set(`${source.sourceId}\u0000${item.locator.anchor}`, item.itemId)
+    frozenMarkdownItemIdsInUse.add(`${source.sourceId}\u0000${item.itemId}`)
+  }
+}
+
+// The R11 reconstruction matches prior items to current blocks by `lineHint`, which is only sound
+// while the source's line numbering is unchanged. Ratified amendment A1 inserted D21, the section
+// 4.1 ratification ledger and integration scenario 14 into the charter and rewrote the loop
+// directive's ownership and state blocks, so line numbers moved and this matcher began handing a
+// prior item's identity to an unrelated NEW block, producing duplicate item and rule IDs.
+//
+// It is kept for the anchors R13 does not cover, but it may no longer overwrite an anchor R13
+// already bound, nor issue an identity R13 already reserved.
 for (const source of priorR11Registry.sources.filter((candidate) =>
   candidate.path.endsWith('.md'),
 )) {
   const content = readFileSync(join(repoRoot, ...source.path.split('/')), 'utf8')
   for (const block of markdownBindingBlocks(markdownDocumentMap(content))) {
+    const frozenKey = `${source.sourceId}\u0000${block.locator.anchor}`
+    if (frozenMarkdownItemIds.has(frozenKey)) continue
     const candidate = source.inventoryItems.find((item) => {
       if (item.locator.lineHint !== block.locator.lineHint || item.ruleIds.length === 0)
         return false
@@ -518,18 +560,10 @@ for (const source of priorR11Registry.sources.filter((candidate) =>
           (target.sourceId !== source.sourceId || target.anchor !== block.locator.anchor),
       )
     })
-    if (candidate !== undefined) {
-      frozenMarkdownItemIds.set(`${source.sourceId}\u0000${block.locator.anchor}`, candidate.itemId)
-    }
-  }
-}
-
-for (const source of priorR13Registry.sources.filter((candidate) =>
-  candidate.path.endsWith('.md'),
-)) {
-  for (const item of source.inventoryItems) {
-    if (!item.locator.anchor.startsWith('md-block:')) continue
-    frozenMarkdownItemIds.set(`${source.sourceId}\u0000${item.locator.anchor}`, item.itemId)
+    if (candidate === undefined) continue
+    if (frozenMarkdownItemIdsInUse.has(`${source.sourceId}\u0000${candidate.itemId}`)) continue
+    frozenMarkdownItemIds.set(frozenKey, candidate.itemId)
+    frozenMarkdownItemIdsInUse.add(`${source.sourceId}\u0000${candidate.itemId}`)
   }
 }
 
@@ -673,9 +707,63 @@ const R11_COMPOUND_ITEM_SEMANTICS: Readonly<
       readonly normalizedStatement: string
       readonly identity: readonly [string, string]
       readonly applicability: AuthorityRule['applicability']
+      /**
+       * Per-rule classification. Defaults to `pre-action-refusal`, which every compound rule
+       * predating R14 relies on. D21 needs two different honest classifications from one source
+       * block, so this is parameterised rather than hardcoded.
+       */
+      readonly classification?: RuleClassification
     }[]
   >
 > = {
+  // D21 (ratified amendment A1) states two distinct obligations in one decision row, so it
+  // publishes two rules rather than one. Publishing a single rule would under-describe the
+  // caching clause; publishing both as refusals would claim enforcement that does not exist.
+  'fk-charter:item.d21': [
+    {
+      suffix: 'latency-budget',
+      normalizedStatement:
+        "The kernel's decision path carries a stated latency budget, measured on the D20 platform matrix. Two spans are distinguished: `kernelDecisionLatency` (request received at the decision surface → response written) is kernel-owned and budgeted at p50 ≤ 5 ms, p95 ≤ 20 ms, p99 ≤ 50 ms warm; `mediatedActionLatency` (host lifecycle entry → hook exit, inclusive of adapter and transport) is budgeted at p99 ≤ 150 ms. First-call-after-start cost is reported separately against a ≤ 2000 ms allowance and is never folded into a warm percentile. Exceeding a budget is a recorded obligation, not a refusal. Exceeding the hard deadline of 1000 ms on a single decision is treated as kernel-unreachable and inherits the D8 outage posture unchanged.",
+      identity: [
+        'kernel.decision-latency-budget',
+        'decision-path-latency-is-budgeted-and-measured',
+      ],
+      // D21's own words: "Exceeding a budget is a recorded obligation, not a refusal." Measured
+      // after the fact by FK-P17's harness, so detection - not a refusal class it cannot honour.
+      classification: 'post-action-detection',
+      applicability: {
+        goals: ['foreman-kernel'],
+        roles: ['any'],
+        stages: ['any'],
+        operations: ['any'],
+        // D21 binds the kernel decision path generally; only its MEASUREMENT is scoped to the D20
+        // platform matrix. Narrowing the rule to one host would make a query about the budget on a
+        // provider-neutral host return no applicable authority, misrepresenting the obligation.
+        hosts: ['any'],
+      },
+    },
+    {
+      suffix: 'cache-revision-binding',
+      normalizedStatement:
+        'Authorization results may be cached only when bound to `goalRevision`, `policyDigest`, and compiled-scope digest; a cache entry whose binding no longer matches produces `STATE_REVISION_STALE` rather than a stale ALLOW.',
+      identity: [
+        'kernel.authorization-cache-revision-binding',
+        'stale-cache-binding-refuses-rather-than-allowing',
+      ],
+      // Genuinely a refusal, but no kernel exists to make it one. Recorded as an unsupported
+      // obligation owned by FK-P1/FK-P12, following AC8's precedent that the absent Allowed Files
+      // body compiler is "recorded as a gap owned by FK-P2, not misclassified as a current
+      // refusal". Classifying it as a live refusal here would be the same overclaim.
+      classification: 'unsupported',
+      applicability: {
+        goals: ['foreman-kernel'],
+        roles: ['any'],
+        stages: ['any'],
+        operations: ['any'],
+        hosts: ['any'],
+      },
+    },
+  ],
   'coordinator-pattern:item.47b2eaa2f9ef': [
     {
       suffix: 'ownership',
@@ -11145,10 +11233,14 @@ function buildSource(definition: SourceDefinition): {
   }
   if (definition.sourceId === 'fk-charter') {
     if (markdown === null) throw new Error('charter Markdown block map is unavailable')
+    // D1-D21. Ratified amendment A1 added D21 (decision-path latency budget) and the ledger in
+    // section 4.1 records it. The count is a source-authored constant, deliberately not derived
+    // from the registry under test; it must be raised when the developer ratifies a new decision,
+    // and the corpus sweep fails with SOURCE_ITEM_UNCOVERED until it is.
     curated.unshift(
       ...tableRows(
         markdown,
-        Array.from({ length: 20 }, (_, index) => `D${index + 1}`),
+        Array.from({ length: 21 }, (_, index) => `D${index + 1}`),
       ),
     )
   }
@@ -11347,8 +11439,9 @@ function buildSource(definition: SourceDefinition): {
       const ruleIds: string[] = [...legacyRuleIds]
       for (const compound of compoundSemantics) {
         const ruleId = `rule.${definition.sourceId}.${itemId.replace(/^item\./, '')}.${compound.suffix}`
+        const compoundClassification = compound.classification ?? 'pre-action-refusal'
         const shape = ruleShape(
-          'pre-action-refusal',
+          compoundClassification,
           `${definition.sourceId}:${itemId}:${compound.suffix}`,
         )
         const baseRule: AuthorityRule = {
@@ -11360,7 +11453,7 @@ function buildSource(definition: SourceDefinition): {
           authorityBasisRef: sourceRef,
           applicability: compound.applicability,
           severity: 'critical',
-          classification: 'pre-action-refusal',
+          classification: compoundClassification,
           ...shape,
           pairedRuleIds: [],
           retirementState: 'active-reading',
@@ -11472,7 +11565,7 @@ function buildSource(definition: SourceDefinition): {
       authorityTier: definition.authorityTier,
       authorityEffect: definition.authorityEffect,
       scope: definition.scope,
-      snapshotEvidence: { commit: SNAPSHOT, fullFileSha256: sha256(bytes) },
+      snapshotEvidence: { commit: CURRENT_SNAPSHOT, fullFileSha256: sha256(bytes) },
       inventoryItems,
     },
     rules,
@@ -12282,15 +12375,20 @@ function buildRegistry(): AuthorityEnforcementRegistry {
   const provisional: AuthorityEnforcementRegistry = {
     schemaVersion: '0.1.0',
     registryId: 'foreman-kernel-authority-enforcement',
-    sourceSnapshotCommit: SNAPSHOT,
+    sourceSnapshotCommit: CURRENT_SNAPSHOT,
     sources,
     rules,
     operationAuthority: operation,
     reconciliations: structuredClone(priorR13Registry.reconciliations),
     normativeMarkdownAudit,
   }
-  const r13Manifest = registryBindingManifestDigest(provisional)
-  const priorManifest = registryBindingManifestDigest(priorR13Registry)
+  // The R13 record is HISTORICAL and byte-frozen by validate.ts's RECONCILIATION_RECORD_DIGESTS.
+  // Its manifest digests are the values it was authored with and must not be recomputed: the
+  // source baseline now advances, so recomputing them would rewrite a frozen historical record.
+  const R13_PRIOR_MANIFEST = '1186818bad7da994a1a5b3572211bebe059a64d8ca6ba0d5845d5eca5c9e137a'
+  const R13_MANIFEST = 'f753296b78bcf4d8de9e603e8e347286519a26694c2241ae4a00a05676388e2f'
+  const r13Manifest = R13_MANIFEST
+  const priorManifest = R13_PRIOR_MANIFEST
   const basisRule = rules.find((rule) => rule.ruleId === 'rule.fk-charter.2a524c1ea63f')
   if (basisRule === undefined) throw new Error('R13 migration basis rule is missing')
   const commandEvidence = (commandId: string, inputDigest: string, resultDigest: string) =>
@@ -12341,9 +12439,64 @@ function buildRegistry(): AuthorityEnforcementRegistry {
     migrationStatus: 'superseded-by-amendment',
     supersedingEvidence: basisRule.authorityBasisRef,
   }
-  return {
+  const withR13: AuthorityEnforcementRegistry = {
     ...provisional,
     reconciliations: [...provisional.reconciliations, r13Migration],
+  }
+
+  // R14 - this rework. It records two things the chain must carry: the source baseline advancing
+  // from the initial dispatch commit to the commit whose bytes were actually hashed, and the
+  // superseding binding manifest that results. `reconciliations` are outside
+  // `registryBindingManifestDigest`, so appending this record does not perturb the digest it
+  // declares - which is what makes the chain non-circular.
+  const r14Manifest = registryBindingManifestDigest(withR13)
+  const r14PriorCommand = commandEvidence(
+    'registry-binding-manifest-r13',
+    sha256(R14_PRIOR_REGISTRY_COMMIT),
+    R13_MANIFEST,
+  )
+  const r14SupersedingCommand = commandEvidence(
+    'superseding-binding-manifest-r14',
+    R13_MANIFEST,
+    r14Manifest,
+  )
+  const r14Migration: ReconciliationRecord = {
+    reconciliationId: 'registry-rework-df8155a',
+    topic: 'R13 registry bindings superseded by the coordinator-ratified FK-P0 R14 rework.',
+    observedRefs: [basisRule.authorityBasisRef],
+    observedEvidence: [
+      {
+        kind: 'git-commit',
+        reference: R14_PRIOR_REGISTRY_COMMIT,
+        digest: sha256(
+          execFileSync('git', ['cat-file', '-p', R14_PRIOR_REGISTRY_COMMIT], { cwd: repoRoot }),
+        ),
+      },
+      {
+        kind: 'git-commit',
+        reference: CURRENT_SNAPSHOT,
+        digest: sha256(
+          execFileSync('git', ['cat-file', '-p', CURRENT_SNAPSHOT], { cwd: repoRoot }),
+        ),
+      },
+      { kind: 'command-result', reference: r14PriorCommand, digest: sha256(r14PriorCommand) },
+      {
+        kind: 'command-result',
+        reference: r14SupersedingCommand,
+        digest: sha256(r14SupersedingCommand),
+      },
+    ],
+    authoritativeRuleIds: [basisRule.ruleId],
+    scopedDisposition:
+      'The R14 genesis-anchored migration chain, digest-verified retirement evidence, fail-closed resolver query guard, and re-bound charter and loop-directive sources supersede the R13 registry bindings in FK scope.',
+    unresolvedConsequence:
+      'Future binding changes require another typed prior-to-new migration record.',
+    migrationStatus: 'superseded-by-amendment',
+    supersedingEvidence: basisRule.authorityBasisRef,
+  }
+  return {
+    ...withR13,
+    reconciliations: [...withR13.reconciliations, r14Migration],
   }
 }
 

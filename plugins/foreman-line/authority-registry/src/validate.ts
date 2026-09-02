@@ -723,6 +723,17 @@ export function bindingDigestFor(rule: Omit<AuthorityRule, 'bindingDigest'>): st
 const GENESIS_BINDING_MANIFEST_DIGEST =
   '1fe3a7c66241904445021c97db68065961a3bf5beceb654faff4b552b4de79b2'
 
+/**
+ * The source snapshot the R1-R13 migration records were authored against.
+ *
+ * Historical records embed this commit as their own Git evidence and are byte-frozen by
+ * `RECONCILIATION_RECORD_DIGESTS`, so their assertions must compare against the snapshot that was
+ * current WHEN THEY WERE WRITTEN, not against the document's live `sourceSnapshotCommit`. Comparing
+ * them to the live value would make every historical record fail the moment the source baseline
+ * legitimately advances - which is precisely the advance the migration chain exists to record.
+ */
+const LEGACY_SOURCE_SNAPSHOT_COMMIT = '51857a3a7796b393c0c0a68712f98c06e7015d79'
+
 /** Prefix identifying a migration-chain record. Other reconciliations are not chain members. */
 const MIGRATION_CHAIN_PREFIX = 'registry-rework-'
 
@@ -2155,13 +2166,13 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
       })
       if (record.reconciliationId === 'missing-provenance-reference') {
         const missingReference = canonicalJson({
-          commit: document.sourceSnapshotCommit,
+          commit: LEGACY_SOURCE_SNAPSHOT_COMMIT,
           path: 'plugins/foreman-line/docs/transcripts/defects_lessons.md',
         })
         expectedEvidence.push(
           {
             kind: 'git-commit',
-            reference: document.sourceSnapshotCommit,
+            reference: LEGACY_SOURCE_SNAPSHOT_COMMIT,
             digest: '35b6b805e4ad81c9b4cb4c1f5dc346c431e55e6823690e93d4ad61a969767cad',
           },
           {
@@ -2252,7 +2263,7 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
       })
       if (
         gitRefs.join('|') !==
-          `4666ea15caee8b231137f23325d14ea4526e338a|${document.sourceSnapshotCommit}` ||
+          `4666ea15caee8b231137f23325d14ea4526e338a|${LEGACY_SOURCE_SNAPSHOT_COMMIT}` ||
         commands.length !== 2 ||
         !resultDigests.includes(
           '1fe3a7c66241904445021c97db68065961a3bf5beceb654faff4b552b4de79b2',
@@ -2283,7 +2294,7 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
         })
       if (
         gitRefs.join('|') !==
-          `87237a868a0da8e1a57fc8ce9d400509b2a09c5d|${document.sourceSnapshotCommit}` ||
+          `87237a868a0da8e1a57fc8ce9d400509b2a09c5d|${LEGACY_SOURCE_SNAPSHOT_COMMIT}` ||
         !resultDigests.includes(PRIOR_R3_BINDING_MANIFEST_DIGEST) ||
         !resultDigests.includes(PRIOR_R4_BINDING_MANIFEST_DIGEST)
       ) {
@@ -2311,7 +2322,7 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
         })
       if (
         gitRefs.join('|') !==
-          `f73a3846e436dcf25d80618aedd88170b0888770|${document.sourceSnapshotCommit}` ||
+          `f73a3846e436dcf25d80618aedd88170b0888770|${LEGACY_SOURCE_SNAPSHOT_COMMIT}` ||
         !resultDigests.includes(PRIOR_R4_BINDING_MANIFEST_DIGEST) ||
         !resultDigests.includes(PRIOR_R5_BINDING_MANIFEST_DIGEST)
       ) {
@@ -2338,7 +2349,7 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
       })
       if (
         gitRefs.join('|') !==
-          `6123474485ef836fc7250df9c15695aaff44fe45|${document.sourceSnapshotCommit}` ||
+          `6123474485ef836fc7250df9c15695aaff44fe45|${LEGACY_SOURCE_SNAPSHOT_COMMIT}` ||
         commands.length !== 2 ||
         !resultDigests.includes(PRIOR_R6_BINDING_MANIFEST_DIGEST) ||
         !resultDigests.includes(PRIOR_R7_BINDING_MANIFEST_DIGEST)
@@ -2366,7 +2377,7 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
       })
       if (
         gitRefs.join('|') !==
-          `5d7ca990574eb8416a1fc5ac40b90d9aec975b2b|${document.sourceSnapshotCommit}` ||
+          `5d7ca990574eb8416a1fc5ac40b90d9aec975b2b|${LEGACY_SOURCE_SNAPSHOT_COMMIT}` ||
         commands.length !== 2 ||
         !resultDigests.includes(PRIOR_R7_BINDING_MANIFEST_DIGEST) ||
         !resultDigests.includes(PRIOR_R8_BINDING_MANIFEST_DIGEST)
@@ -2394,7 +2405,7 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
       })
       if (
         gitRefs.join('|') !==
-          `84d5c7c0fd2ef074dab06770f14e87012619a213|${document.sourceSnapshotCommit}` ||
+          `84d5c7c0fd2ef074dab06770f14e87012619a213|${LEGACY_SOURCE_SNAPSHOT_COMMIT}` ||
         commands.length !== 2 ||
         !resultDigests.includes(PRIOR_R8_BINDING_MANIFEST_DIGEST) ||
         !resultDigests.includes(PRIOR_R9_BINDING_MANIFEST_DIGEST)
@@ -2422,7 +2433,7 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
       })
       if (
         gitRefs.join('|') !==
-          `89d7e4853a8fb0af3db68e9262e38833062fba77|${document.sourceSnapshotCommit}` ||
+          `89d7e4853a8fb0af3db68e9262e38833062fba77|${LEGACY_SOURCE_SNAPSHOT_COMMIT}` ||
         commands.length !== 2 ||
         !resultDigests.includes(PRIOR_R9_BINDING_MANIFEST_DIGEST) ||
         !resultDigests.includes(PRIOR_R10_BINDING_MANIFEST_DIGEST)
@@ -2450,7 +2461,7 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
       })
       if (
         gitRefs.join('|') !==
-          `f3366be12175acb4fd4aeb32c301c845b906a5da|${document.sourceSnapshotCommit}` ||
+          `f3366be12175acb4fd4aeb32c301c845b906a5da|${LEGACY_SOURCE_SNAPSHOT_COMMIT}` ||
         commands.length !== 2 ||
         !resultDigests.includes(PRIOR_R10_BINDING_MANIFEST_DIGEST) ||
         !resultDigests.includes(PRIOR_R11_BINDING_MANIFEST_DIGEST)
@@ -2476,7 +2487,7 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
         }
       })
       if (
-        gitRefs.join('|') !== `${R12_PRIOR_REGISTRY_COMMIT}|${document.sourceSnapshotCommit}` ||
+        gitRefs.join('|') !== `${R12_PRIOR_REGISTRY_COMMIT}|${LEGACY_SOURCE_SNAPSHOT_COMMIT}` ||
         commands.length !== 2 ||
         parsedCommands.map((command) => command.commandId).join('|') !==
           'registry-binding-manifest-r11|superseding-binding-manifest-r12' ||
@@ -2508,7 +2519,7 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
         }
       })
       if (
-        gitRefs.join('|') !== `${R13_PRIOR_REGISTRY_COMMIT}|${document.sourceSnapshotCommit}` ||
+        gitRefs.join('|') !== `${R13_PRIOR_REGISTRY_COMMIT}|${LEGACY_SOURCE_SNAPSHOT_COMMIT}` ||
         commands.length !== 2 ||
         parsedCommands.map((command) => command.commandId).join('|') !==
           'registry-binding-manifest-r12|superseding-binding-manifest-r13'
@@ -2570,7 +2581,13 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
             Object.keys(parsed).sort().join('|') === 'commit|path' &&
             typeof parsed.commit === 'string' &&
             /^[0-9a-f]{40}$/.test(parsed.commit) &&
-            parsed.commit === document.sourceSnapshotCommit &&
+            // The live snapshot, or the snapshot a frozen historical record was authored against.
+            // `missing-provenance-reference` is byte-frozen and binds the initial dispatch commit,
+            // so pinning this to the live value alone would break it the moment the source
+            // baseline legitimately advances. The commit is still required to appear as
+            // `git-commit` evidence on the same record, which is what actually binds it.
+            (parsed.commit === document.sourceSnapshotCommit ||
+              parsed.commit === LEGACY_SOURCE_SNAPSHOT_COMMIT) &&
             typeof parsed.path === 'string' &&
             pathProblem(parsed.path) === null &&
             record.observedEvidence.some(

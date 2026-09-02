@@ -21,6 +21,7 @@ import {
   canonicalJson,
   locatorDigestFor,
   normalizeRuleText,
+  registryBindingManifestDigest,
   resolveAuthority,
   sha256,
   validateRegistry,
@@ -41,6 +42,81 @@ function codes(document: unknown): string[] {
 function expectCode(document: unknown, code: string): void {
   const observed = codes(document)
   if (!observed.includes(code)) throw new Error(`expected ${code}; observed ${observed.join(',')}`)
+}
+
+/**
+ * Append a properly chained migration record so a deliberately amended registry can be VALID.
+ *
+ * The binding manifest is bound to the chain head, so any change to a source, inventory item or
+ * rule makes the shipped head stale - by design, since the spec requires a typed prior-to-new
+ * migration record whenever an operative value or locator changes. A test that wants a valid
+ * document after mutating one therefore has to do what `npm run generate` does: re-digest and
+ * record the migration. This is the mechanism under test, not a way around it.
+ *
+ * `reconciliations` sit outside `registryBindingManifestDigest`, so appending this record does not
+ * perturb the digest it declares.
+ */
+function rechain(document: AuthorityEnforcementRegistry): AuthorityEnforcementRegistry {
+  const chainRecords = document.reconciliations.filter((record) =>
+    record.reconciliationId.startsWith('registry-rework-'),
+  )
+  const head = chainRecords[chainRecords.length - 1]
+  assert.ok(head)
+  // Chain from the head's OWN predecessor and REPLACE the head, rather than appending after it.
+  // Appending would demote the shipped head to a historical record, which would then require a
+  // pinned digest in validate.ts's RECONCILIATION_RECORD_DIGESTS - something a test cannot add.
+  // Replacing keeps every pinned record pinned and leaves exactly one head, as AC4 requires.
+  const headCommands = head.observedEvidence
+    .filter((evidence) => evidence.kind === 'command-result')
+    .map((evidence) => JSON.parse(evidence.reference) as { commandId: string; inputDigest: string })
+  const predecessorDigest = headCommands.find((command) =>
+    command.commandId.startsWith('superseding-binding-manifest'),
+  )?.inputDigest
+  assert.ok(predecessorDigest)
+  const nextDigest = registryBindingManifestDigest(document)
+  const command = (commandId: string, inputDigest: string, resultDigest: string) =>
+    canonicalJson({
+      tool: '@foreman-line/authority-registry',
+      toolVersion: '0.1.0',
+      commandId,
+      inputDigest,
+      resultDigest,
+      exitCode: 0,
+      actorClass: 'coordinator',
+    })
+  const prior = command('registry-binding-manifest-test', sha256('rechain'), predecessorDigest)
+  const superseding = command('superseding-binding-manifest-test', predecessorDigest, nextDigest)
+  const basis = head.observedRefs[0]
+  assert.ok(basis)
+  return {
+    ...document,
+    reconciliations: [
+      ...document.reconciliations.filter(
+        (record) => record.reconciliationId !== head.reconciliationId,
+      ),
+      {
+        reconciliationId: 'registry-rework-testchain',
+        topic: 'Test-authored amendment superseding the shipped bindings.',
+        observedRefs: [basis],
+        observedEvidence: [
+          { kind: 'git-commit', reference: 'a'.repeat(40), digest: sha256('prior') },
+          {
+            kind: 'git-commit',
+            reference: document.sourceSnapshotCommit,
+            digest: sha256('snapshot'),
+          },
+          { kind: 'command-result', reference: prior, digest: sha256(prior) },
+          { kind: 'command-result', reference: superseding, digest: sha256(superseding) },
+        ],
+        authoritativeRuleIds: head.authoritativeRuleIds,
+        scopedDisposition: 'Test amendment.',
+        unresolvedConsequence:
+          'Future binding changes require another typed prior-to-new migration record.',
+        migrationStatus: 'superseded-by-amendment',
+        supersedingEvidence: basis,
+      },
+    ],
+  }
 }
 
 test('normalization is exact and stable across Unicode/line-ending/whitespace forms', () => {
@@ -904,7 +980,16 @@ test('R3 resolver detects naturally worded equal-tier conflicting claims', () =>
   ;(rival as { ruleId: string }).ruleId = 'rule.fk-charter.d3-rival'
   ;(rival as { authorityClaim: string }).authorityClaim = 'state-changes-follow-a-different-rule'
   ;(rival as { normalizedStatement: string }).normalizedStatement = 'Naturally different prose.'
+  // Re-digest the rival so the ONLY objection is the contradiction itself. Without this the
+  // document is invalid for a stale binding digest and the test proves nothing about conflicts.
+  ;(rival as { bindingDigest: string }).bindingDigest = bindingDigestFor(rival)
   ;(mutated.rules as AuthorityEnforcementRegistry['rules'][number][]).push(rival)
+  // The named invariant: an equal-tier contradiction is DETECTED, as RULE_CONFLICT.
+  assert.ok(
+    validateRegistry(mutated).violations.some((violation) => violation.code === 'RULE_CONFLICT'),
+  )
+  // Amended AC5: such a contradiction is validity-blocking, so resolution fails closed rather
+  // than silently selecting a side.
   const result = resolveAuthority(mutated, d3Query)
   assert.equal(result.outcome, 'REQUIRE_HUMAN')
   if (result.outcome === 'REQUIRE_HUMAN') assert.equal(result.reasonCode, 'REGISTRY_INVALID')
@@ -918,16 +1003,21 @@ test('R3 resolver keeps lower-tier rules considered but non-controlling', () => 
   )
   assert.ok(high && low)
   ;(low as { authoritySubject: string }).authoritySubject = high.authoritySubject
-  ;(low.applicability as {
-    goals: string[]
-    roles: string[]
-    stages: string[]
-    operations: string[]
-    hosts: string[]
-  }) = structuredClone(high.applicability) as never
-  const result = resolveAuthority(mutated, d3Query)
-  assert.equal(result.outcome, 'REQUIRE_HUMAN')
-  if (result.outcome === 'REQUIRE_HUMAN') assert.equal(result.reasonCode, 'REGISTRY_INVALID')
+  ;(low.applicability as AuthorityRule['applicability']) = structuredClone(high.applicability)
+  // Re-digest so the registry stays VALID. RULE_CONFLICT needs an EQUAL active tier, and these
+  // two differ, so a valid document is reachable and the named property can actually be checked.
+  ;(low as { bindingDigest: string }).bindingDigest = bindingDigestFor(low)
+  const amended = rechain(mutated)
+  assert.deepEqual(
+    validateRegistry(amended).violations.map((violation) => violation.code),
+    [],
+  )
+  const result = resolveAuthority(amended, d3Query)
+  assert.equal(result.outcome, 'RESOLVED')
+  if (result.outcome !== 'RESOLVED') return
+  assert.ok(result.consideredRuleIds.includes(low.ruleId))
+  assert.ok(!result.controllingRuleIds.includes(low.ruleId))
+  assert.ok(result.controllingRuleIds.includes(high.ruleId))
 })
 
 test('R3 resolver excludes stale explanatory sources from control', () => {
@@ -935,20 +1025,28 @@ test('R3 resolver excludes stale explanatory sources from control', () => {
   const stale = mutated.rules.find(
     (candidate) => candidate.sourceRefs[0]?.sourceId === 'spec-linter-readme',
   )
-  assert.ok(stale)
+  const controlling = mutated.rules.find((r) => r.ruleId === 'rule.fk-charter.d3')
+  assert.ok(stale && controlling)
   ;(stale as { authoritySubject: string }).authoritySubject = d3Query.authoritySubject
-  ;(stale.applicability as {
-    goals: string[]
-    roles: string[]
-    stages: string[]
-    operations: string[]
-    hosts: string[]
-  }) = structuredClone(
-    mutated.rules.find((r) => r.ruleId === 'rule.fk-charter.d3')?.applicability,
-  ) as never
-  const result = resolveAuthority(mutated, d3Query)
-  assert.equal(result.outcome, 'REQUIRE_HUMAN')
-  if (result.outcome === 'REQUIRE_HUMAN') assert.equal(result.reasonCode, 'REGISTRY_INVALID')
+  ;(stale.applicability as AuthorityRule['applicability']) = structuredClone(
+    controlling.applicability,
+  )
+  // Re-digest so the registry stays VALID. Without this the mutation trips a binding-digest
+  // violation and the test passes on REGISTRY_INVALID without ever exercising the named
+  // property - which is what it did before this repair.
+  ;(stale as { bindingDigest: string }).bindingDigest = bindingDigestFor(stale)
+  const amended = rechain(mutated)
+  assert.deepEqual(
+    validateRegistry(amended).violations.map((violation) => violation.code),
+    [],
+  )
+  const result = resolveAuthority(amended, d3Query)
+  assert.equal(result.outcome, 'RESOLVED')
+  if (result.outcome !== 'RESOLVED') return
+  // The named invariant: a stale explanatory source is VISIBLE but never CONTROLS.
+  assert.ok(result.consideredRuleIds.includes(stale.ruleId))
+  assert.ok(!result.controllingRuleIds.includes(stale.ruleId))
+  assert.ok(result.controllingRuleIds.includes('rule.fk-charter.d3'))
 })
 
 test('R3 Gate 2 refuses a revoked standing-grant evidence set', () => {
@@ -1182,16 +1280,28 @@ test('R4 corroborating source ref cannot promote a rule above its authority basi
   assert.ok(rule)
   assert.ok(corroborating)
   ;(rule.sourceRefs as (typeof rule.sourceRefs)[number][]).push(corroborating)
-  const result = resolveAuthority(mutated, {
+  // Re-digest and re-chain so the document stays VALID. Otherwise the mutation simply invalidates
+  // the registry and the test proves nothing about tier promotion, which is what it named.
+  ;(rule as { bindingDigest: string }).bindingDigest = bindingDigestFor(rule)
+  const amended = rechain(mutated)
+  assert.deepEqual(
+    validateRegistry(amended).violations.map((violation) => violation.code),
+    [],
+  )
+  const query = {
     authoritySubject: rule.authoritySubject,
     goal: 'foreman-kernel',
     role: 'builder',
     stage: 'build',
     operation: 'repo-mutation',
     host: 'claude-windows-docker-loaded',
-  })
-  assert.equal(result.outcome, 'REQUIRE_HUMAN')
-  if (result.outcome === 'REQUIRE_HUMAN') assert.equal(result.reasonCode, 'REGISTRY_INVALID')
+  } as const
+  const before = resolveAuthority(full, query)
+  const after = resolveAuthority(amended, query)
+  // The named invariant: an extra corroborating sourceRef changes nothing about control, because
+  // tier comes only from `authorityBasisRef`.
+  assert.equal(after.outcome, before.outcome)
+  assert.deepEqual([...after.controllingRuleIds], [...before.controllingRuleIds])
 })
 
 test('R4 retired-from-agent-reading rules never control authority', () => {
@@ -1199,7 +1309,18 @@ test('R4 retired-from-agent-reading rules never control authority', () => {
   const rule = mutated.rules.find((candidate) => candidate.ruleId === 'rule.fk-charter.d3')
   assert.ok(rule)
   ;(rule as { retirementState: string }).retirementState = 'retired-from-agent-reading'
-  const result = resolveAuthority(mutated, {
+  ;(rule as { bindingDigest: string }).bindingDigest = bindingDigestFor(rule)
+  const amended = rechain(mutated)
+  // Retirement REMOVES enforcement, so a retirement that is not fully evidenced and
+  // digest-verified must not take effect. It is validity-blocking, which is the named property:
+  // a retired rule can never end up controlling, because the document never becomes resolvable.
+  const observed = validateRegistry(amended).violations.map((violation) => violation.code)
+  assert.ok(
+    observed.includes('RETIREMENT_EVIDENCE_INCOMPLETE') ||
+      observed.includes('RETIREMENT_EVIDENCE_UNVERIFIED'),
+    `expected a retirement objection; observed ${observed.join(',')}`,
+  )
+  const result = resolveAuthority(amended, {
     authoritySubject: rule.authoritySubject,
     goal: 'foreman-kernel',
     role: 'builder',
@@ -1208,6 +1329,10 @@ test('R4 retired-from-agent-reading rules never control authority', () => {
     host: 'provider-neutral',
   })
   assert.equal(result.outcome, 'REQUIRE_HUMAN')
+  if (result.outcome === 'REQUIRE_HUMAN') {
+    assert.equal(result.reasonCode, 'REGISTRY_INVALID')
+  }
+  assert.deepEqual([...result.controllingRuleIds], [])
 })
 
 test('R4 reconciliation disposition and consequence are immutable', () => {
@@ -2269,16 +2394,20 @@ test('R10 goal skill stop rule is operative and coordinator-scoped', () => {
   const rule = publishedRuleContaining('goal-skill', 'Stop the loop (ScheduleWakeup stop:true)')
   assert.equal(rule.classification, 'pre-action-refusal')
   assert.deepEqual(rule.applicability.roles, ['coordinator'])
-  assert.equal(
-    resolveNatural(
-      rule.authoritySubject,
-      'builder',
-      'runtime',
-      'external-write',
-      'unsupported-host',
-    ).outcome,
-    'REQUIRE_HUMAN',
+  const outOfScope = resolveNatural(
+    rule.authoritySubject,
+    'builder',
+    'runtime',
+    'external-write',
+    'unsupported-host',
   )
+  // An unasserted reasonCode leaves REQUIRE_HUMAN ambiguous between NO_APPLICABLE_AUTHORITY,
+  // INVALID_QUERY_SCOPE and REGISTRY_INVALID - which is how a test keeps passing after the
+  // property it names stops holding. The registry is valid here, so the reason must be scope.
+  assert.equal(outOfScope.outcome, 'REQUIRE_HUMAN')
+  if (outOfScope.outcome === 'REQUIRE_HUMAN') {
+    assert.equal(outOfScope.reasonCode, 'NO_APPLICABLE_AUTHORITY')
+  }
 })
 
 test('R10 coordinator commentary cannot mutate ratified authority', () => {
@@ -2444,24 +2573,37 @@ for (const vector of [
 }
 
 test('R10 Gate 3 does not resolve for builder runtime external writes', () => {
-  assert.equal(
-    resolveNatural(
-      'gate3.merge-authority',
-      'builder',
-      'runtime',
-      'external-write',
-      'unsupported-host',
-    ).outcome,
-    'REQUIRE_HUMAN',
+  const result = resolveNatural(
+    'gate3.merge-authority',
+    'builder',
+    'runtime',
+    'external-write',
+    'unsupported-host',
   )
+  // An unasserted reasonCode leaves REQUIRE_HUMAN ambiguous between NO_APPLICABLE_AUTHORITY,
+  // INVALID_QUERY_SCOPE and REGISTRY_INVALID - which is how a test keeps passing after the
+  // property it names stops holding. The registry is valid here, so the reason must be scope.
+  assert.equal(result.outcome, 'REQUIRE_HUMAN')
+  if (result.outcome === 'REQUIRE_HUMAN') {
+    assert.equal(result.reasonCode, 'NO_APPLICABLE_AUTHORITY')
+  }
 })
 
 test('R10 Gate 3 does not resolve for CI deterministic read queries', () => {
-  assert.equal(
-    resolveNatural('gate3.merge-authority', 'ci', 'deterministic-verify', 'repo-read', 'ci')
-      .outcome,
-    'REQUIRE_HUMAN',
+  const result = resolveNatural(
+    'gate3.merge-authority',
+    'ci',
+    'deterministic-verify',
+    'repo-read',
+    'ci',
   )
+  // An unasserted reasonCode leaves REQUIRE_HUMAN ambiguous between NO_APPLICABLE_AUTHORITY,
+  // INVALID_QUERY_SCOPE and REGISTRY_INVALID - which is how a test keeps passing after the
+  // property it names stops holding. The registry is valid here, so the reason must be scope.
+  assert.equal(result.outcome, 'REQUIRE_HUMAN')
+  if (result.outcome === 'REQUIRE_HUMAN') {
+    assert.equal(result.reasonCode, 'NO_APPLICABLE_AUTHORITY')
+  }
 })
 
 test('R10 ships an exact typed migration from the R9 registry snapshot', () => {
@@ -3251,7 +3393,13 @@ test('R9 loop Gate 2 shares the charter subject with precise dispatch applicabil
     operation: 'external-write',
     host: 'unsupported-host',
   })
+  // An unasserted reasonCode leaves REQUIRE_HUMAN ambiguous between NO_APPLICABLE_AUTHORITY,
+  // INVALID_QUERY_SCOPE and REGISTRY_INVALID - which is how a test keeps passing after the
+  // property it names stops holding. The registry is valid here, so the reason must be scope.
   assert.equal(outOfScope.outcome, 'REQUIRE_HUMAN')
+  if (outOfScope.outcome === 'REQUIRE_HUMAN') {
+    assert.equal(outOfScope.reasonCode, 'NO_APPLICABLE_AUTHORITY')
+  }
 })
 
 test('R9 loop Gate 3 shares the charter subject with coordinator merge refusal scope', () => {

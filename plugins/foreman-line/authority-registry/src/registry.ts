@@ -3,6 +3,12 @@ import { authorityEnforcementRegistrySchema } from './schemas.js'
 
 export const R12_PRIOR_REGISTRY_COMMIT = '9059bb249f75805b34a68397d53dfa5608fd6ad4'
 export const R13_PRIOR_REGISTRY_COMMIT = '0683bc059ec54a8652624fd2b7be72fe157cac14'
+/**
+ * The committed registry superseded by the R14 rework: the last commit that changed
+ * `authority-enforcement-registry.yaml` before this one. Its short sha names the R14 migration
+ * record, matching the convention used by every prior `registry-rework-*` id.
+ */
+export const R14_PRIOR_REGISTRY_COMMIT = 'df8155a01989f69e9872ef5c08bfc18ad6b8cb03'
 
 export const R13_NORMATIVE_MARKDOWN_AUDIT_KEYS = [
   'fk-charter:item.16f0036885ba',
