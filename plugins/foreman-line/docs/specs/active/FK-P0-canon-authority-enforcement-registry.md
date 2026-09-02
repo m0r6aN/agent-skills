@@ -1249,12 +1249,18 @@ registry under test.
    wide catch-all semantic identities are invalid. The complete declared source baseline,
    including snapshot evidence, is independently manifest-bound.
 5. `resolveAuthority` makes precedence scope-aware and fail-closed: a higher-tier FK rule controls
-   an in-scope subject/claim contradiction; historical/generic rules remain visible; an unlisted
-   or equal-authority contradiction returns `CONFLICT` and cannot be selected silently.
-   Real shipped competing statements share curated subjects, tier comes only from the exact
-   binding `authorityBasisRef`, and retired rules never control. A resolved result exposes its
-   controlling decision; a highest-tier decision split returns `CONFLICT` even when the claim text
-   is identical. Exact bounded Gate 2 dispatch grants resolve `ALLOW`.
+   an in-scope subject/claim contradiction; historical/generic rules remain visible and appear in
+   `consideredRuleIds` without exception or hand-placed exclusion; and an unlisted or
+   equal-authority contradiction can never be selected silently. Such a contradiction - including
+   a highest-tier decision split whose claim text is identical - invalidates the registry via
+   `RULE_CONFLICT`, and resolution against it returns `REQUIRE_HUMAN` with reason
+   `REGISTRY_INVALID`. The resolution result type exposes no `CONFLICT` outcome, because no input
+   can reach one: `RULE_CONFLICT` is a validity-blocking violation, and resolution never runs
+   against an invalid registry. Real shipped competing statements share curated subjects, tier
+   comes only from the exact binding `authorityBasisRef`, and retired rules never control. A
+   resolved result exposes its controlling decision together with the classification, assurance,
+   and enforcement owner behind it, so a structural refusal cannot be read as a mediated one.
+   Exact bounded Gate 2 dispatch grants resolve `ALLOW`.
 6. The operation matrix enforces the protected rows exactly as stated in Constraints. No
    registry mutation can make human approval, FK merge, independent-verifier evidence, closure
    authority, or generic receipt minting ordinary agent-callable/control-state authority.
@@ -1274,8 +1280,15 @@ registry under test.
 11. All required negative fixtures and mutation controls fail for their named invariant, and
     reviewer mutation of each named axis makes the corresponding formerly-green test fail.
 12. Both CLI commands honor the `0/1/2` contract, return all ordered violations, remain read-only,
-    and return byte-identical results for identical inputs. Unrelated bytes outside registered
-    locators do not change the result; a changed normalized operative value does.
+    and return byte-identical results for identical inputs. Operator misconfiguration - including
+    a `--repo-root` that exists but is not the root of a real Git worktree - is an operational
+    error (exit 2), never a registry violation (exit 1). Non-semantic bytes added to a registered
+    source outside its registered locators do not change the result; the shapes proven inert are
+    comments, blank lines, fenced code blocks, and headings. A changed normalized operative value
+    does change the result, **and so does any added narrative prose in a Markdown source**, which
+    is reported as `SOURCE_ITEM_UNCOVERED` because new prose in a canon document requires
+    disposition rather than silent acceptance. The suite must assert the prose case is detected,
+    not only that the inert shapes are ignored.
 13. `npx tsc --noEmit`, `npm test`, `npx biome check .`, full-registry `validate`, and pinned-source
     `sweep` pass in PowerShell under Node >=22 with complete, untruncated output.
 14. README documents the authority hierarchy, schema, classifications, operation matrix,
