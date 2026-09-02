@@ -1266,6 +1266,27 @@ registry under test.
    requirement, and remain bound by their pinned digests exactly as before; the path requirement
    must never be read to demand that chain evidence be invented for a historical record that never
    had any.
+   The head exemption is a *narrower* binding than a pinned constant and never a weaker one, and
+   four further obligations make that true rather than merely asserted. First, **exactly one chain
+   link per record**: a migration-chain record declares exactly one prior-binding-manifest command
+   and exactly one superseding-binding-manifest command, and a record carrying two or more of
+   either is invalid whatever their contents or order. Selecting the first match and ignoring the
+   rest is a defect, because a second superseding command sharing a predecessor and declaring a
+   different successor is a fork *inside* one record, which across-record fork detection cannot
+   see. Second, **a pinned record is never the head**: a reconciliation record holding an entry in
+   the shipped record-digest table is invalid as a chain head, so head position is not selectable
+   by deletion - removing the head must invalidate the document, never promote a pinned record out
+   of its pin. Third, **the head has a required shape**: it declares `superseded-by-amendment` with
+   non-null superseding evidence, carries at least one `git-commit` evidence entry whose reference
+   is a forty-character lowercase hex commit, and carries command evidence issued by this tool with
+   `actorClass` `coordinator` and `exitCode` `0`; a record meeting the schema minimums but not this
+   shape is not a head. Fourth, **evidence digests bind their references**: for every observed-
+   evidence entry of every kind, the recorded digest is the SHA-256 of the recorded reference, and
+   an entry whose digest is merely well-formed hex binds nothing - comparing a digest to itself is
+   not a binding. The accepted residual limit is stated in terms of a *well-formed, correctly
+   chained* head record; these four obligations are what make "well-formed" mean something, and
+   none of them is corpus-dependent, so none reintroduces the shipped-manifest freeze this
+   structure exists to remove.
    Each subject/claim is item-curated and substantively supported by its authority basis; source-
    wide catch-all semantic identities are invalid. The complete declared source baseline,
    including snapshot evidence, is independently manifest-bound.
