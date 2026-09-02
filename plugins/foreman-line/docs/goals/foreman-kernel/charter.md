@@ -2,7 +2,7 @@
 
 **Created:** 2026-08-30
 **Owner:** Clinton Morgangit
-**Status:** fully ratified as amended — scoped Gate 1 re-cleared and standing Gate 2 resumed 2026-08-31
+**Status:** fully ratified as amended — see the ratification ledger (§4.1) for the binding set and every ratification event
 **Coordinator:** primary Codex coordinator session that created this charter
 **Mode:** Repo-Local Parcel Mode
 
@@ -68,7 +68,9 @@ dispatches.” D1–D17 were ratified. The required fresh plan review returned
 SHOULD-FIX findings; D3, D7–D9, D13–D17, new D18–D20, the parcel graph, and affected
 exit criteria were placed under a scoped Gate 1 re-open. The developer explicitly
 re-ratified them on 2026-08-31 with: “Re-ratify Gate 1 amendments R1–R13 and resume
-Gate 2.” D1–D20 and the amended graph/exits are binding.
+Gate 2.” Subsequent amendments are ratified individually. **The binding set is the
+ledger in §4.1, not a range restated in prose:** every ratification event appends a row
+there, so no prose sentence in this charter needs editing when a decision is added.
 
 | ID | Decision | Reasoning |
 |---|---|---|
@@ -92,6 +94,22 @@ Gate 2.” D1–D20 and the amended graph/exits are binding.
 | D18 | `authorizeAction` is a dedicated provider-neutral policy engine, not a hook or control-handler implementation detail. It combines authenticated principal, repository/worktree identity, compiled Allowed Files, role posture, leases/revisions, gate evidence, outage mode, and post-diff obligations against golden lifecycle vectors. | Without an owning engine parcel, thin adapters or the control catalog would have to reimplement policy and violate D12. |
 | D19 | Public read APIs are content-only by default. Any repository read uses an admission-bound `repoId` plus exact relative path resolved inside one mounted read-only root, with canonical containment, symlink/reparse refusal, regular-file checks, and byte limits. Arbitrary host paths are forbidden. | Read-only access can still disclose unrelated source, secrets, container files, or the SQLite volume. Mutation authority and read confidentiality are separate boundaries. |
 | D20 | First-release enforcement is claimed only for Claude Code on Windows 11 with Docker Desktop and the tested plugin/launcher shape. The MCP protocol and Linux container image remain provider-neutral; native-Linux-host or Codex enforcement is not claimed until separate process-boundary evidence exists. | Two harness shapes do not prove host, path, filesystem, or lifecycle parity. The claim must match the demonstrated platform matrix. |
+| D21 | The kernel's decision path carries a stated latency budget, measured on the D20 platform matrix. Two spans are distinguished: `kernelDecisionLatency` (request received at the decision surface → response written) is kernel-owned and budgeted at p50 ≤ 5 ms, p95 ≤ 20 ms, p99 ≤ 50 ms warm; `mediatedActionLatency` (host lifecycle entry → hook exit, inclusive of adapter and transport) is budgeted at p99 ≤ 150 ms. First-call-after-start cost is reported separately against a ≤ 2000 ms allowance and is never folded into a warm percentile. Exceeding a budget is a recorded obligation, not a refusal. Exceeding the hard deadline of 1000 ms on a single decision is treated as kernel-unreachable and inherits the D8 outage posture unchanged. Authorization results may be cached only when bound to `goalRevision`, `policyDigest`, and compiled-scope digest; a cache entry whose binding no longer matches produces `STATE_REVISION_STALE` rather than a stale ALLOW. | D8's enforcement claim depends on adapters that remain loaded and enabled. Latency is the most probable cause of an operator disabling one, which converts a claimed mechanical control into an undetected gap. Stating the budget also settles transport by derivation — per-invocation container start and network round trips are excluded arithmetically rather than by preference — and prevents the budget from being met by unsound caching. |
+
+### 4.1 Ratification ledger
+
+Authoritative record of what is binding and when it became binding. Any statement
+elsewhere in this charter that appears to enumerate the binding set is a convenience
+restatement; this table governs. A decision is in force only if a row below puts it there.
+
+| Date | Instrument | Scope ratified | Record |
+|---|---|---|---|
+| 2026-08-31 | Original Gate 1 | D1–D17, the FK-P0–FK-P21 graph, wave exits, scenarios, goal exit criteria | “Ratify Gate 1 and authorize Gate 2 dispatches.” |
+| 2026-08-31 | Scoped Gate 1 re-open, plan-review amendments R1–R13 | D3, D7–D9, D13–D17, new D18–D20, amended graph and affected exit criteria | “Re-ratify Gate 1 amendments R1–R13 and resume Gate 2.” |
+| 2026-09-01 | Amendment A1 — decision-path latency budget | D21; FK-P1 and FK-P17 scope; Wave 0 exit; integration scenario 14; §13 items 7 and 9 | `proposed-amendment-A1-decision-path-latency-budget.md`, ratification record at foot |
+
+**Appending a row is the only way to change the binding set.** An amendment document
+that has not produced a row here is a proposal, whatever its own status line says.
 
 ## 5. First-release architecture
 
@@ -163,12 +181,14 @@ reviews.
 | Parcel | Outcome | Risk / routing | Dependencies |
 |---|---|---|---|
 | FK-P0 — Canon authority and enforcement registry | Reconciles operative gate/authority statements; defines the structured constraint taxonomy and operation authority matrix; inventories every standing rule by enforcement destination. | critical / architecture-risk | none |
-| FK-P1 — Lifecycle, admission, and decision contracts | Versioned lifecycle event, authenticated-principal/local-capability admission, `authorizeAction`, decision envelope, refusal-code, assurance-level, repository identity, content/read-capability boundary, host-path normalization split, and golden vectors. | critical / architecture-risk | FK-P0 |
+| FK-P1 — Lifecycle, admission, and decision contracts | Versioned lifecycle event, authenticated-principal/local-capability admission, `authorizeAction`, decision envelope, refusal-code, assurance-level, repository identity, content/read-capability boundary, host-path normalization split, golden vectors, and the D21 decision-path latency contract — the two measured spans and their observation points, the hard-deadline-to-outage mapping, and the revision-bound caching rule whose violation yields `STATE_REVISION_STALE`. | critical / architecture-risk | FK-P0 |
 | FK-P2 — Spec-body compiler | Parses required spec sections and compiles exact non-glob Allowed Files plus frozen/forbidden surfaces; rejects ambiguity, traversal, equivalent-path, symlink/reparse escape, and missing authority. | critical / architecture-risk | FK-P0, FK-P1 |
 
 **Wave 0 exit:** contracts and fixtures are merged; exact path authority can be compiled
-without reading `surfaces:` as mutation permission; plan-level contradictions have no
-unresolved implementation consequence.
+without reading `surfaces:` as mutation permission; the D21 latency contract is specified
+with both measured spans, their observation points, the hard-deadline-to-outage mapping,
+and the revision-bound caching rule; and plan-level contradictions have no unresolved
+implementation consequence.
 
 ### Wave 1 — Pure trust core
 
@@ -215,7 +235,7 @@ field-level Git/SQLite authority matrix stops on divergence rather than overwrit
 | Parcel | Outcome | Risk / routing | Dependencies |
 |---|---|---|---|
 | FK-P16 — Claude lifecycle adapter, shadow mode | Capability-preflighted SessionStart/PreToolUse/PostToolUse/Stop adapter for the D20 matrix; enrollment heartbeat; host-path normalization; calls FK-P12 and records would-allow/would-refuse/detected-only results. Owns Claude hook registration, not Codex or shared Docker files. | critical / architecture-risk | FK-P12, FK-P13, FK-P15 |
-| FK-P17 — Bypass and outage harness | Exercises shell, subprocess, custom-tool/MCP, symlink/reparse, subagent, mediated bypass, hook non-enrollment, stale state, service timeout, and restart; produces the mechanical/detected/unsupported matrix. | critical / architecture-risk | FK-P16 |
+| FK-P17 — Bypass and outage harness | Exercises shell, subprocess, custom-tool/MCP, symlink/reparse, subagent, mediated bypass, hook non-enrollment, stale state, service timeout, and restart; produces the mechanical/detected/unsupported matrix; and produces the D21 latency profile on the D20 platform — warm percentiles for both measured spans, the first-call-after-start figure, and a hard-deadline case proving the unreachable path inherits the D8 outage posture rather than failing open. | critical / architecture-risk | FK-P16 |
 | FK-P18 — CI scope and state-evidence backstops | Mirrors exact-scope, enrollment, state/evidence, and dirty-reviewer invariants in CI; negative control intentionally bypasses the hook and must fail CI before enforcement can promote. Owns only its named workflow/CI integration points. | critical / architecture-risk | FK-P17 |
 | FK-P19 — High-confidence refusal enforcement | Promotes only the five mediated classes whose negative controls, corpus sweeps, authorization-engine vectors, and FK-P18 CI backstops pass; implements degraded read-only mode and fail-closed governed mutation. | critical / architecture-risk | FK-P17, FK-P18 |
 | FK-P20 — Second-host feasibility and host registration | Probes Codex lifecycle capabilities; either ships a thin adapter with process-boundary parity or records the unsupported gap. Owns Codex manifest changes; no Claude-hook or Docker-file edits. | elevated / architecture-risk | FK-P19 |
@@ -276,6 +296,13 @@ The goal is not complete until all scenarios have durable evidence:
 13. **Host capability:** each supported adapter passes a real process-boundary capability
     probe on its declared host/filesystem matrix; unsupported lifecycle events are
     reported as gaps.
+14. **Decision-path latency:** on the D20 platform, a warm kernel serves a
+    representative governed-mutation decision within the D21 budget for both measured
+    spans; the first-call-after-start figure is recorded separately; a decision
+    exceeding the hard deadline is reported as kernel-unreachable and inherits the D8
+    outage posture without failing open; and an authorization cache entry whose
+    `goalRevision`, `policyDigest`, or compiled-scope digest no longer matches produces
+    `STATE_REVISION_STALE` rather than a stale ALLOW.
 
 ## 9. Goal exit criterion
 
@@ -312,8 +339,9 @@ This goal exits only when:
 
 **RE-CLEARED 2026-08-31 — nondelegable developer re-ratification recorded.** The
 original Gate 1 was cleared, the fresh plan review returned six decision-changing
-BLOCKERs, and the resulting scoped re-open for R1–R13 was explicitly re-ratified. D1–D20,
-FK-P0–FK-P21, the amended wave exits, scenarios, and goal exit criteria are in force.
+BLOCKERs, and the resulting scoped re-open for R1–R13 was explicitly re-ratified. The
+set in force — including every amendment ratified after this date — is the ledger in
+§4.1. Gate 1 remains nondelegable for each amendment individually.
 
 ### Gate 2 — parcel dispatch
 
@@ -393,9 +421,11 @@ Ratifying this charter confirms:
 5. the Allowed-Files compiler and rule-retirement standard (D10–D13);
 6. durable field-authoritative SQLite state, local control capability, read-volume
    isolation, and pure/effect separation (D14–D16);
-7. versioned typed tool contracts plus the read-confidentiality boundary (D17, D19);
+7. versioned typed tool contracts, the read-confidentiality boundary, and the
+   decision-path latency contract with its revision-bound caching rule
+   (D17, D19, D21);
 8. the FK-P0 through FK-P21 dependency graph and Wave 0–4 exit criteria;
-9. the explicit out-of-scope list and thirteen integration scenarios;
+9. the explicit out-of-scope list and fourteen integration scenarios;
 10. standing Gate-2 dispatch authorization under the stated contingencies; and
 11. nondelegated human Gate 3 for every merge.
 
