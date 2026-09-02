@@ -164,7 +164,7 @@ appends a properly chained migration record, and refused when it does not. A cha
 value therefore requires a typed prior-to-new record — which is the migration discipline the spec
 defines, now enforced rather than approximated by a hardcoded whole-corpus constant.
 
-**The head's floor (AC4 obligations 1-7, amendments R19, R21 and R22).** "Well-formed" is a checked
+**The head's floor (AC4 obligations 1-7, amendments R19, R21, R22 and R23).** "Well-formed" is a checked
 property, not a hopeful adjective. A chain record declares **exactly one** prior and **exactly one**
 superseding binding-manifest command, so a second superseding command cannot fork the chain *inside*
 a record where across-record fork detection cannot see it. A record whose id appears in the shipped
@@ -178,6 +178,10 @@ the record, because a single decoy entry otherwise excused two gutted chain comm
 **references are bound by a digest computed over them**, and no digest is ever verified by comparison
 with itself. A chain record carries **exactly two** `git-commit` entries, **distinct by reference
 alone** — distinctness by kind, reference and digest together was defeated by varying the digest.
+And on the head specifically, every `git-commit` reference is either **bound by its prior chain
+command's `inputDigest`** or is **exactly `document.sourceSnapshotCommit`**, because two *distinct*
+fabricated forty-hex values otherwise satisfy count and distinctness while the attacker recomputes
+`inputDigest` to keep obligation 4 self-consistent.
 
 **The shipped chain head is bound through channels that do not depend on its being the head
 (obligation 6).** This is the defect R22 exists to close. `RECONCILIATION_RECORD_DIGESTS`,
@@ -192,10 +196,29 @@ presence there, so adding it would declare the shipped head ineligible to be the
 invalidates the shipped registry *and* still admits the substitution, because a pin binds only a
 record that is still present.
 
-**A properly chained new head is admitted (obligation 7).** The demoted former head stays bound as a
-historical record. The residual is therefore **append-only and history-preserving**: extending the
-chain is always cheaper than erasing an attestation, which matters because the Git-history review
-this residual leans on is defeated by erasure and not by extension.
+**A properly chained new head is admitted (obligation 7), and its scope is narrower than it first
+read.** The demoted former head stays bound as a historical record, so for **the shipped head** the
+residual is **append-only and history-preserving**: erasing its attestation is refused while
+extending past it is admitted.
+
+**That guarantee does not extend to successors, and the earlier wording that implied it was false.**
+An *appended* head has no presence binding of its own, so it can simply be deleted — which
+re-promotes `registry-rework-df8155a` and restores a valid document with the appended attestation
+gone. Measured: append, then delete the successor and re-anchor, and the result validates with zero
+violations at eighteen reconciliations. So for a successor, erasing is file-only while extending
+needs a `src/validate.ts` edit — the exact inverse of the property this obligation claims.
+
+**Why that is not fixed here, and is not a scheduling decision.** A stateless validator comparing a
+document to itself **cannot detect a deletion at all**. Presence is assertable only against something
+outside the document — a constant, Git history, or a signature. A per-head constant is therefore not
+a shortcut somebody took; it is the only in-band option, and obligation 6 cannot be made to travel
+without an out-of-band anchor. The obvious in-band attempt — keying obligation 2 on the head's own
+record-digest lookup rather than the raw pin table — would declare the shipped head ineligible to be
+the head and **invalidate the shipped registry**. Generalising presence to successors is an FK-P1
+obligation with a stop condition on it, not a cleanup-round change.
+
+The one head obligation that *does* travel is the obligation-5 Git binder, because it is structural
+and names no id.
 
 That extension is **one deep**, and the limit is stated here rather than discovered later. Appending
 one properly chained head is admitted with zero violations. A *second* append demotes the first
@@ -224,19 +247,34 @@ the SHA-256 of a `git-commit` reference on that same record, so repointing or de
 breaks the binding.
 
 **The residual, stated exactly.** Six head-only `git-commit` edits were once admitted while this
-document described one. Four now refuse — deleting the unbound second entry, adding a fabricated
-one, repeating the bound reference under a differing digest, and fabricating the whole provenance.
-**Exactly two remain, both on the chain head alone:**
+document described one. Five now refuse — deleting the unbound second entry, adding a fabricated
+one, repeating the bound reference under a differing digest, fabricating the whole provenance with
+two distinct values, and repointing the unbound reference. **Exactly one remains, on the chain head
+alone: the entry bound by obligation 4 is not independently verifiable**, and it has two faces:
 
-1. **rewriting a `git-commit` digest while leaving its reference intact** — the digest attests the
-   commit object body, which cannot be recomputed offline; and
-2. **repointing the second, unbound `git-commit` reference** — obligation 4 binds one reference per
-   chain record, and the obvious candidate binder (requiring the other to equal the snapshot commit)
-   is **not free**: it would invalidate the shipped registry, which is the mistake R21 had to correct
-   in R19's obligation 4.
+- **rewriting its digest while leaving the reference intact** — the digest attests the commit object
+  body, `sha256(git cat-file -p <commit>)`, which no hermetic validator can recompute; and
+- **replacing the reference and recomputing the prior command's `inputDigest` to match** — the
+  attacker controls both sides of that binding, so it stays self-consistent.
 
-On every other record both edits break the record's pin. All four refusals and both residuals are
-pinned by test, each residual with a control on a pinned record.
+Closing it needs an anchor outside the document: the commit itself, a named constant, or a
+signature. Nothing in-band can do it, and this document does not pretend otherwise.
+
+**A correction, recorded rather than quietly applied.** The unbound second reference was documented
+here as an irreducible residual, on the ground that binding it to `sourceSnapshotCommit` was "not
+free" — measured at **13 of 24**. That census was taken at **all-records** scope while the defect is
+**head-only**. At head scope the binder is free: the head's unbound reference *is*
+`document.sourceSnapshotCommit`, while the other eleven records carry a *historical* snapshot, which
+is exactly why the wide version failed and the narrow one does not. Neither measurement was wrong —
+the scope was. That residual is now closed by obligation 5 rather than reported.
+
+Unlike every other head obligation, this binder is **structural rather than id-keyed**: it names no
+reconciliation id, so it applies to whatever record is the head. It is the first head obligation that
+generalises to successors.
+
+On every other record these edits break the record's pin. All five refusals and the surviving
+residual are pinned by test, and each new refusal was verified to fail when its guard is removed —
+passing is not evidence; failing-when-broken is.
 
 **The honest limit, stated at its true width.** This makes silent substitution *detectable*, not
 impossible. A party who can edit the registry file has **two** ways past the chain, not one:

@@ -4563,6 +4563,9 @@ test('R22 O6 refuses deleting the head and substituting a copy under a fresh unp
   // assertion is reached. The helper's guard is what made this fail loudly instead of quietly.
   reanchorTo(substitute, mutated)
   expectOnlyCodes(mutated, 'RECONCILIATION_MISSING')
+  // AC13 as amended by R23: the code alone cannot say WHICH obligation refused,
+  // because every chain obligation emits it. Bind to the message.
+  expectMessage(mutated, "required rework migration 'registry-rework-df8155a' is missing")
 })
 
 test('R22 O6 refuses rewriting the head IN PLACE under the same id', () => {
@@ -4582,6 +4585,9 @@ test('R22 O6 refuses rewriting the head IN PLACE under the same id', () => {
     'the attestation prose must actually be gone from the document',
   )
   expectOnlyCodes(mutated, 'MIGRATION_EVIDENCE_INVALID')
+  // AC13 as amended by R23: the code alone cannot say WHICH obligation refused,
+  // because every chain obligation emits it. Bind to the message.
+  expectMessage(mutated, 'topic/status contract changed')
 })
 
 test('R22 O6 refuses rewriting the head attestation even with no payload at all', () => {
@@ -4590,6 +4596,9 @@ test('R22 O6 refuses rewriting the head attestation even with no payload at all'
     ;(record as { scopedDisposition: string }).scopedDisposition = 'Routine maintenance.'
   })
   expectOnlyCodes(mutated, 'MIGRATION_EVIDENCE_INVALID')
+  // AC13 as amended by R23: the code alone cannot say WHICH obligation refused,
+  // because every chain obligation emits it. Bind to the message.
+  expectMessage(mutated, 'topic/status contract changed')
 })
 
 test('R22 O7 ADMITS a properly chained appended head and preserves the demoted head', () => {
@@ -4625,6 +4634,9 @@ test('R22 O7 refuses an append that also rewrites the demoted former head', () =
   ;(demoted as { scopedDisposition: string }).scopedDisposition = 'Routine maintenance.'
   assert.notEqual(canonicalJson(demoted), before, 'the demoted head must actually be rewritten')
   expectOnlyCodes(amended, 'MIGRATION_EVIDENCE_INVALID')
+  // AC13 as amended by R23: the code alone cannot say WHICH obligation refused,
+  // because every chain obligation emits it. Bind to the message.
+  expectMessage(amended, 'differs from its complete canonical record manifest')
 })
 
 test('R22 O3 refuses gutted chain commands that a coordinator decoy would have excused', () => {
@@ -4699,6 +4711,9 @@ test('R22 O5 refuses deleting the unbound second git-commit entry from the head'
     assert.notEqual(record.observedEvidence.length, before, 'an entry must actually be removed')
   })
   expectOnlyCodes(mutated, 'MIGRATION_EVIDENCE_INVALID')
+  // AC13 as amended by R23: the code alone cannot say WHICH obligation refused,
+  // because every chain obligation emits it. Bind to the message.
+  expectMessage(mutated, 'git-commit evidence entries; exactly two are required')
 })
 
 test('R22 O5 refuses a fabricated extra git-commit entry on the head', () => {
@@ -4710,6 +4725,9 @@ test('R22 O5 refuses a fabricated extra git-commit entry on the head', () => {
     })
   })
   expectOnlyCodes(mutated, 'MIGRATION_EVIDENCE_INVALID')
+  // AC13 as amended by R23: the code alone cannot say WHICH obligation refused,
+  // because every chain obligation emits it. Bind to the message.
+  expectMessage(mutated, 'git-commit evidence entries; exactly two are required')
 })
 
 test('R22 O5 refuses the bound git-commit reference repeated under a differing digest', () => {
@@ -4738,16 +4756,31 @@ test('R22 O5 refuses the bound git-commit reference repeated under a differing d
   )
 })
 
-test('R22 O5 refuses a head whose entire Git provenance is fabricated', () => {
-  // Reviewer A's deepest shape: the attacker controls BOTH sides of the obligation-4 binding, so
-  // repointing the reference and recomputing the prior command's `inputDigest` to match is
-  // self-consistent. What it cannot do is satisfy the evidence shape.
+test('R23 O5 refuses a head whose entire Git provenance is fabricated (G6)', () => {
+  // Reviewer A's G6, and a correction to the round-3 test that carried this name.
+  //
+  // That test mapped BOTH git-commit entries to the SAME fabricated value, so it was refused by an
+  // evidence-shape rule - it never exercised fabrication at all, and the shape it actually tested
+  // was already covered by a sibling. Meanwhile the real attack - TWO DISTINCT forty-hex
+  // fabrications, with the prior command's `inputDigest` recomputed to match one of them - was
+  // ADMITTED at cc57658: `valid: true`, zero violations, with or without a payload retiring every
+  // rule asserting that Gate 3 merges are human-owned.
+  //
+  // Two distinct values satisfy cardinality and reference-distinctness trivially, and the attacker
+  // controls both sides of obligation 4, so only R23's head-scoped binder refuses this.
   const mutated = withMutatedHead((record) => {
-    const fabricated = 'd'.repeat(40)
+    const fabricated = 'feedface'.repeat(5)
+    const secondFabricated = '0'.repeat(39) + '1'
+    assert.notEqual(fabricated, secondFabricated, 'the two fabrications must be DISTINCT')
+    let index = 0
     ;(record as { observedEvidence: readonly Evidence[] }).observedEvidence =
       record.observedEvidence.map((evidence) =>
         evidence.kind === 'git-commit'
-          ? { kind: 'git-commit', reference: fabricated, digest: sha256('fabricated-object-body') }
+          ? {
+              kind: 'git-commit',
+              reference: index++ === 0 ? fabricated : secondFabricated,
+              digest: sha256('fabricated-object-body'),
+            }
           : evidence,
       )
     ;(record as { observedEvidence: readonly Evidence[] }).observedEvidence =
@@ -4764,15 +4797,28 @@ test('R22 O5 refuses a head whose entire Git provenance is fabricated', () => {
         return { kind: evidence.kind, reference, digest: sha256(reference) }
       })
   })
-  expectOnlyCodes(mutated, 'MIGRATION_EVIDENCE_INVALID')
+  // AC13 as amended by R23: assert the MESSAGE. Every chain obligation emits
+  // MIGRATION_EVIDENCE_INVALID, so asserting the code - even exactly - cannot distinguish which
+  // obligation refused, which is exactly how this test's predecessor passed for the wrong reason.
+  const fabricatedGitCount = headOf(mutated).observedEvidence.filter(
+    (evidence) => evidence.kind === 'git-commit',
+  ).length
+  assert.equal(fabricatedGitCount, 2, 'cardinality must still hold, so only the binder can refuse')
+  expectMessage(
+    mutated,
+    "carries a git-commit reference that is neither bound by its prior binding-manifest command nor equal to the document's own sourceSnapshotCommit",
+  )
 })
 
-test('R22 residual, stated exactly: repointing the head UNBOUND git-commit reference is admitted', () => {
-  // The SECOND of exactly two surviving residuals. Obligation 4 binds one git-commit reference per
-  // chain record - the one the prior command's `inputDigest` covers. The second reference carries no
-  // binder, and the obvious candidate binder (require it to equal the snapshot commit) is NOT free:
-  // it would invalidate the shipped registry, which is the R19-obligation-4 mistake exactly. So this
-  // is reported rather than disguised as covered.
+test('R23 O5 refuses repointing the head UNBOUND git-commit reference (was a stated residual)', () => {
+  // This was documented as the SECOND of two surviving residuals, on the ground that binding the
+  // unbound reference to the snapshot commit was "not free". That number - 13 of 24 - was measured
+  // at ALL-RECORDS scope while the defect is head-only. At HEAD scope the binder is free, because
+  // the head's unbound reference IS `document.sourceSnapshotCommit`; the other eleven records carry
+  // a HISTORICAL snapshot, which is why the wide version failed and the narrow one does not.
+  //
+  // Neither measurement was wrong. The scope was. So this residual is now closed rather than
+  // reported, and what stands in its place is the assertion below.
   const mutated = withMutatedHead((record) => {
     const bound = boundGitReferenceOf(record)
     let repointed = false
@@ -4785,13 +4831,12 @@ test('R22 residual, stated exactly: repointing the head UNBOUND git-commit refer
       })
     assert.equal(repointed, true, 'the unbound reference must actually be repointed')
   })
-  assert.deepEqual(
-    validateRegistry(mutated).violations.map((violation) => violation.code),
-    [],
-    'stated residual: the second git-commit reference on the head carries no binding',
+  expectMessage(
+    mutated,
+    "carries a git-commit reference that is neither bound by its prior binding-manifest command nor equal to the document's own sourceSnapshotCommit",
   )
 
-  // Control - the same edit on a PINNED record is refused, so the residual covers the head alone.
+  // Control - the same edit on a PINNED record is refused too, by that record's own byte pin.
   const pinnedMutated = structuredClone(full)
   const pinned = pinnedMutated.reconciliations.find(
     (record) => record.reconciliationId === 'registry-rework-0683bc0',
@@ -4804,6 +4849,9 @@ test('R22 residual, stated exactly: repointing the head UNBOUND git-commit refer
   ok(target)
   ;(target as { reference: string }).reference = 'b'.repeat(40)
   expectOnlyCodes(pinnedMutated, 'MIGRATION_EVIDENCE_INVALID')
+  // AC13 as amended by R23: the code alone cannot say WHICH obligation refused,
+  // because every chain obligation emits it. Bind to the message.
+  expectMessage(pinnedMutated, 'differs from its complete canonical record manifest')
 })
 
 test('R22 O7 limit, stated exactly: the append path is one deep, and the second is refused', () => {

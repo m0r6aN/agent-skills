@@ -952,7 +952,10 @@ function recordDigestPinFor(reconciliationId: string): string | undefined {
  * NARROWER binding than a pin and never a weaker one; before R19 nothing constrained the head's
  * content at all, and two independent reviewers each drove a tampered registry through it.
  */
-function headFloorViolations(record: ReconciliationRecord): ValidationViolation[] {
+function headFloorViolations(
+  record: ReconciliationRecord,
+  document: AuthorityEnforcementRegistry,
+): ValidationViolation[] {
   const violations: ValidationViolation[] = []
   // Obligation 2: a pinned record is never the head, so head position is not selectable by
   // deletion. Keyed on ID PRESENCE in the pin table, never on byte-match against it - byte-match
@@ -1021,6 +1024,40 @@ function headFloorViolations(record: ReconciliationRecord): ValidationViolation[
       ),
     )
   }
+  // AC4 obligation 5 as amended by R23 - the head-scoped Git provenance binder.
+  //
+  // R22 left the head's Git provenance entirely fabricable: two DISTINCT forty-hex values satisfy
+  // cardinality and reference-distinctness trivially, and setting the prior command's `inputDigest`
+  // to `sha256(fabricated)` makes obligation 4 self-consistent because the attacker controls both
+  // sides of it. Measured at cc57658, with and without a payload retiring every rule asserting that
+  // Gate 3 merges are human-owned: `valid: true`, zero violations.
+  //
+  // R22 rejected this binder as "not free" on an ALL-RECORDS census (13 of 24 / 15 of 24). That
+  // number was taken at the wrong scope: the defect is head-only, and at head scope the binder is
+  // free - the head's two references are the one bound by its prior command and the document's own
+  // `sourceSnapshotCommit`. The other eleven records carry a HISTORICAL snapshot, which is exactly
+  // why the wide version failed and the narrow one does not.
+  //
+  // Unlike every other head obligation this one is STRUCTURAL rather than id-keyed, so it applies to
+  // whatever record is the head - the first head obligation that generalises to successors.
+  const headGitEvidence = record.observedEvidence.filter(
+    (evidence) => evidence.kind === 'git-commit',
+  )
+  const priorChainCommands = commandsWithPrefix(record, PRIOR_MANIFEST_COMMAND_PREFIX)
+  for (const evidence of headGitEvidence) {
+    const boundByPriorCommand = priorChainCommands.some(
+      (command) => sha256(evidence.reference) === command.inputDigest,
+    )
+    if (boundByPriorCommand) continue
+    if (evidence.reference === document.sourceSnapshotCommit) continue
+    violations.push(
+      violation(
+        'MIGRATION_EVIDENCE_INVALID',
+        `migration chain head '${record.reconciliationId}' carries a git-commit reference that is neither bound by its prior binding-manifest command nor equal to the document's own sourceSnapshotCommit`,
+      ),
+    )
+  }
+
   return violations
 }
 
@@ -1230,7 +1267,7 @@ function verifyMigrationChain(document: AuthorityEnforcementRegistry): Migration
   // The head is bound to the manifest recomputed live from the document it sits in - a stricter
   // assertion than equality with a constant, not an exemption from binding.
   const head = path[path.length - 1] as ChainLink
-  violations.push(...headFloorViolations(head.record))
+  violations.push(...headFloorViolations(head.record, document))
   const liveManifest = registryBindingManifestDigest(document)
   if (head.nextDigest !== liveManifest) {
     violations.push(
