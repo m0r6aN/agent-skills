@@ -25,6 +25,7 @@ import {
   OPERATION_SCOPES,
   type OperationId,
   PRINCIPAL_CLASSES,
+  type ReconciliationRecord,
   type RegistrySummary,
   type ResultCode,
   ROLE_SCOPES,
@@ -441,8 +442,6 @@ const RECONCILIATION_CONTRACT = {
 
 const PRIOR_R11_BINDING_MANIFEST_DIGEST =
   'dd775924c5fe88f24f3aa1c545e2501fe9ca3ef8f9cedb0541cf043d0ae36257'
-const SHIPPED_BINDING_MANIFEST_DIGEST =
-  'f753296b78bcf4d8de9e603e8e347286519a26694c2241ae4a00a05676388e2f'
 const PRIOR_R12_BINDING_MANIFEST_DIGEST =
   '1186818bad7da994a1a5b3572211bebe059a64d8ca6ba0d5845d5eca5c9e137a'
 const SEMANTIC_EQUIVALENCE: readonly {
@@ -712,6 +711,227 @@ export function bindingDigestFor(rule: Omit<AuthorityRule, 'bindingDigest'>): st
   )
 }
 
+/**
+ * Genesis anchor for the binding-manifest migration chain: the `resultDigest` of the first
+ * migration record's `registry-binding-manifest` command, i.e. the manifest of the pre-rework
+ * registry. This pins the ORIGIN of history, not the present state.
+ *
+ * It is deliberately the only pinned manifest value. A hardcoded digest of the CURRENT corpus
+ * would be a shipped validation predicate over the source snapshot, which the spec's Constraints
+ * and AC3 both forbid, and would mean exactly one registry document could ever be valid.
+ */
+const GENESIS_BINDING_MANIFEST_DIGEST =
+  '1fe3a7c66241904445021c97db68065961a3bf5beceb654faff4b552b4de79b2'
+
+/** Prefix identifying a migration-chain record. Other reconciliations are not chain members. */
+const MIGRATION_CHAIN_PREFIX = 'registry-rework-'
+
+interface ChainLink {
+  readonly record: ReconciliationRecord
+  /** `superseding-*.inputDigest` - the predecessor manifest this record chains from. */
+  readonly prevDigest: string
+  /** `superseding-*.resultDigest` - the manifest this record supersedes TO. */
+  readonly nextDigest: string
+  /** `registry-binding-manifest*.resultDigest` - an independent restatement of `prevDigest`. */
+  readonly restatedPrevDigest: string
+}
+
+function parsedCommandResults(
+  record: ReconciliationRecord,
+): { commandId?: unknown; inputDigest?: unknown; resultDigest?: unknown }[] {
+  return record.observedEvidence
+    .filter((evidence) => evidence.kind === 'command-result')
+    .flatMap((evidence) => {
+      try {
+        return [
+          JSON.parse(evidence.reference) as {
+            commandId?: unknown
+            inputDigest?: unknown
+            resultDigest?: unknown
+          },
+        ]
+      } catch {
+        return []
+      }
+    })
+}
+
+/**
+ * Extract the chain link a migration record declares, or `null` if it is malformed.
+ *
+ * The link is the `superseding-binding-manifest*` command's `inputDigest` -> `resultDigest` pair.
+ * The companion `registry-binding-manifest*` command restates the predecessor in its own
+ * `resultDigest`, which is checked as an independent second axis.
+ *
+ * Note that `registry-binding-manifest*.inputDigest` is NOT chain state: it is commit-derived and
+ * is the same constant across eight consecutive records, so treating it as the link would produce
+ * a false pass over most of the chain.
+ */
+function chainLinkFor(record: ReconciliationRecord): ChainLink | null {
+  const commands = parsedCommandResults(record)
+  const superseding = commands.find(
+    (command) =>
+      typeof command.commandId === 'string' &&
+      command.commandId.startsWith('superseding-binding-manifest'),
+  )
+  const restatement = commands.find(
+    (command) =>
+      typeof command.commandId === 'string' &&
+      command.commandId.startsWith('registry-binding-manifest'),
+  )
+  if (
+    superseding === undefined ||
+    restatement === undefined ||
+    typeof superseding.inputDigest !== 'string' ||
+    typeof superseding.resultDigest !== 'string' ||
+    typeof restatement.resultDigest !== 'string'
+  ) {
+    return null
+  }
+  return {
+    record,
+    prevDigest: superseding.inputDigest,
+    nextDigest: superseding.resultDigest,
+    restatedPrevDigest: restatement.resultDigest,
+  }
+}
+
+export interface MigrationChain {
+  /** Records in genesis-to-head order. Empty when the chain could not be walked. */
+  readonly path: readonly ChainLink[]
+  /** `reconciliationId` of the single chain head, or `null` when there is not exactly one. */
+  readonly headId: string | null
+  readonly violations: readonly ValidationViolation[]
+}
+
+/**
+ * Walk the binding-manifest migration chain from the pinned genesis anchor and verify that it is
+ * a single unbroken path whose head describes the live document.
+ *
+ * This replaces the former whole-corpus equality against a hardcoded `SHIPPED_BINDING_MANIFEST_DIGEST`.
+ * That constant made exactly one registry content valid, rejected a correctly re-digested registry
+ * with a single `MIGRATION_EVIDENCE_INVALID`, and could not be updated by `npm run generate`.
+ *
+ * The chain preserves the same anti-tamper surface for every historical state while ADMITTING a
+ * legitimately amended registry that appends a properly chained record. Per AC4 as amended by R16,
+ * a document is invalid if it has zero heads, more than one head (a fork), or a migration record
+ * that does not lie on the single genesis-to-head path.
+ *
+ * Honest limit, documented in the README: this makes silent substitution DETECTABLE, not
+ * impossible. Anyone who can edit the file can append a well-formed head record declaring the
+ * manifest of a tampered registry. The registry is a contract, not a trust root; real anti-tamper
+ * is Git history plus human review.
+ */
+function verifyMigrationChain(document: AuthorityEnforcementRegistry): MigrationChain {
+  const violations: ValidationViolation[] = []
+  const chainRecords = document.reconciliations.filter((record) =>
+    record.reconciliationId.startsWith(MIGRATION_CHAIN_PREFIX),
+  )
+  const links: ChainLink[] = []
+  for (const record of chainRecords) {
+    const link = chainLinkFor(record)
+    if (link === null) {
+      violations.push(
+        violation(
+          'MIGRATION_EVIDENCE_INVALID',
+          `migration record '${record.reconciliationId}' does not declare a well-formed prior-to-new binding manifest chain link`,
+        ),
+      )
+      continue
+    }
+    if (link.restatedPrevDigest !== link.prevDigest) {
+      violations.push(
+        violation(
+          'MIGRATION_EVIDENCE_INVALID',
+          `migration record '${record.reconciliationId}' restates a prior binding manifest that disagrees with the digest it chains from`,
+        ),
+      )
+    }
+    links.push(link)
+  }
+  if (links.length !== chainRecords.length) {
+    return { path: [], headId: null, violations }
+  }
+
+  // Fork detection: two records chaining from the same predecessor would give two heads.
+  const byPrev = new Map<string, ChainLink[]>()
+  for (const link of links) {
+    const existing = byPrev.get(link.prevDigest)
+    if (existing === undefined) byPrev.set(link.prevDigest, [link])
+    else existing.push(link)
+  }
+  for (const [prevDigest, forked] of byPrev) {
+    if (forked.length > 1) {
+      violations.push(
+        violation(
+          'MIGRATION_EVIDENCE_INVALID',
+          `binding manifest chain forks at '${prevDigest}': ${forked
+            .map((link) => link.record.reconciliationId)
+            .sort()
+            .join(', ')}`,
+        ),
+      )
+    }
+  }
+  if (violations.length > 0) return { path: [], headId: null, violations }
+
+  // Walk the single path from the pinned genesis anchor.
+  const path: ChainLink[] = []
+  const seen = new Set<string>()
+  let cursor = GENESIS_BINDING_MANIFEST_DIGEST
+  while (byPrev.has(cursor)) {
+    const next = byPrev.get(cursor)?.[0]
+    if (next === undefined) break
+    if (seen.has(next.record.reconciliationId)) {
+      violations.push(
+        violation('MIGRATION_EVIDENCE_INVALID', 'binding manifest chain contains a cycle'),
+      )
+      return { path: [], headId: null, violations }
+    }
+    seen.add(next.record.reconciliationId)
+    path.push(next)
+    cursor = next.nextDigest
+  }
+
+  if (path.length === 0) {
+    violations.push(
+      violation(
+        'MIGRATION_EVIDENCE_INVALID',
+        'binding manifest chain has no record chaining from the genesis anchor',
+      ),
+    )
+    return { path: [], headId: null, violations }
+  }
+  // No orphans: every migration record must lie on the single genesis-to-head path.
+  if (path.length !== links.length) {
+    const orphans = links
+      .filter((link) => !seen.has(link.record.reconciliationId))
+      .map((link) => link.record.reconciliationId)
+      .sort()
+    violations.push(
+      violation(
+        'MIGRATION_EVIDENCE_INVALID',
+        `migration records do not lie on the single genesis-to-head chain: ${orphans.join(', ')}`,
+      ),
+    )
+    return { path: [], headId: null, violations }
+  }
+
+  // The head is bound to the manifest recomputed live from the document it sits in - a stricter
+  // assertion than equality with a constant, not an exemption from binding.
+  const head = path[path.length - 1] as ChainLink
+  const liveManifest = registryBindingManifestDigest(document)
+  if (head.nextDigest !== liveManifest) {
+    violations.push(
+      violation(
+        'MIGRATION_EVIDENCE_INVALID',
+        'registry identity, locator, value, rule, or source binding differs from the manifest declared by the migration chain head',
+      ),
+    )
+  }
+  return { path, headId: head.record.reconciliationId, violations }
+}
+
 export function registryBindingManifestDigest(document: AuthorityEnforcementRegistry): string {
   return sha256(
     canonicalJson({
@@ -746,14 +966,28 @@ const concreteStages = STAGE_SCOPES.filter((value) => value !== 'any')
 const concreteOperations = OPERATION_SCOPES.filter((value) => value !== 'any')
 const concreteHosts = HOST_POSTURES.filter((value) => value !== 'any')
 
-function queryIsValid(query: AuthorityQuery): boolean {
+/**
+ * Structural query guard. Accepts `unknown` deliberately: `resolveAuthority` is an exported
+ * API of a `risk: critical` package, so a nullish, non-object, or wrongly-typed query must fail
+ * closed rather than throw. Each axis is checked for `typeof === 'string'` before any comparison,
+ * because `RegExp.test` and `Array.prototype.includes` both coerce: without the explicit guard
+ * `authoritySubject: 1` stringifies to `"1"` and matches the subject pattern.
+ */
+function queryIsValid(query: unknown): query is AuthorityQuery {
+  if (!isRecord(query)) return false
+  const { authoritySubject, goal, role, stage, operation, host } = query
   return (
-    /^[a-z0-9]+(?:[.-][a-z0-9]+)*$/.test(query.authoritySubject) &&
-    query.goal === 'foreman-kernel' &&
-    concreteRoles.includes(query.role) &&
-    concreteStages.includes(query.stage) &&
-    concreteOperations.includes(query.operation) &&
-    concreteHosts.includes(query.host)
+    typeof authoritySubject === 'string' &&
+    /^[a-z0-9]+(?:[.-][a-z0-9]+)*$/.test(authoritySubject) &&
+    goal === 'foreman-kernel' &&
+    typeof role === 'string' &&
+    (concreteRoles as readonly string[]).includes(role) &&
+    typeof stage === 'string' &&
+    (concreteStages as readonly string[]).includes(stage) &&
+    typeof operation === 'string' &&
+    (concreteOperations as readonly string[]).includes(operation) &&
+    typeof host === 'string' &&
+    (concreteHosts as readonly string[]).includes(host)
   )
 }
 
@@ -778,12 +1012,17 @@ function isActiveAuthorityRule(
 
 function resolveValidatedAuthority(
   document: AuthorityEnforcementRegistry,
-  query: AuthorityQuery,
+  query: unknown,
 ): AuthorityResolution {
+  // Retained as defence in depth even though `resolveAuthority` already guards: this function
+  // must be safe against any caller, so it takes `unknown` and narrows through the type guard.
   if (!queryIsValid(query)) {
     return {
       outcome: 'REQUIRE_HUMAN',
-      authoritySubject: query.authoritySubject,
+      authoritySubject:
+        isRecord(query) && typeof query.authoritySubject === 'string'
+          ? query.authoritySubject
+          : 'invalid.query',
       reasonCode: 'INVALID_QUERY_SCOPE',
       controllingRuleIds: [],
       consideredRuleIds: [],
@@ -792,7 +1031,6 @@ function resolveValidatedAuthority(
   const sources = new Map(document.sources.map((source) => [source.sourceId, source]))
   const considered = document.rules
     .filter((rule) => {
-      if (rule.ruleId === 'rule.coordinator-pattern.91dd60b00fd6') return false
       if (rule.authoritySubject !== query.authoritySubject) return false
       return (
         (rule.applicability.goals.includes(query.goal) ||
@@ -825,14 +1063,15 @@ function resolveValidatedAuthority(
   const claims = [...new Set(controlling.map((rule) => rule.authorityClaim))].sort()
   const decisions = [...new Set(controlling.map((rule) => rule.decision))].sort()
   if (claims.length !== 1 || decisions.length !== 1) {
+    // Unreachable by construction, and deliberately kept as defence in depth rather than deleted.
+    // A highest-tier claim or decision split is exactly the `RULE_CONFLICT` predicate, which is
+    // validity-blocking, and resolution never runs against an invalid registry - so amended AC5
+    // exposes no `CONFLICT` outcome. If this branch is ever reached the registry is internally
+    // inconsistent, so it fails closed instead of silently selecting one side of the split.
     return {
-      outcome: 'CONFLICT',
+      outcome: 'REQUIRE_HUMAN',
       authoritySubject: query.authoritySubject,
-      conflictingClaims: claims,
-      conflictingDecisions: decisions.filter(
-        (decision): decision is 'ALLOW' | 'REFUSE' | 'ADVISORY' | 'REQUIRE_HUMAN' =>
-          decision !== 'CONFLICT',
-      ),
+      reasonCode: 'REGISTRY_INVALID',
       controllingRuleIds: [],
       consideredRuleIds,
     }
@@ -849,12 +1088,26 @@ function resolveValidatedAuthority(
 
 export function resolveAuthority(document: unknown, query: AuthorityQuery): AuthorityResolution {
   const authoritySubject =
-    typeof query?.authoritySubject === 'string' ? query.authoritySubject : 'invalid.query'
+    isRecord(query) && typeof query.authoritySubject === 'string'
+      ? query.authoritySubject
+      : 'invalid.query'
   if (!validateRegistry(document).valid) {
     return {
       outcome: 'REQUIRE_HUMAN',
       authoritySubject,
       reasonCode: 'REGISTRY_INVALID',
+      controllingRuleIds: [],
+      consideredRuleIds: [],
+    }
+  }
+  // Fail closed on a malformed query rather than dereferencing it. `null`, `undefined`, and
+  // non-object queries previously reached `queryIsValid` unguarded and threw `TypeError`, which
+  // a caller with a broad `catch` would turn into a fail-open gate.
+  if (!queryIsValid(query)) {
+    return {
+      outcome: 'REQUIRE_HUMAN',
+      authoritySubject,
+      reasonCode: 'INVALID_QUERY_SCOPE',
       controllingRuleIds: [],
       consideredRuleIds: [],
     }
@@ -1828,6 +2081,9 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
       )
     }
   }
+  // Walked once and reused: `migrationChain.headId` decides which record is bound to the live
+  // manifest instead of to a pinned constant, and its violations are collected below.
+  const migrationChain = verifyMigrationChain(document)
   for (const record of document.reconciliations) {
     if (reconciliationIds.has(record.reconciliationId)) {
       violations.push(
@@ -1842,9 +2098,22 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
       record.reconciliationId !== 'registry-rework-544d8a3' &&
       RECONCILIATION_RECORD_DIGESTS[record.reconciliationId] !== undefined &&
       sha256(canonicalJson(record)) === RECONCILIATION_RECORD_DIGESTS[record.reconciliationId]
+    // AC4 as amended by R16: binding is established either by a pinned constant or by structural
+    // position in the migration chain. Every record EXCEPT the single chain head is bound to its
+    // pinned digest here; the head is bound instead - and more tightly - to the manifest
+    // recomputed live from the document it sits in, which `verifyMigrationChain` asserts.
+    //
+    // Without this the manifest stays transitively frozen: the live manifest must equal the head
+    // record's declared digest, and a byte-frozen head record freezes that digest, so exactly one
+    // registry content could ever be valid and `npm run generate` could never produce a
+    // validatable artifact. This is not a cardinality-conditioned bypass - nothing is counted, the
+    // head is identified by chain topology, and it is bound rather than exempted.
+    const isChainHead =
+      migrationChain.headId !== null && record.reconciliationId === migrationChain.headId
     if (
-      RECONCILIATION_RECORD_DIGESTS[record.reconciliationId] === undefined ||
-      sha256(canonicalJson(record)) !== RECONCILIATION_RECORD_DIGESTS[record.reconciliationId]
+      !isChainHead &&
+      (RECONCILIATION_RECORD_DIGESTS[record.reconciliationId] === undefined ||
+        sha256(canonicalJson(record)) !== RECONCILIATION_RECORD_DIGESTS[record.reconciliationId])
     ) {
       violations.push(
         violation(
@@ -2242,11 +2511,11 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
         gitRefs.join('|') !== `${R13_PRIOR_REGISTRY_COMMIT}|${document.sourceSnapshotCommit}` ||
         commands.length !== 2 ||
         parsedCommands.map((command) => command.commandId).join('|') !==
-          'registry-binding-manifest-r12|superseding-binding-manifest-r13' ||
-        !parsedCommands.some(
-          (command) => command.resultDigest === PRIOR_R12_BINDING_MANIFEST_DIGEST,
-        ) ||
-        !parsedCommands.some((command) => command.resultDigest === SHIPPED_BINDING_MANIFEST_DIGEST)
+          'registry-binding-manifest-r12|superseding-binding-manifest-r13'
+        // The prior and superseding manifest digests are no longer compared against hardcoded
+        // constants here. `verifyMigrationChain` establishes both more strongly: the prior digest
+        // is verified transitively from the pinned genesis anchor, and the superseding digest is
+        // bound to the manifest recomputed live rather than to a frozen copy of one document.
       ) {
         violations.push(
           violation(
@@ -2399,21 +2668,30 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
       }
     }
   }
-  if (registryBindingManifestDigest(document) !== SHIPPED_BINDING_MANIFEST_DIGEST) {
-    violations.push(
-      violation(
-        'MIGRATION_EVIDENCE_INVALID',
-        'registry identity, locator, value, rule, or source binding differs from the shipped manifest',
-      ),
-    )
-  }
+  violations.push(...verifyMigrationChain(document).violations)
   violations.push(...checkOperationAuthority(document))
   return violations
 }
 
-export function validateRegistry(document: unknown): ValidationResult {
+export interface ValidateOptions {
+  /**
+   * Repository root used to digest-verify D11 retirement evidence. Optional and additive.
+   * Without it, a registry containing a `retired-from-agent-reading` rule is INVALID with
+   * `RETIREMENT_EVIDENCE_UNVERIFIED` rather than silently accepted.
+   */
+  readonly repoRoot?: string
+}
+
+export function validateRegistry(
+  document: unknown,
+  options: ValidateOptions = {},
+): ValidationResult {
   const violations: ValidationViolation[] = []
-  if (!validateStructure(document)) {
+  // Single structural pass. `validateStructure.errors` reflects the most recent call, so the
+  // result is captured once and reused; calling it twice doubled the AJV cost on the path
+  // `resolveAuthority` invokes for every query.
+  const structureValid = validateStructure(document)
+  if (!structureValid) {
     for (const error of validateStructure.errors ?? []) {
       violations.push(
         violation(
@@ -2423,13 +2701,12 @@ export function validateRegistry(document: unknown): ValidationResult {
         ),
       )
     }
-  }
-  if (!validateStructure(document)) {
     const sorted = ordered(violations)
     return { valid: false, violations: sorted, summary: null }
   }
   const registry = document as AuthorityEnforcementRegistry
   violations.push(...semanticViolations(registry))
+  violations.push(...retirementVerificationViolations(registry, options.repoRoot))
   const sorted = ordered(violations)
   return { valid: sorted.length === 0, violations: sorted, summary: summaryFor(registry, sorted) }
 }
@@ -3052,7 +3329,10 @@ function resolveRegularFile(
 }
 
 export function sweepRegistrySources(document: unknown, repoRoot: string): ValidationResult {
-  const base = validateRegistry(document)
+  // The sweep has a repo root, so retirement evidence is digest-verified rather than reported
+  // unverified. The verification itself now lives in `validateRegistry`, so the sweep no longer
+  // carries its own copy and the two cannot drift apart.
+  const base = validateRegistry(document, { repoRoot })
   if (!validateStructure(document)) return base
   const registry = document as AuthorityEnforcementRegistry
   const violations = [...base.violations]
@@ -3071,7 +3351,7 @@ export function sweepRegistrySources(document: unknown, repoRoot: string): Valid
     if (!gitReady) {
       violations.push(
         violation(
-          'MIGRATION_EVIDENCE_INVALID',
+          'REPO_ROOT_INVALID',
           'repository root is not the exact root of a real Git worktree',
         ),
       )
@@ -3080,7 +3360,10 @@ export function sweepRegistrySources(document: unknown, repoRoot: string): Valid
     const rootExists = existsSync(root)
     violations.push(
       violation(
-        rootExists ? 'MIGRATION_EVIDENCE_INVALID' : 'IO_ERROR',
+        // Both branches are operator misconfiguration and both exit 2 (amended AC12). The
+        // nonexistent-root case keeps IO_ERROR; an existing path that is not a worktree root is
+        // REPO_ROOT_INVALID. Neither is exit 1, which is reserved for "the registry is invalid".
+        rootExists ? 'REPO_ROOT_INVALID' : 'IO_ERROR',
         `repository root lacks mandatory real-Git evidence: ${(error as Error).message}`,
       ),
     )
@@ -3395,6 +3678,69 @@ export function sweepRegistrySources(document: unknown, repoRoot: string): Valid
       }
     }
   }
+  for (const reconciliation of registry.reconciliations) {
+    for (const evidence of reconciliation.observedEvidence) {
+      if (evidence.kind === 'git-commit' && gitReady) {
+        try {
+          const objectType = execFileSync('git', ['cat-file', '-t', evidence.reference], {
+            cwd: root,
+            stdio: ['ignore', 'pipe', 'ignore'],
+            encoding: 'utf8',
+          }).trim()
+          if (objectType !== 'commit') throw new Error(`object type is '${objectType}'`)
+          const bytes = execFileSync('git', ['cat-file', '-p', evidence.reference], {
+            cwd: root,
+            stdio: ['ignore', 'pipe', 'ignore'],
+          })
+          if (sha256(bytes) !== evidence.digest) {
+            violations.push(
+              violation('MIGRATION_EVIDENCE_INVALID', 'Git object evidence digest changed'),
+            )
+          }
+        } catch {
+          violations.push(
+            violation('MIGRATION_EVIDENCE_INVALID', 'Git object evidence cannot be resolved'),
+          )
+        }
+      }
+      if (evidence.kind === 'missing-path' && gitReady) {
+        try {
+          const parsed = JSON.parse(evidence.reference) as { commit: string; path: string }
+          execFileSync('git', ['cat-file', '-e', `${parsed.commit}:${parsed.path}`], {
+            cwd: root,
+            stdio: 'ignore',
+          })
+          violations.push(
+            violation(
+              'MIGRATION_EVIDENCE_INVALID',
+              'missing-path evidence exists at its bound commit',
+            ),
+          )
+        } catch {
+          // Expected: the path is absent at the bound commit.
+        }
+      }
+    }
+  }
+  const sorted = ordered(violations)
+  return { valid: sorted.length === 0, violations: sorted, summary: summaryFor(registry, sorted) }
+}
+
+/**
+ * Digest-verify D11 retirement evidence against the real filesystem: resolve each artifact
+ * path, confirm its bytes hash to the recorded digest, and confirm the artifact is a typed,
+ * commit-bound, rule-bound record of the right kind with a passing result.
+ *
+ * Extracted from `sweepRegistrySources` so `validateRegistry` can gate on it too. Before this,
+ * digest verification existed ONLY in the sweep, which neither `resolveAuthority` nor the
+ * `validate` CLI ever called - so four correctly-typed artifacts at four real paths with
+ * all-zero digests were accepted by the predicate that actually gates authority resolution.
+ */
+function retirementEvidenceViolations(
+  registry: AuthorityEnforcementRegistry,
+  root: string,
+): ValidationViolation[] {
+  const violations: ValidationViolation[] = []
   for (const rule of registry.rules) {
     if (rule.retirementState !== 'retired-from-agent-reading') continue
     for (const evidence of Object.values(rule.retirementEvidence)) {
@@ -3491,50 +3837,39 @@ export function sweepRegistrySources(document: unknown, repoRoot: string): Valid
       }
     }
   }
-  for (const reconciliation of registry.reconciliations) {
-    for (const evidence of reconciliation.observedEvidence) {
-      if (evidence.kind === 'git-commit' && gitReady) {
-        try {
-          const objectType = execFileSync('git', ['cat-file', '-t', evidence.reference], {
-            cwd: root,
-            stdio: ['ignore', 'pipe', 'ignore'],
-            encoding: 'utf8',
-          }).trim()
-          if (objectType !== 'commit') throw new Error(`object type is '${objectType}'`)
-          const bytes = execFileSync('git', ['cat-file', '-p', evidence.reference], {
-            cwd: root,
-            stdio: ['ignore', 'pipe', 'ignore'],
-          })
-          if (sha256(bytes) !== evidence.digest) {
-            violations.push(
-              violation('MIGRATION_EVIDENCE_INVALID', 'Git object evidence digest changed'),
-            )
-          }
-        } catch {
-          violations.push(
-            violation('MIGRATION_EVIDENCE_INVALID', 'Git object evidence cannot be resolved'),
-          )
-        }
-      }
-      if (evidence.kind === 'missing-path' && gitReady) {
-        try {
-          const parsed = JSON.parse(evidence.reference) as { commit: string; path: string }
-          execFileSync('git', ['cat-file', '-e', `${parsed.commit}:${parsed.path}`], {
-            cwd: root,
-            stdio: 'ignore',
-          })
-          violations.push(
-            violation(
-              'MIGRATION_EVIDENCE_INVALID',
-              'missing-path evidence exists at its bound commit',
-            ),
-          )
-        } catch {
-          // Expected: the path is absent at the bound commit.
-        }
-      }
-    }
+  return violations
+}
+
+/**
+ * Gate retirement on genuinely digest-verified evidence.
+ *
+ * Retirement REMOVES enforcement, so the fail-closed direction is that an unverifiable retirement
+ * must not take effect. Rather than model "unverified retirement" inside `resolveAuthority` - which
+ * would force filesystem access onto the per-query path FK-P1 calls, against D21's latency budget -
+ * an unverifiable retirement makes the DOCUMENT invalid. `resolveAuthority` then returns
+ * REQUIRE_HUMAN / REGISTRY_INVALID and never reaches the question of whether a retired rule
+ * controls, so it keeps its signature and does no I/O.
+ *
+ * This preserves AC5's flat "retired rules never control": a verified retirement is genuinely
+ * retired, and an unverified one invalidates rather than silently taking effect. Fail-closed, not
+ * fail-quiet.
+ */
+function retirementVerificationViolations(
+  registry: AuthorityEnforcementRegistry,
+  repoRoot: string | undefined,
+): ValidationViolation[] {
+  const retired = registry.rules.filter(
+    (rule) => rule.retirementState === 'retired-from-agent-reading',
+  )
+  if (retired.length === 0) return []
+  if (repoRoot === undefined) {
+    return retired.map((rule) =>
+      violation(
+        'RETIREMENT_EVIDENCE_UNVERIFIED',
+        'retirement evidence cannot be digest-verified without a repository root; supply --repo-root to verify it',
+        { ruleId: rule.ruleId },
+      ),
+    )
   }
-  const sorted = ordered(violations)
-  return { valid: sorted.length === 0, violations: sorted, summary: summaryFor(registry, sorted) }
+  return retirementEvidenceViolations(registry, resolve(repoRoot))
 }

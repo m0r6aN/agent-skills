@@ -57,7 +57,11 @@ function run(argv: readonly string[]): number {
   const [command, registryPath, option, repoRoot, ...rest] = argv
   if (registryPath === undefined || rest.length > 0) return usage()
   if (command !== 'validate' && command !== 'sweep') return usage()
-  if (command === 'validate' && (option !== undefined || repoRoot !== undefined)) return usage()
+  // `validate` accepts an OPTIONAL `--repo-root`, which lets it digest-verify D11 retirement
+  // evidence. Without it a registry containing a retired rule is reported
+  // RETIREMENT_EVIDENCE_UNVERIFIED rather than silently passing.
+  if (command === 'validate' && option !== undefined && option !== '--repo-root') return usage()
+  if (command === 'validate' && option === '--repo-root' && repoRoot === undefined) return usage()
   if (command === 'sweep' && (option !== '--repo-root' || repoRoot === undefined)) return usage()
   const loaded = readDocument(registryPath)
   if (loaded.result !== undefined) {
@@ -66,15 +70,18 @@ function run(argv: readonly string[]): number {
   }
   const result =
     command === 'validate'
-      ? validateRegistry(loaded.document)
+      ? validateRegistry(loaded.document, repoRoot === undefined ? {} : { repoRoot })
       : sweepRegistrySources(loaded.document, repoRoot as string)
   emit(result)
   if (result.valid) return 0
+  // Exit 2 is operational: unreadable input, bad usage, or operator misconfiguration of
+  // `--repo-root`. Exit 1 is reserved for "the registry is invalid" (amended AC12).
   return result.violations.some(
     (violation) =>
       violation.code === 'IO_ERROR' ||
       violation.code === 'PARSE_ERROR' ||
-      violation.code === 'USAGE_ERROR',
+      violation.code === 'USAGE_ERROR' ||
+      violation.code === 'REPO_ROOT_INVALID',
   )
     ? 2
     : 1

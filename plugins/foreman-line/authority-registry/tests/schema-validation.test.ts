@@ -36,7 +36,13 @@ test('schema admits empty principal sets for explicitly unavailable operations',
   )
 })
 
-for (const [name, code] of [
+/**
+ * The seven negative fixtures and the exact violation code each one is named for. Shared by the
+ * in-process loop and the CLI loop below so both assert the SAME named invariant: the CLI loop
+ * previously asserted only `status === 1` and `violations.length > 0`, which any validation
+ * failure satisfies, so all seven stayed green when every code was relabelled to junk.
+ */
+const negativeFixtures = [
   ['reject-identity-mutation.yaml', 'LOCATOR_DIGEST_MISMATCH'],
   ['reject-location-mutation.yaml', 'LOCATOR_DIGEST_MISMATCH'],
   ['reject-value-mutation.yaml', 'VALUE_DIGEST_MISMATCH'],
@@ -44,7 +50,9 @@ for (const [name, code] of [
   ['reject-duplicate-rule.yaml', 'RULE_DUPLICATE'],
   ['reject-contradictory-authority.yaml', 'RULE_CONFLICT'],
   ['reject-missing-source.yaml', 'RULE_SOURCE_MISSING'],
-] as const) {
+] as const
+
+for (const [name, code] of negativeFixtures) {
   test(`${name} rejects with ${code}`, () => {
     const result = validateRegistry(load(name))
     assert.equal(result.valid, false)
@@ -79,21 +87,20 @@ test('CLI validate and sweep return exit 0 with machine-readable summaries', () 
   assert.equal(JSON.parse(sweep.stdout).summary.sourceCount, 18)
 })
 
-for (const name of [
-  'reject-identity-mutation.yaml',
-  'reject-location-mutation.yaml',
-  'reject-value-mutation.yaml',
-  'reject-stale-source.yaml',
-  'reject-duplicate-rule.yaml',
-  'reject-contradictory-authority.yaml',
-  'reject-missing-source.yaml',
-]) {
-  test(`CLI negative fixture ${name} returns exit 1 with all violations`, () => {
+for (const [name, code] of negativeFixtures) {
+  test(`CLI negative fixture ${name} returns exit 1 with ${code}`, () => {
     const result = runCli(['validate', join(fixtures, name)])
     assert.equal(result.status, 1, result.stderr || result.stdout)
-    const output = JSON.parse(result.stdout) as { valid: boolean; violations: unknown[] }
+    const output = JSON.parse(result.stdout) as {
+      valid: boolean
+      violations: { code: string }[]
+    }
     assert.equal(output.valid, false)
     assert.ok(output.violations.length > 0)
+    assert.ok(
+      output.violations.some((violation) => violation.code === code),
+      `expected ${code} from ${name}; observed ${output.violations.map((v) => v.code).join(',')}`,
+    )
   })
 }
 

@@ -1885,6 +1885,52 @@ function expectRegistryInvalid(document: AuthorityEnforcementRegistry): void {
   })
 }
 
+// R14 BLOCKER 4: `resolveAuthority` is an exported API of a `risk: critical` package. A nullish or
+// non-object query previously reached `queryIsValid` unguarded and threw `TypeError`, which a
+// caller with a broad `catch` would turn a fail-closed gate into a fail-open one. Each shape is an
+// independently named control per Standing Constraint #3 - checking one while assuming the rest is
+// default-deny-with-exception, not default-deny.
+for (const [label, malformed] of [
+  ['null', null],
+  ['undefined', undefined],
+  ['a number', 42],
+  ['a string', 'authority'],
+  ['an array', []],
+  ['an empty object', {}],
+  ['a proto-polluted object', JSON.parse('{"__proto__":{"polluted":true}}') as unknown],
+] as const) {
+  test(`R14 resolveAuthority fails closed on ${label} instead of throwing`, () => {
+    const result = resolveAuthority(full, malformed as unknown as AuthorityQuery)
+    assert.equal(result.outcome, 'REQUIRE_HUMAN')
+    if (result.outcome === 'REQUIRE_HUMAN') {
+      assert.equal(result.reasonCode, 'INVALID_QUERY_SCOPE')
+    }
+    assert.deepEqual([...result.controllingRuleIds], [])
+  })
+}
+
+// R14 fix 9: `RegExp.test` and `Array.prototype.includes` coerce, so a non-string axis could slip
+// through. `authoritySubject: 1` stringified to "1", matched the subject pattern, and returned
+// NO_APPLICABLE_AUTHORITY - fail-closed only by accident of cross-type comparison.
+for (const axis of ['authoritySubject', 'goal', 'role', 'stage', 'operation', 'host'] as const) {
+  test(`R14 resolveAuthority refuses a non-string ${axis} rather than coercing it`, () => {
+    const query = {
+      authoritySubject: 'gate3.merge-authority',
+      goal: 'foreman-kernel',
+      role: 'coordinator',
+      stage: 'merge',
+      operation: 'repo-mutation',
+      host: 'provider-neutral',
+    } as unknown as Record<string, unknown>
+    query[axis] = 1
+    const result = resolveAuthority(full, query as unknown as AuthorityQuery)
+    assert.equal(result.outcome, 'REQUIRE_HUMAN')
+    if (result.outcome === 'REQUIRE_HUMAN') {
+      assert.equal(result.reasonCode, 'INVALID_QUERY_SCOPE')
+    }
+  })
+}
+
 test('R13 public resolver rejects a schema-invalid raw registry', () => {
   const mutated = structuredClone(full) as AuthorityEnforcementRegistry & { unexpected?: boolean }
   mutated.unexpected = true
@@ -2857,7 +2903,14 @@ test('R12 coordinator-pattern delegation guidance remains an advisory non-grant'
     'shaping',
     'state-transition',
   )
-  assert.ok(!resolution.consideredRuleIds.includes(rule.ruleId))
+  // Amended AC5: historical/generic rules "remain visible and appear in `consideredRuleIds`
+  // without exception or hand-placed exclusion". Visibility is the property; non-grant is proved
+  // by the four assertions above plus its absence from `controllingRuleIds`.
+  assert.equal(resolution.outcome, 'RESOLVED')
+  assert.ok(resolution.consideredRuleIds.includes(rule.ruleId))
+  if (resolution.outcome === 'RESOLVED') {
+    assert.ok(!resolution.controllingRuleIds.includes(rule.ruleId))
+  }
 })
 
 test('R12 a fourth corroborating or unratified ALLOW is rejected', () => {

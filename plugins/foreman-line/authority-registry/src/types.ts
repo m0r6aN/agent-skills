@@ -349,6 +349,19 @@ export const RESULT_CODES = [
   'RULE_CONFLICT',
   'AUTHORITY_ESCALATION',
   'RETIREMENT_EVIDENCE_INCOMPLETE',
+  /**
+   * Operator misconfiguration: the supplied repository root exists but is not the root of a real
+   * Git worktree. Operational (exit 2), never a registry violation (exit 1) - exit 1 means "the
+   * registry is invalid", and returning it for a mistyped path is a false accusation against canon.
+   */
+  'REPO_ROOT_INVALID',
+  /**
+   * A rule claims `retired-from-agent-reading` but its D11 evidence could not be digest-verified
+   * because no repository root was supplied. Validity-blocking, deliberately: retirement REMOVES
+   * enforcement, so accepting an unverifiable retirement would silently delete canon while
+   * reporting green. Supply `--repo-root` (CLI) or `{ repoRoot }` (API) to verify it.
+   */
+  'RETIREMENT_EVIDENCE_UNVERIFIED',
   'RECONCILIATION_MISSING',
   'MIGRATION_EVIDENCE_INVALID',
   'IO_ERROR',
