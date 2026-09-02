@@ -2,7 +2,7 @@
 
 **Created:** 2026-08-30
 **Owner:** Clinton Morgangit
-**Status:** fully ratified as amended — scoped Gate 1 re-cleared and standing Gate 2 resumed 2026-08-31
+**Status:** fully ratified as amended — see the ratification ledger (§4.1) for the binding set and every ratification event
 **Coordinator:** primary Codex coordinator session that created this charter
 **Mode:** Repo-Local Parcel Mode
 
@@ -68,7 +68,9 @@ dispatches.” D1–D17 were ratified. The required fresh plan review returned
 SHOULD-FIX findings; D3, D7–D9, D13–D17, new D18–D20, the parcel graph, and affected
 exit criteria were placed under a scoped Gate 1 re-open. The developer explicitly
 re-ratified them on 2026-08-31 with: “Re-ratify Gate 1 amendments R1–R13 and resume
-Gate 2.” D1–D20 and the amended graph/exits are binding.
+Gate 2.” Subsequent amendments are ratified individually. **The binding set is the
+ledger in §4.1, not a range restated in prose:** every ratification event appends a row
+there, so no prose sentence in this charter needs editing when a decision is added.
 
 | ID | Decision | Reasoning |
 |---|---|---|
@@ -93,6 +95,21 @@ Gate 2.” D1–D20 and the amended graph/exits are binding.
 | D19 | Public read APIs are content-only by default. Any repository read uses an admission-bound `repoId` plus exact relative path resolved inside one mounted read-only root, with canonical containment, symlink/reparse refusal, regular-file checks, and byte limits. Arbitrary host paths are forbidden. | Read-only access can still disclose unrelated source, secrets, container files, or the SQLite volume. Mutation authority and read confidentiality are separate boundaries. |
 | D20 | First-release enforcement is claimed only for Claude Code on Windows 11 with Docker Desktop and the tested plugin/launcher shape. The MCP protocol and Linux container image remain provider-neutral; native-Linux-host or Codex enforcement is not claimed until separate process-boundary evidence exists. | Two harness shapes do not prove host, path, filesystem, or lifecycle parity. The claim must match the demonstrated platform matrix. |
 | D21 | The kernel's decision path carries a stated latency budget, measured on the D20 platform matrix. Two spans are distinguished: `kernelDecisionLatency` (request received at the decision surface → response written) is kernel-owned and budgeted at p50 ≤ 5 ms, p95 ≤ 20 ms, p99 ≤ 50 ms warm; `mediatedActionLatency` (host lifecycle entry → hook exit, inclusive of adapter and transport) is budgeted at p99 ≤ 150 ms. First-call-after-start cost is reported separately against a ≤ 2000 ms allowance and is never folded into a warm percentile. Exceeding a budget is a recorded obligation, not a refusal. Exceeding the hard deadline of 1000 ms on a single decision is treated as kernel-unreachable and inherits the D8 outage posture unchanged. Authorization results may be cached only when bound to `goalRevision`, `policyDigest`, and compiled-scope digest; a cache entry whose binding no longer matches produces `STATE_REVISION_STALE` rather than a stale ALLOW. | D8's enforcement claim depends on adapters that remain loaded and enabled. Latency is the most probable cause of an operator disabling one, which converts a claimed mechanical control into an undetected gap. Stating the budget also settles transport by derivation — per-invocation container start and network round trips are excluded arithmetically rather than by preference — and prevents the budget from being met by unsound caching. |
+
+### 4.1 Ratification ledger
+
+Authoritative record of what is binding and when it became binding. Any statement
+elsewhere in this charter that appears to enumerate the binding set is a convenience
+restatement; this table governs. A decision is in force only if a row below puts it there.
+
+| Date | Instrument | Scope ratified | Record |
+|---|---|---|---|
+| 2026-08-31 | Original Gate 1 | D1–D17, the FK-P0–FK-P21 graph, wave exits, scenarios, goal exit criteria | “Ratify Gate 1 and authorize Gate 2 dispatches.” |
+| 2026-08-31 | Scoped Gate 1 re-open, plan-review amendments R1–R13 | D3, D7–D9, D13–D17, new D18–D20, amended graph and affected exit criteria | “Re-ratify Gate 1 amendments R1–R13 and resume Gate 2.” |
+| 2026-09-01 | Amendment A1 — decision-path latency budget | D21; FK-P1 and FK-P17 scope; Wave 0 exit; integration scenario 14; §13 items 7 and 9 | `proposed-amendment-A1-decision-path-latency-budget.md`, ratification record at foot |
+
+**Appending a row is the only way to change the binding set.** An amendment document
+that has not produced a row here is a proposal, whatever its own status line says.
 
 ## 5. First-release architecture
 
@@ -322,8 +339,9 @@ This goal exits only when:
 
 **RE-CLEARED 2026-08-31 — nondelegable developer re-ratification recorded.** The
 original Gate 1 was cleared, the fresh plan review returned six decision-changing
-BLOCKERs, and the resulting scoped re-open for R1–R13 was explicitly re-ratified. D1–D20,
-FK-P0–FK-P21, the amended wave exits, scenarios, and goal exit criteria are in force.
+BLOCKERs, and the resulting scoped re-open for R1–R13 was explicitly re-ratified. The
+set in force — including every amendment ratified after this date — is the ledger in
+§4.1. Gate 1 remains nondelegable for each amendment individually.
 
 ### Gate 2 — parcel dispatch
 
