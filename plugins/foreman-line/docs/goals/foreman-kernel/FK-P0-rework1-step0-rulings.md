@@ -187,3 +187,75 @@ edit. Your plan to run it via the command line rather than editing `package.json
 and is adopted — it keeps the control genuinely zero-write.
 
 Report (a) / (b) / (c) before touching a file. On (b), stop for a ruling.
+
+---
+
+# F7 SUPERSEDED — ruled again 2026-09-02, reversing the coordinator
+
+## The collision the builder found
+
+The original F7 ruling ("an unverified retirement does not take effect — the rule stays active and
+keeps controlling") produces a registry that is `valid: true` while containing a rule marked
+`retired-from-agent-reading` that is **still controlling**. That contradicts AC5's flat claim
+"retired rules never control" (verified at spec line 1260) and the Required Tests control that
+proves a retired rule can never control.
+
+The builder stopped rather than implement it, correctly identifying this as the F10 case — closing
+it requires deciding what the invariant *should* be, not merely implementing it.
+
+## Ruling: `RETIREMENT_EVIDENCE_UNVERIFIED` is VALIDITY-BLOCKING
+
+The builder's recommendation is adopted in full. A registry containing a retirement that could not
+be verified is **invalid**; `resolveAuthority` returns `REQUIRE_HUMAN / REGISTRY_INVALID` and never
+reaches the question of whether a retired rule controls.
+
+**Why the reversal, in the builder's own framing, which the coordinator adopts as this parcel's
+standard:** a document that validates but does not mean what it says is the precise failure class
+FK-P0 exists to prevent, and FK-P0 must not contain an instance of it.
+
+It is also simpler on the coordinator's *own* stated goal. The original ruling kept
+`resolveAuthority` I/O-free but required it to model "unverified retirement" as a new internal
+state. Validity-blocking keeps it I/O-free, keeps the signature unchanged, **and** removes the
+state entirely, because the resolver only ever runs against a validated registry.
+
+The two designs differ in exactly one case — a rule retired with four complete, correctly-typed
+evidence artifacts that cannot be verified because no repo root was supplied. Every other case
+(incomplete evidence, wrong kinds, duplicate paths, `standing-constraints` rules) already
+invalidates today and is unaffected. That narrowness is what made the reversal cheap.
+
+## Approved with it
+
+`validate <path> [--repo-root <path>]`, matching the `options.repoRoot` already approved on
+`validateRegistry`. Required for consistency with the R14 AC12 amendment: a `--repo-root` that
+**exists but is not the root of a real Git worktree** is exit 2 (operational), never exit 1 — the
+same rule R14 imposed on `sweep`.
+
+**Accepted operational cost, stated plainly:** `validate` with no repo root can never return exit 0
+for a future registry that retires anything. That is the honest behaviour rather than a green light
+over an unverifiable claim, the flag provides the path to a green, and it costs the shipped
+artifact nothing today — 0 rules are retired (449 `active-reading`, 17 `historical-only`, verified).
+
+## A fourth member of the fix-8 class, found by the builder's sweep
+
+`tests/semantic-invariants.test.ts:1197`, "R4 retired-from-agent-reading rules never control
+authority," asserts only `result.outcome === 'REQUIRE_HUMAN'` and never inspects
+`controllingRuleIds`. **Coordinator verification found it worse than reported:** the test sets
+`retirementState` without recomputing `bindingDigest`, so it trips the manifest pin and returns
+`REQUIRE_HUMAN / REGISTRY_INVALID` — it never exercises retirement at all.
+
+Reviewer A found three (`:899`, `:913`, `:933`); this is a fourth, found by the builder's sweep and
+missed by both reviewers. The class has at least four members. The sweep mandate is doing exactly
+what it was written for.
+
+## BLOCKER 1 mechanism — confirmed on disk
+
+The chain the coordinator asked for already exists as data. Verified linkage:
+`r4` `resultDigest 375ea566…` is `r5`'s `inputDigest`; `r5`'s result `589c6c3e…` is `r6`'s input;
+through `r8`'s result `dc213f21…` to `r9`'s input. Genuine prevHash-style linkage needing no new
+data shape.
+
+Approved plan: pin one genesis digest, walk the records in sequence asserting
+`record[i].prev === record[i-1].new`, and assert the final record's new digest equals
+`registryBindingManifestDigest(document)` recomputed live. Note that the `registry-binding-manifest-r<N>`
+records all share `inputDigest 41ba3a51…`, so the builder must be deliberate about which field is
+the chain link versus the anchor, and state the choice in its completion claim.
