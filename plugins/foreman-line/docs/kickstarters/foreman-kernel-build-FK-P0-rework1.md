@@ -26,7 +26,7 @@ requires a ratified amendment before code — raise it at Step 0, do not work ar
 
 - **Worktree:** `D:/Repos/agent-skills-worktrees/fk-p0-canon-authority-enforcement-registry`
 - **Branch:** `codex/fk-p0-canon-authority-enforcement-registry`
-- **Base commit:** `df639f1` (the coordinator-ratified spec amendment R14, committed alone)
+- **Base commit:** `a703941` (merge bringing the current charter + round-1 paper trail onto this branch, on top of the coordinator-ratified R14 amendment `df639f1`)
 
 Never touch the ambient `D:/Repos/agent-skills` checkout. Never touch another worktree. The
 ambient checkout has a user-owned change at `plugins/foreman-line/routing-policy/routing-policy.yaml`
@@ -89,14 +89,23 @@ That is the **superseded 405-line charter**. The current charter is
 `c19359374480b03c39ce04316f94007fbb87e3be2b5be39bca8dd4072164234d` (435 lines), carrying ratified
 amendment A1 / decision D21.
 
-**Important sequencing fact:** the current charter is **not on this branch**. It lives on
-`codex/foreman-kernel-stage0-20260830`. Do not merge, cherry-pick, or copy that branch yourself.
+**RESOLVED BY THE COORDINATOR before your dispatch.** The goal branch has been merged into this
+one (`a703941`), so the current 435-line charter is now physically present at
+`plugins/foreman-line/docs/goals/foreman-kernel/charter.md` on this branch. Verify that yourself
+before regenerating:
 
-**At Step 0, tell the coordinator which of these you need**, and stop:
-(a) the coordinator syncs the current charter onto this branch first, then you regenerate; or
-(b) you regenerate against a charter path the coordinator supplies.
+```
+sha256sum plugins/foreman-line/docs/goals/foreman-kernel/charter.md
+# expect c19359374480b03c39ce04316f94007fbb87e3be2b5be39bca8dd4072164234d
+```
 
-Do not guess, and do not regenerate against the stale file.
+Regenerate the registry's source bindings against the corpus **as it now stands on this branch**.
+Do not hand-edit digests to make validation pass — regenerate them, and if the regeneration path
+cannot produce a validatable artifact, that is BLOCKER 1 and it must be fixed first.
+
+Note that the merge also brought the round-1 paper trail onto this branch. Those documents are
+**canon sources the registry may need to inventory** — check whether the eighteen-source set is
+still correct, and flag it if adding them is required, since the source set is contract-bound.
 
 ### BLOCKER 3 — `validate` accepts forged retirement evidence
 
