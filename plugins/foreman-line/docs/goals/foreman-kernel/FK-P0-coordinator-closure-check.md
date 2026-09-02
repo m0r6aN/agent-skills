@@ -784,3 +784,78 @@ But what gets handed to FK-P1 differs materially:
 Every one of the 18 failures closed, and the count rose by 8. That half of the tripwire is satisfied
 with room. `semantic-invariants` still running on a quiet machine; the builder declines to report a
 count it has not seen.
+
+## C23 — CORRECTION: the coordinator killed the builder's run, and mischaracterised it
+
+**The record said `semantic-invariants` "stalled in `hard-rule-10`". It did not. The coordinator
+terminated it.**
+
+Established by the builder from its own side: the run died at **10:30:27 with `EXIT=127`** after 23
+minutes, having emitted only the TAP header. **Thirteen seconds later, at 10:30:40**, the coordinator
+started `npm test` in the same worktree. The broad node kill followed by a fresh run explains both
+the exit code and the vanished progress log.
+
+### What the coordinator actually knew, and where it went wrong
+
+Observed: the process at 24:52 elapsed; the fix-20 progress log last written at 10:23, seven minutes
+earlier, at 169 tests. Inferred: it was stalled.
+
+**"Stalled" was the builder's word from an earlier report, repeated by the coordinator as though
+verified. It was not verified.** Seven minutes of silence in a file whose slowest test had a 218 s
+baseline — and a measured ~4× per-query cost — is entirely consistent with *working*. The coordinator
+had the arithmetic to know that and did not do it.
+
+**What was correct:** the run's stdout genuinely was unrecoverable. Its agent had exited, and the
+per-file runner uses `stdio: 'inherit'` to a parent that no longer existed, so it could never have
+produced the pass/fail count AC13 needs. A captured re-run was necessary.
+
+**What was wrong:** killing it without telling the builder first. After C4 — where killing processes
+to "clear the machine" woke both reviewers and corrupted the builder's control run — the coordinator
+had a standing practice of coordinating process management, and broke it. The builder had to
+reconstruct from an exit code what it should have been told.
+
+**Cost:** 23 minutes of compute and one avoidable correction. No evidence lost that was not already
+lost, and no finding changes.
+
+### The builder's judgment on being killed
+
+It declined to start a competing run, on the grounds that doing so would recreate exactly the
+contention it flagged at Step 0 and spent the session controlling for. That is the right call and it
+is the same discipline it applied when it reverted the fenced cache.
+
+### Net position, unchanged
+
+- Committed `0ad7ee3`; tree clean; all five builder commits confined to the package.
+- **141/141 green** across five of six files (baseline 133 with 18 failures — all closed, count up 8),
+  plus `tsc` 0, `biome` 0, `validate` exit 0, `sweep` exit 0 at 18 sources / 1525 items / 469 rules.
+- `semantic-invariants`: **169 passed, 0 failures, terminated before completion.**
+- The full-suite count remains the single unestablished item. The coordinator's captured run is in
+  flight and its result — not the builder's — closes AC13.
+
+## C24 — a post-rework adversarial review is required before Gate 3
+
+Both prior reviewers examined `df8155a`. **Everything they found has since been reworked, and the
+central mechanism they reviewed — the whole-corpus manifest pin — has been replaced** by a
+genesis-anchored migration chain that is now the package's entire anti-tamper surface.
+
+That chain was **designed by the builder, hardened by the coordinator, and then ratified by that same
+coordinator** as R16/R17. No independent party has ever examined it.
+
+**A `risk: critical` parcel must not merge with its core security mechanism reviewed only by the two
+people who built it.** AC15 requires two independent fresh reviews returning no unresolved blocker;
+those reviews were of code that no longer exists in its reviewed form.
+
+Mandate committed at `plugins/foreman-line/docs/kickstarters/foreman-kernel-review-FK-P0-postrework.md`.
+Priority 1 is the chain — forging a head with less than a well-formed chained record, breaking each
+of the four topology guards independently, attacking the head/historical boundary in both
+directions, probing R17's `registry-rework-` scoping, checking whether decoupling twelve historical
+assertions weakened any, and neutering `verifyMigrationChain` to establish whether it is load-bearing
+at all. Priority 2 re-probes everything both prior reviewers vouched for, since the rework could have
+broken it.
+
+Explicitly excluded as findings so the round is spent on what is unexamined: the accepted
+append-a-head limit, the deleted fixtures, `pass-minimal`'s size, per-query performance, and the
+cleared daemons.
+
+**Dispatch is held until the authoritative suite run completes** — reviewer scratch-copy probes spawn
+node processes, and this round has already lost evidence to contention twice.
