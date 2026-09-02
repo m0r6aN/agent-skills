@@ -102,11 +102,15 @@ Authoritative record of what is binding and when it became binding. Any statemen
 elsewhere in this charter that appears to enumerate the binding set is a convenience
 restatement; this table governs. A decision is in force only if a row below puts it there.
 
-| Date | Instrument | Scope ratified | Record |
-|---|---|---|---|
-| 2026-08-31 | Original Gate 1 | D1–D17, the FK-P0–FK-P21 graph, wave exits, scenarios, goal exit criteria | “Ratify Gate 1 and authorize Gate 2 dispatches.” |
-| 2026-08-31 | Scoped Gate 1 re-open, plan-review amendments R1–R13 | D3, D7–D9, D13–D17, new D18–D20, amended graph and affected exit criteria | “Re-ratify Gate 1 amendments R1–R13 and resume Gate 2.” |
-| 2026-09-01 | Amendment A1 — decision-path latency budget | D21; FK-P1 and FK-P17 scope; Wave 0 exit; integration scenario 14; §13 items 7 and 9 | `proposed-amendment-A1-decision-path-latency-budget.md`, ratification record at foot |
+Each row carries a unique ledger entry id. Ids are stable, assigned in order, and never
+reused or renumbered; amendments and the authority registry reference a ratification event
+by its id rather than by its date or its position.
+
+| Entry | Date | Instrument | Scope ratified | Record |
+|---|---|---|---|---|
+| L1 | 2026-08-31 | Original Gate 1 | D1–D17, the FK-P0–FK-P21 graph, wave exits, scenarios, goal exit criteria | “Ratify Gate 1 and authorize Gate 2 dispatches.” |
+| L2 | 2026-08-31 | Scoped Gate 1 re-open, plan-review amendments R1–R13 | D3, D7–D9, D13–D17, new D18–D20, amended graph and affected exit criteria | “Re-ratify Gate 1 amendments R1–R13 and resume Gate 2.” |
+| L3 | 2026-09-01 | Amendment A1 — decision-path latency budget | D21; FK-P1 and FK-P17 scope; Wave 0 exit; integration scenario 14; §13 items 7 and 9 | `proposed-amendment-A1-decision-path-latency-budget.md`, ratification record at foot |
 
 **Appending a row is the only way to change the binding set.** An amendment document
 that has not produced a row here is a proposal, whatever its own status line says.
