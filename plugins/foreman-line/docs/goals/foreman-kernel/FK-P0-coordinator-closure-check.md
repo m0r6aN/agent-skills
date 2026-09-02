@@ -70,3 +70,39 @@ had to be replayed across eight near-identical 40,000-line files.
 **Correctness consequences are delegated to Reviewer B**, whose highest-weighted task is
 empirically mutating each named axis to prove the negative fixtures still have teeth (AC11).
 Maintainability alone is recorded here and does not block.
+
+## C3 — abandoned stash on the FK-P0 worktree (disposition)
+
+Reviewer A flagged (I6), coordinator confirmed:
+
+```
+stash@{0}: On codex/fk-p0-canon-authority-enforcement-registry:
+           fk-p0-r11-partial-before-profile-count-amendment
+```
+
+**Provenance:** the dead Codex session, at R11, immediately before the profile-count
+correction that later landed as `3efd617` / `ae6dac0`.
+
+**Coordinator check:** `git stash show -p stash@{0} | git apply --check --reverse` **fails** on
+all 14 files — the stash does not reverse-apply, because HEAD has advanced through R12 and R13
+past the base the stash was taken from. It is superseded partial state, not lost work: the
+corrections it predates exist as committed history.
+
+**Disposition: LEAVE IN PLACE, do not drop.** Dropping is destructive, recovers nothing, and
+the entry is harmless — a stash is not part of any branch and cannot reach `main`. It is
+recorded here so a future reader does not mistake it for live work. If the worktree is removed
+at Stage-F cleanup, confirm this disposition still reads correctly before removal, since
+worktree removal discards the stash with it.
+
+## Deterministic pass — partial observation
+
+At the time of writing, `npm test` (Node v24.7.0, PowerShell, `--test-concurrency=1`) had
+recorded **133 passed, 0 failed** before stalling inside `tests/semantic-invariants.test.ts`.
+Reviewer A independently observed that single file running **>70 minutes** without producing
+output, with the process alive rather than hung. The two observations agree.
+
+**A green deterministic pass on this parcel does not mean what it appears to mean.** Reviewer A
+established that at least seven `schema-validation.test.ts` assertions and five of a 25-test
+`semantic-invariants` subset pass *solely because of the B1 manifest pin*, not because the
+invariant they name holds. The suite going green is therefore not evidence of correctness for
+those items. This is recorded so the eventual green chain is not read as a refutation of B1.
