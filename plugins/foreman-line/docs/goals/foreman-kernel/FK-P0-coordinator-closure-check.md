@@ -415,3 +415,103 @@ measurement was contaminated by it — the mistake recorded in C4, not repeated.
 
 The leak is still fixed at source in the rework (`-c core.fsmonitor=false` plus
 clone-once-and-reuse); this cleanup only clears the five-day accumulation.
+
+## C12 — BLOCKER 2 substantially closed, and a latent generator bug nobody was looking for
+
+Builder regenerated against the advanced snapshot: `validate` exits 0 — valid, 0 violations, 18
+sources, 1523 items (was 1510), 466 rules. `sweep` fell from 26 violations to 2, both of which
+required coordinator rulings (below).
+
+### The latent R11 identity bug — the round's most valuable incidental find
+
+16 of the 25 violations came from **four item IDs each issued twice** (4 `LOCATOR_DUPLICATE` + 4
+`RULE_DUPLICATE` + 4 `RULE_SEMANTICS_UNCURATED` + 4 digest mismatches).
+
+**Cause:** the R11 legacy-ID reconstruction matched prior inventory items to current Markdown blocks
+**by `lineHint`**. Amendment A1 inserted D21, the §4.1 ledger and scenario 14 into the charter and
+rewrote the loop directive's ownership and state blocks — so line numbers moved, and the matcher
+handed a prior item's identity to an unrelated **new** block. Concretely, `item.4910b2a0a7a3` was
+claimed by both the new `integration scenarios:list-item:14` and the existing
+`goal exit criterion:list-item:7`.
+
+**Latent since R11.** It could only surface when a bound source's line numbering changed, and A1 was
+the first change that moved line numbers. It sat in code both adversarial reviewers read.
+
+**Fix:** the R13 map is anchor-keyed and position-independent, so it becomes authoritative and is
+built first; every identity it issues is reserved; the `lineHint` matcher then fills only anchors
+R13 does not cover, and only with identities not already reserved. Position-independent identity is
+the entire point of anchoring — the bug was that a position-dependent fallback could override it.
+
+### Two further generator fixes
+
+- **The snapshot could not simply advance.** The constant is embedded in the R1–R13 migration
+  records as their own Git evidence, and those records are byte-frozen. Advancing it globally would
+  have rewritten eleven historical records and broken the exact R1–R12 preservation the Required
+  Tests mandate. Split into `SNAPSHOT` (frozen, `51857a3`, historical records only) and
+  `CURRENT_SNAPSHOT` (live). Twelve assertions that compared historical records against the *live*
+  `sourceSnapshotCommit` now compare against a legacy constant — **otherwise every historical record
+  fails the moment the baseline legitimately advances, which is the very advance the chain exists to
+  record.** A design that breaks on its own intended use is a defect whether or not anyone has hit it.
+- The frozen `missing-provenance-reference` record: same class, same fix.
+
+## C13 — Ruling 1: D21 becomes two rules
+
+| Element | Ruling |
+|---|---|
+| Classification (budget) | `post-action-detection` — D21 says "Exceeding a budget is a recorded obligation, not a refusal." A refusal class would claim enforcement that does not exist. |
+| Identity | subject `kernel.decision-latency-budget`, claim `decision-path-latency-is-budgeted-and-measured` |
+| Applicability host | **`any`** — D21 binds "the kernel's decision path" generally; only its *measurement* is D20-scoped. Narrowing to `claude-windows-docker-loaded` would make a provider-neutral query return no applicable authority, misrepresenting the obligation. Here narrowing would be the distortion, not the discipline. |
+| One rule or two | **Two** |
+
+**Rule 2** covers the caching clause (a stale-bound cache entry produces `STATE_REVISION_STALE`
+rather than a stale ALLOW). That is genuinely a refusal, and publishing it under a detection
+classification would *under*-describe it — in this parcel the same sin as overclaiming.
+
+**But rule 2 must not be classified as a current refusal.** AC8 is direct precedent, not analogy:
+"current lack of an Allowed Files body compiler is recorded as a gap owned by FK-P2, not
+misclassified as a current refusal." No kernel exists, so the same treatment applies — an obligation
+owned by FK-P1/FK-P12, using whatever mechanism the registry already uses for the FK-P2 gap.
+
+The hard-deadline clause stays with rule 1 as decision semantics unless it needs distinct semantics.
+
+## C14 — Ruling 2: the ledger fixed at source, by the coordinator
+
+The last violation was `LOCATOR_DUPLICATE` on §4.1. Markdown table rows anchor on their **first
+cell**; the ledger's first column was Date; two rows share `2026-08-31`. Two blocks claimed one
+anchor and the registry could not represent both.
+
+The builder enumerated four options and **each of the three available to it broke something
+ratified**:
+
+| Option | Cost |
+|---|---|
+| (A) occurrence ordinal | Makes two identical rows distinguishable — disables R13's required duplicate-row control and the no-text-only-bypass control. Trades a real anti-bypass invariant for a cosmetic fix. |
+| (B) key on first two cells | Re-anchors every table row in the corpus; invalidates frozen identities wholesale. |
+| (C) rows as provenance | Does not clear the violation — the collision happens at *discovery*, regardless of disposition. |
+| **(D) fix the charter** | Fixes the cause. **Forbidden to the builder; the coordinator's file.** |
+
+**Taken: (D) + (C).** Charter amendment **A1.9** (`7e7dc7d`), committed alone before the
+regeneration depending on it: §4.1 gains a leading `Entry` column with stable ids L1–L3 and one
+sentence fixing their semantics. Every existing cell preserved verbatim; no row added, removed,
+reordered or reworded; the binding set untouched. New charter sha
+`151a5a7cb5f6e92d7780f3ef27af5599e7ba7e7f4a9ef3e91acf8d27dd753f65`.
+
+(C) adopted alongside: the ledger's **rows are provenance** records of ratification events; §4.1's
+**prose carries the operative rules**.
+
+Note for the developer: §4.1 was installed by A1.8, whose text has never been developer-reviewed and
+which carries its own known self-reference defect. A1.9 improves a draft that is **not yet in
+force**; it does not ratify A1.8.
+
+### The finding worth more than the fix
+
+**A governed document whose table cannot be uniquely keyed cannot be bound row-by-row by any
+registry.** That is a constraint on how canon documents must be written if they are to be
+digest-bound, and it holds independently of FK-P0. Carried to the lessons ledger at Stage F.
+
+### Standing commitment extended
+
+The coordinator already undertook not to touch `loop-directive.md` between regeneration and merge.
+That now extends to `charter.md` and **every one of the eighteen bound sources**: no further edits
+until the regenerated registry is committed, and if something forces one, the builder is told before
+rather than after.
