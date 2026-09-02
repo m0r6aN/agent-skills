@@ -703,3 +703,84 @@ Reviewer A's 133 ms stands as the recorded per-query number; whether this parcel
 This is the third time the builder has withheld or withdrawn a claim its own data would not support
 — after the module-evaluation and git-clone attributions. Handing the coordinator no number is worth
 more than a number neither party can defend.
+
+## C21 — an apparent per-query regression, a reverted cache, and one probe outstanding
+
+### What the builder measured
+
+`resolveAuthority` under sustained **distinct**-query load: ~250–282 ms/call, against a baseline
+implying ~62–79 ms. Roughly 4×. The five-axis applicability tests take ~100 s each against ~25 s.
+
+Three independent routes to the number: cross-product arithmetic (~360–400 queries per test,
+100 s / 400 ≈ 250 ms); a standalone 168-query probe measuring 282 ms/call; and the same test taking
+102 s on a **contended** machine and 102 s on a **quiet** one — which disproves contention cleanly.
+The builder checked contention specifically because its own probes had polluted an earlier run, and
+withdrew its own prior "looks environmental" framing on that evidence.
+
+**Ruled out:** `validateRegistry` (81.3 ms vs Reviewer A's 79 ms warm — unchanged);
+`registryBindingManifestDigest` (11.6 ms, and called exactly **once** per validation now, call sites
+verified); the duplicate chain walk (fixed in `0ad7ee3`); module evaluation; clones; memory.
+
+Signature is allocation pressure on the distinct-query path — repeated same-query calls optimise to
+~69 ms, distinct queries do not. Root cause **not** established, and the builder declined to guess a
+fourth time.
+
+### The reverted cache — ratified, and the reasoning adopted as a standing rule
+
+The builder memoised the chain walk's JSON parsing of command-result evidence, keyed by reference
+text. It worked: 282 ms → 251 ms, an 11 % gain, no staleness risk. It then recognised it had added a
+cache **on exactly the per-query path the directive fenced off**, without ratification, and reverted
+it.
+
+Its stated reasoning is adopted as a standing rule for this goal: *"it was only 11 % and it was safe"
+is precisely the reasoning that erodes a scope boundary.* Reporting a reverted change the coordinator
+would never otherwise have seen is worth more than quietly keeping a helpful one.
+
+### The confound the coordinator will not record around — one probe outstanding
+
+The comparison is baseline ~62–79 ms/query against current ~250–282 ms/query. Two things could make
+that wrong:
+
+1. **JIT/measurement conditions.** Repeated same-query calls optimise to ~69 ms while distinct
+   queries do not, and `validateRegistry`'s 81.3 ms is almost certainly a repeated-call figure —
+   `resolveAuthority` calls it internally and cannot be cheaper than it. Yet the baseline arithmetic
+   yields ~62 ms, *less* than `validateRegistry`'s own cost. **That is the same impossibility the
+   builder correctly used one message earlier to condemn its own micro-benchmark — and it sits inside
+   the baseline half of this comparison.**
+2. **Changed query counts.** The applicability tests are not byte-identical to baseline; fix 8 added
+   `reasonCode` assertions in that neighbourhood.
+
+So the live possibilities are (i) a genuine ~4× regression, (ii) a measurement-condition artifact,
+(iii) a changed query count.
+
+**Probe ordered:** run the identical 168-query distinct cross-product harness, unchanged, against the
+**pre-rework** tree in a scratch clone, same machine, quiet, back to back with the current tree.
+Identical harness and query set, only the code differing. That separates (i) from (ii) outright, and
+counting queries in both settles (iii). To run **after** the authoritative `semantic-invariants` run,
+never contending with it.
+
+### Disposition — the same either way, but the wording is not
+
+**Not fixed in FK-P0.** The directive's fence stands, and the builder's instinct is right that root
+cause must precede another cache.
+
+**Not a Gate 3 blocker on correctness grounds.** Nothing fails, nothing is misasserted, the
+applicability tests still assert exactly what they assert. It is a suite-runtime and forward-risk item.
+
+But what gets handed to FK-P1 differs materially:
+
+- **If genuine:** a regression *this parcel introduced*, recorded as such and **not laundered into
+  Reviewer A's pre-existing S6 forward risk**. It compounds D21 exposure — further from p95 ≤ 20 ms,
+  not closer — and FK-P1 inherits a known *regression*, not merely a known cost.
+- **If an artifact:** the honest record is that per-query cost is **unestablished**, and that both the
+  133 ms and the 250–282 ms figures were taken under conditions that do not support the comparison.
+
+## C22 — five of six files complete and green
+
+| | Baseline | Post-rework |
+|---|---|---|
+| bare-specifier, corpus-sweep, dependency-allowlist, parity, schema-validation | 133 tests, **18 failures** | **141 tests, 0 failures** |
+
+Every one of the 18 failures closed, and the count rose by 8. That half of the tripwire is satisfied
+with room. `semantic-invariants` still running on a quiet machine; the builder declines to report a
+count it has not seen.
