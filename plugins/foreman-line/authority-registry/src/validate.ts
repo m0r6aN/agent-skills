@@ -63,6 +63,32 @@ const REQUIRED_REWORK_MIGRATIONS = [
   'registry-rework-544d8a3',
   'registry-rework-0683bc0',
 ] as const
+/**
+ * AC4 obligation 6 as amended by R22 - the shipped chain head, bound through channels that do NOT
+ * depend on its being the head.
+ *
+ * Before R22 the head was absent from `RECONCILIATION_RECORD_DIGESTS`, `RECONCILIATION_CONTRACT`,
+ * `RECONCILIATION_PROSE` and `REQUIRED_REWORK_MIGRATIONS` alike, and R19's obligation 2
+ * (pinned => not head) plus the record-manifest check below (not head => pinned) made
+ * `head <=> unpinned`. The unpinned slot was therefore a free slot for whoever claimed it, and three
+ * attacks walked through it: deleting the head, deleting it and substituting a structural copy under
+ * a fresh id, and rewriting it IN PLACE under the same id. The third defeats a presence-only
+ * obligation entirely, because the head never departs.
+ *
+ * This id is deliberately NOT added to `RECONCILIATION_RECORD_DIGESTS`: obligation 2 keys on
+ * presence in that table, so adding it would declare the shipped head ineligible to be the head and
+ * invalidate the shipped registry. Measured: it does exactly that, AND still admits the
+ * delete-and-substitute attack, because a pin binds only a record that is still present.
+ */
+const SHIPPED_CHAIN_HEAD_ID = 'registry-rework-df8155a'
+/**
+ * The canonical record digest of the shipped head, consulted ONLY once the record is no longer the
+ * head. While it IS the head it stays bound to the live manifest, so appending a legitimately
+ * amended registry does not require regenerating or re-pinning anything; once a successor demotes
+ * it, it becomes a historical record and is bound exactly like the eleven before it.
+ */
+const SHIPPED_CHAIN_HEAD_RECORD_DIGEST =
+  'ca5015f0446edbc5e1d7055357dac8d60cc87b4d283f0bba9ce26c15b40d88d2'
 const REQUIRED_OPERATIONS = [
   'gate1.ratify',
   'gate2.dispatch',
@@ -486,6 +512,16 @@ const RECONCILIATION_CONTRACT = {
     refs: ['fk-charter:item.2a524c1ea63f'],
     rules: ['rule.fk-charter.2a524c1ea63f'],
   },
+  // R22 obligation 6: the attestation the head carries is pinned by IDENTITY, not by bytes. These
+  // fields survive regeneration - `refs` compares sourceId:itemId only, never the digests - so the
+  // head stays free to declare a fresh live manifest while its R14 attestation cannot be hollowed
+  // out in place. That in-place rewrite validated green with zero violations before R22.
+  'registry-rework-df8155a': {
+    topic: 'R13 registry bindings superseded by the coordinator-ratified FK-P0 R14 rework.',
+    status: 'superseded-by-amendment',
+    refs: ['fk-charter:item.2a524c1ea63f'],
+    rules: ['rule.fk-charter.2a524c1ea63f'],
+  },
 } as const
 
 const PRIOR_R11_BINDING_MANIFEST_DIGEST =
@@ -652,6 +688,10 @@ const RECONCILIATION_PROSE: Readonly<Record<string, readonly [string, string]>> 
   ],
   'registry-rework-0683bc0': [
     'The R13 normative Markdown audit, fail-closed public resolver, structural YAML profile model, lineHint-free identity, and duplicate keyed-table refusal supersede the R12 registry bindings in FK scope.',
+    'Future binding changes require another typed prior-to-new migration record.',
+  ],
+  'registry-rework-df8155a': [
+    'The R14 genesis-anchored migration chain, digest-verified retirement evidence, fail-closed resolver query guard, and re-bound charter and loop-directive sources supersede the R13 registry bindings in FK scope.',
     'Future binding changes require another typed prior-to-new migration record.',
   ],
 }
@@ -892,9 +932,22 @@ function chainLinkFor(record: ReconciliationRecord): ChainLinkResult {
 }
 
 /**
+ * The record-digest binding for an id: the shipped pin table, plus the shipped head's own constant.
+ *
+ * R22 obligation 7 - a properly chained new head must be ADMITTED. Before R22 the demoted former
+ * head needed an entry in `RECONCILIATION_RECORD_DIGESTS` it did not have, so appending was refused
+ * and the only file-only route that passed was the one that ERASED the attestation. That inverted
+ * the accepted residual from append-only into history-destroying.
+ */
+function recordDigestPinFor(reconciliationId: string): string | undefined {
+  if (reconciliationId === SHIPPED_CHAIN_HEAD_ID) return SHIPPED_CHAIN_HEAD_RECORD_DIGEST
+  return RECONCILIATION_RECORD_DIGESTS[reconciliationId]
+}
+
+/**
  * AC4 obligations 2 and 3 as amended by R19 - the floor the chain head must clear.
  *
- * The head is the one record exempt from `RECONCILIATION_RECORD_DIGESTS`, because it is bound
+ * The head is the one record not bound by a record digest WHILE IT IS THE HEAD, because it is bound
  * instead to the manifest recomputed live from the document it sits in. That exemption has to be a
  * NARROWER binding than a pin and never a weaker one; before R19 nothing constrained the head's
  * content at all, and two independent reviewers each drove a tampered registry through it.
@@ -942,8 +995,19 @@ function headFloorViolations(record: ReconciliationRecord): ValidationViolation[
       ),
     )
   }
+  // AC4 obligation 3 as amended by R22: the predicate binds THE TWO CHAIN COMMANDS THEMSELVES,
+  // never `.some()` over every command-result on the record. Under `.some()` a single decoy entry
+  // satisfied the check while the real prior and superseding commands carried tool 'attacker',
+  // `actorClass: 'anonymous'` and `exitCode: 137` - measured `valid: true`, zero violations, against
+  // a control that refused. Free against the shipped registry: 24 of 24 chain commands already
+  // satisfy the stricter form.
+  const chainCommands = [
+    ...commandsWithPrefix(record, PRIOR_MANIFEST_COMMAND_PREFIX),
+    ...commandsWithPrefix(record, SUPERSEDING_MANIFEST_COMMAND_PREFIX),
+  ]
   if (
-    !parsedCommandResults(record).some(
+    chainCommands.length === 0 ||
+    !chainCommands.every(
       (command) =>
         command.tool === AUTHORITY_REGISTRY_TOOL &&
         command.actorClass === 'coordinator' &&
@@ -953,7 +1017,7 @@ function headFloorViolations(record: ReconciliationRecord): ValidationViolation[
     violations.push(
       violation(
         'MIGRATION_EVIDENCE_INVALID',
-        `migration chain head '${record.reconciliationId}' carries no command evidence issued by this tool with actorClass 'coordinator' and exitCode 0`,
+        `migration chain head '${record.reconciliationId}' does not declare both binding-manifest chain commands as issued by this tool with actorClass 'coordinator' and exitCode 0`,
       ),
     )
   }
@@ -981,6 +1045,31 @@ function headFloorViolations(record: ReconciliationRecord): ValidationViolation[
  */
 function evidenceBindingViolations(record: ReconciliationRecord): ValidationViolation[] {
   const violations: ValidationViolation[] = []
+  // AC4 obligation 5 as amended by R22. Distinctness by the full (kind, reference, digest) triple
+  // was defeated by VARYING the digest, and nothing constrained how many git-commit entries a chain
+  // record carried - so deleting the unbound second entry, adding a fabricated one, and duplicating
+  // the bound reference under a different digest were all admitted. Both narrowings are free against
+  // the shipped registry: 12 of 12 chain records carry exactly two git-commit entries, and 12 of 12
+  // have references distinct by reference alone.
+  if (record.reconciliationId.startsWith(MIGRATION_CHAIN_PREFIX)) {
+    const gitEvidence = record.observedEvidence.filter((evidence) => evidence.kind === 'git-commit')
+    if (gitEvidence.length !== 2) {
+      violations.push(
+        violation(
+          'MIGRATION_EVIDENCE_INVALID',
+          `migration record '${record.reconciliationId}' declares ${gitEvidence.length} git-commit evidence entries; exactly two are required`,
+        ),
+      )
+    }
+    if (new Set(gitEvidence.map((evidence) => evidence.reference)).size !== gitEvidence.length) {
+      violations.push(
+        violation(
+          'MIGRATION_EVIDENCE_INVALID',
+          `migration record '${record.reconciliationId}' repeats a git-commit reference; a differing digest does not make it a second attestation`,
+        ),
+      )
+    }
+  }
   const seen = new Set<string>()
   for (const evidence of record.observedEvidence) {
     const identity = canonicalJson({
@@ -2313,7 +2402,9 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
       )
     }
   }
-  for (const migrationId of REQUIRED_REWORK_MIGRATIONS) {
+  // R22 obligation 6: the shipped head is REQUIRED to be present, so deleting it - with or without
+  // a substitute under another id - invalidates the document instead of vacating a free slot.
+  for (const migrationId of [...REQUIRED_REWORK_MIGRATIONS, SHIPPED_CHAIN_HEAD_ID]) {
     if (!document.reconciliations.some((record) => record.reconciliationId === migrationId)) {
       violations.push(
         violation(
@@ -2354,8 +2445,8 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
       migrationChain.headId !== null && record.reconciliationId === migrationChain.headId
     if (
       !isChainHead &&
-      (RECONCILIATION_RECORD_DIGESTS[record.reconciliationId] === undefined ||
-        sha256(canonicalJson(record)) !== RECONCILIATION_RECORD_DIGESTS[record.reconciliationId])
+      (recordDigestPinFor(record.reconciliationId) === undefined ||
+        sha256(canonicalJson(record)) !== recordDigestPinFor(record.reconciliationId))
     ) {
       violations.push(
         violation(

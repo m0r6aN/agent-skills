@@ -97,6 +97,36 @@ function expectCode(document: unknown, code: string): void {
 }
 
 /**
+ * For a test whose PREMISE is "this document is valid apart from the thing under test".
+ *
+ * `expectCode` asserts only that the named code is present, so such a test keeps passing while the
+ * document is invalid for a reason it never names - which is standing constraint #11 in its exact
+ * form. Two of the four `rechain()` callers did precisely that when the head became required: they
+ * still saw `RULE_ORPHANED` and `RETIREMENT_EVIDENCE_*`, so they passed, while the document was also
+ * carrying an unrelated `RECONCILIATION_MISSING` their premise excluded.
+ *
+ * This is NOT a global replacement for `expectCode`: many mutations legitimately produce several
+ * violations, and forcing exactness there would fail for correct behaviour. The distinction is the
+ * premise, not the assertion style.
+ */
+function expectOnlyCodes(document: unknown, ...expected: readonly string[]): void {
+  const observed = codes(document)
+  const unexpected = observed.filter((code) => !expected.includes(code))
+  if (unexpected.length > 0) {
+    throw new Error(
+      `premise violated: document is invalid for reasons this test does not name: ${[
+        ...new Set(unexpected),
+      ].join(',')}; observed ${observed.join(',')}`,
+    )
+  }
+  for (const code of expected) {
+    if (!observed.includes(code)) {
+      throw new Error(`expected ${code}; observed ${observed.join(',')}`)
+    }
+  }
+}
+
+/**
  * Append a properly chained migration record so a deliberately amended registry can be VALID.
  *
  * The binding manifest is bound to the chain head, so any change to a source, inventory item or
@@ -108,24 +138,46 @@ function expectCode(document: unknown, code: string): void {
  * `reconciliations` sit outside `registryBindingManifestDigest`, so appending this record does not
  * perturb the digest it declares.
  */
-function rechain(document: AuthorityEnforcementRegistry): AuthorityEnforcementRegistry {
+function rechain(
+  document: AuthorityEnforcementRegistry,
+  reconciliationId = 'registry-rework-testchain',
+): AuthorityEnforcementRegistry {
   const chainRecords = document.reconciliations.filter((record) =>
     record.reconciliationId.startsWith('registry-rework-'),
   )
   const head = chainRecords[chainRecords.length - 1]
   ok(head)
-  // Chain from the head's OWN predecessor and REPLACE the head, rather than appending after it.
-  // Appending would demote the shipped head to a historical record, which would then require a
-  // pinned digest in validate.ts's RECONCILIATION_RECORD_DIGESTS - something a test cannot add.
-  // Replacing keeps every pinned record pinned and leaves exactly one head, as AC4 requires.
+  // R22 obligation 7: APPEND after the shipped head rather than replacing it. Replacement was
+  // forced only because a demoted head then needed a pin entry it did not have - and that inverted
+  // the accepted residual, because the cheapest file-only route that passed became the one that
+  // ERASED the R14 attestation. The shipped head now carries its own record-digest binding, so the
+  // legitimate append path is the one under test here, which is what these callers meant all along.
   const headCommands = head.observedEvidence
     .filter((evidence) => evidence.kind === 'command-result')
-    .map((evidence) => JSON.parse(evidence.reference) as { commandId: string; inputDigest: string })
+    .map(
+      (evidence) =>
+        JSON.parse(evidence.reference) as {
+          commandId: string
+          inputDigest: string
+          resultDigest: string
+        },
+    )
+  // Chain from the head's OWN successor digest: the appended record supersedes the shipped head,
+  // so its predecessor is what the head declared, not what the head chained FROM.
   const predecessorDigest = headCommands.find((command) =>
     command.commandId.startsWith('superseding-binding-manifest'),
-  )?.inputDigest
+  )?.resultDigest
   ok(predecessorDigest)
   const nextDigest = registryBindingManifestDigest(document)
+  // NO-OP APPEND guard. If the caller has not actually amended a bound value the manifest has not
+  // moved, so this record would declare `prev === next` - a self-loop the chain walk correctly reads
+  // as a cycle. Refuse to build it rather than let a caller assert against a document that is
+  // invalid for the TEST's reason instead of the code's.
+  assert.notEqual(
+    nextDigest,
+    predecessorDigest,
+    'rechain(): the manifest has not moved, so this append would be a self-loop - amend a bound value first',
+  )
   const command = (commandId: string, inputDigest: string, resultDigest: string) =>
     canonicalJson({
       tool: '@foreman-line/authority-registry',
@@ -153,11 +205,9 @@ function rechain(document: AuthorityEnforcementRegistry): AuthorityEnforcementRe
   return {
     ...document,
     reconciliations: [
-      ...document.reconciliations.filter(
-        (record) => record.reconciliationId !== head.reconciliationId,
-      ),
+      ...document.reconciliations,
       {
-        reconciliationId: 'registry-rework-testchain',
+        reconciliationId,
         topic: 'Test-authored amendment superseding the shipped bindings.',
         observedRefs: [basis],
         observedEvidence: [
@@ -412,16 +462,14 @@ test('builder cannot be inserted as generic receipt mint principal', () => {
 })
 
 test('every required reconciliation is mandatory', () => {
-  // Deleting a REQUIRED record is a missing reconciliation. The chain head is not in the required
-  // set - deliberately, because `rechain()` legitimately replaces it - so deleting the head is
-  // caught by a different invariant, asserted separately below. Asserting one code for both was
-  // over-broad: it demanded RECONCILIATION_MISSING for a record no required list names.
-  const chainHeadId = 'registry-rework-df8155a'
+  // R22 obligation 6: the chain head IS now in the required set, so EVERY reconciliation - the head
+  // included - must report RECONCILIATION_MISSING when deleted. Before R22 this loop skipped the
+  // head, because `rechain()` legitimately replaced it; that skip is exactly the hole the
+  // delete-and-substitute attack walked through, so the loop must no longer have an exemption.
   let checked = 0
   for (let index = 0; index < valid.reconciliations.length; index += 1) {
     const removed = valid.reconciliations[index]
     ok(removed)
-    if (removed.reconciliationId === chainHeadId) continue
     const mutated = structuredClone(valid)
     ;(mutated.reconciliations as AuthorityEnforcementRegistry['reconciliations'][number][]).splice(
       index,
@@ -434,7 +482,11 @@ test('every required reconciliation is mandatory', () => {
     )
     checked += 1
   }
-  assert.equal(checked, valid.reconciliations.length - 1)
+  assert.equal(
+    checked,
+    valid.reconciliations.length,
+    'every reconciliation, including the chain head, must be required',
+  )
 })
 
 test('deleting the chain head invalidates rather than promoting a pinned record', () => {
@@ -1385,6 +1437,11 @@ test('R4 corroborating source ref cannot promote a rule above its authority basi
   // Re-chained, so the refusal below is about the corroboration itself and not about a stale
   // binding manifest the mutation would otherwise have left behind.
   const amended = rechain(mutated)
+  // PREMISE GUARD (R22). This test's premise is "the appended chain is well-formed, so every code
+  // below is caused by the borrowed corroboration". Asserting only `includes` let it keep passing
+  // when the document was ALSO invalid for an unrelated reason - it saw RULE_ORPHANED and stopped
+  // looking. Naming the complete expected set is what makes the premise load-bearing.
+  expectOnlyCodes(amended, 'RULE_ORPHANED', 'MIGRATION_EVIDENCE_INVALID')
   const observed = validateRegistry(amended).violations.map((violation) => violation.code)
   ok(
     observed.includes('RULE_ORPHANED'),
@@ -1418,6 +1475,10 @@ test('R4 retired-from-agent-reading rules never control authority', () => {
   // Retirement REMOVES enforcement, so a retirement that is not fully evidenced and
   // digest-verified must not take effect. It is validity-blocking, which is the named property:
   // a retired rule can never end up controlling, because the document never becomes resolvable.
+  // PREMISE GUARD (R22): the appended chain is well-formed, so the only violations may be the
+  // retirement objections this test names. Without this the test passes on a document that is
+  // invalid for a reason it never checked.
+  expectOnlyCodes(amended, 'RETIREMENT_EVIDENCE_INCOMPLETE', 'RETIREMENT_EVIDENCE_UNVERIFIED')
   const observed = validateRegistry(amended).violations.map((violation) => violation.code)
   ok(
     observed.includes('RETIREMENT_EVIDENCE_INCOMPLETE') ||
@@ -4268,9 +4329,13 @@ test('AC4 O3 rejects a head whose command evidence is not coordinator-issued wit
         return { kind: evidence.kind, reference, digest: sha256(reference) }
       })
   })
+  // R22 narrowed obligation 3 from "some command-result on the record" to "BOTH chain commands", so
+  // the refusal message changed with it. The assertion stays pinned to message text rather than
+  // loosening to "some violation fired": a test that stops naming which property failed is worth
+  // less than one that has to be updated when the property changes.
   ok(
     messagesFor(mutated).some((message) =>
-      message.includes('carries no command evidence issued by'),
+      message.includes('does not declare both binding-manifest chain commands as issued by'),
     ),
     `expected the command-shape refusal; observed ${messagesFor(mutated).join(' | ')}`,
   )
@@ -4414,4 +4479,589 @@ test('AC4 R19 route A: a shadow link declaring the manifest of a tampered regist
   })
   assert.equal(result.outcome, 'REQUIRE_HUMAN')
   assert.equal(result.reasonCode, 'REGISTRY_INVALID')
+})
+
+// ===========================================================================================
+// R22 obligations 6 and 7 - written FROM THE ATTACKS, not from the remedy.
+//
+// Reviewer A's sharpest finding in round 2 was that all four outstanding defects reproduced against
+// a 563/563 green suite, because the AC4 block was built to the shape of the fix. Every test below
+// is a mutation that validated GREEN before R22, run as a refusal - and the states R22 requires to
+// be ADMITTED are asserted too, because an obligation that only ever refuses is half-measured.
+//
+// The payload is the on-the-nose one throughout: retiring every rule asserting that Gate 3 merges
+// are human-owned and nondelegated, in a parcel whose purpose is representing honestly where
+// enforcement is real.
+// ===========================================================================================
+
+/** Retire every `gate3.merge-authority` rule and re-digest it. Returns the count actually flipped. */
+function retireMergeAuthority(document: AuthorityEnforcementRegistry): number {
+  let flipped = 0
+  for (const rule of document.rules) {
+    if (rule.authoritySubject !== 'gate3.merge-authority') continue
+    if (rule.retirementState !== 'active-reading') continue
+    ;(rule as { retirementState: string }).retirementState = 'historical-only'
+    ;(rule as { bindingDigest: string }).bindingDigest = bindingDigestFor(rule)
+    flipped += 1
+  }
+  // The no-op trap. This exact probe reported a clean bypass for three separate parties in this
+  // parcel while flipping ZERO rules, because it keyed on `ruleId` instead of `authoritySubject`.
+  assert.notEqual(flipped, 0, 'the payload must actually retire rules')
+  return flipped
+}
+
+/** Re-anchor a record's superseding chain command at the document's live binding manifest. */
+function reanchorTo(record: Reconciliation, document: AuthorityEnforcementRegistry): void {
+  const live = registryBindingManifestDigest(document)
+  let changed = false
+  ;(record as { observedEvidence: readonly Evidence[] }).observedEvidence =
+    record.observedEvidence.map((evidence) => {
+      if (evidence.kind !== 'command-result') return evidence
+      const parsed = JSON.parse(evidence.reference) as Record<string, unknown>
+      if (
+        typeof parsed.commandId !== 'string' ||
+        !parsed.commandId.startsWith('superseding-binding-manifest')
+      ) {
+        return evidence
+      }
+      const reference = canonicalJson({ ...parsed, resultDigest: live })
+      if (reference !== evidence.reference) changed = true
+      return { kind: evidence.kind, reference, digest: sha256(reference) }
+    })
+  assert.equal(changed, true, 're-anchoring must actually change the superseding command')
+}
+
+test('R22 control: the shipped registry is valid, so every refusal below is caused by its mutation', () => {
+  assert.deepEqual(codes(full), [])
+})
+
+test('R22 O6 refuses deleting the head and substituting a copy under a fresh unpinned id', () => {
+  // THE BLOCKER. Before R22 this validated `valid: true` with ZERO violations while retiring every
+  // rule asserting merges are human-owned, and `resolveAuthority` collapsed from RESOLVED with four
+  // controlling rules to REQUIRE_HUMAN / NO_APPLICABLE_AUTHORITY. The count still read 18.
+  const mutated = structuredClone(full)
+  retireMergeAuthority(mutated)
+  const head = headOf(mutated)
+  const substitute = structuredClone(head)
+  ;(substitute as { reconciliationId: string }).reconciliationId = 'registry-rework-ff00001'
+  ;(mutated as { reconciliations: readonly Reconciliation[] }).reconciliations = [
+    ...mutated.reconciliations.filter((record) => record.reconciliationId !== CHAIN_HEAD_ID),
+    substitute,
+  ]
+  assert.equal(
+    mutated.reconciliations.some((record) => record.reconciliationId === CHAIN_HEAD_ID),
+    false,
+    'the head must actually be gone',
+  )
+  assert.equal(
+    mutated.reconciliations.length,
+    full.reconciliations.length,
+    'the substitution keeps the count unchanged, which is what made it invisible',
+  )
+  // Re-anchor the SUBSTITUTE, not `headOf(mutated)`: that helper resolves by CHAIN_HEAD_ID and
+  // carries its own `ok(head, ...)`, so calling it after deleting that id throws before the
+  // assertion is reached. The helper's guard is what made this fail loudly instead of quietly.
+  reanchorTo(substitute, mutated)
+  expectOnlyCodes(mutated, 'RECONCILIATION_MISSING')
+})
+
+test('R22 O6 refuses rewriting the head IN PLACE under the same id', () => {
+  // The route that defeats a presence-only obligation: the head never departs. Before R22 this
+  // erased the R14 attestation and validated green with zero violations.
+  const mutated = structuredClone(full)
+  retireMergeAuthority(mutated)
+  const head = headOf(mutated)
+  const beforeTopic = head.topic
+  ;(head as { topic: string }).topic = 'Routine maintenance.'
+  ;(head as { scopedDisposition: string }).scopedDisposition = 'Routine maintenance.'
+  assert.notEqual(head.topic, beforeTopic, 'the attestation must actually be rewritten')
+  reanchorTo(head, mutated)
+  assert.equal(
+    JSON.stringify(mutated).includes('R14 genesis-anchored migration chain'),
+    false,
+    'the attestation prose must actually be gone from the document',
+  )
+  expectOnlyCodes(mutated, 'MIGRATION_EVIDENCE_INVALID')
+})
+
+test('R22 O6 refuses rewriting the head attestation even with no payload at all', () => {
+  // Isolates the attestation binding from the payload: hollowing the record is refused on its own.
+  const mutated = withMutatedHead((record) => {
+    ;(record as { scopedDisposition: string }).scopedDisposition = 'Routine maintenance.'
+  })
+  expectOnlyCodes(mutated, 'MIGRATION_EVIDENCE_INVALID')
+})
+
+test('R22 O7 ADMITS a properly chained appended head and preserves the demoted head', () => {
+  // The state that MUST be admitted. Round 2 closed this path, which inverted the accepted residual
+  // from append-only into history-destroying: the cheapest passing route became the one that erased
+  // the attestation.
+  const mutated = structuredClone(full)
+  retireMergeAuthority(mutated)
+  const amended = rechain(mutated)
+  assert.equal(
+    amended.reconciliations.some((record) => record.reconciliationId === CHAIN_HEAD_ID),
+    true,
+    'the shipped head must be PRESERVED, not replaced - that is the point of the obligation',
+  )
+  assert.equal(
+    amended.reconciliations.length,
+    full.reconciliations.length + 1,
+    'the append must actually add a record',
+  )
+  assert.deepEqual(codes(amended), [])
+})
+
+test('R22 O7 refuses an append that also rewrites the demoted former head', () => {
+  // Extending the chain does not license rewriting what came before it.
+  const mutated = structuredClone(full)
+  retireMergeAuthority(mutated)
+  const amended = rechain(mutated)
+  const demoted = amended.reconciliations.find(
+    (record) => record.reconciliationId === CHAIN_HEAD_ID,
+  )
+  ok(demoted)
+  const before = canonicalJson(demoted)
+  ;(demoted as { scopedDisposition: string }).scopedDisposition = 'Routine maintenance.'
+  assert.notEqual(canonicalJson(demoted), before, 'the demoted head must actually be rewritten')
+  expectOnlyCodes(amended, 'MIGRATION_EVIDENCE_INVALID')
+})
+
+test('R22 O3 refuses gutted chain commands that a coordinator decoy would have excused', () => {
+  // Reviewer B's finding. Obligation 3 was `.some()` over EVERY command-result, so one decoy entry
+  // satisfied it while both real chain commands carried tool 'attacker', anonymous, exit 137.
+  const mutated = withMutatedHead((record) => {
+    ;(record as { observedEvidence: readonly Evidence[] }).observedEvidence =
+      record.observedEvidence.map((evidence) => {
+        if (evidence.kind !== 'command-result') return evidence
+        const parsed = JSON.parse(evidence.reference) as Record<string, unknown>
+        const reference = canonicalJson({
+          ...parsed,
+          tool: 'attacker',
+          actorClass: 'anonymous',
+          exitCode: 137,
+        })
+        return { kind: evidence.kind, reference, digest: sha256(reference) }
+      })
+    const decoy = canonicalJson({
+      tool: '@foreman-line/authority-registry',
+      toolVersion: '0.1.0',
+      commandId: 'decoy-command',
+      inputDigest: sha256('decoy-input'),
+      resultDigest: sha256('decoy-result'),
+      exitCode: 0,
+      actorClass: 'coordinator',
+    })
+    ;(record.observedEvidence as Evidence[]).push({
+      kind: 'command-result',
+      reference: decoy,
+      digest: sha256(decoy),
+    })
+  })
+  ok(
+    messagesFor(mutated).some((message) =>
+      message.includes('does not declare both binding-manifest chain commands as issued by'),
+    ),
+    'expected the chain-command refusal; observed ' + messagesFor(mutated).join(' | '),
+  )
+})
+
+// ------------------------------------------------- R22 obligation 5: the git-commit evidence shape
+//
+// Six head-only git-commit edits were admitted before R22 while the README described ONE. Four close
+// under obligation 5 and are asserted as refusals below; TWO genuinely remain and are asserted as
+// admitted, each with a control proving the same edit is refused on a pinned record. A stated limit
+// narrower than the true one is a defect in this deliverable, so both halves are pinned by test.
+
+/** The head's `git-commit` reference that the prior chain command's `inputDigest` binds. */
+function boundGitReferenceOf(record: Reconciliation): string {
+  const prior = record.observedEvidence
+    .filter((evidence) => evidence.kind === 'command-result')
+    .map((evidence) => JSON.parse(evidence.reference) as { commandId: string; inputDigest: string })
+    .find((command) => command.commandId.startsWith('registry-binding-manifest'))
+  ok(prior, 'the head must declare a prior binding-manifest command')
+  const bound = record.observedEvidence.find(
+    (evidence) =>
+      evidence.kind === 'git-commit' && sha256(evidence.reference) === prior.inputDigest,
+  )
+  ok(bound, 'the prior command must bind a git-commit reference on the same record')
+  return bound.reference
+}
+
+test('R22 O5 refuses deleting the unbound second git-commit entry from the head', () => {
+  const mutated = withMutatedHead((record) => {
+    const bound = boundGitReferenceOf(record)
+    const before = record.observedEvidence.length
+    ;(record as { observedEvidence: readonly Evidence[] }).observedEvidence =
+      record.observedEvidence.filter(
+        (evidence) => !(evidence.kind === 'git-commit' && evidence.reference !== bound),
+      )
+    assert.notEqual(record.observedEvidence.length, before, 'an entry must actually be removed')
+  })
+  expectOnlyCodes(mutated, 'MIGRATION_EVIDENCE_INVALID')
+})
+
+test('R22 O5 refuses a fabricated extra git-commit entry on the head', () => {
+  const mutated = withMutatedHead((record) => {
+    ;(record.observedEvidence as Evidence[]).push({
+      kind: 'git-commit',
+      reference: 'c'.repeat(40),
+      digest: sha256('fabricated-object-body'),
+    })
+  })
+  expectOnlyCodes(mutated, 'MIGRATION_EVIDENCE_INVALID')
+})
+
+test('R22 O5 refuses the bound git-commit reference repeated under a differing digest', () => {
+  // Distinctness by the full (kind, reference, digest) triple was defeated by VARYING the digest.
+  // The unbound entry is REPLACED rather than appended, so the record still carries exactly two
+  // git-commit entries - which isolates the distinctness rule from the cardinality rule instead of
+  // letting one test pass on the other's refusal.
+  const mutated = withMutatedHead((record) => {
+    const bound = boundGitReferenceOf(record)
+    let replaced = false
+    ;(record as { observedEvidence: readonly Evidence[] }).observedEvidence =
+      record.observedEvidence.map((evidence) => {
+        if (evidence.kind !== 'git-commit' || evidence.reference === bound) return evidence
+        replaced = true
+        return { kind: 'git-commit', reference: bound, digest: sha256('varied-digest') }
+      })
+    assert.equal(replaced, true, 'the duplicate must actually be introduced')
+  })
+  const gitCount = headOf(mutated).observedEvidence.filter(
+    (evidence) => evidence.kind === 'git-commit',
+  ).length
+  assert.equal(gitCount, 2, 'cardinality must still hold, so only distinctness can be refusing')
+  ok(
+    messagesFor(mutated).some((message) => message.includes('repeats a git-commit reference')),
+    'expected the distinctness refusal; observed ' + messagesFor(mutated).join(' | '),
+  )
+})
+
+test('R22 O5 refuses a head whose entire Git provenance is fabricated', () => {
+  // Reviewer A's deepest shape: the attacker controls BOTH sides of the obligation-4 binding, so
+  // repointing the reference and recomputing the prior command's `inputDigest` to match is
+  // self-consistent. What it cannot do is satisfy the evidence shape.
+  const mutated = withMutatedHead((record) => {
+    const fabricated = 'd'.repeat(40)
+    ;(record as { observedEvidence: readonly Evidence[] }).observedEvidence =
+      record.observedEvidence.map((evidence) =>
+        evidence.kind === 'git-commit'
+          ? { kind: 'git-commit', reference: fabricated, digest: sha256('fabricated-object-body') }
+          : evidence,
+      )
+    ;(record as { observedEvidence: readonly Evidence[] }).observedEvidence =
+      record.observedEvidence.map((evidence) => {
+        if (evidence.kind !== 'command-result') return evidence
+        const parsed = JSON.parse(evidence.reference) as Record<string, unknown>
+        if (
+          typeof parsed.commandId !== 'string' ||
+          !parsed.commandId.startsWith('registry-binding-manifest')
+        ) {
+          return evidence
+        }
+        const reference = canonicalJson({ ...parsed, inputDigest: sha256(fabricated) })
+        return { kind: evidence.kind, reference, digest: sha256(reference) }
+      })
+  })
+  expectOnlyCodes(mutated, 'MIGRATION_EVIDENCE_INVALID')
+})
+
+test('R22 residual, stated exactly: repointing the head UNBOUND git-commit reference is admitted', () => {
+  // The SECOND of exactly two surviving residuals. Obligation 4 binds one git-commit reference per
+  // chain record - the one the prior command's `inputDigest` covers. The second reference carries no
+  // binder, and the obvious candidate binder (require it to equal the snapshot commit) is NOT free:
+  // it would invalidate the shipped registry, which is the R19-obligation-4 mistake exactly. So this
+  // is reported rather than disguised as covered.
+  const mutated = withMutatedHead((record) => {
+    const bound = boundGitReferenceOf(record)
+    let repointed = false
+    ;(record as { observedEvidence: readonly Evidence[] }).observedEvidence =
+      record.observedEvidence.map((evidence) => {
+        if (evidence.kind !== 'git-commit' || evidence.reference === bound) return evidence
+        assert.notEqual(evidence.reference, 'b'.repeat(40), 'the repoint must not be a no-op')
+        repointed = true
+        return { kind: 'git-commit', reference: 'b'.repeat(40), digest: evidence.digest }
+      })
+    assert.equal(repointed, true, 'the unbound reference must actually be repointed')
+  })
+  assert.deepEqual(
+    validateRegistry(mutated).violations.map((violation) => violation.code),
+    [],
+    'stated residual: the second git-commit reference on the head carries no binding',
+  )
+
+  // Control - the same edit on a PINNED record is refused, so the residual covers the head alone.
+  const pinnedMutated = structuredClone(full)
+  const pinned = pinnedMutated.reconciliations.find(
+    (record) => record.reconciliationId === 'registry-rework-0683bc0',
+  )
+  ok(pinned)
+  const target = pinned.observedEvidence.find(
+    (evidence) =>
+      evidence.kind === 'git-commit' && evidence.reference !== boundGitReferenceOf(pinned),
+  )
+  ok(target)
+  ;(target as { reference: string }).reference = 'b'.repeat(40)
+  expectOnlyCodes(pinnedMutated, 'MIGRATION_EVIDENCE_INVALID')
+})
+
+test('R22 O7 limit, stated exactly: the append path is one deep, and the second is refused', () => {
+  // The residual claims "append-only and history-preserving". This pins how FAR that goes, because a
+  // stated limit WIDER than the true one is the same defect as one that is narrower - it just fails
+  // in the flattering direction. Appending one properly chained head is admitted; a SECOND append
+  // demotes the first appended record, which has no record-digest binding of its own, so it is
+  // refused until someone pins it in `src/validate.ts`. That is the discipline every past rework
+  // round followed, and it is why the eleven historical records carry pins at all.
+  const amendedOnce = structuredClone(full)
+  let firstFlipped = 0
+  for (const rule of amendedOnce.rules) {
+    if (rule.authoritySubject !== 'gate3.merge-authority') continue
+    if (rule.retirementState !== 'active-reading') continue
+    ;(rule as { retirementState: string }).retirementState = 'historical-only'
+    ;(rule as { bindingDigest: string }).bindingDigest = bindingDigestFor(rule)
+    firstFlipped += 1
+  }
+  assert.notEqual(firstFlipped, 0, 'the first amendment must actually change a bound value')
+  const first = rechain(amendedOnce)
+  assert.deepEqual(codes(first), [], 'the FIRST append must be admitted')
+
+  // A real second amendment, so the second appended record is not a self-loop on an unchanged
+  // manifest - the manifest has to actually move or the chain walk sees a cycle rather than a link.
+  const second = structuredClone(first)
+  let flipped = 0
+  for (const rule of second.rules) {
+    if (rule.authoritySubject !== 'goal.exit-merge') continue
+    if (rule.retirementState !== 'active-reading') continue
+    ;(rule as { retirementState: string }).retirementState = 'historical-only'
+    ;(rule as { bindingDigest: string }).bindingDigest = bindingDigestFor(rule)
+    flipped += 1
+  }
+  assert.notEqual(flipped, 0, 'the second amendment must actually change a bound value')
+  const amendedAgain = rechain(second, 'registry-rework-testchain2')
+  assert.equal(
+    amendedAgain.reconciliations.length,
+    full.reconciliations.length + 2,
+    'both appended records must be present',
+  )
+  ok(
+    messagesFor(amendedAgain).some(
+      (message) =>
+        message.includes('registry-rework-testchain') &&
+        message.includes('differs from its complete canonical record manifest'),
+    ),
+    'expected the demoted first appended record to be unbound; observed ' +
+      messagesFor(amendedAgain).join(' | '),
+  )
+})
+
+// ===========================================================================================
+// The chain TOPOLOGY guards - orphan, cycle, fork, genesis anchor, truncation,
+// wrong-predecessor and prefix-dodge.
+//
+// `verifyMigrationChain` has implemented every one of these since R16, and both round-2 reviewers
+// probed them by hand and reported them firing. But a reviewer probe evaporates when the reviewer
+// finishes: until now NONE of them was pinned by a test in any of the six files, so the core of the
+// chain was held up by nothing that runs. That is the same defect class as everything else in this
+// round - a guard nobody exercises is a guard nobody knows still works.
+//
+// Each construction below was MEASURED against this implementation before being written as a test,
+// and each asserts the specific message its guard emits rather than "some violation fired", so it
+// binds to the invariant it names. These deliberately do NOT use `expectOnlyCodes`: breaking the
+// topology legitimately cascades into several violations, so the premise "valid apart from the
+// thing under test" does not hold and an exact-set assertion would be brittle for correct reasons.
+// ===========================================================================================
+
+function chainRecordsOf(document: AuthorityEnforcementRegistry): Reconciliation[] {
+  return document.reconciliations.filter((record) =>
+    record.reconciliationId.startsWith('registry-rework-'),
+  )
+}
+
+/** Rewrite one chain command on a record, returning whether anything actually changed. */
+function patchChainCommand(
+  record: Reconciliation,
+  prefix: string,
+  mutate: (command: Record<string, unknown>) => Record<string, unknown>,
+): boolean {
+  let changed = false
+  ;(record as { observedEvidence: readonly Evidence[] }).observedEvidence =
+    record.observedEvidence.map((evidence) => {
+      if (evidence.kind !== 'command-result') return evidence
+      const parsed = JSON.parse(evidence.reference) as Record<string, unknown>
+      if (typeof parsed.commandId !== 'string' || !parsed.commandId.startsWith(prefix)) {
+        return evidence
+      }
+      const reference = canonicalJson(mutate(parsed))
+      if (reference !== evidence.reference) changed = true
+      return { kind: evidence.kind, reference, digest: sha256(reference) }
+    })
+  return changed
+}
+
+function chainCommandOf(record: Reconciliation, prefix: string): Record<string, unknown> {
+  const parsed = record.observedEvidence
+    .filter((evidence) => evidence.kind === 'command-result')
+    .map((evidence) => JSON.parse(evidence.reference) as Record<string, unknown>)
+    .find(
+      (command) => typeof command.commandId === 'string' && command.commandId.startsWith(prefix),
+    )
+  ok(parsed, 'the record must declare a ' + prefix + ' command')
+  return parsed
+}
+
+function expectMessage(document: unknown, fragment: string): void {
+  ok(
+    messagesFor(document).some((message) => message.includes(fragment)),
+    'expected a violation containing "' +
+      fragment +
+      '"; observed ' +
+      messagesFor(document).join(' | '),
+  )
+}
+
+test('chain topology: an off-path migration record is refused as an orphan', () => {
+  const mutated = structuredClone(full)
+  const template = chainRecordsOf(mutated)[0]
+  ok(template)
+  const commit = '1'.repeat(40)
+  const prev = sha256('nowhere')
+  const next = sha256('elsewhere')
+  const command = (commandId: string, inputDigest: string, resultDigest: string) =>
+    canonicalJson({
+      tool: '@foreman-line/authority-registry',
+      toolVersion: '0.1.0',
+      commandId,
+      inputDigest,
+      resultDigest,
+      exitCode: 0,
+      actorClass: 'coordinator',
+    })
+  const prior = command('registry-binding-manifest-orphan', sha256(commit), prev)
+  const superseding = command('superseding-binding-manifest-orphan', prev, next)
+  const basis = template.observedRefs[0]
+  ok(basis)
+  const before = mutated.reconciliations.length
+  ;(mutated.reconciliations as Reconciliation[]).push({
+    reconciliationId: 'registry-rework-orphan1',
+    topic: 'Off-path probe record.',
+    observedRefs: [basis],
+    observedEvidence: [
+      { kind: 'git-commit', reference: commit, digest: sha256('orphan-prior-body') },
+      { kind: 'git-commit', reference: 'f'.repeat(40), digest: sha256('orphan-snapshot-body') },
+      { kind: 'command-result', reference: prior, digest: sha256(prior) },
+      { kind: 'command-result', reference: superseding, digest: sha256(superseding) },
+    ],
+    authoritativeRuleIds: template.authoritativeRuleIds,
+    scopedDisposition: 'Off-path probe.',
+    unresolvedConsequence: 'Off-path probe.',
+    migrationStatus: 'superseded-by-amendment',
+    supersedingEvidence: basis,
+  } as Reconciliation)
+  assert.notEqual(mutated.reconciliations.length, before, 'the orphan must actually be added')
+  expectMessage(mutated, 'do not lie on the single genesis-to-head chain')
+})
+
+test('chain topology: a self-looping head is refused as a cycle', () => {
+  // The head declares prev === next, so the walk arrives at a digest that maps back to the record
+  // it just consumed. This is the exact shape a no-op append produces, which is why `rechain()`
+  // refuses to build one.
+  const mutated = structuredClone(full)
+  const records = chainRecordsOf(mutated)
+  const head = records[records.length - 1]
+  ok(head)
+  const superseding = chainCommandOf(head, 'superseding-binding-manifest')
+  const changed = patchChainCommand(head, 'superseding-binding-manifest', (command) => ({
+    ...command,
+    resultDigest: superseding.inputDigest,
+  }))
+  assert.equal(changed, true, 'the self-loop must actually be introduced')
+  expectMessage(mutated, 'binding manifest chain contains a cycle')
+})
+
+test('chain topology: two records chaining from one predecessor are refused as a fork', () => {
+  // Across-record fork detection, as distinct from R19 obligation 1 which refuses a fork INSIDE a
+  // single record. Both exist because neither can see the other's case.
+  const mutated = structuredClone(full)
+  const records = chainRecordsOf(mutated)
+  const twin = structuredClone(records[5])
+  ok(twin)
+  ;(twin as { reconciliationId: string }).reconciliationId = 'registry-rework-fork1'
+  const changed = patchChainCommand(twin, 'superseding-binding-manifest', (command) => ({
+    ...command,
+    resultDigest: sha256('divergent-successor'),
+  }))
+  assert.equal(changed, true, 'the twin must actually diverge')
+  ;(mutated.reconciliations as Reconciliation[]).push(twin)
+  expectMessage(mutated, 'binding manifest chain forks at')
+})
+
+test('chain topology: a chain that does not start at the genesis anchor is refused', () => {
+  // The genesis digest is the one pinned constant the walk starts from. Repointing the first
+  // record away from it must not silently produce a shorter but self-consistent chain.
+  const mutated = structuredClone(full)
+  const first = chainRecordsOf(mutated)[0]
+  ok(first)
+  const bogus = sha256('not-the-genesis-anchor')
+  // Both sides move together: the restatement axis is checked first and would otherwise mask this.
+  const a = patchChainCommand(first, 'superseding-binding-manifest', (command) => ({
+    ...command,
+    inputDigest: bogus,
+  }))
+  const b = patchChainCommand(first, 'registry-binding-manifest', (command) => ({
+    ...command,
+    resultDigest: bogus,
+  }))
+  assert.equal(a && b, true, 'both chain-link sides must actually move')
+  expectMessage(mutated, 'no record chaining from the genesis anchor')
+})
+
+test('chain topology: removing a middle record truncates the chain and orphans its successors', () => {
+  const mutated = structuredClone(full)
+  const victim = chainRecordsOf(mutated)[5]
+  ok(victim)
+  const victimId = victim.reconciliationId
+  const before = mutated.reconciliations.length
+  ;(mutated as { reconciliations: readonly Reconciliation[] }).reconciliations =
+    mutated.reconciliations.filter((record) => record.reconciliationId !== victimId)
+  assert.notEqual(mutated.reconciliations.length, before, 'the record must actually be removed')
+  expectMessage(mutated, 'do not lie on the single genesis-to-head chain')
+  expectMessage(mutated, "required rework migration '" + victimId + "' is missing")
+})
+
+test('chain topology: a record chaining from the wrong predecessor is refused', () => {
+  // Distinct attack from truncation - nothing is deleted, one record simply claims a predecessor
+  // that no record produces. It converges on the same guard, which is worth knowing rather than
+  // assuming.
+  const mutated = structuredClone(full)
+  const middle = chainRecordsOf(mutated)[6]
+  ok(middle)
+  const bogus = sha256('wrong-predecessor')
+  const a = patchChainCommand(middle, 'superseding-binding-manifest', (command) => ({
+    ...command,
+    inputDigest: bogus,
+  }))
+  const b = patchChainCommand(middle, 'registry-binding-manifest', (command) => ({
+    ...command,
+    resultDigest: bogus,
+  }))
+  assert.equal(a && b, true, 'the predecessor claim must actually change')
+  expectMessage(mutated, 'do not lie on the single genesis-to-head chain')
+})
+
+test('chain topology: renaming a record out of the chain prefix does not let it escape', () => {
+  // The chain is selected by id prefix, so a near-miss id is the obvious dodge: rename the head and
+  // it stops being a chain record at all. R22 obligation 6 catches it by REQUIRED PRESENCE, and
+  // obligation 2 catches the pinned record the rename would promote - two independent axes.
+  const mutated = structuredClone(full)
+  const target = mutated.reconciliations.find((record) => record.reconciliationId === CHAIN_HEAD_ID)
+  ok(target)
+  ;(target as { reconciliationId: string }).reconciliationId = 'registry-rewurk-df8155a'
+  assert.equal(
+    mutated.reconciliations.some((record) => record.reconciliationId === CHAIN_HEAD_ID),
+    false,
+    'the head id must actually be gone',
+  )
+  expectMessage(mutated, "required rework migration 'registry-rework-df8155a' is missing")
+  expectMessage(mutated, 'cannot be the migration chain head')
 })

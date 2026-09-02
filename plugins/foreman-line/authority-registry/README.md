@@ -164,7 +164,7 @@ appends a properly chained migration record, and refused when it does not. A cha
 value therefore requires a typed prior-to-new record — which is the migration discipline the spec
 defines, now enforced rather than approximated by a hardcoded whole-corpus constant.
 
-**The head's floor (AC4 obligations 1-5, amendments R19 and R21).** "Well-formed" is a checked
+**The head's floor (AC4 obligations 1-7, amendments R19, R21 and R22).** "Well-formed" is a checked
 property, not a hopeful adjective. A chain record declares **exactly one** prior and **exactly one**
 superseding binding-manifest command, so a second superseding command cannot fork the chain *inside*
 a record where across-record fork detection cannot see it. A record whose id appears in the shipped
@@ -172,9 +172,48 @@ record-digest table is **never** the head, so head position is not selectable by
 id presence rather than byte-match, because byte-match would let a tamperer break a pinned record's
 own match first and then promote it. The head has a **required shape**: `superseded-by-amendment`
 with non-null superseding evidence, at least one forty-character lowercase hex `git-commit`, and
-command evidence issued by this tool with `actorClass` `coordinator` and `exitCode` `0`. Evidence
+**both** binding-manifest chain commands issued by this tool with `actorClass` `coordinator` and
+`exitCode` `0` — checked on the chain commands themselves, never by `.some()` over every command on
+the record, because a single decoy entry otherwise excused two gutted chain commands. Evidence
 **references are bound by a digest computed over them**, and no digest is ever verified by comparison
-with itself. Evidence entries on a record are **distinct** by kind, reference and digest together.
+with itself. A chain record carries **exactly two** `git-commit` entries, **distinct by reference
+alone** — distinctness by kind, reference and digest together was defeated by varying the digest.
+
+**The shipped chain head is bound through channels that do not depend on its being the head
+(obligation 6).** This is the defect R22 exists to close. `RECONCILIATION_RECORD_DIGESTS`,
+`RECONCILIATION_CONTRACT`, `RECONCILIATION_PROSE` and `REQUIRED_REWORK_MIGRATIONS` held the same set
+and the head was in none of them, while obligation 2 says *pinned ⇒ not head* and the record-manifest
+check says *not head ⇒ pinned* — together making `head ⟺ unpinned`, so the unpinned slot was a free
+slot for whoever claimed it. Three attacks are now refused independently: **deleting** the head,
+**deleting and substituting** a structural copy under any other id, and **rewriting it in place**
+under the same id. The third is the one that defeats a presence-only rule, because the head never
+departs. The head's id is deliberately *not* added to the record-digest table: obligation 2 keys on
+presence there, so adding it would declare the shipped head ineligible to be the head — measured, it
+invalidates the shipped registry *and* still admits the substitution, because a pin binds only a
+record that is still present.
+
+**A properly chained new head is admitted (obligation 7).** The demoted former head stays bound as a
+historical record. The residual is therefore **append-only and history-preserving**: extending the
+chain is always cheaper than erasing an attestation, which matters because the Git-history review
+this residual leans on is defeated by erasure and not by extension.
+
+That extension is **one deep**, and the limit is stated here rather than discovered later. Appending
+one properly chained head is admitted with zero violations. A *second* append demotes the first
+appended record, which then has no record-digest binding of its own and is refused with a single
+`MIGRATION_EVIDENCE_INVALID` until it is pinned in `src/validate.ts`. That is the same discipline
+every past rework round followed — it is why the eleven historical records carry pins at all — and it
+means a file-only editor can extend the chain once, not indefinitely.
+
+**That limit is not on the regeneration path.** `npm run generate` does not append a migration
+record and does not demote the head: it re-emits the *same* head id with its superseding manifest
+recomputed live (`src/generate.ts`), so a corpus change produces eighteen reconciliations in and
+eighteen out, with `registry-rework-df8155a` still the head. Confirmed by construction — amend a
+bound value, re-emit the head as the generator does, and the result validates with **zero
+violations and no `src/validate.ts` edit**. The append-depth limit therefore constrains the *manual*
+path only: a party hand-editing the file who chooses to extend the chain rather than re-anchor the
+head. This is the answer to the question left open in round 2 — whether a corpus change can still be
+regenerated into a valid artifact — and it is **yes**, so the regeneration problem the migration
+chain replaced a frozen whole-corpus constant to solve is solved rather than partly solved.
 
 **Where a binding does not exist, this says so rather than implying one.** `source-ref`,
 `command-result` and `missing-path` digests are the SHA-256 of their own reference and are checked
@@ -182,17 +221,50 @@ as such. A `git-commit` digest is not: it attests the commit *object body*
 (`sha256(git cat-file -p <commit>)`), which no hermetic validator can recompute. What binds a
 `git-commit` entry is the record it sits on — the prior-binding-manifest command's `inputDigest` is
 the SHA-256 of a `git-commit` reference on that same record, so repointing or deleting that evidence
-breaks the binding. The residual is therefore narrow and exact: **on the chain head alone, rewriting
-a `git-commit` digest while leaving its reference intact is not independently detectable.** On every
-other record the same edit breaks the record's pin. Both halves are pinned by test — the refusal and
-the residual, each with a control.
+breaks the binding.
 
-**The honest limit.** This makes silent substitution *detectable*, not impossible. Anyone who can
-edit the registry file can also append a genuinely well-formed, correctly chained head record
-declaring the manifest of a tampered registry, and validation will pass. R19's obligations make
-"well-formed" mean something; they do not close that, and do not pretend to. The registry is a
-contract, not a trust root. Real anti-tamper is Git history plus human review; the chain's job is to
-make an undeclared change fail loudly, not to make a declared-but-illegitimate one impossible.
+**The residual, stated exactly.** Six head-only `git-commit` edits were once admitted while this
+document described one. Four now refuse — deleting the unbound second entry, adding a fabricated
+one, repeating the bound reference under a differing digest, and fabricating the whole provenance.
+**Exactly two remain, both on the chain head alone:**
+
+1. **rewriting a `git-commit` digest while leaving its reference intact** — the digest attests the
+   commit object body, which cannot be recomputed offline; and
+2. **repointing the second, unbound `git-commit` reference** — obligation 4 binds one reference per
+   chain record, and the obvious candidate binder (requiring the other to equal the snapshot commit)
+   is **not free**: it would invalidate the shipped registry, which is the mistake R21 had to correct
+   in R19's obligation 4.
+
+On every other record both edits break the record's pin. All four refusals and both residuals are
+pinned by test, each residual with a control on a pinned record.
+
+**The honest limit, stated at its true width.** This makes silent substitution *detectable*, not
+impossible. A party who can edit the registry file has **two** ways past the chain, not one:
+
+1. **append** a genuinely well-formed, correctly chained new head declaring the manifest of a
+   tampered registry; or
+2. **re-anchor the existing head in place** — leave its id, topic, contract fields and prose exactly
+   as they are, and move only its superseding manifest to match the tampered corpus.
+
+Both validate clean. The second is worth naming precisely because it is **the generator's own
+legitimate operation**: `npm run generate` after a corpus change re-emits the same head id with a
+recomputed manifest, which is byte-for-byte the same edit. The validator cannot distinguish the
+honest regeneration from the dishonest one, and no obligation here claims it can.
+
+**What is refused** is the third move, and it is the one that matters for review: the head's
+attestation may not be **hollowed**. Its topic, status, source references, rule ids and prose are
+contract-bound, so an editor cannot retire the rules asserting that merges are human-owned *and*
+rewrite the record's account of itself to match. Deleting the head is refused; substituting a copy
+under another id is refused; rewriting its prose is refused. What survives is exactly the pair above.
+
+This paragraph previously claimed a tamper "must **add** to the record rather than rewrite it." That
+was **false** — an in-place re-anchor is a rewrite — and it understated what an editor can do. It is
+recorded here rather than quietly corrected, because a limit stated *narrower* than the truth is the
+same defect as one stated wider: both are wrong, and both fail in the direction that flatters the
+implementation. The registry is a contract, not a trust root. Real anti-tamper is Git history plus
+human review — and every one of these edits is visible in a `git diff`, which is the property the
+residual actually leans on. The chain's job is to make an undeclared change fail loudly, not to make
+a declared-but-illegitimate one impossible.
 
 ### Bound sources change, and that is a deliberate act
 
