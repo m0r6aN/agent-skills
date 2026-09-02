@@ -515,3 +515,106 @@ The coordinator already undertook not to touch `loop-directive.md` between regen
 That now extends to `charter.md` and **every one of the eighteen bound sources**: no further edits
 until the regenerated registry is committed, and if something forces one, the builder is told before
 rather than after.
+
+## C15 — CORRECTION to C9/C10: fix 21's root cause is git subprocess spawn, not clones
+
+Third correction to this one question, and the third time the coordinator wrote a hypothesis into
+the goal record before a measurement existed. Settled by CPU profile.
+
+| Measurement | Value |
+|---|---|
+| `validateRegistry` | 82–129 ms — matches both reviewers |
+| `git clone` | ~340 ms → 48 clones ≈ **16 s**, not 795 s |
+| **`sweepRegistrySources`** | **~10,500 ms per call → 62 calls ≈ 651–930 s** |
+
+`corpus-sweep`'s entire 795 s is `sweepRegistrySources`. A CPU profile attributes **98.6 % of one
+sweep to idle time blocked on `spawn`**. The sweep shells out to git roughly **87 times per call** —
+two per source snapshot commit (18 sources), two per reconciliation git-commit evidence ref (25
+refs), plus the worktree probe and the missing-path check. On Windows each spawn costs on the order
+of 100 ms; 87 × ~120 ms ≈ 10.4 s, matching the measured 10.5 s almost exactly.
+
+### The scoreboard on this one question
+
+| Hypothesis | Source | Verdict |
+|---|---|---|
+| `structuredClone` memory pressure | Rework directive (coordinator) | Wrong for `corpus-sweep` |
+| Module evaluation | Builder | Wrong — 2.8 % |
+| **Git clone cost** | **Builder, adopted by the coordinator into C9/C10 as settled** | **Wrong — ~16 s of 795 s** |
+| Git subprocess spawn inside `sweepRegistrySources` | Builder, CPU profile | **Right — essentially all of it** |
+
+Three plausible hypotheses, three wrong, and only the profile settled it. Each correction came from
+a measurement rather than a better guess. The standing lesson is the coordinator's own: **passing is
+not evidence, and neither is a mechanism that sounds right.**
+
+C9's instruction to spend fix 21's effort on clone-once-and-reuse is **withdrawn**.
+
+### The fix, and its honest limit
+
+Git invocations memoised by repository root plus exact argument vector. Sound because the answers
+are immutable within a process — a Git object's type and content are fixed by its sha, and a
+directory's worktree root does not change. Failures are cached too. Keying on the root means the
+copied-corpus and missing-git-metadata tests, which sweep different roots, are unaffected.
+
+**Measured: repeat sweeps 10.5 s → ~4–5 s.**
+
+**Stated limit:** most `corpus-sweep` tests clone a *fresh* temp root, and a fresh root is a fresh
+cache key, so those still pay full spawn cost. Making the cache fully effective would require the
+temp-root tests to share one clone — a real refactor with residue risk for the tests that rename and
+symlink inside their root. **Not done.** Fix 21 will be reported partially closed with the achieved
+runtime, not claimed closed.
+
+**A soundness trap the builder declined:** keying the cache on the git ref alone would have made
+every test fast and would have let one repository's answer satisfy a query about a different
+repository. **No current test would have caught it** — which is precisely why it was refused.
+
+## C16 — fix 20 shipped inert, and the builder caught it before claiming it
+
+The first implementation used a top-level `afterEach` writing to `process.stderr`. It typechecked,
+it read correctly, and it produced **zero output**. Four controlled probes, in order:
+
+1. top-level `afterEach` — does not fire for top-level tests at all. Zero markers.
+2. marker in a `finally` wrapper — fires, but still zero output: node's runner intercepts
+   `process.stderr` to attribute output to tests.
+3. raw `writeSync(2, …)` bypassing the stream object — also intercepted. Zero output.
+4. `appendFileSync` to a file in the OS temp directory — **works**, and captured the failing test as
+   well as the passing one.
+
+Shipped implementation appends to `os.tmpdir()/fk-p0-progress-<file>.log`. **Coordinator-verified**
+it writes to `tmpdir()` and never into the package, so no unlisted file is created and Allowed Files
+is not widened.
+
+**This is the round's failure mode in miniature, and it very nearly landed.** A plausible mechanism,
+coordinator-approved, would have been reported "fix 20 closed", and would have delivered nothing —
+in a fix whose entire purpose is making failures visible. Only the probe caught it.
+
+Note the compounding: the coordinator's *original* fix-20 remedy (switch to TAP) was already proven
+non-working; this was the *second* remedy for the same fix to fail on contact with reality. Both
+were caught by probe rather than by reasoning.
+
+## C17 — further items closed, with two more staleness instances materialised in code
+
+- **D21 curated as two rules** per C13. `latency-budget` post-action-detection; `cache-revision-binding`
+  `unsupported`. The compound-rule path hardcoded `pre-action-refusal` for *every* compound rule, so
+  the classification was parameterised rather than hand-carving an exception — the right call, since
+  a hand-carved exception is defect class #7. Both normalized statements are exact contiguous
+  substrings of the D21 row, sliced programmatically from the generated excerpt so they cannot drift.
+- **The D-row enumeration was hardcoded `D1..D20`** — the F6 staleness, materialised in code rather
+  than merely in prose. D21 was discovered by the sweep and then *silently not inventoried*. Raised
+  to 21, with a comment that it must be raised when a new decision is ratified and that the sweep
+  fails until it is.
+- **Integration scenario 14 existed as an inventory item but was excluded** (`ruleIds: []`), so
+  R15's "all fourteen published" was **not** satisfied by regeneration alone. Curated to match
+  scenario 13's shape. R15 would otherwise have been nominally applied and substantively unmet.
+- **Fix 17 (NTFS alternate data streams):** all four shapes were already refused, but only
+  *incidentally*, by failing to resolve — and `charter.md::$DATA` resolved far enough to reach
+  locator checks, meaning stream syntax was admitted by the path model. `pathProblem` now rejects any
+  interior colon, so they are refused **by policy**. Six independently named controls.
+
+### Builder-reported mistake, recorded
+
+While repairing a botched edit the builder ran `git checkout --` on both test files, reverting them
+to the last commit and silently discarding the fix 12/13/14/17 tests appended since. Noticed within
+a minute; all restored from working notes; typecheck and lint re-verified. Nothing lost.
+
+This is the lesson-#17 class — a destructive step riding alongside ordinary work — and it is
+recorded because the builder self-reported it unprompted rather than letting a gap be found later.
