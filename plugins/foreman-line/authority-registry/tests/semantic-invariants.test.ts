@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { appendFileSync, readFileSync, writeFileSync } from 'node:fs'
+import { appendFileSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { test as nodeTest } from 'node:test'
@@ -20,6 +20,7 @@ import {
 import {
   bindingDigestFor,
   canonicalJson,
+  LEGACY_SOURCE_SNAPSHOT_COMMIT,
   locatorDigestFor,
   normalizeRuleText,
   registryBindingManifestDigest,
@@ -27,6 +28,7 @@ import {
   sha256,
   validateRegistry,
 } from '../src/validate.js'
+import { ok } from './support/assert-ok.js'
 
 /**
  * R14 fix 20 - per-test progress that survives a crash.
@@ -42,7 +44,16 @@ import {
  * log is written to the OS temp directory, never into the package, so no unlisted file is created.
  * If this file dies again, the last line names the last test that completed.
  */
-const progressLogPath = join(tmpdir(), `fk-p0-progress-semantic-invariants.log`)
+/**
+ * R20 fix - the path is PER-RUN UNIQUE. It used to be a fixed name, truncated at import, so two
+ * concurrent runs deleted each other's evidence: the mechanism behind both 'a concurrent run
+ * corrupted evidence' incidents in this round. `mkdtempSync` gives each run its own directory; the
+ * shared prefix keeps the log findable by glob without making the path collidable.
+ */
+const progressLogPath = join(
+  mkdtempSync(join(tmpdir(), 'fk-p0-progress-semantic-invariants-')),
+  'progress.log',
+)
 try {
   writeFileSync(progressLogPath, '')
 } catch {
@@ -102,7 +113,7 @@ function rechain(document: AuthorityEnforcementRegistry): AuthorityEnforcementRe
     record.reconciliationId.startsWith('registry-rework-'),
   )
   const head = chainRecords[chainRecords.length - 1]
-  assert.ok(head)
+  ok(head)
   // Chain from the head's OWN predecessor and REPLACE the head, rather than appending after it.
   // Appending would demote the shipped head to a historical record, which would then require a
   // pinned digest in validate.ts's RECONCILIATION_RECORD_DIGESTS - something a test cannot add.
@@ -113,7 +124,7 @@ function rechain(document: AuthorityEnforcementRegistry): AuthorityEnforcementRe
   const predecessorDigest = headCommands.find((command) =>
     command.commandId.startsWith('superseding-binding-manifest'),
   )?.inputDigest
-  assert.ok(predecessorDigest)
+  ok(predecessorDigest)
   const nextDigest = registryBindingManifestDigest(document)
   const command = (commandId: string, inputDigest: string, resultDigest: string) =>
     canonicalJson({
@@ -125,10 +136,20 @@ function rechain(document: AuthorityEnforcementRegistry): AuthorityEnforcementRe
       exitCode: 0,
       actorClass: 'coordinator',
     })
-  const prior = command('registry-binding-manifest-test', sha256('rechain'), predecessorDigest)
+  // AC4 obligation 4 as amended by R21: the prior command's `inputDigest` must be the SHA-256 of a
+  // `git-commit` reference carried on the SAME record, so that repointing or deleting that evidence
+  // breaks the binding. The old placeholder `sha256('rechain')` bound nothing, which is exactly the
+  // shape of the defect the obligation exists to refuse - a replacement head has to satisfy the
+  // floor a real head satisfies, or these tests would be exercising a head that could not ship.
+  const priorCommitReference = 'a'.repeat(40)
+  const prior = command(
+    'registry-binding-manifest-test',
+    sha256(priorCommitReference),
+    predecessorDigest,
+  )
   const superseding = command('superseding-binding-manifest-test', predecessorDigest, nextDigest)
   const basis = head.observedRefs[0]
-  assert.ok(basis)
+  ok(basis)
   return {
     ...document,
     reconciliations: [
@@ -140,7 +161,7 @@ function rechain(document: AuthorityEnforcementRegistry): AuthorityEnforcementRe
         topic: 'Test-authored amendment superseding the shipped bindings.',
         observedRefs: [basis],
         observedEvidence: [
-          { kind: 'git-commit', reference: 'a'.repeat(40), digest: sha256('prior') },
+          { kind: 'git-commit', reference: priorCommitReference, digest: sha256('prior') },
           {
             kind: 'git-commit',
             reference: document.sourceSnapshotCommit,
@@ -167,15 +188,15 @@ test('normalization is exact and stable across Unicode/line-ending/whitespace fo
 test('canonical digest helpers bind identity, location, and value independently', () => {
   const item = valid.sources[0]?.inventoryItems[0]
   const rule = valid.rules[0]
-  assert.ok(item)
-  assert.ok(rule)
+  ok(item)
+  ok(rule)
   const source = valid.sources.find(
     (candidate) => candidate.sourceId === rule.sourceRefs[0]?.sourceId,
   )
   const referencedItem = source?.inventoryItems.find(
     (candidate) => candidate.itemId === rule.sourceRefs[0]?.itemId,
   )
-  assert.ok(referencedItem)
+  ok(referencedItem)
   assert.equal(locatorDigestFor(referencedItem.locator), rule.sourceRefs[0]?.locatorDigest)
   assert.equal(bindingDigestFor(rule), rule.bindingDigest)
 })
@@ -185,20 +206,20 @@ test('each of the six classifications is accepted and summarized independently',
   assert.equal(result.valid, true)
   assert.deepEqual(result.summary?.classificationCounts, {
     'pre-action-refusal': 254,
-    'post-action-detection': 8,
-    'ci-static-check': 77,
+    'post-action-detection': 9,
+    'ci-static-check': 78,
     'independent-review-human-judgment': 15,
     'narrative-provenance': 100,
-    unsupported: 12,
+    unsupported: 13,
   })
 })
 
 test('pre-action refusal requires a stable refusal code', () => {
   const mutated = structuredClone(valid)
   const rule = mutated.rules.find((candidate) => candidate.classification === 'pre-action-refusal')
-  assert.ok(rule)
+  ok(rule)
   ;(rule as { refusalCode: string | null }).refusalCode = null
-  assert.ok(
+  ok(
     codes(mutated).includes('SCHEMA_INVALID') ||
       codes(mutated).includes('MIGRATION_EVIDENCE_INVALID'),
   )
@@ -207,7 +228,7 @@ test('pre-action refusal requires a stable refusal code', () => {
 test('pre-action refusal decision cannot be widened to ALLOW', () => {
   const mutated = structuredClone(valid)
   const rule = mutated.rules.find((candidate) => candidate.classification === 'pre-action-refusal')
-  assert.ok(rule)
+  ok(rule)
   ;(rule as { decision: string }).decision = 'ALLOW'
   expectCode(mutated, 'AUTHORITY_ESCALATION')
 })
@@ -217,7 +238,7 @@ test('classification matrix rejects post-action-detection assurance widening', (
   const rule = mutated.rules.find(
     (candidate) => candidate.classification === 'post-action-detection',
   )
-  assert.ok(rule)
+  ok(rule)
   ;(rule as { assurance: string }).assurance = 'narrative'
   expectCode(mutated, 'AUTHORITY_ESCALATION')
 })
@@ -225,7 +246,7 @@ test('classification matrix rejects post-action-detection assurance widening', (
 test('classification matrix rejects ci-static-check owner widening', () => {
   const mutated = structuredClone(valid)
   const rule = mutated.rules.find((candidate) => candidate.classification === 'ci-static-check')
-  assert.ok(rule)
+  ok(rule)
   ;(rule as { enforcementOwner: string }).enforcementOwner = 'coordinator'
   expectCode(mutated, 'AUTHORITY_ESCALATION')
 })
@@ -235,7 +256,7 @@ test('classification matrix rejects independent-review decision widening', () =>
   const rule = mutated.rules.find(
     (candidate) => candidate.classification === 'independent-review-human-judgment',
   )
-  assert.ok(rule)
+  ok(rule)
   ;(rule as { decision: string }).decision = 'ALLOW'
   expectCode(mutated, 'AUTHORITY_ESCALATION')
 })
@@ -245,7 +266,7 @@ test('classification matrix rejects narrative-provenance owner widening', () => 
   const rule = mutated.rules.find(
     (candidate) => candidate.classification === 'narrative-provenance',
   )
-  assert.ok(rule)
+  ok(rule)
   ;(rule as { enforcementOwner: string }).enforcementOwner = 'kernel-policy'
   expectCode(mutated, 'AUTHORITY_ESCALATION')
 })
@@ -253,7 +274,7 @@ test('classification matrix rejects narrative-provenance owner widening', () => 
 test('classification matrix rejects unsupported assurance widening', () => {
   const mutated = structuredClone(valid)
   const rule = mutated.rules.find((candidate) => candidate.classification === 'unsupported')
-  assert.ok(rule)
+  ok(rule)
   ;(rule as { assurance: string }).assurance = 'mediated'
   expectCode(mutated, 'AUTHORITY_ESCALATION')
 })
@@ -262,7 +283,7 @@ test('loaded permission-profile refusals are owned by the host adapter at mediat
   const rules = full.rules.filter(
     (candidate) => candidate.sourceRefs[0]?.sourceId === 'permission-profiles-validator',
   )
-  assert.ok(rules.length > 0)
+  ok(rules.length > 0)
   for (const rule of rules) {
     assert.equal(rule.classification, 'pre-action-refusal')
     assert.equal(rule.decision, 'REFUSE')
@@ -276,7 +297,7 @@ test('loaded permission-profile refusal cannot be mislabeled as structural kerne
   const rule = mutated.rules.find(
     (candidate) => candidate.sourceRefs[0]?.sourceId === 'permission-profiles-validator',
   )
-  assert.ok(rule)
+  ok(rule)
   ;(rule as { enforcementOwner: string }).enforcementOwner = 'kernel-policy'
   ;(rule as { assurance: string }).assurance = 'structural'
   expectCode(mutated, 'AUTHORITY_ESCALATION')
@@ -285,9 +306,9 @@ test('loaded permission-profile refusal cannot be mislabeled as structural kerne
 test('retirement requires four correctly typed evidence references', () => {
   const mutated = structuredClone(valid)
   const rule = mutated.rules[0]
-  assert.ok(rule)
+  ok(rule)
   ;(rule as { retirementState: string }).retirementState = 'retired-from-agent-reading'
-  assert.ok(codes(mutated).includes('RETIREMENT_EVIDENCE_INCOMPLETE'))
+  ok(codes(mutated).includes('RETIREMENT_EVIDENCE_INCOMPLETE'))
 })
 
 test('every protected operation rejects agent/control/tool authority escalation', () => {
@@ -302,11 +323,11 @@ test('every protected operation rejects agent/control/tool authority escalation'
     const row = mutated.operationAuthority.find(
       (candidate) => candidate.operationId === operationId,
     )
-    assert.ok(row)
+    ok(row)
     ;(row as { agentCallable: boolean }).agentCallable = true
     ;(row as { operationalStateMaySatisfy: boolean }).operationalStateMaySatisfy = true
     ;(row as { toolMayIssueAuthorityEvidence: boolean }).toolMayIssueAuthorityEvidence = true
-    assert.ok(codes(mutated).includes('AUTHORITY_ESCALATION'), operationId)
+    ok(codes(mutated).includes('AUTHORITY_ESCALATION'), operationId)
   }
 })
 
@@ -315,7 +336,7 @@ test('Gate 2 state may record consumption but cannot mint authority', () => {
   const row = mutated.operationAuthority.find(
     (candidate) => candidate.operationId === 'gate2.dispatch',
   )
-  assert.ok(row)
+  ok(row)
   ;(row as { operationalStateMaySatisfy: boolean }).operationalStateMaySatisfy = true
   expectCode(mutated, 'AUTHORITY_ESCALATION')
 })
@@ -325,7 +346,7 @@ test('Gate 2 rejects anonymous admission even with Git-shaped evidence', () => {
   const row = mutated.operationAuthority.find(
     (candidate) => candidate.operationId === 'gate2.dispatch',
   )
-  assert.ok(row)
+  ok(row)
   ;(row.allowedPrincipals as string[]).splice(0, row.allowedPrincipals.length, 'anonymous-read')
   expectCode(mutated, 'AUTHORITY_ESCALATION')
 })
@@ -335,7 +356,7 @@ test('protected operation evidence resolves locator and value digests, not only 
   const row = mutated.operationAuthority.find(
     (candidate) => candidate.operationId === 'gate2.dispatch',
   )
-  assert.ok(row?.requiredGitEvidence[0])
+  ok(row?.requiredGitEvidence[0])
   ;(row.requiredGitEvidence[0] as { locatorDigest: string }).locatorDigest = '0'.repeat(64)
   ;(row.requiredGitEvidence[0] as { valueDigest: string }).valueDigest = '1'.repeat(64)
   expectCode(mutated, 'AUTHORITY_ESCALATION')
@@ -348,8 +369,8 @@ test('protected operation evidence cannot be replaced by a different fully resol
   )
   const substitute = mutated.rules.find((candidate) => candidate.ruleId === 'rule.fk-charter.d10')
     ?.sourceRefs[0]
-  assert.ok(gate2)
-  assert.ok(substitute)
+  ok(gate2)
+  ok(substitute)
   ;(gate2.requiredGitEvidence as (typeof substitute)[]).splice(0, 1, structuredClone(substitute))
   expectCode(mutated, 'AUTHORITY_ESCALATION')
 })
@@ -359,7 +380,7 @@ test('builder cannot issue closure authority', () => {
   const row = mutated.operationAuthority.find(
     (candidate) => candidate.operationId === 'closure.record',
   )
-  assert.ok(row)
+  ok(row)
   ;(row.allowedPrincipals as string[]).splice(0, row.allowedPrincipals.length, 'builder')
   expectCode(mutated, 'AUTHORITY_ESCALATION')
 })
@@ -368,7 +389,7 @@ test('generic receipt minting has no admitted principal', () => {
   const row = valid.operationAuthority.find(
     (candidate) => candidate.operationId === 'receipt.mint-generic',
   )
-  assert.ok(row)
+  ok(row)
   assert.deepEqual(row.allowedPrincipals, [])
 })
 
@@ -376,7 +397,7 @@ test('external writes have no admitted principal', () => {
   const row = valid.operationAuthority.find(
     (candidate) => candidate.operationId === 'external.write',
   )
-  assert.ok(row)
+  ok(row)
   assert.deepEqual(row.allowedPrincipals, [])
 })
 
@@ -385,26 +406,54 @@ test('builder cannot be inserted as generic receipt mint principal', () => {
   const row = mutated.operationAuthority.find(
     (candidate) => candidate.operationId === 'receipt.mint-generic',
   )
-  assert.ok(row)
+  ok(row)
   ;(row.allowedPrincipals as string[]).push('builder')
   expectCode(mutated, 'AUTHORITY_ESCALATION')
 })
 
-test('all six required reconciliation topics are mandatory', () => {
+test('every required reconciliation is mandatory', () => {
+  // Deleting a REQUIRED record is a missing reconciliation. The chain head is not in the required
+  // set - deliberately, because `rechain()` legitimately replaces it - so deleting the head is
+  // caught by a different invariant, asserted separately below. Asserting one code for both was
+  // over-broad: it demanded RECONCILIATION_MISSING for a record no required list names.
+  const chainHeadId = 'registry-rework-df8155a'
+  let checked = 0
   for (let index = 0; index < valid.reconciliations.length; index += 1) {
+    const removed = valid.reconciliations[index]
+    ok(removed)
+    if (removed.reconciliationId === chainHeadId) continue
     const mutated = structuredClone(valid)
     ;(mutated.reconciliations as AuthorityEnforcementRegistry['reconciliations'][number][]).splice(
       index,
       1,
     )
-    assert.ok(codes(mutated).includes('RECONCILIATION_MISSING'))
+    const observed = codes(mutated)
+    ok(
+      observed.includes('RECONCILIATION_MISSING'),
+      `deleting '${removed.reconciliationId}' must report RECONCILIATION_MISSING; observed ${observed.join(',')}`,
+    )
+    checked += 1
   }
+  assert.equal(checked, valid.reconciliations.length - 1)
+})
+
+test('deleting the chain head invalidates rather than promoting a pinned record', () => {
+  // AC4 obligation 2 as amended by R19. Head position must not be selectable by deletion: before
+  // R19, removing the head promoted the previously-pinned record into the head exemption and out of
+  // its byte pin, and repointing that promoted record at the live manifest validated clean.
+  const chainHeadId = 'registry-rework-df8155a'
+  const kept = structuredClone(valid).reconciliations.filter(
+    (record) => record.reconciliationId !== chainHeadId,
+  )
+  assert.equal(kept.length, valid.reconciliations.length - 1, 'the head must actually be removed')
+  const mutated = { ...structuredClone(valid), reconciliations: kept }
+  expectCode(mutated, 'MIGRATION_EVIDENCE_INVALID')
 })
 
 test('reconciliation IDs are unique', () => {
   const mutated = structuredClone(valid)
   const duplicate = structuredClone(mutated.reconciliations[0])
-  assert.ok(duplicate)
+  ok(duplicate)
   ;(mutated.reconciliations as AuthorityEnforcementRegistry['reconciliations'][number][]).push(
     duplicate,
   )
@@ -414,7 +463,7 @@ test('reconciliation IDs are unique', () => {
 test('reconciliation observed refs bind full identity location and value', () => {
   const mutated = structuredClone(valid)
   const ref = mutated.reconciliations[0]?.observedRefs[0]
-  assert.ok(ref)
+  ok(ref)
   ;(ref as { locatorDigest: string }).locatorDigest = '0'.repeat(64)
   ;(ref as { valueDigest: string }).valueDigest = '1'.repeat(64)
   expectCode(mutated, 'MIGRATION_EVIDENCE_INVALID')
@@ -423,7 +472,7 @@ test('reconciliation observed refs bind full identity location and value', () =>
 test('required reconciliation topics and statuses are immutable', () => {
   const mutated = structuredClone(valid)
   const record = mutated.reconciliations[0]
-  assert.ok(record)
+  ok(record)
   ;(record as { topic: string }).topic = 'Plausible but forged topic'
   ;(record as { migrationStatus: string }).migrationStatus = 'open'
   expectCode(mutated, 'MIGRATION_EVIDENCE_INVALID')
@@ -432,7 +481,7 @@ test('required reconciliation topics and statuses are immutable', () => {
 test('reconciliation evidence digests cannot be self-asserted placeholders', () => {
   const mutated = structuredClone(valid)
   const evidence = mutated.reconciliations[0]?.observedEvidence[0]
-  assert.ok(evidence)
+  ok(evidence)
   ;(evidence as { digest: string }).digest = 'f'.repeat(64)
   expectCode(mutated, 'MIGRATION_EVIDENCE_INVALID')
 })
@@ -440,7 +489,7 @@ test('reconciliation evidence digests cannot be self-asserted placeholders', () 
 test('charter source cannot be downgraded below goal-charter authority', () => {
   const mutated = structuredClone(valid)
   const source = mutated.sources.find((candidate) => candidate.sourceId === 'fk-charter')
-  assert.ok(source)
+  ok(source)
   ;(source as { authorityTier: string }).authorityTier = 'generated-advisory'
   expectCode(mutated, 'AUTHORITY_ESCALATION')
 })
@@ -450,7 +499,7 @@ test('stale explanatory source cannot be promoted to binding authority', () => {
   const source = mutated.sources.find(
     (candidate) => candidate.authorityEffect === 'stale-explanation',
   )
-  assert.ok(source)
+  ok(source)
   ;(source as { authorityEffect: string }).authorityEffect = 'binding'
   expectCode(mutated, 'AUTHORITY_ESCALATION')
 })
@@ -458,7 +507,7 @@ test('stale explanatory source cannot be promoted to binding authority', () => {
 test('operation-disjoint rules do not conflict', () => {
   const mutated = structuredClone(valid)
   const original = mutated.rules[0]
-  assert.ok(original)
+  ok(original)
   const counterpart = structuredClone(original) as AuthorityEnforcementRegistry['rules'][number]
   ;(counterpart as { ruleId: string }).ruleId = 'rule.operation-disjoint'
   ;(counterpart as { decision: string }).decision =
@@ -478,7 +527,7 @@ test('operation-disjoint rules do not conflict', () => {
   const item = mutated.sources
     .find((source) => source.sourceId === counterpart.sourceRefs[0]?.sourceId)
     ?.inventoryItems.find((candidate) => candidate.itemId === counterpart.sourceRefs[0]?.itemId)
-  assert.ok(item)
+  ok(item)
   ;(item.ruleIds as string[]).push(counterpart.ruleId)
   assert.equal(codes(mutated).includes('RULE_CONFLICT'), false)
 })
@@ -488,7 +537,7 @@ test('role stage operation and host axes can make active rules scope-disjoint', 
   for (const dimension of dimensions) {
     const mutated = structuredClone(valid)
     const original = mutated.rules[0]
-    assert.ok(original)
+    ok(original)
     const counterpart = structuredClone(original) as AuthorityEnforcementRegistry['rules'][number]
     ;(counterpart as { ruleId: string }).ruleId = `rule.axis-disjoint-${dimension}`
     ;(counterpart as { classification: string }).classification = 'narrative-provenance'
@@ -512,7 +561,7 @@ test('role stage operation and host axes can make active rules scope-disjoint', 
     const item = mutated.sources
       .find((source) => source.sourceId === counterpart.sourceRefs[0]?.sourceId)
       ?.inventoryItems.find((candidate) => candidate.itemId === counterpart.sourceRefs[0]?.itemId)
-    assert.ok(item)
+    ok(item)
     ;(item.ruleIds as string[]).push(counterpart.ruleId)
     assert.equal(codes(mutated).includes('RULE_CONFLICT'), false, dimension)
   }
@@ -521,7 +570,7 @@ test('role stage operation and host axes can make active rules scope-disjoint', 
 test('all-foreman-goals applicability overlaps foreman-kernel applicability', () => {
   const mutated = structuredClone(valid)
   const original = mutated.rules.find((candidate) => candidate.ruleId === 'rule.fk-charter.d3')
-  assert.ok(original)
+  ok(original)
   const counterpart = structuredClone(original) as AuthorityEnforcementRegistry['rules'][number]
   ;(counterpart as { ruleId: string }).ruleId = 'rule.goal-scope-overlap'
   ;(counterpart as { authorityClaim: string }).authorityClaim = 'conflicting-goal-scope-claim'
@@ -531,7 +580,7 @@ test('all-foreman-goals applicability overlaps foreman-kernel applicability', ()
   const item = mutated.sources
     .find((source) => source.sourceId === counterpart.sourceRefs[0]?.sourceId)
     ?.inventoryItems.find((candidate) => candidate.itemId === counterpart.sourceRefs[0]?.itemId)
-  assert.ok(item)
+  ok(item)
   ;(item.ruleIds as string[]).push(counterpart.ruleId)
   expectCode(mutated, 'RULE_CONFLICT')
 })
@@ -542,15 +591,15 @@ test('higher-tier active authority controls a lower-tier in-scope contradiction'
   const lower = mutated.rules.find(
     (candidate) => candidate.sourceRefs[0]?.sourceId === 'coordinator-pattern',
   )
-  assert.ok(controlling)
-  assert.ok(lower)
+  ok(controlling)
+  ok(lower)
   const lowerSource = mutated.sources.find(
     (candidate) => candidate.sourceId === lower.sourceRefs[0]?.sourceId,
   )
   const lowerItem = lowerSource?.inventoryItems.find(
     (candidate) => candidate.itemId === lower.sourceRefs[0]?.itemId,
   )
-  assert.ok(lowerItem)
+  ok(lowerItem)
   ;(lowerItem as { normalizedExcerpt: string }).normalizedExcerpt = controlling.normalizedStatement
   ;(lowerItem as { valueDigest: string }).valueDigest = sha256(lowerItem.normalizedExcerpt)
   ;(lower as { normalizedStatement: string }).normalizedStatement = controlling.normalizedStatement
@@ -563,7 +612,7 @@ test('higher-tier active authority controls a lower-tier in-scope contradiction'
     controlling.applicability,
   )
   const lowerRef = lower.sourceRefs[0]
-  assert.ok(lowerRef)
+  ok(lowerRef)
   ;(lowerRef as { valueDigest: string }).valueDigest = lowerItem.valueDigest
   ;(lower as { bindingDigest: string }).bindingDigest = bindingDigestFor(lower)
   assert.equal(codes(mutated).includes('RULE_CONFLICT'), false)
@@ -574,8 +623,8 @@ test('historical-only and stale-effect rules cannot create active authority conf
     const mutated = structuredClone(valid)
     const original = mutated.rules[0]
     const source = mutated.sources[0]
-    assert.ok(original)
-    assert.ok(source)
+    ok(original)
+    ok(source)
     const counterpart = structuredClone(original) as AuthorityEnforcementRegistry['rules'][number]
     ;(counterpart as { ruleId: string }).ruleId = `rule.inactive-${mode}`
     ;(counterpart as { classification: string }).classification = 'narrative-provenance'
@@ -593,7 +642,7 @@ test('historical-only and stale-effect rules cannot create active authority conf
     const item = source.inventoryItems.find(
       (candidate) => candidate.itemId === counterpart.sourceRefs[0]?.itemId,
     )
-    assert.ok(item)
+    ok(item)
     ;(item.ruleIds as string[]).push(counterpart.ruleId)
     assert.equal(codes(mutated).includes('RULE_CONFLICT'), false, mode)
   }
@@ -602,7 +651,7 @@ test('historical-only and stale-effect rules cannot create active authority conf
 test('rule normalized statement must equal its referenced normalized excerpt', () => {
   const mutated = structuredClone(valid)
   const rule = mutated.rules[0]
-  assert.ok(rule)
+  ok(rule)
   ;(rule as { normalizedStatement: string }).normalizedStatement =
     'Different but internally rehashed statement'
   ;(rule as { bindingDigest: string }).bindingDigest = bindingDigestFor(rule)
@@ -614,16 +663,16 @@ test('coordinated identity location and value replacement requires typed migrati
   const source = mutated.sources[0]
   const item = source?.inventoryItems[0]
   const rule = mutated.rules.find((candidate) => candidate.ruleId === item?.ruleIds[0])
-  assert.ok(source)
-  assert.ok(item)
-  assert.ok(rule)
+  ok(source)
+  ok(item)
+  ok(rule)
   const priorItemId = item.itemId
   ;(item as { itemId: string }).itemId = 'item.coordinated-replacement'
   ;(item.locator as { anchor: string }).anchor = `${item.locator.anchor} replacement`
   ;(item as { normalizedExcerpt: string }).normalizedExcerpt = 'Coordinated replacement value'
   ;(item as { valueDigest: string }).valueDigest = sha256(item.normalizedExcerpt)
   const ref = rule.sourceRefs[0]
-  assert.ok(ref)
+  ok(ref)
   ;(ref as { itemId: string }).itemId = item.itemId
   ;(ref as { locatorDigest: string }).locatorDigest = locatorDigestFor(item.locator)
   ;(ref as { valueDigest: string }).valueDigest = item.valueDigest
@@ -653,9 +702,9 @@ test('full-registry coordinated rule ID and binding replacement cannot rewrite t
   const source = mutated.sources.find((candidate) => candidate.sourceId === 'fk-charter')
   const item = source?.inventoryItems.find((candidate) => candidate.itemId === 'item.d1')
   const rule = mutated.rules.find((candidate) => candidate.ruleId === 'rule.fk-charter.d1')
-  assert.ok(source)
-  assert.ok(item)
-  assert.ok(rule)
+  ok(source)
+  ok(item)
+  ok(rule)
   const priorRuleId = rule.ruleId
   ;(item as { itemId: string }).itemId = 'item.d1-replacement'
   ;(item.locator as { anchor: string }).anchor = 'D1-replacement'
@@ -666,7 +715,7 @@ test('full-registry coordinated rule ID and binding replacement cannot rewrite t
   ;(rule as { ruleId: string }).ruleId = 'rule.fk-charter.d1-replacement'
   ;(rule as { normalizedStatement: string }).normalizedStatement = item.normalizedExcerpt
   const reference = rule.sourceRefs[0]
-  assert.ok(reference)
+  ok(reference)
   ;(reference as { itemId: string }).itemId = item.itemId
   ;(reference as { locatorDigest: string }).locatorDigest = locatorDigestFor(item.locator)
   ;(reference as { valueDigest: string }).valueDigest = item.valueDigest
@@ -703,14 +752,16 @@ test('rework migration binds the prior registry commit source snapshot and super
   const record = full.reconciliations.find(
     (candidate) => candidate.reconciliationId === 'registry-rework-6eb1c25',
   )
-  assert.ok(record)
+  ok(record)
   assert.equal(record.migrationStatus, 'superseded-by-amendment')
-  assert.ok(record.supersedingEvidence)
+  ok(record.supersedingEvidence)
   assert.deepEqual(
     record.observedEvidence
       .filter((evidence) => evidence.kind === 'git-commit')
       .map((evidence) => evidence.reference),
-    ['4666ea15caee8b231137f23325d14ea4526e338a', full.sourceSnapshotCommit],
+    // Not `full.sourceSnapshotCommit`: this record is byte-frozen by RECONCILIATION_RECORD_DIGESTS
+    // and carries the snapshot current WHEN IT WAS WRITTEN (R16/R17).
+    ['4666ea15caee8b231137f23325d14ea4526e338a', LEGACY_SOURCE_SNAPSHOT_COMMIT],
   )
   const commands = record.observedEvidence
     .filter((evidence) => evidence.kind === 'command-result')
@@ -746,7 +797,7 @@ test('forged prior-commit migration evidence fails even when internally rehashed
     (candidate) => candidate.reconciliationId === 'registry-rework-6eb1c25',
   )
   const evidence = record?.observedEvidence[0]
-  assert.ok(evidence)
+  ok(evidence)
   ;(evidence as { reference: string }).reference = '0'.repeat(40)
   ;(evidence as { digest: string }).digest = sha256(evidence.reference)
   expectCode(mutated, 'MIGRATION_EVIDENCE_INVALID')
@@ -756,9 +807,9 @@ for (const classification of RULE_CLASSIFICATIONS) {
   test(`classification mutation control: ${classification} cannot be widened`, () => {
     const mutated = structuredClone(valid)
     const rule = mutated.rules.find((candidate) => candidate.classification === classification)
-    assert.ok(rule)
+    ok(rule)
     ;(rule as { classification: string }).classification = `${classification}-widened`
-    assert.ok(codes(mutated).includes('SCHEMA_INVALID'))
+    ok(codes(mutated).includes('SCHEMA_INVALID'))
   })
 }
 
@@ -766,7 +817,7 @@ for (const authorityTier of AUTHORITY_TIERS) {
   test(`authority-tier mutation control: ${authorityTier} cannot be widened`, () => {
     const mutated = structuredClone(valid)
     ;(mutated.sources[0] as { authorityTier: string }).authorityTier = `${authorityTier}-widened`
-    assert.ok(codes(mutated).includes('SCHEMA_INVALID'))
+    ok(codes(mutated).includes('SCHEMA_INVALID'))
   })
 }
 
@@ -775,7 +826,7 @@ for (const authorityEffect of AUTHORITY_EFFECTS) {
     const mutated = structuredClone(valid)
     ;(mutated.sources[0] as { authorityEffect: string }).authorityEffect =
       `${authorityEffect}-widened`
-    assert.ok(codes(mutated).includes('SCHEMA_INVALID'))
+    ok(codes(mutated).includes('SCHEMA_INVALID'))
   })
 }
 
@@ -811,12 +862,12 @@ for (const field of [
   test(`retirement mutation control: missing ${field} evidence refuses retirement`, () => {
     const mutated = structuredClone(valid)
     const rule = mutated.rules[0]
-    assert.ok(rule)
+    ok(rule)
     ;(rule as { retirementState: string }).retirementState = 'retired-from-agent-reading'
     ;(rule as { retirementEvidence: typeof evidence }).retirementEvidence =
       structuredClone(evidence)
     ;(rule.retirementEvidence as unknown as Record<string, unknown>)[field] = null
-    assert.ok(codes(mutated).includes('RETIREMENT_EVIDENCE_INCOMPLETE'))
+    ok(codes(mutated).includes('RETIREMENT_EVIDENCE_INCOMPLETE'))
   })
 }
 
@@ -825,47 +876,47 @@ for (const migrationStatus of ['open', 'resolved-for-fk', 'blocked'] as const) {
     const mutated = structuredClone(valid)
     const record = mutated.reconciliations[0]
     const sourceRef = mutated.rules[0]?.sourceRefs[0]
-    assert.ok(record)
-    assert.ok(sourceRef)
+    ok(record)
+    ok(sourceRef)
     ;(record as { migrationStatus: string }).migrationStatus = migrationStatus
     ;(record as { supersedingEvidence: typeof sourceRef | null }).supersedingEvidence = sourceRef
-    assert.ok(codes(mutated).includes('MIGRATION_EVIDENCE_INVALID'))
+    ok(codes(mutated).includes('MIGRATION_EVIDENCE_INVALID'))
   })
 }
 
 test('migration mutation control: superseded-by-amendment requires superseding evidence', () => {
   const mutated = structuredClone(valid)
   const record = mutated.reconciliations[0]
-  assert.ok(record)
+  ok(record)
   ;(record as { migrationStatus: string }).migrationStatus = 'superseded-by-amendment'
   ;(record as { supersedingEvidence: null }).supersedingEvidence = null
-  assert.ok(codes(mutated).includes('MIGRATION_EVIDENCE_INVALID'))
+  ok(codes(mutated).includes('MIGRATION_EVIDENCE_INVALID'))
 })
 
 test('uncovered inventory items and orphaned rule mappings fail closed independently', () => {
   const uncovered = structuredClone(valid)
   const uncoveredItem = uncovered.sources[0]?.inventoryItems[0]
-  assert.ok(uncoveredItem)
+  ok(uncoveredItem)
   ;(uncoveredItem.ruleIds as string[]).splice(0)
-  assert.ok(codes(uncovered).includes('SOURCE_ITEM_UNCOVERED'))
+  ok(codes(uncovered).includes('SOURCE_ITEM_UNCOVERED'))
 
   const orphan = structuredClone(valid)
   const orphanItem = orphan.sources[0]?.inventoryItems[0]
-  assert.ok(orphanItem)
+  ok(orphanItem)
   ;(orphanItem.ruleIds as string[])[0] = 'rule.does-not-exist'
-  assert.ok(codes(orphan).includes('RULE_ORPHANED'))
+  ok(codes(orphan).includes('RULE_ORPHANED'))
 })
 
 test('source snapshot and caller-asserted authority mutations fail closed', () => {
   const staleSnapshot = structuredClone(valid)
   ;(staleSnapshot.sources[0]?.snapshotEvidence as { commit: string }).commit = '0'.repeat(40)
-  assert.ok(codes(staleSnapshot).includes('MIGRATION_EVIDENCE_INVALID'))
+  ok(codes(staleSnapshot).includes('MIGRATION_EVIDENCE_INVALID'))
 
   const selfAsserted = structuredClone(valid) as AuthorityEnforcementRegistry & {
     callerPrincipal?: string
   }
   selfAsserted.callerPrincipal = 'human-developer'
-  assert.ok(codes(selfAsserted).includes('SCHEMA_INVALID'))
+  ok(codes(selfAsserted).includes('SCHEMA_INVALID'))
 })
 
 test('set-valued arrays and protected operation rows require schema-enum order', () => {
@@ -873,16 +924,16 @@ test('set-valued arrays and protected operation rows require schema-enum order',
   const gate2 = principals.operationAuthority.find(
     (operation) => operation.operationId === 'gate2.dispatch',
   )
-  assert.ok(gate2)
+  ok(gate2)
   ;(gate2.allowedPrincipals as string[]).push('builder')
   ;(gate2.allowedPrincipals as string[]).reverse()
-  assert.ok(codes(principals).includes('MIGRATION_EVIDENCE_INVALID'))
+  ok(codes(principals).includes('MIGRATION_EVIDENCE_INVALID'))
 
   const rows = structuredClone(valid)
   ;(
     rows.operationAuthority as AuthorityEnforcementRegistry['operationAuthority'][number][]
   ).reverse()
-  assert.ok(codes(rows).includes('MIGRATION_EVIDENCE_INVALID'))
+  ok(codes(rows).includes('MIGRATION_EVIDENCE_INVALID'))
 })
 
 test('R3 exact source contract rejects a missing eighteenth source', () => {
@@ -894,7 +945,7 @@ test('R3 exact source contract rejects a missing eighteenth source', () => {
 test('R3 exact source contract rejects an unknown nineteenth source', () => {
   const mutated = structuredClone(full)
   const extra = structuredClone(mutated.sources[0])
-  assert.ok(extra)
+  ok(extra)
   ;(extra as { sourceId: string }).sourceId = 'unknown-nineteenth-source'
   ;(extra as { path: string }).path = 'plugins/foreman-line/docs/unknown-nineteenth.md'
   ;(mutated.sources as AuthorityEnforcementRegistry['sources'][number][]).push(extra)
@@ -916,7 +967,7 @@ test('R3 exact source contract rejects a substituted source ID at cardinality ei
 test('R3 D10 semantic downgrade requires typed prior-manifest migration', () => {
   const mutated = structuredClone(full)
   const rule = mutated.rules.find((candidate) => candidate.ruleId === 'rule.fk-charter.d10')
-  assert.ok(rule)
+  ok(rule)
   ;(rule as { normalizedStatement: string }).normalizedStatement += ' weakened'
   ;(rule as { bindingDigest: string }).bindingDigest = bindingDigestFor(rule)
   expectCode(mutated, 'MIGRATION_EVIDENCE_INVALID')
@@ -925,7 +976,7 @@ test('R3 D10 semantic downgrade requires typed prior-manifest migration', () => 
 test('R3 D10 applicability downgrade requires typed prior-manifest migration', () => {
   const mutated = structuredClone(full)
   const rule = mutated.rules.find((candidate) => candidate.ruleId === 'rule.fk-charter.d10')
-  assert.ok(rule)
+  ok(rule)
   ;(rule.applicability.roles as string[]).splice(0, 1)
   ;(rule as { bindingDigest: string }).bindingDigest = bindingDigestFor(rule)
   expectCode(mutated, 'MIGRATION_EVIDENCE_INVALID')
@@ -934,7 +985,7 @@ test('R3 D10 applicability downgrade requires typed prior-manifest migration', (
 test('R3 D10 retirement downgrade requires typed prior-manifest migration', () => {
   const mutated = structuredClone(full)
   const rule = mutated.rules.find((candidate) => candidate.ruleId === 'rule.fk-charter.d10')
-  assert.ok(rule)
+  ok(rule)
   ;(rule as { retirementState: string }).retirementState = 'candidate-for-retirement'
   ;(rule as { bindingDigest: string }).bindingDigest = bindingDigestFor(rule)
   expectCode(mutated, 'MIGRATION_EVIDENCE_INVALID')
@@ -943,7 +994,7 @@ test('R3 D10 retirement downgrade requires typed prior-manifest migration', () =
 test('R3 authority subject replacement is bound by the complete manifest', () => {
   const mutated = structuredClone(full)
   const rule = mutated.rules[0]
-  assert.ok(rule)
+  ok(rule)
   ;(rule as { authoritySubject: string }).authoritySubject = 'forged.subject'
   ;(rule as { bindingDigest: string }).bindingDigest = bindingDigestFor(rule)
   expectCode(mutated, 'MIGRATION_EVIDENCE_INVALID')
@@ -952,7 +1003,7 @@ test('R3 authority subject replacement is bound by the complete manifest', () =>
 test('R3 authority claim replacement is bound by the complete manifest', () => {
   const mutated = structuredClone(full)
   const rule = mutated.rules[0]
-  assert.ok(rule)
+  ok(rule)
   ;(rule as { authorityClaim: string }).authorityClaim = 'forged-claim'
   ;(rule as { bindingDigest: string }).bindingDigest = bindingDigestFor(rule)
   expectCode(mutated, 'MIGRATION_EVIDENCE_INVALID')
@@ -960,7 +1011,7 @@ test('R3 authority claim replacement is bound by the complete manifest', () => {
 
 test('R3 complete binding digest includes applicability retirement and assurance', () => {
   const original = full.rules[0]
-  assert.ok(original)
+  ok(original)
   for (const mutate of [
     (rule: typeof original) => (rule.applicability.hosts as string[]).splice(0, 1),
     (rule: typeof original) =>
@@ -1016,7 +1067,7 @@ test('R3 resolver returns no-applicable-authority instead of silently allowing',
 test('R3 resolver detects naturally worded equal-tier conflicting claims', () => {
   const mutated = structuredClone(full)
   const original = mutated.rules.find((candidate) => candidate.ruleId === 'rule.fk-charter.d3')
-  assert.ok(original)
+  ok(original)
   const rival = structuredClone(original)
   ;(rival as { ruleId: string }).ruleId = 'rule.fk-charter.d3-rival'
   ;(rival as { authorityClaim: string }).authorityClaim = 'state-changes-follow-a-different-rule'
@@ -1026,9 +1077,7 @@ test('R3 resolver detects naturally worded equal-tier conflicting claims', () =>
   ;(rival as { bindingDigest: string }).bindingDigest = bindingDigestFor(rival)
   ;(mutated.rules as AuthorityEnforcementRegistry['rules'][number][]).push(rival)
   // The named invariant: an equal-tier contradiction is DETECTED, as RULE_CONFLICT.
-  assert.ok(
-    validateRegistry(mutated).violations.some((violation) => violation.code === 'RULE_CONFLICT'),
-  )
+  ok(validateRegistry(mutated).violations.some((violation) => violation.code === 'RULE_CONFLICT'))
   // Amended AC5: such a contradiction is validity-blocking, so resolution fails closed rather
   // than silently selecting a side.
   const result = resolveAuthority(mutated, d3Query)
@@ -1042,7 +1091,7 @@ test('R3 resolver keeps lower-tier rules considered but non-controlling', () => 
   const low = mutated.rules.find(
     (candidate) => candidate.sourceRefs[0]?.sourceId === 'standing-constraints',
   )
-  assert.ok(high && low)
+  ok(high && low)
   ;(low as { authoritySubject: string }).authoritySubject = high.authoritySubject
   ;(low.applicability as AuthorityRule['applicability']) = structuredClone(high.applicability)
   // Re-digest so the registry stays VALID. RULE_CONFLICT needs an EQUAL active tier, and these
@@ -1056,9 +1105,9 @@ test('R3 resolver keeps lower-tier rules considered but non-controlling', () => 
   const result = resolveAuthority(amended, d3Query)
   assert.equal(result.outcome, 'RESOLVED')
   if (result.outcome !== 'RESOLVED') return
-  assert.ok(result.consideredRuleIds.includes(low.ruleId))
-  assert.ok(!result.controllingRuleIds.includes(low.ruleId))
-  assert.ok(result.controllingRuleIds.includes(high.ruleId))
+  ok(result.consideredRuleIds.includes(low.ruleId))
+  ok(!result.controllingRuleIds.includes(low.ruleId))
+  ok(result.controllingRuleIds.includes(high.ruleId))
 })
 
 test('R3 resolver excludes stale explanatory sources from control', () => {
@@ -1067,7 +1116,7 @@ test('R3 resolver excludes stale explanatory sources from control', () => {
     (candidate) => candidate.sourceRefs[0]?.sourceId === 'spec-linter-readme',
   )
   const controlling = mutated.rules.find((r) => r.ruleId === 'rule.fk-charter.d3')
-  assert.ok(stale && controlling)
+  ok(stale && controlling)
   ;(stale as { authoritySubject: string }).authoritySubject = d3Query.authoritySubject
   ;(stale.applicability as AuthorityRule['applicability']) = structuredClone(
     controlling.applicability,
@@ -1085,9 +1134,9 @@ test('R3 resolver excludes stale explanatory sources from control', () => {
   assert.equal(result.outcome, 'RESOLVED')
   if (result.outcome !== 'RESOLVED') return
   // The named invariant: a stale explanatory source is VISIBLE but never CONTROLS.
-  assert.ok(result.consideredRuleIds.includes(stale.ruleId))
-  assert.ok(!result.controllingRuleIds.includes(stale.ruleId))
-  assert.ok(result.controllingRuleIds.includes('rule.fk-charter.d3'))
+  ok(result.consideredRuleIds.includes(stale.ruleId))
+  ok(!result.controllingRuleIds.includes(stale.ruleId))
+  ok(result.controllingRuleIds.includes('rule.fk-charter.d3'))
 })
 
 test('R3 Gate 2 refuses a revoked standing-grant evidence set', () => {
@@ -1095,7 +1144,7 @@ test('R3 Gate 2 refuses a revoked standing-grant evidence set', () => {
   const gate2 = mutated.operationAuthority.find(
     (operation) => operation.operationId === 'gate2.dispatch',
   )
-  assert.ok(gate2)
+  ok(gate2)
   ;(gate2.requiredGitEvidence as unknown[]).splice(0)
   expectCode(mutated, 'AUTHORITY_ESCALATION')
 })
@@ -1107,7 +1156,7 @@ test('R3 protected evidence rejects a fully resolved but irrelevant canon refere
   )
   const irrelevant = mutated.rules.find((rule) => rule.ruleId === 'rule.fk-charter.d1')
     ?.sourceRefs[0]
-  assert.ok(gate2 && irrelevant)
+  ok(gate2 && irrelevant)
   ;(
     gate2.requiredGitEvidence as AuthorityEnforcementRegistry['rules'][number]['sourceRefs'][number][]
   ).splice(0, 1, irrelevant)
@@ -1120,7 +1169,7 @@ test('R3 fake migration cannot authorize an exact-source-set substitution', () =
   const migration = mutated.reconciliations.find(
     (record) => record.migrationStatus === 'superseded-by-amendment',
   )
-  assert.ok(migration)
+  ok(migration)
   ;(migration as { scopedDisposition: string }).scopedDisposition = 'Trust this migration.'
   expectCode(mutated, 'MIGRATION_EVIDENCE_INVALID')
 })
@@ -1130,7 +1179,7 @@ test('R3 public rule uses assurance and rejects parallel assuranceLevel', () => 
     rules: Array<Record<string, unknown>>
   }
   const rule = mutated.rules[0]
-  assert.ok(rule)
+  ok(rule)
   rule.assuranceLevel = rule.assurance
   expectCode(mutated, 'SCHEMA_INVALID')
 })
@@ -1138,7 +1187,7 @@ test('R3 public rule uses assurance and rejects parallel assuranceLevel', () => 
 test('R3 manifest detects a fully rehashed coordinated semantic replacement', () => {
   const mutated = structuredClone(full)
   const rule = mutated.rules.find((candidate) => candidate.ruleId === 'rule.fk-charter.d1')
-  assert.ok(rule)
+  ok(rule)
   ;(rule as { authoritySubject: string }).authoritySubject = 'coordinated.replacement'
   ;(rule as { authorityClaim: string }).authorityClaim = 'coordinated-replacement-claim'
   ;(rule as { normalizedStatement: string }).normalizedStatement = 'Coordinated replacement.'
@@ -1152,7 +1201,7 @@ test('R3 one README cannot satisfy all four retirement evidence kinds', () => {
     (candidate) =>
       !candidate.sourceRefs.some((reference) => reference.sourceId === 'standing-constraints'),
   )
-  assert.ok(rule)
+  ok(rule)
   ;(rule as { retirementState: string }).retirementState = 'retired-from-agent-reading'
   const path = 'plugins/foreman-line/authority-registry/README.md'
   ;(rule as { retirementEvidence: unknown }).retirementEvidence = {
@@ -1179,7 +1228,7 @@ test('R4 exact D2 D3 D18 and D19 semantic identities are shipped', () => {
   } as const
   for (const [ruleId, identity] of Object.entries(expected)) {
     const rule = full.rules.find((candidate) => candidate.ruleId === ruleId)
-    assert.ok(rule)
+    ok(rule)
     assert.deepEqual([rule.authoritySubject, rule.authorityClaim], identity)
   }
 })
@@ -1187,10 +1236,8 @@ test('R4 exact D2 D3 D18 and D19 semantic identities are shipped', () => {
 test('R4 every rule has one basis ref contained in its source refs', () => {
   for (const rule of full.rules) {
     const basis = (rule as typeof rule & { authorityBasisRef?: unknown }).authorityBasisRef
-    assert.ok(basis)
-    assert.ok(
-      rule.sourceRefs.some((reference) => canonicalJson(reference) === canonicalJson(basis)),
-    )
+    ok(basis)
+    ok(rule.sourceRefs.some((reference) => canonicalJson(reference) === canonicalJson(basis)))
   }
 })
 
@@ -1201,7 +1248,7 @@ test('R4 shipped reconciliation rules retain repeated current semantic subjects'
         (rule) => rule.authoritySubject === 'standing.provenance',
       )
       assert.equal(provenance.length, 1)
-      assert.ok(
+      ok(
         reconciliation.observedRefs.some(
           (reference) =>
             reference.sourceId === 'standing-constraints' &&
@@ -1220,7 +1267,7 @@ test('R4 shipped reconciliation rules retain repeated current semantic subjects'
             .length,
         )
     }
-    assert.ok(
+    ok(
       [...subjects.values()].some((count) => count > 1),
       reconciliation.reconciliationId,
     )
@@ -1313,42 +1360,58 @@ for (const vector of shippedResolverVectors) {
 }
 
 test('R4 corroborating source ref cannot promote a rule above its authority basis', () => {
+  // The promotion is not merely ineffective - it is UNCONSTRUCTIBLE, which is a stronger guarantee
+  // and the honest one. Two shipped invariants make it so: a rule's `normalizedStatement` must bind
+  // the normalized excerpt of every item it references, and every referenced item must map the rule
+  // back reciprocally. A sourceRef borrowed from another source satisfies neither, so no valid
+  // document carrying one exists. The previous version of this test asserted the amended registry
+  // was VALID and then compared resolutions; that premise was false, and it was reported as one of
+  // this round's ten failures.
+  //
+  // Checked rather than asserted: zero shipped rules carry more than one sourceRef.
+  assert.equal(full.rules.filter((candidate) => candidate.sourceRefs.length > 1).length, 0)
+
   const mutated = structuredClone(full)
   const rule = mutated.rules.find((candidate) => candidate.ruleId === 'rule.fk-charter.d7')
   const corroborating = mutated.rules.find(
     (candidate) => candidate.sourceRefs[0]?.sourceId === 'standing-constraints',
   )?.sourceRefs[0]
-  assert.ok(rule)
-  assert.ok(corroborating)
+  ok(rule)
+  ok(corroborating)
+  const referenceCount = rule.sourceRefs.length
   ;(rule.sourceRefs as (typeof rule.sourceRefs)[number][]).push(corroborating)
-  // Re-digest and re-chain so the document stays VALID. Otherwise the mutation simply invalidates
-  // the registry and the test proves nothing about tier promotion, which is what it named.
+  assert.equal(rule.sourceRefs.length, referenceCount + 1, 'the corroborating ref must be added')
   ;(rule as { bindingDigest: string }).bindingDigest = bindingDigestFor(rule)
+  // Re-chained, so the refusal below is about the corroboration itself and not about a stale
+  // binding manifest the mutation would otherwise have left behind.
   const amended = rechain(mutated)
-  assert.deepEqual(
-    validateRegistry(amended).violations.map((violation) => violation.code),
-    [],
+  const observed = validateRegistry(amended).violations.map((violation) => violation.code)
+  ok(
+    observed.includes('RULE_ORPHANED'),
+    `the borrowed inventory item does not map the rule back; observed ${observed.join(',')}`,
   )
-  const query = {
+  ok(
+    observed.includes('MIGRATION_EVIDENCE_INVALID'),
+    `the rule statement does not bind the borrowed excerpt; observed ${observed.join(',')}`,
+  )
+  // Fail-closed: the resolver refuses an invalid document outright, so a promotion smuggled in this
+  // way can never reach a decision.
+  const result = resolveAuthority(amended, {
     authoritySubject: rule.authoritySubject,
     goal: 'foreman-kernel',
     role: 'builder',
     stage: 'build',
     operation: 'repo-mutation',
     host: 'claude-windows-docker-loaded',
-  } as const
-  const before = resolveAuthority(full, query)
-  const after = resolveAuthority(amended, query)
-  // The named invariant: an extra corroborating sourceRef changes nothing about control, because
-  // tier comes only from `authorityBasisRef`.
-  assert.equal(after.outcome, before.outcome)
-  assert.deepEqual([...after.controllingRuleIds], [...before.controllingRuleIds])
+  })
+  assert.equal(result.outcome, 'REQUIRE_HUMAN')
+  assert.equal(result.reasonCode, 'REGISTRY_INVALID')
 })
 
 test('R4 retired-from-agent-reading rules never control authority', () => {
   const mutated = structuredClone(full)
   const rule = mutated.rules.find((candidate) => candidate.ruleId === 'rule.fk-charter.d3')
-  assert.ok(rule)
+  ok(rule)
   ;(rule as { retirementState: string }).retirementState = 'retired-from-agent-reading'
   ;(rule as { bindingDigest: string }).bindingDigest = bindingDigestFor(rule)
   const amended = rechain(mutated)
@@ -1356,7 +1419,7 @@ test('R4 retired-from-agent-reading rules never control authority', () => {
   // digest-verified must not take effect. It is validity-blocking, which is the named property:
   // a retired rule can never end up controlling, because the document never becomes resolvable.
   const observed = validateRegistry(amended).violations.map((violation) => violation.code)
-  assert.ok(
+  ok(
     observed.includes('RETIREMENT_EVIDENCE_INCOMPLETE') ||
       observed.includes('RETIREMENT_EVIDENCE_UNVERIFIED'),
     `expected a retirement objection; observed ${observed.join(',')}`,
@@ -1380,7 +1443,7 @@ test('R4 reconciliation disposition and consequence are immutable', () => {
   for (const field of ['scopedDisposition', 'unresolvedConsequence'] as const) {
     const mutated = structuredClone(full)
     const record = mutated.reconciliations[0]
-    assert.ok(record)
+    ok(record)
     ;(record as unknown as Record<string, string>)[field] =
       'Delegated merge without human evidence.'
     expectCode(mutated, 'MIGRATION_EVIDENCE_INVALID')
@@ -1392,10 +1455,12 @@ test('R4 missing-path evidence uses commit-bound canonical JSON', () => {
     (candidate) => candidate.reconciliationId === 'missing-provenance-reference',
   )
   const evidence = record?.observedEvidence.find((candidate) => candidate.kind === 'missing-path')
-  assert.ok(evidence)
+  ok(evidence)
   const reference = JSON.parse(evidence.reference) as { commit: string; path: string }
   assert.deepEqual(reference, {
-    commit: full.sourceSnapshotCommit,
+    // `missing-provenance-reference` is byte-frozen and binds the initial dispatch commit, so it
+    // states the snapshot it was authored against, not the live one (R16/R17).
+    commit: LEGACY_SOURCE_SNAPSHOT_COMMIT,
     path: 'plugins/foreman-line/docs/transcripts/defects_lessons.md',
   })
 })
@@ -1434,15 +1499,15 @@ const applicabilityVectors = [
 for (const vector of applicabilityVectors) {
   test(`R4 source-derived applicability vector ${vector.ruleId}`, () => {
     const rule = full.rules.find((candidate) => candidate.ruleId === vector.ruleId)
-    assert.ok(rule)
-    assert.ok(
+    ok(rule)
+    ok(
       rule.applicability.roles.includes('any') ||
         rule.applicability.roles.includes(vector.positiveRole as never),
     )
     if (vector.negativeRole === null) {
       assert.deepEqual(rule.applicability.roles, ['any'])
     } else {
-      assert.ok(!rule.applicability.roles.includes(vector.negativeRole as never))
+      ok(!rule.applicability.roles.includes(vector.negativeRole as never))
     }
   })
 }
@@ -1451,7 +1516,7 @@ test('R4 PDD hard rule 10 applies to ordinary builder build repo mutation', () =
   const rule = full.rules.find(
     (candidate) => candidate.ruleId === 'rule.parcel-driven-development.hard-rule-10',
   )
-  assert.ok(rule)
+  ok(rule)
   assert.deepEqual(rule.applicability.roles, ['any'])
   assert.deepEqual(rule.applicability.stages, ['any'])
   assert.deepEqual(rule.applicability.operations, ['any'])
@@ -1477,11 +1542,11 @@ test('R5 every authority basis is substantive source text rather than a heading'
     const item = source?.inventoryItems.find(
       (candidate) => candidate.itemId === rule.authorityBasisRef.itemId,
     )
-    assert.ok(item, rule.ruleId)
+    ok(item, rule.ruleId)
     assert.notEqual(item.locator.kind, 'heading', rule.ruleId)
     const basis = normalizeRuleText(item.normalizedExcerpt)
     const statement = normalizeRuleText(rule.normalizedStatement)
-    if (item.ruleIds.length > 1) assert.ok(basis.includes(statement), rule.ruleId)
+    if (item.ruleIds.length > 1) ok(basis.includes(statement), rule.ruleId)
     else assert.equal(basis, statement)
   }
 })
@@ -1490,11 +1555,11 @@ test('R5 permission-profile reconciliation is grounded in charter D7 not D9', ()
   const record = full.reconciliations.find(
     (candidate) => candidate.reconciliationId === 'permission-profile-enforcement-bound',
   )
-  assert.ok(record)
+  ok(record)
   const refs = record.observedRefs.map((reference) => `${reference.sourceId}:${reference.itemId}`)
-  assert.ok(refs.includes('fk-charter:item.d7'))
+  ok(refs.includes('fk-charter:item.d7'))
   assert.equal(refs.includes('fk-charter:item.d9'), false)
-  assert.ok(record.authoritativeRuleIds.includes('rule.fk-charter.d7'))
+  ok(record.authoritativeRuleIds.includes('rule.fk-charter.d7'))
   assert.equal(record.authoritativeRuleIds.includes('rule.fk-charter.d9'), false)
 })
 
@@ -1511,7 +1576,7 @@ for (const reconciliationId of [
     const record = mutated.reconciliations.find(
       (candidate) => candidate.reconciliationId === reconciliationId,
     )
-    assert.ok(record)
+    ok(record)
     ;(record.observedEvidence as unknown[]).splice(0, 1)
     expectCode(mutated, 'MIGRATION_EVIDENCE_INVALID')
   })
@@ -1522,9 +1587,10 @@ test('R5 missing provenance evidence uses the exact repository-relative absent p
     (candidate) => candidate.reconciliationId === 'missing-provenance-reference',
   )
   const evidence = record?.observedEvidence.find((candidate) => candidate.kind === 'missing-path')
-  assert.ok(evidence)
+  ok(evidence)
   assert.deepEqual(JSON.parse(evidence.reference), {
-    commit: full.sourceSnapshotCommit,
+    // Byte-frozen record: the snapshot it was authored against, not the live one (R16/R17).
+    commit: LEGACY_SOURCE_SNAPSHOT_COMMIT,
     path: 'plugins/foreman-line/docs/transcripts/defects_lessons.md',
   })
 })
@@ -1532,7 +1598,7 @@ test('R5 missing provenance evidence uses the exact repository-relative absent p
 test('R5 source baseline manifest rejects a recomputed snapshot hash mutation', () => {
   const mutated = structuredClone(full)
   const source = mutated.sources[0]
-  assert.ok(source)
+  ok(source)
   ;(source.snapshotEvidence as { fullFileSha256: string }).fullFileSha256 = '0'.repeat(64)
   expectCode(mutated, 'MIGRATION_EVIDENCE_INVALID')
 })
@@ -1643,7 +1709,7 @@ const r5ApplicabilityManifest = {
 for (const [ruleId, expected] of Object.entries(r5ApplicabilityManifest)) {
   test(`R5 complete five-axis resolver applicability ${ruleId}`, () => {
     const rule = full.rules.find((candidate) => candidate.ruleId === ruleId)
-    assert.ok(rule)
+    ok(rule)
     assert.deepEqual(rule.applicability.goals, ['all-foreman-goals'])
     assert.deepEqual(rule.applicability.roles, expected[0])
     assert.deepEqual(rule.applicability.stages, expected[1])
@@ -1741,18 +1807,18 @@ test('R6 every inventory item is either curated into rules or explicitly exclude
         item.exclusionDisposition !== null,
         `${source.sourceId}:${item.itemId}`,
       )
-      if (item.ruleIds.length === 0) assert.ok(item.rationale.length >= 24)
+      if (item.ruleIds.length === 0) ok(item.rationale.length >= 24)
     }
   }
 })
 
 test('R6 structural TypeScript coverage items are exclusions, not pseudo-authority', () => {
   const source = full.sources.find((candidate) => candidate.sourceId === 'spec-linter-validator')
-  assert.ok(source)
+  ok(source)
   const imports = source.inventoryItems.filter((item) =>
     item.locator.anchor.startsWith('ts-import:'),
   )
-  assert.ok(imports.length > 0)
+  ok(imports.length > 0)
   for (const item of imports) {
     assert.deepEqual(item.ruleIds, [])
     assert.equal(item.exclusionDisposition, 'structural-ast')
@@ -1762,7 +1828,7 @@ test('R6 structural TypeScript coverage items are exclusions, not pseudo-authori
 test('R6 coordinated fallback semantic replacement is rejected as uncurated', () => {
   const mutated = structuredClone(full)
   const rule = mutated.rules.find((candidate) => candidate.ruleId === 'rule.fk-charter.d10')
-  assert.ok(rule)
+  ok(rule)
   ;(rule as { authoritySubject: string }).authoritySubject = 'fk-charter.deadbeefcafe'
   ;(rule as { authorityClaim: string }).authorityClaim = 'requires-deadbeefcafe'
   ;(rule as { bindingDigest: string }).bindingDigest = bindingDigestFor(rule)
@@ -1787,7 +1853,7 @@ for (const reconciliationId of [
     const record = mutated.reconciliations.find(
       (candidate) => candidate.reconciliationId === reconciliationId,
     )
-    assert.ok(record)
+    ok(record)
     ;(record.observedEvidence as { kind: string; reference: string; digest: string }[]).push({
       kind: 'source-ref',
       reference: canonicalJson(record.observedRefs[0]),
@@ -1801,7 +1867,7 @@ for (const reconciliationId of [
     const record = mutated.reconciliations.find(
       (candidate) => candidate.reconciliationId === reconciliationId,
     )
-    assert.ok(record)
+    ok(record)
     ;(record.observedEvidence as unknown[]).splice(0, 1)
     expectCode(mutated, 'MIGRATION_EVIDENCE_INVALID')
   })
@@ -1811,9 +1877,9 @@ for (const reconciliationId of [
     const record = mutated.reconciliations.find(
       (candidate) => candidate.reconciliationId === reconciliationId,
     )
-    assert.ok(record)
+    ok(record)
     const evidence = record.observedEvidence[0]
-    assert.ok(evidence)
+    ok(evidence)
     ;(record.observedEvidence as unknown[]).splice(1, 0, structuredClone(evidence))
     expectCode(mutated, 'MIGRATION_EVIDENCE_INVALID')
   })
@@ -1823,9 +1889,9 @@ for (const reconciliationId of [
     const record = mutated.reconciliations.find(
       (candidate) => candidate.reconciliationId === reconciliationId,
     )
-    assert.ok(record)
+    ok(record)
     const evidence = record.observedEvidence[0]
-    assert.ok(evidence)
+    ok(evidence)
     const reference = `${evidence.reference}#substituted`
     ;(record.observedEvidence as { kind: string; reference: string; digest: string }[])[0] = {
       kind: evidence.kind,
@@ -1875,7 +1941,7 @@ for (const vector of [
 ] as const) {
   test(`R6 natural applicability query: ${vector.name}`, () => {
     const rule = full.rules.find((candidate) => candidate.ruleId === vector.ruleId)
-    assert.ok(rule)
+    ok(rule)
     const result = resolveAuthority(full, {
       authoritySubject: rule.authoritySubject,
       goal: 'foreman-kernel',
@@ -1917,7 +1983,7 @@ test('R13 normative Markdown audit binds every candidate to its exact item and v
   for (const record of r13Audit()) {
     const source = full.sources.find((candidate) => candidate.sourceId === record.sourceId)
     const item = source?.inventoryItems.find((candidate) => candidate.itemId === record.itemId)
-    assert.ok(item, `${record.sourceId}:${record.itemId}`)
+    ok(item, `${record.sourceId}:${record.itemId}`)
     assert.equal(record.valueDigest, item.valueDigest, `${record.sourceId}:${record.itemId}`)
     assert.deepEqual(record.ruleIds, item.ruleIds, `${record.sourceId}:${record.itemId}`)
   }
@@ -1956,27 +2022,27 @@ for (const [name, fragment] of r13NamedPublications) {
     )
     assert.equal(matches.length, 1, fragment)
     const match = matches[0]
-    assert.ok(match)
+    ok(match)
     const record = r13Audit().find(
       (candidate) =>
         candidate.sourceId === match.source.sourceId && candidate.itemId === match.item.itemId,
     )
-    assert.ok(record, fragment)
+    ok(record, fragment)
     assert.equal(record.disposition, 'publish', fragment)
     assert.equal(record.exclusionCode, null, fragment)
-    assert.ok(record.ruleIds.length > 0, fragment)
+    ok(record.ruleIds.length > 0, fragment)
     assert.equal(match.item.exclusionDisposition, null, fragment)
   })
 }
 
 test('R13 every excluded audit candidate has one item-specific rationale', () => {
   const excluded = r13Audit().filter((record) => record.disposition === 'exclude')
-  assert.ok(excluded.length > 0)
+  ok(excluded.length > 0)
   for (const record of excluded) {
     assert.equal(record.ruleIds.length, 0, `${record.sourceId}:${record.itemId}`)
-    assert.ok(record.exclusionCode !== null, `${record.sourceId}:${record.itemId}`)
-    assert.ok(record.rationale.includes(record.itemId), `${record.sourceId}:${record.itemId}`)
-    assert.ok(!/metadata, explanatory context, or duplicate provenance/i.test(record.rationale))
+    ok(record.exclusionCode !== null, `${record.sourceId}:${record.itemId}`)
+    ok(record.rationale.includes(record.itemId), `${record.sourceId}:${record.itemId}`)
+    ok(!/metadata, explanatory context, or duplicate provenance/i.test(record.rationale))
   }
 })
 
@@ -1995,7 +2061,7 @@ const r13AuditMutations = [
     'disposition',
     (records: R13AuditRecord[]) => {
       const record = records.find((candidate) => candidate.disposition === 'exclude')
-      assert.ok(record)
+      ok(record)
       ;(record as { disposition: 'publish' | 'exclude' }).disposition = 'publish'
     },
   ],
@@ -2003,7 +2069,7 @@ const r13AuditMutations = [
     'rule set',
     (records: R13AuditRecord[]) => {
       const record = records.find((candidate) => candidate.disposition === 'publish')
-      assert.ok(record)
+      ok(record)
       ;(record.ruleIds as string[]).push('rule.forged.audit')
     },
   ],
@@ -2108,7 +2174,7 @@ test('R13 public resolver rejects widened Gate 2 applicability before resolution
   const rule = mutated.rules.find(
     (candidate) => candidate.ruleId === 'rule.fk-charter.15a44cf50bc6',
   )
-  assert.ok(rule)
+  ok(rule)
   ;(rule.applicability.roles as string[]).splice(0, rule.applicability.roles.length, 'any')
   ;(rule as { bindingDigest: string }).bindingDigest = bindingDigestFor(rule)
   expectRegistryInvalid(mutated)
@@ -2120,7 +2186,7 @@ test('R13 public resolver rejects an unapproved ALLOW before resolution', () => 
     (candidate) =>
       candidate.classification === 'pre-action-refusal' && candidate.decision === 'REFUSE',
   )
-  assert.ok(rule)
+  ok(rule)
   ;(rule as { decision: string }).decision = 'ALLOW'
   ;(rule as { refusalCode: string | null }).refusalCode = null
   ;(rule as { bindingDigest: string }).bindingDigest = bindingDigestFor(rule)
@@ -2130,7 +2196,7 @@ test('R13 public resolver rejects an unapproved ALLOW before resolution', () => 
 test('R13 public resolver rejects stale-source promotion before resolution', () => {
   const mutated = structuredClone(full)
   const source = mutated.sources.find((candidate) => candidate.sourceId === 'spec-linter-readme')
-  assert.ok(source)
+  ok(source)
   ;(source as { authorityEffect: string }).authorityEffect = 'binding'
   expectRegistryInvalid(mutated)
 })
@@ -2138,7 +2204,7 @@ test('R13 public resolver rejects stale-source promotion before resolution', () 
 test('R13 public resolver rejects recomputed-digest semantic mutation before resolution', () => {
   const mutated = structuredClone(full)
   const rule = mutated.rules.find((candidate) => candidate.ruleId === 'rule.fk-charter.d3')
-  assert.ok(rule)
+  ok(rule)
   ;(rule as { authorityClaim: string }).authorityClaim = 'forged-recomputed-claim'
   ;(rule as { bindingDigest: string }).bindingDigest = bindingDigestFor(rule)
   expectRegistryInvalid(mutated)
@@ -2168,7 +2234,7 @@ test('R13 permission YAML has exactly 34 path-keyed structural containers', () =
   const source = full.sources.find(
     (candidate) => candidate.sourceId === 'permission-profiles-registry',
   )
-  assert.ok(source)
+  ok(source)
   const containers = source.inventoryItems.filter(
     (item) =>
       item.locator.anchor.startsWith('yaml-container:') &&
@@ -2181,10 +2247,10 @@ test('R13 permission YAML excludes all six empty ask containers', () => {
   const source = full.sources.find(
     (candidate) => candidate.sourceId === 'permission-profiles-registry',
   )
-  assert.ok(source)
+  ok(source)
   const asks = source.inventoryItems.filter((item) => /:ask:\[\]$/.test(item.locator.anchor))
   assert.equal(asks.length, 6)
-  assert.ok(
+  ok(
     asks.every(
       (item) => item.exclusionDisposition === 'schema-container' && item.ruleIds.length === 0,
     ),
@@ -2196,8 +2262,8 @@ test('R13 permission YAML publishes exactly 54 mediated restrictions', () => {
     (rule) => rule.classification === 'pre-action-refusal',
   )
   assert.equal(restrictions.length, 54)
-  assert.ok(restrictions.every((rule) => rule.enforcementOwner === 'host-adapter'))
-  assert.ok(restrictions.every((rule) => rule.assurance === 'mediated'))
+  ok(restrictions.every((rule) => rule.enforcementOwner === 'host-adapter'))
+  ok(restrictions.every((rule) => rule.assurance === 'mediated'))
 })
 
 test('R13 permission YAML publishes exactly 51 narrative documentation rules', () => {
@@ -2205,9 +2271,9 @@ test('R13 permission YAML publishes exactly 51 narrative documentation rules', (
     (rule) => rule.classification === 'narrative-provenance',
   )
   assert.equal(narrative.length, 51)
-  assert.ok(narrative.every((rule) => rule.decision === 'ADVISORY'))
-  assert.ok(narrative.every((rule) => rule.enforcementOwner === 'provenance-only'))
-  assert.ok(narrative.every((rule) => rule.assurance === 'narrative'))
+  ok(narrative.every((rule) => rule.decision === 'ADVISORY'))
+  ok(narrative.every((rule) => rule.enforcementOwner === 'provenance-only'))
+  ok(narrative.every((rule) => rule.assurance === 'narrative'))
 })
 
 test('R13 permission YAML publishes zero CI rules', () => {
@@ -2221,21 +2287,21 @@ test('R13 permission YAML publishes all 49 allow leaves as nonbinding documentat
   const source = full.sources.find(
     (candidate) => candidate.sourceId === 'permission-profiles-registry',
   )
-  assert.ok(source)
+  ok(source)
   const allowRules = permissionYamlRules().filter((rule) =>
     source.inventoryItems
       .find((item) => item.itemId === rule.authorityBasisRef.itemId)
       ?.locator.anchor.includes(':allow:'),
   )
   assert.equal(allowRules.length, 49)
-  assert.ok(allowRules.every((rule) => rule.classification === 'narrative-provenance'))
+  ok(allowRules.every((rule) => rule.classification === 'narrative-provenance'))
 })
 
 test('R13 builder-deps allowlist and note remain advisory documentation', () => {
   const source = full.sources.find(
     (candidate) => candidate.sourceId === 'permission-profiles-registry',
   )
-  assert.ok(source)
+  ok(source)
   const targets = source.inventoryItems.filter(
     (item) =>
       item.locator.anchor === 'yaml-rule:builder-deps:network/egress' ||
@@ -2245,7 +2311,7 @@ test('R13 builder-deps allowlist and note remain advisory documentation', () => 
   for (const item of targets) {
     assert.equal(item.ruleIds.length, 1)
     const rule = full.rules.find((candidate) => candidate.ruleId === item.ruleIds[0])
-    assert.ok(rule)
+    ok(rule)
     assert.equal(rule.classification, 'narrative-provenance')
     assert.equal(rule.decision, 'ADVISORY')
   }
@@ -2255,16 +2321,16 @@ test('R13 every permission rule has exact YAML basis and profile-scoped applicab
   const source = full.sources.find(
     (candidate) => candidate.sourceId === 'permission-profiles-registry',
   )
-  assert.ok(source)
+  ok(source)
   for (const rule of permissionYamlRules()) {
     const item: InventoryItem | undefined = source.inventoryItems.find(
       (candidate) => candidate.itemId === rule.authorityBasisRef.itemId,
     )
-    assert.ok(item, rule.ruleId)
+    ok(item, rule.ruleId)
     assert.equal(rule.authorityBasisRef.locatorDigest, locatorDigestFor(item.locator), rule.ruleId)
     assert.equal(rule.authorityBasisRef.valueDigest, item.valueDigest, rule.ruleId)
-    assert.ok(!rule.applicability.roles.includes('any'), rule.ruleId)
-    assert.ok(!rule.applicability.roles.includes('developer'), rule.ruleId)
+    ok(!rule.applicability.roles.includes('any'), rule.ruleId)
+    ok(!rule.applicability.roles.includes('developer'), rule.ruleId)
   }
 })
 
@@ -2304,7 +2370,7 @@ test('R13 ships an exact typed migration from the rejected R12 registry snapshot
   const record = full.reconciliations.find(
     (candidate) => candidate.reconciliationId === 'registry-rework-0683bc0',
   )
-  assert.ok(record)
+  ok(record)
   assert.equal(record.migrationStatus, 'superseded-by-amendment')
   assert.deepEqual(
     record.observedEvidence
@@ -2334,7 +2400,7 @@ for (const [name, mutate] of r13EvidenceMutations) {
     const record = mutated.reconciliations.find(
       (candidate) => candidate.reconciliationId === 'registry-rework-0683bc0',
     )
-    assert.ok(record)
+    ok(record)
     mutate(record.observedEvidence as unknown[])
     expectCode(mutated, 'MIGRATION_EVIDENCE_INVALID')
   })
@@ -2342,13 +2408,13 @@ for (const [name, mutate] of r13EvidenceMutations) {
 
 function publishedRuleContaining(sourceId: string, fragment: string) {
   const source = full.sources.find((candidate) => candidate.sourceId === sourceId)
-  assert.ok(source)
+  ok(source)
   const matches = source.inventoryItems.filter(
     (item) => item.normalizedExcerpt.includes(fragment) && item.ruleIds.length === 1,
   )
   assert.equal(matches.length, 1, `${sourceId}:${fragment}`)
   const rule = full.rules.find((candidate) => candidate.ruleId === matches[0]?.ruleIds[0])
-  assert.ok(rule)
+  ok(rule)
   return rule
 }
 
@@ -2388,7 +2454,7 @@ test('R10 goal skill Gate 1 is an operative nondelegable coordinator refusal', (
     'ci',
   )
   assert.equal(positive.outcome, 'REQUIRE_HUMAN')
-  assert.ok(positive.consideredRuleIds.includes(rule.ruleId))
+  ok(positive.consideredRuleIds.includes(rule.ruleId))
   assert.equal(
     resolveNatural(
       rule.authoritySubject,
@@ -2428,7 +2494,7 @@ test('R10 goal skill human-gate hook condition requires an agent-completable sto
   assert.equal(rule.classification, 'pre-action-refusal')
   const positive = resolveNatural(rule.authoritySubject, 'coordinator', 'merge', 'state-transition')
   assert.equal(positive.outcome, 'REQUIRE_HUMAN')
-  assert.ok(positive.consideredRuleIds.includes(rule.ruleId))
+  ok(positive.consideredRuleIds.includes(rule.ruleId))
 })
 
 test('R10 goal skill stop rule is operative and coordinator-scoped', () => {
@@ -2462,7 +2528,7 @@ test('R10 coordinator commentary cannot mutate ratified authority', () => {
     'spec-mutation',
   )
   assert.equal(positive.outcome, 'REQUIRE_HUMAN')
-  assert.ok(positive.consideredRuleIds.includes(rule.ruleId))
+  ok(positive.consideredRuleIds.includes(rule.ruleId))
   assert.equal(
     resolveNatural(
       rule.authoritySubject,
@@ -2492,14 +2558,24 @@ test('R10 coordinator Gate 2 prose is superseded by the R12 advisory non-grant',
   assert.equal(rule.authoritySubject, 'gate2.dispatch-grant')
   assert.equal(rule.classification, 'narrative-provenance')
   assert.equal(rule.decision, 'ADVISORY')
-  assert.ok(
-    !resolveNatural(
-      rule.authoritySubject,
-      'coordinator',
-      'shaping',
-      'state-transition',
-    ).consideredRuleIds.includes(rule.ruleId),
+  // R14 AC5: an applicable ADVISORY rule appears in `consideredRuleIds` "without exception or
+  // hand-placed exclusion". The named invariant is that it is SEEN and yet does not CONTROL - the
+  // former assertion, that it was absent from the considered set, is what R14 superseded, and it
+  // also contradicted the sibling test asserting every operative rule is considered.
+  const resolution = resolveNatural(
+    rule.authoritySubject,
+    'coordinator',
+    'shaping',
+    'state-transition',
   )
+  ok(
+    resolution.consideredRuleIds.includes(rule.ruleId),
+    `${rule.ruleId} must be considered; considered ${resolution.consideredRuleIds.join(',')}`,
+  )
+  // Widened deliberately: `controllingRuleIds` is `readonly []` on the REQUIRE_HUMAN arm of the
+  // union, which collapses the `includes` parameter to `never`.
+  const controlling: readonly string[] = resolution.controllingRuleIds
+  ok(!controlling.includes(rule.ruleId), `${rule.ruleId} is ADVISORY and must not control`)
 })
 
 test('R10 coordinator verification custody cannot be narrative advice', () => {
@@ -2524,7 +2600,7 @@ test('R10 coordinator ownership rule is an operative state-transition refusal', 
   const rule = full.rules.find(
     (candidate) => candidate.ruleId === 'rule.coordinator-pattern.47b2eaa2f9ef.ownership',
   )
-  assert.ok(rule)
+  ok(rule)
   assert.equal(rule.authoritySubject, 'goal.coordinator-ownership')
   assert.equal(rule.classification, 'pre-action-refusal')
   const positive = resolveNatural(
@@ -2534,7 +2610,7 @@ test('R10 coordinator ownership rule is an operative state-transition refusal', 
     'state-transition',
   )
   assert.equal(positive.outcome, 'RESOLVED')
-  assert.ok(positive.consideredRuleIds.includes(rule.ruleId))
+  ok(positive.consideredRuleIds.includes(rule.ruleId))
   if (positive.outcome === 'RESOLVED') assert.equal(positive.decision, 'REFUSE')
 })
 
@@ -2552,7 +2628,7 @@ test('R10 scoped Gate 1 reopening is operative rather than blanket narrative adv
     'state-transition',
   )
   assert.equal(positive.outcome, 'REQUIRE_HUMAN')
-  assert.ok(positive.consideredRuleIds.includes(rule.ruleId))
+  ok(positive.consideredRuleIds.includes(rule.ruleId))
 })
 
 const r10GoalCoordinatorRules = full.rules.filter(
@@ -2578,8 +2654,16 @@ test('R10 every operative goal and coordinator rule has a source-derived positiv
       host: firstConcrete(rule.applicability.hosts, 'provider-neutral'),
     }
     const result = resolveAuthority(full, query)
-    assert.notEqual(result.outcome, 'CONFLICT', rule.ruleId)
-    assert.ok(result.consideredRuleIds.includes(rule.ruleId), rule.ruleId)
+    // `assert.notEqual(result.outcome, 'CONFLICT')` stood here and was a tautology: R14 removed the
+    // CONFLICT outcome entirely, so `AuthorityResolution['outcome']` is 'RESOLVED' | 'REQUIRE_HUMAN'
+    // and no input could ever have failed it. The invariant it was gesturing at is that a decision
+    // split is a VALIDITY failure rather than a resolution outcome, so it is asserted where it
+    // actually lives - on the document.
+    ok(
+      !codes(full).includes('RULE_CONFLICT'),
+      'a decision split is validity-blocking, not a resolution outcome',
+    )
+    ok(result.consideredRuleIds.includes(rule.ruleId), rule.ruleId)
   }
 })
 
@@ -2587,7 +2671,7 @@ test('R10 every operative goal and coordinator rule has a source-derived negativ
   const concreteRoles = ROLE_SCOPES.filter((role) => role !== 'any')
   for (const rule of r10GoalCoordinatorRules) {
     const excludedRole = concreteRoles.find((role) => !rule.applicability.roles.includes(role))
-    assert.ok(excludedRole, `${rule.ruleId} must preserve a source-narrowed role boundary`)
+    ok(excludedRole, `${rule.ruleId} must preserve a source-narrowed role boundary`)
     const result = resolveAuthority(full, {
       authoritySubject: rule.authoritySubject,
       goal: 'foreman-kernel',
@@ -2596,7 +2680,7 @@ test('R10 every operative goal and coordinator rule has a source-derived negativ
       operation: firstConcrete(rule.applicability.operations, 'state-transition'),
       host: firstConcrete(rule.applicability.hosts, 'provider-neutral'),
     })
-    assert.ok(!result.consideredRuleIds.includes(rule.ruleId), rule.ruleId)
+    ok(!result.consideredRuleIds.includes(rule.ruleId), rule.ruleId)
   }
 })
 
@@ -2651,7 +2735,7 @@ test('R10 ships an exact typed migration from the R9 registry snapshot', () => {
   const record = full.reconciliations.find(
     (candidate) => candidate.reconciliationId === 'registry-rework-1b42f4b',
   )
-  assert.ok(record)
+  ok(record)
   assert.equal(record.migrationStatus, 'superseded-by-amendment')
   assert.deepEqual(
     record.observedEvidence
@@ -2665,7 +2749,7 @@ test('R10 ships an exact typed migration from the R9 registry snapshot', () => {
 const reworkIds = full.reconciliations
   .map((record) => record.reconciliationId)
   .filter((reconciliationId) => reconciliationId.startsWith('registry-rework-'))
-assert.ok(reworkIds.includes('registry-rework-91145d7'))
+ok(reworkIds.includes('registry-rework-91145d7'))
 
 const r10EvidenceMutations = [
   ['append', (items: unknown[]) => items.push(structuredClone(items[0]))],
@@ -2687,7 +2771,7 @@ for (const [name, mutate] of r10EvidenceMutations) {
     const record = mutated.reconciliations.find(
       (candidate) => candidate.reconciliationId === 'registry-rework-91145d7',
     )
-    assert.ok(record)
+    ok(record)
     mutate(record.observedEvidence as unknown[])
     expectCode(mutated, 'MIGRATION_EVIDENCE_INVALID')
   })
@@ -2784,7 +2868,7 @@ const r11CompoundClauses = [
 function r11CompoundItem() {
   const source = full.sources.find((candidate) => candidate.sourceId === 'coordinator-pattern')
   const item = source?.inventoryItems.find((candidate) => candidate.itemId === 'item.47b2eaa2f9ef')
-  assert.ok(item)
+  ok(item)
   return item
 }
 
@@ -2792,9 +2876,9 @@ for (const clause of r11CompoundClauses) {
   test(`R11 compound coordinator paragraph publishes ${clause.suffix} independently`, () => {
     const item = r11CompoundItem()
     const ruleId = `rule.coordinator-pattern.47b2eaa2f9ef.${clause.suffix}`
-    assert.ok(item.ruleIds.includes(ruleId))
+    ok(item.ruleIds.includes(ruleId))
     const rule = full.rules.find((candidate) => candidate.ruleId === ruleId)
-    assert.ok(rule)
+    ok(rule)
     assert.equal(rule.authoritySubject, clause.subject)
     assert.equal(rule.classification, 'pre-action-refusal')
     assert.equal(rule.decision, 'REFUSE')
@@ -2809,7 +2893,7 @@ for (const clause of r11CompoundClauses) {
       host: 'provider-neutral',
     })
     assert.equal(result.outcome, 'RESOLVED')
-    assert.ok(result.consideredRuleIds.includes(ruleId))
+    ok(result.consideredRuleIds.includes(ruleId))
   })
 
   test(`R11 compound coordinator ${clause.suffix} has an explicit source-authored negative query`, () => {
@@ -2822,7 +2906,7 @@ for (const clause of r11CompoundClauses) {
       operation: clause.positive.operation,
       host: 'provider-neutral',
     })
-    assert.ok(!result.consideredRuleIds.includes(ruleId))
+    ok(!result.consideredRuleIds.includes(ruleId))
   })
 }
 
@@ -2859,12 +2943,12 @@ for (const block of r11ProtectedBlocks) {
   test(`R11 publishes the complete protected block: ${block.name}`, () => {
     const source = full.sources.find((candidate) => candidate.sourceId === block.sourceId)
     const item = source?.inventoryItems.find((candidate) => candidate.itemId === block.itemId)
-    assert.ok(item)
+    ok(item)
     assert.equal(item.exclusionDisposition, null)
-    assert.ok(item.ruleIds.length > 0)
-    assert.ok(item.normalizedExcerpt.includes(block.complete))
+    ok(item.ruleIds.length > 0)
+    ok(item.normalizedExcerpt.includes(block.complete))
     const rule = full.rules.find((candidate) => candidate.ruleId === item.ruleIds[0])
-    assert.ok(rule)
+    ok(rule)
     assert.equal(rule.authorityBasisRef.itemId, block.itemId)
     assert.equal(rule.normalizedStatement, item.normalizedExcerpt)
   })
@@ -2874,7 +2958,7 @@ test('R11 protected normative blocks reject exclusion', () => {
   const mutated = structuredClone(full)
   const source = mutated.sources.find((candidate) => candidate.sourceId === 'spec-convention')
   const item = source?.inventoryItems.find((candidate) => candidate.itemId === 'item.276e79bdc002')
-  assert.ok(item)
+  ok(item)
   ;(item.ruleIds as string[]).splice(0)
   ;(item as { exclusionDisposition: string | null }).exclusionDisposition =
     'non-normative-explanation'
@@ -2885,7 +2969,7 @@ test('R11 protected normative blocks reject first-line truncation', () => {
   const mutated = structuredClone(full)
   const source = mutated.sources.find((candidate) => candidate.sourceId === 'spec-convention')
   const item = source?.inventoryItems.find((candidate) => candidate.itemId === 'item.c4828bcd6dfa')
-  assert.ok(item)
+  ok(item)
   ;(item as { normalizedExcerpt: string }).normalizedExcerpt =
     'If implementation requires a path not listed in `Allowed Files`, work stops'
   ;(item as { valueDigest: string }).valueDigest = sha256(item.normalizedExcerpt)
@@ -2904,10 +2988,10 @@ test('R11 protected normative blocks reject a nearby-item authority-basis substi
     (candidate) => candidate.itemId !== protectedItem?.itemId && candidate.ruleIds.length > 0,
   )
   const rule = mutated.rules.find((candidate) => candidate.ruleId === protectedItem?.ruleIds[0])
-  assert.ok(source)
-  assert.ok(protectedItem)
-  assert.ok(nearby)
-  assert.ok(rule)
+  ok(source)
+  ok(protectedItem)
+  ok(nearby)
+  ok(rule)
   const substitute = {
     sourceId: source.sourceId,
     itemId: nearby.itemId,
@@ -2924,7 +3008,7 @@ function r11ProfileRestrictions() {
   const source = full.sources.find(
     (candidate) => candidate.sourceId === 'permission-profiles-registry',
   )
-  assert.ok(source)
+  ok(source)
   return full.rules.filter((rule) => {
     if (rule.authorityBasisRef.sourceId !== source.sourceId) return false
     const item = source.inventoryItems.find(
@@ -2948,7 +3032,7 @@ test('R11 all 54 permission-profile restrictions have precise mediated loaded-ho
     assert.equal(rule.assurance, 'mediated', rule.ruleId)
     assert.deepEqual(rule.applicability.hosts, ['claude-windows-docker-loaded'], rule.ruleId)
     assert.equal(rule.applicability.roles.length, 1, rule.ruleId)
-    assert.ok(!rule.applicability.stages.includes('any'), rule.ruleId)
+    ok(!rule.applicability.stages.includes('any'), rule.ruleId)
     assert.equal(rule.applicability.operations.length, 1, rule.ruleId)
   }
 })
@@ -2957,7 +3041,7 @@ const r11ProfileRuleId = 'rule.permission-profiles-registry.7faf78a6f54a'
 
 test('R11 loaded builder profile denial resolves only through mediated host authority', () => {
   const rule = full.rules.find((candidate) => candidate.ruleId === r11ProfileRuleId)
-  assert.ok(rule)
+  ok(rule)
   const result = resolveAuthority(full, {
     authoritySubject: rule.authoritySubject,
     goal: 'foreman-kernel',
@@ -2967,7 +3051,7 @@ test('R11 loaded builder profile denial resolves only through mediated host auth
     host: 'claude-windows-docker-loaded',
   })
   assert.equal(result.outcome, 'RESOLVED')
-  assert.ok(result.controllingRuleIds.includes(rule.ruleId))
+  ok(result.controllingRuleIds.includes(rule.ruleId))
 })
 
 for (const vector of [
@@ -2978,7 +3062,7 @@ for (const vector of [
 ] as const) {
   test(`R11 permission-profile authority excludes ${vector.name}`, () => {
     const rule = full.rules.find((candidate) => candidate.ruleId === r11ProfileRuleId)
-    assert.ok(rule)
+    ok(rule)
     const result = resolveAuthority(full, {
       authoritySubject: rule.authoritySubject,
       goal: 'foreman-kernel',
@@ -2988,7 +3072,7 @@ for (const vector of [
       host: vector.host,
     })
     assert.equal(result.outcome, 'REQUIRE_HUMAN')
-    assert.ok(!result.consideredRuleIds.includes(rule.ruleId))
+    ok(!result.consideredRuleIds.includes(rule.ruleId))
   })
 }
 
@@ -3001,7 +3085,7 @@ const r12Gate2RuleIds = [
 test('R12 exact three binding Gate 2 rules use ALLOW with no refusal code', () => {
   for (const ruleId of r12Gate2RuleIds) {
     const rule = full.rules.find((candidate) => candidate.ruleId === ruleId)
-    assert.ok(rule, ruleId)
+    ok(rule, ruleId)
     assert.equal(rule.decision, 'ALLOW', ruleId)
     assert.equal(rule.refusalCode, null, ruleId)
   }
@@ -3023,7 +3107,7 @@ test('R11 resolver returns conflict for same highest-tier claim with different d
   const original = mutated.rules.find(
     (candidate) => candidate.ruleId === 'rule.fk-charter.15a44cf50bc6',
   )
-  assert.ok(original)
+  ok(original)
   const conflicting = structuredClone(original)
   ;(conflicting as { ruleId: string }).ruleId = `${original.ruleId}.decision-conflict`
   ;(conflicting as { decision: string }).decision = 'REFUSE'
@@ -3036,7 +3120,7 @@ test('R11 resolver returns conflict for same highest-tier claim with different d
   const item = source?.inventoryItems.find(
     (candidate) => candidate.itemId === original.authorityBasisRef.itemId,
   )
-  assert.ok(item)
+  ok(item)
   ;(item.ruleIds as string[]).push(conflicting.ruleId)
   const result = resolveAuthority(mutated, {
     authoritySubject: original.authoritySubject,
@@ -3057,7 +3141,7 @@ test('R11 validator rejects any unapproved ALLOW rule', () => {
       candidate.classification === 'pre-action-refusal' &&
       !r12Gate2RuleIds.includes(candidate.ruleId as (typeof r12Gate2RuleIds)[number]),
   )
-  assert.ok(rule)
+  ok(rule)
   ;(rule as { decision: string }).decision = 'ALLOW'
   ;(rule as { refusalCode: string | null }).refusalCode = null
   ;(rule as { bindingDigest: string }).bindingDigest = bindingDigestFor(rule)
@@ -3075,7 +3159,7 @@ test('R12 coordinator-pattern delegation guidance remains an advisory non-grant'
   const rule = full.rules.find(
     (candidate) => candidate.ruleId === 'rule.coordinator-pattern.91dd60b00fd6',
   )
-  assert.ok(rule)
+  ok(rule)
   assert.equal(rule.classification, 'narrative-provenance')
   assert.equal(rule.decision, 'ADVISORY')
   assert.equal(rule.enforcementOwner, 'provenance-only')
@@ -3090,9 +3174,9 @@ test('R12 coordinator-pattern delegation guidance remains an advisory non-grant'
   // without exception or hand-placed exclusion". Visibility is the property; non-grant is proved
   // by the four assertions above plus its absence from `controllingRuleIds`.
   assert.equal(resolution.outcome, 'RESOLVED')
-  assert.ok(resolution.consideredRuleIds.includes(rule.ruleId))
+  ok(resolution.consideredRuleIds.includes(rule.ruleId))
   if (resolution.outcome === 'RESOLVED') {
-    assert.ok(!resolution.controllingRuleIds.includes(rule.ruleId))
+    ok(!resolution.controllingRuleIds.includes(rule.ruleId))
   }
 })
 
@@ -3101,7 +3185,7 @@ test('R12 a fourth corroborating or unratified ALLOW is rejected', () => {
   const rule = mutated.rules.find(
     (candidate) => candidate.ruleId === 'rule.coordinator-pattern.91dd60b00fd6',
   )
-  assert.ok(rule)
+  ok(rule)
   ;(rule as { classification: string }).classification = 'pre-action-refusal'
   ;(rule as { decision: string }).decision = 'ALLOW'
   ;(rule as { refusalCode: string | null }).refusalCode = null
@@ -3115,7 +3199,7 @@ function r12ProfileSource() {
   const source = full.sources.find(
     (candidate) => candidate.sourceId === 'permission-profiles-registry',
   )
-  assert.ok(source)
+  ok(source)
   return source
 }
 
@@ -3134,12 +3218,10 @@ test('R12 every permission-profile header and container is structural excluded i
 test('R12 obsolete builder-architecture profile-header rule is absent', () => {
   const source = r12ProfileSource()
   const header = source.inventoryItems.find((item) => item.itemId === 'item.ffd2209ab94a')
-  assert.ok(header)
+  ok(header)
   assert.deepEqual(header.ruleIds, [])
   assert.equal(header.normalizedExcerpt, 'builder-architecture:')
-  assert.ok(
-    !full.rules.some((rule) => rule.ruleId === 'rule.permission-profiles-registry.ffd2209ab94a'),
-  )
+  ok(!full.rules.some((rule) => rule.ruleId === 'rule.permission-profiles-registry.ffd2209ab94a'))
 })
 
 test('R12 reviewer git-commit denial binds only its canonical YAML rule item', () => {
@@ -3148,8 +3230,8 @@ test('R12 reviewer git-commit denial binds only its canonical YAML rule item', (
   const rule = full.rules.find(
     (candidate) => candidate.ruleId === 'rule.permission-profiles-registry.35cf0f58fc34',
   )
-  assert.ok(item)
-  assert.ok(rule)
+  ok(item)
+  ok(rule)
   assert.equal(item.locator.kind, 'symbol')
   assert.equal(item.locator.anchor, 'yaml-rule:reviewer-readonly:deny:"Bash(git commit*)"')
   assert.equal(item.normalizedExcerpt, '"Bash(git commit*)"')
@@ -3169,9 +3251,9 @@ test('R12 a permission-profile claim based on a structural header is rejected', 
   const rule = mutated.rules.find(
     (candidate) => candidate.ruleId === 'rule.permission-profiles-registry.35cf0f58fc34',
   )
-  assert.ok(source)
-  assert.ok(header)
-  assert.ok(rule)
+  ok(source)
+  ok(header)
+  ok(rule)
   const headerRef = {
     sourceId: source.sourceId,
     itemId: header.itemId,
@@ -3191,7 +3273,7 @@ test('R12 rejects a content-derived legacy item ID on a published Markdown rule'
   const item = source?.inventoryItems.find((candidate) =>
     candidate.normalizedExcerpt.includes('One goal, one coordinator:'),
   )
-  assert.ok(item)
+  ok(item)
   const legacyItemId = `item.${sha256(item.normalizedExcerpt).slice(0, 12)}`
   const originalItemId = item.itemId
   ;(item as { itemId: string }).itemId = legacyItemId
@@ -3244,7 +3326,7 @@ test('R12 ships an exact typed migration from the R11 registry snapshot', () => 
   const record = full.reconciliations.find(
     (candidate) => candidate.reconciliationId === 'registry-rework-544d8a3',
   )
-  assert.ok(record)
+  ok(record)
   assert.equal(record.migrationStatus, 'superseded-by-amendment')
   assert.deepEqual(
     record.observedEvidence
@@ -3267,7 +3349,7 @@ for (const [name, mutate] of r10EvidenceMutations) {
     const record = mutated.reconciliations.find(
       (candidate) => candidate.reconciliationId === 'registry-rework-544d8a3',
     )
-    assert.ok(record)
+    ok(record)
     mutate(record.observedEvidence as unknown[])
     expectCode(mutated, 'MIGRATION_EVIDENCE_INVALID')
   })
@@ -3277,7 +3359,7 @@ test('R11 ships an exact typed migration from the R10 registry snapshot', () => 
   const record = full.reconciliations.find(
     (candidate) => candidate.reconciliationId === 'registry-rework-ee29973',
   )
-  assert.ok(record)
+  ok(record)
   assert.equal(record.migrationStatus, 'superseded-by-amendment')
   assert.deepEqual(
     record.observedEvidence
@@ -3293,7 +3375,7 @@ for (const [name, mutate] of r10EvidenceMutations) {
     const record = mutated.reconciliations.find(
       (candidate) => candidate.reconciliationId === 'registry-rework-ee29973',
     )
-    assert.ok(record)
+    ok(record)
     mutate(record.observedEvidence as unknown[])
     expectCode(mutated, 'MIGRATION_EVIDENCE_INVALID')
   })
@@ -3306,7 +3388,7 @@ for (const [name, mutate] of r10EvidenceMutations) {
       const record = mutated.reconciliations.find(
         (candidate) => candidate.reconciliationId === reconciliationId,
       )
-      assert.ok(record)
+      ok(record)
       mutate(record.observedEvidence as unknown[])
       expectCode(mutated, 'MIGRATION_EVIDENCE_INVALID')
     }
@@ -3316,11 +3398,11 @@ for (const [name, mutate] of r10EvidenceMutations) {
 function publishedRuleFor(sourceId: string, itemId: string) {
   const source = full.sources.find((candidate) => candidate.sourceId === sourceId)
   const item = source?.inventoryItems.find((candidate) => candidate.itemId === itemId)
-  assert.ok(item, `${sourceId}:${itemId}`)
+  ok(item, `${sourceId}:${itemId}`)
   assert.equal(item.ruleIds.length, 1, `${sourceId}:${itemId}`)
   assert.equal(item.exclusionDisposition, null, `${sourceId}:${itemId}`)
   const rule = full.rules.find((candidate) => candidate.ruleId === item.ruleIds[0])
-  assert.ok(rule, `${sourceId}:${itemId}`)
+  ok(rule, `${sourceId}:${itemId}`)
   return rule
 }
 
@@ -3387,7 +3469,7 @@ test('R9 gives every published item one literal curated classification entry', (
   assert.match(generator, /const CURATED_ITEM_CLASSIFICATIONS/)
   const curationStart = generator.indexOf('const CURATED_ITEM_CLASSIFICATIONS')
   const curationEnd = generator.indexOf('const CURATED_ITEM_IDENTITIES', curationStart)
-  assert.ok(curationStart >= 0 && curationEnd > curationStart)
+  ok(curationStart >= 0 && curationEnd > curationStart)
   const curation = generator.slice(curationStart, curationEnd)
   const r13PublishedRuleIds = new Set(full.normativeMarkdownAudit.flatMap((entry) => entry.ruleIds))
   for (const rule of full.rules) {
@@ -3407,7 +3489,7 @@ test('R9 classification curation has no source-wide keyword or terminal fallback
   const generator = readFileSync(join(packageRoot, 'src', 'generate.ts'), 'utf8')
   assert.doesNotMatch(generator, /function classificationFor\s*\(/)
   const curation = /function curatedClassificationFor[\s\S]*?\n}/.exec(generator)?.[0]
-  assert.ok(curation)
+  ok(curation)
   assert.match(curation, /lacks literal curated classification/)
   assert.doesNotMatch(
     curation,
@@ -3482,39 +3564,37 @@ test('R9 loop stop and completion rules retain operative classifications and nar
     assert.notEqual(rule.classification, 'narrative-provenance', itemId)
     assert.deepEqual(rule.applicability.roles, ['coordinator'], itemId)
     if (itemId === 'item.237865e0993f') {
-      assert.ok(rule.applicability.stages.includes('runtime'), itemId)
+      ok(rule.applicability.stages.includes('runtime'), itemId)
     } else {
-      assert.ok(!rule.applicability.stages.includes('runtime'), itemId)
+      ok(!rule.applicability.stages.includes('runtime'), itemId)
     }
-    assert.ok(!rule.applicability.operations.includes('external-write'), itemId)
+    ok(!rule.applicability.operations.includes('external-write'), itemId)
   }
 })
 
 test('R7 Gate 1 binds original ratification scoped re-ratification and nondelegability', () => {
   const operation = full.operationAuthority.find((row) => row.operationId === 'gate1.ratify')
-  assert.ok(operation)
+  ok(operation)
   const statements = operation.requiredGitEvidence.map((reference) => {
     const source = full.sources.find((candidate) => candidate.sourceId === reference.sourceId)
     return source?.inventoryItems.find((item) => item.itemId === reference.itemId)
       ?.normalizedExcerpt
   })
-  assert.ok(statements.some((text) => text?.includes('Ratify Gate 1 and authorize Gate 2')))
-  assert.ok(statements.some((text) => text?.includes('Re-ratify Gate 1 amendments R1–R13')))
-  assert.ok(statements.some((text) => text?.includes('Gate 1 is nondelegable')))
+  ok(statements.some((text) => text?.includes('Ratify Gate 1 and authorize Gate 2')))
+  ok(statements.some((text) => text?.includes('Re-ratify Gate 1 amendments R1–R13')))
+  ok(statements.some((text) => text?.includes('Gate 1 is nondelegable')))
 })
 
 test('R7 Gate 2 binds the standing charter grant and operative loop authorization', () => {
   const operation = full.operationAuthority.find((row) => row.operationId === 'gate2.dispatch')
-  assert.ok(operation)
+  ok(operation)
   const statements = operation.requiredGitEvidence.map((reference) => {
     const source = full.sources.find((candidate) => candidate.sourceId === reference.sourceId)
     return source?.inventoryItems.find((item) => item.itemId === reference.itemId)
       ?.normalizedExcerpt
   })
-  assert.ok(statements.some((text) => text?.includes('AUTHORIZED AND RESUMED 2026-08-31')))
-  assert.ok(
-    statements.some((text) => text?.includes('Gate 2 dispatch') && text.includes('FK-P0–FK-P21')),
-  )
+  ok(statements.some((text) => text?.includes('AUTHORIZED AND RESUMED 2026-08-31')))
+  ok(statements.some((text) => text?.includes('Gate 2 dispatch') && text.includes('FK-P0–FK-P21')))
 })
 
 test('R7 every exclusion uses the closed item-specific code vocabulary', () => {
@@ -3533,7 +3613,7 @@ test('R7 every exclusion uses the closed item-specific code vocabulary', () => {
     for (const item of source.inventoryItems.filter(
       (candidate) => candidate.ruleIds.length === 0,
     )) {
-      assert.ok(allowed.has(item.exclusionDisposition ?? ''), `${source.sourceId}:${item.itemId}`)
+      ok(allowed.has(item.exclusionDisposition ?? ''), `${source.sourceId}:${item.itemId}`)
       assert.doesNotMatch(item.rationale, /metadata, explanatory context, or duplicate provenance/i)
     }
   }
@@ -3607,7 +3687,7 @@ test('R9 shared semantic identities are limited to the exact curated equivalent 
 test('R7 all charter decisions D1 through D20 publish active non-narrative authority', () => {
   for (let index = 1; index <= 20; index += 1) {
     const rule = full.rules.find((candidate) => candidate.ruleId === `rule.fk-charter.d${index}`)
-    assert.ok(rule, `D${index}`)
+    ok(rule, `D${index}`)
     assert.equal(rule.retirementState, 'active-reading', `D${index}`)
     assert.notEqual(rule.classification, 'narrative-provenance', `D${index}`)
     assert.notEqual(rule.classification, 'unsupported', `D${index}`)
@@ -3616,7 +3696,7 @@ test('R7 all charter decisions D1 through D20 publish active non-narrative autho
 
 test('R8 publishes all nine charter goal-exit requirements individually', () => {
   const source = full.sources.find((candidate) => candidate.sourceId === 'fk-charter')
-  assert.ok(source)
+  ok(source)
   const items = source.inventoryItems.filter(
     (item) =>
       item.locator.kind === 'numbered-item' &&
@@ -3624,12 +3704,12 @@ test('R8 publishes all nine charter goal-exit requirements individually', () => 
       /^\d+\./.test(item.normalizedExcerpt),
   )
   assert.equal(items.length, 9)
-  assert.ok(items.every((item) => item.ruleIds.length === 1 && item.exclusionDisposition === null))
+  ok(items.every((item) => item.ruleIds.length === 1 && item.exclusionDisposition === null))
 })
 
 test('R8 publishes all seventeen charter stop-condition bullets individually', () => {
   const source = full.sources.find((candidate) => candidate.sourceId === 'fk-charter')
-  assert.ok(source)
+  ok(source)
   const items = source.inventoryItems.filter(
     (item) =>
       item.locator.kind === 'numbered-item' &&
@@ -3637,17 +3717,17 @@ test('R8 publishes all seventeen charter stop-condition bullets individually', (
       item.normalizedExcerpt.startsWith('- '),
   )
   assert.equal(items.length, 17)
-  assert.ok(items.every((item) => item.ruleIds.length === 1 && item.exclusionDisposition === null))
+  ok(items.every((item) => item.ruleIds.length === 1 && item.exclusionDisposition === null))
 })
 
 test('R8 publishes all five literal charter wave-exit contracts individually', () => {
   const source = full.sources.find((candidate) => candidate.sourceId === 'fk-charter')
-  assert.ok(source)
+  ok(source)
   const items = source.inventoryItems.filter((item) =>
     /^\*\*Wave [0-4] exit:\*\*/.test(item.normalizedExcerpt),
   )
   assert.equal(items.length, 5)
-  assert.ok(items.every((item) => item.ruleIds.length === 1 && item.exclusionDisposition === null))
+  ok(items.every((item) => item.ruleIds.length === 1 && item.exclusionDisposition === null))
 })
 
 test('R8 loop completion and gate requirement bodies remain independently published', () => {
@@ -3660,12 +3740,12 @@ test('R8 loop completion and gate requirement bodies remain independently publis
     'item.237865e0993f',
   ]
   const source = full.sources.find((candidate) => candidate.sourceId === 'fk-loop-directive')
-  assert.ok(source)
+  ok(source)
   for (const itemId of required) {
     const inventoryItem: InventoryItem | undefined = source.inventoryItems.find(
       (candidate) => candidate.itemId === itemId,
     )
-    assert.ok(inventoryItem, itemId)
+    ok(inventoryItem, itemId)
     assert.equal(inventoryItem.ruleIds.length, 1, itemId)
     assert.equal(inventoryItem.exclusionDisposition, null, itemId)
   }
@@ -3702,7 +3782,7 @@ test('R8 unrelated linter return remains structural and cannot publish absence a
   )
   const source = full.sources.find((candidate) => candidate.sourceId === 'spec-linter-validator')
   const item = source?.inventoryItems.find((candidate) => candidate.itemId === 'item.80563af1788e')
-  assert.ok(item)
+  ok(item)
   assert.deepEqual(item.ruleIds, [])
   assert.equal(item.exclusionDisposition, 'structural-ast')
 })
@@ -3711,15 +3791,15 @@ test('R8 Allowed Files absence is carried only by exact reconciliation evidence'
   const record = full.reconciliations.find(
     (candidate) => candidate.reconciliationId === 'surfaces-allowed-files',
   )
-  assert.ok(record)
+  ok(record)
   assert.doesNotMatch(canonicalJson(record.observedRefs), /item\.80563af1788e/)
-  assert.ok(record.observedEvidence.some((evidence) => evidence.kind === 'command-result'))
+  ok(record.observedEvidence.some((evidence) => evidence.kind === 'command-result'))
   assert.match(record.unresolvedConsequence, /FK-P2 gap/)
 })
 
 test('R8 verification operation binds exact anti-self-production canon', () => {
   const operation = full.operationAuthority.find((row) => row.operationId === 'verification.issue')
-  assert.ok(operation)
+  ok(operation)
   assert.deepEqual(
     operation.requiredGitEvidence.map((reference) => `${reference.sourceId}:${reference.itemId}`),
     ['spec-convention:item.03f0830cd693', 'fk-loop-directive:item.dd8203551518'],
@@ -3728,14 +3808,14 @@ test('R8 verification operation binds exact anti-self-production canon', () => {
 
 test('R8 verification evidence resolves the exact independent-review meaning', () => {
   const operation = full.operationAuthority.find((row) => row.operationId === 'verification.issue')
-  assert.ok(operation)
+  ok(operation)
   const statements = operation.requiredGitEvidence.map((reference) => {
     const source = full.sources.find((candidate) => candidate.sourceId === reference.sourceId)
     return source?.inventoryItems.find((item) => item.itemId === reference.itemId)
       ?.normalizedExcerpt
   })
-  assert.ok(statements.some((text) => text?.includes('No agent verifies its own claim')))
-  assert.ok(
+  ok(statements.some((text) => text?.includes('No agent verifies its own claim')))
+  ok(
     statements.some((text) =>
       text?.includes(
         'coordinator consumes verification; it never produces independent verification',
@@ -3749,11 +3829,11 @@ test('R8 verification evidence rejects a corroborative two-review substitution',
   const operation = mutated.operationAuthority.find(
     (row) => row.operationId === 'verification.issue',
   )
-  assert.ok(operation)
+  ok(operation)
   const substitute = mutated.rules
     .find((rule) => rule.ruleId === 'rule.fk-charter.d11')
     ?.sourceRefs.at(0)
-  assert.ok(substitute)
+  ok(substitute)
   ;(operation.requiredGitEvidence as (typeof substitute)[])[0] = substitute
   expectCode(mutated, 'AUTHORITY_ESCALATION')
 })
@@ -3761,7 +3841,7 @@ test('R8 verification evidence rejects a corroborative two-review substitution',
 test('R8 RULE_SEMANTICS_UNCURATED is a closed ratified result code', () => {
   const mutated = structuredClone(full)
   const rule = mutated.rules.find((candidate) => candidate.ruleId === 'rule.fk-charter.d2')
-  assert.ok(rule)
+  ok(rule)
   ;(rule as { authoritySubject: string }).authoritySubject = 'fk-charter.d2'
   ;(rule as { bindingDigest: string }).bindingDigest = bindingDigestFor(rule)
   expectCode(mutated, 'RULE_SEMANTICS_UNCURATED')
@@ -3771,23 +3851,23 @@ test('R8 ships a typed migration from the R7 registry snapshot', () => {
   const record = full.reconciliations.find(
     (candidate) => candidate.reconciliationId === 'registry-rework-37afc65',
   )
-  assert.ok(record)
+  ok(record)
   assert.equal(record.migrationStatus, 'superseded-by-amendment')
-  assert.ok(
+  ok(
     record.observedEvidence.some(
       (evidence) =>
         evidence.kind === 'git-commit' &&
         evidence.reference === '5d7ca990574eb8416a1fc5ac40b90d9aec975b2b',
     ),
   )
-  assert.ok(record.supersedingEvidence)
+  ok(record.supersedingEvidence)
 })
 
 test('R9 ships an exact typed migration from the R8 registry snapshot', () => {
   const record = full.reconciliations.find(
     (candidate) => candidate.reconciliationId === 'registry-rework-91145d7',
   )
-  assert.ok(record)
+  ok(record)
   assert.equal(record.migrationStatus, 'superseded-by-amendment')
   assert.deepEqual(
     record.observedEvidence
@@ -3817,7 +3897,7 @@ for (const [name, mutate] of [
     const record = mutated.reconciliations.find(
       (candidate) => candidate.reconciliationId === 'registry-rework-37afc65',
     )
-    assert.ok(record)
+    ok(record)
     mutate(record.observedEvidence as unknown[])
     expectCode(mutated, 'MIGRATION_EVIDENCE_INVALID')
   })
@@ -3879,7 +3959,7 @@ test('R14 a resolved result exposes classification, assurance, enforcement owner
   assert.equal(result.outcome, 'RESOLVED')
   if (result.outcome !== 'RESOLVED') return
   assert.equal(result.decision, 'REFUSE')
-  assert.ok(RULE_CLASSIFICATIONS.includes(result.classification))
+  ok(RULE_CLASSIFICATIONS.includes(result.classification))
   // The honesty signal: this REFUSE is structural, owned by a kernel that does not exist yet.
   assert.equal(result.assurance, 'structural')
   assert.equal(result.enforcementOwner, 'kernel-policy')
@@ -3900,11 +3980,11 @@ test('R14 a resolved result reports the assurance of its controlling rules, not 
   assert.equal(result.decision, 'ALLOW')
   const controlling = result.controllingRuleIds.map((ruleId) => {
     const rule = full.rules.find((candidate) => candidate.ruleId === ruleId)
-    assert.ok(rule)
+    ok(rule)
     return rule
   })
-  assert.ok(controlling.every((rule) => rule.assurance === result.assurance))
-  assert.ok(controlling.every((rule) => rule.enforcementOwner === result.enforcementOwner))
+  ok(controlling.every((rule) => rule.assurance === result.assurance))
+  ok(controlling.every((rule) => rule.enforcementOwner === result.enforcementOwner))
 })
 
 // R14 fix 14: Standing Constraint #13 requires an allowlist to pin identity, LOCATION and VALUE.
@@ -3942,7 +4022,7 @@ for (const [axis, mutate] of [
     const rule = mutated.rules.find(
       (candidate) => candidate.ruleId === 'rule.fk-charter.15a44cf50bc6',
     )
-    assert.ok(rule)
+    ok(rule)
     assert.equal(rule.decision, 'ALLOW')
     mutate(rule)
     ;(rule as { bindingDigest: string }).bindingDigest = bindingDigestFor(rule)
@@ -3955,7 +4035,7 @@ test('R14 a new rule wearing an approved Gate 2 rule name cannot inherit its ALL
   const squatter = mutated.rules.find(
     (candidate) => candidate.ruleId === 'rule.fk-charter.15a44cf50bc6',
   )
-  assert.ok(squatter)
+  ok(squatter)
   // Same name, different binding: a squatted waiver is exactly what Standing Constraint #13's
   // location and value axes exist to refuse.
   ;(squatter.authorityBasisRef as { sourceId: string }).sourceId = 'standing-constraints'
@@ -3963,4 +4043,375 @@ test('R14 a new rule wearing an approved Gate 2 rule name cannot inherit its ALL
   ;(squatter.authorityBasisRef as { valueDigest: string }).valueDigest = 'f'.repeat(64)
   ;(squatter as { bindingDigest: string }).bindingDigest = bindingDigestFor(squatter)
   expectCode(mutated, 'AUTHORITY_ESCALATION')
+})
+
+// ===========================================================================================
+// AC4's head floor - obligations 1-3 (R19) and 4-5 (R21).
+//
+// The head is the ONE reconciliation exempt from `RECONCILIATION_RECORD_DIGESTS`, bound instead to
+// the manifest recomputed live from the document it sits in. Before R19 nothing constrained its
+// CONTENT, and two independent reviewers each drove a tampered registry through it and validated
+// green. Every obligation below is exercised on its own axis, and each mutation asserts that it
+// actually changed the record - a probe that writes a field's shipped value back mutates nothing
+// and reads as "allowed", which is the trap that caught every party to this parcel at least once.
+// ===========================================================================================
+
+const CHAIN_HEAD_ID = 'registry-rework-df8155a'
+
+type Reconciliation = AuthorityEnforcementRegistry['reconciliations'][number]
+type Evidence = Reconciliation['observedEvidence'][number]
+
+function headOf(document: AuthorityEnforcementRegistry): Reconciliation {
+  const head = document.reconciliations.find((record) => record.reconciliationId === CHAIN_HEAD_ID)
+  ok(head, `${CHAIN_HEAD_ID} must be present`)
+  return head
+}
+
+/** Clone the shipped registry, mutate its chain head, and PROVE the mutation changed something. */
+function withMutatedHead(mutate: (record: Reconciliation) => void): AuthorityEnforcementRegistry {
+  const mutated = structuredClone(full)
+  const head = headOf(mutated)
+  const before = canonicalJson(head)
+  mutate(head)
+  assert.notEqual(canonicalJson(head), before, 'the mutation must actually change the head record')
+  return mutated
+}
+
+function commandEvidenceReference(
+  commandId: string,
+  inputDigest: string,
+  resultDigest: string,
+): string {
+  return canonicalJson({
+    tool: '@foreman-line/authority-registry',
+    toolVersion: '0.1.0',
+    commandId,
+    inputDigest,
+    resultDigest,
+    exitCode: 0,
+    actorClass: 'coordinator',
+  })
+}
+
+function parsedHeadCommand(record: Reconciliation, prefix: string) {
+  const parsed = record.observedEvidence
+    .filter((evidence) => evidence.kind === 'command-result')
+    .map(
+      (evidence) =>
+        JSON.parse(evidence.reference) as {
+          commandId: string
+          inputDigest: string
+          resultDigest: string
+        },
+    )
+    .find((command) => command.commandId.startsWith(prefix))
+  ok(parsed, `head must carry a '${prefix}' command`)
+  return parsed
+}
+
+function messagesFor(document: unknown): string[] {
+  return validateRegistry(document).violations.map((violation) => violation.message)
+}
+
+/** The shipped registry is the positive control for every refusal below. */
+test('AC4 head floor: the shipped registry is valid, so each refusal below is caused by its mutation', () => {
+  assert.deepEqual(
+    validateRegistry(full).violations.map((violation) => violation.code),
+    [],
+  )
+})
+
+// ------------------------------------------------------------------ obligation 1: exactly one link
+test('AC4 O1 rejects a head declaring two superseding binding-manifest commands', () => {
+  // R19 route A, the reproduced exploit: `chainLinkFor` selected chain commands with
+  // `Array.prototype.find`, so unshifting a second superseding command bound the chain to whatever
+  // manifest it declared while the honest command sat untouched below it. A fork INSIDE one record
+  // is invisible to across-record fork detection, which keys on `prevDigest` BETWEEN records.
+  const mutated = withMutatedHead((record) => {
+    const honest = parsedHeadCommand(record, 'superseding-binding-manifest')
+    const shadow = commandEvidenceReference(
+      'superseding-binding-manifest-r14',
+      honest.inputDigest,
+      'f'.repeat(64),
+    )
+    ;(record.observedEvidence as Evidence[]).unshift({
+      kind: 'command-result',
+      reference: shadow,
+      digest: sha256(shadow),
+    })
+  })
+  expectCode(mutated, 'MIGRATION_EVIDENCE_INVALID')
+})
+
+test('AC4 O1 rejects a head declaring two prior binding-manifest commands', () => {
+  const mutated = withMutatedHead((record) => {
+    const honest = parsedHeadCommand(record, 'registry-binding-manifest')
+    const second = commandEvidenceReference(
+      'registry-binding-manifest-r13',
+      honest.inputDigest,
+      'e'.repeat(64),
+    )
+    ;(record.observedEvidence as Evidence[]).unshift({
+      kind: 'command-result',
+      reference: second,
+      digest: sha256(second),
+    })
+  })
+  expectCode(mutated, 'MIGRATION_EVIDENCE_INVALID')
+})
+
+test('AC4 O1 rejects a head declaring no superseding binding-manifest command', () => {
+  const mutated = withMutatedHead((record) => {
+    ;(record as { observedEvidence: readonly Evidence[] }).observedEvidence =
+      record.observedEvidence.filter(
+        (evidence) =>
+          evidence.kind !== 'command-result' ||
+          !(JSON.parse(evidence.reference) as { commandId: string }).commandId.startsWith(
+            'superseding-binding-manifest',
+          ),
+      )
+  })
+  expectCode(mutated, 'MIGRATION_EVIDENCE_INVALID')
+})
+
+test('AC4 O1 rejects a head declaring no prior binding-manifest command', () => {
+  const mutated = withMutatedHead((record) => {
+    ;(record as { observedEvidence: readonly Evidence[] }).observedEvidence =
+      record.observedEvidence.filter(
+        (evidence) =>
+          evidence.kind !== 'command-result' ||
+          !(JSON.parse(evidence.reference) as { commandId: string }).commandId.startsWith(
+            'registry-binding-manifest',
+          ),
+      )
+  })
+  expectCode(mutated, 'MIGRATION_EVIDENCE_INVALID')
+})
+
+// ------------------------------------------------------------------ obligation 2: pins are not heads
+test('AC4 O2 refuses a pinned record promoted into the head exemption by deletion', () => {
+  // R19 route B, the reproduced exploit: head identity was positional and position depended on what
+  // existed, so deleting the head promoted the previously pinned record OUT of its byte pin.
+  // Repointing that promoted record at the live manifest then validated clean.
+  const kept = structuredClone(full).reconciliations.filter(
+    (record) => record.reconciliationId !== CHAIN_HEAD_ID,
+  )
+  assert.equal(kept.length, full.reconciliations.length - 1, 'the head must actually be removed')
+  const promoted = kept[kept.length - 1]
+  ok(promoted)
+  const document = { ...structuredClone(full), reconciliations: kept }
+  const liveManifest = registryBindingManifestDigest(document)
+  let repointed = false
+  for (const evidence of promoted.observedEvidence) {
+    if (evidence.kind !== 'command-result') continue
+    const parsed = JSON.parse(evidence.reference) as {
+      commandId: string
+      inputDigest: string
+      resultDigest: string
+    }
+    if (!parsed.commandId.startsWith('superseding-binding-manifest')) continue
+    assert.notEqual(parsed.resultDigest, liveManifest, 'repointing must not be a no-op')
+    const reference = commandEvidenceReference(parsed.commandId, parsed.inputDigest, liveManifest)
+    ;(evidence as { reference: string }).reference = reference
+    ;(evidence as { digest: string }).digest = sha256(reference)
+    repointed = true
+  }
+  ok(repointed, 'the promoted record must actually be repointed at the live manifest')
+  ok(
+    messagesFor(document).some((message) => message.includes('cannot be the migration chain head')),
+    `expected the pinned-record-as-head refusal; observed ${messagesFor(document).join(' | ')}`,
+  )
+})
+
+// ------------------------------------------------------------------ obligation 3: the head's shape
+test('AC4 O3 rejects a head that does not declare superseded-by-amendment with superseding evidence', () => {
+  // These two cannot be varied independently: a separate shipped invariant already requires
+  // `migrationStatus === 'superseded-by-amendment'` and a non-null `supersedingEvidence` to agree
+  // with each other, so breaking one alone trips that instead. Both head-floor messages are
+  // asserted by name so each clause is shown to have fired.
+  const mutated = withMutatedHead((record) => {
+    ;(record as { migrationStatus: string }).migrationStatus = 'open'
+    ;(record as { supersedingEvidence: unknown }).supersedingEvidence = null
+  })
+  const observed = messagesFor(mutated)
+  ok(
+    observed.some((message) => message.includes('does not declare migrationStatus')),
+    `expected the migrationStatus refusal; observed ${observed.join(' | ')}`,
+  )
+  ok(
+    observed.some((message) => message.includes('declares no superseding evidence')),
+    `expected the superseding-evidence refusal; observed ${observed.join(' | ')}`,
+  )
+})
+
+test('AC4 O3 rejects a head carrying no forty-hex lowercase git-commit evidence', () => {
+  const mutated = withMutatedHead((record) => {
+    ;(record as { observedEvidence: readonly Evidence[] }).observedEvidence =
+      record.observedEvidence.filter((evidence) => evidence.kind !== 'git-commit')
+  })
+  ok(
+    messagesFor(mutated).some((message) =>
+      message.includes('carries no git-commit evidence naming'),
+    ),
+    `expected the git-commit shape refusal; observed ${messagesFor(mutated).join(' | ')}`,
+  )
+})
+
+test('AC4 O3 rejects a head whose command evidence is not coordinator-issued with exit code 0', () => {
+  const mutated = withMutatedHead((record) => {
+    ;(record as { observedEvidence: readonly Evidence[] }).observedEvidence =
+      record.observedEvidence.map((evidence) => {
+        if (evidence.kind !== 'command-result') return evidence
+        const parsed = JSON.parse(evidence.reference) as Record<string, unknown>
+        assert.notEqual(parsed.actorClass, 'anonymous', 'degrading the actor must not be a no-op')
+        const reference = canonicalJson({ ...parsed, actorClass: 'anonymous', exitCode: 137 })
+        return { kind: evidence.kind, reference, digest: sha256(reference) }
+      })
+  })
+  ok(
+    messagesFor(mutated).some((message) =>
+      message.includes('carries no command evidence issued by'),
+    ),
+    `expected the command-shape refusal; observed ${messagesFor(mutated).join(' | ')}`,
+  )
+})
+
+// ------------------------------------------------------------------ obligation 4: references bind
+test('AC4 O4 rejects a head whose git-commit reference is repointed at another commit', () => {
+  // Reviewer A's finding. The line this closes read
+  // `expectedDigest = /^[0-9a-f]{64}$/.test(evidence.digest) ? evidence.digest : null` - a digest
+  // compared TO ITSELF and reported as a binding check, so an arbitrary forty-hex value passed.
+  const mutated = withMutatedHead((record) => {
+    const prior = parsedHeadCommand(record, 'registry-binding-manifest')
+    const bound = record.observedEvidence.find(
+      (evidence) =>
+        evidence.kind === 'git-commit' && sha256(evidence.reference) === prior.inputDigest,
+    )
+    ok(bound, 'the head must carry the git-commit its prior command binds')
+    assert.notEqual(bound.reference, 'b'.repeat(40), 'repointing must not be a no-op')
+    ;(bound as { reference: string }).reference = 'b'.repeat(40)
+  })
+  ok(
+    messagesFor(mutated).some((message) =>
+      message.includes('does not bind any git-commit evidence reference'),
+    ),
+    `expected the git-commit binding refusal; observed ${messagesFor(mutated).join(' | ')}`,
+  )
+})
+
+test('AC4 O4 rejects a head whose bound git-commit evidence is deleted', () => {
+  const mutated = withMutatedHead((record) => {
+    const prior = parsedHeadCommand(record, 'registry-binding-manifest')
+    ;(record as { observedEvidence: readonly Evidence[] }).observedEvidence =
+      record.observedEvidence.filter(
+        (evidence) =>
+          !(evidence.kind === 'git-commit' && sha256(evidence.reference) === prior.inputDigest),
+      )
+  })
+  ok(
+    messagesFor(mutated).some((message) =>
+      message.includes('does not bind any git-commit evidence reference'),
+    ),
+    `expected the git-commit binding refusal; observed ${messagesFor(mutated).join(' | ')}`,
+  )
+})
+
+test('AC4 O4 residual, stated and not disguised: a head git-commit digest is not independently checkable', () => {
+  // R21's obligation is that where no binding is available for a kind, the ABSENCE IS STATED rather
+  // than disguised as a check. This test states it, and pins its exact width.
+  //
+  // A `git-commit` digest attests the commit OBJECT BODY - `sha256(git cat-file -p <commit>)` - and
+  // no hermetic validator can recompute that. What IS bound is the REFERENCE, via the prior
+  // command's `inputDigest` (asserted two tests above). So rewriting the DIGEST alone, on the one
+  // record exempt from the byte pin, is not independently detectable. That is a real residual and
+  // this parcel exists to report residuals honestly rather than to imply coverage it lacks.
+  //
+  // It is narrow, and the control below is what makes "narrow" checkable: on any PINNED record the
+  // very same edit is refused, because it breaks the record's canonical manifest.
+  const headMutated = withMutatedHead((record) => {
+    const target = record.observedEvidence.find((evidence) => evidence.kind === 'git-commit')
+    ok(target, 'the head must carry git-commit evidence')
+    assert.notEqual(target.digest, 'a'.repeat(64), 'the digest rewrite must not be a no-op')
+    ;(target as { digest: string }).digest = 'a'.repeat(64)
+  })
+  assert.deepEqual(
+    validateRegistry(headMutated).violations.map((violation) => violation.code),
+    [],
+    'stated residual: a head git-commit digest carries no independent binding',
+  )
+
+  // Control - the same edit on a pinned record IS refused, so the residual covers the head alone.
+  const pinnedMutated = structuredClone(full)
+  const pinned = pinnedMutated.reconciliations.find(
+    (record) => record.reconciliationId === 'registry-rework-0683bc0',
+  )
+  ok(pinned)
+  const pinnedTarget = pinned.observedEvidence.find((evidence) => evidence.kind === 'git-commit')
+  ok(pinnedTarget)
+  assert.notEqual(pinnedTarget.digest, 'a'.repeat(64), 'the digest rewrite must not be a no-op')
+  ;(pinnedTarget as { digest: string }).digest = 'a'.repeat(64)
+  expectCode(pinnedMutated, 'MIGRATION_EVIDENCE_INVALID')
+})
+
+// ------------------------------------------------------------------ obligation 5: distinctness
+test('AC4 O5 rejects a record carrying the same attestation twice', () => {
+  const mutated = withMutatedHead((record) => {
+    const first = record.observedEvidence[0]
+    ok(first)
+    ;(record.observedEvidence as Evidence[]).push(structuredClone(first))
+  })
+  ok(
+    messagesFor(mutated).some((message) => message.includes('carries the same')),
+    `expected the distinctness refusal; observed ${messagesFor(mutated).join(' | ')}`,
+  )
+})
+
+// ------------------------------------------------------------------ the exploit, end to end
+test('AC4 R19 route A: a shadow link declaring the manifest of a tampered registry is refused', () => {
+  // The payload is the on-the-nose one: silently retire every rule asserting that Gate 3 merges are
+  // human-owned, in a parcel whose purpose is to represent honestly where enforcement is real.
+  // Before R19 this validated with `valid: true` and zero violations, and `resolveAuthority` for
+  // `gate3.merge-authority` fell from RESOLVED/REFUSE to REQUIRE_HUMAN with no controlling rules.
+  const tampered = structuredClone(full)
+  let flipped = 0
+  for (const rule of tampered.rules) {
+    if (
+      rule.authoritySubject !== 'gate3.merge-authority' ||
+      rule.retirementState !== 'active-reading'
+    ) {
+      continue
+    }
+    ;(rule as { retirementState: string }).retirementState = 'historical-only'
+    ;(rule as { bindingDigest: string }).bindingDigest = bindingDigestFor(rule)
+    flipped += 1
+  }
+  assert.equal(flipped, 7, 'the payload must retire all seven active gate3.merge-authority rules')
+  assert.notEqual(
+    registryBindingManifestDigest(tampered),
+    registryBindingManifestDigest(full),
+    'the payload must actually change the binding manifest',
+  )
+  const head = headOf(tampered)
+  const honest = parsedHeadCommand(head, 'superseding-binding-manifest')
+  const shadow = commandEvidenceReference(
+    'superseding-binding-manifest-r14',
+    honest.inputDigest,
+    registryBindingManifestDigest(tampered),
+  )
+  ;(head.observedEvidence as Evidence[]).unshift({
+    kind: 'command-result',
+    reference: shadow,
+    digest: sha256(shadow),
+  })
+  expectCode(tampered, 'MIGRATION_EVIDENCE_INVALID')
+  const result = resolveAuthority(tampered, {
+    authoritySubject: 'gate3.merge-authority',
+    goal: 'foreman-kernel',
+    role: 'coordinator',
+    stage: 'merge',
+    operation: 'state-transition',
+    host: 'provider-neutral',
+  })
+  assert.equal(result.outcome, 'REQUIRE_HUMAN')
+  assert.equal(result.reasonCode, 'REGISTRY_INVALID')
 })

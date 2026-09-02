@@ -780,10 +780,25 @@ const GENESIS_BINDING_MANIFEST_DIGEST =
  * them to the live value would make every historical record fail the moment the source baseline
  * legitimately advances - which is precisely the advance the migration chain exists to record.
  */
-const LEGACY_SOURCE_SNAPSHOT_COMMIT = '51857a3a7796b393c0c0a68712f98c06e7015d79'
+export const LEGACY_SOURCE_SNAPSHOT_COMMIT = '51857a3a7796b393c0c0a68712f98c06e7015d79'
 
 /** Prefix identifying a migration-chain record. Other reconciliations are not chain members. */
 const MIGRATION_CHAIN_PREFIX = 'registry-rework-'
+
+/** Command-evidence prefix restating the predecessor manifest. */
+const PRIOR_MANIFEST_COMMAND_PREFIX = 'registry-binding-manifest'
+
+/** Command-evidence prefix declaring the manifest this record supersedes to. */
+const SUPERSEDING_MANIFEST_COMMAND_PREFIX = 'superseding-binding-manifest'
+
+/**
+ * The tool a chain head's command evidence must be issued by (AC4 obligation 3, R19).
+ *
+ * A string literal, not an import: `tests/bare-specifier.test.ts` forbids this package from
+ * importing its own scope by bare specifier, and the value here is an assertion ABOUT evidence
+ * rather than a module reference.
+ */
+const AUTHORITY_REGISTRY_TOOL = '@foreman-line/authority-registry'
 
 interface ChainLink {
   readonly record: ReconciliationRecord
@@ -795,24 +810,35 @@ interface ChainLink {
   readonly restatedPrevDigest: string
 }
 
-function parsedCommandResults(
-  record: ReconciliationRecord,
-): { commandId?: unknown; inputDigest?: unknown; resultDigest?: unknown }[] {
+interface ParsedCommandResult {
+  commandId?: unknown
+  inputDigest?: unknown
+  resultDigest?: unknown
+  tool?: unknown
+  toolVersion?: unknown
+  exitCode?: unknown
+  actorClass?: unknown
+}
+
+function parsedCommandResults(record: ReconciliationRecord): ParsedCommandResult[] {
   return record.observedEvidence
     .filter((evidence) => evidence.kind === 'command-result')
     .flatMap((evidence) => {
       try {
-        return [
-          JSON.parse(evidence.reference) as {
-            commandId?: unknown
-            inputDigest?: unknown
-            resultDigest?: unknown
-          },
-        ]
+        return [JSON.parse(evidence.reference) as ParsedCommandResult]
       } catch {
         return []
       }
     })
+}
+
+function commandsWithPrefix(
+  record: ReconciliationRecord,
+  prefix: string,
+): readonly ParsedCommandResult[] {
+  return parsedCommandResults(record).filter(
+    (command) => typeof command.commandId === 'string' && command.commandId.startsWith(prefix),
+  )
 }
 
 /**
@@ -826,33 +852,168 @@ function parsedCommandResults(
  * is the same constant across eight consecutive records, so treating it as the link would produce
  * a false pass over most of the chain.
  */
-function chainLinkFor(record: ReconciliationRecord): ChainLink | null {
-  const commands = parsedCommandResults(record)
-  const superseding = commands.find(
-    (command) =>
-      typeof command.commandId === 'string' &&
-      command.commandId.startsWith('superseding-binding-manifest'),
-  )
-  const restatement = commands.find(
-    (command) =>
-      typeof command.commandId === 'string' &&
-      command.commandId.startsWith('registry-binding-manifest'),
-  )
+/** Either the record's single well-formed chain link, or why it does not declare one. */
+type ChainLinkResult = { readonly link: ChainLink } | { readonly problem: string }
+
+function chainLinkFor(record: ReconciliationRecord): ChainLinkResult {
+  const superseding = commandsWithPrefix(record, SUPERSEDING_MANIFEST_COMMAND_PREFIX)
+  const restatement = commandsWithPrefix(record, PRIOR_MANIFEST_COMMAND_PREFIX)
+  // AC4 obligation 1 as amended by R19: EXACTLY ONE chain command of each kind, established by
+  // `filter(...).length`, never by `find`. Selecting the first match and ignoring the rest was the
+  // defect: a second superseding command sharing a predecessor and declaring a different successor
+  // is a fork INSIDE one record, and across-record fork detection keys on `prevDigest` BETWEEN
+  // records, so it cannot see one. Unshifting a shadow link therefore bound the chain to the
+  // manifest of a tampered document while the honest link sat untouched below it, reporting
+  // `valid: true` with zero violations.
+  if (superseding.length !== 1 || restatement.length !== 1) {
+    return {
+      problem: `declares ${restatement.length} prior and ${superseding.length} superseding binding-manifest commands; exactly one of each is required`,
+    }
+  }
+  const single = superseding[0]
+  const restated = restatement[0]
   if (
-    superseding === undefined ||
-    restatement === undefined ||
-    typeof superseding.inputDigest !== 'string' ||
-    typeof superseding.resultDigest !== 'string' ||
-    typeof restatement.resultDigest !== 'string'
+    single === undefined ||
+    restated === undefined ||
+    typeof single.inputDigest !== 'string' ||
+    typeof single.resultDigest !== 'string' ||
+    typeof restated.resultDigest !== 'string'
   ) {
-    return null
+    return { problem: 'does not declare a well-formed prior-to-new binding manifest chain link' }
   }
   return {
-    record,
-    prevDigest: superseding.inputDigest,
-    nextDigest: superseding.resultDigest,
-    restatedPrevDigest: restatement.resultDigest,
+    link: {
+      record,
+      prevDigest: single.inputDigest,
+      nextDigest: single.resultDigest,
+      restatedPrevDigest: restated.resultDigest,
+    },
   }
+}
+
+/**
+ * AC4 obligations 2 and 3 as amended by R19 - the floor the chain head must clear.
+ *
+ * The head is the one record exempt from `RECONCILIATION_RECORD_DIGESTS`, because it is bound
+ * instead to the manifest recomputed live from the document it sits in. That exemption has to be a
+ * NARROWER binding than a pin and never a weaker one; before R19 nothing constrained the head's
+ * content at all, and two independent reviewers each drove a tampered registry through it.
+ */
+function headFloorViolations(record: ReconciliationRecord): ValidationViolation[] {
+  const violations: ValidationViolation[] = []
+  // Obligation 2: a pinned record is never the head, so head position is not selectable by
+  // deletion. Keyed on ID PRESENCE in the pin table, never on byte-match against it - byte-match
+  // would let a tamperer mutate a pinned record first, breaking its own match, and only then
+  // delete the head to promote it, which is one step past where the obvious implementation stops.
+  if (RECONCILIATION_RECORD_DIGESTS[record.reconciliationId] !== undefined) {
+    violations.push(
+      violation(
+        'MIGRATION_EVIDENCE_INVALID',
+        `reconciliation '${record.reconciliationId}' holds a pinned record digest and cannot be the migration chain head; deleting the head invalidates the document rather than promoting a pinned record out of its pin`,
+      ),
+    )
+  }
+  // Obligation 3: a record meeting the schema minimums but not this shape is not a head.
+  if (record.migrationStatus !== 'superseded-by-amendment') {
+    violations.push(
+      violation(
+        'MIGRATION_EVIDENCE_INVALID',
+        `migration chain head '${record.reconciliationId}' does not declare migrationStatus 'superseded-by-amendment'`,
+      ),
+    )
+  }
+  if (record.supersedingEvidence === null) {
+    violations.push(
+      violation(
+        'MIGRATION_EVIDENCE_INVALID',
+        `migration chain head '${record.reconciliationId}' declares no superseding evidence`,
+      ),
+    )
+  }
+  if (
+    !record.observedEvidence.some(
+      (evidence) => evidence.kind === 'git-commit' && /^[0-9a-f]{40}$/.test(evidence.reference),
+    )
+  ) {
+    violations.push(
+      violation(
+        'MIGRATION_EVIDENCE_INVALID',
+        `migration chain head '${record.reconciliationId}' carries no git-commit evidence naming a forty-character lowercase hex commit`,
+      ),
+    )
+  }
+  if (
+    !parsedCommandResults(record).some(
+      (command) =>
+        command.tool === AUTHORITY_REGISTRY_TOOL &&
+        command.actorClass === 'coordinator' &&
+        command.exitCode === 0,
+    )
+  ) {
+    violations.push(
+      violation(
+        'MIGRATION_EVIDENCE_INVALID',
+        `migration chain head '${record.reconciliationId}' carries no command evidence issued by this tool with actorClass 'coordinator' and exitCode 0`,
+      ),
+    )
+  }
+  return violations
+}
+
+/**
+ * AC4 obligations 4 and 5 as amended by R21.
+ *
+ * Obligation 4 - every reference is bound by a digest computed over it, and no digest is ever
+ * verified by comparison with itself. `source-ref`, `command-result` and `missing-path` digests are
+ * the SHA-256 of their own reference and are checked as such where the evidence is walked. A
+ * `git-commit` digest attests the commit OBJECT BODY and so cannot be, which R19's literal wording
+ * missed and R21 corrects: the binding is structural instead. The prior-binding-manifest command's
+ * `inputDigest` is the SHA-256 of a `git-commit` reference on the same record, so REPOINTING that
+ * reference breaks the binding - and so does DELETING the evidence, which is what closes the head's
+ * last evidence hole.
+ *
+ * Obligation 5 - evidence entries are distinct by kind, reference and digest together. Duplicating
+ * a `git-commit` entry breaks no cardinality rule, no head shape and no pin, so on the head it was
+ * simply undetectable.
+ *
+ * Both are free against the shipped registry: 12 of 12 chain records already satisfy the binding,
+ * and there are zero duplicate evidence entries. Neither is corpus-dependent.
+ */
+function evidenceBindingViolations(record: ReconciliationRecord): ValidationViolation[] {
+  const violations: ValidationViolation[] = []
+  const seen = new Set<string>()
+  for (const evidence of record.observedEvidence) {
+    const identity = canonicalJson({
+      kind: evidence.kind,
+      reference: evidence.reference,
+      digest: evidence.digest,
+    })
+    if (seen.has(identity)) {
+      violations.push(
+        violation(
+          'MIGRATION_EVIDENCE_INVALID',
+          `reconciliation '${record.reconciliationId}' carries the same ${evidence.kind} attestation twice`,
+        ),
+      )
+    }
+    seen.add(identity)
+  }
+  for (const command of commandsWithPrefix(record, PRIOR_MANIFEST_COMMAND_PREFIX)) {
+    if (
+      !record.observedEvidence.some(
+        (evidence) =>
+          evidence.kind === 'git-commit' && sha256(evidence.reference) === command.inputDigest,
+      )
+    ) {
+      violations.push(
+        violation(
+          'MIGRATION_EVIDENCE_INVALID',
+          `reconciliation '${record.reconciliationId}' prior binding manifest command does not bind any git-commit evidence reference on the same record`,
+        ),
+      )
+    }
+  }
+  return violations
 }
 
 export interface MigrationChain {
@@ -888,16 +1049,17 @@ function verifyMigrationChain(document: AuthorityEnforcementRegistry): Migration
   )
   const links: ChainLink[] = []
   for (const record of chainRecords) {
-    const link = chainLinkFor(record)
-    if (link === null) {
+    const result = chainLinkFor(record)
+    if ('problem' in result) {
       violations.push(
         violation(
           'MIGRATION_EVIDENCE_INVALID',
-          `migration record '${record.reconciliationId}' does not declare a well-formed prior-to-new binding manifest chain link`,
+          `migration record '${record.reconciliationId}' ${result.problem}`,
         ),
       )
       continue
     }
+    const link = result.link
     if (link.restatedPrevDigest !== link.prevDigest) {
       violations.push(
         violation(
@@ -979,6 +1141,7 @@ function verifyMigrationChain(document: AuthorityEnforcementRegistry): Migration
   // The head is bound to the manifest recomputed live from the document it sits in - a stricter
   // assertion than equality with a constant, not an exemption from binding.
   const head = path[path.length - 1] as ChainLink
+  violations.push(...headFloorViolations(head.record))
   const liveManifest = registryBindingManifestDigest(document)
   if (head.nextDigest !== liveManifest) {
     violations.push(
@@ -2634,7 +2797,28 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
         )
       }
     }
+    violations.push(...evidenceBindingViolations(record))
     for (const evidence of record.observedEvidence) {
+      if (evidence.kind === 'git-commit') {
+        // R21: a `git-commit` digest attests the commit OBJECT BODY - `sha256(git cat-file -p ...)`
+        // - which is not derivable from the forty-hex reference, so there is no digest-versus-
+        // reference comparison available here. This validator states that rather than staging one.
+        // The line replaced here read
+        //   `expectedDigest = /^[0-9a-f]{64}$/.test(evidence.digest) ? evidence.digest : null`
+        // which compared the digest TO ITSELF and reported the result as a binding check; a
+        // reviewer repointed the head's git reference to an arbitrary forty-hex value and saw zero
+        // violations. What actually binds the reference is `evidenceBindingViolations` above.
+        // Well-formedness is all that is checked here, and it is called nothing more than that.
+        if (!/^[0-9a-f]{40}$/.test(evidence.reference) || !/^[0-9a-f]{64}$/.test(evidence.digest)) {
+          violations.push(
+            violation(
+              'MIGRATION_EVIDENCE_INVALID',
+              `reconciliation '${record.reconciliationId}' git-commit evidence is not a well-formed commit reference and digest`,
+            ),
+          )
+        }
+        continue
+      }
       let expectedDigest: string | null = null
       if (evidence.kind === 'source-ref') {
         const ref = record.observedRefs.find(
@@ -2686,8 +2870,6 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
         } catch {
           expectedDigest = null
         }
-      } else if (evidence.kind === 'git-commit' && /^[0-9a-f]{40}$/.test(evidence.reference)) {
-        expectedDigest = /^[0-9a-f]{64}$/.test(evidence.digest) ? evidence.digest : null
       }
       if (expectedDigest === null || evidence.digest !== expectedDigest) {
         violations.push(
@@ -2794,7 +2976,19 @@ export function validateRegistry(
   }
   const registry = document as AuthorityEnforcementRegistry
   violations.push(...semanticViolations(registry))
-  violations.push(...retirementVerificationViolations(registry, options.repoRoot))
+  // An unusable `repoRoot` is reported as the operator error it is, and retirement evidence is then
+  // reported UNVERIFIED - exactly as it is when no root was supplied at all - rather than
+  // INCOMPLETE. Reporting a digest check as failed when the directory holding the artifacts does
+  // not exist would be the validator claiming a check it never performed, which is the precise
+  // failure this package exists to make impossible.
+  const repoRootStatus = options.repoRoot === undefined ? null : repoRootCheck(options.repoRoot)
+  if (repoRootStatus !== null) violations.push(...repoRootStatus.violations)
+  violations.push(
+    ...retirementVerificationViolations(
+      registry,
+      repoRootStatus?.gitReady === true ? options.repoRoot : undefined,
+    ),
+  )
   const sorted = ordered(violations)
   return { valid: sorted.length === 0, violations: sorted, summary: summaryFor(registry, sorted) }
 }
@@ -3470,6 +3664,57 @@ function resolveRegularFile(
   return { absolute: cursor }
 }
 
+/**
+ * Is `repoRoot` the exact root of a real Git worktree, and what does it cost the caller if not?
+ *
+ * AC12 as amended by R14: a `--repo-root` that does not name one is OPERATOR MISCONFIGURATION -
+ * exit 2, never exit 1. Exit 1 asserts that canon is invalid, which is a false accusation to level
+ * at a registry because someone mistyped a path.
+ *
+ * This guard used to live only inside `sweepRegistrySources`, so `validateRegistry(document,
+ * { repoRoot })` accepted ANY path: a registry with one retired rule and a nonexistent root
+ * reported four `RETIREMENT_EVIDENCE_INCOMPLETE` violations and exited 1, blaming the registry for
+ * a directory that was never there. Both entry points now share this one implementation, so they
+ * cannot drift apart again.
+ */
+function repoRootCheck(repoRoot: string): {
+  readonly gitReady: boolean
+  readonly violations: readonly ValidationViolation[]
+} {
+  const root = resolve(repoRoot)
+  try {
+    const canonicalRoot = realpathSync(root)
+    const worktreeRoot = realpathSync(
+      runGitText(canonicalRoot, ['rev-parse', '--show-toplevel']).trim(),
+    )
+    if (canonicalRoot.toLowerCase() === worktreeRoot.toLowerCase()) {
+      return { gitReady: true, violations: [] }
+    }
+    return {
+      gitReady: false,
+      violations: [
+        violation(
+          'REPO_ROOT_INVALID',
+          'repository root is not the exact root of a real Git worktree',
+        ),
+      ],
+    }
+  } catch (error) {
+    return {
+      gitReady: false,
+      violations: [
+        violation(
+          // Both branches are operator misconfiguration and both exit 2 (amended AC12). The
+          // nonexistent-root case keeps IO_ERROR; an existing path that is not a worktree root is
+          // REPO_ROOT_INVALID. Neither is exit 1, which is reserved for "the registry is invalid".
+          existsSync(root) ? 'REPO_ROOT_INVALID' : 'IO_ERROR',
+          `repository root lacks mandatory real-Git evidence: ${(error as Error).message}`,
+        ),
+      ],
+    }
+  }
+}
+
 export function sweepRegistrySources(document: unknown, repoRoot: string): ValidationResult {
   // The sweep has a repo root, so retirement evidence is digest-verified rather than reported
   // unverified. The verification itself now lives in `validateRegistry`, so the sweep no longer
@@ -3479,33 +3724,9 @@ export function sweepRegistrySources(document: unknown, repoRoot: string): Valid
   const registry = document as AuthorityEnforcementRegistry
   const violations = [...base.violations]
   const root = resolve(repoRoot)
-  let gitReady = false
-  try {
-    const canonicalRoot = realpathSync(root)
-    const worktreeRoot = realpathSync(
-      runGitText(canonicalRoot, ['rev-parse', '--show-toplevel']).trim(),
-    )
-    gitReady = canonicalRoot.toLowerCase() === worktreeRoot.toLowerCase()
-    if (!gitReady) {
-      violations.push(
-        violation(
-          'REPO_ROOT_INVALID',
-          'repository root is not the exact root of a real Git worktree',
-        ),
-      )
-    }
-  } catch (error) {
-    const rootExists = existsSync(root)
-    violations.push(
-      violation(
-        // Both branches are operator misconfiguration and both exit 2 (amended AC12). The
-        // nonexistent-root case keeps IO_ERROR; an existing path that is not a worktree root is
-        // REPO_ROOT_INVALID. Neither is exit 1, which is reserved for "the registry is invalid".
-        rootExists ? 'REPO_ROOT_INVALID' : 'IO_ERROR',
-        `repository root lacks mandatory real-Git evidence: ${(error as Error).message}`,
-      ),
-    )
-  }
+  // The guard itself now runs inside `validateRegistry`, so its violation is already in `base`.
+  // Only the answer is needed here; re-reporting it would double every misconfiguration message.
+  const { gitReady } = repoRootCheck(repoRoot)
   const normalizedPaths = new Set<string>()
   for (const source of registry.sources) {
     const invalidPath = pathProblem(source.path)

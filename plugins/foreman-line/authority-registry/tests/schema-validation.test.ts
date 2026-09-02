@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { spawnSync } from 'node:child_process'
-import { readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { test } from 'node:test'
@@ -8,6 +8,7 @@ import { fileURLToPath } from 'node:url'
 import { parse, stringify } from 'yaml'
 import type { AuthorityEnforcementRegistry, AuthorityRule } from '../src/types.js'
 import { bindingDigestFor, parseRegistry, sha256, validateRegistry } from '../src/validate.js'
+import { ok } from './support/assert-ok.js'
 
 const packageRoot = join(dirname(fileURLToPath(import.meta.url)), '..')
 const fixtures = join(packageRoot, 'tests', 'fixtures')
@@ -28,7 +29,7 @@ test('schema admits empty principal sets for explicitly unavailable operations',
     const row = mutated.operationAuthority.find(
       (candidate) => candidate.operationId === operationId,
     )
-    assert.ok(row)
+    ok(row)
     ;(row.allowedPrincipals as string[]).splice(0)
   }
   assert.equal(
@@ -79,7 +80,7 @@ test('R3 sweep with a missing repository root returns operational exit 2', () =>
     join(packageRoot, 'tests', 'fixtures', 'missing-repository-root'),
   ])
   assert.equal(result.status, 2, result.stderr || result.stdout)
-  assert.ok(
+  ok(
     JSON.parse(result.stdout).violations.some(
       (violation: { code: string }) => violation.code === 'IO_ERROR',
     ),
@@ -100,17 +101,49 @@ test('R3 sweep with a missing repository root returns operational exit 2', () =>
  * testing its invariant. Fixtures that also trip unrelated violations do not weaken the assertion,
  * because the assertion is on the NAMED code rather than on mere invalidity.
  */
+/**
+ * `[name, code, mutate, messageFragment?]`.
+ *
+ * The fourth element exists because a code alone does not always bind a fixture to its named axis.
+ * `stale-binding-digest` and `identity-mutation` differ only in whether the rule's own binding
+ * digest is re-derived, and BOTH report LOCATOR_DIGEST_MISMATCH plus MIGRATION_EVIDENCE_INVALID -
+ * so asserting the code would have let the stale-digest fixture pass without ever exercising the
+ * stale-digest check. Where a fragment is given, the fixture is pinned to the exact violation it
+ * is named for.
+ */
 const rejectMutations: readonly (readonly [
   string,
   string,
   (document: AuthorityEnforcementRegistry) => void,
+  string?,
 ])[] = [
   [
+    // Names the RULE-IDENTITY axis and now actually constructs it. It used to re-derive
+    // `bindingDigest` on the last line, which defused the axis it was named for and left it a
+    // second copy of `location-mutation`: the stale-`bindingDigest` check at validate.ts's
+    // 'rule bindingDigest is stale' was named by this fixture and exercised by nothing.
+    // Re-deriving is exactly what a tamperer would do, so NOT re-deriving is what tests the guard.
+    'stale-binding-digest',
+    'MIGRATION_EVIDENCE_INVALID',
+    (document) => {
+      const rule = document.rules[0]
+      ok(rule)
+      const before = rule.bindingDigest
+      ;(rule.sourceRefs[0] as { locatorDigest: string }).locatorDigest = '0'.repeat(64)
+      // The rule's own binding digest is deliberately left stale, so the mutation is refused on the
+      // identity axis rather than only on the locator one.
+      assert.equal(rule.bindingDigest, before, 'the binding digest must be left stale')
+    },
+    'rule bindingDigest is stale',
+  ],
+  [
+    // The same edit WITH the binding digest re-derived, which is the locator axis on the rule side.
+    // Kept distinct from `location-mutation`, which breaks the locator from the INVENTORY side.
     'identity-mutation',
     'LOCATOR_DIGEST_MISMATCH',
     (document) => {
       const rule = document.rules[0]
-      assert.ok(rule)
+      ok(rule)
       ;(rule.sourceRefs[0] as { locatorDigest: string }).locatorDigest = '0'.repeat(64)
       ;(rule as { bindingDigest: string }).bindingDigest = bindingDigestFor(rule)
     },
@@ -120,7 +153,7 @@ const rejectMutations: readonly (readonly [
     'LOCATOR_DIGEST_MISMATCH',
     (document) => {
       const item = document.sources[0]?.inventoryItems[0]
-      assert.ok(item)
+      ok(item)
       ;(item.locator as { anchor: string }).anchor += '-moved'
     },
   ],
@@ -129,17 +162,23 @@ const rejectMutations: readonly (readonly [
     'VALUE_DIGEST_MISMATCH',
     (document) => {
       const item = document.sources[0]?.inventoryItems[0]
-      assert.ok(item)
+      ok(item)
       ;(item as { normalizedExcerpt: string }).normalizedExcerpt += ' changed'
     },
   ],
   [
-    'stale-source',
+    // Renamed from `stale-source`, which claimed the FILESYSTEM-DRIFT axis and never touched the
+    // filesystem: it desynchronises the recorded value digests from the operative text on both the
+    // inventory and rule sides, which is the same in-document check `value-mutation` reaches from
+    // the other direction. The genuine filesystem-drift axis is the sweep-level comparison in
+    // `sweepRegistrySources`, which needs a real corpus on disk and is deferred rather than
+    // pretended at here.
+    'desynchronised-value-digest',
     'VALUE_DIGEST_MISMATCH',
     (document) => {
       const item = document.sources[0]?.inventoryItems[0]
       const rule = document.rules[0]
-      assert.ok(item && rule)
+      ok(item && rule)
       ;(item as { valueDigest: string }).valueDigest = 'f'.repeat(64)
       ;(rule.sourceRefs[0] as { valueDigest: string }).valueDigest = 'f'.repeat(64)
       ;(rule as { bindingDigest: string }).bindingDigest = bindingDigestFor(rule)
@@ -150,7 +189,7 @@ const rejectMutations: readonly (readonly [
     'RULE_DUPLICATE',
     (document) => {
       const rule = document.rules[0]
-      assert.ok(rule)
+      ok(rule)
       ;(document.rules as AuthorityRule[]).push(structuredClone(rule))
     },
   ],
@@ -159,7 +198,7 @@ const rejectMutations: readonly (readonly [
     'RULE_CONFLICT',
     (document) => {
       const original = document.rules.find((rule) => rule.ruleId === 'rule.fk-charter.d3')
-      assert.ok(original)
+      ok(original)
       const base = {
         ...structuredClone(original),
         ruleId: 'rule.fk-charter.d3-contradiction',
@@ -171,7 +210,7 @@ const rejectMutations: readonly (readonly [
       const item = document.sources
         .find((source) => source.sourceId === 'fk-charter')
         ?.inventoryItems.find((candidate) => candidate.itemId === 'item.d3')
-      assert.ok(item)
+      ok(item)
       ;(item.ruleIds as string[]).push(conflicting.ruleId)
     },
   ],
@@ -180,7 +219,7 @@ const rejectMutations: readonly (readonly [
     'RULE_SOURCE_MISSING',
     (document) => {
       const rule = document.rules[0]
-      assert.ok(rule)
+      ok(rule)
       ;(rule.sourceRefs[0] as { sourceId: string }).sourceId = 'missing-source'
       ;(rule as { bindingDigest: string }).bindingDigest = bindingDigestFor(rule)
     },
@@ -195,35 +234,54 @@ function rejectDocument(mutate: (document: AuthorityEnforcementRegistry) => void
   return document
 }
 
-for (const [name, code, mutate] of rejectMutations) {
+for (const [name, code, mutate, messageFragment] of rejectMutations) {
   test(`reject-${name} rejects with ${code}`, () => {
     const result = validateRegistry(rejectDocument(mutate))
     assert.equal(result.valid, false)
-    assert.ok(
+    ok(
       result.violations.some((violation) => violation.code === code),
       `expected ${code}; observed ${result.violations.map((v) => v.code).join(',')}`,
     )
+    if (messageFragment !== undefined) {
+      ok(
+        result.violations.some((violation) => violation.message.includes(messageFragment)),
+        `expected a violation mentioning '${messageFragment}'; observed ${result.violations
+          .map((v) => v.message)
+          .join(' | ')}`,
+      )
+    }
   })
 }
 
-for (const [name, code, mutate] of rejectMutations) {
+for (const [name, code, mutate, messageFragment] of rejectMutations) {
   test(`CLI reject-${name} returns exit 1 with ${code}`, () => {
-    const path = join(tmpdir(), `fk-p0-reject-${name}.yaml`)
+    // R20 fix - per-run unique. The former fixed name was truncated and `rmSync`-ed by whichever
+    // concurrent run finished first, producing IO_ERROR and exit 2 against `assert.equal(status, 1)`.
+    const directory = mkdtempSync(join(tmpdir(), 'fk-p0-reject-'))
+    const path = join(directory, `${name}.yaml`)
     try {
       writeFileSync(path, stringify(rejectDocument(mutate)), 'utf8')
       const result = runCli(['validate', path])
       assert.equal(result.status, 1, result.stderr || result.stdout)
       const output = JSON.parse(result.stdout) as {
         valid: boolean
-        violations: { code: string }[]
+        violations: { code: string; message: string }[]
       }
       assert.equal(output.valid, false)
-      assert.ok(
+      ok(
         output.violations.some((violation) => violation.code === code),
         `expected ${code}; observed ${output.violations.map((v) => v.code).join(',')}`,
       )
+      if (messageFragment !== undefined) {
+        ok(
+          output.violations.some((violation) => violation.message.includes(messageFragment)),
+          `expected a violation mentioning '${messageFragment}'; observed ${output.violations
+            .map((v) => v.message)
+            .join(' | ')}`,
+        )
+      }
     } finally {
-      rmSync(path, { force: true })
+      rmSync(directory, { force: true, recursive: true })
     }
   })
 }

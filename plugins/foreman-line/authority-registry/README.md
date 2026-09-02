@@ -164,11 +164,35 @@ appends a properly chained migration record, and refused when it does not. A cha
 value therefore requires a typed prior-to-new record — which is the migration discipline the spec
 defines, now enforced rather than approximated by a hardcoded whole-corpus constant.
 
+**The head's floor (AC4 obligations 1-5, amendments R19 and R21).** "Well-formed" is a checked
+property, not a hopeful adjective. A chain record declares **exactly one** prior and **exactly one**
+superseding binding-manifest command, so a second superseding command cannot fork the chain *inside*
+a record where across-record fork detection cannot see it. A record whose id appears in the shipped
+record-digest table is **never** the head, so head position is not selectable by deletion — keyed on
+id presence rather than byte-match, because byte-match would let a tamperer break a pinned record's
+own match first and then promote it. The head has a **required shape**: `superseded-by-amendment`
+with non-null superseding evidence, at least one forty-character lowercase hex `git-commit`, and
+command evidence issued by this tool with `actorClass` `coordinator` and `exitCode` `0`. Evidence
+**references are bound by a digest computed over them**, and no digest is ever verified by comparison
+with itself. Evidence entries on a record are **distinct** by kind, reference and digest together.
+
+**Where a binding does not exist, this says so rather than implying one.** `source-ref`,
+`command-result` and `missing-path` digests are the SHA-256 of their own reference and are checked
+as such. A `git-commit` digest is not: it attests the commit *object body*
+(`sha256(git cat-file -p <commit>)`), which no hermetic validator can recompute. What binds a
+`git-commit` entry is the record it sits on — the prior-binding-manifest command's `inputDigest` is
+the SHA-256 of a `git-commit` reference on that same record, so repointing or deleting that evidence
+breaks the binding. The residual is therefore narrow and exact: **on the chain head alone, rewriting
+a `git-commit` digest while leaving its reference intact is not independently detectable.** On every
+other record the same edit breaks the record's pin. Both halves are pinned by test — the refusal and
+the residual, each with a control.
+
 **The honest limit.** This makes silent substitution *detectable*, not impossible. Anyone who can
-edit the registry file can also append a well-formed head record declaring the manifest of a
-tampered registry, and validation will pass. The registry is a contract, not a trust root. Real
-anti-tamper is Git history plus human review; the chain's job is to make an undeclared change
-fail loudly, not to make a declared-but-illegitimate one impossible.
+edit the registry file can also append a genuinely well-formed, correctly chained head record
+declaring the manifest of a tampered registry, and validation will pass. R19's obligations make
+"well-formed" mean something; they do not close that, and do not pretend to. The registry is a
+contract, not a trust root. Real anti-tamper is Git history plus human review; the chain's job is to
+make an undeclared change fail loudly, not to make a declared-but-illegitimate one impossible.
 
 ### Bound sources change, and that is a deliberate act
 
@@ -260,10 +284,23 @@ it names. It establishes nothing about any file it does not name.
   `additionalAnchors` checks) are `assert.doesNotMatch` over the **source text** of this package.
   They are lint rules, not behavioural tests: they are defeated by trivial rewrites such as
   `source['sourceId']`, and they must **not** be counted as R10 evidence.
-- The seven named negative axes in `tests/schema-validation.test.ts` exercise **five** distinct
-  predicates, not seven: the identity and location fixtures both bind `LOCATOR_DIGEST_MISMATCH`,
-  and the value and stale-source fixtures both bind `VALUE_DIGEST_MISMATCH`. Downstream parcels
-  must not read the seven fixtures as seven independent guarantees.
+- The named negative axes in `tests/schema-validation.test.ts` are now pinned to the violation each
+  one is named for, not merely to a violation code. Two fixtures previously claimed axes they did
+  not construct: `identity-mutation` re-derived `bindingDigest` on its last line, which defused the
+  rule-identity axis and left it a second locator fixture, and `stale-source` named filesystem drift
+  while never touching the filesystem. The first is split — `stale-binding-digest` leaves the digest
+  stale and is pinned to the `rule bindingDigest is stale` message, recovering a check that was
+  named by a fixture and exercised by none — and the second is renamed
+  `desynchronised-value-digest`, which is what it actually does.
+- **The genuine filesystem-drift axis remains unexercised by fixture.** It is the sweep-level
+  comparison in `sweepRegistrySources`, which needs a real corpus on disk; it is deferred rather
+  than approximated here. Downstream parcels must not read the fixture set as covering it.
+- **Two tests in `tests/corpus-sweep.test.ts` still require Git at run time.** No module performs
+  repository I/O at *import* time any more, so every test file loads outside a Git worktree — that
+  was what prevented reviewers from running the suite at all. But the two tests calling
+  `markdownIdentityProjectionForTesting` consult the frozen-identity map, which is derived from two
+  historical registries read out of Git, so they need a worktree when they execute. A reviewer
+  working in a scratch copy can load every file and skip those two by name.
 The sweep accepts only exact repo-relative source paths below the supplied root and refuses
 absolute/traversal paths, containment escape, duplicate normalized paths, symlink/reparse targets,
 non-regular files, missing or duplicate locators, and changed normalized values. It does not use

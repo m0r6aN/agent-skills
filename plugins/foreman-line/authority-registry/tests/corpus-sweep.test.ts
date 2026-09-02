@@ -19,6 +19,7 @@ import { markdownIdentityProjectionForTesting } from '../src/generate.js'
 import { R12_LEGACY_MARKDOWN_RULE_TARGETS } from '../src/registry.js'
 import type { AuthorityEnforcementRegistry } from '../src/types.js'
 import { canonicalJson, sha256, sweepRegistrySources } from '../src/validate.js'
+import { ok } from './support/assert-ok.js'
 
 /**
  * R14 fix 20 - per-test progress that survives a crash.
@@ -34,7 +35,14 @@ import { canonicalJson, sha256, sweepRegistrySources } from '../src/validate.js'
  * log is written to the OS temp directory, never into the package, so no unlisted file is created.
  * If this file dies again, the last line names the last test that completed.
  */
-const progressLogPath = join(tmpdir(), `fk-p0-progress-corpus-sweep.log`)
+/**
+ * R20 fix - per-run unique, for the reason given in `semantic-invariants.test.ts`: a fixed path
+ * truncated at import lets two concurrent runs destroy each other's evidence.
+ */
+const progressLogPath = join(
+  mkdtempSync(join(tmpdir(), 'fk-p0-progress-corpus-sweep-')),
+  'progress.log',
+)
 try {
   writeFileSync(progressLogPath, '')
 } catch {
@@ -89,11 +97,11 @@ test('R4 copied corpus without Git metadata fails closed', () => {
     // violation. Amended AC12 reserves exit 1 for "the registry is invalid", so this is
     // REPO_ROOT_INVALID (exit 2) rather than MIGRATION_EVIDENCE_INVALID (exit 1); returning the
     // latter would be a false accusation against canon for a mistyped path.
-    assert.ok(
+    ok(
       result.violations.some((violation) => violation.code === 'REPO_ROOT_INVALID'),
       `expected REPO_ROOT_INVALID; observed ${result.violations.map((v) => v.code).join(',')}`,
     )
-    assert.ok(
+    ok(
       !result.violations.some((violation) => violation.code === 'MIGRATION_EVIDENCE_INVALID'),
       'operator misconfiguration must not be reported as a registry violation',
     )
@@ -108,7 +116,7 @@ test('R4 blob object cannot impersonate commit migration evidence', () => {
     (candidate) => candidate.reconciliationId === 'registry-rework-6eb1c25',
   )
   const evidence = record?.observedEvidence.find((candidate) => candidate.kind === 'git-commit')
-  assert.ok(evidence)
+  ok(evidence)
   const blob = execFileSync(
     'git',
     [
@@ -122,7 +130,7 @@ test('R4 blob object cannot impersonate commit migration evidence', () => {
     execFileSync('git', ['cat-file', '-p', blob], { cwd: repoRoot }),
   )
   const result = sweepRegistrySources(mutated, repoRoot)
-  assert.ok(result.violations.some((violation) => violation.code === 'MIGRATION_EVIDENCE_INVALID'))
+  ok(result.violations.some((violation) => violation.code === 'MIGRATION_EVIDENCE_INVALID'))
 })
 
 test('R4 missing-path evidence rejects a non-snapshot commit even when that commit is real', () => {
@@ -131,8 +139,8 @@ test('R4 missing-path evidence rejects a non-snapshot commit even when that comm
     (candidate) => candidate.reconciliationId === 'missing-provenance-reference',
   )
   const evidence = record?.observedEvidence.find((candidate) => candidate.kind === 'missing-path')
-  assert.ok(record)
-  assert.ok(evidence)
+  ok(record)
+  ok(evidence)
   const wrongCommit = '4666ea15caee8b231137f23325d14ea4526e338a'
   const reference = canonicalJson({
     commit: wrongCommit,
@@ -146,7 +154,7 @@ test('R4 missing-path evidence rejects a non-snapshot commit even when that comm
     digest: sha256(execFileSync('git', ['cat-file', '-p', wrongCommit], { cwd: repoRoot })),
   })
   const result = sweepRegistrySources(mutated, repoRoot)
-  assert.ok(result.violations.some((violation) => violation.code === 'MIGRATION_EVIDENCE_INVALID'))
+  ok(result.violations.some((violation) => violation.code === 'MIGRATION_EVIDENCE_INVALID'))
 })
 
 test('R4 natural binding prose added under a curated authority section is discovered', () => {
@@ -163,7 +171,7 @@ test('R4 natural binding prose added under a curated authority section is discov
       ),
     )
     const result = sweepRegistrySources(registry, tempRoot)
-    assert.ok(
+    ok(
       result.violations.some((violation) => violation.code === 'SOURCE_ITEM_UNCOVERED'),
       JSON.stringify(result.violations, null, 2),
     )
@@ -182,7 +190,7 @@ test('R4 inserted top-level executable function is discovered without keyword ma
       `${readFileSync(path, 'utf8')}\nfunction bypassEverything() { return true }\n`,
     )
     const result = sweepRegistrySources(registry, tempRoot)
-    assert.ok(
+    ok(
       result.violations.some((violation) => violation.code === 'SOURCE_ITEM_UNCOVERED'),
       JSON.stringify(result.violations, null, 2),
     )
@@ -205,7 +213,7 @@ test('R4 early return inside an inventoried function changes its complete constr
       ),
     )
     const result = sweepRegistrySources(registry, tempRoot)
-    assert.ok(
+    ok(
       result.violations.some(
         (violation) =>
           violation.code === 'VALUE_DIGEST_MISMATCH' || violation.code === 'LOCATOR_MISSING',
@@ -228,7 +236,7 @@ test('R4 additive JSON schema constraint is discovered', () => {
     schema['x-r4-probe'] = true
     writeFileSync(path, JSON.stringify(schema, null, 2))
     const result = sweepRegistrySources(registry, tempRoot)
-    assert.ok(result.violations.some((violation) => violation.code === 'SOURCE_ITEM_UNCOVERED'))
+    ok(result.violations.some((violation) => violation.code === 'SOURCE_ITEM_UNCOVERED'))
   } finally {
     rmSync(tempRoot, { recursive: true, force: true })
   }
@@ -244,7 +252,7 @@ test('R4 additive permission profile is discovered', () => {
       `${readFileSync(path, 'utf8')}\n  r4-unknown-profile:\n    description: probe\n    envelope:\n      deny: []\n      ask: []\n      allow: []\n`,
     )
     const result = sweepRegistrySources(registry, tempRoot)
-    assert.ok(result.violations.some((violation) => violation.code === 'SOURCE_ITEM_UNCOVERED'))
+    ok(result.violations.some((violation) => violation.code === 'SOURCE_ITEM_UNCOVERED'))
   } finally {
     rmSync(tempRoot, { recursive: true, force: true })
   }
@@ -259,9 +267,9 @@ test('shipped registry sweeps the complete pinned corpus with no gaps or conflic
 
 test('charter inventory contains one atomic record for each D1 through D20 decision', () => {
   const source = registry.sources.find((candidate) => candidate.sourceId === 'fk-charter')
-  assert.ok(source)
+  ok(source)
   const ids = source.inventoryItems.map((item) => item.itemId)
-  for (let number = 1; number <= 20; number += 1) assert.ok(ids.includes(`item.d${number}`))
+  for (let number = 1; number <= 20; number += 1) ok(ids.includes(`item.d${number}`))
 })
 
 test('collapsing one charter decision row into another cannot preserve D-row coverage', () => {
@@ -269,7 +277,7 @@ test('collapsing one charter decision row into another cannot preserve D-row cov
   try {
     copyCorpus(tempRoot)
     const source = registry.sources.find((candidate) => candidate.sourceId === 'fk-charter')
-    assert.ok(source)
+    ok(source)
     const path = join(tempRoot, source.path)
     const lines = readFileSync(path, 'utf8').replace(/\r\n?/g, '\n').split('\n')
     const d1 = lines.findIndex((line) => line.trim().startsWith('| D1 |'))
@@ -280,7 +288,7 @@ test('collapsing one charter decision row into another cannot preserve D-row cov
     lines.splice(d2, 1)
     writeFileSync(path, lines.join('\n'))
     const result = sweepRegistrySources(registry, tempRoot)
-    assert.ok(result.violations.some((violation) => violation.code === 'LOCATOR_MISSING'))
+    ok(result.violations.some((violation) => violation.code === 'LOCATOR_MISSING'))
   } finally {
     rmSync(tempRoot, { recursive: true, force: true })
   }
@@ -290,21 +298,21 @@ test('plan review inventory contains one atomic record for each R1 through R13 c
   const source = registry.sources.find(
     (candidate) => candidate.sourceId === 'fk-plan-review-findings',
   )
-  assert.ok(source)
+  ok(source)
   const ids = source.inventoryItems.map((item) => item.itemId)
-  for (let number = 1; number <= 13; number += 1) assert.ok(ids.includes(`item.r${number}`))
+  for (let number = 1; number <= 13; number += 1) ok(ids.includes(`item.r${number}`))
 })
 
 test('historical plan inventories the pre-heading two-gate thesis independently', () => {
   const source = registry.sources.find((candidate) => candidate.sourceId === 'foreman-line-plan')
-  assert.ok(source?.inventoryItems.some((item) => item.itemId === 'item.two-gate-thesis'))
+  ok(source?.inventoryItems.some((item) => item.itemId === 'item.two-gate-thesis'))
 })
 
 test('standing constraints inventory contains all thirteen atomic numbered rules', () => {
   const source = registry.sources.find((candidate) => candidate.sourceId === 'standing-constraints')
-  assert.ok(source)
+  ok(source)
   for (let number = 1; number <= 13; number += 1) {
-    assert.ok(source.inventoryItems.some((item) => item.itemId === `item.constraint-${number}`))
+    ok(source.inventoryItems.some((item) => item.itemId === `item.constraint-${number}`))
   }
 })
 
@@ -312,9 +320,9 @@ test('PDD inventory contains all fifteen atomic hard rules', () => {
   const source = registry.sources.find(
     (candidate) => candidate.sourceId === 'parcel-driven-development',
   )
-  assert.ok(source)
+  ok(source)
   for (let number = 1; number <= 15; number += 1) {
-    assert.ok(source.inventoryItems.some((item) => item.itemId === `item.hard-rule-${number}`))
+    ok(source.inventoryItems.some((item) => item.itemId === `item.hard-rule-${number}`))
   }
 })
 
@@ -328,7 +336,7 @@ test('operative rules do not use blanket any applicability shortcuts', () => {
       rule.applicability.operations,
       rule.applicability.hosts,
     ]) {
-      assert.ok(axis.length > 0, rule.ruleId)
+      ok(axis.length > 0, rule.ruleId)
       if (axis.includes('any' as never)) assert.deepEqual(axis, ['any'], rule.ruleId)
     }
   }
@@ -370,22 +378,22 @@ test('absolute, traversal, and duplicate normalized source paths are refused', (
     const mutated = structuredClone(registry)
     ;(mutated.sources[0] as { path: string }).path = path
     const result = sweepRegistrySources(mutated, repoRoot)
-    assert.ok(result.violations.some((violation) => violation.code === 'SOURCE_PATH_INVALID'))
+    ok(result.violations.some((violation) => violation.code === 'SOURCE_PATH_INVALID'))
   }
   const duplicate = structuredClone(registry)
   ;(duplicate.sources as AuthorityEnforcementRegistry['sources'][number][]).push(
     structuredClone(duplicate.sources[0] as NonNullable<(typeof duplicate.sources)[0]>),
   )
   const result = sweepRegistrySources(duplicate, repoRoot)
-  assert.ok(result.violations.some((violation) => violation.code === 'SOURCE_DUPLICATE_PATH'))
+  ok(result.violations.some((violation) => violation.code === 'SOURCE_DUPLICATE_PATH'))
 })
 
 test('dot path segments are refused before resolution', () => {
   const mutated = structuredClone(registry)
   const source = mutated.sources[0]
-  assert.ok(source)
+  ok(source)
   ;(source as { path: string }).path = source.path.replace('plugins/', 'plugins/./')
-  assert.ok(
+  ok(
     sweepRegistrySources(mutated, repoRoot).violations.some(
       (violation) => violation.code === 'SOURCE_PATH_INVALID',
     ),
@@ -398,13 +406,13 @@ test('missing and non-regular corpus sources are refused with stable codes', () 
     copyCorpus(tempRoot)
     const sourcePath = join(tempRoot, registry.sources[0]?.path ?? '')
     rmSync(sourcePath)
-    assert.ok(
+    ok(
       sweepRegistrySources(registry, tempRoot).violations.some(
         (violation) => violation.code === 'RULE_SOURCE_MISSING',
       ),
     )
     mkdirSync(sourcePath)
-    assert.ok(
+    ok(
       sweepRegistrySources(registry, tempRoot).violations.some(
         (violation) => violation.code === 'SOURCE_NOT_REGULAR',
       ),
@@ -423,7 +431,7 @@ test('symlink and reparse-point corpus sources are refused before following targ
     rmSync(sourcePath)
     mkdirSync(targetPath)
     symlinkSync(targetPath, sourcePath, 'junction')
-    assert.ok(
+    ok(
       sweepRegistrySources(registry, tempRoot).violations.some(
         (violation) => violation.code === 'SOURCE_SYMLINK_FORBIDDEN',
       ),
@@ -441,7 +449,7 @@ test('a junction in a parent path component is refused before reading a source',
     const targetPath = join(tempRoot, 'plugins-target')
     renameSync(pluginsPath, targetPath)
     symlinkSync(targetPath, pluginsPath, 'junction')
-    assert.ok(
+    ok(
       sweepRegistrySources(registry, tempRoot).violations.some(
         (violation) => violation.code === 'SOURCE_SYMLINK_FORBIDDEN',
       ),
@@ -461,8 +469,8 @@ test('comment text cannot impersonate an operative linter symbol anchor', () => 
     const item = source?.inventoryItems.find((candidate) =>
       candidate.locator.anchor.includes('new Ajv'),
     )
-    assert.ok(source)
-    assert.ok(item)
+    ok(source)
+    ok(item)
     const path = join(tempRoot, source.path)
     const content = readFileSync(path, 'utf8').replace(
       item.locator.anchor,
@@ -480,13 +488,13 @@ test('a new binding heading is reported as an uncovered inventory item', () => {
   try {
     copyCorpus(tempRoot)
     const source = registry.sources.find((candidate) => candidate.sourceId === 'fk-charter')
-    assert.ok(source)
+    ok(source)
     const path = join(tempRoot, source.path)
     writeFileSync(
       path,
       `${readFileSync(path, 'utf8')}\n## Binding emergency authority\nBuilders must never self-ratify.\n`,
     )
-    assert.ok(
+    ok(
       sweepRegistrySources(registry, tempRoot).violations.some(
         (violation) => violation.code === 'SOURCE_ITEM_UNCOVERED',
       ),
@@ -505,10 +513,10 @@ test('R3 additive D22 decision row is discovered independently of the curated in
   try {
     copyCorpus(tempRoot)
     const source = registry.sources.find((candidate) => candidate.sourceId === 'fk-charter')
-    assert.ok(source)
+    ok(source)
     const path = join(tempRoot, source.path)
     writeFileSync(path, `${readFileSync(path, 'utf8')}\n| D22 | New authority | Must bind. |\n`)
-    assert.ok(
+    ok(
       sweepRegistrySources(registry, tempRoot).violations.some(
         (v) => v.code === 'SOURCE_ITEM_UNCOVERED',
       ),
@@ -525,14 +533,14 @@ test('R3 additive PDD hard rule sixteen is discovered', () => {
     const source = registry.sources.find(
       (candidate) => candidate.sourceId === 'parcel-driven-development',
     )
-    assert.ok(source)
+    ok(source)
     const path = join(tempRoot, source.path)
     const content = readFileSync(path, 'utf8').replace(
       '## Time, Calendars, and the Two Clocks',
       '16. **New binding rule.** Stop.\n\n## Time, Calendars, and the Two Clocks',
     )
     writeFileSync(path, content)
-    assert.ok(
+    ok(
       sweepRegistrySources(registry, tempRoot).violations.some(
         (v) => v.code === 'SOURCE_ITEM_UNCOVERED',
       ),
@@ -547,10 +555,10 @@ test('R3 new binding authority bullet is discovered', () => {
   try {
     copyCorpus(tempRoot)
     const source = registry.sources.find((candidate) => candidate.sourceId === 'fk-loop-directive')
-    assert.ok(source)
+    ok(source)
     const path = join(tempRoot, source.path)
     writeFileSync(path, `${readFileSync(path, 'utf8')}\n- MUST refuse builder self-ratification.\n`)
-    assert.ok(
+    ok(
       sweepRegistrySources(registry, tempRoot).violations.some(
         (v) => v.code === 'SOURCE_ITEM_UNCOVERED',
       ),
@@ -568,7 +576,7 @@ test('R3 weakening a loop stop body fails even when the heading remains', () => 
     const item = source?.inventoryItems.find(
       (candidate) => candidate.itemId === 'item.7eb6018d9e57',
     )
-    assert.ok(source && item)
+    ok(source && item)
     const path = join(tempRoot, source.path)
     writeFileSync(
       path,
@@ -577,7 +585,7 @@ test('R3 weakening a loop stop body fails even when the heading remains', () => 
         '6. **Gate 3 is delegated.** Merge freely.',
       ),
     )
-    assert.ok(
+    ok(
       sweepRegistrySources(registry, tempRoot).violations.some(
         (v) => v.code === 'VALUE_DIGEST_MISMATCH' || v.code === 'LOCATOR_MISSING',
       ),
@@ -594,7 +602,7 @@ test('real spec-linter return behavior mutation is detected outside comments', (
     const source = registry.sources.find(
       (candidate) => candidate.sourceId === 'spec-linter-validator',
     )
-    assert.ok(source)
+    ok(source)
     const path = join(tempRoot, source.path)
     const content = readFileSync(path, 'utf8').replace(
       'return { valid: errors.length === 0, errors, warnings }',
@@ -614,7 +622,7 @@ test('real permission-profile deny behavior mutation is detected', () => {
     const source = registry.sources.find(
       (candidate) => candidate.sourceId === 'permission-profiles-registry',
     )
-    assert.ok(source)
+    ok(source)
     const path = join(tempRoot, source.path)
     const content = readFileSync(path, 'utf8').replace(
       '        - Bash(git commit*)',
@@ -633,7 +641,7 @@ test('retirement evidence paths and byte digests are resolved beneath the admitt
     (candidate) =>
       !candidate.sourceRefs.some((reference) => reference.sourceId === 'standing-constraints'),
   )
-  assert.ok(rule)
+  ok(rule)
   ;(rule as { retirementState: string }).retirementState = 'retired-from-agent-reading'
   ;(rule as { retirementEvidence: unknown }).retirementEvidence = {
     predicate: { kind: 'predicate-contract', path: 'fake/predicate.txt', digest: '0'.repeat(64) },
@@ -649,7 +657,7 @@ test('retirement evidence paths and byte digests are resolved beneath the admitt
       digest: '3'.repeat(64),
     },
   }
-  assert.ok(
+  ok(
     sweepRegistrySources(mutated, repoRoot).violations.some(
       (violation) => violation.code === 'RETIREMENT_EVIDENCE_INCOMPLETE',
     ),
@@ -702,7 +710,7 @@ test('R5 unnumbered charter prose outside keyword-selected sections is discovere
     assert.notEqual(changed, content)
     writeFileSync(path, changed)
     const result = sweepRegistrySources(registry, tempRoot)
-    assert.ok(
+    ok(
       result.violations.some((violation) => violation.code === 'SOURCE_ITEM_UNCOVERED'),
       JSON.stringify(result.violations, null, 2),
     )
@@ -748,7 +756,7 @@ for (const [form, addition] of Object.entries(r5TypeScriptAdditions)) {
       const path = join(tempRoot, 'plugins/foreman-line/spec-linter/src/validate.ts')
       writeFileSync(path, `${readFileSync(path, 'utf8')}\n${addition}\n`)
       const result = sweepRegistrySources(registry, tempRoot)
-      assert.ok(result.violations.some((violation) => violation.code === 'SOURCE_ITEM_UNCOVERED'))
+      ok(result.violations.some((violation) => violation.code === 'SOURCE_ITEM_UNCOVERED'))
     } finally {
       rmSync(tempRoot, { recursive: true, force: true })
     }
@@ -769,7 +777,7 @@ test('R5 TypeScript compiler AST detects a nested branch mutation', () => {
       ),
     )
     const result = sweepRegistrySources(registry, tempRoot)
-    assert.ok(result.violations.some((violation) => violation.code === 'VALUE_DIGEST_MISMATCH'))
+    ok(result.violations.some((violation) => violation.code === 'VALUE_DIGEST_MISMATCH'))
   } finally {
     rmSync(tempRoot, { recursive: true, force: true })
   }
@@ -818,10 +826,10 @@ for (const [form, mutate] of [
 test('R5 sweep verifies declared snapshot bytes at the bound Git commit', () => {
   const mutated = structuredClone(registry)
   const source = mutated.sources[0]
-  assert.ok(source)
+  ok(source)
   ;(source.snapshotEvidence as { fullFileSha256: string }).fullFileSha256 = '0'.repeat(64)
   const result = sweepRegistrySources(mutated, repoRoot)
-  assert.ok(result.violations.some((violation) => violation.code === 'MIGRATION_EVIDENCE_INVALID'))
+  ok(result.violations.some((violation) => violation.code === 'MIGRATION_EVIDENCE_INVALID'))
 })
 
 test('R6 visible prose before a same-line HTML comment is discovered', () => {
@@ -838,7 +846,7 @@ test('R6 visible prose before a same-line HTML comment is discovered', () => {
       ),
     )
     const result = sweepRegistrySources(registry, tempRoot)
-    assert.ok(result.violations.some((violation) => violation.code === 'SOURCE_ITEM_UNCOVERED'))
+    ok(result.violations.some((violation) => violation.code === 'SOURCE_ITEM_UNCOVERED'))
   } finally {
     rmSync(tempRoot, { recursive: true, force: true })
   }
@@ -858,7 +866,7 @@ test('R6 visible prose after a same-line HTML comment is discovered', () => {
       ),
     )
     const result = sweepRegistrySources(registry, tempRoot)
-    assert.ok(result.violations.some((violation) => violation.code === 'SOURCE_ITEM_UNCOVERED'))
+    ok(result.violations.some((violation) => violation.code === 'SOURCE_ITEM_UNCOVERED'))
   } finally {
     rmSync(tempRoot, { recursive: true, force: true })
   }
@@ -878,7 +886,7 @@ test('R6 visible prose after a multiline HTML comment close is discovered', () =
       ),
     )
     const result = sweepRegistrySources(registry, tempRoot)
-    assert.ok(result.violations.some((violation) => violation.code === 'SOURCE_ITEM_UNCOVERED'))
+    ok(result.violations.some((violation) => violation.code === 'SOURCE_ITEM_UNCOVERED'))
   } finally {
     rmSync(tempRoot, { recursive: true, force: true })
   }
@@ -907,7 +915,7 @@ test('R6 additive TypeScript side-effect import is discovered', () => {
     const path = join(tempRoot, 'plugins/foreman-line/spec-linter/src/validate.ts')
     writeFileSync(path, `import 'node:diagnostics_channel'\n${readFileSync(path, 'utf8')}`)
     const result = sweepRegistrySources(registry, tempRoot)
-    assert.ok(result.violations.some((violation) => violation.code === 'SOURCE_ITEM_UNCOVERED'))
+    ok(result.violations.some((violation) => violation.code === 'SOURCE_ITEM_UNCOVERED'))
   } finally {
     rmSync(tempRoot, { recursive: true, force: true })
   }
@@ -923,7 +931,7 @@ test('R6 additive TypeScript value import binding is discovered', () => {
       `import { basename as r6Probe } from 'node:path'\n${readFileSync(path, 'utf8')}`,
     )
     const result = sweepRegistrySources(registry, tempRoot)
-    assert.ok(result.violations.some((violation) => violation.code === 'SOURCE_ITEM_UNCOVERED'))
+    ok(result.violations.some((violation) => violation.code === 'SOURCE_ITEM_UNCOVERED'))
   } finally {
     rmSync(tempRoot, { recursive: true, force: true })
   }
@@ -935,10 +943,10 @@ test('R6 TypeScript value import module retargeting changes operative inventory'
     copyCorpus(tempRoot)
     const path = join(tempRoot, 'plugins/foreman-line/spec-linter/src/cli.ts')
     const content = readFileSync(path, 'utf8')
-    assert.ok(content.includes("from 'node:path'"))
+    ok(content.includes("from 'node:path'"))
     writeFileSync(path, content.replace("from 'node:path'", "from 'node:path/posix'"))
     const result = sweepRegistrySources(registry, tempRoot)
-    assert.ok(
+    ok(
       result.violations.some(
         (violation) =>
           violation.code === 'VALUE_DIGEST_MISMATCH' || violation.code === 'SOURCE_ITEM_UNCOVERED',
@@ -975,7 +983,7 @@ test('R7 unmatched HTML comment cannot hide following binding prose', () => {
       `${readFileSync(path, 'utf8')}\n<!-- unmatched\nOnly the coordinator may mint this new grant.\n`,
     )
     const result = sweepRegistrySources(registry, tempRoot)
-    assert.ok(result.violations.some((violation) => violation.code === 'SOURCE_ITEM_UNCOVERED'))
+    ok(result.violations.some((violation) => violation.code === 'SOURCE_ITEM_UNCOVERED'))
   } finally {
     rmSync(tempRoot, { recursive: true, force: true })
   }
@@ -991,7 +999,7 @@ test('R7 four-space pseudo-fences cannot hide binding prose', () => {
       `${readFileSync(path, 'utf8')}\n    \`\`\`text\nOnly the coordinator may mint this new grant.\n    \`\`\`\n`,
     )
     const result = sweepRegistrySources(registry, tempRoot)
-    assert.ok(result.violations.some((violation) => violation.code === 'SOURCE_ITEM_UNCOVERED'))
+    ok(result.violations.some((violation) => violation.code === 'SOURCE_ITEM_UNCOVERED'))
   } finally {
     rmSync(tempRoot, { recursive: true, force: true })
   }
@@ -1007,7 +1015,7 @@ test('R8 backtick in backtick-fence info is visible and cannot hide binding pros
       `${readFileSync(path, 'utf8')}\n\`\`\`lang\`bad\nOnly the coordinator may mint this new grant.\n\`\`\`\n`,
     )
     const result = sweepRegistrySources(registry, tempRoot)
-    assert.ok(result.violations.some((violation) => violation.code === 'SOURCE_ITEM_UNCOVERED'))
+    ok(result.violations.some((violation) => violation.code === 'SOURCE_ITEM_UNCOVERED'))
   } finally {
     rmSync(tempRoot, { recursive: true, force: true })
   }
@@ -1023,7 +1031,7 @@ test('R9 raw mixed comment and backtick info cannot become a hiding fence after 
       `${readFileSync(path, 'utf8')}\n\`\`\`lang<!--\`-->\nOnly the coordinator may mint this new grant.\n\`\`\`\n`,
     )
     const result = sweepRegistrySources(registry, tempRoot)
-    assert.ok(result.violations.some((violation) => violation.code === 'SOURCE_ITEM_UNCOVERED'))
+    ok(result.violations.some((violation) => violation.code === 'SOURCE_ITEM_UNCOVERED'))
   } finally {
     rmSync(tempRoot, { recursive: true, force: true })
   }
@@ -1144,7 +1152,7 @@ for (const [name, mutation] of [
       assert.notEqual(changed, content)
       writeFileSync(path, changed)
       const result = sweepRegistrySources(registry, tempRoot)
-      assert.ok(
+      ok(
         result.violations.some(
           (violation) =>
             violation.code === 'SOURCE_ITEM_UNCOVERED' ||
@@ -1161,7 +1169,7 @@ for (const [name, mutation] of [
 test('R10 generator constructs Markdown block custody without a source-ID allowlist', () => {
   const generator = readFileSync(join(packageRoot, 'src', 'generate.ts'), 'utf8')
   const blockBuilder = /function markdownBindingBlocks[\s\S]*?\n}/.exec(generator)?.[0]
-  assert.ok(blockBuilder)
+  ok(blockBuilder)
   assert.doesNotMatch(blockBuilder, /sourceId|fk-charter|fk-loop-directive/)
   assert.doesNotMatch(generator, /markdownBindingBlocks\(markdown,\s*definition\.sourceId\)/)
 })
@@ -1169,7 +1177,7 @@ test('R10 generator constructs Markdown block custody without a source-ID allowl
 test('R10 validator constructs Markdown block custody without a source-ID allowlist', () => {
   const validator = readFileSync(join(packageRoot, 'src', 'validate.ts'), 'utf8')
   const blockBuilder = /function markdownDocumentMap[\s\S]*?\n}/.exec(validator)?.[0]
-  assert.ok(blockBuilder)
+  ok(blockBuilder)
   assert.doesNotMatch(blockBuilder, /sourceId|fk-charter|fk-loop-directive/)
   assert.doesNotMatch(validator, /markdownDocumentMap\(content,\s*source\.sourceId\)/)
 })
@@ -1178,7 +1186,7 @@ test('R11 Markdown block anchors contain only structural heading kind and stable
   const markdownItems = registry.sources.flatMap((source) =>
     source.inventoryItems.filter((item) => item.locator.anchor.startsWith('md-block:')),
   )
-  assert.ok(markdownItems.length > 0)
+  ok(markdownItems.length > 0)
   for (const item of markdownItems) {
     if (item.locator.kind === 'table-row') {
       assert.match(item.locator.anchor, /^md-block:.*:table-row:.+$/)
@@ -1201,8 +1209,8 @@ test('R11 a Markdown value-only edit resolves the same locator as VALUE_DIGEST_M
         candidate.locator.anchor.startsWith('md-block:') &&
         candidate.normalizedExcerpt.includes('One goal, one coordinator:'),
     )
-    assert.ok(source)
-    assert.ok(item)
+    ok(source)
+    ok(item)
     const path = join(tempRoot, source.path)
     const content = readFileSync(path, 'utf8')
     const changed = content.replace(
@@ -1212,14 +1220,14 @@ test('R11 a Markdown value-only edit resolves the same locator as VALUE_DIGEST_M
     assert.notEqual(changed, content)
     writeFileSync(path, changed)
     const result = sweepRegistrySources(registry, tempRoot)
-    assert.ok(
+    ok(
       result.violations.some(
         (violation) =>
           violation.code === 'VALUE_DIGEST_MISMATCH' && violation.locator === item.locator.anchor,
       ),
       JSON.stringify(result.violations, null, 2),
     )
-    assert.ok(
+    ok(
       !result.violations.some(
         (violation) =>
           violation.code === 'LOCATOR_MISSING' && violation.locator === item.locator.anchor,
@@ -1243,8 +1251,8 @@ test('R11 inserting a same-kind Markdown block is a separate location mutation',
         candidate.locator.anchor.startsWith('md-block:') &&
         candidate.normalizedExcerpt.includes('One goal, one coordinator:'),
     )
-    assert.ok(source)
-    assert.ok(item)
+    ok(source)
+    ok(item)
     const path = join(tempRoot, source.path)
     const content = readFileSync(path, 'utf8')
     const changed = content.replace(
@@ -1254,7 +1262,7 @@ test('R11 inserting a same-kind Markdown block is a separate location mutation',
     assert.notEqual(changed, content)
     writeFileSync(path, changed)
     const result = sweepRegistrySources(registry, tempRoot)
-    assert.ok(
+    ok(
       result.violations.some(
         (violation) =>
           violation.code === 'VALUE_DIGEST_MISMATCH' || violation.code === 'LOCATOR_MISSING',
@@ -1271,7 +1279,7 @@ test('R11 CommonMark parenthesized ordered items produce two independent uncover
   try {
     copyCorpus(tempRoot)
     const source = registry.sources.find((candidate) => candidate.sourceId === 'approval-readme')
-    assert.ok(source)
+    ok(source)
     const path = join(tempRoot, source.path)
     writeFileSync(
       path,
@@ -1318,14 +1326,14 @@ test('R12 every published Markdown paragraph and list rule uses one structural c
       ? source.inventoryItems.filter((item) => item.ruleIds.length > 0)
       : [],
   )
-  assert.ok(published.length > 0)
+  ok(published.length > 0)
   for (const item of published) {
     if (item.locator.kind === 'line-excerpt') {
       assert.match(item.locator.anchor, /^md-block:.*:paragraph:[1-9]\d*$/, item.itemId)
     } else if (item.locator.kind === 'numbered-item') {
       assert.match(item.locator.anchor, /^md-block:.*:list-item:[1-9]\d*$/, item.itemId)
     } else if (item.locator.kind === 'table-row') {
-      assert.ok(item.locator.anchor.length > 0, item.itemId)
+      ok(item.locator.anchor.length > 0, item.itemId)
       assert.doesNotMatch(item.locator.anchor, /^\|.*\|$/, item.itemId)
     } else {
       assert.fail(`published Markdown item ${item.itemId} has nonstructural ${item.locator.kind}`)
@@ -1347,8 +1355,8 @@ test('R12 no published Markdown rule uses a raw-text line-excerpt or additional-
     const item = source?.inventoryItems.find(
       (candidate) => candidate.itemId === rule.authorityBasisRef.itemId,
     )
-    assert.ok(item, rule.ruleId)
-    assert.ok(
+    ok(item, rule.ruleId)
+    ok(
       item.locator.kind !== 'line-excerpt' || item.locator.anchor.startsWith('md-block:'),
       rule.ruleId,
     )
@@ -1361,15 +1369,15 @@ test('R12 all sixteen R11 raw-text Markdown rules migrate to structural canonica
   assert.equal(r12LegacyRawMarkdownRuleIds.length, 16)
   for (const ruleId of r12LegacyRawMarkdownRuleIds) {
     const rule = registry.rules.find((candidate) => candidate.ruleId === ruleId)
-    assert.ok(rule, ruleId)
+    ok(rule, ruleId)
     const source = registry.sources.find(
       (candidate) => candidate.sourceId === rule.authorityBasisRef.sourceId,
     )
     const item = source?.inventoryItems.find(
       (candidate) => candidate.itemId === rule.authorityBasisRef.itemId,
     )
-    assert.ok(item, ruleId)
-    assert.ok(
+    ok(item, ruleId)
+    ok(
       item.locator.kind === 'numbered-item' ||
         item.locator.kind === 'table-row' ||
         item.locator.anchor.startsWith('md-block:'),
@@ -1388,16 +1396,16 @@ test('R12 published Markdown table rules use stable first-column keys', () => {
   ] as const
   for (const [ruleId, suffix] of expectations) {
     const rule = registry.rules.find((candidate) => candidate.ruleId === ruleId)
-    assert.ok(rule, ruleId)
+    ok(rule, ruleId)
     const source = registry.sources.find(
       (candidate) => candidate.sourceId === rule.authorityBasisRef.sourceId,
     )
     const item = source?.inventoryItems.find(
       (candidate) => candidate.itemId === rule.authorityBasisRef.itemId,
     )
-    assert.ok(item, ruleId)
+    ok(item, ruleId)
     assert.equal(item.locator.kind, 'table-row', ruleId)
-    assert.ok(item.locator.anchor.endsWith(suffix), `${ruleId}: ${item.locator.anchor}`)
+    ok(item.locator.anchor.endsWith(suffix), `${ruleId}: ${item.locator.anchor}`)
     assert.notEqual(item.locator.anchor, item.normalizedExcerpt, ruleId)
   }
 })
@@ -1412,8 +1420,8 @@ test('R12 active standing-rule marker renumbering is a value mismatch without lo
     const item = source?.inventoryItems.find(
       (candidate) => candidate.itemId === 'item.constraint-1',
     )
-    assert.ok(source)
-    assert.ok(item)
+    ok(source)
+    ok(item)
     const path = join(tempRoot, source.path)
     const content = readFileSync(path, 'utf8')
     const changed = content.replace(
@@ -1423,14 +1431,14 @@ test('R12 active standing-rule marker renumbering is a value mismatch without lo
     assert.notEqual(changed, content)
     writeFileSync(path, changed)
     const result = sweepRegistrySources(registry, tempRoot)
-    assert.ok(
+    ok(
       result.violations.some(
         (violation) =>
           violation.code === 'VALUE_DIGEST_MISMATCH' && violation.locator === item.locator.anchor,
       ),
       JSON.stringify(result.violations, null, 2),
     )
-    assert.ok(
+    ok(
       !result.violations.some(
         (violation) =>
           violation.code === 'LOCATOR_MISSING' && violation.locator === item.locator.anchor,
@@ -1449,7 +1457,7 @@ test('R12 active ordered rules have no excluded structural duplicate substitute'
       'Typed try-catch at every external boundary a public API exposes.',
     ),
   )
-  assert.ok(matching)
+  ok(matching)
   assert.equal(matching.length, 1)
   assert.equal(matching[0]?.itemId, 'item.constraint-1')
   assert.equal(matching[0]?.locator.kind, 'numbered-item')
@@ -1459,7 +1467,7 @@ test('R12 active ordered rules have no excluded structural duplicate substitute'
 
 test('R12 ordered marker mutation preserves structural item rule and locator identity', () => {
   const source = registry.sources.find((candidate) => candidate.sourceId === 'standing-constraints')
-  assert.ok(source)
+  ok(source)
   const content = readFileSync(join(repoRoot, source.path), 'utf8')
   const mutated = content.replace(
     '1. **Typed try-catch at every external boundary a public API exposes.**',
@@ -1473,8 +1481,8 @@ test('R12 ordered marker mutation preserves structural item rule and locator ide
   const after = markdownIdentityProjectionForTesting(source.sourceId, mutated).find(
     (item) => item.locator.anchor === anchor,
   )
-  assert.ok(before)
-  assert.ok(after)
+  ok(before)
+  ok(after)
   assert.deepEqual(
     [after.itemId, after.ruleIds, after.locator, after.locatorDigest],
     [before.itemId, before.ruleIds, before.locator, before.locatorDigest],
@@ -1484,7 +1492,7 @@ test('R12 ordered marker mutation preserves structural item rule and locator ide
 
 test('R12 compound block value mutation preserves structural item rule and locator identity', () => {
   const source = registry.sources.find((candidate) => candidate.sourceId === 'spec-convention')
-  assert.ok(source)
+  ok(source)
   const content = readFileSync(join(repoRoot, source.path), 'utf8')
   const mutated = content.replace(
     /work stops\r?\nuntil the coordinator/,
@@ -1492,7 +1500,7 @@ test('R12 compound block value mutation preserves structural item rule and locat
   )
   assert.notEqual(mutated, content)
   const target = R12_LEGACY_MARKDOWN_RULE_TARGETS['rule.spec-convention.fd82127bf9f9']
-  assert.ok(target)
+  ok(target)
   const anchor = target.anchor
   const before = markdownIdentityProjectionForTesting(source.sourceId, content).find(
     (item) => item.locator.anchor === anchor,
@@ -1500,9 +1508,9 @@ test('R12 compound block value mutation preserves structural item rule and locat
   const after = markdownIdentityProjectionForTesting(source.sourceId, mutated).find(
     (item) => item.locator.anchor === anchor,
   )
-  assert.ok(before)
-  assert.ok(after)
-  assert.ok(before.ruleIds.length >= 2)
+  ok(before)
+  ok(after)
+  ok(before.ruleIds.length >= 2)
   assert.deepEqual(
     [after.itemId, after.ruleIds, after.locator, after.locatorDigest],
     [before.itemId, before.ruleIds, before.locator, before.locatorDigest],
@@ -1512,7 +1520,7 @@ test('R12 compound block value mutation preserves structural item rule and locat
 
 test('R13 lineHint changes do not change Markdown item or locator identity', () => {
   const source = registry.sources.find((candidate) => candidate.sourceId === 'coordinator-pattern')
-  assert.ok(source)
+  ok(source)
   const content = readFileSync(join(repoRoot, source.path), 'utf8')
   const before = markdownIdentityProjectionForTesting(source.sourceId, content).find(
     (item) => item.itemId === 'item.47b2eaa2f9ef',
@@ -1520,8 +1528,8 @@ test('R13 lineHint changes do not change Markdown item or locator identity', () 
   const after = markdownIdentityProjectionForTesting(source.sourceId, `\n${content}`).find(
     (item) => item.itemId === 'item.47b2eaa2f9ef',
   )
-  assert.ok(before)
-  assert.ok(after)
+  ok(before)
+  ok(after)
   assert.notEqual(after.locator.lineHint, before.locator.lineHint)
   assert.deepEqual(
     [after.itemId, after.ruleIds, after.locator.anchor, after.locatorDigest, after.valueDigest],
@@ -1537,7 +1545,7 @@ test('R13 lineHint changes do not change Markdown item or locator identity', () 
 
 test('R13 leading blank lines preserve every published Markdown identity', () => {
   const source = registry.sources.find((candidate) => candidate.sourceId === 'coordinator-pattern')
-  assert.ok(source)
+  ok(source)
   const content = readFileSync(join(repoRoot, source.path), 'utf8')
   const project = (value: string) =>
     markdownIdentityProjectionForTesting(source.sourceId, value)
@@ -1554,7 +1562,7 @@ test('R13 leading blank lines preserve every published Markdown identity', () =>
 
 test('R13 actual compound coordinator value mutation preserves all six rule identities', () => {
   const source = registry.sources.find((candidate) => candidate.sourceId === 'coordinator-pattern')
-  assert.ok(source)
+  ok(source)
   const content = readFileSync(join(repoRoot, source.path), 'utf8')
   const mutated = content.replace('runs as a self-pacing loop', 'runs as one self-pacing loop')
   assert.notEqual(mutated, content)
@@ -1564,8 +1572,8 @@ test('R13 actual compound coordinator value mutation preserves all six rule iden
   const after = markdownIdentityProjectionForTesting(source.sourceId, mutated).find(
     (item) => item.itemId === 'item.47b2eaa2f9ef',
   )
-  assert.ok(before)
-  assert.ok(after)
+  ok(before)
+  ok(after)
   assert.deepEqual(before.ruleIds, [
     'rule.coordinator-pattern.47b2eaa2f9ef.ownership',
     'rule.coordinator-pattern.47b2eaa2f9ef.frozen-contract',
@@ -1589,7 +1597,7 @@ function duplicateCoordinatorGate2Result() {
     const content = readFileSync(path, 'utf8')
     const row =
       "| 2    | Dispatch approval (parcel-set + kickstarter) | Yes - standing authorization scoped to the charter's named parcels, granted at ratification or later                                |"
-    assert.ok(content.includes(row))
+    ok(content.includes(row))
     writeFileSync(path, content.replace(row, `${row}\n${row}`))
     return sweepRegistrySources(registry, tempRoot)
   } finally {
@@ -1599,7 +1607,7 @@ function duplicateCoordinatorGate2Result() {
 
 test('R13 duplicate identical Gate 2 keyed row emits LOCATOR_DUPLICATE', () => {
   const result = duplicateCoordinatorGate2Result()
-  assert.ok(
+  ok(
     result.violations.some((violation) => violation.code === 'LOCATOR_DUPLICATE'),
     JSON.stringify(result.violations, null, 2),
   )
@@ -1608,7 +1616,7 @@ test('R13 duplicate identical Gate 2 keyed row emits LOCATOR_DUPLICATE', () => {
 test('R13 duplicate table text cannot bypass structural coverage', () => {
   const result = duplicateCoordinatorGate2Result()
   assert.equal(result.valid, false)
-  assert.ok(result.violations.some((violation) => violation.code === 'LOCATOR_DUPLICATE'))
+  ok(result.violations.some((violation) => violation.code === 'LOCATOR_DUPLICATE'))
 })
 
 for (const baseline of [
@@ -1660,8 +1668,8 @@ for (const baseline of [
 ] as const) {
   test(`R10 baseline block custody: ${baseline.name}`, () => {
     const source = registry.sources.find((candidate) => candidate.sourceId === baseline.sourceId)
-    assert.ok(source)
-    assert.ok(
+    ok(source)
+    ok(
       source.inventoryItems.some(
         (item) =>
           item.locator.anchor.startsWith('md-block:') &&
@@ -1699,11 +1707,11 @@ for (const probe of [
     try {
       copyCorpus(tempRoot)
       const source = registry.sources.find((candidate) => candidate.sourceId === probe.sourceId)
-      assert.ok(source)
+      ok(source)
       const path = join(tempRoot, source.path)
       writeFileSync(path, `${readFileSync(path, 'utf8')}\n\n${probe.prose}\n`)
       const result = sweepRegistrySources(registry, tempRoot)
-      assert.ok(
+      ok(
         result.violations.some((violation) => violation.code === 'SOURCE_ITEM_UNCOVERED'),
         JSON.stringify(result.violations, null, 2),
       )
@@ -1723,11 +1731,11 @@ for (const suffix of [':$DATA', '::$DATA', ':hidden', ':hidden:$DATA'] as const)
   test(`R14 an NTFS alternate-data-stream source path ending ${suffix} is refused by policy`, () => {
     const mutated = structuredClone(registry)
     const source = mutated.sources[0]
-    assert.ok(source)
+    ok(source)
     ;(source as { path: string }).path = `${source.path}${suffix}`
     const result = sweepRegistrySources(mutated, repoRoot)
     assert.equal(result.valid, false)
-    assert.ok(
+    ok(
       result.violations.some((violation) => violation.code === 'SOURCE_PATH_INVALID'),
       `expected SOURCE_PATH_INVALID; observed ${result.violations.map((v) => v.code).join(',')}`,
     )
@@ -1737,14 +1745,14 @@ for (const suffix of [':$DATA', '::$DATA', ':hidden', ':hidden:$DATA'] as const)
 test('R14 an interior colon is refused in any path segment, not only the last', () => {
   const mutated = structuredClone(registry)
   const source = mutated.sources[0]
-  assert.ok(source)
+  ok(source)
   ;(source as { path: string }).path = source.path.replace(
     'plugins/foreman-line',
     'plugins:stream/foreman-line',
   )
   const result = sweepRegistrySources(mutated, repoRoot)
   assert.equal(result.valid, false)
-  assert.ok(result.violations.some((violation) => violation.code === 'SOURCE_PATH_INVALID'))
+  ok(result.violations.some((violation) => violation.code === 'SOURCE_PATH_INVALID'))
 })
 
 // R14 fix 12 (amended AC12): the shipped inert-bytes test exercises only the four shapes that
@@ -1758,7 +1766,7 @@ test('R14 added narrative prose in a Markdown source is detected as SOURCE_ITEM_
   try {
     copyCorpus(tempRoot)
     const source = registry.sources.find((candidate) => candidate.path.endsWith('.md'))
-    assert.ok(source)
+    ok(source)
     const destination = join(tempRoot, source.path)
     const content = readFileSync(destination, 'utf8')
     writeFileSync(
@@ -1768,7 +1776,7 @@ test('R14 added narrative prose in a Markdown source is detected as SOURCE_ITEM_
     )
     const result = sweepRegistrySources(registry, tempRoot)
     assert.equal(result.valid, false)
-    assert.ok(
+    ok(
       result.violations.some((violation) => violation.code === 'SOURCE_ITEM_UNCOVERED'),
       `expected SOURCE_ITEM_UNCOVERED; observed ${result.violations.map((v) => v.code).join(',')}`,
     )
@@ -1782,7 +1790,7 @@ test('R14 an added heading stays inert while a paragraph beneath it does not', (
   try {
     copyCorpus(tempRoot)
     const source = registry.sources.find((candidate) => candidate.path.endsWith('.md'))
-    assert.ok(source)
+    ok(source)
     const destination = join(tempRoot, source.path)
     const original = readFileSync(destination, 'utf8')
     writeFileSync(destination, `${original}\n\n## An added heading\n`, 'utf8')

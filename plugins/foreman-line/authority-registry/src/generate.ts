@@ -456,27 +456,65 @@ function markdownBindingBlocks(document: MarkdownDocumentMap): LocatedText[] {
   return blocks
 }
 
-const priorR11Registry = parse(
-  execFileSync(
-    'git',
-    [
-      'show',
-      `${R12_PRIOR_REGISTRY_COMMIT}:plugins/foreman-line/authority-registry/authority-enforcement-registry.yaml`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 },
-  ),
-) as AuthorityEnforcementRegistry
+/**
+ * Raised when historical registry state cannot be read out of Git.
+ *
+ * The two prior registries below are genuinely required to GENERATE, because item identities are
+ * frozen against them - but nothing about merely importing this module needs them. Reading them at
+ * module scope made the import itself spawn `git show` over multi-megabyte blobs, so this file
+ * could not be LOADED outside a Git worktree containing those commits. `corpus-sweep.test.ts`
+ * imports it for one pure helper, which is why both post-rework reviewers could not run the suite
+ * at all: the standing instruction is to copy the package to scratch, and in scratch this import
+ * threw. AC13 as amended by R20 now forbids repository I/O at import time outright.
+ *
+ * Residual, stated rather than disguised (R20's ruling): the two corpus-sweep tests that call
+ * `markdownIdentityProjectionForTesting` consult the frozen-identity map, so they still need Git
+ * when they RUN. R20's obligation is on load, and loading is what was blocking reviewers. A
+ * reviewer working outside a worktree can now load every test file and skip those two by name.
+ */
+export class HistoricalRegistryUnavailableError extends Error {
+  constructor(commit: string, cause: unknown) {
+    super(
+      `cannot read the registry at commit '${commit}' from '${repoRoot}': ${
+        cause instanceof Error ? cause.message : String(cause)
+      }`,
+    )
+    this.name = 'HistoricalRegistryUnavailableError'
+  }
+}
 
-const priorR13Registry = parse(
-  execFileSync(
-    'git',
-    [
-      'show',
-      `${R13_PRIOR_REGISTRY_COMMIT}:plugins/foreman-line/authority-registry/authority-enforcement-registry.yaml`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 },
-  ),
-) as AuthorityEnforcementRegistry
+function registryAtCommit(commit: string): AuthorityEnforcementRegistry {
+  let content: string
+  try {
+    content = execFileSync(
+      'git',
+      [
+        'show',
+        `${commit}:plugins/foreman-line/authority-registry/authority-enforcement-registry.yaml`,
+      ],
+      { cwd: repoRoot, encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 },
+    )
+  } catch (error) {
+    throw new HistoricalRegistryUnavailableError(commit, error)
+  }
+  try {
+    return parse(content) as AuthorityEnforcementRegistry
+  } catch (error) {
+    throw new HistoricalRegistryUnavailableError(commit, error)
+  }
+}
+
+let priorR11RegistryCache: AuthorityEnforcementRegistry | undefined
+function priorR11Registry(): AuthorityEnforcementRegistry {
+  priorR11RegistryCache ??= registryAtCommit(R12_PRIOR_REGISTRY_COMMIT)
+  return priorR11RegistryCache
+}
+
+let priorR13RegistryCache: AuthorityEnforcementRegistry | undefined
+function priorR13Registry(): AuthorityEnforcementRegistry {
+  priorR13RegistryCache ??= registryAtCommit(R13_PRIOR_REGISTRY_COMMIT)
+  return priorR13RegistryCache
+}
 
 function priorStructuralAnchor(
   item: CanonSource['inventoryItems'][number],
@@ -495,76 +533,90 @@ function priorStructuralAnchor(
   return `${match[1]}:${match[2]}:${ordinal}`
 }
 
-const frozenMarkdownItemIds = new Map<string, string>()
-for (const source of priorR11Registry.sources) {
-  const ordinals = new Map<string, number>()
-  for (const item of source.inventoryItems) {
-    const match = /^(md-block:.*):(paragraph|list-item|table-row):[0-9a-f]{12}:\d+$/.exec(
-      item.locator.anchor,
-    )
-    const ordinalKey = match === null ? item.locator.anchor : `${match[1]}\u0000${match[2]}`
-    const ordinal = (ordinals.get(ordinalKey) ?? 0) + 1
-    ordinals.set(ordinalKey, ordinal)
-    const anchor = priorStructuralAnchor(item, ordinal)
-    if (anchor === null) continue
-    const preferred = source.inventoryItems.find(
-      (candidate) =>
-        candidate !== item &&
-        candidate.locator.lineHint === item.locator.lineHint &&
-        candidate.ruleIds.length > 0,
-    )
-    if (preferred === undefined && item.ruleIds.length === 0) continue
-    const candidateId = preferred?.itemId ?? item.itemId
-    const aliasesForCandidate = Object.entries(R12_LEGACY_MARKDOWN_RULE_TARGETS).filter(
-      ([ruleId]) => ruleId.endsWith(candidateId.replace(/^item\./, '')),
-    )
-    if (aliasesForCandidate.some(([, target]) => target.anchor !== anchor)) continue
-    frozenMarkdownItemIds.set(`${source.sourceId}\u0000${anchor}`, candidateId)
-  }
-}
-
-// R13's map is ANCHOR-keyed and therefore independent of where content sits in the file, so it is
-// authoritative and is built FIRST. Every identity it establishes is reserved.
-const frozenMarkdownItemIdsInUse = new Set<string>()
-for (const source of priorR13Registry.sources.filter((candidate) =>
-  candidate.path.endsWith('.md'),
-)) {
-  for (const item of source.inventoryItems) {
-    if (!item.locator.anchor.startsWith('md-block:')) continue
-    frozenMarkdownItemIds.set(`${source.sourceId}\u0000${item.locator.anchor}`, item.itemId)
-    frozenMarkdownItemIdsInUse.add(`${source.sourceId}\u0000${item.itemId}`)
-  }
-}
-
-// The R11 reconstruction matches prior items to current blocks by `lineHint`, which is only sound
-// while the source's line numbering is unchanged. Ratified amendment A1 inserted D21, the section
-// 4.1 ratification ledger and integration scenario 14 into the charter and rewrote the loop
-// directive's ownership and state blocks, so line numbers moved and this matcher began handing a
-// prior item's identity to an unrelated NEW block, producing duplicate item and rule IDs.
-//
-// It is kept for the anchors R13 does not cover, but it may no longer overwrite an anchor R13
-// already bound, nor issue an identity R13 already reserved.
-for (const source of priorR11Registry.sources.filter((candidate) =>
-  candidate.path.endsWith('.md'),
-)) {
-  const content = readFileSync(join(repoRoot, ...source.path.split('/')), 'utf8')
-  for (const block of markdownBindingBlocks(markdownDocumentMap(content))) {
-    const frozenKey = `${source.sourceId}\u0000${block.locator.anchor}`
-    if (frozenMarkdownItemIds.has(frozenKey)) continue
-    const candidate = source.inventoryItems.find((item) => {
-      if (item.locator.lineHint !== block.locator.lineHint || item.ruleIds.length === 0)
-        return false
-      return !Object.entries(R12_LEGACY_MARKDOWN_RULE_TARGETS).some(
-        ([ruleId, target]) =>
-          item.ruleIds.includes(ruleId) &&
-          (target.sourceId !== source.sourceId || target.anchor !== block.locator.anchor),
+/**
+ * Frozen Markdown item identities, built on first use rather than at import.
+ *
+ * This map is what keeps an inventory item's ID stable when its surrounding prose moves, so it is
+ * the most identity-critical structure in the generator. It is derived from two historical
+ * registries read out of Git, which is why building it eagerly made this module unimportable
+ * outside a worktree. Memoized: the derivation is unchanged and still runs exactly once.
+ */
+let frozenMarkdownItemIdsCache: Map<string, string> | undefined
+function frozenMarkdownItemIds(): Map<string, string> {
+  if (frozenMarkdownItemIdsCache !== undefined) return frozenMarkdownItemIdsCache
+  const identities = new Map<string, string>()
+  for (const source of priorR11Registry().sources) {
+    const ordinals = new Map<string, number>()
+    for (const item of source.inventoryItems) {
+      const match = /^(md-block:.*):(paragraph|list-item|table-row):[0-9a-f]{12}:\d+$/.exec(
+        item.locator.anchor,
       )
-    })
-    if (candidate === undefined) continue
-    if (frozenMarkdownItemIdsInUse.has(`${source.sourceId}\u0000${candidate.itemId}`)) continue
-    frozenMarkdownItemIds.set(frozenKey, candidate.itemId)
-    frozenMarkdownItemIdsInUse.add(`${source.sourceId}\u0000${candidate.itemId}`)
+      const ordinalKey = match === null ? item.locator.anchor : `${match[1]}\u0000${match[2]}`
+      const ordinal = (ordinals.get(ordinalKey) ?? 0) + 1
+      ordinals.set(ordinalKey, ordinal)
+      const anchor = priorStructuralAnchor(item, ordinal)
+      if (anchor === null) continue
+      const preferred = source.inventoryItems.find(
+        (candidate) =>
+          candidate !== item &&
+          candidate.locator.lineHint === item.locator.lineHint &&
+          candidate.ruleIds.length > 0,
+      )
+      if (preferred === undefined && item.ruleIds.length === 0) continue
+      const candidateId = preferred?.itemId ?? item.itemId
+      const aliasesForCandidate = Object.entries(R12_LEGACY_MARKDOWN_RULE_TARGETS).filter(
+        ([ruleId]) => ruleId.endsWith(candidateId.replace(/^item\./, '')),
+      )
+      if (aliasesForCandidate.some(([, target]) => target.anchor !== anchor)) continue
+      identities.set(`${source.sourceId}\u0000${anchor}`, candidateId)
+    }
   }
+
+  // R13's map is ANCHOR-keyed and therefore independent of where content sits in the file, so it is
+  // authoritative and is built FIRST. Every identity it establishes is reserved.
+  const frozenMarkdownItemIdsInUse = new Set<string>()
+  for (const source of priorR13Registry().sources.filter((candidate) =>
+    candidate.path.endsWith('.md'),
+  )) {
+    for (const item of source.inventoryItems) {
+      if (!item.locator.anchor.startsWith('md-block:')) continue
+      identities.set(`${source.sourceId}\u0000${item.locator.anchor}`, item.itemId)
+      frozenMarkdownItemIdsInUse.add(`${source.sourceId}\u0000${item.itemId}`)
+    }
+  }
+
+  // The R11 reconstruction matches prior items to current blocks by `lineHint`, which is only sound
+  // while the source's line numbering is unchanged. Ratified amendment A1 inserted D21, the section
+  // 4.1 ratification ledger and integration scenario 14 into the charter and rewrote the loop
+  // directive's ownership and state blocks, so line numbers moved and this matcher began handing a
+  // prior item's identity to an unrelated NEW block, producing duplicate item and rule IDs.
+  //
+  // It is kept for the anchors R13 does not cover, but it may no longer overwrite an anchor R13
+  // already bound, nor issue an identity R13 already reserved.
+  for (const source of priorR11Registry().sources.filter((candidate) =>
+    candidate.path.endsWith('.md'),
+  )) {
+    const content = readFileSync(join(repoRoot, ...source.path.split('/')), 'utf8')
+    for (const block of markdownBindingBlocks(markdownDocumentMap(content))) {
+      const frozenKey = `${source.sourceId}\u0000${block.locator.anchor}`
+      if (identities.has(frozenKey)) continue
+      const candidate = source.inventoryItems.find((item) => {
+        if (item.locator.lineHint !== block.locator.lineHint || item.ruleIds.length === 0)
+          return false
+        return !Object.entries(R12_LEGACY_MARKDOWN_RULE_TARGETS).some(
+          ([ruleId, target]) =>
+            item.ruleIds.includes(ruleId) &&
+            (target.sourceId !== source.sourceId || target.anchor !== block.locator.anchor),
+        )
+      })
+      if (candidate === undefined) continue
+      if (frozenMarkdownItemIdsInUse.has(`${source.sourceId}\u0000${candidate.itemId}`)) continue
+      identities.set(frozenKey, candidate.itemId)
+      frozenMarkdownItemIdsInUse.add(`${source.sourceId}\u0000${candidate.itemId}`)
+    }
+  }
+  frozenMarkdownItemIdsCache = identities
+  return identities
 }
 
 function tsConstructs(content: string): LocatedText[] {
@@ -611,7 +663,7 @@ function itemIdFor(definition: SourceDefinition, located: LocatedText): string {
   ) {
     return 'item.two-gate-thesis'
   }
-  const frozenId = frozenMarkdownItemIds.get(
+  const frozenId = frozenMarkdownItemIds().get(
     `${definition.sourceId}\u0000${located.locator.anchor}`,
   )
   if (frozenId !== undefined) return frozenId
@@ -11153,7 +11205,11 @@ function shortId(value: string): string {
   return sha256(value).slice(0, 12)
 }
 
-const priorR11RulesById = new Map(priorR11Registry.rules.map((rule) => [rule.ruleId, rule]))
+let priorR11RulesByIdCache: Map<string, AuthorityRule> | undefined
+function priorR11RulesById(): Map<string, AuthorityRule> {
+  priorR11RulesByIdCache ??= new Map(priorR11Registry().rules.map((rule) => [rule.ruleId, rule]))
+  return priorR11RulesByIdCache
+}
 
 function legacyRuleIdsFor(sourceId: string, locator: SourceLocator): string[] {
   return Object.entries(R12_LEGACY_MARKDOWN_RULE_TARGETS)
@@ -11199,7 +11255,7 @@ function migratedLegacyRule(
   sourceRef: SourceRef,
   normalizedStatement: string,
 ): AuthorityRule {
-  const prior = priorR11RulesById.get(ruleId)
+  const prior = priorR11RulesById().get(ruleId)
   if (prior === undefined) throw new Error(`R12 legacy rule '${ruleId}' is absent from R11`)
   const coordinatorAdvisory = ruleId === 'rule.coordinator-pattern.91dd60b00fd6'
   const base: AuthorityRule = {
@@ -12394,7 +12450,7 @@ function buildRegistry(): AuthorityEnforcementRegistry {
     sources,
     rules,
     operationAuthority: operation,
-    reconciliations: structuredClone(priorR13Registry.reconciliations),
+    reconciliations: structuredClone(priorR13Registry().reconciliations),
     normativeMarkdownAudit,
   }
   // The R13 record is HISTORICAL and byte-frozen by validate.ts's RECONCILIATION_RECORD_DIGESTS.
