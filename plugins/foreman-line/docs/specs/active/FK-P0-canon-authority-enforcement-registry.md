@@ -1267,7 +1267,7 @@ registry under test.
    must never be read to demand that chain evidence be invented for a historical record that never
    had any.
    The head exemption is a *narrower* binding than a pinned constant and never a weaker one, and
-   five further obligations make that true rather than merely asserted. First, **exactly one chain
+   seven further obligations make that true rather than merely asserted. First, **exactly one chain
    link per record**: a migration-chain record declares exactly one prior-binding-manifest command
    and exactly one superseding-binding-manifest command, and a record carrying two or more of
    either is invalid whatever their contents or order. Selecting the first match and ignoring the
@@ -1278,9 +1278,11 @@ registry under test.
    by deletion - removing the head must invalidate the document, never promote a pinned record out
    of its pin. Third, **the head has a required shape**: it declares `superseded-by-amendment` with
    non-null superseding evidence, carries at least one `git-commit` evidence entry whose reference
-   is a forty-character lowercase hex commit, and carries command evidence issued by this tool with
-   `actorClass` `coordinator` and `exitCode` `0`; a record meeting the schema minimums but not this
-   shape is not a head. Fourth, **evidence references are bound by a digest computed over them, and
+   is a forty-character lowercase hex commit, and **its two chain commands** are issued by this tool
+   with `actorClass` `coordinator` and `exitCode` `0` - the predicate binds the prior and superseding
+   binding-manifest commands themselves, never merely some command entry on the record, because a
+   check satisfiable by an unrelated decoy entry is not a check of the supersession; a record meeting
+   the schema minimums but not this shape is not a head. Fourth, **evidence references are bound by a digest computed over them, and
    no digest is ever verified by comparison with itself**: for `source-ref`, `command-result` and
    `missing-path` entries the recorded digest is the SHA-256 of the recorded reference. A
    `git-commit` digest attests the commit object body and so is not checkable from the reference
@@ -1289,9 +1291,22 @@ registry under test.
    repointing the reference breaks the binding. A validator never treats a digest as verified
    because it is well-formed hexadecimal, and where no binding is available for a kind the absence
    is stated rather than disguised as a check. Fifth, **evidence entries on a record are distinct**
-   by kind, reference and digest together, so a record cannot carry the same attestation twice.
+   by kind, reference and digest together, so a record cannot carry the same attestation twice, and a
+   migration-chain record carries exactly two `git-commit` entries whose references are distinct **by
+   reference alone**, so varying a digest cannot smuggle a second attestation of the same commit.
+   Sixth, **the shipped chain head is bound through channels that do not depend on its being the
+   head**: its presence is required, its topic/status/reference/rule-id contract and its prose are
+   attested, and once it is no longer the head it is digest-bound. Three attacks must each be refused
+   independently - deleting the head; deleting it and substituting a replacement under any other id;
+   and **rewriting it in place under the same id**. The third is the one a presence rule alone does
+   not see, and any binding that depends on the record's head position is circular, because the
+   attacker chooses that position. Seventh, **a properly chained new head is ADMITTED**, and the
+   demoted former head remains bound as a historical record. The residual limit is therefore
+   append-only and history-preserving: it must never be cheaper to erase an attestation than to
+   extend the chain, because the human review of Git history the residual leans on is defeated by
+   erasure and not by extension.
    The accepted residual limit is stated in terms of a *well-formed, correctly
-   chained* head record; these five obligations are what make "well-formed" mean something, and
+   chained* head record; these seven obligations are what make "well-formed" mean something, and
    none of them is corpus-dependent, so none reintroduces the shipped-manifest freeze this
    structure exists to remove.
    Each subject/claim is item-curated and substantively supported by its authority basis; source-
