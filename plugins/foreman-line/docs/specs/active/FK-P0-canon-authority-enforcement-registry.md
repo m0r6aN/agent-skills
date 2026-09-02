@@ -567,7 +567,7 @@ All nine numbered goal-exit requirements and all seventeen charter stop-conditio
 protected normative items and must be published individually; headings/intros may be excluded,
 but no exit/stop body may be `non-normative-explanation`. Wave exit contracts in the loop
 directive are likewise published when they state required completion or gate conditions.
-The charter's thirteen integration scenarios, five initial refusal-class rows, and all twenty-two
+The charter's fourteen integration scenarios, five initial refusal-class rows, and all twenty-two
 ratified parcel-graph rows are also protected normative items. Each scenario's required outcome,
 each refusal class's initial classification/evidence duty, and each parcel's owner/dependency or
 serialization contract is individually published with a basis-supported classification,
@@ -1024,7 +1024,7 @@ a competing owner for `authority-registry`, or relies on self-asserted authority
 
 R9 starts from the independently verified R8 baseline of 350 passing tests. The builder adds at
 least eleven independently named R9 controls and the final combined suite contains at least 361
-tests. The R9 controls separately cover: thirteen scenario publications; five refusal-row
+tests. The R9 controls separately cover: fourteen scenario publications; five refusal-row
 publications; twenty-two parcel-row publications; literal classification on every curated rule;
 absence of source/default classification fallback; loop Gate 2 subject/classification/
 applicability; loop Gate 3 subject/classification/applicability; exact coordinator verification
@@ -1209,7 +1209,7 @@ registry under test.
   stop bullets, and every normative wave-exit body. They reject any classification/default-based
   applicability fallback, assert each published entry carries literal applicability, and prove
   the Gate 2 grant does not resolve in a builder/runtime/external-write/unsupported-host query.
-  They also require all thirteen integration scenarios, all five initial refusal-class rows, and
+  They also require all fourteen integration scenarios, all five initial refusal-class rows, and
   all twenty-two parcel-graph contracts to be individually published; reject every source-wide or
   terminal classification fallback; require literal curated classification for every published
   item; and assert the loop Gate 2, Gate 3, verification, stop, and completion rules have honest
