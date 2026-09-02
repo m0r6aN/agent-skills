@@ -140,3 +140,66 @@ completed. Carried as an open item into the builder's baseline task.
 **Evidence status for AC13:** one full `npm test` returned exit 0 under partial contention. Five
 other full runs died at the file level. No trustworthy test count exists yet. The builder's clean
 control, on a machine verified quiesced PID-by-PID, is the evidence of record and has not yet run.
+
+## C5 — where the 23–38 minutes actually goes, and a five-day resource leak
+
+Found by the builder during its baseline task, verified on disk by the coordinator. This answers
+the C4 open question and reframes the directive's fix 21.
+
+### The runtime is module evaluation, subprocesses, and redundant parsing — not memory
+
+| Cost | Location | Verified |
+|---|---|---|
+| Importing one pure helper executes the **entire generator's top level** | `tests/corpus-sweep.test.ts:17` imports `markdownIdentityProjectionForTesting` from `../src/generate.js` | **TRUE** |
+| That top level runs **two `git show` subprocesses** and parses two ~2.1 MB / ~40,000-line YAML documents out of history | `src/generate.ts` — module-level `const priorR11Registry = parse(execFileSync('git', ['show', …]))`, same for `priorR13Registry` | **TRUE** |
+| `corpus-sweep` parses the current registry **again** at module level | `tests/corpus-sweep.test.ts:24` | **TRUE** |
+| `semantic-invariants` parses **4.2 MB at module load** — and because `pass-minimal.yaml` is byte-identical to the registry, it parses the same 40,000-line document **twice** | `tests/semantic-invariants.test.ts:30-35` | **TRUE** |
+| **48 `git clone` calls per run**, each paired with `mkdtempSync` + recursive `rmSync` | `tests/corpus-sweep.test.ts:28-32`, `copyCorpus()` | **TRUE** |
+
+Five ~2.1 MB YAML parses per run, three of them avoidable. This is consistent with every prior
+observation: it explains why Reviewer B measured a stable 90–140 MB heap and a healthy 0.16 s
+`validateRegistry` and still could not locate 23 minutes — the cost is process spawning, filesystem
+churn, and parsing, none of which appear in heap or in `validateRegistry` timing.
+
+**The directive's framing of fix 21 as a memory problem (~118 `structuredClone` calls) is probably
+wrong.** `structuredClone` is real but it is not the headline. Fix 15 also turns out to have an
+uncosted payoff: shrinking the positive fixture removes one full 2.1 MB parse outright.
+
+### The leak — 81 orphaned daemons over five days
+
+Each `git clone` starts an `fsmonitor--daemon` for the new temp repo; `rmSync` deletes the
+directory but the daemon survives and detaches. Coordinator census:
+
+**81 live `git` processes, 891 threads, 603.7 MB**, by start date:
+
+| Aug 28 | Aug 29 | Aug 30 | Aug 31 | Sep 1 | Sep 2 |
+|---|---|---|---|---|---|
+| 12 | 8 | 10 | **24** | **23** | 4 |
+
+The Aug 31 and Sep 1 spikes correspond to the prior owner's R2–R9 and R10–R13 rework rounds. This
+is a five-day accumulation on the developer's machine caused by this test suite, at roughly 48 per
+full run.
+
+**Cleanup deliberately deferred** until the builder's control run completes — killing 81 processes
+mid-run is precisely how the coordinator contaminated the first control (C4), and it is not being
+repeated. Fixed at source by `-c core.fsmonitor=false` plus clone-once-and-reuse.
+
+### Fix 20's stated remedy does not work — third coordinator error this round
+
+The directive said to "switch to a streaming reporter (TAP) or otherwise guarantee per-test output
+survives a crash." The builder proved by controlled probe that node streams at **file** granularity
+but **buffers within a file**: two deliberate 3-second tests in one file both appeared at the same
+instant only after the file completed. TAP was already in use.
+
+So a dying `semantic-invariants.test.ts` still loses all ~197 results and still surfaces as one
+failed file with no per-test output. **The remedy as written would have been implemented, looked
+correct, and left the gate exactly as blind.** The builder stopped rather than close it green.
+
+This also explains the historical failure signature better than contention does: "single failing
+test, `pass 0`, no per-test output" is simply what node emits whenever a file does not finish, for
+any reason. Whatever killed those runs, *this* is why nobody could see what failed.
+
+**Ruled:** implement both per-file isolation (`package.json`) and intra-file `process.stderr.write`
+progress markers, which are outside the buffered stdout path and survive a non-graceful exit.
+Splitting the 197-test file is declined for this round — Allowed Files fixes the suite at six test
+files and widening it mid-round is how scope creep starts. Recorded as a candidate for the successor.
