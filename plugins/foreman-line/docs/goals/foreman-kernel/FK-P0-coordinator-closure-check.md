@@ -203,3 +203,92 @@ any reason. Whatever killed those runs, *this* is why nobody could see what fail
 progress markers, which are outside the buffered stdout path and survive a non-graceful exit.
 Splitting the 197-test file is declined for this round — Allowed Files fixes the suite at six test
 files and widening it mid-round is how scope creep starts. Recorded as a candidate for the successor.
+
+## C6 — the green/red split explained, and proven by commit timestamp
+
+The contradictory run evidence is resolved, and not by contention.
+
+| Event | Time |
+|---|---|
+| Coordinator's **green** full run (`npm test` exit 0) | 06:43:27 → ~07:38 |
+| Reviewer/coordinator runs that died in `semantic-invariants` | 07:02, 07:12, 07:19 |
+| **Merge `a703941`** — current charter + loop-directive onto the parcel branch | **07:43:05** |
+| Builder's control run — first run *after* the merge | 07:53:40 |
+
+**No run before 07:43:05 could show the corpus-sweep failures; every run after must.** The builder
+predicted this from the test counts before the timestamps were checked, and the commit log confirms
+it exactly.
+
+### What the failures are
+
+18 failing tests in `corpus-sweep`, 115 passing, from **26 violations** — 13 `VALUE_DIGEST_MISMATCH`
+and 13 `SOURCE_ITEM_UNCOVERED`; **15 from `charter.md`, 11 from `loop-directive.md`**. Every one is
+amendment-A1 content: `D21`, the new section 4.1 ledger paragraphs, the changed Gate 1 prose, and
+section 13 items 7 and 9.
+
+**The validator is doing its job. The data is stale.** This is BLOCKER 2 executing rather than
+merely hashing.
+
+### The part that reflects on the coordinator
+
+The registry was **always** stale relative to the current charter. The branch also carried the stale
+charter, so the two matched and nothing noticed. The coordinator's merge brought the current charter
+onto the branch and the sweep went red within one run — the defect was latent and the merge exposed
+it. That is a better outcome than a green suite over a stale artifact.
+
+**F2 is now proven by execution, not just by hash.** `loop-directive.md` contributes 11 of the 26
+violations, so had BLOCKER 2 been worked as the directive originally wrote it — charter only — 11
+violations would have survived the rework and the sweep would still be red. The under-scoping was
+load-bearing, not cosmetic.
+
+### What this does NOT explain — kept deliberately separate
+
+`semantic-invariants` file-level deaths (`pass 0`, no per-test output) were observed at 07:02,
+07:12 and 07:19, **all of which predate the merge**. The merge cannot explain them and they remain
+**OPEN**. The two phenomena must not be conflated: corpus-sweep's 18 failures are closed by
+regeneration; the semantic-invariants death is not.
+
+## C7 — BLOCKER 1's chain verified end to end, and the pin is redundant
+
+The builder extracted the full chain from shipped data before writing code. Twelve unbroken links,
+from the genesis `registry-binding-manifest` out-digest `1fe3a7c6`, through
+`superseding-binding-manifest` r4 to r13, ending at `f753296b`.
+
+**Coordinator-verified:** the head `f753296b78bcf4d8de9e603e8e347286519a26694c2241ae4a00a05676388e2f`
+is byte-identical to `SHIPPED_BINDING_MANIFEST_DIGEST` at `validate.ts:445`.
+
+So the hardcoded pin is **redundant with a chain head already present in the document**. Both
+designs accept exactly the same artifact today; they diverge only for a legitimately amended
+registry, which the chain admits and the pin rejects. **The fix is subtractive.**
+
+Field choices confirmed — including the trap avoided: `registry-binding-manifest` `inputDigest` is
+`41ba3a51` across r3 to r10, then `554c2297` at r11 and `bb8f0011` at r12. It is commit-derived, not
+chain state, and treating it as the link would have produced a **false pass across eight
+consecutive records**. The builder identified and excluded it before writing code.
+
+### Fix 18 is smaller than the triage feared
+
+Reviewer A's five pin-only tests (`:808`, `:817`, `:826`, `:835`, `:1366`) each mutate a rule and
+then **recompute `bindingDigest`**, so only a whole-corpus manifest check catches them. The chain
+keeps a whole-corpus check and merely anchors the expected value in the chain instead of a constant
+— so all five stay caught. **A naive delete-the-pin fix would have silently unmasked all five.**
+Their names ("requires typed prior-manifest migration") indicate the tests were written for the
+chain design and the implementation hardcoded it.
+
+## C8 — the fix-8 inert-test class has at least nine members
+
+| Test | Found by |
+|---|---|
+| `:899`, `:913`, `:933` | Reviewer A |
+| `:1197` | Builder (coordinator-confirmed) |
+| `:1176` — tier promotion never tested | Builder |
+| `:2222`, `:2400`, `:2413`, `:3182` — `reasonCode` unasserted, so `REQUIRE_HUMAN` is ambiguous between `NO_APPLICABLE_AUTHORITY`, `INVALID_QUERY_SCOPE` and `REGISTRY_INVALID` | Builder |
+
+Three found by adversarial review; **six found by the builder's sweep.** The ambiguous-`reasonCode`
+sub-class is the mechanism by which a test keeps passing after the property it names stops holding;
+the ruling is to assert `reasonCode` everywhere, not only in those four.
+
+**Two clean scans recorded as negative findings:** the inert-CLI class is confined to
+`schema-validation.test.ts:82-97`, and the four assert-free tests delegate to throwing helpers.
+Neither is a defect. Reporting negatives that could have been quietly omitted is what makes the
+positives credible.
