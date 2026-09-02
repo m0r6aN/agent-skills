@@ -2,11 +2,28 @@
 
 ## COORDINATOR OWNERSHIP — read before dispatching anything
 
-> **Queue owner:** the primary Codex coordinator session in the task where Clinton
-> Morgan ratified the Foreman Kernel charter and re-ratified amendments R1–R13 on
-> 2026-08-31. Exactly one coordinator owns this goal. Ownership transfers only at a
-> parcel boundary by editing this block and recording a handoff. If another live owner
-> is named or ownership is ambiguous, stop and report; never assume.
+> **Queue owner:** the Claude Code coordinator session entered via `/goal` on
+> 2026-09-01, holding ownership under the developer's explicit transfer of that date.
+> Exactly one coordinator owns this goal. Ownership transfers only at a parcel boundary
+> by editing this block and recording a handoff. If another live owner is named or
+> ownership is ambiguous, stop and report; never assume.
+
+**Handoff record — 2026-09-01.** The prior owner (the primary Codex coordinator
+session, 2026-08-30 → 2026-09-01) stopped without a handoff, last writing to this
+worktree at 11:10 EDT on 2026-09-01 and leaving `charter.md` modified and eleven
+untracked artifacts uncommitted. The developer was asked directly whether that session
+was live and ruled it **dead**, transferring ownership to this session with the
+instruction to take the lead. Transfer occurred at a parcel boundary: FK-P0 was built
+and reworked but never merged, and no dispatch was in flight (no open PRs; every review
+worktree clean).
+
+**Inherited-state caveat — read before trusting any FK-P0 claim.** The prior owner
+recorded FK-P0 rework rounds R2–R13 in commit messages, but **no review findings for
+any of those rounds exist on disk** in this repository, on the parcel branch, or in the
+twenty-six `fk-p0-*` review worktrees (all verified clean). Those findings existed only
+in the dead session's transcript and are unrecoverable. Under the standing rule that
+wrong-shaped claims are presumptively empty, **no R2–R13 review is treated as having
+occurred.** FK-P0 re-enters adversarial review from zero under this owner.
 
 **Goal worktree:**
 `D:/Repos/agent-skills-worktrees/foreman-kernel-stage0-20260830`
@@ -24,11 +41,31 @@
 
 ## Current state — update at every stop or parcel closure
 
-**State 2026-08-31:** Stage Zero complete; original Gate 1 and scoped re-ratification
-complete; required fresh plan-level adversarial review complete and triaged; standing
-Gate 2 resumed; no implementation parcel shaped or dispatched. **NEXT: FK-P0 fresh
-shaping session.** The ambient `D:/Repos/agent-skills` checkout has a user-owned change
-at `plugins/foreman-line/routing-policy/routing-policy.yaml`; never touch or absorb it.
+**State 2026-09-01 (this owner).** Stage Zero complete; original Gate 1 and scoped
+re-ratification complete; plan-level adversarial review complete and triaged. Amendment
+**A1 is ratified and committed** (`16d90e5`). Amendment **A1.8 is applied to the working
+tree pending the developer's text review** (approach directed 2026-09-01; the text was
+never read — see its own known-defect section). Amendment **A2 is PARKED by developer
+ruling of 2026-09-01** after four drafts and five independent reviews all returning
+REQUEST CHANGES; its subject is recorded as a known unowned risk per A2's own rejection
+clause, not silently dropped.
+
+**FK-P0 is built but unmerged**, on branch `codex/fk-p0-canon-authority-enforcement-registry`
+at `df8155a`. **NEXT: deterministic pass on this coordinator's environment, then two fresh
+independent adversarial reviews** (architecture/risk + `risk: critical`), because no
+inherited review evidence survives. Gate 3 remains a human action.
+
+The ambient `D:/Repos/agent-skills` checkout has a user-owned change at
+`plugins/foreman-line/routing-policy/routing-policy.yaml`; never touch or absorb it.
+
+### Standing stop-condition override — the FK-P0 / A2 spiral
+
+The prior owner drove FK-P0 through twelve rework rounds and amendment A2 through four
+drafts without landing either, overriding the charter's own “same tripwire fires” stop
+condition each time. That condition is reinstated with teeth: **this owner takes FK-P0
+through at most two rework rounds.** A third stops the loop and reports. Rework-round
+count is measured from `df8155a` forward under this ownership; inherited rounds are not
+carried, but neither are they credited.
 
 ## Role and canon
 
