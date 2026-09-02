@@ -41,31 +41,33 @@ occurred.** FK-P0 re-enters adversarial review from zero under this owner.
 
 ## Current state — update at every stop or parcel closure
 
-**STATE 2026-09-02 — STOPPED AT A RATIFIED STOP CONDITION. This owner is no longer
-advancing FK-P0.** The tripwire in this directive allows this owner **two rework
-rounds** on FK-P0. Both are spent. After round 2 both independent reviewers confirmed
-their original blockers closed, and one found a **new blocker-grade tamper route**
-(head deletion-and-substitution validates green, delivering the same payload that
-silently retires the human-owned-merge rules), together with a regression that closed
-the legitimate append path. Both reproduced by this owner against pristine `src/`.
+**STATE 2026-09-02 (live) — THE STOP CONDITION FIRED, AND THE DEVELOPER LIFTED IT. This owner is
+running again.** The two-rework tripwire fired after round 2; this owner stopped and wrote
+`FK-P0-STOP-REPORT-for-developer.md`. **The developer read it and explicitly lifted the tripwire and
+authorised further rounds.** Rounds 3 and 4 followed. This is recorded because the previous version of
+this block said STOPPED while the goal was actively running — a stale-state record in the one artifact
+a future `/goal resume` trusts first, written by the owner of a parcel whose purpose is making canon
+represent reality.
 
-**Read `FK-P0-STOP-REPORT-for-developer.md` first.** It carries the blocker, the
-regression, everything verified fixed, the eight decisions that are the developer's,
-and this owner's error ledger.
+- Parcel branch `codex/fk-p0-canon-authority-enforcement-registry`. Round 3 committed `cc57658`;
+  amendments **R19–R23** each committed alone before dependent code (SPEC-CONVENTION §11). Round 4 is
+  green at **583/583** and awaiting its commit. **Not pushed. Not merged.**
+- **AC13 closed on this owner's authoritative pass** at `cc57658` — exit 0, 583 tests, 583 pass,
+  0 fail, stderr empty. Registry YAML and `RECONCILIATION_RECORD_DIGESTS` byte-unchanged throughout.
+- Both independent reviewers returned **CLOSED WITH NEW FINDING** twice. Every blocker they raised is
+  closed, and each was reproduced closed by this owner's own probes rather than accepted.
+- Spec remains in `docs/specs/active/`; **Stage F closure not run.**
+- **Gate 3 remains not delegated and no merge has been performed.**
 
-- Parcel branch `codex/fk-p0-canon-authority-enforcement-registry` at `4c53cd8`,
-  worktree clean, **not pushed**. Registry YAML byte-unchanged.
-- Amendments R14–R21 each committed alone before dependent code (SPEC-CONVENTION §11).
-- Suite 563/563, `tsc`/`biome`/`validate`/`sweep` clean. **A green suite does not close
-  a tamper route no test covers**, and this stop is not contradicted by it.
-- Spec remains in `docs/specs/active/`. **Stage F closure deliberately NOT run** — it
-  would assert a completion that has not happened.
-- **Gate 3 was never presented as ready and no merge was performed.**
+**Known-open at this state, recorded rather than latent:** successor presence (Reviewer B's S3) is an
+FK-P1 obligation with a stop condition, and R23 states the structural reason it cannot close in-band —
+a stateless validator comparing a document to itself cannot detect a deletion; the surviving O4-bound
+residual has one of its two faces pinned by a test; `npm run generate` has never been invoked end to
+end.
 
-**A new owner resuming this goal must not treat FK-P0 as one narrow fix away.** R19 is
-this owner's amendment and has needed narrowing twice; the head-exemption design has
-now admitted a tampered registry twice under two different owners' hardening. Re-enter
-at triage, not at build.
+**A new owner must not treat FK-P0 as one narrow fix away.** R16, R19 and R22 were each this owner's
+amendments and each needed correction; the head-exemption design has admitted a tampered registry under
+two different owners' hardening. Re-enter at triage, not at build.
 
 
 **State 2026-09-01 (this owner).** Stage Zero complete; original Gate 1 and scoped
