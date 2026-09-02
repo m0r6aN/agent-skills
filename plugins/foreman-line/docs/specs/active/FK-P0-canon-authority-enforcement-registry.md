@@ -1252,8 +1252,13 @@ registry under test.
    counting, and it is bound more tightly than a constant rather than exempted, because a constant
    asserts only "these are the bytes I remember" while the live recomputation asserts "this record
    accurately describes the document containing it". A document is invalid if it has zero chain
-   heads, more than one chain head, or any reconciliation record that does not lie on the single
-   genesis-to-head path.
+   heads, more than one chain head, or any *migration-chain* record that does not lie on the single
+   genesis-to-head path. A migration-chain record is a reconciliation record carrying
+   binding-manifest command evidence, by convention prefixed `registry-rework-`. Reconciliation
+   records that carry no binding-manifest evidence are not chain members, are outside the path
+   requirement, and remain bound by their pinned digests exactly as before; the path requirement
+   must never be read to demand that chain evidence be invented for a historical record that never
+   had any.
    Each subject/claim is item-curated and substantively supported by its authority basis; source-
    wide catch-all semantic identities are invalid. The complete declared source baseline,
    including snapshot evidence, is independently manifest-bound.
