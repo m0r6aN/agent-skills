@@ -292,3 +292,36 @@ the ruling is to assert `reasonCode` everywhere, not only in those four.
 `schema-validation.test.ts:82-97`, and the four assert-free tests delegate to throwing helpers.
 Neither is a defect. Reporting negatives that could have been quietly omitted is what makes the
 positives credible.
+
+## C9 — CORRECTION to C5: the runtime driver is the clones, not module evaluation
+
+C5 recorded module evaluation as the answer to the runtime question. **That attribution was wrong
+and is withdrawn.** The builder measured it properly once the five completed files yielded per-test
+`duration_ms` alongside file wall-clock, and withdrew its own hypothesis:
+
+| Quantity | Measured |
+|---|---|
+| Wall clock, five completed files | 865 s |
+| Sum of test-body durations | 826.6 s |
+| **Module evaluation + inter-test overhead** | **~38 s — about 4 %** |
+| `corpus-sweep` test bodies alone | 795.9 s — **96 % of all test time** |
+| Individual tests over 5 s | 77 |
+| Worst single test | 22.4 s |
+
+**The driver is the 48 `git clone` calls and 50 temp-corpus copies inside test bodies**, not the
+module-level `git show` subprocesses and YAML parses. Those imports are real and worth fixing as
+cheap hygiene, but they are ~4 % and were never the headline.
+
+What C5 got right and keeps: the three redundant ~2.1 MB parses, the byte-identical
+`pass-minimal.yaml` double-parse, the clone-per-test pattern, and the daemon leak. What it got wrong
+was the *attribution of the wall clock* to module evaluation.
+
+**Fix 21's effort therefore goes to clone-once-and-reuse**, which addresses 96 % of the cost, with
+the import-time parses as secondary hygiene. The directive's original framing (memory pressure from
+`structuredClone`) and C5's revised framing (module evaluation) were **both** wrong; this is the
+measured answer.
+
+Recorded because the coordinator committed C5's hypothesis into the goal record as settled before
+the measurement existed. The builder produced the measurement, contradicted itself, and reported it
+— the second time in this round it has withdrawn its own claim when data disagreed. That behaviour
+is worth more than the individual findings.
