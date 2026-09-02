@@ -1293,7 +1293,11 @@ registry under test.
    is stated rather than disguised as a check. Fifth, **evidence entries on a record are distinct**
    by kind, reference and digest together, so a record cannot carry the same attestation twice, and a
    migration-chain record carries exactly two `git-commit` entries whose references are distinct **by
-   reference alone**, so varying a digest cannot smuggle a second attestation of the same commit.
+   reference alone**, so varying a digest cannot smuggle a second attestation of the same commit. On
+   the chain head specifically, every `git-commit` reference is either bound by the prior chain
+   command's `inputDigest` or is exactly `document.sourceSnapshotCommit`, so the head's Git
+   provenance cannot name commits that exist nowhere. That binder is *structural* rather than keyed
+   to an id, so unlike every other head obligation it applies to whatever record is the head.
    Sixth, **the shipped chain head is bound through channels that do not depend on its being the
    head**: its presence is required, its topic/status/reference/rule-id contract and its prose are
    attested, and once it is no longer the head it is digest-bound. Three attacks must each be refused
@@ -1301,10 +1305,17 @@ registry under test.
    and **rewriting it in place under the same id**. The third is the one a presence rule alone does
    not see, and any binding that depends on the record's head position is circular, because the
    attacker chooses that position. Seventh, **a properly chained new head is ADMITTED**, and the
-   demoted former head remains bound as a historical record. The residual limit is therefore
-   append-only and history-preserving: it must never be cheaper to erase an attestation than to
-   extend the chain, because the human review of Git history the residual leans on is defeated by
-   erasure and not by extension.
+   demoted former head remains bound as a historical record. **For the shipped head** the residual
+   limit is append-only and history-preserving. That property does **not** extend to an appended
+   successor: a successor inherits none of the head's id-keyed bindings, so deleting it re-promotes
+   the shipped head and erases the successor's attestation while the document stays valid - making
+   erasure cheaper than extension, the inverse of what this obligation wants. The obligation is
+   stated at its true scope rather than the scope we wanted, and generalising presence to successors
+   is an FK-P1 obligation and a stop condition on it. The reason it cannot be closed in-band is
+   structural and worth stating plainly: **a stateless validator comparing a document to itself
+   cannot detect a deletion at all.** Presence is assertable only against something outside the
+   document - a constant, Git history, or a signed manifest - so a per-head constant is not a
+   shortcut somebody took, it is the only in-band option there is.
    The accepted residual limit is stated in terms of a *well-formed, correctly
    chained* head record; these seven obligations are what make "well-formed" mean something, and
    none of them is corpus-dependent, so none reintroduces the shipped-manifest freeze this
@@ -1353,6 +1364,12 @@ registry under test.
     is reported as `SOURCE_ITEM_UNCOVERED` because new prose in a canon document requires
     disposition rather than silent acceptance. The suite must assert the prose case is detected,
     not only that the inert shapes are ignored.
+    A refusal test binds to the obligation it names. Where several obligations share one violation
+    code - as every chain obligation shares `MIGRATION_EVIDENCE_INVALID` - asserting the code, even
+    exactly, cannot distinguish which obligation fired, so such a test asserts the violation message.
+    A test caught by a different obligation than the one in its name passes for the wrong reason
+    however green it reads.
+
 13. `npx tsc --noEmit`, `npm test`, `npx biome check .`, full-registry `validate`, and pinned-source
     `sweep` pass in PowerShell under Node >=22 with complete, untruncated output.
     The suite is hermetic and reports its own failures. Every artifact a test writes outside the
