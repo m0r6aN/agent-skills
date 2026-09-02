@@ -1035,3 +1035,92 @@ complete list, so it waits for the reviewers rather than starting on a list I al
 partial. The reviewers are inside the exact mechanism that produced #360–362; dispatching now would
 also put a builder's commits under two reviewers pinned to `0ad7ee3`, which is the contention
 mistake this round has already made twice.
+
+## C29 — both reviewers returned REWORK REQUIRED, and both proved me wrong
+
+Dispatched independently, same mandate, no contact. **Both verdicts: REWORK REQUIRED.** Both found
+the R16 head exemption exploitable. **Neither found the route I had tested.**
+
+| | route | reproduced by me |
+|---|---|---|
+| **Reviewer A** | `unshift` one shadow `superseding-binding-manifest-r14` onto the head's evidence; `chainLinkFor` uses `.find` and takes it | yes |
+| **Reviewer B** | delete the head record; the previously pinned record is promoted into the exemption and out of its byte pin; repoint it at the live manifest | yes |
+
+Reviewer A's payload is the one that matters: flip all seven `gate3.merge-authority` rules to
+`historical-only` — **the rules asserting that merges are human-owned and nondelegated** — and
+`resolveAuthority` goes from `RESOLVED / REFUSE / critical` to `REQUIRE_HUMAN` with no controlling
+rules. `valid: true`, 0 violations, CLI exit 0. In a parcel whose entire purpose is representing
+honestly where enforcement is real.
+
+### My error, plainly
+
+I wrote **"a missing guard, not a hole"** into C28 after running five attack variants and seeing all
+five refused. **Both live routes are one step past where I stopped.** I had even run "tamper + delete
+head record", seen it caught, and moved on — without taking the next step of repairing the promoted
+head, which *is* the attack. A negative result at depth one is not a negative result, and I have spent
+this round correcting other people for exactly that shape of reasoning.
+
+The one thing I did right: I sent both reviewers the raw observation and **withheld my conclusion**,
+specifically so it could not anchor them. That single decision is why this was caught. Had I sent
+"I found no bypass" along with the matrix, I would have handed two reviewers a false floor.
+
+**R16 is mine.** I designed that hardening and ratified it. The reason the hole was found at all is
+that I dispatched a review of my own work instead of shipping it — which is the only part of this
+worth generalising.
+
+### Where the reviewers agreed, which is most of the signal
+
+- **Chain topology is sound.** Between them: fork, cycle, orphan, zero-genesis-successor, malformed
+  link, wrong-predecessor, duplicate head id, prefix-dodge rename, truncation, shadow record under a
+  non-chain id — every construction refused, each with its own message. **The gap was never the
+  topology. The head had no floor on its *content*.**
+- **The chain is load-bearing but thin.** B's 17-mutation differential against a neutered build found
+  exactly one axis where the chain is the sole detector: `snapshotEvidence.fullFileSha256`. A's found
+  the silent-retirement case. Everything else has an independent detector. Thinness *raises* the cost
+  of the blockers rather than lowering it.
+- **AC6 holds completely.** A: all seven shapes. B: all eleven, plus a sweep of all 251 `REFUSE` rules
+  individually with zero silent acceptances. **Both hit the no-op trap and both caught themselves** —
+  A found three of its probes were setting shipped values. So did I, later, on my own exploit probe:
+  my first run flipped **zero** rules and reported a clean bypass. I re-ran it after checking the
+  field name actually existed. That trap has now caught the builder, both reviewers and me.
+- **R14 did not leak into `src/`.** This was my question to them. Both: no hand-placed exclusion
+  remains, `considered` is built from applicability alone, and **no other assertion in the package
+  encodes pre-R14 semantics** — A checked all seventeen `consideredRuleIds` assertions individually.
+  The one stale test is the owned one.
+- **Both were blocked from running the suite**, independently, by defects in the package. See C30.
+
+### Disposition
+
+Amendments **R19** (chain head floor, four obligations on AC4) and **R20** (hermetic suite that can
+report its own failures, AC13) ratified and committed alone, `957e901` and `8c23c29`, before any
+dependent code, per SPEC-CONVENTION §11.
+
+**Rework round 2 dispatched — the last this owner's tripwire allows.** If it does not land clean I
+stop and hand the parcel to the developer as it stands. The mandate says so in those words, and tells
+the builder to say at Step 0 if the list cannot be landed properly in one round so I can cut it
+rather than let it rush. R16 was rushed hardening; that is not a lesson I need twice.
+
+## C30 — two of this round's evidence corruptions were the package's fault, not mine
+
+I recorded C4 and C23 as my process-management failures and charged them to myself. Reviewer B found
+the mechanism, and part of it was never my judgment at all:
+
+`tests/schema-validation.test.ts:211`, `tests/semantic-invariants.test.ts:45`,
+`tests/corpus-sweep.test.ts:37` and both progress logs use **fixed, non-unique** paths in the OS temp
+directory, truncated at import and `rmSync`-ed at teardown. Two concurrent runs race; whichever
+finishes first deletes the other's fixture mid-test, producing `IO_ERROR` and exit 2 against an
+`assert.equal(status, 1)`. `corpus-sweep` already uses `mkdtempSync` for its fixture roots. Nothing
+else does.
+
+And `src/generate.ts:458-479` runs two `execFileSync('git', …)` calls at **module scope**, which
+`tests/corpus-sweep.test.ts:18` imports for one pure helper — so that file **cannot load outside a Git
+worktree**. The standing instruction to reviewers is *never run tests in the parcel worktree, copy to
+your own scratch*. For that file the instruction is **unsatisfiable**. Both reviewers reported,
+independently, that they could not run the suite; every test-level claim in both reviews is source
+reading rather than execution. AC15 asks for two independent fresh reviews and got two delivered with
+an explicit, package-caused gap.
+
+I do not get to hand C4 and C23 back — the kills were mine and C23's mischaracterisation was mine. But
+"a concurrent run corrupts evidence" was a defect in the package the whole time, and I attributed it
+entirely to my own judgment because the package gave me no way to see otherwise. Both are now R20
+obligations rather than folklore about being careful.
