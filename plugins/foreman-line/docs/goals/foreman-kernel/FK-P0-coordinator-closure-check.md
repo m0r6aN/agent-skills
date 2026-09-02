@@ -618,3 +618,88 @@ a minute; all restored from working notes; typecheck and lint re-verified. Nothi
 
 This is the lesson-#17 class — a destructive step riding alongside ordinary work — and it is
 recorded because the builder self-reported it unprompted rather than letting a gap be found later.
+
+## C18 — AC1 verified commit by commit; AC6 re-verified; R18 settles the fixture deletion
+
+### AC1 — coordinator-verified, matches the builder's report exactly
+
+| Commit | Files | Outside `authority-registry/` |
+|---|---|---|
+| `496af2d` | 5 | **0** |
+| `ef29335` | 13 | **0** |
+| `40394be` | 17 | **0** |
+| `77d3609` | 1 | **0** |
+| `0ad7ee3` | 1 | **0** |
+
+The only two files outside the package in a naive `34f576e..HEAD` diff are `7e7dc7d` (A1.9) and
+`3a74f4e` (R17) — **both coordinator-authored**, which is exactly the case AC1's carve-out
+anticipates. Coordinator cumulative figure 21 files / +2,882 / −280,325 against the builder's 19 /
++2,866 / −280,318; the difference is precisely those two files.
+
+### R18 — the deleted fixtures are not a scope violation
+
+Fix 15 deleted the seven reject fixtures and now generates them at test time into `tmpdir()`, per
+the coordinator's F8(c-2) direction: ~280,000 lines removed, the drift channel closed outright, and
+named-code assertions now running at **both** the direct and CLI layers. **Coordinator-verified** —
+`pass-minimal.yaml` remains ~2.1 MB exactly as predicted (corpus-exact predicates make a genuinely
+minimal positive fixture unreachable), the rejects are built by `rejectDocument(mutate)` and cleaned
+up, and both layers assert the specific code.
+
+That leaves 7 of the 28 Allowed Files nonexistent, which a reviewer would reasonably flag.
+**Amendment R18** (`63fe955`) settles it: the Allowed Files list is a **permission ceiling** bounding
+which paths may be created, edited, moved or deleted — **not a manifest** obliging any listed path to
+exist. AC11 is satisfied by behaviour, not by a file's presence on disk.
+
+The builder stated this plainly and asked for it on the record rather than letting it be discovered.
+
+### AC6 — re-verified against the regenerated registry, 7/7 refused
+
+Classification counts, **counted independently by the coordinator**:
+
+| Classification | Count |
+|---|---|
+| `pre-action-refusal` | 254 |
+| `narrative-provenance` | 100 |
+| `ci-static-check` | 78 |
+| `independent-review-human-judgment` | 15 |
+| `unsupported` | 13 |
+| `post-action-detection` | 9 |
+| **Total** | **469** |
+
+Sums exactly, and the deltas reconcile to the curation — D21's two rules (`post-action-detection`
+8→9, `unsupported` 12→13) and integration scenario 14 (`ci-static-check` 77→78), total 466→469.
+
+**The near-miss is the instructive half.** The missing-evidence probe initially read as ALLOWED. The
+builder chased it rather than filing it, and found the probe had set `gate1` to its **shipped**
+value — a no-op that reads as "allowed" to anyone not looking closely. A false positive against the
+operation matrix would have been expensive: it is the strongest part of this package and both
+reviewers vouched for it independently.
+
+## C19 — the builder introduced, and caught, an instance of the defect it had just fixed
+
+`verifyMigrationChain` was being called **twice** per `validateRegistry` — once to identify the chain
+head, again to collect its violations — each recomputing the manifest over 18 sources, 1,525 items
+and 469 rules, on the path `resolveAuthority` invokes per query. **Precisely fix 16's defect class,
+introduced while closing BLOCKER 1.** Fixed in `0ad7ee3`; behaviour unchanged, since the second call
+returned violations the first had already computed.
+
+**How it was found is the point:** not by re-reading the code, but by chasing a number that looked
+wrong — five-axis applicability tests at ~66 s against a ~25 s baseline. That is the strongest
+argument this round has produced for keeping per-test timing visible, and it retroactively justifies
+what fix 20 cost.
+
+## C20 — the performance claim withheld, correctly
+
+The builder declined to report a speedup because its own measurements were untrustworthy: two runs
+of one micro-benchmark on an idle machine gave `validateRegistry` 73 ms / `resolveAuthority` 69.6 ms,
+then 252 ms / 256.9 ms — a **3.5× spread**, and in the first run `resolveAuthority` measured *faster
+than the `validateRegistry` it internally calls*, which is impossible and indicates the harness was
+measuring GC and JIT state.
+
+**Ratified.** Suite wall clock against the 23.8-minute baseline is the only figure reported.
+Reviewer A's 133 ms stands as the recorded per-query number; whether this parcel moved it is
+**unestablished**; D21's budget remains FK-P1's forward risk either way.
+
+This is the third time the builder has withheld or withdrawn a claim its own data would not support
+— after the module-evaluation and git-clone attributions. Handing the coordinator no number is worth
+more than a number neither party can defend.
