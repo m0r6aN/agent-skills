@@ -1267,7 +1267,7 @@ registry under test.
    must never be read to demand that chain evidence be invented for a historical record that never
    had any.
    The head exemption is a *narrower* binding than a pinned constant and never a weaker one, and
-   four further obligations make that true rather than merely asserted. First, **exactly one chain
+   five further obligations make that true rather than merely asserted. First, **exactly one chain
    link per record**: a migration-chain record declares exactly one prior-binding-manifest command
    and exactly one superseding-binding-manifest command, and a record carrying two or more of
    either is invalid whatever their contents or order. Selecting the first match and ignoring the
@@ -1280,11 +1280,18 @@ registry under test.
    non-null superseding evidence, carries at least one `git-commit` evidence entry whose reference
    is a forty-character lowercase hex commit, and carries command evidence issued by this tool with
    `actorClass` `coordinator` and `exitCode` `0`; a record meeting the schema minimums but not this
-   shape is not a head. Fourth, **evidence digests bind their references**: for every observed-
-   evidence entry of every kind, the recorded digest is the SHA-256 of the recorded reference, and
-   an entry whose digest is merely well-formed hex binds nothing - comparing a digest to itself is
-   not a binding. The accepted residual limit is stated in terms of a *well-formed, correctly
-   chained* head record; these four obligations are what make "well-formed" mean something, and
+   shape is not a head. Fourth, **evidence references are bound by a digest computed over them, and
+   no digest is ever verified by comparison with itself**: for `source-ref`, `command-result` and
+   `missing-path` entries the recorded digest is the SHA-256 of the recorded reference. A
+   `git-commit` digest attests the commit object body and so is not checkable from the reference
+   alone; it is bound instead by the record it sits on - the prior-binding-manifest command's
+   `inputDigest` equals the SHA-256 of a `git-commit` reference present on that same record, so
+   repointing the reference breaks the binding. A validator never treats a digest as verified
+   because it is well-formed hexadecimal, and where no binding is available for a kind the absence
+   is stated rather than disguised as a check. Fifth, **evidence entries on a record are distinct**
+   by kind, reference and digest together, so a record cannot carry the same attestation twice.
+   The accepted residual limit is stated in terms of a *well-formed, correctly
+   chained* head record; these five obligations are what make "well-formed" mean something, and
    none of them is corpus-dependent, so none reintroduces the shipped-manifest freeze this
    structure exists to remove.
    Each subject/claim is item-curated and substantively supported by its authority basis; source-
