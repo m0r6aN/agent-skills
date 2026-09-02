@@ -1333,6 +1333,14 @@ registry under test.
     not only that the inert shapes are ignored.
 13. `npx tsc --noEmit`, `npm test`, `npx biome check .`, full-registry `validate`, and pinned-source
     `sweep` pass in PowerShell under Node >=22 with complete, untruncated output.
+    The suite is hermetic and reports its own failures. Every artifact a test writes outside the
+    package uses a per-run unique path, so two concurrent runs cannot delete or truncate each
+    other's files; no module performs repository I/O at import time, so every test file loads
+    outside a Git worktree; and a failing assertion in any test file produces a reported failure
+    within seconds rather than a hang. That last is a positive obligation, demonstrated by
+    deliberately injecting a failure into each test file and observing it reported - never assumed.
+    A suite that cannot report a failure is not evidence, and output that is complete because
+    nothing failed is not the same as output that would be complete if something did.
 14. README documents the authority hierarchy, schema, classifications, operation matrix,
     migration records, CLI/exit codes, source-snapshot procedure, retirement rule, and the
     explicit non-authority of checksums, profiles, admission capabilities, validator results,
