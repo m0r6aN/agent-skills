@@ -84,8 +84,18 @@ test('R4 copied corpus without Git metadata fails closed', () => {
   try {
     copyCorpus(tempRoot, false)
     const result = sweepRegistrySources(registry, tempRoot)
+    assert.equal(result.valid, false)
+    // A root that exists but carries no Git metadata is OPERATOR MISCONFIGURATION, not a registry
+    // violation. Amended AC12 reserves exit 1 for "the registry is invalid", so this is
+    // REPO_ROOT_INVALID (exit 2) rather than MIGRATION_EVIDENCE_INVALID (exit 1); returning the
+    // latter would be a false accusation against canon for a mistyped path.
     assert.ok(
-      result.violations.some((violation) => violation.code === 'MIGRATION_EVIDENCE_INVALID'),
+      result.violations.some((violation) => violation.code === 'REPO_ROOT_INVALID'),
+      `expected REPO_ROOT_INVALID; observed ${result.violations.map((v) => v.code).join(',')}`,
+    )
+    assert.ok(
+      !result.violations.some((violation) => violation.code === 'MIGRATION_EVIDENCE_INVALID'),
+      'operator misconfiguration must not be reported as a registry violation',
     )
   } finally {
     rmSync(tempRoot, { recursive: true, force: true })
@@ -486,14 +496,18 @@ test('a new binding heading is reported as an uncovered inventory item', () => {
   }
 })
 
-test('R3 additive D21 decision row is discovered independently of the curated inventory', () => {
-  const tempRoot = mkdtempSync(join(tmpdir(), 'fk-p0-d21-'))
+// D21 is now a RATIFIED decision (amendment A1) and is curated in the shipped inventory, so it is
+// no longer an "additive" row. The invariant this test names - that a decision row added to the
+// charter is discovered independently of the curated inventory - is preserved by moving to the
+// next unclaimed decision number.
+test('R3 additive D22 decision row is discovered independently of the curated inventory', () => {
+  const tempRoot = mkdtempSync(join(tmpdir(), 'fk-p0-d22-'))
   try {
     copyCorpus(tempRoot)
     const source = registry.sources.find((candidate) => candidate.sourceId === 'fk-charter')
     assert.ok(source)
     const path = join(tempRoot, source.path)
-    writeFileSync(path, `${readFileSync(path, 'utf8')}\n| D21 | New authority | Must bind. |\n`)
+    writeFileSync(path, `${readFileSync(path, 'utf8')}\n| D22 | New authority | Must bind. |\n`)
     assert.ok(
       sweepRegistrySources(registry, tempRoot).violations.some(
         (v) => v.code === 'SOURCE_ITEM_UNCOVERED',
