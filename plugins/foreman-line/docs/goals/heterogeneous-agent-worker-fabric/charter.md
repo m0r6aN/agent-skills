@@ -129,3 +129,48 @@ data outside its ratified eligibility; or any inferred human gate.
 written, then ratified the current WF-P0–WF-P16 parcel graph and exit criterion as written.
 This Gate 1 record does not grant standing dispatch authority, provider spend, secret access,
 an external effect, a merge, or default-route promotion.
+
+## Proposed Gate 1 amendment A1 — plan-review closure
+
+The mandatory independent plan review recorded six findings in `plan-review-findings.md`.
+All are triaged `Fix`. The following targeted amendment replaces only D4, D8, the parcel
+graph, and the exit-evidence interpretation; D1–D3 and D5–D7 remain ratified unchanged.
+
+| Target | Proposed replacement |
+|---|---|
+| D4 | `plugins/foreman-line/routing-policy` is the single authoritative model registry and data-classification policy. WF-P2 extends it only through a compatible, versioned migration; no second registry or shadow authority is permitted. WF-P2 is serialized behind resolution of the user-owned policy edit. |
+| D8 | Existing gates remain in force. Gate 3 governs each parcel merge under the canon's green-chain contingency and remains ungranted unless explicitly authorized later. Default-route activation is additionally human-exclusive and cannot be delegated by a standing merge authorization. |
+
+### Proposed amended current parcel graph
+
+| Wave | Parcel | Deliverable | Dependencies | Risk | Routing class |
+|---|---|---|---|---|---|
+| 0 | WF-P0 — topology and authority inventory | Current three-role topology, trust-boundary, package, and rollback-path map. | none | critical | architecture/risk |
+| 0 | WF-P1 — role, authority, and envelope contracts | Versioned worker roles and task/result envelopes, including evidence, uncertainty, budgets, and escalation. | WF-P0 | critical | architecture/risk |
+| 0 | WF-P2 — canonical registry and classification migration | Compatible extension of the sole routing-policy registry for actual model identity, capability, eligibility, fallback, and evaluation state. | WF-P0, WF-P1; policy-edit resolution | critical | architecture/risk |
+| 0 | WF-P3 — provider-neutral invocation seam | Injected transport with credential-by-name, timeout, retry, cancellation, and usage normalization; no live provider call absent separate authorization. | WF-P1, WF-P2 | critical | architecture/risk |
+| 0 | WF-P4 — mutation-scope and tool-operation guard | Enforcement that actual actions and mutations remain within declared scope and authority. | WF-P1 | critical | architecture/risk |
+| 1 | WF-P5 — dispatch binding contract | Runtime binding of role, distinct worker identity, registry-resolved actual model, task/result envelopes, permission profile, and scope guard before launch. | WF-P1–WF-P4 | critical | architecture/risk |
+| 1 | WF-P6 — deterministic risk and capability router | Policy-governed route selection from task type, risk, modality, classification, capability, and budget. | WF-P2, WF-P5 | critical | architecture/risk |
+| 1 | WF-P7 — bounded fan-out scheduler | Concurrency, spend, depth, timeout, cancellation, and child-evidence accounting. | WF-P1, WF-P6 | critical | architecture/risk |
+| 1 | WF-P8 — evidence, escalation, fallback, and degraded mode | Evidence aggregation plus assurance-preserving escalation, fallback, and refusal behavior. | WF-P1, WF-P3, WF-P6 | critical | architecture/risk |
+| 1 | WF-P9 — integrator and adversarial-judge boundary | Distinct-instance integration and independent acceptance contract consuming WF-P5 binding evidence. | WF-P5, WF-P8 | critical | architecture/risk |
+| 2 | WF-P10 — classified workload corpus and context control | Versioned corpus/rubric with only registry-controlled classification labels and a context-sufficiency control. | WF-P0, WF-P1, WF-P2 | critical | standard-feature |
+| 2 | WF-P11 — frontier baseline harness | Same classified corpus run through the current three-role path with comparable quality, cost, and latency evidence. | WF-P2, WF-P10 | elevated | standard-feature |
+| 2 | WF-P12 — candidate-fabric harness | Same corpus exercised through bound candidate lanes with identical evidence instrumentation. | WF-P3, WF-P5–WF-P10 | critical | architecture/risk |
+| 2 | WF-P13 — shadow routing and calibration | Bounded eligible shadow evidence and calibration; never a default-route switch. | WF-P11, WF-P12 | critical | architecture/risk |
+| 3 | WF-P14 — standard-route promotion package | Promotion evidence for eligible routine implementation, operator, scout, and verifier routes. | WF-P8, WF-P9, WF-P13 | critical | architecture/risk |
+| 3 | WF-P15 — specialist-route promotion package | Promotion or explicit non-default disposition for research, multimodal, and extraction lanes. | WF-P8, WF-P9, WF-P13 | elevated | standard-feature |
+| 3 | WF-P16 — observability and rollout operations | Quality/cost/latency audit, model upgrade procedure, and exercised rollback path. | WF-P3, WF-P6, WF-P12 | critical | architecture/risk |
+| 3 | WF-P17 — evidence-binding verifier | Cryptographically verifies every manifest artifact descriptor: canonical path, SHA-256, schema/version, and required review/promotion binding. | WF-P11–WF-P16 | critical | architecture/risk |
+| 3 | WF-P18 — exit evidence manifest | Digest-bound manifest whose complete descriptor set is accepted only by WF-P17's verifier. | WF-P11–WF-P17 | critical | architecture/risk |
+
+### Proposed exit-criterion clarification
+
+Exit items 3 and 10 are clarified, without relaxing any existing condition: each parcel reaches
+Stage F only after its applicable Gate 3 merge is explicitly granted and its green chain is
+verified; the final manifest's digest domain is the complete canonical descriptor set for its
+charter/graph revision, implementation SHA, registry/policy version, envelope/schema versions,
+corpus and run results, cost/latency/quality evidence, reviewers, known gaps, and promotion
+decisions. WF-P17 must cryptographically verify every listed descriptor before WF-P18 is
+accepted. Default-route activation remains the developer's human-exclusive Gate 3 decision.
