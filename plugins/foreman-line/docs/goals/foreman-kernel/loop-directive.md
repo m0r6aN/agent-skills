@@ -72,6 +72,18 @@ was produced by this owner's own commands:
 **AC13 is independently corroborated.** The 583 figure reconciles exactly: the five short files
 total 143 (1 + 113 + 1 + 5 + 23) and `semantic-invariants.test.ts` contributes 440.
 
+**GAP CLOSED — `npm run generate` has now been run end to end, for the first time by anyone.** This
+was Reviewer B's largest named unchecked item and the Gate 3 package carried it as an open gap. From
+a clean worktree the generator exits 0, self-reports `{"items":1525,"rules":469,"sources":18}`
+matching `validate` independently, and leaves `git status --porcelain` **empty** — all three of its
+committed outputs (`schemas/`, `authority-enforcement-registry.yaml`,
+`tests/fixtures/pass-minimal.yaml`) reproduce byte-for-byte. This proves the shipped registry is the
+generator's own deterministic output rather than a hand-edited artifact that merely validates. It
+does **not** prove the content is correct — a generator and a registry wrong in the same way agree
+perfectly — and it does **not** close the in-place re-anchor residual, since byte-identical
+regeneration is exactly the legitimate operation the hermetic validator cannot distinguish from a
+re-anchor. `FK-P0-GATE-3-package.md` carries the full statement in both directions.
+
 **NEW FINDING — the `semantic-invariants` failure mode is identified, and it was never a hang.**
 The prior owner recorded five runs that "died identically with `semantic-invariants.test.ts` as a
 single failing test, `pass 0`, no per-test output, after 23-38 minutes" and left the cause open;

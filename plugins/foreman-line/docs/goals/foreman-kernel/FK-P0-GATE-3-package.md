@@ -99,10 +99,44 @@ README said was needed is already in this package, one command away.
    every query at ~75 ms, so one five-axis test costs 3,240 validations ≈ 3m25s. Fenced to FK-P1.
 
 **Stated gaps in verification, not defects:**
-- `npm run generate` has **never been invoked end to end** by anyone. The regeneration claim rests on
-  a simulation of the generator's documented emission shape plus round-2's byte-identical measurement
-  of an untouched `generate.ts`. **Reviewer B names this as the largest single thing it never checked.**
+- ~~`npm run generate` has **never been invoked end to end** by anyone.~~ **CLOSED 2026-09-03 by the
+  resuming coordinator.** See "Generator reproduction" below.
 - The O4-bound residual's second face is documented and probe-verified but has no test.
+
+## Generator reproduction — closed 2026-09-03, previously the largest open gap
+
+Reviewer B named this as the single largest thing it never checked, and the claim had rested on a
+*simulation* of the generator's documented emission shape plus round 2's byte-identical measurement
+of an untouched `generate.ts`. It has now been run for real, from a clean worktree:
+
+```
+$ npx tsx src/generate.ts
+generated 1 schema files in .../authority-registry/schemas
+{"items":1525,"rules":469,"sources":18}
+exit 0
+
+$ git status --porcelain
+(empty)
+```
+
+`main()` writes three committed things — `schemas/`, `authority-enforcement-registry.yaml`, and
+`tests/fixtures/pass-minimal.yaml`. **All three came back byte-for-byte identical to the committed
+bytes**, and the generator's self-reported counts match `validate`'s independently
+(18 sources / 1525 items / 469 rules).
+
+What this does and does not establish, stated in both directions so it is not over-read:
+
+- **It does establish** that the shipped registry is genuinely the generator's own output rather
+  than a hand-edited artifact that merely happens to validate, and that the generator is
+  deterministic across a run on a different day, by a different owner, on a clean tree. That was
+  exactly the doubt Reviewer B raised.
+- **It does not establish** that the generator's *content* is correct — a generator and a registry
+  that are wrong in the same way agree perfectly. Correctness of content rests on the reviews and
+  the mutation controls, not on this check.
+- **It does not close the in-place re-anchor residual.** Byte-identical regeneration is precisely
+  the legitimate operation the validator cannot distinguish from an in-place re-anchor; this run
+  confirms the residual's shape rather than removing it. `sweep --repo-root` remains the out-of-band
+  answer.
 
 ## Decisions that are yours
 
