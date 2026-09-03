@@ -3,8 +3,7 @@
 **Goal slug:** `heterogeneous-agent-worker-fabric`
 **Created:** 2026-09-03 (current-instance intake)
 **Owner:** Clinton Morgan
-**Status:** Stage Zero in progress — D1–D8 ratified 2026-09-03; exact current parcel
-graph and exit-criterion ratification pending
+**Status:** Gate 1 ratified 2026-09-03 — mandatory plan-level adversarial review pending
 **Coordinator:** Codex `/root` coordinator task — see `loop-directive.md`
 **Mode:** repo-local architecture, worker-routing, evaluation, and promotion goal
 **Historical source:** `historical-charter-source.md`, SHA-256
@@ -50,12 +49,12 @@ spend, secret access, an external effect, a merge, or default-route promotion.
 | D7 | Worker-fabric coordination must consume any ratified hierarchical-coordination and sidecar contracts that apply, but this goal cannot amend another live goal's charter or co-own its serialization points. | The two goals should compose without creating dual authority. |
 | D8 | Existing human, security, merge, deployment, publication, spend, and external-effect gates remain in force. Default-route promotion is human Gate 3. | Routing cognition differently cannot widen operational authority. |
 
-## Proposed current parcel graph — pending Gate 1 scope ratification
+## Ratified current parcel graph
 
 The historical WF-P0–WF-P27 graph is superseded as an executable plan. This current graph
 retains its required capabilities without carrying forward prior providers, models, package
-claims, approvals, or parcel completion. Every parcel is `proposed` until Gate 1 closes;
-none is dispatchable until the subsequent plan review and an exact Gate 2 grant.
+claims, approvals, or parcel completion. No parcel is dispatchable until the mandatory
+plan review closes and an exact Gate 2 grant identifies its permitted dispatch scope.
 
 | Wave | Parcel | Deliverable | Dependencies | Risk / serialization note |
 |---|---|---|---|---|
@@ -84,7 +83,7 @@ uncommitted `routing-policy.yaml` edit is not this goal's work.
 No candidate parcel is dispatchable until Gate 1, mandatory plan review, and an explicit
 current-instance Gate 2 grant identify the exact parcel IDs and dependencies.
 
-## Proposed exit criterion
+## Ratified exit criterion
 
 The goal exits only when:
 
@@ -109,8 +108,7 @@ The goal exits only when:
 
 ## Human gates and requested standing authority
 
-- **Gate 1:** D1–D8 ratified. The exact current parcel graph and proposed exit criterion
-  still require explicit ratification before Gate 1 is closed.
+- **Gate 1:** ratified 2026-09-03: D1–D8, the WF-P0–WF-P16 graph, and the exit criterion.
 - **Gate 2:** not granted. The coordinator requests a current, exact parcel-set grant after
   Stage Zero and plan review.
 - **Gate 3:** not delegated. Default-route promotion and any consequential external effect
@@ -127,6 +125,7 @@ data outside its ratified eligibility; or any inferred human gate.
 
 ## Gate 1 record
 
-**2026-09-03 — partial current-instance ratification:** Clinton Morgan explicitly ratified
-D1–D8 as written. The response did not ratify the proposed exit criterion, a current exact
-parcel graph, or standing dispatch authority; they remain open and are not inferred.
+**2026-09-03 — current-instance Gate 1 ratification:** Clinton Morgan ratified D1–D8 as
+written, then ratified the current WF-P0–WF-P16 parcel graph and exit criterion as written.
+This Gate 1 record does not grant standing dispatch authority, provider spend, secret access,
+an external effect, a merge, or default-route promotion.

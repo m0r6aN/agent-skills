@@ -9,7 +9,7 @@
 > Stage Zero work. One goal has one root coordinator. If another live owner is named or
 > ownership becomes ambiguous, stop and report.
 
-**State:** `stopped_awaiting_gate_1_graph_and_exit_ratification`
+**State:** `plan_level_adversarial_review_in_progress`
 
 **Prior stop record — 2026-09-03 America/New_York:** The coordinator verified the pinned
 historical-source hash and recorded a current-instance claim ledger in
@@ -18,9 +18,9 @@ claim was credited. Current tracked routing and public-only shadow-route facilit
 context, not completion evidence; the shared routing-policy file also has a user-owned
 uncommitted change in the registration worktree, so it is not available for this goal to
 claim. The loop was stopped at human Gate 1. On 2026-09-03, Clinton Morgan explicitly
-ratified D1–D8 as written. The coordinator then drafted the current WF-P0–WF-P16 graph
-in `charter.md`; it and the exit criterion remain unratified, and Gate 2 remains absent.
-The loop is stopped awaiting those two Gate 1 decisions; no parcel may be dispatched.
+ratified D1–D8 as written. Clinton Morgan then ratified the current WF-P0–WF-P16 graph
+and exit criterion as written, closing Gate 1. Gate 2 remains absent; the mandatory fresh
+plan-level adversarial review is in progress and no parcel may be dispatched.
 
 **Pickup precondition:** claim from a dedicated goal worktree after this intake commit is
 merged, or from a dedicated worktree based on the exact intake commit. Do not run either
