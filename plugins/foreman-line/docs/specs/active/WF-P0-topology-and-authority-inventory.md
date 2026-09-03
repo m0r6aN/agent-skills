@@ -1,5 +1,5 @@
 ---
-ticket: KONE-TBD
+ticket: KONE-TBD            # register via jira-workflow at Stage B; replace before dispatch
 title: WF-P0 topology and authority inventory
 status: draft
 owner: clinton.morgan
@@ -123,11 +123,18 @@ Each criterion is checkable against disk by a reviewer with no builder context.
   expression, the projected JSON shape, and whether anything in-repo actually drives it.
   Where a path is reachable only from library code with no shipped entry point, the map says
   so.
-- [ ] **AC8 — Package inventory with an explicit inventoried/not-inventoried boundary.** All
-  fourteen packages under `plugins/foreman-line/` are listed. The eight in Inventory Scope
-  (below) carry a role/authority-relevant description with citations; the six excluded carry
-  one line each and the literal label `not inventoried — out of WF-P0 scope`. No row reads
-  "all Foreman Line packages" or equivalent.
+- [ ] **AC8 — Package inventory with an explicit inventoried/not-inventoried boundary that
+  reconciles against a directory listing.** All **fifteen** directories under
+  `plugins/foreman-line/` excluding `docs/` are listed: `approval`, `contracts`, `dispatch`,
+  `integration`, `permission-profiles`, `projection`, `receipts`, `registration`,
+  `routing-policy`, `schema-scaffold`, `shaping`, `skill-injection`, `skills`, `spec-linter`,
+  `verification`. The **eight** in Inventory Scope (below) carry a role/authority-relevant
+  description with citations; the **seven** excluded carry one line each and the literal label
+  `not inventoried — out of WF-P0 scope`. The map states the arithmetic — 8 inventoried + 7
+  excluded = 15 — so a reviewer holding `ls plugins/foreman-line` can reconcile it in one
+  pass, and no directory falls through the boundary. Repository CI (`.github/workflows/`) is
+  inventoried **in addition** and is counted separately: it is not a package under
+  `plugins/foreman-line/`. No row reads "all Foreman Line packages" or equivalent.
 - [ ] **AC9 — Rollback path mapped, with its test obligation assigned and unsatisfied.** The
   map defines the current three-role path as the rollback target: the exact registry state,
   role pins, and dispatch behaviour a rollback must restore, each cited. It then records a
@@ -194,7 +201,7 @@ Each criterion is checkable against disk by a reviewer with no builder context.
 
 ## Inventory Scope
 
-**In scope (eight packages, role/authority-relevant surfaces):** `routing-policy` (roles,
+**In scope — eight packages, role/authority-relevant surfaces:** `routing-policy` (roles,
 classes, tiers, data classification, shadow routes, the validator's enforced invariants);
 `permission-profiles` (the six profiles, `PROFILE_NAMES`, the schemas, the emitter, the
 session-start-load bound); `dispatch` (the routing-evaluation engine's inputs/outputs and
@@ -202,12 +209,34 @@ receipt, the approval-CLI dispatch path); `verification` (the adversarial-review
 and its profile choice); `spec-linter` (what frontmatter authority it actually validates, and
 what it does not); `contracts` (the stage-envelope and correlation surface — named and cited,
 not described field by field); `receipts` (the chain path convention and hash domain — named
-and cited); and repository CI (`.github/workflows/`).
+and cited); and `skills` (below).
 
-**Explicitly excluded, one line each, labelled `not inventoried — out of WF-P0 scope`:**
-`approval`, `integration`, `projection`, `registration`, `schema-scaffold`, `shaping`,
-`skill-injection`. A later parcel may extend the map; WF-P0 draws the line here so a reader
-knows where the map stops.
+**Plus repository CI** (`.github/workflows/`), inventoried but counted separately — it is not
+a package under `plugins/foreman-line/`.
+
+**`skills/` — the prose role definitions.** All eight files under
+`plugins/foreman-line/skills/` are accounted for, and the role-relevant content of these four
+is inventoried: `goal/SKILL.md` (the `/goal` coordinator entry point — the prose definition of
+the coordinator role, its lifecycle, and its gates); `foreman-shaping/SKILL.md` (the Stage A
+shaping role); `parcel-driven-development/SKILL.md` (parcel mechanics and the densest
+role-vocabulary surface in the package, plus its three templates); and `ai-council/SKILL.md`
+with `references/seats.template.md`. Every entry drawn from this directory is labelled
+`documentation-only` or `asserted` per AC1 — a `SKILL.md` enforces nothing at any process
+boundary. **That labelling is the point:** the map must show the reader, side by side, that
+the role vocabulary agents actually read lives in unenforced prose while the registry's three
+roles live in a schema with `additionalProperties: false` and a validator that fails the
+policy load. The map records that contrast explicitly rather than leaving it to be noticed.
+`ai-council` additionally gets one recorded observation: it defines a multi-model dispatch
+path over external model CLIs that no entry in `routing-policy.yaml` registers, governs, or
+bounds — recorded as a current-state fact with its citation, not as a defect for WF-P0 to fix.
+
+**Explicitly excluded — seven, one line each, labelled `not inventoried — out of WF-P0
+scope`:** `approval`, `integration`, `projection`, `registration`, `schema-scaffold`,
+`shaping`, `skill-injection`. A later parcel may extend the map; WF-P0 draws the line here so
+a reader knows where the map stops.
+
+**Accounting:** 8 inventoried + 7 excluded = 15 directories under `plugins/foreman-line/`
+excluding `docs/`, plus repository CI counted separately. Per AC8 the map states this sum.
 
 **Goals:** all goal directories under `plugins/foreman-line/docs/goals/` are listed by name
 with their charter-declared status and owner, cited. Only `heterogeneous-agent-worker-fabric`
@@ -303,23 +332,34 @@ and 6 are the ones that change the parcel's shape.
    ahead.
 3. **Does "three-role" have an on-disk referent?** Recommendation: **yes, but not in the
    dispatch table** — record the conflict, do not resolve it. See the shaping report.
-4. **Is the Inventory Scope split right?** Recommendation: as written above — eight in, six
-   labelled out. The excluded six own no role or authority surface the map's consumers need.
+4. **Is the Inventory Scope split right?** **RULED (coordinator lint L-1) — split amended.**
+   The logic of the split is accepted; the original counts were wrong three ways (fourteen
+   directories, "eight packages" that included non-package CI, "six excluded" against a list
+   of seven) and `plugins/foreman-line/skills/` fell through the boundary entirely. Ruled:
+   fifteen directories, **`skills/` is in scope**, eight inventoried plus repository CI
+   counted separately, seven excluded, and the map states the arithmetic. AC8 and Inventory
+   Scope above are rewritten to that ruling.
 5. **Is the four-class evidence taxonomy right?** Recommendation: as written in AC1.
    `enforced-conditionally` is the class that matters; without it, permission envelopes get
    filed as enforcement and the map overstates the system.
-6. **Filename, ticket key, and artifact path.** Three sub-questions. (a) The directive
-   mandates `ticket: KONE-TBD` with filename `WF-P0-…`, which does not satisfy
-   SPEC-CONVENTION §2's "the ticket key in the filename is mandatory"; the `done/` corpus
-   uses parcel IDs as keys (`WGT-P0A`, `W0-P4`). Recommendation: `ticket: WF-P0`. Written as
-   `KONE-TBD` pending the ruling. (b) The map lives at
+6. **Filename, ticket key, and artifact path.** Three sub-questions. (a) **RULED — keep
+   `ticket: KONE-TBD` with the precedent's trailing comment, and keep the parcel-ID
+   filename.** Checked against the `ticket:` field rather than filenames alone: `W0-P1`,
+   `W0-P4`, and `P1-permission-profile-registry-schema` all use exactly the
+   placeholder-plus-comment form; only `WGT-P0A` uses its parcel ID. Dominant precedent wins,
+   and the comment stops the field reading as unfilled. The `WF-P0-…` filename is accepted as
+   a documented deviation from SPEC-CONVENTION §2 (21 of 22 specs in `done/` deviate the same
+   way), not as a defect. Frontmatter above matches this ruling. (b) The map lives at
    `docs/goals/heterogeneous-agent-worker-fabric/topology-and-authority-inventory.md` —
    goal-local evidence alongside `reconciliation.md`, not `core/` (§2 caps `core/` at 3–5
    always-loadable documents; this is point-in-time evidence). (c) "Versioned" means
    `map_version:` + `base_commit:` + `taken_at:` + a revision log — **not** a digest. WF-P17
    and WF-P18 own digest binding; minting a hash domain here would fork it.
-7. **Permission profile for the builder.** Written as `builder-architecture`, matching the
-   ratified routing class. Recorded mismatch: the profile that *describes* this parcel's work
+7. **Permission profile for the builder.** **RULED — dispatch under `builder-architecture`,
+   record the registry gap as a WF-P0 finding.** Frontmatter matches. The gap is confirmed by
+   the coordinator and is real; fixing it belongs to the `permission-profile-registry` goal,
+   not to this parcel, and stays in Out of Scope. Recorded mismatch: the profile that
+   *describes* this parcel's work
    is `shaping-agent` (docs-only), but its envelope denies `Edit(plugins/**)` and
    `Write(plugins/**)` while allow-narrowing to `docs/**` — and this repository's specs and
    goal docs live under `plugins/foreman-line/docs/`. No registered profile fits a docs-only
