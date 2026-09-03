@@ -220,6 +220,16 @@ obligation with a stop condition on it, not a cleanup-round change.
 The one head obligation that *does* travel is the obligation-5 Git binder, because it is structural
 and names no id.
 
+**But "Git history or a signature" is not future infrastructure here — one of those anchors already
+ships.** `sweep` already has repository access and already uses it, so successor presence is
+assertable **today**, in the sweep rather than in `validate`: *every migration record present at the
+previous registry commit is still present in this one*. That is a `git show <prev>:<registry>` away
+and needs no signing, no new format and no new constant. Its cost is that it is **non-hermetic** —
+it cannot run in `validate`, which is deliberately file-only — so it belongs to the sweep's
+out-of-band tier alongside the commit checks above. This makes the FK-P1 stop condition **cheap to
+discharge rather than blocked**, and it is the reason the successor gap is a scoping decision rather
+than a missing capability.
+
 That extension is **one deep**, and the limit is stated here rather than discovered later. Appending
 one properly chained head is admitted with zero violations. A *second* append demotes the first
 appended record, which then has no record-digest binding of its own and is refused with a single
@@ -246,35 +256,77 @@ as such. A `git-commit` digest is not: it attests the commit *object body*
 the SHA-256 of a `git-commit` reference on that same record, so repointing or deleting that evidence
 breaks the binding.
 
-**The residual, stated exactly.** Six head-only `git-commit` edits were once admitted while this
-document described one. Five now refuse — deleting the unbound second entry, adding a fabricated
-one, repeating the bound reference under a differing digest, fabricating the whole provenance with
-two distinct values, and repointing the unbound reference. **Exactly one remains, on the chain head
-alone: the entry bound by obligation 4 is not independently verifiable**, and it has two faces:
+**The residual, stated exactly — and scoped to `validate` run hermetically.** Everything in this
+section describes `foreman-authority-registry validate`, which reads only the file it is given. The
+`sweep` subcommand is a different matter and is stated at the end, because it changes the answer.
 
-- **rewriting its digest while leaving the reference intact** — the digest attests the commit object
-  body, `sha256(git cat-file -p <commit>)`, which no hermetic validator can recompute; and
-- **replacing the reference and recomputing the prior command's `inputDigest` to match** — the
-  attacker controls both sides of that binding, so it stays self-consistent.
+Four head-only `git-commit` edits refuse: deleting the unbound second entry, adding a fabricated
+third, repeating the bound reference under a differing digest, and repointing the unbound reference
+to an arbitrary commit.
 
-Closing it needs an anchor outside the document: the commit itself, a named constant, or a
-signature. Nothing in-band can do it, and this document does not pretend otherwise.
+**Fabricating the head's whole Git provenance is *narrowed*, not closed.** Obligation 5 binds the
+head's unbound reference to `document.sourceSnapshotCommit` — but that field is itself **in-band and
+attacker-controlled**, so the binder rebinds the reference from *nothing* to *another field in the
+same file*. An editor who also rewrites the snapshot commit defeats it. Measured, with and without a
+payload retiring every rule asserting that Gate 3 merges are human-owned:
 
-**A correction, recorded rather than quietly applied.** The unbound second reference was documented
-here as an irreducible residual, on the ground that binding it to `sourceSnapshotCommit` was "not
-free" — measured at **13 of 24**. That census was taken at **all-records** scope while the defect is
-**head-only**. At head scope the binder is free: the head's unbound reference *is*
+```
+sourceSnapshotCommit -> 0000…0001, and all 18 sources[].snapshotEvidence.commit
+head git references  -> [feedface…, 0000…0001], prior inputDigest recomputed to match
+validate (hermetic)  -> valid: true, 0 violations
+```
+
+What obligation 5 buys is **cost**, not impossibility: the edit goes from a four-entry evidence swap
+to a coherent twenty-field rewrite. That is a real gain and it is not the same thing as a refusal.
+
+**Two entries carry residual, not one.** Neither `git-commit` digest on the head is independently
+verifiable — each attests a commit *object body*, `sha256(git cat-file -p <commit>)`, which no
+hermetic validator can recompute — and the obligation-4-bound entry's **reference** is additionally
+fabricable, because the attacker controls both sides of that binding. So:
+
+| entry | digest | reference |
+|---|---|---|
+| obligation-4-bound | not verifiable hermetically | fabricable (both sides attacker-controlled) |
+| snapshot-anchored | not verifiable hermetically | pinned to `sourceSnapshotCommit`, which is itself editable |
+
+**`sweep` closes all of it, and the tool already ships it.** `sweepRegistrySources` — `validate`'s
+sibling, run as `sweep <registry> --repo-root <path>` — performs exactly the out-of-band check this
+section says is required: it resolves every declared commit with `git cat-file -t` and recomputes
+`sha256(git cat-file -p <ref>)` against the recorded digest. Measured against this registry:
+
+```
+CONTROL   shipped registry            -> valid: true,  0 violations, exit 0
+TAMPERED  the twenty-field fabrication -> valid: false, exit 1, 20 violations
+             18 x declared source snapshot cannot be resolved: git cat-file -t 0000…0001
+              2 x Git object evidence cannot be resolved
+FACE A    bound entry's digest rewritten, reference intact
+             hermetic validate: valid true, 0 -> sweep: exit 1, "Git object evidence digest changed"
+FACE B    snapshot entry's digest rewritten, reference intact
+             hermetic validate: valid true, 0 -> sweep: exit 1, "Git object evidence digest changed"
+```
+
+So the honest statement is not "the head's Git provenance is unverifiable by this tool." It is
+**unverifiable by `validate` alone, and verifiable by `sweep`, which is one command away and part of
+this package.** An earlier version of this section said the former. That understated the deliverable,
+and a limit stated *narrower* than the truth is the same defect as one stated wider — this is simply
+the first time in this parcel the error ran in our favour, and it is corrected on the same terms as
+the ones that did not.
+
+**A correction, recorded rather than quietly applied.** The unbound second reference was once
+documented as an irreducible residual, on the ground that binding it to `sourceSnapshotCommit` was
+"not free" — measured at **13 of 24**. That census was taken at **all-records** scope while the defect
+is **head-only**. At head scope the binder is free: the head's unbound reference *is*
 `document.sourceSnapshotCommit`, while the other eleven records carry a *historical* snapshot, which
 is exactly why the wide version failed and the narrow one does not. Neither measurement was wrong —
-the scope was. That residual is now closed by obligation 5 rather than reported.
+the scope was.
 
 Unlike every other head obligation, this binder is **structural rather than id-keyed**: it names no
 reconciliation id, so it applies to whatever record is the head. It is the first head obligation that
-generalises to successors.
+generalises to successors, verified on a record named nowhere in `src/validate.ts`.
 
-On every other record these edits break the record's pin. All five refusals and the surviving
-residual are pinned by test, and each new refusal was verified to fail when its guard is removed —
-passing is not evidence; failing-when-broken is.
+On every other record these edits break the record's pin. Every refusal above is pinned by test, and
+each new one was verified to **fail when its guard is removed** — passing is not evidence;
+failing-when-broken is.
 
 **The honest limit, stated at its true width.** This makes silent substitution *detectable*, not
 impossible. A party who can edit the registry file has **two** ways past the chain, not one:
