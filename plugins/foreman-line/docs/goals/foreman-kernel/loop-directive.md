@@ -110,11 +110,27 @@ Option A does not avoid this; it hides it. Merging the parcel branch alone lands
 registry to itself and never reads the repository — that asymmetry means the hermetic gate
 cannot detect this class at all.
 
-Nothing was mismeasured. Every figure in `FK-P0-GATE-3-package.md` and
-`FK-P0-MERGE-READY-material.md` reproduces, including `npm test` 583/583 and the byte-identical
-generator run. `tsc`, `biome`, `validate` and the merge into `main` are all still green at
-`a100a91` (62 files, 118,459 insertions, **0 deletions**, conflict-free). The chain was
-conditional, not wrong.
+**`npm test` also fails at `a100a91`: exit 1, 580 pass / 3 fail** (total unchanged at 583, since
+`authority-registry/` is byte-identical between the heads). `corpus-sweep.test.ts` fails tests 9
+and 18; `schema-validation.test.ts` fails test 4, *"CLI validate and sweep return exit 0"* —
+**an acceptance-criterion test**, so the parcel now fails its own ACs. The sharpest witness is
+`corpus-sweep` test 18, *"unrelated bytes outside every registered locator stay green"*: editing
+the coordinator's state section should have been exactly that case, and the test written to
+guarantee ordinary edits stay green is the test this defect breaks.
+`semantic-invariants.test.ts` passed 440/440 and the `0xC0000409` abort did not recur.
+
+Every figure in `FK-P0-GATE-3-package.md` and `FK-P0-MERGE-READY-material.md` still reproduces
+**at `838f438`**, the head they were measured against. `tsc`, `biome`, hermetic `validate` and
+the additions-only merge into `main` remain green at `a100a91` too (62 files, 118,459
+insertions, **0 deletions**, conflict-free). The chain was conditional, not wrong.
+
+**A correction this owner owes against itself.** The first version of this block and its commit
+message (`23a163e`) claimed `npm test` 583/583 "still reproduces" at `a100a91`. It had not been
+run there — it was inferred from code byte-identity, and the inference was wrong: identical
+tests over a changed working tree give different results, because two of them read the
+repository. Caught by running it rather than by review. Stage F lessons candidate: **code
+byte-identity does not transfer a green result across heads when any test reads the working
+tree.**
 
 **Not merged, not pushed. Gate 3 remains not delegated.** `git reset --hard 838f438` on the
 parcel branch reverts the intermediate merge if the developer prefers Option A. The candidate

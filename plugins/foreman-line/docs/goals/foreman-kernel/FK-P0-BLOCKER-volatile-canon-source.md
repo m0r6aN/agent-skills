@@ -29,7 +29,44 @@ Then the green chain was re-run on the merge target:
 | `npx biome check .` | exit 0, 5 infos | exit 0, 5 infos |
 | `validate` (hermetic) | valid, 0 violations | **valid, 0 violations** |
 | `sweep --repo-root` | valid, 0 violations | **`valid: false`, 45 violations, exit 1** |
+| `npm test` | 583 pass / 0 fail, exit 0 | **580 pass / 3 fail, exit 1** |
 | merge into `main` | conflict-free, additions-only | conflict-free, 62 files, 118,459 insertions, **0 deletions** |
+
+### The three failing tests, measured
+
+`npm test` at `a100a91` exits **1**. Two files fail; the test total is unchanged at 583
+because `authority-registry/` is byte-identical between the two heads, so the same tests exist
+and three of them flipped:
+
+**`tests/corpus-sweep.test.ts`** — 32 tests, 30 pass, 2 fail:
+
+```
+not ok 9  - shipped registry sweeps the complete pinned corpus with no gaps or conflicts
+              expected: true    actual: false
+not ok 18 - unrelated bytes outside every registered locator stay green
+              expected: true    actual: false
+```
+
+**`tests/schema-validation.test.ts`** — 23 tests, 22 pass, 1 fail:
+
+```
+not ok 4  - CLI validate and sweep return exit 0 with machine-readable summaries
+              expected: 0       actual: 1
+```
+
+`semantic-invariants.test.ts` passed **440/440** in this run, and the `0xC0000409` abort did
+not recur.
+
+Two of these deserve specific attention:
+
+- **`schema-validation` test 4 is an acceptance-criterion test.** It asserts the CLI sweep
+  returns exit 0. So this defect does not merely fail an operational command — it fails the
+  parcel's own stated acceptance criteria.
+- **`corpus-sweep` test 18 is the sharpest possible witness.** It asserts that *"unrelated bytes
+  outside every registered locator stay green."* Editing the loop directive's state section
+  should have been exactly that case. It is not, because the blocks live *inside* a source
+  declared wholly binding, so they are uncovered rather than unregistered. The test written to
+  guarantee that ordinary edits stay green is the test this defect breaks.
 
 ## Causation, proven by experiment rather than inferred
 
@@ -97,8 +134,19 @@ defect latent, which is strictly worse than finding it now.
 
 ## What this is not
 
-- **Not a mismeasurement.** Every figure in the Gate 3 package and the merge-ready material
-  reproduces exactly, including `npm test` 583/583 and the byte-identical generator run.
+- **Not a mismeasurement of the Gate 3 evidence.** Every figure in the Gate 3 package and the
+  merge-ready material reproduces *at `838f438`*, the head they were measured against —
+  including `npm test` 583/583 and the byte-identical generator run.
+
+  **But this record's own first draft did mismeasure, and the correction is the point.** It
+  asserted that `npm test` 583/583 "still reproduces" at `a100a91`. That was never run there;
+  it was inferred from code byte-identity. When actually run, the suite exits **1** with three
+  failures. The inference was reasonable and wrong: the tests are byte-identical, but two of
+  them read the repository, so identical tests over changed inputs give different results. The
+  coordinator's own rule — a claim is verified on disk before acceptance, and no role is exempt
+  including the coordinator (lesson #16) — is what caught it. Logged as a Stage F lessons
+  candidate: **code byte-identity does not transfer a green result across heads when any test
+  reads the working tree.**
 - **Not the re-anchor residual.** That residual is about a regeneration laundering a tampered
   source. This is about a source that is *supposed* to change.
 - **Not `validate`'s problem.** Hermetic `validate` stays green at 0 violations because it
