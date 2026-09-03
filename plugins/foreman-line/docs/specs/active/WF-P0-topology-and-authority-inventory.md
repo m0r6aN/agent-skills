@@ -10,6 +10,7 @@ superseded_by: null
 risk: critical
 surfaces:
   - plugins/foreman-line/docs/goals/heterogeneous-agent-worker-fabric/topology-and-authority-inventory.md
+  - plugins/foreman-line/docs/goals/heterogeneous-agent-worker-fabric/wf-p0-shaping-report.md
   - plugins/foreman-line/docs/specs/active/WF-P0-topology-and-authority-inventory.md
 routing_class: architecture/risk
 permission_profile: builder-architecture
@@ -34,13 +35,21 @@ and reads no credential value.
 ## Constraints
 
 - **Base.** The builder's worktree is created from **fresh `origin/main`** and its exact
-  40-character base SHA is recorded in the map header. `origin/main` at shaping time is
-  `5ce6ddc` (merge of `096adfb`, routing policy v0.3). This is load-bearing: the coordinator
-  and shaping branches for this goal descend from `cba257e`, which **does not contain**
-  `096adfb`, and therefore carry `routing-policy.yaml` **v0.1** (Anthropic-only tiers,
-  a populated `cerebras-shadow` route). An inventory taken on that lineage would record v0.1
-  as current and be wrong. Verify with
-  `git merge-base --is-ancestor 096adfb HEAD` before writing a single entry.
+  40-character base SHA is recorded in the map header. This spec was shaped against
+  `bc5ed89978ed2614e1b6e5e1016bac1a22dbb68b`, which contains
+  `096adfbffebbaf1a783801a2b286f86d10f94a17` ("retarget routing policy to OpenRouter
+  (v0.3)"), so `routing-policy.yaml` reads **v0.3** and every citation in this spec was
+  resolved against that tree.
+- **Base gate — run it even though the known hazard is now historical.** Before writing a
+  single entry, verify that
+  `git merge-base --is-ancestor 096adfbffebbaf1a783801a2b286f86d10f94a17 HEAD` succeeds.
+  Historical note, retained because it is why this gate exists: this goal's coordinator and
+  shaping branches were originally cut from `cba257e`, which predates `096adfb`, and so
+  carried `routing-policy.yaml` **v0.1** — Anthropic-only tiers and a populated
+  `cerebras-shadow` route. That lineage was rebased before dispatch, so the specific hazard is
+  closed; the gate stays because the next worktree could be cut from anywhere, and an
+  inventory taken on a pre-`096adfb` base would record v0.1 as current and be wrong in a
+  document seventeen parcels inherit.
 - **Branch and worktree.** Branch `claude/hwf-wf-p0-<yyyymmdd>`; worktree
   `D:\Repos\agent-skills-worktrees\hwf-wf-p0-<yyyymmdd>`. Never ambient, never `main`,
   never another goal's worktree.
@@ -310,6 +319,14 @@ Only these exact paths may be created, edited, moved, or deleted in this parcel:
 
 - `plugins/foreman-line/docs/goals/heterogeneous-agent-worker-fabric/topology-and-authority-inventory.md`
 - `plugins/foreman-line/docs/specs/active/WF-P0-topology-and-authority-inventory.md`
+- `plugins/foreman-line/docs/goals/heterogeneous-agent-worker-fabric/wf-p0-shaping-report.md`
+
+The third path is the Stage A shaping report — the reasoning behind this spec's decisions and
+the open questions the coordinator ruled on. It was added by explicit coordinator ruling
+during shaping so the parcel's paper trail carries the reasoning, not just the contract. It is
+**already written and committed by the shaping session**; the builder does not author it. A
+builder needing to correct something in it stops and reports rather than editing it, because
+it is a record of what shaping concluded, not a live document.
 
 Any required path outside this list is a stop-and-report condition requiring a
 coordinator-ratified amendment. No glob or directory shorthand grants mutation authority, and
