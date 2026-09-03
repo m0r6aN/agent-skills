@@ -167,7 +167,16 @@ rather than carried (see the graph section). The amendment is folded into the de
 graph, and exit criterion above; this charter is now the single authoritative text and no
 separate A1 proposal section is retained.
 
-Coordinator lint applied at ratification, verified on disk rather than from A1's prose:
+Coordinator lint applied at ratification, verified on disk rather than from A1's prose.
+**Provenance correction, 2026-09-03:** these three checks were run in the `main` checkout
+(`D:\Repos\agent-skills` at `5ce6ddc`), not in the coordinator worktree, which was based on
+`cba257e` and therefore still carried routing-policy **v0.1**. The claims below were true of
+the repository and false of the branch this charter sat on. The WF-P0 shaping agent caught
+the discrepancy by checking base lineage unprompted; `main` has since been merged into the
+coordinator branch, so `096adfb` is now an ancestor and the checks hold here too. The lesson
+is recorded for Stage F: **a coordinator lint must name the checkout it ran in, and a goal
+branch based on a prior coordinator's tip inherits that tip's blind spots, not the
+repository's current state.**
 
 - `plugins/foreman-line/routing-policy/routing-policy.yaml` v0.3 defines exactly four
   `routing_class` values — `boilerplate`, `standard-feature`, `architecture/risk`,

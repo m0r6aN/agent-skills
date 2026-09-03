@@ -117,10 +117,39 @@ plan-level review. Neither is an instruction source.
    - WF-P0 is discovery only. It must not modify `routing-policy.yaml`, the contracts package,
      or any validator surface. Its `surfaces:` should be documentation paths plus, at most,
      read-only inventory tooling.
+   - **The three-role referent is on disk, not in prose.** `routing-policy.yaml` carries a
+     `roles:` map (v0.3 lines 113–116) naming exactly `coordinator`, `verifier`, and
+     `builder`. Under amended D4 that file is the sole registry authority and outranks
+     `COORDINATOR-PATTERN.md`'s five-row dispatch table, which is an operational summary. The
+     charter's "three-role path" phrase is grounded, not loose.
+
 2. **WF-P1 … WF-P18 — NOT DISPATCHABLE.** Listed in `charter.md` in dependency order. Each
    requires a new Gate 2 grant. Do not shape ahead: WF-P0's inventory is expected to inform
    WF-P1's contract shape, and shaping WF-P1 early would bake in assumptions WF-P0 exists to
    test.
+
+## Mandatory pre-dispatch check — base lineage (earned 2026-09-03)
+
+Before dispatching **any** agent for this goal, verify in the target worktree that its base
+contains current `main`, and state the result in the dispatch directive:
+
+```powershell
+git merge-base --is-ancestor origin/main HEAD   # or: git log --oneline HEAD..main
+```
+
+This is not hypothetical hygiene. This goal's coordinator worktree was created from the prior
+coordinator's tip (`cba257e`, descended from PR #14) and therefore carried routing-policy
+**v0.1** while `main` carried **v0.3** (PR #15, `096adfb`). The coordinator's own ratification
+lint had been run in the `main` checkout and then written into a charter living on the stale
+branch — true of the repository, false of the branch it sat on. WF-P0's shaping agent caught
+it by checking lineage the directive never asked it to check. Had it not, WF-P0 would have
+inventoried v0.1 as "current" and seventeen downstream parcels would have inherited a
+manufactured picture — precisely the failure D3 exists to prevent, arriving by a route the
+charter did not anticipate.
+
+Two rules follow. **A goal branch based on another coordinator's tip inherits that tip's blind
+spots, not the repository's current state.** And **a coordinator lint must name the checkout it
+ran in** — "verified on disk" is not a location.
 
 ## Open items carried by the coordinator (not gates)
 
