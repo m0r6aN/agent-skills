@@ -7,7 +7,9 @@ Supersedes `FK-P0-STOP-REPORT-for-developer.md`, whose stop condition you lifted
 
 - **Branch:** `codex/fk-p0-canon-authority-enforcement-registry`
 - **Merge into:** `main`
-- **Head:** `87f8a8c` plus one README-only commit (round 5)
+- **Head:** `838f438`. Code and tests are byte-identical to `87f8a8c` — I verified
+  `git diff 87f8a8c 838f438 -- src tests` is **empty**, so my authoritative pass covers the shipped
+  bytes and re-running it would be ceremony rather than evidence.
 - **Not pushed.** The branch does not exist on `origin`. No PR has been opened.
 - **Worktree:** `D:/Repos/agent-skills-worktrees/fk-p0-canon-authority-enforcement-registry`
 
@@ -24,8 +26,9 @@ Supersedes `FK-P0-STOP-REPORT-for-developer.md`, whose stop condition you lifted
 | registry YAML | **byte-unchanged** — no regeneration |
 | `RECONCILIATION_RECORD_DIGESTS` | **byte-unchanged** — no history rewrite |
 
-AC13 closes on **my** run, not the builder's. Its independent run agrees exactly. The final commit is
-README-only — `git diff HEAD -- src tests` is empty — so the tested bytes are the shipped bytes.
+AC13 closes on **my** run, not the builder's. Its independent run agrees exactly, and its own final
+run at `838f438` also reports 583/583. The last commit is README-only and I verified the code/test
+bytes are identical to the tree I passed.
 
 Trajectory across this owner's tenure: **518 with 18 failures → 405/395/10 → 563/563 → 583/583.**
 

@@ -49,9 +49,12 @@ this block said STOPPED while the goal was actively running — a stale-state re
 a future `/goal resume` trusts first, written by the owner of a parcel whose purpose is making canon
 represent reality.
 
-- Parcel branch `codex/fk-p0-canon-authority-enforcement-registry`. Round 3 committed `cc57658`;
-  amendments **R19–R23** each committed alone before dependent code (SPEC-CONVENTION §11). Round 4 is
-  green at **583/583** and awaiting its commit. **Not pushed. Not merged.**
+- Parcel branch `codex/fk-p0-canon-authority-enforcement-registry` at **`838f438`**. Rounds 3, 4 and 5
+  committed (`cc57658`, `87f8a8c`, `838f438`); amendments **R19–R23** each committed alone before
+  dependent code (SPEC-CONVENTION §11). **Not pushed — the branch does not exist on `origin`. Not merged.**
+- **FK-P0 is AT GATE 3.** Read `FK-P0-GATE-3-package.md`: green chain, exact merge target, the residual
+  stated in both directions, FK-P1 obligations with stop conditions, and the decisions that are the
+  developer's.
 - **AC13 closed on this owner's authoritative pass** at `cc57658` — exit 0, 583 tests, 583 pass,
   0 fail, stderr empty. Registry YAML and `RECONCILIATION_RECORD_DIGESTS` byte-unchanged throughout.
 - Both independent reviewers returned **CLOSED WITH NEW FINDING** twice. Every blocker they raised is
