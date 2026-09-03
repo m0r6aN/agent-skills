@@ -2,7 +2,7 @@
 
 ## Status
 
-**Proposed — advisory only.**
+**RATIFIED**
 
 This record sits at authority tier 7 of the `foreman-kernel` charter's hierarchy
 (§3, "generated projections, caches, and advisory documentation"). It amends no
@@ -317,3 +317,5 @@ that has not appeared.
   (two independent reviews for architecture/risk), lesson #36 (corpus sweep).
 - `.github/workflows/test-plugin-install.yml` — the existing CI surface Tier 1
   extends.
+
+**Ratification record:** Ratified as written by Clint Morgan - 09/01/2026
