@@ -2,11 +2,41 @@
 
 ## COORDINATOR OWNERSHIP — read before dispatching anything
 
-> **Queue owner:** the Claude Code coordinator session entered via `/goal resume
-> foreman-kernel` on 2026-09-03, holding ownership under the developer's explicit resume
-> instruction of that date. Exactly one coordinator owns this goal. Ownership transfers only
-> at a parcel boundary by editing this block and recording a handoff. If another live owner
-> is named or ownership is ambiguous, stop and report; never assume.
+> **Queue owner:** the **second** Claude Code coordinator session of 2026-09-03, entered via
+> `/goal resume foreman-kernel` after the first 2026-09-03 session stopped at Gate 3. It holds
+> ownership under the developer's explicit ruling of that date that the prior session is dead.
+> Exactly one coordinator owns this goal. Ownership transfers only at a parcel boundary by
+> editing this block and recording a handoff. If another live owner is named or ownership is
+> ambiguous, stop and report; never assume.
+>
+> **Disambiguation for a future reader:** two coordinator sessions held this goal on
+> 2026-09-03. The first reproduced the inherited green chain and wrote
+> `FK-P0-MERGE-READY-material.md`; the second executed Option B and found the blocker in
+> `FK-P0-BLOCKER-volatile-canon-source.md`. Where a record says "this owner" without a date,
+> read the file's own commit date.
+
+**Handoff record — 2026-09-03, second transfer.** The first 2026-09-03 owner stopped after
+writing `FK-P0-MERGE-READY-material.md` (commit `eaa6a33`), leaving FK-P0 at Gate 3 with the
+working tree clean. Asked directly whether that session was live, the developer ruled it
+**dead** and transferred ownership to this session. Transfer verified rather than assumed at a
+clean parcel boundary: goal worktree clean, no open PRs (`gh pr list` empty), parcel head still
+`838f438`, and a scripted `git status --porcelain` sweep across every registered worktree found
+only two dirty trees, both belonging to other goals (`keon-full-platform-gtm-readiness`,
+`wgt-p2a-foreman-queue-reconciliation`) and neither touching FK-P0.
+
+Nothing was discarded in this transfer. Both open items the first 2026-09-03 owner had flagged
+in the ambient checkout resolved on their own and were verified closed by this owner:
+
+- The user-owned `routing-policy.yaml` / `validator.ts` edits **landed via PR #15**
+  (`096adfb`, "retarget routing policy to OpenRouter v0.3"). `KNOWN_FRONTIER_MODELS` now holds
+  five OpenRouter-prefixed ids; no `claude-opus-4-8` pin survives anywhere under
+  `routing-policy/`, and PR #15 updated the affected tests in the same change. The predicted
+  "tests red for the wrong reason" never materialised.
+- The ambient checkout's untracked `docs/goals/foreman-kernel/` copies were diffed against this
+  branch. `proposed-amendment-A1` was an older draft, superseded here. **ADR-001 carried a
+  developer ratification record that existed nowhere else**; on the developer's instruction it
+  was transcribed to this branch alone in `2f9d3f7`, status line and record only, bodies
+  otherwise byte-identical. The ambient files were left untouched.
 
 **Handoff record — 2026-09-03.** The prior owner (the Claude Code coordinator session of
 2026-09-01 → 2026-09-02) stopped after writing `FK-P0-GATE-3-package.md`, leaving FK-P0 at
@@ -50,9 +80,57 @@ occurred.** FK-P0 re-enters adversarial review from zero under this owner.
 
 ## Current state — update at every stop or parcel closure
 
-**STATE 2026-09-03 (live) — FK-P0 REMAINS AT GATE 3. The inherited green chain was independently
-reproduced by this owner and it HOLDS. Stopped at the human gate, which is where the loop is
-supposed to stop.**
+**STATE 2026-09-03 #2 (live) — FK-P0 IS NOT MERGE-READY. A BLOCKER WAS FOUND WHILE EXECUTING THE
+DEVELOPER-APPROVED MERGE. The loop is STOPPED awaiting a developer ruling.**
+
+Read `FK-P0-BLOCKER-volatile-canon-source.md` first; it is the substantive record.
+
+The developer approved Option B (carry the goal records forward, then merge once). This owner
+executed the intermediate merge — goal branch → parcel branch, `838f438` → **`a100a91`**,
+conflict-free, documentation only, all six preservation checks passing — then re-ran the green
+chain on the actual merge target, and **`sweep --repo-root` went red: `valid: false`, 45
+violations, exit 1.**
+
+Causation was established by experiment, not inference: reverting `loop-directive.md` alone to
+its `838f438` content returns the sweep to `valid: true`, 0 violations, exit 0. All 45
+violations name that one file.
+
+**The defect is that FK-P0 digest-pins a document the canon orders the coordinator to rewrite.**
+The registry inventories this file as `authorityEffect: binding` with a pinned `fullFileSha256`
+(`authority-enforcement-registry.yaml:2546`). All 45 violations fall in exactly three sections,
+and all three exist in order to change: `## Current state — update at every stop or parcel
+closure` (37), `## COORDINATOR OWNERSHIP`, whose own text says ownership transfers *by editing
+this block* (7), and the queue's `State` column (1). Step 11 of the per-parcel algorithm below
+ends with "and this state block update" — so **performing Stage F on FK-P0 turns FK-P0's own
+sweep red.** The parcel cannot be closed out without violating itself.
+
+Option A does not avoid this; it hides it. Merging the parcel branch alone lands the frozen
+2026-09-02 bytes, so the sweep is green at merge time and the first mandated state update turns
+`main` red. Hermetic `validate` stays green at 0 violations throughout, because it compares the
+registry to itself and never reads the repository — that asymmetry means the hermetic gate
+cannot detect this class at all.
+
+Nothing was mismeasured. Every figure in `FK-P0-GATE-3-package.md` and
+`FK-P0-MERGE-READY-material.md` reproduces, including `npm test` 583/583 and the byte-identical
+generator run. `tsc`, `biome`, `validate` and the merge into `main` are all still green at
+`a100a91` (62 files, 118,459 insertions, **0 deletions**, conflict-free). The chain was
+conditional, not wrong.
+
+**Not merged, not pushed. Gate 3 remains not delegated.** `git reset --hard 838f438` on the
+parcel branch reverts the intermediate merge if the developer prefers Option A. The candidate
+fix — excluding volatile operational state from the inventoried set using the registry's
+existing `exclusionDisposition` vocabulary — is written up in the blocker record as a
+hypothesis for a builder to establish, **not** as an applied change.
+
+**Review-mandate gap, recorded for reuse:** both independent frontier reviews missed this
+because both swept a tree whose governed sources had not moved since generation. An adversarial
+review of a canon-registry parcel must **mutate a governed source and re-sweep**, not only
+sweep the as-built tree. This belongs in the FK-P0-class review kickstarter and is a Stage F
+lessons candidate.
+
+**STATE 2026-09-03 #1 (superseded by the block above) — FK-P0 REMAINS AT GATE 3. The inherited
+green chain was independently reproduced by this owner and it HOLDS. Stopped at the human gate,
+which is where the loop is supposed to stop.**
 
 This owner re-verified the prior owner's Gate 3 evidence on disk rather than accepting it, because
 the 2026-09-01 handoff established that transcript-only claims are unrecoverable. Everything below
@@ -290,7 +368,7 @@ The plan-review transcript is
 
 | Parcel | State | Depends on |
 |---|---|---|
-| FK-P0 — Canon authority and enforcement registry | **AT GATE 3 — built, reworked 5 rounds, green chain independently reproduced 2026-09-03; awaiting the developer's merge. Not pushed, not merged, Stage F not run.** | none |
+| FK-P0 — Canon authority and enforcement registry | **BLOCKED at Gate 3 — NOT merge-ready. Parcel head `a100a91` (Option B intermediate merge, local only). `sweep --repo-root` red: 45 violations, all from digest-pinning a mandated-mutable source. See `FK-P0-BLOCKER-volatile-canon-source.md`. Awaiting developer ruling: rework, or Option A with an accepted residual. Not pushed, not merged, Stage F not run.** | none |
 | FK-P1 — Lifecycle, admission, and decision contracts | pending | FK-P0 |
 | FK-P2 — Spec-body compiler | pending | FK-P0, FK-P1 |
 | FK-P3 — Pure dispatch decisions | pending | FK-P1 |
