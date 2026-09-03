@@ -256,7 +256,8 @@ frontier reviews, fresh sessions, zero builder context; hostile-input probing li
   name the three roles from an authoritative artifact, or does it back-fill the charter's
   phrase? Is the `verifier` = adversarial-reviewer equation labelled `asserted`, or smuggled
   in as fact?
-- **Attempt the naive reading of every trust-boundary entry** (lesson #9). For each
+- **Attempt the naive reading of every trust-boundary entry** (lesson #14 — for a prose
+  contract, implement the wrong-but-literal reading and show the text excludes it). For each
   `enforced-mechanically` label, read the cited code and answer: does that function actually
   fail closed on the property the label names, or does the invariant live in a sibling
   function that this path never calls?
@@ -272,7 +273,7 @@ frontier reviews, fresh sessions, zero builder context; hostile-input probing li
 - **Did anything mutate?** Confirm `routing-policy.yaml`, `permission-profiles.yaml`, every
   contract, every validator, and every test are byte-identical to `origin/main`, and end the
   review with an assertion of no commits and no dirty files in the reviewer worktree
-  (lesson #10).
+  (lesson #24).
 
 ## Allowed Files
 
