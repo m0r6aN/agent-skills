@@ -19,7 +19,7 @@ matching the pin in `charter.md`. It remains historical design input only.
 | Current goal intake | `verified_current` | Merge commit `24378419243e1098e57f72407fadbeedfdad2e85` contains the charter, preserved source, pickup directive, and goal-index registration. | Valid base for this dedicated coordinator worktree only. |
 | Foreman Line stage contracts, receipts, permission profiles, routing policy, dispatch routing evaluation, and the public-only Cerebras shadow boundary | `verified_current`, but `not_goal_completion` | Tracked packages and tests are present on the intake base. The Cerebras route is candidate-only, public-only, with host-injected discovery and invocation. | Treat only as existing canon or possible dependency; do not call it a heterogeneous worker fabric or reuse it without ratified scope. |
 | Provider transport, Fireworks adapter, current availability/capability/pricing, credential access, and real route evidence | `missing` | No tracked current worker-fabric provider adapter or provider proof was found outside the historical source. No credentials were inspected. | No provider call, spend, secret access, or promotion work is authorized. |
-| Shared routing-policy serialization point | `conflicting` | The shared registration worktree has an uncommitted user-owned edit to `routing-policy.yaml`; its proposed frontier identity also conflicts with the current validator anchor. | This goal will not touch the policy or claim it until the owner resolves the change and a ratified parcel assigns the surface. |
+| Shared routing-policy serialization point | ~~`conflicting`~~ → `verified_current` (corrected 2026-09-03 at coordinator transfer) | **Original Codex observation:** the shared registration worktree had an uncommitted user-owned edit to `routing-policy.yaml`, whose proposed frontier identity also conflicted with the validator anchor. **Current evidence:** that edit has landed as `096adfb` ("retarget routing policy to OpenRouter (v0.3)"), merged to `main` via PR #15; `git status` in worktree `goal-intake-hierarchical-worker-fabric-20260903` is clean; `routing-policy.yaml` is v0.3 with four `routing_class` values and `public`/`internal`/`restricted` classifications. | The user-owned conflict is discharged. The policy remains a shared serialization point requiring explicit parcel ownership (WF-P2, WF-P6), and D4 makes it the sole registry authority — but it no longer blocks WF-P2's dependency chain. Re-verify at WF-P2 dispatch time per D4. |
 | Foreman Kernel and hierarchical-sidecars goals | `verified_current` as separately owned | Foreman Kernel names a live Claude Code coordinator. Hierarchical-sidecars names a separate Codex coordinator and is stopped awaiting its stated gate/owner resolution. | No co-ownership or amendment of their files; only consume ratified interfaces when available. |
 
 ## Current constraints carried to Gate 1
@@ -32,6 +32,17 @@ matching the pin in `charter.md`. It remains historical design input only.
 
 ## Next required action
 
-Developer Gate 1: ratify, amend, or reject the proposed decisions D1–D8, the proposed
-exit criterion, and the scope for a freshly drawn WF-P0 reconnaissance parcel. Gate 2
-is requested only after that ratification and the mandatory plan-level adversarial review.
+~~Developer Gate 1: ratify, amend, or reject the proposed decisions D1–D8, the proposed
+exit criterion, and the scope for a freshly drawn WF-P0 reconnaissance parcel.~~
+
+**Closed 2026-09-03.** Gate 1 was ratified (D1–D8, graph, exit criterion), the mandatory
+plan review ran and returned six reproduced findings, and amendment A1 was ratified with the
+ledger correction recorded above. Gate 2 is granted for **WF-P0 only**. The next action is
+WF-P0 shaping under the loop directive; constraints 1–5 below are superseded only where
+`charter.md` now says otherwise — in particular constraint 1 (decisions non-binding) and
+constraint 2 (no dispatch) no longer hold as written, while constraints 3–5 stand.
+
+**Coordinator transfer:** ownership moved from the stopped Codex `/root` coordinator to a
+Claude Code coordinator session on 2026-09-03 by explicit developer ruling, at a pre-dispatch
+boundary with no parcel in flight. This document's Stage Zero findings were re-verified at
+transfer (source hash, routing-policy state) rather than credited from prose.
