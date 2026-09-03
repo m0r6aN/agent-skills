@@ -9,7 +9,7 @@ from an index row.
 | Goal | State | Entry | Current authority |
 |---|---|---|---|
 | [hierarchical-coordination-sidecars](hierarchical-coordination-sidecars/charter.md) | `awaiting_coordinator_claim` | `/goal resume hierarchical-coordination-sidecars` | Goal intake requested; Gate 1/2 absent; Gate 3 human |
-| [heterogeneous-agent-worker-fabric](heterogeneous-agent-worker-fabric/charter.md) | `awaiting_coordinator_claim` | `/goal resume heterogeneous-agent-worker-fabric` | Completion requested; Gate 1/2 absent; default-route Gate 3 human |
+| [heterogeneous-agent-worker-fabric](heterogeneous-agent-worker-fabric/charter.md) | `stopped_awaiting_current_instance_gate_1` | `/goal resume heterogeneous-agent-worker-fabric` | Claimed by Codex `/root`; reconciliation recorded; Gate 1/2 absent; default-route Gate 3 human |
 
 These are separate goals and require separate owning coordinators. A coordinator may own
 only one of these queues at a time unless a future ratified hierarchy explicitly permits a

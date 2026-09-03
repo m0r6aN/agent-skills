@@ -2,12 +2,23 @@
 
 ## COORDINATOR OWNERSHIP — claim before substantive work
 
-> **Queue owner: UNCLAIMED.** A coordinator claims this goal by replacing this sentence
-> with its exact task/session identity and timestamp in the goal's isolated worktree before
-> doing substantive Stage Zero work. One goal has one root coordinator. If another live
-> owner is named or ownership is ambiguous, stop and report.
+> **Queue owner: Codex `/root` coordinator task, 2026-09-03 America/New_York.** This goal
+> was claimed from the dedicated worktree
+> `D:\Repos\agent-skills-worktrees\heterogeneous-agent-worker-fabric-coordinator-20260903`
+> based on intake commit `24378419243e1098e57f72407fadbeedfdad2e85`, before substantive
+> Stage Zero work. One goal has one root coordinator. If another live owner is named or
+> ownership becomes ambiguous, stop and report.
 
-**State:** `awaiting_coordinator_claim`
+**State:** `stopped_awaiting_current_instance_gate_1`
+
+**Stop record — 2026-09-03 America/New_York:** The coordinator verified the pinned
+historical-source hash and recorded a current-instance claim ledger in
+`reconciliation.md`. No historical WF parcel, provider, credential, test, PR, or gate
+claim was credited. Current tracked routing and public-only shadow-route facilities are
+context, not completion evidence; the shared routing-policy file also has a user-owned
+uncommitted change in the registration worktree, so it is not available for this goal to
+claim. The loop is stopped at human Gate 1: ratify, amend, or reject D1–D8 and the
+proposed exit criterion in `charter.md`. Gate 2 remains absent.
 
 **Pickup precondition:** claim from a dedicated goal worktree after this intake commit is
 merged, or from a dedicated worktree based on the exact intake commit. Do not run either
