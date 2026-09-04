@@ -470,6 +470,55 @@ ratified.** Reusing `non-normative-explanation` was available and is rejected. A
 is not an explanation, and this entire round exists because two rules hid behind exactly that
 label. A precise code makes the next instance visible instead of plausible.
 
+**WITHDRAWN by R29 — do not implement this member.** See R29 below.
+
+### R29 — rulings that live only in a message are not canon
+
+Three amendments' worth of rulings were issued to the builder **by message and never written into
+this spec.** Two separate agents then read the spec, followed it correctly, and were wrong,
+because canon said something the coordinator had already overruled in conversation. That is the
+coordinator's own "commentary is not a change request" rule inverted: a *ruling* that never
+reaches the artifact is not a ruling either. The rule this installs, on the coordinator: **a
+ruling that changes the spec is committed to the spec before the dispatch that depends on it.**
+
+**R29.1 — `operational-status-snapshot` is withdrawn.** R27 ratified the closed-enum member on
+the assumption that `item.ae7854c7dad1` would survive as an excluded carrier. It does not:
+the item sits at `## Current state:paragraph:1`, inside region 1's direct body, so **excision
+removes it from the inventory entirely** and there is no item left to carry a disposition or an
+`exclusionCode`. The member would be an unused variant in a closed union — the defect R27 itself
+names. Withdrawn; do not add it.
+
+**R29.2 — obligation 1's two halves reconciled.** The recovery agent correctly found the recovery
+brief internally inconsistent: it asked both for a disposition flip *and* for the excision path,
+which are alternatives. Under region 1, obligation 1 is discharged by (i) removing the three
+stale curated-publish entries in `src/generate.ts`, and (ii) the reconciliation record pinning the
+item's final `locatorDigest` and `valueDigest` in `scopedDisposition` prose. There is no
+disposition to set and no `exclusionCode` to choose. Retirement remains untouched and the retired
+count stays 0.
+
+**R29.3 — curated maps are keyed by `(sourceId, anchor)`, not `(sourceId, itemId)`.** Ratified
+here after being approved by message. Item IDs derive from a locator that includes `lineHint`, so
+any line-position change in a governed source silently breaks a curated binding — measured twice
+in this round, on `rule.fk-charter.ff0f88a958e0` and again on standing authorization 8. Anchors
+are `headingPath:kind:ordinal` and are position-independent under the non-displacement invariant.
+This changes no item ID and no digest, so it is a curation-layer lookup change and remains inside
+R28's prohibition on identity-layer mechanisms.
+
+**Its boundary, stated so it is not over-claimed:** anchor-keying is robust to `lineHint` shifts
+but **not** to relocation. A `headingPath` change still breaks the binding, as obligation 2c
+demonstrated. That is correct — relocation is a deliberate coordinator act and should break
+loudly rather than silently re-bind.
+
+**R29.4 — standing authorization 8 shipped de-published, and the record should quote it.** At
+`3ee5192` the prohibition relocated by R27 carries `ruleIds: []` and the generated rationale
+*"is explanatory context and does not state an independent normative authority rule."* Its own
+normative text reads: *"…curated `ruleIds: []` with a boilerplate rationale asserting it stated no
+rule. It states a rule."* **The rule documenting the defect became an instance of the defect.**
+Same root cause as R29.3's: its item ID churned from `item.8be213f2455a` to `item.3fe253f7c599`
+and missed all three curated maps. Publishing it — classification `pre-action-refusal` — is what
+takes the count from 468 to R28's required 469; the acceptance assertion's "one addition" is
+currently unmet, and 468 is that failure rather than a partial success.
+
 ## Contract
 
 ### Registry contract
