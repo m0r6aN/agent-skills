@@ -269,6 +269,93 @@ sweep summary and both require migration evidence. A reviewer must confirm that 
 is the status snapshot named above and nothing else, and that the re-anchored ownership rule's new
 statement retains all three of its normative sentences and none of its volatile preamble.
 
+### R26 — Step 0 rulings, and two defects R24/R25 both missed
+
+The round-6 builder's Step 0 analysis found two properties neither R24 nor R25 named, both
+load-bearing. They are adopted here as binding and credited to that analysis; R24's invariant list
+is incomplete without them.
+
+**Ruling 1 — ordinal displacement is the larger half of the damage, and R24 never mentioned it.**
+Of the 7 measured violations in the ownership section, only 1 was the appended block. Prepending a
+handoff paragraph shifted every later paragraph's ordinal in that container by one, so registry
+items pinned at `paragraph:4/5/6` resolved against *different text* — 5 × `VALUE_DIGEST_MISMATCH`
+on governed siblings that were never edited. R24's invariant covers the appended block only and
+would still have failed the sweep.
+
+**Therefore, additional binding invariant: volatile content must never occupy an ordinal.**
+Volatile lines are excised before block discovery and before ordinal assignment, so a governed
+sibling retains its exact anchor, locator digest, and value digest no matter how much volatile
+content is added, removed, or reordered in the same container. Non-displacement is a named, tested
+property, not a hoped-for consequence: the negative control must assert that a pinned governed
+neighbour survives volatile churn byte-identical.
+
+**Ruling 2 — region 1 was over-broad and buried a live stop condition.** R24 declared
+`## Current state` volatile "in full, including every subsection". That section contains
+`### Standing stop-condition override`, whose body states a rework cap and a stop — a **stop
+condition**, one of the six governed categories that source-corpus entry 3 says the governed
+portion "remains exactly". R24's own boundary therefore violated R24's own guarantee. Two
+corrections, both required:
+
+- **Extent semantics:** a `heading-subtree` extent covers body blocks under the matched heading
+  and **excludes descendant headings and their bodies**. A rule written under a volatile section
+  stays inventoriable, and a coordinator who writes one must inventory it.
+- **Source correction:** the standing stop-condition override is *misfiled* — it is a standing
+  rule, not current state. Per R25's invariant the source is restructured rather than the boundary
+  bent, so the coordinator relocates it out of `## Current state`. Both land: the relocation fixes
+  today's instance, the extent semantics prevent recurrence.
+
+**Ruling 3 — region 2 needs no new primitive; the source split already landed.** The builder
+independently reached R25's conclusion that the ownership blockquote is one block, one locator,
+one digest, and offered three routes. The coordinator had already executed the source split at
+commit `4ee0537`. Consequently:
+
+**A `block-prefix-span` extent kind is NOT authorized.** No text-bounded or content-substring
+extent enters this design; every extent is structural. That was the one primitive the builder
+named as its own least-comfortable element, and the source split removes the need for it — which
+is precisely why R25 puts restructuring ahead of boundary-bending. The closed extent union is
+**three** kinds: `heading-subtree`, `container-blocks`, `table-column`.
+
+**Ruling 4 — control (d) is mandatory: generator idempotence under volatile mutation.** The
+generator reads source bytes from the worktree, not from `snapshotEvidence.commit`, so the
+parcel's `npm run generate` → clean-`git status` gate is today conditional on nobody having
+touched the state block. Fixing only the sweep would relocate the contradiction rather than close
+it. Control (d): mutate every volatile region in a temp corpus, run the generator against that
+root, assert emitted bytes identical to the shipped YAML. It is the strongest single statement of
+what R24 means — volatile content cannot affect the registry at all — and none of (a), (b) or (c)
+reaches it. **Control (e)**, region-resolution exactness, is also required: a region matching zero,
+or two or more, headings fails closed and never silently stops masking.
+
+**Ruling 5 — `RESULT_CODES` is widened by exactly two, and the pre-existing drift is reconciled in
+the same act.** `VOLATILE_REGION_OVERLAP` (the control-(c) refusal) and `VOLATILE_REGION_INVALID`
+(malformed or unresolvable declaration) are authorized. Dedicated codes are chosen over reusing
+`AUTHORITY_ESCALATION`/`SCHEMA_INVALID` because amended AC3(c) says "the stable code" and a shared
+code makes the reviewer's deletion test ambiguous. Where obligations share
+`VOLATILE_REGION_INVALID`, tests assert the message, not only the code.
+
+**Separately, the builder reported that the shipped code already carries two codes the spec's
+"closed" set does not list — `REPO_ROOT_INVALID` and `RETIREMENT_EVIDENCE_UNVERIFIED`.** That is an
+undocumented divergence between a spec that says *closed* and an implementation that is not. It is
+reconciled in this round rather than compounded: either the spec's set is corrected to include
+them, or they are removed. Adding two codes on top of an unreconciled drift is how a closed set
+stops meaning anything.
+
+**Ruling 6 — obligation 1 and the new chain head are authorized inside this round.** Un-publishing
+`rule.fk-loop-directive.ae7854c7dad1` is confirmed, and remains explicitly **not** a use of the
+retirement state. Ordinal excision changes governed locator digests and item identities, which is
+a location-plus-identity change requiring a typed `registry-rework-*` record; that record becomes
+the chain head, the incumbent head is demoted and gains a pin in `RECONCILIATION_RECORD_DIGESTS`,
+and **all seven AC4 head obligations apply to the new head unchanged.** The record is named for the
+commit that last touched the shipped YAML, determined at implementation time rather than pinned
+here. This is the largest piece of work in the round and the place where a rushed implementation
+breaks something already closed.
+
+**Endorsed unchanged from the builder's design:** `volatileRegions` participates in
+`registryBindingManifestDigest`, making "the declaration set is part of the reviewed contract"
+mechanically true rather than asserted; a region never covers its own heading item, so editing a
+heading fails once and loudly instead of silently detaching a region; and region matching uses a
+derived stable heading key so it survives rewording, while the heading text itself stays
+digest-pinned.
+
 ## Contract
 
 ### Registry contract
