@@ -255,8 +255,8 @@ test('each of the six classifications is accepted and summarized independently',
   const result = validateRegistry(valid)
   assert.equal(result.valid, true)
   assert.deepEqual(result.summary?.classificationCounts, {
-    'pre-action-refusal': 254,
-    'post-action-detection': 9,
+    'pre-action-refusal': 255,
+    'post-action-detection': 8,
     'ci-static-check': 78,
     'independent-review-human-judgment': 15,
     'narrative-provenance': 100,
@@ -4006,7 +4006,7 @@ for (const vector of [
 
 // R14 fix 13 (amended AC5): a resolved result must expose the classification, assurance and
 // enforcement owner behind its decision, so a structural refusal from a kernel that does not exist
-// cannot be read as a mediated one. 254 of the shipped rules are pre-action-refusal attributed to
+// cannot be read as a mediated one. 255 of the shipped rules are pre-action-refusal attributed to
 // kernel-policy/structural while no kernel exists.
 test('R14 a resolved result exposes classification, assurance, enforcement owner and severity', () => {
   const result = resolveAuthority(full, {
@@ -4565,7 +4565,7 @@ test('R22 O6 refuses deleting the head and substituting a copy under a fresh unp
   expectOnlyCodes(mutated, 'RECONCILIATION_MISSING')
   // AC13 as amended by R23: the code alone cannot say WHICH obligation refused,
   // because every chain obligation emits it. Bind to the message.
-  expectMessage(mutated, "required rework migration 'registry-rework-df8155a' is missing")
+  expectMessage(mutated, `required rework migration '${CHAIN_HEAD_ID}' is missing`)
 })
 
 test('R22 O6 refuses rewriting the head IN PLACE under the same id', () => {
@@ -4580,7 +4580,7 @@ test('R22 O6 refuses rewriting the head IN PLACE under the same id', () => {
   assert.notEqual(head.topic, beforeTopic, 'the attestation must actually be rewritten')
   reanchorTo(head, mutated)
   assert.equal(
-    JSON.stringify(mutated).includes('R14 genesis-anchored migration chain'),
+    JSON.stringify(mutated).includes('The R24-R29 round-6 volatile-region and curation rework'),
     false,
     'the attestation prose must actually be gone from the document',
   )
@@ -5104,12 +5104,12 @@ test('chain topology: renaming a record out of the chain prefix does not let it 
   const mutated = structuredClone(full)
   const target = mutated.reconciliations.find((record) => record.reconciliationId === CHAIN_HEAD_ID)
   ok(target)
-  ;(target as { reconciliationId: string }).reconciliationId = 'registry-rewurk-df8155a'
+  ;(target as { reconciliationId: string }).reconciliationId = 'registry-rewurk-40394be'
   assert.equal(
     mutated.reconciliations.some((record) => record.reconciliationId === CHAIN_HEAD_ID),
     false,
     'the head id must actually be gone',
   )
-  expectMessage(mutated, "required rework migration 'registry-rework-df8155a' is missing")
+  expectMessage(mutated, `required rework migration '${CHAIN_HEAD_ID}' is missing`)
   expectMessage(mutated, 'cannot be the migration chain head')
 })
