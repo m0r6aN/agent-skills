@@ -356,6 +356,120 @@ heading fails once and loudly instead of silently detaching a region; and region
 derived stable heading key so it survives rewording, while the heading text itself stays
 digest-pinned.
 
+### R27 — R25's region table was wrong twice, and there are seven controls
+
+The round-6 builder measured every claim in R25's table against the shipped registry instead of
+accepting it. Two were wrong, both in the direction of the defect being wider than stated. R25's
+table is corrected here, the control letters are made unique, and the remaining Step 0 rulings
+are recorded.
+
+**Correction 1 — `## COORDINATOR OWNERSHIP` contains six published rules, not one.** Measured:
+12 inventory items, 6 published. R25 named only `item.7a05d374a3b1`. The other five are the
+`**Ratified authority:**` list items — `b81725578197`, `aac2d1258986`, `4f0fb14fbd95`,
+**`47a75730afd6` (the pinned Standing Gate 2 `ALLOW`, referenced at three sites in
+`src/validate.ts`)**, and `08b3cbb91027`. R24's region 2 avoided them only by *prose* scoping
+("identity and handoff records"), which is a description, not an extent; any structural
+implementation keyed on the section would have swallowed all six including a pinned `ALLOW`.
+
+**Correction 2 — `## Queue and dependency order` is not clean at section scope.** R25 said region
+3 had no published rules. True of the table *rows*; false of the *section*. It carries 24 items
+and 1 published — `item.1576c95260b6` at `paragraph:1`, the parallelism-and-serialization rule.
+"Declarable immediately" holds only for the **column-scoped** extent. As written R25 licensed a
+section-scoped implementation that control (c) would then have refused — the same error R24 made,
+one notch smaller, inside the amendment correcting R24.
+
+**Obligations 2b and 2c, performed by the coordinator at `a7889e8`.** Rather than keep the
+published ownership rules out of region 2 with a block-kind predicate, the source was restructured
+so they are out by position: `### Owner of record and handoff state` now bounds region 2, and
+`### Goal identity and ratified authority` is a governed sibling holding the five published
+records. The ambient-checkout prohibition was relocated to standing authorization 8 — it was a
+prohibition sitting in a section declared volatile, curated `ruleIds: []` with a generated
+rationale asserting it stated no rule, and it is the rule protecting the user-owned routing-policy
+change every builder is told not to absorb. R26 ruling 2's corrections did not reach it because it
+is a direct body block rather than content under a descendant heading. For a pinned `ALLOW` rule,
+the structural guarantee is the one worth having.
+
+**Consequent region-to-extent mapping, now unambiguous:**
+
+| region | extent | governed content kept out by |
+|---|---|---|
+| 1 — `## Current state` | `heading-subtree`, descendant headings excluded | relocation of the stop condition and the prohibition; section now has no normative content |
+| 2 — `### Owner of record and handoff state` | `heading-subtree` | sibling subheading placement (2c) |
+| 3 — queue `State` column | `table-column` | column scope; `paragraph:1` is outside the table entirely |
+
+**The closed extent union is therefore two kinds: `heading-subtree` and `table-column`.**
+`container-blocks` is dropped — 2b/2c removed its only caller, and an unused variant in a closed
+union is surface without a purpose.
+
+**Control lettering, fixed.** R25 and R26 both defined a "(d)" and both defined an "(e)",
+differently, while the definition of done is stated in letters. The set is now seven, and these
+letters are canonical:
+
+| letter | control |
+|---|---|
+| (a) | negative — declared regions absorb appends and byte changes, and do not displace governed siblings |
+| (b) | positive — a mutated governed sentence in the same source still fails closed with its code |
+| (c) | anti-laundering — the validator refuses a region overlapping a published locator |
+| (d) | no shipped region contains a published item, over the shipped registry |
+| (e) | generator idempotence under volatile mutation |
+| (f) | region-resolution exactness — zero or ≥2 heading matches fails closed |
+| (g) | curated-exclusion guard — see below |
+
+**Control (d) must be implemented independently of (c)'s predicate.** The builder observed that
+if (d) calls the same predicate the validator uses, and the chain already runs `validate` to exit
+0, then (d) proves nothing and can only fail where (c) already fails — the self-verification this
+spec forbids elsewhere. (d) is therefore a second, independent implementation inside the test:
+parse the YAML, resolve each declared extent against `inventoryItems` directly, assert `ruleIds`
+is empty for every in-region item, importing nothing from the validator. Independence is proved
+by mutating the validator's predicate to always-pass and showing (d) still fails.
+
+**Control (g), accepted — the mechanism otherwise rewards under-curation.** (d) tests for
+`ruleIds` non-empty, so it cannot see a block that *states* a rule while curated `ruleIds: []`.
+R25's remedy for an overlap is to declassify the overlapping item, and (d) is satisfied by
+declassification — so nothing in (a) through (f) resists making a region legal by under-publishing.
+R24 over-published into a region; this is the same defect with the opposite sign, and it was
+already sitting in the data twice (`fa05e853c14d`, `5690a4514605`), both with the generated
+rationale *"is explanatory context and does not state an independent normative authority rule"*
+asserting the opposite of the truth.
+
+(g): every `paragraph` or `list-item` item inside a declared volatile region must carry an
+item-specific **curated** exclusion rationale, never the generated template. An in-region item
+cannot be published without a spec amendment, so its exclusion is a permanent, load-bearing
+decision and must be individually argued — the standard already imposed on obligation 1. It forces
+one human sentence per in-region prose block, which is the review step that would have caught both
+instances. `table-row` items keep the template: a row's normative surface is bounded by its
+columns and the mask is separately pinned. Measured cost: 8 sentences, not 30.
+
+**The modal-token scan prints; it does not gate.** Measured precision on current data is 2 of 3.
+A gate at that precision over canon prose gets disabled by the third person it inconveniences,
+and a disabled control is worse than an advisory one. Reviewer aid only.
+
+**Migration, corrected — value axis, not location.** R26 ruling 6 called this a
+location-plus-identity change. The builder measured otherwise and is right: `itemIdFor` resolves
+md-block items through an anchor-keyed frozen identity map, and the restructured rule-only
+blockquote is still `paragraph:1` in the same container, so `item.7a05d374a3b1`'s anchor,
+`locatorDigest`, and item ID are unchanged. Only `normalizedExcerpt`, `valueDigest`,
+`bindingDigest`, and `normalizedStatement` change — a **value-axis** change under Standing
+Constraint #13. The typed record and the new chain head are still required, because the *item*
+layer does change identity, items leave the inventory, and the item count drops.
+
+**The acceptance statement is replaced with the builder's sharper version**, because it is
+checkable and because a record must not pin a claim its author's own measurement contradicts:
+**every surviving published rule's `locatorDigest` is byte-identical to its pre-round value,
+with exactly one `valueDigest` change and exactly one rule removed.** Any published locator
+moving is then a defect signal rather than expected churn.
+
+**Chain-head naming rule, stated rather than left as folklore.** Two YAML-touching commits landed
+after `registry-rework-df8155a` without producing records, so the convention is evidently
+per-rework, not per-commit. The rule: **one record per rework round, named for the commit that
+last touched the shipped YAML at the moment that round's regeneration is committed**, determined
+then and not pre-computed. One record covers both obligations with two `observedRefs`.
+
+**`exclusionCode` for `ae7854c7dad1`: a new closed-enum member `operational-status-snapshot` is
+ratified.** Reusing `non-normative-explanation` was available and is rejected. A progress report
+is not an explanation, and this entire round exists because two rules hid behind exactly that
+label. A precise code makes the next instance visible instead of plausible.
+
 ## Contract
 
 ### Registry contract
@@ -1121,13 +1235,26 @@ semantically; normative publication and resolver hardening cannot rewrite histor
   SOURCE_DUPLICATE_PATH | LOCATOR_MISSING | LOCATOR_DUPLICATE |
   LOCATOR_DIGEST_MISMATCH | VALUE_DIGEST_MISMATCH | RULE_DUPLICATE | RULE_ORPHANED |
   SOURCE_ITEM_UNCOVERED | RULE_SEMANTICS_UNCURATED | RULE_SOURCE_MISSING | RULE_CONFLICT |
-  AUTHORITY_ESCALATION |
-  RETIREMENT_EVIDENCE_INCOMPLETE | RECONCILIATION_MISSING | MIGRATION_EVIDENCE_INVALID |
-  IO_ERROR | PARSE_ERROR | USAGE_ERROR`. Schema/semantic/corpus codes exit `1`; the final three
-  operational/protocol codes exit `2`; any sweep containing `IO_ERROR`, `PARSE_ERROR`, or
-  `USAGE_ERROR` exits `2` even when semantic violations are also present. Multiple violations
-  are ordered by source path, locator,
+  AUTHORITY_ESCALATION | VOLATILE_REGION_OVERLAP | VOLATILE_REGION_INVALID |
+  RETIREMENT_EVIDENCE_INCOMPLETE | RETIREMENT_EVIDENCE_UNVERIFIED | RECONCILIATION_MISSING |
+  MIGRATION_EVIDENCE_INVALID |
+  IO_ERROR | PARSE_ERROR | USAGE_ERROR | REPO_ROOT_INVALID`. Schema/semantic/corpus codes exit
+  `1`; the final four operational/protocol codes exit `2`; any sweep containing `IO_ERROR`,
+  `PARSE_ERROR`, `USAGE_ERROR`, or `REPO_ROOT_INVALID` exits `2` even when semantic violations
+  are also present. Multiple violations are ordered by source path, locator,
   rule ID, then code.
+
+  **Reconciled by R27.** This enumeration previously omitted `REPO_ROOT_INVALID` and
+  `RETIREMENT_EVIDENCE_UNVERIFIED`, both of which the shipped implementation already emitted and
+  documented in `src/types.ts` — a set described as closed while the code exceeded it. The
+  round-6 builder found the divergence and declined to widen a closed set on its own authority,
+  which was correct. They are added rather than removed, because removing either is a
+  security-boundary regression: `REPO_ROOT_INVALID` is what stops a mistyped `--repo-root` being
+  reported as a registry violation, turning an operator error into a false accusation against
+  canon, and `RETIREMENT_EVIDENCE_UNVERIFIED` must block validity precisely because retirement
+  *removes* enforcement, so an unverifiable retirement must never report green.
+  `VOLATILE_REGION_OVERLAP` and `VOLATILE_REGION_INVALID` are added in the same act per R26
+  ruling 5, so the set is closed and true at the same moment rather than one amendment later.
 - Runtime dependencies are exactly `ajv`, `yaml`, and `typescript`; `typescript` is pinned to
   `7.0.2` and supplies the syntax-tree inventory. A dependency-allowlist test enforces the exact
   set. No general parser implemented with declaration-matching regular expressions satisfies the
