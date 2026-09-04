@@ -144,6 +144,59 @@ unmigrated locator/normalized-semantic-value change. Completeness of the curated
 a mandatory independent-review focus; the sweep proves registry-to-source binding, not that
 the registry author noticed every natural-language rule.
 
+### Volatile operational state is outside the inventory boundary (R24)
+
+Per-item exclusion, as specified above, requires one audit record per excluded block. That is
+correct for a static document and wrong for a source the canon **orders** to be rewritten: a new
+paragraph inside such a source is neither published nor excluded, so it is uncovered, and the
+sweep fails. Measured on 2026-09-03 at parcel head `a100a91`, editing `loop-directive.md` — which
+the coordinator pattern, the `goal` skill, and that directive's own text all require at every
+stop, ownership transfer, and parcel closure — produced **45 sweep violations** (10
+`VALUE_DIGEST_MISMATCH`, 35 `SOURCE_ITEM_UNCOVERED`) and failed **three tests**, including the
+acceptance-criterion test asserting the CLI sweep exits 0. Step 11 of the loop directive's own
+per-parcel algorithm ends with a state-block update, so Stage-F closure of this parcel would turn
+this parcel's sweep red. An acceptance criterion that a document cannot satisfy while the canon is
+obeyed is a contradiction, not a standard.
+
+The registry therefore recognizes **volatile operational state**: content inside a governed source
+that carries no independent normative rule and that canon requires to change. It is declared at
+**region scope, not item scope** — one durable declaration per region, never one record per
+paragraph — so that appending to, editing within, or restructuring a declared region requires no
+regeneration.
+
+**Required invariants.** Within a declared volatile region: adding a paragraph, list item, table
+row, or subsection MUST NOT produce `SOURCE_ITEM_UNCOVERED`, and changing bytes MUST NOT produce
+`VALUE_DIGEST_MISMATCH`. This is the operational meaning of the Constraints promise that
+"unrelated bytes, formatting, line numbers, import order, and content outside the locator do not
+invalidate the shipped registry."
+
+**The declared volatile regions of `loop-directive.md`, exhaustively.** The governed portion
+remains exactly the six rule categories named in source-corpus entry 3 — ownership, standing
+authorizations, parcel algorithm, FK-P0 mandate, queue/dependencies, and stop conditions. Note
+that entry 3's own enumeration never included current state. Volatile:
+
+1. the `## Current state` section in full, including every subsection, table, and paragraph it
+   contains;
+2. inside the ownership block, the identity of the current owner and every handoff, transfer, and
+   inherited-state record — **but not** that block's normative sentences (exactly one coordinator
+   owns a goal; ownership transfers only at a parcel boundary; ambiguous or contested ownership is
+   a stop-and-report), which remain fully governed; and
+3. the `State` column of the queue table — **but not** parcel identities, dependency edges, or
+   the table's ordering rule.
+
+**Anti-laundering control, and it is not optional.** A volatile-region declaration that overlaps
+the locator of any published rule MUST be rejected by the validator, fail-closed, with a stable
+code. Absent that control this amendment would supply a mechanism for retiring any inconvenient
+rule by declaring its neighbourhood volatile — strictly worse than the defect it repairs. The
+declaration set is closed, is itself part of the reviewed contract, and is a mandatory
+independent-review focus.
+
+**Mechanism is the builder's to propose, not this amendment's to dictate.** R16, R19 and R22 each
+specified a mechanism from the coordinator's chair and each required correction. This amendment
+fixes the invariants, the exhaustive region list, and the anti-laundering control; the record
+shape, schema changes, and sweep implementation are proposed by the builder at Step 0 and ruled on
+before any code is written.
+
 ## Contract
 
 ### Registry contract
@@ -1247,6 +1300,30 @@ registry under test.
    missing/moved locators, stale normalized values, duplicate normalized paths, or unknown
    mappings. Full-file hashes at `51857a3a7796b393c0c0a68712f98c06e7015d79` are captured only
    as parcel-time evidence and are not a shipped validation predicate.
+
+   **Amended by R24.** "Zero uncovered items" is scoped to content **outside** the volatile
+   regions declared under "Volatile operational state is outside the inventory boundary". The
+   sweep must pass with zero violations against a working tree in which every declared volatile
+   region has been mutated. This narrowing is paired with three mandatory controls, and the
+   criterion is not met unless all three hold:
+
+   - **(a) Negative control — volatile regions absorb change.** A test mutates each declared
+     volatile region of `loop-directive.md` in the two ways that broke it: appending a new
+     paragraph and altering bytes in an existing one. The sweep exits 0 with zero violations. The
+     reproduction on record — 45 violations across `## Current state`, the ownership block, and
+     the queue `State` column — is the fixture this control must retire.
+   - **(b) Positive control — governed prose still fails closed.** A test mutates a *governed*
+     normative sentence in the **same** source, specifically one of the ownership block's rule
+     sentences, and asserts the sweep still reports a violation with the specific expected code.
+     Without this, (a) alone cannot distinguish a scoped exclusion from a disabled sweep, and a
+     region declared too wide would read as success.
+   - **(c) Anti-laundering control.** A test declares a volatile region overlapping a published
+     rule's locator and asserts the validator refuses it, fail-closed, with the stable code, so a
+     rule cannot be retired by declaring its neighbourhood volatile.
+
+   Controls (a) and (b) must fail for the right reason if the other is removed; a reviewer is
+   directed to verify that by deletion rather than by reading. No control may pass because a
+   fixture is shaped to agree with the implementation.
 4. Every rule has stable identity, authority subject/claim, exact source binding, applicability,
    severity, one of the six required classifications, decision semantics, enforcement owner,
    assurance, retirement state, and corpus-sweep evidence appropriate to that state. The shipped
