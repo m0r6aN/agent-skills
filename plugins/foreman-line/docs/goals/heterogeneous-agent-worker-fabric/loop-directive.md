@@ -151,6 +151,32 @@ Two rules follow. **A goal branch based on another coordinator's tip inherits th
 spots, not the repository's current state.** And **a coordinator lint must name the checkout it
 ran in** — "verified on disk" is not a location.
 
+## Never write into a live agent's worktree (earned 2026-09-04 — the coordinator broke this)
+
+The coordinator ratified the WF-P0 spec by editing and committing **inside the shaping
+agent's worktree while that agent was still active** — flipping `status:`, repairing two
+stale lines, and landing two amendment commits on `claude/hwf-wf-p0-shaping-20260903`. One
+worktree, one writer, is the rule that existed precisely to prevent this, and the coordinator
+is not exempt from it.
+
+It was harmless **by luck, not by discipline.** History stayed linear, the shaping agent's own
+`9524293` landed before the coordinator's commits, nothing was lost, and the tree was clean
+throughout. Had the agent committed between the coordinator's Edit-read and its write, the
+agent's fix would have been clobbered silently — the same shape as the incident that produced
+the one-goal-one-coordinator rule (`491fb80`, also benign, also only by luck).
+
+The rule, and how to satisfy it: **when a document inside a live agent's worktree needs to
+change, route the change through that agent.** Send the exact replacement text and have the
+agent commit it, identified as a coordinator-ratified amendment per SPEC-CONVENTION §11. If
+the agent is gone, take ownership of the worktree explicitly — confirm it is idle, say so in
+the commit message — before touching it. Applied correctly the same day: the builder's
+one-word `## Allowed Files` count amendment was routed *to* the builder rather than edited
+into its worktree.
+
+Corollary for ratification specifically: `status: draft` → `active` is the coordinator's
+decision, but it need not be the coordinator's *keystroke*. Prefer ruling and having the
+shaping session commit the flip.
+
 ## Open items carried by the coordinator (not gates)
 
 1. **Routing-class cost.** The ratified graph prices 15 of 18 parcels `architecture/risk`,
