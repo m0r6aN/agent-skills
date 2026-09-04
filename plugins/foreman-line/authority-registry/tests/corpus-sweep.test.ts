@@ -94,6 +94,7 @@ function copyCorpus(tempRoot: string, withGit = true): void {
 const loopDirectiveRelativePath = 'plugins/foreman-line/docs/goals/foreman-kernel/loop-directive.md'
 const currentStateHeading = '## Current state — update at every stop or parcel closure'
 const ownerStateHeading = '### Owner of record and handoff state'
+const standingAuthorizationsHeading = '## Standing authorizations and their limits'
 const ownershipRuleAnchor =
   'md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:paragraph:1'
 
@@ -292,9 +293,10 @@ test('R4 natural binding prose added under a curated authority section is discov
     const content = readFileSync(path, 'utf8')
     writeFileSync(
       path,
-      content.replace(
-        '## Standing authorizations and their limits',
-        '## Standing authorizations and their limits\n\nOnly the coordinator may begin a parcel after the recorded record exists.',
+      appendToHeadingBody(
+        content,
+        standingAuthorizationsHeading,
+        'Only the coordinator may begin a parcel after the recorded record exists.',
       ),
     )
     const result = sweepRegistrySources(registry, tempRoot)
@@ -967,9 +969,10 @@ test('R6 visible prose before a same-line HTML comment is discovered', () => {
     const content = readFileSync(path, 'utf8')
     writeFileSync(
       path,
-      content.replace(
-        '## Standing authorizations and their limits',
-        '## Standing authorizations and their limits\n\nOnly the coordinator may mint this new grant. <!-- R6 hidden note -->',
+      appendToHeadingBody(
+        content,
+        standingAuthorizationsHeading,
+        'Only the coordinator may mint this new grant. <!-- R6 hidden note -->',
       ),
     )
     const result = sweepRegistrySources(registry, tempRoot)
@@ -987,9 +990,10 @@ test('R6 visible prose after a same-line HTML comment is discovered', () => {
     const content = readFileSync(path, 'utf8')
     writeFileSync(
       path,
-      content.replace(
-        '## Standing authorizations and their limits',
-        '## Standing authorizations and their limits\n\n<!-- R6 hidden note --> Only the coordinator may mint this new grant.',
+      appendToHeadingBody(
+        content,
+        standingAuthorizationsHeading,
+        '<!-- R6 hidden note --> Only the coordinator may mint this new grant.',
       ),
     )
     const result = sweepRegistrySources(registry, tempRoot)
@@ -1007,9 +1011,10 @@ test('R6 visible prose after a multiline HTML comment close is discovered', () =
     const content = readFileSync(path, 'utf8')
     writeFileSync(
       path,
-      content.replace(
-        '## Standing authorizations and their limits',
-        '## Standing authorizations and their limits\n\n<!-- R6 hidden\nnote --> Only the coordinator may mint this new grant.',
+      appendToHeadingBody(
+        content,
+        standingAuthorizationsHeading,
+        '<!-- R6 hidden\nnote --> Only the coordinator may mint this new grant.',
       ),
     )
     const result = sweepRegistrySources(registry, tempRoot)
