@@ -230,14 +230,9 @@ was merged onto the parcel branch.
 The ambient `D:/Repos/agent-skills` checkout has a user-owned change at
 `plugins/foreman-line/routing-policy/routing-policy.yaml`; never touch or absorb it.
 
-### Standing stop-condition override — the FK-P0 / A2 spiral
-
-The prior owner drove FK-P0 through twelve rework rounds and amendment A2 through four
-drafts without landing either, overriding the charter's own “same tripwire fires” stop
-condition each time. That condition is reinstated with teeth: **this owner takes FK-P0
-through at most two rework rounds.** A third stops the loop and reports. Rework-round
-count is measured from `df8155a` forward under this ownership; inherited rounds are not
-carried, but neither are they credited.
+The relocated standing stop-condition override now lives under `## Stop conditions`, where R26
+ruling 2 moved it. Nothing normative belongs in this section: it is coordinator status, declared
+volatile, and a rule written here would be uninventoriable.
 
 ## Role and canon
 
@@ -370,6 +365,19 @@ Stop and report if:
 - a reviewer or builder modifies the ambient checkout or another worktree;
 - a user-owned change collides with the parcel; or
 - the queue is empty without every goal exit criterion evidenced.
+
+### Standing stop-condition override — the FK-P0 / A2 spiral
+
+Relocated here from `## Current state` by R26 ruling 2. It was misfiled: this is a standing stop
+condition, not a status record, and while it sat inside the volatile state section R24's region 1
+would have made it permanently uninventoriable. Its text is unchanged by the move.
+
+The prior owner drove FK-P0 through twelve rework rounds and amendment A2 through four
+drafts without landing either, overriding the charter's own “same tripwire fires” stop
+condition each time. That condition is reinstated with teeth: **this owner takes FK-P0
+through at most two rework rounds.** A third stops the loop and reports. Rework-round
+count is measured from `df8155a` forward under this ownership; inherited rounds are not
+carried, but neither are they credited.
 
 ## Wakeup and crash recovery
 
