@@ -213,6 +213,13 @@ so neither validator nor evaluator can run (F-4, map §8.4).
 | `ae95a9c` | `docs(specs): WF-P0 AC12 diff-base amendment (coordinator-ratified)` | Spec AC12 only. Standalone |
 | `eed922d` | `docs(wf-p0): refresh map claims invalidated by this parcel's own commits` | The map |
 
+**A sixth commit exists and is necessarily absent from the table above: the one that adds
+this report.** A file cannot cite the SHA of the commit that creates it. Stated explicitly
+rather than left as a table that undercounts by one — a reviewer running `git log` will find
+six commits against five rows, and this is why. Its message identifies it as the build report
+and records the coordinator's Allowed-Files widening. `git log --oneline -6` on
+`claude/hwf-wf-p0-20260904` is the authoritative list.
+
 Every commit message ends with the required `Co-Authored-By` trailer. No merge, no PR, no
 push — Gate 3 is not delegated (`charter.md:142`).
 
