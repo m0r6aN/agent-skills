@@ -37,6 +37,7 @@ import {
   STAGE_SCOPES,
   type ValidationResult,
   type ValidationViolation,
+  type VolatileExtent,
 } from './types.js'
 
 const Ajv = AjvModule as unknown as typeof AjvType
@@ -62,6 +63,10 @@ const REQUIRED_REWORK_MIGRATIONS = [
   'registry-rework-ee29973',
   'registry-rework-544d8a3',
   'registry-rework-0683bc0',
+  // Demoted from chain head by R24. A former head joins the required set the moment it stops being
+  // the head: presence is now obligatory, so deleting it fails closed rather than reading as an
+  // unclaimed slot.
+  'registry-rework-df8155a',
 ] as const
 /**
  * AC4 obligation 6 as amended by R22 - the shipped chain head, bound through channels that do NOT
@@ -80,7 +85,7 @@ const REQUIRED_REWORK_MIGRATIONS = [
  * invalidate the shipped registry. Measured: it does exactly that, AND still admits the
  * delete-and-substitute attack, because a pin binds only a record that is still present.
  */
-const SHIPPED_CHAIN_HEAD_ID = 'registry-rework-df8155a'
+const SHIPPED_CHAIN_HEAD_ID = 'registry-rework-40394be'
 /**
  * The canonical record digest of the shipped head, consulted ONLY once the record is no longer the
  * head. While it IS the head it stays bound to the live manifest, so appending a legitimately
@@ -88,7 +93,7 @@ const SHIPPED_CHAIN_HEAD_ID = 'registry-rework-df8155a'
  * it, it becomes a historical record and is bound exactly like the eleven before it.
  */
 const SHIPPED_CHAIN_HEAD_RECORD_DIGEST =
-  'ca5015f0446edbc5e1d7055357dac8d60cc87b4d283f0bba9ce26c15b40d88d2'
+  'b779d4e25e0485db35c014aa8b81428b0e8e06b2233227986f1b40745e234c18'
 const REQUIRED_OPERATIONS = [
   'gate1.ratify',
   'gate2.dispatch',
@@ -522,6 +527,12 @@ const RECONCILIATION_CONTRACT = {
     refs: ['fk-charter:item.2a524c1ea63f'],
     rules: ['rule.fk-charter.2a524c1ea63f'],
   },
+  'registry-rework-40394be': {
+    topic: 'R14 registry bindings superseded by the coordinator-ratified FK-P0 R24 amendment.',
+    status: 'superseded-by-amendment',
+    refs: ['fk-charter:item.2a524c1ea63f'],
+    rules: ['rule.fk-charter.2a524c1ea63f'],
+  },
 } as const
 
 const PRIOR_R11_BINDING_MANIFEST_DIGEST =
@@ -694,6 +705,15 @@ const RECONCILIATION_PROSE: Readonly<Record<string, readonly [string, string]>> 
     'The R14 genesis-anchored migration chain, digest-verified retirement evidence, fail-closed resolver query guard, and re-bound charter and loop-directive sources supersede the R13 registry bindings in FK scope.',
     'Future binding changes require another typed prior-to-new migration record.',
   ],
+  // R24. The prose is longer than every record before it because it carries a REDUCTION in an
+  // audited set, and R28 requires the vanished item's final digests to be pinned somewhere the
+  // validator freezes byte-exactly. `observedRefs` cannot hold them - `sourceRefViolations`
+  // requires every ref to resolve to a live item with matching digests, and this item no longer
+  // exists in the inventory - so they are pinned in the disposition text itself.
+  'registry-rework-40394be': [
+    "The R24 declared volatile regions, excised before block discovery and before ordinal assignment, supersede the R14 registry bindings in FK scope: the loop directive's operational state no longer occupies an ordinal, so appends to it cannot displace a governed sibling. Two obligations are recorded together. First, the source baseline advances to the commit whose bytes were hashed. Second, rule.fk-loop-directive.ae7854c7dad1 is DE-PUBLISHED, not retired: its subject goal.current-state-record and claim stage-zero-complete-and-fk-p0-next were an operational status snapshot published as canon, and its backing item left the audited inventory by removal into the declared region. Its final locatorDigest was cd404753257ddc78f7d8f473b679ce9410d745af89a459363f029838e6941c6c and its final valueDigest was 39dd6f0a5551d6fde0f694415fcb01f6f407115c1ca5a74da7b570239d61f371, pinned here because an observedRef must resolve to a live item and this one no longer exists.",
+    'Future binding changes require another typed prior-to-new migration record. Declaring a new volatile region over an already-published locator remains refused, so any future region that would absorb governed text requires a spec amendment first.',
+  ],
 }
 
 const RECONCILIATION_RECORD_DIGESTS: Readonly<Record<string, string>> = {
@@ -717,6 +737,12 @@ const RECONCILIATION_RECORD_DIGESTS: Readonly<Record<string, string>> = {
   'registry-rework-ee29973': 'b9a3ed7f9eaa25468df8557fb812ae343910a481450411928b8abe5d4e216bb3',
   'registry-rework-544d8a3': 'd04e710f14c6f7b9978662161c1bba011a11fe862138dd73e5e477594751fd9d',
   'registry-rework-0683bc0': 'f1a7ee84cb618300079786833537fef4494e093970cffc1ead8d1d66e2bd6aa9',
+  // Demoted from chain head by R24's `registry-rework-40394be`. Adding it here is exactly what R22
+  // obligation 7 was written to make possible: while it was the head, this entry would have
+  // declared the shipped head ineligible to be the head; now that a successor is chained above it,
+  // the pin binds it by bytes like the eleven before it, and `recordDigestPinFor` finds it here
+  // instead of in the head constant.
+  'registry-rework-df8155a': 'ca5015f0446edbc5e1d7055357dac8d60cc87b4d283f0bba9ce26c15b40d88d2',
 }
 
 const LEGACY_RECONCILIATION_SOURCE_REFS: Readonly<Record<string, readonly SourceRef[]>> = {
@@ -1280,6 +1306,21 @@ function verifyMigrationChain(document: AuthorityEnforcementRegistry): Migration
   return { path, headId: head.record.reconciliationId, violations }
 }
 
+/**
+ * Whether a Markdown block anchor sits in the DIRECT BODY of the heading at `headingPath`.
+ *
+ * Direct body, not subtree: a descendant heading's blocks carry the descendant's path, so they do
+ * not match and stay governed (R26 ruling 2). The `table-group:` arm is not cosmetic - a second
+ * table in the same body is anchored under `<path> > table-group:N`, and without it a published
+ * row in that table would be masked by the document layer while passing the hermetic guard.
+ */
+function anchorInHeadingBody(anchor: string, headingPath: string): boolean {
+  return (
+    anchor.startsWith(`md-block:${headingPath}:`) ||
+    anchor.startsWith(`md-block:${headingPath} > table-group:`)
+  )
+}
+
 export function registryBindingManifestDigest(document: AuthorityEnforcementRegistry): string {
   return sha256(
     canonicalJson({
@@ -1305,6 +1346,11 @@ export function registryBindingManifestDigest(document: AuthorityEnforcementRegi
         bindingDigest: rule.bindingDigest,
       })),
       normativeMarkdownAudit: document.normativeMarkdownAudit,
+      // The region set is part of the binding manifest, not metadata beside it. A region decides
+      // which bytes of a binding source are outside the inventory, so adding, widening, or
+      // retargeting one changes what the registry claims to govern as surely as removing a rule
+      // does - and the migration chain head must therefore refuse to cover it silently.
+      volatileRegions: document.volatileRegions,
     }),
   )
 }
@@ -2032,6 +2078,75 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
         'normative Markdown audit must equal the exact 146 item-specific source-authored dispositions',
       ),
     )
+  }
+
+  // R24 volatile regions, checked hermetically: against the shipped registry alone, with no
+  // repository and no source file. This is deliberately a SECOND implementation of the
+  // anti-laundering predicate - `sweepRegistrySources` runs the other one against the document
+  // itself. They share a violation code and are told apart by their messages (AC12). Two
+  // implementations because one of them can be wrong: the hermetic check cannot see a published
+  // block that is in the file but missing from the inventory, and the document check cannot run
+  // where there is no repository. Deleting either leaves a hole the other does not cover.
+  const declaredRegionIds = new Set<string>()
+  for (const region of document.volatileRegions) {
+    if (declaredRegionIds.has(region.regionId)) {
+      violations.push(
+        violation(
+          'VOLATILE_REGION_INVALID',
+          `volatile region '${region.regionId}' is declared more than once`,
+        ),
+      )
+      continue
+    }
+    declaredRegionIds.add(region.regionId)
+    const source = document.sources.find((candidate) => candidate.sourceId === region.sourceId)
+    if (source === undefined) {
+      violations.push(
+        violation(
+          'VOLATILE_REGION_INVALID',
+          `volatile region '${region.regionId}' names source '${region.sourceId}', which is not registered`,
+        ),
+      )
+      continue
+    }
+    const heading = source.inventoryItems.find((item) => item.itemId === region.headingItemId)
+    if (heading === undefined || heading.locator.kind !== 'heading') {
+      violations.push(
+        violation(
+          'VOLATILE_REGION_INVALID',
+          `volatile region '${region.regionId}' names heading item '${region.headingItemId}', which is not a registered heading of source '${region.sourceId}'`,
+          { sourcePath: source.path },
+        ),
+      )
+      continue
+    }
+    const path = heading.locator.anchor
+    // A region is anchored to a heading item and must never cover it, or the anchor it is pinned
+    // by would be inside the content it excises and could be rewritten without detection. Heading
+    // anchors are bare heading paths and block anchors carry the `md-block:` prefix, so the
+    // separation is structural - this asserts the structure rather than trusting it.
+    if (path.startsWith('md-block:')) {
+      violations.push(
+        violation(
+          'VOLATILE_REGION_INVALID',
+          `volatile region '${region.regionId}' is anchored to heading item '${region.headingItemId}', whose locator is a block anchor rather than a heading path`,
+          { sourcePath: source.path },
+        ),
+      )
+      continue
+    }
+    for (const item of source.inventoryItems) {
+      if (item.ruleIds.length === 0) continue
+      if (!anchorInHeadingBody(item.locator.anchor, path)) continue
+      if (region.extent.kind === 'table-column' && item.locator.kind !== 'table-row') continue
+      violations.push(
+        violation(
+          'VOLATILE_REGION_OVERLAP',
+          `volatile region '${region.regionId}' covers inventory item '${item.itemId}', which publishes ${item.ruleIds.join(', ')}`,
+          { sourcePath: source.path, locator: item.locator.anchor },
+        ),
+      )
+    }
   }
 
   for (const [key, expectedStatement] of Object.entries(R11_PROTECTED_NORMATIVE_ITEMS)) {
@@ -3194,6 +3309,239 @@ function pairedFenceLines(lines: readonly string[]): Set<number> {
   return fenced
 }
 
+/**
+ * A volatile region reduced to the two things the document layer needs: which heading it is
+ * anchored to, expressed as the same ` > `-joined path every Markdown anchor already embeds, and
+ * what shape its extent takes. Resolving a region id to a heading path is the *caller's* job -
+ * `validateRegistry` reads it from the region's governed heading item, the generator reads it from
+ * the document it is inventorying - so this layer stays purely mechanical and testable.
+ */
+export interface VolatileRegionRequest {
+  readonly regionId: string
+  readonly headingPath: string
+  readonly extent: VolatileExtent
+}
+export interface ResolvedVolatileExtent {
+  readonly regionId: string
+  readonly headingPath: string
+  readonly headingLine: number
+  readonly kind: VolatileExtent['kind']
+  readonly excisedLines: readonly number[]
+  readonly clearedCells: readonly { readonly line: number; readonly cell: number }[]
+}
+export interface VolatileResolution {
+  readonly extents: readonly ResolvedVolatileExtent[]
+  readonly failures: readonly { readonly regionId: string; readonly message: string }[]
+}
+
+function markdownHeadingIndex(content: string): {
+  readonly lines: readonly string[]
+  readonly fenced: ReadonlySet<number>
+  readonly headings: readonly { readonly line: number; readonly path: string }[]
+} {
+  const rawLines = content.replace(/\r\n?/g, '\n').split('\n')
+  const lines = stripMarkdownHtmlComments(content).replace(/\r\n?/g, '\n').split('\n')
+  const fenced = pairedFenceLines(rawLines)
+  const stack: { level: number; text: string }[] = []
+  const headings: { line: number; path: string }[] = []
+  for (let index = 0; index < lines.length; index += 1) {
+    if (fenced.has(index)) continue
+    const match = /^(#{1,6})\s+.+/.exec(lines[index] ?? '')
+    if (match === null) continue
+    const level = match[1]?.length ?? 6
+    while ((stack.at(-1)?.level ?? 0) >= level) stack.pop()
+    stack.push({ level, text: (lines[index] ?? '').trim() })
+    headings.push({ line: index, path: stack.map((item) => item.text).join(' > ') })
+  }
+  return { lines, fenced, headings }
+}
+
+/**
+ * Resolve declared volatile regions against a Markdown source, exact-or-refuse.
+ *
+ * Every resolution failure is reported rather than approximated. A region that resolves zero
+ * times, several times, or to an ambiguous column is a region whose extent nobody knows, and
+ * masking an unknown extent is how a scoped exclusion turns into a rule-retirement mechanism.
+ *
+ * `heading-subtree` covers the heading's DIRECT BODY: it starts after the heading line and stops
+ * at the next heading of any level, so descendant headings and their bodies stay governed (R26
+ * ruling 2). A heading line inside a fenced block is not a heading and does not stop the extent.
+ */
+export function resolveVolatileRegions(
+  content: string,
+  requests: readonly VolatileRegionRequest[],
+): VolatileResolution {
+  const { lines, fenced, headings } = markdownHeadingIndex(content)
+  const extents: ResolvedVolatileExtent[] = []
+  const failures: { regionId: string; message: string }[] = []
+  const seenIds = new Set<string>()
+  const claimedLines = new Map<number, string>()
+  for (const request of requests) {
+    if (seenIds.has(request.regionId)) {
+      failures.push({
+        regionId: request.regionId,
+        message: `volatile region '${request.regionId}' is declared more than once`,
+      })
+      continue
+    }
+    seenIds.add(request.regionId)
+    // Narrow the discriminated union once, on a local. Narrowing `request.extent` in place does
+    // not survive the loop body, because `request` is a mutable loop binding.
+    const extent: VolatileExtent = request.extent
+    const matches = headings.filter((heading) => heading.path === request.headingPath)
+    if (matches.length !== 1) {
+      failures.push({
+        regionId: request.regionId,
+        message:
+          matches.length === 0
+            ? `volatile region '${request.regionId}' names a heading that is absent from the source`
+            : `volatile region '${request.regionId}' names a heading that occurs ${matches.length} times in the source`,
+      })
+      continue
+    }
+    const headingLine = (matches[0] as { line: number }).line
+    let end = headingLine + 1
+    while (end < lines.length) {
+      if (!fenced.has(end) && /^#{1,6}\s+.+/.test(lines[end] ?? '')) break
+      end += 1
+    }
+    const body: number[] = []
+    for (let index = headingLine + 1; index < end; index += 1) body.push(index)
+    if (extent.kind === 'heading-subtree') {
+      // The WHOLE body span, blank lines included. Filtering blanks out was the first
+      // implementation and it leaks: `maskVolatileSource` removes these lines, so leaving the
+      // region's blank separators behind makes the count of surviving lines depend on how the
+      // volatile content happens to be paragraphed. Appending "\n\ntext" then removes two of the
+      // three inserted lines and shifts every out-of-region `lineHint` after the region by one,
+      // which is exactly the identity channel control (e) measures.
+      const span = body
+      const collision = span.find((index) => claimedLines.has(index))
+      if (collision !== undefined) {
+        failures.push({
+          regionId: request.regionId,
+          message: `volatile region '${request.regionId}' overlaps volatile region '${claimedLines.get(collision)}' at line ${collision + 1}`,
+        })
+        continue
+      }
+      for (const index of span) claimedLines.set(index, request.regionId)
+      extents.push({
+        regionId: request.regionId,
+        headingPath: request.headingPath,
+        headingLine,
+        kind: 'heading-subtree',
+        excisedLines: span,
+        clearedCells: [],
+      })
+      continue
+    }
+    const runs: number[][] = []
+    let run: number[] = []
+    for (const index of body) {
+      if (!fenced.has(index) && /^\s*\|/.test(lines[index] ?? '')) run.push(index)
+      else if (run.length > 0) {
+        runs.push(run)
+        run = []
+      }
+    }
+    if (run.length > 0) runs.push(run)
+    if (runs.length !== 1) {
+      failures.push({
+        regionId: request.regionId,
+        message:
+          runs.length === 0
+            ? `volatile region '${request.regionId}' names a table column but its heading body has no table`
+            : `volatile region '${request.regionId}' names a table column but its heading body has ${runs.length} tables`,
+      })
+      continue
+    }
+    const table = runs[0] as number[]
+    const headerLine = table[0] as number
+    const headerCells = (lines[headerLine] ?? '').trim().split('|').slice(1, -1)
+    const columnIndexes = headerCells
+      .map((cell, index) => ({ cell: cell.trim(), index }))
+      .filter((entry) => entry.cell === extent.column)
+      .map((entry) => entry.index)
+    if (columnIndexes.length !== 1) {
+      failures.push({
+        regionId: request.regionId,
+        message:
+          columnIndexes.length === 0
+            ? `volatile region '${request.regionId}' names table column '${extent.column}', which the table header does not carry`
+            : `volatile region '${request.regionId}' names table column '${extent.column}', which the table header carries ${columnIndexes.length} times`,
+      })
+      continue
+    }
+    const cell = columnIndexes[0] as number
+    extents.push({
+      regionId: request.regionId,
+      headingPath: request.headingPath,
+      headingLine,
+      kind: 'table-column',
+      excisedLines: [],
+      clearedCells: table.map((line) => ({ line, cell })),
+    })
+  }
+  return { extents, failures }
+}
+
+/**
+ * Excise resolved volatile extents from a source before anything reads it.
+ *
+ * Volatile lines are REMOVED, not blanked. Blanking was implemented first and measured to fail
+ * control (e): block discovery and ordinal assignment do skip blank lines, so no governed sibling
+ * is displaced in its container, but a blanked line still OCCUPIES a line, so appending one
+ * paragraph inside a volatile region shifts `lineHint` for every out-of-region block after it.
+ * `itemIdFor` hashes `lineHint` for any md-block item absent from the anchor-keyed frozen map, so
+ * a two-line append to the owner-of-record region churned three item IDs and DE-PUBLISHED standing
+ * authorization 8 - the ambient-checkout prohibition published this same round - because the
+ * curated classification map is keyed by item ID. A volatile append that silently retires a
+ * prohibition is precisely the laundering channel R24 exists to close, reached from the other
+ * direction.
+ *
+ * Removal closes it structurally rather than by care: the masked document contains only
+ * out-of-region lines, so their positions depend on the out-of-region content alone and no
+ * property of a volatile region - not its length, not its bytes - can reach a governed item's
+ * identity. The alternative fix, dropping `lineHint` from `itemIdFor` as the contract at spec ~613
+ * already requires, was measured and rejected for this round: it re-derives every non-frozen
+ * md-block ID in every source, which churned `fk-charter:item.ff0f88a958e0` and de-published
+ * `rule.fk-charter.ff0f88a958e0`. That is an identity-layer change across the whole corpus, and
+ * R28 refuses new identity work on this parcel.
+ *
+ * The cost is that `lineHint` for an out-of-region block after a region names its line in the
+ * masked governed surface rather than in the raw file. That is the coherent reading, not a
+ * regression: `normalizedExcerpt`, `valueDigest`, and every ordinal inside an anchor already
+ * describe the masked projection, so `lineHint` was the one field describing a different document.
+ * The spec makes it a review aid excluded from identity and digests, and anchors - heading path
+ * plus ordinal - remain exact for lookup.
+ *
+ * A `table-column` extent clears one cell per row and leaves the row, so the first-column key that
+ * forms a `table-row` anchor never moves and no line count changes. Note this operation is
+ * deliberately NOT self-idempotent for `table-column`: masked output no longer carries the named
+ * column, so re-resolving masked output fails closed. The property that matters, and that is
+ * tested, is that regenerating after a *volatile mutation of the source* is byte-identical.
+ */
+export function maskVolatileSource(
+  content: string,
+  extents: readonly ResolvedVolatileExtent[],
+): string {
+  if (extents.length === 0) return content
+  const lines = content.replace(/\r\n?/g, '\n').split('\n')
+  const removed = new Set<number>()
+  for (const extent of extents) {
+    for (const index of extent.excisedLines) removed.add(index)
+    for (const { line, cell } of extent.clearedCells) {
+      const source = lines[line] ?? ''
+      const leading = /^\s*/.exec(source)?.[0] ?? ''
+      const cells = source.trim().split('|')
+      const inner = cells.slice(1, -1)
+      if (cell >= inner.length) continue
+      inner.splice(cell, 1)
+      lines[line] = `${leading}|${inner.join('|')}|`
+    }
+  }
+  return lines.filter((_, index) => !removed.has(index)).join('\n')
+}
+
 interface MarkdownDocumentMap {
   readonly lines: readonly string[]
   readonly fenced: ReadonlySet<number>
@@ -3929,9 +4277,65 @@ export function sweepRegistrySources(document: unknown, repoRoot: string): Valid
       )
       continue
     }
-    const markdown = source.path.endsWith('.md') ? markdownDocumentMap(content) : undefined
+    // R24: excise declared volatile regions BEFORE block discovery and before ordinal assignment,
+    // so volatile content never occupies an ordinal (R26 ruling 1). Doing it here, on the source
+    // text, is what makes one implementation serve both readers of this corpus - the generator
+    // masks with the same two functions before building its own block map.
+    let scanContent = content
+    if (source.path.endsWith('.md')) {
+      const requests: VolatileRegionRequest[] = []
+      for (const region of registry.volatileRegions) {
+        if (region.sourceId !== source.sourceId) continue
+        const heading = source.inventoryItems.find((item) => item.itemId === region.headingItemId)
+        if (heading === undefined || heading.locator.kind !== 'heading') continue
+        requests.push({
+          regionId: region.regionId,
+          headingPath: heading.locator.anchor,
+          extent: region.extent,
+        })
+      }
+      if (requests.length > 0) {
+        const resolution = resolveVolatileRegions(content, requests)
+        for (const failure of resolution.failures) {
+          violations.push(
+            violation('VOLATILE_REGION_INVALID', failure.message, { sourcePath: source.path }),
+          )
+        }
+        // The document-derived half of the anti-laundering control, and deliberately not the
+        // hermetic half's predicate. That one asks whether a published item's ANCHOR falls in the
+        // region. This one asks whether a published item's own normative TEXT is among the bytes
+        // being excised, which catches what anchors cannot: a governed statement that the region
+        // swallows while its anchor sits elsewhere, and a region declared before the curation act
+        // that was supposed to precede it.
+        const sourceLines = content.replace(/\r\n?/g, '\n').split('\n')
+        for (const extent of resolution.extents) {
+          const excised = [
+            ...extent.blankedLines.map((index) => sourceLines[index] ?? ''),
+            ...extent.clearedCells.map(
+              ({ line, cell }) =>
+                (sourceLines[line] ?? '').trim().split('|').slice(1, -1)[cell] ?? '',
+            ),
+          ].join('\n')
+          const excisedText = normalizeRuleText(excised)
+          for (const item of source.inventoryItems) {
+            if (item.ruleIds.length === 0) continue
+            const statement = normalizeRuleText(item.normalizedExcerpt)
+            if (statement === '' || !excisedText.includes(statement)) continue
+            violations.push(
+              violation(
+                'VOLATILE_REGION_OVERLAP',
+                `volatile region '${extent.regionId}' excises the published text of inventory item '${item.itemId}', which publishes ${item.ruleIds.join(', ')}`,
+                { sourcePath: source.path, locator: item.locator.anchor },
+              ),
+            )
+          }
+        }
+        scanContent = maskVolatileSource(content, resolution.extents)
+      }
+    }
+    const markdown = source.path.endsWith('.md') ? markdownDocumentMap(scanContent) : undefined
     for (const item of source.inventoryItems) {
-      const extracted = extractLocator(content, item.locator, markdown)
+      const extracted = extractLocator(scanContent, item.locator, markdown)
       if (extracted.count === 0) {
         violations.push(
           violation('LOCATOR_MISSING', 'registered locator is missing', {

@@ -9,6 +9,17 @@ export const R13_PRIOR_REGISTRY_COMMIT = '0683bc059ec54a8652624fd2b7be72fe157cac
  * record, matching the convention used by every prior `registry-rework-*` id.
  */
 export const R14_PRIOR_REGISTRY_COMMIT = 'df8155a01989f69e9872ef5c08bfc18ad6b8cb03'
+/**
+ * The committed registry superseded by the R24 volatile-region rework.
+ *
+ * R28 states the naming rule that was previously folklore: one record per rework round, named for
+ * the commit that last touched the shipped YAML at the moment that round's regeneration is
+ * committed - determined then, not pre-computed. Two YAML-touching commits landed after
+ * `registry-rework-df8155a` without producing records, which is what made the convention look
+ * per-commit. Measured with `git log -1 -- authority-enforcement-registry.yaml` at
+ * implementation time.
+ */
+export const R15_PRIOR_REGISTRY_COMMIT = '40394be5fb7a5376579025513236019ad48dd86c'
 
 export const R13_NORMATIVE_MARKDOWN_AUDIT_KEYS = [
   'fk-charter:item.16f0036885ba',
