@@ -128,6 +128,33 @@ This is the second time this round that work existed only in a session's head �
 ownership block's inherited-state caveat. The lesson is the same one twice: **state that lives
 only in a session's context is state that has already been lost.** Stage-F lessons candidate.
 
+## Two writers on one parcel — the coordinator's collision, and it repeated lesson 491bf80
+
+**The coordinator caused this and owns it.** After five idle notifications with no delivery, and
+seeing HEAD at `b49fef6` with a clean tree, the coordinator judged the builder gone and began the
+restore itself. The builder was in fact alive and committed its own restore, `d307112`, in the
+same window; the coordinator committed `3ee5192` on top of it.
+
+History stayed linear and nothing was lost — **but by luck, not by design.** This is the failure
+that produced the one-goal-one-coordinator rule after commit `491fb80`, repeated here by the
+coordinator that is supposed to enforce it. Two consequences landed on the builder:
+
+- its `sweep` died mid-run with `Cannot read properties of undefined (reading 'map')` on
+  `extent.blankedLines` while the disk already read `excisedLines` — the coordinator editing
+  underneath it; and
+- its first baseline `npm test` read pre- and post-restore files in a single pass. The builder
+  discarded that run rather than report numbers from it, which is the correct call.
+
+The builder attributed the second writer to the stood-down recovery agent. **That attribution is
+wrong and is corrected here**: the recovery builder was stood down before it wrote anything, and
+there is no evidence it touched the tree. Recording it accurately matters because the alternative
+is a stood-down agent carrying the coordinator's mistake in the permanent record.
+
+**Process fix, effective at this record: one writer, and it is the builder.** The builder owns
+`plugins/foreman-line/authority-registry/` for the remainder of the round. The coordinator edits
+docs only, does not run the package's generator or tests, and asks for measurements rather than
+taking them.
+
 ## The restore, and the blocker it exposed
 
 Performed by the coordinator at `3ee5192` after the builder went idle a fifth time without
@@ -143,6 +170,16 @@ declared `excisedLines` at 3329 and the code's own comment says "the bytes being
 rename is mechanical. `tsc --noEmit` then exited 0, confirming the builder's claim exactly.
 
 ### BLOCKER — the restored YAML silently de-published a ratified charter rule
+
+**It reached a commit.** `d307112`, the builder's own restore, carries 467 rules with the charter
+rule absent — so this was not caught in a working tree, it was caught in history. The measurement
+across the three commits:
+
+| commit | rules | `rule.fk-charter.ff0f88a958e0` |
+|---|---|---|
+| `b49fef6` | 469 | present |
+| **`d307112`** | **467** | **absent** |
+| `3ee5192` | 468 | present — restored by regeneration |
 
 Measured against `b49fef6`, the restored rule set was **467**, with **two** removals rather than
 one:
