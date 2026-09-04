@@ -285,7 +285,7 @@ is described in any depth.
 ## Verification Plan
 
 **Step 0.** The builder restates this contract, states its branch, worktree, and exact base
-SHA, proves the base contains `096adfb`, confirms a clean tree, lists the two Allowed Files
+SHA, proves the base contains `096adfb`, confirms a clean tree, lists the three Allowed Files
 verbatim, and stops on any mismatch. Every dispatch including rework opens with this gate.
 
 **Deterministic pass** — coordinator's machine, **PowerShell only**, `node -v` first, exit
