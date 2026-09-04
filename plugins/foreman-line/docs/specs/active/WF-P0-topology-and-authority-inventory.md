@@ -301,8 +301,9 @@ codes never read through a truncated pipeline:
    `git merge-base --is-ancestor 096adfbffebbaf1a783801a2b286f86d10f94a17 HEAD` (must
    succeed — the same gate Constraints names, stated with the full SHA so no abbreviation
    can go ambiguous); `git status --porcelain` clean.
-3. `git diff --name-only origin/main...HEAD` is a subset of `## Allowed Files`;
-   `git diff --check` clean.
+3. `git diff --name-only <parcel base SHA>..HEAD` is a subset of `## Allowed Files`, using
+   the same parcel base SHA as AC12 and the map header — **not** `origin/main`, for the
+   reason AC12 states. `git diff --check` clean.
 4. Spec-linter run over the spec; advisory warnings recorded, not silenced.
 5. Every `path:line-range` citation in the map resolved against the recorded base commit.
    A citation that does not resolve is a Blocker, not a typo.
