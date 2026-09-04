@@ -394,7 +394,7 @@ the structural guarantee is the one worth having.
 | region | extent | governed content kept out by |
 |---|---|---|
 | 1 — `## Current state` | `heading-subtree`, descendant headings excluded | relocation of the stop condition and the prohibition; section now has no normative content |
-| 2 — `### Owner of record and handoff state` | `heading-subtree` | sibling subheading placement (2c) |
+| 2 — `### Owner of record and handoff state` | `heading-subtree` | **direct-body placement (2c, corrected at `9a273a0`)** — the published records stay direct body of the `##`, above the subheading |
 | 3 — queue `State` column | `table-column` | column scope; `paragraph:1` is outside the table entirely |
 
 **The closed extent union is therefore two kinds: `heading-subtree` and `table-column`.**
@@ -1605,9 +1605,39 @@ registry under test.
      (11 `LOCATOR_MISSING`, 54 `SOURCE_ITEM_UNCOVERED`, 6 `VALUE_DIGEST_MISMATCH`; obligations
      2b/2c moved blocks under two new `###` paths, so their old anchors are missing rather than
      mismatched — which is why `VALUE_DIGEST_MISMATCH` *fell* from 10 to 6 while the total rose).
+     and **54** at `9a273a0` (2 `LOCATOR_MISSING`, 45 `SOURCE_ITEM_UNCOVERED`, 7
+     `VALUE_DIGEST_MISMATCH`), after 2c was corrected to direct-body placement — which removed
+     the nine `LOCATOR_MISSING` caused by re-anchoring five published rules.
      A reviewer comparing against 45 would misread the difference as a regression introduced by
      the round; it is the coordinator's own source corrections, and it is recorded here so the
      comparison is against the right number.
+
+     **The acceptance assertion, final form (R28).** Superseding both earlier statements:
+     **no published rule's item ID, rule ID, or `locatorDigest` changes this round.** Exactly one
+     `valueDigest` changes (`7a05d374a3b1`, the ownership blockquote). Exactly one rule is
+     removed (`ae7854c7dad1`, the status snapshot). Exactly one rule is **added** — standing
+     authorization 8, the relocated ambient-checkout prohibition, classified
+     `pre-action-refusal`. Shipped rule count therefore moves **469 → 468 → 469**: net zero by
+     two opposite movements, and both must appear separately in the evidence rather than
+     cancelling silently.
+
+     **No new identity-migration mechanism is authorized.** A value-pinned relocation map was
+     designed and is now unnecessary for every published rule, because direct-body placement
+     preserves their anchors outright. Identity-layer machinery is where R11 already failed on
+     this parcel — handing a prior item's identity to an unrelated new block — so a round-6
+     addition there is refused on principle when a placement change achieves the same end. Where
+     an *unpublished* audited item genuinely vanishes into a declared region, it leaves
+     `R13_NORMATIVE_MARKDOWN_AUDIT_KEYS` by removal recorded in the reconciliation record with
+     its final `locatorDigest` and `valueDigest` pinned — reported as its own evidence category,
+     never as incidental churn, because it is a reduction in an audited set. The audit count
+     moves 146 → 145 and is asserted in three further places that must move with it.
+
+     **Obligation 1's evidence lives in the reconciliation record, not on an inventory item.**
+     `item.ae7854c7dad1` carries no `normativeMarkdownAudit` record — its rationale is the
+     inventory item's own field — and once region 1 is declared the item is excised, so there is
+     nothing left to hold an item-specific rationale. `observedRefs` is shaped for exactly this.
+     The rule leaves enforcement by a curated, digest-pinned, evidenced act; never by a region
+     declaration quietly swallowing it.
    - **(b) Positive control — governed prose still fails closed.** A test mutates a *governed*
      normative sentence in the **same** source, specifically one of the ownership block's rule
      sentences, and asserts the sweep still reports a violation with the specific expected code.
