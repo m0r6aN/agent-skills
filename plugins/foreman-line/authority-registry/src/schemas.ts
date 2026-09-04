@@ -54,6 +54,7 @@ export const authorityEnforcementRegistrySchema: SchemaObject = {
     'operationAuthority',
     'reconciliations',
     'normativeMarkdownAudit',
+    'volatileRegions',
   ],
   properties: {
     schemaVersion: { const: '0.1.0' },
@@ -462,6 +463,39 @@ export const authorityEnforcementRegistrySchema: SchemaObject = {
               'fenced-code',
               'type-only',
               null,
+            ],
+          },
+          rationale: { type: 'string', minLength: 1 },
+        },
+      },
+    },
+    volatileRegions: {
+      type: 'array',
+      items: {
+        type: 'object',
+        additionalProperties: false,
+        required: ['regionId', 'sourceId', 'headingItemId', 'extent', 'rationale'],
+        properties: {
+          regionId: id,
+          sourceId: id,
+          headingItemId: id,
+          extent: {
+            oneOf: [
+              {
+                type: 'object',
+                additionalProperties: false,
+                required: ['kind'],
+                properties: { kind: { const: 'heading-subtree' } },
+              },
+              {
+                type: 'object',
+                additionalProperties: false,
+                required: ['kind', 'column'],
+                properties: {
+                  kind: { const: 'table-column' },
+                  column: { type: 'string', minLength: 1 },
+                },
+              },
             ],
           },
           rationale: { type: 'string', minLength: 1 },
