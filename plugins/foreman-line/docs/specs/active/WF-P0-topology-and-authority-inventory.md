@@ -34,12 +34,22 @@ and reads no credential value.
 
 ## Constraints
 
-- **Base.** The builder's worktree is created from **fresh `origin/main`** and its exact
-  40-character base SHA is recorded in the map header. This spec was shaped against
-  `bc5ed89978ed2614e1b6e5e1016bac1a22dbb68b`, which contains
+- **Base.** *(Coordinator-ratified amendment, 2026-09-04 — replaces "created from fresh
+  `origin/main`".)* The builder's worktree is created from the **ratified-spec commit**
+  `975f0570` on `claude/hwf-wf-p0-shaping-20260903`, and its exact 40-character base SHA is
+  recorded in the map header. That commit contains all of `origin/main`
+  (`5ce6ddc7f996d764e506b6b421779fbf3ece689a`, verified unmoved on the remote at dispatch
+  time) and therefore contains
   `096adfbffebbaf1a783801a2b286f86d10f94a17` ("retarget routing policy to OpenRouter
-  (v0.3)"), so `routing-policy.yaml` reads **v0.3** and every citation in this spec was
-  resolved against that tree.
+  (v0.3)"), so `routing-policy.yaml` reads **v0.3** and every citation in this spec resolves
+  against the builder's own tree.
+
+  Reason for the amendment: the original wording said `origin/main`, but this spec is not on
+  `main` — it is on the shaping branch. A builder based literally on `origin/main` would not
+  have the spec it is being dispatched against, while a builder based on the shaping branch
+  satisfies the wording's actual purpose, which is to guarantee the base is not a stale
+  lineage. The base gate below is unchanged and remains the mechanical check; it passes on
+  this base. Nothing else in the spec changes.
 - **Base gate — run it even though the known hazard is now historical.** Before writing a
   single entry, verify that
   `git merge-base --is-ancestor 096adfbffebbaf1a783801a2b286f86d10f94a17 HEAD` succeeds.
