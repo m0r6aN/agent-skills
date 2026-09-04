@@ -94,10 +94,13 @@ their `list-item:1..5` anchors. See the ordering note there.)_
 
 ## Current state — update at every stop or parcel closure
 
-**STATE 2026-09-04 #1 (live) — CRASH RECOVERY ACTIVE. The developer ruled the prior coordinator
-and round-6 builder dead and transferred ownership to this Codex session. FK-P0 remains mid-round,
-not at Gate 3. The committed package is being inventoried before a replacement builder receives a
-fresh Step 0 dispatch.**
+**STATE 2026-09-04 #2 (live) — ROUND 6 RECOVERY BUILD ACTIVE. The developer ruled the prior
+coordinator and round-6 builder dead and transferred ownership to this Codex session. Replacement
+builder Newton (`01a06c31-f56b-7d80-ab38-9508ee64fedc`) completed a read-only Step 0 against
+`dd1b434`: 583 tests, 561 pass, 22 fail; the inherited R29.3 partial has one TypeScript duplicate-
+key error and no controls (a)–(g). The coordinator ruled that `5f9cf65` is the deliberate live
+source snapshot while `51857a3` remains the historical dispatch authority. Implementation may
+resume from the two preserved uncommitted package files. FK-P0 remains mid-round, not at Gate 3.**
 
 This block is itself the first real test of what round 6 built: it is a coordinator state update
 written into a **declared volatile region**, and the sweep must absorb it with zero violations.
@@ -370,7 +373,7 @@ The plan-review transcript is
 
 | Parcel | State | Depends on |
 |---|---|---|
-| FK-P0 — Canon authority and enforcement registry | **AT GATE 3 — built, reworked 5 rounds, green chain independently reproduced 2026-09-03; awaiting the developer's merge. Not pushed, not merged, Stage F not run.** | none |
+| FK-P0 — Canon authority and enforcement registry | **ROUND 6 RECOVERY BUILD ACTIVE — Newton completed Step 0 at `dd1b434`; inherited baseline 583 total / 561 pass / 22 fail; implementation authorized after the live-snapshot ruling. Not pushed, not merged, Stage F not run.** | none |
 | FK-P1 — Lifecycle, admission, and decision contracts | pending | FK-P0 |
 | FK-P2 — Spec-body compiler | pending | FK-P0, FK-P1 |
 | FK-P3 — Pure dispatch decisions | pending | FK-P1 |
