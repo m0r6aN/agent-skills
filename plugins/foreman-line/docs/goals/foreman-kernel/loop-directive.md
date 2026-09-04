@@ -43,9 +43,18 @@ Everything under this subheading is volatile operational state and is the declar
 region 2. The ownership rule and the `Ratified authority` records are above it as direct body of
 the parent heading, outside this subtree.
 
-**Owner of record.** The second Claude Code coordinator session of 2026-09-03, entered via
-`/goal resume foreman-kernel` after the first 2026-09-03 session stopped at Gate 3, holding
-ownership under the developer's explicit ruling of that date that the prior session is dead.
+**Owner of record.** The Codex coordinator session resumed on 2026-09-04, holding
+crash-recovery ownership under the developer's explicit ruling that the second 2026-09-03
+Claude Code coordinator and the round-6 builder are dead.
+
+**Handoff record — 2026-09-04.** The developer explicitly ruled both the second 2026-09-03
+Claude Code coordinator and its round-6 builder dead and directed transfer of Foreman Kernel
+crash-recovery ownership to this Codex session. The transfer preserves the clean parcel worktree
+at `249903529d2f25aa99617de370a0e3738dab02cf`, the incomplete round-6 package and stop report,
+and every recorded open obligation. No completion, review, Gate 3, push, merge, or Stage F claim
+is inherited from the dead sessions. This session must inventory the committed package, establish
+the current test baseline, and dispatch a fresh builder through Step 0 before implementation
+continues.
 
 **Disambiguation for a future reader:** two coordinator sessions held this goal on 2026-09-03.
 The first reproduced the inherited green chain and wrote `FK-P0-MERGE-READY-material.md`; the
@@ -85,9 +94,10 @@ their `list-item:1..5` anchors. See the ordering note there.)_
 
 ## Current state — update at every stop or parcel closure
 
-**STATE 2026-09-03 #2 (live) — LOOP STOPPED. Round 6's builder died on an API credit limit (HTTP
-402), which is an environment stop condition the coordinator cannot resolve. FK-P0 is mid-round,
-not at Gate 3.**
+**STATE 2026-09-04 #1 (live) — CRASH RECOVERY ACTIVE. The developer ruled the prior coordinator
+and round-6 builder dead and transferred ownership to this Codex session. FK-P0 remains mid-round,
+not at Gate 3. The committed package is being inventoried before a replacement builder receives a
+fresh Step 0 dispatch.**
 
 This block is itself the first real test of what round 6 built: it is a coordinator state update
 written into a **declared volatile region**, and the sweep must absorb it with zero violations.
