@@ -330,43 +330,6 @@ export interface ReconciliationRecord {
   readonly migrationStatus: MigrationStatus
   readonly supersedingEvidence: SourceRef | null
 }
-/**
- * The closed union of ways a volatile region may name its extent (R26 ruling 3).
- *
- * Closed, and deliberately small. `block-prefix-span` and every other text-bounded or
- * content-substring extent is NOT authorized: an extent whose boundary is a substring of the
- * content it governs moves when that content is rewritten, which is the one thing a volatile
- * region must survive.
- *
- * - `heading-subtree` covers the *direct body* of its heading and stops at the next heading of
- *   any level. Descendant headings and their bodies are EXCLUDED (R26 ruling 2). The name is
- *   inherited from the ratified amendment; read it as "the heading's own body".
- * - `table-column` covers one named column of the one table in that direct body. The row itself
- *   survives with its first-column key intact, so `table-row` anchors do not move.
- */
-export const VOLATILE_EXTENT_KINDS = ['heading-subtree', 'table-column'] as const
-export type VolatileExtentKind = (typeof VOLATILE_EXTENT_KINDS)[number]
-export type VolatileExtent =
-  | { readonly kind: 'heading-subtree' }
-  | { readonly kind: 'table-column'; readonly column: string }
-/**
- * A region of a binding source that canon requires the coordinator to rewrite, and which is
- * therefore outside the inventory boundary rather than inside it as an excluded item (R24).
- *
- * A region is anchored by the *item id of its own heading*, never by the heading's text and never
- * by a line range. That gives it two properties it needs at once: it survives the region's body
- * being rewritten wholesale, which is the point; and it cannot be silently relocated, because the
- * heading item stays inside the inventory, published or excluded, with its value digest pinned -
- * so editing the heading trips `VALUE_DIGEST_MISMATCH` on the heading rather than sliding the
- * region onto different content. A region never covers its own heading item.
- */
-export interface VolatileRegion {
-  readonly regionId: string
-  readonly sourceId: string
-  readonly headingItemId: string
-  readonly extent: VolatileExtent
-  readonly rationale: string
-}
 export interface AuthorityEnforcementRegistry {
   readonly schemaVersion: '0.1.0'
   readonly registryId: 'foreman-kernel-authority-enforcement'
@@ -376,7 +339,6 @@ export interface AuthorityEnforcementRegistry {
   readonly operationAuthority: readonly OperationAuthority[]
   readonly reconciliations: readonly ReconciliationRecord[]
   readonly normativeMarkdownAudit: readonly NormativeMarkdownAuditRecord[]
-  readonly volatileRegions: readonly VolatileRegion[]
 }
 
 export const RESULT_CODES = [
@@ -397,19 +359,6 @@ export const RESULT_CODES = [
   'RULE_SOURCE_MISSING',
   'RULE_CONFLICT',
   'AUTHORITY_ESCALATION',
-  /**
-   * A declared volatile region covers an inventory item that publishes a rule. Validity-blocking,
-   * fail-closed: a scoped exclusion that can swallow a published rule is a rule-retirement
-   * mechanism wearing a boundary's clothes, and retirement is not what R24 authorizes.
-   */
-  'VOLATILE_REGION_OVERLAP',
-  /**
-   * A volatile-region declaration cannot be resolved to exactly one extent: its heading item is
-   * absent, its heading resolves zero or several times in the source, its named table column is
-   * absent or ambiguous, it covers its own heading item, or two regions share an id. Resolution is
-   * exact-or-refuse, because a region that resolves loosely masks whatever happens to sit there.
-   */
-  'VOLATILE_REGION_INVALID',
   'RETIREMENT_EVIDENCE_INCOMPLETE',
   /**
    * Operator misconfiguration: the supplied repository root exists but is not the root of a real

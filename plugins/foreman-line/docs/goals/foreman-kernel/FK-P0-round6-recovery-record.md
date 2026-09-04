@@ -128,13 +128,83 @@ This is the second time this round that work existed only in a session's head �
 ownership block's inherited-state caveat. The lesson is the same one twice: **state that lives
 only in a session's context is state that has already been lost.** Stage-F lessons candidate.
 
+## The restore, and the blocker it exposed
+
+Performed by the coordinator at `3ee5192` after the builder went idle a fifth time without
+delivering. Scope was deliberately narrow and non-authorial: check out `b0518f8`, change one
+identifier, run the generator. The masking primitive, schema, extent union and guards remain the
+builder's work, and **the coordinator authored no design and will author none of the controls** —
+the controls *are* the verification, and D4 forbids a coordinator producing verification of its
+own parcel. Restoring preserved code and running a deterministic generator is diagnosis; writing
+the tests that prove the parcel correct is not.
+
+The one fix was `validate.ts:4313`, `extent.blankedLines` → `extent.excisedLines`. The field is
+declared `excisedLines` at 3329 and the code's own comment says "the bytes being excised", so the
+rename is mechanical. `tsc --noEmit` then exited 0, confirming the builder's claim exactly.
+
+### BLOCKER — the restored YAML silently de-published a ratified charter rule
+
+Measured against `b49fef6`, the restored rule set was **467**, with **two** removals rather than
+one:
+
+| rule | authorized |
+|---|---|
+| `rule.fk-loop-directive.ae7854c7dad1` | yes — obligation 1 |
+| **`rule.fk-charter.ff0f88a958e0`** | **no** |
+
+`item.ff0f88a958e0` had been renamed to `item.49359f6269b5`. Because the curated classification
+map is keyed by **item ID**, the renamed item missed it, could not publish, and landed as:
+
+```yaml
+ruleIds: []
+exclusionDisposition: non-normative-explanation
+rationale: "…is explanatory context and does not state an independent normative authority rule."
+```
+
+That item is **charter integration scenario 14 — the decision-path latency scenario**, added by
+A1.5 and bound to **D21**. A ratified charter rule tied to a locked decision was declassified to
+"explanatory context" by generated boilerplate, **and `sweep` reported zero violations**, because
+an item declassified plus a rule not emitted is self-consistent and leaves no trace. Controls (a)
+through (f) cannot see it.
+
+**This is the under-curation gap, no longer hypothetical.** It is the strongest possible argument
+for control (g), and it arrived by accident in the working tree rather than by adversarial probing.
+
+**Cause:** the builder's reverted `itemIdFor` experiment. It reverted the *code* and not the
+*generated YAML*, so `b0518f8` shipped a stale artifact of an abandoned change. Regenerating from
+the reverted code restores the charter rule. Lesson candidate: **a revert that does not regenerate
+its artifacts is not a revert** — and the artifact was clean, validating, and wrong.
+
+### State at `3ee5192`, coordinator-measured
+
+| check | result |
+|---|---|
+| `tsc --noEmit` | exit 0 |
+| `biome check .` | exit 0, 5 infos |
+| `npm run generate` | exit 0, `{"items":1525,"rules":468,"sources":18}` |
+| `validate` | exit 0, valid, 0 violations, 468 rules / 1525 items |
+| `sweep --repo-root` | **exit 0, valid, 0 violations — down from 54** |
+| rule set | 469 → 468, exactly one removal, zero additions |
+
+**The defect this round exists to fix is closed:** editing the volatile regions no longer produces
+sweep violations.
+
 ## Open at this record
 
-- Round 6's real deliverables are all still open: the masking primitive, obligation 1, standing
-  authorization 8's curation, the two-kind extent union, the two new result codes, all seven
-  controls, and the migration record with its new chain head.
-- `npm test` remains **genuinely unmeasured** for this round. The 583 / 580 pass / 3 fail figures
-  predate three governed-source commits and must not be quoted as current.
-- Coordinator-measured sweep baseline: **54 violations at `9a273a0`** — 2 `LOCATOR_MISSING`,
-  45 `SOURCE_ITEM_UNCOVERED`, 7 `VALUE_DIGEST_MISMATCH`.
+Landed at `3ee5192`: the masking primitive, the two-kind extent union, obligation 1, the two new
+result codes, the schema change, and a green `sweep`.
+
+**Still open, and the reason `3ee5192` is a `wip` checkpoint rather than a claim:**
+
+- **Standing authorization 8 is not published.** The count is 468; R28 requires 469 by adding it
+  with curated classification (`pre-action-refusal`) and applicability.
+- **None of controls (a) through (g) exist.** No test file has been touched this round. These are
+  builder work and will not be written by the coordinator.
+- **The migration record and new chain head are not written.**
+- **`npm run generate` is not idempotent yet** — it rewrites the YAML and `pass-minimal.yaml`, so
+  the clean-`git status` gate is unproven.
+- **`npm test` was unmeasured at the checkpoint** and is being measured now. The
+  583 / 580 pass / 3 fail figures predate four governed-source commits and must not be quoted.
+- The `{sourceId, kind, anchor}` divergence from spec line 613 stands as a recorded finding for a
+  later parcel, deliberately unfixed here.
 - Not pushed, not merged, Stage F not run, **Gate 3 not delegated.**

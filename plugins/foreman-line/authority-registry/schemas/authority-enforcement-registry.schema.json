@@ -12,8 +12,7 @@
     "rules",
     "operationAuthority",
     "reconciliations",
-    "normativeMarkdownAudit",
-    "volatileRegions"
+    "normativeMarkdownAudit"
   ],
   "properties": {
     "schemaVersion": {
@@ -937,71 +936,6 @@
               "fenced-code",
               "type-only",
               null
-            ]
-          },
-          "rationale": {
-            "type": "string",
-            "minLength": 1
-          }
-        }
-      }
-    },
-    "volatileRegions": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "regionId",
-          "sourceId",
-          "headingItemId",
-          "extent",
-          "rationale"
-        ],
-        "properties": {
-          "regionId": {
-            "type": "string",
-            "pattern": "^[a-z0-9]+(?:[.-][a-z0-9]+)*$"
-          },
-          "sourceId": {
-            "type": "string",
-            "pattern": "^[a-z0-9]+(?:[.-][a-z0-9]+)*$"
-          },
-          "headingItemId": {
-            "type": "string",
-            "pattern": "^[a-z0-9]+(?:[.-][a-z0-9]+)*$"
-          },
-          "extent": {
-            "oneOf": [
-              {
-                "type": "object",
-                "additionalProperties": false,
-                "required": [
-                  "kind"
-                ],
-                "properties": {
-                  "kind": {
-                    "const": "heading-subtree"
-                  }
-                }
-              },
-              {
-                "type": "object",
-                "additionalProperties": false,
-                "required": [
-                  "kind",
-                  "column"
-                ],
-                "properties": {
-                  "kind": {
-                    "const": "table-column"
-                  },
-                  "column": {
-                    "type": "string",
-                    "minLength": 1
-                  }
-                }
-              }
             ]
           },
           "rationale": {

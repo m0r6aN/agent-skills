@@ -12,7 +12,6 @@ import {
   R13_NORMATIVE_MARKDOWN_PUBLICATION_KEYS,
   R13_PRIOR_REGISTRY_COMMIT,
   R14_PRIOR_REGISTRY_COMMIT,
-  R15_PRIOR_REGISTRY_COMMIT,
 } from './registry.js'
 import type {
   AuthorityEffect,
@@ -28,21 +27,16 @@ import type {
   SourceKind,
   SourceLocator,
   SourceRef,
-  VolatileExtent,
-  VolatileRegion,
 } from './types.js'
 import {
   bindingDigestFor,
   canonicalJson,
   locatorDigestFor,
-  maskVolatileSource,
   normalizeRuleText,
   permissionProfileRuleMap,
   registryBindingManifestDigest,
-  resolveVolatileRegions,
   sha256,
   typescriptConstructMap,
-  type VolatileRegionRequest,
 } from './validate.js'
 
 /**
@@ -63,123 +57,7 @@ const SNAPSHOT = '51857a3a7796b393c0c0a68712f98c06e7015d79'
  * commit whose bytes were not the ones hashed would be a knowingly false statement, so this
  * advances and the advance is recorded as a typed migration record.
  */
-const CURRENT_SNAPSHOT = '5f9cf65eec98f5496202639007205da81ef1c34d'
-
-/**
- * The snapshot the R14 record was authored against, now historical.
- *
- * `registry-rework-df8155a` is demoted from chain head by this round, so it becomes a byte-frozen
- * record bound by `RECONCILIATION_RECORD_DIGESTS` exactly like the twelve before it. It therefore
- * has to keep declaring the commit whose bytes IT hashed. Deriving it from `CURRENT_SNAPSHOT`
- * would rewrite a historical attestation every time the live baseline advances, which is the same
- * defect the pinned `R13_MANIFEST` constants below exist to prevent.
- */
-const R14_SNAPSHOT = '7e7dc7dbb90317a5a2cd69c21a8b86c4a3a4e1e2'
-/**
- * The three volatile regions R24 authorizes, with the extents R27 corrected.
- *
- * Declared by heading PATH here and emitted with the heading's own item id, because the path is
- * what a document match needs and the item id is what a hermetic reader needs. The path is never
- * shipped: shipping it would put a second, unpinned copy of the heading text in the registry, and
- * the whole point of anchoring on the heading item is that the heading stays digest-pinned inside
- * the inventory. Resolution is exact-or-throw here, so a coordinator edit that detaches a region
- * stops `npm run generate` instead of silently masking a different span.
- *
- * Region 3 is column-scoped, not section-scoped. R25 claimed the queue section carried no
- * published rule; measured, it carries one - `item.1576c95260b6`, the parallelism and
- * serialization rule at `paragraph:1` - so a section-scoped region 3 would have been refused by
- * its own anti-laundering control.
- */
-const VOLATILE_REGION_DECLARATIONS: readonly {
-  readonly regionId: string
-  readonly sourceId: string
-  readonly headingPath: string
-  readonly extent: VolatileExtent
-  readonly rationale: string
-}[] = [
-  {
-    regionId: 'region.fk-loop-directive.current-state',
-    sourceId: 'fk-loop-directive',
-    headingPath:
-      '# Foreman Kernel — Coordinator Loop Directive > ## Current state — update at every stop or parcel closure',
-    extent: { kind: 'heading-subtree' },
-    rationale:
-      'Canon requires the coordinator to rewrite this section at every stop and every parcel closure, so its bytes are operational state rather than authority. It is declarable only because the two rules that were sitting in it moved out first: the standing stop-condition override to `## Stop conditions` (R26 ruling 2) and the ambient-checkout prohibition to standing authorization 8 (R27). Descendant headings are excluded by the extent kind and the section now has none.',
-  },
-  {
-    regionId: 'region.fk-loop-directive.owner-of-record',
-    sourceId: 'fk-loop-directive',
-    headingPath:
-      '# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything > ### Owner of record and handoff state',
-    extent: { kind: 'heading-subtree' },
-    rationale:
-      'Owner identity and handoff records change at every ownership transfer. The extent covers this subheading only: the ownership rule and the five `Ratified authority` records - including the pinned Standing Gate 2 grant `item.47a75730afd6`, referenced from three sites in `src/validate.ts` - are kept out by remaining direct body of the parent `##` heading, which is a structural guarantee rather than a prose scope.',
-  },
-  {
-    regionId: 'region.fk-loop-directive.queue-state',
-    sourceId: 'fk-loop-directive',
-    headingPath: '# Foreman Kernel — Coordinator Loop Directive > ## Queue and dependency order',
-    extent: { kind: 'table-column', column: 'State' },
-    rationale:
-      'Per-parcel progress is recorded in one column of the queue table and changes at every parcel transition, while the parcel name and its dependency edges are ratified graph structure. Column scope keeps the row and its first-column key, so every `table-row` anchor holds, and leaves `paragraph:1` - the parallelism and serialization rule - entirely outside the region.',
-  },
-]
-
-/**
- * Mask a Markdown source's declared volatile regions before ANY reader builds a block map.
- *
- * Every generator path that discovers Markdown blocks goes through here, so excision necessarily
- * precedes both block discovery and ordinal assignment (R26 ruling 1). Resolution failure throws:
- * the generator is the one reader that can still be fixed by a human before anything ships, and a
- * region it cannot resolve is a region whose extent nobody knows.
- */
-function maskVolatileMarkdown(sourceId: string, content: string): string {
-  const requests: VolatileRegionRequest[] = VOLATILE_REGION_DECLARATIONS.filter(
-    (declaration) => declaration.sourceId === sourceId,
-  ).map((declaration) => ({
-    regionId: declaration.regionId,
-    headingPath: declaration.headingPath,
-    extent: declaration.extent,
-  }))
-  if (requests.length === 0) return content
-  const resolution = resolveVolatileRegions(content, requests)
-  if (resolution.failures.length > 0) {
-    throw new Error(
-      `volatile region resolution failed: ${resolution.failures.map((failure) => failure.message).join('; ')}`,
-    )
-  }
-  return maskVolatileSource(content, resolution.extents)
-}
-
-/**
- * Bind each declared region to the item id of its own heading, which is the only anchor a reader
- * of the shipped registry can check without re-reading the source.
- *
- * Throws when the heading is not in the inventory as a `heading` item. A region whose heading is
- * not inventoried is a region with no pinned anchor, which is exactly the silent-relocation
- * failure the item-id binding exists to prevent.
- */
-function volatileRegionsFor(sources: readonly CanonSource[]): VolatileRegion[] {
-  return VOLATILE_REGION_DECLARATIONS.map((declaration) => {
-    const source = sources.find((candidate) => candidate.sourceId === declaration.sourceId)
-    const heading = source?.inventoryItems.find(
-      (item) => item.locator.kind === 'heading' && item.locator.anchor === declaration.headingPath,
-    )
-    if (heading === undefined) {
-      throw new Error(
-        `volatile region '${declaration.regionId}' has no inventoried heading item for '${declaration.headingPath}'`,
-      )
-    }
-    return {
-      regionId: declaration.regionId,
-      sourceId: declaration.sourceId,
-      headingItemId: heading.itemId,
-      extent: declaration.extent,
-      rationale: declaration.rationale,
-    }
-  })
-}
-
+const CURRENT_SNAPSHOT = '7e7dc7dbb90317a5a2cd69c21a8b86c4a3a4e1e2'
 const R12_GATE2_ALLOW_ITEMS = new Set([
   'fk-charter:item.15a44cf50bc6',
   'fk-loop-directive:item.47a75730afd6',
@@ -718,10 +596,7 @@ function frozenMarkdownItemIds(): Map<string, string> {
   for (const source of priorR11Registry().sources.filter((candidate) =>
     candidate.path.endsWith('.md'),
   )) {
-    const content = maskVolatileMarkdown(
-      source.sourceId,
-      readFileSync(join(repoRoot, ...source.path.split('/')), 'utf8'),
-    )
+    const content = readFileSync(join(repoRoot, ...source.path.split('/')), 'utf8')
     for (const block of markdownBindingBlocks(markdownDocumentMap(content))) {
       const frozenKey = `${source.sourceId}\u0000${block.locator.anchor}`
       if (identities.has(frozenKey)) continue
@@ -2204,6 +2079,7 @@ const CURATED_ITEM_CLASSIFICATIONS: Readonly<Record<string, RuleClassification>>
   'fk-loop-directive:item.4f0fb14fbd95': 'narrative-provenance',
   'fk-loop-directive:item.47a75730afd6': 'pre-action-refusal',
   'fk-loop-directive:item.08b3cbb91027': 'pre-action-refusal',
+  'fk-loop-directive:item.ae7854c7dad1': 'post-action-detection',
   'fk-loop-directive:item.dd8203551518': 'pre-action-refusal',
   'fk-loop-directive:item.ebdd14e6f524': 'pre-action-refusal',
   'fk-loop-directive:item.a59b01361dc6': 'pre-action-refusal',
@@ -2219,12 +2095,6 @@ const CURATED_ITEM_CLASSIFICATIONS: Readonly<Record<string, RuleClassification>>
   'fk-loop-directive:item.64341d1e8b82': 'pre-action-refusal',
   'fk-loop-directive:item.7eb6018d9e57': 'pre-action-refusal',
   'fk-loop-directive:item.7aa2dd930e35': 'pre-action-refusal',
-  // Standing authorization 8, published this round. It is a prohibition, and it was sitting in
-  // `## Current state` carrying `ruleIds: []` plus a generated rationale asserting it stated no
-  // rule - which is precisely the laundering shape R24 exists to close. Classified
-  // `pre-action-refusal` because it must stop the read or write BEFORE the ambient checkout is
-  // touched; a post-action detection of an absorbed user-owned change is not a remedy.
-  'fk-loop-directive:item.8be213f2455a': 'pre-action-refusal',
   'fk-loop-directive:item.8c0b09120ff1': 'ci-static-check',
   'fk-loop-directive:item.d3b0e9dd63d0': 'pre-action-refusal',
   'fk-loop-directive:item.f7e8dffebadc': 'ci-static-check',
@@ -2686,6 +2556,10 @@ const CURATED_ITEM_IDENTITIES: Readonly<Record<string, readonly [string, string]
     'coordinator-may-dispatch-fk-p0-through-fk-p21-conditionally',
   ],
   'fk-loop-directive:item.08b3cbb91027': ['gate3.merge-authority', 'human-owned-nondelegated'],
+  'fk-loop-directive:item.ae7854c7dad1': [
+    'goal.current-state-record',
+    'stage-zero-complete-and-fk-p0-next',
+  ],
   'fk-loop-directive:item.dd8203551518': [
     'verification.issue-authority',
     'coordinator-consumes-but-never-produces-independent-verification',
@@ -2742,10 +2616,6 @@ const CURATED_ITEM_IDENTITIES: Readonly<Record<string, readonly [string, string]
   'fk-loop-directive:item.7aa2dd930e35': [
     'scm.external-write-authority',
     'push-or-pr-requires-explicit-contract-and-developer-authority',
-  ],
-  'fk-loop-directive:item.8be213f2455a': [
-    'workspace.ambient-checkout-authority',
-    'ambient-checkout-never-read-written-or-absorbed',
   ],
   'fk-loop-directive:item.8c0b09120ff1': [
     'parcel.queue-verification',
@@ -4938,6 +4808,13 @@ const CURATED_ITEM_APPLICABILITY = {
     operations: ['repo-mutation'],
     hosts: ['any'],
   },
+  'fk-loop-directive:item.ae7854c7dad1': {
+    goals: ['foreman-kernel'],
+    roles: ['coordinator'],
+    stages: ['stage-zero'],
+    operations: ['source-inventory'],
+    hosts: ['provider-neutral'],
+  },
   'fk-loop-directive:item.dd8203551518': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
@@ -5112,18 +4989,6 @@ const CURATED_ITEM_APPLICABILITY = {
     roles: ['coordinator', 'builder'],
     stages: ['build', 'merge'],
     operations: ['external-write'],
-    hosts: ['any'],
-  },
-  // The source text names its own scope literally: "No agent working this goal - coordinator,
-  // builder, reviewer, or shaping session". `shaper` is the registry's name for a shaping session.
-  // Both read and write are prohibited, so `repo-read` sits alongside `repo-mutation`; a
-  // read-only-is-fine reading is exactly the reading the sentence forecloses. Every stage, because
-  // the prohibition has no stage qualifier.
-  'fk-loop-directive:item.8be213f2455a': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator', 'shaper', 'builder', 'reviewer'],
-    stages: ['any'],
-    operations: ['repo-read', 'repo-mutation'],
     hosts: ['any'],
   },
   'fk-loop-directive:item.8c0b09120ff1': {
@@ -11362,29 +11227,27 @@ export function markdownIdentityProjectionForTesting(sourceId: string, content: 
   if (definition === undefined || !definition.path.endsWith('.md')) {
     throw new Error(`Markdown source '${sourceId}' is not declared`)
   }
-  return markdownBindingBlocks(markdownDocumentMap(maskVolatileMarkdown(sourceId, content))).map(
-    (located) => {
-      const itemId = itemIdFor(definition, located)
-      const legacyRuleIds = legacyRuleIdsFor(sourceId, located.locator)
-      const compound = R11_COMPOUND_ITEM_SEMANTICS[`${sourceId}:${itemId}`]
-      const generatedRuleIds =
-        compound !== undefined
-          ? compound.map(
-              (entry) => `rule.${sourceId}.${itemId.replace(/^item\./, '')}.${entry.suffix}`,
-            )
-          : authorityIdentityFor(sourceId, itemId) === null
-            ? []
-            : [`rule.${sourceId}.${itemId.replace(/^item\./, '')}`]
-      return {
-        itemId,
-        locator: located.locator,
-        locatorDigest: locatorDigestFor(located.locator),
-        normalizedExcerpt: normalizeRuleText(located.text),
-        valueDigest: sha256(normalizeRuleText(located.text)),
-        ruleIds: [...new Set([...legacyRuleIds, ...generatedRuleIds])],
-      }
-    },
-  )
+  return markdownBindingBlocks(markdownDocumentMap(content)).map((located) => {
+    const itemId = itemIdFor(definition, located)
+    const legacyRuleIds = legacyRuleIdsFor(sourceId, located.locator)
+    const compound = R11_COMPOUND_ITEM_SEMANTICS[`${sourceId}:${itemId}`]
+    const generatedRuleIds =
+      compound !== undefined
+        ? compound.map(
+            (entry) => `rule.${sourceId}.${itemId.replace(/^item\./, '')}.${entry.suffix}`,
+          )
+        : authorityIdentityFor(sourceId, itemId) === null
+          ? []
+          : [`rule.${sourceId}.${itemId.replace(/^item\./, '')}`]
+    return {
+      itemId,
+      locator: located.locator,
+      locatorDigest: locatorDigestFor(located.locator),
+      normalizedExcerpt: normalizeRuleText(located.text),
+      valueDigest: sha256(normalizeRuleText(located.text)),
+      ruleIds: [...new Set([...legacyRuleIds, ...generatedRuleIds])],
+    }
+  })
 }
 
 function migratedLegacyRule(
@@ -11421,12 +11284,7 @@ function buildSource(definition: SourceDefinition): {
 } {
   const absolutePath = join(repoRoot, ...definition.path.split('/'))
   const bytes = readFileSync(absolutePath)
-  // `bytes` stays raw: `snapshotEvidence.fullFileSha256` attests the WHOLE committed file, and a
-  // hash of masked bytes would attest a document that exists nowhere. `content` is masked, so
-  // every locator, ordinal, and digest below is derived from the governed surface only.
-  const content = definition.path.endsWith('.md')
-    ? maskVolatileMarkdown(definition.sourceId, bytes.toString('utf8'))
-    : bytes.toString('utf8')
+  const content = bytes.toString('utf8')
   const markdown = definition.path.endsWith('.md') ? markdownDocumentMap(content) : null
   const baseLocated =
     definition.anchors === undefined
@@ -12594,7 +12452,6 @@ function buildRegistry(): AuthorityEnforcementRegistry {
     operationAuthority: operation,
     reconciliations: structuredClone(priorR13Registry().reconciliations),
     normativeMarkdownAudit,
-    volatileRegions: volatileRegionsFor(sources),
   }
   // The R13 record is HISTORICAL and byte-frozen by validate.ts's RECONCILIATION_RECORD_DIGESTS.
   // Its manifest digests are the values it was authored with and must not be recomputed: the
@@ -12663,13 +12520,7 @@ function buildRegistry(): AuthorityEnforcementRegistry {
   // superseding binding manifest that results. `reconciliations` are outside
   // `registryBindingManifestDigest`, so appending this record does not perturb the digest it
   // declares - which is what makes the chain non-circular.
-  // Pinned for the same reason as `R13_MANIFEST` above: the R14 record is now HISTORICAL - R15
-  // demotes it from chain head - so it is byte-frozen by validate.ts's
-  // RECONCILIATION_RECORD_DIGESTS and must keep the manifest it was authored with. Recomputing it
-  // from the live document would make a frozen record restate this round's result as R14's, which
-  // breaks the chain's `restatedPrevDigest` agreement check by construction.
-  const R14_MANIFEST = '767dabec7dce1bcd9c1436fab93107d049747d1e20d60d6715a3af06e015775a'
-  const r14Manifest = R14_MANIFEST
+  const r14Manifest = registryBindingManifestDigest(withR13)
   const r14PriorCommand = commandEvidence(
     'registry-binding-manifest-r13',
     sha256(R14_PRIOR_REGISTRY_COMMIT),
@@ -12694,8 +12545,10 @@ function buildRegistry(): AuthorityEnforcementRegistry {
       },
       {
         kind: 'git-commit',
-        reference: R14_SNAPSHOT,
-        digest: sha256(execFileSync('git', ['cat-file', '-p', R14_SNAPSHOT], { cwd: repoRoot })),
+        reference: CURRENT_SNAPSHOT,
+        digest: sha256(
+          execFileSync('git', ['cat-file', '-p', CURRENT_SNAPSHOT], { cwd: repoRoot }),
+        ),
       },
       { kind: 'command-result', reference: r14PriorCommand, digest: sha256(r14PriorCommand) },
       {
@@ -12712,71 +12565,9 @@ function buildRegistry(): AuthorityEnforcementRegistry {
     migrationStatus: 'superseded-by-amendment',
     supersedingEvidence: basisRule.authorityBasisRef,
   }
-  const withR14: AuthorityEnforcementRegistry = {
+  return {
     ...withR13,
     reconciliations: [...withR13.reconciliations, r14Migration],
-  }
-
-  // R15 - the R24 volatile-region rework, and the new chain head. R28 fixed the naming rule that
-  // had been folklore: one record per rework ROUND, named for the commit that last touched the
-  // shipped YAML at the moment that round's regeneration is committed. `R15_PRIOR_REGISTRY_COMMIT`
-  // was measured with `git log -1 -- authority-enforcement-registry.yaml`, which is why this is
-  // `registry-rework-40394be` and not a record per intervening commit.
-  //
-  // This record carries TWO obligations, per R28's ruling that one record covers both with two
-  // `observedRefs`: the source baseline advancing to the commit whose bytes are actually hashed,
-  // and the de-publication of the `## Current state` operational snapshot rule. The second is a
-  // REDUCTION in the published set, so its final digests are pinned in prose below - not in
-  // `observedRefs`, because an `observedRef` must resolve to a live item and this item no longer
-  // exists in the inventory at all.
-  const r15Manifest = registryBindingManifestDigest(withR13)
-  const r15PriorCommand = commandEvidence(
-    'registry-binding-manifest-r14',
-    sha256(R15_PRIOR_REGISTRY_COMMIT),
-    R14_MANIFEST,
-  )
-  const r15SupersedingCommand = commandEvidence(
-    'superseding-binding-manifest-r15',
-    R14_MANIFEST,
-    r15Manifest,
-  )
-  const r15Migration: ReconciliationRecord = {
-    reconciliationId: 'registry-rework-40394be',
-    topic: 'R14 registry bindings superseded by the coordinator-ratified FK-P0 R24 amendment.',
-    observedRefs: [basisRule.authorityBasisRef],
-    observedEvidence: [
-      {
-        kind: 'git-commit',
-        reference: R15_PRIOR_REGISTRY_COMMIT,
-        digest: sha256(
-          execFileSync('git', ['cat-file', '-p', R15_PRIOR_REGISTRY_COMMIT], { cwd: repoRoot }),
-        ),
-      },
-      {
-        kind: 'git-commit',
-        reference: CURRENT_SNAPSHOT,
-        digest: sha256(
-          execFileSync('git', ['cat-file', '-p', CURRENT_SNAPSHOT], { cwd: repoRoot }),
-        ),
-      },
-      { kind: 'command-result', reference: r15PriorCommand, digest: sha256(r15PriorCommand) },
-      {
-        kind: 'command-result',
-        reference: r15SupersedingCommand,
-        digest: sha256(r15SupersedingCommand),
-      },
-    ],
-    authoritativeRuleIds: [basisRule.ruleId],
-    scopedDisposition:
-      "The R24 declared volatile regions, excised before block discovery and before ordinal assignment, supersede the R14 registry bindings in FK scope: the loop directive's operational state no longer occupies an ordinal, so appends to it cannot displace a governed sibling. Two obligations are recorded together. First, the source baseline advances to the commit whose bytes were hashed. Second, rule.fk-loop-directive.ae7854c7dad1 is DE-PUBLISHED, not retired: its subject goal.current-state-record and claim stage-zero-complete-and-fk-p0-next were an operational status snapshot published as canon, and its backing item left the audited inventory by removal into the declared region. Its final locatorDigest was cd404753257ddc78f7d8f473b679ce9410d745af89a459363f029838e6941c6c and its final valueDigest was 39dd6f0a5551d6fde0f694415fcb01f6f407115c1ca5a74da7b570239d61f371, pinned here because an observedRef must resolve to a live item and this one no longer exists.",
-    unresolvedConsequence:
-      'Future binding changes require another typed prior-to-new migration record. Declaring a new volatile region over an already-published locator remains refused, so any future region that would absorb governed text requires a spec amendment first.',
-    migrationStatus: 'superseded-by-amendment',
-    supersedingEvidence: basisRule.authorityBasisRef,
-  }
-  return {
-    ...withR14,
-    reconciliations: [...withR14.reconciliations, r15Migration],
   }
 }
 
