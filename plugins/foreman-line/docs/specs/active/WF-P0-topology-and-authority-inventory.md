@@ -277,8 +277,10 @@ verbatim, and stops on any mismatch. Every dispatch including rework opens with 
 codes never read through a truncated pipeline:
 
 1. `node -v`.
-2. `git rev-parse HEAD`; `git merge-base --is-ancestor 096adfb HEAD` (must succeed);
-   `git status --porcelain` clean.
+2. `git rev-parse HEAD`;
+   `git merge-base --is-ancestor 096adfbffebbaf1a783801a2b286f86d10f94a17 HEAD` (must
+   succeed — the same gate Constraints names, stated with the full SHA so no abbreviation
+   can go ambiguous); `git status --porcelain` clean.
 3. `git diff --name-only origin/main...HEAD` is a subset of `## Allowed Files`;
    `git diff --check` clean.
 4. Spec-linter run over the spec; advisory warnings recorded, not silenced.
