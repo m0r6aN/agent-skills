@@ -2,18 +2,27 @@
 
 ## COORDINATOR OWNERSHIP — read before dispatching anything
 
-> **Queue owner:** the **second** Claude Code coordinator session of 2026-09-03, entered via
-> `/goal resume foreman-kernel` after the first 2026-09-03 session stopped at Gate 3. It holds
-> ownership under the developer's explicit ruling of that date that the prior session is dead.
-> Exactly one coordinator owns this goal. Ownership transfers only at a parcel boundary by
-> editing this block and recording a handoff. If another live owner is named or ownership is
-> ambiguous, stop and report; never assume.
+> **Queue owner:** the Codex coordinator session resuming on 2026-09-04. The developer explicitly
+> declared the second Claude Code coordinator session of 2026-09-03 presumed dead and transferred
+> ownership at the clean FK-P0 parcel boundary. Exactly one coordinator owns this goal. Ownership
+> transfers only at a parcel boundary by editing this block and recording a handoff. If another
+> live owner is named or ownership is ambiguous, stop and report; never assume.
 >
 > **Disambiguation for a future reader:** two coordinator sessions held this goal on
 > 2026-09-03. The first reproduced the inherited green chain and wrote
 > `FK-P0-MERGE-READY-material.md`; the second executed Option B and found the blocker in
 > `FK-P0-BLOCKER-volatile-canon-source.md`. Where a record says "this owner" without a date,
 > read the file's own commit date.
+
+**Handoff record — 2026-09-04, Codex takeover.** The developer could not locate the second
+2026-09-03 coordinator and explicitly ruled it presumed dead, transferring Foreman Kernel ownership
+to this session. The transfer was verified at a clean parcel boundary: the goal worktree was clean
+at `2a7a78c76732b98301717e1eb85754dc8e3773ab`; the FK-P0 worktree was clean at
+`0ee165720f8d1e3a91eb283cb770400b23f61bf5`; and no process referenced either worktree. All current
+commits are preserved. The post-Step-0 Round 6 `wip(fk-p0)` commits are unaccepted candidate work:
+they have no builder completion claim, full verification transcript, or independent review evidence.
+Resume Round 6 with a coordinator closure check of that exact candidate before dispatching, amending,
+accepting, or merging any package change.
 
 **Handoff record — 2026-09-03, second transfer.** The first 2026-09-03 owner stopped after
 writing `FK-P0-MERGE-READY-material.md` (commit `eaa6a33`), leaving FK-P0 at Gate 3 with the
@@ -79,6 +88,14 @@ occurred.** FK-P0 re-enters adversarial review from zero under this owner.
 - Gate 3: not delegated; every merge is a human action
 
 ## Current state — update at every stop or parcel closure
+
+**STATE 2026-09-04 — OWNERSHIP TRANSFERRED; ROUND 6 RECOVERY.** The developer explicitly
+transferred ownership to Codex at the clean `0ee1657` FK-P0 head. Preserve all current commits.
+Round 6 remains active, but its candidate `wip(fk-p0)` commits are not completion evidence: the
+previous builder/recovery record has no final builder handoff, deterministic command transcript, or
+fresh independent reviews for that head. The next safe action is a read-only coordinator closure
+check against R24-R29 and the Round 6 kickstarter, followed by a fresh Step 0 only if rework remains
+necessary. No Gate 3 claim, merge, or Stage F action is authorized.
 
 **STATE 2026-09-03 #2 (live) — REWORK ROUND 6 DISPATCHED. Blocker found while executing the
 developer-approved merge; developer ruled "rework"; R24 ratified and committed alone; builder
