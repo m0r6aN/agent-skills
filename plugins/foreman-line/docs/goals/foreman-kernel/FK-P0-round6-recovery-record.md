@@ -30,15 +30,44 @@ Not asserted by the builder — these are the coordinator's own commands:
 
 | check | result |
 |---|---|
-| `tsc --noEmit` | **exit 1** — `src/validate.ts(3426,27)` and `(3432,23)`: `Cannot find name 'blanked'` |
+| `tsc --noEmit` | **exit 1** — see the correction immediately below; the line numbers first recorded here were wrong |
 | `biome check .` | exit 0, 5 infos |
 | tests | **no test file touched — none of controls (a)–(g) exist** |
 | regions | all three declared in the shipped YAML |
 
-`Cannot find name 'blanked'` is a half-written masking function: the failure is mid-edit, not a
-design defect. The registry YAML and `tests/fixtures/pass-minimal.yaml` were regenerated
-(~610 changed lines each) **by code that does not compile**, so those emitted bytes are untrusted
-and no claim is made about them.
+### Correction — the coordinator misattributed its own measurement
+
+The first version of this record reported `Cannot find name 'blanked'` at
+`src/validate.ts(3426,27)` and `(3432,23)` **in `b0518f8`**. That was wrong, and the builder
+caught it. Verified against the commit itself:
+
+```
+$ git show b0518f8:…/src/validate.ts | grep -n blanked
+3490:  * Volatile lines are REMOVED, not blanked. Blanking was implemented first and measured to fail
+3492:  * is displaced in its container, but a blanked line still OCCUPIES a line, so appending one
+4313:            ...extent.blankedLines.map((index) => sourceLines[index] ?? ''),
+```
+
+Line 3426 is `for (const index of span) claimedLines.set(index, request.regionId)`; line 3432 is
+`excisedLines: span`. `excisedLines` is declared at 3329 and used at 3432, 3480 and 3531 — the
+rename landed everywhere except **line 4313**, the single unresolved reference.
+
+**What actually happened:** the coordinator ran `tsc` against the *working tree*, the builder then
+applied a rename batch, and the coordinator committed `b0518f8` afterwards — then attached the
+earlier error text to the later commit. The measurement was real; the object it was attributed to
+was not. Recorded because this parcel exists to make canon represent reality, and a coordinator
+pinning a stale measurement to the wrong SHA is the same defect class the parcel is built to catch.
+
+**Consequence for the salvage calculus, which changes materially.** The preserved work is not
+conceptually half-written. It is **one identifier on one line away from typechecking**. That is
+the difference between material to be mined and work to be restored.
+
+Still unverified at this record: that line 4313 is the *only* remaining error. Confirming it
+requires the edit to be applied and `tsc` re-run.
+
+The registry YAML and `tests/fixtures/pass-minimal.yaml` were regenerated (~610 changed lines
+each) by code carrying that unresolved reference, so those emitted bytes remain untrusted until
+regenerated from a compiling tree.
 
 ## One unruled design divergence, carried forward for a ruling
 
@@ -48,6 +77,38 @@ better: the heading item is itself digest-pinned and sits outside every region, 
 is more robust than re-deriving a key from heading text. But it was never ruled on, and an
 unreviewed change to how a security boundary is anchored does not stand by default. The recovery
 builder must state which it implements and why.
+
+## The finding the round actually produced — control (e) caught a live laundering channel
+
+Not in the first version of this record, and it is the round's real salvage value.
+
+**Control (e) failed against the first masking implementation, and the failure was a genuine
+security defect.** Masking by *blanking* lines — replacing content but keeping the line — left the
+region's line count dependent on how volatile content happened to be paragraphed. Appending two
+lines inside the owner-of-record region shifted `lineHint` for every out-of-region block after the
+regions. `itemIdFor`'s md-block branch hashes `canonicalJson({sourceId, locator})`, and `locator`
+**includes `lineHint`** — so three item IDs churned, and `item.8be213f2455a` →
+`item.cef87defede1` **silently de-published standing authorization 8**, the ambient-checkout
+prohibition published in this very round, because the curated classification map is keyed by item
+ID. Measured, not theorised. Two further items churned: `657d2ba29bea` → `f9eea5516e1b` and
+`ee074fc90155` → `20f4057f8663`.
+
+That is precisely the laundering channel R24 exists to close, reached **through the identity layer
+instead of through the text**. An operator editing volatile status could de-publish a governed
+rule. Neither R24, R25, R26, R27 nor R28 anticipated it; control (e) found it.
+
+**Fix, already in `b0518f8`: excision by removal, not blanking.** `maskVolatileSource` filters the
+removed lines out entirely, and the `heading-subtree` extent is the whole body span including blank
+separators — an earlier version filtered blanks and leaked for the same reason. The masked document
+then contains only out-of-region lines, so no property of a region — content, length, or
+paragraphing — can reach a governed item's identity. Closed structurally rather than by care.
+
+**The obvious alternative was probed and rejected on measurement.** Making `itemIdFor` hash
+`{sourceId, kind, anchor}` — which spec line 613 requires and the implementation violates — dropped
+rules 469 → 467 and de-published published `fk-charter:item.ff0f88a958e0`, plus charter
+ratification-ledger items and three `permission-profiles-readme` table rows. Reverted. It is a
+corpus-wide identity-layer change and R28 authorises no new identity work on this parcel.
+**Recorded as a known spec-versus-implementation divergence for a later parcel**, not fixed here.
 
 ## Why this is not round 7
 
