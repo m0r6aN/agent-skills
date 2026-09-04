@@ -2,11 +2,27 @@
 
 ## COORDINATOR OWNERSHIP — read before dispatching anything
 
-> **Queue owner:** the Claude Code coordinator session entered via `/goal resume
-> foreman-kernel` on 2026-09-03, holding ownership under the developer's explicit resume
-> instruction of that date. Exactly one coordinator owns this goal. Ownership transfers only
-> at a parcel boundary by editing this block and recording a handoff. If another live owner
-> is named or ownership is ambiguous, stop and report; never assume.
+> Exactly one coordinator owns this goal. Ownership transfers only at a parcel boundary, by
+> editing the owner-of-record block below and recording a handoff. If another live owner is
+> named or ownership is ambiguous, stop and report; never assume.
+
+The blockquote above is the **ownership rule** and is governed canon: it states three
+obligations and carries no identity, date, or status. Everything below it in this section is
+**owner-of-record and handoff state**, which canon requires to change at every transfer, and
+which is a declared volatile region under R24 as corrected by R25. This separation exists
+because `rule.fk-loop-directive.7a05d374a3b1` previously bound the ownership rule and the
+current owner's identity into one block, one locator, and one digest — so the rule went stale
+every time the goal changed hands. Do not reunite them.
+
+**Owner of record.** The second Claude Code coordinator session of 2026-09-03, entered via
+`/goal resume foreman-kernel` after the first 2026-09-03 session stopped at Gate 3, holding
+ownership under the developer's explicit ruling of that date that the prior session is dead.
+
+**Disambiguation for a future reader:** two coordinator sessions held this goal on 2026-09-03.
+The first reproduced the inherited green chain and wrote `FK-P0-MERGE-READY-material.md`; the
+second executed Option B, found the blocker in `FK-P0-BLOCKER-volatile-canon-source.md`, and
+ratified R24 and its correction R25. Where a record says "this owner" without a date, read the
+file's own commit date.
 
 **Handoff record — 2026-09-03.** The prior owner (the Claude Code coordinator session of
 2026-09-01 → 2026-09-02) stopped after writing `FK-P0-GATE-3-package.md`, leaving FK-P0 at
