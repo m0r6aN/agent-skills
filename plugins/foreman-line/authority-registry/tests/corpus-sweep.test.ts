@@ -18,7 +18,14 @@ import { parse } from 'yaml'
 import { markdownIdentityProjectionForTesting } from '../src/generate.js'
 import { R12_LEGACY_MARKDOWN_RULE_TARGETS } from '../src/registry.js'
 import type { AuthorityEnforcementRegistry } from '../src/types.js'
-import { canonicalJson, sha256, sweepRegistrySources } from '../src/validate.js'
+import {
+  canonicalJson,
+  maskVolatileSource,
+  resolveVolatileRegions,
+  sha256,
+  sweepRegistrySources,
+  validateRegistry,
+} from '../src/validate.js'
 import { ok } from './support/assert-ok.js'
 
 /**
@@ -1804,4 +1811,72 @@ test('R14 an added heading stays inert while a paragraph beneath it does not', (
   } finally {
     rmSync(tempRoot, { recursive: true, force: true })
   }
+})
+
+test('R29.3 every curation surface is anchor-keyed with no itemId lookup fallback', () => {
+  const generator = readFileSync(join(packageRoot, 'src', 'generate.ts'), 'utf8')
+  const registrySource = readFileSync(join(packageRoot, 'src', 'registry.ts'), 'utf8')
+  assert.doesNotMatch(generator, /^\s*'[^']+:item\.[^']+'\s*:/m)
+  assert.doesNotMatch(registrySource, /'[^']+:item\.[^']+'/)
+  assert.doesNotMatch(generator, /function curatedClassificationFor\([^)]*itemId/)
+  assert.doesNotMatch(generator, /function curatedApplicabilityFor\([^)]*itemId/)
+  assert.doesNotMatch(generator, /function authorityIdentityFor\([\s\S]{0,100}itemId/)
+  assert.doesNotMatch(generator, /sourceItemKey/)
+})
+
+test('R29.4 standing authorization 8 publishes the exact pre-action refusal contract', () => {
+  const rule = registry.rules.find(
+    (candidate) => candidate.ruleId === 'rule.fk-loop-directive.3fe253f7c599',
+  )
+  ok(rule)
+  assert.equal(rule.classification, 'pre-action-refusal')
+  assert.equal(rule.decision, 'REFUSE')
+  assert.equal(rule.enforcementOwner, 'kernel-policy')
+  assert.deepEqual(rule.applicability, {
+    goals: ['foreman-kernel'],
+    roles: ['coordinator', 'shaper', 'builder', 'reviewer'],
+    stages: ['any'],
+    operations: ['repo-read', 'repo-mutation'],
+    hosts: ['any'],
+  })
+  assert.equal(registry.rules.length, 469)
+  assert.equal(
+    registry.rules.filter((candidate) => candidate.classification === 'pre-action-refusal').length,
+    255,
+  )
+})
+
+test('R29.3 anchor migration preserves every surviving published identity and locator digest', () => {
+  const priorPath = 'plugins/foreman-line/authority-registry/authority-enforcement-registry.yaml'
+  const prior = parse(
+    execFileSync(
+      'git',
+      [
+        'show',
+        `5f9cf65eec98f5496202639007205da81ef1c34d:${priorPath}`,
+      ],
+      { cwd: repoRoot, encoding: 'utf8', maxBuffer: 50 * 1024 * 1024 },
+    ),
+  ) as AuthorityEnforcementRegistry
+  const removedRuleId = 'rule.fk-loop-directive.ae7854c7dad1'
+  const addedRuleId = 'rule.fk-loop-directive.3fe253f7c599'
+  const expectedRuleIds = new Set(
+    prior.rules
+      .map((rule) => rule.ruleId)
+      .filter((ruleId) => ruleId !== removedRuleId)
+      .concat(addedRuleId),
+  )
+  assert.deepEqual(new Set(registry.rules.map((rule) => rule.ruleId)), expectedRuleIds)
+  const changedValueRuleIds: string[] = []
+  for (const priorRule of prior.rules) {
+    if (priorRule.ruleId === removedRuleId) continue
+    const currentRule = registry.rules.find((candidate) => candidate.ruleId === priorRule.ruleId)
+    ok(currentRule, priorRule.ruleId)
+    assert.equal(currentRule.authorityBasisRef.itemId, priorRule.authorityBasisRef.itemId)
+    assert.equal(currentRule.authorityBasisRef.locatorDigest, priorRule.authorityBasisRef.locatorDigest)
+    if (currentRule.authorityBasisRef.valueDigest !== priorRule.authorityBasisRef.valueDigest) {
+      changedValueRuleIds.push(currentRule.ruleId)
+    }
+  }
+  assert.deepEqual(changedValueRuleIds, ['rule.fk-loop-directive.7a05d374a3b1'])
 })

@@ -2552,7 +2552,7 @@ sources:
       - foreman-kernel
     snapshotEvidence:
       commit: 5f9cf65eec98f5496202639007205da81ef1c34d
-      fullFileSha256: 386d09fa9a4bb1a889b3bf564c47cb1cfe4b605b335d38f52cf89acc7738e190
+      fullFileSha256: d10f7de3f559147f91ec823258b89cf0afd106e9e4728fd96848504bbf499748
     inventoryItems:
       - itemId: item.00eb94a59e12
         locator:
@@ -2952,9 +2952,10 @@ sources:
           lineHint: 75
         normalizedExcerpt: "8. **The ambient `D:/Repos/agent-skills` checkout carries user-owned changes. Never touch or absorb them.** No agent working this goal — coordinator, builder, reviewer, or shaping session — reads from or writes to the ambient checkout, and no user-owned change is absorbed into a parcel branch. Relocated here from `## Current state` by R27, because it is a prohibition and was sitting in a section declared volatile, curated `ruleIds: []` with a boilerplate rationale asserting it stated no rule. It states a rule."
         valueDigest: 3e3272855cda929c9b4336d1fd867362974a57ee2ea501a36c1f9010dbbfb05c
-        ruleIds: []
-        exclusionDisposition: non-normative-explanation
-        rationale: "Inventory item item.3fe253f7c599 at md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:8 is explanatory context and does not state an independent normative authority rule."
+        ruleIds:
+          - rule.fk-loop-directive.3fe253f7c599
+        exclusionDisposition: null
+        rationale: Rule-bearing section or live behavior is mapped to an explicit source-bound rule.
       - itemId: item.8c0b09120ff1
         locator:
           kind: numbered-item
@@ -22959,6 +22960,49 @@ rules:
       corpusSweep: null
       independentBypassAttempt: null
     bindingDigest: 96910f544f2beb0942bd5b8a1915872b3d23dc93301731557ed9abd2e44da5da
+  - ruleId: rule.fk-loop-directive.3fe253f7c599
+    authoritySubject: workspace.ambient-checkout-authority
+    authorityClaim: ambient-checkout-never-read-written-or-absorbed
+    normalizedStatement: "8. **The ambient `D:/Repos/agent-skills` checkout carries user-owned changes. Never touch or absorb them.** No agent working this goal — coordinator, builder, reviewer, or shaping session — reads from or writes to the ambient checkout, and no user-owned change is absorbed into a parcel branch. Relocated here from `## Current state` by R27, because it is a prohibition and was sitting in a section declared volatile, curated `ruleIds: []` with a boilerplate rationale asserting it stated no rule. It states a rule."
+    sourceRefs:
+      - sourceId: fk-loop-directive
+        itemId: item.3fe253f7c599
+        locatorDigest: df1ea77c24a219dca0fbd8a2b4f416d2a28d54159e23e53167f786546a63aafd
+        valueDigest: 3e3272855cda929c9b4336d1fd867362974a57ee2ea501a36c1f9010dbbfb05c
+    authorityBasisRef:
+      sourceId: fk-loop-directive
+      itemId: item.3fe253f7c599
+      locatorDigest: df1ea77c24a219dca0fbd8a2b4f416d2a28d54159e23e53167f786546a63aafd
+      valueDigest: 3e3272855cda929c9b4336d1fd867362974a57ee2ea501a36c1f9010dbbfb05c
+    applicability:
+      goals:
+        - foreman-kernel
+      roles:
+        - coordinator
+        - shaper
+        - builder
+        - reviewer
+      stages:
+        - any
+      operations:
+        - repo-read
+        - repo-mutation
+      hosts:
+        - any
+    severity: critical
+    classification: pre-action-refusal
+    decision: REFUSE
+    refusalCode: FK_CANON_RULE_REFUSED
+    enforcementOwner: kernel-policy
+    assurance: structural
+    pairedRuleIds: []
+    retirementState: active-reading
+    retirementEvidence:
+      predicate: null
+      negativeRefusalTest: null
+      corpusSweep: null
+      independentBypassAttempt: null
+    bindingDigest: 836e7dc6f18283dfee0e2b3814f440c926aaf0e2913a021e2787c23e56c02ec9
   - ruleId: rule.fk-loop-directive.8c0b09120ff1
     authoritySubject: parcel.queue-verification
     authorityClaim: dependencies-verified-against-git-not-memory
@@ -39100,8 +39144,8 @@ reconciliations:
         reference: '{"actorClass":"coordinator","commandId":"registry-binding-manifest-r14","exitCode":0,"inputDigest":"502bc751a4e9360b0ccd3856a29dbad2ce6dd6a0f3559c4cb6ca0c8d7c3f2f0c","resultDigest":"767dabec7dce1bcd9c1436fab93107d049747d1e20d60d6715a3af06e015775a","tool":"@foreman-line/authority-registry","toolVersion":"0.1.0"}'
         digest: 2341bc921a8620e18903ac9437a68afe9f171156c03a39151569dbd9720cbded
       - kind: command-result
-        reference: '{"actorClass":"coordinator","commandId":"superseding-binding-manifest-r15","exitCode":0,"inputDigest":"767dabec7dce1bcd9c1436fab93107d049747d1e20d60d6715a3af06e015775a","resultDigest":"3e8bd69b721ebf1b8e91bc44d13c29703f82c223842b039d4f1060f9638b7fd4","tool":"@foreman-line/authority-registry","toolVersion":"0.1.0"}'
-        digest: dfdbdd7beeb4cac294e2193f9fcedab05d1090dad54f7bf7c780cee997c706e6
+        reference: '{"actorClass":"coordinator","commandId":"superseding-binding-manifest-r15","exitCode":0,"inputDigest":"767dabec7dce1bcd9c1436fab93107d049747d1e20d60d6715a3af06e015775a","resultDigest":"58422cc3f366d3f8ad30cd190b7767eb83badddbdba73351469e9f2b53518a79","tool":"@foreman-line/authority-registry","toolVersion":"0.1.0"}'
+        digest: fb4950716f6691f08fba58e4b6c48328fe4e12072669bccfeb491dadc133f24a
     authoritativeRuleIds:
       - rule.fk-charter.2a524c1ea63f
     scopedDisposition: "The R24 declared volatile regions, excised before block discovery and before ordinal assignment, supersede the R14 registry bindings in FK scope: the loop directive's operational state no longer occupies an ordinal, so appends to it cannot displace a governed sibling. Two obligations are recorded together. First, the source baseline advances to the commit whose bytes were hashed. Second, rule.fk-loop-directive.ae7854c7dad1 is DE-PUBLISHED, not retired: its subject goal.current-state-record and claim stage-zero-complete-and-fk-p0-next were an operational status snapshot published as canon, and its backing item left the audited inventory by removal into the declared region. Its final locatorDigest was cd404753257ddc78f7d8f473b679ce9410d745af89a459363f029838e6941c6c and its final valueDigest was 39dd6f0a5551d6fde0f694415fcb01f6f407115c1ca5a74da7b570239d61f371, pinned here because an observedRef must resolve to a live item and this one no longer exists."

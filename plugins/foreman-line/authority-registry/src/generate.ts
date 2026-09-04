@@ -181,9 +181,9 @@ function volatileRegionsFor(sources: readonly CanonSource[]): VolatileRegion[] {
 }
 
 const R12_GATE2_ALLOW_ITEMS = new Set([
-  'fk-charter:item.15a44cf50bc6',
-  'fk-loop-directive:item.47a75730afd6',
-  'fk-loop-directive:item.bfffee6d7c1f',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 10. Human gates and standing authorizations requested > ### Gate 2 — parcel dispatch:paragraph:1',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:list-item:4',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:1',
 ])
 const here = dirname(fileURLToPath(import.meta.url))
 const packageRoot = join(here, '..')
@@ -827,7 +827,7 @@ const R11_CURATED_ITEM_SEMANTICS: Readonly<
     }
   >
 > = {
-  'spec-convention:item.276e79bdc002': {
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.8 `Allowed Files` Mutation Authority:paragraph:1': {
     classification: 'pre-action-refusal',
     identity: ['spec.allowed-files-schema', 'exact-paths-and-no-globs'],
     applicability: {
@@ -838,7 +838,7 @@ const R11_CURATED_ITEM_SEMANTICS: Readonly<
       hosts: ['any'],
     },
   },
-  'spec-convention:item.c4828bcd6dfa': {
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.8 `Allowed Files` Mutation Authority:paragraph:3': {
     classification: 'pre-action-refusal',
     identity: [
       'spec.unlisted-path-amendment',
@@ -852,7 +852,7 @@ const R11_CURATED_ITEM_SEMANTICS: Readonly<
       hosts: ['any'],
     },
   },
-  'parcel-driven-development:item.78ff0093607e': {
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Contract Amendment Rule:paragraph:3': {
     classification: 'pre-action-refusal',
     identity: ['spec.contract-amendment-authority', 'parcel-agent-cannot-edit-approved-contract'],
     applicability: {
@@ -863,7 +863,7 @@ const R11_CURATED_ITEM_SEMANTICS: Readonly<
       hosts: ['any'],
     },
   },
-  'parcel-driven-development:item.cef628a1fce0': {
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Session Handoff:paragraph:1': {
     classification: 'ci-static-check',
     identity: ['parcel.session-handoff', 'changed-session-requires-handoff'],
     applicability: {
@@ -896,7 +896,7 @@ const R11_COMPOUND_ITEM_SEMANTICS: Readonly<
   // D21 (ratified amendment A1) states two distinct obligations in one decision row, so it
   // publishes two rules rather than one. Publishing a single rule would under-describe the
   // caching clause; publishing both as refusals would claim enforcement that does not exist.
-  'fk-charter:item.d21': [
+  'fk-charter:D21': [
     {
       suffix: 'latency-budget',
       normalizedStatement:
@@ -941,7 +941,7 @@ const R11_COMPOUND_ITEM_SEMANTICS: Readonly<
       },
     },
   ],
-  'coordinator-pattern:item.47b2eaa2f9ef': [
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## The long-running loop:paragraph:1': [
     {
       suffix: 'ownership',
       normalizedStatement:
@@ -1025,7 +1025,7 @@ const R11_COMPOUND_ITEM_SEMANTICS: Readonly<
 }
 
 const R11_APPLICABILITY_OVERRIDES: Readonly<Record<string, AuthorityRule['applicability']>> = {
-  'fk-loop-directive:item.7a05d374a3b1': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:paragraph:1': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: [
@@ -1042,28 +1042,28 @@ const R11_APPLICABILITY_OVERRIDES: Readonly<Record<string, AuthorityRule['applic
     operations: ['state-transition'],
     hosts: ['any'],
   },
-  'fk-loop-directive:item.23f92834c1c8': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:2': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['shaping', 'runtime'],
     operations: ['spec-mutation'],
     hosts: ['any'],
   },
-  'fk-loop-directive:item.d7945b743a67': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:8': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['build', 'deterministic-verify', 'adversarial-review', 'runtime'],
     operations: ['state-transition'],
     hosts: ['any'],
   },
-  'fk-loop-directive:item.37f78aa591c5': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:7': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['shaping', 'build', 'adversarial-review', 'runtime'],
     operations: ['state-transition'],
     hosts: ['any'],
   },
-  'fk-loop-directive:item.237865e0993f': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:11': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['closure', 'runtime'],
@@ -1081,7 +1081,7 @@ const R11_PERMISSION_PROFILE_CURATION: Readonly<
     }
   >
 > = {
-  'permission-profiles-registry:item.7faf78a6f54a': {
+  'permission-profiles-registry:yaml-rule:builder-architecture:deny:"Bash(git push --force*)"': {
     classification: 'pre-action-refusal',
     applicability: {
       goals: ['all-foreman-goals'],
@@ -1091,7 +1091,7 @@ const R11_PERMISSION_PROFILE_CURATION: Readonly<
       hosts: ['claude-windows-docker-loaded'],
     },
   },
-  'permission-profiles-registry:item.26c5e2b211da': {
+  'permission-profiles-registry:yaml-rule:builder-architecture:deny:"Bash(git push -f *)"': {
     classification: 'pre-action-refusal',
     applicability: {
       goals: ['all-foreman-goals'],
@@ -1101,7 +1101,7 @@ const R11_PERMISSION_PROFILE_CURATION: Readonly<
       hosts: ['claude-windows-docker-loaded'],
     },
   },
-  'permission-profiles-registry:item.1d221ed65b72': {
+  'permission-profiles-registry:yaml-rule:builder-architecture:deny:"Edit(.claude/**)"': {
     classification: 'pre-action-refusal',
     applicability: {
       goals: ['all-foreman-goals'],
@@ -1111,7 +1111,7 @@ const R11_PERMISSION_PROFILE_CURATION: Readonly<
       hosts: ['claude-windows-docker-loaded'],
     },
   },
-  'permission-profiles-registry:item.1ce0fd439b3e': {
+  'permission-profiles-registry:yaml-rule:builder-architecture:deny:"PowerShell(git push --force*)"': {
     classification: 'pre-action-refusal',
     applicability: {
       goals: ['all-foreman-goals'],
@@ -1121,7 +1121,7 @@ const R11_PERMISSION_PROFILE_CURATION: Readonly<
       hosts: ['claude-windows-docker-loaded'],
     },
   },
-  'permission-profiles-registry:item.39e65fb31709': {
+  'permission-profiles-registry:yaml-rule:builder-architecture:deny:"PowerShell(git push -f *)"': {
     classification: 'pre-action-refusal',
     applicability: {
       goals: ['all-foreman-goals'],
@@ -1131,7 +1131,7 @@ const R11_PERMISSION_PROFILE_CURATION: Readonly<
       hosts: ['claude-windows-docker-loaded'],
     },
   },
-  'permission-profiles-registry:item.ffd949ad76c3': {
+  'permission-profiles-registry:yaml-rule:builder-architecture:deny:"Write(.claude/**)"': {
     classification: 'pre-action-refusal',
     applicability: {
       goals: ['all-foreman-goals'],
@@ -1141,7 +1141,7 @@ const R11_PERMISSION_PROFILE_CURATION: Readonly<
       hosts: ['claude-windows-docker-loaded'],
     },
   },
-  'permission-profiles-registry:item.c9cb62068f14': {
+  'permission-profiles-registry:yaml-rule:builder-architecture:network/egress': {
     classification: 'pre-action-refusal',
     applicability: {
       goals: ['all-foreman-goals'],
@@ -1151,7 +1151,7 @@ const R11_PERMISSION_PROFILE_CURATION: Readonly<
       hosts: ['claude-windows-docker-loaded'],
     },
   },
-  'permission-profiles-registry:item.0ed672bcdee8': {
+  'permission-profiles-registry:yaml-rule:builder-standard:network/egress': {
     classification: 'pre-action-refusal',
     applicability: {
       goals: ['all-foreman-goals'],
@@ -1161,7 +1161,7 @@ const R11_PERMISSION_PROFILE_CURATION: Readonly<
       hosts: ['claude-windows-docker-loaded'],
     },
   },
-  'permission-profiles-registry:item.947d19fbeb35': {
+  'permission-profiles-registry:yaml-rule:builder-deps:deny:"Bash(git push --force*)"': {
     classification: 'pre-action-refusal',
     applicability: {
       goals: ['all-foreman-goals'],
@@ -1171,7 +1171,7 @@ const R11_PERMISSION_PROFILE_CURATION: Readonly<
       hosts: ['claude-windows-docker-loaded'],
     },
   },
-  'permission-profiles-registry:item.5a359d80896b': {
+  'permission-profiles-registry:yaml-rule:builder-deps:deny:"Bash(git push -f *)"': {
     classification: 'pre-action-refusal',
     applicability: {
       goals: ['all-foreman-goals'],
@@ -1181,7 +1181,7 @@ const R11_PERMISSION_PROFILE_CURATION: Readonly<
       hosts: ['claude-windows-docker-loaded'],
     },
   },
-  'permission-profiles-registry:item.ee0641be06f2': {
+  'permission-profiles-registry:yaml-rule:builder-deps:deny:"Edit(.claude/**)"': {
     classification: 'pre-action-refusal',
     applicability: {
       goals: ['all-foreman-goals'],
@@ -1191,7 +1191,7 @@ const R11_PERMISSION_PROFILE_CURATION: Readonly<
       hosts: ['claude-windows-docker-loaded'],
     },
   },
-  'permission-profiles-registry:item.cf29180bce81': {
+  'permission-profiles-registry:yaml-rule:builder-deps:deny:"PowerShell(git push --force*)"': {
     classification: 'pre-action-refusal',
     applicability: {
       goals: ['all-foreman-goals'],
@@ -1201,7 +1201,7 @@ const R11_PERMISSION_PROFILE_CURATION: Readonly<
       hosts: ['claude-windows-docker-loaded'],
     },
   },
-  'permission-profiles-registry:item.4f213acde8e0': {
+  'permission-profiles-registry:yaml-rule:builder-deps:deny:"PowerShell(git push -f *)"': {
     classification: 'pre-action-refusal',
     applicability: {
       goals: ['all-foreman-goals'],
@@ -1211,7 +1211,7 @@ const R11_PERMISSION_PROFILE_CURATION: Readonly<
       hosts: ['claude-windows-docker-loaded'],
     },
   },
-  'permission-profiles-registry:item.397a3eb4c7ad': {
+  'permission-profiles-registry:yaml-rule:builder-deps:deny:"Write(.claude/**)"': {
     classification: 'pre-action-refusal',
     applicability: {
       goals: ['all-foreman-goals'],
@@ -1221,7 +1221,7 @@ const R11_PERMISSION_PROFILE_CURATION: Readonly<
       hosts: ['claude-windows-docker-loaded'],
     },
   },
-  'permission-profiles-registry:item.b9e7c5644f49': {
+  'permission-profiles-registry:yaml-rule:builder-standard:deny:"Bash(git push --force*)"': {
     classification: 'pre-action-refusal',
     applicability: {
       goals: ['all-foreman-goals'],
@@ -1231,7 +1231,7 @@ const R11_PERMISSION_PROFILE_CURATION: Readonly<
       hosts: ['claude-windows-docker-loaded'],
     },
   },
-  'permission-profiles-registry:item.861d14c80da2': {
+  'permission-profiles-registry:yaml-rule:builder-standard:deny:"Bash(git push -f *)"': {
     classification: 'pre-action-refusal',
     applicability: {
       goals: ['all-foreman-goals'],
@@ -1241,7 +1241,7 @@ const R11_PERMISSION_PROFILE_CURATION: Readonly<
       hosts: ['claude-windows-docker-loaded'],
     },
   },
-  'permission-profiles-registry:item.fe1bbb0564f6': {
+  'permission-profiles-registry:yaml-rule:builder-standard:deny:"Edit(.claude/**)"': {
     classification: 'pre-action-refusal',
     applicability: {
       goals: ['all-foreman-goals'],
@@ -1251,7 +1251,7 @@ const R11_PERMISSION_PROFILE_CURATION: Readonly<
       hosts: ['claude-windows-docker-loaded'],
     },
   },
-  'permission-profiles-registry:item.803732fe3411': {
+  'permission-profiles-registry:yaml-rule:builder-standard:deny:"PowerShell(git push --force*)"': {
     classification: 'pre-action-refusal',
     applicability: {
       goals: ['all-foreman-goals'],
@@ -1261,7 +1261,7 @@ const R11_PERMISSION_PROFILE_CURATION: Readonly<
       hosts: ['claude-windows-docker-loaded'],
     },
   },
-  'permission-profiles-registry:item.b77e9988c19d': {
+  'permission-profiles-registry:yaml-rule:builder-standard:deny:"PowerShell(git push -f *)"': {
     classification: 'pre-action-refusal',
     applicability: {
       goals: ['all-foreman-goals'],
@@ -1271,7 +1271,7 @@ const R11_PERMISSION_PROFILE_CURATION: Readonly<
       hosts: ['claude-windows-docker-loaded'],
     },
   },
-  'permission-profiles-registry:item.8cf9d57aa29c': {
+  'permission-profiles-registry:yaml-rule:builder-standard:deny:"Write(.claude/**)"': {
     classification: 'pre-action-refusal',
     applicability: {
       goals: ['all-foreman-goals'],
@@ -1281,7 +1281,7 @@ const R11_PERMISSION_PROFILE_CURATION: Readonly<
       hosts: ['claude-windows-docker-loaded'],
     },
   },
-  'permission-profiles-registry:item.b01d14453456': {
+  'permission-profiles-registry:yaml-rule:coordinator:deny:"Bash(git push --force*)"': {
     classification: 'pre-action-refusal',
     applicability: {
       goals: ['all-foreman-goals'],
@@ -1299,7 +1299,7 @@ const R11_PERMISSION_PROFILE_CURATION: Readonly<
       hosts: ['claude-windows-docker-loaded'],
     },
   },
-  'permission-profiles-registry:item.315ebd655fbe': {
+  'permission-profiles-registry:yaml-rule:coordinator:deny:"Bash(git push -f *)"': {
     classification: 'pre-action-refusal',
     applicability: {
       goals: ['all-foreman-goals'],
@@ -1317,7 +1317,7 @@ const R11_PERMISSION_PROFILE_CURATION: Readonly<
       hosts: ['claude-windows-docker-loaded'],
     },
   },
-  'permission-profiles-registry:item.8e8e3c78500b': {
+  'permission-profiles-registry:yaml-rule:coordinator:deny:"Edit(.claude/**)"': {
     classification: 'pre-action-refusal',
     applicability: {
       goals: ['all-foreman-goals'],
@@ -1335,7 +1335,7 @@ const R11_PERMISSION_PROFILE_CURATION: Readonly<
       hosts: ['claude-windows-docker-loaded'],
     },
   },
-  'permission-profiles-registry:item.4c9cd1062bc6': {
+  'permission-profiles-registry:yaml-rule:coordinator:deny:"PowerShell(git push --force*)"': {
     classification: 'pre-action-refusal',
     applicability: {
       goals: ['all-foreman-goals'],
@@ -1353,7 +1353,7 @@ const R11_PERMISSION_PROFILE_CURATION: Readonly<
       hosts: ['claude-windows-docker-loaded'],
     },
   },
-  'permission-profiles-registry:item.060989ad78ea': {
+  'permission-profiles-registry:yaml-rule:coordinator:deny:"PowerShell(git push -f *)"': {
     classification: 'pre-action-refusal',
     applicability: {
       goals: ['all-foreman-goals'],
@@ -1371,7 +1371,7 @@ const R11_PERMISSION_PROFILE_CURATION: Readonly<
       hosts: ['claude-windows-docker-loaded'],
     },
   },
-  'permission-profiles-registry:item.30b62f67dc13': {
+  'permission-profiles-registry:yaml-rule:coordinator:deny:"Write(.claude/**)"': {
     classification: 'pre-action-refusal',
     applicability: {
       goals: ['all-foreman-goals'],
@@ -1389,7 +1389,7 @@ const R11_PERMISSION_PROFILE_CURATION: Readonly<
       hosts: ['claude-windows-docker-loaded'],
     },
   },
-  'permission-profiles-registry:item.f7f03a01fd3a': {
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"Bash(git apply*)"': {
     classification: 'pre-action-refusal',
     applicability: {
       goals: ['all-foreman-goals'],
@@ -1399,7 +1399,7 @@ const R11_PERMISSION_PROFILE_CURATION: Readonly<
       hosts: ['claude-windows-docker-loaded'],
     },
   },
-  'permission-profiles-registry:item.35cf0f58fc34': {
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"Bash(git commit*)"': {
     classification: 'pre-action-refusal',
     applicability: {
       goals: ['all-foreman-goals'],
@@ -1409,7 +1409,7 @@ const R11_PERMISSION_PROFILE_CURATION: Readonly<
       hosts: ['claude-windows-docker-loaded'],
     },
   },
-  'permission-profiles-registry:item.dedb7349c943': {
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"Bash(git merge*)"': {
     classification: 'pre-action-refusal',
     applicability: {
       goals: ['all-foreman-goals'],
@@ -1419,77 +1419,7 @@ const R11_PERMISSION_PROFILE_CURATION: Readonly<
       hosts: ['claude-windows-docker-loaded'],
     },
   },
-  'permission-profiles-registry:item.b7ab94d73ef4': {
-    classification: 'pre-action-refusal',
-    applicability: {
-      goals: ['all-foreman-goals'],
-      roles: ['reviewer'],
-      stages: ['adversarial-review'],
-      operations: ['external-write'],
-      hosts: ['claude-windows-docker-loaded'],
-    },
-  },
-  'permission-profiles-registry:item.9ab0d5db8ebf': {
-    classification: 'pre-action-refusal',
-    applicability: {
-      goals: ['all-foreman-goals'],
-      roles: ['reviewer'],
-      stages: ['adversarial-review'],
-      operations: ['repo-mutation'],
-      hosts: ['claude-windows-docker-loaded'],
-    },
-  },
-  'permission-profiles-registry:item.ea8666a98ca1': {
-    classification: 'pre-action-refusal',
-    applicability: {
-      goals: ['all-foreman-goals'],
-      roles: ['reviewer'],
-      stages: ['adversarial-review'],
-      operations: ['repo-mutation'],
-      hosts: ['claude-windows-docker-loaded'],
-    },
-  },
-  'permission-profiles-registry:item.3a54e390a3e1': {
-    classification: 'pre-action-refusal',
-    applicability: {
-      goals: ['all-foreman-goals'],
-      roles: ['reviewer'],
-      stages: ['adversarial-review'],
-      operations: ['repo-mutation'],
-      hosts: ['claude-windows-docker-loaded'],
-    },
-  },
-  'permission-profiles-registry:item.eb314ad28f5e': {
-    classification: 'pre-action-refusal',
-    applicability: {
-      goals: ['all-foreman-goals'],
-      roles: ['reviewer'],
-      stages: ['adversarial-review'],
-      operations: ['repo-mutation'],
-      hosts: ['claude-windows-docker-loaded'],
-    },
-  },
-  'permission-profiles-registry:item.14569d4abb87': {
-    classification: 'pre-action-refusal',
-    applicability: {
-      goals: ['all-foreman-goals'],
-      roles: ['reviewer'],
-      stages: ['adversarial-review'],
-      operations: ['repo-mutation'],
-      hosts: ['claude-windows-docker-loaded'],
-    },
-  },
-  'permission-profiles-registry:item.7943c5773fba': {
-    classification: 'pre-action-refusal',
-    applicability: {
-      goals: ['all-foreman-goals'],
-      roles: ['reviewer'],
-      stages: ['adversarial-review'],
-      operations: ['repo-mutation'],
-      hosts: ['claude-windows-docker-loaded'],
-    },
-  },
-  'permission-profiles-registry:item.2ca898541627': {
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"Bash(git push*)"': {
     classification: 'pre-action-refusal',
     applicability: {
       goals: ['all-foreman-goals'],
@@ -1499,7 +1429,7 @@ const R11_PERMISSION_PROFILE_CURATION: Readonly<
       hosts: ['claude-windows-docker-loaded'],
     },
   },
-  'permission-profiles-registry:item.23838f138908': {
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"Bash(git stash*)"': {
     classification: 'pre-action-refusal',
     applicability: {
       goals: ['all-foreman-goals'],
@@ -1509,7 +1439,7 @@ const R11_PERMISSION_PROFILE_CURATION: Readonly<
       hosts: ['claude-windows-docker-loaded'],
     },
   },
-  'permission-profiles-registry:item.6d850a4b4948': {
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"Edit"': {
     classification: 'pre-action-refusal',
     applicability: {
       goals: ['all-foreman-goals'],
@@ -1519,7 +1449,7 @@ const R11_PERMISSION_PROFILE_CURATION: Readonly<
       hosts: ['claude-windows-docker-loaded'],
     },
   },
-  'permission-profiles-registry:item.f1d63df02914': {
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"Edit(.claude/**)"': {
     classification: 'pre-action-refusal',
     applicability: {
       goals: ['all-foreman-goals'],
@@ -1529,7 +1459,77 @@ const R11_PERMISSION_PROFILE_CURATION: Readonly<
       hosts: ['claude-windows-docker-loaded'],
     },
   },
-  'permission-profiles-registry:item.60eb2cbc6f43': {
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"PowerShell(git apply*)"': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['reviewer'],
+      stages: ['adversarial-review'],
+      operations: ['repo-mutation'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"PowerShell(git commit*)"': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['reviewer'],
+      stages: ['adversarial-review'],
+      operations: ['repo-mutation'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"PowerShell(git merge*)"': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['reviewer'],
+      stages: ['adversarial-review'],
+      operations: ['repo-mutation'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"PowerShell(git push*)"': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['reviewer'],
+      stages: ['adversarial-review'],
+      operations: ['external-write'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"PowerShell(git stash*)"': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['reviewer'],
+      stages: ['adversarial-review'],
+      operations: ['repo-mutation'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"Write"': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['reviewer'],
+      stages: ['adversarial-review'],
+      operations: ['repo-mutation'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"Write(.claude/**)"': {
+    classification: 'pre-action-refusal',
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['reviewer'],
+      stages: ['adversarial-review'],
+      operations: ['repo-mutation'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  },
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Bash(git push --force*)"': {
     classification: 'pre-action-refusal',
     applicability: {
       goals: ['all-foreman-goals'],
@@ -1539,7 +1539,7 @@ const R11_PERMISSION_PROFILE_CURATION: Readonly<
       hosts: ['claude-windows-docker-loaded'],
     },
   },
-  'permission-profiles-registry:item.1e0db040f9d8': {
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Bash(git push -f *)"': {
     classification: 'pre-action-refusal',
     applicability: {
       goals: ['all-foreman-goals'],
@@ -1549,7 +1549,7 @@ const R11_PERMISSION_PROFILE_CURATION: Readonly<
       hosts: ['claude-windows-docker-loaded'],
     },
   },
-  'permission-profiles-registry:item.e477240aeb8e': {
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Edit(.claude/**)"': {
     classification: 'pre-action-refusal',
     applicability: {
       goals: ['all-foreman-goals'],
@@ -1559,7 +1559,7 @@ const R11_PERMISSION_PROFILE_CURATION: Readonly<
       hosts: ['claude-windows-docker-loaded'],
     },
   },
-  'permission-profiles-registry:item.074c70cc9d55': {
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Edit(apps/**)"': {
     classification: 'pre-action-refusal',
     applicability: {
       goals: ['all-foreman-goals'],
@@ -1569,7 +1569,7 @@ const R11_PERMISSION_PROFILE_CURATION: Readonly<
       hosts: ['claude-windows-docker-loaded'],
     },
   },
-  'permission-profiles-registry:item.5705a054df96': {
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Edit(config/**)"': {
     classification: 'pre-action-refusal',
     applicability: {
       goals: ['all-foreman-goals'],
@@ -1579,7 +1579,7 @@ const R11_PERMISSION_PROFILE_CURATION: Readonly<
       hosts: ['claude-windows-docker-loaded'],
     },
   },
-  'permission-profiles-registry:item.b6db9d1f4737': {
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Edit(plugins/**)"': {
     classification: 'pre-action-refusal',
     applicability: {
       goals: ['all-foreman-goals'],
@@ -1589,7 +1589,7 @@ const R11_PERMISSION_PROFILE_CURATION: Readonly<
       hosts: ['claude-windows-docker-loaded'],
     },
   },
-  'permission-profiles-registry:item.92b60e67dfba': {
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Edit(skills/**)"': {
     classification: 'pre-action-refusal',
     applicability: {
       goals: ['all-foreman-goals'],
@@ -1599,7 +1599,7 @@ const R11_PERMISSION_PROFILE_CURATION: Readonly<
       hosts: ['claude-windows-docker-loaded'],
     },
   },
-  'permission-profiles-registry:item.b8a82b2446d9': {
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"PowerShell(git push --force*)"': {
     classification: 'pre-action-refusal',
     applicability: {
       goals: ['all-foreman-goals'],
@@ -1609,7 +1609,7 @@ const R11_PERMISSION_PROFILE_CURATION: Readonly<
       hosts: ['claude-windows-docker-loaded'],
     },
   },
-  'permission-profiles-registry:item.1fa440b2fe59': {
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"PowerShell(git push -f *)"': {
     classification: 'pre-action-refusal',
     applicability: {
       goals: ['all-foreman-goals'],
@@ -1619,7 +1619,7 @@ const R11_PERMISSION_PROFILE_CURATION: Readonly<
       hosts: ['claude-windows-docker-loaded'],
     },
   },
-  'permission-profiles-registry:item.3641610e292b': {
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Write(.claude/**)"': {
     classification: 'pre-action-refusal',
     applicability: {
       goals: ['all-foreman-goals'],
@@ -1629,7 +1629,7 @@ const R11_PERMISSION_PROFILE_CURATION: Readonly<
       hosts: ['claude-windows-docker-loaded'],
     },
   },
-  'permission-profiles-registry:item.854101218a6d': {
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Write(apps/**)"': {
     classification: 'pre-action-refusal',
     applicability: {
       goals: ['all-foreman-goals'],
@@ -1639,7 +1639,7 @@ const R11_PERMISSION_PROFILE_CURATION: Readonly<
       hosts: ['claude-windows-docker-loaded'],
     },
   },
-  'permission-profiles-registry:item.e4d0bc5dc904': {
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Write(config/**)"': {
     classification: 'pre-action-refusal',
     applicability: {
       goals: ['all-foreman-goals'],
@@ -1649,7 +1649,7 @@ const R11_PERMISSION_PROFILE_CURATION: Readonly<
       hosts: ['claude-windows-docker-loaded'],
     },
   },
-  'permission-profiles-registry:item.7b5310ad887b': {
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Write(plugins/**)"': {
     classification: 'pre-action-refusal',
     applicability: {
       goals: ['all-foreman-goals'],
@@ -1659,7 +1659,7 @@ const R11_PERMISSION_PROFILE_CURATION: Readonly<
       hosts: ['claude-windows-docker-loaded'],
     },
   },
-  'permission-profiles-registry:item.6ac66b888a40': {
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Write(skills/**)"': {
     classification: 'pre-action-refusal',
     applicability: {
       goals: ['all-foreman-goals'],
@@ -1681,7 +1681,7 @@ const R10_CURATED_ITEM_SEMANTICS: Readonly<
     }
   >
 > = {
-  'goal-skill:item.02636597cc8d': {
+  'goal-skill:md-block:# /goal — the Coordinator entry point > ## Stage Zero — run it, don\'t skip it:list-item:1': {
     classification: 'pre-action-refusal',
     identity: ['goal.stage-zero-intake', 'explicit-design-questions-before-ratification'],
     applicability: {
@@ -1692,7 +1692,7 @@ const R10_CURATED_ITEM_SEMANTICS: Readonly<
       hosts: ['any'],
     },
   },
-  'goal-skill:item.fa27a05811dd': {
+  'goal-skill:md-block:# /goal — the Coordinator entry point > ## Stage Zero — run it, don\'t skip it:list-item:2': {
     classification: 'ci-static-check',
     identity: ['goal.charter-shape', 'charter-records-decisions-graph-exits-gates-and-stops'],
     applicability: {
@@ -1703,7 +1703,7 @@ const R10_CURATED_ITEM_SEMANTICS: Readonly<
       hosts: ['any'],
     },
   },
-  'goal-skill:item.8fda5f4d9776': {
+  'goal-skill:md-block:# /goal — the Coordinator entry point > ## Stage Zero — run it, don\'t skip it:list-item:3': {
     classification: 'pre-action-refusal',
     identity: ['gate1.ratification-authority', 'explicit-developer-ratification-required'],
     applicability: {
@@ -1714,7 +1714,7 @@ const R10_CURATED_ITEM_SEMANTICS: Readonly<
       hosts: ['any'],
     },
   },
-  'goal-skill:item.100b2d3e99ce': {
+  'goal-skill:md-block:# /goal — the Coordinator entry point:paragraph:1': {
     classification: 'pre-action-refusal',
     identity: ['verification.issue-authority', 'coordinator-consumes-but-does-not-produce'],
     applicability: {
@@ -1725,7 +1725,7 @@ const R10_CURATED_ITEM_SEMANTICS: Readonly<
       hosts: ['any'],
     },
   },
-  'goal-skill:item.60b00947c4b6': {
+  'goal-skill:md-block:# /goal — the Coordinator entry point > ## Parse the input:list-item:2': {
     classification: 'pre-action-refusal',
     identity: ['goal.coordinator-ownership', 'stop-when-another-live-owner-is-named'],
     applicability: {
@@ -1736,7 +1736,7 @@ const R10_CURATED_ITEM_SEMANTICS: Readonly<
       hosts: ['any'],
     },
   },
-  'goal-skill:item.da6c6e8b8123': {
+  'goal-skill:md-block:# /goal — the Coordinator entry point > ## Parse the input:list-item:3': {
     classification: 'pre-action-refusal',
     identity: ['goal.input-required', 'stop-until-a-goal-concept-exists'],
     applicability: {
@@ -1747,7 +1747,7 @@ const R10_CURATED_ITEM_SEMANTICS: Readonly<
       hosts: ['any'],
     },
   },
-  'goal-skill:item.3924cf25d478': {
+  'goal-skill:md-block:# /goal — the Coordinator entry point > ## Plan-level adversarial review — always:paragraph:1': {
     classification: 'independent-review-human-judgment',
     identity: ['goal.plan-review', 'fresh-plan-review-and-scoped-reratification-required'],
     applicability: {
@@ -1758,7 +1758,7 @@ const R10_CURATED_ITEM_SEMANTICS: Readonly<
       hosts: ['any'],
     },
   },
-  'goal-skill:item.95e72aecfbf6': {
+  'goal-skill:md-block:# /goal — the Coordinator entry point > ## Generate the loop directive, then become the loop:paragraph:1': {
     classification: 'ci-static-check',
     identity: ['goal.loop-directive', 'ownership-authorizations-queue-and-stops-required'],
     applicability: {
@@ -1769,7 +1769,7 @@ const R10_CURATED_ITEM_SEMANTICS: Readonly<
       hosts: ['any'],
     },
   },
-  'goal-skill:item.aa7f78b70702': {
+  'goal-skill:md-block:# /goal — the Coordinator entry point > ## Generate the loop directive, then become the loop:paragraph:2': {
     classification: 'ci-static-check',
     identity: ['goal.loop-pacing', 'completion-signals-and-long-fallbacks-without-polling'],
     applicability: {
@@ -1780,7 +1780,7 @@ const R10_CURATED_ITEM_SEMANTICS: Readonly<
       hosts: ['any'],
     },
   },
-  'goal-skill:item.a970cabbcc75': {
+  'goal-skill:md-block:# /goal — the Coordinator entry point > ## Generate the loop directive, then become the loop:paragraph:3': {
     classification: 'ci-static-check',
     identity: ['goal.parcel-cycle', 'complete-governed-parcel-cycle-required'],
     applicability: {
@@ -1798,7 +1798,7 @@ const R10_CURATED_ITEM_SEMANTICS: Readonly<
       hosts: ['any'],
     },
   },
-  'goal-skill:item.0b5cc2b60d89': {
+  'goal-skill:md-block:# /goal — the Coordinator entry point > ## Hook/goal conditions must be agent-completable:paragraph:1': {
     classification: 'pre-action-refusal',
     identity: ['goal.human-gate-stop', 'human-gates-require-agent-completable-stop-reports'],
     applicability: {
@@ -1809,7 +1809,7 @@ const R10_CURATED_ITEM_SEMANTICS: Readonly<
       hosts: ['any'],
     },
   },
-  'goal-skill:item.fd22c7f94502': {
+  'goal-skill:md-block:# /goal — the Coordinator entry point > ## Stop:paragraph:1': {
     classification: 'pre-action-refusal',
     identity: ['goal.loop-stop', 'stop-on-exit-stop-condition-or-developer-direction'],
     applicability: {
@@ -1820,7 +1820,7 @@ const R10_CURATED_ITEM_SEMANTICS: Readonly<
       hosts: ['any'],
     },
   },
-  'coordinator-pattern:item.38dbf3185a76': {
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:1': {
     classification: 'pre-action-refusal',
     identity: ['goal.stage-zero-intake', 'scope-constraints-and-canon-interrogated'],
     applicability: {
@@ -1831,7 +1831,7 @@ const R10_CURATED_ITEM_SEMANTICS: Readonly<
       hosts: ['any'],
     },
   },
-  'coordinator-pattern:item.84b4e388c06b': {
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:2': {
     classification: 'pre-action-refusal',
     identity: ['goal.design-decision-authority', 'developer-disposes-explicit-decisions'],
     applicability: {
@@ -1842,7 +1842,7 @@ const R10_CURATED_ITEM_SEMANTICS: Readonly<
       hosts: ['any'],
     },
   },
-  'coordinator-pattern:item.d62734f662a0': {
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:3': {
     classification: 'pre-action-refusal',
     identity: ['canon.commentary-mutation-authority', 'explicit-targeted-direction-required'],
     applicability: {
@@ -1853,7 +1853,7 @@ const R10_CURATED_ITEM_SEMANTICS: Readonly<
       hosts: ['any'],
     },
   },
-  'coordinator-pattern:item.00f63e7818bc': {
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:4': {
     classification: 'ci-static-check',
     identity: ['goal.charter-shape', 'charter-records-governed-goal-structure'],
     applicability: {
@@ -1864,7 +1864,7 @@ const R10_CURATED_ITEM_SEMANTICS: Readonly<
       hosts: ['any'],
     },
   },
-  'coordinator-pattern:item.a3d15fe678e1': {
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:5': {
     classification: 'pre-action-refusal',
     identity: ['gate1.ratification-authority', 'explicit-developer-ratification-required'],
     applicability: {
@@ -1875,40 +1875,7 @@ const R10_CURATED_ITEM_SEMANTICS: Readonly<
       hosts: ['any'],
     },
   },
-  'coordinator-pattern:item.dedbefc1b097': {
-    classification: 'pre-action-refusal',
-    identity: ['gate1.ratification-delegability', 'gate-one-never-delegable'],
-    applicability: {
-      goals: ['all-foreman-goals'],
-      roles: ['coordinator'],
-      stages: ['stage-zero'],
-      operations: ['state-transition'],
-      hosts: ['any'],
-    },
-  },
-  'coordinator-pattern:item.91dd60b00fd6': {
-    classification: 'pre-action-refusal',
-    identity: ['gate2.dispatch-grant', 'charter-scoped-standing-dispatch-authorization'],
-    applicability: {
-      goals: ['all-foreman-goals'],
-      roles: ['coordinator'],
-      stages: ['shaping'],
-      operations: ['state-transition'],
-      hosts: ['any'],
-    },
-  },
-  'coordinator-pattern:item.f7686ab58db7': {
-    classification: 'pre-action-refusal',
-    identity: ['gate3.merge-authority', 'contingent-delegation'],
-    applicability: {
-      goals: ['all-foreman-goals'],
-      roles: ['coordinator'],
-      stages: ['merge'],
-      operations: ['state-transition'],
-      hosts: ['any'],
-    },
-  },
-  'coordinator-pattern:item.a18d27d46b1e': {
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## The role, in one paragraph:paragraph:1': {
     classification: 'pre-action-refusal',
     identity: ['verification.issue-authority', 'coordinator-consumes-but-does-not-produce'],
     applicability: {
@@ -1919,7 +1886,7 @@ const R10_CURATED_ITEM_SEMANTICS: Readonly<
       hosts: ['any'],
     },
   },
-  'coordinator-pattern:item.d7759c5e4d44': {
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Plan-level adversarial review - always:paragraph:1': {
     classification: 'independent-review-human-judgment',
     identity: ['goal.plan-review', 'fresh-plan-review-before-first-parcel'],
     applicability: {
@@ -1930,7 +1897,7 @@ const R10_CURATED_ITEM_SEMANTICS: Readonly<
       hosts: ['any'],
     },
   },
-  'coordinator-pattern:item.27e4a58df78c': {
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Plan-level adversarial review - always:paragraph:2': {
     classification: 'independent-review-human-judgment',
     identity: ['goal.plan-review-focus', 'decomposition-boundary-decision-and-collision-review'],
     applicability: {
@@ -1941,7 +1908,7 @@ const R10_CURATED_ITEM_SEMANTICS: Readonly<
       hosts: ['any'],
     },
   },
-  'coordinator-pattern:item.a90198c811be': {
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Plan-level adversarial review - always:paragraph:3': {
     classification: 'pre-action-refusal',
     identity: ['gate1.scoped-reopen', 'decision-changing-triage-reopens-gate-one'],
     applicability: {
@@ -1952,7 +1919,7 @@ const R10_CURATED_ITEM_SEMANTICS: Readonly<
       hosts: ['any'],
     },
   },
-  'coordinator-pattern:item.44badf453ad6': {
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Plan-level adversarial review - always:paragraph:4': {
     classification: 'independent-review-human-judgment',
     identity: ['goal.plan-review-universality', 'plan-review-runs-for-every-goal'],
     applicability: {
@@ -1963,7 +1930,7 @@ const R10_CURATED_ITEM_SEMANTICS: Readonly<
       hosts: ['any'],
     },
   },
-  'coordinator-pattern:item.c9bfcc35b53e': {
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## The three human gates:paragraph:1': {
     classification: 'pre-action-refusal',
     identity: ['goal.gate-record', 'gates-live-in-directives-not-permission-prompts'],
     applicability: {
@@ -1974,7 +1941,7 @@ const R10_CURATED_ITEM_SEMANTICS: Readonly<
       hosts: ['any'],
     },
   },
-  'coordinator-pattern:item.6fa5b60d426b': {
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Dispatch table:paragraph:1': {
     classification: 'post-action-detection',
     identity: ['permission-profile.enforcement-bound', 'loaded-session-mediation-is-incomplete'],
     applicability: {
@@ -1985,7 +1952,7 @@ const R10_CURATED_ITEM_SEMANTICS: Readonly<
       hosts: ['any'],
     },
   },
-  'coordinator-pattern:item.7e0b48ad8223': {
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Dispatch table:table-row:Coordinator': {
     classification: 'ci-static-check',
     identity: ['routing.coordinator-session', 'frontier-long-running-goal-session'],
     applicability: {
@@ -1996,7 +1963,7 @@ const R10_CURATED_ITEM_SEMANTICS: Readonly<
       hosts: ['any'],
     },
   },
-  'coordinator-pattern:item.199277d75b40': {
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Dispatch table:table-row:Builder (standard risk)': {
     classification: 'ci-static-check',
     identity: ['routing.builder-standard', 'standard-builder-isolated-parcel-session'],
     applicability: {
@@ -2007,7 +1974,7 @@ const R10_CURATED_ITEM_SEMANTICS: Readonly<
       hosts: ['any'],
     },
   },
-  'coordinator-pattern:item.986daac0fa56': {
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Dispatch table:table-row:Builder (architecture/risk)': {
     classification: 'ci-static-check',
     identity: ['routing.builder-architecture', 'architecture-builder-uses-frontier-isolation'],
     applicability: {
@@ -2018,7 +1985,7 @@ const R10_CURATED_ITEM_SEMANTICS: Readonly<
       hosts: ['any'],
     },
   },
-  'coordinator-pattern:item.c64915fec3a9': {
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Dispatch table:table-row:Adversarial reviewer': {
     classification: 'post-action-detection',
     identity: ['routing.reviewer-posture', 'fresh-reviewer-mutation-reduced-not-eliminated'],
     applicability: {
@@ -2029,7 +1996,7 @@ const R10_CURATED_ITEM_SEMANTICS: Readonly<
       hosts: ['any'],
     },
   },
-  'coordinator-pattern:item.a0945ba49018': {
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Dispatch table:table-row:Shaping agent': {
     classification: 'pre-action-refusal',
     identity: ['routing.shaper-posture', 'fresh-shaper-docs-only-writes'],
     applicability: {
@@ -2040,7 +2007,7 @@ const R10_CURATED_ITEM_SEMANTICS: Readonly<
       hosts: ['any'],
     },
   },
-  'coordinator-pattern:item.c5bd4203e8bf': {
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Dispatch table:paragraph:2': {
     classification: 'pre-action-refusal',
     identity: [
       'goal.dispatch-mechanics',
@@ -2054,7 +2021,7 @@ const R10_CURATED_ITEM_SEMANTICS: Readonly<
       hosts: ['any'],
     },
   },
-  'coordinator-pattern:item.47b2eaa2f9ef': {
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## The long-running loop:paragraph:1': {
     classification: 'pre-action-refusal',
     identity: ['goal.coordinator-ownership', 'single-owner-transfer-only-at-parcel-boundaries'],
     applicability: {
@@ -2065,7 +2032,7 @@ const R10_CURATED_ITEM_SEMANTICS: Readonly<
       hosts: ['any'],
     },
   },
-  'coordinator-pattern:item.ebd83f2562f3': {
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## The long-running loop:paragraph:2': {
     classification: 'pre-action-refusal',
     identity: ['gate1.scoped-reopen', 'only-affected-irreversible-work-is-held'],
     applicability: {
@@ -2076,7 +2043,7 @@ const R10_CURATED_ITEM_SEMANTICS: Readonly<
       hosts: ['any'],
     },
   },
-  'coordinator-pattern:item.0d38fd58e6b8': {
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Verification spine (unchanged, referenced):paragraph:1': {
     classification: 'ci-static-check',
     identity: ['verification.coordinator-spine', 'disk-closure-determinism-and-tripwires-required'],
     applicability: {
@@ -2087,7 +2054,7 @@ const R10_CURATED_ITEM_SEMANTICS: Readonly<
       hosts: ['any'],
     },
   },
-  'coordinator-pattern:item.d83180642e4d': {
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Verification spine (unchanged, referenced):paragraph:2': {
     classification: 'ci-static-check',
     identity: ['goal.exit-custody', 'word-exact-exits-require-real-artifacts'],
     applicability: {
@@ -2098,7 +2065,7 @@ const R10_CURATED_ITEM_SEMANTICS: Readonly<
       hosts: ['any'],
     },
   },
-  'coordinator-pattern:item.3d29095eda6a': {
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Lessons discipline (Stage F):paragraph:1': {
     classification: 'ci-static-check',
     identity: ['goal.lessons-discipline', 'lessons-remain-provenance-with-narrow-installation'],
     applicability: {
@@ -2109,7 +2076,7 @@ const R10_CURATED_ITEM_SEMANTICS: Readonly<
       hosts: ['any'],
     },
   },
-  'coordinator-pattern:item.0890828ec6f8': {
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Lineage and extraction:paragraph:1': {
     classification: 'ci-static-check',
     identity: ['goal.pattern-extraction', 'promote-only-after-repeated-shipped-practice'],
     applicability: {
@@ -2123,1544 +2090,1500 @@ const R10_CURATED_ITEM_SEMANTICS: Readonly<
 }
 
 const CURATED_ITEM_CLASSIFICATIONS: Readonly<Record<string, RuleClassification>> = {
-  'fk-charter:item.d1': 'ci-static-check',
-  'fk-charter:item.d2': 'ci-static-check',
-  'fk-charter:item.d3': 'pre-action-refusal',
-  'fk-charter:item.d4': 'ci-static-check',
-  'fk-charter:item.d5': 'pre-action-refusal',
-  'fk-charter:item.d6': 'ci-static-check',
-  'fk-charter:item.d7': 'post-action-detection',
-  'fk-charter:item.d8': 'post-action-detection',
-  'fk-charter:item.d9': 'independent-review-human-judgment',
-  'fk-charter:item.d10': 'pre-action-refusal',
-  'fk-charter:item.d11': 'ci-static-check',
-  'fk-charter:item.d12': 'pre-action-refusal',
-  'fk-charter:item.d13': 'post-action-detection',
-  'fk-charter:item.d14': 'ci-static-check',
-  'fk-charter:item.d15': 'pre-action-refusal',
-  'fk-charter:item.d16': 'pre-action-refusal',
-  'fk-charter:item.d17': 'pre-action-refusal',
-  'fk-charter:item.d18': 'ci-static-check',
-  'fk-charter:item.d19': 'pre-action-refusal',
-  'fk-charter:item.d20': 'ci-static-check',
-  'fk-charter:item.a583b7f02950': 'narrative-provenance',
-  'fk-charter:item.93d5d3978e5f': 'pre-action-refusal',
-  'fk-charter:item.cd014d6d90c5': 'independent-review-human-judgment',
-  'fk-charter:item.144bb836f528': 'pre-action-refusal',
-  'fk-charter:item.7d74bdcd5bb3': 'ci-static-check',
-  'fk-charter:item.5f823cd304d6': 'ci-static-check',
-  'fk-charter:item.f1439c7e3a90': 'ci-static-check',
-  'fk-charter:item.fec816847e8e': 'ci-static-check',
-  'fk-charter:item.a087b0ab4c3b': 'pre-action-refusal',
-  'fk-charter:item.10bcdc2cae49': 'ci-static-check',
-  'fk-charter:item.e9ec57edc0a2': 'pre-action-refusal',
-  'fk-charter:item.eddc1a2874a3': 'ci-static-check',
-  'fk-charter:item.248b8ef73429': 'ci-static-check',
-  'fk-charter:item.7854414d4093': 'ci-static-check',
-  'fk-charter:item.a0d98411d75e': 'ci-static-check',
-  'fk-charter:item.fec95f508418': 'ci-static-check',
-  'fk-charter:item.4910b2a0a7a3': 'ci-static-check',
-  'fk-charter:item.4d6ea442cfff': 'ci-static-check',
-  'fk-charter:item.49288a83830e': 'ci-static-check',
-  'fk-charter:item.8cf027fc811e': 'independent-review-human-judgment',
-  'fk-charter:item.15a44cf50bc6': 'pre-action-refusal',
-  'fk-charter:item.c74628d41600': 'pre-action-refusal',
-  'fk-charter:item.d9921c51d7ea': 'pre-action-refusal',
-  'fk-charter:item.41b4b3dccd81': 'pre-action-refusal',
-  'fk-charter:item.0afd841f51f8': 'pre-action-refusal',
-  'fk-charter:item.c80d986d4cfe': 'pre-action-refusal',
-  'fk-charter:item.ab729d219bbb': 'pre-action-refusal',
-  'fk-charter:item.1c42ce2f7e94': 'pre-action-refusal',
-  'fk-charter:item.28ec67f3ddb4': 'pre-action-refusal',
-  'fk-charter:item.5138fd735a8a': 'pre-action-refusal',
-  'fk-charter:item.6aae5fe2d602': 'pre-action-refusal',
-  'fk-charter:item.fc4a386b94fe': 'pre-action-refusal',
-  'fk-charter:item.42e05d00c67a': 'pre-action-refusal',
-  'fk-charter:item.07490af17320': 'pre-action-refusal',
-  'fk-charter:item.b5bad0475a3e': 'pre-action-refusal',
-  'fk-charter:item.e86843a842bc': 'pre-action-refusal',
-  'fk-charter:item.98b291e68000': 'pre-action-refusal',
-  'fk-charter:item.2cbbc7ae0192': 'pre-action-refusal',
-  'fk-charter:item.76049b5d2003': 'pre-action-refusal',
-  'fk-charter:item.b1ac4aa9eddf': 'pre-action-refusal',
-  'fk-charter:item.b0a3e204145f': 'narrative-provenance',
-  'fk-plan-review-findings:item.r1': 'narrative-provenance',
-  'fk-plan-review-findings:item.r2': 'pre-action-refusal',
-  'fk-plan-review-findings:item.r3': 'narrative-provenance',
-  'fk-plan-review-findings:item.r4': 'unsupported',
-  'fk-plan-review-findings:item.r5': 'ci-static-check',
-  'fk-plan-review-findings:item.r6': 'pre-action-refusal',
-  'fk-plan-review-findings:item.r7': 'narrative-provenance',
-  'fk-plan-review-findings:item.r8': 'narrative-provenance',
-  'fk-plan-review-findings:item.r9': 'ci-static-check',
-  'fk-plan-review-findings:item.r10': 'unsupported',
-  'fk-plan-review-findings:item.r11': 'ci-static-check',
-  'fk-plan-review-findings:item.r12': 'post-action-detection',
-  'fk-plan-review-findings:item.r13': 'pre-action-refusal',
-  'fk-plan-review-findings:item.1de06653021c': 'narrative-provenance',
-  'fk-loop-directive:item.7a05d374a3b1': 'pre-action-refusal',
-  'fk-loop-directive:item.b81725578197': 'narrative-provenance',
-  'fk-loop-directive:item.aac2d1258986': 'narrative-provenance',
-  'fk-loop-directive:item.4f0fb14fbd95': 'narrative-provenance',
-  'fk-loop-directive:item.47a75730afd6': 'pre-action-refusal',
-  'fk-loop-directive:item.08b3cbb91027': 'pre-action-refusal',
-  'fk-loop-directive:item.dd8203551518': 'pre-action-refusal',
-  'fk-loop-directive:item.ebdd14e6f524': 'pre-action-refusal',
-  'fk-loop-directive:item.a59b01361dc6': 'pre-action-refusal',
-  'fk-loop-directive:item.734b79ca0bb8': 'pre-action-refusal',
-  'fk-loop-directive:item.51f7dbbba473': 'pre-action-refusal',
-  'fk-loop-directive:item.d69eca1ec1f6': 'pre-action-refusal',
-  'fk-loop-directive:item.fc3ea1441f92': 'pre-action-refusal',
-  'fk-loop-directive:item.15e5fcbdbe13': 'pre-action-refusal',
-  'fk-loop-directive:item.bfffee6d7c1f': 'pre-action-refusal',
-  'fk-loop-directive:item.431228393540': 'pre-action-refusal',
-  'fk-loop-directive:item.be7691d170a9': 'pre-action-refusal',
-  'fk-loop-directive:item.9935b3499764': 'pre-action-refusal',
-  'fk-loop-directive:item.64341d1e8b82': 'pre-action-refusal',
-  'fk-loop-directive:item.7eb6018d9e57': 'pre-action-refusal',
-  'fk-loop-directive:item.7aa2dd930e35': 'pre-action-refusal',
+  'fk-charter:D1': 'ci-static-check',
+  'fk-charter:D2': 'ci-static-check',
+  'fk-charter:D3': 'pre-action-refusal',
+  'fk-charter:D4': 'ci-static-check',
+  'fk-charter:D5': 'pre-action-refusal',
+  'fk-charter:D6': 'ci-static-check',
+  'fk-charter:D7': 'post-action-detection',
+  'fk-charter:D8': 'post-action-detection',
+  'fk-charter:D9': 'independent-review-human-judgment',
+  'fk-charter:D10': 'pre-action-refusal',
+  'fk-charter:D11': 'ci-static-check',
+  'fk-charter:D12': 'pre-action-refusal',
+  'fk-charter:D13': 'post-action-detection',
+  'fk-charter:D14': 'ci-static-check',
+  'fk-charter:D15': 'pre-action-refusal',
+  'fk-charter:D16': 'pre-action-refusal',
+  'fk-charter:D17': 'pre-action-refusal',
+  'fk-charter:D18': 'ci-static-check',
+  'fk-charter:D19': 'pre-action-refusal',
+  'fk-charter:D20': 'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel:paragraph:1': 'narrative-provenance',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 2. Problem statement:list-item:1': 'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 4. Locked decisions:paragraph:1': 'independent-review-human-judgment',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 0 — Authority and contracts:table-row:FK-P2 — Spec-body compiler': 'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 0 — Authority and contracts:paragraph:1': 'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 1 — Pure trust core:paragraph:1': 'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 2 — Stateless read-only MCP and container:paragraph:1': 'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:paragraph:1': 'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P18 — CI scope and state-evidence backstops': 'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:paragraph:1': 'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:1': 'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:2': 'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:3': 'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:4': 'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:5': 'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:6': 'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:7': 'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:8': 'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:9': 'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 10. Human gates and standing authorizations requested > ### Gate 1 — charter ratification:paragraph:1': 'independent-review-human-judgment',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 10. Human gates and standing authorizations requested > ### Gate 2 — parcel dispatch:paragraph:1': 'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 10. Human gates and standing authorizations requested > ### Gate 3 — merge:paragraph:1': 'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:1': 'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:2': 'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:3': 'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:4': 'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:5': 'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:6': 'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:7': 'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:8': 'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:9': 'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:10': 'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:11': 'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:12': 'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:13': 'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:14': 'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:15': 'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:16': 'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:17': 'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 13. Gate 1 decision list:list-item:11': 'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 13. Gate 1 decision list:paragraph:2': 'narrative-provenance',
+  'fk-plan-review-findings:R1': 'narrative-provenance',
+  'fk-plan-review-findings:R2': 'pre-action-refusal',
+  'fk-plan-review-findings:R3': 'narrative-provenance',
+  'fk-plan-review-findings:R4': 'unsupported',
+  'fk-plan-review-findings:R5': 'ci-static-check',
+  'fk-plan-review-findings:R6': 'pre-action-refusal',
+  'fk-plan-review-findings:R7': 'narrative-provenance',
+  'fk-plan-review-findings:R8': 'narrative-provenance',
+  'fk-plan-review-findings:R9': 'ci-static-check',
+  'fk-plan-review-findings:R10': 'unsupported',
+  'fk-plan-review-findings:R11': 'ci-static-check',
+  'fk-plan-review-findings:R12': 'post-action-detection',
+  'fk-plan-review-findings:R13': 'pre-action-refusal',
+  'fk-plan-review-findings:md-block:# Foreman Kernel — Plan-Level Adversarial Review Findings > ## Scoped Gate 1 re-open:list-item:6': 'narrative-provenance',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:paragraph:1': 'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:list-item:1': 'narrative-provenance',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:list-item:2': 'narrative-provenance',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:list-item:3': 'narrative-provenance',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:list-item:4': 'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:list-item:5': 'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:paragraph:1': 'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:1': 'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:2': 'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:3': 'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:4': 'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:5': 'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:6': 'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:paragraph:2': 'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:1': 'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:2': 'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:3': 'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:4': 'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:5': 'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:6': 'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:7': 'pre-action-refusal',
   // Standing authorization 8, published this round. It is a prohibition, and it was sitting in
   // `## Current state` carrying `ruleIds: []` plus a generated rationale asserting it stated no
   // rule - which is precisely the laundering shape R24 exists to close. Classified
   // `pre-action-refusal` because it must stop the read or write BEFORE the ambient checkout is
   // touched; a post-action detection of an absorbed user-owned change is not a remedy.
-  'fk-loop-directive:item.8be213f2455a': 'pre-action-refusal',
-  'fk-loop-directive:item.8c0b09120ff1': 'ci-static-check',
-  'fk-loop-directive:item.d3b0e9dd63d0': 'pre-action-refusal',
-  'fk-loop-directive:item.f7e8dffebadc': 'ci-static-check',
-  'fk-loop-directive:item.1157c2a03bbe': 'pre-action-refusal',
-  'fk-loop-directive:item.bdd56a126b79': 'pre-action-refusal',
-  'fk-loop-directive:item.ed8d7888ce8c': 'ci-static-check',
-  'fk-loop-directive:item.6ea9ce2b9573': 'ci-static-check',
-  'fk-loop-directive:item.ce9042d917b2': 'independent-review-human-judgment',
-  'fk-loop-directive:item.d978784bc1b7': 'independent-review-human-judgment',
-  'fk-loop-directive:item.2743c2f8c558': 'pre-action-refusal',
-  'fk-loop-directive:item.e3065db62b43': 'pre-action-refusal',
-  'fk-loop-directive:item.1576c95260b6': 'pre-action-refusal',
-  'fk-loop-directive:item.8f98d5e3e61a': 'ci-static-check',
-  'fk-loop-directive:item.4f26e86b0870': 'ci-static-check',
-  'fk-loop-directive:item.5909432cc1a7': 'ci-static-check',
-  'fk-loop-directive:item.b2e02392e4e5': 'ci-static-check',
-  'fk-loop-directive:item.ec3e0d0130ff': 'ci-static-check',
-  'fk-loop-directive:item.e7e5c2483975': 'pre-action-refusal',
-  'fk-loop-directive:item.c6c0339a5001': 'ci-static-check',
-  'fk-loop-directive:item.78a9d344c4c6': 'pre-action-refusal',
-  'fk-loop-directive:item.5820c7f79bef': 'pre-action-refusal',
-  'fk-loop-directive:item.7f72e946ccbe': 'pre-action-refusal',
-  'fk-loop-directive:item.23f92834c1c8': 'pre-action-refusal',
-  'fk-loop-directive:item.6151d43333aa': 'pre-action-refusal',
-  'fk-loop-directive:item.c708d8f95113': 'pre-action-refusal',
-  'fk-loop-directive:item.adee76eb5f43': 'pre-action-refusal',
-  'fk-loop-directive:item.52f524327994': 'pre-action-refusal',
-  'fk-loop-directive:item.37f78aa591c5': 'pre-action-refusal',
-  'fk-loop-directive:item.d7945b743a67': 'pre-action-refusal',
-  'fk-loop-directive:item.80f2c4a08e42': 'pre-action-refusal',
-  'fk-loop-directive:item.c55a33cc847f': 'pre-action-refusal',
-  'fk-loop-directive:item.237865e0993f': 'pre-action-refusal',
-  'fk-loop-directive:item.7ad3390acb6b': 'pre-action-refusal',
-  'spec-convention:item.fd5d51dd4808': 'narrative-provenance',
-  'spec-convention:item.f2172f28e7fc': 'narrative-provenance',
-  'spec-convention:item.71d77f22d163': 'narrative-provenance',
-  'spec-convention:item.ea0314db8499': 'narrative-provenance',
-  'spec-convention:item.d2b2084774b8': 'narrative-provenance',
-  'spec-convention:item.910181940014': 'narrative-provenance',
-  'spec-convention:item.c9b45d54e97b': 'narrative-provenance',
-  'spec-convention:item.4fa776b35f0b': 'narrative-provenance',
-  'spec-convention:item.4886c52fa322': 'narrative-provenance',
-  'spec-convention:item.74a07f6879cc': 'narrative-provenance',
-  'spec-convention:item.03f0830cd693': 'pre-action-refusal',
-  'spec-convention:item.7a55cf4f2295': 'narrative-provenance',
-  'spec-convention:item.0979dba6c958': 'ci-static-check',
-  'spec-convention:item.efb0769d6ff2': 'narrative-provenance',
-  'spec-convention:item.513e18f22be3': 'narrative-provenance',
-  'spec-convention:item.6dbbca88286f': 'narrative-provenance',
-  'spec-convention:item.e6f5fa8543a1': 'narrative-provenance',
-  'spec-convention:item.ac5ff7afd06f': 'narrative-provenance',
-  'spec-convention:item.5145ab15549c': 'narrative-provenance',
-  'spec-convention:item.fd82127bf9f9': 'narrative-provenance',
-  'spec-convention:item.022fc00afe7b': 'narrative-provenance',
-  'coordinator-pattern:item.38dbf3185a76': 'narrative-provenance',
-  'coordinator-pattern:item.84b4e388c06b': 'narrative-provenance',
-  'coordinator-pattern:item.d62734f662a0': 'narrative-provenance',
-  'coordinator-pattern:item.00f63e7818bc': 'narrative-provenance',
-  'coordinator-pattern:item.a3d15fe678e1': 'narrative-provenance',
-  'coordinator-pattern:item.dedbefc1b097': 'narrative-provenance',
-  'coordinator-pattern:item.91dd60b00fd6': 'narrative-provenance',
-  'coordinator-pattern:item.f7686ab58db7': 'narrative-provenance',
-  'goal-skill:item.02636597cc8d': 'narrative-provenance',
-  'goal-skill:item.fa27a05811dd': 'narrative-provenance',
-  'goal-skill:item.8fda5f4d9776': 'narrative-provenance',
-  'standing-constraints:item.constraint-1': 'pre-action-refusal',
-  'standing-constraints:item.constraint-2': 'pre-action-refusal',
-  'standing-constraints:item.constraint-3': 'pre-action-refusal',
-  'standing-constraints:item.constraint-4': 'pre-action-refusal',
-  'standing-constraints:item.constraint-5': 'ci-static-check',
-  'standing-constraints:item.constraint-12': 'ci-static-check',
-  'standing-constraints:item.constraint-13': 'pre-action-refusal',
-  'standing-constraints:item.constraint-6': 'pre-action-refusal',
-  'standing-constraints:item.constraint-7': 'pre-action-refusal',
-  'standing-constraints:item.constraint-8': 'independent-review-human-judgment',
-  'standing-constraints:item.constraint-9': 'independent-review-human-judgment',
-  'standing-constraints:item.constraint-10': 'post-action-detection',
-  'standing-constraints:item.constraint-11': 'independent-review-human-judgment',
-  'standing-constraints:item.c5880644c95c': 'narrative-provenance',
-  'parcel-driven-development:item.hard-rule-1': 'pre-action-refusal',
-  'parcel-driven-development:item.hard-rule-2': 'pre-action-refusal',
-  'parcel-driven-development:item.hard-rule-3': 'pre-action-refusal',
-  'parcel-driven-development:item.hard-rule-4': 'pre-action-refusal',
-  'parcel-driven-development:item.hard-rule-5': 'pre-action-refusal',
-  'parcel-driven-development:item.hard-rule-6': 'pre-action-refusal',
-  'parcel-driven-development:item.hard-rule-7': 'ci-static-check',
-  'parcel-driven-development:item.hard-rule-8': 'pre-action-refusal',
-  'parcel-driven-development:item.hard-rule-9': 'pre-action-refusal',
-  'parcel-driven-development:item.hard-rule-10': 'pre-action-refusal',
-  'parcel-driven-development:item.hard-rule-11': 'ci-static-check',
-  'parcel-driven-development:item.hard-rule-12': 'independent-review-human-judgment',
-  'parcel-driven-development:item.hard-rule-13': 'pre-action-refusal',
-  'parcel-driven-development:item.hard-rule-14': 'ci-static-check',
-  'parcel-driven-development:item.hard-rule-15': 'ci-static-check',
-  'parcel-driven-development:item.b7563a79cc57': 'narrative-provenance',
-  'parcel-driven-development:item.400cc2cfd0d5': 'narrative-provenance',
-  'parcel-driven-development:item.303fe3f67dae': 'narrative-provenance',
-  'parcel-driven-development:item.f1add5311b6c': 'narrative-provenance',
-  'parcel-driven-development:item.9d8d06d91590': 'narrative-provenance',
-  'parcel-driven-development:item.dbee4594f901': 'narrative-provenance',
-  'parcel-driven-development:item.7a8af4ddaa1e': 'narrative-provenance',
-  'parcel-driven-development:item.98f93a29441d': 'narrative-provenance',
-  'parcel-driven-development:item.e4751682430a': 'narrative-provenance',
-  'parcel-driven-development:item.72c60fa596e7': 'narrative-provenance',
-  'parcel-driven-development:item.754e096cfecf': 'narrative-provenance',
-  'parcel-driven-development:item.876882377a6a': 'narrative-provenance',
-  'foreman-line-plan:item.two-gate-thesis': 'narrative-provenance',
-  'foreman-line-plan:item.75569dd4ae1a': 'independent-review-human-judgment',
-  'foreman-line-plan:item.56a15a2f3220': 'ci-static-check',
-  'foreman-line-plan:item.c92333c21e64': 'narrative-provenance',
-  'foreman-line-plan:item.760cf6497075': 'pre-action-refusal',
-  'approval-readme:item.4261d18b3243': 'narrative-provenance',
-  'approval-readme:item.ff6f38f088ae': 'narrative-provenance',
-  'spec-frontmatter-schema:item.bdf997c3cd45': 'ci-static-check',
-  'spec-linter-validator:item.c6669b61c6f0': 'ci-static-check',
-  'spec-linter-validator:item.256b9064bc47': 'ci-static-check',
-  'spec-linter-validator:item.092d2fc43a32': 'ci-static-check',
-  'spec-linter-validator:item.fb7d76a32df4': 'ci-static-check',
-  'spec-linter-cli:item.0479c603add5': 'ci-static-check',
-  'spec-linter-cli:item.fb268f5c5eb4': 'ci-static-check',
-  'spec-linter-cli:item.66fec8a20db5': 'ci-static-check',
-  'spec-linter-cli:item.39787f778432': 'ci-static-check',
-  'spec-linter-readme:item.9a889881a236': 'unsupported',
-  'spec-linter-readme:item.b4f5d76d68ec': 'unsupported',
-  'permission-profiles-registry:item.1ec33a4741eb': 'ci-static-check',
-  'permission-profiles-registry:item.7faf78a6f54a': 'pre-action-refusal',
-  'permission-profiles-registry:item.26c5e2b211da': 'pre-action-refusal',
-  'permission-profiles-registry:item.1d221ed65b72': 'pre-action-refusal',
-  'permission-profiles-registry:item.1ce0fd439b3e': 'pre-action-refusal',
-  'permission-profiles-registry:item.39e65fb31709': 'pre-action-refusal',
-  'permission-profiles-registry:item.ffd949ad76c3': 'pre-action-refusal',
-  'permission-profiles-registry:item.c9cb62068f14': 'ci-static-check',
-  'permission-profiles-registry:item.13033f70c124': 'ci-static-check',
-  'permission-profiles-registry:item.947d19fbeb35': 'pre-action-refusal',
-  'permission-profiles-registry:item.5a359d80896b': 'pre-action-refusal',
-  'permission-profiles-registry:item.ee0641be06f2': 'pre-action-refusal',
-  'permission-profiles-registry:item.cf29180bce81': 'pre-action-refusal',
-  'permission-profiles-registry:item.4f213acde8e0': 'pre-action-refusal',
-  'permission-profiles-registry:item.397a3eb4c7ad': 'pre-action-refusal',
-  'permission-profiles-registry:item.f0613939994f': 'ci-static-check',
-  'permission-profiles-registry:item.58ef984a0faa': 'ci-static-check',
-  'permission-profiles-registry:item.50cd9c68ff51': 'ci-static-check',
-  'permission-profiles-registry:item.b9e7c5644f49': 'pre-action-refusal',
-  'permission-profiles-registry:item.861d14c80da2': 'pre-action-refusal',
-  'permission-profiles-registry:item.fe1bbb0564f6': 'pre-action-refusal',
-  'permission-profiles-registry:item.803732fe3411': 'pre-action-refusal',
-  'permission-profiles-registry:item.b77e9988c19d': 'pre-action-refusal',
-  'permission-profiles-registry:item.8cf9d57aa29c': 'pre-action-refusal',
-  'permission-profiles-registry:item.0ed672bcdee8': 'ci-static-check',
-  'permission-profiles-registry:item.bbb2cdb40927': 'ci-static-check',
-  'permission-profiles-registry:item.b01d14453456': 'pre-action-refusal',
-  'permission-profiles-registry:item.315ebd655fbe': 'pre-action-refusal',
-  'permission-profiles-registry:item.8e8e3c78500b': 'pre-action-refusal',
-  'permission-profiles-registry:item.4c9cd1062bc6': 'pre-action-refusal',
-  'permission-profiles-registry:item.060989ad78ea': 'pre-action-refusal',
-  'permission-profiles-registry:item.30b62f67dc13': 'pre-action-refusal',
-  'permission-profiles-registry:item.7417033cefc7': 'ci-static-check',
-  'permission-profiles-registry:item.f7f03a01fd3a': 'pre-action-refusal',
-  'permission-profiles-registry:item.35cf0f58fc34': 'pre-action-refusal',
-  'permission-profiles-registry:item.dedb7349c943': 'pre-action-refusal',
-  'permission-profiles-registry:item.b7ab94d73ef4': 'pre-action-refusal',
-  'permission-profiles-registry:item.9ab0d5db8ebf': 'pre-action-refusal',
-  'permission-profiles-registry:item.ea8666a98ca1': 'pre-action-refusal',
-  'permission-profiles-registry:item.3a54e390a3e1': 'pre-action-refusal',
-  'permission-profiles-registry:item.eb314ad28f5e': 'pre-action-refusal',
-  'permission-profiles-registry:item.14569d4abb87': 'pre-action-refusal',
-  'permission-profiles-registry:item.7943c5773fba': 'pre-action-refusal',
-  'permission-profiles-registry:item.2ca898541627': 'pre-action-refusal',
-  'permission-profiles-registry:item.23838f138908': 'pre-action-refusal',
-  'permission-profiles-registry:item.6d850a4b4948': 'pre-action-refusal',
-  'permission-profiles-registry:item.f1d63df02914': 'pre-action-refusal',
-  'permission-profiles-registry:item.8c5085e2ff63': 'ci-static-check',
-  'permission-profiles-registry:item.60eb2cbc6f43': 'pre-action-refusal',
-  'permission-profiles-registry:item.1e0db040f9d8': 'pre-action-refusal',
-  'permission-profiles-registry:item.e477240aeb8e': 'pre-action-refusal',
-  'permission-profiles-registry:item.074c70cc9d55': 'pre-action-refusal',
-  'permission-profiles-registry:item.5705a054df96': 'pre-action-refusal',
-  'permission-profiles-registry:item.b6db9d1f4737': 'pre-action-refusal',
-  'permission-profiles-registry:item.92b60e67dfba': 'pre-action-refusal',
-  'permission-profiles-registry:item.b8a82b2446d9': 'pre-action-refusal',
-  'permission-profiles-registry:item.1fa440b2fe59': 'pre-action-refusal',
-  'permission-profiles-registry:item.3641610e292b': 'pre-action-refusal',
-  'permission-profiles-registry:item.854101218a6d': 'pre-action-refusal',
-  'permission-profiles-registry:item.e4d0bc5dc904': 'pre-action-refusal',
-  'permission-profiles-registry:item.7b5310ad887b': 'pre-action-refusal',
-  'permission-profiles-registry:item.6ac66b888a40': 'pre-action-refusal',
-  'permission-profiles-types:item.0b9706b5a9bf': 'narrative-provenance',
-  'permission-profiles-types:item.bc257b03aa99': 'narrative-provenance',
-  'permission-profiles-validator:item.dcd8638af4a4': 'pre-action-refusal',
-  'permission-profiles-validator:item.9c3c17055384': 'pre-action-refusal',
-  'permission-profiles-validator:item.4da758cc157c': 'pre-action-refusal',
-  'permission-profiles-validator:item.ffd598413a66': 'pre-action-refusal',
-  'permission-profiles-readme:item.b3183ee0b5ab': 'unsupported',
-  'permission-profiles-readme:item.f8c108b3b431': 'unsupported',
-  'permission-profiles-readme:item.a26beda5342d': 'unsupported',
-  'permission-profiles-readme:item.27ce8e0a4adc': 'unsupported',
-  'permission-profiles-readme:item.729be3615f8d': 'unsupported',
-  'permission-profiles-readme:item.d11b9d38f924': 'unsupported',
-  'permission-profiles-readme:item.1101805f1c9e': 'unsupported',
-  'permission-profiles-readme:item.415efa3f5e3b': 'unsupported',
-  'fk-charter:item.5c1f19dd9911': 'independent-review-human-judgment',
-  'fk-charter:item.863fbb9202f0': 'pre-action-refusal',
-  'fk-charter:item.420807aa841c': 'pre-action-refusal',
-  'fk-charter:item.0b65a783a0be': 'pre-action-refusal',
-  'fk-charter:item.8d204432b7c7': 'pre-action-refusal',
-  'fk-charter:item.e7be31fb263e': 'pre-action-refusal',
-  'fk-charter:item.7983e741c7aa': 'pre-action-refusal',
-  'fk-charter:item.ba4689f0d16e': 'pre-action-refusal',
-  'fk-charter:item.e64616afcaf9': 'pre-action-refusal',
-  'fk-charter:item.01fc2f9fcdd0': 'pre-action-refusal',
-  'fk-charter:item.9aee50455247': 'pre-action-refusal',
-  'fk-charter:item.6427173452f4': 'pre-action-refusal',
-  'fk-charter:item.d6c307d21998': 'pre-action-refusal',
-  'fk-charter:item.9e512e70b8f5': 'pre-action-refusal',
-  'fk-charter:item.d4059b59ac59': 'pre-action-refusal',
-  'fk-charter:item.f4e2ba3acfd6': 'pre-action-refusal',
-  'fk-charter:item.d92a7c500de4': 'pre-action-refusal',
-  'fk-charter:item.dc8cc83e01e7': 'pre-action-refusal',
-  'fk-charter:item.387fb9c622d2': 'pre-action-refusal',
-  'fk-charter:item.9efe42c4e01c': 'pre-action-refusal',
-  'fk-charter:item.dde24d4c9b7c': 'pre-action-refusal',
-  'fk-charter:item.ce7c8467ddb3': 'pre-action-refusal',
-  'fk-charter:item.8e9428543291': 'pre-action-refusal',
-  'fk-charter:item.c9611681dcca': 'pre-action-refusal',
-  'fk-charter:item.1cf05e6b7716': 'pre-action-refusal',
-  'fk-charter:item.5c24c3ef6591': 'pre-action-refusal',
-  'fk-charter:item.ec0f6225e0a6': 'ci-static-check',
-  'fk-charter:item.0689031c79ed': 'ci-static-check',
-  'fk-charter:item.349023b0246d': 'ci-static-check',
-  'fk-charter:item.9308bed876c7': 'ci-static-check',
-  'fk-charter:item.612528548655': 'ci-static-check',
-  'fk-charter:item.102464b0e25b': 'ci-static-check',
-  'fk-charter:item.e1b224d7294b': 'ci-static-check',
-  'fk-charter:item.501441d1853e': 'ci-static-check',
-  'fk-charter:item.fc74f0320a1c': 'ci-static-check',
-  'fk-charter:item.7eba1cb561c5': 'ci-static-check',
-  'fk-charter:item.eb56a1ab24d9': 'ci-static-check',
-  'fk-charter:item.8843a7774432': 'ci-static-check',
-  'fk-charter:item.10f729956b77': 'ci-static-check',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:8': 'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:1': 'ci-static-check',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:2': 'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:3': 'ci-static-check',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:4': 'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:5': 'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:6': 'ci-static-check',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:7': 'ci-static-check',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:8': 'independent-review-human-judgment',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:9': 'independent-review-human-judgment',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:10': 'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:11': 'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Queue and dependency order:paragraph:1': 'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:paragraph:1': 'ci-static-check',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:1': 'ci-static-check',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:2': 'ci-static-check',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:3': 'ci-static-check',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:4': 'ci-static-check',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:5': 'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:6': 'ci-static-check',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:7': 'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:paragraph:1': 'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:1': 'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:2': 'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:3': 'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:4': 'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:5': 'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:6': 'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:7': 'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:8': 'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:9': 'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:10': 'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:11': 'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Wakeup and crash recovery:paragraph:1': 'pre-action-refusal',
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 3. Spec Lifecycle:list-item:1': 'narrative-provenance',
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 3. Spec Lifecycle:list-item:2': 'narrative-provenance',
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 3. Spec Lifecycle:list-item:3': 'narrative-provenance',
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 3. Spec Lifecycle:list-item:4': 'narrative-provenance',
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 5. The Spec ↔ Jira Contract:list-item:1': 'narrative-provenance',
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 5. The Spec ↔ Jira Contract:list-item:2': 'narrative-provenance',
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 5. The Spec ↔ Jira Contract:list-item:3': 'narrative-provenance',
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 5. The Spec ↔ Jira Contract:list-item:4': 'narrative-provenance',
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 8. Dispatch Model (How Agents Consume Specs):list-item:1': 'narrative-provenance',
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 8. Dispatch Model (How Agents Consume Specs):list-item:2': 'narrative-provenance',
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 8. Dispatch Model (How Agents Consume Specs):list-item:3': 'pre-action-refusal',
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 10. Adoption Path:list-item:4': 'ci-static-check',
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 11. Coordinator-Ratified Amendment Pattern (added W0-P2):list-item:1': 'narrative-provenance',
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 11. Coordinator-Ratified Amendment Pattern (added W0-P2):list-item:2': 'narrative-provenance',
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 11. Coordinator-Ratified Amendment Pattern (added W0-P2):list-item:3': 'narrative-provenance',
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.6 Schema v0.2 Fields (added W0-P2):list-item:4': 'narrative-provenance',
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.8 `Allowed Files` Mutation Authority:list-item:1': 'narrative-provenance',
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.8 `Allowed Files` Mutation Authority:list-item:2': 'narrative-provenance',
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.8 `Allowed Files` Mutation Authority:paragraph:3': 'narrative-provenance',
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 8. Dispatch Model (How Agents Consume Specs):list-item:4': 'narrative-provenance',
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:1': 'narrative-provenance',
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:2': 'narrative-provenance',
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:3': 'narrative-provenance',
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:4': 'narrative-provenance',
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:5': 'narrative-provenance',
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## The three human gates:table-row:1': 'narrative-provenance',
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## The three human gates:table-row:2': 'narrative-provenance',
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## The three human gates:table-row:3': 'narrative-provenance',
+  'goal-skill:md-block:# /goal — the Coordinator entry point > ## Stage Zero — run it, don\'t skip it:list-item:1': 'narrative-provenance',
+  'goal-skill:md-block:# /goal — the Coordinator entry point > ## Stage Zero — run it, don\'t skip it:list-item:2': 'narrative-provenance',
+  'goal-skill:md-block:# /goal — the Coordinator entry point > ## Stage Zero — run it, don\'t skip it:list-item:3': 'narrative-provenance',
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:1': 'pre-action-refusal',
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:2': 'pre-action-refusal',
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:3': 'pre-action-refusal',
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:4': 'pre-action-refusal',
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:5': 'ci-static-check',
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:6': 'ci-static-check',
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:7': 'pre-action-refusal',
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — conditional:list-item:1': 'pre-action-refusal',
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — conditional:list-item:2': 'pre-action-refusal',
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Reviewer:list-item:1': 'independent-review-human-judgment',
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Reviewer:list-item:2': 'independent-review-human-judgment',
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Reviewer:list-item:3': 'post-action-detection',
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Reviewer:list-item:4': 'independent-review-human-judgment',
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter:paragraph:1': 'narrative-provenance',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:1': 'pre-action-refusal',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:2': 'pre-action-refusal',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:3': 'pre-action-refusal',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:4': 'pre-action-refusal',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:5': 'pre-action-refusal',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:6': 'pre-action-refusal',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:7': 'ci-static-check',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:8': 'pre-action-refusal',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:9': 'pre-action-refusal',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:10': 'pre-action-refusal',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:11': 'ci-static-check',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:12': 'independent-review-human-judgment',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:13': 'pre-action-refusal',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:14': 'ci-static-check',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:15': 'ci-static-check',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:1': 'narrative-provenance',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:2': 'narrative-provenance',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:3': 'narrative-provenance',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:4': 'narrative-provenance',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:5': 'narrative-provenance',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:6': 'narrative-provenance',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:7': 'narrative-provenance',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:8': 'narrative-provenance',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:9': 'narrative-provenance',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:10': 'narrative-provenance',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:11': 'narrative-provenance',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:12': 'narrative-provenance',
+  'foreman-line-plan:md-block:# The Foreman Line — Master Plugin Plan:paragraph:1': 'narrative-provenance',
+  'foreman-line-plan:md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage D — Verification:list-item:4': 'independent-review-human-judgment',
+  'foreman-line-plan:md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage E — Integration:list-item:4': 'ci-static-check',
+  'foreman-line-plan:md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage F — Closure:list-item:1': 'narrative-provenance',
+  'foreman-line-plan:md-block:# The Foreman Line — Master Plugin Plan > ## 4. Smart Triage as the Assignment Engine:list-item:1': 'pre-action-refusal',
+  'approval-readme:md-block:# @foreman-line/approval — Human Approval Flow CLI, W1-P3 > ## The human-gate contract:list-item:3': 'narrative-provenance',
+  'approval-readme:md-block:# @foreman-line/approval — Human Approval Flow CLI, W1-P3 > ## The human-gate contract:list-item:4': 'narrative-provenance',
+  'spec-frontmatter-schema:json-pointer:/properties/permission_profile/enum': 'ci-static-check',
+  'spec-linter-validator:const ajv = new Ajv({ allErrors: true })': 'ci-static-check',
+  'spec-linter-validator:if (doc.status === \'superseded\' && doc.superseded_by === null) {': 'ci-static-check',
+  'spec-linter-validator:if (!options?.noPermissionProfileWarning && !(\'permission_profile\' in doc)) {': 'ci-static-check',
+  'spec-linter-validator:\'advisory: permission_profile is absent; set it to a registry profile name when the registry ships\',': 'ci-static-check',
+  'spec-linter-cli: *   0  all specs valid (advisory warnings do not affect exit code)': 'ci-static-check',
+  'spec-linter-cli: *   1  at least one schema or semantic-invariant violation (every violation on stderr)': 'ci-static-check',
+  'spec-linter-cli: *   2  usage error: missing/unreadable path, bad invocation, or directory with no .md files': 'ci-static-check',
+  'spec-linter-cli:process.exitCode = run(process.argv.slice(2))': 'ci-static-check',
+  'spec-linter-readme:md-block:# @foreman-line/spec-linter > ## The four v0.2 fields:table-row:`permission_profile:`': 'unsupported',
+  'spec-linter-readme:md-block:# @foreman-line/spec-linter > ## The four v0.2 fields:paragraph:1': 'unsupported',
+  'permission-profiles-registry:yaml-rule:builder-architecture:ask:[]': 'ci-static-check',
+  'permission-profiles-registry:yaml-rule:builder-architecture:deny:"Bash(git push --force*)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:builder-architecture:deny:"Bash(git push -f *)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:builder-architecture:deny:"Edit(.claude/**)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:builder-architecture:deny:"PowerShell(git push --force*)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:builder-architecture:deny:"PowerShell(git push -f *)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:builder-architecture:deny:"Write(.claude/**)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:builder-architecture:network/egress': 'ci-static-check',
+  'permission-profiles-registry:yaml-rule:builder-deps:ask:[]': 'ci-static-check',
+  'permission-profiles-registry:yaml-rule:builder-deps:deny:"Bash(git push --force*)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:builder-deps:deny:"Bash(git push -f *)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:builder-deps:deny:"Edit(.claude/**)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:builder-deps:deny:"PowerShell(git push --force*)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:builder-deps:deny:"PowerShell(git push -f *)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:builder-deps:deny:"Write(.claude/**)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:builder-deps:network/egress': 'ci-static-check',
+  'permission-profiles-registry:yaml-rule:builder-deps:network/notes': 'ci-static-check',
+  'permission-profiles-registry:yaml-rule:builder-standard:ask:[]': 'ci-static-check',
+  'permission-profiles-registry:yaml-rule:builder-standard:deny:"Bash(git push --force*)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:builder-standard:deny:"Bash(git push -f *)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:builder-standard:deny:"Edit(.claude/**)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:builder-standard:deny:"PowerShell(git push --force*)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:builder-standard:deny:"PowerShell(git push -f *)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:builder-standard:deny:"Write(.claude/**)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:builder-standard:network/egress': 'ci-static-check',
+  'permission-profiles-registry:yaml-rule:coordinator:ask:[]': 'ci-static-check',
+  'permission-profiles-registry:yaml-rule:coordinator:deny:"Bash(git push --force*)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:coordinator:deny:"Bash(git push -f *)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:coordinator:deny:"Edit(.claude/**)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:coordinator:deny:"PowerShell(git push --force*)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:coordinator:deny:"PowerShell(git push -f *)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:coordinator:deny:"Write(.claude/**)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:ask:[]': 'ci-static-check',
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"Bash(git apply*)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"Bash(git commit*)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"Bash(git merge*)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"Bash(git push*)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"Bash(git stash*)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"Edit"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"Edit(.claude/**)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"PowerShell(git apply*)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"PowerShell(git commit*)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"PowerShell(git merge*)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"PowerShell(git push*)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"PowerShell(git stash*)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"Write"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"Write(.claude/**)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:shaping-agent:ask:[]': 'ci-static-check',
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Bash(git push --force*)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Bash(git push -f *)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Edit(.claude/**)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Edit(apps/**)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Edit(config/**)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Edit(plugins/**)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Edit(skills/**)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"PowerShell(git push --force*)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"PowerShell(git push -f *)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Write(.claude/**)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Write(apps/**)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Write(config/**)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Write(plugins/**)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Write(skills/**)"': 'pre-action-refusal',
+  'permission-profiles-types:export type PermissionMode = \'default\' | \'acceptEdits\' | \'plan\'': 'narrative-provenance',
+  'permission-profiles-types:export const PROFILE_NAMES: readonly ProfileName[] = [': 'narrative-provenance',
+  'permission-profiles-validator:const REVIEWER_MUTATION_COMMANDS: readonly string[] = [\'commit\', \'push\', \'apply\', \'stash\', \'merge\']': 'pre-action-refusal',
+  'permission-profiles-validator:if (envelope.defaultMode === \'bypassPermissions\') {': 'pre-action-refusal',
+  'permission-profiles-validator:function checkReviewerReadonlyRestrictionCompleteness(doc: Record<string, unknown>): string[] {': 'pre-action-refusal',
+  'permission-profiles-validator:function checkReviewerReadonlyShellAccessPreservation(doc: Record<string, unknown>): string[] {': 'pre-action-refusal',
+  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## The five enforced invariants:list-item:1': 'unsupported',
+  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## The five enforced invariants:list-item:2': 'unsupported',
+  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## The five enforced invariants:list-item:4': 'unsupported',
+  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## The five enforced invariants:list-item:5': 'unsupported',
+  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## Deny-first ruling (D9):paragraph:1': 'unsupported',
+  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## Session-start-load bound — with its failure modes (F-H):paragraph:1': 'unsupported',
+  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## Session-start-load bound — with its failure modes (F-H):list-item:2': 'unsupported',
+  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## Session-start-load bound — with its failure modes (F-H):list-item:3': 'unsupported',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition:paragraph:1': 'independent-review-human-judgment',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:1': 'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:2': 'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:3': 'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:4': 'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:5': 'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 0 — Authority and contracts:table-row:FK-P0 — Canon authority and enforcement registry': 'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 0 — Authority and contracts:table-row:FK-P1 — Lifecycle, admission, and decision contracts': 'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 1 — Pure trust core:table-row:FK-P3 — Pure dispatch decisions': 'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 1 — Pure trust core:table-row:FK-P4 — Verifier facade': 'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 1 — Pure trust core:table-row:FK-P5 — Clean-room trust-core spike': 'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 2 — Stateless read-only MCP and container:table-row:FK-P6 — Read-only MCP server': 'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 2 — Stateless read-only MCP and container:table-row:FK-P7 — Stateless verifier image and launcher': 'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 2 — Stateless read-only MCP and container:table-row:FK-P8 — Stateless harness portability proof': 'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P9 — SQLite storage and migration ABI': 'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P10 — Lease and transition engine': 'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P11 — Legacy import and projection engine': 'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P12 — Authorization policy engine': 'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P13 — Admission-protected control catalog': 'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P14 — Stateful image composition and operator lifecycle': 'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P15 — Stateful restart and admission proof': 'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P16 — Claude lifecycle adapter, shadow mode': 'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P17 — Bypass and outage harness': 'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P19 — High-confidence refusal enforcement': 'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P20 — Second-host feasibility and host registration': 'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P21 — Exit evidence manifest and clean-room proof': 'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:1': 'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:2': 'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:3': 'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:4': 'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:5': 'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:6': 'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:7': 'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:8': 'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:9': 'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:10': 'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:11': 'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:12': 'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:13': 'ci-static-check',
   // Integration scenario 14 (decision-path latency), added by ratified amendment A1.
-  'fk-charter:item.ff0f88a958e0': 'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:14': 'ci-static-check',
 }
 
-function curatedClassificationFor(sourceId: string, itemId: string): RuleClassification {
-  const key = `${sourceId}:${itemId}`
+function curatedClassificationFor(sourceId: string, locatorAnchor: string): RuleClassification {
+  const key = `${sourceId}:${locatorAnchor}`
   const classification =
     R11_PERMISSION_PROFILE_CURATION[key]?.classification ??
     R11_CURATED_ITEM_SEMANTICS[key]?.classification ??
     R10_CURATED_ITEM_SEMANTICS[key]?.classification ??
     CURATED_ITEM_CLASSIFICATIONS[key]
   if (classification === undefined) {
-    throw new Error(`published item '${sourceId}:${itemId}' lacks literal curated classification`)
+    throw new Error(
+      `published item '${sourceId}:${locatorAnchor}' lacks literal curated classification`,
+    )
   }
   return classification
 }
 const CURATED_ITEM_IDENTITIES: Readonly<Record<string, readonly [string, string]>> = {
-  'fk-charter:item.d1': ['goal.separation', 'separate-foreman-kernel-goal'],
-  'fk-charter:item.d2': [
+  'fk-charter:D1': ['goal.separation', 'separate-foreman-kernel-goal'],
+  'fk-charter:D2': [
     'canon.operational-authority-boundary',
     'git-canon-sqlite-operational-split',
   ],
-  'fk-charter:item.d3': ['kernel.surface-admission-separation', 'read-control-admission-separated'],
-  'fk-charter:item.d4': [
+  'fk-charter:D3': ['kernel.surface-admission-separation', 'read-control-admission-separated'],
+  'fk-charter:D4': [
     'kernel.first-release-scope',
     'provider-neutral-trust-core-with-one-shadow-adapter',
   ],
-  'fk-charter:item.d5': ['receipt.mint-authority', 'no-generic-agent-callable-mint'],
-  'fk-charter:item.d6': ['receipt.authority-label', 'first-release-receipts-are-structural'],
-  'fk-charter:item.d7': [
+  'fk-charter:D5': ['receipt.mint-authority', 'no-generic-agent-callable-mint'],
+  'fk-charter:D6': ['receipt.authority-label', 'first-release-receipts-are-structural'],
+  'fk-charter:D7': [
     'permission-profile.enforcement-bound',
     'loaded-refusal-versus-unenrollment-detection-boundary',
   ],
-  'fk-charter:item.d8': ['enforcement.promotion', 'shadow-proofs-before-fail-closed-enforcement'],
-  'fk-charter:item.d9': ['gate.namespace', 'fk-three-gate-ownership'],
-  'fk-charter:item.d10': ['spec.mutation-authority', 'exact-allowed-files-required'],
-  'fk-charter:item.d11': ['defect.retirement', 'four-independent-evidence-kinds-required'],
-  'fk-charter:item.d12': ['hook.policy-boundary', 'hooks-normalize-but-do-not-decide-policy'],
-  'fk-charter:item.d13': [
+  'fk-charter:D8': ['enforcement.promotion', 'shadow-proofs-before-fail-closed-enforcement'],
+  'fk-charter:D9': ['gate.namespace', 'fk-three-gate-ownership'],
+  'fk-charter:D10': ['spec.mutation-authority', 'exact-allowed-files-required'],
+  'fk-charter:D11': ['defect.retirement', 'four-independent-evidence-kinds-required'],
+  'fk-charter:D12': ['hook.policy-boundary', 'hooks-normalize-but-do-not-decide-policy'],
+  'fk-charter:D13': [
     'repository.mutation-detection',
     'post-action-git-and-ci-backstop-required',
   ],
-  'fk-charter:item.d14': [
+  'fk-charter:D14': [
     'operational-state.authority',
     'sqlite-transactional-single-writer-authority',
   ],
-  'fk-charter:item.d15': [
+  'fk-charter:D15': [
     'external-effects.boundary',
     'first-container-has-no-external-credentials',
   ],
-  'fk-charter:item.d16': ['caller.asserted-authority', 'self-asserted-authority-is-refused'],
-  'fk-charter:item.d17': ['tool.public-contract', 'versioned-schema-provenance-and-stable-codes'],
-  'fk-charter:item.d18': ['kernel.authorize-action-owner', 'provider-neutral-policy-engine'],
-  'fk-charter:item.d19': ['repository.read-confidentiality', 'admission-bound-contained-read'],
-  'fk-charter:item.d20': ['host.support-claim', 'first-release-enforcement-is-host-specific'],
-  'fk-charter:item.eddc1a2874a3': [
+  'fk-charter:D16': ['caller.asserted-authority', 'self-asserted-authority-is-refused'],
+  'fk-charter:D17': ['tool.public-contract', 'versioned-schema-provenance-and-stable-codes'],
+  'fk-charter:D18': ['kernel.authorize-action-owner', 'provider-neutral-policy-engine'],
+  'fk-charter:D19': ['repository.read-confidentiality', 'admission-bound-contained-read'],
+  'fk-charter:D20': ['host.support-claim', 'first-release-enforcement-is-host-specific'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:2': [
     'goal-exit.control-catalogs',
     'pinned-images-expose-separated-catalogs-with-read-confidentiality',
   ],
-  'fk-charter:item.248b8ef73429': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:3': [
     'goal-exit.scenario-proof',
     'clean-room-confidentiality-portability-and-admission-scenarios-pass',
   ],
-  'fk-charter:item.7854414d4093': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:4': [
     'goal-exit.durable-state',
     'sqlite-recovery-concurrency-and-projection-evidence-pass',
   ],
-  'fk-charter:item.a0d98411d75e': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:5': [
     'goal-exit.enforcement-promotion',
     'refusal-vectors-bypass-sweeps-and-independent-review-precede-enforcement',
   ],
-  'fk-charter:item.fec95f508418': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:6': [
     'goal-exit.ci-backstop',
     'ci-catches-out-of-scope-mutation-and-missing-enrollment-before-promotion',
   ],
-  'fk-charter:item.4910b2a0a7a3': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:7': [
     'goal-exit.authority-nonmanufacture',
     'tools-and-container-credentials-cannot-manufacture-protected-authority-or-effects',
   ],
-  'fk-charter:item.4d6ea442cfff': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:8': [
     'goal-exit.evidence-manifest',
     'committed-manifest-binds-source-artifact-host-review-and-mutation-evidence',
   ],
-  'fk-charter:item.49288a83830e': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:9': [
     'goal-exit.honest-reporting',
     'final-report-separates-assurance-and-unsupported-host-claims',
   ],
-  'fk-charter:item.41b4b3dccd81': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:2': [
     'goal-stop.ratification-drift',
     'stop-on-unratified-review-change',
   ],
-  'fk-charter:item.c80d986d4cfe': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:4': [
     'goal-stop.stage-contract-boundary',
     'stop-on-out-of-parcel-stage-contract-change',
   ],
-  'fk-charter:item.ab729d219bbb': ['goal-stop.allowed-files', 'stop-on-unlisted-required-file'],
-  'fk-charter:item.1c42ce2f7e94': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:5': ['goal-stop.allowed-files', 'stop-on-unlisted-required-file'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:6': [
     'goal-stop.surfaces-authority-confusion',
     'stop-if-exact-paths-require-treating-surfaces-as-permission',
   ],
-  'fk-charter:item.28ec67f3ddb4': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:7': [
     'goal-stop.mediation-overclaim',
     'stop-on-complete-shell-or-unsupported-host-mediation-claim',
   ],
-  'fk-charter:item.5138fd735a8a': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:8': [
     'goal-stop.protected-authority-mint',
     'stop-on-tool-manufactured-human-independent-merge-or-closure-authority',
   ],
-  'fk-charter:item.6aae5fe2d602': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:9': [
     'goal-stop.external-capability',
     'stop-on-container-external-or-broad-host-capability',
   ],
-  'fk-charter:item.fc4a386b94fe': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:10': [
     'goal-stop.identity-and-control-admission',
     'stop-on-self-asserted-identity-or-read-client-control-discovery',
   ],
-  'fk-charter:item.42e05d00c67a': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:11': [
     'goal-stop.read-confinement',
     'stop-on-arbitrary-host-path-or-state-volume-read',
   ],
-  'fk-charter:item.07490af17320': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:12': [
     'goal-stop.migration-history',
     'stop-on-manufactured-historical-approval-or-authorization',
   ],
-  'fk-charter:item.b5bad0475a3e': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:13': [
     'goal-stop.security-boundary',
     'stop-on-security-boundary-that-cannot-close-in-parcel',
   ],
-  'fk-charter:item.e86843a842bc': ['goal-stop.tripwire', 'stop-on-repeated-tripwire-or-rework-cap'],
-  'fk-charter:item.98b291e68000': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:14': ['goal-stop.tripwire', 'stop-on-repeated-tripwire-or-rework-cap'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:15': [
     'goal-stop.worktree-isolation',
     'stop-on-ambient-or-other-worktree-mutation',
   ],
-  'fk-charter:item.76049b5d2003': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:17': [
     'goal-stop.exit-evidence',
     'stop-on-empty-queue-with-unproved-exit',
   ],
-  'fk-charter:item.7d74bdcd5bb3': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 0 — Authority and contracts:paragraph:1': [
     'wave-exit.authority-contracts',
     'wave-zero-contracts-path-authority-and-reconciliations-complete',
   ],
-  'fk-charter:item.5f823cd304d6': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 1 — Pure trust core:paragraph:1': [
     'wave-exit.pure-trust-core',
     'wave-one-evaluators-deterministic-contracted-and-clean-room-proven',
   ],
-  'fk-charter:item.f1439c7e3a90': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 2 — Stateless read-only MCP and container:paragraph:1': [
     'wave-exit.stateless-verifier',
     'wave-two-pinned-read-only-image-portable-and-state-confined',
   ],
-  'fk-charter:item.fec816847e8e': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:paragraph:1': [
     'wave-exit.durable-state',
     'wave-three-ownership-recovery-idempotency-and-projection-invariants-hold',
   ],
-  'fk-charter:item.10bcdc2cae49': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:paragraph:1': [
     'wave-exit.enforcement-promotion',
     'wave-four-refusal-detection-recovery-and-evidence-claims-are-bound',
   ],
-  'fk-charter:item.b1ac4aa9eddf': ['gate3.merge-authority', 'human-owned-nondelegated'],
-  'fk-plan-review-findings:item.r1': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 13. Gate 1 decision list:list-item:11': ['gate3.merge-authority', 'human-owned-nondelegated'],
+  'fk-plan-review-findings:R1': [
     'authorization.engine-placement',
     'dedicated-policy-engine-parcel-added',
   ],
-  'fk-plan-review-findings:item.r2': [
+  'fk-plan-review-findings:R2': [
     'control.admission',
     'authenticated-local-admission-required',
   ],
-  'fk-plan-review-findings:item.r3': [
+  'fk-plan-review-findings:R3': [
     'image.proof-separation',
     'stateless-and-stateful-proofs-separated',
   ],
-  'fk-plan-review-findings:item.r4': [
+  'fk-plan-review-findings:R4': [
     'bypass.enrollment-separation',
     'refusal-and-absence-detection-separated',
   ],
-  'fk-plan-review-findings:item.r5': ['enforcement.ci-order', 'ci-backstop-precedes-promotion'],
-  'fk-plan-review-findings:item.r6': [
+  'fk-plan-review-findings:R5': ['enforcement.ci-order', 'ci-backstop-precedes-promotion'],
+  'fk-plan-review-findings:R6': [
     'repository.read-boundary',
     'confidential-read-and-state-isolation-added',
   ],
-  'fk-plan-review-findings:item.r7': ['parcel.wave-boundaries', 'wave-three-serialization-redrawn'],
-  'fk-plan-review-findings:item.r8': [
+  'fk-plan-review-findings:R7': ['parcel.wave-boundaries', 'wave-three-serialization-redrawn'],
+  'fk-plan-review-findings:R8': [
     'state.authority-fields',
     'git-sqlite-cutover-semantics-added',
   ],
-  'fk-plan-review-findings:item.r9': [
+  'fk-plan-review-findings:R9': [
     'state.failure-tests',
     'lease-crash-migration-backup-tests-required',
   ],
-  'fk-plan-review-findings:item.r10': [
+  'fk-plan-review-findings:R10': [
     'host.claim-matrix',
     'first-release-host-filesystem-matrix-added',
   ],
-  'fk-plan-review-findings:item.r11': ['exit.evidence-manifest', 'exact-proof-identities-required'],
-  'fk-plan-review-findings:item.r12': [
+  'fk-plan-review-findings:R11': ['exit.evidence-manifest', 'exact-proof-identities-required'],
+  'fk-plan-review-findings:R12': [
     'mixed-entrypoint.sentinel',
     'enumeration-and-write-sentinels-bind-shaping',
   ],
-  'fk-plan-review-findings:item.r13': [
+  'fk-plan-review-findings:R13': [
     'shared-file.serialization',
     'every-shared-surface-has-an-owner',
   ],
-  'fk-loop-directive:item.7a05d374a3b1': [
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:paragraph:1': [
     'goal.coordinator-ownership',
     'single-ratified-coordinator-and-explicit-handoff',
   ],
-  'fk-loop-directive:item.b81725578197': [
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:list-item:1': [
     'goal.ratification-evidence.original',
     'original-gate1-charter-commit-recorded',
   ],
-  'fk-loop-directive:item.aac2d1258986': [
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:list-item:2': [
     'goal.ratification-evidence.plan-review',
     'plan-review-triage-commit-recorded',
   ],
-  'fk-loop-directive:item.4f0fb14fbd95': [
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:list-item:3': [
     'goal.ratification-evidence.reratification',
     'scoped-gate1-reratification-commit-recorded',
   ],
-  'fk-loop-directive:item.47a75730afd6': [
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:list-item:4': [
     'gate2.dispatch-grant',
     'coordinator-may-dispatch-fk-p0-through-fk-p21-conditionally',
   ],
-  'fk-loop-directive:item.08b3cbb91027': ['gate3.merge-authority', 'human-owned-nondelegated'],
-  'fk-loop-directive:item.dd8203551518': [
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:list-item:5': ['gate3.merge-authority', 'human-owned-nondelegated'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:paragraph:1': [
     'verification.issue-authority',
     'coordinator-consumes-but-never-produces-independent-verification',
   ],
-  'fk-loop-directive:item.ebdd14e6f524': [
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:1': [
     'coordinator.required-reading.charter',
     'read-goal-charter-every-iteration',
   ],
-  'fk-loop-directive:item.a59b01361dc6': [
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:2': [
     'coordinator.required-reading.loop-directive',
     'read-loop-directive-every-iteration',
   ],
-  'fk-loop-directive:item.734b79ca0bb8': [
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:3': [
     'coordinator.required-reading.parcel-state',
     'read-active-spec-kickstarter-handoff-and-findings',
   ],
-  'fk-loop-directive:item.51f7dbbba473': [
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:4': [
     'coordinator.required-reading.pattern',
     'read-coordinator-pattern-every-iteration',
   ],
-  'fk-loop-directive:item.d69eca1ec1f6': [
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:5': [
     'coordinator.required-reading.spec-convention',
     'read-spec-convention-every-iteration',
   ],
-  'fk-loop-directive:item.fc3ea1441f92': [
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:6': [
     'coordinator.required-reading.standing-constraints',
     'read-standing-constraints-every-iteration',
   ],
-  'fk-loop-directive:item.15e5fcbdbe13': [
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:paragraph:2': [
     'coordinator.required-reading.plan-review',
     'plan-review-transcript-path-recorded',
   ],
-  'fk-loop-directive:item.bfffee6d7c1f': [
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:1': [
     'gate2.dispatch-grant',
     'coordinator-may-dispatch-fk-p0-through-fk-p21-conditionally',
   ],
-  'fk-loop-directive:item.431228393540': [
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:2': [
     'shaping.dispatch-readiness',
     'shaping-and-lint-require-satisfied-dependencies',
   ],
-  'fk-loop-directive:item.be7691d170a9': [
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:3': [
     'parcel.local-work-authority',
     'local-isolated-work-authorized-for-named-parcel-only',
   ],
-  'fk-loop-directive:item.9935b3499764': [
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:4': [
     'step0.ruling-authority',
     'coordinator-rules-unless-ratified-boundary-changes',
   ],
-  'fk-loop-directive:item.64341d1e8b82': [
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:5': [
     'goal.external-effects-authorization',
     'goal-authorizes-no-external-system-effects',
   ],
-  'fk-loop-directive:item.7eb6018d9e57': ['gate3.merge-authority', 'human-owned-nondelegated'],
-  'fk-loop-directive:item.7aa2dd930e35': [
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:6': ['gate3.merge-authority', 'human-owned-nondelegated'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:7': [
     'scm.external-write-authority',
     'push-or-pr-requires-explicit-contract-and-developer-authority',
   ],
-  'fk-loop-directive:item.8be213f2455a': [
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:8': [
     'workspace.ambient-checkout-authority',
     'ambient-checkout-never-read-written-or-absorbed',
   ],
-  'fk-loop-directive:item.8c0b09120ff1': [
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:1': [
     'parcel.queue-verification',
     'dependencies-verified-against-git-not-memory',
   ],
-  'fk-loop-directive:item.d3b0e9dd63d0': [
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:2': [
     'parcel.shaping-dispatch',
     'fresh-docs-only-shaping-before-build',
   ],
-  'fk-loop-directive:item.f7e8dffebadc': [
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:3': [
     'parcel.spec-charter-lint',
     'coordinator-lints-spec-against-charter',
   ],
-  'fk-loop-directive:item.1157c2a03bbe': [
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:4': [
     'parcel.worktree-dispatch',
     'verified-base-isolated-worktree-required',
   ],
-  'fk-loop-directive:item.bdd56a126b79': [
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:5': [
     'parcel.step0-gate',
     'builder-restates-and-stops-before-code',
   ],
-  'fk-loop-directive:item.ed8d7888ce8c': [
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:6': [
     'parcel.builder-claim-verification',
     'committed-sha-and-claim-verified-before-review',
   ],
-  'fk-loop-directive:item.6ea9ce2b9573': [
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:7': [
     'parcel.deterministic-pass',
     'coordinator-runs-complete-sequential-verification',
   ],
-  'fk-loop-directive:item.ce9042d917b2': [
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:8': [
     'verification.issue-authority',
     'architecture-risk-two-fresh-independent-reviews-required',
   ],
-  'fk-loop-directive:item.d978784bc1b7': [
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:9': [
     'review.finding-triage',
     'findings-triaged-and-disputed-blockers-reproduced',
   ],
-  'fk-loop-directive:item.2743c2f8c558': ['gate3.merge-authority', 'human-owned-nondelegated'],
-  'fk-loop-directive:item.e3065db62b43': [
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:10': ['gate3.merge-authority', 'human-owned-nondelegated'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:11': [
     'closure.stage-f-prerequisite',
     'stage-f-only-after-human-merge',
   ],
-  'fk-loop-directive:item.1576c95260b6': [
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Queue and dependency order:paragraph:1': [
     'parcel.shared-file-serialization',
     'parallelism-only-without-shared-serialization-points',
   ],
-  'fk-loop-directive:item.8f98d5e3e61a': [
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:paragraph:1': [
     'registry.delivery-boundary',
     'authority-registry-precedes-runtime-contracts',
   ],
-  'fk-loop-directive:item.4f26e86b0870': [
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:1': [
     'registry.inventory-coverage',
     'inventory-every-standing-role-gate-stop-and-authority-rule',
   ],
-  'fk-loop-directive:item.5909432cc1a7': [
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:2': [
     'registry.classification-taxonomy',
     'classify-every-rule-in-closed-six-way-taxonomy',
   ],
-  'fk-loop-directive:item.b2e02392e4e5': [
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:3': [
     'registry.rule-contract',
     'bind-precedence-identity-source-applicability-and-retirement',
   ],
-  'fk-loop-directive:item.ec3e0d0130ff': [
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:4': [
     'registry.reconciliation-duty',
     'reconcile-gates-live-behavior-and-stale-canon',
   ],
-  'fk-loop-directive:item.e7e5c2483975': [
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:5': [
     'registry.protected-authority',
     'agent-state-cannot-manufacture-protected-authority',
   ],
-  'fk-loop-directive:item.c6c0339a5001': [
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:6': [
     'registry.fixture-evidence',
     'golden-and-mutation-controls-required',
   ],
-  'fk-loop-directive:item.78a9d344c4c6': [
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:7': [
     'registry.scope-boundary',
     'registry-remains-contract-only-without-runtime-or-effects',
   ],
-  'fk-loop-directive:item.5820c7f79bef': [
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:paragraph:1': [
     'coordinator.stop-policy',
     'stop-and-report-on-listed-boundary-failures',
   ],
-  'fk-loop-directive:item.7f72e946ccbe': [
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:1': [
     'goal.stop.coordinator-ownership',
     'stop-on-ambiguous-or-competing-coordinator',
   ],
-  'fk-loop-directive:item.23f92834c1c8': [
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:2': [
     'goal.stop.ratified-boundary',
     'stop-when-ratified-boundary-needs-change',
   ],
-  'fk-loop-directive:item.6151d43333aa': [
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:3': [
     'goal.stop.allowed-files',
     'stop-when-required-file-is-not-allowed',
   ],
-  'fk-loop-directive:item.c708d8f95113': [
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:4': [
     'goal.stop.serialization-ownership',
     'stop-when-owned-serialization-point-has-no-ratified-sequence',
   ],
-  'fk-loop-directive:item.adee76eb5f43': [
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:5': [
     'goal.stop.protected-authority',
     'stop-on-self-asserted-or-manufactured-authority',
   ],
-  'fk-loop-directive:item.52f524327994': [
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:6': [
     'goal.stop.read-containment',
     'stop-on-repository-or-state-volume-read-escape',
   ],
-  'fk-loop-directive:item.37f78aa591c5': [
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:7': [
     'goal.stop.security-boundary',
     'stop-when-security-finding-cannot-close',
   ],
-  'fk-loop-directive:item.d7945b743a67': [
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:8': [
     'goal.stop.tripwire',
     'stop-when-tripwire-or-rework-cap-fires',
   ],
-  'fk-loop-directive:item.80f2c4a08e42': [
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:9': [
     'goal.stop.worktree-isolation',
     'stop-on-ambient-or-other-worktree-mutation',
   ],
-  'fk-loop-directive:item.c55a33cc847f': [
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:10': [
     'goal.stop.user-change-collision',
     'stop-on-user-owned-required-file-collision',
   ],
-  'fk-loop-directive:item.237865e0993f': [
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:11': [
     'goal.stop.incomplete-empty-queue',
     'stop-on-empty-queue-before-goal-exit-evidence',
   ],
-  'fk-loop-directive:item.7ad3390acb6b': [
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Wakeup and crash recovery:paragraph:1': [
     'coordinator.session-recovery',
     'completion-signal-and-recovery-custody-rules',
   ],
-  'spec-convention:item.fd5d51dd4808': [
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 3. Spec Lifecycle:list-item:1': [
     'parcel.spec-convention',
     'follow-versioned-spec-lifecycle-and-exact-mutation-authority-1-state-lives-frontmatter-folder-location-they-must-agree-folder-authoritative-agent',
   ],
-  'spec-convention:item.f2172f28e7fc': [
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 3. Spec Lifecycle:list-item:2': [
     'parcel.spec-convention',
     'follow-versioned-spec-lifecycle-and-exact-mutation-authority-2-when-work-merges-spec-moves-same-pr-immediate-follow-up-merge',
   ],
-  'spec-convention:item.71d77f22d163': [
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 3. Spec Lifecycle:list-item:3': [
     'parcel.spec-convention',
     'follow-versioned-spec-lifecycle-and-exact-mutation-authority-3-material-changes-spec-require-comment-linked-jira-ticket-see-5',
   ],
-  'spec-convention:item.ea0314db8499': [
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 3. Spec Lifecycle:list-item:4': [
     'parcel.spec-convention',
     'follow-versioned-spec-lifecycle-and-exact-mutation-authority-4-agents-load-only-spec-their-assigned-ticket-b-nothing-else-ever',
   ],
-  'spec-convention:item.d2b2084774b8': [
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 5. The Spec ↔ Jira Contract:list-item:1': [
     'parcel.spec-convention',
     'follow-versioned-spec-lifecycle-and-exact-mutation-authority-1-every-spec-carries-jira-key-frontmatter-filename',
   ],
-  'spec-convention:item.910181940014': [
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 5. The Spec ↔ Jira Contract:list-item:2': [
     'parcel.spec-convention',
     'follow-versioned-spec-lifecycle-and-exact-mutation-authority-2-every-linked-jira-ticket-carries-link-spec-path-at-specific-commit',
   ],
-  'spec-convention:item.c9b45d54e97b': [
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 5. The Spec ↔ Jira Contract:list-item:3': [
     'parcel.spec-convention',
     'follow-versioned-spec-lifecycle-and-exact-mutation-authority-3-when-spec-s-date-bumps-material-change-ticket-gets-comment-spec',
   ],
-  'spec-convention:item.4fa776b35f0b': [
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 5. The Spec ↔ Jira Contract:list-item:4': [
     'parcel.spec-convention',
     'follow-versioned-spec-lifecycle-and-exact-mutation-authority-4-conflicts-resolve-follows-jira-wins-delivery-state-priority-schedule-assignment-spec',
   ],
-  'spec-convention:item.4886c52fa322': [
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 8. Dispatch Model (How Agents Consume Specs):list-item:1': [
     'parcel.spec-convention',
     'follow-versioned-spec-lifecycle-and-exact-mutation-authority-1-one-spec-one-agent-one-isolated-branch-worktree-no-shared-working',
   ],
-  'spec-convention:item.74a07f6879cc': [
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 8. Dispatch Model (How Agents Consume Specs):list-item:2': [
     'parcel.spec-convention',
     'follow-versioned-spec-lifecycle-and-exact-mutation-authority-2-scope-pinning-at-dispatch-step-0-agent-s-first-act-restate',
   ],
-  'spec-convention:item.03f0830cd693': [
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 8. Dispatch Model (How Agents Consume Specs):list-item:3': [
     'verification.issue-authority',
     'claimant-cannot-self-verify',
   ],
-  'spec-convention:item.7a55cf4f2295': [
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 8. Dispatch Model (How Agents Consume Specs):list-item:4': [
     'parcel.spec-convention',
     'follow-versioned-spec-lifecycle-and-exact-mutation-authority-4-gate-3-human-owned-unless-delegation-proven-at-merge-time-delegation',
   ],
-  'spec-convention:item.efb0769d6ff2': [
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 11. Coordinator-Ratified Amendment Pattern (added W0-P2):list-item:1': [
     'parcel.spec-convention',
     'follow-versioned-spec-lifecycle-and-exact-mutation-authority-1-exact-replacement-text-supplied-coordinator-coordinator-provides-literal-text-land-document',
   ],
-  'spec-convention:item.513e18f22be3': [
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 11. Coordinator-Ratified Amendment Pattern (added W0-P2):list-item:2': [
     'parcel.spec-convention',
     'follow-versioned-spec-lifecycle-and-exact-mutation-authority-2-committed-alone-parcel-worktree-before-any-implementing-code-amendment-commit-touches',
   ],
-  'spec-convention:item.6dbbca88286f': [
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 11. Coordinator-Ratified Amendment Pattern (added W0-P2):list-item:3': [
     'parcel.spec-convention',
     'follow-versioned-spec-lifecycle-and-exact-mutation-authority-3-commit-message-explicitly-identifies-coordinator-amendment-not-generic-message-message-must',
   ],
-  'spec-convention:item.e6f5fa8543a1': [
-    'permission-profile.registry-state',
-    'convention-deferred-registry-and-self-authority-boundary',
-  ],
-  'spec-convention:item.ac5ff7afd06f': ['spec.mutation-authority', 'surfaces-routing-only'],
-  'spec-convention:item.5145ab15549c': ['spec.mutation-authority', 'exact-allowed-files-required'],
-  'spec-convention:item.fd82127bf9f9': ['spec.mutation-authority', 'exact-allowed-files-required'],
-  'spec-convention:item.022fc00afe7b': ['gate3.merge-authority', 'human-unless-live-proof'],
-  'coordinator-pattern:item.38dbf3185a76': [
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:1': [
     'goal.coordination-model',
     'mutual-decisions-ratified-before-dispatch-1-intake-developer-brings-concept-sentence-page-coordinator-interrogates-what-does-done',
   ],
-  'coordinator-pattern:item.84b4e388c06b': [
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:2': [
     'goal.coordination-model',
     'mutual-decisions-ratified-before-dispatch-2-ideation-mutual-coordinator-proposes-developer-disposes-open-design-questions-surfaced-explicit',
   ],
-  'coordinator-pattern:item.d62734f662a0': [
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:3': [
     'goal.coordination-model',
     'mutual-decisions-ratified-before-dispatch-3-commentary-not-change-request-treat-developer-s-reaction-rationale-question-preference',
   ],
-  'coordinator-pattern:item.00f63e7818bc': [
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:4': [
     'goal.coordination-model',
     'mutual-decisions-ratified-before-dispatch-4-output-goal-charter-one-document-containing-objective-locked-decisions-d1-dn',
   ],
-  'coordinator-pattern:item.a3d15fe678e1': [
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:5': [
     'goal.coordination-model',
     'mutual-decisions-ratified-before-dispatch-5-gate-1-ratification-developer-approves-charter-explicitly-gate-can-never-delegated',
   ],
-  'coordinator-pattern:item.dedbefc1b097': [
-    'goal.coordination-model',
-    'mutual-decisions-ratified-before-dispatch-1-charter-ratification-stage-zero-exit-never',
-  ],
-  'coordinator-pattern:item.91dd60b00fd6': [
-    'goal.coordination-model',
-    'mutual-decisions-ratified-before-dispatch-2-dispatch-approval-parcel-set-kickstarter-yes-standing-authorization-scoped-charter-s',
-  ],
-  'coordinator-pattern:item.f7686ab58db7': ['gate3.merge-authority', 'contingent-delegation'],
-  'goal-skill:item.02636597cc8d': [
+  'goal-skill:md-block:# /goal — the Coordinator entry point > ## Stage Zero — run it, don\'t skip it:list-item:1': [
     'goal.ratification-lifecycle',
     'interrogate-charter-and-obtain-explicit-gate-one-1-interrogate-concept-what-does-done-mean-who-consumes-result-what-deliberately',
   ],
-  'goal-skill:item.fa27a05811dd': [
+  'goal-skill:md-block:# /goal — the Coordinator entry point > ## Stage Zero — run it, don\'t skip it:list-item:2': [
     'goal.ratification-lifecycle',
     'interrogate-charter-and-obtain-explicit-gate-one-2-draft-goal-charter-at-objective-locked-decisions-d1-dn-reasoning-wave',
   ],
-  'goal-skill:item.8fda5f4d9776': [
+  'goal-skill:md-block:# /goal — the Coordinator entry point > ## Stage Zero — run it, don\'t skip it:list-item:3': [
     'goal.ratification-lifecycle',
     'interrogate-charter-and-obtain-explicit-gate-one-3-gate-1-present-charter-s-decision-list-developer-explicit-ratification-gate',
   ],
-  'standing-constraints:item.constraint-1': [
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:1': [
     'external-boundary.error-contract',
     'typed-module-error-required',
   ],
-  'standing-constraints:item.constraint-2': [
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:2': [
     'untested-seam.return-trust',
     'unknown-until-normalized',
   ],
-  'standing-constraints:item.constraint-3': [
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:3': [
     'default-deny.structural-testing',
     'each-invariant-tested-independently',
   ],
-  'standing-constraints:item.constraint-4': [
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:4': [
     'line-protocol.emission-safety',
     'external-data-sanitized',
   ],
-  'standing-constraints:item.constraint-5': [
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:5': [
     'untrusted-text.parse-complexity',
     'linear-time-required',
   ],
-  'standing-constraints:item.constraint-12': ['parcel.byte-freeze-placement', 'parcel-time-only'],
-  'standing-constraints:item.constraint-13': [
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:6': ['parcel.byte-freeze-placement', 'parcel-time-only'],
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:7': [
     'allowlist.binding-dimensions',
     'identity-location-value-required',
   ],
-  'standing-constraints:item.constraint-6': [
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — conditional:list-item:1': [
     'classifier.fixture-coverage',
     'real-naming-and-false-negatives-covered',
   ],
-  'standing-constraints:item.constraint-7': [
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — conditional:list-item:2': [
     'kompress.payload-ceiling',
     'oversize-requires-coordinator-ruling',
   ],
-  'standing-constraints:item.constraint-8': [
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Reviewer:list-item:1': [
     'review.hostile-probing',
     'one-off-live-probes-licensed',
   ],
-  'standing-constraints:item.constraint-9': [
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Reviewer:list-item:2': [
     'review.prose-ambiguity',
     'naive-reading-must-be-excluded',
   ],
-  'standing-constraints:item.constraint-10': [
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Reviewer:list-item:3': [
     'review.worktree-integrity',
     'post-review-git-detection-required',
   ],
-  'standing-constraints:item.constraint-11': [
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Reviewer:list-item:4': [
     'review.assertion-binding',
     'mutation-probe-required',
   ],
-  'standing-constraints:item.c5880644c95c': [
-    'standing.provenance',
-    'inline-rules-required-until-provenance-restored',
-  ],
-  'parcel-driven-development:item.hard-rule-1': [
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:1': [
     'parcel.contract-sequencing',
     'contracts-before-parallel-work',
   ],
-  'parcel-driven-development:item.hard-rule-2': [
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:2': [
     'parcel.execution-isolation',
     'one-branch-one-worktree',
   ],
-  'parcel-driven-development:item.hard-rule-3': [
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:3': [
     'parcel.review-independence',
     'independently-reviewable',
   ],
-  'parcel-driven-development:item.hard-rule-4': [
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:4': [
     'parcel.mutation-authority',
     'exact-files-required',
   ],
-  'parcel-driven-development:item.hard-rule-5': [
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:5': [
     'parcel.shared-file-serialization',
     'serialization-required',
   ],
-  'parcel-driven-development:item.hard-rule-6': ['parcel.pre-pr-base', 'rebase-before-pr'],
-  'parcel-driven-development:item.hard-rule-7': ['parcel.verification', 'verification-required'],
-  'parcel-driven-development:item.hard-rule-8': [
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:6': ['parcel.pre-pr-base', 'rebase-before-pr'],
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:7': ['parcel.verification', 'verification-required'],
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:8': [
     'parcel.missing-product-decision',
     'stop-and-escalate',
   ],
-  'parcel-driven-development:item.hard-rule-9': [
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:9': [
     'parcel.contract-amendment',
     'no-silent-contract-change',
   ],
-  'parcel-driven-development:item.hard-rule-10': [
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:10': [
     'parcel.sensitive-data-safety',
     'no-secrets-pii-or-payload-dumps',
   ],
-  'parcel-driven-development:item.hard-rule-11': [
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:11': [
     'integration-surface.scenarios',
     'positive-negative-failure-required',
   ],
-  'parcel-driven-development:item.hard-rule-12': [
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:12': [
     'release.security-gate',
     'security-evidence-blocks-release',
   ],
-  'parcel-driven-development:item.hard-rule-13': [
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:13': [
     'coordination.persistence',
     'durable-state-before-closure',
   ],
-  'parcel-driven-development:item.hard-rule-14': [
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:14': [
     'scenario.environment-identity',
     'environment-build-config-bound',
   ],
-  'parcel-driven-development:item.hard-rule-15': [
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:15': [
     'release.claim-evidence',
     'evidence-required-for-claim',
   ],
-  'parcel-driven-development:item.b7563a79cc57': [
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:1': [
     'parcel.review-checklist',
     'verify-contract-scope-safety-evidence-and-handoff-1-does-implementation-match-contract',
   ],
-  'parcel-driven-development:item.400cc2cfd0d5': [
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:2': [
     'parcel.review-checklist',
     'verify-contract-scope-safety-evidence-and-handoff-2-only-allowed-files-touched',
   ],
-  'parcel-driven-development:item.303fe3f67dae': [
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:3': [
     'parcel.review-checklist',
     'verify-contract-scope-safety-evidence-and-handoff-3-were-forbidden-items-respected',
   ],
-  'parcel-driven-development:item.f1add5311b6c': [
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:4': [
     'parcel.review-checklist',
     'verify-contract-scope-safety-evidence-and-handoff-4-did-parcel-respect-out-scope',
   ],
-  'parcel-driven-development:item.9d8d06d91590': [
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:5': [
     'parcel.review-checklist',
     'verify-contract-scope-safety-evidence-and-handoff-5-did-agent-avoid-silent-product-decisions',
   ],
-  'parcel-driven-development:item.dbee4594f901': [
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:6': [
     'parcel.review-checklist',
     'verify-contract-scope-safety-evidence-and-handoff-6-were-required-tests-manual-verification-completed-exactly-specified',
   ],
-  'parcel-driven-development:item.7a8af4ddaa1e': [
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:7': [
     'parcel.review-checklist',
     'verify-contract-scope-safety-evidence-and-handoff-7-did-parcel-avoid-secrets-pii-unsafe-logs-payload-dumps',
   ],
-  'parcel-driven-development:item.98f93a29441d': [
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:8': [
     'parcel.review-checklist',
     'verify-contract-scope-safety-evidence-and-handoff-8-if-crossing-supportability-boundaries-were-logs-metrics-traces-handled-appropriately',
   ],
-  'parcel-driven-development:item.e4751682430a': [
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:9': [
     'parcel.review-checklist',
     'verify-contract-scope-safety-evidence-and-handoff-9-if-crossing-integration-boundaries-was-relevant-surface-updated-referenced',
   ],
-  'parcel-driven-development:item.72c60fa596e7': [
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:10': [
     'parcel.review-checklist',
     'verify-contract-scope-safety-evidence-and-handoff-10-if-security-gate-applies-was-required-security-evidence-produced-tracked',
   ],
-  'parcel-driven-development:item.754e096cfecf': [
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:11': [
     'parcel.review-checklist',
     'verify-contract-scope-safety-evidence-and-handoff-11-was-session-handoff-completed',
   ],
-  'parcel-driven-development:item.876882377a6a': [
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:12': [
     'parcel.review-checklist',
     'verify-contract-scope-safety-evidence-and-handoff-12-was-persistent-coordinator-state-updated-if-required-parcel-fails-gets-sent',
   ],
-  'foreman-line-plan:item.two-gate-thesis': ['gate.namespace', 'historical-two-stage-gates'],
-  'foreman-line-plan:item.c92333c21e64': ['gate3.merge-authority', 'human-owned-nondelegated'],
-  'approval-readme:item.4261d18b3243': [
+  'foreman-line-plan:md-block:# The Foreman Line — Master Plugin Plan:paragraph:1': ['gate.namespace', 'historical-two-stage-gates'],
+  'foreman-line-plan:md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage F — Closure:list-item:1': ['gate3.merge-authority', 'human-owned-nondelegated'],
+  'approval-readme:md-block:# @foreman-line/approval — Human Approval Flow CLI, W1-P3 > ## The human-gate contract:list-item:3': [
     'stage-approval.tty-presence',
     'live-interactive-tty-required',
   ],
-  'approval-readme:item.ff6f38f088ae': [
+  'approval-readme:md-block:# @foreman-line/approval — Human Approval Flow CLI, W1-P3 > ## The human-gate contract:list-item:4': [
     'stage-approval.confirmation-and-mint',
     'typed-confirmation-and-approver-required-before-mint',
   ],
-  'spec-frontmatter-schema:item.bdf997c3cd45': [
+  'spec-frontmatter-schema:json-pointer:/properties/permission_profile/enum': [
     'permission-profile.registry-state',
     'six-profile-live-enum',
   ],
-  'spec-linter-validator:item.c6669b61c6f0': [
+  'spec-linter-validator:const ajv = new Ajv({ allErrors: true })': [
     'spec.validation.ajv-configuration',
     'all-schema-errors-are-collected',
   ],
-  'spec-linter-validator:item.256b9064bc47': [
+  'spec-linter-validator:if (doc.status === \'superseded\' && doc.superseded_by === null) {': [
     'spec.validation.supersession-invariant',
     'superseded-status-requires-a-replacement',
   ],
-  'spec-linter-validator:item.092d2fc43a32': [
+  'spec-linter-validator:if (!options?.noPermissionProfileWarning && !(\'permission_profile\' in doc)) {': [
     'permission-profile.missing-field-warning',
     'absence-emits-advisory-unless-suppressed',
   ],
-  'spec-linter-validator:item.fb7d76a32df4': [
+  'spec-linter-validator:\'advisory: permission_profile is absent; set it to a registry profile name when the registry ships\',': [
     'permission-profile.missing-field-warning-text',
     'advisory-points-to-registry-profile-name',
   ],
-  'spec-linter-cli:item.0479c603add5': [
+  'spec-linter-cli: *   0  all specs valid (advisory warnings do not affect exit code)': [
     'spec-linter.exit-code.zero',
     'valid-specs-exit-zero-despite-advisory-warnings',
   ],
-  'spec-linter-cli:item.fb268f5c5eb4': [
+  'spec-linter-cli: *   1  at least one schema or semantic-invariant violation (every violation on stderr)': [
     'spec-linter.exit-code.one',
     'schema-or-semantic-violations-exit-one',
   ],
-  'spec-linter-cli:item.66fec8a20db5': [
+  'spec-linter-cli: *   2  usage error: missing/unreadable path, bad invocation, or directory with no .md files': [
     'spec-linter.exit-code.two',
     'usage-and-input-errors-exit-two',
   ],
-  'spec-linter-cli:item.39787f778432': [
+  'spec-linter-cli:process.exitCode = run(process.argv.slice(2))': [
     'spec-linter.process-entrypoint',
     'process-exit-code-is-set-from-cli-run-result',
   ],
-  'spec-linter-readme:item.9a889881a236': [
-    'permission-profile.registry-state',
-    'readme-interim-optional-nonempty-string',
-  ],
-  'spec-linter-readme:item.b4f5d76d68ec': [
-    'permission-profile.registry-state',
-    'readme-deferred-enum-promotion',
-  ],
-  'permission-profiles-types:item.0b9706b5a9bf': [
+  'permission-profiles-types:export type PermissionMode = \'default\' | \'acceptEdits\' | \'plan\'': [
     'permission-profile.supported-modes',
     'default-accept-edits-and-plan-only',
   ],
-  'permission-profiles-types:item.bc257b03aa99': [
+  'permission-profiles-types:export const PROFILE_NAMES: readonly ProfileName[] = [': [
     'permission-profile.names',
     'six-profile-name-constant-is-exported',
   ],
-  'permission-profiles-validator:item.dcd8638af4a4': [
+  'permission-profiles-validator:const REVIEWER_MUTATION_COMMANDS: readonly string[] = [\'commit\', \'push\', \'apply\', \'stash\', \'merge\']': [
     'permission-profile.reviewer-mutation-commands',
     'five-git-mutation-verbs-are-enumerated',
   ],
-  'permission-profiles-validator:item.9c3c17055384': [
+  'permission-profiles-validator:if (envelope.defaultMode === \'bypassPermissions\') {': [
     'permission-profile.bypass-mode',
     'bypass-permissions-mode-is-rejected',
   ],
-  'permission-profiles-validator:item.4da758cc157c': [
+  'permission-profiles-validator:function checkReviewerReadonlyRestrictionCompleteness(doc: Record<string, unknown>): string[] {': [
     'permission-profile.reviewer-restriction-completeness',
     'reviewer-deny-set-is-checked-for-edit-write-and-git-mutations',
   ],
-  'permission-profiles-validator:item.ffd598413a66': [
+  'permission-profiles-validator:function checkReviewerReadonlyShellAccessPreservation(doc: Record<string, unknown>): string[] {': [
     'permission-profile.reviewer-shell-preservation',
     'bare-bash-and-powershell-denial-is-rejected',
   ],
-  'permission-profiles-readme:item.729be3615f8d': [
-    'permission-profile.enforcement-bound',
-    'deny-and-ask-are-restriction-mechanisms',
-  ],
-  'permission-profiles-readme:item.d11b9d38f924': [
-    'permission-profile.enforcement-bound',
-    'profile-constrains-only-loaded-sessions',
-  ],
-  'permission-profiles-readme:item.1101805f1c9e': [
-    'permission-profile.enforcement-bound',
-    'bypass-mode-voids-denials',
-  ],
-  'permission-profiles-readme:item.415efa3f5e3b': [
-    'permission-profile.enforcement-bound',
-    'shell-residual-is-reduced-not-eliminated',
-  ],
-  'permission-profiles-registry:item.1ec33a4741eb': [
+  'permission-profiles-registry:yaml-rule:builder-architecture:ask:[]': [
     'permission-profile.builder-architecture.ask.empty-set',
     'configured-human-prompt',
   ],
-  'permission-profiles-registry:item.7faf78a6f54a': [
+  'permission-profiles-registry:yaml-rule:builder-architecture:deny:"Bash(git push --force*)"': [
     'permission-profile.builder-architecture.deny.bash-git-push-force',
     'configured-denial',
   ],
-  'permission-profiles-registry:item.26c5e2b211da': [
+  'permission-profiles-registry:yaml-rule:builder-architecture:deny:"Bash(git push -f *)"': [
     'permission-profile.builder-architecture.deny.bash-git-push-f',
     'configured-denial',
   ],
-  'permission-profiles-registry:item.1d221ed65b72': [
+  'permission-profiles-registry:yaml-rule:builder-architecture:deny:"Edit(.claude/**)"': [
     'permission-profile.builder-architecture.deny.edit-claude',
     'configured-denial',
   ],
-  'permission-profiles-registry:item.1ce0fd439b3e': [
+  'permission-profiles-registry:yaml-rule:builder-architecture:deny:"PowerShell(git push --force*)"': [
     'permission-profile.builder-architecture.deny.powershell-git-push-force',
     'configured-denial',
   ],
-  'permission-profiles-registry:item.39e65fb31709': [
+  'permission-profiles-registry:yaml-rule:builder-architecture:deny:"PowerShell(git push -f *)"': [
     'permission-profile.builder-architecture.deny.powershell-git-push-f',
     'configured-denial',
   ],
-  'permission-profiles-registry:item.ffd949ad76c3': [
+  'permission-profiles-registry:yaml-rule:builder-architecture:deny:"Write(.claude/**)"': [
     'permission-profile.builder-architecture.deny.write-claude',
     'configured-denial',
   ],
-  'permission-profiles-registry:item.c9cb62068f14': [
+  'permission-profiles-registry:yaml-rule:builder-architecture:network/egress': [
     'permission-profile.builder-architecture.network-egress.empty-set',
     'configured-network-posture',
   ],
-  'permission-profiles-registry:item.13033f70c124': [
+  'permission-profiles-registry:yaml-rule:builder-deps:ask:[]': [
     'permission-profile.builder-deps.ask.empty-set',
     'configured-human-prompt',
   ],
-  'permission-profiles-registry:item.947d19fbeb35': [
+  'permission-profiles-registry:yaml-rule:builder-deps:deny:"Bash(git push --force*)"': [
     'permission-profile.builder-deps.deny.bash-git-push-force',
     'configured-denial',
   ],
-  'permission-profiles-registry:item.5a359d80896b': [
+  'permission-profiles-registry:yaml-rule:builder-deps:deny:"Bash(git push -f *)"': [
     'permission-profile.builder-deps.deny.bash-git-push-f',
     'configured-denial',
   ],
-  'permission-profiles-registry:item.ee0641be06f2': [
+  'permission-profiles-registry:yaml-rule:builder-deps:deny:"Edit(.claude/**)"': [
     'permission-profile.builder-deps.deny.edit-claude',
     'configured-denial',
   ],
-  'permission-profiles-registry:item.cf29180bce81': [
+  'permission-profiles-registry:yaml-rule:builder-deps:deny:"PowerShell(git push --force*)"': [
     'permission-profile.builder-deps.deny.powershell-git-push-force',
     'configured-denial',
   ],
-  'permission-profiles-registry:item.4f213acde8e0': [
+  'permission-profiles-registry:yaml-rule:builder-deps:deny:"PowerShell(git push -f *)"': [
     'permission-profile.builder-deps.deny.powershell-git-push-f',
     'configured-denial',
   ],
-  'permission-profiles-registry:item.397a3eb4c7ad': [
+  'permission-profiles-registry:yaml-rule:builder-deps:deny:"Write(.claude/**)"': [
     'permission-profile.builder-deps.deny.write-claude',
     'configured-denial',
   ],
-  'permission-profiles-registry:item.f0613939994f': [
+  'permission-profiles-registry:yaml-rule:builder-deps:network/egress': [
     'permission-profile.builder-deps.network-egress.empty-set',
     'configured-network-posture',
   ],
-  'permission-profiles-registry:item.58ef984a0faa': [
+  'permission-profiles-registry:yaml-rule:builder-deps:network/notes': [
     'permission-profile.builder-deps.network-notes.empty-set',
     'configured-network-posture',
   ],
-  'permission-profiles-registry:item.50cd9c68ff51': [
+  'permission-profiles-registry:yaml-rule:builder-standard:ask:[]': [
     'permission-profile.builder-standard.ask.empty-set',
     'configured-human-prompt',
   ],
-  'permission-profiles-registry:item.b9e7c5644f49': [
+  'permission-profiles-registry:yaml-rule:builder-standard:deny:"Bash(git push --force*)"': [
     'permission-profile.builder-standard.deny.bash-git-push-force',
     'configured-denial',
   ],
-  'permission-profiles-registry:item.861d14c80da2': [
+  'permission-profiles-registry:yaml-rule:builder-standard:deny:"Bash(git push -f *)"': [
     'permission-profile.builder-standard.deny.bash-git-push-f',
     'configured-denial',
   ],
-  'permission-profiles-registry:item.fe1bbb0564f6': [
+  'permission-profiles-registry:yaml-rule:builder-standard:deny:"Edit(.claude/**)"': [
     'permission-profile.builder-standard.deny.edit-claude',
     'configured-denial',
   ],
-  'permission-profiles-registry:item.803732fe3411': [
+  'permission-profiles-registry:yaml-rule:builder-standard:deny:"PowerShell(git push --force*)"': [
     'permission-profile.builder-standard.deny.powershell-git-push-force',
     'configured-denial',
   ],
-  'permission-profiles-registry:item.b77e9988c19d': [
+  'permission-profiles-registry:yaml-rule:builder-standard:deny:"PowerShell(git push -f *)"': [
     'permission-profile.builder-standard.deny.powershell-git-push-f',
     'configured-denial',
   ],
-  'permission-profiles-registry:item.8cf9d57aa29c': [
+  'permission-profiles-registry:yaml-rule:builder-standard:deny:"Write(.claude/**)"': [
     'permission-profile.builder-standard.deny.write-claude',
     'configured-denial',
   ],
-  'permission-profiles-registry:item.0ed672bcdee8': [
+  'permission-profiles-registry:yaml-rule:builder-standard:network/egress': [
     'permission-profile.builder-standard.network-egress.empty-set',
     'configured-network-posture',
   ],
-  'permission-profiles-registry:item.bbb2cdb40927': [
+  'permission-profiles-registry:yaml-rule:coordinator:ask:[]': [
     'permission-profile.coordinator.ask.empty-set',
     'configured-human-prompt',
   ],
-  'permission-profiles-registry:item.b01d14453456': [
+  'permission-profiles-registry:yaml-rule:coordinator:deny:"Bash(git push --force*)"': [
     'permission-profile.coordinator.deny.bash-git-push-force',
     'configured-denial',
   ],
-  'permission-profiles-registry:item.315ebd655fbe': [
+  'permission-profiles-registry:yaml-rule:coordinator:deny:"Bash(git push -f *)"': [
     'permission-profile.coordinator.deny.bash-git-push-f',
     'configured-denial',
   ],
-  'permission-profiles-registry:item.8e8e3c78500b': [
+  'permission-profiles-registry:yaml-rule:coordinator:deny:"Edit(.claude/**)"': [
     'permission-profile.coordinator.deny.edit-claude',
     'configured-denial',
   ],
-  'permission-profiles-registry:item.4c9cd1062bc6': [
+  'permission-profiles-registry:yaml-rule:coordinator:deny:"PowerShell(git push --force*)"': [
     'permission-profile.coordinator.deny.powershell-git-push-force',
     'configured-denial',
   ],
-  'permission-profiles-registry:item.060989ad78ea': [
+  'permission-profiles-registry:yaml-rule:coordinator:deny:"PowerShell(git push -f *)"': [
     'permission-profile.coordinator.deny.powershell-git-push-f',
     'configured-denial',
   ],
-  'permission-profiles-registry:item.30b62f67dc13': [
+  'permission-profiles-registry:yaml-rule:coordinator:deny:"Write(.claude/**)"': [
     'permission-profile.coordinator.deny.write-claude',
     'configured-denial',
   ],
-  'permission-profiles-registry:item.7417033cefc7': [
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:ask:[]': [
     'permission-profile.reviewer-readonly.ask.empty-set',
     'configured-human-prompt',
   ],
-  'permission-profiles-registry:item.f7f03a01fd3a': [
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"Bash(git apply*)"': [
     'permission-profile.reviewer-readonly.deny.bash-git-apply',
     'configured-denial',
   ],
-  'permission-profiles-registry:item.35cf0f58fc34': [
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"Bash(git commit*)"': [
     'permission-profile.reviewer-readonly.deny.bash-git-commit',
     'configured-denial',
   ],
-  'permission-profiles-registry:item.dedb7349c943': [
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"Bash(git merge*)"': [
     'permission-profile.reviewer-readonly.deny.bash-git-merge',
     'configured-denial',
   ],
-  'permission-profiles-registry:item.b7ab94d73ef4': [
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"Bash(git push*)"': [
     'permission-profile.reviewer-readonly.deny.bash-git-push',
     'configured-denial',
   ],
-  'permission-profiles-registry:item.9ab0d5db8ebf': [
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"Bash(git stash*)"': [
     'permission-profile.reviewer-readonly.deny.bash-git-stash',
     'configured-denial',
   ],
-  'permission-profiles-registry:item.ea8666a98ca1': [
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"Edit"': [
     'permission-profile.reviewer-readonly.deny.edit',
     'configured-denial',
   ],
-  'permission-profiles-registry:item.3a54e390a3e1': [
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"Edit(.claude/**)"': [
     'permission-profile.reviewer-readonly.deny.edit-claude',
     'configured-denial',
   ],
-  'permission-profiles-registry:item.eb314ad28f5e': [
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"PowerShell(git apply*)"': [
     'permission-profile.reviewer-readonly.deny.powershell-git-apply',
     'configured-denial',
   ],
-  'permission-profiles-registry:item.14569d4abb87': [
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"PowerShell(git commit*)"': [
     'permission-profile.reviewer-readonly.deny.powershell-git-commit',
     'configured-denial',
   ],
-  'permission-profiles-registry:item.7943c5773fba': [
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"PowerShell(git merge*)"': [
     'permission-profile.reviewer-readonly.deny.powershell-git-merge',
     'configured-denial',
   ],
-  'permission-profiles-registry:item.2ca898541627': [
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"PowerShell(git push*)"': [
     'permission-profile.reviewer-readonly.deny.powershell-git-push',
     'configured-denial',
   ],
-  'permission-profiles-registry:item.23838f138908': [
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"PowerShell(git stash*)"': [
     'permission-profile.reviewer-readonly.deny.powershell-git-stash',
     'configured-denial',
   ],
-  'permission-profiles-registry:item.6d850a4b4948': [
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"Write"': [
     'permission-profile.reviewer-readonly.deny.write',
     'configured-denial',
   ],
-  'permission-profiles-registry:item.f1d63df02914': [
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"Write(.claude/**)"': [
     'permission-profile.reviewer-readonly.deny.write-claude',
     'configured-denial',
   ],
-  'permission-profiles-registry:item.8c5085e2ff63': [
+  'permission-profiles-registry:yaml-rule:shaping-agent:ask:[]': [
     'permission-profile.shaping-agent.ask.empty-set',
     'configured-human-prompt',
   ],
-  'permission-profiles-registry:item.60eb2cbc6f43': [
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Bash(git push --force*)"': [
     'permission-profile.shaping-agent.deny.bash-git-push-force',
     'configured-denial',
   ],
-  'permission-profiles-registry:item.1e0db040f9d8': [
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Bash(git push -f *)"': [
     'permission-profile.shaping-agent.deny.bash-git-push-f',
     'configured-denial',
   ],
-  'permission-profiles-registry:item.e477240aeb8e': [
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Edit(.claude/**)"': [
     'permission-profile.shaping-agent.deny.edit-claude',
     'configured-denial',
   ],
-  'permission-profiles-registry:item.074c70cc9d55': [
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Edit(apps/**)"': [
     'permission-profile.shaping-agent.deny.edit-apps',
     'configured-denial',
   ],
-  'permission-profiles-registry:item.5705a054df96': [
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Edit(config/**)"': [
     'permission-profile.shaping-agent.deny.edit-config',
     'configured-denial',
   ],
-  'permission-profiles-registry:item.b6db9d1f4737': [
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Edit(plugins/**)"': [
     'permission-profile.shaping-agent.deny.edit-plugins',
     'configured-denial',
   ],
-  'permission-profiles-registry:item.92b60e67dfba': [
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Edit(skills/**)"': [
     'permission-profile.shaping-agent.deny.edit-skills',
     'configured-denial',
   ],
-  'permission-profiles-registry:item.b8a82b2446d9': [
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"PowerShell(git push --force*)"': [
     'permission-profile.shaping-agent.deny.powershell-git-push-force',
     'configured-denial',
   ],
-  'permission-profiles-registry:item.1fa440b2fe59': [
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"PowerShell(git push -f *)"': [
     'permission-profile.shaping-agent.deny.powershell-git-push-f',
     'configured-denial',
   ],
-  'permission-profiles-registry:item.3641610e292b': [
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Write(.claude/**)"': [
     'permission-profile.shaping-agent.deny.write-claude',
     'configured-denial',
   ],
-  'permission-profiles-registry:item.854101218a6d': [
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Write(apps/**)"': [
     'permission-profile.shaping-agent.deny.write-apps',
     'configured-denial',
   ],
-  'permission-profiles-registry:item.e4d0bc5dc904': [
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Write(config/**)"': [
     'permission-profile.shaping-agent.deny.write-config',
     'configured-denial',
   ],
-  'permission-profiles-registry:item.7b5310ad887b': [
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Write(plugins/**)"': [
     'permission-profile.shaping-agent.deny.write-plugins',
     'configured-denial',
   ],
-  'permission-profiles-registry:item.6ac66b888a40': [
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Write(skills/**)"': [
     'permission-profile.shaping-agent.deny.write-skills',
     'configured-denial',
   ],
-  'fk-charter:item.a583b7f02950': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel:paragraph:1': [
     'goal.ratification-status',
     'fully-ratified-with-scoped-gate1-and-standing-gate2',
   ],
-  'fk-charter:item.93d5d3978e5f': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 2. Problem statement:list-item:1': [
     'standing-constraints.read-obligation',
     'agents-reread-and-remember-standing-constraints',
   ],
-  'fk-charter:item.cd014d6d90c5': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 4. Locked decisions:paragraph:1': [
     'gate1.ratification-record',
     'original-and-scoped-reratification-bind-d1-through-d20',
   ],
-  'fk-charter:item.144bb836f528': ['parcel.fk-p2', 'spec-compiler-depends-on-fk-p0-and-fk-p1'],
-  'fk-charter:item.a087b0ab4c3b': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 0 — Authority and contracts:table-row:FK-P2 — Spec-body compiler': ['parcel.fk-p2', 'spec-compiler-depends-on-fk-p0-and-fk-p1'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P18 — CI scope and state-evidence backstops': [
     'parcel.fk-p18',
     'ci-backstop-depends-on-fk-p17-and-owns-ci-files',
   ],
-  'fk-charter:item.e9ec57edc0a2': ['goal.exit-merge', 'all-parcels-require-human-gate3-merge'],
-  'fk-charter:item.8cf027fc811e': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:1': ['goal.exit-merge', 'all-parcels-require-human-gate3-merge'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 10. Human gates and standing authorizations requested > ### Gate 1 — charter ratification:paragraph:1': [
     'gate1.reratification-status',
     'scoped-r1-r13-reratification-is-in-force',
   ],
-  'fk-charter:item.15a44cf50bc6': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 10. Human gates and standing authorizations requested > ### Gate 2 — parcel dispatch:paragraph:1': [
     'gate2.dispatch-grant',
     'coordinator-may-dispatch-fk-p0-through-fk-p21-conditionally',
   ],
-  'fk-charter:item.c74628d41600': ['gate3.merge-authority', 'human-owned-nondelegated'],
-  'fk-charter:item.d9921c51d7ea': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 10. Human gates and standing authorizations requested > ### Gate 3 — merge:paragraph:1': ['gate3.merge-authority', 'human-owned-nondelegated'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:1': [
     'goal.stop.gate1-ambiguity',
     'stop-when-gate1-or-locked-decision-is-ambiguous',
   ],
-  'fk-charter:item.0afd841f51f8': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:3': [
     'goal.stop.serialization-ownership',
     'stop-when-owned-serialization-point-has-no-ratified-sequence',
   ],
-  'fk-charter:item.2cbbc7ae0192': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:16': [
     'goal.stop.user-change-collision',
     'stop-on-user-owned-required-file-collision',
   ],
-  'fk-charter:item.b0a3e204145f': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 13. Gate 1 decision list:paragraph:2': [
     'gate1.decision-list-record',
     'ratification-and-dispatch-history-recorded',
   ],
-  'fk-plan-review-findings:item.1de06653021c': [
+  'fk-plan-review-findings:md-block:# Foreman Kernel — Plan-Level Adversarial Review Findings > ## Scoped Gate 1 re-open:list-item:6': [
     'gate1.review-reratification-record',
     'r1-through-r13-reopen-closed-and-gate2-active',
   ],
-  'spec-convention:item.0979dba6c958': [
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 10. Adoption Path:list-item:4': [
     'spec-linter.adoption-standard',
     'org-wide-ci-lint-required-for-specs',
   ],
-  'foreman-line-plan:item.75569dd4ae1a': [
+  'foreman-line-plan:md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage D — Verification:list-item:4': [
     'pipeline.verification-human-review',
     'human-review-required-before-ticket-update',
   ],
-  'foreman-line-plan:item.56a15a2f3220': [
+  'foreman-line-plan:md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage E — Integration:list-item:4': [
     'pipeline.integration-gates',
     'security-scans-and-reviews-required',
   ],
-  'foreman-line-plan:item.760cf6497075': [
+  'foreman-line-plan:md-block:# The Foreman Line — Master Plugin Plan > ## 4. Smart Triage as the Assignment Engine:list-item:1': [
     'deployment.environment-separation',
     'dogfood-and-customer-tenants-must-not-share-blast-radius',
   ],
-  'permission-profiles-readme:item.b3183ee0b5ab': [
+  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## The five enforced invariants:list-item:1': [
     'permission-profile.profile-set',
     'keys-must-exactly-equal-profile-names',
   ],
-  'permission-profiles-readme:item.f8c108b3b431': [
+  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## The five enforced invariants:list-item:2': [
     'permission-profile.self-modification-guard',
     'every-profile-denies-edit-and-write-for-claude',
   ],
-  'permission-profiles-readme:item.a26beda5342d': [
+  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## The five enforced invariants:list-item:4': [
     'permission-profile.reviewer-restrictions',
     'deny-edit-write-and-enumerated-git-mutations',
   ],
-  'permission-profiles-readme:item.27ce8e0a4adc': [
+  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## The five enforced invariants:list-item:5': [
     'permission-profile.reviewer-shell-access',
     'bare-shell-denial-prohibited-for-hostile-probing',
   ],
-  'fk-charter:item.5c1f19dd9911': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition:paragraph:1': [
     'verification.issue-authority',
     'architecture-risk-two-fresh-independent-reviews-required',
   ],
-  'fk-charter:item.863fbb9202f0': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:1': [
     'enforcement.refusal.worktree-branch',
     'worktree-and-branch-mismatch-refusal-class',
   ],
-  'fk-charter:item.420807aa841c': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:2': [
     'enforcement.refusal.path-scope',
     'outside-allowed-files-and-frozen-surface-refusal-class',
   ],
-  'fk-charter:item.0b65a783a0be': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:3': [
     'enforcement.refusal.reviewer-mutation',
     'reviewer-mutation-and-dirty-worktree-refusal-class',
   ],
-  'fk-charter:item.8d204432b7c7': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:4': [
     'enforcement.refusal.policy-bypass',
     'policy-self-modification-and-mediated-bypass-refusal-class',
   ],
-  'fk-charter:item.e7be31fb263e': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:5': [
     'enforcement.refusal.state-lease-gate',
     'lease-revision-and-gate-refusal-class',
   ],
-  'fk-charter:item.7983e741c7aa': ['parcel.fk-p0', 'authority-registry-first-with-no-dependency'],
-  'fk-charter:item.ba4689f0d16e': ['parcel.fk-p1', 'lifecycle-contracts-depend-on-fk-p0'],
-  'fk-charter:item.e64616afcaf9': ['parcel.fk-p3', 'pure-dispatch-depends-on-fk-p1'],
-  'fk-charter:item.01fc2f9fcdd0': ['parcel.fk-p4', 'verifier-facade-dependency-contract'],
-  'fk-charter:item.9aee50455247': ['parcel.fk-p5', 'clean-room-spike-depends-on-fk-p4'],
-  'fk-charter:item.6427173452f4': ['parcel.fk-p6', 'read-only-mcp-dependency-contract'],
-  'fk-charter:item.d6c307d21998': ['parcel.fk-p7', 'stateless-image-depends-on-fk-p6'],
-  'fk-charter:item.9e512e70b8f5': ['parcel.fk-p8', 'portability-proof-depends-on-fk-p7'],
-  'fk-charter:item.d4059b59ac59': ['parcel.fk-p9', 'storage-abi-depends-on-fk-p1'],
-  'fk-charter:item.f4e2ba3acfd6': ['parcel.fk-p10', 'lease-engine-depends-on-fk-p9'],
-  'fk-charter:item.d92a7c500de4': ['parcel.fk-p11', 'projection-engine-dependency-contract'],
-  'fk-charter:item.dc8cc83e01e7': ['parcel.fk-p12', 'authorization-engine-dependency-contract'],
-  'fk-charter:item.387fb9c622d2': ['parcel.fk-p13', 'control-catalog-dependency-contract'],
-  'fk-charter:item.9efe42c4e01c': ['parcel.fk-p14', 'stateful-image-dependency-contract'],
-  'fk-charter:item.dde24d4c9b7c': ['parcel.fk-p15', 'restart-proof-depends-on-fk-p14'],
-  'fk-charter:item.ce7c8467ddb3': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 0 — Authority and contracts:table-row:FK-P0 — Canon authority and enforcement registry': ['parcel.fk-p0', 'authority-registry-first-with-no-dependency'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 0 — Authority and contracts:table-row:FK-P1 — Lifecycle, admission, and decision contracts': ['parcel.fk-p1', 'lifecycle-contracts-depend-on-fk-p0'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 1 — Pure trust core:table-row:FK-P3 — Pure dispatch decisions': ['parcel.fk-p3', 'pure-dispatch-depends-on-fk-p1'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 1 — Pure trust core:table-row:FK-P4 — Verifier facade': ['parcel.fk-p4', 'verifier-facade-dependency-contract'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 1 — Pure trust core:table-row:FK-P5 — Clean-room trust-core spike': ['parcel.fk-p5', 'clean-room-spike-depends-on-fk-p4'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 2 — Stateless read-only MCP and container:table-row:FK-P6 — Read-only MCP server': ['parcel.fk-p6', 'read-only-mcp-dependency-contract'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 2 — Stateless read-only MCP and container:table-row:FK-P7 — Stateless verifier image and launcher': ['parcel.fk-p7', 'stateless-image-depends-on-fk-p6'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 2 — Stateless read-only MCP and container:table-row:FK-P8 — Stateless harness portability proof': ['parcel.fk-p8', 'portability-proof-depends-on-fk-p7'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P9 — SQLite storage and migration ABI': ['parcel.fk-p9', 'storage-abi-depends-on-fk-p1'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P10 — Lease and transition engine': ['parcel.fk-p10', 'lease-engine-depends-on-fk-p9'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P11 — Legacy import and projection engine': ['parcel.fk-p11', 'projection-engine-dependency-contract'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P12 — Authorization policy engine': ['parcel.fk-p12', 'authorization-engine-dependency-contract'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P13 — Admission-protected control catalog': ['parcel.fk-p13', 'control-catalog-dependency-contract'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P14 — Stateful image composition and operator lifecycle': ['parcel.fk-p14', 'stateful-image-dependency-contract'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P15 — Stateful restart and admission proof': ['parcel.fk-p15', 'restart-proof-depends-on-fk-p14'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P16 — Claude lifecycle adapter, shadow mode': [
     'parcel.fk-p16',
     'claude-adapter-dependency-and-ownership-contract',
   ],
-  'fk-charter:item.8e9428543291': ['parcel.fk-p17', 'bypass-harness-depends-on-fk-p16'],
-  'fk-charter:item.c9611681dcca': ['parcel.fk-p19', 'enforcement-promotion-dependency-contract'],
-  'fk-charter:item.1cf05e6b7716': ['parcel.fk-p20', 'second-host-probe-depends-on-fk-p19'],
-  'fk-charter:item.5c24c3ef6591': ['parcel.fk-p21', 'exit-evidence-dependency-contract'],
-  'fk-charter:item.ec0f6225e0a6': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P17 — Bypass and outage harness': ['parcel.fk-p17', 'bypass-harness-depends-on-fk-p16'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P19 — High-confidence refusal enforcement': ['parcel.fk-p19', 'enforcement-promotion-dependency-contract'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P20 — Second-host feasibility and host registration': ['parcel.fk-p20', 'second-host-probe-depends-on-fk-p19'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P21 — Exit evidence manifest and clean-room proof': ['parcel.fk-p21', 'exit-evidence-dependency-contract'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:1': [
     'integration-scenario.clean-room-lint',
     'compile-and-refuse-path-ambiguity',
   ],
-  'fk-charter:item.0689031c79ed': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:2': [
     'integration-scenario.read-confidentiality',
     'bounded-repository-read-with-containment',
   ],
-  'fk-charter:item.349023b0246d': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:3': [
     'integration-scenario.pure-routing',
     'repeatable-routing-with-zero-writes',
   ],
-  'fk-charter:item.9308bed876c7': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:4': [
     'integration-scenario.structural-honesty',
     'tampered-chain-never-overclaimed',
   ],
-  'fk-charter:item.612528548655': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:5': [
     'integration-scenario.control-admission',
     'anonymous-control-denied',
   ],
-  'fk-charter:item.102464b0e25b': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:6': [
     'integration-scenario.restart-recovery',
     'restart-restores-state-and-projection',
   ],
-  'fk-charter:item.e1b224d7294b': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:7': [
     'integration-scenario.split-brain',
     'single-lease-and-stale-transition-conflict',
   ],
-  'fk-charter:item.501441d1853e': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:8': [
     'integration-scenario.scope-refusal',
     'structured-refusal-plus-diff-and-ci-detection',
   ],
-  'fk-charter:item.fc74f0320a1c': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:9': [
     'integration-scenario.reviewer-posture',
     'reviewer-mutation-and-dirty-completion-refuse',
   ],
-  'fk-charter:item.7eba1cb561c5': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:10': [
     'integration-scenario.human-gate',
     'require-human-with-nonlooping-stop-report',
   ],
-  'fk-charter:item.eb56a1ab24d9': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:11': [
     'integration-scenario.outage-posture',
     'mutation-blocked-and-read-only-degraded',
   ],
-  'fk-charter:item.8843a7774432': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:12': [
     'integration-scenario.enrollment-honesty',
     'bypass-refusal-distinct-from-absence-detection',
   ],
-  'fk-charter:item.10f729956b77': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:13': [
     'integration-scenario.host-capability',
     'supported-host-probe-and-gap-reporting',
   ],
-  'fk-charter:item.ff0f88a958e0': [
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:14': [
     'integration-scenario.decision-path-latency',
     'warm-kernel-meets-the-d21-budget-with-outage-and-stale-cache-evidence',
   ],
@@ -3668,12 +3591,12 @@ const CURATED_ITEM_IDENTITIES: Readonly<Record<string, readonly [string, string]
 
 function authorityIdentityFor(
   sourceId: string,
-  itemId: string,
+  locatorAnchor: string,
 ): {
   authoritySubject: string
   authorityClaim: string
 } | null {
-  const key = `${sourceId}:${itemId}`
+  const key = `${sourceId}:${locatorAnchor}`
   const identity =
     R11_CURATED_ITEM_SEMANTICS[key]?.identity ??
     R10_CURATED_ITEM_SEMANTICS[key]?.identity ??
@@ -3683,7 +3606,7 @@ function authorityIdentityFor(
     : { authoritySubject: identity[0], authorityClaim: identity[1] }
 }
 const CURATED_ITEM_APPLICABILITY = {
-  'fk-charter:item.d1': {
+  'fk-charter:D1': {
     goals: ['foreman-kernel'],
     roles: ['ci'],
     stages: ['deterministic-verify'],
@@ -3699,21 +3622,21 @@ const CURATED_ITEM_APPLICABILITY = {
     ],
     hosts: ['ci'],
   },
-  'fk-charter:item.d2': {
+  'fk-charter:D2': {
     goals: ['foreman-kernel'],
     roles: ['builder', 'reviewer', 'kernel'],
     stages: ['build', 'deterministic-verify', 'runtime'],
     operations: ['repo-mutation', 'state-transition'],
     hosts: ['any'],
   },
-  'fk-charter:item.d3': {
+  'fk-charter:D3': {
     goals: ['foreman-kernel'],
     roles: ['coordinator', 'builder', 'reviewer', 'host-adapter', 'kernel'],
     stages: ['build', 'runtime'],
     operations: ['state-transition', 'control-call'],
     hosts: ['provider-neutral', 'claude-windows-docker-loaded'],
   },
-  'fk-charter:item.d4': {
+  'fk-charter:D4': {
     goals: ['foreman-kernel'],
     roles: ['ci'],
     stages: ['deterministic-verify'],
@@ -3729,7 +3652,7 @@ const CURATED_ITEM_APPLICABILITY = {
     ],
     hosts: ['ci'],
   },
-  'fk-charter:item.d5': {
+  'fk-charter:D5': {
     goals: ['foreman-kernel'],
     roles: [
       'developer',
@@ -3752,7 +3675,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'fk-charter:item.d6': {
+  'fk-charter:D6': {
     goals: ['foreman-kernel'],
     roles: ['ci'],
     stages: ['deterministic-verify'],
@@ -3768,14 +3691,14 @@ const CURATED_ITEM_APPLICABILITY = {
     ],
     hosts: ['ci'],
   },
-  'fk-charter:item.d7': {
+  'fk-charter:D7': {
     goals: ['foreman-kernel'],
     roles: ['builder', 'reviewer', 'host-adapter', 'kernel'],
     stages: ['build', 'deterministic-verify', 'runtime'],
     operations: ['repo-mutation', 'control-call'],
     hosts: ['claude-windows-docker-loaded', 'claude-windows-docker-unenrolled', 'unsupported-host'],
   },
-  'fk-charter:item.d8': {
+  'fk-charter:D8': {
     goals: ['foreman-kernel'],
     roles: ['coordinator', 'reviewer', 'ci'],
     stages: ['deterministic-verify', 'adversarial-review', 'merge'],
@@ -3797,7 +3720,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'fk-charter:item.d9': {
+  'fk-charter:D9': {
     goals: ['foreman-kernel'],
     roles: ['developer', 'coordinator', 'builder', 'reviewer', 'kernel', 'operator'],
     stages: ['stage-zero', 'step-zero', 'adversarial-review', 'merge', 'closure'],
@@ -3810,7 +3733,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'fk-charter:item.d10': {
+  'fk-charter:D10': {
     goals: ['foreman-kernel'],
     roles: ['coordinator', 'builder', 'reviewer', 'kernel'],
     stages: ['step-zero', 'build', 'deterministic-verify'],
@@ -3823,14 +3746,14 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'fk-charter:item.d11': {
+  'fk-charter:D11': {
     goals: ['foreman-kernel'],
     roles: ['coordinator', 'builder', 'reviewer', 'ci', 'kernel'],
     stages: ['deterministic-verify', 'adversarial-review'],
     operations: ['source-inventory', 'repo-mutation'],
     hosts: ['provider-neutral', 'claude-windows-docker-loaded', 'ci'],
   },
-  'fk-charter:item.d12': {
+  'fk-charter:D12': {
     goals: ['foreman-kernel'],
     roles: [
       'developer',
@@ -3872,7 +3795,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'fk-charter:item.d13': {
+  'fk-charter:D13': {
     goals: ['foreman-kernel'],
     roles: ['builder', 'reviewer', 'ci', 'host-adapter', 'kernel'],
     stages: ['build', 'deterministic-verify', 'adversarial-review', 'merge', 'runtime'],
@@ -3885,7 +3808,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'fk-charter:item.d14': {
+  'fk-charter:D14': {
     goals: ['foreman-kernel'],
     roles: ['ci'],
     stages: ['deterministic-verify'],
@@ -3901,7 +3824,7 @@ const CURATED_ITEM_APPLICABILITY = {
     ],
     hosts: ['ci'],
   },
-  'fk-charter:item.d15': {
+  'fk-charter:D15': {
     goals: ['foreman-kernel'],
     roles: [
       'developer',
@@ -3934,7 +3857,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'fk-charter:item.d16': {
+  'fk-charter:D16': {
     goals: ['foreman-kernel'],
     roles: [
       'developer',
@@ -3976,7 +3899,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'fk-charter:item.d17': {
+  'fk-charter:D17': {
     goals: ['foreman-kernel'],
     roles: ['coordinator', 'builder', 'reviewer', 'host-adapter', 'kernel', 'operator'],
     stages: ['build', 'deterministic-verify', 'adversarial-review', 'runtime'],
@@ -3989,14 +3912,14 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'fk-charter:item.d18': {
+  'fk-charter:D18': {
     goals: ['foreman-kernel'],
     roles: ['builder', 'reviewer', 'host-adapter', 'kernel'],
     stages: ['build', 'deterministic-verify', 'runtime'],
     operations: ['repo-mutation', 'control-call'],
     hosts: ['any'],
   },
-  'fk-charter:item.d19': {
+  'fk-charter:D19': {
     goals: ['foreman-kernel'],
     roles: ['builder', 'reviewer', 'host-adapter', 'kernel'],
     stages: ['build', 'deterministic-verify', 'runtime'],
@@ -4009,7 +3932,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'fk-charter:item.d20': {
+  'fk-charter:D20': {
     goals: ['foreman-kernel'],
     roles: [
       'developer',
@@ -4024,7 +3947,7 @@ const CURATED_ITEM_APPLICABILITY = {
     operations: ['repo-read', 'repo-mutation', 'control-call'],
     hosts: ['claude-windows-docker-loaded', 'unsupported-host'],
   },
-  'fk-charter:item.a583b7f02950': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel:paragraph:1': {
     goals: ['foreman-kernel'],
     roles: [
       'developer',
@@ -4066,7 +3989,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'fk-charter:item.93d5d3978e5f': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 2. Problem statement:list-item:1': {
     goals: ['foreman-kernel'],
     roles: [
       'developer',
@@ -4108,7 +4031,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'fk-charter:item.cd014d6d90c5': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 4. Locked decisions:paragraph:1': {
     goals: ['foreman-kernel'],
     roles: ['reviewer'],
     stages: ['adversarial-review', 'merge'],
@@ -4130,21 +4053,21 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'fk-charter:item.144bb836f528': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 0 — Authority and contracts:table-row:FK-P2 — Spec-body compiler': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['shaping'],
     operations: ['state-transition'],
     hosts: ['provider-neutral'],
   },
-  'fk-charter:item.a087b0ab4c3b': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P18 — CI scope and state-evidence backstops': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['shaping'],
     operations: ['state-transition'],
     hosts: ['provider-neutral'],
   },
-  'fk-charter:item.e9ec57edc0a2': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:1': {
     goals: ['foreman-kernel'],
     roles: [
       'developer',
@@ -4186,7 +4109,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'fk-charter:item.8cf027fc811e': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 10. Human gates and standing authorizations requested > ### Gate 1 — charter ratification:paragraph:1': {
     goals: ['foreman-kernel'],
     roles: ['reviewer'],
     stages: ['adversarial-review', 'merge'],
@@ -4208,21 +4131,21 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'fk-charter:item.15a44cf50bc6': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 10. Human gates and standing authorizations requested > ### Gate 2 — parcel dispatch:paragraph:1': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['shaping', 'step-zero'],
     operations: ['state-transition'],
     hosts: ['provider-neutral'],
   },
-  'fk-charter:item.c74628d41600': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 10. Human gates and standing authorizations requested > ### Gate 3 — merge:paragraph:1': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['merge'],
     operations: ['repo-mutation', 'state-transition'],
     hosts: ['any'],
   },
-  'fk-charter:item.d9921c51d7ea': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:1': {
     goals: ['foreman-kernel'],
     roles: [
       'developer',
@@ -4264,7 +4187,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'fk-charter:item.0afd841f51f8': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:3': {
     goals: ['foreman-kernel'],
     roles: [
       'developer',
@@ -4306,7 +4229,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'fk-charter:item.2cbbc7ae0192': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:16': {
     goals: ['foreman-kernel'],
     roles: [
       'developer',
@@ -4348,14 +4271,14 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'fk-charter:item.b1ac4aa9eddf': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 13. Gate 1 decision list:list-item:11': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['merge'],
     operations: ['state-transition'],
     hosts: ['any'],
   },
-  'fk-charter:item.b0a3e204145f': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 13. Gate 1 decision list:paragraph:2': {
     goals: ['foreman-kernel'],
     roles: [
       'developer',
@@ -4397,7 +4320,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'fk-plan-review-findings:item.r1': {
+  'fk-plan-review-findings:R1': {
     goals: ['foreman-kernel'],
     roles: [
       'developer',
@@ -4439,7 +4362,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'fk-plan-review-findings:item.r2': {
+  'fk-plan-review-findings:R2': {
     goals: ['foreman-kernel'],
     roles: [
       'developer',
@@ -4481,7 +4404,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'fk-plan-review-findings:item.r3': {
+  'fk-plan-review-findings:R3': {
     goals: ['foreman-kernel'],
     roles: [
       'developer',
@@ -4523,7 +4446,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'fk-plan-review-findings:item.r4': {
+  'fk-plan-review-findings:R4': {
     goals: ['foreman-kernel'],
     roles: [
       'developer',
@@ -4565,7 +4488,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'fk-plan-review-findings:item.r5': {
+  'fk-plan-review-findings:R5': {
     goals: ['foreman-kernel'],
     roles: ['ci'],
     stages: ['deterministic-verify'],
@@ -4581,7 +4504,7 @@ const CURATED_ITEM_APPLICABILITY = {
     ],
     hosts: ['ci'],
   },
-  'fk-plan-review-findings:item.r6': {
+  'fk-plan-review-findings:R6': {
     goals: ['foreman-kernel'],
     roles: [
       'developer',
@@ -4623,7 +4546,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'fk-plan-review-findings:item.r7': {
+  'fk-plan-review-findings:R7': {
     goals: ['foreman-kernel'],
     roles: [
       'developer',
@@ -4665,7 +4588,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'fk-plan-review-findings:item.r8': {
+  'fk-plan-review-findings:R8': {
     goals: ['foreman-kernel'],
     roles: [
       'developer',
@@ -4707,7 +4630,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'fk-plan-review-findings:item.r9': {
+  'fk-plan-review-findings:R9': {
     goals: ['foreman-kernel'],
     roles: ['ci'],
     stages: ['deterministic-verify'],
@@ -4723,7 +4646,7 @@ const CURATED_ITEM_APPLICABILITY = {
     ],
     hosts: ['ci'],
   },
-  'fk-plan-review-findings:item.r10': {
+  'fk-plan-review-findings:R10': {
     goals: ['foreman-kernel'],
     roles: [
       'developer',
@@ -4765,7 +4688,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'fk-plan-review-findings:item.r11': {
+  'fk-plan-review-findings:R11': {
     goals: ['foreman-kernel'],
     roles: ['ci'],
     stages: ['deterministic-verify'],
@@ -4781,7 +4704,7 @@ const CURATED_ITEM_APPLICABILITY = {
     ],
     hosts: ['ci'],
   },
-  'fk-plan-review-findings:item.r12': {
+  'fk-plan-review-findings:R12': {
     goals: ['foreman-kernel'],
     roles: ['coordinator', 'reviewer', 'ci'],
     stages: ['deterministic-verify', 'adversarial-review', 'merge'],
@@ -4803,7 +4726,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'fk-plan-review-findings:item.r13': {
+  'fk-plan-review-findings:R13': {
     goals: ['foreman-kernel'],
     roles: [
       'developer',
@@ -4845,7 +4768,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'fk-plan-review-findings:item.1de06653021c': {
+  'fk-plan-review-findings:md-block:# Foreman Kernel — Plan-Level Adversarial Review Findings > ## Scoped Gate 1 re-open:list-item:6': {
     goals: ['foreman-kernel'],
     roles: [
       'developer',
@@ -4887,7 +4810,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'fk-loop-directive:item.7a05d374a3b1': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:paragraph:1': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: [
@@ -4903,49 +4826,49 @@ const CURATED_ITEM_APPLICABILITY = {
     operations: ['state-transition'],
     hosts: ['any'],
   },
-  'fk-loop-directive:item.b81725578197': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:list-item:1': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['stage-zero'],
     operations: ['source-inventory'],
     hosts: ['any'],
   },
-  'fk-loop-directive:item.aac2d1258986': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:list-item:2': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['stage-zero'],
     operations: ['source-inventory'],
     hosts: ['any'],
   },
-  'fk-loop-directive:item.4f0fb14fbd95': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:list-item:3': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['stage-zero'],
     operations: ['source-inventory'],
     hosts: ['any'],
   },
-  'fk-loop-directive:item.47a75730afd6': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:list-item:4': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['shaping'],
     operations: ['state-transition'],
     hosts: ['provider-neutral'],
   },
-  'fk-loop-directive:item.08b3cbb91027': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:list-item:5': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['merge'],
     operations: ['repo-mutation'],
     hosts: ['any'],
   },
-  'fk-loop-directive:item.dd8203551518': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:paragraph:1': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['deterministic-verify', 'adversarial-review', 'merge', 'closure'],
     operations: ['state-transition', 'receipt-validation'],
     hosts: ['any'],
   },
-  'fk-loop-directive:item.ebdd14e6f524': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:1': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: [
@@ -4961,7 +4884,7 @@ const CURATED_ITEM_APPLICABILITY = {
     operations: ['source-inventory'],
     hosts: ['any'],
   },
-  'fk-loop-directive:item.a59b01361dc6': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:2': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: [
@@ -4977,7 +4900,7 @@ const CURATED_ITEM_APPLICABILITY = {
     operations: ['source-inventory'],
     hosts: ['any'],
   },
-  'fk-loop-directive:item.734b79ca0bb8': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:3': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: [
@@ -4993,7 +4916,7 @@ const CURATED_ITEM_APPLICABILITY = {
     operations: ['source-inventory'],
     hosts: ['any'],
   },
-  'fk-loop-directive:item.51f7dbbba473': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:4': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: [
@@ -5009,7 +4932,7 @@ const CURATED_ITEM_APPLICABILITY = {
     operations: ['source-inventory'],
     hosts: ['any'],
   },
-  'fk-loop-directive:item.d69eca1ec1f6': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:5': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: [
@@ -5025,7 +4948,7 @@ const CURATED_ITEM_APPLICABILITY = {
     operations: ['source-inventory'],
     hosts: ['any'],
   },
-  'fk-loop-directive:item.fc3ea1441f92': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:6': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: [
@@ -5041,7 +4964,7 @@ const CURATED_ITEM_APPLICABILITY = {
     operations: ['source-inventory'],
     hosts: ['any'],
   },
-  'fk-loop-directive:item.15e5fcbdbe13': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:paragraph:2': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: [
@@ -5057,35 +4980,35 @@ const CURATED_ITEM_APPLICABILITY = {
     operations: ['source-inventory'],
     hosts: ['any'],
   },
-  'fk-loop-directive:item.bfffee6d7c1f': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:1': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['shaping'],
     operations: ['state-transition'],
     hosts: ['provider-neutral'],
   },
-  'fk-loop-directive:item.431228393540': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:2': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['shaping'],
     operations: ['spec-mutation'],
     hosts: ['provider-neutral'],
   },
-  'fk-loop-directive:item.be7691d170a9': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:3': {
     goals: ['foreman-kernel'],
     roles: ['coordinator', 'shaper', 'builder', 'reviewer'],
     stages: ['shaping', 'step-zero', 'build', 'deterministic-verify', 'adversarial-review'],
     operations: ['spec-mutation', 'repo-read', 'repo-mutation'],
     hosts: ['provider-neutral'],
   },
-  'fk-loop-directive:item.9935b3499764': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:4': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['step-zero'],
     operations: ['spec-mutation'],
     hosts: ['provider-neutral'],
   },
-  'fk-loop-directive:item.64341d1e8b82': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:5': {
     goals: ['foreman-kernel'],
     roles: ['coordinator', 'shaper', 'builder', 'reviewer'],
     stages: [
@@ -5100,14 +5023,14 @@ const CURATED_ITEM_APPLICABILITY = {
     operations: ['external-write'],
     hosts: ['any'],
   },
-  'fk-loop-directive:item.7eb6018d9e57': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:6': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['merge'],
     operations: ['repo-mutation'],
     hosts: ['any'],
   },
-  'fk-loop-directive:item.7aa2dd930e35': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:7': {
     goals: ['foreman-kernel'],
     roles: ['coordinator', 'builder'],
     stages: ['build', 'merge'],
@@ -5119,154 +5042,154 @@ const CURATED_ITEM_APPLICABILITY = {
   // Both read and write are prohibited, so `repo-read` sits alongside `repo-mutation`; a
   // read-only-is-fine reading is exactly the reading the sentence forecloses. Every stage, because
   // the prohibition has no stage qualifier.
-  'fk-loop-directive:item.8be213f2455a': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:8': {
     goals: ['foreman-kernel'],
     roles: ['coordinator', 'shaper', 'builder', 'reviewer'],
     stages: ['any'],
     operations: ['repo-read', 'repo-mutation'],
     hosts: ['any'],
   },
-  'fk-loop-directive:item.8c0b09120ff1': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:1': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['shaping'],
     operations: ['source-inventory', 'state-transition'],
     hosts: ['provider-neutral'],
   },
-  'fk-loop-directive:item.d3b0e9dd63d0': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:2': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['shaping'],
     operations: ['spec-mutation'],
     hosts: ['provider-neutral'],
   },
-  'fk-loop-directive:item.f7e8dffebadc': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:3': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['shaping'],
     operations: ['source-inventory', 'spec-mutation'],
     hosts: ['provider-neutral'],
   },
-  'fk-loop-directive:item.1157c2a03bbe': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:4': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['shaping'],
     operations: ['state-transition'],
     hosts: ['provider-neutral'],
   },
-  'fk-loop-directive:item.bdd56a126b79': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:5': {
     goals: ['foreman-kernel'],
     roles: ['coordinator', 'builder'],
     stages: ['step-zero'],
     operations: ['spec-mutation'],
     hosts: ['provider-neutral'],
   },
-  'fk-loop-directive:item.ed8d7888ce8c': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:6': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['deterministic-verify'],
     operations: ['repo-read'],
     hosts: ['provider-neutral'],
   },
-  'fk-loop-directive:item.6ea9ce2b9573': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:7': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['deterministic-verify'],
     operations: ['source-inventory'],
     hosts: ['provider-neutral'],
   },
-  'fk-loop-directive:item.ce9042d917b2': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:8': {
     goals: ['foreman-kernel'],
     roles: ['reviewer'],
     stages: ['adversarial-review'],
     operations: ['receipt-validation'],
     hosts: ['any'],
   },
-  'fk-loop-directive:item.d978784bc1b7': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:9': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['adversarial-review'],
     operations: ['receipt-validation'],
     hosts: ['any'],
   },
-  'fk-loop-directive:item.2743c2f8c558': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:10': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['merge'],
     operations: ['repo-mutation'],
     hosts: ['any'],
   },
-  'fk-loop-directive:item.e3065db62b43': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:11': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['closure'],
     operations: ['state-transition'],
     hosts: ['any'],
   },
-  'fk-loop-directive:item.1576c95260b6': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Queue and dependency order:paragraph:1': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['shaping'],
     operations: ['state-transition'],
     hosts: ['provider-neutral'],
   },
-  'fk-loop-directive:item.8f98d5e3e61a': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:paragraph:1': {
     goals: ['foreman-kernel'],
     roles: ['coordinator', 'shaper'],
     stages: ['shaping'],
     operations: ['source-inventory'],
     hosts: ['provider-neutral'],
   },
-  'fk-loop-directive:item.4f26e86b0870': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:1': {
     goals: ['foreman-kernel'],
     roles: ['coordinator', 'shaper'],
     stages: ['shaping'],
     operations: ['source-inventory'],
     hosts: ['provider-neutral'],
   },
-  'fk-loop-directive:item.5909432cc1a7': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:2': {
     goals: ['foreman-kernel'],
     roles: ['coordinator', 'shaper'],
     stages: ['shaping'],
     operations: ['source-inventory'],
     hosts: ['provider-neutral'],
   },
-  'fk-loop-directive:item.b2e02392e4e5': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:3': {
     goals: ['foreman-kernel'],
     roles: ['coordinator', 'shaper'],
     stages: ['shaping'],
     operations: ['source-inventory'],
     hosts: ['provider-neutral'],
   },
-  'fk-loop-directive:item.ec3e0d0130ff': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:4': {
     goals: ['foreman-kernel'],
     roles: ['coordinator', 'shaper'],
     stages: ['shaping'],
     operations: ['source-inventory'],
     hosts: ['provider-neutral'],
   },
-  'fk-loop-directive:item.e7e5c2483975': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:5': {
     goals: ['foreman-kernel'],
     roles: ['coordinator', 'builder', 'kernel'],
     stages: ['build', 'runtime'],
     operations: ['control-call'],
     hosts: ['any'],
   },
-  'fk-loop-directive:item.c6c0339a5001': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:6': {
     goals: ['foreman-kernel'],
     roles: ['shaper', 'builder', 'ci'],
     stages: ['shaping', 'build', 'deterministic-verify'],
     operations: ['source-inventory'],
     hosts: ['provider-neutral'],
   },
-  'fk-loop-directive:item.78a9d344c4c6': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:7': {
     goals: ['foreman-kernel'],
     roles: ['builder'],
     stages: ['build'],
     operations: ['repo-mutation', 'external-write'],
     hosts: ['provider-neutral'],
   },
-  'fk-loop-directive:item.5820c7f79bef': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:paragraph:1': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: [
@@ -5282,91 +5205,91 @@ const CURATED_ITEM_APPLICABILITY = {
     operations: ['state-transition'],
     hosts: ['any'],
   },
-  'fk-loop-directive:item.7f72e946ccbe': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:1': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['shaping'],
     operations: ['state-transition'],
     hosts: ['any'],
   },
-  'fk-loop-directive:item.23f92834c1c8': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:2': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['shaping'],
     operations: ['spec-mutation'],
     hosts: ['any'],
   },
-  'fk-loop-directive:item.6151d43333aa': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:3': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['step-zero'],
     operations: ['spec-mutation'],
     hosts: ['any'],
   },
-  'fk-loop-directive:item.c708d8f95113': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:4': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['shaping'],
     operations: ['state-transition'],
     hosts: ['any'],
   },
-  'fk-loop-directive:item.adee76eb5f43': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:5': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['shaping', 'build'],
     operations: ['control-call'],
     hosts: ['any'],
   },
-  'fk-loop-directive:item.52f524327994': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:6': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['shaping', 'build', 'runtime'],
     operations: ['repo-read'],
     hosts: ['any'],
   },
-  'fk-loop-directive:item.37f78aa591c5': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:7': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['shaping', 'build', 'adversarial-review'],
     operations: ['state-transition'],
     hosts: ['any'],
   },
-  'fk-loop-directive:item.d7945b743a67': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:8': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['build', 'deterministic-verify', 'adversarial-review'],
     operations: ['state-transition'],
     hosts: ['any'],
   },
-  'fk-loop-directive:item.80f2c4a08e42': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:9': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['deterministic-verify', 'adversarial-review'],
     operations: ['repo-mutation'],
     hosts: ['any'],
   },
-  'fk-loop-directive:item.c55a33cc847f': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:10': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['step-zero', 'build'],
     operations: ['repo-mutation'],
     hosts: ['any'],
   },
-  'fk-loop-directive:item.237865e0993f': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:11': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['closure'],
     operations: ['state-transition'],
     hosts: ['any'],
   },
-  'fk-loop-directive:item.7ad3390acb6b': {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Wakeup and crash recovery:paragraph:1': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['build', 'deterministic-verify', 'adversarial-review'],
     operations: ['state-transition'],
     hosts: ['any'],
   },
-  'spec-convention:item.fd5d51dd4808': {
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 3. Spec Lifecycle:list-item:1': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -5408,7 +5331,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'spec-convention:item.f2172f28e7fc': {
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 3. Spec Lifecycle:list-item:2': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -5450,7 +5373,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'spec-convention:item.71d77f22d163': {
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 3. Spec Lifecycle:list-item:3': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -5492,7 +5415,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'spec-convention:item.ea0314db8499': {
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 3. Spec Lifecycle:list-item:4': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -5534,7 +5457,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'spec-convention:item.d2b2084774b8': {
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 5. The Spec ↔ Jira Contract:list-item:1': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -5576,7 +5499,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'spec-convention:item.910181940014': {
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 5. The Spec ↔ Jira Contract:list-item:2': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -5618,7 +5541,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'spec-convention:item.c9b45d54e97b': {
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 5. The Spec ↔ Jira Contract:list-item:3': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -5660,7 +5583,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'spec-convention:item.4fa776b35f0b': {
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 5. The Spec ↔ Jira Contract:list-item:4': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -5702,7 +5625,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'spec-convention:item.4886c52fa322': {
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 8. Dispatch Model (How Agents Consume Specs):list-item:1': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -5744,7 +5667,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'spec-convention:item.74a07f6879cc': {
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 8. Dispatch Model (How Agents Consume Specs):list-item:2': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -5786,14 +5709,14 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'spec-convention:item.03f0830cd693': {
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 8. Dispatch Model (How Agents Consume Specs):list-item:3': {
     goals: ['all-foreman-goals'],
     roles: ['builder'],
     stages: ['deterministic-verify'],
     operations: ['receipt-validation'],
     hosts: ['any'],
   },
-  'spec-convention:item.7a55cf4f2295': {
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 8. Dispatch Model (How Agents Consume Specs):list-item:4': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -5835,7 +5758,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'spec-convention:item.0979dba6c958': {
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 10. Adoption Path:list-item:4': {
     goals: ['all-foreman-goals'],
     roles: ['ci'],
     stages: ['deterministic-verify'],
@@ -5851,7 +5774,7 @@ const CURATED_ITEM_APPLICABILITY = {
     ],
     hosts: ['ci'],
   },
-  'spec-convention:item.efb0769d6ff2': {
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 11. Coordinator-Ratified Amendment Pattern (added W0-P2):list-item:1': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -5893,7 +5816,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'spec-convention:item.513e18f22be3': {
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 11. Coordinator-Ratified Amendment Pattern (added W0-P2):list-item:2': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -5935,7 +5858,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'spec-convention:item.6dbbca88286f': {
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 11. Coordinator-Ratified Amendment Pattern (added W0-P2):list-item:3': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -5977,7 +5900,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'spec-convention:item.e6f5fa8543a1': {
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.6 Schema v0.2 Fields (added W0-P2):list-item:4': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -6019,7 +5942,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'spec-convention:item.ac5ff7afd06f': {
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.8 `Allowed Files` Mutation Authority:list-item:1': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -6061,7 +5984,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'spec-convention:item.5145ab15549c': {
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.8 `Allowed Files` Mutation Authority:list-item:2': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -6103,7 +6026,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'spec-convention:item.fd82127bf9f9': {
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.8 `Allowed Files` Mutation Authority:paragraph:3': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -6145,7 +6068,301 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'spec-convention:item.022fc00afe7b': {
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:1': {
+    goals: ['all-foreman-goals'],
+    roles: [
+      'developer',
+      'coordinator',
+      'shaper',
+      'builder',
+      'reviewer',
+      'ci',
+      'host-adapter',
+      'kernel',
+      'operator',
+    ],
+    stages: [
+      'stage-zero',
+      'shaping',
+      'step-zero',
+      'build',
+      'deterministic-verify',
+      'adversarial-review',
+      'merge',
+      'closure',
+      'runtime',
+    ],
+    operations: [
+      'source-inventory',
+      'spec-mutation',
+      'repo-read',
+      'repo-mutation',
+      'state-transition',
+      'control-call',
+      'receipt-validation',
+      'external-write',
+    ],
+    hosts: [
+      'provider-neutral',
+      'claude-windows-docker-loaded',
+      'claude-windows-docker-unenrolled',
+      'unsupported-host',
+      'ci',
+    ],
+  },
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:2': {
+    goals: ['all-foreman-goals'],
+    roles: [
+      'developer',
+      'coordinator',
+      'shaper',
+      'builder',
+      'reviewer',
+      'ci',
+      'host-adapter',
+      'kernel',
+      'operator',
+    ],
+    stages: [
+      'stage-zero',
+      'shaping',
+      'step-zero',
+      'build',
+      'deterministic-verify',
+      'adversarial-review',
+      'merge',
+      'closure',
+      'runtime',
+    ],
+    operations: [
+      'source-inventory',
+      'spec-mutation',
+      'repo-read',
+      'repo-mutation',
+      'state-transition',
+      'control-call',
+      'receipt-validation',
+      'external-write',
+    ],
+    hosts: [
+      'provider-neutral',
+      'claude-windows-docker-loaded',
+      'claude-windows-docker-unenrolled',
+      'unsupported-host',
+      'ci',
+    ],
+  },
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:3': {
+    goals: ['all-foreman-goals'],
+    roles: [
+      'developer',
+      'coordinator',
+      'shaper',
+      'builder',
+      'reviewer',
+      'ci',
+      'host-adapter',
+      'kernel',
+      'operator',
+    ],
+    stages: [
+      'stage-zero',
+      'shaping',
+      'step-zero',
+      'build',
+      'deterministic-verify',
+      'adversarial-review',
+      'merge',
+      'closure',
+      'runtime',
+    ],
+    operations: [
+      'source-inventory',
+      'spec-mutation',
+      'repo-read',
+      'repo-mutation',
+      'state-transition',
+      'control-call',
+      'receipt-validation',
+      'external-write',
+    ],
+    hosts: [
+      'provider-neutral',
+      'claude-windows-docker-loaded',
+      'claude-windows-docker-unenrolled',
+      'unsupported-host',
+      'ci',
+    ],
+  },
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:4': {
+    goals: ['all-foreman-goals'],
+    roles: [
+      'developer',
+      'coordinator',
+      'shaper',
+      'builder',
+      'reviewer',
+      'ci',
+      'host-adapter',
+      'kernel',
+      'operator',
+    ],
+    stages: [
+      'stage-zero',
+      'shaping',
+      'step-zero',
+      'build',
+      'deterministic-verify',
+      'adversarial-review',
+      'merge',
+      'closure',
+      'runtime',
+    ],
+    operations: [
+      'source-inventory',
+      'spec-mutation',
+      'repo-read',
+      'repo-mutation',
+      'state-transition',
+      'control-call',
+      'receipt-validation',
+      'external-write',
+    ],
+    hosts: [
+      'provider-neutral',
+      'claude-windows-docker-loaded',
+      'claude-windows-docker-unenrolled',
+      'unsupported-host',
+      'ci',
+    ],
+  },
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:5': {
+    goals: ['all-foreman-goals'],
+    roles: [
+      'developer',
+      'coordinator',
+      'shaper',
+      'builder',
+      'reviewer',
+      'ci',
+      'host-adapter',
+      'kernel',
+      'operator',
+    ],
+    stages: [
+      'stage-zero',
+      'shaping',
+      'step-zero',
+      'build',
+      'deterministic-verify',
+      'adversarial-review',
+      'merge',
+      'closure',
+      'runtime',
+    ],
+    operations: [
+      'source-inventory',
+      'spec-mutation',
+      'repo-read',
+      'repo-mutation',
+      'state-transition',
+      'control-call',
+      'receipt-validation',
+      'external-write',
+    ],
+    hosts: [
+      'provider-neutral',
+      'claude-windows-docker-loaded',
+      'claude-windows-docker-unenrolled',
+      'unsupported-host',
+      'ci',
+    ],
+  },
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## The three human gates:table-row:1': {
+    goals: ['all-foreman-goals'],
+    roles: [
+      'developer',
+      'coordinator',
+      'shaper',
+      'builder',
+      'reviewer',
+      'ci',
+      'host-adapter',
+      'kernel',
+      'operator',
+    ],
+    stages: [
+      'stage-zero',
+      'shaping',
+      'step-zero',
+      'build',
+      'deterministic-verify',
+      'adversarial-review',
+      'merge',
+      'closure',
+      'runtime',
+    ],
+    operations: [
+      'source-inventory',
+      'spec-mutation',
+      'repo-read',
+      'repo-mutation',
+      'state-transition',
+      'control-call',
+      'receipt-validation',
+      'external-write',
+    ],
+    hosts: [
+      'provider-neutral',
+      'claude-windows-docker-loaded',
+      'claude-windows-docker-unenrolled',
+      'unsupported-host',
+      'ci',
+    ],
+  },
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## The three human gates:table-row:2': {
+    goals: ['all-foreman-goals'],
+    roles: [
+      'developer',
+      'coordinator',
+      'shaper',
+      'builder',
+      'reviewer',
+      'ci',
+      'host-adapter',
+      'kernel',
+      'operator',
+    ],
+    stages: [
+      'stage-zero',
+      'shaping',
+      'step-zero',
+      'build',
+      'deterministic-verify',
+      'adversarial-review',
+      'merge',
+      'closure',
+      'runtime',
+    ],
+    operations: [
+      'source-inventory',
+      'spec-mutation',
+      'repo-read',
+      'repo-mutation',
+      'state-transition',
+      'control-call',
+      'receipt-validation',
+      'external-write',
+    ],
+    hosts: [
+      'provider-neutral',
+      'claude-windows-docker-loaded',
+      'claude-windows-docker-unenrolled',
+      'unsupported-host',
+      'ci',
+    ],
+  },
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## The three human gates:table-row:3': {
     goals: ['all-foreman-goals'],
     roles: ['coordinator'],
     stages: ['merge'],
@@ -6158,7 +6375,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'coordinator-pattern:item.38dbf3185a76': {
+  'goal-skill:md-block:# /goal — the Coordinator entry point > ## Stage Zero — run it, don\'t skip it:list-item:1': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -6200,7 +6417,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'coordinator-pattern:item.84b4e388c06b': {
+  'goal-skill:md-block:# /goal — the Coordinator entry point > ## Stage Zero — run it, don\'t skip it:list-item:2': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -6242,7 +6459,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'coordinator-pattern:item.d62734f662a0': {
+  'goal-skill:md-block:# /goal — the Coordinator entry point > ## Stage Zero — run it, don\'t skip it:list-item:3': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -6284,405 +6501,98 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'coordinator-pattern:item.00f63e7818bc': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'coordinator-pattern:item.a3d15fe678e1': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'coordinator-pattern:item.dedbefc1b097': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'coordinator-pattern:item.91dd60b00fd6': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'coordinator-pattern:item.f7686ab58db7': {
-    goals: ['all-foreman-goals'],
-    roles: ['coordinator'],
-    stages: ['merge'],
-    operations: ['state-transition'],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'goal-skill:item.02636597cc8d': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'goal-skill:item.fa27a05811dd': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'goal-skill:item.8fda5f4d9776': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'standing-constraints:item.constraint-1': {
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:1': {
     goals: ['all-foreman-goals'],
     roles: ['builder'],
     stages: ['any'],
     operations: ['any'],
     hosts: ['any'],
   },
-  'standing-constraints:item.constraint-2': {
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:2': {
     goals: ['all-foreman-goals'],
     roles: ['builder'],
     stages: ['any'],
     operations: ['any'],
     hosts: ['any'],
   },
-  'standing-constraints:item.constraint-3': {
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:3': {
     goals: ['all-foreman-goals'],
     roles: ['builder'],
     stages: ['any'],
     operations: ['any'],
     hosts: ['any'],
   },
-  'standing-constraints:item.constraint-4': {
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:4': {
     goals: ['all-foreman-goals'],
     roles: ['builder'],
     stages: ['any'],
     operations: ['any'],
     hosts: ['any'],
   },
-  'standing-constraints:item.constraint-5': {
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:5': {
     goals: ['all-foreman-goals'],
     roles: ['builder'],
     stages: ['any'],
     operations: ['any'],
     hosts: ['any'],
   },
-  'standing-constraints:item.constraint-12': {
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:6': {
     goals: ['all-foreman-goals'],
     roles: ['coordinator'],
     stages: ['deterministic-verify', 'adversarial-review'],
     operations: ['source-inventory', 'repo-read', 'repo-mutation'],
     hosts: ['any'],
   },
-  'standing-constraints:item.constraint-13': {
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:7': {
     goals: ['all-foreman-goals'],
     roles: ['builder'],
     stages: ['any'],
     operations: ['any'],
     hosts: ['any'],
   },
-  'standing-constraints:item.constraint-6': {
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — conditional:list-item:1': {
     goals: ['all-foreman-goals'],
     roles: ['builder'],
     stages: ['any'],
     operations: ['any'],
     hosts: ['any'],
   },
-  'standing-constraints:item.constraint-7': {
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — conditional:list-item:2': {
     goals: ['all-foreman-goals'],
     roles: ['builder'],
     stages: ['any'],
     operations: ['control-call'],
     hosts: ['any'],
   },
-  'standing-constraints:item.constraint-8': {
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Reviewer:list-item:1': {
     goals: ['all-foreman-goals'],
     roles: ['reviewer'],
     stages: ['adversarial-review'],
     operations: ['repo-read', 'repo-mutation', 'control-call'],
     hosts: ['any'],
   },
-  'standing-constraints:item.constraint-9': {
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Reviewer:list-item:2': {
     goals: ['all-foreman-goals'],
     roles: ['reviewer'],
     stages: ['adversarial-review'],
     operations: ['repo-read', 'repo-mutation', 'control-call'],
     hosts: ['any'],
   },
-  'standing-constraints:item.constraint-10': {
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Reviewer:list-item:3': {
     goals: ['all-foreman-goals'],
     roles: ['reviewer'],
     stages: ['adversarial-review'],
     operations: ['repo-read', 'repo-mutation', 'control-call'],
     hosts: ['any'],
   },
-  'standing-constraints:item.constraint-11': {
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Reviewer:list-item:4': {
     goals: ['all-foreman-goals'],
     roles: ['reviewer'],
     stages: ['adversarial-review'],
     operations: ['repo-read', 'repo-mutation', 'control-call'],
     hosts: ['any'],
   },
-  'standing-constraints:item.c5880644c95c': {
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter:paragraph:1': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -6724,112 +6634,112 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'parcel-driven-development:item.hard-rule-1': {
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:1': {
     goals: ['all-foreman-goals'],
     roles: ['shaper', 'builder'],
     stages: ['shaping', 'step-zero', 'build'],
     operations: ['any'],
     hosts: ['any'],
   },
-  'parcel-driven-development:item.hard-rule-2': {
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:2': {
     goals: ['all-foreman-goals'],
     roles: ['coordinator', 'shaper', 'builder', 'reviewer'],
     stages: ['shaping', 'step-zero', 'build', 'adversarial-review'],
     operations: ['any'],
     hosts: ['any'],
   },
-  'parcel-driven-development:item.hard-rule-3': {
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:3': {
     goals: ['all-foreman-goals'],
     roles: ['shaper', 'builder'],
     stages: ['shaping', 'step-zero', 'build'],
     operations: ['any'],
     hosts: ['any'],
   },
-  'parcel-driven-development:item.hard-rule-4': {
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:4': {
     goals: ['all-foreman-goals'],
     roles: ['shaper', 'builder'],
     stages: ['shaping', 'step-zero', 'build'],
     operations: ['repo-mutation'],
     hosts: ['any'],
   },
-  'parcel-driven-development:item.hard-rule-5': {
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:5': {
     goals: ['all-foreman-goals'],
     roles: ['shaper', 'builder'],
     stages: ['shaping', 'step-zero', 'build'],
     operations: ['repo-mutation'],
     hosts: ['any'],
   },
-  'parcel-driven-development:item.hard-rule-6': {
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:6': {
     goals: ['all-foreman-goals'],
     roles: ['coordinator', 'builder'],
     stages: ['build'],
     operations: ['repo-mutation'],
     hosts: ['any'],
   },
-  'parcel-driven-development:item.hard-rule-7': {
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:7': {
     goals: ['all-foreman-goals'],
     roles: ['builder', 'ci'],
     stages: ['build', 'deterministic-verify'],
     operations: ['any'],
     hosts: ['any'],
   },
-  'parcel-driven-development:item.hard-rule-8': {
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:8': {
     goals: ['all-foreman-goals'],
     roles: ['builder'],
     stages: ['build'],
     operations: ['repo-mutation'],
     hosts: ['any'],
   },
-  'parcel-driven-development:item.hard-rule-9': {
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:9': {
     goals: ['all-foreman-goals'],
     roles: ['coordinator', 'builder'],
     stages: ['build'],
     operations: ['repo-mutation'],
     hosts: ['any'],
   },
-  'parcel-driven-development:item.hard-rule-10': {
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:10': {
     goals: ['all-foreman-goals'],
     roles: ['any'],
     stages: ['any'],
     operations: ['any'],
     hosts: ['any'],
   },
-  'parcel-driven-development:item.hard-rule-11': {
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:11': {
     goals: ['all-foreman-goals'],
     roles: ['shaper', 'builder', 'reviewer'],
     stages: ['shaping', 'step-zero', 'build', 'adversarial-review'],
     operations: ['any'],
     hosts: ['any'],
   },
-  'parcel-driven-development:item.hard-rule-12': {
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:12': {
     goals: ['all-foreman-goals'],
     roles: ['coordinator', 'reviewer', 'ci'],
     stages: ['deterministic-verify', 'adversarial-review', 'merge'],
     operations: ['state-transition'],
     hosts: ['any'],
   },
-  'parcel-driven-development:item.hard-rule-13': {
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:13': {
     goals: ['all-foreman-goals'],
     roles: ['coordinator'],
     stages: ['build', 'merge', 'closure'],
     operations: ['state-transition'],
     hosts: ['any'],
   },
-  'parcel-driven-development:item.hard-rule-14': {
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:14': {
     goals: ['all-foreman-goals'],
     roles: ['coordinator', 'builder', 'reviewer', 'ci'],
     stages: ['deterministic-verify', 'adversarial-review', 'merge'],
     operations: ['source-inventory', 'state-transition'],
     hosts: ['any'],
   },
-  'parcel-driven-development:item.hard-rule-15': {
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:15': {
     goals: ['all-foreman-goals'],
     roles: ['coordinator', 'builder', 'reviewer', 'ci'],
     stages: ['deterministic-verify', 'adversarial-review', 'merge'],
     operations: ['source-inventory', 'state-transition'],
     hosts: ['any'],
   },
-  'parcel-driven-development:item.b7563a79cc57': {
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:1': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -6871,7 +6781,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'parcel-driven-development:item.400cc2cfd0d5': {
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:2': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -6913,7 +6823,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'parcel-driven-development:item.303fe3f67dae': {
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:3': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -6955,7 +6865,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'parcel-driven-development:item.f1add5311b6c': {
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:4': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -6997,7 +6907,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'parcel-driven-development:item.9d8d06d91590': {
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:5': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -7039,7 +6949,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'parcel-driven-development:item.dbee4594f901': {
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:6': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -7081,7 +6991,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'parcel-driven-development:item.7a8af4ddaa1e': {
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:7': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -7123,7 +7033,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'parcel-driven-development:item.98f93a29441d': {
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:8': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -7165,7 +7075,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'parcel-driven-development:item.e4751682430a': {
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:9': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -7207,7 +7117,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'parcel-driven-development:item.72c60fa596e7': {
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:10': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -7249,7 +7159,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'parcel-driven-development:item.754e096cfecf': {
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:11': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -7291,7 +7201,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'parcel-driven-development:item.876882377a6a': {
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:12': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -7333,7 +7243,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'foreman-line-plan:item.two-gate-thesis': {
+  'foreman-line-plan:md-block:# The Foreman Line — Master Plugin Plan:paragraph:1': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -7375,7 +7285,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'foreman-line-plan:item.75569dd4ae1a': {
+  'foreman-line-plan:md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage D — Verification:list-item:4': {
     goals: ['all-foreman-goals'],
     roles: ['reviewer'],
     stages: ['adversarial-review', 'merge'],
@@ -7397,7 +7307,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'foreman-line-plan:item.56a15a2f3220': {
+  'foreman-line-plan:md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage E — Integration:list-item:4': {
     goals: ['all-foreman-goals'],
     roles: ['ci'],
     stages: ['deterministic-verify'],
@@ -7413,7 +7323,7 @@ const CURATED_ITEM_APPLICABILITY = {
     ],
     hosts: ['ci'],
   },
-  'foreman-line-plan:item.c92333c21e64': {
+  'foreman-line-plan:md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage F — Closure:list-item:1': {
     goals: ['all-foreman-goals'],
     roles: ['coordinator'],
     stages: ['merge'],
@@ -7426,7 +7336,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'foreman-line-plan:item.760cf6497075': {
+  'foreman-line-plan:md-block:# The Foreman Line — Master Plugin Plan > ## 4. Smart Triage as the Assignment Engine:list-item:1': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -7468,7 +7378,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'approval-readme:item.4261d18b3243': {
+  'approval-readme:md-block:# @foreman-line/approval — Human Approval Flow CLI, W1-P3 > ## The human-gate contract:list-item:3': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -7510,7 +7420,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'approval-readme:item.ff6f38f088ae': {
+  'approval-readme:md-block:# @foreman-line/approval — Human Approval Flow CLI, W1-P3 > ## The human-gate contract:list-item:4': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -7552,23 +7462,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'spec-frontmatter-schema:item.bdf997c3cd45': {
-    goals: ['all-foreman-goals'],
-    roles: ['ci'],
-    stages: ['deterministic-verify'],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: ['ci'],
-  },
-  'spec-linter-validator:item.c6669b61c6f0': {
+  'spec-frontmatter-schema:json-pointer:/properties/permission_profile/enum': {
     goals: ['all-foreman-goals'],
     roles: ['ci'],
     stages: ['deterministic-verify'],
@@ -7584,7 +7478,7 @@ const CURATED_ITEM_APPLICABILITY = {
     ],
     hosts: ['ci'],
   },
-  'spec-linter-validator:item.256b9064bc47': {
+  'spec-linter-validator:const ajv = new Ajv({ allErrors: true })': {
     goals: ['all-foreman-goals'],
     roles: ['ci'],
     stages: ['deterministic-verify'],
@@ -7600,7 +7494,7 @@ const CURATED_ITEM_APPLICABILITY = {
     ],
     hosts: ['ci'],
   },
-  'spec-linter-validator:item.092d2fc43a32': {
+  'spec-linter-validator:if (doc.status === \'superseded\' && doc.superseded_by === null) {': {
     goals: ['all-foreman-goals'],
     roles: ['ci'],
     stages: ['deterministic-verify'],
@@ -7616,7 +7510,7 @@ const CURATED_ITEM_APPLICABILITY = {
     ],
     hosts: ['ci'],
   },
-  'spec-linter-validator:item.fb7d76a32df4': {
+  'spec-linter-validator:if (!options?.noPermissionProfileWarning && !(\'permission_profile\' in doc)) {': {
     goals: ['all-foreman-goals'],
     roles: ['ci'],
     stages: ['deterministic-verify'],
@@ -7632,7 +7526,7 @@ const CURATED_ITEM_APPLICABILITY = {
     ],
     hosts: ['ci'],
   },
-  'spec-linter-cli:item.0479c603add5': {
+  'spec-linter-validator:\'advisory: permission_profile is absent; set it to a registry profile name when the registry ships\',': {
     goals: ['all-foreman-goals'],
     roles: ['ci'],
     stages: ['deterministic-verify'],
@@ -7648,7 +7542,7 @@ const CURATED_ITEM_APPLICABILITY = {
     ],
     hosts: ['ci'],
   },
-  'spec-linter-cli:item.fb268f5c5eb4': {
+  'spec-linter-cli: *   0  all specs valid (advisory warnings do not affect exit code)': {
     goals: ['all-foreman-goals'],
     roles: ['ci'],
     stages: ['deterministic-verify'],
@@ -7664,7 +7558,7 @@ const CURATED_ITEM_APPLICABILITY = {
     ],
     hosts: ['ci'],
   },
-  'spec-linter-cli:item.66fec8a20db5': {
+  'spec-linter-cli: *   1  at least one schema or semantic-invariant violation (every violation on stderr)': {
     goals: ['all-foreman-goals'],
     roles: ['ci'],
     stages: ['deterministic-verify'],
@@ -7680,7 +7574,7 @@ const CURATED_ITEM_APPLICABILITY = {
     ],
     hosts: ['ci'],
   },
-  'spec-linter-cli:item.39787f778432': {
+  'spec-linter-cli: *   2  usage error: missing/unreadable path, bad invocation, or directory with no .md files': {
     goals: ['all-foreman-goals'],
     roles: ['ci'],
     stages: ['deterministic-verify'],
@@ -7696,91 +7590,7 @@ const CURATED_ITEM_APPLICABILITY = {
     ],
     hosts: ['ci'],
   },
-  'spec-linter-readme:item.9a889881a236': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'spec-linter-readme:item.b4f5d76d68ec': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'permission-profiles-registry:item.1ec33a4741eb': {
+  'spec-linter-cli:process.exitCode = run(process.argv.slice(2))': {
     goals: ['all-foreman-goals'],
     roles: ['ci'],
     stages: ['deterministic-verify'],
@@ -7796,7 +7606,7 @@ const CURATED_ITEM_APPLICABILITY = {
     ],
     hosts: ['ci'],
   },
-  'permission-profiles-registry:item.7faf78a6f54a': {
+  'spec-linter-readme:md-block:# @foreman-line/spec-linter > ## The four v0.2 fields:table-row:`permission_profile:`': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -7838,7 +7648,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'permission-profiles-registry:item.26c5e2b211da': {
+  'spec-linter-readme:md-block:# @foreman-line/spec-linter > ## The four v0.2 fields:paragraph:1': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -7880,175 +7690,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'permission-profiles-registry:item.1d221ed65b72': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'permission-profiles-registry:item.1ce0fd439b3e': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'permission-profiles-registry:item.39e65fb31709': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'permission-profiles-registry:item.ffd949ad76c3': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'permission-profiles-registry:item.c9cb62068f14': {
+  'permission-profiles-registry:yaml-rule:builder-architecture:ask:[]': {
     goals: ['all-foreman-goals'],
     roles: ['ci'],
     stages: ['deterministic-verify'],
@@ -8064,7 +7706,259 @@ const CURATED_ITEM_APPLICABILITY = {
     ],
     hosts: ['ci'],
   },
-  'permission-profiles-registry:item.13033f70c124': {
+  'permission-profiles-registry:yaml-rule:builder-architecture:deny:"Bash(git push --force*)"': {
+    goals: ['all-foreman-goals'],
+    roles: [
+      'developer',
+      'coordinator',
+      'shaper',
+      'builder',
+      'reviewer',
+      'ci',
+      'host-adapter',
+      'kernel',
+      'operator',
+    ],
+    stages: [
+      'stage-zero',
+      'shaping',
+      'step-zero',
+      'build',
+      'deterministic-verify',
+      'adversarial-review',
+      'merge',
+      'closure',
+      'runtime',
+    ],
+    operations: [
+      'source-inventory',
+      'spec-mutation',
+      'repo-read',
+      'repo-mutation',
+      'state-transition',
+      'control-call',
+      'receipt-validation',
+      'external-write',
+    ],
+    hosts: [
+      'provider-neutral',
+      'claude-windows-docker-loaded',
+      'claude-windows-docker-unenrolled',
+      'unsupported-host',
+      'ci',
+    ],
+  },
+  'permission-profiles-registry:yaml-rule:builder-architecture:deny:"Bash(git push -f *)"': {
+    goals: ['all-foreman-goals'],
+    roles: [
+      'developer',
+      'coordinator',
+      'shaper',
+      'builder',
+      'reviewer',
+      'ci',
+      'host-adapter',
+      'kernel',
+      'operator',
+    ],
+    stages: [
+      'stage-zero',
+      'shaping',
+      'step-zero',
+      'build',
+      'deterministic-verify',
+      'adversarial-review',
+      'merge',
+      'closure',
+      'runtime',
+    ],
+    operations: [
+      'source-inventory',
+      'spec-mutation',
+      'repo-read',
+      'repo-mutation',
+      'state-transition',
+      'control-call',
+      'receipt-validation',
+      'external-write',
+    ],
+    hosts: [
+      'provider-neutral',
+      'claude-windows-docker-loaded',
+      'claude-windows-docker-unenrolled',
+      'unsupported-host',
+      'ci',
+    ],
+  },
+  'permission-profiles-registry:yaml-rule:builder-architecture:deny:"Edit(.claude/**)"': {
+    goals: ['all-foreman-goals'],
+    roles: [
+      'developer',
+      'coordinator',
+      'shaper',
+      'builder',
+      'reviewer',
+      'ci',
+      'host-adapter',
+      'kernel',
+      'operator',
+    ],
+    stages: [
+      'stage-zero',
+      'shaping',
+      'step-zero',
+      'build',
+      'deterministic-verify',
+      'adversarial-review',
+      'merge',
+      'closure',
+      'runtime',
+    ],
+    operations: [
+      'source-inventory',
+      'spec-mutation',
+      'repo-read',
+      'repo-mutation',
+      'state-transition',
+      'control-call',
+      'receipt-validation',
+      'external-write',
+    ],
+    hosts: [
+      'provider-neutral',
+      'claude-windows-docker-loaded',
+      'claude-windows-docker-unenrolled',
+      'unsupported-host',
+      'ci',
+    ],
+  },
+  'permission-profiles-registry:yaml-rule:builder-architecture:deny:"PowerShell(git push --force*)"': {
+    goals: ['all-foreman-goals'],
+    roles: [
+      'developer',
+      'coordinator',
+      'shaper',
+      'builder',
+      'reviewer',
+      'ci',
+      'host-adapter',
+      'kernel',
+      'operator',
+    ],
+    stages: [
+      'stage-zero',
+      'shaping',
+      'step-zero',
+      'build',
+      'deterministic-verify',
+      'adversarial-review',
+      'merge',
+      'closure',
+      'runtime',
+    ],
+    operations: [
+      'source-inventory',
+      'spec-mutation',
+      'repo-read',
+      'repo-mutation',
+      'state-transition',
+      'control-call',
+      'receipt-validation',
+      'external-write',
+    ],
+    hosts: [
+      'provider-neutral',
+      'claude-windows-docker-loaded',
+      'claude-windows-docker-unenrolled',
+      'unsupported-host',
+      'ci',
+    ],
+  },
+  'permission-profiles-registry:yaml-rule:builder-architecture:deny:"PowerShell(git push -f *)"': {
+    goals: ['all-foreman-goals'],
+    roles: [
+      'developer',
+      'coordinator',
+      'shaper',
+      'builder',
+      'reviewer',
+      'ci',
+      'host-adapter',
+      'kernel',
+      'operator',
+    ],
+    stages: [
+      'stage-zero',
+      'shaping',
+      'step-zero',
+      'build',
+      'deterministic-verify',
+      'adversarial-review',
+      'merge',
+      'closure',
+      'runtime',
+    ],
+    operations: [
+      'source-inventory',
+      'spec-mutation',
+      'repo-read',
+      'repo-mutation',
+      'state-transition',
+      'control-call',
+      'receipt-validation',
+      'external-write',
+    ],
+    hosts: [
+      'provider-neutral',
+      'claude-windows-docker-loaded',
+      'claude-windows-docker-unenrolled',
+      'unsupported-host',
+      'ci',
+    ],
+  },
+  'permission-profiles-registry:yaml-rule:builder-architecture:deny:"Write(.claude/**)"': {
+    goals: ['all-foreman-goals'],
+    roles: [
+      'developer',
+      'coordinator',
+      'shaper',
+      'builder',
+      'reviewer',
+      'ci',
+      'host-adapter',
+      'kernel',
+      'operator',
+    ],
+    stages: [
+      'stage-zero',
+      'shaping',
+      'step-zero',
+      'build',
+      'deterministic-verify',
+      'adversarial-review',
+      'merge',
+      'closure',
+      'runtime',
+    ],
+    operations: [
+      'source-inventory',
+      'spec-mutation',
+      'repo-read',
+      'repo-mutation',
+      'state-transition',
+      'control-call',
+      'receipt-validation',
+      'external-write',
+    ],
+    hosts: [
+      'provider-neutral',
+      'claude-windows-docker-loaded',
+      'claude-windows-docker-unenrolled',
+      'unsupported-host',
+      'ci',
+    ],
+  },
+  'permission-profiles-registry:yaml-rule:builder-architecture:network/egress': {
     goals: ['all-foreman-goals'],
     roles: ['ci'],
     stages: ['deterministic-verify'],
@@ -8080,259 +7974,7 @@ const CURATED_ITEM_APPLICABILITY = {
     ],
     hosts: ['ci'],
   },
-  'permission-profiles-registry:item.947d19fbeb35': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'permission-profiles-registry:item.5a359d80896b': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'permission-profiles-registry:item.ee0641be06f2': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'permission-profiles-registry:item.cf29180bce81': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'permission-profiles-registry:item.4f213acde8e0': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'permission-profiles-registry:item.397a3eb4c7ad': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'permission-profiles-registry:item.f0613939994f': {
+  'permission-profiles-registry:yaml-rule:builder-deps:ask:[]': {
     goals: ['all-foreman-goals'],
     roles: ['ci'],
     stages: ['deterministic-verify'],
@@ -8348,7 +7990,259 @@ const CURATED_ITEM_APPLICABILITY = {
     ],
     hosts: ['ci'],
   },
-  'permission-profiles-registry:item.58ef984a0faa': {
+  'permission-profiles-registry:yaml-rule:builder-deps:deny:"Bash(git push --force*)"': {
+    goals: ['all-foreman-goals'],
+    roles: [
+      'developer',
+      'coordinator',
+      'shaper',
+      'builder',
+      'reviewer',
+      'ci',
+      'host-adapter',
+      'kernel',
+      'operator',
+    ],
+    stages: [
+      'stage-zero',
+      'shaping',
+      'step-zero',
+      'build',
+      'deterministic-verify',
+      'adversarial-review',
+      'merge',
+      'closure',
+      'runtime',
+    ],
+    operations: [
+      'source-inventory',
+      'spec-mutation',
+      'repo-read',
+      'repo-mutation',
+      'state-transition',
+      'control-call',
+      'receipt-validation',
+      'external-write',
+    ],
+    hosts: [
+      'provider-neutral',
+      'claude-windows-docker-loaded',
+      'claude-windows-docker-unenrolled',
+      'unsupported-host',
+      'ci',
+    ],
+  },
+  'permission-profiles-registry:yaml-rule:builder-deps:deny:"Bash(git push -f *)"': {
+    goals: ['all-foreman-goals'],
+    roles: [
+      'developer',
+      'coordinator',
+      'shaper',
+      'builder',
+      'reviewer',
+      'ci',
+      'host-adapter',
+      'kernel',
+      'operator',
+    ],
+    stages: [
+      'stage-zero',
+      'shaping',
+      'step-zero',
+      'build',
+      'deterministic-verify',
+      'adversarial-review',
+      'merge',
+      'closure',
+      'runtime',
+    ],
+    operations: [
+      'source-inventory',
+      'spec-mutation',
+      'repo-read',
+      'repo-mutation',
+      'state-transition',
+      'control-call',
+      'receipt-validation',
+      'external-write',
+    ],
+    hosts: [
+      'provider-neutral',
+      'claude-windows-docker-loaded',
+      'claude-windows-docker-unenrolled',
+      'unsupported-host',
+      'ci',
+    ],
+  },
+  'permission-profiles-registry:yaml-rule:builder-deps:deny:"Edit(.claude/**)"': {
+    goals: ['all-foreman-goals'],
+    roles: [
+      'developer',
+      'coordinator',
+      'shaper',
+      'builder',
+      'reviewer',
+      'ci',
+      'host-adapter',
+      'kernel',
+      'operator',
+    ],
+    stages: [
+      'stage-zero',
+      'shaping',
+      'step-zero',
+      'build',
+      'deterministic-verify',
+      'adversarial-review',
+      'merge',
+      'closure',
+      'runtime',
+    ],
+    operations: [
+      'source-inventory',
+      'spec-mutation',
+      'repo-read',
+      'repo-mutation',
+      'state-transition',
+      'control-call',
+      'receipt-validation',
+      'external-write',
+    ],
+    hosts: [
+      'provider-neutral',
+      'claude-windows-docker-loaded',
+      'claude-windows-docker-unenrolled',
+      'unsupported-host',
+      'ci',
+    ],
+  },
+  'permission-profiles-registry:yaml-rule:builder-deps:deny:"PowerShell(git push --force*)"': {
+    goals: ['all-foreman-goals'],
+    roles: [
+      'developer',
+      'coordinator',
+      'shaper',
+      'builder',
+      'reviewer',
+      'ci',
+      'host-adapter',
+      'kernel',
+      'operator',
+    ],
+    stages: [
+      'stage-zero',
+      'shaping',
+      'step-zero',
+      'build',
+      'deterministic-verify',
+      'adversarial-review',
+      'merge',
+      'closure',
+      'runtime',
+    ],
+    operations: [
+      'source-inventory',
+      'spec-mutation',
+      'repo-read',
+      'repo-mutation',
+      'state-transition',
+      'control-call',
+      'receipt-validation',
+      'external-write',
+    ],
+    hosts: [
+      'provider-neutral',
+      'claude-windows-docker-loaded',
+      'claude-windows-docker-unenrolled',
+      'unsupported-host',
+      'ci',
+    ],
+  },
+  'permission-profiles-registry:yaml-rule:builder-deps:deny:"PowerShell(git push -f *)"': {
+    goals: ['all-foreman-goals'],
+    roles: [
+      'developer',
+      'coordinator',
+      'shaper',
+      'builder',
+      'reviewer',
+      'ci',
+      'host-adapter',
+      'kernel',
+      'operator',
+    ],
+    stages: [
+      'stage-zero',
+      'shaping',
+      'step-zero',
+      'build',
+      'deterministic-verify',
+      'adversarial-review',
+      'merge',
+      'closure',
+      'runtime',
+    ],
+    operations: [
+      'source-inventory',
+      'spec-mutation',
+      'repo-read',
+      'repo-mutation',
+      'state-transition',
+      'control-call',
+      'receipt-validation',
+      'external-write',
+    ],
+    hosts: [
+      'provider-neutral',
+      'claude-windows-docker-loaded',
+      'claude-windows-docker-unenrolled',
+      'unsupported-host',
+      'ci',
+    ],
+  },
+  'permission-profiles-registry:yaml-rule:builder-deps:deny:"Write(.claude/**)"': {
+    goals: ['all-foreman-goals'],
+    roles: [
+      'developer',
+      'coordinator',
+      'shaper',
+      'builder',
+      'reviewer',
+      'ci',
+      'host-adapter',
+      'kernel',
+      'operator',
+    ],
+    stages: [
+      'stage-zero',
+      'shaping',
+      'step-zero',
+      'build',
+      'deterministic-verify',
+      'adversarial-review',
+      'merge',
+      'closure',
+      'runtime',
+    ],
+    operations: [
+      'source-inventory',
+      'spec-mutation',
+      'repo-read',
+      'repo-mutation',
+      'state-transition',
+      'control-call',
+      'receipt-validation',
+      'external-write',
+    ],
+    hosts: [
+      'provider-neutral',
+      'claude-windows-docker-loaded',
+      'claude-windows-docker-unenrolled',
+      'unsupported-host',
+      'ci',
+    ],
+  },
+  'permission-profiles-registry:yaml-rule:builder-deps:network/egress': {
     goals: ['all-foreman-goals'],
     roles: ['ci'],
     stages: ['deterministic-verify'],
@@ -8364,7 +8258,7 @@ const CURATED_ITEM_APPLICABILITY = {
     ],
     hosts: ['ci'],
   },
-  'permission-profiles-registry:item.50cd9c68ff51': {
+  'permission-profiles-registry:yaml-rule:builder-deps:network/notes': {
     goals: ['all-foreman-goals'],
     roles: ['ci'],
     stages: ['deterministic-verify'],
@@ -8380,259 +8274,7 @@ const CURATED_ITEM_APPLICABILITY = {
     ],
     hosts: ['ci'],
   },
-  'permission-profiles-registry:item.b9e7c5644f49': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'permission-profiles-registry:item.861d14c80da2': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'permission-profiles-registry:item.fe1bbb0564f6': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'permission-profiles-registry:item.803732fe3411': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'permission-profiles-registry:item.b77e9988c19d': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'permission-profiles-registry:item.8cf9d57aa29c': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'permission-profiles-registry:item.0ed672bcdee8': {
+  'permission-profiles-registry:yaml-rule:builder-standard:ask:[]': {
     goals: ['all-foreman-goals'],
     roles: ['ci'],
     stages: ['deterministic-verify'],
@@ -8648,7 +8290,259 @@ const CURATED_ITEM_APPLICABILITY = {
     ],
     hosts: ['ci'],
   },
-  'permission-profiles-registry:item.bbb2cdb40927': {
+  'permission-profiles-registry:yaml-rule:builder-standard:deny:"Bash(git push --force*)"': {
+    goals: ['all-foreman-goals'],
+    roles: [
+      'developer',
+      'coordinator',
+      'shaper',
+      'builder',
+      'reviewer',
+      'ci',
+      'host-adapter',
+      'kernel',
+      'operator',
+    ],
+    stages: [
+      'stage-zero',
+      'shaping',
+      'step-zero',
+      'build',
+      'deterministic-verify',
+      'adversarial-review',
+      'merge',
+      'closure',
+      'runtime',
+    ],
+    operations: [
+      'source-inventory',
+      'spec-mutation',
+      'repo-read',
+      'repo-mutation',
+      'state-transition',
+      'control-call',
+      'receipt-validation',
+      'external-write',
+    ],
+    hosts: [
+      'provider-neutral',
+      'claude-windows-docker-loaded',
+      'claude-windows-docker-unenrolled',
+      'unsupported-host',
+      'ci',
+    ],
+  },
+  'permission-profiles-registry:yaml-rule:builder-standard:deny:"Bash(git push -f *)"': {
+    goals: ['all-foreman-goals'],
+    roles: [
+      'developer',
+      'coordinator',
+      'shaper',
+      'builder',
+      'reviewer',
+      'ci',
+      'host-adapter',
+      'kernel',
+      'operator',
+    ],
+    stages: [
+      'stage-zero',
+      'shaping',
+      'step-zero',
+      'build',
+      'deterministic-verify',
+      'adversarial-review',
+      'merge',
+      'closure',
+      'runtime',
+    ],
+    operations: [
+      'source-inventory',
+      'spec-mutation',
+      'repo-read',
+      'repo-mutation',
+      'state-transition',
+      'control-call',
+      'receipt-validation',
+      'external-write',
+    ],
+    hosts: [
+      'provider-neutral',
+      'claude-windows-docker-loaded',
+      'claude-windows-docker-unenrolled',
+      'unsupported-host',
+      'ci',
+    ],
+  },
+  'permission-profiles-registry:yaml-rule:builder-standard:deny:"Edit(.claude/**)"': {
+    goals: ['all-foreman-goals'],
+    roles: [
+      'developer',
+      'coordinator',
+      'shaper',
+      'builder',
+      'reviewer',
+      'ci',
+      'host-adapter',
+      'kernel',
+      'operator',
+    ],
+    stages: [
+      'stage-zero',
+      'shaping',
+      'step-zero',
+      'build',
+      'deterministic-verify',
+      'adversarial-review',
+      'merge',
+      'closure',
+      'runtime',
+    ],
+    operations: [
+      'source-inventory',
+      'spec-mutation',
+      'repo-read',
+      'repo-mutation',
+      'state-transition',
+      'control-call',
+      'receipt-validation',
+      'external-write',
+    ],
+    hosts: [
+      'provider-neutral',
+      'claude-windows-docker-loaded',
+      'claude-windows-docker-unenrolled',
+      'unsupported-host',
+      'ci',
+    ],
+  },
+  'permission-profiles-registry:yaml-rule:builder-standard:deny:"PowerShell(git push --force*)"': {
+    goals: ['all-foreman-goals'],
+    roles: [
+      'developer',
+      'coordinator',
+      'shaper',
+      'builder',
+      'reviewer',
+      'ci',
+      'host-adapter',
+      'kernel',
+      'operator',
+    ],
+    stages: [
+      'stage-zero',
+      'shaping',
+      'step-zero',
+      'build',
+      'deterministic-verify',
+      'adversarial-review',
+      'merge',
+      'closure',
+      'runtime',
+    ],
+    operations: [
+      'source-inventory',
+      'spec-mutation',
+      'repo-read',
+      'repo-mutation',
+      'state-transition',
+      'control-call',
+      'receipt-validation',
+      'external-write',
+    ],
+    hosts: [
+      'provider-neutral',
+      'claude-windows-docker-loaded',
+      'claude-windows-docker-unenrolled',
+      'unsupported-host',
+      'ci',
+    ],
+  },
+  'permission-profiles-registry:yaml-rule:builder-standard:deny:"PowerShell(git push -f *)"': {
+    goals: ['all-foreman-goals'],
+    roles: [
+      'developer',
+      'coordinator',
+      'shaper',
+      'builder',
+      'reviewer',
+      'ci',
+      'host-adapter',
+      'kernel',
+      'operator',
+    ],
+    stages: [
+      'stage-zero',
+      'shaping',
+      'step-zero',
+      'build',
+      'deterministic-verify',
+      'adversarial-review',
+      'merge',
+      'closure',
+      'runtime',
+    ],
+    operations: [
+      'source-inventory',
+      'spec-mutation',
+      'repo-read',
+      'repo-mutation',
+      'state-transition',
+      'control-call',
+      'receipt-validation',
+      'external-write',
+    ],
+    hosts: [
+      'provider-neutral',
+      'claude-windows-docker-loaded',
+      'claude-windows-docker-unenrolled',
+      'unsupported-host',
+      'ci',
+    ],
+  },
+  'permission-profiles-registry:yaml-rule:builder-standard:deny:"Write(.claude/**)"': {
+    goals: ['all-foreman-goals'],
+    roles: [
+      'developer',
+      'coordinator',
+      'shaper',
+      'builder',
+      'reviewer',
+      'ci',
+      'host-adapter',
+      'kernel',
+      'operator',
+    ],
+    stages: [
+      'stage-zero',
+      'shaping',
+      'step-zero',
+      'build',
+      'deterministic-verify',
+      'adversarial-review',
+      'merge',
+      'closure',
+      'runtime',
+    ],
+    operations: [
+      'source-inventory',
+      'spec-mutation',
+      'repo-read',
+      'repo-mutation',
+      'state-transition',
+      'control-call',
+      'receipt-validation',
+      'external-write',
+    ],
+    hosts: [
+      'provider-neutral',
+      'claude-windows-docker-loaded',
+      'claude-windows-docker-unenrolled',
+      'unsupported-host',
+      'ci',
+    ],
+  },
+  'permission-profiles-registry:yaml-rule:builder-standard:network/egress': {
     goals: ['all-foreman-goals'],
     roles: ['ci'],
     stages: ['deterministic-verify'],
@@ -8664,259 +8558,7 @@ const CURATED_ITEM_APPLICABILITY = {
     ],
     hosts: ['ci'],
   },
-  'permission-profiles-registry:item.b01d14453456': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'permission-profiles-registry:item.315ebd655fbe': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'permission-profiles-registry:item.8e8e3c78500b': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'permission-profiles-registry:item.4c9cd1062bc6': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'permission-profiles-registry:item.060989ad78ea': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'permission-profiles-registry:item.30b62f67dc13': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'permission-profiles-registry:item.7417033cefc7': {
+  'permission-profiles-registry:yaml-rule:coordinator:ask:[]': {
     goals: ['all-foreman-goals'],
     roles: ['ci'],
     stages: ['deterministic-verify'],
@@ -8932,7 +8574,7 @@ const CURATED_ITEM_APPLICABILITY = {
     ],
     hosts: ['ci'],
   },
-  'permission-profiles-registry:item.f7f03a01fd3a': {
+  'permission-profiles-registry:yaml-rule:coordinator:deny:"Bash(git push --force*)"': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -8974,7 +8616,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'permission-profiles-registry:item.35cf0f58fc34': {
+  'permission-profiles-registry:yaml-rule:coordinator:deny:"Bash(git push -f *)"': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -9016,7 +8658,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'permission-profiles-registry:item.dedb7349c943': {
+  'permission-profiles-registry:yaml-rule:coordinator:deny:"Edit(.claude/**)"': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -9058,7 +8700,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'permission-profiles-registry:item.b7ab94d73ef4': {
+  'permission-profiles-registry:yaml-rule:coordinator:deny:"PowerShell(git push --force*)"': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -9100,7 +8742,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'permission-profiles-registry:item.9ab0d5db8ebf': {
+  'permission-profiles-registry:yaml-rule:coordinator:deny:"PowerShell(git push -f *)"': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -9142,7 +8784,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'permission-profiles-registry:item.ea8666a98ca1': {
+  'permission-profiles-registry:yaml-rule:coordinator:deny:"Write(.claude/**)"': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -9184,343 +8826,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'permission-profiles-registry:item.3a54e390a3e1': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'permission-profiles-registry:item.eb314ad28f5e': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'permission-profiles-registry:item.14569d4abb87': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'permission-profiles-registry:item.7943c5773fba': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'permission-profiles-registry:item.2ca898541627': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'permission-profiles-registry:item.23838f138908': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'permission-profiles-registry:item.6d850a4b4948': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'permission-profiles-registry:item.f1d63df02914': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'permission-profiles-registry:item.8c5085e2ff63': {
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:ask:[]': {
     goals: ['all-foreman-goals'],
     roles: ['ci'],
     stages: ['deterministic-verify'],
@@ -9536,7 +8842,7 @@ const CURATED_ITEM_APPLICABILITY = {
     ],
     hosts: ['ci'],
   },
-  'permission-profiles-registry:item.60eb2cbc6f43': {
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"Bash(git apply*)"': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -9578,7 +8884,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'permission-profiles-registry:item.1e0db040f9d8': {
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"Bash(git commit*)"': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -9620,7 +8926,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'permission-profiles-registry:item.e477240aeb8e': {
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"Bash(git merge*)"': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -9662,7 +8968,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'permission-profiles-registry:item.074c70cc9d55': {
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"Bash(git push*)"': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -9704,7 +9010,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'permission-profiles-registry:item.5705a054df96': {
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"Bash(git stash*)"': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -9746,7 +9052,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'permission-profiles-registry:item.b6db9d1f4737': {
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"Edit"': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -9788,7 +9094,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'permission-profiles-registry:item.92b60e67dfba': {
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"Edit(.claude/**)"': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -9830,7 +9136,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'permission-profiles-registry:item.b8a82b2446d9': {
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"PowerShell(git apply*)"': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -9872,7 +9178,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'permission-profiles-registry:item.1fa440b2fe59': {
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"PowerShell(git commit*)"': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -9914,7 +9220,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'permission-profiles-registry:item.3641610e292b': {
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"PowerShell(git merge*)"': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -9956,7 +9262,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'permission-profiles-registry:item.854101218a6d': {
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"PowerShell(git push*)"': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -9998,7 +9304,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'permission-profiles-registry:item.e4d0bc5dc904': {
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"PowerShell(git stash*)"': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -10040,7 +9346,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'permission-profiles-registry:item.7b5310ad887b': {
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"Write"': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -10082,7 +9388,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'permission-profiles-registry:item.6ac66b888a40': {
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"Write(.claude/**)"': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -10124,7 +9430,23 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'permission-profiles-types:item.0b9706b5a9bf': {
+  'permission-profiles-registry:yaml-rule:shaping-agent:ask:[]': {
+    goals: ['all-foreman-goals'],
+    roles: ['ci'],
+    stages: ['deterministic-verify'],
+    operations: [
+      'source-inventory',
+      'spec-mutation',
+      'repo-read',
+      'repo-mutation',
+      'state-transition',
+      'control-call',
+      'receipt-validation',
+      'external-write',
+    ],
+    hosts: ['ci'],
+  },
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Bash(git push --force*)"': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -10166,7 +9488,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'permission-profiles-types:item.bc257b03aa99': {
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Bash(git push -f *)"': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -10208,7 +9530,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'permission-profiles-validator:item.dcd8638af4a4': {
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Edit(.claude/**)"': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -10250,7 +9572,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'permission-profiles-validator:item.9c3c17055384': {
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Edit(apps/**)"': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -10292,7 +9614,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'permission-profiles-validator:item.4da758cc157c': {
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Edit(config/**)"': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -10334,7 +9656,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'permission-profiles-validator:item.ffd598413a66': {
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Edit(plugins/**)"': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -10376,7 +9698,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'permission-profiles-readme:item.b3183ee0b5ab': {
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Edit(skills/**)"': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -10418,7 +9740,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'permission-profiles-readme:item.f8c108b3b431': {
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"PowerShell(git push --force*)"': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -10460,7 +9782,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'permission-profiles-readme:item.a26beda5342d': {
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"PowerShell(git push -f *)"': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -10502,7 +9824,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'permission-profiles-readme:item.27ce8e0a4adc': {
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Write(.claude/**)"': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -10544,7 +9866,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'permission-profiles-readme:item.729be3615f8d': {
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Write(apps/**)"': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -10586,7 +9908,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'permission-profiles-readme:item.d11b9d38f924': {
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Write(config/**)"': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -10628,7 +9950,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'permission-profiles-readme:item.1101805f1c9e': {
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Write(plugins/**)"': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -10670,7 +9992,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'permission-profiles-readme:item.415efa3f5e3b': {
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Write(skills/**)"': {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -10712,462 +10034,1050 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'fk-charter:item.eddc1a2874a3': {
+  'permission-profiles-types:export type PermissionMode = \'default\' | \'acceptEdits\' | \'plan\'': {
+    goals: ['all-foreman-goals'],
+    roles: [
+      'developer',
+      'coordinator',
+      'shaper',
+      'builder',
+      'reviewer',
+      'ci',
+      'host-adapter',
+      'kernel',
+      'operator',
+    ],
+    stages: [
+      'stage-zero',
+      'shaping',
+      'step-zero',
+      'build',
+      'deterministic-verify',
+      'adversarial-review',
+      'merge',
+      'closure',
+      'runtime',
+    ],
+    operations: [
+      'source-inventory',
+      'spec-mutation',
+      'repo-read',
+      'repo-mutation',
+      'state-transition',
+      'control-call',
+      'receipt-validation',
+      'external-write',
+    ],
+    hosts: [
+      'provider-neutral',
+      'claude-windows-docker-loaded',
+      'claude-windows-docker-unenrolled',
+      'unsupported-host',
+      'ci',
+    ],
+  },
+  'permission-profiles-types:export const PROFILE_NAMES: readonly ProfileName[] = [': {
+    goals: ['all-foreman-goals'],
+    roles: [
+      'developer',
+      'coordinator',
+      'shaper',
+      'builder',
+      'reviewer',
+      'ci',
+      'host-adapter',
+      'kernel',
+      'operator',
+    ],
+    stages: [
+      'stage-zero',
+      'shaping',
+      'step-zero',
+      'build',
+      'deterministic-verify',
+      'adversarial-review',
+      'merge',
+      'closure',
+      'runtime',
+    ],
+    operations: [
+      'source-inventory',
+      'spec-mutation',
+      'repo-read',
+      'repo-mutation',
+      'state-transition',
+      'control-call',
+      'receipt-validation',
+      'external-write',
+    ],
+    hosts: [
+      'provider-neutral',
+      'claude-windows-docker-loaded',
+      'claude-windows-docker-unenrolled',
+      'unsupported-host',
+      'ci',
+    ],
+  },
+  'permission-profiles-validator:const REVIEWER_MUTATION_COMMANDS: readonly string[] = [\'commit\', \'push\', \'apply\', \'stash\', \'merge\']': {
+    goals: ['all-foreman-goals'],
+    roles: [
+      'developer',
+      'coordinator',
+      'shaper',
+      'builder',
+      'reviewer',
+      'ci',
+      'host-adapter',
+      'kernel',
+      'operator',
+    ],
+    stages: [
+      'stage-zero',
+      'shaping',
+      'step-zero',
+      'build',
+      'deterministic-verify',
+      'adversarial-review',
+      'merge',
+      'closure',
+      'runtime',
+    ],
+    operations: [
+      'source-inventory',
+      'spec-mutation',
+      'repo-read',
+      'repo-mutation',
+      'state-transition',
+      'control-call',
+      'receipt-validation',
+      'external-write',
+    ],
+    hosts: [
+      'provider-neutral',
+      'claude-windows-docker-loaded',
+      'claude-windows-docker-unenrolled',
+      'unsupported-host',
+      'ci',
+    ],
+  },
+  'permission-profiles-validator:if (envelope.defaultMode === \'bypassPermissions\') {': {
+    goals: ['all-foreman-goals'],
+    roles: [
+      'developer',
+      'coordinator',
+      'shaper',
+      'builder',
+      'reviewer',
+      'ci',
+      'host-adapter',
+      'kernel',
+      'operator',
+    ],
+    stages: [
+      'stage-zero',
+      'shaping',
+      'step-zero',
+      'build',
+      'deterministic-verify',
+      'adversarial-review',
+      'merge',
+      'closure',
+      'runtime',
+    ],
+    operations: [
+      'source-inventory',
+      'spec-mutation',
+      'repo-read',
+      'repo-mutation',
+      'state-transition',
+      'control-call',
+      'receipt-validation',
+      'external-write',
+    ],
+    hosts: [
+      'provider-neutral',
+      'claude-windows-docker-loaded',
+      'claude-windows-docker-unenrolled',
+      'unsupported-host',
+      'ci',
+    ],
+  },
+  'permission-profiles-validator:function checkReviewerReadonlyRestrictionCompleteness(doc: Record<string, unknown>): string[] {': {
+    goals: ['all-foreman-goals'],
+    roles: [
+      'developer',
+      'coordinator',
+      'shaper',
+      'builder',
+      'reviewer',
+      'ci',
+      'host-adapter',
+      'kernel',
+      'operator',
+    ],
+    stages: [
+      'stage-zero',
+      'shaping',
+      'step-zero',
+      'build',
+      'deterministic-verify',
+      'adversarial-review',
+      'merge',
+      'closure',
+      'runtime',
+    ],
+    operations: [
+      'source-inventory',
+      'spec-mutation',
+      'repo-read',
+      'repo-mutation',
+      'state-transition',
+      'control-call',
+      'receipt-validation',
+      'external-write',
+    ],
+    hosts: [
+      'provider-neutral',
+      'claude-windows-docker-loaded',
+      'claude-windows-docker-unenrolled',
+      'unsupported-host',
+      'ci',
+    ],
+  },
+  'permission-profiles-validator:function checkReviewerReadonlyShellAccessPreservation(doc: Record<string, unknown>): string[] {': {
+    goals: ['all-foreman-goals'],
+    roles: [
+      'developer',
+      'coordinator',
+      'shaper',
+      'builder',
+      'reviewer',
+      'ci',
+      'host-adapter',
+      'kernel',
+      'operator',
+    ],
+    stages: [
+      'stage-zero',
+      'shaping',
+      'step-zero',
+      'build',
+      'deterministic-verify',
+      'adversarial-review',
+      'merge',
+      'closure',
+      'runtime',
+    ],
+    operations: [
+      'source-inventory',
+      'spec-mutation',
+      'repo-read',
+      'repo-mutation',
+      'state-transition',
+      'control-call',
+      'receipt-validation',
+      'external-write',
+    ],
+    hosts: [
+      'provider-neutral',
+      'claude-windows-docker-loaded',
+      'claude-windows-docker-unenrolled',
+      'unsupported-host',
+      'ci',
+    ],
+  },
+  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## The five enforced invariants:list-item:1': {
+    goals: ['all-foreman-goals'],
+    roles: [
+      'developer',
+      'coordinator',
+      'shaper',
+      'builder',
+      'reviewer',
+      'ci',
+      'host-adapter',
+      'kernel',
+      'operator',
+    ],
+    stages: [
+      'stage-zero',
+      'shaping',
+      'step-zero',
+      'build',
+      'deterministic-verify',
+      'adversarial-review',
+      'merge',
+      'closure',
+      'runtime',
+    ],
+    operations: [
+      'source-inventory',
+      'spec-mutation',
+      'repo-read',
+      'repo-mutation',
+      'state-transition',
+      'control-call',
+      'receipt-validation',
+      'external-write',
+    ],
+    hosts: [
+      'provider-neutral',
+      'claude-windows-docker-loaded',
+      'claude-windows-docker-unenrolled',
+      'unsupported-host',
+      'ci',
+    ],
+  },
+  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## The five enforced invariants:list-item:2': {
+    goals: ['all-foreman-goals'],
+    roles: [
+      'developer',
+      'coordinator',
+      'shaper',
+      'builder',
+      'reviewer',
+      'ci',
+      'host-adapter',
+      'kernel',
+      'operator',
+    ],
+    stages: [
+      'stage-zero',
+      'shaping',
+      'step-zero',
+      'build',
+      'deterministic-verify',
+      'adversarial-review',
+      'merge',
+      'closure',
+      'runtime',
+    ],
+    operations: [
+      'source-inventory',
+      'spec-mutation',
+      'repo-read',
+      'repo-mutation',
+      'state-transition',
+      'control-call',
+      'receipt-validation',
+      'external-write',
+    ],
+    hosts: [
+      'provider-neutral',
+      'claude-windows-docker-loaded',
+      'claude-windows-docker-unenrolled',
+      'unsupported-host',
+      'ci',
+    ],
+  },
+  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## The five enforced invariants:list-item:4': {
+    goals: ['all-foreman-goals'],
+    roles: [
+      'developer',
+      'coordinator',
+      'shaper',
+      'builder',
+      'reviewer',
+      'ci',
+      'host-adapter',
+      'kernel',
+      'operator',
+    ],
+    stages: [
+      'stage-zero',
+      'shaping',
+      'step-zero',
+      'build',
+      'deterministic-verify',
+      'adversarial-review',
+      'merge',
+      'closure',
+      'runtime',
+    ],
+    operations: [
+      'source-inventory',
+      'spec-mutation',
+      'repo-read',
+      'repo-mutation',
+      'state-transition',
+      'control-call',
+      'receipt-validation',
+      'external-write',
+    ],
+    hosts: [
+      'provider-neutral',
+      'claude-windows-docker-loaded',
+      'claude-windows-docker-unenrolled',
+      'unsupported-host',
+      'ci',
+    ],
+  },
+  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## The five enforced invariants:list-item:5': {
+    goals: ['all-foreman-goals'],
+    roles: [
+      'developer',
+      'coordinator',
+      'shaper',
+      'builder',
+      'reviewer',
+      'ci',
+      'host-adapter',
+      'kernel',
+      'operator',
+    ],
+    stages: [
+      'stage-zero',
+      'shaping',
+      'step-zero',
+      'build',
+      'deterministic-verify',
+      'adversarial-review',
+      'merge',
+      'closure',
+      'runtime',
+    ],
+    operations: [
+      'source-inventory',
+      'spec-mutation',
+      'repo-read',
+      'repo-mutation',
+      'state-transition',
+      'control-call',
+      'receipt-validation',
+      'external-write',
+    ],
+    hosts: [
+      'provider-neutral',
+      'claude-windows-docker-loaded',
+      'claude-windows-docker-unenrolled',
+      'unsupported-host',
+      'ci',
+    ],
+  },
+  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## Deny-first ruling (D9):paragraph:1': {
+    goals: ['all-foreman-goals'],
+    roles: [
+      'developer',
+      'coordinator',
+      'shaper',
+      'builder',
+      'reviewer',
+      'ci',
+      'host-adapter',
+      'kernel',
+      'operator',
+    ],
+    stages: [
+      'stage-zero',
+      'shaping',
+      'step-zero',
+      'build',
+      'deterministic-verify',
+      'adversarial-review',
+      'merge',
+      'closure',
+      'runtime',
+    ],
+    operations: [
+      'source-inventory',
+      'spec-mutation',
+      'repo-read',
+      'repo-mutation',
+      'state-transition',
+      'control-call',
+      'receipt-validation',
+      'external-write',
+    ],
+    hosts: [
+      'provider-neutral',
+      'claude-windows-docker-loaded',
+      'claude-windows-docker-unenrolled',
+      'unsupported-host',
+      'ci',
+    ],
+  },
+  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## Session-start-load bound — with its failure modes (F-H):paragraph:1': {
+    goals: ['all-foreman-goals'],
+    roles: [
+      'developer',
+      'coordinator',
+      'shaper',
+      'builder',
+      'reviewer',
+      'ci',
+      'host-adapter',
+      'kernel',
+      'operator',
+    ],
+    stages: [
+      'stage-zero',
+      'shaping',
+      'step-zero',
+      'build',
+      'deterministic-verify',
+      'adversarial-review',
+      'merge',
+      'closure',
+      'runtime',
+    ],
+    operations: [
+      'source-inventory',
+      'spec-mutation',
+      'repo-read',
+      'repo-mutation',
+      'state-transition',
+      'control-call',
+      'receipt-validation',
+      'external-write',
+    ],
+    hosts: [
+      'provider-neutral',
+      'claude-windows-docker-loaded',
+      'claude-windows-docker-unenrolled',
+      'unsupported-host',
+      'ci',
+    ],
+  },
+  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## Session-start-load bound — with its failure modes (F-H):list-item:2': {
+    goals: ['all-foreman-goals'],
+    roles: [
+      'developer',
+      'coordinator',
+      'shaper',
+      'builder',
+      'reviewer',
+      'ci',
+      'host-adapter',
+      'kernel',
+      'operator',
+    ],
+    stages: [
+      'stage-zero',
+      'shaping',
+      'step-zero',
+      'build',
+      'deterministic-verify',
+      'adversarial-review',
+      'merge',
+      'closure',
+      'runtime',
+    ],
+    operations: [
+      'source-inventory',
+      'spec-mutation',
+      'repo-read',
+      'repo-mutation',
+      'state-transition',
+      'control-call',
+      'receipt-validation',
+      'external-write',
+    ],
+    hosts: [
+      'provider-neutral',
+      'claude-windows-docker-loaded',
+      'claude-windows-docker-unenrolled',
+      'unsupported-host',
+      'ci',
+    ],
+  },
+  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## Session-start-load bound — with its failure modes (F-H):list-item:3': {
+    goals: ['all-foreman-goals'],
+    roles: [
+      'developer',
+      'coordinator',
+      'shaper',
+      'builder',
+      'reviewer',
+      'ci',
+      'host-adapter',
+      'kernel',
+      'operator',
+    ],
+    stages: [
+      'stage-zero',
+      'shaping',
+      'step-zero',
+      'build',
+      'deterministic-verify',
+      'adversarial-review',
+      'merge',
+      'closure',
+      'runtime',
+    ],
+    operations: [
+      'source-inventory',
+      'spec-mutation',
+      'repo-read',
+      'repo-mutation',
+      'state-transition',
+      'control-call',
+      'receipt-validation',
+      'external-write',
+    ],
+    hosts: [
+      'provider-neutral',
+      'claude-windows-docker-loaded',
+      'claude-windows-docker-unenrolled',
+      'unsupported-host',
+      'ci',
+    ],
+  },
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:2': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['deterministic-verify', 'merge', 'closure'],
     operations: ['source-inventory', 'state-transition'],
     hosts: ['any'],
   },
-  'fk-charter:item.248b8ef73429': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:3': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['deterministic-verify', 'merge', 'closure'],
     operations: ['source-inventory', 'state-transition'],
     hosts: ['any'],
   },
-  'fk-charter:item.7854414d4093': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:4': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['deterministic-verify', 'merge', 'closure'],
     operations: ['source-inventory', 'state-transition'],
     hosts: ['any'],
   },
-  'fk-charter:item.a0d98411d75e': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:5': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['deterministic-verify', 'merge', 'closure'],
     operations: ['source-inventory', 'state-transition'],
     hosts: ['any'],
   },
-  'fk-charter:item.fec95f508418': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:6': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['deterministic-verify', 'merge', 'closure'],
     operations: ['source-inventory', 'state-transition'],
     hosts: ['any'],
   },
-  'fk-charter:item.4910b2a0a7a3': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:7': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['deterministic-verify', 'merge', 'closure'],
     operations: ['source-inventory', 'state-transition'],
     hosts: ['any'],
   },
-  'fk-charter:item.4d6ea442cfff': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:8': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['deterministic-verify', 'merge', 'closure'],
     operations: ['source-inventory', 'state-transition'],
     hosts: ['any'],
   },
-  'fk-charter:item.49288a83830e': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:9': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['deterministic-verify', 'merge', 'closure'],
     operations: ['source-inventory', 'state-transition'],
     hosts: ['any'],
   },
-  'fk-charter:item.41b4b3dccd81': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:2': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['any'],
     operations: ['any'],
     hosts: ['any'],
   },
-  'fk-charter:item.c80d986d4cfe': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:4': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['any'],
     operations: ['any'],
     hosts: ['any'],
   },
-  'fk-charter:item.ab729d219bbb': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:5': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['any'],
     operations: ['any'],
     hosts: ['any'],
   },
-  'fk-charter:item.1c42ce2f7e94': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:6': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['any'],
     operations: ['any'],
     hosts: ['any'],
   },
-  'fk-charter:item.28ec67f3ddb4': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:7': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['any'],
     operations: ['any'],
     hosts: ['any'],
   },
-  'fk-charter:item.5138fd735a8a': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:8': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['any'],
     operations: ['any'],
     hosts: ['any'],
   },
-  'fk-charter:item.6aae5fe2d602': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:9': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['any'],
     operations: ['any'],
     hosts: ['any'],
   },
-  'fk-charter:item.fc4a386b94fe': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:10': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['any'],
     operations: ['any'],
     hosts: ['any'],
   },
-  'fk-charter:item.42e05d00c67a': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:11': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['any'],
     operations: ['any'],
     hosts: ['any'],
   },
-  'fk-charter:item.07490af17320': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:12': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['any'],
     operations: ['any'],
     hosts: ['any'],
   },
-  'fk-charter:item.b5bad0475a3e': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:13': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['any'],
     operations: ['any'],
     hosts: ['any'],
   },
-  'fk-charter:item.e86843a842bc': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:14': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['any'],
     operations: ['any'],
     hosts: ['any'],
   },
-  'fk-charter:item.98b291e68000': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:15': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['any'],
     operations: ['any'],
     hosts: ['any'],
   },
-  'fk-charter:item.76049b5d2003': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:17': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['any'],
     operations: ['any'],
     hosts: ['any'],
   },
-  'fk-charter:item.7d74bdcd5bb3': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 0 — Authority and contracts:paragraph:1': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['deterministic-verify', 'merge', 'closure'],
     operations: ['source-inventory', 'state-transition'],
     hosts: ['any'],
   },
-  'fk-charter:item.5f823cd304d6': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 1 — Pure trust core:paragraph:1': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['deterministic-verify', 'merge', 'closure'],
     operations: ['source-inventory', 'state-transition'],
     hosts: ['any'],
   },
-  'fk-charter:item.f1439c7e3a90': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 2 — Stateless read-only MCP and container:paragraph:1': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['deterministic-verify', 'merge', 'closure'],
     operations: ['source-inventory', 'state-transition'],
     hosts: ['any'],
   },
-  'fk-charter:item.fec816847e8e': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:paragraph:1': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['deterministic-verify', 'merge', 'closure'],
     operations: ['source-inventory', 'state-transition'],
     hosts: ['any'],
   },
-  'fk-charter:item.10bcdc2cae49': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:paragraph:1': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['deterministic-verify', 'merge', 'closure'],
     operations: ['source-inventory', 'state-transition'],
     hosts: ['any'],
   },
-  'fk-charter:item.5c1f19dd9911': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition:paragraph:1': {
     goals: ['foreman-kernel'],
     roles: ['reviewer'],
     stages: ['adversarial-review'],
     operations: ['receipt-validation'],
     hosts: ['any'],
   },
-  'fk-charter:item.863fbb9202f0': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:1': {
     goals: ['foreman-kernel'],
     roles: ['builder'],
     stages: ['build'],
     operations: ['repo-mutation'],
     hosts: ['claude-windows-docker-loaded'],
   },
-  'fk-charter:item.420807aa841c': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:2': {
     goals: ['foreman-kernel'],
     roles: ['builder'],
     stages: ['build'],
     operations: ['repo-mutation'],
     hosts: ['claude-windows-docker-loaded'],
   },
-  'fk-charter:item.0b65a783a0be': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:3': {
     goals: ['foreman-kernel'],
     roles: ['reviewer'],
     stages: ['adversarial-review'],
     operations: ['repo-mutation'],
     hosts: ['claude-windows-docker-loaded'],
   },
-  'fk-charter:item.8d204432b7c7': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:4': {
     goals: ['foreman-kernel'],
     roles: ['builder'],
     stages: ['build'],
     operations: ['repo-mutation'],
     hosts: ['claude-windows-docker-loaded'],
   },
-  'fk-charter:item.e7be31fb263e': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:5': {
     goals: ['foreman-kernel'],
     roles: ['coordinator', 'builder'],
     stages: ['build', 'runtime'],
     operations: ['state-transition', 'control-call'],
     hosts: ['claude-windows-docker-loaded'],
   },
-  'fk-charter:item.7983e741c7aa': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 0 — Authority and contracts:table-row:FK-P0 — Canon authority and enforcement registry': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['shaping'],
     operations: ['state-transition'],
     hosts: ['provider-neutral'],
   },
-  'fk-charter:item.ba4689f0d16e': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 0 — Authority and contracts:table-row:FK-P1 — Lifecycle, admission, and decision contracts': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['shaping'],
     operations: ['state-transition'],
     hosts: ['provider-neutral'],
   },
-  'fk-charter:item.e64616afcaf9': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 1 — Pure trust core:table-row:FK-P3 — Pure dispatch decisions': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['shaping'],
     operations: ['state-transition'],
     hosts: ['provider-neutral'],
   },
-  'fk-charter:item.01fc2f9fcdd0': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 1 — Pure trust core:table-row:FK-P4 — Verifier facade': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['shaping'],
     operations: ['state-transition'],
     hosts: ['provider-neutral'],
   },
-  'fk-charter:item.9aee50455247': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 1 — Pure trust core:table-row:FK-P5 — Clean-room trust-core spike': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['shaping'],
     operations: ['state-transition'],
     hosts: ['provider-neutral'],
   },
-  'fk-charter:item.6427173452f4': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 2 — Stateless read-only MCP and container:table-row:FK-P6 — Read-only MCP server': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['shaping'],
     operations: ['state-transition'],
     hosts: ['provider-neutral'],
   },
-  'fk-charter:item.d6c307d21998': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 2 — Stateless read-only MCP and container:table-row:FK-P7 — Stateless verifier image and launcher': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['shaping'],
     operations: ['state-transition'],
     hosts: ['provider-neutral'],
   },
-  'fk-charter:item.9e512e70b8f5': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 2 — Stateless read-only MCP and container:table-row:FK-P8 — Stateless harness portability proof': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['shaping'],
     operations: ['state-transition'],
     hosts: ['provider-neutral'],
   },
-  'fk-charter:item.d4059b59ac59': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P9 — SQLite storage and migration ABI': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['shaping'],
     operations: ['state-transition'],
     hosts: ['provider-neutral'],
   },
-  'fk-charter:item.f4e2ba3acfd6': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P10 — Lease and transition engine': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['shaping'],
     operations: ['state-transition'],
     hosts: ['provider-neutral'],
   },
-  'fk-charter:item.d92a7c500de4': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P11 — Legacy import and projection engine': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['shaping'],
     operations: ['state-transition'],
     hosts: ['provider-neutral'],
   },
-  'fk-charter:item.dc8cc83e01e7': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P12 — Authorization policy engine': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['shaping'],
     operations: ['state-transition'],
     hosts: ['provider-neutral'],
   },
-  'fk-charter:item.387fb9c622d2': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P13 — Admission-protected control catalog': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['shaping'],
     operations: ['state-transition'],
     hosts: ['provider-neutral'],
   },
-  'fk-charter:item.9efe42c4e01c': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P14 — Stateful image composition and operator lifecycle': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['shaping'],
     operations: ['state-transition'],
     hosts: ['provider-neutral'],
   },
-  'fk-charter:item.dde24d4c9b7c': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P15 — Stateful restart and admission proof': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['shaping'],
     operations: ['state-transition'],
     hosts: ['provider-neutral'],
   },
-  'fk-charter:item.ce7c8467ddb3': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P16 — Claude lifecycle adapter, shadow mode': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['shaping'],
     operations: ['state-transition'],
     hosts: ['provider-neutral'],
   },
-  'fk-charter:item.8e9428543291': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P17 — Bypass and outage harness': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['shaping'],
     operations: ['state-transition'],
     hosts: ['provider-neutral'],
   },
-  'fk-charter:item.c9611681dcca': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P19 — High-confidence refusal enforcement': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['shaping'],
     operations: ['state-transition'],
     hosts: ['provider-neutral'],
   },
-  'fk-charter:item.1cf05e6b7716': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P20 — Second-host feasibility and host registration': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['shaping'],
     operations: ['state-transition'],
     hosts: ['provider-neutral'],
   },
-  'fk-charter:item.5c24c3ef6591': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P21 — Exit evidence manifest and clean-room proof': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
     stages: ['shaping'],
     operations: ['state-transition'],
     hosts: ['provider-neutral'],
   },
-  'fk-charter:item.ec0f6225e0a6': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:1': {
     goals: ['foreman-kernel'],
     roles: ['ci'],
     stages: ['deterministic-verify'],
     operations: ['spec-mutation'],
     hosts: ['provider-neutral'],
   },
-  'fk-charter:item.0689031c79ed': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:2': {
     goals: ['foreman-kernel'],
     roles: ['ci'],
     stages: ['deterministic-verify'],
     operations: ['repo-read'],
     hosts: ['provider-neutral'],
   },
-  'fk-charter:item.349023b0246d': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:3': {
     goals: ['foreman-kernel'],
     roles: ['ci'],
     stages: ['deterministic-verify'],
     operations: ['control-call'],
     hosts: ['provider-neutral'],
   },
-  'fk-charter:item.9308bed876c7': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:4': {
     goals: ['foreman-kernel'],
     roles: ['ci'],
     stages: ['deterministic-verify'],
     operations: ['receipt-validation'],
     hosts: ['provider-neutral'],
   },
-  'fk-charter:item.612528548655': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:5': {
     goals: ['foreman-kernel'],
     roles: ['ci'],
     stages: ['deterministic-verify'],
     operations: ['control-call'],
     hosts: ['claude-windows-docker-loaded'],
   },
-  'fk-charter:item.102464b0e25b': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:6': {
     goals: ['foreman-kernel'],
     roles: ['ci'],
     stages: ['deterministic-verify'],
     operations: ['state-transition'],
     hosts: ['claude-windows-docker-loaded'],
   },
-  'fk-charter:item.e1b224d7294b': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:7': {
     goals: ['foreman-kernel'],
     roles: ['ci'],
     stages: ['deterministic-verify'],
     operations: ['state-transition'],
     hosts: ['claude-windows-docker-loaded'],
   },
-  'fk-charter:item.501441d1853e': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:8': {
     goals: ['foreman-kernel'],
     roles: ['ci'],
     stages: ['deterministic-verify'],
     operations: ['repo-mutation'],
     hosts: ['claude-windows-docker-loaded'],
   },
-  'fk-charter:item.fc74f0320a1c': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:9': {
     goals: ['foreman-kernel'],
     roles: ['ci'],
     stages: ['deterministic-verify'],
     operations: ['repo-mutation'],
     hosts: ['claude-windows-docker-loaded'],
   },
-  'fk-charter:item.7eba1cb561c5': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:10': {
     goals: ['foreman-kernel'],
     roles: ['ci'],
     stages: ['deterministic-verify'],
     operations: ['state-transition'],
     hosts: ['claude-windows-docker-loaded'],
   },
-  'fk-charter:item.eb56a1ab24d9': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:11': {
     goals: ['foreman-kernel'],
     roles: ['ci'],
     stages: ['deterministic-verify'],
     operations: ['control-call'],
     hosts: ['claude-windows-docker-loaded'],
   },
-  'fk-charter:item.8843a7774432': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:12': {
     goals: ['foreman-kernel'],
     roles: ['ci'],
     stages: ['deterministic-verify'],
     operations: ['control-call'],
     hosts: ['claude-windows-docker-loaded'],
   },
-  'fk-charter:item.10f729956b77': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:13': {
     goals: ['foreman-kernel'],
     roles: ['ci'],
     stages: ['deterministic-verify'],
@@ -11176,7 +11086,7 @@ const CURATED_ITEM_APPLICABILITY = {
   },
   // Scenario 14 is proved on the D20 platform like every other scenario, so it carries the same
   // CI / deterministic-verify / control-call applicability as scenario 13.
-  'fk-charter:item.ff0f88a958e0': {
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:14': {
     goals: ['foreman-kernel'],
     roles: ['ci'],
     stages: ['deterministic-verify'],
@@ -11185,8 +11095,11 @@ const CURATED_ITEM_APPLICABILITY = {
   },
 } as const satisfies Readonly<Record<string, AuthorityRule['applicability']>>
 
-function curatedApplicabilityFor(sourceId: string, itemId: string): AuthorityRule['applicability'] {
-  const key = `${sourceId}:${itemId}`
+function curatedApplicabilityFor(
+  sourceId: string,
+  locatorAnchor: string,
+): AuthorityRule['applicability'] {
+  const key = `${sourceId}:${locatorAnchor}`
   const applicability =
     R11_PERMISSION_PROFILE_CURATION[key]?.applicability ??
     R11_CURATED_ITEM_SEMANTICS[key]?.applicability ??
@@ -11194,18 +11107,20 @@ function curatedApplicabilityFor(sourceId: string, itemId: string): AuthorityRul
     R10_CURATED_ITEM_SEMANTICS[key]?.applicability ??
     CURATED_ITEM_APPLICABILITY[key as keyof typeof CURATED_ITEM_APPLICABILITY]
   if (applicability === undefined) {
-    throw new Error(`published item '${sourceId}:${itemId}' lacks literal curated applicability`)
+    throw new Error(
+      `published item '${sourceId}:${locatorAnchor}' lacks literal curated applicability`,
+    )
   }
   return applicability
 }
 
 function ruleShape(
   classification: RuleClassification,
-  sourceItemKey: string,
+  curationKey: string,
 ): Pick<AuthorityRule, 'decision' | 'refusalCode' | 'enforcementOwner' | 'assurance'> {
   switch (classification) {
     case 'pre-action-refusal':
-      if (R12_GATE2_ALLOW_ITEMS.has(sourceItemKey)) {
+      if (R12_GATE2_ALLOW_ITEMS.has(curationKey)) {
         return {
           decision: 'ALLOW',
           refusalCode: null,
@@ -11366,13 +11281,14 @@ export function markdownIdentityProjectionForTesting(sourceId: string, content: 
     (located) => {
       const itemId = itemIdFor(definition, located)
       const legacyRuleIds = legacyRuleIdsFor(sourceId, located.locator)
-      const compound = R11_COMPOUND_ITEM_SEMANTICS[`${sourceId}:${itemId}`]
+      const curationKey = `${sourceId}:${located.locator.anchor}`
+      const compound = R11_COMPOUND_ITEM_SEMANTICS[curationKey]
       const generatedRuleIds =
         compound !== undefined
           ? compound.map(
               (entry) => `rule.${sourceId}.${itemId.replace(/^item\./, '')}.${entry.suffix}`,
             )
-          : authorityIdentityFor(sourceId, itemId) === null
+          : authorityIdentityFor(sourceId, located.locator.anchor) === null
             ? []
             : [`rule.${sourceId}.${itemId.replace(/^item\./, '')}`]
       return {
@@ -11523,8 +11439,8 @@ function buildSource(definition: SourceDefinition): {
       locatorDigest: locatorDigestFor(locator),
       valueDigest,
     }
-    const sourceItemKey = `${definition.sourceId}:${itemId}`
-    if (R13_NORMATIVE_MARKDOWN_PUBLICATION_KEYS.has(sourceItemKey)) {
+    const curationKey = `${definition.sourceId}:${locator.anchor}`
+    if (R13_NORMATIVE_MARKDOWN_PUBLICATION_KEYS.has(curationKey)) {
       const ruleId = `rule.${definition.sourceId}.${itemId.replace(/^item\./, '')}`
       const baseRule: AuthorityRule = {
         ruleId,
@@ -11609,8 +11525,8 @@ function buildSource(definition: SourceDefinition): {
       }
     }
     const legacyRuleIds = legacyRuleIdsFor(definition.sourceId, locator)
-    const authorityIdentity = authorityIdentityFor(definition.sourceId, itemId)
-    const compoundSemantics = R11_COMPOUND_ITEM_SEMANTICS[`${definition.sourceId}:${itemId}`]
+    const authorityIdentity = authorityIdentityFor(definition.sourceId, locator.anchor)
+    const compoundSemantics = R11_COMPOUND_ITEM_SEMANTICS[curationKey]
     if (
       authorityIdentity === null &&
       compoundSemantics === undefined &&
@@ -11655,7 +11571,7 @@ function buildSource(definition: SourceDefinition): {
         const compoundClassification = compound.classification ?? 'pre-action-refusal'
         const shape = ruleShape(
           compoundClassification,
-          `${definition.sourceId}:${itemId}:${compound.suffix}`,
+          `${curationKey}:${compound.suffix}`,
         )
         const baseRule: AuthorityRule = {
           ruleId,
@@ -11720,11 +11636,11 @@ function buildSource(definition: SourceDefinition): {
         rationale: 'R12 frozen legacy rule identity is rebound to this canonical structural item.',
       }
     }
-    const classification = curatedClassificationFor(definition.sourceId, itemId)
-    const baseSemantics = ruleShape(classification, `${definition.sourceId}:${itemId}`)
+    const classification = curatedClassificationFor(definition.sourceId, locator.anchor)
+    const baseSemantics = ruleShape(classification, curationKey)
     const semantics =
       (definition.sourceId === 'permission-profiles-validator' ||
-        R11_PERMISSION_PROFILE_CURATION[`${definition.sourceId}:${itemId}`] !== undefined) &&
+        R11_PERMISSION_PROFILE_CURATION[curationKey] !== undefined) &&
       classification === 'pre-action-refusal'
         ? {
             ...baseSemantics,
@@ -11738,7 +11654,7 @@ function buildSource(definition: SourceDefinition): {
       normalizedStatement: normalizedExcerpt,
       sourceRefs: [sourceRef],
       authorityBasisRef: sourceRef,
-      applicability: curatedApplicabilityFor(definition.sourceId, itemId),
+      applicability: curatedApplicabilityFor(definition.sourceId, locator.anchor),
       severity: classification === 'pre-action-refusal' ? 'critical' : 'medium',
       classification,
       ...semantics,
@@ -12568,10 +12484,13 @@ function buildRegistry(): AuthorityEnforcementRegistry {
   const normativeMarkdownAudit = R13_NORMATIVE_MARKDOWN_AUDIT_KEYS.map((key) => {
     const separator = key.indexOf(':')
     const sourceId = key.slice(0, separator)
-    const itemId = key.slice(separator + 1)
+    const locatorAnchor = key.slice(separator + 1)
     const source = sources.find((candidate) => candidate.sourceId === sourceId)
-    const item = source?.inventoryItems.find((candidate) => candidate.itemId === itemId)
+    const item = source?.inventoryItems.find(
+      (candidate) => candidate.locator.anchor === locatorAnchor,
+    )
     if (item === undefined) throw new Error(`R13 audit candidate '${key}' is missing`)
+    const { itemId } = item
     const published = item.ruleIds.length > 0
     return {
       sourceId,
