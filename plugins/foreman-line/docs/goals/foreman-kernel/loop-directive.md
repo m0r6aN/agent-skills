@@ -7,20 +7,41 @@
 > named or ownership is ambiguous, stop and report; never assume.
 
 The blockquote above is the **ownership rule** and is governed canon: it states three
-obligations and carries no identity, date, or status. Everything below it in this section is
-**owner-of-record and handoff state**, which canon requires to change at every transfer, and
-which is a declared volatile region under R24 as corrected by R25. This separation exists
-because `rule.fk-loop-directive.7a05d374a3b1` previously bound the ownership rule and the
+obligations and carries no identity, date, or status. Governed canon continues to the end of
+this paragraph block and through the `Ratified authority` records below, all of which remain
+**direct body of this heading**. Volatile owner-of-record and handoff state lives under the
+`### Owner of record and handoff state` subheading that follows them, and is the declared extent
+of region 2. This separation exists because
+`rule.fk-loop-directive.7a05d374a3b1` previously bound the ownership rule and the
 current owner's identity into one block, one locator, and one digest — so the rule went stale
 every time the goal changed hands. Do not reunite them.
+
+The ordering here is load-bearing and is not cosmetic. The five `Ratified authority` records are
+published rules — including the pinned Standing Gate 2 grant referenced from `src/validate.ts` —
+and they are kept out of region 2 **by remaining direct body of this `##` heading**, never by
+being moved beneath a sibling `###`. Moving them under any subheading changes their anchor from
+`…:list-item:1..5` to a subheading path, which re-anchors five published rules and forces an
+identity migration. Do not introduce a subheading above them.
+
+**Goal worktree:**
+`D:/Repos/agent-skills-worktrees/foreman-kernel-stage0-20260830`
+
+**Goal branch:** `codex/foreman-kernel-stage0-20260830`
+
+**Ratified authority:**
+
+- Original Gate 1 charter commit: `c4bf00f6fde9058e1350898914e06f261ae38c93`
+- Plan-review triage commit: `a9a48b5656c3ce3837781c962a6ee00035d7f3c6`
+- Scoped Gate 1 re-ratification commit:
+  `26fb2b56e4861b6122a95f1d413394c0dcd3b4a1`
+- Standing Gate 2: active for FK-P0 through FK-P21 under the charter contingencies
+- Gate 3: not delegated; every merge is a human action
 
 ### Owner of record and handoff state
 
 Everything under this subheading is volatile operational state and is the declared extent of
-region 2. The ownership *rule* is the blockquote above, outside this subtree; the five published
-`Ratified authority` records are under their own sibling subheading, also outside this subtree.
-That placement is deliberate and structural: a pinned `ALLOW` rule should be kept out of a
-volatile region by its position in the document, not by a predicate about block kinds.
+region 2. The ownership rule and the `Ratified authority` records are above it as direct body of
+the parent heading, outside this subtree.
 
 **Owner of record.** The second Claude Code coordinator session of 2026-09-03, entered via
 `/goal resume foreman-kernel` after the first 2026-09-03 session stopped at Gate 3, holding
@@ -58,26 +79,9 @@ in the dead session's transcript and are unrecoverable. Under the standing rule 
 wrong-shaped claims are presumptively empty, **no R2–R13 review is treated as having
 occurred.** FK-P0 re-enters adversarial review from zero under this owner.
 
-### Goal identity and ratified authority
-
-Governed canon. This subheading is a sibling of the owner-of-record subtree, not a descendant,
-so nothing here falls inside region 2. The five `Ratified authority` records below are published
-rules — including the pinned Standing Gate 2 grant referenced from `src/validate.ts` — and they
-stay digest-bound.
-
-**Goal worktree:**
-`D:/Repos/agent-skills-worktrees/foreman-kernel-stage0-20260830`
-
-**Goal branch:** `codex/foreman-kernel-stage0-20260830`
-
-**Ratified authority:**
-
-- Original Gate 1 charter commit: `c4bf00f6fde9058e1350898914e06f261ae38c93`
-- Plan-review triage commit: `a9a48b5656c3ce3837781c962a6ee00035d7f3c6`
-- Scoped Gate 1 re-ratification commit:
-  `26fb2b56e4861b6122a95f1d413394c0dcd3b4a1`
-- Standing Gate 2: active for FK-P0 through FK-P21 under the charter contingencies
-- Gate 3: not delegated; every merge is a human action
+_(The goal-identity and ratified-authority records were moved above the owner-of-record
+subheading, back to direct body of `## COORDINATOR OWNERSHIP`, so the five published rules keep
+their `list-item:1..5` anchors. See the ordering note there.)_
 
 ## Current state — update at every stop or parcel closure
 
