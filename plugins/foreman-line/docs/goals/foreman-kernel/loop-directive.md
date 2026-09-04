@@ -14,6 +14,14 @@ because `rule.fk-loop-directive.7a05d374a3b1` previously bound the ownership rul
 current owner's identity into one block, one locator, and one digest — so the rule went stale
 every time the goal changed hands. Do not reunite them.
 
+### Owner of record and handoff state
+
+Everything under this subheading is volatile operational state and is the declared extent of
+region 2. The ownership *rule* is the blockquote above, outside this subtree; the five published
+`Ratified authority` records are under their own sibling subheading, also outside this subtree.
+That placement is deliberate and structural: a pinned `ALLOW` rule should be kept out of a
+volatile region by its position in the document, not by a predicate about block kinds.
+
 **Owner of record.** The second Claude Code coordinator session of 2026-09-03, entered via
 `/goal resume foreman-kernel` after the first 2026-09-03 session stopped at Gate 3, holding
 ownership under the developer's explicit ruling of that date that the prior session is dead.
@@ -49,6 +57,13 @@ twenty-six `fk-p0-*` review worktrees (all verified clean). Those findings exist
 in the dead session's transcript and are unrecoverable. Under the standing rule that
 wrong-shaped claims are presumptively empty, **no R2–R13 review is treated as having
 occurred.** FK-P0 re-enters adversarial review from zero under this owner.
+
+### Goal identity and ratified authority
+
+Governed canon. This subheading is a sibling of the owner-of-record subtree, not a descendant,
+so nothing here falls inside region 2. The five `Ratified authority` records below are published
+rules — including the pinned Standing Gate 2 grant referenced from `src/validate.ts` — and they
+stay digest-bound.
 
 **Goal worktree:**
 `D:/Repos/agent-skills-worktrees/foreman-kernel-stage0-20260830`
@@ -227,8 +242,9 @@ machine. **133 is not the baseline** -- it counts only the five other files.
 Gate 3 remains a human action, and now covers **one** merge rather than two, since the goal branch
 was merged onto the parcel branch.
 
-The ambient `D:/Repos/agent-skills` checkout has a user-owned change at
-`plugins/foreman-line/routing-policy/routing-policy.yaml`; never touch or absorb it.
+The ambient-checkout prohibition now lives as standing authorization 8 under
+`## Standing authorizations and their limits`, where R27 relocated it. It is a rule, and it
+does not belong in a volatile status section.
 
 The relocated standing stop-condition override now lives under `## Stop conditions`, where R26
 ruling 2 moved it. Nothing normative belongs in this section: it is coordinator status, declared
@@ -267,6 +283,12 @@ The plan-review transcript is
 7. A push or PR may occur only when the active parcel contract and developer authority
    clearly cover it; otherwise prepare local PR material and stop before the external
    action.
+8. **The ambient `D:/Repos/agent-skills` checkout carries user-owned changes. Never touch or
+   absorb them.** No agent working this goal — coordinator, builder, reviewer, or shaping
+   session — reads from or writes to the ambient checkout, and no user-owned change is
+   absorbed into a parcel branch. Relocated here from `## Current state` by R27, because it is
+   a prohibition and was sitting in a section declared volatile, curated `ruleIds: []` with a
+   boilerplate rationale asserting it stated no rule. It states a rule.
 
 ## Per-parcel algorithm
 
