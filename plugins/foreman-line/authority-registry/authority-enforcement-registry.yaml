@@ -719,7 +719,7 @@ sources:
           - rule.fk-charter.cd014d6d90c5
         exclusionDisposition: null
         rationale: Rule-bearing section or live behavior is mapped to an explicit source-bound rule.
-      - itemId: item.28d8ce24dbf8
+      - itemId: item.0077176dba28
         locator:
           kind: line-excerpt
           anchor: "md-block:# Goal Charter — Foreman Kernel > ## 4. Locked decisions > ### 4.1 Ratification ledger:paragraph:1"
@@ -728,8 +728,8 @@ sources:
         valueDigest: 016efba085ed863e9c02388fbbe01979213cf54e48082f7efc71d2e1a4892762
         ruleIds: []
         exclusionDisposition: non-normative-explanation
-        rationale: "Inventory item item.28d8ce24dbf8 at md-block:# Goal Charter — Foreman Kernel > ## 4. Locked decisions > ### 4.1 Ratification ledger:paragraph:1 is explanatory context and does not state an independent normative authority rule."
-      - itemId: item.a8af02ecfa29
+        rationale: "Inventory item item.0077176dba28 at md-block:# Goal Charter — Foreman Kernel > ## 4. Locked decisions > ### 4.1 Ratification ledger:paragraph:1 is explanatory context and does not state an independent normative authority rule."
+      - itemId: item.11307b6ee77e
         locator:
           kind: line-excerpt
           anchor: "md-block:# Goal Charter — Foreman Kernel > ## 4. Locked decisions > ### 4.1 Ratification ledger:paragraph:2"
@@ -738,8 +738,8 @@ sources:
         valueDigest: 5e7cd92bdf6e801b50e2b7e00850c9bb8525e7f420bb10240e945ab875ee4533
         ruleIds: []
         exclusionDisposition: non-normative-explanation
-        rationale: "Inventory item item.a8af02ecfa29 at md-block:# Goal Charter — Foreman Kernel > ## 4. Locked decisions > ### 4.1 Ratification ledger:paragraph:2 is explanatory context and does not state an independent normative authority rule."
-      - itemId: item.19b5470c04c1
+        rationale: "Inventory item item.11307b6ee77e at md-block:# Goal Charter — Foreman Kernel > ## 4. Locked decisions > ### 4.1 Ratification ledger:paragraph:2 is explanatory context and does not state an independent normative authority rule."
+      - itemId: item.73c2e8af98c5
         locator:
           kind: table-row
           anchor: "md-block:# Goal Charter — Foreman Kernel > ## 4. Locked decisions > ### 4.1 Ratification ledger:table-row:L1"
@@ -748,8 +748,8 @@ sources:
         valueDigest: 10227f07e504175c130d828b50c7924ce2fd5bd1aaf379c5044528a228e4daab
         ruleIds: []
         exclusionDisposition: non-normative-explanation
-        rationale: "Inventory item item.19b5470c04c1 at md-block:# Goal Charter — Foreman Kernel > ## 4. Locked decisions > ### 4.1 Ratification ledger:table-row:L1 is explanatory context and does not state an independent normative authority rule."
-      - itemId: item.5bf239aff879
+        rationale: "Inventory item item.73c2e8af98c5 at md-block:# Goal Charter — Foreman Kernel > ## 4. Locked decisions > ### 4.1 Ratification ledger:table-row:L1 is explanatory context and does not state an independent normative authority rule."
+      - itemId: item.56c611d71350
         locator:
           kind: table-row
           anchor: "md-block:# Goal Charter — Foreman Kernel > ## 4. Locked decisions > ### 4.1 Ratification ledger:table-row:L2"
@@ -758,8 +758,8 @@ sources:
         valueDigest: 87ca8e25c8dc385f9a685eedd2cd26da688e706e1b08f3b313e23d5f8cea3643
         ruleIds: []
         exclusionDisposition: non-normative-explanation
-        rationale: "Inventory item item.5bf239aff879 at md-block:# Goal Charter — Foreman Kernel > ## 4. Locked decisions > ### 4.1 Ratification ledger:table-row:L2 is explanatory context and does not state an independent normative authority rule."
-      - itemId: item.0a116759085b
+        rationale: "Inventory item item.56c611d71350 at md-block:# Goal Charter — Foreman Kernel > ## 4. Locked decisions > ### 4.1 Ratification ledger:table-row:L2 is explanatory context and does not state an independent normative authority rule."
+      - itemId: item.cf301316d970
         locator:
           kind: table-row
           anchor: "md-block:# Goal Charter — Foreman Kernel > ## 4. Locked decisions > ### 4.1 Ratification ledger:table-row:L3"
@@ -768,8 +768,8 @@ sources:
         valueDigest: 77fca69f904dc731171e4d5263cb55848a94dea875d76d945fba243f330da5f7
         ruleIds: []
         exclusionDisposition: non-normative-explanation
-        rationale: "Inventory item item.0a116759085b at md-block:# Goal Charter — Foreman Kernel > ## 4. Locked decisions > ### 4.1 Ratification ledger:table-row:L3 is explanatory context and does not state an independent normative authority rule."
-      - itemId: item.722b27f9d1f8
+        rationale: "Inventory item item.cf301316d970 at md-block:# Goal Charter — Foreman Kernel > ## 4. Locked decisions > ### 4.1 Ratification ledger:table-row:L3 is explanatory context and does not state an independent normative authority rule."
+      - itemId: item.131a7863b940
         locator:
           kind: line-excerpt
           anchor: "md-block:# Goal Charter — Foreman Kernel > ## 4. Locked decisions > ### 4.1 Ratification ledger:paragraph:3"
@@ -778,7 +778,7 @@ sources:
         valueDigest: 3a3949a424775345172e9ae330697bf78bd16f8527d3c405c1ff419c3a18f3d9
         ruleIds: []
         exclusionDisposition: non-normative-explanation
-        rationale: "Inventory item item.722b27f9d1f8 at md-block:# Goal Charter — Foreman Kernel > ## 4. Locked decisions > ### 4.1 Ratification ledger:paragraph:3 is explanatory context and does not state an independent normative authority rule."
+        rationale: "Inventory item item.131a7863b940 at md-block:# Goal Charter — Foreman Kernel > ## 4. Locked decisions > ### 4.1 Ratification ledger:paragraph:3 is explanatory context and does not state an independent normative authority rule."
       - itemId: item.0b2a6def88bd
         locator:
           kind: line-excerpt
@@ -1511,16 +1511,17 @@ sources:
           - rule.fk-charter.10f729956b77
         exclusionDisposition: null
         rationale: Rule-bearing section or live behavior is mapped to an explicit source-bound rule.
-      - itemId: item.49359f6269b5
+      - itemId: item.ff0f88a958e0
         locator:
           kind: numbered-item
           anchor: "md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:14"
           lineHint: 303
         normalizedExcerpt: 14. **Decision-path latency:** on the D20 platform, a warm kernel serves a representative governed-mutation decision within the D21 budget for both measured spans; the first-call-after-start figure is recorded separately; a decision exceeding the hard deadline is reported as kernel-unreachable and inherits the D8 outage posture without failing open; and an authorization cache entry whose `goalRevision`, `policyDigest`, or compiled-scope digest no longer matches produces `STATE_REVISION_STALE` rather than a stale ALLOW.
         valueDigest: 00d00f41d915f0d64eec83652adbac10b29ccf70d175562fa3aa5475f853b451
-        ruleIds: []
-        exclusionDisposition: non-normative-explanation
-        rationale: "Inventory item item.49359f6269b5 at md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:14 is explanatory context and does not state an independent normative authority rule."
+        ruleIds:
+          - rule.fk-charter.ff0f88a958e0
+        exclusionDisposition: null
+        rationale: Rule-bearing section or live behavior is mapped to an explicit source-bound rule.
       - itemId: item.6116f0dd5f60
         locator:
           kind: line-excerpt
@@ -2577,7 +2578,7 @@ sources:
         locator:
           kind: heading
           anchor: "# Foreman Kernel — Coordinator Loop Directive > ## Current state — update at every stop or parcel closure"
-          lineHint: 86
+          lineHint: 41
         normalizedExcerpt: "## Current state — update at every stop or parcel closure"
         valueDigest: a6950e4714be0186c858d2f4ba724773e4d3ad7149fc5a91e2c62f9fdc778640
         ruleIds: []
@@ -2587,7 +2588,7 @@ sources:
         locator:
           kind: heading
           anchor: "# Foreman Kernel — Coordinator Loop Directive > ## Role and canon"
-          lineHint: 257
+          lineHint: 42
         normalizedExcerpt: "## Role and canon"
         valueDigest: df87ba2912028f6e8635d73f53e84d829c206bf84d1093456dc3f69be05b6b52
         ruleIds: []
@@ -2597,7 +2598,7 @@ sources:
         locator:
           kind: heading
           anchor: "# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits"
-          lineHint: 272
+          lineHint: 57
         normalizedExcerpt: "## Standing authorizations and their limits"
         valueDigest: 35cab030b44c02fdd03a7cb3d71dec208978447acbf9bd44475d984f6ca6faff
         ruleIds: []
@@ -2607,7 +2608,7 @@ sources:
         locator:
           kind: heading
           anchor: "# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm"
-          lineHint: 297
+          lineHint: 82
         normalizedExcerpt: "## Per-parcel algorithm"
         valueDigest: 75c7c73942f8aa43a28e1ec16c9dbdec8f3899b21c4015514d9295a127c7db77
         ruleIds: []
@@ -2617,7 +2618,7 @@ sources:
         locator:
           kind: heading
           anchor: "# Foreman Kernel — Coordinator Loop Directive > ## Queue and dependency order"
-          lineHint: 326
+          lineHint: 111
         normalizedExcerpt: "## Queue and dependency order"
         valueDigest: 258946caaf55a9b96c13f259ab17d4369bfefab275425b05204999a136067430
         ruleIds: []
@@ -2627,7 +2628,7 @@ sources:
         locator:
           kind: heading
           anchor: "# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate"
-          lineHint: 358
+          lineHint: 143
         normalizedExcerpt: "## FK-P0 shaping mandate"
         valueDigest: b5d57c3df2718d1132fe518b9533facaf933cc51685ab8ce0e8f07316417e143
         ruleIds: []
@@ -2637,7 +2638,7 @@ sources:
         locator:
           kind: heading
           anchor: "# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions"
-          lineHint: 377
+          lineHint: 162
         normalizedExcerpt: "## Stop conditions"
         valueDigest: 5da05b74b311e6f74f97695e6d70aa787188fd84b1800583125386094122f4e9
         ruleIds: []
@@ -2647,7 +2648,7 @@ sources:
         locator:
           kind: heading
           anchor: "# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions > ### Standing stop-condition override — the FK-P0 / A2 spiral"
-          lineHint: 395
+          lineHint: 180
         normalizedExcerpt: "### Standing stop-condition override — the FK-P0 / A2 spiral"
         valueDigest: 3b4b174744207a8ff1dd994d2a6edfc465d13a8adf728bb37738b46ffeab1621
         ruleIds: []
@@ -2657,7 +2658,7 @@ sources:
         locator:
           kind: heading
           anchor: "# Foreman Kernel — Coordinator Loop Directive > ## Wakeup and crash recovery"
-          lineHint: 408
+          lineHint: 193
         normalizedExcerpt: "## Wakeup and crash recovery"
         valueDigest: 16521752110879cbe4a72915d05d093d0ea865e150ec9daecfaba9ffb1e9f4ec
         ruleIds: []
@@ -2704,7 +2705,7 @@ sources:
         ruleIds: []
         exclusionDisposition: non-normative-explanation
         rationale: "Inventory item item.10f2e751ab84 at md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:paragraph:4 is explanatory context and does not state an independent normative authority rule."
-      - itemId: item.8e6fcd45f722
+      - itemId: item.1ddf9a9f1993
         locator:
           kind: line-excerpt
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:paragraph:5"
@@ -2713,8 +2714,8 @@ sources:
         valueDigest: 04d13ab525bed808d51a8c1480868d54a6322edfe943b03b9d956f22de0971d4
         ruleIds: []
         exclusionDisposition: non-normative-explanation
-        rationale: "Inventory item item.8e6fcd45f722 at md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:paragraph:5 is explanatory context and does not state an independent normative authority rule."
-      - itemId: item.566bbbd85ddf
+        rationale: "Inventory item item.1ddf9a9f1993 at md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:paragraph:5 is explanatory context and does not state an independent normative authority rule."
+      - itemId: item.5cc627194f8c
         locator:
           kind: line-excerpt
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:paragraph:6"
@@ -2723,7 +2724,7 @@ sources:
         valueDigest: 620852625e35c0e79e013ab7ad677f4dc7135598f3795f1197a6b407a908b960
         ruleIds: []
         exclusionDisposition: non-normative-explanation
-        rationale: "Inventory item item.566bbbd85ddf at md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:paragraph:6 is explanatory context and does not state an independent normative authority rule."
+        rationale: "Inventory item item.5cc627194f8c at md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:paragraph:6 is explanatory context and does not state an independent normative authority rule."
       - itemId: item.b81725578197
         locator:
           kind: numbered-item
@@ -2783,7 +2784,7 @@ sources:
         locator:
           kind: line-excerpt
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:paragraph:1"
-          lineHint: 259
+          lineHint: 44
         normalizedExcerpt: "The coordinator consumes verification; it never produces independent verification of its own work. On every iteration read:"
         valueDigest: 25ba8e8ebb127292879aa5767bd1389fb5795b2b8759516f7d1cf099f57784e6
         ruleIds:
@@ -2794,7 +2795,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:1"
-          lineHint: 262
+          lineHint: 47
         normalizedExcerpt: 1. `plugins/foreman-line/docs/goals/foreman-kernel/charter.md`;
         valueDigest: 29c04eac921cdbe98100484d2a68dbf9ac2f12e698c7a2c089eb6d64e5024ad0
         ruleIds:
@@ -2805,7 +2806,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:2"
-          lineHint: 263
+          lineHint: 48
         normalizedExcerpt: 2. this directive;
         valueDigest: c5640b0dca980a62d28730b06d0698ab900e3c13c15a81a46767189bd77a41a0
         ruleIds:
@@ -2816,7 +2817,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:3"
-          lineHint: 264
+          lineHint: 49
         normalizedExcerpt: 3. the active parcel spec, kickstarter, handoff, and review findings;
         valueDigest: c3582ce78baf8fa8a630ccab4208c91e1a0b596f8a5ea37b70d06119c6178d5b
         ruleIds:
@@ -2827,7 +2828,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:4"
-          lineHint: 265
+          lineHint: 50
         normalizedExcerpt: 4. `plugins/foreman-line/docs/COORDINATOR-PATTERN.md`;
         valueDigest: 5f645af72cf6f53be7501b63403abfeb17d03a8c0c7913cb5152cdcb2cae5b6e
         ruleIds:
@@ -2838,7 +2839,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:5"
-          lineHint: 266
+          lineHint: 51
         normalizedExcerpt: 5. `plugins/foreman-line/docs/SPEC-CONVENTION.md`; and
         valueDigest: 18ab4609b0a9b30e14978996cfa01449a443c07c6f52bcd9b0a9d1aed5abc983
         ruleIds:
@@ -2849,7 +2850,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:6"
-          lineHint: 267
+          lineHint: 52
         normalizedExcerpt: 6. `plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md`.
         valueDigest: 008d1545d2a05cdc8442f372cd490adbd2fbe9a7f4ba0cf34473049660c40aaf
         ruleIds:
@@ -2860,7 +2861,7 @@ sources:
         locator:
           kind: line-excerpt
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:paragraph:2"
-          lineHint: 269
+          lineHint: 54
         normalizedExcerpt: The plan-review transcript is `plugins/foreman-line/docs/goals/foreman-kernel/plan-review-findings.md`.
         valueDigest: 236347019db54f49b4e6a0e4534e5e426ec4ef981b0caadd52ac0ebeb6581085
         ruleIds:
@@ -2871,7 +2872,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:1"
-          lineHint: 274
+          lineHint: 59
         normalizedExcerpt: 1. **Gate 2 dispatch** is authorized for exactly FK-P0–FK-P21, in the ratified dependency order. A new parcel or changed dependency graph reopens Gate 1.
         valueDigest: 0b622848f73f596b86715d031dc5bb3495de074d7304f527d1590042110ed75b
         ruleIds:
@@ -2882,7 +2883,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:2"
-          lineHint: 276
+          lineHint: 61
         normalizedExcerpt: 2. **Shaping and coordinator lint** may proceed when dependencies are satisfied.
         valueDigest: f4f807d5b20c0ca5f0b81dd315bf50b919f81b7e3b9835d00c4c3b38347c5d65
         ruleIds:
@@ -2893,7 +2894,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:3"
-          lineHint: 277
+          lineHint: 62
         normalizedExcerpt: 3. **Local isolated worktrees, branches, commits, tests, and review artifacts** are authorized for the named parcel only. Every parcel gets exact Allowed Files.
         valueDigest: 59274bf7849d83745f73f5d6340ac2d4f322f74e95f69024006382227e42bd30
         ruleIds:
@@ -2904,7 +2905,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:4"
-          lineHint: 279
+          lineHint: 64
         normalizedExcerpt: 4. **Step 0 rulings** stay with the coordinator unless a flag changes a locked decision, external-effect boundary, public contract, security boundary, or exact Allowed Files; those require a ratified amendment before code.
         valueDigest: 05439a2429cd0531778fd867ae77cf2db1bebc40cced12f2daacc81fab68a079
         ruleIds:
@@ -2915,7 +2916,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:5"
-          lineHint: 282
+          lineHint: 67
         normalizedExcerpt: 5. **No external-system effects:** no Jira, cloud, deployment, publication, external communication, Docker-socket, signing, billing, credential, or repository-settings mutation.
         valueDigest: af893209dd88fac411591c072973305926b63ab26bc7b48dceec60522a1f723d
         ruleIds:
@@ -2926,7 +2927,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:6"
-          lineHint: 285
+          lineHint: 70
         normalizedExcerpt: 6. **Gate 3 is not delegated.** Never merge. Present the complete green chain and exact merge target to the human.
         valueDigest: 3d876b410aa392c1cac6b95b512177e5f9e5c94bac78555b89c8fe81d271ba36
         ruleIds:
@@ -2937,28 +2938,28 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:7"
-          lineHint: 287
+          lineHint: 72
         normalizedExcerpt: 7. A push or PR may occur only when the active parcel contract and developer authority clearly cover it; otherwise prepare local PR material and stop before the external action.
         valueDigest: e4d844c1de1d2ce8f1e37e3da793526ab22db0159c35946e3b55b249b98a35e9
         ruleIds:
           - rule.fk-loop-directive.7aa2dd930e35
         exclusionDisposition: null
         rationale: Rule-bearing section or live behavior is mapped to an explicit source-bound rule.
-      - itemId: item.ee7470c4506e
+      - itemId: item.3fe253f7c599
         locator:
           kind: numbered-item
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:8"
-          lineHint: 290
+          lineHint: 75
         normalizedExcerpt: "8. **The ambient `D:/Repos/agent-skills` checkout carries user-owned changes. Never touch or absorb them.** No agent working this goal — coordinator, builder, reviewer, or shaping session — reads from or writes to the ambient checkout, and no user-owned change is absorbed into a parcel branch. Relocated here from `## Current state` by R27, because it is a prohibition and was sitting in a section declared volatile, curated `ruleIds: []` with a boilerplate rationale asserting it stated no rule. It states a rule."
         valueDigest: 3e3272855cda929c9b4336d1fd867362974a57ee2ea501a36c1f9010dbbfb05c
         ruleIds: []
         exclusionDisposition: non-normative-explanation
-        rationale: "Inventory item item.ee7470c4506e at md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:8 is explanatory context and does not state an independent normative authority rule."
+        rationale: "Inventory item item.3fe253f7c599 at md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:8 is explanatory context and does not state an independent normative authority rule."
       - itemId: item.8c0b09120ff1
         locator:
           kind: numbered-item
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:1"
-          lineHint: 299
+          lineHint: 84
         normalizedExcerpt: 1. Verify the current queue item and all dependencies against Git, not memory.
         valueDigest: ee13b48d4f37dab142156a6783dc6664f79a0e1a4fc99ac8b17a588529d0160f
         ruleIds:
@@ -2969,7 +2970,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:2"
-          lineHint: 300
+          lineHint: 85
         normalizedExcerpt: 2. Dispatch a fresh shaping session in docs-only mode. It drafts one spec with exact, non-glob Allowed Files, Forbidden, Out of Scope, contracts, tests, evidence, collision risks, and Step 0 requirements.
         valueDigest: 0e1cba6c1a2421a949e0602db74a6cd8ef301369ce29af862462bec88c528dc0
         ruleIds:
@@ -2980,7 +2981,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:3"
-          lineHint: 303
+          lineHint: 88
         normalizedExcerpt: 3. Coordinator-lint every factual claim on disk. Check the spec against the charter word for word where it restates a locked decision or exit criterion. A missing product decision stops the loop.
         valueDigest: 41f8c513b96064415ffd82c18486e6a75790a94edb5ffcd5855c956f1d1140e4
         ruleIds:
@@ -2991,7 +2992,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:4"
-          lineHint: 306
+          lineHint: 91
         normalizedExcerpt: 4. Gate 2 is already active only if the spec stays within the charter. Create the parcel's named isolated worktree and branch from a verified base; never use the ambient checkout.
         valueDigest: 46ba86c64e4cb304c36a48a4b1b7806556fbab01c91c3896e9cc73ec78636601
         ruleIds:
@@ -3002,7 +3003,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:5"
-          lineHint: 308
+          lineHint: 93
         normalizedExcerpt: "5. Dispatch a fresh builder. Its first action is Step 0 restate-and-stop: scope, exact Allowed Files, branch/worktree, dependencies, contract, verification, and every out-of-scope item. No code before coordinator confirmation."
         valueDigest: 998510f417d8705dbb090d30dfdeaf94f77dd77781cfad3719ba33864d76f32e
         ruleIds:
@@ -3013,7 +3014,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:6"
-          lineHint: 311
+          lineHint: 96
         normalizedExcerpt: 6. Verify the builder's committed SHA and completion claim on disk before accepting it. Wrong-shaped claims are empty. Never dispatch review against uncommitted work.
         valueDigest: 70c5bc58bd2820d23d9db2226784878703bb01124565ae115f34bc96877aa280
         ruleIds:
@@ -3024,7 +3025,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:7"
-          lineHint: 313
+          lineHint: 98
         normalizedExcerpt: 7. Run the parcel's deterministic pass on the coordinator environment. Capture complete command output before trusting exit codes. Node/package work runs sequentially on Windows to avoid dependency-install races.
         valueDigest: de149de237892d7b1707494cf897418436136af483931f4c999e2eaec04c1f91
         ruleIds:
@@ -3035,7 +3036,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:8"
-          lineHint: 316
+          lineHint: 101
         normalizedExcerpt: 8. Every Foreman Kernel parcel is architecture/risk or critical unless its ratified spec says otherwise. Architecture/risk receives **two independent fresh reviews**. Reviewers never fix or commit and are explicitly licensed for hostile-input and mutation probing.
         valueDigest: db05b0dbc2f3348b26893cc1b9f1f383450f8a96f0ae224cc5cafb082146aac7
         ruleIds:
@@ -3046,7 +3047,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:9"
-          lineHint: 319
+          lineHint: 104
         normalizedExcerpt: 9. Triage findings as fix / accept-as-documented / informational. Reproduce disputed blockers before ruling. Rework gets a new Step 0 gate and a test-count tripwire.
         valueDigest: f4ac6092353fbe6956d25caa1b5b45280878b5695dd0c8f29008e7324f2632f7
         ruleIds:
@@ -3057,7 +3058,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:10"
-          lineHint: 321
+          lineHint: 106
         normalizedExcerpt: 10. When green, prepare the verification-chain table and PR material. Stop at the human Gate 3 before merge.
         valueDigest: 1fc69e35e56e76c14da55daaa995ad6e002d8677a0b011314412851c111ff602
         ruleIds:
@@ -3068,7 +3069,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:11"
-          lineHint: 323
+          lineHint: 108
         normalizedExcerpt: "11. After a human merge, perform Stage F: spec to `done/`, lessons with dispositions, evidence index, worktree/branch cleanup, and this state block update."
         valueDigest: e6106647984fd1080bce4f7292331adf51d2cfe8f4556301d7de8d9d5c0be2ae
         ruleIds:
@@ -3079,7 +3080,7 @@ sources:
         locator:
           kind: table-row
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Queue and dependency order:table-row:FK-P0 — Canon authority and enforcement registry"
-          lineHint: 330
+          lineHint: 115
         normalizedExcerpt: "| FK-P0 — Canon authority and enforcement registry | none |"
         valueDigest: 5f87c57b92e8974cddb63b4baabb6c298f0ceb0946243d94343f9d6f6d665a36
         ruleIds: []
@@ -3089,7 +3090,7 @@ sources:
         locator:
           kind: table-row
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Queue and dependency order:table-row:FK-P1 — Lifecycle, admission, and decision contracts"
-          lineHint: 331
+          lineHint: 116
         normalizedExcerpt: "| FK-P1 — Lifecycle, admission, and decision contracts | FK-P0 |"
         valueDigest: aec927c00530d1ab33b574458f6e2c0ef0dfbf6c185c09e135906b9cc4c549a0
         ruleIds: []
@@ -3099,7 +3100,7 @@ sources:
         locator:
           kind: table-row
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Queue and dependency order:table-row:FK-P2 — Spec-body compiler"
-          lineHint: 332
+          lineHint: 117
         normalizedExcerpt: "| FK-P2 — Spec-body compiler | FK-P0, FK-P1 |"
         valueDigest: 144dc1e47bb2155e2fd7cfcfc184550c868c6b28b9998561edb291775d521725
         ruleIds: []
@@ -3109,7 +3110,7 @@ sources:
         locator:
           kind: table-row
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Queue and dependency order:table-row:FK-P3 — Pure dispatch decisions"
-          lineHint: 333
+          lineHint: 118
         normalizedExcerpt: "| FK-P3 — Pure dispatch decisions | FK-P1 |"
         valueDigest: ce8fe8307e9d270ec3ca996502959878181747f97c0296e5fe4886dc1adf9e27
         ruleIds: []
@@ -3119,7 +3120,7 @@ sources:
         locator:
           kind: table-row
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Queue and dependency order:table-row:FK-P4 — Verifier facade"
-          lineHint: 334
+          lineHint: 119
         normalizedExcerpt: "| FK-P4 — Verifier facade | FK-P1, FK-P2, FK-P3 |"
         valueDigest: 91a96f9cd3600cf39486e3ce293e41bd942624a5a7321605412bd6bb35b8bf71
         ruleIds: []
@@ -3129,7 +3130,7 @@ sources:
         locator:
           kind: table-row
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Queue and dependency order:table-row:FK-P5 — Clean-room trust-core spike"
-          lineHint: 335
+          lineHint: 120
         normalizedExcerpt: "| FK-P5 — Clean-room trust-core spike | FK-P4 |"
         valueDigest: 02fd496c910915b41667ef2505bfa5be37d4d3d94fba4ccfdaa09690c1b8da5c
         ruleIds: []
@@ -3139,7 +3140,7 @@ sources:
         locator:
           kind: table-row
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Queue and dependency order:table-row:FK-P6 — Read-only MCP server"
-          lineHint: 336
+          lineHint: 121
         normalizedExcerpt: "| FK-P6 — Read-only MCP server | FK-P4, FK-P5 |"
         valueDigest: 58792456fd8769d923bed60cc1a32f44d0ca1ce15d94e4f2a196e9b9321b90fd
         ruleIds: []
@@ -3149,7 +3150,7 @@ sources:
         locator:
           kind: table-row
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Queue and dependency order:table-row:FK-P7 — Stateless verifier image and launcher"
-          lineHint: 337
+          lineHint: 122
         normalizedExcerpt: "| FK-P7 — Stateless verifier image and launcher | FK-P6 |"
         valueDigest: 666455c0c8763f0a8c853bdcb7e9a73d0b3d3e1966f5dc89a46e29094c940947
         ruleIds: []
@@ -3159,7 +3160,7 @@ sources:
         locator:
           kind: table-row
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Queue and dependency order:table-row:FK-P8 — Stateless harness portability proof"
-          lineHint: 338
+          lineHint: 123
         normalizedExcerpt: "| FK-P8 — Stateless harness portability proof | FK-P7 |"
         valueDigest: ad20dcf629534f78ef96e5a03c5d9bc0cdf8477251ef826f36f55c18528c1836
         ruleIds: []
@@ -3169,7 +3170,7 @@ sources:
         locator:
           kind: table-row
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Queue and dependency order:table-row:FK-P9 — SQLite storage and migration ABI"
-          lineHint: 339
+          lineHint: 124
         normalizedExcerpt: "| FK-P9 — SQLite storage and migration ABI | FK-P1 |"
         valueDigest: 0119cd2d6098b9244218e3ecae1949dab3bc2aa4b53c57379962c658ce076212
         ruleIds: []
@@ -3179,7 +3180,7 @@ sources:
         locator:
           kind: table-row
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Queue and dependency order:table-row:FK-P10 — Lease and transition engine"
-          lineHint: 340
+          lineHint: 125
         normalizedExcerpt: "| FK-P10 — Lease and transition engine | FK-P9 |"
         valueDigest: 1462571d0c699799d6deb50a9e9d51ae006e835205f86bbd0ec845e581dfd764
         ruleIds: []
@@ -3189,7 +3190,7 @@ sources:
         locator:
           kind: table-row
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Queue and dependency order:table-row:FK-P11 — Legacy import and projection engine"
-          lineHint: 341
+          lineHint: 126
         normalizedExcerpt: "| FK-P11 — Legacy import and projection engine | FK-P9, FK-P10 |"
         valueDigest: becaf9328617cf3beecfbc1e0a3002db25a55ad6c60822181e498934b9094a8c
         ruleIds: []
@@ -3199,7 +3200,7 @@ sources:
         locator:
           kind: table-row
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Queue and dependency order:table-row:FK-P12 — Authorization policy engine"
-          lineHint: 342
+          lineHint: 127
         normalizedExcerpt: "| FK-P12 — Authorization policy engine | FK-P2, FK-P10 |"
         valueDigest: 2d968e51a73b07ce04a46998c29676d55dc7c3db3032c73e84d6676b91713a87
         ruleIds: []
@@ -3209,7 +3210,7 @@ sources:
         locator:
           kind: table-row
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Queue and dependency order:table-row:FK-P13 — Admission-protected control catalog"
-          lineHint: 343
+          lineHint: 128
         normalizedExcerpt: "| FK-P13 — Admission-protected control catalog | FK-P6, FK-P10, FK-P11, FK-P12 |"
         valueDigest: c7931b3caac3a6c9d82d5c5f85688bca708cd351278d99f7d47bbda90d140054
         ruleIds: []
@@ -3219,7 +3220,7 @@ sources:
         locator:
           kind: table-row
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Queue and dependency order:table-row:FK-P14 — Stateful image composition and operator lifecycle"
-          lineHint: 344
+          lineHint: 129
         normalizedExcerpt: "| FK-P14 — Stateful image composition and operator lifecycle | FK-P7, FK-P13 |"
         valueDigest: d3e8ac1d30e8172dcf52670401c03e280d0c8e83e1f75200857a84bb829c20c8
         ruleIds: []
@@ -3229,7 +3230,7 @@ sources:
         locator:
           kind: table-row
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Queue and dependency order:table-row:FK-P15 — Stateful restart and admission proof"
-          lineHint: 345
+          lineHint: 130
         normalizedExcerpt: "| FK-P15 — Stateful restart and admission proof | FK-P14 |"
         valueDigest: ae0caa6fe3c47d33b82756766313f7593cda150f57be383ae6490a5b56fef167
         ruleIds: []
@@ -3239,7 +3240,7 @@ sources:
         locator:
           kind: table-row
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Queue and dependency order:table-row:FK-P16 — Claude lifecycle adapter, shadow mode"
-          lineHint: 346
+          lineHint: 131
         normalizedExcerpt: "| FK-P16 — Claude lifecycle adapter, shadow mode | FK-P12, FK-P13, FK-P15 |"
         valueDigest: 780fe3a7f3b7b60e57ad2d0ca517ed314deaf6b6c00d7ffa0c861d67eaf8fa89
         ruleIds: []
@@ -3249,7 +3250,7 @@ sources:
         locator:
           kind: table-row
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Queue and dependency order:table-row:FK-P17 — Bypass and outage harness"
-          lineHint: 347
+          lineHint: 132
         normalizedExcerpt: "| FK-P17 — Bypass and outage harness | FK-P16 |"
         valueDigest: e8b16d6d8adcc779abb36d36949d0e0f08bdc87f9f1d1ab5d958ec1c6872e9d1
         ruleIds: []
@@ -3259,7 +3260,7 @@ sources:
         locator:
           kind: table-row
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Queue and dependency order:table-row:FK-P18 — CI scope and state-evidence backstops"
-          lineHint: 348
+          lineHint: 133
         normalizedExcerpt: "| FK-P18 — CI scope and state-evidence backstops | FK-P17 |"
         valueDigest: 5a7666e2f9d4caed9449eb2e5dbf3463bfb2f82d3b35e266b9b49df87d0436b6
         ruleIds: []
@@ -3269,7 +3270,7 @@ sources:
         locator:
           kind: table-row
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Queue and dependency order:table-row:FK-P19 — High-confidence refusal enforcement"
-          lineHint: 349
+          lineHint: 134
         normalizedExcerpt: "| FK-P19 — High-confidence refusal enforcement | FK-P17, FK-P18 |"
         valueDigest: ffb90c2cb875e0d789a8a211df79e7987c450e351c2c58ec1ec1134932252263
         ruleIds: []
@@ -3279,7 +3280,7 @@ sources:
         locator:
           kind: table-row
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Queue and dependency order:table-row:FK-P20 — Second-host feasibility and host registration"
-          lineHint: 350
+          lineHint: 135
         normalizedExcerpt: "| FK-P20 — Second-host feasibility and host registration | FK-P19 |"
         valueDigest: 81a908bef5041f3e6603ca22a0b94660b332d5c3b35ba2733e80760b53fbc34d
         ruleIds: []
@@ -3289,7 +3290,7 @@ sources:
         locator:
           kind: table-row
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Queue and dependency order:table-row:FK-P21 — Exit evidence manifest and clean-room proof"
-          lineHint: 351
+          lineHint: 136
         normalizedExcerpt: "| FK-P21 — Exit evidence manifest and clean-room proof | FK-P19, FK-P20 |"
         valueDigest: b384f521821d5fb0c0ac0db695f5b187f722f475789209819422b8abbc4e8088
         ruleIds: []
@@ -3299,7 +3300,7 @@ sources:
         locator:
           kind: line-excerpt
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Queue and dependency order:paragraph:1"
-          lineHint: 353
+          lineHint: 138
         normalizedExcerpt: Parallelism is allowed only after contracts merge and only for parcels with no shared serialization point. The coordinator owns sequencing for manifests, lockfiles, package exports, Docker/launcher files, migrations, hook registration, and CI workflows exactly as assigned in the charter.
         valueDigest: 065376030d95fad5633705be071524db81bc2e6d274b8f3939bd25aff59441f1
         ruleIds:
@@ -3310,7 +3311,7 @@ sources:
         locator:
           kind: line-excerpt
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:paragraph:1"
-          lineHint: 360
+          lineHint: 145
         normalizedExcerpt: "FK-P0 produces the canonical authority/enforcement registry and reconciles operative contradictions before any runtime contract freezes. Its spec must:"
         valueDigest: 7d7ccb4c403244f2f892e456b796760446d91faba3aadd382e939257fa97e246
         ruleIds:
@@ -3321,7 +3322,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:1"
-          lineHint: 363
+          lineHint: 148
         normalizedExcerpt: "- inventory every standing builder, reviewer, coordinator, gate, stop, and authority rule;"
         valueDigest: bada3350b9d806809d70021ef45c82bacebac6778bc9e1b001e7b5c6fc7d7374
         ruleIds:
@@ -3332,7 +3333,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:2"
-          lineHint: 364
+          lineHint: 149
         normalizedExcerpt: "- classify each rule as pre-action refusal, post-action detection, CI/static check, independent review/human judgment, narrative provenance, or unsupported;"
         valueDigest: 05c9547421cceb08780feaf0f0db87d3e2550437965a828eabed603919c69dbe
         ruleIds:
@@ -3343,7 +3344,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:3"
-          lineHint: 366
+          lineHint: 151
         normalizedExcerpt: "- define precedence, stable rule identity, source locator/digest, applicability, severity, decision semantics, enforcement owner, retirement state, and corpus-sweep evidence;"
         valueDigest: e55798c2489cc0019bf657d2de8a5db4477abb3a64da21a8207b3e7436dc7384
         ruleIds:
@@ -3354,7 +3355,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:4"
-          lineHint: 368
+          lineHint: 153
         normalizedExcerpt: "- reconcile gate-count language, current spec-linter/profile behavior, and live-vs-stale canon without rewriting historical artifacts;"
         valueDigest: 89df9305ae131c87388ca52a47957701b509d619660c2f6e85d9201c56045e63
         ruleIds:
@@ -3365,7 +3366,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:5"
-          lineHint: 370
+          lineHint: 155
         normalizedExcerpt: "- mechanically prohibit human approval, independent-verifier evidence, merge authority, closure authority, and generic receipt minting from agent-callable control state;"
         valueDigest: 1839505137bcc51f0c95fdd7094c3f6ddad3c0b48060dc95cfc69a1fce32297c
         ruleIds:
@@ -3376,7 +3377,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:6"
-          lineHint: 372
+          lineHint: 157
         normalizedExcerpt: "- define golden registry fixtures and mutation controls for identity/location/value, stale-source, duplicate-rule, contradictory-authority, and missing-source cases; and"
         valueDigest: 3e1499685537b227078b7622b31b876fb733d7c5679397c6318a8348b04d05b1
         ruleIds:
@@ -3387,7 +3388,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:7"
-          lineHint: 374
+          lineHint: 159
         normalizedExcerpt: "- remain contract/docs only: no hooks, MCP server, SQLite runtime, Docker, external calls, or edits to the user-owned routing policy change."
         valueDigest: 52b63de667334e9f11914511490d105353c43393156bfe4a4394373e331a580f
         ruleIds:
@@ -3398,7 +3399,7 @@ sources:
         locator:
           kind: line-excerpt
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:paragraph:1"
-          lineHint: 379
+          lineHint: 164
         normalizedExcerpt: "Stop and report if:"
         valueDigest: 6450a85e73e166f0543fa3384fc7d260b8262b26ce4cee89eb62fa0f286d6d5b
         ruleIds:
@@ -3409,7 +3410,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:1"
-          lineHint: 381
+          lineHint: 166
         normalizedExcerpt: "- ownership is ambiguous or another live coordinator is named;"
         valueDigest: 01c5202d872cd3cea7c684246fee6db2cbbff89f14033f5a7e61cfaae7ac30a3
         ruleIds:
@@ -3420,7 +3421,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:2"
-          lineHint: 382
+          lineHint: 167
         normalizedExcerpt: "- a locked decision, parcel graph, exit criterion, external-effect boundary, or human gate needs to change;"
         valueDigest: a755d1e31a0894e6cc9fd4622490f35399891eaf3dbbcbf0d82e481965e9dcb8
         ruleIds:
@@ -3431,7 +3432,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:3"
-          lineHint: 384
+          lineHint: 169
         normalizedExcerpt: "- a required file falls outside exact Allowed Files;"
         valueDigest: 13775d792df3d66f0b9dd513126041771877985254eaaec867667417801fa018
         ruleIds:
@@ -3442,7 +3443,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:4"
-          lineHint: 385
+          lineHint: 170
         normalizedExcerpt: "- a current goal/parcel owns a required serialization point and sequencing is unresolved;"
         valueDigest: 9b79aa4b5e37b70e929681d0bd41531c8509114a9d1291abc10c538ae86063d9
         ruleIds:
@@ -3453,7 +3454,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:5"
-          lineHint: 386
+          lineHint: 171
         normalizedExcerpt: "- a proposed control trusts self-asserted identity or can manufacture human/independent authority;"
         valueDigest: 5c30cd975ca9a667989beb9b1fc3789dfe0f26b6c2dbe93c12a393e9d91ee383
         ruleIds:
@@ -3464,7 +3465,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:6"
-          lineHint: 388
+          lineHint: 173
         normalizedExcerpt: "- a read-only path can escape its admitted repository or reach the state volume;"
         valueDigest: 7ed75328212d68a5913b89be57b487562757fd58fcd271f721cc18286b037426
         ruleIds:
@@ -3475,7 +3476,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:7"
-          lineHint: 389
+          lineHint: 174
         normalizedExcerpt: "- a security finding cannot close inside the parcel;"
         valueDigest: b0c2b348976767507fbbb967a414484a267364d40730420c4ce028bd2eab7aa4
         ruleIds:
@@ -3486,7 +3487,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:8"
-          lineHint: 390
+          lineHint: 175
         normalizedExcerpt: "- the same tripwire/rework cap fires as defined by the parcel;"
         valueDigest: 1097a50e23ecbb6d0fc320e4e76bcba4735004c4731707d2265e605f39989b6d
         ruleIds:
@@ -3497,7 +3498,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:9"
-          lineHint: 391
+          lineHint: 176
         normalizedExcerpt: "- a reviewer or builder modifies the ambient checkout or another worktree;"
         valueDigest: fa09e709a0db1b2e7160eaf477e02686995b6606a28c1fb9f62bebc6194b98b3
         ruleIds:
@@ -3508,7 +3509,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:10"
-          lineHint: 392
+          lineHint: 177
         normalizedExcerpt: "- a user-owned change collides with the parcel; or"
         valueDigest: dc2f6b2d5dc7afd2d3446291787c30babd9e2cf928c6d54bfd6ea38f9ab60609
         ruleIds:
@@ -3519,38 +3520,38 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:11"
-          lineHint: 393
+          lineHint: 178
         normalizedExcerpt: "- the queue is empty without every goal exit criterion evidenced."
         valueDigest: ec8475cfabc86aa8814118651ceb6e6de07612c78019a9f8628eef11b79ab7bd
         ruleIds:
           - rule.fk-loop-directive.237865e0993f
         exclusionDisposition: null
         rationale: Rule-bearing section or live behavior is mapped to an explicit source-bound rule.
-      - itemId: item.52d7bfd093ea
+      - itemId: item.8cff5ee3a8e0
         locator:
           kind: line-excerpt
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions > ### Standing stop-condition override — the FK-P0 / A2 spiral:paragraph:1"
-          lineHint: 397
+          lineHint: 182
         normalizedExcerpt: "Relocated here from `## Current state` by R26 ruling 2. It was misfiled: this is a standing stop condition, not a status record, and while it sat inside the volatile state section R24's region 1 would have made it permanently uninventoriable. Its text is unchanged by the move."
         valueDigest: b06c9e76a43df63545594293e469fc4dbe707194b3d36cc0100f6f2e4b7492e9
         ruleIds: []
         exclusionDisposition: non-normative-explanation
-        rationale: "Inventory item item.52d7bfd093ea at md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions > ### Standing stop-condition override — the FK-P0 / A2 spiral:paragraph:1 is explanatory context and does not state an independent normative authority rule."
-      - itemId: item.f9a0e297db71
+        rationale: "Inventory item item.8cff5ee3a8e0 at md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions > ### Standing stop-condition override — the FK-P0 / A2 spiral:paragraph:1 is explanatory context and does not state an independent normative authority rule."
+      - itemId: item.f2ca73012926
         locator:
           kind: line-excerpt
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions > ### Standing stop-condition override — the FK-P0 / A2 spiral:paragraph:2"
-          lineHint: 401
+          lineHint: 186
         normalizedExcerpt: "The prior owner drove FK-P0 through twelve rework rounds and amendment A2 through four drafts without landing either, overriding the charter's own “same tripwire fires” stop condition each time. That condition is reinstated with teeth: **this owner takes FK-P0 through at most two rework rounds.** A third stops the loop and reports. Rework-round count is measured from `df8155a` forward under this ownership; inherited rounds are not carried, but neither are they credited."
         valueDigest: ed34704bf0d20ac6e8f7817222b4e665added3d9a4b29f19c4d52863ce99f24c
         ruleIds: []
         exclusionDisposition: non-normative-explanation
-        rationale: "Inventory item item.f9a0e297db71 at md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions > ### Standing stop-condition override — the FK-P0 / A2 spiral:paragraph:2 is explanatory context and does not state an independent normative authority rule."
+        rationale: "Inventory item item.f2ca73012926 at md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions > ### Standing stop-condition override — the FK-P0 / A2 spiral:paragraph:2 is explanatory context and does not state an independent normative authority rule."
       - itemId: item.7ad3390acb6b
         locator:
           kind: line-excerpt
           anchor: "md-block:# Foreman Kernel — Coordinator Loop Directive > ## Wakeup and crash recovery:paragraph:1"
-          lineHint: 410
+          lineHint: 195
         normalizedExcerpt: Completion notifications are the primary wake signal. Use long fallback waits only while a builder or reviewer is running; never poll rapidly. After a host restart or missing result, check whether the session is still running before interpreting disk state. Uncommitted work without a completion claim is unclaimed. A recovery session must restate the original directive, inventory disk state and test count, identify gaps/half-written files, and stop for coordinator ruling before continuing.
         valueDigest: 631047721b0c7e2d40791718415c840e5fc950936a6da471ef5b74ce7604560f
         ruleIds:
@@ -15867,7 +15868,7 @@ sources:
         ruleIds: []
         exclusionDisposition: non-normative-explanation
         rationale: "Inventory item item.cebeea8b2df4 at md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## CLI and exit-code contract:paragraph:3 is explanatory context and does not state an independent normative authority rule."
-      - itemId: item.415a6d066f37
+      - itemId: item.9ecd2f911a8f
         locator:
           kind: table-row
           anchor: "md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## CLI and exit-code contract > table-group:2:table-row:`0`"
@@ -15876,8 +15877,8 @@ sources:
         valueDigest: a760e4f04584bb7ff4a9ed66efb0cec3d6f31e497b0f86fce4922edd36eb4c35
         ruleIds: []
         exclusionDisposition: non-normative-explanation
-        rationale: "Inventory item item.415a6d066f37 at md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## CLI and exit-code contract > table-group:2:table-row:`0` is explanatory context and does not state an independent normative authority rule."
-      - itemId: item.8083a278274d
+        rationale: "Inventory item item.9ecd2f911a8f at md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## CLI and exit-code contract > table-group:2:table-row:`0` is explanatory context and does not state an independent normative authority rule."
+      - itemId: item.fe475715e2f1
         locator:
           kind: table-row
           anchor: "md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## CLI and exit-code contract > table-group:2:table-row:`1`"
@@ -15886,8 +15887,8 @@ sources:
         valueDigest: 4e9c58867abdf58c0ff4221f30940e8c06575ba50bc844baa228573497686968
         ruleIds: []
         exclusionDisposition: non-normative-explanation
-        rationale: "Inventory item item.8083a278274d at md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## CLI and exit-code contract > table-group:2:table-row:`1` is explanatory context and does not state an independent normative authority rule."
-      - itemId: item.d321e34861c9
+        rationale: "Inventory item item.fe475715e2f1 at md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## CLI and exit-code contract > table-group:2:table-row:`1` is explanatory context and does not state an independent normative authority rule."
+      - itemId: item.11e2c84468cc
         locator:
           kind: table-row
           anchor: "md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## CLI and exit-code contract > table-group:2:table-row:`2`"
@@ -15896,7 +15897,7 @@ sources:
         valueDigest: 52179c6f631ed69318de7c16924610f09c8db2e07b96c39455402a04ca8b5a86
         ruleIds: []
         exclusionDisposition: non-normative-explanation
-        rationale: "Inventory item item.d321e34861c9 at md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## CLI and exit-code contract > table-group:2:table-row:`2` is explanatory context and does not state an independent normative authority rule."
+        rationale: "Inventory item item.11e2c84468cc at md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## CLI and exit-code contract > table-group:2:table-row:`2` is explanatory context and does not state an independent normative authority rule."
       - itemId: item.dcce597bf88f
         locator:
           kind: line-excerpt
@@ -19460,6 +19461,45 @@ rules:
       corpusSweep: null
       independentBypassAttempt: null
     bindingDigest: b30518b56f3021c28ba0c2a6735a00c839d6129504c71e8b4dd524b082530561
+  - ruleId: rule.fk-charter.ff0f88a958e0
+    authoritySubject: integration-scenario.decision-path-latency
+    authorityClaim: warm-kernel-meets-the-d21-budget-with-outage-and-stale-cache-evidence
+    normalizedStatement: 14. **Decision-path latency:** on the D20 platform, a warm kernel serves a representative governed-mutation decision within the D21 budget for both measured spans; the first-call-after-start figure is recorded separately; a decision exceeding the hard deadline is reported as kernel-unreachable and inherits the D8 outage posture without failing open; and an authorization cache entry whose `goalRevision`, `policyDigest`, or compiled-scope digest no longer matches produces `STATE_REVISION_STALE` rather than a stale ALLOW.
+    sourceRefs:
+      - sourceId: fk-charter
+        itemId: item.ff0f88a958e0
+        locatorDigest: 00e847cc369683866f6184df0d1bf77bd07fb81b2300999de85705eaff3a6233
+        valueDigest: 00d00f41d915f0d64eec83652adbac10b29ccf70d175562fa3aa5475f853b451
+    authorityBasisRef:
+      sourceId: fk-charter
+      itemId: item.ff0f88a958e0
+      locatorDigest: 00e847cc369683866f6184df0d1bf77bd07fb81b2300999de85705eaff3a6233
+      valueDigest: 00d00f41d915f0d64eec83652adbac10b29ccf70d175562fa3aa5475f853b451
+    applicability:
+      goals:
+        - foreman-kernel
+      roles:
+        - ci
+      stages:
+        - deterministic-verify
+      operations:
+        - control-call
+      hosts:
+        - claude-windows-docker-loaded
+    severity: medium
+    classification: ci-static-check
+    decision: ADVISORY
+    refusalCode: null
+    enforcementOwner: ci
+    assurance: detected
+    pairedRuleIds: []
+    retirementState: active-reading
+    retirementEvidence:
+      predicate: null
+      negativeRefusalTest: null
+      corpusSweep: null
+      independentBypassAttempt: null
+    bindingDigest: 812efa00ccb51b3a9c60789356a2b7e3014483ffc796666fa262324f7aa58e66
   - ruleId: rule.fk-charter.e9ec57edc0a2
     authoritySubject: goal.exit-merge
     authorityClaim: all-parcels-require-human-gate3-merge
@@ -39060,8 +39100,8 @@ reconciliations:
         reference: '{"actorClass":"coordinator","commandId":"registry-binding-manifest-r14","exitCode":0,"inputDigest":"502bc751a4e9360b0ccd3856a29dbad2ce6dd6a0f3559c4cb6ca0c8d7c3f2f0c","resultDigest":"767dabec7dce1bcd9c1436fab93107d049747d1e20d60d6715a3af06e015775a","tool":"@foreman-line/authority-registry","toolVersion":"0.1.0"}'
         digest: 2341bc921a8620e18903ac9437a68afe9f171156c03a39151569dbd9720cbded
       - kind: command-result
-        reference: '{"actorClass":"coordinator","commandId":"superseding-binding-manifest-r15","exitCode":0,"inputDigest":"767dabec7dce1bcd9c1436fab93107d049747d1e20d60d6715a3af06e015775a","resultDigest":"fa2f2cc72808e32ef2ce8581cb1b367bdf47c43fdda6f627aec2c888c924e99e","tool":"@foreman-line/authority-registry","toolVersion":"0.1.0"}'
-        digest: abde0dd95e380fae509b6e1e9f71e82ee07d1e3d860dbf94a18840493f673b0f
+        reference: '{"actorClass":"coordinator","commandId":"superseding-binding-manifest-r15","exitCode":0,"inputDigest":"767dabec7dce1bcd9c1436fab93107d049747d1e20d60d6715a3af06e015775a","resultDigest":"3e8bd69b721ebf1b8e91bc44d13c29703f82c223842b039d4f1060f9638b7fd4","tool":"@foreman-line/authority-registry","toolVersion":"0.1.0"}'
+        digest: dfdbdd7beeb4cac294e2193f9fcedab05d1090dad54f7bf7c780cee997c706e6
     authoritativeRuleIds:
       - rule.fk-charter.2a524c1ea63f
     scopedDisposition: "The R24 declared volatile regions, excised before block discovery and before ordinal assignment, supersede the R14 registry bindings in FK scope: the loop directive's operational state no longer occupies an ordinal, so appends to it cannot displace a governed sibling. Two obligations are recorded together. First, the source baseline advances to the commit whose bytes were hashed. Second, rule.fk-loop-directive.ae7854c7dad1 is DE-PUBLISHED, not retired: its subject goal.current-state-record and claim stage-zero-complete-and-fk-p0-next were an operational status snapshot published as canon, and its backing item left the audited inventory by removal into the declared region. Its final locatorDigest was cd404753257ddc78f7d8f473b679ce9410d745af89a459363f029838e6941c6c and its final valueDigest was 39dd6f0a5551d6fde0f694415fcb01f6f407115c1ca5a74da7b570239d61f371, pinned here because an observedRef must resolve to a live item and this one no longer exists."
