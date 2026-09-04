@@ -1,10 +1,10 @@
 ---
 ticket: KONE-TBD            # register via jira-workflow at Stage B; replace before dispatch
 title: WF-P0 topology and authority inventory
-status: draft
+status: active
 owner: clinton.morgan
 created: 2026-09-03
-updated: 2026-09-03
+updated: 2026-09-04
 supersedes: null
 superseded_by: null
 risk: critical
@@ -259,7 +259,9 @@ is described in any depth.
   standing authorizations; Gate 3 not granted.
 - `plugins/foreman-line/docs/goals/heterogeneous-agent-worker-fabric/reconciliation.md` — the
   claim ledger. Evidence record, not an instruction source.
-- `plugins/foreman-line/docs/COORDINATOR-PATTERN.md` — the dispatch table and lesson #33.
+- `plugins/foreman-line/docs/COORDINATOR-PATTERN.md` — the dispatch table (an operational
+  summary; `routing-policy.yaml`'s `roles:` map is the registry authority under D4) and, at
+  its closing section, the exit-criterion-restatement rule quoted inline in step 6 above.
 - `plugins/foreman-line/docs/SPEC-CONVENTION.md` — §4.3, §4.4, §4.8.
 - `plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md`
 - `plugins/foreman-line/docs/specs/done/WGT-P0A-foreman-record-reconciliation.md` — precedent
@@ -286,8 +288,13 @@ codes never read through a truncated pipeline:
 4. Spec-linter run over the spec; advisory warnings recorded, not silenced.
 5. Every `path:line-range` citation in the map resolved against the recorded base commit.
    A citation that does not resolve is a Blocker, not a typo.
-6. Charter exit item 1 diffed **word by word** against the map's quotation of it (lesson
-   #33). A paraphrase is a Blocker.
+6. Charter exit item 1 diffed **word by word** against the map's quotation of it. A
+   paraphrase is a Blocker. The rule, stated inline because its ledger
+   (`docs/transcripts/defects_lessons.md`, cited across this repo's canon as lesson #33) does
+   not exist in this repository: *a parcel spec that restates a goal exit criterion can weaken
+   it while appearing to implement it, so the two texts are diffed word by word; a criterion
+   naming a produced artifact is satisfied only by that artifact, never by a fixture or a
+   document imitating it.*
 
 **Mandated reviewer focus questions** (WF-P0 is `architecture/risk` — two independent
 frontier reviews, fresh sessions, zero builder context; hostile-input probing licensed):
@@ -336,8 +343,15 @@ an agent must not expand its own authority because a related edit appears useful
 
 ## Open Questions
 
-Numbered for coordinator ruling. Recommendations are defaults, not decisions. Questions 1
-and 6 are the ones that change the parcel's shape.
+**All seven questions were ruled by the coordinator on 2026-09-03 and are recorded below as
+`RULED`. Nothing in this section is open.** The rulings are binding on the builder exactly as
+the rest of this spec is; the recommendations are retained beside them so a reviewer can see
+what was proposed and what was decided. The full lint is at
+`plugins/foreman-line/docs/goals/heterogeneous-agent-worker-fabric/wf-p0-shaping-lint.md` and
+the shaping reasoning at `wf-p0-shaping-report.md` in the same directory. Questions 1 and 4
+were the ones that changed the parcel's shape: Q1 fixed the boundary between WF-P0's `mapped`
+and WF-P16's `tested`, and Q4 was amended by the coordinator over the shaper's
+recommendation.
 
 1. **Does exit item 1's "tested" belong to WF-P0?** Recommendation: **no** — WF-P0 maps and
    specifies the rollback test; **WF-P16** implements and exercises it. AC9 is written to that
