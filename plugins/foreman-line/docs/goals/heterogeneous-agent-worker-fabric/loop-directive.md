@@ -224,8 +224,17 @@ authority, a citation that must resolve — over any instruction to be careful.
 1. **Routing-class cost.** The ratified graph prices 15 of 18 parcels `architecture/risk`,
    which means a frontier builder plus two independent reviews each. The developer declined to
    re-rule classes at ratification. You may propose a scoped demotion amendment for specific
-   parcels — WF-P16, and possibly WF-P13 — once their shaping makes the cost concrete. Until
-   ratified, the recorded classes bind.
+   parcels once their shaping makes the cost concrete. Until ratified, the recorded classes
+   bind.
+
+   **WF-P0 is settled: do not demote it.** Its shaping session argued the case and the
+   coordinator accepts it. The document carries roughly sixty individually falsifiable claims
+   that seventeen parcels inherit, its entire value is citation accuracy, and claim-checking
+   against disk is exactly what a second independent reviewer catches that a first misses —
+   the provenance of the dual-review rule itself being two frontier reviews of W0-P4 that
+   agreed on every focus question while only one found the blocker. A frontier builder plus
+   two frontier reviews for one Markdown file is the right price here. **WF-P16 and WF-P13
+   remain the demotion candidates.**
 2. **The lessons ledger does not exist in this repository.** Both `STANDING-CONSTRAINTS.md`
    and `foreman-line-coordinator-carryover.md` cite `docs/transcripts/defects_lessons.md` for
    the provenance of lessons #1–#36, but that path is absent here (`docs/transcripts/` does
