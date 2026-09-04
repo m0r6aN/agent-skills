@@ -180,8 +180,13 @@ Each criterion is checkable against disk by a reviewer with no builder context.
   `hierarchical-coordination-sidecars` are recorded as separately owned (charter D7), with
   their on-disk status on the base commit and any interface WF-P1…WF-P18 would consume. No
   file belonging to either goal is modified and no serialization point of theirs is claimed.
-- [ ] **AC12 — Scope and cleanliness.** `git diff --name-only origin/main...HEAD` is a subset
-  of `## Allowed Files`; `git diff --check` is clean; no package source, schema,
+- [ ] **AC12 — Scope and cleanliness.** `git diff --name-only <parcel base SHA>..HEAD` is a
+  subset of `## Allowed Files`, where *parcel base SHA* is the 40-character base recorded in
+  the map header per AC2 — **not** `origin/main`. The two are not the same commit for this
+  parcel: the ratified base amendment moved the base to the shaping-branch tip, which carries
+  the coordinator's and shaping session's own commits, so an `origin/main` diff reports
+  inherited paths this parcel never touched and the criterion becomes unsatisfiable while the
+  parcel is in fact clean. `git diff --check` is clean; no package source, schema,
   `routing-policy.yaml`, `permission-profiles.yaml`, contract, validator, or test file is
   touched.
 - [ ] **AC13 — Two independent adversarial reviews return PASS** with no unresolved Blocker,
