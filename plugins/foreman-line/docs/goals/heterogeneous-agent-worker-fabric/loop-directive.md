@@ -231,6 +231,47 @@ base was corrected in the Constraints bullet and left stale in AC12. That the au
 lesson immediately reproduced the lesson is the strongest available argument that the
 countermeasure has to be structural rather than attentional.
 
+## Verify the verifier: the deterministic pass is not exempt (earned 2026-09-04)
+
+The coordinator's own citation-resolution check — deterministic-pass step 5, the step whose
+whole purpose is catching Blockers — **reported 38 out-of-range citations in a map that had
+none.** Had it been believed, it would have sent a clean artifact into a full rework cycle,
+which is the most expensive mistake available at closure and one that also teaches every agent
+downstream that the checks lie.
+
+Two independent bugs, both silent:
+
+1. **`(Get-Content $f | Measure-Object -Line).Lines` does not count blank lines.** It
+   under-reports every prose file by roughly its paragraph count —
+   `COORDINATOR-PATTERN.md` measured 60 against an actual 89. Use `(Get-Content $f).Count`,
+   which is the array length and counts every line. This belongs beside "PowerShell only,
+   `node -v` first" as a shell-discipline rule, because it fails green-adjacent: it produces
+   a plausible number rather than an error.
+2. **Resolving a partial path by basename silently binds to an arbitrary same-named file.**
+   Citations like `dispatch/src/routing-eval/index.ts:140` were resolved by searching for
+   `index.ts` and taking the first hit, so eight distinct files all became one 55-line
+   stranger. The tell was the repeated "file has 55 lines" across unrelated modules.
+   Either resolve a path from the repo root or report it as **not mechanically checkable** —
+   never guess and then report the guess as a finding.
+
+**The rule that actually caught it, and the one to carry:** the broken check contradicted a
+fact the coordinator had personally verified an hour earlier — that `routing-policy.yaml:169`
+reads `shadow_routes: {}`. It claimed the file had 164 lines. **When a check contradicts
+something you verified by hand, suspect the check before the artifact.** A tool disagreeing
+with direct observation is a hypothesis about the tool, not a finding about the work.
+
+Corrected result, for the record: of 206 citation-shaped strings in the map, 36 resolve from
+the repo root and **all 36 are in range**; 170 are context-relative and not checkable by
+root resolution, of which the load-bearing ones (`types.ts:87-90` → the `PROFILE_NAMES` tail,
+`permission-profiles.yaml:174-176`, `routing-policy.schema.json:170` →
+`"additionalProperties": false`) were confirmed by hand to resolve **and to contain the
+content cited for**. Zero Blockers.
+
+Two process points follow. A check's *first* run is unvalidated code, so validate it against a
+known-good and a known-bad case before trusting either verdict. And a mechanical check that
+cannot resolve most of its inputs — 170 of 206 here — should report that coverage honestly
+rather than presenting the checkable minority as a complete pass.
+
 ## The parcel's dominant failure mode: a local fix, left unpropagated
 
 Six defects surfaced on WF-P0 before a line of the map was written; five were the
