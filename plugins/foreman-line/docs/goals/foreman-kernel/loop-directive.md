@@ -80,8 +80,61 @@ occurred.** FK-P0 re-enters adversarial review from zero under this owner.
 
 ## Current state — update at every stop or parcel closure
 
-**STATE 2026-09-03 #2 (live) — FK-P0 IS NOT MERGE-READY. A BLOCKER WAS FOUND WHILE EXECUTING THE
-DEVELOPER-APPROVED MERGE. The loop is STOPPED awaiting a developer ruling.**
+**STATE 2026-09-03 #2 (live) — REWORK ROUND 6 DISPATCHED. Blocker found while executing the
+developer-approved merge; developer ruled "rework"; R24 ratified and committed alone; builder
+holding at its Step 0 gate.**
+
+**Round 6, in order, all committed on the parcel branch:**
+
+| commit | what |
+|---|---|
+| `a100a91` | Option B intermediate merge — goal records carried onto the parcel branch, documentation only |
+| `47a26be` | **coordinator-ratified spec amendment R24**, committed alone before any code, per SPEC-CONVENTION §11 |
+| `43d1614` | rework round 6 kickstarter — builder proposes the mechanism |
+
+**R24 in one sentence:** the registry recognizes *volatile operational state* — content inside a
+governed source that carries no independent rule and that canon requires to change — declared at
+**region scope rather than item scope**, so editing within a region needs no regeneration. Note
+that source-corpus entry 3's own enumeration of what `loop-directive.md` contributes never
+included current state, so R24 narrows the boundary to what the spec already described.
+
+**Three controls make R24 a tightening rather than a weakening, and amended AC3 is not met unless
+all three hold:** (a) a negative control proving declared regions absorb both an appended
+paragraph and a byte change; (b) a positive control proving a mutated *governed* sentence in the
+same source still fails closed with its specific code — without which (a) cannot be distinguished
+from a disabled sweep; and (c) an anti-laundering control proving the validator refuses, fail-
+closed, any region declaration overlapping a published rule's locator. Absent (c), R24 would be a
+mechanism for retiring any rule by declaring its neighbourhood volatile — strictly worse than the
+defect it repairs.
+
+**Mechanism was deliberately left to the builder** and is the substantive Step 0 deliverable.
+R16, R19 and R22 were each designed from this chair and each needed correction; this round asks
+the builder for a design with alternatives and named rejections, and the coordinator rules before
+code. The builder was also asked to challenge R24's region list directly — the ownership block
+mixes rule sentences with owner identity and handoff records in one blockquote, and whether that
+separates at region granularity is a real open question, not a settled one.
+
+**Test-count tripwire for round 6, against a measured baseline:** 583 total / 580 pass / 3 fail
+at `a100a91`. Requires total ≥ 583 plus the new controls, 0 fail, and the three previously-failing
+tests passing *for the right reason* rather than by having their expectations edited.
+
+**Do not edit `loop-directive.md` on the parcel branch while round 6 is live.** It is the
+builder's measurement target; editing it moves the baseline mid-round. This state block therefore
+lives only on the goal branch until round 6 closes, and the two copies are knowingly divergent.
+
+**Still true and unchanged:** not pushed, not merged, Stage F not run, **Gate 3 not delegated.**
+`git reset --hard 838f438` still reverts to the pre-Option-B head if the developer prefers Option
+A, though that now discards R24 and the round-6 kickstarter with it.
+
+**Amendment A3 (standing authorization widening) is DRAFTED AND NOT IN FORCE.** Drafted at the
+developer's request, then deliberately left unratified: the auto-mode classifier refused a
+coordinator self-ratification of its own standing authority on a generic blanket grant, and that
+refusal was correct — it is the same laundering the charter forbids. Round 6 needed no part of it;
+the existing two-round cap authorizes this round, since FK-P0's five prior rounds were prior
+ownership. Any clause requires the developer to ratify it in their own words, naming the clause.
+
+**SUPERSEDED — the state this block replaces:** FK-P0 IS NOT MERGE-READY, loop STOPPED awaiting a
+developer ruling. The ruling arrived.
 
 Read `FK-P0-BLOCKER-volatile-canon-source.md` first; it is the substantive record.
 
