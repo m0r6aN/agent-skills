@@ -1595,9 +1595,19 @@ registry under test.
 
    - **(a) Negative control — volatile regions absorb change.** A test mutates each declared
      volatile region of `loop-directive.md` in the two ways that broke it: appending a new
-     paragraph and altering bytes in an existing one. The sweep exits 0 with zero violations. The
-     reproduction on record — 45 violations across `## Current state`, the ownership block, and
-     the queue `State` column — is the fixture this control must retire.
+     paragraph and altering bytes in an existing one. The sweep exits 0 with zero violations.
+
+     **The reproduction figure is measured at the start of the round, never quoted from a prior
+     record.** It has moved three times as the source corrections landed, each move expected and
+     each closing on regeneration: **45** at `a100a91` (10 `VALUE_DIGEST_MISMATCH`, 35
+     `SOURCE_ITEM_UNCOVERED`), **53** at `85760ff` (the relocation vacated two anchors, adding
+     `LOCATOR_MISSING` — a code absent from the blocker record), and **71** at `0a24bc8`
+     (11 `LOCATOR_MISSING`, 54 `SOURCE_ITEM_UNCOVERED`, 6 `VALUE_DIGEST_MISMATCH`; obligations
+     2b/2c moved blocks under two new `###` paths, so their old anchors are missing rather than
+     mismatched — which is why `VALUE_DIGEST_MISMATCH` *fell* from 10 to 6 while the total rose).
+     A reviewer comparing against 45 would misread the difference as a regression introduced by
+     the round; it is the coordinator's own source corrections, and it is recorded here so the
+     comparison is against the right number.
    - **(b) Positive control — governed prose still fails closed.** A test mutates a *governed*
      normative sentence in the **same** source, specifically one of the ownership block's rule
      sentences, and asserts the sweep still reports a violation with the specific expected code.
