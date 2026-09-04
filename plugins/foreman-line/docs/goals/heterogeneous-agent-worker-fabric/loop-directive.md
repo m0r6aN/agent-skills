@@ -194,6 +194,43 @@ Corollary for ratification specifically: `status: draft` → `active` is the coo
 decision, but it need not be the coordinator's *keystroke*. Prefer ruling and having the
 shaping session commit the flip.
 
+## Dispatch artifacts must live on the branch you dispatch from (earned 2026-09-04)
+
+**Root cause of three of WF-P0's defects, all the coordinator's.** This goal ran two divergent
+branches — a coordinator branch (`claude/heterogeneous-agent-worker-fabric-coordinator-20260903`)
+holding the charter, loop directive, kickstarters, and lint records, and a parcel branch
+(`claude/hwf-wf-p0-shaping-20260903`, then `claude/hwf-wf-p0-20260904`) holding the spec and the
+shaping report. The coordinator wrote artifacts to the first and dispatched agents from the
+second, with cross-references pointing between them. Consequences, each found by the builder
+rather than the coordinator:
+
+1. **The builder's own dispatch directive was absent from its worktree.** The kickstarter was
+   committed to the coordinator branch (`bda734d`), which is not an ancestor of the builder's
+   base (`b9f4e1a`). The dispatch message asserted the file was "committed in your worktree at
+   …" and it was not. The builder located it in the coordinator worktree and read it read-only,
+   which was the correct recovery.
+2. **The ratified spec cites a file its own branch does not contain** — `wf-p0-shaping-lint.md`,
+   written to the coordinator branch (`2ef49df`).
+3. **AC12 became unsatisfiable.** Its check is `git diff --name-only origin/main...HEAD`, which
+   returns nine paths on the parcel base because the base moved to a branch tip carrying the
+   coordinator's and shaping session's own commits. Measured correctly — against the parcel's
+   own base SHA — the builder changed exactly one file, so the criterion's *intent* held while
+   its wording failed.
+
+**The rules.** Before dispatching: (a) verify every path the directive names actually exists in
+the target worktree — `git -C <worktree> cat-file -e <base>:<path>` or simply read it there,
+because asserting a location is the same defect class as asserting a lint's checkout; (b) keep
+one lineage per goal, or consolidate before dispatch — the parcel branch is based on the
+coordinator branch, and the coordinator merges its own artifacts down before an agent needs
+them; (c) any acceptance criterion whose check names a diff base must name **the parcel's base
+SHA**, never `origin/main`, unless the two are provably identical.
+
+Defect 3 deserves its own note: it is an instance of the failure mode named in the next
+section, committed by the coordinator **in the same document, one turn after naming it** — the
+base was corrected in the Constraints bullet and left stale in AC12. That the author of the
+lesson immediately reproduced the lesson is the strongest available argument that the
+countermeasure has to be structural rather than attentional.
+
 ## The parcel's dominant failure mode: a local fix, left unpropagated
 
 Six defects surfaced on WF-P0 before a line of the map was written; five were the
