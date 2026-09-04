@@ -197,6 +197,78 @@ fixes the invariants, the exhaustive region list, and the anti-laundering contro
 shape, schema changes, and sweep implementation are proposed by the builder at Step 0 and ruled on
 before any code is written.
 
+### R25 — R24's region list was wrong, and the real defect is curation
+
+R24 is corrected here by the same coordinator that ratified it, before any code was written
+against it. R16, R19 and R22 each needed correction after the fact; this one was caught at the
+Step 0 gate, which is the gate working.
+
+**What R24 got wrong.** R24 declared three volatile regions and, in the same breath, required the
+validator to refuse any region overlapping a published rule's locator. Measured against the
+shipped registry, **two of its three regions overlap published rules**, so R24's own
+anti-laundering control would have correctly refused two thirds of R24:
+
+| R24 region | published rule inside it | declarable as written |
+|---|---|---|
+| 1 — `## Current state` in full | `rule.fk-loop-directive.ae7854c7dad1` at `Current state:paragraph:1` | **no** |
+| 2 — ownership block, identity and handoffs only | `rule.fk-loop-directive.7a05d374a3b1` at `COORDINATOR OWNERSHIP:paragraph:1` | **no** |
+| 3 — queue `State` column | none; all queue rows are `non-normative-explanation`, `ruleIds: []` | yes |
+
+Region 2 was additionally unimplementable for a second reason: region scope cannot subdivide an
+inventory item, and the ownership block's rule sentences and the current owner's identity are one
+item — one markdown blockquote, one locator, one digest.
+
+**The real defect is that two items were mis-curated as rules.** Region exclusion was aimed at
+the wrong layer. Inspecting the two blocking rules:
+
+- `rule.fk-loop-directive.ae7854c7dad1` carries `authoritySubject: goal.current-state-record`,
+  `authorityClaim: stage-zero-complete-and-fk-p0-next`, and a `normalizedStatement` that is a
+  coordinator status snapshot: Stage Zero complete, A1 ratified and committed, A1.8 pending a
+  text review, A2 parked. **That states no authority.** It is a progress report published as
+  binding canon and pinned by digest, which is the proximate reason editing the state block
+  breaks the sweep. Under this spec's own exclusion standard — explicit exclusion is for items
+  stating no independent rule — its correct disposition was always `exclude`.
+- `rule.fk-loop-directive.7a05d374a3b1` carries `authoritySubject: goal.coordinator-ownership`
+  and is a **genuine** rule: exactly one coordinator owns a goal, transfer only at a parcel
+  boundary, stop and report on ambiguity. But its `normalizedStatement` embeds "the Claude Code
+  coordinator session entered via `/goal` on 2026-09-01, holding ownership under the developer's
+  explicit transfer of that date". **A binding rule whose normative text contains a session
+  identity and a date that canon requires to change** is a curation defect in its own right,
+  independent of regions: the rule goes stale every time the goal changes hands.
+
+**The governing invariant, replacing R24's region-list approach as the primary control.** No
+inventory item may bind a published rule to content that canon requires to change. Where one
+does, **the source is restructured so that rule text and volatile state occupy separate blocks —
+the boundary is never bent to fit the document.** A region declaration is then a consequence of
+correct curation rather than a substitute for it.
+
+**Consequent obligations.**
+
+1. `item.ae7854c7dad1`'s disposition becomes `exclude` with an item-specific rationale, and
+   `rule.fk-loop-directive.ae7854c7dad1` ceases to be published. This is a **curation correction
+   effected by regeneration with migration evidence, and explicitly NOT a use of the registry's
+   retirement state** — retirement remains latent at zero retired rules, mutually exclusive with
+   `resolveAuthority`, and deferred to FK-P1 by standing ruling. A builder that reaches for
+   retirement here has misread this obligation and must stop.
+2. The coordinator restructures `loop-directive.md` so the ownership rule sentences occupy a block
+   containing no owner identity, handoff record, or date, and `rule.fk-loop-directive.7a05d374a3b1`
+   re-anchors to that block with migration evidence. **The builder may not perform this edit** —
+   `loop-directive.md` is in Forbidden — and must stop and report if it is not already done.
+3. R24's regions 1 and 2 are declarable only after obligations 1 and 2 land. Region 3 is
+   declarable immediately.
+
+**Control (d), added to amended AC3 and mandatory.** A test asserts that **no declared volatile
+region contains any inventory item with non-empty `ruleIds`**, evaluated over the shipped
+registry rather than a fixture. This is the machine-checked form of the invariant above, and it is
+the control that would have caught R24 before it was ratified. Controls (a), (b) and (c) stand as
+written in AC3.
+
+**What this costs, stated plainly.** R25 removes one published rule and re-anchors another, so the
+shipped rule count falls by exactly one and one `valueDigest` changes. Both are visible in the
+sweep summary and both require migration evidence. A reviewer must confirm that the removed rule
+is the status snapshot named above and nothing else, and that the re-anchored ownership rule's new
+statement retains all three of its normative sentences and none of its volatile preamble.
+
 ## Contract
 
 ### Registry contract
