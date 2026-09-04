@@ -29,7 +29,7 @@ more rule IDs or has one explicit exclusion disposition. The sweep proves that d
 remain bound; completeness of the natural-language inventory still requires two independent
 reviews and is not proved by a self-authored manifest.
 
-The closed top-level `normativeMarkdownAudit` contains exactly 146 source-authored Markdown
+The closed top-level `normativeMarkdownAudit` contains exactly 145 source-authored Markdown
 candidate dispositions. Each record binds the exact source/item/value triple and either the
 complete published rule set or one item-specific exclusion code and rationale. The validator
 rejects additions, omissions, duplicates, substituted values, changed dispositions, changed rule
@@ -203,9 +203,9 @@ extending past it is admitted.
 
 **That guarantee does not extend to successors, and the earlier wording that implied it was false.**
 An *appended* head has no presence binding of its own, so it can simply be deleted — which
-re-promotes `registry-rework-df8155a` and restores a valid document with the appended attestation
+re-promotes `registry-rework-40394be` and restores a valid document with the appended attestation
 gone. Measured: append, then delete the successor and re-anchor, and the result validates with zero
-violations at eighteen reconciliations. So for a successor, erasing is file-only while extending
+violations at nineteen reconciliations. So for a successor, erasing is file-only while extending
 needs a `src/validate.ts` edit — the exact inverse of the property this obligation claims.
 
 **Why that is not fixed here, and is not a scheduling decision.** A stateless validator comparing a
@@ -239,8 +239,8 @@ means a file-only editor can extend the chain once, not indefinitely.
 
 **That limit is not on the regeneration path.** `npm run generate` does not append a migration
 record and does not demote the head: it re-emits the *same* head id with its superseding manifest
-recomputed live (`src/generate.ts`), so a corpus change produces eighteen reconciliations in and
-eighteen out, with `registry-rework-df8155a` still the head. Confirmed by construction — amend a
+recomputed live (`src/generate.ts`), so a corpus change produces nineteen reconciliations in and
+nineteen out, with `registry-rework-40394be` still the head. Confirmed by construction — amend a
 bound value, re-emit the head as the generator does, and the result validates with **zero
 violations and no `src/validate.ts` edit**. The append-depth limit therefore constrains the *manual*
 path only: a party hand-editing the file who chooses to extend the chain rather than re-anchor the

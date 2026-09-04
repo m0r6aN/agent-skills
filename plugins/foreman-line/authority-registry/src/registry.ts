@@ -60,7 +60,6 @@ export const R13_NORMATIVE_MARKDOWN_AUDIT_KEYS = [
   'fk-plan-review-findings:md-block:# Foreman Kernel — Plan-Level Adversarial Review Findings > ## Scoped Gate 1 re-open:paragraph:2',
   'fk-plan-review-findings:md-block:# Foreman Kernel — Plan-Level Adversarial Review Findings > ## Scoped Gate 1 re-open:paragraph:3',
   'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:paragraph:4',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Queue and dependency order:table-row:FK-P0 — Canon authority and enforcement registry',
   'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Queue and dependency order:table-row:FK-P19 — High-confidence refusal enforcement',
   'spec-convention:md-block:# Spec-Driven Development Convention > ## 1. Purpose:paragraph:3',
   'spec-convention:md-block:# Spec-Driven Development Convention > ## 2. Folder Structure:paragraph:2',
@@ -222,6 +221,25 @@ export const R13_NORMATIVE_MARKDOWN_PUBLICATION_KEYS: ReadonlySet<string> = new 
   'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Final Notes:list-item:1',
   'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Final Notes:list-item:2',
 ] as const)
+
+export const R24_VOLATILE_BASELINE_EXCLUSIONS: Readonly<Record<string, string>> = {
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Current state — update at every stop or parcel closure:paragraph:1':
+    'This is a dated coordinator status snapshot. Its former rule is deliberately de-published, with its final locator and value digests pinned by the round-6 reconciliation record.',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Current state — update at every stop or parcel closure:paragraph:2':
+    'This reports a parcel build state and next action; it grants no standing authority and is excluded as volatile operational status.',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Current state — update at every stop or parcel closure:paragraph:3':
+    'This prohibition was not left excluded: it moved to standing authorization 8 and is published there as a kernel-policy refusal.',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Current state — update at every stop or parcel closure > ### Standing stop-condition override — the FK-P0 / A2 spiral:paragraph:1':
+    'This stop condition was not left inside volatile state: it moved to the governed Stop conditions section before region excision.',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything > ### Owner of record and handoff state:paragraph:1':
+    'This paragraph defines the volatile owner-record boundary and distinguishes it from the governed ownership rule above the subheading.',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything > ### Owner of record and handoff state:paragraph:2':
+    'This names the coordinator holding the goal at the pinned pre-excision baseline and is operational identity rather than transferable authority.',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything > ### Owner of record and handoff state:paragraph:4':
+    'This is a dated handoff record preserving provenance for a prior coordinator transfer, not an operative authorization.',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything > ### Owner of record and handoff state:paragraph:6':
+    'This is an inherited-state warning about absent historical review evidence and is operational recovery context, not authority.',
+}
 
 export interface FrozenMarkdownRuleTarget {
   readonly sourceId: string

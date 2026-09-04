@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import { execFileSync } from 'node:child_process'
 import {
   appendFileSync,
+  cpSync,
   mkdirSync,
   mkdtempSync,
   readFileSync,
@@ -16,16 +17,12 @@ import { test as nodeTest } from 'node:test'
 import { fileURLToPath } from 'node:url'
 import { parse } from 'yaml'
 import { markdownIdentityProjectionForTesting } from '../src/generate.js'
-import { R12_LEGACY_MARKDOWN_RULE_TARGETS } from '../src/registry.js'
-import type { AuthorityEnforcementRegistry } from '../src/types.js'
 import {
-  canonicalJson,
-  maskVolatileSource,
-  resolveVolatileRegions,
-  sha256,
-  sweepRegistrySources,
-  validateRegistry,
-} from '../src/validate.js'
+  R12_LEGACY_MARKDOWN_RULE_TARGETS,
+  R24_VOLATILE_BASELINE_EXCLUSIONS,
+} from '../src/registry.js'
+import type { AuthorityEnforcementRegistry } from '../src/types.js'
+import { canonicalJson, sha256, sweepRegistrySources, validateRegistry } from '../src/validate.js'
 import { ok } from './support/assert-ok.js'
 
 /**
@@ -92,6 +89,129 @@ function copyCorpus(tempRoot: string, withGit = true): void {
     mkdirSync(dirname(destination), { recursive: true })
     writeFileSync(destination, readFileSync(join(repoRoot, source.path)))
   }
+}
+
+const loopDirectiveRelativePath = 'plugins/foreman-line/docs/goals/foreman-kernel/loop-directive.md'
+const currentStateHeading = '## Current state — update at every stop or parcel closure'
+const ownerStateHeading = '### Owner of record and handoff state'
+const ownershipRuleAnchor =
+  'md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:paragraph:1'
+
+function appendToHeadingBody(content: string, heading: string, paragraph: string): string {
+  const headingMarker = `\n${heading}\n`
+  const markerStart = content.indexOf(headingMarker)
+  ok(markerStart >= 0, `heading '${heading}' must be present as a heading line`)
+  const headingStart = markerStart + 1
+  const bodyStart = headingStart + heading.length
+  const nextHeading = /\n#{1,6}\s+/.exec(content.slice(bodyStart))
+  const insertion = nextHeading === null ? content.length : bodyStart + nextHeading.index
+  return `${content.slice(0, insertion)}\n\n${paragraph}\n${content.slice(insertion)}`
+}
+
+function mutateEveryVolatileRegion(content: string): string {
+  let changed = content.replace(
+    '**Owner of record.**',
+    '**Owner of record — volatile mutation probe.**',
+  )
+  changed = appendToHeadingBody(
+    changed,
+    ownerStateHeading,
+    '**R27 owner-region append probe.** This paragraph is volatile.',
+  )
+  changed = changed.replace('**STATE 2026-09-04 #2', '**STATE 2026-09-04 #2 MUTATED')
+  changed = appendToHeadingBody(
+    changed,
+    currentStateHeading,
+    '**R27 current-state append probe.** This paragraph is volatile.',
+  )
+  const lines = changed.split(/\r?\n/)
+  const queueRow = lines.findIndex((line) => /^\| FK-P0 — Canon authority/.test(line))
+  ok(queueRow >= 0, 'FK-P0 queue row must be present')
+  const cells = (lines[queueRow] as string).split('|')
+  ok(cells.length >= 5, 'FK-P0 queue row must carry the State column')
+  cells[2] = ' R27 volatile state mutation with appended bytes '
+  lines[queueRow] = cells.join('|')
+  const result = lines.join('\n')
+  assert.notEqual(result, content, 'the volatile mutation must change the source')
+  return result
+}
+
+function assertGovernedOwnershipMutationDetected(document: AuthorityEnforcementRegistry): void {
+  const tempRoot = mkdtempSync(join(tmpdir(), 'fk-p0-r27-governed-'))
+  try {
+    copyCorpus(tempRoot)
+    const path = join(tempRoot, loopDirectiveRelativePath)
+    const content = readFileSync(path, 'utf8')
+    const changed = content.replace(
+      'Exactly one coordinator owns this goal.',
+      'Exactly one designated coordinator owns this goal.',
+    )
+    assert.notEqual(changed, content, 'the governed ownership sentence must change')
+    writeFileSync(path, changed)
+    const result = sweepRegistrySources(document, tempRoot)
+    ok(
+      result.violations.some(
+        (violation) =>
+          violation.code === 'VALUE_DIGEST_MISMATCH' &&
+          violation.message === 'operative normalized source value changed' &&
+          violation.locator === ownershipRuleAnchor,
+      ),
+      `expected governed ownership mutation to report VALUE_DIGEST_MISMATCH at ${ownershipRuleAnchor}; observed ${JSON.stringify(result.violations, null, 2)}`,
+    )
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true })
+  }
+}
+
+function independentlyDetectedVolatileOverlaps(
+  document: AuthorityEnforcementRegistry,
+): { regionId: string; itemId: string }[] {
+  const overlaps: { regionId: string; itemId: string }[] = []
+  for (const region of document.volatileRegions) {
+    const source = document.sources.find((candidate) => candidate.sourceId === region.sourceId)
+    const heading = source?.inventoryItems.find(
+      (candidate) => candidate.itemId === region.headingItemId,
+    )
+    if (source === undefined || heading === undefined || heading.locator.kind !== 'heading')
+      continue
+    const headingPath = heading.locator.anchor
+    for (const item of source.inventoryItems) {
+      if (item.ruleIds.length === 0) continue
+      const inDirectHeadingBody =
+        item.locator.anchor.startsWith(`md-block:${headingPath}:`) ||
+        item.locator.anchor.startsWith(`md-block:${headingPath} > table-group:`)
+      if (!inDirectHeadingBody) continue
+      if (region.extent.kind === 'table-column' && item.locator.kind !== 'table-row') continue
+      overlaps.push({ regionId: region.regionId, itemId: item.itemId })
+    }
+  }
+  return overlaps
+}
+
+function registryWithInjectedVolatileOverlap(): AuthorityEnforcementRegistry {
+  const mutated = structuredClone(registry)
+  const region = mutated.volatileRegions.find(
+    (candidate) => candidate.regionId === 'region.fk-loop-directive.current-state',
+  )
+  const source = mutated.sources.find((candidate) => candidate.sourceId === region?.sourceId)
+  const heading = source?.inventoryItems.find(
+    (candidate) => candidate.itemId === region?.headingItemId,
+  )
+  const published = source?.inventoryItems.find((candidate) => candidate.ruleIds.length > 0)
+  ok(region)
+  ok(source)
+  ok(heading)
+  ok(published)
+  ;(source.inventoryItems as (typeof source.inventoryItems)[number][]).push({
+    ...structuredClone(published),
+    itemId: 'item.r27-overlap-probe',
+    locator: {
+      kind: 'line-excerpt',
+      anchor: `md-block:${heading.locator.anchor}:paragraph:1`,
+      lineHint: 1,
+    },
+  })
+  return mutated
 }
 
 test('R4 copied corpus without Git metadata fails closed', () => {
@@ -1849,14 +1969,11 @@ test('R29.4 standing authorization 8 publishes the exact pre-action refusal cont
 test('R29.3 anchor migration preserves every surviving published identity and locator digest', () => {
   const priorPath = 'plugins/foreman-line/authority-registry/authority-enforcement-registry.yaml'
   const prior = parse(
-    execFileSync(
-      'git',
-      [
-        'show',
-        `5f9cf65eec98f5496202639007205da81ef1c34d:${priorPath}`,
-      ],
-      { cwd: repoRoot, encoding: 'utf8', maxBuffer: 50 * 1024 * 1024 },
-    ),
+    execFileSync('git', ['show', `5f9cf65eec98f5496202639007205da81ef1c34d:${priorPath}`], {
+      cwd: repoRoot,
+      encoding: 'utf8',
+      maxBuffer: 50 * 1024 * 1024,
+    }),
   ) as AuthorityEnforcementRegistry
   const removedRuleId = 'rule.fk-loop-directive.ae7854c7dad1'
   const addedRuleId = 'rule.fk-loop-directive.3fe253f7c599'
@@ -1873,10 +1990,306 @@ test('R29.3 anchor migration preserves every surviving published identity and lo
     const currentRule = registry.rules.find((candidate) => candidate.ruleId === priorRule.ruleId)
     ok(currentRule, priorRule.ruleId)
     assert.equal(currentRule.authorityBasisRef.itemId, priorRule.authorityBasisRef.itemId)
-    assert.equal(currentRule.authorityBasisRef.locatorDigest, priorRule.authorityBasisRef.locatorDigest)
+    assert.equal(
+      currentRule.authorityBasisRef.locatorDigest,
+      priorRule.authorityBasisRef.locatorDigest,
+    )
     if (currentRule.authorityBasisRef.valueDigest !== priorRule.authorityBasisRef.valueDigest) {
       changedValueRuleIds.push(currentRule.ruleId)
     }
   }
   assert.deepEqual(changedValueRuleIds, ['rule.fk-loop-directive.7a05d374a3b1'])
+})
+
+test('R27 control (a) volatile appends and byte changes preserve the sweep and governed siblings', () => {
+  const tempRoot = mkdtempSync(join(tmpdir(), 'fk-p0-r27-volatile-'))
+  try {
+    copyCorpus(tempRoot)
+    const path = join(tempRoot, loopDirectiveRelativePath)
+    const original = readFileSync(path, 'utf8')
+    const changed = mutateEveryVolatileRegion(original)
+    writeFileSync(path, changed)
+    const result = sweepRegistrySources(registry, tempRoot)
+    assert.equal(result.valid, true, JSON.stringify(result.violations, null, 2))
+    assert.deepEqual(
+      markdownIdentityProjectionForTesting('fk-loop-directive', changed),
+      markdownIdentityProjectionForTesting('fk-loop-directive', original),
+      'volatile changes must not alter any governed item identity, locator, value, or rule binding',
+    )
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true })
+  }
+})
+
+test('R27 control (a) deletion probe fails for each removed volatile-region declaration', () => {
+  for (const region of registry.volatileRegions) {
+    const tempRoot = mkdtempSync(join(tmpdir(), 'fk-p0-r27-region-delete-'))
+    try {
+      copyCorpus(tempRoot)
+      const path = join(tempRoot, loopDirectiveRelativePath)
+      writeFileSync(path, mutateEveryVolatileRegion(readFileSync(path, 'utf8')))
+      const mutated = structuredClone(registry)
+      ;(mutated as { volatileRegions: typeof mutated.volatileRegions }).volatileRegions =
+        mutated.volatileRegions.filter((candidate) => candidate.regionId !== region.regionId)
+      const result = sweepRegistrySources(mutated, tempRoot)
+      if (region.extent.kind === 'table-column') {
+        ok(
+          result.violations.some(
+            (violation) =>
+              violation.code === 'VALUE_DIGEST_MISMATCH' &&
+              violation.message === 'operative normalized source value changed' &&
+              violation.locator?.includes(
+                'table-row:FK-P0 — Canon authority and enforcement registry',
+              ),
+          ),
+          `removing ${region.regionId} did not expose its queue-state value mismatch: ${JSON.stringify(result.violations, null, 2)}`,
+        )
+      } else {
+        const headingFragment =
+          region.regionId === 'region.fk-loop-directive.current-state'
+            ? currentStateHeading
+            : ownerStateHeading
+        ok(
+          result.violations.some(
+            (violation) =>
+              violation.code === 'SOURCE_ITEM_UNCOVERED' &&
+              violation.message === 'binding prose block is not inventoried' &&
+              violation.locator?.includes(headingFragment),
+          ),
+          `removing ${region.regionId} did not expose its uninventoried prose: ${JSON.stringify(result.violations, null, 2)}`,
+        )
+      }
+    } finally {
+      rmSync(tempRoot, { recursive: true, force: true })
+    }
+  }
+})
+
+test('R27 control (b) governed ownership prose still fails closed with VALUE_DIGEST_MISMATCH', () => {
+  assertGovernedOwnershipMutationDetected(registry)
+})
+
+test('R27 control (b) binding-deletion probe defeats the exact governed-mutation expectation', () => {
+  const mutated = structuredClone(registry)
+  const source = mutated.sources.find((candidate) => candidate.sourceId === 'fk-loop-directive')
+  ok(source)
+  const before = source.inventoryItems.length
+  ;(source as { inventoryItems: typeof source.inventoryItems }).inventoryItems =
+    source.inventoryItems.filter((item) => item.locator.anchor !== ownershipRuleAnchor)
+  assert.equal(source.inventoryItems.length, before - 1, 'the governed binding must be deleted')
+  assert.throws(
+    () => assertGovernedOwnershipMutationDetected(mutated),
+    /expected governed ownership mutation to report VALUE_DIGEST_MISMATCH/,
+  )
+})
+
+test('R27 control (c) anti-laundering refuses a region overlapping a published locator', () => {
+  const mutated = structuredClone(registry)
+  const region = mutated.volatileRegions.find(
+    (candidate) => candidate.regionId === 'region.fk-loop-directive.current-state',
+  )
+  const source = mutated.sources.find((candidate) => candidate.sourceId === region?.sourceId)
+  const ownershipHeading = source?.inventoryItems.find(
+    (candidate) =>
+      candidate.locator.kind === 'heading' &&
+      candidate.locator.anchor ===
+        '# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything',
+  )
+  ok(region)
+  ok(ownershipHeading)
+  ;(region as { headingItemId: string }).headingItemId = ownershipHeading.itemId
+  const result = validateRegistry(mutated)
+  ok(
+    result.violations.some(
+      (violation) =>
+        violation.code === 'VOLATILE_REGION_OVERLAP' &&
+        violation.message.startsWith(
+          `volatile region '${region.regionId}' covers inventory item 'item.7a05d374a3b1'`,
+        ),
+    ),
+    JSON.stringify(result.violations, null, 2),
+  )
+})
+
+test('R27 control (d) independently finds no published item inside any shipped volatile extent', () => {
+  assert.deepEqual(independentlyDetectedVolatileOverlaps(registry), [])
+})
+
+test('R27 control (d) predicate-mutation probe survives a production overlap predicate forced false', () => {
+  const mutatedRegistry = registryWithInjectedVolatileOverlap()
+  assert.deepEqual(independentlyDetectedVolatileOverlaps(mutatedRegistry), [
+    {
+      regionId: 'region.fk-loop-directive.current-state',
+      itemId: 'item.r27-overlap-probe',
+    },
+  ])
+  const tempRoot = mkdtempSync(join(tmpdir(), 'fk-p0-r27-independent-'))
+  try {
+    cpSync(join(packageRoot, 'src'), join(tempRoot, 'src'), { recursive: true })
+    writeFileSync(join(tempRoot, 'package.json'), readFileSync(join(packageRoot, 'package.json')))
+    symlinkSync(join(packageRoot, 'node_modules'), join(tempRoot, 'node_modules'), 'junction')
+    const validatorPath = join(tempRoot, 'src', 'validate.ts')
+    const validator = readFileSync(validatorPath, 'utf8')
+    const predicate = `function anchorInHeadingBody(anchor: string, headingPath: string): boolean {
+  return (
+    anchor.startsWith(\`md-block:\${headingPath}:\`) ||
+    anchor.startsWith(\`md-block:\${headingPath} > table-group:\`)
+  )
+}`
+    const disabledPredicate = `function anchorInHeadingBody(_anchor: string, _headingPath: string): boolean {
+  return false
+}`
+    const changedValidator = validator.replace(predicate, disabledPredicate)
+    assert.notEqual(changedValidator, validator, 'the production overlap predicate must be mutated')
+    writeFileSync(validatorPath, changedValidator)
+    writeFileSync(join(tempRoot, 'registry.json'), JSON.stringify(mutatedRegistry))
+    writeFileSync(
+      join(tempRoot, 'probe.ts'),
+      "import { readFileSync } from 'node:fs'\nimport { validateRegistry } from './src/validate.ts'\nconst document = JSON.parse(readFileSync('./registry.json', 'utf8'))\nprocess.stdout.write(JSON.stringify(validateRegistry(document).violations.filter((violation) => violation.code === 'VOLATILE_REGION_OVERLAP')))\n",
+    )
+    const output = execFileSync(
+      process.execPath,
+      [join(packageRoot, 'node_modules', 'tsx', 'dist', 'cli.mjs'), 'probe.ts'],
+      { cwd: tempRoot, encoding: 'utf8', maxBuffer: 10 * 1024 * 1024 },
+    )
+    assert.deepEqual(
+      JSON.parse(output),
+      [],
+      'the forced-false production predicate must miss overlap',
+    )
+    assert.equal(
+      independentlyDetectedVolatileOverlaps(mutatedRegistry).length,
+      1,
+      'the independent shipped-data predicate must still catch the overlap',
+    )
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true })
+  }
+})
+
+test('R27 control (e) generator output is byte-identical under mutation of every volatile region', () => {
+  const tempRoot = mkdtempSync(join(tmpdir(), 'fk-p0-r27-generator-'))
+  try {
+    copyCorpus(tempRoot)
+    const loopPath = join(tempRoot, loopDirectiveRelativePath)
+    writeFileSync(loopPath, mutateEveryVolatileRegion(readFileSync(loopPath, 'utf8')))
+    const tempPackage = join(tempRoot, 'plugins', 'foreman-line', 'authority-registry')
+    mkdirSync(tempPackage, { recursive: true })
+    cpSync(join(packageRoot, 'src'), join(tempPackage, 'src'), { recursive: true })
+    writeFileSync(
+      join(tempPackage, 'package.json'),
+      readFileSync(join(packageRoot, 'package.json')),
+    )
+    mkdirSync(join(tempPackage, 'tests', 'fixtures'), { recursive: true })
+    cpSync(
+      join(repoRoot, 'plugins', 'foreman-line', 'schema-scaffold', 'src'),
+      join(tempRoot, 'plugins', 'foreman-line', 'schema-scaffold', 'src'),
+      { recursive: true },
+    )
+    symlinkSync(join(packageRoot, 'node_modules'), join(tempPackage, 'node_modules'), 'junction')
+    execFileSync(
+      process.execPath,
+      [join(packageRoot, 'node_modules', 'tsx', 'dist', 'cli.mjs'), 'src/generate.ts'],
+      { cwd: tempPackage, encoding: 'utf8', maxBuffer: 100 * 1024 * 1024 },
+    )
+    for (const relativePath of [
+      'authority-enforcement-registry.yaml',
+      'schemas/authority-enforcement-registry.schema.json',
+      'tests/fixtures/pass-minimal.yaml',
+    ]) {
+      assert.deepEqual(
+        readFileSync(join(tempPackage, relativePath)),
+        readFileSync(join(packageRoot, relativePath)),
+        `${relativePath} changed under volatile-only mutation`,
+      )
+    }
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true })
+  }
+})
+
+test('R27 control (f) zero heading matches fails closed with the exact VOLATILE_REGION_INVALID message', () => {
+  const tempRoot = mkdtempSync(join(tmpdir(), 'fk-p0-r27-zero-heading-'))
+  try {
+    copyCorpus(tempRoot)
+    const path = join(tempRoot, loopDirectiveRelativePath)
+    const content = readFileSync(path, 'utf8')
+    const changed = content.replace(currentStateHeading, `${currentStateHeading} renamed`)
+    assert.notEqual(changed, content)
+    writeFileSync(path, changed)
+    const result = sweepRegistrySources(registry, tempRoot)
+    ok(
+      result.violations.some(
+        (violation) =>
+          violation.code === 'VOLATILE_REGION_INVALID' &&
+          violation.message ===
+            "volatile region 'region.fk-loop-directive.current-state' names a heading that is absent from the source",
+      ),
+      JSON.stringify(result.violations, null, 2),
+    )
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true })
+  }
+})
+
+test('R27 control (f) multiple heading matches fails closed with the exact VOLATILE_REGION_INVALID message', () => {
+  const tempRoot = mkdtempSync(join(tmpdir(), 'fk-p0-r27-multiple-heading-'))
+  try {
+    copyCorpus(tempRoot)
+    const path = join(tempRoot, loopDirectiveRelativePath)
+    writeFileSync(
+      path,
+      `${readFileSync(path, 'utf8')}\n\n${currentStateHeading}\n\nDuplicate volatile heading probe.\n`,
+    )
+    const result = sweepRegistrySources(registry, tempRoot)
+    ok(
+      result.violations.some(
+        (violation) =>
+          violation.code === 'VOLATILE_REGION_INVALID' &&
+          violation.message ===
+            "volatile region 'region.fk-loop-directive.current-state' names a heading that occurs 2 times in the source",
+      ),
+      JSON.stringify(result.violations, null, 2),
+    )
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true })
+  }
+})
+
+test('R27 control (g) pins eight curated pre-excision prose rationales without gating future additions', () => {
+  assert.equal(Object.keys(R24_VOLATILE_BASELINE_EXCLUSIONS).length, 8)
+  const baselineByAnchor = new Map<
+    string,
+    ReturnType<typeof markdownIdentityProjectionForTesting>[number]
+  >()
+  for (const commit of [
+    '40394be5fb7a5376579025513236019ad48dd86c',
+    '5f9cf65eec98f5496202639007205da81ef1c34d',
+  ]) {
+    const baseline = execFileSync('git', ['show', `${commit}:${loopDirectiveRelativePath}`], {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    })
+    for (const item of markdownIdentityProjectionForTesting('fk-loop-directive', baseline, {
+      maskVolatile: false,
+    })) {
+      baselineByAnchor.set(item.locator.anchor, item)
+    }
+  }
+  for (const [key, rationale] of Object.entries(R24_VOLATILE_BASELINE_EXCLUSIONS)) {
+    const separator = key.indexOf(':')
+    assert.equal(key.slice(0, separator), 'fk-loop-directive')
+    const anchor = key.slice(separator + 1)
+    const item = baselineByAnchor.get(anchor)
+    ok(item, `pre-excision baseline item '${anchor}' must resolve`)
+    ok(
+      item.locator.kind === 'line-excerpt' || item.locator.kind === 'numbered-item',
+      `${anchor} must be paragraph or list-item prose`,
+    )
+    assert.doesNotMatch(
+      rationale,
+      /is explanatory context and does not state an independent normative authority rule/,
+    )
+    ok(rationale.length >= 80, `${anchor} must carry an item-specific review rationale`)
+  }
 })

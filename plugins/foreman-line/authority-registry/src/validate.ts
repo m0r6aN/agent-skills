@@ -93,7 +93,7 @@ const SHIPPED_CHAIN_HEAD_ID = 'registry-rework-40394be'
  * it, it becomes a historical record and is bound exactly like the eleven before it.
  */
 const SHIPPED_CHAIN_HEAD_RECORD_DIGEST =
-  'b779d4e25e0485db35c014aa8b81428b0e8e06b2233227986f1b40745e234c18'
+  '307a1b563240107c5a12610e18b340e66f3be0621e6bc30b438ae79af91b4bfd'
 const REQUIRED_OPERATIONS = [
   'gate1.ratify',
   'gate2.dispatch',
@@ -528,10 +528,10 @@ const RECONCILIATION_CONTRACT = {
     rules: ['rule.fk-charter.2a524c1ea63f'],
   },
   'registry-rework-40394be': {
-    topic: 'R14 registry bindings superseded by the coordinator-ratified FK-P0 R24 amendment.',
+    topic: 'R14 registry bindings superseded by the coordinator-ratified FK-P0 round-6 amendments.',
     status: 'superseded-by-amendment',
-    refs: ['fk-charter:item.2a524c1ea63f'],
-    rules: ['rule.fk-charter.2a524c1ea63f'],
+    refs: ['fk-charter:item.2a524c1ea63f', 'fk-loop-directive:item.3fe253f7c599'],
+    rules: ['rule.fk-charter.2a524c1ea63f', 'rule.fk-loop-directive.3fe253f7c599'],
   },
 } as const
 
@@ -711,7 +711,7 @@ const RECONCILIATION_PROSE: Readonly<Record<string, readonly [string, string]>> 
   // requires every ref to resolve to a live item with matching digests, and this item no longer
   // exists in the inventory - so they are pinned in the disposition text itself.
   'registry-rework-40394be': [
-    "The R24 declared volatile regions, excised before block discovery and before ordinal assignment, supersede the R14 registry bindings in FK scope: the loop directive's operational state no longer occupies an ordinal, so appends to it cannot displace a governed sibling. Two obligations are recorded together. First, the source baseline advances to the commit whose bytes were hashed. Second, rule.fk-loop-directive.ae7854c7dad1 is DE-PUBLISHED, not retired: its subject goal.current-state-record and claim stage-zero-complete-and-fk-p0-next were an operational status snapshot published as canon, and its backing item left the audited inventory by removal into the declared region. Its final locatorDigest was cd404753257ddc78f7d8f473b679ce9410d745af89a459363f029838e6941c6c and its final valueDigest was 39dd6f0a5551d6fde0f694415fcb01f6f407115c1ca5a74da7b570239d61f371, pinned here because an observedRef must resolve to a live item and this one no longer exists.",
+    'The R24-R29 round-6 volatile-region and curation rework supersedes the R14 registry bindings in FK scope. The declared volatile regions are excised before block discovery and ordinal assignment, so operational state cannot displace a governed sibling. The source baseline advances to the commit whose bytes were hashed. rule.fk-loop-directive.ae7854c7dad1 is DE-PUBLISHED, not retired: its subject goal.current-state-record and claim stage-zero-complete-and-fk-p0-next were an operational status snapshot published as canon, and its backing item is excised from inventory. Its final locatorDigest was cd404753257ddc78f7d8f473b679ce9410d745af89a459363f029838e6941c6c and its final valueDigest was 39dd6f0a5551d6fde0f694415fcb01f6f407115c1ca5a74da7b570239d61f371. The unpublished FK-P0 queue audit candidate is also removed because its audited signal was solely the now-volatile State cell; its final locatorDigest was 7fcf048fef2f8f007fe9083fabccf58cea064025f51a0468f471144e94818de5 and its final valueDigest was 1a430cadb645418f777ef2827628d2efe92cde3b84ab1337589f20c335615262. Standing authorization 8 is now published as pre-action-refusal / REFUSE under kernel-policy and is quoted exactly: 8. **The ambient `D:/Repos/agent-skills` checkout carries user-owned changes. Never touch or absorb them.** No agent working this goal — coordinator, builder, reviewer, or shaping session — reads from or writes to the ambient checkout, and no user-owned change is absorbed into a parcel branch. Relocated here from `## Current state` by R27, because it is a prohibition and was sitting in a section declared volatile, curated `ruleIds: []` with a boilerplate rationale asserting it stated no rule. It states a rule.',
     'Future binding changes require another typed prior-to-new migration record. Declaring a new volatile region over an already-published locator remains refused, so any future region that would absorb governed text requires a spec amendment first.',
   ],
 }
@@ -2052,9 +2052,13 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
   const expectedNormativeMarkdownAudit = R13_NORMATIVE_MARKDOWN_AUDIT_KEYS.map((key) => {
     const separator = key.indexOf(':')
     const sourceId = key.slice(0, separator)
-    const itemId = key.slice(separator + 1)
-    const item = itemsByRef.get(referenceKey(sourceId, itemId))
+    const locatorAnchor = key.slice(separator + 1)
+    const source = document.sources.find((candidate) => candidate.sourceId === sourceId)
+    const item = source?.inventoryItems.find(
+      (candidate) => candidate.locator.anchor === locatorAnchor,
+    )
     if (item === undefined) return null
+    const { itemId } = item
     const published = item.ruleIds.length > 0
     return {
       sourceId,
@@ -2075,7 +2079,7 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
     violations.push(
       violation(
         'RULE_SEMANTICS_UNCURATED',
-        'normative Markdown audit must equal the exact 146 item-specific source-authored dispositions',
+        'normative Markdown audit must equal the exact 145 item-specific source-authored dispositions',
       ),
     )
   }

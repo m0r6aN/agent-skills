@@ -493,7 +493,7 @@ test('deleting the chain head invalidates rather than promoting a pinned record'
   // AC4 obligation 2 as amended by R19. Head position must not be selectable by deletion: before
   // R19, removing the head promoted the previously-pinned record into the head exemption and out of
   // its byte pin, and repointing that promoted record at the live manifest validated clean.
-  const chainHeadId = 'registry-rework-df8155a'
+  const chainHeadId = 'registry-rework-40394be'
   const kept = structuredClone(valid).reconciliations.filter(
     (record) => record.reconciliationId !== chainHeadId,
   )
@@ -2036,8 +2036,8 @@ function r13Audit(document: AuthorityEnforcementRegistry = full): R13AuditRecord
   )
 }
 
-test('R13 normative Markdown audit has exactly 146 source-authored records', () => {
-  assert.equal(r13Audit().length, 146)
+test('R13 normative Markdown audit has exactly 145 source-authored records', () => {
+  assert.equal(r13Audit().length, 145)
 })
 
 test('R13 normative Markdown audit binds every candidate to its exact item and value', () => {
@@ -4117,7 +4117,7 @@ test('R14 a new rule wearing an approved Gate 2 rule name cannot inherit its ALL
 // and reads as "allowed", which is the trap that caught every party to this parcel at least once.
 // ===========================================================================================
 
-const CHAIN_HEAD_ID = 'registry-rework-df8155a'
+const CHAIN_HEAD_ID = 'registry-rework-40394be'
 
 type Reconciliation = AuthorityEnforcementRegistry['reconciliations'][number]
 type Evidence = Reconciliation['observedEvidence'][number]

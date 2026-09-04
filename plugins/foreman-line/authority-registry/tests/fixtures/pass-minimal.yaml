@@ -2552,7 +2552,7 @@ sources:
       - foreman-kernel
     snapshotEvidence:
       commit: 5f9cf65eec98f5496202639007205da81ef1c34d
-      fullFileSha256: d10f7de3f559147f91ec823258b89cf0afd106e9e4728fd96848504bbf499748
+      fullFileSha256: 386d09fa9a4bb1a889b3bf564c47cb1cfe4b605b335d38f52cf89acc7738e190
     inventoryItems:
       - itemId: item.00eb94a59e12
         locator:
@@ -39127,12 +39127,16 @@ reconciliations:
       locatorDigest: 90869ff1fdd3d7b5b03ace121fa6dcf12beb30f29068119cc352e406b628b3b2
       valueDigest: 5e9805301c2d5aae54a063f4dba845ad95d6e33e5af6e3fb5327837265fb1289
   - reconciliationId: registry-rework-40394be
-    topic: R14 registry bindings superseded by the coordinator-ratified FK-P0 R24 amendment.
+    topic: R14 registry bindings superseded by the coordinator-ratified FK-P0 round-6 amendments.
     observedRefs:
       - sourceId: fk-charter
         itemId: item.2a524c1ea63f
         locatorDigest: 90869ff1fdd3d7b5b03ace121fa6dcf12beb30f29068119cc352e406b628b3b2
         valueDigest: 5e9805301c2d5aae54a063f4dba845ad95d6e33e5af6e3fb5327837265fb1289
+      - sourceId: fk-loop-directive
+        itemId: item.3fe253f7c599
+        locatorDigest: df1ea77c24a219dca0fbd8a2b4f416d2a28d54159e23e53167f786546a63aafd
+        valueDigest: 3e3272855cda929c9b4336d1fd867362974a57ee2ea501a36c1f9010dbbfb05c
     observedEvidence:
       - kind: git-commit
         reference: 40394be5fb7a5376579025513236019ad48dd86c
@@ -39144,11 +39148,12 @@ reconciliations:
         reference: '{"actorClass":"coordinator","commandId":"registry-binding-manifest-r14","exitCode":0,"inputDigest":"502bc751a4e9360b0ccd3856a29dbad2ce6dd6a0f3559c4cb6ca0c8d7c3f2f0c","resultDigest":"767dabec7dce1bcd9c1436fab93107d049747d1e20d60d6715a3af06e015775a","tool":"@foreman-line/authority-registry","toolVersion":"0.1.0"}'
         digest: 2341bc921a8620e18903ac9437a68afe9f171156c03a39151569dbd9720cbded
       - kind: command-result
-        reference: '{"actorClass":"coordinator","commandId":"superseding-binding-manifest-r15","exitCode":0,"inputDigest":"767dabec7dce1bcd9c1436fab93107d049747d1e20d60d6715a3af06e015775a","resultDigest":"58422cc3f366d3f8ad30cd190b7767eb83badddbdba73351469e9f2b53518a79","tool":"@foreman-line/authority-registry","toolVersion":"0.1.0"}'
-        digest: fb4950716f6691f08fba58e4b6c48328fe4e12072669bccfeb491dadc133f24a
+        reference: '{"actorClass":"coordinator","commandId":"superseding-binding-manifest-r15","exitCode":0,"inputDigest":"767dabec7dce1bcd9c1436fab93107d049747d1e20d60d6715a3af06e015775a","resultDigest":"ebeef1c026daa9363be384e1b284c4167c1d33c5e5709ed5068412f45dfce952","tool":"@foreman-line/authority-registry","toolVersion":"0.1.0"}'
+        digest: 3f9c7ce6a09320f4c9edbb1e7123e1515d0c72bc4bf22a6b49b003d4c4f50bdd
     authoritativeRuleIds:
       - rule.fk-charter.2a524c1ea63f
-    scopedDisposition: "The R24 declared volatile regions, excised before block discovery and before ordinal assignment, supersede the R14 registry bindings in FK scope: the loop directive's operational state no longer occupies an ordinal, so appends to it cannot displace a governed sibling. Two obligations are recorded together. First, the source baseline advances to the commit whose bytes were hashed. Second, rule.fk-loop-directive.ae7854c7dad1 is DE-PUBLISHED, not retired: its subject goal.current-state-record and claim stage-zero-complete-and-fk-p0-next were an operational status snapshot published as canon, and its backing item left the audited inventory by removal into the declared region. Its final locatorDigest was cd404753257ddc78f7d8f473b679ce9410d745af89a459363f029838e6941c6c and its final valueDigest was 39dd6f0a5551d6fde0f694415fcb01f6f407115c1ca5a74da7b570239d61f371, pinned here because an observedRef must resolve to a live item and this one no longer exists."
+      - rule.fk-loop-directive.3fe253f7c599
+    scopedDisposition: "The R24-R29 round-6 volatile-region and curation rework supersedes the R14 registry bindings in FK scope. The declared volatile regions are excised before block discovery and ordinal assignment, so operational state cannot displace a governed sibling. The source baseline advances to the commit whose bytes were hashed. rule.fk-loop-directive.ae7854c7dad1 is DE-PUBLISHED, not retired: its subject goal.current-state-record and claim stage-zero-complete-and-fk-p0-next were an operational status snapshot published as canon, and its backing item is excised from inventory. Its final locatorDigest was cd404753257ddc78f7d8f473b679ce9410d745af89a459363f029838e6941c6c and its final valueDigest was 39dd6f0a5551d6fde0f694415fcb01f6f407115c1ca5a74da7b570239d61f371. The unpublished FK-P0 queue audit candidate is also removed because its audited signal was solely the now-volatile State cell; its final locatorDigest was 7fcf048fef2f8f007fe9083fabccf58cea064025f51a0468f471144e94818de5 and its final valueDigest was 1a430cadb645418f777ef2827628d2efe92cde3b84ab1337589f20c335615262. Standing authorization 8 is now published as pre-action-refusal / REFUSE under kernel-policy and is quoted exactly: 8. **The ambient `D:/Repos/agent-skills` checkout carries user-owned changes. Never touch or absorb them.** No agent working this goal — coordinator, builder, reviewer, or shaping session — reads from or writes to the ambient checkout, and no user-owned change is absorbed into a parcel branch. Relocated here from `## Current state` by R27, because it is a prohibition and was sitting in a section declared volatile, curated `ruleIds: []` with a boilerplate rationale asserting it stated no rule. It states a rule."
     unresolvedConsequence: Future binding changes require another typed prior-to-new migration record. Declaring a new volatile region over an already-published locator remains refused, so any future region that would absorb governed text requires a spec amendment first.
     migrationStatus: superseded-by-amendment
     supersedingEvidence:
@@ -39435,13 +39440,6 @@ normativeMarkdownAudit:
     ruleIds: []
     exclusionCode: non-normative-explanation
     rationale: Audit candidate item.10f2e751ab84 is excluded as non-normative-explanation; this exact source item does not independently impose an operative FK rule.
-  - sourceId: fk-loop-directive
-    itemId: item.47629cf1fc4c
-    valueDigest: 5f87c57b92e8974cddb63b4baabb6c298f0ceb0946243d94343f9d6f6d665a36
-    disposition: exclude
-    ruleIds: []
-    exclusionCode: non-normative-explanation
-    rationale: Audit candidate item.47629cf1fc4c is excluded as non-normative-explanation; this exact source item does not independently impose an operative FK rule.
   - sourceId: fk-loop-directive
     itemId: item.4aef5cb209b8
     valueDigest: ffb90c2cb875e0d789a8a211df79e7987c450e351c2c58ec1ec1134932252263

@@ -827,53 +827,57 @@ const R11_CURATED_ITEM_SEMANTICS: Readonly<
     }
   >
 > = {
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.8 `Allowed Files` Mutation Authority:paragraph:1': {
-    classification: 'pre-action-refusal',
-    identity: ['spec.allowed-files-schema', 'exact-paths-and-no-globs'],
-    applicability: {
-      goals: ['all-foreman-goals'],
-      roles: ['coordinator', 'shaper', 'builder'],
-      stages: ['shaping', 'step-zero', 'build'],
-      operations: ['spec-mutation', 'repo-mutation'],
-      hosts: ['any'],
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.8 `Allowed Files` Mutation Authority:paragraph:1':
+    {
+      classification: 'pre-action-refusal',
+      identity: ['spec.allowed-files-schema', 'exact-paths-and-no-globs'],
+      applicability: {
+        goals: ['all-foreman-goals'],
+        roles: ['coordinator', 'shaper', 'builder'],
+        stages: ['shaping', 'step-zero', 'build'],
+        operations: ['spec-mutation', 'repo-mutation'],
+        hosts: ['any'],
+      },
     },
-  },
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.8 `Allowed Files` Mutation Authority:paragraph:3': {
-    classification: 'pre-action-refusal',
-    identity: [
-      'spec.unlisted-path-amendment',
-      'stop-and-coordinator-ratification-no-self-expansion',
-    ],
-    applicability: {
-      goals: ['all-foreman-goals'],
-      roles: ['builder'],
-      stages: ['step-zero', 'build'],
-      operations: ['spec-mutation', 'repo-mutation'],
-      hosts: ['any'],
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.8 `Allowed Files` Mutation Authority:paragraph:3':
+    {
+      classification: 'pre-action-refusal',
+      identity: [
+        'spec.unlisted-path-amendment',
+        'stop-and-coordinator-ratification-no-self-expansion',
+      ],
+      applicability: {
+        goals: ['all-foreman-goals'],
+        roles: ['builder'],
+        stages: ['step-zero', 'build'],
+        operations: ['spec-mutation', 'repo-mutation'],
+        hosts: ['any'],
+      },
     },
-  },
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Contract Amendment Rule:paragraph:3': {
-    classification: 'pre-action-refusal',
-    identity: ['spec.contract-amendment-authority', 'parcel-agent-cannot-edit-approved-contract'],
-    applicability: {
-      goals: ['all-foreman-goals'],
-      roles: ['builder'],
-      stages: ['build'],
-      operations: ['spec-mutation', 'repo-mutation'],
-      hosts: ['any'],
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Contract Amendment Rule:paragraph:3':
+    {
+      classification: 'pre-action-refusal',
+      identity: ['spec.contract-amendment-authority', 'parcel-agent-cannot-edit-approved-contract'],
+      applicability: {
+        goals: ['all-foreman-goals'],
+        roles: ['builder'],
+        stages: ['build'],
+        operations: ['spec-mutation', 'repo-mutation'],
+        hosts: ['any'],
+      },
     },
-  },
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Session Handoff:paragraph:1': {
-    classification: 'ci-static-check',
-    identity: ['parcel.session-handoff', 'changed-session-requires-handoff'],
-    applicability: {
-      goals: ['all-foreman-goals'],
-      roles: ['coordinator', 'shaper', 'builder', 'reviewer'],
-      stages: ['shaping', 'build', 'adversarial-review', 'closure'],
-      operations: ['repo-mutation', 'state-transition'],
-      hosts: ['any'],
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Session Handoff:paragraph:1':
+    {
+      classification: 'ci-static-check',
+      identity: ['parcel.session-handoff', 'changed-session-requires-handoff'],
+      applicability: {
+        goals: ['all-foreman-goals'],
+        roles: ['coordinator', 'shaper', 'builder', 'reviewer'],
+        stages: ['shaping', 'build', 'adversarial-review', 'closure'],
+        operations: ['repo-mutation', 'state-transition'],
+        hosts: ['any'],
+      },
     },
-  },
 }
 
 const R11_COMPOUND_ITEM_SEMANTICS: Readonly<
@@ -1025,51 +1029,56 @@ const R11_COMPOUND_ITEM_SEMANTICS: Readonly<
 }
 
 const R11_APPLICABILITY_OVERRIDES: Readonly<Record<string, AuthorityRule['applicability']>> = {
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:paragraph:1': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: ['state-transition'],
-    hosts: ['any'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:2': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['shaping', 'runtime'],
-    operations: ['spec-mutation'],
-    hosts: ['any'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:8': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['build', 'deterministic-verify', 'adversarial-review', 'runtime'],
-    operations: ['state-transition'],
-    hosts: ['any'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:7': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['shaping', 'build', 'adversarial-review', 'runtime'],
-    operations: ['state-transition'],
-    hosts: ['any'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:11': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['closure', 'runtime'],
-    operations: ['state-transition'],
-    hosts: ['any'],
-  },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:paragraph:1':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: ['state-transition'],
+      hosts: ['any'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:2':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['shaping', 'runtime'],
+      operations: ['spec-mutation'],
+      hosts: ['any'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:8':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['build', 'deterministic-verify', 'adversarial-review', 'runtime'],
+      operations: ['state-transition'],
+      hosts: ['any'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:7':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['shaping', 'build', 'adversarial-review', 'runtime'],
+      operations: ['state-transition'],
+      hosts: ['any'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:11':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['closure', 'runtime'],
+      operations: ['state-transition'],
+      hosts: ['any'],
+    },
 }
 
 const R11_PERMISSION_PROFILE_CURATION: Readonly<
@@ -1111,16 +1120,17 @@ const R11_PERMISSION_PROFILE_CURATION: Readonly<
       hosts: ['claude-windows-docker-loaded'],
     },
   },
-  'permission-profiles-registry:yaml-rule:builder-architecture:deny:"PowerShell(git push --force*)"': {
-    classification: 'pre-action-refusal',
-    applicability: {
-      goals: ['all-foreman-goals'],
-      roles: ['builder'],
-      stages: ['step-zero', 'build'],
-      operations: ['external-write'],
-      hosts: ['claude-windows-docker-loaded'],
+  'permission-profiles-registry:yaml-rule:builder-architecture:deny:"PowerShell(git push --force*)"':
+    {
+      classification: 'pre-action-refusal',
+      applicability: {
+        goals: ['all-foreman-goals'],
+        roles: ['builder'],
+        stages: ['step-zero', 'build'],
+        operations: ['external-write'],
+        hosts: ['claude-windows-docker-loaded'],
+      },
     },
-  },
   'permission-profiles-registry:yaml-rule:builder-architecture:deny:"PowerShell(git push -f *)"': {
     classification: 'pre-action-refusal',
     applicability: {
@@ -1681,39 +1691,42 @@ const R10_CURATED_ITEM_SEMANTICS: Readonly<
     }
   >
 > = {
-  'goal-skill:md-block:# /goal — the Coordinator entry point > ## Stage Zero — run it, don\'t skip it:list-item:1': {
-    classification: 'pre-action-refusal',
-    identity: ['goal.stage-zero-intake', 'explicit-design-questions-before-ratification'],
-    applicability: {
-      goals: ['all-foreman-goals'],
-      roles: ['coordinator'],
-      stages: ['stage-zero'],
-      operations: ['spec-mutation'],
-      hosts: ['any'],
+  "goal-skill:md-block:# /goal — the Coordinator entry point > ## Stage Zero — run it, don't skip it:list-item:1":
+    {
+      classification: 'pre-action-refusal',
+      identity: ['goal.stage-zero-intake', 'explicit-design-questions-before-ratification'],
+      applicability: {
+        goals: ['all-foreman-goals'],
+        roles: ['coordinator'],
+        stages: ['stage-zero'],
+        operations: ['spec-mutation'],
+        hosts: ['any'],
+      },
     },
-  },
-  'goal-skill:md-block:# /goal — the Coordinator entry point > ## Stage Zero — run it, don\'t skip it:list-item:2': {
-    classification: 'ci-static-check',
-    identity: ['goal.charter-shape', 'charter-records-decisions-graph-exits-gates-and-stops'],
-    applicability: {
-      goals: ['all-foreman-goals'],
-      roles: ['coordinator'],
-      stages: ['stage-zero'],
-      operations: ['spec-mutation'],
-      hosts: ['any'],
+  "goal-skill:md-block:# /goal — the Coordinator entry point > ## Stage Zero — run it, don't skip it:list-item:2":
+    {
+      classification: 'ci-static-check',
+      identity: ['goal.charter-shape', 'charter-records-decisions-graph-exits-gates-and-stops'],
+      applicability: {
+        goals: ['all-foreman-goals'],
+        roles: ['coordinator'],
+        stages: ['stage-zero'],
+        operations: ['spec-mutation'],
+        hosts: ['any'],
+      },
     },
-  },
-  'goal-skill:md-block:# /goal — the Coordinator entry point > ## Stage Zero — run it, don\'t skip it:list-item:3': {
-    classification: 'pre-action-refusal',
-    identity: ['gate1.ratification-authority', 'explicit-developer-ratification-required'],
-    applicability: {
-      goals: ['all-foreman-goals'],
-      roles: ['coordinator'],
-      stages: ['stage-zero'],
-      operations: ['state-transition'],
-      hosts: ['any'],
+  "goal-skill:md-block:# /goal — the Coordinator entry point > ## Stage Zero — run it, don't skip it:list-item:3":
+    {
+      classification: 'pre-action-refusal',
+      identity: ['gate1.ratification-authority', 'explicit-developer-ratification-required'],
+      applicability: {
+        goals: ['all-foreman-goals'],
+        roles: ['coordinator'],
+        stages: ['stage-zero'],
+        operations: ['state-transition'],
+        hosts: ['any'],
+      },
     },
-  },
   'goal-skill:md-block:# /goal — the Coordinator entry point:paragraph:1': {
     classification: 'pre-action-refusal',
     identity: ['verification.issue-authority', 'coordinator-consumes-but-does-not-produce'],
@@ -1747,68 +1760,73 @@ const R10_CURATED_ITEM_SEMANTICS: Readonly<
       hosts: ['any'],
     },
   },
-  'goal-skill:md-block:# /goal — the Coordinator entry point > ## Plan-level adversarial review — always:paragraph:1': {
-    classification: 'independent-review-human-judgment',
-    identity: ['goal.plan-review', 'fresh-plan-review-and-scoped-reratification-required'],
-    applicability: {
-      goals: ['all-foreman-goals'],
-      roles: ['coordinator', 'reviewer'],
-      stages: ['stage-zero', 'adversarial-review'],
-      operations: ['source-inventory', 'state-transition'],
-      hosts: ['any'],
+  'goal-skill:md-block:# /goal — the Coordinator entry point > ## Plan-level adversarial review — always:paragraph:1':
+    {
+      classification: 'independent-review-human-judgment',
+      identity: ['goal.plan-review', 'fresh-plan-review-and-scoped-reratification-required'],
+      applicability: {
+        goals: ['all-foreman-goals'],
+        roles: ['coordinator', 'reviewer'],
+        stages: ['stage-zero', 'adversarial-review'],
+        operations: ['source-inventory', 'state-transition'],
+        hosts: ['any'],
+      },
     },
-  },
-  'goal-skill:md-block:# /goal — the Coordinator entry point > ## Generate the loop directive, then become the loop:paragraph:1': {
-    classification: 'ci-static-check',
-    identity: ['goal.loop-directive', 'ownership-authorizations-queue-and-stops-required'],
-    applicability: {
-      goals: ['all-foreman-goals'],
-      roles: ['coordinator'],
-      stages: ['stage-zero'],
-      operations: ['spec-mutation'],
-      hosts: ['any'],
+  'goal-skill:md-block:# /goal — the Coordinator entry point > ## Generate the loop directive, then become the loop:paragraph:1':
+    {
+      classification: 'ci-static-check',
+      identity: ['goal.loop-directive', 'ownership-authorizations-queue-and-stops-required'],
+      applicability: {
+        goals: ['all-foreman-goals'],
+        roles: ['coordinator'],
+        stages: ['stage-zero'],
+        operations: ['spec-mutation'],
+        hosts: ['any'],
+      },
     },
-  },
-  'goal-skill:md-block:# /goal — the Coordinator entry point > ## Generate the loop directive, then become the loop:paragraph:2': {
-    classification: 'ci-static-check',
-    identity: ['goal.loop-pacing', 'completion-signals-and-long-fallbacks-without-polling'],
-    applicability: {
-      goals: ['all-foreman-goals'],
-      roles: ['coordinator'],
-      stages: ['runtime'],
-      operations: ['state-transition'],
-      hosts: ['any'],
+  'goal-skill:md-block:# /goal — the Coordinator entry point > ## Generate the loop directive, then become the loop:paragraph:2':
+    {
+      classification: 'ci-static-check',
+      identity: ['goal.loop-pacing', 'completion-signals-and-long-fallbacks-without-polling'],
+      applicability: {
+        goals: ['all-foreman-goals'],
+        roles: ['coordinator'],
+        stages: ['runtime'],
+        operations: ['state-transition'],
+        hosts: ['any'],
+      },
     },
-  },
-  'goal-skill:md-block:# /goal — the Coordinator entry point > ## Generate the loop directive, then become the loop:paragraph:3': {
-    classification: 'ci-static-check',
-    identity: ['goal.parcel-cycle', 'complete-governed-parcel-cycle-required'],
-    applicability: {
-      goals: ['all-foreman-goals'],
-      roles: ['coordinator'],
-      stages: [
-        'shaping',
-        'build',
-        'deterministic-verify',
-        'adversarial-review',
-        'merge',
-        'closure',
-      ],
-      operations: ['source-inventory', 'repo-read', 'repo-mutation', 'state-transition'],
-      hosts: ['any'],
+  'goal-skill:md-block:# /goal — the Coordinator entry point > ## Generate the loop directive, then become the loop:paragraph:3':
+    {
+      classification: 'ci-static-check',
+      identity: ['goal.parcel-cycle', 'complete-governed-parcel-cycle-required'],
+      applicability: {
+        goals: ['all-foreman-goals'],
+        roles: ['coordinator'],
+        stages: [
+          'shaping',
+          'build',
+          'deterministic-verify',
+          'adversarial-review',
+          'merge',
+          'closure',
+        ],
+        operations: ['source-inventory', 'repo-read', 'repo-mutation', 'state-transition'],
+        hosts: ['any'],
+      },
     },
-  },
-  'goal-skill:md-block:# /goal — the Coordinator entry point > ## Hook/goal conditions must be agent-completable:paragraph:1': {
-    classification: 'pre-action-refusal',
-    identity: ['goal.human-gate-stop', 'human-gates-require-agent-completable-stop-reports'],
-    applicability: {
-      goals: ['all-foreman-goals'],
-      roles: ['coordinator', 'host-adapter'],
-      stages: ['merge', 'closure', 'runtime'],
-      operations: ['state-transition', 'control-call'],
-      hosts: ['any'],
+  'goal-skill:md-block:# /goal — the Coordinator entry point > ## Hook/goal conditions must be agent-completable:paragraph:1':
+    {
+      classification: 'pre-action-refusal',
+      identity: ['goal.human-gate-stop', 'human-gates-require-agent-completable-stop-reports'],
+      applicability: {
+        goals: ['all-foreman-goals'],
+        roles: ['coordinator', 'host-adapter'],
+        stages: ['merge', 'closure', 'runtime'],
+        operations: ['state-transition', 'control-call'],
+        hosts: ['any'],
+      },
     },
-  },
   'goal-skill:md-block:# /goal — the Coordinator entry point > ## Stop:paragraph:1': {
     classification: 'pre-action-refusal',
     identity: ['goal.loop-stop', 'stop-on-exit-stop-condition-or-developer-direction'],
@@ -1820,116 +1838,126 @@ const R10_CURATED_ITEM_SEMANTICS: Readonly<
       hosts: ['any'],
     },
   },
-  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:1': {
-    classification: 'pre-action-refusal',
-    identity: ['goal.stage-zero-intake', 'scope-constraints-and-canon-interrogated'],
-    applicability: {
-      goals: ['all-foreman-goals'],
-      roles: ['coordinator'],
-      stages: ['stage-zero'],
-      operations: ['spec-mutation'],
-      hosts: ['any'],
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:1':
+    {
+      classification: 'pre-action-refusal',
+      identity: ['goal.stage-zero-intake', 'scope-constraints-and-canon-interrogated'],
+      applicability: {
+        goals: ['all-foreman-goals'],
+        roles: ['coordinator'],
+        stages: ['stage-zero'],
+        operations: ['spec-mutation'],
+        hosts: ['any'],
+      },
     },
-  },
-  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:2': {
-    classification: 'pre-action-refusal',
-    identity: ['goal.design-decision-authority', 'developer-disposes-explicit-decisions'],
-    applicability: {
-      goals: ['all-foreman-goals'],
-      roles: ['coordinator'],
-      stages: ['stage-zero'],
-      operations: ['state-transition'],
-      hosts: ['any'],
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:2':
+    {
+      classification: 'pre-action-refusal',
+      identity: ['goal.design-decision-authority', 'developer-disposes-explicit-decisions'],
+      applicability: {
+        goals: ['all-foreman-goals'],
+        roles: ['coordinator'],
+        stages: ['stage-zero'],
+        operations: ['state-transition'],
+        hosts: ['any'],
+      },
     },
-  },
-  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:3': {
-    classification: 'pre-action-refusal',
-    identity: ['canon.commentary-mutation-authority', 'explicit-targeted-direction-required'],
-    applicability: {
-      goals: ['all-foreman-goals'],
-      roles: ['coordinator'],
-      stages: ['stage-zero', 'shaping', 'build'],
-      operations: ['spec-mutation', 'state-transition'],
-      hosts: ['any'],
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:3':
+    {
+      classification: 'pre-action-refusal',
+      identity: ['canon.commentary-mutation-authority', 'explicit-targeted-direction-required'],
+      applicability: {
+        goals: ['all-foreman-goals'],
+        roles: ['coordinator'],
+        stages: ['stage-zero', 'shaping', 'build'],
+        operations: ['spec-mutation', 'state-transition'],
+        hosts: ['any'],
+      },
     },
-  },
-  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:4': {
-    classification: 'ci-static-check',
-    identity: ['goal.charter-shape', 'charter-records-governed-goal-structure'],
-    applicability: {
-      goals: ['all-foreman-goals'],
-      roles: ['coordinator'],
-      stages: ['stage-zero'],
-      operations: ['spec-mutation'],
-      hosts: ['any'],
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:4':
+    {
+      classification: 'ci-static-check',
+      identity: ['goal.charter-shape', 'charter-records-governed-goal-structure'],
+      applicability: {
+        goals: ['all-foreman-goals'],
+        roles: ['coordinator'],
+        stages: ['stage-zero'],
+        operations: ['spec-mutation'],
+        hosts: ['any'],
+      },
     },
-  },
-  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:5': {
-    classification: 'pre-action-refusal',
-    identity: ['gate1.ratification-authority', 'explicit-developer-ratification-required'],
-    applicability: {
-      goals: ['all-foreman-goals'],
-      roles: ['coordinator'],
-      stages: ['stage-zero'],
-      operations: ['state-transition'],
-      hosts: ['any'],
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:5':
+    {
+      classification: 'pre-action-refusal',
+      identity: ['gate1.ratification-authority', 'explicit-developer-ratification-required'],
+      applicability: {
+        goals: ['all-foreman-goals'],
+        roles: ['coordinator'],
+        stages: ['stage-zero'],
+        operations: ['state-transition'],
+        hosts: ['any'],
+      },
     },
-  },
-  'coordinator-pattern:md-block:# The Coordinator Pattern > ## The role, in one paragraph:paragraph:1': {
-    classification: 'pre-action-refusal',
-    identity: ['verification.issue-authority', 'coordinator-consumes-but-does-not-produce'],
-    applicability: {
-      goals: ['all-foreman-goals'],
-      roles: ['coordinator'],
-      stages: ['deterministic-verify', 'adversarial-review', 'merge', 'closure'],
-      operations: ['state-transition', 'receipt-validation'],
-      hosts: ['any'],
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## The role, in one paragraph:paragraph:1':
+    {
+      classification: 'pre-action-refusal',
+      identity: ['verification.issue-authority', 'coordinator-consumes-but-does-not-produce'],
+      applicability: {
+        goals: ['all-foreman-goals'],
+        roles: ['coordinator'],
+        stages: ['deterministic-verify', 'adversarial-review', 'merge', 'closure'],
+        operations: ['state-transition', 'receipt-validation'],
+        hosts: ['any'],
+      },
     },
-  },
-  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Plan-level adversarial review - always:paragraph:1': {
-    classification: 'independent-review-human-judgment',
-    identity: ['goal.plan-review', 'fresh-plan-review-before-first-parcel'],
-    applicability: {
-      goals: ['all-foreman-goals'],
-      roles: ['coordinator', 'reviewer'],
-      stages: ['stage-zero', 'adversarial-review'],
-      operations: ['source-inventory', 'state-transition'],
-      hosts: ['any'],
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Plan-level adversarial review - always:paragraph:1':
+    {
+      classification: 'independent-review-human-judgment',
+      identity: ['goal.plan-review', 'fresh-plan-review-before-first-parcel'],
+      applicability: {
+        goals: ['all-foreman-goals'],
+        roles: ['coordinator', 'reviewer'],
+        stages: ['stage-zero', 'adversarial-review'],
+        operations: ['source-inventory', 'state-transition'],
+        hosts: ['any'],
+      },
     },
-  },
-  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Plan-level adversarial review - always:paragraph:2': {
-    classification: 'independent-review-human-judgment',
-    identity: ['goal.plan-review-focus', 'decomposition-boundary-decision-and-collision-review'],
-    applicability: {
-      goals: ['all-foreman-goals'],
-      roles: ['reviewer'],
-      stages: ['adversarial-review'],
-      operations: ['source-inventory'],
-      hosts: ['any'],
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Plan-level adversarial review - always:paragraph:2':
+    {
+      classification: 'independent-review-human-judgment',
+      identity: ['goal.plan-review-focus', 'decomposition-boundary-decision-and-collision-review'],
+      applicability: {
+        goals: ['all-foreman-goals'],
+        roles: ['reviewer'],
+        stages: ['adversarial-review'],
+        operations: ['source-inventory'],
+        hosts: ['any'],
+      },
     },
-  },
-  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Plan-level adversarial review - always:paragraph:3': {
-    classification: 'pre-action-refusal',
-    identity: ['gate1.scoped-reopen', 'decision-changing-triage-reopens-gate-one'],
-    applicability: {
-      goals: ['all-foreman-goals'],
-      roles: ['coordinator'],
-      stages: ['stage-zero'],
-      operations: ['state-transition'],
-      hosts: ['any'],
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Plan-level adversarial review - always:paragraph:3':
+    {
+      classification: 'pre-action-refusal',
+      identity: ['gate1.scoped-reopen', 'decision-changing-triage-reopens-gate-one'],
+      applicability: {
+        goals: ['all-foreman-goals'],
+        roles: ['coordinator'],
+        stages: ['stage-zero'],
+        operations: ['state-transition'],
+        hosts: ['any'],
+      },
     },
-  },
-  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Plan-level adversarial review - always:paragraph:4': {
-    classification: 'independent-review-human-judgment',
-    identity: ['goal.plan-review-universality', 'plan-review-runs-for-every-goal'],
-    applicability: {
-      goals: ['all-foreman-goals'],
-      roles: ['coordinator', 'reviewer'],
-      stages: ['stage-zero', 'adversarial-review'],
-      operations: ['state-transition'],
-      hosts: ['any'],
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Plan-level adversarial review - always:paragraph:4':
+    {
+      classification: 'independent-review-human-judgment',
+      identity: ['goal.plan-review-universality', 'plan-review-runs-for-every-goal'],
+      applicability: {
+        goals: ['all-foreman-goals'],
+        roles: ['coordinator', 'reviewer'],
+        stages: ['stage-zero', 'adversarial-review'],
+        operations: ['state-transition'],
+        hosts: ['any'],
+      },
     },
-  },
   'coordinator-pattern:md-block:# The Coordinator Pattern > ## The three human gates:paragraph:1': {
     classification: 'pre-action-refusal',
     identity: ['goal.gate-record', 'gates-live-in-directives-not-permission-prompts'],
@@ -1952,61 +1980,66 @@ const R10_CURATED_ITEM_SEMANTICS: Readonly<
       hosts: ['any'],
     },
   },
-  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Dispatch table:table-row:Coordinator': {
-    classification: 'ci-static-check',
-    identity: ['routing.coordinator-session', 'frontier-long-running-goal-session'],
-    applicability: {
-      goals: ['all-foreman-goals'],
-      roles: ['coordinator'],
-      stages: ['any'],
-      operations: ['source-inventory'],
-      hosts: ['any'],
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Dispatch table:table-row:Coordinator':
+    {
+      classification: 'ci-static-check',
+      identity: ['routing.coordinator-session', 'frontier-long-running-goal-session'],
+      applicability: {
+        goals: ['all-foreman-goals'],
+        roles: ['coordinator'],
+        stages: ['any'],
+        operations: ['source-inventory'],
+        hosts: ['any'],
+      },
     },
-  },
-  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Dispatch table:table-row:Builder (standard risk)': {
-    classification: 'ci-static-check',
-    identity: ['routing.builder-standard', 'standard-builder-isolated-parcel-session'],
-    applicability: {
-      goals: ['all-foreman-goals'],
-      roles: ['builder'],
-      stages: ['step-zero', 'build'],
-      operations: ['source-inventory'],
-      hosts: ['any'],
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Dispatch table:table-row:Builder (standard risk)':
+    {
+      classification: 'ci-static-check',
+      identity: ['routing.builder-standard', 'standard-builder-isolated-parcel-session'],
+      applicability: {
+        goals: ['all-foreman-goals'],
+        roles: ['builder'],
+        stages: ['step-zero', 'build'],
+        operations: ['source-inventory'],
+        hosts: ['any'],
+      },
     },
-  },
-  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Dispatch table:table-row:Builder (architecture/risk)': {
-    classification: 'ci-static-check',
-    identity: ['routing.builder-architecture', 'architecture-builder-uses-frontier-isolation'],
-    applicability: {
-      goals: ['all-foreman-goals'],
-      roles: ['builder'],
-      stages: ['step-zero', 'build'],
-      operations: ['source-inventory'],
-      hosts: ['any'],
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Dispatch table:table-row:Builder (architecture/risk)':
+    {
+      classification: 'ci-static-check',
+      identity: ['routing.builder-architecture', 'architecture-builder-uses-frontier-isolation'],
+      applicability: {
+        goals: ['all-foreman-goals'],
+        roles: ['builder'],
+        stages: ['step-zero', 'build'],
+        operations: ['source-inventory'],
+        hosts: ['any'],
+      },
     },
-  },
-  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Dispatch table:table-row:Adversarial reviewer': {
-    classification: 'post-action-detection',
-    identity: ['routing.reviewer-posture', 'fresh-reviewer-mutation-reduced-not-eliminated'],
-    applicability: {
-      goals: ['all-foreman-goals'],
-      roles: ['reviewer'],
-      stages: ['adversarial-review'],
-      operations: ['repo-mutation', 'control-call'],
-      hosts: ['any'],
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Dispatch table:table-row:Adversarial reviewer':
+    {
+      classification: 'post-action-detection',
+      identity: ['routing.reviewer-posture', 'fresh-reviewer-mutation-reduced-not-eliminated'],
+      applicability: {
+        goals: ['all-foreman-goals'],
+        roles: ['reviewer'],
+        stages: ['adversarial-review'],
+        operations: ['repo-mutation', 'control-call'],
+        hosts: ['any'],
+      },
     },
-  },
-  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Dispatch table:table-row:Shaping agent': {
-    classification: 'pre-action-refusal',
-    identity: ['routing.shaper-posture', 'fresh-shaper-docs-only-writes'],
-    applicability: {
-      goals: ['all-foreman-goals'],
-      roles: ['shaper'],
-      stages: ['shaping'],
-      operations: ['repo-mutation'],
-      hosts: ['any'],
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Dispatch table:table-row:Shaping agent':
+    {
+      classification: 'pre-action-refusal',
+      identity: ['routing.shaper-posture', 'fresh-shaper-docs-only-writes'],
+      applicability: {
+        goals: ['all-foreman-goals'],
+        roles: ['shaper'],
+        stages: ['shaping'],
+        operations: ['repo-mutation'],
+        hosts: ['any'],
+      },
     },
-  },
   'coordinator-pattern:md-block:# The Coordinator Pattern > ## Dispatch table:paragraph:2': {
     classification: 'pre-action-refusal',
     identity: [
@@ -2043,50 +2076,57 @@ const R10_CURATED_ITEM_SEMANTICS: Readonly<
       hosts: ['any'],
     },
   },
-  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Verification spine (unchanged, referenced):paragraph:1': {
-    classification: 'ci-static-check',
-    identity: ['verification.coordinator-spine', 'disk-closure-determinism-and-tripwires-required'],
-    applicability: {
-      goals: ['all-foreman-goals'],
-      roles: ['coordinator'],
-      stages: ['deterministic-verify', 'adversarial-review'],
-      operations: ['source-inventory', 'repo-read'],
-      hosts: ['any'],
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Verification spine (unchanged, referenced):paragraph:1':
+    {
+      classification: 'ci-static-check',
+      identity: [
+        'verification.coordinator-spine',
+        'disk-closure-determinism-and-tripwires-required',
+      ],
+      applicability: {
+        goals: ['all-foreman-goals'],
+        roles: ['coordinator'],
+        stages: ['deterministic-verify', 'adversarial-review'],
+        operations: ['source-inventory', 'repo-read'],
+        hosts: ['any'],
+      },
     },
-  },
-  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Verification spine (unchanged, referenced):paragraph:2': {
-    classification: 'ci-static-check',
-    identity: ['goal.exit-custody', 'word-exact-exits-require-real-artifacts'],
-    applicability: {
-      goals: ['all-foreman-goals'],
-      roles: ['coordinator'],
-      stages: ['shaping', 'deterministic-verify', 'closure'],
-      operations: ['source-inventory', 'spec-mutation', 'state-transition'],
-      hosts: ['any'],
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Verification spine (unchanged, referenced):paragraph:2':
+    {
+      classification: 'ci-static-check',
+      identity: ['goal.exit-custody', 'word-exact-exits-require-real-artifacts'],
+      applicability: {
+        goals: ['all-foreman-goals'],
+        roles: ['coordinator'],
+        stages: ['shaping', 'deterministic-verify', 'closure'],
+        operations: ['source-inventory', 'spec-mutation', 'state-transition'],
+        hosts: ['any'],
+      },
     },
-  },
-  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Lessons discipline (Stage F):paragraph:1': {
-    classification: 'ci-static-check',
-    identity: ['goal.lessons-discipline', 'lessons-remain-provenance-with-narrow-installation'],
-    applicability: {
-      goals: ['all-foreman-goals'],
-      roles: ['coordinator'],
-      stages: ['closure'],
-      operations: ['spec-mutation', 'state-transition'],
-      hosts: ['any'],
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Lessons discipline (Stage F):paragraph:1':
+    {
+      classification: 'ci-static-check',
+      identity: ['goal.lessons-discipline', 'lessons-remain-provenance-with-narrow-installation'],
+      applicability: {
+        goals: ['all-foreman-goals'],
+        roles: ['coordinator'],
+        stages: ['closure'],
+        operations: ['spec-mutation', 'state-transition'],
+        hosts: ['any'],
+      },
     },
-  },
-  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Lineage and extraction:paragraph:1': {
-    classification: 'ci-static-check',
-    identity: ['goal.pattern-extraction', 'promote-only-after-repeated-shipped-practice'],
-    applicability: {
-      goals: ['all-foreman-goals'],
-      roles: ['coordinator'],
-      stages: ['closure'],
-      operations: ['spec-mutation'],
-      hosts: ['any'],
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Lineage and extraction:paragraph:1':
+    {
+      classification: 'ci-static-check',
+      identity: ['goal.pattern-extraction', 'promote-only-after-repeated-shipped-practice'],
+      applicability: {
+        goals: ['all-foreman-goals'],
+        roles: ['coordinator'],
+        stages: ['closure'],
+        operations: ['spec-mutation'],
+        hosts: ['any'],
+      },
     },
-  },
 }
 
 const CURATED_ITEM_CLASSIFICATIONS: Readonly<Record<string, RuleClassification>> = {
@@ -2111,46 +2151,86 @@ const CURATED_ITEM_CLASSIFICATIONS: Readonly<Record<string, RuleClassification>>
   'fk-charter:D19': 'pre-action-refusal',
   'fk-charter:D20': 'ci-static-check',
   'fk-charter:md-block:# Goal Charter — Foreman Kernel:paragraph:1': 'narrative-provenance',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 2. Problem statement:list-item:1': 'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 4. Locked decisions:paragraph:1': 'independent-review-human-judgment',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 0 — Authority and contracts:table-row:FK-P2 — Spec-body compiler': 'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 0 — Authority and contracts:paragraph:1': 'ci-static-check',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 1 — Pure trust core:paragraph:1': 'ci-static-check',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 2 — Stateless read-only MCP and container:paragraph:1': 'ci-static-check',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:paragraph:1': 'ci-static-check',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P18 — CI scope and state-evidence backstops': 'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:paragraph:1': 'ci-static-check',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:1': 'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:2': 'ci-static-check',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:3': 'ci-static-check',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:4': 'ci-static-check',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:5': 'ci-static-check',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:6': 'ci-static-check',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:7': 'ci-static-check',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:8': 'ci-static-check',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:9': 'ci-static-check',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 10. Human gates and standing authorizations requested > ### Gate 1 — charter ratification:paragraph:1': 'independent-review-human-judgment',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 10. Human gates and standing authorizations requested > ### Gate 2 — parcel dispatch:paragraph:1': 'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 10. Human gates and standing authorizations requested > ### Gate 3 — merge:paragraph:1': 'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:1': 'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:2': 'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:3': 'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:4': 'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:5': 'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:6': 'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:7': 'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:8': 'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:9': 'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:10': 'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:11': 'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:12': 'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:13': 'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:14': 'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:15': 'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:16': 'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:17': 'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 13. Gate 1 decision list:list-item:11': 'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 13. Gate 1 decision list:paragraph:2': 'narrative-provenance',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 2. Problem statement:list-item:1':
+    'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 4. Locked decisions:paragraph:1':
+    'independent-review-human-judgment',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 0 — Authority and contracts:table-row:FK-P2 — Spec-body compiler':
+    'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 0 — Authority and contracts:paragraph:1':
+    'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 1 — Pure trust core:paragraph:1':
+    'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 2 — Stateless read-only MCP and container:paragraph:1':
+    'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:paragraph:1':
+    'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P18 — CI scope and state-evidence backstops':
+    'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:paragraph:1':
+    'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:1':
+    'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:2':
+    'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:3':
+    'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:4':
+    'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:5':
+    'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:6':
+    'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:7':
+    'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:8':
+    'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:9':
+    'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 10. Human gates and standing authorizations requested > ### Gate 1 — charter ratification:paragraph:1':
+    'independent-review-human-judgment',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 10. Human gates and standing authorizations requested > ### Gate 2 — parcel dispatch:paragraph:1':
+    'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 10. Human gates and standing authorizations requested > ### Gate 3 — merge:paragraph:1':
+    'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:1':
+    'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:2':
+    'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:3':
+    'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:4':
+    'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:5':
+    'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:6':
+    'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:7':
+    'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:8':
+    'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:9':
+    'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:10':
+    'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:11':
+    'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:12':
+    'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:13':
+    'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:14':
+    'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:15':
+    'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:16':
+    'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:17':
+    'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 13. Gate 1 decision list:list-item:11':
+    'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 13. Gate 1 decision list:paragraph:2':
+    'narrative-provenance',
   'fk-plan-review-findings:R1': 'narrative-provenance',
   'fk-plan-review-findings:R2': 'pre-action-refusal',
   'fk-plan-review-findings:R3': 'narrative-provenance',
@@ -2164,274 +2244,520 @@ const CURATED_ITEM_CLASSIFICATIONS: Readonly<Record<string, RuleClassification>>
   'fk-plan-review-findings:R11': 'ci-static-check',
   'fk-plan-review-findings:R12': 'post-action-detection',
   'fk-plan-review-findings:R13': 'pre-action-refusal',
-  'fk-plan-review-findings:md-block:# Foreman Kernel — Plan-Level Adversarial Review Findings > ## Scoped Gate 1 re-open:list-item:6': 'narrative-provenance',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:paragraph:1': 'pre-action-refusal',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:list-item:1': 'narrative-provenance',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:list-item:2': 'narrative-provenance',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:list-item:3': 'narrative-provenance',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:list-item:4': 'pre-action-refusal',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:list-item:5': 'pre-action-refusal',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:paragraph:1': 'pre-action-refusal',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:1': 'pre-action-refusal',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:2': 'pre-action-refusal',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:3': 'pre-action-refusal',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:4': 'pre-action-refusal',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:5': 'pre-action-refusal',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:6': 'pre-action-refusal',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:paragraph:2': 'pre-action-refusal',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:1': 'pre-action-refusal',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:2': 'pre-action-refusal',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:3': 'pre-action-refusal',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:4': 'pre-action-refusal',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:5': 'pre-action-refusal',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:6': 'pre-action-refusal',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:7': 'pre-action-refusal',
+  'fk-plan-review-findings:md-block:# Foreman Kernel — Plan-Level Adversarial Review Findings > ## Scoped Gate 1 re-open:list-item:6':
+    'narrative-provenance',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:paragraph:1':
+    'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:list-item:1':
+    'narrative-provenance',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:list-item:2':
+    'narrative-provenance',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:list-item:3':
+    'narrative-provenance',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:list-item:4':
+    'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:list-item:5':
+    'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:paragraph:1':
+    'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:1':
+    'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:2':
+    'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:3':
+    'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:4':
+    'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:5':
+    'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:6':
+    'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:paragraph:2':
+    'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:1':
+    'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:2':
+    'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:3':
+    'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:4':
+    'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:5':
+    'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:6':
+    'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:7':
+    'pre-action-refusal',
   // Standing authorization 8, published this round. It is a prohibition, and it was sitting in
   // `## Current state` carrying `ruleIds: []` plus a generated rationale asserting it stated no
   // rule - which is precisely the laundering shape R24 exists to close. Classified
   // `pre-action-refusal` because it must stop the read or write BEFORE the ambient checkout is
   // touched; a post-action detection of an absorbed user-owned change is not a remedy.
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:8': 'pre-action-refusal',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:1': 'ci-static-check',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:2': 'pre-action-refusal',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:3': 'ci-static-check',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:4': 'pre-action-refusal',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:5': 'pre-action-refusal',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:6': 'ci-static-check',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:7': 'ci-static-check',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:8': 'independent-review-human-judgment',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:9': 'independent-review-human-judgment',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:10': 'pre-action-refusal',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:11': 'pre-action-refusal',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Queue and dependency order:paragraph:1': 'pre-action-refusal',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:paragraph:1': 'ci-static-check',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:1': 'ci-static-check',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:2': 'ci-static-check',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:3': 'ci-static-check',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:4': 'ci-static-check',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:5': 'pre-action-refusal',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:6': 'ci-static-check',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:7': 'pre-action-refusal',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:paragraph:1': 'pre-action-refusal',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:1': 'pre-action-refusal',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:2': 'pre-action-refusal',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:3': 'pre-action-refusal',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:4': 'pre-action-refusal',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:5': 'pre-action-refusal',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:6': 'pre-action-refusal',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:7': 'pre-action-refusal',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:8': 'pre-action-refusal',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:9': 'pre-action-refusal',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:10': 'pre-action-refusal',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:11': 'pre-action-refusal',
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Wakeup and crash recovery:paragraph:1': 'pre-action-refusal',
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 3. Spec Lifecycle:list-item:1': 'narrative-provenance',
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 3. Spec Lifecycle:list-item:2': 'narrative-provenance',
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 3. Spec Lifecycle:list-item:3': 'narrative-provenance',
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 3. Spec Lifecycle:list-item:4': 'narrative-provenance',
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 5. The Spec ↔ Jira Contract:list-item:1': 'narrative-provenance',
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 5. The Spec ↔ Jira Contract:list-item:2': 'narrative-provenance',
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 5. The Spec ↔ Jira Contract:list-item:3': 'narrative-provenance',
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 5. The Spec ↔ Jira Contract:list-item:4': 'narrative-provenance',
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 8. Dispatch Model (How Agents Consume Specs):list-item:1': 'narrative-provenance',
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 8. Dispatch Model (How Agents Consume Specs):list-item:2': 'narrative-provenance',
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 8. Dispatch Model (How Agents Consume Specs):list-item:3': 'pre-action-refusal',
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 10. Adoption Path:list-item:4': 'ci-static-check',
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 11. Coordinator-Ratified Amendment Pattern (added W0-P2):list-item:1': 'narrative-provenance',
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 11. Coordinator-Ratified Amendment Pattern (added W0-P2):list-item:2': 'narrative-provenance',
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 11. Coordinator-Ratified Amendment Pattern (added W0-P2):list-item:3': 'narrative-provenance',
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.6 Schema v0.2 Fields (added W0-P2):list-item:4': 'narrative-provenance',
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.8 `Allowed Files` Mutation Authority:list-item:1': 'narrative-provenance',
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.8 `Allowed Files` Mutation Authority:list-item:2': 'narrative-provenance',
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.8 `Allowed Files` Mutation Authority:paragraph:3': 'narrative-provenance',
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 8. Dispatch Model (How Agents Consume Specs):list-item:4': 'narrative-provenance',
-  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:1': 'narrative-provenance',
-  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:2': 'narrative-provenance',
-  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:3': 'narrative-provenance',
-  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:4': 'narrative-provenance',
-  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:5': 'narrative-provenance',
-  'coordinator-pattern:md-block:# The Coordinator Pattern > ## The three human gates:table-row:1': 'narrative-provenance',
-  'coordinator-pattern:md-block:# The Coordinator Pattern > ## The three human gates:table-row:2': 'narrative-provenance',
-  'coordinator-pattern:md-block:# The Coordinator Pattern > ## The three human gates:table-row:3': 'narrative-provenance',
-  'goal-skill:md-block:# /goal — the Coordinator entry point > ## Stage Zero — run it, don\'t skip it:list-item:1': 'narrative-provenance',
-  'goal-skill:md-block:# /goal — the Coordinator entry point > ## Stage Zero — run it, don\'t skip it:list-item:2': 'narrative-provenance',
-  'goal-skill:md-block:# /goal — the Coordinator entry point > ## Stage Zero — run it, don\'t skip it:list-item:3': 'narrative-provenance',
-  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:1': 'pre-action-refusal',
-  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:2': 'pre-action-refusal',
-  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:3': 'pre-action-refusal',
-  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:4': 'pre-action-refusal',
-  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:5': 'ci-static-check',
-  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:6': 'ci-static-check',
-  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:7': 'pre-action-refusal',
-  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — conditional:list-item:1': 'pre-action-refusal',
-  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — conditional:list-item:2': 'pre-action-refusal',
-  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Reviewer:list-item:1': 'independent-review-human-judgment',
-  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Reviewer:list-item:2': 'independent-review-human-judgment',
-  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Reviewer:list-item:3': 'post-action-detection',
-  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Reviewer:list-item:4': 'independent-review-human-judgment',
-  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter:paragraph:1': 'narrative-provenance',
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:1': 'pre-action-refusal',
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:2': 'pre-action-refusal',
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:3': 'pre-action-refusal',
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:4': 'pre-action-refusal',
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:5': 'pre-action-refusal',
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:6': 'pre-action-refusal',
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:7': 'ci-static-check',
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:8': 'pre-action-refusal',
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:9': 'pre-action-refusal',
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:10': 'pre-action-refusal',
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:11': 'ci-static-check',
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:12': 'independent-review-human-judgment',
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:13': 'pre-action-refusal',
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:14': 'ci-static-check',
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:15': 'ci-static-check',
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:1': 'narrative-provenance',
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:2': 'narrative-provenance',
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:3': 'narrative-provenance',
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:4': 'narrative-provenance',
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:5': 'narrative-provenance',
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:6': 'narrative-provenance',
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:7': 'narrative-provenance',
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:8': 'narrative-provenance',
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:9': 'narrative-provenance',
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:10': 'narrative-provenance',
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:11': 'narrative-provenance',
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:12': 'narrative-provenance',
-  'foreman-line-plan:md-block:# The Foreman Line — Master Plugin Plan:paragraph:1': 'narrative-provenance',
-  'foreman-line-plan:md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage D — Verification:list-item:4': 'independent-review-human-judgment',
-  'foreman-line-plan:md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage E — Integration:list-item:4': 'ci-static-check',
-  'foreman-line-plan:md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage F — Closure:list-item:1': 'narrative-provenance',
-  'foreman-line-plan:md-block:# The Foreman Line — Master Plugin Plan > ## 4. Smart Triage as the Assignment Engine:list-item:1': 'pre-action-refusal',
-  'approval-readme:md-block:# @foreman-line/approval — Human Approval Flow CLI, W1-P3 > ## The human-gate contract:list-item:3': 'narrative-provenance',
-  'approval-readme:md-block:# @foreman-line/approval — Human Approval Flow CLI, W1-P3 > ## The human-gate contract:list-item:4': 'narrative-provenance',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:8':
+    'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:1':
+    'ci-static-check',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:2':
+    'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:3':
+    'ci-static-check',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:4':
+    'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:5':
+    'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:6':
+    'ci-static-check',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:7':
+    'ci-static-check',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:8':
+    'independent-review-human-judgment',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:9':
+    'independent-review-human-judgment',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:10':
+    'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:11':
+    'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Queue and dependency order:paragraph:1':
+    'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:paragraph:1':
+    'ci-static-check',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:1':
+    'ci-static-check',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:2':
+    'ci-static-check',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:3':
+    'ci-static-check',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:4':
+    'ci-static-check',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:5':
+    'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:6':
+    'ci-static-check',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:7':
+    'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:paragraph:1':
+    'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:1':
+    'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:2':
+    'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:3':
+    'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:4':
+    'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:5':
+    'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:6':
+    'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:7':
+    'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:8':
+    'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:9':
+    'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:10':
+    'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:11':
+    'pre-action-refusal',
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Wakeup and crash recovery:paragraph:1':
+    'pre-action-refusal',
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 3. Spec Lifecycle:list-item:1':
+    'narrative-provenance',
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 3. Spec Lifecycle:list-item:2':
+    'narrative-provenance',
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 3. Spec Lifecycle:list-item:3':
+    'narrative-provenance',
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 3. Spec Lifecycle:list-item:4':
+    'narrative-provenance',
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 5. The Spec ↔ Jira Contract:list-item:1':
+    'narrative-provenance',
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 5. The Spec ↔ Jira Contract:list-item:2':
+    'narrative-provenance',
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 5. The Spec ↔ Jira Contract:list-item:3':
+    'narrative-provenance',
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 5. The Spec ↔ Jira Contract:list-item:4':
+    'narrative-provenance',
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 8. Dispatch Model (How Agents Consume Specs):list-item:1':
+    'narrative-provenance',
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 8. Dispatch Model (How Agents Consume Specs):list-item:2':
+    'narrative-provenance',
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 8. Dispatch Model (How Agents Consume Specs):list-item:3':
+    'pre-action-refusal',
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 10. Adoption Path:list-item:4':
+    'ci-static-check',
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 11. Coordinator-Ratified Amendment Pattern (added W0-P2):list-item:1':
+    'narrative-provenance',
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 11. Coordinator-Ratified Amendment Pattern (added W0-P2):list-item:2':
+    'narrative-provenance',
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 11. Coordinator-Ratified Amendment Pattern (added W0-P2):list-item:3':
+    'narrative-provenance',
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.6 Schema v0.2 Fields (added W0-P2):list-item:4':
+    'narrative-provenance',
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.8 `Allowed Files` Mutation Authority:list-item:1':
+    'narrative-provenance',
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.8 `Allowed Files` Mutation Authority:list-item:2':
+    'narrative-provenance',
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.8 `Allowed Files` Mutation Authority:paragraph:3':
+    'narrative-provenance',
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 8. Dispatch Model (How Agents Consume Specs):list-item:4':
+    'narrative-provenance',
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:1':
+    'narrative-provenance',
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:2':
+    'narrative-provenance',
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:3':
+    'narrative-provenance',
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:4':
+    'narrative-provenance',
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:5':
+    'narrative-provenance',
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## The three human gates:table-row:1':
+    'narrative-provenance',
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## The three human gates:table-row:2':
+    'narrative-provenance',
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## The three human gates:table-row:3':
+    'narrative-provenance',
+  "goal-skill:md-block:# /goal — the Coordinator entry point > ## Stage Zero — run it, don't skip it:list-item:1":
+    'narrative-provenance',
+  "goal-skill:md-block:# /goal — the Coordinator entry point > ## Stage Zero — run it, don't skip it:list-item:2":
+    'narrative-provenance',
+  "goal-skill:md-block:# /goal — the Coordinator entry point > ## Stage Zero — run it, don't skip it:list-item:3":
+    'narrative-provenance',
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:1':
+    'pre-action-refusal',
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:2':
+    'pre-action-refusal',
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:3':
+    'pre-action-refusal',
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:4':
+    'pre-action-refusal',
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:5':
+    'ci-static-check',
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:6':
+    'ci-static-check',
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:7':
+    'pre-action-refusal',
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — conditional:list-item:1':
+    'pre-action-refusal',
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — conditional:list-item:2':
+    'pre-action-refusal',
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Reviewer:list-item:1':
+    'independent-review-human-judgment',
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Reviewer:list-item:2':
+    'independent-review-human-judgment',
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Reviewer:list-item:3':
+    'post-action-detection',
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Reviewer:list-item:4':
+    'independent-review-human-judgment',
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter:paragraph:1':
+    'narrative-provenance',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:1':
+    'pre-action-refusal',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:2':
+    'pre-action-refusal',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:3':
+    'pre-action-refusal',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:4':
+    'pre-action-refusal',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:5':
+    'pre-action-refusal',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:6':
+    'pre-action-refusal',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:7':
+    'ci-static-check',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:8':
+    'pre-action-refusal',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:9':
+    'pre-action-refusal',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:10':
+    'pre-action-refusal',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:11':
+    'ci-static-check',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:12':
+    'independent-review-human-judgment',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:13':
+    'pre-action-refusal',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:14':
+    'ci-static-check',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:15':
+    'ci-static-check',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:1':
+    'narrative-provenance',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:2':
+    'narrative-provenance',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:3':
+    'narrative-provenance',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:4':
+    'narrative-provenance',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:5':
+    'narrative-provenance',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:6':
+    'narrative-provenance',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:7':
+    'narrative-provenance',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:8':
+    'narrative-provenance',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:9':
+    'narrative-provenance',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:10':
+    'narrative-provenance',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:11':
+    'narrative-provenance',
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:12':
+    'narrative-provenance',
+  'foreman-line-plan:md-block:# The Foreman Line — Master Plugin Plan:paragraph:1':
+    'narrative-provenance',
+  'foreman-line-plan:md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage D — Verification:list-item:4':
+    'independent-review-human-judgment',
+  'foreman-line-plan:md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage E — Integration:list-item:4':
+    'ci-static-check',
+  'foreman-line-plan:md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage F — Closure:list-item:1':
+    'narrative-provenance',
+  'foreman-line-plan:md-block:# The Foreman Line — Master Plugin Plan > ## 4. Smart Triage as the Assignment Engine:list-item:1':
+    'pre-action-refusal',
+  'approval-readme:md-block:# @foreman-line/approval — Human Approval Flow CLI, W1-P3 > ## The human-gate contract:list-item:3':
+    'narrative-provenance',
+  'approval-readme:md-block:# @foreman-line/approval — Human Approval Flow CLI, W1-P3 > ## The human-gate contract:list-item:4':
+    'narrative-provenance',
   'spec-frontmatter-schema:json-pointer:/properties/permission_profile/enum': 'ci-static-check',
   'spec-linter-validator:const ajv = new Ajv({ allErrors: true })': 'ci-static-check',
-  'spec-linter-validator:if (doc.status === \'superseded\' && doc.superseded_by === null) {': 'ci-static-check',
-  'spec-linter-validator:if (!options?.noPermissionProfileWarning && !(\'permission_profile\' in doc)) {': 'ci-static-check',
-  'spec-linter-validator:\'advisory: permission_profile is absent; set it to a registry profile name when the registry ships\',': 'ci-static-check',
-  'spec-linter-cli: *   0  all specs valid (advisory warnings do not affect exit code)': 'ci-static-check',
-  'spec-linter-cli: *   1  at least one schema or semantic-invariant violation (every violation on stderr)': 'ci-static-check',
-  'spec-linter-cli: *   2  usage error: missing/unreadable path, bad invocation, or directory with no .md files': 'ci-static-check',
+  "spec-linter-validator:if (doc.status === 'superseded' && doc.superseded_by === null) {":
+    'ci-static-check',
+  "spec-linter-validator:if (!options?.noPermissionProfileWarning && !('permission_profile' in doc)) {":
+    'ci-static-check',
+  "spec-linter-validator:'advisory: permission_profile is absent; set it to a registry profile name when the registry ships',":
+    'ci-static-check',
+  'spec-linter-cli: *   0  all specs valid (advisory warnings do not affect exit code)':
+    'ci-static-check',
+  'spec-linter-cli: *   1  at least one schema or semantic-invariant violation (every violation on stderr)':
+    'ci-static-check',
+  'spec-linter-cli: *   2  usage error: missing/unreadable path, bad invocation, or directory with no .md files':
+    'ci-static-check',
   'spec-linter-cli:process.exitCode = run(process.argv.slice(2))': 'ci-static-check',
-  'spec-linter-readme:md-block:# @foreman-line/spec-linter > ## The four v0.2 fields:table-row:`permission_profile:`': 'unsupported',
-  'spec-linter-readme:md-block:# @foreman-line/spec-linter > ## The four v0.2 fields:paragraph:1': 'unsupported',
+  'spec-linter-readme:md-block:# @foreman-line/spec-linter > ## The four v0.2 fields:table-row:`permission_profile:`':
+    'unsupported',
+  'spec-linter-readme:md-block:# @foreman-line/spec-linter > ## The four v0.2 fields:paragraph:1':
+    'unsupported',
   'permission-profiles-registry:yaml-rule:builder-architecture:ask:[]': 'ci-static-check',
-  'permission-profiles-registry:yaml-rule:builder-architecture:deny:"Bash(git push --force*)"': 'pre-action-refusal',
-  'permission-profiles-registry:yaml-rule:builder-architecture:deny:"Bash(git push -f *)"': 'pre-action-refusal',
-  'permission-profiles-registry:yaml-rule:builder-architecture:deny:"Edit(.claude/**)"': 'pre-action-refusal',
-  'permission-profiles-registry:yaml-rule:builder-architecture:deny:"PowerShell(git push --force*)"': 'pre-action-refusal',
-  'permission-profiles-registry:yaml-rule:builder-architecture:deny:"PowerShell(git push -f *)"': 'pre-action-refusal',
-  'permission-profiles-registry:yaml-rule:builder-architecture:deny:"Write(.claude/**)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:builder-architecture:deny:"Bash(git push --force*)"':
+    'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:builder-architecture:deny:"Bash(git push -f *)"':
+    'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:builder-architecture:deny:"Edit(.claude/**)"':
+    'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:builder-architecture:deny:"PowerShell(git push --force*)"':
+    'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:builder-architecture:deny:"PowerShell(git push -f *)"':
+    'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:builder-architecture:deny:"Write(.claude/**)"':
+    'pre-action-refusal',
   'permission-profiles-registry:yaml-rule:builder-architecture:network/egress': 'ci-static-check',
   'permission-profiles-registry:yaml-rule:builder-deps:ask:[]': 'ci-static-check',
-  'permission-profiles-registry:yaml-rule:builder-deps:deny:"Bash(git push --force*)"': 'pre-action-refusal',
-  'permission-profiles-registry:yaml-rule:builder-deps:deny:"Bash(git push -f *)"': 'pre-action-refusal',
-  'permission-profiles-registry:yaml-rule:builder-deps:deny:"Edit(.claude/**)"': 'pre-action-refusal',
-  'permission-profiles-registry:yaml-rule:builder-deps:deny:"PowerShell(git push --force*)"': 'pre-action-refusal',
-  'permission-profiles-registry:yaml-rule:builder-deps:deny:"PowerShell(git push -f *)"': 'pre-action-refusal',
-  'permission-profiles-registry:yaml-rule:builder-deps:deny:"Write(.claude/**)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:builder-deps:deny:"Bash(git push --force*)"':
+    'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:builder-deps:deny:"Bash(git push -f *)"':
+    'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:builder-deps:deny:"Edit(.claude/**)"':
+    'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:builder-deps:deny:"PowerShell(git push --force*)"':
+    'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:builder-deps:deny:"PowerShell(git push -f *)"':
+    'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:builder-deps:deny:"Write(.claude/**)"':
+    'pre-action-refusal',
   'permission-profiles-registry:yaml-rule:builder-deps:network/egress': 'ci-static-check',
   'permission-profiles-registry:yaml-rule:builder-deps:network/notes': 'ci-static-check',
   'permission-profiles-registry:yaml-rule:builder-standard:ask:[]': 'ci-static-check',
-  'permission-profiles-registry:yaml-rule:builder-standard:deny:"Bash(git push --force*)"': 'pre-action-refusal',
-  'permission-profiles-registry:yaml-rule:builder-standard:deny:"Bash(git push -f *)"': 'pre-action-refusal',
-  'permission-profiles-registry:yaml-rule:builder-standard:deny:"Edit(.claude/**)"': 'pre-action-refusal',
-  'permission-profiles-registry:yaml-rule:builder-standard:deny:"PowerShell(git push --force*)"': 'pre-action-refusal',
-  'permission-profiles-registry:yaml-rule:builder-standard:deny:"PowerShell(git push -f *)"': 'pre-action-refusal',
-  'permission-profiles-registry:yaml-rule:builder-standard:deny:"Write(.claude/**)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:builder-standard:deny:"Bash(git push --force*)"':
+    'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:builder-standard:deny:"Bash(git push -f *)"':
+    'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:builder-standard:deny:"Edit(.claude/**)"':
+    'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:builder-standard:deny:"PowerShell(git push --force*)"':
+    'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:builder-standard:deny:"PowerShell(git push -f *)"':
+    'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:builder-standard:deny:"Write(.claude/**)"':
+    'pre-action-refusal',
   'permission-profiles-registry:yaml-rule:builder-standard:network/egress': 'ci-static-check',
   'permission-profiles-registry:yaml-rule:coordinator:ask:[]': 'ci-static-check',
-  'permission-profiles-registry:yaml-rule:coordinator:deny:"Bash(git push --force*)"': 'pre-action-refusal',
-  'permission-profiles-registry:yaml-rule:coordinator:deny:"Bash(git push -f *)"': 'pre-action-refusal',
-  'permission-profiles-registry:yaml-rule:coordinator:deny:"Edit(.claude/**)"': 'pre-action-refusal',
-  'permission-profiles-registry:yaml-rule:coordinator:deny:"PowerShell(git push --force*)"': 'pre-action-refusal',
-  'permission-profiles-registry:yaml-rule:coordinator:deny:"PowerShell(git push -f *)"': 'pre-action-refusal',
-  'permission-profiles-registry:yaml-rule:coordinator:deny:"Write(.claude/**)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:coordinator:deny:"Bash(git push --force*)"':
+    'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:coordinator:deny:"Bash(git push -f *)"':
+    'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:coordinator:deny:"Edit(.claude/**)"':
+    'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:coordinator:deny:"PowerShell(git push --force*)"':
+    'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:coordinator:deny:"PowerShell(git push -f *)"':
+    'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:coordinator:deny:"Write(.claude/**)"':
+    'pre-action-refusal',
   'permission-profiles-registry:yaml-rule:reviewer-readonly:ask:[]': 'ci-static-check',
-  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"Bash(git apply*)"': 'pre-action-refusal',
-  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"Bash(git commit*)"': 'pre-action-refusal',
-  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"Bash(git merge*)"': 'pre-action-refusal',
-  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"Bash(git push*)"': 'pre-action-refusal',
-  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"Bash(git stash*)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"Bash(git apply*)"':
+    'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"Bash(git commit*)"':
+    'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"Bash(git merge*)"':
+    'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"Bash(git push*)"':
+    'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"Bash(git stash*)"':
+    'pre-action-refusal',
   'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"Edit"': 'pre-action-refusal',
-  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"Edit(.claude/**)"': 'pre-action-refusal',
-  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"PowerShell(git apply*)"': 'pre-action-refusal',
-  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"PowerShell(git commit*)"': 'pre-action-refusal',
-  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"PowerShell(git merge*)"': 'pre-action-refusal',
-  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"PowerShell(git push*)"': 'pre-action-refusal',
-  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"PowerShell(git stash*)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"Edit(.claude/**)"':
+    'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"PowerShell(git apply*)"':
+    'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"PowerShell(git commit*)"':
+    'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"PowerShell(git merge*)"':
+    'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"PowerShell(git push*)"':
+    'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"PowerShell(git stash*)"':
+    'pre-action-refusal',
   'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"Write"': 'pre-action-refusal',
-  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"Write(.claude/**)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:reviewer-readonly:deny:"Write(.claude/**)"':
+    'pre-action-refusal',
   'permission-profiles-registry:yaml-rule:shaping-agent:ask:[]': 'ci-static-check',
-  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Bash(git push --force*)"': 'pre-action-refusal',
-  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Bash(git push -f *)"': 'pre-action-refusal',
-  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Edit(.claude/**)"': 'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Bash(git push --force*)"':
+    'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Bash(git push -f *)"':
+    'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Edit(.claude/**)"':
+    'pre-action-refusal',
   'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Edit(apps/**)"': 'pre-action-refusal',
-  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Edit(config/**)"': 'pre-action-refusal',
-  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Edit(plugins/**)"': 'pre-action-refusal',
-  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Edit(skills/**)"': 'pre-action-refusal',
-  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"PowerShell(git push --force*)"': 'pre-action-refusal',
-  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"PowerShell(git push -f *)"': 'pre-action-refusal',
-  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Write(.claude/**)"': 'pre-action-refusal',
-  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Write(apps/**)"': 'pre-action-refusal',
-  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Write(config/**)"': 'pre-action-refusal',
-  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Write(plugins/**)"': 'pre-action-refusal',
-  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Write(skills/**)"': 'pre-action-refusal',
-  'permission-profiles-types:export type PermissionMode = \'default\' | \'acceptEdits\' | \'plan\'': 'narrative-provenance',
-  'permission-profiles-types:export const PROFILE_NAMES: readonly ProfileName[] = [': 'narrative-provenance',
-  'permission-profiles-validator:const REVIEWER_MUTATION_COMMANDS: readonly string[] = [\'commit\', \'push\', \'apply\', \'stash\', \'merge\']': 'pre-action-refusal',
-  'permission-profiles-validator:if (envelope.defaultMode === \'bypassPermissions\') {': 'pre-action-refusal',
-  'permission-profiles-validator:function checkReviewerReadonlyRestrictionCompleteness(doc: Record<string, unknown>): string[] {': 'pre-action-refusal',
-  'permission-profiles-validator:function checkReviewerReadonlyShellAccessPreservation(doc: Record<string, unknown>): string[] {': 'pre-action-refusal',
-  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## The five enforced invariants:list-item:1': 'unsupported',
-  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## The five enforced invariants:list-item:2': 'unsupported',
-  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## The five enforced invariants:list-item:4': 'unsupported',
-  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## The five enforced invariants:list-item:5': 'unsupported',
-  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## Deny-first ruling (D9):paragraph:1': 'unsupported',
-  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## Session-start-load bound — with its failure modes (F-H):paragraph:1': 'unsupported',
-  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## Session-start-load bound — with its failure modes (F-H):list-item:2': 'unsupported',
-  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## Session-start-load bound — with its failure modes (F-H):list-item:3': 'unsupported',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition:paragraph:1': 'independent-review-human-judgment',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:1': 'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:2': 'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:3': 'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:4': 'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:5': 'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 0 — Authority and contracts:table-row:FK-P0 — Canon authority and enforcement registry': 'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 0 — Authority and contracts:table-row:FK-P1 — Lifecycle, admission, and decision contracts': 'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 1 — Pure trust core:table-row:FK-P3 — Pure dispatch decisions': 'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 1 — Pure trust core:table-row:FK-P4 — Verifier facade': 'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 1 — Pure trust core:table-row:FK-P5 — Clean-room trust-core spike': 'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 2 — Stateless read-only MCP and container:table-row:FK-P6 — Read-only MCP server': 'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 2 — Stateless read-only MCP and container:table-row:FK-P7 — Stateless verifier image and launcher': 'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 2 — Stateless read-only MCP and container:table-row:FK-P8 — Stateless harness portability proof': 'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P9 — SQLite storage and migration ABI': 'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P10 — Lease and transition engine': 'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P11 — Legacy import and projection engine': 'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P12 — Authorization policy engine': 'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P13 — Admission-protected control catalog': 'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P14 — Stateful image composition and operator lifecycle': 'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P15 — Stateful restart and admission proof': 'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P16 — Claude lifecycle adapter, shadow mode': 'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P17 — Bypass and outage harness': 'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P19 — High-confidence refusal enforcement': 'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P20 — Second-host feasibility and host registration': 'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P21 — Exit evidence manifest and clean-room proof': 'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:1': 'ci-static-check',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:2': 'ci-static-check',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:3': 'ci-static-check',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:4': 'ci-static-check',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:5': 'ci-static-check',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:6': 'ci-static-check',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:7': 'ci-static-check',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:8': 'ci-static-check',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:9': 'ci-static-check',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:10': 'ci-static-check',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:11': 'ci-static-check',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:12': 'ci-static-check',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:13': 'ci-static-check',
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Edit(config/**)"':
+    'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Edit(plugins/**)"':
+    'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Edit(skills/**)"':
+    'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"PowerShell(git push --force*)"':
+    'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"PowerShell(git push -f *)"':
+    'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Write(.claude/**)"':
+    'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Write(apps/**)"':
+    'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Write(config/**)"':
+    'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Write(plugins/**)"':
+    'pre-action-refusal',
+  'permission-profiles-registry:yaml-rule:shaping-agent:deny:"Write(skills/**)"':
+    'pre-action-refusal',
+  "permission-profiles-types:export type PermissionMode = 'default' | 'acceptEdits' | 'plan'":
+    'narrative-provenance',
+  'permission-profiles-types:export const PROFILE_NAMES: readonly ProfileName[] = [':
+    'narrative-provenance',
+  "permission-profiles-validator:const REVIEWER_MUTATION_COMMANDS: readonly string[] = ['commit', 'push', 'apply', 'stash', 'merge']":
+    'pre-action-refusal',
+  "permission-profiles-validator:if (envelope.defaultMode === 'bypassPermissions') {":
+    'pre-action-refusal',
+  'permission-profiles-validator:function checkReviewerReadonlyRestrictionCompleteness(doc: Record<string, unknown>): string[] {':
+    'pre-action-refusal',
+  'permission-profiles-validator:function checkReviewerReadonlyShellAccessPreservation(doc: Record<string, unknown>): string[] {':
+    'pre-action-refusal',
+  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## The five enforced invariants:list-item:1':
+    'unsupported',
+  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## The five enforced invariants:list-item:2':
+    'unsupported',
+  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## The five enforced invariants:list-item:4':
+    'unsupported',
+  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## The five enforced invariants:list-item:5':
+    'unsupported',
+  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## Deny-first ruling (D9):paragraph:1':
+    'unsupported',
+  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## Session-start-load bound — with its failure modes (F-H):paragraph:1':
+    'unsupported',
+  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## Session-start-load bound — with its failure modes (F-H):list-item:2':
+    'unsupported',
+  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## Session-start-load bound — with its failure modes (F-H):list-item:3':
+    'unsupported',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition:paragraph:1':
+    'independent-review-human-judgment',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:1':
+    'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:2':
+    'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:3':
+    'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:4':
+    'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:5':
+    'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 0 — Authority and contracts:table-row:FK-P0 — Canon authority and enforcement registry':
+    'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 0 — Authority and contracts:table-row:FK-P1 — Lifecycle, admission, and decision contracts':
+    'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 1 — Pure trust core:table-row:FK-P3 — Pure dispatch decisions':
+    'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 1 — Pure trust core:table-row:FK-P4 — Verifier facade':
+    'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 1 — Pure trust core:table-row:FK-P5 — Clean-room trust-core spike':
+    'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 2 — Stateless read-only MCP and container:table-row:FK-P6 — Read-only MCP server':
+    'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 2 — Stateless read-only MCP and container:table-row:FK-P7 — Stateless verifier image and launcher':
+    'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 2 — Stateless read-only MCP and container:table-row:FK-P8 — Stateless harness portability proof':
+    'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P9 — SQLite storage and migration ABI':
+    'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P10 — Lease and transition engine':
+    'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P11 — Legacy import and projection engine':
+    'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P12 — Authorization policy engine':
+    'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P13 — Admission-protected control catalog':
+    'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P14 — Stateful image composition and operator lifecycle':
+    'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P15 — Stateful restart and admission proof':
+    'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P16 — Claude lifecycle adapter, shadow mode':
+    'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P17 — Bypass and outage harness':
+    'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P19 — High-confidence refusal enforcement':
+    'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P20 — Second-host feasibility and host registration':
+    'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P21 — Exit evidence manifest and clean-room proof':
+    'pre-action-refusal',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:1':
+    'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:2':
+    'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:3':
+    'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:4':
+    'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:5':
+    'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:6':
+    'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:7':
+    'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:8':
+    'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:9':
+    'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:10':
+    'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:11':
+    'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:12':
+    'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:13':
+    'ci-static-check',
   // Integration scenario 14 (decision-path latency), added by ratified amendment A1.
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:14': 'ci-static-check',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:14':
+    'ci-static-check',
 }
 
 function curatedClassificationFor(sourceId: string, locatorAnchor: string): RuleClassification {
@@ -2450,10 +2776,7 @@ function curatedClassificationFor(sourceId: string, locatorAnchor: string): Rule
 }
 const CURATED_ITEM_IDENTITIES: Readonly<Record<string, readonly [string, string]>> = {
   'fk-charter:D1': ['goal.separation', 'separate-foreman-kernel-goal'],
-  'fk-charter:D2': [
-    'canon.operational-authority-boundary',
-    'git-canon-sqlite-operational-split',
-  ],
+  'fk-charter:D2': ['canon.operational-authority-boundary', 'git-canon-sqlite-operational-split'],
   'fk-charter:D3': ['kernel.surface-admission-separation', 'read-control-admission-separated'],
   'fk-charter:D4': [
     'kernel.first-release-scope',
@@ -2470,18 +2793,9 @@ const CURATED_ITEM_IDENTITIES: Readonly<Record<string, readonly [string, string]
   'fk-charter:D10': ['spec.mutation-authority', 'exact-allowed-files-required'],
   'fk-charter:D11': ['defect.retirement', 'four-independent-evidence-kinds-required'],
   'fk-charter:D12': ['hook.policy-boundary', 'hooks-normalize-but-do-not-decide-policy'],
-  'fk-charter:D13': [
-    'repository.mutation-detection',
-    'post-action-git-and-ci-backstop-required',
-  ],
-  'fk-charter:D14': [
-    'operational-state.authority',
-    'sqlite-transactional-single-writer-authority',
-  ],
-  'fk-charter:D15': [
-    'external-effects.boundary',
-    'first-container-has-no-external-credentials',
-  ],
+  'fk-charter:D13': ['repository.mutation-detection', 'post-action-git-and-ci-backstop-required'],
+  'fk-charter:D14': ['operational-state.authority', 'sqlite-transactional-single-writer-authority'],
+  'fk-charter:D15': ['external-effects.boundary', 'first-container-has-no-external-credentials'],
   'fk-charter:D16': ['caller.asserted-authority', 'self-asserted-authority-is-refused'],
   'fk-charter:D17': ['tool.public-contract', 'versioned-schema-provenance-and-stable-codes'],
   'fk-charter:D18': ['kernel.authorize-action-owner', 'provider-neutral-policy-engine'],
@@ -2527,7 +2841,10 @@ const CURATED_ITEM_IDENTITIES: Readonly<Record<string, readonly [string, string]
     'goal-stop.stage-contract-boundary',
     'stop-on-out-of-parcel-stage-contract-change',
   ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:5': ['goal-stop.allowed-files', 'stop-on-unlisted-required-file'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:5': [
+    'goal-stop.allowed-files',
+    'stop-on-unlisted-required-file',
+  ],
   'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:6': [
     'goal-stop.surfaces-authority-confusion',
     'stop-if-exact-paths-require-treating-surfaces-as-permission',
@@ -2560,7 +2877,10 @@ const CURATED_ITEM_IDENTITIES: Readonly<Record<string, readonly [string, string]
     'goal-stop.security-boundary',
     'stop-on-security-boundary-that-cannot-close-in-parcel',
   ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:14': ['goal-stop.tripwire', 'stop-on-repeated-tripwire-or-rework-cap'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:14': [
+    'goal-stop.tripwire',
+    'stop-on-repeated-tripwire-or-rework-cap',
+  ],
   'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:15': [
     'goal-stop.worktree-isolation',
     'stop-on-ambient-or-other-worktree-mutation',
@@ -2569,35 +2889,35 @@ const CURATED_ITEM_IDENTITIES: Readonly<Record<string, readonly [string, string]
     'goal-stop.exit-evidence',
     'stop-on-empty-queue-with-unproved-exit',
   ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 0 — Authority and contracts:paragraph:1': [
-    'wave-exit.authority-contracts',
-    'wave-zero-contracts-path-authority-and-reconciliations-complete',
-  ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 1 — Pure trust core:paragraph:1': [
-    'wave-exit.pure-trust-core',
-    'wave-one-evaluators-deterministic-contracted-and-clean-room-proven',
-  ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 2 — Stateless read-only MCP and container:paragraph:1': [
-    'wave-exit.stateless-verifier',
-    'wave-two-pinned-read-only-image-portable-and-state-confined',
-  ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:paragraph:1': [
-    'wave-exit.durable-state',
-    'wave-three-ownership-recovery-idempotency-and-projection-invariants-hold',
-  ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:paragraph:1': [
-    'wave-exit.enforcement-promotion',
-    'wave-four-refusal-detection-recovery-and-evidence-claims-are-bound',
-  ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 13. Gate 1 decision list:list-item:11': ['gate3.merge-authority', 'human-owned-nondelegated'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 0 — Authority and contracts:paragraph:1':
+    [
+      'wave-exit.authority-contracts',
+      'wave-zero-contracts-path-authority-and-reconciliations-complete',
+    ],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 1 — Pure trust core:paragraph:1':
+    [
+      'wave-exit.pure-trust-core',
+      'wave-one-evaluators-deterministic-contracted-and-clean-room-proven',
+    ],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 2 — Stateless read-only MCP and container:paragraph:1':
+    ['wave-exit.stateless-verifier', 'wave-two-pinned-read-only-image-portable-and-state-confined'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:paragraph:1':
+    [
+      'wave-exit.durable-state',
+      'wave-three-ownership-recovery-idempotency-and-projection-invariants-hold',
+    ],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:paragraph:1':
+    [
+      'wave-exit.enforcement-promotion',
+      'wave-four-refusal-detection-recovery-and-evidence-claims-are-bound',
+    ],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 13. Gate 1 decision list:list-item:11':
+    ['gate3.merge-authority', 'human-owned-nondelegated'],
   'fk-plan-review-findings:R1': [
     'authorization.engine-placement',
     'dedicated-policy-engine-parcel-added',
   ],
-  'fk-plan-review-findings:R2': [
-    'control.admission',
-    'authenticated-local-admission-required',
-  ],
+  'fk-plan-review-findings:R2': ['control.admission', 'authenticated-local-admission-required'],
   'fk-plan-review-findings:R3': [
     'image.proof-separation',
     'stateless-and-stateful-proofs-separated',
@@ -2612,10 +2932,7 @@ const CURATED_ITEM_IDENTITIES: Readonly<Record<string, readonly [string, string]
     'confidential-read-and-state-isolation-added',
   ],
   'fk-plan-review-findings:R7': ['parcel.wave-boundaries', 'wave-three-serialization-redrawn'],
-  'fk-plan-review-findings:R8': [
-    'state.authority-fields',
-    'git-sqlite-cutover-semantics-added',
-  ],
+  'fk-plan-review-findings:R8': ['state.authority-fields', 'git-sqlite-cutover-semantics-added'],
   'fk-plan-review-findings:R9': [
     'state.failure-tests',
     'lease-crash-migration-backup-tests-required',
@@ -2629,474 +2946,373 @@ const CURATED_ITEM_IDENTITIES: Readonly<Record<string, readonly [string, string]
     'mixed-entrypoint.sentinel',
     'enumeration-and-write-sentinels-bind-shaping',
   ],
-  'fk-plan-review-findings:R13': [
-    'shared-file.serialization',
-    'every-shared-surface-has-an-owner',
-  ],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:paragraph:1': [
-    'goal.coordinator-ownership',
-    'single-ratified-coordinator-and-explicit-handoff',
-  ],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:list-item:1': [
-    'goal.ratification-evidence.original',
-    'original-gate1-charter-commit-recorded',
-  ],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:list-item:2': [
-    'goal.ratification-evidence.plan-review',
-    'plan-review-triage-commit-recorded',
-  ],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:list-item:3': [
-    'goal.ratification-evidence.reratification',
-    'scoped-gate1-reratification-commit-recorded',
-  ],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:list-item:4': [
-    'gate2.dispatch-grant',
-    'coordinator-may-dispatch-fk-p0-through-fk-p21-conditionally',
-  ],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:list-item:5': ['gate3.merge-authority', 'human-owned-nondelegated'],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:paragraph:1': [
-    'verification.issue-authority',
-    'coordinator-consumes-but-never-produces-independent-verification',
-  ],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:1': [
-    'coordinator.required-reading.charter',
-    'read-goal-charter-every-iteration',
-  ],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:2': [
-    'coordinator.required-reading.loop-directive',
-    'read-loop-directive-every-iteration',
-  ],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:3': [
-    'coordinator.required-reading.parcel-state',
-    'read-active-spec-kickstarter-handoff-and-findings',
-  ],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:4': [
-    'coordinator.required-reading.pattern',
-    'read-coordinator-pattern-every-iteration',
-  ],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:5': [
-    'coordinator.required-reading.spec-convention',
-    'read-spec-convention-every-iteration',
-  ],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:6': [
-    'coordinator.required-reading.standing-constraints',
-    'read-standing-constraints-every-iteration',
-  ],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:paragraph:2': [
-    'coordinator.required-reading.plan-review',
-    'plan-review-transcript-path-recorded',
-  ],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:1': [
-    'gate2.dispatch-grant',
-    'coordinator-may-dispatch-fk-p0-through-fk-p21-conditionally',
-  ],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:2': [
-    'shaping.dispatch-readiness',
-    'shaping-and-lint-require-satisfied-dependencies',
-  ],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:3': [
-    'parcel.local-work-authority',
-    'local-isolated-work-authorized-for-named-parcel-only',
-  ],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:4': [
-    'step0.ruling-authority',
-    'coordinator-rules-unless-ratified-boundary-changes',
-  ],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:5': [
-    'goal.external-effects-authorization',
-    'goal-authorizes-no-external-system-effects',
-  ],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:6': ['gate3.merge-authority', 'human-owned-nondelegated'],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:7': [
-    'scm.external-write-authority',
-    'push-or-pr-requires-explicit-contract-and-developer-authority',
-  ],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:8': [
-    'workspace.ambient-checkout-authority',
-    'ambient-checkout-never-read-written-or-absorbed',
-  ],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:1': [
-    'parcel.queue-verification',
-    'dependencies-verified-against-git-not-memory',
-  ],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:2': [
-    'parcel.shaping-dispatch',
-    'fresh-docs-only-shaping-before-build',
-  ],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:3': [
-    'parcel.spec-charter-lint',
-    'coordinator-lints-spec-against-charter',
-  ],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:4': [
-    'parcel.worktree-dispatch',
-    'verified-base-isolated-worktree-required',
-  ],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:5': [
-    'parcel.step0-gate',
-    'builder-restates-and-stops-before-code',
-  ],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:6': [
-    'parcel.builder-claim-verification',
-    'committed-sha-and-claim-verified-before-review',
-  ],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:7': [
-    'parcel.deterministic-pass',
-    'coordinator-runs-complete-sequential-verification',
-  ],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:8': [
-    'verification.issue-authority',
-    'architecture-risk-two-fresh-independent-reviews-required',
-  ],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:9': [
-    'review.finding-triage',
-    'findings-triaged-and-disputed-blockers-reproduced',
-  ],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:10': ['gate3.merge-authority', 'human-owned-nondelegated'],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:11': [
-    'closure.stage-f-prerequisite',
-    'stage-f-only-after-human-merge',
-  ],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Queue and dependency order:paragraph:1': [
-    'parcel.shared-file-serialization',
-    'parallelism-only-without-shared-serialization-points',
-  ],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:paragraph:1': [
-    'registry.delivery-boundary',
-    'authority-registry-precedes-runtime-contracts',
-  ],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:1': [
-    'registry.inventory-coverage',
-    'inventory-every-standing-role-gate-stop-and-authority-rule',
-  ],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:2': [
-    'registry.classification-taxonomy',
-    'classify-every-rule-in-closed-six-way-taxonomy',
-  ],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:3': [
-    'registry.rule-contract',
-    'bind-precedence-identity-source-applicability-and-retirement',
-  ],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:4': [
-    'registry.reconciliation-duty',
-    'reconcile-gates-live-behavior-and-stale-canon',
-  ],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:5': [
-    'registry.protected-authority',
-    'agent-state-cannot-manufacture-protected-authority',
-  ],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:6': [
-    'registry.fixture-evidence',
-    'golden-and-mutation-controls-required',
-  ],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:7': [
-    'registry.scope-boundary',
-    'registry-remains-contract-only-without-runtime-or-effects',
-  ],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:paragraph:1': [
-    'coordinator.stop-policy',
-    'stop-and-report-on-listed-boundary-failures',
-  ],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:1': [
-    'goal.stop.coordinator-ownership',
-    'stop-on-ambiguous-or-competing-coordinator',
-  ],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:2': [
-    'goal.stop.ratified-boundary',
-    'stop-when-ratified-boundary-needs-change',
-  ],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:3': [
-    'goal.stop.allowed-files',
-    'stop-when-required-file-is-not-allowed',
-  ],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:4': [
-    'goal.stop.serialization-ownership',
-    'stop-when-owned-serialization-point-has-no-ratified-sequence',
-  ],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:5': [
-    'goal.stop.protected-authority',
-    'stop-on-self-asserted-or-manufactured-authority',
-  ],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:6': [
-    'goal.stop.read-containment',
-    'stop-on-repository-or-state-volume-read-escape',
-  ],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:7': [
-    'goal.stop.security-boundary',
-    'stop-when-security-finding-cannot-close',
-  ],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:8': [
-    'goal.stop.tripwire',
-    'stop-when-tripwire-or-rework-cap-fires',
-  ],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:9': [
-    'goal.stop.worktree-isolation',
-    'stop-on-ambient-or-other-worktree-mutation',
-  ],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:10': [
-    'goal.stop.user-change-collision',
-    'stop-on-user-owned-required-file-collision',
-  ],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:11': [
-    'goal.stop.incomplete-empty-queue',
-    'stop-on-empty-queue-before-goal-exit-evidence',
-  ],
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Wakeup and crash recovery:paragraph:1': [
-    'coordinator.session-recovery',
-    'completion-signal-and-recovery-custody-rules',
-  ],
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 3. Spec Lifecycle:list-item:1': [
-    'parcel.spec-convention',
-    'follow-versioned-spec-lifecycle-and-exact-mutation-authority-1-state-lives-frontmatter-folder-location-they-must-agree-folder-authoritative-agent',
-  ],
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 3. Spec Lifecycle:list-item:2': [
-    'parcel.spec-convention',
-    'follow-versioned-spec-lifecycle-and-exact-mutation-authority-2-when-work-merges-spec-moves-same-pr-immediate-follow-up-merge',
-  ],
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 3. Spec Lifecycle:list-item:3': [
-    'parcel.spec-convention',
-    'follow-versioned-spec-lifecycle-and-exact-mutation-authority-3-material-changes-spec-require-comment-linked-jira-ticket-see-5',
-  ],
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 3. Spec Lifecycle:list-item:4': [
-    'parcel.spec-convention',
-    'follow-versioned-spec-lifecycle-and-exact-mutation-authority-4-agents-load-only-spec-their-assigned-ticket-b-nothing-else-ever',
-  ],
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 5. The Spec ↔ Jira Contract:list-item:1': [
-    'parcel.spec-convention',
-    'follow-versioned-spec-lifecycle-and-exact-mutation-authority-1-every-spec-carries-jira-key-frontmatter-filename',
-  ],
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 5. The Spec ↔ Jira Contract:list-item:2': [
-    'parcel.spec-convention',
-    'follow-versioned-spec-lifecycle-and-exact-mutation-authority-2-every-linked-jira-ticket-carries-link-spec-path-at-specific-commit',
-  ],
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 5. The Spec ↔ Jira Contract:list-item:3': [
-    'parcel.spec-convention',
-    'follow-versioned-spec-lifecycle-and-exact-mutation-authority-3-when-spec-s-date-bumps-material-change-ticket-gets-comment-spec',
-  ],
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 5. The Spec ↔ Jira Contract:list-item:4': [
-    'parcel.spec-convention',
-    'follow-versioned-spec-lifecycle-and-exact-mutation-authority-4-conflicts-resolve-follows-jira-wins-delivery-state-priority-schedule-assignment-spec',
-  ],
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 8. Dispatch Model (How Agents Consume Specs):list-item:1': [
-    'parcel.spec-convention',
-    'follow-versioned-spec-lifecycle-and-exact-mutation-authority-1-one-spec-one-agent-one-isolated-branch-worktree-no-shared-working',
-  ],
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 8. Dispatch Model (How Agents Consume Specs):list-item:2': [
-    'parcel.spec-convention',
-    'follow-versioned-spec-lifecycle-and-exact-mutation-authority-2-scope-pinning-at-dispatch-step-0-agent-s-first-act-restate',
-  ],
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 8. Dispatch Model (How Agents Consume Specs):list-item:3': [
-    'verification.issue-authority',
-    'claimant-cannot-self-verify',
-  ],
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 8. Dispatch Model (How Agents Consume Specs):list-item:4': [
-    'parcel.spec-convention',
-    'follow-versioned-spec-lifecycle-and-exact-mutation-authority-4-gate-3-human-owned-unless-delegation-proven-at-merge-time-delegation',
-  ],
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 11. Coordinator-Ratified Amendment Pattern (added W0-P2):list-item:1': [
-    'parcel.spec-convention',
-    'follow-versioned-spec-lifecycle-and-exact-mutation-authority-1-exact-replacement-text-supplied-coordinator-coordinator-provides-literal-text-land-document',
-  ],
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 11. Coordinator-Ratified Amendment Pattern (added W0-P2):list-item:2': [
-    'parcel.spec-convention',
-    'follow-versioned-spec-lifecycle-and-exact-mutation-authority-2-committed-alone-parcel-worktree-before-any-implementing-code-amendment-commit-touches',
-  ],
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 11. Coordinator-Ratified Amendment Pattern (added W0-P2):list-item:3': [
-    'parcel.spec-convention',
-    'follow-versioned-spec-lifecycle-and-exact-mutation-authority-3-commit-message-explicitly-identifies-coordinator-amendment-not-generic-message-message-must',
-  ],
-  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:1': [
-    'goal.coordination-model',
-    'mutual-decisions-ratified-before-dispatch-1-intake-developer-brings-concept-sentence-page-coordinator-interrogates-what-does-done',
-  ],
-  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:2': [
-    'goal.coordination-model',
-    'mutual-decisions-ratified-before-dispatch-2-ideation-mutual-coordinator-proposes-developer-disposes-open-design-questions-surfaced-explicit',
-  ],
-  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:3': [
-    'goal.coordination-model',
-    'mutual-decisions-ratified-before-dispatch-3-commentary-not-change-request-treat-developer-s-reaction-rationale-question-preference',
-  ],
-  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:4': [
-    'goal.coordination-model',
-    'mutual-decisions-ratified-before-dispatch-4-output-goal-charter-one-document-containing-objective-locked-decisions-d1-dn',
-  ],
-  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:5': [
-    'goal.coordination-model',
-    'mutual-decisions-ratified-before-dispatch-5-gate-1-ratification-developer-approves-charter-explicitly-gate-can-never-delegated',
-  ],
-  'goal-skill:md-block:# /goal — the Coordinator entry point > ## Stage Zero — run it, don\'t skip it:list-item:1': [
-    'goal.ratification-lifecycle',
-    'interrogate-charter-and-obtain-explicit-gate-one-1-interrogate-concept-what-does-done-mean-who-consumes-result-what-deliberately',
-  ],
-  'goal-skill:md-block:# /goal — the Coordinator entry point > ## Stage Zero — run it, don\'t skip it:list-item:2': [
-    'goal.ratification-lifecycle',
-    'interrogate-charter-and-obtain-explicit-gate-one-2-draft-goal-charter-at-objective-locked-decisions-d1-dn-reasoning-wave',
-  ],
-  'goal-skill:md-block:# /goal — the Coordinator entry point > ## Stage Zero — run it, don\'t skip it:list-item:3': [
-    'goal.ratification-lifecycle',
-    'interrogate-charter-and-obtain-explicit-gate-one-3-gate-1-present-charter-s-decision-list-developer-explicit-ratification-gate',
-  ],
-  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:1': [
-    'external-boundary.error-contract',
-    'typed-module-error-required',
-  ],
-  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:2': [
-    'untested-seam.return-trust',
-    'unknown-until-normalized',
-  ],
-  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:3': [
-    'default-deny.structural-testing',
-    'each-invariant-tested-independently',
-  ],
-  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:4': [
-    'line-protocol.emission-safety',
-    'external-data-sanitized',
-  ],
-  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:5': [
-    'untrusted-text.parse-complexity',
-    'linear-time-required',
-  ],
-  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:6': ['parcel.byte-freeze-placement', 'parcel-time-only'],
-  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:7': [
-    'allowlist.binding-dimensions',
-    'identity-location-value-required',
-  ],
-  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — conditional:list-item:1': [
-    'classifier.fixture-coverage',
-    'real-naming-and-false-negatives-covered',
-  ],
-  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — conditional:list-item:2': [
-    'kompress.payload-ceiling',
-    'oversize-requires-coordinator-ruling',
-  ],
-  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Reviewer:list-item:1': [
-    'review.hostile-probing',
-    'one-off-live-probes-licensed',
-  ],
-  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Reviewer:list-item:2': [
-    'review.prose-ambiguity',
-    'naive-reading-must-be-excluded',
-  ],
-  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Reviewer:list-item:3': [
-    'review.worktree-integrity',
-    'post-review-git-detection-required',
-  ],
-  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Reviewer:list-item:4': [
-    'review.assertion-binding',
-    'mutation-probe-required',
-  ],
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:1': [
-    'parcel.contract-sequencing',
-    'contracts-before-parallel-work',
-  ],
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:2': [
-    'parcel.execution-isolation',
-    'one-branch-one-worktree',
-  ],
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:3': [
-    'parcel.review-independence',
-    'independently-reviewable',
-  ],
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:4': [
-    'parcel.mutation-authority',
-    'exact-files-required',
-  ],
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:5': [
-    'parcel.shared-file-serialization',
-    'serialization-required',
-  ],
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:6': ['parcel.pre-pr-base', 'rebase-before-pr'],
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:7': ['parcel.verification', 'verification-required'],
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:8': [
-    'parcel.missing-product-decision',
-    'stop-and-escalate',
-  ],
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:9': [
-    'parcel.contract-amendment',
-    'no-silent-contract-change',
-  ],
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:10': [
-    'parcel.sensitive-data-safety',
-    'no-secrets-pii-or-payload-dumps',
-  ],
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:11': [
-    'integration-surface.scenarios',
-    'positive-negative-failure-required',
-  ],
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:12': [
-    'release.security-gate',
-    'security-evidence-blocks-release',
-  ],
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:13': [
-    'coordination.persistence',
-    'durable-state-before-closure',
-  ],
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:14': [
-    'scenario.environment-identity',
-    'environment-build-config-bound',
-  ],
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:15': [
-    'release.claim-evidence',
-    'evidence-required-for-claim',
-  ],
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:1': [
-    'parcel.review-checklist',
-    'verify-contract-scope-safety-evidence-and-handoff-1-does-implementation-match-contract',
-  ],
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:2': [
-    'parcel.review-checklist',
-    'verify-contract-scope-safety-evidence-and-handoff-2-only-allowed-files-touched',
-  ],
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:3': [
-    'parcel.review-checklist',
-    'verify-contract-scope-safety-evidence-and-handoff-3-were-forbidden-items-respected',
-  ],
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:4': [
-    'parcel.review-checklist',
-    'verify-contract-scope-safety-evidence-and-handoff-4-did-parcel-respect-out-scope',
-  ],
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:5': [
-    'parcel.review-checklist',
-    'verify-contract-scope-safety-evidence-and-handoff-5-did-agent-avoid-silent-product-decisions',
-  ],
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:6': [
-    'parcel.review-checklist',
-    'verify-contract-scope-safety-evidence-and-handoff-6-were-required-tests-manual-verification-completed-exactly-specified',
-  ],
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:7': [
-    'parcel.review-checklist',
-    'verify-contract-scope-safety-evidence-and-handoff-7-did-parcel-avoid-secrets-pii-unsafe-logs-payload-dumps',
-  ],
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:8': [
-    'parcel.review-checklist',
-    'verify-contract-scope-safety-evidence-and-handoff-8-if-crossing-supportability-boundaries-were-logs-metrics-traces-handled-appropriately',
-  ],
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:9': [
-    'parcel.review-checklist',
-    'verify-contract-scope-safety-evidence-and-handoff-9-if-crossing-integration-boundaries-was-relevant-surface-updated-referenced',
-  ],
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:10': [
-    'parcel.review-checklist',
-    'verify-contract-scope-safety-evidence-and-handoff-10-if-security-gate-applies-was-required-security-evidence-produced-tracked',
-  ],
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:11': [
-    'parcel.review-checklist',
-    'verify-contract-scope-safety-evidence-and-handoff-11-was-session-handoff-completed',
-  ],
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:12': [
-    'parcel.review-checklist',
-    'verify-contract-scope-safety-evidence-and-handoff-12-was-persistent-coordinator-state-updated-if-required-parcel-fails-gets-sent',
-  ],
-  'foreman-line-plan:md-block:# The Foreman Line — Master Plugin Plan:paragraph:1': ['gate.namespace', 'historical-two-stage-gates'],
-  'foreman-line-plan:md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage F — Closure:list-item:1': ['gate3.merge-authority', 'human-owned-nondelegated'],
-  'approval-readme:md-block:# @foreman-line/approval — Human Approval Flow CLI, W1-P3 > ## The human-gate contract:list-item:3': [
-    'stage-approval.tty-presence',
-    'live-interactive-tty-required',
-  ],
-  'approval-readme:md-block:# @foreman-line/approval — Human Approval Flow CLI, W1-P3 > ## The human-gate contract:list-item:4': [
-    'stage-approval.confirmation-and-mint',
-    'typed-confirmation-and-approver-required-before-mint',
-  ],
+  'fk-plan-review-findings:R13': ['shared-file.serialization', 'every-shared-surface-has-an-owner'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:paragraph:1':
+    ['goal.coordinator-ownership', 'single-ratified-coordinator-and-explicit-handoff'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:list-item:1':
+    ['goal.ratification-evidence.original', 'original-gate1-charter-commit-recorded'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:list-item:2':
+    ['goal.ratification-evidence.plan-review', 'plan-review-triage-commit-recorded'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:list-item:3':
+    ['goal.ratification-evidence.reratification', 'scoped-gate1-reratification-commit-recorded'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:list-item:4':
+    ['gate2.dispatch-grant', 'coordinator-may-dispatch-fk-p0-through-fk-p21-conditionally'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:list-item:5':
+    ['gate3.merge-authority', 'human-owned-nondelegated'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:paragraph:1':
+    [
+      'verification.issue-authority',
+      'coordinator-consumes-but-never-produces-independent-verification',
+    ],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:1':
+    ['coordinator.required-reading.charter', 'read-goal-charter-every-iteration'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:2':
+    ['coordinator.required-reading.loop-directive', 'read-loop-directive-every-iteration'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:3':
+    [
+      'coordinator.required-reading.parcel-state',
+      'read-active-spec-kickstarter-handoff-and-findings',
+    ],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:4':
+    ['coordinator.required-reading.pattern', 'read-coordinator-pattern-every-iteration'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:5':
+    ['coordinator.required-reading.spec-convention', 'read-spec-convention-every-iteration'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:6':
+    [
+      'coordinator.required-reading.standing-constraints',
+      'read-standing-constraints-every-iteration',
+    ],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:paragraph:2':
+    ['coordinator.required-reading.plan-review', 'plan-review-transcript-path-recorded'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:1':
+    ['gate2.dispatch-grant', 'coordinator-may-dispatch-fk-p0-through-fk-p21-conditionally'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:2':
+    ['shaping.dispatch-readiness', 'shaping-and-lint-require-satisfied-dependencies'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:3':
+    ['parcel.local-work-authority', 'local-isolated-work-authorized-for-named-parcel-only'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:4':
+    ['step0.ruling-authority', 'coordinator-rules-unless-ratified-boundary-changes'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:5':
+    ['goal.external-effects-authorization', 'goal-authorizes-no-external-system-effects'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:6':
+    ['gate3.merge-authority', 'human-owned-nondelegated'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:7':
+    [
+      'scm.external-write-authority',
+      'push-or-pr-requires-explicit-contract-and-developer-authority',
+    ],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:8':
+    ['workspace.ambient-checkout-authority', 'ambient-checkout-never-read-written-or-absorbed'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:1':
+    ['parcel.queue-verification', 'dependencies-verified-against-git-not-memory'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:2':
+    ['parcel.shaping-dispatch', 'fresh-docs-only-shaping-before-build'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:3':
+    ['parcel.spec-charter-lint', 'coordinator-lints-spec-against-charter'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:4':
+    ['parcel.worktree-dispatch', 'verified-base-isolated-worktree-required'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:5':
+    ['parcel.step0-gate', 'builder-restates-and-stops-before-code'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:6':
+    ['parcel.builder-claim-verification', 'committed-sha-and-claim-verified-before-review'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:7':
+    ['parcel.deterministic-pass', 'coordinator-runs-complete-sequential-verification'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:8':
+    ['verification.issue-authority', 'architecture-risk-two-fresh-independent-reviews-required'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:9':
+    ['review.finding-triage', 'findings-triaged-and-disputed-blockers-reproduced'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:10':
+    ['gate3.merge-authority', 'human-owned-nondelegated'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:11':
+    ['closure.stage-f-prerequisite', 'stage-f-only-after-human-merge'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Queue and dependency order:paragraph:1':
+    ['parcel.shared-file-serialization', 'parallelism-only-without-shared-serialization-points'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:paragraph:1':
+    ['registry.delivery-boundary', 'authority-registry-precedes-runtime-contracts'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:1':
+    ['registry.inventory-coverage', 'inventory-every-standing-role-gate-stop-and-authority-rule'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:2':
+    ['registry.classification-taxonomy', 'classify-every-rule-in-closed-six-way-taxonomy'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:3':
+    ['registry.rule-contract', 'bind-precedence-identity-source-applicability-and-retirement'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:4':
+    ['registry.reconciliation-duty', 'reconcile-gates-live-behavior-and-stale-canon'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:5':
+    ['registry.protected-authority', 'agent-state-cannot-manufacture-protected-authority'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:6':
+    ['registry.fixture-evidence', 'golden-and-mutation-controls-required'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:7':
+    ['registry.scope-boundary', 'registry-remains-contract-only-without-runtime-or-effects'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:paragraph:1':
+    ['coordinator.stop-policy', 'stop-and-report-on-listed-boundary-failures'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:1':
+    ['goal.stop.coordinator-ownership', 'stop-on-ambiguous-or-competing-coordinator'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:2':
+    ['goal.stop.ratified-boundary', 'stop-when-ratified-boundary-needs-change'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:3':
+    ['goal.stop.allowed-files', 'stop-when-required-file-is-not-allowed'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:4':
+    [
+      'goal.stop.serialization-ownership',
+      'stop-when-owned-serialization-point-has-no-ratified-sequence',
+    ],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:5':
+    ['goal.stop.protected-authority', 'stop-on-self-asserted-or-manufactured-authority'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:6':
+    ['goal.stop.read-containment', 'stop-on-repository-or-state-volume-read-escape'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:7':
+    ['goal.stop.security-boundary', 'stop-when-security-finding-cannot-close'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:8':
+    ['goal.stop.tripwire', 'stop-when-tripwire-or-rework-cap-fires'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:9':
+    ['goal.stop.worktree-isolation', 'stop-on-ambient-or-other-worktree-mutation'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:10':
+    ['goal.stop.user-change-collision', 'stop-on-user-owned-required-file-collision'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:11':
+    ['goal.stop.incomplete-empty-queue', 'stop-on-empty-queue-before-goal-exit-evidence'],
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Wakeup and crash recovery:paragraph:1':
+    ['coordinator.session-recovery', 'completion-signal-and-recovery-custody-rules'],
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 3. Spec Lifecycle:list-item:1':
+    [
+      'parcel.spec-convention',
+      'follow-versioned-spec-lifecycle-and-exact-mutation-authority-1-state-lives-frontmatter-folder-location-they-must-agree-folder-authoritative-agent',
+    ],
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 3. Spec Lifecycle:list-item:2':
+    [
+      'parcel.spec-convention',
+      'follow-versioned-spec-lifecycle-and-exact-mutation-authority-2-when-work-merges-spec-moves-same-pr-immediate-follow-up-merge',
+    ],
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 3. Spec Lifecycle:list-item:3':
+    [
+      'parcel.spec-convention',
+      'follow-versioned-spec-lifecycle-and-exact-mutation-authority-3-material-changes-spec-require-comment-linked-jira-ticket-see-5',
+    ],
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 3. Spec Lifecycle:list-item:4':
+    [
+      'parcel.spec-convention',
+      'follow-versioned-spec-lifecycle-and-exact-mutation-authority-4-agents-load-only-spec-their-assigned-ticket-b-nothing-else-ever',
+    ],
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 5. The Spec ↔ Jira Contract:list-item:1':
+    [
+      'parcel.spec-convention',
+      'follow-versioned-spec-lifecycle-and-exact-mutation-authority-1-every-spec-carries-jira-key-frontmatter-filename',
+    ],
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 5. The Spec ↔ Jira Contract:list-item:2':
+    [
+      'parcel.spec-convention',
+      'follow-versioned-spec-lifecycle-and-exact-mutation-authority-2-every-linked-jira-ticket-carries-link-spec-path-at-specific-commit',
+    ],
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 5. The Spec ↔ Jira Contract:list-item:3':
+    [
+      'parcel.spec-convention',
+      'follow-versioned-spec-lifecycle-and-exact-mutation-authority-3-when-spec-s-date-bumps-material-change-ticket-gets-comment-spec',
+    ],
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 5. The Spec ↔ Jira Contract:list-item:4':
+    [
+      'parcel.spec-convention',
+      'follow-versioned-spec-lifecycle-and-exact-mutation-authority-4-conflicts-resolve-follows-jira-wins-delivery-state-priority-schedule-assignment-spec',
+    ],
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 8. Dispatch Model (How Agents Consume Specs):list-item:1':
+    [
+      'parcel.spec-convention',
+      'follow-versioned-spec-lifecycle-and-exact-mutation-authority-1-one-spec-one-agent-one-isolated-branch-worktree-no-shared-working',
+    ],
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 8. Dispatch Model (How Agents Consume Specs):list-item:2':
+    [
+      'parcel.spec-convention',
+      'follow-versioned-spec-lifecycle-and-exact-mutation-authority-2-scope-pinning-at-dispatch-step-0-agent-s-first-act-restate',
+    ],
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 8. Dispatch Model (How Agents Consume Specs):list-item:3':
+    ['verification.issue-authority', 'claimant-cannot-self-verify'],
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 8. Dispatch Model (How Agents Consume Specs):list-item:4':
+    [
+      'parcel.spec-convention',
+      'follow-versioned-spec-lifecycle-and-exact-mutation-authority-4-gate-3-human-owned-unless-delegation-proven-at-merge-time-delegation',
+    ],
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 11. Coordinator-Ratified Amendment Pattern (added W0-P2):list-item:1':
+    [
+      'parcel.spec-convention',
+      'follow-versioned-spec-lifecycle-and-exact-mutation-authority-1-exact-replacement-text-supplied-coordinator-coordinator-provides-literal-text-land-document',
+    ],
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 11. Coordinator-Ratified Amendment Pattern (added W0-P2):list-item:2':
+    [
+      'parcel.spec-convention',
+      'follow-versioned-spec-lifecycle-and-exact-mutation-authority-2-committed-alone-parcel-worktree-before-any-implementing-code-amendment-commit-touches',
+    ],
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 11. Coordinator-Ratified Amendment Pattern (added W0-P2):list-item:3':
+    [
+      'parcel.spec-convention',
+      'follow-versioned-spec-lifecycle-and-exact-mutation-authority-3-commit-message-explicitly-identifies-coordinator-amendment-not-generic-message-message-must',
+    ],
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:1':
+    [
+      'goal.coordination-model',
+      'mutual-decisions-ratified-before-dispatch-1-intake-developer-brings-concept-sentence-page-coordinator-interrogates-what-does-done',
+    ],
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:2':
+    [
+      'goal.coordination-model',
+      'mutual-decisions-ratified-before-dispatch-2-ideation-mutual-coordinator-proposes-developer-disposes-open-design-questions-surfaced-explicit',
+    ],
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:3':
+    [
+      'goal.coordination-model',
+      'mutual-decisions-ratified-before-dispatch-3-commentary-not-change-request-treat-developer-s-reaction-rationale-question-preference',
+    ],
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:4':
+    [
+      'goal.coordination-model',
+      'mutual-decisions-ratified-before-dispatch-4-output-goal-charter-one-document-containing-objective-locked-decisions-d1-dn',
+    ],
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:5':
+    [
+      'goal.coordination-model',
+      'mutual-decisions-ratified-before-dispatch-5-gate-1-ratification-developer-approves-charter-explicitly-gate-can-never-delegated',
+    ],
+  "goal-skill:md-block:# /goal — the Coordinator entry point > ## Stage Zero — run it, don't skip it:list-item:1":
+    [
+      'goal.ratification-lifecycle',
+      'interrogate-charter-and-obtain-explicit-gate-one-1-interrogate-concept-what-does-done-mean-who-consumes-result-what-deliberately',
+    ],
+  "goal-skill:md-block:# /goal — the Coordinator entry point > ## Stage Zero — run it, don't skip it:list-item:2":
+    [
+      'goal.ratification-lifecycle',
+      'interrogate-charter-and-obtain-explicit-gate-one-2-draft-goal-charter-at-objective-locked-decisions-d1-dn-reasoning-wave',
+    ],
+  "goal-skill:md-block:# /goal — the Coordinator entry point > ## Stage Zero — run it, don't skip it:list-item:3":
+    [
+      'goal.ratification-lifecycle',
+      'interrogate-charter-and-obtain-explicit-gate-one-3-gate-1-present-charter-s-decision-list-developer-explicit-ratification-gate',
+    ],
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:1':
+    ['external-boundary.error-contract', 'typed-module-error-required'],
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:2':
+    ['untested-seam.return-trust', 'unknown-until-normalized'],
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:3':
+    ['default-deny.structural-testing', 'each-invariant-tested-independently'],
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:4':
+    ['line-protocol.emission-safety', 'external-data-sanitized'],
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:5':
+    ['untrusted-text.parse-complexity', 'linear-time-required'],
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:6':
+    ['parcel.byte-freeze-placement', 'parcel-time-only'],
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:7':
+    ['allowlist.binding-dimensions', 'identity-location-value-required'],
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — conditional:list-item:1':
+    ['classifier.fixture-coverage', 'real-naming-and-false-negatives-covered'],
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — conditional:list-item:2':
+    ['kompress.payload-ceiling', 'oversize-requires-coordinator-ruling'],
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Reviewer:list-item:1':
+    ['review.hostile-probing', 'one-off-live-probes-licensed'],
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Reviewer:list-item:2':
+    ['review.prose-ambiguity', 'naive-reading-must-be-excluded'],
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Reviewer:list-item:3':
+    ['review.worktree-integrity', 'post-review-git-detection-required'],
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Reviewer:list-item:4':
+    ['review.assertion-binding', 'mutation-probe-required'],
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:1':
+    ['parcel.contract-sequencing', 'contracts-before-parallel-work'],
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:2':
+    ['parcel.execution-isolation', 'one-branch-one-worktree'],
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:3':
+    ['parcel.review-independence', 'independently-reviewable'],
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:4':
+    ['parcel.mutation-authority', 'exact-files-required'],
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:5':
+    ['parcel.shared-file-serialization', 'serialization-required'],
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:6':
+    ['parcel.pre-pr-base', 'rebase-before-pr'],
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:7':
+    ['parcel.verification', 'verification-required'],
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:8':
+    ['parcel.missing-product-decision', 'stop-and-escalate'],
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:9':
+    ['parcel.contract-amendment', 'no-silent-contract-change'],
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:10':
+    ['parcel.sensitive-data-safety', 'no-secrets-pii-or-payload-dumps'],
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:11':
+    ['integration-surface.scenarios', 'positive-negative-failure-required'],
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:12':
+    ['release.security-gate', 'security-evidence-blocks-release'],
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:13':
+    ['coordination.persistence', 'durable-state-before-closure'],
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:14':
+    ['scenario.environment-identity', 'environment-build-config-bound'],
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:15':
+    ['release.claim-evidence', 'evidence-required-for-claim'],
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:1':
+    [
+      'parcel.review-checklist',
+      'verify-contract-scope-safety-evidence-and-handoff-1-does-implementation-match-contract',
+    ],
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:2':
+    [
+      'parcel.review-checklist',
+      'verify-contract-scope-safety-evidence-and-handoff-2-only-allowed-files-touched',
+    ],
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:3':
+    [
+      'parcel.review-checklist',
+      'verify-contract-scope-safety-evidence-and-handoff-3-were-forbidden-items-respected',
+    ],
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:4':
+    [
+      'parcel.review-checklist',
+      'verify-contract-scope-safety-evidence-and-handoff-4-did-parcel-respect-out-scope',
+    ],
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:5':
+    [
+      'parcel.review-checklist',
+      'verify-contract-scope-safety-evidence-and-handoff-5-did-agent-avoid-silent-product-decisions',
+    ],
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:6':
+    [
+      'parcel.review-checklist',
+      'verify-contract-scope-safety-evidence-and-handoff-6-were-required-tests-manual-verification-completed-exactly-specified',
+    ],
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:7':
+    [
+      'parcel.review-checklist',
+      'verify-contract-scope-safety-evidence-and-handoff-7-did-parcel-avoid-secrets-pii-unsafe-logs-payload-dumps',
+    ],
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:8':
+    [
+      'parcel.review-checklist',
+      'verify-contract-scope-safety-evidence-and-handoff-8-if-crossing-supportability-boundaries-were-logs-metrics-traces-handled-appropriately',
+    ],
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:9':
+    [
+      'parcel.review-checklist',
+      'verify-contract-scope-safety-evidence-and-handoff-9-if-crossing-integration-boundaries-was-relevant-surface-updated-referenced',
+    ],
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:10':
+    [
+      'parcel.review-checklist',
+      'verify-contract-scope-safety-evidence-and-handoff-10-if-security-gate-applies-was-required-security-evidence-produced-tracked',
+    ],
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:11':
+    [
+      'parcel.review-checklist',
+      'verify-contract-scope-safety-evidence-and-handoff-11-was-session-handoff-completed',
+    ],
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:12':
+    [
+      'parcel.review-checklist',
+      'verify-contract-scope-safety-evidence-and-handoff-12-was-persistent-coordinator-state-updated-if-required-parcel-fails-gets-sent',
+    ],
+  'foreman-line-plan:md-block:# The Foreman Line — Master Plugin Plan:paragraph:1': [
+    'gate.namespace',
+    'historical-two-stage-gates',
+  ],
+  'foreman-line-plan:md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage F — Closure:list-item:1':
+    ['gate3.merge-authority', 'human-owned-nondelegated'],
+  'approval-readme:md-block:# @foreman-line/approval — Human Approval Flow CLI, W1-P3 > ## The human-gate contract:list-item:3':
+    ['stage-approval.tty-presence', 'live-interactive-tty-required'],
+  'approval-readme:md-block:# @foreman-line/approval — Human Approval Flow CLI, W1-P3 > ## The human-gate contract:list-item:4':
+    [
+      'stage-approval.confirmation-and-mint',
+      'typed-confirmation-and-approver-required-before-mint',
+    ],
   'spec-frontmatter-schema:json-pointer:/properties/permission_profile/enum': [
     'permission-profile.registry-state',
     'six-profile-live-enum',
@@ -3105,35 +3321,27 @@ const CURATED_ITEM_IDENTITIES: Readonly<Record<string, readonly [string, string]
     'spec.validation.ajv-configuration',
     'all-schema-errors-are-collected',
   ],
-  'spec-linter-validator:if (doc.status === \'superseded\' && doc.superseded_by === null) {': [
+  "spec-linter-validator:if (doc.status === 'superseded' && doc.superseded_by === null) {": [
     'spec.validation.supersession-invariant',
     'superseded-status-requires-a-replacement',
   ],
-  'spec-linter-validator:if (!options?.noPermissionProfileWarning && !(\'permission_profile\' in doc)) {': [
-    'permission-profile.missing-field-warning',
-    'absence-emits-advisory-unless-suppressed',
-  ],
-  'spec-linter-validator:\'advisory: permission_profile is absent; set it to a registry profile name when the registry ships\',': [
-    'permission-profile.missing-field-warning-text',
-    'advisory-points-to-registry-profile-name',
-  ],
+  "spec-linter-validator:if (!options?.noPermissionProfileWarning && !('permission_profile' in doc)) {":
+    ['permission-profile.missing-field-warning', 'absence-emits-advisory-unless-suppressed'],
+  "spec-linter-validator:'advisory: permission_profile is absent; set it to a registry profile name when the registry ships',":
+    ['permission-profile.missing-field-warning-text', 'advisory-points-to-registry-profile-name'],
   'spec-linter-cli: *   0  all specs valid (advisory warnings do not affect exit code)': [
     'spec-linter.exit-code.zero',
     'valid-specs-exit-zero-despite-advisory-warnings',
   ],
-  'spec-linter-cli: *   1  at least one schema or semantic-invariant violation (every violation on stderr)': [
-    'spec-linter.exit-code.one',
-    'schema-or-semantic-violations-exit-one',
-  ],
-  'spec-linter-cli: *   2  usage error: missing/unreadable path, bad invocation, or directory with no .md files': [
-    'spec-linter.exit-code.two',
-    'usage-and-input-errors-exit-two',
-  ],
+  'spec-linter-cli: *   1  at least one schema or semantic-invariant violation (every violation on stderr)':
+    ['spec-linter.exit-code.one', 'schema-or-semantic-violations-exit-one'],
+  'spec-linter-cli: *   2  usage error: missing/unreadable path, bad invocation, or directory with no .md files':
+    ['spec-linter.exit-code.two', 'usage-and-input-errors-exit-two'],
   'spec-linter-cli:process.exitCode = run(process.argv.slice(2))': [
     'spec-linter.process-entrypoint',
     'process-exit-code-is-set-from-cli-run-result',
   ],
-  'permission-profiles-types:export type PermissionMode = \'default\' | \'acceptEdits\' | \'plan\'': [
+  "permission-profiles-types:export type PermissionMode = 'default' | 'acceptEdits' | 'plan'": [
     'permission-profile.supported-modes',
     'default-accept-edits-and-plan-only',
   ],
@@ -3141,22 +3349,22 @@ const CURATED_ITEM_IDENTITIES: Readonly<Record<string, readonly [string, string]
     'permission-profile.names',
     'six-profile-name-constant-is-exported',
   ],
-  'permission-profiles-validator:const REVIEWER_MUTATION_COMMANDS: readonly string[] = [\'commit\', \'push\', \'apply\', \'stash\', \'merge\']': [
-    'permission-profile.reviewer-mutation-commands',
-    'five-git-mutation-verbs-are-enumerated',
-  ],
-  'permission-profiles-validator:if (envelope.defaultMode === \'bypassPermissions\') {': [
+  "permission-profiles-validator:const REVIEWER_MUTATION_COMMANDS: readonly string[] = ['commit', 'push', 'apply', 'stash', 'merge']":
+    ['permission-profile.reviewer-mutation-commands', 'five-git-mutation-verbs-are-enumerated'],
+  "permission-profiles-validator:if (envelope.defaultMode === 'bypassPermissions') {": [
     'permission-profile.bypass-mode',
     'bypass-permissions-mode-is-rejected',
   ],
-  'permission-profiles-validator:function checkReviewerReadonlyRestrictionCompleteness(doc: Record<string, unknown>): string[] {': [
-    'permission-profile.reviewer-restriction-completeness',
-    'reviewer-deny-set-is-checked-for-edit-write-and-git-mutations',
-  ],
-  'permission-profiles-validator:function checkReviewerReadonlyShellAccessPreservation(doc: Record<string, unknown>): string[] {': [
-    'permission-profile.reviewer-shell-preservation',
-    'bare-bash-and-powershell-denial-is-rejected',
-  ],
+  'permission-profiles-validator:function checkReviewerReadonlyRestrictionCompleteness(doc: Record<string, unknown>): string[] {':
+    [
+      'permission-profile.reviewer-restriction-completeness',
+      'reviewer-deny-set-is-checked-for-edit-write-and-git-mutations',
+    ],
+  'permission-profiles-validator:function checkReviewerReadonlyShellAccessPreservation(doc: Record<string, unknown>): string[] {':
+    [
+      'permission-profile.reviewer-shell-preservation',
+      'bare-bash-and-powershell-denial-is-rejected',
+    ],
   'permission-profiles-registry:yaml-rule:builder-architecture:ask:[]': [
     'permission-profile.builder-architecture.ask.empty-set',
     'configured-human-prompt',
@@ -3173,10 +3381,8 @@ const CURATED_ITEM_IDENTITIES: Readonly<Record<string, readonly [string, string]
     'permission-profile.builder-architecture.deny.edit-claude',
     'configured-denial',
   ],
-  'permission-profiles-registry:yaml-rule:builder-architecture:deny:"PowerShell(git push --force*)"': [
-    'permission-profile.builder-architecture.deny.powershell-git-push-force',
-    'configured-denial',
-  ],
+  'permission-profiles-registry:yaml-rule:builder-architecture:deny:"PowerShell(git push --force*)"':
+    ['permission-profile.builder-architecture.deny.powershell-git-push-force', 'configured-denial'],
   'permission-profiles-registry:yaml-rule:builder-architecture:deny:"PowerShell(git push -f *)"': [
     'permission-profile.builder-architecture.deny.powershell-git-push-f',
     'configured-denial',
@@ -3417,21 +3623,20 @@ const CURATED_ITEM_IDENTITIES: Readonly<Record<string, readonly [string, string]
     'gate1.ratification-record',
     'original-and-scoped-reratification-bind-d1-through-d20',
   ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 0 — Authority and contracts:table-row:FK-P2 — Spec-body compiler': ['parcel.fk-p2', 'spec-compiler-depends-on-fk-p0-and-fk-p1'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P18 — CI scope and state-evidence backstops': [
-    'parcel.fk-p18',
-    'ci-backstop-depends-on-fk-p17-and-owns-ci-files',
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 0 — Authority and contracts:table-row:FK-P2 — Spec-body compiler':
+    ['parcel.fk-p2', 'spec-compiler-depends-on-fk-p0-and-fk-p1'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P18 — CI scope and state-evidence backstops':
+    ['parcel.fk-p18', 'ci-backstop-depends-on-fk-p17-and-owns-ci-files'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:1': [
+    'goal.exit-merge',
+    'all-parcels-require-human-gate3-merge',
   ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:1': ['goal.exit-merge', 'all-parcels-require-human-gate3-merge'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 10. Human gates and standing authorizations requested > ### Gate 1 — charter ratification:paragraph:1': [
-    'gate1.reratification-status',
-    'scoped-r1-r13-reratification-is-in-force',
-  ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 10. Human gates and standing authorizations requested > ### Gate 2 — parcel dispatch:paragraph:1': [
-    'gate2.dispatch-grant',
-    'coordinator-may-dispatch-fk-p0-through-fk-p21-conditionally',
-  ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 10. Human gates and standing authorizations requested > ### Gate 3 — merge:paragraph:1': ['gate3.merge-authority', 'human-owned-nondelegated'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 10. Human gates and standing authorizations requested > ### Gate 1 — charter ratification:paragraph:1':
+    ['gate1.reratification-status', 'scoped-r1-r13-reratification-is-in-force'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 10. Human gates and standing authorizations requested > ### Gate 2 — parcel dispatch:paragraph:1':
+    ['gate2.dispatch-grant', 'coordinator-may-dispatch-fk-p0-through-fk-p21-conditionally'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 10. Human gates and standing authorizations requested > ### Gate 3 — merge:paragraph:1':
+    ['gate3.merge-authority', 'human-owned-nondelegated'],
   'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:1': [
     'goal.stop.gate1-ambiguity',
     'stop-when-gate1-or-locked-decision-is-ambiguous',
@@ -3448,89 +3653,90 @@ const CURATED_ITEM_IDENTITIES: Readonly<Record<string, readonly [string, string]
     'gate1.decision-list-record',
     'ratification-and-dispatch-history-recorded',
   ],
-  'fk-plan-review-findings:md-block:# Foreman Kernel — Plan-Level Adversarial Review Findings > ## Scoped Gate 1 re-open:list-item:6': [
-    'gate1.review-reratification-record',
-    'r1-through-r13-reopen-closed-and-gate2-active',
-  ],
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 10. Adoption Path:list-item:4': [
-    'spec-linter.adoption-standard',
-    'org-wide-ci-lint-required-for-specs',
-  ],
-  'foreman-line-plan:md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage D — Verification:list-item:4': [
-    'pipeline.verification-human-review',
-    'human-review-required-before-ticket-update',
-  ],
-  'foreman-line-plan:md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage E — Integration:list-item:4': [
-    'pipeline.integration-gates',
-    'security-scans-and-reviews-required',
-  ],
-  'foreman-line-plan:md-block:# The Foreman Line — Master Plugin Plan > ## 4. Smart Triage as the Assignment Engine:list-item:1': [
-    'deployment.environment-separation',
-    'dogfood-and-customer-tenants-must-not-share-blast-radius',
-  ],
-  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## The five enforced invariants:list-item:1': [
-    'permission-profile.profile-set',
-    'keys-must-exactly-equal-profile-names',
-  ],
-  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## The five enforced invariants:list-item:2': [
-    'permission-profile.self-modification-guard',
-    'every-profile-denies-edit-and-write-for-claude',
-  ],
-  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## The five enforced invariants:list-item:4': [
-    'permission-profile.reviewer-restrictions',
-    'deny-edit-write-and-enumerated-git-mutations',
-  ],
-  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## The five enforced invariants:list-item:5': [
-    'permission-profile.reviewer-shell-access',
-    'bare-shell-denial-prohibited-for-hostile-probing',
-  ],
+  'fk-plan-review-findings:md-block:# Foreman Kernel — Plan-Level Adversarial Review Findings > ## Scoped Gate 1 re-open:list-item:6':
+    ['gate1.review-reratification-record', 'r1-through-r13-reopen-closed-and-gate2-active'],
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 10. Adoption Path:list-item:4':
+    ['spec-linter.adoption-standard', 'org-wide-ci-lint-required-for-specs'],
+  'foreman-line-plan:md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage D — Verification:list-item:4':
+    ['pipeline.verification-human-review', 'human-review-required-before-ticket-update'],
+  'foreman-line-plan:md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage E — Integration:list-item:4':
+    ['pipeline.integration-gates', 'security-scans-and-reviews-required'],
+  'foreman-line-plan:md-block:# The Foreman Line — Master Plugin Plan > ## 4. Smart Triage as the Assignment Engine:list-item:1':
+    [
+      'deployment.environment-separation',
+      'dogfood-and-customer-tenants-must-not-share-blast-radius',
+    ],
+  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## The five enforced invariants:list-item:1':
+    ['permission-profile.profile-set', 'keys-must-exactly-equal-profile-names'],
+  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## The five enforced invariants:list-item:2':
+    [
+      'permission-profile.self-modification-guard',
+      'every-profile-denies-edit-and-write-for-claude',
+    ],
+  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## The five enforced invariants:list-item:4':
+    ['permission-profile.reviewer-restrictions', 'deny-edit-write-and-enumerated-git-mutations'],
+  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## The five enforced invariants:list-item:5':
+    [
+      'permission-profile.reviewer-shell-access',
+      'bare-shell-denial-prohibited-for-hostile-probing',
+    ],
   'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition:paragraph:1': [
     'verification.issue-authority',
     'architecture-risk-two-fresh-independent-reviews-required',
   ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:1': [
-    'enforcement.refusal.worktree-branch',
-    'worktree-and-branch-mismatch-refusal-class',
-  ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:2': [
-    'enforcement.refusal.path-scope',
-    'outside-allowed-files-and-frozen-surface-refusal-class',
-  ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:3': [
-    'enforcement.refusal.reviewer-mutation',
-    'reviewer-mutation-and-dirty-worktree-refusal-class',
-  ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:4': [
-    'enforcement.refusal.policy-bypass',
-    'policy-self-modification-and-mediated-bypass-refusal-class',
-  ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:5': [
-    'enforcement.refusal.state-lease-gate',
-    'lease-revision-and-gate-refusal-class',
-  ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 0 — Authority and contracts:table-row:FK-P0 — Canon authority and enforcement registry': ['parcel.fk-p0', 'authority-registry-first-with-no-dependency'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 0 — Authority and contracts:table-row:FK-P1 — Lifecycle, admission, and decision contracts': ['parcel.fk-p1', 'lifecycle-contracts-depend-on-fk-p0'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 1 — Pure trust core:table-row:FK-P3 — Pure dispatch decisions': ['parcel.fk-p3', 'pure-dispatch-depends-on-fk-p1'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 1 — Pure trust core:table-row:FK-P4 — Verifier facade': ['parcel.fk-p4', 'verifier-facade-dependency-contract'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 1 — Pure trust core:table-row:FK-P5 — Clean-room trust-core spike': ['parcel.fk-p5', 'clean-room-spike-depends-on-fk-p4'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 2 — Stateless read-only MCP and container:table-row:FK-P6 — Read-only MCP server': ['parcel.fk-p6', 'read-only-mcp-dependency-contract'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 2 — Stateless read-only MCP and container:table-row:FK-P7 — Stateless verifier image and launcher': ['parcel.fk-p7', 'stateless-image-depends-on-fk-p6'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 2 — Stateless read-only MCP and container:table-row:FK-P8 — Stateless harness portability proof': ['parcel.fk-p8', 'portability-proof-depends-on-fk-p7'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P9 — SQLite storage and migration ABI': ['parcel.fk-p9', 'storage-abi-depends-on-fk-p1'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P10 — Lease and transition engine': ['parcel.fk-p10', 'lease-engine-depends-on-fk-p9'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P11 — Legacy import and projection engine': ['parcel.fk-p11', 'projection-engine-dependency-contract'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P12 — Authorization policy engine': ['parcel.fk-p12', 'authorization-engine-dependency-contract'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P13 — Admission-protected control catalog': ['parcel.fk-p13', 'control-catalog-dependency-contract'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P14 — Stateful image composition and operator lifecycle': ['parcel.fk-p14', 'stateful-image-dependency-contract'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P15 — Stateful restart and admission proof': ['parcel.fk-p15', 'restart-proof-depends-on-fk-p14'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P16 — Claude lifecycle adapter, shadow mode': [
-    'parcel.fk-p16',
-    'claude-adapter-dependency-and-ownership-contract',
-  ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P17 — Bypass and outage harness': ['parcel.fk-p17', 'bypass-harness-depends-on-fk-p16'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P19 — High-confidence refusal enforcement': ['parcel.fk-p19', 'enforcement-promotion-dependency-contract'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P20 — Second-host feasibility and host registration': ['parcel.fk-p20', 'second-host-probe-depends-on-fk-p19'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P21 — Exit evidence manifest and clean-room proof': ['parcel.fk-p21', 'exit-evidence-dependency-contract'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:1':
+    ['enforcement.refusal.worktree-branch', 'worktree-and-branch-mismatch-refusal-class'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:2':
+    ['enforcement.refusal.path-scope', 'outside-allowed-files-and-frozen-surface-refusal-class'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:3':
+    ['enforcement.refusal.reviewer-mutation', 'reviewer-mutation-and-dirty-worktree-refusal-class'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:4':
+    [
+      'enforcement.refusal.policy-bypass',
+      'policy-self-modification-and-mediated-bypass-refusal-class',
+    ],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:5':
+    ['enforcement.refusal.state-lease-gate', 'lease-revision-and-gate-refusal-class'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 0 — Authority and contracts:table-row:FK-P0 — Canon authority and enforcement registry':
+    ['parcel.fk-p0', 'authority-registry-first-with-no-dependency'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 0 — Authority and contracts:table-row:FK-P1 — Lifecycle, admission, and decision contracts':
+    ['parcel.fk-p1', 'lifecycle-contracts-depend-on-fk-p0'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 1 — Pure trust core:table-row:FK-P3 — Pure dispatch decisions':
+    ['parcel.fk-p3', 'pure-dispatch-depends-on-fk-p1'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 1 — Pure trust core:table-row:FK-P4 — Verifier facade':
+    ['parcel.fk-p4', 'verifier-facade-dependency-contract'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 1 — Pure trust core:table-row:FK-P5 — Clean-room trust-core spike':
+    ['parcel.fk-p5', 'clean-room-spike-depends-on-fk-p4'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 2 — Stateless read-only MCP and container:table-row:FK-P6 — Read-only MCP server':
+    ['parcel.fk-p6', 'read-only-mcp-dependency-contract'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 2 — Stateless read-only MCP and container:table-row:FK-P7 — Stateless verifier image and launcher':
+    ['parcel.fk-p7', 'stateless-image-depends-on-fk-p6'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 2 — Stateless read-only MCP and container:table-row:FK-P8 — Stateless harness portability proof':
+    ['parcel.fk-p8', 'portability-proof-depends-on-fk-p7'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P9 — SQLite storage and migration ABI':
+    ['parcel.fk-p9', 'storage-abi-depends-on-fk-p1'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P10 — Lease and transition engine':
+    ['parcel.fk-p10', 'lease-engine-depends-on-fk-p9'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P11 — Legacy import and projection engine':
+    ['parcel.fk-p11', 'projection-engine-dependency-contract'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P12 — Authorization policy engine':
+    ['parcel.fk-p12', 'authorization-engine-dependency-contract'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P13 — Admission-protected control catalog':
+    ['parcel.fk-p13', 'control-catalog-dependency-contract'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P14 — Stateful image composition and operator lifecycle':
+    ['parcel.fk-p14', 'stateful-image-dependency-contract'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P15 — Stateful restart and admission proof':
+    ['parcel.fk-p15', 'restart-proof-depends-on-fk-p14'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P16 — Claude lifecycle adapter, shadow mode':
+    ['parcel.fk-p16', 'claude-adapter-dependency-and-ownership-contract'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P17 — Bypass and outage harness':
+    ['parcel.fk-p17', 'bypass-harness-depends-on-fk-p16'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P19 — High-confidence refusal enforcement':
+    ['parcel.fk-p19', 'enforcement-promotion-dependency-contract'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P20 — Second-host feasibility and host registration':
+    ['parcel.fk-p20', 'second-host-probe-depends-on-fk-p19'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P21 — Exit evidence manifest and clean-room proof':
+    ['parcel.fk-p21', 'exit-evidence-dependency-contract'],
   'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:1': [
     'integration-scenario.clean-room-lint',
     'compile-and-refuse-path-ambiguity',
@@ -3567,26 +3773,19 @@ const CURATED_ITEM_IDENTITIES: Readonly<Record<string, readonly [string, string]
     'integration-scenario.reviewer-posture',
     'reviewer-mutation-and-dirty-completion-refuse',
   ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:10': [
-    'integration-scenario.human-gate',
-    'require-human-with-nonlooping-stop-report',
-  ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:11': [
-    'integration-scenario.outage-posture',
-    'mutation-blocked-and-read-only-degraded',
-  ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:12': [
-    'integration-scenario.enrollment-honesty',
-    'bypass-refusal-distinct-from-absence-detection',
-  ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:13': [
-    'integration-scenario.host-capability',
-    'supported-host-probe-and-gap-reporting',
-  ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:14': [
-    'integration-scenario.decision-path-latency',
-    'warm-kernel-meets-the-d21-budget-with-outage-and-stale-cache-evidence',
-  ],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:10':
+    ['integration-scenario.human-gate', 'require-human-with-nonlooping-stop-report'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:11':
+    ['integration-scenario.outage-posture', 'mutation-blocked-and-read-only-degraded'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:12':
+    ['integration-scenario.enrollment-honesty', 'bypass-refusal-distinct-from-absence-detection'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:13':
+    ['integration-scenario.host-capability', 'supported-host-probe-and-gap-reporting'],
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:14':
+    [
+      'integration-scenario.decision-path-latency',
+      'warm-kernel-meets-the-d21-budget-with-outage-and-stale-cache-evidence',
+    ],
 }
 
 function authorityIdentityFor(
@@ -4053,20 +4252,22 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 0 — Authority and contracts:table-row:FK-P2 — Spec-body compiler': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['shaping'],
-    operations: ['state-transition'],
-    hosts: ['provider-neutral'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P18 — CI scope and state-evidence backstops': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['shaping'],
-    operations: ['state-transition'],
-    hosts: ['provider-neutral'],
-  },
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 0 — Authority and contracts:table-row:FK-P2 — Spec-body compiler':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['shaping'],
+      operations: ['state-transition'],
+      hosts: ['provider-neutral'],
+    },
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P18 — CI scope and state-evidence backstops':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['shaping'],
+      operations: ['state-transition'],
+      hosts: ['provider-neutral'],
+    },
   'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:1': {
     goals: ['foreman-kernel'],
     roles: [
@@ -4109,42 +4310,45 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 10. Human gates and standing authorizations requested > ### Gate 1 — charter ratification:paragraph:1': {
-    goals: ['foreman-kernel'],
-    roles: ['reviewer'],
-    stages: ['adversarial-review', 'merge'],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 10. Human gates and standing authorizations requested > ### Gate 2 — parcel dispatch:paragraph:1': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['shaping', 'step-zero'],
-    operations: ['state-transition'],
-    hosts: ['provider-neutral'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 10. Human gates and standing authorizations requested > ### Gate 3 — merge:paragraph:1': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['merge'],
-    operations: ['repo-mutation', 'state-transition'],
-    hosts: ['any'],
-  },
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 10. Human gates and standing authorizations requested > ### Gate 1 — charter ratification:paragraph:1':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['reviewer'],
+      stages: ['adversarial-review', 'merge'],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 10. Human gates and standing authorizations requested > ### Gate 2 — parcel dispatch:paragraph:1':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['shaping', 'step-zero'],
+      operations: ['state-transition'],
+      hosts: ['provider-neutral'],
+    },
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 10. Human gates and standing authorizations requested > ### Gate 3 — merge:paragraph:1':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['merge'],
+      operations: ['repo-mutation', 'state-transition'],
+      hosts: ['any'],
+    },
   'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:1': {
     goals: ['foreman-kernel'],
     roles: [
@@ -4271,13 +4475,14 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 13. Gate 1 decision list:list-item:11': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['merge'],
-    operations: ['state-transition'],
-    hosts: ['any'],
-  },
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 13. Gate 1 decision list:list-item:11':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['merge'],
+      operations: ['state-transition'],
+      hosts: ['any'],
+    },
   'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 13. Gate 1 decision list:paragraph:2': {
     goals: ['foreman-kernel'],
     roles: [
@@ -4768,1516 +4973,1597 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'fk-plan-review-findings:md-block:# Foreman Kernel — Plan-Level Adversarial Review Findings > ## Scoped Gate 1 re-open:list-item:6': {
-    goals: ['foreman-kernel'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:paragraph:1': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-    ],
-    operations: ['state-transition'],
-    hosts: ['any'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:list-item:1': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['stage-zero'],
-    operations: ['source-inventory'],
-    hosts: ['any'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:list-item:2': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['stage-zero'],
-    operations: ['source-inventory'],
-    hosts: ['any'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:list-item:3': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['stage-zero'],
-    operations: ['source-inventory'],
-    hosts: ['any'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:list-item:4': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['shaping'],
-    operations: ['state-transition'],
-    hosts: ['provider-neutral'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:list-item:5': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['merge'],
-    operations: ['repo-mutation'],
-    hosts: ['any'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:paragraph:1': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['deterministic-verify', 'adversarial-review', 'merge', 'closure'],
-    operations: ['state-transition', 'receipt-validation'],
-    hosts: ['any'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:1': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-    ],
-    operations: ['source-inventory'],
-    hosts: ['any'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:2': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-    ],
-    operations: ['source-inventory'],
-    hosts: ['any'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:3': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-    ],
-    operations: ['source-inventory'],
-    hosts: ['any'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:4': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-    ],
-    operations: ['source-inventory'],
-    hosts: ['any'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:5': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-    ],
-    operations: ['source-inventory'],
-    hosts: ['any'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:6': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-    ],
-    operations: ['source-inventory'],
-    hosts: ['any'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:paragraph:2': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-    ],
-    operations: ['source-inventory'],
-    hosts: ['any'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:1': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['shaping'],
-    operations: ['state-transition'],
-    hosts: ['provider-neutral'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:2': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['shaping'],
-    operations: ['spec-mutation'],
-    hosts: ['provider-neutral'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:3': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator', 'shaper', 'builder', 'reviewer'],
-    stages: ['shaping', 'step-zero', 'build', 'deterministic-verify', 'adversarial-review'],
-    operations: ['spec-mutation', 'repo-read', 'repo-mutation'],
-    hosts: ['provider-neutral'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:4': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['step-zero'],
-    operations: ['spec-mutation'],
-    hosts: ['provider-neutral'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:5': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator', 'shaper', 'builder', 'reviewer'],
-    stages: [
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-    ],
-    operations: ['external-write'],
-    hosts: ['any'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:6': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['merge'],
-    operations: ['repo-mutation'],
-    hosts: ['any'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:7': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator', 'builder'],
-    stages: ['build', 'merge'],
-    operations: ['external-write'],
-    hosts: ['any'],
-  },
+  'fk-plan-review-findings:md-block:# Foreman Kernel — Plan-Level Adversarial Review Findings > ## Scoped Gate 1 re-open:list-item:6':
+    {
+      goals: ['foreman-kernel'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:paragraph:1':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+      ],
+      operations: ['state-transition'],
+      hosts: ['any'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:list-item:1':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['stage-zero'],
+      operations: ['source-inventory'],
+      hosts: ['any'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:list-item:2':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['stage-zero'],
+      operations: ['source-inventory'],
+      hosts: ['any'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:list-item:3':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['stage-zero'],
+      operations: ['source-inventory'],
+      hosts: ['any'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:list-item:4':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['shaping'],
+      operations: ['state-transition'],
+      hosts: ['provider-neutral'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:list-item:5':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['merge'],
+      operations: ['repo-mutation'],
+      hosts: ['any'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:paragraph:1':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['deterministic-verify', 'adversarial-review', 'merge', 'closure'],
+      operations: ['state-transition', 'receipt-validation'],
+      hosts: ['any'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:1':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+      ],
+      operations: ['source-inventory'],
+      hosts: ['any'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:2':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+      ],
+      operations: ['source-inventory'],
+      hosts: ['any'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:3':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+      ],
+      operations: ['source-inventory'],
+      hosts: ['any'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:4':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+      ],
+      operations: ['source-inventory'],
+      hosts: ['any'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:5':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+      ],
+      operations: ['source-inventory'],
+      hosts: ['any'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:list-item:6':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+      ],
+      operations: ['source-inventory'],
+      hosts: ['any'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:paragraph:2':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+      ],
+      operations: ['source-inventory'],
+      hosts: ['any'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:1':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['shaping'],
+      operations: ['state-transition'],
+      hosts: ['provider-neutral'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:2':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['shaping'],
+      operations: ['spec-mutation'],
+      hosts: ['provider-neutral'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:3':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator', 'shaper', 'builder', 'reviewer'],
+      stages: ['shaping', 'step-zero', 'build', 'deterministic-verify', 'adversarial-review'],
+      operations: ['spec-mutation', 'repo-read', 'repo-mutation'],
+      hosts: ['provider-neutral'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:4':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['step-zero'],
+      operations: ['spec-mutation'],
+      hosts: ['provider-neutral'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:5':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator', 'shaper', 'builder', 'reviewer'],
+      stages: [
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+      ],
+      operations: ['external-write'],
+      hosts: ['any'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:6':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['merge'],
+      operations: ['repo-mutation'],
+      hosts: ['any'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:7':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator', 'builder'],
+      stages: ['build', 'merge'],
+      operations: ['external-write'],
+      hosts: ['any'],
+    },
   // The source text names its own scope literally: "No agent working this goal - coordinator,
   // builder, reviewer, or shaping session". `shaper` is the registry's name for a shaping session.
   // Both read and write are prohibited, so `repo-read` sits alongside `repo-mutation`; a
   // read-only-is-fine reading is exactly the reading the sentence forecloses. Every stage, because
   // the prohibition has no stage qualifier.
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:8': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator', 'shaper', 'builder', 'reviewer'],
-    stages: ['any'],
-    operations: ['repo-read', 'repo-mutation'],
-    hosts: ['any'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:1': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['shaping'],
-    operations: ['source-inventory', 'state-transition'],
-    hosts: ['provider-neutral'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:2': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['shaping'],
-    operations: ['spec-mutation'],
-    hosts: ['provider-neutral'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:3': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['shaping'],
-    operations: ['source-inventory', 'spec-mutation'],
-    hosts: ['provider-neutral'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:4': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['shaping'],
-    operations: ['state-transition'],
-    hosts: ['provider-neutral'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:5': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator', 'builder'],
-    stages: ['step-zero'],
-    operations: ['spec-mutation'],
-    hosts: ['provider-neutral'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:6': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['deterministic-verify'],
-    operations: ['repo-read'],
-    hosts: ['provider-neutral'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:7': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['deterministic-verify'],
-    operations: ['source-inventory'],
-    hosts: ['provider-neutral'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:8': {
-    goals: ['foreman-kernel'],
-    roles: ['reviewer'],
-    stages: ['adversarial-review'],
-    operations: ['receipt-validation'],
-    hosts: ['any'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:9': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['adversarial-review'],
-    operations: ['receipt-validation'],
-    hosts: ['any'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:10': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['merge'],
-    operations: ['repo-mutation'],
-    hosts: ['any'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:11': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['closure'],
-    operations: ['state-transition'],
-    hosts: ['any'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Queue and dependency order:paragraph:1': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['shaping'],
-    operations: ['state-transition'],
-    hosts: ['provider-neutral'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:paragraph:1': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator', 'shaper'],
-    stages: ['shaping'],
-    operations: ['source-inventory'],
-    hosts: ['provider-neutral'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:1': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator', 'shaper'],
-    stages: ['shaping'],
-    operations: ['source-inventory'],
-    hosts: ['provider-neutral'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:2': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator', 'shaper'],
-    stages: ['shaping'],
-    operations: ['source-inventory'],
-    hosts: ['provider-neutral'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:3': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator', 'shaper'],
-    stages: ['shaping'],
-    operations: ['source-inventory'],
-    hosts: ['provider-neutral'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:4': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator', 'shaper'],
-    stages: ['shaping'],
-    operations: ['source-inventory'],
-    hosts: ['provider-neutral'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:5': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator', 'builder', 'kernel'],
-    stages: ['build', 'runtime'],
-    operations: ['control-call'],
-    hosts: ['any'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:6': {
-    goals: ['foreman-kernel'],
-    roles: ['shaper', 'builder', 'ci'],
-    stages: ['shaping', 'build', 'deterministic-verify'],
-    operations: ['source-inventory'],
-    hosts: ['provider-neutral'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:7': {
-    goals: ['foreman-kernel'],
-    roles: ['builder'],
-    stages: ['build'],
-    operations: ['repo-mutation', 'external-write'],
-    hosts: ['provider-neutral'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:paragraph:1': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-    ],
-    operations: ['state-transition'],
-    hosts: ['any'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:1': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['shaping'],
-    operations: ['state-transition'],
-    hosts: ['any'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:2': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['shaping'],
-    operations: ['spec-mutation'],
-    hosts: ['any'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:3': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['step-zero'],
-    operations: ['spec-mutation'],
-    hosts: ['any'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:4': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['shaping'],
-    operations: ['state-transition'],
-    hosts: ['any'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:5': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['shaping', 'build'],
-    operations: ['control-call'],
-    hosts: ['any'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:6': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['shaping', 'build', 'runtime'],
-    operations: ['repo-read'],
-    hosts: ['any'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:7': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['shaping', 'build', 'adversarial-review'],
-    operations: ['state-transition'],
-    hosts: ['any'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:8': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['build', 'deterministic-verify', 'adversarial-review'],
-    operations: ['state-transition'],
-    hosts: ['any'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:9': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['deterministic-verify', 'adversarial-review'],
-    operations: ['repo-mutation'],
-    hosts: ['any'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:10': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['step-zero', 'build'],
-    operations: ['repo-mutation'],
-    hosts: ['any'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:11': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['closure'],
-    operations: ['state-transition'],
-    hosts: ['any'],
-  },
-  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Wakeup and crash recovery:paragraph:1': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['build', 'deterministic-verify', 'adversarial-review'],
-    operations: ['state-transition'],
-    hosts: ['any'],
-  },
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 3. Spec Lifecycle:list-item:1': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 3. Spec Lifecycle:list-item:2': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 3. Spec Lifecycle:list-item:3': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 3. Spec Lifecycle:list-item:4': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 5. The Spec ↔ Jira Contract:list-item:1': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 5. The Spec ↔ Jira Contract:list-item:2': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 5. The Spec ↔ Jira Contract:list-item:3': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 5. The Spec ↔ Jira Contract:list-item:4': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 8. Dispatch Model (How Agents Consume Specs):list-item:1': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 8. Dispatch Model (How Agents Consume Specs):list-item:2': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 8. Dispatch Model (How Agents Consume Specs):list-item:3': {
-    goals: ['all-foreman-goals'],
-    roles: ['builder'],
-    stages: ['deterministic-verify'],
-    operations: ['receipt-validation'],
-    hosts: ['any'],
-  },
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 8. Dispatch Model (How Agents Consume Specs):list-item:4': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 10. Adoption Path:list-item:4': {
-    goals: ['all-foreman-goals'],
-    roles: ['ci'],
-    stages: ['deterministic-verify'],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: ['ci'],
-  },
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 11. Coordinator-Ratified Amendment Pattern (added W0-P2):list-item:1': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 11. Coordinator-Ratified Amendment Pattern (added W0-P2):list-item:2': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 11. Coordinator-Ratified Amendment Pattern (added W0-P2):list-item:3': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.6 Schema v0.2 Fields (added W0-P2):list-item:4': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.8 `Allowed Files` Mutation Authority:list-item:1': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.8 `Allowed Files` Mutation Authority:list-item:2': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.8 `Allowed Files` Mutation Authority:paragraph:3': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:1': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:2': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:3': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:4': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:5': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:8':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator', 'shaper', 'builder', 'reviewer'],
+      stages: ['any'],
+      operations: ['repo-read', 'repo-mutation'],
+      hosts: ['any'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:1':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['shaping'],
+      operations: ['source-inventory', 'state-transition'],
+      hosts: ['provider-neutral'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:2':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['shaping'],
+      operations: ['spec-mutation'],
+      hosts: ['provider-neutral'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:3':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['shaping'],
+      operations: ['source-inventory', 'spec-mutation'],
+      hosts: ['provider-neutral'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:4':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['shaping'],
+      operations: ['state-transition'],
+      hosts: ['provider-neutral'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:5':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator', 'builder'],
+      stages: ['step-zero'],
+      operations: ['spec-mutation'],
+      hosts: ['provider-neutral'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:6':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['deterministic-verify'],
+      operations: ['repo-read'],
+      hosts: ['provider-neutral'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:7':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['deterministic-verify'],
+      operations: ['source-inventory'],
+      hosts: ['provider-neutral'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:8':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['reviewer'],
+      stages: ['adversarial-review'],
+      operations: ['receipt-validation'],
+      hosts: ['any'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:9':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['adversarial-review'],
+      operations: ['receipt-validation'],
+      hosts: ['any'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:10':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['merge'],
+      operations: ['repo-mutation'],
+      hosts: ['any'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:11':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['closure'],
+      operations: ['state-transition'],
+      hosts: ['any'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Queue and dependency order:paragraph:1':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['shaping'],
+      operations: ['state-transition'],
+      hosts: ['provider-neutral'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:paragraph:1':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator', 'shaper'],
+      stages: ['shaping'],
+      operations: ['source-inventory'],
+      hosts: ['provider-neutral'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:1':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator', 'shaper'],
+      stages: ['shaping'],
+      operations: ['source-inventory'],
+      hosts: ['provider-neutral'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:2':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator', 'shaper'],
+      stages: ['shaping'],
+      operations: ['source-inventory'],
+      hosts: ['provider-neutral'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:3':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator', 'shaper'],
+      stages: ['shaping'],
+      operations: ['source-inventory'],
+      hosts: ['provider-neutral'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:4':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator', 'shaper'],
+      stages: ['shaping'],
+      operations: ['source-inventory'],
+      hosts: ['provider-neutral'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:5':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator', 'builder', 'kernel'],
+      stages: ['build', 'runtime'],
+      operations: ['control-call'],
+      hosts: ['any'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:6':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['shaper', 'builder', 'ci'],
+      stages: ['shaping', 'build', 'deterministic-verify'],
+      operations: ['source-inventory'],
+      hosts: ['provider-neutral'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## FK-P0 shaping mandate:list-item:7':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['builder'],
+      stages: ['build'],
+      operations: ['repo-mutation', 'external-write'],
+      hosts: ['provider-neutral'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:paragraph:1':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+      ],
+      operations: ['state-transition'],
+      hosts: ['any'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:1':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['shaping'],
+      operations: ['state-transition'],
+      hosts: ['any'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:2':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['shaping'],
+      operations: ['spec-mutation'],
+      hosts: ['any'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:3':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['step-zero'],
+      operations: ['spec-mutation'],
+      hosts: ['any'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:4':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['shaping'],
+      operations: ['state-transition'],
+      hosts: ['any'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:5':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['shaping', 'build'],
+      operations: ['control-call'],
+      hosts: ['any'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:6':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['shaping', 'build', 'runtime'],
+      operations: ['repo-read'],
+      hosts: ['any'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:7':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['shaping', 'build', 'adversarial-review'],
+      operations: ['state-transition'],
+      hosts: ['any'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:8':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['build', 'deterministic-verify', 'adversarial-review'],
+      operations: ['state-transition'],
+      hosts: ['any'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:9':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['deterministic-verify', 'adversarial-review'],
+      operations: ['repo-mutation'],
+      hosts: ['any'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:10':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['step-zero', 'build'],
+      operations: ['repo-mutation'],
+      hosts: ['any'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Stop conditions:list-item:11':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['closure'],
+      operations: ['state-transition'],
+      hosts: ['any'],
+    },
+  'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Wakeup and crash recovery:paragraph:1':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['build', 'deterministic-verify', 'adversarial-review'],
+      operations: ['state-transition'],
+      hosts: ['any'],
+    },
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 3. Spec Lifecycle:list-item:1':
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 3. Spec Lifecycle:list-item:2':
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 3. Spec Lifecycle:list-item:3':
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 3. Spec Lifecycle:list-item:4':
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 5. The Spec ↔ Jira Contract:list-item:1':
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 5. The Spec ↔ Jira Contract:list-item:2':
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 5. The Spec ↔ Jira Contract:list-item:3':
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 5. The Spec ↔ Jira Contract:list-item:4':
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 8. Dispatch Model (How Agents Consume Specs):list-item:1':
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 8. Dispatch Model (How Agents Consume Specs):list-item:2':
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 8. Dispatch Model (How Agents Consume Specs):list-item:3':
+    {
+      goals: ['all-foreman-goals'],
+      roles: ['builder'],
+      stages: ['deterministic-verify'],
+      operations: ['receipt-validation'],
+      hosts: ['any'],
+    },
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 8. Dispatch Model (How Agents Consume Specs):list-item:4':
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 10. Adoption Path:list-item:4':
+    {
+      goals: ['all-foreman-goals'],
+      roles: ['ci'],
+      stages: ['deterministic-verify'],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: ['ci'],
+    },
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 11. Coordinator-Ratified Amendment Pattern (added W0-P2):list-item:1':
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 11. Coordinator-Ratified Amendment Pattern (added W0-P2):list-item:2':
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 11. Coordinator-Ratified Amendment Pattern (added W0-P2):list-item:3':
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.6 Schema v0.2 Fields (added W0-P2):list-item:4':
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.8 `Allowed Files` Mutation Authority:list-item:1':
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.8 `Allowed Files` Mutation Authority:list-item:2':
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.8 `Allowed Files` Mutation Authority:paragraph:3':
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:1':
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:2':
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:3':
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:4':
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'coordinator-pattern:md-block:# The Coordinator Pattern > ## Stage Zero - concept to ratified plan:list-item:5':
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
   'coordinator-pattern:md-block:# The Coordinator Pattern > ## The three human gates:table-row:1': {
     goals: ['all-foreman-goals'],
     roles: [
@@ -6375,874 +6661,918 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'goal-skill:md-block:# /goal — the Coordinator entry point > ## Stage Zero — run it, don\'t skip it:list-item:1': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'goal-skill:md-block:# /goal — the Coordinator entry point > ## Stage Zero — run it, don\'t skip it:list-item:2': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'goal-skill:md-block:# /goal — the Coordinator entry point > ## Stage Zero — run it, don\'t skip it:list-item:3': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:1': {
-    goals: ['all-foreman-goals'],
-    roles: ['builder'],
-    stages: ['any'],
-    operations: ['any'],
-    hosts: ['any'],
-  },
-  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:2': {
-    goals: ['all-foreman-goals'],
-    roles: ['builder'],
-    stages: ['any'],
-    operations: ['any'],
-    hosts: ['any'],
-  },
-  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:3': {
-    goals: ['all-foreman-goals'],
-    roles: ['builder'],
-    stages: ['any'],
-    operations: ['any'],
-    hosts: ['any'],
-  },
-  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:4': {
-    goals: ['all-foreman-goals'],
-    roles: ['builder'],
-    stages: ['any'],
-    operations: ['any'],
-    hosts: ['any'],
-  },
-  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:5': {
-    goals: ['all-foreman-goals'],
-    roles: ['builder'],
-    stages: ['any'],
-    operations: ['any'],
-    hosts: ['any'],
-  },
-  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:6': {
-    goals: ['all-foreman-goals'],
-    roles: ['coordinator'],
-    stages: ['deterministic-verify', 'adversarial-review'],
-    operations: ['source-inventory', 'repo-read', 'repo-mutation'],
-    hosts: ['any'],
-  },
-  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:7': {
-    goals: ['all-foreman-goals'],
-    roles: ['builder'],
-    stages: ['any'],
-    operations: ['any'],
-    hosts: ['any'],
-  },
-  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — conditional:list-item:1': {
-    goals: ['all-foreman-goals'],
-    roles: ['builder'],
-    stages: ['any'],
-    operations: ['any'],
-    hosts: ['any'],
-  },
-  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — conditional:list-item:2': {
-    goals: ['all-foreman-goals'],
-    roles: ['builder'],
-    stages: ['any'],
-    operations: ['control-call'],
-    hosts: ['any'],
-  },
-  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Reviewer:list-item:1': {
-    goals: ['all-foreman-goals'],
-    roles: ['reviewer'],
-    stages: ['adversarial-review'],
-    operations: ['repo-read', 'repo-mutation', 'control-call'],
-    hosts: ['any'],
-  },
-  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Reviewer:list-item:2': {
-    goals: ['all-foreman-goals'],
-    roles: ['reviewer'],
-    stages: ['adversarial-review'],
-    operations: ['repo-read', 'repo-mutation', 'control-call'],
-    hosts: ['any'],
-  },
-  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Reviewer:list-item:3': {
-    goals: ['all-foreman-goals'],
-    roles: ['reviewer'],
-    stages: ['adversarial-review'],
-    operations: ['repo-read', 'repo-mutation', 'control-call'],
-    hosts: ['any'],
-  },
-  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Reviewer:list-item:4': {
-    goals: ['all-foreman-goals'],
-    roles: ['reviewer'],
-    stages: ['adversarial-review'],
-    operations: ['repo-read', 'repo-mutation', 'control-call'],
-    hosts: ['any'],
-  },
-  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter:paragraph:1': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:1': {
-    goals: ['all-foreman-goals'],
-    roles: ['shaper', 'builder'],
-    stages: ['shaping', 'step-zero', 'build'],
-    operations: ['any'],
-    hosts: ['any'],
-  },
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:2': {
-    goals: ['all-foreman-goals'],
-    roles: ['coordinator', 'shaper', 'builder', 'reviewer'],
-    stages: ['shaping', 'step-zero', 'build', 'adversarial-review'],
-    operations: ['any'],
-    hosts: ['any'],
-  },
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:3': {
-    goals: ['all-foreman-goals'],
-    roles: ['shaper', 'builder'],
-    stages: ['shaping', 'step-zero', 'build'],
-    operations: ['any'],
-    hosts: ['any'],
-  },
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:4': {
-    goals: ['all-foreman-goals'],
-    roles: ['shaper', 'builder'],
-    stages: ['shaping', 'step-zero', 'build'],
-    operations: ['repo-mutation'],
-    hosts: ['any'],
-  },
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:5': {
-    goals: ['all-foreman-goals'],
-    roles: ['shaper', 'builder'],
-    stages: ['shaping', 'step-zero', 'build'],
-    operations: ['repo-mutation'],
-    hosts: ['any'],
-  },
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:6': {
-    goals: ['all-foreman-goals'],
-    roles: ['coordinator', 'builder'],
-    stages: ['build'],
-    operations: ['repo-mutation'],
-    hosts: ['any'],
-  },
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:7': {
-    goals: ['all-foreman-goals'],
-    roles: ['builder', 'ci'],
-    stages: ['build', 'deterministic-verify'],
-    operations: ['any'],
-    hosts: ['any'],
-  },
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:8': {
-    goals: ['all-foreman-goals'],
-    roles: ['builder'],
-    stages: ['build'],
-    operations: ['repo-mutation'],
-    hosts: ['any'],
-  },
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:9': {
-    goals: ['all-foreman-goals'],
-    roles: ['coordinator', 'builder'],
-    stages: ['build'],
-    operations: ['repo-mutation'],
-    hosts: ['any'],
-  },
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:10': {
-    goals: ['all-foreman-goals'],
-    roles: ['any'],
-    stages: ['any'],
-    operations: ['any'],
-    hosts: ['any'],
-  },
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:11': {
-    goals: ['all-foreman-goals'],
-    roles: ['shaper', 'builder', 'reviewer'],
-    stages: ['shaping', 'step-zero', 'build', 'adversarial-review'],
-    operations: ['any'],
-    hosts: ['any'],
-  },
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:12': {
-    goals: ['all-foreman-goals'],
-    roles: ['coordinator', 'reviewer', 'ci'],
-    stages: ['deterministic-verify', 'adversarial-review', 'merge'],
-    operations: ['state-transition'],
-    hosts: ['any'],
-  },
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:13': {
-    goals: ['all-foreman-goals'],
-    roles: ['coordinator'],
-    stages: ['build', 'merge', 'closure'],
-    operations: ['state-transition'],
-    hosts: ['any'],
-  },
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:14': {
-    goals: ['all-foreman-goals'],
-    roles: ['coordinator', 'builder', 'reviewer', 'ci'],
-    stages: ['deterministic-verify', 'adversarial-review', 'merge'],
-    operations: ['source-inventory', 'state-transition'],
-    hosts: ['any'],
-  },
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:15': {
-    goals: ['all-foreman-goals'],
-    roles: ['coordinator', 'builder', 'reviewer', 'ci'],
-    stages: ['deterministic-verify', 'adversarial-review', 'merge'],
-    operations: ['source-inventory', 'state-transition'],
-    hosts: ['any'],
-  },
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:1': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:2': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:3': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:4': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:5': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:6': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:7': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:8': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:9': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:10': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:11': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:12': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
+  "goal-skill:md-block:# /goal — the Coordinator entry point > ## Stage Zero — run it, don't skip it:list-item:1":
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  "goal-skill:md-block:# /goal — the Coordinator entry point > ## Stage Zero — run it, don't skip it:list-item:2":
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  "goal-skill:md-block:# /goal — the Coordinator entry point > ## Stage Zero — run it, don't skip it:list-item:3":
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:1':
+    {
+      goals: ['all-foreman-goals'],
+      roles: ['builder'],
+      stages: ['any'],
+      operations: ['any'],
+      hosts: ['any'],
+    },
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:2':
+    {
+      goals: ['all-foreman-goals'],
+      roles: ['builder'],
+      stages: ['any'],
+      operations: ['any'],
+      hosts: ['any'],
+    },
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:3':
+    {
+      goals: ['all-foreman-goals'],
+      roles: ['builder'],
+      stages: ['any'],
+      operations: ['any'],
+      hosts: ['any'],
+    },
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:4':
+    {
+      goals: ['all-foreman-goals'],
+      roles: ['builder'],
+      stages: ['any'],
+      operations: ['any'],
+      hosts: ['any'],
+    },
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:5':
+    {
+      goals: ['all-foreman-goals'],
+      roles: ['builder'],
+      stages: ['any'],
+      operations: ['any'],
+      hosts: ['any'],
+    },
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:6':
+    {
+      goals: ['all-foreman-goals'],
+      roles: ['coordinator'],
+      stages: ['deterministic-verify', 'adversarial-review'],
+      operations: ['source-inventory', 'repo-read', 'repo-mutation'],
+      hosts: ['any'],
+    },
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — universal:list-item:7':
+    {
+      goals: ['all-foreman-goals'],
+      roles: ['builder'],
+      stages: ['any'],
+      operations: ['any'],
+      hosts: ['any'],
+    },
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — conditional:list-item:1':
+    {
+      goals: ['all-foreman-goals'],
+      roles: ['builder'],
+      stages: ['any'],
+      operations: ['any'],
+      hosts: ['any'],
+    },
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — conditional:list-item:2':
+    {
+      goals: ['all-foreman-goals'],
+      roles: ['builder'],
+      stages: ['any'],
+      operations: ['control-call'],
+      hosts: ['any'],
+    },
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Reviewer:list-item:1':
+    {
+      goals: ['all-foreman-goals'],
+      roles: ['reviewer'],
+      stages: ['adversarial-review'],
+      operations: ['repo-read', 'repo-mutation', 'control-call'],
+      hosts: ['any'],
+    },
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Reviewer:list-item:2':
+    {
+      goals: ['all-foreman-goals'],
+      roles: ['reviewer'],
+      stages: ['adversarial-review'],
+      operations: ['repo-read', 'repo-mutation', 'control-call'],
+      hosts: ['any'],
+    },
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Reviewer:list-item:3':
+    {
+      goals: ['all-foreman-goals'],
+      roles: ['reviewer'],
+      stages: ['adversarial-review'],
+      operations: ['repo-read', 'repo-mutation', 'control-call'],
+      hosts: ['any'],
+    },
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Reviewer:list-item:4':
+    {
+      goals: ['all-foreman-goals'],
+      roles: ['reviewer'],
+      stages: ['adversarial-review'],
+      operations: ['repo-read', 'repo-mutation', 'control-call'],
+      hosts: ['any'],
+    },
+  'standing-constraints:md-block:# Standing Constraints — included by reference in every dispatch kickstarter:paragraph:1':
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:1':
+    {
+      goals: ['all-foreman-goals'],
+      roles: ['shaper', 'builder'],
+      stages: ['shaping', 'step-zero', 'build'],
+      operations: ['any'],
+      hosts: ['any'],
+    },
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:2':
+    {
+      goals: ['all-foreman-goals'],
+      roles: ['coordinator', 'shaper', 'builder', 'reviewer'],
+      stages: ['shaping', 'step-zero', 'build', 'adversarial-review'],
+      operations: ['any'],
+      hosts: ['any'],
+    },
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:3':
+    {
+      goals: ['all-foreman-goals'],
+      roles: ['shaper', 'builder'],
+      stages: ['shaping', 'step-zero', 'build'],
+      operations: ['any'],
+      hosts: ['any'],
+    },
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:4':
+    {
+      goals: ['all-foreman-goals'],
+      roles: ['shaper', 'builder'],
+      stages: ['shaping', 'step-zero', 'build'],
+      operations: ['repo-mutation'],
+      hosts: ['any'],
+    },
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:5':
+    {
+      goals: ['all-foreman-goals'],
+      roles: ['shaper', 'builder'],
+      stages: ['shaping', 'step-zero', 'build'],
+      operations: ['repo-mutation'],
+      hosts: ['any'],
+    },
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:6':
+    {
+      goals: ['all-foreman-goals'],
+      roles: ['coordinator', 'builder'],
+      stages: ['build'],
+      operations: ['repo-mutation'],
+      hosts: ['any'],
+    },
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:7':
+    {
+      goals: ['all-foreman-goals'],
+      roles: ['builder', 'ci'],
+      stages: ['build', 'deterministic-verify'],
+      operations: ['any'],
+      hosts: ['any'],
+    },
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:8':
+    {
+      goals: ['all-foreman-goals'],
+      roles: ['builder'],
+      stages: ['build'],
+      operations: ['repo-mutation'],
+      hosts: ['any'],
+    },
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:9':
+    {
+      goals: ['all-foreman-goals'],
+      roles: ['coordinator', 'builder'],
+      stages: ['build'],
+      operations: ['repo-mutation'],
+      hosts: ['any'],
+    },
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:10':
+    {
+      goals: ['all-foreman-goals'],
+      roles: ['any'],
+      stages: ['any'],
+      operations: ['any'],
+      hosts: ['any'],
+    },
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:11':
+    {
+      goals: ['all-foreman-goals'],
+      roles: ['shaper', 'builder', 'reviewer'],
+      stages: ['shaping', 'step-zero', 'build', 'adversarial-review'],
+      operations: ['any'],
+      hosts: ['any'],
+    },
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:12':
+    {
+      goals: ['all-foreman-goals'],
+      roles: ['coordinator', 'reviewer', 'ci'],
+      stages: ['deterministic-verify', 'adversarial-review', 'merge'],
+      operations: ['state-transition'],
+      hosts: ['any'],
+    },
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:13':
+    {
+      goals: ['all-foreman-goals'],
+      roles: ['coordinator'],
+      stages: ['build', 'merge', 'closure'],
+      operations: ['state-transition'],
+      hosts: ['any'],
+    },
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:14':
+    {
+      goals: ['all-foreman-goals'],
+      roles: ['coordinator', 'builder', 'reviewer', 'ci'],
+      stages: ['deterministic-verify', 'adversarial-review', 'merge'],
+      operations: ['source-inventory', 'state-transition'],
+      hosts: ['any'],
+    },
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## The Hard Rules:list-item:15':
+    {
+      goals: ['all-foreman-goals'],
+      roles: ['coordinator', 'builder', 'reviewer', 'ci'],
+      stages: ['deterministic-verify', 'adversarial-review', 'merge'],
+      operations: ['source-inventory', 'state-transition'],
+      hosts: ['any'],
+    },
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:1':
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:2':
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:3':
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:4':
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:5':
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:6':
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:7':
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:8':
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:9':
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:10':
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:11':
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'parcel-driven-development:md-block:# Parcel-Driven Development Skill > ## Review Workflow:list-item:12':
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
   'foreman-line-plan:md-block:# The Foreman Line — Master Plugin Plan:paragraph:1': {
     goals: ['all-foreman-goals'],
     roles: [
@@ -7285,183 +7615,189 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'foreman-line-plan:md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage D — Verification:list-item:4': {
-    goals: ['all-foreman-goals'],
-    roles: ['reviewer'],
-    stages: ['adversarial-review', 'merge'],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'foreman-line-plan:md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage E — Integration:list-item:4': {
-    goals: ['all-foreman-goals'],
-    roles: ['ci'],
-    stages: ['deterministic-verify'],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: ['ci'],
-  },
-  'foreman-line-plan:md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage F — Closure:list-item:1': {
-    goals: ['all-foreman-goals'],
-    roles: ['coordinator'],
-    stages: ['merge'],
-    operations: ['state-transition'],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'foreman-line-plan:md-block:# The Foreman Line — Master Plugin Plan > ## 4. Smart Triage as the Assignment Engine:list-item:1': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'approval-readme:md-block:# @foreman-line/approval — Human Approval Flow CLI, W1-P3 > ## The human-gate contract:list-item:3': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'approval-readme:md-block:# @foreman-line/approval — Human Approval Flow CLI, W1-P3 > ## The human-gate contract:list-item:4': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
+  'foreman-line-plan:md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage D — Verification:list-item:4':
+    {
+      goals: ['all-foreman-goals'],
+      roles: ['reviewer'],
+      stages: ['adversarial-review', 'merge'],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'foreman-line-plan:md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage E — Integration:list-item:4':
+    {
+      goals: ['all-foreman-goals'],
+      roles: ['ci'],
+      stages: ['deterministic-verify'],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: ['ci'],
+    },
+  'foreman-line-plan:md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage F — Closure:list-item:1':
+    {
+      goals: ['all-foreman-goals'],
+      roles: ['coordinator'],
+      stages: ['merge'],
+      operations: ['state-transition'],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'foreman-line-plan:md-block:# The Foreman Line — Master Plugin Plan > ## 4. Smart Triage as the Assignment Engine:list-item:1':
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'approval-readme:md-block:# @foreman-line/approval — Human Approval Flow CLI, W1-P3 > ## The human-gate contract:list-item:3':
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'approval-readme:md-block:# @foreman-line/approval — Human Approval Flow CLI, W1-P3 > ## The human-gate contract:list-item:4':
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
   'spec-frontmatter-schema:json-pointer:/properties/permission_profile/enum': {
     goals: ['all-foreman-goals'],
     roles: ['ci'],
@@ -7494,7 +7830,7 @@ const CURATED_ITEM_APPLICABILITY = {
     ],
     hosts: ['ci'],
   },
-  'spec-linter-validator:if (doc.status === \'superseded\' && doc.superseded_by === null) {': {
+  "spec-linter-validator:if (doc.status === 'superseded' && doc.superseded_by === null) {": {
     goals: ['all-foreman-goals'],
     roles: ['ci'],
     stages: ['deterministic-verify'],
@@ -7510,38 +7846,40 @@ const CURATED_ITEM_APPLICABILITY = {
     ],
     hosts: ['ci'],
   },
-  'spec-linter-validator:if (!options?.noPermissionProfileWarning && !(\'permission_profile\' in doc)) {': {
-    goals: ['all-foreman-goals'],
-    roles: ['ci'],
-    stages: ['deterministic-verify'],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: ['ci'],
-  },
-  'spec-linter-validator:\'advisory: permission_profile is absent; set it to a registry profile name when the registry ships\',': {
-    goals: ['all-foreman-goals'],
-    roles: ['ci'],
-    stages: ['deterministic-verify'],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: ['ci'],
-  },
+  "spec-linter-validator:if (!options?.noPermissionProfileWarning && !('permission_profile' in doc)) {":
+    {
+      goals: ['all-foreman-goals'],
+      roles: ['ci'],
+      stages: ['deterministic-verify'],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: ['ci'],
+    },
+  "spec-linter-validator:'advisory: permission_profile is absent; set it to a registry profile name when the registry ships',":
+    {
+      goals: ['all-foreman-goals'],
+      roles: ['ci'],
+      stages: ['deterministic-verify'],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: ['ci'],
+    },
   'spec-linter-cli: *   0  all specs valid (advisory warnings do not affect exit code)': {
     goals: ['all-foreman-goals'],
     roles: ['ci'],
@@ -7558,38 +7896,40 @@ const CURATED_ITEM_APPLICABILITY = {
     ],
     hosts: ['ci'],
   },
-  'spec-linter-cli: *   1  at least one schema or semantic-invariant violation (every violation on stderr)': {
-    goals: ['all-foreman-goals'],
-    roles: ['ci'],
-    stages: ['deterministic-verify'],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: ['ci'],
-  },
-  'spec-linter-cli: *   2  usage error: missing/unreadable path, bad invocation, or directory with no .md files': {
-    goals: ['all-foreman-goals'],
-    roles: ['ci'],
-    stages: ['deterministic-verify'],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: ['ci'],
-  },
+  'spec-linter-cli: *   1  at least one schema or semantic-invariant violation (every violation on stderr)':
+    {
+      goals: ['all-foreman-goals'],
+      roles: ['ci'],
+      stages: ['deterministic-verify'],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: ['ci'],
+    },
+  'spec-linter-cli: *   2  usage error: missing/unreadable path, bad invocation, or directory with no .md files':
+    {
+      goals: ['all-foreman-goals'],
+      roles: ['ci'],
+      stages: ['deterministic-verify'],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: ['ci'],
+    },
   'spec-linter-cli:process.exitCode = run(process.argv.slice(2))': {
     goals: ['all-foreman-goals'],
     roles: ['ci'],
@@ -7606,48 +7946,49 @@ const CURATED_ITEM_APPLICABILITY = {
     ],
     hosts: ['ci'],
   },
-  'spec-linter-readme:md-block:# @foreman-line/spec-linter > ## The four v0.2 fields:table-row:`permission_profile:`': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
+  'spec-linter-readme:md-block:# @foreman-line/spec-linter > ## The four v0.2 fields:table-row:`permission_profile:`':
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
   'spec-linter-readme:md-block:# @foreman-line/spec-linter > ## The four v0.2 fields:paragraph:1': {
     goals: ['all-foreman-goals'],
     roles: [
@@ -7832,48 +8173,49 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'permission-profiles-registry:yaml-rule:builder-architecture:deny:"PowerShell(git push --force*)"': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
+  'permission-profiles-registry:yaml-rule:builder-architecture:deny:"PowerShell(git push --force*)"':
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
   'permission-profiles-registry:yaml-rule:builder-architecture:deny:"PowerShell(git push -f *)"': {
     goals: ['all-foreman-goals'],
     roles: [
@@ -10034,7 +10376,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'permission-profiles-types:export type PermissionMode = \'default\' | \'acceptEdits\' | \'plan\'': {
+  "permission-profiles-types:export type PermissionMode = 'default' | 'acceptEdits' | 'plan'": {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -10118,7 +10460,50 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'permission-profiles-validator:const REVIEWER_MUTATION_COMMANDS: readonly string[] = [\'commit\', \'push\', \'apply\', \'stash\', \'merge\']': {
+  "permission-profiles-validator:const REVIEWER_MUTATION_COMMANDS: readonly string[] = ['commit', 'push', 'apply', 'stash', 'merge']":
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  "permission-profiles-validator:if (envelope.defaultMode === 'bypassPermissions') {": {
     goals: ['all-foreman-goals'],
     roles: [
       'developer',
@@ -10160,468 +10545,436 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'permission-profiles-validator:if (envelope.defaultMode === \'bypassPermissions\') {': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'permission-profiles-validator:function checkReviewerReadonlyRestrictionCompleteness(doc: Record<string, unknown>): string[] {': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'permission-profiles-validator:function checkReviewerReadonlyShellAccessPreservation(doc: Record<string, unknown>): string[] {': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## The five enforced invariants:list-item:1': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## The five enforced invariants:list-item:2': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## The five enforced invariants:list-item:4': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## The five enforced invariants:list-item:5': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## Deny-first ruling (D9):paragraph:1': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## Session-start-load bound — with its failure modes (F-H):paragraph:1': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## Session-start-load bound — with its failure modes (F-H):list-item:2': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## Session-start-load bound — with its failure modes (F-H):list-item:3': {
-    goals: ['all-foreman-goals'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
+  'permission-profiles-validator:function checkReviewerReadonlyRestrictionCompleteness(doc: Record<string, unknown>): string[] {':
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'permission-profiles-validator:function checkReviewerReadonlyShellAccessPreservation(doc: Record<string, unknown>): string[] {':
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## The five enforced invariants:list-item:1':
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## The five enforced invariants:list-item:2':
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## The five enforced invariants:list-item:4':
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## The five enforced invariants:list-item:5':
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## Deny-first ruling (D9):paragraph:1':
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## Session-start-load bound — with its failure modes (F-H):paragraph:1':
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## Session-start-load bound — with its failure modes (F-H):list-item:2':
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## Session-start-load bound — with its failure modes (F-H):list-item:3':
+    {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
   'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:2': {
     goals: ['foreman-kernel'],
     roles: ['coordinator'],
@@ -10776,41 +11129,46 @@ const CURATED_ITEM_APPLICABILITY = {
     operations: ['any'],
     hosts: ['any'],
   },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 0 — Authority and contracts:paragraph:1': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['deterministic-verify', 'merge', 'closure'],
-    operations: ['source-inventory', 'state-transition'],
-    hosts: ['any'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 1 — Pure trust core:paragraph:1': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['deterministic-verify', 'merge', 'closure'],
-    operations: ['source-inventory', 'state-transition'],
-    hosts: ['any'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 2 — Stateless read-only MCP and container:paragraph:1': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['deterministic-verify', 'merge', 'closure'],
-    operations: ['source-inventory', 'state-transition'],
-    hosts: ['any'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:paragraph:1': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['deterministic-verify', 'merge', 'closure'],
-    operations: ['source-inventory', 'state-transition'],
-    hosts: ['any'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:paragraph:1': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['deterministic-verify', 'merge', 'closure'],
-    operations: ['source-inventory', 'state-transition'],
-    hosts: ['any'],
-  },
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 0 — Authority and contracts:paragraph:1':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['deterministic-verify', 'merge', 'closure'],
+      operations: ['source-inventory', 'state-transition'],
+      hosts: ['any'],
+    },
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 1 — Pure trust core:paragraph:1':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['deterministic-verify', 'merge', 'closure'],
+      operations: ['source-inventory', 'state-transition'],
+      hosts: ['any'],
+    },
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 2 — Stateless read-only MCP and container:paragraph:1':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['deterministic-verify', 'merge', 'closure'],
+      operations: ['source-inventory', 'state-transition'],
+      hosts: ['any'],
+    },
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:paragraph:1':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['deterministic-verify', 'merge', 'closure'],
+      operations: ['source-inventory', 'state-transition'],
+      hosts: ['any'],
+    },
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:paragraph:1':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['deterministic-verify', 'merge', 'closure'],
+      operations: ['source-inventory', 'state-transition'],
+      hosts: ['any'],
+    },
   'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition:paragraph:1': {
     goals: ['foreman-kernel'],
     roles: ['reviewer'],
@@ -10818,181 +11176,206 @@ const CURATED_ITEM_APPLICABILITY = {
     operations: ['receipt-validation'],
     hosts: ['any'],
   },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:1': {
-    goals: ['foreman-kernel'],
-    roles: ['builder'],
-    stages: ['build'],
-    operations: ['repo-mutation'],
-    hosts: ['claude-windows-docker-loaded'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:2': {
-    goals: ['foreman-kernel'],
-    roles: ['builder'],
-    stages: ['build'],
-    operations: ['repo-mutation'],
-    hosts: ['claude-windows-docker-loaded'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:3': {
-    goals: ['foreman-kernel'],
-    roles: ['reviewer'],
-    stages: ['adversarial-review'],
-    operations: ['repo-mutation'],
-    hosts: ['claude-windows-docker-loaded'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:4': {
-    goals: ['foreman-kernel'],
-    roles: ['builder'],
-    stages: ['build'],
-    operations: ['repo-mutation'],
-    hosts: ['claude-windows-docker-loaded'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:5': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator', 'builder'],
-    stages: ['build', 'runtime'],
-    operations: ['state-transition', 'control-call'],
-    hosts: ['claude-windows-docker-loaded'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 0 — Authority and contracts:table-row:FK-P0 — Canon authority and enforcement registry': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['shaping'],
-    operations: ['state-transition'],
-    hosts: ['provider-neutral'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 0 — Authority and contracts:table-row:FK-P1 — Lifecycle, admission, and decision contracts': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['shaping'],
-    operations: ['state-transition'],
-    hosts: ['provider-neutral'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 1 — Pure trust core:table-row:FK-P3 — Pure dispatch decisions': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['shaping'],
-    operations: ['state-transition'],
-    hosts: ['provider-neutral'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 1 — Pure trust core:table-row:FK-P4 — Verifier facade': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['shaping'],
-    operations: ['state-transition'],
-    hosts: ['provider-neutral'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 1 — Pure trust core:table-row:FK-P5 — Clean-room trust-core spike': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['shaping'],
-    operations: ['state-transition'],
-    hosts: ['provider-neutral'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 2 — Stateless read-only MCP and container:table-row:FK-P6 — Read-only MCP server': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['shaping'],
-    operations: ['state-transition'],
-    hosts: ['provider-neutral'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 2 — Stateless read-only MCP and container:table-row:FK-P7 — Stateless verifier image and launcher': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['shaping'],
-    operations: ['state-transition'],
-    hosts: ['provider-neutral'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 2 — Stateless read-only MCP and container:table-row:FK-P8 — Stateless harness portability proof': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['shaping'],
-    operations: ['state-transition'],
-    hosts: ['provider-neutral'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P9 — SQLite storage and migration ABI': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['shaping'],
-    operations: ['state-transition'],
-    hosts: ['provider-neutral'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P10 — Lease and transition engine': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['shaping'],
-    operations: ['state-transition'],
-    hosts: ['provider-neutral'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P11 — Legacy import and projection engine': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['shaping'],
-    operations: ['state-transition'],
-    hosts: ['provider-neutral'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P12 — Authorization policy engine': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['shaping'],
-    operations: ['state-transition'],
-    hosts: ['provider-neutral'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P13 — Admission-protected control catalog': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['shaping'],
-    operations: ['state-transition'],
-    hosts: ['provider-neutral'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P14 — Stateful image composition and operator lifecycle': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['shaping'],
-    operations: ['state-transition'],
-    hosts: ['provider-neutral'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P15 — Stateful restart and admission proof': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['shaping'],
-    operations: ['state-transition'],
-    hosts: ['provider-neutral'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P16 — Claude lifecycle adapter, shadow mode': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['shaping'],
-    operations: ['state-transition'],
-    hosts: ['provider-neutral'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P17 — Bypass and outage harness': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['shaping'],
-    operations: ['state-transition'],
-    hosts: ['provider-neutral'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P19 — High-confidence refusal enforcement': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['shaping'],
-    operations: ['state-transition'],
-    hosts: ['provider-neutral'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P20 — Second-host feasibility and host registration': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['shaping'],
-    operations: ['state-transition'],
-    hosts: ['provider-neutral'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P21 — Exit evidence manifest and clean-room proof': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['shaping'],
-    operations: ['state-transition'],
-    hosts: ['provider-neutral'],
-  },
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:1':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['builder'],
+      stages: ['build'],
+      operations: ['repo-mutation'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:2':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['builder'],
+      stages: ['build'],
+      operations: ['repo-mutation'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:3':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['reviewer'],
+      stages: ['adversarial-review'],
+      operations: ['repo-mutation'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:4':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['builder'],
+      stages: ['build'],
+      operations: ['repo-mutation'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:5':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator', 'builder'],
+      stages: ['build', 'runtime'],
+      operations: ['state-transition', 'control-call'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 0 — Authority and contracts:table-row:FK-P0 — Canon authority and enforcement registry':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['shaping'],
+      operations: ['state-transition'],
+      hosts: ['provider-neutral'],
+    },
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 0 — Authority and contracts:table-row:FK-P1 — Lifecycle, admission, and decision contracts':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['shaping'],
+      operations: ['state-transition'],
+      hosts: ['provider-neutral'],
+    },
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 1 — Pure trust core:table-row:FK-P3 — Pure dispatch decisions':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['shaping'],
+      operations: ['state-transition'],
+      hosts: ['provider-neutral'],
+    },
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 1 — Pure trust core:table-row:FK-P4 — Verifier facade':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['shaping'],
+      operations: ['state-transition'],
+      hosts: ['provider-neutral'],
+    },
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 1 — Pure trust core:table-row:FK-P5 — Clean-room trust-core spike':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['shaping'],
+      operations: ['state-transition'],
+      hosts: ['provider-neutral'],
+    },
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 2 — Stateless read-only MCP and container:table-row:FK-P6 — Read-only MCP server':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['shaping'],
+      operations: ['state-transition'],
+      hosts: ['provider-neutral'],
+    },
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 2 — Stateless read-only MCP and container:table-row:FK-P7 — Stateless verifier image and launcher':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['shaping'],
+      operations: ['state-transition'],
+      hosts: ['provider-neutral'],
+    },
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 2 — Stateless read-only MCP and container:table-row:FK-P8 — Stateless harness portability proof':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['shaping'],
+      operations: ['state-transition'],
+      hosts: ['provider-neutral'],
+    },
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P9 — SQLite storage and migration ABI':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['shaping'],
+      operations: ['state-transition'],
+      hosts: ['provider-neutral'],
+    },
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P10 — Lease and transition engine':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['shaping'],
+      operations: ['state-transition'],
+      hosts: ['provider-neutral'],
+    },
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P11 — Legacy import and projection engine':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['shaping'],
+      operations: ['state-transition'],
+      hosts: ['provider-neutral'],
+    },
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P12 — Authorization policy engine':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['shaping'],
+      operations: ['state-transition'],
+      hosts: ['provider-neutral'],
+    },
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P13 — Admission-protected control catalog':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['shaping'],
+      operations: ['state-transition'],
+      hosts: ['provider-neutral'],
+    },
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P14 — Stateful image composition and operator lifecycle':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['shaping'],
+      operations: ['state-transition'],
+      hosts: ['provider-neutral'],
+    },
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P15 — Stateful restart and admission proof':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['shaping'],
+      operations: ['state-transition'],
+      hosts: ['provider-neutral'],
+    },
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P16 — Claude lifecycle adapter, shadow mode':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['shaping'],
+      operations: ['state-transition'],
+      hosts: ['provider-neutral'],
+    },
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P17 — Bypass and outage harness':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['shaping'],
+      operations: ['state-transition'],
+      hosts: ['provider-neutral'],
+    },
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P19 — High-confidence refusal enforcement':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['shaping'],
+      operations: ['state-transition'],
+      hosts: ['provider-neutral'],
+    },
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P20 — Second-host feasibility and host registration':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['shaping'],
+      operations: ['state-transition'],
+      hosts: ['provider-neutral'],
+    },
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P21 — Exit evidence manifest and clean-room proof':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['shaping'],
+      operations: ['state-transition'],
+      hosts: ['provider-neutral'],
+    },
   'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:1': {
     goals: ['foreman-kernel'],
     roles: ['ci'],
@@ -11056,43 +11439,48 @@ const CURATED_ITEM_APPLICABILITY = {
     operations: ['repo-mutation'],
     hosts: ['claude-windows-docker-loaded'],
   },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:10': {
-    goals: ['foreman-kernel'],
-    roles: ['ci'],
-    stages: ['deterministic-verify'],
-    operations: ['state-transition'],
-    hosts: ['claude-windows-docker-loaded'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:11': {
-    goals: ['foreman-kernel'],
-    roles: ['ci'],
-    stages: ['deterministic-verify'],
-    operations: ['control-call'],
-    hosts: ['claude-windows-docker-loaded'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:12': {
-    goals: ['foreman-kernel'],
-    roles: ['ci'],
-    stages: ['deterministic-verify'],
-    operations: ['control-call'],
-    hosts: ['claude-windows-docker-loaded'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:13': {
-    goals: ['foreman-kernel'],
-    roles: ['ci'],
-    stages: ['deterministic-verify'],
-    operations: ['control-call'],
-    hosts: ['claude-windows-docker-loaded'],
-  },
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:10':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['ci'],
+      stages: ['deterministic-verify'],
+      operations: ['state-transition'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:11':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['ci'],
+      stages: ['deterministic-verify'],
+      operations: ['control-call'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:12':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['ci'],
+      stages: ['deterministic-verify'],
+      operations: ['control-call'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:13':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['ci'],
+      stages: ['deterministic-verify'],
+      operations: ['control-call'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
   // Scenario 14 is proved on the D20 platform like every other scenario, so it carries the same
   // CI / deterministic-verify / control-call applicability as scenario 13.
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:14': {
-    goals: ['foreman-kernel'],
-    roles: ['ci'],
-    stages: ['deterministic-verify'],
-    operations: ['control-call'],
-    hosts: ['claude-windows-docker-loaded'],
-  },
+  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:14':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['ci'],
+      stages: ['deterministic-verify'],
+      operations: ['control-call'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
 } as const satisfies Readonly<Record<string, AuthorityRule['applicability']>>
 
 function curatedApplicabilityFor(
@@ -11272,35 +11660,39 @@ function legacyRuleIdsFor(sourceId: string, locator: SourceLocator): string[] {
     .map(([ruleId]) => ruleId)
 }
 
-export function markdownIdentityProjectionForTesting(sourceId: string, content: string) {
+export function markdownIdentityProjectionForTesting(
+  sourceId: string,
+  content: string,
+  options: { readonly maskVolatile?: boolean } = {},
+) {
   const definition = SOURCE_DEFINITIONS.find((candidate) => candidate.sourceId === sourceId)
   if (definition === undefined || !definition.path.endsWith('.md')) {
     throw new Error(`Markdown source '${sourceId}' is not declared`)
   }
-  return markdownBindingBlocks(markdownDocumentMap(maskVolatileMarkdown(sourceId, content))).map(
-    (located) => {
-      const itemId = itemIdFor(definition, located)
-      const legacyRuleIds = legacyRuleIdsFor(sourceId, located.locator)
-      const curationKey = `${sourceId}:${located.locator.anchor}`
-      const compound = R11_COMPOUND_ITEM_SEMANTICS[curationKey]
-      const generatedRuleIds =
-        compound !== undefined
-          ? compound.map(
-              (entry) => `rule.${sourceId}.${itemId.replace(/^item\./, '')}.${entry.suffix}`,
-            )
-          : authorityIdentityFor(sourceId, located.locator.anchor) === null
-            ? []
-            : [`rule.${sourceId}.${itemId.replace(/^item\./, '')}`]
-      return {
-        itemId,
-        locator: located.locator,
-        locatorDigest: locatorDigestFor(located.locator),
-        normalizedExcerpt: normalizeRuleText(located.text),
-        valueDigest: sha256(normalizeRuleText(located.text)),
-        ruleIds: [...new Set([...legacyRuleIds, ...generatedRuleIds])],
-      }
-    },
-  )
+  const projectedContent =
+    options.maskVolatile === false ? content : maskVolatileMarkdown(sourceId, content)
+  return markdownBindingBlocks(markdownDocumentMap(projectedContent)).map((located) => {
+    const itemId = itemIdFor(definition, located)
+    const legacyRuleIds = legacyRuleIdsFor(sourceId, located.locator)
+    const curationKey = `${sourceId}:${located.locator.anchor}`
+    const compound = R11_COMPOUND_ITEM_SEMANTICS[curationKey]
+    const generatedRuleIds =
+      compound !== undefined
+        ? compound.map(
+            (entry) => `rule.${sourceId}.${itemId.replace(/^item\./, '')}.${entry.suffix}`,
+          )
+        : authorityIdentityFor(sourceId, located.locator.anchor) === null
+          ? []
+          : [`rule.${sourceId}.${itemId.replace(/^item\./, '')}`]
+    return {
+      itemId,
+      locator: located.locator,
+      locatorDigest: locatorDigestFor(located.locator),
+      normalizedExcerpt: normalizeRuleText(located.text),
+      valueDigest: sha256(normalizeRuleText(located.text)),
+      ruleIds: [...new Set([...legacyRuleIds, ...generatedRuleIds])],
+    }
+  })
 }
 
 function migratedLegacyRule(
@@ -11337,9 +11729,13 @@ function buildSource(definition: SourceDefinition): {
 } {
   const absolutePath = join(repoRoot, ...definition.path.split('/'))
   const bytes = readFileSync(absolutePath)
-  // `bytes` stays raw: `snapshotEvidence.fullFileSha256` attests the WHOLE committed file, and a
-  // hash of masked bytes would attest a document that exists nowhere. `content` is masked, so
-  // every locator, ordinal, and digest below is derived from the governed surface only.
+  const snapshotBytes = execFileSync(
+    'git',
+    ['cat-file', '-p', `${CURRENT_SNAPSHOT}:${definition.path}`],
+    { cwd: repoRoot },
+  )
+  // Snapshot evidence attests the pinned commit, never mutable worktree bytes. `content` is masked,
+  // so every locator, ordinal, and digest below is derived from the governed surface only.
   const content = definition.path.endsWith('.md')
     ? maskVolatileMarkdown(definition.sourceId, bytes.toString('utf8'))
     : bytes.toString('utf8')
@@ -11569,10 +11965,7 @@ function buildSource(definition: SourceDefinition): {
       for (const compound of compoundSemantics) {
         const ruleId = `rule.${definition.sourceId}.${itemId.replace(/^item\./, '')}.${compound.suffix}`
         const compoundClassification = compound.classification ?? 'pre-action-refusal'
-        const shape = ruleShape(
-          compoundClassification,
-          `${curationKey}:${compound.suffix}`,
-        )
+        const shape = ruleShape(compoundClassification, `${curationKey}:${compound.suffix}`)
         const baseRule: AuthorityRule = {
           ruleId,
           authoritySubject: compound.identity[0],
@@ -11694,7 +12087,7 @@ function buildSource(definition: SourceDefinition): {
       authorityTier: definition.authorityTier,
       authorityEffect: definition.authorityEffect,
       scope: definition.scope,
-      snapshotEvidence: { commit: CURRENT_SNAPSHOT, fullFileSha256: sha256(bytes) },
+      snapshotEvidence: { commit: CURRENT_SNAPSHOT, fullFileSha256: sha256(snapshotBytes) },
       inventoryItems,
     },
     rules,
@@ -12524,6 +12917,10 @@ function buildRegistry(): AuthorityEnforcementRegistry {
   const priorManifest = R13_PRIOR_MANIFEST
   const basisRule = rules.find((rule) => rule.ruleId === 'rule.fk-charter.2a524c1ea63f')
   if (basisRule === undefined) throw new Error('R13 migration basis rule is missing')
+  const ambientCheckoutRule = rules.find(
+    (rule) => rule.ruleId === 'rule.fk-loop-directive.3fe253f7c599',
+  )
+  if (ambientCheckoutRule === undefined) throw new Error('standing authorization 8 is missing')
   const commandEvidence = (commandId: string, inputDigest: string, resultDigest: string) =>
     canonicalJson({
       tool: '@foreman-line/authority-registry',
@@ -12661,8 +13058,8 @@ function buildRegistry(): AuthorityEnforcementRegistry {
   )
   const r15Migration: ReconciliationRecord = {
     reconciliationId: 'registry-rework-40394be',
-    topic: 'R14 registry bindings superseded by the coordinator-ratified FK-P0 R24 amendment.',
-    observedRefs: [basisRule.authorityBasisRef],
+    topic: 'R14 registry bindings superseded by the coordinator-ratified FK-P0 round-6 amendments.',
+    observedRefs: [basisRule.authorityBasisRef, ambientCheckoutRule.authorityBasisRef],
     observedEvidence: [
       {
         kind: 'git-commit',
@@ -12685,9 +13082,9 @@ function buildRegistry(): AuthorityEnforcementRegistry {
         digest: sha256(r15SupersedingCommand),
       },
     ],
-    authoritativeRuleIds: [basisRule.ruleId],
+    authoritativeRuleIds: [basisRule.ruleId, ambientCheckoutRule.ruleId],
     scopedDisposition:
-      "The R24 declared volatile regions, excised before block discovery and before ordinal assignment, supersede the R14 registry bindings in FK scope: the loop directive's operational state no longer occupies an ordinal, so appends to it cannot displace a governed sibling. Two obligations are recorded together. First, the source baseline advances to the commit whose bytes were hashed. Second, rule.fk-loop-directive.ae7854c7dad1 is DE-PUBLISHED, not retired: its subject goal.current-state-record and claim stage-zero-complete-and-fk-p0-next were an operational status snapshot published as canon, and its backing item left the audited inventory by removal into the declared region. Its final locatorDigest was cd404753257ddc78f7d8f473b679ce9410d745af89a459363f029838e6941c6c and its final valueDigest was 39dd6f0a5551d6fde0f694415fcb01f6f407115c1ca5a74da7b570239d61f371, pinned here because an observedRef must resolve to a live item and this one no longer exists.",
+      'The R24-R29 round-6 volatile-region and curation rework supersedes the R14 registry bindings in FK scope. The declared volatile regions are excised before block discovery and ordinal assignment, so operational state cannot displace a governed sibling. The source baseline advances to the commit whose bytes were hashed. rule.fk-loop-directive.ae7854c7dad1 is DE-PUBLISHED, not retired: its subject goal.current-state-record and claim stage-zero-complete-and-fk-p0-next were an operational status snapshot published as canon, and its backing item is excised from inventory. Its final locatorDigest was cd404753257ddc78f7d8f473b679ce9410d745af89a459363f029838e6941c6c and its final valueDigest was 39dd6f0a5551d6fde0f694415fcb01f6f407115c1ca5a74da7b570239d61f371. The unpublished FK-P0 queue audit candidate is also removed because its audited signal was solely the now-volatile State cell; its final locatorDigest was 7fcf048fef2f8f007fe9083fabccf58cea064025f51a0468f471144e94818de5 and its final valueDigest was 1a430cadb645418f777ef2827628d2efe92cde3b84ab1337589f20c335615262. Standing authorization 8 is now published as pre-action-refusal / REFUSE under kernel-policy and is quoted exactly: 8. **The ambient `D:/Repos/agent-skills` checkout carries user-owned changes. Never touch or absorb them.** No agent working this goal — coordinator, builder, reviewer, or shaping session — reads from or writes to the ambient checkout, and no user-owned change is absorbed into a parcel branch. Relocated here from `## Current state` by R27, because it is a prohibition and was sitting in a section declared volatile, curated `ruleIds: []` with a boilerplate rationale asserting it stated no rule. It states a rule.',
     unresolvedConsequence:
       'Future binding changes require another typed prior-to-new migration record. Declaring a new volatile region over an already-published locator remains refused, so any future region that would absorb governed text requires a spec amendment first.',
     migrationStatus: 'superseded-by-amendment',
