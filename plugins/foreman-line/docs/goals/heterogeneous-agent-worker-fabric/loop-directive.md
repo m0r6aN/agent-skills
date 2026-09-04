@@ -159,11 +159,28 @@ stale lines, and landing two amendment commits on `claude/hwf-wf-p0-shaping-2026
 worktree, one writer, is the rule that existed precisely to prevent this, and the coordinator
 is not exempt from it.
 
-It was harmless **by luck, not by discipline.** History stayed linear, the shaping agent's own
-`9524293` landed before the coordinator's commits, nothing was lost, and the tree was clean
-throughout. Had the agent committed between the coordinator's Edit-read and its write, the
-agent's fix would have been clobbered silently — the same shape as the incident that produced
-the one-goal-one-coordinator rule (`491fb80`, also benign, also only by luck).
+**The collision actually happened, and a mechanism — not discipline — is what held the line.**
+The first account of this said "harmless by luck." The shaping agent then supplied the detail
+that makes it precise: during its final pass, two of its `Edit` calls failed with *"File has
+been modified since read"* on content byte-identical to what it held. That was the
+coordinator's write landing between the agent's read and its write. The harness's stale-read
+guard fired, refused the write, and produced a visible signal. Nothing was lost because the
+guard caught it, not because either writer was careful.
+
+Two rules come out of that, and the second is the one that would have caught it sooner:
+
+1. **The guard is the backstop, never the plan.** It protects a single file against a
+   read-write straddle. It would not have protected a `git add`/commit sequence, a file the
+   other writer had not read, or an edit routed through a shell command.
+2. **"The file changed under me and I don't know why" is a stop condition, not a re-read.**
+   The agent attributed the failures to a linter touching mtime and re-read past them — a
+   reasonable guess that was wrong, and that discarded the only live signal either writer got.
+   A future dual-writer collision will announce itself exactly this way. Any agent seeing an
+   unexplained stale-read failure stops and reports it rather than retrying through it.
+
+Had the agent committed between the coordinator's read and write, its fix would have been
+clobbered silently — the same shape as the incident that produced the one-goal-one-coordinator
+rule (`491fb80`, also benign, also only by luck).
 
 The rule, and how to satisfy it: **when a document inside a live agent's worktree needs to
 change, route the change through that agent.** Send the exact replacement text and have the
@@ -176,6 +193,31 @@ into its worktree.
 Corollary for ratification specifically: `status: draft` → `active` is the coordinator's
 decision, but it need not be the coordinator's *keystroke*. Prefer ruling and having the
 shaping session commit the flip.
+
+## The parcel's dominant failure mode: a local fix, left unpropagated
+
+Six defects surfaced on WF-P0 before a line of the map was written; five were the
+coordinator's. Four of them are **one** mode, and the shaping agent named it more precisely
+than the coordinator first did. It is not "a smoothing phrase substituting for a recount."
+It is:
+
+> **A fact established once is assumed to stay established at its other instances.**
+
+The instances:
+
+| Defect | The fact | The unpropagated copy |
+|---|---|---|
+| Six-versus-seven | The exclusion list held seven names | The "six excluded" sentence above it — the count was *already known* to be off and was papered over with a parenthetical |
+| Gate spelled two ways | The base gate's SHA, corrected to 40 chars | Deterministic-pass step 2, left at the short form |
+| "Verified on disk" | The lint's checks, run in the `main` checkout | The charter sentence asserting them, on a branch where the file was v0.1 |
+| Allowed Files count | The grant, widened to three paths | The Verification Plan's Step 0 sentence, still saying "two" |
+
+Every one is a correct local edit whose siblings were left standing, and **not one was caught
+by its author.** The countermeasure is structural, not attentional: **make the invariant state
+a total that fails loudly when one side drifts.** AC8 requires the map to state `8 + 7 = 15`
+rather than merely be internally consistent, because a stated sum breaks visibly while two
+quietly disagreeing sentences do not. Prefer that shape — a stated total, a single named
+authority, a citation that must resolve — over any instruction to be careful.
 
 ## Open items carried by the coordinator (not gates)
 
