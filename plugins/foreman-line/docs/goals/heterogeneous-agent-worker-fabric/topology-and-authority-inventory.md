@@ -153,7 +153,7 @@ unless noted. **No profile pins a model or a tier:** `PermissionProfile` is
 | `builder-standard` (`:45-67`) | none | bare `Edit` `:60`, `Write` `:61`; deny `.claude/**` `:55-56` | bare `Bash` `:62`, `PowerShell` `:63`; 4 force-push denies `:51-54` | `denied` (`:66-67`) — `documentation-only` | 7 tools `:58-65` | `enforced-conditionally` |
 | `builder-architecture` (`:69-91`) | none | bare `Edit` `:84`, `Write` `:85`; deny `.claude/**` `:79-80` | bare `Bash` `:86`, `PowerShell` `:87`; 4 force-push denies `:74-77` | `denied` (`:90-91`) — `documentation-only` | 7 tools `:82-89` | `enforced-conditionally` |
 | `reviewer-readonly` (`:93-121`) | none | `Edit` and `Write` denied **bare** (`:101-102`) plus `.claude/**` forms (`:103-104`) | **Shell retained deliberately:** bare `Bash` `:120`, `PowerShell` `:121` in `allow`. Deny **enumerates 10 specific git commands** (`:105-114`), not a blanket shell deny | **absent** | `Read, Glob, Grep, Bash, PowerShell` `:116-121` | `enforced-conditionally` — and **reduced, not eliminated**; see §5.4 |
-| `shaping-agent` (`:123-149`) | none | Denies 8 write-surface prefixes incl. `Edit(plugins/**)` `:135` and `Write(plugins/**)` `:136`; allow-narrows to `Edit(docs/**)` `:148`, `Write(docs/**)` `:149` | **No `Bash`/`PowerShell` in `allow`** (`:145-149`); no shell deny beyond the 4 force-push forms `:129-132` | **absent** | `Read, Glob, Grep, Edit(docs/**), Write(docs/**)` `:145-149` | `enforced-conditionally` — but see the `allow` caveat below and Finding F-7 |
+| `shaping-agent` (`:123-149`) | none | **8 deny rules over 4 distinct prefixes** (`plugins/**`, `skills/**`, `apps/**`, `config/**` — each denied for both `Edit` and `Write`), incl. `Edit(plugins/**)` `:135` and `Write(plugins/**)` `:136`; allow-narrows to `Edit(docs/**)` `:148`, `Write(docs/**)` `:149` | **No `Bash`/`PowerShell` in `allow`** (`:145-149`); no shell deny beyond the 4 force-push forms `:129-132` | **absent** | `Read, Glob, Grep, Edit(docs/**), Write(docs/**)` `:145-149` | `enforced-conditionally` — but see the `allow` caveat below and Finding F-7 |
 | `builder-deps` (`:151-176`) | none | bare `Edit` `:166`, `Write` `:167`; deny `.claude/**` `:161-162` | bare `Bash` `:168`, `PowerShell` `:169`; 4 force-push denies `:157-160` | `allowlist` (`:172-176`), self-labelled in the YAML `:174-176` as "DOCUMENTATION-ONLY in this goal - not proven to gate at the process boundary" — `documentation-only` | 7 tools `:164-171` | `enforced-conditionally` |
 
 Two caveats that change how the `allow` column reads:
@@ -416,6 +416,13 @@ Bin inventory backing the reachability verdicts — packages declaring a `bin`: 
 `bin`: `contracts`, `dispatch`, `integration`, `projection`, `registration`,
 `schema-scaffold`, `shaping`, `verification`.
 
+> **6 with a `bin` + 8 without = 14 directories carrying a `package.json`.** The fifteenth
+> directory in §7.1's count is `skills/`, which has **no `package.json`** and therefore
+> declares no `bin` — it is prose, not an npm package (§7.3). **14 packages + `skills/` = 15**,
+> reconciling this list against §7.1's total. Stated so the two counts cannot drift apart
+> silently: a reader holding `ls plugins/foreman-line` who counts 14 manifests here and 15
+> directories there has the discrepancy explained rather than left open.
+
 ---
 
 ## 7. Package inventory
@@ -498,6 +505,11 @@ may extend this map. WF-P0 draws the line here so a reader knows where the map s
 All goal directories under `plugins/foreman-line/docs/goals/`, with charter-declared status
 and owner. `INDEX.md:3-5` is explicit that it is a discovery projection and *"Never infer
 authority from an index row."*
+
+> **11 goal directories exist and carry a `charter.md`; `foreman-kernel` is listed as a
+> twelfth row with no directory and no charter (§10.1). 11 + 1 = 12 rows below.** Stated
+> because F-11's "4 of 11" counts charters, not rows — the two numbers are both correct and
+> would otherwise look like a drift.
 
 | Goal | Charter-declared status | Charter-declared owner | Class |
 |---|---|---|---|
