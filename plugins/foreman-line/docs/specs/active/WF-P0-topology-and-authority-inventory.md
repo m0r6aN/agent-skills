@@ -35,9 +35,12 @@ and reads no credential value.
 ## Constraints
 
 - **Base.** *(Coordinator-ratified amendment, 2026-09-04 — replaces "created from fresh
-  `origin/main`".)* The builder's worktree is created from the **ratified-spec commit**
-  `975f0570` on `claude/hwf-wf-p0-shaping-20260903`, and its exact 40-character base SHA is
-  recorded in the map header. That commit contains all of `origin/main`
+  `origin/main`".)* The builder's worktree is created from the **tip of
+  `claude/hwf-wf-p0-shaping-20260903` at dispatch time** — the ratified spec including this
+  amendment — and its exact 40-character base SHA is recorded in the map header per AC2. The
+  branch tip is named rather than a fixed SHA because this amendment cannot pin a commit that
+  must contain the amendment itself; AC2's requirement that the builder record its own base
+  SHA is what makes the base auditable. That tip contains all of `origin/main`
   (`5ce6ddc7f996d764e506b6b421779fbf3ece689a`, verified unmoved on the remote at dispatch
   time) and therefore contains
   `096adfbffebbaf1a783801a2b286f86d10f94a17` ("retarget routing policy to OpenRouter
