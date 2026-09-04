@@ -85,9 +85,42 @@ their `list-item:1..5` anchors. See the ordering note there.)_
 
 ## Current state — update at every stop or parcel closure
 
-**STATE 2026-09-03 (live) — FK-P0 REMAINS AT GATE 3. The inherited green chain was independently
-reproduced by this owner and it HOLDS. Stopped at the human gate, which is where the loop is
-supposed to stop.**
+**STATE 2026-09-03 #2 (live) — LOOP STOPPED. Round 6's builder died on an API credit limit (HTTP
+402), which is an environment stop condition the coordinator cannot resolve. FK-P0 is mid-round,
+not at Gate 3.**
+
+This block is itself the first real test of what round 6 built: it is a coordinator state update
+written into a **declared volatile region**, and the sweep must absorb it with zero violations.
+Before round 6 this edit produced 45 violations and broke three tests. The result is recorded in
+`FK-P0-round6-STOP-REPORT.md` alongside the measurement.
+
+**What is done and on the branch (HEAD `ab8b891` package content):** the two-pass masking
+primitive with excision before block discovery and before ordinal assignment; the two-kind extent
+union (`heading-subtree`, `table-column`); all three regions declared; the closed-schema change;
+`VOLATILE_REGION_OVERLAP` and `VOLATILE_REGION_INVALID`; obligation 1's rule removal; and a
+document-derived second half of the anti-laundering check that asks whether a published item's
+*text* is among the excised bytes, which the coordinator did not specify and which catches what
+anchors cannot. `sweep --repo-root` is **0 violations, down from 54**. **The defect round 6 exists
+to fix is closed.**
+
+**What is not done, and why this is not a claim:** standing authorization 8 is unpublished, so the
+count is 468 where R28 requires 469 — the acceptance assertion's one addition is unmet;
+**none of controls (a)–(g) exist**; R29.3's anchor-keying is ratified but unimplemented; the
+migration record and new chain head are unwritten; `generate` idempotence is unproven; and
+`npm test` is **unmeasured for this round** — the 583/580/3 figures predate five governed-source
+commits and must not be quoted.
+
+**Three coordinator errors this round, recorded because they are the transferable part:** two
+writers were put on one parcel after the coordinator wrongly judged the builder dead; a stale
+`tsc` measurement was pinned to the wrong SHA; and three amendments' worth of rulings were issued
+by message and never written into the spec, so two agents read canon and were correctly misled
+(R29).
+
+**Gate 3 remains not delegated. Not pushed, not merged, Stage F not run.**
+
+**SUPERSEDED — STATE 2026-09-03 #1 — FK-P0 REMAINS AT GATE 3. The inherited green chain was
+independently reproduced by this owner and it HOLDS. Stopped at the human gate, which is where the
+loop is supposed to stop.**
 
 This owner re-verified the prior owner's Gate 3 evidence on disk rather than accepting it, because
 the 2026-09-01 handoff established that transcript-only claims are unrecoverable. Everything below

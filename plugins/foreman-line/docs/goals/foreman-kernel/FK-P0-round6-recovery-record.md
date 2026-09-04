@@ -145,10 +145,34 @@ coordinator that is supposed to enforce it. Two consequences landed on the build
 - its first baseline `npm test` read pre- and post-restore files in a single pass. The builder
   discarded that run rather than report numbers from it, which is the correct call.
 
-The builder attributed the second writer to the stood-down recovery agent. **That attribution is
-wrong and is corrected here**: the recovery builder was stood down before it wrote anything, and
-there is no evidence it touched the tree. Recording it accurately matters because the alternative
-is a stood-down agent carrying the coordinator's mistake in the permanent record.
+### Attribution — corrected twice, and now left unattributed on purpose
+
+This record has now been wrong about *who staged the revert* in both directions, which is itself
+the finding worth keeping.
+
+1. The builder attributed it to the stood-down recovery agent, from "not me, plus a clean tree".
+2. The coordinator overruled that and claimed it, from the builder's own account of running
+   `git checkout b49fef6 -- <path>`.
+3. The recovery agent then reported that **it** had run `git checkout b0518f8 -- <package>`
+   followed by `git checkout 5f9cf65 -- <package>` to measure `tsc`, and that its transcript
+   documents it.
+
+**All three claims are consistent with the evidence, and git cannot separate them**: `b49fef6`
+and `5f9cf65` carry byte-identical package content, so the two commands are indistinguishable
+after the fact. The staging is therefore recorded as **unattributed**, and the coordinator's
+earlier statement that "the recovery builder was stood down before it wrote anything" is
+**withdrawn** — it did write, and saying otherwise put a false exoneration in the record just as
+the builder's guess had put a false accusation there.
+
+**What is not in doubt, and is the part that mattered:** `git checkout <sha> -- <path>` stages as
+well as writes, and `git commit` commits **the whole index**, not the paths passed to `git add`.
+So a staged measurement by one agent became a 1,365-deletion revert committed by another's hand,
+invisible from either side. Three agents held this worktree; at least two ran index-staging
+checkouts; the coordinator committed from it after declaring it someone else's.
+
+**The rule, which is about the checkout and not about blame:** measurements go in a separate git
+worktree. A shared checkout has a shared index, and a shared index means no agent can see what it
+is about to commit.
 
 **Process fix, effective at this record: one writer, and it is the builder.** The builder owns
 `plugins/foreman-line/authority-registry/` for the remainder of the round. The coordinator edits
