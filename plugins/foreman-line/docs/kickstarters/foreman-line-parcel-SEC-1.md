@@ -1,8 +1,10 @@
+> **Repository identity migration (2026-09-06):** Repository identifiers and paths in this historical record were normalized to `m0r6aN/agent-skills`. Recorded commands were not rerun; all other historical outcomes remain as captured.
+
 Builder directive — SEC-1 (mini-parcel): Dependabot alert #6, yaml dependency bump in routing-policy.
 
 You work on branch feat/foreman-line-sec-1 in worktree C:\Repos\foreman-line-sec-1 — never the main working tree (defects_lessons #9). All verification in PowerShell, node -v first (defects_lessons #10; Git Bash nvm shadows system Node on this machine). Never read an exit code through a truncated pipeline — capture output fully, then check $LASTEXITCODE (defects_lessons #11).
 
-Scope: plugins/foreman-line/routing-policy/ contains yaml@2.6.1, vulnerable to GHSA-48c2-rrv3-qjmp (stack overflow via deeply nested YAML collections, moderate, patched in 2.8.3). This is parcel-relevant: the validator parses YAML at a trust boundary. Verify the alert facts yourself first: gh api repos/KaseyaOne/kaseya-one-productivity-tools/dependabot/alerts/6.
+Scope: plugins/foreman-line/routing-policy/ contains yaml@2.6.1, vulnerable to GHSA-48c2-rrv3-qjmp (stack overflow via deeply nested YAML collections, moderate, patched in 2.8.3). This is parcel-relevant: the validator parses YAML at a trust boundary. Verify the alert facts yourself first: gh api repos/m0r6aN/agent-skills/dependabot/alerts/6.
 
 Step 0 — before changing anything: restate the task in your own words, enumerate the exact files you will touch, confirm what is OUT of scope (below), state the current routing-policy test count from a live run, and flag any ambiguity. Then STOP and wait for coordinator confirmation.
 

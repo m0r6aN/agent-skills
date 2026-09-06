@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "1",
+  "recordType": "repository-migration-provenance",
+  "isRegistrationResult": false,
+  "historicalTicketKeys": [
+    "KONE-23208",
+    "KONE-23209"
+  ],
+  "verifiedImport": {
+    "commitSha": "48d1db73ad0a6e9c2d9bd76f92f3a44d9fb7fcf0",
+    "path": "plugins/foreman-line/docs/specs/done/SCAF-P3-receipt-chain-walker.md",
+    "permalink": "https://github.com/m0r6aN/agent-skills/blob/48d1db73ad0a6e9c2d9bd76f92f3a44d9fb7fcf0/plugins/foreman-line/docs/specs/done/SCAF-P3-receipt-chain-walker.md"
+  },
+  "disclaimer": "This is repository-migration provenance, not a RegistrationResult. It makes no claim of current bidirectional ticket links."
+}

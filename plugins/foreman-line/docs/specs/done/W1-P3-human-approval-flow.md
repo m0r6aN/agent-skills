@@ -16,6 +16,8 @@ permission_profile: builder-deps   # new package needs an ajv install (network e
 
 # W1-P3 - Human approval flow (CLI)
 
+> **Repository identity migration (2026-09-06):** Repository identifiers and paths in this historical record were normalized to `m0r6aN/agent-skills`. Recorded commands were not rerun; all other historical outcomes remain as captured.
+
 ## Intent
 
 Ship the Stage A **human gate** of the Foreman Line: the CLI capability by which a human reviews the projected parcel set + Epic/Story tree, decides to approve or reject, and - on approval - **binds** the decision to an RFC 8785 canonical hash of the approved spec-set and mints the receipt chain's genesis (Stage-A) receipt. This is the parcel that turns "shaped and projected" into "approved for registration": the artifact W1-P4 later refuses to register against unless the current content still hashes to the approved value (charter F7).
@@ -26,7 +28,7 @@ The load-bearing design fact this parcel exists to enforce: **approval is a huma
 
 ## Constraints
 
-- **Location:** new package `plugins/foreman-line/approval/` in `kaseya-one-productivity-tools` (local: `C:\Repos\kaseya-one-productivity-tools`) - sibling to the frozen `plugins/foreman-line/contracts/` and the shipped `plugins/foreman-line/shaping/`, `plugins/foreman-line/projection/`, `plugins/foreman-line/receipts/`, `plugins/foreman-line/spec-linter/` packages (coordinator ruling Q8). **Not folded into `projection`** - `projection` is shipped and read-only; this parcel invokes it, never modifies it.
+- **Location:** new package `plugins/foreman-line/approval/` in `agent-skills` (local: `D:\Repos\agent-skills`) - sibling to the frozen `plugins/foreman-line/contracts/` and the shipped `plugins/foreman-line/shaping/`, `plugins/foreman-line/projection/`, `plugins/foreman-line/receipts/`, `plugins/foreman-line/spec-linter/` packages (coordinator ruling Q8). **Not folded into `projection`** - `projection` is shipped and read-only; this parcel invokes it, never modifies it.
 - **Stack:** TypeScript, ESM-only. `engines.node >= 24.11.1` (coordinator ruling Q8; W1-P2 precedent and defects_lessons #10 - NOT the `>=22` the older W0 packages declare). Tests via `node --test` (`npx tsx --test`). Lint/format with `biome`.
 - **Runtime dependency allowlist:** exactly one runtime dependency - `ajv` (needed to re-use `receipts`' `validateReceiptDocument` and to re-validate the projected `ShapingResult` against the frozen `shapingResultSchema`). A test MUST assert `package.json`'s `dependencies` keys equal exactly `{ajv}`, machine-enforced per the W0-P3/W0-P4/SCAF-P1/W1-P1/W1-P2 pattern. All hashing uses `node:crypto` (built-in, no dependency).
 - **Standing rule (binding):** ajv's `JSONSchemaType` is banned as a schema authority anywhere in this repo. This parcel authors **no new stage schema** - it re-validates against the frozen `shapingResultSchema` and validates minted receipts via the shipped `receipts` `validateReceiptDocument`; both schemas are imported, never re-declared.

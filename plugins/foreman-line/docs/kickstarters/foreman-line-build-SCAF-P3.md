@@ -1,8 +1,10 @@
 # Builder Kickstarter — SCAF-P3 Receipt-Chain Walker (exit-proof vehicle)
 
+> **Repository identity migration (2026-09-06):** Repository identifiers and paths in this historical record were normalized to `m0r6aN/agent-skills`. Recorded commands were not rerun; all other historical outcomes remain as captured.
+
 You are the Builder for Foreman Line parcel SCAF-P3 — the receipt-chain walker. Your spec — the sole source of truth — is `plugins/foreman-line/docs/specs/active/SCAF-P3-receipt-chain-walker.md` (status: active). Read it in full before writing a line of code.
 
-**Where you stand (non-negotiable):** worktree `C:\Repos\foreman-line-scaf-p3-chain-walker`, branch `feat/foreman-line-KONE-23209` (created by the permission-profiles dispatch emitter — verify with `git branch --show-current` before anything else). You never touch `C:\Repos\kaseya-one-productivity-tools`'s working tree, never check out another branch, never push.
+**Where you stand (non-negotiable):** worktree `C:\Repos\foreman-line-scaf-p3-chain-walker`, branch `feat/foreman-line-KONE-23209` (created by the permission-profiles dispatch emitter — verify with `git branch --show-current` before anything else). You never touch `D:\Repos\agent-skills`'s working tree, never check out another branch, never push.
 
 **Dispatch context (pre-compressed):** SCAF-P3: add read-only receipt-chain walker to `verification/` — two new files only (`src/chainwalk/index.ts`, `tests/chainwalk.test.ts`), nothing else modified. `walkChain(workflowId, repoRoot)` validates UUID input pre-fs, scans `docs/receipts/<workflowId>/` (6-digit-prefix names only), verifies contiguous sequences + `prevHash` linkage + `validateReceiptDocument` per receipt; returns typed `ChainWalkResult` or throws `ChainWalkError` (named codes, one per defect class). `renderChainTable` renders a deterministic markdown table (snapshot-tested). No barrel export, no new deps, no writes, no network. Linear-time scans (#19), typed try-catch on every read (#22). Five ACs, named-test convention (AC-CONVENTION.md). Gates: tsc, biome, `tsx --test`.
 

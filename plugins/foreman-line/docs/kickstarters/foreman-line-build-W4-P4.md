@@ -1,5 +1,7 @@
 # Builder Kickstarter — W4-P4 GitHub Gate Assembly + Stage-F Closure
 
+> **Repository identity migration (2026-09-06):** Repository identifiers and paths in this historical record were normalized to `m0r6aN/agent-skills`. Recorded commands were not rerun; all other historical outcomes remain as captured.
+
 You are the Builder for Foreman Line parcel **W4-P4** — GitHub gate assembly + Stage-F closure
 receipt sealing the chain. Your spec — the sole source of truth — is
 `plugins/foreman-line/docs/specs/active/W4-P4-github-gate-stage-f-closure.md` (status: active).
@@ -7,7 +9,7 @@ Read it in full, then every file its Context & References section names.
 
 **Where you stand (non-negotiable):** worktree `C:\Repos\foreman-line-w4-p4`, branch
 `feat/foreman-line-w4-p4` (verify with `git branch --show-current` before anything else). You
-never touch `C:\Repos\kaseya-one-productivity-tools`'s working tree, never check out another
+never touch `D:\Repos\agent-skills`'s working tree, never check out another
 branch, never push. All work is committed on this branch in this worktree.
 
 **What you are building:** three new source files extending the existing

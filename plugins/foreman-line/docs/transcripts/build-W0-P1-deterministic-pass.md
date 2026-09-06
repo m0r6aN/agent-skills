@@ -1,4 +1,6 @@
-PS C:\Repos\kaseya-one-productivity-tools> cd C:\Repos\foreman-line-w0-p1                                                                                                                        
+> **Repository identity migration (2026-09-06):** Repository identifiers and paths in this historical record were normalized to `m0r6aN/agent-skills`. Recorded commands were not rerun; all other historical outcomes remain as captured.
+
+PS D:\Repos\agent-skills> cd C:\Repos\foreman-line-w0-p1
 PS C:\Repos\foreman-line-w0-p1> node -v                                   # MUST say v22.x — fix nvm first if not                                                                                
 v24.11.1                                                                                                                                                                                         
 PS C:\Repos\foreman-line-w0-p1> git status --short                        # blast radius check: everything should be under                                                                       

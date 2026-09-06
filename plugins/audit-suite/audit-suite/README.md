@@ -33,12 +33,12 @@ checkout of the repository you want to assess. That's it.
 
 **1. Install the plugin** (once). Run these in any terminal — you don't need to
 download or copy anything first; the first command fetches the
-`KaseyaOne/kaseya-one-productivity-tools` repository from GitHub and registers it as a
+`m0r6aN/agent-skills` repository from GitHub and registers it as a
 plugin marketplace, and the second installs the suite from it. Claude Code
 manages where it lives.
 
 ```bash
-claude plugin marketplace add KaseyaOne/kaseya-one-productivity-tools
+claude plugin marketplace add m0r6aN/agent-skills
 claude plugin install audit-suite@kaseya-one
 ```
 
@@ -46,7 +46,7 @@ claude plugin install audit-suite@kaseya-one
 thing but only inside a terminal session — see the FAQ if it reports it "isn't
 available in this environment". No GitHub access? Clone the repo anywhere and
 point the first command at the local path, e.g.
-`claude plugin marketplace add C:\path\to\kaseya-one-productivity-tools`.)
+`claude plugin marketplace add C:\path\to\agent-skills`.)
 
 **2. Open a Claude Code session in the repo and say:**
 
@@ -228,7 +228,7 @@ comparable across time.
 The `/plugin` slash command opens an interactive dialog that only exists in
 interactive terminal sessions; the desktop app and other non-interactive
 environments don't have it. Use the CLI from any terminal instead —
-`claude plugin marketplace add KaseyaOne/kaseya-one-productivity-tools` then
+`claude plugin marketplace add m0r6aN/agent-skills` then
 `claude plugin install audit-suite@kaseya-one` — same result, works everywhere.
 
 **How do I roll this out to a whole team?**
@@ -239,7 +239,7 @@ startup for everyone who opens that repo — no install commands, no dialogs:
 {
   "extraKnownMarketplaces": {
     "kaseya-one": {
-      "source": { "source": "github", "repo": "KaseyaOne/kaseya-one-productivity-tools" }
+      "source": { "source": "github", "repo": "m0r6aN/agent-skills" }
     }
   },
   "enabledPlugins": { "audit-suite@kaseya-one": true }
@@ -248,7 +248,7 @@ startup for everyone who opens that repo — no install commands, no dialogs:
 
 **Who do I contact?**
 The repository owners — open an issue on
-[kaseya-one-productivity-tools](https://github.com/KaseyaOne/kaseya-one-productivity-tools)
+[agent-skills](https://github.com/m0r6aN/agent-skills)
 or reach the platform team directly.
 
 ---
