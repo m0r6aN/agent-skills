@@ -55,6 +55,24 @@ function loadFixture(): LiveCaptureFixture {
   return JSON.parse(readFileSync(FIXTURE_PATH, 'utf8')) as LiveCaptureFixture
 }
 
+function assertAuditableRulesetCapture(capture: unknown): Record<string, unknown> {
+  assert.ok(typeof capture === 'object' && capture !== null && !Array.isArray(capture))
+  const record = capture as Record<string, unknown>
+  assert.ok(Number.isInteger(record.id))
+  assert.ok(typeof record.name === 'string' && record.name.trim().length > 0)
+  assert.equal(record.target, 'branch')
+  assert.equal(record.source, 'm0r6aN/agent-skills')
+  assert.equal(record.enforcement, 'active')
+  assert.ok(
+    typeof record.conditions === 'object' &&
+      record.conditions !== null &&
+      !Array.isArray(record.conditions),
+  )
+  assert.ok(Array.isArray(record.rules))
+  assert.ok(Array.isArray(record.bypass_actors))
+  return record
+}
+
 function assertNormalizationThrow(fn: () => unknown): void {
   assert.throws(fn, (err: unknown) => {
     assert.ok(err instanceof EffectiveRulesNormalizationError)
@@ -104,8 +122,7 @@ test('E6-R1 AC4: every merge-gating ruleset has a full captured response', () =>
   )
   const capturedRulesetIds = new Set(
     fixture.rulesetBypasses.map(({ capture }) => {
-      assert.ok(typeof capture === 'object' && capture !== null && !Array.isArray(capture))
-      return (capture as Record<string, unknown>).id
+      return assertAuditableRulesetCapture(capture).id
     }),
   )
 
@@ -113,6 +130,12 @@ test('E6-R1 AC4: every merge-gating ruleset has a full captured response', () =>
     [...capturedRulesetIds].map(String).sort(),
     [...mergeGatingRulesetIds].map(String).sort(),
   )
+})
+
+test('E6-R1 AC4: stripped ruleset capture fails the full-response structural assertion', () => {
+  const capture = assertAuditableRulesetCapture(loadFixture().rulesetBypasses[0]?.capture)
+  const stripped = { id: capture.id, bypass_actors: capture.bypass_actors }
+  assert.throws(() => assertAuditableRulesetCapture(stripped))
 })
 
 test('E6-R1 AC4: aggregate bypass actors from every captured merge-gating ruleset', () => {

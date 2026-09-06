@@ -12,6 +12,12 @@
       "source": "./plugins/foreman-line",
       "description": "Foreman Line is a contract-first workflow for shaping, dispatching, verifying, integrating, and closing multi-parcel development work with explicit human gates.",
       "keywords": ["parcels", "multi-agent", "automation", "spec", "audit", "review", "ship"]  
+    },
+    {
+      "name": "audit-suite",
+      "source": "./plugins/audit-suite/audit-suite",
+      "description": "Security and compliance audit suite with decision-ready reporting, remediation planning, and Jira integration.",
+      "keywords": ["security", "compliance", "audit", "remediation", "jira"]
     }
   ]
 }
