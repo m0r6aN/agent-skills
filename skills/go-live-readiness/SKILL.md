@@ -7,6 +7,10 @@ description: Orchestrates a complete go-live readiness assessment for an existin
 
 An orchestrator that sequences `initiative-coordination`, `security-review`, and `parcel-driven-development` into a single go-live readiness command for an **existing system**.
 
+## Overview
+
+Launch decisions are usually made on vibes: PRs are merged, tests are green, so it "should be fine." This skill replaces vibes with an evidence trail. It runs a built system through discovery, contract/scenario audit, integration verification, security review of every security-sensitive surface, and a release gate checklist — then issues one honest verdict: ship, hold, or ship-with-constraints. It is assessment-first: the default assumption is that nothing is proven until evidence says otherwise, and "unverified" is never silently treated as "passing."
+
 ## Purpose
 
 This skill answers one question:
@@ -313,6 +317,41 @@ When applying this skill, produce:
 - **The silent assumption.** A surface is assumed secure because it was reviewed once, six months ago.
 - **The merged PR verdict.** "All PRs are merged" is not a go-live verdict.
 - **The chat-history state.** Assessment results live in conversation memory instead of durable documents.
+
+---
+
+## Common Rationalizations
+
+| Rationalization | Reality |
+|---|---|
+| "All the PRs are merged, we're basically ready." | Merged code is not verified behavior. Ship/hold verdicts require passing integration scenarios and cleared security gates, not a green PR queue. |
+| "It passed in staging, that's close enough to production." | A scenario is passing in the specific environment where it was verified — nowhere else. Staging evidence does not imply production readiness. |
+| "This surface was reviewed months ago, it's probably still fine." | Security clearance is tied to the reviewed state at a point in time. Code that has changed since needs re-review before it can gate a release. |
+| "We're behind schedule, let's waive the Medium finding and move on." | Waivers are allowed, but only with a named owner, a documented rationale, and a re-assessment timeline — never as a silent way to hit a date. |
+| "No one's tested this scenario, but it probably works." | Unverified is not passing. An untested scenario is a blocker unless it is explicitly waived, not an implicit pass. |
+| "The remediation parcel found more problems, let's just fix those too while we're in there." | Remediation is bounded to the identified gap. A parcel that expands into a feature build needs its own scope and its own gate, not a scope-creep merge into readiness work. |
+
+## Red Flags
+
+- A ship verdict resting on "all PRs merged" with no scenario or gate evidence behind it
+- Any Critical or High security finding without a documented remediation or explicit block
+- A Medium finding waived with no named owner, rationale, or re-assessment date
+- Scenarios marked `passing` with no environment, commit set, or evidence artifact recorded
+- A public claim on the product with no linked evidence artifact
+- Assessment state living only in chat history instead of `docs/INITIATIVES/<initiative-id>/`
+- A remediation parcel whose diff is visibly larger than the gap it was dispatched to close
+
+## Verification
+
+Before issuing a final readiness verdict:
+
+- [ ] Every required integration scenario has a recorded status (not defaulted to passing)
+- [ ] Every surface flagged `security_relevance: high` or `medium` has a completed security review
+- [ ] No open Critical or High security finding remains unresolved
+- [ ] Every waived Medium finding names an owner, rationale, and re-assessment timeline
+- [ ] Every release gate in the checklist has an explicit status, not "assumed fine"
+- [ ] Every public claim maps to a linked evidence artifact
+- [ ] The final handoff states verdict, passing gates, failing/unverified gates, open risks, and deferred work — with owners
 
 ---
 
