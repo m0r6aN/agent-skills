@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "1",
+  "kind": "stage",
+  "stage": "F",
+  "claimRef": null,
+  "correlation": {
+    "correlationId": "4f145582-9c9c-423c-92e9-9d4f5a88a71a",
+    "sessionId": "89eec704-45ef-4724-9a7d-8d787c9ae80f",
+    "workflowId": "a5b1975a-7497-4200-bac2-5d8a6fd6c749",
+    "runId": "2771017b-facc-4058-8d52-e23cf01c48d7"
+  },
+  "sequence": 5,
+  "prevHash": "ce824f9bdd3248f4aadd0ec9a8228fcf69c720ca7168b61a53c5c44fa2d86a91",
+  "timestamp": "2026-09-06T14:58:24.226Z",
+  "subjectKind": "ClosureRecord",
+  "subject": {
+    "mergeSha": "57c8a4d2775cac6c37a771392fc0c531d4a35af2",
+    "ticketTransition": {
+      "ticketKey": "m0r6aN/agent-skills#18",
+      "fromStatus": "OPEN",
+      "toStatus": "OPEN"
+    },
+    "specLifecycleMove": {
+      "from": "plugins/foreman-line/docs/specs/active/E6-R1-current-repository-identity-and-evidence-rerun.md",
+      "to": "plugins/foreman-line/docs/specs/done/E6-R1-current-repository-identity-and-evidence-rerun.md"
+    }
+  },
+  "signature": null,
+  "hash": "3de881be904eb9bee9cb2b25034299a99b79a588b5308c00d81ba6847d66407f"
+}
