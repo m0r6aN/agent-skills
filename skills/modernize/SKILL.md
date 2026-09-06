@@ -1,5 +1,5 @@
 ---
-name: modernizer
+name: modernize
 description: Contract-first modernization workflow for rebuilding legacy systems with provable behavioral equivalence. Use when a team needs to extract requirements and contracts, perform human validation, implement an idiomatic target solution, and verify parity with reconciliation reports and replayable receipts.
 metadata:
   author: The Brotherhood
@@ -14,6 +14,18 @@ metadata:
 # Objective
 
 Modernize a legacy system by deriving behavioral contracts from evidence, validating contracts with human review, implementing in a target-native architecture, and proving equivalence within defined drift tolerances.
+
+## Overview
+
+Legacy rewrites usually fail one of two ways: a line-by-line port that drags the old architecture's problems into the new stack, or a from-scratch reimagining that quietly drops behavior nobody remembered to specify. This skill avoids both by making approved behavioral contracts — not the legacy source, and not an engineer's mental model — the only implementation truth. Discovery extracts contracts from evidence, a human validation gate approves them before any implementation starts, the target is built idiomatically against the approved contracts only, and reconciliation proves equivalence with replayable receipts rather than asserting it. At enterprise scale, this runs as choreography — a tree of autonomous discovery/implementation processes reporting into shared durable state — with a primary agent watching for coverage and gate readiness rather than blocking on every step.
+
+## When to Use
+
+- Rebuilding a legacy system in a new stack while needing provable behavioral equivalence, not just a "looks the same" rewrite
+- A team needs auditable, replayable evidence that the new system matches the old one within defined tolerances
+- The migration is large enough to need contract-first discovery and a human approval gate before implementation begins
+- Consolidating or replacing a system where undocumented behavior (Hyrum's Law dependencies) must be discovered before it's broken
+- Following on from `get-app-specs` (Phase 0) to turn a baseline specification into approved contracts and a target implementation
 
 ## Non-Negotiable Rules
 
@@ -225,6 +237,41 @@ Stop and escalate if any of the following occur:
 - Do not perform speculative refactors unrelated to contract compliance.
 - Do not enforce style preferences that conflict with contract behavior.
 - Do not assert behavior without source evidence.
+
+## Common Rationalizations
+
+| Rationalization | Reality |
+|---|---|
+| "I know roughly what the old system did, I don't need a signed approval to start building." | The Approval Gate exists precisely because "roughly what it did" is how scope drifts. Implementation may not start without a live-verified, forgery-resistant approval artifact — a self-asserted flag is never sufficient. |
+| "The target only recorded correctly, that's good enough to call it verified." | A parity claim requires paired legacy-vs-target comparisons for the same stimulus. Target-only recordings can never lift the claim tier above `unverified`. |
+| "This node hasn't reported in a while, I'll just mark it done and move on." | A node leaves `started` only by writing its own terminal state. The primary never mutates a child's terminal state on its behalf — a stuck node is a signal to investigate, not a box to check. |
+| "The reconciliation report reads roughly right, I'll write it up as verified." | The claim tier is recomputed from sample/comparison/coverage counts at emission, never asserted from a stored field or gut feel. Unwaived gaps force `partial`; missing legacy samples force `unverified`. |
+| "This is basically the same behavior, I'll just implement it the idiomatic way without a contract." | No line-by-line translation, but also no implementation outside an approved contract — "basically the same" is exactly the kind of undocumented drift the contract gate exists to catch. |
+| "Depth 6 is fine, we don't need to worry about spawn budget." | Depth is a proxy that lies — a shallow tree with high fan-out can explode as easily as a deep one. Spawn budget and max_concurrency are the real governance levers, not depth alone. |
+
+## Red Flags
+
+- Implementation work starting before `contracts/MANIFEST.yaml` carries a live-verified, signed approval artifact
+- A parity or reconciliation claim with zero paired legacy/target comparisons behind it
+- A node sitting in `started` with no terminal row and no one investigating why
+- A phase-transition gate opened while `v_open_nodes` / `v_phase_coverage` still shows open nodes for that phase
+- A `DEFENSIBILITY.md` or receipt asserting a tier the evidence doesn't support (e.g. "verified" with unwaived coverage gaps)
+- A tombstoned semantic divergence that isn't listed in `TOMBSTONES.md`
+- Strict-field drift outside tolerance that wasn't escalated to block release
+- A contract amendment applied without updating its dependent fixtures, tests, or specs
+
+## Verification
+
+Before declaring a modernization run complete:
+
+- [ ] `APP_SPECIFICATION.md` exists with confidence labels and resolved (or explicitly accepted) low-confidence items
+- [ ] Every contract in `contracts/MANIFEST.yaml` carries a `content_hash`, links to baseline requirement IDs, and cites source evidence
+- [ ] The Approval Gate was verified live at Phase III entry (signature, signer allowlist, ref resolution, hash match) — not assumed from a prior PASS
+- [ ] `coverage_check.md` shows every discovered node reached a terminal state (`done`/`failed`) for each closed phase
+- [ ] Reconciliation ran against captured legacy samples with ≥1 paired comparison per claimed contract
+- [ ] The `claim` block in `receipts/manifest.json` validates against its schema and matches the tier actually earned
+- [ ] `DEFENSIBILITY.md` states what was proven, what coverage was achieved, and what was not verified
+- [ ] Receipts are replayable (`receipts/replay.sh`/`.ps1` runs successfully against `receipts/hashes.sha256`)
 
 ## Final Instruction
 
