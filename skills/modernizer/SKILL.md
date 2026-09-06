@@ -39,6 +39,19 @@ Correctness is demonstrated with:
 
 ---
 
+## Overview
+
+Modernizer treats a legacy codebase's behavior, not its source, as the thing worth preserving. It extracts behavioral contracts from evidence, routes them through a human-in-the-loop validation gate before any implementation begins, rebuilds the system idiomatically in the target stack against approved contracts only, and proves equivalence with reconciliation and a replayable receipt pack — so "we modernized it" is a claim backed by evidence, not a claim taken on faith.
+
+## When to Use
+
+- Rebuilding a legacy system in a new stack where behavioral parity must be provable, not assumed
+- The team needs a human validation gate before implementation starts, to catch ambiguity and undocumented behavior early
+- Reconciliation evidence (contract tests, parity comparisons, replayable receipts) is required before release
+- A migration is large or risky enough that "it compiles and looks right" is not an acceptable bar
+
+---
+
 ## Rules (Non-Negotiable)
 
 1. **Contracts are the truth.** You may not implement or guess behavior that is not defined in approved contracts.
@@ -164,6 +177,32 @@ This skill does NOT:
 - Assume behavior not validated by evidence
 
 ---
+
+## Common Rationalizations
+
+| Rationalization | Reality |
+|---|---|
+| "I understand the old system well enough, I'll start building now." | Human validation gate is required before any implementation begins — understanding is not the same as an approved manifest. |
+| "The new system's output looks right on the cases I tried." | Correctness is demonstrated with contract conformance tests and parity evidence, not spot-checked plausibility. |
+| "This behavior wasn't in the contract, but it's obviously needed — I'll add it." | Contracts are the truth. Undocumented behavior discovered mid-implementation triggers escalation and a contract update, not silent addition. |
+| "The drift is small, it's probably fine to ship." | Reconciliation must pass before release; drift must remain within defined tolerance, not "probably fine." |
+| "I'll port this function line-for-line to save time." | No line-for-line translation — implementation must be idiomatic in the target stack even when it takes longer. |
+
+## Red Flags
+
+- Implementation started before the manifest passed the HITL validation gate
+- A behavioral claim with no receipt or trace evidence backing it
+- Ambiguous legacy behavior resolved by guessing instead of escalating for human resolution
+- Reconciliation skipped or reported without the underlying diff artifacts
+- A tombstoned divergence that isn't recorded in `TOMBSTONES.md`
+
+## Verification
+
+- [ ] `MANIFEST.yaml` is HITL-approved before any implementation task started
+- [ ] Every contract includes inputs, triggers, outputs, side effects, and error handling
+- [ ] Contract tests exist and pass for implemented behavior
+- [ ] Reconciliation reports (`coverage_summary.md`, `sampling_summary.md`, `delta_report.md`) exist and drift is within tolerance
+- [ ] Receipt pack is present and replay scripts run successfully
 
 ## Final Instruction
 
