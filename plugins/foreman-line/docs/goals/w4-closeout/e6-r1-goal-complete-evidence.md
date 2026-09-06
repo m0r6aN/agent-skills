@@ -1,6 +1,6 @@
 # E6-R1 Goal-complete Evidence
 
-**Status:** LOCAL CLOSURE ASSEMBLED — awaiting the second human-merge PR
+**Status:** PR #21 OPEN — awaiting required checks and human merge
 **Workflow:** `a5b1975a-7497-4200-bac2-5d8a6fd6c749`
 **Repository:** `m0r6aN/agent-skills`
 **Goal-complete branch:** `codex/w4-closeout-e6-r1-goal-complete`
@@ -83,12 +83,15 @@ credentials from self-merging, so no configuration-enforced independent-human
 approval is claimed. The explicit process boundary remains: Clint, not an
 agent, merges the goal-complete PR.
 
-The run has created exactly the authorized test issue and evidence PR so far.
-Opening the goal-complete PR will consume the second and final authorized PR.
-There were no Jira writes, ruleset mutations, issue-state mutations, direct
-pushes to main, agent merges, deployments, releases, publications, or writes to
-another repository.
+The run created exactly the authorized test issue and two PRs: evidence PR #19
+and goal-complete PR #21. The second PR consumes the final authorized PR. There
+were no Jira writes, ruleset mutations, issue-state mutations, direct pushes to
+main, agent merges, deployments, releases, publications, or writes to another
+repository.
 
 ## Frozen-head result
 
-Pending creation and required-check completion of the second PR.
+Goal-complete PR #21 is open at
+`https://github.com/m0r6aN/agent-skills/pull/21`. The commit carrying this record
+is the intended frozen head. GitHub must report successful `test` and
+`integration-report` conclusions on that exact head before the human merge.
