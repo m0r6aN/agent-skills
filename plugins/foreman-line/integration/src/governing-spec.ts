@@ -4,13 +4,14 @@
  * dispatch time — never the archival `done/` corpus and never a `draft`
  * (non-dispatchable) spec. Only `status: 'active'` descriptors govern.
  *
- * Loading active specs is an INJECTED SEAM (default = real disk read, tests =
- * fixtures). The frontmatter reader is a LOCAL minimal parser (no `spec-linter`
- * import — no `integration → spec-linter` edge) wrapped in a typed try-catch
- * (lesson #22, external-shape reads). Nothing here mints a `correlationId`.
+ * Loading active specs is an INJECTED SEAM with real-disk regression coverage.
+ * YAML is parsed to unknown data and validated locally (no `spec-linter`
+ * import) inside a typed try-catch (lesson #22, external-shape reads).
+ * Nothing here mints a `correlationId`.
  */
 import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { parseDocument } from 'yaml'
 import {
   type AuditTriggerDecision,
   evaluateAuditTrigger,
@@ -130,52 +131,58 @@ const ACTIVE_SPECS_DIR = join('plugins', 'foreman-line', 'docs', 'specs', 'activ
 
 const VALID_RISKS: readonly RiskLevel[] = ['low', 'standard', 'elevated', 'critical']
 
-function isRiskLevel(value: string): value is RiskLevel {
-  return (VALID_RISKS as readonly string[]).includes(value)
+function isRiskLevel(value: unknown): value is RiskLevel {
+  return typeof value === 'string' && (VALID_RISKS as readonly string[]).includes(value)
 }
 
 /**
- * Local minimal frontmatter reader (no `spec-linter` import). Extracts
- * `status`, `risk`, and the inline `surfaces: [...]` array from the leading
- * `---` fenced block. Returns null when the file is not a shaped spec.
+ * Only a leading, line-delimited --- block is frontmatter. Plain Markdown and
+ * non-active records return null; malformed frontmatter throws for the loader
+ * to wrap. This validates audit metadata, not the full frozen spec schema.
  */
 function parseFrontmatter(
   raw: string,
 ): { status: string; risk: RiskLevel; surfaces: string[] } | null {
-  const fence = /^---\s*\n([\s\S]*?)\n---\s*(\n|$)/.exec(raw)
-  if (fence === null) return null
-  const body = fence[1] as string
+  const lines = raw.split(/\r?\n/)
+  if (!/^---[ \t]*$/.test(lines[0] ?? '')) return null
+  const end = lines.findIndex((line, index) => index > 0 && /^---[ \t]*$/.test(line))
+  if (end === -1) throw new Error('frontmatter is missing its closing --- fence')
 
-  let status: string | undefined
-  let risk: string | undefined
-  let surfaces: string[] | undefined
-
-  for (const line of body.split('\n')) {
-    const statusMatch = /^status:\s*(.+?)\s*$/.exec(line)
-    if (statusMatch) status = (statusMatch[1] as string).replace(/^["']|["']$/g, '')
-
-    const riskMatch = /^risk:\s*(.+?)\s*$/.exec(line)
-    if (riskMatch) risk = (riskMatch[1] as string).replace(/^["']|["']$/g, '')
-
-    const surfacesMatch = /^surfaces:\s*\[(.*)\]\s*$/.exec(line)
-    if (surfacesMatch) {
-      surfaces = (surfacesMatch[1] as string)
-        .split(',')
-        .map((entry) => entry.trim().replace(/^["']|["']$/g, ''))
-        .filter((entry) => entry.length > 0)
-    }
+  const document = parseDocument(lines.slice(1, end).join('\n'), {
+    prettyErrors: false,
+    uniqueKeys: true,
+    stringKeys: true,
+  })
+  if (document.errors.length > 0) throw document.errors[0]
+  // Unsupported tags/directives must not be silently interpreted as audit data.
+  if (document.warnings.length > 0) throw document.warnings[0]
+  const parsed: unknown = document.toJS({ maxAliasCount: 100 })
+  if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
+    throw new Error('frontmatter must be a mapping')
   }
-
-  if (status === undefined || risk === undefined || surfaces === undefined) return null
-  if (!isRiskLevel(risk)) return null
+  const { status, risk, surfaces } = parsed as Record<string, unknown>
+  if (typeof status !== 'string' || status.trim().length === 0) {
+    throw new Error('frontmatter status must be a nonempty string')
+  }
+  if (status !== 'active') return null
+  if (!isRiskLevel(risk))
+    throw new Error('active spec risk must be low, standard, elevated or critical')
+  if (
+    !Array.isArray(surfaces) ||
+    surfaces.length === 0 ||
+    !surfaces.every(
+      (surface: unknown): surface is string =>
+        typeof surface === 'string' && surface.trim().length > 0,
+    )
+  ) {
+    throw new Error('active spec surfaces must be a nonempty array of nonempty strings')
+  }
   return { status, risk, surfaces }
 }
 
 /**
- * Real loader (default): reads `active/*.md`, parses frontmatter with the local
- * reader, and returns only `status:'active'` descriptors. Never invoked by the
- * hermetic test suite (tests inject descriptors directly). Wrapped in a typed
- * try-catch per lesson #22.
+ * Real loader (default): reads `active/*.md` and returns only validated active
+ * descriptors. Directory, file and YAML boundaries are wrapped per lesson #22.
  */
 export const loadActiveSpecsLive: LoadActiveSpecsFn = (repoRoot) => {
   const dir = join(repoRoot, ACTIVE_SPECS_DIR)
@@ -188,7 +195,7 @@ export const loadActiveSpecsLive: LoadActiveSpecsFn = (repoRoot) => {
   } catch (err) {
     throw new IntegrationError(
       'POSTURE_INVALID',
-      `failed to list active specs dir '${dir}': ${String(err)}`,
+      `failed to list active specs dir ${JSON.stringify(dir)}: ${JSON.stringify(String(err))}`,
     )
   }
 
@@ -199,9 +206,10 @@ export const loadActiveSpecsLive: LoadActiveSpecsFn = (repoRoot) => {
     try {
       parsed = parseFrontmatter(readFileSync(join(dir, name), 'utf8'))
     } catch (err) {
+      // Errors reach report.ts's line-based annotations; encode paths and parser diagnostics.
       throw new IntegrationError(
         'POSTURE_INVALID',
-        `failed to read/parse active spec '${specPath}': ${String(err)}`,
+        `failed to read/parse active spec ${JSON.stringify(specPath)}: ${JSON.stringify(String(err))}`,
       )
     }
     if (parsed === null || parsed.status !== 'active') continue
