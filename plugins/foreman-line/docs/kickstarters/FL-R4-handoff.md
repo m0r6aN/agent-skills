@@ -157,3 +157,13 @@ Existing full-suite fixture effects must not be confused with the hermetic new r
 - The existing human D4 gate is unchanged and remains human-owned. No go-live, release, merge or goal-transfer acceptance is claimed.
 - Native agent permission settings are not enforced here; no OS containment claim is made. The helper-test Node permission probe does not alter this limitation.
 - Independent review and coordinator disposition remain pending. The reviewer should test whether failures can be hidden, a package omitted, credentials retained or docs-only checks skipped, and confirm the exact stale repair does not weaken policy.
+
+## Hosted Windows Checkout Follow-Up
+
+Date: 2026-09-05. PR #16 supplied the first hosted Windows execution. Both the push and pull-request `Test Plugin Installation` runs failed on pre-existing repository-wide skill-format debt outside FL-R4; this parcel changes no path under `skills/`.
+
+The pull-request `foreman-line-ci` run `34002419756` passed the runner-helper step, installed all 14 packages, and then failed the aggregate check because checkout had converted tracked LF files to CRLF. Biome explicitly reported CRLF-to-LF formatting differences across every package, while byte-identity tests failed in the same converted workspace and typechecks continued to pass. This was a workflow environment defect, not authority to reformat package sources or relax lint/tests.
+
+The minimal follow-up configures `git config --global core.autocrlf false` in a Windows PowerShell step before `actions/checkout`. It preserves repository blob bytes for all subsequent checks and does not change the runner, package code, test selection, failure propagation, permissions, or external-effect boundary. The original workflow hash above remains the builder-time candidate identity; the superseding workflow SHA-256 is `92413ddcd6129059c0a3cd0f70993753002f25207ba091c05e9937c112bde93e`.
+
+Hosted rerun success remains required evidence. The unrelated repository-wide skill validator debt remains visible and is not repaired or waived by this follow-up.
