@@ -2,7 +2,7 @@
 
 **Date:** 2026-09-06
 **Workflow:** `a5b1975a-7497-4200-bac2-5d8a6fd6c749`
-**Status:** STOPPED before Stage B
+**Status:** RESOLVED — Issues enabled and authorized test issue created
 
 ## Completed evidence
 
@@ -35,3 +35,15 @@ read-only and retry exactly the already-ratified `[TEST]` issue creation.
 
 Choosing a different Stage-B tracker or evidence object changes the ratified
 observable event and reopens Gate 1; it must not be inferred from this failure.
+
+## Resolution
+
+Clint enabled GitHub Issues and confirmed the setting. The coordinator verified
+`hasIssuesEnabled: true`, confirmed no prior matching issue existed, and created
+exactly one authorized issue:
+
+`https://github.com/m0r6aN/agent-skills/issues/18`
+
+The failed attempt created no duplicate. Stage B remains unminted until the
+subsequent commit and issue comment make both link directions independently
+observable.
