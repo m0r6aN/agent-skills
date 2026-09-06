@@ -18,6 +18,8 @@ Standing constraints apply —
   `plugins/foreman-line/docs/specs/active/E6-R1-current-repository-identity-and-evidence-rerun.md`
 - Ratified amendment:
   `plugins/foreman-line/docs/goals/w4-closeout/e6-r1-current-repository-evidence-rerun-amendment.md`
+- Ratified rework amendment:
+  `plugins/foreman-line/docs/goals/w4-closeout/e6-r1b-marketplace-and-evidence-guard-amendment.md`
 - Workflow: `a5b1975a-7497-4200-bac2-5d8a6fd6c749`
 - Test issue: `m0r6aN/agent-skills#18`
 - Stage-C receipt:
@@ -44,7 +46,7 @@ Before editing anything:
    It must produce exactly 79 matching lines in exactly 42 tracked files. The
    only match that lacks the legacy repository basename is the standalone
    legacy-organization author URL in the audit-suite manifest.
-4. Restate the intent, all acceptance criteria, and the exact 45 Allowed Files
+4. Restate the intent, all acceptance criteria, and the exact 46 Allowed Files
    below. Explain how you will distinguish living references from normalized
    historical records, preserve the historical meaning, recapture rather than
    hand-build live GitHub evidence, and keep coordinator artifacts untouched.
@@ -98,6 +100,7 @@ Before editing anything:
 43. `plugins/foreman-line/integration/tests/effective-rules.test.ts`
 44. `plugins/foreman-line/docs/specs/active/receipt-chain-walker.repository-migration.json`
 45. `plugins/foreman-line/docs/specs/active/scaffold-migration.repository-migration.json`
+46. `.claude-plugin/marketplace.json`
 
 ## Build phase after Step-0 acceptance
 
