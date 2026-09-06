@@ -1,7 +1,7 @@
 ---
 ticket: E6-R1
 title: Current-repository identity normalization and observable A-to-F evidence rerun
-status: active
+status: done
 owner: clinton.morgan
 created: 2026-09-06
 updated: 2026-09-06
