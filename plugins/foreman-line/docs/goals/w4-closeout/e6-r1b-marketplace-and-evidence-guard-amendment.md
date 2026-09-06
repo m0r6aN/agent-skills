@@ -1,8 +1,14 @@
-# Proposed Goal-Charter Amendment — E6-R1B Marketplace and Evidence Guards
+# Ratified Goal-Charter Amendment — E6-R1B Marketplace and Evidence Guards
 
-**Status:** PROPOSED — NOT RATIFIED  
+**Status:** RATIFIED 2026-09-06
 **Date:** 2026-09-06  
 **Owner:** canonical coordinator task `/root`
+
+## Owner ratification
+
+Clint ratified this amendment exactly as written on 2026-09-06:
+
+> Ratify E6-R1B exactly as written.
 
 ## Trigger
 

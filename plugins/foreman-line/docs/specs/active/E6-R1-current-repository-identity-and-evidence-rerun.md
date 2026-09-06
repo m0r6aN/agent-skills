@@ -30,7 +30,10 @@ evidence-vehicle and goal-complete pull requests remain human-merge stops.
 
 - The controlling authority is the ratified E6-R1 amendment at
   `plugins/foreman-line/docs/goals/w4-closeout/e6-r1-current-repository-evidence-rerun-amendment.md`.
-  Its locked decisions may not be weakened or widened by the builder.
+  Its locked decisions may not be weakened or widened by the builder. Ratified
+  E6-R1B at
+  `plugins/foreman-line/docs/goals/w4-closeout/e6-r1b-marketplace-and-evidence-guard-amendment.md`
+  adds only the bounded marketplace and evidence guards stated below.
 - `m0r6aN/agent-skills` is the sole canonical repository. Canonical GitHub URLs
   use `https://github.com/m0r6aN/agent-skills`; repository-relative examples
   must resolve inside this checkout. No write to the former inaccessible source
@@ -40,11 +43,16 @@ evidence-vehicle and goal-complete pull requests remain human-merge stops.
   This number defines the identity-migration inventory, not permission to
   rewrite generic product or organization history outside those 79 lines.
 - The 42 identity-bearing files are listed verbatim under `Allowed Files`.
-  `plugins/foreman-line/integration/tests/effective-rules.test.ts` is the only
-  additional existing builder file: the live recapture necessarily invalidates
-  its hard-coded July date, eight-rule count, and old-rule expectations. The two
-  new migration-record paths are the other additions. No other implementation
-  path is implied by the larger `surfaces` metadata.
+  `plugins/foreman-line/integration/tests/effective-rules.test.ts` and root
+  `.claude-plugin/marketplace.json` are the only additional existing builder
+  files: the live recapture necessarily invalidates the test's hard-coded July
+  expectations, and the marketplace needs one `audit-suite` entry. The two new
+  migration-record paths are the other additions. No other implementation path
+  is implied by the larger `surfaces` metadata.
+- The root marketplace retains the name `m0r6an-agent-skills` and gains exactly
+  one `audit-suite` entry whose source is `./plugins/audit-suite/audit-suite`.
+  Every living Audit Suite install/update/team-settings/enabled-plugin identifier
+  uses `audit-suite@m0r6an-agent-skills`; no marketplace publication is implied.
 - Living manifests, install instructions, URLs, and paths become current and
   functional. A historical command, transcript, kickstarter, completed spec,
   or findings record must not silently masquerade as a rerun after its
@@ -96,6 +104,12 @@ evidence-vehicle and goal-complete pull requests remain human-merge stops.
   finish before the single Stage-D verdict-stage receipt is emitted. Review or
   verdict helpers that would add Stage-D claim receipts are not used for emission
   in this exact-six vehicle.
+- E/F observability is a coordinator process invariant. Immediately before each
+  emission, the coordinator reads the relevant GitHub PR data, asserts that the
+  supplied PR/head or merge values equal the observed data, and persists the raw
+  evidence outside the receipt directory. The deterministic exit repeats those
+  binding checks. Frozen `runStageE` and `runStageF` remain pure consumers of
+  already-observed values; no helper-level network enforcement is added.
 - Stage B uses exactly one scoped issue titled with `[TEST]` in
   `m0r6aN/agent-skills`. The issue body first links the SHA-pinned approved spec.
   A subsequent real branch commit mentions and links the issue; an issue
@@ -112,9 +126,12 @@ evidence-vehicle and goal-complete pull requests remain human-merge stops.
 - E6-R1 Gate 2 is granted for the isolated builder and two independent reviewers,
   contingent on the corrected plan-review PASS and human Stage-A approval. Stage C
   creates a new isolated builder worktree only through the shipped dispatch path
-  after Stage B is durable. The builder begins with Step 0, restates the 45 exact
+  after Stage B is durable. The builder begins with Step 0, restates the 46 exact
   Allowed Files, and makes no receipt, issue, push, PR,
   merge, ruleset, or other-repository write.
+- E6-R1B extends that Gate-2 grant only to bounded rework by the same builder and
+  two independent read-only re-reviews of the final SHA. The rework begins with
+  its own Step 0 and restates the amended 46-file boundary before any edit.
 - Two independent adversarial implementation reviews are mandatory. Reviewers
   are read-only and do not fix or commit. Any blocker or required rework is
   resolved and both reviews rerun before the coordinator assembles and emits
@@ -150,9 +167,9 @@ evidence-vehicle and goal-complete pull requests remain human-merge stops.
 ## Allowed Files
 
 The first 42 paths are the exact identity-bearing baseline, including the two
-stale sidecars that will be deleted. The final three paths are the sole
-fixture-consumer adjustment and the two replacement migration records ratified
-by E6-R1A.
+stale sidecars that will be deleted. Paths 43–45 are the fixture-consumer
+adjustment and two replacement migration records ratified by E6-R1A. Root
+`.claude-plugin/marketplace.json` is the sole 46th path ratified by E6-R1B.
 
 1. `plugins/audit-suite/audit-suite/.claude-plugin/plugin.json`
 2. `plugins/audit-suite/audit-suite/README.md`
@@ -199,6 +216,7 @@ by E6-R1A.
 43. `plugins/foreman-line/integration/tests/effective-rules.test.ts`
 44. `plugins/foreman-line/docs/specs/active/receipt-chain-walker.repository-migration.json`
 45. `plugins/foreman-line/docs/specs/active/scaffold-migration.repository-migration.json`
+46. `.claude-plugin/marketplace.json`
 
 ## Acceptance Criteria
 
@@ -210,6 +228,10 @@ by E6-R1A.
    `https://github.com/m0r6aN/agent-skills`. Each migrated historical artifact
    that contained recorded commands or outputs carries the explicit 2026-09-06
    migration annotation and does not claim those commands were rerun.
+   The existing `m0r6an-agent-skills` root marketplace declares `audit-suite`
+   at `./plugins/audit-suite/audit-suite`; that source exists, its nested plugin
+   manifest is named `audit-suite`, and the changed README has no living
+   `audit-suite@kaseya-one` or `kaseya-one` marketplace key.
 3. Both stale `*.registration.json` sidecars are absent from the builder result.
    Their two replacement `*.repository-migration.json` files are parseable JSON,
    are explicitly typed as non-registration provenance, preserve the corresponding
@@ -225,6 +247,11 @@ by E6-R1A.
    The updated normalization tests consume every captured merge-gating ruleset,
    aggregate bypass actors, and assert the current effective rule types without
    July-specific dates, counts, IDs, enterprise rules, or old repository names.
+   For each captured merge-gating ruleset the test binds integer `id`, non-empty
+   `name`, `target:'branch'`, current repository source, active enforcement,
+   object `conditions`, array `rules`, and array `bypass_actors`. An in-memory
+   stripped-capture mutation proves that structural assertion turns red without
+   byte-pinning the full response.
 5. After coordinator lint, corrected plan-level adversarial-review PASS, and a
    commit containing the final active spec, the real approval CLI stops at its
    interactive TTY prompt. Clint explicitly supplies
@@ -243,7 +270,7 @@ by E6-R1A.
    emits sequence 2/stage C chained to B. Its `DispatchOrder` names E6-R1,
    `builder-architecture`, resolved skills/routing evidence, and the builder's
    Step-0 restatement. The builder branch begins at the coordinator-approved
-   base and changes only the 45 Allowed Files.
+   base and changes only the 46 Allowed Files.
 8. The builder's diff performs the complete identity migration, historical-sidecar
    retirement and migration-record replacement,
    fixture recapture, and fixture-test adjustment with no frozen-contract,
@@ -262,10 +289,14 @@ by E6-R1A.
     implementation, and has successful required `test` and
     `integration-report` conclusions on its frozen final head. Stage E is then
     emitted with the actual PR number and identical full head SHA; GitHub proves
-    the SHA is the PR's `headRefOid` and a PR commit.
+    the SHA is the PR's `headRefOid` and a PR commit. Immediately before Stage E,
+    the coordinator observes and persists the GitHub PR data and asserts the
+    supplied PR/head values match it; the frozen emitter remains a pure consumer.
 11. Clint, not an agent, merges the evidence-vehicle PR. Clint's explicit task-level
     confirmation plus the coordinator's recorded stop supplies human provenance;
     GitHub's `mergedBy`, event time, and `mergeCommit.oid` corroborate the binding.
+    Immediately before Stage F, the coordinator persists those observations and
+    asserts the supplied merge values match them; the frozen emitter remains pure.
     The goal-complete branch is created from current `main`, this spec is moved
     locally from `active/` to `done/`, and Stage F is only then emitted with that
     exact merge SHA, an honest no-op issue state record unless separately authorized,
@@ -298,7 +329,7 @@ by E6-R1A.
 - Agent merge of either PR, direct push to `main`, deployment, release, package
   publication, marketplace publication, or write to any other repository.
 - Frozen-contract or emitter changes, workflow changes, dependency changes, or
-  cleanup/refactoring outside the 45 exact Allowed Files.
+  cleanup/refactoring outside the 46 exact Allowed Files.
 - Treating the historical CLOSE-P1 receipts, missing commits/PRs, a fixture, or
   a reconstructed subject as current-instance completion evidence.
 - The deferred W4 Jira leg and all other deferred goal debts.
@@ -323,17 +354,24 @@ by E6-R1A.
 
 - Before edits, record `git rev-parse HEAD`, branch/worktree identity, the exact
   `git grep` file list, and the 42/79 counts. After edits, rerun the same tracked
-  search and fail on any match; diff the changed paths against the 45-entry
+  search and fail on any match; diff the changed paths against the 46-entry
   Allowed Files list.
 - Parse every changed JSON file. Verify the two stale registration sidecars are
   absent, validate the exact shape and non-registration disclaimer of both
   replacement migration records, verify both SHA/path objects with
   `git cat-file -e`, and probe every current manifest/install URL with read-only
   repository/path checks.
+- Parse `.claude-plugin/marketplace.json`, run `claude plugin validate .`, and
+  deterministically prove that its `audit-suite` source exists and resolves to a
+  nested plugin manifest named `audit-suite`. Search the changed README for stale
+  living `audit-suite@kaseya-one` and `kaseya-one` marketplace keys.
 - Capture the live fixture only from authenticated read-only `gh api` calls.
   Immediately rerun those calls and deep-compare each parsed body to the stored
   `capture`. Run the integration package's test, typecheck, and lint commands;
   retain direct exit codes and complete output.
+- Prove the effective-rules structural guard with an in-memory stripped-capture
+  mutation that makes the corrected test fail, then restore the unmodified
+  capture and rerun green.
 - Run the spec-linter advisory check before handoff. At coordinator lint, verify
   every factual path/API claim on disk, promote `draft`→`active`, and run a
   separate plan-level adversarial review before any issue or push.
