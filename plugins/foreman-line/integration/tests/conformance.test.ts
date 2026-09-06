@@ -239,28 +239,23 @@ test('AC19: .github/workflows/foreman-line-ci.yml is byte-unchanged from origin/
 // Amendment A1 (2026-07-28, coordinator-ratified). The AC19 marker-presence
 // test above stays.
 
-// ─── SCAF-P4 AC7/AC8: frozen errors.ts + append-only index.ts ────────────────
-// Same `git show origin/main:<path>` idiom as AC14 above. These live here rather
-// than in scaf-p4-harness.test.ts because this is the suite permitted to shell
-// out to git; the harness stays hermetic.
-
-function showOriginMain(repoRelativePath: string): string {
-  return execFileSync('git', ['show', `origin/main:${repoRelativePath}`], {
-    encoding: 'utf8',
-    cwd: REPO_ROOT,
-  })
-}
-
-test('SCAF-P4 AC7: src/errors.ts is byte-unchanged from origin/main', {
-  skip: !originMainHas('plugins/foreman-line/integration/src/errors.ts'),
-}, () => {
-  const current = readSrc('errors.ts')
-  const originMain = showOriginMain('plugins/foreman-line/integration/src/errors.ts')
-  assert.equal(
-    current,
-    originMain,
-    'src/errors.ts (and the IntegrationError union it declares) must be byte-unchanged',
-  )
+// FL-R3-A1 replaces the parcel-time byte freeze with the stable error contract.
+test('SCAF-P4 AC7: IntegrationError preserves identity, codes and messages (FL-R3-A1)', () => {
+  for (const code of [
+    'PRIOR_CORRELATION_MISSING',
+    'RECEIPT_WRITE_FAILED',
+    'PLAN_INVALID',
+    'POSTURE_INVALID',
+    'PUSH_FAILED',
+  ] as const) {
+    const message = ` ${code} fixture\n `
+    const error = new api.IntegrationError(code, message)
+    assert.ok(error instanceof Error)
+    assert.ok(error instanceof api.IntegrationError)
+    assert.equal(error.name, 'IntegrationError')
+    assert.equal(error.code, code)
+    assert.equal(error.message, message)
+  }
 })
 
 // RETIRED per CLOSE-P3 spec Amendment A1(1): the 'SCAF-P4 AC8: src/index.ts
