@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "1",
+  "kind": "stage",
+  "stage": "E",
+  "claimRef": null,
+  "correlation": {
+    "correlationId": "4f145582-9c9c-423c-92e9-9d4f5a88a71a",
+    "sessionId": "017eb033-6c6e-4c91-b4d4-7f443e2571db",
+    "workflowId": "a5b1975a-7497-4200-bac2-5d8a6fd6c749",
+    "runId": "1b3d5de9-12ef-4ea5-8328-8c1f0ff03065"
+  },
+  "sequence": 4,
+  "prevHash": "ec674455331b9df9a86631a25cc160073d9b445ea6d349cd2aed94597d7796c9",
+  "timestamp": "2026-09-06T14:12:40.144Z",
+  "subjectKind": "IntegrationResult",
+  "subject": {
+    "prRef": "pr-19@d1bf93f555e0e0e611d08089e6402ed6caaf1cfe",
+    "ciJobs": [
+      {
+        "job": "test",
+        "outcome": "success"
+      },
+      {
+        "job": "integration-report",
+        "outcome": "success"
+      }
+    ],
+    "auditTrigger": {
+      "triggered": true,
+      "reason": "multi-spec: plugins/foreman-line/docs/specs/active/E6-R1-current-repository-identity-and-evidence-rerun.md, plugins/foreman-line/docs/specs/active/FL-R2-real-audit-loader.md, plugins/foreman-line/docs/specs/active/FL-R3-push-failure-stop.md, plugins/foreman-line/docs/specs/active/FL-R4-package-ci.md, plugins/foreman-line/docs/specs/active/P1-plugin-packaging.md"
+    }
+  },
+  "signature": null,
+  "hash": "ce824f9bdd3248f4aadd0ec9a8228fcf69c720ca7168b61a53c5c44fa2d86a91"
+}
