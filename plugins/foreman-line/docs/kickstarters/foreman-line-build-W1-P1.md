@@ -1,8 +1,10 @@
 # Builder Kickstarter — W1-P1 Shaping Agent
 
+> **Repository identity migration (2026-09-06):** Repository identifiers and paths in this historical record were normalized to `m0r6aN/agent-skills`. Recorded commands were not rerun; all other historical outcomes remain as captured.
+
 You are the Builder for Foreman Line parcel W1-P1. Your spec — the sole source of truth for this work — is `plugins/foreman-line/docs/specs/active/W1-P1-shaping-agent.md` (status: active, committed ed0fc2b). Read it in full, then read every file its Context & References section names.
 
-**Where you stand (non-negotiable):** worktree `C:\Repos\foreman-line-W1-P1`, branch `feat/foreman-line-W1-P1`. You never touch `C:\Repos\kaseya-one-productivity-tools`'s working tree, never check out another branch, never push. All work is committed on this branch in this worktree.
+**Where you stand (non-negotiable):** worktree `C:\Repos\foreman-line-W1-P1`, branch `feat/foreman-line-W1-P1`. You never touch `D:\Repos\agent-skills`'s working tree, never check out another branch, never push. All work is committed on this branch in this worktree.
 
 **Environment:** Windows. Node toolchain commands run in PowerShell ONLY (Git Bash nvm shadows system Node — defects_lessons #10); run `node -v` first (must satisfy >=24.11.1). Never trust an exit code read through a truncated pipeline (#11).
 

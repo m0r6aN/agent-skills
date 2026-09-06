@@ -1,5 +1,7 @@
 Shaping Session Kickstarter — P1 (plugin packaging + skill relocation)
 
+> **Repository identity migration (2026-09-06):** Repository identifiers and paths in this historical record were normalized to `m0r6aN/agent-skills`. Recorded commands were not rerun; all other historical outcomes remain as captured.
+
 You are the Shaping Agent for `p1-plugin-packaging`, first parcel of the
 `plugin-packaging-and-scaffolder` goal.
 
@@ -34,7 +36,7 @@ the fact that its documented entry point does not load. Concretely:
 
 ## Where you work
 
-- Worktree: `C:\Repos\kaseya-one-productivity-tools.p1-packaging` on branch `feat/p1-plugin-packaging`.
+- Worktree: `D:\Repos\agent-skills.p1-packaging` on branch `feat/p1-plugin-packaging`.
   Do ALL work there. Never touch the main working tree, never check out another branch, never push.
 - Environment: Windows. Node toolchain commands run in **PowerShell only**; run `node -v` first
   (must satisfy `>=24.11.1`). Byte comparisons use `Get-FileHash` — the rtk-wrapped `diff` has been

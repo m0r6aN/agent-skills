@@ -16,6 +16,8 @@ permission_profile: shaping-agent
 
 # P4 - Spec-Linter `permission_profile` Enum Upgrade
 
+> **Repository identity migration (2026-09-06):** Repository identifiers and paths in this historical record were normalized to `m0r6aN/agent-skills`. Recorded commands were not rerun; all other historical outcomes remain as captured.
+
 ## Intent
 
 Close the forward commitment `SPEC-CONVENTION.md` §4.6 made when W0-P2 added the `permission_profile:` field: *"When the registry ships, it will add enum validation as a non-breaking additive change to this field's contract."* The registry shipped (P1). This parcel upgrades the spec-linter so that when `permission_profile:` **is present**, its value must match a name in the P1 permission-profile registry (read by importing P1's authoritative `PROFILE_NAMES` const, never by re-parsing `permission-profiles.yaml`) instead of "any non-empty, non-whitespace string." The field remains optional; the absent-field advisory-warning behavior is untouched. This is a small, mechanical, additive change that makes the field's authority real instead of aspirational.
@@ -26,7 +28,7 @@ This parcel adds no enforcement code and does not test the permission mechanism 
 
 ## Constraints
 
-- **Location:** `plugins/foreman-line/spec-linter/` in `kaseya-one-productivity-tools` (local: `C:\Repos\kaseya-one-productivity-tools`). Sibling to the frozen `contracts/`, `routing-policy/`, `receipts/`, `skill-injection/`, and to `permission-profiles/` (P1, the import source).
+- **Location:** `plugins/foreman-line/spec-linter/` in `agent-skills` (local: `D:\Repos\agent-skills`). Sibling to the frozen `contracts/`, `routing-policy/`, `receipts/`, `skill-injection/`, and to `permission-profiles/` (P1, the import source).
 - **Stack:** TypeScript, ESM-only, Node >=22 for this package (repo root `package.json` `engines.node` requires >=24.11.1). Tests via `tsx --test`. Lint/format with `biome`.
 - **Standing rule from the W0-P1 rework (binding):** ajv's `JSONSchemaType` is banned as a schema authority anywhere in this repo. The schema edit stays a hand-authored `SchemaObject` literal (`schemas.ts`). This parcel touches an existing `SchemaObject` property; it introduces no `JSONSchemaType`.
 - **Cross-package import mechanism (this spec's decision #1 - see Verification Plan focus Q1 and the final decision list):** the enum's legal-value set is read by a **relative-path TypeScript import** of P1's authoritative const:
