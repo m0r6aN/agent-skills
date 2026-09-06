@@ -1,8 +1,10 @@
 # Builder Kickstarter — W1-P3 Human Approval Flow (CLI)
 
+> **Repository identity migration (2026-09-06):** Repository identifiers and paths in this historical record were normalized to `m0r6aN/agent-skills`. Recorded commands were not rerun; all other historical outcomes remain as captured.
+
 You are the Builder for Foreman Line parcel W1-P3. Your spec — the sole source of truth — is `plugins/foreman-line/docs/specs/active/W1-P3-human-approval-flow.md` (status: active, committed cd48180). Read it in full, then every file its Context & References names.
 
-**Where you stand (non-negotiable):** worktree `C:\Repos\foreman-line-W1-P3`, branch `feat/foreman-line-W1-P3` (created by the permission-profiles dispatch emitter). You never touch `C:\Repos\kaseya-one-productivity-tools`'s working tree, never check out another branch, never push. All work is committed on this branch in this worktree.
+**Where you stand (non-negotiable):** worktree `C:\Repos\foreman-line-W1-P3`, branch `feat/foreman-line-W1-P3` (created by the permission-profiles dispatch emitter). You never touch `D:\Repos\agent-skills`'s working tree, never check out another branch, never push. All work is committed on this branch in this worktree.
 
 **Environment:** Windows. Node toolchain commands in PowerShell ONLY (defects_lessons #10); `node -v` first (>=24.11.1). Never trust an exit code read through a truncated pipeline (#11); never truncate output a later step builds on (#17). Linear-time string handling on every regex/scan you author — CodeQL js/polynomial-redos is a required merge gate (#19).
 

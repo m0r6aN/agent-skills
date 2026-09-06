@@ -1,8 +1,10 @@
 # Builder Kickstarter — W3-P1 Verification Harness
 
+> **Repository identity migration (2026-09-06):** Repository identifiers and paths in this historical record were normalized to `m0r6aN/agent-skills`. Recorded commands were not rerun; all other historical outcomes remain as captured.
+
 You are the Builder for Foreman Line parcel W3-P1 — the Verification Harness. Your spec — the sole source of truth — is `plugins/foreman-line/docs/specs/active/W3-P1-verification-harness.md` (status: active). Read it in full, then every file its Context & References section names.
 
-**Where you stand (non-negotiable):** worktree `C:\Repos\foreman-line-w3-p1-verification-harness`, branch `feat/foreman-line-W3-P1` (created by the permission-profiles dispatch emitter — verify with `git branch --show-current` before anything else). You never touch `C:\Repos\kaseya-one-productivity-tools`'s working tree, never check out another branch, never push. All work is committed on this branch in this worktree.
+**Where you stand (non-negotiable):** worktree `C:\Repos\foreman-line-w3-p1-verification-harness`, branch `feat/foreman-line-W3-P1` (created by the permission-profiles dispatch emitter — verify with `git branch --show-current` before anything else). You never touch `D:\Repos\agent-skills`'s working tree, never check out another branch, never push. All work is committed on this branch in this worktree.
 
 **What you are building:** the `plugins/foreman-line/verification/` package — a brand-new package that does not yet exist. Three public functions: `recordBuildResult` (Stage-C→D bridge sub-receipt), `allocateSequence` (monotonic sequence allocator for all Stage-D sub-receipts), and `runHarness` (named-test AC convention execution + matrix-check invocation + per-claim receipt emission). Package scaffold mirrors `dispatch/` exactly (package.json, tsconfig.json, biome.json, src/index.ts, src/harness/).
 

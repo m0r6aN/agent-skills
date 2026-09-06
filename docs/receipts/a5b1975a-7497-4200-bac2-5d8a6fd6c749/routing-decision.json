@@ -1,0 +1,13 @@
+{
+  "workflowId": "a5b1975a-7497-4200-bac2-5d8a6fd6c749",
+  "routing_class": "architecture/risk",
+  "data_classification": "internal",
+  "resolvedTier": "frontier",
+  "resolvedModelId": "anthropic/claude-opus-5",
+  "transportRequirements": {
+    "data_collection": "deny",
+    "zdr": true
+  },
+  "timestamp": "2026-09-06T12:22:45.530Z",
+  "policyRef": "plugins/foreman-line/routing-policy/routing-policy.yaml"
+}

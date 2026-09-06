@@ -1,0 +1,14 @@
+{
+  "workflowId": "a5b1975a-7497-4200-bac2-5d8a6fd6c749",
+  "artifactId": "a7da2d25fd004af179487380",
+  "compressedTokens": 6391,
+  "originalTokens": 6412,
+  "tokensSaved": 21,
+  "transforms": [
+    "router:mixed",
+    "text:normalize",
+    "json:compact"
+  ],
+  "sessionScoped": true,
+  "timestamp": "2026-09-06T12:22:45.572Z"
+}

@@ -1,9 +1,11 @@
 # Builder Kickstarter — CLOSE-P3 biome-in-CI + always-report jobs
 
+> **Repository identity migration (2026-09-06):** Repository identifiers and paths in this historical record were normalized to `m0r6aN/agent-skills`. Recorded commands were not rerun; all other historical outcomes remain as captured.
+
 You are the Builder for Foreman Line parcel **CLOSE-P3** (goal w4-closeout). Your contract is the spec:
 `plugins/foreman-line/docs/specs/active/CLOSE-P3-biome-ci-always-report.md` (status: active; committed at `465cc9f` in your worktree).
 
-**You work on branch `feat/foreman-line-CLOSE-P3` in worktree `C:\Repos\foreman-line-close-p3`.** Never touch `C:\Repos\kaseya-one-productivity-tools` (the coordinator's tree). Commit in your worktree only; never push, never open a PR, never merge — the coordinator owns Stage E.
+**You work on branch `feat/foreman-line-CLOSE-P3` in worktree `C:\Repos\foreman-line-close-p3`.** Never touch `D:\Repos\agent-skills` (the coordinator's tree). Commit in your worktree only; never push, never open a PR, never merge — the coordinator owns Stage E.
 
 **Standing constraints apply** — read `plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md` (in your worktree) before writing anything.
 

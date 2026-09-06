@@ -1,12 +1,14 @@
 # /loop Directive — Permission-Profile Registry + Dispatch-Time Emitter
 
+> **Repository identity migration (2026-09-06):** Repository identifiers and paths in this historical record were normalized to `m0r6aN/agent-skills`. Recorded commands were not rerun; all other historical outcomes remain as captured.
+
 Modeled on `docs/kickstarters/foreman-line-coordinator-loop.md`. Governs the parcel loop for the goal charter at `docs/goals/permission-profile-registry/charter.md` (Gate 1 fully ratified 2026-07-16, including the D9-amendment triage recorded in `docs/goals/permission-profile-registry/plan-review-findings.md`).
 
 ## GOAL OWNERSHIP — read before dispatching anything
 
 > **Goal owner: this coordinator session**, entered via `/goal permission-profile registry + dispatch-time emitter, per the deferred parcel in docs/kickstarters/foreman-line-coordinator-loop.md` (2026-07-16). One goal, one coordinator; ownership transfers only at parcel boundaries via this block. If ownership is ever ambiguous, report to Clint and wait — never assume (the W0 loop's dual-coordinator lesson, 491fb80, applies here too).
 
-**Launch/resume** (fresh Claude Code session in `C:\Repos\kaseya-one-productivity-tools`):
+**Launch/resume** (fresh Claude Code session in `D:\Repos\agent-skills`):
 
 ```
 /loop Read docs/goals/permission-profile-registry/loop-directive.md and execute one coordinator iteration per its rules; self-pace with ScheduleWakeup.

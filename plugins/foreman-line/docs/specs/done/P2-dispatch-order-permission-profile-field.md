@@ -16,6 +16,8 @@ permission_profile: null
 
 # P2 - DispatchOrder `permissionProfile` Field
 
+> **Repository identity migration (2026-09-06):** Repository identifiers and paths in this historical record were normalized to `m0r6aN/agent-skills`. Recorded commands were not rerun; all other historical outcomes remain as captured.
+
 ## Intent
 
 Add exactly one optional, additive field - `permissionProfile?: string` - to the `DispatchOrder` contract in `plugins/foreman-line/contracts/`, so a dispatched parcel can carry the *name* of the permission profile resolved for its worktree onto its Stage-C receipt for Trust Wall auditability. This is the goal charter's single frozen-contract touch (charter D2), scoped **exactly** to three artifacts: the `DispatchOrder` **type**, its **JSON schema**, and the **parity/propagation tests** that prove type and schema never drift. The field's *value* is drawn from the permission-profile-name vocabulary P1 shipped (`PROFILE_NAMES` in `plugins/foreman-line/permission-profiles/`), but at this contract layer the value is an **opaque, well-formed string** - identical in spirit to how `routingDecisionRef` is a bare reference string and `injectedSkills` are opaque skill-name strings today. Enum-binding the value against the registry is P4's job (spec-linter), never this package's.
@@ -24,7 +26,7 @@ This parcel ships a **type-level contract only**. No runtime code anywhere in th
 
 ## Constraints
 
-- **Location:** `plugins/foreman-line/contracts/` in `kaseya-one-productivity-tools` (local: `C:\Repos\kaseya-one-productivity-tools`). This is the single genuinely frozen contract package in the repo; the standing "modifying frozen contracts is a loop-stop" rule is suspended for this parcel **only** by charter D2's narrow exception, and only for the exact three-artifact surface below.
+- **Location:** `plugins/foreman-line/contracts/` in `agent-skills` (local: `D:\Repos\agent-skills`). This is the single genuinely frozen contract package in the repo; the standing "modifying frozen contracts is a loop-stop" rule is suspended for this parcel **only** by charter D2's narrow exception, and only for the exact three-artifact surface below.
 - **Stack:** TypeScript, ESM-only, Node >=22 (repo root `engines.node` requires >=24.11.1; the live toolchain reports `v24.11.1`). Tests via `node --test` driven through `tsx` (`tsx --test tests/*.test.ts`, the package's existing `npm test` script). Lint/format with `biome`.
 - **Standing rule (binding, W0-P1 rework lesson):** ajv's `JSONSchemaType` is banned as a schema authority anywhere in this repo. The schema edit MUST stay a hand-authored `SchemaObject`, consistent with the existing `dispatchOrderSchema` in `src/stages/c-dispatch.ts`. Do not introduce type-derived schema generation.
 - **Dual representation, no drift (existing package discipline):** `DispatchOrder` ships as (1) a TypeScript `interface` and (2) a hand-authored `SchemaObject` (`dispatchOrderSchema`), with the committed `schemas/*.json` files serialized from the typed source by `src/generate.ts` (`npm run generate`) and proven byte-identical by `tests/parity.test.ts`. The field addition must preserve this discipline exactly.

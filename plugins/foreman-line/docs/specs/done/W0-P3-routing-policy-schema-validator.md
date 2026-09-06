@@ -15,13 +15,15 @@ routing_class: architecture/risk   # W0 contract work routes frontier per policy
 
 # W0-P3 - Routing Policy Schema + Validator
 
+> **Repository identity migration (2026-09-06):** Repository identifiers and paths in this historical record were normalized to `m0r6aN/agent-skills`. Recorded commands were not rerun; all other historical outcomes remain as captured.
+
 ## Intent
 
 Define the frozen JSON Schema (and matching TypeScript type) for `routing-policy.yaml` - the policy-as-code artifact that governs model/agent-count selection at dispatch (plan §5, locked decisions D5/D6) - and ship a validator that checks a policy document against both structure and the semantic invariants the plan already states in prose. Ship the concrete v0 policy file itself, populated with the July-2026 table from §5, so the schema and validator are proven against real content on day one rather than a synthetic fixture. This parcel produces the artifact W2-P3 will later evaluate at dispatch time; it does not perform that evaluation.
 
 ## Constraints
 
-- **Location:** `plugins/foreman-line/routing-policy/` in `kaseya-one-productivity-tools` (local: `C:\Repos\kaseya-one-productivity-tools`) - sibling to the frozen `plugins/foreman-line/contracts/`, same foundation tier.
+- **Location:** `plugins/foreman-line/routing-policy/` in `agent-skills` (local: `D:\Repos\agent-skills`) - sibling to the frozen `plugins/foreman-line/contracts/`, same foundation tier.
 - **Stack:** TypeScript, Node ≥22, ESM-only. Tests via `node --test` (`npx tsx --test`). Lint/format with `biome`.
 - **Standing rule from the W0-P1 rework (binding on this parcel):** ajv's
   `JSONSchemaType` is banned as a schema authority anywhere in this repo;
