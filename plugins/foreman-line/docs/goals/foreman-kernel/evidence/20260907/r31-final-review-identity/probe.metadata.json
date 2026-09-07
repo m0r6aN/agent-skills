@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "D:/nodejs_symlinks/node.exe",
+    "--import",
+    "tsx",
+    "--input-type=module"
+  ],
+  "cwd": "D:/Repos/agent-skills-worktrees/fk-p0-r31-source-adoption-20260907/plugins/foreman-line/authority-registry",
+  "startUtc": "2026-09-07T18:45:55.567773+00:00",
+  "endUtc": "2026-09-07T18:45:59.557343+00:00",
+  "elapsedSeconds": 3.9966602000640705,
+  "directExit": 0,
+  "scriptSha256": "1311c22b7d152ff299614c9340ceb86679224d869e79a44aa13696b42a53ef3b",
+  "stdoutSha256": "fcbf761f3dea1c70cc0b15bf4460728b8255992825ebc2a61aea21aac0c8241b",
+  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

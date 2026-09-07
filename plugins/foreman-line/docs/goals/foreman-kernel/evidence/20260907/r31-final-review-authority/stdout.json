@@ -1,0 +1,305 @@
+{
+  "node": "v24.7.0",
+  "checks": 18,
+  "results": [
+    {
+      "name": "actual repository baseline and 18 source blobs",
+      "valid": true
+    },
+    {
+      "name": "repaired M01 Plugin/marketplace parcels",
+      "violations": [
+        {
+          "code": "AUTHORITY_ESCALATION",
+          "message": "R31 reserved rule 'rule.standing-constraints.constraint-14' is missing or differs from its complete reviewed shape",
+          "ruleId": "rule.standing-constraints.constraint-14"
+        },
+        {
+          "code": "AUTHORITY_ESCALATION",
+          "message": "rule 'rule.standing-constraints.constraint-14' violates the independent-review-human-judgment decision/owner/assurance contract",
+          "ruleId": "rule.standing-constraints.constraint-14"
+        },
+        {
+          "code": "AUTHORITY_ESCALATION",
+          "message": "R31 reserved source unit 'M01' differs from its complete reviewed source binding"
+        },
+        {
+          "code": "MIGRATION_EVIDENCE_INVALID",
+          "message": "migration 'registry-rework-446700d' lacks complete prior-to-new evidence"
+        },
+        {
+          "code": "MIGRATION_EVIDENCE_INVALID",
+          "message": "R31 exact migration diagnostic, source references and custody tuple changed"
+        },
+        {
+          "code": "MIGRATION_EVIDENCE_INVALID",
+          "message": "reconciliation observedRef does not fully resolve identity, locator, and value"
+        }
+      ]
+    },
+    {
+      "name": "repaired M01 each living install identifier",
+      "violations": [
+        {
+          "code": "AUTHORITY_ESCALATION",
+          "message": "R31 reserved rule 'rule.standing-constraints.constraint-14' is missing or differs from its complete reviewed shape",
+          "ruleId": "rule.standing-constraints.constraint-14"
+        },
+        {
+          "code": "AUTHORITY_ESCALATION",
+          "message": "rule 'rule.standing-constraints.constraint-14' violates the independent-review-human-judgment decision/owner/assurance contract",
+          "ruleId": "rule.standing-constraints.constraint-14"
+        },
+        {
+          "code": "AUTHORITY_ESCALATION",
+          "message": "R31 reserved source unit 'M01' differs from its complete reviewed source binding"
+        },
+        {
+          "code": "MIGRATION_EVIDENCE_INVALID",
+          "message": "migration 'registry-rework-446700d' lacks complete prior-to-new evidence"
+        },
+        {
+          "code": "MIGRATION_EVIDENCE_INVALID",
+          "message": "R31 exact migration diagnostic, source references and custody tuple changed"
+        },
+        {
+          "code": "MIGRATION_EVIDENCE_INVALID",
+          "message": "reconciliation observedRef does not fully resolve identity, locator, and value"
+        }
+      ]
+    },
+    {
+      "name": "repaired M01 declared marketplace entry",
+      "violations": [
+        {
+          "code": "AUTHORITY_ESCALATION",
+          "message": "R31 reserved rule 'rule.standing-constraints.constraint-14' is missing or differs from its complete reviewed shape",
+          "ruleId": "rule.standing-constraints.constraint-14"
+        },
+        {
+          "code": "AUTHORITY_ESCALATION",
+          "message": "rule 'rule.standing-constraints.constraint-14' violates the independent-review-human-judgment decision/owner/assurance contract",
+          "ruleId": "rule.standing-constraints.constraint-14"
+        },
+        {
+          "code": "AUTHORITY_ESCALATION",
+          "message": "R31 reserved source unit 'M01' differs from its complete reviewed source binding"
+        },
+        {
+          "code": "MIGRATION_EVIDENCE_INVALID",
+          "message": "migration 'registry-rework-446700d' lacks complete prior-to-new evidence"
+        },
+        {
+          "code": "MIGRATION_EVIDENCE_INVALID",
+          "message": "R31 exact migration diagnostic, source references and custody tuple changed"
+        },
+        {
+          "code": "MIGRATION_EVIDENCE_INVALID",
+          "message": "reconciliation observedRef does not fully resolve identity, locator, and value"
+        }
+      ]
+    },
+    {
+      "name": "repaired M01 existing plugin source",
+      "violations": [
+        {
+          "code": "AUTHORITY_ESCALATION",
+          "message": "R31 reserved rule 'rule.standing-constraints.constraint-14' is missing or differs from its complete reviewed shape",
+          "ruleId": "rule.standing-constraints.constraint-14"
+        },
+        {
+          "code": "AUTHORITY_ESCALATION",
+          "message": "rule 'rule.standing-constraints.constraint-14' violates the independent-review-human-judgment decision/owner/assurance contract",
+          "ruleId": "rule.standing-constraints.constraint-14"
+        },
+        {
+          "code": "AUTHORITY_ESCALATION",
+          "message": "R31 reserved source unit 'M01' differs from its complete reviewed source binding"
+        },
+        {
+          "code": "MIGRATION_EVIDENCE_INVALID",
+          "message": "migration 'registry-rework-446700d' lacks complete prior-to-new evidence"
+        },
+        {
+          "code": "MIGRATION_EVIDENCE_INVALID",
+          "message": "R31 exact migration diagnostic, source references and custody tuple changed"
+        },
+        {
+          "code": "MIGRATION_EVIDENCE_INVALID",
+          "message": "reconciliation observedRef does not fully resolve identity, locator, and value"
+        }
+      ]
+    },
+    {
+      "name": "repaired M01 nested manifest name equals the requested plugin",
+      "violations": [
+        {
+          "code": "AUTHORITY_ESCALATION",
+          "message": "R31 reserved rule 'rule.standing-constraints.constraint-14' is missing or differs from its complete reviewed shape",
+          "ruleId": "rule.standing-constraints.constraint-14"
+        },
+        {
+          "code": "AUTHORITY_ESCALATION",
+          "message": "rule 'rule.standing-constraints.constraint-14' violates the independent-review-human-judgment decision/owner/assurance contract",
+          "ruleId": "rule.standing-constraints.constraint-14"
+        },
+        {
+          "code": "AUTHORITY_ESCALATION",
+          "message": "R31 reserved source unit 'M01' differs from its complete reviewed source binding"
+        },
+        {
+          "code": "MIGRATION_EVIDENCE_INVALID",
+          "message": "migration 'registry-rework-446700d' lacks complete prior-to-new evidence"
+        },
+        {
+          "code": "MIGRATION_EVIDENCE_INVALID",
+          "message": "R31 exact migration diagnostic, source references and custody tuple changed"
+        },
+        {
+          "code": "MIGRATION_EVIDENCE_INVALID",
+          "message": "reconciliation observedRef does not fully resolve identity, locator, and value"
+        }
+      ]
+    },
+    {
+      "name": "repaired M01 does not prove",
+      "violations": [
+        {
+          "code": "AUTHORITY_ESCALATION",
+          "message": "R31 reserved rule 'rule.standing-constraints.constraint-14' is missing or differs from its complete reviewed shape",
+          "ruleId": "rule.standing-constraints.constraint-14"
+        },
+        {
+          "code": "AUTHORITY_ESCALATION",
+          "message": "rule 'rule.standing-constraints.constraint-14' violates the independent-review-human-judgment decision/owner/assurance contract",
+          "ruleId": "rule.standing-constraints.constraint-14"
+        },
+        {
+          "code": "AUTHORITY_ESCALATION",
+          "message": "R31 reserved source unit 'M01' differs from its complete reviewed source binding"
+        },
+        {
+          "code": "MIGRATION_EVIDENCE_INVALID",
+          "message": "migration 'registry-rework-446700d' lacks complete prior-to-new evidence"
+        },
+        {
+          "code": "MIGRATION_EVIDENCE_INVALID",
+          "message": "R31 exact migration diagnostic, source references and custody tuple changed"
+        },
+        {
+          "code": "MIGRATION_EVIDENCE_INVALID",
+          "message": "reconciliation observedRef does not fully resolve identity, locator, and value"
+        }
+      ]
+    },
+    {
+      "name": "repaired diagnostic commandId",
+      "violations": [
+        {
+          "code": "MIGRATION_EVIDENCE_INVALID",
+          "message": "R31 exact migration diagnostic, source references and custody tuple changed"
+        }
+      ]
+    },
+    {
+      "name": "repaired diagnostic inputDigest",
+      "violations": [
+        {
+          "code": "MIGRATION_EVIDENCE_INVALID",
+          "message": "R31 exact migration diagnostic, source references and custody tuple changed"
+        }
+      ]
+    },
+    {
+      "name": "repaired diagnostic resultDigest",
+      "violations": [
+        {
+          "code": "MIGRATION_EVIDENCE_INVALID",
+          "message": "R31 exact migration diagnostic, source references and custody tuple changed"
+        }
+      ]
+    },
+    {
+      "name": "repaired diagnostic actorClass",
+      "violations": [
+        {
+          "code": "MIGRATION_EVIDENCE_INVALID",
+          "message": "R31 exact migration diagnostic, source references and custody tuple changed"
+        }
+      ]
+    },
+    {
+      "name": "repaired diagnostic tool",
+      "violations": [
+        {
+          "code": "MIGRATION_EVIDENCE_INVALID",
+          "message": "R31 exact migration diagnostic, source references and custody tuple changed"
+        }
+      ]
+    },
+    {
+      "name": "repaired diagnostic toolVersion",
+      "violations": [
+        {
+          "code": "MIGRATION_EVIDENCE_INVALID",
+          "message": "R31 exact migration diagnostic, source references and custody tuple changed"
+        }
+      ]
+    },
+    {
+      "name": "repaired diagnostic exitCode",
+      "violations": [
+        {
+          "code": "MIGRATION_EVIDENCE_INVALID",
+          "message": "R31 exact migration diagnostic, source references and custody tuple changed"
+        }
+      ]
+    },
+    {
+      "name": "missing diagnostic",
+      "violations": [
+        {
+          "code": "MIGRATION_EVIDENCE_INVALID",
+          "message": "R31 exact migration diagnostic, source references and custody tuple changed"
+        }
+      ]
+    },
+    {
+      "name": "duplicate diagnostic",
+      "violations": [
+        {
+          "code": "MIGRATION_EVIDENCE_INVALID",
+          "message": "R31 exact migration diagnostic, source references and custody tuple changed"
+        },
+        {
+          "code": "MIGRATION_EVIDENCE_INVALID",
+          "message": "reconciliation 'registry-rework-446700d' carries the same command-result attestation twice"
+        }
+      ]
+    },
+    {
+      "name": "assurance fallback",
+      "violations": [
+        {
+          "code": "AUTHORITY_ESCALATION",
+          "message": "R31 reserved rule 'rule.standing-constraints.constraint-14' is missing or differs from its complete reviewed shape",
+          "ruleId": "rule.standing-constraints.constraint-14"
+        },
+        {
+          "code": "MIGRATION_EVIDENCE_INVALID",
+          "message": "R31 exact migration diagnostic, source references and custody tuple changed"
+        }
+      ]
+    },
+    {
+      "name": "in-memory Git blob transport substitution with untouched diagnostic",
+      "hits": 1,
+      "violations": [
+        {
+          "code": "MIGRATION_EVIDENCE_INVALID",
+          "message": "R31 plan decision actual Git-blob correspondence failed: decision blob differs from its reviewed bytes"
+        }
+      ]
+    }
+  ]
+}
