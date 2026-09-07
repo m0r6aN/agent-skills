@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "capturedUtc": "2026-09-07T15:16:00.625723+00:00",
+  "capturedUtc": "2026-09-07T15:21:26.024703+00:00",
   "origin": "https://github.com/m0r6aN/agent-skills.git",
   "coordinatorSource": {
     "worktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-unattended-20260907",
     "branch": "codex/foreman-kernel-unattended-20260907",
-    "fullHeadSha": "de10b456cec7001f38cc7a6c7754f3eb4d2c11a4"
+    "fullHeadSha": "24dc9dfbb024ba08007ebb632477bd5734481c8b"
   },
   "implementationSource": {
     "worktree": "D:/Repos/agent-skills-worktrees/fk-p0-r30-adoption-20260907",
@@ -56,8 +56,8 @@
     },
     {
       "path": "plugins/foreman-line/docs/goals/foreman-kernel/CURRENT-RESUME.md",
-      "bytes": 3885,
-      "gitBlobSha256": "89aac3ddb22492c98f001c92efa15a3be05bd18c3d6f1c7b12304c95dcb43e1d"
+      "bytes": 4267,
+      "gitBlobSha256": "e120cad258273c9561e94262209bb6182512e6b434c6e60d17da1573dde22578"
     },
     {
       "path": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-BLOCKER-volatile-canon-source.md",
@@ -731,8 +731,8 @@
     },
     {
       "path": "plugins/foreman-line/docs/goals/foreman-kernel/loop-directive.md",
-      "bytes": 32783,
-      "gitBlobSha256": "8b2cd6818833d3f27ecd346f05d3f84bdfc669f16ce81265a1bf6667664ce4cb"
+      "bytes": 33064,
+      "gitBlobSha256": "ae16edc56e8e9b14ae654a29a3063f211b36b517cb496cd31cb3ff07741c8b89"
     },
     {
       "path": "plugins/foreman-line/docs/goals/foreman-kernel/plan-review-findings.md",
@@ -997,5 +997,13 @@
       "bytes": 497,
       "gitBlobSha256": "38976aeb8a37adf4d858f92a6f2cf25134f291e077d86224bdc1627d20ff2025"
     }
-  ]
+  ],
+  "operationalSourceDifferences": {
+    "coordinatorLoopUpdateCommit": "24dc9dfbb024ba08007ebb632477bd5734481c8b",
+    "paths": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/loop-directive.md"
+    ],
+    "scope": "Only declared Current state body and FK-P0 State cell; all bytes outside those regions compare identical to prior coordinator blob. Implementation source65c4714 remains untouched.",
+    "normativeChange": false
+  }
 }
