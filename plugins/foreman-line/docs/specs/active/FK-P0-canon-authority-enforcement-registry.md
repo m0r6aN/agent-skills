@@ -4,7 +4,7 @@ title: Foreman Kernel - canon authority and enforcement registry
 status: active
 owner: clinton.morgan
 created: 2026-08-31
-updated: 2026-09-01
+updated: 2026-09-07
 supersedes: null
 superseded_by: null
 risk: critical
@@ -107,7 +107,7 @@ commit, and each review ends with a clean-worktree assertion.
 
 The shipped registry must inventory every rule-bearing item in these exact committed sources:
 
-1. `plugins/foreman-line/docs/goals/foreman-kernel/charter.md` - D1-D20, architecture
+1. `plugins/foreman-line/docs/goals/foreman-kernel/charter.md` - D1-D21, stable ratification ledger, adopted INF-1–INF-8, architecture
    boundaries, refusal classes, gates, stop conditions, serialization ownership, and exits.
 2. `plugins/foreman-line/docs/goals/foreman-kernel/plan-review-findings.md` - accepted R1-R13
    corrections and binding FK-P3 shaping disposition.
@@ -898,7 +898,7 @@ forbidden. A duplicate exclusion names the exact published rule with byte-equiva
 meaning. D/R rows, numbered standing/PDD rules, ratification/grant/merge/verification records,
 binding MUST/required/prohibited statements, exit criteria, and stop conditions cannot be
 excluded. Validation rejects exclusion of these protected normative item classes. Every binding
-charter decision D1-D20 is published with a binding basis and active semantics; shipped resolver
+charter decision D1-D21 is published with a binding basis and active semantics; shipped resolver
 tests prove at least D2 and D18 return `RESOLVED` with their exact claims in natural FK queries.
 `narrative-provenance` is reserved for provenance/history/rationale text and cannot classify an
 operative binding requirement merely because no enforcement mechanism exists yet.
@@ -1982,3 +1982,10 @@ tripwire fires twice; or any required file is outside Allowed Files.
 Do not amend the contract, expand the source corpus, change an Allowed File, update the source
 snapshot, reinterpret `surfaces:` as permission, or fix a stale historical artifact from the
 builder session. Request a coordinator-ratified spec/charter amendment and await a new Step 0.
+
+
+## R30 — Current corpus-adoption contract overlay
+
+`plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-amendment-R30.md` is part of this contract. Its exact source/write boundary, curation, historical-preservation/append rules, counts and controls apply to the separate R30 adoption candidate. It supersedes older prohibitions on the specifically coordinator-committed September7 source snapshot adoption only; it does not permit builder source edits, source-set expansion, identity redesign, weakened security or lower coverage. Existing 28 Allowed Files are unchanged.
+
+R24-R29 and R28's exact delta/count assertions remain the unchanged Round6 baseline contract. They are preserved as historical regression evidence; R30 does not pretend the enlarged corpus has the historical 469-rule denominator. General safety invariants and the full verification/evidence/independent-review requirements remain binding on the new candidate.
