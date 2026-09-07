@@ -16,6 +16,10 @@ Read `R30-test-migration-review-20260907.md`, `R30-implementation-ruling-2026090
 
 The coordinator loop's Current state/FK-P0 State cell may differ from the implementation's historical operational text. Only declared volatile operational regions were changed; implementation source65c bytes remain untouched during verification. The manifest records this distinction.
 
+## Current main integration dependency
+
+A read-only merge simulation against main `476b8df6efe6c9974879957147449f61c34cd9a0` has no text conflicts, but two of eighteen governed source files differ from the adopted snapshot. STANDING-CONSTRAINTS adds normative rule14 for plugin/marketplace install resolution; FOREMAN-LINE-PLAN adds a historical migration note and updates a library identifier. See `main-source-compatibility-20260907.json` for exact hashes and diffs. R30 verification stays pinned to its adopted snapshot. Current-main registry integration requires explicit source adoption and verification; text merge success is not acceptance.
+
 ## Ratifications and preparation
 
 Read live charter and loop, authorization, A1.8/A1.9 ledger closure and A4 infrastructure adoption. Ratifications stand; historical A2/A3 drafts are not silently activated. U1-evidence-contract-draft-20260907.md passed draft closure review; U1-provider-observations-20260907.md records actual GitHub configuration and supported options without claiming protected verifier independence or retention proof. Concrete U1 context/protection/provider/retention/schema choices remain preP18 dependencies.

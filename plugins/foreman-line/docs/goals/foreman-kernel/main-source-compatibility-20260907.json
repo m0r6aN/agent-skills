@@ -1,0 +1,27 @@
+{
+  "observedUtc": "2026-09-07T15:52:32Z",
+  "method": "Read-only merge-tree simulation in separate bare repository with complete history; no branch or worktree merged",
+  "mainCommit": "476b8df6efe6c9974879957147449f61c34cd9a0",
+  "candidateCommit": "f8093410cead451f204d08ae25f3a70b34208213",
+  "mergeBase": "354940e1d138b0555a68feab18cc9bc0680aa7dc",
+  "simulatedTree": "2a7343795cfbf4f8a1f0d36f1b361960cfba5bb7",
+  "mergeTreeExitCode": 0,
+  "textConflicts": 0,
+  "adoptedSourceCommit": "65c471416e4a3916695815e951ffbe389288560e",
+  "governedSourcesCompared": 18,
+  "changedGovernedSources": [
+    {
+      "path": "plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md",
+      "adoptedGitBlobSha256": "b5cce5029c4619058795414b624a418fb8c1c28f8534dab9d58c8fef61994c2f",
+      "simulatedGitBlobSha256": "57e345f9294cb8fcd8c3d90325505c80903648f60522f820061a5f8f288a86ac",
+      "diff": "diff --git a/plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md b/plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md\nindex b157dac..5d64994 100644\n--- a/plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md\n+++ b/plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md\n@@ -18,6 +18,7 @@ Every builder and reviewer kickstarter includes this file by reference (one line\n \n 6. **Classifier/heuristic parcels:** fixtures MUST cover the naming conventions that dominate real codebases (camelCase, concatenated, abbreviated), not just the canonical/textbook form \u2014 and for a *safety* classifier, the under-detect (false-negative) direction gets the most fixtures. (#29)\n 7. **Kompress-touching parcels:** probe content length before assembly; the ~200-token router:noop threshold is an effective ceiling in coordinator/builder sessions. Content above it is a stop condition requiring a coordinator ruling \u2014 never a silent retry. (#23)\n+14. **Plugin/marketplace parcels:** verify each living install identifier through the declared marketplace entry to an existing plugin source whose nested manifest name equals the requested plugin. A normalized repository URL does not prove that an install command resolves. (#37)\n \n ## Reviewer\n \n"
+    },
+    {
+      "path": "plugins/foreman-line/docs/FOREMAN-LINE-PLAN.md",
+      "adoptedGitBlobSha256": "0ca5a264e5371be59b2351e2f8e369a6e7f9fa2b4fd6d94ab54902d4ecd63a22",
+      "simulatedGitBlobSha256": "dcca81e1e38e245bc6b8bc8ddfdbd44b8b7546c4f0663639256fb421f686f8eb",
+      "diff": "diff --git a/plugins/foreman-line/docs/FOREMAN-LINE-PLAN.md b/plugins/foreman-line/docs/FOREMAN-LINE-PLAN.md\nindex eeb7e99..cfeb86c 100644\n--- a/plugins/foreman-line/docs/FOREMAN-LINE-PLAN.md\n+++ b/plugins/foreman-line/docs/FOREMAN-LINE-PLAN.md\n@@ -1,5 +1,7 @@\n # The Foreman Line \u2014 Master Plugin Plan\n \n+> **Repository identity migration (2026-09-06):** Repository identifiers and paths in this historical record were normalized to `m0r6aN/agent-skills`. Recorded commands were not rerun; all other historical outcomes remain as captured.\n+\n **Version:** 0.1 (Draft \u2014 working name \"the Line\"; rename at will)\n **Owner:** Clinton Morgan \u2014 Principal Agentic AI Platform Architect, KaseyaOne\n **Status:** Proposed\n@@ -138,7 +140,7 @@ Rules: data classification gates eligibility **before** cost optimization runs;\n \n ## 5a. Skill Injection Policy (the execution-plane library)\n \n-The Line is the conveyor; the skills library is the rack of tools hanging above each station (`kaseya-one-productivity-tools`, deployed at `~\\.claude\\skills\\`). Skills are wired in through a single mechanism \u2014 a versioned **skill injection matrix**, policy-as-code alongside the routing policy \u2014 rather than hardcoding each skill into a pipeline stage:\n+The Line is the conveyor; the skills library is the rack of tools hanging above each station (`agent-skills`, deployed at `~\\.claude\\skills\\`). Skills are wired in through a single mechanism \u2014 a versioned **skill injection matrix**, policy-as-code alongside the routing policy \u2014 rather than hardcoding each skill into a pipeline stage:\n \n ```yaml\n # illustrative \u2014 skill-injection.yaml\n"
+    }
+  ],
+  "conclusion": "Text merge succeeds, but source adoption/registry validation against current main is not established. Preserve fixed R30 verification; reconcile upstream source changes explicitly before integration."
+}
