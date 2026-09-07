@@ -111,8 +111,6 @@ by its id rather than by its date or its position.
 | L1 | 2026-08-31 | Original Gate 1 | D1–D17, the FK-P0–FK-P21 graph, wave exits, scenarios, goal exit criteria | “Ratify Gate 1 and authorize Gate 2 dispatches.” |
 | L2 | 2026-08-31 | Scoped Gate 1 re-open, plan-review amendments R1–R13 | D3, D7–D9, D13–D17, new D18–D20, amended graph and affected exit criteria | “Re-ratify Gate 1 amendments R1–R13 and resume Gate 2.” |
 | L3 | 2026-09-01 | Amendment A1 — decision-path latency budget | D21; FK-P1 and FK-P17 scope; Wave 0 exit; integration scenario 14; §13 items 7 and 9 | `proposed-amendment-A1-decision-path-latency-budget.md`, ratification record at foot |
-
-
 | L4 | 2026-09-07 | Amendment A1.8 — ratification ledger (with A1.9, its Entry-id keying) | §4.1 itself; header status line, §4 preamble, and §10 Gate 1 restatements replaced by pointers to §4.1; ledger rows keyed by stable Entry id. Adds no locked decision, changes no gate, alters no parcel, scenario, or exit criterion. | `amendment-A1.8-ratification-ledger.md`; A1.9 at `7e7dc7d`; `authorization-20260907-unattended.md`. This is the instruments' own required row. |
 | L5 | 2026-09-07 | Infrastructure adoption INF-1–INF-8 | §14 and its detailed carrier mapping; D21 rationale/cold-deadline clarification; U1 assigned to coordinator contract resolution, FK-P18 production, FK-P19 verification and FK-P21 retention. No parcel added or dependency removed. | `amendment-A4-infrastructure-adoption-20260907.md`; developer recommendations ratified September 7 and continuation authorization in `authorization-20260907-unattended.md`. |
 
