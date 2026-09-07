@@ -169,3 +169,10 @@ Keep the existing global class contract unchanged for every other rule. Preserve
 Required later verification should demonstrate both sides of this boundary: an exact reviewed R30 entry with `human-ratified` is admitted; substitutions in identity, location, value, class, decision, owner, applicability or other bound shape fail; unrelated rules do not acquire the exception by copying the assurance string; copying an approved entry onto a different rule fails; and rule/source/manifest mutations still fail after passing the exception selector. Preserve ordinary non-R30 negative controls. These are requirements for the builder's future verification, not test results from this docs-only supplement.
 
 If a proposed rule needs a different owner/decision as well as different assurance, this recommendation alone does not authorize it. Return the concrete source clause and exact proposed shape for separate scoped ruling, without changing global classification semantics. In particular, neither U02/U03 nor L01/L02 creates a new ALLOW entry through this assurance mechanism.
+
+
+## Independent review correction — reserved identities cannot fall through
+
+The original recommendation's reference to nonmatching shapes using legacy checks is superseded for reserved R30 identities. The mandatory finite expected set first distinguishes reserved R30 entries from unrelated legacy entries. Every reserved entry must exist and match its complete approved shape including human-ratified assurance, or fail closed; no reserved mismatch may reach legacy acceptance. Identity replacement/removal is a separate required-set failure. Only unrelated legacy identities keep ordinary classification checks unchanged.
+
+This closes the demonstrated fallback attack: replace human-ratified with independently-verified for IJ, detected for PD, or structural for PR; recompute incidental binding and manifest values; the resulting reserved entry must still fail its named authority-semantic contract. Include those controls plus exact required-set substitution/removal controls. This corrects the exception envelope; U01-U04 and the source-unit denominator are unchanged.
