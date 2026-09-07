@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "capturedUtc": "2026-09-07T17:29:01.463127+00:00",
+  "capturedUtc": "2026-09-07T17:39:50.120177+00:00",
   "origin": "https://github.com/m0r6aN/agent-skills.git",
   "coordinatorSource": {
     "worktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-unattended-20260907",
     "branch": "codex/foreman-kernel-unattended-20260907",
-    "fullHeadSha": "f1407d3d81beda4b551e55e6c8762836cc3297db"
+    "fullHeadSha": "bf24298d61359c81eac3a4c9bd97d725a1f32764"
   },
   "implementationSource": {
     "worktree": "D:/Repos/agent-skills-worktrees/fk-p0-r30-adoption-20260907",
@@ -59,8 +59,8 @@
     },
     {
       "path": "plugins/foreman-line/docs/goals/foreman-kernel/CURRENT-RESUME.md",
-      "bytes": 5853,
-      "gitBlobSha256": "fed2680da2d79fd36dca8c5be728c517652b108f17edb0468ddb77202ce1e5a9"
+      "bytes": 6118,
+      "gitBlobSha256": "ff8bb3e57a25b3949601c67921f4208b1e56463dd19abfdba4a3c7a68f88c6b6"
     },
     {
       "path": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-BLOCKER-volatile-canon-source.md",
@@ -293,6 +293,11 @@
       "gitBlobSha256": "e75fef50d7dd694ebe76f652af3a00c69b088ccc26b8ef6d87f2950bc05de707"
     },
     {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/R31-to-P1-field-reconciliation-20260907.md",
+      "bytes": 14842,
+      "gitBlobSha256": "d8d33fa2a25d89c8313bbfc7407a5c75a7d527bd321480ee39d1343c9b162c72"
+    },
+    {
       "path": "plugins/foreman-line/docs/goals/foreman-kernel/U1-draft-review-20260907.md",
       "bytes": 1809,
       "gitBlobSha256": "4a7b3a85c5d74b9158b6c82177dfd4a3ca61dbddadc3fc42be8cf0721c713064"
@@ -476,6 +481,16 @@
       "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30-final-review-history/review.md",
       "bytes": 6818,
       "gitBlobSha256": "076af0d7e814328a95b962faf31a055cf9370f6904daebdb90ad2014a149a724"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31-main-integration/closure-review-preparation.md",
+      "bytes": 4254,
+      "gitBlobSha256": "119a234f67d54e48e86aea925f6cddf9b7e9de4a1d9debcc8858d9e2e1db2ed7"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31-main-integration/verify-integration.py",
+      "bytes": 24633,
+      "gitBlobSha256": "3f0f6fa4943e1f57fdfa75d397cede7277ce3c63e062ee0439cc3dcc9f9b80b8"
     },
     {
       "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/01-node.exit.txt",
@@ -1021,7 +1036,7 @@
     "Complete R31 full751-test deterministic chain at published521214e; retain all direct exits, full streams, package/source byte custody and failed attempts.",
     "Publish final R31 evidence and obtain two fresh independent final review dispositions.",
     "Verify exact current-main hypothetical integration per committed plan; no actual merge implied.",
-    "Human Gate3 and merge remain separate; mergedP0 compatibility and field-shape reconciliation gate P1 activation.",
+    "Human Gate3 and actual merge remain separate; mergedP0 dependency and F05 exact field-table review gate P1 activation. F01–F04 compatibility requirements are recorded and accepted without changing the draft or activating implementation.",
     "U1 provider/verifier independence, context/protection, retention, schema/limit/path decisions remain preP18 dependencies.",
     "Reconcile live coordinator ownership before another session dispatches work; publication does not transfer ownership."
   ],

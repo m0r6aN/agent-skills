@@ -26,7 +26,7 @@ Read live charter/loop, authorization, A1.8/A1.9 ledger closure and A4 infrastru
 
 U1's evidence-contract draft passed closure review. `U1-provider-observations-20260907.md` records actual GitHub configuration and supported options without claiming protected verifier independence or retention proof. Concrete context/protection/provider/retention/schema choices remain preP18 dependencies.
 
-FK-P1 StageA is prepared: reviewed draft spec, explicit decisions, successful two-layer advisory check and schema-valid shaping result with epics:[]. P1 implementation is not dispatched; mergedP0 compatibility and remaining field-shape reconciliation still gate activation.
+FK-P1 StageA is prepared: reviewed draft spec, explicit decisions, successful two-layer advisory check and schema-valid shaping result with epics:[]. P1 implementation is not dispatched. `R31-to-P1-field-reconciliation-20260907.md` records the actual P0 API and accepted F01–F04 compatibility requirements: separate digest domains, distinct source/runtime assurance, trust-safe protocol errors and finite trusted principal/role/operation projection. F05 exact schema field table and the actual mergedP0 dependency still gate activation.
 
 ## Next action and limits
 
