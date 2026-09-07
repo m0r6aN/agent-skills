@@ -2,17 +2,20 @@
 
 ## COORDINATOR OWNERSHIP — read before dispatching anything
 
-> **Queue owner:** the Codex coordinator session resuming on 2026-09-04. The developer explicitly
-> declared the second Claude Code coordinator session of 2026-09-03 presumed dead and transferred
-> ownership at the clean FK-P0 parcel boundary. Exactly one coordinator owns this goal. Ownership
-> transfers only at a parcel boundary by editing this block and recording a handoff. If another
-> live owner is named or ownership is ambiguous, stop and report; never assume.
+> **Queue owner:** the Codex coordinator in thread `01a07c0b-90eb-7bf0-88f4-0ca912ef87fb`, continuing on 2026-09-07 under the developer's explicit unattended direction recorded in `authorization-20260907-unattended.md`. Exactly one coordinator owns this goal. The previous source worktrees are preserved; an actual concurrent owner/writer is a collision to isolate and report.
 >
-> **Disambiguation for a future reader:** two coordinator sessions held this goal on
-> 2026-09-03. The first reproduced the inherited green chain and wrote
-> `FK-P0-MERGE-READY-material.md`; the second executed Option B and found the blocker in
-> `FK-P0-BLOCKER-volatile-canon-source.md`. Where a record says "this owner" without a date,
-> read the file's own commit date.
+> **Current coordinator worktree:** `D:/Repos/agent-skills-worktrees/foreman-kernel-unattended-20260907`.
+> **Current coordinator branch:** `codex/foreman-kernel-unattended-20260907`.
+> **Published boundary:** `fe31042bbe4370cb81b38632720849983c7be04c`.
+> Older ownership blocks and source coordinates below are historical provenance, not a second active owner.
+
+## Current continuation — 2026-09-07
+
+The developer ratified recommendations and authorized all decisions and non-destructive actions while away for six hours. The exact instruction and dispositions are in `authorization-20260907-unattended.md`. Existing A1 and D1-D21 stand. A1.8/A1.9 and INF adoption are being recorded on this coordinator branch and independently reviewed.
+
+FK-P0 remains active Round 6 recovery at `0ee165720f8d1e3a91eb283cb770400b23f61bf5`. Verification uses `codex/fk-p0-recovery-20260907` in its own worktree; the original candidate branch remains untouched. No new green-chain claim exists. Next: accept the read-only recovery Step 0 plan, capture the full sequential verification chain, and obtain two independent reviews. FK-P1 through FK-P21 remain pending implementation; preparatory shaping may proceed without representing dependencies as merged.
+
+The queue's dated a100a91 state and older not-pushed claims below are superseded by this block. Publishing and verification do not satisfy human Gate 3. No merge is authorized by this continuation record.
 
 **Handoff record — 2026-09-04, Codex takeover.** The developer could not locate the second
 2026-09-03 coordinator and explicitly ruled it presumed dead, transferring Foreman Kernel ownership
