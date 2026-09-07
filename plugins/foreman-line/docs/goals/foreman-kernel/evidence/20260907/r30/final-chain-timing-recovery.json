@@ -1,0 +1,29 @@
+[
+  {
+    "log": "24-final-npm-ci.log",
+    "startUtc": "2026-09-07T15:09:19.3652734Z",
+    "startTimingBasis": "filesystem creation time inferred; no explicit invocation clock was recorded",
+    "lastWriteUtc": "2026-09-07T15:09:27.5853121Z",
+    "endTimingBasis": "filesystem last-write time inferred after direct exit marker",
+    "directExit": 0,
+    "knownToolWallSeconds": 9.2480432
+  },
+  {
+    "log": "25-final-typecheck.log",
+    "startUtc": "2026-09-07T15:09:38.2600319Z",
+    "startTimingBasis": "filesystem creation time inferred; no explicit invocation clock was recorded",
+    "lastWriteUtc": "2026-09-07T15:09:39.8973260Z",
+    "endTimingBasis": "filesystem last-write time inferred after direct exit marker",
+    "directExit": 0,
+    "knownToolWallSeconds": 2.3686188
+  },
+  {
+    "log": "26-final-npm-test.log",
+    "startUtc": "2026-09-07T15:09:40.8762265Z",
+    "startTimingBasis": "filesystem creation time inferred; no explicit invocation clock was recorded",
+    "lastWriteUtc": "2026-09-07T15:09:42.6543496Z",
+    "endTimingBasis": "running; final completion will be explicitly observed",
+    "directExit": null,
+    "knownToolWallSeconds": null
+  }
+]

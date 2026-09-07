@@ -1,0 +1,328 @@
+src\registry.ts:5396:13 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Template literals are preferred over string concatenation.
+  
+    5394 │ ]
+    5395 │ export const R30_AUDIT_KEYS = R30_SOURCE_ITEMS.map(
+  > 5396 │   (item) => item.sourceId + ':' + item.locator.anchor,
+         │             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    5397 │ )
+    5398 │ export const NORMATIVE_MARKDOWN_AUDIT_KEYS = [
+  
+  i Unsafe fix: Use a template literal.
+  
+    5394 5394 │   ]
+    5395 5395 │   export const R30_AUDIT_KEYS = R30_SOURCE_ITEMS.map(
+    5396      │ - ··(item)·=>·item.sourceId·+·':'·+·item.locator.anchor,
+         5396 │ + ··(item)·=>·`${item.sourceId}:${item.locator.anchor}`,
+    5397 5397 │   )
+    5398 5398 │   export const NORMATIVE_MARKDOWN_AUDIT_KEYS = [
+  
+
+tests\semantic-invariants.test.ts:4681:5 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Template literals are preferred over string concatenation.
+  
+    4679 │       message.includes('does not declare both binding-manifest chain commands as issued by'),
+    4680 │     ),
+  > 4681 │     'expected the chain-command refusal; observed ' + messagesFor(mutated).join(' | '),
+         │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    4682 │   )
+    4683 │ })
+  
+  i Unsafe fix: Use a template literal.
+  
+    4679 4679 │         message.includes('does not declare both binding-manifest chain commands as issued by'),
+    4680 4680 │       ),
+    4681      │ - ····'expected·the·chain-command·refusal;·observed·'·+·messagesFor(mutated).join('·|·'),
+         4681 │ + ····`expected·the·chain-command·refusal;·observed·${messagesFor(mutated).join('·|·')}`,
+    4682 4682 │     )
+    4683 4683 │   })
+  
+
+tests\semantic-invariants.test.ts:4759:5 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Template literals are preferred over string concatenation.
+  
+    4757 │   ok(
+    4758 │     messagesFor(mutated).some((message) => message.includes('repeats a git-commit reference')),
+  > 4759 │     'expected the distinctness refusal; observed ' + messagesFor(mutated).join(' | '),
+         │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    4760 │   )
+    4761 │ })
+  
+  i Unsafe fix: Use a template literal.
+  
+    4757 4757 │     ok(
+    4758 4758 │       messagesFor(mutated).some((message) => message.includes('repeats a git-commit reference')),
+    4759      │ - ····'expected·the·distinctness·refusal;·observed·'·+·messagesFor(mutated).join('·|·'),
+         4759 │ + ····`expected·the·distinctness·refusal;·observed·${messagesFor(mutated).join('·|·')}`,
+    4760 4760 │     )
+    4761 4761 │   })
+  
+
+tests\semantic-invariants.test.ts:4777:30 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Template literals are preferred over string concatenation.
+  
+    4775 │   const mutated = withMutatedHead((record) => {
+    4776 │     const fabricated = 'feedface'.repeat(5)
+  > 4777 │     const secondFabricated = '0'.repeat(39) + '1'
+         │                              ^^^^^^^^^^^^^^^^^^^^
+    4778 │     assert.notEqual(fabricated, secondFabricated, 'the two fabrications must be DISTINCT')
+    4779 │     let index = 0
+  
+  i Unsafe fix: Use a template literal.
+  
+    4775 4775 │     const mutated = withMutatedHead((record) => {
+    4776 4776 │       const fabricated = 'feedface'.repeat(5)
+    4777      │ - ····const·secondFabricated·=·'0'.repeat(39)·+·'1'
+         4777 │ + ····const·secondFabricated·=·`${'0'.repeat(39)}1`
+    4778 4778 │       assert.notEqual(fabricated, secondFabricated, 'the two fabrications must be DISTINCT')
+    4779 4779 │       let index = 0
+  
+
+tests\semantic-invariants.test.ts:4961:14 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Template literals are preferred over string concatenation.
+  
+    4959 │       (command) => typeof command.commandId === 'string' && command.commandId.startsWith(prefix),
+    4960 │     )
+  > 4961 │   ok(parsed, 'the record must declare a ' + prefix + ' command')
+         │              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    4962 │   return parsed
+    4963 │ }
+  
+  i Unsafe fix: Use a template literal.
+  
+    4959 4959 │         (command) => typeof command.commandId === 'string' && command.commandId.startsWith(prefix),
+    4960 4960 │       )
+    4961      │ - ··ok(parsed,·'the·record·must·declare·a·'·+·prefix·+·'·command')
+         4961 │ + ··ok(parsed,·`the·record·must·declare·a·${prefix}·command`)
+    4962 4962 │     return parsed
+    4963 4963 │   }
+  
+
+tests\semantic-invariants.test.ts:5081:26 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Template literals are preferred over string concatenation.
+  
+    5079 │   assert.notEqual(mutated.reconciliations.length, before, 'the record must actually be removed')
+    5080 │   expectMessage(mutated, 'do not lie on the single genesis-to-head chain')
+  > 5081 │   expectMessage(mutated, "required rework migration '" + victimId + "' is missing")
+         │                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    5082 │ })
+    5083 │ 
+  
+  i Unsafe fix: Use a template literal.
+  
+    5079 5079 │     assert.notEqual(mutated.reconciliations.length, before, 'the record must actually be removed')
+    5080 5080 │     expectMessage(mutated, 'do not lie on the single genesis-to-head chain')
+    5081      │ - ··expectMessage(mutated,·"required·rework·migration·'"·+·victimId·+·"'·is·missing")
+         5081 │ + ··expectMessage(mutated,·`required·rework·migration·'${victimId}'·is·missing`)
+    5082 5082 │   })
+    5083 5083 │   
+  
+
+tests\semantic-invariants.test.ts:5142:28 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Template literals are preferred over string concatenation.
+  
+    5140 │ function r30Rule(unit: string, document = full): AuthorityRule {
+    5141 │   const escaped = unit.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  > 5142 │   const match = new RegExp('\\| ' + escaped + ' \\| `([^`]+)`').exec(r30Mapping())
+         │                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    5143 │   ok(match, unit)
+    5144 │   const rule = document.rules.find((entry) => entry.ruleId === match[1])
+  
+  i Unsafe fix: Use a template literal.
+  
+    5140 5140 │   function r30Rule(unit: string, document = full): AuthorityRule {
+    5141 5141 │     const escaped = unit.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    5142      │ - ··const·match·=·new·RegExp('\\|·'·+·escaped·+·'·\\|·`([^`]+)`').exec(r30Mapping())
+         5142 │ + ··const·match·=·new·RegExp(`\\|·${escaped}·\\|·\`([^\`]+)\``).exec(r30Mapping())
+    5143 5143 │     ok(match, unit)
+    5144 5144 │     const rule = document.rules.find((entry) => entry.ruleId === match[1])
+  
+
+tests\semantic-invariants.test.ts:5338:52 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Template literals are preferred over string concatenation.
+  
+    5336 │   [
+    5337 │     'statement word',
+  > 5338 │     (r) => Object.assign(r, { normalizedStatement: r.normalizedStatement + ' unauthorized' }),
+         │                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    5339 │   ],
+    5340 │   [
+  
+  i Unsafe fix: Use a template literal.
+  
+    5336 5336 │     [
+    5337 5337 │       'statement word',
+    5338      │ - ····(r)·=>·Object.assign(r,·{·normalizedStatement:·r.normalizedStatement·+·'·unauthorized'·}),
+         5338 │ + ····(r)·=>·Object.assign(r,·{·normalizedStatement:·`${r.normalizedStatement}·unauthorized`·}),
+    5339 5339 │     ],
+    5340 5340 │     [
+  
+
+tests\semantic-invariants.test.ts:5353:30 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Template literals are preferred over string concatenation.
+  
+    5351 │     (r) =>
+    5352 │       Object.assign(r, {
+  > 5353 │         normalizedStatement: 'Only during warm startup: ' + r.normalizedStatement,
+         │                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    5354 │       }),
+    5355 │   ],
+  
+  i Unsafe fix: Use a template literal.
+  
+    5351 5351 │       (r) =>
+    5352 5352 │         Object.assign(r, {
+    5353      │ - ········normalizedStatement:·'Only·during·warm·startup:·'·+·r.normalizedStatement,
+         5353 │ + ········normalizedStatement:·`Only·during·warm·startup:·${r.normalizedStatement}`,
+    5354 5354 │         }),
+    5355 5355 │     ],
+  
+
+tests\semantic-invariants.test.ts:5360:55 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Template literals are preferred over string concatenation.
+  
+    5358 │     (r) => Object.assign(r, { authoritySubject: 'goal.unrelated-reserved-substitution' }),
+    5359 │   ],
+  > 5360 │   ['claim', (r) => Object.assign(r, { authorityClaim: r.authorityClaim + '-changed' })],
+         │                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    5361 │   ['decision', (r) => Object.assign(r, { decision: 'ALLOW', refusalCode: null })],
+    5362 │   [
+  
+  i Unsafe fix: Use a template literal.
+  
+    5358 5358 │       (r) => Object.assign(r, { authoritySubject: 'goal.unrelated-reserved-substitution' }),
+    5359 5359 │     ],
+    5360      │ - ··['claim',·(r)·=>·Object.assign(r,·{·authorityClaim:·r.authorityClaim·+·'-changed'·})],
+         5360 │ + ··['claim',·(r)·=>·Object.assign(r,·{·authorityClaim:·`${r.authorityClaim}-changed`·})],
+    5361 5361 │     ['decision', (r) => Object.assign(r, { decision: 'ALLOW', refusalCode: null })],
+    5362 5362 │     [
+  
+
+tests\semantic-invariants.test.ts:5421:44 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Template literals are preferred over string concatenation.
+  
+    5419 │             rules: document.rules.filter((entry) => entry.ruleId !== rule.ruleId),
+    5420 │           })
+  > 5421 │         else Object.assign(rule, { ruleId: rule.ruleId + '-substitution' })
+         │                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    5422 │       }),
+    5423 │     )
+  
+  i Unsafe fix: Use a template literal.
+  
+    5419 5419 │               rules: document.rules.filter((entry) => entry.ruleId !== rule.ruleId),
+    5420 5420 │             })
+    5421      │ - ········else·Object.assign(rule,·{·ruleId:·rule.ruleId·+·'-substitution'·})
+         5421 │ + ········else·Object.assign(rule,·{·ruleId:·`${rule.ruleId}-substitution`·})
+    5422 5422 │         }),
+    5423 5423 │       )
+  
+
+tests\semantic-invariants.test.ts:5441:47 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Template literals are preferred over string concatenation.
+  
+    5439 │       ok(item)
+    5440 │       if (axis === 'locator')
+  > 5441 │         Object.assign(item.locator, { anchor: item.locator.anchor + '-forged' })
+         │                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    5442 │       else if (axis === 'missing inventory membership')
+    5443 │         Object.assign(item, { ruleIds: item.ruleIds.filter((id) => id !== rule.ruleId) })
+  
+  i Unsafe fix: Use a template literal.
+  
+    5439 5439 │         ok(item)
+    5440 5440 │         if (axis === 'locator')
+    5441      │ - ········Object.assign(item.locator,·{·anchor:·item.locator.anchor·+·'-forged'·})
+         5441 │ + ········Object.assign(item.locator,·{·anchor:·`${item.locator.anchor}-forged`·})
+    5442 5442 │         else if (axis === 'missing inventory membership')
+    5443 5443 │           Object.assign(item, { ruleIds: item.ruleIds.filter((id) => id !== rule.ruleId) })
+  
+
+tests\semantic-invariants.test.ts:5449:50 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Template literals are preferred over string concatenation.
+  
+    5447 │         Object.assign(rule, { normalizedStatement: r30Rule('C23/points').normalizedStatement })
+    5448 │       else {
+  > 5449 │         Object.assign(item, { normalizedExcerpt: item.normalizedExcerpt + ' Permit late ALLOW.' })
+         │                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    5450 │         if (axis === 'repaired digest')
+    5451 │           Object.assign(item, { valueDigest: sha256(normalizeRuleText(item.normalizedExcerpt)) })
+  
+  i Unsafe fix: Use a template literal.
+  
+    5447 5447 │           Object.assign(rule, { normalizedStatement: r30Rule('C23/points').normalizedStatement })
+    5448 5448 │         else {
+    5449      │ - ········Object.assign(item,·{·normalizedExcerpt:·item.normalizedExcerpt·+·'·Permit·late·ALLOW.'·})
+         5449 │ + ········Object.assign(item,·{·normalizedExcerpt:·`${item.normalizedExcerpt}·Permit·late·ALLOW.`·})
+    5450 5450 │           if (axis === 'repaired digest')
+    5451 5451 │             Object.assign(item, { valueDigest: sha256(normalizeRuleText(item.normalizedExcerpt)) })
+  
+
+src\generate.ts:14:3 lint/correctness/noUnusedImports  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ! Several of these imports are unused.
+  
+    12 │   R13_NORMATIVE_MARKDOWN_PUBLICATION_KEYS,
+    13 │   R13_PRIOR_REGISTRY_COMMIT,
+  > 14 │   R14_PRIOR_REGISTRY_COMMIT,
+       │   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 15 │   R15_PRIOR_REGISTRY_COMMIT,
+       │   ^^^^^^^^^^^^^^^^^^^^^^^^^
+    16 │   R30_PRIOR_REGISTRY_COMMIT,
+    17 │   R30_RULE_SHAPES,
+  
+  i Unused imports might be the result of an incomplete refactoring.
+  
+  i Unsafe fix: Remove the unused imports.
+  
+       12    12 │     R13_NORMATIVE_MARKDOWN_PUBLICATION_KEYS,
+       13    13 │     R13_PRIOR_REGISTRY_COMMIT,
+       14       │ - ··R14_PRIOR_REGISTRY_COMMIT,
+       15       │ - ··R15_PRIOR_REGISTRY_COMMIT,
+       16    14 │     R30_PRIOR_REGISTRY_COMMIT,
+       17    15 │     R30_RULE_SHAPES,
+  
+
+src\generate.ts:81:7 lint/correctness/noUnusedVariables  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ! This variable R14_SNAPSHOT is unused.
+  
+    79 │  * defect the pinned `R13_MANIFEST` constants below exist to prevent.
+    80 │  */
+  > 81 │ const R14_SNAPSHOT = '7e7dc7dbb90317a5a2cd69c21a8b86c4a3a4e1e2'
+       │       ^^^^^^^^^^^^
+    82 │ /**
+    83 │  * The three volatile regions R24 authorizes, with the extents R27 corrected.
+  
+  i Unused variables are often the result of typos, incomplete refactors, or other sources of bugs.
+  
+  i Unsafe fix: If this is intentional, prepend R14_SNAPSHOT with an underscore.
+  
+       79    79 │    * defect the pinned `R13_MANIFEST` constants below exist to prevent.
+       80    80 │    */
+       81       │ - const·R14_SNAPSHOT·=·'7e7dc7dbb90317a5a2cd69c21a8b86c4a3a4e1e2'
+             81 │ + const·_R14_SNAPSHOT·=·'7e7dc7dbb90317a5a2cd69c21a8b86c4a3a4e1e2'
+       82    82 │   /**
+       83    83 │    * The three volatile regions R24 authorizes, with the extents R27 corrected.
+  
+
+Skipped 30 suggested fixes.
+If you wish to apply the suggested (unsafe) fixes, use the command biome check --write --unsafe
+
+Checked 6 files in 460ms. Fixed 5 files.
+Found 2 warnings.
+Found 13 infos.
+DIRECT_EXIT=0

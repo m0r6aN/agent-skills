@@ -1,0 +1,68 @@
+[
+  {
+    "path": "plugins/foreman-line/authority-registry/README.md",
+    "before": "f37ef31e817f7bc391d924368fd2c9f73ee5251ca3383a4914220ff751acf159",
+    "after": "7aad4f2722c8fba589f384eaf7f5d5b5f9bec37d4f7e84d775dc65f7aedad6b2",
+    "classification": "builder-package-change"
+  },
+  {
+    "path": "plugins/foreman-line/authority-registry/authority-enforcement-registry.yaml",
+    "before": "e1a5b9b0c2cb3c92b7591c5f4e24b233e8402fd91848256e83adbf2c2cc5dd13",
+    "after": "47ff17a113b67b457d1050c5086095dee2cf044af6c5de8d2875c85a1881cf6c",
+    "classification": "builder-package-change"
+  },
+  {
+    "path": "plugins/foreman-line/authority-registry/src/generate.ts",
+    "before": "99e9756e7b2c5490f3c59e1d0700e93e91b0d92b0008e26a4f3cde7b2fc1082f",
+    "after": "8e26cd96d6ee6a355df3ff48dbf61039e7e114c2ddf767004690ef6b088ea2e3",
+    "classification": "builder-package-change"
+  },
+  {
+    "path": "plugins/foreman-line/authority-registry/src/registry.ts",
+    "before": "30d8a707a1b9ab19b4c4b49df790df5e76271ee8b656a9ab2324c88229d57ec8",
+    "after": "050a901baf0732163a30c7b25d2b31cfb5f9f0bc2e472d8a0a148ec68a822d80",
+    "classification": "builder-package-change"
+  },
+  {
+    "path": "plugins/foreman-line/authority-registry/src/validate.ts",
+    "before": "525f5670fb29102567d2c890ec74c7710adfd38777a71fc27d34d12320112899",
+    "after": "125af59742ca8eaf45a42b4fa7d0899e729c6c6ee298a259004f7785fc134536",
+    "classification": "builder-package-change"
+  },
+  {
+    "path": "plugins/foreman-line/authority-registry/tests/corpus-sweep.test.ts",
+    "before": "7f0069812b4ea41b5295c53091ab9dae56aafe91433c061673f400dd0fc0c506",
+    "after": "51e43d3231876210f20c9c72536286945c1087d4be28217864b4838b5cd2e6ee",
+    "classification": "builder-package-change"
+  },
+  {
+    "path": "plugins/foreman-line/authority-registry/tests/fixtures/pass-minimal.yaml",
+    "before": "e1a5b9b0c2cb3c92b7591c5f4e24b233e8402fd91848256e83adbf2c2cc5dd13",
+    "after": "47ff17a113b67b457d1050c5086095dee2cf044af6c5de8d2875c85a1881cf6c",
+    "classification": "builder-package-change"
+  },
+  {
+    "path": "plugins/foreman-line/authority-registry/tests/parity.test.ts",
+    "before": "01903ea33cae8f848dd0188c3cbdd40af5b306d6245c09a4f61820f62ab5087f",
+    "after": "4e4602c0f14a2e2e46e74ebb0b20433ffed8dfcfb02ade5e09ee92f4585159fb",
+    "classification": "builder-package-change"
+  },
+  {
+    "path": "plugins/foreman-line/authority-registry/tests/semantic-invariants.test.ts",
+    "before": "e1fbdfd9572b45726e537e2f5375685865aea2bd31401e2aa290327384fed2aa",
+    "after": "44cbcde01648ed93323c10991bdd8079af5eb07d547d97bb88be8e2cefb86192",
+    "classification": "builder-package-change"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-amendment-R30.md",
+    "before": "35021b8a233abaa7d7e721084f3a2719f35369b41353926b5f6f88efd4ac6d80",
+    "after": "0b9095bfc76e154a0fac25f3d0909a6ac0cbc2c061cb9facdb2fca172e24730d",
+    "classification": "coordinator-committed-metadata"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/R30-step0-mapping-20260907.md",
+    "before": "cc809534bf8f12b36567c1f9c74761510dcce412649a48003b118e675bb2d06a",
+    "after": "224c6d7359dc850249dee9b5bba19406374d4df13bd6c2cb6fe8358715b90001",
+    "classification": "coordinator-committed-metadata"
+  }
+]

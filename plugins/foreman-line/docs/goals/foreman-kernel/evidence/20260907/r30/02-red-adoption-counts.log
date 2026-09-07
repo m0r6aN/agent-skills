@@ -1,0 +1,32 @@
+✖ R30 adopted sample has source-authored counts before accepting generated output (12.7359ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4285.868
+
+✖ failing tests:
+
+test at tests\semantic-invariants.test.ts:1:930
+✖ R30 adopted sample has source-authored counts before accepting generated output (12.7359ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1525 !== 1583
+  
+      at <anonymous> (D:\Repos\agent-skills-worktrees\fk-p0-r30-adoption-20260907\plugins\foreman-line\authority-registry\tests\semantic-invariants.test.ts:5119:10)
+      at TestContext.<anonymous> (D:\Repos\agent-skills-worktrees\fk-p0-r30-adoption-20260907\plugins\foreman-line\authority-registry\tests\semantic-invariants.test.ts:66:13)
+      at Test.runInAsyncScope (node:async_hooks:214:14)
+      at Test.run (node:internal/test_runner/test:1106:25)
+      at Test.start (node:internal/test_runner/test:1003:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:358:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1525,
+    expected: 1583,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+DIRECT_EXIT=1

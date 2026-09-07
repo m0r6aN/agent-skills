@@ -1,0 +1,18 @@
+[
+  {
+    "Path": "D:\\Repos\\agent-skills-worktrees\\fk-p0-r30-adoption-20260907\\plugins\\foreman-line\\authority-registry\\package-lock.json",
+    "Hash": "E7A986409956DC29A8EAF3D4D70BA3CF842643CD7999C79B6525F2368191B8EB"
+  },
+  {
+    "Path": "D:\\Repos\\agent-skills-worktrees\\fk-p0-r30-adoption-20260907\\plugins\\foreman-line\\authority-registry\\schemas\\authority-enforcement-registry.schema.json",
+    "Hash": "B679A496254DCAA88DA68A884ABFE0AC436F6481B2B7C59AA0E1DB133120D31C"
+  },
+  {
+    "Path": "D:\\Repos\\agent-skills-worktrees\\fk-p0-r30-adoption-20260907\\plugins\\foreman-line\\authority-registry\\authority-enforcement-registry.yaml",
+    "Hash": "47FF17A113B67B457D1050C5086095DEE2CF044AF6C5DE8D2875C85A1881CF6C"
+  },
+  {
+    "Path": "D:\\Repos\\agent-skills-worktrees\\fk-p0-r30-adoption-20260907\\plugins\\foreman-line\\authority-registry\\tests\\fixtures\\pass-minimal.yaml",
+    "Hash": "47FF17A113B67B457D1050C5086095DEE2CF044AF6C5DE8D2875C85A1881CF6C"
+  }
+]

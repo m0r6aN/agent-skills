@@ -1,0 +1,4 @@
+tests/semantic-invariants.test.ts(5228,13): error TS7022: 'current' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
+tests/semantic-invariants.test.ts(5351,27): error TS2339: Property 'assurance' does not exist on type '{ readonly outcome: "REQUIRE_HUMAN"; readonly authoritySubject: string; readonly reasonCode: "INVALID_QUERY_SCOPE" | "NO_APPLICABLE_AUTHORITY" | "REGISTRY_INVALID"; readonly controllingRuleIds: []; readonly consideredRuleIds: string[]; }'.
+tests/semantic-invariants.test.ts(5358,74): error TS2551: Property 'operation' does not exist on type 'OperationAuthority'. Did you mean 'operationId'?
+DIRECT_EXIT=1

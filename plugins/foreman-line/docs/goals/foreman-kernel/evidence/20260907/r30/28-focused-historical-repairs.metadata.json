@@ -1,0 +1,7 @@
+{
+  "startUtc": "2026-09-07T15:36:47.8362187Z",
+  "endUtc": "2026-09-07T15:36:52.3869017Z",
+  "elapsedSeconds": 4.5035656,
+  "directExit": 0,
+  "command": "npx tsx --test --test-reporter=tap --test-concurrency=1 --test-name-pattern=R4corroborating|R5basis|R22head tests/semantic-invariants.test.ts"
+}

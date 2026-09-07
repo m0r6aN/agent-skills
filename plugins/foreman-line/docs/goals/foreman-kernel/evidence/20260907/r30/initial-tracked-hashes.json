@@ -1,0 +1,4286 @@
+[
+  {
+    "path": ".claude-plugin/marketplace.json",
+    "sha256": "28b4c7efa43a38743da68d8a18197548e3353cb0b9383a87d302be20d130e040"
+  },
+  {
+    "path": ".claude-plugin/plugin.json",
+    "sha256": "907d747304388778979071baa733d34b884ed6ae1483274a44f02779c308e197"
+  },
+  {
+    "path": ".claude/commands/accomplish.md",
+    "sha256": "c3063d1bb5091dc20628dd4f64d6dbc5c49c3b68a9d5e200d072b77d6d970a74"
+  },
+  {
+    "path": ".claude/commands/build.md",
+    "sha256": "74cc85b5092f8e209bcda36441a4ce17a5cd9efd2a7d8ce76ba202816088e277"
+  },
+  {
+    "path": ".claude/commands/code-simplify.md",
+    "sha256": "71e9e8d38c5cbab5b7ecff324ed4ea0f1aaa4fd053ea6c2b717f2fbadfb65a91"
+  },
+  {
+    "path": ".claude/commands/plan.md",
+    "sha256": "4a14758a45963c4c43b239f405dcdf0cf70778fc0de8c90953fd86177f952832"
+  },
+  {
+    "path": ".claude/commands/review.md",
+    "sha256": "8ad7da75873b430b737328d1bdd95fc8d2de4a4866737087feb4d218abe4e88f"
+  },
+  {
+    "path": ".claude/commands/ship.md",
+    "sha256": "02d2d0fc10bfb58bb62dcfe22ed396cd2b9f55dced7d5cd92fce6d29f0da4ace"
+  },
+  {
+    "path": ".claude/commands/spec.md",
+    "sha256": "ac359a9ad030dee29e54bd0db64b96cadaab00daf8eb900043956930f23e17e5"
+  },
+  {
+    "path": ".claude/commands/test.md",
+    "sha256": "62f72b64cfac6db984db072fdc987a23e6049876191297da5f37367def986ff2"
+  },
+  {
+    "path": ".claude/commands/webperf.md",
+    "sha256": "74c0c1335f1397a5138a78eda4275e4e5deba16c4537f3a4b4971c3280d0ba27"
+  },
+  {
+    "path": ".gemini/commands/build.toml",
+    "sha256": "e25857cf424905bceea7f1250903eb801a8e79ed62ec67c2fd4d785969e47e62"
+  },
+  {
+    "path": ".gemini/commands/code-simplify.toml",
+    "sha256": "5216ae4dc14077d1ac7f9b1d201972955909302eb7c0b63682e057f86a49c745"
+  },
+  {
+    "path": ".gemini/commands/planning.toml",
+    "sha256": "0be6342ddff35204095b23c64a389323185624418c365390955c3c716eba4d85"
+  },
+  {
+    "path": ".gemini/commands/review.toml",
+    "sha256": "a7ae7259a9e080731e0dd91368da728b89919d31488192e067b751cf472d5a8d"
+  },
+  {
+    "path": ".gemini/commands/ship.toml",
+    "sha256": "84fff3c04f9823836ad9625c4076559f47b06e369e4a60295c86980b9362bf5f"
+  },
+  {
+    "path": ".gemini/commands/spec.toml",
+    "sha256": "e964ec1155154d9f2f83dbd4c7a6e030ec19aec1fdc5060176c7c255d4695577"
+  },
+  {
+    "path": ".gemini/commands/test.toml",
+    "sha256": "c54f004d67f9fd4f8a5c9ab753ef99d3dd3d12cdc304473ea61db8c8680fe84d"
+  },
+  {
+    "path": ".gemini/commands/webperf.toml",
+    "sha256": "5b08fc19bacdb0f9984e9225a2c7913cef51249c9472f51169efa5a83f53a60b"
+  },
+  {
+    "path": ".github/workflows/test-plugin-install.yml",
+    "sha256": "cedc54f017570ef59ad3baf2a53916e2ca4c0e4154c619116809021140a29239"
+  },
+  {
+    "path": ".gitignore",
+    "sha256": "c1bff4ebf4bdcbc4bfd42b130a0dc60f7609237287728352994150ebb2eb3415"
+  },
+  {
+    "path": ".opencode/skills",
+    "sha256": "9d36d6a253d6844eb107d26dc0dcd8252808449433b251eceb14cee3517a185a"
+  },
+  {
+    "path": ".serena/.gitignore",
+    "sha256": "441f89b8bba2252c9f7797ebc2fca741b760712e1c8261a7ad5c282175dd52f2"
+  },
+  {
+    "path": ".serena/project.yml",
+    "sha256": "9c4f85c396469e88c0fc56075c81929cc09e56df8e66e2db4c57385d61b090fa"
+  },
+  {
+    "path": "AGENTS.md",
+    "sha256": "8ee96ce58bbebaffe9ab8d539bcae78e46c7af1a1795534497e64d438ec5821e"
+  },
+  {
+    "path": "CLAUDE.md",
+    "sha256": "bb173aee413ba147141813aa14885381058d78483cfba6b89bae974bf4de4149"
+  },
+  {
+    "path": "CONTRIBUTING.md",
+    "sha256": "2be11f03da9217022741ec7063478ef18e515d78e963e295144da6e6681bc221"
+  },
+  {
+    "path": "LICENSE",
+    "sha256": "6f202f8bd568cd730dbb2b0d1f8e243bc74c2fa1f64dbce9b2c7ea08bd5c9fd7"
+  },
+  {
+    "path": "README.md",
+    "sha256": "7eb3a2562339ac1588b8fecfc1fb4ab9ed7f04f32aca3e2b7654c3075d63b091"
+  },
+  {
+    "path": "TODO.md",
+    "sha256": "13faff089bc1bb4128767f04d032659e9149d6e34bde19aec37833bd7e2c3278"
+  },
+  {
+    "path": "agents/code-reviewer.md",
+    "sha256": "74667b052cb6a75079791cee8f6e465a248e28fd82178505aaaec8db95c40ccf"
+  },
+  {
+    "path": "agents/security-auditor.md",
+    "sha256": "66a3f68f1c691b600ddb44e88afb138e239d0572df37be84e1f9a427c887dd0a"
+  },
+  {
+    "path": "agents/test-engineer.md",
+    "sha256": "c4acde91d6307d88515387344a129a2d0679134e587596c3517d73faffcd5aa6"
+  },
+  {
+    "path": "agents/web-performance-auditor.md",
+    "sha256": "0928b1cf8103262a364bce0c1fc689a918852e2275441f1b2e687adfa1e607e9"
+  },
+  {
+    "path": "chrome/chrome-native-host.bat",
+    "sha256": "c8da6fa089c14605e2f6a8a22b5fcbcd8f52be03a719bbc1393206bff7f8fe9a"
+  },
+  {
+    "path": "commands/build.toml",
+    "sha256": "e25857cf424905bceea7f1250903eb801a8e79ed62ec67c2fd4d785969e47e62"
+  },
+  {
+    "path": "commands/code-simplify.toml",
+    "sha256": "002ce23f27f33078f31e94e2d18c4a043f3c68df1bc833c41882180a0a1f135f"
+  },
+  {
+    "path": "commands/planning.toml",
+    "sha256": "0be6342ddff35204095b23c64a389323185624418c365390955c3c716eba4d85"
+  },
+  {
+    "path": "commands/review.toml",
+    "sha256": "a7ae7259a9e080731e0dd91368da728b89919d31488192e067b751cf472d5a8d"
+  },
+  {
+    "path": "commands/ship.toml",
+    "sha256": "a067c5c4ea484609ceb530b908c7fb707f184abae839826012ddca653517c1c5"
+  },
+  {
+    "path": "commands/spec.toml",
+    "sha256": "e964ec1155154d9f2f83dbd4c7a6e030ec19aec1fdc5060176c7c255d4695577"
+  },
+  {
+    "path": "commands/test.toml",
+    "sha256": "c54f004d67f9fd4f8a5c9ab753ef99d3dd3d12cdc304473ea61db8c8680fe84d"
+  },
+  {
+    "path": "commands/webperf.toml",
+    "sha256": "7b254b0678a324321cb94ead01163139c934a4db6658aaa40f5c4ffe9d78555d"
+  },
+  {
+    "path": "debug/ca212ab3-8107-415b-9921-ac706b4f3fb9.txt",
+    "sha256": "b3bb77732e6207fc11b5012832137f3b93d44df78338c7199d345d0a854a5b61"
+  },
+  {
+    "path": "debug/latest",
+    "sha256": "f461c616c42d7d19feb308e624fb7c5158fc8c76a3b7d0c98f48fdf23d1d0b04"
+  },
+  {
+    "path": "docs/agents.md",
+    "sha256": "e03481592a725146ed48ee22010086dcfebd1faf1373cb99e7f2ed4d2100275c"
+  },
+  {
+    "path": "docs/antigravity-setup.md",
+    "sha256": "889e7872386eeb49d2298e9b18f229efa57e2d3e1ffd62a92a5e84a3ceef77f6"
+  },
+  {
+    "path": "docs/copilot-setup.md",
+    "sha256": "87b8bd7b7884593981578de386195d0a546b2c4781c11fe74d15e3d66d0ec0db"
+  },
+  {
+    "path": "docs/cursor-setup.md",
+    "sha256": "949c4cd92f88bfaa1cd93ccab79e220b79ef62eb8316fbb6001ea659fbeb0475"
+  },
+  {
+    "path": "docs/gemini-cli-setup.md",
+    "sha256": "982d9cdc469fb26cbd4dd6a2d26d1894f2b93e2f821dd8646c188dacb8150803"
+  },
+  {
+    "path": "docs/getting-started.md",
+    "sha256": "c82c22eda195dbb03835a5798a5dfb5588773ec1fb3389730640af0876687399"
+  },
+  {
+    "path": "docs/kickstarters/tool_universe_sidecar.md",
+    "sha256": "d1a24392ee098f4c18bcec615533a766abecabc71fdefb48f4b6f22923ab14c3"
+  },
+  {
+    "path": "docs/opencode-setup.md",
+    "sha256": "4ea73ec1e4a46e5fc1a7984a6a15e64b6289522c4d8927147e34d4abdf0030f4"
+  },
+  {
+    "path": "docs/skill-anatomy.md",
+    "sha256": "8bd283c85313cca69ed82b64ebd62e78f3f32e99fa7214d6484b501c99d491b7"
+  },
+  {
+    "path": "docs/windsurf-setup.md",
+    "sha256": "1410af016060047d1a265365f8d98aadd00a58bcfa2a048edec06d61d337cd97"
+  },
+  {
+    "path": "hooks/SDD-CACHE.md",
+    "sha256": "e7c5b2b67d1947e41e4eb8c39d6406c861a5eb7a740f9dd0ca48ce5f05c85326"
+  },
+  {
+    "path": "hooks/SIMPLIFY-IGNORE.md",
+    "sha256": "386deb1bac8b6d8f49576044acfef1281334d1084686ec70151bf9013cebe424"
+  },
+  {
+    "path": "hooks/hooks.json",
+    "sha256": "870c97c9cb6f526b66cc1d684e261ad2f7b45066a41e56ca5cb3fa6784df8888"
+  },
+  {
+    "path": "hooks/sdd-cache-post.sh",
+    "sha256": "cf60a60fd475cceaf8cefdf0462393b1be0d7a4a5a4ea54508172f36ec0883e5"
+  },
+  {
+    "path": "hooks/sdd-cache-pre.sh",
+    "sha256": "853ad36f5e17e977060b92313e34b848ec1d321f2ac4aa657e9f3b9281cc0473"
+  },
+  {
+    "path": "hooks/session-start-test.sh",
+    "sha256": "db35bb3e69a98900dddb0c5b1c9ceb8e738cdeb17613ed50177fff7924d350d2"
+  },
+  {
+    "path": "hooks/session-start.sh",
+    "sha256": "9f3ab636c164463b26bc93af82626d42b184ce323a6b64c9a9aec873dd2c7cb7"
+  },
+  {
+    "path": "hooks/simplify-ignore-test.sh",
+    "sha256": "8c13e5f7a27e691bba901934e63e76587a51789cb54df3e98c23b92a54c8929f"
+  },
+  {
+    "path": "hooks/simplify-ignore.sh",
+    "sha256": "1256c677adbce33f3c361793d7dae2405fb02a7efc07b19cc8f42134def8a5cd"
+  },
+  {
+    "path": "plugin.json",
+    "sha256": "382627a40f4ec9d1cbea497e50a83412841e65b044f5cd9927181f784f03eea2"
+  },
+  {
+    "path": "plugins/audit-suite/audit-suite/.claude-plugin/plugin.json",
+    "sha256": "c3db83d5ae3fe6c7afee9976d6224e7436328190bd7f204ae430d41f8d49d3d7"
+  },
+  {
+    "path": "plugins/audit-suite/audit-suite/CHANGELOG.md",
+    "sha256": "150728b87f85d7c6104d37bfd8a7845c1166eb0c40f9caefc6fde0ab3c6bc332"
+  },
+  {
+    "path": "plugins/audit-suite/audit-suite/README.md",
+    "sha256": "2cec68b49966904fc26afa35b7f198daf0f35dbafa1b91a02863cd5c3edcbdcf"
+  },
+  {
+    "path": "plugins/audit-suite/audit-suite/skills/audit-conductor/SKILL.md",
+    "sha256": "285d5ba58be63c836e165158ff4ced0805fb45fdaf2a09d859bd375b3ef00836"
+  },
+  {
+    "path": "plugins/audit-suite/audit-suite/skills/audit-conductor/references/dispatch-spec.md",
+    "sha256": "a479d10330a7139b9be6a48f2eb827759f7764e715cb5706bb065556b6c4b20b"
+  },
+  {
+    "path": "plugins/audit-suite/audit-suite/skills/audit-conductor/references/industry-mandate-matrix.md",
+    "sha256": "7f2328750c14eadad2ab881c9f1953b8aed25d4743869bac5ebc9894db951c53"
+  },
+  {
+    "path": "plugins/audit-suite/audit-suite/skills/audit-conductor/references/module-registry.yaml",
+    "sha256": "a30179dc847a93bbf4d17d42bfc95a23b1730e80eb0c5d559f4867b402e0d3d9"
+  },
+  {
+    "path": "plugins/audit-suite/audit-suite/skills/audit-conductor/references/module-selection.md",
+    "sha256": "d87d5ddbb0713dfd4b0c8974b2157872a6e3fd07794798028e4ea8a392739a3f"
+  },
+  {
+    "path": "plugins/audit-suite/audit-suite/skills/audit-conductor/references/tool-transparency.md",
+    "sha256": "29674aaa4d2f7cd4589cf035d620cb8dff490dd56f4c0925f17bcd672c4ffd3f"
+  },
+  {
+    "path": "plugins/audit-suite/audit-suite/skills/compliance-audit/SKILL.md",
+    "sha256": "03f4905e6db5ad5c7a7d600489d16e5a838120caab6fe9fcde04fe014b013039"
+  },
+  {
+    "path": "plugins/audit-suite/audit-suite/skills/compliance-audit/modules/ai-governance.md",
+    "sha256": "3193a63e65399f993888c1228d6fe8e3352d05bc472fe55d38b1c4e22aacafd7"
+  },
+  {
+    "path": "plugins/audit-suite/audit-suite/skills/compliance-audit/modules/cloud-supply-chain.md",
+    "sha256": "903482f8500dc2756fd49c60b3ebc5d9c108b071e4c5bd05554b465930b23851"
+  },
+  {
+    "path": "plugins/audit-suite/audit-suite/skills/compliance-audit/modules/cmmc-800-171.md",
+    "sha256": "54fe97d311c47f8fa16178e1af95df9cfa45d96bcd1174b86f1b6a044843ef14"
+  },
+  {
+    "path": "plugins/audit-suite/audit-suite/skills/compliance-audit/modules/cobit-governance.md",
+    "sha256": "7aa228dba3efade58b95a1a31a80960e9080dfb92ad9e53e7a2d39ca48eea696"
+  },
+  {
+    "path": "plugins/audit-suite/audit-suite/skills/compliance-audit/modules/dora.md",
+    "sha256": "4eb62b5f68bbd50683179a9db1ed8ae2ffd1d3d16e58dd75fff3ed1d789029ae"
+  },
+  {
+    "path": "plugins/audit-suite/audit-suite/skills/compliance-audit/modules/fedramp.md",
+    "sha256": "12e0a9ec84b20259954a106b2538b57b48fd670a8d8a7cac863d3dd7e53d5598"
+  },
+  {
+    "path": "plugins/audit-suite/audit-suite/skills/compliance-audit/modules/hipaa-hitrust.md",
+    "sha256": "d1e357ecd38fc424533378f3e2a63beab5169d893c6843bc56cfdbc7614a54e9"
+  },
+  {
+    "path": "plugins/audit-suite/audit-suite/skills/compliance-audit/modules/iso-27001-family.md",
+    "sha256": "df2bf568326966f04643eecb71533ad0899a4d0f9d253b6835705bafdb8f6313"
+  },
+  {
+    "path": "plugins/audit-suite/audit-suite/skills/compliance-audit/modules/nis2.md",
+    "sha256": "bc2a55097e0eca9cdeb23c466869cf8c5659d671f3ce0db61adae03f56d9266f"
+  },
+  {
+    "path": "plugins/audit-suite/audit-suite/skills/compliance-audit/modules/nist-core.md",
+    "sha256": "e50d225752fdb91345fdba61d839187b80fe55c11a59056b2c7598b216c9eac8"
+  },
+  {
+    "path": "plugins/audit-suite/audit-suite/skills/compliance-audit/modules/pci-dss.md",
+    "sha256": "d76086e10273fae1c28670f6854b68e40aa2e94ee4b43c1f16d1c2702b7764fd"
+  },
+  {
+    "path": "plugins/audit-suite/audit-suite/skills/compliance-audit/modules/privacy.md",
+    "sha256": "a8285a80fada7e2799bdff6ccc75627a0491908b4b055976f395ff5d93875d63"
+  },
+  {
+    "path": "plugins/audit-suite/audit-suite/skills/compliance-audit/modules/soc2.md",
+    "sha256": "5b45a2a3b87c2acc6cce2f0c06ce53c667f26d0bc5781c11d29e488d08e10e29"
+  },
+  {
+    "path": "plugins/audit-suite/audit-suite/skills/compliance-audit/references/baseline-mapping.md",
+    "sha256": "f16b8924cc3e3b104f7adc84b9b9961b0fa1ea5b9a5afcdf6aaaf7552dfa5730"
+  },
+  {
+    "path": "plugins/audit-suite/audit-suite/skills/compliance-audit/references/cmmc-l2-800-171r2.md",
+    "sha256": "d753973b1297a939154ea1398f7d5b615e21ee4c27984699479a48ffea5008b3"
+  },
+  {
+    "path": "plugins/audit-suite/audit-suite/skills/jira-integration/SKILL.md",
+    "sha256": "9c4cbd73f929c8481fb73f6dc9c8205c70813c981cad68d9d4820376a788b75e"
+  },
+  {
+    "path": "plugins/audit-suite/audit-suite/skills/jira-integration/references/jira-mapping.md",
+    "sha256": "7abf738aaa822c7978b8928add539b0e1598cba214fb5ac53d289de45a37c247"
+  },
+  {
+    "path": "plugins/audit-suite/audit-suite/skills/remediation-plan/SKILL.md",
+    "sha256": "5ac72a7e39e70f66f60a2163e2202c07bc4c664d039543267884fc18c97da482"
+  },
+  {
+    "path": "plugins/audit-suite/audit-suite/skills/remediation-plan/references/optimization-model.md",
+    "sha256": "f86525be595c56c4da99fcb0311ceb39995913efe48c97219431fe61d49be67b"
+  },
+  {
+    "path": "plugins/audit-suite/audit-suite/skills/security-audit/SKILL.md",
+    "sha256": "cacd29bcd087d65d3679cf52d72d76ded6460b1a7cbcb60aefa6585431b966ef"
+  },
+  {
+    "path": "plugins/audit-suite/audit-suite/skills/security-audit/modules/ai-security.md",
+    "sha256": "1e1560636618a14cb1e0b68e5653e81066e761486ee5e65902361f3d318d012d"
+  },
+  {
+    "path": "plugins/audit-suite/audit-suite/skills/security-audit/modules/cis-controls.md",
+    "sha256": "c64cce3d0a62e8b81b931faa45e017bbbdd51befd76b7d0090714ef943ef5af7"
+  },
+  {
+    "path": "plugins/audit-suite/audit-suite/skills/security-audit/modules/incident-continuity.md",
+    "sha256": "f89dd8d456add8cf539a53ef374590ca32812564742770864d3a078a9cce96b5"
+  },
+  {
+    "path": "plugins/audit-suite/audit-suite/skills/security-audit/modules/owasp-asvs.md",
+    "sha256": "d25220e4592cfa1b9e32c8618916c35edafd2ad5f6bd57c93de774f8b06f0252"
+  },
+  {
+    "path": "plugins/audit-suite/audit-suite/skills/security-audit/modules/slsa-supply-chain.md",
+    "sha256": "cfba93594c06f18ff08e59314105ff10f535d92f732963080e580a1af4888cc1"
+  },
+  {
+    "path": "plugins/audit-suite/audit-suite/skills/security-audit/modules/zero-trust.md",
+    "sha256": "7434eed10ee3e9df52309983a7cdf04a0a1bfb88ceeacacbf50b7b9f38481fd7"
+  },
+  {
+    "path": "plugins/audit-suite/audit-suite/skills/security-audit/references/baseline-lenses.md",
+    "sha256": "84abc2249a5c017ad1060641c9e26651193765c99f2fc90b4d29384a40d607e1"
+  },
+  {
+    "path": "plugins/foreman-line/.claude-plugin/plugin.json",
+    "sha256": "6f7090f5f13971d09bbee0fc45e19946b7510a2d52ff2a4d5b3144f0eb4c916b"
+  },
+  {
+    "path": "plugins/foreman-line/.codex-plugin/plugin.json",
+    "sha256": "47c3b468a36d8ad531da95c74d333179497cf86110232b1469b2b18a407f65d3"
+  },
+  {
+    "path": "plugins/foreman-line/AGENTS.md",
+    "sha256": "4ce53b826835a856cf90a5ebb112cdb47bc690e54f13ea96ce14c9bcb9393bf8"
+  },
+  {
+    "path": "plugins/foreman-line/CHANGELOG.md",
+    "sha256": "94989179b57d690be45271628604e891f551b5d2b1b92b68e44ff882c0239fac"
+  },
+  {
+    "path": "plugins/foreman-line/README.md",
+    "sha256": "da1dc9e145883b236f5efb5b73173b99697dc2af0e40d9a2e03645c59fd70ded"
+  },
+  {
+    "path": "plugins/foreman-line/approval/README.md",
+    "sha256": "5369e558879ea9faeee5828329807dc544dfbcc21722a1c94d3458f670244849"
+  },
+  {
+    "path": "plugins/foreman-line/approval/biome.json",
+    "sha256": "2d4f7ce07833129bab12747a15b47f8dc57773881fab75d9dcd19389281e282f"
+  },
+  {
+    "path": "plugins/foreman-line/approval/package-lock.json",
+    "sha256": "fee0d8186235d8c5fb7a37f2a0f8e44bfb834868fd3e2bdf20d148a76cf1d14e"
+  },
+  {
+    "path": "plugins/foreman-line/approval/package.json",
+    "sha256": "d5c8ead144e0ed4eba96b8786fb310afa18e042cf66b1d0b77bb5bc38cad604f"
+  },
+  {
+    "path": "plugins/foreman-line/approval/src/approval-record.ts",
+    "sha256": "1d55e553b985296e995c8eb4f2c72c2f5d66f65aafed1062f3f7f50c96a197ba"
+  },
+  {
+    "path": "plugins/foreman-line/approval/src/approve-flow.ts",
+    "sha256": "3bbe83c305db60834fc8955ff2553d0f5acd70424402447a301fda628fbeed7e"
+  },
+  {
+    "path": "plugins/foreman-line/approval/src/canonical.ts",
+    "sha256": "b2d6edb944a2804e8e7c83db4f8224cd68f3b7dd0cd4a96fe5d49e13f043e34a"
+  },
+  {
+    "path": "plugins/foreman-line/approval/src/cli.ts",
+    "sha256": "0712201a8e9fea18b9db71f80037d2a8474b7d6c1cb933980509da4f95670c0f"
+  },
+  {
+    "path": "plugins/foreman-line/approval/src/confirm.ts",
+    "sha256": "cfcdb7e9869903a0626e632be9ca805c2ae4d29a04855b2dd45813a36b4a1fe9"
+  },
+  {
+    "path": "plugins/foreman-line/approval/src/correlation.ts",
+    "sha256": "c81714d39c3923bc38fec2a5948c8bfd03afaa7e9122ed8db25c295b6fc92329"
+  },
+  {
+    "path": "plugins/foreman-line/approval/src/hash.ts",
+    "sha256": "3b7048c7b0f938346deb81f51bfee0440558b6129f351357ecb5590f60517891"
+  },
+  {
+    "path": "plugins/foreman-line/approval/src/index.ts",
+    "sha256": "ee076e25c80119a31b498b662a55a2de2a8214a5bf57acb521261b976b7b8010"
+  },
+  {
+    "path": "plugins/foreman-line/approval/src/paths.ts",
+    "sha256": "f0dce4d635d92f1ee316a270e1ce352c8e5da6e185ba25a84293d648118033ca"
+  },
+  {
+    "path": "plugins/foreman-line/approval/src/receipt-writer.ts",
+    "sha256": "3d317299d0fa3b1e60a3125b4034b4693e1e29a377ac02f662a8a97fda0cfa64"
+  },
+  {
+    "path": "plugins/foreman-line/approval/src/receipt.ts",
+    "sha256": "42592fdd5eb46896779fb1582c4e0e32f802bfb370a25c7c6af97e4cabac3a30"
+  },
+  {
+    "path": "plugins/foreman-line/approval/src/rejection-record.ts",
+    "sha256": "a4aa3d1aaf9cd57e55fef104620e8dd0fead55a2d0d335a73ba0d21f33a3ac44"
+  },
+  {
+    "path": "plugins/foreman-line/approval/src/render.ts",
+    "sha256": "5feac772543b389511a5ee43e2e97ebca611f85df5f7c06c90092356b37c21fa"
+  },
+  {
+    "path": "plugins/foreman-line/approval/src/resolve-input.ts",
+    "sha256": "bb64e4fe1f7137e54340de87d583aacd1d64963d5813787bac8137e36a3c3156"
+  },
+  {
+    "path": "plugins/foreman-line/approval/src/slug-guard.ts",
+    "sha256": "4e0f68358c54e0ccdf2a4a45eb45064b12677c1be68e764c24bf6a60d978a17f"
+  },
+  {
+    "path": "plugins/foreman-line/approval/src/subject.ts",
+    "sha256": "e4db017b2ed293bcb94a6794e6249e68dba7cee9110d32f4b908f1f3a80caaf0"
+  },
+  {
+    "path": "plugins/foreman-line/approval/tests/approval-record.test.ts",
+    "sha256": "863611c0e8e4c997d12bbb0073b581ad4a13abeb87063f968aae692c7163e8eb"
+  },
+  {
+    "path": "plugins/foreman-line/approval/tests/approved-hash.test.ts",
+    "sha256": "28a18c77562aeb854953f0b9c21cd892ff28bcd9e1e541f9141776b7a0ef2890"
+  },
+  {
+    "path": "plugins/foreman-line/approval/tests/bare-specifier.test.ts",
+    "sha256": "bd98fa19afb86e5a90863fcf89ea385f333b80691b03ccbe118c54c27c445703"
+  },
+  {
+    "path": "plugins/foreman-line/approval/tests/canonical-parity.test.ts",
+    "sha256": "409a9771f07cbf3d157f713a2095ce21649b4a465a81ee9493a0957a78cd14b8"
+  },
+  {
+    "path": "plugins/foreman-line/approval/tests/cli-verbs.test.ts",
+    "sha256": "7f33576e446d8d7e4dbf6e38a68cc37839251fe6d8235b88918895afadcb4d79"
+  },
+  {
+    "path": "plugins/foreman-line/approval/tests/correlation.test.ts",
+    "sha256": "97941e4d4af843cafdb85d40f927d40c9ff0afe6a8722f1927d7ed220e18649b"
+  },
+  {
+    "path": "plugins/foreman-line/approval/tests/dependency-allowlist.test.ts",
+    "sha256": "9fbd7cff3ffd34f42f3f7306e4cf6130202c0c761265f1a26e88af4ac6e48929"
+  },
+  {
+    "path": "plugins/foreman-line/approval/tests/frozen-surface.test.ts",
+    "sha256": "c8160f13942b5ff1f0a64c26bf1f9a5e9613f55844de76fda7e0b93e19b5d358"
+  },
+  {
+    "path": "plugins/foreman-line/approval/tests/helpers.ts",
+    "sha256": "ff3ed6b7a1f1014e276de0e56a1311deddb1f33b73d2469121933936c572ac91"
+  },
+  {
+    "path": "plugins/foreman-line/approval/tests/human-gate-integrity.test.ts",
+    "sha256": "e348b29cc39189394caedfd9f4a638ca417c5fdb5ede5e8df23bd82284764de2"
+  },
+  {
+    "path": "plugins/foreman-line/approval/tests/no-status-flip.test.ts",
+    "sha256": "5466a6f9cce931b2d4f971291d9e2dc8beb155d4aeba9d8e20ffcf758cd014b3"
+  },
+  {
+    "path": "plugins/foreman-line/approval/tests/projection-invocation.test.ts",
+    "sha256": "3151235c56a477c332b45de2de95bbe345f17882135abfd08830321c935ce772"
+  },
+  {
+    "path": "plugins/foreman-line/approval/tests/receipt-mint.test.ts",
+    "sha256": "c3f91b01816b61fb63bf861405df5160a8ce629a412123ba341895401ea400db"
+  },
+  {
+    "path": "plugins/foreman-line/approval/tests/reject.test.ts",
+    "sha256": "6072f74d19b500290c4236f1445f74ee466083c301a65e2d524db67232057497"
+  },
+  {
+    "path": "plugins/foreman-line/approval/tests/slug-containment.test.ts",
+    "sha256": "8145a6d4218f06de1630ac2dd26a5bbceb7a19ef21b3124ad5d2f131e6ac923c"
+  },
+  {
+    "path": "plugins/foreman-line/approval/tests/write-ordering.test.ts",
+    "sha256": "238ac70b2e1d51cbdea531c82151e4fb205a40008712f6715de5d601144f00de"
+  },
+  {
+    "path": "plugins/foreman-line/approval/tsconfig.json",
+    "sha256": "b679a88f6f2c7506954141ad911b446acfabaab703135f866f66863ba2022d94"
+  },
+  {
+    "path": "plugins/foreman-line/authority-registry/README.md",
+    "sha256": "f37ef31e817f7bc391d924368fd2c9f73ee5251ca3383a4914220ff751acf159"
+  },
+  {
+    "path": "plugins/foreman-line/authority-registry/authority-enforcement-registry.yaml",
+    "sha256": "e1a5b9b0c2cb3c92b7591c5f4e24b233e8402fd91848256e83adbf2c2cc5dd13"
+  },
+  {
+    "path": "plugins/foreman-line/authority-registry/biome.json",
+    "sha256": "3e144fbbca0f50224a0f713e94f95fb3a0bf94b36a71f2ea80e8e3b1698b4e7b"
+  },
+  {
+    "path": "plugins/foreman-line/authority-registry/package-lock.json",
+    "sha256": "e7a986409956dc29a8eaf3d4d70ba3cf842643cd7999c79b6525f2368191b8eb"
+  },
+  {
+    "path": "plugins/foreman-line/authority-registry/package.json",
+    "sha256": "9b36380363171d4b3e72ee26122731511a2e9b0b0669ca5bba250ba96f38f20d"
+  },
+  {
+    "path": "plugins/foreman-line/authority-registry/schemas/authority-enforcement-registry.schema.json",
+    "sha256": "b679a496254dcaa88da68a884abfe0ac436f6481b2b7c59aa0e1db133120d31c"
+  },
+  {
+    "path": "plugins/foreman-line/authority-registry/src/cli.ts",
+    "sha256": "b59bfbacfb3ccba285d8c70599a36e7d934818fe988df709017683269d6de555"
+  },
+  {
+    "path": "plugins/foreman-line/authority-registry/src/generate.ts",
+    "sha256": "99e9756e7b2c5490f3c59e1d0700e93e91b0d92b0008e26a4f3cde7b2fc1082f"
+  },
+  {
+    "path": "plugins/foreman-line/authority-registry/src/index.ts",
+    "sha256": "9c85231fe030420356093899c5f22dc04c623e93702bb048dc0b74f1d3f9b03e"
+  },
+  {
+    "path": "plugins/foreman-line/authority-registry/src/registry.ts",
+    "sha256": "30d8a707a1b9ab19b4c4b49df790df5e76271ee8b656a9ab2324c88229d57ec8"
+  },
+  {
+    "path": "plugins/foreman-line/authority-registry/src/schemas.ts",
+    "sha256": "51fa129bbe67fb0f64c9954e4c82bba885a8cd3bfc7cf2d63d93422e4f228fbb"
+  },
+  {
+    "path": "plugins/foreman-line/authority-registry/src/types.ts",
+    "sha256": "20e293e457efc2919222139230aaa498ace7988c195fccd585c87f2f62c68db4"
+  },
+  {
+    "path": "plugins/foreman-line/authority-registry/src/validate.ts",
+    "sha256": "525f5670fb29102567d2c890ec74c7710adfd38777a71fc27d34d12320112899"
+  },
+  {
+    "path": "plugins/foreman-line/authority-registry/tests/bare-specifier.test.ts",
+    "sha256": "5a6c18e7cd80746e35f4e5bbb41325ab4867c42077467a6c211691410592b366"
+  },
+  {
+    "path": "plugins/foreman-line/authority-registry/tests/corpus-sweep.test.ts",
+    "sha256": "7f0069812b4ea41b5295c53091ab9dae56aafe91433c061673f400dd0fc0c506"
+  },
+  {
+    "path": "plugins/foreman-line/authority-registry/tests/dependency-allowlist.test.ts",
+    "sha256": "fd5e5b0414548b4e2b9194a5d0460aa04be49e786b37e0ba21e3836bf8e64f30"
+  },
+  {
+    "path": "plugins/foreman-line/authority-registry/tests/fixtures/pass-minimal.yaml",
+    "sha256": "e1a5b9b0c2cb3c92b7591c5f4e24b233e8402fd91848256e83adbf2c2cc5dd13"
+  },
+  {
+    "path": "plugins/foreman-line/authority-registry/tests/parity.test.ts",
+    "sha256": "01903ea33cae8f848dd0188c3cbdd40af5b306d6245c09a4f61820f62ab5087f"
+  },
+  {
+    "path": "plugins/foreman-line/authority-registry/tests/schema-validation.test.ts",
+    "sha256": "bd682356dbc0e1176599a1161e8d5eef87e55b35326b3c60a5eb84621e5b3289"
+  },
+  {
+    "path": "plugins/foreman-line/authority-registry/tests/semantic-invariants.test.ts",
+    "sha256": "e1fbdfd9572b45726e537e2f5375685865aea2bd31401e2aa290327384fed2aa"
+  },
+  {
+    "path": "plugins/foreman-line/authority-registry/tests/support/assert-ok.ts",
+    "sha256": "b3e4a12191842b284da06a393992e45f4ecf9b42f6e07960030fb387bc91d25b"
+  },
+  {
+    "path": "plugins/foreman-line/authority-registry/tsconfig.json",
+    "sha256": "38976aeb8a37adf4d858f92a6f2cf25134f291e077d86224bdc1627d20ff2025"
+  },
+  {
+    "path": "plugins/foreman-line/contracts/README.md",
+    "sha256": "e066d3563a848e7a16e3f5d9142aa81463b2b2eaba96d26f62ac1c48f4fa4b01"
+  },
+  {
+    "path": "plugins/foreman-line/contracts/biome.json",
+    "sha256": "2d4f7ce07833129bab12747a15b47f8dc57773881fab75d9dcd19389281e282f"
+  },
+  {
+    "path": "plugins/foreman-line/contracts/package-lock.json",
+    "sha256": "35e7d544b4a31e5e92311ae9912eae121efa73670f4c0a43cf7124270aaac70a"
+  },
+  {
+    "path": "plugins/foreman-line/contracts/package.json",
+    "sha256": "95e4632d798b89309a37ba210857084f43b90c5ecbc73fd8cb04c8c87636ba67"
+  },
+  {
+    "path": "plugins/foreman-line/contracts/schemas/build-result.schema.json",
+    "sha256": "fe0f4889023e8032e31d77b137a09214f6a79009e2a2dce44ed8f2abefea3ffe"
+  },
+  {
+    "path": "plugins/foreman-line/contracts/schemas/closure-record.schema.json",
+    "sha256": "573e2bfdeace0d7fec4c82aec4056c6837050157d0b3b4b3f48bdfdd74800913"
+  },
+  {
+    "path": "plugins/foreman-line/contracts/schemas/correlation-context.schema.json",
+    "sha256": "e661489dd58dcdd01f0e8b5fdecd127f32018c8e18f947154eb70f53dd9bf08d"
+  },
+  {
+    "path": "plugins/foreman-line/contracts/schemas/dispatch-order.schema.json",
+    "sha256": "1eb158f83a2a1bd4dc1d3e211cb76defce4e114270a33685ee58f2e0453d9d6b"
+  },
+  {
+    "path": "plugins/foreman-line/contracts/schemas/integration-result.schema.json",
+    "sha256": "1117c4f90dd5d8cd472a692ba8184bf34a43aec93d81bdfd59758534b687e398"
+  },
+  {
+    "path": "plugins/foreman-line/contracts/schemas/receipt-ref.schema.json",
+    "sha256": "1ebd7720ef32191d0cd473e27fe7512a7cd4d1754b400aac203fd462855bab41"
+  },
+  {
+    "path": "plugins/foreman-line/contracts/schemas/registration-result.schema.json",
+    "sha256": "8be6f680da15e896f5897bce3911c843da99fd47a11427893b721dd58b635857"
+  },
+  {
+    "path": "plugins/foreman-line/contracts/schemas/rework-signal.schema.json",
+    "sha256": "9fc69fcecc3f0ec60fe97a744fced81028cdffda6283e231daa8ebfbf5d521cf"
+  },
+  {
+    "path": "plugins/foreman-line/contracts/schemas/shaping-result.schema.json",
+    "sha256": "a4dc5471338bcacb0ec888d5586dfe68e643c0642a65169ec9d1d800a093bc0c"
+  },
+  {
+    "path": "plugins/foreman-line/contracts/schemas/stage-envelope.build-result.schema.json",
+    "sha256": "bc0f1408ff94fdd8dce71a7bc9413c432a5858fe2711db1c9ff384d55d80dd9c"
+  },
+  {
+    "path": "plugins/foreman-line/contracts/schemas/stage-envelope.closure-record.schema.json",
+    "sha256": "9e4c70def322788786921c0d142ba26dd6de33f43dd12be038992d4ee413aa8b"
+  },
+  {
+    "path": "plugins/foreman-line/contracts/schemas/stage-envelope.dispatch-order.schema.json",
+    "sha256": "058eb0425f759bee89d127d1ed196725a57e38b34a51c16ac3a2d73547c5281f"
+  },
+  {
+    "path": "plugins/foreman-line/contracts/schemas/stage-envelope.integration-result.schema.json",
+    "sha256": "b011eb2d22c61388ddcf93dbfb4b7ca2e95c629a65d0786a8647858d1f44bdf3"
+  },
+  {
+    "path": "plugins/foreman-line/contracts/schemas/stage-envelope.registration-result.schema.json",
+    "sha256": "07f580d1e776c0b8c7a4683a682fca115a1bcc2d603c0d922b9be05c0f50da79"
+  },
+  {
+    "path": "plugins/foreman-line/contracts/schemas/stage-envelope.shaping-result.schema.json",
+    "sha256": "583e65ab0a5166527f279ae282f3e7e10209fd1a9e87328aeca2aa0652ccdeb6"
+  },
+  {
+    "path": "plugins/foreman-line/contracts/schemas/stage-envelope.verification-verdict.schema.json",
+    "sha256": "e186bd12047b924429f05283f90d86473ff00efd6f893c8fa3a0e40b9e35d590"
+  },
+  {
+    "path": "plugins/foreman-line/contracts/schemas/verification-verdict.schema.json",
+    "sha256": "aa8e0168a6dbdd467b4984a221573f396b4460fafa9a23bbbde7064feb5f8c61"
+  },
+  {
+    "path": "plugins/foreman-line/contracts/src/correlation.ts",
+    "sha256": "eb5c9e91307f093503c74d39ae51b8193e33f9f8469dda04e031d70262d7386b"
+  },
+  {
+    "path": "plugins/foreman-line/contracts/src/envelope.ts",
+    "sha256": "8ea10133970bc6e86ead6755e8351578a9d6f0630be71a8f4f8dbfa15411d6d1"
+  },
+  {
+    "path": "plugins/foreman-line/contracts/src/generate.ts",
+    "sha256": "1e56d5adfd726b0583e7d95751cb94cb94a555a9a0518cb1c58b633e24c84398"
+  },
+  {
+    "path": "plugins/foreman-line/contracts/src/index.ts",
+    "sha256": "e369becb7390038a9be30779ad02894e9b87b75682cd7ef36ed7cc0ffc660bef"
+  },
+  {
+    "path": "plugins/foreman-line/contracts/src/registry.ts",
+    "sha256": "f538b038ae10c13cb3f640bf5939314194c736fa57fef8f3dbf2e8ff44bbbe8e"
+  },
+  {
+    "path": "plugins/foreman-line/contracts/src/stages/a-intake.ts",
+    "sha256": "b029ca981bb4392096a08e1fb48587d6de17970605241f3be18ef2e965b4ba04"
+  },
+  {
+    "path": "plugins/foreman-line/contracts/src/stages/b-registration.ts",
+    "sha256": "ede291410bd6cf6fe2d812b61a9652c500a7ce801b1ea4bf9184787d8fca15f3"
+  },
+  {
+    "path": "plugins/foreman-line/contracts/src/stages/c-dispatch.ts",
+    "sha256": "5571a4d8c77643c93222ef55911eba74d9f52634f8b209380bbebb3f67163096"
+  },
+  {
+    "path": "plugins/foreman-line/contracts/src/stages/d-verification.ts",
+    "sha256": "1ca866ea666d0e6bfed6d4ec9f0acf34b396d355f2db868289faa773570a8561"
+  },
+  {
+    "path": "plugins/foreman-line/contracts/src/stages/e-integration.ts",
+    "sha256": "bf39ff88d46c3d1c868c8d18d306c965d83f74617a1fde426bf0682f4d204a97"
+  },
+  {
+    "path": "plugins/foreman-line/contracts/src/stages/f-closure.ts",
+    "sha256": "93111ceb0749508eb4e8ccf995fc4e89f7c76c5b024de2f6f78256e635789fe8"
+  },
+  {
+    "path": "plugins/foreman-line/contracts/src/testing.ts",
+    "sha256": "0e3082e2e22bbc4fd27d5eb253aa2c1d6269c1f142a10729e37cc48f52a936d0"
+  },
+  {
+    "path": "plugins/foreman-line/contracts/tests/parity.test.ts",
+    "sha256": "80e2a94968776239ea902f13f8b66425ef3c4b4aee8c2728d373677966d662bd"
+  },
+  {
+    "path": "plugins/foreman-line/contracts/tests/propagation.test.ts",
+    "sha256": "a9e3f451c414fa0774389fb3de25fbd0339572849bd1f4b45e9fe8e6f3754385"
+  },
+  {
+    "path": "plugins/foreman-line/contracts/tests/rework.test.ts",
+    "sha256": "ebe20edccc3f4d8f111ea7888a7963279b18706178cd3917875bff401813ddc7"
+  },
+  {
+    "path": "plugins/foreman-line/contracts/tests/strictness.test.ts",
+    "sha256": "60a4f72aac109c8b65cb1f92c706437b374c7aa62f88eea98673b43ffacb8105"
+  },
+  {
+    "path": "plugins/foreman-line/contracts/tsconfig.json",
+    "sha256": "b679a88f6f2c7506954141ad911b446acfabaab703135f866f66863ba2022d94"
+  },
+  {
+    "path": "plugins/foreman-line/dispatch/README.md",
+    "sha256": "c3cfbcd782dac5b26c0ac8b1ae5a8fe004b0465fc710630e04a97d17c285e64c"
+  },
+  {
+    "path": "plugins/foreman-line/dispatch/biome.json",
+    "sha256": "2d4f7ce07833129bab12747a15b47f8dc57773881fab75d9dcd19389281e282f"
+  },
+  {
+    "path": "plugins/foreman-line/dispatch/package-lock.json",
+    "sha256": "644616d4a01f2995a5a25bfab7302f4beb59a703d456de4e4ef9ac66e3ebbfa6"
+  },
+  {
+    "path": "plugins/foreman-line/dispatch/package.json",
+    "sha256": "205eb371cb17f2e460603bbdde0c01b6214d78f3d241f7bf50675e9fc76eb52e"
+  },
+  {
+    "path": "plugins/foreman-line/dispatch/src/approval-cli/index.ts",
+    "sha256": "b301104d32837566333b13ad5b64ff8c6bb9a01fce7ff3e7b71e431e0307ef68"
+  },
+  {
+    "path": "plugins/foreman-line/dispatch/src/index.ts",
+    "sha256": "0b65515b6d3a1a0d5af52b1a491c74ec739dc52ea249a33c97637157c49dd01a"
+  },
+  {
+    "path": "plugins/foreman-line/dispatch/src/kompress-adapter/index.ts",
+    "sha256": "f1eacc33445588e05a5e6f1dd770f67291fc6aef369ec2e7f4dbe001d2d26bce"
+  },
+  {
+    "path": "plugins/foreman-line/dispatch/src/query/index.ts",
+    "sha256": "20dfa853bb16d50b49143367837330fe976aeda9c2cbbd5bf349c49674e28592"
+  },
+  {
+    "path": "plugins/foreman-line/dispatch/src/routing-eval/index.ts",
+    "sha256": "cec61d6add31adfce4804b813678d916fee4abdc388a0c71dd5bf115874b68ab"
+  },
+  {
+    "path": "plugins/foreman-line/dispatch/src/routing-eval/shadow.ts",
+    "sha256": "d0f18ba88f32b6560fb96fbe7fcd4ff52890163045d0fd1a15c10bf02fd93643"
+  },
+  {
+    "path": "plugins/foreman-line/dispatch/src/skill-resolver/index.ts",
+    "sha256": "24e2a19a2b008042942886aaa839f1f503c1946c21645b92836231a98897c8c4"
+  },
+  {
+    "path": "plugins/foreman-line/dispatch/tests/approval-cli.test.ts",
+    "sha256": "3f8e8f803787e2bec719b79a48e21843f04daf2ab6922c521f6dcef03d318fa9"
+  },
+  {
+    "path": "plugins/foreman-line/dispatch/tests/dependency-allowlist.test.ts",
+    "sha256": "65f44793ff5dba20145ebe866850819471ec580b8a2e9066015cbcd1c0a9e491"
+  },
+  {
+    "path": "plugins/foreman-line/dispatch/tests/kompress-adapter.test.ts",
+    "sha256": "58e60566054790d89a5ab0fb4e864ff89b4071a4f6725df3252c3c1fe05ef27d"
+  },
+  {
+    "path": "plugins/foreman-line/dispatch/tests/query.test.ts",
+    "sha256": "714f79a6bd8bc9fbd33fcf6938529fd2d15b5d9b5cd4e16fe9e0c856e710db0a"
+  },
+  {
+    "path": "plugins/foreman-line/dispatch/tests/routing-eval.test.ts",
+    "sha256": "3932dd0e5c29be8ea7e4de3b2eeb508a1e2da44f9847fcf4a4330eb5a4a0751e"
+  },
+  {
+    "path": "plugins/foreman-line/dispatch/tests/shadow-routing.test.ts",
+    "sha256": "54c04b75de74c3989257a46644d4387223c2c873e65fea93935ed825a69d42d8"
+  },
+  {
+    "path": "plugins/foreman-line/dispatch/tests/skill-resolver.test.ts",
+    "sha256": "8a651863ce3bd5fcba1f4e0e736c802ff37a605bc06b797684196d7133513c15"
+  },
+  {
+    "path": "plugins/foreman-line/dispatch/tests/w4-p0-correlation-lineage.test.ts",
+    "sha256": "a621caf5c834d8c36974a8eb3eb9534a16e5ec297a19f15c5bb8c86fc22a2907"
+  },
+  {
+    "path": "plugins/foreman-line/dispatch/tsconfig.json",
+    "sha256": "b679a88f6f2c7506954141ad911b446acfabaab703135f866f66863ba2022d94"
+  },
+  {
+    "path": "plugins/foreman-line/docs/COORDINATOR-PATTERN.md",
+    "sha256": "c734c9b2aef15f020a4a5eb261a1291740eddb2a154376386599074cbb8ca9bd"
+  },
+  {
+    "path": "plugins/foreman-line/docs/FOREMAN-LINE-PLAN.md",
+    "sha256": "0ca5a264e5371be59b2351e2f8e369a6e7f9fa2b4fd6d94ab54902d4ecd63a22"
+  },
+  {
+    "path": "plugins/foreman-line/docs/SPEC-CONVENTION.md",
+    "sha256": "7ac315005cde6ad6def848b83de1d1b644e321c5d9f6434bc925deb6daba8703"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/A1.8-coordinator-review-and-exact-ratification-text.md",
+    "sha256": "a4f777a955fcc85927e12e70a4cdd6add02f7694298bf819b81c2da3506f01f8"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/A2-PARKED-known-unowned-risk.md",
+    "sha256": "90045abf3a899962c877f25367712aa0328608f280a6806e45aec47e7823b77d"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/A2-adversarial-review-findings.md",
+    "sha256": "2c15824525649f5ffe22f216de678ca0909ff45e5d4729683bffe8aeeb4d1fbf"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/A2-r2-adversarial-review-findings.md",
+    "sha256": "62b60ad105faad2515704afe00873c69adbc370a46914f5c9d3b52bde1b6902a"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/A2-r3-adversarial-review-findings.md",
+    "sha256": "64804e1c43845ede81bc68c6de2f72aed52ef95de23c7fc15206d9514bb46918"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/ADR-001-runtime-infrastructure-posture.md",
+    "sha256": "7d7f1ac7f5f543052b475737879d8fa278cdb788b61df257b63e4481ed40b5e7"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-BLOCKER-volatile-canon-source.md",
+    "sha256": "6004c7567757f2d6db6642169af45715c0de94f5e2c6486958a66f1d3fb1924a"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-GATE-3-package.md",
+    "sha256": "563bb6cadcd5df2f4957a971de5ab975ebd84f85fd22a5ca82e60b18d2d6d91d"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-MERGE-READY-material.md",
+    "sha256": "3b97555283e8b9e589dc5597dedd37955dbca5dfa5de16d2cce742f896e7a72f"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-STOP-REPORT-for-developer.md",
+    "sha256": "50c8f349543f4bdd90f41153384970bbbd906ab9d5b0dabf3ae956ca101d6627"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-amendment-R14.md",
+    "sha256": "3548c28fe7e37beaae8482dc750974d54022e03b38b480c9349e3eb686321365"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-amendment-R15.md",
+    "sha256": "320af1ded1f06ceb1dde4a5faaffb970557364c201e7564f8101160366f07226"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-amendment-R16.md",
+    "sha256": "1d6d2a5a77022c4d132b3ebbb5f80412f117926b158b133f77f7b524143ee272"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-amendment-R19.md",
+    "sha256": "e4316468715a38a5a7e9a898b87c57113575f951c9227df9a15ecaf1de9686fd"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-amendment-R20.md",
+    "sha256": "eb868a8d9bed35c1d2691f798ab5e5ab0e2443560318f95dd21fbff7b0115772"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-amendment-R21.md",
+    "sha256": "dc6465e8523f4f99fa155474a8c28db3e61c98dca1aba6f375c70b6fa5da9381"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-amendment-R22.md",
+    "sha256": "729012269c9a49f12b60f0a831c2e15d4f4108a2d94ac0e290751baabde6b065"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-amendment-R23.md",
+    "sha256": "95916284476a51c9f6ae5a5310f34e719f57d057b60d8a0860c043650ff53db0"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-amendment-R30.md",
+    "sha256": "35021b8a233abaa7d7e721084f3a2719f35369b41353926b5f6f88efd4ac6d80"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-coordinator-closure-check.md",
+    "sha256": "9bf09bd4e0bd67ebb59a1485347b6198261dd2beda3f8c3bcdf968d6b850be5a"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-review-A-findings.md",
+    "sha256": "9e4244af894082c7bda8db44d88f62a0edbeb5f22c57fbec52a15f67a5fca0ca"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-rework1-step0-rulings.md",
+    "sha256": "e2abf0777aaf1c8f383b58b4b8393830f9e82042134b4b3f284508aeeb0c21e7"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-round6-STOP-REPORT.md",
+    "sha256": "d1ad8ea4e0eb747358c185ba5f252cd263a8891d4fb5d8d7e92bbbd787dedd92"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-round6-baseline-closure-20260907.md",
+    "sha256": "7a63822935dc31ed7cca99a120d68f19aeaffb2f864b4e01009a6b17296cbee9"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-round6-execution-ruling-20260907.md",
+    "sha256": "2ba1aa3e5aef4eccff45fec8867dd6e6cebd8eb6ecd79025b672d5e2b026cbab"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-round6-recovery-record.md",
+    "sha256": "34e7fb8c23d4b0bbf5d8216b164f1ffeff40732f8573dd478b9511f6c6145717"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-round6-recovery-step0-ruling.md",
+    "sha256": "1e6d4e47536c1645022e5a602192c89e156c60a41e828d24e9c0855e8783c7bb"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-triage-round1.md",
+    "sha256": "7ed07c36c81cf204dbab848e978653188d5be1be7b45d24362e8d38a99de9c3c"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/FOREMAN-KERNEL-DEVELOPMENT-CHARTER.md",
+    "sha256": "e7c211c55fd7534d4d36fed624f51e019662326be9688a8e9ea665b64d4e1346"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/GOAL-FINDING-inherited-canon-provenance.md",
+    "sha256": "13b0bb5d1dc391c2ab801dc9b418784a1808d5752d931331574d904108eaa05c"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/R30-implementation-ruling-20260907.md",
+    "sha256": "7b5384a64b6650940b1e7dc0196dd506cb42a5b6d9ba35bf1eba19bfb44c4771"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/R30-plan-and-source-review-20260907.md",
+    "sha256": "bcc4ea36405dfd7bd4400e4f7ee6c9f8eeaf45bb8ddd6d474534ac45574bba01"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/R30-source-expectations-20260907.md",
+    "sha256": "04d2b91a36427b1d6c27ebd36a2eebc7ca736af81567ec0e85f92a9b448ba0c4"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/R30-source-integration.json",
+    "sha256": "9d0730110dfdbfe70e62013a814950f96673e953c6f778e4f23449731cb5a8f2"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/R30-step0-mapping-20260907.md",
+    "sha256": "cc809534bf8f12b36567c1f9c74761510dcce412649a48003b118e675bb2d06a"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/adoption-review-20260907.md",
+    "sha256": "299e122a56dfcce9c3d9e30bbf44e75f075480026f5c47d869f88c1b3962cd1b"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/amendment-A1.8-ratification-ledger.md",
+    "sha256": "9b74439c9a8cee9e82987c6542e61e0c9113f7009a1d96a3786735834bcbc8a5"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/amendment-A4-infrastructure-adoption-20260907.md",
+    "sha256": "1fea81f4f9d33d0fc6b10e737dd83101f776e7c097cb53e338435c43a879bb18"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/authorization-20260907-unattended.md",
+    "sha256": "673eb766f5acfe165025f6d044151b61cb6eb636b1118a70d6c0eb55d6a0851a"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/charter.md",
+    "sha256": "c289fbcc384ca825181662b091572c2f085e23c984ad2be6bec5fff49d7350d3"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/01-node.exit.txt",
+    "sha256": "cb4b37eba18aed4b8f8180372632e8ed4c84f4f4d834b87b8229ff06c54e236b"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/01-node.metadata.json",
+    "sha256": "a0321aa187944c1d2df94d4596abcbbb96ad35c752152a94835b0ec67ae5338c"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/01-node.running.json",
+    "sha256": "9915e99e13f85818da2e76e02732dfc9d4117fbfb74198bce520b220678b9689"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/01-node.stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/01-node.stdout.log",
+    "sha256": "b99372377fd9e05e4eee36b57572623996c0db38e8fe8000c6c016c6ea0290c0"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/02-install.exit.txt",
+    "sha256": "80b6b0264453acdc43757d54cefa484cd3f45cad509b485a52bc07e852858fe1"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/02-install.metadata.json",
+    "sha256": "0051d054f1dac2a64880c245186902f0452f75369cd89d6633c38b3bfae9399f"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/02-install.running.json",
+    "sha256": "669d94942e3ebd1ca1c9b894f723c915b09cfb196adf217c60775877fb7b6e4b"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/02-install.stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/02-install.stdout.log",
+    "sha256": "35d881d79be698206df1013d4b3f80a691b231b21bfa5ba51b420ec83765a974"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/03-typecheck.exit.txt",
+    "sha256": "7efaab91ef070ba9664623a21246e828dc294d6df340b477e9a9b7056f180b88"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/03-typecheck.metadata.json",
+    "sha256": "b9db4f95dc2022172b8bcf9a8efa4b91131852d17fa7ae5798fb68a12722fdc9"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/03-typecheck.running.json",
+    "sha256": "54459e81343891154425b7945157e407b1acd0494a655a68ef93e54b15382dae"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/03-typecheck.stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/03-typecheck.stdout.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/04-test.added-test-names.txt",
+    "sha256": "544137369f717429ec1aeb1a23a4a609fce9787925b973dd86f618d09947966d"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/04-test.corpus-progress.log",
+    "sha256": "c8789b9aa2f2d36b1fba7c939818f06dbd250a0a19820abd9e60682b39149f3e"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/04-test.exit.txt",
+    "sha256": "7e36fad846edd789eb2f82c443775c9febdb2510334390970d7702bf9ae8645a"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/04-test.metadata.json",
+    "sha256": "012287312ee1618c32bdbc2c11276bd585cf764558fc1aa152c024ce67d7105a"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/04-test.running.json",
+    "sha256": "b7c4131a760b638f259b777508635cffde0aa8b4c82b2e9dc70d7fc11f0b2bb9"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/04-test.semantic-progress.log",
+    "sha256": "af0a50955394ba1735151cf41a92b5a85bec8cab23aa25e4879af60dec8bf68e"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/04-test.stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/04-test.stdout.log",
+    "sha256": "27d86b0f99f217818663e12533d62aac201ca6dd09fa9073c80eb28dbcb70316"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/04-test.totals.json",
+    "sha256": "2bac61ff07040f8ddb75c0eadd74b73d480d1c59a3d300ec2ec2d8d9927ddde6"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/05-biome.exit.txt",
+    "sha256": "a76b3321a181dcb6efaa99c246c4e7d1c7b851e80e33fd80de2c526b41ca4dde"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/05-biome.metadata.json",
+    "sha256": "bb95aeb162eb97e3becdcb5275d7e436a29af99be274ac446262e481579f6ee5"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/05-biome.running.json",
+    "sha256": "72ea579a07aad0d5fe00c9dd39a64dcb17cb807f7482a7dea8b6d5c3a4919c6a"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/05-biome.stderr.log",
+    "sha256": "ef44c102c594b376a538f066ba167de589c3ff7bdfbfa76c930b7a411ebd8a17"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/05-biome.stdout.log",
+    "sha256": "c7043c7646d072fc398eaf7a02e2204f4d79e08b0067569dbd777479c2fbf86c"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/06-validate.exit.txt",
+    "sha256": "b5d1af0061fff31694b686658af2d9b2498042439b6b8ef0a928e2273c8be91b"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/06-validate.metadata.json",
+    "sha256": "cc0fcb0f9435ddba4e327b9bcfbce954aa0d0fafa26aa3129ce53cdfa551bf1f"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/06-validate.running.json",
+    "sha256": "62a444860c308a0156a2ec073fbb94e1806e72cc07b090aee0ac801577d228b0"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/06-validate.stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/06-validate.stdout.log",
+    "sha256": "b65ff4bbc746cd0e56ce44c70916c43d4a79ec4dde13046b3e48662bd0f23008"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/07-sweep.exit.txt",
+    "sha256": "229a313ce9c3f785eb755abcd4c06b41f5591b5c083fd83674d93931b867a880"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/07-sweep.metadata.json",
+    "sha256": "7231376253c6d22143379e7361d51767e48aa78adad0e9248ca8e9314b4a25c8"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/07-sweep.running.json",
+    "sha256": "d0db447aa84e17b08ff57c6c7b58ded186fc215372de2b541bd04afcc14afe57"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/07-sweep.stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/07-sweep.stdout.log",
+    "sha256": "b65ff4bbc746cd0e56ce44c70916c43d4a79ec4dde13046b3e48662bd0f23008"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/08-generate.after-sha256.csv",
+    "sha256": "6ff928d3fc03b7bb3ed8d7cb78f136e876a14c5c171135641fbadbe1ed468e5e"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/08-generate.before-sha256.csv",
+    "sha256": "6ff928d3fc03b7bb3ed8d7cb78f136e876a14c5c171135641fbadbe1ed468e5e"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/08-generate.exit.txt",
+    "sha256": "3e3a670d775d3e8c57b155b2e4aa29f813daade20295809e178b006022e0acfc"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/08-generate.metadata.json",
+    "sha256": "3857bce4cbd4be987494718467ac02bb6159b1047568c6448b430c3ad49f4d04"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/08-generate.running.json",
+    "sha256": "1ceea8d015195249365dfdbb82d3bb7386a7a6439fe68f6b3679a756e916582b"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/08-generate.stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/08-generate.stdout.log",
+    "sha256": "c50db9951c7202b43f3824702e827e7f0b3fdf7d8d7e4f6058480fd42b2477e1"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/09-status.exit.txt",
+    "sha256": "0c7013537ab5e1a4563ff0360953208adc03f90244c16eb071719fb2e9b59cab"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/09-status.metadata.json",
+    "sha256": "9b8809c37173ed9a1146671b78799faf40e9054e3c92f5ca620702215ded64c4"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/09-status.running.json",
+    "sha256": "5632532e5b8f38059df98a961e79df656341f0b2b228dd490a4eb9dc6f96c179"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/09-status.stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/09-status.stdout.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/10-scope.exit.txt",
+    "sha256": "4c01b1ebbd9e37c628915d7e8d59c77feb1b0eb165a4a9cd4a5cb288a8237371"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/10-scope.metadata.json",
+    "sha256": "354d261d2194969ab6cb9542152207e268355849d21d2dc7b82bd22c0153fb35"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/10-scope.provenance.csv",
+    "sha256": "b16868a08572db4a7d989bb24b8ad7802c2a881f50453b6de150ac06b81a60e3"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/10-scope.running.json",
+    "sha256": "911f5a1fe4e6f2bef2353c6864275fcb0aeb257c50c482ac775d01b4d4b74606"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/10-scope.stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/10-scope.stdout.log",
+    "sha256": "a5ffe52fc10966f6393a9be825842dc278b65f0eb2fe5fc2f52d005d1d819165"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/BUILDER-HANDOFF.md",
+    "sha256": "63a76712d5f52d52b41960526cd0515941e24b5c0fd69ebb67bcf356a07e7def"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/baseline-metadata.json",
+    "sha256": "16e33f152ebfdb0d0b97b44302caf99576423e1c459810f74b1af89c7fdb4873"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/baseline-tracked-sha256.csv",
+    "sha256": "203c93e26bb37cfd0322f3d47ea9b2f672a6ab63ca05844a7f298e1c44ab7e5a"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/evidence-sha256.csv",
+    "sha256": "4083cfd90c8aeea1c4cc84196580cbe576543ce94301d6234a73330cd9c48558"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/final-integrity.json",
+    "sha256": "bac1c5b6aed5d81c26544b8ada504bfbd4fef58bdb9dcaa2620b805264418e3a"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/final-tracked-sha256.csv",
+    "sha256": "203c93e26bb37cfd0322f3d47ea9b2f672a6ab63ca05844a7f298e1c44ab7e5a"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/fk-p0-progress-corpus-sweep-lnwaCS.log",
+    "sha256": "c8789b9aa2f2d36b1fba7c939818f06dbd250a0a19820abd9e60682b39149f3e"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/fk-p0-progress-semantic-invariants-zK3ZEb.log",
+    "sha256": "6cb42ccc82bb399437814e91af6bd8c94f1d419042a2bbe37f5b277bf2e9196e"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/run-command.ps1",
+    "sha256": "23b4b0baeff239d4684e6bb0ff16b52366ab977ad777549f6f2d2e3f3ef123d5"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/loop-directive.md",
+    "sha256": "8b2cd6818833d3f27ecd346f05d3f84bdfc669f16ce81265a1bf6667664ce4cb"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/plan-review-findings.md",
+    "sha256": "d2e5bc3268450c77456ad14baa6df8dadb9cd132123ddc52a782886e42a73057"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/proposed-amendment-A1-decision-path-latency-budget.md",
+    "sha256": "a7d6301225ce79942d7a7931c41e46d1403514e819e481f830e7b144c1e0ddfc"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/proposed-amendment-A2-ci-backstop-host-independence.md",
+    "sha256": "a0dee210e0084ba72d723fcdc9da4d1297d6097b91c2a225b8b1ac60e7b3c813"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/proposed-amendment-A2-r2-backstop-independence.md",
+    "sha256": "3e676047a4515356d4b15a56d40407a642fe03c6f948fe9ca39598d3240b2475"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/proposed-amendment-A2-r3-backstop-independence.md",
+    "sha256": "2c391f14ab16a0d5a246e4b14cd20d07353bd478f1a40af86acb6f8ee04662b2"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/proposed-amendment-A2-r4-backstop-independence.md",
+    "sha256": "4a23454e558420d063786b362947d3e4350b5703cd022bd4f12570d99cba5056"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/keon-full-platform-gtm-readiness/charter.md",
+    "sha256": "bb9938dbd23f9f719d407c0a577fb365bf3282f09b2618f210f1ce83d9f024c1"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/keon-full-platform-gtm-readiness/discovery.md",
+    "sha256": "7fdd0de2ea32e47b5a00289f66ee7644d37b77433e693d7979c333b3fc5a2338"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/keon-full-platform-gtm-readiness/goal-charter-amendment-r1.md",
+    "sha256": "468065c7bb441677c76c361a10eda6479a49fc1e339bfb0957d1fb0f079e51ee"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/keon-full-platform-gtm-readiness/plan-review-findings.md",
+    "sha256": "80c908fc5905c6f63dbd7edc94ec5f92c5b33aa2ddd8e0aa75ecd59d725011e5"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/keon-proof-led-portfolio-priority/charter.md",
+    "sha256": "7c27e0fe35b2390b2e6e91f6151ec745da7d35b07f6dc1648baa70f30f0d3a02"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/keon-proof-led-portfolio-priority/discovery.md",
+    "sha256": "67eae384d3ad1f4e1bdcc2c417fe305c733805299757a3335c3c827ddc913e35"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/keon-proof-led-portfolio-priority/kpp-001-a-amendment-draft.md",
+    "sha256": "60f4536de2b01edbf089c385aef1668466fb123e3f8303ca2f3ffed63d5e742a"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/keon-proof-led-portfolio-priority/loop-directive.md",
+    "sha256": "8dc5d8e8c88eddb80144dc441d659c50d8e8a7622630ec8c2f28bdae1add5029"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/keon-proof-led-portfolio-priority/plan-review-findings.md",
+    "sha256": "dff5ecae2a1aaf57ff6146849657afa18a0c96a06425877fbd764fa3e7a1c383"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/keon-proof-led-portfolio-priority/website-gtm-closeout-amendment.md",
+    "sha256": "12ef75de3f9619e6a411f0fdf55d3e1f09d119cdd2c9ac165eed4988032f8d0d"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/keon-proof-led-portfolio-priority/website-gtm-plan-review-findings.md",
+    "sha256": "907e7819695235b8056cffae37d767fed18d6ce9e2fd65cd54e19b6cafb205c4"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/keon-proof-led-portfolio-priority/wgt-p0a-findings.md",
+    "sha256": "dedaa522e4c78ac500bc18dd18e2fdf8c1ec37486101e8e1cea21df50350be9d"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/keon-proof-led-portfolio-priority/wgt-p0boot-review-a-findings.md",
+    "sha256": "a5ea764299f78fbde664b37dd767aa7c60684f4a9273ca1dad427c0d9ff6925d"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/keon-proof-led-portfolio-priority/wgt-p0boot-review-b-findings.md",
+    "sha256": "a85b72cfa4642a4b31b68af87ccab0e8abb278c66da80650a49a7b2d8545d50f"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/permission-profile-registry/charter.md",
+    "sha256": "ccf4092c4f4e1794e20d6063f675e550fc61cb5b0e703f6bda04b68cf1a6fd35"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/permission-profile-registry/loop-directive.md",
+    "sha256": "3024c09ad805e5008728c3593291a71283e8a90929191735d33be8a2a6096e71"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/permission-profile-registry/p1-adversarial-review-findings.md",
+    "sha256": "eef0a5bc4c92160800d5131bc964c2904981a517c99ba3351d853a75199d41cd"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/permission-profile-registry/p2-adversarial-review-A-findings.md",
+    "sha256": "e496a6b089308b26256f172e9f8787c6009e7ebc97d0bed9b2401754de06147f"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/permission-profile-registry/p2-adversarial-review-B-findings.md",
+    "sha256": "83ea90dea35c83c5d0fcf839d9d6b1b5632e2de60dacbe35d77e4dfcdf8aff04"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/permission-profile-registry/p3-adversarial-review-A-findings.md",
+    "sha256": "533689710cc27572eabfe66cfd30f5858d5f437272631e0c9109c529710c6e7b"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/permission-profile-registry/p3-adversarial-review-B-findings.md",
+    "sha256": "ceb67e7b244006fe3e498002011a16716d488465bfb62833d57f57f819c77db1"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/permission-profile-registry/p4-adversarial-review-findings.md",
+    "sha256": "724b09607fb3ed9051967694f9b79736a6ca5ad1f6017a5fa215871e3e4c7dd3"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/permission-profile-registry/plan-review-findings.md",
+    "sha256": "d4c0bd137c0986798ab9c7d893737049a10714778245754c858c96d71c8bfd22"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/plugin-packaging-and-scaffolder/charter.md",
+    "sha256": "81d854189c2be9c817394862d1664d7f1d33bbb165a037332eff1ec2a2c89b6f"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/plugin-packaging-and-scaffolder/plan-review-findings.md",
+    "sha256": "413c4f9020e70de812860acf41af8536e1e9ad70c14d6efd635a34ac29d9ecb1"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/w1-intake-registration/charter.md",
+    "sha256": "9015c3572fc40b347791af3825605304d3d1be4c6c3d783a82b5a73112e7b308"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/w1-intake-registration/loop-directive.md",
+    "sha256": "977b81f76b6140edaea9eb9961c816fd4f6f74bc22734c96a562db7ef6f186ae"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/w1-intake-registration/p1-adversarial-review-findings.md",
+    "sha256": "d576f9503667b4a44c7983ecfb9fd761fd4253c220fe3db7f10562790ffe0b7d"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/w1-intake-registration/p2-adversarial-review-findings.md",
+    "sha256": "9439cda2848bb6554a8421268da9cd08686b16da123aeb614d91d10a5241646c"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/w1-intake-registration/p3-adversarial-review-findings.md",
+    "sha256": "6bfa278532515586fee9a129d551bb1e2a7343941709d23227d3066695c87501"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/w1-intake-registration/p4-adversarial-review-findings.md",
+    "sha256": "229e213865f29adaf77f5d68194c8c35c7dc1c30bbc8a72efcb64b2a48df7c04"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/w1-intake-registration/plan-review-findings.md",
+    "sha256": "16b109720fff6f8f1d84192232b4365905cce886cf856b4125af0ae924499144"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/w2-dispatch/charter.md",
+    "sha256": "04987805092661a98c7bebcd0f083da38b80ef64fe8e7a36b3b97b26f5ec4e57"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/w2-dispatch/loop-directive.md",
+    "sha256": "da916c081ee77201b7e91a6751f0dbc5f1c70a1a84acdf2c5cbbf7ffae304452"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/w2-dispatch/plan-review-findings.md",
+    "sha256": "58096db17c1b18c84eb191bff39d4db1381b17dec2178b04f5989a812dbcab3e"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/w3-verification/charter.md",
+    "sha256": "2cdb14ef67783227778426c9a9939411958dd3c778fc24838dca90a6b155d490"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/w3-verification/loop-directive.md",
+    "sha256": "32671f9e28743503d507e9fac7089caa6712656c0e6a184654edf6705f49aea0"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/w3-verification/plan-review-findings.md",
+    "sha256": "f69159fe0a46d8a06148b96aa3e1ce8c2b784ec68edbf94f6766e83af0a6d8f8"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/w4-ci-integration/charter.md",
+    "sha256": "e5746acec04ca67dcc5184fff5663fc97f0a5db942e0154a5bb21789e97a2c2d"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/w4-ci-integration/loop-directive.md",
+    "sha256": "906236a239fbd09de2a648fdf9622f6199223559cf7628dad55a2a1a2ec4ce38"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/w4-ci-integration/plan-review-findings.md",
+    "sha256": "628cc4d3c5b0e385a3c6d2598414748e2c4c304c0167d680401e2eb792cac55c"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/w4-closeout/charter.md",
+    "sha256": "2d6dca8ca84a1d5978bead35c311e8756e68c7169f7779f5cec9fb1f15f1824e"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/w4-closeout/loop-directive.md",
+    "sha256": "33584160fa4bf71db15eeb05647c3f6c0c4fa56c4ff1ec41c7010bb000ab624d"
+  },
+  {
+    "path": "plugins/foreman-line/docs/goals/w4-closeout/plan-review-findings.md",
+    "sha256": "17f0a21978b77347016cb613f4ddeaded022bade2a4f74e8a10bfc771a35850d"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md",
+    "sha256": "b5cce5029c4619058795414b624a418fb8c1c28f8534dab9d58c8fef61994c2f"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/adversarial-review-DOCS-P1.md",
+    "sha256": "3f9456253215cf703456b5ca49396963cdc9c3e18e64ee114e24130cebd0df40"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/adversarial-review-SCAF-P1.md",
+    "sha256": "eacfeac022c56f379aef90e15b97546e294fa5f22a6064f9b0efd7e747698e87"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/adversarial-review-W0-P3.md",
+    "sha256": "86e44964e875b792646e735854f149344db2434c91eeed8ba69e0feaeae7a715"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/adversarial-review-W0-P4.md",
+    "sha256": "602fb6a5720d628ee0baf93586be2d4c6d37cf17ba30c39d28ba611bebcbf933"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/adverserial_review.md",
+    "sha256": "9a13ac7b54bb26884e37bf01a6d3e10288325c1d0488b51612ef624d34cd0ea4"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/foreman-kernel-build-FK-P0-rework1.md",
+    "sha256": "1ab99e3c3e78c64b50b6afbfb96139afc38b2cf82b6864371049d7b2324c2f06"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/foreman-kernel-build-FK-P0-rework2.md",
+    "sha256": "ceb812db2292e98b721e4a6ee081208354dde8c312f936654979e37abb3063d5"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/foreman-kernel-build-FK-P0-rework3.md",
+    "sha256": "948eba6d8f843a897cc6727dd0bc75fdcd19ac0da11e68882b31db811c3cc977"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/foreman-kernel-build-FK-P0-rework6-recovery.md",
+    "sha256": "ce38f7dcac7ed416d11e0b75694f4d94a727196395b37e351740dcd016d96d6e"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/foreman-kernel-build-FK-P0-rework6.md",
+    "sha256": "5fa22e0a49ee9e241e916ae038d8371f67525598965f4861ed6a66ab371f4ba6"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/foreman-kernel-review-A2-r2.md",
+    "sha256": "f6ebac901f3fb81865ea9ffbeedb887dec33a6748a37505c05ee55d4fd85f77c"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/foreman-kernel-review-A2-r3.md",
+    "sha256": "303feea40d1813eb54765b4eb04e38d452940b90cc52b214d2be271b9b6e78cb"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/foreman-kernel-review-A2.md",
+    "sha256": "4e22b151e124f4dfc5d822e377d64dae0c3aaec730df953aae1daf89b8875b06"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/foreman-kernel-review-FK-P0-postrework.md",
+    "sha256": "1509c4219033f1f8708281e30a38a081bcbf14280039401d385bc82b505d23d8"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/foreman-kernel-review-FK-P0.md",
+    "sha256": "24ce072f261859fd8de11c6dc0b5fb8a1404b33158d16e645b48e1d8a09432a3"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/foreman-line-build-CLOSE-P1.md",
+    "sha256": "365fe5ae29c4c0b2fd74b82193d743c924c6682fbfedfdd9999440a1806149cb"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/foreman-line-build-CLOSE-P2.md",
+    "sha256": "f69e98de038b47611803665530dd7b696a9b0f12c78b47fb5e79cb718c768ae4"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/foreman-line-build-CLOSE-P3.md",
+    "sha256": "2cad4426328c64828af1e029978ed9de4b19ce6a07f3d72a41d3e9eacf893d7f"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/foreman-line-build-SCAF-P3.md",
+    "sha256": "6cdf14df070a7bb523cee83eee79801942228f71729735e028913e90fa613f5e"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/foreman-line-build-SCAF-P4.md",
+    "sha256": "2f859f0d5c21a17aa9148306a455fb95c9929a1c73259e29db724db7c24d7c6f"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/foreman-line-build-W1-P1.md",
+    "sha256": "4573cde148af5eb33d8315cb2c89ae467c4c976670d3493c15d0efa068df0244"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/foreman-line-build-W1-P2.md",
+    "sha256": "debfad7aa817c57fd3ca03ccbf8684e8c0f9ebf0fac6148e34db1aa4a593046c"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/foreman-line-build-W1-P3.md",
+    "sha256": "14b67c74cf4222b191fc2702660c5ae14f35e9b99aa4824270e5c4390a1c8c95"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/foreman-line-build-W1-P4.md",
+    "sha256": "caa05c86a72baf1de9105a961aa9466837389f85a58b922388de57fbcd752a57"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/foreman-line-build-W3-P1.md",
+    "sha256": "a68978d389439f581a7280f65f1f9bd9753a9bbba03745be875190c1fd75724e"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/foreman-line-build-W3-P4.md",
+    "sha256": "84ab338425ec5aec126e93709cab3a8631d1539cdbcc18861466f01c01b7958c"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/foreman-line-build-W4-P2.md",
+    "sha256": "ad973e1995f084e309483ceee278416adcf2d6e380d318bef5f82094c2569a97"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/foreman-line-build-W4-P4.md",
+    "sha256": "a69d6f0d39c13e8a8902bddd53f45a8e15ac295585b9c6a9ba0d0a79395eb024"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/foreman-line-coordinator-carryover.md",
+    "sha256": "ec52210e591619c5f4d543bce55a9071d69bc584d755c7854494ecaee22b15b8"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/foreman-line-coordinator-loop.md",
+    "sha256": "a87171a4bcf870a53663cc74da8a635c2db2a43f8af6325ad5992a653c5ec0db"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/foreman-line-parcel-DOCS-P1-rework.md",
+    "sha256": "802aab2bb5d6b8f62bf7b0a28f4227f644109feddd7ca093bf9a3c03a80fd8e6"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/foreman-line-parcel-DOCS-P1.md",
+    "sha256": "a185a7221b45a4e1c3ae40179e2dc80877030dc48d1d406ca271806fd42ff1d5"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/foreman-line-parcel-SCAF-P1.md",
+    "sha256": "93376c0fd78ce8f468d0ae6d5d5313c85ac07ebe427ffe988ac6dc4c3540425a"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/foreman-line-parcel-SEC-1.md",
+    "sha256": "1d1728a0f0ba908c25238f0c5714a1bbf93fa4573ffd2b582cb07ad33d347291"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/foreman-line-parcel-W0-P1.md",
+    "sha256": "a9a672dd2cde27a644aae1457918083b907a38291f7c36b9be8a1114d0ca44b9"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/foreman-line-parcel-W0-P2.md",
+    "sha256": "84ea447e9d385fe8b3f7a489917bd9c9a66b352f3ed63fe4b59bf89f67f79616"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/foreman-line-parcel-W0-P3-rework.md",
+    "sha256": "b498a7b073c3af4ffafe0261d37b2aa69d4f74a13c3c39a149d36a12e3ef08f9"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/foreman-line-parcel-W0-P3.md",
+    "sha256": "7f76c18764f4d43ac5b76a1ade9d6d0b36ca0a2d5db05d389cfdda0caa81401c"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/foreman-line-parcel-W0-P4-rework.md",
+    "sha256": "35057f94096c5f29fcf13b052891e619f39263241b5d9d9c78ccfca2c5ba6e2e"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/foreman-line-parcel-W0-P4.md",
+    "sha256": "fb3d1e4f0f824de460ef5b66c49f69d8a929596713d9eb8b9f808f9cbce9d4e2"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/foreman-line-parcel-W0-P5.md",
+    "sha256": "306279f14697297b2eff441c77ed2c8545bb6f15cd314c9b43f614ee532a6903"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/foreman-line-shaping-P1.md",
+    "sha256": "140ec4776bb59965cc75e46b25f17bf3f8f9e71ce7c2f3e6302ea487d31f713e"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/foreman-line-shaping-SCAF-P1.md",
+    "sha256": "fe0d64bf7e3e102211f933670e564d90d2af89fbbe45f1543ccd5ae09ada85a0"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/foreman-line-shaping-W0-P2.md",
+    "sha256": "d815632ca27095e798642e15d5f4201700c56251a74b71b4b7f4f1d5a3037dfc"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/foreman-line-shaping-W0-P3.md",
+    "sha256": "ba6c07b9c4483a8882c1d83a35b37ae05d688984105b1a70fe2aa21327fc8657"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/foreman-line-shaping-W0-P4.md",
+    "sha256": "67f47ae03c67b90d49b369c9be414ec75e16fc91fb6b177712ece88598a38b51"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/foreman-line-shaping-W0-P5.md",
+    "sha256": "fd14322c721fca315954269b94b3971f4268b9c6dd4c5025ff90dcfd65ed6778"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/foreman-line-shaping-W1-P1.md",
+    "sha256": "dd5240120112544c05272a67daa7c93ae5654ec2a6e27b6579e9147c243cefda"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/foreman-line-shaping-W1-P2.md",
+    "sha256": "78e0154de505a46e52dfce8c3a9d7b3cd4e340011bec14e812e1c369c5770122"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/foreman-line-shaping-W1-P3.md",
+    "sha256": "fc10eb400e55bab922b3b97328558fb4b9154c0e84df4e1930019cb969069aa8"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/foreman-line-shaping-W1-P4.md",
+    "sha256": "ea70050f44cae2c095f2ee31ef366973e23af661d55c72c5a2e2892cba43b356"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/foreman-line-shaping-W4-P0.md",
+    "sha256": "7efabfd55ab2e4a985d7c266b634be8bebddb1765641d74c31253ac64cd4e31a"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/foreman-line-shaping-W4-P1.md",
+    "sha256": "3a751cb2b826de4a0a0ae60a9d4b5caddf68c57d7f36ba63188a47b963995071"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/foreman-shaping-template.md",
+    "sha256": "ccc5bdb4911765242f7f792fba1bb3a1017775e0f17b6ff03ce218d8e10325c0"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/keon-full-platform-gtm-readiness-build-GTM-P0A-rework.md",
+    "sha256": "9630ca759ce78ad56c235c81ebb805132c7c3cf05bd27bc301f182b008bc4483"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/keon-full-platform-gtm-readiness-build-GTM-P0A-rework2.md",
+    "sha256": "439adf1a3e9e416037907ca9c2ada80bf1cab436acb779cd6e7679493459c2ec"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/keon-full-platform-gtm-readiness-build-GTM-P0A.md",
+    "sha256": "f902ba2e2d902f58748565731a2912dbd51d1b7a6c033c84be3357ab7a733493"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/keon-full-platform-gtm-readiness-closure-GTM-P0A.md",
+    "sha256": "4f0ca1a3efa9b83793966692f36818599d570dd84e0e8c86b8e8e52f466f6e77"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/keon-full-platform-gtm-readiness-review-GTM-P0A.md",
+    "sha256": "294a46dfdcb66e0608eb537c80d1564e93a82e44367f5b9353889f1d79e2ab7b"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/permission-profile-registry-build-P1.md",
+    "sha256": "6c5e95b3497ec696caade83a566f0fd3f7ca36090d2dcf0ead617f6b6988fcef"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/permission-profile-registry-build-P2.md",
+    "sha256": "55c7e8cf61ab6ab6bfebd15dee3797ac38239401597f03d91eecbb5d2679b1ab"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/permission-profile-registry-build-P3.md",
+    "sha256": "f466348c61902fa53c2eb33d62d75ec9a749e26f2217a12fe662ae60f3d7eb72"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/permission-profile-registry-build-P4.md",
+    "sha256": "079d9db50825ee81dcf120a6ba89b4f3bf1a469e687ba5269ddb65002f5686dd"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/permission-profile-registry-review-P3-A.md",
+    "sha256": "a59934aacb103afffc660b485a418f44a3d50c9d7cae828b6dfc9945b4a9c4a5"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/permission-profile-registry-review-P3-B.md",
+    "sha256": "c5b8e6561cf52102fd67770309d50b06b9edc4de1e7657040413bdf94685c075"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/permission-profile-registry-shaping-P1.md",
+    "sha256": "3f1ab407503cbce3c5a3b22e9b1fa115f16d8d03ffff515799460bf424c74b2d"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/permission-profile-registry-shaping-P2.md",
+    "sha256": "d155a7c61b1ea8301d1ffc22ffc67647b6046255a6b2cbd8fb75b7f6864fdaf5"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/permission-profile-registry-shaping-P3.md",
+    "sha256": "0d6d1ee37d925e2862c8413b874b0d90027342bfbd97c8b20c3956eadfd34060"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/permission-profile-registry-shaping-P4.md",
+    "sha256": "8e254669e40f5e384b1840278e012367998dae139285e920e87179995fe2ff17"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/plan-review-packaging-scaffolder.md",
+    "sha256": "5d3c354f8a59b51c54a5e7d47b419d930295614355c72267cd8b11506e23c202"
+  },
+  {
+    "path": "plugins/foreman-line/docs/kickstarters/restart_after_missed_timer_event.md",
+    "sha256": "a30bffe08a0c1734345884bd8ba9533eaea3ea1df895d03316fc8b9be167a058"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md",
+    "sha256": "8cda4b68bf247351e2d9fcba376e68de5c1176415206391abd141673e878a2db"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/active/KEO-156-P5-minimum-verifier-implementation.md",
+    "sha256": "60f0a2d4ee4234dfb728c4a7e6141af2f316c56ab57a0cff28b438d471ea3842"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/active/KEO-197-browseahead-domain-path-slop-squatting-contract-freeze.md",
+    "sha256": "06d34342279d22af8f64f52b6d57aa5990586578bf0930b9b678d3bdda50ad5f"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/active/KONE-TBD-cerebras-shadow-operational-dispatch.md",
+    "sha256": "4d4bde7c5e02add170ee1f721b812e51a9e93efefbbdb990c9fc0bf9d28f946f"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/active/P1-plugin-packaging.md",
+    "sha256": "d183dedc67bc4f08a6db63d7d9c65eadb03572a62be964f7aa7b63a467c3f542"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/active/keo-156-p2-minimum-verifier-compatibility-canon-freeze.shaping-result.json",
+    "sha256": "6a4af8a87a8713a4ef67f71cbd08f8ae87f313efc8188f4e68cf38ed42e6b4f9"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/active/keo-197-browseahead-domain-path-slop-squatting-contract-freeze.shaping-result.json",
+    "sha256": "67fa0ae50e52e78992055bbf0cfbd804fc118cd80741834b3dd82e8b51841cbc"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/active/p1-plugin-packaging.shaping-result.json",
+    "sha256": "e30fcdcfe1a068abac84862833cca308a0fc33f19324969662d1dafb59d4cd35"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/active/receipt-chain-walker.approval.json",
+    "sha256": "9a4731bf14a207db2e306d808c3cd3a913e85d370f507dc093deeeb29a5f4d51"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/active/receipt-chain-walker.projected.shaping-result.json",
+    "sha256": "e792161b1de64144f97c0142bef99f134a272e6f6eb68393247cda0407f737bc"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/active/receipt-chain-walker.registration.json",
+    "sha256": "f27ae12ce474a13f728450f6d1b8aa950c1fa890dea6bf57f29ea244b7508306"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/active/receipt-chain-walker.shaping-result.json",
+    "sha256": "c2a99777cf7dd7afc455a674d39fd41ad7e9801738dabc4d6b00b3d81bbafb32"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/active/scaffold-migration.approval.json",
+    "sha256": "07d419b4d8c65b178b6d2e8c00d4937c90dc15cf6ef2045770b8e0b43dc554c0"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/active/scaffold-migration.projected.shaping-result.json",
+    "sha256": "88f67dc70ade560b2d1d4ce75916453987efdc62754b3696fcb815079ac63e83"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/active/scaffold-migration.registration.json",
+    "sha256": "0e00d2f5d155daeb9e3e64baf6fd520a0e5e41282ce862016d7fa425131e841a"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/active/scaffold-migration.shaping-result.json",
+    "sha256": "bb5acc671b54219b900a167a3dd9d11a36611ff2742803e374d273fc6a0342c0"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/active/wgt-p0boot-tracked-foreman-bootstrap.shaping-result.json",
+    "sha256": "e72da2397b8cab9b7fe801ba897d1d5f870bb3e1b6be73618487841f21bdfa69"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/done/CLOSE-P1-minted-chain-exit-vehicle.md",
+    "sha256": "703db36e2a6d69dd6fc35eb5f94f72672683224277c110516f3c0d101f49a2aa"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/done/CLOSE-P2-spec-linter-corpus-reconciliation.md",
+    "sha256": "8488758488b88aaf548f5ab892abd7a6c3d896960fc21b8ec55f541d5144e41a"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/done/CLOSE-P3-biome-ci-always-report.md",
+    "sha256": "51a1bd5efa85d49c6891d8c59c7afac4c1276e157f6076d7694e503b17ee61a3"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/done/KEO-155-P1-review-sprint-packaging-closure.md",
+    "sha256": "e2be3f89b9dd33a59050dc84cea521bb054c1fd6b444c2e91196632271d2600f"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/done/KEO-156-P2-minimum-verifier-compatibility-canon-freeze.md",
+    "sha256": "4808cf2848347a4bc817e2f65788e763b16eed46bce6c9ff870a5cac527fa746"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/done/KEO-59-P0V-claims-validation-repair.md",
+    "sha256": "965a52fe220cda6db665e8315030f953afe53c47c932bca0baaf7261cc4ae26c"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/done/KEO-59-proof-led-control-plane-reconciliation.md",
+    "sha256": "55cd283ec018bfd2004012a1b78e190291c72c09b455083e5baf5e027182f613"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/done/P1-permission-profile-registry-schema.md",
+    "sha256": "6040e3a88f0483acb6a422ff051a6f7539a804a05f11070f67fcc9de74b6774e"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/done/P2-dispatch-order-permission-profile-field.md",
+    "sha256": "d35a8cf1cf7b33f8a4c9fdf3280b5b52de6b924b462968004bc71743a00cd17d"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/done/P3-dispatch-time-emitter.md",
+    "sha256": "0078f70dab0f804ee3e497274e968e3083d07b714e2c66b910fbd06f7b8f5059"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/done/P4-spec-linter-permission-profile-enum.md",
+    "sha256": "0ca99273025928d412bf890f95f0c10592e4cb5a0911641e643894f737bc0a8e"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/done/SCAF-P1-shared-schema-scaffold-extraction.md",
+    "sha256": "c694a90e30ab9012092d860ea680e333148a76cc35f6291dd767080a9d805843"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/done/SCAF-P2-shared-test-scaffold-extraction.md",
+    "sha256": "f35ffafdbe6624f82ed14efd3b8a8805176cc62987c8e3bed87ddabe62d89fe0"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/done/SCAF-P3-receipt-chain-walker.md",
+    "sha256": "0554d1ea90fe972f41b343581a95ef70e662a9581940a786fac179862cb153d2"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/done/SCAF-P4-exit-vehicle.md",
+    "sha256": "fc0f9a770989b4f0a026cbf3e76638b74056650754989a1a351f2e98c6bf4fec"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/done/W0-P1-pipeline-stage-contracts.md",
+    "sha256": "33b0b9df58b22756e8282aa7db64f237a3ef9042308e79b0f80f3f1ce825f69d"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/done/W0-P2-parcel-schema-v02.md",
+    "sha256": "2637028c1169fe7aeb4eb4a5aed32b7e0c117c42a1751b576c47165a257d99b7"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/done/W0-P3-routing-policy-schema-validator.md",
+    "sha256": "31a9b745cd36cc37534783c0afed8b94ddd79d22a59b01a0f00ddf64154158c7"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/done/W0-P4-receipt-chain-schema-validator.md",
+    "sha256": "40bea3642c3e719950a3ecb6adcce144ca432a23517c187d267c81218fe4ef68"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/done/W0-P5-skill-injection-matrix-schema-validator.md",
+    "sha256": "86ae3359fdc25ecee2e7e6fe107c318dbda6ca5030fee710ac72992d9a507165"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/done/W1-P1-shaping-agent.md",
+    "sha256": "7af754104e899b62811fcb231ef2e8c7c48cdfe96f6096ba3801857424aee358"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/done/W1-P2-epic-story-projection.md",
+    "sha256": "9e7debfa0702d36f7c0a167073df1da383603823c22475e9571a678242f96914"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/done/W1-P3-human-approval-flow.md",
+    "sha256": "704e573177e6c8048f69365d9f033c3b3144a53ed91797968c1b1c56d43ec0b9"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/done/W1-P4-jira-registration.md",
+    "sha256": "f97cd9c4ea9ee7c10ee0f273e35f28dfe0c7ff2f7608a0546b73166a6ed6f4d5"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/done/W2-P1-jira-query-ranking.md",
+    "sha256": "bc5aeb9778ed6dad011721cc838947902517e211eaa10229fde75bb518de4791"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/done/W2-P2-dispatch-approval-cli.md",
+    "sha256": "8bb7b9896475849b952940d681c32462602cb3169fe6d946d158a0eb5fb32687"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/done/W2-P3-routing-eval-engine.md",
+    "sha256": "21a4707c9395c25670ce719c121a178440c49ab4875d2873278bae74882878df"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/done/W2-P4-kompress-integration.md",
+    "sha256": "60ce4f435bf231e7733d563ce90e4af88c8da04f80500ecc358b4d5ec47e44c0"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/done/W2-P5-skill-injection-engine.md",
+    "sha256": "a1307948b6aa9106d5671c38cc7f1ca72b6efc4dcb11580f475a8106e076c037"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/done/W3-P1-verification-harness.md",
+    "sha256": "a4c6b211439c2d6f52b5ac56c1278b5b2a4e489c754985bb5220f10d1470fea1"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/done/W3-P2-adversarial-reviewer.md",
+    "sha256": "576428c0bdf67c5e1264da0795b763c11cec9b472908959bd6f205de0647a6b2"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/done/W3-P3-pipeline-rework.md",
+    "sha256": "951757fd8553126f8eb6ab90843a0b76b5d81069693a20b8bae1009862c4de6d"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/done/W3-P4-human-gate-jira.md",
+    "sha256": "7e711dd14407e6b9de805eeda0c13effcebd065170cf35a901e48cb3e482dc13"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/done/W4-P0-correlation-lineage-fix.md",
+    "sha256": "519ffe5b1dc0db2da0072324fa52a5337fe479eb51e4a1686aaae4cfb165009f"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/done/W4-P1-integration-stage-e.md",
+    "sha256": "4985293502b47f22f5195eaed147c000deb752781d64a1086c63e85c73b8b2ed"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/done/W4-P2-docspine-ci-hook.md",
+    "sha256": "ba91ee221c60d2b0b514e7c9dbfbc80bc5cbd7be65dc12bf58dd2c07aaa2c307"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/done/W4-P3-risk-driven-audit-triggers.md",
+    "sha256": "4c171ca65428a05c7757963873a689815b20280865088cb81efcbe61732e9716"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/done/W4-P4-github-gate-stage-f-closure.md",
+    "sha256": "c6e3dec42fd95bb2a20610a5b631a7bc2105c42b2e10994c9c170852d5ca6a44"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/done/WGT-P0A-foreman-record-reconciliation.md",
+    "sha256": "80c783f5459afb7eb9b7c6335bc2618cf9bc89780868b2c63cf1c74840edcc29"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/done/WGT-P0BOOT-tracked-foreman-bootstrap.md",
+    "sha256": "28378b7911da0f6f824e6ec4b8921123e6960cc78bd5d93b46d8e10b9f447959"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/done/correlation-lineage-fix.shaping-result.json",
+    "sha256": "4b5cd56f95f6a720f7b0b33304ce33710d8d1d1dd8d2dceb3ab508d061c52c5c"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/done/keo-155-p1-review-sprint-packaging-closure.shaping-result.json",
+    "sha256": "ca5b1be5e235de916fce2156a63d12f00301719d34ba3779216475a6a0b6bfba"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/done/keo-59-p0v-claims-validation-repair.shaping-result.json",
+    "sha256": "32102ca53964887bb81cde37b97485ef546906c92c3ac485dd974cb821a98522"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/done/keo-59-proof-led-control-plane-reconciliation.shaping-result.json",
+    "sha256": "3f46a362dd8d35ebddb4dc7ead2640e2751f72b0e347673dac0a245be876639d"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/done/w4-p1-integration-stage-e.shaping-result.json",
+    "sha256": "9720105a1a5865e12d843f5ae43e6a4b72111a5c256bf98fc100705fab9c59dc"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/done/w4-p3-risk-driven-audit-triggers.shaping-result.json",
+    "sha256": "679da351b8e9eb0f8a87b7b4efa93bca8d5f61bfa25e790dde490f929dfbcbe0"
+  },
+  {
+    "path": "plugins/foreman-line/docs/specs/done/w4-p4-github-gate-stage-f-closure.shaping-result.json",
+    "sha256": "44318c4b1cda5a9e43a7870f5be23ad11926a14ef152c83b8dfdcb87b67c3ddc"
+  },
+  {
+    "path": "plugins/foreman-line/docs/transcripts/WGT-P0BOOT-source-manifest.sha256",
+    "sha256": "48120451fda4d1cf6e6d6e5fd11e6ce5a4b1a0605a249b6d7a8dd1d65889e3c4"
+  },
+  {
+    "path": "plugins/foreman-line/docs/transcripts/adversarial-review-DOCS-P1-findings.md",
+    "sha256": "80a6a6d16495fe4e8ae15ad01fe87006195ab5544f1c800b9d128c9524ceb3c1"
+  },
+  {
+    "path": "plugins/foreman-line/docs/transcripts/adversarial-review-SCAF-P1-findings.md",
+    "sha256": "dcd02766e30562fa7a9a0e6505dc087bf014e90ea1091d15146bef4a401bfae5"
+  },
+  {
+    "path": "plugins/foreman-line/docs/transcripts/adversarial-review-W0-P3-findings.md",
+    "sha256": "d387b0690417295d71ee39442617bf56aff1fb9bb0ef8bf47abfdbe68cfba471"
+  },
+  {
+    "path": "plugins/foreman-line/docs/transcripts/adversarial-review-W0-P4-findings.md",
+    "sha256": "0e224f3015d35de3eb2bfcf01a1158b849f3ee011c73c7e94f784dd67a6a6e47"
+  },
+  {
+    "path": "plugins/foreman-line/docs/transcripts/build-SEC-1-deterministic-pass.md",
+    "sha256": "edb675aa4eeaa2e13847260666330064b378da5b853450a5f0e46693d6dd6bb2"
+  },
+  {
+    "path": "plugins/foreman-line/docs/transcripts/build-W0-P1-deterministic-pass.md",
+    "sha256": "e066464770784c7aa008f15c1c2b050f3cdde10a6523d69ab14529b2365a7630"
+  },
+  {
+    "path": "plugins/foreman-line/docs/transcripts/build-W0-P1-model-routing.md",
+    "sha256": "52f62150cf9659ee257ce7409b205ae7cd94e3980536391d3879519e0ae7323c"
+  },
+  {
+    "path": "plugins/foreman-line/docs/transcripts/build-W0-P1-pass-1.md",
+    "sha256": "40ee2a2493e0b5b437bc113f2f6074d24224acd97d6b4aedba421d3a2ecfe10b"
+  },
+  {
+    "path": "plugins/foreman-line/docs/transcripts/build-W0-P1-pass-2.md",
+    "sha256": "69560eeb3316d3ac5f20d3beeb913f029e99a8d73ad4e01110c7a1b20de67d0f"
+  },
+  {
+    "path": "plugins/foreman-line/docs/transcripts/build-W0-P1-pass-3.md",
+    "sha256": "6245e2d5b2a758facb20aa0ee98e9dd37f5f3957a0416334c1a50f18b7bb6ed4"
+  },
+  {
+    "path": "plugins/foreman-line/docs/transcripts/build-W0-P3-deterministic-pass.md",
+    "sha256": "a2c3cc0215226c5270b86afb1396bfc2167d489d5b3578d239a15c816c085be2"
+  },
+  {
+    "path": "plugins/foreman-line/docs/transcripts/build-W0-P4-deterministic-pass.md",
+    "sha256": "7178c72d7916648c3708cddad77a4f52f554d415bf28b86b978067a656fe6461"
+  },
+  {
+    "path": "plugins/foreman-line/docs/transcripts/build-W1-P1-deterministic-pass.md",
+    "sha256": "97be55aae85721849c6109cae563bb8e97d5d0946691b651492f33f1ab158e8f"
+  },
+  {
+    "path": "plugins/foreman-line/docs/transcripts/build-W1-P2-deterministic-pass.md",
+    "sha256": "19cedd29d27dd6034e5482a2f4ce29f024def1f1be9e92e8f8e54b7ab6c856b7"
+  },
+  {
+    "path": "plugins/foreman-line/docs/transcripts/build-W1-P3-deterministic-pass.md",
+    "sha256": "5c8ea7ae7f4cef8df3dfb41ccd9dc5615baa7175fd55bce32d98628594fb95c8"
+  },
+  {
+    "path": "plugins/foreman-line/docs/transcripts/build-W1-P4-deterministic-pass.md",
+    "sha256": "44a82bc352510115cd8c73e8af452d1ae9e836b8ed97129115d927976afa1528"
+  },
+  {
+    "path": "plugins/foreman-line/docs/transcripts/build-WGT-P0BOOT-tracked-bootstrap.md",
+    "sha256": "b9fa19885858e9f7dbfe6bcbc030e9f61ebf54d71bc2f1eaa3f3ba87f45d0d70"
+  },
+  {
+    "path": "plugins/foreman-line/docs/transcripts/wgt-p0a-foreman-record-reconciliation-handoff.md",
+    "sha256": "f4bd3bb4630d157efc0bcc02305531159013d0fa6c4f6847481eb0c2bfa19476"
+  },
+  {
+    "path": "plugins/foreman-line/integration/biome.json",
+    "sha256": "2d4f7ce07833129bab12747a15b47f8dc57773881fab75d9dcd19389281e282f"
+  },
+  {
+    "path": "plugins/foreman-line/integration/package-lock.json",
+    "sha256": "ab40d72cba704a81b76b8bb9ab2e02c13c206e4a53c4a01d999d250fd6d2b05e"
+  },
+  {
+    "path": "plugins/foreman-line/integration/package.json",
+    "sha256": "05b4260ae2ea370614523e48548d687581bbbe2bb769d0d9d47467f75ded5a4b"
+  },
+  {
+    "path": "plugins/foreman-line/integration/src/audit-trigger.ts",
+    "sha256": "4883197e3815dd94d15e583e2da99c9582174b6273af86e08848a723c9d7f963"
+  },
+  {
+    "path": "plugins/foreman-line/integration/src/auth/coordinator-identity.ts",
+    "sha256": "667a7198e72b62751d480ec675f44db357ec214601600ea2f9f1543a3dcc9c2a"
+  },
+  {
+    "path": "plugins/foreman-line/integration/src/branch-protection.ts",
+    "sha256": "94d4ef93e5fd9ac2552a2553fdc33873bc9b7f407223bece5199e47c8a97d5c3"
+  },
+  {
+    "path": "plugins/foreman-line/integration/src/closure-receipt.ts",
+    "sha256": "819c830ec49c66f52e817ce7dcc42726e75edff3b63884ef310396d80a0b5b6d"
+  },
+  {
+    "path": "plugins/foreman-line/integration/src/closure.ts",
+    "sha256": "a12c1367c8e8f5f179888d4cd18bce082c6c52588c9bcf21d448ea82de7d938a"
+  },
+  {
+    "path": "plugins/foreman-line/integration/src/docspine-hook.ts",
+    "sha256": "079584b437a019da67c9f0242e41f7d8108fa7e5ffba85080e550c8677ef1725"
+  },
+  {
+    "path": "plugins/foreman-line/integration/src/docspine-report.ts",
+    "sha256": "5c83731a681b1474b6ff929de28c9227d25485a0d5cc555943039f283afc4634"
+  },
+  {
+    "path": "plugins/foreman-line/integration/src/effective-rules.ts",
+    "sha256": "83446c9fe319a4e7f5035f352891013c244e2c60830e95ba3abbb59db25dac30"
+  },
+  {
+    "path": "plugins/foreman-line/integration/src/errors.ts",
+    "sha256": "1f1a05a341f88f4b02fd7be5024bedf9b919b86ced12669e9fa31418db639b72"
+  },
+  {
+    "path": "plugins/foreman-line/integration/src/exit-vehicle.ts",
+    "sha256": "b5d1b337eddadb018b82009df77c3cda6ac02600ac609e9f1c006e748331b0ec"
+  },
+  {
+    "path": "plugins/foreman-line/integration/src/gate-assembly.ts",
+    "sha256": "93dac902c89566f5b766984407405b9ef1edfa70c74f99a5bbd609720d735fc6"
+  },
+  {
+    "path": "plugins/foreman-line/integration/src/governing-spec.ts",
+    "sha256": "b1ce394fb443aed858926a4b56faa5930e4869eae5de35bbcd0e8262c7a24093"
+  },
+  {
+    "path": "plugins/foreman-line/integration/src/index.ts",
+    "sha256": "6d6571658d5631194511d2bca7e8fea0c44056cfc7a46deb01e0da972fac18e2"
+  },
+  {
+    "path": "plugins/foreman-line/integration/src/pr-plan.ts",
+    "sha256": "886954743f9755ea64de09bc8e716b2bae4e08e198e35500697aac6f7408fd87"
+  },
+  {
+    "path": "plugins/foreman-line/integration/src/receipt.ts",
+    "sha256": "fb458149cdb41c3fd2d68d555126d085dc440aa5bdaec354a5781c4b21a85d78"
+  },
+  {
+    "path": "plugins/foreman-line/integration/src/report.ts",
+    "sha256": "e01f809d202730d75660d324e996e18f351f32cddf2e9d2eb9f2fb138c2ef326"
+  },
+  {
+    "path": "plugins/foreman-line/integration/tests/audit-trigger-chain.test.ts",
+    "sha256": "f283478be26878856c0b5c4bb1bdb17b8d0867c4b2137a307ec6eec6a0118c52"
+  },
+  {
+    "path": "plugins/foreman-line/integration/tests/audit-trigger.test.ts",
+    "sha256": "55c3f7d2ac763fecac1977f812b58bc621539f20c05232282f7a3d2e2a653636"
+  },
+  {
+    "path": "plugins/foreman-line/integration/tests/branch-protection.test.ts",
+    "sha256": "377c6fc3eb1d611fc44639d0dc5b9ea6505c312361c7fef9b861d528446049d8"
+  },
+  {
+    "path": "plugins/foreman-line/integration/tests/closure-fixtures.ts",
+    "sha256": "3643d6777791a47e555cefafa71b96a99f6bef09e6a59064c71bd2bec26b2333"
+  },
+  {
+    "path": "plugins/foreman-line/integration/tests/closure-receipt.test.ts",
+    "sha256": "b255982617f236c2efb7a86ce6ba29a7aa32bbfe835e6c8b9782ce9bd791fb93"
+  },
+  {
+    "path": "plugins/foreman-line/integration/tests/closure.test.ts",
+    "sha256": "590cad348333bed8dd7410fa0903526031a78ebf7bdca701ea826fd7e6a9147a"
+  },
+  {
+    "path": "plugins/foreman-line/integration/tests/conformance.test.ts",
+    "sha256": "aba92493a1c44988a0538f95729625fcd4b17a7b7c0651dc0fd1bafc95cb42cf"
+  },
+  {
+    "path": "plugins/foreman-line/integration/tests/coordinator-identity.test.ts",
+    "sha256": "30a348e1becb0a9bb74ceb7709a11e7f005ff3ddf0d1ceef41e68cb89fad5ecc"
+  },
+  {
+    "path": "plugins/foreman-line/integration/tests/docspine-hook.test.ts",
+    "sha256": "edbb1dcad5a7e6c3ea0113ad3454a73a5ae7511945739d5f10e60ff0fee9b601"
+  },
+  {
+    "path": "plugins/foreman-line/integration/tests/effective-rules.test.ts",
+    "sha256": "27e7b39a02f6704256992d730c099d57144981869c4af1ec2a42a3e604818ba8"
+  },
+  {
+    "path": "plugins/foreman-line/integration/tests/exit-vehicle.test.ts",
+    "sha256": "7d69cfe152c76c6c009ae651418a776341c1bee18ffd003653a20b5c44cac28b"
+  },
+  {
+    "path": "plugins/foreman-line/integration/tests/fixtures/effective-rules-live-capture.json",
+    "sha256": "17734bfce5ef884deb0e13a15e8f413022850d76bc0958edbb840579f83d6adf"
+  },
+  {
+    "path": "plugins/foreman-line/integration/tests/gate-assembly.test.ts",
+    "sha256": "ffcf63cf05b2cfc9e1ac42b9f184803b3b5324c80b713f35cd5ed4d5163a3b11"
+  },
+  {
+    "path": "plugins/foreman-line/integration/tests/governing-spec.test.ts",
+    "sha256": "f6a1e7d9c1f3e91f8f4b716bac640a02d399f1beda93abe9bf45b02401adffa3"
+  },
+  {
+    "path": "plugins/foreman-line/integration/tests/pr-plan.test.ts",
+    "sha256": "f1bc688596c456426effd39345009c92b99130c40787c5864d5a9bdfd910d0c8"
+  },
+  {
+    "path": "plugins/foreman-line/integration/tests/receipt.test.ts",
+    "sha256": "e882edb53fa67d567dab074542278ce5dd09905a3fa02843f09e9c08a137386d"
+  },
+  {
+    "path": "plugins/foreman-line/integration/tests/report.test.ts",
+    "sha256": "820839764a067b1e26f74e5370efdcacdd78c85f51ee7c4e5361e9a4dbbd2c19"
+  },
+  {
+    "path": "plugins/foreman-line/integration/tests/scaf-p4-harness.test.ts",
+    "sha256": "0cc334e97f2604fd1ceb1bc7b91da41d9f3d31a9be6168d715d20599258751db"
+  },
+  {
+    "path": "plugins/foreman-line/integration/tsconfig.json",
+    "sha256": "b679a88f6f2c7506954141ad911b446acfabaab703135f866f66863ba2022d94"
+  },
+  {
+    "path": "plugins/foreman-line/permission-profiles/PROBE.md",
+    "sha256": "54b4a4c9f5697072cac8a50a227aeda05d88809bbfe17a0d8a7207030c43e078"
+  },
+  {
+    "path": "plugins/foreman-line/permission-profiles/README.md",
+    "sha256": "b790947a8223daab2babf45cba648f1bfd073d7d0b1e6f524fa02f51dc129f00"
+  },
+  {
+    "path": "plugins/foreman-line/permission-profiles/biome.json",
+    "sha256": "2d4f7ce07833129bab12747a15b47f8dc57773881fab75d9dcd19389281e282f"
+  },
+  {
+    "path": "plugins/foreman-line/permission-profiles/package-lock.json",
+    "sha256": "8a11374b04a69da19dab9993497493f060099e21d6295a613659d6a6098b2c92"
+  },
+  {
+    "path": "plugins/foreman-line/permission-profiles/package.json",
+    "sha256": "ceba6a34b0f3ce6a9347c5fdd4ff6fcbbbd4b9cabbae16958ecc58dd89fc4b34"
+  },
+  {
+    "path": "plugins/foreman-line/permission-profiles/permission-profiles.yaml",
+    "sha256": "9da06cf299653b244c636dd9809b5ba6410efb5e9e7f89389c1ef7260fa577cb"
+  },
+  {
+    "path": "plugins/foreman-line/permission-profiles/schemas/network-intent.schema.json",
+    "sha256": "c2c4b16bbff64191d162d6251598a1100e2a76c3a6856d20ab234541ba6d2476"
+  },
+  {
+    "path": "plugins/foreman-line/permission-profiles/schemas/permission-envelope.schema.json",
+    "sha256": "ac34637e03895119771c74f3d4a00dbe4b5d7e435396197c784edfbb5c4faf38"
+  },
+  {
+    "path": "plugins/foreman-line/permission-profiles/schemas/permission-profile-registry.schema.json",
+    "sha256": "6aa274b7d53ddbb9113e39da660724eb25c8704f5a2ecd12ec0b4aa708c87b2f"
+  },
+  {
+    "path": "plugins/foreman-line/permission-profiles/schemas/permission-profile.schema.json",
+    "sha256": "43f7700a27a22f6a7a7d92ab116e2a0ababb3a623974e1ccbf2202b893d84735"
+  },
+  {
+    "path": "plugins/foreman-line/permission-profiles/src/cli.ts",
+    "sha256": "af5a4a70901a52107080c824bee99333ffef45c003180f8e9af49703082f79d6"
+  },
+  {
+    "path": "plugins/foreman-line/permission-profiles/src/emitter.ts",
+    "sha256": "0ed41d8817a636e80bb6d6835609a0cf4f55e1128b4ae0a4f91e517f33ee6d16"
+  },
+  {
+    "path": "plugins/foreman-line/permission-profiles/src/generate.ts",
+    "sha256": "1e56d5adfd726b0583e7d95751cb94cb94a555a9a0518cb1c58b633e24c84398"
+  },
+  {
+    "path": "plugins/foreman-line/permission-profiles/src/index.ts",
+    "sha256": "405813fda286cea4f2033397224ee708f2e30c497e20249f5a813c762ba439b1"
+  },
+  {
+    "path": "plugins/foreman-line/permission-profiles/src/registry.ts",
+    "sha256": "46357e355ea5eb104418949f46b07810d9cf958f5d58c1b640d6aa00f8bd4894"
+  },
+  {
+    "path": "plugins/foreman-line/permission-profiles/src/schemas.ts",
+    "sha256": "20f07a32b8937dc46b0f99817c10ac01fe67266f772bf11554e1425d666798d2"
+  },
+  {
+    "path": "plugins/foreman-line/permission-profiles/src/testing.ts",
+    "sha256": "13c6154d76d261a339b8f824afacc614cb2977c3369d463b51969f940762aa7c"
+  },
+  {
+    "path": "plugins/foreman-line/permission-profiles/src/types.ts",
+    "sha256": "91651a073156834119b5037127b942f315ea4d45d26bc17e0c9df2a1499aa5a9"
+  },
+  {
+    "path": "plugins/foreman-line/permission-profiles/src/validator.ts",
+    "sha256": "1f12fe53f75b089d25dd27e995af024c52269b0db6b8c4e22c616702749a7d23"
+  },
+  {
+    "path": "plugins/foreman-line/permission-profiles/tests/cli.test.ts",
+    "sha256": "696a2a26845575ddbaeabad59add2ec507006cb55f44071aa39a0e03370d188a"
+  },
+  {
+    "path": "plugins/foreman-line/permission-profiles/tests/dependency-allowlist.test.ts",
+    "sha256": "012e9682ae44b8320b3f41fc5c17dc3b16aaf1ff65b53624c73e691235341e4e"
+  },
+  {
+    "path": "plugins/foreman-line/permission-profiles/tests/dispatch-cli.test.ts",
+    "sha256": "32a1a171e08461af86c13708cbcf567be875684b2dfdd589d9e94dc7788be475"
+  },
+  {
+    "path": "plugins/foreman-line/permission-profiles/tests/emitter.test.ts",
+    "sha256": "3e66c8be2bf4ee48340c9c05df2b8b1176fa2b97615dd2e0746846f9684a20da"
+  },
+  {
+    "path": "plugins/foreman-line/permission-profiles/tests/fixtures/reject-bypass-mode.yaml",
+    "sha256": "48c925198935ba72344c9bffebb46d964bfc1f8ed5db9f48cb8d64f2c8576f5d"
+  },
+  {
+    "path": "plugins/foreman-line/permission-profiles/tests/fixtures/reject-malformed-rule.yaml",
+    "sha256": "4cd347fb50d1151683fda702430ce245540757683e372ddfb530759122bed317"
+  },
+  {
+    "path": "plugins/foreman-line/permission-profiles/tests/fixtures/reject-missing-envelope-field.yaml",
+    "sha256": "b9c98b387fa0e9266700ec425894e12ee8843ef9d3a646c96e4e5ec897c042fe"
+  },
+  {
+    "path": "plugins/foreman-line/permission-profiles/tests/fixtures/reject-missing-profile.yaml",
+    "sha256": "78165356fa753ae9276072201dfcbea6fc26739665ff278b6f0b410ce07f1622"
+  },
+  {
+    "path": "plugins/foreman-line/permission-profiles/tests/fixtures/reject-reviewer-incomplete.yaml",
+    "sha256": "2caea7b2a62a6c19c8f24a890f83785098535ac830d4b9e890ec1ce36a78670f"
+  },
+  {
+    "path": "plugins/foreman-line/permission-profiles/tests/fixtures/reject-reviewer-shell-denied.yaml",
+    "sha256": "d72929c873ed5ca6ddfaa66f375393690499986caaff5ac92f3af7b8145d96f8"
+  },
+  {
+    "path": "plugins/foreman-line/permission-profiles/tests/fixtures/reject-self-mod-guard.yaml",
+    "sha256": "ed54e6099deee0531dd7e9b809f817aaabf5556b7f110d8b67245f4eee2d625f"
+  },
+  {
+    "path": "plugins/foreman-line/permission-profiles/tests/fixtures/reject-unknown-profile.yaml",
+    "sha256": "97cb5d09be3a9695e19a4bd06237e7f038cbcdbdb5d0b90027ff5e540a90299e"
+  },
+  {
+    "path": "plugins/foreman-line/permission-profiles/tests/fixtures/reject-unparsable.yaml",
+    "sha256": "0c15a4d55488051f9896b73e1ef3568bddfc9432448f459a74beceeeb393fa50"
+  },
+  {
+    "path": "plugins/foreman-line/permission-profiles/tests/gitignore.test.ts",
+    "sha256": "149a0434f1801d06bc2440d8870e98abf5dea7ce20e604ba5174d9171354718e"
+  },
+  {
+    "path": "plugins/foreman-line/permission-profiles/tests/no-coupling.test.ts",
+    "sha256": "0326f6723ce3f8c3716f5d0f836091200c9a69c22ba31ae4fb4355d4b4a754bf"
+  },
+  {
+    "path": "plugins/foreman-line/permission-profiles/tests/parity.test.ts",
+    "sha256": "ec018a4844a8ac17481a953d906ad003267f2830b7658a579ad68632d0352597"
+  },
+  {
+    "path": "plugins/foreman-line/permission-profiles/tests/schema-validation.test.ts",
+    "sha256": "2645d20d1a7bc2ece017b48e40250fb6431208d8c433b8e5494034cb74c21d5a"
+  },
+  {
+    "path": "plugins/foreman-line/permission-profiles/tests/semantic-invariants.test.ts",
+    "sha256": "9f9d723b5d06ac31be01498396730984d67393316e8162b31fadea1a923af4ad"
+  },
+  {
+    "path": "plugins/foreman-line/permission-profiles/tsconfig.json",
+    "sha256": "b679a88f6f2c7506954141ad911b446acfabaab703135f866f66863ba2022d94"
+  },
+  {
+    "path": "plugins/foreman-line/projection/README.md",
+    "sha256": "d730a1b61e0e7102eee4da1d9813c06af61b9c2b912d941b751f2f419bd068c4"
+  },
+  {
+    "path": "plugins/foreman-line/projection/biome.json",
+    "sha256": "2d4f7ce07833129bab12747a15b47f8dc57773881fab75d9dcd19389281e282f"
+  },
+  {
+    "path": "plugins/foreman-line/projection/package-lock.json",
+    "sha256": "9183ad98a6dbe4c3970fe3853eab74e3fa80ef1ee4a80ae2255dd22f2b64073b"
+  },
+  {
+    "path": "plugins/foreman-line/projection/package.json",
+    "sha256": "8d20f6b64510d4ecc6a5d7c1a427f1b08a7ba203647da53bdbc2f3eae912c58e"
+  },
+  {
+    "path": "plugins/foreman-line/projection/src/api.ts",
+    "sha256": "9286d8ff415ef0d3ecb0eba14073e268f7b8723d8f2f761b6a5a45bf076b0689"
+  },
+  {
+    "path": "plugins/foreman-line/projection/src/discover.ts",
+    "sha256": "edf8ca2f592e5768c34667e1fbdc3db5afe5c21cdeeb8600a8265a6b27d3033e"
+  },
+  {
+    "path": "plugins/foreman-line/projection/src/guards.ts",
+    "sha256": "20acaa1f2da1d056d3e35f3312ca75409ac6a55c8fabb0c9636f6fc42ef7d254"
+  },
+  {
+    "path": "plugins/foreman-line/projection/src/index.ts",
+    "sha256": "a15aa4a7ce163c4546d959e70d7b6f2e7ce6b6024a4d55e0400a1b706131ff47"
+  },
+  {
+    "path": "plugins/foreman-line/projection/src/keys.ts",
+    "sha256": "5b51f0d746f044b640f0a40d5ecbf88a34c9a126bdbcd4b34d6d755808aa038b"
+  },
+  {
+    "path": "plugins/foreman-line/projection/src/path-guard.ts",
+    "sha256": "3fa97fd9ed8639ed03903c853ccd9f2f49484e60f259161eae938a7096ceffdb"
+  },
+  {
+    "path": "plugins/foreman-line/projection/src/paths.ts",
+    "sha256": "026ed3b1bd45b61e933e82d6386fa734ca5ba2449f7af1379084247d53bf0a74"
+  },
+  {
+    "path": "plugins/foreman-line/projection/src/project.ts",
+    "sha256": "ae81a10b462802ecff9388bea5baa54fe4772a05ea79db95c9f955f965478581"
+  },
+  {
+    "path": "plugins/foreman-line/projection/src/title.ts",
+    "sha256": "b62d3ed2ca1e64b790f2e136de244969a3e718535da6aa5efa90ccdf4045ada3"
+  },
+  {
+    "path": "plugins/foreman-line/projection/src/write.ts",
+    "sha256": "20bfa4b7b432f4db8582db65a6a89942fce47a3ced8b73d99b572408e125637a"
+  },
+  {
+    "path": "plugins/foreman-line/projection/tests/bare-specifier.test.ts",
+    "sha256": "aae4bbea935c883b1cbe16834a20b0eccb578ce017bc001f376c90158bc77a6f"
+  },
+  {
+    "path": "plugins/foreman-line/projection/tests/canonicalizability.test.ts",
+    "sha256": "c76bbf0153b175e567f9571725360473d998213f320deba4463cc057091ddd7a"
+  },
+  {
+    "path": "plugins/foreman-line/projection/tests/dependency-allowlist.test.ts",
+    "sha256": "724fafc998d9622559fe646a5998891761b360631f972b39fa74f25550722ee2"
+  },
+  {
+    "path": "plugins/foreman-line/projection/tests/epic-title.test.ts",
+    "sha256": "5810e655d6e2db37480fdcfddd8a1920f7abf951fb25268ee45a7466db0e245c"
+  },
+  {
+    "path": "plugins/foreman-line/projection/tests/frozen-surface.test.ts",
+    "sha256": "8b1c635ac0d68e8434a9ab56363d9f6dd2c24595360ddce4d240a337478ccd12"
+  },
+  {
+    "path": "plugins/foreman-line/projection/tests/helpers.ts",
+    "sha256": "c80492c75fa272ed1a5f14f342774a0c0f7dcaf89a55b088bdc2f55d8de3b36f"
+  },
+  {
+    "path": "plugins/foreman-line/projection/tests/input-consumption.test.ts",
+    "sha256": "413315aa8b198056edf1c6fa1d5f73f7e9d06039974094cbe3d2bbf7e65e2ae0"
+  },
+  {
+    "path": "plugins/foreman-line/projection/tests/keys.test.ts",
+    "sha256": "b15e544b8bf07418d3eaf398de21b5963e0bfc6879bad6f37614b8c01570ad03"
+  },
+  {
+    "path": "plugins/foreman-line/projection/tests/output-mechanics.test.ts",
+    "sha256": "35e36bc64edcde1a93369873914f6756110ff84b1dff05272fa24e8741c46876"
+  },
+  {
+    "path": "plugins/foreman-line/projection/tests/path-containment.test.ts",
+    "sha256": "f7483bb5d38b7b854801b5798724f0a2e9241c25f6b2d53ceb9ac5c0ffbf083c"
+  },
+  {
+    "path": "plugins/foreman-line/projection/tests/redos.test.ts",
+    "sha256": "534fe2522de6a0c027c474b5d610202a155f6c5b73fb698bbf860f90a58ff41c"
+  },
+  {
+    "path": "plugins/foreman-line/projection/tests/schema-validation.test.ts",
+    "sha256": "8bd87661c460ecafa697012d902f49316f84c7312cc5f5a415def1f14583896b"
+  },
+  {
+    "path": "plugins/foreman-line/projection/tests/semantic-guards.test.ts",
+    "sha256": "610d6d1ecefaeb4097560f7a4c08112e331c7085bffb6bdde46d8846cab2a8df"
+  },
+  {
+    "path": "plugins/foreman-line/projection/tests/title-provenance.test.ts",
+    "sha256": "9061c63ba6e194df9588ca4631649e4a2caa5365fe7efee6531a3f5941497f5f"
+  },
+  {
+    "path": "plugins/foreman-line/projection/tests/topology.test.ts",
+    "sha256": "cfaf30d98d7f9009687f82c2df592d2b96cedcbd7bd726a8bd3b175cc84cef2c"
+  },
+  {
+    "path": "plugins/foreman-line/projection/tsconfig.json",
+    "sha256": "b679a88f6f2c7506954141ad911b446acfabaab703135f866f66863ba2022d94"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/README.md",
+    "sha256": "eb517856b819ec751f1c792faf880e498883ad567cd8b4ac49a05db7e0a20f31"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/biome.json",
+    "sha256": "2d4f7ce07833129bab12747a15b47f8dc57773881fab75d9dcd19389281e282f"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/package-lock.json",
+    "sha256": "7b9cab52a30084a7c2dc303963ebaea410252f32b43fade4769b46d38c74994a"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/package.json",
+    "sha256": "124625550bcc8ba239340d63a189e1b587aab701b0aaf6e8f07f979e5eab7cb9"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/schemas/receipt-document.schema.json",
+    "sha256": "2ca3ded024eba83d9599ef76cb84cccd5bf3d6fba95787a6c433c9fda8a3f598"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/schemas/signature.schema.json",
+    "sha256": "f8243c43553a049aa6fe19f411da7570fe054ee1ec284ebd235bcd4f339498c0"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/src/cli.ts",
+    "sha256": "738515bfbbcfbb8be4ebc2cf146ce6d90112d5d5004648f5fb0f38706b268eb6"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/src/generate.ts",
+    "sha256": "1e56d5adfd726b0583e7d95751cb94cb94a555a9a0518cb1c58b633e24c84398"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/src/index.ts",
+    "sha256": "ab66c6eb8b976e785f1d07cc1b68f4133d12344b7d9fd1052e80d9a3e91cfed1"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/src/paths.ts",
+    "sha256": "f4719b1125f4668c9ef5dc082a11a2db5fbabd2ceab8824a498af3bc837f2cb6"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/src/registry.ts",
+    "sha256": "731cbecdeb61bbbfe92407039530e76f2b3231e8ce66ea91fa8a3038726b5650"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/src/schemas.ts",
+    "sha256": "5fcd06ba2dbfa390d423726de4a6ce6c2d26b19566228c8055d089132d12f200"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/src/types.ts",
+    "sha256": "aa5fefe4d648a63d02e8fc647a6c3036879328af2d3e6f9a398f8f6bbdd794c2"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/src/validator.ts",
+    "sha256": "68b2598dca8f0c8ac0d247778bcd1ce06af7663710e14f1461e36f86a2b8783e"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/tests/chain-invariants.test.ts",
+    "sha256": "ea046c2a4e0a19206fc49cbcbd1296b44f8d19487553b583712bc48e5d2028a3"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/tests/cli.test.ts",
+    "sha256": "2cc36fab01abb529e9525ea1c0c80c5fbdc3f0e1332ba9c2eb13657d6b8f31fa"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/tests/dependency-allowlist.test.ts",
+    "sha256": "4839f7fceac52ac2940c8fe3a800834fac244ff1e50ae07f9011d69b40996d26"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/tests/fixtures/chain-empty/.gitkeep",
+    "sha256": "9f480234c195284aab2575ad582d1a6479d9d43046735cdffaa6428ca65e9ff8"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/tests/fixtures/chain-reject-correlation-mismatch/000000-A-shaping-result.json",
+    "sha256": "4e252510fcfc2e621946f33143f604bbdaac2d5ad32157c2beff1d606e4a06a5"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/tests/fixtures/chain-reject-correlation-mismatch/000001-C-dispatch-order.json",
+    "sha256": "78b40ca0723ed7ae8904092aba84f228c28d6dc0b61355e79b134bd808349c3c"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/tests/fixtures/chain-reject-null-correlation/000000-A-shaping-result.json",
+    "sha256": "4e252510fcfc2e621946f33143f604bbdaac2d5ad32157c2beff1d606e4a06a5"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/tests/fixtures/chain-reject-null-correlation/000001-C-dispatch-order.json",
+    "sha256": "1e6325bf3764831c8e987916e31c5bc06b51c26c17dbe6cebd60de1e115f255f"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/tests/fixtures/chain-reject-prevhash-mismatch/000000-A-shaping-result.json",
+    "sha256": "4e252510fcfc2e621946f33143f604bbdaac2d5ad32157c2beff1d606e4a06a5"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/tests/fixtures/chain-reject-prevhash-mismatch/000001-C-dispatch-order.json",
+    "sha256": "05213a454c73daea098d08e6fc1cadd6d30fac4164dcb84206abcb6d99292356"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/tests/fixtures/chain-reject-scalar-member/000000-A-shaping-result.json",
+    "sha256": "4e252510fcfc2e621946f33143f604bbdaac2d5ad32157c2beff1d606e4a06a5"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/tests/fixtures/chain-reject-scalar-member/000001-C-dispatch-order.json",
+    "sha256": "efbe3ae4c4a7028cc358715740b9439d15c0bc58d0c6b375fa9954e579cc7f3d"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/tests/fixtures/chain-reject-scalar-member/notes.json",
+    "sha256": "084c799cd551dd1d8d5c5f9a5d593b2e931f5e36122ee5c793c1d08a19839cc0"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/tests/fixtures/chain-reject-sequence-gap/000000-A-shaping-result.json",
+    "sha256": "4e252510fcfc2e621946f33143f604bbdaac2d5ad32157c2beff1d606e4a06a5"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/tests/fixtures/chain-reject-sequence-gap/000002-C-dispatch-order.json",
+    "sha256": "4ea4c73038fd78ebaf37b436af75bb7374b189236e507ac4a57b19a118487aae"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/tests/fixtures/chain-sealed/000000-A-shaping-result.json",
+    "sha256": "4e252510fcfc2e621946f33143f604bbdaac2d5ad32157c2beff1d606e4a06a5"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/tests/fixtures/chain-sealed/000001-C-dispatch-order.json",
+    "sha256": "efbe3ae4c4a7028cc358715740b9439d15c0bc58d0c6b375fa9954e579cc7f3d"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/tests/fixtures/chain-sealed/000002-F-closure-record.json",
+    "sha256": "d6c7cdad54822e71f496573f319ec40e7ba01b6d23a8902cd29bc5fbedae62aa"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/tests/fixtures/chain-single-genesis/000000-A-shaping-result.json",
+    "sha256": "4e252510fcfc2e621946f33143f604bbdaac2d5ad32157c2beff1d606e4a06a5"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/tests/fixtures/chain-single-nongenesis/000005-C-dispatch-order.json",
+    "sha256": "15925a90576282fbb67322125340d0f1271382f91d5251234688e65cf4ee2c8f"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/tests/fixtures/chain-unsealed/000000-A-shaping-result.json",
+    "sha256": "4e252510fcfc2e621946f33143f604bbdaac2d5ad32157c2beff1d606e4a06a5"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/tests/fixtures/chain-unsealed/000001-C-dispatch-order.json",
+    "sha256": "efbe3ae4c4a7028cc358715740b9439d15c0bc58d0c6b375fa9954e579cc7f3d"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/tests/fixtures/hash-vector-genesis.json",
+    "sha256": "814bc917e7add3bceb7cd881a08ffb16f082a819ff0725667020e49afae6ae8a"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/tests/fixtures/malformed.json",
+    "sha256": "9970ff7b04154f096bb4c41d31ad39c239230c200e202cb2385f12198ced162a"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/tests/fixtures/pass-claimref-claim-nonnull.json",
+    "sha256": "cfeb8f376cbdccf3d56ff60b20745b2a14f6ddc83ad5d2a1536abbde9038b27b"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/tests/fixtures/pass-claimref-stage-null.json",
+    "sha256": "4e252510fcfc2e621946f33143f604bbdaac2d5ad32157c2beff1d606e4a06a5"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/tests/fixtures/pass-genesis-null-prevhash.json",
+    "sha256": "4e252510fcfc2e621946f33143f604bbdaac2d5ad32157c2beff1d606e4a06a5"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/tests/fixtures/pass-nongenesis-nonnull-prevhash.json",
+    "sha256": "e2f52632065ac313ad4275e1b8da1b6e3e7e7c91539b9d3dee8fc5de80ba125e"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/tests/fixtures/reject-claimref-claim-null.json",
+    "sha256": "6ba9775b501a260271c9406ce1fc2c67ade09dbf6c74c13ea728aeaac3e9e7de"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/tests/fixtures/reject-claimref-stage-nonnull.json",
+    "sha256": "c43e4dbcb2cc3c5867a901ac8d6767aa82f8e911b3ee93279e4b1e696d2607ec"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/tests/fixtures/reject-correlation-unknown-field.json",
+    "sha256": "093174535469543e70e079cd712e1fdd6ff4d4865dd01dc01ac41d9a97aeadf0"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/tests/fixtures/reject-genesis-nonnull-prevhash.json",
+    "sha256": "51a50c9fec69deece80515145b7bcbdacb363e5505fd172159f5ed57b92c7d4e"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/tests/fixtures/reject-hash-badpattern.json",
+    "sha256": "f1252e0e4533ab113876cf4f77f877f88416418d691f9ac874385f11f2b29f1e"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/tests/fixtures/reject-kind-invalid.json",
+    "sha256": "bbd5bc6e191a92d82d57e950ca3ff88cfe0bac9a0fdeb63f2439cdb78cd09e46"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/tests/fixtures/reject-missing-field.json",
+    "sha256": "3f32c7001d26b622c2b8cf8fdca77aebc04081ac677e5f4d127b5961ba0b113e"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/tests/fixtures/reject-nongenesis-null-prevhash.json",
+    "sha256": "ce18c1e47fb73a6c4aad32e44ae013bf2ad2aaa08d698491e4c5c3f45b251b5b"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/tests/fixtures/reject-prevhash-badpattern.json",
+    "sha256": "57edb4ffe743d523d2faaae4674fcfde75d15cc7bbeac1047d5611d3f7f17ead"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/tests/fixtures/reject-sequence-negative.json",
+    "sha256": "ab1806f0a4ba001240b698e6bf673be74a56a010f1b5255df7b7268f92c4b899"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/tests/fixtures/reject-sequence-noninteger.json",
+    "sha256": "14572289d9f06e791795c4bdfd30148bc5c88e5820e44e1f35cc1b58ffd78f1b"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/tests/fixtures/reject-stage-invalid.json",
+    "sha256": "8af5650df582cfdf7273606c153d7cbbbd402997ec70cd9ad23ff59c4e056c66"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/tests/fixtures/reject-timestamp-badpattern.json",
+    "sha256": "43279833c95cdc6080d1b07621c65a4980ee3c0017e7dd98bbcfa14bff59ae98"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/tests/fixtures/reject-unknown-field.json",
+    "sha256": "ec03edabfb4c5a3ad4fd0b4ae188ac3f5327f9fbc905be3aa100ec8842dcab64"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/tests/hash-vector.test.ts",
+    "sha256": "85fb98c4b255394cb6812ac66643b57d607a79cd2a4df1d6d03cf3a5fad07333"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/tests/parity.test.ts",
+    "sha256": "f482239075b84c1993bbb7b9a05f89d1f9289af38a3348625506b032653b472c"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/tests/paths.test.ts",
+    "sha256": "f0cb80ca4eaa1d7b154e790fff2c8e33a51c85252ccf9daff77f2956b69c127a"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/tests/schema-validation.test.ts",
+    "sha256": "a304af6bae55e02547bdd4722ac28f3339760de3fc32180f22c7c305e7fc913f"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/tests/semantic-invariants.test.ts",
+    "sha256": "13a7a9ec0e1049ec46ed25b0f247f3f2c42559679a7eb607452dd7268489b0c6"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/tests/support/canonical.ts",
+    "sha256": "d86228be68b93962b588917873b2d155845bf01733adf68e36b62add257c242c"
+  },
+  {
+    "path": "plugins/foreman-line/receipts/tsconfig.json",
+    "sha256": "b679a88f6f2c7506954141ad911b446acfabaab703135f866f66863ba2022d94"
+  },
+  {
+    "path": "plugins/foreman-line/registration/README.md",
+    "sha256": "87655f4b92585767423ae25d1cc42887492c66fa7c9ad396ace831676d5b4ca3"
+  },
+  {
+    "path": "plugins/foreman-line/registration/biome.json",
+    "sha256": "2d4f7ce07833129bab12747a15b47f8dc57773881fab75d9dcd19389281e282f"
+  },
+  {
+    "path": "plugins/foreman-line/registration/config/project-allowlist.json",
+    "sha256": "632e977b1a302d36ed3a60c89551ce404178e2b2cc859c919af36a3b83e411c4"
+  },
+  {
+    "path": "plugins/foreman-line/registration/package-lock.json",
+    "sha256": "6a45b55387df5b1ecd1645bc7e2e4a5ebfab59f21a46cb4bb17c898b563054a1"
+  },
+  {
+    "path": "plugins/foreman-line/registration/package.json",
+    "sha256": "c309a776e8bbe3fc1eff93e8bb0e95c47895c56425c2b71b29806ac0b32c0bce"
+  },
+  {
+    "path": "plugins/foreman-line/registration/src/adapter-docker-mcp.ts",
+    "sha256": "822dc998ec2c4e5fd3c6133bcd82becdf1ab052367513ed6826e9f46aad8f12a"
+  },
+  {
+    "path": "plugins/foreman-line/registration/src/backfill.ts",
+    "sha256": "b062be1914cdbbea63532cba69aef135239bbcb7d161b201226b88d45d099a48"
+  },
+  {
+    "path": "plugins/foreman-line/registration/src/gate.ts",
+    "sha256": "c3d880fc8f750ca597a47019648f3976274ca04047aa087ff873937d048618d0"
+  },
+  {
+    "path": "plugins/foreman-line/registration/src/gated-transport.ts",
+    "sha256": "818557c97f7b1af9f9483cf653bcd4e4047d2dd93e1903a4c042a4e25e0b442b"
+  },
+  {
+    "path": "plugins/foreman-line/registration/src/git.ts",
+    "sha256": "726d7eabdd56131eba648ffa6694bc7e448fd6fd4382ffd537f01e3f7b96cf2b"
+  },
+  {
+    "path": "plugins/foreman-line/registration/src/hash-refusal.ts",
+    "sha256": "c5d56b3ed7177dd28ed72b3b3c89b52531ccc6f8f8a70f6f5e0ade28a9b6156d"
+  },
+  {
+    "path": "plugins/foreman-line/registration/src/index.ts",
+    "sha256": "454009af68c673573f7398bf6bfa53d80538707e789891d05dd5914840fa4a5e"
+  },
+  {
+    "path": "plugins/foreman-line/registration/src/jql.ts",
+    "sha256": "08ff19e7adad69c43c5cf6f01c6acf2de80f6e31dc8b78458fcd03d3cf36dd5c"
+  },
+  {
+    "path": "plugins/foreman-line/registration/src/payloads.ts",
+    "sha256": "914f73c2a86b6d5332be2e3b04dd5df2aeda55520afe09c794378dc6f399e835"
+  },
+  {
+    "path": "plugins/foreman-line/registration/src/permalink.ts",
+    "sha256": "b04be7462874f43926767ba56469ea3720c0a8e2d6cfe89b81a97df4231f0466"
+  },
+  {
+    "path": "plugins/foreman-line/registration/src/prior-registration.ts",
+    "sha256": "7da8baebf744be0c9d2c2b92115dcc7e10c725f15f1821bd29df270f884c7570"
+  },
+  {
+    "path": "plugins/foreman-line/registration/src/receipt.ts",
+    "sha256": "27edd4790572e649b924b202acb3abd6fd44d982f27dea87e33976ce527d9d04"
+  },
+  {
+    "path": "plugins/foreman-line/registration/src/register.ts",
+    "sha256": "468e0486481bb3317e51629bbcf7d69deb63e6513acf852dffdcf04b29690ba9"
+  },
+  {
+    "path": "plugins/foreman-line/registration/src/types.ts",
+    "sha256": "ed94d24545a5967ee5b2eabb21000355f5a20a2c7a931a5f18e9348640d71d7b"
+  },
+  {
+    "path": "plugins/foreman-line/registration/tests/adapter-args.test.ts",
+    "sha256": "6e6025f5b3d389836ab25f2b7e40b37e34248c5801c13cc62412bcbfcb3ac009"
+  },
+  {
+    "path": "plugins/foreman-line/registration/tests/adapter-gate.test.ts",
+    "sha256": "dd8167afaa7951e486da9f40a755197b8d1e3396f3bd4c4cc2a658a5e8a2c196"
+  },
+  {
+    "path": "plugins/foreman-line/registration/tests/bare-specifier.test.ts",
+    "sha256": "8cec30c257072f4fbca9ef23e8daaf522b496aff87b3bae3dfd2e7d6c7213b7d"
+  },
+  {
+    "path": "plugins/foreman-line/registration/tests/credential-hygiene.test.ts",
+    "sha256": "459638b891d9eaec79f385401e81e3e3b10671d5fb855be6e5da80260b15c91f"
+  },
+  {
+    "path": "plugins/foreman-line/registration/tests/dependency-allowlist.test.ts",
+    "sha256": "2d5e9bb6b05042e8c6dd2e76c58b316f338416ccdba7ad4fda9e4115afb2adf0"
+  },
+  {
+    "path": "plugins/foreman-line/registration/tests/frozen-surface.test.ts",
+    "sha256": "8a92ac3be5942b3278e74c301616081dc2a5ed5bff35a0d115e1bccca8f725f3"
+  },
+  {
+    "path": "plugins/foreman-line/registration/tests/gate-reachability.test.ts",
+    "sha256": "85b709a97302ae832fb62450af82f3650a6715beeb3569a7a2276f9bf3761891"
+  },
+  {
+    "path": "plugins/foreman-line/registration/tests/gate.test.ts",
+    "sha256": "aa2c8f6f102811b51a9214f3c38e397146715b0a764e12ad263d0984bdf3102e"
+  },
+  {
+    "path": "plugins/foreman-line/registration/tests/hash-refusal.test.ts",
+    "sha256": "cb3f463df0cb9aaaa2a6d0681162600b0faa3d9ebdac07110cde698f9cddd91f"
+  },
+  {
+    "path": "plugins/foreman-line/registration/tests/helpers.ts",
+    "sha256": "ef1e26fecc20ce73e89aa43f51110d65e18174c40d20947ca25d9e83295ee2fb"
+  },
+  {
+    "path": "plugins/foreman-line/registration/tests/idempotency.test.ts",
+    "sha256": "b9d1ff9725d4dc687b02b51530e333bc60e05c229af51751be1fe794d56de5fc"
+  },
+  {
+    "path": "plugins/foreman-line/registration/tests/link-recovery.test.ts",
+    "sha256": "c068dbdeaeb25cecf806cce9daf7dd829c8036c70d283c1a7a5cd58023c3715a"
+  },
+  {
+    "path": "plugins/foreman-line/registration/tests/multi-match.test.ts",
+    "sha256": "1be9e9ee95dc8fa476b526c37dca8a79e542a0ca61e44750ab7c622398a6f01c"
+  },
+  {
+    "path": "plugins/foreman-line/registration/tests/payloads.test.ts",
+    "sha256": "f4375f019f526987f9fafad5ba9a1fc960e7aff1266d3a6a5606c7e8b31da324"
+  },
+  {
+    "path": "plugins/foreman-line/registration/tests/plan-correction.test.ts",
+    "sha256": "e365c914d1761ea8bbc3155b9b3a8520faaed8339bffec1d8dfe4f1ccbe7b186"
+  },
+  {
+    "path": "plugins/foreman-line/registration/tests/preview.test.ts",
+    "sha256": "402aca7ceeafbcea1029ec33866fc6d152ce1b9f3df8ffcf22f0b04b39af26e7"
+  },
+  {
+    "path": "plugins/foreman-line/registration/tests/prior-registration.test.ts",
+    "sha256": "586f50fed9dd6183b18d129cbf4ffb3cbeafaf58f5ec365ddf16a005a6cdb09d"
+  },
+  {
+    "path": "plugins/foreman-line/registration/tests/receipt.test.ts",
+    "sha256": "2c53a21134b9baa3570d93425c2153a967838bba40d575a4e6c59132022c100f"
+  },
+  {
+    "path": "plugins/foreman-line/registration/tests/reconcile-sha.test.ts",
+    "sha256": "2b2d24ebb2653dc6f32961e7a74f34ac02a5a00f9a461777be8f6d895e63f5fd"
+  },
+  {
+    "path": "plugins/foreman-line/registration/tests/registration-result.test.ts",
+    "sha256": "5c30ff5ba00581939dbd76107fcc5b81e3ba834904dd44ae2557df9da24963dd"
+  },
+  {
+    "path": "plugins/foreman-line/registration/tests/two-commit.test.ts",
+    "sha256": "c1c6f03d4b49e2e377b5d9326b858f705d8fa8d0a816d4c1e6d174d0a2beab82"
+  },
+  {
+    "path": "plugins/foreman-line/registration/tests/writeback.test.ts",
+    "sha256": "8c7d47c7c4051a73c1e0691a15a7e53cae3b3f65e23ffd7bd2840babb76881b4"
+  },
+  {
+    "path": "plugins/foreman-line/registration/tsconfig.json",
+    "sha256": "b679a88f6f2c7506954141ad911b446acfabaab703135f866f66863ba2022d94"
+  },
+  {
+    "path": "plugins/foreman-line/routing-policy/README.md",
+    "sha256": "d5f4fa5413cec8acf01c78429425c36bf4091dd519534631cd430519d2720e79"
+  },
+  {
+    "path": "plugins/foreman-line/routing-policy/biome.json",
+    "sha256": "2d4f7ce07833129bab12747a15b47f8dc57773881fab75d9dcd19389281e282f"
+  },
+  {
+    "path": "plugins/foreman-line/routing-policy/package-lock.json",
+    "sha256": "7134c1f5517163d50a0c4e8cfb43875be0001ccae990ab9f3849a3a6d0916c38"
+  },
+  {
+    "path": "plugins/foreman-line/routing-policy/package.json",
+    "sha256": "4f90be3f68698224686b7032dc83fb6e3909b044349e4dd2a405f3b7a5012c8b"
+  },
+  {
+    "path": "plugins/foreman-line/routing-policy/routing-policy.yaml",
+    "sha256": "fd9afccec8efdb5ba5b9c6756d59a9f2daea8ce838ffd9724fbf14acc3018f25"
+  },
+  {
+    "path": "plugins/foreman-line/routing-policy/schemas/class-entry.schema.json",
+    "sha256": "ad5ba3fee3b17c9d5f8b1fef3d75ff9dff4e6c0963d62fdb5a5b9355c550b5aa"
+  },
+  {
+    "path": "plugins/foreman-line/routing-policy/schemas/data-classification-rule.schema.json",
+    "sha256": "6f065579c71ecbe1661c7e46c4b45a67a0965d54e3f1d97a8fd97952ee6f5b1c"
+  },
+  {
+    "path": "plugins/foreman-line/routing-policy/schemas/role-assignment.schema.json",
+    "sha256": "d0ee5b79ba26db37feefd0311562e046cb992f15c8184581e00cf96b3d891cdb"
+  },
+  {
+    "path": "plugins/foreman-line/routing-policy/schemas/routing-policy.schema.json",
+    "sha256": "dd8beecde075822b76bfad0b0bbc551638b7a9aac62c6844d9c090f11406db6a"
+  },
+  {
+    "path": "plugins/foreman-line/routing-policy/schemas/shadow-route.schema.json",
+    "sha256": "d3179b0fe4a09528181cdc3699ad3a80fcfe71cabf341178efc1be02524b6ffb"
+  },
+  {
+    "path": "plugins/foreman-line/routing-policy/src/cli.ts",
+    "sha256": "b8fc55fbbed92c7847a9b931fd3fc76976c07ce49897a3ddcb34dbab80fa1978"
+  },
+  {
+    "path": "plugins/foreman-line/routing-policy/src/generate.ts",
+    "sha256": "1e56d5adfd726b0583e7d95751cb94cb94a555a9a0518cb1c58b633e24c84398"
+  },
+  {
+    "path": "plugins/foreman-line/routing-policy/src/index.ts",
+    "sha256": "257196e319744b2c221d36e3db08e1de3800c79ae8ce3f4844139b85cc2814cb"
+  },
+  {
+    "path": "plugins/foreman-line/routing-policy/src/registry.ts",
+    "sha256": "e759126abe6b1bd245facfee45419c1ea1d89421f31250dc1acd953ddfeb5412"
+  },
+  {
+    "path": "plugins/foreman-line/routing-policy/src/schemas.ts",
+    "sha256": "1c94865c4663753301394b57d4178db6cc9ed8da37e1b2cff032861b91fabeec"
+  },
+  {
+    "path": "plugins/foreman-line/routing-policy/src/testing.ts",
+    "sha256": "4d0ae6d262a645533d546571802685df248c30b5963992cf82cabe33843ddbe7"
+  },
+  {
+    "path": "plugins/foreman-line/routing-policy/src/types.ts",
+    "sha256": "c26ccf471f12f0428e9a579e5e54e9a6be52e27e13540827b93328adc6c8ec15"
+  },
+  {
+    "path": "plugins/foreman-line/routing-policy/src/validator.ts",
+    "sha256": "a6f1467bde06b262d00d1deac008cc5605c12d0f0851a6dfca9d22b1a2af3d43"
+  },
+  {
+    "path": "plugins/foreman-line/routing-policy/tests/cli.test.ts",
+    "sha256": "cd40365c8bcc74afd2fb407cecf747ec5e02535653b07479df9dae0ffa54ac71"
+  },
+  {
+    "path": "plugins/foreman-line/routing-policy/tests/dependency-allowlist.test.ts",
+    "sha256": "53a62aa1dd85147a506f07f688540aa62f2c7a64e33b5b2d6093cccc48968f34"
+  },
+  {
+    "path": "plugins/foreman-line/routing-policy/tests/entrypoint.test.ts",
+    "sha256": "64975ca578d56b66e1994c4c8111b037f8c6f61295edd75aac22fe1f838d2c7f"
+  },
+  {
+    "path": "plugins/foreman-line/routing-policy/tests/fixtures/reject-both.yaml",
+    "sha256": "a0b270cf9fdf6fd3d16379cf4d738460cedbff739dc3fdfe405754a7c5c669fc"
+  },
+  {
+    "path": "plugins/foreman-line/routing-policy/tests/fixtures/reject-ceiling-missing.yaml",
+    "sha256": "55a3fc14ff2363bfe8d49a24de15d2a691150b63a05faa748b03e5e13d03d7e8"
+  },
+  {
+    "path": "plugins/foreman-line/routing-policy/tests/fixtures/reject-ceiling-zero.yaml",
+    "sha256": "e18c81ee472300dcfb9661a7c034851e7e18af72a3c5e27afc91406e95639ba4"
+  },
+  {
+    "path": "plugins/foreman-line/routing-policy/tests/fixtures/reject-classification-gate.yaml",
+    "sha256": "a4b6f44bd61bec1623e386209fa3605dddf12fa1b2aecd085e8a03f6c8be2511"
+  },
+  {
+    "path": "plugins/foreman-line/routing-policy/tests/fixtures/reject-frontier-anchor.yaml",
+    "sha256": "86406f2c47d4c152f433f0f8d038867e8ade5a9e7dbed5e1d4f8dcad454fe38b"
+  },
+  {
+    "path": "plugins/foreman-line/routing-policy/tests/fixtures/reject-multiple.yaml",
+    "sha256": "79745ccc46971aa64131764fa5756da8e39b0e48729d48d6de06c384601d5d14"
+  },
+  {
+    "path": "plugins/foreman-line/routing-policy/tests/fixtures/reject-role-pinning.yaml",
+    "sha256": "5c66e2bc3768b21cb2db1ece863bc19466dc1fd2f881496231dd0b6be7455a7e"
+  },
+  {
+    "path": "plugins/foreman-line/routing-policy/tests/fixtures/reject-security-override.yaml",
+    "sha256": "e083f6bb2edf4cea35f1b842946e90eed33cd8e25c1af0ec684c0f0525997ace"
+  },
+  {
+    "path": "plugins/foreman-line/routing-policy/tests/fixtures/reject-security-undeclared.yaml",
+    "sha256": "ef87f7f269e4489faae873733e4258f7e49b0eced383b36a317620ff4eb2667e"
+  },
+  {
+    "path": "plugins/foreman-line/routing-policy/tests/fixtures/reject-structural.yaml",
+    "sha256": "593f3c392701b611627bac67c4074c936e3b6eaa059fccfc5be98031f6e510ce"
+  },
+  {
+    "path": "plugins/foreman-line/routing-policy/tests/parity.test.ts",
+    "sha256": "72244b784179933c2868e1f42c92cab5bc21095e33af598323e401c3d8027deb"
+  },
+  {
+    "path": "plugins/foreman-line/routing-policy/tests/schema-validation.test.ts",
+    "sha256": "e35fd3b1123ed93828d1b11592efc18d3fd65f7bd8af8ee05e3954cde3d51485"
+  },
+  {
+    "path": "plugins/foreman-line/routing-policy/tests/semantic-invariants.test.ts",
+    "sha256": "849b0390910be55d28db93f0aa3f1199a97992f30b73bd2beea344a327506d3d"
+  },
+  {
+    "path": "plugins/foreman-line/routing-policy/tsconfig.json",
+    "sha256": "b679a88f6f2c7506954141ad911b446acfabaab703135f866f66863ba2022d94"
+  },
+  {
+    "path": "plugins/foreman-line/schema-scaffold/README.md",
+    "sha256": "5396d7a714e27b7b5b6fd7efbda5b1ae746073eece0536b4820359504f8584b0"
+  },
+  {
+    "path": "plugins/foreman-line/schema-scaffold/biome.json",
+    "sha256": "2d4f7ce07833129bab12747a15b47f8dc57773881fab75d9dcd19389281e282f"
+  },
+  {
+    "path": "plugins/foreman-line/schema-scaffold/package-lock.json",
+    "sha256": "3cc504c1473bc0860bbcae190a37cd8faa0c9b6fbdc1f832d475fd8e95d64dce"
+  },
+  {
+    "path": "plugins/foreman-line/schema-scaffold/package.json",
+    "sha256": "700f15c4ecc02fda9bff3afc30073c6dd2e5980d4ebb26656d4acfb4b461441e"
+  },
+  {
+    "path": "plugins/foreman-line/schema-scaffold/src/generate.ts",
+    "sha256": "64a7f62c044a2d6aa36f0dd2563866cd27af9105a5b866f6e1123c9902847f1a"
+  },
+  {
+    "path": "plugins/foreman-line/schema-scaffold/src/index.ts",
+    "sha256": "61512ba2cf3b1010a3b584ba8be9111efce8cb639b9b372c979286e67ebddcbb"
+  },
+  {
+    "path": "plugins/foreman-line/schema-scaffold/src/registry.ts",
+    "sha256": "412d3771a6c7e0fe3cf317ed6070f69eafad51d06014b83a32d6869c0bc19ec1"
+  },
+  {
+    "path": "plugins/foreman-line/schema-scaffold/src/test-scaffold.ts",
+    "sha256": "ff9d9d7228065c8f47a214fef62f7d42d56a587c7a76781e93a8fcfe5002db67"
+  },
+  {
+    "path": "plugins/foreman-line/schema-scaffold/tests/dependency-allowlist.test.ts",
+    "sha256": "377bce617e6a6d9b69bf28f8f70a7ba6d5c24857c6ef22909f8c13552d167d9a"
+  },
+  {
+    "path": "plugins/foreman-line/schema-scaffold/tests/generate.test.ts",
+    "sha256": "0c0bb5b0e108fa00eb9af0f5129532dbc2064fd9499c52737de2a14435413519"
+  },
+  {
+    "path": "plugins/foreman-line/schema-scaffold/tests/test-scaffold.test.ts",
+    "sha256": "af65412296750e78f21ed25f67fe7e06fc3736179c200af6f56c0c7778758829"
+  },
+  {
+    "path": "plugins/foreman-line/schema-scaffold/tsconfig.json",
+    "sha256": "b679a88f6f2c7506954141ad911b446acfabaab703135f866f66863ba2022d94"
+  },
+  {
+    "path": "plugins/foreman-line/shaping/README.md",
+    "sha256": "88e8c318f49e8e8d6043260f95a8e1246c8426592e3b873cc3addeea8786daf9"
+  },
+  {
+    "path": "plugins/foreman-line/shaping/biome.json",
+    "sha256": "2d4f7ce07833129bab12747a15b47f8dc57773881fab75d9dcd19389281e282f"
+  },
+  {
+    "path": "plugins/foreman-line/shaping/package-lock.json",
+    "sha256": "b9562207aaf3cf473150e2f63451c9e063f748260d739d85ea4cded5f7d94393"
+  },
+  {
+    "path": "plugins/foreman-line/shaping/package.json",
+    "sha256": "64a2eeecc2fccdd39f097e28bc039ae65600d25a38ffd42cbab9af04272501cb"
+  },
+  {
+    "path": "plugins/foreman-line/shaping/src/emit.ts",
+    "sha256": "7d9842496288cd6538275c217fda865f34f9dd50b9340249e1f4f514900afd5a"
+  },
+  {
+    "path": "plugins/foreman-line/shaping/src/index.ts",
+    "sha256": "b8686b687b4bbaf9ae3d3643e107eab285785eafdba78f12b06e18cd8e76f8ba"
+  },
+  {
+    "path": "plugins/foreman-line/shaping/src/read.ts",
+    "sha256": "22f64595e6f21217e4e200470a950dccc7bfde60ca1fcbda2091ab648784d855"
+  },
+  {
+    "path": "plugins/foreman-line/shaping/src/self-check.ts",
+    "sha256": "d1ddd9e87f0066b534e550fed44bc349344ab22b1ea20ad4359985416f67c45a"
+  },
+  {
+    "path": "plugins/foreman-line/shaping/tests/advisory.test.ts",
+    "sha256": "5bab3bfe0f2dc2ae1c51ff407379804d3a55b6a5c5f4e42b83339fac5f3dcf04"
+  },
+  {
+    "path": "plugins/foreman-line/shaping/tests/artifact-path.test.ts",
+    "sha256": "cceb59b3c5fbf1a254f606e08080ecb094432dc319f32857fd6877ca4e9533b1"
+  },
+  {
+    "path": "plugins/foreman-line/shaping/tests/bare-specifier.test.ts",
+    "sha256": "d1a199600e675ba9f122b2c8848c66e7fd18505cdb85b44364b76bd502f27a57"
+  },
+  {
+    "path": "plugins/foreman-line/shaping/tests/body-section.test.ts",
+    "sha256": "48350a1fb6bd08c326e400f7612b5784ed2272fa91e34826aa4820c64a4cd1b8"
+  },
+  {
+    "path": "plugins/foreman-line/shaping/tests/canonicalizability.test.ts",
+    "sha256": "f2b41a2d025090d4b41b4e71fe412922482b0a711ad9844269a2f9a216d35a31"
+  },
+  {
+    "path": "plugins/foreman-line/shaping/tests/dependency-allowlist.test.ts",
+    "sha256": "c82bc758aaecee5edbfb5a75ff9567c6268d8b5edf6ca8209e950749f8fdf6f4"
+  },
+  {
+    "path": "plugins/foreman-line/shaping/tests/empty-epics.test.ts",
+    "sha256": "3b8b673138138a78cc5a00163ffa6815a551db26d5c12e76367deaefd992e610"
+  },
+  {
+    "path": "plugins/foreman-line/shaping/tests/frontmatter-selfcheck.test.ts",
+    "sha256": "fb607061248a92d7e7c4b81fda5d2a16033cf08f52a348a5adc864dad8555f9e"
+  },
+  {
+    "path": "plugins/foreman-line/shaping/tests/handoff-read.test.ts",
+    "sha256": "32ce51288d75285139256660177334c53ddb14d1f33860aa704488445d5ba802"
+  },
+  {
+    "path": "plugins/foreman-line/shaping/tests/helpers.ts",
+    "sha256": "b52a8c7b0bac8a1e759ae721982dd2c0ba893cbee7473bb8ef4b6c09dc6f00f5"
+  },
+  {
+    "path": "plugins/foreman-line/shaping/tests/redos.test.ts",
+    "sha256": "39b3b5e2be7d2f3bed1bca746cc17d2b9759a137957638a5c9d106249d674b43"
+  },
+  {
+    "path": "plugins/foreman-line/shaping/tests/schema-validation.test.ts",
+    "sha256": "b685c580b425eb450c20cc74aa2d6dd807a95fbd7a69554c595de44e66b1b9a3"
+  },
+  {
+    "path": "plugins/foreman-line/shaping/tests/semantic-guard.test.ts",
+    "sha256": "ae5eca23c88306f6000c2a38b26b5a2c5bd9e2bd3e0ffe613514c0bb83bf032b"
+  },
+  {
+    "path": "plugins/foreman-line/shaping/tests/skill-template-presence.test.ts",
+    "sha256": "877d07c79449c3d5083f0a2454d4ceb8b80634bbad60acc0fab73bae3c1e91b3"
+  },
+  {
+    "path": "plugins/foreman-line/shaping/tsconfig.json",
+    "sha256": "b679a88f6f2c7506954141ad911b446acfabaab703135f866f66863ba2022d94"
+  },
+  {
+    "path": "plugins/foreman-line/skill-injection/README.md",
+    "sha256": "6dfdb7b22b174258eb1d4d3532a0a599833935609a1d985178b5c9193b22a475"
+  },
+  {
+    "path": "plugins/foreman-line/skill-injection/biome.json",
+    "sha256": "2d4f7ce07833129bab12747a15b47f8dc57773881fab75d9dcd19389281e282f"
+  },
+  {
+    "path": "plugins/foreman-line/skill-injection/package-lock.json",
+    "sha256": "9f40297cedbef3b193c968926a2ae250427ae5494d6bc5e2ab74496436f75fdd"
+  },
+  {
+    "path": "plugins/foreman-line/skill-injection/package.json",
+    "sha256": "9e1eec84add64f43d9a966551cebea3580c8e017cd868c532045a3d479ba1805"
+  },
+  {
+    "path": "plugins/foreman-line/skill-injection/schemas/coordinator-skills.schema.json",
+    "sha256": "6e4510f45aed7f9b730bb10294a1b80c128dce5086276558b529f7b3f740e46e"
+  },
+  {
+    "path": "plugins/foreman-line/skill-injection/schemas/integration-skills.schema.json",
+    "sha256": "cad5d884f764582bf2471f0e82eaba977bd8f5928d5b890bd208c50a4c2bc5ae"
+  },
+  {
+    "path": "plugins/foreman-line/skill-injection/schemas/role-skill-map.schema.json",
+    "sha256": "e6619f08d8d242abbccf0c2f2e1ebebfd8fc0db3d0fda7158a22d98a324a9e74"
+  },
+  {
+    "path": "plugins/foreman-line/skill-injection/schemas/skill-injection-matrix.schema.json",
+    "sha256": "d001419cb45cb48ab51f24ce6ba1c97ec170d94c5eed359f1d7a65ad74e6a50d"
+  },
+  {
+    "path": "plugins/foreman-line/skill-injection/skill-injection.yaml",
+    "sha256": "ee42ac1b40e8dced8d9a116b8d3e94dcb2261133ddb2b42ac3f3e7b864871bff"
+  },
+  {
+    "path": "plugins/foreman-line/skill-injection/src/cli.ts",
+    "sha256": "cea56157ecc3df965819e256673d5d6c7baae66a75f2c2c507007db1f12e8d4d"
+  },
+  {
+    "path": "plugins/foreman-line/skill-injection/src/generate.ts",
+    "sha256": "1e56d5adfd726b0583e7d95751cb94cb94a555a9a0518cb1c58b633e24c84398"
+  },
+  {
+    "path": "plugins/foreman-line/skill-injection/src/index.ts",
+    "sha256": "caf9fe18298d779b9838faf5f8ef065e0d8ccae980e8c8be42be3d1a01b03d33"
+  },
+  {
+    "path": "plugins/foreman-line/skill-injection/src/registry.ts",
+    "sha256": "784922fba1daac96a984d7e4f77fc228c1cdca6cee543450f853d93ac4388dfb"
+  },
+  {
+    "path": "plugins/foreman-line/skill-injection/src/schemas.ts",
+    "sha256": "0036dc8c6e3fffb2fcd7c2efdfbaf6ee6a2c504ec6afad30f8e4656dac16b1a5"
+  },
+  {
+    "path": "plugins/foreman-line/skill-injection/src/testing.ts",
+    "sha256": "7e49026f66bb7a12a80baba58afa66adec8671e4da8a374f5566fd63c0654add"
+  },
+  {
+    "path": "plugins/foreman-line/skill-injection/src/types.ts",
+    "sha256": "4b02dfda093f92dec3ef11d3cc8e5461a24a905981e5c0dbd67d1df8ec4e97e1"
+  },
+  {
+    "path": "plugins/foreman-line/skill-injection/src/validate.ts",
+    "sha256": "e5237de64599704bdc7df3107c64ffca86b7068d20b50e3870f4d54992d9dc75"
+  },
+  {
+    "path": "plugins/foreman-line/skill-injection/tests/cli.test.ts",
+    "sha256": "acabc9721791c540b1191f656e72d4d84477b3d1f89fb6767a63527052844ef9"
+  },
+  {
+    "path": "plugins/foreman-line/skill-injection/tests/dependency-allowlist.test.ts",
+    "sha256": "20c249a2d6e7f7ef2f9a5d26eacb3beafa040d60b0d5daa4be8abbe841e0f137"
+  },
+  {
+    "path": "plugins/foreman-line/skill-injection/tests/fixtures/accept-empty-role-map.yaml",
+    "sha256": "e07b0f6fac9d931ddb41ebd574301aa1d221fb825cc012853e9a90e48f3bb3d4"
+  },
+  {
+    "path": "plugins/foreman-line/skill-injection/tests/fixtures/reject-bad-glob.yaml",
+    "sha256": "3d7537a240db19591712ed80c35f9eb2c1a1cd715720b71755b7d30b8851fc1e"
+  },
+  {
+    "path": "plugins/foreman-line/skill-injection/tests/fixtures/reject-duplicate-nested-key.yaml",
+    "sha256": "691b384dfefe773d61ee248e4b3267476558134d375decc1e133345f433e753b"
+  },
+  {
+    "path": "plugins/foreman-line/skill-injection/tests/fixtures/reject-duplicate-top-level.yaml",
+    "sha256": "3391898d1a4a7be5c3b771fc721cbca3cd3332a665bb22e19a933c185519bfd0"
+  },
+  {
+    "path": "plugins/foreman-line/skill-injection/tests/fixtures/reject-empty-glob-array.yaml",
+    "sha256": "c0077766badcc8ed1c229bc3138aa94bfb0d87bfb75a1ce8cf0a4c067b81f1fb"
+  },
+  {
+    "path": "plugins/foreman-line/skill-injection/tests/fixtures/reject-empty-jira.yaml",
+    "sha256": "05cbcae07fcc817a98197b78649ad500c9a1adb57acbb044b78465f65773b9cb"
+  },
+  {
+    "path": "plugins/foreman-line/skill-injection/tests/fixtures/reject-empty-rework-first.yaml",
+    "sha256": "d93e03ccb5427e45c308dd0608c4a9e0d21d73c3d6c5423608bc401dd58d0255"
+  },
+  {
+    "path": "plugins/foreman-line/skill-injection/tests/fixtures/reject-missing-toplevel.yaml",
+    "sha256": "48e335efc684534f6cba4a9abbcc7158d8903be5eeddefed8f640429e2bc21f6"
+  },
+  {
+    "path": "plugins/foreman-line/skill-injection/tests/fixtures/reject-multiple-violations.yaml",
+    "sha256": "9d7e9efa7563d6935a06ca1260387a9b67d7b188bae4f540096f979a72ad7174"
+  },
+  {
+    "path": "plugins/foreman-line/skill-injection/tests/fixtures/reject-unknown-nested.yaml",
+    "sha256": "d094977f630783db71ef317403119d15f93024ee2065786c4c7b338cca24ac61"
+  },
+  {
+    "path": "plugins/foreman-line/skill-injection/tests/fixtures/reject-unknown-toplevel.yaml",
+    "sha256": "eb950f6ee8786ea441e34b0c004d4319861a794aa6a730dee7dd1d7290017961"
+  },
+  {
+    "path": "plugins/foreman-line/skill-injection/tests/fixtures/reject-whitespace-skill-name.yaml",
+    "sha256": "ef5267cf8e235d22ca8436c7aaa59130ccf8c1064138e80631ef5c5dc7e03fdd"
+  },
+  {
+    "path": "plugins/foreman-line/skill-injection/tests/parity.test.ts",
+    "sha256": "59e5a44a56d5bac7cb126bf57bf652e36b2b0f23947220136244150c3401ecf2"
+  },
+  {
+    "path": "plugins/foreman-line/skill-injection/tests/schema-validation.test.ts",
+    "sha256": "24b9c9eb5153ae65a65be0b7b4d29520c711deb7fbd461ada47638ae0cbb3022"
+  },
+  {
+    "path": "plugins/foreman-line/skill-injection/tests/semantic-invariants.test.ts",
+    "sha256": "5cd81cf0412d6740208d366ba53de9b2785122692523e389e55449c15c1d3bf8"
+  },
+  {
+    "path": "plugins/foreman-line/skill-injection/tsconfig.json",
+    "sha256": "b679a88f6f2c7506954141ad911b446acfabaab703135f866f66863ba2022d94"
+  },
+  {
+    "path": "plugins/foreman-line/skills/ai-council/SKILL.md",
+    "sha256": "fdbf539b7252d0deb69e4e391908a5aff6ca2344e0f107695113f1c16070ba41"
+  },
+  {
+    "path": "plugins/foreman-line/skills/ai-council/references/seats.template.md",
+    "sha256": "5ce80722fd109ea72656b721a1643b4b89d0bd6cb6f06f297b93885f64788665"
+  },
+  {
+    "path": "plugins/foreman-line/skills/foreman-shaping/SKILL.md",
+    "sha256": "df6627e5208fdc4935dd385d9a0c986da8a0fec4437d13281b5d8e56e0d35ead"
+  },
+  {
+    "path": "plugins/foreman-line/skills/goal/SKILL.md",
+    "sha256": "ee003674865be3a45316b95f5459b8f317d8150bdb8c0774601929cb0befd831"
+  },
+  {
+    "path": "plugins/foreman-line/skills/parcel-driven-development/SKILL.md",
+    "sha256": "f673472c804a659f9f01515b878f02c653d4ed97c2c4c97f7340139325c6df05"
+  },
+  {
+    "path": "plugins/foreman-line/skills/parcel-driven-development/templates/CONTRACT_AMENDMENT.md",
+    "sha256": "43aec051cb2d87341d7010fa350d8c85fa2b07f9cf64f765a44b4356f2d9e170"
+  },
+  {
+    "path": "plugins/foreman-line/skills/parcel-driven-development/templates/PARCEL.md",
+    "sha256": "ca24f0cc9eaee560e7777f7b31041d6c8d1796272332a9a5888fdb8fa45359f2"
+  },
+  {
+    "path": "plugins/foreman-line/skills/parcel-driven-development/templates/PARCEL_INDEX.md",
+    "sha256": "9ae9221e38ad1b435c3d3861fcef227f0fd4aa7372c439821644378a65981e29"
+  },
+  {
+    "path": "plugins/foreman-line/spec-linter/README.md",
+    "sha256": "8be95883d16a3a73a128a8c0d14d73d61204724531c99ee9dfc8072dff08a69c"
+  },
+  {
+    "path": "plugins/foreman-line/spec-linter/biome.json",
+    "sha256": "2d4f7ce07833129bab12747a15b47f8dc57773881fab75d9dcd19389281e282f"
+  },
+  {
+    "path": "plugins/foreman-line/spec-linter/package-lock.json",
+    "sha256": "fcfd617b9af3aec7c0a3445ae29bef16004d80ee67ece448fc6b6dc16e94d533"
+  },
+  {
+    "path": "plugins/foreman-line/spec-linter/package.json",
+    "sha256": "0e099d605bc66a7d53804a190738933e75689dc3741e0ac4a506dfd7ea8a698c"
+  },
+  {
+    "path": "plugins/foreman-line/spec-linter/schemas/spec-frontmatter.schema.json",
+    "sha256": "8ff17dbd4ccbd29d0f60f7b03dfdc9f08afb63d9de1b64549bc1646ce546034e"
+  },
+  {
+    "path": "plugins/foreman-line/spec-linter/src/cli.ts",
+    "sha256": "aa0928ab5173d868c61c1ddd75ce990dbb698afdaee9269b7e99965f5e687c18"
+  },
+  {
+    "path": "plugins/foreman-line/spec-linter/src/generate.ts",
+    "sha256": "1e56d5adfd726b0583e7d95751cb94cb94a555a9a0518cb1c58b633e24c84398"
+  },
+  {
+    "path": "plugins/foreman-line/spec-linter/src/grandfather.ts",
+    "sha256": "81dfe76b8d79b61c8df5ffdbb078c2bbbc249320149b2bb223a5d09877492dc1"
+  },
+  {
+    "path": "plugins/foreman-line/spec-linter/src/index.ts",
+    "sha256": "76cc0c40215650bdbcf2eda68cda9891ded368d8040d7e814aac6a82c13534f6"
+  },
+  {
+    "path": "plugins/foreman-line/spec-linter/src/registry.ts",
+    "sha256": "624a820c6d1123e9336d5375756e1448242eb5da49f93270de8c368a2bc52dfc"
+  },
+  {
+    "path": "plugins/foreman-line/spec-linter/src/schemas.ts",
+    "sha256": "bc54e20e8e8ae6aaaf412e9eb60dd0f7a5f05d5d1c623fb34c2a5ac57fff201c"
+  },
+  {
+    "path": "plugins/foreman-line/spec-linter/src/testing.ts",
+    "sha256": "8eb8ed277eebcb20ddd5a20ac8810988375500e92b47cde1ea06cb745dec0451"
+  },
+  {
+    "path": "plugins/foreman-line/spec-linter/src/types.ts",
+    "sha256": "0aa9b00a9fd8a533413c5795610527c18446b38f6b3664ca9e7d7d17183b1eb1"
+  },
+  {
+    "path": "plugins/foreman-line/spec-linter/src/validate.ts",
+    "sha256": "4e542bfa6943c71b962236cbd5410713186f6eabb2b7788e12392cbffaef3a99"
+  },
+  {
+    "path": "plugins/foreman-line/spec-linter/tests/cli.test.ts",
+    "sha256": "ee95c64e7101758f84832d0e1d36be30cc86100589c985ee8c11ddd64bc6fe24"
+  },
+  {
+    "path": "plugins/foreman-line/spec-linter/tests/dependency-allowlist.test.ts",
+    "sha256": "a4755730aec14b5274bafba924cf6e77f13dc06c60555167a14f9df15eee2b44"
+  },
+  {
+    "path": "plugins/foreman-line/spec-linter/tests/fixtures/permission-profile-null.md",
+    "sha256": "001e5a24bd797f50c6eea55ea035922186adbd2f2b957c399fbd85081b323f05"
+  },
+  {
+    "path": "plugins/foreman-line/spec-linter/tests/fixtures/reject-permission-profile-unknown.md",
+    "sha256": "f52ab3eb29e35430342f8e9092cfe022370be5342b93aace546ea346af5ab7d1"
+  },
+  {
+    "path": "plugins/foreman-line/spec-linter/tests/fixtures/reject-permission-profile-whitespace.md",
+    "sha256": "3d73f1874438b62a31b13ba6a926f6a89ba46145cf473780e90279822ba5fd6b"
+  },
+  {
+    "path": "plugins/foreman-line/spec-linter/tests/fixtures/reject-risk.md",
+    "sha256": "ee314ffe817c68b92c9f4ceeffc2b738d2492d880d7950e537d156570b50bb19"
+  },
+  {
+    "path": "plugins/foreman-line/spec-linter/tests/fixtures/reject-routing-class.md",
+    "sha256": "010bb2440c4c11e75e5728b109d07b2a4cd75dba68796d58c4826509f8f84a10"
+  },
+  {
+    "path": "plugins/foreman-line/spec-linter/tests/fixtures/reject-status.md",
+    "sha256": "ca4b751907f3d837ee4eeb5d549a6145798f8307b76f54116668b5b0d0d255f5"
+  },
+  {
+    "path": "plugins/foreman-line/spec-linter/tests/fixtures/reject-superseded-null.md",
+    "sha256": "e156a4ee0e20d28edba05a6dd070b1fdf98c8d6dfa119069d11fdee4df70d6f2"
+  },
+  {
+    "path": "plugins/foreman-line/spec-linter/tests/fixtures/reject-surfaces-empty.md",
+    "sha256": "10ba10f3bf10a485a5a63a979cb591052ceda306d14bf4067eaaed5d14728aa1"
+  },
+  {
+    "path": "plugins/foreman-line/spec-linter/tests/fixtures/valid-spec-no-perm.md",
+    "sha256": "74070ebd88f153b07df6f8ca7c647469b37d0e4ef9871326c823961fa1b03c0c"
+  },
+  {
+    "path": "plugins/foreman-line/spec-linter/tests/fixtures/valid-spec-unknown-surface.md",
+    "sha256": "ee56eee759371240691483df577b86dd03f5410489fad75f81420ca0b6eb28f3"
+  },
+  {
+    "path": "plugins/foreman-line/spec-linter/tests/fixtures/valid-spec.md",
+    "sha256": "58b7b238c61971704d0c91bbff9af88fccaf9a7067073686fe9a8df4c526e4a9"
+  },
+  {
+    "path": "plugins/foreman-line/spec-linter/tests/fixtures/valid-superseded.md",
+    "sha256": "0786221d584b143f6cbeeb129c9d401c2f69df31363c75bd2e7caaaf7a80001a"
+  },
+  {
+    "path": "plugins/foreman-line/spec-linter/tests/grandfather.test.ts",
+    "sha256": "3923a083c2aee699840609613b8f8a2242706215aaf933a798276a86241e3f77"
+  },
+  {
+    "path": "plugins/foreman-line/spec-linter/tests/parity.test.ts",
+    "sha256": "6eacc7d8eb5dccdf7c3d46fe9e778a93d14ab1d70c949c7dc3aa758100fdcd7a"
+  },
+  {
+    "path": "plugins/foreman-line/spec-linter/tests/schema-validation.test.ts",
+    "sha256": "cc0ce8fc8500a64a052604baa3fb1d6274832f2c9b04d75261096348e75e1409"
+  },
+  {
+    "path": "plugins/foreman-line/spec-linter/tests/semantic-invariants.test.ts",
+    "sha256": "f44a2a93114bfeabacef0156def7d0fbc359edd3d89e2f8cfaffce4967ab4c7a"
+  },
+  {
+    "path": "plugins/foreman-line/spec-linter/tsconfig.json",
+    "sha256": "b679a88f6f2c7506954141ad911b446acfabaab703135f866f66863ba2022d94"
+  },
+  {
+    "path": "plugins/foreman-line/verification/AC-CONVENTION.md",
+    "sha256": "06fad76735ab5419027e067bb7e94535cef826859d1c001e8c8bc4a1063d14fb"
+  },
+  {
+    "path": "plugins/foreman-line/verification/PROBE-HEADLESS.md",
+    "sha256": "c3cfeb807ee856c615e7c496d052d390ca0470031998c19671085cba63fdeb6d"
+  },
+  {
+    "path": "plugins/foreman-line/verification/biome.json",
+    "sha256": "2d4f7ce07833129bab12747a15b47f8dc57773881fab75d9dcd19389281e282f"
+  },
+  {
+    "path": "plugins/foreman-line/verification/package-lock.json",
+    "sha256": "6dfd1da093b7e0983586c56cd56726cbbd487b02561f88261c323e63c8a8113d"
+  },
+  {
+    "path": "plugins/foreman-line/verification/package.json",
+    "sha256": "47cf5d108fead639787daf50f0b3c273b5bd00910552b4db61adf0b0a8a1cd4e"
+  },
+  {
+    "path": "plugins/foreman-line/verification/src/adversarial/index.ts",
+    "sha256": "9d3612074c86cca4011c120c1ab344abb82f03eea1d4f5dcf99857d61413377c"
+  },
+  {
+    "path": "plugins/foreman-line/verification/src/chainwalk/index.ts",
+    "sha256": "a130210c309b64f5262f07f3ff4aee60e6b56f396c1afdf9f7ad4f5ff92cebe4"
+  },
+  {
+    "path": "plugins/foreman-line/verification/src/harness/index.ts",
+    "sha256": "88598de6fbc2fca9bd803a7060d172fbd528a4d7dfd2d998fed54d4a11b4e95f"
+  },
+  {
+    "path": "plugins/foreman-line/verification/src/human-gate/adapter.ts",
+    "sha256": "c9d219222ebe555aed6ae32c94b5c2e6253d07b0433a2c13bcb86f71b10a3042"
+  },
+  {
+    "path": "plugins/foreman-line/verification/src/human-gate/index.ts",
+    "sha256": "3f6c5d38b0f7b30c2032a71bcb631441f0bf1c01ad07e3dbe6da07df4d92e11b"
+  },
+  {
+    "path": "plugins/foreman-line/verification/src/index.ts",
+    "sha256": "ec73b5796ed8f66e6d5431772d3aff505c0939e894abf813c91c3f4d5202ebc0"
+  },
+  {
+    "path": "plugins/foreman-line/verification/src/pipeline/index.ts",
+    "sha256": "a6212e4e214d84405e5237c7c9dbc457d391a0c0199929956899eab4528cc265"
+  },
+  {
+    "path": "plugins/foreman-line/verification/tests/adversarial-collect.test.ts",
+    "sha256": "0276b496ca2c2287879ed209545ff8c39dc7786129565ce1c0429f1eeda531e1"
+  },
+  {
+    "path": "plugins/foreman-line/verification/tests/adversarial-dispatch.test.ts",
+    "sha256": "ed0ee8103cafb7c725b0ccd7fec650cbdbbf66b0f96567ba86e299fa37981c44"
+  },
+  {
+    "path": "plugins/foreman-line/verification/tests/adversarial-rework.test.ts",
+    "sha256": "ee1e2a3e7801e73375b8c365fc243f55e1ac4d036113804d5745d2d2877552b7"
+  },
+  {
+    "path": "plugins/foreman-line/verification/tests/adversarial-scaffold.test.ts",
+    "sha256": "37ec39ea42ce98af1725a6ed5734c76e2a07db3879263796bc1cfd8f04797638"
+  },
+  {
+    "path": "plugins/foreman-line/verification/tests/build-result.test.ts",
+    "sha256": "438ef9d3d555e13f9d0bad626ea906d23c4ca9e7f3bc5b19850d11660743a24f"
+  },
+  {
+    "path": "plugins/foreman-line/verification/tests/chainwalk.test.ts",
+    "sha256": "6db84050d85f36a79a0f01f0a29a11dabbe3a41b43e79021f0b65c6fd4f32bc6"
+  },
+  {
+    "path": "plugins/foreman-line/verification/tests/harness.test.ts",
+    "sha256": "85b6e48ec2c601084553e4c53e9e2f5ec5f10549119413f47862b42e1ee87946"
+  },
+  {
+    "path": "plugins/foreman-line/verification/tests/helpers.ts",
+    "sha256": "161088be3566ff5a596c5b0207914f891e0b115e55804fcb642ecf4696ecb444"
+  },
+  {
+    "path": "plugins/foreman-line/verification/tests/human-gate-execute.test.ts",
+    "sha256": "bdb845d005881ada01a873ac9fb51b722138e9045513b4bd10a9163f4c0088e2"
+  },
+  {
+    "path": "plugins/foreman-line/verification/tests/human-gate-helpers.ts",
+    "sha256": "7e993398a9f15b0c3e0fdfd8376beb73fc7c32211206b968d57a6062708556c5"
+  },
+  {
+    "path": "plugins/foreman-line/verification/tests/human-gate.test.ts",
+    "sha256": "68c6c29b6c3e463dfbda37b32d78f8d83ae6ae26b1c983ec2a0f1a3091669985"
+  },
+  {
+    "path": "plugins/foreman-line/verification/tests/pipeline.test.ts",
+    "sha256": "ed4073d36f6bab3da44464fc1e32222fa723750f847e4ff5633b0e71b3c8038d"
+  },
+  {
+    "path": "plugins/foreman-line/verification/tests/rework.test.ts",
+    "sha256": "b69050db2030d62c352e721adde897eb6a4ee43615eb750c91a6cf48ee2fc8b0"
+  },
+  {
+    "path": "plugins/foreman-line/verification/tests/scaffold.test.ts",
+    "sha256": "205f83ba115497ab23f8618ee38088c7cf52d51b8600c97a61c58225b48b7da3"
+  },
+  {
+    "path": "plugins/foreman-line/verification/tsconfig.json",
+    "sha256": "b679a88f6f2c7506954141ad911b446acfabaab703135f866f66863ba2022d94"
+  },
+  {
+    "path": "references/accessibility-checklist.md",
+    "sha256": "61c759d94d52296231f5f310b92b401f56c44e4430dc3cc95ebac5d7b1d5ffac"
+  },
+  {
+    "path": "references/orchestration-patterns.md",
+    "sha256": "61e543d86f19f86b83074f8c1c769455c7085a2c72dd47b1da21a8c63785be4a"
+  },
+  {
+    "path": "references/performance-checklist.md",
+    "sha256": "628539583b7f515f84d0b8e4f4210ccdc0449afd31901149a078209f0769e654"
+  },
+  {
+    "path": "references/security-checklist.md",
+    "sha256": "56ffac21ef2226d41a47753ff691633451e313b068ce6020e07a1c9617c421ab"
+  },
+  {
+    "path": "references/testing-patterns.md",
+    "sha256": "2502c02eee60a9e97f4256b318cdf2f1e22b045b78c6d9713fcb926b9dfc025e"
+  },
+  {
+    "path": "scripts/validate-skills.js",
+    "sha256": "2e8fe0afb478ac4943b574fe5008372128340a0179db9936aa7a5e684113a374"
+  },
+  {
+    "path": "skills/accomplish/SKILL.md",
+    "sha256": "a964c79fa09a2bc67ba1ff207340b01485d53f6226f02e7ff525c9ff1dc327b7"
+  },
+  {
+    "path": "skills/accomplish/evals/evals.json",
+    "sha256": "9daba595dbe24f672d7464d4f8c02cabd72c5e64aba9f31f61039be7d82e1abd"
+  },
+  {
+    "path": "skills/api-and-interface-design/SKILL.md",
+    "sha256": "293db2903b41316a5109a1e0ce3e1740eeafae31735bc1f9143dafbfd1187363"
+  },
+  {
+    "path": "skills/browser-testing-with-devtools/SKILL.md",
+    "sha256": "838e392a8300e7bbf4b6be20b26692c4557a8cf59ba5cbd1be9ce05ab4e73522"
+  },
+  {
+    "path": "skills/ci-cd-and-automation/SKILL.md",
+    "sha256": "a6ed8ed56456b01ff8314c44eefc69897d9905ae4e06bb2b7036286efb79b5f0"
+  },
+  {
+    "path": "skills/code-review-and-quality/SKILL.md",
+    "sha256": "7587de5eff9eccd098f0d3b57b6d86ee18df680a7bbbef03710de7c1a4e67263"
+  },
+  {
+    "path": "skills/code-simplification/SKILL.md",
+    "sha256": "f0c5ed754057eb0c1e027e2587f59de816651feb5e837242296c43ea21cf621d"
+  },
+  {
+    "path": "skills/context-engineering/SKILL.md",
+    "sha256": "ff9d4e5706bdd2eb7de1bfed569f1f42d28e478979ce6fcc32e617e7861b491d"
+  },
+  {
+    "path": "skills/debugging-and-error-recovery/SKILL.md",
+    "sha256": "2539c0078466755c192123c34758aa432da5d29529340037113eeaecb6647b0e"
+  },
+  {
+    "path": "skills/deprecation-and-migration/SKILL.md",
+    "sha256": "bf2d9b4e3bc635b32e8de70b0ab41e4395d7b585e6474347c53ce89d45fbdb75"
+  },
+  {
+    "path": "skills/documentation-and-adrs/SKILL.md",
+    "sha256": "7fed35f9c5b95d8e3623ad24d78d209c3267ab62d7157fc03954c76a7e58adf4"
+  },
+  {
+    "path": "skills/doubt-driven-development/SKILL.md",
+    "sha256": "59aef769adeae40aad67a1d54474aaf914ea7ecdfc2a4752a54840a8d29f80de"
+  },
+  {
+    "path": "skills/frontend-ui-engineering/SKILL.md",
+    "sha256": "9f9e5b3141c891d866c2a15a11ac3aba4e86ec6c530d054f0534503c2e720cb1"
+  },
+  {
+    "path": "skills/get-app-specs/SKILL.md",
+    "sha256": "933eb2abc90b6dda8dd6d42c0dd1487a679323f058e88798d650be0a4e5972f2"
+  },
+  {
+    "path": "skills/get-app-specs/templates/APP_SPECIFICATION.template.md",
+    "sha256": "b562a0d65b5f725a3b793b41ae46bd02ab6710997962eed13db863df8920af4c"
+  },
+  {
+    "path": "skills/git-workflow-and-versioning/SKILL.md",
+    "sha256": "b1a84eac7a47f6e2985a27733137d862fcdeb552eefe2bd17629e1f3c20e0e97"
+  },
+  {
+    "path": "skills/go-live-readiness/SKILL.md",
+    "sha256": "26e96ab3001506865aa8657d99eafa2908b3989e9eb4a8f681464cd1238eb87b"
+  },
+  {
+    "path": "skills/go-live-readiness/examples/keon-go-live/ASSESSMENT-SCOPE.md",
+    "sha256": "0139e4425c32cee27040498aff97846d21f09150bdfc0e7335271a547a8b4b1c"
+  },
+  {
+    "path": "skills/go-live-readiness/examples/keon-go-live/DISCOVERY.md",
+    "sha256": "87ba121bc4be5fc4157c792f2ddb00d79602f9642763359b6d608961877766b9"
+  },
+  {
+    "path": "skills/go-live-readiness/examples/keon-go-live/FINAL-HANDOFF.md",
+    "sha256": "c677ba6bed60202f74bbf04f8a313d8477e1cd496c3448e397dc57cc85e6b8c2"
+  },
+  {
+    "path": "skills/go-live-readiness/examples/keon-go-live/INTEGRATION-SURFACES.md",
+    "sha256": "589fc24a7f9026635d2b79b70b28c20d1491c425275f29c567aad0216d5dd80a"
+  },
+  {
+    "path": "skills/go-live-readiness/examples/keon-go-live/README.md",
+    "sha256": "77fa97bcc99d0a93e31ef1ef181d05d64716ea05f10d5b23da1a0d5605400fa0"
+  },
+  {
+    "path": "skills/go-live-readiness/examples/keon-go-live/RELEASE-GATES.md",
+    "sha256": "0149547aca90a82ea54e8132a6b8bebf35eb2dbc6987ff04a990cc44ca904d1f"
+  },
+  {
+    "path": "skills/go-live-readiness/examples/keon-go-live/SCENARIOS.md",
+    "sha256": "0b3b3b5a4db164af8c1f6f843eb3c0dcc6ee5dac777240130553ebe8036408e4"
+  },
+  {
+    "path": "skills/go-live-readiness/examples/keon-go-live/SECURITY-GATES.md",
+    "sha256": "5acf4260da61e0eeb4b111672696e44f93614da129ad51c41894a1790718b65c"
+  },
+  {
+    "path": "skills/go-live-readiness/examples/keon-go-live/TRACKS.md",
+    "sha256": "a66fec52d3848f83ba9025b251cbc4b6a3674eb9cfc7c0fe35b7c510987640ba"
+  },
+  {
+    "path": "skills/go-live-readiness/examples/keon-go-live/VERIFICATION.md",
+    "sha256": "36ef03263a2607dec9d414dd574313418c799233811c83457549a8427677cdb8"
+  },
+  {
+    "path": "skills/go-live-readiness/templates/ASSESSMENT_SCOPE.md",
+    "sha256": "698a9fc6043182519275ca7de6514d5269ed6911cb68f647b8d3f542353d388f"
+  },
+  {
+    "path": "skills/go-live-readiness/templates/FINAL_READINESS_HANDOFF.md",
+    "sha256": "4ae752360cd81ef53bb059eb9fc61cc970f5d179d2ef2651e1d8d2ffe06c2218"
+  },
+  {
+    "path": "skills/go-live-readiness/templates/RELEASE_GATE_CHECKLIST.md",
+    "sha256": "462a5744ac6527beefa178ffc40d46818e6e24fb002337bc8cc7227d035fe153"
+  },
+  {
+    "path": "skills/go-live-readiness/templates/REMEDIATION_PARCEL.md",
+    "sha256": "76020a30174fbb1c6103f37bf218e4f689855c850747f88a0b77e19979cc8131"
+  },
+  {
+    "path": "skills/idea-refine/SKILL.md",
+    "sha256": "ee6ea1c7f444568e0b5e9b9791a8261d7834a180d2ecb96fd95ec6a4c0a4aef1"
+  },
+  {
+    "path": "skills/idea-refine/examples.md",
+    "sha256": "563204bfbf2f80a444151695205af4cb759e722b3d1e5460e08f278a69c89ba1"
+  },
+  {
+    "path": "skills/idea-refine/frameworks.md",
+    "sha256": "161ebc18fdf2d996bc62a87a2d747cf1bf53548354f8925de25c732c27f00309"
+  },
+  {
+    "path": "skills/idea-refine/refinement-criteria.md",
+    "sha256": "1ca2973a4d01b5cb37ab7ddb2eff77fa4e792634a33d0ce44961c068fc88d51a"
+  },
+  {
+    "path": "skills/idea-refine/scripts/idea-refine.sh",
+    "sha256": "f02a52408a4218047c032d221483abfbb48d11f090bb4915965c7419bf2e0e47"
+  },
+  {
+    "path": "skills/incremental-implementation/SKILL.md",
+    "sha256": "5f16adf542330dfadb8b9a9c6d7ec45e4196bd1db9a67d4407e9dc07e6e29e41"
+  },
+  {
+    "path": "skills/initiative-coordination/SKILL.md",
+    "sha256": "931e6945ba21cb4719f7e4894f6279c754b19c35fb7e73303e5664e1bb43dc0e"
+  },
+  {
+    "path": "skills/initiative-coordination/templates/INITIATIVE.md",
+    "sha256": "d3d055030aba3873ce1f6870af3ec8954249ac6acb2fb33514f5954ba7982891"
+  },
+  {
+    "path": "skills/initiative-coordination/templates/INTEGRATION-SURFACE.md",
+    "sha256": "b4aebb4547ebd1b4852a866c959a326baf0e6ce78d736238049da7dce4950351"
+  },
+  {
+    "path": "skills/initiative-coordination/templates/RELEASE-GATE.md",
+    "sha256": "2a0cb7a0af8e71d16d773f3dd84d1da92bc4a5a29e04551f77e913981091e6c6"
+  },
+  {
+    "path": "skills/initiative-coordination/templates/SESSION-HANDOFF.md",
+    "sha256": "f9a6d5049753ae2d1a39fc671570bf9de4ff73b92c66d960a67793e6741bda92"
+  },
+  {
+    "path": "skills/initiative-coordination/templates/TRACK.md",
+    "sha256": "badc67ce1911e624bef79a05f6593258fd5e2c980c42145220adb3442d2da5b3"
+  },
+  {
+    "path": "skills/interview-me/SKILL.md",
+    "sha256": "1d94741d10d2c826cd0c191aea3981ee94c8abb27ef2a166f6a372117d06448f"
+  },
+  {
+    "path": "skills/modernize/README.md",
+    "sha256": "392f079f958aec26e878d11a33bafec8c72204b9a76195f49ebf642ac9b2efb9"
+  },
+  {
+    "path": "skills/modernize/SKILL.md",
+    "sha256": "38e07ccc2e2e48d4575dc1e9e4170c38f61964cddcff94cd01c387e772d38c2c"
+  },
+  {
+    "path": "skills/modernize/agents/openai.yaml",
+    "sha256": "c4ebcf68c8783a56229d66f3fa23f6c23814bf5f67098061eb54b78f124a0f05"
+  },
+  {
+    "path": "skills/modernize/examples/dotnet-clean-architecture.yaml",
+    "sha256": "298bb2732207333ce1379ddf2dd5e6ba287f22920b01b37dfad2f162d269199b"
+  },
+  {
+    "path": "skills/modernize/examples/dotnet-migration.yaml",
+    "sha256": "2eedadbd22e2783b5a49c19534a80ceb6b54459b2256dc6c7646d0b2932ffae9"
+  },
+  {
+    "path": "skills/modernize/examples/go-migration.yaml",
+    "sha256": "ea4bf0d5d503d593fbda50a52fb76d126b4ac88df2c050fee69458cb85ce27ea"
+  },
+  {
+    "path": "skills/modernize/examples/invocation-examples.md",
+    "sha256": "d0fdbe8deaf987827c455ef1ba25bce8383e7e83f4034692497efe7fc5000855"
+  },
+  {
+    "path": "skills/modernize/examples/minimal.yaml",
+    "sha256": "bbff78576b4e0f51d3eac62fc47f11455c5a7ef6b0595f5e620248ee4a6cc217"
+  },
+  {
+    "path": "skills/modernize/examples/rust-axum-migration.yaml",
+    "sha256": "d35763b26c972a78f36d29198c2cfb158d6d64f9b1c979414355ecdf5dd93bc7"
+  },
+  {
+    "path": "skills/modernize/examples/sdk-py-to-csharp.yaml",
+    "sha256": "a53670b3b0ffb063ee1f23c9ac8f4fbc78f4641419078ca4565c6a2e21d4511b"
+  },
+  {
+    "path": "skills/modernize/executors/package-lock.json",
+    "sha256": "47195bc15712bc629b1e2243e675f73d9871a7a79e3f53f20cf990777412dd1b"
+  },
+  {
+    "path": "skills/modernize/executors/package.json",
+    "sha256": "66dfb82072dfc679de24963001e9628eb425e294900e9d90970cbd0147858294"
+  },
+  {
+    "path": "skills/modernize/executors/src/approval-errors.ts",
+    "sha256": "dd72e19aaadda93418fb0c1645287e5832813767854089c614192a9bb846567c"
+  },
+  {
+    "path": "skills/modernize/executors/src/approval-gate.ts",
+    "sha256": "2aaa01fc52208b2b5c077b66c3b319bafa57cbebf515092578d95e19f6fdbcd5"
+  },
+  {
+    "path": "skills/modernize/executors/src/approval-hash.ts",
+    "sha256": "0124c48d49e8bcd506991cecbd34c2d9052e48fbede5caae971e82bb52a0bef2"
+  },
+  {
+    "path": "skills/modernize/executors/src/approval-schema.ts",
+    "sha256": "dfecbd3c018bb8eb729f527469e8a1398e1fa7aa1af7019273457e709bac0ea7"
+  },
+  {
+    "path": "skills/modernize/executors/src/canonical-json.ts",
+    "sha256": "2cd3be1b1a0c7cb5ec65c35dec0d9e38b6c71ea481999820c79a881b264bf253"
+  },
+  {
+    "path": "skills/modernize/executors/src/claim-schema.ts",
+    "sha256": "de148952649bdda985ec9ff971e65f07cee920e0fcb9c5ecb8b1032a3634e2b7"
+  },
+  {
+    "path": "skills/modernize/executors/src/claim-tier.ts",
+    "sha256": "c4ea629d387ec27a288f7e4e144dfc47d1c6db6852a70962a915308b5375f13b"
+  },
+  {
+    "path": "skills/modernize/executors/src/coverage.ts",
+    "sha256": "f138162de261f9a09e2b4ee5018cbc988b475cc28caadd722fa3a1dc1e4d402b"
+  },
+  {
+    "path": "skills/modernize/executors/src/ddl.ts",
+    "sha256": "0afecd57bae4b0507009f56b5795d8340f6e0e85a84a13fa4bf6f0b4a07bb743"
+  },
+  {
+    "path": "skills/modernize/executors/src/defensibility.ts",
+    "sha256": "6ba3eaf618af05dc830a834e12a84b180e332c2238ccf831655332a5f1c72ec6"
+  },
+  {
+    "path": "skills/modernize/executors/src/errors.ts",
+    "sha256": "04af0013d724e2c954c1734808346d860d6077ae362aed0b7951e91c9059ed08"
+  },
+  {
+    "path": "skills/modernize/executors/src/git-verifier.ts",
+    "sha256": "fa069da8c959317a30a1bbb22abaddf326685d3e7164048ce2f265c3f49994e9"
+  },
+  {
+    "path": "skills/modernize/executors/src/ids.ts",
+    "sha256": "51dd7b30135f4f6c8c26cd505bac87093232c431e723f72c357c4cc7b42d9a23"
+  },
+  {
+    "path": "skills/modernize/executors/src/index.ts",
+    "sha256": "53449077b3ec5a83e8a458a7605ddf8e5d26704340047f0a95f4d827e30f2c11"
+  },
+  {
+    "path": "skills/modernize/executors/src/presence-redis.ts",
+    "sha256": "c6b39b1f70e2b4480800964d57a8783683baccdf933e69d0605cc93d99fb0446"
+  },
+  {
+    "path": "skills/modernize/executors/src/presence.ts",
+    "sha256": "09b56f0d866251247c5e67b3a8e1d87e03f2193dd82a3de321d8fc31f4f04fc7"
+  },
+  {
+    "path": "skills/modernize/executors/src/task-store.ts",
+    "sha256": "13b9136420771a5acef899107626f5d26481bed91217a79ab049f74777be1c24"
+  },
+  {
+    "path": "skills/modernize/executors/src/types.ts",
+    "sha256": "743a050f2961172e601846d8ff2838eef203154cb10fc2e36fb9584feea12e70"
+  },
+  {
+    "path": "skills/modernize/executors/src/watcher.ts",
+    "sha256": "4521dc22f1398991ebc9e71bead8e0994a43e7048e8725b1b18ffab1ec726b1d"
+  },
+  {
+    "path": "skills/modernize/executors/test/approval.test.ts",
+    "sha256": "4abcab60e5fb0d90824b6787ecee90e0842724bda925d4b5e7b6c30d19317e48"
+  },
+  {
+    "path": "skills/modernize/executors/test/claim-tier.test.ts",
+    "sha256": "3ab1d78b53093ca4d8e787a784228012bc8559e1af42066d595d1eae29ba1bf1"
+  },
+  {
+    "path": "skills/modernize/executors/test/spine.test.ts",
+    "sha256": "06f1a0b846d9608987d76676734420262b0b849d95f24ad20850dd28ceec2c98"
+  },
+  {
+    "path": "skills/modernize/executors/test/task-store.test.ts",
+    "sha256": "17ad1ed7f7e24d474c1a44137a4c013130fea196f4e25f34f2d6f719bfcd8c3a"
+  },
+  {
+    "path": "skills/modernize/executors/tsconfig.json",
+    "sha256": "37a8c7c77dc26236a21bd1d4f53637fac090d8f993397c3af87946f82e09a120"
+  },
+  {
+    "path": "skills/modernize/references/approval-verification.md",
+    "sha256": "2a27049f07d3440f25c88491ce3553b2987cc247a0c5390aba645479290ec1d4"
+  },
+  {
+    "path": "skills/modernize/references/defensibility-and-claims.md",
+    "sha256": "2d80eb0d80291b3699c5b13060ca3b867b1610937ea3d907451a1d8d65d001d8"
+  },
+  {
+    "path": "skills/modernize/references/sdk-reconciliation-harness.md",
+    "sha256": "ce6b610bde4728ee391a708b47302e0e04e199dd628410450f9cdeb6a669d9ad"
+  },
+  {
+    "path": "skills/modernize/schemas/approval.schema.json",
+    "sha256": "fb4c88f84fada6b242056e7c8dfb3e4ecda4cceaddfb817b55987f4eb483b919"
+  },
+  {
+    "path": "skills/modernize/schemas/claim.schema.json",
+    "sha256": "76232aa66129459eaefafdcdeb77e667fab3f3e18da33a09d8e03c2109a14305"
+  },
+  {
+    "path": "skills/modernize/schemas/contract.schema.json",
+    "sha256": "2bc759322031f82881665bd8b87245abe64f2eadb1e44de509525637f419984e"
+  },
+  {
+    "path": "skills/modernize/schemas/manifest.schema.json",
+    "sha256": "18a352a9980aa337979b646fec2f4c80a30bd1a2558db6dcd1a2c8b2dee00b70"
+  },
+  {
+    "path": "skills/modernize/schemas/task_store.sql",
+    "sha256": "df547a3e89768518ecd0ebc0c018a140efe41ed76e5dc8d6a9df36d7df73db63"
+  },
+  {
+    "path": "skills/modernize/schemas/wire_contract.schema.json",
+    "sha256": "7942bc7a1540f48e7aa7fb89ee35d91948a891e418ee0ab3cf51d11660e3363a"
+  },
+  {
+    "path": "skills/modernizer/README.md",
+    "sha256": "142814513c3333e28ff819da57fe33cabe79125920d87e5f46a4648272856319"
+  },
+  {
+    "path": "skills/modernizer/SKILL.md",
+    "sha256": "2f50263ee7e1317ff56ff1c6065b4dabe5fe9dc8e1849dc0d0bff177c210a301"
+  },
+  {
+    "path": "skills/modernizer/examples/advanced.yaml",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "skills/modernizer/examples/dotnet-clean-architecture.yaml",
+    "sha256": "298bb2732207333ce1379ddf2dd5e6ba287f22920b01b37dfad2f162d269199b"
+  },
+  {
+    "path": "skills/modernizer/examples/dotnet-migration.yaml",
+    "sha256": "2eedadbd22e2783b5a49c19534a80ceb6b54459b2256dc6c7646d0b2932ffae9"
+  },
+  {
+    "path": "skills/modernizer/examples/go-migration.yaml",
+    "sha256": "ea4bf0d5d503d593fbda50a52fb76d126b4ac88df2c050fee69458cb85ce27ea"
+  },
+  {
+    "path": "skills/modernizer/examples/invocation-examples.md",
+    "sha256": "d0fdbe8deaf987827c455ef1ba25bce8383e7e83f4034692497efe7fc5000855"
+  },
+  {
+    "path": "skills/modernizer/examples/minimal.yaml",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "skills/modernizer/examples/omega-sdk-py-to-csharp-federation-core.yaml",
+    "sha256": "44019a62193b4592e758468ace729dec6a46a5e3ccb6c3f0403967782c5f0e7e"
+  },
+  {
+    "path": "skills/modernizer/examples/rust-axum-migration.yaml",
+    "sha256": "d35763b26c972a78f36d29198c2cfb158d6d64f9b1c979414355ecdf5dd93bc7"
+  },
+  {
+    "path": "skills/modernizer/references/angular-to-react.md",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "skills/modernizer/references/java-to-go.md",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "skills/modernizer/references/mainframe-to-cloud.md",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "skills/modernizer/references/node-to-dotnet.md",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "skills/modernizer/references/python-to-csharp.md",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "skills/modernizer/references/sdk-reconciliation-harness.md",
+    "sha256": "709fc36a91bbb6d8ca6c2eff9145f42177dd248897cb40da5d4d236ac63c6a08"
+  },
+  {
+    "path": "skills/modernizer/schemas/contract.schema.json",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "skills/modernizer/schemas/wire_contract.schema.json",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "skills/observability-and-instrumentation/SKILL.md",
+    "sha256": "0f6b1602d65e3eacbbd555ac51bb12f78e053dda008896d3dcfc192960710ee4"
+  },
+  {
+    "path": "skills/parcel-compiler/SKILL.md",
+    "sha256": "b9435578c8f22a3789e3748de1b13099489c5011cbe8e15a0abd3a75be0bb340"
+  },
+  {
+    "path": "skills/parcel-compiler/docs/kickstarters/adversarial-review-PCC-P0.md",
+    "sha256": "fc717ca61e2d7ba5c964fa2a4a634cb068fc929c6b93ea27db1cf52d3ffc6cc1"
+  },
+  {
+    "path": "skills/parcel-compiler/docs/kickstarters/foreman-line-parcel-PCC-P0-rework.md",
+    "sha256": "a4cd2e5b79f670cca1d33a66fe443324b3c1cdc9d84b07770a848acceba25f13"
+  },
+  {
+    "path": "skills/parcel-compiler/docs/kickstarters/foreman-line-parcel-PCC-P0.md",
+    "sha256": "e4dae338ac6d65c374a180b27144f57221f73291ba8ea3b840ce77bded2ccdfe"
+  },
+  {
+    "path": "skills/parcel-compiler/docs/specs/done/PCC-P0-pcc-cli-scaffold.md",
+    "sha256": "81828daca8d135c65b094da984e2f53a6225f2e6a31c6c19d52099167902692a"
+  },
+  {
+    "path": "skills/parcel-compiler/docs/transcripts/adversarial-review-PCC-P0-findings.md",
+    "sha256": "f8ef2ee8674c9225f58626e8c9e1ba70d757ca81a7726e6746d9138c2bb0317e"
+  },
+  {
+    "path": "skills/parcel-compiler/docs/transcripts/build-PCC-P0-deterministic-pass.md",
+    "sha256": "a5288779104c8b8512a2e38f0bce24729a77cd71d2d8a799c555e9ffdd4923d8"
+  },
+  {
+    "path": "skills/parcel-compiler/tool/README.md",
+    "sha256": "6e64dc1b305c66a7e9a6ec33c0602317453a6bb9463ef483219757af2667e99b"
+  },
+  {
+    "path": "skills/parcel-compiler/tool/biome.json",
+    "sha256": "161be02e88ca1859f6bcc65e680d3ea1af3343d2f656e83322a691dc2f7682d3"
+  },
+  {
+    "path": "skills/parcel-compiler/tool/package-lock.json",
+    "sha256": "10c5997332ca4f3677a05ff14fa0b62b0b2baa8b81841234e6c8bb9254ed5c84"
+  },
+  {
+    "path": "skills/parcel-compiler/tool/package.json",
+    "sha256": "543b57b7d6dc889bf32f2ee9d32e51a4dc8d119c5f7b61e98c01a855ddebe255"
+  },
+  {
+    "path": "skills/parcel-compiler/tool/src/cli.ts",
+    "sha256": "63e2b729bba348b8ec6df479517f5aa1af15fb738c9ae21bb98c776ce423d4ef"
+  },
+  {
+    "path": "skills/parcel-compiler/tool/src/receipts/canonical.ts",
+    "sha256": "449b8acf30fb20b2d2be4e1832ded4f118d06829a548d9e3d953eac26ad37f46"
+  },
+  {
+    "path": "skills/parcel-compiler/tool/src/util/git.ts",
+    "sha256": "7f92cb6279e8c3c68fc716a138d00f6858145705505febe32a95c5758830b064"
+  },
+  {
+    "path": "skills/parcel-compiler/tool/src/util/hash.ts",
+    "sha256": "d3d44d9a1e33df9b5c11f272b562ea09531eb40e26fc4bf2a5c080ac24035c50"
+  },
+  {
+    "path": "skills/parcel-compiler/tool/test/canonical.test.ts",
+    "sha256": "04d66b79259f28cac26d3a870134685f3675f6b820122433b46d79a734343c55"
+  },
+  {
+    "path": "skills/parcel-compiler/tool/test/cli.test.ts",
+    "sha256": "93ff6bd9c6b8af5a10b09203e38142de318d252a2e903e492911076d50949b4f"
+  },
+  {
+    "path": "skills/parcel-compiler/tool/test/deps.test.ts",
+    "sha256": "d28606d1f9d51bad2b5aecce484849f0f5028bf7010eb39c5a4a1c02b83b79f7"
+  },
+  {
+    "path": "skills/parcel-compiler/tool/test/git.test.ts",
+    "sha256": "a39d016662bebd15f2f073f71b76b0d5ce6e7b5a969660589c8c5ef490c4b66d"
+  },
+  {
+    "path": "skills/parcel-compiler/tool/test/hash.test.ts",
+    "sha256": "254cd45b2117e32e07e990af414ceab31976982f8761ace323a0702803a878c5"
+  },
+  {
+    "path": "skills/parcel-compiler/tool/tsconfig.json",
+    "sha256": "38c1c18ba1807855828ed590582c8981466d2a8f7e4aec031591ebb7af12c961"
+  },
+  {
+    "path": "skills/performance-optimization/SKILL.md",
+    "sha256": "46ebf029d5fe812c312d4c5388ba7f07a076685fd30c7dfa7539c07763f1304e"
+  },
+  {
+    "path": "skills/planning-and-task-breakdown/SKILL.md",
+    "sha256": "d9dc9a1bea50a0bb2b5c51ed59833b65969b5b0bda2c8dacefb5560275443a35"
+  },
+  {
+    "path": "skills/security-and-hardening/SKILL.md",
+    "sha256": "8fed058a520281384ed1bbfddbfb3d2b12479459231c67ae0d1f0d765bb52f95"
+  },
+  {
+    "path": "skills/security-review/SKILL.md",
+    "sha256": "53219bd0cb7d47a45169759e8520c99a2537c7ec9af8460dde647211a8e2b5d6"
+  },
+  {
+    "path": "skills/security-review/templates/FINDING.md",
+    "sha256": "8f288cbfab1850449700f233ebc5b73560295a52053a0eb05c417f16f8a7a834"
+  },
+  {
+    "path": "skills/security-review/templates/SECURITY_GATE.md",
+    "sha256": "4f4113e776a2ea6c58f7198e08aecdee979b97431b0275853196a5bd2c7d3457"
+  },
+  {
+    "path": "skills/security-review/templates/THREAT_MODEL.md",
+    "sha256": "2bfe0627b71b52c7a03f79092bbcc9c3af385e4b74fa647fa5db6c3509308c2a"
+  },
+  {
+    "path": "skills/shipping-and-launch/SKILL.md",
+    "sha256": "3e54575e5dcdc8f576cd1735aa804a56bb881c342bd6c702fd86531bd6652d56"
+  },
+  {
+    "path": "skills/source-driven-development/SKILL.md",
+    "sha256": "b979e7531ea601ed14a090f32a5b135db517c48ab9821c5e8b09efd80f4ff4d8"
+  },
+  {
+    "path": "skills/spec-driven-development/SKILL.md",
+    "sha256": "16041b4b6149c0e99d7323f8c1e2104ddca2819bf46f78c402a8f0458938e344"
+  },
+  {
+    "path": "skills/test-driven-development/SKILL.md",
+    "sha256": "6c60e193d77a6c52eb3d9a7ca774f1801b9f798ec34f075720e0425a8094f50e"
+  },
+  {
+    "path": "skills/using-agent-skills/SKILL.md",
+    "sha256": "30db272d8ae3389a5b9e0fcfaa8eec1f40535724d49f2f59448d333842ecd4ef"
+  },
+  {
+    "path": "tasks/5bab12bf-5e4c-4bd1-9c38-ed97a21350c5/.highwatermark",
+    "sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+  }
+]

@@ -1,0 +1,146 @@
+[
+  {
+    "sourceId": "fk-charter",
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/charter.md",
+    "gitExit": 0,
+    "expected": "c289fbcc384ca825181662b091572c2f085e23c984ad2be6bec5fff49d7350d3",
+    "actual": "c289fbcc384ca825181662b091572c2f085e23c984ad2be6bec5fff49d7350d3",
+    "match": true
+  },
+  {
+    "sourceId": "fk-plan-review-findings",
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/plan-review-findings.md",
+    "gitExit": 0,
+    "expected": "d2e5bc3268450c77456ad14baa6df8dadb9cd132123ddc52a782886e42a73057",
+    "actual": "d2e5bc3268450c77456ad14baa6df8dadb9cd132123ddc52a782886e42a73057",
+    "match": true
+  },
+  {
+    "sourceId": "fk-loop-directive",
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/loop-directive.md",
+    "gitExit": 0,
+    "expected": "8b2cd6818833d3f27ecd346f05d3f84bdfc669f16ce81265a1bf6667664ce4cb",
+    "actual": "8b2cd6818833d3f27ecd346f05d3f84bdfc669f16ce81265a1bf6667664ce4cb",
+    "match": true
+  },
+  {
+    "sourceId": "spec-convention",
+    "path": "plugins/foreman-line/docs/SPEC-CONVENTION.md",
+    "gitExit": 0,
+    "expected": "7ac315005cde6ad6def848b83de1d1b644e321c5d9f6434bc925deb6daba8703",
+    "actual": "7ac315005cde6ad6def848b83de1d1b644e321c5d9f6434bc925deb6daba8703",
+    "match": true
+  },
+  {
+    "sourceId": "coordinator-pattern",
+    "path": "plugins/foreman-line/docs/COORDINATOR-PATTERN.md",
+    "gitExit": 0,
+    "expected": "c734c9b2aef15f020a4a5eb261a1291740eddb2a154376386599074cbb8ca9bd",
+    "actual": "c734c9b2aef15f020a4a5eb261a1291740eddb2a154376386599074cbb8ca9bd",
+    "match": true
+  },
+  {
+    "sourceId": "goal-skill",
+    "path": "plugins/foreman-line/skills/goal/SKILL.md",
+    "gitExit": 0,
+    "expected": "ee003674865be3a45316b95f5459b8f317d8150bdb8c0774601929cb0befd831",
+    "actual": "ee003674865be3a45316b95f5459b8f317d8150bdb8c0774601929cb0befd831",
+    "match": true
+  },
+  {
+    "sourceId": "standing-constraints",
+    "path": "plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md",
+    "gitExit": 0,
+    "expected": "b5cce5029c4619058795414b624a418fb8c1c28f8534dab9d58c8fef61994c2f",
+    "actual": "b5cce5029c4619058795414b624a418fb8c1c28f8534dab9d58c8fef61994c2f",
+    "match": true
+  },
+  {
+    "sourceId": "parcel-driven-development",
+    "path": "plugins/foreman-line/skills/parcel-driven-development/SKILL.md",
+    "gitExit": 0,
+    "expected": "f673472c804a659f9f01515b878f02c653d4ed97c2c4c97f7340139325c6df05",
+    "actual": "f673472c804a659f9f01515b878f02c653d4ed97c2c4c97f7340139325c6df05",
+    "match": true
+  },
+  {
+    "sourceId": "foreman-line-plan",
+    "path": "plugins/foreman-line/docs/FOREMAN-LINE-PLAN.md",
+    "gitExit": 0,
+    "expected": "0ca5a264e5371be59b2351e2f8e369a6e7f9fa2b4fd6d94ab54902d4ecd63a22",
+    "actual": "0ca5a264e5371be59b2351e2f8e369a6e7f9fa2b4fd6d94ab54902d4ecd63a22",
+    "match": true
+  },
+  {
+    "sourceId": "approval-readme",
+    "path": "plugins/foreman-line/approval/README.md",
+    "gitExit": 0,
+    "expected": "5369e558879ea9faeee5828329807dc544dfbcc21722a1c94d3458f670244849",
+    "actual": "5369e558879ea9faeee5828329807dc544dfbcc21722a1c94d3458f670244849",
+    "match": true
+  },
+  {
+    "sourceId": "spec-frontmatter-schema",
+    "path": "plugins/foreman-line/spec-linter/schemas/spec-frontmatter.schema.json",
+    "gitExit": 0,
+    "expected": "8ff17dbd4ccbd29d0f60f7b03dfdc9f08afb63d9de1b64549bc1646ce546034e",
+    "actual": "8ff17dbd4ccbd29d0f60f7b03dfdc9f08afb63d9de1b64549bc1646ce546034e",
+    "match": true
+  },
+  {
+    "sourceId": "spec-linter-validator",
+    "path": "plugins/foreman-line/spec-linter/src/validate.ts",
+    "gitExit": 0,
+    "expected": "4e542bfa6943c71b962236cbd5410713186f6eabb2b7788e12392cbffaef3a99",
+    "actual": "4e542bfa6943c71b962236cbd5410713186f6eabb2b7788e12392cbffaef3a99",
+    "match": true
+  },
+  {
+    "sourceId": "spec-linter-cli",
+    "path": "plugins/foreman-line/spec-linter/src/cli.ts",
+    "gitExit": 0,
+    "expected": "aa0928ab5173d868c61c1ddd75ce990dbb698afdaee9269b7e99965f5e687c18",
+    "actual": "aa0928ab5173d868c61c1ddd75ce990dbb698afdaee9269b7e99965f5e687c18",
+    "match": true
+  },
+  {
+    "sourceId": "spec-linter-readme",
+    "path": "plugins/foreman-line/spec-linter/README.md",
+    "gitExit": 0,
+    "expected": "8be95883d16a3a73a128a8c0d14d73d61204724531c99ee9dfc8072dff08a69c",
+    "actual": "8be95883d16a3a73a128a8c0d14d73d61204724531c99ee9dfc8072dff08a69c",
+    "match": true
+  },
+  {
+    "sourceId": "permission-profiles-registry",
+    "path": "plugins/foreman-line/permission-profiles/permission-profiles.yaml",
+    "gitExit": 0,
+    "expected": "9da06cf299653b244c636dd9809b5ba6410efb5e9e7f89389c1ef7260fa577cb",
+    "actual": "9da06cf299653b244c636dd9809b5ba6410efb5e9e7f89389c1ef7260fa577cb",
+    "match": true
+  },
+  {
+    "sourceId": "permission-profiles-types",
+    "path": "plugins/foreman-line/permission-profiles/src/types.ts",
+    "gitExit": 0,
+    "expected": "91651a073156834119b5037127b942f315ea4d45d26bc17e0c9df2a1499aa5a9",
+    "actual": "91651a073156834119b5037127b942f315ea4d45d26bc17e0c9df2a1499aa5a9",
+    "match": true
+  },
+  {
+    "sourceId": "permission-profiles-validator",
+    "path": "plugins/foreman-line/permission-profiles/src/validator.ts",
+    "gitExit": 0,
+    "expected": "1f12fe53f75b089d25dd27e995af024c52269b0db6b8c4e22c616702749a7d23",
+    "actual": "1f12fe53f75b089d25dd27e995af024c52269b0db6b8c4e22c616702749a7d23",
+    "match": true
+  },
+  {
+    "sourceId": "permission-profiles-readme",
+    "path": "plugins/foreman-line/permission-profiles/README.md",
+    "gitExit": 0,
+    "expected": "b790947a8223daab2babf45cba648f1bfd073d7d0b1e6f524fa02f51dc129f00",
+    "actual": "b790947a8223daab2babf45cba648f1bfd073d7d0b1e6f524fa02f51dc129f00",
+    "match": true
+  }
+]
