@@ -1,0 +1,16 @@
+{
+  "observedUtc": "2026-09-07T15:11:46.451508+00:00",
+  "implementationCommit": "446700d47c2e162fcfa575d5a46b9247241a59c1",
+  "priorRegistryCommit": "66a514d35a384f901486e7b814580eb6fb7de6ea",
+  "method": "Read exact Git blobs using Python subprocess; parse with PyYAML independently of package Node generator/validator; compare all nested historical record values and array order",
+  "priorRegistrySha256": "e1a5b9b0c2cb3c92b7591c5f4e24b233e8402fd91848256e83adbf2c2cc5dd13",
+  "newRegistrySha256": "47ff17a113b67b457d1050c5086095dee2cf044af6c5de8d2875c85a1881cf6c",
+  "historicalRecordCount": 19,
+  "historicalRecordsUnchanged": true,
+  "currentRecordCount": 20,
+  "priorRuleCount": 469,
+  "currentRuleCount": 541,
+  "currentSourceCount": 18,
+  "remoteCheckpointVerification": "Fresh bare fetch verified full checkpoint SHA and byte equality of all nine implementation Git blobs",
+  "limits": "Read-only artifact comparison and publication verification; not a full-suite pass, independent final code review or Gate3."
+}
