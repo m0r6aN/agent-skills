@@ -37,7 +37,7 @@ Every preset has `goals: [foreman-kernel]` and `hosts: [any]`. Hosts any preserv
 | B | [coordinator,shaper,builder,reviewer,operator] | [shaping,step-zero,build,deterministic-verify,adversarial-review,closure] | [source-inventory,spec-mutation,repo-read,repo-mutation,state-transition,control-call] |
 | E | [coordinator,shaper,builder,reviewer,ci] | [shaping,step-zero,build,deterministic-verify,adversarial-review,merge,closure] | [source-inventory,spec-mutation,repo-read,repo-mutation,state-transition,control-call,receipt-validation] |
 | M | [coordinator,builder,reviewer,ci,host-adapter,kernel] | [build,deterministic-verify,adversarial-review,closure,runtime] | [repo-read,state-transition,control-call] |
-| K | [builder,reviewer,kernel,host-adapter,operator] | [build,deterministic-verify,adversarial-review,runtime] | [repo-mutation,state-transition,control-call,receipt-validation] |
+| K | [builder,reviewer,host-adapter,kernel,operator] | [build,deterministic-verify,adversarial-review,runtime] | [repo-mutation,state-transition,control-call,receipt-validation] |
 | X | [coordinator,shaper,builder,reviewer,operator] | [shaping,step-zero,build,deterministic-verify,adversarial-review,merge,closure,runtime] | [spec-mutation,repo-mutation,state-transition,control-call,external-write] |
 | C | [coordinator] | [stage-zero,shaping,step-zero,build,deterministic-verify,adversarial-review,merge,closure] | [source-inventory,spec-mutation,repo-read,repo-mutation,state-transition,external-write] |
 | S | [coordinator,shaper] | [stage-zero,shaping,step-zero] | [source-inventory,spec-mutation,repo-read,repo-mutation,state-transition] |
@@ -665,3 +665,6 @@ Independent review verified the failed candidate's exact diagnostics and approve
 ## Encoding custody correction
 
 A Windows default-codepage read during the masked-coordinate update damaged non-ASCII text in the intermediate mapping. This document was reconstructed from the exact independently approved8b33963 Git blob (SHA256cc809534bf8f12b36567c1f9c74761510dcce412649a48003b118e675bb2d06a) with explicit UTF-8 decoding, applying only the four verified identity/lineHint substitutions, two enum-order substitutions and these disposition notes. Intermediate mojibake is not source authority or an accepted statement change. The eighteen governed source files were never rewritten by that mapping update.
+
+
+**R30.9 K-preset enumeration correction.** The original18 role-order diagnostics also include four K entries; the M/Q-only description was incomplete. Coordinator independently read ROLE_SCOPES and verified the same finite ordering correction for K:builder,reviewer,host-adapter,kernel,operator. Membership, scope and semantics remain identical. The preset above is corrected; ordinary canonical-order and membership checks remain mandatory.
