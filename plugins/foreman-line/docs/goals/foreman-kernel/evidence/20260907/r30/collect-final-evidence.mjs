@@ -32,7 +32,7 @@ assert.equal(auditAdded.length,53);
 fs.writeFileSync(path.join(out,'final-adoption-delta.json'),JSON.stringify({checkpoint:execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),sourceSnapshot:after.sourceSnapshotCommit,prior,counts,addedRuleClasses:classes,addedItems:added,removedItems:removed,changedItemValues:values,inventoryLinkDelta:links,addedRules,changedExistingRules:changedRules,addedAuditEntries:auditAdded,historicalCanonicalRecords:history,appendedReconciliation:after.reconciliations.at(-1),operationAuthorityUnchanged:true},null,2)+'\n');
 const files=['package-lock.json','schemas/authority-enforcement-registry.schema.json','authority-enforcement-registry.yaml','tests/fixtures/pass-minimal.yaml'];
 fs.writeFileSync(path.join(out,'final-artifact-hashes.json'),JSON.stringify(files.map(file=>({path:path.resolve(file),sha256:hash(fs.readFileSync(file))})),null,2)+'\n');
-const log=fs.readFileSync(path.join(out,'33-final-npm-test.log'),'utf8');
+const log=fs.readFileSync(path.join(out,'39-final-npm-test.log'),'utf8');
 const totals={}; for(const metric of ['tests','pass','fail','cancelled','skipped','todo'])totals[metric]=[...log.matchAll(new RegExp(`^# ${metric} (\\d+)$`,'gm'))].reduce((n,m)=>n+Number(m[1]),0);
 assert.equal(totals.tests,686);assert.equal(totals.pass,686);for(const metric of ['fail','cancelled','skipped','todo'])assert.equal(totals[metric],0);assert.match(log,/DIRECT_EXIT=0/);
 const names=[...log.matchAll(/^# Subtest: (.+)$/gm)].map(m=>m[1]);

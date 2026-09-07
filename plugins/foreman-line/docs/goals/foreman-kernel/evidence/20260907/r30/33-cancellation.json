@@ -1,0 +1,13 @@
+{
+  "cancellationUtc": "2026-09-07T15:40:18.9791235Z",
+  "reason": "Coordinator-authorized supersession for required independent exact basis/reference and reciprocal-set oracle coverage; not a pass",
+  "ownedProcessIds": [
+    453648,
+    482868,
+    480956,
+    471276,
+    482560,
+    440504,
+    461812
+  ]
+}

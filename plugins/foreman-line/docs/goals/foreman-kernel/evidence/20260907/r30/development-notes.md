@@ -42,3 +42,13 @@ Code checkpoint: 446700d47c2e162fcfa575d5a46b9247241a59c1, nine allowed package 
 - Timing recovery for 24–26 is labeled as filesystem-inferred where no clock was captured. Live OS process creation and explicit observed completion are separate evidence, not invented command start/end equivalents.
 
 The first complete run is failed and unaccepted. A new test-only checkpoint and a fresh full sequential chain are required; 26 is never overwritten.
+
+## Superseded second run and strengthened independent reference oracle
+
+- 29 repair formatting and 30 final historical focused checks: direct exit 0; all three controls pass with explicit58 corroborating-rule count and19 historical-record preservation assertions.
+- Test-only checkpoint0a43bbb and failed evidence checkpointc95a315 preserve the first complete failure honestly.
+- 31 npm ci and32 typecheck: direct exit0.
+- 33 full suite started before the independent review's required exact-reference oracle finding arrived. Coordinator explicitly authorized cancellation of the verified owned npm subtree only. Direct exit -1; process custody, start/end metadata and cancellation reason are retained. This is a superseded incomplete run, not a pass or new correctness failure.
+- 34 oracle formatting: direct exit0. 35 focused independent oracle plus historical repairs: direct exit0, five tests passed. The oracle derives53 exact sourceRef pins from the reviewed appendix and72 identities/reference lists from source-authored mapping conventions. It checks designated basis and ordered refs for all72; exact reciprocal target sets for all inventory items preserve baseline links. No runtime constants or generated values select expected refs, and no runtime code changed.
+
+Fresh complete chain remains pending against the replacement test checkpoint; expected floor remains686 because existing tests were strengthened rather than removed or split.
