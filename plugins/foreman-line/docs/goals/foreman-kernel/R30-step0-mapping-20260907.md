@@ -164,364 +164,364 @@ Exact anchors, existing/fresh item identities and source-value hashes below were
 ### C02
 
 - sourceId: `fk-charter`; itemId: `item.fbed3af63b13`; kind: `table-row`; lineHint: 114
-- anchor: `md-block:# Goal Charter — Foreman Kernel > ## 4. Locked decisions > ### 4.1 Ratification ledger:table-row:L4`
+- anchor: `md-block:# Goal Charter â€” Foreman Kernel > ## 4. Locked decisions > ### 4.1 Ratification ledger:table-row:L4`
 - locatorDigest: `78e8b87907322cf1dae7fd214ab9079aa16ce6e1b3446709b2b0745d01b68024`
 - valueDigest: `c79a6e083966ed83dbbe3d7655b8202713fe70c5df036e265c4cdd79e5bdc1a7`
 
 ### C03
 
 - sourceId: `fk-charter`; itemId: `item.f081be090f04`; kind: `table-row`; lineHint: 115
-- anchor: `md-block:# Goal Charter — Foreman Kernel > ## 4. Locked decisions > ### 4.1 Ratification ledger:table-row:L5`
+- anchor: `md-block:# Goal Charter â€” Foreman Kernel > ## 4. Locked decisions > ### 4.1 Ratification ledger:table-row:L5`
 - locatorDigest: `99d6c696ddd05b97d9a97d61c1a19217c12d4e430d509e622dc4b0161bf2e405`
 - valueDigest: `ab5dce965ea7e68dcfa2ac68e0c7cd1217949553daeace56cbaf2241005577d5`
 
 ### C04
 
 - sourceId: `fk-charter`; itemId: `item.131a7863b940`; kind: `line-excerpt`; lineHint: 117
-- anchor: `md-block:# Goal Charter — Foreman Kernel > ## 4. Locked decisions > ### 4.1 Ratification ledger:paragraph:3`
+- anchor: `md-block:# Goal Charter â€” Foreman Kernel > ## 4. Locked decisions > ### 4.1 Ratification ledger:paragraph:3`
 - locatorDigest: `c912b118b8d8d243968b8c5dae10899d27bc398ac8b8b78db6e872c0a3a1b36a`
 - valueDigest: `463f75ca85843d1223f301c815e7e677b49e6642149003ea69d3c545853d1aa4`
 
 ### C05
 
 - sourceId: `fk-charter`; itemId: `item.7df1436dcd98`; kind: `line-excerpt`; lineHint: 444
-- anchor: `md-block:# Goal Charter — Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07:paragraph:1`
+- anchor: `md-block:# Goal Charter â€” Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07:paragraph:1`
 - locatorDigest: `4fc0181749940bbea6964f4476056000687b7b48d6b147b013d2f3f761ceb097`
 - valueDigest: `7cdb06b5d62c333331028f47aa79a9c5c01650a0d20ecd5d6e63ef1756751da4`
 
 ### C06
 
 - sourceId: `fk-charter`; itemId: `item.6aa2e5c4c5e5`; kind: `line-excerpt`; lineHint: 448
-- anchor: `md-block:# Goal Charter — Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-1: Separate platform proof, development, and future execution:paragraph:1`
+- anchor: `md-block:# Goal Charter â€” Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-1: Separate platform proof, development, and future execution:paragraph:1`
 - locatorDigest: `507db9239273fcf016096325e685e782e0fb56857606132cffc10f739334171f`
 - valueDigest: `718cdbdaf7eb1c33c65a3f1406dc4fba47bef84318c64619eddc87a3b336d3f3`
 
 ### C07
 
 - sourceId: `fk-charter`; itemId: `item.0334ebc1c195`; kind: `line-excerpt`; lineHint: 455
-- anchor: `md-block:# Goal Charter — Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-1: Separate platform proof, development, and future execution:paragraph:2`
+- anchor: `md-block:# Goal Charter â€” Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-1: Separate platform proof, development, and future execution:paragraph:2`
 - locatorDigest: `76750020376f56a3b2104e2e961b27cd1f927c5b739ea41a5e51378332c55224`
 - valueDigest: `b0ad07741b0f585054c316c55dccdd2381af5adbf835af80fe90d7634b7934cd`
 
 ### C08
 
 - sourceId: `fk-charter`; itemId: `item.ac3a94701bf0`; kind: `line-excerpt`; lineHint: 463
-- anchor: `md-block:# Goal Charter — Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-1: Separate platform proof, development, and future execution:paragraph:3`
+- anchor: `md-block:# Goal Charter â€” Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-1: Separate platform proof, development, and future execution:paragraph:3`
 - locatorDigest: `138456051cb4fd46eafe91d1c2bd87afa290e91950b60d609fb6bdbf8936d731`
 - valueDigest: `885da27a0ab8b8113ea9b8763b691a2ec1a87a92c52b2a1245643d2282be69f7`
 
 ### C09
 
 - sourceId: `fk-charter`; itemId: `item.d5def2117d58`; kind: `line-excerpt`; lineHint: 470
-- anchor: `md-block:# Goal Charter — Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-2: Scope storage and hosting decisions to their actual contracts:paragraph:1`
+- anchor: `md-block:# Goal Charter â€” Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-2: Scope storage and hosting decisions to their actual contracts:paragraph:1`
 - locatorDigest: `0a8e2c74c5a03ac61c0e5ed6ae251dafb7dcd6394dbc0d66a64448fad9dc2d9f`
 - valueDigest: `4e7fb00f29af7a0513a606af4d226b3b74eb9d225c38047fcec1731d832bde9f`
 
 ### C10
 
 - sourceId: `fk-charter`; itemId: `item.aedd676e1a43`; kind: `line-excerpt`; lineHint: 475
-- anchor: `md-block:# Goal Charter — Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-2: Scope storage and hosting decisions to their actual contracts:paragraph:2`
+- anchor: `md-block:# Goal Charter â€” Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-2: Scope storage and hosting decisions to their actual contracts:paragraph:2`
 - locatorDigest: `55fcc70cc4db1c5e213cd9d14cbacc651112a562ab93f4d2485750676d1213de`
 - valueDigest: `e80447cf1949f27260b56ba203ccf8180118f8100851e57bcd4bd462d7508bf2`
 
 ### C11
 
 - sourceId: `fk-charter`; itemId: `item.5602e9c0f2d7`; kind: `line-excerpt`; lineHint: 484
-- anchor: `md-block:# Goal Charter — Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-2: Scope storage and hosting decisions to their actual contracts:paragraph:3`
+- anchor: `md-block:# Goal Charter â€” Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-2: Scope storage and hosting decisions to their actual contracts:paragraph:3`
 - locatorDigest: `0a1b97eb822375755436ef9db29b12acba5ac1cdd4faa526cf8237c075e243b6`
 - valueDigest: `441f7a8234754e2bdf32a23516c4914d0dfc896b9608fff75c2599abdca2e994`
 
 ### C12
 
 - sourceId: `fk-charter`; itemId: `item.0e5b4dca9153`; kind: `line-excerpt`; lineHint: 489
-- anchor: `md-block:# Goal Charter — Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-3: Measure workstation optimization without blanket exclusions:paragraph:1`
+- anchor: `md-block:# Goal Charter â€” Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-3: Measure workstation optimization without blanket exclusions:paragraph:1`
 - locatorDigest: `32a6cb9e553981dea8d87912c6d6fb20137853b59be59370c189dc3ca8ffe02f`
 - valueDigest: `a5c60298e50b4f882c79410999acefa80364ab3389338a5611fdf4f0d1d4be71`
 
 ### C13
 
 - sourceId: `fk-charter`; itemId: `item.823540249b94`; kind: `line-excerpt`; lineHint: 495
-- anchor: `md-block:# Goal Charter — Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-3: Measure workstation optimization without blanket exclusions:paragraph:2`
+- anchor: `md-block:# Goal Charter â€” Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-3: Measure workstation optimization without blanket exclusions:paragraph:2`
 - locatorDigest: `bcc0e0518e60a3da38a6b6bc215bd5ce828b637a69d3de4ff69f7676a5e3f88e`
 - valueDigest: `cc2b292fc763639f0268a30fe790f4ecbb07ab814c5b66263859d47a65bf2bad`
 
 ### C14
 
 - sourceId: `fk-charter`; itemId: `item.b760093ab1a0`; kind: `line-excerpt`; lineHint: 502
-- anchor: `md-block:# Goal Charter — Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-3: Measure workstation optimization without blanket exclusions:paragraph:3`
+- anchor: `md-block:# Goal Charter â€” Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-3: Measure workstation optimization without blanket exclusions:paragraph:3`
 - locatorDigest: `adba99a81cf6269c21d92fe6e5e383fe6f27e91af20c28250ee273f3250c307e`
 - valueDigest: `f31ddd26f10d95b4600788f348ffc89a5f28197136a99905af72876990313df9`
 
 ### C15
 
 - sourceId: `fk-charter`; itemId: `item.a903b0947304`; kind: `line-excerpt`; lineHint: 509
-- anchor: `md-block:# Goal Charter — Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-4: Prove verification independence and retain evidence:paragraph:1`
+- anchor: `md-block:# Goal Charter â€” Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-4: Prove verification independence and retain evidence:paragraph:1`
 - locatorDigest: `6e88bd6b51fa05309ba0e99398c6750b988d688b9ef4a7ec2e1cd261bd1689b1`
 - valueDigest: `d270568d88576df98355eb7562487d2dc0257df8c39fa417ca5d7c810fac2539`
 
 ### C16
 
 - sourceId: `fk-charter`; itemId: `item.738d073932ec`; kind: `line-excerpt`; lineHint: 516
-- anchor: `md-block:# Goal Charter — Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-4: Prove verification independence and retain evidence:paragraph:2`
+- anchor: `md-block:# Goal Charter â€” Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-4: Prove verification independence and retain evidence:paragraph:2`
 - locatorDigest: `094a7ac7e92e92dc4fe5cffb3f0ad3ea6ded12d9d19698a2ba93e326c7465e2b`
 - valueDigest: `4d2c95c0c853e2a90b9f30e9f70e3df14737295f48ce7ae63a20c2b5d8348491`
 
 ### C17
 
 - sourceId: `fk-charter`; itemId: `item.4d179a0e3c71`; kind: `line-excerpt`; lineHint: 522
-- anchor: `md-block:# Goal Charter — Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-4: Prove verification independence and retain evidence:paragraph:3`
+- anchor: `md-block:# Goal Charter â€” Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-4: Prove verification independence and retain evidence:paragraph:3`
 - locatorDigest: `5359f92c233b35fc364dc96fe56d9712c58dafa7f169d0cc9b1fccb541b07368`
 - valueDigest: `1014689b6a7b2d7ee374948367b955d916e990c82d21839ebdb5706e05c75a0b`
 
 ### C18
 
 - sourceId: `fk-charter`; itemId: `item.f0be0de850ce`; kind: `line-excerpt`; lineHint: 529
-- anchor: `md-block:# Goal Charter — Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-5: Reconcile A1 and measure both latency spans:paragraph:1`
+- anchor: `md-block:# Goal Charter â€” Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-5: Reconcile A1 and measure both latency spans:paragraph:1`
 - locatorDigest: `c7a376dfd8f9db8c95f36ce318fec447931231b03993eb198c5afefad0dd1f9e`
 - valueDigest: `991c6811c1aab8d9c4fb885bfceedf282617ab26201c985990fb33bd5c8b747e`
 
 ### C19
 
 - sourceId: `fk-charter`; itemId: `item.85625a932abb`; kind: `table-row`; lineHint: 533
-- anchor: `md-block:# Goal Charter — Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-5: Reconcile A1 and measure both latency spans:table-row:Warm kernel decision`
+- anchor: `md-block:# Goal Charter â€” Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-5: Reconcile A1 and measure both latency spans:table-row:Warm kernel decision`
 - locatorDigest: `f23b3dc45588fd8d2c1ff15f41e0b358717035de88e7f848fb4b41f10c5d79ed`
 - valueDigest: `d28871e2cbd8dce8c907acd9b7f6b7f0a06672cdc3065b021393de8a91abf23a`
 
 ### C20
 
 - sourceId: `fk-charter`; itemId: `item.c9672cddd1f2`; kind: `table-row`; lineHint: 534
-- anchor: `md-block:# Goal Charter — Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-5: Reconcile A1 and measure both latency spans:table-row:End-to-end mediated action`
+- anchor: `md-block:# Goal Charter â€” Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-5: Reconcile A1 and measure both latency spans:table-row:End-to-end mediated action`
 - locatorDigest: `f13ee5f18880bea1280640d7de00e17003f9753fc1be056d2f90b4a41f303be3`
 - valueDigest: `705a2ed7f955548982cdbec85ba713c6dabbcdc3a29f96aec5685aa2a565a32b`
 
 ### C21
 
 - sourceId: `fk-charter`; itemId: `item.db57a9d18103`; kind: `table-row`; lineHint: 535
-- anchor: `md-block:# Goal Charter — Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-5: Reconcile A1 and measure both latency spans:table-row:First call after startup`
+- anchor: `md-block:# Goal Charter â€” Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-5: Reconcile A1 and measure both latency spans:table-row:First call after startup`
 - locatorDigest: `abae1d5c7df77797b6406226ab381b1f01f32f159388fea3291e95ae8395c950`
 - valueDigest: `10b89c57d7a263417d3b562160af061db1f92759902d68039a73b5d6bd7de0ae`
 
 ### C22
 
 - sourceId: `fk-charter`; itemId: `item.8e7289313266`; kind: `table-row`; lineHint: 536
-- anchor: `md-block:# Goal Charter — Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-5: Reconcile A1 and measure both latency spans:table-row:Per-decision hard deadline`
+- anchor: `md-block:# Goal Charter â€” Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-5: Reconcile A1 and measure both latency spans:table-row:Per-decision hard deadline`
 - locatorDigest: `ca0613157c2841ebcdb0b906a14cec6da63f8b42637ac6aa4328d286bea069ea`
 - valueDigest: `185dd02060ac72766f09581849c2eac612423c9cec667a122e926ecd669f1b0e`
 
 ### C23
 
 - sourceId: `fk-charter`; itemId: `item.90282758c3ec`; kind: `line-excerpt`; lineHint: 538
-- anchor: `md-block:# Goal Charter — Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-5: Reconcile A1 and measure both latency spans:paragraph:2`
+- anchor: `md-block:# Goal Charter â€” Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-5: Reconcile A1 and measure both latency spans:paragraph:2`
 - locatorDigest: `e757d18986be5c67396e96fef5c118dcc1111b222cca1deb5cff469c08d278f4`
 - valueDigest: `5e80bc865949837ad1a4e505ca8287e38152067f9430b6c901d952818943af21`
 
 ### C24
 
 - sourceId: `fk-charter`; itemId: `item.bd0165a4630f`; kind: `line-excerpt`; lineHint: 540
-- anchor: `md-block:# Goal Charter — Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-5: Reconcile A1 and measure both latency spans:paragraph:3`
+- anchor: `md-block:# Goal Charter â€” Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-5: Reconcile A1 and measure both latency spans:paragraph:3`
 - locatorDigest: `5a537c41cc8dce77ba8050734d8465d46fbd5a4f3af60f6f090f3be196969a86`
 - valueDigest: `67b2b4486373bbeb158e9f488f38d414686d22188ddaa8edbf49640debcf409f`
 
 ### C25
 
 - sourceId: `fk-charter`; itemId: `item.52a3074f5030`; kind: `line-excerpt`; lineHint: 547
-- anchor: `md-block:# Goal Charter — Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-6: Use a reproducible performance and cost baseline:paragraph:1`
+- anchor: `md-block:# Goal Charter â€” Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-6: Use a reproducible performance and cost baseline:paragraph:1`
 - locatorDigest: `acf2245e477192d1eaf67f53aa95011ea775e1a67aec382761239ad0286fb354`
 - valueDigest: `bb891c6487a2ed866169f56e4874f470cf9c1dedaf30715d94e9058f726abed8`
 
 ### C26
 
 - sourceId: `fk-charter`; itemId: `item.7dd8dba116bc`; kind: `table-row`; lineHint: 554
-- anchor: `md-block:# Goal Charter — Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-6: Use a reproducible performance and cost baseline:table-row:Accepted parcels per hour`
+- anchor: `md-block:# Goal Charter â€” Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-6: Use a reproducible performance and cost baseline:table-row:Accepted parcels per hour`
 - locatorDigest: `e7ffe97e83b601f3f2d55ce268a1ef4c2ee296746784427387ec29574bfcd107`
 - valueDigest: `222efd280053046fd30dfae35af8cf40bd26711f4960ccd2969dc03f4bde2cbf`
 
 ### C27
 
 - sourceId: `fk-charter`; itemId: `item.5eb069676d8e`; kind: `table-row`; lineHint: 555
-- anchor: `md-block:# Goal Charter — Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-6: Use a reproducible performance and cost baseline:table-row:Cost per accepted parcel, including rework`
+- anchor: `md-block:# Goal Charter â€” Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-6: Use a reproducible performance and cost baseline:table-row:Cost per accepted parcel, including rework`
 - locatorDigest: `d2dbbe3bc702b47bd0f49946c7d2adfe90b561b9351c712a6d3d3a4b765d7450`
 - valueDigest: `47138a879b48761a8fafc2c07338176e6fcff8d4daa448eb4b5b679ba2232f12`
 
 ### C28
 
 - sourceId: `fk-charter`; itemId: `item.73e69c428a2f`; kind: `table-row`; lineHint: 556
-- anchor: `md-block:# Goal Charter — Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-6: Use a reproducible performance and cost baseline:table-row:Reviewer queue delay, latency, tokens, rework rate`
+- anchor: `md-block:# Goal Charter â€” Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-6: Use a reproducible performance and cost baseline:table-row:Reviewer queue delay, latency, tokens, rework rate`
 - locatorDigest: `5bf02d2f5731fcf1e3e36144efac47a351fc881aa7000da48db15de7aefd0af2`
 - valueDigest: `65047f7e4f0a3e535a34e30ff433a9812d84054074458b4cd08c485207b9d13a`
 
 ### C29
 
 - sourceId: `fk-charter`; itemId: `item.065406de951b`; kind: `table-row`; lineHint: 557
-- anchor: `md-block:# Goal Charter — Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-6: Use a reproducible performance and cost baseline:table-row:Installation and verification duration`
+- anchor: `md-block:# Goal Charter â€” Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-6: Use a reproducible performance and cost baseline:table-row:Installation and verification duration`
 - locatorDigest: `e906c507f36f4fc0827a64bdb3f9da19021da303aa9000676fcc749a5d7bb4bf`
 - valueDigest: `5fd42944a43c9bb90b7bc9e3100a59817c99a8cdd8212ef3695b38fa0a41be30`
 
 ### C30
 
 - sourceId: `fk-charter`; itemId: `item.aac81e1754fb`; kind: `table-row`; lineHint: 558
-- anchor: `md-block:# Goal Charter — Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-6: Use a reproducible performance and cost baseline:table-row:Both A1 latency spans`
+- anchor: `md-block:# Goal Charter â€” Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-6: Use a reproducible performance and cost baseline:table-row:Both A1 latency spans`
 - locatorDigest: `6b1553f523c87b1da8d44bc92dd8381417f9f21d01f12f58458deb12555027de`
 - valueDigest: `5eb6cf7d7d15216d14ea590caac6304c899ecebab3b011b3055a9c5865d9b39a`
 
 ### C31
 
 - sourceId: `fk-charter`; itemId: `item.a09a3029f031`; kind: `table-row`; lineHint: 559
-- anchor: `md-block:# Goal Charter — Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-6: Use a reproducible performance and cost baseline:table-row:SQLite contention and CPU/memory/disk pressure by concurrency`
+- anchor: `md-block:# Goal Charter â€” Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-6: Use a reproducible performance and cost baseline:table-row:SQLite contention and CPU/memory/disk pressure by concurrency`
 - locatorDigest: `044ce673b268c5e69a21845aa9465c11386dcf1a96d26580a5b43dd94b715bde`
 - valueDigest: `8ecc71533bc18b378202f053aaa6aa8b3aa416639a9d6534797d12c596a6efb3`
 
 ### C32
 
 - sourceId: `fk-charter`; itemId: `item.5ab7daa95afc`; kind: `line-excerpt`; lineHint: 561
-- anchor: `md-block:# Goal Charter — Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-6: Use a reproducible performance and cost baseline:paragraph:2`
+- anchor: `md-block:# Goal Charter â€” Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-6: Use a reproducible performance and cost baseline:paragraph:2`
 - locatorDigest: `ff62db4263f7b489738feb327cfa0618d37cf4ff7b34f27f18789309f99c1ca2`
 - valueDigest: `445f858c17e0af3052acc8a9fd603ef7187c7fabe3def7810292f7050c1995fb`
 
 ### C33
 
 - sourceId: `fk-charter`; itemId: `item.2483eaff6f43`; kind: `line-excerpt`; lineHint: 568
-- anchor: `md-block:# Goal Charter — Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-6: Use a reproducible performance and cost baseline:paragraph:3`
+- anchor: `md-block:# Goal Charter â€” Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-6: Use a reproducible performance and cost baseline:paragraph:3`
 - locatorDigest: `fc425483e98452868b478b70dafb9d404f36da694b7b7e1736868d13e20f5f9d`
 - valueDigest: `f7105e55003f855866e2119c3c0aa06514a49121fed66c57968389232e28dd5f`
 
 ### C34
 
 - sourceId: `fk-charter`; itemId: `item.6bef45e68858`; kind: `line-excerpt`; lineHint: 575
-- anchor: `md-block:# Goal Charter — Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-7: Exhaustive corpus manifests; retrieval remains advisory:paragraph:1`
+- anchor: `md-block:# Goal Charter â€” Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-7: Exhaustive corpus manifests; retrieval remains advisory:paragraph:1`
 - locatorDigest: `9fdf866e282f94fa77dd0328a435b739e10b723c37ae66ca5f5672f50f9eb16b`
 - valueDigest: `39ddd54a680143a68b4b8972db409c19c621124c1896cbb30b0969f7c69908c0`
 
 ### C35
 
 - sourceId: `fk-charter`; itemId: `item.4ed03c71f99b`; kind: `line-excerpt`; lineHint: 581
-- anchor: `md-block:# Goal Charter — Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-7: Exhaustive corpus manifests; retrieval remains advisory:paragraph:2`
+- anchor: `md-block:# Goal Charter â€” Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-7: Exhaustive corpus manifests; retrieval remains advisory:paragraph:2`
 - locatorDigest: `9b15aa69861a9d316496e9807a496625c995139baee4bc0ff6a7c910d8d3503d`
 - valueDigest: `33528b32a55f362f7110d1ee7de30168a5450502aaa87a93417666360039ae2f`
 
 ### C36
 
 - sourceId: `fk-charter`; itemId: `item.9b7ce5dacd99`; kind: `line-excerpt`; lineHint: 588
-- anchor: `md-block:# Goal Charter — Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-7: Exhaustive corpus manifests; retrieval remains advisory:paragraph:3`
+- anchor: `md-block:# Goal Charter â€” Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-7: Exhaustive corpus manifests; retrieval remains advisory:paragraph:3`
 - locatorDigest: `b6065dcc34a4d4835e29aa1a1ee7cfd8bc456c68b2a1cb397e471127879f2b8a`
 - valueDigest: `74a087d5a4c75bff1e3018f52aac808feaa0334f8dbf5e90774025145ac4bca7`
 
 ### C37
 
 - sourceId: `fk-charter`; itemId: `item.462313b4d210`; kind: `line-excerpt`; lineHint: 594
-- anchor: `md-block:# Goal Charter — Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-8: Demonstrate recovery and define measured revisit conditions:paragraph:1`
+- anchor: `md-block:# Goal Charter â€” Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-8: Demonstrate recovery and define measured revisit conditions:paragraph:1`
 - locatorDigest: `222f517bba587d9b4c1ea30e52bc2da6a2eaad81367be14931f9be5a234ca040`
 - valueDigest: `3b0961d85aeaf823a8147d9715ca2f9a45e2610c9a39de85025395c93ccbed4c`
 
 ### C38
 
 - sourceId: `fk-charter`; itemId: `item.4f5a41ed9f1d`; kind: `line-excerpt`; lineHint: 601
-- anchor: `md-block:# Goal Charter — Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-8: Demonstrate recovery and define measured revisit conditions:paragraph:2`
+- anchor: `md-block:# Goal Charter â€” Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-8: Demonstrate recovery and define measured revisit conditions:paragraph:2`
 - locatorDigest: `0ec3da57a09d1b3a914f3f1c11572de9bad083ecc92d63b0704107b07dfcceb6`
 - valueDigest: `e8325766788b7b4225bfbeab607a33e939f387e7fdd9002317f113771ef8553b`
 
 ### C39
 
 - sourceId: `fk-charter`; itemId: `item.dbbeaf39106c`; kind: `line-excerpt`; lineHint: 607
-- anchor: `md-block:# Goal Charter — Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-8: Demonstrate recovery and define measured revisit conditions:paragraph:3`
+- anchor: `md-block:# Goal Charter â€” Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-8: Demonstrate recovery and define measured revisit conditions:paragraph:3`
 - locatorDigest: `1430d36ac3a1c88d723153036390ee017e7e57945f5130f59a353e1a08814e6b`
 - valueDigest: `284f11242f5dd836e0fc27a99a27b80eade3d741b12e1329ff0e4e9dff84637b`
 
 ### C40
 
 - sourceId: `fk-charter`; itemId: `item.96e53dfda63f`; kind: `line-excerpt`; lineHint: 612
-- anchor: `md-block:# Goal Charter — Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-8: Demonstrate recovery and define measured revisit conditions:paragraph:4`
+- anchor: `md-block:# Goal Charter â€” Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### INF-8: Demonstrate recovery and define measured revisit conditions:paragraph:4`
 - locatorDigest: `fb04b02c3403d5da8b64abbf4b76fe25dd2620994fcbac5f1b0717f9555d3dbd`
 - valueDigest: `2aa46edb2223185ac862bd192e1bba2b39e3883d0e55d2fd97933377dd582ecb`
 
 ### C41
 
 - sourceId: `fk-charter`; itemId: `item.c3ba63d89fb1`; kind: `numbered-item`; lineHint: 617
-- anchor: `md-block:# Goal Charter — Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### Adoption dependencies and evidence ownership:list-item:1`
+- anchor: `md-block:# Goal Charter â€” Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### Adoption dependencies and evidence ownership:list-item:1`
 - locatorDigest: `4fd2857932514c488480e2dcecf7875cb68addd128ebeca1926dd11b9f08cfb0`
 - valueDigest: `7cbc7c80c2d8cb38be0fe1fc2e514ff869a8d9d8c68d4bb9cb271eb50b50c8c6`
 
 ### C42
 
 - sourceId: `fk-charter`; itemId: `item.f95b77d201bc`; kind: `numbered-item`; lineHint: 618
-- anchor: `md-block:# Goal Charter — Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### Adoption dependencies and evidence ownership:list-item:2`
+- anchor: `md-block:# Goal Charter â€” Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### Adoption dependencies and evidence ownership:list-item:2`
 - locatorDigest: `ae9b333a43a69b31ae81d42163e6eb8a8592153f9c29dd4fedb5faeea2eeb26f`
 - valueDigest: `8e4d31552ac7a2706b75a6903045412225434c57dccda59eed43d09b53ed9f0b`
 
 ### C43
 
 - sourceId: `fk-charter`; itemId: `item.24841a6c1279`; kind: `numbered-item`; lineHint: 619
-- anchor: `md-block:# Goal Charter — Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### Adoption dependencies and evidence ownership:list-item:3`
+- anchor: `md-block:# Goal Charter â€” Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### Adoption dependencies and evidence ownership:list-item:3`
 - locatorDigest: `7b9432b738c849536a0c19ab2eabf9b0656b0eb3d641978f2f2d9022a17a50aa`
 - valueDigest: `4dd478551e4a12cb6d04b6c7ee420058bfb2f297f8ef47191b5e64858da59669`
 
 ### C44
 
 - sourceId: `fk-charter`; itemId: `item.df7635424bf7`; kind: `numbered-item`; lineHint: 620
-- anchor: `md-block:# Goal Charter — Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### Adoption dependencies and evidence ownership:list-item:4`
+- anchor: `md-block:# Goal Charter â€” Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### Adoption dependencies and evidence ownership:list-item:4`
 - locatorDigest: `45e6510c07c337c30896e7920d2bd0a42254643084ef370bf7a7e6cfe6d7dd3f`
 - valueDigest: `9aab73c2a8893a644d36436691dc8a70625745739bf5acd6526e97bb7a565e9e`
 
 ### C45
 
 - sourceId: `fk-charter`; itemId: `item.6eca2202eee8`; kind: `numbered-item`; lineHint: 621
-- anchor: `md-block:# Goal Charter — Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### Adoption dependencies and evidence ownership:list-item:5`
+- anchor: `md-block:# Goal Charter â€” Foreman Kernel > ## 14. Ratified infrastructure adoption, 2026-09-07 > ### Adoption dependencies and evidence ownership:list-item:5`
 - locatorDigest: `16df7355c481786387be5d21c80f02bccfacc4697d9a496b3c5b0db55f927761`
 - valueDigest: `72c06f92ca6947cd47fb275407f254a6d04cef2e765fdec8eec570c4d83e20d7`
 
 ### L01
 
-- sourceId: `fk-loop-directive`; itemId: `item.10bc39350722`; kind: `line-excerpt`; lineHint: 345
-- anchor: `md-block:# Foreman Kernel — Coordinator Loop Directive > ## September 7 continuation authority:paragraph:1`
+- sourceId: `fk-loop-directive`; itemId: `item.c98e1f76aeb5`; kind: `line-excerpt`; lineHint: 84; raw source navigation line: 345
+- anchor: `md-block:# Foreman Kernel â€” Coordinator Loop Directive > ## September 7 continuation authority:paragraph:1`
 - locatorDigest: `1388a84f45baa2148f545913cc7c750ae1e2deb65ca58db0de74ed4824c00588`
 - valueDigest: `f8efec1d5b8607c1af4634545b805ef6fff99f1b18a615575b37b10fd07a0146`
 
 ### L02
 
-- sourceId: `fk-loop-directive`; itemId: `item.fe7ecb120fa5`; kind: `line-excerpt`; lineHint: 347
-- anchor: `md-block:# Foreman Kernel — Coordinator Loop Directive > ## September 7 continuation authority:paragraph:2`
+- sourceId: `fk-loop-directive`; itemId: `item.d0e8b87bbcc3`; kind: `line-excerpt`; lineHint: 86; raw source navigation line: 347
+- anchor: `md-block:# Foreman Kernel â€” Coordinator Loop Directive > ## September 7 continuation authority:paragraph:2`
 - locatorDigest: `f3e292ad7d8e772fecd9ba246b677ede160ad936e15a10e5c040a275479ab095`
 - valueDigest: `9b9752cb3d78643f1331326ae5ae3e1f4deb24662b86f6140d2dbdc4cbbd9ada`
 
 ### L03
 
-- sourceId: `fk-loop-directive`; itemId: `item.6bf290417cad`; kind: `line-excerpt`; lineHint: 349
-- anchor: `md-block:# Foreman Kernel — Coordinator Loop Directive > ## September 7 continuation authority:paragraph:3`
+- sourceId: `fk-loop-directive`; itemId: `item.de1bd9760493`; kind: `line-excerpt`; lineHint: 88; raw source navigation line: 349
+- anchor: `md-block:# Foreman Kernel â€” Coordinator Loop Directive > ## September 7 continuation authority:paragraph:3`
 - locatorDigest: `78d87f065b486d3c5105a6e067ad73165b4dd71c775653ab8a9630a3d9cab3c9`
 - valueDigest: `af812328707a698461dbc9a2c221e7f2547060223d4457e1af23885cfe0f0a61`
 
 ### L04
 
-- sourceId: `fk-loop-directive`; itemId: `item.06af83fccfb7`; kind: `line-excerpt`; lineHint: 351
-- anchor: `md-block:# Foreman Kernel — Coordinator Loop Directive > ## September 7 continuation authority:paragraph:4`
+- sourceId: `fk-loop-directive`; itemId: `item.923c5c059572`; kind: `line-excerpt`; lineHint: 90; raw source navigation line: 351
+- anchor: `md-block:# Foreman Kernel â€” Coordinator Loop Directive > ## September 7 continuation authority:paragraph:4`
 - locatorDigest: `b80a41c8077ba49642c80926ed06aec01b20f21d550ac6d5547783f3bea2b45d`
 - valueDigest: `99e68117bf269d57f9cb07c703cd81d2a210a974a41d71446ebb882b2c27ee0b`
 
 ### U01
 
 - sourceId: `fk-charter`; itemId: `item.11307b6ee77e`; kind: `line-excerpt`; lineHint: 105
-- anchor: `md-block:# Goal Charter — Foreman Kernel > ## 4. Locked decisions > ### 4.1 Ratification ledger:paragraph:2`
+- anchor: `md-block:# Goal Charter â€” Foreman Kernel > ## 4. Locked decisions > ### 4.1 Ratification ledger:paragraph:2`
 - locatorDigest: `db19b61d7acd1f6b1924ca7ad8fd946f15ef92e54e3e64f066a9543211352f8b`
 - valueDigest: `5e7cd92bdf6e801b50e2b7e00850c9bb8525e7f420bb10240e945ab875ee4533`
 
 ### U02
 
 - sourceId: `fk-charter`; itemId: `item.73c2e8af98c5`; kind: `table-row`; lineHint: 111
-- anchor: `md-block:# Goal Charter — Foreman Kernel > ## 4. Locked decisions > ### 4.1 Ratification ledger:table-row:L1`
+- anchor: `md-block:# Goal Charter â€” Foreman Kernel > ## 4. Locked decisions > ### 4.1 Ratification ledger:table-row:L1`
 - locatorDigest: `5be96aabdbd4616070df8699ac926a4054fb9cc4764558e5f8841dcd17f84a1e`
 - valueDigest: `10227f07e504175c130d828b50c7924ce2fd5bd1aaf379c5044528a228e4daab`
 
 ### U03
 
 - sourceId: `fk-charter`; itemId: `item.56c611d71350`; kind: `table-row`; lineHint: 112
-- anchor: `md-block:# Goal Charter — Foreman Kernel > ## 4. Locked decisions > ### 4.1 Ratification ledger:table-row:L2`
+- anchor: `md-block:# Goal Charter â€” Foreman Kernel > ## 4. Locked decisions > ### 4.1 Ratification ledger:table-row:L2`
 - locatorDigest: `9ed5b6bb5387081898d234a7234de6a00783a61789d39cd0b66b43dbb58b5459`
 - valueDigest: `87ca8e25c8dc385f9a685eedd2cd26da688e706e1b08f3b313e23d5f8cea3643`
 
 ### U04
 
 - sourceId: `fk-charter`; itemId: `item.cf301316d970`; kind: `table-row`; lineHint: 113
-- anchor: `md-block:# Goal Charter — Foreman Kernel > ## 4. Locked decisions > ### 4.1 Ratification ledger:table-row:L3`
+- anchor: `md-block:# Goal Charter â€” Foreman Kernel > ## 4. Locked decisions > ### 4.1 Ratification ledger:table-row:L3`
 - locatorDigest: `878f7003a230b2948dba17fd503be70abaf6cfa489a57c014fe4c21a00fe4162`
 - valueDigest: `77fca69f904dc731171e4d5263cb55848a94dea875d76d945fba243f330da5f7`
 
@@ -590,13 +590,13 @@ Exact anchors, existing/fresh item identities and source-value hashes below were
 | C44/ownership | `rule.fk-charter.df7635424bf7.ownership` |
 | C45/precedence | `rule.fk-charter.6eca2202eee8.precedence` |
 | C45/foreign | `rule.fk-charter.6eca2202eee8.foreign` |
-| L01/continuation | `rule.fk-loop-directive.10bc39350722.continuation` |
-| L01/preserve | `rule.fk-loop-directive.10bc39350722.preserve` |
-| L02/publication | `rule.fk-loop-directive.fe7ecb120fa5.publication` |
-| L02/boundary | `rule.fk-loop-directive.fe7ecb120fa5.boundary` |
-| L03/shaping | `rule.fk-loop-directive.6bf290417cad.shaping` |
-| L03/dependencies | `rule.fk-loop-directive.6bf290417cad.dependencies` |
-| L04/preservation | `rule.fk-loop-directive.06af83fccfb7.preservation` |
+| L01/continuation | `rule.fk-loop-directive.c98e1f76aeb5.continuation` |
+| L01/preserve | `rule.fk-loop-directive.c98e1f76aeb5.preserve` |
+| L02/publication | `rule.fk-loop-directive.d0e8b87bbcc3.publication` |
+| L02/boundary | `rule.fk-loop-directive.d0e8b87bbcc3.boundary` |
+| L03/shaping | `rule.fk-loop-directive.de1bd9760493.shaping` |
+| L03/dependencies | `rule.fk-loop-directive.de1bd9760493.dependencies` |
+| L04/preservation | `rule.fk-loop-directive.923c5c059572.preservation` |
 | U01/stable-ids | `rule.fk-charter.11307b6ee77e.stable-ids` |
 | U02/original-event | `rule.fk-charter.73c2e8af98c5.original-event` |
 | U03/reopen-event | `rule.fk-charter.56c611d71350.reopen-event` |
@@ -652,3 +652,8 @@ The exact reserved shape includes each repaired array and the nine NP classifica
 The coordinator adopted the six additionally flagged historical/event facts C02/self-application, C03/adoption, C18/reaffirm, U02/original-event, U03/reopen-event and U04/a1-event as NP/ADVISORY/provenance-only/human-ratified. The exact U04 suffix is a1-event, matching the ruling. These supplement the three loop permission facts for nine total. Each preserves source dates, quotes, scope and references as exact bound provenance. U01 and C04 remain operative identity/process obligations; D21 and the INF requirements remain operative through their separate rules.
 
 For each of these six additional facts, query its exact unique subject with coordinator/shaping/source-inventory and provider-neutral host; assert REQUIRE_HUMAN, NO_APPLICABLE_AUTHORITY and controllingRuleIds: []. For U02/U03 additionally query coordinator/step-zero/state-transition to prove recorded Gate2 permission never mints a runtime grant. Full-shape/reserved-set controls prevent reclassification to controlling authority even after incidental digest recalculation. No informational resolver API, global eligibility change, assurance-order change or reinterpretation of resolver outcomes is permitted.
+
+
+## Independently verified masked-coordinate correction
+
+Before generation could write a registry, the builder detected that L01-L04 used raw source line coordinates. Independent reviewer `/root/adoption_final_review` reproduced the existing mask/identity algorithm from exact source65c4714 using read-only PowerShell, not generated output: 49 owner-body and212 current-state lines are excised before block discovery. The coordinator accepts masked lineHints84/86/88/90, yielding item.c98e1f76aeb5/item.d0e8b87bbcc3/item.de1bd9760493/item.923c5c059572. This appendix and all seven component IDs are corrected consistently. Anchors, locator/value digests, source bytes, counts, classifications and applicability are unchanged. Raw lines345/347/349/351 are navigation coordinates only. The required reserved set, source/basis references, audit and test literals must use these source-derived identities. No identity-algorithm change is authorized.
