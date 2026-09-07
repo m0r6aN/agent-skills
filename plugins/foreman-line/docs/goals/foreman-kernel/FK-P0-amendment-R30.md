@@ -58,3 +58,18 @@ Use the existing sequential PowerShell verification chain, complete stdout/stder
 3. Coordinator integrates adopted source plus this active-spec amendment in docs-only commit; verifies all eighteen committed source paths and records SHA/hashes.
 4. Builder Step0 names exact source delta, independent expectation coverage, historical-record preservation strategy, candidate curation/pin changes, required tests and all unproven conditions. Stop for ruling before code.
 5. Execute within existing ceiling, then deterministic verification and independent review on final committed candidate. Gate3 remains human-owned.
+
+
+## R30.6 — Step0 clarification: source-intent assurance and ledger completeness
+
+Coordinator-ratified September7 before code, under the same explicit developer authority. Step0 identified that ordinary classification contracts enforce structural/detected/independently-verified assurance, while newly adopted requirements have human-ratified source intent and no implemented runtime proof.
+
+A finite trusted-code map may authorize **only the assurance substitution to human-ratified** for the reviewed R30 normative source-intent entries. Preserve the ordinary classification decision and enforcement-owner pairing; do not add ALLOW, weaken protected-operation authority, or change legacy entries globally. A named entry binds exact rule identity, sourceId/itemId, typed locator/digest, normalized source value/digest, authority subject/claim/basis, classification, decision, severity, owner, assurance, five-axis applicability, source refs and retirement/evidence shape. No prefix wildcard, ID-only waiver, changed value or caller-supplied exception map is allowed. Unmatched/mutated entries remain subject to refusal; exact exceptions do not bypass ordinary source, manifest, migration or protected-operation checks.
+
+The implementation may share trusted literals between generator and validator, but independent source-authored tests remain the oracle. Add independent axis mutations and resolver tests proving source-intent entries do not become implemented-enforcement claims or new grants. Existing global assurance ordering and unrelated resolution semantics are not changed by this amendment; avoid new subject collisions and report any mixed controlling-set ambiguity before coding a broader resolver change.
+
+Step0 also found pre-existing non-normative exclusions for unchanged ledger paragraph2 (stable Entry IDs) and L1-L3. Correct these four specifically named units as U01-U04 in the independent expectation supplement. The original55 changed-unit denominator stays unchanged; four additional unchanged-ledger coverage corrections are separately inventoried. Ratification records are published as source authority facts, never as new ALLOW grants or runtime gate satisfaction. Existing numeric budgets, original grants and their dates remain unchanged.
+
+Scoped precedence is documentary: the September7 direction controls this coordinator's authorized Git publication and non-destructive decisions, not the kernel's protected-operation matrix. Existing human Gate3 and substantive source/verification protections remain. The existing round cap has not fired for this owner's first R30 adoption; no unrecorded reset of historical attempt counts or wholesale A3 adoption is implied.
+
+The builder must supply a complete, reviewable per-component mapping with exact enum values and applicability arrays plus independent count/delta derivation, including U01-U04, before code. The former68-added-rule proposal is provisional and does not yet include this supplement. Independent review of this clarification and revised mapping precedes implementation authorization.
