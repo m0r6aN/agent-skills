@@ -89,7 +89,7 @@ their `list-item:1..5` anchors. See the ordering note there.)_
 
 ## Current state — update at every stop or parcel closure
 
-**STATE 2026-09-07 — R30 accepted against fixed sources; R31 Step0 active.** R30c35ff72 passed the complete686-test chain and two fresh final reviews with noP0/P1/P2 findings. Exact source65c and all19historical records are preserved; full remote evidence and review probes are published. Separate R31 branch publishes4782820 with exact source8d50070, adopting only two selected upstream source blobs. Existing package remains R30; R31 mapping is in Step0 and code awaits independent approval/ruling. Current-main integration and human Gate3 remain separate. No merge or StageF is claimed.
+**STATE 2026-09-07 — R30 accepted; R31 implementation active.** R30c35ff72 passed the complete686-test chain and two fresh final reviews. R31 exactmappingcc23f91 independently passed review and ruling2ed7569 authorizes nine-file implementation against fixedsource8d50070. Expected18sources/1585items/542rules/202audit/21records are pre-implementation assertions, not a pass. Preserveall20historyrecords and original686test meaning. Published2ed7569 remains a preparation checkpoint; active code/evidence work is builder-owned until a new checkpoint. Current-main integration and human Gate3 remain separate; no merge or StageF.
 
 This progress supersedes older state labels below. Read `CURRENT-RESUME.md` and `LIVE-PUBLICATION-MANIFEST.json` for published branches, fullSHAs and hashes. A1.8/A1.9 and INF adoption are ratified and separately integrated through R30. FK-P1 StageA draft/review/advisory/ShapingResult are complete but P1 implementation remains pending its mergedP0 dependency. U1 draft and provider observations are published; named preP18 choices remain. This coordinator-only operational update is confined to declared volatile state; implementation source snapshot65c4714 and its worktree remain unchanged.
 
@@ -383,7 +383,7 @@ Source preservation applies to all prior worktrees and the published handoff. Th
 
 | Parcel | State | Depends on |
 |---|---|---|
-| FK-P0 — Canon authority and enforcement registry | **R30 full686-test chain and two fresh reviews passed atc35ff72; R31 source8d50070/Step0 active. Main integration and human Gate3 pending; no merge or StageF.** | none |
+| FK-P0 — Canon authority and enforcement registry | **R30 accepted atc35ff72; R31 mapping approved and nine-file implementation active under2ed7569 againstsource8d50070. Fullchain/freshreviews/mainintegration/humanGate3 pending; no merge.** | none |
 | FK-P1 — Lifecycle, admission, and decision contracts | pending | FK-P0 |
 | FK-P2 — Spec-body compiler | pending | FK-P0, FK-P1 |
 | FK-P3 — Pure dispatch decisions | pending | FK-P1 |
