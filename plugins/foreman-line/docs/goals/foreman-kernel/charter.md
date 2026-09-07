@@ -94,7 +94,7 @@ there, so no prose sentence in this charter needs editing when a decision is add
 | D18 | `authorizeAction` is a dedicated provider-neutral policy engine, not a hook or control-handler implementation detail. It combines authenticated principal, repository/worktree identity, compiled Allowed Files, role posture, leases/revisions, gate evidence, outage mode, and post-diff obligations against golden lifecycle vectors. | Without an owning engine parcel, thin adapters or the control catalog would have to reimplement policy and violate D12. |
 | D19 | Public read APIs are content-only by default. Any repository read uses an admission-bound `repoId` plus exact relative path resolved inside one mounted read-only root, with canonical containment, symlink/reparse refusal, regular-file checks, and byte limits. Arbitrary host paths are forbidden. | Read-only access can still disclose unrelated source, secrets, container files, or the SQLite volume. Mutation authority and read confidentiality are separate boundaries. |
 | D20 | First-release enforcement is claimed only for Claude Code on Windows 11 with Docker Desktop and the tested plugin/launcher shape. The MCP protocol and Linux container image remain provider-neutral; native-Linux-host or Codex enforcement is not claimed until separate process-boundary evidence exists. | Two harness shapes do not prove host, path, filesystem, or lifecycle parity. The claim must match the demonstrated platform matrix. |
-| D21 | The kernel's decision path carries a stated latency budget, measured on the D20 platform matrix. Two spans are distinguished: `kernelDecisionLatency` (request received at the decision surface → response written) is kernel-owned and budgeted at p50 ≤ 5 ms, p95 ≤ 20 ms, p99 ≤ 50 ms warm; `mediatedActionLatency` (host lifecycle entry → hook exit, inclusive of adapter and transport) is budgeted at p99 ≤ 150 ms. First-call-after-start cost is reported separately against a ≤ 2000 ms allowance and is never folded into a warm percentile. Exceeding a budget is a recorded obligation, not a refusal. Exceeding the hard deadline of 1000 ms on a single decision is treated as kernel-unreachable and inherits the D8 outage posture unchanged. Authorization results may be cached only when bound to `goalRevision`, `policyDigest`, and compiled-scope digest; a cache entry whose binding no longer matches produces `STATE_REVISION_STALE` rather than a stale ALLOW. | D8's enforcement claim depends on adapters that remain loaded and enabled. Latency is the most probable cause of an operator disabling one, which converts a claimed mechanical control into an undetected gap. Stating the budget also settles transport by derivation — per-invocation container start and network round trips are excluded arithmetically rather than by preference — and prevents the budget from being met by unsound caching. |
+| D21 | The kernel's decision path carries a stated latency budget, measured on the D20 platform matrix. Two spans are distinguished: `kernelDecisionLatency` (request received at the decision surface → response written) is kernel-owned and budgeted at p50 ≤ 5 ms, p95 ≤ 20 ms, p99 ≤ 50 ms warm; `mediatedActionLatency` (host lifecycle entry → hook exit, inclusive of adapter and transport) is budgeted at p99 ≤ 150 ms. First-call-after-start cost is reported separately against a ≤ 2000 ms allowance and is never folded into a warm percentile. Exceeding a budget is a recorded obligation, not a refusal. Exceeding the hard deadline of 1000 ms on a single decision is treated as kernel-unreachable and inherits the D8 outage posture unchanged. Authorization results may be cached only when bound to `goalRevision`, `policyDigest`, and compiled-scope digest; a cache entry whose binding no longer matches produces `STATE_REVISION_STALE` rather than a stale ALLOW. | D8's enforcement claim depends on adapters that remain loaded and enabled. Latency is the most probable cause of an operator disabling one, which converts a claimed mechanical control into an undetected gap. The measured D20 budgets constrain transport choice and prevent unsound caching; they do not establish a universal claim that every network round trip necessarily exceeds the budget. |
 
 ### 4.1 Ratification ledger
 
@@ -102,14 +102,21 @@ Authoritative record of what is binding and when it became binding. Any statemen
 elsewhere in this charter that appears to enumerate the binding set is a convenience
 restatement; this table governs. A decision is in force only if a row below puts it there.
 
-| Date | Instrument | Scope ratified | Record |
-|---|---|---|---|
-| 2026-08-31 | Original Gate 1 | D1–D17, the FK-P0–FK-P21 graph, wave exits, scenarios, goal exit criteria | “Ratify Gate 1 and authorize Gate 2 dispatches.” |
-| 2026-08-31 | Scoped Gate 1 re-open, plan-review amendments R1–R13 | D3, D7–D9, D13–D17, new D18–D20, amended graph and affected exit criteria | “Re-ratify Gate 1 amendments R1–R13 and resume Gate 2.” |
-| 2026-09-01 | Amendment A1 — decision-path latency budget | D21; FK-P1 and FK-P17 scope; Wave 0 exit; integration scenario 14; §13 items 7 and 9 | `proposed-amendment-A1-decision-path-latency-budget.md`, ratification record at foot |
+Each row carries a unique ledger entry id. Ids are stable, assigned in order, and never
+reused or renumbered; amendments and the authority registry reference a ratification event
+by its id rather than by its date or its position.
 
-**Appending a row is the only way to change the binding set.** An amendment document
-that has not produced a row here is a proposal, whatever its own status line says.
+| Entry | Date | Instrument | Scope ratified | Record |
+|---|---|---|---|---|
+| L1 | 2026-08-31 | Original Gate 1 | D1–D17, the FK-P0–FK-P21 graph, wave exits, scenarios, goal exit criteria | “Ratify Gate 1 and authorize Gate 2 dispatches.” |
+| L2 | 2026-08-31 | Scoped Gate 1 re-open, plan-review amendments R1–R13 | D3, D7–D9, D13–D17, new D18–D20, amended graph and affected exit criteria | “Re-ratify Gate 1 amendments R1–R13 and resume Gate 2.” |
+| L3 | 2026-09-01 | Amendment A1 — decision-path latency budget | D21; FK-P1 and FK-P17 scope; Wave 0 exit; integration scenario 14; §13 items 7 and 9 | `proposed-amendment-A1-decision-path-latency-budget.md`, ratification record at foot |
+
+
+| L4 | 2026-09-07 | Amendment A1.8 — ratification ledger (with A1.9, its Entry-id keying) | §4.1 itself; header status line, §4 preamble, and §10 Gate 1 restatements replaced by pointers to §4.1; ledger rows keyed by stable Entry id. Adds no locked decision, changes no gate, alters no parcel, scenario, or exit criterion. | `amendment-A1.8-ratification-ledger.md`; A1.9 at `7e7dc7d`; `authorization-20260907-unattended.md`. This is the instruments' own required row. |
+| L5 | 2026-09-07 | Infrastructure adoption INF-1–INF-8 | §14 and its detailed carrier mapping; D21 rationale/cold-deadline clarification; U1 assigned to coordinator contract resolution, FK-P18 production, FK-P19 verification and FK-P21 retention. No parcel added or dependency removed. | `amendment-A4-infrastructure-adoption-20260907.md`; developer recommendations ratified September 7 and continuation authorization in `authorization-20260907-unattended.md`. |
+
+**Appending a row is the only way to change the binding set.** Any amendment document that changes this charter must produce a row here, whether or not it changes the binding set. An unrowed amendment is a proposal; stable rows record actual ratification events, not inferred approvals.
 
 ## 5. First-release architecture
 
@@ -433,3 +440,184 @@ Ratifying this charter confirms:
 the contingent Gate 2 dispatch grant on 2026-08-31, then explicitly re-ratified plan-review
 amendments R1–R13 and resumed Gate 2 on 2026-08-31. Parcel shaping and dispatch may now
 proceed in dependency order under the stated contingencies.
+
+## 14. Ratified infrastructure adoption, 2026-09-07
+
+This section adopts the eight September 7 ratified recommendations into the live charter under L5. The detailed Carriers paragraphs assign obligations without adding parcels or dependency edges. The preserved companion is provenance; its older sections 1-13 do not replace this charter. Amendments A1 and A1.8/A1.9 stand as recorded in L3/L4. Newly adopted normative source content requires a separately reviewed FK-P0 corpus/contract amendment before an implementation verification claim can cover it. The unchanged Round 6 candidate remains a distinct baseline, not evidence for this adopted corpus.
+
+### INF-1: Separate platform proof, development, and future execution
+
+Retain Windows 11 + Docker Desktop + the tested Claude Code launcher/plugin as
+the D20 enforcement proving environment. Portable evaluator development and
+independent CI may execute elsewhere, but their results do not establish Windows
+enforcement parity. Local IPC and a long-lived kernel remain the first-release
+direction. Do not claim every filesystem operation in remote development crosses
+the network or that every network hop necessarily exceeds a latency budget.
+
+Future coordinator, sidecar, retrieval, and worker hosting stays open to separately
+ratified designs. The `hierarchical-coordination-sidecars` and
+`heterogeneous-agent-worker-fabric` goals retain their own owners, charters, and
+gates. This kernel release creates neither hierarchical commissioning nor a
+distributed execution fabric by implication. HCS's A3 proposal is not imported
+as ratified authority. Preserve neutral kernel contracts for those future consumers
+without assigning this goal their implementation work.
+
+**Carriers:** FK-P1 records environment/assurance semantics; FK-P7/FK-P14 implement
+the local deployment direction; FK-P16/FK-P17 prove Windows mediation; FK-P20
+reports only the additional host capabilities actually demonstrated; FK-P21 binds
+the resulting matrix to evidence.
+
+### INF-2: Scope storage and hosting decisions to their actual contracts
+
+SQLite WAL on a native Docker named volume remains the first-release state
+placement. Record the actual volume driver, backing filesystem, runtime version,
+mount configuration, and ownership with the evidence. An arbitrary named volume
+backed by network storage does not satisfy the native-volume condition.
+
+Reject ACA with SQLite WAL on Azure Files for the current topology. ACA supports
+SMB and NFS mounts; neither changes the same-host WAL requirement. Do not convert
+this into a permanent ACA ban or claim PostgreSQL inherently contradicts lease
+ownership or optimistic revisions. A changed state service would need its own
+contract, durability, authority, recovery, and concurrency proof. No migration is
+authorized here. A cloud host does not inherently require public ingress or cloud
+credentials inside the kernel; actual admitted identities and capabilities govern
+that boundary.
+
+**Carriers:** FK-P9 owns storage and backup contracts; FK-P14 owns deployment and
+operator lifecycle; FK-P15 proves recovery and concurrency on the exact placement.
+
+### INF-3: Measure workstation optimization without blanket exclusions
+
+Do not install the former blanket antivirus exclusions for `D:\Repos`, worktree
+roots, package caches, or the Docker VHDX. Profile hot paths first. Evaluate Dev
+Drive with Defender performance mode. Residual exclusions must be narrowly scoped
+and justified by measured impact. OS configuration changes remain operator actions
+under the available authority, not kernel capabilities.
+
+Keep independent workspace verification. A shared npm cache reduces fetching but
+does not eliminate each worktree's installed dependency tree. A linked dependency
+store or package-manager change is a distinct compatibility decision. Benchmark
+BuildKit cache mounts, resource ceilings, and install changes against cold and
+warm baselines before claiming improvements. Preserve reproducible lockfile-based
+installation, dirty worktrees, and untracked work.
+
+**Carriers:** FK-P0 records the applicable operational rules; FK-P7/FK-P14 own
+their respective build/launcher configuration and benchmark evidence; FK-P21
+reports the measured outcome. This does not grant cross-package lockfile edits
+or create a new workstation-tuning implementation parcel.
+
+### INF-4: Prove verification independence and retain evidence
+
+Separate machines contribute isolation but are not sufficient for independent
+verification. For every accepted verification path identify protected verifier
+code and workflow configuration, allowed credentials, builder-controlled inputs,
+runner lifecycle, and independent evaluation of negative controls. A local fresh
+environment may demonstrate freedom from ambient dependencies; it does not prove
+resistance to host compromise. Keep those assurance claims distinct.
+
+Retain evidence artifacts with digests, source/workflow/toolchain identities,
+image and configuration digests, and a declared retention/retrieval procedure.
+CI job URLs are navigation pointers, not sole durable evidence. Do not assume
+they are public. Pin external actions and container inputs according to the
+reviewed CI contract. A mutable runner label or image tag is not a tested identity.
+
+**Carriers:** FK-P5/FK-P8/FK-P15 define clean-environment proof; FK-P18 owns the
+independently controlled CI backstop; FK-P21 owns the retained evidence manifest.
+Publishing images, changing repository rules, or provisioning runners requires
+the actual external-effect authority; this document grants none automatically.
+
+### INF-5: Reconcile A1 and measure both latency spans
+
+A1 is ratified and already adopted as D21 and ledger entry L3. Its numerical budgets, both latency spans, revision-bound cache rule and D8 outage mapping remain binding. The source artifact's old not-yet-landed wording is historical and has been corrected.
+
+| Span or condition | Adopted D21 budget |
+|---|---|
+| Warm kernel decision | p50 <= 5 ms; p95 <= 20 ms; p99 <= 50 ms |
+| End-to-end mediated action | p99 <= 150 ms |
+| First call after startup | separately reported allowance <= 2000 ms |
+| Per-decision hard deadline | 1000 ms, mapped to the existing outage posture |
+
+The first-call allowance is an observation budget and does not extend the 1000 ms decision deadline or permit a late ALLOW. FK-P1 specifies the observation points and which startup work lies outside the decision span. Budget overruns remain recorded obligations; hard-deadline overruns inherit D8. No cache eligibility is broadened to satisfy a performance target.
+
+**Carriers:** FK-P0 records reconciliation; FK-P1 owns the adopted decision-path
+contract; FK-P16 implements the adapter; FK-P17 measures both spans, cold start,
+and the hard-deadline failure behavior on D20; FK-P18 may carry only the coarse
+CI regression checks authorized by the adopted A1; FK-P21 records evidence.
+
+### INF-6: Use a reproducible performance and cost baseline
+
+Do not claim the earlier bottleneck ranking, Defender multiplier, model fit,
+per-review price, VM price, or model-to-infrastructure spend ratio as measured.
+Record workload, source/configuration, sample count, concurrency, cold/warm state,
+measurement boundaries, and missing observations with each baseline.
+
+| Metric | Required use |
+|---|---|
+| Accepted parcels per hour | Measure useful delivery rather than raw task starts |
+| Cost per accepted parcel, including rework | Evaluate routing and capacity economics |
+| Reviewer queue delay, latency, tokens, rework rate | Separate review capacity from implementation performance |
+| Installation and verification duration | Evaluate caching, disk, and verification-chain work |
+| Both A1 latency spans | Detect kernel and adapter regressions separately |
+| SQLite contention and CPU/memory/disk pressure by concurrency | Identify the tested capacity boundary |
+
+The measurement record must define what counts as acceptance, the observation
+window, currency/time basis, and which cost components are included. If no parcel
+is accepted in the window, report that condition rather than a misleading unit
+cost. Report unknown spend or telemetry as unknown; do not add credentials to the
+kernel merely to collect billing data. Numeric improvement claims require actual
+before/after evidence. This charter adds no unmeasured percentage target.
+
+**Carriers:** the coordinator records end-to-end parcel/review economics from
+available evidence; FK-P7/FK-P14 measure their build paths; FK-P10/FK-P15 measure
+contention; FK-P17 measures decision latency; FK-P21 assembles the baseline and
+the documented measurement gaps. Keep instrumentation out of authority semantics.
+
+### INF-7: Exhaustive corpus manifests; retrieval remains advisory
+
+Deterministically enumerate the complete in-scope corpus at a named revision.
+Maintain a manifest and one explicit disposition for every item, including
+unreadable, failed, unsupported, and excluded items with reasons. A failed or
+unexamined in-scope item cannot be counted as swept for a rule-retirement claim.
+Retrieval may prioritize review but cannot define completeness.
+
+The inspected upstream main at `476b8df6efe6c9974879957147449f61c34cd9a0` has
+`shadow_routes: {}`. Do not assume Cerebras or a local GPU route is active.
+Model/provider eligibility must come from the current routing policy and actual
+host capability; do not substitute a hosted-model name that this session cannot
+select. A local GPU evaluation or retrieval index remains outside this kernel's
+first-release implementation unless a separate scope decision admits it.
+
+**Carriers:** FK-P0 inventories rules and corpus obligations; FK-P3 covers every
+read-surface-reachable mixed evaluator; FK-P19 requires complete sweep evidence
+before retirement/promotion; FK-P21 binds manifest identities, counts, and outcomes.
+
+### INF-8: Demonstrate recovery and define measured revisit conditions
+
+Source reproducibility alone does not recover runtime state. FK-P9/FK-P14 must
+define the consistent backup boundary, integrity checks, protected destination,
+retention, and operator restore sequence. FK-P15 must exercise restore, ownership
+reconciliation, and refusal of stale leases, stale authorization, and duplicate
+owners. Restore must not silently restart dispatch. Use existing authority and
+lease contracts; add no competing recovery authority primitive.
+
+Define recovery-point and recovery-time objectives against actual needs before
+claiming an objective is met. Record measured restore behavior while those
+numeric objectives remain unresolved; do not silently choose them in a builder.
+Any blocking unresolved objective is named at its affected acceptance gate, not
+used to hold unrelated contract or evaluator work.
+
+Open a separately governed infrastructure evaluation when continuity, manual proof
+regeneration, concurrent verifier demand, sustained queue delay, writer contention,
+recovery needs, or cost per accepted parcel justifies it. Revisit triggers do not
+automatically choose Azure, authorize spend, or widen D20.
+
+**Carriers:** FK-P9/FK-P14 define backup and restore; FK-P15 proves recovery;
+FK-P21 records limitations, objectives, results, and revisit evidence.
+
+### Adoption dependencies and evidence ownership
+
+- U1 (backstop independence) now has a named contract-resolution owner: this goal's coordinator. FK-P18 implements the reviewed producer contract and supplies evidence; FK-P19 independently verifies that evidence at promotion; FK-P21 consolidates and retains evidence that must already exist before promotion. FK-P21 cannot be the first producer of promotion prerequisites.
+- Before FK-P18 implementation dispatch, a concrete independently reviewed contract must bind protected verifier/workflow control, builder-input limits, credentials and runner lifecycle, independent negative controls, evidence identities/retention, and bounded unsupported/unavailable outcomes. Missing or invalid evidence refuses promotion. This is an affected-parcel dependency, not a hold on upstream evaluator work. No old A2 draft is revived by this assignment.
+- The coordinator owns an observation-window baseline now: an accepted parcel means a parcel accepted through its required green chain and human merge gate; record elapsed times, queue delay, included cost components and unknowns. With no accepted parcels, report zero accepted and undefined cost per accepted parcel. Do not manufacture billing telemetry.
+- FK-P9/FK-P14 define backup/restore boundaries and objectives before their affected acceptance gates; FK-P15 measures recovery. Unknown numeric objectives do not block orthogonal work, and no objective is claimed met without measurement.
+- The detailed INF carrier paragraphs govern. The companion's section 16 is a convenience summary and cannot narrow them. Existing packaging, HCS and worker-fabric serialization ownership is checked before affected edits; no foreign goal scope is imported.

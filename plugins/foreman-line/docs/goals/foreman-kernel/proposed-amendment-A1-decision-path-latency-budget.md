@@ -6,18 +6,9 @@
 document. Superseded the prior `PROPOSED` status on the developer's explicit
 written approval.
 
-This document supplies exact replacement text for a scoped Gate 1 amendment. The
-ratification is recorded; the amendment is **not yet landed**. Per
-SPEC-CONVENTION §11, applying it still requires the replacement text to be
-transcribed into `charter.md`, committed alone in a commit touching only
-charter/convention files, with a commit message identifying it as a
-coordinator-ratified amendment. Until that commit exists, the ruling lives only
-in this document.
+This scoped Gate 1 amendment was ratified and transcribed into the live charter; D21 and ledger row L3 verify adoption. The prior “not yet landed” and “uncommitted” wording was stale and is corrected on 2026-09-07. The original ratification record is preserved below.
 
-**Scope:** binds D21 and A1.2–A1.7. The enumeration originally read “A1.2–A1.6”
-because it predated A1.7; the developer confirmed A1.7 in scope on 2026-09-01 and
-the scope sentence was corrected then. Transcribed into `charter.md` (uncommitted)
-on 2026-09-01.
+**Scope:** D21 and A1.2–A1.7, including the developer-confirmed A1.7 enumeration. Historical current/replacement blocks below document the original adoption. The current charter's INF-5 clarifies cold-start accounting without extending the per-decision deadline; INF-1 corrects universal transport-cost claims. Neither clarification broadens authorization caching.
 
 **Source:** `ADR-001-runtime-infrastructure-posture.md`, Consequences §1, which
 recorded this as advisory and named FK-P1 as the natural owner.

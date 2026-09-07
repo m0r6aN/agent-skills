@@ -2,13 +2,9 @@
 
 ## Status
 
-**APPLIED TO THE WORKING TREE, UNCOMMITTED — text not yet reviewed by the developer.**
+**RATIFIED 2026-09-07.** Text was committed at `7fa0ddf`; developer ratification of the recommendation is now recorded in `authorization-20260907-unattended.md`. Row L4 is appended to §4.1 in the same standalone documentation act, covering A1.9 (`7e7dc7d`). The prior unreviewed/uncommitted status was historical and inaccurate about commit state.
 
-Drafted and applied on the developer's direction of 2026-09-01 ("go with your
-recommendation" on the stale-reference finding, plus explicit agreement that "the
-preamble should name a ratification ledger"). The *approach* was directed; the
-*text* below has not been read by the developer. It is uncommitted for that reason.
-Landing it requires the §11 commit discipline and the developer's review of the diff.
+The known-defect discussion below is preserved as the reason for the correction. It no longer describes the current ledger after L4. The self-application sentence is clarified exactly as recommended by the coordinator review.
 
 ## Problem
 
@@ -67,5 +63,4 @@ SPEC-CONVENTION §11.
 
 ## Ratification
 
-**Ratification record:** _(text unreviewed — approach directed 2026-09-01, wording pending;
-see the known defect above, which must be resolved in the same act)_
+**Ratification record:** On 2026-09-07 the developer stated, “I ratify any recommendations and give blanket approval to move forward with all decisions and non-destructive actions on my behalf.” This adopts the previously documented A1.8/A1.9 recommendation, with L4 dated September 7. It does not backdate ratification to September 1.
