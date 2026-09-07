@@ -23,3 +23,11 @@ Separately mutate that digest on the actual current reserved R31 record and requ
 ## Boundary
 
 Only these two test subjects need migration under the reported failures. Keep all other live validation, current-head mutation, historical preservation and independent source-oracle assertions intact. The actual corrected diff and focused direct results still require inspection before claiming closure; a subsequent full run remains required. The only reviewer mutation is this coordinator report, with no commit.
+
+## Published correction closure
+
+Closed the bounded test-migration review against published `2fc39405988df4d7073f20d69b65a276329be83d`. The package diff from `521214e4fa7e3475e2544ef1f1492638250437f6` changes only `tests/semantic-invariants.test.ts` and implements both approved corrections without weakening their subjects. The audit test asserts historical198, independent proposed4 and complete concatenated equality before retaining the historical rationale assertions. The residual test asserts a valid rechain fixture, mutates only the successor digest, proves complete-document equality after restoring that digest, preserves all21 prior records, and separately requires the precise reserved-R31 and historical-pin refusals. Shared live helpers and runtime code are unchanged.
+
+Inspected exact evidence files `30-test-migration-biome.metadata.json`, `31-test-migration-typecheck.metadata.json`, `32-test-migration-focused.metadata.json`, their corresponding logs, and `33-test-migration-checkpoint.md`. All three metadata files record directExit0. Focused evidence reports82 pass/0fail; these are bounded regressions, not the full suite. The failed run28 remains failed evidence, and this closure makes no claim about the new full run or final implementation acceptance.
+
+No Node or package edits were performed in this closure review. Candidate HEAD remained the reviewed2fc3940. Newly appearing34–36 full-run metadata files belong to concurrent builder verification and were not reviewer writes. The sole reviewer mutation is this appended report note; no commit was made.
