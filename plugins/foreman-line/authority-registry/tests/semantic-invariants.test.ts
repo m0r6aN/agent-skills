@@ -11,6 +11,7 @@ import type {
   AuthorityQuery,
   AuthorityRule,
   InventoryItem,
+  SourceRef,
 } from '../src/types.js'
 import {
   AUTHORITY_EFFECTS,
@@ -5247,8 +5248,61 @@ function r30AuthorityRefusal(document: AuthorityEnforcementRegistry, duplicatePa
   )
 }
 
+// Derive references from the reviewed prose convention and exact appendix pins, never runtime maps.
+function r30ExpectedReferences() {
+  const text = r30Mapping()
+  const pins = new Map<string, SourceRef>()
+  for (const section of text.split(/^### /m).slice(1)) {
+    const unit = /^([CLU]\d\d)\r?\n/.exec(section)?.[1]
+    if (!unit) continue
+    const identity = /- sourceId: `([^`]+)`; itemId: `([^`]+)`/.exec(section)
+    const locator = /- locatorDigest: `([a-f0-9]{64})`/.exec(section)
+    const value = /- valueDigest: `([a-f0-9]{64})`/.exec(section)
+    ok(identity, unit)
+    ok(locator, unit)
+    ok(value, unit)
+    pins.set(unit, {
+      sourceId: identity[1] ?? '',
+      itemId: identity[2] ?? '',
+      locatorDigest: locator[1] ?? '',
+      valueDigest: value[1] ?? '',
+    })
+  }
+  assert.equal(pins.size, 53, 'exact independently reviewed source-unit appendix')
+  const pin = (unit: string) => {
+    const ref = pins.get(unit)
+    ok(ref, unit)
+    return ref
+  }
+  const entries = [...text.matchAll(/^\| ([CLU]\d\d\/[^|]+) \| `(rule\.[^`]+)` \|/gm)].map(
+    (row) => {
+      const unit = row[1]?.trim()
+      ok(unit)
+      const own = unit.split('/')[0]
+      ok(own)
+      const number = Number(own.slice(1))
+      const corroboration =
+        own === 'U01'
+          ? ['C02']
+          : own.startsWith('C') && number >= 18 && number <= 24
+            ? ['C01', 'C03']
+            : own.startsWith('C') && number >= 5 && number <= 45
+              ? ['C03']
+              : []
+      return {
+        unit,
+        ruleId: row[2] ?? '',
+        basis: pin(own),
+        refs: [pin(own), ...corroboration.map(pin)],
+      }
+    },
+  )
+  assert.equal(entries.length, 72, 'exact independently reviewed component identities')
+  return entries
+}
 test('R30 all 72 complete published shapes agree with the independent source mapping', () => {
   const text = r30Mapping()
+  const references = new Map(r30ExpectedReferences().map((entry) => [entry.unit, entry]))
   const presets = new Map(
     [...text.matchAll(/^\| ([A-Z]+) \| \[([^\]]+)\] \| \[([^\]]+)\] \| \[([^\]]+)\] \|/gm)].map(
       (m) => [
@@ -5305,10 +5359,11 @@ test('R30 all 72 complete published shapes agree with the independent source map
       },
       unit,
     )
-    const basis = rule.sourceRefs.find(
-      (ref) => canonicalJson(ref) === canonicalJson(rule.authorityBasisRef),
-    )
-    ok(basis, unit)
+    const expectedRefs = references.get(unit)
+    ok(expectedRefs, unit)
+    assert.equal(rule.ruleId, expectedRefs.ruleId, unit)
+    assert.deepEqual(rule.authorityBasisRef, expectedRefs.basis, `${unit}: exact designated basis`)
+    assert.deepEqual(rule.sourceRefs, expectedRefs.refs, `${unit}: exact ordered source refs`)
   }
   assert.deepEqual(classes, { IJ: 37, PR: 21, PD: 5, NP: 9 })
 })
@@ -5679,6 +5734,26 @@ test('R30 preserves ordinary unrelated legacy singleton and nonliteral-paraphras
 })
 
 test('R30 corroboration adds exactly 67 reciprocal edges without changing the designated bases', () => {
+  const expected = r30ExpectedReferences()
+  const baseline = r30Baseline()
+  for (const source of full.sources) {
+    const priorSource = baseline.sources.find((candidate) => candidate.sourceId === source.sourceId)
+    for (const item of source.inventoryItems) {
+      const priorItem = priorSource?.inventoryItems.find(
+        (candidate) => candidate.itemId === item.itemId,
+      )
+      const additions = expected
+        .filter((entry) =>
+          entry.refs.some((ref) => ref.sourceId === source.sourceId && ref.itemId === item.itemId),
+        )
+        .map((entry) => entry.ruleId)
+      assert.deepEqual(
+        [...item.ruleIds].sort(),
+        [...new Set([...(priorItem?.ruleIds ?? []), ...additions])].sort(),
+        `${source.sourceId}:${item.itemId}: exact reciprocal set preserves legacy links`,
+      )
+    }
+  }
   const targets = [
     ['C03/adoption', 57],
     ['C19/warm', 9],
