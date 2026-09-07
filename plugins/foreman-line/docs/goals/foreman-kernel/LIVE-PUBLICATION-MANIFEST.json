@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "capturedUtc": "2026-09-07T17:02:26.854123+00:00",
+  "capturedUtc": "2026-09-07T17:22:37.165392+00:00",
   "origin": "https://github.com/m0r6aN/agent-skills.git",
   "coordinatorSource": {
     "worktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-unattended-20260907",
     "branch": "codex/foreman-kernel-unattended-20260907",
-    "fullHeadSha": "08173ee147a68b72623f1f1655a800d54c9987ea"
+    "fullHeadSha": "3ab37f8cf333a372b865e27c6bf0a4bcba90a5d1"
   },
   "implementationSource": {
     "worktree": "D:/Repos/agent-skills-worktrees/fk-p0-r30-adoption-20260907",
@@ -258,6 +258,11 @@
       "gitBlobSha256": "7522a9072c8a153e02847b6e5cb03988e7bfd25fc90535f8958b069393ad1bb3"
     },
     {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/R31-main-integration-check-plan-20260907.md",
+      "bytes": 15852,
+      "gitBlobSha256": "ffe622f3bcfdd5a6155bf4b6b11cc6f724c7f025c3e7175ff778e75e251efe85"
+    },
+    {
       "path": "plugins/foreman-line/docs/goals/foreman-kernel/R31-migration-evidence-review-20260907.md",
       "bytes": 6511,
       "gitBlobSha256": "528f453096bd399419af3ab4877c9e0a284955fb68eff0bc0ca5ca6352bcdfec"
@@ -426,6 +431,11 @@
       "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/p1-shaping/spec-linter-install.stdout.log",
       "bytes": 222,
       "gitBlobSha256": "d11799130c349168c9f42d88107568827cc45927bb02afa27182849a1d814a84"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/publication-39381cf-verified.json",
+      "bytes": 156499,
+      "gitBlobSha256": "3a633c85b892c403f4f5e841f012e4d0bbb961bdf6a497e9c950981c296c7c91"
     },
     {
       "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30-final-review-authority/metadata.json",
@@ -796,6 +806,11 @@
       "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/run-command.ps1",
       "bytes": 2782,
       "gitBlobSha256": "23b4b0baeff239d4684e6bb0ff16b52366ab977ad777549f6f2d2e3f3ef123d5"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/verify-publication.py",
+      "bytes": 5920,
+      "gitBlobSha256": "86d90fdb6756489ac70244d926df20d6ce192ac1dd5710f3efb533c7f5689fa7"
     },
     {
       "path": "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/RESUME.md",
