@@ -124,3 +124,7 @@ Static body-discovery expectation is two additional blocks: M01's list item and 
 5. Run scheduled validation and obtain independent review of the final subject and evidence. Perform full-main integration as a separate subsequent check against its exact selected head; selective source adoption does not certify that integration. Record separate outcomes for text integration, source adoption, registry validation and full P0 acceptance. Only the resulting accepted dependency can support downstream implementation gates.
 
 No Node/npm commands, installs, tests, workflow runs, commits, source edits or builder-tree writes were performed for this review. The only authored file is this draft.
+
+## Terminology reconciliation after pinned inventory inspection
+
+The earlier draft's phrase "existing hard rule" for the historical thesis is imprecise. Direct inspection of accepted registry446700d confirms rule.foreman-line-plan.two-gate-thesis is narrative-provenance / ADVISORY / provenance-only / narrative / historical-only, with authoritySubject gate.namespace and claim historical-two-stage-gates. R31 preserves that exact historical effect and identity at the relocated paragraph; it does not preserve or create a live hard gate. R31-source-expectations-20260907.md records the exact old item/value/locator bindings. This addendum explicitly reconciles the terminology without changing the approved migration boundary.
