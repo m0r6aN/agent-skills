@@ -1,0 +1,7 @@
+{
+  "command": "npx tsx focused R13 audit/R31/AC4 O4/R22 O7",
+  "startUtc": "2026-09-07T17:59:06.9170489Z",
+  "endUtc": "2026-09-07T17:59:23.0824237Z",
+  "elapsedSeconds": 16.1677173,
+  "directExit": 0
+}

@@ -1,0 +1,7 @@
+{
+  "command": "npx biome check --write tests/semantic-invariants.test.ts",
+  "startUtc": "2026-09-07T17:58:34.1429363Z",
+  "endUtc": "2026-09-07T17:58:38.9787246Z",
+  "elapsedSeconds": 4.8377806,
+  "directExit": 0
+}

@@ -2126,7 +2126,26 @@ for (const [name, fragment] of r13NamedPublications) {
 }
 
 test('R13 every excluded audit candidate has one item-specific rationale', () => {
-  const excluded = r13Audit().filter((record) => record.disposition === 'exclude')
+  const historical = r31Baseline().normativeMarkdownAudit
+  const proposed = r31Contract()
+  assert.equal(historical.length, 198)
+  assert.equal(proposed.audit.length, 4)
+  assert.deepEqual(r13Audit().slice(0, 198), historical)
+  assert.deepEqual(r13Audit(), [...historical, ...proposed.audit])
+  for (const record of proposed.audit) {
+    const unit = proposed.units.find(
+      (candidate) => candidate.sourceId === record.sourceId && candidate.itemId === record.itemId,
+    )
+    ok(unit)
+    const item = full.sources
+      .find((source) => source.sourceId === unit.sourceId)
+      ?.inventoryItems.find((candidate) => candidate.itemId === unit.itemId)
+    ok(item)
+    assert.deepEqual(item.locator, unit.locator)
+    assert.equal(record.valueDigest, unit.valueDigest)
+    assert.deepEqual(record.ruleIds, unit.ruleIds)
+  }
+  const excluded = historical.filter((record) => record.disposition === 'exclude')
   ok(excluded.length > 0)
   for (const record of excluded) {
     assert.equal(record.ruleIds.length, 0, `${record.sourceId}:${record.itemId}`)
@@ -4412,30 +4431,58 @@ test('AC4 O4 rejects a head whose bound git-commit evidence is deleted', () => {
   )
 })
 
-test('AC4 O4 residual, stated and not disguised: a head git-commit digest is not independently checkable', () => {
-  // R21's obligation is that where no binding is available for a kind, the ABSENCE IS STATED rather
-  // than disguised as a check. This test states it, and pins its exact width.
-  //
-  // A `git-commit` digest attests the commit OBJECT BODY - `sha256(git cat-file -p <commit>)` - and
-  // no hermetic validator can recompute that. What IS bound is the REFERENCE, via the prior
-  // command's `inputDigest` (asserted two tests above). So rewriting the DIGEST alone, on the one
-  // record exempt from the byte pin, is not independently detectable. That is a real residual and
-  // this parcel exists to report residuals honestly rather than to imply coverage it lacks.
-  //
-  // It is narrow, and the control below is what makes "narrow" checkable: on any PINNED record the
-  // very same edit is refused, because it breaks the record's canonical manifest.
-  const headMutated = withMutatedHead((record) => {
-    const target = record.observedEvidence.find((evidence) => evidence.kind === 'git-commit')
-    ok(target, 'the head must carry git-commit evidence')
-    assert.notEqual(target.digest, 'a'.repeat(64), 'the digest rewrite must not be a no-op')
-    ;(target as { digest: string }).digest = 'a'.repeat(64)
-  })
+test('AC4 O4 hermetic residual remains explicit for a generic nonreserved successor Git digest', () => {
+  // R31 pins its exact reserved record, while hermetic validation still cannot independently
+  // read the Git object bytes claimed by a generic future successor. Preserve both boundaries.
+  const candidate = structuredClone(full)
+  retireMergeAuthority(candidate)
+  const headMutated = rechain(candidate)
+  assert.deepEqual(
+    validateRegistry(headMutated).violations,
+    [],
+    'the successor baseline must actually be valid',
+  )
+  const before = structuredClone(headMutated)
+  const successor = headMutated.reconciliations.at(-1)
+  ok(successor)
+  assert.notEqual(successor.reconciliationId, CHAIN_HEAD_ID)
+  const target = successor.observedEvidence.find((evidence) => evidence.kind === 'git-commit')
+  ok(target)
+  const originalDigest = target.digest
+  assert.notEqual(originalDigest, 'a'.repeat(64))
+  Object.assign(target, { digest: 'a'.repeat(64) })
+  assert.deepEqual(headMutated.reconciliations.slice(0, 21), full.reconciliations)
+  assert.equal(registryBindingManifestDigest(headMutated), registryBindingManifestDigest(before))
+  const restored = structuredClone(headMutated)
+  const restoredTarget = restored.reconciliations
+    .at(-1)
+    ?.observedEvidence.find((evidence) => evidence.kind === 'git-commit')
+  ok(restoredTarget)
+  Object.assign(restoredTarget, { digest: originalDigest })
+  assert.deepEqual(
+    restored,
+    before,
+    'only the successor Git-object digest may change; references, command evidence, source bindings and history stay exact',
+  )
   assert.deepEqual(
     validateRegistry(headMutated).violations.map((violation) => violation.code),
     [],
-    'stated residual: a head git-commit digest carries no independent binding',
+    'explicit hermetic-only residual: a generic nonreserved successor digest has no independent object-byte binding',
   )
 
+  const reservedMutated = withMutatedHead((record) => {
+    const reservedTarget = record.observedEvidence.find(
+      (evidence) => evidence.kind === 'git-commit',
+    )
+    ok(reservedTarget)
+    assert.notEqual(reservedTarget.digest, 'a'.repeat(64))
+    Object.assign(reservedTarget, { digest: 'a'.repeat(64) })
+  })
+  expectCode(reservedMutated, 'MIGRATION_EVIDENCE_INVALID')
+  expectMessage(
+    reservedMutated,
+    'R31 exact migration diagnostic, source references and custody tuple changed',
+  )
   // Control - the same edit on a pinned record IS refused, so the residual covers the head alone.
   const pinnedMutated = structuredClone(full)
   const pinned = pinnedMutated.reconciliations.find(
@@ -4447,6 +4494,7 @@ test('AC4 O4 residual, stated and not disguised: a head git-commit digest is not
   assert.notEqual(pinnedTarget.digest, 'a'.repeat(64), 'the digest rewrite must not be a no-op')
   ;(pinnedTarget as { digest: string }).digest = 'a'.repeat(64)
   expectCode(pinnedMutated, 'MIGRATION_EVIDENCE_INVALID')
+  expectMessage(pinnedMutated, 'differs from its complete canonical record manifest')
 })
 
 // ------------------------------------------------------------------ obligation 5: distinctness
