@@ -1,0 +1,3 @@
+# R31 run36 monitoring note
+
+At 2026-09-07T18:08:49Z, one read-only progress command mistakenly passed `-File` to Get-Content rather than only to Get-ChildItem. PowerShell emitted `A parameter cannot be found that matches parameter name 'File'.` It was a non-terminating monitor error; the outer shell returned 0 after printing the UTC timestamp. No Node command, test, package file or source was changed. A corrected read at18:09:02.9905381Z reported corpus marker70 while the same full-suite process continued. This observation is not part of the required verification chain and is not presented as a successful test.

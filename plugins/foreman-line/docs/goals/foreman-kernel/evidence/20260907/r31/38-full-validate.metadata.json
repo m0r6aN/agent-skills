@@ -1,0 +1,8 @@
+{
+  "command": "npx tsx src/cli.ts validate authority-enforcement-registry.yaml --repo-root ../../..",
+  "checkpoint": "2fc39405988df4d7073f20d69b65a276329be83d",
+  "startUtc": "2026-09-07T18:28:52.5677749Z",
+  "endUtc": "2026-09-07T18:28:55.7014319Z",
+  "elapsedSeconds": 3.135428,
+  "directExit": 0
+}

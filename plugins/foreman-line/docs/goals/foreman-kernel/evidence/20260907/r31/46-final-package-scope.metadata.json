@@ -1,0 +1,7 @@
+{
+  "command": "git diff --exit-code 2fc39405988df4d7073f20d69b65a276329be83d -- authority-registry package",
+  "startUtc": "2026-09-07T18:32:52.8806842Z",
+  "endUtc": "2026-09-07T18:32:53.8221706Z",
+  "elapsedSeconds": 0.9440492,
+  "directExit": 0
+}

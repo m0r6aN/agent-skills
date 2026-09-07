@@ -1,0 +1,8 @@
+{
+  "command": "npx biome check .",
+  "checkpoint": "2fc39405988df4d7073f20d69b65a276329be83d",
+  "startUtc": "2026-09-07T18:28:34.6849184Z",
+  "endUtc": "2026-09-07T18:28:39.2778361Z",
+  "elapsedSeconds": 4.5957125,
+  "directExit": 0
+}

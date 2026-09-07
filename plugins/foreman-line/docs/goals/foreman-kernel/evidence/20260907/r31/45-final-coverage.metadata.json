@@ -1,0 +1,8 @@
+{
+  "command": "node evidence/r31/collect-coverage.mjs",
+  "checkpoint": "2fc39405988df4d7073f20d69b65a276329be83d",
+  "startUtc": "2026-09-07T18:32:17.8088319Z",
+  "endUtc": "2026-09-07T18:32:18.5196140Z",
+  "elapsedSeconds": 0.7147568,
+  "directExit": 0
+}

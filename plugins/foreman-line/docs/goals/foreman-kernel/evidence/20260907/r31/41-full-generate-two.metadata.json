@@ -1,0 +1,45 @@
+{
+  "command": "npm run generate",
+  "checkpoint": "2fc39405988df4d7073f20d69b65a276329be83d",
+  "startUtc": "2026-09-07T18:30:29.8999179Z",
+  "endUtc": "2026-09-07T18:30:40.0585150Z",
+  "elapsedSeconds": 10.1602585,
+  "directExit": 0,
+  "artifactAndLockBytesUnchanged": true,
+  "before": [
+    {
+      "path": "README.md",
+      "sha256": "639450f0fe49fb7149981d8162df3d56b2d2d79188c67745f680f48f6e0d2b15"
+    },
+    {
+      "path": "authority-enforcement-registry.yaml",
+      "sha256": "6ff8521e9a9210ae69adad571e7c3fc1f2e20e895fc5b5114e622e9ee2820910"
+    },
+    {
+      "path": "tests/fixtures/pass-minimal.yaml",
+      "sha256": "6ff8521e9a9210ae69adad571e7c3fc1f2e20e895fc5b5114e622e9ee2820910"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "e7a986409956dc29a8eaf3d4d70ba3cf842643cd7999c79b6525f2368191b8eb"
+    }
+  ],
+  "after": [
+    {
+      "path": "README.md",
+      "sha256": "639450f0fe49fb7149981d8162df3d56b2d2d79188c67745f680f48f6e0d2b15"
+    },
+    {
+      "path": "authority-enforcement-registry.yaml",
+      "sha256": "6ff8521e9a9210ae69adad571e7c3fc1f2e20e895fc5b5114e622e9ee2820910"
+    },
+    {
+      "path": "tests/fixtures/pass-minimal.yaml",
+      "sha256": "6ff8521e9a9210ae69adad571e7c3fc1f2e20e895fc5b5114e622e9ee2820910"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "e7a986409956dc29a8eaf3d4d70ba3cf842643cd7999c79b6525f2368191b8eb"
+    }
+  ]
+}

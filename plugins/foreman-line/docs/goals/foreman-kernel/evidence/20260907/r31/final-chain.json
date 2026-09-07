@@ -1,0 +1,191 @@
+{
+  "sourceSnapshot": "8d500704c9e3d6d8b652bbe838aa3623f88203fc",
+  "runtimeImplementation": "521214e4fa7e3475e2544ef1f1492638250437f6",
+  "testedCheckpoint": "2fc39405988df4d7073f20d69b65a276329be83d",
+  "requiredCommands": [
+    {
+      "command": "npm ci",
+      "checkpoint": "2fc39405988df4d7073f20d69b65a276329be83d",
+      "startUtc": "2026-09-07T18:00:30.4157354Z",
+      "endUtc": "2026-09-07T18:00:38.86467Z",
+      "elapsedSeconds": 8.4521037,
+      "directExit": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "checkpoint": "2fc39405988df4d7073f20d69b65a276329be83d",
+      "startUtc": "2026-09-07T18:00:50.6250004Z",
+      "endUtc": "2026-09-07T18:00:52.4872485Z",
+      "elapsedSeconds": 1.8643888,
+      "directExit": 0
+    },
+    {
+      "command": "npm test",
+      "checkpoint": "2fc39405988df4d7073f20d69b65a276329be83d",
+      "startUtc": "2026-09-07T18:01:07.9955162Z",
+      "endUtc": "2026-09-07T18:28:09.9080698Z",
+      "elapsedSeconds": 1621.9185012,
+      "directExit": 0,
+      "expectedMinimumTests": 751
+    },
+    {
+      "command": "npx biome check .",
+      "checkpoint": "2fc39405988df4d7073f20d69b65a276329be83d",
+      "startUtc": "2026-09-07T18:28:34.6849184Z",
+      "endUtc": "2026-09-07T18:28:39.2778361Z",
+      "elapsedSeconds": 4.5957125,
+      "directExit": 0
+    },
+    {
+      "command": "npx tsx src/cli.ts validate authority-enforcement-registry.yaml --repo-root ../../..",
+      "checkpoint": "2fc39405988df4d7073f20d69b65a276329be83d",
+      "startUtc": "2026-09-07T18:28:52.5677749Z",
+      "endUtc": "2026-09-07T18:28:55.7014319Z",
+      "elapsedSeconds": 3.135428,
+      "directExit": 0
+    },
+    {
+      "command": "npx tsx src/cli.ts sweep authority-enforcement-registry.yaml --repo-root ../../..",
+      "checkpoint": "2fc39405988df4d7073f20d69b65a276329be83d",
+      "startUtc": "2026-09-07T18:29:09.4632748Z",
+      "endUtc": "2026-09-07T18:29:20.4581177Z",
+      "elapsedSeconds": 10.9984571,
+      "directExit": 0
+    },
+    {
+      "command": "npm run generate",
+      "checkpoint": "2fc39405988df4d7073f20d69b65a276329be83d",
+      "startUtc": "2026-09-07T18:29:47.9357098Z",
+      "endUtc": "2026-09-07T18:30:00.5953433Z",
+      "elapsedSeconds": 12.664157,
+      "directExit": 0,
+      "artifactAndLockBytesUnchanged": true,
+      "before": [
+        {
+          "path": "README.md",
+          "sha256": "639450f0fe49fb7149981d8162df3d56b2d2d79188c67745f680f48f6e0d2b15"
+        },
+        {
+          "path": "authority-enforcement-registry.yaml",
+          "sha256": "6ff8521e9a9210ae69adad571e7c3fc1f2e20e895fc5b5114e622e9ee2820910"
+        },
+        {
+          "path": "tests/fixtures/pass-minimal.yaml",
+          "sha256": "6ff8521e9a9210ae69adad571e7c3fc1f2e20e895fc5b5114e622e9ee2820910"
+        },
+        {
+          "path": "package-lock.json",
+          "sha256": "e7a986409956dc29a8eaf3d4d70ba3cf842643cd7999c79b6525f2368191b8eb"
+        }
+      ],
+      "after": [
+        {
+          "path": "README.md",
+          "sha256": "639450f0fe49fb7149981d8162df3d56b2d2d79188c67745f680f48f6e0d2b15"
+        },
+        {
+          "path": "authority-enforcement-registry.yaml",
+          "sha256": "6ff8521e9a9210ae69adad571e7c3fc1f2e20e895fc5b5114e622e9ee2820910"
+        },
+        {
+          "path": "tests/fixtures/pass-minimal.yaml",
+          "sha256": "6ff8521e9a9210ae69adad571e7c3fc1f2e20e895fc5b5114e622e9ee2820910"
+        },
+        {
+          "path": "package-lock.json",
+          "sha256": "e7a986409956dc29a8eaf3d4d70ba3cf842643cd7999c79b6525f2368191b8eb"
+        }
+      ]
+    },
+    {
+      "command": "npm run generate",
+      "checkpoint": "2fc39405988df4d7073f20d69b65a276329be83d",
+      "startUtc": "2026-09-07T18:30:29.8999179Z",
+      "endUtc": "2026-09-07T18:30:40.058515Z",
+      "elapsedSeconds": 10.1602585,
+      "directExit": 0,
+      "artifactAndLockBytesUnchanged": true,
+      "before": [
+        {
+          "path": "README.md",
+          "sha256": "639450f0fe49fb7149981d8162df3d56b2d2d79188c67745f680f48f6e0d2b15"
+        },
+        {
+          "path": "authority-enforcement-registry.yaml",
+          "sha256": "6ff8521e9a9210ae69adad571e7c3fc1f2e20e895fc5b5114e622e9ee2820910"
+        },
+        {
+          "path": "tests/fixtures/pass-minimal.yaml",
+          "sha256": "6ff8521e9a9210ae69adad571e7c3fc1f2e20e895fc5b5114e622e9ee2820910"
+        },
+        {
+          "path": "package-lock.json",
+          "sha256": "e7a986409956dc29a8eaf3d4d70ba3cf842643cd7999c79b6525f2368191b8eb"
+        }
+      ],
+      "after": [
+        {
+          "path": "README.md",
+          "sha256": "639450f0fe49fb7149981d8162df3d56b2d2d79188c67745f680f48f6e0d2b15"
+        },
+        {
+          "path": "authority-enforcement-registry.yaml",
+          "sha256": "6ff8521e9a9210ae69adad571e7c3fc1f2e20e895fc5b5114e622e9ee2820910"
+        },
+        {
+          "path": "tests/fixtures/pass-minimal.yaml",
+          "sha256": "6ff8521e9a9210ae69adad571e7c3fc1f2e20e895fc5b5114e622e9ee2820910"
+        },
+        {
+          "path": "package-lock.json",
+          "sha256": "e7a986409956dc29a8eaf3d4d70ba3cf842643cd7999c79b6525f2368191b8eb"
+        }
+      ]
+    },
+    {
+      "command": "node --version",
+      "checkpoint": "2fc39405988df4d7073f20d69b65a276329be83d",
+      "startUtc": "2026-09-07T18:31:29.5479517Z",
+      "endUtc": "2026-09-07T18:31:31.3058738Z",
+      "elapsedSeconds": 1.7605555,
+      "directExit": 0
+    },
+    {
+      "command": "npm --version",
+      "checkpoint": "2fc39405988df4d7073f20d69b65a276329be83d",
+      "startUtc": "2026-09-07T18:31:42.5133759Z",
+      "endUtc": "2026-09-07T18:31:42.8443433Z",
+      "elapsedSeconds": 0.3343083,
+      "directExit": 0
+    }
+  ],
+  "additionalEvidenceChecks": [
+    {
+      "command": "npx tsx evidence/r31/final-integrity.ts 2fc39405988df4d7073f20d69b65a276329be83d",
+      "checkpoint": "2fc39405988df4d7073f20d69b65a276329be83d",
+      "startUtc": "2026-09-07T18:31:57.8856674Z",
+      "endUtc": "2026-09-07T18:32:05.1880239Z",
+      "elapsedSeconds": 7.3052675,
+      "directExit": 0
+    },
+    {
+      "command": "node evidence/r31/collect-coverage.mjs",
+      "checkpoint": "2fc39405988df4d7073f20d69b65a276329be83d",
+      "startUtc": "2026-09-07T18:32:17.8088319Z",
+      "endUtc": "2026-09-07T18:32:18.519614Z",
+      "elapsedSeconds": 0.7147568,
+      "directExit": 0
+    },
+    {
+      "command": "git diff --exit-code 2fc39405988df4d7073f20d69b65a276329be83d -- authority-registry package",
+      "startUtc": "2026-09-07T18:32:52.8806842Z",
+      "endUtc": "2026-09-07T18:32:53.8221706Z",
+      "elapsedSeconds": 0.9440492,
+      "directExit": 0
+    }
+  ],
+  "acceptedRun": "36-full-test.log",
+  "retainedFailedRun": "28-full-test.log",
+  "expectedTests": 751,
+  "gate": "Complete deterministic chain; two fresh independent final reviews and main integration remain separate"
+}

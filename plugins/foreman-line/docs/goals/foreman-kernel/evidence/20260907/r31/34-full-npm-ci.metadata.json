@@ -1,0 +1,8 @@
+{
+  "command": "npm ci",
+  "checkpoint": "2fc39405988df4d7073f20d69b65a276329be83d",
+  "startUtc": "2026-09-07T18:00:30.4157354Z",
+  "endUtc": "2026-09-07T18:00:38.8646700Z",
+  "elapsedSeconds": 8.4521037,
+  "directExit": 0
+}

@@ -1,0 +1,4571 @@
+
+> @foreman-line/authority-registry@0.1.0 test
+> node --input-type=commonjs -e "const{spawnSync}=require('child_process'),fs=require('fs');let failed=[];for(const f of fs.readdirSync('tests').filter(n=>n.endsWith('.test.ts')).sort()){const r=spawnSync(process.execPath,['node_modules/tsx/dist/cli.mjs','--test','--test-reporter=tap','--test-concurrency=1','tests/'+f],{stdio:'inherit'});if(r.status!==0)failed.push(f);}if(failed.length){console.error('FAILED FILES: '+failed.join(', '));process.exit(1);}"
+
+TAP version 13
+# Subtest: source uses no bare Foreman package specifier or workspace linkage
+ok 1 - source uses no bare Foreman package specifier or workspace linkage
+  ---
+  duration_ms: 4.9683
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 314.5549
+TAP version 13
+# Subtest: R4 copied corpus without Git metadata fails closed
+ok 1 - R4 copied corpus without Git metadata fails closed
+  ---
+  duration_ms: 2904.9106
+  type: 'test'
+  ...
+# Subtest: R4 blob object cannot impersonate commit migration evidence
+ok 2 - R4 blob object cannot impersonate commit migration evidence
+  ---
+  duration_ms: 7143.6772
+  type: 'test'
+  ...
+# Subtest: R4 missing-path evidence rejects a non-snapshot commit even when that commit is real
+ok 3 - R4 missing-path evidence rejects a non-snapshot commit even when that commit is real
+  ---
+  duration_ms: 3098.8151
+  type: 'test'
+  ...
+# Subtest: R4 natural binding prose added under a curated authority section is discovered
+ok 4 - R4 natural binding prose added under a curated authority section is discovered
+  ---
+  duration_ms: 7435.4963
+  type: 'test'
+  ...
+# Subtest: R4 inserted top-level executable function is discovered without keyword matching
+ok 5 - R4 inserted top-level executable function is discovered without keyword matching
+  ---
+  duration_ms: 7671.3693
+  type: 'test'
+  ...
+# Subtest: R4 early return inside an inventoried function changes its complete construct digest
+ok 6 - R4 early return inside an inventoried function changes its complete construct digest
+  ---
+  duration_ms: 7484.1298
+  type: 'test'
+  ...
+# Subtest: R4 additive JSON schema constraint is discovered
+ok 7 - R4 additive JSON schema constraint is discovered
+  ---
+  duration_ms: 6679.7163
+  type: 'test'
+  ...
+# Subtest: R4 additive permission profile is discovered
+ok 8 - R4 additive permission profile is discovered
+  ---
+  duration_ms: 9159.6965
+  type: 'test'
+  ...
+# Subtest: shipped registry sweeps the complete pinned corpus with no gaps or conflicts
+ok 9 - shipped registry sweeps the complete pinned corpus with no gaps or conflicts
+  ---
+  duration_ms: 3094.4032
+  type: 'test'
+  ...
+# Subtest: charter inventory contains one atomic record for each D1 through D20 decision
+ok 10 - charter inventory contains one atomic record for each D1 through D20 decision
+  ---
+  duration_ms: 8.2103
+  type: 'test'
+  ...
+# Subtest: collapsing one charter decision row into another cannot preserve D-row coverage
+ok 11 - collapsing one charter decision row into another cannot preserve D-row coverage
+  ---
+  duration_ms: 7234.6916
+  type: 'test'
+  ...
+# Subtest: plan review inventory contains one atomic record for each R1 through R13 correction
+ok 12 - plan review inventory contains one atomic record for each R1 through R13 correction
+  ---
+  duration_ms: 9.2631
+  type: 'test'
+  ...
+# Subtest: historical plan inventories the pre-heading two-gate thesis independently
+ok 13 - historical plan inventories the pre-heading two-gate thesis independently
+  ---
+  duration_ms: 6.2574
+  type: 'test'
+  ...
+# Subtest: standing constraints inventory contains all fourteen atomic numbered rules
+ok 14 - standing constraints inventory contains all fourteen atomic numbered rules
+  ---
+  duration_ms: 5.8074
+  type: 'test'
+  ...
+# Subtest: PDD inventory contains all fifteen atomic hard rules
+ok 15 - PDD inventory contains all fifteen atomic hard rules
+  ---
+  duration_ms: 6.666
+  type: 'test'
+  ...
+# Subtest: operative rules do not use blanket any applicability shortcuts
+ok 16 - operative rules do not use blanket any applicability shortcuts
+  ---
+  duration_ms: 7.5744
+  type: 'test'
+  ...
+# Subtest: repeated source sweeps are byte-identical and read-only
+ok 17 - repeated source sweeps are byte-identical and read-only
+  ---
+  duration_ms: 6387.1897
+  type: 'test'
+  ...
+# Subtest: unrelated bytes outside every registered locator stay green
+ok 18 - unrelated bytes outside every registered locator stay green
+  ---
+  duration_ms: 9608.0099
+  type: 'test'
+  ...
+# Subtest: absolute, traversal, and duplicate normalized source paths are refused
+ok 19 - absolute, traversal, and duplicate normalized source paths are refused
+  ---
+  duration_ms: 9448.9651
+  type: 'test'
+  ...
+# Subtest: dot path segments are refused before resolution
+ok 20 - dot path segments are refused before resolution
+  ---
+  duration_ms: 2613.3232
+  type: 'test'
+  ...
+# Subtest: missing and non-regular corpus sources are refused with stable codes
+ok 21 - missing and non-regular corpus sources are refused with stable codes
+  ---
+  duration_ms: 9820.4421
+  type: 'test'
+  ...
+# Subtest: symlink and reparse-point corpus sources are refused before following targets
+ok 22 - symlink and reparse-point corpus sources are refused before following targets
+  ---
+  duration_ms: 6151.3268
+  type: 'test'
+  ...
+# Subtest: a junction in a parent path component is refused before reading a source
+ok 23 - a junction in a parent path component is refused before reading a source
+  ---
+  duration_ms: 8368.3644
+  type: 'test'
+  ...
+# Subtest: comment text cannot impersonate an operative linter symbol anchor
+ok 24 - comment text cannot impersonate an operative linter symbol anchor
+  ---
+  duration_ms: 8236.02
+  type: 'test'
+  ...
+# Subtest: a new binding heading is reported as an uncovered inventory item
+ok 25 - a new binding heading is reported as an uncovered inventory item
+  ---
+  duration_ms: 6969.9667
+  type: 'test'
+  ...
+# Subtest: R3 additive D22 decision row is discovered independently of the curated inventory
+ok 26 - R3 additive D22 decision row is discovered independently of the curated inventory
+  ---
+  duration_ms: 7467.28
+  type: 'test'
+  ...
+# Subtest: R3 additive PDD hard rule sixteen is discovered
+ok 27 - R3 additive PDD hard rule sixteen is discovered
+  ---
+  duration_ms: 7424.5785
+  type: 'test'
+  ...
+# Subtest: R3 new binding authority bullet is discovered
+ok 28 - R3 new binding authority bullet is discovered
+  ---
+  duration_ms: 6505.3942
+  type: 'test'
+  ...
+# Subtest: R3 weakening a loop stop body fails even when the heading remains
+ok 29 - R3 weakening a loop stop body fails even when the heading remains
+  ---
+  duration_ms: 7049.8231
+  type: 'test'
+  ...
+# Subtest: real spec-linter return behavior mutation is detected outside comments
+ok 30 - real spec-linter return behavior mutation is detected outside comments
+  ---
+  duration_ms: 7243.5374
+  type: 'test'
+  ...
+# Subtest: real permission-profile deny behavior mutation is detected
+ok 31 - real permission-profile deny behavior mutation is detected
+  ---
+  duration_ms: 7567.3889
+  type: 'test'
+  ...
+# Subtest: retirement evidence paths and byte digests are resolved beneath the admitted root
+ok 32 - retirement evidence paths and byte digests are resolved beneath the admitted root
+  ---
+  duration_ms: 2971.8548
+  type: 'test'
+  ...
+# Subtest: multiple corpus violations are deterministically ordered by path, locator, rule, then code
+ok 33 - multiple corpus violations are deterministically ordered by path, locator, rule, then code
+  ---
+  duration_ms: 7536.1226
+  type: 'test'
+  ...
+# Subtest: R5 Markdown numbered-item locators survive physical line wrapping
+ok 34 - R5 Markdown numbered-item locators survive physical line wrapping
+  ---
+  duration_ms: 8534.6305
+  type: 'test'
+  ...
+# Subtest: R5 unnumbered charter prose outside keyword-selected sections is discovered
+ok 35 - R5 unnumbered charter prose outside keyword-selected sections is discovered
+  ---
+  duration_ms: 6687.9434
+  type: 'test'
+  ...
+# Subtest: R5 fenced Markdown prose cannot impersonate a live authority binding
+ok 36 - R5 fenced Markdown prose cannot impersonate a live authority binding
+  ---
+  duration_ms: 7886.9292
+  type: 'test'
+  ...
+# Subtest: R5 TypeScript compiler AST discovers additive function form
+ok 37 - R5 TypeScript compiler AST discovers additive function form
+  ---
+  duration_ms: 7698.4301
+  type: 'test'
+  ...
+# Subtest: R5 TypeScript compiler AST discovers additive const form
+ok 38 - R5 TypeScript compiler AST discovers additive const form
+  ---
+  duration_ms: 7609.4713
+  type: 'test'
+  ...
+# Subtest: R5 TypeScript compiler AST discovers additive let form
+ok 39 - R5 TypeScript compiler AST discovers additive let form
+  ---
+  duration_ms: 8694.0104
+  type: 'test'
+  ...
+# Subtest: R5 TypeScript compiler AST discovers additive var form
+ok 40 - R5 TypeScript compiler AST discovers additive var form
+  ---
+  duration_ms: 7111.9684
+  type: 'test'
+  ...
+# Subtest: R5 TypeScript compiler AST discovers additive class form
+ok 41 - R5 TypeScript compiler AST discovers additive class form
+  ---
+  duration_ms: 7983.0796
+  type: 'test'
+  ...
+# Subtest: R5 TypeScript compiler AST discovers additive default-export form
+ok 42 - R5 TypeScript compiler AST discovers additive default-export form
+  ---
+  duration_ms: 13699.7887
+  type: 'test'
+  ...
+# Subtest: R5 TypeScript compiler AST discovers additive method form
+ok 43 - R5 TypeScript compiler AST discovers additive method form
+  ---
+  duration_ms: 6782.641
+  type: 'test'
+  ...
+# Subtest: R5 TypeScript compiler AST discovers additive arrow form
+ok 44 - R5 TypeScript compiler AST discovers additive arrow form
+  ---
+  duration_ms: 8506.0726
+  type: 'test'
+  ...
+# Subtest: R5 TypeScript compiler AST discovers additive top-level-call form
+ok 45 - R5 TypeScript compiler AST discovers additive top-level-call form
+  ---
+  duration_ms: 7747.5409
+  type: 'test'
+  ...
+# Subtest: R5 TypeScript compiler AST detects a nested branch mutation
+ok 46 - R5 TypeScript compiler AST detects a nested branch mutation
+  ---
+  duration_ms: 8465.0621
+  type: 'test'
+  ...
+# Subtest: R5 TypeScript semantic inventory ignores benign comment changes
+ok 47 - R5 TypeScript semantic inventory ignores benign comment changes
+  ---
+  duration_ms: 7095.7414
+  type: 'test'
+  ...
+# Subtest: R5 TypeScript semantic inventory ignores benign whitespace changes
+ok 48 - R5 TypeScript semantic inventory ignores benign whitespace changes
+  ---
+  duration_ms: 6889.1476
+  type: 'test'
+  ...
+# Subtest: R5 TypeScript semantic inventory ignores benign import-order changes
+ok 49 - R5 TypeScript semantic inventory ignores benign import-order changes
+  ---
+  duration_ms: 8866.8107
+  type: 'test'
+  ...
+# Subtest: R5 sweep verifies declared snapshot bytes at the bound Git commit
+ok 50 - R5 sweep verifies declared snapshot bytes at the bound Git commit
+  ---
+  duration_ms: 2807.6775
+  type: 'test'
+  ...
+# Subtest: R6 visible prose before a same-line HTML comment is discovered
+ok 51 - R6 visible prose before a same-line HTML comment is discovered
+  ---
+  duration_ms: 8155.7601
+  type: 'test'
+  ...
+# Subtest: R6 visible prose after a same-line HTML comment is discovered
+ok 52 - R6 visible prose after a same-line HTML comment is discovered
+  ---
+  duration_ms: 7449.1637
+  type: 'test'
+  ...
+# Subtest: R6 visible prose after a multiline HTML comment close is discovered
+ok 53 - R6 visible prose after a multiline HTML comment close is discovered
+  ---
+  duration_ms: 7381.1909
+  type: 'test'
+  ...
+# Subtest: R6 comment-only Markdown remains non-operative
+ok 54 - R6 comment-only Markdown remains non-operative
+  ---
+  duration_ms: 6743.9429
+  type: 'test'
+  ...
+# Subtest: R6 additive TypeScript side-effect import is discovered
+ok 55 - R6 additive TypeScript side-effect import is discovered
+  ---
+  duration_ms: 8291.1685
+  type: 'test'
+  ...
+# Subtest: R6 additive TypeScript value import binding is discovered
+ok 56 - R6 additive TypeScript value import binding is discovered
+  ---
+  duration_ms: 6831.4652
+  type: 'test'
+  ...
+# Subtest: R6 TypeScript value import module retargeting changes operative inventory
+ok 57 - R6 TypeScript value import module retargeting changes operative inventory
+  ---
+  duration_ms: 7179.1283
+  type: 'test'
+  ...
+# Subtest: R6 additive TypeScript type-only import remains non-operative
+ok 58 - R6 additive TypeScript type-only import remains non-operative
+  ---
+  duration_ms: 7652.3155
+  type: 'test'
+  ...
+# Subtest: R7 unmatched HTML comment cannot hide following binding prose
+ok 59 - R7 unmatched HTML comment cannot hide following binding prose
+  ---
+  duration_ms: 6858.4109
+  type: 'test'
+  ...
+# Subtest: R7 four-space pseudo-fences cannot hide binding prose
+ok 60 - R7 four-space pseudo-fences cannot hide binding prose
+  ---
+  duration_ms: 7563.0047
+  type: 'test'
+  ...
+# Subtest: R8 backtick in backtick-fence info is visible and cannot hide binding prose
+ok 61 - R8 backtick in backtick-fence info is visible and cannot hide binding prose
+  ---
+  duration_ms: 7980.3044
+  type: 'test'
+  ...
+# Subtest: R9 raw mixed comment and backtick info cannot become a hiding fence after comment masking
+ok 62 - R9 raw mixed comment and backtick info cannot become a hiding fence after comment masking
+  ---
+  duration_ms: 8065.8385
+  type: 'test'
+  ...
+# Subtest: R9 valid fenced standing-constraint number is ignored by the shared Markdown map
+ok 63 - R9 valid fenced standing-constraint number is ignored by the shared Markdown map
+  ---
+  duration_ms: 6856.5147
+  type: 'test'
+  ...
+# Subtest: R8 valid fenced heading is ignored by every Markdown discovery layer
+ok 64 - R8 valid fenced heading is ignored by every Markdown discovery layer
+  ---
+  duration_ms: 7645.3725
+  type: 'test'
+  ...
+# Subtest: R8 valid fenced D row is ignored by every Markdown discovery layer
+ok 65 - R8 valid fenced D row is ignored by every Markdown discovery layer
+  ---
+  duration_ms: 6879.8511
+  type: 'test'
+  ...
+# Subtest: R8 valid fenced R row is ignored by every Markdown discovery layer
+ok 66 - R8 valid fenced R row is ignored by every Markdown discovery layer
+  ---
+  duration_ms: 6242.8412
+  type: 'test'
+  ...
+# Subtest: R8 valid fenced numbered hard rule is ignored by every Markdown discovery layer
+ok 67 - R8 valid fenced numbered hard rule is ignored by every Markdown discovery layer
+  ---
+  duration_ms: 6730.481
+  type: 'test'
+  ...
+# Subtest: R7 mixed fence delimiters do not close a correctly paired fence
+ok 68 - R7 mixed fence delimiters do not close a correctly paired fence
+  ---
+  duration_ms: 7864.6377
+  type: 'test'
+  ...
+# Subtest: R7 mixed type and value import order is semantically stable
+ok 69 - R7 mixed type and value import order is semantically stable
+  ---
+  duration_ms: 8041.5101
+  type: 'test'
+  ...
+# Subtest: R7 ambient declarations remain non-operative
+ok 70 - R7 ambient declarations remain non-operative
+  ---
+  duration_ms: 8507.8704
+  type: 'test'
+  ...
+# Subtest: R7 permission-profile nested add mutation is discovered
+ok 71 - R7 permission-profile nested add mutation is discovered
+  ---
+  duration_ms: 7565.7542
+  type: 'test'
+  ...
+# Subtest: R7 permission-profile nested delete mutation is discovered
+ok 72 - R7 permission-profile nested delete mutation is discovered
+  ---
+  duration_ms: 6581.7271
+  type: 'test'
+  ...
+# Subtest: R7 permission-profile nested retarget mutation is discovered
+ok 73 - R7 permission-profile nested retarget mutation is discovered
+  ---
+  duration_ms: 7024.4392
+  type: 'test'
+  ...
+# Subtest: R7 permission-profile nested move mutation is discovered
+ok 74 - R7 permission-profile nested move mutation is discovered
+  ---
+  duration_ms: 7669.1122
+  type: 'test'
+  ...
+# Subtest: R10 generator constructs Markdown block custody without a source-ID allowlist
+ok 75 - R10 generator constructs Markdown block custody without a source-ID allowlist
+  ---
+  duration_ms: 12.3051
+  type: 'test'
+  ...
+# Subtest: R10 validator constructs Markdown block custody without a source-ID allowlist
+ok 76 - R10 validator constructs Markdown block custody without a source-ID allowlist
+  ---
+  duration_ms: 9.4357
+  type: 'test'
+  ...
+# Subtest: R11 Markdown block anchors contain only structural heading kind and stable identity
+ok 77 - R11 Markdown block anchors contain only structural heading kind and stable identity
+  ---
+  duration_ms: 11.3521
+  type: 'test'
+  ...
+# Subtest: R11 a Markdown value-only edit resolves the same locator as VALUE_DIGEST_MISMATCH
+ok 78 - R11 a Markdown value-only edit resolves the same locator as VALUE_DIGEST_MISMATCH
+  ---
+  duration_ms: 7223.1304
+  type: 'test'
+  ...
+# Subtest: R11 inserting a same-kind Markdown block is a separate location mutation
+ok 79 - R11 inserting a same-kind Markdown block is a separate location mutation
+  ---
+  duration_ms: 7156.0074
+  type: 'test'
+  ...
+# Subtest: R11 CommonMark parenthesized ordered items produce two independent uncovered items
+ok 80 - R11 CommonMark parenthesized ordered items produce two independent uncovered items
+  ---
+  duration_ms: 7638.3588
+  type: 'test'
+  ...
+# Subtest: R12 every published Markdown paragraph and list rule uses one structural canonical locator
+ok 81 - R12 every published Markdown paragraph and list rule uses one structural canonical locator
+  ---
+  duration_ms: 15.749
+  type: 'test'
+  ...
+# Subtest: R12 no published Markdown rule uses a raw-text line-excerpt or additional-anchor escape
+ok 82 - R12 no published Markdown rule uses a raw-text line-excerpt or additional-anchor escape
+  ---
+  duration_ms: 16.9913
+  type: 'test'
+  ...
+# Subtest: R12 all sixteen R11 raw-text Markdown rules migrate to structural canonical items
+ok 83 - R12 all sixteen R11 raw-text Markdown rules migrate to structural canonical items
+  ---
+  duration_ms: 8.9896
+  type: 'test'
+  ...
+# Subtest: R12 published Markdown table rules use stable first-column keys
+ok 84 - R12 published Markdown table rules use stable first-column keys
+  ---
+  duration_ms: 16.8827
+  type: 'test'
+  ...
+# Subtest: R12 active standing-rule marker renumbering is a value mismatch without locator loss
+ok 85 - R12 active standing-rule marker renumbering is a value mismatch without locator loss
+  ---
+  duration_ms: 7667.8725
+  type: 'test'
+  ...
+# Subtest: R12 active ordered rules have no excluded structural duplicate substitute
+ok 86 - R12 active ordered rules have no excluded structural duplicate substitute
+  ---
+  duration_ms: 17.3934
+  type: 'test'
+  ...
+# Subtest: R12 ordered marker mutation preserves structural item rule and locator identity
+ok 87 - R12 ordered marker mutation preserves structural item rule and locator identity
+  ---
+  duration_ms: 1617.4521
+  type: 'test'
+  ...
+# Subtest: R12 compound block value mutation preserves structural item rule and locator identity
+ok 88 - R12 compound block value mutation preserves structural item rule and locator identity
+  ---
+  duration_ms: 16.7486
+  type: 'test'
+  ...
+# Subtest: R13 lineHint changes do not change Markdown item or locator identity
+ok 89 - R13 lineHint changes do not change Markdown item or locator identity
+  ---
+  duration_ms: 16.0487
+  type: 'test'
+  ...
+# Subtest: R13 leading blank lines preserve every published Markdown identity
+ok 90 - R13 leading blank lines preserve every published Markdown identity
+  ---
+  duration_ms: 18.1438
+  type: 'test'
+  ...
+# Subtest: R13 actual compound coordinator value mutation preserves all six rule identities
+ok 91 - R13 actual compound coordinator value mutation preserves all six rule identities
+  ---
+  duration_ms: 10.835
+  type: 'test'
+  ...
+# Subtest: R13 duplicate identical Gate 2 keyed row emits LOCATOR_DUPLICATE
+ok 92 - R13 duplicate identical Gate 2 keyed row emits LOCATOR_DUPLICATE
+  ---
+  duration_ms: 8163.7758
+  type: 'test'
+  ...
+# Subtest: R13 duplicate table text cannot bypass structural coverage
+ok 93 - R13 duplicate table text cannot bypass structural coverage
+  ---
+  duration_ms: 8414.2567
+  type: 'test'
+  ...
+# Subtest: R10 baseline block custody: goal skill verification custody
+ok 94 - R10 baseline block custody: goal skill verification custody
+  ---
+  duration_ms: 6.987
+  type: 'test'
+  ...
+# Subtest: R10 baseline block custody: goal skill human-gate stop custody
+ok 95 - R10 baseline block custody: goal skill human-gate stop custody
+  ---
+  duration_ms: 8.0287
+  type: 'test'
+  ...
+# Subtest: R10 baseline block custody: goal skill loop-stop custody
+ok 96 - R10 baseline block custody: goal skill loop-stop custody
+  ---
+  duration_ms: 7.4216
+  type: 'test'
+  ...
+# Subtest: R10 baseline block custody: coordinator pattern ownership stop
+ok 97 - R10 baseline block custody: coordinator pattern ownership stop
+  ---
+  duration_ms: 7.9308
+  type: 'test'
+  ...
+# Subtest: R10 baseline block custody: coordinator pattern universal-stop custody
+ok 98 - R10 baseline block custody: coordinator pattern universal-stop custody
+  ---
+  duration_ms: 7.006
+  type: 'test'
+  ...
+# Subtest: R10 baseline block custody: coordinator pattern scoped-Gate-1 custody
+ok 99 - R10 baseline block custody: coordinator pattern scoped-Gate-1 custody
+  ---
+  duration_ms: 7.7251
+  type: 'test'
+  ...
+# Subtest: R10 baseline block custody: PDD branch isolation
+ok 100 - R10 baseline block custody: PDD branch isolation
+  ---
+  duration_ms: 8.6484
+  type: 'test'
+  ...
+# Subtest: R10 baseline block custody: PDD serialization custody
+ok 101 - R10 baseline block custody: PDD serialization custody
+  ---
+  duration_ms: 9.5484
+  type: 'test'
+  ...
+# Subtest: R10 baseline block custody: SPEC-CONVENTION ordinary mutation authority
+ok 102 - R10 baseline block custody: SPEC-CONVENTION ordinary mutation authority
+  ---
+  duration_ms: 8.8897
+  type: 'test'
+  ...
+# Subtest: R10 additive ordinary prose is discovered in goal skill
+ok 103 - R10 additive ordinary prose is discovered in goal skill
+  ---
+  duration_ms: 7032.327
+  type: 'test'
+  ...
+# Subtest: R10 additive ordinary prose is discovered in coordinator pattern
+ok 104 - R10 additive ordinary prose is discovered in coordinator pattern
+  ---
+  duration_ms: 6450.1897
+  type: 'test'
+  ...
+# Subtest: R10 additive ordinary prose is discovered in PDD
+ok 105 - R10 additive ordinary prose is discovered in PDD
+  ---
+  duration_ms: 7231.2875
+  type: 'test'
+  ...
+# Subtest: R10 additive ordinary prose is discovered in SPEC-CONVENTION
+ok 106 - R10 additive ordinary prose is discovered in SPEC-CONVENTION
+  ---
+  duration_ms: 7402.217
+  type: 'test'
+  ...
+# Subtest: R14 an NTFS alternate-data-stream source path ending :$DATA is refused by policy
+ok 107 - R14 an NTFS alternate-data-stream source path ending :$DATA is refused by policy
+  ---
+  duration_ms: 3059.3308
+  type: 'test'
+  ...
+# Subtest: R14 an NTFS alternate-data-stream source path ending ::$DATA is refused by policy
+ok 108 - R14 an NTFS alternate-data-stream source path ending ::$DATA is refused by policy
+  ---
+  duration_ms: 3201.3518
+  type: 'test'
+  ...
+# Subtest: R14 an NTFS alternate-data-stream source path ending :hidden is refused by policy
+ok 109 - R14 an NTFS alternate-data-stream source path ending :hidden is refused by policy
+  ---
+  duration_ms: 2966.8989
+  type: 'test'
+  ...
+# Subtest: R14 an NTFS alternate-data-stream source path ending :hidden:$DATA is refused by policy
+ok 110 - R14 an NTFS alternate-data-stream source path ending :hidden:$DATA is refused by policy
+  ---
+  duration_ms: 3313.8024
+  type: 'test'
+  ...
+# Subtest: R14 an interior colon is refused in any path segment, not only the last
+ok 111 - R14 an interior colon is refused in any path segment, not only the last
+  ---
+  duration_ms: 2581.4775
+  type: 'test'
+  ...
+# Subtest: R14 added narrative prose in a Markdown source is detected as SOURCE_ITEM_UNCOVERED
+ok 112 - R14 added narrative prose in a Markdown source is detected as SOURCE_ITEM_UNCOVERED
+  ---
+  duration_ms: 9013.7504
+  type: 'test'
+  ...
+# Subtest: R14 an added heading stays inert while a paragraph beneath it does not
+ok 113 - R14 an added heading stays inert while a paragraph beneath it does not
+  ---
+  duration_ms: 11781.3539
+  type: 'test'
+  ...
+# Subtest: R29.3 every curation surface is anchor-keyed with no itemId lookup fallback
+ok 114 - R29.3 every curation surface is anchor-keyed with no itemId lookup fallback
+  ---
+  duration_ms: 12.1954
+  type: 'test'
+  ...
+# Subtest: R29.4 standing authorization 8 publishes the exact pre-action refusal contract
+ok 115 - R29.4 standing authorization 8 publishes the exact pre-action refusal contract
+  ---
+  duration_ms: 556.1052
+  type: 'test'
+  ...
+# Subtest: R29.3 anchor migration preserves every surviving published identity and locator digest
+ok 116 - R29.3 anchor migration preserves every surviving published identity and locator digest
+  ---
+  duration_ms: 862.7156
+  type: 'test'
+  ...
+# Subtest: R27 control (a) volatile appends and byte changes preserve the sweep and governed siblings
+ok 117 - R27 control (a) volatile appends and byte changes preserve the sweep and governed siblings
+  ---
+  duration_ms: 7350.4667
+  type: 'test'
+  ...
+# Subtest: R27 control (a) deletion probe fails for each removed volatile-region declaration
+ok 118 - R27 control (a) deletion probe fails for each removed volatile-region declaration
+  ---
+  duration_ms: 20933.1657
+  type: 'test'
+  ...
+# Subtest: R27 control (b) governed ownership prose still fails closed with VALUE_DIGEST_MISMATCH
+ok 119 - R27 control (b) governed ownership prose still fails closed with VALUE_DIGEST_MISMATCH
+  ---
+  duration_ms: 6372.1196
+  type: 'test'
+  ...
+# Subtest: R27 control (b) binding-deletion probe defeats the exact governed-mutation expectation
+ok 120 - R27 control (b) binding-deletion probe defeats the exact governed-mutation expectation
+  ---
+  duration_ms: 7540.5222
+  type: 'test'
+  ...
+# Subtest: R27 control (c) anti-laundering refuses a region overlapping a published locator
+ok 121 - R27 control (c) anti-laundering refuses a region overlapping a published locator
+  ---
+  duration_ms: 98.9134
+  type: 'test'
+  ...
+# Subtest: R27 control (d) independently finds no published item inside any shipped volatile extent
+ok 122 - R27 control (d) independently finds no published item inside any shipped volatile extent
+  ---
+  duration_ms: 9.6009
+  type: 'test'
+  ...
+# Subtest: R27 control (d) predicate-mutation probe survives a production overlap predicate forced false
+ok 123 - R27 control (d) predicate-mutation probe survives a production overlap predicate forced false
+  ---
+  duration_ms: 1110.2839
+  type: 'test'
+  ...
+# Subtest: R27 control (e) generator output is byte-identical under mutation of every volatile region
+ok 124 - R27 control (e) generator output is byte-identical under mutation of every volatile region
+  ---
+  duration_ms: 16543.1274
+  type: 'test'
+  ...
+# Subtest: R27 control (f) zero heading matches fails closed with the exact VOLATILE_REGION_INVALID message
+ok 125 - R27 control (f) zero heading matches fails closed with the exact VOLATILE_REGION_INVALID message
+  ---
+  duration_ms: 7166.5371
+  type: 'test'
+  ...
+# Subtest: R27 control (f) multiple heading matches fails closed with the exact VOLATILE_REGION_INVALID message
+ok 126 - R27 control (f) multiple heading matches fails closed with the exact VOLATILE_REGION_INVALID message
+  ---
+  duration_ms: 6905.4285
+  type: 'test'
+  ...
+# Subtest: R27 control (g) pins eight curated pre-excision prose rationales without gating future additions
+ok 127 - R27 control (g) pins eight curated pre-excision prose rationales without gating future additions
+  ---
+  duration_ms: 141.9497
+  type: 'test'
+  ...
+# Subtest: R30 INF-1 real governed source mutation fails exact value binding
+ok 128 - R30 INF-1 real governed source mutation fails exact value binding
+  ---
+  duration_ms: 6880.5022
+  type: 'test'
+  ...
+# Subtest: R30 INF-2 real governed source mutation fails exact value binding
+ok 129 - R30 INF-2 real governed source mutation fails exact value binding
+  ---
+  duration_ms: 6613.3322
+  type: 'test'
+  ...
+# Subtest: R30 INF-3 real governed source mutation fails exact value binding
+ok 130 - R30 INF-3 real governed source mutation fails exact value binding
+  ---
+  duration_ms: 6497.2058
+  type: 'test'
+  ...
+# Subtest: R30 INF-4 real governed source mutation fails exact value binding
+ok 131 - R30 INF-4 real governed source mutation fails exact value binding
+  ---
+  duration_ms: 7770.4487
+  type: 'test'
+  ...
+# Subtest: R30 INF-5 real governed source mutation fails exact value binding
+ok 132 - R30 INF-5 real governed source mutation fails exact value binding
+  ---
+  duration_ms: 7984.2685
+  type: 'test'
+  ...
+# Subtest: R30 INF-6 real governed source mutation fails exact value binding
+ok 133 - R30 INF-6 real governed source mutation fails exact value binding
+  ---
+  duration_ms: 7588.8442
+  type: 'test'
+  ...
+# Subtest: R30 INF-7 real governed source mutation fails exact value binding
+ok 134 - R30 INF-7 real governed source mutation fails exact value binding
+  ---
+  duration_ms: 6395.8759
+  type: 'test'
+  ...
+# Subtest: R30 INF-8 real governed source mutation fails exact value binding
+ok 135 - R30 INF-8 real governed source mutation fails exact value binding
+  ---
+  duration_ms: 8960.559
+  type: 'test'
+  ...
+# Subtest: R30 new continuation authority is governed outside every volatile region
+ok 136 - R30 new continuation authority is governed outside every volatile region
+  ---
+  duration_ms: 6553.5072
+  type: 'test'
+  ...
+# Subtest: R30 prior anchor freeze retains ledger identities and rejects ambiguous current ledger anchors
+ok 137 - R30 prior anchor freeze retains ledger identities and rejects ambiguous current ledger anchors
+  ---
+  duration_ms: 6999.6946
+  type: 'test'
+  ...
+# Subtest: R31 approved annotation and thesis have distinct source-bound identities
+ok 138 - R31 approved annotation and thesis have distinct source-bound identities
+  ---
+  duration_ms: 12.9381
+  type: 'test'
+  ...
+# Subtest: R31 actual M01 source rejects parcel condition mutation
+ok 139 - R31 actual M01 source rejects parcel condition mutation
+  ---
+  duration_ms: 7134.4454
+  type: 'test'
+  ...
+# Subtest: R31 actual M01 source rejects living identifier mutation
+ok 140 - R31 actual M01 source rejects living identifier mutation
+  ---
+  duration_ms: 6416.8241
+  type: 'test'
+  ...
+# Subtest: R31 actual M01 source rejects marketplace entry mutation
+ok 141 - R31 actual M01 source rejects marketplace entry mutation
+  ---
+  duration_ms: 6406.7886
+  type: 'test'
+  ...
+# Subtest: R31 actual M01 source rejects source existence mutation
+ok 142 - R31 actual M01 source rejects source existence mutation
+  ---
+  duration_ms: 8133.0856
+  type: 'test'
+  ...
+# Subtest: R31 actual M01 source rejects nested manifest equality mutation
+ok 143 - R31 actual M01 source rejects nested manifest equality mutation
+  ---
+  duration_ms: 7242.5994
+  type: 'test'
+  ...
+# Subtest: R31 actual M01 source rejects URL insufficiency mutation
+ok 144 - R31 actual M01 source rejects URL insufficiency mutation
+  ---
+  duration_ms: 6996.5141
+  type: 'test'
+  ...
+# Subtest: R31 actual decision blob correspondence detects Git replacement despite an unchanged diagnostic
+ok 145 - R31 actual decision blob correspondence detects Git replacement despite an unchanged diagnostic
+  ---
+  duration_ms: 954.11
+  type: 'test'
+  ...
+# Subtest: R31 source-bound aliases reject displaced or substituted historical note and thesis
+ok 146 - R31 source-bound aliases reject displaced or substituted historical note and thesis
+  ---
+  duration_ms: 15.4176
+  type: 'test'
+  ...
+# Subtest: R31 historical positive uses the pinned R30 implementation and its exact source subject
+ok 147 - R31 historical positive uses the pinned R30 implementation and its exact source subject
+  ---
+  duration_ms: 8017.663
+  type: 'test'
+  ...
+# Subtest: R31 current fourteen-rule coverage still refuses an unreviewed fifteenth standing rule
+ok 148 - R31 current fourteen-rule coverage still refuses an unreviewed fifteenth standing rule
+  ---
+  duration_ms: 7436.3283
+  type: 'test'
+  ...
+1..148
+# tests 148
+# suites 0
+# pass 148
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 816565.8998
+TAP version 13
+# Subtest: runtime dependency set and versions are exact
+ok 1 - runtime dependency set and versions are exact
+  ---
+  duration_ms: 1.2494
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 306.8644
+TAP version 13
+# Subtest: committed draft-07 schema is byte-identical to the hand-authored schema source
+ok 1 - committed draft-07 schema is byte-identical to the hand-authored schema source
+  ---
+  duration_ms: 1.0078
+  type: 'test'
+  ...
+# Subtest: typed canonical sample validates against the hand-authored schema
+ok 2 - typed canonical sample validates against the hand-authored schema
+  ---
+  duration_ms: 540.7713
+  type: 'test'
+  ...
+# Subtest: closed schema rejects unknown nested properties
+ok 3 - closed schema rejects unknown nested properties
+  ---
+  duration_ms: 446.8978
+  type: 'test'
+  ...
+# Subtest: R13 schema requires the closed normative Markdown audit top-level contract
+ok 4 - R13 schema requires the closed normative Markdown audit top-level contract
+  ---
+  duration_ms: 0.1795
+  type: 'test'
+  ...
+# Subtest: R13 typed canonical sample carries the normative Markdown audit contract
+ok 5 - R13 typed canonical sample carries the normative Markdown audit contract
+  ---
+  duration_ms: 393.3616
+  type: 'test'
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1879.2456
+TAP version 13
+# Subtest: accepts the minimal contract fixture
+ok 1 - accepts the minimal contract fixture
+  ---
+  duration_ms: 580.7655
+  type: 'test'
+  ...
+# Subtest: schema admits empty principal sets for explicitly unavailable operations
+ok 2 - schema admits empty principal sets for explicitly unavailable operations
+  ---
+  duration_ms: 504.4335
+  type: 'test'
+  ...
+# Subtest: parseRegistry distinguishes parse failures from validation failures
+ok 3 - parseRegistry distinguishes parse failures from validation failures
+  ---
+  duration_ms: 8.8577
+  type: 'test'
+  ...
+# Subtest: CLI validate and sweep return exit 0 with machine-readable summaries
+ok 4 - CLI validate and sweep return exit 0 with machine-readable summaries
+  ---
+  duration_ms: 11353.0951
+  type: 'test'
+  ...
+# Subtest: CLI bad invocation and unreadable input return exit 2
+ok 5 - CLI bad invocation and unreadable input return exit 2
+  ---
+  duration_ms: 2936.7297
+  type: 'test'
+  ...
+# Subtest: R3 sweep with a missing repository root returns operational exit 2
+ok 6 - R3 sweep with a missing repository root returns operational exit 2
+  ---
+  duration_ms: 1408.5293
+  type: 'test'
+  ...
+# Subtest: reject-stale-binding-digest rejects with MIGRATION_EVIDENCE_INVALID
+ok 7 - reject-stale-binding-digest rejects with MIGRATION_EVIDENCE_INVALID
+  ---
+  duration_ms: 606.1472
+  type: 'test'
+  ...
+# Subtest: reject-identity-mutation rejects with LOCATOR_DIGEST_MISMATCH
+ok 8 - reject-identity-mutation rejects with LOCATOR_DIGEST_MISMATCH
+  ---
+  duration_ms: 520.3138
+  type: 'test'
+  ...
+# Subtest: reject-location-mutation rejects with LOCATOR_DIGEST_MISMATCH
+ok 9 - reject-location-mutation rejects with LOCATOR_DIGEST_MISMATCH
+  ---
+  duration_ms: 527.8902
+  type: 'test'
+  ...
+# Subtest: reject-value-mutation rejects with VALUE_DIGEST_MISMATCH
+ok 10 - reject-value-mutation rejects with VALUE_DIGEST_MISMATCH
+  ---
+  duration_ms: 532.3266
+  type: 'test'
+  ...
+# Subtest: reject-desynchronised-value-digest rejects with VALUE_DIGEST_MISMATCH
+ok 11 - reject-desynchronised-value-digest rejects with VALUE_DIGEST_MISMATCH
+  ---
+  duration_ms: 522.5665
+  type: 'test'
+  ...
+# Subtest: reject-duplicate-rule rejects with RULE_DUPLICATE
+ok 12 - reject-duplicate-rule rejects with RULE_DUPLICATE
+  ---
+  duration_ms: 550.9136
+  type: 'test'
+  ...
+# Subtest: reject-contradictory-authority rejects with RULE_CONFLICT
+ok 13 - reject-contradictory-authority rejects with RULE_CONFLICT
+  ---
+  duration_ms: 578.5108
+  type: 'test'
+  ...
+# Subtest: reject-missing-source rejects with RULE_SOURCE_MISSING
+ok 14 - reject-missing-source rejects with RULE_SOURCE_MISSING
+  ---
+  duration_ms: 557.3761
+  type: 'test'
+  ...
+# Subtest: CLI reject-stale-binding-digest returns exit 1 with MIGRATION_EVIDENCE_INVALID
+ok 15 - CLI reject-stale-binding-digest returns exit 1 with MIGRATION_EVIDENCE_INVALID
+  ---
+  duration_ms: 2136.452
+  type: 'test'
+  ...
+# Subtest: CLI reject-identity-mutation returns exit 1 with LOCATOR_DIGEST_MISMATCH
+ok 16 - CLI reject-identity-mutation returns exit 1 with LOCATOR_DIGEST_MISMATCH
+  ---
+  duration_ms: 2154.7304
+  type: 'test'
+  ...
+# Subtest: CLI reject-location-mutation returns exit 1 with LOCATOR_DIGEST_MISMATCH
+ok 17 - CLI reject-location-mutation returns exit 1 with LOCATOR_DIGEST_MISMATCH
+  ---
+  duration_ms: 2386.7404
+  type: 'test'
+  ...
+# Subtest: CLI reject-value-mutation returns exit 1 with VALUE_DIGEST_MISMATCH
+ok 18 - CLI reject-value-mutation returns exit 1 with VALUE_DIGEST_MISMATCH
+  ---
+  duration_ms: 2275.3669
+  type: 'test'
+  ...
+# Subtest: CLI reject-desynchronised-value-digest returns exit 1 with VALUE_DIGEST_MISMATCH
+ok 19 - CLI reject-desynchronised-value-digest returns exit 1 with VALUE_DIGEST_MISMATCH
+  ---
+  duration_ms: 2340.04
+  type: 'test'
+  ...
+# Subtest: CLI reject-duplicate-rule returns exit 1 with RULE_DUPLICATE
+ok 20 - CLI reject-duplicate-rule returns exit 1 with RULE_DUPLICATE
+  ---
+  duration_ms: 2165.0945
+  type: 'test'
+  ...
+# Subtest: CLI reject-contradictory-authority returns exit 1 with RULE_CONFLICT
+ok 21 - CLI reject-contradictory-authority returns exit 1 with RULE_CONFLICT
+  ---
+  duration_ms: 2251.0809
+  type: 'test'
+  ...
+# Subtest: CLI reject-missing-source returns exit 1 with RULE_SOURCE_MISSING
+ok 22 - CLI reject-missing-source returns exit 1 with RULE_SOURCE_MISSING
+  ---
+  duration_ms: 2459.7337
+  type: 'test'
+  ...
+# Subtest: the positive fixture has not drifted from the registry it is derived from
+ok 23 - the positive fixture has not drifted from the registry it is derived from
+  ---
+  duration_ms: 5.3711
+  type: 'test'
+  ...
+1..23
+# tests 23
+# suites 0
+# pass 23
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 39987.3907
+TAP version 13
+# Subtest: normalization is exact and stable across Unicode/line-ending/whitespace forms
+ok 1 - normalization is exact and stable across Unicode/line-ending/whitespace forms
+  ---
+  duration_ms: 8.6596
+  type: 'test'
+  ...
+# Subtest: canonical digest helpers bind identity, location, and value independently
+ok 2 - canonical digest helpers bind identity, location, and value independently
+  ---
+  duration_ms: 7.6973
+  type: 'test'
+  ...
+# Subtest: each of the six classifications is accepted and summarized independently
+ok 3 - each of the six classifications is accepted and summarized independently
+  ---
+  duration_ms: 127.4859
+  type: 'test'
+  ...
+# Subtest: pre-action refusal requires a stable refusal code
+ok 4 - pre-action refusal requires a stable refusal code
+  ---
+  duration_ms: 168.99
+  type: 'test'
+  ...
+# Subtest: pre-action refusal decision cannot be widened to ALLOW
+ok 5 - pre-action refusal decision cannot be widened to ALLOW
+  ---
+  duration_ms: 91.4269
+  type: 'test'
+  ...
+# Subtest: classification matrix rejects post-action-detection assurance widening
+ok 6 - classification matrix rejects post-action-detection assurance widening
+  ---
+  duration_ms: 95.9489
+  type: 'test'
+  ...
+# Subtest: classification matrix rejects ci-static-check owner widening
+ok 7 - classification matrix rejects ci-static-check owner widening
+  ---
+  duration_ms: 88.8444
+  type: 'test'
+  ...
+# Subtest: classification matrix rejects independent-review decision widening
+ok 8 - classification matrix rejects independent-review decision widening
+  ---
+  duration_ms: 87.9391
+  type: 'test'
+  ...
+# Subtest: classification matrix rejects narrative-provenance owner widening
+ok 9 - classification matrix rejects narrative-provenance owner widening
+  ---
+  duration_ms: 173.4413
+  type: 'test'
+  ...
+# Subtest: classification matrix rejects unsupported assurance widening
+ok 10 - classification matrix rejects unsupported assurance widening
+  ---
+  duration_ms: 82.612
+  type: 'test'
+  ...
+# Subtest: loaded permission-profile refusals are owned by the host adapter at mediated assurance
+ok 11 - loaded permission-profile refusals are owned by the host adapter at mediated assurance
+  ---
+  duration_ms: 12.8005
+  type: 'test'
+  ...
+# Subtest: loaded permission-profile refusal cannot be mislabeled as structural kernel enforcement
+ok 12 - loaded permission-profile refusal cannot be mislabeled as structural kernel enforcement
+  ---
+  duration_ms: 90.2169
+  type: 'test'
+  ...
+# Subtest: retirement requires four correctly typed evidence references
+ok 13 - retirement requires four correctly typed evidence references
+  ---
+  duration_ms: 95.9747
+  type: 'test'
+  ...
+# Subtest: every protected operation rejects agent/control/tool authority escalation
+ok 14 - every protected operation rejects agent/control/tool authority escalation
+  ---
+  duration_ms: 397.3256
+  type: 'test'
+  ...
+# Subtest: Gate 2 state may record consumption but cannot mint authority
+ok 15 - Gate 2 state may record consumption but cannot mint authority
+  ---
+  duration_ms: 100.189
+  type: 'test'
+  ...
+# Subtest: Gate 2 rejects anonymous admission even with Git-shaped evidence
+ok 16 - Gate 2 rejects anonymous admission even with Git-shaped evidence
+  ---
+  duration_ms: 83.9596
+  type: 'test'
+  ...
+# Subtest: protected operation evidence resolves locator and value digests, not only item identity
+ok 17 - protected operation evidence resolves locator and value digests, not only item identity
+  ---
+  duration_ms: 106.7049
+  type: 'test'
+  ...
+# Subtest: protected operation evidence cannot be replaced by a different fully resolved canon ref
+ok 18 - protected operation evidence cannot be replaced by a different fully resolved canon ref
+  ---
+  duration_ms: 134.9699
+  type: 'test'
+  ...
+# Subtest: builder cannot issue closure authority
+ok 19 - builder cannot issue closure authority
+  ---
+  duration_ms: 138.5525
+  type: 'test'
+  ...
+# Subtest: generic receipt minting has no admitted principal
+ok 20 - generic receipt minting has no admitted principal
+  ---
+  duration_ms: 12.2848
+  type: 'test'
+  ...
+# Subtest: external writes have no admitted principal
+ok 21 - external writes have no admitted principal
+  ---
+  duration_ms: 6.0045
+  type: 'test'
+  ...
+# Subtest: builder cannot be inserted as generic receipt mint principal
+ok 22 - builder cannot be inserted as generic receipt mint principal
+  ---
+  duration_ms: 92.7325
+  type: 'test'
+  ...
+# Subtest: every required reconciliation is mandatory
+ok 23 - every required reconciliation is mandatory
+  ---
+  duration_ms: 1597.5533
+  type: 'test'
+  ...
+# Subtest: deleting the chain head invalidates rather than promoting a pinned record
+ok 24 - deleting the chain head invalidates rather than promoting a pinned record
+  ---
+  duration_ms: 92.7847
+  type: 'test'
+  ...
+# Subtest: reconciliation IDs are unique
+ok 25 - reconciliation IDs are unique
+  ---
+  duration_ms: 84.442
+  type: 'test'
+  ...
+# Subtest: reconciliation observed refs bind full identity location and value
+ok 26 - reconciliation observed refs bind full identity location and value
+  ---
+  duration_ms: 85.2052
+  type: 'test'
+  ...
+# Subtest: required reconciliation topics and statuses are immutable
+ok 27 - required reconciliation topics and statuses are immutable
+  ---
+  duration_ms: 87.8434
+  type: 'test'
+  ...
+# Subtest: reconciliation evidence digests cannot be self-asserted placeholders
+ok 28 - reconciliation evidence digests cannot be self-asserted placeholders
+  ---
+  duration_ms: 91.635
+  type: 'test'
+  ...
+# Subtest: charter source cannot be downgraded below goal-charter authority
+ok 29 - charter source cannot be downgraded below goal-charter authority
+  ---
+  duration_ms: 90.5158
+  type: 'test'
+  ...
+# Subtest: stale explanatory source cannot be promoted to binding authority
+ok 30 - stale explanatory source cannot be promoted to binding authority
+  ---
+  duration_ms: 82.3068
+  type: 'test'
+  ...
+# Subtest: operation-disjoint rules do not conflict
+ok 31 - operation-disjoint rules do not conflict
+  ---
+  duration_ms: 85.2757
+  type: 'test'
+  ...
+# Subtest: role stage operation and host axes can make active rules scope-disjoint
+ok 32 - role stage operation and host axes can make active rules scope-disjoint
+  ---
+  duration_ms: 310.2172
+  type: 'test'
+  ...
+# Subtest: all-foreman-goals applicability overlaps foreman-kernel applicability
+ok 33 - all-foreman-goals applicability overlaps foreman-kernel applicability
+  ---
+  duration_ms: 87.417
+  type: 'test'
+  ...
+# Subtest: higher-tier active authority controls a lower-tier in-scope contradiction
+ok 34 - higher-tier active authority controls a lower-tier in-scope contradiction
+  ---
+  duration_ms: 95.375
+  type: 'test'
+  ...
+# Subtest: historical-only and stale-effect rules cannot create active authority conflicts
+ok 35 - historical-only and stale-effect rules cannot create active authority conflicts
+  ---
+  duration_ms: 155.911
+  type: 'test'
+  ...
+# Subtest: rule normalized statement must equal its referenced normalized excerpt
+ok 36 - rule normalized statement must equal its referenced normalized excerpt
+  ---
+  duration_ms: 157.0387
+  type: 'test'
+  ...
+# Subtest: coordinated identity location and value replacement requires typed migration evidence
+ok 37 - coordinated identity location and value replacement requires typed migration evidence
+  ---
+  duration_ms: 132.8208
+  type: 'test'
+  ...
+# Subtest: full-registry coordinated rule ID and binding replacement cannot rewrite the baseline
+ok 38 - full-registry coordinated rule ID and binding replacement cannot rewrite the baseline
+  ---
+  duration_ms: 85.5734
+  type: 'test'
+  ...
+# Subtest: rework migration binds the prior registry commit source snapshot and superseding manifest
+ok 39 - rework migration binds the prior registry commit source snapshot and superseding manifest
+  ---
+  duration_ms: 13.1471
+  type: 'test'
+  ...
+# Subtest: removing the coordinator-ratified rework migration fails closed
+ok 40 - removing the coordinator-ratified rework migration fails closed
+  ---
+  duration_ms: 75.6529
+  type: 'test'
+  ...
+# Subtest: forged prior-commit migration evidence fails even when internally rehashed
+ok 41 - forged prior-commit migration evidence fails even when internally rehashed
+  ---
+  duration_ms: 154.1472
+  type: 'test'
+  ...
+# Subtest: classification mutation control: pre-action-refusal cannot be widened
+ok 42 - classification mutation control: pre-action-refusal cannot be widened
+  ---
+  duration_ms: 56.1648
+  type: 'test'
+  ...
+# Subtest: classification mutation control: post-action-detection cannot be widened
+ok 43 - classification mutation control: post-action-detection cannot be widened
+  ---
+  duration_ms: 36.2408
+  type: 'test'
+  ...
+# Subtest: classification mutation control: ci-static-check cannot be widened
+ok 44 - classification mutation control: ci-static-check cannot be widened
+  ---
+  duration_ms: 37.9611
+  type: 'test'
+  ...
+# Subtest: classification mutation control: independent-review-human-judgment cannot be widened
+ok 45 - classification mutation control: independent-review-human-judgment cannot be widened
+  ---
+  duration_ms: 39.1761
+  type: 'test'
+  ...
+# Subtest: classification mutation control: narrative-provenance cannot be widened
+ok 46 - classification mutation control: narrative-provenance cannot be widened
+  ---
+  duration_ms: 40.2718
+  type: 'test'
+  ...
+# Subtest: classification mutation control: unsupported cannot be widened
+ok 47 - classification mutation control: unsupported cannot be widened
+  ---
+  duration_ms: 40.1648
+  type: 'test'
+  ...
+# Subtest: authority-tier mutation control: developer-ratification cannot be widened
+ok 48 - authority-tier mutation control: developer-ratification cannot be widened
+  ---
+  duration_ms: 109.4355
+  type: 'test'
+  ...
+# Subtest: authority-tier mutation control: goal-charter cannot be widened
+ok 49 - authority-tier mutation control: goal-charter cannot be widened
+  ---
+  duration_ms: 51.1211
+  type: 'test'
+  ...
+# Subtest: authority-tier mutation control: ratified-contract cannot be widened
+ok 50 - authority-tier mutation control: ratified-contract cannot be widened
+  ---
+  duration_ms: 40.3347
+  type: 'test'
+  ...
+# Subtest: authority-tier mutation control: coordinator-pattern cannot be widened
+ok 51 - authority-tier mutation control: coordinator-pattern cannot be widened
+  ---
+  duration_ms: 37.3309
+  type: 'test'
+  ...
+# Subtest: authority-tier mutation control: parcel-spec cannot be widened
+ok 52 - authority-tier mutation control: parcel-spec cannot be widened
+  ---
+  duration_ms: 39.1164
+  type: 'test'
+  ...
+# Subtest: authority-tier mutation control: standing-role cannot be widened
+ok 53 - authority-tier mutation control: standing-role cannot be widened
+  ---
+  duration_ms: 30.3457
+  type: 'test'
+  ...
+# Subtest: authority-tier mutation control: generated-advisory cannot be widened
+ok 54 - authority-tier mutation control: generated-advisory cannot be widened
+  ---
+  duration_ms: 29.4735
+  type: 'test'
+  ...
+# Subtest: authority-effect mutation control: binding cannot be widened
+ok 55 - authority-effect mutation control: binding cannot be widened
+  ---
+  duration_ms: 39.1592
+  type: 'test'
+  ...
+# Subtest: authority-effect mutation control: corroborating cannot be widened
+ok 56 - authority-effect mutation control: corroborating cannot be widened
+  ---
+  duration_ms: 53.614
+  type: 'test'
+  ...
+# Subtest: authority-effect mutation control: superseded-in-scope cannot be widened
+ok 57 - authority-effect mutation control: superseded-in-scope cannot be widened
+  ---
+  duration_ms: 36.763
+  type: 'test'
+  ...
+# Subtest: authority-effect mutation control: historical cannot be widened
+ok 58 - authority-effect mutation control: historical cannot be widened
+  ---
+  duration_ms: 91.9717
+  type: 'test'
+  ...
+# Subtest: authority-effect mutation control: stale-explanation cannot be widened
+ok 59 - authority-effect mutation control: stale-explanation cannot be widened
+  ---
+  duration_ms: 98.7106
+  type: 'test'
+  ...
+# Subtest: authority-effect mutation control: advisory-only cannot be widened
+ok 60 - authority-effect mutation control: advisory-only cannot be widened
+  ---
+  duration_ms: 47.9744
+  type: 'test'
+  ...
+# Subtest: retirement mutation control: missing predicate evidence refuses retirement
+ok 61 - retirement mutation control: missing predicate evidence refuses retirement
+  ---
+  duration_ms: 107.1036
+  type: 'test'
+  ...
+# Subtest: retirement mutation control: missing negativeRefusalTest evidence refuses retirement
+ok 62 - retirement mutation control: missing negativeRefusalTest evidence refuses retirement
+  ---
+  duration_ms: 95.3476
+  type: 'test'
+  ...
+# Subtest: retirement mutation control: missing corpusSweep evidence refuses retirement
+ok 63 - retirement mutation control: missing corpusSweep evidence refuses retirement
+  ---
+  duration_ms: 87.8642
+  type: 'test'
+  ...
+# Subtest: retirement mutation control: missing independentBypassAttempt evidence refuses retirement
+ok 64 - retirement mutation control: missing independentBypassAttempt evidence refuses retirement
+  ---
+  duration_ms: 212.0494
+  type: 'test'
+  ...
+# Subtest: migration mutation control: open cannot carry superseding evidence
+ok 65 - migration mutation control: open cannot carry superseding evidence
+  ---
+  duration_ms: 85.989
+  type: 'test'
+  ...
+# Subtest: migration mutation control: resolved-for-fk cannot carry superseding evidence
+ok 66 - migration mutation control: resolved-for-fk cannot carry superseding evidence
+  ---
+  duration_ms: 102.5673
+  type: 'test'
+  ...
+# Subtest: migration mutation control: blocked cannot carry superseding evidence
+ok 67 - migration mutation control: blocked cannot carry superseding evidence
+  ---
+  duration_ms: 96.8808
+  type: 'test'
+  ...
+# Subtest: migration mutation control: superseded-by-amendment requires superseding evidence
+ok 68 - migration mutation control: superseded-by-amendment requires superseding evidence
+  ---
+  duration_ms: 88.3977
+  type: 'test'
+  ...
+# Subtest: uncovered inventory items and orphaned rule mappings fail closed independently
+ok 69 - uncovered inventory items and orphaned rule mappings fail closed independently
+  ---
+  duration_ms: 351.8108
+  type: 'test'
+  ...
+# Subtest: source snapshot and caller-asserted authority mutations fail closed
+ok 70 - source snapshot and caller-asserted authority mutations fail closed
+  ---
+  duration_ms: 109.5057
+  type: 'test'
+  ...
+# Subtest: set-valued arrays and protected operation rows require schema-enum order
+ok 71 - set-valued arrays and protected operation rows require schema-enum order
+  ---
+  duration_ms: 160.1281
+  type: 'test'
+  ...
+# Subtest: R3 exact source contract rejects a missing eighteenth source
+ok 72 - R3 exact source contract rejects a missing eighteenth source
+  ---
+  duration_ms: 81.4581
+  type: 'test'
+  ...
+# Subtest: R3 exact source contract rejects an unknown nineteenth source
+ok 73 - R3 exact source contract rejects an unknown nineteenth source
+  ---
+  duration_ms: 100.1816
+  type: 'test'
+  ...
+# Subtest: R3 exact source contract rejects a known ID with a substituted path
+ok 74 - R3 exact source contract rejects a known ID with a substituted path
+  ---
+  duration_ms: 112.2244
+  type: 'test'
+  ...
+# Subtest: R3 exact source contract rejects a substituted source ID at cardinality eighteen
+ok 75 - R3 exact source contract rejects a substituted source ID at cardinality eighteen
+  ---
+  duration_ms: 174.2429
+  type: 'test'
+  ...
+# Subtest: R3 D10 semantic downgrade requires typed prior-manifest migration
+ok 76 - R3 D10 semantic downgrade requires typed prior-manifest migration
+  ---
+  duration_ms: 100.7916
+  type: 'test'
+  ...
+# Subtest: R3 D10 applicability downgrade requires typed prior-manifest migration
+ok 77 - R3 D10 applicability downgrade requires typed prior-manifest migration
+  ---
+  duration_ms: 112.2086
+  type: 'test'
+  ...
+# Subtest: R3 D10 retirement downgrade requires typed prior-manifest migration
+ok 78 - R3 D10 retirement downgrade requires typed prior-manifest migration
+  ---
+  duration_ms: 110.4641
+  type: 'test'
+  ...
+# Subtest: R3 authority subject replacement is bound by the complete manifest
+ok 79 - R3 authority subject replacement is bound by the complete manifest
+  ---
+  duration_ms: 96.501
+  type: 'test'
+  ...
+# Subtest: R3 authority claim replacement is bound by the complete manifest
+ok 80 - R3 authority claim replacement is bound by the complete manifest
+  ---
+  duration_ms: 142.768
+  type: 'test'
+  ...
+# Subtest: R3 complete binding digest includes applicability retirement and assurance
+ok 81 - R3 complete binding digest includes applicability retirement and assurance
+  ---
+  duration_ms: 10.2512
+  type: 'test'
+  ...
+# Subtest: R3 resolver returns exact controlling claim and sorted IDs
+ok 82 - R3 resolver returns exact controlling claim and sorted IDs
+  ---
+  duration_ms: 103.8513
+  type: 'test'
+  ...
+# Subtest: R3 resolver rejects any-valued query scope
+ok 83 - R3 resolver rejects any-valued query scope
+  ---
+  duration_ms: 149.5413
+  type: 'test'
+  ...
+# Subtest: R3 resolver rejects all-foreman-goals query scope
+ok 84 - R3 resolver rejects all-foreman-goals query scope
+  ---
+  duration_ms: 213.8967
+  type: 'test'
+  ...
+# Subtest: R3 resolver returns no-applicable-authority instead of silently allowing
+ok 85 - R3 resolver returns no-applicable-authority instead of silently allowing
+  ---
+  duration_ms: 143.2491
+  type: 'test'
+  ...
+# Subtest: R3 resolver detects naturally worded equal-tier conflicting claims
+ok 86 - R3 resolver detects naturally worded equal-tier conflicting claims
+  ---
+  duration_ms: 272.2404
+  type: 'test'
+  ...
+# Subtest: R3 resolver keeps lower-tier rules considered but non-controlling
+ok 87 - R3 resolver keeps lower-tier rules considered but non-controlling
+  ---
+  duration_ms: 278.7269
+  type: 'test'
+  ...
+# Subtest: R3 resolver excludes stale explanatory sources from control
+ok 88 - R3 resolver excludes stale explanatory sources from control
+  ---
+  duration_ms: 241.1893
+  type: 'test'
+  ...
+# Subtest: R3 Gate 2 refuses a revoked standing-grant evidence set
+ok 89 - R3 Gate 2 refuses a revoked standing-grant evidence set
+  ---
+  duration_ms: 148.0736
+  type: 'test'
+  ...
+# Subtest: R3 protected evidence rejects a fully resolved but irrelevant canon reference
+ok 90 - R3 protected evidence rejects a fully resolved but irrelevant canon reference
+  ---
+  duration_ms: 82.5733
+  type: 'test'
+  ...
+# Subtest: R3 fake migration cannot authorize an exact-source-set substitution
+ok 91 - R3 fake migration cannot authorize an exact-source-set substitution
+  ---
+  duration_ms: 78.2197
+  type: 'test'
+  ...
+# Subtest: R3 public rule uses assurance and rejects parallel assuranceLevel
+ok 92 - R3 public rule uses assurance and rejects parallel assuranceLevel
+  ---
+  duration_ms: 23.8517
+  type: 'test'
+  ...
+# Subtest: R3 manifest detects a fully rehashed coordinated semantic replacement
+ok 93 - R3 manifest detects a fully rehashed coordinated semantic replacement
+  ---
+  duration_ms: 87.1819
+  type: 'test'
+  ...
+# Subtest: R3 one README cannot satisfy all four retirement evidence kinds
+ok 94 - R3 one README cannot satisfy all four retirement evidence kinds
+  ---
+  duration_ms: 103.2773
+  type: 'test'
+  ...
+# Subtest: R4 exact D2 D3 D18 and D19 semantic identities are shipped
+ok 95 - R4 exact D2 D3 D18 and D19 semantic identities are shipped
+  ---
+  duration_ms: 5.5806
+  type: 'test'
+  ...
+# Subtest: R4 every rule has one basis ref contained in its source refs
+ok 96 - R4 every rule has one basis ref contained in its source refs
+  ---
+  duration_ms: 10.7858
+  type: 'test'
+  ...
+# Subtest: R4 shipped reconciliation rules retain repeated current semantic subjects
+ok 97 - R4 shipped reconciliation rules retain repeated current semantic subjects
+  ---
+  duration_ms: 7.798
+  type: 'test'
+  ...
+# Subtest: R4 shipped Gate 3 competitors resolve without test-time subject rewriting
+ok 98 - R4 shipped Gate 3 competitors resolve without test-time subject rewriting
+  ---
+  duration_ms: 116.0855
+  type: 'test'
+  ...
+# Subtest: R4 shipped-data resolver vector gate.namespace
+ok 99 - R4 shipped-data resolver vector gate.namespace
+  ---
+  duration_ms: 91.3184
+  type: 'test'
+  ...
+# Subtest: R4 shipped-data resolver vector gate3.merge-authority
+ok 100 - R4 shipped-data resolver vector gate3.merge-authority
+  ---
+  duration_ms: 118.4825
+  type: 'test'
+  ...
+# Subtest: R4 shipped-data resolver vector permission-profile.registry-state
+ok 101 - R4 shipped-data resolver vector permission-profile.registry-state
+  ---
+  duration_ms: 92.985
+  type: 'test'
+  ...
+# Subtest: R4 shipped-data resolver vector spec.mutation-authority
+ok 102 - R4 shipped-data resolver vector spec.mutation-authority
+  ---
+  duration_ms: 95.5293
+  type: 'test'
+  ...
+# Subtest: R4 shipped-data resolver vector permission-profile.enforcement-bound
+ok 103 - R4 shipped-data resolver vector permission-profile.enforcement-bound
+  ---
+  duration_ms: 87.8579
+  type: 'test'
+  ...
+# Subtest: R4 shipped-data resolver vector standing.provenance
+ok 104 - R4 shipped-data resolver vector standing.provenance
+  ---
+  duration_ms: 87.0572
+  type: 'test'
+  ...
+# Subtest: R4 corroborating source ref cannot promote a rule above its authority basis
+ok 105 - R4 corroborating source ref cannot promote a rule above its authority basis
+  ---
+  duration_ms: 1030.1644
+  type: 'test'
+  ...
+# Subtest: R4 retired-from-agent-reading rules never control authority
+ok 106 - R4 retired-from-agent-reading rules never control authority
+  ---
+  duration_ms: 252.8433
+  type: 'test'
+  ...
+# Subtest: R4 reconciliation disposition and consequence are immutable
+ok 107 - R4 reconciliation disposition and consequence are immutable
+  ---
+  duration_ms: 196.7142
+  type: 'test'
+  ...
+# Subtest: R4 missing-path evidence uses commit-bound canonical JSON
+ok 108 - R4 missing-path evidence uses commit-bound canonical JSON
+  ---
+  duration_ms: 9.0772
+  type: 'test'
+  ...
+# Subtest: R4 source-derived applicability vector rule.standing-constraints.constraint-1
+ok 109 - R4 source-derived applicability vector rule.standing-constraints.constraint-1
+  ---
+  duration_ms: 10.9921
+  type: 'test'
+  ...
+# Subtest: R4 source-derived applicability vector rule.standing-constraints.constraint-2
+ok 110 - R4 source-derived applicability vector rule.standing-constraints.constraint-2
+  ---
+  duration_ms: 9.2959
+  type: 'test'
+  ...
+# Subtest: R4 source-derived applicability vector rule.standing-constraints.constraint-3
+ok 111 - R4 source-derived applicability vector rule.standing-constraints.constraint-3
+  ---
+  duration_ms: 11.2753
+  type: 'test'
+  ...
+# Subtest: R4 source-derived applicability vector rule.standing-constraints.constraint-4
+ok 112 - R4 source-derived applicability vector rule.standing-constraints.constraint-4
+  ---
+  duration_ms: 13.5757
+  type: 'test'
+  ...
+# Subtest: R4 source-derived applicability vector rule.standing-constraints.constraint-5
+ok 113 - R4 source-derived applicability vector rule.standing-constraints.constraint-5
+  ---
+  duration_ms: 13.1519
+  type: 'test'
+  ...
+# Subtest: R4 source-derived applicability vector rule.standing-constraints.constraint-6
+ok 114 - R4 source-derived applicability vector rule.standing-constraints.constraint-6
+  ---
+  duration_ms: 10.8291
+  type: 'test'
+  ...
+# Subtest: R4 source-derived applicability vector rule.standing-constraints.constraint-7
+ok 115 - R4 source-derived applicability vector rule.standing-constraints.constraint-7
+  ---
+  duration_ms: 9.9822
+  type: 'test'
+  ...
+# Subtest: R4 source-derived applicability vector rule.standing-constraints.constraint-8
+ok 116 - R4 source-derived applicability vector rule.standing-constraints.constraint-8
+  ---
+  duration_ms: 12.1249
+  type: 'test'
+  ...
+# Subtest: R4 source-derived applicability vector rule.standing-constraints.constraint-9
+ok 117 - R4 source-derived applicability vector rule.standing-constraints.constraint-9
+  ---
+  duration_ms: 11.9347
+  type: 'test'
+  ...
+# Subtest: R4 source-derived applicability vector rule.standing-constraints.constraint-10
+ok 118 - R4 source-derived applicability vector rule.standing-constraints.constraint-10
+  ---
+  duration_ms: 13.3759
+  type: 'test'
+  ...
+# Subtest: R4 source-derived applicability vector rule.standing-constraints.constraint-11
+ok 119 - R4 source-derived applicability vector rule.standing-constraints.constraint-11
+  ---
+  duration_ms: 13.9851
+  type: 'test'
+  ...
+# Subtest: R4 source-derived applicability vector rule.standing-constraints.constraint-12
+ok 120 - R4 source-derived applicability vector rule.standing-constraints.constraint-12
+  ---
+  duration_ms: 11.8594
+  type: 'test'
+  ...
+# Subtest: R4 source-derived applicability vector rule.standing-constraints.constraint-13
+ok 121 - R4 source-derived applicability vector rule.standing-constraints.constraint-13
+  ---
+  duration_ms: 10.5133
+  type: 'test'
+  ...
+# Subtest: R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-1
+ok 122 - R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-1
+  ---
+  duration_ms: 8.7237
+  type: 'test'
+  ...
+# Subtest: R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-2
+ok 123 - R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-2
+  ---
+  duration_ms: 7.7528
+  type: 'test'
+  ...
+# Subtest: R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-3
+ok 124 - R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-3
+  ---
+  duration_ms: 8.6371
+  type: 'test'
+  ...
+# Subtest: R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-4
+ok 125 - R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-4
+  ---
+  duration_ms: 8.9496
+  type: 'test'
+  ...
+# Subtest: R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-5
+ok 126 - R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-5
+  ---
+  duration_ms: 9.1486
+  type: 'test'
+  ...
+# Subtest: R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-6
+ok 127 - R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-6
+  ---
+  duration_ms: 7.6484
+  type: 'test'
+  ...
+# Subtest: R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-7
+ok 128 - R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-7
+  ---
+  duration_ms: 9.4628
+  type: 'test'
+  ...
+# Subtest: R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-8
+ok 129 - R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-8
+  ---
+  duration_ms: 10.9158
+  type: 'test'
+  ...
+# Subtest: R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-9
+ok 130 - R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-9
+  ---
+  duration_ms: 8.8789
+  type: 'test'
+  ...
+# Subtest: R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-10
+ok 131 - R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-10
+  ---
+  duration_ms: 9.8604
+  type: 'test'
+  ...
+# Subtest: R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-11
+ok 132 - R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-11
+  ---
+  duration_ms: 12.773
+  type: 'test'
+  ...
+# Subtest: R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-12
+ok 133 - R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-12
+  ---
+  duration_ms: 10.9443
+  type: 'test'
+  ...
+# Subtest: R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-13
+ok 134 - R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-13
+  ---
+  duration_ms: 10.5176
+  type: 'test'
+  ...
+# Subtest: R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-14
+ok 135 - R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-14
+  ---
+  duration_ms: 10.7415
+  type: 'test'
+  ...
+# Subtest: R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-15
+ok 136 - R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-15
+  ---
+  duration_ms: 10.2395
+  type: 'test'
+  ...
+# Subtest: R4 PDD hard rule 10 applies to ordinary builder build repo mutation
+ok 137 - R4 PDD hard rule 10 applies to ordinary builder build repo mutation
+  ---
+  duration_ms: 13.8808
+  type: 'test'
+  ...
+# Subtest: R5 standing rules have thirteen distinct operative semantic subjects
+ok 138 - R5 standing rules have thirteen distinct operative semantic subjects
+  ---
+  duration_ms: 11.5742
+  type: 'test'
+  ...
+# Subtest: R5 every authority basis is substantive source text rather than a heading
+ok 139 - R5 every authority basis is substantive source text rather than a heading
+  ---
+  duration_ms: 666.7321
+  type: 'test'
+  ...
+# Subtest: R5 permission-profile reconciliation is grounded in charter D7 not D9
+ok 140 - R5 permission-profile reconciliation is grounded in charter D7 not D9
+  ---
+  duration_ms: 9.1978
+  type: 'test'
+  ...
+# Subtest: R5 reconciliation gate-namespace-count binds its exact observedEvidence set
+ok 141 - R5 reconciliation gate-namespace-count binds its exact observedEvidence set
+  ---
+  duration_ms: 96.9555
+  type: 'test'
+  ...
+# Subtest: R5 reconciliation gate3-delegation binds its exact observedEvidence set
+ok 142 - R5 reconciliation gate3-delegation binds its exact observedEvidence set
+  ---
+  duration_ms: 80.8445
+  type: 'test'
+  ...
+# Subtest: R5 reconciliation spec-linter-profile-behavior binds its exact observedEvidence set
+ok 143 - R5 reconciliation spec-linter-profile-behavior binds its exact observedEvidence set
+  ---
+  duration_ms: 82.3333
+  type: 'test'
+  ...
+# Subtest: R5 reconciliation surfaces-allowed-files binds its exact observedEvidence set
+ok 144 - R5 reconciliation surfaces-allowed-files binds its exact observedEvidence set
+  ---
+  duration_ms: 114.0859
+  type: 'test'
+  ...
+# Subtest: R5 reconciliation permission-profile-enforcement-bound binds its exact observedEvidence set
+ok 145 - R5 reconciliation permission-profile-enforcement-bound binds its exact observedEvidence set
+  ---
+  duration_ms: 118.4527
+  type: 'test'
+  ...
+# Subtest: R5 reconciliation missing-provenance-reference binds its exact observedEvidence set
+ok 146 - R5 reconciliation missing-provenance-reference binds its exact observedEvidence set
+  ---
+  duration_ms: 143.2919
+  type: 'test'
+  ...
+# Subtest: R5 missing provenance evidence uses the exact repository-relative absent path
+ok 147 - R5 missing provenance evidence uses the exact repository-relative absent path
+  ---
+  duration_ms: 8.752
+  type: 'test'
+  ...
+# Subtest: R5 source baseline manifest rejects a recomputed snapshot hash mutation
+ok 148 - R5 source baseline manifest rejects a recomputed snapshot hash mutation
+  ---
+  duration_ms: 132.274
+  type: 'test'
+  ...
+# Subtest: R5 complete five-axis resolver applicability rule.standing-constraints.constraint-1
+ok 149 - R5 complete five-axis resolver applicability rule.standing-constraints.constraint-1
+  ---
+  duration_ms: 28943.6708
+  type: 'test'
+  ...
+# Subtest: R5 complete five-axis resolver applicability rule.standing-constraints.constraint-2
+ok 150 - R5 complete five-axis resolver applicability rule.standing-constraints.constraint-2
+  ---
+  duration_ms: 30872.0045
+  type: 'test'
+  ...
+# Subtest: R5 complete five-axis resolver applicability rule.standing-constraints.constraint-3
+ok 151 - R5 complete five-axis resolver applicability rule.standing-constraints.constraint-3
+  ---
+  duration_ms: 30078.2662
+  type: 'test'
+  ...
+# Subtest: R5 complete five-axis resolver applicability rule.standing-constraints.constraint-4
+ok 152 - R5 complete five-axis resolver applicability rule.standing-constraints.constraint-4
+  ---
+  duration_ms: 30492.5308
+  type: 'test'
+  ...
+# Subtest: R5 complete five-axis resolver applicability rule.standing-constraints.constraint-5
+ok 153 - R5 complete five-axis resolver applicability rule.standing-constraints.constraint-5
+  ---
+  duration_ms: 30006.7267
+  type: 'test'
+  ...
+# Subtest: R5 complete five-axis resolver applicability rule.standing-constraints.constraint-6
+ok 154 - R5 complete five-axis resolver applicability rule.standing-constraints.constraint-6
+  ---
+  duration_ms: 29012.8767
+  type: 'test'
+  ...
+# Subtest: R5 complete five-axis resolver applicability rule.standing-constraints.constraint-7
+ok 155 - R5 complete five-axis resolver applicability rule.standing-constraints.constraint-7
+  ---
+  duration_ms: 4712.266
+  type: 'test'
+  ...
+# Subtest: R5 complete five-axis resolver applicability rule.standing-constraints.constraint-8
+ok 156 - R5 complete five-axis resolver applicability rule.standing-constraints.constraint-8
+  ---
+  duration_ms: 1411.3627
+  type: 'test'
+  ...
+# Subtest: R5 complete five-axis resolver applicability rule.standing-constraints.constraint-9
+ok 157 - R5 complete five-axis resolver applicability rule.standing-constraints.constraint-9
+  ---
+  duration_ms: 1216.2393
+  type: 'test'
+  ...
+# Subtest: R5 complete five-axis resolver applicability rule.standing-constraints.constraint-10
+ok 158 - R5 complete five-axis resolver applicability rule.standing-constraints.constraint-10
+  ---
+  duration_ms: 1235.5788
+  type: 'test'
+  ...
+# Subtest: R5 complete five-axis resolver applicability rule.standing-constraints.constraint-11
+ok 159 - R5 complete five-axis resolver applicability rule.standing-constraints.constraint-11
+  ---
+  duration_ms: 1470.2608
+  type: 'test'
+  ...
+# Subtest: R5 complete five-axis resolver applicability rule.standing-constraints.constraint-12
+ok 160 - R5 complete five-axis resolver applicability rule.standing-constraints.constraint-12
+  ---
+  duration_ms: 3108.3653
+  type: 'test'
+  ...
+# Subtest: R5 complete five-axis resolver applicability rule.standing-constraints.constraint-13
+ok 161 - R5 complete five-axis resolver applicability rule.standing-constraints.constraint-13
+  ---
+  duration_ms: 30198.7382
+  type: 'test'
+  ...
+# Subtest: R5 complete five-axis resolver applicability rule.parcel-driven-development.hard-rule-1
+ok 162 - R5 complete five-axis resolver applicability rule.parcel-driven-development.hard-rule-1
+  ---
+  duration_ms: 19738.815
+  type: 'test'
+  ...
+# Subtest: R5 complete five-axis resolver applicability rule.parcel-driven-development.hard-rule-2
+ok 163 - R5 complete five-axis resolver applicability rule.parcel-driven-development.hard-rule-2
+  ---
+  duration_ms: 53757.6456
+  type: 'test'
+  ...
+# Subtest: R5 complete five-axis resolver applicability rule.parcel-driven-development.hard-rule-3
+ok 164 - R5 complete five-axis resolver applicability rule.parcel-driven-development.hard-rule-3
+  ---
+  duration_ms: 21435.9216
+  type: 'test'
+  ...
+# Subtest: R5 complete five-axis resolver applicability rule.parcel-driven-development.hard-rule-4
+ok 165 - R5 complete five-axis resolver applicability rule.parcel-driven-development.hard-rule-4
+  ---
+  duration_ms: 2805.7894
+  type: 'test'
+  ...
+# Subtest: R5 complete five-axis resolver applicability rule.parcel-driven-development.hard-rule-5
+ok 166 - R5 complete five-axis resolver applicability rule.parcel-driven-development.hard-rule-5
+  ---
+  duration_ms: 2842.7249
+  type: 'test'
+  ...
+# Subtest: R5 complete five-axis resolver applicability rule.parcel-driven-development.hard-rule-6
+ok 167 - R5 complete five-axis resolver applicability rule.parcel-driven-development.hard-rule-6
+  ---
+  duration_ms: 1234.1977
+  type: 'test'
+  ...
+# Subtest: R5 complete five-axis resolver applicability rule.parcel-driven-development.hard-rule-7
+ok 168 - R5 complete five-axis resolver applicability rule.parcel-driven-development.hard-rule-7
+  ---
+  duration_ms: 14188.3569
+  type: 'test'
+  ...
+# Subtest: R5 complete five-axis resolver applicability rule.parcel-driven-development.hard-rule-8
+ok 169 - R5 complete five-axis resolver applicability rule.parcel-driven-development.hard-rule-8
+  ---
+  duration_ms: 387.3918
+  type: 'test'
+  ...
+# Subtest: R5 complete five-axis resolver applicability rule.parcel-driven-development.hard-rule-9
+ok 170 - R5 complete five-axis resolver applicability rule.parcel-driven-development.hard-rule-9
+  ---
+  duration_ms: 757.119
+  type: 'test'
+  ...
+# Subtest: R5 complete five-axis resolver applicability rule.parcel-driven-development.hard-rule-10
+ok 171 - R5 complete five-axis resolver applicability rule.parcel-driven-development.hard-rule-10
+  ---
+  duration_ms: 269669.1772
+  type: 'test'
+  ...
+# Subtest: R5 complete five-axis resolver applicability rule.parcel-driven-development.hard-rule-11
+ok 172 - R5 complete five-axis resolver applicability rule.parcel-driven-development.hard-rule-11
+  ---
+  duration_ms: 39003.6234
+  type: 'test'
+  ...
+# Subtest: R5 complete five-axis resolver applicability rule.parcel-driven-development.hard-rule-12
+ok 173 - R5 complete five-axis resolver applicability rule.parcel-driven-development.hard-rule-12
+  ---
+  duration_ms: 5077.6263
+  type: 'test'
+  ...
+# Subtest: R5 complete five-axis resolver applicability rule.parcel-driven-development.hard-rule-13
+ok 174 - R5 complete five-axis resolver applicability rule.parcel-driven-development.hard-rule-13
+  ---
+  duration_ms: 1284.2434
+  type: 'test'
+  ...
+# Subtest: R5 complete five-axis resolver applicability rule.parcel-driven-development.hard-rule-14
+ok 175 - R5 complete five-axis resolver applicability rule.parcel-driven-development.hard-rule-14
+  ---
+  duration_ms: 10044.0858
+  type: 'test'
+  ...
+# Subtest: R5 complete five-axis resolver applicability rule.parcel-driven-development.hard-rule-15
+ok 176 - R5 complete five-axis resolver applicability rule.parcel-driven-development.hard-rule-15
+  ---
+  duration_ms: 9556.4726
+  type: 'test'
+  ...
+# Subtest: R6 published rules never expose hash-derived or fallback semantic identities
+ok 177 - R6 published rules never expose hash-derived or fallback semantic identities
+  ---
+  duration_ms: 11.0095
+  type: 'test'
+  ...
+# Subtest: R6 every inventory item is either curated into rules or explicitly excluded
+ok 178 - R6 every inventory item is either curated into rules or explicitly excluded
+  ---
+  duration_ms: 10.2841
+  type: 'test'
+  ...
+# Subtest: R6 structural TypeScript coverage items are exclusions, not pseudo-authority
+ok 179 - R6 structural TypeScript coverage items are exclusions, not pseudo-authority
+  ---
+  duration_ms: 18.1083
+  type: 'test'
+  ...
+# Subtest: R6 coordinated fallback semantic replacement is rejected as uncurated
+ok 180 - R6 coordinated fallback semantic replacement is rejected as uncurated
+  ---
+  duration_ms: 91.0773
+  type: 'test'
+  ...
+# Subtest: R6 reconciliation gate-namespace-count rejects appended evidence
+ok 181 - R6 reconciliation gate-namespace-count rejects appended evidence
+  ---
+  duration_ms: 93.6973
+  type: 'test'
+  ...
+# Subtest: R6 reconciliation gate-namespace-count rejects removed evidence
+ok 182 - R6 reconciliation gate-namespace-count rejects removed evidence
+  ---
+  duration_ms: 83.8203
+  type: 'test'
+  ...
+# Subtest: R6 reconciliation gate-namespace-count rejects duplicated evidence
+ok 183 - R6 reconciliation gate-namespace-count rejects duplicated evidence
+  ---
+  duration_ms: 103.9704
+  type: 'test'
+  ...
+# Subtest: R6 reconciliation gate-namespace-count rejects substituted evidence
+ok 184 - R6 reconciliation gate-namespace-count rejects substituted evidence
+  ---
+  duration_ms: 86.2933
+  type: 'test'
+  ...
+# Subtest: R6 reconciliation gate3-delegation rejects appended evidence
+ok 185 - R6 reconciliation gate3-delegation rejects appended evidence
+  ---
+  duration_ms: 80.5939
+  type: 'test'
+  ...
+# Subtest: R6 reconciliation gate3-delegation rejects removed evidence
+ok 186 - R6 reconciliation gate3-delegation rejects removed evidence
+  ---
+  duration_ms: 87.9583
+  type: 'test'
+  ...
+# Subtest: R6 reconciliation gate3-delegation rejects duplicated evidence
+ok 187 - R6 reconciliation gate3-delegation rejects duplicated evidence
+  ---
+  duration_ms: 92.4747
+  type: 'test'
+  ...
+# Subtest: R6 reconciliation gate3-delegation rejects substituted evidence
+ok 188 - R6 reconciliation gate3-delegation rejects substituted evidence
+  ---
+  duration_ms: 95.4058
+  type: 'test'
+  ...
+# Subtest: R6 reconciliation spec-linter-profile-behavior rejects appended evidence
+ok 189 - R6 reconciliation spec-linter-profile-behavior rejects appended evidence
+  ---
+  duration_ms: 84.9218
+  type: 'test'
+  ...
+# Subtest: R6 reconciliation spec-linter-profile-behavior rejects removed evidence
+ok 190 - R6 reconciliation spec-linter-profile-behavior rejects removed evidence
+  ---
+  duration_ms: 87.3484
+  type: 'test'
+  ...
+# Subtest: R6 reconciliation spec-linter-profile-behavior rejects duplicated evidence
+ok 191 - R6 reconciliation spec-linter-profile-behavior rejects duplicated evidence
+  ---
+  duration_ms: 118.5044
+  type: 'test'
+  ...
+# Subtest: R6 reconciliation spec-linter-profile-behavior rejects substituted evidence
+ok 192 - R6 reconciliation spec-linter-profile-behavior rejects substituted evidence
+  ---
+  duration_ms: 78.9404
+  type: 'test'
+  ...
+# Subtest: R6 reconciliation surfaces-allowed-files rejects appended evidence
+ok 193 - R6 reconciliation surfaces-allowed-files rejects appended evidence
+  ---
+  duration_ms: 94.143
+  type: 'test'
+  ...
+# Subtest: R6 reconciliation surfaces-allowed-files rejects removed evidence
+ok 194 - R6 reconciliation surfaces-allowed-files rejects removed evidence
+  ---
+  duration_ms: 78.056
+  type: 'test'
+  ...
+# Subtest: R6 reconciliation surfaces-allowed-files rejects duplicated evidence
+ok 195 - R6 reconciliation surfaces-allowed-files rejects duplicated evidence
+  ---
+  duration_ms: 84.0873
+  type: 'test'
+  ...
+# Subtest: R6 reconciliation surfaces-allowed-files rejects substituted evidence
+ok 196 - R6 reconciliation surfaces-allowed-files rejects substituted evidence
+  ---
+  duration_ms: 87.7831
+  type: 'test'
+  ...
+# Subtest: R6 reconciliation permission-profile-enforcement-bound rejects appended evidence
+ok 197 - R6 reconciliation permission-profile-enforcement-bound rejects appended evidence
+  ---
+  duration_ms: 77.8849
+  type: 'test'
+  ...
+# Subtest: R6 reconciliation permission-profile-enforcement-bound rejects removed evidence
+ok 198 - R6 reconciliation permission-profile-enforcement-bound rejects removed evidence
+  ---
+  duration_ms: 79.4417
+  type: 'test'
+  ...
+# Subtest: R6 reconciliation permission-profile-enforcement-bound rejects duplicated evidence
+ok 199 - R6 reconciliation permission-profile-enforcement-bound rejects duplicated evidence
+  ---
+  duration_ms: 76.1172
+  type: 'test'
+  ...
+# Subtest: R6 reconciliation permission-profile-enforcement-bound rejects substituted evidence
+ok 200 - R6 reconciliation permission-profile-enforcement-bound rejects substituted evidence
+  ---
+  duration_ms: 81.3863
+  type: 'test'
+  ...
+# Subtest: R6 reconciliation missing-provenance-reference rejects appended evidence
+ok 201 - R6 reconciliation missing-provenance-reference rejects appended evidence
+  ---
+  duration_ms: 78.4112
+  type: 'test'
+  ...
+# Subtest: R6 reconciliation missing-provenance-reference rejects removed evidence
+ok 202 - R6 reconciliation missing-provenance-reference rejects removed evidence
+  ---
+  duration_ms: 83.4483
+  type: 'test'
+  ...
+# Subtest: R6 reconciliation missing-provenance-reference rejects duplicated evidence
+ok 203 - R6 reconciliation missing-provenance-reference rejects duplicated evidence
+  ---
+  duration_ms: 82.0147
+  type: 'test'
+  ...
+# Subtest: R6 reconciliation missing-provenance-reference rejects substituted evidence
+ok 204 - R6 reconciliation missing-provenance-reference rejects substituted evidence
+  ---
+  duration_ms: 78.2382
+  type: 'test'
+  ...
+# Subtest: R6 reconciliation registry-rework-6eb1c25 rejects appended evidence
+ok 205 - R6 reconciliation registry-rework-6eb1c25 rejects appended evidence
+  ---
+  duration_ms: 79.0745
+  type: 'test'
+  ...
+# Subtest: R6 reconciliation registry-rework-6eb1c25 rejects removed evidence
+ok 206 - R6 reconciliation registry-rework-6eb1c25 rejects removed evidence
+  ---
+  duration_ms: 79.8465
+  type: 'test'
+  ...
+# Subtest: R6 reconciliation registry-rework-6eb1c25 rejects duplicated evidence
+ok 207 - R6 reconciliation registry-rework-6eb1c25 rejects duplicated evidence
+  ---
+  duration_ms: 84.6923
+  type: 'test'
+  ...
+# Subtest: R6 reconciliation registry-rework-6eb1c25 rejects substituted evidence
+ok 208 - R6 reconciliation registry-rework-6eb1c25 rejects substituted evidence
+  ---
+  duration_ms: 93.6714
+  type: 'test'
+  ...
+# Subtest: R6 reconciliation registry-rework-9285945 rejects appended evidence
+ok 209 - R6 reconciliation registry-rework-9285945 rejects appended evidence
+  ---
+  duration_ms: 84.0057
+  type: 'test'
+  ...
+# Subtest: R6 reconciliation registry-rework-9285945 rejects removed evidence
+ok 210 - R6 reconciliation registry-rework-9285945 rejects removed evidence
+  ---
+  duration_ms: 78.2263
+  type: 'test'
+  ...
+# Subtest: R6 reconciliation registry-rework-9285945 rejects duplicated evidence
+ok 211 - R6 reconciliation registry-rework-9285945 rejects duplicated evidence
+  ---
+  duration_ms: 85.1486
+  type: 'test'
+  ...
+# Subtest: R6 reconciliation registry-rework-9285945 rejects substituted evidence
+ok 212 - R6 reconciliation registry-rework-9285945 rejects substituted evidence
+  ---
+  duration_ms: 84.3418
+  type: 'test'
+  ...
+# Subtest: R6 reconciliation registry-rework-6f45963 rejects appended evidence
+ok 213 - R6 reconciliation registry-rework-6f45963 rejects appended evidence
+  ---
+  duration_ms: 89.6785
+  type: 'test'
+  ...
+# Subtest: R6 reconciliation registry-rework-6f45963 rejects removed evidence
+ok 214 - R6 reconciliation registry-rework-6f45963 rejects removed evidence
+  ---
+  duration_ms: 86.9427
+  type: 'test'
+  ...
+# Subtest: R6 reconciliation registry-rework-6f45963 rejects duplicated evidence
+ok 215 - R6 reconciliation registry-rework-6f45963 rejects duplicated evidence
+  ---
+  duration_ms: 82.347
+  type: 'test'
+  ...
+# Subtest: R6 reconciliation registry-rework-6f45963 rejects substituted evidence
+ok 216 - R6 reconciliation registry-rework-6f45963 rejects substituted evidence
+  ---
+  duration_ms: 85.7114
+  type: 'test'
+  ...
+# Subtest: R6 reconciliation registry-rework-b414d06 rejects appended evidence
+ok 217 - R6 reconciliation registry-rework-b414d06 rejects appended evidence
+  ---
+  duration_ms: 89.2366
+  type: 'test'
+  ...
+# Subtest: R6 reconciliation registry-rework-b414d06 rejects removed evidence
+ok 218 - R6 reconciliation registry-rework-b414d06 rejects removed evidence
+  ---
+  duration_ms: 94.6556
+  type: 'test'
+  ...
+# Subtest: R6 reconciliation registry-rework-b414d06 rejects duplicated evidence
+ok 219 - R6 reconciliation registry-rework-b414d06 rejects duplicated evidence
+  ---
+  duration_ms: 93.974
+  type: 'test'
+  ...
+# Subtest: R6 reconciliation registry-rework-b414d06 rejects substituted evidence
+ok 220 - R6 reconciliation registry-rework-b414d06 rejects substituted evidence
+  ---
+  duration_ms: 85.5531
+  type: 'test'
+  ...
+# Subtest: R6 reconciliation registry-rework-00b41b7 rejects appended evidence
+ok 221 - R6 reconciliation registry-rework-00b41b7 rejects appended evidence
+  ---
+  duration_ms: 97.2663
+  type: 'test'
+  ...
+# Subtest: R6 reconciliation registry-rework-00b41b7 rejects removed evidence
+ok 222 - R6 reconciliation registry-rework-00b41b7 rejects removed evidence
+  ---
+  duration_ms: 104.5088
+  type: 'test'
+  ...
+# Subtest: R6 reconciliation registry-rework-00b41b7 rejects duplicated evidence
+ok 223 - R6 reconciliation registry-rework-00b41b7 rejects duplicated evidence
+  ---
+  duration_ms: 82.6
+  type: 'test'
+  ...
+# Subtest: R6 reconciliation registry-rework-00b41b7 rejects substituted evidence
+ok 224 - R6 reconciliation registry-rework-00b41b7 rejects substituted evidence
+  ---
+  duration_ms: 84.7789
+  type: 'test'
+  ...
+# Subtest: R6 natural applicability query: standing rule 12 coordinator Stage E repository read
+ok 225 - R6 natural applicability query: standing rule 12 coordinator Stage E repository read
+  ---
+  duration_ms: 85.6547
+  type: 'test'
+  ...
+# Subtest: R6 natural applicability query: PDD rule 1 shaper shaping source inventory
+ok 226 - R6 natural applicability query: PDD rule 1 shaper shaping source inventory
+  ---
+  duration_ms: 85.9143
+  type: 'test'
+  ...
+# Subtest: R6 natural applicability query: PDD rule 7 builder build verification read
+ok 227 - R6 natural applicability query: PDD rule 7 builder build verification read
+  ---
+  duration_ms: 82.3374
+  type: 'test'
+  ...
+# Subtest: R6 natural applicability query: PDD rule 12 reviewer merge security transition
+ok 228 - R6 natural applicability query: PDD rule 12 reviewer merge security transition
+  ---
+  duration_ms: 83.8438
+  type: 'test'
+  ...
+# Subtest: R6 natural applicability query: PDD rule 10 operator runtime external write
+ok 229 - R6 natural applicability query: PDD rule 10 operator runtime external write
+  ---
+  duration_ms: 87.2112
+  type: 'test'
+  ...
+# Subtest: R13 normative Markdown audit has exactly 145 source-authored records
+ok 230 - R13 normative Markdown audit has exactly 145 source-authored records
+  ---
+  duration_ms: 509.9101
+  type: 'test'
+  ...
+# Subtest: R13 normative Markdown audit binds every candidate to its exact item and value
+ok 231 - R13 normative Markdown audit binds every candidate to its exact item and value
+  ---
+  duration_ms: 13.6808
+  type: 'test'
+  ...
+# Subtest: R13 audit publishes conflict stop
+ok 232 - R13 audit publishes conflict stop
+  ---
+  duration_ms: 12.7796
+  type: 'test'
+  ...
+# Subtest: R13 audit publishes secret persistence
+ok 233 - R13 audit publishes secret persistence
+  ---
+  duration_ms: 12.2479
+  type: 'test'
+  ...
+# Subtest: R13 audit publishes unenrolled detected-only posture
+ok 234 - R13 audit publishes unenrolled detected-only posture
+  ---
+  duration_ms: 13.3457
+  type: 'test'
+  ...
+# Subtest: R13 audit publishes generic mint prohibition
+ok 235 - R13 audit publishes generic mint prohibition
+  ---
+  duration_ms: 13.3128
+  type: 'test'
+  ...
+# Subtest: R13 audit publishes agent gate prohibition
+ok 236 - R13 audit publishes agent gate prohibition
+  ---
+  duration_ms: 13.3368
+  type: 'test'
+  ...
+# Subtest: R13 audit publishes external-write prohibition
+ok 237 - R13 audit publishes external-write prohibition
+  ---
+  duration_ms: 13.126
+  type: 'test'
+  ...
+# Subtest: R13 audit publishes isolated worktrees
+ok 238 - R13 audit publishes isolated worktrees
+  ---
+  duration_ms: 11.7137
+  type: 'test'
+  ...
+# Subtest: R13 audit publishes serialization ownership
+ok 239 - R13 audit publishes serialization ownership
+  ---
+  duration_ms: 15.2738
+  type: 'test'
+  ...
+# Subtest: R13 audit publishes pinned policy
+ok 240 - R13 audit publishes pinned policy
+  ---
+  duration_ms: 15.026
+  type: 'test'
+  ...
+# Subtest: R13 audit publishes host evidence
+ok 241 - R13 audit publishes host evidence
+  ---
+  duration_ms: 16.4143
+  type: 'test'
+  ...
+# Subtest: R13 audit publishes PDD environment release boundary
+ok 242 - R13 audit publishes PDD environment release boundary
+  ---
+  duration_ms: 13.0064
+  type: 'test'
+  ...
+# Subtest: R13 audit publishes PDD security release boundary
+ok 243 - R13 audit publishes PDD security release boundary
+  ---
+  duration_ms: 13.8518
+  type: 'test'
+  ...
+# Subtest: R13 every excluded audit candidate has one item-specific rationale
+ok 244 - R13 every excluded audit candidate has one item-specific rationale
+  ---
+  duration_ms: 478.5276
+  type: 'test'
+  ...
+# Subtest: R13 normative audit rejects append mutation
+ok 245 - R13 normative audit rejects append mutation
+  ---
+  duration_ms: 91.2467
+  type: 'test'
+  ...
+# Subtest: R13 normative audit rejects remove mutation
+ok 246 - R13 normative audit rejects remove mutation
+  ---
+  duration_ms: 87.0808
+  type: 'test'
+  ...
+# Subtest: R13 normative audit rejects duplicate mutation
+ok 247 - R13 normative audit rejects duplicate mutation
+  ---
+  duration_ms: 79.2363
+  type: 'test'
+  ...
+# Subtest: R13 normative audit rejects disposition mutation
+ok 248 - R13 normative audit rejects disposition mutation
+  ---
+  duration_ms: 100.1653
+  type: 'test'
+  ...
+# Subtest: R13 normative audit rejects rule set mutation
+ok 249 - R13 normative audit rejects rule set mutation
+  ---
+  duration_ms: 115.6013
+  type: 'test'
+  ...
+# Subtest: R13 normative audit rejects value mutation
+ok 250 - R13 normative audit rejects value mutation
+  ---
+  duration_ms: 85.9787
+  type: 'test'
+  ...
+# Subtest: R13 normative audit rejects rationale mutation
+ok 251 - R13 normative audit rejects rationale mutation
+  ---
+  duration_ms: 97.027
+  type: 'test'
+  ...
+# Subtest: R14 resolveAuthority fails closed on null instead of throwing
+ok 252 - R14 resolveAuthority fails closed on null instead of throwing
+  ---
+  duration_ms: 96.0773
+  type: 'test'
+  ...
+# Subtest: R14 resolveAuthority fails closed on undefined instead of throwing
+ok 253 - R14 resolveAuthority fails closed on undefined instead of throwing
+  ---
+  duration_ms: 90.0001
+  type: 'test'
+  ...
+# Subtest: R14 resolveAuthority fails closed on a number instead of throwing
+ok 254 - R14 resolveAuthority fails closed on a number instead of throwing
+  ---
+  duration_ms: 94.3739
+  type: 'test'
+  ...
+# Subtest: R14 resolveAuthority fails closed on a string instead of throwing
+ok 255 - R14 resolveAuthority fails closed on a string instead of throwing
+  ---
+  duration_ms: 83.3128
+  type: 'test'
+  ...
+# Subtest: R14 resolveAuthority fails closed on an array instead of throwing
+ok 256 - R14 resolveAuthority fails closed on an array instead of throwing
+  ---
+  duration_ms: 86.77
+  type: 'test'
+  ...
+# Subtest: R14 resolveAuthority fails closed on an empty object instead of throwing
+ok 257 - R14 resolveAuthority fails closed on an empty object instead of throwing
+  ---
+  duration_ms: 90.9834
+  type: 'test'
+  ...
+# Subtest: R14 resolveAuthority fails closed on a proto-polluted object instead of throwing
+ok 258 - R14 resolveAuthority fails closed on a proto-polluted object instead of throwing
+  ---
+  duration_ms: 88.9469
+  type: 'test'
+  ...
+# Subtest: R14 resolveAuthority refuses a non-string authoritySubject rather than coercing it
+ok 259 - R14 resolveAuthority refuses a non-string authoritySubject rather than coercing it
+  ---
+  duration_ms: 85.4315
+  type: 'test'
+  ...
+# Subtest: R14 resolveAuthority refuses a non-string goal rather than coercing it
+ok 260 - R14 resolveAuthority refuses a non-string goal rather than coercing it
+  ---
+  duration_ms: 82.3292
+  type: 'test'
+  ...
+# Subtest: R14 resolveAuthority refuses a non-string role rather than coercing it
+ok 261 - R14 resolveAuthority refuses a non-string role rather than coercing it
+  ---
+  duration_ms: 85.9361
+  type: 'test'
+  ...
+# Subtest: R14 resolveAuthority refuses a non-string stage rather than coercing it
+ok 262 - R14 resolveAuthority refuses a non-string stage rather than coercing it
+  ---
+  duration_ms: 87.0385
+  type: 'test'
+  ...
+# Subtest: R14 resolveAuthority refuses a non-string operation rather than coercing it
+ok 263 - R14 resolveAuthority refuses a non-string operation rather than coercing it
+  ---
+  duration_ms: 82.0604
+  type: 'test'
+  ...
+# Subtest: R14 resolveAuthority refuses a non-string host rather than coercing it
+ok 264 - R14 resolveAuthority refuses a non-string host rather than coercing it
+  ---
+  duration_ms: 115.1416
+  type: 'test'
+  ...
+# Subtest: R13 public resolver rejects a schema-invalid raw registry
+ok 265 - R13 public resolver rejects a schema-invalid raw registry
+  ---
+  duration_ms: 28.9573
+  type: 'test'
+  ...
+# Subtest: R13 public resolver rejects widened Gate 2 applicability before resolution
+ok 266 - R13 public resolver rejects widened Gate 2 applicability before resolution
+  ---
+  duration_ms: 89.9472
+  type: 'test'
+  ...
+# Subtest: R13 public resolver rejects an unapproved ALLOW before resolution
+ok 267 - R13 public resolver rejects an unapproved ALLOW before resolution
+  ---
+  duration_ms: 81.9319
+  type: 'test'
+  ...
+# Subtest: R13 public resolver rejects stale-source promotion before resolution
+ok 268 - R13 public resolver rejects stale-source promotion before resolution
+  ---
+  duration_ms: 84.6132
+  type: 'test'
+  ...
+# Subtest: R13 public resolver rejects recomputed-digest semantic mutation before resolution
+ok 269 - R13 public resolver rejects recomputed-digest semantic mutation before resolution
+  ---
+  duration_ms: 85.4915
+  type: 'test'
+  ...
+# Subtest: R13 public resolver resolves only a completely validated registry
+ok 270 - R13 public resolver resolves only a completely validated registry
+  ---
+  duration_ms: 163.3863
+  type: 'test'
+  ...
+# Subtest: R13 permission YAML has exactly 34 path-keyed structural containers
+ok 271 - R13 permission YAML has exactly 34 path-keyed structural containers
+  ---
+  duration_ms: 9.5015
+  type: 'test'
+  ...
+# Subtest: R13 permission YAML excludes all six empty ask containers
+ok 272 - R13 permission YAML excludes all six empty ask containers
+  ---
+  duration_ms: 9.6789
+  type: 'test'
+  ...
+# Subtest: R13 permission YAML publishes exactly 54 mediated restrictions
+ok 273 - R13 permission YAML publishes exactly 54 mediated restrictions
+  ---
+  duration_ms: 10.3252
+  type: 'test'
+  ...
+# Subtest: R13 permission YAML publishes exactly 51 narrative documentation rules
+ok 274 - R13 permission YAML publishes exactly 51 narrative documentation rules
+  ---
+  duration_ms: 11.8106
+  type: 'test'
+  ...
+# Subtest: R13 permission YAML publishes zero CI rules
+ok 275 - R13 permission YAML publishes zero CI rules
+  ---
+  duration_ms: 10.4199
+  type: 'test'
+  ...
+# Subtest: R13 permission YAML publishes all 49 allow leaves as nonbinding documentation
+ok 276 - R13 permission YAML publishes all 49 allow leaves as nonbinding documentation
+  ---
+  duration_ms: 14.5222
+  type: 'test'
+  ...
+# Subtest: R13 builder-deps allowlist and note remain advisory documentation
+ok 277 - R13 builder-deps allowlist and note remain advisory documentation
+  ---
+  duration_ms: 15.7351
+  type: 'test'
+  ...
+# Subtest: R13 every permission rule has exact YAML basis and profile-scoped applicability
+ok 278 - R13 every permission rule has exact YAML basis and profile-scoped applicability
+  ---
+  duration_ms: 17.7264
+  type: 'test'
+  ...
+# Subtest: R13 preserves every R1-R12 reconciliation record byte-semantically
+ok 279 - R13 preserves every R1-R12 reconciliation record byte-semantically
+  ---
+  duration_ms: 16.4548
+  type: 'test'
+  ...
+# Subtest: R13 ships an exact typed migration from the rejected R12 registry snapshot
+ok 280 - R13 ships an exact typed migration from the rejected R12 registry snapshot
+  ---
+  duration_ms: 14.4562
+  type: 'test'
+  ...
+# Subtest: R13 registry-rework-0683bc0 rejects append evidence
+ok 281 - R13 registry-rework-0683bc0 rejects append evidence
+  ---
+  duration_ms: 108.8687
+  type: 'test'
+  ...
+# Subtest: R13 registry-rework-0683bc0 rejects remove evidence
+ok 282 - R13 registry-rework-0683bc0 rejects remove evidence
+  ---
+  duration_ms: 78.2823
+  type: 'test'
+  ...
+# Subtest: R13 registry-rework-0683bc0 rejects duplicate evidence
+ok 283 - R13 registry-rework-0683bc0 rejects duplicate evidence
+  ---
+  duration_ms: 97.0566
+  type: 'test'
+  ...
+# Subtest: R13 registry-rework-0683bc0 rejects substitute evidence
+ok 284 - R13 registry-rework-0683bc0 rejects substitute evidence
+  ---
+  duration_ms: 82.3798
+  type: 'test'
+  ...
+# Subtest: R10 goal skill Gate 1 is an operative nondelegable coordinator refusal
+ok 285 - R10 goal skill Gate 1 is an operative nondelegable coordinator refusal
+  ---
+  duration_ms: 167.0691
+  type: 'test'
+  ...
+# Subtest: R10 goal skill verification custody is an operative coordinator refusal
+ok 286 - R10 goal skill verification custody is an operative coordinator refusal
+  ---
+  duration_ms: 97.0306
+  type: 'test'
+  ...
+# Subtest: R10 goal skill human-gate hook condition requires an agent-completable stop report
+ok 287 - R10 goal skill human-gate hook condition requires an agent-completable stop report
+  ---
+  duration_ms: 95.4684
+  type: 'test'
+  ...
+# Subtest: R10 goal skill stop rule is operative and coordinator-scoped
+ok 288 - R10 goal skill stop rule is operative and coordinator-scoped
+  ---
+  duration_ms: 95.6335
+  type: 'test'
+  ...
+# Subtest: R10 coordinator commentary cannot mutate ratified authority
+ok 289 - R10 coordinator commentary cannot mutate ratified authority
+  ---
+  duration_ms: 163.3648
+  type: 'test'
+  ...
+# Subtest: R10 coordinator Gate 1 rule is nondelegable and precisely scoped
+ok 290 - R10 coordinator Gate 1 rule is nondelegable and precisely scoped
+  ---
+  duration_ms: 10.6089
+  type: 'test'
+  ...
+# Subtest: R10 coordinator Gate 2 prose is superseded by the R12 advisory non-grant
+ok 291 - R10 coordinator Gate 2 prose is superseded by the R12 advisory non-grant
+  ---
+  duration_ms: 88.7397
+  type: 'test'
+  ...
+# Subtest: R10 coordinator verification custody cannot be narrative advice
+ok 292 - R10 coordinator verification custody cannot be narrative advice
+  ---
+  duration_ms: 87.0173
+  type: 'test'
+  ...
+# Subtest: R10 coordinator ownership rule is an operative state-transition refusal
+ok 293 - R10 coordinator ownership rule is an operative state-transition refusal
+  ---
+  duration_ms: 97.6552
+  type: 'test'
+  ...
+# Subtest: R10 scoped Gate 1 reopening is operative rather than blanket narrative advice
+ok 294 - R10 scoped Gate 1 reopening is operative rather than blanket narrative advice
+  ---
+  duration_ms: 93.6161
+  type: 'test'
+  ...
+# Subtest: R10 every operative goal and coordinator rule has a source-derived positive resolver vector
+ok 295 - R10 every operative goal and coordinator rule has a source-derived positive resolver vector
+  ---
+  duration_ms: 6733.5593
+  type: 'test'
+  ...
+# Subtest: R10 every operative goal and coordinator rule has a source-derived negative resolver vector
+ok 296 - R10 every operative goal and coordinator rule has a source-derived negative resolver vector
+  ---
+  duration_ms: 3263.2675
+  type: 'test'
+  ...
+# Subtest: R10 Gate 3 resolves the coordinator merge repo mutation refusal
+ok 297 - R10 Gate 3 resolves the coordinator merge repo mutation refusal
+  ---
+  duration_ms: 89.933
+  type: 'test'
+  ...
+# Subtest: R10 Gate 3 resolves the coordinator merge state transition refusal
+ok 298 - R10 Gate 3 resolves the coordinator merge state transition refusal
+  ---
+  duration_ms: 125.7858
+  type: 'test'
+  ...
+# Subtest: R10 Gate 3 does not resolve for builder runtime external writes
+ok 299 - R10 Gate 3 does not resolve for builder runtime external writes
+  ---
+  duration_ms: 113.838
+  type: 'test'
+  ...
+# Subtest: R10 Gate 3 does not resolve for CI deterministic read queries
+ok 300 - R10 Gate 3 does not resolve for CI deterministic read queries
+  ---
+  duration_ms: 86.3232
+  type: 'test'
+  ...
+# Subtest: R10 ships an exact typed migration from the R9 registry snapshot
+ok 301 - R10 ships an exact typed migration from the R9 registry snapshot
+  ---
+  duration_ms: 7.0999
+  type: 'test'
+  ...
+# Subtest: R10 registry-rework-91145d7 rejects append evidence
+ok 302 - R10 registry-rework-91145d7 rejects append evidence
+  ---
+  duration_ms: 76.1576
+  type: 'test'
+  ...
+# Subtest: R10 registry-rework-91145d7 rejects remove evidence
+ok 303 - R10 registry-rework-91145d7 rejects remove evidence
+  ---
+  duration_ms: 78.993
+  type: 'test'
+  ...
+# Subtest: R10 registry-rework-91145d7 rejects duplicate evidence
+ok 304 - R10 registry-rework-91145d7 rejects duplicate evidence
+  ---
+  duration_ms: 83.9198
+  type: 'test'
+  ...
+# Subtest: R10 registry-rework-91145d7 rejects substitute evidence
+ok 305 - R10 registry-rework-91145d7 rejects substitute evidence
+  ---
+  duration_ms: 86.7649
+  type: 'test'
+  ...
+# Subtest: R11 preserves every R1-R10 reconciliation record exactly
+ok 306 - R11 preserves every R1-R10 reconciliation record exactly
+  ---
+  duration_ms: 12.6481
+  type: 'test'
+  ...
+# Subtest: R11 compound coordinator paragraph publishes ownership independently
+ok 307 - R11 compound coordinator paragraph publishes ownership independently
+  ---
+  duration_ms: 12.0091
+  type: 'test'
+  ...
+# Subtest: R11 compound coordinator ownership has an explicit source-authored positive query
+ok 308 - R11 compound coordinator ownership has an explicit source-authored positive query
+  ---
+  duration_ms: 94.3615
+  type: 'test'
+  ...
+# Subtest: R11 compound coordinator ownership has an explicit source-authored negative query
+ok 309 - R11 compound coordinator ownership has an explicit source-authored negative query
+  ---
+  duration_ms: 85.7239
+  type: 'test'
+  ...
+# Subtest: R11 compound coordinator paragraph publishes frozen-contract independently
+ok 310 - R11 compound coordinator paragraph publishes frozen-contract independently
+  ---
+  duration_ms: 9.2524
+  type: 'test'
+  ...
+# Subtest: R11 compound coordinator frozen-contract has an explicit source-authored positive query
+ok 311 - R11 compound coordinator frozen-contract has an explicit source-authored positive query
+  ---
+  duration_ms: 89.474
+  type: 'test'
+  ...
+# Subtest: R11 compound coordinator frozen-contract has an explicit source-authored negative query
+ok 312 - R11 compound coordinator frozen-contract has an explicit source-authored negative query
+  ---
+  duration_ms: 83.3728
+  type: 'test'
+  ...
+# Subtest: R11 compound coordinator paragraph publishes tripwire independently
+ok 313 - R11 compound coordinator paragraph publishes tripwire independently
+  ---
+  duration_ms: 8.7572
+  type: 'test'
+  ...
+# Subtest: R11 compound coordinator tripwire has an explicit source-authored positive query
+ok 314 - R11 compound coordinator tripwire has an explicit source-authored positive query
+  ---
+  duration_ms: 89.2541
+  type: 'test'
+  ...
+# Subtest: R11 compound coordinator tripwire has an explicit source-authored negative query
+ok 315 - R11 compound coordinator tripwire has an explicit source-authored negative query
+  ---
+  duration_ms: 83.3156
+  type: 'test'
+  ...
+# Subtest: R11 compound coordinator paragraph publishes security-boundary independently
+ok 316 - R11 compound coordinator paragraph publishes security-boundary independently
+  ---
+  duration_ms: 9.0677
+  type: 'test'
+  ...
+# Subtest: R11 compound coordinator security-boundary has an explicit source-authored positive query
+ok 317 - R11 compound coordinator security-boundary has an explicit source-authored positive query
+  ---
+  duration_ms: 84.2786
+  type: 'test'
+  ...
+# Subtest: R11 compound coordinator security-boundary has an explicit source-authored negative query
+ok 318 - R11 compound coordinator security-boundary has an explicit source-authored negative query
+  ---
+  duration_ms: 83.9299
+  type: 'test'
+  ...
+# Subtest: R11 compound coordinator paragraph publishes external-capability independently
+ok 319 - R11 compound coordinator paragraph publishes external-capability independently
+  ---
+  duration_ms: 10.5388
+  type: 'test'
+  ...
+# Subtest: R11 compound coordinator external-capability has an explicit source-authored positive query
+ok 320 - R11 compound coordinator external-capability has an explicit source-authored positive query
+  ---
+  duration_ms: 87.6076
+  type: 'test'
+  ...
+# Subtest: R11 compound coordinator external-capability has an explicit source-authored negative query
+ok 321 - R11 compound coordinator external-capability has an explicit source-authored negative query
+  ---
+  duration_ms: 81.6578
+  type: 'test'
+  ...
+# Subtest: R11 compound coordinator paragraph publishes empty-queue independently
+ok 322 - R11 compound coordinator paragraph publishes empty-queue independently
+  ---
+  duration_ms: 11.1685
+  type: 'test'
+  ...
+# Subtest: R11 compound coordinator empty-queue has an explicit source-authored positive query
+ok 323 - R11 compound coordinator empty-queue has an explicit source-authored positive query
+  ---
+  duration_ms: 83.5962
+  type: 'test'
+  ...
+# Subtest: R11 compound coordinator empty-queue has an explicit source-authored negative query
+ok 324 - R11 compound coordinator empty-queue has an explicit source-authored negative query
+  ---
+  duration_ms: 85.4019
+  type: 'test'
+  ...
+# Subtest: R11 publishes the complete protected block: SPEC-CONVENTION exact Allowed Files block
+ok 325 - R11 publishes the complete protected block: SPEC-CONVENTION exact Allowed Files block
+  ---
+  duration_ms: 10.0153
+  type: 'test'
+  ...
+# Subtest: R11 publishes the complete protected block: SPEC-CONVENTION stop and no-self-expansion block
+ok 326 - R11 publishes the complete protected block: SPEC-CONVENTION stop and no-self-expansion block
+  ---
+  duration_ms: 9.7638
+  type: 'test'
+  ...
+# Subtest: R11 publishes the complete protected block: PDD approved-contract mutation block
+ok 327 - R11 publishes the complete protected block: PDD approved-contract mutation block
+  ---
+  duration_ms: 11.9037
+  type: 'test'
+  ...
+# Subtest: R11 publishes the complete protected block: PDD mandatory session-handoff block
+ok 328 - R11 publishes the complete protected block: PDD mandatory session-handoff block
+  ---
+  duration_ms: 14.2525
+  type: 'test'
+  ...
+# Subtest: R11 protected normative blocks reject exclusion
+ok 329 - R11 protected normative blocks reject exclusion
+  ---
+  duration_ms: 103.3892
+  type: 'test'
+  ...
+# Subtest: R11 protected normative blocks reject first-line truncation
+ok 330 - R11 protected normative blocks reject first-line truncation
+  ---
+  duration_ms: 90.4254
+  type: 'test'
+  ...
+# Subtest: R11 protected normative blocks reject a nearby-item authority-basis substitution
+ok 331 - R11 protected normative blocks reject a nearby-item authority-basis substitution
+  ---
+  duration_ms: 99.6236
+  type: 'test'
+  ...
+# Subtest: R11 all 54 permission-profile restrictions have precise mediated loaded-host scope
+ok 332 - R11 all 54 permission-profile restrictions have precise mediated loaded-host scope
+  ---
+  duration_ms: 10.1015
+  type: 'test'
+  ...
+# Subtest: R11 loaded builder profile denial resolves only through mediated host authority
+ok 333 - R11 loaded builder profile denial resolves only through mediated host authority
+  ---
+  duration_ms: 99.9068
+  type: 'test'
+  ...
+# Subtest: R11 permission-profile authority excludes unenrolled host
+ok 334 - R11 permission-profile authority excludes unenrolled host
+  ---
+  duration_ms: 83.8132
+  type: 'test'
+  ...
+# Subtest: R11 permission-profile authority excludes unsupported host
+ok 335 - R11 permission-profile authority excludes unsupported host
+  ---
+  duration_ms: 84.0783
+  type: 'test'
+  ...
+# Subtest: R11 permission-profile authority excludes CI host
+ok 336 - R11 permission-profile authority excludes CI host
+  ---
+  duration_ms: 88.6833
+  type: 'test'
+  ...
+# Subtest: R11 permission-profile authority excludes wrong role
+ok 337 - R11 permission-profile authority excludes wrong role
+  ---
+  duration_ms: 91.2399
+  type: 'test'
+  ...
+# Subtest: R12 exact three binding Gate 2 rules use ALLOW with no refusal code
+ok 338 - R12 exact three binding Gate 2 rules use ALLOW with no refusal code
+  ---
+  duration_ms: 9.5076
+  type: 'test'
+  ...
+# Subtest: R11 resolver propagates the controlling Gate 2 ALLOW decision
+ok 339 - R11 resolver propagates the controlling Gate 2 ALLOW decision
+  ---
+  duration_ms: 89.3405
+  type: 'test'
+  ...
+# Subtest: R11 resolver returns conflict for same highest-tier claim with different decisions
+ok 340 - R11 resolver returns conflict for same highest-tier claim with different decisions
+  ---
+  duration_ms: 88.323
+  type: 'test'
+  ...
+# Subtest: R11 validator rejects any unapproved ALLOW rule
+ok 341 - R11 validator rejects any unapproved ALLOW rule
+  ---
+  duration_ms: 96.2658
+  type: 'test'
+  ...
+# Subtest: R12 the complete ALLOW set contains exactly the three binding Gate 2 grants
+ok 342 - R12 the complete ALLOW set contains exactly the three binding Gate 2 grants
+  ---
+  duration_ms: 9.5473
+  type: 'test'
+  ...
+# Subtest: R12 coordinator-pattern delegation guidance remains an advisory non-grant
+ok 343 - R12 coordinator-pattern delegation guidance remains an advisory non-grant
+  ---
+  duration_ms: 85.1516
+  type: 'test'
+  ...
+# Subtest: R12 a fourth corroborating or unratified ALLOW is rejected
+ok 344 - R12 a fourth corroborating or unratified ALLOW is rejected
+  ---
+  duration_ms: 80.9893
+  type: 'test'
+  ...
+# Subtest: R12 every permission-profile header and container is structural excluded inventory
+ok 345 - R12 every permission-profile header and container is structural excluded inventory
+  ---
+  duration_ms: 11.2406
+  type: 'test'
+  ...
+# Subtest: R12 obsolete builder-architecture profile-header rule is absent
+ok 346 - R12 obsolete builder-architecture profile-header rule is absent
+  ---
+  duration_ms: 11.7323
+  type: 'test'
+  ...
+# Subtest: R12 reviewer git-commit denial binds only its canonical YAML rule item
+ok 347 - R12 reviewer git-commit denial binds only its canonical YAML rule item
+  ---
+  duration_ms: 12.0247
+  type: 'test'
+  ...
+# Subtest: R12 a permission-profile claim based on a structural header is rejected
+ok 348 - R12 a permission-profile claim based on a structural header is rejected
+  ---
+  duration_ms: 87.8451
+  type: 'test'
+  ...
+# Subtest: R12 rejects a content-derived legacy item ID on a published Markdown rule
+ok 349 - R12 rejects a content-derived legacy item ID on a published Markdown rule
+  ---
+  duration_ms: 87.5288
+  type: 'test'
+  ...
+# Subtest: R12 preserves every R1-R11 reconciliation record byte-semantically
+ok 350 - R12 preserves every R1-R11 reconciliation record byte-semantically
+  ---
+  duration_ms: 12.0517
+  type: 'test'
+  ...
+# Subtest: R12 ships an exact typed migration from the R11 registry snapshot
+ok 351 - R12 ships an exact typed migration from the R11 registry snapshot
+  ---
+  duration_ms: 12.3743
+  type: 'test'
+  ...
+# Subtest: R12 registry-rework-544d8a3 rejects append evidence
+ok 352 - R12 registry-rework-544d8a3 rejects append evidence
+  ---
+  duration_ms: 95.2149
+  type: 'test'
+  ...
+# Subtest: R12 registry-rework-544d8a3 rejects remove evidence
+ok 353 - R12 registry-rework-544d8a3 rejects remove evidence
+  ---
+  duration_ms: 81.1425
+  type: 'test'
+  ...
+# Subtest: R12 registry-rework-544d8a3 rejects duplicate evidence
+ok 354 - R12 registry-rework-544d8a3 rejects duplicate evidence
+  ---
+  duration_ms: 84.1872
+  type: 'test'
+  ...
+# Subtest: R12 registry-rework-544d8a3 rejects substitute evidence
+ok 355 - R12 registry-rework-544d8a3 rejects substitute evidence
+  ---
+  duration_ms: 82.7585
+  type: 'test'
+  ...
+# Subtest: R11 ships an exact typed migration from the R10 registry snapshot
+ok 356 - R11 ships an exact typed migration from the R10 registry snapshot
+  ---
+  duration_ms: 10.0084
+  type: 'test'
+  ...
+# Subtest: R11 registry-rework-ee29973 rejects append evidence
+ok 357 - R11 registry-rework-ee29973 rejects append evidence
+  ---
+  duration_ms: 91.9535
+  type: 'test'
+  ...
+# Subtest: R11 registry-rework-ee29973 rejects remove evidence
+ok 358 - R11 registry-rework-ee29973 rejects remove evidence
+  ---
+  duration_ms: 107.2578
+  type: 'test'
+  ...
+# Subtest: R11 registry-rework-ee29973 rejects duplicate evidence
+ok 359 - R11 registry-rework-ee29973 rejects duplicate evidence
+  ---
+  duration_ms: 87.0563
+  type: 'test'
+  ...
+# Subtest: R11 registry-rework-ee29973 rejects substitute evidence
+ok 360 - R11 registry-rework-ee29973 rejects substitute evidence
+  ---
+  duration_ms: 86.0012
+  type: 'test'
+  ...
+# Subtest: R10 source-derived registry-rework loop rejects append evidence
+ok 361 - R10 source-derived registry-rework loop rejects append evidence
+  ---
+  duration_ms: 1113.5596
+  type: 'test'
+  ...
+# Subtest: R10 source-derived registry-rework loop rejects remove evidence
+ok 362 - R10 source-derived registry-rework loop rejects remove evidence
+  ---
+  duration_ms: 1203.2883
+  type: 'test'
+  ...
+# Subtest: R10 source-derived registry-rework loop rejects duplicate evidence
+ok 363 - R10 source-derived registry-rework loop rejects duplicate evidence
+  ---
+  duration_ms: 1143.4777
+  type: 'test'
+  ...
+# Subtest: R10 source-derived registry-rework loop rejects substitute evidence
+ok 364 - R10 source-derived registry-rework loop rejects substitute evidence
+  ---
+  duration_ms: 1088.7286
+  type: 'test'
+  ...
+# Subtest: R9 publishes all thirteen charter integration scenarios individually
+ok 365 - R9 publishes all thirteen charter integration scenarios individually
+  ---
+  duration_ms: 6.2782
+  type: 'test'
+  ...
+# Subtest: R9 publishes all five charter refusal-class rows individually
+ok 366 - R9 publishes all five charter refusal-class rows individually
+  ---
+  duration_ms: 7.6843
+  type: 'test'
+  ...
+# Subtest: R9 publishes all twenty-two charter parcel contracts individually
+ok 367 - R9 publishes all twenty-two charter parcel contracts individually
+  ---
+  duration_ms: 6.0782
+  type: 'test'
+  ...
+# Subtest: R9 gives every published item one literal curated classification entry
+ok 368 - R9 gives every published item one literal curated classification entry
+  ---
+  duration_ms: 15.4555
+  type: 'test'
+  ...
+# Subtest: R9 classification curation has no source-wide keyword or terminal fallback
+ok 369 - R9 classification curation has no source-wide keyword or terminal fallback
+  ---
+  duration_ms: 9.2665
+  type: 'test'
+  ...
+# Subtest: R9 loop Gate 2 shares the charter subject with precise dispatch applicability
+ok 370 - R9 loop Gate 2 shares the charter subject with precise dispatch applicability
+  ---
+  duration_ms: 87.6264
+  type: 'test'
+  ...
+# Subtest: R9 loop Gate 3 shares the charter subject with coordinator merge refusal scope
+ok 371 - R9 loop Gate 3 shares the charter subject with coordinator merge refusal scope
+  ---
+  duration_ms: 6.1166
+  type: 'test'
+  ...
+# Subtest: R9 exact coordinator verification custody is an operative refusal on the shared subject
+ok 372 - R9 exact coordinator verification custody is an operative refusal on the shared subject
+  ---
+  duration_ms: 8.1924
+  type: 'test'
+  ...
+# Subtest: R9 loop stop and completion rules retain operative classifications and narrow scope
+ok 373 - R9 loop stop and completion rules retain operative classifications and narrow scope
+  ---
+  duration_ms: 6.2132
+  type: 'test'
+  ...
+# Subtest: R7 Gate 1 binds original ratification scoped re-ratification and nondelegability
+ok 374 - R7 Gate 1 binds original ratification scoped re-ratification and nondelegability
+  ---
+  duration_ms: 9.4163
+  type: 'test'
+  ...
+# Subtest: R7 Gate 2 binds the standing charter grant and operative loop authorization
+ok 375 - R7 Gate 2 binds the standing charter grant and operative loop authorization
+  ---
+  duration_ms: 6.7253
+  type: 'test'
+  ...
+# Subtest: R7 every exclusion uses the closed item-specific code vocabulary
+ok 376 - R7 every exclusion uses the closed item-specific code vocabulary
+  ---
+  duration_ms: 11.9122
+  type: 'test'
+  ...
+# Subtest: R9 shared semantic identities are limited to the exact curated equivalent claims
+ok 377 - R9 shared semantic identities are limited to the exact curated equivalent claims
+  ---
+  duration_ms: 8.7719
+  type: 'test'
+  ...
+# Subtest: R7 all charter decisions D1 through D20 publish active non-narrative authority
+ok 378 - R7 all charter decisions D1 through D20 publish active non-narrative authority
+  ---
+  duration_ms: 8.3926
+  type: 'test'
+  ...
+# Subtest: R8 publishes all nine charter goal-exit requirements individually
+ok 379 - R8 publishes all nine charter goal-exit requirements individually
+  ---
+  duration_ms: 7.4734
+  type: 'test'
+  ...
+# Subtest: R8 publishes all seventeen charter stop-condition bullets individually
+ok 380 - R8 publishes all seventeen charter stop-condition bullets individually
+  ---
+  duration_ms: 17.2164
+  type: 'test'
+  ...
+# Subtest: R8 publishes all five literal charter wave-exit contracts individually
+ok 381 - R8 publishes all five literal charter wave-exit contracts individually
+  ---
+  duration_ms: 39.3234
+  type: 'test'
+  ...
+# Subtest: R8 loop completion and gate requirement bodies remain independently published
+ok 382 - R8 loop completion and gate requirement bodies remain independently published
+  ---
+  duration_ms: 26.6265
+  type: 'test'
+  ...
+# Subtest: R8 generation has no classification or default applicability fallback
+ok 383 - R8 generation has no classification or default applicability fallback
+  ---
+  duration_ms: 22.3076
+  type: 'test'
+  ...
+# Subtest: R8 Gate 2 grant is out of scope for builder runtime external write on unsupported host
+ok 384 - R8 Gate 2 grant is out of scope for builder runtime external write on unsupported host
+  ---
+  duration_ms: 182.5697
+  type: 'test'
+  ...
+# Subtest: R8 unrelated linter return remains structural and cannot publish absence authority
+ok 385 - R8 unrelated linter return remains structural and cannot publish absence authority
+  ---
+  duration_ms: 12.1591
+  type: 'test'
+  ...
+# Subtest: R8 Allowed Files absence is carried only by exact reconciliation evidence
+ok 386 - R8 Allowed Files absence is carried only by exact reconciliation evidence
+  ---
+  duration_ms: 11.0499
+  type: 'test'
+  ...
+# Subtest: R8 verification operation binds exact anti-self-production canon
+ok 387 - R8 verification operation binds exact anti-self-production canon
+  ---
+  duration_ms: 11.0892
+  type: 'test'
+  ...
+# Subtest: R8 verification evidence resolves the exact independent-review meaning
+ok 388 - R8 verification evidence resolves the exact independent-review meaning
+  ---
+  duration_ms: 11.2574
+  type: 'test'
+  ...
+# Subtest: R8 verification evidence rejects a corroborative two-review substitution
+ok 389 - R8 verification evidence rejects a corroborative two-review substitution
+  ---
+  duration_ms: 128.3109
+  type: 'test'
+  ...
+# Subtest: R8 RULE_SEMANTICS_UNCURATED is a closed ratified result code
+ok 390 - R8 RULE_SEMANTICS_UNCURATED is a closed ratified result code
+  ---
+  duration_ms: 210.9775
+  type: 'test'
+  ...
+# Subtest: R8 ships a typed migration from the R7 registry snapshot
+ok 391 - R8 ships a typed migration from the R7 registry snapshot
+  ---
+  duration_ms: 10.3703
+  type: 'test'
+  ...
+# Subtest: R9 ships an exact typed migration from the R8 registry snapshot
+ok 392 - R9 ships an exact typed migration from the R8 registry snapshot
+  ---
+  duration_ms: 12.7613
+  type: 'test'
+  ...
+# Subtest: R8 migration rejects append evidence
+ok 393 - R8 migration rejects append evidence
+  ---
+  duration_ms: 95.2646
+  type: 'test'
+  ...
+# Subtest: R8 migration rejects remove evidence
+ok 394 - R8 migration rejects remove evidence
+  ---
+  duration_ms: 81.5056
+  type: 'test'
+  ...
+# Subtest: R8 migration rejects duplicate evidence
+ok 395 - R8 migration rejects duplicate evidence
+  ---
+  duration_ms: 80.5943
+  type: 'test'
+  ...
+# Subtest: R8 migration rejects substitute evidence
+ok 396 - R8 migration rejects substitute evidence
+  ---
+  duration_ms: 84.2327
+  type: 'test'
+  ...
+# Subtest: R7 natural resolution: D2 canon and operational authority split
+ok 397 - R7 natural resolution: D2 canon and operational authority split
+  ---
+  duration_ms: 82.5851
+  type: 'test'
+  ...
+# Subtest: R7 natural resolution: D18 provider-neutral authorizeAction owner
+ok 398 - R7 natural resolution: D18 provider-neutral authorizeAction owner
+  ---
+  duration_ms: 86.0876
+  type: 'test'
+  ...
+# Subtest: R7 natural resolution: PDD6 builder pre-PR rebase
+ok 399 - R7 natural resolution: PDD6 builder pre-PR rebase
+  ---
+  duration_ms: 127.7827
+  type: 'test'
+  ...
+# Subtest: R14 a resolved result exposes classification, assurance, enforcement owner and severity
+ok 400 - R14 a resolved result exposes classification, assurance, enforcement owner and severity
+  ---
+  duration_ms: 111.5048
+  type: 'test'
+  ...
+# Subtest: R14 a resolved result reports the assurance of its controlling rules, not a default
+ok 401 - R14 a resolved result reports the assurance of its controlling rules, not a default
+  ---
+  duration_ms: 274.8535
+  type: 'test'
+  ...
+# Subtest: R14 a Gate 2 ALLOW whose source no longer matches the ratified grant is refused
+ok 402 - R14 a Gate 2 ALLOW whose source no longer matches the ratified grant is refused
+  ---
+  duration_ms: 102.8057
+  type: 'test'
+  ...
+# Subtest: R14 a Gate 2 ALLOW whose item no longer matches the ratified grant is refused
+ok 403 - R14 a Gate 2 ALLOW whose item no longer matches the ratified grant is refused
+  ---
+  duration_ms: 87.5186
+  type: 'test'
+  ...
+# Subtest: R14 a Gate 2 ALLOW whose value digest no longer matches the ratified grant is refused
+ok 404 - R14 a Gate 2 ALLOW whose value digest no longer matches the ratified grant is refused
+  ---
+  duration_ms: 97.9404
+  type: 'test'
+  ...
+# Subtest: R14 a Gate 2 ALLOW whose authority claim no longer matches the ratified grant is refused
+ok 405 - R14 a Gate 2 ALLOW whose authority claim no longer matches the ratified grant is refused
+  ---
+  duration_ms: 83.367
+  type: 'test'
+  ...
+# Subtest: R14 a new rule wearing an approved Gate 2 rule name cannot inherit its ALLOW
+ok 406 - R14 a new rule wearing an approved Gate 2 rule name cannot inherit its ALLOW
+  ---
+  duration_ms: 82.532
+  type: 'test'
+  ...
+# Subtest: AC4 head floor: the shipped registry is valid, so each refusal below is caused by its mutation
+ok 407 - AC4 head floor: the shipped registry is valid, so each refusal below is caused by its mutation
+  ---
+  duration_ms: 102.642
+  type: 'test'
+  ...
+# Subtest: AC4 O1 rejects a head declaring two superseding binding-manifest commands
+ok 408 - AC4 O1 rejects a head declaring two superseding binding-manifest commands
+  ---
+  duration_ms: 84.0442
+  type: 'test'
+  ...
+# Subtest: AC4 O1 rejects a head declaring two prior binding-manifest commands
+ok 409 - AC4 O1 rejects a head declaring two prior binding-manifest commands
+  ---
+  duration_ms: 91.9982
+  type: 'test'
+  ...
+# Subtest: AC4 O1 rejects a head declaring no superseding binding-manifest command
+ok 410 - AC4 O1 rejects a head declaring no superseding binding-manifest command
+  ---
+  duration_ms: 127.7103
+  type: 'test'
+  ...
+# Subtest: AC4 O1 rejects a head declaring no prior binding-manifest command
+ok 411 - AC4 O1 rejects a head declaring no prior binding-manifest command
+  ---
+  duration_ms: 256.7176
+  type: 'test'
+  ...
+# Subtest: AC4 O2 refuses a pinned record promoted into the head exemption by deletion
+ok 412 - AC4 O2 refuses a pinned record promoted into the head exemption by deletion
+  ---
+  duration_ms: 227.0747
+  type: 'test'
+  ...
+# Subtest: AC4 O3 rejects a head that does not declare superseded-by-amendment with superseding evidence
+ok 413 - AC4 O3 rejects a head that does not declare superseded-by-amendment with superseding evidence
+  ---
+  duration_ms: 79.3282
+  type: 'test'
+  ...
+# Subtest: AC4 O3 rejects a head carrying no forty-hex lowercase git-commit evidence
+ok 414 - AC4 O3 rejects a head carrying no forty-hex lowercase git-commit evidence
+  ---
+  duration_ms: 224.9622
+  type: 'test'
+  ...
+# Subtest: AC4 O3 rejects a head whose command evidence is not coordinator-issued with exit code 0
+ok 415 - AC4 O3 rejects a head whose command evidence is not coordinator-issued with exit code 0
+  ---
+  duration_ms: 167.1893
+  type: 'test'
+  ...
+# Subtest: AC4 O4 rejects a head whose git-commit reference is repointed at another commit
+ok 416 - AC4 O4 rejects a head whose git-commit reference is repointed at another commit
+  ---
+  duration_ms: 163.2859
+  type: 'test'
+  ...
+# Subtest: AC4 O4 rejects a head whose bound git-commit evidence is deleted
+ok 417 - AC4 O4 rejects a head whose bound git-commit evidence is deleted
+  ---
+  duration_ms: 362.8622
+  type: 'test'
+  ...
+# Subtest: AC4 O4 hermetic residual remains explicit for a generic nonreserved successor Git digest
+ok 418 - AC4 O4 hermetic residual remains explicit for a generic nonreserved successor Git digest
+  ---
+  duration_ms: 792.5129
+  type: 'test'
+  ...
+# Subtest: AC4 O5 rejects a record carrying the same attestation twice
+ok 419 - AC4 O5 rejects a record carrying the same attestation twice
+  ---
+  duration_ms: 254.0245
+  type: 'test'
+  ...
+# Subtest: AC4 R19 route A: a shadow link declaring the manifest of a tampered registry is refused
+ok 420 - AC4 R19 route A: a shadow link declaring the manifest of a tampered registry is refused
+  ---
+  duration_ms: 186.9741
+  type: 'test'
+  ...
+# Subtest: R22 control: the shipped registry is valid, so every refusal below is caused by its mutation
+ok 421 - R22 control: the shipped registry is valid, so every refusal below is caused by its mutation
+  ---
+  duration_ms: 85.8617
+  type: 'test'
+  ...
+# Subtest: R22 O6 refuses deleting the head and substituting a copy under a fresh unpinned id
+ok 422 - R22 O6 refuses deleting the head and substituting a copy under a fresh unpinned id
+  ---
+  duration_ms: 234.3149
+  type: 'test'
+  ...
+# Subtest: R22 O6 refuses rewriting the head IN PLACE under the same id
+ok 423 - R22 O6 refuses rewriting the head IN PLACE under the same id
+  ---
+  duration_ms: 1009.0097
+  type: 'test'
+  ...
+# Subtest: R22 O6 refuses rewriting the head attestation even with no payload at all
+ok 424 - R22 O6 refuses rewriting the head attestation even with no payload at all
+  ---
+  duration_ms: 216.7119
+  type: 'test'
+  ...
+# Subtest: R22 O7 ADMITS a properly chained appended head and preserves the demoted head
+ok 425 - R22 O7 ADMITS a properly chained appended head and preserves the demoted head
+  ---
+  duration_ms: 134.3487
+  type: 'test'
+  ...
+# Subtest: R22 O7 refuses an append that also rewrites the demoted former head
+ok 426 - R22 O7 refuses an append that also rewrites the demoted former head
+  ---
+  duration_ms: 255.7425
+  type: 'test'
+  ...
+# Subtest: R22 O3 refuses gutted chain commands that a coordinator decoy would have excused
+ok 427 - R22 O3 refuses gutted chain commands that a coordinator decoy would have excused
+  ---
+  duration_ms: 203.9507
+  type: 'test'
+  ...
+# Subtest: R22 O5 refuses deleting the unbound second git-commit entry from the head
+ok 428 - R22 O5 refuses deleting the unbound second git-commit entry from the head
+  ---
+  duration_ms: 251.5452
+  type: 'test'
+  ...
+# Subtest: R22 O5 refuses a fabricated extra git-commit entry on the head
+ok 429 - R22 O5 refuses a fabricated extra git-commit entry on the head
+  ---
+  duration_ms: 244.1318
+  type: 'test'
+  ...
+# Subtest: R22 O5 refuses the bound git-commit reference repeated under a differing digest
+ok 430 - R22 O5 refuses the bound git-commit reference repeated under a differing digest
+  ---
+  duration_ms: 183.8489
+  type: 'test'
+  ...
+# Subtest: R23 O5 refuses a head whose entire Git provenance is fabricated (G6)
+ok 431 - R23 O5 refuses a head whose entire Git provenance is fabricated (G6)
+  ---
+  duration_ms: 186.9586
+  type: 'test'
+  ...
+# Subtest: R23 O5 refuses repointing the head UNBOUND git-commit reference (was a stated residual)
+ok 432 - R23 O5 refuses repointing the head UNBOUND git-commit reference (was a stated residual)
+  ---
+  duration_ms: 371.9359
+  type: 'test'
+  ...
+# Subtest: R22 O7 limit, stated exactly: the append path is one deep, and the second is refused
+ok 433 - R22 O7 limit, stated exactly: the append path is one deep, and the second is refused
+  ---
+  duration_ms: 242.567
+  type: 'test'
+  ...
+# Subtest: chain topology: an off-path migration record is refused as an orphan
+ok 434 - chain topology: an off-path migration record is refused as an orphan
+  ---
+  duration_ms: 134.1267
+  type: 'test'
+  ...
+# Subtest: chain topology: a self-looping head is refused as a cycle
+ok 435 - chain topology: a self-looping head is refused as a cycle
+  ---
+  duration_ms: 136.4493
+  type: 'test'
+  ...
+# Subtest: chain topology: two records chaining from one predecessor are refused as a fork
+ok 436 - chain topology: two records chaining from one predecessor are refused as a fork
+  ---
+  duration_ms: 153.8064
+  type: 'test'
+  ...
+# Subtest: chain topology: a chain that does not start at the genesis anchor is refused
+ok 437 - chain topology: a chain that does not start at the genesis anchor is refused
+  ---
+  duration_ms: 136.9874
+  type: 'test'
+  ...
+# Subtest: chain topology: removing a middle record truncates the chain and orphans its successors
+ok 438 - chain topology: removing a middle record truncates the chain and orphans its successors
+  ---
+  duration_ms: 236.5661
+  type: 'test'
+  ...
+# Subtest: chain topology: a record chaining from the wrong predecessor is refused
+ok 439 - chain topology: a record chaining from the wrong predecessor is refused
+  ---
+  duration_ms: 130.1706
+  type: 'test'
+  ...
+# Subtest: chain topology: renaming a record out of the chain prefix does not let it escape
+ok 440 - chain topology: renaming a record out of the chain prefix does not let it escape
+  ---
+  duration_ms: 488.5792
+  type: 'test'
+  ...
+# Subtest: R30 adopted sample has source-authored counts before accepting generated output
+ok 441 - R30 adopted sample has source-authored counts before accepting generated output
+  ---
+  duration_ms: 872.5535
+  type: 'test'
+  ...
+# Subtest: R30 all 72 complete published shapes agree with the independent source mapping
+ok 442 - R30 all 72 complete published shapes agree with the independent source mapping
+  ---
+  duration_ms: 44.6528
+  type: 'test'
+  ...
+# Subtest: R30 exact adopted registry and reviewed paraphrases validate without new grants
+ok 443 - R30 exact adopted registry and reviewed paraphrases validate without new grants
+  ---
+  duration_ms: 789.7904
+  type: 'test'
+  ...
+# Subtest: R30 preserves all 19 complete historical reconciliations and appends only one named migration
+ok 444 - R30 preserves all 19 complete historical reconciliations and appends only one named migration
+  ---
+  duration_ms: 1632.8602
+  type: 'test'
+  ...
+# Subtest: R30 exact baseline-to-adoption item and rule delta preserves all post-R13 identities
+ok 445 - R30 exact baseline-to-adoption item and rule delta preserves all post-R13 identities
+  ---
+  duration_ms: 1283.3886
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses statement word with repaired incidental digests
+ok 446 - R30 reserved shape refuses statement word with repaired incidental digests
+  ---
+  duration_ms: 179.0108
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses statement negation with repaired incidental digests
+ok 447 - R30 reserved shape refuses statement negation with repaired incidental digests
+  ---
+  duration_ms: 409.1138
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses statement number with repaired incidental digests
+ok 448 - R30 reserved shape refuses statement number with repaired incidental digests
+  ---
+  duration_ms: 333.6167
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses statement scope with repaired incidental digests
+ok 449 - R30 reserved shape refuses statement scope with repaired incidental digests
+  ---
+  duration_ms: 246.2202
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses subject with repaired incidental digests
+ok 450 - R30 reserved shape refuses subject with repaired incidental digests
+  ---
+  duration_ms: 129.6374
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses claim with repaired incidental digests
+ok 451 - R30 reserved shape refuses claim with repaired incidental digests
+  ---
+  duration_ms: 147.1873
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses decision with repaired incidental digests
+ok 452 - R30 reserved shape refuses decision with repaired incidental digests
+  ---
+  duration_ms: 161.5185
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses classification with repaired incidental digests
+ok 453 - R30 reserved shape refuses classification with repaired incidental digests
+  ---
+  duration_ms: 300.6989
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses owner with repaired incidental digests
+ok 454 - R30 reserved shape refuses owner with repaired incidental digests
+  ---
+  duration_ms: 138.1676
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses severity with repaired incidental digests
+ok 455 - R30 reserved shape refuses severity with repaired incidental digests
+  ---
+  duration_ms: 174.5532
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses refusal code with repaired incidental digests
+ok 456 - R30 reserved shape refuses refusal code with repaired incidental digests
+  ---
+  duration_ms: 293.4267
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses goals with repaired incidental digests
+ok 457 - R30 reserved shape refuses goals with repaired incidental digests
+  ---
+  duration_ms: 140.2391
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses roles with repaired incidental digests
+ok 458 - R30 reserved shape refuses roles with repaired incidental digests
+  ---
+  duration_ms: 195.5364
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses stages with repaired incidental digests
+ok 459 - R30 reserved shape refuses stages with repaired incidental digests
+  ---
+  duration_ms: 159.8756
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses operations with repaired incidental digests
+ok 460 - R30 reserved shape refuses operations with repaired incidental digests
+  ---
+  duration_ms: 155.5168
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses hosts with repaired incidental digests
+ok 461 - R30 reserved shape refuses hosts with repaired incidental digests
+  ---
+  duration_ms: 222.3126
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses pairings with repaired incidental digests
+ok 462 - R30 reserved shape refuses pairings with repaired incidental digests
+  ---
+  duration_ms: 201.6694
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses retirement with repaired incidental digests
+ok 463 - R30 reserved shape refuses retirement with repaired incidental digests
+  ---
+  duration_ms: 147.8057
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses retirement evidence with repaired incidental digests
+ok 464 - R30 reserved shape refuses retirement evidence with repaired incidental digests
+  ---
+  duration_ms: 138.9378
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses missing basis ref with repaired incidental digests
+ok 465 - R30 reserved shape refuses missing basis ref with repaired incidental digests
+  ---
+  duration_ms: 136.1424
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses corroboration as basis with repaired incidental digests
+ok 466 - R30 reserved shape refuses corroboration as basis with repaired incidental digests
+  ---
+  duration_ms: 130.5399
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses source substitution with repaired incidental digests
+ok 467 - R30 reserved shape refuses source substitution with repaired incidental digests
+  ---
+  duration_ms: 132.6471
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses location digest with repaired incidental digests
+ok 468 - R30 reserved shape refuses location digest with repaired incidental digests
+  ---
+  duration_ms: 225.3062
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses value digest with repaired incidental digests
+ok 469 - R30 reserved shape refuses value digest with repaired incidental digests
+  ---
+  duration_ms: 243.9872
+  type: 'test'
+  ...
+# Subtest: R30 C04/events cannot revert assurance to independently-verified through legacy fallback
+ok 470 - R30 C04/events cannot revert assurance to independently-verified through legacy fallback
+  ---
+  duration_ms: 170.3269
+  type: 'test'
+  ...
+# Subtest: R30 C19/warm cannot revert assurance to detected through legacy fallback
+ok 471 - R30 C19/warm cannot revert assurance to detected through legacy fallback
+  ---
+  duration_ms: 139.6717
+  type: 'test'
+  ...
+# Subtest: R30 C23/no-late-allow cannot revert assurance to structural through legacy fallback
+ok 472 - R30 C23/no-late-allow cannot revert assurance to structural through legacy fallback
+  ---
+  duration_ms: 136.9578
+  type: 'test'
+  ...
+# Subtest: R30 L01/continuation cannot revert assurance to narrative through legacy fallback
+ok 473 - R30 L01/continuation cannot revert assurance to narrative through legacy fallback
+  ---
+  duration_ms: 184.6974
+  type: 'test'
+  ...
+# Subtest: R30 required reserved set refuses remove independently of incidental digests
+ok 474 - R30 required reserved set refuses remove independently of incidental digests
+  ---
+  duration_ms: 162.2696
+  type: 'test'
+  ...
+# Subtest: R30 required reserved set refuses substitute independently of incidental digests
+ok 475 - R30 required reserved set refuses substitute independently of incidental digests
+  ---
+  duration_ms: 147.8063
+  type: 'test'
+  ...
+# Subtest: R30 exact basis correspondence refuses copied digest
+ok 476 - R30 exact basis correspondence refuses copied digest
+  ---
+  duration_ms: 200.9049
+  type: 'test'
+  ...
+# Subtest: R30 exact basis correspondence refuses repaired digest
+ok 477 - R30 exact basis correspondence refuses repaired digest
+  ---
+  duration_ms: 148.864
+  type: 'test'
+  ...
+# Subtest: R30 exact basis correspondence refuses locator
+ok 478 - R30 exact basis correspondence refuses locator
+  ---
+  duration_ms: 169.2515
+  type: 'test'
+  ...
+# Subtest: R30 exact basis correspondence refuses missing inventory membership
+ok 479 - R30 exact basis correspondence refuses missing inventory membership
+  ---
+  duration_ms: 161.703
+  type: 'test'
+  ...
+# Subtest: R30 exact basis correspondence refuses borrowed statement
+ok 480 - R30 exact basis correspondence refuses borrowed statement
+  ---
+  duration_ms: 188.5841
+  type: 'test'
+  ...
+# Subtest: R30 exact basis correspondence refuses shared-item swap
+ok 481 - R30 exact basis correspondence refuses shared-item swap
+  ---
+  duration_ms: 206.6898
+  type: 'test'
+  ...
+# Subtest: R30 C02/self-application is exact noncontrolling provenance rather than a runtime grant
+ok 482 - R30 C02/self-application is exact noncontrolling provenance rather than a runtime grant
+  ---
+  duration_ms: 237.7682
+  type: 'test'
+  ...
+# Subtest: R30 C03/adoption is exact noncontrolling provenance rather than a runtime grant
+ok 483 - R30 C03/adoption is exact noncontrolling provenance rather than a runtime grant
+  ---
+  duration_ms: 223.848
+  type: 'test'
+  ...
+# Subtest: R30 C18/reaffirm is exact noncontrolling provenance rather than a runtime grant
+ok 484 - R30 C18/reaffirm is exact noncontrolling provenance rather than a runtime grant
+  ---
+  duration_ms: 242.1837
+  type: 'test'
+  ...
+# Subtest: R30 L01/continuation is exact noncontrolling provenance rather than a runtime grant
+ok 485 - R30 L01/continuation is exact noncontrolling provenance rather than a runtime grant
+  ---
+  duration_ms: 277.5548
+  type: 'test'
+  ...
+# Subtest: R30 L02/publication is exact noncontrolling provenance rather than a runtime grant
+ok 486 - R30 L02/publication is exact noncontrolling provenance rather than a runtime grant
+  ---
+  duration_ms: 391.9742
+  type: 'test'
+  ...
+# Subtest: R30 L03/shaping is exact noncontrolling provenance rather than a runtime grant
+ok 487 - R30 L03/shaping is exact noncontrolling provenance rather than a runtime grant
+  ---
+  duration_ms: 312.0936
+  type: 'test'
+  ...
+# Subtest: R30 U02/original-event is exact noncontrolling provenance rather than a runtime grant
+ok 488 - R30 U02/original-event is exact noncontrolling provenance rather than a runtime grant
+  ---
+  duration_ms: 252.9091
+  type: 'test'
+  ...
+# Subtest: R30 U03/reopen-event is exact noncontrolling provenance rather than a runtime grant
+ok 489 - R30 U03/reopen-event is exact noncontrolling provenance rather than a runtime grant
+  ---
+  duration_ms: 216.3882
+  type: 'test'
+  ...
+# Subtest: R30 U04/a1-event is exact noncontrolling provenance rather than a runtime grant
+ok 490 - R30 U04/a1-event is exact noncontrolling provenance rather than a runtime grant
+  ---
+  duration_ms: 219.8155
+  type: 'test'
+  ...
+# Subtest: R30 applicable C42/gates covers coordinator/shaping/state-transition on supported and unsupported hosts
+ok 491 - R30 applicable C42/gates covers coordinator/shaping/state-transition on supported and unsupported hosts
+  ---
+  duration_ms: 207.6729
+  type: 'test'
+  ...
+# Subtest: R30 applicable C42/gates covers coordinator/step-zero/state-transition on supported and unsupported hosts
+ok 492 - R30 applicable C42/gates covers coordinator/step-zero/state-transition on supported and unsupported hosts
+  ---
+  duration_ms: 274.0648
+  type: 'test'
+  ...
+# Subtest: R30 applicable C42/gates covers shaper/shaping/spec-mutation on supported and unsupported hosts
+ok 493 - R30 applicable C42/gates covers shaper/shaping/spec-mutation on supported and unsupported hosts
+  ---
+  duration_ms: 160.1899
+  type: 'test'
+  ...
+# Subtest: R30 applicable C42/gates covers reviewer/adversarial-review/receipt-validation on supported and unsupported hosts
+ok 494 - R30 applicable C42/gates covers reviewer/adversarial-review/receipt-validation on supported and unsupported hosts
+  ---
+  duration_ms: 160.1355
+  type: 'test'
+  ...
+# Subtest: R30 applicable C42/gates covers coordinator/merge/state-transition on supported and unsupported hosts
+ok 495 - R30 applicable C42/gates covers coordinator/merge/state-transition on supported and unsupported hosts
+  ---
+  duration_ms: 170.0825
+  type: 'test'
+  ...
+# Subtest: R30 applicable C42/contract covers shaper/shaping/spec-mutation on supported and unsupported hosts
+ok 496 - R30 applicable C42/contract covers shaper/shaping/spec-mutation on supported and unsupported hosts
+  ---
+  duration_ms: 171.9467
+  type: 'test'
+  ...
+# Subtest: R30 applicable C42/contract covers reviewer/step-zero/repo-read on supported and unsupported hosts
+ok 497 - R30 applicable C42/contract covers reviewer/step-zero/repo-read on supported and unsupported hosts
+  ---
+  duration_ms: 156.7975
+  type: 'test'
+  ...
+# Subtest: R30 applicable U01/stable-ids covers coordinator/build/repo-mutation on supported and unsupported hosts
+ok 498 - R30 applicable U01/stable-ids covers coordinator/build/repo-mutation on supported and unsupported hosts
+  ---
+  duration_ms: 176.1425
+  type: 'test'
+  ...
+# Subtest: R30 applicable U01/stable-ids covers shaper/shaping/spec-mutation on supported and unsupported hosts
+ok 499 - R30 applicable U01/stable-ids covers shaper/shaping/spec-mutation on supported and unsupported hosts
+  ---
+  duration_ms: 189.2157
+  type: 'test'
+  ...
+# Subtest: R30 applicable U01/stable-ids covers kernel/runtime/receipt-validation on supported and unsupported hosts
+ok 500 - R30 applicable U01/stable-ids covers kernel/runtime/receipt-validation on supported and unsupported hosts
+  ---
+  duration_ms: 159.4494
+  type: 'test'
+  ...
+# Subtest: R30 applicable C11/carriers covers shaper/shaping/spec-mutation on supported and unsupported hosts
+ok 501 - R30 applicable C11/carriers covers shaper/shaping/spec-mutation on supported and unsupported hosts
+  ---
+  duration_ms: 154.0516
+  type: 'test'
+  ...
+# Subtest: R30 applicable C34/manifest covers shaper/step-zero/repo-mutation on supported and unsupported hosts
+ok 502 - R30 applicable C34/manifest covers shaper/step-zero/repo-mutation on supported and unsupported hosts
+  ---
+  duration_ms: 154.6744
+  type: 'test'
+  ...
+# Subtest: R30 applicable C32/accounting covers shaper/shaping/spec-mutation on supported and unsupported hosts
+ok 503 - R30 applicable C32/accounting covers shaper/shaping/spec-mutation on supported and unsupported hosts
+  ---
+  duration_ms: 157.6669
+  type: 'test'
+  ...
+# Subtest: R30 applicable C43/window covers coordinator/closure/repo-mutation on supported and unsupported hosts
+ok 504 - R30 applicable C43/window covers coordinator/closure/repo-mutation on supported and unsupported hosts
+  ---
+  duration_ms: 148.2967
+  type: 'test'
+  ...
+# Subtest: R30 applicable L04/preservation covers operator/runtime/repo-read on supported and unsupported hosts
+ok 505 - R30 applicable L04/preservation covers operator/runtime/repo-read on supported and unsupported hosts
+  ---
+  duration_ms: 157.8535
+  type: 'test'
+  ...
+# Subtest: R30 exact correspondence does not bypass protected operation or migration refusal
+ok 506 - R30 exact correspondence does not bypass protected operation or migration refusal
+  ---
+  duration_ms: 185.1834
+  type: 'test'
+  ...
+# Subtest: R30 approved reference-edge set rejects missing refs with repaired incidental digests
+ok 507 - R30 approved reference-edge set rejects missing refs with repaired incidental digests
+  ---
+  duration_ms: 127.8697
+  type: 'test'
+  ...
+# Subtest: R30 approved reference-edge set rejects extra refs with repaired incidental digests
+ok 508 - R30 approved reference-edge set rejects extra refs with repaired incidental digests
+  ---
+  duration_ms: 125.5603
+  type: 'test'
+  ...
+# Subtest: R30 approved reference-edge set rejects reordered refs with repaired incidental digests
+ok 509 - R30 approved reference-edge set rejects reordered refs with repaired incidental digests
+  ---
+  duration_ms: 127.7691
+  type: 'test'
+  ...
+# Subtest: R30 approved reference-edge set rejects swapped refs with repaired incidental digests
+ok 510 - R30 approved reference-edge set rejects swapped refs with repaired incidental digests
+  ---
+  duration_ms: 140.8769
+  type: 'test'
+  ...
+# Subtest: R30 approved reference-edge set rejects duplicate refs with repaired incidental digests
+ok 511 - R30 approved reference-edge set rejects duplicate refs with repaired incidental digests
+  ---
+  duration_ms: 75.2105
+  type: 'test'
+  ...
+# Subtest: R30 reciprocal inventory edge set rejects missing membership
+ok 512 - R30 reciprocal inventory edge set rejects missing membership
+  ---
+  duration_ms: 141.3891
+  type: 'test'
+  ...
+# Subtest: R30 reciprocal inventory edge set rejects extra membership
+ok 513 - R30 reciprocal inventory edge set rejects extra membership
+  ---
+  duration_ms: 139.9606
+  type: 'test'
+  ...
+# Subtest: R30 reciprocal inventory edge set rejects cross-item membership
+ok 514 - R30 reciprocal inventory edge set rejects cross-item membership
+  ---
+  duration_ms: 144.4527
+  type: 'test'
+  ...
+# Subtest: R30 reciprocal inventory edge set rejects duplicate membership
+ok 515 - R30 reciprocal inventory edge set rejects duplicate membership
+  ---
+  duration_ms: 87.5019
+  type: 'test'
+  ...
+# Subtest: R30 singleton component identity refuses suffix substitution
+ok 516 - R30 singleton component identity refuses suffix substitution
+  ---
+  duration_ms: 167.8676
+  type: 'test'
+  ...
+# Subtest: R30 singleton component identity refuses borrowed suffix
+ok 517 - R30 singleton component identity refuses borrowed suffix
+  ---
+  duration_ms: 150.9249
+  type: 'test'
+  ...
+# Subtest: R30 preserves ordinary unrelated legacy singleton and nonliteral-paraphrase refusals
+ok 518 - R30 preserves ordinary unrelated legacy singleton and nonliteral-paraphrase refusals
+  ---
+  duration_ms: 198.5772
+  type: 'test'
+  ...
+# Subtest: R30 corroboration adds exactly 67 reciprocal edges without changing the designated bases
+ok 519 - R30 corroboration adds exactly 67 reciprocal edges without changing the designated bases
+  ---
+  duration_ms: 1782.9212
+  type: 'test'
+  ...
+# Subtest: R31 independently prescribed successor counts and source snapshot are adopted
+ok 520 - R31 independently prescribed successor counts and source snapshot are adopted
+  ---
+  duration_ms: 11.64
+  type: 'test'
+  ...
+# Subtest: R31 full source-authored rule shapes, designated bases and ordered references are exact
+ok 521 - R31 full source-authored rule shapes, designated bases and ordered references are exact
+  ---
+  duration_ms: 12.4385
+  type: 'test'
+  ...
+# Subtest: R31 complete prior-item correspondence and exact reciprocal sets include every current item
+ok 522 - R31 complete prior-item correspondence and exact reciprocal sets include every current item
+  ---
+  duration_ms: 596.1171
+  type: 'test'
+  ...
+# Subtest: R31 twenty canonical historical records and exact independently pinned append are preserved
+ok 523 - R31 twenty canonical historical records and exact independently pinned append are preserved
+  ---
+  duration_ms: 814.901
+  type: 'test'
+  ...
+# Subtest: R31 reserved M01 shape rejects subject
+ok 524 - R31 reserved M01 shape rejects subject
+  ---
+  duration_ms: 205.2277
+  type: 'test'
+  ...
+# Subtest: R31 reserved M01 shape rejects claim
+ok 525 - R31 reserved M01 shape rejects claim
+  ---
+  duration_ms: 160.8631
+  type: 'test'
+  ...
+# Subtest: R31 reserved M01 shape rejects decision
+ok 526 - R31 reserved M01 shape rejects decision
+  ---
+  duration_ms: 146.7982
+  type: 'test'
+  ...
+# Subtest: R31 reserved M01 shape rejects owner
+ok 527 - R31 reserved M01 shape rejects owner
+  ---
+  duration_ms: 189.3804
+  type: 'test'
+  ...
+# Subtest: R31 reserved M01 shape rejects legacy assurance fallback
+ok 528 - R31 reserved M01 shape rejects legacy assurance fallback
+  ---
+  duration_ms: 220.3446
+  type: 'test'
+  ...
+# Subtest: R31 reserved M01 shape rejects classification
+ok 529 - R31 reserved M01 shape rejects classification
+  ---
+  duration_ms: 225.2815
+  type: 'test'
+  ...
+# Subtest: R31 reserved M01 shape rejects severity
+ok 530 - R31 reserved M01 shape rejects severity
+  ---
+  duration_ms: 176.3545
+  type: 'test'
+  ...
+# Subtest: R31 reserved M01 shape rejects goals
+ok 531 - R31 reserved M01 shape rejects goals
+  ---
+  duration_ms: 164.0441
+  type: 'test'
+  ...
+# Subtest: R31 reserved M01 shape rejects roles
+ok 532 - R31 reserved M01 shape rejects roles
+  ---
+  duration_ms: 142.5066
+  type: 'test'
+  ...
+# Subtest: R31 reserved M01 shape rejects stages
+ok 533 - R31 reserved M01 shape rejects stages
+  ---
+  duration_ms: 157.1819
+  type: 'test'
+  ...
+# Subtest: R31 reserved M01 shape rejects operations
+ok 534 - R31 reserved M01 shape rejects operations
+  ---
+  duration_ms: 176.0435
+  type: 'test'
+  ...
+# Subtest: R31 reserved M01 shape rejects hosts
+ok 535 - R31 reserved M01 shape rejects hosts
+  ---
+  duration_ms: 146.9658
+  type: 'test'
+  ...
+# Subtest: R31 reserved M01 shape rejects retirement
+ok 536 - R31 reserved M01 shape rejects retirement
+  ---
+  duration_ms: 204.4199
+  type: 'test'
+  ...
+# Subtest: R31 reserved M01 shape rejects basis substitution
+ok 537 - R31 reserved M01 shape rejects basis substitution
+  ---
+  duration_ms: 151.8201
+  type: 'test'
+  ...
+# Subtest: R31 reserved M01 shape rejects missing reference
+ok 538 - R31 reserved M01 shape rejects missing reference
+  ---
+  duration_ms: 123.3093
+  type: 'test'
+  ...
+# Subtest: R31 reserved M01 shape rejects extra reference
+ok 539 - R31 reserved M01 shape rejects extra reference
+  ---
+  duration_ms: 302.423
+  type: 'test'
+  ...
+# Subtest: R31 complete M01 duty rejects repaired parcel condition mutation
+ok 540 - R31 complete M01 duty rejects repaired parcel condition mutation
+  ---
+  duration_ms: 156.8501
+  type: 'test'
+  ...
+# Subtest: R31 complete M01 duty rejects repaired every living identifier mutation
+ok 541 - R31 complete M01 duty rejects repaired every living identifier mutation
+  ---
+  duration_ms: 144.6412
+  type: 'test'
+  ...
+# Subtest: R31 complete M01 duty rejects repaired marketplace entry mutation
+ok 542 - R31 complete M01 duty rejects repaired marketplace entry mutation
+  ---
+  duration_ms: 145.4703
+  type: 'test'
+  ...
+# Subtest: R31 complete M01 duty rejects repaired source existence mutation
+ok 543 - R31 complete M01 duty rejects repaired source existence mutation
+  ---
+  duration_ms: 159.5179
+  type: 'test'
+  ...
+# Subtest: R31 complete M01 duty rejects repaired nested manifest equality mutation
+ok 544 - R31 complete M01 duty rejects repaired nested manifest equality mutation
+  ---
+  duration_ms: 160.7261
+  type: 'test'
+  ...
+# Subtest: R31 complete M01 duty rejects repaired URL insufficiency mutation
+ok 545 - R31 complete M01 duty rejects repaired URL insufficiency mutation
+  ---
+  duration_ms: 153.5056
+  type: 'test'
+  ...
+# Subtest: R31 finite source identity rejects remove M01
+ok 546 - R31 finite source identity rejects remove M01
+  ---
+  duration_ms: 108.6812
+  type: 'test'
+  ...
+# Subtest: R31 finite source identity rejects substitute alias
+ok 547 - R31 finite source identity rejects substitute alias
+  ---
+  duration_ms: 105.0663
+  type: 'test'
+  ...
+# Subtest: R31 finite source identity rejects note takes thesis
+ok 548 - R31 finite source identity rejects note takes thesis
+  ---
+  duration_ms: 106.5512
+  type: 'test'
+  ...
+# Subtest: R31 finite source identity rejects thesis old location
+ok 549 - R31 finite source identity rejects thesis old location
+  ---
+  duration_ms: 98.2878
+  type: 'test'
+  ...
+# Subtest: R31 finite source identity rejects historical name reversion
+ok 550 - R31 finite source identity rejects historical name reversion
+  ---
+  duration_ms: 99.2377
+  type: 'test'
+  ...
+# Subtest: R31 finite source identity rejects extra raw alias
+ok 551 - R31 finite source identity rejects extra raw alias
+  ---
+  duration_ms: 101.0749
+  type: 'test'
+  ...
+# Subtest: R31 decision diagnostic rejects repaired commandId substitution
+ok 552 - R31 decision diagnostic rejects repaired commandId substitution
+  ---
+  duration_ms: 111.7358
+  type: 'test'
+  ...
+# Subtest: R31 decision diagnostic rejects repaired inputDigest substitution
+ok 553 - R31 decision diagnostic rejects repaired inputDigest substitution
+  ---
+  duration_ms: 97.395
+  type: 'test'
+  ...
+# Subtest: R31 decision diagnostic rejects repaired resultDigest substitution
+ok 554 - R31 decision diagnostic rejects repaired resultDigest substitution
+  ---
+  duration_ms: 102.2072
+  type: 'test'
+  ...
+# Subtest: R31 decision diagnostic rejects repaired actorClass substitution
+ok 555 - R31 decision diagnostic rejects repaired actorClass substitution
+  ---
+  duration_ms: 100.067
+  type: 'test'
+  ...
+# Subtest: R31 decision diagnostic rejects repaired tool substitution
+ok 556 - R31 decision diagnostic rejects repaired tool substitution
+  ---
+  duration_ms: 98.1179
+  type: 'test'
+  ...
+# Subtest: R31 decision diagnostic rejects repaired toolVersion substitution
+ok 557 - R31 decision diagnostic rejects repaired toolVersion substitution
+  ---
+  duration_ms: 107.5881
+  type: 'test'
+  ...
+# Subtest: R31 decision diagnostic rejects repaired exitCode substitution
+ok 558 - R31 decision diagnostic rejects repaired exitCode substitution
+  ---
+  duration_ms: 104.4334
+  type: 'test'
+  ...
+# Subtest: R31 M01 resolves as source-intent review duty on every host without granting installation
+ok 559 - R31 M01 resolves as source-intent review duty on every host without granting installation
+  ---
+  duration_ms: 942.3001
+  type: 'test'
+  ...
+# Subtest: R31 relocated thesis preserves its complete historical effect and never controls current queries
+ok 560 - R31 relocated thesis preserves its complete historical effect and never controls current queries
+  ---
+  duration_ms: 185.3163
+  type: 'test'
+  ...
+# Subtest: R31 exact migration rejects repaired input path
+ok 561 - R31 exact migration rejects repaired input path
+  ---
+  duration_ms: 122.1077
+  type: 'test'
+  ...
+# Subtest: R31 exact migration rejects repaired input commit
+ok 562 - R31 exact migration rejects repaired input commit
+  ---
+  duration_ms: 107.3089
+  type: 'test'
+  ...
+# Subtest: R31 exact migration rejects repaired Git commit evidence
+ok 563 - R31 exact migration rejects repaired Git commit evidence
+  ---
+  duration_ms: 96.6941
+  type: 'test'
+  ...
+# Subtest: R31 exact migration rejects repaired missing diagnostic
+ok 564 - R31 exact migration rejects repaired missing diagnostic
+  ---
+  duration_ms: 103.9204
+  type: 'test'
+  ...
+# Subtest: R31 required complete shape rejects rule removal
+ok 565 - R31 required complete shape rejects rule removal
+  ---
+  duration_ms: 111.15
+  type: 'test'
+  ...
+# Subtest: R31 required complete shape rejects rule identity substitution
+ok 566 - R31 required complete shape rejects rule identity substitution
+  ---
+  duration_ms: 111.7873
+  type: 'test'
+  ...
+# Subtest: R31 required complete shape rejects thesis classification
+ok 567 - R31 required complete shape rejects thesis classification
+  ---
+  duration_ms: 105.3627
+  type: 'test'
+  ...
+# Subtest: R31 required complete shape rejects thesis decision
+ok 568 - R31 required complete shape rejects thesis decision
+  ---
+  duration_ms: 103.8163
+  type: 'test'
+  ...
+# Subtest: R31 required complete shape rejects thesis assurance
+ok 569 - R31 required complete shape rejects thesis assurance
+  ---
+  duration_ms: 111.6963
+  type: 'test'
+  ...
+# Subtest: R31 required complete shape rejects thesis retirement
+ok 570 - R31 required complete shape rejects thesis retirement
+  ---
+  duration_ms: 102.2751
+  type: 'test'
+  ...
+# Subtest: R31 required complete shape rejects M01 paired rules
+ok 571 - R31 required complete shape rejects M01 paired rules
+  ---
+  duration_ms: 103.4825
+  type: 'test'
+  ...
+# Subtest: R31 required complete shape rejects M01 refusal code
+ok 572 - R31 required complete shape rejects M01 refusal code
+  ---
+  duration_ms: 105.0008
+  type: 'test'
+  ...
+# Subtest: R31 alias duplication remains refused after repairing links and appending a successor
+ok 573 - R31 alias duplication remains refused after repairing links and appending a successor
+  ---
+  duration_ms: 114.1988
+  type: 'test'
+  ...
+1..573
+# tests 573
+# suites 0
+# pass 573
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 759547.3878
+DIRECT_EXIT=0

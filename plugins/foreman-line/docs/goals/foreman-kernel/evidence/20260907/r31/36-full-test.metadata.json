@@ -1,0 +1,9 @@
+{
+  "command": "npm test",
+  "checkpoint": "2fc39405988df4d7073f20d69b65a276329be83d",
+  "startUtc": "2026-09-07T18:01:07.9955162Z",
+  "endUtc": "2026-09-07T18:28:09.9080698Z",
+  "elapsedSeconds": 1621.9185012,
+  "directExit": 0,
+  "expectedMinimumTests": 751
+}

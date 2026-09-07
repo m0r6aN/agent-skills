@@ -1,0 +1,8 @@
+{
+  "command": "git -c core.whitespace=cr-at-eol diff --cached --check authored Markdown/JSON",
+  "startUtc": "2026-09-07T18:35:02.5828590Z",
+  "endUtc": "2026-09-07T18:35:02.7380899Z",
+  "elapsedSeconds": 0.1569602,
+  "directExit": 0,
+  "rawLogsPreserved": true
+}
