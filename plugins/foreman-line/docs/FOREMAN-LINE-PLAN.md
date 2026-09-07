@@ -1,5 +1,7 @@
 # The Foreman Line — Master Plugin Plan
 
+> **Repository identity migration (2026-09-06):** Repository identifiers and paths in this historical record were normalized to `m0r6aN/agent-skills`. Recorded commands were not rerun; all other historical outcomes remain as captured.
+
 **Version:** 0.1 (Draft — working name "the Line"; rename at will)
 **Owner:** Clinton Morgan — Principal Agentic AI Platform Architect, KaseyaOne
 **Status:** Proposed
@@ -138,7 +140,7 @@ Rules: data classification gates eligibility **before** cost optimization runs; 
 
 ## 5a. Skill Injection Policy (the execution-plane library)
 
-The Line is the conveyor; the skills library is the rack of tools hanging above each station (`kaseya-one-productivity-tools`, deployed at `~\.claude\skills\`). Skills are wired in through a single mechanism — a versioned **skill injection matrix**, policy-as-code alongside the routing policy — rather than hardcoding each skill into a pipeline stage:
+The Line is the conveyor; the skills library is the rack of tools hanging above each station (`agent-skills`, deployed at `~\.claude\skills\`). Skills are wired in through a single mechanism — a versioned **skill injection matrix**, policy-as-code alongside the routing policy — rather than hardcoding each skill into a pipeline stage:
 
 ```yaml
 # illustrative — skill-injection.yaml

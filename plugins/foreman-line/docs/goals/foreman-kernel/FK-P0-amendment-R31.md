@@ -1,0 +1,37 @@
+# FK-P0 amendment R31 — current-main source adoption
+
+Status: coordinator proposal under September 7 delegated decision authority; not dispatched. This amendment identifier is reserved here after checking the current goal files. Independent plan review, exact source integration, and accepted Step0 mapping remain prerequisites to implementation. R30's active verification and fixed source snapshot remain untouched.
+
+## R31.1 — Finite subject and source boundary
+
+Adopt only the two exact upstream blobs from main `476b8df6efe6c9974879957147449f61c34cd9a0`, independently compared in `main-source-compatibility-20260907.json` and inventoried in `main-source-impact-20260907.md`: STANDING-CONSTRAINTS rule14 and FOREMAN-LINE-PLAN historical annotation/library-name correction. Those three units, including the annotation-induced thesis relocation, are the complete source-change scope. Preserve the other sixteen source blobs and all eighteen source IDs/paths. No actual main merge is authorized by this amendment.
+
+After fixed R30 full-chain verification and fresh independent final review disposition, create a separate isolated successor branch from the reviewed candidate. The coordinator copies the exact two upstream Git blobs, integrates the amended spec and contract, and commits a real source snapshot before generation. The simulated merge tree is planning evidence only. Record full source commit, all eighteen hashes and the exact prior registry-changing commit; never use a future output commit or mutable HEAD as source evidence.
+
+## R31.2 — Source semantics and finite mappings
+
+M01 preserves the complete conditional builder obligation: for plugin/marketplace parcels, resolve each living install identifier through its declared marketplace entry to an existing plugin source whose nested manifest name equals the requested plugin. URL normalization alone is insufficient. This adoption grants no permission to install, publish, change marketplace configuration or execute external actions. All aliases retain that condition and complete chain. Proposed classification is independent-review-human-judgment with human-ratified source intent, ordinary judgment decision/owner, and a finite exact-shape assurance exception where required. This is not an independently verified runtime-enforcement claim. Exact legal enum values, full applicability arrays, authority subject/claim/basis, source references and test expectations require reviewed Step0. Do not invent a parcel-kind schema axis.
+
+M02 is historical narrative provenance and cannot grant authority or imply commands were rerun. Its insertion moves the existing title-level thesis body from paragraph1 to paragraph2. Preserve item.two-gate-thesis and rule.foreman-line-plan.two-gate-thesis for the actual unchanged thesis. Give the annotation a separate noncontrolling identity. The migration is source-version-aware, pinned to exact approved source identity/location/value shapes; historical generation retains paragraph1. No global target rewrite, generic semantic search, volatile exclusion or identity algorithm redesign is allowed. Bind every affected current rule/source reference to the approved thesis location while preserving historical references against their own snapshots.
+
+M03 changes the existing paragraph value and source provenance at the unchanged Skill Injection Policy anchor. Preserve item.483a4914f57e and its non-normative-explanation exclusion; the library rename creates no new live rule or deployment evidence.
+
+Reserved successor identities require complete exact shapes and required-set presence; mismatch/removal/substitution fails closed and cannot fall through legacy acceptance. Preserve ordinary source, manifest, authority, migration and protected-operation checks. Do not widen any R30 exception to cover R31 implicitly.
+
+## R31.3 — History, counts and acceptance precedence
+
+Verify and preserve all twenty R30 reconciliation records canonically, including historical thirteen-standing-rule statements; append exactly one successor migration linked to the actual prior registry and new source manifests. Preserve all historical digest pins and register the former head for future demotion. Current coverage becomes fourteen numbered standing constraints, preserving identities1–13. Older active-spec thirteen-rule assertions retain their historical snapshot meaning and are superseded only for this explicit successor corpus; unrelated R1–R13 review references are unchanged.
+
+Static source expectations are two added body blocks, one changed existing value and one relocated unchanged thesis, with no new headings. These are not certified registry totals: Step0 must reconcile aliases, all affected bindings, audit dispositions and current-oracle changes independently before implementation. Counts must be derived from source expectations plus discovery, not copied from candidate generation as their own oracle.
+
+## R31.4 — Write boundary and required proof
+
+Builder writes are limited to the same nine implementation paths proposed in main-source-impact-20260907.md: src/generate.ts, src/registry.ts, src/validate.ts, generated registry, pass-minimal fixture, semantic-invariants/corpus-sweep/parity tests and README within plugins/foreman-line/authority-registry. The original 28-file ceiling does not expand this narrower dispatch. The coordinator owns source/spec/amendment records. No dependencies, lockfiles, schemas, support helpers, other packages or runtime surfaces change.
+
+Required negative controls cover incomplete M01 verification chain/condition, a new unadopted constraint15, annotation/thesis identity swap/duplicate/loss/stale references, annotation promotion to thesis authority or live grant, unapproved source versions/insertions/relocations, changed thesis value, M03 historical-authority promotion, historical-record rewrite, tree-as-commit substitution, missing migration, changed reserved shape with repaired incidental digests, and a second unregistered append. Positive controls cover both historical paragraph1 and approved successor paragraph2 thesis linkage, all fourteen standing constraints, unchanged sixteen source blobs and exact twenty-record preservation plus one append.
+
+Retain meaningful full R30 coverage. Any test migration must explicitly preserve its historical subject rather than weaken it globally. Run the complete deterministic chain with full output and direct exits on a serialized supported host, validate/sweep/idempotence/integrity, commit and publish evidence, then obtain two fresh independent final reviews of the exact successor. Selective source adoption does not certify full-main integration; check that separately against its exact head. Human Gate3 remains separate.
+
+## Dispatch gate
+
+No R31 code is authorized by this proposal alone. Required sequence: fixed R30 disposition; independent plan review and coordinator contract decision; isolated source-first commit; builder Step0 with exact identities/shapes/counts and historical preservation; independent mapping review and recorded ruling; implementation; full verification; fresh final reviews and publication. User blanket authority permits these non-destructive preparation decisions without another permission round, while preserving the stated review and source boundaries.
