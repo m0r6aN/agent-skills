@@ -1,0 +1,17 @@
+{
+  "step": "06-validate",
+  "command": [
+    "npx.cmd",
+    "tsx",
+    "src/cli.ts",
+    "validate",
+    "authority-enforcement-registry.yaml"
+  ],
+  "directExit": 0,
+  "head": "0ee165720f8d1e3a91eb283cb770400b23f61bf5",
+  "startedUtc": "2026-09-07T14:13:25.2080162Z",
+  "stdoutSha256": "B65FF4BBC746CD0E56CE44C70916C43D4A79EC4DDE13046B3E48662BD0F23008",
+  "endedUtc": "2026-09-07T14:13:27.3458886Z",
+  "stderrSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+  "elapsedMs": 2136
+}

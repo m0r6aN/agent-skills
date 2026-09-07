@@ -1,0 +1,14 @@
+{
+  "directExit": 0,
+  "command": [
+    "npm.cmd",
+    "ci"
+  ],
+  "stderrSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+  "elapsedMs": 13436,
+  "stdoutSha256": "35D881D79BE698206DF1013D4B3F80A691B231B21BFA5BA51B420EC83765A974",
+  "head": "0ee165720f8d1e3a91eb283cb770400b23f61bf5",
+  "startedUtc": "2026-09-07T13:49:55.9994493Z",
+  "endedUtc": "2026-09-07T13:50:09.4383701Z",
+  "step": "02-install"
+}

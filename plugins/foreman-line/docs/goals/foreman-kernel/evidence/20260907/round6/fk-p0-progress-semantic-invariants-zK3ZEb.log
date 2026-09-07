@@ -1,0 +1,142 @@
+1	normalization is exact and stable across Unicode/line-ending/whitespace forms
+2	canonical digest helpers bind identity, location, and value independently
+3	each of the six classifications is accepted and summarized independently
+4	pre-action refusal requires a stable refusal code
+5	pre-action refusal decision cannot be widened to ALLOW
+6	classification matrix rejects post-action-detection assurance widening
+7	classification matrix rejects ci-static-check owner widening
+8	classification matrix rejects independent-review decision widening
+9	classification matrix rejects narrative-provenance owner widening
+10	classification matrix rejects unsupported assurance widening
+11	loaded permission-profile refusals are owned by the host adapter at mediated assurance
+12	loaded permission-profile refusal cannot be mislabeled as structural kernel enforcement
+13	retirement requires four correctly typed evidence references
+14	every protected operation rejects agent/control/tool authority escalation
+15	Gate 2 state may record consumption but cannot mint authority
+16	Gate 2 rejects anonymous admission even with Git-shaped evidence
+17	protected operation evidence resolves locator and value digests, not only item identity
+18	protected operation evidence cannot be replaced by a different fully resolved canon ref
+19	builder cannot issue closure authority
+20	generic receipt minting has no admitted principal
+21	external writes have no admitted principal
+22	builder cannot be inserted as generic receipt mint principal
+23	every required reconciliation is mandatory
+24	deleting the chain head invalidates rather than promoting a pinned record
+25	reconciliation IDs are unique
+26	reconciliation observed refs bind full identity location and value
+27	required reconciliation topics and statuses are immutable
+28	reconciliation evidence digests cannot be self-asserted placeholders
+29	charter source cannot be downgraded below goal-charter authority
+30	stale explanatory source cannot be promoted to binding authority
+31	operation-disjoint rules do not conflict
+32	role stage operation and host axes can make active rules scope-disjoint
+33	all-foreman-goals applicability overlaps foreman-kernel applicability
+34	higher-tier active authority controls a lower-tier in-scope contradiction
+35	historical-only and stale-effect rules cannot create active authority conflicts
+36	rule normalized statement must equal its referenced normalized excerpt
+37	coordinated identity location and value replacement requires typed migration evidence
+38	full-registry coordinated rule ID and binding replacement cannot rewrite the baseline
+39	rework migration binds the prior registry commit source snapshot and superseding manifest
+40	removing the coordinator-ratified rework migration fails closed
+41	forged prior-commit migration evidence fails even when internally rehashed
+42	classification mutation control: pre-action-refusal cannot be widened
+43	classification mutation control: post-action-detection cannot be widened
+44	classification mutation control: ci-static-check cannot be widened
+45	classification mutation control: independent-review-human-judgment cannot be widened
+46	classification mutation control: narrative-provenance cannot be widened
+47	classification mutation control: unsupported cannot be widened
+48	authority-tier mutation control: developer-ratification cannot be widened
+49	authority-tier mutation control: goal-charter cannot be widened
+50	authority-tier mutation control: ratified-contract cannot be widened
+51	authority-tier mutation control: coordinator-pattern cannot be widened
+52	authority-tier mutation control: parcel-spec cannot be widened
+53	authority-tier mutation control: standing-role cannot be widened
+54	authority-tier mutation control: generated-advisory cannot be widened
+55	authority-effect mutation control: binding cannot be widened
+56	authority-effect mutation control: corroborating cannot be widened
+57	authority-effect mutation control: superseded-in-scope cannot be widened
+58	authority-effect mutation control: historical cannot be widened
+59	authority-effect mutation control: stale-explanation cannot be widened
+60	authority-effect mutation control: advisory-only cannot be widened
+61	retirement mutation control: missing predicate evidence refuses retirement
+62	retirement mutation control: missing negativeRefusalTest evidence refuses retirement
+63	retirement mutation control: missing corpusSweep evidence refuses retirement
+64	retirement mutation control: missing independentBypassAttempt evidence refuses retirement
+65	migration mutation control: open cannot carry superseding evidence
+66	migration mutation control: resolved-for-fk cannot carry superseding evidence
+67	migration mutation control: blocked cannot carry superseding evidence
+68	migration mutation control: superseded-by-amendment requires superseding evidence
+69	uncovered inventory items and orphaned rule mappings fail closed independently
+70	source snapshot and caller-asserted authority mutations fail closed
+71	set-valued arrays and protected operation rows require schema-enum order
+72	R3 exact source contract rejects a missing eighteenth source
+73	R3 exact source contract rejects an unknown nineteenth source
+74	R3 exact source contract rejects a known ID with a substituted path
+75	R3 exact source contract rejects a substituted source ID at cardinality eighteen
+76	R3 D10 semantic downgrade requires typed prior-manifest migration
+77	R3 D10 applicability downgrade requires typed prior-manifest migration
+78	R3 D10 retirement downgrade requires typed prior-manifest migration
+79	R3 authority subject replacement is bound by the complete manifest
+80	R3 authority claim replacement is bound by the complete manifest
+81	R3 complete binding digest includes applicability retirement and assurance
+82	R3 resolver returns exact controlling claim and sorted IDs
+83	R3 resolver rejects any-valued query scope
+84	R3 resolver rejects all-foreman-goals query scope
+85	R3 resolver returns no-applicable-authority instead of silently allowing
+86	R3 resolver detects naturally worded equal-tier conflicting claims
+87	R3 resolver keeps lower-tier rules considered but non-controlling
+88	R3 resolver excludes stale explanatory sources from control
+89	R3 Gate 2 refuses a revoked standing-grant evidence set
+90	R3 protected evidence rejects a fully resolved but irrelevant canon reference
+91	R3 fake migration cannot authorize an exact-source-set substitution
+92	R3 public rule uses assurance and rejects parallel assuranceLevel
+93	R3 manifest detects a fully rehashed coordinated semantic replacement
+94	R3 one README cannot satisfy all four retirement evidence kinds
+95	R4 exact D2 D3 D18 and D19 semantic identities are shipped
+96	R4 every rule has one basis ref contained in its source refs
+97	R4 shipped reconciliation rules retain repeated current semantic subjects
+98	R4 shipped Gate 3 competitors resolve without test-time subject rewriting
+99	R4 shipped-data resolver vector gate.namespace
+100	R4 shipped-data resolver vector gate3.merge-authority
+101	R4 shipped-data resolver vector permission-profile.registry-state
+102	R4 shipped-data resolver vector spec.mutation-authority
+103	R4 shipped-data resolver vector permission-profile.enforcement-bound
+104	R4 shipped-data resolver vector standing.provenance
+105	R4 corroborating source ref cannot promote a rule above its authority basis
+106	R4 retired-from-agent-reading rules never control authority
+107	R4 reconciliation disposition and consequence are immutable
+108	R4 missing-path evidence uses commit-bound canonical JSON
+109	R4 source-derived applicability vector rule.standing-constraints.constraint-1
+110	R4 source-derived applicability vector rule.standing-constraints.constraint-2
+111	R4 source-derived applicability vector rule.standing-constraints.constraint-3
+112	R4 source-derived applicability vector rule.standing-constraints.constraint-4
+113	R4 source-derived applicability vector rule.standing-constraints.constraint-5
+114	R4 source-derived applicability vector rule.standing-constraints.constraint-6
+115	R4 source-derived applicability vector rule.standing-constraints.constraint-7
+116	R4 source-derived applicability vector rule.standing-constraints.constraint-8
+117	R4 source-derived applicability vector rule.standing-constraints.constraint-9
+118	R4 source-derived applicability vector rule.standing-constraints.constraint-10
+119	R4 source-derived applicability vector rule.standing-constraints.constraint-11
+120	R4 source-derived applicability vector rule.standing-constraints.constraint-12
+121	R4 source-derived applicability vector rule.standing-constraints.constraint-13
+122	R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-1
+123	R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-2
+124	R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-3
+125	R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-4
+126	R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-5
+127	R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-6
+128	R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-7
+129	R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-8
+130	R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-9
+131	R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-10
+132	R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-11
+133	R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-12
+134	R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-13
+135	R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-14
+136	R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-15
+137	R4 PDD hard rule 10 applies to ordinary builder build repo mutation
+138	R5 standing rules have thirteen distinct operative semantic subjects
+139	R5 every authority basis is substantive source text rather than a heading
+140	R5 permission-profile reconciliation is grounded in charter D7 not D9
+141	R5 reconciliation gate-namespace-count binds its exact observedEvidence set
+142	R5 reconciliation gate3-delegation binds its exact observedEvidence set

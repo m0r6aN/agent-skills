@@ -1,0 +1,127 @@
+1	R4 copied corpus without Git metadata fails closed
+2	R4 blob object cannot impersonate commit migration evidence
+3	R4 missing-path evidence rejects a non-snapshot commit even when that commit is real
+4	R4 natural binding prose added under a curated authority section is discovered
+5	R4 inserted top-level executable function is discovered without keyword matching
+6	R4 early return inside an inventoried function changes its complete construct digest
+7	R4 additive JSON schema constraint is discovered
+8	R4 additive permission profile is discovered
+9	shipped registry sweeps the complete pinned corpus with no gaps or conflicts
+10	charter inventory contains one atomic record for each D1 through D20 decision
+11	collapsing one charter decision row into another cannot preserve D-row coverage
+12	plan review inventory contains one atomic record for each R1 through R13 correction
+13	historical plan inventories the pre-heading two-gate thesis independently
+14	standing constraints inventory contains all thirteen atomic numbered rules
+15	PDD inventory contains all fifteen atomic hard rules
+16	operative rules do not use blanket any applicability shortcuts
+17	repeated source sweeps are byte-identical and read-only
+18	unrelated bytes outside every registered locator stay green
+19	absolute, traversal, and duplicate normalized source paths are refused
+20	dot path segments are refused before resolution
+21	missing and non-regular corpus sources are refused with stable codes
+22	symlink and reparse-point corpus sources are refused before following targets
+23	a junction in a parent path component is refused before reading a source
+24	comment text cannot impersonate an operative linter symbol anchor
+25	a new binding heading is reported as an uncovered inventory item
+26	R3 additive D22 decision row is discovered independently of the curated inventory
+27	R3 additive PDD hard rule sixteen is discovered
+28	R3 new binding authority bullet is discovered
+29	R3 weakening a loop stop body fails even when the heading remains
+30	real spec-linter return behavior mutation is detected outside comments
+31	real permission-profile deny behavior mutation is detected
+32	retirement evidence paths and byte digests are resolved beneath the admitted root
+33	multiple corpus violations are deterministically ordered by path, locator, rule, then code
+34	R5 Markdown numbered-item locators survive physical line wrapping
+35	R5 unnumbered charter prose outside keyword-selected sections is discovered
+36	R5 fenced Markdown prose cannot impersonate a live authority binding
+37	R5 TypeScript compiler AST discovers additive function form
+38	R5 TypeScript compiler AST discovers additive const form
+39	R5 TypeScript compiler AST discovers additive let form
+40	R5 TypeScript compiler AST discovers additive var form
+41	R5 TypeScript compiler AST discovers additive class form
+42	R5 TypeScript compiler AST discovers additive default-export form
+43	R5 TypeScript compiler AST discovers additive method form
+44	R5 TypeScript compiler AST discovers additive arrow form
+45	R5 TypeScript compiler AST discovers additive top-level-call form
+46	R5 TypeScript compiler AST detects a nested branch mutation
+47	R5 TypeScript semantic inventory ignores benign comment changes
+48	R5 TypeScript semantic inventory ignores benign whitespace changes
+49	R5 TypeScript semantic inventory ignores benign import-order changes
+50	R5 sweep verifies declared snapshot bytes at the bound Git commit
+51	R6 visible prose before a same-line HTML comment is discovered
+52	R6 visible prose after a same-line HTML comment is discovered
+53	R6 visible prose after a multiline HTML comment close is discovered
+54	R6 comment-only Markdown remains non-operative
+55	R6 additive TypeScript side-effect import is discovered
+56	R6 additive TypeScript value import binding is discovered
+57	R6 TypeScript value import module retargeting changes operative inventory
+58	R6 additive TypeScript type-only import remains non-operative
+59	R7 unmatched HTML comment cannot hide following binding prose
+60	R7 four-space pseudo-fences cannot hide binding prose
+61	R8 backtick in backtick-fence info is visible and cannot hide binding prose
+62	R9 raw mixed comment and backtick info cannot become a hiding fence after comment masking
+63	R9 valid fenced standing-constraint number is ignored by the shared Markdown map
+64	R8 valid fenced heading is ignored by every Markdown discovery layer
+65	R8 valid fenced D row is ignored by every Markdown discovery layer
+66	R8 valid fenced R row is ignored by every Markdown discovery layer
+67	R8 valid fenced numbered hard rule is ignored by every Markdown discovery layer
+68	R7 mixed fence delimiters do not close a correctly paired fence
+69	R7 mixed type and value import order is semantically stable
+70	R7 ambient declarations remain non-operative
+71	R7 permission-profile nested add mutation is discovered
+72	R7 permission-profile nested delete mutation is discovered
+73	R7 permission-profile nested retarget mutation is discovered
+74	R7 permission-profile nested move mutation is discovered
+75	R10 generator constructs Markdown block custody without a source-ID allowlist
+76	R10 validator constructs Markdown block custody without a source-ID allowlist
+77	R11 Markdown block anchors contain only structural heading kind and stable identity
+78	R11 a Markdown value-only edit resolves the same locator as VALUE_DIGEST_MISMATCH
+79	R11 inserting a same-kind Markdown block is a separate location mutation
+80	R11 CommonMark parenthesized ordered items produce two independent uncovered items
+81	R12 every published Markdown paragraph and list rule uses one structural canonical locator
+82	R12 no published Markdown rule uses a raw-text line-excerpt or additional-anchor escape
+83	R12 all sixteen R11 raw-text Markdown rules migrate to structural canonical items
+84	R12 published Markdown table rules use stable first-column keys
+85	R12 active standing-rule marker renumbering is a value mismatch without locator loss
+86	R12 active ordered rules have no excluded structural duplicate substitute
+87	R12 ordered marker mutation preserves structural item rule and locator identity
+88	R12 compound block value mutation preserves structural item rule and locator identity
+89	R13 lineHint changes do not change Markdown item or locator identity
+90	R13 leading blank lines preserve every published Markdown identity
+91	R13 actual compound coordinator value mutation preserves all six rule identities
+92	R13 duplicate identical Gate 2 keyed row emits LOCATOR_DUPLICATE
+93	R13 duplicate table text cannot bypass structural coverage
+94	R10 baseline block custody: goal skill verification custody
+95	R10 baseline block custody: goal skill human-gate stop custody
+96	R10 baseline block custody: goal skill loop-stop custody
+97	R10 baseline block custody: coordinator pattern ownership stop
+98	R10 baseline block custody: coordinator pattern universal-stop custody
+99	R10 baseline block custody: coordinator pattern scoped-Gate-1 custody
+100	R10 baseline block custody: PDD branch isolation
+101	R10 baseline block custody: PDD serialization custody
+102	R10 baseline block custody: SPEC-CONVENTION ordinary mutation authority
+103	R10 additive ordinary prose is discovered in goal skill
+104	R10 additive ordinary prose is discovered in coordinator pattern
+105	R10 additive ordinary prose is discovered in PDD
+106	R10 additive ordinary prose is discovered in SPEC-CONVENTION
+107	R14 an NTFS alternate-data-stream source path ending :$DATA is refused by policy
+108	R14 an NTFS alternate-data-stream source path ending ::$DATA is refused by policy
+109	R14 an NTFS alternate-data-stream source path ending :hidden is refused by policy
+110	R14 an NTFS alternate-data-stream source path ending :hidden:$DATA is refused by policy
+111	R14 an interior colon is refused in any path segment, not only the last
+112	R14 added narrative prose in a Markdown source is detected as SOURCE_ITEM_UNCOVERED
+113	R14 an added heading stays inert while a paragraph beneath it does not
+114	R29.3 every curation surface is anchor-keyed with no itemId lookup fallback
+115	R29.4 standing authorization 8 publishes the exact pre-action refusal contract
+116	R29.3 anchor migration preserves every surviving published identity and locator digest
+117	R27 control (a) volatile appends and byte changes preserve the sweep and governed siblings
+118	R27 control (a) deletion probe fails for each removed volatile-region declaration
+119	R27 control (b) governed ownership prose still fails closed with VALUE_DIGEST_MISMATCH
+120	R27 control (b) binding-deletion probe defeats the exact governed-mutation expectation
+121	R27 control (c) anti-laundering refuses a region overlapping a published locator
+122	R27 control (d) independently finds no published item inside any shipped volatile extent
+123	R27 control (d) predicate-mutation probe survives a production overlap predicate forced false
+124	R27 control (e) generator output is byte-identical under mutation of every volatile region
+125	R27 control (f) zero heading matches fails closed with the exact VOLATILE_REGION_INVALID message
+126	R27 control (f) multiple heading matches fails closed with the exact VOLATILE_REGION_INVALID message
+127	R27 control (g) pins eight curated pre-excision prose rationales without gating future additions

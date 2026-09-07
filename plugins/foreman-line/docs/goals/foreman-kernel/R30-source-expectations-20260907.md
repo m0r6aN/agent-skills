@@ -169,3 +169,17 @@ Keep the existing global class contract unchanged for every other rule. Preserve
 Required later verification should demonstrate both sides of this boundary: an exact reviewed R30 entry with `human-ratified` is admitted; substitutions in identity, location, value, class, decision, owner, applicability or other bound shape fail; unrelated rules do not acquire the exception by copying the assurance string; copying an approved entry onto a different rule fails; and rule/source/manifest mutations still fail after passing the exception selector. Preserve ordinary non-R30 negative controls. These are requirements for the builder's future verification, not test results from this docs-only supplement.
 
 If a proposed rule needs a different owner/decision as well as different assurance, this recommendation alone does not authorize it. Return the concrete source clause and exact proposed shape for separate scoped ruling, without changing global classification semantics. In particular, neither U02/U03 nor L01/L02 creates a new ALLOW entry through this assurance mechanism.
+
+
+## Independent review correction — reserved identities cannot fall through
+
+The original recommendation's reference to nonmatching shapes using legacy checks is superseded for reserved R30 identities. The mandatory finite expected set first distinguishes reserved R30 entries from unrelated legacy entries. Every reserved entry must exist and match its complete approved shape including human-ratified assurance, or fail closed; no reserved mismatch may reach legacy acceptance. Identity replacement/removal is a separate required-set failure. Only unrelated legacy identities keep ordinary classification checks unchanged.
+
+This closes the demonstrated fallback attack: replace human-ratified with independently-verified for IJ, detected for PD, or structural for PR; recompute incidental binding and manifest values; the resulting reserved entry must still fail its named authority-semantic contract. Include those controls plus exact required-set substitution/removal controls. This corrects the exception envelope; U01-U04 and the source-unit denominator are unchanged.
+
+
+## R30.7 reviewed classification correction — nine event/permission facts
+
+The initial IJ recommendation above for C02/self-application, C03/adoption, C18/reaffirm, U02/original-event, U03/reopen-event, U04/a1-event, L01/continuation, L02/publication and L03/shaping is explicitly superseded by the scoped ruling in FK-P0-amendment-R30.md R30.7. Independent review found that these facts would demand another human act if represented as controlling IJ rules. Their exact stored representation is narrative-provenance / ADVISORY / provenance-only / human-ratified, with full reserved identity and binding protection. The earlier general statement that NP has narrative assurance also has this exact nine-entry exception; unrelated provenance is unchanged.
+
+The source-unit inventory and all operative obligations remain unchanged. These nine are noncontrolling source-authority facts: the existing resolver excludes them and isolated queries return NO_APPLICABLE_AUTHORITY with no controlling rule. Stored ADVISORY is not a resolved informational response. Tests must distinguish these observations and reject assurance reversion to narrative, identity substitution or source-shape changes even after incidental digests are repaired. Actual user authorization is not inferred from a registry resolution result.

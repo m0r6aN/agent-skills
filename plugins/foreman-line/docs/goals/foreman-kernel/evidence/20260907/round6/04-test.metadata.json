@@ -1,0 +1,14 @@
+{
+  "endedUtc": "2026-09-07T14:12:32.4140608Z",
+  "step": "04-test",
+  "head": "0ee165720f8d1e3a91eb283cb770400b23f61bf5",
+  "stdoutSha256": "27D86B0F99F217818663E12533D62AAC201CA6DD09FA9073C80EB28DBCB70316",
+  "startedUtc": "2026-09-07T13:50:41.7673051Z",
+  "command": [
+    "npm.cmd",
+    "test"
+  ],
+  "directExit": 0,
+  "stderrSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+  "elapsedMs": 1310645
+}
