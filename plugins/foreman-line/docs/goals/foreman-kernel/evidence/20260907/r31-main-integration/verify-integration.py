@@ -184,10 +184,14 @@ class Runner:
         return result
 
     def refs(self, label):
-        return {'head': self.git_text(label + '-head', 'rev-parse', 'HEAD'),
+        # An owned bare repository may legitimately have an unborn symbolic HEAD.
+        # Preserve its exact bytes without requiring that target to resolve.
+        snapshot = {'head_bytes_hex': (Path(self.bare) / 'HEAD').read_bytes().hex(),
                 'symbolic_head': self.git_cmd(label + '-symbolic', 'symbolic-ref', '-q', 'HEAD',
                                               allowed=(0, 1)).read_text().strip(),
                 'refs': self.git_text(label + '-refs', 'show-ref')}
+        write_json(self.out / f'{label}-refs-snapshot.json', snapshot)
+        return snapshot
 
     def run(self):
         a = self.a
