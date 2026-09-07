@@ -89,10 +89,9 @@ their `list-item:1..5` anchors. See the ordering note there.)_
 
 ## Current state — update at every stop or parcel closure
 
-**STATE 2026-09-07 — unattended continuation active.** The latest recorded candidate is `0ee165720f8d1e3a91eb283cb770400b23f61bf5`, isolated on `codex/fk-p0-recovery-20260907`. Installation and typecheck completed with direct exit0; full serial tests are running. A1.8/A1.9 and INF adoption are recorded on the coordinator branch; fresh adoption review approved after ledger rendering repair at `9afa38b`. Corpus integration is being shaped as R30. The original candidate has no new completion claim. FK-P1 through FK-P21 remain pending implementation.
+**STATE 2026-09-07 — R30 full verification active.** Unchanged Round6 baseline at `0ee165720f8d1e3a91eb283cb770400b23f61bf5` completed all ten direct-exit commands and597tests; complete hashed evidence is published. R30 implementation `446700d47c2e162fcfa575d5a46b9247241a59c1` is published on `codex/fk-p0-r30-adoption-20260907`;79focused semantic and10focused corpus tests passed. Full686-test verification is running on that exact checkpoint. Two fresh final independent code reviews and human Gate3 remain outstanding. No implementation acceptance or merge is claimed.
 
-This current progress entry supersedes older queue/status dates below. Detailed command evidence is accumulating in `evidence/20260907/round6/`; the latest execution plan is `FK-P0-round6-execution-ruling-20260907.md`. The source worktrees and initial publication remain unchanged.
-
+This progress supersedes older state labels below. Read `CURRENT-RESUME.md` and `LIVE-PUBLICATION-MANIFEST.json` for published branches, fullSHAs and hashes. A1.8/A1.9 and INF adoption are ratified and separately integrated through R30. FK-P1 StageA draft/review/advisory/ShapingResult are complete but P1 implementation remains pending its mergedP0 dependency. U1 draft and provider observations are published; named preP18 choices remain. This coordinator-only operational update is confined to declared volatile state; implementation source snapshot65c4714 and its worktree remain unchanged.
 
 **STATE 2026-09-04 #2 (live) — ROUND 6 RECOVERY BUILD ACTIVE. The developer ruled the prior
 coordinator and round-6 builder dead and transferred ownership to this Codex session. Replacement
@@ -384,7 +383,7 @@ Source preservation applies to all prior worktrees and the published handoff. Th
 
 | Parcel | State | Depends on |
 |---|---|---|
-| FK-P0 — Canon authority and enforcement registry | **ROUND 6 BASELINE VERIFICATION ACTIVE at 0ee1657 on codex/fk-p0-recovery-20260907; R30 source adoption being shaped separately. Source candidate and coordinator continuation published; no acceptance, merge or Stage F.** | none |
+| FK-P0 — Canon authority and enforcement registry | **R30 full686-test verification active at published446700d; baseline597 and focused79+10 passed. Final independent reviews and human Gate3 pending; no merge or StageF.** | none |
 | FK-P1 — Lifecycle, admission, and decision contracts | pending | FK-P0 |
 | FK-P2 — Spec-body compiler | pending | FK-P0, FK-P1 |
 | FK-P3 — Pure dispatch decisions | pending | FK-P1 |
