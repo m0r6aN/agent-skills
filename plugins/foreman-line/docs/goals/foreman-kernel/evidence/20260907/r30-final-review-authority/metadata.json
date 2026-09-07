@@ -1,0 +1,28 @@
+{
+  "reviewer": "/root/r30_final_authority_review",
+  "verdict": "APPROVE adopted65c R30; no P0/P1/P2 findings",
+  "candidate": "c35ff72ef45fb19d647cede6acf5a13636911db7",
+  "testedPackageSubject": "f8093410cead451f204d08ae25f3a70b34208213",
+  "source": "65c471416e4a3916695815e951ffbe389288560e",
+  "observedProbeStartUtc": null,
+  "observedProbeEndUtc": null,
+  "persistenceUtc": "2026-09-07T16:27:51.8299562Z",
+  "timingBasis": "Exact observed probe UTC times not retained; persistenceUtc records only evidence persistence.",
+  "actualCommand": "@'\nimport fs from 'node:fs'; import cp from 'node:child_process'; import assert from 'node:assert/strict'; import {parse} from 'yaml'; import {R30_RULE_SHAPES} from './src/registry.ts'; import {validateRegistry,canonicalJson,bindingDigestFor,registryBindingManifestDigest,sha256,resolveAuthority} from './src/validate.ts';\nconst d=parse(fs.readFileSync('authority-enforcement-registry.yaml','utf8')); assert.equal(validateRegistry(d).valid,true);\nconst p=parse(cp.execFileSync('git',['show','66a514d35a384f901486e7b814580eb6fb7de6ea:plugins/foreman-line/authority-registry/authority-enforcement-registry.yaml'],{encoding:'utf8',maxBuffer:32000000}));assert.equal(canonicalJson(p.reconciliations),canonicalJson(d.reconciliations.slice(0,19)));assert.equal(canonicalJson(p.operationAuthority),canonicalJson(d.operationAuthority));assert.equal(canonicalJson(p.rules.filter(r=>r.decision==='ALLOW')),canonicalJson(d.rules.filter(r=>r.decision==='ALLOW')));\nlet n=0;for(const e of R30_RULE_SHAPES){const c=structuredClone(d),r=c.rules.find(r=>r.ruleId===e.ruleId);r.assurance=({'independent-review-human-judgment':'independently-verified','pre-action-refusal':'structural','post-action-detection':'detected','narrative-provenance':'narrative'})[r.classification];r.bindingDigest=bindingDigestFor(r);for(const v of c.reconciliations.at(-1).observedEvidence){if(v.kind!=='command-result')continue;const x=JSON.parse(v.reference);if(x.commandId.startsWith('superseding-binding-manifest')){x.resultDigest=registryBindingManifestDigest(c);v.reference=canonicalJson(x);v.digest=sha256(v.reference);}}const result=validateRegistry(c);assert.equal(result.valid,false);assert.ok(result.violations.some(v=>v.code==='AUTHORITY_ESCALATION'&&v.message.includes('reserved R30 rule')));n++;}\nlet np=0;for(const r of R30_RULE_SHAPES.filter(r=>r.classification==='narrative-provenance')){const result=resolveAuthority(d,{authoritySubject:r.authoritySubject,goal:'foreman-kernel',role:r.applicability.roles[0],stage:r.applicability.stages[0],operation:r.applicability.operations[0],host:'provider-neutral'});assert.equal(result.reasonCode,'NO_APPLICABLE_AUTHORITY');assert.deepEqual(result.controllingRuleIds,[]);np++;}console.log(JSON.stringify({valid:true,history:19,protectedAuthorityUnchanged:true,allowSetUnchanged:true,repairedAssuranceRefusals:n,noncontrollingProvenance:np}));\n'@ | & 'D:/nodejs_symlinks/node.exe' --import tsx --input-type=module\nWrite-Output \"DIRECT_EXIT=$LASTEXITCODE\"",
+  "workingDirectory": "D:/Repos/agent-skills-worktrees/fk-p0-r30-adoption-20260907/plugins/foreman-line/authority-registry",
+  "directExit": 0,
+  "execSession": 97101,
+  "outputChunk": "985471",
+  "outputCustody": "Exact text copied from captured tools.write_stdin output; not an original redirected byte stream.",
+  "earlierInvocation": "Completion output not retained by wrapper; not counted as verification evidence.",
+  "readOnlyScope": "Candidate/source/evidence untouched throughout review. Subsequent coordinator authorization permits only four evidence files in this separate coordinator directory. No rerun, Node invocation, install, suite, commit, push or merge during persistence.",
+  "hashes": {
+    "review.md": "68dfc446f3f475da53c17bbb65809dda934ca55278fdaacc710b51e933d45009",
+    "probe.mjs": "2990400fadc567397b051fb395f323d88f4f0224ae1233f12f4e41a9cd5f99ab",
+    "probe-output.log": "a80611e6d088ad01ef7afd4eab4cef9918950598a8d5185256f25683676d6529"
+  },
+  "metadataSelfHash": "Excluded to avoid self-reference; returned separately.",
+  "reproductionCommand": "Get-Content -LiteralPath 'D:/Repos/agent-skills-worktrees/foreman-kernel-unattended-20260907/plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30-final-review-authority/probe.mjs' -Raw | & 'D:/nodejs_symlinks/node.exe' --import tsx --input-type=module\nWrite-Output \"DIRECT_EXIT=$LASTEXITCODE\"",
+  "reproductionWorkingDirectory": "D:/Repos/agent-skills-worktrees/fk-p0-r30-adoption-20260907/plugins/foreman-line/authority-registry",
+  "reproductionExecutedDuringPersistence": false
+}
