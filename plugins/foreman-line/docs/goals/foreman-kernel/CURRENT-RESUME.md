@@ -16,3 +16,5 @@ The corrected R30 Step 0 mapping passed independent review at `8b33963`: 72 new 
 U1-evidence-contract-draft-20260907.md passed draft closure review recorded in U1-draft-review-20260907.md. Its concrete provider/protection/context/retention/schema selections remain pre-P18 dispatch dependencies; a reviewed draft does not satisfy implementation or promotion evidence.
 
 FK-P1 Stage A preparation is complete: reviewed status:draft spec, explicit shaping decisions, two-layer advisory pass and schema-valid ShapingResult with epics:[] are published. Read FK-P1-shaping-review-20260907.md. No P1 activation or implementation occurred; merged P0 compatibility and remaining field-shape reconciliation still gate dispatch.
+
+U1-provider-observations-20260907.md records read-only current GitHub configuration, workflow/run identities and official provider documentation. Existing rulesets/hosted CI are observed; protected verifier independence, attestation issuance and retained retrieval are not proved. No provider settings or workflow execution were changed. These observations narrow U1 selection work without satisfying pre-P18 gates.
