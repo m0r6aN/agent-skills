@@ -18,3 +18,9 @@ Check independently that:
 - Full baseline coverage remains meaningful. Expected686tests=597baseline+79semantic+10corpus; count alone proves nothing. Inspect weakened assertions, fixture substitutions and negative controls independently. Complete logs/direct exits/source and generated hashes are required.
 
 Reviewers do not edit candidate code or source documents, commit, push, merge, install dependencies or run long suites. Any bounded in-memory Node probe must be explicitly serialized by coordinator after the builder chain; output the command and direct result. Avoid writer access to candidate files. Report exact reviewed code/evidence SHAs, substantive findings with paths/lines/reproductions, unavailable proof, verdict and whether your read-only scope was preserved. Do not manufacture a pass from the earlier baseline, focused suite or this brief. Human Gate3 remains separate.
+
+## Test checkpoint and upstream context
+
+The final test checkpoint is `9b4de111e78bd6682cf7c2d64989bd4adf803dce`, published with evidence at `f8093410cead451f204d08ae25f3a70b34208213`; runtime/generated/source bytes still match `446700d47c2e162fcfa575d5a46b9247241a59c1`. Review the strengthened independent Markdown-derived oracle for all72 exact basis/reference tuples and all reciprocal links. The final full chain must identify its own evidence commit; run26 failed and run33 was canceled, while replacement run39 was active when this note was written.
+
+Current main `476b8df6efe6c9974879957147449f61c34cd9a0` changes two governed sources, including new standing constraint14. The read-only merge simulation has no text conflicts, but current-main registry compatibility is unverified. Review R30 against its explicitly adopted65c snapshot and report this separate integration dependency. Do not treat text merge success or this known dependency as proof of either R30 correctness or current-main acceptance. See `main-source-compatibility-20260907.json`.
