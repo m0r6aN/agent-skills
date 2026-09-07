@@ -260,7 +260,7 @@ test('each of the six classifications is accepted and summarized independently',
     'pre-action-refusal': 276,
     'post-action-detection': 13,
     'ci-static-check': 78,
-    'independent-review-human-judgment': 52,
+    'independent-review-human-judgment': 53,
     'narrative-provenance': 109,
     unsupported: 13,
   })
@@ -495,7 +495,7 @@ test('deleting the chain head invalidates rather than promoting a pinned record'
   // AC4 obligation 2 as amended by R19. Head position must not be selectable by deletion: before
   // R19, removing the head promoted the previously-pinned record into the head exemption and out of
   // its byte pin, and repointing that promoted record at the live manifest validated clean.
-  const chainHeadId = 'registry-rework-66a514d'
+  const chainHeadId = 'registry-rework-446700d'
   const kept = structuredClone(valid).reconciliations.filter(
     (record) => record.reconciliationId !== chainHeadId,
   )
@@ -2066,7 +2066,7 @@ test('R13 normative Markdown audit has exactly 145 source-authored records', () 
   const baseline = r30Baseline()
   assert.equal(baseline.normativeMarkdownAudit.length, 145)
   assert.deepEqual(r13Audit().slice(0, 145), baseline.normativeMarkdownAudit)
-  assert.equal(r13Audit().length, 198)
+  assert.equal(r13Audit().length, 202)
 })
 
 test('R13 normative Markdown audit binds every candidate to its exact item and value', () => {
@@ -2800,6 +2800,7 @@ test('R10 Gate 3 does not resolve for builder runtime external writes', () => {
   // property it names stops holding. The registry is valid here, so the reason must be scope.
   assert.equal(result.outcome, 'REQUIRE_HUMAN')
   if (result.outcome === 'REQUIRE_HUMAN') {
+    ok('reasonCode' in result)
     assert.equal(result.reasonCode, 'NO_APPLICABLE_AUTHORITY')
   }
 })
@@ -2817,6 +2818,7 @@ test('R10 Gate 3 does not resolve for CI deterministic read queries', () => {
   // property it names stops holding. The registry is valid here, so the reason must be scope.
   assert.equal(result.outcome, 'REQUIRE_HUMAN')
   if (result.outcome === 'REQUIRE_HUMAN') {
+    ok('reasonCode' in result)
     assert.equal(result.reasonCode, 'NO_APPLICABLE_AUTHORITY')
   }
 })
@@ -4146,7 +4148,7 @@ test('R14 a new rule wearing an approved Gate 2 rule name cannot inherit its ALL
 // and reads as "allowed", which is the trap that caught every party to this parcel at least once.
 // ===========================================================================================
 
-const CHAIN_HEAD_ID = 'registry-rework-66a514d'
+const CHAIN_HEAD_ID = 'registry-rework-446700d'
 
 type Reconciliation = AuthorityEnforcementRegistry['reconciliations'][number]
 type Evidence = Reconciliation['observedEvidence'][number]
@@ -5149,6 +5151,7 @@ test('chain topology: renaming a record out of the chain prefix does not let it 
 })
 
 test('R30 adopted sample has source-authored counts before accepting generated output', () => {
+  const full = r31Baseline()
   assert.equal(full.sources.length, 18)
   assert.equal(
     full.sources.reduce((sum, source) => sum + source.inventoryItems.length, 0),
@@ -5374,6 +5377,7 @@ test('R30 exact adopted registry and reviewed paraphrases validate without new g
 })
 
 test('R30 preserves all 19 complete historical reconciliations and appends only one named migration', () => {
+  const full = r31Baseline()
   const prior = r30Baseline()
   assert.equal(prior.reconciliations.length, 19)
   assert.equal(
@@ -5384,15 +5388,16 @@ test('R30 preserves all 19 complete historical reconciliations and appends only 
   assert.equal(full.sourceSnapshotCommit, '65c471416e4a3916695815e951ffbe389288560e')
   assert.deepEqual(
     new Set(
-      headOf(full)
-        .observedEvidence.filter((entry) => entry.kind === 'git-commit')
-        .map((entry) => entry.reference),
+      full.reconciliations[19]!.observedEvidence.filter((entry) => entry.kind === 'git-commit').map(
+        (entry) => entry.reference,
+      ),
     ),
     new Set(['66a514d35a384f901486e7b814580eb6fb7de6ea', full.sourceSnapshotCommit]),
   )
 })
 
 test('R30 exact baseline-to-adoption item and rule delta preserves all post-R13 identities', () => {
+  const full = r31Baseline()
   const prior = r30Baseline()
   const changed: string[] = []
   for (const source of prior.sources) {
@@ -5588,6 +5593,7 @@ for (const unit of r30ProvenanceUnits) {
     }
     const result = resolveAuthority(full, query)
     assert.equal(result.outcome, 'REQUIRE_HUMAN')
+    ok('reasonCode' in result)
     assert.equal(result.reasonCode, 'NO_APPLICABLE_AUTHORITY')
     assert.deepEqual(result.controllingRuleIds, [])
     r30AuthorityRefusal(
@@ -5736,7 +5742,7 @@ test('R30 preserves ordinary unrelated legacy singleton and nonliteral-paraphras
 test('R30 corroboration adds exactly 67 reciprocal edges without changing the designated bases', () => {
   const expected = r30ExpectedReferences()
   const baseline = r30Baseline()
-  for (const source of full.sources) {
+  for (const source of [...r31Baseline().sources, ...full.sources]) {
     const priorSource = baseline.sources.find((candidate) => candidate.sourceId === source.sourceId)
     for (const item of source.inventoryItems) {
       const priorItem = priorSource?.inventoryItems.find(
@@ -5749,7 +5755,13 @@ test('R30 corroboration adds exactly 67 reciprocal edges without changing the de
         .map((entry) => entry.ruleId)
       assert.deepEqual(
         [...item.ruleIds].sort(),
-        [...new Set([...(priorItem?.ruleIds ?? []), ...additions])].sort(),
+        [
+          ...new Set([
+            ...(priorItem?.ruleIds ?? []),
+            ...additions,
+            ...r31ExpectedItemRuleIds(source.sourceId, item.itemId),
+          ]),
+        ].sort(),
         `${source.sourceId}:${item.itemId}: exact reciprocal set preserves legacy links`,
       )
     }
@@ -5775,4 +5787,488 @@ test('R30 corroboration adds exactly 67 reciprocal edges without changing the de
     ok(item)
     for (const referencing of references) assert.ok(item.ruleIds.includes(referencing.ruleId))
   }
+})
+
+test('R31 independently prescribed successor counts and source snapshot are adopted', () => {
+  assert.equal(full.sourceSnapshotCommit, '8d500704c9e3d6d8b652bbe838aa3623f88203fc')
+  assert.deepEqual(
+    [
+      full.sources.length,
+      full.sources.reduce((n, s) => n + s.inventoryItems.length, 0),
+      full.rules.length,
+      full.normativeMarkdownAudit.length,
+      full.reconciliations.length,
+    ],
+    [18, 1585, 542, 202, 21],
+  )
+  assert.ok(full.rules.some((r) => r.ruleId === 'rule.standing-constraints.constraint-14'))
+})
+
+// R31 expectations come from independently reviewed pre-generation source artifacts.
+function r31Oracle<T>(name: string): T {
+  return JSON.parse(
+    readFileSync(
+      join(packageRoot, '../docs/goals/foreman-kernel/evidence/20260907/r31', name),
+      'utf8',
+    ),
+  ) as T
+}
+function r31Contract() {
+  return r31Oracle<{
+    units: (InventoryItem & { sourceId: string; locatorDigest: string })[]
+    newRule: AuthorityRule
+    thesisBefore: AuthorityRule
+    thesisAfter: AuthorityRule
+    audit: AuthorityEnforcementRegistry['normativeMarkdownAudit']
+  }>('04-step0-proposed-contract.json')
+}
+function r31Baseline(): AuthorityEnforcementRegistry {
+  return parse(
+    execFileSync(
+      'git',
+      [
+        'show',
+        '446700d47c2e162fcfa575d5a46b9247241a59c1:plugins/foreman-line/authority-registry/authority-enforcement-registry.yaml',
+      ],
+      { cwd: packageRoot, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 },
+    ),
+  ) as AuthorityEnforcementRegistry
+}
+function r31ExpectedItemRuleIds(sourceId: string, itemId: string): readonly string[] {
+  return (
+    r31Contract().units.find((unit) => unit.sourceId === sourceId && unit.itemId === itemId)
+      ?.ruleIds ?? []
+  )
+}
+function r31Refusal(document: AuthorityEnforcementRegistry, code = 'AUTHORITY_ESCALATION') {
+  r30Repair(document)
+  const result = validateRegistry(document)
+  assert.equal(result.valid, false)
+  ok(
+    result.violations.some((entry) => entry.code === code && /R31/.test(entry.message)),
+    JSON.stringify(result.violations),
+  )
+}
+
+test('R31 full source-authored rule shapes, designated bases and ordered references are exact', () => {
+  const oracle = r31Contract()
+  for (const expected of [oracle.newRule, oracle.thesisAfter])
+    assert.deepEqual(
+      full.rules.find((rule) => rule.ruleId === expected.ruleId),
+      expected,
+    )
+  for (const expected of oracle.units) {
+    const item = full.sources
+      .find((source) => source.sourceId === expected.sourceId)
+      ?.inventoryItems.find((candidate) => candidate.itemId === expected.itemId)
+    ok(item)
+    for (const key of [
+      'locator',
+      'normalizedExcerpt',
+      'valueDigest',
+      'ruleIds',
+      'exclusionDisposition',
+    ] as const)
+      assert.deepEqual(item[key], expected[key])
+    assert.equal(locatorDigestFor(item.locator), expected.locatorDigest)
+  }
+  assert.deepEqual(full.normativeMarkdownAudit.slice(198), oracle.audit)
+})
+
+test('R31 complete prior-item correspondence and exact reciprocal sets include every current item', () => {
+  const baseline = r31Baseline()
+  const oracle = r31Oracle<{
+    rows: {
+      sourceId: string
+      itemId: string
+      before: InventoryItem | null
+      expectedAfter: InventoryItem
+    }[]
+  }>('06-complete-item-correspondence.json')
+  assert.equal(oracle.rows.length, 176)
+  const expectedKeys = new Set<string>()
+  for (const source of full.sources) {
+    const prior = baseline.sources.find((candidate) => candidate.sourceId === source.sourceId)
+    ok(prior)
+    for (const item of source.inventoryItems) {
+      const row = oracle.rows.find(
+        (entry) => entry.sourceId === source.sourceId && entry.itemId === item.itemId,
+      )
+      const expected: InventoryItem | undefined =
+        row?.expectedAfter ??
+        prior.inventoryItems.find((candidate) => candidate.itemId === item.itemId)
+      ok(expected, `no unreviewed item ${source.sourceId}:${item.itemId}`)
+      expectedKeys.add(`${source.sourceId}:${item.itemId}`)
+      for (const key of [
+        'locator',
+        'normalizedExcerpt',
+        'valueDigest',
+        'ruleIds',
+        'exclusionDisposition',
+      ] as const)
+        assert.deepEqual(item[key], expected[key], `${source.sourceId}:${item.itemId}:${key}`)
+    }
+  }
+  assert.equal(expectedKeys.size, 1585)
+  for (const source of baseline.sources)
+    for (const item of source.inventoryItems)
+      ok(expectedKeys.has(`${source.sourceId}:${item.itemId}`))
+  assert.deepEqual(
+    full.rules.filter((rule) => !baseline.rules.some((old) => old.ruleId === rule.ruleId)),
+    [r31Contract().newRule],
+  )
+  assert.deepEqual(
+    full.rules.filter((rule) =>
+      baseline.rules.some(
+        (old) => old.ruleId === rule.ruleId && old.bindingDigest !== rule.bindingDigest,
+      ),
+    ),
+    [r31Contract().thesisAfter],
+  )
+  for (const old of baseline.rules) ok(full.rules.some((rule) => rule.ruleId === old.ruleId))
+  assert.deepEqual(full.normativeMarkdownAudit.slice(0, 198), baseline.normativeMarkdownAudit)
+  assert.deepEqual(full.operationAuthority, baseline.operationAuthority)
+  assert.deepEqual(full.volatileRegions, baseline.volatileRegions)
+})
+
+test('R31 twenty canonical historical records and exact independently pinned append are preserved', () => {
+  const baseline = r31Baseline()
+  const oracle = r31Oracle<{
+    record: Reconciliation
+    newManifest: string
+    proposedRecordCanonicalSha256: string
+  }>('09-exact-migration-proposal.json')
+  assert.equal(baseline.reconciliations.length, 20)
+  assert.equal(
+    canonicalJson(full.reconciliations.slice(0, 20)),
+    canonicalJson(baseline.reconciliations),
+  )
+  assert.deepEqual(full.reconciliations[20], oracle.record)
+  assert.equal(registryBindingManifestDigest(full), oracle.newManifest)
+  assert.equal(
+    sha256(canonicalJson(full.reconciliations[20])),
+    oracle.proposedRecordCanonicalSha256,
+  )
+  assert.equal(
+    full.sources
+      .find((source) => source.sourceId === 'standing-constraints')
+      ?.inventoryItems.filter((item) => /^item.constraint-\d+$/.test(item.itemId)).length,
+    14,
+  )
+  assert.equal(
+    baseline.sources
+      .find((source) => source.sourceId === 'standing-constraints')
+      ?.inventoryItems.filter((item) => /^item.constraint-\d+$/.test(item.itemId)).length,
+    13,
+  )
+})
+
+const r31RuleMutations: readonly [string, (rule: AuthorityRule) => void][] = [
+  ['subject', (rule) => Object.assign(rule, { authoritySubject: 'plugin.other-subject' })],
+  ['claim', (rule) => Object.assign(rule, { authorityClaim: 'url-only-is-sufficient' })],
+  ['decision', (rule) => Object.assign(rule, { decision: 'ALLOW' })],
+  ['owner', (rule) => Object.assign(rule, { enforcementOwner: 'kernel-policy' })],
+  [
+    'legacy assurance fallback',
+    (rule) => Object.assign(rule, { assurance: 'independently-verified' }),
+  ],
+  ['classification', (rule) => Object.assign(rule, { classification: 'narrative-provenance' })],
+  ['severity', (rule) => Object.assign(rule, { severity: 'low' })],
+  ['goals', (rule) => Object.assign(rule.applicability, { goals: ['foreman-kernel'] })],
+  ['roles', (rule) => Object.assign(rule.applicability, { roles: ['reviewer'] })],
+  ['stages', (rule) => Object.assign(rule.applicability, { stages: ['build'] })],
+  ['operations', (rule) => Object.assign(rule.applicability, { operations: ['repo-mutation'] })],
+  ['hosts', (rule) => Object.assign(rule.applicability, { hosts: ['unsupported-host'] })],
+  ['retirement', (rule) => Object.assign(rule, { retirementState: 'historical-only' })],
+  [
+    'basis substitution',
+    (rule) =>
+      Object.assign(rule, { authorityBasisRef: r31Contract().thesisAfter.authorityBasisRef }),
+  ],
+  ['missing reference', (rule) => Object.assign(rule, { sourceRefs: [] })],
+  [
+    'extra reference',
+    (rule) =>
+      Object.assign(rule, {
+        sourceRefs: [...rule.sourceRefs, r31Contract().thesisAfter.authorityBasisRef],
+      }),
+  ],
+]
+for (const [axis, mutate] of r31RuleMutations)
+  test(`R31 reserved M01 shape rejects ${axis}`, () => {
+    const changed = structuredClone(full)
+    const rule = changed.rules.find(
+      (candidate) => candidate.ruleId === r31Contract().newRule.ruleId,
+    )!
+    mutate(rule)
+    r30Repair(changed)
+    const result = validateRegistry(changed)
+    assert.equal(result.valid, false)
+    ok(
+      result.violations.some(
+        (entry) => entry.code === 'AUTHORITY_ESCALATION' || entry.code === 'SCHEMA_INVALID',
+      ),
+    )
+  })
+for (const [component, before, after] of [
+  ['parcel condition', 'Plugin/marketplace parcels', 'All parcels'],
+  ['every living identifier', 'each living install identifier', 'one install identifier'],
+  ['marketplace entry', 'declared marketplace entry', 'repository URL'],
+  ['source existence', 'existing plugin source', 'possible plugin source'],
+  [
+    'nested manifest equality',
+    'nested manifest name equals the requested plugin',
+    'nested manifest name resembles the requested plugin',
+  ],
+  ['URL insufficiency', 'does not prove', 'proves'],
+] as const)
+  test(`R31 complete M01 duty rejects repaired ${component} mutation`, () => {
+    const changed = structuredClone(full)
+    const rule = changed.rules.find(
+      (candidate) => candidate.ruleId === r31Contract().newRule.ruleId,
+    )!
+    const item = changed.sources
+      .find((source) => source.sourceId === 'standing-constraints')!
+      .inventoryItems.find((entry) => entry.itemId === 'item.constraint-14')!
+    const text = item.normalizedExcerpt.replace(before, after)
+    assert.notEqual(text, item.normalizedExcerpt)
+    Object.assign(item, { normalizedExcerpt: text, valueDigest: sha256(text) })
+    const ref = { ...rule.authorityBasisRef, valueDigest: sha256(text) }
+    Object.assign(rule, { normalizedStatement: text, sourceRefs: [ref], authorityBasisRef: ref })
+    r31Refusal(changed)
+  })
+for (const axis of [
+  'remove M01',
+  'substitute alias',
+  'note takes thesis',
+  'thesis old location',
+  'historical name reversion',
+  'extra raw alias',
+] as const)
+  test(`R31 finite source identity rejects ${axis}`, () => {
+    const changed = structuredClone(full)
+    const source = changed.sources.find(
+      (candidate) =>
+        candidate.sourceId ===
+        (axis === 'remove M01' || axis === 'substitute alias' || axis === 'extra raw alias'
+          ? 'standing-constraints'
+          : 'foreman-line-plan'),
+    )!
+    const item = source.inventoryItems.find(
+      (candidate) =>
+        candidate.itemId ===
+        (source.sourceId === 'standing-constraints'
+          ? 'item.constraint-14'
+          : axis === 'note takes thesis'
+            ? 'item.8bef504af1db'
+            : axis === 'historical name reversion'
+              ? 'item.483a4914f57e'
+              : 'item.two-gate-thesis'),
+    )!
+    if (axis === 'remove M01')
+      Object.assign(source, {
+        inventoryItems: source.inventoryItems.filter((candidate) => candidate !== item),
+      })
+    else if (axis === 'substitute alias') Object.assign(item, { itemId: 'item.e3c4f313970c' })
+    else if (axis === 'note takes thesis') Object.assign(item, { itemId: 'item.two-gate-thesis' })
+    else if (axis === 'thesis old location')
+      Object.assign(item.locator, {
+        anchor: r31Contract().units.find((unit) => unit.itemId === 'item.8bef504af1db')!.locator
+          .anchor,
+      })
+    else if (axis === 'historical name reversion')
+      Object.assign(item, {
+        normalizedExcerpt: item.normalizedExcerpt.replace(
+          'agent-skills',
+          'kaseya-one-productivity-tools',
+        ),
+      })
+    else
+      Object.assign(source, {
+        inventoryItems: [
+          ...source.inventoryItems,
+          { ...structuredClone(item), itemId: 'item.e3c4f313970c' },
+        ],
+      })
+    r30Repair(changed)
+    assert.equal(validateRegistry(changed).valid, false)
+  })
+
+for (const key of [
+  'commandId',
+  'inputDigest',
+  'resultDigest',
+  'actorClass',
+  'tool',
+  'toolVersion',
+  'exitCode',
+] as const)
+  test(`R31 decision diagnostic rejects repaired ${key} substitution`, () => {
+    const changed = structuredClone(full)
+    const record = headOf(changed)
+    const evidence = record.observedEvidence.find(
+      (entry) =>
+        entry.kind === 'command-result' &&
+        JSON.parse(entry.reference).commandId === 'r31-plan-decision-git-blob',
+    )!
+    const command = JSON.parse(evidence.reference) as Record<string, unknown>
+    command[key] = key === 'exitCode' ? 1 : key.endsWith('Digest') ? 'f'.repeat(64) : 'substituted'
+    const reference = canonicalJson(command)
+    Object.assign(evidence, { reference, digest: sha256(reference) })
+    r31Refusal(changed, 'MIGRATION_EVIDENCE_INVALID')
+  })
+test('R31 M01 resolves as source-intent review duty on every host without granting installation', () => {
+  for (const host of [
+    'provider-neutral',
+    'claude-windows-docker-loaded',
+    'claude-windows-docker-unenrolled',
+    'unsupported-host',
+    'ci',
+  ] as const) {
+    const result = resolveAuthority(full, {
+      ...d3Query,
+      authoritySubject: r31Contract().newRule.authoritySubject,
+      host,
+    })
+    assert.equal(result.outcome, 'RESOLVED', JSON.stringify(result))
+    ok(result.outcome === 'RESOLVED')
+    assert.equal(result.decision, 'REQUIRE_HUMAN')
+    assert.equal(result.assurance, 'human-ratified')
+    assert.deepEqual(result.controllingRuleIds, [r31Contract().newRule.ruleId])
+  }
+  const result = resolveAuthority(full, {
+    ...d3Query,
+    authoritySubject: r31Contract().newRule.authoritySubject,
+    role: 'reviewer',
+  })
+  ok('reasonCode' in result)
+  assert.equal(result.reasonCode, 'NO_APPLICABLE_AUTHORITY')
+  assert.deepEqual(result.controllingRuleIds, [])
+  assert.deepEqual(
+    full.rules.filter((rule) => rule.decision === 'ALLOW'),
+    r31Baseline().rules.filter((rule) => rule.decision === 'ALLOW'),
+  )
+})
+
+test('R31 relocated thesis preserves its complete historical effect and never controls current queries', () => {
+  const before = r31Contract().thesisBefore
+  const after = r31Contract().thesisAfter
+  const {
+    bindingDigest: _before,
+    sourceRefs: _oldRefs,
+    authorityBasisRef: _oldBasis,
+    ...oldShape
+  } = before
+  const {
+    bindingDigest: _after,
+    sourceRefs: _newRefs,
+    authorityBasisRef: _newBasis,
+    ...newShape
+  } = after
+  assert.deepEqual(newShape, oldShape)
+  for (const role of ['builder', 'coordinator'] as const) {
+    const result = resolveAuthority(full, {
+      ...d3Query,
+      authoritySubject: after.authoritySubject,
+      role,
+    })
+    assert.equal((result.controllingRuleIds as readonly string[]).includes(after.ruleId), false)
+  }
+})
+
+for (const axis of [
+  'input path',
+  'input commit',
+  'Git commit evidence',
+  'missing diagnostic',
+] as const)
+  test(`R31 exact migration rejects repaired ${axis}`, () => {
+    const changed = structuredClone(full)
+    const record = headOf(changed)
+    const evidence = record.observedEvidence.find(
+      (entry) =>
+        entry.kind === 'command-result' &&
+        JSON.parse(entry.reference).commandId === 'r31-plan-decision-git-blob',
+    )!
+    if (axis === 'missing diagnostic')
+      Object.assign(record, {
+        observedEvidence: record.observedEvidence.filter((entry) => entry !== evidence),
+      })
+    else if (axis === 'Git commit evidence') {
+      const git = record.observedEvidence.find((entry) => entry.kind === 'git-commit')!
+      Object.assign(git, { reference: 'f'.repeat(40), digest: 'e'.repeat(64) })
+    } else {
+      const oracle = r31Oracle<{ decisionInputCanonicalJson: string }>(
+        '09-exact-migration-proposal.json',
+      )
+      const input = JSON.parse(oracle.decisionInputCanonicalJson)
+      input[axis === 'input path' ? 'path' : 'commit'] =
+        axis === 'input path'
+          ? 'plugins/foreman-line/docs/goals/foreman-kernel/R31-step0-mapping-20260907.md'
+          : '446700d47c2e162fcfa575d5a46b9247241a59c1'
+      const command = JSON.parse(evidence.reference)
+      command.inputDigest = sha256(canonicalJson(input))
+      const reference = canonicalJson(command)
+      Object.assign(evidence, { reference, digest: sha256(reference) })
+    }
+    r31Refusal(changed, 'MIGRATION_EVIDENCE_INVALID')
+  })
+
+for (const axis of [
+  'rule removal',
+  'rule identity substitution',
+  'thesis classification',
+  'thesis decision',
+  'thesis assurance',
+  'thesis retirement',
+  'M01 paired rules',
+  'M01 refusal code',
+] as const)
+  test(`R31 required complete shape rejects ${axis}`, () => {
+    const changed = structuredClone(full)
+    const oracle = r31Contract()
+    const rule = changed.rules.find(
+      (candidate) =>
+        candidate.ruleId ===
+        (axis.startsWith('thesis') ? oracle.thesisAfter.ruleId : oracle.newRule.ruleId),
+    )!
+    if (axis === 'rule removal')
+      Object.assign(changed, { rules: changed.rules.filter((candidate) => candidate !== rule) })
+    else if (axis === 'rule identity substitution')
+      Object.assign(rule, { ruleId: 'rule.standing-constraints.e3c4f313970c' })
+    else if (axis === 'thesis classification')
+      Object.assign(rule, { classification: 'independent-review-human-judgment' })
+    else if (axis === 'thesis decision') Object.assign(rule, { decision: 'REQUIRE_HUMAN' })
+    else if (axis === 'thesis assurance') Object.assign(rule, { assurance: 'human-ratified' })
+    else if (axis === 'thesis retirement')
+      Object.assign(rule, { retirementState: 'active-reading' })
+    else if (axis === 'M01 paired rules')
+      Object.assign(rule, { pairedRuleIds: [oracle.thesisAfter.ruleId] })
+    else Object.assign(rule, { refusalCode: 'AUTHORITY_ESCALATION' })
+    r31Refusal(changed)
+  })
+test('R31 alias duplication remains refused after repairing links and appending a successor', () => {
+  const changed = structuredClone(full)
+  const source = changed.sources.find((entry) => entry.sourceId === 'standing-constraints')!
+  const original = source.inventoryItems.find((item) => item.itemId === 'item.constraint-14')!
+  Object.assign(source, {
+    inventoryItems: [
+      ...source.inventoryItems,
+      {
+        ...structuredClone(original),
+        itemId: 'item.e3c4f313970c',
+        ruleIds: [],
+        exclusionDisposition: 'non-normative-explanation',
+        rationale: 'Attempted duplicate alias without reciprocal links.',
+      },
+    ],
+  })
+  const result = validateRegistry(rechain(changed))
+  assert.equal(result.valid, false)
+  ok(
+    result.violations.some(
+      (entry) =>
+        entry.code === 'AUTHORITY_ESCALATION' && /R31 reserved source unit/.test(entry.message),
+    ),
+  )
 })

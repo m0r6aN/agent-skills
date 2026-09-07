@@ -1,0 +1,7 @@
+{
+  "command": "npx tsx focused corpus R31/R30/standing/R5-numbered/R12-standing/R9-fenced",
+  "startUtc": "2026-09-07T17:20:33.8909861Z",
+  "endUtc": "2026-09-07T17:23:22.3952452Z",
+  "elapsedSeconds": 168.5073585,
+  "directExit": 0
+}

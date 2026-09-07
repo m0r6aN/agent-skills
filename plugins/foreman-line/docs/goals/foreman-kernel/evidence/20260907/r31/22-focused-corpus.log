@@ -1,0 +1,161 @@
+TAP version 13
+# Subtest: standing constraints inventory contains all fourteen atomic numbered rules
+ok 1 - standing constraints inventory contains all fourteen atomic numbered rules
+  ---
+  duration_ms: 7.2466
+  type: 'test'
+  ...
+# Subtest: R5 Markdown numbered-item locators survive physical line wrapping
+ok 2 - R5 Markdown numbered-item locators survive physical line wrapping
+  ---
+  duration_ms: 10053.5593
+  type: 'test'
+  ...
+# Subtest: R9 valid fenced standing-constraint number is ignored by the shared Markdown map
+ok 3 - R9 valid fenced standing-constraint number is ignored by the shared Markdown map
+  ---
+  duration_ms: 8358.4449
+  type: 'test'
+  ...
+# Subtest: R12 active standing-rule marker renumbering is a value mismatch without locator loss
+ok 4 - R12 active standing-rule marker renumbering is a value mismatch without locator loss
+  ---
+  duration_ms: 8697.2798
+  type: 'test'
+  ...
+# Subtest: R30 INF-1 real governed source mutation fails exact value binding
+ok 5 - R30 INF-1 real governed source mutation fails exact value binding
+  ---
+  duration_ms: 8582.5403
+  type: 'test'
+  ...
+# Subtest: R30 INF-2 real governed source mutation fails exact value binding
+ok 6 - R30 INF-2 real governed source mutation fails exact value binding
+  ---
+  duration_ms: 6833.759
+  type: 'test'
+  ...
+# Subtest: R30 INF-3 real governed source mutation fails exact value binding
+ok 7 - R30 INF-3 real governed source mutation fails exact value binding
+  ---
+  duration_ms: 6734.3336
+  type: 'test'
+  ...
+# Subtest: R30 INF-4 real governed source mutation fails exact value binding
+ok 8 - R30 INF-4 real governed source mutation fails exact value binding
+  ---
+  duration_ms: 7071.6237
+  type: 'test'
+  ...
+# Subtest: R30 INF-5 real governed source mutation fails exact value binding
+ok 9 - R30 INF-5 real governed source mutation fails exact value binding
+  ---
+  duration_ms: 7620.2362
+  type: 'test'
+  ...
+# Subtest: R30 INF-6 real governed source mutation fails exact value binding
+ok 10 - R30 INF-6 real governed source mutation fails exact value binding
+  ---
+  duration_ms: 7803.1113
+  type: 'test'
+  ...
+# Subtest: R30 INF-7 real governed source mutation fails exact value binding
+ok 11 - R30 INF-7 real governed source mutation fails exact value binding
+  ---
+  duration_ms: 8281.5468
+  type: 'test'
+  ...
+# Subtest: R30 INF-8 real governed source mutation fails exact value binding
+ok 12 - R30 INF-8 real governed source mutation fails exact value binding
+  ---
+  duration_ms: 7173.2838
+  type: 'test'
+  ...
+# Subtest: R30 new continuation authority is governed outside every volatile region
+ok 13 - R30 new continuation authority is governed outside every volatile region
+  ---
+  duration_ms: 7307.065
+  type: 'test'
+  ...
+# Subtest: R30 prior anchor freeze retains ledger identities and rejects ambiguous current ledger anchors
+ok 14 - R30 prior anchor freeze retains ledger identities and rejects ambiguous current ledger anchors
+  ---
+  duration_ms: 10249.1119
+  type: 'test'
+  ...
+# Subtest: R31 approved annotation and thesis have distinct source-bound identities
+ok 15 - R31 approved annotation and thesis have distinct source-bound identities
+  ---
+  duration_ms: 10.643
+  type: 'test'
+  ...
+# Subtest: R31 actual M01 source rejects parcel condition mutation
+ok 16 - R31 actual M01 source rejects parcel condition mutation
+  ---
+  duration_ms: 6447.3716
+  type: 'test'
+  ...
+# Subtest: R31 actual M01 source rejects living identifier mutation
+ok 17 - R31 actual M01 source rejects living identifier mutation
+  ---
+  duration_ms: 6980.924
+  type: 'test'
+  ...
+# Subtest: R31 actual M01 source rejects marketplace entry mutation
+ok 18 - R31 actual M01 source rejects marketplace entry mutation
+  ---
+  duration_ms: 7804.6884
+  type: 'test'
+  ...
+# Subtest: R31 actual M01 source rejects source existence mutation
+ok 19 - R31 actual M01 source rejects source existence mutation
+  ---
+  duration_ms: 8496.8353
+  type: 'test'
+  ...
+# Subtest: R31 actual M01 source rejects nested manifest equality mutation
+ok 20 - R31 actual M01 source rejects nested manifest equality mutation
+  ---
+  duration_ms: 6770.7475
+  type: 'test'
+  ...
+# Subtest: R31 actual M01 source rejects URL insufficiency mutation
+ok 21 - R31 actual M01 source rejects URL insufficiency mutation
+  ---
+  duration_ms: 7392.002
+  type: 'test'
+  ...
+# Subtest: R31 actual decision blob correspondence detects Git replacement despite an unchanged diagnostic
+ok 22 - R31 actual decision blob correspondence detects Git replacement despite an unchanged diagnostic
+  ---
+  duration_ms: 1103.1271
+  type: 'test'
+  ...
+# Subtest: R31 source-bound aliases reject displaced or substituted historical note and thesis
+ok 23 - R31 source-bound aliases reject displaced or substituted historical note and thesis
+  ---
+  duration_ms: 171.7871
+  type: 'test'
+  ...
+# Subtest: R31 historical positive uses the pinned R30 implementation and its exact source subject
+ok 24 - R31 historical positive uses the pinned R30 implementation and its exact source subject
+  ---
+  duration_ms: 8642.7363
+  type: 'test'
+  ...
+# Subtest: R31 current fourteen-rule coverage still refuses an unreviewed fifteenth standing rule
+ok 25 - R31 current fourteen-rule coverage still refuses an unreviewed fifteenth standing rule
+  ---
+  duration_ms: 7280.6571
+  type: 'test'
+  ...
+1..25
+# tests 25
+# suites 0
+# pass 25
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 167145.4349
+DIRECT_EXIT=0

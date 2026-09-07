@@ -1,0 +1,899 @@
+TAP version 13
+# Subtest: each of the six classifications is accepted and summarized independently
+ok 1 - each of the six classifications is accepted and summarized independently
+  ---
+  duration_ms: 124.4025
+  type: 'test'
+  ...
+# Subtest: classification matrix rejects post-action-detection assurance widening
+ok 2 - classification matrix rejects post-action-detection assurance widening
+  ---
+  duration_ms: 96.2419
+  type: 'test'
+  ...
+# Subtest: classification matrix rejects ci-static-check owner widening
+ok 3 - classification matrix rejects ci-static-check owner widening
+  ---
+  duration_ms: 89.1328
+  type: 'test'
+  ...
+# Subtest: classification matrix rejects independent-review decision widening
+ok 4 - classification matrix rejects independent-review decision widening
+  ---
+  duration_ms: 96.5517
+  type: 'test'
+  ...
+# Subtest: classification matrix rejects narrative-provenance owner widening
+ok 5 - classification matrix rejects narrative-provenance owner widening
+  ---
+  duration_ms: 95.0738
+  type: 'test'
+  ...
+# Subtest: classification matrix rejects unsupported assurance widening
+ok 6 - classification matrix rejects unsupported assurance widening
+  ---
+  duration_ms: 94.9366
+  type: 'test'
+  ...
+# Subtest: classification mutation control: pre-action-refusal cannot be widened
+ok 7 - classification mutation control: pre-action-refusal cannot be widened
+  ---
+  duration_ms: 39.9061
+  type: 'test'
+  ...
+# Subtest: classification mutation control: post-action-detection cannot be widened
+ok 8 - classification mutation control: post-action-detection cannot be widened
+  ---
+  duration_ms: 31.9873
+  type: 'test'
+  ...
+# Subtest: classification mutation control: ci-static-check cannot be widened
+ok 9 - classification mutation control: ci-static-check cannot be widened
+  ---
+  duration_ms: 29.736
+  type: 'test'
+  ...
+# Subtest: classification mutation control: independent-review-human-judgment cannot be widened
+ok 10 - classification mutation control: independent-review-human-judgment cannot be widened
+  ---
+  duration_ms: 25.833
+  type: 'test'
+  ...
+# Subtest: classification mutation control: narrative-provenance cannot be widened
+ok 11 - classification mutation control: narrative-provenance cannot be widened
+  ---
+  duration_ms: 23.8134
+  type: 'test'
+  ...
+# Subtest: classification mutation control: unsupported cannot be widened
+ok 12 - classification mutation control: unsupported cannot be widened
+  ---
+  duration_ms: 26.2131
+  type: 'test'
+  ...
+# Subtest: R5 standing rules have thirteen distinct operative semantic subjects
+ok 13 - R5 standing rules have thirteen distinct operative semantic subjects
+  ---
+  duration_ms: 6.9531
+  type: 'test'
+  ...
+# Subtest: R13 normative Markdown audit has exactly 145 source-authored records
+ok 14 - R13 normative Markdown audit has exactly 145 source-authored records
+  ---
+  duration_ms: 466.0845
+  type: 'test'
+  ...
+# Subtest: R9 gives every published item one literal curated classification entry
+ok 15 - R9 gives every published item one literal curated classification entry
+  ---
+  duration_ms: 14.0431
+  type: 'test'
+  ...
+# Subtest: R9 classification curation has no source-wide keyword or terminal fallback
+ok 16 - R9 classification curation has no source-wide keyword or terminal fallback
+  ---
+  duration_ms: 9.3875
+  type: 'test'
+  ...
+# Subtest: R9 loop stop and completion rules retain operative classifications and narrow scope
+ok 17 - R9 loop stop and completion rules retain operative classifications and narrow scope
+  ---
+  duration_ms: 8.1606
+  type: 'test'
+  ...
+# Subtest: R8 generation has no classification or default applicability fallback
+ok 18 - R8 generation has no classification or default applicability fallback
+  ---
+  duration_ms: 11.0235
+  type: 'test'
+  ...
+# Subtest: R14 a resolved result exposes classification, assurance, enforcement owner and severity
+ok 19 - R14 a resolved result exposes classification, assurance, enforcement owner and severity
+  ---
+  duration_ms: 117.5409
+  type: 'test'
+  ...
+# Subtest: R22 control: the shipped registry is valid, so every refusal below is caused by its mutation
+ok 20 - R22 control: the shipped registry is valid, so every refusal below is caused by its mutation
+  ---
+  duration_ms: 103.7863
+  type: 'test'
+  ...
+# Subtest: R22 O6 refuses deleting the head and substituting a copy under a fresh unpinned id
+ok 21 - R22 O6 refuses deleting the head and substituting a copy under a fresh unpinned id
+  ---
+  duration_ms: 386.6052
+  type: 'test'
+  ...
+# Subtest: R22 O6 refuses rewriting the head IN PLACE under the same id
+ok 22 - R22 O6 refuses rewriting the head IN PLACE under the same id
+  ---
+  duration_ms: 1150.449
+  type: 'test'
+  ...
+# Subtest: R22 O6 refuses rewriting the head attestation even with no payload at all
+ok 23 - R22 O6 refuses rewriting the head attestation even with no payload at all
+  ---
+  duration_ms: 219.4101
+  type: 'test'
+  ...
+# Subtest: R22 O7 ADMITS a properly chained appended head and preserves the demoted head
+ok 24 - R22 O7 ADMITS a properly chained appended head and preserves the demoted head
+  ---
+  duration_ms: 107.5132
+  type: 'test'
+  ...
+# Subtest: R22 O7 refuses an append that also rewrites the demoted former head
+ok 25 - R22 O7 refuses an append that also rewrites the demoted former head
+  ---
+  duration_ms: 294.8941
+  type: 'test'
+  ...
+# Subtest: R22 O3 refuses gutted chain commands that a coordinator decoy would have excused
+ok 26 - R22 O3 refuses gutted chain commands that a coordinator decoy would have excused
+  ---
+  duration_ms: 214.3353
+  type: 'test'
+  ...
+# Subtest: R22 O5 refuses deleting the unbound second git-commit entry from the head
+ok 27 - R22 O5 refuses deleting the unbound second git-commit entry from the head
+  ---
+  duration_ms: 224.5012
+  type: 'test'
+  ...
+# Subtest: R22 O5 refuses a fabricated extra git-commit entry on the head
+ok 28 - R22 O5 refuses a fabricated extra git-commit entry on the head
+  ---
+  duration_ms: 224.5216
+  type: 'test'
+  ...
+# Subtest: R22 O5 refuses the bound git-commit reference repeated under a differing digest
+ok 29 - R22 O5 refuses the bound git-commit reference repeated under a differing digest
+  ---
+  duration_ms: 169.1751
+  type: 'test'
+  ...
+# Subtest: R22 O7 limit, stated exactly: the append path is one deep, and the second is refused
+ok 30 - R22 O7 limit, stated exactly: the append path is one deep, and the second is refused
+  ---
+  duration_ms: 245.3878
+  type: 'test'
+  ...
+# Subtest: R30 adopted sample has source-authored counts before accepting generated output
+ok 31 - R30 adopted sample has source-authored counts before accepting generated output
+  ---
+  duration_ms: 449.3547
+  type: 'test'
+  ...
+# Subtest: R30 all 72 complete published shapes agree with the independent source mapping
+ok 32 - R30 all 72 complete published shapes agree with the independent source mapping
+  ---
+  duration_ms: 32.9394
+  type: 'test'
+  ...
+# Subtest: R30 exact adopted registry and reviewed paraphrases validate without new grants
+ok 33 - R30 exact adopted registry and reviewed paraphrases validate without new grants
+  ---
+  duration_ms: 514.1912
+  type: 'test'
+  ...
+# Subtest: R30 preserves all 19 complete historical reconciliations and appends only one named migration
+ok 34 - R30 preserves all 19 complete historical reconciliations and appends only one named migration
+  ---
+  duration_ms: 1346.1339
+  type: 'test'
+  ...
+# Subtest: R30 exact baseline-to-adoption item and rule delta preserves all post-R13 identities
+ok 35 - R30 exact baseline-to-adoption item and rule delta preserves all post-R13 identities
+  ---
+  duration_ms: 2605.0914
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses statement word with repaired incidental digests
+ok 36 - R30 reserved shape refuses statement word with repaired incidental digests
+  ---
+  duration_ms: 170.7542
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses statement negation with repaired incidental digests
+ok 37 - R30 reserved shape refuses statement negation with repaired incidental digests
+  ---
+  duration_ms: 154.189
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses statement number with repaired incidental digests
+ok 38 - R30 reserved shape refuses statement number with repaired incidental digests
+  ---
+  duration_ms: 143.5684
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses statement scope with repaired incidental digests
+ok 39 - R30 reserved shape refuses statement scope with repaired incidental digests
+  ---
+  duration_ms: 141.1023
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses subject with repaired incidental digests
+ok 40 - R30 reserved shape refuses subject with repaired incidental digests
+  ---
+  duration_ms: 130.784
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses claim with repaired incidental digests
+ok 41 - R30 reserved shape refuses claim with repaired incidental digests
+  ---
+  duration_ms: 213.1722
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses decision with repaired incidental digests
+ok 42 - R30 reserved shape refuses decision with repaired incidental digests
+  ---
+  duration_ms: 208.5399
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses classification with repaired incidental digests
+ok 43 - R30 reserved shape refuses classification with repaired incidental digests
+  ---
+  duration_ms: 212.0013
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses owner with repaired incidental digests
+ok 44 - R30 reserved shape refuses owner with repaired incidental digests
+  ---
+  duration_ms: 201.2969
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses severity with repaired incidental digests
+ok 45 - R30 reserved shape refuses severity with repaired incidental digests
+  ---
+  duration_ms: 172.6051
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses refusal code with repaired incidental digests
+ok 46 - R30 reserved shape refuses refusal code with repaired incidental digests
+  ---
+  duration_ms: 153.0304
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses goals with repaired incidental digests
+ok 47 - R30 reserved shape refuses goals with repaired incidental digests
+  ---
+  duration_ms: 222.7347
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses roles with repaired incidental digests
+ok 48 - R30 reserved shape refuses roles with repaired incidental digests
+  ---
+  duration_ms: 261.3289
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses stages with repaired incidental digests
+ok 49 - R30 reserved shape refuses stages with repaired incidental digests
+  ---
+  duration_ms: 185.8116
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses operations with repaired incidental digests
+ok 50 - R30 reserved shape refuses operations with repaired incidental digests
+  ---
+  duration_ms: 324.1626
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses hosts with repaired incidental digests
+ok 51 - R30 reserved shape refuses hosts with repaired incidental digests
+  ---
+  duration_ms: 166.3529
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses pairings with repaired incidental digests
+ok 52 - R30 reserved shape refuses pairings with repaired incidental digests
+  ---
+  duration_ms: 178.6032
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses retirement with repaired incidental digests
+ok 53 - R30 reserved shape refuses retirement with repaired incidental digests
+  ---
+  duration_ms: 194.8952
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses retirement evidence with repaired incidental digests
+ok 54 - R30 reserved shape refuses retirement evidence with repaired incidental digests
+  ---
+  duration_ms: 206.4821
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses missing basis ref with repaired incidental digests
+ok 55 - R30 reserved shape refuses missing basis ref with repaired incidental digests
+  ---
+  duration_ms: 162.3093
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses corroboration as basis with repaired incidental digests
+ok 56 - R30 reserved shape refuses corroboration as basis with repaired incidental digests
+  ---
+  duration_ms: 158.7862
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses source substitution with repaired incidental digests
+ok 57 - R30 reserved shape refuses source substitution with repaired incidental digests
+  ---
+  duration_ms: 174.1988
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses location digest with repaired incidental digests
+ok 58 - R30 reserved shape refuses location digest with repaired incidental digests
+  ---
+  duration_ms: 163.897
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses value digest with repaired incidental digests
+ok 59 - R30 reserved shape refuses value digest with repaired incidental digests
+  ---
+  duration_ms: 141.6366
+  type: 'test'
+  ...
+# Subtest: R30 C04/events cannot revert assurance to independently-verified through legacy fallback
+ok 60 - R30 C04/events cannot revert assurance to independently-verified through legacy fallback
+  ---
+  duration_ms: 133.0234
+  type: 'test'
+  ...
+# Subtest: R30 C19/warm cannot revert assurance to detected through legacy fallback
+ok 61 - R30 C19/warm cannot revert assurance to detected through legacy fallback
+  ---
+  duration_ms: 147.2155
+  type: 'test'
+  ...
+# Subtest: R30 C23/no-late-allow cannot revert assurance to structural through legacy fallback
+ok 62 - R30 C23/no-late-allow cannot revert assurance to structural through legacy fallback
+  ---
+  duration_ms: 135.0614
+  type: 'test'
+  ...
+# Subtest: R30 L01/continuation cannot revert assurance to narrative through legacy fallback
+ok 63 - R30 L01/continuation cannot revert assurance to narrative through legacy fallback
+  ---
+  duration_ms: 168.0085
+  type: 'test'
+  ...
+# Subtest: R30 required reserved set refuses remove independently of incidental digests
+ok 64 - R30 required reserved set refuses remove independently of incidental digests
+  ---
+  duration_ms: 164.98
+  type: 'test'
+  ...
+# Subtest: R30 required reserved set refuses substitute independently of incidental digests
+ok 65 - R30 required reserved set refuses substitute independently of incidental digests
+  ---
+  duration_ms: 140.11
+  type: 'test'
+  ...
+# Subtest: R30 exact basis correspondence refuses copied digest
+ok 66 - R30 exact basis correspondence refuses copied digest
+  ---
+  duration_ms: 150.6778
+  type: 'test'
+  ...
+# Subtest: R30 exact basis correspondence refuses repaired digest
+ok 67 - R30 exact basis correspondence refuses repaired digest
+  ---
+  duration_ms: 142.6087
+  type: 'test'
+  ...
+# Subtest: R30 exact basis correspondence refuses locator
+ok 68 - R30 exact basis correspondence refuses locator
+  ---
+  duration_ms: 161.081
+  type: 'test'
+  ...
+# Subtest: R30 exact basis correspondence refuses missing inventory membership
+ok 69 - R30 exact basis correspondence refuses missing inventory membership
+  ---
+  duration_ms: 191.3298
+  type: 'test'
+  ...
+# Subtest: R30 exact basis correspondence refuses borrowed statement
+ok 70 - R30 exact basis correspondence refuses borrowed statement
+  ---
+  duration_ms: 214.3318
+  type: 'test'
+  ...
+# Subtest: R30 exact basis correspondence refuses shared-item swap
+ok 71 - R30 exact basis correspondence refuses shared-item swap
+  ---
+  duration_ms: 138.6497
+  type: 'test'
+  ...
+# Subtest: R30 C02/self-application is exact noncontrolling provenance rather than a runtime grant
+ok 72 - R30 C02/self-application is exact noncontrolling provenance rather than a runtime grant
+  ---
+  duration_ms: 233.5376
+  type: 'test'
+  ...
+# Subtest: R30 C03/adoption is exact noncontrolling provenance rather than a runtime grant
+ok 73 - R30 C03/adoption is exact noncontrolling provenance rather than a runtime grant
+  ---
+  duration_ms: 234.6167
+  type: 'test'
+  ...
+# Subtest: R30 C18/reaffirm is exact noncontrolling provenance rather than a runtime grant
+ok 74 - R30 C18/reaffirm is exact noncontrolling provenance rather than a runtime grant
+  ---
+  duration_ms: 324.5774
+  type: 'test'
+  ...
+# Subtest: R30 L01/continuation is exact noncontrolling provenance rather than a runtime grant
+ok 75 - R30 L01/continuation is exact noncontrolling provenance rather than a runtime grant
+  ---
+  duration_ms: 437.9058
+  type: 'test'
+  ...
+# Subtest: R30 L02/publication is exact noncontrolling provenance rather than a runtime grant
+ok 76 - R30 L02/publication is exact noncontrolling provenance rather than a runtime grant
+  ---
+  duration_ms: 304.8431
+  type: 'test'
+  ...
+# Subtest: R30 L03/shaping is exact noncontrolling provenance rather than a runtime grant
+ok 77 - R30 L03/shaping is exact noncontrolling provenance rather than a runtime grant
+  ---
+  duration_ms: 288.3383
+  type: 'test'
+  ...
+# Subtest: R30 U02/original-event is exact noncontrolling provenance rather than a runtime grant
+ok 78 - R30 U02/original-event is exact noncontrolling provenance rather than a runtime grant
+  ---
+  duration_ms: 346.4033
+  type: 'test'
+  ...
+# Subtest: R30 U03/reopen-event is exact noncontrolling provenance rather than a runtime grant
+ok 79 - R30 U03/reopen-event is exact noncontrolling provenance rather than a runtime grant
+  ---
+  duration_ms: 308.947
+  type: 'test'
+  ...
+# Subtest: R30 U04/a1-event is exact noncontrolling provenance rather than a runtime grant
+ok 80 - R30 U04/a1-event is exact noncontrolling provenance rather than a runtime grant
+  ---
+  duration_ms: 347.8567
+  type: 'test'
+  ...
+# Subtest: R30 applicable C42/gates covers coordinator/shaping/state-transition on supported and unsupported hosts
+ok 81 - R30 applicable C42/gates covers coordinator/shaping/state-transition on supported and unsupported hosts
+  ---
+  duration_ms: 223.784
+  type: 'test'
+  ...
+# Subtest: R30 applicable C42/gates covers coordinator/step-zero/state-transition on supported and unsupported hosts
+ok 82 - R30 applicable C42/gates covers coordinator/step-zero/state-transition on supported and unsupported hosts
+  ---
+  duration_ms: 195.0443
+  type: 'test'
+  ...
+# Subtest: R30 applicable C42/gates covers shaper/shaping/spec-mutation on supported and unsupported hosts
+ok 83 - R30 applicable C42/gates covers shaper/shaping/spec-mutation on supported and unsupported hosts
+  ---
+  duration_ms: 338.3647
+  type: 'test'
+  ...
+# Subtest: R30 applicable C42/gates covers reviewer/adversarial-review/receipt-validation on supported and unsupported hosts
+ok 84 - R30 applicable C42/gates covers reviewer/adversarial-review/receipt-validation on supported and unsupported hosts
+  ---
+  duration_ms: 283.2434
+  type: 'test'
+  ...
+# Subtest: R30 applicable C42/gates covers coordinator/merge/state-transition on supported and unsupported hosts
+ok 85 - R30 applicable C42/gates covers coordinator/merge/state-transition on supported and unsupported hosts
+  ---
+  duration_ms: 351.0908
+  type: 'test'
+  ...
+# Subtest: R30 applicable C42/contract covers shaper/shaping/spec-mutation on supported and unsupported hosts
+ok 86 - R30 applicable C42/contract covers shaper/shaping/spec-mutation on supported and unsupported hosts
+  ---
+  duration_ms: 293.1501
+  type: 'test'
+  ...
+# Subtest: R30 applicable C42/contract covers reviewer/step-zero/repo-read on supported and unsupported hosts
+ok 87 - R30 applicable C42/contract covers reviewer/step-zero/repo-read on supported and unsupported hosts
+  ---
+  duration_ms: 360.9605
+  type: 'test'
+  ...
+# Subtest: R30 applicable U01/stable-ids covers coordinator/build/repo-mutation on supported and unsupported hosts
+ok 88 - R30 applicable U01/stable-ids covers coordinator/build/repo-mutation on supported and unsupported hosts
+  ---
+  duration_ms: 355.6357
+  type: 'test'
+  ...
+# Subtest: R30 applicable U01/stable-ids covers shaper/shaping/spec-mutation on supported and unsupported hosts
+ok 89 - R30 applicable U01/stable-ids covers shaper/shaping/spec-mutation on supported and unsupported hosts
+  ---
+  duration_ms: 328.921
+  type: 'test'
+  ...
+# Subtest: R30 applicable U01/stable-ids covers kernel/runtime/receipt-validation on supported and unsupported hosts
+ok 90 - R30 applicable U01/stable-ids covers kernel/runtime/receipt-validation on supported and unsupported hosts
+  ---
+  duration_ms: 413.6051
+  type: 'test'
+  ...
+# Subtest: R30 applicable C11/carriers covers shaper/shaping/spec-mutation on supported and unsupported hosts
+ok 91 - R30 applicable C11/carriers covers shaper/shaping/spec-mutation on supported and unsupported hosts
+  ---
+  duration_ms: 371.1216
+  type: 'test'
+  ...
+# Subtest: R30 applicable C34/manifest covers shaper/step-zero/repo-mutation on supported and unsupported hosts
+ok 92 - R30 applicable C34/manifest covers shaper/step-zero/repo-mutation on supported and unsupported hosts
+  ---
+  duration_ms: 257.2263
+  type: 'test'
+  ...
+# Subtest: R30 applicable C32/accounting covers shaper/shaping/spec-mutation on supported and unsupported hosts
+ok 93 - R30 applicable C32/accounting covers shaper/shaping/spec-mutation on supported and unsupported hosts
+  ---
+  duration_ms: 282.7813
+  type: 'test'
+  ...
+# Subtest: R30 applicable C43/window covers coordinator/closure/repo-mutation on supported and unsupported hosts
+ok 94 - R30 applicable C43/window covers coordinator/closure/repo-mutation on supported and unsupported hosts
+  ---
+  duration_ms: 295.6566
+  type: 'test'
+  ...
+# Subtest: R30 applicable L04/preservation covers operator/runtime/repo-read on supported and unsupported hosts
+ok 95 - R30 applicable L04/preservation covers operator/runtime/repo-read on supported and unsupported hosts
+  ---
+  duration_ms: 280.7093
+  type: 'test'
+  ...
+# Subtest: R30 exact correspondence does not bypass protected operation or migration refusal
+ok 96 - R30 exact correspondence does not bypass protected operation or migration refusal
+  ---
+  duration_ms: 236.9395
+  type: 'test'
+  ...
+# Subtest: R30 approved reference-edge set rejects missing refs with repaired incidental digests
+ok 97 - R30 approved reference-edge set rejects missing refs with repaired incidental digests
+  ---
+  duration_ms: 241.8797
+  type: 'test'
+  ...
+# Subtest: R30 approved reference-edge set rejects extra refs with repaired incidental digests
+ok 98 - R30 approved reference-edge set rejects extra refs with repaired incidental digests
+  ---
+  duration_ms: 269.3229
+  type: 'test'
+  ...
+# Subtest: R30 approved reference-edge set rejects reordered refs with repaired incidental digests
+ok 99 - R30 approved reference-edge set rejects reordered refs with repaired incidental digests
+  ---
+  duration_ms: 134.7035
+  type: 'test'
+  ...
+# Subtest: R30 approved reference-edge set rejects swapped refs with repaired incidental digests
+ok 100 - R30 approved reference-edge set rejects swapped refs with repaired incidental digests
+  ---
+  duration_ms: 133.6133
+  type: 'test'
+  ...
+# Subtest: R30 approved reference-edge set rejects duplicate refs with repaired incidental digests
+ok 101 - R30 approved reference-edge set rejects duplicate refs with repaired incidental digests
+  ---
+  duration_ms: 81.1312
+  type: 'test'
+  ...
+# Subtest: R30 reciprocal inventory edge set rejects missing membership
+ok 102 - R30 reciprocal inventory edge set rejects missing membership
+  ---
+  duration_ms: 230.0849
+  type: 'test'
+  ...
+# Subtest: R30 reciprocal inventory edge set rejects extra membership
+ok 103 - R30 reciprocal inventory edge set rejects extra membership
+  ---
+  duration_ms: 153.1443
+  type: 'test'
+  ...
+# Subtest: R30 reciprocal inventory edge set rejects cross-item membership
+ok 104 - R30 reciprocal inventory edge set rejects cross-item membership
+  ---
+  duration_ms: 139.6028
+  type: 'test'
+  ...
+# Subtest: R30 reciprocal inventory edge set rejects duplicate membership
+ok 105 - R30 reciprocal inventory edge set rejects duplicate membership
+  ---
+  duration_ms: 77.6289
+  type: 'test'
+  ...
+# Subtest: R30 singleton component identity refuses suffix substitution
+ok 106 - R30 singleton component identity refuses suffix substitution
+  ---
+  duration_ms: 157.342
+  type: 'test'
+  ...
+# Subtest: R30 singleton component identity refuses borrowed suffix
+ok 107 - R30 singleton component identity refuses borrowed suffix
+  ---
+  duration_ms: 136.6143
+  type: 'test'
+  ...
+# Subtest: R30 preserves ordinary unrelated legacy singleton and nonliteral-paraphrase refusals
+ok 108 - R30 preserves ordinary unrelated legacy singleton and nonliteral-paraphrase refusals
+  ---
+  duration_ms: 381.9257
+  type: 'test'
+  ...
+# Subtest: R30 corroboration adds exactly 67 reciprocal edges without changing the designated bases
+ok 109 - R30 corroboration adds exactly 67 reciprocal edges without changing the designated bases
+  ---
+  duration_ms: 781.3569
+  type: 'test'
+  ...
+# Subtest: R31 independently prescribed successor counts and source snapshot are adopted
+ok 110 - R31 independently prescribed successor counts and source snapshot are adopted
+  ---
+  duration_ms: 5.312
+  type: 'test'
+  ...
+# Subtest: R31 full source-authored rule shapes, designated bases and ordered references are exact
+ok 111 - R31 full source-authored rule shapes, designated bases and ordered references are exact
+  ---
+  duration_ms: 5.9505
+  type: 'test'
+  ...
+# Subtest: R31 complete prior-item correspondence and exact reciprocal sets include every current item
+ok 112 - R31 complete prior-item correspondence and exact reciprocal sets include every current item
+  ---
+  duration_ms: 681.9382
+  type: 'test'
+  ...
+# Subtest: R31 twenty canonical historical records and exact independently pinned append are preserved
+ok 113 - R31 twenty canonical historical records and exact independently pinned append are preserved
+  ---
+  duration_ms: 502.2062
+  type: 'test'
+  ...
+# Subtest: R31 reserved M01 shape rejects subject
+ok 114 - R31 reserved M01 shape rejects subject
+  ---
+  duration_ms: 165.1469
+  type: 'test'
+  ...
+# Subtest: R31 reserved M01 shape rejects claim
+ok 115 - R31 reserved M01 shape rejects claim
+  ---
+  duration_ms: 157.8031
+  type: 'test'
+  ...
+# Subtest: R31 reserved M01 shape rejects decision
+ok 116 - R31 reserved M01 shape rejects decision
+  ---
+  duration_ms: 147.8199
+  type: 'test'
+  ...
+# Subtest: R31 reserved M01 shape rejects owner
+ok 117 - R31 reserved M01 shape rejects owner
+  ---
+  duration_ms: 175.9766
+  type: 'test'
+  ...
+# Subtest: R31 reserved M01 shape rejects legacy assurance fallback
+ok 118 - R31 reserved M01 shape rejects legacy assurance fallback
+  ---
+  duration_ms: 209.6939
+  type: 'test'
+  ...
+# Subtest: R31 reserved M01 shape rejects classification
+ok 119 - R31 reserved M01 shape rejects classification
+  ---
+  duration_ms: 152.7163
+  type: 'test'
+  ...
+# Subtest: R31 reserved M01 shape rejects severity
+ok 120 - R31 reserved M01 shape rejects severity
+  ---
+  duration_ms: 153.383
+  type: 'test'
+  ...
+# Subtest: R31 reserved M01 shape rejects goals
+ok 121 - R31 reserved M01 shape rejects goals
+  ---
+  duration_ms: 88.3855
+  type: 'test'
+  ...
+# Subtest: R31 reserved M01 shape rejects roles
+ok 122 - R31 reserved M01 shape rejects roles
+  ---
+  duration_ms: 143.3669
+  type: 'test'
+  ...
+# Subtest: R31 reserved M01 shape rejects stages
+ok 123 - R31 reserved M01 shape rejects stages
+  ---
+  duration_ms: 171.5792
+  type: 'test'
+  ...
+# Subtest: R31 reserved M01 shape rejects operations
+ok 124 - R31 reserved M01 shape rejects operations
+  ---
+  duration_ms: 143.1749
+  type: 'test'
+  ...
+# Subtest: R31 reserved M01 shape rejects hosts
+ok 125 - R31 reserved M01 shape rejects hosts
+  ---
+  duration_ms: 183.5194
+  type: 'test'
+  ...
+# Subtest: R31 reserved M01 shape rejects retirement
+ok 126 - R31 reserved M01 shape rejects retirement
+  ---
+  duration_ms: 162.893
+  type: 'test'
+  ...
+# Subtest: R31 reserved M01 shape rejects basis substitution
+ok 127 - R31 reserved M01 shape rejects basis substitution
+  ---
+  duration_ms: 140.6837
+  type: 'test'
+  ...
+# Subtest: R31 reserved M01 shape rejects missing reference
+ok 128 - R31 reserved M01 shape rejects missing reference
+  ---
+  duration_ms: 88.3188
+  type: 'test'
+  ...
+# Subtest: R31 reserved M01 shape rejects extra reference
+ok 129 - R31 reserved M01 shape rejects extra reference
+  ---
+  duration_ms: 170.6521
+  type: 'test'
+  ...
+# Subtest: R31 complete M01 duty rejects repaired parcel condition mutation
+ok 130 - R31 complete M01 duty rejects repaired parcel condition mutation
+  ---
+  duration_ms: 149.8053
+  type: 'test'
+  ...
+# Subtest: R31 complete M01 duty rejects repaired every living identifier mutation
+ok 131 - R31 complete M01 duty rejects repaired every living identifier mutation
+  ---
+  duration_ms: 161.7147
+  type: 'test'
+  ...
+# Subtest: R31 complete M01 duty rejects repaired marketplace entry mutation
+ok 132 - R31 complete M01 duty rejects repaired marketplace entry mutation
+  ---
+  duration_ms: 157.5271
+  type: 'test'
+  ...
+# Subtest: R31 complete M01 duty rejects repaired source existence mutation
+ok 133 - R31 complete M01 duty rejects repaired source existence mutation
+  ---
+  duration_ms: 172.7749
+  type: 'test'
+  ...
+# Subtest: R31 complete M01 duty rejects repaired nested manifest equality mutation
+ok 134 - R31 complete M01 duty rejects repaired nested manifest equality mutation
+  ---
+  duration_ms: 150.0891
+  type: 'test'
+  ...
+# Subtest: R31 complete M01 duty rejects repaired URL insufficiency mutation
+ok 135 - R31 complete M01 duty rejects repaired URL insufficiency mutation
+  ---
+  duration_ms: 184.8911
+  type: 'test'
+  ...
+# Subtest: R31 finite source identity rejects remove M01
+ok 136 - R31 finite source identity rejects remove M01
+  ---
+  duration_ms: 113.6382
+  type: 'test'
+  ...
+# Subtest: R31 finite source identity rejects substitute alias
+ok 137 - R31 finite source identity rejects substitute alias
+  ---
+  duration_ms: 102.1493
+  type: 'test'
+  ...
+# Subtest: R31 finite source identity rejects note takes thesis
+ok 138 - R31 finite source identity rejects note takes thesis
+  ---
+  duration_ms: 97.8261
+  type: 'test'
+  ...
+# Subtest: R31 finite source identity rejects thesis old location
+ok 139 - R31 finite source identity rejects thesis old location
+  ---
+  duration_ms: 104.1708
+  type: 'test'
+  ...
+# Subtest: R31 finite source identity rejects historical name reversion
+ok 140 - R31 finite source identity rejects historical name reversion
+  ---
+  duration_ms: 123.112
+  type: 'test'
+  ...
+# Subtest: R31 finite source identity rejects extra raw alias
+ok 141 - R31 finite source identity rejects extra raw alias
+  ---
+  duration_ms: 106.8599
+  type: 'test'
+  ...
+# Subtest: R31 decision diagnostic rejects repaired commandId substitution
+ok 142 - R31 decision diagnostic rejects repaired commandId substitution
+  ---
+  duration_ms: 118.4897
+  type: 'test'
+  ...
+# Subtest: R31 decision diagnostic rejects repaired inputDigest substitution
+ok 143 - R31 decision diagnostic rejects repaired inputDigest substitution
+  ---
+  duration_ms: 107.7367
+  type: 'test'
+  ...
+# Subtest: R31 decision diagnostic rejects repaired resultDigest substitution
+ok 144 - R31 decision diagnostic rejects repaired resultDigest substitution
+  ---
+  duration_ms: 186.0464
+  type: 'test'
+  ...
+# Subtest: R31 decision diagnostic rejects repaired actorClass substitution
+ok 145 - R31 decision diagnostic rejects repaired actorClass substitution
+  ---
+  duration_ms: 281.7758
+  type: 'test'
+  ...
+# Subtest: R31 decision diagnostic rejects repaired tool substitution
+ok 146 - R31 decision diagnostic rejects repaired tool substitution
+  ---
+  duration_ms: 216.5945
+  type: 'test'
+  ...
+# Subtest: R31 decision diagnostic rejects repaired toolVersion substitution
+ok 147 - R31 decision diagnostic rejects repaired toolVersion substitution
+  ---
+  duration_ms: 206.1254
+  type: 'test'
+  ...
+# Subtest: R31 decision diagnostic rejects repaired exitCode substitution
+ok 148 - R31 decision diagnostic rejects repaired exitCode substitution
+  ---
+  duration_ms: 121.3452
+  type: 'test'
+  ...
+1..148
+# tests 148
+# suites 0
+# pass 148
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 34857.8435
+DIRECT_EXIT=0

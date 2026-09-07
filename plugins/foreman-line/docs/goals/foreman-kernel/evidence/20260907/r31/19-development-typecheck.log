@@ -1,0 +1,9 @@
+
+> @foreman-line/authority-registry@0.1.0 typecheck
+> tsc --noEmit
+
+tests/corpus-sweep.test.ts(2521,13): error TS7022: 'bytes' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
+tests/semantic-invariants.test.ts(5938,23): error TS2339: Property 'reasonCode' does not exist on type 'AuthorityResolution'.
+  Property 'reasonCode' does not exist on type '{ readonly outcome: "RESOLVED"; readonly authoritySubject: string; readonly authorityClaim: string; readonly decision: "ADVISORY" | "ALLOW" | "REFUSE" | "REQUIRE_HUMAN"; readonly classification: "ci-static-check" | ... 4 more ... | "unsupported"; ... 4 more ...; readonly consideredRuleIds: string[]; }'.
+tests/semantic-invariants.test.ts(5951,53): error TS2345: Argument of type 'string' is not assignable to parameter of type 'never'.
+DIRECT_EXIT=1

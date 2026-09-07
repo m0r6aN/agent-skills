@@ -1,0 +1,7 @@
+{
+  "command": "npx biome check --write six allowed TypeScript files",
+  "startUtc": "2026-09-07T17:18:48.0764132Z",
+  "endUtc": "2026-09-07T17:18:50.7951789Z",
+  "elapsedSeconds": 2.7211886,
+  "directExit": 0
+}

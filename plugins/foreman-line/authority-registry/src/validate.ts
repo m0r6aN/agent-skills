@@ -13,6 +13,14 @@ import {
   R13_PRIOR_REGISTRY_COMMIT,
   R30_RULE_SHAPES,
   R30_SOURCE_ITEMS,
+  R31_AUDIT_ROWS,
+  R31_DECISION_BLOB_DIGEST,
+  R31_DECISION_PATH,
+  R31_RECONCILIATION,
+  R31_RECORD_DIGEST,
+  R31_RULE_SHAPES,
+  R31_SOURCE_ITEMS,
+  R31_SOURCE_SNAPSHOT,
 } from './registry.js'
 import { authorityEnforcementRegistrySchema } from './schemas.js'
 import {
@@ -70,6 +78,7 @@ const REQUIRED_REWORK_MIGRATIONS = [
   // unclaimed slot.
   'registry-rework-df8155a',
   'registry-rework-40394be',
+  'registry-rework-66a514d',
 ] as const
 /**
  * AC4 obligation 6 as amended by R22 - the shipped chain head, bound through channels that do NOT
@@ -88,15 +97,14 @@ const REQUIRED_REWORK_MIGRATIONS = [
  * invalidate the shipped registry. Measured: it does exactly that, AND still admits the
  * delete-and-substitute attack, because a pin binds only a record that is still present.
  */
-const SHIPPED_CHAIN_HEAD_ID = 'registry-rework-66a514d'
+const SHIPPED_CHAIN_HEAD_ID = 'registry-rework-446700d'
 /**
  * The canonical record digest of the shipped head, consulted ONLY once the record is no longer the
  * head. While it IS the head it stays bound to the live manifest, so appending a legitimately
  * amended registry does not require regenerating or re-pinning anything; once a successor demotes
  * it, it becomes a historical record and is bound exactly like the eleven before it.
  */
-const SHIPPED_CHAIN_HEAD_RECORD_DIGEST =
-  '6d39f17f70b25ce44030e729c62d975b45a8597b99af8c22f19c6a3cbfba92d7'
+const SHIPPED_CHAIN_HEAD_RECORD_DIGEST = R31_RECORD_DIGEST
 const REQUIRED_OPERATIONS = [
   'gate1.ratify',
   'gate2.dispatch',
@@ -352,6 +360,12 @@ const R11_PROTECTED_NORMATIVE_ITEMS: Readonly<Record<string, string>> = {
 }
 
 const RECONCILIATION_CONTRACT = {
+  'registry-rework-446700d': {
+    topic: R31_RECONCILIATION.topic,
+    status: R31_RECONCILIATION.migrationStatus,
+    refs: R31_RECONCILIATION.observedRefs.map((ref) => `${ref.sourceId}:${ref.itemId}`),
+    rules: R31_RECONCILIATION.authoritativeRuleIds,
+  },
   'gate-namespace-count': {
     topic: 'Historical two-gate and stage approval terms versus FK Gate 1, Gate 2, and Gate 3.',
     status: 'resolved-for-fk',
@@ -646,6 +660,10 @@ const PRIOR_R10_BINDING_MANIFEST_DIGEST =
   '99d9bed01cd5a7957457e24c82cbcc3645ebf591415d6072c26130d3b8a2e8d7'
 
 const RECONCILIATION_PROSE: Readonly<Record<string, readonly [string, string]>> = {
+  'registry-rework-446700d': [
+    R31_RECONCILIATION.scopedDisposition,
+    R31_RECONCILIATION.unresolvedConsequence,
+  ],
   'gate-namespace-count': [
     'Historical pipeline vocabulary remains visible; the FK goal three-gate namespace controls FK work.',
     'Naive consumers must retain the namespace and scope when interpreting gate numbers.',
@@ -734,6 +752,7 @@ const RECONCILIATION_PROSE: Readonly<Record<string, readonly [string, string]>> 
 }
 
 const RECONCILIATION_RECORD_DIGESTS: Readonly<Record<string, string>> = {
+  'registry-rework-66a514d': '6d39f17f70b25ce44030e729c62d975b45a8597b99af8c22f19c6a3cbfba92d7',
   'gate-namespace-count': '23f3549859f81eddfd5645dc3de3ffe07997c624cd75d61d3410645b710968d3',
   'gate3-delegation': '13f5094dc781381ad5c1124f094af5f6f57b462c73df3fd3925e2b844c3f53c6',
   'spec-linter-profile-behavior':
@@ -1940,7 +1959,7 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
         }
         const protectedNormative =
           item.locator.kind !== 'heading' &&
-          (/^item\.(?:d(?:[1-9]|1\d|20)|r(?:[1-9]|1[0-3])|constraint-(?:[1-9]|1[0-3])|hard-rule-(?:[1-9]|1[0-5]))$/.test(
+          (/^item\.(?:d(?:[1-9]|1\d|20)|r(?:[1-9]|1[0-3])|constraint-(?:[1-9]|1[0-4])|hard-rule-(?:[1-9]|1[0-5]))$/.test(
             item.itemId,
           ) ||
             (source.sourceId === 'fk-charter' &&
@@ -1985,7 +2004,19 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
     }
   }
 
-  for (const [ruleId, target] of Object.entries(R12_LEGACY_MARKDOWN_RULE_TARGETS)) {
+  for (const [ruleId, historicalTarget] of Object.entries(R12_LEGACY_MARKDOWN_RULE_TARGETS)) {
+    const relocated =
+      ruleId === 'rule.foreman-line-plan.two-gate-thesis'
+        ? R31_SOURCE_ITEMS.find((item) => item.itemId === 'item.two-gate-thesis')
+        : undefined
+    const target =
+      relocated === undefined
+        ? historicalTarget
+        : {
+            sourceId: relocated.sourceId,
+            kind: relocated.locator.kind,
+            anchor: relocated.locator.anchor,
+          }
     const rule = document.rules.find((candidate) => candidate.ruleId === ruleId)
     const item = rule
       ? itemsByRef.get(referenceKey(rule.authorityBasisRef.sourceId, rule.authorityBasisRef.itemId))
@@ -2092,12 +2123,13 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
   })
   if (
     expectedNormativeMarkdownAudit.some((record) => record === null) ||
-    canonicalJson(document.normativeMarkdownAudit) !== canonicalJson(expectedNormativeMarkdownAudit)
+    canonicalJson(document.normativeMarkdownAudit) !==
+      canonicalJson([...expectedNormativeMarkdownAudit, ...R31_AUDIT_ROWS])
   ) {
     violations.push(
       violation(
         'RULE_SEMANTICS_UNCURATED',
-        'normative Markdown audit must equal the exact 198 item-specific source-authored dispositions',
+        'normative Markdown audit must equal the exact 202 item-specific source-authored dispositions',
       ),
     )
   }
@@ -2264,6 +2296,57 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
     }
   }
 
+  // These finite source-version mappings precede every legacy fallback. No reserved identity
+  // can recover admission by changing its claim, assurance, basis, or source tuple.
+  for (const expected of R31_SOURCE_ITEMS) {
+    const source = sourcesById.get(expected.sourceId)
+    const item = itemsByRef.get(referenceKey(expected.sourceId, expected.itemId))
+    if (
+      source === undefined ||
+      item === undefined ||
+      source.snapshotEvidence.commit !== R31_SOURCE_SNAPSHOT ||
+      source.inventoryItems.filter(
+        (candidate) =>
+          candidate.locator.kind === expected.locator.kind &&
+          candidate.locator.anchor === expected.locator.anchor,
+      ).length !== 1 ||
+      source.inventoryItems.some(
+        (candidate) =>
+          (source.sourceId === 'standing-constraints' &&
+            candidate.itemId === 'item.e3c4f313970c') ||
+          (source.sourceId === 'foreman-line-plan' && candidate.itemId === 'item.13c267a420b3'),
+      ) ||
+      (expected.sourceId === 'standing-constraints'
+        ? source.snapshotEvidence.fullFileSha256 !==
+          '57e345f9294cb8fcd8c3d90325505c80903648f60522f820061a5f8f288a86ac'
+        : source.snapshotEvidence.fullFileSha256 !==
+          'dcca81e1e38e245bc6b8bc8ddfdbd44b8b7546c4f0663639256fb421f686f8eb') ||
+      locatorDigestFor(item.locator) !== expected.locatorDigest ||
+      item.normalizedExcerpt !== expected.normalizedExcerpt ||
+      item.valueDigest !== expected.valueDigest ||
+      sha256(normalizeRuleText(item.normalizedExcerpt)) !== expected.valueDigest ||
+      canonicalJson(item.ruleIds) !== canonicalJson(expected.ruleIds) ||
+      item.exclusionDisposition !== expected.exclusionDisposition
+    ) {
+      violations.push(
+        violation(
+          'AUTHORITY_ESCALATION',
+          `R31 reserved source unit '${expected.unit}' differs from its complete reviewed source binding`,
+        ),
+      )
+    }
+  }
+  for (const expected of R31_RULE_SHAPES) {
+    const rule = document.rules.find((candidate) => candidate.ruleId === expected.ruleId)
+    if (rule === undefined || canonicalJson(rule) !== canonicalJson(expected))
+      violations.push(
+        violation(
+          'AUTHORITY_ESCALATION',
+          `R31 reserved rule '${expected.ruleId}' is missing or differs from its complete reviewed shape`,
+          { ruleId: expected.ruleId },
+        ),
+      )
+  }
   // Reserved R30 identities never fall through to legacy acceptance, including on assurance
   // reversion. The independent required set also rejects renamed or removed entries.
   for (const expected of R30_RULE_SHAPES) {
@@ -2404,6 +2487,10 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
         : rule.enforcementOwner === 'kernel-policy' && rule.assurance === 'structural')
     if (
       r30Expected === undefined &&
+      !R31_RULE_SHAPES.some(
+        (expected) =>
+          expected.ruleId === rule.ruleId && canonicalJson(expected) === canonicalJson(rule),
+      ) &&
       (rule.decision !== expectedDecision ||
         !validPreActionShape ||
         (classificationContract.enforcementOwner !== null &&
@@ -2721,6 +2808,17 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
         violation(
           'MIGRATION_EVIDENCE_INVALID',
           `reconciliation '${record.reconciliationId}' differs from its complete canonical record manifest`,
+        ),
+      )
+    }
+    if (
+      record.reconciliationId === R31_RECONCILIATION.reconciliationId &&
+      canonicalJson(record) !== canonicalJson(R31_RECONCILIATION)
+    ) {
+      violations.push(
+        violation(
+          'MIGRATION_EVIDENCE_INVALID',
+          'R31 exact migration diagnostic, source references and custody tuple changed',
         ),
       )
     }
@@ -3343,6 +3441,24 @@ export function validateRegistry(
   // failure this package exists to make impossible.
   const repoRootStatus = options.repoRoot === undefined ? null : repoRootCheck(options.repoRoot)
   if (repoRootStatus !== null) violations.push(...repoRootStatus.violations)
+  if (repoRootStatus?.gitReady === true) {
+    try {
+      const blob = execFileSync(
+        'git',
+        ['cat-file', 'blob', `${R31_SOURCE_SNAPSHOT}:${R31_DECISION_PATH}`],
+        { cwd: options.repoRoot, stdio: ['ignore', 'pipe', 'ignore'] },
+      )
+      if (sha256(blob) !== R31_DECISION_BLOB_DIGEST)
+        throw new Error('decision blob differs from its reviewed bytes')
+    } catch (error) {
+      violations.push(
+        violation(
+          'MIGRATION_EVIDENCE_INVALID',
+          `R31 plan decision actual Git-blob correspondence failed: ${(error as Error).message}`,
+        ),
+      )
+    }
+  }
   violations.push(
     ...retirementVerificationViolations(
       registry,
@@ -4659,7 +4775,7 @@ export function sweepRegistrySources(document: unknown, repoRoot: string): Valid
           if (fenced.has(index)) continue
           const line = markdownLines[index] ?? ''
           const number = /^(\d+)\.\s/.exec(line.trim())?.[1]
-          if (number !== undefined && Number(number) > 13) {
+          if (number !== undefined && Number(number) > 14) {
             violations.push(
               violation('SOURCE_ITEM_UNCOVERED', 'new standing constraint is not inventoried', {
                 sourcePath: source.path,

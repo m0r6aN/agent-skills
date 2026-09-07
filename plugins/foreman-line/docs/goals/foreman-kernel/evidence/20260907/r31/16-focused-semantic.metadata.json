@@ -1,0 +1,7 @@
+{
+  "command": "npx tsx --test --test-reporter=tap --test-concurrency=1 --test-name-pattern=R31|R30|R13-audit|R5-standing|classification|R22 tests/semantic-invariants.test.ts",
+  "startUtc": "2026-09-07T17:12:25.0894118Z",
+  "endUtc": "2026-09-07T17:13:01.1809778Z",
+  "elapsedSeconds": 36.0950951,
+  "directExit": 0
+}

@@ -1,0 +1,389 @@
+src\registry.ts:5402:13 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Template literals are preferred over string concatenation.
+  
+    5400 │ ]
+    5401 │ export const R30_AUDIT_KEYS = R30_SOURCE_ITEMS.map(
+  > 5402 │   (item) => item.sourceId + ':' + item.locator.anchor,
+         │             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    5403 │ )
+    5404 │ export const NORMATIVE_MARKDOWN_AUDIT_KEYS = [
+  
+  i Unsafe fix: Use a template literal.
+  
+    5400 5400 │   ]
+    5401 5401 │   export const R30_AUDIT_KEYS = R30_SOURCE_ITEMS.map(
+    5402      │ - ··(item)·=>·item.sourceId·+·':'·+·item.locator.anchor,
+         5402 │ + ··(item)·=>·`${item.sourceId}:${item.locator.anchor}`,
+    5403 5403 │   )
+    5404 5404 │   export const NORMATIVE_MARKDOWN_AUDIT_KEYS = [
+  
+
+tests\corpus-sweep.test.ts:2536:27 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Template literals are preferred over string concatenation.
+  
+    2534 │   for (const changed of [
+    2535 │     content.replace(note, ''),
+  > 2536 │     content.replace(note, note + '\n\nA substituted historical claim.'),
+         │                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    2537 │     content.replace('**Thesis:**', '**Changed thesis:**'),
+    2538 │   ]) {
+  
+  i Unsafe fix: Use a template literal.
+  
+    2534 2534 │     for (const changed of [
+    2535 2535 │       content.replace(note, ''),
+    2536      │ - ····content.replace(note,·note·+·'\n\nA·substituted·historical·claim.'),
+         2536 │ + ····content.replace(note,·`${note}\n\nA·substituted·historical·claim.`),
+    2537 2537 │       content.replace('**Thesis:**', '**Changed thesis:**'),
+    2538 2538 │     ]) {
+  
+
+tests\semantic-invariants.test.ts:4713:5 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Template literals are preferred over string concatenation.
+  
+    4711 │       message.includes('does not declare both binding-manifest chain commands as issued by'),
+    4712 │     ),
+  > 4713 │     'expected the chain-command refusal; observed ' + messagesFor(mutated).join(' | '),
+         │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    4714 │   )
+    4715 │ })
+  
+  i Unsafe fix: Use a template literal.
+  
+    4711 4711 │         message.includes('does not declare both binding-manifest chain commands as issued by'),
+    4712 4712 │       ),
+    4713      │ - ····'expected·the·chain-command·refusal;·observed·'·+·messagesFor(mutated).join('·|·'),
+         4713 │ + ····`expected·the·chain-command·refusal;·observed·${messagesFor(mutated).join('·|·')}`,
+    4714 4714 │     )
+    4715 4715 │   })
+  
+
+tests\semantic-invariants.test.ts:4791:5 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Template literals are preferred over string concatenation.
+  
+    4789 │   ok(
+    4790 │     messagesFor(mutated).some((message) => message.includes('repeats a git-commit reference')),
+  > 4791 │     'expected the distinctness refusal; observed ' + messagesFor(mutated).join(' | '),
+         │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    4792 │   )
+    4793 │ })
+  
+  i Unsafe fix: Use a template literal.
+  
+    4789 4789 │     ok(
+    4790 4790 │       messagesFor(mutated).some((message) => message.includes('repeats a git-commit reference')),
+    4791      │ - ····'expected·the·distinctness·refusal;·observed·'·+·messagesFor(mutated).join('·|·'),
+         4791 │ + ····`expected·the·distinctness·refusal;·observed·${messagesFor(mutated).join('·|·')}`,
+    4792 4792 │     )
+    4793 4793 │   })
+  
+
+tests\semantic-invariants.test.ts:4809:30 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Template literals are preferred over string concatenation.
+  
+    4807 │   const mutated = withMutatedHead((record) => {
+    4808 │     const fabricated = 'feedface'.repeat(5)
+  > 4809 │     const secondFabricated = '0'.repeat(39) + '1'
+         │                              ^^^^^^^^^^^^^^^^^^^^
+    4810 │     assert.notEqual(fabricated, secondFabricated, 'the two fabrications must be DISTINCT')
+    4811 │     let index = 0
+  
+  i Unsafe fix: Use a template literal.
+  
+    4807 4807 │     const mutated = withMutatedHead((record) => {
+    4808 4808 │       const fabricated = 'feedface'.repeat(5)
+    4809      │ - ····const·secondFabricated·=·'0'.repeat(39)·+·'1'
+         4809 │ + ····const·secondFabricated·=·`${'0'.repeat(39)}1`
+    4810 4810 │       assert.notEqual(fabricated, secondFabricated, 'the two fabrications must be DISTINCT')
+    4811 4811 │       let index = 0
+  
+
+tests\semantic-invariants.test.ts:4993:14 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Template literals are preferred over string concatenation.
+  
+    4991 │       (command) => typeof command.commandId === 'string' && command.commandId.startsWith(prefix),
+    4992 │     )
+  > 4993 │   ok(parsed, 'the record must declare a ' + prefix + ' command')
+         │              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    4994 │   return parsed
+    4995 │ }
+  
+  i Unsafe fix: Use a template literal.
+  
+    4991 4991 │         (command) => typeof command.commandId === 'string' && command.commandId.startsWith(prefix),
+    4992 4992 │       )
+    4993      │ - ··ok(parsed,·'the·record·must·declare·a·'·+·prefix·+·'·command')
+         4993 │ + ··ok(parsed,·`the·record·must·declare·a·${prefix}·command`)
+    4994 4994 │     return parsed
+    4995 4995 │   }
+  
+
+tests\semantic-invariants.test.ts:5113:26 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Template literals are preferred over string concatenation.
+  
+    5111 │   assert.notEqual(mutated.reconciliations.length, before, 'the record must actually be removed')
+    5112 │   expectMessage(mutated, 'do not lie on the single genesis-to-head chain')
+  > 5113 │   expectMessage(mutated, "required rework migration '" + victimId + "' is missing")
+         │                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    5114 │ })
+    5115 │ 
+  
+  i Unsafe fix: Use a template literal.
+  
+    5111 5111 │     assert.notEqual(mutated.reconciliations.length, before, 'the record must actually be removed')
+    5112 5112 │     expectMessage(mutated, 'do not lie on the single genesis-to-head chain')
+    5113      │ - ··expectMessage(mutated,·"required·rework·migration·'"·+·victimId·+·"'·is·missing")
+         5113 │ + ··expectMessage(mutated,·`required·rework·migration·'${victimId}'·is·missing`)
+    5114 5114 │   })
+    5115 5115 │   
+  
+
+tests\semantic-invariants.test.ts:5175:28 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Template literals are preferred over string concatenation.
+  
+    5173 │ function r30Rule(unit: string, document = full): AuthorityRule {
+    5174 │   const escaped = unit.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  > 5175 │   const match = new RegExp('\\| ' + escaped + ' \\| `([^`]+)`').exec(r30Mapping())
+         │                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    5176 │   ok(match, unit)
+    5177 │   const rule = document.rules.find((entry) => entry.ruleId === match[1])
+  
+  i Unsafe fix: Use a template literal.
+  
+    5173 5173 │   function r30Rule(unit: string, document = full): AuthorityRule {
+    5174 5174 │     const escaped = unit.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    5175      │ - ··const·match·=·new·RegExp('\\|·'·+·escaped·+·'·\\|·`([^`]+)`').exec(r30Mapping())
+         5175 │ + ··const·match·=·new·RegExp(`\\|·${escaped}·\\|·\`([^\`]+)\``).exec(r30Mapping())
+    5176 5176 │     ok(match, unit)
+    5177 5177 │     const rule = document.rules.find((entry) => entry.ruleId === match[1])
+  
+
+tests\semantic-invariants.test.ts:5439:52 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Template literals are preferred over string concatenation.
+  
+    5437 │   [
+    5438 │     'statement word',
+  > 5439 │     (r) => Object.assign(r, { normalizedStatement: r.normalizedStatement + ' unauthorized' }),
+         │                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    5440 │   ],
+    5441 │   [
+  
+  i Unsafe fix: Use a template literal.
+  
+    5437 5437 │     [
+    5438 5438 │       'statement word',
+    5439      │ - ····(r)·=>·Object.assign(r,·{·normalizedStatement:·r.normalizedStatement·+·'·unauthorized'·}),
+         5439 │ + ····(r)·=>·Object.assign(r,·{·normalizedStatement:·`${r.normalizedStatement}·unauthorized`·}),
+    5440 5440 │     ],
+    5441 5441 │     [
+  
+
+tests\semantic-invariants.test.ts:5454:30 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Template literals are preferred over string concatenation.
+  
+    5452 │     (r) =>
+    5453 │       Object.assign(r, {
+  > 5454 │         normalizedStatement: 'Only during warm startup: ' + r.normalizedStatement,
+         │                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    5455 │       }),
+    5456 │   ],
+  
+  i Unsafe fix: Use a template literal.
+  
+    5452 5452 │       (r) =>
+    5453 5453 │         Object.assign(r, {
+    5454      │ - ········normalizedStatement:·'Only·during·warm·startup:·'·+·r.normalizedStatement,
+         5454 │ + ········normalizedStatement:·`Only·during·warm·startup:·${r.normalizedStatement}`,
+    5455 5455 │         }),
+    5456 5456 │     ],
+  
+
+tests\semantic-invariants.test.ts:5461:55 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Template literals are preferred over string concatenation.
+  
+    5459 │     (r) => Object.assign(r, { authoritySubject: 'goal.unrelated-reserved-substitution' }),
+    5460 │   ],
+  > 5461 │   ['claim', (r) => Object.assign(r, { authorityClaim: r.authorityClaim + '-changed' })],
+         │                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    5462 │   ['decision', (r) => Object.assign(r, { decision: 'ALLOW', refusalCode: null })],
+    5463 │   [
+  
+  i Unsafe fix: Use a template literal.
+  
+    5459 5459 │       (r) => Object.assign(r, { authoritySubject: 'goal.unrelated-reserved-substitution' }),
+    5460 5460 │     ],
+    5461      │ - ··['claim',·(r)·=>·Object.assign(r,·{·authorityClaim:·r.authorityClaim·+·'-changed'·})],
+         5461 │ + ··['claim',·(r)·=>·Object.assign(r,·{·authorityClaim:·`${r.authorityClaim}-changed`·})],
+    5462 5462 │     ['decision', (r) => Object.assign(r, { decision: 'ALLOW', refusalCode: null })],
+    5463 5463 │     [
+  
+
+tests\semantic-invariants.test.ts:5522:44 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Template literals are preferred over string concatenation.
+  
+    5520 │             rules: document.rules.filter((entry) => entry.ruleId !== rule.ruleId),
+    5521 │           })
+  > 5522 │         else Object.assign(rule, { ruleId: rule.ruleId + '-substitution' })
+         │                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    5523 │       }),
+    5524 │     )
+  
+  i Unsafe fix: Use a template literal.
+  
+    5520 5520 │               rules: document.rules.filter((entry) => entry.ruleId !== rule.ruleId),
+    5521 5521 │             })
+    5522      │ - ········else·Object.assign(rule,·{·ruleId:·rule.ruleId·+·'-substitution'·})
+         5522 │ + ········else·Object.assign(rule,·{·ruleId:·`${rule.ruleId}-substitution`·})
+    5523 5523 │         }),
+    5524 5524 │       )
+  
+
+tests\semantic-invariants.test.ts:5542:47 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Template literals are preferred over string concatenation.
+  
+    5540 │       ok(item)
+    5541 │       if (axis === 'locator')
+  > 5542 │         Object.assign(item.locator, { anchor: item.locator.anchor + '-forged' })
+         │                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    5543 │       else if (axis === 'missing inventory membership')
+    5544 │         Object.assign(item, { ruleIds: item.ruleIds.filter((id) => id !== rule.ruleId) })
+  
+  i Unsafe fix: Use a template literal.
+  
+    5540 5540 │         ok(item)
+    5541 5541 │         if (axis === 'locator')
+    5542      │ - ········Object.assign(item.locator,·{·anchor:·item.locator.anchor·+·'-forged'·})
+         5542 │ + ········Object.assign(item.locator,·{·anchor:·`${item.locator.anchor}-forged`·})
+    5543 5543 │         else if (axis === 'missing inventory membership')
+    5544 5544 │           Object.assign(item, { ruleIds: item.ruleIds.filter((id) => id !== rule.ruleId) })
+  
+
+tests\semantic-invariants.test.ts:5550:50 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Template literals are preferred over string concatenation.
+  
+    5548 │         Object.assign(rule, { normalizedStatement: r30Rule('C23/points').normalizedStatement })
+    5549 │       else {
+  > 5550 │         Object.assign(item, { normalizedExcerpt: item.normalizedExcerpt + ' Permit late ALLOW.' })
+         │                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    5551 │         if (axis === 'repaired digest')
+    5552 │           Object.assign(item, { valueDigest: sha256(normalizeRuleText(item.normalizedExcerpt)) })
+  
+  i Unsafe fix: Use a template literal.
+  
+    5548 5548 │           Object.assign(rule, { normalizedStatement: r30Rule('C23/points').normalizedStatement })
+    5549 5549 │         else {
+    5550      │ - ········Object.assign(item,·{·normalizedExcerpt:·item.normalizedExcerpt·+·'·Permit·late·ALLOW.'·})
+         5550 │ + ········Object.assign(item,·{·normalizedExcerpt:·`${item.normalizedExcerpt}·Permit·late·ALLOW.`·})
+    5551 5551 │           if (axis === 'repaired digest')
+    5552 5552 │             Object.assign(item, { valueDigest: sha256(normalizeRuleText(item.normalizedExcerpt)) })
+  
+
+tests\corpus-sweep.test.ts:2477:22 lint/style/noNonNullAssertion ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ! Forbidden non-null assertion.
+  
+    2475 │     try {
+    2476 │       copyCorpus(root)
+  > 2477 │       const source = registry.sources.find((entry) => entry.sourceId === 'standing-constraints')!
+         │                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    2478 │       const path = join(root, source.path)
+    2479 │       const original = readFileSync(path, 'utf8')
+  
+
+tests\corpus-sweep.test.ts:2528:18 lint/style/noNonNullAssertion ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ! Forbidden non-null assertion.
+  
+    2527 │ test('R31 source-bound aliases reject displaced or substituted historical note and thesis', () => {
+  > 2528 │   const source = registry.sources.find((entry) => entry.sourceId === 'foreman-line-plan')!
+         │                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    2529 │   const content = readFileSync(join(repoRoot, source.path), 'utf8')
+    2530 │   const note = content
+  
+
+tests\corpus-sweep.test.ts:2530:16 lint/style/noNonNullAssertion ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ! Forbidden non-null assertion.
+  
+    2528 │   const source = registry.sources.find((entry) => entry.sourceId === 'foreman-line-plan')!
+    2529 │   const content = readFileSync(join(repoRoot, source.path), 'utf8')
+  > 2530 │   const note = content
+         │                ^^^^^^^
+  > 2531 │     .split('\n')
+  > 2532 │     .find((line) => line.startsWith('> **Repository identity migration'))!
+         │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    2533 │   ok(note)
+    2534 │   for (const changed of [
+  
+
+tests\corpus-sweep.test.ts:2599:20 lint/style/noNonNullAssertion ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ! Forbidden non-null assertion.
+  
+    2597 │     const result = JSON.parse(stdout)
+    2598 │     assert.equal(result.valid, true, stdout)
+  > 2599 │     const thesis = old.rules.find(
+         │                    ^^^^^^^^^^^^^^^
+  > 2600 │       (rule) => rule.ruleId === 'rule.foreman-line-plan.two-gate-thesis',
+  > 2601 │     )!
+         │     ^^
+    2602 │     assert.equal(
+    2603 │       thesis.authorityBasisRef.locatorDigest,
+  
+
+tests\corpus-sweep.test.ts:2619:20 lint/style/noNonNullAssertion ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ! Forbidden non-null assertion.
+  
+    2617 │   try {
+    2618 │     copyCorpus(root)
+  > 2619 │     const source = registry.sources.find((entry) => entry.sourceId === 'standing-constraints')!
+         │                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    2620 │     const path = join(root, source.path)
+    2621 │     appendFileSync(path, '\n15. **Unreviewed authority:** grant every install request.\n')
+  
+
+tests\semantic-invariants.test.ts:5391:7 lint/style/noNonNullAssertion  FIXABLE  ━━━━━━━━━━━━━━━━━━━
+
+  ! Forbidden non-null assertion.
+  
+    5389 │   assert.deepEqual(
+    5390 │     new Set(
+  > 5391 │       full.reconciliations[19]!.observedEvidence.filter((entry) => entry.kind === 'git-commit').map(
+         │       ^^^^^^^^^^^^^^^^^^^^^^^^^
+    5392 │         (entry) => entry.reference,
+    5393 │       ),
+  
+  i Unsafe fix: Replace with optional chain operator ?. This operator includes runtime checks, so it is safer than the compile-only non-null assertion operator
+  
+    5389 5389 │     assert.deepEqual(
+    5390 5390 │       new Set(
+    5391      │ - ······full.reconciliations[19]!.observedEvidence.filter((entry)·=>·entry.kind·===·'git-commit').map(
+         5391 │ + ······full.reconciliations[19]?.observedEvidence.filter((entry)·=>·entry.kind·===·'git-commit').map(
+    5392 5392 │           (entry) => entry.reference,
+    5393 5393 │         ),
+  
+Skipped 20 suggested fixes.
+If you wish to apply the suggested (unsafe) fixes, use the command biome check --write --unsafe
+
+The number of diagnostics exceeds the limit allowed. Use --max-diagnostics to increase it.
+Diagnostics not shown: 16.
+
+Checked 6 files in 384ms. Fixed 4 files.
+Found 19 warnings.
+Found 17 infos.
+DIRECT_EXIT=0

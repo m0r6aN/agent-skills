@@ -11,10 +11,19 @@ import {
   R12_PRIOR_REGISTRY_COMMIT,
   R13_NORMATIVE_MARKDOWN_PUBLICATION_KEYS,
   R13_PRIOR_REGISTRY_COMMIT,
-  R30_PRIOR_REGISTRY_COMMIT,
   R30_RULE_SHAPES,
   R30_SOURCE_ITEMS,
-  R30_SOURCE_SNAPSHOT,
+  R31_AUDIT_ROWS,
+  R31_BINDING_MANIFEST,
+  R31_DECISION_BLOB_DIGEST,
+  R31_DECISION_PATH,
+  R31_PRIOR_MANIFEST,
+  R31_PRIOR_REGISTRY_COMMIT,
+  R31_RECONCILIATION,
+  R31_RECORD_DIGEST,
+  R31_RULE_SHAPES,
+  R31_SOURCE_ITEMS,
+  R31_SOURCE_SNAPSHOT,
 } from './registry.js'
 import type {
   AuthorityEffect,
@@ -65,7 +74,7 @@ const SNAPSHOT = '51857a3a7796b393c0c0a68712f98c06e7015d79'
  * commit whose bytes were not the ones hashed would be a knowingly false statement, so this
  * advances and the advance is recorded as a typed migration record.
  */
-const CURRENT_SNAPSHOT = R30_SOURCE_SNAPSHOT
+const CURRENT_SNAPSHOT = R31_SOURCE_SNAPSHOT
 
 /**
  * The three volatile regions R24 authorizes, with the extents R27 corrected.
@@ -702,7 +711,7 @@ function frozenMarkdownItemIds(): Map<string, string> {
   // R30 extends the existing anchor-keyed freeze through the exact prior shipped inventory.
   // Post-R13 items must not receive new identities merely because a source insertion shifts lines.
   const r30PriorAnchors = new Set<string>()
-  for (const source of registryAtCommit(R30_PRIOR_REGISTRY_COMMIT).sources) {
+  for (const source of registryAtCommit(R31_PRIOR_REGISTRY_COMMIT).sources) {
     for (const item of source.inventoryItems) {
       if (!item.locator.anchor.startsWith('md-block:')) continue
       const key = `${source.sourceId}\u0000${item.locator.anchor}`
@@ -785,7 +794,23 @@ function permissionProfileRules(content: string): LocatedText[] {
   }))
 }
 
+function r31ItemFor(sourceId: string, located: LocatedText) {
+  const expected = R31_SOURCE_ITEMS.find(
+    (item) => item.sourceId === sourceId && item.locator.anchor === located.locator.anchor,
+  )
+  if (
+    expected !== undefined &&
+    (expected.locatorDigest !== locatorDigestFor(located.locator) ||
+      expected.valueDigest !== sha256(normalizeRuleText(located.text)) ||
+      expected.normalizedExcerpt !== normalizeRuleText(located.text))
+  ) {
+    throw new Error(`R31 reviewed source mapping drift: ${expected.unit}`)
+  }
+  return expected
+}
 function itemIdFor(definition: SourceDefinition, located: LocatedText): string {
+  const r31 = r31ItemFor(definition.sourceId, located)
+  if (r31 !== undefined) return r31.itemId
   if (
     definition.sourceId === 'foreman-line-plan' &&
     located.locator.anchor ===
@@ -11655,6 +11680,13 @@ function priorR11RulesById(): Map<string, AuthorityRule> {
 }
 
 function legacyRuleIdsFor(sourceId: string, locator: SourceLocator): string[] {
+  const r31 = R31_SOURCE_ITEMS.find(
+    (item) =>
+      item.sourceId === sourceId &&
+      item.locator.anchor === locator.anchor &&
+      item.locator.kind === locator.kind,
+  )
+  if (r31 !== undefined) return [...r31.ruleIds]
   return Object.entries(R12_LEGACY_MARKDOWN_RULE_TARGETS)
     .filter(
       ([, target]) =>
@@ -11695,7 +11727,9 @@ export function markdownIdentityProjectionForTesting(
       locatorDigest: locatorDigestFor(located.locator),
       normalizedExcerpt: normalizeRuleText(located.text),
       valueDigest: sha256(normalizeRuleText(located.text)),
-      ruleIds: [...new Set([...legacyRuleIds, ...generatedRuleIds])],
+      ruleIds: r31ItemFor(sourceId, located)?.ruleIds.slice() ?? [
+        ...new Set([...legacyRuleIds, ...generatedRuleIds]),
+      ],
     }
   })
 }
@@ -11841,6 +11875,33 @@ function buildSource(definition: SourceDefinition): {
       valueDigest,
     }
     const curationKey = `${definition.sourceId}:${locator.anchor}`
+    const r31Item = r31ItemFor(definition.sourceId, entry)
+    if (r31Item !== undefined) {
+      const published = R31_RULE_SHAPES.filter((shape) =>
+        r31Item.ruleIds.includes(shape.ruleId),
+      ).map((shape) => ({ ...structuredClone(shape), bindingDigest: bindingDigestFor(shape) }))
+      rules.push(...published)
+      const priorItem = registryAtCommit(R31_PRIOR_REGISTRY_COMMIT)
+        .sources.find((source) => source.sourceId === definition.sourceId)
+        ?.inventoryItems.find((item) => item.itemId === itemId)
+      const audit = R31_AUDIT_ROWS.find(
+        (row) => row.sourceId === definition.sourceId && row.itemId === itemId,
+      )
+      return {
+        itemId,
+        locator,
+        normalizedExcerpt,
+        valueDigest,
+        ruleIds: [...r31Item.ruleIds],
+        exclusionDisposition: r31Item.exclusionDisposition,
+        rationale:
+          priorItem?.rationale ??
+          audit?.rationale ??
+          (() => {
+            throw new Error('Missing reviewed R31 audit rationale')
+          })(),
+      }
+    }
     const r30Item = R30_SOURCE_ITEMS.find(
       (item) => item.sourceId === definition.sourceId && item.locator.anchor === locator.anchor,
     )
@@ -12954,72 +13015,39 @@ function buildRegistry(): AuthorityEnforcementRegistry {
     rules,
     operationAuthority: operation,
     reconciliations: structuredClone(priorR13Registry().reconciliations),
-    normativeMarkdownAudit,
+    normativeMarkdownAudit: [...normativeMarkdownAudit, ...structuredClone(R31_AUDIT_ROWS)],
     volatileRegions: volatileRegionsFor(sources),
   }
-  // R30 preserves every historical record from the committed prior registry. Advancing the
-  // live source snapshot must never rebuild an old attestation from the adopted source bytes.
-  const prior = registryAtCommit(R30_PRIOR_REGISTRY_COMMIT)
+  // Historical attestations retain the exact committed bytes and their original source subject.
+  const prior = registryAtCommit(R31_PRIOR_REGISTRY_COMMIT)
   const history = structuredClone(prior.reconciliations)
   const adopted = { ...provisional, reconciliations: history }
-  const priorManifest = registryBindingManifestDigest(prior)
-  const newManifest = registryBindingManifestDigest(adopted)
-  const adoption = R30_RULE_SHAPES.find(
-    (rule) => rule.authoritySubject === 'goal.infrastructure-adoption.ratification',
+  if (
+    registryBindingManifestDigest(prior) !== R31_PRIOR_MANIFEST ||
+    registryBindingManifestDigest(adopted) !== R31_BINDING_MANIFEST
   )
-  const continuation = R30_RULE_SHAPES.find(
-    (rule) => rule.authoritySubject === 'goal.continuation.scoped-decision-authority',
-  )
-  if (adoption === undefined || continuation === undefined)
-    throw new Error('missing reviewed R30 adoption authority')
-  const commandEvidence = (commandId: string, inputDigest: string, resultDigest: string) =>
-    canonicalJson({
-      tool: '@foreman-line/authority-registry',
-      toolVersion: '0.1.0',
-      commandId,
-      inputDigest,
-      resultDigest,
-      exitCode: 0,
-      actorClass: 'coordinator',
-    })
-  const priorCommand = commandEvidence(
-    'registry-binding-manifest-r29',
-    sha256(R30_PRIOR_REGISTRY_COMMIT),
-    priorManifest,
-  )
-  const nextCommand = commandEvidence(
-    'superseding-binding-manifest-r30',
-    priorManifest,
-    newManifest,
-  )
-  const record: ReconciliationRecord = {
-    reconciliationId: 'registry-rework-66a514d',
-    topic:
-      'Round-6 registry bindings superseded by the coordinator-ratified FK-P0 R30 corpus adoption.',
-    observedRefs: [adoption.authorityBasisRef, continuation.authorityBasisRef],
-    observedEvidence: [
-      ...[R30_PRIOR_REGISTRY_COMMIT, CURRENT_SNAPSHOT].map((commit) => ({
-        kind: 'git-commit' as const,
-        reference: commit,
-        digest: sha256(execFileSync('git', ['cat-file', '-p', commit], { cwd: repoRoot })),
-      })),
-      ...[priorCommand, nextCommand].map((reference) => ({
-        kind: 'command-result' as const,
-        reference,
-        digest: sha256(reference),
-      })),
-    ],
-    authoritativeRuleIds: [adoption.ruleId, continuation.ruleId],
-    scopedDisposition:
-      'R30 adopts the committed September 7 charter and loop within the unchanged eighteen-source set. Preserve all nineteen prior reconciliation records canonically. Add 47 body items and 11 headings; change D21 and ledger paragraph 3 source values; add 72 source-bound rules, including four unchanged-ledger repairs, and 53 audit dispositions. Add exactly 67 reciprocal corroboration links: 57 to L5, 9 to D21, and 1 to L4. Preserve all existing rule identities, including both D21 bindings; no item/rule removals or locator-identity changes. The nine event and permission facts are noncontrolling provenance, never runtime grants. All 72 reserved shapes carry human-ratified source intent only.',
-    unresolvedConsequence:
-      'Future binding changes require another typed prior-to-new migration record; human Gate 3, complete verification, independent review and exact source/authority boundaries remain mandatory.',
-    migrationStatus: 'superseded-by-amendment',
-    supersedingEvidence: adoption.authorityBasisRef,
+    throw new Error('R31 independently reviewed binding manifest mismatch')
+  const record = structuredClone(R31_RECONCILIATION)
+  for (const evidence of record.observedEvidence) {
+    if (
+      evidence.kind === 'git-commit' &&
+      sha256(execFileSync('git', ['cat-file', '-p', evidence.reference], { cwd: repoRoot })) !==
+        evidence.digest
+    )
+      throw new Error('R31 Git commit custody mismatch')
   }
+  if (
+    sha256(
+      execFileSync('git', ['cat-file', 'blob', `${CURRENT_SNAPSHOT}:${R31_DECISION_PATH}`], {
+        cwd: repoRoot,
+      }),
+    ) !== R31_DECISION_BLOB_DIGEST
+  )
+    throw new Error('R31 plan decision Git blob mismatch')
+  if (sha256(canonicalJson(record)) !== R31_RECORD_DIGEST)
+    throw new Error('R31 independently reviewed reconciliation pin mismatch')
   return { ...adopted, reconciliations: [...history, record] }
 }
-
 function buildMinimal(full: AuthorityEnforcementRegistry): AuthorityEnforcementRegistry {
   return structuredClone(full)
 }

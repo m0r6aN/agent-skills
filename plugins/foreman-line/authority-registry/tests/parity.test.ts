@@ -57,5 +57,5 @@ test('R13 typed canonical sample carries the normative Markdown audit contract',
   const sample = parse(
     readFileSync(join(packageRoot, 'tests', 'fixtures', 'pass-minimal.yaml'), 'utf8'),
   ) as AuthorityEnforcementRegistry & { normativeMarkdownAudit?: unknown[] }
-  assert.equal(sample.normativeMarkdownAudit?.length, 198)
+  assert.equal(sample.normativeMarkdownAudit?.length, 202)
 })

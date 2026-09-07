@@ -437,10 +437,10 @@ test('historical plan inventories the pre-heading two-gate thesis independently'
   ok(source?.inventoryItems.some((item) => item.itemId === 'item.two-gate-thesis'))
 })
 
-test('standing constraints inventory contains all thirteen atomic numbered rules', () => {
+test('standing constraints inventory contains all fourteen atomic numbered rules', () => {
   const source = registry.sources.find((candidate) => candidate.sourceId === 'standing-constraints')
   ok(source)
-  for (let number = 1; number <= 13; number += 1) {
+  for (let number = 1; number <= 14; number += 1) {
     ok(source.inventoryItems.some((item) => item.itemId === `item.constraint-${number}`))
   }
 })
@@ -2433,6 +2433,198 @@ test('R30 prior anchor freeze retains ledger identities and rejects ambiguous cu
     ok(
       result.violations.some((entry) => /ambiguous|multiple|unique|duplicate/i.test(entry.message)),
       JSON.stringify(result.violations),
+    )
+  } finally {
+    rmSync(root, { recursive: true, force: true })
+  }
+})
+
+test('R31 approved annotation and thesis have distinct source-bound identities', () => {
+  const source = registry.sources.find((entry) => entry.sourceId === 'foreman-line-plan')
+  ok(source)
+  const projected = markdownIdentityProjectionForTesting(
+    source.sourceId,
+    readFileSync(join(repoRoot, source.path), 'utf8'),
+  )
+  const note = projected.find(
+    (entry) =>
+      entry.locator.anchor === 'md-block:# The Foreman Line — Master Plugin Plan:paragraph:1',
+  )
+  const thesis = projected.find(
+    (entry) =>
+      entry.locator.anchor === 'md-block:# The Foreman Line — Master Plugin Plan:paragraph:2',
+  )
+  assert.equal(note?.itemId, 'item.8bef504af1db')
+  assert.equal(thesis?.itemId, 'item.two-gate-thesis')
+})
+
+for (const [component, before, after] of [
+  ['parcel condition', 'Plugin/marketplace parcels', 'All parcels'],
+  ['living identifier', 'each living install identifier', 'one install identifier'],
+  ['marketplace entry', 'declared marketplace entry', 'repository URL'],
+  ['source existence', 'existing plugin source', 'possible plugin source'],
+  [
+    'nested manifest equality',
+    'nested manifest name equals the requested plugin',
+    'nested manifest name resembles the requested plugin',
+  ],
+  ['URL insufficiency', 'does not prove', 'proves'],
+] as const)
+  test(`R31 actual M01 source rejects ${component} mutation`, () => {
+    const root = mkdtempSync(join(tmpdir(), 'fk-p0-r31-source-'))
+    try {
+      copyCorpus(root)
+      const source = registry.sources.find((entry) => entry.sourceId === 'standing-constraints')!
+      const path = join(root, source.path)
+      const original = readFileSync(path, 'utf8')
+      const changed = original.replace(before, after)
+      assert.notEqual(changed, original)
+      writeFileSync(path, changed)
+      assert.throws(
+        () => markdownIdentityProjectionForTesting(source.sourceId, changed),
+        /R31 reviewed source mapping drift/,
+      )
+      const result = sweepRegistrySources(registry, root)
+      assert.equal(result.valid, false)
+      ok(result.violations.some((entry) => entry.code === 'VALUE_DIGEST_MISMATCH'))
+    } finally {
+      rmSync(root, { recursive: true, force: true })
+    }
+  })
+
+test('R31 actual decision blob correspondence detects Git replacement despite an unchanged diagnostic', () => {
+  const root = mkdtempSync(join(tmpdir(), 'fk-p0-r31-decision-'))
+  try {
+    copyCorpus(root)
+    const commit = '8d500704c9e3d6d8b652bbe838aa3623f88203fc'
+    const path =
+      'plugins/foreman-line/docs/goals/foreman-kernel/R31-coordinator-decision-20260907.md'
+    const blob = execFileSync('git', ['rev-parse', `${commit}:${path}`], {
+      cwd: root,
+      encoding: 'utf8',
+    }).trim()
+    const replacement = execFileSync('git', ['hash-object', '-w', '--stdin'], {
+      cwd: root,
+      input: 'Substituted coordinator decision; no ratification.\n',
+      encoding: 'utf8',
+    }).trim()
+    execFileSync('git', ['replace', blob, replacement], { cwd: root })
+    const result = validateRegistry(registry, { repoRoot: root })
+    assert.equal(result.valid, false)
+    ok(
+      result.violations.some(
+        (entry) =>
+          entry.code === 'MIGRATION_EVIDENCE_INVALID' &&
+          /R31 plan decision actual Git-blob/.test(entry.message),
+      ),
+      JSON.stringify(result.violations),
+    )
+  } finally {
+    rmSync(root, { recursive: true, force: true })
+  }
+})
+
+test('R31 source-bound aliases reject displaced or substituted historical note and thesis', () => {
+  const source = registry.sources.find((entry) => entry.sourceId === 'foreman-line-plan')!
+  const content = readFileSync(join(repoRoot, source.path), 'utf8')
+  const note = content
+    .split('\n')
+    .find((line) => line.startsWith('> **Repository identity migration'))!
+  ok(note)
+  for (const changed of [
+    content.replace(note, ''),
+    content.replace(note, note + '\n\nA substituted historical claim.'),
+    content.replace('**Thesis:**', '**Changed thesis:**'),
+  ]) {
+    assert.notEqual(changed, content)
+    assert.throws(
+      () => markdownIdentityProjectionForTesting(source.sourceId, changed),
+      /R31 reviewed source mapping drift/,
+    )
+  }
+})
+test('R31 historical positive uses the pinned R30 implementation and its exact source subject', () => {
+  const root = mkdtempSync(join(tmpdir(), 'fk-p0-r31-historical-'))
+  try {
+    copyCorpus(root)
+    const commit = '446700d47c2e162fcfa575d5a46b9247241a59c1'
+    const relativePackage = 'plugins/foreman-line/authority-registry'
+    const oldPackage = join(root, relativePackage)
+    const paths = execFileSync(
+      'git',
+      ['ls-tree', '-r', '--name-only', commit, '--', relativePackage],
+      { cwd: root, encoding: 'utf8' },
+    )
+      .trim()
+      .split('\n')
+    for (const path of paths) {
+      const destination = join(root, path)
+      mkdirSync(dirname(destination), { recursive: true })
+      writeFileSync(
+        destination,
+        execFileSync('git', ['show', `${commit}:${path}`], {
+          cwd: root,
+          maxBuffer: 32 * 1024 * 1024,
+        }),
+      )
+    }
+    const old = parse(
+      readFileSync(join(oldPackage, 'authority-enforcement-registry.yaml'), 'utf8'),
+    ) as AuthorityEnforcementRegistry
+    assert.equal(old.sourceSnapshotCommit, '65c471416e4a3916695815e951ffbe389288560e')
+    for (const source of old.sources) {
+      const bytes: Buffer = execFileSync(
+        'git',
+        ['show', `${old.sourceSnapshotCommit}:${source.path}`],
+        { cwd: root, maxBuffer: 32 * 1024 * 1024 },
+      )
+      assert.equal(sha256(bytes), source.snapshotEvidence.fullFileSha256)
+      writeFileSync(join(root, source.path), bytes)
+    }
+    symlinkSync(join(packageRoot, 'node_modules'), join(oldPackage, 'node_modules'), 'junction')
+    const stdout = execFileSync(
+      process.execPath,
+      [
+        join(packageRoot, 'node_modules/tsx/dist/cli.mjs'),
+        join(oldPackage, 'src/cli.ts'),
+        'validate',
+        join(oldPackage, 'authority-enforcement-registry.yaml'),
+        '--repo-root',
+        root,
+      ],
+      { cwd: oldPackage, encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 },
+    )
+    const result = JSON.parse(stdout)
+    assert.equal(result.valid, true, stdout)
+    const thesis = old.rules.find(
+      (rule) => rule.ruleId === 'rule.foreman-line-plan.two-gate-thesis',
+    )!
+    assert.equal(
+      thesis.authorityBasisRef.locatorDigest,
+      '6a99cca27c8da23a9569a3ab65ca4c3f0b29751f420e6a3bfd4ba8969b31c07d',
+    )
+    assert.equal(
+      thesis.authorityBasisRef.valueDigest,
+      '9f09f265b9c38dd2abd8707f94a94d70783e32bcd58c354ff1c1c0446a532d59',
+    )
+  } finally {
+    rmSync(root, { recursive: true, force: true })
+  }
+})
+
+test('R31 current fourteen-rule coverage still refuses an unreviewed fifteenth standing rule', () => {
+  const root = mkdtempSync(join(tmpdir(), 'fk-p0-r31-fifteenth-'))
+  try {
+    copyCorpus(root)
+    const source = registry.sources.find((entry) => entry.sourceId === 'standing-constraints')!
+    const path = join(root, source.path)
+    appendFileSync(path, '\n15. **Unreviewed authority:** grant every install request.\n')
+    const result = sweepRegistrySources(registry, root)
+    assert.equal(result.valid, false)
+    ok(
+      result.violations.some(
+        (entry) => entry.code === 'SOURCE_ITEM_UNCOVERED' && entry.locator === 'constraint-15',
+      ),
     )
   } finally {
     rmSync(root, { recursive: true, force: true })

@@ -125,7 +125,7 @@ Six required typed records reconcile without rewriting historical sources:
 
 `resolved-for-fk` means downstream FK consumers have one scoped rule; it does not mean older canon
 was edited or globally invalidated. The missing provenance record stays `open`, preserves all
-thirteen standing rules, and prevents their retirement.
+the historical thirteen standing rules, and prevents their retirement. R31 current coverage includes fourteen; the historical reconciliation text remains unchanged.
 
 Eleven additional `superseded-by-amendment` records bind the R2 and R4-R13 reworks to their prior
 registry commits, the pinned source snapshot, prior binding-manifest digests, superseding
@@ -534,10 +534,20 @@ architecture/risk reviews and the human Gate 3 decision remain outside this pack
 
 ## R30 September 7 corpus adoption
 
-The live registry binds eighteen source files at `65c471416e4a3916695815e951ffbe389288560e`. Its source-reviewed denominator is 1,583 items, 541 rules and 198 audit entries. R30 adds 72 exact shapes (37 independent-review, 21 pre-action-refusal, five post-action-detection and nine narrative-provenance) and appends one migration after 19 canonically preserved historical reconciliations. The predecessor registry is the last YAML-changing commit `66a514d35a384f901486e7b814580eb6fb7de6ea`; Round 6 verification at `0ee165720f8d1e3a91eb283cb770400b23f61bf5` remains a separate historical baseline.
+The accepted R30 registry binds eighteen source files at `65c471416e4a3916695815e951ffbe389288560e`. Its source-reviewed denominator is 1,583 items, 541 rules and 198 audit entries. R30 adds 72 exact shapes (37 independent-review, 21 pre-action-refusal, five post-action-detection and nine narrative-provenance) and appends one migration after 19 canonically preserved historical reconciliations. The predecessor registry is the last YAML-changing commit `66a514d35a384f901486e7b814580eb6fb7de6ea`; Round 6 verification at `0ee165720f8d1e3a91eb283cb770400b23f61bf5` remains a separate historical baseline.
 
 R30 rules carry `human-ratified` source intent only. A finite trusted-code mapping binds every field and each exact source identity, locator and normalized value. Reserved entries cannot fall through to legacy validation after alteration, removal or assurance reversion. Reviewed paraphrases require an exact trusted correspondence to their designated basis; corroborating references remain pinned, reciprocal references and never substitute for that basis. Neither this mapping nor successful validation proves runtime enforcement, completed review, gate satisfaction or authority to execute an operation.
 
 The nine event/permission records are stored as narrative-provenance / ADVISORY / provenance-only / human-ratified. Existing resolver eligibility excludes them: an isolated query yields NO_APPLICABLE_AUTHORITY with no controlling rules, not an informational ADVISORY resolution. Actual coordinator authorization comes from the recorded developer instruction; the protected-operation matrix remains unchanged.
 
 Current-state and owner-state bodies and the queue State column retain their existing exact volatile extents. New continuation paragraphs and INF carrier duties remain governed. The generator retains prior anchor identities and derives fresh loop identities from the existing masked projection; lineHint is navigation in that projection, not raw-source identity authority. Old R28/R29 count assertions remain tests of committed baseline data; general protection tests exercise the adopted sample.
+
+## R31 finite upstream source adoption
+
+The live registry binds the same eighteen source paths at `8d500704c9e3d6d8b652bbe838aa3623f88203fc`, with 1,585 items, 542 rules, 202 audit entries and 21 reconciliations. Only the standing constraints and historical master plan source blobs change. All twenty prior reconciliation records retain their original canonical bytes; the new record binds prior implementation `446700d47c2e162fcfa575d5a46b9247241a59c1` to this source adoption.
+
+Constraint 14 preserves the complete conditional plugin/marketplace duty: each living install identifier must resolve through the declared marketplace entry to an existing plugin source whose nested manifest name equals the requested plugin. A normalized repository URL is insufficient. Its exact reserved shape uses independent review and `human-ratified` source intent, without granting installation or satisfying a gate. Unknown or changed shapes retain refusal behavior.
+
+The historical repository annotation has a distinct excluded identity. The unchanged historical thesis retains its item, rule and noncontrolling provenance effect at paragraph 2. The historical library-name correction retains its item and exclusion. These finite source-version, locator and value mappings precede privileged and frozen identity lookup; they do not introduce a general historical regeneration mode.
+
+The new migration's supporting decision diagnostic is exact and independently pinned. Repository-aware validation also reads the actual decision Git blob at the adopted source commit. That historical decision ratifies the finite source plan only; mapping approval and implementation dispatch have separate recorded authority. Diagnostic evidence does not itself grant authority.

@@ -1,6 +1,6 @@
 schemaVersion: 0.1.0
 registryId: foreman-kernel-authority-enforcement
-sourceSnapshotCommit: 65c471416e4a3916695815e951ffbe389288560e
+sourceSnapshotCommit: 8d500704c9e3d6d8b652bbe838aa3623f88203fc
 sources:
   - sourceId: fk-charter
     path: plugins/foreman-line/docs/goals/foreman-kernel/charter.md
@@ -10,7 +10,7 @@ sources:
     scope:
       - foreman-kernel
     snapshotEvidence:
-      commit: 65c471416e4a3916695815e951ffbe389288560e
+      commit: 8d500704c9e3d6d8b652bbe838aa3623f88203fc
       fullFileSha256: c289fbcc384ca825181662b091572c2f085e23c984ad2be6bec5fff49d7350d3
     inventoryItems:
       - itemId: item.d1
@@ -2738,7 +2738,7 @@ sources:
     scope:
       - foreman-kernel
     snapshotEvidence:
-      commit: 65c471416e4a3916695815e951ffbe389288560e
+      commit: 8d500704c9e3d6d8b652bbe838aa3623f88203fc
       fullFileSha256: d2e5bc3268450c77456ad14baa6df8dadb9cd132123ddc52a782886e42a73057
     inventoryItems:
       - itemId: item.r1
@@ -3213,7 +3213,7 @@ sources:
     scope:
       - foreman-kernel
     snapshotEvidence:
-      commit: 65c471416e4a3916695815e951ffbe389288560e
+      commit: 8d500704c9e3d6d8b652bbe838aa3623f88203fc
       fullFileSha256: 8b2cd6818833d3f27ecd346f05d3f84bdfc669f16ce81265a1bf6667664ce4cb
     inventoryItems:
       - itemId: item.00eb94a59e12
@@ -4286,7 +4286,7 @@ sources:
     scope:
       - all-foreman-goals
     snapshotEvidence:
-      commit: 65c471416e4a3916695815e951ffbe389288560e
+      commit: 8d500704c9e3d6d8b652bbe838aa3623f88203fc
       fullFileSha256: 7ac315005cde6ad6def848b83de1d1b644e321c5d9f6434bc925deb6daba8703
     inventoryItems:
       - itemId: item.243cd0dcdf20
@@ -5422,7 +5422,7 @@ sources:
     scope:
       - all-foreman-goals
     snapshotEvidence:
-      commit: 65c471416e4a3916695815e951ffbe389288560e
+      commit: 8d500704c9e3d6d8b652bbe838aa3623f88203fc
       fullFileSha256: c734c9b2aef15f020a4a5eb261a1291740eddb2a154376386599074cbb8ca9bd
     inventoryItems:
       - itemId: item.1ba6bbd037bb
@@ -5905,7 +5905,7 @@ sources:
     scope:
       - all-foreman-goals
     snapshotEvidence:
-      commit: 65c471416e4a3916695815e951ffbe389288560e
+      commit: 8d500704c9e3d6d8b652bbe838aa3623f88203fc
       fullFileSha256: ee003674865be3a45316b95f5459b8f317d8150bdb8c0774601929cb0befd831
     inventoryItems:
       - itemId: item.d56470e1e839
@@ -6128,8 +6128,8 @@ sources:
     scope:
       - all-foreman-goals
     snapshotEvidence:
-      commit: 65c471416e4a3916695815e951ffbe389288560e
-      fullFileSha256: b5cce5029c4619058795414b624a418fb8c1c28f8534dab9d58c8fef61994c2f
+      commit: 8d500704c9e3d6d8b652bbe838aa3623f88203fc
+      fullFileSha256: 57e345f9294cb8fcd8c3d90325505c80903648f60522f820061a5f8f288a86ac
     inventoryItems:
       - itemId: item.28f59347f541
         locator:
@@ -6155,7 +6155,7 @@ sources:
         locator:
           kind: heading
           anchor: "# Standing Constraints — included by reference in every dispatch kickstarter > ## Reviewer"
-          lineHint: 22
+          lineHint: 23
         normalizedExcerpt: "## Reviewer"
         valueDigest: a8b9ec14eec53f9d0000bbbd9766ff37018c2ed963197a252f395fe919698474
         ruleIds: []
@@ -6271,11 +6271,22 @@ sources:
           - rule.standing-constraints.constraint-7
         exclusionDisposition: null
         rationale: Rule-bearing section or live behavior is mapped to an explicit source-bound rule.
+      - itemId: item.constraint-14
+        locator:
+          kind: numbered-item
+          anchor: "md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — conditional:list-item:3"
+          lineHint: 21
+        normalizedExcerpt: 14. **Plugin/marketplace parcels:** verify each living install identifier through the declared marketplace entry to an existing plugin source whose nested manifest name equals the requested plugin. A normalized repository URL does not prove that an install command resolves. (#37)
+        valueDigest: 4f3ee9daa1a008f7002cce5742fa585387976783bb9a1a333f5cd6ab5a1d4d19
+        ruleIds:
+          - rule.standing-constraints.constraint-14
+        exclusionDisposition: null
+        rationale: Exact upstream conditional builder obligation14 is mapped without an install grant.
       - itemId: item.constraint-8
         locator:
           kind: numbered-item
           anchor: "md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Reviewer:list-item:1"
-          lineHint: 24
+          lineHint: 25
         normalizedExcerpt: 8. **Hostile-input probing is licensed.** You MAY run small one-off scripts against the live process boundary; green ACs verify the fixture space, not the input space. (#12)
         valueDigest: ff40dc1873d003763067852b50a6868cf2813c0c0b5197284e1ad6eb4cbb57c5
         ruleIds:
@@ -6286,7 +6297,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Reviewer:list-item:2"
-          lineHint: 25
+          lineHint: 26
         normalizedExcerpt: '9. **Prose-only contracts: attempt the naive reading.** For a parcel whose contract is prose rather than code, "is this unambiguous?" is answered by implementing the wrong-but-literal reading and showing the text excludes it — not by confirming the intended reading is present. (#14)'
         valueDigest: f2b52b894998ce831ff2512d43dbb7da2ecb065802a9520bb151415d39d06d13
         ruleIds:
@@ -6297,7 +6308,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Reviewer:list-item:3"
-          lineHint: 26
+          lineHint: 27
         normalizedExcerpt: 10. **Post-review git-detection control.** Every review cycle ends with an assertion of no commits/dirty files in the reviewer worktree; the permission envelope is a layer, not the guarantee. (#24)
         valueDigest: 8608110b125cc5966968c269a453086e1508cd6d7bd8c32d2940dffe73a8c161
         ruleIds:
@@ -6308,7 +6319,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Reviewer:list-item:4"
-          lineHint: 27
+          lineHint: 28
         normalizedExcerpt: 11. **Mutate the fixture to prove each assertion binds to its named invariant.** For any test whose name claims an invariant (`…A→F chain…`, `…rejects hostile…`, `…inherits correlationId…`), read the validator it calls and confirm that function actually checks that property — then break the fixture in the named dimension and confirm the test fails. An invariant that lives in a *different* exported function (e.g. `isSealed` vs `validateChain`) is not checked just because the sibling was called. Passing is not evidence; failing-when-broken is. (#32)
         valueDigest: 2ddd3347b433e57c6dc2187ed83f9360f11e879a08368077ea7c1c1ec33cca55
         ruleIds:
@@ -6323,7 +6334,7 @@ sources:
     scope:
       - all-foreman-goals
     snapshotEvidence:
-      commit: 65c471416e4a3916695815e951ffbe389288560e
+      commit: 8d500704c9e3d6d8b652bbe838aa3623f88203fc
       fullFileSha256: f673472c804a659f9f01515b878f02c653d4ed97c2c4c97f7340139325c6df05
     inventoryItems:
       - itemId: item.905b22073871
@@ -11249,14 +11260,14 @@ sources:
     scope:
       - all-foreman-goals
     snapshotEvidence:
-      commit: 65c471416e4a3916695815e951ffbe389288560e
-      fullFileSha256: 0ca5a264e5371be59b2351e2f8e369a6e7f9fa2b4fd6d94ab54902d4ecd63a22
+      commit: 8d500704c9e3d6d8b652bbe838aa3623f88203fc
+      fullFileSha256: dcca81e1e38e245bc6b8bc8ddfdbd44b8b7546c4f0663639256fb421f686f8eb
     inventoryItems:
       - itemId: item.c16ff9b18c4c
         locator:
           kind: heading
           anchor: "# The Foreman Line — Master Plugin Plan > ## 1. What This Is"
-          lineHint: 10
+          lineHint: 12
         normalizedExcerpt: "## 1. What This Is"
         valueDigest: 6de48b2a5dd9b003b33456f3e697245dcecafc0b527cf7f5d91c5d13756c5d4d
         ruleIds: []
@@ -11266,7 +11277,7 @@ sources:
         locator:
           kind: heading
           anchor: "# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages"
-          lineHint: 18
+          lineHint: 20
         normalizedExcerpt: "## 2. Pipeline Stages"
         valueDigest: 30f08d327f9127d59446a4a80c8c881448f0b8d9d70254ed55dc61b722e0f6df
         ruleIds: []
@@ -11276,7 +11287,7 @@ sources:
         locator:
           kind: heading
           anchor: "# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage A — Intake & Shaping"
-          lineHint: 20
+          lineHint: 22
         normalizedExcerpt: "### Stage A — Intake & Shaping"
         valueDigest: 8b5d27fff3ad5bb5ce01d0edb830217191a7f3491f406e212055b2ef14d5ab95
         ruleIds: []
@@ -11286,7 +11297,7 @@ sources:
         locator:
           kind: heading
           anchor: "# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage B — Registration"
-          lineHint: 31
+          lineHint: 33
         normalizedExcerpt: "### Stage B — Registration"
         valueDigest: 572421a1df83f4917f33a6e7f64d8167c06b5c71834f5c0026d0efc59f1a424f
         ruleIds: []
@@ -11296,7 +11307,7 @@ sources:
         locator:
           kind: heading
           anchor: "# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage C — Dispatch & Build"
-          lineHint: 36
+          lineHint: 38
         normalizedExcerpt: "### Stage C — Dispatch & Build"
         valueDigest: 58d1703f504b6472033ea6f6711b7390ffcd34717744ee4e9d873e5fa53d9157
         ruleIds: []
@@ -11306,7 +11317,7 @@ sources:
         locator:
           kind: heading
           anchor: "# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage D — Verification"
-          lineHint: 46
+          lineHint: 48
         normalizedExcerpt: "### Stage D — Verification"
         valueDigest: dc330aafa9d1c0d6744de6a38e8e0ac0231660d9b7396dc353bc452edddee1f7
         ruleIds: []
@@ -11316,7 +11327,7 @@ sources:
         locator:
           kind: heading
           anchor: "# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage E — Integration"
-          lineHint: 54
+          lineHint: 56
         normalizedExcerpt: "### Stage E — Integration"
         valueDigest: 38885407135854839130b866e35afd061ca7249ae8bf0acf01ad3a2eee2a3b01
         ruleIds: []
@@ -11326,7 +11337,7 @@ sources:
         locator:
           kind: heading
           anchor: "# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage F — Closure"
-          lineHint: 60
+          lineHint: 62
         normalizedExcerpt: "### Stage F — Closure"
         valueDigest: 155da3c2bd8b54a6ad457bc7d64c98907149bf90502eac6905f45e581e837e31
         ruleIds: []
@@ -11336,7 +11347,7 @@ sources:
         locator:
           kind: heading
           anchor: "# The Foreman Line — Master Plugin Plan > ## 3. Locked Decisions (with reasoning)"
-          lineHint: 68
+          lineHint: 70
         normalizedExcerpt: "## 3. Locked Decisions (with reasoning)"
         valueDigest: 997085578ec66bc1e560057864f8bbf55a911d2a281c47bb701cabc3abeaea69
         ruleIds: []
@@ -11346,7 +11357,7 @@ sources:
         locator:
           kind: heading
           anchor: "# The Foreman Line — Master Plugin Plan > ## 4. Smart Triage as the Assignment Engine"
-          lineHint: 84
+          lineHint: 86
         normalizedExcerpt: "## 4. Smart Triage as the Assignment Engine"
         valueDigest: 6f91f416e578600d961ffb0670d909dd4577da5b25942e15368fa077dcff10ce
         ruleIds: []
@@ -11356,7 +11367,7 @@ sources:
         locator:
           kind: heading
           anchor: "# The Foreman Line — Master Plugin Plan > ## 5. Model Routing Policy (v0 shape)"
-          lineHint: 105
+          lineHint: 107
         normalizedExcerpt: "## 5. Model Routing Policy (v0 shape)"
         valueDigest: d79a68b52f65377208d8144ec26a048a4f3b9a0ab7d216bc74b564388e2328f5
         ruleIds: []
@@ -11366,7 +11377,7 @@ sources:
         locator:
           kind: heading
           anchor: "# The Foreman Line — Master Plugin Plan > ## 5a. Skill Injection Policy (the execution-plane library)"
-          lineHint: 139
+          lineHint: 141
         normalizedExcerpt: "## 5a. Skill Injection Policy (the execution-plane library)"
         valueDigest: 44ea06e73ead0ad6c0f14d9a66cf95719e959937f1d467eed5363a8d0e8d7bb5
         ruleIds: []
@@ -11376,7 +11387,7 @@ sources:
         locator:
           kind: heading
           anchor: '# The Foreman Line — Master Plugin Plan > ## 6. Risk-Driven Audit Triggers (killing the "somehow")'
-          lineHint: 170
+          lineHint: 172
         normalizedExcerpt: '## 6. Risk-Driven Audit Triggers (killing the "somehow")'
         valueDigest: a9c3872892b2e3504fbdcc53474dff301881b6698637a8fcec5a9953105aa29d
         ruleIds: []
@@ -11386,7 +11397,7 @@ sources:
         locator:
           kind: heading
           anchor: "# The Foreman Line — Master Plugin Plan > ## 7. Open Questions (decide before W1 exit)"
-          lineHint: 190
+          lineHint: 192
         normalizedExcerpt: "## 7. Open Questions (decide before W1 exit)"
         valueDigest: 64cbe684f16e204308f0ef8efdf212efd253a665d5e7ec96997f28f87a4dc63b
         ruleIds: []
@@ -11396,7 +11407,7 @@ sources:
         locator:
           kind: heading
           anchor: "# The Foreman Line — Master Plugin Plan > ## 7. Open Questions (decide before W1 exit) > ### 7a. DocSpine Transfer Checklist (evening before demo)"
-          lineHint: 199
+          lineHint: 201
         normalizedExcerpt: "### 7a. DocSpine Transfer Checklist (evening before demo)"
         valueDigest: 1d81fb4021f004a91422861d01b435494b6c5e5554ec71e50b33d103bf677fe6
         ruleIds: []
@@ -11406,7 +11417,7 @@ sources:
         locator:
           kind: heading
           anchor: "# The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels"
-          lineHint: 212
+          lineHint: 214
         normalizedExcerpt: "## 8. Build Plan — Waves & Parcels"
         valueDigest: cf9967464472d441c8e322d643be9f50e705da447dbcb54ccfc4b5bc0a264357
         ruleIds: []
@@ -11416,7 +11427,7 @@ sources:
         locator:
           kind: heading
           anchor: "# The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### W0 — Contracts (foundation, no runtime)"
-          lineHint: 216
+          lineHint: 218
         normalizedExcerpt: "### W0 — Contracts (foundation, no runtime)"
         valueDigest: 1bdcf704dee3a17987547cc633074845ace771c8d51bb5c59d4cd780af05940b
         ruleIds: []
@@ -11426,7 +11437,7 @@ sources:
         locator:
           kind: heading
           anchor: "# The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### W1 — Intake & Registration"
-          lineHint: 224
+          lineHint: 226
         normalizedExcerpt: "### W1 — Intake & Registration"
         valueDigest: f11d7718cf1fe3af9c64a3e8bbc423ab7a371112ff48b1ca4908aad273414c5b
         ruleIds: []
@@ -11436,7 +11447,7 @@ sources:
         locator:
           kind: heading
           anchor: "# The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### W2 — Dispatch"
-          lineHint: 231
+          lineHint: 233
         normalizedExcerpt: "### W2 — Dispatch"
         valueDigest: f0a2d6601efd34ed78decc1ab5f0966eaf9584829320f5119f66233f051ab5da
         ruleIds: []
@@ -11446,7 +11457,7 @@ sources:
         locator:
           kind: heading
           anchor: "# The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### W3 — Verification"
-          lineHint: 239
+          lineHint: 241
         normalizedExcerpt: "### W3 — Verification"
         valueDigest: 9b9e0de5fbf53feffef40731f92a1d138287f6b270d48be90fa1e6d1850f8367
         ruleIds: []
@@ -11456,7 +11467,7 @@ sources:
         locator:
           kind: heading
           anchor: "# The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### W4 — CI Integration"
-          lineHint: 246
+          lineHint: 248
         normalizedExcerpt: "### W4 — CI Integration"
         valueDigest: c00f857179d6fe77d93b9b3a2b8b340fe48baefc2e8305c101211de931bfc7fe
         ruleIds: []
@@ -11466,7 +11477,7 @@ sources:
         locator:
           kind: heading
           anchor: "# The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### W5 — Smart Triage Assignment"
-          lineHint: 253
+          lineHint: 255
         normalizedExcerpt: "### W5 — Smart Triage Assignment"
         valueDigest: d8a83ca0cb7c1b1ccb2fa6a8c42d6558bea3d4780a8e6b94f16bbdec33c2887d
         ruleIds: []
@@ -11476,7 +11487,7 @@ sources:
         locator:
           kind: heading
           anchor: "# The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### Sequencing notes"
-          lineHint: 260
+          lineHint: 262
         normalizedExcerpt: "### Sequencing notes"
         valueDigest: 20d538a6386a51e2d10ede33f5b16e7bfcffbc4bac9db2d62e0b92030c97a7d1
         ruleIds: []
@@ -11486,17 +11497,27 @@ sources:
         locator:
           kind: heading
           anchor: "# The Foreman Line — Master Plugin Plan > ## 9. Risks — Honest Ledger"
-          lineHint: 267
+          lineHint: 269
         normalizedExcerpt: "## 9. Risks — Honest Ledger"
         valueDigest: 6935e98b73bfdd2018d553b51cd2ba9fb706c7f3e8593616c2d3c40434a0c2ba
         ruleIds: []
         exclusionDisposition: heading-only
         rationale: "Heading # The Foreman Line — Master Plugin Plan > ## 9. Risks — Honest Ledger is structural navigation; its complete body items carry the operative rules."
-      - itemId: item.two-gate-thesis
+      - itemId: item.8bef504af1db
         locator:
           kind: line-excerpt
           anchor: md-block:# The Foreman Line — Master Plugin Plan:paragraph:1
           lineHint: 3
+        normalizedExcerpt: "> **Repository identity migration (2026-09-06):** Repository identifiers and paths in this historical record were normalized to `m0r6aN/agent-skills`. Recorded commands were not rerun; all other historical outcomes remain as captured."
+        valueDigest: 9d600b9b44dfe18183d5a668eb46862ab9187395aa35ce43a15d2b9e41e4741d
+        ruleIds: []
+        exclusionDisposition: non-normative-explanation
+        rationale: The repository-identity annotation records historical normalization and expressly disclaims rerun evidence.
+      - itemId: item.two-gate-thesis
+        locator:
+          kind: line-excerpt
+          anchor: md-block:# The Foreman Line — Master Plugin Plan:paragraph:2
+          lineHint: 5
         normalizedExcerpt: '**Version:** 0.1 (Draft — working name "the Line"; rename at will) **Owner:** Clinton Morgan — Principal Agentic AI Platform Architect, KaseyaOne **Status:** Proposed **Thesis:** One orchestrated pipeline from idea to merged code, in which specs are the unit of truth, humans hold exactly two gates (dispatch and merge), every stage emits a verifiable receipt, and the platform layer (model routing, Kompress, audit suite, DocSpine) is wired in by default — not by memory.'
         valueDigest: 9f09f265b9c38dd2abd8707f94a94d70783e32bcd58c354ff1c1c0446a532d59
         ruleIds:
@@ -11507,7 +11528,7 @@ sources:
         locator:
           kind: line-excerpt
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 1. What This Is:paragraph:1"
-          lineHint: 12
+          lineHint: 14
         normalizedExcerpt: "The Line is Foreman's flagship workflow: the end-to-end conveyor that carries a raw idea through shaping, registration, dispatch, build, verification, integration, and closure. It composes the plugins already ranked as force multipliers — Parcel Compiler, Verification Harness, Context Ledger, Adversarial Review Panel — plus the platform layer, into a single operable loop."
         valueDigest: 2a5f31c299ea31d4a21e498a0b618179b19c42c9d7e980a3cb79289b6579a9a4
         ruleIds: []
@@ -11517,7 +11538,7 @@ sources:
         locator:
           kind: line-excerpt
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 1. What This Is:paragraph:2"
-          lineHint: 14
+          lineHint: 16
         normalizedExcerpt: "It is built the way it demands others build: parcel by parcel, under PDD, with the Line's own construction as the first proof."
         valueDigest: 4e3fb84c5f3df3651ab2beba90838fd773c44d70eb9c79c08db20b25bc405f5c
         ruleIds: []
@@ -11527,7 +11548,7 @@ sources:
         locator:
           kind: line-excerpt
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage A — Intake & Shaping:paragraph:1"
-          lineHint: 21
+          lineHint: 23
         normalizedExcerpt: "Input: an idea or prompt. More context helps; none is required."
         valueDigest: 2e3c5b82c199bbebb422bcb0ae15650f41d56e08faaa3ccc7d01336d45a01e74
         ruleIds: []
@@ -11537,7 +11558,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage A — Intake & Shaping:list-item:1"
-          lineHint: 23
+          lineHint: 25
         normalizedExcerpt: "1. The **Shaping Agent** runs interactive ideation and optimization with the human: clarifies intent, surfaces constraints, proposes decomposition."
         valueDigest: 401409ba78e013b2ddd0075789faa81082f26885faf2d0cd6982ae5888b4b381
         ruleIds: []
@@ -11547,7 +11568,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage A — Intake & Shaping:list-item:2"
-          lineHint: 24
+          lineHint: 26
         normalizedExcerpt: "2. Output artifact: **parcel specs written to `plugins/foreman-line/docs/specs/`** — one per unit of work — each with intent, constraints, acceptance criteria, mandatory out-of-scope, plus new v0.2 schema fields: `risk:` and `surfaces:`."
         valueDigest: 540148b6f888f85740d3aca1e07b4103a13b1eca9da989bed0689f53d528f952
         ruleIds: []
@@ -11557,7 +11578,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage A — Intake & Shaping:list-item:3"
-          lineHint: 25
+          lineHint: 27
         normalizedExcerpt: 3. The agent proposes the Epic → Story → Task tree as a *projection* of the parcel set.
         valueDigest: 1a410975805477ab6e67257da88c7623150dcb6750b7bab721ed982263a77052
         ruleIds: []
@@ -11567,7 +11588,7 @@ sources:
         locator:
           kind: line-excerpt
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage A — Intake & Shaping:paragraph:2"
-          lineHint: 27
+          lineHint: 29
         normalizedExcerpt: "> **Non-negotiable:** the spec is the source of truth for implementation. Jira artifacts are projections of specs, never the other way around. An idea that skips the spec and lands directly in Jira has recreated the vague-ticket anti-pattern the whole system exists to kill."
         valueDigest: e178b3777a9327d226419df569446989d7001c3ab412065e9885500d76015829
         ruleIds: []
@@ -11577,7 +11598,7 @@ sources:
         locator:
           kind: line-excerpt
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage A — Intake & Shaping:paragraph:3"
-          lineHint: 29
+          lineHint: 31
         normalizedExcerpt: "**Human gate: approval of the parcel set + tree before anything is registered.**"
         valueDigest: 7d55caee0ce6a9db4a5f5b71433e9f4651c6afddf75954925e7d11af73cef4f8
         ruleIds: []
@@ -11587,7 +11608,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage B — Registration:list-item:1"
-          lineHint: 32
+          lineHint: 34
         normalizedExcerpt: 1. On approval, the agent creates the Epic/Story/Task tree in Jira via the **local Jira MCP server**.
         valueDigest: 4b89e7797aff78d82602e182c952039d2d551862d3e0b0332ccd526e28515f8d
         ruleIds: []
@@ -11597,7 +11618,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage B — Registration:list-item:2"
-          lineHint: 33
+          lineHint: 35
         normalizedExcerpt: "2. Bidirectional linking per SPEC-CONVENTION §5: ticket key in spec frontmatter; SHA permalink to the spec in the ticket. Enforced, not suggested."
         valueDigest: ae5f3e1229c50c237e008914fa56f19d853c35b8681f3e82ee04c199943caa44
         ruleIds: []
@@ -11607,7 +11628,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage B — Registration:list-item:3"
-          lineHint: 34
+          lineHint: 36
         normalizedExcerpt: 3. **Assignment via Smart Triage** — see §4.
         valueDigest: d3170e66b433ec93f0a268f0a1e4e347c3a27ee26e1cb33ffe9bc9ea66f74a8f
         ruleIds: []
@@ -11617,7 +11638,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage C — Dispatch & Build:list-item:1"
-          lineHint: 37
+          lineHint: 39
         normalizedExcerpt: 1. Each SWE's agent **subscribes to Jira queries** scoped to its human's assignment.
         valueDigest: 2bd2ff96802e78d192ec9516b0028a2911e386e9ac4d33cf41c601f42fd60fd2
         ruleIds: []
@@ -11627,7 +11648,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage C — Dispatch & Build:list-item:2"
-          lineHint: 38
+          lineHint: 40
         normalizedExcerpt: 2. The agent **proposes** the next-best candidate (priority, dependency order, capacity) — it does not grab.
         valueDigest: 5b88e70274d846cfeec5b8c422dc1af7aef5d899b88e2823c49b21100a73736d
         ruleIds: []
@@ -11637,7 +11658,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage C — Dispatch & Build:list-item:3"
-          lineHint: 39
+          lineHint: 41
         normalizedExcerpt: "3. The agent pre-drafts its **Step 0 restatement**: scope, enumerated surfaces, out-of-scope acknowledgment."
         valueDigest: 58da608c28ae9e0b7491c6bf0cd0dde837868e09c527dce05f569f155a551818
         ruleIds: []
@@ -11647,7 +11668,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage C — Dispatch & Build:list-item:4"
-          lineHint: 40
+          lineHint: 42
         normalizedExcerpt: "4. **Human gate: one-tap dispatch approval.** Step 0 confirmation is preserved exactly as validated in production."
         valueDigest: 2f64cc48d35ee99f7661674d7aefe4ebe2699df55d4796276670910751f18229
         ruleIds: []
@@ -11657,7 +11678,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage C — Dispatch & Build:list-item:5"
-          lineHint: 41
+          lineHint: 43
         normalizedExcerpt: 5. **Model routing policy** (policy-as-code, §5) selects model(s) and agent count for the parcel's task class, data classification, and cost ceiling.
         valueDigest: c0b63829cf5571927dc907f28427ea6f182bad47ed98ff3e7ad4fa06b0f559a2
         ruleIds: []
@@ -11667,7 +11688,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage C — Dispatch & Build:list-item:6"
-          lineHint: 42
+          lineHint: 44
         normalizedExcerpt: "6. **Kaseya Kompress is mandatory** on all pipeline context. Exception baked into policy: system prompts are never compressed (prompt-cache prefix integrity)."
         valueDigest: 1ad5730157b06ce19331525cf50a2ce146b44c0cb1410c5b28108e0f33c0f96c
         ruleIds: []
@@ -11677,7 +11698,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage C — Dispatch & Build:list-item:7"
-          lineHint: 43
+          lineHint: 45
         normalizedExcerpt: 7. Agent(s) build on an isolated branch/worktree. One parcel, one branch, no shared state.
         valueDigest: 48abdaa1e3cab2c457f5d371d595852af2f7bfe97c1c23c252d899f798bd7cbf
         ruleIds: []
@@ -11687,7 +11708,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage C — Dispatch & Build:list-item:8"
-          lineHint: 44
+          lineHint: 46
         normalizedExcerpt: 8. **Builder-side skill injection (§5a):** the skill matrix loads capabilities matched to the parcel's surfaces — every parcel gets test-coverage (Kaseya-standard tests); `ui/*` parcels additionally get **kds-figma** (`plugins/kds-figma`), resolving Figma node refs from the spec's Context & References into KDS tokens, variable definitions, and screenshots. Builders work with the org's real standards and design system in context, not approximations.
         valueDigest: c539accc1b805a82734d01f72b9db62ab3da3755b33b5aed190bb5b28a7d81f1
         ruleIds: []
@@ -11697,7 +11718,7 @@ sources:
         locator:
           kind: line-excerpt
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage D — Verification:paragraph:1"
-          lineHint: 47
+          lineHint: 49
         normalizedExcerpt: "Verification is layered, and no agent — including the orchestrator — grades its own work:"
         valueDigest: c29133d455a1c8d7337a1c94220e5f2fc909dd1e5ba98324e8af189c48cb97ed
         ruleIds: []
@@ -11707,7 +11728,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage D — Verification:list-item:1"
-          lineHint: 49
+          lineHint: 51
         normalizedExcerpt: "1. **Deterministic harness first:** acceptance criteria executed as checks (tests, lint, schema validation, spec-conformance), plus verifier-side checks from the skill matrix (§5a) — coverage thresholds on every parcel, **kds-sweep** for `ui/*`, **tenant-isolation** for `tenancy/*` — all blocking. pcc-style: canonical receipts (RFC 8785) for every claim."
         valueDigest: a47300fdb105f3e6575f8232fe12d41dca8f2d8f16e5a24fe2bbb1488588de13
         ruleIds: []
@@ -11717,7 +11738,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage D — Verification:list-item:2"
-          lineHint: 50
+          lineHint: 52
         normalizedExcerpt: 2. **Adversarial review second:** a frontier-model reviewer, *distinct from the coordinating agent*, armed with the **code-review skill** — challenging the change against Kaseya's documented dev standards, with standard citations in its findings.
         valueDigest: 109cfc18b6308ee2c6dca43c9d203b9e010cf9c747cd1e4378cb4d7e18114836
         ruleIds: []
@@ -11727,7 +11748,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage D — Verification:list-item:3"
-          lineHint: 51
+          lineHint: 53
         normalizedExcerpt: 3. The **Coordinator** (frontier model) routes rework if either layer fails — mechanical build/test failures go to a small model running **build-fix-loop** first; frontier re-coordination is the escalation, not the default. The Coordinator consumes verification results; it never produces them.
         valueDigest: 48e4c45cab37cc5cc9a795e35c1996fbd463cafc3f80c6f564a8f227a751aa99
         ruleIds: []
@@ -11737,7 +11758,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage D — Verification:list-item:4"
-          lineHint: 52
+          lineHint: 54
         normalizedExcerpt: 4. **Human review is required before the ticket is updated.** On approval, the agent updates the Jira ticket via MCP.
         valueDigest: d6b8ab1f78c2ea8fe6e4a9800ddea2a4f35d561af0d7270d695d9bfe46d3761a
         ruleIds:
@@ -11748,7 +11769,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage E — Integration:list-item:1"
-          lineHint: 55
+          lineHint: 57
         normalizedExcerpt: "1. Agent commits, pushes, and opens the PR. Branch protection: agents cannot merge."
         valueDigest: 402b9e2bb59f171e6a1b4414e538981874e87a3a44d376d6df832d29a8c34f2e
         ruleIds: []
@@ -11758,7 +11779,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage E — Integration:list-item:2"
-          lineHint: 56
+          lineHint: 58
         normalizedExcerpt: 2. CI triggers **DocSpine** to validate and update documentation claims against the changed code.
         valueDigest: 1842388911dd337c3ea28c86f4058938438a5ffb2df9f830b2e6f779380a4392
         ruleIds: []
@@ -11768,7 +11789,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage E — Integration:list-item:3"
-          lineHint: 57
+          lineHint: 59
         normalizedExcerpt: "3. CI runs **risk-driven audit triggers** (§6): declared risk from spec frontmatter + derived risk from the diff decide whether the audit-suite runs, and at what tier."
         valueDigest: b857d8819e8fe5b80639e31831d7e2f36cd415a66a9fe092742a58291bdd234d
         ruleIds: []
@@ -11778,7 +11799,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage E — Integration:list-item:4"
-          lineHint: 58
+          lineHint: 60
         normalizedExcerpt: "4. GitHub gates: required security scans, required reviews, co-pilot assisted human review."
         valueDigest: 9542dcbbcef8466dd65f56d88f4a19255bdab75f89c3b04b3b939c4cbc09b5a2
         ruleIds:
@@ -11789,7 +11810,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage F — Closure:list-item:1"
-          lineHint: 61
+          lineHint: 63
         normalizedExcerpt: "1. **Human gate: the merge.** A human owns every merge. Deliberate, permanent."
         valueDigest: b155877202b1b11c18c46dce26ad26d0f5e28d6ff1b130b360c3e3983260b6af
         ruleIds:
@@ -11800,7 +11821,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage F — Closure:list-item:2"
-          lineHint: 62
+          lineHint: 64
         normalizedExcerpt: "2. On merge: ticket transitions to closed via MCP; spec moves `active/ → done/`; the receipt chain is sealed."
         valueDigest: 2a089e025f938d583cbf678e8c460565bf6f8e069fff68aaa1c9e9c99e73037b
         ruleIds: []
@@ -11810,7 +11831,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage F — Closure:list-item:3"
-          lineHint: 63
+          lineHint: 65
         normalizedExcerpt: "3. Correlation IDs (ADR-069 taxonomy: WorkloadId → SessionId → WorkflowId/RunId → AgentId) stamp every stage. The chain idea → spec → ticket → dispatch → PR → merge is walkable end to end."
         valueDigest: 4d3ff0c4b9dc69959a935edbb644bbb9c7bb59edfec86c26d295e527f23552e3
         ruleIds: []
@@ -11820,7 +11841,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 2. Pipeline Stages > ### Stage F — Closure:list-item:4"
-          lineHint: 64
+          lineHint: 66
         normalizedExcerpt: "4. **Lesson distillation.** Lessons earned in the cycle are appended to `docs/transcripts/defects_lessons.md` with a **disposition line** (per the ledger's convention): the distilled rule is routed into the narrowest artifact already in the reading path of the agent it governs — kickstarter constraint, SPEC-CONVENTION, coordinator pattern/carryover, or a mechanical hook/CI check (best of all — a checked rule no longer needs remembering) — or marked narrative-only. No agent reads the ledger as operating instructions; a lesson without a disposition is not closed. **When a lesson's rule invalidates an existing pattern, the disposition includes a one-time enumeration sweep of the existing corpus — instances retired immediately or recorded as a single named debt with the full inventory (lesson #36: installing a rule for future parcels while leaving existing instances live means the class keeps firing).**"
         valueDigest: 3f65fe693eb976e613e6342540139d3050e96534ae4c160cdcde45b20966bd5e
         ruleIds: []
@@ -11830,7 +11851,7 @@ sources:
         locator:
           kind: table-row
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 3. Locked Decisions (with reasoning):table-row:D1"
-          lineHint: 72
+          lineHint: 74
         normalizedExcerpt: "| D1 | Specs are the unit of dispatch; Jira tickets are projections | Prevents automating the vague-ticket anti-pattern; preserves Git as implementation truth |"
         valueDigest: 2aa12ede06990d4e28066810aaef940a18612dff13b9cd0e6693513c785ce67d
         ruleIds: []
@@ -11840,7 +11861,7 @@ sources:
         locator:
           kind: table-row
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 3. Locked Decisions (with reasoning):table-row:D2"
-          lineHint: 73
+          lineHint: 75
         normalizedExcerpt: "| D2 | Humans hold exactly two gates: dispatch approval and merge | Step 0 + human merge are the two validated drift/quality controls; everything between is automatable |"
         valueDigest: 0341ba5811106695a1497346735e1b5dffafbb2894e547a7fcc33ae673a7be53
         ruleIds: []
@@ -11850,7 +11871,7 @@ sources:
         locator:
           kind: table-row
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 3. Locked Decisions (with reasoning):table-row:D3"
-          lineHint: 74
+          lineHint: 76
         normalizedExcerpt: "| D3 | Agents propose work; they do not auto-grab | Auto-grab kills Step 0. Full autonomy is a maturity level earned with verification data, not a starting posture |"
         valueDigest: 6e5da6a16d4f4e340d83eee688c04a0886b1acf97ae3a54fea2384df259cc35a
         ruleIds: []
@@ -11860,7 +11881,7 @@ sources:
         locator:
           kind: table-row
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 3. Locked Decisions (with reasoning):table-row:D4"
-          lineHint: 75
+          lineHint: 77
         normalizedExcerpt: "| D4 | Coordinator ≠ Verifier | No self-graded work at any level. Harness and Adversarial Review are separate plugins by design |"
         valueDigest: f1a54d5282416484f5e1a5b39b5b349ec80c842983bf016e849bfc46f9bbabea
         ruleIds: []
@@ -11870,7 +11891,7 @@ sources:
         locator:
           kind: table-row
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 3. Locked Decisions (with reasoning):table-row:D5"
-          lineHint: 76
+          lineHint: 78
         normalizedExcerpt: '| D5 | Audit triggers are declared + derived, never "somehow" | `risk:`/`surfaces:` in spec frontmatter + diff-based CI rules = deterministic, auditable |'
         valueDigest: efea0ac400f8704fc112d182538ebb900f7ae35f5c61e217f7b889d2aa80c820
         ruleIds: []
@@ -11880,7 +11901,7 @@ sources:
         locator:
           kind: table-row
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 3. Locked Decisions (with reasoning):table-row:D6"
-          lineHint: 77
+          lineHint: 79
         normalizedExcerpt: "| D6 | Model routing is policy-as-code | Versioned routing table (task class × data classification → allowlist + cost ceiling); privacy gates eligibility before cost optimizes |"
         valueDigest: 0723982b119acc9f9b6268eb9ad3a77b74bb6f8f1b378429ee1ee56e8f0dcab4
         ruleIds: []
@@ -11890,7 +11911,7 @@ sources:
         locator:
           kind: table-row
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 3. Locked Decisions (with reasoning):table-row:D7"
-          lineHint: 78
+          lineHint: 80
         normalizedExcerpt: "| D7 | Kompress mandatory; system prompts exempt | Token burn control without breaking prompt-cache prefix hits |"
         valueDigest: 117963219d4e9e214be33f35e63966b317c9599aca8d307c251719bc64a6adaf
         ruleIds: []
@@ -11900,7 +11921,7 @@ sources:
         locator:
           kind: table-row
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 3. Locked Decisions (with reasoning):table-row:D8"
-          lineHint: 79
+          lineHint: 81
         normalizedExcerpt: "| D8 | Every stage emits an RFC 8785 canonical receipt | pcc machinery exists; the Trust Wall demands a walkable chain |"
         valueDigest: 53082ad94c72b15c27c40f72e9073271f53f65ec6506b6bc9b394b99eac4f0a5
         ruleIds: []
@@ -11910,7 +11931,7 @@ sources:
         locator:
           kind: table-row
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 3. Locked Decisions (with reasoning):table-row:D9"
-          lineHint: 80
+          lineHint: 82
         normalizedExcerpt: "| D9 | The Line is built via PDD | Dogfooding is the proof; every wave below is a parcel set |"
         valueDigest: 9f4d3c5cb520248ff84a10d87e54147a2e85b582c6441dae0795e84434c89fb5
         ruleIds: []
@@ -11920,7 +11941,7 @@ sources:
         locator:
           kind: line-excerpt
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 4. Smart Triage as the Assignment Engine:paragraph:1"
-          lineHint: 86
+          lineHint: 88
         normalizedExcerpt: "**Decision: yes — as a new tenant class, on a separate deployment.**"
         valueDigest: 46e3f532ce8346a90b44cbcc83485d839ab569813744db7cc3a37995280aafa8
         ruleIds: []
@@ -11930,7 +11951,7 @@ sources:
         locator:
           kind: line-excerpt
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 4. Smart Triage as the Assignment Engine:paragraph:2"
-          lineHint: 88
+          lineHint: 90
         normalizedExcerpt: "Mapping of existing agents to the engineering domain:"
         valueDigest: cdd4c88bc1588e4ad69d947526f3eedf0f1800e4ec5c4beb2827dbb5dac1debc
         ruleIds: []
@@ -11940,7 +11961,7 @@ sources:
         locator:
           kind: table-row
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 4. Smart Triage as the Assignment Engine:table-row:Impact Assessment"
-          lineHint: 92
+          lineHint: 94
         normalizedExcerpt: "| Impact Assessment | Parcel priority/urgency scoring from spec + Epic context |"
         valueDigest: b7050d5ccc44525638344673d66a1a425f25e39a75cde129043f2637103f14f0
         ruleIds: []
@@ -11950,7 +11971,7 @@ sources:
         locator:
           kind: table-row
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 4. Smart Triage as the Assignment Engine:table-row:Skill Extraction"
-          lineHint: 93
+          lineHint: 95
         normalizedExcerpt: "| Skill Extraction | Tech-surface extraction from parcel (`surfaces:` + stack) |"
         valueDigest: 08d47b3fb943865f2e70106e38e24a12ee29e4c542f6da94e72f477ef085000b
         ruleIds: []
@@ -11960,7 +11981,7 @@ sources:
         locator:
           kind: table-row
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 4. Smart Triage as the Assignment Engine:table-row:Skill Assessment"
-          lineHint: 94
+          lineHint: 96
         normalizedExcerpt: "| Skill Assessment | SWE proficiency scoring against extracted surface |"
         valueDigest: ab1a73612693575011a9efc5b889e9b7b66ccf1111bad06ae3800022d528ebc5
         ruleIds: []
@@ -11970,7 +11991,7 @@ sources:
         locator:
           kind: table-row
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 4. Smart Triage as the Assignment Engine:table-row:Smart Assignment"
-          lineHint: 95
+          lineHint: 97
         normalizedExcerpt: "| Smart Assignment | Parcel → SWE match |"
         valueDigest: 07fecc05c08cabc9aec6e6303100ae31771a8cbc5d2e890f6a124f9a2f2f65c2
         ruleIds: []
@@ -11980,7 +12001,7 @@ sources:
         locator:
           kind: table-row
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 4. Smart Triage as the Assignment Engine:table-row:Capacity Planner"
-          lineHint: 96
+          lineHint: 98
         normalizedExcerpt: "| Capacity Planner | Sprint-load-aware throttling (deterministic, unchanged) |"
         valueDigest: ce5c68c9ee7b184ccaefc2dbe5053371fc7bfaa91583b7bce0950c5453897756
         ruleIds: []
@@ -11990,7 +12011,7 @@ sources:
         locator:
           kind: line-excerpt
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 4. Smart Triage as the Assignment Engine:paragraph:3"
-          lineHint: 98
+          lineHint: 100
         normalizedExcerpt: "**Conditions:**"
         valueDigest: b566c4877a6e8d92f5a1a7e3766b1cb1300fc0a6bc8ef5090b19073dac8d7ef2
         ruleIds: []
@@ -12000,7 +12021,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 4. Smart Triage as the Assignment Engine:list-item:1"
-          lineHint: 99
+          lineHint: 101
         normalizedExcerpt: 1. **Separate deployment/environment from the MSP pilot.** Internal dogfooding must not share blast radius with production customer tenants.
         valueDigest: 137e60a6d4cc1758af88890749eeab78424e908bcba5f0b11c67aa12580004a4
         ruleIds:
@@ -12011,7 +12032,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 4. Smart Triage as the Assignment Engine:list-item:2"
-          lineHint: 100
+          lineHint: 102
         normalizedExcerpt: 2. **Engineering skill taxonomy** is net-new work — the MSP taxonomy does not transfer. Budgeted as its own parcel (W5-P2).
         valueDigest: a5ead63dfa3fcddd21ba978c8ebb16a89d698233db78b02139f42aa81195621f
         ruleIds: []
@@ -12021,7 +12042,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 4. Smart Triage as the Assignment Engine:list-item:3"
-          lineHint: 101
+          lineHint: 103
         normalizedExcerpt: 3. **Feedback capture is the hidden payoff:** engineers correct bad assignments immediately and loudly. That correction stream is the highest-quality assignment-feedback corpus the product will ever get — instrument it from day one and feed it back into Skill Assessment.
         valueDigest: 8e10c35cf1a403281305f4ce41190afcdb0adcb6cb7814004fd2c54a4fea5ab7
         ruleIds: []
@@ -12031,7 +12052,7 @@ sources:
         locator:
           kind: line-excerpt
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 5. Model Routing Policy (v0 shape):paragraph:1"
-          lineHint: 107
+          lineHint: 109
         normalizedExcerpt: "A versioned artifact in the repo (`routing-policy.yaml`), evaluated at dispatch:"
         valueDigest: 32d30c27a665e7acccac24b0fb249669ff3f6f99b2eaf73ec9b2986b33088c08
         ruleIds: []
@@ -12041,7 +12062,7 @@ sources:
         locator:
           kind: line-excerpt
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 5. Model Routing Policy (v0 shape):paragraph:2"
-          lineHint: 125
+          lineHint: 127
         normalizedExcerpt: "Rules: data classification gates eligibility **before** cost optimization runs; ceilings are per-parcel and enforced by the Context Ledger; every routing decision lands in the receipt."
         valueDigest: 4593daf6428f1676bcf1552c7415ae42f48cbc5584335c046a510e1bcec3644b
         ruleIds: []
@@ -12051,7 +12072,7 @@ sources:
         locator:
           kind: line-excerpt
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 5. Model Routing Policy (v0 shape):paragraph:3"
-          lineHint: 127
+          lineHint: 129
         normalizedExcerpt: "**Concrete v0 instantiation (as of July 2026 — revisit quarterly):**"
         valueDigest: 999af331c6f80490355106902efd27fbcfe7d2037b51c90ba6e73d46e917afaa
         ruleIds: []
@@ -12061,7 +12082,7 @@ sources:
         locator:
           kind: table-row
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 5. Model Routing Policy (v0 shape):table-row:Builder (default)"
-          lineHint: 131
+          lineHint: 133
         normalizedExcerpt: "| Builder (default) | Claude Sonnet 5 | Most agentic Sonnet, near-Opus coding at ~40% of the cost; PDD's pinned scopes are exactly the conditions where mid-tier performs like frontier. Budget at standard $3/$15 — intro $2/$10 pricing ends Aug 31, 2026 |"
         valueDigest: acd6dca8d5a664281044259cf5f36668a6010d238f68b19b57733d0ecbf41bc7
         ruleIds: []
@@ -12071,7 +12092,7 @@ sources:
         locator:
           kind: table-row
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 5. Model Routing Policy (v0 shape):table-row:Boilerplate / build-fix-loop"
-          lineHint: 132
+          lineHint: 134
         normalizedExcerpt: "| Boilerplate / build-fix-loop | Claude Haiku 4.5 | $1/$5, fast; mechanical fixes don't deserve Sonnet tokens |"
         valueDigest: b2ae69870a8a9b899f60777b986f7512c56a72aeacd1800881a96838a0c27a47
         ruleIds: []
@@ -12081,7 +12102,7 @@ sources:
         locator:
           kind: table-row
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 5. Model Routing Policy (v0 shape):table-row:Coordinator"
-          lineHint: 133
+          lineHint: 135
         normalizedExcerpt: "| Coordinator | Claude Opus 4.8 | Frontier role by D4; must outclass the builders it coordinates |"
         valueDigest: b4f93dd1722b094bc9d6f4f97dec81752821ce60956894cf73d91c13daaf1872
         ruleIds: []
@@ -12091,7 +12112,7 @@ sources:
         locator:
           kind: table-row
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 5. Model Routing Policy (v0 shape):table-row:Adversarial Reviewer"
-          lineHint: 134
+          lineHint: 136
         normalizedExcerpt: "| Adversarial Reviewer | Claude Opus 4.8 | A verifier weaker than its builders is theater |"
         valueDigest: 0f08ea7a7c006b4a0556496c37b72ff53f0931b57691e6ae722aac6ebcae43b3
         ruleIds: []
@@ -12101,7 +12122,7 @@ sources:
         locator:
           kind: table-row
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 5. Model Routing Policy (v0 shape):table-row:Security-audit parcels & security review"
-          lineHint: 135
+          lineHint: 137
         normalizedExcerpt: "| Security-audit parcels & security review | Claude Opus 4.8 — **hard override, never Sonnet 5** | Sonnet 5 has deliberately reduced cybersecurity capability; task class overrides default routing |"
         valueDigest: 1a87ef163c67f4984ea2952c9a53d6273b4f65902070f08b60eb36e919917ccc
         ruleIds: []
@@ -12111,9 +12132,9 @@ sources:
         locator:
           kind: line-excerpt
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 5a. Skill Injection Policy (the execution-plane library):paragraph:1"
-          lineHint: 141
-        normalizedExcerpt: "The Line is the conveyor; the skills library is the rack of tools hanging above each station (`kaseya-one-productivity-tools`, deployed at `~\\.claude\\skills\\`). Skills are wired in through a single mechanism — a versioned **skill injection matrix**, policy-as-code alongside the routing policy — rather than hardcoding each skill into a pipeline stage:"
-        valueDigest: da9dc34eec1507684380cc49d976e06fc0bf876e5c2406578fe099b317672f42
+          lineHint: 143
+        normalizedExcerpt: "The Line is the conveyor; the skills library is the rack of tools hanging above each station (`agent-skills`, deployed at `~\\.claude\\skills\\`). Skills are wired in through a single mechanism — a versioned **skill injection matrix**, policy-as-code alongside the routing policy — rather than hardcoding each skill into a pipeline stage:"
+        valueDigest: 9bc1d135bbd0ddbb5fedd27f9d7040660d8ad8e94b6ba2ff3da56f86ecd516ad
         ruleIds: []
         exclusionDisposition: non-normative-explanation
         rationale: "Inventory item item.483a4914f57e at md-block:# The Foreman Line — Master Plugin Plan > ## 5a. Skill Injection Policy (the execution-plane library):paragraph:1 is explanatory context and does not state an independent normative authority rule."
@@ -12121,7 +12142,7 @@ sources:
         locator:
           kind: line-excerpt
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 5a. Skill Injection Policy (the execution-plane library):paragraph:2"
-          lineHint: 160
+          lineHint: 162
         normalizedExcerpt: "Rules:"
         valueDigest: 09e09762d2d1e809d52aa2d5556e5ca727966b86b2b6fceabeafeca50ac54522
         ruleIds: []
@@ -12131,7 +12152,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 5a. Skill Injection Policy (the execution-plane library):list-item:1"
-          lineHint: 161
+          lineHint: 163
         normalizedExcerpt: "- Injection is driven mechanically by the parcel's `surfaces:` and task class — no per-dispatch human decision."
         valueDigest: 4ce14afac665b22591cd3ead4ee7f11ad8bea8391cb56dd52ff9bdbbedb3dc2e
         ruleIds: []
@@ -12141,7 +12162,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 5a. Skill Injection Policy (the execution-plane library):list-item:2"
-          lineHint: 162
+          lineHint: 164
         normalizedExcerpt: "- Skills split into **builder-side** (context/capability injected at dispatch) and **verifier-side** (blocking checks in the harness). The same domain often ships both: test-coverage *adds* standards-compliant tests in the builder and *enforces* thresholds in the harness."
         valueDigest: e49e3f59ddcc532e6bda44a670a57d378b5b5066dd5b2d3ad4595242bf5efbc4
         ruleIds: []
@@ -12151,7 +12172,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 5a. Skill Injection Policy (the execution-plane library):list-item:3"
-          lineHint: 163
+          lineHint: 165
         normalizedExcerpt: "- **code-review arms the Adversarial Reviewer** with Kaseya's actual dev standards — the reviewer challenges against documented organizational rules, not generic model taste. Review findings carry standard citations in the receipt."
         valueDigest: beaa3b2d698d0fb89ba2204bc20cc07656aba6acd995d074a9363a992092ba02
         ruleIds: []
@@ -12161,7 +12182,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 5a. Skill Injection Policy (the execution-plane library):list-item:4"
-          lineHint: 164
+          lineHint: 166
         normalizedExcerpt: "- **tenant-isolation is a blocking harness check** for any parcel whose surfaces touch tenancy — and doubles as a derived audit trigger (§6). On a multi-tenant platform this is the check that pays for the whole harness."
         valueDigest: 9bb2bf81ad331518c36c4e4e0970de0925005d63bc4cc362cb3c7b8276f1d76c
         ruleIds: []
@@ -12171,7 +12192,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 5a. Skill Injection Policy (the execution-plane library):list-item:5"
-          lineHint: 165
+          lineHint: 167
         normalizedExcerpt: "- **build-fix-loop is the Coordinator's first rework move:** mechanical build/test failures route to a small model running build-fix-loop before any frontier re-coordination. Cheap fixes stay cheap; escalation is earned by repeated failure, not default."
         valueDigest: 29d8b51c5245faf447b02ba75ffc5356042052f1e5e51486f73d5573e168bfd7
         ruleIds: []
@@ -12181,7 +12202,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 5a. Skill Injection Policy (the execution-plane library):list-item:6"
-          lineHint: 166
+          lineHint: 168
         normalizedExcerpt: "- The matrix is versioned in the repo; every injection decision lands in the dispatch receipt. **New skills join the Line by editing the matrix, not the pipeline.**"
         valueDigest: dabce6be7ffd736c9275e75b5e6e6ae80a8d14d573d7980c4ecc01b06423ad70
         ruleIds: []
@@ -12191,7 +12212,7 @@ sources:
         locator:
           kind: line-excerpt
           anchor: 'md-block:# The Foreman Line — Master Plugin Plan > ## 6. Risk-Driven Audit Triggers (killing the "somehow"):paragraph:1'
-          lineHint: 172
+          lineHint: 174
         normalizedExcerpt: "Two inputs, one deterministic decision:"
         valueDigest: 43232ab781468dbdcf2439af518f063b1be6976ae2e629ffb9f5f985da15bcc4
         ruleIds: []
@@ -12201,7 +12222,7 @@ sources:
         locator:
           kind: line-excerpt
           anchor: 'md-block:# The Foreman Line — Master Plugin Plan > ## 6. Risk-Driven Audit Triggers (killing the "somehow"):paragraph:2'
-          lineHint: 174
+          lineHint: 176
         normalizedExcerpt: "**Declared (from spec frontmatter, set at shaping, human-approved):**"
         valueDigest: f7c6de964c8118c79f30a8bb1fb32ad47dc7f720fa8880b81d0ca096b8781ca1
         ruleIds: []
@@ -12211,7 +12232,7 @@ sources:
         locator:
           kind: line-excerpt
           anchor: 'md-block:# The Foreman Line — Master Plugin Plan > ## 6. Risk-Driven Audit Triggers (killing the "somehow"):paragraph:3'
-          lineHint: 180
+          lineHint: 182
         normalizedExcerpt: "**Derived (from the diff, evaluated in CI):**"
         valueDigest: 16b32c38c1856010983fd32b40598f4a3e4af13e653321cc6567a4d1d1c63941
         ruleIds: []
@@ -12221,7 +12242,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: 'md-block:# The Foreman Line — Master Plugin Plan > ## 6. Risk-Driven Audit Triggers (killing the "somehow"):list-item:1'
-          lineHint: 181
+          lineHint: 183
         normalizedExcerpt: "- Paths matching auth/authz, secrets handling, tenancy, session, crypto → security audit"
         valueDigest: 23bcc21ae7700ed3e58f8f73198d00b5f216cb30fd9c7577a9c2e89350954525
         ruleIds: []
@@ -12231,7 +12252,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: 'md-block:# The Foreman Line — Master Plugin Plan > ## 6. Risk-Driven Audit Triggers (killing the "somehow"):list-item:2'
-          lineHint: 182
+          lineHint: 184
         normalizedExcerpt: "- IaC (Pulumi/Terraform), Dockerfiles, CI workflow files → infra + supply-chain audit"
         valueDigest: 0f48851af3e8fe7f61191d0463a716298c995979621368540aea86214e8f906c
         ruleIds: []
@@ -12241,7 +12262,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: 'md-block:# The Foreman Line — Master Plugin Plan > ## 6. Risk-Driven Audit Triggers (killing the "somehow"):list-item:3'
-          lineHint: 183
+          lineHint: 185
         normalizedExcerpt: "- Lockfile/dependency changes → supply-chain scan"
         valueDigest: 1da32d0e76b8cb94d3924b5cf1e7020f7d56adfdfb0e0e0f9ead9c22a36e07a6
         ruleIds: []
@@ -12251,7 +12272,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: 'md-block:# The Foreman Line — Master Plugin Plan > ## 6. Risk-Driven Audit Triggers (killing the "somehow"):list-item:4'
-          lineHint: 184
+          lineHint: 186
         normalizedExcerpt: "- New external endpoints or data egress → security + compliance audit"
         valueDigest: c75b05ad160d3702755e088b18daf63a069a742a1bdc68bd3fe53e7929204273
         ruleIds: []
@@ -12261,7 +12282,7 @@ sources:
         locator:
           kind: line-excerpt
           anchor: 'md-block:# The Foreman Line — Master Plugin Plan > ## 6. Risk-Driven Audit Triggers (killing the "somehow"):paragraph:4'
-          lineHint: 186
+          lineHint: 188
         normalizedExcerpt: Decision = max(declared, derived). `elevated`+ runs the audit-suite plugins as blocking CI jobs; findings above threshold block the PR. Declared-vs-derived mismatches (spec said `low`, diff says auth paths) are flagged as spec-drift and block until reconciled.
         valueDigest: 8e1b636f75ea2c206c499b53e7f2709a94dc785e618363694a2b497ab64912c9
         ruleIds: []
@@ -12271,7 +12292,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 7. Open Questions (decide before W1 exit):list-item:1"
-          lineHint: 192
+          lineHint: 194
         normalizedExcerpt: 1. **Naming.** "The Line" is a working name. Foreman runs the Line — keep the factory metaphor or rename.
         valueDigest: c0d14deb5a25c76af77b4ea494c31091fbf3c1aea3adcd14c3270a47f5005733
         ruleIds: []
@@ -12281,7 +12302,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 7. Open Questions (decide before W1 exit):list-item:2"
-          lineHint: 193
+          lineHint: 195
         normalizedExcerpt: 2. **Dispatch approval UX.** CLI-first (fastest) vs. QCC surface (most visible to leadership). Recommend CLI in W2, QCC panel in a later wave.
         valueDigest: d244a80536e2af018fc5023607c974942b815d5b05ae0acee029cabe8b42c803
         ruleIds: []
@@ -12291,7 +12312,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 7. Open Questions (decide before W1 exit):list-item:3"
-          lineHint: 194
+          lineHint: 196
         normalizedExcerpt: "3. **Multi-agent builds.** When routing selects N>1 builders for one parcel: sub-parcel split (preferred — preserves one-agent-one-scope) vs. shared-parcel coordination (violates D2's spirit). Recommend: N>1 forces a shaping-time split."
         valueDigest: 61f463890e4c109aa5163aaf185dbcd019fd775dd390faa178a714e396f03ad9
         ruleIds: []
@@ -12301,7 +12322,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 7. Open Questions (decide before W1 exit):list-item:4"
-          lineHint: 195
+          lineHint: 197
         normalizedExcerpt: 4. ~~**DocSpine IP posture.**~~ **RESOLVED:** DocSpine currently lives in Clint's personal Kaseya account and transfers to the KaseyaOne org the **evening before the demo** (held back until then to control the introduction; off-hours timing minimizes pre-demo visibility and leaves a full night of slack for CI/permission fixes). W4-P2 is unblocked as of transfer. See transfer checklist in §7a.
         valueDigest: 4c11b6aa9a2582e44206be9b7ed5fedeacc2f0860585afb65549a2d9bf1a7ec3
         ruleIds: []
@@ -12311,7 +12332,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 7. Open Questions (decide before W1 exit):list-item:5"
-          lineHint: 196
+          lineHint: 198
         normalizedExcerpt: 5. **Escalation path.** What happens when verification fails ×N — rework loop cap, human pull-in threshold.
         valueDigest: 277b1e621804e7e43d7a356e442be902d8970892861a9a5d2cba0597d71eba17
         ruleIds: []
@@ -12321,7 +12342,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 7. Open Questions (decide before W1 exit):list-item:6"
-          lineHint: 197
+          lineHint: 199
         normalizedExcerpt: 6. **Jira MCP hosting.** Local MCP server ownership, auth model (scoped service principal per ADR workload identity), and blast-radius controls for Jira write scopes.
         valueDigest: 32ebd06272ce5141e9d1b0982c83eb586c42ef2006be67a8dae5473e79308dbd
         ruleIds: []
@@ -12331,7 +12352,7 @@ sources:
         locator:
           kind: line-excerpt
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 7. Open Questions (decide before W1 exit) > ### 7a. DocSpine Transfer Checklist (evening before demo):paragraph:1"
-          lineHint: 201
+          lineHint: 203
         normalizedExcerpt: "Repo transfers change more than the owner — run this list the evening before, then re-verify green in the morning:"
         valueDigest: e93ad1f5c7b446720ba91e98fcbef8c774fe334dc7308509e13aca9787880f9b
         ruleIds: []
@@ -12341,7 +12362,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 7. Open Questions (decide before W1 exit) > ### 7a. DocSpine Transfer Checklist (evening before demo):list-item:1"
-          lineHint: 203
+          lineHint: 205
         normalizedExcerpt: 1. **Transfer** personal account → `KaseyaOne` org; verify the new canonical URL resolves.
         valueDigest: ae6f2cbf7e6a7b728f9379933a6a4ad856be97eeb5981f13ca3c0f826b958b9e
         ruleIds: []
@@ -12351,7 +12372,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 7. Open Questions (decide before W1 exit) > ### 7a. DocSpine Transfer Checklist (evening before demo):list-item:2"
-          lineHint: 204
+          lineHint: 206
         normalizedExcerpt: 2. **Redirects:** GitHub redirects the old URL, but redirects break silently on a future rename — update any hardcoded remotes/links immediately, don't lean on the redirect.
         valueDigest: ba288565810675263aea95efc6767db113d8693415b5fbaf72e39a06d720267e
         ruleIds: []
@@ -12361,7 +12382,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 7. Open Questions (decide before W1 exit) > ### 7a. DocSpine Transfer Checklist (evening before demo):list-item:3"
-          lineHint: 205
+          lineHint: 207
         normalizedExcerpt: 3. **Local remote:** `git remote set-url origin` on `C:\Repos\docspine`.
         valueDigest: 3fb2280c5b778d527770446021177e24e00a07053b69a854f21803e6f8c2315b
         ruleIds: []
@@ -12371,7 +12392,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 7. Open Questions (decide before W1 exit) > ### 7a. DocSpine Transfer Checklist (evening before demo):list-item:4"
-          lineHint: 206
+          lineHint: 208
         normalizedExcerpt: 4. **Access:** set team/collaborator permissions under org policy (org default may be more restrictive than personal); confirm branch protection survives or re-apply.
         valueDigest: 66b3e1b33974496069fb24545ccfd6946a3aa770a96084e05ced9d95c4b518a4
         ruleIds: []
@@ -12381,7 +12402,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 7. Open Questions (decide before W1 exit) > ### 7a. DocSpine Transfer Checklist (evening before demo):list-item:5"
-          lineHint: 207
+          lineHint: 209
         normalizedExcerpt: 5. **CI/secrets:** personal-account Actions secrets and integrations do not transfer — re-provision under org context; confirm any workflows go green.
         valueDigest: f89ccfd3ca6ed168cc88346397c995f42cbaf9b3980fad88f3457858b29be46a
         ruleIds: []
@@ -12391,7 +12412,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 7. Open Questions (decide before W1 exit) > ### 7a. DocSpine Transfer Checklist (evening before demo):list-item:6"
-          lineHint: 208
+          lineHint: 210
         normalizedExcerpt: 6. **Morning check:** one glance before the call — CI green, URL resolves, permissions correct. Thirty seconds of verification, zero surprises with an audience.
         valueDigest: eb754295d3fc0075d0262f9ba6827668e4ce0c1fb3d2099e7687c63b89417757
         ruleIds: []
@@ -12401,7 +12422,7 @@ sources:
         locator:
           kind: line-excerpt
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels:paragraph:1"
-          lineHint: 214
+          lineHint: 216
         normalizedExcerpt: Each wave ships independently valuable capability and has hard exit criteria. All work under PDD; specs in `plugins/foreman-line/docs/specs/`.
         valueDigest: 141f5b13dde34e55d23c8f7f45f3a9e57d4bbb0c9aa2d1b15af80e98b7b6d1c5
         ruleIds: []
@@ -12411,7 +12432,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### W0 — Contracts (foundation, no runtime):list-item:1"
-          lineHint: 217
+          lineHint: 219
         normalizedExcerpt: "- **W0-P1** Pipeline stage contracts: typed interfaces between stages A–F; correlation ID propagation (ADR-069)"
         valueDigest: 7e46dce603216f5413c653f2d55b5a7ebc19658d8a138379b712eb6153891dfc
         ruleIds: []
@@ -12421,7 +12442,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### W0 — Contracts (foundation, no runtime):list-item:2"
-          lineHint: 218
+          lineHint: 220
         normalizedExcerpt: "- **W0-P2** Parcel schema v0.2: add `risk:`, `surfaces:`, `routing_class:` to SPEC-CONVENTION frontmatter"
         valueDigest: dd6ed2269754a29f2a9b42ab0b13e2799f5f93878cf45de3ad70388ff4261d91
         ruleIds: []
@@ -12431,7 +12452,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### W0 — Contracts (foundation, no runtime):list-item:3"
-          lineHint: 219
+          lineHint: 221
         normalizedExcerpt: "- **W0-P3** Routing policy schema + validator"
         valueDigest: 6ce24af4310eb81502635133665044087b7a887b691345d734c04861151e0549
         ruleIds: []
@@ -12441,7 +12462,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### W0 — Contracts (foundation, no runtime):list-item:4"
-          lineHint: 220
+          lineHint: 222
         normalizedExcerpt: "- **W0-P4** Receipt chain spec: per-stage receipt shape (RFC 8785), chain linkage, storage"
         valueDigest: a6a82a84cff56f91d1bd483e8a3b7a18fb51242b3da0f2ee61df76530f4c7335
         ruleIds: []
@@ -12451,7 +12472,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### W0 — Contracts (foundation, no runtime):list-item:5"
-          lineHint: 221
+          lineHint: 223
         normalizedExcerpt: "- **W0-P5** Skill injection matrix schema + validator (§5a)"
         valueDigest: 0ac0c50fc4873efa45bcb5b0e16893b211cac3cdf35c50a2d61e31862d0715a2
         ruleIds: []
@@ -12461,7 +12482,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### W0 — Contracts (foundation, no runtime):list-item:6"
-          lineHint: 222
+          lineHint: 224
         normalizedExcerpt: "- **Exit:** all contracts reviewed and merged; downstream waves build against frozen interfaces"
         valueDigest: fac2dde03f3a2bd1f281f084941fba99a6780ede73af3bc4506e225fcf432c63
         ruleIds: []
@@ -12471,7 +12492,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### W1 — Intake & Registration:list-item:1"
-          lineHint: 225
+          lineHint: 227
         normalizedExcerpt: "- **W1-P1** Shaping Agent: idea → interactive shaping → parcel spec drafts"
         valueDigest: c03663b8c8b5d7046b59e50abf1bd491ded66e3601c3ac6c420ac094f1759908
         ruleIds: []
@@ -12481,7 +12502,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### W1 — Intake & Registration:list-item:2"
-          lineHint: 226
+          lineHint: 228
         normalizedExcerpt: "- **W1-P2** Epic/Story projection generator (specs → tree proposal)"
         valueDigest: 5e95625e0ee970b7e629b3b85b9f8bfbed7137081c02c39544aa22c6a99d9cf9
         ruleIds: []
@@ -12491,7 +12512,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### W1 — Intake & Registration:list-item:3"
-          lineHint: 227
+          lineHint: 229
         normalizedExcerpt: "- **W1-P3** Human approval flow (CLI) for parcel set + tree"
         valueDigest: a922023cb9d13710edf09836ed4cd9f27a0976d18980fe4d2ca1919015f24356
         ruleIds: []
@@ -12501,7 +12522,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### W1 — Intake & Registration:list-item:4"
-          lineHint: 228
+          lineHint: 230
         normalizedExcerpt: "- **W1-P4** Jira MCP integration: tree creation, bidirectional SHA-permalink linking, default-deny write authorization gate — built on the existing **jira-integration** skill, not from scratch"
         valueDigest: 17d846187720d7d2e650a249d417b27c1b76e6989fb9d3a3bfa62972e1af264f
         ruleIds: []
@@ -12511,7 +12532,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### W1 — Intake & Registration:list-item:5"
-          lineHint: 229
+          lineHint: 231
         normalizedExcerpt: "- **Exit:** one real idea shaped, approved, and registered end-to-end with linked specs and tickets"
         valueDigest: 528934fd20efa04dafaad79bb69809e36186b290db24de44f81db3bcda792575
         ruleIds: []
@@ -12521,7 +12542,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### W2 — Dispatch:list-item:1"
-          lineHint: 232
+          lineHint: 234
         normalizedExcerpt: "- **W2-P1** Jira query subscription + next-candidate ranking"
         valueDigest: b505730275bf96264f3b934065ec2140986cbcb6e5c9e08c1fc8fa7727152c83
         ruleIds: []
@@ -12531,7 +12552,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### W2 — Dispatch:list-item:2"
-          lineHint: 233
+          lineHint: 235
         normalizedExcerpt: "- **W2-P2** Step 0 pre-draft + one-tap human dispatch approval"
         valueDigest: 13d7124b6c96462e4c6afb797e3131246cee4ffd58d502c146b71bcbba87139c
         ruleIds: []
@@ -12541,7 +12562,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### W2 — Dispatch:list-item:3"
-          lineHint: 234
+          lineHint: 236
         normalizedExcerpt: "- **W2-P3** Model routing v0: static policy table evaluation at dispatch"
         valueDigest: 8f72763751b96e447cd73c87ca713b91ffbce5f13c32a925b1290f7c7680f2af
         ruleIds: []
@@ -12551,7 +12572,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### W2 — Dispatch:list-item:4"
-          lineHint: 235
+          lineHint: 237
         normalizedExcerpt: "- **W2-P4** Kompress integration in the dispatch context path (system-prompt exemption enforced)"
         valueDigest: 8ec0d0971dfb9c087908adef34d8e221ca64ae3a3c041206a47617d789642774
         ruleIds: []
@@ -12561,7 +12582,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### W2 — Dispatch:list-item:5"
-          lineHint: 236
+          lineHint: 238
         normalizedExcerpt: "- **W2-P5** Builder-side skill injection engine: matrix evaluation at dispatch, surfaces-matched loading (test-coverage universal; kds-figma for `ui/*`), injection receipts"
         valueDigest: ca8454fa0c6e43e31f32bfaf91789004adba6a14d7198bc758722dda4ea3d7d3
         ruleIds: []
@@ -12571,7 +12592,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### W2 — Dispatch:list-item:6"
-          lineHint: 237
+          lineHint: 239
         normalizedExcerpt: "- **Exit:** a registered parcel dispatched to a builder with routed model, compressed context, injected skills, and a dispatch receipt"
         valueDigest: 64a8713d45f72d6ee665a6a48e98a4fc05bac1447bf6917f62a57abd50032946
         ruleIds: []
@@ -12581,7 +12602,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### W3 — Verification:list-item:1"
-          lineHint: 240
+          lineHint: 242
         normalizedExcerpt: "- **W3-P1** Verification Harness: acceptance criteria as executable checks + verifier-side matrix checks (coverage thresholds, kds-sweep for `ui/*`, tenant-isolation for `tenancy/*`), receipts per claim"
         valueDigest: c7710d719f5dfcd1f83c1a0eeaa65b257f6561b08cf495dbaa0dc038ad74ee26
         ruleIds: []
@@ -12591,7 +12612,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### W3 — Verification:list-item:2"
-          lineHint: 241
+          lineHint: 243
         normalizedExcerpt: "- **W3-P2** Adversarial Reviewer: frontier instance, isolated from Coordinator, armed with code-review skill (Kaseya dev standards, cited findings)"
         valueDigest: 98d1949d89966b3393c523f448f0b0aea81c866acbdfa0a131f778996cde7584
         ruleIds: []
@@ -12601,7 +12622,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### W3 — Verification:list-item:3"
-          lineHint: 242
+          lineHint: 244
         normalizedExcerpt: "- **W3-P3** Coordinator: build-fix-loop as first-line rework on a small model, frontier re-coordination as escalation, rework cap (per open question 5)"
         valueDigest: f95978237b778f56e3fe81d4ed466bcc35a5c28e2e28026b2e9496e059529a71
         ruleIds: []
@@ -12611,7 +12632,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### W3 — Verification:list-item:4"
-          lineHint: 243
+          lineHint: 245
         normalizedExcerpt: "- **W3-P4** Human review gate + ticket update via MCP"
         valueDigest: ac168b64ed0d79282706aac7c0717827ee07c4e88ada855614936d1b404fd603
         ruleIds: []
@@ -12621,7 +12642,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### W3 — Verification:list-item:5"
-          lineHint: 244
+          lineHint: 246
         normalizedExcerpt: "- **Exit:** a built parcel passes harness + adversarial review, is human-approved, ticket updated — with zero self-graded claims in the chain"
         valueDigest: 37030aebee4315bbfb3daa8e332a7956cd81c21d63b701254705eaf55a5943e0
         ruleIds: []
@@ -12631,7 +12652,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### W4 — CI Integration:list-item:1"
-          lineHint: 247
+          lineHint: 249
         normalizedExcerpt: "- **W4-P1** Commit/push/PR automation with branch protection (agents cannot merge)"
         valueDigest: e9dc321ebb62ff8148ffac14a8fc6beabc72d74784c6b6c3c02096be3c42596d
         ruleIds: []
@@ -12641,7 +12662,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### W4 — CI Integration:list-item:2"
-          lineHint: 248
+          lineHint: 250
         normalizedExcerpt: "- **W4-P2** DocSpine CI hook: doc-claims validation against the diff *(blocked on open question 4)*"
         valueDigest: 45def185bbe2b7a3ba49c9f50cd019f64b11d7248522843c976ca0796cf3f86f
         ruleIds: []
@@ -12651,7 +12672,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### W4 — CI Integration:list-item:3"
-          lineHint: 249
+          lineHint: 251
         normalizedExcerpt: "- **W4-P3** Risk-driven audit triggers: declared + derived evaluation, blocking jobs, drift flagging"
         valueDigest: 01260de258e93eda8dbf466506395d3daa7fa7e8e9cd9119d92e64398b347d16
         ruleIds: []
@@ -12661,7 +12682,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### W4 — CI Integration:list-item:4"
-          lineHint: 250
+          lineHint: 252
         normalizedExcerpt: "- **W4-P4** GitHub gate assembly: required scans, required human review, merge → closure automation"
         valueDigest: 3de70ac6555977b78f93e011091ec4446728749b699860e3cd6d3c17c637c367
         ruleIds: []
@@ -12671,7 +12692,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### W4 — CI Integration:list-item:5"
-          lineHint: 251
+          lineHint: 253
         normalizedExcerpt: "- **Exit:** one parcel travels Stage E–F fully: PR, docs validated, audits triggered correctly on an elevated-risk diff, human merge, ticket closed, receipt chain sealed"
         valueDigest: 0ea810f5ba14e53a9508a45091cb0391fd56ee5897d4972c90d0fe05fdfddc31
         ruleIds: []
@@ -12681,7 +12702,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### W5 — Smart Triage Assignment:list-item:1"
-          lineHint: 254
+          lineHint: 256
         normalizedExcerpt: "- **W5-P1** Engineering tenant class + separate deployment"
         valueDigest: dba917e29cac23ce3256ca13e248880e81881d4be2d2f366d69be0c854250d98
         ruleIds: []
@@ -12691,7 +12712,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### W5 — Smart Triage Assignment:list-item:2"
-          lineHint: 255
+          lineHint: 257
         normalizedExcerpt: "- **W5-P2** Engineering skill taxonomy + Skill Extraction/Assessment prompt adaptation"
         valueDigest: 9110ab4b96733705cad14c845ebb1e82da22ccf35ea5c9527cab3601781a0206
         ruleIds: []
@@ -12701,7 +12722,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### W5 — Smart Triage Assignment:list-item:3"
-          lineHint: 256
+          lineHint: 258
         normalizedExcerpt: "- **W5-P3** Assignment loop integration into Stage B"
         valueDigest: 8ff4eb33b5527e5611c0d8e65d8424ab6e91927b5c9ba5ace4ba3e256121e63e
         ruleIds: []
@@ -12711,7 +12732,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### W5 — Smart Triage Assignment:list-item:4"
-          lineHint: 257
+          lineHint: 259
         normalizedExcerpt: "- **W5-P4** Feedback capture instrumentation (assignment corrections → assessment signal)"
         valueDigest: 547954f358f7d181cc9e508f8cc7dcf63f703a8e72219578d904daf402808c31
         ruleIds: []
@@ -12721,7 +12742,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### W5 — Smart Triage Assignment:list-item:5"
-          lineHint: 258
+          lineHint: 260
         normalizedExcerpt: "- **Exit:** assignments flow through Smart Triage for one team-tenant; correction feedback lands in telemetry"
         valueDigest: bf3e08a7ac5f9c094f12faa2b6870e288fd3ed61b29809914dd7bb4f7d3afdef
         ruleIds: []
@@ -12731,7 +12752,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### Sequencing notes:list-item:1"
-          lineHint: 261
+          lineHint: 263
         normalizedExcerpt: "- W0 → W1 → W2 → W3 → W4 is a strict chain (each proves the next stage of the Line on real work)."
         valueDigest: 36da04f2939d8dbb60a4b1b6bec125c4050828c60af032c3c320b63d119d3786
         ruleIds: []
@@ -12741,7 +12762,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### Sequencing notes:list-item:2"
-          lineHint: 262
+          lineHint: 264
         normalizedExcerpt: "- W5 is parallelizable after W1 (registration exists); manual assignment is the interim."
         valueDigest: e0e60d353a3954a182499b381b5774ed7a20663eefff13c35233379cbaad3b70
         ruleIds: []
@@ -12751,7 +12772,7 @@ sources:
         locator:
           kind: numbered-item
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 8. Build Plan — Waves & Parcels > ### Sequencing notes:list-item:3"
-          lineHint: 263
+          lineHint: 265
         normalizedExcerpt: "- Every wave's demo artifact: **the receipt chain for one real parcel**, walked live."
         valueDigest: a9d83b4721301fa4bb2eb23e6011e76f5dea85a749cd82974dd0144a422affad
         ruleIds: []
@@ -12761,7 +12782,7 @@ sources:
         locator:
           kind: table-row
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 9. Risks — Honest Ledger:table-row:This is a platform wearing a plugin costume — ocean-boiling temptation"
-          lineHint: 271
+          lineHint: 273
         normalizedExcerpt: "| This is a platform wearing a plugin costume — ocean-boiling temptation | Strict wave gates; each wave ships standalone value; no wave starts before the prior exits |"
         valueDigest: 8e262020bf55c81b2112be5e8f525c63d0db196215d00f6fa6f9c5547d00ec60
         ruleIds: []
@@ -12771,7 +12792,7 @@ sources:
         locator:
           kind: table-row
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 9. Risks — Honest Ledger:table-row:Jira write + git push + PR creation = large agent blast radius"
-          lineHint: 272
+          lineHint: 274
         normalizedExcerpt: "| Jira write + git push + PR creation = large agent blast radius | Default-deny authorization gate (approval-gate executor pattern exists), scoped service principals, branch protection, receipts on every mutation |"
         valueDigest: e158a5b0c54ffb0fac3d8a52e780e4b7487a7004884289949051e4a28ea3d053
         ruleIds: []
@@ -12781,7 +12802,7 @@ sources:
         locator:
           kind: table-row
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 9. Risks — Honest Ledger:table-row:Smart Triage dogfooding destabilizes the MSP pilot"
-          lineHint: 273
+          lineHint: 275
         normalizedExcerpt: "| Smart Triage dogfooding destabilizes the MSP pilot | Separate deployment, separate tenant class, no shared state — condition, not preference |"
         valueDigest: 2d489fed44f08a738f296d33f9527902bec74a82e1a97bbff587dbf5269595f1
         ruleIds: []
@@ -12791,7 +12812,7 @@ sources:
         locator:
           kind: table-row
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 9. Risks — Honest Ledger:table-row:Verification loop cost (frontier verifier on every parcel)"
-          lineHint: 274
+          lineHint: 276
         normalizedExcerpt: "| Verification loop cost (frontier verifier on every parcel) | Routing policy tiers verification depth by `risk:`; Context Ledger enforces ceilings |"
         valueDigest: f0d94477ca012f06b1925929f520673b168e8b9af80b1fc3d0a33229cb69ee80
         ruleIds: []
@@ -12801,7 +12822,7 @@ sources:
         locator:
           kind: table-row
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 9. Risks — Honest Ledger:table-row:DocSpine transfer-day surprises (CI secrets, permissions, remotes)"
-          lineHint: 275
+          lineHint: 277
         normalizedExcerpt: "| DocSpine transfer-day surprises (CI secrets, permissions, remotes) | Transfer checklist (§7a) executed with time buffer before the demo, not minutes |"
         valueDigest: 1d959c0747ec863831d82f8ff95c78b63fe1c0d9cb2c242af1dd3fc00cb3c337
         ruleIds: []
@@ -12811,7 +12832,7 @@ sources:
         locator:
           kind: table-row
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 9. Risks — Honest Ledger:table-row:Autonomy creep — pressure to remove the two human gates as volume grows"
-          lineHint: 276
+          lineHint: 278
         normalizedExcerpt: "| Autonomy creep — pressure to remove the two human gates as volume grows | The gates are architectural, not procedural: agents lack merge permissions and lack dispatch authority by construction |"
         valueDigest: 8c5984a6a0ebca27224c22800d92f49778c9cdb680750706f1a060a86189d968
         ruleIds: []
@@ -12821,7 +12842,7 @@ sources:
         locator:
           kind: line-excerpt
           anchor: "md-block:# The Foreman Line — Master Plugin Plan > ## 9. Risks — Honest Ledger:paragraph:1"
-          lineHint: 280
+          lineHint: 282
         normalizedExcerpt: "*Built parcel by parcel. Proven receipt by receipt. Enforced by tooling, not memory.*"
         valueDigest: 4ef711a05807a566016e461321edfa984b21fc2e4e66432eff85bf1434899b36
         ruleIds: []
@@ -12835,7 +12856,7 @@ sources:
     scope:
       - all-foreman-goals
     snapshotEvidence:
-      commit: 65c471416e4a3916695815e951ffbe389288560e
+      commit: 8d500704c9e3d6d8b652bbe838aa3623f88203fc
       fullFileSha256: 5369e558879ea9faeee5828329807dc544dfbcc21722a1c94d3458f670244849
     inventoryItems:
       - itemId: item.a7e48d46fe37
@@ -13158,7 +13179,7 @@ sources:
     scope:
       - all-foreman-goals
     snapshotEvidence:
-      commit: 65c471416e4a3916695815e951ffbe389288560e
+      commit: 8d500704c9e3d6d8b652bbe838aa3623f88203fc
       fullFileSha256: 8ff17dbd4ccbd29d0f60f7b03dfdc9f08afb63d9de1b64549bc1646ce546034e
     inventoryItems:
       - itemId: item.91159bfb342e
@@ -13470,7 +13491,7 @@ sources:
     scope:
       - all-foreman-goals
     snapshotEvidence:
-      commit: 65c471416e4a3916695815e951ffbe389288560e
+      commit: 8d500704c9e3d6d8b652bbe838aa3623f88203fc
       fullFileSha256: 4e542bfa6943c71b962236cbd5410713186f6eabb2b7788e12392cbffaef3a99
     inventoryItems:
       - itemId: item.c6669b61c6f0
@@ -13705,7 +13726,7 @@ sources:
     scope:
       - all-foreman-goals
     snapshotEvidence:
-      commit: 65c471416e4a3916695815e951ffbe389288560e
+      commit: 8d500704c9e3d6d8b652bbe838aa3623f88203fc
       fullFileSha256: aa0928ab5173d868c61c1ddd75ce990dbb698afdaee9269b7e99965f5e687c18
     inventoryItems:
       - itemId: item.0479c603add5
@@ -13870,7 +13891,7 @@ sources:
     scope:
       - all-foreman-goals
     snapshotEvidence:
-      commit: 65c471416e4a3916695815e951ffbe389288560e
+      commit: 8d500704c9e3d6d8b652bbe838aa3623f88203fc
       fullFileSha256: 8be95883d16a3a73a128a8c0d14d73d61204724531c99ee9dfc8072dff08a69c
     inventoryItems:
       - itemId: item.c4b58087a66f
@@ -14173,7 +14194,7 @@ sources:
     scope:
       - all-foreman-goals
     snapshotEvidence:
-      commit: 65c471416e4a3916695815e951ffbe389288560e
+      commit: 8d500704c9e3d6d8b652bbe838aa3623f88203fc
       fullFileSha256: 9da06cf299653b244c636dd9809b5ba6410efb5e9e7f89389c1ef7260fa577cb
     inventoryItems:
       - itemId: item.0f7efe94f551
@@ -15809,7 +15830,7 @@ sources:
     scope:
       - all-foreman-goals
     snapshotEvidence:
-      commit: 65c471416e4a3916695815e951ffbe389288560e
+      commit: 8d500704c9e3d6d8b652bbe838aa3623f88203fc
       fullFileSha256: 91651a073156834119b5037127b942f315ea4d45d26bc17e0c9df2a1499aa5a9
     inventoryItems:
       - itemId: item.0b9706b5a9bf
@@ -15882,7 +15903,7 @@ sources:
     scope:
       - all-foreman-goals
     snapshotEvidence:
-      commit: 65c471416e4a3916695815e951ffbe389288560e
+      commit: 8d500704c9e3d6d8b652bbe838aa3623f88203fc
       fullFileSha256: 1f12fe53f75b089d25dd27e995af024c52269b0db6b8c4e22c616702749a7d23
     inventoryItems:
       - itemId: item.dcd8638af4a4
@@ -16227,7 +16248,7 @@ sources:
     scope:
       - all-foreman-goals
     snapshotEvidence:
-      commit: 65c471416e4a3916695815e951ffbe389288560e
+      commit: 8d500704c9e3d6d8b652bbe838aa3623f88203fc
       fullFileSha256: b790947a8223daab2babf45cba648f1bfd073d7d0b1e6f524fa02f51dc129f00
     inventoryItems:
       - itemId: item.90d349d9adf8
@@ -33523,6 +33544,45 @@ rules:
       corpusSweep: null
       independentBypassAttempt: null
     bindingDigest: dfa22a1b1ef0719d2c5e2f4932a6fa30b8f5b9d9cfede8d4c073be06ac81deaa
+  - ruleId: rule.standing-constraints.constraint-14
+    authoritySubject: plugin-marketplace.install-identifier-verification
+    authorityClaim: plugin-marketplace-parcels-require-complete-install-identifier-chain-not-url-only
+    normalizedStatement: 14. **Plugin/marketplace parcels:** verify each living install identifier through the declared marketplace entry to an existing plugin source whose nested manifest name equals the requested plugin. A normalized repository URL does not prove that an install command resolves. (#37)
+    sourceRefs:
+      - sourceId: standing-constraints
+        itemId: item.constraint-14
+        locatorDigest: 22f088d2c9e1efe1e1f6b620474d795c54c76354b19c1b0508ebd1b31d3b959c
+        valueDigest: 4f3ee9daa1a008f7002cce5742fa585387976783bb9a1a333f5cd6ab5a1d4d19
+    authorityBasisRef:
+      sourceId: standing-constraints
+      itemId: item.constraint-14
+      locatorDigest: 22f088d2c9e1efe1e1f6b620474d795c54c76354b19c1b0508ebd1b31d3b959c
+      valueDigest: 4f3ee9daa1a008f7002cce5742fa585387976783bb9a1a333f5cd6ab5a1d4d19
+    applicability:
+      goals:
+        - all-foreman-goals
+      roles:
+        - builder
+      stages:
+        - any
+      operations:
+        - any
+      hosts:
+        - any
+    severity: critical
+    classification: independent-review-human-judgment
+    decision: REQUIRE_HUMAN
+    refusalCode: null
+    enforcementOwner: independent-reviewer
+    assurance: human-ratified
+    pairedRuleIds: []
+    retirementState: active-reading
+    retirementEvidence:
+      predicate: null
+      negativeRefusalTest: null
+      corpusSweep: null
+      independentBypassAttempt: null
+    bindingDigest: cd409e5b4c139afc93892ef16579d900b5abde76aec1556d3b47ae4ae830a3ca
   - ruleId: rule.standing-constraints.constraint-8
     authoritySubject: review.hostile-probing
     authorityClaim: one-off-live-probes-licensed
@@ -36892,12 +36952,12 @@ rules:
     sourceRefs:
       - sourceId: foreman-line-plan
         itemId: item.two-gate-thesis
-        locatorDigest: 6a99cca27c8da23a9569a3ab65ca4c3f0b29751f420e6a3bfd4ba8969b31c07d
+        locatorDigest: 464f7353d3bb900a07fe85436e96f2fd8729dd616c635338c17ed6f3a703875e
         valueDigest: 9f09f265b9c38dd2abd8707f94a94d70783e32bcd58c354ff1c1c0446a532d59
     authorityBasisRef:
       sourceId: foreman-line-plan
       itemId: item.two-gate-thesis
-      locatorDigest: 6a99cca27c8da23a9569a3ab65ca4c3f0b29751f420e6a3bfd4ba8969b31c07d
+      locatorDigest: 464f7353d3bb900a07fe85436e96f2fd8729dd616c635338c17ed6f3a703875e
       valueDigest: 9f09f265b9c38dd2abd8707f94a94d70783e32bcd58c354ff1c1c0446a532d59
     applicability:
       goals:
@@ -36950,7 +37010,7 @@ rules:
       negativeRefusalTest: null
       corpusSweep: null
       independentBypassAttempt: null
-    bindingDigest: 4618604bb27e4194d139aed40f24e8fdec192d761dafba09cb00a5fc0be1584c
+    bindingDigest: 2a603de7e4b87897cdebca094241430df41f0aa3c04ce244666aac7bc3a5379c
   - ruleId: rule.foreman-line-plan.75569dd4ae1a
     authoritySubject: pipeline.verification-human-review
     authorityClaim: human-review-required-before-ticket-update
@@ -44018,6 +44078,56 @@ reconciliations:
       itemId: item.f081be090f04
       locatorDigest: 99d6c696ddd05b97d9a97d61c1a19217c12d4e430d509e622dc4b0161bf2e405
       valueDigest: ab5dce965ea7e68dcfa2ac68e0c7cd1217949553daeace56cbaf2241005577d5
+  - reconciliationId: registry-rework-446700d
+    topic: R30 registry bindings superseded by the coordinator-ratified finite R31 source adoption.
+    observedRefs:
+      - sourceId: standing-constraints
+        itemId: item.constraint-14
+        locatorDigest: 22f088d2c9e1efe1e1f6b620474d795c54c76354b19c1b0508ebd1b31d3b959c
+        valueDigest: 4f3ee9daa1a008f7002cce5742fa585387976783bb9a1a333f5cd6ab5a1d4d19
+      - sourceId: foreman-line-plan
+        itemId: item.8bef504af1db
+        locatorDigest: 6a99cca27c8da23a9569a3ab65ca4c3f0b29751f420e6a3bfd4ba8969b31c07d
+        valueDigest: 9d600b9b44dfe18183d5a668eb46862ab9187395aa35ce43a15d2b9e41e4741d
+      - sourceId: foreman-line-plan
+        itemId: item.two-gate-thesis
+        locatorDigest: 464f7353d3bb900a07fe85436e96f2fd8729dd616c635338c17ed6f3a703875e
+        valueDigest: 9f09f265b9c38dd2abd8707f94a94d70783e32bcd58c354ff1c1c0446a532d59
+      - sourceId: foreman-line-plan
+        itemId: item.483a4914f57e
+        locatorDigest: b209a80af8457ba1a89290fe308c3a65484075080d43cc059692d7044e788647
+        valueDigest: 9bc1d135bbd0ddbb5fedd27f9d7040660d8ad8e94b6ba2ff3da56f86ecd516ad
+      - sourceId: fk-loop-directive
+        itemId: item.c98e1f76aeb5
+        locatorDigest: 1388a84f45baa2148f545913cc7c750ae1e2deb65ca58db0de74ed4824c00588
+        valueDigest: f8efec1d5b8607c1af4634545b805ef6fff99f1b18a615575b37b10fd07a0146
+    observedEvidence:
+      - kind: git-commit
+        reference: 446700d47c2e162fcfa575d5a46b9247241a59c1
+        digest: bb421f8e3d3baba8781937f302d42210262a72ed874f756a72e527767b462e05
+      - kind: git-commit
+        reference: 8d500704c9e3d6d8b652bbe838aa3623f88203fc
+        digest: 81070168ff53c12d3cc94020d76da1dbcbfde5a460b579e74d14f258cc4c2a71
+      - kind: command-result
+        reference: '{"actorClass":"coordinator","commandId":"registry-binding-manifest-r30","exitCode":0,"inputDigest":"43d3dfe4823498282c484ef4a614bef918b89543ca80fc14bc0548bf2281eae5","resultDigest":"7f122f6ddecc916582ca299b48f8eedc23c813a960f28f2b786c76e343d90d2b","tool":"@foreman-line/authority-registry","toolVersion":"0.1.0"}'
+        digest: b0a426bb57a320f5c2379df4b0272fc356dc7dfc28d7f3ff42c4785bdc257d8c
+      - kind: command-result
+        reference: '{"actorClass":"coordinator","commandId":"superseding-binding-manifest-r31","exitCode":0,"inputDigest":"7f122f6ddecc916582ca299b48f8eedc23c813a960f28f2b786c76e343d90d2b","resultDigest":"605f9c370c62cdbf619d1f65583a2404311d69cfc8c0fcc7c7867959b4adf4d5","tool":"@foreman-line/authority-registry","toolVersion":"0.1.0"}'
+        digest: c486ecceac7f2d3205cc044ff2a5d3c49d5669c72aea6b35600de19d91400be5
+      - kind: command-result
+        reference: '{"actorClass":"coordinator","commandId":"r31-plan-decision-git-blob","exitCode":0,"inputDigest":"7095b8623ecfbab4d383046d19111a0c99580f94e2b03ca20f0dd1eb02639e69","resultDigest":"974c26657ef1cfab3c7a72cdb552e1e979ac9534832acb7009d5d0f74c776e9f","tool":"@foreman-line/authority-registry","toolVersion":"0.1.0"}'
+        digest: d44523e9f8d044c45f6138d5df68c521ea8f359674e40aea874df8bf2c7d8ee4
+    authoritativeRuleIds:
+      - rule.standing-constraints.constraint-14
+      - rule.fk-loop-directive.c98e1f76aeb5.continuation
+    scopedDisposition: R31 adopts two exact upstream source blobs within the unchanged eighteen-source set under the externally recorded coordinator ratification of finite plan106fd58 and existing continuation delegation. The decision blob at source8d ratifies that plan only; later mapping approval and implementation dispatch are separately recorded and are not attributed to the old decision. Add the complete conditional plugin/marketplace verification requirement without an install grant. Add the distinct historical repository annotation, relocate the unchanged historical thesis from paragraph1 to paragraph2 while preserving its identity and authority effect, and correct the historical library-name value without new policy or deployment evidence. Preserve all twenty prior reconciliation records canonically, including historical thirteen-standing-rule statements; current coverage becomes fourteen. Add two inventory items, one rule and four audit dispositions; change one existing value and one existing locator binding. M01 is representative changed-corpus evidence, not ratification of the entire amendment. L01 remains noncontrolling provenance, and the supporting diagnostic establishes Git-blob custody only.
+    unresolvedConsequence: Future binding changes require another typed prior-to-new migration. Independent mapping review and a separately recorded implementation ruling remain prerequisites; complete verification, fresh independent reviews and human Gate3 remain mandatory. No diagnostic, source annotation or record membership grants operational authority, proves installation verification, or claims historical commands were rerun.
+    migrationStatus: superseded-by-amendment
+    supersedingEvidence:
+      sourceId: standing-constraints
+      itemId: item.constraint-14
+      locatorDigest: 22f088d2c9e1efe1e1f6b620474d795c54c76354b19c1b0508ebd1b31d3b959c
+      valueDigest: 4f3ee9daa1a008f7002cce5742fa585387976783bb9a1a333f5cd6ab5a1d4d19
 normativeMarkdownAudit:
   - sourceId: fk-charter
     itemId: item.16f0036885ba
@@ -45596,6 +45706,36 @@ normativeMarkdownAudit:
       - rule.fk-charter.cf301316d970.a1-event
     exclusionCode: null
     rationale: Audit candidate item.cf301316d970 is published by its exact source-bound rule set.
+  - sourceId: standing-constraints
+    itemId: item.constraint-14
+    valueDigest: 4f3ee9daa1a008f7002cce5742fa585387976783bb9a1a333f5cd6ab5a1d4d19
+    disposition: publish
+    ruleIds:
+      - rule.standing-constraints.constraint-14
+    exclusionCode: null
+    rationale: Exact upstream conditional builder obligation14 is mapped without an install grant.
+  - sourceId: foreman-line-plan
+    itemId: item.8bef504af1db
+    valueDigest: 9d600b9b44dfe18183d5a668eb46862ab9187395aa35ce43a15d2b9e41e4741d
+    disposition: exclude
+    ruleIds: []
+    exclusionCode: non-normative-explanation
+    rationale: The repository-identity annotation records historical normalization and expressly disclaims rerun evidence.
+  - sourceId: foreman-line-plan
+    itemId: item.two-gate-thesis
+    valueDigest: 9f09f265b9c38dd2abd8707f94a94d70783e32bcd58c354ff1c1c0446a532d59
+    disposition: publish
+    ruleIds:
+      - rule.foreman-line-plan.two-gate-thesis
+    exclusionCode: null
+    rationale: The unchanged historical thesis keeps its original identity at the approved paragraph2 location.
+  - sourceId: foreman-line-plan
+    itemId: item.483a4914f57e
+    valueDigest: 9bc1d135bbd0ddbb5fedd27f9d7040660d8ad8e94b6ba2ff3da56f86ecd516ad
+    disposition: exclude
+    ruleIds: []
+    exclusionCode: non-normative-explanation
+    rationale: The historical library-name correction remains explanatory context and supplies no new live authority.
 volatileRegions:
   - regionId: region.fk-loop-directive.current-state
     sourceId: fk-loop-directive

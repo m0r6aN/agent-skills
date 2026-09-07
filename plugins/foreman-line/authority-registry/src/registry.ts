@@ -1,6 +1,12 @@
 import type { SchemaFile } from '../../schema-scaffold/src/registry.js'
 import { authorityEnforcementRegistrySchema } from './schemas.js'
-import type { AuthorityRule } from './types.js'
+import type {
+  AuthorityRule,
+  InventoryItem,
+  NormativeMarkdownAuditRecord,
+  ReconciliationRecord,
+  SourceLocator,
+} from './types.js'
 
 export const R12_PRIOR_REGISTRY_COMMIT = '9059bb249f75805b34a68397d53dfa5608fd6ad4'
 export const R13_PRIOR_REGISTRY_COMMIT = '0683bc059ec54a8652624fd2b7be72fe157cac14'
@@ -5399,3 +5405,340 @@ export const NORMATIVE_MARKDOWN_AUDIT_KEYS = [
   ...R13_NORMATIVE_MARKDOWN_AUDIT_KEYS,
   ...R30_AUDIT_KEYS,
 ]
+
+// R31 literals transcribed from the independently reviewed source-authored Step0 mapping.
+export const R31_SOURCE_SNAPSHOT = '8d500704c9e3d6d8b652bbe838aa3623f88203fc'
+export const R31_PRIOR_REGISTRY_COMMIT = '446700d47c2e162fcfa575d5a46b9247241a59c1'
+export const R31_PRIOR_MANIFEST = '7f122f6ddecc916582ca299b48f8eedc23c813a960f28f2b786c76e343d90d2b'
+export const R31_BINDING_MANIFEST =
+  '605f9c370c62cdbf619d1f65583a2404311d69cfc8c0fcc7c7867959b4adf4d5'
+export const R31_RECORD_DIGEST = '73b921477e09f2bcf20c4cf27d182221746c6cd85e2948a82f573e465177bf33'
+export const R31_DECISION_PATH =
+  'plugins/foreman-line/docs/goals/foreman-kernel/R31-coordinator-decision-20260907.md'
+export const R31_DECISION_BLOB_DIGEST =
+  '974c26657ef1cfab3c7a72cdb552e1e979ac9534832acb7009d5d0f74c776e9f'
+export const R31_SOURCE_ITEMS: readonly {
+  unit: string
+  sourceId: string
+  itemId: string
+  locator: SourceLocator
+  locatorDigest: string
+  normalizedExcerpt: string
+  valueDigest: string
+  ruleIds: readonly string[]
+  exclusionDisposition: InventoryItem['exclusionDisposition']
+}[] = [
+  {
+    unit: 'M01',
+    sourceId: 'standing-constraints',
+    itemId: 'item.constraint-14',
+    locator: {
+      kind: 'numbered-item',
+      anchor:
+        'md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — conditional:list-item:3',
+      lineHint: 21,
+    },
+    locatorDigest: '22f088d2c9e1efe1e1f6b620474d795c54c76354b19c1b0508ebd1b31d3b959c',
+    normalizedExcerpt:
+      '14. **Plugin/marketplace parcels:** verify each living install identifier through the declared marketplace entry to an existing plugin source whose nested manifest name equals the requested plugin. A normalized repository URL does not prove that an install command resolves. (#37)',
+    valueDigest: '4f3ee9daa1a008f7002cce5742fa585387976783bb9a1a333f5cd6ab5a1d4d19',
+    ruleIds: ['rule.standing-constraints.constraint-14'],
+    exclusionDisposition: null,
+  },
+  {
+    unit: 'M02-note',
+    sourceId: 'foreman-line-plan',
+    itemId: 'item.8bef504af1db',
+    locator: {
+      kind: 'line-excerpt',
+      anchor: 'md-block:# The Foreman Line — Master Plugin Plan:paragraph:1',
+      lineHint: 3,
+    },
+    locatorDigest: '6a99cca27c8da23a9569a3ab65ca4c3f0b29751f420e6a3bfd4ba8969b31c07d',
+    normalizedExcerpt:
+      '> **Repository identity migration (2026-09-06):** Repository identifiers and paths in this historical record were normalized to `m0r6aN/agent-skills`. Recorded commands were not rerun; all other historical outcomes remain as captured.',
+    valueDigest: '9d600b9b44dfe18183d5a668eb46862ab9187395aa35ce43a15d2b9e41e4741d',
+    ruleIds: [],
+    exclusionDisposition: 'non-normative-explanation',
+  },
+  {
+    unit: 'M02-thesis',
+    sourceId: 'foreman-line-plan',
+    itemId: 'item.two-gate-thesis',
+    locator: {
+      kind: 'line-excerpt',
+      anchor: 'md-block:# The Foreman Line — Master Plugin Plan:paragraph:2',
+      lineHint: 5,
+    },
+    locatorDigest: '464f7353d3bb900a07fe85436e96f2fd8729dd616c635338c17ed6f3a703875e',
+    normalizedExcerpt:
+      '**Version:** 0.1 (Draft — working name "the Line"; rename at will) **Owner:** Clinton Morgan — Principal Agentic AI Platform Architect, KaseyaOne **Status:** Proposed **Thesis:** One orchestrated pipeline from idea to merged code, in which specs are the unit of truth, humans hold exactly two gates (dispatch and merge), every stage emits a verifiable receipt, and the platform layer (model routing, Kompress, audit suite, DocSpine) is wired in by default — not by memory.',
+    valueDigest: '9f09f265b9c38dd2abd8707f94a94d70783e32bcd58c354ff1c1c0446a532d59',
+    ruleIds: ['rule.foreman-line-plan.two-gate-thesis'],
+    exclusionDisposition: null,
+  },
+  {
+    unit: 'M03',
+    sourceId: 'foreman-line-plan',
+    itemId: 'item.483a4914f57e',
+    locator: {
+      kind: 'line-excerpt',
+      anchor:
+        'md-block:# The Foreman Line — Master Plugin Plan > ## 5a. Skill Injection Policy (the execution-plane library):paragraph:1',
+      lineHint: 143,
+    },
+    locatorDigest: 'b209a80af8457ba1a89290fe308c3a65484075080d43cc059692d7044e788647',
+    normalizedExcerpt:
+      'The Line is the conveyor; the skills library is the rack of tools hanging above each station (`agent-skills`, deployed at `~\\.claude\\skills\\`). Skills are wired in through a single mechanism — a versioned **skill injection matrix**, policy-as-code alongside the routing policy — rather than hardcoding each skill into a pipeline stage:',
+    valueDigest: '9bc1d135bbd0ddbb5fedd27f9d7040660d8ad8e94b6ba2ff3da56f86ecd516ad',
+    ruleIds: [],
+    exclusionDisposition: 'non-normative-explanation',
+  },
+]
+export const R31_RULE_SHAPES: readonly AuthorityRule[] = [
+  {
+    ruleId: 'rule.standing-constraints.constraint-14',
+    authoritySubject: 'plugin-marketplace.install-identifier-verification',
+    authorityClaim:
+      'plugin-marketplace-parcels-require-complete-install-identifier-chain-not-url-only',
+    normalizedStatement:
+      '14. **Plugin/marketplace parcels:** verify each living install identifier through the declared marketplace entry to an existing plugin source whose nested manifest name equals the requested plugin. A normalized repository URL does not prove that an install command resolves. (#37)',
+    sourceRefs: [
+      {
+        sourceId: 'standing-constraints',
+        itemId: 'item.constraint-14',
+        locatorDigest: '22f088d2c9e1efe1e1f6b620474d795c54c76354b19c1b0508ebd1b31d3b959c',
+        valueDigest: '4f3ee9daa1a008f7002cce5742fa585387976783bb9a1a333f5cd6ab5a1d4d19',
+      },
+    ],
+    authorityBasisRef: {
+      sourceId: 'standing-constraints',
+      itemId: 'item.constraint-14',
+      locatorDigest: '22f088d2c9e1efe1e1f6b620474d795c54c76354b19c1b0508ebd1b31d3b959c',
+      valueDigest: '4f3ee9daa1a008f7002cce5742fa585387976783bb9a1a333f5cd6ab5a1d4d19',
+    },
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: ['builder'],
+      stages: ['any'],
+      operations: ['any'],
+      hosts: ['any'],
+    },
+    severity: 'critical',
+    classification: 'independent-review-human-judgment',
+    decision: 'REQUIRE_HUMAN',
+    refusalCode: null,
+    enforcementOwner: 'independent-reviewer',
+    assurance: 'human-ratified',
+    pairedRuleIds: [],
+    retirementState: 'active-reading',
+    retirementEvidence: {
+      predicate: null,
+      negativeRefusalTest: null,
+      corpusSweep: null,
+      independentBypassAttempt: null,
+    },
+    bindingDigest: 'cd409e5b4c139afc93892ef16579d900b5abde76aec1556d3b47ae4ae830a3ca',
+  },
+  {
+    ruleId: 'rule.foreman-line-plan.two-gate-thesis',
+    authoritySubject: 'gate.namespace',
+    authorityClaim: 'historical-two-stage-gates',
+    normalizedStatement:
+      '**Version:** 0.1 (Draft — working name "the Line"; rename at will) **Owner:** Clinton Morgan — Principal Agentic AI Platform Architect, KaseyaOne **Status:** Proposed **Thesis:** One orchestrated pipeline from idea to merged code, in which specs are the unit of truth, humans hold exactly two gates (dispatch and merge), every stage emits a verifiable receipt, and the platform layer (model routing, Kompress, audit suite, DocSpine) is wired in by default — not by memory.',
+    sourceRefs: [
+      {
+        sourceId: 'foreman-line-plan',
+        itemId: 'item.two-gate-thesis',
+        locatorDigest: '464f7353d3bb900a07fe85436e96f2fd8729dd616c635338c17ed6f3a703875e',
+        valueDigest: '9f09f265b9c38dd2abd8707f94a94d70783e32bcd58c354ff1c1c0446a532d59',
+      },
+    ],
+    authorityBasisRef: {
+      sourceId: 'foreman-line-plan',
+      itemId: 'item.two-gate-thesis',
+      locatorDigest: '464f7353d3bb900a07fe85436e96f2fd8729dd616c635338c17ed6f3a703875e',
+      valueDigest: '9f09f265b9c38dd2abd8707f94a94d70783e32bcd58c354ff1c1c0446a532d59',
+    },
+    applicability: {
+      goals: ['all-foreman-goals'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+    severity: 'medium',
+    classification: 'narrative-provenance',
+    decision: 'ADVISORY',
+    refusalCode: null,
+    enforcementOwner: 'provenance-only',
+    assurance: 'narrative',
+    pairedRuleIds: [],
+    retirementState: 'historical-only',
+    retirementEvidence: {
+      predicate: null,
+      negativeRefusalTest: null,
+      corpusSweep: null,
+      independentBypassAttempt: null,
+    },
+    bindingDigest: '2a603de7e4b87897cdebca094241430df41f0aa3c04ce244666aac7bc3a5379c',
+  },
+]
+export const R31_AUDIT_ROWS: readonly NormativeMarkdownAuditRecord[] = [
+  {
+    sourceId: 'standing-constraints',
+    itemId: 'item.constraint-14',
+    valueDigest: '4f3ee9daa1a008f7002cce5742fa585387976783bb9a1a333f5cd6ab5a1d4d19',
+    disposition: 'publish',
+    ruleIds: ['rule.standing-constraints.constraint-14'],
+    exclusionCode: null,
+    rationale:
+      'Exact upstream conditional builder obligation14 is mapped without an install grant.',
+  },
+  {
+    sourceId: 'foreman-line-plan',
+    itemId: 'item.8bef504af1db',
+    valueDigest: '9d600b9b44dfe18183d5a668eb46862ab9187395aa35ce43a15d2b9e41e4741d',
+    disposition: 'exclude',
+    ruleIds: [],
+    exclusionCode: 'non-normative-explanation',
+    rationale:
+      'The repository-identity annotation records historical normalization and expressly disclaims rerun evidence.',
+  },
+  {
+    sourceId: 'foreman-line-plan',
+    itemId: 'item.two-gate-thesis',
+    valueDigest: '9f09f265b9c38dd2abd8707f94a94d70783e32bcd58c354ff1c1c0446a532d59',
+    disposition: 'publish',
+    ruleIds: ['rule.foreman-line-plan.two-gate-thesis'],
+    exclusionCode: null,
+    rationale:
+      'The unchanged historical thesis keeps its original identity at the approved paragraph2 location.',
+  },
+  {
+    sourceId: 'foreman-line-plan',
+    itemId: 'item.483a4914f57e',
+    valueDigest: '9bc1d135bbd0ddbb5fedd27f9d7040660d8ad8e94b6ba2ff3da56f86ecd516ad',
+    disposition: 'exclude',
+    ruleIds: [],
+    exclusionCode: 'non-normative-explanation',
+    rationale:
+      'The historical library-name correction remains explanatory context and supplies no new live authority.',
+  },
+]
+export const R31_RECONCILIATION: ReconciliationRecord = {
+  reconciliationId: 'registry-rework-446700d',
+  topic: 'R30 registry bindings superseded by the coordinator-ratified finite R31 source adoption.',
+  observedRefs: [
+    {
+      sourceId: 'standing-constraints',
+      itemId: 'item.constraint-14',
+      locatorDigest: '22f088d2c9e1efe1e1f6b620474d795c54c76354b19c1b0508ebd1b31d3b959c',
+      valueDigest: '4f3ee9daa1a008f7002cce5742fa585387976783bb9a1a333f5cd6ab5a1d4d19',
+    },
+    {
+      sourceId: 'foreman-line-plan',
+      itemId: 'item.8bef504af1db',
+      locatorDigest: '6a99cca27c8da23a9569a3ab65ca4c3f0b29751f420e6a3bfd4ba8969b31c07d',
+      valueDigest: '9d600b9b44dfe18183d5a668eb46862ab9187395aa35ce43a15d2b9e41e4741d',
+    },
+    {
+      sourceId: 'foreman-line-plan',
+      itemId: 'item.two-gate-thesis',
+      locatorDigest: '464f7353d3bb900a07fe85436e96f2fd8729dd616c635338c17ed6f3a703875e',
+      valueDigest: '9f09f265b9c38dd2abd8707f94a94d70783e32bcd58c354ff1c1c0446a532d59',
+    },
+    {
+      sourceId: 'foreman-line-plan',
+      itemId: 'item.483a4914f57e',
+      locatorDigest: 'b209a80af8457ba1a89290fe308c3a65484075080d43cc059692d7044e788647',
+      valueDigest: '9bc1d135bbd0ddbb5fedd27f9d7040660d8ad8e94b6ba2ff3da56f86ecd516ad',
+    },
+    {
+      sourceId: 'fk-loop-directive',
+      itemId: 'item.c98e1f76aeb5',
+      locatorDigest: '1388a84f45baa2148f545913cc7c750ae1e2deb65ca58db0de74ed4824c00588',
+      valueDigest: 'f8efec1d5b8607c1af4634545b805ef6fff99f1b18a615575b37b10fd07a0146',
+    },
+  ],
+  observedEvidence: [
+    {
+      kind: 'git-commit',
+      reference: '446700d47c2e162fcfa575d5a46b9247241a59c1',
+      digest: 'bb421f8e3d3baba8781937f302d42210262a72ed874f756a72e527767b462e05',
+    },
+    {
+      kind: 'git-commit',
+      reference: '8d500704c9e3d6d8b652bbe838aa3623f88203fc',
+      digest: '81070168ff53c12d3cc94020d76da1dbcbfde5a460b579e74d14f258cc4c2a71',
+    },
+    {
+      kind: 'command-result',
+      reference:
+        '{"actorClass":"coordinator","commandId":"registry-binding-manifest-r30","exitCode":0,"inputDigest":"43d3dfe4823498282c484ef4a614bef918b89543ca80fc14bc0548bf2281eae5","resultDigest":"7f122f6ddecc916582ca299b48f8eedc23c813a960f28f2b786c76e343d90d2b","tool":"@foreman-line/authority-registry","toolVersion":"0.1.0"}',
+      digest: 'b0a426bb57a320f5c2379df4b0272fc356dc7dfc28d7f3ff42c4785bdc257d8c',
+    },
+    {
+      kind: 'command-result',
+      reference:
+        '{"actorClass":"coordinator","commandId":"superseding-binding-manifest-r31","exitCode":0,"inputDigest":"7f122f6ddecc916582ca299b48f8eedc23c813a960f28f2b786c76e343d90d2b","resultDigest":"605f9c370c62cdbf619d1f65583a2404311d69cfc8c0fcc7c7867959b4adf4d5","tool":"@foreman-line/authority-registry","toolVersion":"0.1.0"}',
+      digest: 'c486ecceac7f2d3205cc044ff2a5d3c49d5669c72aea6b35600de19d91400be5',
+    },
+    {
+      kind: 'command-result',
+      reference:
+        '{"actorClass":"coordinator","commandId":"r31-plan-decision-git-blob","exitCode":0,"inputDigest":"7095b8623ecfbab4d383046d19111a0c99580f94e2b03ca20f0dd1eb02639e69","resultDigest":"974c26657ef1cfab3c7a72cdb552e1e979ac9534832acb7009d5d0f74c776e9f","tool":"@foreman-line/authority-registry","toolVersion":"0.1.0"}',
+      digest: 'd44523e9f8d044c45f6138d5df68c521ea8f359674e40aea874df8bf2c7d8ee4',
+    },
+  ],
+  authoritativeRuleIds: [
+    'rule.standing-constraints.constraint-14',
+    'rule.fk-loop-directive.c98e1f76aeb5.continuation',
+  ],
+  scopedDisposition:
+    'R31 adopts two exact upstream source blobs within the unchanged eighteen-source set under the externally recorded coordinator ratification of finite plan106fd58 and existing continuation delegation. The decision blob at source8d ratifies that plan only; later mapping approval and implementation dispatch are separately recorded and are not attributed to the old decision. Add the complete conditional plugin/marketplace verification requirement without an install grant. Add the distinct historical repository annotation, relocate the unchanged historical thesis from paragraph1 to paragraph2 while preserving its identity and authority effect, and correct the historical library-name value without new policy or deployment evidence. Preserve all twenty prior reconciliation records canonically, including historical thirteen-standing-rule statements; current coverage becomes fourteen. Add two inventory items, one rule and four audit dispositions; change one existing value and one existing locator binding. M01 is representative changed-corpus evidence, not ratification of the entire amendment. L01 remains noncontrolling provenance, and the supporting diagnostic establishes Git-blob custody only.',
+  unresolvedConsequence:
+    'Future binding changes require another typed prior-to-new migration. Independent mapping review and a separately recorded implementation ruling remain prerequisites; complete verification, fresh independent reviews and human Gate3 remain mandatory. No diagnostic, source annotation or record membership grants operational authority, proves installation verification, or claims historical commands were rerun.',
+  migrationStatus: 'superseded-by-amendment',
+  supersedingEvidence: {
+    sourceId: 'standing-constraints',
+    itemId: 'item.constraint-14',
+    locatorDigest: '22f088d2c9e1efe1e1f6b620474d795c54c76354b19c1b0508ebd1b31d3b959c',
+    valueDigest: '4f3ee9daa1a008f7002cce5742fa585387976783bb9a1a333f5cd6ab5a1d4d19',
+  },
+}

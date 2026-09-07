@@ -1,0 +1,66 @@
+TAP version 13
+# Subtest: R31 approved annotation and thesis have distinct source-bound identities
+not ok 1 - R31 approved annotation and thesis have distinct source-bound identities
+  ---
+  duration_ms: 1210.2595
+  type: 'test'
+  location: 'D:\\Repos\\agent-skills-worktrees\\fk-p0-r31-source-adoption-20260907\\plugins\\foreman-line\\authority-registry\\tests\\corpus-sweep.test.ts:1:978'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'item.two-gate-thesis'
+    - 'item.8bef504af1db'
+            ^
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'item.8bef504af1db'
+  actual: 'item.two-gate-thesis'
+  operator: 'strictEqual'
+  stack: |-
+    <anonymous> (D:\Repos\agent-skills-worktrees\fk-p0-r31-source-adoption-20260907\plugins\foreman-line\authority-registry\tests\corpus-sweep.test.ts:2448:10)
+    TestContext.<anonymous> (D:\Repos\agent-skills-worktrees\fk-p0-r31-source-adoption-20260907\plugins\foreman-line\authority-registry\tests\corpus-sweep.test.ts:59:13)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1106:25)
+    Test.start (node:internal/test_runner/test:1003:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:358:17)
+  ...
+# Subtest: R31 independently prescribed successor counts and source snapshot are adopted
+not ok 2 - R31 independently prescribed successor counts and source snapshot are adopted
+  ---
+  duration_ms: 14.5999
+  type: 'test'
+  location: 'D:\\Repos\\agent-skills-worktrees\\fk-p0-r31-source-adoption-20260907\\plugins\\foreman-line\\authority-registry\\tests\\semantic-invariants.test.ts:1:975'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + '65c471416e4a3916695815e951ffbe389288560e'
+    - '8d500704c9e3d6d8b652bbe838aa3623f88203fc'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: '8d500704c9e3d6d8b652bbe838aa3623f88203fc'
+  actual: '65c471416e4a3916695815e951ffbe389288560e'
+  operator: 'strictEqual'
+  stack: |-
+    <anonymous> (D:\Repos\agent-skills-worktrees\fk-p0-r31-source-adoption-20260907\plugins\foreman-line\authority-registry\tests\semantic-invariants.test.ts:5781:10)
+    TestContext.<anonymous> (D:\Repos\agent-skills-worktrees\fk-p0-r31-source-adoption-20260907\plugins\foreman-line\authority-registry\tests\semantic-invariants.test.ts:68:13)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1106:25)
+    Test.start (node:internal/test_runner/test:1003:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:358:17)
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 0
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3931.7231
+DIRECT_EXIT=1

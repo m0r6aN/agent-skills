@@ -1,0 +1,209 @@
+TAP version 13
+# Subtest: standing constraints inventory contains all fourteen atomic numbered rules
+ok 1 - standing constraints inventory contains all fourteen atomic numbered rules
+  ---
+  duration_ms: 7.1253
+  type: 'test'
+  ...
+# Subtest: R5 Markdown numbered-item locators survive physical line wrapping
+not ok 2 - R5 Markdown numbered-item locators survive physical line wrapping
+  ---
+  duration_ms: 10443.4924
+  type: 'test'
+  location: 'D:\\Repos\\agent-skills-worktrees\\fk-p0-r31-source-adoption-20260907\\plugins\\foreman-line\\authority-registry\\tests\\corpus-sweep.test.ts:1:978'
+  failureType: 'testCodeFailure'
+  error: |-
+    [
+      {
+        "code": "SOURCE_ITEM_UNCOVERED",
+        "message": "new standing constraint is not inventoried",
+        "sourcePath": "plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md",
+        "locator": "constraint-14"
+      }
+    ]
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    <anonymous> (D:\Repos\agent-skills-worktrees\fk-p0-r31-source-adoption-20260907\plugins\foreman-line\authority-registry\tests\corpus-sweep.test.ts:823:12)
+    TestContext.<anonymous> (D:\Repos\agent-skills-worktrees\fk-p0-r31-source-adoption-20260907\plugins\foreman-line\authority-registry\tests\corpus-sweep.test.ts:59:13)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1106:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+    Test.postRun (node:internal/test_runner/test:1235:19)
+    node:internal/test_runner/test:1040:31
+    node:internal/process/task_queues:151:7
+    AsyncResource.runInAsyncScope (node:async_hooks:214:14)
+    AsyncResource.runMicrotask (node:internal/process/task_queues:148:8)
+  ...
+# Subtest: R9 valid fenced standing-constraint number is ignored by the shared Markdown map
+not ok 3 - R9 valid fenced standing-constraint number is ignored by the shared Markdown map
+  ---
+  duration_ms: 7444.0529
+  type: 'test'
+  location: 'D:\\Repos\\agent-skills-worktrees\\fk-p0-r31-source-adoption-20260907\\plugins\\foreman-line\\authority-registry\\tests\\corpus-sweep.test.ts:1:978'
+  failureType: 'testCodeFailure'
+  error: |-
+    [
+      {
+        "code": "SOURCE_ITEM_UNCOVERED",
+        "message": "new standing constraint is not inventoried",
+        "sourcePath": "plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md",
+        "locator": "constraint-14"
+      }
+    ]
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    <anonymous> (D:\Repos\agent-skills-worktrees\fk-p0-r31-source-adoption-20260907\plugins\foreman-line\authority-registry\tests\corpus-sweep.test.ts:1182:12)
+    TestContext.<anonymous> (D:\Repos\agent-skills-worktrees\fk-p0-r31-source-adoption-20260907\plugins\foreman-line\authority-registry\tests\corpus-sweep.test.ts:59:13)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1106:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+    Test.postRun (node:internal/test_runner/test:1235:19)
+    node:internal/test_runner/test:1040:31
+    node:internal/process/task_queues:151:7
+    AsyncResource.runInAsyncScope (node:async_hooks:214:14)
+    AsyncResource.runMicrotask (node:internal/process/task_queues:148:8)
+  ...
+# Subtest: R12 active standing-rule marker renumbering is a value mismatch without locator loss
+ok 4 - R12 active standing-rule marker renumbering is a value mismatch without locator loss
+  ---
+  duration_ms: 7128.3629
+  type: 'test'
+  ...
+# Subtest: R30 INF-1 real governed source mutation fails exact value binding
+ok 5 - R30 INF-1 real governed source mutation fails exact value binding
+  ---
+  duration_ms: 7952.4312
+  type: 'test'
+  ...
+# Subtest: R30 INF-2 real governed source mutation fails exact value binding
+ok 6 - R30 INF-2 real governed source mutation fails exact value binding
+  ---
+  duration_ms: 6881.4341
+  type: 'test'
+  ...
+# Subtest: R30 INF-3 real governed source mutation fails exact value binding
+ok 7 - R30 INF-3 real governed source mutation fails exact value binding
+  ---
+  duration_ms: 6801.0554
+  type: 'test'
+  ...
+# Subtest: R30 INF-4 real governed source mutation fails exact value binding
+ok 8 - R30 INF-4 real governed source mutation fails exact value binding
+  ---
+  duration_ms: 7135.9491
+  type: 'test'
+  ...
+# Subtest: R30 INF-5 real governed source mutation fails exact value binding
+ok 9 - R30 INF-5 real governed source mutation fails exact value binding
+  ---
+  duration_ms: 6135.0466
+  type: 'test'
+  ...
+# Subtest: R30 INF-6 real governed source mutation fails exact value binding
+ok 10 - R30 INF-6 real governed source mutation fails exact value binding
+  ---
+  duration_ms: 8799.3316
+  type: 'test'
+  ...
+# Subtest: R30 INF-7 real governed source mutation fails exact value binding
+ok 11 - R30 INF-7 real governed source mutation fails exact value binding
+  ---
+  duration_ms: 7241.4367
+  type: 'test'
+  ...
+# Subtest: R30 INF-8 real governed source mutation fails exact value binding
+ok 12 - R30 INF-8 real governed source mutation fails exact value binding
+  ---
+  duration_ms: 6347.9534
+  type: 'test'
+  ...
+# Subtest: R30 new continuation authority is governed outside every volatile region
+ok 13 - R30 new continuation authority is governed outside every volatile region
+  ---
+  duration_ms: 7502.3624
+  type: 'test'
+  ...
+# Subtest: R30 prior anchor freeze retains ledger identities and rejects ambiguous current ledger anchors
+ok 14 - R30 prior anchor freeze retains ledger identities and rejects ambiguous current ledger anchors
+  ---
+  duration_ms: 10161.2387
+  type: 'test'
+  ...
+# Subtest: R31 approved annotation and thesis have distinct source-bound identities
+ok 15 - R31 approved annotation and thesis have distinct source-bound identities
+  ---
+  duration_ms: 14.1961
+  type: 'test'
+  ...
+# Subtest: R31 actual M01 source rejects parcel condition mutation
+ok 16 - R31 actual M01 source rejects parcel condition mutation
+  ---
+  duration_ms: 7095.0966
+  type: 'test'
+  ...
+# Subtest: R31 actual M01 source rejects living identifier mutation
+ok 17 - R31 actual M01 source rejects living identifier mutation
+  ---
+  duration_ms: 7465.8313
+  type: 'test'
+  ...
+# Subtest: R31 actual M01 source rejects marketplace entry mutation
+ok 18 - R31 actual M01 source rejects marketplace entry mutation
+  ---
+  duration_ms: 6864.4042
+  type: 'test'
+  ...
+# Subtest: R31 actual M01 source rejects source existence mutation
+ok 19 - R31 actual M01 source rejects source existence mutation
+  ---
+  duration_ms: 7215.0444
+  type: 'test'
+  ...
+# Subtest: R31 actual M01 source rejects nested manifest equality mutation
+ok 20 - R31 actual M01 source rejects nested manifest equality mutation
+  ---
+  duration_ms: 7597.6184
+  type: 'test'
+  ...
+# Subtest: R31 actual M01 source rejects URL insufficiency mutation
+ok 21 - R31 actual M01 source rejects URL insufficiency mutation
+  ---
+  duration_ms: 6613.3542
+  type: 'test'
+  ...
+# Subtest: R31 actual decision blob correspondence detects Git replacement despite an unchanged diagnostic
+ok 22 - R31 actual decision blob correspondence detects Git replacement despite an unchanged diagnostic
+  ---
+  duration_ms: 1008.55
+  type: 'test'
+  ...
+# Subtest: R31 source-bound aliases reject displaced or substituted historical note and thesis
+ok 23 - R31 source-bound aliases reject displaced or substituted historical note and thesis
+  ---
+  duration_ms: 9.0009
+  type: 'test'
+  ...
+1..23
+# tests 23
+# suites 0
+# pass 21
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 145105.3828
+DIRECT_EXIT=1
