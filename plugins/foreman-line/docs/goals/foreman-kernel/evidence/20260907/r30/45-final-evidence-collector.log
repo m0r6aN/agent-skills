@@ -1,0 +1,2 @@
+{"counts":{"sources":18,"items":1583,"rules":541,"audit":198,"reconciliations":20},"addedRuleClasses":{"independent-review-human-judgment":37,"narrative-provenance":9,"post-action-detection":5,"pre-action-refusal":21},"historicalRecordsPreserved":19,"testTotals":{"tests":686,"pass":686,"fail":0,"cancelled":0,"skipped":0,"todo":0}}
+DIRECT_EXIT=0

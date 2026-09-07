@@ -50,7 +50,7 @@
   {
     "path": "plugins/foreman-line/authority-registry/tests/semantic-invariants.test.ts",
     "before": "e1fbdfd9572b45726e537e2f5375685865aea2bd31401e2aa290327384fed2aa",
-    "after": "44cbcde01648ed93323c10991bdd8079af5eb07d547d97bb88be8e2cefb86192",
+    "after": "e76e240871ed089e75c86af80a4d6ebc8cfa3e23010b2d848ef49020a18d809d",
     "classification": "builder-package-change"
   },
   {

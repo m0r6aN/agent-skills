@@ -52,3 +52,18 @@ The first complete run is failed and unaccepted. A new test-only checkpoint and 
 - 34 oracle formatting: direct exit0. 35 focused independent oracle plus historical repairs: direct exit0, five tests passed. The oracle derives53 exact sourceRef pins from the reviewed appendix and72 identities/reference lists from source-authored mapping conventions. It checks designated basis and ordered refs for all72; exact reciprocal target sets for all inventory items preserve baseline links. No runtime constants or generated values select expected refs, and no runtime code changed.
 
 Fresh complete chain remains pending against the replacement test checkpoint; expected floor remains686 because existing tests were strengthened rather than removed or split.
+
+## Completed verification chain
+
+- 36 final oracle checkpoint format/typecheck/five focused controls: direct exits0. Code9b4de111e78bd6682cf7c2d64989bd4adf803dce plus evidencef8093410cead451f204d08ae25f3a70b34208213 is the published tested checkpoint. Only the semantic test file differs from runtime checkpoint446700d47c2e162fcfa575d5a46b9247241a59c1.
+- 37 npm ci and38 typecheck: direct exits0, exact command timing retained.
+- 39 complete npm test: direct exit0,686/686pass,0fail/cancel/skip/TODO. Explicit start2026-09-07T15:44:18.4953237Z, end2026-09-07T16:10:22.7325123Z, monotonic elapsed1564.2341684seconds. This is the successful full run;26 remains failed and33 remains canceled/superseded.
+- 40 Biome: direct exit0,15files checked, no fixes,16non-failing infos.
+- 41 CLI validate: direct exit0.42 full source sweep: direct exit0.
+- 43 and44 generation: direct exits0; all three generated artifacts and lockfile match checkpoint SHA256 after both passes.
+- 45 independent delta/evidence collector: direct exit0;18sources/1583items/541rules/198audit/20reconciliations;72addedrules (37IJ21PR5PD9NP),58addeditems,2changeditemvalues,2changedlegacyrules,53addedauditentries,all19historicalrecords canonically identical,operationAuthority unchanged. Full item/rule/link/audit deltas and canonical hashes are retained in final-adoption-delta.json. Named686test coverage is in final-test-coverage.json.
+- 46 scope readback: source/package checks passed, but git diff --check flagged a CRLF line in updated evidence JSON. Recorded as exit1; normalized that evidence serialization only.47 final diff check: direct exit0. No package/runtime/source changes followed the successful suite.
+
+The complete successful chain is ready for two fresh independent final reviews. It does not claim merge, human Gate3, deployment or adoption of independently identified current-main source drift.
+
+Raw evidence custody: staged default whitespace check50returns2 because original Windows transcript/JSON CRLF is preserved. Its complete diagnostic is retained;51CRLF-aware authored Markdown/JSON check returns0. No raw test stream was rewritten for whitespace policy. evidence-manifest.json distinguishes raw working-byte SHA256 from staged Git-blob-byte SHA256 for every other evidence file; it excludes itself to avoid self-reference.

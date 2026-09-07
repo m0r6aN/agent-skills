@@ -1,0 +1,12 @@
+{
+  "command": "node",
+  "arguments": [
+    "D:\\Repos\\agent-skills-worktrees\\fk-p0-r30-adoption-20260907\\plugins\\foreman-line\\docs\\goals\\foreman-kernel\\evidence\\20260907\\r30\\.\\collect-final-evidence.mjs"
+  ],
+  "cwd": "D:\\Repos\\agent-skills-worktrees\\fk-p0-r30-adoption-20260907\\plugins\\foreman-line\\authority-registry",
+  "startUtc": "2026-09-07T16:11:31.4231867Z",
+  "endUtc": "2026-09-07T16:11:32.9801810Z",
+  "elapsedSeconds": 1.5569487,
+  "directExit": 0,
+  "timingBasis": "explicit UTC timestamps immediately before invocation and after process return; stopwatch monotonic elapsed"
+}

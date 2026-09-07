@@ -1,0 +1,8 @@
+{
+  "command": "git diff --check",
+  "startUtc": "2026-09-07T16:12:27.0586236Z",
+  "endUtc": "2026-09-07T16:12:27.3469114Z",
+  "directExit": 0,
+  "sourceFilesUnchanged": 18,
+  "packageFilesChangedFromTestedCheckpoint": 0
+}

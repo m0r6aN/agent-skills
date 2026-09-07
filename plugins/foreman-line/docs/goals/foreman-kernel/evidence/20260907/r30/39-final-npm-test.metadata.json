@@ -1,0 +1,9 @@
+{
+  "command": "npm test",
+  "checkpoint": "f8093410cead451f204d08ae25f3a70b34208213",
+  "startUtc": "2026-09-07T15:44:18.4953237Z",
+  "endUtc": "2026-09-07T16:10:22.7325123Z",
+  "elapsedSeconds": 1564.2341684,
+  "directExit": 0,
+  "timingBasis": "explicit UTC before invocation and after process return; monotonic stopwatch elapsed"
+}

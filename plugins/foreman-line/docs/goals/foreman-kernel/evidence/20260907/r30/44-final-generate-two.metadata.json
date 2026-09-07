@@ -1,0 +1,13 @@
+{
+  "command": "npm",
+  "arguments": [
+    "run",
+    "generate"
+  ],
+  "cwd": "D:\\Repos\\agent-skills-worktrees\\fk-p0-r30-adoption-20260907\\plugins\\foreman-line\\authority-registry",
+  "startUtc": "2026-09-07T16:11:23.8988106Z",
+  "endUtc": "2026-09-07T16:11:31.3637231Z",
+  "elapsedSeconds": 7.4648658,
+  "directExit": 0,
+  "timingBasis": "explicit UTC timestamps immediately before invocation and after process return; stopwatch monotonic elapsed"
+}
