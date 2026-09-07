@@ -531,3 +531,13 @@ npx tsx src/cli.ts sweep authority-enforcement-registry.yaml --repo-root ../../.
 
 Green deterministic checks and checksums remain evidence inputs only. Two independent fresh
 architecture/risk reviews and the human Gate 3 decision remain outside this package.
+
+## R30 September 7 corpus adoption
+
+The live registry binds eighteen source files at `65c471416e4a3916695815e951ffbe389288560e`. Its source-reviewed denominator is 1,583 items, 541 rules and 198 audit entries. R30 adds 72 exact shapes (37 independent-review, 21 pre-action-refusal, five post-action-detection and nine narrative-provenance) and appends one migration after 19 canonically preserved historical reconciliations. The predecessor registry is the last YAML-changing commit `66a514d35a384f901486e7b814580eb6fb7de6ea`; Round 6 verification at `0ee165720f8d1e3a91eb283cb770400b23f61bf5` remains a separate historical baseline.
+
+R30 rules carry `human-ratified` source intent only. A finite trusted-code mapping binds every field and each exact source identity, locator and normalized value. Reserved entries cannot fall through to legacy validation after alteration, removal or assurance reversion. Reviewed paraphrases require an exact trusted correspondence to their designated basis; corroborating references remain pinned, reciprocal references and never substitute for that basis. Neither this mapping nor successful validation proves runtime enforcement, completed review, gate satisfaction or authority to execute an operation.
+
+The nine event/permission records are stored as narrative-provenance / ADVISORY / provenance-only / human-ratified. Existing resolver eligibility excludes them: an isolated query yields NO_APPLICABLE_AUTHORITY with no controlling rules, not an informational ADVISORY resolution. Actual coordinator authorization comes from the recorded developer instruction; the protected-operation matrix remains unchanged.
+
+Current-state and owner-state bodies and the queue State column retain their existing exact volatile extents. New continuation paragraphs and INF carrier duties remain governed. The generator retains prior anchor identities and derives fresh loop identities from the existing masked projection; lineHint is navigation in that projection, not raw-source identity authority. Old R28/R29 count assertions remain tests of committed baseline data; general protection tests exercise the adopted sample.

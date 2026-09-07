@@ -1950,6 +1950,16 @@ test('R29.3 every curation surface is anchor-keyed with no itemId lookup fallbac
 })
 
 test('R29.4 standing authorization 8 publishes the exact pre-action refusal contract', () => {
+  const registry = parse(
+    execFileSync(
+      'git',
+      [
+        'show',
+        '66a514d35a384f901486e7b814580eb6fb7de6ea:plugins/foreman-line/authority-registry/authority-enforcement-registry.yaml',
+      ],
+      { cwd: repoRoot, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 },
+    ),
+  ) as AuthorityEnforcementRegistry
   const rule = registry.rules.find(
     (candidate) => candidate.ruleId === 'rule.fk-loop-directive.3fe253f7c599',
   )
@@ -1972,6 +1982,16 @@ test('R29.4 standing authorization 8 publishes the exact pre-action refusal cont
 })
 
 test('R29.3 anchor migration preserves every surviving published identity and locator digest', () => {
+  const registry = parse(
+    execFileSync(
+      'git',
+      [
+        'show',
+        '66a514d35a384f901486e7b814580eb6fb7de6ea:plugins/foreman-line/authority-registry/authority-enforcement-registry.yaml',
+      ],
+      { cwd: repoRoot, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 },
+    ),
+  ) as AuthorityEnforcementRegistry
   const priorPath = 'plugins/foreman-line/authority-registry/authority-enforcement-registry.yaml'
   const prior = parse(
     execFileSync('git', ['show', `5f9cf65eec98f5496202639007205da81ef1c34d:${priorPath}`], {
@@ -2296,5 +2316,125 @@ test('R27 control (g) pins eight curated pre-excision prose rationales without g
       /is explanatory context and does not state an independent normative authority rule/,
     )
     ok(rationale.length >= 80, `${anchor} must carry an item-specific review rationale`)
+  }
+})
+
+const r30InfMutations = [
+  [
+    'INF-1',
+    'Local IPC and a long-lived kernel remain',
+    'Remote invocation and a short-lived kernel remain',
+  ],
+  [
+    'INF-2',
+    'SQLite WAL on a native Docker named volume remains',
+    'SQLite WAL on a network Docker named volume remains',
+  ],
+  [
+    'INF-3',
+    'Do not install the former blanket antivirus exclusions',
+    'Install the former blanket antivirus exclusions',
+  ],
+  [
+    'INF-4',
+    'Separate machines contribute isolation but are not sufficient',
+    'Separate machines contribute isolation and are sufficient',
+  ],
+  [
+    'INF-5',
+    'does not extend the 1000 ms decision deadline',
+    'extends the 2000 ms decision deadline',
+  ],
+  [
+    'INF-6',
+    'Report unknown spend or telemetry as unknown',
+    'Report unknown spend or telemetry as measured',
+  ],
+  [
+    'INF-7',
+    'Retrieval may prioritize review but cannot define completeness',
+    'Retrieval may prioritize review and can define completeness',
+  ],
+  ['INF-8', 'Restore must not silently restart dispatch', 'Restore may silently restart dispatch'],
+] as const
+for (const [section, before, after] of r30InfMutations) {
+  test(`R30 ${section} real governed source mutation fails exact value binding`, () => {
+    const root = mkdtempSync(join(tmpdir(), 'fk-p0-r30-inf-'))
+    try {
+      copyCorpus(root)
+      const source = registry.sources.find((entry) => entry.sourceId === 'fk-charter')
+      ok(source)
+      const path = join(root, source.path)
+      const original = readFileSync(path, 'utf8')
+      // Match normalized words across source wrapping, preserving only the tested phrase change.
+      const pattern = new RegExp(before.split(' ').join('\\s+'))
+      assert.match(original, pattern)
+      const changed = original.replace(pattern, after)
+      assert.notEqual(changed, original)
+      writeFileSync(path, changed)
+      const result = sweepRegistrySources(registry, root)
+      ok(
+        result.violations.some(
+          (entry) => entry.code === 'VALUE_DIGEST_MISMATCH' && entry.locator?.includes(section),
+        ),
+        JSON.stringify(result.violations),
+      )
+    } finally {
+      rmSync(root, { recursive: true, force: true })
+    }
+  })
+}
+
+test('R30 new continuation authority is governed outside every volatile region', () => {
+  const root = mkdtempSync(join(tmpdir(), 'fk-p0-r30-continuation-'))
+  try {
+    copyCorpus(root)
+    const path = join(root, loopDirectiveRelativePath)
+    const original = readFileSync(path, 'utf8')
+    const changed = original.replace(
+      'A draft does not satisfy a dependency',
+      'A draft satisfies a dependency',
+    )
+    assert.notEqual(changed, original)
+    writeFileSync(path, changed)
+    const result = sweepRegistrySources(registry, root)
+    ok(
+      result.violations.some(
+        (entry) =>
+          entry.code === 'VALUE_DIGEST_MISMATCH' &&
+          entry.locator?.includes('September 7 continuation authority'),
+      ),
+      JSON.stringify(result.violations),
+    )
+  } finally {
+    rmSync(root, { recursive: true, force: true })
+  }
+})
+
+test('R30 prior anchor freeze retains ledger identities and rejects ambiguous current ledger anchors', () => {
+  const source = registry.sources.find((entry) => entry.sourceId === 'fk-charter')
+  ok(source)
+  const content = readFileSync(join(repoRoot, source.path), 'utf8')
+  const current = markdownIdentityProjectionForTesting('fk-charter', content)
+  const ledger = current.find((entry) =>
+    entry.locator.anchor.endsWith('4.1 Ratification ledger:paragraph:3'),
+  )
+  ok(ledger)
+  assert.equal(ledger.itemId, 'item.131a7863b940')
+  const root = mkdtempSync(join(tmpdir(), 'fk-p0-r30-ledger-'))
+  try {
+    copyCorpus(root)
+    const path = join(root, source.path)
+    const l4 = content.split('\n').find((line) => line.startsWith('| L4 |'))
+    ok(l4)
+    writeFileSync(path, content.replace(l4, `${l4}\n${l4}`))
+    const result = sweepRegistrySources(registry, root)
+    assert.equal(result.valid, false)
+    ok(
+      result.violations.some((entry) => /ambiguous|multiple|unique|duplicate/i.test(entry.message)),
+      JSON.stringify(result.violations),
+    )
+  } finally {
+    rmSync(root, { recursive: true, force: true })
   }
 })

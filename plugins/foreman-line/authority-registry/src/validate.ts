@@ -7,10 +7,12 @@ import { API as TypeScriptApi } from 'typescript/unstable/sync'
 import { parse } from 'yaml'
 import AjvModule, { type Ajv as AjvType } from '../node_modules/ajv/dist/ajv.js'
 import {
+  NORMATIVE_MARKDOWN_AUDIT_KEYS,
   R12_LEGACY_MARKDOWN_RULE_TARGETS,
   R12_PRIOR_REGISTRY_COMMIT,
-  R13_NORMATIVE_MARKDOWN_AUDIT_KEYS,
   R13_PRIOR_REGISTRY_COMMIT,
+  R30_RULE_SHAPES,
+  R30_SOURCE_ITEMS,
 } from './registry.js'
 import { authorityEnforcementRegistrySchema } from './schemas.js'
 import {
@@ -67,6 +69,7 @@ const REQUIRED_REWORK_MIGRATIONS = [
   // the head: presence is now obligatory, so deleting it fails closed rather than reading as an
   // unclaimed slot.
   'registry-rework-df8155a',
+  'registry-rework-40394be',
 ] as const
 /**
  * AC4 obligation 6 as amended by R22 - the shipped chain head, bound through channels that do NOT
@@ -85,7 +88,7 @@ const REQUIRED_REWORK_MIGRATIONS = [
  * invalidate the shipped registry. Measured: it does exactly that, AND still admits the
  * delete-and-substitute attack, because a pin binds only a record that is still present.
  */
-const SHIPPED_CHAIN_HEAD_ID = 'registry-rework-40394be'
+const SHIPPED_CHAIN_HEAD_ID = 'registry-rework-66a514d'
 /**
  * The canonical record digest of the shipped head, consulted ONLY once the record is no longer the
  * head. While it IS the head it stays bound to the live manifest, so appending a legitimately
@@ -93,7 +96,7 @@ const SHIPPED_CHAIN_HEAD_ID = 'registry-rework-40394be'
  * it, it becomes a historical record and is bound exactly like the eleven before it.
  */
 const SHIPPED_CHAIN_HEAD_RECORD_DIGEST =
-  '307a1b563240107c5a12610e18b340e66f3be0621e6bc30b438ae79af91b4bfd'
+  '6d39f17f70b25ce44030e729c62d975b45a8597b99af8c22f19c6a3cbfba92d7'
 const REQUIRED_OPERATIONS = [
   'gate1.ratify',
   'gate2.dispatch',
@@ -533,6 +536,16 @@ const RECONCILIATION_CONTRACT = {
     refs: ['fk-charter:item.2a524c1ea63f', 'fk-loop-directive:item.3fe253f7c599'],
     rules: ['rule.fk-charter.2a524c1ea63f', 'rule.fk-loop-directive.3fe253f7c599'],
   },
+  'registry-rework-66a514d': {
+    topic:
+      'Round-6 registry bindings superseded by the coordinator-ratified FK-P0 R30 corpus adoption.',
+    status: 'superseded-by-amendment',
+    refs: ['fk-charter:item.f081be090f04', 'fk-loop-directive:item.c98e1f76aeb5'],
+    rules: [
+      'rule.fk-charter.f081be090f04.adoption',
+      'rule.fk-loop-directive.c98e1f76aeb5.continuation',
+    ],
+  },
 } as const
 
 const PRIOR_R11_BINDING_MANIFEST_DIGEST =
@@ -714,6 +727,10 @@ const RECONCILIATION_PROSE: Readonly<Record<string, readonly [string, string]>> 
     'The R24-R29 round-6 volatile-region and curation rework supersedes the R14 registry bindings in FK scope. The declared volatile regions are excised before block discovery and ordinal assignment, so operational state cannot displace a governed sibling. The source baseline advances to the commit whose bytes were hashed. rule.fk-loop-directive.ae7854c7dad1 is DE-PUBLISHED, not retired: its subject goal.current-state-record and claim stage-zero-complete-and-fk-p0-next were an operational status snapshot published as canon, and its backing item is excised from inventory. Its final locatorDigest was cd404753257ddc78f7d8f473b679ce9410d745af89a459363f029838e6941c6c and its final valueDigest was 39dd6f0a5551d6fde0f694415fcb01f6f407115c1ca5a74da7b570239d61f371. The unpublished FK-P0 queue audit candidate is also removed because its audited signal was solely the now-volatile State cell; its final locatorDigest was 7fcf048fef2f8f007fe9083fabccf58cea064025f51a0468f471144e94818de5 and its final valueDigest was 1a430cadb645418f777ef2827628d2efe92cde3b84ab1337589f20c335615262. Standing authorization 8 is now published as pre-action-refusal / REFUSE under kernel-policy and is quoted exactly: 8. **The ambient `D:/Repos/agent-skills` checkout carries user-owned changes. Never touch or absorb them.** No agent working this goal — coordinator, builder, reviewer, or shaping session — reads from or writes to the ambient checkout, and no user-owned change is absorbed into a parcel branch. Relocated here from `## Current state` by R27, because it is a prohibition and was sitting in a section declared volatile, curated `ruleIds: []` with a boilerplate rationale asserting it stated no rule. It states a rule.',
     'Future binding changes require another typed prior-to-new migration record. Declaring a new volatile region over an already-published locator remains refused, so any future region that would absorb governed text requires a spec amendment first.',
   ],
+  'registry-rework-66a514d': [
+    'R30 adopts the committed September 7 charter and loop within the unchanged eighteen-source set. Preserve all nineteen prior reconciliation records canonically. Add 47 body items and 11 headings; change D21 and ledger paragraph 3 source values; add 72 source-bound rules, including four unchanged-ledger repairs, and 53 audit dispositions. Add exactly 67 reciprocal corroboration links: 57 to L5, 9 to D21, and 1 to L4. Preserve all existing rule identities, including both D21 bindings; no item/rule removals or locator-identity changes. The nine event and permission facts are noncontrolling provenance, never runtime grants. All 72 reserved shapes carry human-ratified source intent only.',
+    'Future binding changes require another typed prior-to-new migration record; human Gate 3, complete verification, independent review and exact source/authority boundaries remain mandatory.',
+  ],
 }
 
 const RECONCILIATION_RECORD_DIGESTS: Readonly<Record<string, string>> = {
@@ -743,6 +760,7 @@ const RECONCILIATION_RECORD_DIGESTS: Readonly<Record<string, string>> = {
   // the pin binds it by bytes like the eleven before it, and `recordDigestPinFor` finds it here
   // instead of in the head constant.
   'registry-rework-df8155a': 'ca5015f0446edbc5e1d7055357dac8d60cc87b4d283f0bba9ce26c15b40d88d2',
+  'registry-rework-40394be': '307a1b563240107c5a12610e18b340e66f3be0621e6bc30b438ae79af91b4bfd',
 }
 
 const LEGACY_RECONCILIATION_SOURCE_REFS: Readonly<Record<string, readonly SourceRef[]>> = {
@@ -2049,7 +2067,7 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
     }
   }
 
-  const expectedNormativeMarkdownAudit = R13_NORMATIVE_MARKDOWN_AUDIT_KEYS.map((key) => {
+  const expectedNormativeMarkdownAudit = NORMATIVE_MARKDOWN_AUDIT_KEYS.map((key) => {
     const separator = key.indexOf(':')
     const sourceId = key.slice(0, separator)
     const locatorAnchor = key.slice(separator + 1)
@@ -2079,7 +2097,7 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
     violations.push(
       violation(
         'RULE_SEMANTICS_UNCURATED',
-        'normative Markdown audit must equal the exact 145 item-specific source-authored dispositions',
+        'normative Markdown audit must equal the exact 198 item-specific source-authored dispositions',
       ),
     )
   }
@@ -2246,7 +2264,65 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
     }
   }
 
+  // Reserved R30 identities never fall through to legacy acceptance, including on assurance
+  // reversion. The independent required set also rejects renamed or removed entries.
+  for (const expected of R30_RULE_SHAPES) {
+    if (!document.rules.some((rule) => rule.ruleId === expected.ruleId)) {
+      violations.push(
+        violation(
+          'AUTHORITY_ESCALATION',
+          `required R30 rule '${expected.ruleId}' is missing or substituted`,
+          { ruleId: expected.ruleId },
+        ),
+      )
+    }
+  }
+  for (const expected of R30_SOURCE_ITEMS) {
+    const item = itemsByRef.get(referenceKey(expected.sourceId, expected.itemId))
+    const ownRules = R30_RULE_SHAPES.filter(
+      (rule) =>
+        rule.authorityBasisRef.sourceId === expected.sourceId &&
+        rule.authorityBasisRef.itemId === expected.itemId,
+    ).map((rule) => rule.ruleId)
+    const allRefs = R30_RULE_SHAPES.filter((rule) =>
+      rule.sourceRefs.some(
+        (ref) => ref.sourceId === expected.sourceId && ref.itemId === expected.itemId,
+      ),
+    ).map((rule) => rule.ruleId)
+    const legacyRules =
+      expected.unit === 'C01'
+        ? ['rule.fk-charter.d21.latency-budget', 'rule.fk-charter.d21.cache-revision-binding']
+        : []
+    const expectedMembership = [...new Set([...legacyRules, ...ownRules, ...allRefs])]
+    if (
+      item === undefined ||
+      canonicalJson(item.ruleIds) !== canonicalJson(expectedMembership) ||
+      locatorDigestFor(item.locator) !== expected.locatorDigest ||
+      item.valueDigest !== expected.valueDigest ||
+      sha256(normalizeRuleText(item.normalizedExcerpt)) !== expected.valueDigest
+    ) {
+      violations.push(
+        violation(
+          'AUTHORITY_ESCALATION',
+          `R30 reviewed source unit '${expected.unit}' does not match its exact locator and value`,
+        ),
+      )
+    }
+  }
   for (const rule of document.rules) {
+    const r30Expected = R30_RULE_SHAPES.find((expected) => expected.ruleId === rule.ruleId)
+    const { bindingDigest: _r30Binding, ...r30Shape } = rule
+    const r30Exact =
+      r30Expected !== undefined && canonicalJson(r30Shape) === canonicalJson(r30Expected)
+    if (r30Expected !== undefined && !r30Exact) {
+      violations.push(
+        violation(
+          'AUTHORITY_ESCALATION',
+          `reserved R30 rule '${rule.ruleId}' does not match its complete reviewed shape`,
+          { ruleId: rule.ruleId },
+        ),
+      )
+    }
     const sourceNamespace = rule.ruleId.split('.').slice(1, -1).join('.')
     if (
       /(?:^|\.)[0-9a-f]{12}(?:$|\.)/.test(rule.authoritySubject) ||
@@ -2271,14 +2347,30 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
     const basisItem = itemsByRef.get(
       referenceKey(rule.authorityBasisRef.sourceId, rule.authorityBasisRef.itemId),
     )
+    const r30Basis = R30_SOURCE_ITEMS.find(
+      (item) =>
+        item.sourceId === r30Expected?.authorityBasisRef.sourceId &&
+        item.itemId === r30Expected.authorityBasisRef.itemId,
+    )
     const basisStatementMatches =
-      basisItem !== undefined &&
-      (normalizeRuleText(rule.normalizedStatement) ===
-        normalizeRuleText(basisItem.normalizedExcerpt) ||
-        (basisItem.ruleIds.length > 1 &&
-          normalizeRuleText(basisItem.normalizedExcerpt).includes(
-            normalizeRuleText(rule.normalizedStatement),
-          )))
+      r30Expected !== undefined
+        ? r30Exact &&
+          basisItem !== undefined &&
+          r30Basis !== undefined &&
+          basisItem.itemId === r30Basis.itemId &&
+          basisItem.locator.kind === r30Basis.locator.kind &&
+          basisItem.locator.anchor === r30Basis.locator.anchor &&
+          locatorDigestFor(basisItem.locator) === r30Basis.locatorDigest &&
+          sha256(normalizeRuleText(basisItem.normalizedExcerpt)) === r30Basis.valueDigest &&
+          basisItem.valueDigest === r30Basis.valueDigest &&
+          basisItem.ruleIds.includes(rule.ruleId)
+        : basisItem !== undefined &&
+          (normalizeRuleText(rule.normalizedStatement) ===
+            normalizeRuleText(basisItem.normalizedExcerpt) ||
+            (basisItem.ruleIds.length > 1 &&
+              normalizeRuleText(basisItem.normalizedExcerpt).includes(
+                normalizeRuleText(rule.normalizedStatement),
+              )))
     if (
       !rule.sourceRefs.some(
         (reference) => canonicalJson(reference) === canonicalJson(rule.authorityBasisRef),
@@ -2311,12 +2403,13 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
         ? rule.enforcementOwner === 'host-adapter' && rule.assurance === 'mediated'
         : rule.enforcementOwner === 'kernel-policy' && rule.assurance === 'structural')
     if (
-      rule.decision !== expectedDecision ||
-      !validPreActionShape ||
-      (classificationContract.enforcementOwner !== null &&
-        rule.enforcementOwner !== classificationContract.enforcementOwner) ||
-      (classificationContract.assurance !== null &&
-        rule.assurance !== classificationContract.assurance)
+      r30Expected === undefined &&
+      (rule.decision !== expectedDecision ||
+        !validPreActionShape ||
+        (classificationContract.enforcementOwner !== null &&
+          rule.enforcementOwner !== classificationContract.enforcementOwner) ||
+        (classificationContract.assurance !== null &&
+          rule.assurance !== classificationContract.assurance))
     ) {
       violations.push(
         violation(
@@ -2405,15 +2498,33 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
         locatorDigestFor(item.locator) === sourceRef.locatorDigest &&
         item.valueDigest === sourceRef.valueDigest
       ) {
+        // R30.9 binds each approved edge to its actual pinned inventory item. Corroboration
+        // remains distinct from the designated basis and never bypasses reciprocal membership.
+        const r30Reference = R30_SOURCE_ITEMS.find(
+          (expected) =>
+            expected.sourceId === sourceRef.sourceId && expected.itemId === sourceRef.itemId,
+        )
+        const r30ReferenceExact =
+          r30Exact &&
+          r30Reference !== undefined &&
+          item.itemId === r30Reference.itemId &&
+          item.locator.kind === r30Reference.locator.kind &&
+          item.locator.anchor === r30Reference.locator.anchor &&
+          locatorDigestFor(item.locator) === r30Reference.locatorDigest &&
+          item.valueDigest === r30Reference.valueDigest &&
+          sha256(normalizeRuleText(item.normalizedExcerpt)) === r30Reference.valueDigest &&
+          item.ruleIds.includes(rule.ruleId)
         const expectedRuleId = `rule.${sourceRef.sourceId}.${item.itemId.replace(/^item\./, '')}`
         const expectedCompoundPrefix = `${expectedRuleId}.`
         if (
-          rule.sourceRefs.length === 1 &&
-          R12_LEGACY_MARKDOWN_RULE_TARGETS[rule.ruleId] === undefined &&
-          ((item.ruleIds.length === 1 && rule.ruleId !== expectedRuleId) ||
-            (item.ruleIds.length > 1 &&
-              rule.ruleId !== expectedRuleId &&
-              !rule.ruleId.startsWith(expectedCompoundPrefix)))
+          r30Expected !== undefined
+            ? !r30ReferenceExact
+            : rule.sourceRefs.length === 1 &&
+              R12_LEGACY_MARKDOWN_RULE_TARGETS[rule.ruleId] === undefined &&
+              ((item.ruleIds.length === 1 && rule.ruleId !== expectedRuleId) ||
+                (item.ruleIds.length > 1 &&
+                  rule.ruleId !== expectedRuleId &&
+                  !rule.ruleId.startsWith(expectedCompoundPrefix)))
         ) {
           violations.push(
             violation(
@@ -2424,14 +2535,16 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
           )
         }
         if (
-          normalizeRuleText(rule.normalizedStatement) !==
-            normalizeRuleText(item.normalizedExcerpt) &&
-          !(
-            item.ruleIds.length > 1 &&
-            normalizeRuleText(item.normalizedExcerpt).includes(
-              normalizeRuleText(rule.normalizedStatement),
-            )
-          )
+          r30Expected !== undefined
+            ? !r30ReferenceExact
+            : normalizeRuleText(rule.normalizedStatement) !==
+                normalizeRuleText(item.normalizedExcerpt) &&
+              !(
+                item.ruleIds.length > 1 &&
+                normalizeRuleText(item.normalizedExcerpt).includes(
+                  normalizeRuleText(rule.normalizedStatement),
+                )
+              )
         ) {
           violations.push(
             violation(

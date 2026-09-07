@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict'
+import { execFileSync } from 'node:child_process'
 import { appendFileSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
@@ -255,11 +256,11 @@ test('each of the six classifications is accepted and summarized independently',
   const result = validateRegistry(valid)
   assert.equal(result.valid, true)
   assert.deepEqual(result.summary?.classificationCounts, {
-    'pre-action-refusal': 255,
-    'post-action-detection': 8,
+    'pre-action-refusal': 276,
+    'post-action-detection': 13,
     'ci-static-check': 78,
-    'independent-review-human-judgment': 15,
-    'narrative-provenance': 100,
+    'independent-review-human-judgment': 52,
+    'narrative-provenance': 109,
     unsupported: 13,
   })
 })
@@ -493,7 +494,7 @@ test('deleting the chain head invalidates rather than promoting a pinned record'
   // AC4 obligation 2 as amended by R19. Head position must not be selectable by deletion: before
   // R19, removing the head promoted the previously-pinned record into the head exemption and out of
   // its byte pin, and repointing that promoted record at the live manifest validated clean.
-  const chainHeadId = 'registry-rework-40394be'
+  const chainHeadId = 'registry-rework-66a514d'
   const kept = structuredClone(valid).reconciliations.filter(
     (record) => record.reconciliationId !== chainHeadId,
   )
@@ -2037,7 +2038,10 @@ function r13Audit(document: AuthorityEnforcementRegistry = full): R13AuditRecord
 }
 
 test('R13 normative Markdown audit has exactly 145 source-authored records', () => {
-  assert.equal(r13Audit().length, 145)
+  const baseline = r30Baseline()
+  assert.equal(baseline.normativeMarkdownAudit.length, 145)
+  assert.deepEqual(r13Audit().slice(0, 145), baseline.normativeMarkdownAudit)
+  assert.equal(r13Audit().length, 198)
 })
 
 test('R13 normative Markdown audit binds every candidate to its exact item and value', () => {
@@ -4117,7 +4121,7 @@ test('R14 a new rule wearing an approved Gate 2 rule name cannot inherit its ALL
 // and reads as "allowed", which is the trap that caught every party to this parcel at least once.
 // ===========================================================================================
 
-const CHAIN_HEAD_ID = 'registry-rework-40394be'
+const CHAIN_HEAD_ID = 'registry-rework-66a514d'
 
 type Reconciliation = AuthorityEnforcementRegistry['reconciliations'][number]
 type Evidence = Reconciliation['observedEvidence'][number]
@@ -5112,4 +5116,559 @@ test('chain topology: renaming a record out of the chain prefix does not let it 
   )
   expectMessage(mutated, `required rework migration '${CHAIN_HEAD_ID}' is missing`)
   expectMessage(mutated, 'cannot be the migration chain head')
+})
+
+test('R30 adopted sample has source-authored counts before accepting generated output', () => {
+  assert.equal(full.sources.length, 18)
+  assert.equal(
+    full.sources.reduce((sum, source) => sum + source.inventoryItems.length, 0),
+    1583,
+  )
+  assert.equal(full.rules.length, 541)
+  assert.equal(full.normativeMarkdownAudit.length, 198)
+  assert.equal(full.reconciliations.length, 20)
+})
+
+// This oracle is the reviewed source-authored mapping, not src/registry.ts or generated YAML.
+// Read lazily inside tests so importing the test module performs no Git operations.
+function r30Mapping(): string {
+  return readFileSync(
+    join(packageRoot, '../docs/goals/foreman-kernel/R30-step0-mapping-20260907.md'),
+    'utf8',
+  )
+}
+function r30Rule(unit: string, document = full): AuthorityRule {
+  const escaped = unit.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  const match = new RegExp('\\| ' + escaped + ' \\| `([^`]+)`').exec(r30Mapping())
+  ok(match, unit)
+  const rule = document.rules.find((entry) => entry.ruleId === match[1])
+  ok(rule, `${unit}: ${match[1]}`)
+  return rule
+}
+function r30Baseline(): AuthorityEnforcementRegistry {
+  return parse(
+    execFileSync(
+      'git',
+      [
+        'show',
+        '66a514d35a384f901486e7b814580eb6fb7de6ea:plugins/foreman-line/authority-registry/authority-enforcement-registry.yaml',
+      ],
+      {
+        cwd: packageRoot,
+        encoding: 'utf8',
+        maxBuffer: 32 * 1024 * 1024,
+      },
+    ),
+  ) as AuthorityEnforcementRegistry
+}
+function r30Repair(document: AuthorityEnforcementRegistry): void {
+  for (const rule of document.rules)
+    (rule as { bindingDigest: string }).bindingDigest = bindingDigestFor(rule)
+  // Repair incidental manifest evidence without changing historical records or trusted source pins.
+  const head = headOf(document)
+  ;(head as { observedEvidence: readonly Evidence[] }).observedEvidence = head.observedEvidence.map(
+    (evidence) => {
+      if (evidence.kind !== 'command-result') return evidence
+      const command = JSON.parse(evidence.reference) as Record<string, unknown>
+      if (
+        typeof command.commandId !== 'string' ||
+        !command.commandId.startsWith('superseding-binding-manifest')
+      )
+        return evidence
+      const reference = canonicalJson({
+        ...command,
+        resultDigest: registryBindingManifestDigest(document),
+      })
+      return { ...evidence, reference, digest: sha256(reference) }
+    },
+  )
+}
+function r30Mutate(
+  unit: string,
+  mutate: (rule: AuthorityRule, document: AuthorityEnforcementRegistry) => void,
+): AuthorityEnforcementRegistry {
+  const document = structuredClone(full)
+  const rule = r30Rule(unit, document)
+  const before = canonicalJson(document)
+  mutate(rule, document)
+  assert.notEqual(canonicalJson(document), before, 'named axis must actually mutate')
+  r30Repair(document)
+  return document
+}
+function r30AuthorityRefusal(document: AuthorityEnforcementRegistry, duplicatePath?: string): void {
+  const result = validateRegistry(document)
+  if (duplicatePath !== undefined) {
+    assert.equal(result.valid, false)
+    ok(
+      result.violations.some(
+        (entry) =>
+          entry.code === 'SCHEMA_INVALID' &&
+          entry.message.includes(`/${duplicatePath} must NOT have duplicate items`),
+      ),
+      JSON.stringify(result.violations),
+    )
+    return
+  }
+  assert.equal(result.valid, false)
+  ok(
+    result.violations.some(
+      (entry) => entry.code === 'AUTHORITY_ESCALATION' && /R30/.test(entry.message),
+    ),
+    JSON.stringify(result.violations),
+  )
+}
+
+test('R30 all 72 complete published shapes agree with the independent source mapping', () => {
+  const text = r30Mapping()
+  const presets = new Map(
+    [...text.matchAll(/^\| ([A-Z]+) \| \[([^\]]+)\] \| \[([^\]]+)\] \| \[([^\]]+)\] \|/gm)].map(
+      (m) => [
+        m[1],
+        {
+          goals: ['foreman-kernel'],
+          roles: m[2]?.split(','),
+          stages: m[3]?.split(','),
+          operations: m[4]?.split(','),
+          hosts: ['any'],
+        },
+      ],
+    ),
+  )
+  const rows = [
+    ...text.matchAll(
+      /^\| ([CLU]\d\d\/[^|]+) \| (IJ|PR|PD|NP) \| ([A-Z]+) \| ([^|]+) \| ([^|]+) \| ([^|]+) \|/gm,
+    ),
+  ]
+  assert.equal(rows.length, 72)
+  const classes = { IJ: 0, PR: 0, PD: 0, NP: 0 }
+  for (const row of rows) {
+    const unit = row[1]?.trim()
+    ok(unit)
+    const rule = r30Rule(unit)
+    const cls = row[2] as keyof typeof classes
+    classes[cls]++
+    const expected = {
+      IJ: ['independent-review-human-judgment', 'REQUIRE_HUMAN', 'independent-reviewer', null],
+      PR: ['pre-action-refusal', 'REFUSE', 'kernel-policy', 'FK_CANON_RULE_REFUSED'],
+      PD: ['post-action-detection', 'ADVISORY', 'coordinator', null],
+      NP: ['narrative-provenance', 'ADVISORY', 'provenance-only', null],
+    }[cls]
+    assert.deepEqual(
+      [rule.classification, rule.decision, rule.enforcementOwner, rule.refusalCode],
+      expected,
+      unit,
+    )
+    assert.equal(rule.assurance, 'human-ratified', unit)
+    assert.equal(rule.severity, 'critical', unit)
+    assert.equal(rule.authoritySubject, row[4]?.trim(), unit)
+    assert.equal(rule.authorityClaim, row[5]?.trim(), unit)
+    assert.equal(rule.normalizedStatement, normalizeRuleText(row[6]?.trim() ?? ''), unit)
+    assert.deepEqual(rule.applicability, presets.get(row[3]), unit)
+    assert.deepEqual(rule.pairedRuleIds, [], unit)
+    assert.equal(rule.retirementState, 'active-reading', unit)
+    assert.deepEqual(
+      rule.retirementEvidence,
+      {
+        predicate: null,
+        negativeRefusalTest: null,
+        corpusSweep: null,
+        independentBypassAttempt: null,
+      },
+      unit,
+    )
+    const basis = rule.sourceRefs.find(
+      (ref) => canonicalJson(ref) === canonicalJson(rule.authorityBasisRef),
+    )
+    ok(basis, unit)
+  }
+  assert.deepEqual(classes, { IJ: 37, PR: 21, PD: 5, NP: 9 })
+})
+
+test('R30 exact adopted registry and reviewed paraphrases validate without new grants', () => {
+  assert.deepEqual(validateRegistry(full).violations, [])
+  assert.deepEqual(full.operationAuthority, r30Baseline().operationAuthority)
+})
+
+test('R30 preserves all 19 complete historical reconciliations and appends only one named migration', () => {
+  const prior = r30Baseline()
+  assert.equal(prior.reconciliations.length, 19)
+  assert.equal(
+    canonicalJson(full.reconciliations.slice(0, 19)),
+    canonicalJson(prior.reconciliations),
+  )
+  assert.equal(full.reconciliations[19]?.reconciliationId, 'registry-rework-66a514d')
+  assert.equal(full.sourceSnapshotCommit, '65c471416e4a3916695815e951ffbe389288560e')
+  assert.deepEqual(
+    new Set(
+      headOf(full)
+        .observedEvidence.filter((entry) => entry.kind === 'git-commit')
+        .map((entry) => entry.reference),
+    ),
+    new Set(['66a514d35a384f901486e7b814580eb6fb7de6ea', full.sourceSnapshotCommit]),
+  )
+})
+
+test('R30 exact baseline-to-adoption item and rule delta preserves all post-R13 identities', () => {
+  const prior = r30Baseline()
+  const changed: string[] = []
+  for (const source of prior.sources) {
+    const adopted = full.sources.find((entry) => entry.sourceId === source.sourceId)
+    ok(adopted)
+    for (const item of source.inventoryItems) {
+      const current: InventoryItem | undefined = adopted.inventoryItems.find(
+        (entry) => entry.itemId === item.itemId,
+      )
+      ok(current, item.itemId)
+      assert.equal(locatorDigestFor(current.locator), locatorDigestFor(item.locator), item.itemId)
+      if (item.valueDigest !== current.valueDigest)
+        changed.push(`${source.sourceId}:${item.itemId}`)
+    }
+  }
+  assert.deepEqual(changed.sort(), ['fk-charter:item.131a7863b940', 'fk-charter:item.d21'].sort())
+  const oldRules = new Set(prior.rules.map((rule) => rule.ruleId))
+  const additions = full.rules.filter((rule) => !oldRules.has(rule.ruleId))
+  assert.equal(additions.length, 72)
+  const changedRules: string[] = []
+  for (const old of prior.rules) {
+    const current = full.rules.find((rule) => rule.ruleId === old.ruleId)
+    ok(current, old.ruleId)
+    if (current.bindingDigest !== old.bindingDigest) changedRules.push(old.ruleId)
+  }
+  assert.deepEqual(
+    changedRules.sort(),
+    ['rule.fk-charter.d21.cache-revision-binding', 'rule.fk-charter.d21.latency-budget'].sort(),
+  )
+  assert.equal(new Set(additions.map((rule) => rule.authoritySubject)).size, 72)
+  const oldSubjects = new Set(prior.rules.map((rule) => rule.authoritySubject))
+  for (const rule of additions)
+    assert.equal(oldSubjects.has(rule.authoritySubject), false, rule.ruleId)
+})
+
+const r30AxisMutations: readonly [string, (rule: AuthorityRule) => void][] = [
+  [
+    'statement word',
+    (r) => Object.assign(r, { normalizedStatement: r.normalizedStatement + ' unauthorized' }),
+  ],
+  [
+    'statement negation',
+    (r) =>
+      Object.assign(r, { normalizedStatement: r.normalizedStatement.replace('never', 'always') }),
+  ],
+  [
+    'statement number',
+    (r) => Object.assign(r, { normalizedStatement: r.normalizedStatement.replace('1000', '2000') }),
+  ],
+  [
+    'statement scope',
+    (r) =>
+      Object.assign(r, {
+        normalizedStatement: 'Only during warm startup: ' + r.normalizedStatement,
+      }),
+  ],
+  [
+    'subject',
+    (r) => Object.assign(r, { authoritySubject: 'goal.unrelated-reserved-substitution' }),
+  ],
+  ['claim', (r) => Object.assign(r, { authorityClaim: r.authorityClaim + '-changed' })],
+  ['decision', (r) => Object.assign(r, { decision: 'ALLOW', refusalCode: null })],
+  [
+    'classification',
+    (r) =>
+      Object.assign(r, {
+        classification: 'post-action-detection',
+        decision: 'ADVISORY',
+        enforcementOwner: 'coordinator',
+        refusalCode: null,
+      }),
+  ],
+  ['owner', (r) => Object.assign(r, { enforcementOwner: 'coordinator' })],
+  ['severity', (r) => Object.assign(r, { severity: 'info' })],
+  ['refusal code', (r) => Object.assign(r, { refusalCode: 'CHANGED_REFUSAL' })],
+  ['goals', (r) => Object.assign(r.applicability, { goals: ['all-foreman-goals'] })],
+  ['roles', (r) => Object.assign(r.applicability, { roles: ['any'] })],
+  ['stages', (r) => Object.assign(r.applicability, { stages: ['any'] })],
+  ['operations', (r) => Object.assign(r.applicability, { operations: ['any'] })],
+  ['hosts', (r) => Object.assign(r.applicability, { hosts: ['provider-neutral'] })],
+  ['pairings', (r) => Object.assign(r, { pairedRuleIds: [r.ruleId] })],
+  ['retirement', (r) => Object.assign(r, { retirementState: 'historical-only' })],
+  [
+    'retirement evidence',
+    (r) =>
+      Object.assign(r.retirementEvidence, {
+        predicate: { kind: 'predicate-contract', path: 'forged.ts', digest: 'a'.repeat(64) },
+      }),
+  ],
+  ['missing basis ref', (r) => Object.assign(r, { sourceRefs: r.sourceRefs.slice(1) })],
+  ['corroboration as basis', (r) => Object.assign(r, { authorityBasisRef: r.sourceRefs[1] })],
+  [
+    'source substitution',
+    (r) => Object.assign(r.authorityBasisRef, { sourceId: 'fk-loop-directive' }),
+  ],
+  ['location digest', (r) => Object.assign(r.authorityBasisRef, { locatorDigest: 'a'.repeat(64) })],
+  ['value digest', (r) => Object.assign(r.authorityBasisRef, { valueDigest: 'b'.repeat(64) })],
+]
+for (const [axis, mutate] of r30AxisMutations) {
+  test(`R30 reserved shape refuses ${axis} with repaired incidental digests`, () => {
+    r30AuthorityRefusal(r30Mutate('C23/no-late-allow', (rule) => mutate(rule)))
+  })
+}
+for (const [unit, assurance] of [
+  ['C04/events', 'independently-verified'],
+  ['C19/warm', 'detected'],
+  ['C23/no-late-allow', 'structural'],
+  ['L01/continuation', 'narrative'],
+] as const) {
+  test(`R30 ${unit} cannot revert assurance to ${assurance} through legacy fallback`, () => {
+    r30AuthorityRefusal(r30Mutate(unit, (rule) => Object.assign(rule, { assurance })))
+  })
+}
+for (const axis of ['remove', 'substitute'] as const) {
+  test(`R30 required reserved set refuses ${axis} independently of incidental digests`, () => {
+    r30AuthorityRefusal(
+      r30Mutate('C23/no-late-allow', (rule, document) => {
+        if (axis === 'remove')
+          Object.assign(document, {
+            rules: document.rules.filter((entry) => entry.ruleId !== rule.ruleId),
+          })
+        else Object.assign(rule, { ruleId: rule.ruleId + '-substitution' })
+      }),
+    )
+  })
+}
+for (const axis of [
+  'copied digest',
+  'repaired digest',
+  'locator',
+  'missing inventory membership',
+  'borrowed statement',
+  'shared-item swap',
+] as const) {
+  test(`R30 exact basis correspondence refuses ${axis}`, () => {
+    const document = r30Mutate('C23/no-late-allow', (rule, candidate) => {
+      const item = candidate.sources
+        .find((source) => source.sourceId === rule.authorityBasisRef.sourceId)
+        ?.inventoryItems.find((entry) => entry.itemId === rule.authorityBasisRef.itemId)
+      ok(item)
+      if (axis === 'locator')
+        Object.assign(item.locator, { anchor: item.locator.anchor + '-forged' })
+      else if (axis === 'missing inventory membership')
+        Object.assign(item, { ruleIds: item.ruleIds.filter((id) => id !== rule.ruleId) })
+      else if (axis === 'borrowed statement')
+        Object.assign(rule, { normalizedStatement: r30Rule('C22/deadline').normalizedStatement })
+      else if (axis === 'shared-item swap')
+        Object.assign(rule, { normalizedStatement: r30Rule('C23/points').normalizedStatement })
+      else {
+        Object.assign(item, { normalizedExcerpt: item.normalizedExcerpt + ' Permit late ALLOW.' })
+        if (axis === 'repaired digest')
+          Object.assign(item, { valueDigest: sha256(normalizeRuleText(item.normalizedExcerpt)) })
+      }
+    })
+    const result = validateRegistry(document)
+    assert.equal(result.valid, false)
+    ok(
+      result.violations.some(
+        (entry) =>
+          entry.code === 'MIGRATION_EVIDENCE_INVALID' &&
+          entry.message.includes('authorityBasisRef'),
+      ),
+      JSON.stringify(result.violations),
+    )
+  })
+}
+
+const r30ProvenanceUnits = [
+  'C02/self-application',
+  'C03/adoption',
+  'C18/reaffirm',
+  'L01/continuation',
+  'L02/publication',
+  'L03/shaping',
+  'U02/original-event',
+  'U03/reopen-event',
+  'U04/a1-event',
+] as const
+for (const unit of r30ProvenanceUnits) {
+  test(`R30 ${unit} is exact noncontrolling provenance rather than a runtime grant`, () => {
+    const rule = r30Rule(unit)
+    assert.deepEqual(
+      [rule.classification, rule.decision, rule.enforcementOwner, rule.assurance],
+      ['narrative-provenance', 'ADVISORY', 'provenance-only', 'human-ratified'],
+    )
+    const query: AuthorityQuery = {
+      authoritySubject: rule.authoritySubject,
+      goal: 'foreman-kernel',
+      role: 'coordinator',
+      stage: 'shaping',
+      operation: 'state-transition',
+      host: 'provider-neutral',
+    }
+    const result = resolveAuthority(full, query)
+    assert.equal(result.outcome, 'REQUIRE_HUMAN')
+    assert.equal(result.reasonCode, 'NO_APPLICABLE_AUTHORITY')
+    assert.deepEqual(result.controllingRuleIds, [])
+    r30AuthorityRefusal(
+      r30Mutate(unit, (entry) =>
+        Object.assign(entry, {
+          classification: 'independent-review-human-judgment',
+          decision: 'REQUIRE_HUMAN',
+          enforcementOwner: 'independent-reviewer',
+        }),
+      ),
+    )
+  })
+}
+const r30Queries = [
+  ['C42/gates', 'coordinator', 'shaping', 'state-transition', 'REFUSE'],
+  ['C42/gates', 'coordinator', 'step-zero', 'state-transition', 'REFUSE'],
+  ['C42/gates', 'shaper', 'shaping', 'spec-mutation', 'REFUSE'],
+  ['C42/gates', 'reviewer', 'adversarial-review', 'receipt-validation', 'REFUSE'],
+  ['C42/gates', 'coordinator', 'merge', 'state-transition', 'REFUSE'],
+  ['C42/contract', 'shaper', 'shaping', 'spec-mutation', 'REQUIRE_HUMAN'],
+  ['C42/contract', 'reviewer', 'step-zero', 'repo-read', 'REQUIRE_HUMAN'],
+  ['U01/stable-ids', 'coordinator', 'build', 'repo-mutation', 'REQUIRE_HUMAN'],
+  ['U01/stable-ids', 'shaper', 'shaping', 'spec-mutation', 'REQUIRE_HUMAN'],
+  ['U01/stable-ids', 'kernel', 'runtime', 'receipt-validation', 'REQUIRE_HUMAN'],
+  ['C11/carriers', 'shaper', 'shaping', 'spec-mutation', 'REQUIRE_HUMAN'],
+  ['C34/manifest', 'shaper', 'step-zero', 'repo-mutation', 'REQUIRE_HUMAN'],
+  ['C32/accounting', 'shaper', 'shaping', 'spec-mutation', 'REQUIRE_HUMAN'],
+  ['C43/window', 'coordinator', 'closure', 'repo-mutation', 'REQUIRE_HUMAN'],
+  ['L04/preservation', 'operator', 'runtime', 'repo-read', 'REFUSE'],
+] as const
+for (const [unit, role, stage, operation, outcome] of r30Queries) {
+  test(`R30 applicable ${unit} covers ${role}/${stage}/${operation} on supported and unsupported hosts`, () => {
+    const rule = r30Rule(unit)
+    for (const host of ['provider-neutral', 'unsupported-host'] as const) {
+      const result = resolveAuthority(full, {
+        authoritySubject: rule.authoritySubject,
+        goal: 'foreman-kernel',
+        role,
+        stage,
+        operation,
+        host,
+      })
+      assert.equal(result.outcome, 'RESOLVED', JSON.stringify(result))
+      ok(result.outcome === 'RESOLVED')
+      assert.equal(result.decision, outcome, JSON.stringify(result))
+      assert.deepEqual(result.controllingRuleIds, [rule.ruleId])
+      ok('assurance' in result, JSON.stringify(result))
+      assert.equal(result.assurance, 'human-ratified')
+    }
+  })
+}
+
+test('R30 exact correspondence does not bypass protected operation or migration refusal', () => {
+  const protectedMutation = structuredClone(full)
+  const row = protectedMutation.operationAuthority.find(
+    (entry) => entry.operationId === 'external.write',
+  )
+  ok(row)
+  Object.assign(row, { allowedPrincipals: ['coordinator'] })
+  r30Repair(protectedMutation)
+  expectCode(protectedMutation, 'AUTHORITY_ESCALATION')
+  const migrationMutation = structuredClone(full)
+  Object.assign(headOf(migrationMutation), { migrationStatus: 'open', supersedingEvidence: null })
+  expectCode(migrationMutation, 'MIGRATION_EVIDENCE_INVALID')
+})
+
+for (const axis of ['missing', 'extra', 'reordered', 'swapped', 'duplicate'] as const) {
+  test(`R30 approved reference-edge set rejects ${axis} refs with repaired incidental digests`, () => {
+    r30AuthorityRefusal(
+      r30Mutate('C23/no-late-allow', (rule) => {
+        const refs = structuredClone([...rule.sourceRefs])
+        if (axis === 'missing') refs.pop()
+        else if (axis === 'extra')
+          refs.push(structuredClone(r30Rule('U01/stable-ids').authorityBasisRef))
+        else if (axis === 'reordered') refs.reverse()
+        else if (axis === 'swapped')
+          refs[1] = structuredClone(r30Rule('U01/stable-ids').authorityBasisRef)
+        else refs.push(structuredClone(refs[0] as AuthorityRule['authorityBasisRef']))
+        Object.assign(rule, { sourceRefs: refs })
+      }),
+      axis === 'duplicate' ? 'sourceRefs' : undefined,
+    )
+  })
+}
+for (const axis of ['missing', 'extra', 'cross-item', 'duplicate'] as const) {
+  test(`R30 reciprocal inventory edge set rejects ${axis} membership`, () => {
+    const document = r30Mutate('C23/no-late-allow', (rule, candidate) => {
+      const ref = rule.sourceRefs[2]
+      ok(ref)
+      const item = candidate.sources
+        .find((source) => source.sourceId === ref.sourceId)
+        ?.inventoryItems.find((entry) => entry.itemId === ref.itemId)
+      ok(item)
+      const ids = [...item.ruleIds]
+      if (axis === 'missing') ids.splice(ids.indexOf(rule.ruleId), 1)
+      else if (axis === 'extra') ids.push('rule.fk-charter.d1')
+      else if (axis === 'duplicate') ids.push(rule.ruleId)
+      else ids[ids.indexOf(rule.ruleId)] = r30Rule('U01/stable-ids').ruleId
+      Object.assign(item, { ruleIds: ids })
+    })
+    r30AuthorityRefusal(document, axis === 'duplicate' ? 'ruleIds' : undefined)
+  })
+}
+for (const axis of ['suffix substitution', 'borrowed suffix'] as const) {
+  test(`R30 singleton component identity refuses ${axis}`, () => {
+    r30AuthorityRefusal(
+      r30Mutate('U02/original-event', (rule) => {
+        Object.assign(rule, {
+          ruleId:
+            axis === 'suffix substitution'
+              ? rule.ruleId + '-changed'
+              : r30Rule('U03/reopen-event').ruleId,
+        })
+      }),
+    )
+  })
+}
+
+test('R30 preserves ordinary unrelated legacy singleton and nonliteral-paraphrase refusals', () => {
+  const original = full.rules.find((rule) => rule.ruleId === 'rule.fk-charter.d1')
+  ok(original)
+  const altered = structuredClone(full)
+  const rule = altered.rules.find((entry) => entry.ruleId === original.ruleId)
+  ok(rule)
+  Object.assign(rule, {
+    normalizedStatement: rule.normalizedStatement + ' A newly paraphrased exception applies.',
+  })
+  r30Repair(altered)
+  const result = validateRegistry(altered)
+  ok(
+    result.violations.some(
+      (entry) =>
+        entry.code === 'MIGRATION_EVIDENCE_INVALID' &&
+        entry.message.includes('normalizedStatement'),
+    ),
+    JSON.stringify(result.violations),
+  )
+  const suffix = structuredClone(full)
+  const singleton = suffix.rules.find((entry) => entry.ruleId === original.ruleId)
+  ok(singleton)
+  Object.assign(singleton, { ruleId: singleton.ruleId + '.borrowed-component' })
+  r30Repair(suffix)
+  expectCode(suffix, 'RULE_ORPHANED')
+})
+
+test('R30 corroboration adds exactly 67 reciprocal edges without changing the designated bases', () => {
+  const targets = [
+    ['C03/adoption', 57],
+    ['C19/warm', 9],
+    ['C02/self-application', 1],
+  ] as const
+  for (const [unit, count] of targets) {
+    const rule = r30Rule(unit)
+    const ref = unit === 'C19/warm' ? rule.sourceRefs[1] : rule.authorityBasisRef
+    ok(ref)
+    const references = full.rules.filter(
+      (entry) =>
+        entry.sourceRefs.some((candidate) => canonicalJson(candidate) === canonicalJson(ref)) &&
+        canonicalJson(entry.authorityBasisRef) !== canonicalJson(ref),
+    )
+    assert.equal(references.length, count, unit)
+    const item = full.sources
+      .find((source) => source.sourceId === ref.sourceId)
+      ?.inventoryItems.find((candidate) => candidate.itemId === ref.itemId)
+    ok(item)
+    for (const referencing of references) assert.ok(item.ruleIds.includes(referencing.ruleId))
+  }
 })

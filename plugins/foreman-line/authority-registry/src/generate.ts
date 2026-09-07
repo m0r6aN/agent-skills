@@ -6,13 +6,15 @@ import { parse, stringify } from 'yaml'
 import { generate } from '../../schema-scaffold/src/generate.js'
 import {
   allSchemaFiles,
+  NORMATIVE_MARKDOWN_AUDIT_KEYS,
   R12_LEGACY_MARKDOWN_RULE_TARGETS,
   R12_PRIOR_REGISTRY_COMMIT,
-  R13_NORMATIVE_MARKDOWN_AUDIT_KEYS,
   R13_NORMATIVE_MARKDOWN_PUBLICATION_KEYS,
   R13_PRIOR_REGISTRY_COMMIT,
-  R14_PRIOR_REGISTRY_COMMIT,
-  R15_PRIOR_REGISTRY_COMMIT,
+  R30_PRIOR_REGISTRY_COMMIT,
+  R30_RULE_SHAPES,
+  R30_SOURCE_ITEMS,
+  R30_SOURCE_SNAPSHOT,
 } from './registry.js'
 import type {
   AuthorityEffect,
@@ -63,18 +65,8 @@ const SNAPSHOT = '51857a3a7796b393c0c0a68712f98c06e7015d79'
  * commit whose bytes were not the ones hashed would be a knowingly false statement, so this
  * advances and the advance is recorded as a typed migration record.
  */
-const CURRENT_SNAPSHOT = '5f9cf65eec98f5496202639007205da81ef1c34d'
+const CURRENT_SNAPSHOT = R30_SOURCE_SNAPSHOT
 
-/**
- * The snapshot the R14 record was authored against, now historical.
- *
- * `registry-rework-df8155a` is demoted from chain head by this round, so it becomes a byte-frozen
- * record bound by `RECONCILIATION_RECORD_DIGESTS` exactly like the twelve before it. It therefore
- * has to keep declaring the commit whose bytes IT hashed. Deriving it from `CURRENT_SNAPSHOT`
- * would rewrite a historical attestation every time the live baseline advances, which is the same
- * defect the pinned `R13_MANIFEST` constants below exist to prevent.
- */
-const R14_SNAPSHOT = '7e7dc7dbb90317a5a2cd69c21a8b86c4a3a4e1e2'
 /**
  * The three volatile regions R24 authorizes, with the extents R27 corrected.
  *
@@ -707,6 +699,19 @@ function frozenMarkdownItemIds(): Map<string, string> {
     }
   }
 
+  // R30 extends the existing anchor-keyed freeze through the exact prior shipped inventory.
+  // Post-R13 items must not receive new identities merely because a source insertion shifts lines.
+  const r30PriorAnchors = new Set<string>()
+  for (const source of registryAtCommit(R30_PRIOR_REGISTRY_COMMIT).sources) {
+    for (const item of source.inventoryItems) {
+      if (!item.locator.anchor.startsWith('md-block:')) continue
+      const key = `${source.sourceId}\u0000${item.locator.anchor}`
+      if (r30PriorAnchors.has(key)) throw new Error(`ambiguous prior R30 anchor '${key}'`)
+      r30PriorAnchors.add(key)
+      identities.set(key, item.itemId)
+      frozenMarkdownItemIdsInUse.add(`${source.sourceId}\u0000${item.itemId}`)
+    }
+  }
   // The R11 reconstruction matches prior items to current blocks by `lineHint`, which is only sound
   // while the source's line numbering is unchanged. Ratified amendment A1 inserted D21, the section
   // 4.1 ratification ledger and integration scenario 14 into the charter and rewrote the loop
@@ -11836,6 +11841,39 @@ function buildSource(definition: SourceDefinition): {
       valueDigest,
     }
     const curationKey = `${definition.sourceId}:${locator.anchor}`
+    const r30Item = R30_SOURCE_ITEMS.find(
+      (item) => item.sourceId === definition.sourceId && item.locator.anchor === locator.anchor,
+    )
+    if (r30Item !== undefined) {
+      if (
+        r30Item.itemId !== itemId ||
+        r30Item.locatorDigest !== locatorDigestFor(locator) ||
+        r30Item.valueDigest !== valueDigest
+      ) {
+        throw new Error(`R30 reviewed source mapping drift: ${r30Item.unit}`)
+      }
+      const shapes = R30_RULE_SHAPES.filter(
+        (rule) =>
+          rule.authorityBasisRef.sourceId === definition.sourceId &&
+          rule.authorityBasisRef.itemId === itemId,
+      )
+      if (shapes.length > 0) {
+        const published = shapes.map((shape) => ({
+          ...structuredClone(shape),
+          bindingDigest: bindingDigestFor(shape),
+        }))
+        rules.push(...published)
+        return {
+          itemId,
+          locator,
+          normalizedExcerpt,
+          valueDigest,
+          ruleIds: published.map((rule) => rule.ruleId),
+          exclusionDisposition: null,
+          rationale: `R30 reviewed source unit ${r30Item.unit} maps every component to its exact source-intent shape; provenance never grants runtime authority.`,
+        }
+      }
+    }
     if (R13_NORMATIVE_MARKDOWN_PUBLICATION_KEYS.has(curationKey)) {
       const ruleId = `rule.${definition.sourceId}.${itemId.replace(/^item\./, '')}`
       const baseRule: AuthorityRule = {
@@ -12849,7 +12887,18 @@ function _requiredReconciliations(
 
 function buildRegistry(): AuthorityEnforcementRegistry {
   const built = SOURCE_DEFINITIONS.map(buildSource)
-  const sources = built.map((entry) => entry.source)
+  // Corroborating references remain reciprocal inventory links. They never replace the basis.
+  const sources = built.map((entry) => ({
+    ...entry.source,
+    inventoryItems: entry.source.inventoryItems.map((item) => {
+      const corroborating = R30_RULE_SHAPES.filter((rule) =>
+        rule.sourceRefs.some(
+          (ref) => ref.sourceId === entry.source.sourceId && ref.itemId === item.itemId,
+        ),
+      ).map((rule) => rule.ruleId)
+      return { ...item, ruleIds: [...new Set([...item.ruleIds, ...corroborating])] }
+    }),
+  }))
   const rules = built.flatMap((entry) => entry.rules)
   const operation = operationAuthority({
     gate1: [
@@ -12874,7 +12923,7 @@ function buildRegistry(): AuthorityEnforcementRegistry {
       refFor(sources, 'fk-loop-directive', 'item.e3065db62b43'),
     ],
   })
-  const normativeMarkdownAudit = R13_NORMATIVE_MARKDOWN_AUDIT_KEYS.map((key) => {
+  const normativeMarkdownAudit = NORMATIVE_MARKDOWN_AUDIT_KEYS.map((key) => {
     const separator = key.indexOf(':')
     const sourceId = key.slice(0, separator)
     const locatorAnchor = key.slice(separator + 1)
@@ -12908,19 +12957,21 @@ function buildRegistry(): AuthorityEnforcementRegistry {
     normativeMarkdownAudit,
     volatileRegions: volatileRegionsFor(sources),
   }
-  // The R13 record is HISTORICAL and byte-frozen by validate.ts's RECONCILIATION_RECORD_DIGESTS.
-  // Its manifest digests are the values it was authored with and must not be recomputed: the
-  // source baseline now advances, so recomputing them would rewrite a frozen historical record.
-  const R13_PRIOR_MANIFEST = '1186818bad7da994a1a5b3572211bebe059a64d8ca6ba0d5845d5eca5c9e137a'
-  const R13_MANIFEST = 'f753296b78bcf4d8de9e603e8e347286519a26694c2241ae4a00a05676388e2f'
-  const r13Manifest = R13_MANIFEST
-  const priorManifest = R13_PRIOR_MANIFEST
-  const basisRule = rules.find((rule) => rule.ruleId === 'rule.fk-charter.2a524c1ea63f')
-  if (basisRule === undefined) throw new Error('R13 migration basis rule is missing')
-  const ambientCheckoutRule = rules.find(
-    (rule) => rule.ruleId === 'rule.fk-loop-directive.3fe253f7c599',
+  // R30 preserves every historical record from the committed prior registry. Advancing the
+  // live source snapshot must never rebuild an old attestation from the adopted source bytes.
+  const prior = registryAtCommit(R30_PRIOR_REGISTRY_COMMIT)
+  const history = structuredClone(prior.reconciliations)
+  const adopted = { ...provisional, reconciliations: history }
+  const priorManifest = registryBindingManifestDigest(prior)
+  const newManifest = registryBindingManifestDigest(adopted)
+  const adoption = R30_RULE_SHAPES.find(
+    (rule) => rule.authoritySubject === 'goal.infrastructure-adoption.ratification',
   )
-  if (ambientCheckoutRule === undefined) throw new Error('standing authorization 8 is missing')
+  const continuation = R30_RULE_SHAPES.find(
+    (rule) => rule.authoritySubject === 'goal.continuation.scoped-decision-authority',
+  )
+  if (adoption === undefined || continuation === undefined)
+    throw new Error('missing reviewed R30 adoption authority')
   const commandEvidence = (commandId: string, inputDigest: string, resultDigest: string) =>
     canonicalJson({
       tool: '@foreman-line/authority-registry',
@@ -12932,168 +12983,41 @@ function buildRegistry(): AuthorityEnforcementRegistry {
       actorClass: 'coordinator',
     })
   const priorCommand = commandEvidence(
-    'registry-binding-manifest-r12',
-    sha256(R13_PRIOR_REGISTRY_COMMIT),
+    'registry-binding-manifest-r29',
+    sha256(R30_PRIOR_REGISTRY_COMMIT),
     priorManifest,
   )
-  const currentCommand = commandEvidence(
-    'superseding-binding-manifest-r13',
+  const nextCommand = commandEvidence(
+    'superseding-binding-manifest-r30',
     priorManifest,
-    r13Manifest,
+    newManifest,
   )
-  const r13Migration: ReconciliationRecord = {
-    reconciliationId: 'registry-rework-0683bc0',
-    topic: 'R12 registry bindings superseded by the coordinator-ratified FK-P0 R13 amendment.',
-    observedRefs: [basisRule.authorityBasisRef],
+  const record: ReconciliationRecord = {
+    reconciliationId: 'registry-rework-66a514d',
+    topic:
+      'Round-6 registry bindings superseded by the coordinator-ratified FK-P0 R30 corpus adoption.',
+    observedRefs: [adoption.authorityBasisRef, continuation.authorityBasisRef],
     observedEvidence: [
-      {
-        kind: 'git-commit',
-        reference: R13_PRIOR_REGISTRY_COMMIT,
-        digest: sha256(
-          execFileSync('git', ['cat-file', '-p', R13_PRIOR_REGISTRY_COMMIT], { cwd: repoRoot }),
-        ),
-      },
-      {
-        kind: 'git-commit',
-        reference: SNAPSHOT,
-        digest: sha256(execFileSync('git', ['cat-file', '-p', SNAPSHOT], { cwd: repoRoot })),
-      },
-      { kind: 'command-result', reference: priorCommand, digest: sha256(priorCommand) },
-      { kind: 'command-result', reference: currentCommand, digest: sha256(currentCommand) },
+      ...[R30_PRIOR_REGISTRY_COMMIT, CURRENT_SNAPSHOT].map((commit) => ({
+        kind: 'git-commit' as const,
+        reference: commit,
+        digest: sha256(execFileSync('git', ['cat-file', '-p', commit], { cwd: repoRoot })),
+      })),
+      ...[priorCommand, nextCommand].map((reference) => ({
+        kind: 'command-result' as const,
+        reference,
+        digest: sha256(reference),
+      })),
     ],
-    authoritativeRuleIds: [basisRule.ruleId],
+    authoritativeRuleIds: [adoption.ruleId, continuation.ruleId],
     scopedDisposition:
-      'The R13 normative Markdown audit, fail-closed public resolver, structural YAML profile model, lineHint-free identity, and duplicate keyed-table refusal supersede the R12 registry bindings in FK scope.',
+      'R30 adopts the committed September 7 charter and loop within the unchanged eighteen-source set. Preserve all nineteen prior reconciliation records canonically. Add 47 body items and 11 headings; change D21 and ledger paragraph 3 source values; add 72 source-bound rules, including four unchanged-ledger repairs, and 53 audit dispositions. Add exactly 67 reciprocal corroboration links: 57 to L5, 9 to D21, and 1 to L4. Preserve all existing rule identities, including both D21 bindings; no item/rule removals or locator-identity changes. The nine event and permission facts are noncontrolling provenance, never runtime grants. All 72 reserved shapes carry human-ratified source intent only.',
     unresolvedConsequence:
-      'Future binding changes require another typed prior-to-new migration record.',
+      'Future binding changes require another typed prior-to-new migration record; human Gate 3, complete verification, independent review and exact source/authority boundaries remain mandatory.',
     migrationStatus: 'superseded-by-amendment',
-    supersedingEvidence: basisRule.authorityBasisRef,
+    supersedingEvidence: adoption.authorityBasisRef,
   }
-  const withR13: AuthorityEnforcementRegistry = {
-    ...provisional,
-    reconciliations: [...provisional.reconciliations, r13Migration],
-  }
-
-  // R14 - this rework. It records two things the chain must carry: the source baseline advancing
-  // from the initial dispatch commit to the commit whose bytes were actually hashed, and the
-  // superseding binding manifest that results. `reconciliations` are outside
-  // `registryBindingManifestDigest`, so appending this record does not perturb the digest it
-  // declares - which is what makes the chain non-circular.
-  // Pinned for the same reason as `R13_MANIFEST` above: the R14 record is now HISTORICAL - R15
-  // demotes it from chain head - so it is byte-frozen by validate.ts's
-  // RECONCILIATION_RECORD_DIGESTS and must keep the manifest it was authored with. Recomputing it
-  // from the live document would make a frozen record restate this round's result as R14's, which
-  // breaks the chain's `restatedPrevDigest` agreement check by construction.
-  const R14_MANIFEST = '767dabec7dce1bcd9c1436fab93107d049747d1e20d60d6715a3af06e015775a'
-  const r14Manifest = R14_MANIFEST
-  const r14PriorCommand = commandEvidence(
-    'registry-binding-manifest-r13',
-    sha256(R14_PRIOR_REGISTRY_COMMIT),
-    R13_MANIFEST,
-  )
-  const r14SupersedingCommand = commandEvidence(
-    'superseding-binding-manifest-r14',
-    R13_MANIFEST,
-    r14Manifest,
-  )
-  const r14Migration: ReconciliationRecord = {
-    reconciliationId: 'registry-rework-df8155a',
-    topic: 'R13 registry bindings superseded by the coordinator-ratified FK-P0 R14 rework.',
-    observedRefs: [basisRule.authorityBasisRef],
-    observedEvidence: [
-      {
-        kind: 'git-commit',
-        reference: R14_PRIOR_REGISTRY_COMMIT,
-        digest: sha256(
-          execFileSync('git', ['cat-file', '-p', R14_PRIOR_REGISTRY_COMMIT], { cwd: repoRoot }),
-        ),
-      },
-      {
-        kind: 'git-commit',
-        reference: R14_SNAPSHOT,
-        digest: sha256(execFileSync('git', ['cat-file', '-p', R14_SNAPSHOT], { cwd: repoRoot })),
-      },
-      { kind: 'command-result', reference: r14PriorCommand, digest: sha256(r14PriorCommand) },
-      {
-        kind: 'command-result',
-        reference: r14SupersedingCommand,
-        digest: sha256(r14SupersedingCommand),
-      },
-    ],
-    authoritativeRuleIds: [basisRule.ruleId],
-    scopedDisposition:
-      'The R14 genesis-anchored migration chain, digest-verified retirement evidence, fail-closed resolver query guard, and re-bound charter and loop-directive sources supersede the R13 registry bindings in FK scope.',
-    unresolvedConsequence:
-      'Future binding changes require another typed prior-to-new migration record.',
-    migrationStatus: 'superseded-by-amendment',
-    supersedingEvidence: basisRule.authorityBasisRef,
-  }
-  const withR14: AuthorityEnforcementRegistry = {
-    ...withR13,
-    reconciliations: [...withR13.reconciliations, r14Migration],
-  }
-
-  // R15 - the R24 volatile-region rework, and the new chain head. R28 fixed the naming rule that
-  // had been folklore: one record per rework ROUND, named for the commit that last touched the
-  // shipped YAML at the moment that round's regeneration is committed. `R15_PRIOR_REGISTRY_COMMIT`
-  // was measured with `git log -1 -- authority-enforcement-registry.yaml`, which is why this is
-  // `registry-rework-40394be` and not a record per intervening commit.
-  //
-  // This record carries TWO obligations, per R28's ruling that one record covers both with two
-  // `observedRefs`: the source baseline advancing to the commit whose bytes are actually hashed,
-  // and the de-publication of the `## Current state` operational snapshot rule. The second is a
-  // REDUCTION in the published set, so its final digests are pinned in prose below - not in
-  // `observedRefs`, because an `observedRef` must resolve to a live item and this item no longer
-  // exists in the inventory at all.
-  const r15Manifest = registryBindingManifestDigest(withR13)
-  const r15PriorCommand = commandEvidence(
-    'registry-binding-manifest-r14',
-    sha256(R15_PRIOR_REGISTRY_COMMIT),
-    R14_MANIFEST,
-  )
-  const r15SupersedingCommand = commandEvidence(
-    'superseding-binding-manifest-r15',
-    R14_MANIFEST,
-    r15Manifest,
-  )
-  const r15Migration: ReconciliationRecord = {
-    reconciliationId: 'registry-rework-40394be',
-    topic: 'R14 registry bindings superseded by the coordinator-ratified FK-P0 round-6 amendments.',
-    observedRefs: [basisRule.authorityBasisRef, ambientCheckoutRule.authorityBasisRef],
-    observedEvidence: [
-      {
-        kind: 'git-commit',
-        reference: R15_PRIOR_REGISTRY_COMMIT,
-        digest: sha256(
-          execFileSync('git', ['cat-file', '-p', R15_PRIOR_REGISTRY_COMMIT], { cwd: repoRoot }),
-        ),
-      },
-      {
-        kind: 'git-commit',
-        reference: CURRENT_SNAPSHOT,
-        digest: sha256(
-          execFileSync('git', ['cat-file', '-p', CURRENT_SNAPSHOT], { cwd: repoRoot }),
-        ),
-      },
-      { kind: 'command-result', reference: r15PriorCommand, digest: sha256(r15PriorCommand) },
-      {
-        kind: 'command-result',
-        reference: r15SupersedingCommand,
-        digest: sha256(r15SupersedingCommand),
-      },
-    ],
-    authoritativeRuleIds: [basisRule.ruleId, ambientCheckoutRule.ruleId],
-    scopedDisposition:
-      'The R24-R29 round-6 volatile-region and curation rework supersedes the R14 registry bindings in FK scope. The declared volatile regions are excised before block discovery and ordinal assignment, so operational state cannot displace a governed sibling. The source baseline advances to the commit whose bytes were hashed. rule.fk-loop-directive.ae7854c7dad1 is DE-PUBLISHED, not retired: its subject goal.current-state-record and claim stage-zero-complete-and-fk-p0-next were an operational status snapshot published as canon, and its backing item is excised from inventory. Its final locatorDigest was cd404753257ddc78f7d8f473b679ce9410d745af89a459363f029838e6941c6c and its final valueDigest was 39dd6f0a5551d6fde0f694415fcb01f6f407115c1ca5a74da7b570239d61f371. The unpublished FK-P0 queue audit candidate is also removed because its audited signal was solely the now-volatile State cell; its final locatorDigest was 7fcf048fef2f8f007fe9083fabccf58cea064025f51a0468f471144e94818de5 and its final valueDigest was 1a430cadb645418f777ef2827628d2efe92cde3b84ab1337589f20c335615262. Standing authorization 8 is now published as pre-action-refusal / REFUSE under kernel-policy and is quoted exactly: 8. **The ambient `D:/Repos/agent-skills` checkout carries user-owned changes. Never touch or absorb them.** No agent working this goal — coordinator, builder, reviewer, or shaping session — reads from or writes to the ambient checkout, and no user-owned change is absorbed into a parcel branch. Relocated here from `## Current state` by R27, because it is a prohibition and was sitting in a section declared volatile, curated `ruleIds: []` with a boilerplate rationale asserting it stated no rule. It states a rule.',
-    unresolvedConsequence:
-      'Future binding changes require another typed prior-to-new migration record. Declaring a new volatile region over an already-published locator remains refused, so any future region that would absorb governed text requires a spec amendment first.',
-    migrationStatus: 'superseded-by-amendment',
-    supersedingEvidence: basisRule.authorityBasisRef,
-  }
-  return {
-    ...withR14,
-    reconciliations: [...withR14.reconciliations, r15Migration],
-  }
+  return { ...adopted, reconciliations: [...history, record] }
 }
 
 function buildMinimal(full: AuthorityEnforcementRegistry): AuthorityEnforcementRegistry {
