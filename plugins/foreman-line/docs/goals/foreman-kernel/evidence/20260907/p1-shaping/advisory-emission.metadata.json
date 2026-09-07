@@ -1,0 +1,11 @@
+{
+  "command": [
+    "D:/nvm/v24.19.0/node.exe",
+    "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-unattended-20260907\\plugins\\foreman-line\\shaping\\node_modules\\tsx\\dist\\cli.mjs",
+    "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-unattended-20260907\\plugins\\foreman-line\\docs\\goals\\foreman-kernel\\evidence\\20260907\\p1-shaping\\run-shaping.mts"
+  ],
+  "directExit": 1,
+  "elapsedMs": 1604,
+  "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderrSha256": "d42395f980998cc941dcb6f9197870cbcfa9dd268003cf2ba3fa642979dbf266"
+}

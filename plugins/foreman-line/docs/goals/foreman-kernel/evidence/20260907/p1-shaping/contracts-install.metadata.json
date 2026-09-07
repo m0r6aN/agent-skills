@@ -1,0 +1,9 @@
+{
+  "command": "npm ci",
+  "node": "D:/nvm/v24.19.0/node.exe",
+  "nodeVersion": "v24.19.0",
+  "directExit": 0,
+  "elapsedMs": 23227,
+  "stdoutSha256": "36b48fcb6f3202b74ac440d9c9ec6aa0f6ee32a8a54a26a7fc8e0907b86b436d",
+  "stderrSha256": "5b54f9ba441a92ad33cfbbacce37c54d721ecd46094518175dc347fd8b98922e"
+}

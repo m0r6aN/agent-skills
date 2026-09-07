@@ -64,3 +64,8 @@ After scheduling permits, the coordinator should use the shaping package's inspe
 Then derive the canonical slug through `deriveSessionSlug` for `fk-p1-lifecycle-admission-decision-contracts-20260907` and invoke the existing emitter, after extending the permitted shaping output set to the single corresponding `.shaping-result.json` path. Payload must contain the one spec POSIX path and `epics: []`. Do not fabricate the JSON manually, issue a receipt, fill an epic tree or register an external item. Emission remains pending and must be reported as such until completed.
 
 Draft spec: `plugins/foreman-line/docs/specs/active/FK-P1-lifecycle-admission-decision-contracts.md`. Recommended next action: independent contract review and explicit coordinator dispositions while FK-P0 verification/rework continues; then schedule advisory checks/emitter. Implementation remains blocked on accepted upstream P0 and draft activation.
+
+
+## Coordinator shaping completion
+
+The preceding pending advisory/emitter steps are now complete. FK-P1-shaping-review-20260907.md records independent draft approval, supported-Node two-layer advisory pass and schema-valid ShapingResult emission/readback. Initial isolated dependency failure and successful retry are both retained. Draft status and pre-activation dependencies remain unchanged; this completes Stage A preparation only.
