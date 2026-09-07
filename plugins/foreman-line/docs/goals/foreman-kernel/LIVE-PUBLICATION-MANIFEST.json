@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "capturedUtc": "2026-09-07T17:22:37.165392+00:00",
+  "capturedUtc": "2026-09-07T17:29:01.463127+00:00",
   "origin": "https://github.com/m0r6aN/agent-skills.git",
   "coordinatorSource": {
     "worktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-unattended-20260907",
     "branch": "codex/foreman-kernel-unattended-20260907",
-    "fullHeadSha": "3ab37f8cf333a372b865e27c6bf0a4bcba90a5d1"
+    "fullHeadSha": "f1407d3d81beda4b551e55e6c8762836cc3297db"
   },
   "implementationSource": {
     "worktree": "D:/Repos/agent-skills-worktrees/fk-p0-r30-adoption-20260907",
@@ -59,8 +59,8 @@
     },
     {
       "path": "plugins/foreman-line/docs/goals/foreman-kernel/CURRENT-RESUME.md",
-      "bytes": 5527,
-      "gitBlobSha256": "8424605bad6c61a040f7662b6229e43f887e82e9380fe7314a9301d1b56a8f92"
+      "bytes": 5853,
+      "gitBlobSha256": "fed2680da2d79fd36dca8c5be728c517652b108f17edb0468ddb77202ce1e5a9"
     },
     {
       "path": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-BLOCKER-volatile-canon-source.md",
@@ -859,8 +859,8 @@
     },
     {
       "path": "plugins/foreman-line/docs/goals/foreman-kernel/loop-directive.md",
-      "bytes": 33138,
-      "gitBlobSha256": "da75b154a531dacb4238383edc0a4aa607c091203bef702f5a2e760e58365f1c"
+      "bytes": 33106,
+      "gitBlobSha256": "713e25f0471906159c4cfdaa85149fee847dd0774cc8ee2fc8d645534f93cd27"
     },
     {
       "path": "plugins/foreman-line/docs/goals/foreman-kernel/main-source-compatibility-20260907.json",
@@ -1016,14 +1016,14 @@
     }
   ],
   "unpublishedChangesIncluded": "Initial publication captured explicitly inventoried source work; see immutable handoff manifest. Continuation captures committed ratifications, contracts, baseline evidence, R30 code checkpoint and P1/U1 preparation. No unrelated ambient changes or credentials are included.",
-  "preservedUnpublishedWork": "Original ambient dirty A1 deletion and untracked companion charter remain preserved. AcceptedR30code/evidence/reviews andR31source/Step0/ruling are published. ActiveR31package/evidence edits remain builder-owned in isolatedworktree until a new checkpoint; no acceptance claim for those in-flight edits.",
+  "preservedUnpublishedWork": "Original ambient dirty A1 deletion and untracked companion charter remain preserved. R30 accepted implementation/evidence/reviews and R31 source/Step0/ruling/code/development evidence are published. New R31 full-chain output remains builder-owned in-flight until its final evidence checkpoint; no pass inferred.",
   "unresolvedDependencies": [
-    "Complete scoped R31 implementation and focused affectedR30/newcontrols under published2ed7569ruling, preserving exactsource8d and approvedmapping.",
-    "Publish testedR31code/evidence after complete deterministicchain and obtain two fresh final reviews. CurrentpublishedR31branchcheckpoint is preparation, not complete implementation state.",
-    "Verify full-main integration separately against its exact selected HEAD; text merge success against476b8df is not registry acceptance.",
-    "Human Gate3 and merge remain separate; no merge, StageF, deployment or spend performed.",
-    "FK-P1 draft/shaping is prepared, but merged-P0 compatibility and field-shape reconciliation still gate implementation.",
-    "Concrete U1 provider/protected context/retention/schema choices remain preP18 dependencies; read reviewed U1 draft and provider observations."
+    "Complete R31 full751-test deterministic chain at published521214e; retain all direct exits, full streams, package/source byte custody and failed attempts.",
+    "Publish final R31 evidence and obtain two fresh independent final review dispositions.",
+    "Verify exact current-main hypothetical integration per committed plan; no actual merge implied.",
+    "Human Gate3 and merge remain separate; mergedP0 compatibility and field-shape reconciliation gate P1 activation.",
+    "U1 provider/verifier independence, context/protection, retention, schema/limit/path decisions remain preP18 dependencies.",
+    "Reconcile live coordinator ownership before another session dispatches work; publication does not transfer ownership."
   ],
   "requiredImplementationArtifacts": [
     {
@@ -1138,11 +1138,11 @@
     }
   ],
   "operationalSourceDifferences": {
-    "coordinatorLoopUpdateCommit": "08173ee147a68b72623f1f1655a800d54c9987ea",
+    "coordinatorLoopUpdateCommit": "f1407d3d81beda4b551e55e6c8762836cc3297db",
     "paths": [
       "plugins/foreman-line/docs/goals/foreman-kernel/loop-directive.md"
     ],
-    "scope": "Only declared Current state paragraph and FK-P0 State cell; parent verified all bytes outside selected operational replacements identical. R30source65c and R31source8d50070 retain their own exact loop bytes.",
+    "scope": "Only declared Current state paragraph and FK-P0 State cell, including staged full-verification-active update in this publication; parent verified all bytes outside selected operational replacements identical. R30source65c and R31source8d retain exact own loop bytes.",
     "normativeChange": false
   },
   "requiredVerificationEvidence": [
@@ -1635,12 +1635,13 @@
   "successorSource": {
     "worktree": "D:/Repos/agent-skills-worktrees/fk-p0-r31-source-adoption-20260907",
     "branch": "codex/fk-p0-r31-source-adoption-20260907",
-    "fullHeadSha": "2ed7569afae2ea23e77c4279b5cee86709814595",
+    "fullHeadSha": "521214e4fa7e3475e2544ef1f1492638250437f6",
     "sourceSnapshotCommit": "8d500704c9e3d6d8b652bbe838aa3623f88203fc",
     "acceptedBase": "c35ff72ef45fb19d647cede6acf5a13636911db7",
-    "state": "R31 mapping independently approved and implementation ruling published. Active builder code/evidence is not yet a published tested checkpoint. Published2ed7569 remains source/contract preparation with unchangedR30package, not completeR31implementation.",
+    "state": "R31 nine-file implementation and development evidence published. Exact reviewed generation manifest/record matched; focused semantic163 and corpus25 passed direct0. Complete751-test deterministic chain active at this fixed code checkpoint; no full-chain pass or final acceptance yet.",
     "approvedMappingCommit": "cc23f915949866b1237cba9f6116b4113adbfe3e",
-    "approvedMappingSha256": "668dee6e73c6c527ac3ea9c4fb31c3373d78a9bb618b50726ee78b3f6b01a370"
+    "approvedMappingSha256": "668dee6e73c6c527ac3ea9c4fb31c3373d78a9bb618b50726ee78b3f6b01a370",
+    "candidatePackageSubject": "521214e4fa7e3475e2544ef1f1492638250437f6"
   },
   "requiredSuccessorSources": [
     {
@@ -1989,6 +1990,420 @@
       "path": "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md",
       "bytes": 147641,
       "gitBlobSha256": "babf47f3dc42ab09392a7a6ccf8f56fc9c54aa4f642f2ea75bba565c8cba49f5"
+    }
+  ],
+  "requiredSuccessorImplementationArtifacts": [
+    {
+      "path": "plugins/foreman-line/authority-registry/README.md",
+      "bytes": 41775,
+      "gitBlobSha256": "639450f0fe49fb7149981d8162df3d56b2d2d79188c67745f680f48f6e0d2b15"
+    },
+    {
+      "path": "plugins/foreman-line/authority-registry/authority-enforcement-registry.yaml",
+      "bytes": 2376697,
+      "gitBlobSha256": "6ff8521e9a9210ae69adad571e7c3fc1f2e20e895fc5b5114e622e9ee2820910"
+    },
+    {
+      "path": "plugins/foreman-line/authority-registry/biome.json",
+      "bytes": 489,
+      "gitBlobSha256": "3e144fbbca0f50224a0f713e94f95fb3a0bf94b36a71f2ea80e8e3b1698b4e7b"
+    },
+    {
+      "path": "plugins/foreman-line/authority-registry/package-lock.json",
+      "bytes": 35963,
+      "gitBlobSha256": "e7a986409956dc29a8eaf3d4d70ba3cf842643cd7999c79b6525f2368191b8eb"
+    },
+    {
+      "path": "plugins/foreman-line/authority-registry/package.json",
+      "bytes": 1314,
+      "gitBlobSha256": "9b36380363171d4b3e72ee26122731511a2e9b0b0669ca5bba250ba96f38f20d"
+    },
+    {
+      "path": "plugins/foreman-line/authority-registry/schemas/authority-enforcement-registry.schema.json",
+      "bytes": 29106,
+      "gitBlobSha256": "b679a496254dcaa88da68a884abfe0ac436f6481b2b7c59aa0e1db133120d31c"
+    },
+    {
+      "path": "plugins/foreman-line/authority-registry/src/cli.ts",
+      "bytes": 2941,
+      "gitBlobSha256": "b59bfbacfb3ccba285d8c70599a36e7d934818fe988df709017683269d6de555"
+    },
+    {
+      "path": "plugins/foreman-line/authority-registry/src/generate.ts",
+      "bytes": 449297,
+      "gitBlobSha256": "18d4be67cd00c1f89203e79c1dbf993168726804f97e6aeb17ba9e4819c4af0d"
+    },
+    {
+      "path": "plugins/foreman-line/authority-registry/src/index.ts",
+      "bytes": 346,
+      "gitBlobSha256": "9c85231fe030420356093899c5f22dc04c623e93702bb048dc0b74f1d3f9b03e"
+    },
+    {
+      "path": "plugins/foreman-line/authority-registry/src/registry.ts",
+      "bytes": 230880,
+      "gitBlobSha256": "2ee684c795eb95e7129b805c7bafa8212a83b6d759d33d7de2304c5d777aed13"
+    },
+    {
+      "path": "plugins/foreman-line/authority-registry/src/schemas.ts",
+      "bytes": 15510,
+      "gitBlobSha256": "51fa129bbe67fb0f64c9954e4c82bba885a8cd3bfc7cf2d63d93422e4f228fbb"
+    },
+    {
+      "path": "plugins/foreman-line/authority-registry/src/types.ts",
+      "bytes": 15472,
+      "gitBlobSha256": "20e293e457efc2919222139230aaa498ace7988c195fccd585c87f2f62c68db4"
+    },
+    {
+      "path": "plugins/foreman-line/authority-registry/src/validate.ts",
+      "bytes": 205421,
+      "gitBlobSha256": "bae8bc0b3bf742b6cc6f7e5b00843a421d70a63eac91133d57ffe7319f98a2c5"
+    },
+    {
+      "path": "plugins/foreman-line/authority-registry/tests/bare-specifier.test.ts",
+      "bytes": 971,
+      "gitBlobSha256": "5a6c18e7cd80746e35f4e5bbb41325ab4867c42077467a6c211691410592b366"
+    },
+    {
+      "path": "plugins/foreman-line/authority-registry/tests/corpus-sweep.test.ts",
+      "bytes": 105036,
+      "gitBlobSha256": "e7291b5e9f0d841166f73f3d4cf409005b34cfc2cc6e7d71cf76326f6951ff07"
+    },
+    {
+      "path": "plugins/foreman-line/authority-registry/tests/dependency-allowlist.test.ts",
+      "bytes": 590,
+      "gitBlobSha256": "fd5e5b0414548b4e2b9194a5d0460aa04be49e786b37e0ba21e3836bf8e64f30"
+    },
+    {
+      "path": "plugins/foreman-line/authority-registry/tests/fixtures/pass-minimal.yaml",
+      "bytes": 2376697,
+      "gitBlobSha256": "6ff8521e9a9210ae69adad571e7c3fc1f2e20e895fc5b5114e622e9ee2820910"
+    },
+    {
+      "path": "plugins/foreman-line/authority-registry/tests/parity.test.ts",
+      "bytes": 2522,
+      "gitBlobSha256": "efa4e67f1daa7262db821c3543b8361c9f7a7e5d25331e51ab6cdc7183f03e00"
+    },
+    {
+      "path": "plugins/foreman-line/authority-registry/tests/schema-validation.test.ts",
+      "bytes": 12613,
+      "gitBlobSha256": "bd682356dbc0e1176599a1161e8d5eef87e55b35326b3c60a5eb84621e5b3289"
+    },
+    {
+      "path": "plugins/foreman-line/authority-registry/tests/semantic-invariants.test.ts",
+      "bytes": 260709,
+      "gitBlobSha256": "90b9de001735d59df58c369e373992f9b7c4b138c7a7f5fb5dd7c415c8b9b3fe"
+    },
+    {
+      "path": "plugins/foreman-line/authority-registry/tests/support/assert-ok.ts",
+      "bytes": 1501,
+      "gitBlobSha256": "b3e4a12191842b284da06a393992e45f4ecf9b42f6e07960030fb387bc91d25b"
+    },
+    {
+      "path": "plugins/foreman-line/authority-registry/tsconfig.json",
+      "bytes": 497,
+      "gitBlobSha256": "38976aeb8a37adf4d858f92a6f2cf25134f291e077d86224bdc1627d20ff2025"
+    }
+  ],
+  "requiredSuccessorVerificationEvidence": [
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/01-npm-ci.log",
+      "bytes": 162,
+      "gitBlobSha256": "0cc499381f3c0853931af42dd6ac50095440a01711426bbe8f3fe9e9d255e3f8"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/01-npm-ci.metadata.json",
+      "bytes": 173,
+      "gitBlobSha256": "6f5a70110703bab40f5e371bf8e58f13cbd70668febbe12c33258878f0c2a7c7"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/02-source-discovery.json",
+      "bytes": 464077,
+      "gitBlobSha256": "8bedeb8990b69e84352bed1d8619aeced4a6bba1397512a8d46165821f779720"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/02-source-discovery.log",
+      "bytes": 180211,
+      "gitBlobSha256": "cc788c47cc9389ea8f420b89745713d8e9a07e5dedba9d242ca28063c22c7a83"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/02-source-discovery.metadata.json",
+      "bytes": 223,
+      "gitBlobSha256": "e388876e20311afd4e8968966461fe68f621e727823a7a65f141cc603b868898"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/03-initial-draft-unvalidated.json",
+      "bytes": 20489,
+      "gitBlobSha256": "9baa45a761fee221bd6f887b8bb1e8e08461bd9d2c43c1e5975aeb5a2139d0b4"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/03-step0-contract.log",
+      "bytes": 732,
+      "gitBlobSha256": "db4901d82730a6965445ce934610e5c4a6b62a8994daceea9f683b2383dfb596"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/03-step0-contract.metadata.json",
+      "bytes": 257,
+      "gitBlobSha256": "c7815bbb08f0eed7c158ec6c5198fc6bfdbdf210054ba3c55e2da81b1776eb52"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/03-step0-proposed-contract.json",
+      "bytes": 20489,
+      "gitBlobSha256": "9baa45a761fee221bd6f887b8bb1e8e08461bd9d2c43c1e5975aeb5a2139d0b4"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/04-step0-contract.log",
+      "bytes": 732,
+      "gitBlobSha256": "db4901d82730a6965445ce934610e5c4a6b62a8994daceea9f683b2383dfb596"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/04-step0-contract.metadata.json",
+      "bytes": 441,
+      "gitBlobSha256": "230e87bfaed6fad8f58f5e97a115c36181aea5569961c7f65f94686bd44b9e00"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/04-step0-proposed-contract.json",
+      "bytes": 20511,
+      "gitBlobSha256": "295ca6c48d75ca138f411e3e49b71b8cdb582b9adc37350d7570e73448fc1366"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/05-source-byte-check.json",
+      "bytes": 6073,
+      "gitBlobSha256": "9ac9eb4d5f444f1740a9400cf0b70aad90d49b554f3e8fa580ae12fd40e69462"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/06-complete-item-correspondence.json",
+      "bytes": 367551,
+      "gitBlobSha256": "54a3b4924284a9b7c80f6df2aeb600d96f50f8f824811f238f6308d6f9326344"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/06-item-correspondence.log",
+      "bytes": 124,
+      "gitBlobSha256": "b355baefafafa436484a7ba72333e3a304712f2bec7f3b0e377efbad19529a1a"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/06-item-correspondence.metadata.json",
+      "bytes": 208,
+      "gitBlobSha256": "fb9764cce810d6da74198b8d3abf70743baa2162fd30299f6d32455e5a201299"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/07-scope-metadata-preparation-error.log",
+      "bytes": 305,
+      "gitBlobSha256": "d5800fe1d355f884021b173fd900649f478ef9601e3b1430011dacef6e828f67"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/08-step0-scope-check.json",
+      "bytes": 353,
+      "gitBlobSha256": "4112a609d7397ea2efa9c7654e1523c719bbd4faa83eaecefa644a6574979c2e"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/09-exact-migration-proposal.json",
+      "bytes": 9623,
+      "gitBlobSha256": "fbde4a225acfaa6bb1f264ed90697352370866f6e2ecb9fe8da64140b76dd90d"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/09-exact-migration-proposal.log",
+      "bytes": 631,
+      "gitBlobSha256": "4303ff06d0fe1cd0e8623d541aa6d213b2cbdedd0cddcfd21c834dd5173c294e"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/09-exact-migration-proposal.metadata.json",
+      "bytes": 245,
+      "gitBlobSha256": "bb6eae545b3906331c3d70a801a44f16bf1ea309c9a8a0eec0e073c76760e210"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/10-final-step0-scope.json",
+      "bytes": 483,
+      "gitBlobSha256": "bca56135cc9aa7857aec80c3b46b3372517abee9a55f35a2a948592b0ee810f2"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/11-red-source-controls.log",
+      "bytes": 2877,
+      "gitBlobSha256": "74e80ea6ea33103df60997c8d7f259fe7a34db38aaf7203db753854010cd405e"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/11-red-source-controls.metadata.json",
+      "bytes": 198,
+      "gitBlobSha256": "d08cdde38e5b804bfa942ce4f3c1470a775661d166cfa06d5a2c280b08d46b5a"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/12-development-typecheck.log",
+      "bytes": 87,
+      "gitBlobSha256": "73a48171880c301444cface2dafa7e5ee565409491da885360f54cc4397fb24a"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/12-development-typecheck.metadata.json",
+      "bytes": 183,
+      "gitBlobSha256": "0971f0e557f8475bc52383d81d50f62304a344516104e0063da3841c8e429012"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/13-development-generation.log",
+      "bytes": 278,
+      "gitBlobSha256": "3e3d89fa9e8092367f3e386ab1e79b95445ef541eccf6c3387f58ccbf9211c85"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/13-development-generation.metadata.json",
+      "bytes": 182,
+      "gitBlobSha256": "6929082675a075df7b44e4605bd123b29378fb231defbe1ebc97fb42260e17db"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/14-development-validate.log",
+      "bytes": 1452,
+      "gitBlobSha256": "ce0ec52892c0cbd209de38d0dffc535afefdc356858c4582380e9c23396738d5"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/14-development-validate.metadata.json",
+      "bytes": 230,
+      "gitBlobSha256": "9bb62159a445a371c9c3eac51c65023e32481866924db8a41a75d2244a2e4dc6"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/15-development-typecheck.log",
+      "bytes": 291,
+      "gitBlobSha256": "0504cda347481f689f277956ba5f8fa02ffdfe74ce8072faa9c9d9c8a64e3003"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/15-development-typecheck.metadata.json",
+      "bytes": 184,
+      "gitBlobSha256": "f6e3d5b8cfb56616795a9d45a902cd217a66d6f1eaf239037032fcbd9ff60173"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/16-focused-semantic.log",
+      "bytes": 32807,
+      "gitBlobSha256": "f286b99df62e07a2df3d31806e938107b57eac3c20d1ed9205dcca10a1ad3a7c"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/16-focused-semantic.metadata.json",
+      "bytes": 326,
+      "gitBlobSha256": "e286e8a4efad228bc90e8899894e78dbcf2ed55e8bfaed948c7a34e8c145078b"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/17-focused-corpus.log",
+      "bytes": 7971,
+      "gitBlobSha256": "4b47fb8e5bf479fc4658cdf4e3d739b1b318b77230baeb26e02d7e78b4da063c"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/17-focused-corpus.metadata.json",
+      "bytes": 333,
+      "gitBlobSha256": "379549bfaf9c5bc3d134c98a8aeb40f8ebd8e66d281b3547f73f5815b013772a"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/18-development-notes.md",
+      "bytes": 4380,
+      "gitBlobSha256": "0a19781f8767a14ea290be69b39048d46dd57482f5b09fcc21f4d1ecd2046d87"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/19-development-typecheck.log",
+      "bytes": 895,
+      "gitBlobSha256": "18ca36dcb2981ca9676c3a48734f537f3e05f8735338e46d0231496e3ed9b828"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/19-development-typecheck.metadata.json",
+      "bytes": 184,
+      "gitBlobSha256": "d98d506e5d8a4de7d4b3980cc132fd7d5d7ddc5351c460f2aa51ab6b8141cd00"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/20-development-biome.log",
+      "bytes": 20172,
+      "gitBlobSha256": "e307c176550fadb17a2967a7d072ecde11f46fcd879f7ebb69154083b1a22e03"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/20-development-biome.metadata.json",
+      "bytes": 219,
+      "gitBlobSha256": "425c4b1a16e8854b4afe6dc167ae50a472e63a1bf3defeb9ec64ad76cdd6c825"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/21-focused-semantic.log",
+      "bytes": 34072,
+      "gitBlobSha256": "9b6a0c54b80eb3f27c4163271fdb22c0d0613a9cd7b9549c6af62157da907933"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/21-focused-semantic.metadata.json",
+      "bytes": 226,
+      "gitBlobSha256": "0b3c0d801c32bcf406981fe92674e5a4400a04a4d8921f3ece8a2832bd6e852b"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/22-focused-corpus.log",
+      "bytes": 5611,
+      "gitBlobSha256": "a4ac1b8cadb3e02b2b9936e592fb1b27e2ef27df5e17405a5e640935e737288d"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/22-focused-corpus.metadata.json",
+      "bytes": 243,
+      "gitBlobSha256": "600e83788b2e70bca03b62a53f0f64307ed76f6907d5229babb4da84b0d63872"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/23-development-biome.log",
+      "bytes": 20286,
+      "gitBlobSha256": "e2a7b155da2a0bc0a8a8026d3bce81a5ae135bb5f3e5ce498dab8aec2d77494f"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/23-development-biome.metadata.json",
+      "bytes": 219,
+      "gitBlobSha256": "ec524dc553bf5cc9604d8650505d00a6c067bcb4320a9817601c4ba0232b8b08"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/24-development-typecheck.log",
+      "bytes": 87,
+      "gitBlobSha256": "73a48171880c301444cface2dafa7e5ee565409491da885360f54cc4397fb24a"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/24-development-typecheck.metadata.json",
+      "bytes": 184,
+      "gitBlobSha256": "5eba636fe89b1ec17ccdfddf7c926418827ead47f64adbcc2a2fe35d9efa3b71"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/25-focused-semantic.log",
+      "bytes": 35798,
+      "gitBlobSha256": "8f4105c060e3d5b29c34454aa405d3adf5f58586d0fa8fab25b565e6b798618f"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/25-focused-semantic.metadata.json",
+      "bytes": 226,
+      "gitBlobSha256": "1db1b7f5a2d9fa0d49b7230b4dc9fbc66deb089fadd630c611cee5c37ba8a00c"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/correspondence.mjs",
+      "bytes": 2449,
+      "gitBlobSha256": "1c26e4b6fd172e2c28e8794fce8622d8329a264a13abe50c831ae2bb5cd92886"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/discover.mjs",
+      "bytes": 2136,
+      "gitBlobSha256": "ca8837c80a36de131050cd421e4b874bb16158e74681869f072dc9faf4e7fd36"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/final-integrity.ts",
+      "bytes": 3812,
+      "gitBlobSha256": "733a115686da166903d29df0f634cc9011b5a453fb9489694995c96752e15f53"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/initial-package-hashes.json",
+      "bytes": 2894,
+      "gitBlobSha256": "66b1d1d7d00259739c44a7a1b04d9adcbce4d8bff8a11c515c67bfcec364348e"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/migration-proposal.mjs",
+      "bytes": 6662,
+      "gitBlobSha256": "a74475ffe979de663ab51324445189a8c42d05dc77713c6121a96325a2d17789"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/propose-contract.mjs",
+      "bytes": 4653,
+      "gitBlobSha256": "8ff20f01f28e5167de91ea4a30665359e14538330e55ca22f55c437043ab368e"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/step0-evidence-manifest.json",
+      "bytes": 10191,
+      "gitBlobSha256": "95151480d8be0b4e3399b88112b05417c31f584ef0cf4bff4e3efcb3bd5c9b36"
+    }
+  ],
+  "additionalArtifactGroups": [
+    {
+      "group": "requiredSuccessorImplementationArtifacts",
+      "fullHeadSha": "521214e4fa7e3475e2544ef1f1492638250437f6"
+    },
+    {
+      "group": "requiredSuccessorVerificationEvidence",
+      "fullHeadSha": "521214e4fa7e3475e2544ef1f1492638250437f6"
     }
   ]
 }
