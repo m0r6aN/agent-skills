@@ -1,0 +1,12 @@
+{
+  "head": "0ee165720f8d1e3a91eb283cb770400b23f61bf5",
+  "startedUtc": "2026-09-07T14:14:14.7733677Z",
+  "step": "08-generate",
+  "command": [
+    "npm.cmd",
+    "run",
+    "generate"
+  ],
+  "status": "running",
+  "wrapperPid": 475952
+}

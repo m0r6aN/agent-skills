@@ -1,0 +1,57 @@
+{
+  "tests": 597.0,
+  "testsPerFile": [
+    1,
+    127,
+    1,
+    5,
+    23,
+    440
+  ],
+  "pass": 597.0,
+  "passPerFile": [
+    1,
+    127,
+    1,
+    5,
+    23,
+    440
+  ],
+  "fail": 0.0,
+  "failPerFile": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "cancelled": 0.0,
+  "cancelledPerFile": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "skipped": 0.0,
+  "skippedPerFile": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "todo": 0.0,
+  "todoPerFile": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "notOkLines": 0
+}

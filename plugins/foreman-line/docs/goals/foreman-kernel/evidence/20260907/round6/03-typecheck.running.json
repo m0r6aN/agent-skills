@@ -1,0 +1,12 @@
+{
+  "startedUtc": "2026-09-07T13:50:24.9637100Z",
+  "wrapperPid": 470800,
+  "step": "03-typecheck",
+  "status": "running",
+  "head": "0ee165720f8d1e3a91eb283cb770400b23f61bf5",
+  "command": [
+    "npx.cmd",
+    "tsc",
+    "--noEmit"
+  ]
+}

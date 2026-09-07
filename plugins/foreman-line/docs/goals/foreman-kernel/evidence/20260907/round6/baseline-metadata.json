@@ -1,0 +1,24 @@
+{
+  "branch": "codex/fk-p0-recovery-20260907",
+  "status": [],
+  "tools": [
+    {
+      "Name": "node.exe",
+      "Source": "D:\\nodejs_symlinks\\node.exe"
+    },
+    {
+      "Name": "npm.cmd",
+      "Source": "D:\\nodejs_symlinks\\npm.cmd"
+    },
+    {
+      "Name": "npx.cmd",
+      "Source": "D:\\nodejs_symlinks\\npx.cmd"
+    },
+    {
+      "Name": "git.exe",
+      "Source": "C:\\Program Files\\Git\\cmd\\git.exe"
+    }
+  ],
+  "utc": "2026-09-07T13:49:27.2476870Z",
+  "head": "0ee165720f8d1e3a91eb283cb770400b23f61bf5"
+}
