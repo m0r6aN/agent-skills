@@ -1,5 +1,4 @@
 {
-  "observedUtc": "2026-09-07T16:19:00Z",
   "state": "Verification complete; final independent review pending",
   "remoteBranch": "codex/fk-p0-r30-adoption-20260907",
   "remoteCommit": "c35ff72ef45fb19d647cede6acf5a13636911db7",
@@ -30,5 +29,7 @@
     "Two fresh final independent reviews and disposition",
     "R31 selective source adoption and separate current-main integration verification",
     "Human Gate3; no merge or StageF performed"
-  ]
+  ],
+  "recordedUtc": "2026-09-07T16:21:14.898376+00:00",
+  "timingBasis": "Publication and hash verification were observed directly earlier in this session; this timestamp is the record write time, not a reconstructed command boundary."
 }
