@@ -144,381 +144,6 @@ unmigrated locator/normalized-semantic-value change. Completeness of the curated
 a mandatory independent-review focus; the sweep proves registry-to-source binding, not that
 the registry author noticed every natural-language rule.
 
-### Volatile operational state is outside the inventory boundary (R24)
-
-Per-item exclusion, as specified above, requires one audit record per excluded block. That is
-correct for a static document and wrong for a source the canon **orders** to be rewritten: a new
-paragraph inside such a source is neither published nor excluded, so it is uncovered, and the
-sweep fails. Measured on 2026-09-03 at parcel head `a100a91`, editing `loop-directive.md` — which
-the coordinator pattern, the `goal` skill, and that directive's own text all require at every
-stop, ownership transfer, and parcel closure — produced **45 sweep violations** (10
-`VALUE_DIGEST_MISMATCH`, 35 `SOURCE_ITEM_UNCOVERED`) and failed **three tests**, including the
-acceptance-criterion test asserting the CLI sweep exits 0. Step 11 of the loop directive's own
-per-parcel algorithm ends with a state-block update, so Stage-F closure of this parcel would turn
-this parcel's sweep red. An acceptance criterion that a document cannot satisfy while the canon is
-obeyed is a contradiction, not a standard.
-
-The registry therefore recognizes **volatile operational state**: content inside a governed source
-that carries no independent normative rule and that canon requires to change. It is declared at
-**region scope, not item scope** — one durable declaration per region, never one record per
-paragraph — so that appending to, editing within, or restructuring a declared region requires no
-regeneration.
-
-**Required invariants.** Within a declared volatile region: adding a paragraph, list item, table
-row, or subsection MUST NOT produce `SOURCE_ITEM_UNCOVERED`, and changing bytes MUST NOT produce
-`VALUE_DIGEST_MISMATCH`. This is the operational meaning of the Constraints promise that
-"unrelated bytes, formatting, line numbers, import order, and content outside the locator do not
-invalidate the shipped registry."
-
-**The declared volatile regions of `loop-directive.md`, exhaustively.** The governed portion
-remains exactly the six rule categories named in source-corpus entry 3 — ownership, standing
-authorizations, parcel algorithm, FK-P0 mandate, queue/dependencies, and stop conditions. Note
-that entry 3's own enumeration never included current state. Volatile:
-
-1. the `## Current state` section in full, including every subsection, table, and paragraph it
-   contains;
-2. inside the ownership block, the identity of the current owner and every handoff, transfer, and
-   inherited-state record — **but not** that block's normative sentences (exactly one coordinator
-   owns a goal; ownership transfers only at a parcel boundary; ambiguous or contested ownership is
-   a stop-and-report), which remain fully governed; and
-3. the `State` column of the queue table — **but not** parcel identities, dependency edges, or
-   the table's ordering rule.
-
-**Anti-laundering control, and it is not optional.** A volatile-region declaration that overlaps
-the locator of any published rule MUST be rejected by the validator, fail-closed, with a stable
-code. Absent that control this amendment would supply a mechanism for retiring any inconvenient
-rule by declaring its neighbourhood volatile — strictly worse than the defect it repairs. The
-declaration set is closed, is itself part of the reviewed contract, and is a mandatory
-independent-review focus.
-
-**Mechanism is the builder's to propose, not this amendment's to dictate.** R16, R19 and R22 each
-specified a mechanism from the coordinator's chair and each required correction. This amendment
-fixes the invariants, the exhaustive region list, and the anti-laundering control; the record
-shape, schema changes, and sweep implementation are proposed by the builder at Step 0 and ruled on
-before any code is written.
-
-### R25 — R24's region list was wrong, and the real defect is curation
-
-R24 is corrected here by the same coordinator that ratified it, before any code was written
-against it. R16, R19 and R22 each needed correction after the fact; this one was caught at the
-Step 0 gate, which is the gate working.
-
-**What R24 got wrong.** R24 declared three volatile regions and, in the same breath, required the
-validator to refuse any region overlapping a published rule's locator. Measured against the
-shipped registry, **two of its three regions overlap published rules**, so R24's own
-anti-laundering control would have correctly refused two thirds of R24:
-
-| R24 region | published rule inside it | declarable as written |
-|---|---|---|
-| 1 — `## Current state` in full | `rule.fk-loop-directive.ae7854c7dad1` at `Current state:paragraph:1` | **no** |
-| 2 — ownership block, identity and handoffs only | `rule.fk-loop-directive.7a05d374a3b1` at `COORDINATOR OWNERSHIP:paragraph:1` | **no** |
-| 3 — queue `State` column | none; all queue rows are `non-normative-explanation`, `ruleIds: []` | yes |
-
-Region 2 was additionally unimplementable for a second reason: region scope cannot subdivide an
-inventory item, and the ownership block's rule sentences and the current owner's identity are one
-item — one markdown blockquote, one locator, one digest.
-
-**The real defect is that two items were mis-curated as rules.** Region exclusion was aimed at
-the wrong layer. Inspecting the two blocking rules:
-
-- `rule.fk-loop-directive.ae7854c7dad1` carries `authoritySubject: goal.current-state-record`,
-  `authorityClaim: stage-zero-complete-and-fk-p0-next`, and a `normalizedStatement` that is a
-  coordinator status snapshot: Stage Zero complete, A1 ratified and committed, A1.8 pending a
-  text review, A2 parked. **That states no authority.** It is a progress report published as
-  binding canon and pinned by digest, which is the proximate reason editing the state block
-  breaks the sweep. Under this spec's own exclusion standard — explicit exclusion is for items
-  stating no independent rule — its correct disposition was always `exclude`.
-- `rule.fk-loop-directive.7a05d374a3b1` carries `authoritySubject: goal.coordinator-ownership`
-  and is a **genuine** rule: exactly one coordinator owns a goal, transfer only at a parcel
-  boundary, stop and report on ambiguity. But its `normalizedStatement` embeds "the Claude Code
-  coordinator session entered via `/goal` on 2026-09-01, holding ownership under the developer's
-  explicit transfer of that date". **A binding rule whose normative text contains a session
-  identity and a date that canon requires to change** is a curation defect in its own right,
-  independent of regions: the rule goes stale every time the goal changes hands.
-
-**The governing invariant, replacing R24's region-list approach as the primary control.** No
-inventory item may bind a published rule to content that canon requires to change. Where one
-does, **the source is restructured so that rule text and volatile state occupy separate blocks —
-the boundary is never bent to fit the document.** A region declaration is then a consequence of
-correct curation rather than a substitute for it.
-
-**Consequent obligations.**
-
-1. `item.ae7854c7dad1`'s disposition becomes `exclude` with an item-specific rationale, and
-   `rule.fk-loop-directive.ae7854c7dad1` ceases to be published. This is a **curation correction
-   effected by regeneration with migration evidence, and explicitly NOT a use of the registry's
-   retirement state** — retirement remains latent at zero retired rules, mutually exclusive with
-   `resolveAuthority`, and deferred to FK-P1 by standing ruling. A builder that reaches for
-   retirement here has misread this obligation and must stop.
-2. The coordinator restructures `loop-directive.md` so the ownership rule sentences occupy a block
-   containing no owner identity, handoff record, or date, and `rule.fk-loop-directive.7a05d374a3b1`
-   re-anchors to that block with migration evidence. **The builder may not perform this edit** —
-   `loop-directive.md` is in Forbidden — and must stop and report if it is not already done.
-3. R24's regions 1 and 2 are declarable only after obligations 1 and 2 land. Region 3 is
-   declarable immediately.
-
-**Control (d), added to amended AC3 and mandatory.** A test asserts that **no declared volatile
-region contains any inventory item with non-empty `ruleIds`**, evaluated over the shipped
-registry rather than a fixture. This is the machine-checked form of the invariant above, and it is
-the control that would have caught R24 before it was ratified. Controls (a), (b) and (c) stand as
-written in AC3.
-
-**What this costs, stated plainly.** R25 removes one published rule and re-anchors another, so the
-shipped rule count falls by exactly one and one `valueDigest` changes. Both are visible in the
-sweep summary and both require migration evidence. A reviewer must confirm that the removed rule
-is the status snapshot named above and nothing else, and that the re-anchored ownership rule's new
-statement retains all three of its normative sentences and none of its volatile preamble.
-
-### R26 — Step 0 rulings, and two defects R24/R25 both missed
-
-The round-6 builder's Step 0 analysis found two properties neither R24 nor R25 named, both
-load-bearing. They are adopted here as binding and credited to that analysis; R24's invariant list
-is incomplete without them.
-
-**Ruling 1 — ordinal displacement is the larger half of the damage, and R24 never mentioned it.**
-Of the 7 measured violations in the ownership section, only 1 was the appended block. Prepending a
-handoff paragraph shifted every later paragraph's ordinal in that container by one, so registry
-items pinned at `paragraph:4/5/6` resolved against *different text* — 5 × `VALUE_DIGEST_MISMATCH`
-on governed siblings that were never edited. R24's invariant covers the appended block only and
-would still have failed the sweep.
-
-**Therefore, additional binding invariant: volatile content must never occupy an ordinal.**
-Volatile lines are excised before block discovery and before ordinal assignment, so a governed
-sibling retains its exact anchor, locator digest, and value digest no matter how much volatile
-content is added, removed, or reordered in the same container. Non-displacement is a named, tested
-property, not a hoped-for consequence: the negative control must assert that a pinned governed
-neighbour survives volatile churn byte-identical.
-
-**Ruling 2 — region 1 was over-broad and buried a live stop condition.** R24 declared
-`## Current state` volatile "in full, including every subsection". That section contains
-`### Standing stop-condition override`, whose body states a rework cap and a stop — a **stop
-condition**, one of the six governed categories that source-corpus entry 3 says the governed
-portion "remains exactly". R24's own boundary therefore violated R24's own guarantee. Two
-corrections, both required:
-
-- **Extent semantics:** a `heading-subtree` extent covers body blocks under the matched heading
-  and **excludes descendant headings and their bodies**. A rule written under a volatile section
-  stays inventoriable, and a coordinator who writes one must inventory it.
-- **Source correction:** the standing stop-condition override is *misfiled* — it is a standing
-  rule, not current state. Per R25's invariant the source is restructured rather than the boundary
-  bent, so the coordinator relocates it out of `## Current state`. Both land: the relocation fixes
-  today's instance, the extent semantics prevent recurrence.
-
-**Ruling 3 — region 2 needs no new primitive; the source split already landed.** The builder
-independently reached R25's conclusion that the ownership blockquote is one block, one locator,
-one digest, and offered three routes. The coordinator had already executed the source split at
-commit `4ee0537`. Consequently:
-
-**A `block-prefix-span` extent kind is NOT authorized.** No text-bounded or content-substring
-extent enters this design; every extent is structural. That was the one primitive the builder
-named as its own least-comfortable element, and the source split removes the need for it — which
-is precisely why R25 puts restructuring ahead of boundary-bending. The closed extent union is
-**three** kinds: `heading-subtree`, `container-blocks`, `table-column`.
-
-**Ruling 4 — control (d) is mandatory: generator idempotence under volatile mutation.** The
-generator reads source bytes from the worktree, not from `snapshotEvidence.commit`, so the
-parcel's `npm run generate` → clean-`git status` gate is today conditional on nobody having
-touched the state block. Fixing only the sweep would relocate the contradiction rather than close
-it. Control (d): mutate every volatile region in a temp corpus, run the generator against that
-root, assert emitted bytes identical to the shipped YAML. It is the strongest single statement of
-what R24 means — volatile content cannot affect the registry at all — and none of (a), (b) or (c)
-reaches it. **Control (e)**, region-resolution exactness, is also required: a region matching zero,
-or two or more, headings fails closed and never silently stops masking.
-
-**Ruling 5 — `RESULT_CODES` is widened by exactly two, and the pre-existing drift is reconciled in
-the same act.** `VOLATILE_REGION_OVERLAP` (the control-(c) refusal) and `VOLATILE_REGION_INVALID`
-(malformed or unresolvable declaration) are authorized. Dedicated codes are chosen over reusing
-`AUTHORITY_ESCALATION`/`SCHEMA_INVALID` because amended AC3(c) says "the stable code" and a shared
-code makes the reviewer's deletion test ambiguous. Where obligations share
-`VOLATILE_REGION_INVALID`, tests assert the message, not only the code.
-
-**Separately, the builder reported that the shipped code already carries two codes the spec's
-"closed" set does not list — `REPO_ROOT_INVALID` and `RETIREMENT_EVIDENCE_UNVERIFIED`.** That is an
-undocumented divergence between a spec that says *closed* and an implementation that is not. It is
-reconciled in this round rather than compounded: either the spec's set is corrected to include
-them, or they are removed. Adding two codes on top of an unreconciled drift is how a closed set
-stops meaning anything.
-
-**Ruling 6 — obligation 1 and the new chain head are authorized inside this round.** Un-publishing
-`rule.fk-loop-directive.ae7854c7dad1` is confirmed, and remains explicitly **not** a use of the
-retirement state. Ordinal excision changes governed locator digests and item identities, which is
-a location-plus-identity change requiring a typed `registry-rework-*` record; that record becomes
-the chain head, the incumbent head is demoted and gains a pin in `RECONCILIATION_RECORD_DIGESTS`,
-and **all seven AC4 head obligations apply to the new head unchanged.** The record is named for the
-commit that last touched the shipped YAML, determined at implementation time rather than pinned
-here. This is the largest piece of work in the round and the place where a rushed implementation
-breaks something already closed.
-
-**Endorsed unchanged from the builder's design:** `volatileRegions` participates in
-`registryBindingManifestDigest`, making "the declaration set is part of the reviewed contract"
-mechanically true rather than asserted; a region never covers its own heading item, so editing a
-heading fails once and loudly instead of silently detaching a region; and region matching uses a
-derived stable heading key so it survives rewording, while the heading text itself stays
-digest-pinned.
-
-### R27 — R25's region table was wrong twice, and there are seven controls
-
-The round-6 builder measured every claim in R25's table against the shipped registry instead of
-accepting it. Two were wrong, both in the direction of the defect being wider than stated. R25's
-table is corrected here, the control letters are made unique, and the remaining Step 0 rulings
-are recorded.
-
-**Correction 1 — `## COORDINATOR OWNERSHIP` contains six published rules, not one.** Measured:
-12 inventory items, 6 published. R25 named only `item.7a05d374a3b1`. The other five are the
-`**Ratified authority:**` list items — `b81725578197`, `aac2d1258986`, `4f0fb14fbd95`,
-**`47a75730afd6` (the pinned Standing Gate 2 `ALLOW`, referenced at three sites in
-`src/validate.ts`)**, and `08b3cbb91027`. R24's region 2 avoided them only by *prose* scoping
-("identity and handoff records"), which is a description, not an extent; any structural
-implementation keyed on the section would have swallowed all six including a pinned `ALLOW`.
-
-**Correction 2 — `## Queue and dependency order` is not clean at section scope.** R25 said region
-3 had no published rules. True of the table *rows*; false of the *section*. It carries 24 items
-and 1 published — `item.1576c95260b6` at `paragraph:1`, the parallelism-and-serialization rule.
-"Declarable immediately" holds only for the **column-scoped** extent. As written R25 licensed a
-section-scoped implementation that control (c) would then have refused — the same error R24 made,
-one notch smaller, inside the amendment correcting R24.
-
-**Obligations 2b and 2c, performed by the coordinator at `a7889e8`.** Rather than keep the
-published ownership rules out of region 2 with a block-kind predicate, the source was restructured
-so they are out by position: `### Owner of record and handoff state` now bounds region 2, and
-`### Goal identity and ratified authority` is a governed sibling holding the five published
-records. The ambient-checkout prohibition was relocated to standing authorization 8 — it was a
-prohibition sitting in a section declared volatile, curated `ruleIds: []` with a generated
-rationale asserting it stated no rule, and it is the rule protecting the user-owned routing-policy
-change every builder is told not to absorb. R26 ruling 2's corrections did not reach it because it
-is a direct body block rather than content under a descendant heading. For a pinned `ALLOW` rule,
-the structural guarantee is the one worth having.
-
-**Consequent region-to-extent mapping, now unambiguous:**
-
-| region | extent | governed content kept out by |
-|---|---|---|
-| 1 — `## Current state` | `heading-subtree`, descendant headings excluded | relocation of the stop condition and the prohibition; section now has no normative content |
-| 2 — `### Owner of record and handoff state` | `heading-subtree` | **direct-body placement (2c, corrected at `9a273a0`)** — the published records stay direct body of the `##`, above the subheading |
-| 3 — queue `State` column | `table-column` | column scope; `paragraph:1` is outside the table entirely |
-
-**The closed extent union is therefore two kinds: `heading-subtree` and `table-column`.**
-`container-blocks` is dropped — 2b/2c removed its only caller, and an unused variant in a closed
-union is surface without a purpose.
-
-**Control lettering, fixed.** R25 and R26 both defined a "(d)" and both defined an "(e)",
-differently, while the definition of done is stated in letters. The set is now seven, and these
-letters are canonical:
-
-| letter | control |
-|---|---|
-| (a) | negative — declared regions absorb appends and byte changes, and do not displace governed siblings |
-| (b) | positive — a mutated governed sentence in the same source still fails closed with its code |
-| (c) | anti-laundering — the validator refuses a region overlapping a published locator |
-| (d) | no shipped region contains a published item, over the shipped registry |
-| (e) | generator idempotence under volatile mutation |
-| (f) | region-resolution exactness — zero or ≥2 heading matches fails closed |
-| (g) | curated-exclusion guard — see below |
-
-**Control (d) must be implemented independently of (c)'s predicate.** The builder observed that
-if (d) calls the same predicate the validator uses, and the chain already runs `validate` to exit
-0, then (d) proves nothing and can only fail where (c) already fails — the self-verification this
-spec forbids elsewhere. (d) is therefore a second, independent implementation inside the test:
-parse the YAML, resolve each declared extent against `inventoryItems` directly, assert `ruleIds`
-is empty for every in-region item, importing nothing from the validator. Independence is proved
-by mutating the validator's predicate to always-pass and showing (d) still fails.
-
-**Control (g), accepted — the mechanism otherwise rewards under-curation.** (d) tests for
-`ruleIds` non-empty, so it cannot see a block that *states* a rule while curated `ruleIds: []`.
-R25's remedy for an overlap is to declassify the overlapping item, and (d) is satisfied by
-declassification — so nothing in (a) through (f) resists making a region legal by under-publishing.
-R24 over-published into a region; this is the same defect with the opposite sign, and it was
-already sitting in the data twice (`fa05e853c14d`, `5690a4514605`), both with the generated
-rationale *"is explanatory context and does not state an independent normative authority rule"*
-asserting the opposite of the truth.
-
-(g): every `paragraph` or `list-item` item inside a declared volatile region must carry an
-item-specific **curated** exclusion rationale, never the generated template. An in-region item
-cannot be published without a spec amendment, so its exclusion is a permanent, load-bearing
-decision and must be individually argued — the standard already imposed on obligation 1. It forces
-one human sentence per in-region prose block, which is the review step that would have caught both
-instances. `table-row` items keep the template: a row's normative surface is bounded by its
-columns and the mask is separately pinned. Measured cost: 8 sentences, not 30.
-
-**The modal-token scan prints; it does not gate.** Measured precision on current data is 2 of 3.
-A gate at that precision over canon prose gets disabled by the third person it inconveniences,
-and a disabled control is worse than an advisory one. Reviewer aid only.
-
-**Migration, corrected — value axis, not location.** R26 ruling 6 called this a
-location-plus-identity change. The builder measured otherwise and is right: `itemIdFor` resolves
-md-block items through an anchor-keyed frozen identity map, and the restructured rule-only
-blockquote is still `paragraph:1` in the same container, so `item.7a05d374a3b1`'s anchor,
-`locatorDigest`, and item ID are unchanged. Only `normalizedExcerpt`, `valueDigest`,
-`bindingDigest`, and `normalizedStatement` change — a **value-axis** change under Standing
-Constraint #13. The typed record and the new chain head are still required, because the *item*
-layer does change identity, items leave the inventory, and the item count drops.
-
-**The acceptance statement is replaced with the builder's sharper version**, because it is
-checkable and because a record must not pin a claim its author's own measurement contradicts:
-**every surviving published rule's `locatorDigest` is byte-identical to its pre-round value,
-with exactly one `valueDigest` change and exactly one rule removed.** Any published locator
-moving is then a defect signal rather than expected churn.
-
-**Chain-head naming rule, stated rather than left as folklore.** Two YAML-touching commits landed
-after `registry-rework-df8155a` without producing records, so the convention is evidently
-per-rework, not per-commit. The rule: **one record per rework round, named for the commit that
-last touched the shipped YAML at the moment that round's regeneration is committed**, determined
-then and not pre-computed. One record covers both obligations with two `observedRefs`.
-
-**`exclusionCode` for `ae7854c7dad1`: a new closed-enum member `operational-status-snapshot` is
-ratified.** Reusing `non-normative-explanation` was available and is rejected. A progress report
-is not an explanation, and this entire round exists because two rules hid behind exactly that
-label. A precise code makes the next instance visible instead of plausible.
-
-**WITHDRAWN by R29 — do not implement this member.** See R29 below.
-
-### R29 — rulings that live only in a message are not canon
-
-Three amendments' worth of rulings were issued to the builder **by message and never written into
-this spec.** Two separate agents then read the spec, followed it correctly, and were wrong,
-because canon said something the coordinator had already overruled in conversation. That is the
-coordinator's own "commentary is not a change request" rule inverted: a *ruling* that never
-reaches the artifact is not a ruling either. The rule this installs, on the coordinator: **a
-ruling that changes the spec is committed to the spec before the dispatch that depends on it.**
-
-**R29.1 — `operational-status-snapshot` is withdrawn.** R27 ratified the closed-enum member on
-the assumption that `item.ae7854c7dad1` would survive as an excluded carrier. It does not:
-the item sits at `## Current state:paragraph:1`, inside region 1's direct body, so **excision
-removes it from the inventory entirely** and there is no item left to carry a disposition or an
-`exclusionCode`. The member would be an unused variant in a closed union — the defect R27 itself
-names. Withdrawn; do not add it.
-
-**R29.2 — obligation 1's two halves reconciled.** The recovery agent correctly found the recovery
-brief internally inconsistent: it asked both for a disposition flip *and* for the excision path,
-which are alternatives. Under region 1, obligation 1 is discharged by (i) removing the three
-stale curated-publish entries in `src/generate.ts`, and (ii) the reconciliation record pinning the
-item's final `locatorDigest` and `valueDigest` in `scopedDisposition` prose. There is no
-disposition to set and no `exclusionCode` to choose. Retirement remains untouched and the retired
-count stays 0.
-
-**R29.3 — curated maps are keyed by `(sourceId, anchor)`, not `(sourceId, itemId)`.** Ratified
-here after being approved by message. Item IDs derive from a locator that includes `lineHint`, so
-any line-position change in a governed source silently breaks a curated binding — measured twice
-in this round, on `rule.fk-charter.ff0f88a958e0` and again on standing authorization 8. Anchors
-are `headingPath:kind:ordinal` and are position-independent under the non-displacement invariant.
-This changes no item ID and no digest, so it is a curation-layer lookup change and remains inside
-R28's prohibition on identity-layer mechanisms.
-
-**Its boundary, stated so it is not over-claimed:** anchor-keying is robust to `lineHint` shifts
-but **not** to relocation. A `headingPath` change still breaks the binding, as obligation 2c
-demonstrated. That is correct — relocation is a deliberate coordinator act and should break
-loudly rather than silently re-bind.
-
-**R29.4 — standing authorization 8 shipped de-published, and the record should quote it.** At
-`3ee5192` the prohibition relocated by R27 carries `ruleIds: []` and the generated rationale
-*"is explanatory context and does not state an independent normative authority rule."* Its own
-normative text reads: *"…curated `ruleIds: []` with a boilerplate rationale asserting it stated no
-rule. It states a rule."* **The rule documenting the defect became an instance of the defect.**
-Same root cause as R29.3's: its item ID churned from `item.8be213f2455a` to `item.3fe253f7c599`
-and missed all three curated maps. Publishing it — classification `pre-action-refusal` — is what
-takes the count from 468 to R28's required 469; the acceptance assertion's "one addition" is
-currently unmet, and 468 is that failure rather than a partial success.
-
 ## Contract
 
 ### Registry contract
@@ -942,7 +567,7 @@ All nine numbered goal-exit requirements and all seventeen charter stop-conditio
 protected normative items and must be published individually; headings/intros may be excluded,
 but no exit/stop body may be `non-normative-explanation`. Wave exit contracts in the loop
 directive are likewise published when they state required completion or gate conditions.
-The charter's fourteen integration scenarios, five initial refusal-class rows, and all twenty-two
+The charter's thirteen integration scenarios, five initial refusal-class rows, and all twenty-two
 ratified parcel-graph rows are also protected normative items. Each scenario's required outcome,
 each refusal class's initial classification/evidence duty, and each parcel's owner/dependency or
 serialization contract is individually published with a basis-supported classification,
@@ -1284,26 +909,13 @@ semantically; normative publication and resolver hardening cannot rewrite histor
   SOURCE_DUPLICATE_PATH | LOCATOR_MISSING | LOCATOR_DUPLICATE |
   LOCATOR_DIGEST_MISMATCH | VALUE_DIGEST_MISMATCH | RULE_DUPLICATE | RULE_ORPHANED |
   SOURCE_ITEM_UNCOVERED | RULE_SEMANTICS_UNCURATED | RULE_SOURCE_MISSING | RULE_CONFLICT |
-  AUTHORITY_ESCALATION | VOLATILE_REGION_OVERLAP | VOLATILE_REGION_INVALID |
-  RETIREMENT_EVIDENCE_INCOMPLETE | RETIREMENT_EVIDENCE_UNVERIFIED | RECONCILIATION_MISSING |
-  MIGRATION_EVIDENCE_INVALID |
-  IO_ERROR | PARSE_ERROR | USAGE_ERROR | REPO_ROOT_INVALID`. Schema/semantic/corpus codes exit
-  `1`; the final four operational/protocol codes exit `2`; any sweep containing `IO_ERROR`,
-  `PARSE_ERROR`, `USAGE_ERROR`, or `REPO_ROOT_INVALID` exits `2` even when semantic violations
-  are also present. Multiple violations are ordered by source path, locator,
+  AUTHORITY_ESCALATION |
+  RETIREMENT_EVIDENCE_INCOMPLETE | RECONCILIATION_MISSING | MIGRATION_EVIDENCE_INVALID |
+  IO_ERROR | PARSE_ERROR | USAGE_ERROR`. Schema/semantic/corpus codes exit `1`; the final three
+  operational/protocol codes exit `2`; any sweep containing `IO_ERROR`, `PARSE_ERROR`, or
+  `USAGE_ERROR` exits `2` even when semantic violations are also present. Multiple violations
+  are ordered by source path, locator,
   rule ID, then code.
-
-  **Reconciled by R27.** This enumeration previously omitted `REPO_ROOT_INVALID` and
-  `RETIREMENT_EVIDENCE_UNVERIFIED`, both of which the shipped implementation already emitted and
-  documented in `src/types.ts` — a set described as closed while the code exceeded it. The
-  round-6 builder found the divergence and declined to widen a closed set on its own authority,
-  which was correct. They are added rather than removed, because removing either is a
-  security-boundary regression: `REPO_ROOT_INVALID` is what stops a mistyped `--repo-root` being
-  reported as a registry violation, turning an operator error into a false accusation against
-  canon, and `RETIREMENT_EVIDENCE_UNVERIFIED` must block validity precisely because retirement
-  *removes* enforcement, so an unverifiable retirement must never report green.
-  `VOLATILE_REGION_OVERLAP` and `VOLATILE_REGION_INVALID` are added in the same act per R26
-  ruling 5, so the set is closed and true at the same moment rather than one amendment later.
 - Runtime dependencies are exactly `ajv`, `yaml`, and `typescript`; `typescript` is pinned to
   `7.0.2` and supplies the syntax-tree inventory. A dependency-allowlist test enforces the exact
   set. No general parser implemented with declaration-matching regular expressions satisfies the
@@ -1355,13 +967,6 @@ semantically; normative publication and resolver hardening cannot rewrite histor
 If any required file is not listed above, stop and request a coordinator-ratified spec amendment
 before editing or creating it. Globs, directory-wide authority, and implied adjacent files are
 not permitted.
-
-This list is a permission ceiling, not a manifest of required artifacts: it bounds which paths may
-be created, edited, moved, or deleted, and it does not oblige any listed path to exist in the
-shipped result. In particular the negative fixtures may be **generated at test time** rather than
-committed, provided each one is still constructed for its named axis and its test still asserts the
-specific violation code that axis produces. AC11 is satisfied by that behaviour, not by the presence
-of a file on disk, and a listed path that no longer exists is not a scope violation.
 
 ## Forbidden
 
@@ -1419,7 +1024,7 @@ a competing owner for `authority-registry`, or relies on self-asserted authority
 
 R9 starts from the independently verified R8 baseline of 350 passing tests. The builder adds at
 least eleven independently named R9 controls and the final combined suite contains at least 361
-tests. The R9 controls separately cover: fourteen scenario publications; five refusal-row
+tests. The R9 controls separately cover: thirteen scenario publications; five refusal-row
 publications; twenty-two parcel-row publications; literal classification on every curated rule;
 absence of source/default classification fallback; loop Gate 2 subject/classification/
 applicability; loop Gate 3 subject/classification/applicability; exact coordinator verification
@@ -1604,7 +1209,7 @@ registry under test.
   stop bullets, and every normative wave-exit body. They reject any classification/default-based
   applicability fallback, assert each published entry carries literal applicability, and prove
   the Gate 2 grant does not resolve in a builder/runtime/external-write/unsupported-host query.
-  They also require all fourteen integration scenarios, all five initial refusal-class rows, and
+  They also require all thirteen integration scenarios, all five initial refusal-class rows, and
   all twenty-two parcel-graph contracts to be individually published; reject every source-wide or
   terminal classification fallback; require literal curated classification for every published
   item; and assert the loop Gate 2, Gate 3, verification, stop, and completion rules have honest
@@ -1635,159 +1240,21 @@ registry under test.
    missing/moved locators, stale normalized values, duplicate normalized paths, or unknown
    mappings. Full-file hashes at `51857a3a7796b393c0c0a68712f98c06e7015d79` are captured only
    as parcel-time evidence and are not a shipped validation predicate.
-
-   **Amended by R24.** "Zero uncovered items" is scoped to content **outside** the volatile
-   regions declared under "Volatile operational state is outside the inventory boundary". The
-   sweep must pass with zero violations against a working tree in which every declared volatile
-   region has been mutated. This narrowing is paired with three mandatory controls, and the
-   criterion is not met unless all three hold:
-
-   - **(a) Negative control — volatile regions absorb change.** A test mutates each declared
-     volatile region of `loop-directive.md` in the two ways that broke it: appending a new
-     paragraph and altering bytes in an existing one. The sweep exits 0 with zero violations.
-
-     **The reproduction figure is measured at the start of the round, never quoted from a prior
-     record.** It has moved three times as the source corrections landed, each move expected and
-     each closing on regeneration: **45** at `a100a91` (10 `VALUE_DIGEST_MISMATCH`, 35
-     `SOURCE_ITEM_UNCOVERED`), **53** at `85760ff` (the relocation vacated two anchors, adding
-     `LOCATOR_MISSING` — a code absent from the blocker record), and **71** at `0a24bc8`
-     (11 `LOCATOR_MISSING`, 54 `SOURCE_ITEM_UNCOVERED`, 6 `VALUE_DIGEST_MISMATCH`; obligations
-     2b/2c moved blocks under two new `###` paths, so their old anchors are missing rather than
-     mismatched — which is why `VALUE_DIGEST_MISMATCH` *fell* from 10 to 6 while the total rose).
-     and **54** at `9a273a0` (2 `LOCATOR_MISSING`, 45 `SOURCE_ITEM_UNCOVERED`, 7
-     `VALUE_DIGEST_MISMATCH`), after 2c was corrected to direct-body placement — which removed
-     the nine `LOCATOR_MISSING` caused by re-anchoring five published rules.
-     A reviewer comparing against 45 would misread the difference as a regression introduced by
-     the round; it is the coordinator's own source corrections, and it is recorded here so the
-     comparison is against the right number.
-
-     **The acceptance assertion, final form (R28).** Superseding both earlier statements:
-     **no published rule's item ID, rule ID, or `locatorDigest` changes this round.** Exactly one
-     `valueDigest` changes (`7a05d374a3b1`, the ownership blockquote). Exactly one rule is
-     removed (`ae7854c7dad1`, the status snapshot). Exactly one rule is **added** — standing
-     authorization 8, the relocated ambient-checkout prohibition, classified
-     `pre-action-refusal`. Shipped rule count therefore moves **469 → 468 → 469**: net zero by
-     two opposite movements, and both must appear separately in the evidence rather than
-     cancelling silently.
-
-     **No new identity-migration mechanism is authorized.** A value-pinned relocation map was
-     designed and is now unnecessary for every published rule, because direct-body placement
-     preserves their anchors outright. Identity-layer machinery is where R11 already failed on
-     this parcel — handing a prior item's identity to an unrelated new block — so a round-6
-     addition there is refused on principle when a placement change achieves the same end. Where
-     an *unpublished* audited item genuinely vanishes into a declared region, it leaves
-     `R13_NORMATIVE_MARKDOWN_AUDIT_KEYS` by removal recorded in the reconciliation record with
-     its final `locatorDigest` and `valueDigest` pinned — reported as its own evidence category,
-     never as incidental churn, because it is a reduction in an audited set. The audit count
-     moves 146 → 145 and is asserted in three further places that must move with it.
-
-     **Obligation 1's evidence lives in the reconciliation record, not on an inventory item.**
-     `item.ae7854c7dad1` carries no `normativeMarkdownAudit` record — its rationale is the
-     inventory item's own field — and once region 1 is declared the item is excised, so there is
-     nothing left to hold an item-specific rationale. `observedRefs` is shaped for exactly this.
-     The rule leaves enforcement by a curated, digest-pinned, evidenced act; never by a region
-     declaration quietly swallowing it.
-   - **(b) Positive control — governed prose still fails closed.** A test mutates a *governed*
-     normative sentence in the **same** source, specifically one of the ownership block's rule
-     sentences, and asserts the sweep still reports a violation with the specific expected code.
-     Without this, (a) alone cannot distinguish a scoped exclusion from a disabled sweep, and a
-     region declared too wide would read as success.
-   - **(c) Anti-laundering control.** A test declares a volatile region overlapping a published
-     rule's locator and asserts the validator refuses it, fail-closed, with the stable code, so a
-     rule cannot be retired by declaring its neighbourhood volatile.
-
-   Controls (a) and (b) must fail for the right reason if the other is removed; a reviewer is
-   directed to verify that by deletion rather than by reading. No control may pass because a
-   fixture is shaped to agree with the implementation.
 4. Every rule has stable identity, authority subject/claim, exact source binding, applicability,
    severity, one of the six required classifications, decision semantics, enforcement owner,
    assurance, retirement state, and corpus-sweep evidence appropriate to that state. The shipped
    manifest binds the full normative rule record and exact eighteen-source set without a
-   cardinality-conditioned bypass. Binding is established either by a pinned constant or by
-   structural position in the migration chain: the single chain head - the one record from which
-   no other record chains - is bound instead to the manifest recomputed live from the document it
-   sits in, and every other record is bound to its pinned digest. This is not a
-   cardinality-conditioned bypass: the head is identified by chain topology rather than by
-   counting, and it is bound more tightly than a constant rather than exempted, because a constant
-   asserts only "these are the bytes I remember" while the live recomputation asserts "this record
-   accurately describes the document containing it". A document is invalid if it has zero chain
-   heads, more than one chain head, or any *migration-chain* record that does not lie on the single
-   genesis-to-head path. A migration-chain record is a reconciliation record carrying
-   binding-manifest command evidence, by convention prefixed `registry-rework-`. Reconciliation
-   records that carry no binding-manifest evidence are not chain members, are outside the path
-   requirement, and remain bound by their pinned digests exactly as before; the path requirement
-   must never be read to demand that chain evidence be invented for a historical record that never
-   had any.
-   The head exemption is a *narrower* binding than a pinned constant and never a weaker one, and
-   seven further obligations make that true rather than merely asserted. First, **exactly one chain
-   link per record**: a migration-chain record declares exactly one prior-binding-manifest command
-   and exactly one superseding-binding-manifest command, and a record carrying two or more of
-   either is invalid whatever their contents or order. Selecting the first match and ignoring the
-   rest is a defect, because a second superseding command sharing a predecessor and declaring a
-   different successor is a fork *inside* one record, which across-record fork detection cannot
-   see. Second, **a pinned record is never the head**: a reconciliation record holding an entry in
-   the shipped record-digest table is invalid as a chain head, so head position is not selectable
-   by deletion - removing the head must invalidate the document, never promote a pinned record out
-   of its pin. Third, **the head has a required shape**: it declares `superseded-by-amendment` with
-   non-null superseding evidence, carries at least one `git-commit` evidence entry whose reference
-   is a forty-character lowercase hex commit, and **its two chain commands** are issued by this tool
-   with `actorClass` `coordinator` and `exitCode` `0` - the predicate binds the prior and superseding
-   binding-manifest commands themselves, never merely some command entry on the record, because a
-   check satisfiable by an unrelated decoy entry is not a check of the supersession; a record meeting
-   the schema minimums but not this shape is not a head. Fourth, **evidence references are bound by a digest computed over them, and
-   no digest is ever verified by comparison with itself**: for `source-ref`, `command-result` and
-   `missing-path` entries the recorded digest is the SHA-256 of the recorded reference. A
-   `git-commit` digest attests the commit object body and so is not checkable from the reference
-   alone; it is bound instead by the record it sits on - the prior-binding-manifest command's
-   `inputDigest` equals the SHA-256 of a `git-commit` reference present on that same record, so
-   repointing the reference breaks the binding. A validator never treats a digest as verified
-   because it is well-formed hexadecimal, and where no binding is available for a kind the absence
-   is stated rather than disguised as a check. Fifth, **evidence entries on a record are distinct**
-   by kind, reference and digest together, so a record cannot carry the same attestation twice, and a
-   migration-chain record carries exactly two `git-commit` entries whose references are distinct **by
-   reference alone**, so varying a digest cannot smuggle a second attestation of the same commit. On
-   the chain head specifically, every `git-commit` reference is either bound by the prior chain
-   command's `inputDigest` or is exactly `document.sourceSnapshotCommit`, so the head's Git
-   provenance cannot name commits that exist nowhere. That binder is *structural* rather than keyed
-   to an id, so unlike every other head obligation it applies to whatever record is the head.
-   Sixth, **the shipped chain head is bound through channels that do not depend on its being the
-   head**: its presence is required, its topic/status/reference/rule-id contract and its prose are
-   attested, and once it is no longer the head it is digest-bound. Three attacks must each be refused
-   independently - deleting the head; deleting it and substituting a replacement under any other id;
-   and **rewriting it in place under the same id**. The third is the one a presence rule alone does
-   not see, and any binding that depends on the record's head position is circular, because the
-   attacker chooses that position. Seventh, **a properly chained new head is ADMITTED**, and the
-   demoted former head remains bound as a historical record. **For the shipped head** the residual
-   limit is append-only and history-preserving. That property does **not** extend to an appended
-   successor: a successor inherits none of the head's id-keyed bindings, so deleting it re-promotes
-   the shipped head and erases the successor's attestation while the document stays valid - making
-   erasure cheaper than extension, the inverse of what this obligation wants. The obligation is
-   stated at its true scope rather than the scope we wanted, and generalising presence to successors
-   is an FK-P1 obligation and a stop condition on it. The reason it cannot be closed in-band is
-   structural and worth stating plainly: **a stateless validator comparing a document to itself
-   cannot detect a deletion at all.** Presence is assertable only against something outside the
-   document - a constant, Git history, or a signed manifest - so a per-head constant is not a
-   shortcut somebody took, it is the only in-band option there is.
-   The accepted residual limit is stated in terms of a *well-formed, correctly
-   chained* head record; these seven obligations are what make "well-formed" mean something, and
-   none of them is corpus-dependent, so none reintroduces the shipped-manifest freeze this
-   structure exists to remove.
+   cardinality-conditioned bypass.
    Each subject/claim is item-curated and substantively supported by its authority basis; source-
    wide catch-all semantic identities are invalid. The complete declared source baseline,
    including snapshot evidence, is independently manifest-bound.
 5. `resolveAuthority` makes precedence scope-aware and fail-closed: a higher-tier FK rule controls
-   an in-scope subject/claim contradiction; historical/generic rules remain visible and appear in
-   `consideredRuleIds` without exception or hand-placed exclusion; and an unlisted or
-   equal-authority contradiction can never be selected silently. Such a contradiction - including
-   a highest-tier decision split whose claim text is identical - invalidates the registry via
-   `RULE_CONFLICT`, and resolution against it returns `REQUIRE_HUMAN` with reason
-   `REGISTRY_INVALID`. The resolution result type exposes no `CONFLICT` outcome, because no input
-   can reach one: `RULE_CONFLICT` is a validity-blocking violation, and resolution never runs
-   against an invalid registry. Real shipped competing statements share curated subjects, tier
-   comes only from the exact binding `authorityBasisRef`, and retired rules never control. A
-   resolved result exposes its controlling decision together with the classification, assurance,
-   and enforcement owner behind it, so a structural refusal cannot be read as a mediated one.
-   Exact bounded Gate 2 dispatch grants resolve `ALLOW`.
+   an in-scope subject/claim contradiction; historical/generic rules remain visible; an unlisted
+   or equal-authority contradiction returns `CONFLICT` and cannot be selected silently.
+   Real shipped competing statements share curated subjects, tier comes only from the exact
+   binding `authorityBasisRef`, and retired rules never control. A resolved result exposes its
+   controlling decision; a highest-tier decision split returns `CONFLICT` even when the claim text
+   is identical. Exact bounded Gate 2 dispatch grants resolve `ALLOW`.
 6. The operation matrix enforces the protected rows exactly as stated in Constraints. No
    registry mutation can make human approval, FK merge, independent-verifier evidence, closure
    authority, or generic receipt minting ordinary agent-callable/control-state authority.
@@ -1807,31 +1274,10 @@ registry under test.
 11. All required negative fixtures and mutation controls fail for their named invariant, and
     reviewer mutation of each named axis makes the corresponding formerly-green test fail.
 12. Both CLI commands honor the `0/1/2` contract, return all ordered violations, remain read-only,
-    and return byte-identical results for identical inputs. Operator misconfiguration - including
-    a `--repo-root` that exists but is not the root of a real Git worktree - is an operational
-    error (exit 2), never a registry violation (exit 1). Non-semantic bytes added to a registered
-    source outside its registered locators do not change the result; the shapes proven inert are
-    comments, blank lines, fenced code blocks, and headings. A changed normalized operative value
-    does change the result, **and so does any added narrative prose in a Markdown source**, which
-    is reported as `SOURCE_ITEM_UNCOVERED` because new prose in a canon document requires
-    disposition rather than silent acceptance. The suite must assert the prose case is detected,
-    not only that the inert shapes are ignored.
-    A refusal test binds to the obligation it names. Where several obligations share one violation
-    code - as every chain obligation shares `MIGRATION_EVIDENCE_INVALID` - asserting the code, even
-    exactly, cannot distinguish which obligation fired, so such a test asserts the violation message.
-    A test caught by a different obligation than the one in its name passes for the wrong reason
-    however green it reads.
-
+    and return byte-identical results for identical inputs. Unrelated bytes outside registered
+    locators do not change the result; a changed normalized operative value does.
 13. `npx tsc --noEmit`, `npm test`, `npx biome check .`, full-registry `validate`, and pinned-source
     `sweep` pass in PowerShell under Node >=22 with complete, untruncated output.
-    The suite is hermetic and reports its own failures. Every artifact a test writes outside the
-    package uses a per-run unique path, so two concurrent runs cannot delete or truncate each
-    other's files; no module performs repository I/O at import time, so every test file loads
-    outside a Git worktree; and a failing assertion in any test file produces a reported failure
-    within seconds rather than a hang. That last is a positive obligation, demonstrated by
-    deliberately injecting a failure into each test file and observing it reported - never assumed.
-    A suite that cannot report a failure is not evidence, and output that is complete because
-    nothing failed is not the same as output that would be complete if something did.
 14. README documents the authority hierarchy, schema, classifications, operation matrix,
     migration records, CLI/exit codes, source-snapshot procedure, retirement rule, and the
     explicit non-authority of checksums, profiles, admission capabilities, validator results,

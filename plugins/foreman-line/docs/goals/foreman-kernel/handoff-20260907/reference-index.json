@@ -1,0 +1,715 @@
+[
+  {
+    "reference": ".github/workflows",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/A2-r2-adversarial-review-findings.md",
+      "plugins/foreman-line/docs/goals/foreman-kernel/proposed-amendment-A2-r3-backstop-independence.md",
+      "plugins/foreman-line/docs/goals/foreman-kernel/proposed-amendment-A2-r4-backstop-independence.md"
+    ],
+    "location": "repository_directory"
+  },
+  {
+    "reference": ".github/workflows/foreman-line-ci.yml",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/GOAL-FINDING-inherited-canon-provenance.md"
+    ],
+    "location": "unresolved_literal_or_template"
+  },
+  {
+    "reference": ".github/workflows/test-plugin-install.yml",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/ADR-001-runtime-infrastructure-posture.md",
+      "plugins/foreman-line/docs/goals/foreman-kernel/GOAL-FINDING-inherited-canon-provenance.md",
+      "plugins/foreman-line/docs/goals/foreman-kernel/proposed-amendment-A2-r2-backstop-independence.md",
+      "plugins/foreman-line/docs/goals/foreman-kernel/proposed-amendment-A2-r3-backstop-independence.md",
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-review-A2-r2.md",
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-review-A2-r3.md",
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-review-A2.md"
+    ],
+    "location": "handoff",
+    "sha256": "cedc54f017570ef59ad3baf2a53916e2ca4c0e4154c619116809021140a29239"
+  },
+  {
+    "reference": "plugins/foreman-line/approval/README.md",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "handoff",
+    "sha256": "5369e558879ea9faeee5828329807dc544dfbcc21722a1c94d3458f670244849"
+  },
+  {
+    "reference": "plugins/foreman-line/authority-registry",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-STOP-REPORT-for-developer.md",
+      "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-round6-recovery-record.md",
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/foreman-kernel-build-FK-P0-rework1.md",
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-build-FK-P0-rework1.md",
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-build-FK-P0-rework2.md",
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-build-FK-P0-rework3.md",
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-build-FK-P0-rework6-recovery.md",
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-build-FK-P0-rework6.md",
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-review-FK-P0-postrework.md",
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-review-FK-P0.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "repository_directory"
+  },
+  {
+    "reference": "plugins/foreman-line/authority-registry/README.md",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "implementation_branch",
+    "sha256": "f37ef31e817f7bc391d924368fd2c9f73ee5251ca3383a4914220ff751acf159"
+  },
+  {
+    "reference": "plugins/foreman-line/authority-registry/authority-enforcement-registry.yaml",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "implementation_branch",
+    "sha256": "e1a5b9b0c2cb3c92b7591c5f4e24b233e8402fd91848256e83adbf2c2cc5dd13"
+  },
+  {
+    "reference": "plugins/foreman-line/authority-registry/biome.json",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "implementation_branch",
+    "sha256": "3e144fbbca0f50224a0f713e94f95fb3a0bf94b36a71f2ea80e8e3b1698b4e7b"
+  },
+  {
+    "reference": "plugins/foreman-line/authority-registry/package-lock.json",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "implementation_branch",
+    "sha256": "e7a986409956dc29a8eaf3d4d70ba3cf842643cd7999c79b6525f2368191b8eb"
+  },
+  {
+    "reference": "plugins/foreman-line/authority-registry/package.json",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "implementation_branch",
+    "sha256": "9b36380363171d4b3e72ee26122731511a2e9b0b0669ca5bba250ba96f38f20d"
+  },
+  {
+    "reference": "plugins/foreman-line/authority-registry/schemas/authority-enforcement-registry.schema.json",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "implementation_branch",
+    "sha256": "b679a496254dcaa88da68a884abfe0ac436f6481b2b7c59aa0e1db133120d31c"
+  },
+  {
+    "reference": "plugins/foreman-line/authority-registry/src/cli.ts",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "implementation_branch",
+    "sha256": "b59bfbacfb3ccba285d8c70599a36e7d934818fe988df709017683269d6de555"
+  },
+  {
+    "reference": "plugins/foreman-line/authority-registry/src/generate.ts",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "implementation_branch",
+    "sha256": "99e9756e7b2c5490f3c59e1d0700e93e91b0d92b0008e26a4f3cde7b2fc1082f"
+  },
+  {
+    "reference": "plugins/foreman-line/authority-registry/src/index.ts",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "implementation_branch",
+    "sha256": "9c85231fe030420356093899c5f22dc04c623e93702bb048dc0b74f1d3f9b03e"
+  },
+  {
+    "reference": "plugins/foreman-line/authority-registry/src/registry.ts",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "implementation_branch",
+    "sha256": "30d8a707a1b9ab19b4c4b49df790df5e76271ee8b656a9ab2324c88229d57ec8"
+  },
+  {
+    "reference": "plugins/foreman-line/authority-registry/src/schemas.ts",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "implementation_branch",
+    "sha256": "51fa129bbe67fb0f64c9954e4c82bba885a8cd3bfc7cf2d63d93422e4f228fbb"
+  },
+  {
+    "reference": "plugins/foreman-line/authority-registry/src/types.ts",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "implementation_branch",
+    "sha256": "20e293e457efc2919222139230aaa498ace7988c195fccd585c87f2f62c68db4"
+  },
+  {
+    "reference": "plugins/foreman-line/authority-registry/src/validate.ts",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "implementation_branch",
+    "sha256": "525f5670fb29102567d2c890ec74c7710adfd38777a71fc27d34d12320112899"
+  },
+  {
+    "reference": "plugins/foreman-line/authority-registry/tests/bare-specifier.test.ts",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "implementation_branch",
+    "sha256": "5a6c18e7cd80746e35f4e5bbb41325ab4867c42077467a6c211691410592b366"
+  },
+  {
+    "reference": "plugins/foreman-line/authority-registry/tests/corpus-sweep.test.ts",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "implementation_branch",
+    "sha256": "7f0069812b4ea41b5295c53091ab9dae56aafe91433c061673f400dd0fc0c506"
+  },
+  {
+    "reference": "plugins/foreman-line/authority-registry/tests/dependency-allowlist.test.ts",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "implementation_branch",
+    "sha256": "fd5e5b0414548b4e2b9194a5d0460aa04be49e786b37e0ba21e3836bf8e64f30"
+  },
+  {
+    "reference": "plugins/foreman-line/authority-registry/tests/fixtures/pass-minimal.yaml",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "implementation_branch",
+    "sha256": "e1a5b9b0c2cb3c92b7591c5f4e24b233e8402fd91848256e83adbf2c2cc5dd13"
+  },
+  {
+    "reference": "plugins/foreman-line/authority-registry/tests/fixtures/reject-contradictory-authority.yaml",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "unresolved_literal_or_template"
+  },
+  {
+    "reference": "plugins/foreman-line/authority-registry/tests/fixtures/reject-duplicate-rule.yaml",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "unresolved_literal_or_template"
+  },
+  {
+    "reference": "plugins/foreman-line/authority-registry/tests/fixtures/reject-identity-mutation.yaml",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "unresolved_literal_or_template"
+  },
+  {
+    "reference": "plugins/foreman-line/authority-registry/tests/fixtures/reject-location-mutation.yaml",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "unresolved_literal_or_template"
+  },
+  {
+    "reference": "plugins/foreman-line/authority-registry/tests/fixtures/reject-missing-source.yaml",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "unresolved_literal_or_template"
+  },
+  {
+    "reference": "plugins/foreman-line/authority-registry/tests/fixtures/reject-stale-source.yaml",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "unresolved_literal_or_template"
+  },
+  {
+    "reference": "plugins/foreman-line/authority-registry/tests/fixtures/reject-value-mutation.yaml",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "unresolved_literal_or_template"
+  },
+  {
+    "reference": "plugins/foreman-line/authority-registry/tests/parity.test.ts",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "implementation_branch",
+    "sha256": "01903ea33cae8f848dd0188c3cbdd40af5b306d6245c09a4f61820f62ab5087f"
+  },
+  {
+    "reference": "plugins/foreman-line/authority-registry/tests/schema-validation.test.ts",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "implementation_branch",
+    "sha256": "bd682356dbc0e1176599a1161e8d5eef87e55b35326b3c60a5eb84621e5b3289"
+  },
+  {
+    "reference": "plugins/foreman-line/authority-registry/tests/semantic-invariants.test.ts",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "implementation_branch",
+    "sha256": "e1fbdfd9572b45726e537e2f5375685865aea2bd31401e2aa290327384fed2aa"
+  },
+  {
+    "reference": "plugins/foreman-line/authority-registry/tsconfig.json",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "implementation_branch",
+    "sha256": "38976aeb8a37adf4d858f92a6f2cf25134f291e077d86224bdc1627d20ff2025"
+  },
+  {
+    "reference": "plugins/foreman-line/docs/COORDINATOR-PATTERN.md",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/ADR-001-runtime-infrastructure-posture.md",
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/parcel-versions/loop-directive.md",
+      "plugins/foreman-line/docs/goals/foreman-kernel/loop-directive.md",
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-review-A2-r2.md",
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-review-A2-r3.md",
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-review-A2.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "handoff",
+    "sha256": "c734c9b2aef15f020a4a5eb261a1291740eddb2a154376386599074cbb8ca9bd"
+  },
+  {
+    "reference": "plugins/foreman-line/docs/FOREMAN-LINE-PLAN.md",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/ADR-001-runtime-infrastructure-posture.md",
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "handoff",
+    "sha256": "0ca5a264e5371be59b2351e2f8e369a6e7f9fa2b4fd6d94ab54902d4ecd63a22"
+  },
+  {
+    "reference": "plugins/foreman-line/docs/SPEC-CONVENTION.md",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/parcel-versions/loop-directive.md",
+      "plugins/foreman-line/docs/goals/foreman-kernel/loop-directive.md",
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-review-A2-r2.md",
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-review-A2.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "handoff",
+    "sha256": "7ac315005cde6ad6def848b83de1d1b644e321c5d9f6434bc925deb6daba8703"
+  },
+  {
+    "reference": "plugins/foreman-line/docs/goals/foreman-kernel",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/FOREMAN-KERNEL-DEVELOPMENT-CHARTER.md",
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-build-FK-P0-rework3.md"
+    ],
+    "location": "repository_directory"
+  },
+  {
+    "reference": "plugins/foreman-line/docs/goals/foreman-kernel/ADR-001-runtime-infrastructure-posture.md",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-review-A2-r2.md",
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-review-A2-r3.md",
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-review-A2.md"
+    ],
+    "location": "handoff",
+    "sha256": "7d7f1ac7f5f543052b475737879d8fa278cdb788b61df257b63e4481ed40b5e7"
+  },
+  {
+    "reference": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-BLOCKER-volatile-canon-source.md",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-build-FK-P0-rework6-recovery.md",
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-build-FK-P0-rework6.md"
+    ],
+    "location": "handoff",
+    "sha256": "6004c7567757f2d6db6642169af45715c0de94f5e2c6486958a66f1d3fb1924a"
+  },
+  {
+    "reference": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-amendment-R1",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-review-FK-P0-postrework.md"
+    ],
+    "location": "unresolved_literal_or_template"
+  },
+  {
+    "reference": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-amendment-R14.md",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/foreman-kernel-build-FK-P0-rework1.md",
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-build-FK-P0-rework1.md"
+    ],
+    "location": "handoff",
+    "sha256": "3548c28fe7e37beaae8482dc750974d54022e03b38b480c9349e3eb686321365"
+  },
+  {
+    "reference": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-review-A-findings.md",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/foreman-kernel-build-FK-P0-rework1.md",
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-build-FK-P0-rework1.md"
+    ],
+    "location": "handoff",
+    "sha256": "9e4244af894082c7bda8db44d88f62a0edbeb5f22c57fbec52a15f67a5fca0ca"
+  },
+  {
+    "reference": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-round6-STOP-REPORT.md",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-build-FK-P0-rework6-recovery.md"
+    ],
+    "location": "handoff",
+    "sha256": "d1ad8ea4e0eb747358c185ba5f252cd263a8891d4fb5d8d7e92bbbd787dedd92"
+  },
+  {
+    "reference": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-round6-recovery-record.md",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-build-FK-P0-rework6-recovery.md"
+    ],
+    "location": "handoff",
+    "sha256": "34e7fb8c23d4b0bbf5d8216b164f1ffeff40732f8573dd478b9511f6c6145717"
+  },
+  {
+    "reference": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-triage-round1.md",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/foreman-kernel-build-FK-P0-rework1.md",
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-build-FK-P0-rework1.md"
+    ],
+    "location": "handoff",
+    "sha256": "7ed07c36c81cf204dbab848e978653188d5be1be7b45d24362e8d38a99de9c3c"
+  },
+  {
+    "reference": "plugins/foreman-line/docs/goals/foreman-kernel/FOREMAN-KERNEL-DEVELOPMENT-CHARTER.md",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/FOREMAN-KERNEL-DEVELOPMENT-CHARTER.md"
+    ],
+    "location": "handoff",
+    "sha256": "e7c211c55fd7534d4d36fed624f51e019662326be9688a8e9ea665b64d4e1346"
+  },
+  {
+    "reference": "plugins/foreman-line/docs/goals/foreman-kernel/amendment-A1.8-ratification-ledger.md",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-review-A2-r2.md",
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-review-A2-r3.md"
+    ],
+    "location": "handoff",
+    "sha256": "d0116f9394ad7a8f43787f25d58e6a9c5c77caa94717d2a5b3e25c05bcf77cbe"
+  },
+  {
+    "reference": "plugins/foreman-line/docs/goals/foreman-kernel/charter.md",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/ADR-001-runtime-infrastructure-posture.md",
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/parcel-versions/loop-directive.md",
+      "plugins/foreman-line/docs/goals/foreman-kernel/loop-directive.md",
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-build-FK-P0-rework1.md",
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-review-A2-r2.md",
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-review-A2-r3.md",
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-review-A2.md",
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-review-FK-P0.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "handoff",
+    "sha256": "c19359374480b03c39ce04316f94007fbb87e3be2b5be39bca8dd4072164234d"
+  },
+  {
+    "reference": "plugins/foreman-line/docs/goals/foreman-kernel/loop-directive.md",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-BLOCKER-volatile-canon-source.md",
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "handoff",
+    "sha256": "1742023d00f5f33275ff1ac957f66844bbfe2f5cfc31a98efac7d74f420ab140"
+  },
+  {
+    "reference": "plugins/foreman-line/docs/goals/foreman-kernel/plan-review-findings.md",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/parcel-versions/loop-directive.md",
+      "plugins/foreman-line/docs/goals/foreman-kernel/loop-directive.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "handoff",
+    "sha256": "d2e5bc3268450c77456ad14baa6df8dadb9cd132123ddc52a782886e42a73057"
+  },
+  {
+    "reference": "plugins/foreman-line/docs/goals/foreman-kernel/proposed-amendment-A1-decision-path-latency-budget.md",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-review-A2-r2.md",
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-review-A2-r3.md",
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-review-A2.md"
+    ],
+    "location": "handoff",
+    "sha256": "ae7fea39b978b3d673e0e74b1640223ae8db5b6a7e34c9b8f8cec800c40561f4"
+  },
+  {
+    "reference": "plugins/foreman-line/docs/goals/foreman-kernel/proposed-amendment-A2-ci-backstop-host-independence.md",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-review-A2.md"
+    ],
+    "location": "handoff",
+    "sha256": "a0dee210e0084ba72d723fcdc9da4d1297d6097b91c2a225b8b1ac60e7b3c813"
+  },
+  {
+    "reference": "plugins/foreman-line/docs/goals/foreman-kernel/proposed-amendment-A2-r2-backstop-independence.md",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-review-A2-r2.md"
+    ],
+    "location": "handoff",
+    "sha256": "3e676047a4515356d4b15a56d40407a642fe03c6f948fe9ca39598d3240b2475"
+  },
+  {
+    "reference": "plugins/foreman-line/docs/goals/foreman-kernel/proposed-amendment-A2-r3-backstop-independence.md",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-review-A2-r3.md"
+    ],
+    "location": "handoff",
+    "sha256": "2c391f14ab16a0d5a246e4b14cd20d07353bd478f1a40af86acb6f8ee04662b2"
+  },
+  {
+    "reference": "plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/FOREMAN-KERNEL-DEVELOPMENT-CHARTER.md",
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/foreman-kernel-build-FK-P0-rework1.md",
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/parcel-versions/loop-directive.md",
+      "plugins/foreman-line/docs/goals/foreman-kernel/loop-directive.md",
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-build-FK-P0-rework1.md",
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-build-FK-P0-rework2.md",
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-build-FK-P0-rework3.md",
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-build-FK-P0-rework6-recovery.md",
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-build-FK-P0-rework6.md",
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-review-A2-r2.md",
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-review-A2-r3.md",
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-review-A2.md",
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-review-FK-P0-postrework.md",
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-review-FK-P0.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "handoff",
+    "sha256": "b5cce5029c4619058795414b624a418fb8c1c28f8534dab9d58c8fef61994c2f"
+  },
+  {
+    "reference": "plugins/foreman-line/docs/kickstarters/foreman-kernel-build-FK-P0-rework6.md",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-build-FK-P0-rework6-recovery.md"
+    ],
+    "location": "handoff",
+    "sha256": "5fa22e0a49ee9e241e916ae038d8371f67525598965f4861ed6a66ab371f4ba6"
+  },
+  {
+    "reference": "plugins/foreman-line/docs/kickstarters/foreman-kernel-review-A2.md",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/A2-adversarial-review-findings.md"
+    ],
+    "location": "handoff",
+    "sha256": "4e22b151e124f4dfc5d822e377d64dae0c3aaec730df953aae1daf89b8875b06"
+  },
+  {
+    "reference": "plugins/foreman-line/docs/kickstarters/foreman-kernel-review-FK-P0-postrework.md",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-coordinator-closure-check.md"
+    ],
+    "location": "handoff",
+    "sha256": "1509c4219033f1f8708281e30a38a081bcbf14280039401d385bc82b505d23d8"
+  },
+  {
+    "reference": "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/foreman-kernel-build-FK-P0-rework1.md",
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-build-FK-P0-rework1.md",
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-build-FK-P0-rework6-recovery.md",
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-build-FK-P0-rework6.md",
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-review-FK-P0-postrework.md",
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-review-FK-P0.md"
+    ],
+    "location": "handoff",
+    "sha256": "7f8471affe2ff5e2e9fc0012af90a313034d1297c5ce38188a124c5e4a379fda"
+  },
+  {
+    "reference": "plugins/foreman-line/docs/transcripts/defects_lessons.md",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "unresolved_literal_or_template"
+  },
+  {
+    "reference": "plugins/foreman-line/permission-profiles",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "repository_directory"
+  },
+  {
+    "reference": "plugins/foreman-line/permission-profiles/README.md",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "handoff",
+    "sha256": "b790947a8223daab2babf45cba648f1bfd073d7d0b1e6f524fa02f51dc129f00"
+  },
+  {
+    "reference": "plugins/foreman-line/permission-profiles/permission-profiles.yaml",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "handoff",
+    "sha256": "9da06cf299653b244c636dd9809b5ba6410efb5e9e7f89389c1ef7260fa577cb"
+  },
+  {
+    "reference": "plugins/foreman-line/permission-profiles/src/types.ts",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "handoff",
+    "sha256": "91651a073156834119b5037127b942f315ea4d45d26bc17e0c9df2a1499aa5a9"
+  },
+  {
+    "reference": "plugins/foreman-line/permission-profiles/src/validator.ts",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "handoff",
+    "sha256": "1f12fe53f75b089d25dd27e995af024c52269b0db6b8c4e22c616702749a7d23"
+  },
+  {
+    "reference": "plugins/foreman-line/routing-policy",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "repository_directory"
+  },
+  {
+    "reference": "plugins/foreman-line/routing-policy/routing-policy.yaml",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-GATE-3-package.md",
+      "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-STOP-REPORT-for-developer.md",
+      "plugins/foreman-line/docs/goals/foreman-kernel/FOREMAN-KERNEL-DEVELOPMENT-CHARTER.md",
+      "plugins/foreman-line/docs/goals/foreman-kernel/charter.md",
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/foreman-kernel-build-FK-P0-rework1.md",
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/parcel-versions/charter.md",
+      "plugins/foreman-line/docs/goals/foreman-kernel/loop-directive.md",
+      "plugins/foreman-line/docs/kickstarters/foreman-kernel-build-FK-P0-rework1.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "handoff",
+    "sha256": "fd9afccec8efdb5ba5b9c6756d59a9f2daea8ce838ffd9724fbf14acc3018f25"
+  },
+  {
+    "reference": "plugins/foreman-line/schema-scaffold",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "repository_directory"
+  },
+  {
+    "reference": "plugins/foreman-line/skills/goal/SKILL.md",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "handoff",
+    "sha256": "ee003674865be3a45316b95f5459b8f317d8150bdb8c0774601929cb0befd831"
+  },
+  {
+    "reference": "plugins/foreman-line/skills/parcel-driven-development/SKILL.md",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "handoff",
+    "sha256": "f673472c804a659f9f01515b878f02c653d4ed97c2c4c97f7340139325c6df05"
+  },
+  {
+    "reference": "plugins/foreman-line/spec-linter",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "repository_directory"
+  },
+  {
+    "reference": "plugins/foreman-line/spec-linter/README.md",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "handoff",
+    "sha256": "8be95883d16a3a73a128a8c0d14d73d61204724531c99ee9dfc8072dff08a69c"
+  },
+  {
+    "reference": "plugins/foreman-line/spec-linter/schemas/spec-frontmatter.schema.json",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "handoff",
+    "sha256": "8ff17dbd4ccbd29d0f60f7b03dfdc9f08afb63d9de1b64549bc1646ce546034e"
+  },
+  {
+    "reference": "plugins/foreman-line/spec-linter/src/cli.ts",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "handoff",
+    "sha256": "aa0928ab5173d868c61c1ddd75ce990dbb698afdaee9269b7e99965f5e687c18"
+  },
+  {
+    "reference": "plugins/foreman-line/spec-linter/src/validate.ts",
+    "mentioned_by": [
+      "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md"
+    ],
+    "location": "handoff",
+    "sha256": "4e542bfa6943c71b962236cbd5410713186f6eabb2b7788e12392cbffaef3a99"
+  }
+]

@@ -1,0 +1,483 @@
+[
+  {
+    "worktree": "D:/Repos/agent-skills",
+    "HEAD": "dab90c9c769867e1bded5151e6126f4360b4f6fc",
+    "branch": "refs/heads/temp/plugin-bump",
+    "kernel_files": {
+      "charter.md": "e7c211c55fd7534d4d36fed624f51e019662326be9688a8e9ea665b64d4e1346"
+    },
+    "dirty_entry_count": 2
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-kpp-001-a-r3",
+    "HEAD": "63a3a88c0b1351e697f18d97b98be76e1613f8eb",
+    "branch": "refs/heads/agent/kpp-001-a-foreman-r3",
+    "kernel_files": {},
+    "dirty_entry_count": 0
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/fk-p0-canon-authority-enforcement-registry",
+    "HEAD": "0ee165720f8d1e3a91eb283cb770400b23f61bf5",
+    "branch": "refs/heads/codex/fk-p0-canon-authority-enforcement-registry",
+    "kernel_files": {
+      "charter.md": "151a5a7cb5f6e92d7780f3ef27af5599e7ba7e7f4a9ef3e91acf8d27dd753f65",
+      "loop-directive.md": "d10f7de3f559147f91ec823258b89cf0afd106e9e4728fd96848504bbf499748"
+    },
+    "dirty_entry_count": 0
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/fk-p0-r10-contract-20260901",
+    "HEAD": "f3366be12175acb4fd4aeb32c301c845b906a5da",
+    "detached": true,
+    "kernel_files": {
+      "charter.md": "a69b19d69106243a918b2b228b29b8a85d854c8966e3d578ed1036105c90cc84",
+      "loop-directive.md": "b7dd2ee3e6c688234b8a3ec92ea3c3db0748bbb16e63907c6024cc577de314dd"
+    },
+    "dirty_entry_count": 0
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/fk-p0-r10-coverage-20260901",
+    "HEAD": "f3366be12175acb4fd4aeb32c301c845b906a5da",
+    "detached": true,
+    "kernel_files": {
+      "charter.md": "a69b19d69106243a918b2b228b29b8a85d854c8966e3d578ed1036105c90cc84",
+      "loop-directive.md": "b7dd2ee3e6c688234b8a3ec92ea3c3db0748bbb16e63907c6024cc577de314dd"
+    },
+    "dirty_entry_count": 0
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/fk-p0-r11-contract-20260901",
+    "HEAD": "9059bb249f75805b34a68397d53dfa5608fd6ad4",
+    "detached": true,
+    "kernel_files": {
+      "charter.md": "a69b19d69106243a918b2b228b29b8a85d854c8966e3d578ed1036105c90cc84",
+      "loop-directive.md": "b7dd2ee3e6c688234b8a3ec92ea3c3db0748bbb16e63907c6024cc577de314dd"
+    },
+    "dirty_entry_count": 0
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/fk-p0-r11-coverage-security-20260901",
+    "HEAD": "9059bb249f75805b34a68397d53dfa5608fd6ad4",
+    "detached": true,
+    "kernel_files": {
+      "charter.md": "a69b19d69106243a918b2b228b29b8a85d854c8966e3d578ed1036105c90cc84",
+      "loop-directive.md": "b7dd2ee3e6c688234b8a3ec92ea3c3db0748bbb16e63907c6024cc577de314dd"
+    },
+    "dirty_entry_count": 0
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/fk-p0-r12-contract-20260901",
+    "HEAD": "0683bc059ec54a8652624fd2b7be72fe157cac14",
+    "detached": true,
+    "kernel_files": {
+      "charter.md": "a69b19d69106243a918b2b228b29b8a85d854c8966e3d578ed1036105c90cc84",
+      "loop-directive.md": "b7dd2ee3e6c688234b8a3ec92ea3c3db0748bbb16e63907c6024cc577de314dd"
+    },
+    "dirty_entry_count": 0
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/fk-p0-r12-coverage-security-20260901",
+    "HEAD": "0683bc059ec54a8652624fd2b7be72fe157cac14",
+    "detached": true,
+    "kernel_files": {
+      "charter.md": "a69b19d69106243a918b2b228b29b8a85d854c8966e3d578ed1036105c90cc84",
+      "loop-directive.md": "b7dd2ee3e6c688234b8a3ec92ea3c3db0748bbb16e63907c6024cc577de314dd"
+    },
+    "dirty_entry_count": 0
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/fk-p0-r13-contract-20260901",
+    "HEAD": "df8155a01989f69e9872ef5c08bfc18ad6b8cb03",
+    "detached": true,
+    "kernel_files": {
+      "charter.md": "a69b19d69106243a918b2b228b29b8a85d854c8966e3d578ed1036105c90cc84",
+      "loop-directive.md": "b7dd2ee3e6c688234b8a3ec92ea3c3db0748bbb16e63907c6024cc577de314dd"
+    },
+    "dirty_entry_count": 0
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/fk-p0-r13-coverage-security-20260901",
+    "HEAD": "df8155a01989f69e9872ef5c08bfc18ad6b8cb03",
+    "detached": true,
+    "kernel_files": {
+      "charter.md": "a69b19d69106243a918b2b228b29b8a85d854c8966e3d578ed1036105c90cc84",
+      "loop-directive.md": "b7dd2ee3e6c688234b8a3ec92ea3c3db0748bbb16e63907c6024cc577de314dd"
+    },
+    "dirty_entry_count": 0
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/fk-p0-r2-authority-20260831",
+    "HEAD": "08ebfc63947e9a44501f0595958cb7c3f377bc8d",
+    "detached": true,
+    "kernel_files": {
+      "charter.md": "a69b19d69106243a918b2b228b29b8a85d854c8966e3d578ed1036105c90cc84",
+      "loop-directive.md": "b7dd2ee3e6c688234b8a3ec92ea3c3db0748bbb16e63907c6024cc577de314dd"
+    },
+    "dirty_entry_count": 0
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/fk-p0-r2-coverage-20260831",
+    "HEAD": "08ebfc63947e9a44501f0595958cb7c3f377bc8d",
+    "detached": true,
+    "kernel_files": {
+      "charter.md": "a69b19d69106243a918b2b228b29b8a85d854c8966e3d578ed1036105c90cc84",
+      "loop-directive.md": "b7dd2ee3e6c688234b8a3ec92ea3c3db0748bbb16e63907c6024cc577de314dd"
+    },
+    "dirty_entry_count": 0
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/fk-p0-r3-authority-20260831",
+    "HEAD": "87237a868a0da8e1a57fc8ce9d400509b2a09c5d",
+    "detached": true,
+    "kernel_files": {
+      "charter.md": "a69b19d69106243a918b2b228b29b8a85d854c8966e3d578ed1036105c90cc84",
+      "loop-directive.md": "b7dd2ee3e6c688234b8a3ec92ea3c3db0748bbb16e63907c6024cc577de314dd"
+    },
+    "dirty_entry_count": 0
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/fk-p0-r3-coverage-20260831",
+    "HEAD": "87237a868a0da8e1a57fc8ce9d400509b2a09c5d",
+    "detached": true,
+    "kernel_files": {
+      "charter.md": "a69b19d69106243a918b2b228b29b8a85d854c8966e3d578ed1036105c90cc84",
+      "loop-directive.md": "b7dd2ee3e6c688234b8a3ec92ea3c3db0748bbb16e63907c6024cc577de314dd"
+    },
+    "dirty_entry_count": 0
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/fk-p0-r4-authority-20260831",
+    "HEAD": "f73a3846e436dcf25d80618aedd88170b0888770",
+    "detached": true,
+    "kernel_files": {
+      "charter.md": "a69b19d69106243a918b2b228b29b8a85d854c8966e3d578ed1036105c90cc84",
+      "loop-directive.md": "b7dd2ee3e6c688234b8a3ec92ea3c3db0748bbb16e63907c6024cc577de314dd"
+    },
+    "dirty_entry_count": 0
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/fk-p0-r4-coverage-20260831",
+    "HEAD": "f73a3846e436dcf25d80618aedd88170b0888770",
+    "detached": true,
+    "kernel_files": {
+      "charter.md": "a69b19d69106243a918b2b228b29b8a85d854c8966e3d578ed1036105c90cc84",
+      "loop-directive.md": "b7dd2ee3e6c688234b8a3ec92ea3c3db0748bbb16e63907c6024cc577de314dd"
+    },
+    "dirty_entry_count": 0
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/fk-p0-r5-contract-20260831",
+    "HEAD": "a61eb08da6e7826d2e30bc0210434330184522da",
+    "detached": true,
+    "kernel_files": {
+      "charter.md": "a69b19d69106243a918b2b228b29b8a85d854c8966e3d578ed1036105c90cc84",
+      "loop-directive.md": "b7dd2ee3e6c688234b8a3ec92ea3c3db0748bbb16e63907c6024cc577de314dd"
+    },
+    "dirty_entry_count": 0
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/fk-p0-r5-coverage-20260831",
+    "HEAD": "a61eb08da6e7826d2e30bc0210434330184522da",
+    "detached": true,
+    "kernel_files": {
+      "charter.md": "a69b19d69106243a918b2b228b29b8a85d854c8966e3d578ed1036105c90cc84",
+      "loop-directive.md": "b7dd2ee3e6c688234b8a3ec92ea3c3db0748bbb16e63907c6024cc577de314dd"
+    },
+    "dirty_entry_count": 0
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/fk-p0-r6-contract-20260831",
+    "HEAD": "6123474485ef836fc7250df9c15695aaff44fe45",
+    "detached": true,
+    "kernel_files": {
+      "charter.md": "a69b19d69106243a918b2b228b29b8a85d854c8966e3d578ed1036105c90cc84",
+      "loop-directive.md": "b7dd2ee3e6c688234b8a3ec92ea3c3db0748bbb16e63907c6024cc577de314dd"
+    },
+    "dirty_entry_count": 0
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/fk-p0-r6-coverage-20260831",
+    "HEAD": "6123474485ef836fc7250df9c15695aaff44fe45",
+    "detached": true,
+    "kernel_files": {
+      "charter.md": "a69b19d69106243a918b2b228b29b8a85d854c8966e3d578ed1036105c90cc84",
+      "loop-directive.md": "b7dd2ee3e6c688234b8a3ec92ea3c3db0748bbb16e63907c6024cc577de314dd"
+    },
+    "dirty_entry_count": 0
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/fk-p0-r7-contract-20260831",
+    "HEAD": "5d7ca990574eb8416a1fc5ac40b90d9aec975b2b",
+    "detached": true,
+    "kernel_files": {
+      "charter.md": "a69b19d69106243a918b2b228b29b8a85d854c8966e3d578ed1036105c90cc84",
+      "loop-directive.md": "b7dd2ee3e6c688234b8a3ec92ea3c3db0748bbb16e63907c6024cc577de314dd"
+    },
+    "dirty_entry_count": 0
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/fk-p0-r7-coverage-20260831",
+    "HEAD": "5d7ca990574eb8416a1fc5ac40b90d9aec975b2b",
+    "detached": true,
+    "kernel_files": {
+      "charter.md": "a69b19d69106243a918b2b228b29b8a85d854c8966e3d578ed1036105c90cc84",
+      "loop-directive.md": "b7dd2ee3e6c688234b8a3ec92ea3c3db0748bbb16e63907c6024cc577de314dd"
+    },
+    "dirty_entry_count": 0
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/fk-p0-r8-contract-20260831",
+    "HEAD": "84d5c7c0fd2ef074dab06770f14e87012619a213",
+    "detached": true,
+    "kernel_files": {
+      "charter.md": "a69b19d69106243a918b2b228b29b8a85d854c8966e3d578ed1036105c90cc84",
+      "loop-directive.md": "b7dd2ee3e6c688234b8a3ec92ea3c3db0748bbb16e63907c6024cc577de314dd"
+    },
+    "dirty_entry_count": 0
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/fk-p0-r8-coverage-20260831",
+    "HEAD": "84d5c7c0fd2ef074dab06770f14e87012619a213",
+    "detached": true,
+    "kernel_files": {
+      "charter.md": "a69b19d69106243a918b2b228b29b8a85d854c8966e3d578ed1036105c90cc84",
+      "loop-directive.md": "b7dd2ee3e6c688234b8a3ec92ea3c3db0748bbb16e63907c6024cc577de314dd"
+    },
+    "dirty_entry_count": 0
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/fk-p0-r9-contract-20260831",
+    "HEAD": "89d7e4853a8fb0af3db68e9262e38833062fba77",
+    "detached": true,
+    "kernel_files": {
+      "charter.md": "a69b19d69106243a918b2b228b29b8a85d854c8966e3d578ed1036105c90cc84",
+      "loop-directive.md": "b7dd2ee3e6c688234b8a3ec92ea3c3db0748bbb16e63907c6024cc577de314dd"
+    },
+    "dirty_entry_count": 0
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/fk-p0-r9-coverage-20260831",
+    "HEAD": "89d7e4853a8fb0af3db68e9262e38833062fba77",
+    "detached": true,
+    "kernel_files": {
+      "charter.md": "a69b19d69106243a918b2b228b29b8a85d854c8966e3d578ed1036105c90cc84",
+      "loop-directive.md": "b7dd2ee3e6c688234b8a3ec92ea3c3db0748bbb16e63907c6024cc577de314dd"
+    },
+    "dirty_entry_count": 0
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/fk-p0-review-authority-20260831",
+    "HEAD": "4666ea15caee8b231137f23325d14ea4526e338a",
+    "detached": true,
+    "kernel_files": {
+      "charter.md": "a69b19d69106243a918b2b228b29b8a85d854c8966e3d578ed1036105c90cc84",
+      "loop-directive.md": "b7dd2ee3e6c688234b8a3ec92ea3c3db0748bbb16e63907c6024cc577de314dd"
+    },
+    "dirty_entry_count": 0
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/fk-p0-review-coverage-20260831",
+    "HEAD": "4666ea15caee8b231137f23325d14ea4526e338a",
+    "detached": true,
+    "kernel_files": {
+      "charter.md": "a69b19d69106243a918b2b228b29b8a85d854c8966e3d578ed1036105c90cc84",
+      "loop-directive.md": "b7dd2ee3e6c688234b8a3ec92ea3c3db0748bbb16e63907c6024cc577de314dd"
+    },
+    "dirty_entry_count": 0
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/fl-assembly-20260905",
+    "HEAD": "e62ba0afcf1872ad7e165179377f64ed1656a3eb",
+    "branch": "refs/heads/feat/foreman-line-FL-ASSEMBLY-20260905",
+    "kernel_files": {},
+    "dirty_entry_count": 0
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/fl-fk-v0-verification-20260905",
+    "HEAD": "0ee165720f8d1e3a91eb283cb770400b23f61bf5",
+    "branch": "refs/heads/feat/foreman-line-FL-FK-V0-20260905",
+    "kernel_files": {
+      "charter.md": "151a5a7cb5f6e92d7780f3ef27af5599e7ba7e7f4a9ef3e91acf8d27dd753f65",
+      "loop-directive.md": "d10f7de3f559147f91ec823258b89cf0afd106e9e4728fd96848504bbf499748"
+    },
+    "dirty_entry_count": 0
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/fl-r1-terminal-seal-20260905",
+    "HEAD": "5ce6ddc7f996d764e506b6b421779fbf3ece689a",
+    "branch": "refs/heads/feat/foreman-line-FL-R1-20260905",
+    "kernel_files": {},
+    "dirty_entry_count": 5
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/fl-r2-audit-loader-20260905",
+    "HEAD": "5ce6ddc7f996d764e506b6b421779fbf3ece689a",
+    "branch": "refs/heads/feat/foreman-line-FL-R2-20260905",
+    "kernel_files": {},
+    "dirty_entry_count": 7
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/fl-r3-pr-push-20260905",
+    "HEAD": "5ce6ddc7f996d764e506b6b421779fbf3ece689a",
+    "branch": "refs/heads/feat/foreman-line-FL-R3-20260905",
+    "kernel_files": {},
+    "dirty_entry_count": 6
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/fl-r4-package-ci-20260905",
+    "HEAD": "5ce6ddc7f996d764e506b6b421779fbf3ece689a",
+    "branch": "refs/heads/feat/foreman-line-FL-R4-20260905",
+    "kernel_files": {},
+    "dirty_entry_count": 6
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/foreman-kernel-stage0-20260830",
+    "HEAD": "d0e87ce0e36e69868909c93e0f00f6fc7e4a9af3",
+    "branch": "refs/heads/codex/foreman-kernel-stage0-20260830",
+    "kernel_files": {
+      "charter.md": "c19359374480b03c39ce04316f94007fbb87e3be2b5be39bca8dd4072164234d",
+      "loop-directive.md": "1742023d00f5f33275ff1ac957f66844bbfe2f5cfc31a98efac7d74f420ab140"
+    },
+    "dirty_entry_count": 0
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/foreman-line-bootstrap-20260731",
+    "HEAD": "f1874415455b69118e44eac6cfcb3b71796f946a",
+    "branch": "refs/heads/codex/foreman-line-bootstrap",
+    "kernel_files": {},
+    "dirty_entry_count": 0
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/foreman-line-bootstrap-r1-20260731",
+    "HEAD": "6032bee1832c40959f9078f1c17c075619e9e2ea",
+    "branch": "refs/heads/codex/foreman-line-bootstrap-r1",
+    "kernel_files": {},
+    "dirty_entry_count": 0
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/foreman-line-postmerge-20260731",
+    "HEAD": "5f16577d8b2592fe49f4f2a24be16fe42587c148",
+    "branch": "refs/heads/codex/foreman-line-bootstrap-closeout",
+    "kernel_files": {},
+    "dirty_entry_count": 0
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/foreman-routing-cerebras-shadow",
+    "HEAD": "f04fb49975c00bb55cfd6e28a840f09fdcc32728",
+    "branch": "refs/heads/codex/foreman-routing-cerebras-shadow-v2-20260830",
+    "kernel_files": {},
+    "dirty_entry_count": 0
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/goal-intake-hierarchical-worker-fabric-20260903",
+    "HEAD": "a7ca8a88e958e57aa7b913f1d9f559ce181b0868",
+    "branch": "refs/heads/codex/goal-intake-hierarchical-worker-fabric-20260903",
+    "kernel_files": {},
+    "dirty_entry_count": 0
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/heterogeneous-agent-worker-fabric-coordinator-20260903",
+    "HEAD": "cba257ec0d8327440db13c53224fe051982d770c",
+    "branch": "refs/heads/codex/heterogeneous-agent-worker-fabric-coordinator-20260903",
+    "kernel_files": {},
+    "dirty_entry_count": 0
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/heterogeneous-agent-worker-fabric-coordinator-claude-20260903",
+    "HEAD": "4dd2e0838b0c9034c0a465a862165073a17f9940",
+    "branch": "refs/heads/claude/heterogeneous-agent-worker-fabric-coordinator-20260903",
+    "kernel_files": {},
+    "dirty_entry_count": 0
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/hierarchical-coordination-sidecars-20260903",
+    "HEAD": "7bc050bf69e3cd66bd53120f93955771c6e72ccf",
+    "branch": "refs/heads/codex/hierarchical-coordination-sidecars-20260903",
+    "kernel_files": {},
+    "dirty_entry_count": 0
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/hwf-wf-p0-20260904",
+    "HEAD": "7af103c7b60e108c963311318f1c2ff97ed85c2d",
+    "branch": "refs/heads/claude/hwf-wf-p0-20260904",
+    "kernel_files": {},
+    "dirty_entry_count": 2
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/hwf-wf-p0-shaping-20260903",
+    "HEAD": "b9f4e1ac7bcd109f64e001695836c02ac2cee5ab",
+    "branch": "refs/heads/claude/hwf-wf-p0-shaping-20260903",
+    "kernel_files": {},
+    "dirty_entry_count": 0
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/keon-full-platform-gtm-readiness-20260818",
+    "HEAD": "e515bff3cec142719dbf6ee9177cde541660e306",
+    "branch": "refs/heads/goal/keon-full-platform-gtm-readiness-20260818",
+    "kernel_files": {},
+    "dirty_entry_count": 2
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/operation-receipt-remediation-20260812",
+    "HEAD": "756aa4d7d153e420a746db1aa95275972740e22a",
+    "branch": "refs/heads/codex/operation-receipt-remediation-20260812",
+    "kernel_files": {},
+    "dirty_entry_count": 0
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/parcel-compiler-bootstrap-20260731",
+    "HEAD": "72dfd455f3a12ecbea3640c36ef12a461c35747c",
+    "branch": "refs/heads/codex/parcel-compiler-bootstrap",
+    "kernel_files": {},
+    "dirty_entry_count": 0
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/provisional-patent-readiness-20260813",
+    "HEAD": "36336577adea79a0638e13fcbe3f383aa01fdded",
+    "branch": "refs/heads/codex/provisional-patent-readiness-20260813",
+    "kernel_files": {},
+    "dirty_entry_count": 0
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/provisional-patent-readiness-w0-p01-20260813",
+    "HEAD": "3519e8c0a49808e13b875b0e737068e10565ab37",
+    "branch": "refs/heads/codex/w0-p01-custody-snapshot-20260813",
+    "kernel_files": {},
+    "dirty_entry_count": 0
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/provisional-patent-readiness-w0-p01-retry-20260813",
+    "HEAD": "314a17fa60493d6ee47d1792cd4dcdcd4d67078a",
+    "branch": "refs/heads/codex/w0-p01-custody-retry-20260813",
+    "kernel_files": {},
+    "dirty_entry_count": 0
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/provisional-patent-readiness-w0-p01-retry-20260817",
+    "HEAD": "6e134c5b5afd0794602e91b96999cf64bf3929b7",
+    "branch": "refs/heads/codex/w0-p01-custody-retry-20260817",
+    "kernel_files": {},
+    "dirty_entry_count": 0
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/provisional-patent-readiness-w0-p01-retry-a3-20260817",
+    "HEAD": "e29a4d61bf6420425c93c864936a84efca7013e3",
+    "branch": "refs/heads/codex/w0-p01-custody-retry-a3-20260817",
+    "kernel_files": {},
+    "dirty_entry_count": 0
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/wgt-p0a-foreman-reconciliation-20260801",
+    "HEAD": "d5328aacbaba15a387206c38a212bac297de2fa6",
+    "branch": "refs/heads/codex/wgt-p0a-stage-f-archive-20260801",
+    "kernel_files": {},
+    "dirty_entry_count": 0
+  },
+  {
+    "worktree": "D:/Repos/agent-skills-worktrees/wgt-p2a-foreman-queue-reconciliation-20260802",
+    "HEAD": "1ada3cc429668d7e57e070fd1a43a15b961ee3df",
+    "branch": "refs/heads/codex/wgt-p2a-foreman-queue-reconciliation-20260802",
+    "kernel_files": {},
+    "dirty_entry_count": 3
+  }
+]

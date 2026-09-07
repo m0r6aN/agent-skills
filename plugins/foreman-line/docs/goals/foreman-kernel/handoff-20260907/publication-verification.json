@@ -1,0 +1,13 @@
+{
+  "status": "capture checks passed; remote verification follows push",
+  "captured_document_hashes_verified": 69,
+  "implementation_files_hashed": 22,
+  "unpublished_history_blobs_scanned": 411,
+  "credential_pattern_hits": 0,
+  "source_goal_and_implementation_worktrees": "clean before and after capture",
+  "ambient_changes": "same deletion and untracked charter preserved",
+  "implementation_tests_run": false,
+  "diff_check": "One inherited trailing whitespace at FK-P0-amendment-R21.md:14 retained for byte-identical provenance. No generated-document whitespace issue.",
+  "verification_scope": "Integrity of source capture and publication only; not independent parcel review or runtime acceptance.",
+  "manifest_sha256": "b90b27cec7ee6a2be9ced596e25df495eb076c5af8ba25c4641fb22141fbab93"
+}
