@@ -1,0 +1,8 @@
+{
+  "command": "npm run typecheck",
+  "checkpoint": "521214e4fa7e3475e2544ef1f1492638250437f6",
+  "startUtc": "2026-09-07T17:26:40.2613564Z",
+  "endUtc": "2026-09-07T17:26:42.2411331Z",
+  "elapsedSeconds": 1.9822296,
+  "directExit": 0
+}
