@@ -1,0 +1,89 @@
+{
+  "edges": [
+    [
+      "plugins/foreman-line/authority-registry/src/generate.ts",
+      "../../schema-scaffold/src/generate.js",
+      "plugins/foreman-line/schema-scaffold/src/generate.ts"
+    ],
+    [
+      "plugins/foreman-line/authority-registry/src/generate.ts",
+      "./registry.js",
+      "plugins/foreman-line/authority-registry/src/registry.ts"
+    ],
+    [
+      "plugins/foreman-line/authority-registry/src/generate.ts",
+      "./types.js",
+      "plugins/foreman-line/authority-registry/src/types.ts"
+    ],
+    [
+      "plugins/foreman-line/authority-registry/src/generate.ts",
+      "./validate.js",
+      "plugins/foreman-line/authority-registry/src/validate.ts"
+    ],
+    [
+      "plugins/foreman-line/authority-registry/src/validate.ts",
+      "./registry.js",
+      "plugins/foreman-line/authority-registry/src/registry.ts"
+    ],
+    [
+      "plugins/foreman-line/authority-registry/src/validate.ts",
+      "./schemas.js",
+      "plugins/foreman-line/authority-registry/src/schemas.ts"
+    ],
+    [
+      "plugins/foreman-line/authority-registry/src/validate.ts",
+      "./types.js",
+      "plugins/foreman-line/authority-registry/src/types.ts"
+    ],
+    [
+      "plugins/foreman-line/authority-registry/src/registry.ts",
+      "../../schema-scaffold/src/registry.js",
+      "plugins/foreman-line/schema-scaffold/src/registry.ts"
+    ],
+    [
+      "plugins/foreman-line/authority-registry/src/registry.ts",
+      "./schemas.js",
+      "plugins/foreman-line/authority-registry/src/schemas.ts"
+    ],
+    [
+      "plugins/foreman-line/authority-registry/src/registry.ts",
+      "./types.js",
+      "plugins/foreman-line/authority-registry/src/types.ts"
+    ],
+    [
+      "plugins/foreman-line/schema-scaffold/src/generate.ts",
+      "./registry.js",
+      "plugins/foreman-line/schema-scaffold/src/registry.ts"
+    ],
+    [
+      "plugins/foreman-line/authority-registry/src/cli.ts",
+      "./types.js",
+      "plugins/foreman-line/authority-registry/src/types.ts"
+    ],
+    [
+      "plugins/foreman-line/authority-registry/src/cli.ts",
+      "./validate.js",
+      "plugins/foreman-line/authority-registry/src/validate.ts"
+    ]
+  ],
+  "entry_roots": [
+    "plugins/foreman-line/authority-registry/src/cli.ts",
+    "plugins/foreman-line/authority-registry/src/generate.ts"
+  ],
+  "external": [
+    "${repoRoot}",
+    ",\n    authorityClaim: ",
+    ",\n    normalizedStatement: ",
+    "ajv",
+    "node:child_process",
+    "node:crypto",
+    "node:fs",
+    "node:path",
+    "node:url",
+    "plugins/foreman-line/authority-registry/node_modules/ajv/dist/ajv.js",
+    "typescript/unstable/ast",
+    "typescript/unstable/sync",
+    "yaml"
+  ],
+  "limit": "Literal imports reachable from CLI and generator entries only. Source-corpus TS and test snippets are not executable roots. Full protected input equality is checked separately. Computed imports and dynamic filesystem inputs require independent review and explicit protected_paths; this scanner does not prove their absence."
+}

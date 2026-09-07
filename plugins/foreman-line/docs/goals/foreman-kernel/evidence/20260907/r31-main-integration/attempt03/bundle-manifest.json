@@ -1,0 +1,518 @@
+{
+  "capturedUtc": "2026-09-07T18:57:12.315004+00:00",
+  "retainedLocalDirectory": "C:\\Users\\clint\\AppData\\Local\\Temp\\fk-r31-main-integration-final-attempt03",
+  "implementationCommit": "1747c1df7dfa4677d345390ac673c3d15c82b980",
+  "mainCommit": "476b8df6efe6c9974879957147449f61c34cd9a0",
+  "syntheticTree": "a9df33c71d0e34ddae277d312a04f7a97dd66480",
+  "syntheticTreeAvailability": "Locally retained immutable Git object, reproducible from the two published commit inputs; not a remotely published merge commit.",
+  "files": [
+    {
+      "file": "0001-before-symbolic.json",
+      "bytes": 462,
+      "sha256": "21909efeaf4a01537a64215e77ab24cd5e5f18f7221c42128fa2587d7e646160",
+      "published": true
+    },
+    {
+      "file": "0001-before-symbolic.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published": true
+    },
+    {
+      "file": "0001-before-symbolic.stdout",
+      "bytes": 18,
+      "sha256": "48583181859e65c7656874783518080ae7cc67c0b1a8116fef61d317f02982ad",
+      "published": true
+    },
+    {
+      "file": "0002-before-refs.json",
+      "bytes": 427,
+      "sha256": "2ba41c74769c74d01c17fe868ff3bd5e5c856034ea8fc5df45364a8d87fa6128",
+      "published": true
+    },
+    {
+      "file": "0002-before-refs.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published": true
+    },
+    {
+      "file": "0002-before-refs.stdout",
+      "bytes": 457,
+      "sha256": "3d89a5c2921ab22a64e7140ec68196ad7ddfd20b7e3737a23425b1ff6f418d57",
+      "published": true
+    },
+    {
+      "file": "0003-git-version.json",
+      "bytes": 429,
+      "sha256": "cec6772c0c17263b3090197384ea9161160898b29c69e53466576f75ab1ec5c1",
+      "published": true
+    },
+    {
+      "file": "0003-git-version.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published": true
+    },
+    {
+      "file": "0003-git-version.stdout",
+      "bytes": 29,
+      "sha256": "ec9dfdb8fe0dec58e2083352e3e583473b6054c8deb2e6b233ec7a970430aecd",
+      "published": true
+    },
+    {
+      "file": "0004-main-type.json",
+      "bytes": 481,
+      "sha256": "2f9f0ed586b2dbd64370773908442516d913b4fa13b73ac530c33c9e1e3fddff",
+      "published": true
+    },
+    {
+      "file": "0004-main-type.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published": true
+    },
+    {
+      "file": "0004-main-type.stdout",
+      "bytes": 7,
+      "sha256": "50836eee574ecff79dea3b4fd40673d7d000f7a5f177d8a6a3000b59c78383b8",
+      "published": true
+    },
+    {
+      "file": "0005-r31-type.json",
+      "bytes": 478,
+      "sha256": "8aada5a30cf543f420c926e09f1916e72909f8e3eda6253075479638966a9ee3",
+      "published": true
+    },
+    {
+      "file": "0005-r31-type.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published": true
+    },
+    {
+      "file": "0005-r31-type.stdout",
+      "bytes": 7,
+      "sha256": "50836eee574ecff79dea3b4fd40673d7d000f7a5f177d8a6a3000b59c78383b8",
+      "published": true
+    },
+    {
+      "file": "0006-source_commit-type.json",
+      "bytes": 499,
+      "sha256": "ece376b63f20416099ea0a82ca387d6f101015b4ea1722682728fafdccd621b3",
+      "published": true
+    },
+    {
+      "file": "0006-source_commit-type.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published": true
+    },
+    {
+      "file": "0006-source_commit-type.stdout",
+      "bytes": 7,
+      "sha256": "50836eee574ecff79dea3b4fd40673d7d000f7a5f177d8a6a3000b59c78383b8",
+      "published": true
+    },
+    {
+      "file": "0007-source-tree.json",
+      "bytes": 483,
+      "sha256": "6af08f194963f650dc83c62e9d7468ca112309431af0fcfcf56a955fd7fc0458",
+      "published": true
+    },
+    {
+      "file": "0007-source-tree.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published": true
+    },
+    {
+      "file": "0007-source-tree.stdout",
+      "bytes": 41,
+      "sha256": "3d2380c0078afa35f6e83694af6522778e6e064f25ed76825932e1f40cd3c886",
+      "published": true
+    },
+    {
+      "file": "0008-source-ancestor.json",
+      "bytes": 554,
+      "sha256": "07d781bcf0bcca61f5df50fd7c0a5f6d49e865f098af40f43ac1d404f459109b",
+      "published": true
+    },
+    {
+      "file": "0008-source-ancestor.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published": true
+    },
+    {
+      "file": "0008-source-ancestor.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published": true
+    },
+    {
+      "file": "0009-accepted-inventory.json",
+      "bytes": 518,
+      "sha256": "7c62e62f0bc04f8ff12bac91c606f4ad728600b9395faeccf9382f6a6d14db8f",
+      "published": true
+    },
+    {
+      "file": "0009-accepted-inventory.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published": true
+    },
+    {
+      "file": "0009-accepted-inventory.stdout",
+      "bytes": 158199,
+      "sha256": "de19c8ff346eb152b15e01a7fa949baa1027491f1a2fa118beea0e6dfb8b6078",
+      "published": false,
+      "reason": "Derived full repository binary stream; retained locally to keep unrelated file content out of the goal handoff.",
+      "reconstruct": "For inventory, run exact argv in its command JSON against the named published commit/tree. For raw-blobs, recreate merge-tree from exact main/R31, obtain sorted unique blob OIDs via ls-tree -r -z, and feed each OID plus LF to git cat-file --batch; preserve raw stdout bytes. Runner source implements the exact recipe."
+    },
+    {
+      "file": "0010-source-inventory.json",
+      "bytes": 514,
+      "sha256": "360665fe366cc12917849b27175ba81a770ec01d46951c5b9a97ee8beed73a8b",
+      "published": true
+    },
+    {
+      "file": "0010-source-inventory.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published": true
+    },
+    {
+      "file": "0010-source-inventory.stdout",
+      "bytes": 139460,
+      "sha256": "2926e21e66dca3b4f20a0379ee69a38c36a7b398e6538233bfaefc123c6a50d4",
+      "published": false,
+      "reason": "Derived full repository binary stream; retained locally to keep unrelated file content out of the goal handoff.",
+      "reconstruct": "For inventory, run exact argv in its command JSON against the named published commit/tree. For raw-blobs, recreate merge-tree from exact main/R31, obtain sorted unique blob OIDs via ls-tree -r -z, and feed each OID plus LF to git cat-file --batch; preserve raw stdout bytes. Runner source implements the exact recipe."
+    },
+    {
+      "file": "0011-main-inventory.json",
+      "bytes": 511,
+      "sha256": "6bb20884f4e8ec6cae6afd34dca2dc009401f3e0fe6618b75c01158d06793492",
+      "published": true
+    },
+    {
+      "file": "0011-main-inventory.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published": true
+    },
+    {
+      "file": "0011-main-inventory.stdout",
+      "bytes": 111519,
+      "sha256": "bf9905d35241719672885055319a5bce024756236dff72e32cdafb3d7c48b6af",
+      "published": false,
+      "reason": "Derived full repository binary stream; retained locally to keep unrelated file content out of the goal handoff.",
+      "reconstruct": "For inventory, run exact argv in its command JSON against the named published commit/tree. For raw-blobs, recreate merge-tree from exact main/R31, obtain sorted unique blob OIDs via ls-tree -r -z, and feed each OID plus LF to git cat-file --batch; preserve raw stdout bytes. Runner source implements the exact recipe."
+    },
+    {
+      "file": "0012-merge-tree.json",
+      "bytes": 543,
+      "sha256": "bd0a966cbf707d7fe8fd5d2833f55666a3710f08629fac3c3315646955066722",
+      "published": true
+    },
+    {
+      "file": "0012-merge-tree.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published": true
+    },
+    {
+      "file": "0012-merge-tree.stdout",
+      "bytes": 41,
+      "sha256": "d0a1c1e9e24ace72a9ed14c8afae4022e4dba250ce315dc5514162fb74c2f702",
+      "published": true
+    },
+    {
+      "file": "0013-merge-type.json",
+      "bytes": 483,
+      "sha256": "29a9924e115463f5d1928396d6aa6f7322246f2a94b701afb499d762fd9be13d",
+      "published": true
+    },
+    {
+      "file": "0013-merge-type.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published": true
+    },
+    {
+      "file": "0013-merge-type.stdout",
+      "bytes": 5,
+      "sha256": "f27e01fe7624cca3e69811a0bf9a4efd9dca9fd39f7a3a8f939cae0cfe8cdfb8",
+      "published": true
+    },
+    {
+      "file": "0014-merge-inventory.json",
+      "bytes": 513,
+      "sha256": "2f421b3c56ae688f058da53e0a07ca4e5bf3d208fcf834e30e0c3863d903f7b8",
+      "published": true
+    },
+    {
+      "file": "0014-merge-inventory.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published": true
+    },
+    {
+      "file": "0014-merge-inventory.stdout",
+      "bytes": 165814,
+      "sha256": "7f6411a4de116ae2be470d0f325f78bfb44f59d95df37d189fdc7bac1b7376bc",
+      "published": false,
+      "reason": "Derived full repository binary stream; retained locally to keep unrelated file content out of the goal handoff.",
+      "reconstruct": "For inventory, run exact argv in its command JSON against the named published commit/tree. For raw-blobs, recreate merge-tree from exact main/R31, obtain sorted unique blob OIDs via ls-tree -r -z, and feed each OID plus LF to git cat-file --batch; preserve raw stdout bytes. Runner source implements the exact recipe."
+    },
+    {
+      "file": "0015-accepted-registry.json",
+      "bytes": 575,
+      "sha256": "f5950f0ede6e9c9c20c7fffa2b867140482a173504beea5f01385994c8696f70",
+      "published": true
+    },
+    {
+      "file": "0015-accepted-registry.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published": true
+    },
+    {
+      "file": "0015-accepted-registry.stdout",
+      "bytes": 2376697,
+      "sha256": "6ff8521e9a9210ae69adad571e7c3fc1f2e20e895fc5b5114e622e9ee2820910",
+      "published": true
+    },
+    {
+      "file": "0016-read-alternate-index.json",
+      "bytes": 494,
+      "sha256": "b3cfaa7ef82380fc571a570ed03ad8119b9b330ee347d131fac9cdb630e3c392",
+      "published": true
+    },
+    {
+      "file": "0016-read-alternate-index.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published": true
+    },
+    {
+      "file": "0016-read-alternate-index.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published": true
+    },
+    {
+      "file": "0017-fixture-root.json",
+      "bytes": 544,
+      "sha256": "bdb91eee09533ff2f076d04ce6f257a353f6b9a7f04021c19dbb5252a57cae46",
+      "published": true
+    },
+    {
+      "file": "0017-fixture-root.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published": true
+    },
+    {
+      "file": "0017-fixture-root.stdout",
+      "bytes": 67,
+      "sha256": "dc9c13f9f07acef39cf5f1fa322cd3370ca665e87406100c66e40eb66fa2816d",
+      "published": true
+    },
+    {
+      "file": "0018-raw-blobs.json",
+      "bytes": 437,
+      "sha256": "32fbf33a1017ef38d948aaab2cf203f256f93606c5f46bfe6aa04344811a0e66",
+      "published": true
+    },
+    {
+      "file": "0018-raw-blobs.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published": true
+    },
+    {
+      "file": "0018-raw-blobs.stdout",
+      "bytes": 15720403,
+      "sha256": "8e57726832ea3a94542b21fa0436a4f92f10d6d27c2f55343731170f645b8354",
+      "published": false,
+      "reason": "Derived full repository binary stream; retained locally to keep unrelated file content out of the goal handoff.",
+      "reconstruct": "For inventory, run exact argv in its command JSON against the named published commit/tree. For raw-blobs, recreate merge-tree from exact main/R31, obtain sorted unique blob OIDs via ls-tree -r -z, and feed each OID plus LF to git cat-file --batch; preserve raw stdout bytes. Runner source implements the exact recipe."
+    },
+    {
+      "file": "0019-node-version.json",
+      "bytes": 450,
+      "sha256": "5663070be0b6ca811f438114789caf909724db28dc718583190867e6d9bd41f1",
+      "published": true
+    },
+    {
+      "file": "0019-node-version.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published": true
+    },
+    {
+      "file": "0019-node-version.stdout",
+      "bytes": 9,
+      "sha256": "b99372377fd9e05e4eee36b57572623996c0db38e8fe8000c6c016c6ea0290c0",
+      "published": true
+    },
+    {
+      "file": "0020-validate.json",
+      "bytes": 995,
+      "sha256": "876bf56dde2c6e31dfe36f670aebb3b94dd7b0788f9d35545f458b4f623ba6d6",
+      "published": true
+    },
+    {
+      "file": "0020-validate.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published": true
+    },
+    {
+      "file": "0020-validate.stdout",
+      "bytes": 1436,
+      "sha256": "96302676e52113db907daa6740cdbb4bcb69e2b4b69b2f6dcc58d66da47d43ea",
+      "published": true
+    },
+    {
+      "file": "0021-sweep.json",
+      "bytes": 986,
+      "sha256": "d49bba45cbc1648012e9301a7a0d22c880412508fde0daaeab6df459eebaedae",
+      "published": true
+    },
+    {
+      "file": "0021-sweep.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published": true
+    },
+    {
+      "file": "0021-sweep.stdout",
+      "bytes": 1436,
+      "sha256": "96302676e52113db907daa6740cdbb4bcb69e2b4b69b2f6dcc58d66da47d43ea",
+      "published": true
+    },
+    {
+      "file": "0022-generate-idempotence.json",
+      "bytes": 747,
+      "sha256": "b6bd28d170802d6c3486c9767700af1e74a516dd6b2d9504448e72995d2054f6",
+      "published": true
+    },
+    {
+      "file": "0022-generate-idempotence.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published": true
+    },
+    {
+      "file": "0022-generate-idempotence.stdout",
+      "bytes": 183,
+      "sha256": "d4498514b52202d61ece065d5bb4acc1ba097b52d26c318d7c87b58226cff839",
+      "published": true
+    },
+    {
+      "file": "0023-after-symbolic.json",
+      "bytes": 459,
+      "sha256": "f4dfd7d2499c9acdc4ff6f5e17043738c8c929940589d526262776a9965d71b0",
+      "published": true
+    },
+    {
+      "file": "0023-after-symbolic.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published": true
+    },
+    {
+      "file": "0023-after-symbolic.stdout",
+      "bytes": 18,
+      "sha256": "48583181859e65c7656874783518080ae7cc67c0b1a8116fef61d317f02982ad",
+      "published": true
+    },
+    {
+      "file": "0024-after-refs.json",
+      "bytes": 426,
+      "sha256": "918fdccf52ea06229f9e982bb4ee4502b87b893e5191d7741747c336dce31bcf",
+      "published": true
+    },
+    {
+      "file": "0024-after-refs.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published": true
+    },
+    {
+      "file": "0024-after-refs.stdout",
+      "bytes": 457,
+      "sha256": "3d89a5c2921ab22a64e7140ec68196ad7ddfd20b7e3737a23425b1ff6f418d57",
+      "published": true
+    },
+    {
+      "file": "after-refs-snapshot.json",
+      "bytes": 589,
+      "sha256": "efda67e43a1e61110146871824d9b2ce6bc7f326304e9de2d2f3df8b9fdc8a95",
+      "published": true
+    },
+    {
+      "file": "all-tree-deltas.json",
+      "bytes": 36376,
+      "sha256": "b28b496f29ddad6a9bd2136dda9b11d3d115a4f49eceddede82ca704aa03075f",
+      "published": true
+    },
+    {
+      "file": "before-refs-snapshot.json",
+      "bytes": 589,
+      "sha256": "efda67e43a1e61110146871824d9b2ce6bc7f326304e9de2d2f3df8b9fdc8a95",
+      "published": true
+    },
+    {
+      "file": "inert-symlink-materialization.json",
+      "bytes": 1040,
+      "sha256": "fc6a3464b90beb0355750d39a664fd8ccecbedb97916545d71927d2e29326b8f",
+      "published": true
+    },
+    {
+      "file": "literal-import-closure.json",
+      "bytes": 3006,
+      "sha256": "41e8c2270fa7a5d4f438ac2b53acab91374244fb86f381005562477ad5272a5c",
+      "published": true
+    },
+    {
+      "file": "materialized-sha256.json",
+      "bytes": 192997,
+      "sha256": "e159de6891c3833d81622cde644369d78fda62d80ac66084782305ace2cd72cc",
+      "published": true
+    },
+    {
+      "file": "post-command-file-deltas.json",
+      "bytes": 3,
+      "sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+      "published": true
+    },
+    {
+      "file": "protected-inputs.json",
+      "bytes": 64460,
+      "sha256": "6c5840fdb146fecf884fc2fce32fea56b396b81c3a66d374fcd71df66f7e2408",
+      "published": true
+    },
+    {
+      "file": "result.json",
+      "bytes": 1333,
+      "sha256": "08ab3ded079d2b96d72325e880a09b285081cce2266721ba68eec5fc751f98d3",
+      "published": true
+    },
+    {
+      "file": "review-input.json",
+      "bytes": 183143,
+      "sha256": "9f23e8e08c4fad8099a33d2e3dfcc6e7b4c5339734b0ae07fd8c00d4da205843",
+      "published": true
+    },
+    {
+      "file": "source-input.json",
+      "bytes": 7263,
+      "sha256": "622b52ac9cb3d93e1406fbb592140c0396c7b47b49e041df9a53d2fc241da9ec",
+      "published": true
+    }
+  ]
+}

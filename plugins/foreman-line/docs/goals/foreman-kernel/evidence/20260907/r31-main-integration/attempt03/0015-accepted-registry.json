@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "C:\\Program Files\\Git\\cmd\\git.EXE",
+    "--git-dir=C:\\Users\\clint\\AppData\\Local\\Temp\\fk-remote-verify-20260907.git",
+    "cat-file",
+    "blob",
+    "1747c1df7dfa4677d345390ac673c3d15c82b980:plugins/foreman-line/authority-registry/authority-enforcement-registry.yaml"
+  ],
+  "cwd": null,
+  "ended_utc": "2026-09-07T18:55:46.513334+00:00",
+  "exit": 0,
+  "pid": 477064,
+  "seconds": 0.08862389996647835,
+  "started_utc": "2026-09-07T18:55:46.424710+00:00",
+  "stderr": "0015-accepted-registry.stderr",
+  "stdout": "0015-accepted-registry.stdout"
+}

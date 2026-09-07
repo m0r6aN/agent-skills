@@ -1,0 +1,8 @@
+{
+  "observedUtc": "2026-09-07T18:58:57.459216+00:00",
+  "attempt": "attempt03",
+  "runnerDirectExit": 0,
+  "observation": "Parent exec session4464 completed with direct exit0; result.json statuspass. All24 child command metadata records separately retain direct exits/timing and raw streams.",
+  "runnerPublishedBeforeExecution": "1e1ffd753ba85d6b3acd4c81ac55126a9e6abfad",
+  "limits": "No actual merge or upstream ref update."
+}

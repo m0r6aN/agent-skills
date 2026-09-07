@@ -89,7 +89,7 @@ their `list-item:1..5` anchors. See the ordering note there.)_
 
 ## Current state — update at every stop or parcel closure
 
-**STATE 2026-09-07 — R31 complete751-test chain published at1747c1df7dfa4677d345390ac673c3d15c82b980; two fresh final reviews APPROVE; scoped candidate acceptance recorded.** Package equals tested2fc3940; runtime521214e and source8d remain fixed. All ten required commands and final integrity/coverage/scope checks returned direct0. Parent fresh fetch verified159 manifest entries. Both whole-change final reviews APPROVED with noP0/P1/P2 findings. Failed28 remains retained. Isolated main integration is authorized and pending; humanGate3 remains separate; no merge or StageF.
+**STATE 2026-09-07 — R31 accepted and published at1747c1df7dfa4677d345390ac673c3d15c82b980 after751/751 complete chain and two fresh final APPROVE verdicts.** Package equals tested2fc3940; runtime521214e/source8d remain fixed. Parent fresh fetch verified159 implementation manifest entries. Isolated integration with main476b8df passed:153 reviewed upstream deltas,398 unchanged protected inputs, repository-aware validate/sweep and generation direct0, no byte changes or ref mutation. Exact hypothetical treea9df33c is locally retained/reproducible from published inputs. Failed28 and two harness failures remain preserved. HumanGate3/actualmerge and FK-P1 merged dependency remain open; no merge or StageF.
 
 This progress supersedes older state labels below. Read `CURRENT-RESUME.md` and `LIVE-PUBLICATION-MANIFEST.json` for published branches, fullSHAs and hashes. A1.8/A1.9 and INF adoption are ratified and separately integrated through R30. FK-P1 StageA draft/review/advisory/ShapingResult are complete but P1 implementation remains pending its mergedP0 dependency. U1 draft and provider observations are published; named preP18 choices remain. This coordinator-only operational update is confined to declared volatile state; implementation source snapshot65c4714 and its worktree remain unchanged.
 
@@ -383,7 +383,7 @@ Source preservation applies to all prior worktrees and the published handoff. Th
 
 | Parcel | State | Depends on |
 |---|---|---|
-| FK-P0 — Canon authority and enforcement registry | **R31 final1747c1d:751/751 and complete chain passed; two fresh APPROVE verdicts and scoped acceptance; isolated main integration and humanGate3 pending; failed28 retained; no merge.** | none |
+| FK-P0 — Canon authority and enforcement registry | **R31 final1747c1d accepted:751/751 complete chain, two fresh APPROVE verdicts, isolated main476 integration passed. HumanGate3/actualmerge pending; failed attempts retained.** | none |
 | FK-P1 — Lifecycle, admission, and decision contracts | pending | FK-P0 |
 | FK-P2 — Spec-body compiler | pending | FK-P0, FK-P1 |
 | FK-P3 — Pure dispatch decisions | pending | FK-P1 |

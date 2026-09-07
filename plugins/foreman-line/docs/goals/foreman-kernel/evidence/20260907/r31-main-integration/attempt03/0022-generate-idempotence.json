@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "D:\\nodejs_symlinks\\node.exe",
+    "C:\\Users\\clint\\AppData\\Local\\Temp\\fk-r31-integration-h7vdnawi\\tree\\plugins\\foreman-line\\authority-registry\\node_modules\\tsx\\dist\\cli.mjs",
+    "C:\\Users\\clint\\AppData\\Local\\Temp\\fk-r31-integration-h7vdnawi\\tree\\plugins\\foreman-line\\authority-registry\\src\\generate.ts"
+  ],
+  "cwd": "C:\\Users\\clint\\AppData\\Local\\Temp\\fk-r31-integration-h7vdnawi\\tree\\plugins\\foreman-line\\authority-registry",
+  "ended_utc": "2026-09-07T18:56:24.336973+00:00",
+  "exit": 0,
+  "pid": 489756,
+  "seconds": 8.920445799943991,
+  "started_utc": "2026-09-07T18:56:15.416532+00:00",
+  "stderr": "0022-generate-idempotence.stderr",
+  "stdout": "0022-generate-idempotence.stdout"
+}

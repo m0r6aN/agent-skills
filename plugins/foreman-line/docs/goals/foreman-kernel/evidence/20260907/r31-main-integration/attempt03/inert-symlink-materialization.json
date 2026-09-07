@@ -1,0 +1,20 @@
+{
+  "entries": [
+    {
+      "blob": "7fc7d9f7be858ee62e454c529b3f8deddd83e1d2",
+      "mode": "120000",
+      "path": ".opencode/skills",
+      "reason": "OpenCode skill discovery link is outside fixture-local Node CLI/generator execution and all protected sources/imports. Preserve target bytes as inert regular file; do not traverse.",
+      "target": "../skills/"
+    },
+    {
+      "blob": "83cc3f226b17278384e32056cfa8470b9ae43738",
+      "mode": "120000",
+      "path": "debug/latest",
+      "reason": "Historical debug convenience link is outside fixture CLI/generator/source/evidence closure. Absolute target is inert blob content, never opened or resolved.",
+      "target": "D:/Repos/agent-skills/debug/ca212ab3-8107-415b-9921-ac706b4f3fb9.txt"
+    }
+  ],
+  "limit": "Git mode is retained in alternate index, not reproduced in filesystem. No symlink behavior or unrelated package integration is certified.",
+  "representation": "Regular files containing exact Git target-blob bytes; no filesystem symlink created or followed."
+}
