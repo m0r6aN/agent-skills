@@ -1,0 +1,49 @@
+{
+  "reviewer": "/root/r30_final_history_review",
+  "verdict": "APPROVE for adopted source snapshot; no P0/P1/P2 findings",
+  "candidateCommit": "c35ff72ef45fb19d647cede6acf5a13636911db7",
+  "testedCheckpoint": "f8093410cead451f204d08ae25f3a70b34208213",
+  "sourceSnapshot": "65c471416e4a3916695815e951ffbe389288560e",
+  "priorRegistryCommit": "66a514d35a384f901486e7b814580eb6fb7de6ea",
+  "baselineCommit": "0ee165720f8d1e3a91eb283cb770400b23f61bf5",
+  "workingDirectory": "D:/Repos/agent-skills-worktrees/fk-p0-r30-adoption-20260907/plugins/foreman-line/authority-registry",
+  "actualCommand": "@'\nimport assert from 'node:assert/strict';\nimport {readFileSync} from 'node:fs';\nimport {parse} from 'yaml';\nimport {validateRegistry,registryBindingManifestDigest,canonicalJson,sha256,bindingDigestFor} from './src/validate.ts';\nconst full=parse(readFileSync('authority-enforcement-registry.yaml','utf8'));\nconst head=d=>d.reconciliations.at(-1);\nconst editCommand=(r,p,fn)=>{r.observedEvidence=r.observedEvidence.map(e=>{if(e.kind!=='command-result')return e;const c=JSON.parse(e.reference);if(!c.commandId.startsWith(p))return e;fn(c);const reference=canonicalJson(c);return {...e,reference,digest:sha256(reference)};});};\nconst check=(name,d,pattern)=>{const r=validateRegistry(d);if(pattern){assert.equal(r.valid,false,name);assert(r.violations.some(v=>pattern.test(v.message)),JSON.stringify(r));}else assert.deepEqual(r.violations,[],name);console.log(JSON.stringify({name,valid:r.valid,codes:[...new Set(r.violations.map(v=>v.code))],matching:pattern?r.violations.filter(v=>pattern.test(v.message)).map(v=>v.message):[]}));};\ncheck('shipped positive control',full);\nlet d=structuredClone(full);d.reconciliations.splice(18,1);check('delete former head',d,/required rework migration 'registry-rework-40394be' is missing/);\nd=structuredClone(full);d.reconciliations[18].scopedDisposition+=' rewritten';check('rewrite canonical former head',d,/differs from its complete canonical record manifest/);\nd=structuredClone(full);d.reconciliations.pop();editCommand(head(d),'superseding-binding-manifest',c=>c.resultDigest=registryBindingManifestDigest(d));check('delete current head and reanchor promoted record',d,/cannot be the migration chain head/);\nd=structuredClone(full);head(d).observedEvidence.find(e=>e.kind==='git-commit'&&e.reference===d.sourceSnapshotCommit).reference='b'.repeat(40);check('fabricate unbound head Git reference',d,/neither bound by its prior binding-manifest command nor equal/);\nd=structuredClone(full);editCommand(head(d),'superseding-binding-manifest',c=>c.resultDigest=c.inputDigest);check('head self cycle',d,/contains a cycle/);\nd=structuredClone(full);const fork=structuredClone(head(d));fork.reconciliationId='registry-rework-independent-fork';d.reconciliations.push(fork);check('fork same predecessor',d,/chain forks/);\nfunction retire(d,subject){let n=0;for(const r of d.rules)if(r.authoritySubject===subject&&r.retirementState==='active-reading'){r.retirementState='historical-only';r.bindingDigest=bindingDigestFor(r);n++;}assert(n>0);}\nfunction append(d,id){const prev=head(d),old=JSON.parse(prev.observedEvidence.find(e=>e.kind==='command-result'&&JSON.parse(e.reference).commandId.startsWith('superseding-binding-manifest')).reference).resultDigest;const next=registryBindingManifestDigest(d);assert.notEqual(old,next);const commit='a'.repeat(40);const cmd=(commandId,inputDigest,resultDigest)=>{const reference=canonicalJson({tool:'@foreman-line/authority-registry',toolVersion:'0.1.0',commandId,inputDigest,resultDigest,exitCode:0,actorClass:'coordinator'});return {kind:'command-result',reference,digest:sha256(reference)}};d.reconciliations.push({reconciliationId:id,topic:'Independent review migration probe.',observedRefs:[prev.observedRefs[0]],observedEvidence:[{kind:'git-commit',reference:commit,digest:sha256('prior')},{kind:'git-commit',reference:d.sourceSnapshotCommit,digest:sha256('source')},cmd('registry-binding-manifest-independent',sha256(commit),old),cmd('superseding-binding-manifest-independent',old,next)],authoritativeRuleIds:prev.authoritativeRuleIds,scopedDisposition:'Independent review amendment.',unresolvedConsequence:'Future binding changes require another typed prior-to-new migration record.',migrationStatus:'superseded-by-amendment',supersedingEvidence:prev.observedRefs[0]});return d;}\nd=structuredClone(full);retire(d,'gate3.merge-authority');append(d,'registry-rework-independent1');check('single well-formed successor admitted',d);\nconst demoted=structuredClone(d);demoted.reconciliations[19].scopedDisposition+=' rewritten';check('new shipped head protected on future demotion',demoted,/differs from its complete canonical record manifest/);\nretire(d,'goal.exit-merge');append(d,'registry-rework-independent2');check('second unregistered successor refused',d,/registry-rework-independent1.*differs from its complete canonical record manifest/);\nconsole.log('INDEPENDENT_PROBES=10 PASS');\n'@ | & 'D:/nodejs_symlinks/node.exe' --import tsx --input-type=module -\nWrite-Output \"DIRECT_EXIT=$LASTEXITCODE\"",
+  "reproductionCommand": "Get-Content -Raw -LiteralPath 'D:/Repos/agent-skills-worktrees/foreman-kernel-unattended-20260907/plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30-final-review-history/probe.mjs' | & 'D:/nodejs_symlinks/node.exe' --import tsx --input-type=module -\nWrite-Output \"DIRECT_EXIT=$LASTEXITCODE\"",
+  "reproductionNote": "Run from workingDirectory. Saved body must go through stdin; direct execution at evidence path changes relative import resolution. Reproduction command is documented only and was not run.",
+  "directExit": 0,
+  "processExitCode": 0,
+  "elapsedSeconds": 2.8047375,
+  "elapsedBasis": "exec_command returned wall_time_seconds; not an independently captured monotonic stopwatch",
+  "probeStartUtc": null,
+  "probeEndUtc": null,
+  "probeTimestampNote": "Exact UTC probe start/end were not captured. Original successful tool output chunk f1bd74; no timestamps inferred from later persistence.",
+  "persistedUtc": "2026-09-07T16:28:27.020178+00:00",
+  "probeCount": 10,
+  "terminalMarker": "INDEPENDENT_PROBES=10 PASS",
+  "readOnlyScope": "Original review and probes read candidate/source/evidence and mutated in-memory clones only. No candidate writes, commits, pushes, merges, dependency installs, or long suites. Later coordinator authorization permits only review.md, probe.mjs, probe-output.log, metadata.json in this evidence directory. No probes rerun during persistence.",
+  "rawOutputEncoding": "UTF-8 without BOM; original LF Node stdout and final CRLF PowerShell direct-exit marker preserved",
+  "limitations": [
+    "Human Gate3 and merge remain separate.",
+    "Current main476b8df source drift is not covered; R31 integration separate.",
+    "Hermetic current-head Git commit-object digest is not independently authenticated.",
+    "One properly chained successor admitted; second unregistered append refused; Git custody and actual authority remain external."
+  ],
+  "files": [
+    {
+      "path": "review.md",
+      "sha256": "076af0d7e814328a95b962faf31a055cf9370f6904daebdb90ad2014a149a724",
+      "bytes": 6818
+    },
+    {
+      "path": "probe.mjs",
+      "sha256": "61c577b22062e5fd8f8b2a99d267ab8a79bed8ad8e7d0263da561f644cf89d8e",
+      "bytes": 4367
+    },
+    {
+      "path": "probe-output.log",
+      "sha256": "83dcaf8b7e76e28878d2f5b30ba202aa6e2ecee48f580c7ba6dd87d14dfe38ef",
+      "bytes": 2084
+    }
+  ],
+  "metadataHashNote": "Metadata excludes its own hash to avoid self-reference; parent receives its hash separately."
+}
