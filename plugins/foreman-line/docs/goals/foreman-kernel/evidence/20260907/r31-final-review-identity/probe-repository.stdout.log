@@ -1,0 +1,3 @@
+repository-aware baseline valid including actual decision blob
+{"name":"repository-aware repaired diagnostic actor","violations":[{"code":"MIGRATION_EVIDENCE_INVALID","message":"R31 exact migration diagnostic, source references and custody tuple changed"}]}
+{"name":"second unregistered append","violations":[{"code":"MIGRATION_EVIDENCE_INVALID","message":"reconciliation 'registry-rework-review-probe' differs from its complete canonical record manifest"}]}
