@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "C:\\Program Files\\Git\\cmd\\git.EXE",
+    "--git-dir=C:\\Users\\clint\\AppData\\Local\\Temp\\fk-remote-verify-20260907.git",
+    "symbolic-ref",
+    "-q",
+    "HEAD"
+  ],
+  "cwd": null,
+  "ended_utc": "2026-09-07T18:52:34.784079+00:00",
+  "exit": 0,
+  "pid": 488248,
+  "seconds": 0.05420629994478077,
+  "started_utc": "2026-09-07T18:52:34.729854+00:00",
+  "stderr": "0001-before-symbolic.stderr",
+  "stdout": "0001-before-symbolic.stdout"
+}

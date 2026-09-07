@@ -177,7 +177,7 @@ class Runner:
             info, name = line.split(b'\t', 1)
             mode, kind, oid = info.decode('ascii').split()
             path = safe_path(name.decode('utf-8'))
-            if path.lower() in folded or kind != 'blob' or mode not in ('100644', '100755'):
+            if path.lower() in folded or kind != 'blob' or mode not in ('100644', '100755', '120000'):
                 raise ValueError(f'Unsupported mode/type/case collision: {path}')
             folded.add(path.lower())
             result[path] = [mode, oid]
@@ -217,6 +217,7 @@ class Runner:
         write_json(self.out / 'source-input.json', manifest)
         base = self.inventory(a.r31, 'accepted-inventory')
         source = self.inventory(a.source_tree, 'source-inventory')
+        main_inventory = self.inventory(a.main, 'main-inventory')
         merge_output = self.git_text('merge-tree', 'merge-tree', '--write-tree', a.main, a.r31)
         merged = merge_output.splitlines()[0]
         if not SHA.fullmatch(merged) or self.git_text('merge-type', 'cat-file', '-t', merged) != 'tree':
@@ -286,6 +287,21 @@ class Runner:
         for p in sources:
             if source.get(p) != current.get(p):
                 raise ValueError('Real source snapshot differs: ' + p)
+        # Only exact reviewed, unchanged, unreachable Git links may become inert
+        # regular files. No target is resolved or followed by materialization.
+        inert_entries = review.get('inert_symlinks', [])
+        inert = {safe_path(x['path']): x for x in inert_entries}
+        link_paths = {p for inventory in (base, source, main_inventory, current)
+                      for p, entry in inventory.items() if entry[0] == '120000'}
+        if len(inert) != len(inert_entries) or set(inert) != link_paths:
+            raise ValueError('Git symlink required set does not equal exact reviewed inert set')
+        for p, entry in inert.items():
+            expected = ['120000', entry.get('blob')]
+            if (entry.get('mode') != '120000' or not isinstance(entry.get('target'), str) or
+                    not entry.get('reason', '').strip() or
+                    any(inventory.get(p) != expected for inventory in (base, source, main_inventory, current)) or
+                    any(q == p or q.startswith(p + '/') or p.startswith(q + '/') for q in protected)):
+                raise ValueError('Unreviewed, changed or protected Git symlink: ' + p)
         write_json(self.out / 'protected-inputs.json', {p: current[p] for p in sorted(protected)})
         intended_temp = Path(tempfile.gettempdir()).resolve(strict=True)
         parent = Path(tempfile.mkdtemp(prefix='fk-r31-integration-', dir=intended_temp))
@@ -322,6 +338,8 @@ class Runner:
                 if hashlib.sha1(b'blob ' + str(size).encode() + b'\0' + content).hexdigest() != oid:
                     raise ValueError('Blob identity mismatch')
                 for p in by_id[oid]:
+                    if p in inert and content != inert[p]['target'].encode('utf-8'):
+                        raise ValueError('Reviewed inert target bytes mismatch: ' + p)
                     target = root / p
                     target.parent.mkdir(parents=True, exist_ok=True)
                     with target.open('xb') as out:
@@ -335,6 +353,11 @@ class Runner:
         if files_snapshot(root) != dict(sorted(byte_hashes.items())):
             raise ValueError('Materialized bytes differ from tree')
         write_json(self.out / 'materialized-sha256.json', byte_hashes)
+        write_json(self.out / 'inert-symlink-materialization.json', {
+            'entries': inert_entries,
+            'representation': 'Regular files containing exact Git target-blob bytes; no filesystem symlink created or followed.',
+            'limit': 'Git mode is retained in alternate index, not reproduced in filesystem. No symlink behavior or unrelated package integration is certified.'})
+        self.result['inert_symlink_paths'] = sorted(inert)
         # Inspect literal import closure before Node. Dynamic filesystem inputs still
         # require the explicit independent protected_paths review above.
         entry_roots = [PKG + '/src/cli.ts', PKG + '/src/generate.ts']
@@ -357,6 +380,8 @@ class Runner:
                     relative = absolute.relative_to(root).as_posix()
                 except ValueError:
                     raise ValueError('Relative import escapes fixture: ' + target)
+                if any(relative == p or relative.startswith(p + '/') for p in inert):
+                    raise ValueError('Runtime import collides with inert Git symlink: ' + relative)
                 if '/node_modules/' in relative:
                     # Supplied later by exact private dependency copies.
                     external.add(relative)

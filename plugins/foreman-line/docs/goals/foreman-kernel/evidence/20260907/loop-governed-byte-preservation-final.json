@@ -1,0 +1,12 @@
+{
+  "verifiedUtc": "2026-09-07T18:54:50.684936+00:00",
+  "sourceCommit": "8d500704c9e3d6d8b652bbe838aa3623f88203fc",
+  "path": "plugins/foreman-line/docs/goals/foreman-kernel/loop-directive.md",
+  "excludedRegions": [
+    "Declared Current state section",
+    "FK-P0 queue State cell"
+  ],
+  "governedBytesIdentical": true,
+  "governedSha256": "e49ab9aa5da74ffe4c06fed59eb3bf7ca23e9122aca756855924c06ad8a96cf3",
+  "note": "Only operational state differs; this does not overwrite source8d or claim its runtime package contains the coordinator continuation."
+}

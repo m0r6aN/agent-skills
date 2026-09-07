@@ -2818,5 +2818,21 @@
   "coordinatorDisposition": {
     "path": "plugins/foreman-line/docs/goals/foreman-kernel/R31-coordinator-disposition-20260907.md",
     "sha256": "7c666b85b13304f2a3080b83e0016f639347a14ce715bffbb495c0e7158b48c7"
-  }
+  },
+  "inert_symlinks": [
+    {
+      "path": ".opencode/skills",
+      "mode": "120000",
+      "blob": "7fc7d9f7be858ee62e454c529b3f8deddd83e1d2",
+      "target": "../skills/",
+      "reason": "OpenCode skill discovery link is outside fixture-local Node CLI/generator execution and all protected sources/imports. Preserve target bytes as inert regular file; do not traverse."
+    },
+    {
+      "path": "debug/latest",
+      "mode": "120000",
+      "blob": "83cc3f226b17278384e32056cfa8470b9ae43738",
+      "target": "D:/Repos/agent-skills/debug/ca212ab3-8107-415b-9921-ac706b4f3fb9.txt",
+      "reason": "Historical debug convenience link is outside fixture CLI/generator/source/evidence closure. Absolute target is inert blob content, never opened or resolved."
+    }
+  ]
 }

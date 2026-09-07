@@ -1,0 +1,7 @@
+fe31042bbe4370cb81b38632720849983c7be04c refs/heads/handoff
+0ee165720f8d1e3a91eb283cb770400b23f61bf5 refs/heads/implementation
+b0518f8605e0bef2f9178a8fb56c8942d7c2c133 refs/heads/salvage
+4ba87fd3d27a881a26be24e1e277277f312c7267 refs/verify/coordinator-current
+476b8df6efe6c9974879957147449f61c34cd9a0 refs/verify/main-20260907
+c35ff72ef45fb19d647cede6acf5a13636911db7 refs/verify/r30-current
+1747c1df7dfa4677d345390ac673c3d15c82b980 refs/verify/r31-current
