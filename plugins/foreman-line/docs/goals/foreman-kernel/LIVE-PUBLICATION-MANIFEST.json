@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "capturedUtc": "2026-09-07T18:03:37.598951+00:00",
+  "capturedUtc": "2026-09-07T18:14:04.962354+00:00",
   "origin": "https://github.com/m0r6aN/agent-skills.git",
   "coordinatorSource": {
     "worktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-unattended-20260907",
     "branch": "codex/foreman-kernel-unattended-20260907",
-    "fullHeadSha": "2e2ad83a8ae42d66eac1f0baa987d012277a8ba7"
+    "fullHeadSha": "430749a946f140b4e280ab36ad7ec475929715bf"
   },
   "implementationSource": {
     "worktree": "D:/Repos/agent-skills-worktrees/fk-p0-r30-adoption-20260907",
@@ -308,6 +308,11 @@
       "gitBlobSha256": "d8d33fa2a25d89c8313bbfc7407a5c75a7d527bd321480ee39d1343c9b162c72"
     },
     {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/REMOTE-RESUME-PROCEDURE.md",
+      "bytes": 3677,
+      "gitBlobSha256": "36b2c33f5eade5967e4b8b8751d7918b691f0fd955eab2031d7b89310cb5dd52"
+    },
+    {
       "path": "plugins/foreman-line/docs/goals/foreman-kernel/U1-draft-review-20260907.md",
       "bytes": 1809,
       "gitBlobSha256": "4a7b3a85c5d74b9158b6c82177dfd4a3ca61dbddadc3fc42be8cf0721c713064"
@@ -501,6 +506,16 @@
       "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31-main-integration/closure-review-preparation.md",
       "bytes": 5039,
       "gitBlobSha256": "c556484c43ac93e3543c31da1f7a2e6738a3aafe55d5a8ed472b97f9c05d6ac5"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31-main-integration/preparation/anticipated-exclusions.json",
+      "bytes": 182178,
+      "gitBlobSha256": "d642b8d94e49f671d585f27418aea2184a6a5e411cd870a801d52d8808188220"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31-main-integration/preparation/review.md",
+      "bytes": 6230,
+      "gitBlobSha256": "0b838af4ac690da529ee12e739304f5e7e8987a09d8a3db696a5a90f5f41cda4"
     },
     {
       "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31-main-integration/verify-integration.py",
@@ -1045,7 +1060,7 @@
       "gitBlobSha256": "b790947a8223daab2babf45cba648f1bfd073d7d0b1e6f524fa02f51dc129f00"
     }
   ],
-  "unpublishedChangesIncluded": "Initial publication captured explicitly inventoried source work; see immutable handoff manifest. Continuation captures committed ratifications, contracts, baseline evidence, R30 code checkpoint and P1/U1 preparation. No unrelated ambient changes or credentials are included.",
+  "unpublishedChangesIncluded": "Initial publication captured explicitly inventoried source work; see immutable handoff manifest. Continuation includes committed ratifications, recovery evidence, acceptedR30, R31 source/implementation/test/evidence checkpoints, reviews and scoped P1/U1/integration preparation. Unrelated ambient dirty work remains preserved; credentials are excluded.",
   "preservedUnpublishedWork": "Original ambient dirty work and69capturedsourcebytes preserved. R31 correctedtest2fc3940 published and independently inspected; new fullrerun36 output remains isolated builder-owned until final evidence checkpoint.",
   "unresolvedDependencies": [
     "Finish complete fullrerun36 and deterministic tail at fixedpublished2fc3940; retain failed28 and exact runtime/source byte custody.",
