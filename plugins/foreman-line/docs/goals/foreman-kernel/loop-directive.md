@@ -43,18 +43,13 @@ Everything under this subheading is volatile operational state and is the declar
 region 2. The ownership rule and the `Ratified authority` records are above it as direct body of
 the parent heading, outside this subtree.
 
-**Owner of record.** The Codex coordinator session resumed on 2026-09-04, holding
-crash-recovery ownership under the developer's explicit ruling that the second 2026-09-03
-Claude Code coordinator and the round-6 builder are dead.
+**Owner of record.** Codex coordinator thread `01a07c0b-90eb-7bf0-88f4-0ca912ef87fb`, continuing on 2026-09-07 under the developer instruction recorded in `authorization-20260907-unattended.md`.
 
-**Handoff record — 2026-09-04.** The developer explicitly ruled both the second 2026-09-03
-Claude Code coordinator and its round-6 builder dead and directed transfer of Foreman Kernel
-crash-recovery ownership to this Codex session. The transfer preserves the clean parcel worktree
-at `249903529d2f25aa99617de370a0e3738dab02cf`, the incomplete round-6 package and stop report,
-and every recorded open obligation. No completion, review, Gate 3, push, merge, or Stage F claim
-is inherited from the dead sessions. This session must inventory the committed package, establish
-the current test baseline, and dispatch a fresh builder through Step 0 before implementation
-continues.
+**Current coordinator worktree:** `D:/Repos/agent-skills-worktrees/foreman-kernel-unattended-20260907`.
+**Current coordinator branch:** `codex/foreman-kernel-unattended-20260907`.
+**Published handoff boundary:** `fe31042bbe4370cb81b38632720849983c7be04c`.
+
+**Handoff record — 2026-09-07.** The developer directed this session to move forward during a six-hour absence. The clean goal/implementation/handoff source worktrees were preserved, and no matching source-worktree process was observed. That observation is not a declaration that an older session was proven dead. New work is on isolated coordinator and recovery branches. The recorded September 4 ownership provenance remains in the published handoff's exact source copies.
 
 **Disambiguation for a future reader:** two coordinator sessions held this goal on 2026-09-03.
 The first reproduced the inherited green chain and wrote `FK-P0-MERGE-READY-material.md`; the
@@ -93,6 +88,11 @@ subheading, back to direct body of `## COORDINATOR OWNERSHIP`, so the five publi
 their `list-item:1..5` anchors. See the ordering note there.)_
 
 ## Current state — update at every stop or parcel closure
+
+**STATE 2026-09-07 — unattended continuation active.** The latest recorded candidate is `0ee165720f8d1e3a91eb283cb770400b23f61bf5`, isolated on `codex/fk-p0-recovery-20260907`. Installation and typecheck completed with direct exit0; full serial tests are running. A1.8/A1.9 and INF adoption are recorded on the coordinator branch; fresh adoption review approved after ledger rendering repair at `9afa38b`. Corpus integration is being shaped as R30. The original candidate has no new completion claim. FK-P1 through FK-P21 remain pending implementation.
+
+This current progress entry supersedes older queue/status dates below. Detailed command evidence is accumulating in `evidence/20260907/round6/`; the latest execution plan is `FK-P0-round6-execution-ruling-20260907.md`. The source worktrees and initial publication remain unchanged.
+
 
 **STATE 2026-09-04 #2 (live) — ROUND 6 RECOVERY BUILD ACTIVE. The developer ruled the prior
 coordinator and round-6 builder dead and transferred ownership to this Codex session. Replacement
@@ -340,6 +340,17 @@ The plan-review transcript is
    a prohibition and was sitting in a section declared volatile, curated `ruleIds: []` with a
    boilerplate rationale asserting it stated no rule. It states a rule.
 
+## September 7 continuation authority
+
+The developer instruction recorded verbatim in `authorization-20260907-unattended.md` authorizes this coordinator to make the decisions and perform the non-destructive actions needed to advance this existing goal. Covered decisions do not require repeated permission requests. Record contract or source changes before implementation and retain exact parcel write boundaries, substantive fail-closed guarantees, complete verification and independent review.
+
+Publication of the named source, continuation and evidence branches is authorized. This is a scoped exception to older external-effect wording for Git publication only. It creates no authority for deployment, spending, credentials, repository-settings mutation or destructive cleanup. Human Gate3 remains the merge boundary; publication and passing tests do not manufacture its satisfaction.
+
+Preparatory shaping of downstream parcels may proceed in isolated documents while their implementation dependencies remain pending. A draft does not satisfy a dependency, and implementation dispatch retains the charter's dependency order and exact Allowed Files.
+
+Source preservation applies to all prior worktrees and the published handoff. The already-published September7 companion was captured under the developer's explicit publication request; this does not create a general exception to standing authorization8 for unrelated ambient work.
+
+
 ## Per-parcel algorithm
 
 1. Verify the current queue item and all dependencies against Git, not memory.
@@ -373,7 +384,7 @@ The plan-review transcript is
 
 | Parcel | State | Depends on |
 |---|---|---|
-| FK-P0 — Canon authority and enforcement registry | **ROUND 6 RECOVERY BUILD ACTIVE — Newton completed Step 0 at `dd1b434`; inherited baseline 583 total / 561 pass / 22 fail; implementation authorized after the live-snapshot ruling. Not pushed, not merged, Stage F not run.** | none |
+| FK-P0 — Canon authority and enforcement registry | **ROUND 6 BASELINE VERIFICATION ACTIVE at 0ee1657 on codex/fk-p0-recovery-20260907; R30 source adoption being shaped separately. Source candidate and coordinator continuation published; no acceptance, merge or Stage F.** | none |
 | FK-P1 — Lifecycle, admission, and decision contracts | pending | FK-P0 |
 | FK-P2 — Spec-body compiler | pending | FK-P0, FK-P1 |
 | FK-P3 — Pure dispatch decisions | pending | FK-P1 |
