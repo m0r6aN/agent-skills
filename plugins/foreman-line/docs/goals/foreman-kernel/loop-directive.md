@@ -89,7 +89,7 @@ their `list-item:1..5` anchors. See the ordering note there.)_
 
 ## Current state — update at every stop or parcel closure
 
-**STATE 2026-09-07 — R30 full verification active.** Unchanged Round6 baseline at `0ee165720f8d1e3a91eb283cb770400b23f61bf5` completed all ten direct-exit commands and597tests; complete hashed evidence is published. R30 implementation `446700d47c2e162fcfa575d5a46b9247241a59c1` is published on `codex/fk-p0-r30-adoption-20260907`;79focused semantic and10focused corpus tests passed. Full686-test verification is running on that exact checkpoint. Two fresh final independent code reviews and human Gate3 remain outstanding. No implementation acceptance or merge is claimed.
+**STATE 2026-09-07 — R30 full verification passed; fresh final reviews active.** Unchanged Round6 baseline0ee1657 passed597tests and its full chain. R30 final evidence is published at `c35ff72ef45fb19d647cede6acf5a13636911db7` on `codex/fk-p0-r30-adoption-20260907`. Tested packagef809341 passed686tests with zero failures/cancellations/skips/TODOs and direct exit0; the complete lint/validate/sweep/idempotence/integrity chain passed. Parent independently verified96remote evidence hashes and unchanged tested package bytes. Two fresh final independent code reviews are active. R31 selective source-adoption plan is independently approved and ratified but awaits R30 disposition, source-first snapshot and reviewed Step0. Human Gate3 remains outstanding; no merge or StageF is claimed.
 
 This progress supersedes older state labels below. Read `CURRENT-RESUME.md` and `LIVE-PUBLICATION-MANIFEST.json` for published branches, fullSHAs and hashes. A1.8/A1.9 and INF adoption are ratified and separately integrated through R30. FK-P1 StageA draft/review/advisory/ShapingResult are complete but P1 implementation remains pending its mergedP0 dependency. U1 draft and provider observations are published; named preP18 choices remain. This coordinator-only operational update is confined to declared volatile state; implementation source snapshot65c4714 and its worktree remain unchanged.
 
@@ -383,7 +383,7 @@ Source preservation applies to all prior worktrees and the published handoff. Th
 
 | Parcel | State | Depends on |
 |---|---|---|
-| FK-P0 — Canon authority and enforcement registry | **R30 full686-test verification active at published446700d; baseline597 and focused79+10 passed. Final independent reviews and human Gate3 pending; no merge or StageF.** | none |
+| FK-P0 — Canon authority and enforcement registry | **R30 full686-test chain passed at publishedc35ff72; two fresh final reviews active. R31 source adoption gated; human Gate3 pending; no merge or StageF.** | none |
 | FK-P1 — Lifecycle, admission, and decision contracts | pending | FK-P0 |
 | FK-P2 — Spec-body compiler | pending | FK-P0, FK-P1 |
 | FK-P3 — Pure dispatch decisions | pending | FK-P1 |
