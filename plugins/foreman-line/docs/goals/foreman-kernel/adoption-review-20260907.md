@@ -21,3 +21,11 @@ Reviewer `/root/adoption_final_review` independently inspected `622c934..57be35c
 **Fix:** remove separating blank lines, preserving exact cell content and ratification dates. Coordinator deterministic check finds five adjacent five-column L1-L5 entries. No substantive recommendation changed and no new ratification is needed. Reviewer closure of the resulting commit follows.
 
 Both reviewers made no edits/commits and ran no tests. Fresh review ended at unchanged HEAD with tracked and staged trees clean; only expected recovery evidence was untracked. This is plan/document review, not runtime verification or FK-P0 acceptance.
+
+## Closure and subsequent source-structure finding
+
+Final fresh reviewer approved the ledger fix at `9afa38bd0852aea6a159167bcc7772d762d8ab48`; no remaining findings in the charter adoption scope.
+
+During R30 source-expectation shaping, the independent reviewer found that the goal-derived loop retained older structure absent the parcel's R26/R27 corrections: missing owner-state subheading, authority8 outside its proper standing section, and the stop override returned to volatile current state. This is a real preservation defect in the coordinator continuation, not a package failure.
+
+**Fix before R30 consumption:** rebuild the live loop from exact candidate source structure; keep the ownership rule and five authority records as direct body, preserve declared owner-state and current-state regions, preserve authorization8 and the R26 stop-override location, and layer only mutable identity/progress into declared regions. New September7 authority lives in its own governed section after existing standing authorizations. The historical source snapshots remain unchanged. Independent source-shaping review checks the resulting commit before builder consumption.

@@ -2,53 +2,60 @@
 
 ## COORDINATOR OWNERSHIP — read before dispatching anything
 
-> **Queue owner:** the Codex coordinator in thread `01a07c0b-90eb-7bf0-88f4-0ca912ef87fb`, continuing on 2026-09-07 under the developer's explicit unattended direction recorded in `authorization-20260907-unattended.md`. Exactly one coordinator owns this goal. The previous source worktrees are preserved; an actual concurrent owner/writer is a collision to isolate and report.
->
-> **Current coordinator worktree:** `D:/Repos/agent-skills-worktrees/foreman-kernel-unattended-20260907`.
-> **Current coordinator branch:** `codex/foreman-kernel-unattended-20260907`.
-> **Published boundary:** `fe31042bbe4370cb81b38632720849983c7be04c`.
-> Older ownership blocks and source coordinates below are historical provenance, not a second active owner.
+> Exactly one coordinator owns this goal. Ownership transfers only at a parcel boundary, by
+> editing the owner-of-record block below and recording a handoff. If another live owner is
+> named or ownership is ambiguous, stop and report; never assume.
 
-## Current continuation — 2026-09-07
+The blockquote above is the **ownership rule** and is governed canon: it states three
+obligations and carries no identity, date, or status. Governed canon continues to the end of
+this paragraph block and through the `Ratified authority` records below, all of which remain
+**direct body of this heading**. Volatile owner-of-record and handoff state lives under the
+`### Owner of record and handoff state` subheading that follows them, and is the declared extent
+of region 2. This separation exists because
+`rule.fk-loop-directive.7a05d374a3b1` previously bound the ownership rule and the
+current owner's identity into one block, one locator, and one digest — so the rule went stale
+every time the goal changed hands. Do not reunite them.
 
-The developer ratified recommendations and authorized all decisions and non-destructive actions while away for six hours. The exact instruction and dispositions are in `authorization-20260907-unattended.md`. Existing A1 and D1-D21 stand. A1.8/A1.9 and INF adoption are being recorded on this coordinator branch and independently reviewed.
+The ordering here is load-bearing and is not cosmetic. The five `Ratified authority` records are
+published rules — including the pinned Standing Gate 2 grant referenced from `src/validate.ts` —
+and they are kept out of region 2 **by remaining direct body of this `##` heading**, never by
+being moved beneath a sibling `###`. Moving them under any subheading changes their anchor from
+`…:list-item:1..5` to a subheading path, which re-anchors five published rules and forces an
+identity migration. Do not introduce a subheading above them.
 
-FK-P0 remains active Round 6 recovery at `0ee165720f8d1e3a91eb283cb770400b23f61bf5`. Verification uses `codex/fk-p0-recovery-20260907` in its own worktree; the original candidate branch remains untouched. No new green-chain claim exists. Next: accept the read-only recovery Step 0 plan, capture the full sequential verification chain, and obtain two independent reviews. FK-P1 through FK-P21 remain pending implementation; preparatory shaping may proceed without representing dependencies as merged.
+**Goal worktree:**
+`D:/Repos/agent-skills-worktrees/foreman-kernel-stage0-20260830`
 
-The queue's dated a100a91 state and older not-pushed claims below are superseded by this block. Publishing and verification do not satisfy human Gate 3. No merge is authorized by this continuation record.
+**Goal branch:** `codex/foreman-kernel-stage0-20260830`
 
-**Handoff record — 2026-09-04, Codex takeover.** The developer could not locate the second
-2026-09-03 coordinator and explicitly ruled it presumed dead, transferring Foreman Kernel ownership
-to this session. The transfer was verified at a clean parcel boundary: the goal worktree was clean
-at `2a7a78c76732b98301717e1eb85754dc8e3773ab`; the FK-P0 worktree was clean at
-`0ee165720f8d1e3a91eb283cb770400b23f61bf5`; and no process referenced either worktree. All current
-commits are preserved. The post-Step-0 Round 6 `wip(fk-p0)` commits are unaccepted candidate work:
-they have no builder completion claim, full verification transcript, or independent review evidence.
-Resume Round 6 with a coordinator closure check of that exact candidate before dispatching, amending,
-accepting, or merging any package change.
+**Ratified authority:**
 
-**Handoff record — 2026-09-03, second transfer.** The first 2026-09-03 owner stopped after
-writing `FK-P0-MERGE-READY-material.md` (commit `eaa6a33`), leaving FK-P0 at Gate 3 with the
-working tree clean. Asked directly whether that session was live, the developer ruled it
-**dead** and transferred ownership to this session. Transfer verified rather than assumed at a
-clean parcel boundary: goal worktree clean, no open PRs (`gh pr list` empty), parcel head still
-`838f438`, and a scripted `git status --porcelain` sweep across every registered worktree found
-only two dirty trees, both belonging to other goals (`keon-full-platform-gtm-readiness`,
-`wgt-p2a-foreman-queue-reconciliation`) and neither touching FK-P0.
+- Original Gate 1 charter commit: `c4bf00f6fde9058e1350898914e06f261ae38c93`
+- Plan-review triage commit: `a9a48b5656c3ce3837781c962a6ee00035d7f3c6`
+- Scoped Gate 1 re-ratification commit:
+  `26fb2b56e4861b6122a95f1d413394c0dcd3b4a1`
+- Standing Gate 2: active for FK-P0 through FK-P21 under the charter contingencies
+- Gate 3: not delegated; every merge is a human action
 
-Nothing was discarded in this transfer. Both open items the first 2026-09-03 owner had flagged
-in the ambient checkout resolved on their own and were verified closed by this owner:
+### Owner of record and handoff state
 
-- The user-owned `routing-policy.yaml` / `validator.ts` edits **landed via PR #15**
-  (`096adfb`, "retarget routing policy to OpenRouter v0.3"). `KNOWN_FRONTIER_MODELS` now holds
-  five OpenRouter-prefixed ids; no `claude-opus-4-8` pin survives anywhere under
-  `routing-policy/`, and PR #15 updated the affected tests in the same change. The predicted
-  "tests red for the wrong reason" never materialised.
-- The ambient checkout's untracked `docs/goals/foreman-kernel/` copies were diffed against this
-  branch. `proposed-amendment-A1` was an older draft, superseded here. **ADR-001 carried a
-  developer ratification record that existed nowhere else**; on the developer's instruction it
-  was transcribed to this branch alone in `2f9d3f7`, status line and record only, bodies
-  otherwise byte-identical. The ambient files were left untouched.
+Everything under this subheading is volatile operational state and is the declared extent of
+region 2. The ownership rule and the `Ratified authority` records are above it as direct body of
+the parent heading, outside this subtree.
+
+**Owner of record.** Codex coordinator thread `01a07c0b-90eb-7bf0-88f4-0ca912ef87fb`, continuing on 2026-09-07 under the developer instruction recorded in `authorization-20260907-unattended.md`.
+
+**Current coordinator worktree:** `D:/Repos/agent-skills-worktrees/foreman-kernel-unattended-20260907`.
+**Current coordinator branch:** `codex/foreman-kernel-unattended-20260907`.
+**Published handoff boundary:** `fe31042bbe4370cb81b38632720849983c7be04c`.
+
+**Handoff record — 2026-09-07.** The developer directed this session to move forward during a six-hour absence. The clean goal/implementation/handoff source worktrees were preserved, and no matching source-worktree process was observed. That observation is not a declaration that an older session was proven dead. New work is on isolated coordinator and recovery branches. The recorded September 4 ownership provenance remains in the published handoff's exact source copies.
+
+**Disambiguation for a future reader:** two coordinator sessions held this goal on 2026-09-03.
+The first reproduced the inherited green chain and wrote `FK-P0-MERGE-READY-material.md`; the
+second executed Option B, found the blocker in `FK-P0-BLOCKER-volatile-canon-source.md`, and
+ratified R24 and its correction R25. Where a record says "this owner" without a date, read the
+file's own commit date.
 
 **Handoff record — 2026-09-03.** The prior owner (the Claude Code coordinator session of
 2026-09-01 → 2026-09-02) stopped after writing `FK-P0-GATE-3-package.md`, leaving FK-P0 at
@@ -76,150 +83,57 @@ in the dead session's transcript and are unrecoverable. Under the standing rule 
 wrong-shaped claims are presumptively empty, **no R2–R13 review is treated as having
 occurred.** FK-P0 re-enters adversarial review from zero under this owner.
 
-**Goal worktree:**
-`D:/Repos/agent-skills-worktrees/foreman-kernel-stage0-20260830`
-
-**Goal branch:** `codex/foreman-kernel-stage0-20260830`
-
-**Ratified authority:**
-
-- Original Gate 1 charter commit: `c4bf00f6fde9058e1350898914e06f261ae38c93`
-- Plan-review triage commit: `a9a48b5656c3ce3837781c962a6ee00035d7f3c6`
-- Scoped Gate 1 re-ratification commit:
-  `26fb2b56e4861b6122a95f1d413394c0dcd3b4a1`
-- Standing Gate 2: active for FK-P0 through FK-P21 under the charter contingencies
-- Gate 3: not delegated; every merge is a human action
+_(The goal-identity and ratified-authority records were moved above the owner-of-record
+subheading, back to direct body of `## COORDINATOR OWNERSHIP`, so the five published rules keep
+their `list-item:1..5` anchors. See the ordering note there.)_
 
 ## Current state — update at every stop or parcel closure
 
-**STATE 2026-09-04 — OWNERSHIP TRANSFERRED; ROUND 6 RECOVERY.** The developer explicitly
-transferred ownership to Codex at the clean `0ee1657` FK-P0 head. Preserve all current commits.
-Round 6 remains active, but its candidate `wip(fk-p0)` commits are not completion evidence: the
-previous builder/recovery record has no final builder handoff, deterministic command transcript, or
-fresh independent reviews for that head. The next safe action is a read-only coordinator closure
-check against R24-R29 and the Round 6 kickstarter, followed by a fresh Step 0 only if rework remains
-necessary. No Gate 3 claim, merge, or Stage F action is authorized.
+**STATE 2026-09-07 — unattended continuation active.** The latest recorded candidate is `0ee165720f8d1e3a91eb283cb770400b23f61bf5`, isolated on `codex/fk-p0-recovery-20260907`. Installation and typecheck completed with direct exit0; full serial tests are running. A1.8/A1.9 and INF adoption are recorded on the coordinator branch; fresh adoption review approved after ledger rendering repair at `9afa38b`. Corpus integration is being shaped as R30. The original candidate has no new completion claim. FK-P1 through FK-P21 remain pending implementation.
 
-**STATE 2026-09-03 #2 (live) — REWORK ROUND 6 DISPATCHED. Blocker found while executing the
-developer-approved merge; developer ruled "rework"; R24 ratified and committed alone; builder
-holding at its Step 0 gate.**
+This current progress entry supersedes older queue/status dates below. Detailed command evidence is accumulating in `evidence/20260907/round6/`; the latest execution plan is `FK-P0-round6-execution-ruling-20260907.md`. The source worktrees and initial publication remain unchanged.
 
-**Round 6, in order, all committed on the parcel branch:**
 
-| commit | what |
-|---|---|
-| `a100a91` | Option B intermediate merge — goal records carried onto the parcel branch, documentation only |
-| `47a26be` | **coordinator-ratified spec amendment R24**, committed alone before any code, per SPEC-CONVENTION §11 |
-| `43d1614` | rework round 6 kickstarter — builder proposes the mechanism |
+**STATE 2026-09-04 #2 (live) — ROUND 6 RECOVERY BUILD ACTIVE. The developer ruled the prior
+coordinator and round-6 builder dead and transferred ownership to this Codex session. Replacement
+builder Newton (`01a06c31-f56b-7d80-ab38-9508ee64fedc`) completed a read-only Step 0 against
+`dd1b434`: 583 tests, 561 pass, 22 fail; the inherited R29.3 partial has one TypeScript duplicate-
+key error and no controls (a)–(g). The coordinator ruled that `5f9cf65` is the deliberate live
+source snapshot while `51857a3` remains the historical dispatch authority. Implementation may
+resume from the two preserved uncommitted package files. FK-P0 remains mid-round, not at Gate 3.**
 
-**R24 in one sentence:** the registry recognizes *volatile operational state* — content inside a
-governed source that carries no independent rule and that canon requires to change — declared at
-**region scope rather than item scope**, so editing within a region needs no regeneration. Note
-that source-corpus entry 3's own enumeration of what `loop-directive.md` contributes never
-included current state, so R24 narrows the boundary to what the spec already described.
+This block is itself the first real test of what round 6 built: it is a coordinator state update
+written into a **declared volatile region**, and the sweep must absorb it with zero violations.
+Before round 6 this edit produced 45 violations and broke three tests. The result is recorded in
+`FK-P0-round6-STOP-REPORT.md` alongside the measurement.
 
-**Three controls make R24 a tightening rather than a weakening, and amended AC3 is not met unless
-all three hold:** (a) a negative control proving declared regions absorb both an appended
-paragraph and a byte change; (b) a positive control proving a mutated *governed* sentence in the
-same source still fails closed with its specific code — without which (a) cannot be distinguished
-from a disabled sweep; and (c) an anti-laundering control proving the validator refuses, fail-
-closed, any region declaration overlapping a published rule's locator. Absent (c), R24 would be a
-mechanism for retiring any rule by declaring its neighbourhood volatile — strictly worse than the
-defect it repairs.
+**What is done and on the branch (HEAD `ab8b891` package content):** the two-pass masking
+primitive with excision before block discovery and before ordinal assignment; the two-kind extent
+union (`heading-subtree`, `table-column`); all three regions declared; the closed-schema change;
+`VOLATILE_REGION_OVERLAP` and `VOLATILE_REGION_INVALID`; obligation 1's rule removal; and a
+document-derived second half of the anti-laundering check that asks whether a published item's
+*text* is among the excised bytes, which the coordinator did not specify and which catches what
+anchors cannot. `sweep --repo-root` is **0 violations, down from 54**. **The defect round 6 exists
+to fix is closed.**
 
-**Mechanism was deliberately left to the builder** and is the substantive Step 0 deliverable.
-R16, R19 and R22 were each designed from this chair and each needed correction; this round asks
-the builder for a design with alternatives and named rejections, and the coordinator rules before
-code. The builder was also asked to challenge R24's region list directly — the ownership block
-mixes rule sentences with owner identity and handoff records in one blockquote, and whether that
-separates at region granularity is a real open question, not a settled one.
+**What is not done, and why this is not a claim:** standing authorization 8 is unpublished, so the
+count is 468 where R28 requires 469 — the acceptance assertion's one addition is unmet;
+**none of controls (a)–(g) exist**; R29.3's anchor-keying is ratified but unimplemented; the
+migration record and new chain head are unwritten; `generate` idempotence is unproven; and
+`npm test` is **unmeasured for this round** — the 583/580/3 figures predate five governed-source
+commits and must not be quoted.
 
-**Test-count tripwire for round 6, against a measured baseline:** 583 total / 580 pass / 3 fail
-at `a100a91`. Requires total ≥ 583 plus the new controls, 0 fail, and the three previously-failing
-tests passing *for the right reason* rather than by having their expectations edited.
+**Three coordinator errors this round, recorded because they are the transferable part:** two
+writers were put on one parcel after the coordinator wrongly judged the builder dead; a stale
+`tsc` measurement was pinned to the wrong SHA; and three amendments' worth of rulings were issued
+by message and never written into the spec, so two agents read canon and were correctly misled
+(R29).
 
-**Do not edit `loop-directive.md` on the parcel branch while round 6 is live.** It is the
-builder's measurement target; editing it moves the baseline mid-round. This state block therefore
-lives only on the goal branch until round 6 closes, and the two copies are knowingly divergent.
+**Gate 3 remains not delegated. Not pushed, not merged, Stage F not run.**
 
-**Still true and unchanged:** not pushed, not merged, Stage F not run, **Gate 3 not delegated.**
-`git reset --hard 838f438` still reverts to the pre-Option-B head if the developer prefers Option
-A, though that now discards R24 and the round-6 kickstarter with it.
-
-**Amendment A3 (standing authorization widening) is DRAFTED AND NOT IN FORCE.** Drafted at the
-developer's request, then deliberately left unratified: the auto-mode classifier refused a
-coordinator self-ratification of its own standing authority on a generic blanket grant, and that
-refusal was correct — it is the same laundering the charter forbids. Round 6 needed no part of it;
-the existing two-round cap authorizes this round, since FK-P0's five prior rounds were prior
-ownership. Any clause requires the developer to ratify it in their own words, naming the clause.
-
-**SUPERSEDED — the state this block replaces:** FK-P0 IS NOT MERGE-READY, loop STOPPED awaiting a
-developer ruling. The ruling arrived.
-
-Read `FK-P0-BLOCKER-volatile-canon-source.md` first; it is the substantive record.
-
-The developer approved Option B (carry the goal records forward, then merge once). This owner
-executed the intermediate merge — goal branch → parcel branch, `838f438` → **`a100a91`**,
-conflict-free, documentation only, all six preservation checks passing — then re-ran the green
-chain on the actual merge target, and **`sweep --repo-root` went red: `valid: false`, 45
-violations, exit 1.**
-
-Causation was established by experiment, not inference: reverting `loop-directive.md` alone to
-its `838f438` content returns the sweep to `valid: true`, 0 violations, exit 0. All 45
-violations name that one file.
-
-**The defect is that FK-P0 digest-pins a document the canon orders the coordinator to rewrite.**
-The registry inventories this file as `authorityEffect: binding` with a pinned `fullFileSha256`
-(`authority-enforcement-registry.yaml:2546`). All 45 violations fall in exactly three sections,
-and all three exist in order to change: `## Current state — update at every stop or parcel
-closure` (37), `## COORDINATOR OWNERSHIP`, whose own text says ownership transfers *by editing
-this block* (7), and the queue's `State` column (1). Step 11 of the per-parcel algorithm below
-ends with "and this state block update" — so **performing Stage F on FK-P0 turns FK-P0's own
-sweep red.** The parcel cannot be closed out without violating itself.
-
-Option A does not avoid this; it hides it. Merging the parcel branch alone lands the frozen
-2026-09-02 bytes, so the sweep is green at merge time and the first mandated state update turns
-`main` red. Hermetic `validate` stays green at 0 violations throughout, because it compares the
-registry to itself and never reads the repository — that asymmetry means the hermetic gate
-cannot detect this class at all.
-
-**`npm test` also fails at `a100a91`: exit 1, 580 pass / 3 fail** (total unchanged at 583, since
-`authority-registry/` is byte-identical between the heads). `corpus-sweep.test.ts` fails tests 9
-and 18; `schema-validation.test.ts` fails test 4, *"CLI validate and sweep return exit 0"* —
-**an acceptance-criterion test**, so the parcel now fails its own ACs. The sharpest witness is
-`corpus-sweep` test 18, *"unrelated bytes outside every registered locator stay green"*: editing
-the coordinator's state section should have been exactly that case, and the test written to
-guarantee ordinary edits stay green is the test this defect breaks.
-`semantic-invariants.test.ts` passed 440/440 and the `0xC0000409` abort did not recur.
-
-Every figure in `FK-P0-GATE-3-package.md` and `FK-P0-MERGE-READY-material.md` still reproduces
-**at `838f438`**, the head they were measured against. `tsc`, `biome`, hermetic `validate` and
-the additions-only merge into `main` remain green at `a100a91` too (62 files, 118,459
-insertions, **0 deletions**, conflict-free). The chain was conditional, not wrong.
-
-**A correction this owner owes against itself.** The first version of this block and its commit
-message (`23a163e`) claimed `npm test` 583/583 "still reproduces" at `a100a91`. It had not been
-run there — it was inferred from code byte-identity, and the inference was wrong: identical
-tests over a changed working tree give different results, because two of them read the
-repository. Caught by running it rather than by review. Stage F lessons candidate: **code
-byte-identity does not transfer a green result across heads when any test reads the working
-tree.**
-
-**Not merged, not pushed. Gate 3 remains not delegated.** `git reset --hard 838f438` on the
-parcel branch reverts the intermediate merge if the developer prefers Option A. The candidate
-fix — excluding volatile operational state from the inventoried set using the registry's
-existing `exclusionDisposition` vocabulary — is written up in the blocker record as a
-hypothesis for a builder to establish, **not** as an applied change.
-
-**Review-mandate gap, recorded for reuse:** both independent frontier reviews missed this
-because both swept a tree whose governed sources had not moved since generation. An adversarial
-review of a canon-registry parcel must **mutate a governed source and re-sweep**, not only
-sweep the as-built tree. This belongs in the FK-P0-class review kickstarter and is a Stage F
-lessons candidate.
-
-**STATE 2026-09-03 #1 (superseded by the block above) — FK-P0 REMAINS AT GATE 3. The inherited
-green chain was independently reproduced by this owner and it HOLDS. Stopped at the human gate,
-which is where the loop is supposed to stop.**
+**SUPERSEDED — STATE 2026-09-03 #1 — FK-P0 REMAINS AT GATE 3. The inherited green chain was
+independently reproduced by this owner and it HOLDS. Stopped at the human gate, which is where the
+loop is supposed to stop.**
 
 This owner re-verified the prior owner's Gate 3 evidence on disk rather than accepting it, because
 the 2026-09-01 handoff established that transcript-only claims are unrecoverable. Everything below
@@ -378,17 +292,13 @@ machine. **133 is not the baseline** -- it counts only the five other files.
 Gate 3 remains a human action, and now covers **one** merge rather than two, since the goal branch
 was merged onto the parcel branch.
 
-The ambient `D:/Repos/agent-skills` checkout has a user-owned change at
-`plugins/foreman-line/routing-policy/routing-policy.yaml`; never touch or absorb it.
+The ambient-checkout prohibition now lives as standing authorization 8 under
+`## Standing authorizations and their limits`, where R27 relocated it. It is a rule, and it
+does not belong in a volatile status section.
 
-### Standing stop-condition override — the FK-P0 / A2 spiral
-
-The prior owner drove FK-P0 through twelve rework rounds and amendment A2 through four
-drafts without landing either, overriding the charter's own “same tripwire fires” stop
-condition each time. That condition is reinstated with teeth: **this owner takes FK-P0
-through at most two rework rounds.** A third stops the loop and reports. Rework-round
-count is measured from `df8155a` forward under this ownership; inherited rounds are not
-carried, but neither are they credited.
+The relocated standing stop-condition override now lives under `## Stop conditions`, where R26
+ruling 2 moved it. Nothing normative belongs in this section: it is coordinator status, declared
+volatile, and a rule written here would be uninventoriable.
 
 ## Role and canon
 
@@ -423,6 +333,23 @@ The plan-review transcript is
 7. A push or PR may occur only when the active parcel contract and developer authority
    clearly cover it; otherwise prepare local PR material and stop before the external
    action.
+8. **The ambient `D:/Repos/agent-skills` checkout carries user-owned changes. Never touch or
+   absorb them.** No agent working this goal — coordinator, builder, reviewer, or shaping
+   session — reads from or writes to the ambient checkout, and no user-owned change is
+   absorbed into a parcel branch. Relocated here from `## Current state` by R27, because it is
+   a prohibition and was sitting in a section declared volatile, curated `ruleIds: []` with a
+   boilerplate rationale asserting it stated no rule. It states a rule.
+
+## September 7 continuation authority
+
+The developer instruction recorded verbatim in `authorization-20260907-unattended.md` authorizes this coordinator to make the decisions and perform the non-destructive actions needed to advance this existing goal. Covered decisions do not require repeated permission requests. Record contract or source changes before implementation and retain exact parcel write boundaries, substantive fail-closed guarantees, complete verification and independent review.
+
+Publication of the named source, continuation and evidence branches is authorized. This is a scoped exception to older external-effect wording for Git publication only. It creates no authority for deployment, spending, credentials, repository-settings mutation or destructive cleanup. Human Gate3 remains the merge boundary; publication and passing tests do not manufacture its satisfaction.
+
+Preparatory shaping of downstream parcels may proceed in isolated documents while their implementation dependencies remain pending. A draft does not satisfy a dependency, and implementation dispatch retains the charter's dependency order and exact Allowed Files.
+
+Source preservation applies to all prior worktrees and the published handoff. The already-published September7 companion was captured under the developer's explicit publication request; this does not create a general exception to standing authorization8 for unrelated ambient work.
+
 
 ## Per-parcel algorithm
 
@@ -457,7 +384,7 @@ The plan-review transcript is
 
 | Parcel | State | Depends on |
 |---|---|---|
-| FK-P0 — Canon authority and enforcement registry | **BLOCKED at Gate 3 — NOT merge-ready. Parcel head `a100a91` (Option B intermediate merge, local only). `sweep --repo-root` red: 45 violations, all from digest-pinning a mandated-mutable source. See `FK-P0-BLOCKER-volatile-canon-source.md`. Awaiting developer ruling: rework, or Option A with an accepted residual. Not pushed, not merged, Stage F not run.** | none |
+| FK-P0 — Canon authority and enforcement registry | **ROUND 6 BASELINE VERIFICATION ACTIVE at 0ee1657 on codex/fk-p0-recovery-20260907; R30 source adoption being shaped separately. Source candidate and coordinator continuation published; no acceptance, merge or Stage F.** | none |
 | FK-P1 — Lifecycle, admission, and decision contracts | pending | FK-P0 |
 | FK-P2 — Spec-body compiler | pending | FK-P0, FK-P1 |
 | FK-P3 — Pure dispatch decisions | pending | FK-P1 |
@@ -521,6 +448,19 @@ Stop and report if:
 - a reviewer or builder modifies the ambient checkout or another worktree;
 - a user-owned change collides with the parcel; or
 - the queue is empty without every goal exit criterion evidenced.
+
+### Standing stop-condition override — the FK-P0 / A2 spiral
+
+Relocated here from `## Current state` by R26 ruling 2. It was misfiled: this is a standing stop
+condition, not a status record, and while it sat inside the volatile state section R24's region 1
+would have made it permanently uninventoriable. Its text is unchanged by the move.
+
+The prior owner drove FK-P0 through twelve rework rounds and amendment A2 through four
+drafts without landing either, overriding the charter's own “same tripwire fires” stop
+condition each time. That condition is reinstated with teeth: **this owner takes FK-P0
+through at most two rework rounds.** A third stops the loop and reports. Rework-round
+count is measured from `df8155a` forward under this ownership; inherited rounds are not
+carried, but neither are they credited.
 
 ## Wakeup and crash recovery
 
