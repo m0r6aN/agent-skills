@@ -18,3 +18,8 @@ U1-evidence-contract-draft-20260907.md passed draft closure review recorded in U
 FK-P1 Stage A preparation is complete: reviewed status:draft spec, explicit shaping decisions, two-layer advisory pass and schema-valid ShapingResult with epics:[] are published. Read FK-P1-shaping-review-20260907.md. No P1 activation or implementation occurred; merged P0 compatibility and remaining field-shape reconciliation still gate dispatch.
 
 U1-provider-observations-20260907.md records read-only current GitHub configuration, workflow/run identities and official provider documentation. Existing rulesets/hosted CI are observed; protected verifier independence, attestation issuance and retained retrieval are not proved. No provider settings or workflow execution were changed. These observations narrow U1 selection work without satisfying pre-P18 gates.
+
+
+## Published R30 implementation checkpoint
+
+Branch `codex/fk-p0-r30-adoption-20260907` now publishes implementation `446700d47c2e162fcfa575d5a46b9247241a59c1`: nine exact Allowed Files changed. Focused79semantic+10corpus tests and checkpoint typecheck passed directexit0; full sequential verification is running against that commit. This is current implementation state, not only documents. It remains unaccepted: full chain and two fresh independent final code reviews are outstanding. Full-chain evidence is being captured in the implementation tree at evidence/20260907/r30/ and is not yet published as complete. R30.8/R30.9 and corrected mapping are committed before their dependent code; source65c4714 and all18governed paths are unchanged.
