@@ -1,0 +1,90 @@
+[
+  {
+    "path": "README.md",
+    "sha256": "7aad4f2722c8fba589f384eaf7f5d5b5f9bec37d4f7e84d775dc65f7aedad6b2"
+  },
+  {
+    "path": "authority-enforcement-registry.yaml",
+    "sha256": "47ff17a113b67b457d1050c5086095dee2cf044af6c5de8d2875c85a1881cf6c"
+  },
+  {
+    "path": "biome.json",
+    "sha256": "3e144fbbca0f50224a0f713e94f95fb3a0bf94b36a71f2ea80e8e3b1698b4e7b"
+  },
+  {
+    "path": "package-lock.json",
+    "sha256": "e7a986409956dc29a8eaf3d4d70ba3cf842643cd7999c79b6525f2368191b8eb"
+  },
+  {
+    "path": "package.json",
+    "sha256": "9b36380363171d4b3e72ee26122731511a2e9b0b0669ca5bba250ba96f38f20d"
+  },
+  {
+    "path": "schemas/authority-enforcement-registry.schema.json",
+    "sha256": "b679a496254dcaa88da68a884abfe0ac436f6481b2b7c59aa0e1db133120d31c"
+  },
+  {
+    "path": "src/cli.ts",
+    "sha256": "b59bfbacfb3ccba285d8c70599a36e7d934818fe988df709017683269d6de555"
+  },
+  {
+    "path": "src/generate.ts",
+    "sha256": "8e26cd96d6ee6a355df3ff48dbf61039e7e114c2ddf767004690ef6b088ea2e3"
+  },
+  {
+    "path": "src/index.ts",
+    "sha256": "9c85231fe030420356093899c5f22dc04c623e93702bb048dc0b74f1d3f9b03e"
+  },
+  {
+    "path": "src/registry.ts",
+    "sha256": "050a901baf0732163a30c7b25d2b31cfb5f9f0bc2e472d8a0a148ec68a822d80"
+  },
+  {
+    "path": "src/schemas.ts",
+    "sha256": "51fa129bbe67fb0f64c9954e4c82bba885a8cd3bfc7cf2d63d93422e4f228fbb"
+  },
+  {
+    "path": "src/types.ts",
+    "sha256": "20e293e457efc2919222139230aaa498ace7988c195fccd585c87f2f62c68db4"
+  },
+  {
+    "path": "src/validate.ts",
+    "sha256": "125af59742ca8eaf45a42b4fa7d0899e729c6c6ee298a259004f7785fc134536"
+  },
+  {
+    "path": "tests/bare-specifier.test.ts",
+    "sha256": "5a6c18e7cd80746e35f4e5bbb41325ab4867c42077467a6c211691410592b366"
+  },
+  {
+    "path": "tests/corpus-sweep.test.ts",
+    "sha256": "51e43d3231876210f20c9c72536286945c1087d4be28217864b4838b5cd2e6ee"
+  },
+  {
+    "path": "tests/dependency-allowlist.test.ts",
+    "sha256": "fd5e5b0414548b4e2b9194a5d0460aa04be49e786b37e0ba21e3836bf8e64f30"
+  },
+  {
+    "path": "tests/fixtures/pass-minimal.yaml",
+    "sha256": "47ff17a113b67b457d1050c5086095dee2cf044af6c5de8d2875c85a1881cf6c"
+  },
+  {
+    "path": "tests/parity.test.ts",
+    "sha256": "4e4602c0f14a2e2e46e74ebb0b20433ffed8dfcfb02ade5e09ee92f4585159fb"
+  },
+  {
+    "path": "tests/schema-validation.test.ts",
+    "sha256": "bd682356dbc0e1176599a1161e8d5eef87e55b35326b3c60a5eb84621e5b3289"
+  },
+  {
+    "path": "tests/semantic-invariants.test.ts",
+    "sha256": "e76e240871ed089e75c86af80a4d6ebc8cfa3e23010b2d848ef49020a18d809d"
+  },
+  {
+    "path": "tests/support/assert-ok.ts",
+    "sha256": "b3e4a12191842b284da06a393992e45f4ecf9b42f6e07960030fb387bc91d25b"
+  },
+  {
+    "path": "tsconfig.json",
+    "sha256": "38976aeb8a37adf4d858f92a6f2cf25134f291e077d86224bdc1627d20ff2025"
+  }
+]

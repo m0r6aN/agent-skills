@@ -1,0 +1,1 @@
+Scope metadata preparation failed because PowerShell used bare true instead of $true. Package comparison completed with no differences before serialization failed. Tool shell returned0 after later git status; this is not a successful metadata write. Corrected in08; no package or source writes occurred.

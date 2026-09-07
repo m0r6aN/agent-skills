@@ -1,0 +1,8 @@
+{
+  "command": "source-authored proposed mapping with existing audit/exclusion enums",
+  "startUtc": "2026-09-07T16:38:33.6870709Z",
+  "endUtc": "2026-09-07T16:38:35.7047910Z",
+  "elapsedSeconds": 2.019729,
+  "directExit": 0,
+  "note": "Initial03 draft used descriptive historical-context/map labels absent from schema; corrected to non-normative-explanation/publish before review. Initial draft preserved, no package generation."
+}

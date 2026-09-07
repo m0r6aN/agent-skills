@@ -1,0 +1,11 @@
+{
+  "recordedUtc": "2026-09-07T16:44:13.5558370Z",
+  "packageTrackedFileCount": 22,
+  "packageChanges": [],
+  "sourceFilesMatched": 18,
+  "head": "47828207456ec2ea19028e7c911be5f20d1a3f8c",
+  "mappingSha256": "c779c1577bcefe495d6ebaabb9d3eecf3f0995a0b322b9590c8fcf9a10775c6c",
+  "noGeneration": true,
+  "noTests": true,
+  "noCommits": true
+}

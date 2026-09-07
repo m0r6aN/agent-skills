@@ -1,0 +1,496 @@
+{
+  "counts": {
+    "before": {
+      "sources": 18,
+      "items": 1583,
+      "rules": 541,
+      "audit": 198,
+      "reconciliations": 20
+    },
+    "expectedAfter": {
+      "sources": 18,
+      "items": 1585,
+      "rules": 542,
+      "audit": 202,
+      "reconciliations": 21
+    },
+    "delta": {
+      "itemsAdded": 2,
+      "itemsRemoved": 0,
+      "existingValuesChanged": 1,
+      "existingLocatorIdentityChanged": 1,
+      "rulesAdded": 1,
+      "rulesRemoved": 0,
+      "existingRuleBindingsChanged": 1,
+      "auditAdded": 4,
+      "reconciliationsAppended": 1
+    }
+  },
+  "units": [
+    {
+      "unit": "M01",
+      "sourceId": "standing-constraints",
+      "rawCandidateItemId": "item.e3c4f313970c",
+      "proposedItemId": "item.constraint-14",
+      "itemId": "item.constraint-14",
+      "locator": {
+        "kind": "numbered-item",
+        "anchor": "md-block:# Standing Constraints — included by reference in every dispatch kickstarter > ## Builder — conditional:list-item:3",
+        "lineHint": 21
+      },
+      "locatorDigest": "22f088d2c9e1efe1e1f6b620474d795c54c76354b19c1b0508ebd1b31d3b959c",
+      "normalizedExcerpt": "14. **Plugin/marketplace parcels:** verify each living install identifier through the declared marketplace entry to an existing plugin source whose nested manifest name equals the requested plugin. A normalized repository URL does not prove that an install command resolves. (#37)",
+      "valueDigest": "4f3ee9daa1a008f7002cce5742fa585387976783bb9a1a333f5cd6ab5a1d4d19",
+      "ruleIds": [
+        "rule.standing-constraints.constraint-14"
+      ],
+      "exclusionDisposition": null
+    },
+    {
+      "unit": "M02-note",
+      "sourceId": "foreman-line-plan",
+      "wrongLegacyProjectionItemId": "item.two-gate-thesis",
+      "rawCandidateItemId": "item.8bef504af1db",
+      "itemId": "item.8bef504af1db",
+      "locator": {
+        "kind": "line-excerpt",
+        "anchor": "md-block:# The Foreman Line — Master Plugin Plan:paragraph:1",
+        "lineHint": 3
+      },
+      "locatorDigest": "6a99cca27c8da23a9569a3ab65ca4c3f0b29751f420e6a3bfd4ba8969b31c07d",
+      "normalizedExcerpt": "> **Repository identity migration (2026-09-06):** Repository identifiers and paths in this historical record were normalized to `m0r6aN/agent-skills`. Recorded commands were not rerun; all other historical outcomes remain as captured.",
+      "valueDigest": "9d600b9b44dfe18183d5a668eb46862ab9187395aa35ce43a15d2b9e41e4741d",
+      "ruleIds": [],
+      "exclusionDisposition": "non-normative-explanation"
+    },
+    {
+      "unit": "M02-thesis",
+      "sourceId": "foreman-line-plan",
+      "rawCandidateItemId": "item.13c267a420b3",
+      "itemId": "item.two-gate-thesis",
+      "locator": {
+        "kind": "line-excerpt",
+        "anchor": "md-block:# The Foreman Line — Master Plugin Plan:paragraph:2",
+        "lineHint": 5
+      },
+      "locatorDigest": "464f7353d3bb900a07fe85436e96f2fd8729dd616c635338c17ed6f3a703875e",
+      "normalizedExcerpt": "**Version:** 0.1 (Draft — working name \"the Line\"; rename at will) **Owner:** Clinton Morgan — Principal Agentic AI Platform Architect, KaseyaOne **Status:** Proposed **Thesis:** One orchestrated pipeline from idea to merged code, in which specs are the unit of truth, humans hold exactly two gates (dispatch and merge), every stage emits a verifiable receipt, and the platform layer (model routing, Kompress, audit suite, DocSpine) is wired in by default — not by memory.",
+      "valueDigest": "9f09f265b9c38dd2abd8707f94a94d70783e32bcd58c354ff1c1c0446a532d59",
+      "ruleIds": [
+        "rule.foreman-line-plan.two-gate-thesis"
+      ],
+      "exclusionDisposition": null
+    },
+    {
+      "unit": "M03",
+      "sourceId": "foreman-line-plan",
+      "itemId": "item.483a4914f57e",
+      "locator": {
+        "kind": "line-excerpt",
+        "anchor": "md-block:# The Foreman Line — Master Plugin Plan > ## 5a. Skill Injection Policy (the execution-plane library):paragraph:1",
+        "lineHint": 143
+      },
+      "locatorDigest": "b209a80af8457ba1a89290fe308c3a65484075080d43cc059692d7044e788647",
+      "normalizedExcerpt": "The Line is the conveyor; the skills library is the rack of tools hanging above each station (`agent-skills`, deployed at `~\\.claude\\skills\\`). Skills are wired in through a single mechanism — a versioned **skill injection matrix**, policy-as-code alongside the routing policy — rather than hardcoding each skill into a pipeline stage:",
+      "valueDigest": "9bc1d135bbd0ddbb5fedd27f9d7040660d8ad8e94b6ba2ff3da56f86ecd516ad",
+      "ruleIds": [],
+      "exclusionDisposition": "non-normative-explanation"
+    }
+  ],
+  "newRule": {
+    "ruleId": "rule.standing-constraints.constraint-14",
+    "authoritySubject": "plugin-marketplace.install-identifier-verification",
+    "authorityClaim": "plugin-marketplace-parcels-require-complete-install-identifier-chain-not-url-only",
+    "normalizedStatement": "14. **Plugin/marketplace parcels:** verify each living install identifier through the declared marketplace entry to an existing plugin source whose nested manifest name equals the requested plugin. A normalized repository URL does not prove that an install command resolves. (#37)",
+    "sourceRefs": [
+      {
+        "sourceId": "standing-constraints",
+        "itemId": "item.constraint-14",
+        "locatorDigest": "22f088d2c9e1efe1e1f6b620474d795c54c76354b19c1b0508ebd1b31d3b959c",
+        "valueDigest": "4f3ee9daa1a008f7002cce5742fa585387976783bb9a1a333f5cd6ab5a1d4d19"
+      }
+    ],
+    "authorityBasisRef": {
+      "sourceId": "standing-constraints",
+      "itemId": "item.constraint-14",
+      "locatorDigest": "22f088d2c9e1efe1e1f6b620474d795c54c76354b19c1b0508ebd1b31d3b959c",
+      "valueDigest": "4f3ee9daa1a008f7002cce5742fa585387976783bb9a1a333f5cd6ab5a1d4d19"
+    },
+    "applicability": {
+      "goals": [
+        "all-foreman-goals"
+      ],
+      "roles": [
+        "builder"
+      ],
+      "stages": [
+        "any"
+      ],
+      "operations": [
+        "any"
+      ],
+      "hosts": [
+        "any"
+      ]
+    },
+    "severity": "critical",
+    "classification": "independent-review-human-judgment",
+    "decision": "REQUIRE_HUMAN",
+    "refusalCode": null,
+    "enforcementOwner": "independent-reviewer",
+    "assurance": "human-ratified",
+    "pairedRuleIds": [],
+    "retirementState": "active-reading",
+    "retirementEvidence": {
+      "predicate": null,
+      "negativeRefusalTest": null,
+      "corpusSweep": null,
+      "independentBypassAttempt": null
+    },
+    "bindingDigest": "cd409e5b4c139afc93892ef16579d900b5abde76aec1556d3b47ae4ae830a3ca"
+  },
+  "thesisBefore": {
+    "ruleId": "rule.foreman-line-plan.two-gate-thesis",
+    "authoritySubject": "gate.namespace",
+    "authorityClaim": "historical-two-stage-gates",
+    "normalizedStatement": "**Version:** 0.1 (Draft — working name \"the Line\"; rename at will) **Owner:** Clinton Morgan — Principal Agentic AI Platform Architect, KaseyaOne **Status:** Proposed **Thesis:** One orchestrated pipeline from idea to merged code, in which specs are the unit of truth, humans hold exactly two gates (dispatch and merge), every stage emits a verifiable receipt, and the platform layer (model routing, Kompress, audit suite, DocSpine) is wired in by default — not by memory.",
+    "sourceRefs": [
+      {
+        "sourceId": "foreman-line-plan",
+        "itemId": "item.two-gate-thesis",
+        "locatorDigest": "6a99cca27c8da23a9569a3ab65ca4c3f0b29751f420e6a3bfd4ba8969b31c07d",
+        "valueDigest": "9f09f265b9c38dd2abd8707f94a94d70783e32bcd58c354ff1c1c0446a532d59"
+      }
+    ],
+    "authorityBasisRef": {
+      "sourceId": "foreman-line-plan",
+      "itemId": "item.two-gate-thesis",
+      "locatorDigest": "6a99cca27c8da23a9569a3ab65ca4c3f0b29751f420e6a3bfd4ba8969b31c07d",
+      "valueDigest": "9f09f265b9c38dd2abd8707f94a94d70783e32bcd58c354ff1c1c0446a532d59"
+    },
+    "applicability": {
+      "goals": [
+        "all-foreman-goals"
+      ],
+      "roles": [
+        "developer",
+        "coordinator",
+        "shaper",
+        "builder",
+        "reviewer",
+        "ci",
+        "host-adapter",
+        "kernel",
+        "operator"
+      ],
+      "stages": [
+        "stage-zero",
+        "shaping",
+        "step-zero",
+        "build",
+        "deterministic-verify",
+        "adversarial-review",
+        "merge",
+        "closure",
+        "runtime"
+      ],
+      "operations": [
+        "source-inventory",
+        "spec-mutation",
+        "repo-read",
+        "repo-mutation",
+        "state-transition",
+        "control-call",
+        "receipt-validation",
+        "external-write"
+      ],
+      "hosts": [
+        "provider-neutral",
+        "claude-windows-docker-loaded",
+        "claude-windows-docker-unenrolled",
+        "unsupported-host",
+        "ci"
+      ]
+    },
+    "severity": "medium",
+    "classification": "narrative-provenance",
+    "decision": "ADVISORY",
+    "refusalCode": null,
+    "enforcementOwner": "provenance-only",
+    "assurance": "narrative",
+    "pairedRuleIds": [],
+    "retirementState": "historical-only",
+    "retirementEvidence": {
+      "predicate": null,
+      "negativeRefusalTest": null,
+      "corpusSweep": null,
+      "independentBypassAttempt": null
+    },
+    "bindingDigest": "4618604bb27e4194d139aed40f24e8fdec192d761dafba09cb00a5fc0be1584c"
+  },
+  "thesisAfter": {
+    "ruleId": "rule.foreman-line-plan.two-gate-thesis",
+    "authoritySubject": "gate.namespace",
+    "authorityClaim": "historical-two-stage-gates",
+    "normalizedStatement": "**Version:** 0.1 (Draft — working name \"the Line\"; rename at will) **Owner:** Clinton Morgan — Principal Agentic AI Platform Architect, KaseyaOne **Status:** Proposed **Thesis:** One orchestrated pipeline from idea to merged code, in which specs are the unit of truth, humans hold exactly two gates (dispatch and merge), every stage emits a verifiable receipt, and the platform layer (model routing, Kompress, audit suite, DocSpine) is wired in by default — not by memory.",
+    "sourceRefs": [
+      {
+        "sourceId": "foreman-line-plan",
+        "itemId": "item.two-gate-thesis",
+        "locatorDigest": "464f7353d3bb900a07fe85436e96f2fd8729dd616c635338c17ed6f3a703875e",
+        "valueDigest": "9f09f265b9c38dd2abd8707f94a94d70783e32bcd58c354ff1c1c0446a532d59"
+      }
+    ],
+    "authorityBasisRef": {
+      "sourceId": "foreman-line-plan",
+      "itemId": "item.two-gate-thesis",
+      "locatorDigest": "464f7353d3bb900a07fe85436e96f2fd8729dd616c635338c17ed6f3a703875e",
+      "valueDigest": "9f09f265b9c38dd2abd8707f94a94d70783e32bcd58c354ff1c1c0446a532d59"
+    },
+    "applicability": {
+      "goals": [
+        "all-foreman-goals"
+      ],
+      "roles": [
+        "developer",
+        "coordinator",
+        "shaper",
+        "builder",
+        "reviewer",
+        "ci",
+        "host-adapter",
+        "kernel",
+        "operator"
+      ],
+      "stages": [
+        "stage-zero",
+        "shaping",
+        "step-zero",
+        "build",
+        "deterministic-verify",
+        "adversarial-review",
+        "merge",
+        "closure",
+        "runtime"
+      ],
+      "operations": [
+        "source-inventory",
+        "spec-mutation",
+        "repo-read",
+        "repo-mutation",
+        "state-transition",
+        "control-call",
+        "receipt-validation",
+        "external-write"
+      ],
+      "hosts": [
+        "provider-neutral",
+        "claude-windows-docker-loaded",
+        "claude-windows-docker-unenrolled",
+        "unsupported-host",
+        "ci"
+      ]
+    },
+    "severity": "medium",
+    "classification": "narrative-provenance",
+    "decision": "ADVISORY",
+    "refusalCode": null,
+    "enforcementOwner": "provenance-only",
+    "assurance": "narrative",
+    "pairedRuleIds": [],
+    "retirementState": "historical-only",
+    "retirementEvidence": {
+      "predicate": null,
+      "negativeRefusalTest": null,
+      "corpusSweep": null,
+      "independentBypassAttempt": null
+    },
+    "bindingDigest": "2a603de7e4b87897cdebca094241430df41f0aa3c04ce244666aac7bc3a5379c"
+  },
+  "audit": [
+    {
+      "sourceId": "standing-constraints",
+      "itemId": "item.constraint-14",
+      "valueDigest": "4f3ee9daa1a008f7002cce5742fa585387976783bb9a1a333f5cd6ab5a1d4d19",
+      "disposition": "publish",
+      "ruleIds": [
+        "rule.standing-constraints.constraint-14"
+      ],
+      "exclusionCode": null,
+      "rationale": "Exact upstream conditional builder obligation14 is mapped without an install grant."
+    },
+    {
+      "sourceId": "foreman-line-plan",
+      "itemId": "item.8bef504af1db",
+      "valueDigest": "9d600b9b44dfe18183d5a668eb46862ab9187395aa35ce43a15d2b9e41e4741d",
+      "disposition": "exclude",
+      "ruleIds": [],
+      "exclusionCode": "non-normative-explanation",
+      "rationale": "The repository-identity annotation records historical normalization and expressly disclaims rerun evidence."
+    },
+    {
+      "sourceId": "foreman-line-plan",
+      "itemId": "item.two-gate-thesis",
+      "valueDigest": "9f09f265b9c38dd2abd8707f94a94d70783e32bcd58c354ff1c1c0446a532d59",
+      "disposition": "publish",
+      "ruleIds": [
+        "rule.foreman-line-plan.two-gate-thesis"
+      ],
+      "exclusionCode": null,
+      "rationale": "The unchanged historical thesis keeps its original identity at the approved paragraph2 location."
+    },
+    {
+      "sourceId": "foreman-line-plan",
+      "itemId": "item.483a4914f57e",
+      "valueDigest": "9bc1d135bbd0ddbb5fedd27f9d7040660d8ad8e94b6ba2ff3da56f86ecd516ad",
+      "disposition": "exclude",
+      "ruleIds": [],
+      "exclusionCode": "non-normative-explanation",
+      "rationale": "The historical library-name correction remains explanatory context and supplies no new live authority."
+    }
+  ],
+  "priorManifest": "7f122f6ddecc916582ca299b48f8eedc23c813a960f28f2b786c76e343d90d2b",
+  "historicalRecords": [
+    {
+      "reconciliationId": "gate-namespace-count",
+      "canonicalSha256": "23f3549859f81eddfd5645dc3de3ffe07997c624cd75d61d3410645b710968d3"
+    },
+    {
+      "reconciliationId": "gate3-delegation",
+      "canonicalSha256": "13f5094dc781381ad5c1124f094af5f6f57b462c73df3fd3925e2b844c3f53c6"
+    },
+    {
+      "reconciliationId": "spec-linter-profile-behavior",
+      "canonicalSha256": "48c147ae850d5779e763c187ee9381bc2b824e299764eeb15869f57dce2e553c"
+    },
+    {
+      "reconciliationId": "surfaces-allowed-files",
+      "canonicalSha256": "c7addc8070757f6da21ae15354139d2a39c6f5db2dc164d2534305e0f944d7c1"
+    },
+    {
+      "reconciliationId": "permission-profile-enforcement-bound",
+      "canonicalSha256": "6558689b94ae965d85c60cef8cc7d9086278f38c755276b74953d2613440eda2"
+    },
+    {
+      "reconciliationId": "missing-provenance-reference",
+      "canonicalSha256": "ed49c8796d80a450fbb272d7aaba9c1159225e54bbf5d96e0a441cf757135b80"
+    },
+    {
+      "reconciliationId": "registry-rework-6eb1c25",
+      "canonicalSha256": "c2b4971fd67a81df51ab33931fda17122c06de67ce5cc6ef857380704348fd6d"
+    },
+    {
+      "reconciliationId": "registry-rework-9285945",
+      "canonicalSha256": "fc10cc1e7f98635521a8fbc65ba34895415b8901d62c49790b8b3e7337fd3fb1"
+    },
+    {
+      "reconciliationId": "registry-rework-6f45963",
+      "canonicalSha256": "3954ba2fc23122f82f6d68e294a180b8dc789983e2bb3da0198c79f8550513d9"
+    },
+    {
+      "reconciliationId": "registry-rework-b414d06",
+      "canonicalSha256": "8a7c1fdd61cbb664d6c9b1b0aefcba1dc35dc26873eff711bbfada8480247d7f"
+    },
+    {
+      "reconciliationId": "registry-rework-00b41b7",
+      "canonicalSha256": "7113ebbad6811a3dfd4f14302f736ac11074c04943686eea28a1de820c75e9c9"
+    },
+    {
+      "reconciliationId": "registry-rework-37afc65",
+      "canonicalSha256": "5f3bba04f9177884da88d21a8535d3ebc04557252aa27b30cbb191824e0b0f17"
+    },
+    {
+      "reconciliationId": "registry-rework-91145d7",
+      "canonicalSha256": "6b6e2dbd3b009428c647ed8947ba5d7008445dabdcccdde7d135466b9f46f3e3"
+    },
+    {
+      "reconciliationId": "registry-rework-1b42f4b",
+      "canonicalSha256": "14bb9b5739d37281619e6ace7ea9e5d0f6fd0febeecf3facc892e1a606795a56"
+    },
+    {
+      "reconciliationId": "registry-rework-ee29973",
+      "canonicalSha256": "b9a3ed7f9eaa25468df8557fb812ae343910a481450411928b8abe5d4e216bb3"
+    },
+    {
+      "reconciliationId": "registry-rework-544d8a3",
+      "canonicalSha256": "d04e710f14c6f7b9978662161c1bba011a11fe862138dd73e5e477594751fd9d"
+    },
+    {
+      "reconciliationId": "registry-rework-0683bc0",
+      "canonicalSha256": "f1a7ee84cb618300079786833537fef4494e093970cffc1ead8d1d66e2bd6aa9"
+    },
+    {
+      "reconciliationId": "registry-rework-df8155a",
+      "canonicalSha256": "ca5015f0446edbc5e1d7055357dac8d60cc87b4d283f0bba9ce26c15b40d88d2"
+    },
+    {
+      "reconciliationId": "registry-rework-40394be",
+      "canonicalSha256": "307a1b563240107c5a12610e18b340e66f3be0621e6bc30b438ae79af91b4bfd"
+    },
+    {
+      "reconciliationId": "registry-rework-66a514d",
+      "canonicalSha256": "6d39f17f70b25ce44030e729c62d975b45a8597b99af8c22f19c6a3cbfba92d7"
+    }
+  ],
+  "historicalThesisReferences": [
+    {
+      "reconciliationId": "gate-namespace-count",
+      "topic": "Historical two-gate and stage approval terms versus FK Gate 1, Gate 2, and Gate 3.",
+      "observedRefs": [
+        {
+          "sourceId": "foreman-line-plan",
+          "itemId": "item.two-gate-thesis",
+          "locatorDigest": "c234b89e0d8abd7ad1f32fc63581b5aeabb6accde83549b92e69f91e3cd30aad",
+          "valueDigest": "f6a643b044b41c84ad751f6bf817b19847b012049dd6753cc892c980749c900f"
+        },
+        {
+          "sourceId": "approval-readme",
+          "itemId": "item.4261d18b3243",
+          "locatorDigest": "ad4ca1af2757712b1dd24c374430f042b391093a46346627f70e69edeb7af4fd",
+          "valueDigest": "17bf00c0670a0e612e5edc308e05740ff46275adb2c3dc44a74adb260573d1d1"
+        },
+        {
+          "sourceId": "approval-readme",
+          "itemId": "item.ff6f38f088ae",
+          "locatorDigest": "2e58512cee88abf1e290b7242196828fbde4cf32f73c573abe851c2979daf6d7",
+          "valueDigest": "51778df53be643771107c6118e6e196092d3285484c99fa83d7bdc2f530ec66d"
+        },
+        {
+          "sourceId": "fk-charter",
+          "itemId": "item.d9",
+          "locatorDigest": "1122736df86e42ba03aaa4e0c1c875c84cfb1e78da6d9b58dc25797dfe6c7ace",
+          "valueDigest": "c94f713fcb89b9e6f3ef19f2ae85b936fdd0a1896c47a804a13a0696a94cd88e"
+        }
+      ],
+      "observedEvidence": [
+        {
+          "kind": "source-ref",
+          "reference": "{\"itemId\":\"item.two-gate-thesis\",\"locatorDigest\":\"c234b89e0d8abd7ad1f32fc63581b5aeabb6accde83549b92e69f91e3cd30aad\",\"sourceId\":\"foreman-line-plan\",\"valueDigest\":\"f6a643b044b41c84ad751f6bf817b19847b012049dd6753cc892c980749c900f\"}",
+          "digest": "6378d5cb18af77844814dd6fc7aa1f763911a01fb3a5fc95cd2ddb9a73ee83ed"
+        },
+        {
+          "kind": "source-ref",
+          "reference": "{\"itemId\":\"item.4261d18b3243\",\"locatorDigest\":\"ad4ca1af2757712b1dd24c374430f042b391093a46346627f70e69edeb7af4fd\",\"sourceId\":\"approval-readme\",\"valueDigest\":\"17bf00c0670a0e612e5edc308e05740ff46275adb2c3dc44a74adb260573d1d1\"}",
+          "digest": "6d4f7b93aac48cfb8f94a0b7ccd86b47019ef31c10bb250be497617d2a050e1f"
+        },
+        {
+          "kind": "source-ref",
+          "reference": "{\"itemId\":\"item.ff6f38f088ae\",\"locatorDigest\":\"2e58512cee88abf1e290b7242196828fbde4cf32f73c573abe851c2979daf6d7\",\"sourceId\":\"approval-readme\",\"valueDigest\":\"51778df53be643771107c6118e6e196092d3285484c99fa83d7bdc2f530ec66d\"}",
+          "digest": "ae92e4c093963af6377006828686d6aeeeec042bf611a28d9d529e5e04ca6fc9"
+        },
+        {
+          "kind": "source-ref",
+          "reference": "{\"itemId\":\"item.d9\",\"locatorDigest\":\"1122736df86e42ba03aaa4e0c1c875c84cfb1e78da6d9b58dc25797dfe6c7ace\",\"sourceId\":\"fk-charter\",\"valueDigest\":\"c94f713fcb89b9e6f3ef19f2ae85b936fdd0a1896c47a804a13a0696a94cd88e\"}",
+          "digest": "edc98157c9c4d11c89377f6f615213b37fdb1773cca8e1960c61d4bb2059539f"
+        }
+      ],
+      "authoritativeRuleIds": [
+        "rule.fk-charter.d9"
+      ],
+      "scopedDisposition": "Historical pipeline vocabulary remains visible; the FK goal three-gate namespace controls FK work.",
+      "unresolvedConsequence": "Naive consumers must retain the namespace and scope when interpreting gate numbers.",
+      "migrationStatus": "resolved-for-fk",
+      "supersedingEvidence": null
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "command": "npx tsx evidence/r31/propose-contract.mjs (source-authored proposed mapping, no generator)",
+  "startUtc": "2026-09-07T16:37:04.2344487Z",
+  "endUtc": "2026-09-07T16:37:06.6204522Z",
+  "elapsedSeconds": 2.3959187,
+  "directExit": 0
+}
