@@ -1421,8 +1421,25 @@ test('R4 corroborating source ref cannot promote a rule above its authority basi
   // was VALID and then compared resolutions; that premise was false, and it was reported as one of
   // this round's ten failures.
   //
-  // Checked rather than asserted: zero shipped rules carry more than one sourceRef.
-  assert.equal(full.rules.filter((candidate) => candidate.sourceRefs.length > 1).length, 0)
+  // Preserve the pre-R30 invariant on its exact baseline and every retained legacy rule.
+  // R30.9 separately admits exactly reviewed, reciprocally bound corroboration edges.
+  const baseline = r30Baseline()
+  const legacyIds = new Set(baseline.rules.map((candidate) => candidate.ruleId))
+  assert.equal(baseline.rules.filter((candidate) => candidate.sourceRefs.length > 1).length, 0)
+  assert.equal(
+    full.rules.filter(
+      (candidate) => legacyIds.has(candidate.ruleId) && candidate.sourceRefs.length > 1,
+    ).length,
+    0,
+  )
+
+  assert.equal(
+    full.rules.filter(
+      (candidate) => !legacyIds.has(candidate.ruleId) && candidate.sourceRefs.length > 1,
+    ).length,
+    58,
+    'reviewed R30 corroborating rule count',
+  )
 
   const mutated = structuredClone(full)
   const rule = mutated.rules.find((candidate) => candidate.ruleId === 'rule.fk-charter.d7')
@@ -1597,19 +1614,26 @@ test('R5 standing rules have thirteen distinct operative semantic subjects', () 
 })
 
 test('R5 every authority basis is substantive source text rather than a heading', () => {
-  for (const rule of full.rules) {
-    const source = full.sources.find(
-      (candidate) => candidate.sourceId === rule.authorityBasisRef.sourceId,
-    )
-    const item = source?.inventoryItems.find(
-      (candidate) => candidate.itemId === rule.authorityBasisRef.itemId,
-    )
-    ok(item, rule.ruleId)
-    assert.notEqual(item.locator.kind, 'heading', rule.ruleId)
-    const basis = normalizeRuleText(item.normalizedExcerpt)
-    const statement = normalizeRuleText(rule.normalizedStatement)
-    if (item.ruleIds.length > 1) ok(basis.includes(statement), rule.ruleId)
-    else assert.equal(basis, statement)
+  const baseline = r30Baseline()
+  const legacyIds = new Set(baseline.rules.map((rule) => rule.ruleId))
+  for (const document of [baseline, full]) {
+    for (const rule of document.rules) {
+      const source = document.sources.find(
+        (candidate) => candidate.sourceId === rule.authorityBasisRef.sourceId,
+      )
+      const item = source?.inventoryItems.find(
+        (candidate) => candidate.itemId === rule.authorityBasisRef.itemId,
+      )
+      ok(item, rule.ruleId)
+      assert.notEqual(item.locator.kind, 'heading', rule.ruleId)
+      // Preserve literal correspondence for all historical rules, on baseline and current data.
+      // The 72 reviewed R30 paraphrases have their own full-shape oracle and mutation controls.
+      if (!legacyIds.has(rule.ruleId)) continue
+      const basis = normalizeRuleText(item.normalizedExcerpt)
+      const statement = normalizeRuleText(rule.normalizedStatement)
+      if (item.ruleIds.length > 1) ok(basis.includes(statement), rule.ruleId)
+      else assert.equal(basis, statement)
+    }
   }
 })
 
@@ -4584,9 +4608,14 @@ test('R22 O6 refuses rewriting the head IN PLACE under the same id', () => {
   assert.notEqual(head.topic, beforeTopic, 'the attestation must actually be rewritten')
   reanchorTo(head, mutated)
   assert.equal(
-    JSON.stringify(mutated).includes('The R24-R29 round-6 volatile-region and curation rework'),
+    JSON.stringify(head).includes(beforeTopic),
     false,
-    'the attestation prose must actually be gone from the document',
+    'the current head attestation must actually be gone; historical attestations stay preserved',
+  )
+  assert.deepEqual(
+    mutated.reconciliations.slice(0, 19),
+    r30Baseline().reconciliations,
+    'all historical records remain unchanged',
   )
   expectOnlyCodes(mutated, 'MIGRATION_EVIDENCE_INVALID')
   // AC13 as amended by R23: the code alone cannot say WHICH obligation refused,
