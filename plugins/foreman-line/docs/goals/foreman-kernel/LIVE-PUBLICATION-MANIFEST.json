@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "capturedUtc": "2026-09-07T15:54:13.992982+00:00",
+  "capturedUtc": "2026-09-07T16:06:18.428616+00:00",
   "origin": "https://github.com/m0r6aN/agent-skills.git",
   "coordinatorSource": {
     "worktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-unattended-20260907",
     "branch": "codex/foreman-kernel-unattended-20260907",
-    "fullHeadSha": "76fd52e8a4da79752be4ef639daf9d83b87a5fc3"
+    "fullHeadSha": "c4d227468b533afe3ba64f03b5355c0710680946"
   },
   "implementationSource": {
     "worktree": "D:/Repos/agent-skills-worktrees/fk-p0-r30-adoption-20260907",
@@ -127,6 +127,11 @@
       "gitBlobSha256": "0b9095bfc76e154a0fac25f3d0909a6ac0cbc2c061cb9facdb2fca172e24730d"
     },
     {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-amendment-R31.md",
+      "bytes": 7361,
+      "gitBlobSha256": "7392b55bcd66b300e5cc8dcedb861c4d8768210bb61657a7adffc8baa15a4d6d"
+    },
+    {
       "path": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-coordinator-closure-check.md",
       "bytes": 95745,
       "gitBlobSha256": "9bf09bd4e0bd67ebb59a1485347b6198261dd2beda3f8c3bcdf968d6b850be5a"
@@ -198,8 +203,8 @@
     },
     {
       "path": "plugins/foreman-line/docs/goals/foreman-kernel/R30-final-review-brief-20260907.md",
-      "bytes": 3564,
-      "gitBlobSha256": "f908edc574cdfce67a32d3ba00b3d188a60e999a0596577d891cff35d69dd818"
+      "bytes": 4651,
+      "gitBlobSha256": "26884c3828dbcdb7fa7b18a3a55ff0930bc7d76af0689d8955f953babfaf6e0f"
     },
     {
       "path": "plugins/foreman-line/docs/goals/foreman-kernel/R30-implementation-ruling-20260907.md",
@@ -225,6 +230,16 @@
       "path": "plugins/foreman-line/docs/goals/foreman-kernel/R30-test-migration-review-20260907.md",
       "bytes": 2927,
       "gitBlobSha256": "221240b583fff2dc4a68f3b2b70090cce543e0d827dd78ec88b897b664b57a53"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/R31-coordinator-decision-20260907.md",
+      "bytes": 1776,
+      "gitBlobSha256": "974c26657ef1cfab3c7a72cdb552e1e979ac9534832acb7009d5d0f74c776e9f"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/R31-source-plan-review-20260907.md",
+      "bytes": 12840,
+      "gitBlobSha256": "654007023db531789927b66f61998c70941404cef6c522ae7b3f6de71a951be2"
     },
     {
       "path": "plugins/foreman-line/docs/goals/foreman-kernel/U1-draft-review-20260907.md",
@@ -752,6 +767,11 @@
       "gitBlobSha256": "72f05669f45f79d282537f0077f72ec7945ea91c0adabf48f4d52517fb0cb264"
     },
     {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/main-source-impact-20260907.md",
+      "bytes": 20410,
+      "gitBlobSha256": "5d6fb92109861b0a123cc35e418a5e81bfd0a87796f5c0b19efd0d3483d5f76b"
+    },
+    {
       "path": "plugins/foreman-line/docs/goals/foreman-kernel/plan-review-findings.md",
       "bytes": 7900,
       "gitBlobSha256": "d2e5bc3268450c77456ad14baa6df8dadb9cd132123ddc52a782886e42a73057"
@@ -902,7 +922,7 @@
     "Human Gate3/merge remains outstanding; no P1 implementation dispatch.",
     "P1 accepted P0 API/canonicalization and full field-shape reconciliation remain preactivation dependencies.",
     "U1 provider/protection/independent context/retention/schema choices remain preP18 dependencies; provider observations are not implementation proof.",
-    "Current main476b8df changes two governed sources including standing constraint14. Explicit source adoption and registry integration verification required before main integration; see main-source-compatibility-20260907.json."
+    "R31 plan is independently approved and coordinator-ratified; implementation waits for fixed R30 full-chain/final-review disposition, source-first snapshot and independently approved exact Step0. Current-main integration remains separately unverified."
   ],
   "requiredImplementationArtifacts": [
     {
