@@ -1,0 +1,19 @@
+{
+  "recordedUtc": "2026-09-08T13:43:01.457226+00:00",
+  "source": "Codex app read_thread and list_threads tools observed in this preparation session",
+  "recordedOwner": {
+    "id": "01a07c0b-90eb-7bf0-88f4-0ca912ef87fb",
+    "title": "Publish current Foreman Kernel state",
+    "observedStatus": "idle"
+  },
+  "preparationTask": {
+    "id": "01a0813c-3179-74c1-8bdf-480bf47a44a8",
+    "title": "Resume Foreman Kernel",
+    "observedStatus": "active"
+  },
+  "inventoryLimit": 50,
+  "ownershipTransferred": false,
+  "dispatchedAgents": 0,
+  "messagesSentToOtherTasks": 0,
+  "limits": "Bounded accessible app inventory, not all host processes or external sessions. Idle does not mean dead or ownership relinquished."
+}

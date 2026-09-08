@@ -1,0 +1,487 @@
+{
+  "observedUtc": "2026-09-08T13:40:41.181470+00:00",
+  "commitObjects": {
+    "865e16cf83f884ef15f380ab273b7bce8e1888a1": {
+      "argv": [
+        "git",
+        "--git-dir=D:/Repos/agent-skills-worktrees/fk-resume-verify-20260908.git",
+        "cat-file",
+        "-t",
+        "865e16cf83f884ef15f380ab273b7bce8e1888a1"
+      ],
+      "directExit": 0,
+      "stdout": "commit\n",
+      "stderr": ""
+    },
+    "1747c1df7dfa4677d345390ac673c3d15c82b980": {
+      "argv": [
+        "git",
+        "--git-dir=D:/Repos/agent-skills-worktrees/fk-resume-verify-20260908.git",
+        "cat-file",
+        "-t",
+        "1747c1df7dfa4677d345390ac673c3d15c82b980"
+      ],
+      "directExit": 0,
+      "stdout": "commit\n",
+      "stderr": ""
+    },
+    "8d500704c9e3d6d8b652bbe838aa3623f88203fc": {
+      "argv": [
+        "git",
+        "--git-dir=D:/Repos/agent-skills-worktrees/fk-resume-verify-20260908.git",
+        "cat-file",
+        "-t",
+        "8d500704c9e3d6d8b652bbe838aa3623f88203fc"
+      ],
+      "directExit": 0,
+      "stdout": "commit\n",
+      "stderr": ""
+    },
+    "2fc39405988df4d7073f20d69b65a276329be83d": {
+      "argv": [
+        "git",
+        "--git-dir=D:/Repos/agent-skills-worktrees/fk-resume-verify-20260908.git",
+        "cat-file",
+        "-t",
+        "2fc39405988df4d7073f20d69b65a276329be83d"
+      ],
+      "directExit": 0,
+      "stdout": "commit\n",
+      "stderr": ""
+    }
+  },
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "ls-remote",
+        "origin",
+        "refs/heads/main",
+        "refs/heads/codex/foreman-kernel-unattended-20260907",
+        "refs/heads/codex/fk-p0-r31-source-adoption-20260907"
+      ],
+      "directExit": 0,
+      "stdout": "1747c1df7dfa4677d345390ac673c3d15c82b980\trefs/heads/codex/fk-p0-r31-source-adoption-20260907\n865e16cf83f884ef15f380ab273b7bce8e1888a1\trefs/heads/codex/foreman-kernel-unattended-20260907\n476b8df6efe6c9974879957147449f61c34cd9a0\trefs/heads/main\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "gh",
+        "pr",
+        "list",
+        "--repo",
+        "m0r6aN/agent-skills",
+        "--state",
+        "open",
+        "--json",
+        "number,title,headRefName,baseRefName"
+      ],
+      "directExit": 0,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "gh",
+        "api",
+        "repos/m0r6aN/agent-skills/rules/branches/main"
+      ],
+      "directExit": 0,
+      "stdout": "[{\"type\":\"deletion\",\"ruleset_source_type\":\"Repository\",\"ruleset_source\":\"m0r6aN/agent-skills\",\"ruleset_id\":17746056},{\"type\":\"non_fast_forward\",\"ruleset_source_type\":\"Repository\",\"ruleset_source\":\"m0r6aN/agent-skills\",\"ruleset_id\":17746056},{\"type\":\"pull_request\",\"parameters\":{\"required_approving_review_count\":0,\"dismiss_stale_reviews_on_push\":false,\"required_reviewers\":[],\"require_code_owner_review\":false,\"require_last_push_approval\":false,\"required_review_thread_resolution\":true,\"require_extra_approval_for_unattributed_changes\":false,\"allowed_merge_methods\":[\"merge\",\"squash\",\"rebase\"]},\"ruleset_source_type\":\"Repository\",\"ruleset_source\":\"m0r6aN/agent-skills\",\"ruleset_id\":22369510},{\"type\":\"required_status_checks\",\"parameters\":{\"strict_required_status_checks_policy\":true,\"do_not_enforce_on_create\":false,\"required_status_checks\":[{\"context\":\"test\",\"integration_id\":15368},{\"context\":\"integration-report\",\"integration_id\":15368}]},\"ruleset_source_type\":\"Repository\",\"ruleset_source\":\"m0r6aN/agent-skills\",\"ruleset_id\":22369510}]",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--git-dir=D:/Repos/agent-skills-worktrees/fk-resume-verify-20260908.git",
+        "merge-tree",
+        "--write-tree",
+        "476b8df6efe6c9974879957147449f61c34cd9a0",
+        "1747c1df7dfa4677d345390ac673c3d15c82b980"
+      ],
+      "directExit": 0,
+      "stdout": "a9df33c71d0e34ddae277d312a04f7a97dd66480\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "--git-dir=D:/Repos/agent-skills-worktrees/fk-resume-verify-20260908.git",
+        "diff",
+        "--name-status",
+        "476b8df6efe6c9974879957147449f61c34cd9a0...1747c1df7dfa4677d345390ac673c3d15c82b980"
+      ],
+      "directExit": 0,
+      "stdout": "A\tplugins/foreman-line/authority-registry/README.md\nA\tplugins/foreman-line/authority-registry/authority-enforcement-registry.yaml\nA\tplugins/foreman-line/authority-registry/biome.json\nA\tplugins/foreman-line/authority-registry/package-lock.json\nA\tplugins/foreman-line/authority-registry/package.json\nA\tplugins/foreman-line/authority-registry/schemas/authority-enforcement-registry.schema.json\nA\tplugins/foreman-line/authority-registry/src/cli.ts\nA\tplugins/foreman-line/authority-registry/src/generate.ts\nA\tplugins/foreman-line/authority-registry/src/index.ts\nA\tplugins/foreman-line/authority-registry/src/registry.ts\nA\tplugins/foreman-line/authority-registry/src/schemas.ts\nA\tplugins/foreman-line/authority-registry/src/types.ts\nA\tplugins/foreman-line/authority-registry/src/validate.ts\nA\tplugins/foreman-line/authority-registry/tests/bare-specifier.test.ts\nA\tplugins/foreman-line/authority-registry/tests/corpus-sweep.test.ts\nA\tplugins/foreman-line/authority-registry/tests/dependency-allowlist.test.ts\nA\tplugins/foreman-line/authority-registry/tests/fixtures/pass-minimal.yaml\nA\tplugins/foreman-line/authority-registry/tests/parity.test.ts\nA\tplugins/foreman-line/authority-registry/tests/schema-validation.test.ts\nA\tplugins/foreman-line/authority-registry/tests/semantic-invariants.test.ts\nA\tplugins/foreman-line/authority-registry/tests/support/assert-ok.ts\nA\tplugins/foreman-line/authority-registry/tsconfig.json\nM\tplugins/foreman-line/docs/FOREMAN-LINE-PLAN.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/A1.8-coordinator-review-and-exact-ratification-text.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/A2-PARKED-known-unowned-risk.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/A2-adversarial-review-findings.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/A2-r2-adversarial-review-findings.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/A2-r3-adversarial-review-findings.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/ADR-001-runtime-infrastructure-posture.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/FK-P0-BLOCKER-volatile-canon-source.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/FK-P0-GATE-3-package.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/FK-P0-MERGE-READY-material.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/FK-P0-STOP-REPORT-for-developer.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/FK-P0-amendment-R14.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/FK-P0-amendment-R15.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/FK-P0-amendment-R16.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/FK-P0-amendment-R19.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/FK-P0-amendment-R20.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/FK-P0-amendment-R21.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/FK-P0-amendment-R22.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/FK-P0-amendment-R23.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/FK-P0-amendment-R30.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/FK-P0-amendment-R31.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/FK-P0-coordinator-closure-check.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/FK-P0-review-A-findings.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/FK-P0-rework1-step0-rulings.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/FK-P0-round6-STOP-REPORT.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/FK-P0-round6-baseline-closure-20260907.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/FK-P0-round6-execution-ruling-20260907.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/FK-P0-round6-recovery-record.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/FK-P0-round6-recovery-step0-ruling.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/FK-P0-triage-round1.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/FOREMAN-KERNEL-DEVELOPMENT-CHARTER.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/GOAL-FINDING-inherited-canon-provenance.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/R30-coordinator-disposition-20260907.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/R30-implementation-ruling-20260907.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/R30-plan-and-source-review-20260907.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/R30-source-expectations-20260907.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/R30-source-integration.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/R30-step0-mapping-20260907.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/R30-verification-closure-20260907.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/R31-coordinator-decision-20260907.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/R31-full-run28-test-migration-review-20260907.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/R31-full-run28-test-migration-ruling-20260907.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/R31-implementation-ruling-20260907.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/R31-migration-evidence-review-20260907.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/R31-migration-evidence-ruling-20260907.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/R31-source-expectations-20260907.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/R31-source-integration-20260907.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/R31-source-plan-review-20260907.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/R31-step0-mapping-20260907.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/R31-step0-review-20260907.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/adoption-review-20260907.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/amendment-A1.8-ratification-ledger.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/amendment-A4-infrastructure-adoption-20260907.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/authorization-20260907-unattended.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/charter.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30-final-review-authority/metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30-final-review-authority/probe-output.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30-final-review-authority/probe.mjs\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30-final-review-authority/review.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30-final-review-history/metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30-final-review-history/probe-output.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30-final-review-history/probe.mjs\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30-final-review-history/review.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/01-npm-ci.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/02-red-adoption-counts.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/03-typecheck-increment.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/04-typecheck-increment.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/05-generate-first.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/06-generate-frozen-anchors.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/07-generate-approved-masked-ids.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/08-typecheck-tests.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/09-validate-increment.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/10-typecheck-expanded-controls.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/11-format-increment.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/12-oracle-counts-increment.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/13-typecheck-r30-9.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/14-generate-r30-9.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/15-validate-r30-9.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/16-generate-final-shapes.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/17-head-pin-validation.exit\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/17-head-pin-validation.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/18-focused-r30-semantic.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/19-focused-r30-semantic-corrected.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/20-focused-r30-semantic.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/21-focused-r30-corpus.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/22-format-final.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/23-typecheck-checkpoint.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/24-final-npm-ci.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/25-final-typecheck.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/26-completion-observation.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/26-final-npm-test.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/26-live-process-start-evidence.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/27-repair-format.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/27-repair-format.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/28-focused-historical-repairs.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/28-focused-historical-repairs.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/29-repair-final-format.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/29-repair-final-format.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/30-focused-historical-final.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/30-focused-historical-final.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/31-final-npm-ci.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/31-final-npm-ci.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/32-final-typecheck.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/32-final-typecheck.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/33-cancel-owned-processes.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/33-cancellation.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/33-final-npm-test.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/33-final-npm-test.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/34-oracle-format.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/34-oracle-format.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/35-focused-oracle-and-historical.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/35-focused-oracle-and-historical.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/36-oracle-checkpoint-checks.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/36-oracle-checkpoint-checks.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/37-final-npm-ci.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/37-final-npm-ci.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/38-final-typecheck.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/38-final-typecheck.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/39-final-npm-test.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/39-final-npm-test.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/40-final-biome.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/40-final-biome.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/41-final-validate.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/41-final-validate.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/42-final-sweep.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/42-final-sweep.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/43-final-generate-one.hashes.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/43-final-generate-one.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/43-final-generate-one.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/44-final-generate-two.hashes.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/44-final-generate-two.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/44-final-generate-two.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/45-final-evidence-collector.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/45-final-evidence-collector.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/46-final-scope-check.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/47-final-scope-check.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/47-final-scope-check.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/48-final-node-version.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/48-final-node-version.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/49-final-npm-version.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/49-final-npm-version.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/50-raw-evidence-whitespace-check.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/50-raw-evidence-whitespace-check.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/51-authored-evidence-check.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/checkpoint-artifact-hashes.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/collect-final-evidence.mjs\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/development-notes.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/evidence-manifest.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/final-adoption-delta.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/final-artifact-hashes.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/final-chain-timing-recovery.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/final-handoff.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/final-source-snapshot-hashes.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/final-source-working-hashes.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/final-test-coverage.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/final-tracked-byte-delta.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/initial-tracked-hashes.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/node-version.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/npm-version.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/run-final-tail.ps1\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/01-npm-ci.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/01-npm-ci.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/02-source-discovery.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/02-source-discovery.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/02-source-discovery.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/03-initial-draft-unvalidated.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/03-step0-contract.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/03-step0-contract.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/03-step0-proposed-contract.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/04-step0-contract.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/04-step0-contract.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/04-step0-proposed-contract.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/05-source-byte-check.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/06-complete-item-correspondence.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/06-item-correspondence.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/06-item-correspondence.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/07-scope-metadata-preparation-error.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/08-step0-scope-check.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/09-exact-migration-proposal.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/09-exact-migration-proposal.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/09-exact-migration-proposal.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/10-final-step0-scope.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/11-red-source-controls.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/11-red-source-controls.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/12-development-typecheck.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/12-development-typecheck.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/13-development-generation.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/13-development-generation.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/14-development-validate.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/14-development-validate.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/15-development-typecheck.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/15-development-typecheck.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/16-focused-semantic.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/16-focused-semantic.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/17-focused-corpus.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/17-focused-corpus.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/18-development-notes.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/19-development-typecheck.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/19-development-typecheck.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/20-development-biome.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/20-development-biome.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/21-focused-semantic.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/21-focused-semantic.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/22-focused-corpus.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/22-focused-corpus.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/23-development-biome.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/23-development-biome.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/24-development-typecheck.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/24-development-typecheck.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/25-focused-semantic.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/25-focused-semantic.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/26-full-npm-ci.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/26-full-npm-ci.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/27-full-typecheck.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/27-full-typecheck.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/28-full-test.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/28-full-test.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/29-full-run-failure-diagnosis.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/30-test-migration-biome.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/30-test-migration-biome.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/31-test-migration-typecheck.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/31-test-migration-typecheck.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/32-test-migration-focused.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/32-test-migration-focused.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/33-test-migration-checkpoint.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/34-full-npm-ci.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/34-full-npm-ci.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/35-full-typecheck.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/35-full-typecheck.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/36-full-test.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/36-full-test.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/37-full-biome.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/37-full-biome.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/38-full-validate.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/38-full-validate.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/39-full-sweep.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/39-full-sweep.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/40-full-generate-one.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/40-full-generate-one.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/41-full-generate-two.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/41-full-generate-two.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/42-node-version.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/42-node-version.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/43-npm-version.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/43-npm-version.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/44-final-integrity.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/44-final-integrity.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/45-final-coverage.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/45-final-coverage.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/46-final-package-scope.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/46-final-package-scope.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/47-authored-evidence-whitespace.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/47-authored-evidence-whitespace.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/build-evidence-manifest.mjs\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/collect-coverage.mjs\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/correspondence.mjs\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/discover.mjs\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/evidence-manifest.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/final-chain.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/final-handoff.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/final-integrity.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/final-integrity.ts\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/final-test-coverage.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/initial-package-hashes.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/migration-proposal.mjs\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/monitor-notes.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/propose-contract.mjs\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/step0-evidence-manifest.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/01-node.exit.txt\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/01-node.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/01-node.running.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/01-node.stderr.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/01-node.stdout.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/02-install.exit.txt\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/02-install.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/02-install.running.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/02-install.stderr.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/02-install.stdout.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/03-typecheck.exit.txt\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/03-typecheck.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/03-typecheck.running.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/03-typecheck.stderr.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/03-typecheck.stdout.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/04-test.added-test-names.txt\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/04-test.corpus-progress.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/04-test.exit.txt\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/04-test.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/04-test.running.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/04-test.semantic-progress.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/04-test.stderr.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/04-test.stdout.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/04-test.totals.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/05-biome.exit.txt\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/05-biome.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/05-biome.running.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/05-biome.stderr.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/05-biome.stdout.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/06-validate.exit.txt\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/06-validate.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/06-validate.running.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/06-validate.stderr.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/06-validate.stdout.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/07-sweep.exit.txt\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/07-sweep.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/07-sweep.running.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/07-sweep.stderr.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/07-sweep.stdout.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/08-generate.after-sha256.csv\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/08-generate.before-sha256.csv\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/08-generate.exit.txt\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/08-generate.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/08-generate.running.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/08-generate.stderr.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/08-generate.stdout.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/09-status.exit.txt\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/09-status.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/09-status.running.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/09-status.stderr.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/09-status.stdout.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/10-scope.exit.txt\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/10-scope.metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/10-scope.provenance.csv\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/10-scope.running.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/10-scope.stderr.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/10-scope.stdout.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/BUILDER-HANDOFF.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/baseline-metadata.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/baseline-tracked-sha256.csv\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/evidence-sha256.csv\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/final-integrity.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/final-tracked-sha256.csv\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/fk-p0-progress-corpus-sweep-lnwaCS.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/fk-p0-progress-semantic-invariants-zK3ZEb.log\nA\tplugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/run-command.ps1\nA\tplugins/foreman-line/docs/goals/foreman-kernel/loop-directive.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/main-source-compatibility-20260907.json\nA\tplugins/foreman-line/docs/goals/foreman-kernel/main-source-impact-20260907.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/plan-review-findings.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/proposed-amendment-A1-decision-path-latency-budget.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/proposed-amendment-A2-ci-backstop-host-independence.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/proposed-amendment-A2-r2-backstop-independence.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/proposed-amendment-A2-r3-backstop-independence.md\nA\tplugins/foreman-line/docs/goals/foreman-kernel/proposed-amendment-A2-r4-backstop-independence.md\nM\tplugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md\nA\tplugins/foreman-line/docs/kickstarters/foreman-kernel-build-FK-P0-rework1.md\nA\tplugins/foreman-line/docs/kickstarters/foreman-kernel-build-FK-P0-rework2.md\nA\tplugins/foreman-line/docs/kickstarters/foreman-kernel-build-FK-P0-rework3.md\nA\tplugins/foreman-line/docs/kickstarters/foreman-kernel-build-FK-P0-rework6-recovery.md\nA\tplugins/foreman-line/docs/kickstarters/foreman-kernel-build-FK-P0-rework6.md\nA\tplugins/foreman-line/docs/kickstarters/foreman-kernel-review-A2-r2.md\nA\tplugins/foreman-line/docs/kickstarters/foreman-kernel-review-A2-r3.md\nA\tplugins/foreman-line/docs/kickstarters/foreman-kernel-review-A2.md\nA\tplugins/foreman-line/docs/kickstarters/foreman-kernel-review-FK-P0-postrework.md\nA\tplugins/foreman-line/docs/kickstarters/foreman-kernel-review-FK-P0.md\nA\tplugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md\n",
+      "stderr": ""
+    }
+  ],
+  "preservedSourceFiles": [
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\plugins\\foreman-line\\docs\\goals\\foreman-kernel\\A1.8-coordinator-review-and-exact-ratification-text.md",
+      "sha256": "a4f777a955fcc85927e12e70a4cdd6add02f7694298bf819b81c2da3506f01f8",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\plugins\\foreman-line\\docs\\goals\\foreman-kernel\\A2-PARKED-known-unowned-risk.md",
+      "sha256": "90045abf3a899962c877f25367712aa0328608f280a6806e45aec47e7823b77d",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\plugins\\foreman-line\\docs\\goals\\foreman-kernel\\A2-adversarial-review-findings.md",
+      "sha256": "2c15824525649f5ffe22f216de678ca0909ff45e5d4729683bffe8aeeb4d1fbf",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\plugins\\foreman-line\\docs\\goals\\foreman-kernel\\A2-r2-adversarial-review-findings.md",
+      "sha256": "62b60ad105faad2515704afe00873c69adbc370a46914f5c9d3b52bde1b6902a",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\plugins\\foreman-line\\docs\\goals\\foreman-kernel\\A2-r3-adversarial-review-findings.md",
+      "sha256": "64804e1c43845ede81bc68c6de2f72aed52ef95de23c7fc15206d9514bb46918",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\plugins\\foreman-line\\docs\\goals\\foreman-kernel\\ADR-001-runtime-infrastructure-posture.md",
+      "sha256": "7d7f1ac7f5f543052b475737879d8fa278cdb788b61df257b63e4481ed40b5e7",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\plugins\\foreman-line\\docs\\goals\\foreman-kernel\\FK-P0-BLOCKER-volatile-canon-source.md",
+      "sha256": "6004c7567757f2d6db6642169af45715c0de94f5e2c6486958a66f1d3fb1924a",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\plugins\\foreman-line\\docs\\goals\\foreman-kernel\\FK-P0-GATE-3-package.md",
+      "sha256": "563bb6cadcd5df2f4957a971de5ab975ebd84f85fd22a5ca82e60b18d2d6d91d",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\plugins\\foreman-line\\docs\\goals\\foreman-kernel\\FK-P0-MERGE-READY-material.md",
+      "sha256": "3b97555283e8b9e589dc5597dedd37955dbca5dfa5de16d2cce742f896e7a72f",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\plugins\\foreman-line\\docs\\goals\\foreman-kernel\\FK-P0-STOP-REPORT-for-developer.md",
+      "sha256": "50c8f349543f4bdd90f41153384970bbbd906ab9d5b0dabf3ae956ca101d6627",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\plugins\\foreman-line\\docs\\goals\\foreman-kernel\\FK-P0-coordinator-closure-check.md",
+      "sha256": "9bf09bd4e0bd67ebb59a1485347b6198261dd2beda3f8c3bcdf968d6b850be5a",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\plugins\\foreman-line\\docs\\goals\\foreman-kernel\\FK-P0-review-A-findings.md",
+      "sha256": "9e4244af894082c7bda8db44d88f62a0edbeb5f22c57fbec52a15f67a5fca0ca",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\plugins\\foreman-line\\docs\\goals\\foreman-kernel\\FK-P0-rework1-step0-rulings.md",
+      "sha256": "e2abf0777aaf1c8f383b58b4b8393830f9e82042134b4b3f284508aeeb0c21e7",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\plugins\\foreman-line\\docs\\goals\\foreman-kernel\\FK-P0-round6-recovery-step0-ruling.md",
+      "sha256": "1e6d4e47536c1645022e5a602192c89e156c60a41e828d24e9c0855e8783c7bb",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\plugins\\foreman-line\\docs\\goals\\foreman-kernel\\FK-P0-triage-round1.md",
+      "sha256": "7ed07c36c81cf204dbab848e978653188d5be1be7b45d24362e8d38a99de9c3c",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\plugins\\foreman-line\\docs\\goals\\foreman-kernel\\GOAL-FINDING-inherited-canon-provenance.md",
+      "sha256": "13b0bb5d1dc391c2ab801dc9b418784a1808d5752d931331574d904108eaa05c",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\plugins\\foreman-line\\docs\\goals\\foreman-kernel\\amendment-A1.8-ratification-ledger.md",
+      "sha256": "d0116f9394ad7a8f43787f25d58e6a9c5c77caa94717d2a5b3e25c05bcf77cbe",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\plugins\\foreman-line\\docs\\goals\\foreman-kernel\\charter.md",
+      "sha256": "c19359374480b03c39ce04316f94007fbb87e3be2b5be39bca8dd4072164234d",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\plugins\\foreman-line\\docs\\goals\\foreman-kernel\\loop-directive.md",
+      "sha256": "1742023d00f5f33275ff1ac957f66844bbfe2f5cfc31a98efac7d74f420ab140",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\plugins\\foreman-line\\docs\\goals\\foreman-kernel\\plan-review-findings.md",
+      "sha256": "d2e5bc3268450c77456ad14baa6df8dadb9cd132123ddc52a782886e42a73057",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\plugins\\foreman-line\\docs\\goals\\foreman-kernel\\proposed-amendment-A1-decision-path-latency-budget.md",
+      "sha256": "ae7fea39b978b3d673e0e74b1640223ae8db5b6a7e34c9b8f8cec800c40561f4",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\plugins\\foreman-line\\docs\\goals\\foreman-kernel\\proposed-amendment-A2-ci-backstop-host-independence.md",
+      "sha256": "a0dee210e0084ba72d723fcdc9da4d1297d6097b91c2a225b8b1ac60e7b3c813",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\plugins\\foreman-line\\docs\\goals\\foreman-kernel\\proposed-amendment-A2-r2-backstop-independence.md",
+      "sha256": "3e676047a4515356d4b15a56d40407a642fe03c6f948fe9ca39598d3240b2475",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\plugins\\foreman-line\\docs\\goals\\foreman-kernel\\proposed-amendment-A2-r3-backstop-independence.md",
+      "sha256": "2c391f14ab16a0d5a246e4b14cd20d07353bd478f1a40af86acb6f8ee04662b2",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\plugins\\foreman-line\\docs\\goals\\foreman-kernel\\proposed-amendment-A2-r4-backstop-independence.md",
+      "sha256": "4a23454e558420d063786b362947d3e4350b5703cd022bd4f12570d99cba5056",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\plugins\\foreman-line\\docs\\goals\\foreman-kernel\\proposed-amendment-A3-standing-authorization-widening.md",
+      "sha256": "8452cd45c2c3172731377a654fdcd6ea2fb64216f924018fec3d055d786a4fb0",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\fk-p0-canon-authority-enforcement-registry\\plugins\\foreman-line\\docs\\kickstarters\\foreman-kernel-build-FK-P0-rework1.md",
+      "sha256": "1ab99e3c3e78c64b50b6afbfb96139afc38b2cf82b6864371049d7b2324c2f06",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\plugins\\foreman-line\\docs\\kickstarters\\foreman-kernel-build-FK-P0-rework2.md",
+      "sha256": "ceb812db2292e98b721e4a6ee081208354dde8c312f936654979e37abb3063d5",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\plugins\\foreman-line\\docs\\kickstarters\\foreman-kernel-build-FK-P0-rework3.md",
+      "sha256": "948eba6d8f843a897cc6727dd0bc75fdcd19ac0da11e68882b31db811c3cc977",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\plugins\\foreman-line\\docs\\kickstarters\\foreman-kernel-build-FK-P0-rework6-recovery.md",
+      "sha256": "ce38f7dcac7ed416d11e0b75694f4d94a727196395b37e351740dcd016d96d6e",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\plugins\\foreman-line\\docs\\kickstarters\\foreman-kernel-review-A2-r2.md",
+      "sha256": "f6ebac901f3fb81865ea9ffbeedb887dec33a6748a37505c05ee55d4fd85f77c",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\plugins\\foreman-line\\docs\\kickstarters\\foreman-kernel-review-A2-r3.md",
+      "sha256": "303feea40d1813eb54765b4eb04e38d452940b90cc52b214d2be271b9b6e78cb",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\plugins\\foreman-line\\docs\\kickstarters\\foreman-kernel-review-A2.md",
+      "sha256": "4e22b151e124f4dfc5d822e377d64dae0c3aaec730df953aae1daf89b8875b06",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\plugins\\foreman-line\\docs\\kickstarters\\foreman-kernel-review-FK-P0-postrework.md",
+      "sha256": "1509c4219033f1f8708281e30a38a081bcbf14280039401d385bc82b505d23d8",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\plugins\\foreman-line\\docs\\kickstarters\\foreman-kernel-review-FK-P0.md",
+      "sha256": "24ce072f261859fd8de11c6dc0b5fb8a1404b33158d16e645b48e1d8a09432a3",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\fk-p0-canon-authority-enforcement-registry\\plugins\\foreman-line\\docs\\specs\\active\\FK-P0-canon-authority-enforcement-registry.md",
+      "sha256": "7f8471affe2ff5e2e9fc0012af90a313034d1297c5ce38188a124c5e4a379fda",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\fk-p0-canon-authority-enforcement-registry\\plugins\\foreman-line\\docs\\goals\\foreman-kernel\\FK-P0-amendment-R14.md",
+      "sha256": "3548c28fe7e37beaae8482dc750974d54022e03b38b480c9349e3eb686321365",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\fk-p0-canon-authority-enforcement-registry\\plugins\\foreman-line\\docs\\goals\\foreman-kernel\\FK-P0-amendment-R15.md",
+      "sha256": "320af1ded1f06ceb1dde4a5faaffb970557364c201e7564f8101160366f07226",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\fk-p0-canon-authority-enforcement-registry\\plugins\\foreman-line\\docs\\goals\\foreman-kernel\\FK-P0-amendment-R16.md",
+      "sha256": "1d6d2a5a77022c4d132b3ebbb5f80412f117926b158b133f77f7b524143ee272",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\fk-p0-canon-authority-enforcement-registry\\plugins\\foreman-line\\docs\\goals\\foreman-kernel\\FK-P0-amendment-R19.md",
+      "sha256": "e4316468715a38a5a7e9a898b87c57113575f951c9227df9a15ecaf1de9686fd",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\fk-p0-canon-authority-enforcement-registry\\plugins\\foreman-line\\docs\\goals\\foreman-kernel\\FK-P0-amendment-R20.md",
+      "sha256": "eb868a8d9bed35c1d2691f798ab5e5ab0e2443560318f95dd21fbff7b0115772",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\fk-p0-canon-authority-enforcement-registry\\plugins\\foreman-line\\docs\\goals\\foreman-kernel\\FK-P0-amendment-R21.md",
+      "sha256": "dc6465e8523f4f99fa155474a8c28db3e61c98dca1aba6f375c70b6fa5da9381",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\fk-p0-canon-authority-enforcement-registry\\plugins\\foreman-line\\docs\\goals\\foreman-kernel\\FK-P0-amendment-R22.md",
+      "sha256": "729012269c9a49f12b60f0a831c2e15d4f4108a2d94ac0e290751baabde6b065",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\fk-p0-canon-authority-enforcement-registry\\plugins\\foreman-line\\docs\\goals\\foreman-kernel\\FK-P0-amendment-R23.md",
+      "sha256": "95916284476a51c9f6ae5a5310f34e719f57d057b60d8a0860c043650ff53db0",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\fk-p0-canon-authority-enforcement-registry\\plugins\\foreman-line\\docs\\goals\\foreman-kernel\\FK-P0-round6-STOP-REPORT.md",
+      "sha256": "d1ad8ea4e0eb747358c185ba5f252cd263a8891d4fb5d8d7e92bbbd787dedd92",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\fk-p0-canon-authority-enforcement-registry\\plugins\\foreman-line\\docs\\goals\\foreman-kernel\\FK-P0-round6-recovery-record.md",
+      "sha256": "34e7fb8c23d4b0bbf5d8216b164f1ffeff40732f8573dd478b9511f6c6145717",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\fk-p0-canon-authority-enforcement-registry\\plugins\\foreman-line\\docs\\goals\\foreman-kernel\\charter.md",
+      "sha256": "151a5a7cb5f6e92d7780f3ef27af5599e7ba7e7f4a9ef3e91acf8d27dd753f65",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\fk-p0-canon-authority-enforcement-registry\\plugins\\foreman-line\\docs\\goals\\foreman-kernel\\loop-directive.md",
+      "sha256": "d10f7de3f559147f91ec823258b89cf0afd106e9e4728fd96848504bbf499748",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\plugins\\foreman-line\\docs\\kickstarters\\foreman-kernel-build-FK-P0-rework1.md",
+      "sha256": "bd46264d648ba8ce380df349770fb7e02a1ffb1455380eb032ef824df13a414e",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\fk-p0-canon-authority-enforcement-registry\\plugins\\foreman-line\\docs\\kickstarters\\foreman-kernel-build-FK-P0-rework6.md",
+      "sha256": "5fa22e0a49ee9e241e916ae038d8371f67525598965f4861ed6a66ab371f4ba6",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\plugins\\foreman-line\\docs\\specs\\active\\FK-P0-canon-authority-enforcement-registry.md",
+      "sha256": "b2c2505dd6a08f416e58b77e2e624581c3cb9c55d8a5161b5d2000df85924af2",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\goals\\foreman-kernel\\charter.md",
+      "sha256": "e7c211c55fd7534d4d36fed624f51e019662326be9688a8e9ea665b64d4e1346",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\.github\\workflows\\test-plugin-install.yml",
+      "sha256": "cedc54f017570ef59ad3baf2a53916e2ca4c0e4154c619116809021140a29239",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\plugins\\foreman-line\\approval\\README.md",
+      "sha256": "5369e558879ea9faeee5828329807dc544dfbcc21722a1c94d3458f670244849",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\plugins\\foreman-line\\docs\\COORDINATOR-PATTERN.md",
+      "sha256": "c734c9b2aef15f020a4a5eb261a1291740eddb2a154376386599074cbb8ca9bd",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\plugins\\foreman-line\\docs\\FOREMAN-LINE-PLAN.md",
+      "sha256": "0ca5a264e5371be59b2351e2f8e369a6e7f9fa2b4fd6d94ab54902d4ecd63a22",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\plugins\\foreman-line\\docs\\SPEC-CONVENTION.md",
+      "sha256": "7ac315005cde6ad6def848b83de1d1b644e321c5d9f6434bc925deb6daba8703",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\plugins\\foreman-line\\docs\\kickstarters\\STANDING-CONSTRAINTS.md",
+      "sha256": "b5cce5029c4619058795414b624a418fb8c1c28f8534dab9d58c8fef61994c2f",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\plugins\\foreman-line\\permission-profiles\\README.md",
+      "sha256": "b790947a8223daab2babf45cba648f1bfd073d7d0b1e6f524fa02f51dc129f00",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\plugins\\foreman-line\\permission-profiles\\permission-profiles.yaml",
+      "sha256": "9da06cf299653b244c636dd9809b5ba6410efb5e9e7f89389c1ef7260fa577cb",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\plugins\\foreman-line\\permission-profiles\\src\\types.ts",
+      "sha256": "91651a073156834119b5037127b942f315ea4d45d26bc17e0c9df2a1499aa5a9",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\plugins\\foreman-line\\permission-profiles\\src\\validator.ts",
+      "sha256": "1f12fe53f75b089d25dd27e995af024c52269b0db6b8c4e22c616702749a7d23",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\plugins\\foreman-line\\routing-policy\\routing-policy.yaml",
+      "sha256": "fd9afccec8efdb5ba5b9c6756d59a9f2daea8ce838ffd9724fbf14acc3018f25",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\plugins\\foreman-line\\skills\\goal\\SKILL.md",
+      "sha256": "ee003674865be3a45316b95f5459b8f317d8150bdb8c0774601929cb0befd831",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\plugins\\foreman-line\\skills\\parcel-driven-development\\SKILL.md",
+      "sha256": "f673472c804a659f9f01515b878f02c653d4ed97c2c4c97f7340139325c6df05",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\plugins\\foreman-line\\spec-linter\\README.md",
+      "sha256": "8be95883d16a3a73a128a8c0d14d73d61204724531c99ee9dfc8072dff08a69c",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\plugins\\foreman-line\\spec-linter\\schemas\\spec-frontmatter.schema.json",
+      "sha256": "8ff17dbd4ccbd29d0f60f7b03dfdc9f08afb63d9de1b64549bc1646ce546034e",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\plugins\\foreman-line\\spec-linter\\src\\cli.ts",
+      "sha256": "aa0928ab5173d868c61c1ddd75ce990dbb698afdaee9269b7e99965f5e687c18",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830\\plugins\\foreman-line\\spec-linter\\src\\validate.ts",
+      "sha256": "4e542bfa6943c71b962236cbd5410713186f6eabb2b7788e12392cbffaef3a99",
+      "matchesSeptember7": true
+    }
+  ],
+  "originalWorktreeStates": [
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "head": "d0e87ce0e36e69868909c93e0f00f6fc7e4a9af3",
+      "status": "",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills-worktrees\\fk-p0-canon-authority-enforcement-registry",
+      "head": "0ee165720f8d1e3a91eb283cb770400b23f61bf5",
+      "status": "",
+      "matchesSeptember7": true
+    },
+    {
+      "path": "D:\\Repos\\agent-skills",
+      "head": "dab90c9c769867e1bded5151e6126f4360b4f6fc",
+      "status": "D plugins/foreman-line/docs/goals/foreman-kernel/proposed-amendment-A1-decision-path-latency-budget.md\n?? plugins/foreman-line/docs/goals/foreman-kernel/charter.md",
+      "matchesSeptember7": true
+    }
+  ],
+  "limits": "Read-only remote/Git custody inspection. merge-tree writes only objects in the owned bare verifier, no merge commit or branch mutation. No runtime or CI execution."
+}

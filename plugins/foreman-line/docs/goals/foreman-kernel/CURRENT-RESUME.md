@@ -1,5 +1,15 @@
 # Foreman Kernel current continuation
 
+## September 8 preparation publication
+
+Read `R31-GATE-3-DECISION-20260908.md` first for current remote/ownership observations and the exact remaining merge requirements. This isolated preparation branch is `codex/foreman-kernel-resume-20260908`; the original coordinator branch and owner below remain unchanged. `LIVE-PUBLICATION-MANIFEST.json` identifies this capture separately from implementation R31.
+
+Fresh remote verification passed all 685 entries of coordinator publication `865e16cf83f884ef15f380ab273b7bce8e1888a1`. Main and R31 heads remain `476b8df6efe6c9974879957147449f61c34cd9a0` and `1747c1df7dfa4677d345390ac673c3d15c82b980`; the same hypothetical integration tree was reproduced without a merge or runtime rerun. All 69 captured original files and three original worktree states matched the September 7 preservation record.
+
+The recorded coordinator task is observed idle, not transferred. No duplicate dispatch occurred. Human Gate 3, an actual implementation PR with strict `test` and `integration-report` checks and resolved review threads, and the human merge remain outstanding. `R31-PR-MATERIAL-20260908.md` is prepared but unsubmitted. Reconcile an owner-of-record handoff before successor dispatch. FK-P1, U1 and historical provenance limits below remain explicit.
+
+The following September 7 narrative is retained for exact subject/provenance context. Current preparation supersedes its instruction to repeat the already completed September 8 handoff check; remote state must still be checked again before subsequent dispatch or merge.
+
 Coordinator remains Codex thread `01a07c0b-90eb-7bf0-88f4-0ca912ef87fb` under `authorization-20260907-unattended.md`. Publication does not transfer ownership. Reconcile the live owner before another session dispatches work.
 
 Live coordinator branch: `codex/foreman-kernel-unattended-20260907`. Read `LIVE-PUBLICATION-MANIFEST.json` for captured full HEADs and exact Git-blob hashes. Immutable initial handoff: `handoff/foreman-kernel-live-20260907` at `fe31042bbe4370cb81b38632720849983c7be04c`.
