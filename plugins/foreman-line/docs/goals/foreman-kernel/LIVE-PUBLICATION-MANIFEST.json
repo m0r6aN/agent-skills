@@ -1,11 +1,12 @@
 {
   "schemaVersion": 1,
-  "capturedUtc": "2026-09-07T19:00:34.251378+00:00",
+  "capturedUtc": "2026-09-08T13:43:33.600756+00:00",
   "origin": "https://github.com/m0r6aN/agent-skills.git",
   "coordinatorSource": {
-    "worktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-unattended-20260907",
-    "branch": "codex/foreman-kernel-unattended-20260907",
-    "fullHeadSha": "fbf2fbe7e22c1ee94b649978035354f99f123da9"
+    "worktree": "D:/Repos/agent-skills-worktrees/foreman-kernel-resume-20260908",
+    "branch": "codex/foreman-kernel-resume-20260908",
+    "fullHeadSha": "00215540ddd5a6dcd990f16d4700eefd432e4077",
+    "role": "Isolated preparation publication; recorded coordinator ownership unchanged"
   },
   "implementationSource": {
     "worktree": "D:/Repos/agent-skills-worktrees/fk-p0-r31-source-adoption-20260907",
@@ -28,7 +29,7 @@
     "manifest": "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/manifest.json"
   },
   "resumeEntryPoint": "plugins/foreman-line/docs/goals/foreman-kernel/CURRENT-RESUME.md",
-  "ownership": "Coordinator remains Codex thread01a07c0b-90eb-7bf0-88f4-0ca912ef87fb under recorded September7 authorization. Publication does not transfer ownership or authorize merge.",
+  "ownership": "Recorded coordinator remains Codex task 01a07c0b-90eb-7bf0-88f4-0ca912ef87fb, observed idle September 8. Preparation task 01a0813c-3179-74c1-8bdf-480bf47a44a8 has not taken ownership or dispatched. A parcel-boundary recorded transfer is required before successor dispatch.",
   "hashSemantics": "SHA256 of exact committed Git blob bytes, not platform checkout line endings. This manifest excludes itself to avoid a circular digest. Its containing commit is the publication address.",
   "capturedFiles": [
     {
@@ -63,8 +64,8 @@
     },
     {
       "path": "plugins/foreman-line/docs/goals/foreman-kernel/CURRENT-RESUME.md",
-      "bytes": 7061,
-      "gitBlobSha256": "ca66c89ec031ed72582277a6eca08a9c76451a96186e64888a3e2520c399e176"
+      "bytes": 8624,
+      "gitBlobSha256": "60c5087e9c90cd2a21755b6dc84afb83b1f34b7199c642fa5b7cfdf06808129b"
     },
     {
       "path": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-BLOCKER-volatile-canon-source.md",
@@ -245,6 +246,16 @@
       "path": "plugins/foreman-line/docs/goals/foreman-kernel/R30-verification-closure-20260907.json",
       "bytes": 1354,
       "gitBlobSha256": "bd23e311925325d867f22185c12ad384ec20cee6c70207cbec90f6131ffa6e25"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/R31-GATE-3-DECISION-20260908.md",
+      "bytes": 8371,
+      "gitBlobSha256": "64a749efee69e7fdd84834c974ffcae07039a0a07a4a42e28371ba2db47d9303"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/R31-PR-MATERIAL-20260908.md",
+      "bytes": 2730,
+      "gitBlobSha256": "287d3613d6b992983dae64f55f17511eb4443c720578fa7bb62877565aed34cf"
     },
     {
       "path": "plugins/foreman-line/docs/goals/foreman-kernel/R31-VERIFIED-STATE-20260907.md",
@@ -1657,6 +1668,26 @@
       "gitBlobSha256": "86d90fdb6756489ac70244d926df20d6ce192ac1dd5710f3efb533c7f5689fa7"
     },
     {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260908/ownership-observation.json",
+      "bytes": 737,
+      "gitBlobSha256": "752731572c368cd993993dbe37bd27f72c276f7b939b29f622397a352769be74"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260908/preparation-checks.json",
+      "bytes": 231,
+      "gitBlobSha256": "c5237518a3593985a662f01505f36eeb26508e8a57f7ce50339cd5743949fb12"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260908/published-handoff-verification.json",
+      "bytes": 284023,
+      "gitBlobSha256": "a68230024d7fc8af507a9cea6a029ebac1f6a224ee50e88d45855cf904ba90cf"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260908/remote-and-preservation.json",
+      "bytes": 61970,
+      "gitBlobSha256": "eab937e6ed529a597a2862ec223675aae8ba3a9d9d1e1209de65450538e0727b"
+    },
+    {
       "path": "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/RESUME.md",
       "bytes": 8760,
       "gitBlobSha256": "e0fd96e8d7760575a388651da5b9b42886aa12af30e1e926c56c4a1264767d5e"
@@ -1859,14 +1890,14 @@
       "gitBlobSha256": "4e542bfa6943c71b962236cbd5410713186f6eabb2b7788e12392cbffaef3a99"
     }
   ],
-  "unpublishedChangesIncluded": "Initial inventoried source work is preserved in the immutable handoff. Continuation includes recorded ratifications, baseline recovery, accepted R30 and R31 implementation branches, complete verification and failed attempts, independent reviews, scoped P1/U1 preparation, integration evidence and operational state. No unrelated ambient work or credentials are included.",
+  "unpublishedChangesIncluded": "September 8 preparation adds current Gate3 requirements, unsubmitted PR material, fresh publication/Git-object/remote-rule/ownership observations and preservation proof. Prior publication and historical failures remain intact; no implementation or governing charter/loop change.",
   "preservedUnpublishedWork": "Original ambient dirty/staged/untracked work and all69 original captured source files remain preserved. R31 final implementation/evidence1747 and coordinator continuation are published; no active builder output is omitted.",
   "unresolvedDependencies": [
-    "Human Gate3 and an explicitly authorized actual merge remain open; publication and scoped candidate acceptance do not satisfy them.",
-    "FK-P1 remains inactive until merged FK-P0 and independently reviewed Step0 field mapping, including accepted F01-F04 requirements and unresolved F05.",
-    "U1 named context/protection/provider/retention/schema choices and evidence remain pre-P18 dependencies.",
-    "Fresh remote session must reconcile the recorded coordinator owner before dispatch; publication does not transfer ownership.",
-    "Verification is pinned to published commits and the recorded Windows Node24.7 environment; a changed main or different host needs appropriately scoped new evidence."
+    "Recorded ownership handoff before successor dispatch; idle is not transfer.",
+    "Human Gate3 decision and actual human merge. Implementation PR absent; strict test/integration-report provider checks and review-thread resolution remain required. Recheck heads/rules at merge.",
+    "FK-P1 inactive pending actual merged P0 and exact reviewed F05 Step0 field mapping.",
+    "U1 named infrastructure, protected verifier/provider/schema and retention/retrieval/negative-control evidence choices remain pre-P18/P19 dependencies.",
+    "Historical missing provenance remains open; entire 22-parcel kernel incomplete."
   ],
   "requiredImplementationArtifacts": [
     {
@@ -3516,5 +3547,9 @@
       "bytes": 147641,
       "gitBlobSha256": "babf47f3dc42ab09392a7a6ccf8f56fc9c54aa4f642f2ea75bba565c8cba49f5"
     }
-  ]
+  ],
+  "priorCoordinatorPublication": {
+    "branch": "codex/foreman-kernel-unattended-20260907",
+    "fullHeadSha": "865e16cf83f884ef15f380ab273b7bce8e1888a1"
+  }
 }
