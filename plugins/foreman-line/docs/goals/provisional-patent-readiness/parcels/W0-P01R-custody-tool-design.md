@@ -28,12 +28,29 @@ These roots are evidence objects. They are not test inputs, and they must not be
 
 Prove one custody implementation against a synthetic, local fixture before the implementation may enumerate or copy either preservation-critical source.
 
-### Proposed isolated locations
+### Proposed isolated locations and branch
 
-- Builder worktree: `D:/Repos/agent-skills-worktrees/provisional-patent-readiness-w0-p01r-fixture-20260913/`
-- Fixture/output root: `D:/Repos/keon-omega-preserve/provisional-patent-readiness-20260913-w0-p01r-fixture-proof/`
+- Base: the ratified `codex/provisional-patent-readiness-20260813` control branch at the design-revision commit recorded in the metadata receipt below.
+- Builder branch: `codex/w0-p01r-fixture-20260913`.
+- Builder worktree: `D:/Repos/agent-skills-worktrees/provisional-patent-readiness-w0-p01r-fixture-20260913/`.
+- Fixture root: `D:/Repos/keon-omega-preserve/provisional-patent-readiness-w0-p01r-fixture-proof-20260913/`.
+- Synthetic success source: `<fixture-root>/fixture-success-source/`.
+- Synthetic external referent: `<fixture-root>/referents/external-target/`.
+- Synthetic internal referent: `<fixture-root>/fixture-internal-link-source/authored-internal-target/`.
+- Success capture outputs: `<fixture-root>/captures/success-a/` and `<fixture-root>/captures/success-b/`.
+- Controlled-stop outputs: `<fixture-root>/expected/internal-link-stop/` and `<fixture-root>/expected/path-escape-stop.json`.
 
-Both must be initially absent at builder Step 0. The fixture root is the only permitted write area. It must not be placed inside a source repository, a prior partial-output root, or a cloud-synced location.
+The worktree and fixture root must be initially absent at Step 0. The fixture root must not be placed inside a source repository, a prior partial-output root, or a cloud-synced location.
+
+### Exact write scopes
+
+| Actor | Permitted writes | Prohibited writes |
+|---|---|---|
+| Coordinator setup only | Git administrative metadata required by `git worktree add` for the exact worktree/branch above; no product or patent source path | Fixture root contents, protected sources, prior partial roots, remote state |
+| Builder | `tools/w0-p01r-fixture.ps1` in the named builder worktree; every synthetic fixture, capture, manifest, sidecar, and result beneath the exact fixture root | Any protected source, its `.git`, prior partial root, control worktree, remote, or other repository path |
+| Reviewers | None; read-only inspection only | Any write, commit, staging, worktree setup, remote operation, or fixture rerun |
+
+The builder does not commit, stage, merge, push, fetch, pull, or alter Git state. The fixture root is the only builder output area other than its one permitted script file.
 
 ### Implementation contract
 
@@ -42,9 +59,28 @@ Both must be initially absent at builder Step 0. The fixture root is the only pe
 3. Create each manifest entry as an `[ordered]` dictionary with every field initialized, including `payloadSha256 = $null`; assign post-copy values via dictionary keys, not dynamic object properties.
 4. Before fixture traversal, perform an in-memory schema test that creates a regular-file entry, assigns a known hash string to `payloadSha256`, reads it back, and asserts all required fields exist.
 5. Before fixture traversal, parse the script with PowerShell's parser API and fail if parser errors exist.
-6. Construct a synthetic tree containing: regular files; an empty directory; every A1 excluded-leaf directory; an external junction; an internal junction; and a path-escape candidate. Junctions may point only to synthetic fixture paths. If junction creation is unavailable, record that as a failed prerequisite rather than substituting a source link.
-7. Assert: excluded leaves produce nonrecursive `EXCLUDED` / `BUILD_EPHEMERA` manifest entries; external junction produces `LINK_OPAQUE` without target traversal; internal junction produces `LINK_INTERNAL` and a controlled stop before acceptance; a root-escape candidate is rejected; copied regular-file hashes match; empty directories persist; manifest and sidecar hashes verify.
-8. Run the fixture test twice against two initially absent output subroots. Both result manifests must match apart from explicit run timestamps and output-root fields. No test may read `keon-docs-internal/patents/`, `keon-doctrine/`, their `.git` directories, or any prior partial root.
+6. Construct three separate synthetic test inputs. `fixture-success-source` contains regular files, an empty directory, every A1 excluded-leaf directory, and one external junction to `referents/external-target`. `fixture-internal-link-source` contains the internal junction to its own `authored-internal-target`. The path-escape case is an explicit helper invocation with a candidate outside its asserted root. Junctions may point only to synthetic fixture paths. If junction creation is unavailable, record a failed prerequisite rather than substituting a source link.
+7. The two success captures process only `fixture-success-source`. Assert: excluded leaves produce nonrecursive `EXCLUDED` / `BUILD_EPHEMERA` entries; the external junction produces `LINK_OPAQUE` without target traversal; copied regular-file hashes match; empty directories persist; manifest and sidecar hashes verify. The success tree contains no internal link and no path-escape candidate.
+8. The internal-link mode processes only `fixture-internal-link-source`. It must emit a `LINK_INTERNAL` stop record in `expected/internal-link-stop/` and must not create an accepted capture. The path-escape mode must reject the outside candidate and write its controlled result only to `expected/path-escape-stop.json`. Neither expected-failure mode may make success-capture determinism impossible.
+9. Run the success mode twice against the two initially absent success capture output subroots. Both result manifests must match apart from explicit run timestamps and output-root fields. No mode may read `keon-docs-internal/patents/`, `keon-doctrine/`, their `.git` directories, or any prior partial root.
+
+### Deterministic invocations
+
+All commands are proposed future commands, not executed under this design:
+
+```powershell
+powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "D:\Repos\agent-skills-worktrees\provisional-patent-readiness-w0-p01r-fixture-20260913\tools\w0-p01r-fixture.ps1" -Mode FixtureSuccess -FixtureRoot "D:\Repos\keon-omega-preserve\provisional-patent-readiness-w0-p01r-fixture-proof-20260913" -SourceRoot "D:\Repos\keon-omega-preserve\provisional-patent-readiness-w0-p01r-fixture-proof-20260913\fixture-success-source" -CaptureRoot "D:\Repos\keon-omega-preserve\provisional-patent-readiness-w0-p01r-fixture-proof-20260913\captures\success-a"
+
+powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "D:\Repos\agent-skills-worktrees\provisional-patent-readiness-w0-p01r-fixture-20260913\tools\w0-p01r-fixture.ps1" -Mode FixtureSuccess -FixtureRoot "D:\Repos\keon-omega-preserve\provisional-patent-readiness-w0-p01r-fixture-proof-20260913" -SourceRoot "D:\Repos\keon-omega-preserve\provisional-patent-readiness-w0-p01r-fixture-proof-20260913\fixture-success-source" -CaptureRoot "D:\Repos\keon-omega-preserve\provisional-patent-readiness-w0-p01r-fixture-proof-20260913\captures\success-b"
+
+powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "D:\Repos\agent-skills-worktrees\provisional-patent-readiness-w0-p01r-fixture-20260913\tools\w0-p01r-fixture.ps1" -Mode ExpectedInternalLink -FixtureRoot "D:\Repos\keon-omega-preserve\provisional-patent-readiness-w0-p01r-fixture-proof-20260913" -SourceRoot "D:\Repos\keon-omega-preserve\provisional-patent-readiness-w0-p01r-fixture-proof-20260913\fixture-internal-link-source" -CaptureRoot "D:\Repos\keon-omega-preserve\provisional-patent-readiness-w0-p01r-fixture-proof-20260913\expected\internal-link-stop"
+
+powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "D:\Repos\agent-skills-worktrees\provisional-patent-readiness-w0-p01r-fixture-20260913\tools\w0-p01r-fixture.ps1" -Mode ExpectedPathEscape -FixtureRoot "D:\Repos\keon-omega-preserve\provisional-patent-readiness-w0-p01r-fixture-proof-20260913" -ResultPath "D:\Repos\keon-omega-preserve\provisional-patent-readiness-w0-p01r-fixture-proof-20260913\expected\path-escape-stop.json"
+```
+
+### Required manifest schema
+
+Every success manifest must be JSON with these required fields: `schemaVersion`, `mode`, `toolSha256`, `fixtureRoot`, `sourceRoot`, `captureRoot`, `startedAtUtc`, `completedAtUtc`, `remoteOperations`, `sourceStability`, `counts`, `entries`, and `assertions`. Each `entries[]` item must contain `relativePath`, `entryType`, `classification`, `traversed`, `byteLength`, `sourceSha256`, `payloadSha256`, `copyResult`, and the applicable one of `reason`, `immediateEntryCount`, `enumerationError`, `linkType`, `resolvedTarget`, or `targetWithinRoot`. The schema requires `payloadSha256` to exist even when null. Expected-stop records use the same envelope plus `stopReason`; they are not accepted captures.
 
 ### Required evidence
 
@@ -54,7 +90,7 @@ Both must be initially absent at builder Step 0. The fixture root is the only pe
 - Each expected classification and assertion result, including the controlled internal-link stop.
 - Both fixture manifest hashes, sidecar verification results, and a deterministic comparison report.
 - Command ledger proving the only writes occurred under the fixture root and no source/Git/remote operation occurred.
-- One independent, read-only review that reproduces hashes and classification counts.
+- **Two independent, fresh, read-only adversarial reviews**. Each must reproduce script/manifest hashes, output classifications, expected-stop behavior, and write-scope checks; reviewers never fix, commit, or rerun the fixture. The dual-review requirement supersedes the earlier single-review wording because this is an architecture/risk parcel.
 
 ### Failure rule
 
@@ -62,7 +98,7 @@ Any parser, schema, relative-path, type, classification, hash, determinism, repa
 
 ## Separate future decision: W0-P01R-S source capture
 
-Only after W0-P01R-F passes independent review may the owner decide whether to authorize a new source-capture parcel. That new parcel must name a fresh source-output root, freeze the reviewed script SHA-256, enumerate exact source roots, carry every A1 exclusion/link rule, preserve every partial root above, and prohibit any implementation change during capture.
+Only after W0-P01R-F passes **both** independent reviews may the owner decide whether to authorize a new source-capture parcel. That new parcel must name a fresh source-output root, freeze the reviewed script SHA-256, enumerate exact source roots, carry every A1 exclusion/link rule, preserve every partial root above, and prohibit any implementation change during capture.
 
 ## Metadata-only patent-record locators (content not reviewed in this parcel)
 
