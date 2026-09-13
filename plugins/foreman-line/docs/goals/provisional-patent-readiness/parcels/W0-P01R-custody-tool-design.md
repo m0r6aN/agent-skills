@@ -96,9 +96,39 @@ Every success manifest must be JSON with these required fields: `schemaVersion`,
 
 Any parser, schema, relative-path, type, classification, hash, determinism, reparse, path-boundary, or write-scope failure ends the parcel. Preserve its fixture output and do not access a preservation-critical source.
 
-## Separate future decision: W0-P01R-S source capture
+## Combined conditional owner option: W0-P01R-F/S
 
-Only after W0-P01R-F passes **both** independent reviews may the owner decide whether to authorize a new source-capture parcel. That new parcel must name a fresh source-output root, freeze the reviewed script SHA-256, enumerate exact source roots, carry every A1 exclusion/link rule, preserve every partial root above, and prohibit any implementation change during capture.
+The ratified tripwire requires a replacement custody-tool design that proves itself synthetically **before** it reads a preservation-critical source. It does not state that a second human approval is required after the synthetic proof. The controlling stop text is:
+
+> "ratify a replacement custody-tool design parcel that proves all object construction, relative-path, manifest-schema, exclusion/link classification, and copy-loop behavior against a synthetic local fixture before it is permitted to read a preservation-critical source root."
+
+Accordingly, the owner may ratify the following serial F/S option in one decision. This is a conditional authorization, not permission for an early source read:
+
+1. **F — fixture proof:** execute the source-free fixture phase above. Two independent fresh, read-only reviewers must each return `ACCEPT` on the fixture evidence.
+2. **S — source capture:** only after both F reviews accept, run the script unchanged against the two exact source roots:
+   - `D:/Repos/keon-omega/keon-docs-internal/patents/`
+   - `D:/Repos/keon-omega/keon-doctrine/`
+3. The source output root is `D:/Repos/keon-omega-preserve/provisional-patent-readiness-20260913-w0-p01r-source-capture-01/`. It is verified absent at design time and must be absent again at capture Step 0. It must never reuse or alter any prior partial root.
+4. Before S starts, the builder records the accepted F script SHA-256 as `expectedToolSha256`. The capture invocation must calculate its script SHA-256 and refuse unless it exactly equals that accepted value. No script, fixture, schema, invocation, source list, or link/exclusion rule may change between F acceptance and S completion.
+5. S receives independent read-only acceptance before the existing W0 downstream dependency gate clears. Because S is a custody-risk parcel, it receives two fresh independent reviewers; neither writes, reruns, fixes, commits, or contacts a remote.
+
+### Source-capture write scope and invocation
+
+The builder may write only its already-authorized script file in the named builder worktree and paths below the new source-output root. It may read only the two exact source roots and their local Git metadata for classification. It may not read any prior partial root, mutate a source or Git state, contact a remote, create a commit, or write elsewhere.
+
+The following is a proposed future command, not executed under this design. Replace `<accepted-fixture-script-sha256>` only with the digest recorded in both F review acceptances:
+
+```powershell
+powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "D:\Repos\agent-skills-worktrees\provisional-patent-readiness-w0-p01r-fixture-20260913\tools\w0-p01r-fixture.ps1" -Mode SourceCapture -PatentRoot "D:\Repos\keon-omega\keon-docs-internal\patents" -DoctrineRoot "D:\Repos\keon-omega\keon-doctrine" -CaptureRoot "D:\Repos\keon-omega-preserve\provisional-patent-readiness-20260913-w0-p01r-source-capture-01" -ExpectedToolSha256 "<accepted-fixture-script-sha256>"
+```
+
+### Source-capture evidence and acceptance
+
+The S manifest uses the required schema above and additionally records `expectedToolSha256`, `actualToolSha256`, `patentSourceRoot`, `doctrineSourceRoot`, a per-track baseline Git classification summary, pre/post source inventories, source-stability results, payload/source count equality, aggregate and per-file SHA-256 comparisons, every A1 `EXCLUDED`, `LINK_OPAQUE`, and `LINK_INTERNAL` entry, output ACL/owner observation, and `remoteOperations: false`.
+
+`LINK_INTERNAL`, a source-inventory drift, a hash/count mismatch, script-digest mismatch, pre-existing output root, command outside write scope, Git/source mutation, or remote operation stops S and preserves its output. Only a complete manifest plus sidecar, per-track stable inventory, successful hash comparisons, and both independent S `ACCEPT` reviews satisfy W0-P01's custody evidence requirement. Existing W0-P02 through W0-P06 remain blocked until then.
+
+The earlier F-only option remains available: it authorizes only fixture proof and reviews, not S. Neither option authorizes package drafting, counsel transmission, disclosure, filing, payment, or a change to the patent corpus.
 
 ## Metadata-only patent-record locators (content not reviewed in this parcel)
 
