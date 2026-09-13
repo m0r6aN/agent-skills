@@ -12,6 +12,7 @@ Status: local design-only receipt; no fixture or protected-source execution occu
 
 - Design path: `parcels/W0-P01R-custody-tool-design.md`.
 - The design now separates successful fixture captures from expected internal-link and path-escape stops, names exact setup/builder/reviewer write scopes, gives four exact fixture invocations and one exact conditional source-capture invocation, defines the required manifest schema, and requires two independent read-only reviews for each F/S phase.
+- Setup sequencing is explicit: coordinator pre-setup records absence before worktree creation; builder F Step 0 verifies the created base/branch and untouched output roots without source enumeration; S Step 0 rechecks only output absence, digest, reviews, arguments, and prior-root preservation before coordinator ACK.
 - No separate patent-custody owner was identifiable from metadata-only inspection. This does not establish that no legal, filing, or document custodian exists.
 
 ## Required owner text: F-only option

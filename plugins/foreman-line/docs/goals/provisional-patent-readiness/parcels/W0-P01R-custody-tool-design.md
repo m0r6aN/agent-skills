@@ -40,7 +40,14 @@ Prove one custody implementation against a synthetic, local fixture before the i
 - Success capture outputs: `<fixture-root>/captures/success-a/` and `<fixture-root>/captures/success-b/`.
 - Controlled-stop outputs: `<fixture-root>/expected/internal-link-stop/` and `<fixture-root>/expected/path-escape-stop.json`.
 
-The worktree and fixture root must be initially absent at Step 0. The fixture root must not be placed inside a source repository, a prior partial-output root, or a cloud-synced location.
+### Setup and Step 0 sequence
+
+1. **Coordinator pre-setup check:** before `git worktree add`, verify and record that the exact builder branch, builder-worktree path, fixture root, and conditional S source-output root are absent. This check performs no source enumeration or source/Git read.
+2. **Permitted setup:** only after that record, the coordinator may create the named branch/worktree with `git worktree add`.
+3. **Builder Step 0:** inside the newly created worktree, verify the exact worktree path, base commit `cced8e20c8deb2eb21fb5ac242e65cebd3b2c322`, and builder branch; verify fixture root and conditional S source-output root remain absent; restate the source-free F boundary and stop for coordinator ACK. This check performs no source enumeration or source/Git read.
+4. **S Step 0:** after F has two accepts, but before any source traversal, recheck only the source-output root's absence, the script's actual/expected digest equality, the two recorded F accepts, unchanged invocation/source-root arguments, and all prior-partial-root preservation. Restate and stop for coordinator ACK. Source enumeration begins only after that ACK.
+
+The fixture root must not be placed inside a source repository, a prior partial-output root, or a cloud-synced location.
 
 ### Exact write scopes
 
