@@ -9,7 +9,7 @@
 - Validator CLI: `npx tsx src/cli.ts validate routing-policy.yaml` → exit **0** (from `plugins/foreman-line/routing-policy/`).
 - `routing-policy` suite: **60/60 pass** (baseline 59/59 + 1 new SUPERCHARGE-P1 pin test), `tsc --noEmit` clean, `biome check .` clean.
 - `dispatch` suite: **118/118 pass** (unchanged from baseline), `tsc --noEmit` clean, `biome check .` clean.
-- `git diff --check`: clean. `git diff --name-only` (tracked): exactly the four spec Allowed Files — `routing-policy.yaml`, `src/validator.ts`, `README.md`, `tests/semantic-invariants.test.ts`. `dispatch/` and `docs/goals/model-fleet-v1/` diffs empty.
+- `git diff --check`: clean. `git diff --name-only` plus staged additions: exactly 7 files, all in spec Allowed Files — 4 code files modified (`routing-policy.yaml`, `src/validator.ts`, `README.md`, `tests/semantic-invariants.test.ts`) + 3 parcel-record files added (this handoff, the active spec, the Phase-1 kickstarter). `dispatch/` and `docs/goals/model-fleet-v1/` diffs empty. (Correction 2026-09-14: an earlier revision of this receipt claimed a four-file diff, omitting the three added parcel-record files — two of which were not then in Allowed Files. The spec's Allowed Files now lists all 7; the subset check holds literally.)
 - AC-6 tripwire over added (`+`) diff lines for `fallback|failover|retry|try-next|backup|alternative|second-choice`: **empty**. The only `fallback` strings in the diff are pre-existing comment context lines.
 
 ## Review chain (all independent, zero builder context)
@@ -18,6 +18,7 @@
 2. Round 2 → REQUEST CHANGES (3 findings: AC-3 denylist gap for invented ts slugs; AC-6 grep bypassable + GMF unverifiable by grep; AC-7 ambiguous counts). Triage: all valid → fixed (AC-3 closed-set with set-diff method; AC-6 allowlist-only shape + GMF assigned to implementation review; AC-7 names CLI + both suites + implementation review).
 3. Round 3 (fix-confirmation) → **APPROVE**.
 4. Post-build implementation-diff review → **APPROVE** (6/6 checks: allowlist-only, no preemption, no fallback semantics, test binds invariant (e), GMF D12/D13/D24 clean, closed set verified). One Major: this handoff note was absent (filed here). One Minor (suggest-only, adopted): removed a tautological `assert.match` on a string literal from the new pin test; suite re-run 60/60 green, lint clean.
+5. Post-commit scope-receipt review → finding ACCEPTED (medium): this note's receipt claimed a four-file `git diff --name-only` result, but the commit also adds the handoff, the spec, and the kickstarter, with the latter two absent from Allowed Files — so the AC-6 subset check did not hold literally. Fixed by listing all 7 files in Allowed Files, tightening AC-6 to cover additions, and correcting the receipt above (this entry).
 
 ## Pinned closed ID set (AC-3 set-diff reference)
 
