@@ -47,6 +47,7 @@ const SHADOW_TASK_TYPES = new Set(['spec_lint', 'evidence_index', 'review_triage
 export const KNOWN_FRONTIER_MODELS: readonly string[] = [
   'anthropic/claude-opus-5',
   'anthropic/claude-fable-5.1',
+  'openai/gpt-6-astra', // SUPERCHARGE-P1 (verified 2026-09-14; $10/$50 escalation)
   'openai/gpt-5.6-sol',
   'openai/gpt-5.5',
   'google/gemini-3.1-pro-preview',

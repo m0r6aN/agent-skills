@@ -153,6 +153,13 @@ test('frontier-tier anchoring: rejects a model_tiers.frontier not in KNOWN_FRONT
   )
 })
 
+test('frontier-tier anchoring: SUPERCHARGE-P1 pins openai/gpt-6-astra in KNOWN_FRONTIER_MODELS', () => {
+  assert.ok(
+    KNOWN_FRONTIER_MODELS.includes('openai/gpt-6-astra'),
+    'SUPERCHARGE-P1 authorizes openai/gpt-6-astra as frontier (verified 2026-09-14); removing it must fail this test',
+  )
+})
+
 // f. Tier models must be classification-eligible -----------------------------
 
 test('tier eligibility: shipped policy lists every tier model under data_classification.public', () => {
