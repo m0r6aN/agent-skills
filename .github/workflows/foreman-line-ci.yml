@@ -1,0 +1,57 @@
+name: foreman-line-ci
+
+# No path filters: documentation-only PRs need these named checks too.
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: test
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - name: Preserve repository LF bytes
+        shell: pwsh
+        run: git config --global core.autocrlf false
+
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.19.0'
+
+      - name: Test the package runner without subprocess effects
+        run: node --test scripts/foreman-line-ci.test.mjs
+
+      - name: Install all 14 packages, then aggregate every check
+        if: ${{ success() || failure() }}
+        shell: pwsh
+        run: |
+          $npmCli = Join-Path (Split-Path (Get-Command node).Source) 'node_modules/npm/bin/npm-cli.js'
+          node scripts/foreman-line-ci.mjs "$npmCli"
+          exit $LASTEXITCODE
+
+  integration-report:
+    name: integration-report
+    needs: test
+    if: ${{ always() }}
+    runs-on: windows-latest
+    timeout-minutes: 5
+    steps:
+      - name: Report package job outcome without masking failure
+        shell: pwsh
+        env:
+          TEST_RESULT: ${{ needs.test.result }}
+        run: |
+          if ($env:TEST_RESULT -ne 'success') {
+            'Foreman Line package checks did not succeed. See the test job for per-package outcomes.' >> $env:GITHUB_STEP_SUMMARY
+            exit 1
+          }
+          'Foreman Line package checks passed. This is not live adapter, installed-host or human D4 acceptance.' >> $env:GITHUB_STEP_SUMMARY

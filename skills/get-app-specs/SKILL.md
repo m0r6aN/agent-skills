@@ -20,6 +20,19 @@ Derive a canonical, evidence-backed specification of what an application does �
 
 This skill describes behavior. It does not redesign, refactor, or rewrite. When used as modernizer Phase 0, its output is the baseline that all downstream contracts trace back to.
 
+## Overview
+
+Codebases accumulate implicit knowledge that outlives the people who wrote it: business rules buried in validation branches, domain invariants encoded only in a schema constraint, scheduled jobs nobody remembers exist. `get-app-specs` turns that implicit knowledge into an explicit, evidence-backed artifact — `APP_SPECIFICATION.md` — by walking the codebase and every available evidence class (code, tests, telemetry, config, docs) and recording what the system actually does, not what it was designed to do or what someone assumes it does. Every claim carries a source pointer, a confidence label, and — for capabilities — a liveness verdict, so the resulting spec can be trusted as a baseline rather than treated as one more piece of stale documentation.
+
+## When to Use
+
+- Auditing an unfamiliar or legacy codebase before making changes to it
+- Onboarding onto a system with no current documentation, or documentation you don't trust
+- Pre-rewrite archaeology — establishing what a system does before deciding what its replacement should do
+- Running as Phase 0 of the `modernize` skill, to produce the baseline that behavioral contracts link back to
+- Answering "does this feature still get used?" before removing or replacing it
+- Reconstructing business rules that exist only as code, not as written policy
+
 ## Non-Negotiable Rules
 
 1. Attach source evidence (`path:line`) to every behavioral claim. No evidence, no claim.
@@ -211,6 +224,41 @@ Stop and escalate if:
 - Do not assert behavior without source evidence.
 - Do not declare functionality dead from the absence of a static caller alone.
 - Do not collapse distinct behaviors to make the inventory look tidier than reality.
+
+## Common Rationalizations
+
+| Rationalization | Reality |
+|---|---|
+| "There's no caller in the repo, so it's dead — I'll drop it." | Existence is not liveness, and absence of a static caller is not evidence of death (DI resolution, scheduled jobs, and external callers are all invisible to grep). Grade it Cold or Indeterminate and route it to the human gate instead. |
+| "I'm confident this is what the code does, I don't need to cite it." | Confidence without a `path:line` pointer is a guess wearing a fact's clothes. No evidence, no claim — cite it or label it Low and raise an `OQ-*`. |
+| "This edge case is obviously a bug, I'll just describe the intended behavior." | The spec records observed behavior, not corrected behavior. Flag the anti-pattern as a finding linked to its evidence; do not silently "fix" it in the spec. |
+| "No telemetry hit in 30 days, so it's cold/dead." | Telemetry absence is only meaningful relative to the item's own cadence. A yearly job silent for 30 days is between runs, not dead. Reconcile against the declared schedule first. |
+| "I'll finish the inventory faster if I skip the confidence labels." | Unlabeled claims are indistinguishable from verified ones downstream — a Low-confidence item silently treated as High-confidence is how false spec baselines happen. |
+| "This area was inaccessible, I'll just leave it out of the spec." | Inaccessible-but-in-scope areas must be logged as open questions, not silently dropped from coverage. |
+
+## Red Flags
+
+- A behavioral claim with no `path:line` evidence pointer attached
+- An `F-*` item with no liveness label, or a liveness label with no evidence class recorded
+- A capability marked **Dead** on the strength of "no caller found" alone
+- A Low-confidence item with no paired `OQ-*`
+- A "cold" verdict that ignores the item's own declared schedule/cadence
+- Anti-patterns or suspected bugs quietly rewritten into "intended" behavior instead of flagged as findings
+- Scope exclusions or inaccessible areas that are absent from the spec with no note explaining why
+- IDs that are reused, non-namespaced under a multi-node parallel run, or don't match the linked-requirement ID pattern
+
+## Verification
+
+Before treating `APP_SPECIFICATION.md` as a trustworthy baseline:
+
+- [ ] Every F/BR/R/CANON/DEP item has ≥1 evidence pointer in `path:line` (or artifact+locator) form
+- [ ] Every `F-*` carries a trigger and a liveness label (Live/Cold/Dead/Indeterminate)
+- [ ] No item is labeled **Dead** on static-absence evidence alone
+- [ ] Every Low-confidence item has a paired `OQ-*`
+- [ ] Every Cold/Indeterminate liveness item has been resolved to keep-or-omit with a recorded rationale
+- [ ] Scope exclusions and inaccessible-but-in-scope areas are recorded, not silently skipped
+- [ ] IDs are unique, stable, and correctly namespaced (or bare for a single-scope run)
+- [ ] A coverage summary states what was inventoried and what remains uncertain
 
 ## Final Instruction
 

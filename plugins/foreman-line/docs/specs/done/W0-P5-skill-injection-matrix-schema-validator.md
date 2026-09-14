@@ -16,6 +16,8 @@ permission_profile: null
 
 # W0-P5 - Skill Injection Matrix Schema + Validator
 
+> **Repository identity migration (2026-09-06):** Repository identifiers and paths in this historical record were normalized to `m0r6aN/agent-skills`. Recorded commands were not rerun; all other historical outcomes remain as captured.
+
 ## Intent
 
 Define the frozen JSON Schema (and matching TypeScript type) for `skill-injection.yaml` - the policy-as-code artifact that governs which skills are injected at which pipeline role, per plan §5a - and ship a validator that checks a matrix document against both structure and the semantic invariants §5a already states in prose ("injection is driven mechanically by the parcel's `surfaces:` and task class - no per-dispatch human decision"). Ship the concrete v0 matrix file itself, populated with §5a's illustrative content, so the schema and validator are proven against real content on day one, same discipline as W0-P3's `routing-policy.yaml` and W0-P4's worked receipt fixture. This parcel produces the artifact W2-P5 ("skill injection engine: matrix evaluation at dispatch") will later evaluate against a specific parcel's `surfaces:`/`routing_class:`; it does not perform that evaluation. It also *specifies* (in prose, not executable code) the surface-glob resolution semantics W2-P5 must implement, so that later parcel has an unambiguous contract to build against rather than reverse-engineering intent from this document's schema alone.
@@ -24,7 +26,7 @@ This is the last W0 parcel. Once it ships, W0's exit criterion - "all contracts 
 
 ## Constraints
 
-- **Location:** `plugins/foreman-line/skill-injection/` in `kaseya-one-productivity-tools` (local: `C:\Repos\kaseya-one-productivity-tools`) - sibling to the frozen `plugins/foreman-line/contracts/`, `routing-policy/`, `receipts/`, and `spec-linter/`, same foundation tier.
+- **Location:** `plugins/foreman-line/skill-injection/` in `agent-skills` (local: `D:\Repos\agent-skills`) - sibling to the frozen `plugins/foreman-line/contracts/`, `routing-policy/`, `receipts/`, and `spec-linter/`, same foundation tier.
 - **Stack:** TypeScript, Node >=22, ESM-only. Tests via `node --test` (`npx tsx --test`). Lint/format with `biome`.
 - **Standing rule from the W0-P1 rework (binding on this parcel):** ajv's `JSONSchemaType` is banned as a schema authority anywhere in this repo; every schema is standard JSON Schema draft-07 typed as `SchemaObject`.
 - **Runtime dependency allowlist:** exactly two runtime dependencies - `ajv` (validation engine) and `yaml` (matrix document parsing; same pattern as `routing-policy/`, itself a YAML-authored artifact per §5a's illustrative example). A test MUST assert that `package.json`'s `dependencies` keys equal exactly `{ajv, yaml}` - machine-enforced per the W0-P3/W0-P2 pattern.

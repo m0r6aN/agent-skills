@@ -1,7 +1,7 @@
 /**
  * AC5: the shipped `skill-injection.yaml` validates against
- * `skill-injection-matrix.schema.json` with zero errors, and reproduces
- * §5a's illustrative content exactly.
+ * `skill-injection-matrix.schema.json` with zero errors, and retains the
+ * baseline mappings plus the contracts/* adversarial reviewer skills.
  */
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
@@ -20,7 +20,7 @@ test('shipped skill-injection.yaml validates with zero errors', () => {
   assert.equal(result.valid, true)
 })
 
-test('shipped skill-injection.yaml reproduces §5a illustrative content exactly', () => {
+test('shipped skill-injection.yaml retains baseline mappings and contracts reviewer skills', () => {
   const doc = parse(readFileSync(matrixPath, 'utf8'))
   assert.deepEqual(doc, {
     builder: {
@@ -34,6 +34,7 @@ test('shipped skill-injection.yaml reproduces §5a illustrative content exactly'
     },
     adversarial_reviewer: {
       '*': ['code-review'],
+      'contracts/*': ['code-review', 'ai-council'],
     },
     coordinator: {
       rework_first: ['build-fix-loop'],

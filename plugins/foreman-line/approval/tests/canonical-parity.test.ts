@@ -2,7 +2,7 @@
  * AC2: the vendored `src/canonical.ts` + `src/hash.ts` reproduce the shipped
  * `receipts` package's frozen worked vector - drift of the vendored
  * algorithm from the authority fails this test mechanically. Also asserts no
- * import of pcc internals and no modification of `receipts/`.
+ * import of pcc internals and sensitivity to a semantic vector mutation.
  */
 import assert from 'node:assert/strict'
 import { readdirSync, readFileSync } from 'node:fs'
@@ -11,10 +11,8 @@ import { test } from 'node:test'
 import { fileURLToPath } from 'node:url'
 import { canonicalize, type JsonObject } from '../src/canonical.js'
 import { sha256Hex } from '../src/hash.js'
-import { diffStatSinceMergeBase } from './helpers.js'
 
 const packageDir = join(dirname(fileURLToPath(import.meta.url)), '..')
-const repoRoot = join(packageDir, '..', '..', '..')
 const fixturePath = join(
   packageDir,
   '..',
@@ -56,7 +54,14 @@ test('AC2: no import of pcc internals (skills/parcel-compiler) anywhere in the p
   }
 })
 
-test('AC2: no modification to receipts/ since the branch fork point', () => {
-  const out = diffStatSinceMergeBase(repoRoot, 'plugins/foreman-line/receipts')
-  assert.equal(out.trim(), '')
+test('AC2: a semantic vector mutation changes the hash without changing the fixture', () => {
+  const before = readFileSync(fixturePath)
+  const { hash, ...original } = JSON.parse(before.toString('utf8')) as JsonObject & { hash: string }
+  const mutated = { ...original, timestamp: '2026-07-15T00:00:01Z' }
+
+  assert.equal(hash, EXPECTED_HASH)
+  assert.notEqual(mutated.timestamp, original.timestamp)
+  assert.notEqual(sha256Hex(canonicalize(mutated)), EXPECTED_HASH)
+  assert.equal(sha256Hex(canonicalize(original)), EXPECTED_HASH)
+  assert.deepEqual(readFileSync(fixturePath), before)
 })

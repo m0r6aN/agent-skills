@@ -9,6 +9,10 @@ A coordinator methodology for managing large multi-project efforts across multip
 
 This skill sits above repo-local implementation methods such as Parcel-Driven Development. It does not replace parcel work. It coordinates parcel work across a broader initiative.
 
+## Overview
+
+Multi-repo, multi-agent efforts fail at the seams, not inside any single project. Each repo can pass its own tests while the system they compose into is still broken — a contract drifted, a boundary was never proven, an agent finished its task while the initiative stayed blocked. This skill provides the missing control plane: a coordinator that owns scope, tracks, integration surfaces, contracts, verification evidence, and release gates as durable state, and that treats the initiative — not any single pull request — as the unit of delivery.
+
 ## Core Principle
 
 > Treat the initiative, not the pull request, as the unit of delivery.
@@ -1311,6 +1315,28 @@ Publishing public claims without mapped proof artifacts.
 ### Agent Drift
 
 Letting an agent continue after it encounters missing product, security, or contract decisions.
+
+## Common Rationalizations
+
+| Rationalization | Reality |
+|---|---|
+| "Every repo's tests are green, we're done." | Distributed systems fail at boundaries. Green unit tests in every repo say nothing about whether the integration surfaces between them actually work. |
+| "The PR merged, that workstream is complete." | A merged PR is not release evidence by itself. The work item is done when its required integration scenarios pass with recorded evidence, not when the diff lands. |
+| "We'll wire the boundary at the end once everything's built." | Big-bang integration defers discovery of missing configuration, auth, and contract assumptions to the worst possible time. Boundaries are planned in Phase 2, before dispatch. |
+| "It's a small dependency, I don't need to track it as a surface." | An untracked cross-project dependency is a ghost dependency — the coordinator can't gate, verify, or reason about a boundary it doesn't know exists. |
+| "I'll just remember the state, no need for a doc or a DB." | Chat history is not coordinator state. Multi-session and multi-agent work requires durable, persisted state or the next session starts blind. |
+| "Security review can happen right before launch." | Security-sensitive surfaces must be identified during planning, not bolted on at the end — "security later" is how launch-week surprises happen. |
+
+## Red Flags
+
+- A track or workstream that exists but was never named in the track map
+- An integration surface with no owner, no contract, or no positive/negative scenario defined
+- A "done" project whose required integration scenarios are still pending or unverified
+- A dependency between two projects that appears in conversation but nowhere in tracked state
+- Coordinator state that lives only in a chat transcript, with no `docs/INITIATIVES/` or database record
+- A release gate marked passing with no linked evidence artifact
+- An agent session that hit a missing product/security/contract decision and kept going anyway
+- A security-sensitive surface (auth, tenant isolation, secrets, PII) with no security gate tracked against it
 
 ## Recommended Directory Structure
 

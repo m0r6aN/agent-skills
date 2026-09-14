@@ -16,6 +16,8 @@ permission_profile: null
 
 # P1 - Permission-Profile Registry Schema + Validator
 
+> **Repository identity migration (2026-09-06):** Repository identifiers and paths in this historical record were normalized to `m0r6aN/agent-skills`. Recorded commands were not rerun; all other historical outcomes remain as captured.
+
 ## Intent
 
 Define the frozen JSON Schema (and matching TypeScript type) for `permission-profiles.yaml` - the named-profile registry the goal charter's D1-D9 build on - and ship a validator that checks a registry document against both structure and the deny-first semantic invariants the charter states in prose (D9: `deny`/`ask` are the restriction mechanism, `allow` is documentation of intent only). Ship the concrete v0 registry file itself, populated with the six D4 profiles (`coordinator`, `builder-standard`, `builder-architecture`, `reviewer-readonly`, `shaping-agent`, `builder-deps`), so the schema and validator are proven against real content on day one - same discipline as `routing-policy.yaml` (W0-P3) and `skill-injection.yaml` (W0-P5). This parcel produces the artifact P3's dispatch-time emitter will later resolve and project into a worktree's `.claude/settings.local.json`, and the profile-name vocabulary P4's spec-linter enum upgrade will bind to; it performs neither of those operations. It ships schema + types + the v0 registry file + a validator only - a **fifth copy** of the shared `registry.ts`/`generate.ts`/`testing.ts` scaffold (charter D3), no extraction.
@@ -24,7 +26,7 @@ This parcel enforces nothing at runtime. It cannot: a static validator that read
 
 ## Constraints
 
-- **Location:** `plugins/foreman-line/permission-profiles/` in `kaseya-one-productivity-tools` (local: `C:\Repos\kaseya-one-productivity-tools`) - sibling to the frozen `plugins/foreman-line/contracts/`, `routing-policy/`, `receipts/`, `spec-linter/`, and `skill-injection/`, same foundation tier.
+- **Location:** `plugins/foreman-line/permission-profiles/` in `agent-skills` (local: `D:\Repos\agent-skills`) - sibling to the frozen `plugins/foreman-line/contracts/`, `routing-policy/`, `receipts/`, `spec-linter/`, and `skill-injection/`, same foundation tier.
 - **Stack:** TypeScript, Node >=22 (repo root `package.json` `engines.node` requires >=24.11.1 per the standing rule), ESM-only. Tests via `node --test` (`npx tsx --test`). Lint/format with `biome`.
 - **Standing rule from the W0-P1 rework (binding on this parcel):** ajv's `JSONSchemaType` is banned as a schema authority anywhere in this repo; every schema is standard JSON Schema **draft-07** typed as `SchemaObject`.
 - **Runtime dependency allowlist:** exactly two runtime dependencies - `ajv` (validation engine) and `yaml` (registry document parsing; same pattern as the four siblings, all YAML-authored artifacts). A test MUST assert that `package.json`'s `dependencies` keys equal exactly `{ajv, yaml}` - machine-enforced, not prose. This parcel needs no additional runtime dependency: it parses one YAML document and validates it, exactly the sibling shape.
