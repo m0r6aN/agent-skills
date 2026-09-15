@@ -1,6 +1,6 @@
 ---
 name: get-app-specs
-description: Extract a canonical application specification from a codebase — features, business rules, requirements, domain canon, and dependencies — each evidence-backed, confidence-labeled, and liveness-checked (does this code actually get triggered?), with open questions surfaced. Use standalone to inventory what an app actually does (audit, onboarding, pre-rewrite archaeology), or as Phase 0 of the modernizer skill to produce the APP_SPECIFICATION.md baseline that behavioral contracts map to.
+description: Extract a canonical application specification from a codebase — features, business rules, requirements, domain canon, and dependencies — each evidence-backed, confidence-labeled, and liveness-checked (does this code actually get triggered?), with open questions surfaced. Use when taking a standalone inventory of what an app actually does (audit, onboarding, pre-rewrite archaeology), or as Phase 0 of the modernizer skill to produce the APP_SPECIFICATION.md baseline that behavioral contracts map to.
 metadata:
   author: The Brotherhood
   keywords:

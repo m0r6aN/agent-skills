@@ -48,7 +48,7 @@ The underlying skills assume you are building new work. This skill adds an expli
 
 If assessment reveals remediation is needed, the coordinator dispatches targeted PDD parcels and re-runs verification. The remediation loop is bounded — one parcel per gap, not a new feature build.
 
-## When to Use This Skill
+## When to Use
 
 Use when:
 
