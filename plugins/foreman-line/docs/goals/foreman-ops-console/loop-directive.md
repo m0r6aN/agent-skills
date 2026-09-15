@@ -2,16 +2,15 @@
 
 ## COORDINATOR OWNERSHIP — read before dispatching anything
 
-> **Queue owner:** unclaimed. Stage Zero drafted by a single session on
-> 2026-09-15; no long-running coordinator has claimed this goal. One goal has
-> one coordinator: claim ownership here, in `charter.md`, and in
-> `docs/goals/INDEX.md` at the same parcel boundary before dispatching
-> anything. If ownership is ambiguous, stop and report; never assume.
-
+> **Queue owner:** current session (owner-transferred 2026-09-15; prior Stage Zero
+> drafter session dead). One goal has one coordinator: ownership is claimed
+> here and in `charter.md`; `docs/goals/INDEX.md` registration waits for Gate 1
+> per the charter. If ownership is ambiguous, stop and report; never assume.
+>
 > **State (update on every stop/closure):** Charter DRAFT 2026-09-15. Gate 1
-> ABSENT. Plan-level adversarial review NOT run. Loop directive DRAFT (scaffold
-> only — the loop is not running). No parcel shaped, no Gate 2, no external
-> effects.
+> ABSENT. OQ5 decided 2026-09-15 (owner, Option 1). Plan-level adversarial
+> review NOT run. Loop directive DRAFT (scaffold only — the loop is not
+> running). No parcel shaped, no Gate 2, no external effects.
 
 **Resume prompt** (fresh session, after Gate 1): `/goal resume foreman-ops-console`
 
