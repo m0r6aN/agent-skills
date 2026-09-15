@@ -14,7 +14,7 @@
  * Coverage:
  *   - AC2: standard-feature/internal → anthropic/claude-sonnet-5/standard (spec workflowId)
  *   - AC3: architecture/risk/public  → anthropic/claude-opus-5/frontier  (spec workflowId)
- *   - AC4: boilerplate/public        → openai/gpt-5.6-luna/economy
+ *   - AC4: boilerplate/public        → nvidia/nemotron-3.5-lightning/economy
  *   - AC5: implementation/standard/restricted → anthropic/claude-sonnet-5/standard
  *   - AC6: all 12 class × data_classification combinations (eval matrix + transport)
  *   - AC7/PAR-2: routing_class 'standard' (old wrong label) → UNKNOWN_CLASS
@@ -91,14 +91,14 @@ test('AC3: architecture/risk/public resolves to anthropic/claude-opus-5/frontier
   }
 })
 
-test('AC4: boilerplate/public resolves to openai/gpt-5.6-luna/economy', () => {
+test('AC4: boilerplate/public resolves to nvidia/nemotron-3.5-lightning/economy', () => {
   const repoRoot = makeTempRepoRoot()
   try {
     const result = evaluateRouting(
       { routing_class: 'boilerplate', data_classification: 'public', workflowId: 'test-wf-003' },
       { repoRoot },
     )
-    assert.equal(result.resolvedModelId, 'openai/gpt-5.6-luna')
+    assert.equal(result.resolvedModelId, 'nvidia/nemotron-3.5-lightning')
     assert.equal(result.resolvedTier, 'economy')
     assert.equal(result.routingDecisionRef, 'docs/receipts/test-wf-003/routing-decision.json')
   } finally {
@@ -135,23 +135,23 @@ interface EvalCase {
 }
 
 const EVAL_MATRIX: EvalCase[] = [
-  // boilerplate → economy → openai/gpt-5.6-luna (all three data tiers)
+  // boilerplate → economy → nvidia/nemotron-3.5-lightning (all three data tiers)
   {
     routing_class: 'boilerplate',
     data_classification: 'public',
-    expectedModel: 'openai/gpt-5.6-luna',
+    expectedModel: 'nvidia/nemotron-3.5-lightning',
     expectedTier: 'economy',
   },
   {
     routing_class: 'boilerplate',
     data_classification: 'internal',
-    expectedModel: 'openai/gpt-5.6-luna',
+    expectedModel: 'nvidia/nemotron-3.5-lightning',
     expectedTier: 'economy',
   },
   {
     routing_class: 'boilerplate',
     data_classification: 'restricted',
-    expectedModel: 'openai/gpt-5.6-luna',
+    expectedModel: 'nvidia/nemotron-3.5-lightning',
     expectedTier: 'economy',
   },
   // standard-feature → standard → anthropic/claude-sonnet-5 (all three data tiers)
@@ -353,7 +353,7 @@ test('AC10: second call with same workflowId overwrites receipt without error', 
 
     // Must reflect the second call's values
     assert.equal(receipt.routing_class, 'boilerplate')
-    assert.equal(receipt.resolvedModelId, 'openai/gpt-5.6-luna')
+    assert.equal(receipt.resolvedModelId, 'nvidia/nemotron-3.5-lightning')
     assert.equal(receipt.resolvedTier, 'economy')
   } finally {
     rmSync(repoRoot, { recursive: true, force: true })
