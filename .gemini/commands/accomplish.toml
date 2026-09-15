@@ -3,7 +3,9 @@ description = "Turn a vague objective into a verifiable goal, then orchestrate t
 prompt = """
 Invoke the agent-skills:accomplish skill.
 
-`$ARGUMENTS` is the user's raw objective, if they gave one. If it's empty, ask "What would you like to accomplish?" before doing anything else.
+The user's raw objective follows (Gemini injects exactly what was typed after the command name). If it is empty, ask "What would you like to accomplish?" before doing anything else.
+
+{{args}}
 
 Run the skill's process in order — do not skip ahead to execution:
 
