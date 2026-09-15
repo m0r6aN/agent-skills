@@ -41,7 +41,11 @@ evaluation and the optional shadow-route execution boundary live in
   (`dispatch/src/routing-eval`) walks a class's allowlist tiers in order and
   picks the first model eligible under the task's data classification. There
   is no price comparison at dispatch time, so cost optimization is expressed
-  by list order. Ids are bare OpenRouter slugs (`vendor/model`); the consumer
+  by list order. The shipped economy order selects Nemotron 3.5 Lightning
+  for boilerplate in all three classifications, preserving each classification's
+  transport requirements. Later entries are eligibility alternatives; the
+  evaluator does not retry them on provider health or quota failures.
+  Ids are bare OpenRouter slugs (`vendor/model`); the consumer
   prepends its own provider prefix. No `:nitro`/`:floor`/`:free`/`:batch`
   variant suffixes — those are transport concerns or unusable in an agent loop.
 - **`shadow_routes`** — separately governed advisory sidecars, never model
