@@ -1,10 +1,10 @@
 ---
 ticket: GMF-P0
 title: Governed Model Fleet discovery and permanent negative contracts
-status: draft
+status: active
 owner: clinton.morgan
 created: 2026-09-04
-updated: 2026-09-04
+updated: 2026-09-15
 supersedes: null
 superseded_by: null
 risk: critical
