@@ -60,7 +60,8 @@ Harness permission prompts and filesystem access are not governance gates.
 > creation (HG-R1), spend, disclosure, promotion, PR creation, and Gate 3."
 > Coordinator scoping (binding): these apply to the GMF-P0 landing + P1 shaping
 > and dispatch chain only — repo creation executes as human HG-R1 at its actual
-> boundary (after P0/P1 findings, per graph); spend/disclosure/promotion apply
+> boundary (after P2C per the ratified queue; P0/P1 findings available per the
+> charter HG-R1 row), never earlier; spend/disclosure/promotion apply
 > per-parcel at their actual boundaries under that parcel's own Gate 2 + green
 > verification chain; PR creation covers parcel/closure PRs (never direct-to-main
 > pushes); Gate 3 merges are contingent on the full green verification chain per
