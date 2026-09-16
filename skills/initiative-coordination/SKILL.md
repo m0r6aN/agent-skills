@@ -62,7 +62,7 @@ Security Review = specialized boundary and threat review
 
 The coordinator invokes lower-level skills when needed. The coordinator does not become those skills.
 
-## When to Use This Skill
+## When to Use
 
 Use this skill when:
 
@@ -1337,6 +1337,17 @@ Letting an agent continue after it encounters missing product, security, or cont
 - A release gate marked passing with no linked evidence artifact
 - An agent session that hit a missing product/security/contract decision and kept going anyway
 - A security-sensitive surface (auth, tenant isolation, secrets, PII) with no security gate tracked against it
+
+## Verification
+
+A coordination claim is verified against persisted evidence, never against chat history or merged-PR counts:
+
+- Every track in the track map has a status from the Status Vocabulary, and every status transition links to the evidence artifact that caused it.
+- Every integration surface names its contract, its positive and negative scenarios, and the recorded run results — a surface with no run evidence is unverified, not done.
+- Every release gate and security gate carries an explicit verdict (pass / fail / waived-with-reason) with linked evidence; a gate without evidence is open.
+- The Evidence Index resolves: every cited artifact exists at the recorded path and says what the citation claims it says.
+- The Session Handoff is complete and current: starting state, ending state, files changed, commands run, verification result, decisions needed, blockers, and the next safe action — a future session can resume from it alone.
+- No work item is marked complete while its required integration scenarios are pending, and no initiative is declared complete while any release gate is open.
 
 ## Recommended Directory Structure
 

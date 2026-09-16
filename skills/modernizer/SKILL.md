@@ -1,11 +1,6 @@
 ---
 name: modernizer
-description: |
-  A contract-first modernization agent skill.
-  Modernizer extracts behavioral contracts from legacy systems,
-  orchestrates human-in-the-loop validation, and generates
-  target-native implementations that are provably correct
-  via reconciliation and receipt packs.
+description: A contract-first modernization agent skill that extracts behavioral contracts from legacy systems, orchestrates human-in-the-loop validation, and generates target-native implementations that are provably correct via reconciliation and receipt packs. Use when modernizing a legacy system through human-validated behavioral contracts rather than a blind rewrite.
 version: "1.2"
 metadata:
   author: The Brotherhood
