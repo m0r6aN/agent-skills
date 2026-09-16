@@ -85,8 +85,8 @@ Harness permission prompts and filesystem access are not governance gates.
 
 ## Current state and next safe action
 
-**State:** `gmf_p1_building`
-**Active queue item:** GMF-P1 build (Gate 2 granted 2026-09-16; builder branch `codex/gmf-p1-contracts-20260916`) + P1 landing prep
+**State:** `gmf_p1_landed_p2a_awaiting_shape`
+**Active queue item:** GMF-P1 landed (PR #33); GMF-P2A shaping is the next coordinator prep (no Gate 2 yet)
 **Product implementation:** none authorized
 **External effects:** per 2026-09-16 standing grants only (scoped; see above)
 
