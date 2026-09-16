@@ -68,6 +68,17 @@ Harness permission prompts and filesystem access are not governance gates.
 > parcel (any red step voids it; pre-existing red CI unrelated to the parcel is
 > documented in the PR body, never silently absorbed). Anything outward-facing
 > beyond this scope still needs an explicit owner call.
+>
+> **Designations + rulings recorded 2026-09-16 (owner, verbatim):**
+> S1: "Designate Clinton Morgan as keon-systems contract owner and
+> keon-mcp-gateway owner for GMF-P1 DR concurrence." S2: "Concur DR-001(a),
+> DR-002(a), DR-004(a), DR-006(a), DR-008(b) as the P1 resolutions, recorded
+> against P1-C049/C066/C071/C119/C093/C061; concurrence HOLDs clear." S3:
+> "Ratify the coordinator ruling on F-A1/F-01:
+> BLOCKED_UNRATIFIED_ERROR_CODE retained as HOLD marker under P1-C072/EV-010
+> guards; permanent vocabulary lands with DR-002 concurrence." Scope: P1 only;
+> key-provider selection stays CARRIED (DR-006 remainder); nothing herein
+> chooses P2A+ matters.
 
 ## Current state and next safe action
 
