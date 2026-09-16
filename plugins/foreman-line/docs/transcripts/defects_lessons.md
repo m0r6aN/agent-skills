@@ -74,5 +74,5 @@ every marketplace entry, and a validator that compares every entry (proven
 with a negative probe).
 
 **Disposition:** mechanically installed in `scripts/validate-versions.js` +
-`scripts/validate-versions-test.js` (all-entries comparison) and on disk
-(tag `0.6.9`, per-plugin pins); PR #29.
+`scripts/validate-versions-test.js` (all-entries comparison, committed
+hermetic negative probe over fixture manifests in a temp git repo); PR #29.
