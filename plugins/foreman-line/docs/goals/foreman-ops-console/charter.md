@@ -3,8 +3,8 @@
 **Goal slug:** `foreman-ops-console`
 **Created:** 2026-09-15
 **Owner:** Clinton Morgan
-**Coordinator:** owner-transferred Stage Zero session (2026-09-15; prior drafter session dead) — Gate 1 pending, no long-running loop claimed
-**Status:** DRAFT — Gate 1 NOT granted; plan-level adversarial review NOT run
+**Coordinator:** owner-transferred Stage Zero session (2026-09-15; prior drafter session dead) — Gate 1 RATIFIED 2026-09-16 (owner), no long-running loop claimed yet
+**Status:** RATIFIED — Gate 1 granted 2026-09-16 (owner: OQ1–OQ4 ruled per attached recommendations, charter ratified); plan-level adversarial review NOT run (mandatory next step)
 **Stage Zero baseline:** `agent-skills @ 7894492` (branch `feat/foreman-line-supercharge`)
 
 ## Objective
@@ -64,10 +64,10 @@ explicitly excluded from this exit criterion.
 
 | # | Question | Recommendation |
 |---|---|---|
-| OQ1 | Heartbeat threshold for `hung` (OQ: single value or per-routing-class)? | Single default of 6h no-receipt-progress with no live builder session, overridable per goal in its loop directive. One number ships the MVP; per-class tuning is Phase 2 analytics input (FOC-P5). |
-| OQ2 | Polling interval for the projection refresh (receipts change via git, not a daemon)? | Poll on page load + 60s background refresh; no filesystem watcher in Phase 1. Watchers add a daemon reliability surface the MVP does not need. |
-| OQ3 | Should the console's own notifications persist per-goal (`docs/goals/<slug>/`) or console-local (`ops-console/state/`)? | Console-local `state/notifications.json` copied from the Automations-hub pattern. Goal directories stay coordinator-owned; the console must not write into them (D2). |
-| OQ4 | Jira ticket state in the board (candidate locator exists via W2-P1 records)? | Display-only ticket key + status link in Phase 1 if cheaply readable; no Jira writes ever. Bidirectional sync view is deferred to Phase 2 (FOC-P8). |
+| OQ1 | Heartbeat threshold for `hung` (OQ: single value or per-routing-class)? | Single default of 6h no-receipt-progress with no live builder session, overridable per goal in its loop directive. One number ships the MVP; per-class tuning is Phase 2 analytics input (FOC-P5). RULED 2026-09-16 (owner): accept recommendation. |
+| OQ2 | Polling interval for the projection refresh (receipts change via git, not a daemon)? | Poll on page load + 60s background refresh; no filesystem watcher in Phase 1. Watchers add a daemon reliability surface the MVP does not need. RULED 2026-09-16 (owner): accept recommendation. |
+| OQ3 | Should the console's own notifications persist per-goal (`docs/goals/<slug>/`) or console-local (`ops-console/state/`)? | Console-local `state/notifications.json` copied from the Automations-hub pattern. Goal directories stay coordinator-owned; the console must not write into them (D2). RULED 2026-09-16 (owner): accept recommendation. |
+| OQ4 | Jira ticket state in the board (candidate locator exists via W2-P1 records)? | Display-only ticket key + status link in Phase 1 if cheaply readable; no Jira writes ever. Bidirectional sync view is deferred to Phase 2 (FOC-P8). RULED 2026-09-16 (owner): accept recommendation. |
 | OQ5 | How is ratify/approve/deny capture routed, given no existing flow records Gates 1–3? | DECIDED 2026-09-15 (owner, Option 1) — presentation + invocation only; frozen proxy rules; no new gate-decision type in Phase 1; Gate 1/3 have no console capture path. D2 unchanged. |
 
 ## Wave/parcel decomposition — Phase 1 (dependency order)
