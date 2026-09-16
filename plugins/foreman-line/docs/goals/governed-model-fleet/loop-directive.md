@@ -78,12 +78,15 @@ Harness permission prompts and filesystem access are not governance gates.
 > BLOCKED_UNRATIFIED_ERROR_CODE retained as HOLD marker under P1-C072/EV-010
 > guards; permanent vocabulary lands with DR-002 concurrence." Scope: P1 only;
 > key-provider selection stays CARRIED (DR-006 remainder); nothing herein
-> chooses P2A+ matters.
+> chooses P2A+ matters. Coordinator note: the cited `P1-C0xx` controls live in
+> the unlanded P1 evidence set (branch `codex/gmf-p1-contracts-20260916`, landing
+> PR pending at record time); this entry's operative content — the designations,
+> the five choices, the F-A1 ratification — applies in full on P1 landing.
 
 ## Current state and next safe action
 
-**State:** `gmf_p0_landing_p1_shaping`
-**Active queue item:** GMF-P0 landing (PR #28) + GMF-P1 shaping
+**State:** `gmf_p1_building`
+**Active queue item:** GMF-P1 build (Gate 2 granted 2026-09-16; builder branch `codex/gmf-p1-contracts-20260916`) + P1 landing prep
 **Product implementation:** none authorized
 **External effects:** per 2026-09-16 standing grants only (scoped; see above)
 
