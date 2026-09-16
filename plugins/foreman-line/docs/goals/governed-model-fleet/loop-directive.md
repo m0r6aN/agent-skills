@@ -56,12 +56,25 @@ Their controlling interpretation is narrow:
 
 Harness permission prompts and filesystem access are not governance gates.
 
+> **Standing grants recorded 2026-09-16 (owner, verbatim):** "I grant repo
+> creation (HG-R1), spend, disclosure, promotion, PR creation, and Gate 3."
+> Coordinator scoping (binding): these apply to the GMF-P0 landing + P1 shaping
+> and dispatch chain only — repo creation executes as human HG-R1 at its actual
+> boundary (after P2C per the ratified queue; P0/P1 findings available per the
+> charter HG-R1 row), never earlier; spend/disclosure/promotion apply
+> per-parcel at their actual boundaries under that parcel's own Gate 2 + green
+> verification chain; PR creation covers parcel/closure PRs (never direct-to-main
+> pushes); Gate 3 merges are contingent on the full green verification chain per
+> parcel (any red step voids it; pre-existing red CI unrelated to the parcel is
+> documented in the PR body, never silently absorbed). Anything outward-facing
+> beyond this scope still needs an explicit owner call.
+
 ## Current state and next safe action
 
-**State:** `gmf_p0_shaped_awaiting_gate_2`  
-**Active queue item:** GMF-P0  
-**Product implementation:** none authorized  
-**External effects:** none authorized
+**State:** `gmf_p0_landing_p1_shaping`
+**Active queue item:** GMF-P0 landing (PR #28) + GMF-P1 shaping
+**Product implementation:** none authorized
+**External effects:** per 2026-09-16 standing grants only (scoped; see above)
 
 GMF-P0 is shaped and coordinator-linted at
 `plugins/foreman-line/docs/specs/active/GMF-P0-governed-model-fleet-discovery-and-negative-contracts.md`.

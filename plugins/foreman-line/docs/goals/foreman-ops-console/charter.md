@@ -3,8 +3,8 @@
 **Goal slug:** `foreman-ops-console`
 **Created:** 2026-09-15
 **Owner:** Clinton Morgan
-**Coordinator:** owner-transferred Stage Zero session (2026-09-15; prior drafter session dead) — Gate 1 pending, no long-running loop claimed
-**Status:** DRAFT — Gate 1 NOT granted; plan-level adversarial review NOT run
+**Coordinator:** owner-transferred Stage Zero session (2026-09-15; prior drafter session dead) — Gate 1 RATIFIED 2026-09-16 (owner), no long-running loop claimed yet
+**Status:** RATIFIED — Gate 1 granted 2026-09-16 (owner: OQ1–OQ4 ruled per attached recommendations, charter ratified); plan-level adversarial review NOT run (mandatory next step)
 **Stage Zero baseline:** `agent-skills @ 7894492` (branch `feat/foreman-line-supercharge`)
 
 ## Objective
@@ -47,7 +47,7 @@ Completion does not imply network exposure, multi-goal portfolio views, cost
 accounting, or push notifications — those are Phase 2 sketches below and are
 explicitly excluded from this exit criterion.
 
-## Locked decisions (PROPOSED — awaiting Gate 1 ratification)
+## Locked decisions (RATIFIED at Gate 1, 2026-09-16 — owner)
 
 | # | Decision | Reasoning |
 |---|---|---|
@@ -64,10 +64,10 @@ explicitly excluded from this exit criterion.
 
 | # | Question | Recommendation |
 |---|---|---|
-| OQ1 | Heartbeat threshold for `hung` (OQ: single value or per-routing-class)? | Single default of 6h no-receipt-progress with no live builder session, overridable per goal in its loop directive. One number ships the MVP; per-class tuning is Phase 2 analytics input (FOC-P5). |
-| OQ2 | Polling interval for the projection refresh (receipts change via git, not a daemon)? | Poll on page load + 60s background refresh; no filesystem watcher in Phase 1. Watchers add a daemon reliability surface the MVP does not need. |
-| OQ3 | Should the console's own notifications persist per-goal (`docs/goals/<slug>/`) or console-local (`ops-console/state/`)? | Console-local `state/notifications.json` copied from the Automations-hub pattern. Goal directories stay coordinator-owned; the console must not write into them (D2). |
-| OQ4 | Jira ticket state in the board (candidate locator exists via W2-P1 records)? | Display-only ticket key + status link in Phase 1 if cheaply readable; no Jira writes ever. Bidirectional sync view is deferred to Phase 2 (FOC-P8). |
+| OQ1 | Heartbeat threshold for `hung` (OQ: single value or per-routing-class)? | Single default of 6h no-receipt-progress with no live builder session, overridable per goal in its loop directive. One number ships the MVP; per-class tuning is Phase 2 analytics input (FOC-P5). RULED 2026-09-16 (owner): accept recommendation. |
+| OQ2 | Polling interval for the projection refresh (receipts change via git, not a daemon)? | Poll on page load + 60s background refresh; no filesystem watcher in Phase 1. Watchers add a daemon reliability surface the MVP does not need. RULED 2026-09-16 (owner): accept recommendation. |
+| OQ3 | Should the console's own notifications persist per-goal (`docs/goals/<slug>/`) or console-local (`ops-console/state/`)? | Console-local `state/notifications.json` copied from the Automations-hub pattern. Goal directories stay coordinator-owned; the console must not write into them (D2). RULED 2026-09-16 (owner): accept recommendation. |
+| OQ4 | Jira ticket state in the board (candidate locator exists via W2-P1 records)? | Display-only ticket key + status link in Phase 1 if cheaply readable; no Jira writes ever. Bidirectional sync view is deferred to Phase 2 (FOC-P8). RULED 2026-09-16 (owner): accept recommendation. |
 | OQ5 | How is ratify/approve/deny capture routed, given no existing flow records Gates 1–3? | DECIDED 2026-09-15 (owner, Option 1) — presentation + invocation only; frozen proxy rules; no new gate-decision type in Phase 1; Gate 1/3 have no console capture path. D2 unchanged. |
 
 ## Wave/parcel decomposition — Phase 1 (dependency order)
@@ -103,7 +103,7 @@ Universal set (COORDINATOR-PATTERN): a frozen contract needs modification; a tri
 
 ## Ratification record
 
-- Gate 1: **ABSENT.** Decisions D1–D8 and questions OQ1–OQ5 above are proposed, not ratified (OQ5 carries the owner's pre-Gate-1 Option-1 ruling, ratified with the charter as a package). No dispatch, implementation, or external effect is authorized.
+- Gate 1: **GRANTED 2026-09-16 (owner).** Decisions D1–D8 ratified; OQ1–OQ4 ruled per attached recommendations, OQ5 decided 2026-09-15 (Option 1). Dispatch authorized only under the D8 standing authorizations; implementation and external effects only per-parcel under their own Gate 2 + green chain.
 - Pre-Gate-1 rulings: **OQ5 decided 2026-09-15** (owner, Option 1 — presentation + invocation, frozen proxy rules, no new gate-decision type, D2 unchanged); **ownership transferred** from the dead Stage Zero session to the current session the same day. Plan-level review still runs after Gate 1.
-- Plan-level adversarial review: **NOT run.** Runs after Gate 1, against the ratified charter; findings triaged into `plan-review-findings.md`.
-- Goal index: **NOT registered.** `docs/goals/INDEX.md` registration happens at Gate 1 ratification per its update rule; the index is never the authority.
+- Plan-level adversarial review: **RUN 2026-09-16 — REQUEST CHANGES, no Gate-1 reopen.** Findings triaged into `plan-review-findings.md` (R1 reconciled here; A1/A2/C1/M1/D-LOAD/X1/T1/F1/S1 carried as FOC-P0 shaping constraints; no locked decision changed, Gate 1 stays ratified).
+- Goal index: **REGISTERED at Gate 1** (`docs/goals/INDEX.md`, 2026-09-16); the index is never the authority.

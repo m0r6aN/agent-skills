@@ -1,16 +1,17 @@
-# /loop Directive — foreman-ops-console (DRAFT)
+# /loop Directive — foreman-ops-console
 
 ## COORDINATOR OWNERSHIP — read before dispatching anything
 
 > **Queue owner:** current session (owner-transferred 2026-09-15; prior Stage Zero
 > drafter session dead). One goal has one coordinator: ownership is claimed
-> here and in `charter.md`; `docs/goals/INDEX.md` registration waits for Gate 1
+> here and in `charter.md`; `docs/goals/INDEX.md` registration follows Gate 1
 > per the charter. If ownership is ambiguous, stop and report; never assume.
 >
-> **State (update on every stop/closure):** Charter DRAFT 2026-09-15. Gate 1
-> ABSENT. OQ5 decided 2026-09-15 (owner, Option 1). Plan-level adversarial
-> review NOT run. Loop directive DRAFT (scaffold only — the loop is not
-> running). No parcel shaped, no Gate 2, no external effects.
+> **State (update on every stop/closure):** Charter RATIFIED 2026-09-16 (owner:
+> OQ1–OQ4 ruled per recommendations, OQ5 decided 2026-09-15). Plan-level
+> adversarial review NOT run (mandatory next step). Loop directive active
+> (scaffold only — the loop starts after plan review). No parcel shaped,
+> no Gate 2, no external effects.
 
 **Resume prompt** (fresh session, after Gate 1): `/goal resume foreman-ops-console`
 
@@ -18,13 +19,12 @@
 
 The Foreman Line Coordinator (D4): you consume verification results, you never
 produce them. Charter: `plugins/foreman-line/docs/goals/foreman-ops-console/charter.md`
-(source of truth for scope and proposed decisions D1–D8; treat every D-entry
-as UNRATIFIED until the Gate 1 record says otherwise). Canon:
+(source of truth for scope and ratified decisions D1–D8; D-entries are RATIFIED per the Gate 1 record below). Canon:
 `plugins/foreman-line/docs/COORDINATOR-PATTERN.md`,
 `plugins/foreman-line/skills/parcel-driven-development/SKILL.md`,
 `docs/SPEC-CONVENTION.md`.
 
-## Standing authorizations (REQUESTED, not granted — see charter D8)
+## Standing authorizations (GRANTED at Gate 1 ratification 2026-09-16 — see charter D8)
 
 1. **Gate 2 — dispatch**, requested for exactly FOC-P0, FOC-P1, FOC-P2, FOC-P3,
    FOC-P4 in dependency order, effective per-parcel once its shaped spec passes
@@ -39,9 +39,9 @@ as UNRATIFIED until the Gate 1 record says otherwise). Canon:
 4. **Push, PR, and Stage F closure work** authorized within `agent-skills` only.
    Main requires PRs; closure commits go through PRs, never direct to main.
 
-Until Gate 1 is ratified, items 1–4 authorize NOTHING. The only permitted work
-is charter iteration with the owner and (after ratification) the plan-level
-adversarial review.
+Until Gate 1 was ratified (2026-09-16), items 1–4 authorized NOTHING. The only permitted work
+is now the plan-level adversarial review, then per-parcel shaping/dispatch under the
+authorizations above.
 
 ## Queue (strict dependency order — charter Phase 1 table)
 
@@ -113,7 +113,7 @@ record naming the exact spec, Allowed Files, branch/worktree, and review route.
 
 ## Wakeup pacing
 
-Loop is NOT running (Gate 1 absent). When claimed and gated: blocked only on a
+Loop starts after plan-review triage (Gate 1 granted 2026-09-16). When claimed and gated: blocked only on a
 running background agent → 1200–1800s fallback wakeup and yield; completion
 notifications are the primary signal. Actively coordinating → keep working.
 Never poll harness-tracked agents.
