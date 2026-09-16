@@ -13,9 +13,15 @@ const manifestPaths = [
   ".agents/plugins/marketplace.json",
 ];
 
-function readManifestVersion(manifestPath) {
+function readManifestVersions(manifestPath) {
   const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
-  return manifest.version ?? manifest.plugins?.[0]?.version;
+  if (Array.isArray(manifest.plugins)) {
+    return manifest.plugins.map((plugin, index) => ({
+      label: plugin?.name ?? `#${index}`,
+      version: plugin?.version,
+    }));
+  }
+  return [{ label: manifestPath, version: manifest.version }];
 }
 
 const expectedVersion = execFileSync(
@@ -25,11 +31,12 @@ const expectedVersion = execFileSync(
 ).trim();
 
 for (const manifestPath of manifestPaths) {
-  const version = readManifestVersion(manifestPath);
-  if (version !== expectedVersion) {
-    throw new Error(
-      `${manifestPath} has version ${version ?? "<missing>"}; expected ${expectedVersion}`,
-    );
+  for (const { label, version } of readManifestVersions(manifestPath)) {
+    if (version !== expectedVersion) {
+      throw new Error(
+        `${manifestPath} [${label}] has version ${version ?? "<missing>"}; expected ${expectedVersion}`,
+      );
+    }
   }
 }
 
