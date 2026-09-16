@@ -1,7 +1,7 @@
 ---
 ticket: GMF-P1
 title: Effect, source, environment, envelope, artifact, terminal, receipt, and evidence contract freeze
-status: draft
+status: active
 owner: clinton.morgan
 created: 2026-09-16
 updated: 2026-09-16

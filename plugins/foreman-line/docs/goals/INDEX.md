@@ -15,7 +15,7 @@ from an index row.
 
 | Goal | Owner | State | Current authority |
 |---|---|---|---|
-| [governed-model-fleet](governed-model-fleet/charter.md) | `/root` | `gmf_p0_landing_p1_shaping` | D1–D24 plus A1/P0-P9 ratified; P0 evidence in PR #28, P1 spec shaping; owner standing grants recorded 2026-09-16 (HG-R1/spend/disclosure/promotion/PR/Gate-3, scoped, green-chain contingent) |
+| [governed-model-fleet](governed-model-fleet/charter.md) | /root | gmf_p1_landed_p2a_awaiting_shape | D1-D24 plus A1/P0-P9 ratified; P0 + P1 evidence landed (PRs #28, #33); P1 closure READY; P2A shaping next, no Gate 2 yet |
 | [foreman-ops-console](foreman-ops-console/charter.md) | current session | `gate_1_ratified_plan_review_pending` | Charter ratified 2026-09-16 (OQ1–OQ5 decided); D8 standing Gate 2 (FOC-P0–P4) + contingent Gate 3 granted; plan-level adversarial review is the mandatory next step |
 
 ## Frozen or stopped goals
