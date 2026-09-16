@@ -13,9 +13,15 @@ const manifestPaths = [
   ".agents/plugins/marketplace.json",
 ];
 
-function readManifestVersion(manifestPath) {
+function readManifestVersions(manifestPath) {
   const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
-  return manifest.version ?? manifest.plugins?.[0]?.version;
+  if (Array.isArray(manifest.plugins)) {
+    return manifest.plugins.map((plugin, index) => ({
+      label: plugin?.name ?? `#${index}`,
+      version: plugin?.version,
+    }));
+  }
+  return [{ label: manifestPath, version: manifest.version }];
 }
 
 test("all plugin manifests use the latest release tag", () => {
@@ -26,10 +32,12 @@ test("all plugin manifests use the latest release tag", () => {
   ).trim();
 
   for (const manifestPath of manifestPaths) {
-    assert.equal(
-      readManifestVersion(manifestPath),
-      expectedVersion,
-      `${manifestPath} must use version ${expectedVersion}`,
-    );
+    for (const { label, version } of readManifestVersions(manifestPath)) {
+      assert.equal(
+        version,
+        expectedVersion,
+        `${manifestPath} [${label}] must use version ${expectedVersion}`,
+      );
+    }
   }
 });
