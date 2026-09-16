@@ -90,21 +90,21 @@ Harness permission prompts and filesystem access are not governance gates.
 **Product implementation:** none authorized
 **External effects:** per 2026-09-16 standing grants only (scoped; see above)
 
-GMF-P0 is shaped and coordinator-linted at
-`plugins/foreman-line/docs/specs/active/GMF-P0-governed-model-fleet-discovery-and-negative-contracts.md`.
-Its status remains `draft`. The next safe action is the owner's explicit Gate 2 decision for
-that exact spec, five new goal-local output files, named branch/worktree, passive-only
-commands, and dual-review route. Gate 2 activation may flip only this spec from `draft` to
-`active`; it grants none of the external effects withheld above.
+GMF-P0 landed on main (PR #28, five evidence files, closure READY) and GMF-P1
+landed on main (PR #33, seven frozen-contract records + draft spec activated to
+`active` at landing, closure `READY_TO_REQUEST_GMF_P2A_GATE_2`). The next safe
+action is coordinator prep for GMF-P2A shaping (no P2A Gate 2 granted or
+requested); a P2A Gate-2 decision needs its own shaped spec, Allowed Files,
+branch/worktree, and review route.
 
 ## Dependency queue
 
 The queue is strict by dependency, with parallelism permitted only where explicitly shown
 and only after collision analysis:
 
-1. **GMF-P0 — discovery/canon/threat model/expanded negative matrix.** Shaped and
-   coordinator-linted; awaiting Gate 2. Zero implementation and zero external effects.
-2. **GMF-P1 — contracts.** Depends on accepted GMF-P0.
+1. **GMF-P0 — discovery/canon/threat model/expanded negative matrix.** LANDED
+   (PR #28). Zero implementation and zero external effects, as scoped.
+2. **GMF-P1 — contracts.** LANDED (PR #33, closure READY). Depends on accepted GMF-P0 (satisfied).
 3. **GMF-P2A — durable Runtime authority/accounting store and migration.** Depends on P1.
 4. **GMF-P2B — atomic spend/reservation/concurrency/pre-effect receipt.** Depends on P2A.
 5. **GMF-P2C — terminal reconciliation, lease recovery, settlement, verification
