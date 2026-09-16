@@ -19,8 +19,7 @@
 
 The Foreman Line Coordinator (D4): you consume verification results, you never
 produce them. Charter: `plugins/foreman-line/docs/goals/foreman-ops-console/charter.md`
-(source of truth for scope and proposed decisions D1–D8; treat every D-entry
-as UNRATIFIED until the Gate 1 record says otherwise). Canon:
+(source of truth for scope and ratified decisions D1–D8; D-entries are RATIFIED per the Gate 1 record below). Canon:
 `plugins/foreman-line/docs/COORDINATOR-PATTERN.md`,
 `plugins/foreman-line/skills/parcel-driven-development/SKILL.md`,
 `docs/SPEC-CONVENTION.md`.
@@ -114,7 +113,7 @@ record naming the exact spec, Allowed Files, branch/worktree, and review route.
 
 ## Wakeup pacing
 
-Loop is NOT running (Gate 1 absent). When claimed and gated: blocked only on a
+Loop starts after plan-review triage (Gate 1 granted 2026-09-16). When claimed and gated: blocked only on a
 running background agent → 1200–1800s fallback wakeup and yield; completion
 notifications are the primary signal. Actively coordinating → keep working.
 Never poll harness-tracked agents.

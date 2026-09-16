@@ -47,7 +47,7 @@ Completion does not imply network exposure, multi-goal portfolio views, cost
 accounting, or push notifications — those are Phase 2 sketches below and are
 explicitly excluded from this exit criterion.
 
-## Locked decisions (PROPOSED — awaiting Gate 1 ratification)
+## Locked decisions (RATIFIED at Gate 1, 2026-09-16 — owner)
 
 | # | Decision | Reasoning |
 |---|---|---|
@@ -103,7 +103,7 @@ Universal set (COORDINATOR-PATTERN): a frozen contract needs modification; a tri
 
 ## Ratification record
 
-- Gate 1: **ABSENT.** Decisions D1–D8 and questions OQ1–OQ5 above are proposed, not ratified (OQ5 carries the owner's pre-Gate-1 Option-1 ruling, ratified with the charter as a package). No dispatch, implementation, or external effect is authorized.
+- Gate 1: **GRANTED 2026-09-16 (owner).** Decisions D1–D8 ratified; OQ1–OQ4 ruled per attached recommendations, OQ5 decided 2026-09-15 (Option 1). Dispatch authorized only under the D8 standing authorizations; implementation and external effects only per-parcel under their own Gate 2 + green chain.
 - Pre-Gate-1 rulings: **OQ5 decided 2026-09-15** (owner, Option 1 — presentation + invocation, frozen proxy rules, no new gate-decision type, D2 unchanged); **ownership transferred** from the dead Stage Zero session to the current session the same day. Plan-level review still runs after Gate 1.
-- Plan-level adversarial review: **NOT run.** Runs after Gate 1, against the ratified charter; findings triaged into `plan-review-findings.md`.
-- Goal index: **NOT registered.** `docs/goals/INDEX.md` registration happens at Gate 1 ratification per its update rule; the index is never the authority.
+- Plan-level adversarial review: **RUN 2026-09-16 — REQUEST CHANGES, no Gate-1 reopen.** Findings triaged into `plan-review-findings.md` (R1 reconciled here; A1/A2/C1/M1/D-LOAD/X1/T1/F1/S1 carried as FOC-P0 shaping constraints; no locked decision changed, Gate 1 stays ratified).
+- Goal index: **REGISTERED at Gate 1** (`docs/goals/INDEX.md`, 2026-09-16); the index is never the authority.
