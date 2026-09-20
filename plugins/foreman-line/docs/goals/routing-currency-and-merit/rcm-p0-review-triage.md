@@ -97,15 +97,30 @@ release was performed in that parcel.
 - Deterministic evidence blocks: A1 `8,450`, A2 `77`, A3 `1,949`; all exits 0.
 - Positive consumption: `PARTIAL_REFUSED`, expected native exit 1.
 - Current evidence remains `complete:false`; freshness, approved configuration,
-  installed parity, four endpoint mismatches, and Jev unresolvability in the
-  supplied eligibility surface remain holds. The phantom characterization is
-  withdrawn; the alpha Decisions possibility is user-supplied and unverified,
-  pending a D13 / eligibility-surface ruling.
+  installed parity, four endpoint mismatches, and standard chat/completions Jev
+  eligibility remain holds. One bounded alpha Decisions call returned HTTP 200
+  using the existing key, with provider-reported usage cost `0.000017934`; this
+  establishes observed alpha servability only. The phantom characterization is
+  withdrawn, and D13 routing acceptance remains pending.
 - HAWF remains exactly `escalated-unresolved / downstream hold`; its packet remains
   parked with the owner and was not reconciled or handed off.
 
 The continuation is accepted as a reviewed, incomplete evidence refresh only. It does
 not authorize RCM-P1 dispatch or any downstream parcel.
+
+## Bounded alpha Decisions servability continuation
+
+The user authorized exactly one potentially billable call. The coordinator made one
+POST to `https://openrouter.ai/api/alpha/decisions` for `typesafe/jev-1.13`; it returned
+HTTP 200 with structured answers, response model `typesafe/jev-1.13-20260917`, and
+provider `TypeSafe`. The provider-reported usage cost was `0.000017934` with currency
+unspecified. No retry or second call was made, and no key value or request header was
+recorded.
+
+The same key was accepted for this alpha Decisions call. Chat/completions key coverage
+was not tested and is not inferred. The supplied chat/completions catalog still has
+zero Jev matches and `MISSING_MODEL_REFUSED`; alpha servability does not approve the
+alpha endpoint under D13 or create Foreman routing authority. HAWF remains untouched.
 
 ## Jev eligibility-surface correction
 

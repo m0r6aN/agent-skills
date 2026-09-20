@@ -114,8 +114,10 @@ Gate 2 is satisfied for RCM-P0 and RCM-P1. The bounded Gate 3 extension was used
 for the same four RCM-P0 evidence artifacts: the host-owner export refresh was merged
 as `37d9ecb` after two fresh independent reviews and coordinator hash/closure checks.
 The refresh remains an incomplete evidence handoff: `complete:false`, freshness and
-approved-configuration authority are refused, Jev remains refusal-only, and no live
-routing authority was created. General Gate 3 authority remains human-owned and not
-delegated. RCM-P1 remains held; no P1 dispatch, host correction, live policy mutation,
-Pi write, provider spend, or downstream consumption is authorized until the remaining
-P0 evidence boundary is accepted and P1 is explicitly re-gated.
+approved-configuration authority are refused. One bounded alpha Decisions call
+observed Jev servability, but standard chat/completions eligibility and D13 routing
+acceptance remain unresolved; no live routing authority was created. General Gate 3
+authority remains human-owned and not delegated. RCM-P1 remains held; no P1 dispatch,
+host correction, live policy mutation, Pi write, provider spend, or downstream
+consumption is authorized until the remaining P0 evidence boundary is accepted and P1
+is explicitly re-gated.
