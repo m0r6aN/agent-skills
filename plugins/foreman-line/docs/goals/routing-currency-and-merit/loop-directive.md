@@ -8,12 +8,12 @@
 > boundary by updating this block. If another live coordinator is named or ownership
 > becomes ambiguous, stop and report; never assume.
 
-**State:** `RCM-P0-human-gate-3` — Stage Zero, mandatory plan review, shaping, Gate 2,
-builder rework, deterministic closure, and two fresh post-rework adversarial reviews
-are complete. RCM-P0 is accepted only as an incomplete evidence handoff; its four
-evidence files remain unmerged in the builder worktree. Human Gate 3 is required.
-RCM-P1 is not dispatched because the strict queue requires the RCM-P0 evidence
-handoff first.
+**State:** `RCM-P0-closed-incomplete` — Stage Zero, mandatory plan review, shaping,
+Gate 2, builder rework, deterministic closure, two fresh post-rework adversarial
+reviews, and the bounded human Gate 3 merge are complete. RCM-P0 is accepted only
+as an incomplete evidence handoff; its spec is in `docs/specs/done/` and its four
+evidence files are merged. RCM-P1 remains held because the live-source boundary is
+unresolved and the queue is re-gated on accepted RCM-P0 evidence.
 
 ## Standing authorizations and limits
 
@@ -107,10 +107,11 @@ claim.
 
 ## Current iteration
 
-Gate 2 is satisfied for RCM-P0 and RCM-P1, but Gate 3 is not delegated. RCM-P0's
-bounded incomplete handoff and review disposition are recorded in
-`rcm-p0-review-triage.md`; the full requirement audit is recorded in `exit-audit.md`.
-The coordinator must stop here: no merge, P1 dispatch,
+Gate 2 is satisfied for RCM-P0 and RCM-P1. A one-off human Gate 3 grant merged the
+bounded RCM-P0 handoff; general Gate 3 authority remains human-owned and not
+delegated. RCM-P0's bounded incomplete handoff and review disposition are recorded
+in `rcm-p0-review-triage.md`; the full requirement audit is recorded in
+`exit-audit.md`. The coordinator must stop here: no P1 dispatch,
 host correction, live policy mutation, Pi write, provider spend, or downstream
-consumption is authorized until the human Gate 3 decision and the missing evidence
-boundary are resolved.
+consumption is authorized until the missing evidence boundary is resolved and P1 is
+re-gated.

@@ -1,7 +1,7 @@
 ---
 ticket: RCM-P0
 title: Current-instance routing reconnaissance
-status: draft
+status: done
 owner: clinton.morgan
 created: 2026-09-20
 updated: 2026-09-20
@@ -21,13 +21,14 @@ produce reviewable evidence for the coordinator and later parcels. Deliver a dri
 report, versioned catalog facts, environment map, and verification record without
 implementing code or correcting host configuration. Historical observations are
 hypotheses; a snapshot proves recorded facts, not live provider availability or
-dispatch authority.
+dispatch authority. This completed evidence parcel is not a runtime implementation
+and does not release downstream P1 while its live-source holds remain.
 
 ## Constraints
 
 Authority baseline is `96b6e39d9845f15b52057ffa5e73147fc02ae5e7`: Gate 1 includes
 amendments A–K and queue amendments 1–6; Gate 2 names only RCM-P0/P1. Gate 3 remains
-human-owned. This draft is not dispatchable. The coordinator's subsequent Step-0
+human-owned. This evidence parcel is not a runtime dispatch path. The coordinator's subsequent Step-0
 ruling explicitly makes HAWF/INDEX reconciliation an in-scope P0 evidence item,
 not a shaping blocker; it does not waive the downstream ownership gate.
 
@@ -341,7 +342,7 @@ comparison and every freshness result from its recorded operands.
 
 Draft self-check: use existing `shaping/src/self-check.ts::selfCheckDraft` and the
 spec-linter CLI against this exact file with `--repo-root` explicitly supplied;
-require both layers valid and status still draft. Use preinstalled dependencies
+require both layers valid. At shaping time the file was draft. Use preinstalled dependencies
 and a compatible Node runtime; no installation or cache output is authorized.
 Coordinator lint remains authoritative.
 
@@ -365,3 +366,14 @@ ownership and Jev dispositions, tool versions and exact command exits. Coordinat
 and independent reviewers decide acceptance and whether P1 can consume evidence;
 later waves need new Gate 2 grants. Freshness TTL and safe acquisition availability
 are execution prerequisites, not claims established by this shaping session.
+
+## Stage F closure
+
+Gate 3 for the bounded RCM-P0 handoff was explicitly granted by Clinton Morgan.
+The evidence artifacts and this spec were merged from `codex/rcm-p0-builder` after
+the coordinator closure pass and two fresh post-rework frontier reviews. The
+handoff is accepted as incomplete evidence only: F1–F6 remain
+`blocked-secret-boundary`, HAWF remains `escalated-unresolved` with downstream hold,
+Jev remains evidence-only refused/disabled-lane, and the catalog snapshot is not
+consumable as live routing authority. RCM-P1 remains held until the missing evidence
+boundary is resolved and its parcel is separately advanced through the loop.

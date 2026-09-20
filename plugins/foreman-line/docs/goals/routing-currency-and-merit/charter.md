@@ -358,3 +358,12 @@ Gate 3, provider spend, host correction, or external-effect authority.
 authorizes dispatch of exactly those two parcels, subject to the full per-parcel loop,
 and authorizes no other parcel, merge, host correction, provider spend, or external
 effect. Later waves require a new exact parcel-set grant.
+
+## Bounded Gate 3 record
+
+**GRANTED 2026-09-20 by Clinton Morgan:** “I explicitly grant Gate 3 for the bounded
+RCM-P0 handoff.” This one-off grant authorized integration of the reviewed RCM-P0
+spec and four evidence artifacts after the green closure chain. It does not accept
+the incomplete host-derived evidence as live authority, release RCM-P1, delegate
+general Gate 3, authorize host correction, provider spend, credential discovery,
+network access, or any downstream parcel.

@@ -6,13 +6,15 @@
 acceptance, not downstream release, and not authorization to consume the catalog
 snapshot for routing, dispatch, merit, or live authority.
 
-The handoff remains in the builder worktree and is not merged:
+The bounded handoff was merged after the explicit Gate 3 grant:
 
 - Worktree: `C:\Repos\foreman-line-routing-currency-merit-rcm-p0-builder`
 - Branch: `codex/rcm-p0-builder`
-- Baseline: `1ec2b1012d5290851e924cc91137ec3f09122820`
-- Scope: exactly the four RCM-P0 evidence files named by the spec; no commit was
-  created and no tracked files changed.
+- Evidence commit: `d5f85b2`
+- Integration merge: `794514a`
+- Scope: exactly the four RCM-P0 evidence files named by the spec plus the shaped
+  parcel spec, with no unrelated files included.
+- Stage F: the spec is now at `plugins/foreman-line/docs/specs/done/`.
 
 ## Review record
 
@@ -77,7 +79,7 @@ times, and host measurements remain unavailable; C06/C13 and the earlier-read
 gate limitation remain retained.
 
 Do not dispatch RCM-P1, promote routing, write Pi settings, discover credentials,
-call the network, spend with a provider, or merge the builder branch under the
-current directive. The next required decision is human Gate 3 for the bounded
-RCM-P0 evidence handoff. A later Gate 2 decision is required before any parcel
-outside the explicitly granted initial set is dispatched.
+call the network, or spend with a provider under the current directive. The bounded
+Gate 3 merge is complete, but RCM-P1 remains held until the missing evidence
+boundary is resolved and the parcel is re-gated. A later Gate 2 decision is required
+before any parcel outside the explicitly granted initial set is dispatched.
