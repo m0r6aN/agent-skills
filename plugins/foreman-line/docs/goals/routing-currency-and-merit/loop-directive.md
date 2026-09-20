@@ -110,11 +110,12 @@ claim.
 
 ## Current iteration
 
-Gate 2 is satisfied for RCM-P0 and RCM-P1. A one-off human Gate 3 grant merged the
-bounded RCM-P0 handoff; general Gate 3 authority remains human-owned and not
-delegated. RCM-P0's bounded incomplete handoff and review disposition are recorded
-in `rcm-p0-review-triage.md`; the full requirement audit is recorded in
-`exit-audit.md`. The coordinator must stop here: no P1 dispatch,
-host correction, live policy mutation, Pi write, provider spend, or downstream
-consumption is authorized until the selected sanitized export is supplied, the fresh
-P0 continuation verifies it, and P1 is re-gated.
+Gate 2 is satisfied for RCM-P0 and RCM-P1. The bounded Gate 3 extension was used only
+for the same four RCM-P0 evidence artifacts: the host-owner export refresh was merged
+as `37d9ecb` after two fresh independent reviews and coordinator hash/closure checks.
+The refresh remains an incomplete evidence handoff: `complete:false`, freshness and
+approved-configuration authority are refused, Jev remains refusal-only, and no live
+routing authority was created. General Gate 3 authority remains human-owned and not
+delegated. RCM-P1 remains held; no P1 dispatch, host correction, live policy mutation,
+Pi write, provider spend, or downstream consumption is authorized until the remaining
+P0 evidence boundary is accepted and P1 is explicitly re-gated.

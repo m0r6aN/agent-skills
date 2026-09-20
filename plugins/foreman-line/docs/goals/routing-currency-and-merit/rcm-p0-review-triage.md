@@ -83,3 +83,23 @@ call the network, or spend with a provider under the current directive. The boun
 Gate 3 merge is complete, but RCM-P1 remains held until the missing evidence
 boundary is resolved and the parcel is re-gated. A later Gate 2 decision is required
 before any parcel outside the explicitly granted initial set is dispatched.
+
+## Sanitized-export continuation
+
+The host-owner sanitized export was supplied and refreshed under the explicitly
+extended bounded Gate 3 scope. Only the same four evidence artifacts changed; no
+control document, host file, policy, credential, network, spend, HAWF action, or P1
+release was performed in that parcel.
+
+- Refresh commit: `51af8f6`; integration merge: `37d9ecb`.
+- Fresh Review A: no actionable findings for the bounded incomplete refresh.
+- Fresh Review B: no actionable findings for the bounded incomplete refresh.
+- Deterministic evidence blocks: A1 `8,450`, A2 `77`, A3 `1,949`; all exits 0.
+- Positive consumption: `PARTIAL_REFUSED`, expected native exit 1.
+- Current evidence remains `complete:false`; freshness, approved configuration,
+  installed parity, four endpoint mismatches, and Jev absence remain holds.
+- HAWF remains exactly `escalated-unresolved / downstream hold`; its packet remains
+  parked with the owner and was not reconciled or handed off.
+
+The continuation is accepted as a reviewed, incomplete evidence refresh only. It does
+not authorize RCM-P1 dispatch or any downstream parcel.

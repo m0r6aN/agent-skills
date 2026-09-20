@@ -3,10 +3,11 @@
 **Audit date:** 2026-09-20  
 **Coordinator task:** `01a0bf3f-559b-7291-a20e-8d8a4bbb16b3`  
 **Operational charter:** repo-local ratified copy at `charter.md`  
-**State:** not complete; RCM-P0 bounded handoff merged, with host-owner sanitized
-export selected as the next evidence path; downstream live-evidence boundary and
-RCM-P1 re-gate remain open. The bounded Gate 3 extension covers only refreshes of
-the same four RCM-P0 evidence artifacts under the completed P0 spec.
+**State:** not complete; the host-owner sanitized-export refresh of the four RCM-P0
+evidence artifacts is merged and independently reviewed, but remains incomplete
+evidence (`complete:false`). The downstream live-evidence boundary and RCM-P1 re-gate
+remain open. The bounded Gate 3 extension covers only those four artifacts under the
+completed P0 spec.
 
 This is a requirement audit against the current repo-local ratified charter and
 loop directive. It is not a substitute for parcel verification or human gates.
@@ -30,17 +31,17 @@ loop directive. It is not a substitute for parcel verification or human gates.
 
 | Parcel | State | Evidence |
 |---|---|---|
-| RCM-P0 | Reviewed as incomplete evidence handoff; bounded merge complete | `rcm-p0-review-triage.md`; merge `794514a`; spec in `docs/specs/done/` |
+| RCM-P0 | Reviewed as incomplete evidence handoff; bounded refresh merge complete | `rcm-p0-review-triage.md`; merges `794514a`, `37d9ecb`; spec in `docs/specs/done/` |
 | RCM-P1 | Not dispatched | P0 evidence/dependency hold in `loop-directive.md` |
 | RCM-P2–P10 | Not dispatched | Strict queue and new Gate 2 requirement |
 
 ## Active blockers
 
-1. The host-owner sanitized-export route is selected, but no export or exact source
-   binding has yet been supplied. Therefore F1–F6 live evidence,
-   identity/endpoint joins, installed parity, accepted freshness, and source times
-   remain unavailable.
-2. HAWF remains `escalated-unresolved` with downstream hold; Jev remains an
+1. The host-owner sanitized export is supplied and reproducibly checked, but it does
+   not establish approved configuration authority, installed parity, accepted
+   freshness/source-time authority, or a complete live snapshot. Four exact endpoint
+   mismatches and the absent Jev tuple remain refused findings.
+2. HAWF remains `escalated-unresolved / downstream hold`; Jev remains an
    evidence-only refused/disabled lane.
 
 The current directive therefore correctly forbids P1 dispatch, host
