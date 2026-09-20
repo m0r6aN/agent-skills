@@ -1,138 +1,168 @@
-# RCM-P0 drift report — incomplete reconnaissance
+# RCM-P0 drift report — sanitized-export continuation
 
-Status: **blocked evidence delivered; no positive live claims; not accepted for downstream consumption**.
-Repository commit: `1ec2b1012d5290851e924cc91137ec3f09122820`.
-Repository observations: 2026-09-20T15:23:52.9276997Z; independent reacquisition: 2026-09-20T15:24:22.7814460Z.
-Authority: coordinator execution release R1, transcribed in `rcm-p0-environment-map.md`.
-Source IDs resolve to exact repository paths, timestamps, byte formats and SHA-256 in
-`rcm-p0-catalog-snapshot.v1.json#/sourceRefs`. Repeatable commands are in
-`rcm-p0-verification.md`; host source IDs H01-H04 are explicitly unbound.
+Status: **unaccepted evidence refresh; complete:false; no live routing authority**.
+Repository: `cfdde25728d73fe4532d9dfc794a3b4188973f51`.
+Fixed evidence evaluation time: `2026-09-20T17:06:31.731Z`.
+Source acquisition/reacquisition times, exact SHA-256s and record locators are in
+`rcm-p0-catalog-snapshot.v1.json#/sourceRefs`. Commands and exits are in
+`rcm-p0-verification.md`. H02/H03 mean the supplied sanitized projections only.
 
-## Rework qualification
+The bounded Gate 3 extension permits refresh of these four artifacts under the
+completed P0 spec only. It grants no RCM-P1 release, host correction, spend,
+general Gate 3 or commit. The original bounded handoff remains accepted only as
+incomplete evidence; this refresh requires coordinator acceptance and fresh reviews.
 
-R1/R2 process authorization is explicitly bound in the environment map and
-verification record to task `01a0bf3f-559b-7291-a20e-8d8a4bbb16b3`, ratified
-directive commit `96b6e39`, and “Grant Gate 2 for RCM-P0 and RCM-P1”.
-It supplies no host-source evidence or downstream release.
+## Findings re-derived
 
-RW02 completed 167 fresh pre-edit repository/evidence checks. RW04 documents
-the corrected verification: exact approved-role/root containment before source
-metadata/hash access, reparse/credential/URL rejection, 45 classification cited-line
-checks, 15 tier cited-line checks, and all six arrays compared in exact policy order.
-Changed-locator and reversed-economy negative controls refuse in memory.
-These are evidence-procedure controls, not production runtime enforcement.
+“Reproduced” below is scoped to repository text plus the supplied projections.
+It does not mean provider availability, installed parity, runtime execution,
+approved current configuration or freshness has been proved.
 
-Fresh rework source access is limited to S01 and S03–S13. Prior S02/S14 evaluator/
-dispatch observations below are retained historical evidence; neither source is
-read, rehashed or newly attested during rework. All bounded repository observations
-remain separate from blocked host claims. Original acquisition times are preserved.
-
-## F1–F6
-
-All six overall verdicts are `blocked`, specifically `blocked-secret-boundary`.
-Repository-only subfindings below do not validate historical host hypotheses.
-No blocked hypothesis is classified as reproduced or not-reproduced; no locked
-decision is invalidated by absence of evidence.
-
-| Finding / charter hypothesis | Current observation and calculation | Verdict, comparison and accountable next action |
+| Finding | Observation, derivation and verdict | Consequence / owner |
 |---|---|---|
-| F1 — economy first pick is text-only (S03:104) | S01:18-20 selects economy for boilerplate. S01:191 puts Nemotron first; it appears in public/internal/restricted at 91/114/137. S02:74-78 exposes class, classification and workflow ID; S02:204,210-224 selects the first classification-eligible tier entry with no modality predicate. Static repository selection therefore exposes Nemotron for all three classifications, conditional on this policy being loaded. Catalog exact match, input modalities, approved host endpoint and installed policy parity are unknown. | **blocked**. Policy order and static omission are observed; text-only/image-bearing runtime failure is not reproduced. Coordinator/host owner must establish safe acquisition; P4/P4A own actual execution proof. No evaluator was called. |
-| F2 — GLM text-only at standard position four (S03:105) | S01:174-181 gives GLM position **4 of 6**, after Sonnet, Gemini Flash and GPT Terra; all three predecessors and GLM appear in each classification. With the current repository classification lists, GLM is not the selected primary. First-eligible logic could expose it only if all three predecessors become ineligible; no health/quota fallback is implemented by the observed loop. GLM catalog capabilities remain unknown. | **blocked**. Fourth position reproduced as a repository fact only. Text-only claim and execution effect unverified. P4/P4A own runtime closure. |
-| F3 — Nemotron price drift (S03:106) | S01:13-14 dates comments to 2026-09-03, per 1M input/output tokens; S01:191 records USD 0.065 / 0.18. Historical comparison operands 0.08 / 0.20 yield 23.076923% input and 11.111111% output, separately, using (new-old)/old*100 (C04). Those newer operands are charter history, not acquired catalog rates. Current numeric rates and units are unavailable. | **blocked**; current price comparison refused. Never compare token rates with per-parcel ceiling_usd. Unknown units/prices or a zero denominator refuse. Safe measurement belongs to a later authorized acquisition; P6 owns proposal work. |
-| F4 — enabled/default phantom references (S03:107) | Host enabled/default references, inventory counts, exact match counts and endpoints are all unknown. Missing/total = unknown/unknown, not 4/5, not 0/0. Empty snapshot arrays mean unobserved, not absent. Jev disposition below. | **blocked**. Cannot enumerate any current enabled/default list safely. Host owner must supply a bound safe export; correction requires separate human authorization, with P7 owning projection work. |
-| F5 — opencode/opencode-go namespace mismatch (S03:108) | Configured opencode key/endpoint: unknown. Configured opencode-go key/endpoint: unknown. Each corresponding catalog namespace/endpoint: unknown. Approved current configuration authority: unavailable. Both comparisons independently refuse. | **blocked**; historical mismatches neither reproduced nor dismissed. Equal endpoints never permit provider aliasing. Cached endpoints cannot approve themselves. Coordinator/host owner own authority and safe-source prerequisites; later resolver/projector parcels own enforcement. |
-| F6 — all 15 policy IDs current (S03:109) | Independent repository derivations C04/C05 yield frontier 5 + standard 6 + economy 4 = 15 entries, 15 distinct IDs, zero duplicate tier IDs; each classification has the same 15 distinct IDs and no references outside tiers. Every catalog join in the table below is blocked. Present/total = **unknown/15**; catalog duplicates, absent and mismatched rows are unknown. | **blocked**. Historical 15/15 is not current evidence. No uptime, exact installed endpoint, or provider availability claim. P1 may consume only coordinator-accepted evidence and must preserve refusals. |
+| F1 | **reproduced, static exposure only**. S01:18-20 selects economy for boilerplate; Nemotron is first (191) and appears in all three classification sets (91/114/137). H02#/providers/10/models/185 is exactly openrouter / nvidia/nemotron-3.5-lightning / https://openrouter.ai/api/v1, input=[text]. S02:204,210-224 intersects classification and walks tier order without an input-modality predicate. In-memory derivation selects Nemotron in all three classifications. | Text-only first-eligible exposure is supported. Actual image-bearing execution remains **blocked/unproved**; installed policy parity is unknown. P4/P4A own runtime proof; no evaluator or dispatch call was made. |
+| F2 | **reproduced, conditional static exposure only**. H02#/providers/10/models/373 gives exact openrouter / z-ai/glm-5.3 / https://openrouter.ai/api/v1, input=[text]. S01:174-181 puts it **4 of 6** in standard after Sonnet, Gemini Flash, GPT Terra. All four are classification-eligible in each list. | Sonnet is the static first eligible entry; GLM is not the selected primary. Removing all three predecessors from the eligible set in memory exposes GLM; this is not health/quota fallback or a runtime result. P4/P4A own closure. |
+| F3 | **reproduced, projected rate comparison**. S01:13-14 dates USD-per-1M-token comments to 2026-09-03; line 191 gives 0.065 input / 0.18 output. H02#/providers/10/models/185/cost supplies 0.08 / 0.20, each explicitly labeled USD per 1M tokens. (new-old)/old*100 gives **23.076923% input**, **11.111111% output**. | Units are declared by the owner projection, not independently verified against an upstream pricing source. No claim about the exact time of price change. No comparison with ceiling_usd. Unknown units/rates or zero denominators refuse. P6 owns later proposal work. |
+| F4 | **reproduced, projection membership**. Five enabled references: four absent, one unique observed endpoint match; **4/5 = 80%**. The one default is also absent and duplicates enabled index 0: **1/1 default absent**, six reference occurrences, five distinct pairs. Full inventory below. | No host repair. Separate human authorization is needed for any correction; P7 may later produce a governed proposal. Jev remains refused/disabled-lane/correction proposal only. |
+| F5 | **reproduced core endpoint mismatch; disjoint-ID subclaim not-reproduced**. H03#/providers/0 configures opencode at https://opencode.ai/zen/go/v1. H02#/providers/8 has 68 opencode records: 54 at /zen/v1 and 14 at /zen; none at the configured URL. H02#/providers/9 has 27 opencode-go records: 25 at /zen/go/v1 and 2 at /zen/go. H03 has no opencode-go provider entry. The namespaces share **15 exact IDs**, so “disjoint” is false. | Do not alias opencode to opencode-go or normalize endpoint paths. opencode mismatch is measured; opencode-go's approved/configured endpoint remains unresolved. H04 approved configuration authority was not supplied. Coordinator owns the evidence correction; no configuration action. |
+| F6 | **not-reproduced as full exact-tuple health**. All **15/15 policy IDs** exist uniquely in OpenRouter, but only **11/15** exactly match H03's https://openrouter.ai/api/v1; **4/15** use https://openrouter.ai/api and refuse. Zero absent policy IDs, zero duplicate pairs, 45 classification references and zero outside-tier IDs. | Discard the unqualified “100% current / governed file healthy” claim. ID-only presence reproduces; endpoint-compatible health does not. Even the 11 agreements are observations, not approved joins: H04 and freshness remain blocked. Escalate the empirical-premise correction to the RCM coordinator within this completion report; no locked decision is amended and no downstream work is released. |
 
-## Exact-ID join inventory
+F6's four mismatches are Opus 5, Fable 5.1, Sonnet 5 and Haiku 4.5.
+Their catalog API is anthropic-messages; the other policy records use
+openai-completions. This difference is observed, not permission to equate or
+rewrite URLs. No case folding, dot/dash conversion, suffix stripping, URL
+trimming, provider aliasing or substitute ID is used.
 
-Order below is repository tier order, never price or merit order. Required provider is
-`openrouter`; no approved current installed endpoint source was acquired. The repository
-D10 endpoint is contractual evidence for Jev, not proof of a host configuration.
-No case folding, alias substitution, dot/dash conversion, suffix removal, or URL trimming.
+## Exact policy-ID join inventory
 
-| Tier | Position | Exact repository ID | Source | Catalog join |
-|---|---:|---|---|---|
-| frontier | 1 | `anthropic/claude-opus-5` | S01:166 | blocked-secret-boundary; match count unknown |
-| frontier | 2 | `openai/gpt-5.6-sol` | S01:167 | blocked-secret-boundary; match count unknown |
-| frontier | 3 | `google/gemini-3.1-pro-preview` | S01:168 | blocked-secret-boundary; match count unknown |
-| frontier | 4 | `anthropic/claude-fable-5.1` | S01:169 | blocked-secret-boundary; match count unknown |
-| frontier | 5 | `openai/gpt-6-astra` | S01:170 | blocked-secret-boundary; match count unknown |
-| standard | 1 | `anthropic/claude-sonnet-5` | S01:174 | blocked-secret-boundary; match count unknown |
-| standard | 2 | `google/gemini-3.8-flash` | S01:175 | blocked-secret-boundary; match count unknown |
-| standard | 3 | `openai/gpt-5.6-terra` | S01:176 | blocked-secret-boundary; match count unknown |
-| standard | 4 | `z-ai/glm-5.3` | S01:179 | blocked-secret-boundary; match count unknown |
-| standard | 5 | `x-ai/grok-4.6` | S01:180 | blocked-secret-boundary; match count unknown |
-| standard | 6 | `meta/muse-spark-1.3` | S01:181 | blocked-secret-boundary; match count unknown |
-| economy | 1 | `nvidia/nemotron-3.5-lightning` | S01:191 | blocked-secret-boundary; match count unknown |
-| economy | 2 | `openai/gpt-5.6-luna` | S01:192 | blocked-secret-boundary; match count unknown |
-| economy | 3 | `google/gemini-3.1-flash-lite` | S01:193 | blocked-secret-boundary; match count unknown |
-| economy | 4 | `anthropic/claude-haiku-4.5` | S01:194 | blocked-secret-boundary; match count unknown |
+The comparison endpoint comes from **observed H03 settings**, not an approved
+configuration source. H04 is unavailable. All positive approved/live consumption
+therefore remains refused. Order below is policy order.
 
-Classification outside-tier IDs: none in each of public, internal and restricted
-(S01:73-137; C04/C05). Catalog-side duplicates/absence/mismatches are unmeasured.
+| Tier / position | Exact ID | Source | ID matches | Catalog baseUrl | Disposition |
+|---|---|---|---:|---|---|
+| frontier 1 | `anthropic/claude-opus-5` | S01:166; H02#/providers/10/models/44 | 1 | `https://openrouter.ai/api` | endpoint mismatch; refused |
+| frontier 2 | `openai/gpt-5.6-sol` | S01:167; H02#/providers/10/models/244 | 1 | `https://openrouter.ai/api/v1` | observed match; approval/freshness blocked |
+| frontier 3 | `google/gemini-3.1-pro-preview` | S01:168; H02#/providers/10/models/96 | 1 | `https://openrouter.ai/api/v1` | observed match; approval/freshness blocked |
+| frontier 4 | `anthropic/claude-fable-5.1` | S01:169; H02#/providers/10/models/29 | 1 | `https://openrouter.ai/api` | endpoint mismatch; refused |
+| frontier 5 | `openai/gpt-6-astra` | S01:170; H02#/providers/10/models/252 | 1 | `https://openrouter.ai/api/v1` | observed match; approval/freshness blocked |
+| standard 1 | `anthropic/claude-sonnet-5` | S01:174; H02#/providers/10/models/51 | 1 | `https://openrouter.ai/api` | endpoint mismatch; refused |
+| standard 2 | `google/gemini-3.8-flash` | S01:175; H02#/providers/10/models/107 | 1 | `https://openrouter.ai/api/v1` | observed match; approval/freshness blocked |
+| standard 3 | `openai/gpt-5.6-terra` | S01:176; H02#/providers/10/models/248 | 1 | `https://openrouter.ai/api/v1` | observed match; approval/freshness blocked |
+| standard 4 | `z-ai/glm-5.3` | S01:179; H02#/providers/10/models/373 | 1 | `https://openrouter.ai/api/v1` | observed match; approval/freshness blocked |
+| standard 5 | `x-ai/grok-4.6` | S01:180; H02#/providers/10/models/357 | 1 | `https://openrouter.ai/api/v1` | observed match; approval/freshness blocked |
+| standard 6 | `meta/muse-spark-1.3` | S01:181; H02#/providers/10/models/138 | 1 | `https://openrouter.ai/api/v1` | observed match; approval/freshness blocked |
+| economy 1 | `nvidia/nemotron-3.5-lightning` | S01:191; H02#/providers/10/models/185 | 1 | `https://openrouter.ai/api/v1` | observed match; approval/freshness blocked |
+| economy 2 | `openai/gpt-5.6-luna` | S01:192; H02#/providers/10/models/240 | 1 | `https://openrouter.ai/api/v1` | observed match; approval/freshness blocked |
+| economy 3 | `google/gemini-3.1-flash-lite` | S01:193; H02#/providers/10/models/93 | 1 | `https://openrouter.ai/api/v1` | observed match; approval/freshness blocked |
+| economy 4 | `anthropic/claude-haiku-4.5` | S01:194; H02#/providers/10/models/31 | 1 | `https://openrouter.ai/api` | endpoint mismatch; refused |
 
-## Supporting charter observations
+All three classification lists have 15 entries / 15 distinct IDs, equal to the
+tier ID set. No classification reference occurs outside tiers. Duplicate provider
+keys, provider/model pairs and settings provider keys are all zero in the supplied
+export; injected duplicate and ambiguous identities refuse in memory.
 
-S03:64-98 labels the old snapshot as design input. Provider/model counts, schema/key
-inventory, modality values, output-modality absence, reasoning coverage, context ranges,
-thinking-map coverage, provider refresh times and default thinking level are all
-`blocked-secret-boundary` now. Historical 13/608/341 and similar values receive no
-current evidentiary credit. No visible quality-field absence or merit conclusion is made.
+## Every settings reference
 
-Sentinel prices, meta-router IDs and model variant IDs in the host catalog are unobserved.
-S01:157-161 documents variant restrictions, and S03:137-149 discusses historical
-sentinel/meta-router examples; these are hypotheses/contract context, never new candidates.
-Credential-bearing fields are deliberately excluded; safe schema coverage itself is
-unavailable. Deliberate credential exclusion is not a missing required routing fact.
+| Settings locator | Exact provider:model | Observed configured baseUrl | ID matches | Result |
+|---|---|---|---:|---|
+| enabledModels/0 | `opencode:qwen/qwen-2.5-coder-32b` | `https://opencode.ai/zen/go/v1` | 0 | MISSING_MODEL_REFUSED |
+| enabledModels/1 | `opencode:deepseek/deepseek-r1-distill-qwen-32b` | `https://opencode.ai/zen/go/v1` | 0 | MISSING_MODEL_REFUSED |
+| enabledModels/2 | `openrouter:anthropic/claude-3.5-sonnet` | `https://openrouter.ai/api/v1` | 0 | MISSING_MODEL_REFUSED |
+| enabledModels/3 | `openrouter:openai/gpt-4o-mini` | `https://openrouter.ai/api/v1` | 1 | OBSERVED_TUPLE_MATCH |
+| enabledModels/4 | `openrouter:typesafe/jev-1.13` | `https://openrouter.ai/api/v1` | 0 | MISSING_MODEL_REFUSED |
+| defaultProvider + #/defaultModel | `opencode:qwen/qwen-2.5-coder-32b` | `https://opencode.ai/zen/go/v1` | 0 | MISSING_MODEL_REFUSED |
 
-## HAWF/INDEX disposition
+The one observed match is openrouter:openai/gpt-4o-mini at H02#/providers/10/models/204.
+A match does not promote it or approve dispatch. Missing model matches are zero;
+they are not explained away by matching another namespace.
 
-**escalated-unresolved; downstream hold remains.**
+## Supporting observations and limits
 
-- S07:6 says HAWF is SUPERSEDED, historical and non-dispatchable.
-- S06:12 still advertises awaiting_coordinator_claim in the pickup queue;
-  S06:50-52 requires stop-and-reconcile on conflicting goal/index state.
-- S08:5,10 still says UNCLAIMED / awaiting_coordinator_claim.
-- R1 clause 4 explicitly permits this evidence and requires escalated-unresolved.
-  R1 was received before 2026-09-20T15:22:22.2949213Z; its exact message timestamp
-  is not exposed. This is a receipt upper bound, not an invented ruling time.
+H02 contains **13 providers / 608 records**; counts and safe fieldCounts reproduce
+independently. Provider counts, in exported order: anthropic 14, cerebras 2,
+deepseek 2, google 22, groq 7, nvidia 20, openai 39, openai-codex 6,
+opencode 68, opencode-go 27, openrouter 378, qwen-token-plan 20, xai 3.
 
-Proposed reconciliation: the RCM coordinator should route correction of the stale
-pickup row and stale HAWF directive state to the superseded/non-dispatchable disposition,
-preserving historical provenance and respecting HAWF authority. The RCM coordinator
-owns this ruling/escalation, **not HAWF ownership**. No INDEX, charter or directive was
-corrected. Escalation satisfies reporting only; unresolved authority blocks P1 and
-affected downstream dispatch. Exact control hashes: S06/S07/S08 in the snapshot manifest.
+All 608 have id/provider/baseUrl/api/input/reasoning/contextWindow/maxTokens and
+input/output rate labels. Visible input occurrences: text 608, image 424; no
+other projected input modality. Reasoning: true 504 / false 104; policy tiers
+true 15/15. Overall context range is 4,095–2,000,000; economy 200,000–1,050,000.
+thinkingLevelMap is present on 341, absent on 267; settings defaultThinkingLevel
+is minimal. Missing maps are unknown; null map values do not prove support.
+Nemotron has no thinking map. Projected map values include uppercase HIGH and
+MINIMAL and the value default; they are retained without normalization.
 
-## Jev disposition and correction proposal
+**Provider checkedAt is absent for all 13** and both manifest sourceCheckedAt
+objects are empty. The historical “all providers share one checkedAt” assertion
+is **blocked, not reproduced** by this export. Source modification timestamps
+are owner-attested metadata, not refresh authority. Raw key inventory, output-
+modality absence and absence of quality fields cannot be inferred from an
+allowlist projection; those historical assertions remain **blocked/unknown**.
+No model-merit conclusion is made.
+
+Two negative-price records are openrouter/auto and openrouter/auto-beta
+(H02#/providers/10/models/273 and /274): input and output each -1000000.
+They are sentinel/meta-router observations, never usable prices or candidates.
+There are 94 policy-named suffix variants: 74 :batch, 20 :free, zero :nitro or
+:floor. The snapshot inventories every matching ID and locator. This inventory
+does not claim an exhaustive taxonomy of meta-routers or all possible variants.
+
+## HAWF disposition
+
+**escalated-unresolved / downstream hold**
+
+The escalation packet is parked with its owner. No action, reconciliation or
+onward handoff is performed or requested by this worker. S07:6 says SUPERSEDED /
+historical / non-dispatchable; S06:12 still says awaiting_coordinator_claim,
+S06:50-52 requires reconciliation for conflict, and S08:5,10 retains UNCLAIMED /
+awaiting_coordinator_claim. Current hashes:
+
+- S06 INDEX: `d10de5af1553d2405860e2ab3efa242279fa422c72fd8dba102aba404aeb1e30`
+- S07 HAWF charter: `6f9cd2a813dd69b1ec061df06db34e2bfb5098156643088c344de92a10900253`
+- S08 HAWF directive: `508fb3206520a5f4161f7f1e5076009fb56d420d1daeae924dacd75e489b4b51`
+
+The current coordinator ruling preserves this disposition. The worker neither
+claims HAWF ownership nor changes any control document.
+
+## Jev absence and correction proposal
 
 Required tuple: **openrouter / typesafe/jev-1.13 / https://openrouter.ai/api/v1**.
-S09:29,58,68-69 confines it to recommend-only routing/classification; never prose,
-implementation, approval, merge, release or policy bypass.
+It is enabled at H03#/enabledModels/4 but has **zero catalog matches** in the
+supplied full H02 projection; M01/catalogCoverage records the same absence.
 
-Current identity/membership/capabilities: **unverified**. Evidence disposition:
-**refused/disabled-lane**, per R1 clause 5; this is not a claim of runtime disablement.
+D10 corroboration supplied by the coordinator:
+[OpenRouter models endpoint](https://openrouter.ai/api/v1/models), observed at
+**2026-09-20T17:22:45.7959406Z**; direct find returned no matching
+`typesafe/jev-1.13` entry. This is **corroboration only**, not a replacement for
+H02 and not an independent worker fetch. No model page is catalog proof.
+The coordinator timestamp does not establish accepted catalog freshness.
 
-Proposal: a separately authorized host owner supplies a current credential-free,
-source-bound catalog/settings projection plus approved endpoint authority. Verify
-exactly one case-sensitive tuple and every default/enabled reference. Keep the lane
-refused while unavailable, ambiguous, mismatched or stale. A human separately authorizes
-any host correction; P7 may later propose a governed projection. No substitute identity,
-host patch, installation or live change is performed here.
+Disposition: **refused/disabled-lane/correction proposal only**. No runtime
+disablement is asserted. S09 D10 confines Jev to recommend-only routing/
+classification, never prose, implementation, approval, merge, release or bypass.
 
-## Consumption and remaining holds
+Correction proposal: keep the lane refused; a separately authorized human may
+address the missing identity and enabled/default inconsistencies. Any future
+acceptance needs exact unique provider/model/baseUrl evidence and accepted
+freshness/configuration authority. No model is installed, substituted, patched
+or silently selected here.
 
-The snapshot is incomplete evidence only. Refuse positive consumption on missing,
-partial, stale, changing, digest-mismatched or namespace-mismatched input. Daily cadence
-is ratified; 86400 seconds is only a proposed TTL. No required host time or accepted
-freshness bound exists, so freshness acceptance is refused. Repository rereads cannot
-renew cache age. No snapshot is installed as routing authority, an availability
-guarantee, a GMF execution receipt, or permission to dispatch.
+## Holds and unchanged contracts
 
-Holds: safe source/authority acquisition; host identities and F1-F6 measurements;
-freshness TTL and source times; installed parity; HAWF ownership reconciliation;
-Jev lane; compatible preinstalled lint tooling; post-rework coordinator-routed frontier
-review (including security focus); coordinator acceptance. The coordinator reports two
-prior frontier reviews that requested this rework; their full reports were not acquired
-by this builder. P0 neither amends frozen
-contracts nor adds inputs/min_context/thinking_level/expertise schema fields.
+Freshness is **refused**: no accepted TTL or source-time authority, no provider
+checkedAt. 86400 seconds remains a proposal. The snapshot stays complete:false
+and evidence-only until acceptance, and acceptance alone cannot make missing
+authority or freshness true. P1 remains held.
+
+Other holds: approved configuration authority; installed plugin version/parity;
+four policy endpoint mismatches; Jev absence; HAWF's exact disposition above;
+two fresh independent frontier reviews including security; coordinator evidence
+acceptance. F1/F2 runtime proof belongs to later parcels.
+
+RCM D1–D14, OQ1–OQ7, amendments A–K / queue 1–6, boundary D1–D10 and GMF
+contracts remain unchanged. Classification precedes capability then fixed tier
+order; eligibility is not merit; Pi settings are not routing authority. No
+network, raw host/credential read, host write, exporter-source acquisition,
+export-package mutation, code/runtime implementation, installation, price sort,
+spend, dispatch, commit or policy/control-document change occurred.

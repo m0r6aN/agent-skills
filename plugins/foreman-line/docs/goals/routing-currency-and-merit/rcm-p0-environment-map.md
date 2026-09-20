@@ -1,213 +1,177 @@
-# RCM-P0 environment map — repository evidence, host acquisition blocked
+# RCM-P0 environment map — bounded sanitized-export refresh
 
-Status: incomplete / blocked-secret-boundary. Observation: 2026-09-20T15:23:52.9276997Z.
-Repo commit: `1ec2b1012d5290851e924cc91137ec3f09122820`; branch: `codex/rcm-p0-builder`.
-The isolated root is represented as `REPO_ROOT`; the coordinator retains its exact
-absolute binding from the builder assignment. No identifying host path is published.
-All source paths below are repository-relative and resolved only under that bound root.
+## Explicit worktree and authorization
 
-## Coordinator-release record R1 and rework release R2
+Absolute repository root:
+**`C:\Repos\foreman-line-routing-currency-merit-rcm-p0-live-export`**.
+This is the assigned isolated **C:** worktree, not the D: coordinator checkout.
+Branch: `codex/rcm-p0-live-export`.
+Step 0 HEAD: `cfdde25728d73fe4532d9dfc794a3b4188973f51`; clean tracked and
+untracked status. The same clean state was confirmed after the interruptions,
+before the first evidence write. No commit is authorized or made.
 
-This retained record binds **process authorization** to coordinator task
-`01a0bf3f-559b-7291-a20e-8d8a4bbb16b3`, the ratified loop-directive commit
-`96b6e39d9845f15b52057ffa5e73147fc02ae5e7` (`96b6e39`), and the exact Gate 2
-phrase **“Grant Gate 2 for RCM-P0 and RCM-P1”**. The directive's ownership block
-names that task; its Standing authorizations item 2 records that grant. RW02
-compared the committed directive text with the unchanged disk directive and
-checked the task and phrase. Its SHA-256 remains
-`5ed29906d77105eb3a5b05cc9b7cbe00f102930208d93cd7ff44cb06b1c057dc`.
+Completed governing spec:
+`plugins/foreman-line/docs/specs/done/RCM-P0-current-instance-recon.md` (S10).
+Only these repository-relative paths may change:
 
-R1 is the coordinator execution ruling transcribed from the initial assignment:
-“Coordinator Step-0 ruling: release RCM-P0 execution under the accepted spec with
-these limits.” The current coordinator rework assignment explicitly confirms those
-limits and directs retention of this binding. R2 is the subsequent coordinator
-message: “Coordinator releases rework. Apply the four requested fixes exactly
-within the four evidence files.” It follows this builder's new Step 0 restatement
-and authorizes this bounded rework of the existing artifacts.
+- `plugins/foreman-line/docs/goals/routing-currency-and-merit/rcm-p0-drift-report.md`
+- `plugins/foreman-line/docs/goals/routing-currency-and-merit/rcm-p0-catalog-snapshot.v1.json`
+- `plugins/foreman-line/docs/goals/routing-currency-and-merit/rcm-p0-environment-map.md`
+- `plugins/foreman-line/docs/goals/routing-currency-and-merit/rcm-p0-verification.md`
 
-The ruling permits repository evidence and in-memory verification while safe host
-source binding remains unavailable. It requires F1–F6 blocked-secret-boundary,
-HAWF escalated-unresolved with downstream hold, Jev refused/disabled-lane evidence
-only, and snapshot complete=false/freshness refused. Node v24.7.0 is below shaping's
->=24.11.1 floor and worktree dependencies are absent; no installation is authorized.
-Only the four evidence files may change. No host/catalog/settings/auth/credential
-content, guessed paths, home/environment/credential-store enumeration, Pi launch,
-network, dispatch/evaluator access, host/policy/control writes, commit or merge.
+**Coordinator extension, recorded 2026-09-20T17:22:27.817Z:** the bounded Gate 3 granted
+2026-09-20 is explicitly extended to refreshes of these same four artifacts under
+this same completed spec only. No other artifact, no RCM-P1 release, host
+correction, spend, or general Gate 3 is granted. No commit is permitted.
+This records the current conversation ruling, not an invented control-document
+amendment or an acceptance of this worker's evidence.
 
-Provenance class: builder-retained transcription of coordinator messages plus
-repository control evidence. Exact original user-message timestamps and immutable
-message IDs are unavailable; no tool identity is asserted and there is
-**no independent human signature**. The original artifact's “received before
-2026-09-20T15:22:22.2949213Z” is a retained initial-run receipt upper-bound claim,
-not a newly verified user timestamp. Rework observation times identify command
-execution only. This record neither independently authenticates a human nor
-turns process authorization into host evidence, TTL approval, spec promotion,
-P1 dependency release, Gate 3 delegation, or full acceptance. No control document
-was amended to create this record.
+The bounded original handoff remains accepted as incomplete only. The earlier
+complete:false snapshot does not become live authority through this refresh.
+The new snapshot also remains complete:false, pending coordinator acceptance
+and fresh independent review, with substantive authority/freshness gaps retained.
 
-## Current evidence-procedure control
+## Source roles and boundaries
 
-Chronology limitation (open): initial Step 0 and RW01 repository reads predated
-RW04's later safety-gate proof. RW02 also cannot retroactively cover those reads.
-No retained evidence establishes equivalent gating for those earlier reads; the
-later controls do not close that process-evidence gap. Current source reads must
-use the corrected RW04 gate before metadata/content/hash access. This is not
-retroactive coverage or a claim of production enforcement.
-
-RW04 supersedes historical C06–C12 locator-based reacquisition. It is an
-**evidence-procedure control; not production runtime enforcement**. The only
-rework-readable source roles are S01 and S03–S13. S02/S14 remain historical
-dispatch/evaluator observations and are not accessed, rehashed or freshly attested.
-H01–H04 remain unbound and unread.
-
-Before a source metadata/content/hash read, require one exact, case-sensitive
-source-ID + role + full safe-locator match against the fixed approved table.
-Resolve the path from that table, never from `safeLocator.Substring(5)`. Reject
-unknown roles, changed locators, absolute/drive-relative/UNC/device paths, dot
-segments, traversal, alternate streams and malformed separators. Canonicalize
-under the coordinator-bound repository root and require root-plus-separator
-containment. Only after the role/containment gate, inspect each ancestor's
-attributes without traversing a reparse point; refuse any reparse point before
-descending or reading source content/hash/length/mtime.
-
-Reject credential-bearing fields and URL userinfo/query/fragment before path
-resolution or metadata reads. The source-role table accepts repository locators
-only, so no URL can become a readable source. Refusals emit fixed labels without
-the rejected value. No host document is acquired to perform these checks: inputs
-are the existing safe evidence manifest and explicitly synthetic in-memory
-negative copies. This is not an extractor or permission to parse mixed host JSON.
-
-The negative changed-locator case changes S01 to another otherwise valid repository
-path while retaining S01's role. It must yield SOURCE_ROLE_REFUSED with zero
-additional metadata probes. Absolute, UNC, traversal, wrong-role, credential-field,
-secret-URL and forbidden-source cases also refuse before metadata. A synthetic
-reparse attribute exercises the same rejection predicate used by the ancestor
-walk; no junction is created. This procedure does not claim atomic protection
-against concurrent filesystem substitution; source changes refuse acceptance and
-require coordinator handling.
-
-An independent section-aware policy scan verifies each of 45 classification rows
-and 15 tier rows against its exact cited line, then compares all six arrays in
-exact source order. Reversed economy order and a changed classification citation
-must fail on in-memory copies. Counts or set equality alone cannot pass those
-checks. These results establish bounded repository declarations only.
-
-## Initial R1 transcription (retained history)
-
-Reference: current builder task, user message beginning
-"Coordinator Step-0 ruling: release RCM-P0 execution under the accepted spec with these limits."
-Received before the first execution observation, 2026-09-20T15:22:22.2949213Z.
-Exact message timestamp/immutable message ID remain unavailable. The task/commit/
-Gate 2/process binding is now retained in the coordinator-release record above;
-no independent timestamp or signature is claimed.
-
-1. Safe-source boundary not established. No guessing paths, home/environment/store
-   enumeration, mixed host JSON, Pi launch or extractor. Record blocked-secret-boundary
-   and incomplete host-derived F1-F6 evidence; no positive live claims.
-2. Daily cadence ratified. 86400-second freshness bound remains proposed, not an
-   independently established TTL; freshness acceptance refused without binding/proof.
-3. Node v24.7.0 is below shaping's engine floor; dependencies absent. No installation.
-   Record limitations and exact exits; native PowerShell/repository evidence permitted.
-4. HAWF/INDEX evidence in scope: escalated-unresolved, superseded charter vs stale
-   awaiting-claim index, downstream hold; no INDEX write or HAWF ownership claim.
-5. Jev unverified: refused/disabled-lane evidence and correction proposal only.
-6. Only the four evidence files may be created; no code, host/policy/control writes,
-   installation, dispatch/evaluator calls, credentials, network, commit or merge.
-   Independent two-review requirement is coordinator-routed after the completion claim.
-
-R1 releases this bounded evidence execution despite preserved draft/shaping wording
-in S10 and S04. It does not promote the spec, release P1's dependencies, grant other
-Gate 2 parcels, or delegate Gate 3. S04:20-25 grants only P0/P1 and preserves human
-authority. Boundary D1-D10, RCM D1-D14 and GMF contracts remain unchanged.
-
-## Source roles and owners
-
-| Role locator | Binding / read status | Authority and owner |
+| Role | Read status and meaning | Authority / owner |
 |---|---|---|
-| REPO_ROOT | Coordinator-supplied isolated worktree; HEAD matches spec commit; clean before execution (C01 and Step 0) | Repository policy and goal controls; coordinator |
-| repo:plugins/foreman-line | Checkout source only, not an installed plugin | Repository maintainers; no installed parity inferred |
-| unbound:installed-plugin (H01) | Exact installed path/version/source absent; no read | Host owner must bind; parity unknown |
-| unbound:host-catalog (H02) | Exact path, safe method/export and current times absent; no read or hash | Host owner; observations cannot authorize routing |
-| unbound:Pi-settings (H03) | Exact path and safe method/export absent; no read or hash | Pi/host owner; never Foreman routing authority |
-| unbound:approved-configuration-authority (H04) | No approved current source bound; distinct from settings observation | Coordinator/host owner must identify authority |
-| S09:29 | Repository Jev contractual endpoint only | Boundary-routing contract; not installed endpoint proof |
+| REPO_ROOT | Exact absolute worktree above; repository text only | Repo policy owns routing; RCM coordinator owns evidence acceptance |
+| EXPORT_ROOT | Read-only coordinator-supplied `D:\Repos\agent-skills\plugins\foreman-line\docs\goals\routing-currency-and-merit\host-owner-export` | Input exception explicitly supplied by coordinator; only three named JSON files |
+| H02 | `EXPORT_ROOT/catalog-projection.json`; 13 providers / 608 projected models | Host-owner observation; not routing authority |
+| H03 | `EXPORT_ROOT/settings-projection.json`; five enabled references, one default, two provider entries | Observed Pi settings; not approved config or routing authority |
+| M01 | `EXPORT_ROOT/export-manifest.json` | Owner attests source binding, exclusion, acquisition and metadata stability |
+| H01 | Installed plugin version/source/path/parity not supplied; not inspected | Host owner; cannot infer parity from checkout |
+| H04 | Approved current configuration source not supplied | Unknown; H03 does not approve itself |
+| S09 D10 | Repository Jev URL and recommend-only boundary | Contractual endpoint only; not proof of an installed endpoint |
+| Coordinator OpenRouter observation | URL and timestamp below; worker made no network call | Corroboration only, not H02 replacement or freshness authority |
 
-No host metadata was inspected: absent exact bindings prevent even a meaningful host
-stability check. No Pi process/cache refresh was triggered. Templates were not used
-as installation evidence. Zero acquired host rows is not a measured zero-sized catalog.
+No raw host source, credential/auth file, environment dump, Pi process,
+network endpoint or exporter source was used for acquisition. No host metadata
+was read directly. Raw source locators remain owner-held safe labels
+`pi-agent/models-store.json` and `pi-agent/settings.json`; they are not paths
+the worker opened. `tools/rcm-p0-export.mjs` was neither read nor modified.
+The supplied package was not modified.
 
-## Safe acquisition boundary
+The owner manifest attests exclusion before the export boundary, with no raw
+mixed-document export/hash, credentials or secret URLs. This is an owner
+attestation, not an independently inspected exporter guarantee. Independently,
+the worker checked every delivered provider/model/settings key against the
+allowlist, nested cost/map shapes, exact counts, and public endpoint syntax/
+known public hostname membership. No DNS/network test was performed.
+Safe fieldCounts cover only allowlisted fields, not the raw schema.
 
-No existing reviewed field-access mechanism or owner-produced safe export was supplied.
-None was invented. Only repository text and in-memory calculations on it were read.
-No credential values were read, emitted, hashed or retained.
+Catalog omissions include name, lastModified, etag, headers, compat, cacheRead/
+cacheWrite cost and other non-allowlisted fields. Settings omissions include
+credentials/references, auth data, private URLs, URL userinfo/query/fragment,
+packages, unrelated UI data and PII. Deliberate credential exclusions do not
+count as missing required routing facts. Missing provider checkedAt does.
 
-A later authorized acquisition must bind the exact source/time and safely expose only:
-catalog provider key, model id/provider/public baseUrl/api/input/reasoning/contextWindow/
-maxTokens, documented numeric cost units, thinkingLevelMap, checkedAt, safe field-name
-inventory/counts; settings defaultProvider/defaultModel/enabledModels/defaultThinkingLevel,
-provider keys and public baseUrl. Credentials/references, headers, auth files, arbitrary
-compat payloads, unrelated settings, secret URLs, private endpoints and PII cannot cross
-that boundary. No bulk mixed-document parsing, post-read redaction, copying or whole-file
-hashing; no new extractor in P0. Publish role locators, with exact binding retained by owner.
-Reacquire safe projections independently, compare byte digests and metadata, and refuse
-changing sources without locking, repairing or rewriting Pi.
+## Byte integrity and source-time evidence
 
-## Runtime and tooling
+All three delivered files decode as strict UTF-8, no BOM, zero CR bytes,
+LF-terminated, and exactly reserialize as JSON.stringify(value, null, 2) + LF.
+This exact parse/serialize comparison also detects lossy duplicate JSON members.
+Arrays retain their supplied order. SHA-256 and byte lengths for both projections
+match M01; M01's own digest is independently pinned, not self-attested.
 
-C01/C03 measured Node **v24.7.0**, PowerShell **7.6.6**, Git
-**2.45.2.windows.1**, ripgrep **14.1.0**. Native version commands all exited 0.
-S12:8 requires Node >=24.11.1; S13:8 requires >=22. Root, shaping and spec-linter
-node_modules are absent (Step 0/C03). No dependency search outside the worktree,
-installation, build, selfCheckDraft or spec-linter execution occurred.
-Self-check and CLI exit codes are **not run / no exit**, not fabricated failures/passes.
-Compatible preinstalled tooling and coordinator lint remain outstanding.
-Step-0 source inspection confirmed --repo-root support in the CLI; selfCheckDraft takes
-document text, not that CLI flag. The spec remains draft.
+| Safe input | SHA-256 | Bytes | LF |
+|---|---|---:|---:|
+| `catalog-projection.json` | `b0c2dc8cf1412773b4ed4f17fcba10634a997f3b2b2b960d6dca200bdbb171fe` | 443195 | 16822 |
+| `settings-projection.json` | `1024154d7245a52fb3cb82b3c8105a2249d5406daee03498f99cbed8ed137d1e` | 568 | 22 |
+| `export-manifest.json` | `aa9b03faff555c6f5e98fd06b0f6e940269a5393f846877f57af562d1df692c3` | 6131 | 192 |
 
-## Source manifest and reproducibility
+First byte observation: `2026-09-20T17:06:31.731Z`.
+Audit completion: `2026-09-20T17:11:03.314Z`; independent reread times appear per
+source in the snapshot. Hash, byte length and mtime matched on all 15 audited
+inputs (three export files and 12 repository sources). A final source reread
+is recorded in verification. Stable projection bytes do not prove that the raw
+host remained unchanged after the owner's capture.
 
-Source IDs and exact SHA-256 below identify retained repository evidence.
-C04/C05 are historical acquisition records only: they reported exact UTF-8 bytes,
-no BOM, LF for all 14 sources and agreement of hashes, lengths and last-write
-metadata at 2026-09-20T15:24:22.7814460Z. The snapshot retains those acquisition
-times, formats and coverage; they are not refreshed by this rework.
-For current reproduction use the corrected RW04 in rcm-p0-verification.md,
-limited to S01 and S03-S13 after its exact-role/root/reparse safety gate.
-Use NR01 byte controls and NR05 current sealing procedure in that document for
-the four artifacts. Archived C01-C13, including C04/C05, are not current
-reproduction instructions. S02/S14 remain historical-only and must not be read.
-These are repository evidence hashes, never hashes of mixed host content.
-Metadata stability alone is not proof of no writes; pair with the command/effect log
-and final allowed-path audit. Installed/host stability remains unknown.
+Owner times from M01:
 
-| ID | Safe locator under REPO_ROOT | Role | SHA-256 |
-|---|---|---|---|
-| S01 | `plugins/foreman-line/routing-policy/routing-policy.yaml` | repository routing policy | `578f7a8a3a4384bf5f3e0064cb0439032e068a9e869bbf42770714e1466bebb0` |
-| S02 | `plugins/foreman-line/dispatch/src/routing-eval/index.ts` | repository evaluator source | `6b754fc0b2bb535198141dd18bb25aefb360ddb1d3ab436c5cbd41f556bec23f` |
-| S03 | `plugins/foreman-line/docs/goals/routing-currency-and-merit/charter.md` | RCM charter / historical hypotheses | `93c536582fc893ba57c08859799d8fa72ef49866f51a639b521f1d6208965a79` |
-| S04 | `plugins/foreman-line/docs/goals/routing-currency-and-merit/loop-directive.md` | RCM authority and queue | `5ed29906d77105eb3a5b05cc9b7cbe00f102930208d93cd7ff44cb06b1c057dc` |
-| S05 | `plugins/foreman-line/docs/goals/routing-currency-and-merit/gate-1-reopen-proposal.md` | ratified amendments | `c661823fef414f83fa716fb52fb78061d5ece0613d159f484e2fb4e70d5621af` |
-| S06 | `plugins/foreman-line/docs/goals/INDEX.md` | goal index | `d10de5af1553d2405860e2ab3efa242279fa422c72fd8dba102aba404aeb1e30` |
-| S07 | `plugins/foreman-line/docs/goals/heterogeneous-agent-worker-fabric/charter.md` | HAWF charter | `6f9cd2a813dd69b1ec061df06db34e2bfb5098156643088c344de92a10900253` |
-| S08 | `plugins/foreman-line/docs/goals/heterogeneous-agent-worker-fabric/loop-directive.md` | HAWF directive | `508fb3206520a5f4161f7f1e5076009fb56d420d1daeae924dacd75e489b4b51` |
-| S09 | `plugins/foreman-line/docs/goals/foreman-line-boundary-routing/charter.md` | boundary-routing contract | `b02460686c89453cb4ca812127384d9723db6c67935f5442340dd9ea416aa567` |
-| S10 | `plugins/foreman-line/docs/specs/active/RCM-P0-current-instance-recon.md` | accepted parcel spec | `20f2f6f26f32d51ef085abbfd2b30e9357c177eb5180cff04104ba21d1cf53d0` |
-| S11 | `plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md` | standing constraints | `57e345f9294cb8fcd8c3d90325505c80903648f60522f820061a5f8f288a86ac` |
-| S12 | `plugins/foreman-line/shaping/package.json` | shaping runtime manifest | `6b34e93b94db565e625393c5cd2e9c6e131e30dc649d87937e61bb69b925f569` |
-| S13 | `plugins/foreman-line/spec-linter/package.json` | spec-linter runtime manifest | `6247ddaad5d93dcd1fd2fbeff98cf34a9885ca7228b10b542882cf51e6711aff` |
-| S14 | `plugins/foreman-line/dispatch/src/approval-cli/index.ts` | dispatch caller source | `1eceee9253163c829bc80fd5e96f1f3810a672e2871a436f04a48eb0b876281d` |
+| Input | Acquisition UTC | Raw source mtime before = after (attested) | Raw size before = after (attested) |
+|---|---|---|---:|
+| H02 | 2026-09-20T17:01:26.402Z | 2026-09-20T14:25:18.753Z | 465793 |
+| H03 | 2026-09-20T17:01:26.406Z | 2026-09-20T14:36:02.955Z | 786 |
 
-## Freshness and handoff
+M01 generatedAtUtc: `2026-09-20T17:01:26.485Z`.
+The recorded order is source mtime <= acquisition <= manifest generation <=
+fixed evaluation time. Both sourceCheckedAt maps are empty, and no provider
+checkedAt is exported. Source mtime, export time and acquisition time cannot
+substitute for an accepted provider fact time.
 
-Fixed evaluation time: 2026-09-20T15:23:52.9276997Z. Proposed maxAgeSeconds: 86400;
-accepted maxAgeSeconds: null. Oldest required host/provider fact time: null; computed
-age: null; verdict: refused. Daily cadence does not establish TTL. R1 clauses 1-2 bind
-the refusal, not TTL approval. Missing/future/stale/changed source times must refuse;
-historical replay at a recorded time is not current freshness acceptance.
+Freshness: evaluatedAtUtc `2026-09-20T17:06:31.731Z`; maxAgeSeconds null;
+proposedMaxAgeSeconds 86400; oldest required fact time null; computed age null;
+**refused**. Daily cadence does not ratify TTL. No accepted TTL or source-time
+authority exists. Historical replay cannot authorize current consumption.
 
-Handoff owners: RCM coordinator for acceptance, HAWF reconciliation ruling and review
-routing; host owner for any separately authorized safe export/correction; later parcels
-for runtime implementation. The coordinator reports two independent frontier reviews that produced this rework.
-Their reports are not independently attested by this builder; post-rework review and
-coordinator acceptance remain outstanding. Nothing here releases downstream holds.
+## Repository source bindings
+
+These fresh hashes replace current use of old source manifests. Historical
+records and their failures remain recoverable at the unchanged baseline commit.
+
+| ID | Safe locator | SHA-256 | Bytes |
+|---|---|---|---:|
+| S01 | `repo:plugins/foreman-line/routing-policy/routing-policy.yaml` | `578f7a8a3a4384bf5f3e0064cb0439032e068a9e869bbf42770714e1466bebb0` | 10322 |
+| S02 | `repo:plugins/foreman-line/dispatch/src/routing-eval/index.ts` | `6b754fc0b2bb535198141dd18bb25aefb360ddb1d3ab436c5cbd41f556bec23f` | 9642 |
+| S03 | `repo:plugins/foreman-line/docs/goals/routing-currency-and-merit/charter.md` | `1eaac0cbbc1950d29f7486fe83e8489d7a1aaba8c1bf94b3f1b5ce6d6a2f593e` | 31678 |
+| S04 | `repo:plugins/foreman-line/docs/goals/routing-currency-and-merit/loop-directive.md` | `076af92e272e20f23aefcb5f43e4230b5f8e6127ff48a4518ee8a566478220ae` | 7078 |
+| S05 | `repo:plugins/foreman-line/docs/goals/routing-currency-and-merit/gate-1-reopen-proposal.md` | `c661823fef414f83fa716fb52fb78061d5ece0613d159f484e2fb4e70d5621af` | 5670 |
+| S06 | `repo:plugins/foreman-line/docs/goals/INDEX.md` | `d10de5af1553d2405860e2ab3efa242279fa422c72fd8dba102aba404aeb1e30` | 3016 |
+| S07 | `repo:plugins/foreman-line/docs/goals/heterogeneous-agent-worker-fabric/charter.md` | `6f9cd2a813dd69b1ec061df06db34e2bfb5098156643088c344de92a10900253` | 8154 |
+| S08 | `repo:plugins/foreman-line/docs/goals/heterogeneous-agent-worker-fabric/loop-directive.md` | `508fb3206520a5f4161f7f1e5076009fb56d420d1daeae924dacd75e489b4b51` | 3238 |
+| S09 | `repo:plugins/foreman-line/docs/goals/foreman-line-boundary-routing/charter.md` | `b02460686c89453cb4ca812127384d9723db6c67935f5442340dd9ea416aa567` | 7533 |
+| S10 | `repo:plugins/foreman-line/docs/specs/done/RCM-P0-current-instance-recon.md` | `57bdcdeb82af3206a2d769fc9d4eda72406060d2c516a3069470c3348d4bb4fb` | 24458 |
+| S11 | `repo:plugins/foreman-line/docs/goals/routing-currency-and-merit/host-owner-export-request.md` | `78d2680c680bfac3765e996eea24934032146cdcc7a322a11578c7b6422163a4` | 3196 |
+| S12 | `repo:plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md` | `57e345f9294cb8fcd8c3d90325505c80903648f60522f820061a5f8f288a86ac` | 5376 |
+
+S02 evaluator source was read only under the current completed spec's F1/F2
+derivation requirement. Prior rework's narrower S02 exclusion is historical,
+not falsely carried forward as this continuation's command log. No evaluator,
+prepareDispatch or executeDispatch function was invoked; the evaluator would
+write a receipt. No dispatch-caller execution or runtime verification occurred.
+
+## Tooling and method
+
+Measured: Node v24.7.0, PowerShell 7.6.6, Git 2.45.2.windows.1,
+ripgrep 14.1.0. Version probes succeeded (initial grouped shell exit 0; native
+exits independently captured in final verification). Only installed built-ins
+were used. No install, build, compiler, production test, linter, selfCheckDraft,
+reviewer dispatch, watcher or automation was run.
+
+A1 is a transient in-memory evidence audit, reproduced verbatim in verification,
+not plugin/runtime implementation. It checks allowlists and observed exact
+joins, preserves refusal on ambiguous identity and unknown authority, and does
+not turn observed endpoint equality into approved routing eligibility.
+A2 independently scans policy cited lines and models static selection with
+in-memory sets; it does not run the evaluator.
+
+## Jev and HAWF
+
+Jev's required tuple remains
+`openrouter / typesafe/jev-1.13 / https://openrouter.ai/api/v1`.
+H03 enabledModels[4] contains it; H02 contains zero matching records.
+
+Coordinator corroboration:
+[https://openrouter.ai/api/v1/models](https://openrouter.ai/api/v1/models),
+UTC observation **2026-09-20T17:22:45.7959406Z**;
+direct find returned no matching `typesafe/jev-1.13` entry.
+This supplied observation is corroboration only, not an independent worker fetch,
+H02 replacement, model-page proof or accepted freshness timestamp.
+
+Jev: **refused/disabled-lane/correction proposal only**. No runtime disablement,
+installation or substitution is asserted or performed; recommend-only routing/
+classification limits remain. Host correction requires separate human authority.
+
+HAWF: **escalated-unresolved / downstream hold**. The packet is parked with its
+owner. No action, reconciliation or onward handoff. No HAWF ownership is claimed.
+
+## Remaining holds
+
+Coordinator evidence acceptance and two fresh independent frontier reviews,
+including security; no accepted TTL/source-time authority; no approved
+configuration source; no installed-plugin parity; four exact policy endpoint
+mismatches; Jev absence; the preserved HAWF disposition. RCM-P1 remains held.
+The F6 health claim and F5 disjoint-namespace subclaim are corrected as evidence,
+without changing any locked decision or control document. All RCM D1–D14,
+OQ1–OQ7, boundary D1–D10, amendments and GMF contracts remain unchanged.
