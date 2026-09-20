@@ -554,7 +554,7 @@
     "approved-configuration-unavailable",
     "installed-plugin-parity-unverified",
     "four-policy-endpoint-mismatches",
-    "jev-required-identity-absent",
+    "jev-unresolvable-in-supplied-projection-pending-eligibility-surface-ruling",
     "continuation-awaiting-coordinator-acceptance"
   ],
   "acceptance": {
@@ -21666,6 +21666,17 @@
       "baseUrl": "https://openrouter.ai/api/v1",
       "enabledSettingsSource": "H03#/enabledModels/4",
       "suppliedCatalogMatchCount": 0,
+      "projectorResult": "MISSING_MODEL_REFUSED",
+      "refusalReason": "The projector cannot resolve the exact tuple against the supplied catalog projection; zero resolvable matches. This is not proof of service nonexistence.",
+      "phantomCharacterization": "withdrawn pending a D13 / eligibility-surface ruling",
+      "eligibilitySurfaceEvidence": {
+        "source": "user-supplied",
+        "verificationStatus": "unverified",
+        "suggestion": "User-supplied, unverified evidence suggests Jev is served by a non-enumerated endpoint family (alpha Decisions) outside the supplied chat/completions projection.",
+        "limitation": "Not verified catalog/service fact; no endpoint discovery, service verification or eligibility acceptance was performed.",
+        "status": "pending a D13 / eligibility-surface ruling"
+      },
+      "d13Refusal": "provider:id cannot be accepted unless it resolves exactly against the enumerated eligibility surface and approved matching endpoint; D13 is unchanged.",
       "currentOpenRouterEvidence": "Coordinator direct find returned no matching typesafe/jev-1.13 entry; corroboration only, not independently fetched by this worker.",
       "corroborationSourceUrl": "https://openrouter.ai/api/v1/models",
       "coordinatorObservationRecordedAtUtc": "2026-09-20T17:27:20.484Z",
@@ -21680,8 +21691,9 @@
       ],
       "disposition": "refused/disabled-lane/correction proposal only",
       "runtimeDisablementAsserted": false,
+      "runtimeDisablementPerformed": false,
       "boundary": "recommend-only routing/classification; no prose, implementation, approval, merge, release or policy bypass",
-      "correctionProposal": "Keep evidence refusal. Any host correction requires separate human authorization. No installation, substitute, model-page proof or runtime change."
+      "correctionProposal": "Keep the exact projector refusal and correction-only/recommend-only boundary pending a D13 / eligibility-surface ruling. User-supplied, unverified alpha Decisions evidence does not resolve or approve the tuple. Any host correction requires separate human authorization. No installation, substitute, model-page proof or runtime change."
     }
   },
   "verification": {
