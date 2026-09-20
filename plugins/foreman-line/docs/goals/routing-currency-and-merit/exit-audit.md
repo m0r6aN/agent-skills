@@ -3,8 +3,9 @@
 **Audit date:** 2026-09-20  
 **Coordinator task:** `01a0bf3f-559b-7291-a20e-8d8a4bbb16b3`  
 **Operational charter:** repo-local ratified copy at `charter.md`  
-**State:** not complete; RCM-P0 bounded handoff merged, downstream live-evidence
-boundary and RCM-P1 re-gate remain open
+**State:** not complete; RCM-P0 bounded handoff merged, with host-owner sanitized
+export selected as the next evidence path; downstream live-evidence boundary and
+RCM-P1 re-gate remain open
 
 This is a requirement audit against the current repo-local ratified charter and
 loop directive. It is not a substitute for parcel verification or human gates.
@@ -34,8 +35,8 @@ loop directive. It is not a substitute for parcel verification or human gates.
 
 ## Active blockers
 
-1. No exact approved host catalog/settings path, reviewed field-access method, or
-   host-owner credential-free export is bound. Therefore F1–F6 live evidence,
+1. The host-owner sanitized-export route is selected, but no export or exact source
+   binding has yet been supplied. Therefore F1–F6 live evidence,
    identity/endpoint joins, installed parity, accepted freshness, and source times
    remain unavailable.
 2. HAWF remains `escalated-unresolved` with downstream hold; Jev remains an

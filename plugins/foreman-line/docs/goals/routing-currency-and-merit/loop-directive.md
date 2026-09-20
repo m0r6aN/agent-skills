@@ -13,7 +13,9 @@ Gate 2, builder rework, deterministic closure, two fresh post-rework adversarial
 reviews, and the bounded human Gate 3 merge are complete. RCM-P0 is accepted only
 as an incomplete evidence handoff; its spec is in `docs/specs/done/` and its four
 evidence files are merged. RCM-P1 remains held because the live-source boundary is
-unresolved and the queue is re-gated on accepted RCM-P0 evidence.
+unresolved and the queue is re-gated on accepted RCM-P0 evidence. The selected
+recovery path is the host-owner sanitized export defined in
+`host-owner-export-request.md`.
 
 ## Standing authorizations and limits
 
@@ -113,5 +115,5 @@ delegated. RCM-P0's bounded incomplete handoff and review disposition are record
 in `rcm-p0-review-triage.md`; the full requirement audit is recorded in
 `exit-audit.md`. The coordinator must stop here: no P1 dispatch,
 host correction, live policy mutation, Pi write, provider spend, or downstream
-consumption is authorized until the missing evidence boundary is resolved and P1 is
-re-gated.
+consumption is authorized until the selected sanitized export is supplied, the fresh
+P0 continuation verifies it, and P1 is re-gated.
