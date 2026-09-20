@@ -40,7 +40,9 @@ loop directive. It is not a substitute for parcel verification or human gates.
 1. The host-owner sanitized export is supplied and reproducibly checked, but it does
    not establish approved configuration authority, installed parity, accepted
    freshness/source-time authority, or a complete live snapshot. Four exact endpoint
-   mismatches and the absent Jev tuple remain refused findings.
+   mismatches remain refused findings, and Jev remains unresolvable in the supplied
+   eligibility surface pending a D13 ruling. The phantom characterization is withdrawn;
+   the alpha Decisions possibility is user-supplied and unverified.
 2. HAWF remains `escalated-unresolved / downstream hold`; Jev remains an
    evidence-only refused/disabled lane.
 

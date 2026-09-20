@@ -97,9 +97,22 @@ release was performed in that parcel.
 - Deterministic evidence blocks: A1 `8,450`, A2 `77`, A3 `1,949`; all exits 0.
 - Positive consumption: `PARTIAL_REFUSED`, expected native exit 1.
 - Current evidence remains `complete:false`; freshness, approved configuration,
-  installed parity, four endpoint mismatches, and Jev absence remain holds.
+  installed parity, four endpoint mismatches, and Jev unresolvability in the
+  supplied eligibility surface remain holds. The phantom characterization is
+  withdrawn; the alpha Decisions possibility is user-supplied and unverified,
+  pending a D13 / eligibility-surface ruling.
 - HAWF remains exactly `escalated-unresolved / downstream hold`; its packet remains
   parked with the owner and was not reconciled or handed off.
 
 The continuation is accepted as a reviewed, incomplete evidence refresh only. It does
 not authorize RCM-P1 dispatch or any downstream parcel.
+
+## Jev eligibility-surface correction
+
+The coordinator note that Jev may be served by a non-enumerated alpha Decisions
+endpoint family is recorded as unverified evidence only. The supplied catalog
+projection remains the enumerated eligibility surface for this evidence package; it
+cannot resolve the exact tuple, so `MISSING_MODEL_REFUSED` and the
+refused/disabled-lane/correction-proposal-only disposition remain. D13 is unchanged.
+The correction was merged under the same four-artifact Gate 3 extension in `d045aa7`
+after two fresh independent read-only reviews. HAWF remains untouched.
