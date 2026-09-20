@@ -1,0 +1,873 @@
+{
+  "recordVersion": 1,
+  "purpose": "recon-evidence-only",
+  "repoCommit": "1ec2b1012d5290851e924cc91137ec3f09122820",
+  "observedAtUtc": "2026-09-20T15:23:52.9276997Z",
+  "verificationProcedure": {
+    "controlScope": "evidence-procedure control; not production runtime enforcement",
+    "commandRef": "rcm-p0-verification.md#rw04",
+    "authorizationRef": "rcm-p0-environment-map.md#coordinator-release-record-r1-and-rework-release-r2",
+    "reworkReadableSourceIds": [
+      "S01",
+      "S03",
+      "S04",
+      "S05",
+      "S06",
+      "S07",
+      "S08",
+      "S09",
+      "S10",
+      "S11",
+      "S12",
+      "S13"
+    ],
+    "retainedHistoricalOnlySourceIds": [
+      "S02",
+      "S14"
+    ],
+    "requiredOrder": [
+      "exact approved source ID, role and full locator binding",
+      "credential-field and secret-bearing URL rejection before metadata",
+      "repository-root containment; reject absolute, UNC, traversal and device paths",
+      "reject reparse points before descending or reading source content or hashes",
+      "read permitted source metadata/hash/content",
+      "verify classification citations and exact tier array order"
+    ],
+    "negativeControls": [
+      "changed locator refused before metadata",
+      "absolute/UNC/traversal and wrong role refused before metadata",
+      "credential-field and secret-URL refusal",
+      "reparse attribute refusal in memory",
+      "reversed economy array refused",
+      "changed classification citation refused"
+    ],
+    "observationSemantics": "Original source acquisition and freshness times remain unchanged; host sources remain blocked. This rework does not grant host acquisition or production runtime authority."
+  },
+  "sourceRefs": [
+    {
+      "id": "S01",
+      "role": "repository routing policy",
+      "safeLocator": "repo:plugins/foreman-line/routing-policy/routing-policy.yaml",
+      "acquiredAtUtc": "2026-09-20T15:23:52.8459648Z",
+      "safeProjectionSha256": "578f7a8a3a4384bf5f3e0064cb0439032e068a9e869bbf42770714e1466bebb0",
+      "extractionMethod": {
+        "name": "identity projection of credential-free repository text bytes",
+        "version": "PowerShell 7.6.6 / Get-FileHash SHA256",
+        "commandRef": "rcm-p0-verification.md#c04"
+      },
+      "byteFormat": {
+        "encoding": "UTF-8",
+        "bom": false,
+        "crlfCount": 0,
+        "bareLfCount": 208,
+        "length": 10322
+      },
+      "sourceStability": {
+        "reacquiredAtUtc": "2026-09-20T15:24:22.7814460Z",
+        "sha256": "578f7a8a3a4384bf5f3e0064cb0439032e068a9e869bbf42770714e1466bebb0",
+        "digestMatches": true,
+        "lengthMatches": true,
+        "lastWriteTimeUtc": "2026-09-20T15:18:46.6316067Z",
+        "lastWriteTimeMatches": true,
+        "scope": "repository only; C05 independent reacquisition, not host stability"
+      },
+      "fieldCoverage": "classes; model_tiers; data_classification; rate comments",
+      "complete": true
+    },
+    {
+      "id": "S02",
+      "role": "repository evaluator source",
+      "safeLocator": "repo:plugins/foreman-line/dispatch/src/routing-eval/index.ts",
+      "acquiredAtUtc": "2026-09-20T15:23:52.8721087Z",
+      "safeProjectionSha256": "6b754fc0b2bb535198141dd18bb25aefb360ddb1d3ab436c5cbd41f556bec23f",
+      "extractionMethod": {
+        "name": "identity projection of credential-free repository text bytes",
+        "version": "PowerShell 7.6.6 / Get-FileHash SHA256",
+        "commandRef": "rcm-p0-verification.md#c04"
+      },
+      "byteFormat": {
+        "encoding": "UTF-8",
+        "bom": false,
+        "crlfCount": 0,
+        "bareLfCount": 264,
+        "length": 9642
+      },
+      "sourceStability": {
+        "reacquiredAtUtc": "2026-09-20T15:24:22.7814460Z",
+        "sha256": "6b754fc0b2bb535198141dd18bb25aefb360ddb1d3ab436c5cbd41f556bec23f",
+        "digestMatches": true,
+        "lengthMatches": true,
+        "lastWriteTimeUtc": "2026-09-20T15:18:46.1186241Z",
+        "lastWriteTimeMatches": true,
+        "scope": "repository only; C05 independent reacquisition, not host stability"
+      },
+      "fieldCoverage": "RoutingInput lines 72-79; selection lines 193-224; receipt effects lines 229-259",
+      "complete": true
+    },
+    {
+      "id": "S03",
+      "role": "RCM charter / historical hypotheses",
+      "safeLocator": "repo:plugins/foreman-line/docs/goals/routing-currency-and-merit/charter.md",
+      "acquiredAtUtc": "2026-09-20T15:23:52.8744242Z",
+      "safeProjectionSha256": "93c536582fc893ba57c08859799d8fa72ef49866f51a639b521f1d6208965a79",
+      "extractionMethod": {
+        "name": "identity projection of credential-free repository text bytes",
+        "version": "PowerShell 7.6.6 / Get-FileHash SHA256",
+        "commandRef": "rcm-p0-verification.md#c04"
+      },
+      "byteFormat": {
+        "encoding": "UTF-8",
+        "bom": false,
+        "crlfCount": 0,
+        "bareLfCount": 360,
+        "length": 31193
+      },
+      "sourceStability": {
+        "reacquiredAtUtc": "2026-09-20T15:24:22.7814460Z",
+        "sha256": "93c536582fc893ba57c08859799d8fa72ef49866f51a639b521f1d6208965a79",
+        "digestMatches": true,
+        "lengthMatches": true,
+        "lastWriteTimeUtc": "2026-09-20T15:18:46.1974858Z",
+        "lastWriteTimeMatches": true,
+        "scope": "repository only; C05 independent reacquisition, not host stability"
+      },
+      "fieldCoverage": "historical hypotheses lines 64-109; cadence line 316; ratification line 344",
+      "complete": true
+    },
+    {
+      "id": "S04",
+      "role": "RCM authority and queue",
+      "safeLocator": "repo:plugins/foreman-line/docs/goals/routing-currency-and-merit/loop-directive.md",
+      "acquiredAtUtc": "2026-09-20T15:23:52.8759971Z",
+      "safeProjectionSha256": "5ed29906d77105eb3a5b05cc9b7cbe00f102930208d93cd7ff44cb06b1c057dc",
+      "extractionMethod": {
+        "name": "identity projection of credential-free repository text bytes",
+        "version": "PowerShell 7.6.6 / Get-FileHash SHA256",
+        "commandRef": "rcm-p0-verification.md#c04"
+      },
+      "byteFormat": {
+        "encoding": "UTF-8",
+        "bom": false,
+        "crlfCount": 0,
+        "bareLfCount": 108,
+        "length": 6329
+      },
+      "sourceStability": {
+        "reacquiredAtUtc": "2026-09-20T15:24:22.7814460Z",
+        "sha256": "5ed29906d77105eb3a5b05cc9b7cbe00f102930208d93cd7ff44cb06b1c057dc",
+        "digestMatches": true,
+        "lengthMatches": true,
+        "lastWriteTimeUtc": "2026-09-20T15:18:46.1994852Z",
+        "lastWriteTimeMatches": true,
+        "scope": "repository only; C05 independent reacquisition, not host stability"
+      },
+      "fieldCoverage": "ownership lines 3-9; gates lines 17-28; queue lines 32-48",
+      "complete": true
+    },
+    {
+      "id": "S05",
+      "role": "ratified amendments",
+      "safeLocator": "repo:plugins/foreman-line/docs/goals/routing-currency-and-merit/gate-1-reopen-proposal.md",
+      "acquiredAtUtc": "2026-09-20T15:23:52.8773868Z",
+      "safeProjectionSha256": "c661823fef414f83fa716fb52fb78061d5ece0613d159f484e2fb4e70d5621af",
+      "extractionMethod": {
+        "name": "identity projection of credential-free repository text bytes",
+        "version": "PowerShell 7.6.6 / Get-FileHash SHA256",
+        "commandRef": "rcm-p0-verification.md#c04"
+      },
+      "byteFormat": {
+        "encoding": "UTF-8",
+        "bom": false,
+        "crlfCount": 0,
+        "bareLfCount": 105,
+        "length": 5670
+      },
+      "sourceStability": {
+        "reacquiredAtUtc": "2026-09-20T15:24:22.7814460Z",
+        "sha256": "c661823fef414f83fa716fb52fb78061d5ece0613d159f484e2fb4e70d5621af",
+        "digestMatches": true,
+        "lengthMatches": true,
+        "lastWriteTimeUtc": "2026-09-20T15:18:46.1984847Z",
+        "lastWriteTimeMatches": true,
+        "scope": "repository only; C05 independent reacquisition, not host stability"
+      },
+      "fieldCoverage": "ratification lines 3-5; Jev lines 60-65; ownership queue amendment line 101",
+      "complete": true
+    },
+    {
+      "id": "S06",
+      "role": "goal index",
+      "safeLocator": "repo:plugins/foreman-line/docs/goals/INDEX.md",
+      "acquiredAtUtc": "2026-09-20T15:23:52.8791105Z",
+      "safeProjectionSha256": "d10de5af1553d2405860e2ab3efa242279fa422c72fd8dba102aba404aeb1e30",
+      "extractionMethod": {
+        "name": "identity projection of credential-free repository text bytes",
+        "version": "PowerShell 7.6.6 / Get-FileHash SHA256",
+        "commandRef": "rcm-p0-verification.md#c04"
+      },
+      "byteFormat": {
+        "encoding": "UTF-8",
+        "bom": false,
+        "crlfCount": 0,
+        "bareLfCount": 52,
+        "length": 3016
+      },
+      "sourceStability": {
+        "reacquiredAtUtc": "2026-09-20T15:24:22.7814460Z",
+        "sha256": "d10de5af1553d2405860e2ab3efa242279fa422c72fd8dba102aba404aeb1e30",
+        "digestMatches": true,
+        "lengthMatches": true,
+        "lastWriteTimeUtc": "2026-09-20T15:18:46.1331454Z",
+        "lastWriteTimeMatches": true,
+        "scope": "repository only; C05 independent reacquisition, not host stability"
+      },
+      "fieldCoverage": "pickup row line 12; conflict rule lines 50-52",
+      "complete": true
+    },
+    {
+      "id": "S07",
+      "role": "HAWF charter",
+      "safeLocator": "repo:plugins/foreman-line/docs/goals/heterogeneous-agent-worker-fabric/charter.md",
+      "acquiredAtUtc": "2026-09-20T15:23:52.8804196Z",
+      "safeProjectionSha256": "6f9cd2a813dd69b1ec061df06db34e2bfb5098156643088c344de92a10900253",
+      "extractionMethod": {
+        "name": "identity projection of credential-free repository text bytes",
+        "version": "PowerShell 7.6.6 / Get-FileHash SHA256",
+        "commandRef": "rcm-p0-verification.md#c04"
+      },
+      "byteFormat": {
+        "encoding": "UTF-8",
+        "bom": false,
+        "crlfCount": 0,
+        "bareLfCount": 117,
+        "length": 8154
+      },
+      "sourceStability": {
+        "reacquiredAtUtc": "2026-09-20T15:24:22.7814460Z",
+        "sha256": "6f9cd2a813dd69b1ec061df06db34e2bfb5098156643088c344de92a10900253",
+        "digestMatches": true,
+        "lengthMatches": true,
+        "lastWriteTimeUtc": "2026-09-20T15:18:46.1622644Z",
+        "lastWriteTimeMatches": true,
+        "scope": "repository only; C05 independent reacquisition, not host stability"
+      },
+      "fieldCoverage": "superseded status line 6",
+      "complete": true
+    },
+    {
+      "id": "S08",
+      "role": "HAWF directive",
+      "safeLocator": "repo:plugins/foreman-line/docs/goals/heterogeneous-agent-worker-fabric/loop-directive.md",
+      "acquiredAtUtc": "2026-09-20T15:23:52.8815516Z",
+      "safeProjectionSha256": "508fb3206520a5f4161f7f1e5076009fb56d420d1daeae924dacd75e489b4b51",
+      "extractionMethod": {
+        "name": "identity projection of credential-free repository text bytes",
+        "version": "PowerShell 7.6.6 / Get-FileHash SHA256",
+        "commandRef": "rcm-p0-verification.md#c04"
+      },
+      "byteFormat": {
+        "encoding": "UTF-8",
+        "bom": false,
+        "crlfCount": 0,
+        "bareLfCount": 64,
+        "length": 3238
+      },
+      "sourceStability": {
+        "reacquiredAtUtc": "2026-09-20T15:24:22.7814460Z",
+        "sha256": "508fb3206520a5f4161f7f1e5076009fb56d420d1daeae924dacd75e489b4b51",
+        "digestMatches": true,
+        "lengthMatches": true,
+        "lastWriteTimeUtc": "2026-09-20T15:18:46.1651219Z",
+        "lastWriteTimeMatches": true,
+        "scope": "repository only; C05 independent reacquisition, not host stability"
+      },
+      "fieldCoverage": "unclaimed ownership lines 3-10",
+      "complete": true
+    },
+    {
+      "id": "S09",
+      "role": "boundary-routing contract",
+      "safeLocator": "repo:plugins/foreman-line/docs/goals/foreman-line-boundary-routing/charter.md",
+      "acquiredAtUtc": "2026-09-20T15:23:52.8826588Z",
+      "safeProjectionSha256": "b02460686c89453cb4ca812127384d9723db6c67935f5442340dd9ea416aa567",
+      "extractionMethod": {
+        "name": "identity projection of credential-free repository text bytes",
+        "version": "PowerShell 7.6.6 / Get-FileHash SHA256",
+        "commandRef": "rcm-p0-verification.md#c04"
+      },
+      "byteFormat": {
+        "encoding": "UTF-8",
+        "bom": false,
+        "crlfCount": 0,
+        "bareLfCount": 102,
+        "length": 7533
+      },
+      "sourceStability": {
+        "reacquiredAtUtc": "2026-09-20T15:24:22.7814460Z",
+        "sha256": "b02460686c89453cb4ca812127384d9723db6c67935f5442340dd9ea416aa567",
+        "digestMatches": true,
+        "lengthMatches": true,
+        "lastWriteTimeUtc": "2026-09-20T15:18:46.1370520Z",
+        "lastWriteTimeMatches": true,
+        "scope": "repository only; C05 independent reacquisition, not host stability"
+      },
+      "fieldCoverage": "D7-D10 lines 26-29; recommend-only lines 58,68-69",
+      "complete": true
+    },
+    {
+      "id": "S10",
+      "role": "accepted parcel spec",
+      "safeLocator": "repo:plugins/foreman-line/docs/specs/active/RCM-P0-current-instance-recon.md",
+      "acquiredAtUtc": "2026-09-20T15:23:52.8841149Z",
+      "safeProjectionSha256": "20f2f6f26f32d51ef085abbfd2b30e9357c177eb5180cff04104ba21d1cf53d0",
+      "extractionMethod": {
+        "name": "identity projection of credential-free repository text bytes",
+        "version": "PowerShell 7.6.6 / Get-FileHash SHA256",
+        "commandRef": "rcm-p0-verification.md#c04"
+      },
+      "byteFormat": {
+        "encoding": "UTF-8",
+        "bom": false,
+        "crlfCount": 0,
+        "bareLfCount": 367,
+        "length": 23638
+      },
+      "sourceStability": {
+        "reacquiredAtUtc": "2026-09-20T15:24:22.7814460Z",
+        "sha256": "20f2f6f26f32d51ef085abbfd2b30e9357c177eb5180cff04104ba21d1cf53d0",
+        "digestMatches": true,
+        "lengthMatches": true,
+        "lastWriteTimeUtc": "2026-09-20T15:18:46.3028380Z",
+        "lastWriteTimeMatches": true,
+        "scope": "repository only; C05 independent reacquisition, not host stability"
+      },
+      "fieldCoverage": "full accepted spec; execution limits supplied by coordinator ruling R1",
+      "complete": true
+    },
+    {
+      "id": "S11",
+      "role": "standing constraints",
+      "safeLocator": "repo:plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md",
+      "acquiredAtUtc": "2026-09-20T15:23:52.8855320Z",
+      "safeProjectionSha256": "57e345f9294cb8fcd8c3d90325505c80903648f60522f820061a5f8f288a86ac",
+      "extractionMethod": {
+        "name": "identity projection of credential-free repository text bytes",
+        "version": "PowerShell 7.6.6 / Get-FileHash SHA256",
+        "commandRef": "rcm-p0-verification.md#c04"
+      },
+      "byteFormat": {
+        "encoding": "UTF-8",
+        "bom": false,
+        "crlfCount": 0,
+        "bareLfCount": 28,
+        "length": 5376
+      },
+      "sourceStability": {
+        "reacquiredAtUtc": "2026-09-20T15:24:22.7814460Z",
+        "sha256": "57e345f9294cb8fcd8c3d90325505c80903648f60522f820061a5f8f288a86ac",
+        "digestMatches": true,
+        "lengthMatches": true,
+        "lastWriteTimeUtc": "2026-09-20T15:18:46.2323449Z",
+        "lastWriteTimeMatches": true,
+        "scope": "repository only; C05 independent reacquisition, not host stability"
+      },
+      "fieldCoverage": "full standing constraints",
+      "complete": true
+    },
+    {
+      "id": "S12",
+      "role": "shaping runtime manifest",
+      "safeLocator": "repo:plugins/foreman-line/shaping/package.json",
+      "acquiredAtUtc": "2026-09-20T15:23:52.8869265Z",
+      "safeProjectionSha256": "6b34e93b94db565e625393c5cd2e9c6e131e30dc649d87937e61bb69b925f569",
+      "extractionMethod": {
+        "name": "identity projection of credential-free repository text bytes",
+        "version": "PowerShell 7.6.6 / Get-FileHash SHA256",
+        "commandRef": "rcm-p0-verification.md#c04"
+      },
+      "byteFormat": {
+        "encoding": "UTF-8",
+        "bom": false,
+        "crlfCount": 0,
+        "bareLfCount": 27,
+        "length": 741
+      },
+      "sourceStability": {
+        "reacquiredAtUtc": "2026-09-20T15:24:22.7814460Z",
+        "sha256": "6b34e93b94db565e625393c5cd2e9c6e131e30dc649d87937e61bb69b925f569",
+        "digestMatches": true,
+        "lengthMatches": true,
+        "lastWriteTimeUtc": "2026-09-20T15:18:46.6734291Z",
+        "lastWriteTimeMatches": true,
+        "scope": "repository only; C05 independent reacquisition, not host stability"
+      },
+      "fieldCoverage": "engines.node line 8; dependencies lines 18-26",
+      "complete": true
+    },
+    {
+      "id": "S13",
+      "role": "spec-linter runtime manifest",
+      "safeLocator": "repo:plugins/foreman-line/spec-linter/package.json",
+      "acquiredAtUtc": "2026-09-20T15:23:52.8884179Z",
+      "safeProjectionSha256": "6247ddaad5d93dcd1fd2fbeff98cf34a9885ca7228b10b542882cf51e6711aff",
+      "extractionMethod": {
+        "name": "identity projection of credential-free repository text bytes",
+        "version": "PowerShell 7.6.6 / Get-FileHash SHA256",
+        "commandRef": "rcm-p0-verification.md#c04"
+      },
+      "byteFormat": {
+        "encoding": "UTF-8",
+        "bom": false,
+        "crlfCount": 0,
+        "bareLfCount": 32,
+        "length": 811
+      },
+      "sourceStability": {
+        "reacquiredAtUtc": "2026-09-20T15:24:22.7814460Z",
+        "sha256": "6247ddaad5d93dcd1fd2fbeff98cf34a9885ca7228b10b542882cf51e6711aff",
+        "digestMatches": true,
+        "lengthMatches": true,
+        "lastWriteTimeUtc": "2026-09-20T15:18:46.7236587Z",
+        "lastWriteTimeMatches": true,
+        "scope": "repository only; C05 independent reacquisition, not host stability"
+      },
+      "fieldCoverage": "engines.node line 8; dependencies lines 22-31",
+      "complete": true
+    },
+    {
+      "id": "S14",
+      "role": "dispatch caller source",
+      "safeLocator": "repo:plugins/foreman-line/dispatch/src/approval-cli/index.ts",
+      "acquiredAtUtc": "2026-09-20T15:23:52.8898672Z",
+      "safeProjectionSha256": "1eceee9253163c829bc80fd5e96f1f3810a672e2871a436f04a48eb0b876281d",
+      "extractionMethod": {
+        "name": "identity projection of credential-free repository text bytes",
+        "version": "PowerShell 7.6.6 / Get-FileHash SHA256",
+        "commandRef": "rcm-p0-verification.md#c04"
+      },
+      "byteFormat": {
+        "encoding": "UTF-8",
+        "bom": false,
+        "crlfCount": 0,
+        "bareLfCount": 537,
+        "length": 19342
+      },
+      "sourceStability": {
+        "reacquiredAtUtc": "2026-09-20T15:24:22.7814460Z",
+        "sha256": "1eceee9253163c829bc80fd5e96f1f3810a672e2871a436f04a48eb0b876281d",
+        "digestMatches": true,
+        "lengthMatches": true,
+        "lastWriteTimeUtc": "2026-09-20T15:18:46.1145623Z",
+        "lastWriteTimeMatches": true,
+        "scope": "repository only; C05 independent reacquisition, not host stability"
+      },
+      "fieldCoverage": "routing evaluation call lines 342-348; effectful phase lines 427-429",
+      "complete": true
+    },
+    {
+      "id": "H01",
+      "role": "installed plugin",
+      "safeLocator": "unbound:installed-plugin",
+      "acquiredAtUtc": null,
+      "safeProjectionSha256": null,
+      "extractionMethod": null,
+      "sourceStability": {
+        "verdict": "not-observed"
+      },
+      "fieldCoverage": [],
+      "complete": false,
+      "status": "blocked-secret-boundary",
+      "reason": "No coordinator-supplied exact source binding or reviewed credential-safe access method; no host read attempted."
+    },
+    {
+      "id": "H02",
+      "role": "host catalog",
+      "safeLocator": "unbound:host-catalog",
+      "acquiredAtUtc": null,
+      "safeProjectionSha256": null,
+      "extractionMethod": null,
+      "sourceStability": {
+        "verdict": "not-observed"
+      },
+      "fieldCoverage": [],
+      "complete": false,
+      "status": "blocked-secret-boundary",
+      "reason": "No coordinator-supplied exact source binding or reviewed credential-safe access method; no host read attempted."
+    },
+    {
+      "id": "H03",
+      "role": "Pi settings",
+      "safeLocator": "unbound:Pi-settings",
+      "acquiredAtUtc": null,
+      "safeProjectionSha256": null,
+      "extractionMethod": null,
+      "sourceStability": {
+        "verdict": "not-observed"
+      },
+      "fieldCoverage": [],
+      "complete": false,
+      "status": "blocked-secret-boundary",
+      "reason": "No coordinator-supplied exact source binding or reviewed credential-safe access method; no host read attempted."
+    },
+    {
+      "id": "H04",
+      "role": "approved configuration authority",
+      "safeLocator": "unbound:approved-configuration-authority",
+      "acquiredAtUtc": null,
+      "safeProjectionSha256": null,
+      "extractionMethod": null,
+      "sourceStability": {
+        "verdict": "not-observed"
+      },
+      "fieldCoverage": [],
+      "complete": false,
+      "status": "blocked-secret-boundary",
+      "reason": "No coordinator-supplied exact source binding or reviewed credential-safe access method; no host read attempted."
+    }
+  ],
+  "policySha256": "578f7a8a3a4384bf5f3e0064cb0439032e068a9e869bbf42770714e1466bebb0",
+  "complete": false,
+  "incompleteReasons": [
+    "blocked-secret-boundary",
+    "installed-plugin-parity-unverified",
+    "catalog-not-acquired",
+    "settings-not-acquired",
+    "approved-configuration-unavailable",
+    "identity-unverified",
+    "freshness-bound-unratified",
+    "provider-fact-times-unavailable"
+  ],
+  "freshness": {
+    "evaluatedAtUtc": "2026-09-20T15:23:52.9276997Z",
+    "maxAgeSeconds": null,
+    "proposedMaxAgeSeconds": 86400,
+    "coordinatorRulingRef": "R1: coordinator Step-0 execution release, clauses 1-2; recorded in rcm-p0-environment-map.md",
+    "cadence": "daily (ratified); cadence is not TTL",
+    "boundStatus": "proposed-not-accepted",
+    "oldestRequiredSourceOrProviderFactTimeUtc": null,
+    "computedAgeSeconds": null,
+    "verdict": "refused",
+    "reasons": [
+      "freshness-bound-unratified",
+      "required-host-times-unavailable"
+    ],
+    "semantics": "Repository acquisition time is not catalog refresh time. Re-reading cannot renew old facts. No freshness acceptance or live consumption."
+  },
+  "providers": [],
+  "models": [],
+  "settingsFacts": {
+    "sourceRef": "H03",
+    "status": "blocked-secret-boundary",
+    "facts": null,
+    "missingFields": [
+      "defaultProvider",
+      "defaultModel",
+      "enabledModels",
+      "defaultThinkingLevel",
+      "provider keys",
+      "public baseUrl values"
+    ]
+  },
+  "coverage": {
+    "providerCount": null,
+    "modelCount": null,
+    "enabledReferenceCount": null,
+    "defaultReferenceCount": null,
+    "observedHostRecords": 0,
+    "emptyArraysMean": "No host records acquired; not evidence that the host catalog is empty.",
+    "unknownFields": [
+      "catalog schema/key inventory",
+      "input modalities",
+      "output-modality field presence/absence",
+      "reasoning coverage",
+      "contextWindow range",
+      "maxTokens coverage",
+      "thinkingLevelMap coverage",
+      "provider checkedAt",
+      "numeric cost units and values",
+      "sentinel prices",
+      "meta-router IDs",
+      "variant IDs",
+      "defaultThinkingLevel"
+    ]
+  },
+  "repositoryFacts": {
+    "sourceRef": "S01",
+    "methodRef": "C04 fixed line ranges and C05 independent section scan",
+    "tiers": {
+      "frontier": [
+        {
+          "id": "anthropic/claude-opus-5",
+          "line": 166
+        },
+        {
+          "id": "openai/gpt-5.6-sol",
+          "line": 167
+        },
+        {
+          "id": "google/gemini-3.1-pro-preview",
+          "line": 168
+        },
+        {
+          "id": "anthropic/claude-fable-5.1",
+          "line": 169
+        },
+        {
+          "id": "openai/gpt-6-astra",
+          "line": 170
+        }
+      ],
+      "standard": [
+        {
+          "id": "anthropic/claude-sonnet-5",
+          "line": 174
+        },
+        {
+          "id": "google/gemini-3.8-flash",
+          "line": 175
+        },
+        {
+          "id": "openai/gpt-5.6-terra",
+          "line": 176
+        },
+        {
+          "id": "z-ai/glm-5.3",
+          "line": 179
+        },
+        {
+          "id": "x-ai/grok-4.6",
+          "line": 180
+        },
+        {
+          "id": "meta/muse-spark-1.3",
+          "line": 181
+        }
+      ],
+      "economy": [
+        {
+          "id": "nvidia/nemotron-3.5-lightning",
+          "line": 191
+        },
+        {
+          "id": "openai/gpt-5.6-luna",
+          "line": 192
+        },
+        {
+          "id": "google/gemini-3.1-flash-lite",
+          "line": 193
+        },
+        {
+          "id": "anthropic/claude-haiku-4.5",
+          "line": 194
+        }
+      ]
+    },
+    "classificationIds": {
+      "public": [
+        {
+          "id": "anthropic/claude-opus-5",
+          "line": 74
+        },
+        {
+          "id": "anthropic/claude-fable-5.1",
+          "line": 75
+        },
+        {
+          "id": "openai/gpt-5.6-sol",
+          "line": 76
+        },
+        {
+          "id": "google/gemini-3.1-pro-preview",
+          "line": 77
+        },
+        {
+          "id": "anthropic/claude-sonnet-5",
+          "line": 78
+        },
+        {
+          "id": "google/gemini-3.8-flash",
+          "line": 79
+        },
+        {
+          "id": "openai/gpt-5.6-terra",
+          "line": 80
+        },
+        {
+          "id": "openai/gpt-5.6-luna",
+          "line": 81
+        },
+        {
+          "id": "google/gemini-3.1-flash-lite",
+          "line": 82
+        },
+        {
+          "id": "anthropic/claude-haiku-4.5",
+          "line": 83
+        },
+        {
+          "id": "openai/gpt-6-astra",
+          "line": 85
+        },
+        {
+          "id": "z-ai/glm-5.3",
+          "line": 86
+        },
+        {
+          "id": "x-ai/grok-4.6",
+          "line": 87
+        },
+        {
+          "id": "meta/muse-spark-1.3",
+          "line": 88
+        },
+        {
+          "id": "nvidia/nemotron-3.5-lightning",
+          "line": 91
+        }
+      ],
+      "internal": [
+        {
+          "id": "anthropic/claude-opus-5",
+          "line": 97
+        },
+        {
+          "id": "anthropic/claude-fable-5.1",
+          "line": 98
+        },
+        {
+          "id": "openai/gpt-5.6-sol",
+          "line": 99
+        },
+        {
+          "id": "google/gemini-3.1-pro-preview",
+          "line": 100
+        },
+        {
+          "id": "anthropic/claude-sonnet-5",
+          "line": 101
+        },
+        {
+          "id": "google/gemini-3.8-flash",
+          "line": 102
+        },
+        {
+          "id": "openai/gpt-5.6-terra",
+          "line": 103
+        },
+        {
+          "id": "openai/gpt-5.6-luna",
+          "line": 104
+        },
+        {
+          "id": "google/gemini-3.1-flash-lite",
+          "line": 105
+        },
+        {
+          "id": "anthropic/claude-haiku-4.5",
+          "line": 106
+        },
+        {
+          "id": "openai/gpt-6-astra",
+          "line": 108
+        },
+        {
+          "id": "z-ai/glm-5.3",
+          "line": 109
+        },
+        {
+          "id": "x-ai/grok-4.6",
+          "line": 110
+        },
+        {
+          "id": "meta/muse-spark-1.3",
+          "line": 111
+        },
+        {
+          "id": "nvidia/nemotron-3.5-lightning",
+          "line": 114
+        }
+      ],
+      "restricted": [
+        {
+          "id": "anthropic/claude-opus-5",
+          "line": 120
+        },
+        {
+          "id": "anthropic/claude-fable-5.1",
+          "line": 121
+        },
+        {
+          "id": "openai/gpt-5.6-sol",
+          "line": 122
+        },
+        {
+          "id": "google/gemini-3.1-pro-preview",
+          "line": 123
+        },
+        {
+          "id": "anthropic/claude-sonnet-5",
+          "line": 124
+        },
+        {
+          "id": "google/gemini-3.8-flash",
+          "line": 125
+        },
+        {
+          "id": "openai/gpt-5.6-terra",
+          "line": 126
+        },
+        {
+          "id": "openai/gpt-5.6-luna",
+          "line": 127
+        },
+        {
+          "id": "google/gemini-3.1-flash-lite",
+          "line": 128
+        },
+        {
+          "id": "anthropic/claude-haiku-4.5",
+          "line": 129
+        },
+        {
+          "id": "openai/gpt-6-astra",
+          "line": 131
+        },
+        {
+          "id": "z-ai/glm-5.3",
+          "line": 132
+        },
+        {
+          "id": "x-ai/grok-4.6",
+          "line": 133
+        },
+        {
+          "id": "meta/muse-spark-1.3",
+          "line": 134
+        },
+        {
+          "id": "nvidia/nemotron-3.5-lightning",
+          "line": 137
+        }
+      ]
+    },
+    "distinctTierIdCount": 15,
+    "tierEntryCount": 15,
+    "tierDuplicateCount": 0,
+    "classificationReferencesOutsideTiers": {
+      "public": [],
+      "internal": [],
+      "restricted": []
+    },
+    "catalogJoin": {
+      "providerRequired": "openrouter",
+      "approvedInstalledEndpoint": null,
+      "presentCount": null,
+      "absentCount": null,
+      "mismatchedCount": null,
+      "duplicateCatalogIdentityCount": null,
+      "requiredTierIdentityCount": 15,
+      "verdict": "blocked-secret-boundary"
+    },
+    "limits": "Repository declarations only; no provider/model facts, live identity resolution, installed parity, or dispatch authority."
+  }
+}
