@@ -21670,11 +21670,57 @@
       "refusalReason": "The projector cannot resolve the exact tuple against the supplied catalog projection; zero resolvable matches. This is not proof of service nonexistence.",
       "phantomCharacterization": "withdrawn pending a D13 / eligibility-surface ruling",
       "eligibilitySurfaceEvidence": {
-        "source": "user-supplied",
-        "verificationStatus": "unverified",
-        "suggestion": "User-supplied, unverified evidence suggests Jev is served by a non-enumerated endpoint family (alpha Decisions) outside the supplied chat/completions projection.",
-        "limitation": "Not verified catalog/service fact; no endpoint discovery, service verification or eligibility acceptance was performed.",
-        "status": "pending a D13 / eligibility-surface ruling"
+        "source": "coordinator-provided sanitized one-call result",
+        "verificationStatus": "observed alpha Decisions servability",
+        "observation": "Coordinator-provided one-call evidence establishes observed alpha Decisions servability outside the supplied chat/completions projection.",
+        "limitation": "One alpha Decisions response only; no general service health, uptime, broader endpoint support, chat/completions eligibility or Foreman routing approval is established.",
+        "status": "pending a D13 / eligibility-surface ruling",
+        "call": {
+          "method": "POST",
+          "url": "https://openrouter.ai/api/alpha/decisions",
+          "requestCount": 1,
+          "retryCount": 0,
+          "secondCallMade": false,
+          "workerNetworkCallCount": 0,
+          "requestedModel": "typesafe/jev-1.13",
+          "httpStatus": 200,
+          "contentType": "application/json",
+          "responseModel": "typesafe/jev-1.13-20260917",
+          "provider": "TypeSafe",
+          "responseId": "gen-dec-1789928401-sPUpnAUmu5pVtk95zfsT",
+          "serverEpochSecond": 1789928401,
+          "serverResponseAtUtc": "2026-09-20T18:20:01Z",
+          "clientObservedAtUtc": "2026-09-20T18:20:11.038Z",
+          "timestampSemantics": "Server response time from response ID epoch-second; distinct from coordinator client observation. Neither replaces catalog timestamps or ratifies freshness.",
+          "providerReportedUsageCost": 0.000017934,
+          "usageCostSemantics": "Provider-reported usage cost; currency not specified in the supplied response field. Sole bounded spend authorized by the user; no further spend authorized.",
+          "answers": {
+            "is_urgent.noul": 0.95,
+            "department.choice": "billing",
+            "department.probabilities": {
+              "technical": 0.09,
+              "billing": 0.91,
+              "sales": 0
+            },
+            "frustration.score": 1.04
+          },
+          "answerSemantics": "Response-shape evidence only, not routing authority.",
+          "keyEvidence": {
+            "environmentVariableName": "OPENROUTER_API_KEY",
+            "sameKeyAcceptedForAlphaDecisions": true,
+            "chatCompletionsKeyCoverage": "not tested; must not be inferred",
+            "credentialValuesReadByWorker": false,
+            "credentialValuesRecorded": false,
+            "requestHeadersRecorded": false
+          },
+          "clientCleanupAnomaly": "Local Node runner emitted a post-response Windows assertion after printing the successful response; local client cleanup anomaly, not an HTTP failure."
+        },
+        "eligibilityBoundary": {
+          "standardChatCompletionsCatalogEligibility": "unresolved/refused",
+          "d13RoutingAcceptance": "unresolved/refused pending a D13 / eligibility-surface ruling",
+          "alphaEndpointD13Approved": false,
+          "generalRoutingApproval": false
+        }
       },
       "d13Refusal": "provider:id cannot be accepted unless it resolves exactly against the enumerated eligibility surface and approved matching endpoint; D13 is unchanged.",
       "currentOpenRouterEvidence": "Coordinator direct find returned no matching typesafe/jev-1.13 entry; corroboration only, not independently fetched by this worker.",
@@ -21693,7 +21739,7 @@
       "runtimeDisablementAsserted": false,
       "runtimeDisablementPerformed": false,
       "boundary": "recommend-only routing/classification; no prose, implementation, approval, merge, release or policy bypass",
-      "correctionProposal": "Keep the exact projector refusal and correction-only/recommend-only boundary pending a D13 / eligibility-surface ruling. User-supplied, unverified alpha Decisions evidence does not resolve or approve the tuple. Any host correction requires separate human authorization. No installation, substitute, model-page proof or runtime change."
+      "correctionProposal": "Keep the exact projector refusal and correction-only/recommend-only boundary pending a D13 / eligibility-surface ruling. Observed alpha Decisions servability does not resolve chat/completions/catalog eligibility or approve Foreman routing. The alpha endpoint is not established as an approved D13 endpoint. Any host correction requires separate human authorization. No installation, substitute, model-page proof or runtime change."
     }
   },
   "verification": {

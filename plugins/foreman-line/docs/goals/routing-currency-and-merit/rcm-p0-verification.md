@@ -10,15 +10,27 @@ was read. Only drift report, snapshot, environment map and this verification
 file change; no commit. A fresh clean-status check after interruptions preceded
 the first write.
 
-Current Jev correction Step 0 verified a clean worktree at
+Prior Jev eligibility-surface correction Step 0 verified a clean worktree at
 `5b1d33caae85cabfaf45089088798680ffed949f` on `codex/rcm-p0-jev-surface`,
 root **`C:\Repos\foreman-line-routing-currency-merit-rcm-p0-jev-surface`**.
 The original root declaration, snapshot repoCommit, source pins and historical
-results are retained. A1/A2 now replay from this correction root; A3 seals this
-HEAD and branch. A3 verifies original source pins against snapshot repoCommit
-and current source stability against correction HEAD, without repinning prior
+results were retained. That correction replayed A1/A2 from its root and sealed its
+HEAD and branch. The current A3 verifies original source pins against snapshot repoCommit
+and current source stability against this live-servability refresh's starting HEAD, without repinning prior
 coordinator changes or acting on HAWF. No completed-spec amendment is needed:
 AC3/AC5 retain refusal for unverifiable identity, without runtime disablement.
+
+Current Jev live-servability evidence refresh repository root:
+**`C:\Repos\foreman-line-routing-currency-merit-rcm-p0-jev-call`**.
+Branch: `codex/rcm-p0-jev-call`.
+Step 0 HEAD: `446c0fb9ce2549e44d0efafdb24655fe3d59f1bf`; clean tracked and
+untracked status. The worker restated the four-file scope and paused before
+continuing. Original C: root declarations, source pins, source times and
+snapshot repoCommit are retained. A1/A2/A3 run from this exact current C: root
+against the same three safe exports; no raw host files or credentials are read.
+The one-call result is coordinator-provided sanitized evidence, not a worker
+network observation. The previously authorized call is complete; this refresh
+authorizes no retry, second call or further spend.
 
 Coordinator ruling recorded at 2026-09-20T17:22:27.817Z: the bounded Gate 3
 granted 2026-09-20 is explicitly extended to refreshes of these same four artifacts
@@ -44,9 +56,46 @@ resolve this tuple; the correction-only/recommend-only boundary remains.
 No runtime disablement is asserted or performed.
 
 The phantom characterization is withdrawn pending a D13 / eligibility-surface ruling.
-User-supplied, unverified evidence suggests Jev is served by a non-enumerated
-endpoint family (alpha Decisions) outside the supplied chat/completions projection. This suggestion
-is not verified catalog/service fact and does not resolve or approve Jev.
+Coordinator-provided one-call evidence establishes observed alpha Decisions servability
+outside the supplied chat/completions projection. This is one observed response,
+not general service health, uptime or broader endpoint support. Standard
+chat/completions/catalog eligibility and D13 routing acceptance remain
+unresolved/refused pending a D13 / eligibility-surface ruling.
+The alpha endpoint is not established as an approved D13 endpoint; no general
+routing approval follows. The exact projector tuple and its refusal remain unchanged.
+
+### Coordinator-provided bounded live-call evidence
+
+The coordinator already completed exactly one POST to
+`https://openrouter.ai/api/alpha/decisions`, requesting `typesafe/jev-1.13`.
+The response was HTTP **200**, content type `application/json`, response model
+`typesafe/jev-1.13-20260917`, provider `TypeSafe`, response ID
+`gen-dec-1789928401-sPUpnAUmu5pVtk95zfsT`.
+Server epoch-second **1789928401** corresponds to **2026-09-20T18:20:01Z**;
+the coordinator observed client output at **2026-09-20T18:20:11.038Z**.
+These are distinct server-response and client-observation times; neither
+replaces the original catalog timestamp or ratifies freshness.
+
+Provider-reported usage cost: **0.000017934**. Currency is not specified in
+the supplied response field. This was the sole bounded spend authorized by
+the user, separately from the recorded four-artifact Gate 3 extension;
+no further spend is authorized. **No retry and no second call.**
+This evidence builder made **zero network calls**.
+
+Structured answers: `is_urgent.noul = 0.95`;
+`department.choice = billing`, probabilities
+`technical = 0.09, billing = 0.91, sales = 0`;
+`frustration.score = 1.04`. These are response-shape evidence, not routing authority.
+The same existing key, from the `OPENROUTER_API_KEY` environment variable,
+was accepted for this alpha Decisions call. **Chat/completions key coverage
+was not tested and must not be inferred.** No key value or request header
+was supplied to, read by, or recorded by this evidence builder.
+
+After printing the successful response, the local Node runner emitted a
+post-response Windows assertion. This is a local client cleanup anomaly;
+it does not reclassify the HTTP 200 response as failed. The builder records
+only the coordinator's sanitized result and did not rerun the client.
+
 Under unchanged D13, provider:id cannot be accepted unless it resolves exactly
 against the enumerated eligibility surface and approved matching endpoint.
 
@@ -127,9 +176,9 @@ stays complete:false, evidence-only and unaccepted; it is not live authority.
 | AC2 F1–F6 | All six re-derived; F1/F2 scoped static, F3/F4 projected, F5 core reproduced with failed subclaim, F6 full-health claim not-reproduced. No frozen policy change. |
 | AC3 exact identity | Exact provider/model/baseUrl comparison and negative controls recorded. Four policy endpoint mismatches and H04 unknown refuse acceptance. |
 | AC4 ownership | Exact HAWF control hashes and escalated-unresolved / downstream hold retained; parked packet untouched. Reporting only, not reconciliation. |
-| AC5 F4/Jev | Complete reference inventory; exact tuple unresolvable in H02, zero matches and MISSING_MODEL_REFUSED retained; coordinator OpenRouter corroboration preserved. User-supplied alpha Decisions evidence is unverified; phantom characterization withdrawn pending D13 / eligibility-surface ruling. Correction-only/recommend-only refusal retained. No runtime disablement is asserted or performed. |
+| AC5 F4/Jev | Complete reference inventory; exact tuple unresolvable in H02, zero matches and MISSING_MODEL_REFUSED retained; coordinator OpenRouter corroboration preserved. Coordinator-provided one-call result establishes observed alpha Decisions servability only; chat/completions/catalog eligibility and D13 routing acceptance remain unresolved/refused. Same key accepted for alpha; chat/completions key coverage untested. Phantom characterization remains withdrawn pending the ruling. Correction-only/recommend-only refusal retained. No runtime disablement is asserted or performed. |
 | AC6 snapshot | Version 1, full projected fact rows, source pointers/missing markers, complete:false and refused freshness. Source/provider times unavailable; not consumable. |
-| AC7 safety | Four-file diff audit and command/effect log. No raw host/credential/auth/env read, Pi process, network, host write, export mutation, exporter-source read, install, spend, dispatch or commit. |
+| AC7 safety | Four-file diff audit and command/effect log. Worker: zero network calls, no raw host/credential/auth/env read, Pi process, host write, export mutation, exporter-source read, install, spend, dispatch or commit. Coordinator's sole authorized call/cost recorded separately; no key/header, retry or second call. |
 | AC8 independent verification | Deterministic checks and independent source rereads complete; fresh two-frontier adversarial review and coordinator acceptance remain outstanding. Not a clean acceptance pass. |
 
 RCM D1–D14/OQ1–OQ7, amendments A–K/queue 1–6, boundary D1–D10 and GMF
@@ -151,8 +200,8 @@ collector, test suite or executable was added. The documentation skill informed
 the separation of observation, inference, history and authority; no other skill
 workflow or new gate is implied.
 
-For this correction, documentation-and-adrs guides the evidence wording and
-debugging-and-error-recovery guides the baseline reproduction and regression
+For the prior eligibility-surface correction, documentation-and-adrs guided the evidence wording and
+debugging-and-error-recovery guided the baseline reproduction and regression
 assertions. All read-only probes used this correction worktree. One patch attempt
 failed its context check without changing a file; the corrected patch succeeded.
 No script file or other artifact was created. The only changes are the four
@@ -175,7 +224,7 @@ and pass its exact text as a single argument to node -e. The block markers allow
 an exact replay from this document; do not load arbitrary external instructions:
 
 ```powershell
-$repoRoot = 'C:/Repos/foreman-line-routing-currency-merit-rcm-p0-jev-surface'
+$repoRoot = 'C:/Repos/foreman-line-routing-currency-merit-rcm-p0-jev-call'
 $exportRoot = 'D:/Repos/agent-skills/plugins/foreman-line/docs/goals/routing-currency-and-merit/host-owner-export'
 $verification = 'plugins/foreman-line/docs/goals/routing-currency-and-merit/rcm-p0-verification.md'
 $doc = Get-Content -Raw -LiteralPath $verification
@@ -205,7 +254,7 @@ const fs = require('node:fs'), path = require('node:path'), crypto = require('no
 const R = process.argv[1], E = process.argv[2];
 const checks = [];
 function check(name, ok) { checks.push({name, pass: !!ok}); if (!ok) throw Error(name); }
-check('exact-repo-binding', R === 'C:/Repos/foreman-line-routing-currency-merit-rcm-p0-jev-surface');
+check('exact-repo-binding', R === 'C:/Repos/foreman-line-routing-currency-merit-rcm-p0-jev-call');
 check('exact-export-binding', E === 'D:/Repos/agent-skills/plugins/foreman-line/docs/goals/routing-currency-and-merit/host-owner-export');
 const evaluatedAtUtc = "2026-09-20T17:06:31.731Z";
 const sha = b => crypto.createHash('sha256').update(b).digest('hex');
@@ -427,24 +476,24 @@ own final digest is emitted externally after the last edit.
 
 | Artifact | Expected SHA-256 | Bytes |
 |---|---|---:|
-| rcm-p0-drift-report.md | `edc31c9920cc7ce9211e1955ac61123d65aa158a56f11a6cade72ef86122276e` | 15317 |
-| rcm-p0-catalog-snapshot.v1.json | `e8e71662f9754afbb32caf0a35f13e72a983bba13d43c16bb6393cd2b05ecff4` | 613900 |
-| rcm-p0-environment-map.md | `e1286296ae1158a426e43388b71cd748f02f6295166711f9b9835a040056c671` | 13492 |
+| rcm-p0-drift-report.md | `8bd8c299d33de806b932c69fe9d3c42d23e4b6b1e8f914a5044bbacd9c5a36cb` | 17641 |
+| rcm-p0-catalog-snapshot.v1.json | `e9671a3375190f76c99d5bf619ba6666129846740ae38d89aeaf812830749319` | 616462 |
+| rcm-p0-environment-map.md | `4dc610d26a31821bbdc09ce2395a30e9a6172de513ede057971ba5cf4069f052` | 16560 |
 
 <!-- A3 BEGIN -->
 ```javascript
 const fs=require('node:fs'), path=require('node:path'), crypto=require('node:crypto'), cp=require('node:child_process');
-const R='C:/Repos/foreman-line-routing-currency-merit-rcm-p0-jev-surface';
+const R='C:/Repos/foreman-line-routing-currency-merit-rcm-p0-jev-call';
 const E='D:/Repos/agent-skills/plugins/foreman-line/docs/goals/routing-currency-and-merit/host-owner-export';
 const G='plugins/foreman-line/docs/goals/routing-currency-and-merit/';
 const names=['rcm-p0-drift-report.md','rcm-p0-catalog-snapshot.v1.json','rcm-p0-environment-map.md','rcm-p0-verification.md'];
-const pins=[{"file":"rcm-p0-drift-report.md","sha256":"edc31c9920cc7ce9211e1955ac61123d65aa158a56f11a6cade72ef86122276e","byteLength":15317},{"file":"rcm-p0-catalog-snapshot.v1.json","sha256":"e8e71662f9754afbb32caf0a35f13e72a983bba13d43c16bb6393cd2b05ecff4","byteLength":613900},{"file":"rcm-p0-environment-map.md","sha256":"e1286296ae1158a426e43388b71cd748f02f6295166711f9b9835a040056c671","byteLength":13492}];
-const baseline='5b1d33caae85cabfaf45089088798680ffed949f';
+const pins=[{"file":"rcm-p0-drift-report.md","sha256":"8bd8c299d33de806b932c69fe9d3c42d23e4b6b1e8f914a5044bbacd9c5a36cb","byteLength":17641},{"file":"rcm-p0-catalog-snapshot.v1.json","sha256":"e9671a3375190f76c99d5bf619ba6666129846740ae38d89aeaf812830749319","byteLength":616462},{"file":"rcm-p0-environment-map.md","sha256":"4dc610d26a31821bbdc09ce2395a30e9a6172de513ede057971ba5cf4069f052","byteLength":16560}];
+const baseline='446c0fb9ce2549e44d0efafdb24655fe3d59f1bf';
 const observationCommit='cfdde25728d73fe4532d9dfc794a3b4188973f51';
 let checks=0;function assert(name,ok){checks++;if(!ok)throw Error(name);}
 const native=[];function git(...args){const r=cp.spawnSync('git',args,{cwd:R,encoding:'utf8'});native.push({command:['git',...args],exit:r.status});assert('git-exit:'+args.join(' '),r.status===0);return r.stdout.trim();}
 assert('HEAD',git('rev-parse','HEAD')===baseline);
-assert('branch',git('branch','--show-current')==='codex/rcm-p0-jev-surface');
+assert('branch',git('branch','--show-current')==='codex/rcm-p0-jev-call');
 assert('no-staged-edits',git('diff','--cached','--name-only')==='');
 const changed=git('diff','--name-only').split('\n').filter(Boolean);
 assert('exact-four-changed',JSON.stringify([...changed].sort())===JSON.stringify(names.map(n=>G+n).sort()));
@@ -462,6 +511,7 @@ const contents={};const artifacts=names.map(file=>{
  if(pin)assert('artifact-pin:'+file,result.sha256===pin.sha256&&result.byteLength===pin.byteLength);
  return result;
 });
+for(const p of pins)assert('documented-artifact-pin:'+p.file,contents[names[3]].includes('| '+p.file+' | `'+p.sha256+'` | '+p.byteLength+' |'));
 const s=JSON.parse(contents[names[1]]);
 assert('snapshot-stable-JSON',contents[names[1]]===JSON.stringify(s,null,2)+'\n');
 assert('envelope',s.recordVersion===1&&s.purpose==='recon-evidence-only'&&s.repoCommit===observationCommit);
@@ -526,36 +576,116 @@ assert('jev-unresolvable-in-projection',c.providers.every(p=>p.models.every(m=>m
 assert('jev-refusal',j.disposition==='refused/disabled-lane/correction proposal only'&&j.runtimeDisablementAsserted===false&&j.runtimeDisablementPerformed===false);
 const d13='provider:id cannot be accepted unless it resolves exactly against the enumerated eligibility surface and approved matching endpoint; D13 is unchanged.';
 const withdrawal='withdrawn pending a D13 / eligibility-surface ruling';
-const suggestion='User-supplied, unverified evidence suggests Jev is served by a non-enumerated endpoint family (alpha Decisions) outside the supplied chat/completions projection.';
+const observation='Coordinator-provided one-call evidence establishes observed alpha Decisions servability outside the supplied chat/completions projection.';
 const boundary='recommend-only routing/classification; no prose, implementation, approval, merge, release or policy bypass';
-function correctedJev(v){return v.provider==='openrouter'&&v.id==='typesafe/jev-1.13'&&v.baseUrl==='https://openrouter.ai/api/v1'&&v.suppliedCatalogMatchCount===0&&v.projectorResult==='MISSING_MODEL_REFUSED'&&v.refusalReason==='The projector cannot resolve the exact tuple against the supplied catalog projection; zero resolvable matches. This is not proof of service nonexistence.'&&v.phantomCharacterization===withdrawal&&v.eligibilitySurfaceEvidence?.source==='user-supplied'&&v.eligibilitySurfaceEvidence?.verificationStatus==='unverified'&&v.eligibilitySurfaceEvidence?.suggestion===suggestion&&v.eligibilitySurfaceEvidence?.status==='pending a D13 / eligibility-surface ruling'&&v.eligibilitySurfaceEvidence?.limitation==='Not verified catalog/service fact; no endpoint discovery, service verification or eligibility acceptance was performed.'&&v.d13Refusal===d13&&v.disposition==='refused/disabled-lane/correction proposal only'&&v.runtimeDisablementAsserted===false&&v.runtimeDisablementPerformed===false&&v.boundary===boundary;}
-assert('corrected-Jev-semantics',correctedJev(j));
+const expectedEvidence={
+  "source": "coordinator-provided sanitized one-call result",
+  "verificationStatus": "observed alpha Decisions servability",
+  "observation": "Coordinator-provided one-call evidence establishes observed alpha Decisions servability outside the supplied chat/completions projection.",
+  "limitation": "One alpha Decisions response only; no general service health, uptime, broader endpoint support, chat/completions eligibility or Foreman routing approval is established.",
+  "status": "pending a D13 / eligibility-surface ruling",
+  "call": {
+    "method": "POST",
+    "url": "https://openrouter.ai/api/alpha/decisions",
+    "requestCount": 1,
+    "retryCount": 0,
+    "secondCallMade": false,
+    "workerNetworkCallCount": 0,
+    "requestedModel": "typesafe/jev-1.13",
+    "httpStatus": 200,
+    "contentType": "application/json",
+    "responseModel": "typesafe/jev-1.13-20260917",
+    "provider": "TypeSafe",
+    "responseId": "gen-dec-1789928401-sPUpnAUmu5pVtk95zfsT",
+    "serverEpochSecond": 1789928401,
+    "serverResponseAtUtc": "2026-09-20T18:20:01Z",
+    "clientObservedAtUtc": "2026-09-20T18:20:11.038Z",
+    "timestampSemantics": "Server response time from response ID epoch-second; distinct from coordinator client observation. Neither replaces catalog timestamps or ratifies freshness.",
+    "providerReportedUsageCost": 0.000017934,
+    "usageCostSemantics": "Provider-reported usage cost; currency not specified in the supplied response field. Sole bounded spend authorized by the user; no further spend authorized.",
+    "answers": {
+      "is_urgent.noul": 0.95,
+      "department.choice": "billing",
+      "department.probabilities": {
+        "technical": 0.09,
+        "billing": 0.91,
+        "sales": 0
+      },
+      "frustration.score": 1.04
+    },
+    "answerSemantics": "Response-shape evidence only, not routing authority.",
+    "keyEvidence": {
+      "environmentVariableName": "OPENROUTER_API_KEY",
+      "sameKeyAcceptedForAlphaDecisions": true,
+      "chatCompletionsKeyCoverage": "not tested; must not be inferred",
+      "credentialValuesReadByWorker": false,
+      "credentialValuesRecorded": false,
+      "requestHeadersRecorded": false
+    },
+    "clientCleanupAnomaly": "Local Node runner emitted a post-response Windows assertion after printing the successful response; local client cleanup anomaly, not an HTTP failure."
+  },
+  "eligibilityBoundary": {
+    "standardChatCompletionsCatalogEligibility": "unresolved/refused",
+    "d13RoutingAcceptance": "unresolved/refused pending a D13 / eligibility-surface ruling",
+    "alphaEndpointD13Approved": false,
+    "generalRoutingApproval": false
+  }
+};
+const expectedCorrection="Keep the exact projector refusal and correction-only/recommend-only boundary pending a D13 / eligibility-surface ruling. Observed alpha Decisions servability does not resolve chat/completions/catalog eligibility or approve Foreman routing. The alpha endpoint is not established as an approved D13 endpoint. Any host correction requires separate human authorization. No installation, substitute, model-page proof or runtime change.";
+function correctedJev(v){return v.provider==='openrouter'&&v.id==='typesafe/jev-1.13'&&v.baseUrl==='https://openrouter.ai/api/v1'&&v.suppliedCatalogMatchCount===0&&v.projectorResult==='MISSING_MODEL_REFUSED'&&v.refusalReason==='The projector cannot resolve the exact tuple against the supplied catalog projection; zero resolvable matches. This is not proof of service nonexistence.'&&v.phantomCharacterization===withdrawal&&JSON.stringify(v.eligibilitySurfaceEvidence)===JSON.stringify(expectedEvidence)&&v.correctionProposal===expectedCorrection&&v.d13Refusal===d13&&v.disposition==='refused/disabled-lane/correction proposal only'&&v.runtimeDisablementAsserted===false&&v.runtimeDisablementPerformed===false&&v.boundary===boundary;}
+assert('observed-alpha-without-routing-approval',correctedJev(j));
+const call=j.eligibilitySurfaceEvidence.call;
+assert('server-epoch-time',new Date(call.serverEpochSecond*1000).toISOString()==='2026-09-20T18:20:01.000Z'&&call.responseId.split('-')[2]===String(call.serverEpochSecond));
+assert('distinct-client-observation',Date.parse(call.clientObservedAtUtc)-Date.parse(call.serverResponseAtUtc)===10038);
 const jevNegativeMutations=[
  ['provider-alias',v=>v.provider='OpenRouter'],
  ['ID-substitution',v=>v.id='typesafe/jev-1.14'],
  ['endpoint-normalization',v=>v.baseUrl+='/' ],
- ['invented-match',v=>v.suppliedCatalogMatchCount=1],
+ ['invented-catalog-match',v=>v.suppliedCatalogMatchCount=1],
  ['projector-acceptance',v=>v.projectorResult='OBSERVED_TUPLE_MATCH'],
  ['unsupported-nonexistence',v=>v.refusalReason='service does not exist'],
  ['phantom-reinstated',v=>v.phantomCharacterization='retained'],
- ['evidence-source-promoted',v=>v.eligibilitySurfaceEvidence.source='verified-service'],
- ['evidence-verification-promoted',v=>v.eligibilitySurfaceEvidence.verificationStatus='verified'],
- ['suggestion-promoted',v=>v.eligibilitySurfaceEvidence.suggestion='alpha Decisions serves Jev'],
- ['service-verification-claimed',v=>v.eligibilitySurfaceEvidence.limitation='service verified'],
+ ['worker-live-source-invented',v=>v.eligibilitySurfaceEvidence.source='worker live call'],
+ ['unverified-hypothesis-retained',v=>v.eligibilitySurfaceEvidence.verificationStatus='unverified'],
+ ['service-health-invented',v=>v.eligibilitySurfaceEvidence.limitation='general service health verified'],
  ['ruling-invented',v=>v.eligibilitySurfaceEvidence.status='accepted'],
  ['D13-waived',v=>v.d13Refusal='exception accepted'],
  ['lane-enabled',v=>v.disposition='accepted'],
  ['runtime-disablement-asserted',v=>v.runtimeDisablementAsserted=true],
  ['runtime-disablement-performed',v=>v.runtimeDisablementPerformed=true],
- ['recommend-only-bypass',v=>v.boundary='dispatch allowed']
+ ['recommend-only-bypass',v=>v.boundary='dispatch allowed'],
+ ['chat-endpoint-substitution',v=>v.eligibilitySurfaceEvidence.call.url='https://openrouter.ai/api/v1/chat/completions'],
+ ['second-call',v=>v.eligibilitySurfaceEvidence.call.requestCount=2],
+ ['retry',v=>v.eligibilitySurfaceEvidence.call.retryCount=1],
+ ['second-call-flag',v=>v.eligibilitySurfaceEvidence.call.secondCallMade=true],
+ ['worker-network-call',v=>v.eligibilitySurfaceEvidence.call.workerNetworkCallCount=1],
+ ['HTTP-failure-invented',v=>v.eligibilitySurfaceEvidence.call.httpStatus=500],
+ ['response-model-substituted',v=>v.eligibilitySurfaceEvidence.call.responseModel='typesafe/jev-1.13'],
+ ['server-client-time-conflated',v=>v.eligibilitySurfaceEvidence.call.serverResponseAtUtc=v.eligibilitySurfaceEvidence.call.clientObservedAtUtc],
+ ['invented-cost',v=>v.eligibilitySurfaceEvidence.call.providerReportedUsageCost=0],
+ ['invented-currency',v=>v.eligibilitySurfaceEvidence.call.currency='USD'],
+ ['altered-answer',v=>v.eligibilitySurfaceEvidence.call.answers['frustration.score']=1],
+ ['answer-routing-authority',v=>v.eligibilitySurfaceEvidence.call.answerSemantics='routing authority'],
+ ['alpha-key-acceptance-omitted',v=>v.eligibilitySurfaceEvidence.call.keyEvidence.sameKeyAcceptedForAlphaDecisions=false],
+ ['chat-key-coverage-inferred',v=>v.eligibilitySurfaceEvidence.call.keyEvidence.chatCompletionsKeyCoverage='accepted'],
+ ['credential-value-added',v=>v.eligibilitySurfaceEvidence.call.keyEvidence.value='synthetic forbidden field'],
+ ['request-header-added',v=>v.eligibilitySurfaceEvidence.call.headers={synthetic:'forbidden field'}],
+ ['credential-read-asserted',v=>v.eligibilitySurfaceEvidence.call.keyEvidence.credentialValuesReadByWorker=true],
+ ['cleanup-reclassified',v=>v.eligibilitySurfaceEvidence.call.clientCleanupAnomaly='HTTP failed'],
+ ['chat-eligibility-accepted',v=>v.eligibilitySurfaceEvidence.eligibilityBoundary.standardChatCompletionsCatalogEligibility='accepted'],
+ ['D13-acceptance-invented',v=>v.eligibilitySurfaceEvidence.eligibilityBoundary.d13RoutingAcceptance='accepted'],
+ ['alpha-D13-endpoint-approved',v=>v.eligibilitySurfaceEvidence.eligibilityBoundary.alphaEndpointD13Approved=true],
+ ['general-routing-approved',v=>v.eligibilitySurfaceEvidence.eligibilityBoundary.generalRoutingApproval=true]
 ];
 for(const [name,mutate] of jevNegativeMutations){const v=structuredClone(j);mutate(v);assert('Jev-negative:'+name,!correctedJev(v));}
 const original=JSON.parse(gitBlob(baseline,G+names[1]).toString('utf8'));
 const revised=structuredClone(s),prior=structuredClone(original);
 delete revised.dispositions.jev;delete prior.dispositions.jev;
-revised.incompleteReasons=prior.incompleteReasons;
 assert('all-other-snapshot-facts-unchanged',JSON.stringify(revised)===JSON.stringify(prior));
-assert('only-Jev-incomplete-reason-changed',JSON.stringify(s.incompleteReasons)===JSON.stringify(original.incompleteReasons.map(v=>v==='jev-required-identity-absent'?'jev-unresolvable-in-supplied-projection-pending-eligibility-surface-ruling':v)));
+const currentJev=structuredClone(j), priorJev=structuredClone(original.dispositions.jev);
+delete currentJev.eligibilitySurfaceEvidence;delete priorJev.eligibilitySurfaceEvidence;
+delete currentJev.correctionProposal;delete priorJev.correctionProposal;
+assert('only-Jev-servability-and-proposal-changed',JSON.stringify(currentJev)===JSON.stringify(priorJev));
 assert('jev-corroboration',j.corroborationSourceUrl==='https://openrouter.ai/api/v1/models'&&j.coordinatorOriginalObservationAtUtc==='2026-09-20T17:22:45.7959406Z');
 assert('HAWF',s.dispositions.hawf==='escalated-unresolved / downstream hold'&&s.dispositions.hawfPacket.includes('parked with its owner'));
 for(const n of [names[0],names[2],names[3]]){
@@ -565,13 +695,22 @@ for(const n of [names[0],names[2],names[3]]){
  assert('doc-Gate3:'+n,t.includes('Gate 3'));
  const prose=t.split('<!-- A1 BEGIN -->')[0].replace(/\s+/g,' ');
  assert('doc-withdrawal:'+n,prose.includes('The phantom characterization is '+withdrawal+'.'));
- assert('doc-unverified-evidence:'+n,prose.includes(suggestion));
+ assert('doc-observed-alpha:'+n,prose.includes(observation));
+ assert('doc-call-facts:'+n,prose.includes(call.responseId)&&prose.includes(call.clientObservedAtUtc)&&prose.includes(call.serverResponseAtUtc)&&prose.includes(String(call.providerReportedUsageCost)));
+ assert('doc-key-boundary:'+n,prose.includes('Chat/completions key coverage was not tested and must not be inferred.')&&prose.includes('No key value or request header'));
+ assert('doc-no-second-call:'+n,prose.includes('No retry and no second call.')&&prose.includes('zero network calls'));
+ assert('doc-eligibility-held:'+n,prose.includes('chat/completions/catalog eligibility and D13 routing acceptance remain unresolved/refused pending a D13 / eligibility-surface ruling.'));
+ assert('doc-no-D13-approval:'+n,prose.includes('The alpha endpoint is not established as an approved D13 endpoint; no general routing approval follows.'));
  assert('doc-D13:'+n,prose.includes('Under unchanged D13, provider:id cannot be accepted unless it resolves exactly against the enumerated eligibility surface and approved matching endpoint.'));
  assert('doc-no-runtime-disablement:'+n,prose.includes('No runtime disablement is asserted or performed.'));
  assert('doc-projector-refusal:'+n,prose.includes('MISSING_MODEL_REFUSED')&&prose.includes('correction-only/recommend-only'));
 }
 assert('absolute-C-root',contents[names[2]].includes('C:\\Repos\\foreman-line-routing-currency-merit-rcm-p0-live-export'));
-assert('current-absolute-C-root',contents[names[2]].includes('C:\\Repos\\foreman-line-routing-currency-merit-rcm-p0-jev-surface'));
+assert('prior-absolute-C-root',contents[names[2]].includes('C:\\Repos\\foreman-line-routing-currency-merit-rcm-p0-jev-surface'));
+assert('current-absolute-C-root',contents[names[2]].includes('C:\\Repos\\foreman-line-routing-currency-merit-rcm-p0-jev-call'));
+for(const [file,t] of Object.entries(contents)){
+ assert('no-key-or-header-value:'+file,!/sk-or-v1-[A-Za-z0-9]{16,}|Authorization:\s*Bearer\s+\S+/i.test(t));
+}
 assert('reviews-held',s.verification.independentFrontierReviewsThisContinuation===0);
 console.log(JSON.stringify({verifiedAtUtc:new Date().toISOString(),checks,failed:0,native,artifacts,changed,head:baseline,negativeControlsInA1:25,jevNegativeControls:jevNegativeMutations.length,scope:'four artifacts only; no commit; final verification self-hash external'}));
 ```
@@ -620,7 +759,7 @@ parked and untouched. No P1 release, host correction, network, spend, dispatch,
 runtime implementation or commit. Fresh independent frontier reviews and
 coordinator acceptance remain outstanding.
 
-### Jev eligibility-surface correction completion ledger
+### Jev eligibility-surface correction completion ledger (historical)
 
 Correction root: `C:\Repos\foreman-line-routing-currency-merit-rcm-p0-jev-surface`.
 Starting and retained HEAD: `5b1d33caae85cabfaf45089088798680ffed949f`.
@@ -637,14 +776,15 @@ $probeExit = $LASTEXITCODE
 "semanticBaselineExit=$probeExit"
 ```
 
-A3 now checks that corrected semantic assertion plus the exact tuple, projector
+At that prior correction, A3 checked that corrected semantic assertion plus the exact tuple, projector
 refusal, user-supplied/unverified evidence and unchanged D13. Seventeen in-memory
 negative controls reject identity/endpoint changes, invented matches, acceptance,
 service-nonexistence claims, reinstated phantom characterization, promoted evidence,
 invented rulings, D13 waiver, lane enablement, runtime-disablement assertions or
 effects, and recommend-only bypass. These are evidence checks, not runtime tests.
-All three prose artifacts must contain the exact no-runtime-disablement sentence
-and consistent unverified evidence, withdrawal, D13 and projector-refusal wording.
+That prior pass required the exact no-runtime-disablement sentence and consistent
+unverified-evidence, withdrawal, D13 and projector-refusal wording. The current
+A3 replaces the unverified hypothesis with the bounded observed-call evidence.
 
 | Correction check | Exact result |
 |---|---|
@@ -688,3 +828,67 @@ packet untouched. No HAWF action, reconciliation or handoff; no raw host or
 credential read, network/MCP call, host correction, runtime change, installation,
 substitution, spend, dispatch or commit. Fresh reviews and coordinator acceptance
 remain outstanding; this correction does not release P1 or any evidence hold.
+
+### Jev live-servability refresh completion ledger (current)
+
+Root: `C:\Repos\foreman-line-routing-currency-merit-rcm-p0-jev-call`.
+Starting and retained HEAD: `446c0fb9ce2549e44d0efafdb24655fe3d59f1bf`.
+Branch: `codex/rcm-p0-jev-call`. Step 0 restated the four-file boundary and
+stopped before continuing; initial status was clean. The two ledgers above
+are historical and are not current servability assertions.
+
+The documentation-and-adrs skill informed the separation of the coordinator's
+observed response, catalog facts and routing authority. Only apply_patch edited
+the four existing artifacts. Read-only work comprised local instructions/spec,
+the four artifacts, the reviewed A1/A2/A3 blocks, their already-pinned safe export
+inputs and repository sources, plus Git/version/digest checks. No raw host file,
+credential value, environment variable value or exporter source was read.
+The builder made zero network/MCP calls and incurred no spend. Exactly one
+already-completed coordinator call, no retry and no second call, is recorded.
+
+| Current check | Exact result |
+|---|---|
+| A1 replay, exact block above | **8,450 assertions, zero failures, 25 negative controls; native exit 0**, completed 2026-09-20T18:26:00.003Z. |
+| A2 replay, exact block above | **77 assertions, zero failures; native exit 0**. |
+| A3 initial servability seal | **2,065 assertions, zero failures, 38 Jev negative controls; native exit 0**, completed 2026-09-20T18:26:21.234Z. |
+| A3 final seal | Adds three comparisons between the documented artifact digest table and checked pins: **2,068 assertions, zero failures, 38 Jev negative controls; native exit 0**. Executed after this ledger edit; final verification-file hash emitted externally. |
+| Native commands inside A3 | **31/31 exit 0**: six HEAD/branch/scope/whitespace checks, 24 original/current repository blob reads, one starting snapshot blob read. |
+| Positive-consumption command above | **PARTIAL_REFUSED, native exit 1 (expected)**; containing shell exit 0 after explicitly capturing and checking the refusal exit. |
+| Version probes | `node --version`: v24.7.0, exit 0; `git --version`: 2.45.2.windows.1, exit 0; `rg --version`: 14.1.0, exit 0; PowerShell 7.6.6. |
+| SHA-256 / length calculation | PowerShell ReadAllBytes + SHA256.HashData on the three non-self artifacts; shell exit 0. Pins compared by A3, with strict UTF-8, no BOM and LF-only bytes. |
+| Final diff review | `git diff --stat`: exit 0; `git diff --check`: exit 0; `git status --short --untracked-files=all`: exit 0; `git diff --` on verification: exit 0; `git diff --` on the other three artifacts: exit 0 (259 diff lines). Exactly four modified paths. |
+| Production tests / linter / independent reviewers | Not run; no exit. No spec/code change, install or dispatch. **0 fresh reviews**; coordinator acceptance and fresh independent reviews remain outstanding. |
+
+A1+A2+final A3 = **10,595 assertions per complete pass**, including **63 negative
+controls** (25 A1 + 38 A3). Initial and final seals are separate executions,
+not additive coverage. All fresh checks passed; historical failed checks remain
+historical. Diff review corrected the digest table placement before the final
+seal; original historical digest rows are preserved.
+
+The current A3 checks the exact supplied call facts, server epoch/time and
+10.038-second distinction from client observation; it rejects a second call,
+retry, invented currency, key/header fields, inferred chat/completions key
+coverage, HTTP failure due to cleanup, general health and routing approval.
+The key/header scan is a supplementary recognizable-pattern check, not proof
+about undisclosed host data; the exact allowed evidence object and the command
+log establish this builder's no-key-read/no-key-record boundary.
+
+The final four-file seal preserves all 608 projected models in order, every
+F1–F6 result, source pins, settings, incomplete reasons, original catalog URL
+and timestamp, freshness refusal, original exact C: declarations and Gate 3 scope.
+Only Jev's servability evidence and associated correction-proposal wording change
+in the snapshot. The exact tuple remains
+**openrouter / typesafe/jev-1.13 / https://openrouter.ai/api/v1** with **zero
+catalog matches** and **MISSING_MODEL_REFUSED**. Alpha Decisions servability
+was observed; standard chat/completions/catalog eligibility and D13 routing
+acceptance remain unresolved/refused pending a D13 / eligibility-surface ruling.
+The same key was accepted only for the observed alpha call; chat/completions
+key coverage remains untested. No approved D13 alpha endpoint, general routing
+approval or runtime disablement is asserted. Correction-only/recommend-only remains.
+
+HAWF remains exactly **escalated-unresolved / downstream hold**, with its parked
+packet untouched: no action, reconciliation or handoff. No charter, directive,
+exit audit, triage, completed spec, export package or exporter change; no
+installation, substitution, host correction, runtime change, dispatch, further
+spend, policy change or commit. Exactly four tracked files remain modified for
+coordinator review, with zero staged or untracked files and unchanged HEAD/branch.

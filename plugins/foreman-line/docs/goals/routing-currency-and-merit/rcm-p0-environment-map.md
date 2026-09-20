@@ -10,15 +10,27 @@ Step 0 HEAD: `cfdde25728d73fe4532d9dfc794a3b4188973f51`; clean tracked and
 untracked status. The same clean state was confirmed after the interruptions,
 before the first evidence write. No commit is authorized or made.
 
-Current Jev correction repository root:
+Prior Jev eligibility-surface correction repository root (historical):
 **`C:\Repos\foreman-line-routing-currency-merit-rcm-p0-jev-surface`**.
 Branch: `codex/rcm-p0-jev-surface`.
 Step 0 HEAD: `5b1d33caae85cabfaf45089088798680ffed949f`; clean tracked and
 untracked status before correction. The prior root, source acquisition times and
-snapshot repoCommit remain historical provenance. Verification runs from this
-current root, using only the same three absolute read-only export inputs below.
+snapshot repoCommit remain historical provenance. That correction ran from the prior root using the three absolute read-only
+export inputs below.
 The completed spec permits this evidence correction without amendment: AC5
 retains refusal for unverifiable identity and forbids asserting runtime disablement.
+
+Current Jev live-servability evidence refresh repository root:
+**`C:\Repos\foreman-line-routing-currency-merit-rcm-p0-jev-call`**.
+Branch: `codex/rcm-p0-jev-call`.
+Step 0 HEAD: `446c0fb9ce2549e44d0efafdb24655fe3d59f1bf`; clean tracked and
+untracked status. The worker restated the four-file scope and paused before
+continuing. Original C: root declarations, source pins, source times and
+snapshot repoCommit are retained. A1/A2/A3 run from this exact current C: root
+against the same three safe exports; no raw host files or credentials are read.
+The one-call result is coordinator-provided sanitized evidence, not a worker
+network observation. The previously authorized call is complete; this refresh
+authorizes no retry, second call or further spend.
 
 Completed governing spec:
 `plugins/foreman-line/docs/specs/done/RCM-P0-current-instance-recon.md` (S10).
@@ -45,7 +57,7 @@ and fresh independent review, with substantive authority/freshness gaps retained
 
 | Role | Read status and meaning | Authority / owner |
 |---|---|---|
-| REPO_ROOT | Current Jev correction absolute worktree above; repository text only | Repo policy owns routing; RCM coordinator owns evidence acceptance |
+| REPO_ROOT | Current Jev live-servability absolute worktree above; repository text only | Repo policy owns routing; RCM coordinator owns evidence acceptance |
 | EXPORT_ROOT | Read-only coordinator-supplied `D:\Repos\agent-skills\plugins\foreman-line\docs\goals\routing-currency-and-merit\host-owner-export` | Input exception explicitly supplied by coordinator; only three named JSON files |
 | H02 | `EXPORT_ROOT/catalog-projection.json`; 13 providers / 608 projected models | Host-owner observation; not routing authority |
 | H03 | `EXPORT_ROOT/settings-projection.json`; five enabled references, one default, two provider entries | Observed Pi settings; not approved config or routing authority |
@@ -53,6 +65,7 @@ and fresh independent review, with substantive authority/freshness gaps retained
 | H01 | Installed plugin version/source/path/parity not supplied; not inspected | Host owner; cannot infer parity from checkout |
 | H04 | Approved current configuration source not supplied | Unknown; H03 does not approve itself |
 | S09 D10 | Repository Jev URL and recommend-only boundary | Contractual endpoint only; not proof of an installed endpoint |
+| Coordinator alpha Decisions result | Sanitized one-call facts supplied in the current instruction; worker made zero network calls | Servability observation only; no D13 endpoint or routing approval |
 | Coordinator OpenRouter observation | URL and timestamp below; worker made no network call | Corroboration only, not H02 replacement or freshness authority |
 
 No raw host source, credential/auth file, environment dump, Pi process,
@@ -170,9 +183,46 @@ The exact projector result remains **MISSING_MODEL_REFUSED** because the project
 cannot resolve this tuple against the supplied catalog projection.
 
 The phantom characterization is withdrawn pending a D13 / eligibility-surface ruling.
-User-supplied, unverified evidence suggests Jev is served by a non-enumerated
-endpoint family (alpha Decisions) outside the supplied chat/completions projection. This suggestion
-is not verified catalog/service fact and does not resolve or approve Jev.
+Coordinator-provided one-call evidence establishes observed alpha Decisions servability
+outside the supplied chat/completions projection. This is one observed response,
+not general service health, uptime or broader endpoint support. Standard
+chat/completions/catalog eligibility and D13 routing acceptance remain
+unresolved/refused pending a D13 / eligibility-surface ruling.
+The alpha endpoint is not established as an approved D13 endpoint; no general
+routing approval follows. The exact projector tuple and its refusal remain unchanged.
+
+### Coordinator-provided bounded live-call evidence
+
+The coordinator already completed exactly one POST to
+`https://openrouter.ai/api/alpha/decisions`, requesting `typesafe/jev-1.13`.
+The response was HTTP **200**, content type `application/json`, response model
+`typesafe/jev-1.13-20260917`, provider `TypeSafe`, response ID
+`gen-dec-1789928401-sPUpnAUmu5pVtk95zfsT`.
+Server epoch-second **1789928401** corresponds to **2026-09-20T18:20:01Z**;
+the coordinator observed client output at **2026-09-20T18:20:11.038Z**.
+These are distinct server-response and client-observation times; neither
+replaces the original catalog timestamp or ratifies freshness.
+
+Provider-reported usage cost: **0.000017934**. Currency is not specified in
+the supplied response field. This was the sole bounded spend authorized by
+the user, separately from the recorded four-artifact Gate 3 extension;
+no further spend is authorized. **No retry and no second call.**
+This evidence builder made **zero network calls**.
+
+Structured answers: `is_urgent.noul = 0.95`;
+`department.choice = billing`, probabilities
+`technical = 0.09, billing = 0.91, sales = 0`;
+`frustration.score = 1.04`. These are response-shape evidence, not routing authority.
+The same existing key, from the `OPENROUTER_API_KEY` environment variable,
+was accepted for this alpha Decisions call. **Chat/completions key coverage
+was not tested and must not be inferred.** No key value or request header
+was supplied to, read by, or recorded by this evidence builder.
+
+After printing the successful response, the local Node runner emitted a
+post-response Windows assertion. This is a local client cleanup anomaly;
+it does not reclassify the HTTP 200 response as failed. The builder records
+only the coordinator's sanitized result and did not rerun the client.
+
 Under unchanged D13, provider:id cannot be accepted unless it resolves exactly
 against the enumerated eligibility surface and approved matching endpoint.
 
