@@ -8,9 +8,12 @@
 > boundary by updating this block. If another live coordinator is named or ownership
 > becomes ambiguous, stop and report; never assume.
 
-**State:** `RCM-P0-shaping` — Stage Zero and mandatory plan review are complete; Gate 1
-is ratified; Gate 2 for exactly RCM-P0 and RCM-P1 was explicitly granted by Clinton
-Morgan on 2026-09-20. RCM-P0 shaping is active; no builder has been dispatched.
+**State:** `RCM-P0-human-gate-3` — Stage Zero, mandatory plan review, shaping, Gate 2,
+builder rework, deterministic closure, and two fresh post-rework adversarial reviews
+are complete. RCM-P0 is accepted only as an incomplete evidence handoff; its four
+evidence files remain unmerged in the builder worktree. Human Gate 3 is required.
+RCM-P1 is not dispatched because the strict queue requires the RCM-P0 evidence
+handoff first.
 
 ## Standing authorizations and limits
 
@@ -104,5 +107,9 @@ claim.
 
 ## Current iteration
 
-Gate 2 is satisfied for RCM-P0 and RCM-P1. The coordinator is advancing through the
-RCM-P0 shaping and lint steps; implementation remains isolated until its spec is accepted.
+Gate 2 is satisfied for RCM-P0 and RCM-P1, but Gate 3 is not delegated. RCM-P0's
+bounded incomplete handoff and review disposition are recorded in
+`rcm-p0-review-triage.md`. The coordinator must stop here: no merge, P1 dispatch,
+host correction, live policy mutation, Pi write, provider spend, or downstream
+consumption is authorized until the human Gate 3 decision and the missing evidence
+boundary are resolved.
