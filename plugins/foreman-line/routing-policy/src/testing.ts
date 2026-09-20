@@ -2,6 +2,8 @@
  * Canonical sample values, typed against `types.ts`, used by the parity test to
  * prove each schema actually accepts values of the shape its type describes.
  */
+
+import { PI_OPENROUTER_ROUTING, type PiOpenRouterRouting } from './pi-openrouter.js'
 import type {
   ClassEntry,
   DataClassificationRule,
@@ -10,6 +12,8 @@ import type {
   ShadowRoute,
   TransportRequirements,
 } from './types.js'
+
+export const samplePiOpenRouterRouting: PiOpenRouterRouting = PI_OPENROUTER_ROUTING
 
 export const sampleClassEntry: ClassEntry = {
   allowlist: ['economy'],

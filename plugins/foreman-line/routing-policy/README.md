@@ -58,6 +58,16 @@ evaluation and the optional shadow-route execution boundary live in
   the Parcel supplies the exact public inputs.
   `tests/fixtures/accept-shadow-route.yaml` is the canonical valid example.
 
+## Pi/OpenRouter structured-decision registry
+
+`templates/pi-openrouter-routing.json` is the Pi execution-plane configuration
+template. Its base URL is `https://openrouter.ai/api/v1`, and its enabled list
+contains the exact OpenRouter model id `typesafe/jev-1.13`. The capability
+validator keeps Jev limited to `routing` and `classification` lanes with
+`recommend-only` authority; it cannot be used for prose generation,
+implementation, approval, merge, or policy bypass. No credential is stored in
+the template.
+
 Types live in `src/types.ts`; schemas in `schemas/*.json` (hand-authored as
 `SchemaObject`, never ajv's `JSONSchemaType`); `tests/parity.test.ts` proves
 the two never drift.

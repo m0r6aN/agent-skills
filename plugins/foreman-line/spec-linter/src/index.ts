@@ -11,4 +11,9 @@ export type {
 } from './types.js'
 export { RISK_LEVELS, ROUTING_CLASSES, SPEC_STATUSES } from './types.js'
 export type { ValidateOptions, ValidationResult } from './validate.js'
-export { KNOWN_SURFACE_PREFIXES, parseFrontmatter, validateSpecFrontmatter } from './validate.js'
+export {
+  KNOWN_INVOLVES_CAPABILITIES,
+  KNOWN_SURFACE_PREFIXES,
+  parseFrontmatter,
+  validateSpecFrontmatter,
+} from './validate.js'

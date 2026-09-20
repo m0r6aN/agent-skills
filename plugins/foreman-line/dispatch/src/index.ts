@@ -37,12 +37,19 @@ export type {
 export { KompressError, kompressContext } from './kompress-adapter/index.js'
 export type {
   CandidateRecord,
+  DispatchIdentity,
   McpClientFactory,
   McpToolClient,
   QueryOptions,
   RankedCandidateList,
 } from './query/index.js'
-export { buildCandidateJql, queryAndRankCandidates, SITE_URL } from './query/index.js'
+export {
+  buildCandidateJql,
+  DispatchIdentityUndeclared,
+  queryAndRankCandidates,
+  SITE_URL,
+  scanReceiptsForResolution,
+} from './query/index.js'
 // W2-P3: routing-eval
 export type {
   ParcelShadowAuthorization,

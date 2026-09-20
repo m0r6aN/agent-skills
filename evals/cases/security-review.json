@@ -1,0 +1,23 @@
+{
+  "skill_name": "security-review",
+  "trigger": {
+    "positive": [
+      { "prompt": "Perform a defensive security review of this API and its authorization boundaries", "top_k": 3 },
+      { "prompt": "Threat-model this agent tool chain for prompt injection, secrets, and tenant isolation", "top_k": 3 },
+      { "prompt": "Audit this Dockerfile for vulnerabilities and unsafe configuration", "top_k": 3 }
+    ],
+    "negative": [
+      { "prompt": "Review this pull request for general correctness and readability", "owner": "code-review-and-quality" },
+      { "prompt": "Assess whether the existing system is ready to launch", "owner": "go-live-readiness" }
+    ]
+  },
+  "evals": [
+    {
+      "id": 1,
+      "kind": "dialogue",
+      "prompt": "Perform a defensive security review of this service and its agentic tool chain.",
+      "expected_output": "Evidence-backed findings with severity, affected surfaces, mitigations, and explicit testing boundaries.",
+      "expectations": ["The response identifies authorization and secret-handling risks", "The response avoids exploitative or destructive testing"]
+    }
+  ]
+}

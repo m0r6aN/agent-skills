@@ -27,8 +27,8 @@ export {
   promptForConfirmation,
 } from './confirm.js'
 export { generateCorrelationContext } from './correlation.js'
+export { ApprovalRootUnresolvedError, assertAbsoluteRoot } from './errors.js'
 export { sha256Hex } from './hash.js'
-export { ACTIVE_SPECS_DIR, DEFAULT_REPO_ROOT } from './paths.js'
 export { type MintedReceipt, mintGenesisReceipt, RECEIPT_SCHEMA_VERSION } from './receipt.js'
 export { writeReceiptDocument } from './receipt-writer.js'
 export {

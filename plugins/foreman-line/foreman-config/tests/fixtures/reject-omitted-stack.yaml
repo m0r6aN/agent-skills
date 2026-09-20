@@ -1,0 +1,14 @@
+# AC10 reject (D26): an omitted `stack:` block is an invalid document —
+# absence must never read as exemption.
+identity:
+  project_key: KONE
+  base_branch: main
+  branch_prefix: feat/
+  worktree_root: ../worktrees
+  dispatch_queue: foreman-line-dispatch
+
+capabilities: {}
+
+policy:
+  audit:
+    require_security_audit_at: [elevated]

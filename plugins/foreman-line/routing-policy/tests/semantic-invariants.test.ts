@@ -11,6 +11,7 @@ import { dirname, join } from 'node:path'
 import { test } from 'node:test'
 import { fileURLToPath } from 'node:url'
 import { parse } from 'yaml'
+import { PI_OPENROUTER_ROUTING } from '../src/pi-openrouter.js'
 import { KNOWN_FRONTIER_MODELS, validatePolicy } from '../src/validator.js'
 
 const here = dirname(fileURLToPath(import.meta.url))
@@ -249,6 +250,36 @@ test('transport requirements: missing block is a structural error, not a silent 
 
 const SHADOW_ROUTE_KEY = 'example-shadow'
 const shadowPolicy = loadYaml(join(fixturesDir, 'accept-shadow-route.yaml'))
+
+test('Pi/OpenRouter config uses the verified base URL and exact Jev model id', () => {
+  assert.equal(PI_OPENROUTER_ROUTING.baseUrl, 'https://openrouter.ai/api/v1')
+  assert.ok(PI_OPENROUTER_ROUTING.enabledModels.includes('typesafe/jev-1.13'))
+  assert.ok(PI_OPENROUTER_ROUTING.models['typesafe/jev-1.13'])
+})
+
+test('Jev is limited to fast structured routing/classification recommendations', () => {
+  const jev = PI_OPENROUTER_ROUTING.models['typesafe/jev-1.13']
+  assert.ok(jev)
+  assert.deepEqual(jev.capabilities, ['routing', 'classification', 'structured-decision'])
+  assert.deepEqual(jev.allowedLanes, ['routing', 'classification'])
+  assert.equal(jev.authority, 'recommend-only')
+  for (const lane of [
+    'prose-generation',
+    'implementation',
+    'approval',
+    'merge',
+    'policy-bypass',
+  ] as const) {
+    assert.ok(jev.prohibitedLanes.includes(lane), `Jev must prohibit ${lane}`)
+  }
+})
+
+test('Pi/OpenRouter enabled models and capability entries are one-to-one', () => {
+  assert.deepEqual(
+    Object.keys(PI_OPENROUTER_ROUTING.models).sort(),
+    [...PI_OPENROUTER_ROUTING.enabledModels].sort(),
+  )
+})
 
 test('shadow routes: shipped policy declares none and validates with an empty map', () => {
   const doc = validPolicy as { shadow_routes?: Record<string, unknown> }

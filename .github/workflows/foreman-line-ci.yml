@@ -30,7 +30,7 @@ jobs:
       - name: Test the package runner without subprocess effects
         run: node --test scripts/foreman-line-ci.test.mjs
 
-      - name: Install all 14 packages, then aggregate every check
+      - name: Install all 19 packages, then aggregate every check
         if: ${{ success() || failure() }}
         shell: pwsh
         run: |

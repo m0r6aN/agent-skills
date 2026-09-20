@@ -29,10 +29,15 @@ test('AC3: readShapingResult and discoverShapingResults are imported from ../../
   assert.match(text, /discoverShapingResults/)
 })
 
-test('AC3: no file under shaping/ is modified by this parcel since the branch fork point', () => {
-  // Diffed from the merge-base with origin/main (rework item 2), not HEAD.
-  const out = diffStatSinceMergeBase(repoRootOfMonorepo, 'plugins/foreman-line/shaping')
-  assert.equal(out.trim(), '')
+test('AC3: the shipped shaping reader surface this package consumes stays exported', async () => {
+  // P2b-i: the original W1-P2 parcel-time byte-freeze on shaping/ is retired —
+  // P2b-i is chartered to change shaping (R2/R3; shaping is in `surfaces:`),
+  // and a shipped byte-pin hard-blocks every future chartered change
+  // (STANDING-CONSTRAINTS #12). The durable invariant is pinned instead: the
+  // reader functions this package consumes remain on shaping's public surface.
+  const shaping = await import('../../shaping/src/index.js')
+  assert.equal(typeof shaping.readShapingResult, 'function')
+  assert.equal(typeof shaping.discoverShapingResults, 'function')
 })
 
 test("AC3: the fallback discovery filters out this package's own projected artifact", () => {
@@ -41,9 +46,13 @@ test("AC3: the fallback discovery filters out this package's own projected artif
   const inputPath = writeShapingResultFixture(root, 'disc-slug', [
     'plugins/foreman-line/docs/specs/active/w1-p2.md',
   ])
-  writeProjectedResult(inputPath, 'Epic Title', { repoRoot: root })
+  // Home-repo shape: the plugin-prefixed specsDir is passed EXPLICITLY (R2).
+  writeProjectedResult(inputPath, 'Epic Title', {
+    repoRoot: root,
+    specsDir: 'plugins/foreman-line/docs/specs/active',
+  })
 
-  const found = discoverProjectableInputs(root)
+  const found = discoverProjectableInputs(root, 'plugins/foreman-line/docs/specs/active')
   assert.equal(found.length, 1)
   assert.ok(found[0]?.endsWith('disc-slug.shaping-result.json'))
   assert.ok(!found.some((p) => p.endsWith('.projected.shaping-result.json')))

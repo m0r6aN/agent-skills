@@ -1,0 +1,23 @@
+{
+  "skill_name": "modernizer",
+  "trigger": {
+    "positive": [
+      { "prompt": "Use a modernization agent to extract behavioral contracts from this legacy code", "top_k": 3 },
+      { "prompt": "Orchestrate human-validated modernization and generate a target-native implementation", "top_k": 3 },
+      { "prompt": "Reconcile a legacy rewrite with receipt-backed behavioral evidence", "top_k": 3 }
+    ],
+    "negative": [
+      { "prompt": "Extract an app specification and document its current features", "owner": "get-app-specs" },
+      { "prompt": "Plan a new feature from a vague idea before coding", "owner": "spec-driven-development" }
+    ]
+  },
+  "evals": [
+    {
+      "id": 1,
+      "kind": "dialogue",
+      "prompt": "Coordinate a human-validated modernization from legacy behavior to a target implementation.",
+      "expected_output": "A modernization workflow centered on contracts, reconciliation, and receipt evidence.",
+      "expectations": ["The response includes human validation", "The response requires reconciliation evidence"]
+    }
+  ]
+}

@@ -18,6 +18,7 @@ import { shadowRouteSchema } from '../src/schemas.js'
 import {
   sampleClassEntry,
   sampleDataClassificationRule,
+  samplePiOpenRouterRouting,
   sampleRoleAssignment,
   sampleRoutingPolicy,
   sampleShadowRoute,
@@ -34,13 +35,14 @@ const samplesByName: ReadonlyMap<string, unknown> = new Map<string, unknown>([
   ['transport-requirements', sampleStrictTransport],
   ['role-assignment', sampleRoleAssignment],
   ['shadow-route', sampleShadowRoute],
+  ['pi-openrouter-routing', samplePiOpenRouterRouting],
 ])
 
 registerNoDriftTests(allSchemaFiles, schemasDir)
 registerSampleValidationTests(allSchemaFiles, samplesByName)
 
 test('every exported routing-policy type has a committed schema file', () => {
-  assert.equal(allSchemaFiles.length, 6)
+  assert.equal(allSchemaFiles.length, 7)
 })
 
 test('shadow prohibited_roles type and schema accept either exact role order', () => {

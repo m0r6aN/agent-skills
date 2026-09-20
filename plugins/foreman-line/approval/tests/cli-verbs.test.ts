@@ -117,15 +117,8 @@ test('reject: exit 0, writes a rejection record with a reason, mints no receipt'
   assert.equal(existsSync(join(repoRoot, 'docs', 'receipts')), false)
   assert.equal(existsSync(approvalRecordPath('example', repoRoot)), false)
 
-  const rejectionPath = join(
-    repoRoot,
-    'plugins',
-    'foreman-line',
-    'docs',
-    'specs',
-    'active',
-    'example.rejection.json',
-  )
+  // P2b-i R2/A1.3: no --specs-dir given, so the FOREIGN default applies.
+  const rejectionPath = join(repoRoot, 'docs', 'specs', 'active', 'example.rejection.json')
   assert.ok(existsSync(rejectionPath))
   const parsed = JSON.parse(readFileSync(rejectionPath, 'utf8'))
   assert.equal(parsed.decision, 'rejected')

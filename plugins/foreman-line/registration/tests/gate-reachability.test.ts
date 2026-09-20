@@ -60,6 +60,7 @@ test('AC2: a fake recording adapter drives a full registration with no network',
   const adapter = new FakeAdapter()
   const outcome = await register({
     slug: fx.slug,
+    projectKey: 'KONE',
     repoRoot: fx.repoRoot,
     adapter,
     timestamp: '2026-07-22T12:00:00Z',

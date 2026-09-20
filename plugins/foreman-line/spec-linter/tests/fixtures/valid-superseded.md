@@ -10,6 +10,7 @@ superseded_by: KONE-9999-replacement-spec
 risk: standard
 surfaces: [docs/SPEC-CONVENTION.md]
 routing_class: standard-feature
+verification_class: judgment-required
 permission_profile: builder-standard
 ---
 

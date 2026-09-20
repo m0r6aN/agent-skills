@@ -4,6 +4,7 @@
  * proves the committed files never drift from these typed sources.
  */
 import type { SchemaFile } from '../../schema-scaffold/src/registry.js'
+import { piOpenRouterRoutingSchema } from './pi-openrouter.js'
 import {
   classEntrySchema,
   dataClassificationRuleSchema,
@@ -22,4 +23,5 @@ export const allSchemaFiles: readonly SchemaFile[] = [
   { name: 'transport-requirements', schema: transportRequirementsSchema },
   { name: 'role-assignment', schema: roleAssignmentSchema },
   { name: 'shadow-route', schema: shadowRouteSchema },
+  { name: 'pi-openrouter-routing', schema: piOpenRouterRoutingSchema },
 ]

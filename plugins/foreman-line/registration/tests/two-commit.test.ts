@@ -24,6 +24,7 @@ test('AC9: commit 1 = back-fill; commit 2 = Stage-B receipt + RegistrationResult
   const fx = singleStoryFixture()
   const outcome = await register({
     slug: fx.slug,
+    projectKey: 'KONE',
     repoRoot: fx.repoRoot,
     adapter: new FakeAdapter(),
     timestamp: TS,
@@ -36,7 +37,8 @@ test('AC9: commit 1 = back-fill; commit 2 = Stage-B receipt + RegistrationResult
   assert.deepEqual(commit1, [fx.specRefs[0] as string])
 
   // Commit 2: the Stage-B receipt + the sidecar, nothing else.
-  const sidecarRel = `plugins/foreman-line/docs/specs/active/${fx.slug}.registration.json`
+  // P2b-i R2/A1.3: no specsDir supplied, so the FOREIGN default applies.
+  const sidecarRel = `docs/specs/active/${fx.slug}.registration.json`
   assert.equal(commit2.length, 2)
   assert.ok(commit2.includes(outcome.receiptLocator as string))
   assert.ok(commit2.includes(sidecarRel))

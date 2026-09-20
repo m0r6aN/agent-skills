@@ -10,7 +10,6 @@
  *
  * Guarded by `invokedDirectly()` — safe to import in tests without side-effects.
  */
-import { execFileSync } from 'node:child_process'
 import { pathToFileURL } from 'node:url'
 import type { DocSpineRunVerifyFn } from './docspine-hook.js'
 import { runDocSpineHook } from './docspine-hook.js'
@@ -18,14 +17,8 @@ import { runDocSpineHook } from './docspine-hook.js'
 /** Injected seams — defaults touch the real live DocSpine import and git. */
 export interface DocSpineReportSeams {
   readonly runVerifyFn?: DocSpineRunVerifyFn // default: live dynamic import
-  readonly getRepoRoot?: () => string // default: git rev-parse
-}
-
-/** Default repo-root seam: `git rev-parse --show-toplevel`. */
-function realGetRepoRoot(): string {
-  return execFileSync('git', ['rev-parse', '--show-toplevel'], {
-    encoding: 'utf8',
-  }).trim()
+  /** Explicit caller-supplied repository root; never discovered from cwd. */
+  readonly repoRoot: string
 }
 
 /**
@@ -57,10 +50,14 @@ function invokedDirectly(): boolean {
 }
 
 if (invokedDirectly()) {
-  const seams: DocSpineReportSeams = {}
+  const repoRoot = process.env.FOREMAN_REPO_ROOT
+  if (repoRoot === undefined || repoRoot.trim().length === 0) {
+    console.log('::warning::docspine-hook: skipped — FOREMAN_REPO_ROOT is required')
+    process.exit(0)
+  }
+  const seams: DocSpineReportSeams = { repoRoot }
   const runVerifyFn = seams.runVerifyFn ?? (await getLiveRunVerifyFn())
-  const getRepoRoot = seams.getRepoRoot ?? realGetRepoRoot
-  const result = await runDocSpineHook({ runVerifyFn, getRepoRoot })
+  const result = await runDocSpineHook({ runVerifyFn, repoRoot: seams.repoRoot })
   for (const annotation of result.annotations) {
     console.log(annotation)
   }
