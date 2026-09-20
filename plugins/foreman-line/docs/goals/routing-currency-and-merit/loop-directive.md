@@ -109,7 +109,8 @@ claim.
 
 Gate 2 is satisfied for RCM-P0 and RCM-P1, but Gate 3 is not delegated. RCM-P0's
 bounded incomplete handoff and review disposition are recorded in
-`rcm-p0-review-triage.md`. The coordinator must stop here: no merge, P1 dispatch,
+`rcm-p0-review-triage.md`; the full requirement audit is recorded in `exit-audit.md`.
+The coordinator must stop here: no merge, P1 dispatch,
 host correction, live policy mutation, Pi write, provider spend, or downstream
 consumption is authorized until the human Gate 3 decision and the missing evidence
 boundary are resolved.
