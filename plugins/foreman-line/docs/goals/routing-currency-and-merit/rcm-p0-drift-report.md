@@ -125,11 +125,20 @@ awaiting_coordinator_claim. Current hashes:
 The current coordinator ruling preserves this disposition. The worker neither
 claims HAWF ownership nor changes any control document.
 
-## Jev absence and correction proposal
+## Jev eligibility-surface uncertainty and correction proposal
 
 Required tuple: **openrouter / typesafe/jev-1.13 / https://openrouter.ai/api/v1**.
-It is enabled at H03#/enabledModels/4 but has **zero catalog matches** in the
-supplied full H02 projection; M01/catalogCoverage records the same absence.
+It is enabled at H03#/enabledModels/4 but has **zero resolvable matches** in the
+supplied H02 catalog projection; M01/catalogCoverage records the same projection
+absence. The exact projector result remains **MISSING_MODEL_REFUSED** because
+the projector cannot resolve this tuple. This is not proof of service nonexistence.
+
+The phantom characterization is withdrawn pending a D13 / eligibility-surface ruling.
+User-supplied, unverified evidence suggests Jev is served by a non-enumerated
+endpoint family (alpha Decisions) outside the supplied chat/completions projection. This suggestion
+is not verified catalog/service fact and does not resolve or approve Jev.
+Under unchanged D13, provider:id cannot be accepted unless it resolves exactly
+against the enumerated eligibility surface and approved matching endpoint.
 
 D10 corroboration supplied by the coordinator:
 [OpenRouter models endpoint](https://openrouter.ai/api/v1/models), observed at
@@ -138,12 +147,14 @@ D10 corroboration supplied by the coordinator:
 H02 and not an independent worker fetch. No model page is catalog proof.
 The coordinator timestamp does not establish accepted catalog freshness.
 
-Disposition: **refused/disabled-lane/correction proposal only**. No runtime
-disablement is asserted. S09 D10 confines Jev to recommend-only routing/
+Disposition: **refused/disabled-lane/correction proposal only**.
+No runtime disablement is asserted or performed. The correction-only/recommend-only
+boundary remains. S09 D10 confines Jev to recommend-only routing/
 classification, never prose, implementation, approval, merge, release or bypass.
 
 Correction proposal: keep the lane refused; a separately authorized human may
-address the missing identity and enabled/default inconsistencies. Any future
+address the unresolved eligibility surface and enabled/default inconsistencies.
+The D13 / eligibility-surface ruling remains pending. Any future
 acceptance needs exact unique provider/model/baseUrl evidence and accepted
 freshness/configuration authority. No model is installed, substituted, patched
 or silently selected here.

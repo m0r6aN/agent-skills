@@ -2,13 +2,23 @@
 
 ## Explicit worktree and authorization
 
-Absolute repository root:
+Original sanitized-export repository root (historical declaration retained):
 **`C:\Repos\foreman-line-routing-currency-merit-rcm-p0-live-export`**.
-This is the assigned isolated **C:** worktree, not the D: coordinator checkout.
+This was the assigned isolated **C:** worktree, not the D: coordinator checkout.
 Branch: `codex/rcm-p0-live-export`.
 Step 0 HEAD: `cfdde25728d73fe4532d9dfc794a3b4188973f51`; clean tracked and
 untracked status. The same clean state was confirmed after the interruptions,
 before the first evidence write. No commit is authorized or made.
+
+Current Jev correction repository root:
+**`C:\Repos\foreman-line-routing-currency-merit-rcm-p0-jev-surface`**.
+Branch: `codex/rcm-p0-jev-surface`.
+Step 0 HEAD: `5b1d33caae85cabfaf45089088798680ffed949f`; clean tracked and
+untracked status before correction. The prior root, source acquisition times and
+snapshot repoCommit remain historical provenance. Verification runs from this
+current root, using only the same three absolute read-only export inputs below.
+The completed spec permits this evidence correction without amendment: AC5
+retains refusal for unverifiable identity and forbids asserting runtime disablement.
 
 Completed governing spec:
 `plugins/foreman-line/docs/specs/done/RCM-P0-current-instance-recon.md` (S10).
@@ -35,7 +45,7 @@ and fresh independent review, with substantive authority/freshness gaps retained
 
 | Role | Read status and meaning | Authority / owner |
 |---|---|---|
-| REPO_ROOT | Exact absolute worktree above; repository text only | Repo policy owns routing; RCM coordinator owns evidence acceptance |
+| REPO_ROOT | Current Jev correction absolute worktree above; repository text only | Repo policy owns routing; RCM coordinator owns evidence acceptance |
 | EXPORT_ROOT | Read-only coordinator-supplied `D:\Repos\agent-skills\plugins\foreman-line\docs\goals\routing-currency-and-merit\host-owner-export` | Input exception explicitly supplied by coordinator; only three named JSON files |
 | H02 | `EXPORT_ROOT/catalog-projection.json`; 13 providers / 608 projected models | Host-owner observation; not routing authority |
 | H03 | `EXPORT_ROOT/settings-projection.json`; five enabled references, one default, two provider entries | Observed Pi settings; not approved config or routing authority |
@@ -109,6 +119,11 @@ authority exists. Historical replay cannot authorize current consumption.
 
 These fresh hashes replace current use of old source manifests. Historical
 records and their failures remain recoverable at the unchanged baseline commit.
+For this correction, these are preserved original acquisition pins at snapshot
+repoCommit `cfdde25728d73fe4532d9dfc794a3b4188973f51`. Charter/directive changes
+already present at correction HEAD are not repinned or reconciled. A3 checks
+historical source bytes against these pins and current source bytes against the
+correction starting HEAD; the source table is not a claim of current control hashes.
 
 | ID | Safe locator | SHA-256 | Bytes |
 |---|---|---|---:|
@@ -150,7 +165,16 @@ in-memory sets; it does not run the evaluator.
 
 Jev's required tuple remains
 `openrouter / typesafe/jev-1.13 / https://openrouter.ai/api/v1`.
-H03 enabledModels[4] contains it; H02 contains zero matching records.
+H03 enabledModels[4] contains it; H02 contains zero resolvable matches.
+The exact projector result remains **MISSING_MODEL_REFUSED** because the projector
+cannot resolve this tuple against the supplied catalog projection.
+
+The phantom characterization is withdrawn pending a D13 / eligibility-surface ruling.
+User-supplied, unverified evidence suggests Jev is served by a non-enumerated
+endpoint family (alpha Decisions) outside the supplied chat/completions projection. This suggestion
+is not verified catalog/service fact and does not resolve or approve Jev.
+Under unchanged D13, provider:id cannot be accepted unless it resolves exactly
+against the enumerated eligibility surface and approved matching endpoint.
 
 Coordinator corroboration:
 [https://openrouter.ai/api/v1/models](https://openrouter.ai/api/v1/models),
@@ -159,9 +183,10 @@ direct find returned no matching `typesafe/jev-1.13` entry.
 This supplied observation is corroboration only, not an independent worker fetch,
 H02 replacement, model-page proof or accepted freshness timestamp.
 
-Jev: **refused/disabled-lane/correction proposal only**. No runtime disablement,
-installation or substitution is asserted or performed; recommend-only routing/
-classification limits remain. Host correction requires separate human authority.
+Jev: **refused/disabled-lane/correction proposal only**.
+No runtime disablement is asserted or performed. No installation or substitution
+is asserted or performed; the correction-only/recommend-only routing/classification
+boundary remains. Host correction requires separate human authority.
 
 HAWF: **escalated-unresolved / downstream hold**. The packet is parked with its
 owner. No action, reconciliation or onward handoff. No HAWF ownership is claimed.
@@ -171,7 +196,8 @@ owner. No action, reconciliation or onward handoff. No HAWF ownership is claimed
 Coordinator evidence acceptance and two fresh independent frontier reviews,
 including security; no accepted TTL/source-time authority; no approved
 configuration source; no installed-plugin parity; four exact policy endpoint
-mismatches; Jev absence; the preserved HAWF disposition. RCM-P1 remains held.
+mismatches; Jev unresolvable in the supplied projection pending a D13 /
+eligibility-surface ruling; the preserved HAWF disposition. RCM-P1 remains held.
 The F6 health claim and F5 disjoint-namespace subclaim are corrected as evidence,
 without changing any locked decision or control document. All RCM D1–D14,
 OQ1–OQ7, boundary D1–D10, amendments and GMF contracts remain unchanged.
