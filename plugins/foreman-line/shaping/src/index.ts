@@ -7,14 +7,13 @@
  * frozen `contracts` package and imported from there directly.
  */
 export {
-  ACTIVE_SPECS_DIR,
-  DEFAULT_REPO_ROOT,
   deriveSessionSlug,
   type EmitOptions,
   type EmitResult,
   emitShapingResult,
   toPosixRelative,
 } from './emit.js'
+export { assertAbsoluteRoot, ShapingRootUnresolvedError } from './errors.js'
 export {
   ARTIFACT_SUFFIX,
   discoverShapingResults,

@@ -16,17 +16,12 @@ test('AC5: artifact is written to active/<session-slug>.shaping-result.json bene
     parcelSpecRefs: ['x.md'],
     repoRoot: root,
   })
-  const expected = join(
-    root,
-    'plugins',
-    'foreman-line',
-    'docs',
-    'specs',
-    'active',
-    'my-session.shaping-result.json',
-  )
+  // P2b-i R2/A1.3: with no explicit specsDir the FOREIGN default applies —
+  // `docs/specs/active` beneath the caller-supplied root. The old
+  // plugin-prefixed value is now the home repo's explicit call-site argument.
+  const expected = join(root, 'docs', 'specs', 'active', 'my-session.shaping-result.json')
   assert.equal(artifactPath, expected)
-  assert.equal(artifactRef, 'plugins/foreman-line/docs/specs/active/my-session.shaping-result.json')
+  assert.equal(artifactRef, 'docs/specs/active/my-session.shaping-result.json')
   assert.ok(existsSync(artifactPath))
 })
 

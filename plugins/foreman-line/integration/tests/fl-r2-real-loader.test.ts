@@ -9,6 +9,10 @@ import { runReport } from '../src/report.js'
 
 const ACTIVE_DIR = 'plugins/foreman-line/docs/specs/active'
 
+function pluginRoot(root: string): string {
+  return join(root, 'plugins/foreman-line')
+}
+
 function diskSpecs(t: TestContext, files: Record<string, string>): string {
   const root = mkdtempSync(join(tmpdir(), 'fl-r2-specs-'))
   t.after(() => rmSync(root, { recursive: true, force: true }))
@@ -33,7 +37,7 @@ for (const [format, surfaces] of Object.entries({
         `status: "active" # comment\nrisk: 'critical' # comment\n${surfaces}`,
       )
       const root = diskSpecs(t, { 'SPEC.md': content.replaceAll('\n', newline) })
-      const loaded = loadActiveSpecsLive(root)
+      const loaded = loadActiveSpecsLive(root, pluginRoot(root))
       assert.deepEqual(loaded, [
         {
           path: `${ACTIVE_DIR}/SPEC.md`,
@@ -57,7 +61,7 @@ test('AC-2: real disk filtering, deterministic order and highest declared risk',
     'README.md': '# Plain Markdown\nstatus: active\nrisk: critical\nsurfaces: [other/]',
     'ignored.json': '{invalid json is not a spec}',
   })
-  const loaded = loadActiveSpecsLive(root)
+  const loaded = loadActiveSpecsLive(root, pluginRoot(root))
   assert.deepEqual(
     loaded.map((spec) => spec.path),
     [`${ACTIVE_DIR}/A-standard.md`, `${ACTIVE_DIR}/Z-critical.md`],
@@ -76,7 +80,7 @@ for (const risk of ['low', 'standard', 'elevated', 'critical']) {
     const root = diskSpecs(t, {
       'SPEC.md': `---\nstatus: active\nrisk: ${risk}\nsurfaces: [docs/]\n---`,
     })
-    assert.equal(loadActiveSpecsLive(root)[0]?.risk, risk)
+    assert.equal(loadActiveSpecsLive(root, pluginRoot(root))[0]?.risk, risk)
   })
 }
 
@@ -117,7 +121,7 @@ for (const [shape, body] of Object.entries(invalidBodies)) {
   test(`AC-3: ${shape} throws POSTURE_INVALID from the real reader`, (t) => {
     const root = diskSpecs(t, { 'INVALID.md': frontmatter(body) })
     assert.throws(
-      () => loadActiveSpecsLive(root),
+      () => loadActiveSpecsLive(root, pluginRoot(root)),
       (err: unknown) => {
         assert.ok(err instanceof IntegrationError)
         assert.equal(err.code, 'POSTURE_INVALID')
@@ -132,7 +136,7 @@ test('AC-3: unterminated frontmatter is not silently treated as plain Markdown',
   const root = diskSpecs(t, {
     'INVALID.md': '---\nstatus: active\nrisk: critical\nsurfaces: [docs/]\n',
   })
-  assert.throws(() => loadActiveSpecsLive(root), {
+  assert.throws(() => loadActiveSpecsLive(root, pluginRoot(root)), {
     name: 'IntegrationError',
     code: 'POSTURE_INVALID',
   })
@@ -140,12 +144,12 @@ test('AC-3: unterminated frontmatter is not silently treated as plain Markdown',
 
 test('AC-3: real directory-list and file-read failures are typed', (t) => {
   const root = diskSpecs(t, {})
-  assert.throws(() => loadActiveSpecsLive(join(root, 'missing')), {
+  assert.throws(() => loadActiveSpecsLive(root, join(root, 'missing')), {
     name: 'IntegrationError',
     code: 'POSTURE_INVALID',
   })
   mkdirSync(join(root, ACTIVE_DIR, 'directory.md'))
-  assert.throws(() => loadActiveSpecsLive(root), {
+  assert.throws(() => loadActiveSpecsLive(root, pluginRoot(root)), {
     name: 'IntegrationError',
     code: 'POSTURE_INVALID',
   })
@@ -157,9 +161,9 @@ test('AC-3: malformed disk input remains report-only and cannot inject annotatio
       'status: active\nrisk: critical\nsurfaces: [docs/\n::warning::forged',
     ),
   })
-  const result = runReport({
+  const result = runReport(root, pluginRoot(root), {
     getChangedPaths: () => ['docs/note.md'],
-    loadActiveSpecs: () => loadActiveSpecsLive(root),
+    loadActiveSpecs: () => loadActiveSpecsLive(root, pluginRoot(root)),
   })
   assert.equal(result.exitCode, 0)
   assert.equal(result.decision, null)
@@ -177,7 +181,7 @@ test('AC-1: YAML aliases and indented block-scalar fences do not truncate frontm
       'notes: |\n  ---\n  Not the closing fence\npaths: &paths [docs/]\nstatus: active\nrisk: critical\nsurfaces: *paths',
     ),
   })
-  assert.deepEqual(loadActiveSpecsLive(root)[0]?.surfaces, ['docs/'])
+  assert.deepEqual(loadActiveSpecsLive(root, pluginRoot(root))[0]?.surfaces, ['docs/'])
 })
 
 test('AC-3: hostile near-fence input is rejected without unbounded whitespace backtracking', (t) => {
@@ -185,7 +189,7 @@ test('AC-3: hostile near-fence input is rejected without unbounded whitespace ba
     'INVALID.md': `---\n${`---${' '.repeat(64_000)}x\n`.repeat(16)}`,
   })
   const start = performance.now()
-  assert.throws(() => loadActiveSpecsLive(root), {
+  assert.throws(() => loadActiveSpecsLive(root, pluginRoot(root)), {
     name: 'IntegrationError',
     code: 'POSTURE_INVALID',
   })
@@ -196,9 +200,9 @@ test('AC-2: real loaded critical risk is reported with exit zero, not promoted t
   const root = diskSpecs(t, {
     'SPEC.md': frontmatter('status: active\nrisk: critical\nsurfaces:\n  - docs/'),
   })
-  const result = runReport({
+  const result = runReport(root, pluginRoot(root), {
     getChangedPaths: () => ['docs/note.md'],
-    loadActiveSpecs: () => loadActiveSpecsLive(root),
+    loadActiveSpecs: () => loadActiveSpecsLive(root, pluginRoot(root)),
   })
   assert.equal(result.exitCode, 0)
   assert.equal(result.decision?.declaredRisk, 'critical')
@@ -214,7 +218,7 @@ for (const [field, body] of Object.entries({
   test(`AC-3 B-01: alias key cannot overwrite ${field} in the real reader`, (t) => {
     const root = diskSpecs(t, { 'ALIAS.md': frontmatter(body) })
     assert.throws(
-      () => loadActiveSpecsLive(root),
+      () => loadActiveSpecsLive(root, pluginRoot(root)),
       (err: unknown) => {
         assert.ok(err instanceof IntegrationError)
         assert.equal(err.code, 'POSTURE_INVALID')
@@ -226,9 +230,9 @@ for (const [field, body] of Object.entries({
 
   test(`AC-3 B-01: alias ${field} overwrite yields a report-only warning, not a decision`, (t) => {
     const root = diskSpecs(t, { 'ALIAS.md': frontmatter(body) })
-    const result = runReport({
+    const result = runReport(root, pluginRoot(root), {
       getChangedPaths: () => ['docs/note.md'],
-      loadActiveSpecs: () => loadActiveSpecsLive(root),
+      loadActiveSpecs: () => loadActiveSpecsLive(root, pluginRoot(root)),
     })
     assert.equal(result.exitCode, 0)
     assert.equal(result.decision, null)
@@ -244,7 +248,7 @@ test('AC-3 B-01: benign status, risk and surfaces aliases as values still load',
       's: &s active\nr: &r critical\np: &p [docs/]\nstatus: *s\nrisk: *r\nsurfaces: *p',
     ),
   })
-  assert.deepEqual(loadActiveSpecsLive(root), [
+  assert.deepEqual(loadActiveSpecsLive(root, pluginRoot(root)), [
     { path: `${ACTIVE_DIR}/ALIAS.md`, status: 'active', risk: 'critical', surfaces: ['docs/'] },
   ])
 })

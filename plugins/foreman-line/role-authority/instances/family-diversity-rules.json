@@ -1,0 +1,10 @@
+[
+  {
+    "riskClass": "R2",
+    "minDistinctModelFamilies": 2
+  },
+  {
+    "riskClass": "R3",
+    "minDistinctModelFamilies": 2
+  }
+]

@@ -24,6 +24,7 @@ superseded_by: null
 risk: standard
 surfaces: [docs/example.md]
 routing_class: standard-feature
+verification_class: judgment-required
 ---
 
 # Example Draft
@@ -66,6 +67,7 @@ superseded_by: null
 risk: standard
 surfaces: [docs/example.md]
 routing_class: standard-feature
+verification_class: judgment-required
 ---
 
 # Example Draft

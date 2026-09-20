@@ -1,0 +1,13 @@
+{
+  "contract": "D34 adversarial shared-dependency fixture (coordination-seam-proposal.md §1)",
+  "readers": [
+    {
+      "parcelId": "d34-parcel-a",
+      "files": ["plugins/foreman-line/contract-readers/tests/fixtures/d34-shared-dependency.json"]
+    },
+    {
+      "parcelId": "d34-parcel-b",
+      "files": ["plugins/foreman-line/contract-readers/tests/fixtures/d34-shared-dependency.json"]
+    }
+  ]
+}

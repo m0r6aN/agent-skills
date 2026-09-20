@@ -21,7 +21,7 @@ const templatePath = join(
   'foreman-shaping-template.md',
 )
 
-test('AC11: plugin-local foreman-shaping/SKILL.md exists and documents the session shape', () => {
+test('AC11: plugins/foreman-line/skills/foreman-shaping/SKILL.md exists and documents the session shape', () => {
   assert.ok(existsSync(skillPath), `missing ${skillPath}`)
   const text = readFileSync(skillPath, 'utf8')
   assert.match(text, /STOP/)

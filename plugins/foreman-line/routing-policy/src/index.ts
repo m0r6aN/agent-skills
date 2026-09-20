@@ -1,3 +1,18 @@
+export type {
+  PiOpenRouterAuthority,
+  PiOpenRouterCapability,
+  PiOpenRouterLane,
+  PiOpenRouterModel,
+  PiOpenRouterRouting,
+  PiOpenRouterValidationResult,
+} from './pi-openrouter.js'
+export {
+  PI_OPENROUTER_ENABLED_MODELS,
+  PI_OPENROUTER_ROUTING,
+  piOpenRouterModelSchema,
+  piOpenRouterRoutingSchema,
+  validatePiOpenRouterRouting,
+} from './pi-openrouter.js'
 export {
   classEntrySchema,
   dataClassificationRuleSchema,

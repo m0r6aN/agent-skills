@@ -33,6 +33,7 @@ function makeFixture(specBody = 'AC-1: fixture criterion\n'): Fixture {
     surfaces: ['plugins/foreman-line/verification'],
     worktreePath: join(repoRoot, 'reviewer-wt'),
     repoRoot,
+    pluginRoot: join(repoRoot, 'plugins/foreman-line'),
   }
   return { repoRoot, workflowId, input }
 }
@@ -108,7 +109,7 @@ test('AC-5: src/index.ts exports the seven adversarial functions, AdversarialErr
   assert.equal(typeof api.allocateSequence, 'function')
   assert.equal(typeof api.runHarness, 'function')
   assert.equal(typeof api.VerificationError, 'function')
-  assert.equal(api.AC_CONVENTION_PATH, 'plugins/foreman-line/verification/AC-CONVENTION.md')
+  assert.equal(api.AC_CONVENTION_PATH, 'verification/AC-CONVENTION.md')
 })
 
 // ─── AC-6: kickstarter content ────────────────────────────────────────────────
@@ -172,7 +173,12 @@ test('AC-8: unreadable matrix raises MATRIX_UNREADABLE; invalid matrix raises MA
   const fixture = makeFixture()
   const bare = makeTempRepoRoot({ matrix: false })
   assert.throws(
-    () => api.generateReviewKickstarter({ ...fixture.input, repoRoot: bare }),
+    () =>
+      api.generateReviewKickstarter({
+        ...fixture.input,
+        repoRoot: bare,
+        pluginRoot: join(bare, 'plugins/foreman-line'),
+      }),
     (err: unknown) => err instanceof api.AdversarialError && err.code === 'MATRIX_UNREADABLE',
   )
 
@@ -181,7 +187,12 @@ test('AC-8: unreadable matrix raises MATRIX_UNREADABLE; invalid matrix raises MA
   mkdirSync(matrixDir, { recursive: true })
   writeFileSync(join(matrixDir, 'skill-injection.yaml'), 'builder: 5\n')
   assert.throws(
-    () => api.generateReviewKickstarter({ ...fixture.input, repoRoot: invalidRoot }),
+    () =>
+      api.generateReviewKickstarter({
+        ...fixture.input,
+        repoRoot: invalidRoot,
+        pluginRoot: join(invalidRoot, 'plugins/foreman-line'),
+      }),
     (err: unknown) => err instanceof api.AdversarialError && err.code === 'MATRIX_INVALID',
   )
 })

@@ -107,8 +107,8 @@ export interface HumanGateInput {
   readonly targetStatus: string
   /** Coordinator triage entries for the summary's disposition table. */
   readonly dispositions: readonly Disposition[]
-  /** Defaults to process.cwd(); tests pass a tmp dir. */
-  readonly repoRoot?: string
+  /** Explicit repository root; never inferred from the process directory. */
+  readonly repoRoot: string
 }
 
 export interface HumanGateDecision {
@@ -162,8 +162,8 @@ export interface ExecuteHumanGateDeps {
 
 export interface RetryHalfClosedDeps {
   readonly transport: HumanGateJiraTransport
-  /** Defaults to process.cwd(); tests pass a tmp dir. */
-  readonly repoRoot?: string
+  /** Explicit repository root for retry receipts. */
+  readonly repoRoot: string
   /** Failure-injection seam wrapping each Stage-D receipt write. */
   readonly writeReceiptFn?: (write: () => string) => string
 }
@@ -770,7 +770,7 @@ export function prepareHumanGate(
   }
   // 1. workflowId before any filesystem access (AC-6).
   assertValidWorkflowId(input.workflowId)
-  const repoRoot = input.repoRoot ?? process.cwd()
+  const repoRoot = input.repoRoot
   if (typeof input.ticketKey !== 'string' || input.ticketKey.length === 0) {
     throw invalidInput('HumanGateInput.ticketKey', 'must be a non-empty string')
   }
@@ -1187,7 +1187,7 @@ export async function retryHalfClosed(
       'a HumanGateJiraTransport is required for the retry',
     )
   }
-  const repoRoot = deps.repoRoot ?? process.cwd()
+  const repoRoot = deps.repoRoot
   const receipts = loadConformingReceipts(workflowId, repoRoot)
 
   // 1. Closure already exists: a repeat retry after success is a no-op —

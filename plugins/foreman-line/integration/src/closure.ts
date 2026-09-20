@@ -85,8 +85,8 @@ export interface ClosureInput {
   readonly mergeSha: string
   /** active/ -> done/, recorded-only (Q2). */
   readonly specLifecycleMove: { readonly from: string; readonly to: string }
-  /** Defaults to process.cwd(); tests pass a tmp dir. */
-  readonly repoRoot?: string
+  /** Required (P2a/D19): never derived from process.cwd(). */
+  readonly repoRoot: string
 }
 
 export interface ClosurePackage {
@@ -663,7 +663,7 @@ export async function prepareClosure(
   }
   // 1. workflowId before any filesystem access.
   assertValidWorkflowId(input.workflowId)
-  const repoRoot = input.repoRoot ?? process.cwd()
+  const repoRoot = input.repoRoot
   // 2. Input shape guards.
   assertNonEmptyString(input.ticketKey, 'ClosureInput.ticketKey')
   assertNonEmptyString(input.targetStatus, 'ClosureInput.targetStatus')
@@ -783,7 +783,7 @@ export async function executeClosure(
 
 export async function retryHalfClosedClosure(
   workflowId: string,
-  deps: ExecuteClosureDeps & { readonly repoRoot?: string },
+  deps: ExecuteClosureDeps & { readonly repoRoot: string },
 ): Promise<ClosureResult> {
   assertValidWorkflowId(workflowId)
   if (typeof deps !== 'object' || deps === null || deps.transport === undefined) {
@@ -792,7 +792,7 @@ export async function retryHalfClosedClosure(
       'ExecuteClosureDeps.transport (a ClosureJiraTransport) is required for the retry',
     )
   }
-  const repoRoot = deps.repoRoot ?? process.cwd()
+  const repoRoot = deps.repoRoot
   const loadFn = deps.loadReceiptChainFn ?? defaultLoadReceiptChain
   const chain = loadChain(loadFn, workflowId, repoRoot)
 

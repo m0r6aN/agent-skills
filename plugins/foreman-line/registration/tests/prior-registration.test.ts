@@ -21,7 +21,13 @@ test('AC7: order is first (no Stage-B receipt) -> then reconcile once the receip
   assert.equal(detectRegistrationMode(fx.record, fx.repoRoot), 'first')
 
   const adapter = new FakeAdapter()
-  await register({ slug: fx.slug, repoRoot: fx.repoRoot, adapter, timestamp: TS })
+  await register({
+    slug: fx.slug,
+    projectKey: 'KONE',
+    repoRoot: fx.repoRoot,
+    adapter,
+    timestamp: TS,
+  })
 
   // The completed first registration minted the Stage-B receipt -> reconcile.
   assert.equal(detectRegistrationMode(fx.record, fx.repoRoot), 'reconcile')
@@ -30,12 +36,24 @@ test('AC7: order is first (no Stage-B receipt) -> then reconcile once the receip
 test('AC7: reconcile creates nothing and skips F7 against (legitimately) back-filled content', async () => {
   const fx = singleStoryFixture()
   const adapter = new FakeAdapter()
-  await register({ slug: fx.slug, repoRoot: fx.repoRoot, adapter, timestamp: TS })
+  await register({
+    slug: fx.slug,
+    projectKey: 'KONE',
+    repoRoot: fx.repoRoot,
+    adapter,
+    timestamp: TS,
+  })
   const createsAfterFirst = adapter.createCalls.length
 
   // Content is now back-filled (ticket: != KONE-TBD); a naive F7 would refuse.
   // Reconcile mode must proceed without creating anything and without F7.
-  const outcome = await register({ slug: fx.slug, repoRoot: fx.repoRoot, adapter, timestamp: TS })
+  const outcome = await register({
+    slug: fx.slug,
+    projectKey: 'KONE',
+    repoRoot: fx.repoRoot,
+    adapter,
+    timestamp: TS,
+  })
   assert.equal(outcome.mode, 'reconcile')
   assert.equal(adapter.createCalls.length, createsAfterFirst, 'reconcile must create nothing')
 })
@@ -53,7 +71,13 @@ test('AC7: abuse closed - hand-edited ticket keys on unapproved content do NOT e
 
   // And first-mode F7 refuses the tampered content: reconcile is unreachable.
   await assert.rejects(
-    register({ slug: fx.slug, repoRoot: fx.repoRoot, adapter: new FakeAdapter(), timestamp: TS }),
+    register({
+      slug: fx.slug,
+      projectKey: 'KONE',
+      repoRoot: fx.repoRoot,
+      adapter: new FakeAdapter(),
+      timestamp: TS,
+    }),
     HashMismatchError,
   )
 })

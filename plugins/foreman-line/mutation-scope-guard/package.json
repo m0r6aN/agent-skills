@@ -1,0 +1,25 @@
+{
+  "name": "@foreman-line/mutation-scope-guard",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "WF-P27: mutation-scope enforcement guard. Checks a task envelope's allowedFiles/forbiddenSurfaces and a spec's surfaces: declaration against actually-changed paths, refusing out-of-scope mutation with a typed, coded error.",
+  "engines": {
+    "node": ">=24.11.1"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test tests/*.test.ts",
+    "lint": "biome check ."
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@biomejs/biome": "2.5.3",
+    "@types/node": "26.1.1",
+    "tsx": "4.23.1",
+    "typescript": "7.0.2"
+  }
+}

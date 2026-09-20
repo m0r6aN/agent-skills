@@ -10,7 +10,7 @@
  * Nothing here mints a `correlationId`.
  */
 import { readdirSync, readFileSync } from 'node:fs'
-import { join } from 'node:path'
+import { join, relative } from 'node:path'
 import { parseDocument } from 'yaml'
 import {
   type AuditTriggerDecision,
@@ -124,10 +124,10 @@ export function evaluateChangeSet(
 // ── Injected active-spec loader seam (default = real disk read) ─────────────
 
 /** Injected seam: load `status:'active'` spec descriptors from a repo root. */
-export type LoadActiveSpecsFn = (repoRoot: string) => readonly ActiveSpecDescriptor[]
-
-/** Repo-relative directory holding the live spec contracts (PR4-6). */
-const ACTIVE_SPECS_DIR = join('plugins', 'foreman-line', 'docs', 'specs', 'active')
+export type LoadActiveSpecsFn = (
+  repoRoot: string,
+  pluginRoot: string,
+) => readonly ActiveSpecDescriptor[]
 
 const VALID_RISKS: readonly RiskLevel[] = ['low', 'standard', 'elevated', 'critical']
 
@@ -184,8 +184,8 @@ function parseFrontmatter(
  * Real loader (default): reads `active/*.md` and returns only validated active
  * descriptors. Directory, file and YAML boundaries are wrapped per lesson #22.
  */
-export const loadActiveSpecsLive: LoadActiveSpecsFn = (repoRoot) => {
-  const dir = join(repoRoot, ACTIVE_SPECS_DIR)
+export const loadActiveSpecsLive: LoadActiveSpecsFn = (repoRoot, pluginRoot) => {
+  const dir = join(pluginRoot, 'docs', 'specs', 'active')
   let files: string[]
   try {
     // Sort for a stable, deterministic descriptor order (RA-2/RB-3).
@@ -201,7 +201,7 @@ export const loadActiveSpecsLive: LoadActiveSpecsFn = (repoRoot) => {
 
   const descriptors: ActiveSpecDescriptor[] = []
   for (const name of files) {
-    const specPath = join(ACTIVE_SPECS_DIR, name).replace(/\\/g, '/')
+    const specPath = relative(repoRoot, join(dir, name)).replace(/\\/g, '/')
     let parsed: ReturnType<typeof parseFrontmatter>
     try {
       parsed = parseFrontmatter(readFileSync(join(dir, name), 'utf8'))

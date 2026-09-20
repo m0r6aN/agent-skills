@@ -54,7 +54,7 @@ test('AC2: ui/components/Button.ts resolves to [test-coverage, kds-figma]', () =
   try {
     const result = resolveSkills(
       { surfaces: ['ui/components/Button.ts'], workflowId: 'ac2-test' },
-      { repoRoot },
+      { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
     )
     assert.deepEqual([...result.injectedSkills].sort(), ['kds-figma', 'test-coverage'])
     assert.equal(result.injectionReceiptRef, 'docs/receipts/ac2-test/skill-injection.json')
@@ -70,7 +70,7 @@ test('AC3: plugins/foreman-line/dispatch/src/index.ts resolves to [test-coverage
   try {
     const result = resolveSkills(
       { surfaces: ['plugins/foreman-line/dispatch/src/index.ts'], workflowId: 'ac3-test' },
-      { repoRoot },
+      { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
     )
     assert.deepEqual([...result.injectedSkills], ['test-coverage'])
   } finally {
@@ -85,7 +85,7 @@ test('PAR-2 regression: uix/legacy-widget.ts resolves to [test-coverage] NOT kds
   try {
     const result = resolveSkills(
       { surfaces: ['uix/legacy-widget.ts'], workflowId: 'ac4-par2-test' },
-      { repoRoot },
+      { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
     )
     assert.deepEqual([...result.injectedSkills], ['test-coverage'])
     assert.ok(
@@ -102,7 +102,10 @@ test('PAR-2 regression: uix/legacy-widget.ts resolves to [test-coverage] NOT kds
 test('AC5: surface "ui" (exact prefix) resolves to [test-coverage, kds-figma]', () => {
   const repoRoot = makeTempRepoRoot()
   try {
-    const result = resolveSkills({ surfaces: ['ui'], workflowId: 'ac5-test' }, { repoRoot })
+    const result = resolveSkills(
+      { surfaces: ['ui'], workflowId: 'ac5-test' },
+      { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
+    )
     assert.deepEqual([...result.injectedSkills].sort(), ['kds-figma', 'test-coverage'])
   } finally {
     rmSync(repoRoot, { recursive: true, force: true })
@@ -116,7 +119,7 @@ test('AC6: [ui/foo.ts, ui/bar.ts] resolves to [test-coverage, kds-figma] without
   try {
     const result = resolveSkills(
       { surfaces: ['ui/foo.ts', 'ui/bar.ts'], workflowId: 'ac6-test' },
-      { repoRoot },
+      { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
     )
     const skills = [...result.injectedSkills].sort()
     assert.deepEqual(skills, ['kds-figma', 'test-coverage'])
@@ -134,7 +137,7 @@ test('AC7: [ui/foo.ts, backend/service.ts] resolves to [test-coverage, kds-figma
   try {
     const result = resolveSkills(
       { surfaces: ['ui/foo.ts', 'backend/service.ts'], workflowId: 'ac7-test' },
-      { repoRoot },
+      { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
     )
     assert.deepEqual([...result.injectedSkills].sort(), ['kds-figma', 'test-coverage'])
   } finally {
@@ -148,7 +151,10 @@ test('AC8: empty surfaces resolves to [test-coverage] (universal rule fires)', (
   const repoRoot = makeTempRepoRoot()
   const workflowId = 'ac8-test'
   try {
-    const result = resolveSkills({ surfaces: [], workflowId }, { repoRoot })
+    const result = resolveSkills(
+      { surfaces: [], workflowId },
+      { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
+    )
     assert.deepEqual([...result.injectedSkills], ['test-coverage'])
     // S1 (adversarial Q5): verify receipt records surfaces: [] and injectedSkills correctly
     const receiptPath = join(repoRoot, 'docs', 'receipts', workflowId, 'skill-injection.json')
@@ -166,25 +172,31 @@ test('AC8: empty surfaces resolves to [test-coverage] (universal rule fires)', (
 
 // ─── AC9: receipt fields validation ──────────────────────────────────────────
 
-test('AC9: receipt JSON contains all 6 required fields with correct values', () => {
+test('AC9: receipt JSON contains all 7 required fields with correct values (P2b-i Q3/Q5 adds pluginRoot)', () => {
   const repoRoot = makeTempRepoRoot()
   const workflowId = 'ac9-receipt-test'
   try {
-    resolveSkills({ surfaces: ['ui/Button.ts'], workflowId }, { repoRoot })
+    resolveSkills(
+      { surfaces: ['ui/Button.ts'], workflowId },
+      { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
+    )
 
     const receiptPath = join(repoRoot, 'docs', 'receipts', workflowId, 'skill-injection.json')
     const receipt = JSON.parse(readFileSync(receiptPath, 'utf8')) as Record<string, unknown>
 
-    // All 6 fields must be present
+    // All 7 fields must be present
     assert.equal(receipt.workflowId, workflowId)
     assert.equal(receipt.role, 'builder')
     assert.deepEqual(receipt.surfaces, ['ui/Button.ts'])
     assert.ok(Array.isArray(receipt.injectedSkills), 'injectedSkills must be an array')
+    // P2b-i R1/Q3 (Q5's shape): matrixRef is PLUGIN-relative, with the plugin
+    // root recorded as its own receipt field.
     assert.equal(
       receipt.matrixRef,
-      'plugins/foreman-line/skill-injection/skill-injection.yaml',
-      'matrixRef must be the literal string constant',
+      'skill-injection/skill-injection.yaml',
+      'matrixRef must be the plugin-relative matrix path',
     )
+    assert.equal(receipt.pluginRoot, join(repoRoot, 'plugins', 'foreman-line'))
     assert.ok(typeof receipt.timestamp === 'string', 'timestamp must be a string')
     assert.ok(
       !Number.isNaN(Date.parse(receipt.timestamp as string)),
@@ -202,10 +214,16 @@ test('AC10: second call with same workflowId overwrites receipt without error', 
   const workflowId = 'ac10-overwrite-test'
   try {
     // First call — ui surface
-    resolveSkills({ surfaces: ['ui/first.ts'], workflowId }, { repoRoot })
+    resolveSkills(
+      { surfaces: ['ui/first.ts'], workflowId },
+      { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
+    )
 
     // Second call — backend surface (different result)
-    resolveSkills({ surfaces: ['backend/service.ts'], workflowId }, { repoRoot })
+    resolveSkills(
+      { surfaces: ['backend/service.ts'], workflowId },
+      { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
+    )
 
     const receiptPath = join(repoRoot, 'docs', 'receipts', workflowId, 'skill-injection.json')
     const receipt = JSON.parse(readFileSync(receiptPath, 'utf8')) as Record<string, unknown>
@@ -228,7 +246,7 @@ test('AC11: missing skill-injection.yaml throws SkillResolverError MATRIX_UNREAD
       () =>
         resolveSkills(
           { surfaces: ['ui/foo.ts'], workflowId: 'ac11-test' },
-          { repoRoot: emptyRoot },
+          { repoRoot: emptyRoot, pluginRoot: join(emptyRoot, 'plugins', 'foreman-line') },
         ),
       (err: unknown) => {
         assert.ok(err instanceof SkillResolverError, 'must be a SkillResolverError')
@@ -250,7 +268,11 @@ test('AC12: malformed YAML throws SkillResolverError MATRIX_INVALID', () => {
     mkdirSync(matrixDir, { recursive: true })
     writeFileSync(join(matrixDir, 'skill-injection.yaml'), 'builder: {invalid: [unclosed')
     assert.throws(
-      () => resolveSkills({ surfaces: ['ui/foo.ts'], workflowId: 'ac12-test' }, { repoRoot }),
+      () =>
+        resolveSkills(
+          { surfaces: ['ui/foo.ts'], workflowId: 'ac12-test' },
+          { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
+        ),
       (err: unknown) => {
         assert.ok(err instanceof SkillResolverError, 'must be a SkillResolverError')
         assert.equal(err.code, 'MATRIX_INVALID')
@@ -272,7 +294,11 @@ test('AC13: valid YAML with missing required keys throws SkillResolverError MATR
     // Valid YAML but missing required top-level keys (builder, verifier_harness, etc.)
     writeFileSync(join(matrixDir, 'skill-injection.yaml'), 'notBuilder: {}')
     assert.throws(
-      () => resolveSkills({ surfaces: ['ui/foo.ts'], workflowId: 'ac13-test' }, { repoRoot }),
+      () =>
+        resolveSkills(
+          { surfaces: ['ui/foo.ts'], workflowId: 'ac13-test' },
+          { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
+        ),
       (err: unknown) => {
         assert.ok(err instanceof SkillResolverError, 'must be a SkillResolverError')
         assert.equal(err.code, 'MATRIX_INVALID')

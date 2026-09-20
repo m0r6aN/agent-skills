@@ -137,7 +137,10 @@ test('rejects non-public Parcel input before discovery', async () => {
     })
 
     await assert.rejects(
-      executeShadowRoute(input, fake.dependencies, { repoRoot }),
+      executeShadowRoute(input, fake.dependencies, {
+        repoRoot,
+        pluginRoot: join(repoRoot, 'plugins', 'foreman-line'),
+      }),
       (error: unknown) => {
         assert.ok(error instanceof ShadowRoutingError)
         assert.equal(error.code, 'NON_PUBLIC_INPUT')
@@ -167,7 +170,10 @@ test('rejects a policy-unsupported task before discovery', async () => {
     })
 
     await assert.rejects(
-      executeShadowRoute(input, fake.dependencies, { repoRoot }),
+      executeShadowRoute(input, fake.dependencies, {
+        repoRoot,
+        pluginRoot: join(repoRoot, 'plugins', 'foreman-line'),
+      }),
       (error: unknown) => {
         assert.ok(error instanceof ShadowRoutingError)
         assert.equal(error.code, 'UNSUPPORTED_TASK')
@@ -196,7 +202,7 @@ test('rejects forged caller self-authorization before discovery', async () => {
           },
         }),
         fake.dependencies,
-        { repoRoot },
+        { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
       ),
       (error: unknown) => {
         assert.ok(error instanceof ShadowRoutingError)
@@ -256,7 +262,7 @@ test('invokes with the authorized pre-await snapshot when caller input mutates d
         },
       }),
       dependencies,
-      { repoRoot },
+      { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
     )
 
     assert.equal(result.status, 'candidate')
@@ -311,7 +317,7 @@ test('snapshots all request metadata and dependency functions before authorizati
     const result = await executeShadowRoute(
       mutableInput as unknown as ShadowRoutingInput,
       dependencies,
-      { repoRoot },
+      { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
     )
 
     assert.equal(result.status, 'candidate')
@@ -379,7 +385,7 @@ test('discovery-time caller mutation cannot change the authorized task or review
     const result = await executeShadowRoute(
       mutableInput as unknown as ShadowRoutingInput,
       dependencies,
-      { repoRoot },
+      { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
     )
 
     assert.equal(result.status, 'candidate')
@@ -418,7 +424,10 @@ test('rejects malformed trusted authorization without persisting verifier detail
   })
   try {
     await assert.rejects(
-      executeShadowRoute(makeInput(), fake.dependencies, { repoRoot }),
+      executeShadowRoute(makeInput(), fake.dependencies, {
+        repoRoot,
+        pluginRoot: join(repoRoot, 'plugins', 'foreman-line'),
+      }),
       (error: unknown) => {
         assert.ok(error instanceof ShadowRoutingError)
         assert.equal(error.code, 'INVALID_AUTHORIZATION_RECORD')
@@ -458,7 +467,10 @@ test('normalizes a hostile trusted-authorization object before discovery', async
   const fake = makeDependencies({ status: 'verified_available' }, undefined, hostileAuthorization)
   try {
     await assert.rejects(
-      executeShadowRoute(makeInput(), fake.dependencies, { repoRoot }),
+      executeShadowRoute(makeInput(), fake.dependencies, {
+        repoRoot,
+        pluginRoot: join(repoRoot, 'plugins', 'foreman-line'),
+      }),
       (error: unknown) => {
         assert.ok(error instanceof ShadowRoutingError)
         assert.equal(error.code, 'INVALID_AUTHORIZATION_RECORD')
@@ -491,7 +503,10 @@ test('normalizes a throwing trusted authorization resolver and fails before disc
   }
   try {
     await assert.rejects(
-      executeShadowRoute(makeInput(), dependencies, { repoRoot }),
+      executeShadowRoute(makeInput(), dependencies, {
+        repoRoot,
+        pluginRoot: join(repoRoot, 'plugins', 'foreman-line'),
+      }),
       (error: unknown) => {
         assert.ok(error instanceof ShadowRoutingError)
         assert.equal(error.code, 'AUTHORIZATION_VERIFICATION_FAILED')
@@ -518,7 +533,10 @@ test('requires the trusted authorization resolver before discovery', async () =>
   } as unknown as ShadowRoutingDependencies
   try {
     await assert.rejects(
-      executeShadowRoute(makeInput(), dependencies, { repoRoot }),
+      executeShadowRoute(makeInput(), dependencies, {
+        repoRoot,
+        pluginRoot: join(repoRoot, 'plugins', 'foreman-line'),
+      }),
       (error: unknown) => {
         assert.ok(error instanceof ShadowRoutingError)
         assert.equal(error.code, 'AUTHORIZATION_VERIFICATION_FAILED')
@@ -539,7 +557,10 @@ test('rejects a non-public trusted authorization record before discovery', async
   })
   try {
     await assert.rejects(
-      executeShadowRoute(makeInput(), fake.dependencies, { repoRoot }),
+      executeShadowRoute(makeInput(), fake.dependencies, {
+        repoRoot,
+        pluginRoot: join(repoRoot, 'plugins', 'foreman-line'),
+      }),
       (error: unknown) => {
         assert.ok(error instanceof ShadowRoutingError)
         assert.equal(error.code, 'AUTHORIZATION_NOT_PUBLIC')
@@ -567,7 +588,7 @@ test('rejects a task omitted from the Parcel authorization before discovery', as
           },
         }),
         fake.dependencies,
-        { repoRoot },
+        { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
       ),
       (error: unknown) => {
         assert.ok(error instanceof ShadowRoutingError)
@@ -590,7 +611,7 @@ test('rejects an input that does not match its Parcel authorization digest befor
       executeShadowRoute(
         makeInput({ publicInput: { ...PUBLIC_INPUT, excerpt: 'Different public text.' } }),
         fake.dependencies,
-        { repoRoot },
+        { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
       ),
       (error: unknown) => {
         assert.ok(error instanceof ShadowRoutingError)
@@ -630,7 +651,7 @@ test('rejects sparse arrays and oversized canonical public input before authoriz
           },
         }),
         fake.dependencies,
-        { repoRoot },
+        { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
       ),
       (error: unknown) => {
         assert.ok(error instanceof ShadowRoutingError)
@@ -690,7 +711,10 @@ for (const testCase of IDENTIFIER_LIMIT_CASES) {
     const fake = makeDependencies({ status: 'verified_available' })
     try {
       await assert.rejects(
-        executeShadowRoute(makeInput(testCase.overrides), fake.dependencies, { repoRoot }),
+        executeShadowRoute(makeInput(testCase.overrides), fake.dependencies, {
+          repoRoot,
+          pluginRoot: join(repoRoot, 'plugins', 'foreman-line'),
+        }),
         (error: unknown) => {
           assert.ok(error instanceof ShadowRoutingError)
           assert.equal(error.code, 'INVALID_INPUT')
@@ -711,6 +735,7 @@ test('unavailable live discovery skips cleanly without provider execution', asyn
   try {
     const result = await executeShadowRoute(makeInput(), fake.dependencies, {
       repoRoot,
+      pluginRoot: join(repoRoot, 'plugins', 'foreman-line'),
       now: () => '2026-08-30T12:00:00.000Z',
     })
 
@@ -734,7 +759,10 @@ test('malformed discovery is not verified availability and skips without executi
   const repoRoot = makeTempRepoRoot()
   const fake = makeDependencies({ status: 'verified_available', unexpected: true })
   try {
-    const result = await executeShadowRoute(makeInput(), fake.dependencies, { repoRoot })
+    const result = await executeShadowRoute(makeInput(), fake.dependencies, {
+      repoRoot,
+      pluginRoot: join(repoRoot, 'plugins', 'foreman-line'),
+    })
 
     assert.equal(result.status, 'skipped')
     assert.equal(fake.discoveryCalls(), 1)
@@ -756,7 +784,10 @@ test('hostile discovery data is normalized to a skip without execution', async (
   )
   const fake = makeDependencies(hostileDiscovery)
   try {
-    const result = await executeShadowRoute(makeInput(), fake.dependencies, { repoRoot })
+    const result = await executeShadowRoute(makeInput(), fake.dependencies, {
+      repoRoot,
+      pluginRoot: join(repoRoot, 'plugins', 'foreman-line'),
+    })
 
     assert.equal(result.status, 'skipped')
     assert.equal(fake.invocationCalls(), 0)
@@ -779,7 +810,10 @@ test('discovery failure is normalized to a skip without provider execution', asy
     },
   }
   try {
-    const result = await executeShadowRoute(makeInput(), dependencies, { repoRoot })
+    const result = await executeShadowRoute(makeInput(), dependencies, {
+      repoRoot,
+      pluginRoot: join(repoRoot, 'plugins', 'foreman-line'),
+    })
 
     assert.equal(result.status, 'skipped')
     assert.equal(invocationCalls, 0)
@@ -799,6 +833,7 @@ test('verified adapter returns a constrained candidate bound to pending independ
   try {
     const result = await executeShadowRoute(makeInput(), fake.dependencies, {
       repoRoot,
+      pluginRoot: join(repoRoot, 'plugins', 'foreman-line'),
       now: () => '2026-08-30T12:00:00.000Z',
     })
 
@@ -867,7 +902,10 @@ test('runtime-freezes invocation containment and defensively freezes returned ev
     },
   }
   try {
-    const result = await executeShadowRoute(makeInput(), dependencies, { repoRoot })
+    const result = await executeShadowRoute(makeInput(), dependencies, {
+      repoRoot,
+      pluginRoot: join(repoRoot, 'plugins', 'foreman-line'),
+    })
     assert.equal(result.status, 'candidate')
     assert.ok(invocationRequest !== undefined)
     assert.equal(Object.isFrozen(invocationRequest), true)
@@ -907,7 +945,10 @@ test('rejects malformed or authority-claiming untrusted adapter output', async (
   )
   try {
     await assert.rejects(
-      executeShadowRoute(makeInput(), fake.dependencies, { repoRoot }),
+      executeShadowRoute(makeInput(), fake.dependencies, {
+        repoRoot,
+        pluginRoot: join(repoRoot, 'plugins', 'foreman-line'),
+      }),
       (error: unknown) => {
         assert.ok(error instanceof ShadowRoutingError)
         assert.equal(error.code, 'INVALID_ADAPTER_OUTPUT')
@@ -934,7 +975,10 @@ test('normalizes hostile adapter output without creating a receipt', async () =>
   const fake = makeDependencies({ status: 'verified_available' }, hostileOutput)
   try {
     await assert.rejects(
-      executeShadowRoute(makeInput(), fake.dependencies, { repoRoot }),
+      executeShadowRoute(makeInput(), fake.dependencies, {
+        repoRoot,
+        pluginRoot: join(repoRoot, 'plugins', 'foreman-line'),
+      }),
       (error: unknown) => {
         assert.ok(error instanceof ShadowRoutingError)
         assert.equal(error.code, 'INVALID_ADAPTER_OUTPUT')
@@ -981,7 +1025,10 @@ for (const testCase of [
     const fake = makeDependencies({ status: 'verified_available' }, testCase.output)
     try {
       await assert.rejects(
-        executeShadowRoute(makeInput(), fake.dependencies, { repoRoot }),
+        executeShadowRoute(makeInput(), fake.dependencies, {
+          repoRoot,
+          pluginRoot: join(repoRoot, 'plugins', 'foreman-line'),
+        }),
         (error: unknown) => {
           assert.ok(error instanceof ShadowRoutingError)
           assert.equal(error.code, 'INVALID_ADAPTER_OUTPUT')
@@ -1014,7 +1061,7 @@ test('requires an independent reviewer distinct from the shadow adapter before d
       executeShadowRoute(
         makeInput({ independentReviewerId: SHADOW_ROUTE_NAME }),
         fake.dependencies,
-        { repoRoot },
+        { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
       ),
       (error: unknown) => {
         assert.ok(error instanceof ShadowRoutingError)

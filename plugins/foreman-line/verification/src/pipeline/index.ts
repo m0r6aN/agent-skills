@@ -118,8 +118,8 @@ export interface ReworkRoutingInput {
   readonly parcelRef: string
   readonly branch: string
   readonly worktreePath: string
-  /** Defaults to process.cwd(); tests pass a tmp dir. */
-  readonly repoRoot?: string
+  /** Explicit repository root; never inferred from the process directory. */
+  readonly repoRoot: string
 }
 
 /** One on-disk rework attempt, walked from its ReworkSignal receipt. */
@@ -170,8 +170,8 @@ export interface ReverificationPlan {
 }
 
 export interface PipelineFsDeps {
-  /** Defaults to process.cwd(); tests pass a tmp dir. */
-  readonly repoRoot?: string
+  /** Explicit repository root; never inferred from the process directory. */
+  readonly repoRoot: string
 }
 
 export interface EmitVerdictDeps extends PipelineFsDeps {
@@ -776,9 +776,9 @@ function scanReworkSignalReceipts(workflowId: string, repoRoot: string): ReworkS
  * original build is attempt 0, so the next attempt number is count + 1.
  * Tampered conforming-named receipts are typed REWORK_RECEIPT_INVALID errors.
  */
-export function countReworkAttempts(workflowId: string, deps: PipelineFsDeps = {}): number {
+export function countReworkAttempts(workflowId: string, deps: PipelineFsDeps): number {
   assertValidWorkflowId(workflowId)
-  const repoRoot = deps.repoRoot ?? process.cwd()
+  const repoRoot = deps.repoRoot
   return scanReworkSignalReceipts(workflowId, repoRoot).length
 }
 
@@ -802,10 +802,10 @@ export function emitVerificationVerdict(
   workflowId: string,
   verdict: VerificationVerdict,
   reworkSignal: ReworkSignal | null,
-  deps: EmitVerdictDeps = {},
+  deps: EmitVerdictDeps,
 ): { receiptLocator: string; envelopePath: string } {
   assertValidWorkflowId(workflowId)
-  const repoRoot = deps.repoRoot ?? process.cwd()
+  const repoRoot = deps.repoRoot
 
   if (!validateVerdict(verdict)) {
     throw invalidInput(
@@ -1233,7 +1233,7 @@ export function routeRework(
   deps: RouteReworkDeps = {},
 ): ReworkRoutingResult {
   assertValidWorkflowId(input.workflowId)
-  const repoRoot = input.repoRoot ?? process.cwd()
+  const repoRoot = input.repoRoot
 
   if (!isParcelRefSlug(input.parcelRef)) {
     throw invalidInput('ReworkRoutingInput.parcelRef', 'must be a slug [A-Z0-9]+(-[A-Z0-9]+)*')

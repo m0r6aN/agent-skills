@@ -19,7 +19,12 @@ import {
 import type { CorrelationContext, ShapingResult } from '../../contracts/src/index.js'
 import type { IssueCreatePayload, IssueUpdatePayload, JiraTransport } from '../src/types.js'
 
-export const ACTIVE_SPECS_REL = 'plugins/foreman-line/docs/specs/active'
+/**
+ * P2b-i R2/A1.3: fixtures use the FOREIGN default specs dir (the library
+ * default). Home-repo-shaped call sites pass the plugin-prefixed value
+ * explicitly where a test exercises that shape.
+ */
+export const ACTIVE_SPECS_REL = 'docs/specs/active'
 export const GITHUB_URL = 'https://github.com/acme/widgets.git'
 
 /**

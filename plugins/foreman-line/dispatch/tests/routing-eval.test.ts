@@ -62,7 +62,7 @@ test('AC2: standard-feature/internal resolves to anthropic/claude-sonnet-5/stand
         data_classification: 'internal',
         workflowId: 'test-wf-001',
       },
-      { repoRoot },
+      { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
     )
     assert.equal(result.resolvedModelId, 'anthropic/claude-sonnet-5')
     assert.equal(result.resolvedTier, 'standard')
@@ -81,7 +81,7 @@ test('AC3: architecture/risk/public resolves to anthropic/claude-opus-5/frontier
         data_classification: 'public',
         workflowId: 'test-wf-002',
       },
-      { repoRoot },
+      { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
     )
     assert.equal(result.resolvedModelId, 'anthropic/claude-opus-5')
     assert.equal(result.resolvedTier, 'frontier')
@@ -96,7 +96,7 @@ test('AC4: boilerplate/public resolves to nvidia/nemotron-3.5-lightning/economy'
   try {
     const result = evaluateRouting(
       { routing_class: 'boilerplate', data_classification: 'public', workflowId: 'test-wf-003' },
-      { repoRoot },
+      { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
     )
     assert.equal(result.resolvedModelId, 'nvidia/nemotron-3.5-lightning')
     assert.equal(result.resolvedTier, 'economy')
@@ -115,7 +115,7 @@ test('AC5: implementation/standard/restricted resolves to anthropic/claude-sonne
         data_classification: 'restricted',
         workflowId: 'test-wf-004',
       },
-      { repoRoot },
+      { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
     )
     assert.equal(result.resolvedModelId, 'anthropic/claude-sonnet-5')
     assert.equal(result.resolvedTier, 'standard')
@@ -231,7 +231,7 @@ for (const { routing_class, data_classification, expectedModel, expectedTier } o
       const wfId = `matrix-${routing_class.replace('/', '-')}-${data_classification}`
       const result = evaluateRouting(
         { routing_class, data_classification, workflowId: wfId },
-        { repoRoot },
+        { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
       )
       assert.equal(result.resolvedModelId, expectedModel)
       assert.equal(result.resolvedTier, expectedTier)
@@ -259,7 +259,7 @@ test('PAR-2: routing_class "standard" (old wrong label) throws RoutingError UNKN
       () =>
         evaluateRouting(
           { routing_class: 'standard', data_classification: 'internal', workflowId: 'par2-test' },
-          { repoRoot },
+          { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
         ),
       (err: unknown) => {
         assert.ok(err instanceof RoutingError, 'must be a RoutingError')
@@ -285,7 +285,7 @@ test('AC8: unrecognised data_classification throws RoutingError UNKNOWN_DATA_CLA
             data_classification: 'top-secret',
             workflowId: 'ac8-test',
           },
-          { repoRoot },
+          { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
         ),
       (err: unknown) => {
         assert.ok(err instanceof RoutingError, 'must be a RoutingError')
@@ -306,7 +306,7 @@ test('AC9: receipt JSON contains all 8 required fields with correct values', () 
   try {
     evaluateRouting(
       { routing_class: 'standard-feature', data_classification: 'internal', workflowId },
-      { repoRoot },
+      { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
     )
 
     const receiptPath = join(repoRoot, 'docs', 'receipts', workflowId, 'routing-decision.json')
@@ -318,7 +318,9 @@ test('AC9: receipt JSON contains all 8 required fields with correct values', () 
     assert.equal(receipt.resolvedTier, 'standard')
     assert.equal(receipt.resolvedModelId, 'anthropic/claude-sonnet-5')
     assert.deepEqual(receipt.transportRequirements, { data_collection: 'deny', zdr: true })
-    assert.equal(receipt.policyRef, 'plugins/foreman-line/routing-policy/routing-policy.yaml')
+    // The policy is an installed-plugin asset, so its locator is relative to
+    // the explicitly injected pluginRoot rather than the caller's repoRoot.
+    assert.equal(receipt.policyRef, 'routing-policy/routing-policy.yaml')
     // timestamp must be parseable as ISO 8601
     assert.ok(typeof receipt.timestamp === 'string', 'timestamp must be a string')
     assert.ok(
@@ -339,13 +341,13 @@ test('AC10: second call with same workflowId overwrites receipt without error', 
     // First call
     evaluateRouting(
       { routing_class: 'standard-feature', data_classification: 'public', workflowId },
-      { repoRoot },
+      { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
     )
 
     // Second call — same workflowId, different data_classification
     evaluateRouting(
       { routing_class: 'boilerplate', data_classification: 'internal', workflowId },
-      { repoRoot },
+      { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
     )
 
     const receiptPath = join(repoRoot, 'docs', 'receipts', workflowId, 'routing-decision.json')
@@ -370,7 +372,7 @@ test('AC11b: missing policy YAML throws RoutingError POLICY_UNREADABLE', () => {
       () =>
         evaluateRouting(
           { routing_class: 'standard-feature', data_classification: 'internal', workflowId: 'x' },
-          { repoRoot: emptyRoot },
+          { repoRoot: emptyRoot, pluginRoot: join(emptyRoot, 'plugins', 'foreman-line') },
         ),
       (err: unknown) => {
         assert.ok(err instanceof RoutingError, 'must be a RoutingError')
@@ -396,7 +398,7 @@ test('F-01: malformed routing-policy.yaml throws RoutingError POLICY_INVALID', (
       () =>
         evaluateRouting(
           { routing_class: 'standard-feature', data_classification: 'internal', workflowId: 'f01' },
-          { repoRoot },
+          { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
         ),
       (err: unknown) => {
         assert.ok(err instanceof RoutingError, 'must be a RoutingError, not a bare YAMLParseError')

@@ -15,10 +15,22 @@ const TS = '2026-07-22T12:00:00Z'
 test('AC12: a second run after a complete first registration creates nothing (reconcile)', async () => {
   const fx = singleStoryFixture()
   const adapter = new FakeAdapter()
-  await register({ slug: fx.slug, repoRoot: fx.repoRoot, adapter, timestamp: TS })
+  await register({
+    slug: fx.slug,
+    projectKey: 'KONE',
+    repoRoot: fx.repoRoot,
+    adapter,
+    timestamp: TS,
+  })
   const createsAfterFirst = adapter.createCalls.length
 
-  const outcome = await register({ slug: fx.slug, repoRoot: fx.repoRoot, adapter, timestamp: TS })
+  const outcome = await register({
+    slug: fx.slug,
+    projectKey: 'KONE',
+    repoRoot: fx.repoRoot,
+    adapter,
+    timestamp: TS,
+  })
   assert.equal(outcome.mode, 'reconcile')
   assert.equal(adapter.createCalls.length, createsAfterFirst)
 })
@@ -46,9 +58,17 @@ test('AC12: the search-first UPDATE path never carries status/assignee/sprint', 
   // First run fails at the back-fill commit (no identity) but leaves the
   // created tickets; the re-run then takes the UPDATE branch of search-first.
   blockCommits(fx.repoRoot)
-  await assert.rejects(register({ slug: fx.slug, repoRoot: fx.repoRoot, adapter, timestamp: TS }))
+  await assert.rejects(
+    register({ slug: fx.slug, projectKey: 'KONE', repoRoot: fx.repoRoot, adapter, timestamp: TS }),
+  )
   unblockCommits(fx.repoRoot)
-  await register({ slug: fx.slug, repoRoot: fx.repoRoot, adapter, timestamp: TS })
+  await register({
+    slug: fx.slug,
+    projectKey: 'KONE',
+    repoRoot: fx.repoRoot,
+    adapter,
+    timestamp: TS,
+  })
 
   assert.ok(adapter.updateCalls.length >= 1)
   for (const { payload } of adapter.updateCalls) {

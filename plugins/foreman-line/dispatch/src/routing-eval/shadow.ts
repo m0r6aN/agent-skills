@@ -8,7 +8,7 @@
  */
 import { createHash } from 'node:crypto'
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
-import { join } from 'node:path'
+import { isAbsolute, join } from 'node:path'
 import { parse } from 'yaml'
 import type {
   RoutingPolicy,
@@ -17,7 +17,7 @@ import type {
 } from '../../../routing-policy/src/index.js'
 import { validatePolicy } from '../../../routing-policy/src/index.js'
 
-const POLICY_REPO_PATH = 'plugins/foreman-line/routing-policy/routing-policy.yaml'
+const POLICY_PLUGIN_PATH = 'routing-policy/routing-policy.yaml'
 const SAFE_IDENTIFIER = /^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/
 const SHA256_HEX = /^[a-f0-9]{64}$/
 
@@ -53,6 +53,7 @@ export class ShadowRoutingError extends Error {
     | 'ADAPTER_INVOCATION_FAILED'
     | 'INVALID_ADAPTER_OUTPUT'
     | 'RECEIPT_WRITE_FAILED'
+    | 'ROOT_NOT_ABSOLUTE'
 
   constructor(code: ShadowRoutingError['code'], message: string) {
     super(message)
@@ -111,7 +112,8 @@ export interface ShadowRoutingDependencies {
 }
 
 export interface ShadowRoutingOptions {
-  readonly repoRoot?: string
+  readonly repoRoot: string
+  readonly pluginRoot: string
   readonly now?: () => string
 }
 
@@ -613,14 +615,14 @@ async function verifyParcelAuthorization(
   return authorization
 }
 
-function loadPolicy(repoRoot: string): RoutingPolicy {
+function loadPolicy(pluginRoot: string): RoutingPolicy {
   let rawYaml: string
   try {
-    rawYaml = readFileSync(join(repoRoot, POLICY_REPO_PATH), 'utf8')
+    rawYaml = readFileSync(join(pluginRoot, ...POLICY_PLUGIN_PATH.split('/')), 'utf8')
   } catch {
     throw new ShadowRoutingError(
       'POLICY_UNREADABLE',
-      `Cannot read routing policy at ${POLICY_REPO_PATH}`,
+      `Cannot read routing policy at ${POLICY_PLUGIN_PATH}`,
     )
   }
 
@@ -630,7 +632,7 @@ function loadPolicy(repoRoot: string): RoutingPolicy {
   } catch {
     throw new ShadowRoutingError(
       'POLICY_INVALID',
-      `Cannot parse routing policy YAML at ${POLICY_REPO_PATH}`,
+      `Cannot parse routing policy YAML at ${POLICY_PLUGIN_PATH}`,
     )
   }
   const validation = validatePolicy(rawPolicy)
@@ -761,14 +763,26 @@ const CONTAINMENT = Object.freeze({
 export async function executeShadowRoute(
   input: ShadowRoutingInput,
   dependencies: ShadowRoutingDependencies,
-  options: ShadowRoutingOptions = {},
+  options: ShadowRoutingOptions,
 ): Promise<ShadowRoutingResult> {
   const requestSnapshot = validatePreDiscoveryInput(input)
   const dependencySnapshot = snapshotDependencies(dependencies)
-  const repoRoot = options.repoRoot ?? process.cwd()
+  const { repoRoot, pluginRoot } = options
+  if (!isAbsolute(repoRoot)) {
+    throw new ShadowRoutingError(
+      'ROOT_NOT_ABSOLUTE',
+      'executeShadowRoute: repoRoot must be absolute',
+    )
+  }
+  if (!isAbsolute(pluginRoot)) {
+    throw new ShadowRoutingError(
+      'ROOT_NOT_ABSOLUTE',
+      'executeShadowRoute: pluginRoot must be absolute',
+    )
+  }
   const now = options.now
   await verifyParcelAuthorization(requestSnapshot, dependencySnapshot.resolveParcelAuthorization)
-  const policy = loadPolicy(repoRoot)
+  const policy = loadPolicy(pluginRoot)
   const route = resolveRoute(policy, requestSnapshot)
   const receiptRef = receiptRefFor(requestSnapshot)
   const timestamp = now?.() ?? new Date().toISOString()
@@ -781,7 +795,7 @@ export async function executeShadowRoute(
     taskType: requestSnapshot.taskType,
     dataClassification: 'public',
     publicInputSha256: requestSnapshot.publicInputSha256,
-    policyRef: POLICY_REPO_PATH,
+    policyRef: POLICY_PLUGIN_PATH,
     timestamp,
     ...CONTAINMENT,
   }

@@ -4,6 +4,7 @@
  * index walks - no regex, lesson #19).
  */
 import { isAbsolute, relative, resolve } from 'node:path'
+import { assertAbsoluteRoot } from './errors.js'
 
 /**
  * Reject a `slug` containing `/`, `\`, or `..` before any path is
@@ -28,6 +29,12 @@ export function assertSafeSlug(slug: string): void {
  * resolved path.
  */
 export function assertContainedPath(repoRoot: string, absPath: string, ref: string): void {
+  // P2b-i AC6 (mechanism class 5): `resolve()` of a possibly-relative
+  // `repoRoot` silently re-anchors the containment comparison base to
+  // `process.cwd()`, letting a path outside the TRUE root pass containment
+  // when invoked from a chosen cwd. The root must arrive absolute; a
+  // relative one is refused with a typed error before any comparison.
+  assertAbsoluteRoot(repoRoot, 'assertContainedPath')
   const rel = relative(resolve(repoRoot), resolve(absPath))
   // `..` (or a leading `..` segment) means the target climbed out of repoRoot;
   // an absolute `rel` (e.g. a different Windows drive) escapes it too.

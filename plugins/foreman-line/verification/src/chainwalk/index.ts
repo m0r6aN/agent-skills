@@ -187,7 +187,7 @@ function readString(doc: Record<string, unknown>, key: string, name: string): st
  * for the first defect found. Performs no writes; its only filesystem access
  * is `readdirSync`/`readFileSync` under the receipt directory.
  */
-export function walkChain(workflowId: string, repoRoot: string = process.cwd()): ChainWalkResult {
+export function walkChain(workflowId: string, repoRoot: string): ChainWalkResult {
   assertValidWorkflowId(workflowId)
   const dir = join(repoRoot, 'docs', 'receipts', workflowId)
 

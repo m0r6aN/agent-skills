@@ -121,8 +121,10 @@ export interface ReviewDispatchInput {
   readonly surfaces: readonly string[]
   /** Filesystem path the reviewer worktree will be created at. */
   readonly worktreePath: string
-  /** Defaults to process.cwd(); tests pass a tmp dir. */
-  readonly repoRoot?: string
+  /** Explicit repository root; never inferred from the process directory. */
+  readonly repoRoot: string
+  /** Explicit plugin root for plugin-local contracts and templates. */
+  readonly pluginRoot: string
 }
 
 /** Result of one git-seam invocation (child-process-shaped result). */
@@ -213,7 +215,7 @@ export interface LaunchDeps {
    * async failure with nowhere to report would be a silent downgrade.
    */
   readonly workflowId?: string
-  /** Defaults to process.cwd(); tests pass a tmp dir. */
+  /** Explicit repository root for the asynchronous failure receipt. */
   readonly repoRoot?: string
 }
 
@@ -225,7 +227,7 @@ export interface LaunchResult {
 }
 
 export interface CollectDeps {
-  readonly repoRoot?: string
+  readonly repoRoot: string
   /**
    * Failure-injection seam wrapping every Stage-D receipt write in collect
    * (AC-26). Default: `(write) => write()`. On a parse-failure receipt-write
@@ -250,7 +252,7 @@ export type CollectResult =
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const MATRIX_REPO_PATH = 'plugins/foreman-line/skill-injection/skill-injection.yaml'
+const MATRIX_REPO_PATH = 'skill-injection/skill-injection.yaml'
 const REVIEWER_PROFILE = 'reviewer-readonly'
 const KICKSTARTER_FILENAME = 'ADVERSARIAL-REVIEW-KICKSTARTER.md'
 const FINDINGS_FENCE_OPEN = '```adversarial-findings'
@@ -634,10 +636,10 @@ function emitStageDReceipt(args: {
 
 // ─── Matrix resolution (adversarial_reviewer section; W2-P5 glob rule) ───────
 
-function loadMatrix(repoRoot: string): SkillInjectionMatrix {
+function loadMatrix(pluginRoot: string): SkillInjectionMatrix {
   let rawYaml: string
   try {
-    rawYaml = readFileSync(join(repoRoot, ...MATRIX_REPO_PATH.split('/')), 'utf8')
+    rawYaml = readFileSync(join(pluginRoot, ...MATRIX_REPO_PATH.split('/')), 'utf8')
   } catch (err) {
     throw new AdversarialError(
       'MATRIX_UNREADABLE',
@@ -710,8 +712,8 @@ function resolveReviewSkills(matrix: SkillInjectionMatrix, surfaces: readonly st
  */
 export function generateReviewKickstarter(input: ReviewDispatchInput): string {
   assertValidDispatchInput(input)
-  const repoRoot = input.repoRoot ?? process.cwd()
-  const matrix = loadMatrix(repoRoot)
+  const repoRoot = input.repoRoot
+  const matrix = loadMatrix(input.pluginRoot)
   const injectedSkills = resolveReviewSkills(matrix, input.surfaces)
   try {
     // Readability check only — the body is deliberately NOT inlined (AC-7).
@@ -787,10 +789,10 @@ export function dispatchReview(
 ): ReviewDispatchResult {
   assertValidWorkflowId(input.workflowId)
   assertValidDispatchInput(input)
-  const repoRoot = input.repoRoot ?? process.cwd()
+  const repoRoot = input.repoRoot
 
   // Pure-generation phase (reads only; fail-fast before any git mutation).
-  const matrix = loadMatrix(repoRoot)
+  const matrix = loadMatrix(input.pluginRoot)
   const injectedSkills = resolveReviewSkills(matrix, input.surfaces)
   const kickstarter = generateReviewKickstarter(input)
   const branch = branchForParcel(input.parcelRef)
@@ -1039,7 +1041,7 @@ export function launchReviewer(cmd: ReviewerLaunchCommand, deps: LaunchDeps = {}
     )
   }
   assertValidWorkflowId(workflowId)
-  const repoRoot = deps.repoRoot ?? process.cwd()
+  const repoRoot = deps.repoRoot
   let child: SpawnedProcess
   try {
     child = spawnFn(cmd.command, cmd.args, { cwd: cmd.cwd, env: cmd.env, stdoutPath })
@@ -1055,6 +1057,9 @@ export function launchReviewer(cmd: ReviewerLaunchCommand, deps: LaunchDeps = {}
       // recorded as a stop-report; if even that write fails, scream to stderr
       // rather than swallow it (an event listener cannot usefully throw).
       try {
+        if (repoRoot === undefined) {
+          throw new Error('repoRoot is required for launch failure reporting')
+        }
         emitStopReport(workflowId, `async reviewer launch failure: ${String(err)}`, repoRoot)
       } catch (reportErr) {
         process.stderr.write(
@@ -1071,11 +1076,7 @@ export function launchReviewer(cmd: ReviewerLaunchCommand, deps: LaunchDeps = {}
  * headless launch is not viable and the kickstarter + human-relay fallback is
  * in effect, as a Stage-D sub-receipt. Returns the receipt locator.
  */
-export function emitStopReport(
-  workflowId: string,
-  reason: string,
-  repoRoot: string = process.cwd(),
-): string {
+export function emitStopReport(workflowId: string, reason: string, repoRoot: string): string {
   assertValidWorkflowId(workflowId)
   const tip = readChainTip(workflowId, repoRoot)
   return emitStageDReceipt({
@@ -1218,10 +1219,10 @@ function padSequence(sequence: number): string {
 export function collectAdversarialFindings(
   workflowId: string,
   rawText: string,
-  deps: CollectDeps = {},
+  deps: CollectDeps,
 ): CollectResult {
   assertValidWorkflowId(workflowId)
-  const repoRoot = deps.repoRoot ?? process.cwd()
+  const repoRoot = deps.repoRoot
   const writeReceiptFn = deps.writeReceiptFn ?? ((write: () => string): string => write())
 
   let findings: AdversarialFinding[]

@@ -13,7 +13,12 @@ export function makeTempRepoRoot(): string {
   return mkdtempSync(join(tmpdir(), 'foreman-approval-'))
 }
 
-export const ACTIVE_SPECS_REL = 'plugins/foreman-line/docs/specs/active'
+/**
+ * P2b-i R2/A1.3: fixtures use the FOREIGN default specs dir (the library
+ * default). Home-repo-shaped call sites pass the plugin-prefixed value
+ * explicitly where a test exercises that shape.
+ */
+export const ACTIVE_SPECS_REL = 'docs/specs/active'
 
 /**
  * `git diff --stat` for `pathSpec`, scoped from the merge-base with

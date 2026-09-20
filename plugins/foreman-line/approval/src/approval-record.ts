@@ -17,8 +17,12 @@
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import type { CorrelationContext, ReceiptRef } from '../../contracts/src/index.js'
-import { ACTIVE_SPECS_DIR, DEFAULT_REPO_ROOT } from './paths.js'
+import { assertAbsoluteRoot } from './errors.js'
 import { assertSafeSlug } from './slug-guard.js'
+
+/** Foreign-repo default specs dir, relative to `repoRoot` (P2b-i R2/A1.3 — not a root fallback). */
+const DEFAULT_SPECS_DIR = 'docs/specs/active'
+
 import type { ApprovalSubject } from './subject.js'
 
 export const APPROVAL_RECORD_SUFFIX = '.approval.json'
@@ -39,9 +43,14 @@ export interface ApprovalRecord {
  * item 1) BEFORE any path is constructed from it - a slug containing `../`,
  * `/`, `\`, or uppercase is refused, naming the offending slug.
  */
-export function approvalRecordPath(slug: string, repoRoot: string = DEFAULT_REPO_ROOT): string {
+export function approvalRecordPath(
+  slug: string,
+  repoRoot: string,
+  specsDir: string = DEFAULT_SPECS_DIR,
+): string {
   assertSafeSlug(slug)
-  const activeDir = join(repoRoot, ...ACTIVE_SPECS_DIR.split('/'))
+  assertAbsoluteRoot(repoRoot, 'approvalRecordPath')
+  const activeDir = join(repoRoot, ...specsDir.split('/'))
   return join(activeDir, `${slug}${APPROVAL_RECORD_SUFFIX}`)
 }
 
@@ -54,15 +63,16 @@ export function approvalRecordPath(slug: string, repoRoot: string = DEFAULT_REPO
 export function writeApprovalRecord(
   slug: string,
   record: ApprovalRecord,
-  repoRoot: string = DEFAULT_REPO_ROOT,
+  repoRoot: string,
+  specsDir: string = DEFAULT_SPECS_DIR,
 ): string {
-  const filePath = approvalRecordPath(slug, repoRoot)
+  const filePath = approvalRecordPath(slug, repoRoot, specsDir)
   if (existsSync(filePath)) {
     throw new Error(
       `writeApprovalRecord: refusing to overwrite existing approval record at ${filePath}`,
     )
   }
-  mkdirSync(join(repoRoot, ...ACTIVE_SPECS_DIR.split('/')), { recursive: true })
+  mkdirSync(join(repoRoot, ...specsDir.split('/')), { recursive: true })
   writeFileSync(filePath, `${JSON.stringify(record, null, 2)}\n`, 'utf8')
   return filePath
 }
