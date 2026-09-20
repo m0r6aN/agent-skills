@@ -125,7 +125,7 @@ awaiting_coordinator_claim. Current hashes:
 The current coordinator ruling preserves this disposition. The worker neither
 claims HAWF ownership nor changes any control document.
 
-## Jev eligibility-surface uncertainty and correction proposal
+## Jev observed alpha servability, unresolved eligibility and correction proposal
 
 Required tuple: **openrouter / typesafe/jev-1.13 / https://openrouter.ai/api/v1**.
 It is enabled at H03#/enabledModels/4 but has **zero resolvable matches** in the
@@ -134,9 +134,46 @@ absence. The exact projector result remains **MISSING_MODEL_REFUSED** because
 the projector cannot resolve this tuple. This is not proof of service nonexistence.
 
 The phantom characterization is withdrawn pending a D13 / eligibility-surface ruling.
-User-supplied, unverified evidence suggests Jev is served by a non-enumerated
-endpoint family (alpha Decisions) outside the supplied chat/completions projection. This suggestion
-is not verified catalog/service fact and does not resolve or approve Jev.
+Coordinator-provided one-call evidence establishes observed alpha Decisions servability
+outside the supplied chat/completions projection. This is one observed response,
+not general service health, uptime or broader endpoint support. Standard
+chat/completions/catalog eligibility and D13 routing acceptance remain
+unresolved/refused pending a D13 / eligibility-surface ruling.
+The alpha endpoint is not established as an approved D13 endpoint; no general
+routing approval follows. The exact projector tuple and its refusal remain unchanged.
+
+### Coordinator-provided bounded live-call evidence
+
+The coordinator already completed exactly one POST to
+`https://openrouter.ai/api/alpha/decisions`, requesting `typesafe/jev-1.13`.
+The response was HTTP **200**, content type `application/json`, response model
+`typesafe/jev-1.13-20260917`, provider `TypeSafe`, response ID
+`gen-dec-1789928401-sPUpnAUmu5pVtk95zfsT`.
+Server epoch-second **1789928401** corresponds to **2026-09-20T18:20:01Z**;
+the coordinator observed client output at **2026-09-20T18:20:11.038Z**.
+These are distinct server-response and client-observation times; neither
+replaces the original catalog timestamp or ratifies freshness.
+
+Provider-reported usage cost: **0.000017934**. Currency is not specified in
+the supplied response field. This was the sole bounded spend authorized by
+the user, separately from the recorded four-artifact Gate 3 extension;
+no further spend is authorized. **No retry and no second call.**
+This evidence builder made **zero network calls**.
+
+Structured answers: `is_urgent.noul = 0.95`;
+`department.choice = billing`, probabilities
+`technical = 0.09, billing = 0.91, sales = 0`;
+`frustration.score = 1.04`. These are response-shape evidence, not routing authority.
+The same existing key, from the `OPENROUTER_API_KEY` environment variable,
+was accepted for this alpha Decisions call. **Chat/completions key coverage
+was not tested and must not be inferred.** No key value or request header
+was supplied to, read by, or recorded by this evidence builder.
+
+After printing the successful response, the local Node runner emitted a
+post-response Windows assertion. This is a local client cleanup anomaly;
+it does not reclassify the HTTP 200 response as failed. The builder records
+only the coordinator's sanitized result and did not rerun the client.
+
 Under unchanged D13, provider:id cannot be accepted unless it resolves exactly
 against the enumerated eligibility surface and approved matching endpoint.
 
@@ -167,7 +204,7 @@ and evidence-only until acceptance, and acceptance alone cannot make missing
 authority or freshness true. P1 remains held.
 
 Other holds: approved configuration authority; installed plugin version/parity;
-four policy endpoint mismatches; Jev absence; HAWF's exact disposition above;
+four policy endpoint mismatches; Jev's supplied-catalog absence and unresolved eligibility; HAWF's exact disposition above;
 two fresh independent frontier reviews including security; coordinator evidence
 acceptance. F1/F2 runtime proof belongs to later parcels.
 
@@ -176,4 +213,6 @@ contracts remain unchanged. Classification precedes capability then fixed tier
 order; eligibility is not merit; Pi settings are not routing authority. No
 network, raw host/credential read, host write, exporter-source acquisition,
 export-package mutation, code/runtime implementation, installation, price sort,
-spend, dispatch, commit or policy/control-document change occurred.
+spend, dispatch, commit or policy/control-document change occurred in this worker refresh.
+The separately authorized coordinator call and its provider-reported usage cost
+are recorded above; that call does not broaden the Gate 3 extension.
