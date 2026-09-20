@@ -8,10 +8,25 @@
   },
   "plugins": [   
     {
+      "name": "agent-skills",
+      "source": "./",
+      "version": "0.6.9",
+      "description": "Production-grade engineering skills covering every phase of software development: spec, plan, build, verify, review, and ship.",
+      "keywords": ["engineering", "spec", "plan", "build", "verify", "review", "ship"]
+    },
+    {
       "name": "foreman-line",
       "source": "./plugins/foreman-line",
+      "version": "0.6.9",
       "description": "Foreman Line is a contract-first workflow for shaping, dispatching, verifying, integrating, and closing multi-parcel development work with explicit human gates.",
       "keywords": ["parcels", "multi-agent", "automation", "spec", "audit", "review", "ship"]  
+    },
+    {
+      "name": "audit-suite",
+      "source": "./plugins/audit-suite/audit-suite",
+      "version": "0.6.9",
+      "description": "Security and compliance audit suite with decision-ready reporting, remediation planning, and Jira integration.",
+      "keywords": ["security", "compliance", "audit", "remediation", "jira"]
     }
   ]
 }

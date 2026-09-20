@@ -69,8 +69,15 @@ offending argument.
 One chain per parcel, keyed by `correlation.workflowId` (stable across rework
 retries; `runId` changes per attempt). Genesis (`sequence: 0`, `prevHash: null`)
 is minted at Stage A; rework attempts append to the same chain, never fork.
-**"Sealed" is a derived read, not a stored flag:** sealed iff the
-highest-`sequence` receipt has `stage === 'F'` (`isSealed()`).
+**"Sealed" is a derived structural read, not a stored flag:** `isSealed()`
+is true only when `validateChain` succeeds and the highest-`sequence` receipt
+has `kind === 'stage'`, `stage === 'F'`, and `subjectKind === 'ClosureRecord'`.
+Stage-F `HalfClosedClosure` claims are never seals; a valid retry chain becomes
+sealed only when its terminal receipt is a stage-F `ClosureRecord`.
+FL-R1-A1 deliberately tightens the former stage-F-only predicate: empty,
+invalid, and nonterminal chains are unsealed. Existing legitimate structural
+`ClosureRecord` chains remain sealed. This does not require every stage A-F,
+deep-validate the subject payload, or authenticate closure/merge facts.
 `validateChain` invariants: (1) `sequence` values exactly `0..N-1`,
 contiguous, no gaps or duplicates; (2) `receipts[0].prevHash === null` and
 `receipts[i].prevHash === receipts[i-1].hash` — **structural pointer

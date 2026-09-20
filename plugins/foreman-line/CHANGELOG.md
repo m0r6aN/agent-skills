@@ -1,11 +1,13 @@
 # Changelog
 
-## 0.1.0 — 2026-07-29
+## 0.6.10 — 2026-09-19
 
-- Added Claude Code and Codex plugin manifests.
-- Relocated the `goal`, `foreman-shaping`, and `parcel-driven-development`
-  skills into the plugin discovery surface.
-- Removed captured runtime memory from the distribution tree.
-- Added portable ignore rules for generated permission envelopes.
-- Corrected product documentation to distinguish structural receipts from
-  cryptographic verification and asserted merge metadata from live merge proof.
+- Ported explicit repository/plugin roots and caller/config identity injection.
+- Added `foreman-config`, contract readers, role authority, worker envelopes,
+  mutation-scope enforcement, hooks, and templates.
+- Added generated-schema parity coverage for the new contracts.
+- Added TypeSafe Jev 1.13 through OpenRouter for fast routing/classification
+  decisions only; it remains recommendation-only and cannot approve, merge, or
+  bypass policy.
+- Allowed Pi to auto-route only within Foreman-approved execution lanes.
+- Removed the Fireworks routing and worker-provider path entirely.

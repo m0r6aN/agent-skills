@@ -1,9 +1,11 @@
 # /loop Directive — Foreman Line Coordinator (W0 completion)
 
+> **Repository identity migration (2026-09-06):** Repository identifiers and paths in this historical record were normalized to `m0r6aN/agent-skills`. Recorded commands were not rerun; all other historical outcomes remain as captured.
+
 ## COORDINATOR OWNERSHIP — read before dispatching anything
 > **Queue owner: the dedicated bypass-permissions coordinator session** (started by Clint, 2026-07-15). The original relay session completed SEC-1 (PR #17, merge 934a5d5) and has stopped its loop; ownership transferred here at that parcel boundary. Exactly one coordinator owns the queue at a time: if you are not the owner, do not dispatch, and if ownership is ever ambiguous, report to Clint and wait — never assume. Rule earned on 2026-07-15: during a brief dual-coordinator overlap, the second coordinator committed onto the first's parcel branch (491fb80 — benign, but only by luck). One queue, one coordinator, transfers only at parcel boundaries via this block + the carryover.
 
-**Launch** (fresh Claude Code session in `C:\Repos\kaseya-one-productivity-tools`):
+**Launch** (fresh Claude Code session in `D:\Repos\agent-skills`):
 
 ```
 /loop Read plugins/foreman-line/docs/kickstarters/foreman-line-coordinator-loop.md and execute one coordinator iteration per its rules; self-pace with ScheduleWakeup.

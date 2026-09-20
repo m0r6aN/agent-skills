@@ -1,16 +1,37 @@
+export type {
+  PiOpenRouterAuthority,
+  PiOpenRouterCapability,
+  PiOpenRouterLane,
+  PiOpenRouterModel,
+  PiOpenRouterRouting,
+  PiOpenRouterValidationResult,
+} from './pi-openrouter.js'
+export {
+  PI_OPENROUTER_ENABLED_MODELS,
+  PI_OPENROUTER_ROUTING,
+  piOpenRouterModelSchema,
+  piOpenRouterRoutingSchema,
+  validatePiOpenRouterRouting,
+} from './pi-openrouter.js'
 export {
   classEntrySchema,
   dataClassificationRuleSchema,
   roleAssignmentSchema,
   routingPolicySchema,
+  shadowRouteSchema,
+  transportRequirementsSchema,
 } from './schemas.js'
 export type {
   ClassEntry,
   ClassName,
   DataClassificationRule,
   DataClassificationTier,
+  ProhibitedShadowRoles,
   RoleAssignment,
   RoutingPolicy,
+  ShadowRoute,
+  ShadowTaskType,
+  TransportRequirements,
 } from './types.js'
 export { CLASS_NAMES, DATA_CLASSIFICATION_TIERS } from './types.js'
 export type { ValidationResult } from './validator.js'

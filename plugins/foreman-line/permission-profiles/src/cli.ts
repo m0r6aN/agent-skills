@@ -8,7 +8,7 @@
  *       1  schema or semantic-invariant violation (every violation on stderr)
  *       2  usage error (missing/unreadable path, bad invocation, unparsable YAML)
  *
- *   dispatch-worktree --parcel <ref> --profile <name> --path <worktree-path>
+ *   dispatch-worktree --parcel <ref> --profile <name> --path <worktree-path> --cwd <repo-root>
  *     Resolve the named profile against the shipped registry, create the git
  *     worktree + branch, and write the untracked `.claude/settings.local.json`
  *     from the resolved envelope (P3). Exit codes:
@@ -58,14 +58,14 @@ function runValidate(argv: readonly string[]): number {
 }
 
 const DISPATCH_USAGE =
-  'usage: permission-profiles dispatch-worktree --parcel <ref> --profile <name> --path <worktree-path>\n'
+  'usage: permission-profiles dispatch-worktree --parcel <ref> --profile <name> --path <worktree-path> --cwd <repo-root>\n'
 
 /** Parse `--flag value` pairs imperatively (no schema — standing ajv ban). */
 function parseFlags(
   argv: readonly string[],
 ): { flags: Record<string, string> } | { error: string } {
   const flags: Record<string, string> = {}
-  const known = new Set(['--parcel', '--profile', '--path'])
+  const known = new Set(['--parcel', '--profile', '--path', '--cwd'])
   for (let i = 0; i < argv.length; i += 1) {
     const token = argv[i]
     if (token === undefined || !token.startsWith('--')) {
@@ -93,7 +93,9 @@ function runDispatch(argv: readonly string[]): number {
     return 2
   }
   const { flags } = parsed
-  const missing = (['parcel', 'profile', 'path'] as const).filter((k) => flags[k] === undefined)
+  const missing = (['parcel', 'profile', 'path', 'cwd'] as const).filter(
+    (k) => flags[k] === undefined,
+  )
   if (missing.length > 0) {
     process.stderr.write(
       `error: missing required flag(s): ${missing.map((m) => `--${m}`).join(', ')}\n`,
@@ -109,6 +111,8 @@ function runDispatch(argv: readonly string[]): number {
     profile: flags.profile!,
     // biome-ignore lint/style/noNonNullAssertion: presence enforced by the `missing` check above.
     path: flags.path!,
+    // biome-ignore lint/style/noNonNullAssertion: presence enforced by the `missing` check above.
+    cwd: flags.cwd!,
   })
   if (result.stdout.length > 0) {
     process.stdout.write(result.stdout)

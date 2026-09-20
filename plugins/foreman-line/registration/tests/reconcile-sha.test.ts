@@ -16,7 +16,13 @@ test('item4: reconcile pins the receipted SHA even after a later commit touches 
   const fx = singleStoryFixture()
   const adapter = new FakeAdapter()
 
-  const first = await register({ slug: fx.slug, repoRoot: fx.repoRoot, adapter, timestamp: TS })
+  const first = await register({
+    slug: fx.slug,
+    projectKey: 'KONE',
+    repoRoot: fx.repoRoot,
+    adapter,
+    timestamp: TS,
+  })
   const receiptedSha = first.result.links[0]?.commitSha as string
 
   // Simulate drift: a later commit touches the spec, so `git log` would report
@@ -31,7 +37,13 @@ test('item4: reconcile pins the receipted SHA even after a later commit touches 
 
   // Reconcile must use the RECEIPTED SHA, not the drifted git-log SHA.
   const linksBefore = adapter.linkCalls.length
-  const outcome = await register({ slug: fx.slug, repoRoot: fx.repoRoot, adapter, timestamp: TS })
+  const outcome = await register({
+    slug: fx.slug,
+    projectKey: 'KONE',
+    repoRoot: fx.repoRoot,
+    adapter,
+    timestamp: TS,
+  })
   assert.equal(outcome.mode, 'reconcile')
   for (const link of outcome.result.links) {
     assert.equal(link.commitSha, receiptedSha)

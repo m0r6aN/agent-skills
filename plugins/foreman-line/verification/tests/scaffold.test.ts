@@ -76,7 +76,7 @@ test('AC-4: src/index.ts exports the three functions, VerificationError, and AC_
   assert.equal(typeof api.allocateSequence, 'function')
   assert.equal(typeof api.runHarness, 'function')
   assert.equal(typeof api.VerificationError, 'function')
-  assert.equal(api.AC_CONVENTION_PATH, 'plugins/foreman-line/verification/AC-CONVENTION.md')
+  assert.equal(api.AC_CONVENTION_PATH, 'verification/AC-CONVENTION.md')
   // Type exports are proven by compilation: these annotations fail tsc if absent.
   const testResults: api.TestResults = { passed: [], failed: [] }
   const checkResult: api.MatrixCheckResult = { passed: true, evidence: 'x' }

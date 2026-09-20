@@ -178,7 +178,10 @@ test('AC2: prepareDispatch reads spec file and parses frontmatter correctly', as
       compressFn: makeMockCompressFn(),
       worktreePath: join(repoRoot, 'worktrees', 'w2p2'),
     }
-    const pkg = await prepareDispatch(input, { repoRoot })
+    const pkg = await prepareDispatch(input, {
+      repoRoot,
+      pluginRoot: join(repoRoot, 'plugins', 'foreman-line'),
+    })
 
     assert.equal(pkg.specFrontmatter.routing_class, 'architecture/risk')
     assert.equal(pkg.specFrontmatter.data_classification, 'public')
@@ -201,7 +204,7 @@ test('AC3: prevHash is extracted from Stage-B receipt hash field', async () => {
     const candidate = makeCandidate({ priorReceiptLocator })
     const pkg = await prepareDispatch(
       { candidate, specPath, compressFn: makeMockCompressFn(), worktreePath: '/tmp/wt' },
-      { repoRoot },
+      { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
     )
     assert.equal(pkg.prevHash, knownHash)
   } finally {
@@ -227,7 +230,7 @@ test('AC3b: PRIOR_RECEIPT_UNREADABLE when Stage-B receipt JSON has no hash field
       () =>
         prepareDispatch(
           { candidate, specPath, compressFn: makeMockCompressFn(), worktreePath: '/tmp/wt' },
-          { repoRoot },
+          { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
         ),
       (err: unknown) => {
         assert.ok(err instanceof DispatchError)
@@ -250,15 +253,15 @@ test('AC4: routing eval result populates pkg.order.routingDecisionRef', async ()
     const candidate = makeCandidate({ priorReceiptLocator })
     const pkg = await prepareDispatch(
       { candidate, specPath, compressFn: makeMockCompressFn(), worktreePath: '/tmp/wt' },
-      { repoRoot },
+      { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
     )
     assert.equal(pkg.order.routingDecisionRef, `docs/receipts/${WORKFLOW_ID}/routing-decision.json`)
     assert.equal(
       pkg.routingResult.routingDecisionRef,
       `docs/receipts/${WORKFLOW_ID}/routing-decision.json`,
     )
-    // architecture/risk → frontier → claude-opus-4-8
-    assert.equal(pkg.routingResult.resolvedModelId, 'claude-opus-4-8')
+    // architecture/risk → frontier → anthropic/claude-opus-5 (first frontier entry in the shipped policy)
+    assert.equal(pkg.routingResult.resolvedModelId, 'anthropic/claude-opus-5')
   } finally {
     rmSync(repoRoot, { recursive: true, force: true })
   }
@@ -274,7 +277,7 @@ test('AC5: skill resolver result populates pkg.order.injectedSkills', async () =
     const candidate = makeCandidate({ priorReceiptLocator })
     const pkg = await prepareDispatch(
       { candidate, specPath, compressFn: makeMockCompressFn(), worktreePath: '/tmp/wt' },
-      { repoRoot },
+      { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
     )
     // surfaces: ['plugins/foreman-line/dispatch/'] — universal rule fires at minimum
     assert.ok(Array.isArray(pkg.order.injectedSkills))
@@ -307,7 +310,7 @@ test('AC6: kompressContext receives exact parcelSpecText and priorReceiptChain',
 
     await prepareDispatch(
       { candidate, specPath, compressFn: capturingFn, worktreePath: '/tmp/wt' },
-      { repoRoot },
+      { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
     )
 
     // kompressContext joins parcelSpecText + priorReceiptChain with separator
@@ -333,12 +336,12 @@ test('AC7: stepZeroRestatement contains all required substrings', async () => {
         compressFn: makeMockCompressFn({ hash: 'artifact-hash-999' }),
         worktreePath: '/tmp/wt',
       },
-      { repoRoot },
+      { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
     )
     const restatement = pkg.order.stepZeroRestatement
     assert.ok(restatement.includes('KONE-9999'), 'must contain ticket key')
     assert.ok(restatement.includes(WORKFLOW_ID), 'must contain workflowId')
-    assert.ok(restatement.includes('claude-opus-4-8'), 'must contain resolved model ID')
+    assert.ok(restatement.includes('anthropic/claude-opus-5'), 'must contain resolved model ID')
     assert.ok(restatement.includes('artifact ID:'), 'must contain "artifact ID:"')
     assert.ok(restatement.includes('artifact-hash-999'), 'must contain kompressArtifactId')
   } finally {
@@ -356,7 +359,7 @@ test('AC8: assembled DispatchOrder passes frozen schema validation', async () =>
     const candidate = makeCandidate({ priorReceiptLocator })
     const pkg = await prepareDispatch(
       { candidate, specPath, compressFn: makeMockCompressFn(), worktreePath: '/tmp/wt' },
-      { repoRoot },
+      { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
     )
     // If schema validation failed, prepareDispatch would have thrown ORDER_INVALID
     assert.ok(typeof pkg.order.parcelRef === 'string')
@@ -378,12 +381,16 @@ test('AC9: worktree FAILED → receipt file does NOT exist', async () => {
     const candidate = makeCandidate({ priorReceiptLocator })
     const pkg = await prepareDispatch(
       { candidate, specPath, compressFn: makeMockCompressFn(), worktreePath: '/tmp/wt' },
-      { repoRoot },
+      { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
     )
 
     // Worktree fn that fails — receipt should NOT be written
     const failFn = (): DispatchWorktreeOutput => ({ code: 1, stdout: '', stderr: 'git failed' })
-    const opts: DispatchOptions = { repoRoot, dispatchWorktreeFn: failFn }
+    const opts: DispatchOptions = {
+      repoRoot,
+      pluginRoot: join(repoRoot, 'plugins', 'foreman-line'),
+      dispatchWorktreeFn: failFn,
+    }
 
     await assert.rejects(
       () => executeDispatch(pkg, join(repoRoot, 'worktrees', 'test-wt'), opts),
@@ -418,13 +425,14 @@ test('AC10: WORKTREE_FAILED when dispatchWorktreeFn returns code 1', async () =>
     const candidate = makeCandidate({ priorReceiptLocator })
     const pkg = await prepareDispatch(
       { candidate, specPath, compressFn: makeMockCompressFn(), worktreePath: '/tmp/wt' },
-      { repoRoot },
+      { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
     )
 
     await assert.rejects(
       () =>
         executeDispatch(pkg, join(repoRoot, 'worktrees', 'wt'), {
           repoRoot,
+          pluginRoot: join(repoRoot, 'plugins', 'foreman-line'),
           dispatchWorktreeFn: () => ({ code: 1, stdout: '', stderr: 'error\n' }),
         }),
       (err: unknown) => {
@@ -454,11 +462,12 @@ test('AC11: Stage-C receipt written with correct fields after executeDispatch', 
         compressFn: makeMockCompressFn({ hash: 'kompress-artifact-id-test' }),
         worktreePath: '/tmp/wt',
       },
-      { repoRoot },
+      { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
     )
 
     await executeDispatch(pkg, join(repoRoot, 'worktrees', 'test-wt'), {
       repoRoot,
+      pluginRoot: join(repoRoot, 'plugins', 'foreman-line'),
       dispatchWorktreeFn: successWorktreeFn,
     })
 
@@ -496,12 +505,13 @@ test('AC12: executeDispatch returns { order, receiptLocator, worktreePath }', as
     const candidate = makeCandidate({ priorReceiptLocator })
     const pkg = await prepareDispatch(
       { candidate, specPath, compressFn: makeMockCompressFn(), worktreePath: '/tmp/wt' },
-      { repoRoot },
+      { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
     )
 
     const worktreePath = join(repoRoot, 'worktrees', 'wt-result')
     const result = await executeDispatch(pkg, worktreePath, {
       repoRoot,
+      pluginRoot: join(repoRoot, 'plugins', 'foreman-line'),
       dispatchWorktreeFn: successWorktreeFn,
     })
 
@@ -528,7 +538,7 @@ test('AC13: SPEC_UNREADABLE on non-existent specPath', async () => {
             compressFn: makeMockCompressFn(),
             worktreePath: '/tmp/wt',
           },
-          { repoRoot },
+          { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
         ),
       (err: unknown) => {
         assert.ok(err instanceof DispatchError)
@@ -558,7 +568,7 @@ test('AC14a: SPEC_INVALID_FRONTMATTER when routing_class is missing from frontma
       () =>
         prepareDispatch(
           { candidate, specPath, compressFn: makeMockCompressFn(), worktreePath: '/tmp/wt' },
-          { repoRoot },
+          { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
         ),
       (err: unknown) => {
         assert.ok(err instanceof DispatchError)
@@ -581,7 +591,7 @@ test('AC14b: SPEC_INVALID_FRONTMATTER when candidate.workflowId is null', async 
       () =>
         prepareDispatch(
           { candidate, specPath, compressFn: makeMockCompressFn(), worktreePath: '/tmp/wt' },
-          { repoRoot },
+          { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
         ),
       (err: unknown) => {
         assert.ok(err instanceof DispatchError)
@@ -606,7 +616,7 @@ test('AC15a: PRIOR_RECEIPT_UNREADABLE when priorReceiptLocator is null', async (
       () =>
         prepareDispatch(
           { candidate, specPath, compressFn: makeMockCompressFn(), worktreePath: '/tmp/wt' },
-          { repoRoot },
+          { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
         ),
       (err: unknown) => {
         assert.ok(err instanceof DispatchError)
@@ -631,7 +641,7 @@ test('AC15b: PRIOR_RECEIPT_UNREADABLE when Stage-B receipt file does not exist',
       () =>
         prepareDispatch(
           { candidate, specPath, compressFn: makeMockCompressFn(), worktreePath: '/tmp/wt' },
-          { repoRoot },
+          { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
         ),
       (err: unknown) => {
         assert.ok(err instanceof DispatchError)
@@ -663,7 +673,7 @@ test('AC15c: PRIOR_RECEIPT_UNREADABLE when Stage-B receipt JSON has missing hash
       () =>
         prepareDispatch(
           { candidate, specPath, compressFn: makeMockCompressFn(), worktreePath: '/tmp/wt' },
-          { repoRoot },
+          { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
         ),
       (err: unknown) => {
         assert.ok(err instanceof DispatchError)
@@ -693,7 +703,7 @@ test('AC16: COMPRESS_FAILED when compressFn rejects', async () => {
       () =>
         prepareDispatch(
           { candidate, specPath, compressFn: throwingFn, worktreePath: '/tmp/wt' },
-          { repoRoot },
+          { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
         ),
       (err: unknown) => {
         assert.ok(err instanceof DispatchError)
@@ -722,7 +732,7 @@ test('AC22: dispatchWorktreeFn receives builder-standard when permission_profile
     const candidate = makeCandidate({ priorReceiptLocator })
     const pkg = await prepareDispatch(
       { candidate, specPath, compressFn: makeMockCompressFn(), worktreePath: '/tmp/wt' },
-      { repoRoot },
+      { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
     )
 
     // pkg.order.permissionProfile must be undefined
@@ -737,6 +747,7 @@ test('AC22: dispatchWorktreeFn receives builder-standard when permission_profile
 
     await executeDispatch(pkg, join(repoRoot, 'worktrees', 'wt-default'), {
       repoRoot,
+      pluginRoot: join(repoRoot, 'plugins', 'foreman-line'),
       dispatchWorktreeFn: capturingWorktreeFn,
     })
 
@@ -756,14 +767,18 @@ test('SF3: WORKTREE_FAILED when dispatchWorktreeFn throws synchronously', async 
     const candidate = makeCandidate({ priorReceiptLocator })
     const pkg = await prepareDispatch(
       { candidate, specPath, compressFn: makeMockCompressFn(), worktreePath: '/tmp/wt' },
-      { repoRoot },
+      { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
     )
 
     // Inject a worktree fn that throws synchronously rather than returning code !== 0
     const throwingWorktreeFn = (): DispatchWorktreeOutput => {
       throw new Error('emitter crashed')
     }
-    const opts: DispatchOptions = { repoRoot, dispatchWorktreeFn: throwingWorktreeFn }
+    const opts: DispatchOptions = {
+      repoRoot,
+      pluginRoot: join(repoRoot, 'plugins', 'foreman-line'),
+      dispatchWorktreeFn: throwingWorktreeFn,
+    }
 
     await assert.rejects(
       () => executeDispatch(pkg, join(repoRoot, 'worktrees', 'sf3-wt'), opts),

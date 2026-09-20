@@ -16,13 +16,21 @@
  * `reject` - records a rejection with a reason but mints no receipt and
  * produces no `approvedHash` binding.
  *
- * `--repo-root <path>` (optional, all three verbs): overrides the repo root
- * every library call below resolves paths against (defaults to
- * `DEFAULT_REPO_ROOT`). Purely a filesystem-location override - it never
- * touches approval authorization, the TTY check, or the confirmation check.
+ * `--repo-root <path>` (REQUIRED, all three verbs — P2b-i/R3, extending
+ * P2a/D19): the absolute target repo root every library call below resolves
+ * paths against. Absent or relative → typed exit-2 refusal (PCC-P0 usage),
+ * nothing written. Purely a filesystem-location input - it never touches
+ * approval authorization, the TTY check, or the confirmation check.
+ *
+ * `--specs-dir <dir>` (optional, all three verbs — P2b-i/R2): the specs
+ * `active/` directory relative to `--repo-root`. Defaults to the foreign-repo
+ * value `docs/specs/active`; the home repo passes
+ * `plugins/foreman-line/docs/specs/active` explicitly. A relative path within
+ * a caller-supplied root — not a root fallback (A1.3).
  */
 import { performApproval } from './approve-flow.js'
 import { confirmationMatches, isInteractiveTty, promptForConfirmation } from './confirm.js'
+import { ApprovalRootUnresolvedError, assertAbsoluteRoot } from './errors.js'
 import { type RejectionRecord, writeRejectionRecord } from './rejection-record.js'
 import { renderTree } from './render.js'
 import { resolveArtifact } from './resolve-input.js'
@@ -49,11 +57,17 @@ function parseFlags(args: readonly string[]): Flags {
   return flags
 }
 
-async function runShow(arg: string, flags: Flags): Promise<number> {
+async function runShow(
+  arg: string,
+  flags: Flags,
+  repoRoot: string,
+  specsDir: string | undefined,
+): Promise<number> {
   try {
     const resolved = resolveArtifact(arg, {
       epicTitle: flags['epic-title'],
-      repoRoot: flags['repo-root'],
+      repoRoot,
+      specsDir,
     })
     process.stdout.write(`${renderTree(resolved.projectedResult)}\n`)
     return 0
@@ -63,11 +77,15 @@ async function runShow(arg: string, flags: Flags): Promise<number> {
   }
 }
 
-async function runApprove(arg: string, flags: Flags): Promise<number> {
-  const repoRoot = flags['repo-root']
+async function runApprove(
+  arg: string,
+  flags: Flags,
+  repoRoot: string,
+  specsDir: string | undefined,
+): Promise<number> {
   let resolved: ReturnType<typeof resolveArtifact>
   try {
-    resolved = resolveArtifact(arg, { epicTitle: flags['epic-title'], repoRoot })
+    resolved = resolveArtifact(arg, { epicTitle: flags['epic-title'], repoRoot, specsDir })
   } catch (err) {
     process.stderr.write(`error: ${(err as Error).message}\n`)
     return 2
@@ -105,7 +123,7 @@ async function runApprove(arg: string, flags: Flags): Promise<number> {
   // `performApproval`, which also owns the record-before-receipt durability
   // ordering and refuse-to-overwrite check).
   try {
-    const { record, receiptPath } = performApproval(resolved, approver, repoRoot)
+    const { record, receiptPath } = performApproval(resolved, approver, repoRoot, specsDir)
     process.stdout.write(
       `approved: ${resolved.slug}\n  approvedHash: ${record.approvedHash}\n  receipt: ${receiptPath}\n`,
     )
@@ -116,11 +134,15 @@ async function runApprove(arg: string, flags: Flags): Promise<number> {
   }
 }
 
-async function runReject(arg: string, flags: Flags): Promise<number> {
-  const repoRoot = flags['repo-root']
+async function runReject(
+  arg: string,
+  flags: Flags,
+  repoRoot: string,
+  specsDir: string | undefined,
+): Promise<number> {
   let resolved: ReturnType<typeof resolveArtifact>
   try {
-    resolved = resolveArtifact(arg, { epicTitle: flags['epic-title'], repoRoot })
+    resolved = resolveArtifact(arg, { epicTitle: flags['epic-title'], repoRoot, specsDir })
   } catch (err) {
     process.stderr.write(`error: ${(err as Error).message}\n`)
     return 2
@@ -137,7 +159,7 @@ async function runReject(arg: string, flags: Flags): Promise<number> {
     timestamp,
     referenceHash: approvedHash,
   }
-  writeRejectionRecord(resolved.slug, record, repoRoot)
+  writeRejectionRecord(resolved.slug, record, repoRoot, specsDir)
   process.stdout.write(`rejected: ${resolved.slug}\n`)
   return 0
 }
@@ -146,15 +168,35 @@ async function main(argv: readonly string[]): Promise<number> {
   const [command, arg, ...rest] = argv
   if (arg === undefined || (command !== 'show' && command !== 'approve' && command !== 'reject')) {
     process.stderr.write(
-      'usage: approval <show|approve|reject> <slug|path> [--epic-title <title>] [--approver <name>] [--reason <text>] [--repo-root <path>]\n',
+      'usage: approval <show|approve|reject> <slug|path> --repo-root <path> [--specs-dir <dir>] [--epic-title <title>] [--approver <name>] [--reason <text>]\n',
     )
     return 2
   }
 
   const flags = parseFlags(rest)
-  if (command === 'show') return runShow(arg, flags)
-  if (command === 'approve') return runApprove(arg, flags)
-  return runReject(arg, flags)
+
+  // CLI/entry seam (P2b-i/R3, P2a Q3 shape): the root is user-supplied and
+  // REQUIRED. Absent or non-absolute → typed exit-2 refusal (PCC-P0 usage)
+  // before any filesystem work; nothing is written.
+  const repoRootFlag = flags['repo-root']
+  try {
+    if (repoRootFlag === undefined || repoRootFlag.trim().length === 0) {
+      throw new ApprovalRootUnresolvedError(
+        'root-absent',
+        'approval: --repo-root <path> is required (P2b-i/D19: the target repo root is never derived from this tool’s own location or the process cwd)',
+      )
+    }
+    assertAbsoluteRoot(repoRootFlag, 'approval --repo-root')
+  } catch (err) {
+    process.stderr.write(`error: ${(err as Error).message}\n`)
+    return 2
+  }
+  const repoRoot = repoRootFlag
+  const specsDir = flags['specs-dir']
+
+  if (command === 'show') return runShow(arg, flags, repoRoot, specsDir)
+  if (command === 'approve') return runApprove(arg, flags, repoRoot, specsDir)
+  return runReject(arg, flags, repoRoot, specsDir)
 }
 
 process.exitCode = await main(process.argv.slice(2))

@@ -1,6 +1,6 @@
 /**
  * `validatePolicy`: the one exported validation entry point. Runs the
- * structural (ajv) pass against `routingPolicySchema` first, then the five
+ * structural (ajv) pass against `routingPolicySchema` first, then the seven
  * semantic invariants from the spec's Constraints section, independent of
  * whether the structural pass succeeded (so a single invocation surfaces every
  * violation, not just the first — the exit-code contract's `1` case depends
@@ -23,6 +23,7 @@ const ajv = new Ajv({ allErrors: true })
 const validateStructure = ajv.compile(routingPolicySchema as SchemaObject)
 
 const SECURITY_NAME_PATTERN = /security|audit/i
+const SHADOW_TASK_TYPES = new Set(['spec_lint', 'evidence_index', 'review_triage'])
 
 /**
  * Frontier-tier anchoring registry (rework Finding 1): the set of model ids
@@ -32,8 +33,25 @@ const SECURITY_NAME_PATTERN = /security|audit/i
  * validation; this registry is reviewed, tested code. Redefining "frontier"
  * therefore costs a code change with tests (the quarterly model revisit),
  * never a policy-file edit.
+ *
+ * Ids are OpenRouter slugs verbatim (`vendor/model`, from
+ * https://openrouter.ai/api/v1/models) — note Anthropic ids use dots there
+ * (`anthropic/claude-fable-5.1`), the opposite of OpenCode Zen's dashes.
+ * Gemini 3.1 Pro exists on OpenRouter only as `-preview`. Free, `:free`, and
+ * contributor-tier models (which may train on submitted data, or are
+ * rate-limited) are never frontier: the coordinator and verifier see
+ * everything. Registry as of 2026-09-03; `openai/gpt-5.5-pro` /
+ * `openai/gpt-5.4-pro` are deliberately absent — at $30/$180 per 1M tokens
+ * they exhaust a $25 class ceiling in a single turn.
  */
-export const KNOWN_FRONTIER_MODELS: readonly string[] = ['claude-opus-4-8']
+export const KNOWN_FRONTIER_MODELS: readonly string[] = [
+  'anthropic/claude-opus-5',
+  'anthropic/claude-fable-5.1',
+  'openai/gpt-6-astra', // SUPERCHARGE-P1 (verified 2026-09-14; $10/$50 escalation)
+  'openai/gpt-5.6-sol',
+  'openai/gpt-5.5',
+  'google/gemini-3.1-pro-preview',
+]
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
@@ -150,6 +168,125 @@ function checkFrontierTierAnchoring(doc: Record<string, unknown>): string[] {
   return errors
 }
 
+/**
+ * Invariant (g): non-public classifications must declare the strictest
+ * gateway transport requirements. On a multi-provider gateway a model id does
+ * not determine who serves the request; `data_collection: 'deny'` and
+ * `zdr: true` are the two OpenRouter controls that do. The policy cannot send
+ * requests, so this is a declared obligation on the consumer — but a policy
+ * that declared anything weaker for internal/restricted data would be wrong
+ * on its face, and that much can be checked here.
+ */
+function checkTransportRequirements(doc: Record<string, unknown>): string[] {
+  const errors: string[] = []
+  const dataClassification = doc.data_classification
+  if (!isRecord(dataClassification)) return errors
+
+  for (const tier of ['internal', 'restricted'] as const) {
+    const rule = dataClassification[tier]
+    if (!isRecord(rule)) continue
+    const transport = rule.transport_requirements
+    if (!isRecord(transport)) continue // structural pass reports the missing block
+    const prefix = `data_classification.${tier}.transport_requirements`
+    if (transport.data_collection !== 'deny') {
+      errors.push(
+        `${prefix}.data_collection must be 'deny', got '${String(transport.data_collection)}' — non-public data may not reach providers that store or train on inputs (g)`,
+      )
+    }
+    if (transport.zdr !== true) {
+      errors.push(
+        `${prefix}.zdr must be true, got '${String(transport.zdr)}' — non-public data may only reach zero-data-retention endpoints (g)`,
+      )
+    }
+  }
+  return errors
+}
+
+/**
+ * Invariant (f): every model id in any `model_tiers.*` list must be eligible
+ * under `data_classification.public`. Classification gating runs before cost
+ * optimization (D6), so a tier model absent from even the widest eligible set
+ * can never be dispatched under any classification — or, worse, is dispatched
+ * unchecked by a caller that consults tiers without consulting eligibility.
+ * Either way the document is lying about what it routes to. Checking against
+ * `public` suffices because (D6) already forces internal and restricted to be
+ * subsets of it.
+ */
+function checkTiersEligibleUnderPublic(doc: Record<string, unknown>): string[] {
+  const errors: string[] = []
+  const modelTiers = doc.model_tiers
+  const dataClassification = doc.data_classification
+  if (!isRecord(modelTiers) || !isRecord(dataClassification)) return errors
+
+  const publicModels = eligibleModelsOf(dataClassification, 'public')
+  for (const [tierName, rawModels] of Object.entries(modelTiers)) {
+    for (const modelId of toStringArray(rawModels)) {
+      if (!publicModels.has(modelId)) {
+        errors.push(
+          `model_tiers.${tierName} contains '${modelId}', which is not in data_classification.public.eligible_models — every tier model must be classification-eligible somewhere or it can never be dispatched (D6)`,
+        )
+      }
+    }
+  }
+  return errors
+}
+
+/**
+ * Shadow routes are advisory sidecars, never substitute model tiers or
+ * authority-bearing roles. Structural rules live in the schema; these checks
+ * bind a route's map key to its adapter id and make the fail-closed policy
+ * reasons explicit for dispatch-time callers and reviewers.
+ */
+function checkShadowRoutes(doc: Record<string, unknown>): string[] {
+  const errors: string[] = []
+  const shadowRoutes = doc.shadow_routes
+  if (!isRecord(shadowRoutes)) return errors
+
+  for (const [routeName, rawRoute] of Object.entries(shadowRoutes)) {
+    if (!isRecord(rawRoute)) continue
+    const prefix = `shadow_routes['${routeName}']`
+
+    if (rawRoute.adapter_id !== routeName) {
+      errors.push(`${prefix}.adapter_id must equal its route key '${routeName}'`)
+    }
+    if (rawRoute.data_classification !== 'public') {
+      errors.push(`${prefix}.data_classification must be 'public' for a shadow route`)
+    }
+    if (rawRoute.requires_live_discovery !== true) {
+      errors.push(`${prefix}.requires_live_discovery must be true`)
+    }
+    if (rawRoute.candidate_only !== true) {
+      errors.push(
+        `${prefix}.candidate_only must be true; shadow output cannot satisfy a review or gate`,
+      )
+    }
+    if (rawRoute.authority !== 'none') {
+      errors.push(`${prefix}.authority must be 'none'`)
+    }
+    if (toStringArray(rawRoute.tools_granted).length !== 0) {
+      errors.push(`${prefix}.tools_granted must be empty`)
+    }
+    if (rawRoute.effect_capability !== 'none') {
+      errors.push(`${prefix}.effect_capability must be 'none'`)
+    }
+
+    const prohibitedRoles = new Set(toStringArray(rawRoute.prohibited_roles))
+    for (const role of ['coordinator', 'verifier']) {
+      if (!prohibitedRoles.has(role)) {
+        errors.push(`${prefix}.prohibited_roles must include '${role}'`)
+      }
+    }
+
+    for (const taskType of toStringArray(rawRoute.allowed_task_types)) {
+      if (!SHADOW_TASK_TYPES.has(taskType)) {
+        errors.push(`${prefix}.allowed_task_types contains unsupported task type '${taskType}'`)
+      }
+    }
+  }
+
+  return errors
+}
+
 export function validatePolicy(doc: unknown): ValidationResult {
   const errors: string[] = []
 
@@ -166,6 +303,9 @@ export function validatePolicy(doc: unknown): ValidationResult {
     errors.push(...checkRolePinning(doc))
     errors.push(...checkSecurityOverride(doc))
     errors.push(...checkFrontierTierAnchoring(doc))
+    errors.push(...checkTiersEligibleUnderPublic(doc))
+    errors.push(...checkTransportRequirements(doc))
+    errors.push(...checkShadowRoutes(doc))
   }
 
   return { valid: errors.length === 0, errors }

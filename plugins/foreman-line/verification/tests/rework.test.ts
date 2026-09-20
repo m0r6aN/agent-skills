@@ -27,6 +27,7 @@ function makeHarnessInput(repoRoot: string, workflowId: string, specPath: string
     testResults: { passed: ['AC-1: covered'], failed: [] },
     matrixChecks: { 'test-coverage.check': passCheck },
     repoRoot,
+    pluginRoot: join(repoRoot, 'plugins/foreman-line'),
   }
 }
 

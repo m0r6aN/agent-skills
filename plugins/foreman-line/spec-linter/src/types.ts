@@ -1,5 +1,5 @@
 /**
- * Spec frontmatter shapes (W0-P2): TypeScript types for SPEC-CONVENTION §4 v0.2.
+ * Spec frontmatter shapes (W0-P2): TypeScript types for SPEC-CONVENTION §4 v0.3.
  * The SpecFrontmatter interface has a matching hand-authored JSON Schema in
  * `schemas/spec-frontmatter.schema.json` — the two representations are proven to
  * agree by `tests/parity.test.ts`, never by generating one from the other
@@ -17,15 +17,18 @@ export const ROUTING_CLASSES = [
 ] as const
 export type RoutingClass = (typeof ROUTING_CLASSES)[number]
 
+export const VERIFICATION_CLASSES = ['equivalence-provable', 'judgment-required'] as const
+export type VerificationClass = (typeof VERIFICATION_CLASSES)[number]
+
 export const SPEC_STATUSES = ['draft', 'active', 'done', 'superseded'] as const
 export type SpecStatus = (typeof SPEC_STATUSES)[number]
 
 /**
- * Shape of a spec's YAML frontmatter at SPEC-CONVENTION schema v0.2.
+ * Shape of a spec's YAML frontmatter at SPEC-CONVENTION schema v0.3.
  * Required fields: ticket, title, status, owner, created, updated, risk,
- * surfaces, routing_class.
+ * surfaces, routing_class, verification_class.
  * Optional fields: supersedes, superseded_by, permission_profile,
- * data_classification.
+ * data_classification, involves.
  *
  * Semantic invariant (not expressible in JSON Schema): status 'superseded'
  * requires a non-null superseded_by — enforced by validateSpecFrontmatter.
@@ -42,7 +45,15 @@ export interface SpecFrontmatter {
   readonly risk: RiskLevel
   readonly surfaces: readonly string[]
   readonly routing_class: RoutingClass
+  /** Required verification route declaration; there is deliberately no default. */
+  readonly verification_class: VerificationClass
   readonly permission_profile?: string
   /** CLOSE-P2 (W4-P5 ruling): optional sensitivity classification; no enum yet. */
   readonly data_classification?: string
+  /**
+   * P1a (SPEC-CONVENTION §4.6/§4.8): optional capability-area hints.
+   * Advisory only, never a gate (locked D14) — absent means no hints,
+   * `[]` is equivalent to absence, unknown values warn and pass.
+   */
+  readonly involves?: readonly string[]
 }

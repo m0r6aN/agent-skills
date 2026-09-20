@@ -1,0 +1,9 @@
+{
+  "type": "string",
+  "enum": [
+    "build",
+    "verify",
+    "integrate",
+    "accept"
+  ]
+}

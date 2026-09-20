@@ -8,7 +8,6 @@
  * All types are local mirrors of DocSpine's output contracts — no direct
  * import from DocSpine. The live seam is wired in `docspine-report.ts`.
  */
-import { execFileSync } from 'node:child_process'
 
 // ─── Annotation field sanitizer ───────────────────────────────────────────────
 
@@ -46,20 +45,13 @@ export type DocSpineRunVerifyFn = (
 
 export interface DocSpineHookSeams {
   readonly runVerifyFn: DocSpineRunVerifyFn
-  readonly getRepoRoot?: () => string
+  /** Explicit caller-supplied repository root; never discovered from cwd. */
+  readonly repoRoot: string
 }
 
 export interface DocSpineHookResult {
   readonly annotations: readonly string[]
   readonly exitCode: 0
-}
-
-// ─── Default repo-root seam ───────────────────────────────────────────────────
-
-function realGetRepoRoot(): string {
-  return execFileSync('git', ['rev-parse', '--show-toplevel'], {
-    encoding: 'utf8',
-  }).trim()
 }
 
 // ─── Annotation builders ──────────────────────────────────────────────────────
@@ -103,11 +95,8 @@ function buildClaimAnnotation(docId: string, finding: DocSpineClaimFinding): str
  * Never throws. Always exits 0 — report-only / non-blocking invariant.
  */
 export async function runDocSpineHook(seams: DocSpineHookSeams): Promise<DocSpineHookResult> {
-  const getRepoRoot = seams.getRepoRoot ?? realGetRepoRoot
-
   try {
-    const repoRoot = getRepoRoot()
-    const report = await seams.runVerifyFn(repoRoot, undefined)
+    const report = await seams.runVerifyFn(seams.repoRoot, undefined)
 
     let brokenDocs = 0
     let brokenClaims = 0

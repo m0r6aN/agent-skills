@@ -16,6 +16,8 @@ export const sampleSpecFrontmatter: SpecFrontmatter = {
   risk: 'standard',
   surfaces: ['docs/SPEC-CONVENTION.md'],
   routing_class: 'standard-feature',
+  verification_class: 'judgment-required',
   permission_profile: 'builder-standard',
   data_classification: 'internal',
+  involves: ['ticketing'],
 }

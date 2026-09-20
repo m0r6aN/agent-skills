@@ -35,10 +35,7 @@ export interface ReportResult {
 }
 
 /** Default changed-paths seam: `git diff --name-only <base>...HEAD`. */
-function realGetChangedPaths(): readonly string[] {
-  const repoRoot = execFileSync('git', ['rev-parse', '--show-toplevel'], {
-    encoding: 'utf8',
-  }).trim()
+function realGetChangedPaths(repoRoot: string): readonly string[] {
   const baseSha = process.env.BASE_SHA
   const range = baseSha !== undefined && baseSha.trim().length > 0 ? `${baseSha}...HEAD` : 'HEAD~1'
   const out = execFileSync('git', ['diff', '--name-only', range], {
@@ -52,11 +49,11 @@ function realGetChangedPaths(): readonly string[] {
 }
 
 /** Default active-spec seam: real disk read from the git repo root. */
-function realLoadActiveSpecs(): readonly ActiveSpecDescriptor[] {
-  const repoRoot = execFileSync('git', ['rev-parse', '--show-toplevel'], {
-    encoding: 'utf8',
-  }).trim()
-  return loadActiveSpecsLive(repoRoot)
+function realLoadActiveSpecs(
+  repoRoot: string,
+  pluginRoot: string,
+): readonly ActiveSpecDescriptor[] {
+  return loadActiveSpecsLive(repoRoot, pluginRoot)
 }
 
 /**
@@ -64,9 +61,13 @@ function realLoadActiveSpecs(): readonly ActiveSpecDescriptor[] {
  * and returns the annotation lines plus `exitCode: 0`. No process exit, no
  * printing — the runner does that. Fully testable with fixture seams.
  */
-export function runReport(seams: ReportSeams = {}): ReportResult {
-  const getChangedPaths = seams.getChangedPaths ?? realGetChangedPaths
-  const loadActiveSpecs = seams.loadActiveSpecs ?? realLoadActiveSpecs
+export function runReport(
+  repoRoot: string,
+  pluginRoot: string,
+  seams: ReportSeams = {},
+): ReportResult {
+  const getChangedPaths = seams.getChangedPaths ?? (() => realGetChangedPaths(repoRoot))
+  const loadActiveSpecs = seams.loadActiveSpecs ?? (() => realLoadActiveSpecs(repoRoot, pluginRoot))
 
   // Typed try-catch (lesson #22): a live input failure — bad BASE_SHA, shallow
   // clone, single-commit branch, unreadable specs — must NOT break the
@@ -105,7 +106,18 @@ function invokedDirectly(): boolean {
 }
 
 if (invokedDirectly()) {
-  const result = runReport()
+  const repoRoot = process.env.FOREMAN_REPO_ROOT
+  const pluginRoot = process.env.FOREMAN_PLUGIN_ROOT
+  const result =
+    repoRoot !== undefined && pluginRoot !== undefined
+      ? runReport(repoRoot, pluginRoot)
+      : {
+          decision: null,
+          annotations: [
+            '::warning::audit-trigger: report skipped — FOREMAN_REPO_ROOT and FOREMAN_PLUGIN_ROOT are required',
+          ],
+          exitCode: 0 as const,
+        }
   for (const annotation of result.annotations) {
     console.log(annotation)
   }
