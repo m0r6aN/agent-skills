@@ -48,8 +48,9 @@ the worker-envelope boundary, and the mutation-scope guard.
 | D32 | Jev routing/classification scope |
 | D33 | Self-declaration ownership |
 | D34 | Template/source parity |
-| D35 | Version and changelog consistency |
-| D36 | Serial verification and release evidence |
+| D35 | Retired provider route removal |
+| D36 | Version and changelog consistency |
+| D37 | Serial verification and release evidence |
 
 ```bash
 npm run typecheck

@@ -6,14 +6,21 @@
  * foreman-config, so this test no longer treats its source as frozen.
  */
 import assert from 'node:assert/strict'
-import { execFileSync } from 'node:child_process'
+import { readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { test } from 'node:test'
 import { fileURLToPath } from 'node:url'
 import { checkFrontmatter } from '../src/index.js'
 import { CONFORMANT_DRAFT, DRAFT_MISSING_RISK } from './helpers.js'
 
-const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..')
+const specLinterCliPath = join(
+  dirname(fileURLToPath(import.meta.url)),
+  '..',
+  '..',
+  'spec-linter',
+  'src',
+  'cli.ts',
+)
 
 test('AC8: a valid v0.2 draft passes the frontmatter self-check', () => {
   const result = checkFrontmatter(CONFORMANT_DRAFT)
@@ -30,16 +37,9 @@ test('AC8: a draft missing the required `risk` field is rejected with the linter
 })
 
 test('AC8: spec-linter integration is present for the config-aware boundary', () => {
-  const out = execFileSync(
-    'git',
-    ['diff', 'HEAD', '--stat', '--', 'plugins/foreman-line/spec-linter'],
-    {
-      cwd: repoRoot,
-      encoding: 'utf8',
-    },
-  )
+  const out = readFileSync(specLinterCliPath, 'utf8')
   assert.ok(
-    out.includes('spec-linter/src/'),
-    'expected the config-aware linter integration to be tracked',
+    out.includes('foreman-config'),
+    'expected the config-aware linter integration to be present',
   )
 })
