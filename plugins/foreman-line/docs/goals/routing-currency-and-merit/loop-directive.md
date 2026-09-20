@@ -15,7 +15,8 @@ as an incomplete evidence handoff; its spec is in `docs/specs/done/` and its fou
 evidence files are merged. RCM-P1 remains held because the live-source boundary is
 unresolved and the queue is re-gated on accepted RCM-P0 evidence. The selected
 recovery path is the host-owner sanitized export defined in
-`host-owner-export-request.md`.
+`host-owner-export-request.md`. The bounded Gate 3 grant is explicitly extended to
+refreshes of these same four evidence artifacts under the completed P0 spec only.
 
 ## Standing authorizations and limits
 

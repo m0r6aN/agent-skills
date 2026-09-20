@@ -5,7 +5,8 @@
 **Operational charter:** repo-local ratified copy at `charter.md`  
 **State:** not complete; RCM-P0 bounded handoff merged, with host-owner sanitized
 export selected as the next evidence path; downstream live-evidence boundary and
-RCM-P1 re-gate remain open
+RCM-P1 re-gate remain open. The bounded Gate 3 extension covers only refreshes of
+the same four RCM-P0 evidence artifacts under the completed P0 spec.
 
 This is a requirement audit against the current repo-local ratified charter and
 loop directive. It is not a substitute for parcel verification or human gates.

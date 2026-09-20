@@ -367,3 +367,9 @@ spec and four evidence artifacts after the green closure chain. It does not acce
 the incomplete host-derived evidence as live authority, release RCM-P1, delegate
 general Gate 3, authorize host correction, provider spend, credential discovery,
 network access, or any downstream parcel.
+
+**EXTENDED 2026-09-20 by Clinton Morgan:** The bounded Gate 3 above also covers
+refreshes of those same four RCM-P0 evidence artifacts under the completed spec
+`plugins/foreman-line/docs/specs/done/RCM-P0-current-instance-recon.md`. The extension
+does not cover any other artifact, RCM-P1 release, host correction, provider spend,
+credential discovery, network access, or general Gate 3 authority.
