@@ -154,7 +154,7 @@ test('FL-R2-A1: only reviewed yaml is a runtime dependency; no direct spec-linte
   const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8')) as {
     dependencies?: Record<string, string>
   }
-  assert.deepEqual(pkg.dependencies, { yaml: '2.9.0' })
+  assert.deepEqual(pkg.dependencies, { yaml: '2.9.1' })
   const src = new URL('../src/', import.meta.url)
   for (const file of readdirSync(src, { recursive: true, encoding: 'utf8' }).filter((name) =>
     name.endsWith('.ts'),

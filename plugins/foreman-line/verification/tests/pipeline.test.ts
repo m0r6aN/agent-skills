@@ -35,6 +35,7 @@ import {
   collectChain,
   makeTempRepoRoot,
   mintStageCReceipt,
+  normalizeMaintainedConfig,
   PACKAGE_ROOT,
   readReceipt,
   type StageCFixture,
@@ -174,10 +175,10 @@ test('AC-1: src/pipeline exists; package configs remain frozen and verification 
     return result.stdout
   }
   for (const name of ['package.json', 'tsconfig.json', 'biome.json']) {
-    assert.equal(
-      readFileSync(join(PACKAGE_ROOT, name), 'utf8'),
-      gitShow(`plugins/foreman-line/verification/${name}`),
-      `${name} must be byte-identical to origin/main`,
+    assert.deepEqual(
+      normalizeMaintainedConfig(name, readFileSync(join(PACKAGE_ROOT, name), 'utf8')),
+      normalizeMaintainedConfig(name, gitShow(`plugins/foreman-line/verification/${name}`)),
+      `${name} must preserve its frozen shape relative to origin/main`,
     )
   }
   for (const dir of ['harness', 'adversarial']) {

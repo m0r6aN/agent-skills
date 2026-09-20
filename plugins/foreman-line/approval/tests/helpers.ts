@@ -38,6 +38,22 @@ export function diffStatSinceMergeBase(monorepoRoot: string, pathSpec: string): 
   })
 }
 
+/** Changed repository-relative paths since the merge-base, scoped to `pathSpec`. */
+export function changedPathsSinceMergeBase(monorepoRoot: string, pathSpec: string): string[] {
+  const mergeBase = execFileSync('git', ['merge-base', 'HEAD', 'origin/main'], {
+    cwd: monorepoRoot,
+    encoding: 'utf8',
+  }).trim()
+  const output = execFileSync('git', ['diff', mergeBase, '--name-only', '--', pathSpec], {
+    cwd: monorepoRoot,
+    encoding: 'utf8',
+  })
+  return output
+    .split(/\r?\n/)
+    .map((path) => path.trim())
+    .filter(Boolean)
+}
+
 /** Write a bare (pre-projection) ShapingResult artifact beneath `repoRoot`. */
 export function writeShapingResultFixture(
   repoRoot: string,
