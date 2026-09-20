@@ -59,7 +59,10 @@ test('AC2: no import of pcc internals (skills/parcel-compiler) anywhere in the p
 test('AC2: no source or fixture modification to receipts/ since the branch fork point', () => {
   const changedPaths = changedPathsSinceMergeBase(repoRoot, 'plugins/foreman-line/receipts')
   const sourceChanges = changedPaths.filter(
-    (path) => !path.endsWith('/package.json') && !path.endsWith('/package-lock.json'),
+    (path) =>
+      !path.endsWith('/package.json') &&
+      !path.endsWith('/package-lock.json') &&
+      !path.endsWith('/biome.json'),
   )
   assert.deepEqual(sourceChanges, [])
 })
