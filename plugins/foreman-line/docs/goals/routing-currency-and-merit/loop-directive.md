@@ -2,11 +2,21 @@
 
 ## COORDINATOR OWNERSHIP
 
-> **Queue owner:** the current dedicated Foreman Line coordinator session for task
-> `01a0bf3f-559b-7291-a20e-8d8a4bbb16b3`, claimed 2026-09-20 after the second Gate 1
-> ratification. One goal, one coordinator. Ownership transfers only at a parcel
+> **Queue owner:** the Claude Code coordinator session
+> `e45b4d47-8455-49e9-9629-31c713c1b356`, which took ownership on 2026-09-21 at
+> 10:18 EDT on Clinton Morgan's explicit direction: "Transfer ownership to this
+> session." One goal, one coordinator. Ownership transfers only at a parcel
 > boundary by updating this block. If another live coordinator is named or ownership
 > becomes ambiguous, stop and report; never assume.
+>
+> **Transfer record.** The prior owner was the coordinator session for task
+> `01a0bf3f-559b-7291-a20e-8d8a4bbb16b3`, claimed 2026-09-20. The transfer happened at
+> a parcel boundary: no RCM parcel was in flight, RCM-P0 was closed incomplete, and
+> RCM-P1 was held. The prior owner's last act was stopping the child goal's JEV-P0 at
+> its human Gate 3 boundary in commit `54ef5dd`. The transfer covers this parent goal
+> only. Ownership of `routing-currency-and-merit-jev-alpha` is unchanged, and that
+> child's rule against editing parent surfaces without a ratified integration parcel
+> still binds it. The transfer changes no gate, hold, or authorization recorded below.
 
 **State:** `RCM-P0-closed-incomplete` — Stage Zero, mandatory plan review, shaping,
 Gate 2, builder rework, deterministic closure, two fresh post-rework adversarial
