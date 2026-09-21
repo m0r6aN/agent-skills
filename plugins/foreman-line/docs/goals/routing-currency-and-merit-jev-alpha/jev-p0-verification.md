@@ -1,8 +1,8 @@
-# JEV-P0 — Bounded Gate 2 builder round 12 verification record
+# JEV-P0 — Bounded Gate 2 builder round 13 verification record
 
 ## Scope
 
-This record verifies the bounded JEV-P0 builder round 12 only.
+This record verifies the bounded JEV-P0 builder round 13 only.
 It does not authorize JEV-P1 or later, provider calls, runtime use, spend,
 credential access, dispatch, promotion, or Gate 3. The only mutation authority
 is:
@@ -11,21 +11,23 @@ is:
 - `plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-evidence-boundary.md`
 - `plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-verification.md`
 
-Every other path and effect is forbidden. The current round is round 12 on
-branch `codex/jev-p0-rework21`, starting from immediate prior candidate
-`dc9d6a76772097be07832a2fe2b2653fb81fdf87`. The cumulative parcel proof base
+Every other path and effect is forbidden. The current round is round 13 on
+branch `codex/jev-p0-rework23`, starting from immediate prior candidate
+`60f9d72c4191167082fd96db8bf3b6eacc6e5bac`. The cumulative parcel proof base
 remains `eb88b65426c5e37893ac0591be83eef8c91da123`; intervening candidates in
 that cumulative chain are `cf79819848c129581b13ff1289920f4cace2beca`,
 `d439b4dfd9c0f9783f76a2dbb0c6a4a7bf4e5241`,
-`dbc2db5f5dbae7b3df142a22230d69ed6584e5c6`, and
-`a83930eb174cc7afedcf3cd06c6d6bf63ab68b8a`; `dc9d6a76` is the immediate prior
+`dbc2db5f5dbae7b3df142a22230d69ed6584e5c6`,
+`a83930eb174cc7afedcf3cd06c6d6bf63ab68b8a`,
+`dc9d6a76772097be07832a2fe2b2653fb81fdf87`, and
+`d18d08ba12e5b06d08a6c4ccf11875d0bc77cfda`; `60f9d72c` is the immediate prior
 candidate for this round. `c71bdbfa0f9597eb44d0c3a01aa853f1f33989a8` is
 historical proof evidence, not an intervening or immediate-prior candidate.
 The full-scope proof compares one cumulative base-to-head range `eb88..HEAD`
 so it covers the complete parcel change set; `eb88` is not the immediate prior
 candidate, and `c71` is historical.
 
-## Prior-closure preservation and nineteenth-review closure/current review checklist
+## Prior-closure preservation and twenty-first-review closure/current review checklist
 
 The three allowed documents explicitly close these findings while preserving
 all earlier identity, schema, answer, JCS, transport, custody, lease, budget,
@@ -152,7 +154,7 @@ builder result is self-approval or Gate 3 authorization.
 ## Prior-candidate coordinator proof evidence
 
 The following is exact coordinator evidence for a historical candidate from
-round 5. It is neither the immediate prior candidate for current round 12 nor
+round 5. It is neither the immediate prior candidate for current round 13 nor
 current-round-head proof, builder approval, or Gate 3 authorization. The
 external proof targeted candidate
 `c71bdbfa0f9597eb44d0c3a01aa853f1f33989a8` using receipt path
@@ -174,7 +176,7 @@ external proof targeted candidate
 | Filtered status | Passed; all three allowed paths were exactly `M` |
 | Independent review count | `0/2` at the time of this prior-candidate coordinator proof; no review approval inferred |
 
-This historical-candidate record does not assert the current round 12 final HEAD,
+This historical-candidate record does not assert the current round 13 final HEAD,
 current base-to-head scope, whitespace, or status results. Those remain
 pending until the coordinator runs the proof below with the current immutable
 expected head. It does not authorize a provider call, merge, or Gate 3.
@@ -204,7 +206,7 @@ limitation, not a contract pass.
 
 ### 2. Full base-to-head scope proof, then filtered checks
 
-Run after the resulting round-12 builder commit exists:
+Run after the resulting round-13 builder commit exists:
 
 ```powershell
 param(
@@ -464,14 +466,87 @@ shaped, non-empty, non-sentinel value that is unequal in the finite path set
 below. The set is exactly these paths:
 `fixture.evidence_class`, `fixture.fixture_id`, `fixture.manifest_id`,
 `fixture.schema_version`, `fixture.requested_identity`,
-`fixture.served_identity`, `fixture.served_identity.response_id`,
+`fixture.requested_identity.provider`, `fixture.requested_identity.model`,
+`fixture.requested_identity.surface`, `fixture.served_identity`,
+`fixture.served_identity.model`, `fixture.served_identity.response_id`,
+`fixture.served_identity.source`,
 `fixture.response_id`, `fixture.server_timestamp_utc`, `fixture.request`,
-`fixture.request.schema_version`, `fixture.request.requested_identity`,
+`fixture.request.schema_version`, `fixture.request.capability`,
+`fixture.request.requested_identity`,
+`fixture.request.requested_identity.provider`,
+`fixture.request.requested_identity.model`,
+`fixture.request.requested_identity.surface`, `fixture.request.state`,
+`fixture.request.state.schema_version`, `fixture.request.state.values`,
+`fixture.request.state.values.case_type`,
+`fixture.request.state.values.urgency_signal`,
+`fixture.request.state.values.frustration_signal`,
+`fixture.request.state.values.contact_channel`,
+`fixture.request.questions`, `fixture.request.questions[0]`,
+`fixture.request.questions[0].name`, `fixture.request.questions[0].type`,
+`fixture.request.questions[0].instructions`,
+`fixture.request.questions[0].instructions[0]`,
+`fixture.request.questions[0].criteria`,
+`fixture.request.questions[0].criteria[0]`,
+`fixture.request.questions[0].criteria[0].key`,
+`fixture.request.questions[0].criteria[0].description`,
+`fixture.request.questions[1]`, `fixture.request.questions[1].name`,
+`fixture.request.questions[1].type`,
+`fixture.request.questions[1].instructions`,
+`fixture.request.questions[1].instructions[0]`,
+`fixture.request.questions[1].criteria`,
+`fixture.request.questions[1].criteria[0]`,
+`fixture.request.questions[1].criteria[0].key`,
+`fixture.request.questions[1].criteria[0].description`,
+`fixture.request.questions[1].choices`,
+`fixture.request.questions[1].choices[0]`,
+`fixture.request.questions[1].choices[1]`,
+`fixture.request.questions[1].choices[2]`,
+`fixture.request.questions[2]`, `fixture.request.questions[2].name`,
+`fixture.request.questions[2].type`,
+`fixture.request.questions[2].instructions`,
+`fixture.request.questions[2].instructions[0]`,
+`fixture.request.questions[2].criteria`,
+`fixture.request.questions[2].criteria[0]`,
+`fixture.request.questions[2].criteria[0].key`,
+`fixture.request.questions[2].criteria[0].description`,
+`fixture.request.questions[2].score_label`,
 `fixture.request_digest`, `fixture.response`,
-`fixture.response.schema_version`, `fixture.response.requested_identity`,
+`fixture.response.schema_version`, `fixture.response.capability`,
+`fixture.response.requested_identity`,
+`fixture.response.requested_identity.provider`,
+`fixture.response.requested_identity.model`,
+`fixture.response.requested_identity.surface`,
 `fixture.response.served_identity`,
+`fixture.response.served_identity.model`,
 `fixture.response.served_identity.response_id`,
+`fixture.response.served_identity.source`,
 `fixture.response.response_id`, `fixture.response.server_timestamp_utc`,
+`fixture.response.answers`, `fixture.response.answers[0]`,
+`fixture.response.answers[0].name`, `fixture.response.answers[0].type`,
+`fixture.response.answers[0].criteria`,
+`fixture.response.answers[0].criteria[0]`,
+`fixture.response.answers[0].criteria[0].key`,
+`fixture.response.answers[0].criteria[0].description`,
+`fixture.response.answers[0].value`,
+`fixture.response.answers[0].confidence`,
+`fixture.response.answers[1]`, `fixture.response.answers[1].name`,
+`fixture.response.answers[1].type`, `fixture.response.answers[1].criteria`,
+`fixture.response.answers[1].criteria[0]`,
+`fixture.response.answers[1].criteria[0].key`,
+`fixture.response.answers[1].criteria[0].description`,
+`fixture.response.answers[1].value`,
+`fixture.response.answers[1].confidence`,
+`fixture.response.answers[1].distribution`,
+`fixture.response.answers[1].distribution.billing`,
+`fixture.response.answers[1].distribution.technical`,
+`fixture.response.answers[1].distribution.sales`,
+`fixture.response.answers[2]`, `fixture.response.answers[2].name`,
+`fixture.response.answers[2].type`, `fixture.response.answers[2].criteria`,
+`fixture.response.answers[2].criteria[0]`,
+`fixture.response.answers[2].criteria[0].key`,
+`fixture.response.answers[2].criteria[0].description`,
+`fixture.response.answers[2].value`,
+`fixture.response.answers[2].confidence`,
 `fixture.response_digest`, `fixture.provenance.fixture_id`,
 `fixture.provenance.manifest_id`, `fixture.provenance.source_kind`,
 `fixture.provenance.source_ref`, `fixture.provenance.captured_at_utc`,
@@ -495,8 +570,10 @@ fixture.manifest_entry.fixture_id`;
 `fixture.requested_identity == fixture.request.requested_identity ==
 fixture.response.requested_identity`;
 `fixture.served_identity == fixture.response.served_identity`;
+`fixture.served_identity.model == fixture.response.served_identity.model`;
 `fixture.served_identity.response_id ==
 fixture.response.served_identity.response_id`;
+`fixture.served_identity.source == fixture.response.served_identity.source`;
 `fixture.response_id == fixture.response.response_id ==
 fixture.served_identity.response_id ==
 fixture.response.served_identity.response_id ==
@@ -504,6 +581,18 @@ fixture.provenance.authenticated_response_id`;
 `fixture.server_timestamp_utc == fixture.response.server_timestamp_utc`;
 `fixture.source_kind == fixture.provenance.source_kind`;
 `fixture.source_ref == fixture.provenance.source_ref`;
+`fixture.response.answers[0].name == fixture.request.questions[0].name`;
+`fixture.response.answers[0].type == fixture.request.questions[0].type`;
+`fixture.response.answers[0].criteria ==
+fixture.request.questions[0].criteria`;
+`fixture.response.answers[1].name == fixture.request.questions[1].name`;
+`fixture.response.answers[1].type == fixture.request.questions[1].type`;
+`fixture.response.answers[1].criteria ==
+fixture.request.questions[1].criteria`;
+`fixture.response.answers[2].name == fixture.request.questions[2].name`;
+`fixture.response.answers[2].type == fixture.request.questions[2].type`;
+`fixture.response.answers[2].criteria ==
+fixture.request.questions[2].criteria`;
 `fixture.request_digest == SHA256(JCS-UTF8(fixture.request)) ==
 fixture.manifest_entry.request_digest`;
 `fixture.response_digest == SHA256(JCS-UTF8(fixture.response)) ==
@@ -596,7 +685,7 @@ builder does not self-approve or merge.
 
 | Check | Result | Evidence |
 |---|---|---|
-| Starting branch/base | `codex/jev-p0-rework21`, immediate prior candidate `dc9d6a76772097be07832a2fe2b2653fb81fdf87`; cumulative proof base `eb88b65426c5e37893ac0591be83eef8c91da123`; intervening candidates are `cf798`, `d439`, `dbc2`, and `a839`; `dc9d6a76` is the immediate prior candidate for round 12; `c71` is historical | Confirmed before current builder round 12 edits. The proof intentionally compares one cumulative base-to-head range `eb88..HEAD`; it is not a direct-parent proof. |
+| Starting branch/base | `codex/jev-p0-rework23`, immediate prior candidate `60f9d72c4191167082fd96db8bf3b6eacc6e5bac`; cumulative proof base `eb88b65426c5e37893ac0591be83eef8c91da123`; intervening candidates are `cf798`, `d439`, `dbc2`, `a839`, `dc9d`, and `d18d`; `60f9d72c` is the immediate prior candidate for round 13; `c71` is historical | Confirmed before current builder round 13 edits. The proof intentionally compares one cumulative base-to-head range `eb88..HEAD`; it is not a direct-parent proof. |
 | `node -v` | Passed: `v24.7.0`, native exit code `0`; below shaping requirement `>=24.11.1` | Immediate exit-code capture/check followed `node -v`. |
 | `RepositoryRoot` input | Mandatory and documented; the prior-candidate proof used `C:\Repos\foreman-line-jev-p0-rework5` | The proof resolves a literal existing Git root and uses `git -C` for every relative Git operation; unsafe/missing/non-repository roots reject. |
 | Prior-candidate coordinator proof | Passed externally for candidate `c71bdbfa0f9597eb44d0c3a01aa853f1f33989a8` | Exact receipt/path, target/head, base, repository root, three-file scope, whitespace, native exits, and `M` status results are recorded above; this is prior-candidate coordinator evidence, not current-head proof, builder approval, or Gate 3 authorization. |
@@ -611,7 +700,7 @@ builder does not self-approve or merge.
 | Filtered base-to-head `git diff --check` and status | Pending until the coordinator executes the proof; no pass claimed | These checks run only after the unfiltered three-file set and reviewed head are proven. |
 | Targeted active-spec linter/self-check | Environment limitation: local `ajv` missing; no install | These tools do not lint the three goal documents. |
 | Manual semantic consistency review | Required; not claimed by the scope script and not independent approval | Review all three documents for canonical lease vocabulary/state transitions, exact lease/budget/live-record equalities, narrow status/reason suffixes, complete-only observations, one timestamp grammar/order, R09/R10/R12/R13, first-failure R23/R22 structural/value stages, R19/R20 custody partition, and the full ordered R17/R20/R21 semantic rules. |
-| Field-by-field nineteenth-review closure/current review | Blocked for coordinator traceability; read-only content review is not independent approval | Checked the requested nineteenth-review control text locally; current-round coordinator proof and two independent reviews remain external. |
+| Field-by-field twenty-first-review closure/current review | Blocked for coordinator traceability; read-only content review is not independent approval | Checked the requested twenty-first-review control text locally; current-round coordinator proof and two independent reviews remain external. |
 | Independent frontier review A | Observed result: no fresh report supplied or performed in this builder session (`0/2`) | Coordinator must supply and triage; no pass inferred. |
 | Independent frontier review B | Observed result: no fresh report supplied or performed in this builder session (`0/2`) | Coordinator must supply and triage; no pass inferred. |
 | Gate 3 / merge | Not granted; human-owned | No self-approval or merge. |

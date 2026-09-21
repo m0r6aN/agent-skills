@@ -515,17 +515,92 @@ the first failing stage rather than being ambiguous:
    The set is exactly these paths:
    `fixture.evidence_class`, `fixture.fixture_id`, `fixture.manifest_id`,
    `fixture.schema_version`, `fixture.requested_identity`,
-   `fixture.served_identity`, `fixture.served_identity.response_id`,
-   `fixture.response_id`, `fixture.server_timestamp_utc`, `fixture.request`,
-   `fixture.request.schema_version`, `fixture.request.requested_identity`,
-   `fixture.request_digest`, `fixture.response`,
-   `fixture.response.schema_version`, `fixture.response.requested_identity`,
+   `fixture.requested_identity.provider`, `fixture.requested_identity.model`,
+   `fixture.requested_identity.surface`, `fixture.served_identity`,
+   `fixture.served_identity.model`, `fixture.served_identity.response_id`,
+   `fixture.served_identity.source`, `fixture.response_id`,
+   `fixture.server_timestamp_utc`, `fixture.request`,
+   `fixture.request.schema_version`, `fixture.request.capability`,
+   `fixture.request.requested_identity`,
+   `fixture.request.requested_identity.provider`,
+   `fixture.request.requested_identity.model`,
+   `fixture.request.requested_identity.surface`, `fixture.request.state`,
+   `fixture.request.state.schema_version`, `fixture.request.state.values`,
+   `fixture.request.state.values.case_type`,
+   `fixture.request.state.values.urgency_signal`,
+   `fixture.request.state.values.frustration_signal`,
+   `fixture.request.state.values.contact_channel`,
+   `fixture.request.questions`, `fixture.request.questions[0]`,
+   `fixture.request.questions[0].name`,
+   `fixture.request.questions[0].type`,
+   `fixture.request.questions[0].instructions`,
+   `fixture.request.questions[0].instructions[0]`,
+   `fixture.request.questions[0].criteria`,
+   `fixture.request.questions[0].criteria[0]`,
+   `fixture.request.questions[0].criteria[0].key`,
+   `fixture.request.questions[0].criteria[0].description`,
+   `fixture.request.questions[1]`, `fixture.request.questions[1].name`,
+   `fixture.request.questions[1].type`,
+   `fixture.request.questions[1].instructions`,
+   `fixture.request.questions[1].instructions[0]`,
+   `fixture.request.questions[1].criteria`,
+   `fixture.request.questions[1].criteria[0]`,
+   `fixture.request.questions[1].criteria[0].key`,
+   `fixture.request.questions[1].criteria[0].description`,
+   `fixture.request.questions[1].choices`,
+   `fixture.request.questions[1].choices[0]`,
+   `fixture.request.questions[1].choices[1]`,
+   `fixture.request.questions[1].choices[2]`,
+   `fixture.request.questions[2]`, `fixture.request.questions[2].name`,
+   `fixture.request.questions[2].type`,
+   `fixture.request.questions[2].instructions`,
+   `fixture.request.questions[2].instructions[0]`,
+   `fixture.request.questions[2].criteria`,
+   `fixture.request.questions[2].criteria[0]`,
+   `fixture.request.questions[2].criteria[0].key`,
+   `fixture.request.questions[2].criteria[0].description`,
+   `fixture.request.questions[2].score_label`, `fixture.request_digest`,
+   `fixture.response`, `fixture.response.schema_version`,
+   `fixture.response.capability`, `fixture.response.requested_identity`,
+   `fixture.response.requested_identity.provider`,
+   `fixture.response.requested_identity.model`,
+   `fixture.response.requested_identity.surface`,
    `fixture.response.served_identity`,
+   `fixture.response.served_identity.model`,
    `fixture.response.served_identity.response_id`,
-   `fixture.response.response_id`, `fixture.response.server_timestamp_utc`,
-   `fixture.response_digest`, `fixture.provenance.fixture_id`,
-   `fixture.provenance.manifest_id`, `fixture.provenance.source_kind`,
-   `fixture.provenance.source_ref`, `fixture.provenance.captured_at_utc`,
+   `fixture.response.served_identity.source`, `fixture.response.response_id`,
+   `fixture.response.server_timestamp_utc`, `fixture.response.answers`,
+   `fixture.response.answers[0]`, `fixture.response.answers[0].name`,
+   `fixture.response.answers[0].type`,
+   `fixture.response.answers[0].criteria`,
+   `fixture.response.answers[0].criteria[0]`,
+   `fixture.response.answers[0].criteria[0].key`,
+   `fixture.response.answers[0].criteria[0].description`,
+   `fixture.response.answers[0].value`,
+   `fixture.response.answers[0].confidence`,
+   `fixture.response.answers[1]`, `fixture.response.answers[1].name`,
+   `fixture.response.answers[1].type`,
+   `fixture.response.answers[1].criteria`,
+   `fixture.response.answers[1].criteria[0]`,
+   `fixture.response.answers[1].criteria[0].key`,
+   `fixture.response.answers[1].criteria[0].description`,
+   `fixture.response.answers[1].value`,
+   `fixture.response.answers[1].confidence`,
+   `fixture.response.answers[1].distribution`,
+   `fixture.response.answers[1].distribution.billing`,
+   `fixture.response.answers[1].distribution.technical`,
+   `fixture.response.answers[1].distribution.sales`,
+   `fixture.response.answers[2]`, `fixture.response.answers[2].name`,
+   `fixture.response.answers[2].type`,
+   `fixture.response.answers[2].criteria`,
+   `fixture.response.answers[2].criteria[0]`,
+   `fixture.response.answers[2].criteria[0].key`,
+   `fixture.response.answers[2].criteria[0].description`,
+   `fixture.response.answers[2].value`,
+   `fixture.response.answers[2].confidence`, `fixture.response_digest`,
+   `fixture.provenance.fixture_id`, `fixture.provenance.manifest_id`,
+   `fixture.provenance.source_kind`, `fixture.provenance.source_ref`,
+   `fixture.provenance.captured_at_utc`,
    `fixture.provenance.authenticated_response_id`,
    `fixture.provenance_digest`, `fixture.source_kind`, `fixture.source_ref`,
    `fixture.status`, `fixture.reason_code`, `fixture.retention_until_utc`,
@@ -539,6 +614,8 @@ the first failing stage rather than being ambiguous:
    The exact equality paths are:
    `fixture.schema_version == fixture.request.schema_version ==
    fixture.response.schema_version == fixture.manifest_entry.schema_version`;
+   `fixture.request.capability == fixture.response.capability ==
+   "openrouter-alpha-decisions"`;
    `fixture.manifest_id == fixture.provenance.manifest_id ==
    fixture.manifest_entry.manifest_id`;
    `fixture.fixture_id == fixture.provenance.fixture_id ==
@@ -546,8 +623,10 @@ the first failing stage rather than being ambiguous:
    `fixture.requested_identity == fixture.request.requested_identity ==
    fixture.response.requested_identity`;
    `fixture.served_identity == fixture.response.served_identity`;
+   `fixture.served_identity.model == fixture.response.served_identity.model`;
    `fixture.served_identity.response_id ==
    fixture.response.served_identity.response_id`;
+   `fixture.served_identity.source == fixture.response.served_identity.source`;
    `fixture.response_id == fixture.response.response_id ==
    fixture.served_identity.response_id ==
    fixture.response.served_identity.response_id ==
@@ -555,6 +634,18 @@ the first failing stage rather than being ambiguous:
    `fixture.server_timestamp_utc == fixture.response.server_timestamp_utc`;
    `fixture.source_kind == fixture.provenance.source_kind`;
    `fixture.source_ref == fixture.provenance.source_ref`;
+   `fixture.response.answers[0].name == fixture.request.questions[0].name`;
+   `fixture.response.answers[0].type == fixture.request.questions[0].type`;
+   `fixture.response.answers[0].criteria ==
+   fixture.request.questions[0].criteria`;
+   `fixture.response.answers[1].name == fixture.request.questions[1].name`;
+   `fixture.response.answers[1].type == fixture.request.questions[1].type`;
+   `fixture.response.answers[1].criteria ==
+   fixture.request.questions[1].criteria`;
+   `fixture.response.answers[2].name == fixture.request.questions[2].name`;
+   `fixture.response.answers[2].type == fixture.request.questions[2].type`;
+   `fixture.response.answers[2].criteria ==
+   fixture.request.questions[2].criteria`;
    `fixture.request_digest == SHA256(JCS-UTF8(fixture.request)) ==
    fixture.manifest_entry.request_digest`;
    `fixture.response_digest == SHA256(JCS-UTF8(fixture.response)) ==
@@ -563,8 +654,8 @@ the first failing stage rather than being ambiguous:
    fixture.manifest_entry.provenance_digest`.
 
    `fixture.request` and `fixture.response` are compared as the exact closed
-   request and response envelope objects defined by this contract, with the
-   nested paths listed above compared at their exact values. The singleton
+   request and response envelope objects defined by this contract, with every
+   finite nested path listed above compared at its exact value. The singleton
    paths `fixture.evidence_class`, `fixture.status`, and `fixture.reason_code`
    are compared to their exact closed-schema literals. The path
    `fixture.provenance.captured_at_utc` is compared byte-for-byte with the
@@ -575,11 +666,12 @@ the first failing stage rather than being ambiguous:
    `fixture.retention_until_utc` is compared using that exact invariant.
    All listed identity, timestamp, digest, ID, source, object, string, number,
    and array comparisons are exact and case-sensitive. Repository/ref/path/
-   commit/tree and `fixture.manifest_entry.repository/ref/path/commit/tree`
-   are custody-tuple paths owned only by `R20`; request/response digest
-   computation failures belong only to `R17`; provenance digest procedure
-   failures belong only to `R18`. A missing, one-sided, empty, sentinel, or
-   invalid listed value is `R23` or `R22`, never `R21`.
+   commit/tree, the corresponding provenance custody fields, and
+   `fixture.manifest_entry.repository/ref/path/commit/tree` are custody-tuple
+   paths owned only by `R20`; request/response digest computation failures
+   belong only to `R17`; provenance digest procedure failures belong only to
+   `R18`. A missing, one-sided, empty, sentinel, or invalid listed value is
+   `R23` or `R22`, never `R21`.
 
 The predicates are ordered and mutually exclusive:
 `R23 -> R22 -> R19 -> R18 -> R17 -> R20 -> R21`. No digest-procedure failure
