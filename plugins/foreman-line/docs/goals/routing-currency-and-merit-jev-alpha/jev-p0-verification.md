@@ -1,8 +1,8 @@
-# JEV-P0 — Sixth rework verification record
+# JEV-P0 — Seventh rework verification record
 
 ## Scope
 
-This record verifies the sixth JEV-P0 contract/evidence-boundary rework only.
+This record verifies the seventh JEV-P0 contract/evidence-boundary rework only.
 It does not authorize JEV-P1 or later, provider calls, runtime use, spend,
 credential access, dispatch, promotion, or Gate 3. The only mutation authority
 is:
@@ -11,10 +11,10 @@ is:
 - `plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-evidence-boundary.md`
 - `plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-verification.md`
 
-Every other path and effect is forbidden. The exact sixth-rework base is
-`e3273dde49deec062c2787006b7b8fd409c01e91`.
+Every other path and effect is forbidden. The exact seventh-rework base is
+`2187402c218499fba8b413bec2c6824efd92ed8f`.
 
-## Sixth-rework closure checklist
+## Seventh-rework closure checklist
 
 The three allowed documents explicitly close these findings while preserving
 all earlier identity, schema, answer, JCS, transport, custody, lease, budget,
@@ -27,20 +27,26 @@ text outside the fixed schema.
    evidence class and status, generated opaque IDs, finite repository/ref/path
    literals, custody fields, timestamps, digests, status, reason, wrapper
    fields, and retention; no free text is permitted.
-3. Non-complete provenance uses only JSON string `"none"`; complete provenance
-   requires a provider response ID exactly equal to `served_identity.response_id`.
-4. The closed `budget_ack` object is mandatory for every live call and is bound
+3. The closed cost object has exactly `amount` and `currency`; refusal/hold
+   field sets forbid `cost`.
+4. Complete fixtures require exact four-way response-ID equality and exact
+   wrapper/provenance/manifest-entry custody equality.
+5. Non-complete provenance uses only JSON string `"none"`; complete provenance
+   rejects `none` and requires provider-declared response IDs.
+6. The closed `budget_ack` object is mandatory for every live call and is bound
    to run/capability/request digest and custody; there is no direct enforcement
    alternative.
-5. Scope proof first enumerates the complete unfiltered two-commit diff from
-   the exact base to the recorded reviewed head and asserts exact set equality
-   to the three Allowed Files; only afterward does it run checked filtered
-   commands.
+7. Scope proof first enumerates the complete unfiltered two-commit diff from
+   the exact base to the coordinator-supplied expected reviewed head and
+   asserts exact set equality, exact `M` statuses, and native exit codes before
+   reporting success.
 
 ## Dependency-free verification commands
 
 Run from `C:\Repos\foreman-line-jev-p0` in PowerShell. No dependency
-installation is part of this parcel.
+installation is part of this parcel. The coordinator must supply the immutable
+expected reviewed-head SHA captured before execution; the script must not
+derive it from `HEAD`.
 
 ### 1. Environment probe
 
@@ -56,17 +62,24 @@ limitation, not a contract pass.
 Run after the resulting rework commit exists:
 
 ```powershell
-$base = 'e3273dde49deec062c2787006b7b8fd409c01e91'
-$head = (git rev-parse --verify HEAD).Trim()
-if ($LASTEXITCODE -ne 0) { throw 'git rev-parse HEAD failed' }
-# The coordinator records this exact observed resulting SHA as the reviewed head.
-$recordedReviewedHead = $head
-if ($head -ne $recordedReviewedHead) { throw 'HEAD is not the recorded reviewed head' }
+param(
+  [Parameter(Mandatory = $true)]
+  [string]$ExpectedHead
+)
+
+$base = '2187402c218499fba8b413bec2c6824efd92ed8f'
 $allowed = @(
   'plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-contract.md',
   'plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-evidence-boundary.md',
   'plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-verification.md'
 )
+if ([string]::IsNullOrWhiteSpace($ExpectedHead) -or
+    $ExpectedHead -cnotmatch '^[0-9a-f]{40}$') {
+  throw 'ExpectedHead is missing or is not exactly 40 lowercase hexadecimal characters'
+}
+$head = (git rev-parse --verify HEAD).Trim()
+if ($LASTEXITCODE -ne 0) { throw 'git rev-parse HEAD failed' }
+if ($head -cne $ExpectedHead) { throw "HEAD does not equal immutable ExpectedHead $ExpectedHead" }
 # First enumerate without any path filter; no forbidden path can be hidden.
 $allChanged = @(git diff --name-only "$base..$head")
 if ($LASTEXITCODE -ne 0) { throw 'git diff --name-only failed' }
@@ -80,20 +93,30 @@ if ($setDelta.Count -ne 0 -or $actualSet.Count -ne $expectedSet.Count) { throw '
 git diff --check "$base..$head" -- $allowed
 if ($LASTEXITCODE -ne 0) { throw 'git diff --check failed' }
 Write-Output 'filtered_whitespace=passed'
-git diff --name-status "$base..$head" -- $allowed
+$nameStatus = @(git diff --name-status "$base..$head" -- $allowed)
 if ($LASTEXITCODE -ne 0) { throw 'git diff --name-status failed' }
+$expectedStatus = @(
+  "M`tplugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-contract.md",
+  "M`tplugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-evidence-boundary.md",
+  "M`tplugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-verification.md"
+)
+if ($nameStatus.Count -ne $expectedStatus.Count -or
+    @(Compare-Object -ReferenceObject $expectedStatus -DifferenceObject $nameStatus).Count -ne 0) {
+  throw 'filtered name-status is not exactly M for the three Allowed Files'
+}
+$nameStatus
 Write-Output 'filtered_status=passed'
 Write-Output "base=$base"
 Write-Output "head=$head"
-Write-Output "recorded_reviewed_head=$recordedReviewedHead"
-Write-Output 'base_to_head_scope_and_checked_status=passed'
+Write-Output "expected_reviewed_head=$ExpectedHead"
+Write-Output 'base_to_head_scope_checked_status_and_head_assertion=passed'
 ```
 
 This is the authoritative scope proof. It compares the complete unfiltered
-path set from the exact sixth-rework base to the exact observed reviewed head,
-asserts exact set equality, checks each native exit code immediately, and only
-then runs the filtered whitespace/status checks. It does not use a
-clean-worktree assertion as the scope proof.
+path set from the exact seventh-rework base to the coordinator-supplied
+immutable expected reviewed head, asserts exact set equality and exact `M`
+statuses, checks each native exit code immediately, and only then reports
+success. It does not use a clean-worktree assertion as the scope proof.
 
 ### 3. Targeted active-spec tooling limitation
 
@@ -160,19 +183,20 @@ builder does not self-approve or merge.
 
 | Check | Result | Evidence |
 |---|---|---|
-| Starting branch/base | `codex/jev-p0-contract`, base `e3273dde49deec062c2787006b7b8fd409c01e91` | Confirmed before sixth-rework edits. |
+| Starting branch/base | `codex/jev-p0-contract`, base `2187402c218499fba8b413bec2c6824efd92ed8f` | Confirmed before seventh-rework edits. |
 | `node -v` | Passed: `v24.7.0`; below shaping requirement `>=24.11.1` | Dependency-free environment probe. |
-| Full base-to-head scope comparison | Passed: exact unfiltered set from base `e3273dde49deec062c2787006b7b8fd409c01e91` to the observed `recorded_reviewed_head` exactly equaled the three Allowed Files | `git diff --name-only` was unfiltered; set equality passed before filtered checks. |
-| Filtered base-to-head `git diff --check` and status | Passed: no whitespace errors; all three allowed paths reported modified | Native exit codes were checked immediately after each command. |
+| Expected reviewed head | Passed: coordinator-supplied `ExpectedHead` was present, exactly 40 lowercase hex characters, and matched `git rev-parse --verify HEAD`; the exact observed SHA is reported in the handoff | The script never derives the expected value from `HEAD`. |
+| Full base-to-head scope comparison | Passed: exact unfiltered set from base `2187402c218499fba8b413bec2c6824efd92ed8f` to the externally expected reviewed head exactly equaled the three Allowed Files | `git diff --name-only` was unfiltered; set equality passed before filtered checks. |
+| Filtered base-to-head `git diff --check` and status | Passed: no whitespace errors; all three allowed paths reported `M` exactly | Native exit codes were checked immediately after each command; exact name-status equality passed. |
 | Targeted active-spec linter/self-check | Environment limitation: local `ajv` missing; no install | These tools do not lint the three goal documents. |
-| Field-by-field sixth-rework review | Passed as a builder read-only content check; not independent approval | Explicit class/status sets, mandatory budget acknowledgement, generated metadata, custody, and prior controls were checked. |
+| Field-by-field seventh-rework review | Passed as a builder read-only content check; not independent approval | Exact cost object, four-way response-ID equality, custody equality, timestamp grammar, and prior controls were checked. |
 | Independent frontier review A | Observed result: no fresh report supplied or performed in this builder session (`0/2`) | Coordinator must supply and triage; no pass inferred. |
 | Independent frontier review B | Observed result: no fresh report supplied or performed in this builder session (`0/2`) | Coordinator must supply and triage; no pass inferred. |
 | Gate 3 / merge | Not granted; human-owned | No self-approval or merge. |
 
 ## Completion boundary
 
-The sixth rework is document-complete when all current findings are explicit
+The seventh rework is document-complete when all current findings are explicit
 and testable in the three allowed documents, the dependency-free full
 base-to-head scope and whitespace commands pass, and environment limitations
 are accurately recorded. It is not Gate 3-ready until two independent fresh

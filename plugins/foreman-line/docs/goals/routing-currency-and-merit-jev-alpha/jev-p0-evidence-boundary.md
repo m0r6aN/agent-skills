@@ -46,7 +46,9 @@ and `reason_code: "none"`. `response_id` and `server_timestamp_utc` are
 provider-declared, parseable, and bound to the same authenticated response;
 `served_identity.model` is exactly the authenticated response `model`, and
 `served_identity.response_id` is exactly that response's identifier. The
-requested model is never a fallback.
+requested model is never a fallback. The `cost` field is exactly the two-field
+object `{ amount: <finite non-negative JSON number <= 0.01>, currency: "USD" }`;
+no cost field is omitted or added, and `currency` is exactly `USD`.
 
 `live-observation` with `status: refused` has exactly this required field set:
 
@@ -83,8 +85,8 @@ field set:
 evidence_class, fixture_id, manifest_id, repository, ref, path, commit, tree,
 provenance, provenance_digest, schema_version, requested_identity,
 served_identity, response_id, server_timestamp_utc, request, response,
-request_digest, response_digest, source_kind, source_ref, status, reason_code,
-retention_until_utc
+request_digest, response_digest, manifest_entry, source_kind, source_ref,
+status, reason_code, retention_until_utc
 ```
 
 Its exact values include `evidence_class: "sanitized-replay-fixture"`,
@@ -169,8 +171,9 @@ control character. These exact bounds make metadata validation deterministic:
   `^manifest-[0-9a-f]{32}$`; and `account_ref` matches exactly
   `^acct-[0-9a-f]{32}$`. These IDs are generated opaque values, never names,
   labels, ticket IDs, or caller text.
-- `response_id` matches `^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$`; served model
-  identifiers match `^[A-Za-z0-9][A-Za-z0-9._/-]{0,127}$`.
+- `response_id` matches `^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$`, is non-empty,
+  and is never the literal `none`; served model identifiers match
+  `^[A-Za-z0-9][A-Za-z0-9._/-]{0,127}$`.
 - `repository` is exactly the literal `agent-skills`; `ref` is exactly one of
   the literals `main` or `codex/jev-p0-contract`; and `path` is exactly one of
   these repository-relative literals:
@@ -179,8 +182,8 @@ control character. These exact bounds make metadata validation deterministic:
   or `plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-verification.md`.
   No other repository, ref, or path is valid. `commit` and `tree` are exactly
   40 lowercase hexadecimal characters.
-- `server_timestamp_utc`, `client_timestamp_utc`, `captured_at_utc`, and
-  `retention_until_utc` match the exact UTC form
+- `server_timestamp_utc`, `client_timestamp_utc`, `captured_at_utc`,
+  `recorded_at_utc`, and `retention_until_utc` match the exact UTC form
   `^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$` and must
   parse as real UTC timestamps. `retention_until_utc` is no later than 90 days
   after the relevant capture timestamp.
@@ -329,6 +332,9 @@ and finite literals defined by this document:
   captured_at_utc: <parseable UTC timestamp>,
   authenticated_response_id: "none" | <provider response_id>,
   manifest_id: <string matching ^manifest-[0-9a-f]{32}$>,
+  repository: "agent-skills",
+  ref: "main" | "codex/jev-p0-contract",
+  path: <one of the three finite repository-relative custody paths>,
   manifest_commit: <verified commit SHA>,
   manifest_tree: <verified tree SHA>
 }
@@ -343,12 +349,20 @@ schema, or mutable timestamps.
 `provenance.authenticated_response_id` is always present. For a non-complete
 `refused` or `hold` fixture, its only permitted value is the exact JSON string
 `"none"`; omitted, `null`, empty, or any other sentinel refuses. For a
-`complete` fixture, it must be the provider response ID and must equal
-`fixture.served_identity.response_id` exactly. Both complete values must be
-present together; a missing, one-sided, sentinel, or mismatched value is a
-terminal hold/refusal. The provenance value may not be synthesized from a
-requested identity, fixture filename, manifest entry, or client-generated
-identifier.
+`complete` fixture, it must be a non-empty provider response ID, never `none`,
+and the complete-fixture equality is exact:
+
+```text
+fixture.response_id
+  == fixture.response.response_id
+  == fixture.served_identity.response_id
+  == fixture.provenance.authenticated_response_id
+```
+
+All four values are provider-declared. A missing, one-sided, empty, sentinel,
+client-synthesized, or mismatched value is a terminal hold/refusal. The
+provenance value may not be synthesized from a requested identity, fixture
+filename, manifest entry, or client-generated identifier.
 
 A replay fixture must be present in an immutable, reviewable manifest/commit
 custody chain and contain:
@@ -371,14 +385,39 @@ request: <sanitized validated request envelope>
 response: <sanitized validated response envelope>
 request_digest: <JCS SHA-256>
 response_digest: <JCS SHA-256>
+manifest_entry: {
+  manifest_id: <same manifest_id>,
+  fixture_id: <same fixture_id>,
+  repository: <same repository>,
+  ref: <same ref>,
+  path: <same path>,
+  commit: <same commit>,
+  tree: <same tree>,
+  request_digest: <same request_digest>,
+  response_digest: <same response_digest>,
+  provenance_digest: <same provenance_digest>
+}
 retention_until_utc: <bounded retention deadline>
 ```
 
 Trusted custody means the exact repository, ref, path, manifest commit, and
 manifest tree are verified; `fixture_id` resolves to the exact manifest entry
 at that committed tree; the entry contains the exact paired request/response
-digests and provenance digest; `provenance.authenticated_response_id` equals
-`served_identity.response_id`; and current bytes match the committed bytes.
+digests and provenance digest; the complete fixture satisfies the four-way
+response-ID equality above; and current bytes match the committed bytes. The
+wrapper custody tuple and provenance custody tuple must be identical:
+
+```text
+(repository, ref, path, commit, tree)
+  == (provenance.repository, provenance.ref, provenance.path,
+      provenance.manifest_commit, provenance.manifest_tree)
+  == (manifest_entry.repository, manifest_entry.ref, manifest_entry.path,
+      manifest_entry.commit, manifest_entry.tree)
+```
+
+`manifest_commit` and `manifest_tree` are exactly 40 lowercase hexadecimal
+characters and equal wrapper `commit` and `tree`; every manifest-entry field
+above is required and exact. Any split-brain mismatch refuses custody.
 Mutable working-tree files, uncommitted fixtures, detached copies, missing
 manifest entries, self-recomputed manifest entries, or changed digest pairs
 are not trusted custody and refuse replay.
@@ -467,15 +506,15 @@ recipient, or state mutation.
 | R10 | Schema, envelope, JSON, duplicate-key, extra-field, question, criteria, answer, confidence, or type validation fails. | Refuse; no coercion, repair, or partial answer set. |
 | R11 | Choice distribution differs from total 1 by more than absolute `1e-12`, or has invalid keys/probabilities. | Refuse; no repair, clamping, or renormalization. |
 | R12 | Complete status lacks provider-declared parseable `response_id` or `server_timestamp_utc`. | Terminal hold/refusal; never mark complete. |
-| R13 | Cost is missing, a string, NaN, Infinity, negative, non-USD, malformed, or greater than `0.01`. | Terminal hold/refusal; never estimate or convert. |
+| R13 | A complete live wrapper lacks the exact two-field `cost` object, has a missing/extra field, a string/NaN/Infinity/negative/over-cap `amount`, or non-USD `currency`. | Terminal hold/refusal; never estimate or convert. |
 | R14 | The mandatory `budget_ack` is missing, malformed, stale, mutable, custody-unverified, non-USD, over-cap, or not bound exactly to run/capability/request digest. | Terminal hold before transmission; client reservation alone is insufficient. |
 | R15 | `run_id` or CAS/create-if-absent lease is missing, duplicated, already consumed, or not bound to capability/version/request digest. | Terminal hold/refusal; no call. |
 | R16 | Second, concurrent, or retry call is attempted, or timeout expires. | Terminal refusal; append-only lease cannot be recreated or reopened. |
 | R17 | JCS canonical bytes or paired request/response digest is missing, malformed, recomputed differently, or identity-unbound. | Refuse replay or evidence acceptance. |
 | R18 | Provenance object is non-canonical, contains a field outside its closed schema, has missing/wrong provenance digest, or uses a non-JCS hash procedure. | Refuse replay and evidence acceptance. |
-| R19 | Fixture repository/ref/path/commit/tree is missing, unverified, mutable, or fixture ID does not resolve to the exact committed manifest entry. | Refuse replay custody; terminal hold pending coordinator disposition. |
+| R19 | Fixture repository/ref/path/commit/tree is missing, unverified, mutable, differs across wrapper/provenance/manifest-entry custody tuples, or fixture ID does not resolve to the exact committed manifest entry. | Refuse replay custody; terminal hold pending coordinator disposition. |
 | R20 | Fixture is self-recomputed outside the committed manifest, detached from its paired digests, or current bytes differ from custody. | Refuse replay; no self-recomputed acceptance. |
-| R21 | Non-complete provenance lacks the exact JSON string `"none"`, or complete provenance is missing, one-sided, sentinel-valued, client-synthesized, or not exactly equal to `served_identity.response_id`. | Terminal hold/refusal; complete fixture status is forbidden. |
+| R21 | Non-complete provenance lacks the exact JSON string `"none"`, or complete `response_id`, `response.response_id`, `served_identity.response_id`, and `provenance.authenticated_response_id` are missing, one-sided, sentinel-valued, client-synthesized, or not exactly equal. | Terminal hold/refusal; complete fixture status is forbidden. |
 | R22 | Input contains any unknown field, free-text value, credential-bearing value, or value outside the fixed vocabulary, generated-ID grammar, finite custody allowlist, or numeric bounds, or minimization/redaction is uncertain. | Refuse before serialization/transmission; retain no rejected input or metadata. |
 | R23 | Fixture, metadata, source reference, log, or report contains a field outside its closed schema, a key, raw authorization header, unsafe payload, or exceeds retention limit. | Refuse retention and consumption; do not echo material. |
 | R24 | Consumer is not `support-triage-advisory-v1`, recommendation has unknown/effect fields, or independent application authorization is absent. | Refuse; application retains all authority and effects. |

@@ -104,7 +104,8 @@ served_identity:
   source: "provider-declared"
 ```
 
-No consumer may infer a requested identity from served metadata, headers, the
+The provider response identifier is a non-empty provider field and is never
+the literal `none`. No consumer may infer a requested identity from served metadata, headers, the
 URL, a configured default, or a client-generated value.
 
 ## Versioned typed envelope
@@ -309,11 +310,20 @@ field is accepted. The acknowledgement digest is the SHA-256 of the JCS UTF-8
 bytes of the object with that digest field omitted. Missing, stale, mismatched,
 mutable, or unverified acknowledgement is a terminal hold before transmission.
 
-Any reported cost must be a JSON number that is finite and non-negative, never
-a string, NaN, Infinity, or negative value, and must carry the exact literal
-currency `USD`. The amount must be `<= 0.01`. Missing, non-USD, malformed, or
-over-cap cost is a terminal hold/refusal; it is never estimated, converted, or
-silently accepted.
+Every `live-observation` complete wrapper must contain this exact closed cost
+object, with no omitted or extra field:
+
+```text
+cost: {
+  amount: <finite non-negative JSON number <= 0.01>,
+  currency: "USD"
+}
+```
+
+`amount` is a JSON number, never a string, `NaN`, `Infinity`, negative value,
+or other non-finite value. Missing fields, extra fields, non-USD currency, or
+over-cap amount is a terminal hold/refusal; cost is never estimated, converted,
+or silently accepted. Refused and held evidence field sets forbid `cost`.
 
 Run and evidence state transitions are append-only. Once `complete`, `refused`,
 or `hold` is recorded, that terminal state cannot be retried, reopened,
