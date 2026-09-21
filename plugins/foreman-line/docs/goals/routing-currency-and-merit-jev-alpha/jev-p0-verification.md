@@ -1,8 +1,8 @@
-# JEV-P0 — Bounded Gate 2 builder round 11 verification record
+# JEV-P0 — Bounded Gate 2 builder round 12 verification record
 
 ## Scope
 
-This record verifies the bounded JEV-P0 builder round 11 only.
+This record verifies the bounded JEV-P0 builder round 12 only.
 It does not authorize JEV-P1 or later, provider calls, runtime use, spend,
 credential access, dispatch, promotion, or Gate 3. The only mutation authority
 is:
@@ -11,20 +11,21 @@ is:
 - `plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-evidence-boundary.md`
 - `plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-verification.md`
 
-Every other path and effect is forbidden. The working branch is
-`codex/jev-p0-rework20`, starting from the immediate prior candidate
-`a83930eb174cc7afedcf3cd06c6d6bf63ab68b8a`. The cumulative parcel proof base
-is `eb88b65426c5e37893ac0591be83eef8c91da123`; the intervening candidates in
+Every other path and effect is forbidden. The current round is round 12 on
+branch `codex/jev-p0-rework21`, starting from immediate prior candidate
+`dc9d6a76772097be07832a2fe2b2653fb81fdf87`. The cumulative parcel proof base
+remains `eb88b65426c5e37893ac0591be83eef8c91da123`; intervening candidates in
 that cumulative chain are `cf79819848c129581b13ff1289920f4cace2beca`,
 `d439b4dfd9c0f9783f76a2dbb0c6a4a7bf4e5241`,
-`dbc2db5f5dbae7b3df142a22230d69ed6584e5c6`, and the immediate prior
-`a83930eb174cc7afedcf3cd06c6d6bf63ab68b8a`. `c71bdbfa0f9597eb44d0c3a01aa853f1f33989a8`
-is historical proof evidence, not part of this immediate-parent chain. The
-full-scope proof compares the cumulative base `eb88..HEAD` so it covers the
-complete parcel change set; `eb88` is not the direct parent, and `c71` is not
-the immediate prior candidate.
+`dbc2db5f5dbae7b3df142a22230d69ed6584e5c6`, and
+`a83930eb174cc7afedcf3cd06c6d6bf63ab68b8a`; `dc9d6a76` is the immediate prior
+candidate for this round. `c71bdbfa0f9597eb44d0c3a01aa853f1f33989a8` is
+historical proof evidence, not an intervening or immediate-prior candidate.
+The full-scope proof compares one cumulative base-to-head range `eb88..HEAD`
+so it covers the complete parcel change set; `eb88` is not the immediate prior
+candidate, and `c71` is historical.
 
-## Prior-closure preservation and eighteenth-review closure/current review checklist
+## Prior-closure preservation and nineteenth-review closure/current review checklist
 
 The three allowed documents explicitly close these findings while preserving
 all earlier identity, schema, answer, JCS, transport, custody, lease, budget,
@@ -78,15 +79,22 @@ text outside the fixed schema.
     ordered: first structurally scan the recognized closed evidence-wrapper and
     retained-record schemas defined in this parcel. An unknown/extra field,
     raw authorization header, unsafe payload, or structural retention/schema
-    violation is R23 and stops validation. Only when that scan passes, validate
+    violation is R23 and stops validation. Logs and review reports are not
+    evidence surfaces, are outside R23's evidence-wrapper classification, and
+    must never contain credentials, raw authorization headers, unsafe payloads,
+    or rejected sensitive input. Only when that scan passes, validate
     recognized field values; a finite vocabulary, repository/ref/path allowlist,
     generated-ID grammar, numeric bound, or minimization/redaction uncertainty
     is R22. The first failing stage owns the result, so a combined structural-
     and-value violation is R23, never R22; no unbounded log/report object is
-    classified. After R23 then R22 pass, unresolved custody before a resolved
-    immutable custody tuple exists is R19 hold, canonical provenance
-    JCS/digest/procedure failure is R18 refusal, and request/response JCS
-    canonical-byte or paired request/response digest procedure failure is R17.
+    classified. After R23 then R22 pass, missing, unverified, or non-resolving
+    coordinator custody after repository/ref/path allowlist success and before
+    a resolved immutable custody tuple exists is R19 hold; invalid ref/path is
+    R22; canonical provenance JCS/digest/procedure failure is R18 refusal, and
+    present, validly shaped request/response JCS canonical-byte or paired
+    digest inputs whose canonicalization, computation, or reproducibility
+    fails are R17. The structural stage owns absent fields as R23; the
+    recognized-value stage owns out-of-grammar values as R22.
     After R17, custody-resolved committed bytes/tree or manifest-entry custody
     mismatch is exclusively R20. After R20, any unequal valid field in the
     closed post-custody semantic equality set is R21. The ordered predicates
@@ -96,7 +104,7 @@ text outside the fixed schema.
 9. Retention uses a trusted coordinator capture/recording clock, rejects future
    anchors, and preserves `anchor <= retention <= anchor+90 days`.
 10. Scope proof first enumerates the complete unfiltered cumulative base-to-head
-    diff over one direct base-to-head range from the exact base to the
+    diff over one cumulative base-to-head range from the exact base to the
     coordinator-supplied
     expected reviewed head and asserts exact set equality, exact `M` statuses,
     and native exit codes before reporting success. It does not verify document
@@ -144,7 +152,7 @@ builder result is self-approval or Gate 3 authorization.
 ## Prior-candidate coordinator proof evidence
 
 The following is exact coordinator evidence for a historical candidate from
-round 5. It is neither the immediate prior candidate for current round 11 nor
+round 5. It is neither the immediate prior candidate for current round 12 nor
 current-round-head proof, builder approval, or Gate 3 authorization. The
 external proof targeted candidate
 `c71bdbfa0f9597eb44d0c3a01aa853f1f33989a8` using receipt path
@@ -166,7 +174,7 @@ external proof targeted candidate
 | Filtered status | Passed; all three allowed paths were exactly `M` |
 | Independent review count | `0/2` at the time of this prior-candidate coordinator proof; no review approval inferred |
 
-This historical-candidate record does not assert the current round 11 final HEAD,
+This historical-candidate record does not assert the current round 12 final HEAD,
 current base-to-head scope, whitespace, or status results. Those remain
 pending until the coordinator runs the proof below with the current immutable
 expected head. It does not authorize a provider call, merge, or Gate 3.
@@ -196,7 +204,7 @@ limitation, not a contract pass.
 
 ### 2. Full base-to-head scope proof, then filtered checks
 
-Run after the resulting round-11 builder commit exists:
+Run after the resulting round-12 builder commit exists:
 
 ```powershell
 param(
@@ -291,6 +299,11 @@ $receiptTargetMatchResult = 'passed'
 $head = (git -C $resolvedRepositoryRoot rev-parse --verify HEAD).Trim()
 if ($LASTEXITCODE -ne 0) { throw 'git rev-parse HEAD failed' }
 if ($head -cne $ExpectedHead) { throw "HEAD does not equal immutable ExpectedHead $ExpectedHead" }
+# Prove the cumulative base is an ancestor before comparing path scope.
+git -C $resolvedRepositoryRoot merge-base --is-ancestor $base $head
+$ancestryExitCode = $LASTEXITCODE
+if ($ancestryExitCode -ne 0) { throw 'cumulative base is not an ancestor of reviewed head' }
+Write-Output 'cumulative_base_ancestry=passed'
 # First enumerate without any path filter; no forbidden path can be hidden.
 $allChanged = @(git -C $resolvedRepositoryRoot diff --name-only "$base..$head")
 if ($LASTEXITCODE -ne 0) { throw 'git diff --name-only failed' }
@@ -328,9 +341,9 @@ Write-Output "receipt_target_match=$receiptTargetMatchResult"
 Write-Output 'base_to_head_scope_checked_status_and_head_assertion=passed'
 ```
 
-This is the authoritative scope proof. It compares the complete unfiltered
-path set over one cumulative `$base..$head` range from the cumulative parcel
-proof base (not the direct parent) to the coordinator-supplied
+This is the authoritative scope proof. It proves ancestry and then compares the
+complete unfiltered path set over one cumulative `$base..$head` range from the
+cumulative parcel proof base to the coordinator-supplied
 immutable expected reviewed head, asserts exact set equality and exact `M`
 statuses, checks each native exit code immediately, and only then reports
 success. It does not use a clean-worktree assertion as the scope proof.
@@ -401,23 +414,63 @@ that scan passes, validate recognized field values: a finite vocabulary,
 repository/ref/path allowlist, generated-ID grammar, numeric bound, or
 minimization/redaction uncertainty is R22. The first failing stage owns the
 result, so a combined structural-and-value violation is R23, never R22. No
-unbounded log/report object is classified. Only after R23 then R22 pass,
-resolve immutable custody; missing, unverified, unapproved, or non-resolving
-custody before a resolved immutable custody tuple exists is R19 hold; once
-that tuple resolves, no custody mismatch is R19 and any such mismatch is R20.
+unbounded log/report object is classified. Logs and review reports are not
+evidence surfaces, are outside R23's evidence-wrapper classification, and
+must never contain credentials, raw authorization headers, unsafe payloads,
+or rejected sensitive input. Only after R23 then R22 pass, resolve immutable
+custody; missing, unverified, or non-resolving coordinator custody after
+structural and recognized-value validation plus repository/ref/path allowlist
+success, before a resolved immutable custody tuple exists, is R19 hold;
+invalid ref/path is R22; once that tuple resolves, no custody mismatch is R19
+and any such mismatch is R20.
 After custody and defined schema pass, canonical provenance JCS/digest/procedure
-failures are R18; after R18, request/response JCS canonical-byte or paired
-request/response digest computation/procedure failures are R17; after R17,
+failures are R18; after R18, present, validly shaped request/response JCS
+canonical-byte or paired digest inputs whose canonicalization, computation,
+or reproducibility fails are R17; the structural stage owns absent fields as
+R23 and the recognized-value stage owns out-of-grammar values as R22; after
+R17,
 custody-resolved committed fixture bytes/tree or manifest-entry custody
 mismatches are exclusively R20. After R20, any unequal valid field in the
-closed post-custody semantic equality set is R21. That full set includes
-fixture_id, manifest_id wherever it is not custody-owned, schema_version,
-capability/endpoint, requested_identity, served_identity, response_id,
-server_timestamp_utc, request, response, request_digest, response_digest,
-the complete provenance object/provenance_digest, source_kind/source_ref, and
-any other explicitly named non-custody wrapper/manifest semantic field. R21
-explicitly excludes R17 digest computation/procedure failures and R20
-custody-byte/tree/manifest-entry mismatches. The mutually exclusive order is
+  closed post-custody semantic equality set is R21. That set is exactly these
+  paths: fixture.evidence_class, fixture.fixture_id, fixture.manifest_id,
+  fixture.schema_version, fixture.capability, fixture.endpoint,
+  fixture.requested_identity, fixture.served_identity, fixture.response_id,
+  fixture.server_timestamp_utc, fixture.request, fixture.response,
+  fixture.request_digest, fixture.response_digest,
+  fixture.provenance.fixture_id, fixture.provenance.source_kind,
+  fixture.provenance.source_ref, fixture.provenance.captured_at_utc,
+  fixture.provenance.authenticated_response_id, fixture.provenance_digest,
+  fixture.source_kind, fixture.source_ref, fixture.status, fixture.reason_code,
+  fixture.retention_until_utc, fixture.manifest_entry.schema_version,
+  fixture.manifest_entry.manifest_id, fixture.manifest_entry.fixture_id,
+  fixture.manifest_entry.request_digest,
+  fixture.manifest_entry.response_digest, and
+  fixture.manifest_entry.provenance_digest. The exact equality paths are:
+  `fixture.schema_version == fixture.request.schema_version ==
+  fixture.response.schema_version == fixture.manifest_entry.schema_version`;
+  `fixture.manifest_id == fixture.provenance.manifest_id ==
+  fixture.manifest_entry.manifest_id`;
+  `fixture.fixture_id == fixture.provenance.fixture_id ==
+  fixture.manifest_entry.fixture_id`;
+  `fixture.requested_identity == fixture.request.requested_identity ==
+  fixture.response.requested_identity`;
+  `fixture.served_identity == fixture.response.served_identity`;
+  `fixture.response_id == fixture.response.response_id ==
+  fixture.served_identity.response_id == fixture.response.served_identity.response_id ==
+  fixture.provenance.authenticated_response_id`;
+  `fixture.server_timestamp_utc == fixture.response.server_timestamp_utc`;
+  `fixture.source_kind == fixture.provenance.source_kind`;
+  `fixture.source_ref == fixture.provenance.source_ref`;
+  `fixture.request_digest == SHA256(JCS-UTF8(fixture.request)) ==
+  fixture.manifest_entry.request_digest`;
+  `fixture.response_digest == SHA256(JCS-UTF8(fixture.response)) ==
+  fixture.manifest_entry.response_digest`; and
+  `fixture.provenance_digest == SHA256(JCS-UTF8(fixture.provenance)) ==
+  fixture.manifest_entry.provenance_digest`. Repository/ref/path/commit/tree and manifest-entry custody tuple
+  fields belong only to R20; request/response digest computation failures
+  belong only to R17. Missing, one-sided, empty, or sentinel values are R23 or
+  R22, never R21. R21 explicitly excludes R17 digest computation/procedure
+  failures and R20 custody-byte/tree/manifest-entry mismatches. The mutually exclusive order is
 R23 -> R22 -> R19 -> R18 -> R17 -> R20 -> R21; R18 never owns generic
 out-of-schema fields, and no valid unequal replay field has an unowned result.
 
@@ -481,7 +534,7 @@ builder does not self-approve or merge.
 
 | Check | Result | Evidence |
 |---|---|---|
-| Starting branch/base | `codex/jev-p0-rework20`, immediate prior candidate `a83930eb174cc7afedcf3cd06c6d6bf63ab68b8a`; cumulative proof base `eb88b65426c5e37893ac0591be83eef8c91da123`; intervening candidates are `cf798`, `d439`, `dbc2`, and `a839`; `c71` is historical | Confirmed before current builder round 11 edits. The cumulative base-to-head proof intentionally compares `eb88..HEAD`; the immediate-parent relation is `a839..HEAD` after this round's commit. |
+| Starting branch/base | `codex/jev-p0-rework21`, immediate prior candidate `dc9d6a76772097be07832a2fe2b2653fb81fdf87`; cumulative proof base `eb88b65426c5e37893ac0591be83eef8c91da123`; intervening candidates are `cf798`, `d439`, `dbc2`, and `a839`; `dc9d6a76` is the immediate prior candidate for round 12; `c71` is historical | Confirmed before current builder round 12 edits. The proof intentionally compares one cumulative base-to-head range `eb88..HEAD`; it is not a direct-parent proof. |
 | `node -v` | Passed: `v24.7.0`, native exit code `0`; below shaping requirement `>=24.11.1` | Immediate exit-code capture/check followed `node -v`. |
 | `RepositoryRoot` input | Mandatory and documented; the prior-candidate proof used `C:\Repos\foreman-line-jev-p0-rework5` | The proof resolves a literal existing Git root and uses `git -C` for every relative Git operation; unsafe/missing/non-repository roots reject. |
 | Prior-candidate coordinator proof | Passed externally for candidate `c71bdbfa0f9597eb44d0c3a01aa853f1f33989a8` | Exact receipt/path, target/head, base, repository root, three-file scope, whitespace, native exits, and `M` status results are recorded above; this is prior-candidate coordinator evidence, not current-head proof, builder approval, or Gate 3 authorization. |
@@ -491,11 +544,12 @@ builder does not self-approve or merge.
 | Receipt-open result | Pending until the coordinator executes the proof; no pass claimed | Strict UTF-8, no BOM, exact two-line closed format with an optional final LF, and native file-read evidence are required. |
 | Receipt target-match result | Pending until the coordinator executes the proof; no pass claimed | Receipt `target_sha`, `CoordinatorTargetSha`, and `ExpectedHead` must match exactly. |
 | Observed repository head | Not used as a target; no authoritative comparison executed | `git rev-parse --verify HEAD` may only be observed and compared after the coordinator inputs pass. |
+| Cumulative base ancestry | Pending until the coordinator executes the proof; no pass claimed | Before path scope comparison, `git -C $resolvedRepositoryRoot merge-base --is-ancestor $base $head` must exit `0`; a nonzero exit fails the proof, and the procedure outputs `cumulative_base_ancestry=passed` only on success. |
 | Full base-to-head scope comparison | Pending until the coordinator executes the proof after receipt-open, target-match, and `ExpectedHead`; no pass claimed | The script first enumerates the unfiltered base-to-head path set, then checks exact set equality. |
 | Filtered base-to-head `git diff --check` and status | Pending until the coordinator executes the proof; no pass claimed | These checks run only after the unfiltered three-file set and reviewed head are proven. |
 | Targeted active-spec linter/self-check | Environment limitation: local `ajv` missing; no install | These tools do not lint the three goal documents. |
 | Manual semantic consistency review | Required; not claimed by the scope script and not independent approval | Review all three documents for canonical lease vocabulary/state transitions, exact lease/budget/live-record equalities, narrow status/reason suffixes, complete-only observations, one timestamp grammar/order, R09/R10/R12/R13, first-failure R23/R22 structural/value stages, R19/R20 custody partition, and the full ordered R17/R20/R21 semantic rules. |
-| Field-by-field eighteenth-review closure/current review | Blocked for coordinator traceability; read-only content review is not independent approval | Checked the requested eighteenth-review control text locally; current-round coordinator proof and two independent reviews remain external. |
+| Field-by-field nineteenth-review closure/current review | Blocked for coordinator traceability; read-only content review is not independent approval | Checked the requested nineteenth-review control text locally; current-round coordinator proof and two independent reviews remain external. |
 | Independent frontier review A | Observed result: no fresh report supplied or performed in this builder session (`0/2`) | Coordinator must supply and triage; no pass inferred. |
 | Independent frontier review B | Observed result: no fresh report supplied or performed in this builder session (`0/2`) | Coordinator must supply and triage; no pass inferred. |
 | Gate 3 / merge | Not granted; human-owned | No self-approval or merge. |

@@ -487,17 +487,22 @@ the first failing stage rather than being ambiguous:
    value violation is `R23`, never `R22`; neither pre-custody reason is `R19`
    or `R18`.
 3. Only after both pre-custody stages pass, resolve immutable custody.
-   Missing, unverified, unapproved, or non-resolving custody before a resolved
-   immutable custody tuple exists is generic `evidence:R19` hold. Once the
-   immutable custody tuple resolves, no custody mismatch is `R19`.
+   Missing, unverified, or non-resolving coordinator custody after structural
+   validation, recognized-value validation, and repository/ref/path allowlist
+   success, but before a resolved immutable custody tuple exists, is generic
+   `evidence:R19` hold. Invalid ref/path values are `R22`; once the immutable
+   custody tuple resolves, no custody mismatch is `R19`.
 4. Only after custody and the defined outer schemas pass, a canonical
    provenance JCS, digest, or procedure failure is generic `evidence:R18`
    refusal. `R18` does not own generic out-of-schema fields; `R23` owns those.
 5. Only after `R18` passes, evaluate `R17` solely for a request/response JCS
    canonical-byte failure or a paired request/response digest
-   computation/procedure failure, including a missing, malformed, or
-   non-reproducible paired digest. `R17` does not own identity equality or
-   custody-byte/tree/manifest-entry mismatches.
+   computation/procedure failure for present, validly shaped request/response
+   JCS canonical-byte or paired digest inputs whose canonicalization,
+   computation, or reproducibility fails. `R17` does not own identity equality
+   or custody-byte/tree/manifest-entry mismatches. The structural stage owns
+   absent fields as `R23`; the recognized-value stage owns out-of-grammar
+   values as `R22`.
 6. Only after `R17` passes and custody is resolved, evaluate `R20` for any
    mismatch between committed fixture bytes or the committed tree and the
    resolved immutable custody tuple or manifest-entry custody, including a
@@ -506,17 +511,57 @@ the first failing stage rather than being ambiguous:
    explicitly excludes every `R17` canonical-byte or digest-computation/
    procedure failure.
 7. Only after `R20` passes, evaluate `R21` for any unequal valid field in the
-   closed post-custody semantic equality set. That set includes `fixture_id`,
-   `manifest_id` wherever it is not custody-owned, `schema_version`,
-   `capability`, `endpoint`, `requested_identity`, `served_identity`,
-   `response_id`, `server_timestamp_utc`, `request`, `response`,
-   `request_digest`, `response_digest`, the complete `provenance` object,
-   `provenance_digest`, `source_kind`, `source_ref`, and every other explicitly
-   named non-custody wrapper or manifest semantic field. A valid but unequal
-   field has no other post-custody owner. `R21` explicitly excludes `R17`
-   digest computation/procedure failures and `R20` custody-byte/tree/
-   manifest-entry mismatches; malformed or out-of-vocabulary values remain
-   owned by the earlier structural/value stages.
+   closed post-custody semantic equality set. The finite set is exactly the
+   following paths: `fixture.evidence_class`, `fixture.fixture_id`,
+   `fixture.manifest_id`, `fixture.schema_version`, `fixture.capability`,
+   `fixture.endpoint`, `fixture.requested_identity`,
+   `fixture.served_identity`, `fixture.response_id`,
+   `fixture.server_timestamp_utc`, `fixture.request`, `fixture.response`,
+   `fixture.request_digest`, `fixture.response_digest`,
+   `fixture.provenance.fixture_id`, `fixture.provenance.source_kind`,
+   `fixture.provenance.source_ref`, `fixture.provenance.captured_at_utc`,
+   `fixture.provenance.authenticated_response_id`,
+   `fixture.provenance_digest`, `fixture.source_kind`, `fixture.source_ref`,
+   `fixture.status`, `fixture.reason_code`, `fixture.retention_until_utc`,
+   `fixture.manifest_entry.schema_version`,
+   `fixture.manifest_entry.manifest_id`,
+   `fixture.manifest_entry.fixture_id`,
+   `fixture.manifest_entry.request_digest`,
+   `fixture.manifest_entry.response_digest`, and
+   `fixture.manifest_entry.provenance_digest`. The exact equality paths are
+   `fixture.schema_version == fixture.request.schema_version ==
+   fixture.response.schema_version == fixture.manifest_entry.schema_version`,
+   `fixture.manifest_id == fixture.provenance.manifest_id ==
+   fixture.manifest_entry.manifest_id`,
+   `fixture.fixture_id == fixture.provenance.fixture_id ==
+   fixture.manifest_entry.fixture_id`,
+   `fixture.requested_identity == fixture.request.requested_identity ==
+   fixture.response.requested_identity`,
+   `fixture.served_identity == fixture.response.served_identity`,
+   `fixture.response_id == fixture.response.response_id ==
+   fixture.served_identity.response_id == fixture.response.served_identity.response_id ==
+   fixture.provenance.authenticated_response_id`,
+   `fixture.server_timestamp_utc == fixture.response.server_timestamp_utc`,
+   `fixture.source_kind == fixture.provenance.source_kind`,
+   `fixture.source_ref == fixture.provenance.source_ref`,
+   `fixture.request_digest == SHA256(JCS-UTF8(fixture.request)) ==
+   fixture.manifest_entry.request_digest`,
+   `fixture.response_digest == SHA256(JCS-UTF8(fixture.response)) ==
+   fixture.manifest_entry.response_digest`, and
+   `fixture.provenance_digest == SHA256(JCS-UTF8(fixture.provenance)) ==
+   fixture.manifest_entry.provenance_digest`. The singleton paths
+   `fixture.evidence_class`, `fixture.capability`, `fixture.endpoint`,
+   `fixture.status`, `fixture.reason_code`, and
+   `fixture.retention_until_utc` are compared only to their exact closed
+   schema values and retention binding. Repository/ref/path/commit/tree and
+   `manifest_entry.repository/ref/path/commit/tree` are custody-tuple fields
+   owned only by `R20`; request/response digest computation failures belong
+   only to `R17`. Missing, one-sided, empty, or sentinel values are `R23` or
+   `R22`, never `R21`. A valid but unequal field has no other post-custody
+   owner. `R21` explicitly excludes `R17` digest computation/procedure
+   failures and `R20` custody-byte/tree/manifest-entry mismatches; malformed
+   or out-of-vocabulary values remain owned by the earlier structural/value
+   stages.
 
 The predicates are ordered and mutually exclusive:
 `R23 -> R22 -> R19 -> R18 -> R17 -> R20 -> R21`. No digest-procedure failure
