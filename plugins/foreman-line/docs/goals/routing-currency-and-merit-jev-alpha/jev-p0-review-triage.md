@@ -106,3 +106,9 @@ are accepted as blockers:
 Gate 3 remains blocked. The fourth rework is authorized only on the same three
 JEV-P0 documents. No live call, credential access, spend, external mutation,
 downstream dispatch, or merge is authorized.
+
+During dispatch reconciliation, the builder branch advanced within the same
+three-file scope from `81a7954003e8a5e12a3f254a49c04aaa8faac7f2` to
+`11bbd6c009b5cbb2638f41d152f3bc57f85bf8e8`, changing only the verification
+record. The coordinator verified that path set and adopted `11bbd6c` as the
+actual fourth-rework base; no other scope or authority changed.
