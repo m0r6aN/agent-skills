@@ -107,6 +107,24 @@ Gate 3 remains blocked. The fourth rework is authorized only on the same three
 JEV-P0 documents. No live call, credential access, spend, external mutation,
 downstream dispatch, or merge is authorized.
 
+## Seventh rework disposition
+
+Two fresh independent reviews of `2187402c218499fba8b413bec2c6824efd92ed8f`
+both returned **REQUEST CHANGES / Gate 3 not ready**. The coordinator accepts
+these blockers:
+
+| Finding | Evidence | Disposition |
+|---|---|---|
+| P1 | The reviewed-head proof assigns the recorded head from mutable `HEAD` and compares the value to itself; it is not pinned to the reviewed commit. | Fix in seventh rework: assert the exact expected head SHA and require every changed status to be `M`. |
+| P1 | Complete replay fixtures duplicate response and custody fields without explicit equality across top-level `response_id`, embedded response ID, served identity, provenance ID, and manifest commit/tree fields. | Fix in seventh rework: add all cross-field equality and split-brain refusal rules. |
+| P1 | Live cost is described as a number plus currency but lacks a closed `{amount, currency}` object schema and extra-field refusal. | Fix in seventh rework: define the exact cost object and all numeric/type bounds. |
+| P2 | `recorded_at_utc` and provenance manifest commit/tree fields are not covered by the exact timestamp/40-hex grammars. | Fix in seventh rework: bind these fields directly to the exact existing grammars. |
+| P1 | The builder field-by-field pass overstates closure while these findings remain. | Fix in seventh rework: keep content status blocked until controls close. |
+
+Gate 3 remains blocked. The seventh rework is authorized only on the same three
+JEV-P0 documents; no live call, credential access, spend, external mutation,
+downstream dispatch, or merge is authorized.
+
 ## Sixth rework result
 
 The sixth rework committed as `2187402c218499fba8b413bec2c6824efd92ed8f`
