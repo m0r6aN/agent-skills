@@ -192,3 +192,23 @@ three-file scope from `81a7954003e8a5e12a3f254a49c04aaa8faac7f2` to
 `11bbd6c009b5cbb2638f41d152f3bc57f85bf8e8`, changing only the verification
 record. The coordinator verified that path set and adopted `11bbd6c` as the
 actual fourth-rework base; no other scope or authority changed.
+downstream dispatch, or merge is authorized.
+
+## Ninth review disposition
+
+Two fresh independent reviews of `bfcebb2378304568931f1166085945b42cac1d89`
+returned **REQUEST CHANGES / Gate 3 not ready**. The parcel is therefore
+stopped at the human Gate 3 boundary; no further implementation is authorized
+by the user's Gate 2 grant alone.
+
+| Finding | Disposition |
+|---|---|
+| Coordinator receipt path and target SHA are only caller-supplied and not read/verified by the documented check; the execution record says no receipt was supplied. | Gate-blocking traceability gap; requires a coordinator-supplied receipt/target before any merge decision. |
+| Complete replay fixtures do not fully bind duplicated wrapper fields to nested request/response/provenance metadata. | Gate-blocking contract gap; requires same-file rework if the parcel resumes. |
+| Budget-ack freshness has no age/expiry/clock rule; retention lacks an explicit capture-time anchor. | Deterministic contract gaps; requires same-file rework if the parcel resumes. |
+| Non-complete fixture custody equality and evidence-class reason-code partition are underspecified; the field-count label is stale. | Deterministic contract gaps; requires same-file rework if the parcel resumes. |
+
+The exact three-file scope, exact `M` statuses, whitespace, native command exits,
+JCS vectors, identity/schema/answer/transport/lease/cost/privacy/consumer and
+parent-boundary controls passed review. No live call, credentials, spend, host/Pi
+action, parent mutation, or merge occurred. Gate 3 is not granted.
