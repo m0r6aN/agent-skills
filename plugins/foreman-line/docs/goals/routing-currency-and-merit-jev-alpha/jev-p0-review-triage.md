@@ -305,3 +305,22 @@ The coordinator supplied receipt
 receipt, matched the target, asserted `HEAD`, enumerated exactly the three
 allowed paths, confirmed `M` statuses, and passed whitespace/native checks.
 No independent review or Gate 3 approval is implied by this coordinator proof.
+
+## Twelfth review disposition
+
+Two fresh independent reviews of `2fe8b456b397e2f8f0731f51788a0c5b7b795b4a`
+returned **REQUEST CHANGES / Gate 3 not ready**. The coordinator proof passed,
+but the following deterministic contract and record gaps require another
+same-three-file rework under the existing bounded Gate 2 grant:
+
+| Finding | Disposition |
+|---|---|
+| R09 and R12 both cover a present response-ID conflict. | Make the conditions mutually exclusive: R09 owns served-model/identity conflict; R12 owns missing provider-complete metadata only. |
+| R14/R15/R16 overlap on budget acknowledgement reuse, lease contention, and retry/concurrency. | Define one explicit precedence and mutually exclusive condition/status mapping for each code. |
+| Freshness clock samples lack complete grammar and monotonic ordering. | Add exact timestamp grammar and require `run_started_at_utc <= acknowledged_at_utc <= transmission_started_at_utc <= socket_opened_at_utc`. |
+| R20 matrix emits `evidence:R18`. | Align the matrix and partition rule so the emitted reason code is deterministic and consistent. |
+| The current verification table still records the latest proof as pending. | Record the exact coordinator receipt, target, head, scope, whitespace, and status results for the reviewed implementation head; keep builder review counts at `0/2`. |
+
+Scope and external-boundary compliance passed for `2fe8b456`; no network,
+credential, spend, host/Pi, parent, HAWF, Helmholtz, or downstream action
+occurred.
