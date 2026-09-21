@@ -126,7 +126,8 @@ The builder read-only review must confirm:
 - closed ASCII-only request grammar, exact refusal regexes, bounds, duplicate
   rules, unknown-field refusal, and zero retention for rejected metadata;
 - closed usage/source/ID/path/timestamp/digest/status/retention schemas with
-  exact enums/regexes/number bounds and no free text or PII;
+  exact enums/regexes/number bounds, generated IDs, finite custody literals,
+  and no free text;
 - cost type, exact USD currency, non-negative finite value, and cap;
 - canonical provenance object, JCS provenance digest, exact manifest custody,
   and no mutable/self-recomputed fixture acceptance;
@@ -161,10 +162,10 @@ builder does not self-approve or merge.
 |---|---|---|
 | Starting branch/base | `codex/jev-p0-contract`, base `e3273dde49deec062c2787006b7b8fd409c01e91` | Confirmed before sixth-rework edits. |
 | `node -v` | Passed: `v24.7.0`; below shaping requirement `>=24.11.1` | Dependency-free environment probe. |
-| Full base-to-head scope comparison | To be recorded after the sixth-rework commit: the exact unfiltered set from base `e3273dde49deec062c2787006b7b8fd409c01e91` to the recorded reviewed head must equal the three Allowed Files | Full enumeration must precede filtered checks. |
-| Filtered base-to-head `git diff --check` and status | Passed: no whitespace errors; all three allowed paths reported modified | Ran only after full-set equality. |
+| Full base-to-head scope comparison | Passed: exact unfiltered set from base `e3273dde49deec062c2787006b7b8fd409c01e91` to the observed `recorded_reviewed_head` exactly equaled the three Allowed Files | `git diff --name-only` was unfiltered; set equality passed before filtered checks. |
+| Filtered base-to-head `git diff --check` and status | Passed: no whitespace errors; all three allowed paths reported modified | Native exit codes were checked immediately after each command. |
 | Targeted active-spec linter/self-check | Environment limitation: local `ajv` missing; no install | These tools do not lint the three goal documents. |
-| Field-by-field sixth-rework review | To be recorded from the builder read-only content check; not independent approval | Checklist above. |
+| Field-by-field sixth-rework review | Passed as a builder read-only content check; not independent approval | Explicit class/status sets, mandatory budget acknowledgement, generated metadata, custody, and prior controls were checked. |
 | Independent frontier review A | Observed result: no fresh report supplied or performed in this builder session (`0/2`) | Coordinator must supply and triage; no pass inferred. |
 | Independent frontier review B | Observed result: no fresh report supplied or performed in this builder session (`0/2`) | Coordinator must supply and triage; no pass inferred. |
 | Gate 3 / merge | Not granted; human-owned | No self-approval or merge. |
