@@ -35,6 +35,16 @@ This parcel is dispatchable under the exact JEV-P1 Gate 2 grant recorded in the
 JEV alpha charter. The merged JEV-P0 contract and evidence boundary are the
 authoritative inputs; no unresolved P0 review observation blocks this parcel.
 
+### Ratified P1 amendment A1
+
+The coordinator identified that complete replay requires an independent
+coordinator manifest receipt, while the original single-argument replay API
+provided no receipt input. Clinton Morgan approved the recommended amendment:
+`replayFixture(fixture, manifestReceipt)`. The fixture schema remains unchanged;
+the second argument is a separately supplied closed receipt value validated
+offline against the P0 manifest-receipt schema. This amendment changes only the
+P1 implementation contract and does not alter JEV-P0.
+
 ## Constraints
 
 - The merged JEV-P0 contract and evidence boundary are authoritative:
@@ -78,7 +88,8 @@ authoritative inputs; no unresolved P0 review observation blocks this parcel.
 - [ ] **AC5 — Fixture replay:** `replayFixture` validates complete,
   refused, and hold sanitized fixtures, including exact field sets, status and
   reason partitions, provenance custody, complete-fixture response-ID equality,
-  request/response digest equality, retention timestamps, and manifest binding.
+  request/response digest equality, retention timestamps, and manifest binding
+  against the separately supplied independent coordinator manifest receipt.
 - [ ] **AC6 — Fail closed:** Every invalid fixture class has a stable P0 reason
   code; rejected input is not serialized into the result, logged, echoed, or
   used to synthesize missing provider metadata.
@@ -151,7 +162,10 @@ validateResponse(
   value: unknown,
 ): ValidationResult<ValidatedResponse>;
 canonicalDigest(value: CanonicalDigestInput): string;
-replayFixture(value: unknown): ReplayResult;
+replayFixture(
+  fixture: unknown,
+  manifestReceipt: unknown,
+): ReplayResult;
 ```
 
 The exact field names, literal values, closed sets, identity equalities,
@@ -167,7 +181,8 @@ provider payloads/raw diagnostics.
   missing, extra, reordered, duplicate, malformed, and split-brain answers.
 - Exact JCS request and response vectors from P0.
 - Complete, refused, and hold fixture acceptance/rejection with each required
-  custody, provenance, digest, status, reason, and retention invariant.
+  custody, provenance, digest, status, reason, and retention invariant,
+  including valid, missing, malformed, and mismatched manifest receipts.
 - Mutation tests for response ID, served identity, digest, provenance,
   manifest entry, unknown field, reason partition, and timestamp failures.
 - Isolation test proving no network, environment, filesystem, timer, or external

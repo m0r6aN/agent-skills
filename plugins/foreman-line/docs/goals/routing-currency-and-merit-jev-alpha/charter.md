@@ -148,6 +148,11 @@ parent-surface mutation, host/Pi action, HAWF, Helmholtz, or downstream action.
 Non-destructive authority does not expand the JEV-P1 allowed-file list or
 replace a later exact Gate 3 grant.
 
+**P1 amendment A1 approved 2026-09-21 by Clinton Morgan:** The P1 replay API
+is `replayFixture(fixture, manifestReceipt)`. The receipt is supplied as a
+separate closed value and validated offline; the sanitized fixture schema and
+all JEV-P0 artifacts remain unchanged.
+
 ## Plan-review Gate 1 reopening
 
 The mandatory fresh plan-level review on 2026-09-21 returned **REQUEST CHANGES**.
