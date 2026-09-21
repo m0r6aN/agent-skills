@@ -32,7 +32,7 @@ CAPABILITY_HEADERS = {
 REDIRECT_POLICY = "disabled"
 ```
 
-The logical request body is built only from the allowlisted request schema in
+The logical request body is built only from the closed request schema in
 this document. The adapter owns its serialization and transmits exactly the
 measured UTF-8 body bytes; the caller cannot supply or replace a raw body.
 Runtime-only authorization injection, when later authorized, is owned by the
@@ -120,9 +120,9 @@ extra and refuse. All required strings are non-empty UTF-8 strings; JSON
 objects and arrays must not contain duplicate keys; non-finite numbers,
 `null` where a value is required, and malformed JSON refuse.
 
-### Allowlisted request envelope and privacy boundary
+### Closed support-triage request envelope and privacy boundary
 
-The caller supplies typed logical fields, not an endpoint, headers, or raw
+The caller supplies no free-form question definition, endpoint, header, or raw
 body. The only permitted `state` shape is:
 
 ```text
@@ -135,47 +135,56 @@ state:
     contact_channel: "email" | "chat" | "phone"
 ```
 
-`values` may omit fields that are not available, but unknown keys, free text,
-raw transcripts, names, email addresses, phone numbers, addresses, customer or
-ticket identifiers, tokens, credentials, authorization material, and other
-PII are forbidden. The caller must minimize to this allowlist, redact unsafe
-input before serialization, and refuse rather than guess when minimization or
-redaction is uncertain. The request body is closed and no extra state fields
-are accepted.
+`values` may omit fields that are not available, but the four field names and
+their enum/number rules are closed. No other state key, free text, transcript,
+name, email, phone number, address, customer/ticket identifier, token,
+credential, or authorization material is accepted.
 
-The entire question envelope is also allowlisted and bounded. All caller-
-supplied strings in the request are ASCII-only printable characters U+0020
-through U+007E; any non-ASCII byte, control character, NUL, CR, LF, tab, or
-other Unicode character refuses. Question names, instruction tokens, criterion
-keys, choice labels, and score labels must match the exact token grammar
-`^[a-z][a-z0-9._-]{0,63}$`; each array is duplicate-free, with at most 8
-instructions, 16 criteria, and 32 choices. Criterion descriptions, when
-present, must be 1–160 characters matching the exact grammar
-`^[A-Za-z0-9][A-Za-z0-9 .,;:/()_-]{0,159}$`; they are bounded labels, not
-prompts or free-form provider instructions. The question list has at most 16
-entries. `instructions` is an optional array of literal safe tokens, never
-arbitrary prose. `score_label` is a token required only for `score`; it is
-forbidden for `noul` and `choice`.
-
-Before serialization, refuse a complete request if any caller string matches
-one of these exact refusal patterns (the patterns marked `/i` are
-case-insensitive):
+The question envelope is one exact finite value. It must be the following array
+of three objects in this order; unknown fields or any changed value refuse:
 
 ```text
-email: (?:^|[^A-Za-z0-9])[A-Za-z0-9.!#$%&'*+/=?^_{}|~-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+(?:$|[^A-Za-z0-9])
-URL: /(?:https?|ftp):\/\/[^\s]+/i or /(?:^|\s)www\.[^\s]+/i
-phone: (?:^|[^0-9])\+?[1-9][0-9]{6,14}(?:$|[^0-9])
-       or (?:^|[^0-9])(?:\+?1[ .-]?)?\(?[2-9][0-9]{2}\)?[ .-][0-9]{3}[ .-][0-9]{4}(?:$|[^0-9])
-credential: /\b(?:bearer|basic)\s+[A-Za-z0-9._~+/=-]{8,}\b/i
-            or /\b(?:password|passwd|secret|api[_-]?key|access[_-]?token|authorization)\s*[:=]\s*[^\s]+/i
-            or /\b(?:sk|pk)_[A-Za-z0-9_-]{16,}\b/
+questions: [
+  {
+    name: "is_urgent",
+    type: "noul",
+    instructions: ["support_triage_v1"],
+    criteria: [
+      { key: "urgent_signal", description: "customer urgency signal" }
+    ]
+  },
+  {
+    name: "department",
+    type: "choice",
+    instructions: ["support_triage_v1"],
+    criteria: [
+      { key: "department_signal", description: "support department signal" }
+    ],
+    choices: ["billing", "technical", "sales"]
+  },
+  {
+    name: "frustration",
+    type: "score",
+    instructions: ["support_triage_v1"],
+    criteria: [
+      { key: "frustration_signal", description: "customer frustration signal" }
+    ],
+    score_label: "frustration_score"
+  }
+]
 ```
 
-These are the complete refusal patterns; no undefined general PII detector is
-claimed. Strings that do not match the closed field grammar, exceed its length
-or count bound, contain duplicate keys/items, or use unknown fields refuse.
-Rejected strings and their containing envelope are not logged, digested,
-serialized, transmitted, or retained.
+All caller-supplied request strings are therefore fixed ASCII literals from the
+schema above. The only permitted string values are the literal state enums,
+the three question names, the one instruction value, the six criterion
+key/description literals, the three department choices, the one score label,
+the fixed schema/capability/identity literals, and the exact UTC/ID/digest
+fields defined by the evidence schema. Non-ASCII bytes, control characters,
+NUL, CR, LF, tab, duplicate JSON keys/items, unknown fields, or any other
+string value refuse before serialization. Privacy enforcement uses only these
+fixed schema and refusal rules; there is no free-text field to classify. Rejected values and their
+containing envelope are not logged, digested, serialized, transmitted, or
+retained.
 
 The logical request envelope is:
 
@@ -188,35 +197,17 @@ The logical request envelope is:
     model: "typesafe/jev-1.13",
     surface: "alpha-decisions"
   },
-  state: <the allowlisted state object above>,
-  questions: [
-    {
-      name: <unique safe token>,
-      type: "noul" | "choice" | "score",
-      instructions: [<optional allowlisted safe tokens>],
-      criteria: [
-        { key: <unique safe token>, description: <optional bounded safe text> }
-      ],
-      choices: [<required only for type "choice", safe tokens>],
-      score_label: <required only for type "score", safe token>
-    }
-  ]
+  state: <the closed state object above>,
+  questions: <the exact three-question array above>
 }
 ```
 
 Request rules:
 
-- `questions` is non-empty and no larger than 16 entries. Question names are
-  unique by exact, case-sensitive comparison and obey the safe token grammar.
-  Criterion keys are unique within a question and define the complete coverage
-  set for that question; descriptions obey the bounded safe-text rule.
-- `instructions`, when present, contains only safe tokens from a coordinator-
-  approved allowlist. Arbitrary prose, prompts, commands, URLs, identifiers,
-  and PII in instructions refuse.
-- `choices` is required, non-empty, unique, and exact when `type` is `choice`;
-  every label obeys the safe token grammar, and it is forbidden for `noul` and
-  `score`. `score_label` is required for `score`, obeys the safe token grammar,
-  and is forbidden for `noul` and `choice`.
+- `questions` must equal the exact three objects above, including order, literal
+  names, types, instructions, criteria keys/descriptions, choices, and score
+  label. Any unknown question, criterion, instruction, choice, or label value
+  refuses.
 - The request must be validated, minimized/redacted, serialized as UTF-8, and
   measured as the exact body bytes immediately before transmission. It must be
   no larger than 65,536 bytes. The transmitted body bytes must equal the
@@ -304,6 +295,18 @@ provider/account acknowledgement that the cap is enforced for this run. A
 client-side reservation alone cannot prevent post-call overcharge and is not
 sufficient authorization.
 
+When acknowledgement is used, `budget_ack` is a closed `jev-budget/v1` object
+with exactly these fields and values: `mode` is `provider-hard-budget` or
+`account-hard-budget`; `provider` is literal `openrouter`; `account_ref`
+matches `^acct-[a-z0-9]{32}$`; `cap_amount` is the finite JSON number `0.01`;
+`currency` is literal `USD`; `acknowledged_at_utc` is the exact UTC timestamp
+form; `acknowledgement_digest` is 64 lowercase hex; `repository`, `ref`,
+`path`, `commit`, and `tree` use the immutable custody grammars; and `run_id`,
+`capability`, and `request_digest` bind it exactly to the current run. No extra
+field is accepted. The acknowledgement digest is the SHA-256 of the JCS UTF-8
+bytes of the object with that digest field omitted. Missing, stale, mismatched,
+mutable, or unverified acknowledgement is a terminal hold before transmission.
+
 Any reported cost must be a JSON number that is finite and non-negative, never
 a string, NaN, Infinity, or negative value, and must carry the exact literal
 currency `USD`. The amount must be `<= 0.01`. Missing, non-USD, malformed, or
@@ -325,7 +328,7 @@ Receipts, fixtures, logs, review reports, and evidence contain neither the key
 nor a raw authorization header. A later auth observation may be boolean/status-
 only.
 
-The only named consumer is `support-triage-advisory-v1`. Its exact allowlisted
+The only named consumer is `support-triage-advisory-v1`. Its exact closed
 recommendation object is:
 
 ```text
@@ -349,7 +352,7 @@ model, or invoke a host/Pi, HAWF, Helmholtz, or GMF effect.
 
 ## Privacy, retention, and evidence boundary
 
-Only the allowlisted state schema may be sent. Pre-send minimization and
+Only the closed state schema may be sent. Pre-send minimization and
 redaction are mandatory; uncertain or unsafe input refuses. This applies to
 the complete transmitted envelope: state, question names, instruction tokens,
 criteria keys/descriptions, choices, score labels, and all wrapper metadata.
