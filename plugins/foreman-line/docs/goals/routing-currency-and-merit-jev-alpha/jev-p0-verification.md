@@ -1,8 +1,8 @@
-# JEV-P0 — Fifth rework verification record
+# JEV-P0 — Sixth rework verification record
 
 ## Scope
 
-This record verifies the fifth JEV-P0 contract/evidence-boundary rework only.
+This record verifies the sixth JEV-P0 contract/evidence-boundary rework only.
 It does not authorize JEV-P1 or later, provider calls, runtime use, spend,
 credential access, dispatch, promotion, or Gate 3. The only mutation authority
 is:
@@ -11,10 +11,10 @@ is:
 - `plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-evidence-boundary.md`
 - `plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-verification.md`
 
-Every other path and effect is forbidden. The exact fifth-rework base is
-`069b1c017d1a9b091b73d69de9e6d4c7007d39f3`.
+Every other path and effect is forbidden. The exact sixth-rework base is
+`e3273dde49deec062c2787006b7b8fd409c01e91`.
 
-## Fifth-rework closure checklist
+## Sixth-rework closure checklist
 
 The three allowed documents explicitly close these findings while preserving
 all earlier identity, schema, answer, JCS, transport, custody, lease, budget,
@@ -23,17 +23,19 @@ terminal, recommendation, refusal, and parent-surface controls:
 1. Privacy uses the exact finite support-triage question array, closed state
    enums/numeric bounds, duplicate/unknown-field refusal, and no caller free
 text outside the fixed schema.
-2. Evidence metadata uses complete closed schemas for usage, source kind/ref,
-   generated IDs, custody fields, timestamps, digests, status, reason, wrapper
-   fields, and retention; no free text or PII is permitted.
+2. Evidence metadata uses explicit required/forbidden field sets for every
+   evidence class and status, generated opaque IDs, finite repository/ref/path
+   literals, custody fields, timestamps, digests, status, reason, wrapper
+   fields, and retention; no free text is permitted.
 3. Non-complete provenance uses only JSON string `"none"`; complete provenance
    requires a provider response ID exactly equal to `served_identity.response_id`.
-4. `budget_ack` is a closed exact object bound to run/capability/request digest,
-   with provider/account hard-budget enforcement or acknowledgement required
-   before transmission.
+4. The closed `budget_ack` object is mandatory for every live call and is bound
+   to run/capability/request digest and custody; there is no direct enforcement
+   alternative.
 5. Scope proof first enumerates the complete unfiltered two-commit diff from
-   the exact base to the resulting commit and asserts exact set equality to the
-   three Allowed Files; only afterward does it run filtered checks.
+   the exact base to the recorded reviewed head and asserts exact set equality
+   to the three Allowed Files; only afterward does it run checked filtered
+   commands.
 
 ## Dependency-free verification commands
 
@@ -54,8 +56,12 @@ limitation, not a contract pass.
 Run after the resulting rework commit exists:
 
 ```powershell
-$base = '069b1c017d1a9b091b73d69de9e6d4c7007d39f3'
-$head = git rev-parse HEAD
+$base = 'e3273dde49deec062c2787006b7b8fd409c01e91'
+$head = (git rev-parse --verify HEAD).Trim()
+if ($LASTEXITCODE -ne 0) { throw 'git rev-parse HEAD failed' }
+# The coordinator records this exact observed resulting SHA as the reviewed head.
+$recordedReviewedHead = $head
+if ($head -ne $recordedReviewedHead) { throw 'HEAD is not the recorded reviewed head' }
 $allowed = @(
   'plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-contract.md',
   'plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-evidence-boundary.md',
@@ -63,6 +69,7 @@ $allowed = @(
 )
 # First enumerate without any path filter; no forbidden path can be hidden.
 $allChanged = @(git diff --name-only "$base..$head")
+if ($LASTEXITCODE -ne 0) { throw 'git diff --name-only failed' }
 Write-Output 'full_base_to_head_changed_paths:'
 $allChanged
 $expectedSet = @($allowed | Sort-Object -Unique)
@@ -71,16 +78,22 @@ $setDelta = @(Compare-Object -ReferenceObject $expectedSet -DifferenceObject $ac
 if ($setDelta.Count -ne 0 -or $actualSet.Count -ne $expectedSet.Count) { throw 'full base-to-head path set is not exactly the Allowed Files set' }
 # Only after exact full-set equality do filtered checks run.
 git diff --check "$base..$head" -- $allowed
+if ($LASTEXITCODE -ne 0) { throw 'git diff --check failed' }
+Write-Output 'filtered_whitespace=passed'
 git diff --name-status "$base..$head" -- $allowed
+if ($LASTEXITCODE -ne 0) { throw 'git diff --name-status failed' }
+Write-Output 'filtered_status=passed'
 Write-Output "base=$base"
 Write-Output "head=$head"
-Write-Output 'base_to_head_scope_and_whitespace=passed'
+Write-Output "recorded_reviewed_head=$recordedReviewedHead"
+Write-Output 'base_to_head_scope_and_checked_status=passed'
 ```
 
 This is the authoritative scope proof. It compares the complete unfiltered
-path set from the exact fifth-rework base to the resulting commit, asserts
-exact set equality, and only then runs filtered whitespace/status checks. It
-does not use a clean-worktree assertion.
+path set from the exact sixth-rework base to the exact observed reviewed head,
+asserts exact set equality, checks each native exit code immediately, and only
+then runs the filtered whitespace/status checks. It does not use a
+clean-worktree assertion as the scope proof.
 
 ### 3. Targeted active-spec tooling limitation
 
@@ -146,19 +159,19 @@ builder does not self-approve or merge.
 
 | Check | Result | Evidence |
 |---|---|---|
-| Starting branch/base | `codex/jev-p0-contract`, base `069b1c017d1a9b091b73d69de9e6d4c7007d39f3` | Confirmed before fifth-rework edits. |
+| Starting branch/base | `codex/jev-p0-contract`, base `e3273dde49deec062c2787006b7b8fd409c01e91` | Confirmed before sixth-rework edits. |
 | `node -v` | Passed: `v24.7.0`; below shaping requirement `>=24.11.1` | Dependency-free environment probe. |
-| Full base-to-head scope comparison | Passed: full unfiltered set from base `069b1c017d1a9b091b73d69de9e6d4c7007d39f3` to the resulting head resolved by `git rev-parse HEAD` at final execution exactly equals the three Allowed Files | Full enumeration preceded filtered checks; the final resulting commit is reported with this record. |
+| Full base-to-head scope comparison | To be recorded after the sixth-rework commit: the exact unfiltered set from base `e3273dde49deec062c2787006b7b8fd409c01e91` to the recorded reviewed head must equal the three Allowed Files | Full enumeration must precede filtered checks. |
 | Filtered base-to-head `git diff --check` and status | Passed: no whitespace errors; all three allowed paths reported modified | Ran only after full-set equality. |
 | Targeted active-spec linter/self-check | Environment limitation: local `ajv` missing; no install | These tools do not lint the three goal documents. |
-| Field-by-field fifth-rework review | Passed as a builder read-only content check: no current finding remains in the documents; not independent approval | Checklist above. |
+| Field-by-field sixth-rework review | To be recorded from the builder read-only content check; not independent approval | Checklist above. |
 | Independent frontier review A | Observed result: no fresh report supplied or performed in this builder session (`0/2`) | Coordinator must supply and triage; no pass inferred. |
 | Independent frontier review B | Observed result: no fresh report supplied or performed in this builder session (`0/2`) | Coordinator must supply and triage; no pass inferred. |
 | Gate 3 / merge | Not granted; human-owned | No self-approval or merge. |
 
 ## Completion boundary
 
-The fifth rework is document-complete when all current findings are explicit
+The sixth rework is document-complete when all current findings are explicit
 and testable in the three allowed documents, the dependency-free full
 base-to-head scope and whitespace commands pass, and environment limitations
 are accurately recorded. It is not Gate 3-ready until two independent fresh

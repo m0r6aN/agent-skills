@@ -17,55 +17,139 @@ manifest custody, and explicit requested/served identity binding. Evidence
 status must say whether a record is an observation, replayable evidence,
 refusal, or hold; these states must not be collapsed.
 
-## Closed live-observation wrapper schema
+## Exact evidence-class and status field sets
 
-A live-observation wrapper is exactly this closed object; no omitted or extra
-field is accepted. Conditional requirements are explicit in the table:
+Each record below is a closed JSON object. The listed required set is the
+complete set: every field name not listed for that record is forbidden. A
+missing listed field, an extra field, a wrong literal, or a wrong conditional
+value refuses. Pre-call failures are represented only by `refusal-record` or
+`hold-record`; every `live-observation` record represents an attempted call and
+therefore carries the required `budget_ack`.
 
-| Field | Requirement |
-|---|---|
-| `evidence_class` | Literal `live-observation`. |
-| `capability` | Literal `openrouter-alpha-decisions`. |
-| `run_id` | Coordinator-issued immutable run identifier. |
-| `lease_id` | Atomic single-call lease bound to `run_id`, capability, schema version, and request digest. |
-| `endpoint` | Capability-owned immutable endpoint constant, never a caller-provided value. |
-| `requested_identity` | Exact `openrouter / typesafe/jev-1.13 / alpha-decisions` tuple. |
-| `served_identity.model` | Exact authenticated provider response field `model`; never client-synthesized. |
-| `served_identity.response_id` | Exact authenticated provider response identifier. |
-| `schema_version` | Literal `jev-decisions/v1`. |
-| `response_id` | Mandatory provider response identifier for `status: complete`. |
-| `server_timestamp_utc` | Mandatory parseable provider/server UTC timestamp for `status: complete`. |
-| `client_timestamp_utc` | Client observation UTC timestamp. |
-| `request_digest` | SHA-256 of RFC 8785/JCS UTF-8 canonical logical request bytes. |
-| `response_digest` | SHA-256 of RFC 8785/JCS UTF-8 canonical logical response bytes when a response exists. |
-| `usage` | Exact closed usage object defined below; required for `complete`, absent for a pre-call refusal. |
-| `cost` | Exact `{ amount: <finite non-negative JSON number>, currency: "USD" }`, with `amount <= 0.01`; required for `complete`. |
-| `budget_ack` | Exact pre-call budget acknowledgement object defined below; required before any call and retained in every live wrapper. |
-| `source_kind` | Exact enum `coordinator-live` or `provider-response`. |
-| `source_ref` | Exact `src:` identifier grammar defined below; no free text. |
-| `status` | `complete`, `refused`, or terminal `hold`, with a reason. |
-| `reason_code` | `none` for `complete`, otherwise exactly one refusal code from the matrix. |
-| `retention_until_utc` | Exact timestamp required for retained safe metadata; no later than 90 days after capture. |
+### `live-observation`
 
-For `status: complete`, `response_id` and `server_timestamp_utc` are mandatory,
-provider-declared, parseable, and bound to the same authenticated response.
-Missing, unparseable, conflicting, or client-invented values produce a
-terminal hold/refusal. A complete record also requires an authenticated
-provider response whose `model` field equals `served_identity.model`; the
+`live-observation` with `status: complete` has exactly this required field set:
+
+```text
+evidence_class, capability, run_id, lease_id, endpoint,
+requested_identity, served_identity, schema_version, response_id,
+server_timestamp_utc, client_timestamp_utc, request_digest, response_digest,
+usage, cost, budget_ack, source_kind, source_ref, status, reason_code,
+retention_until_utc
+```
+
+Its exact conditional values are `evidence_class: "live-observation"`,
+`capability: "openrouter-alpha-decisions"`, `endpoint` equal to the immutable
+capability endpoint, `schema_version: "jev-decisions/v1"`,
+`source_kind: "coordinator-live" | "provider-response"`, `status: "complete"`,
+and `reason_code: "none"`. `response_id` and `server_timestamp_utc` are
+provider-declared, parseable, and bound to the same authenticated response;
+`served_identity.model` is exactly the authenticated response `model`, and
+`served_identity.response_id` is exactly that response's identifier. The
 requested model is never a fallback.
 
-Cost is valid only when its JSON representation is a number accepted as finite
-and non-negative, its currency is exactly the literal `USD`, and its amount is
-no greater than `0.01`. Strings, `NaN`, `Infinity`, negative numbers, missing
-currency, non-USD currency, and over-cap amounts are terminal holds/refusals.
+`live-observation` with `status: refused` has exactly this required field set:
 
-The record must not contain an API key, authorization header, secret, raw
-credential-bearing request or response, unredacted provider payload, PII,
-free-text input, or unbounded log excerpt. A boolean or status-only
-authentication observation is the maximum permitted credential-related
-evidence. `complete` additionally requires every conditional field marked
-required above; refusal/hold wrappers contain only the exact fields needed to
-identify the failed bounded check.
+```text
+evidence_class, capability, run_id, lease_id, endpoint, schema_version,
+client_timestamp_utc, request_digest, budget_ack, source_kind, source_ref,
+status, reason_code, retention_until_utc
+```
+
+Its exact values include `status: "refused"`, `reason_code: "R01"` through
+`"R25"`, and the same capability, endpoint, schema, source, and budget
+requirements above. `requested_identity`, `served_identity`, `response_id`,
+`server_timestamp_utc`, `response_digest`, `usage`, and `cost` are forbidden.
+
+`live-observation` with `status: hold` has exactly this required field set:
+
+```text
+evidence_class, capability, run_id, lease_id, endpoint, schema_version,
+client_timestamp_utc, request_digest, budget_ack, source_kind, source_ref,
+status, reason_code, disposition, retention_until_utc
+```
+
+Its exact values include `status: "hold"`, `disposition: "pending-coordinator"`,
+and `reason_code: "R01"` through `"R25"`. `requested_identity`,
+`served_identity`, `response_id`, `server_timestamp_utc`, `response_digest`,
+`usage`, and `cost` are forbidden.
+
+### `sanitized-replay-fixture`
+
+`sanitized-replay-fixture` with `status: complete` has exactly this required
+field set:
+
+```text
+evidence_class, fixture_id, manifest_id, repository, ref, path, commit, tree,
+provenance, provenance_digest, schema_version, requested_identity,
+served_identity, response_id, server_timestamp_utc, request, response,
+request_digest, response_digest, source_kind, source_ref, status, reason_code,
+retention_until_utc
+```
+
+Its exact values include `evidence_class: "sanitized-replay-fixture"`,
+`schema_version: "jev-decisions/v1"`, `source_kind: "sanitized-fixture"`,
+`status: "complete"`, and `reason_code: "none"`. All custody, provenance,
+identity, request, response, and digest equalities below are mandatory.
+
+`sanitized-replay-fixture` with `status: refused` has exactly this required
+field set:
+
+```text
+evidence_class, fixture_id, manifest_id, repository, ref, path, commit, tree,
+source_kind, source_ref, status, reason_code, retention_until_utc
+```
+
+Its exact values are `evidence_class: "sanitized-replay-fixture"`,
+`source_kind: "sanitized-fixture"`, `status: "refused"`, and
+`reason_code: "R01"` through `"R25"`. `provenance`, `provenance_digest`,
+`requested_identity`, `served_identity`, `response_id`, `server_timestamp_utc`,
+`request`, `response`, `request_digest`, and `response_digest` are forbidden.
+
+`sanitized-replay-fixture` with `status: hold` has exactly this required field
+set:
+
+```text
+evidence_class, fixture_id, manifest_id, repository, ref, path, commit, tree,
+source_kind, source_ref, status, reason_code, disposition, retention_until_utc
+```
+
+Its exact values are `evidence_class: "sanitized-replay-fixture"`,
+`source_kind: "sanitized-fixture"`, `status: "hold"`,
+`disposition: "pending-coordinator"`, and `reason_code: "R01"` through
+`"R25"`. `provenance`, `provenance_digest`, `requested_identity`,
+`served_identity`, `response_id`, `server_timestamp_utc`, `request`,
+`response`, `request_digest`, and `response_digest` are forbidden.
+
+### `refusal-record` and `hold-record`
+
+`refusal-record` has exactly this required field set:
+
+```text
+evidence_class, status, reason_code, source_kind, source_ref,
+recorded_at_utc, retention_until_utc
+```
+
+Its exact values are `evidence_class: "refusal-record"`,
+`status: "refused"`, `source_kind: "coordinator-review"`, and
+`reason_code: "R01"` through `"R25"`. `disposition`, request/response fields,
+custody fields, identities, cost, usage, and budget fields are forbidden.
+
+`hold-record` has exactly this required field set:
+
+```text
+evidence_class, status, reason_code, disposition, source_kind, source_ref,
+recorded_at_utc, retention_until_utc
+```
+
+Its exact values are `evidence_class: "hold-record"`, `status: "hold"`,
+`disposition: "pending-coordinator"`, `source_kind: "coordinator-review"`,
+and `reason_code: "R01"` through `"R25"`. Request/response fields, custody
+fields, identities, cost, usage, and budget fields are forbidden.
+
+Every complete record requires the exact complete set above; every refused or
+held record requires its exact refused or held set above. No record may move
+between these sets, add a diagnostic field, or use a free-text reason.
 
 ## Closed evidence metadata schemas
 
@@ -77,41 +161,42 @@ control character. These exact bounds make metadata validation deterministic:
   an integer from 0 through 65,536 except `total_tokens`, which is from 0
   through 131,072; `total_tokens` must equal the other two fields' sum.
 - `source_kind` is exactly one of `coordinator-live`, `provider-response`,
-  `sanitized-fixture`, or `coordinator-review`.
-- `source_ref` matches `^src:[a-z0-9][a-z0-9._/-]{0,127}$`, contains no `..`,
-  and is an opaque repository reference; the regex is the complete rule and no
-  semantic PII predicate is used.
-- `run_id` matches `^run-[0-9a-f]{32}$`; `lease_id` matches
-  `^lease-[0-9a-f]{32}$`; `fixture_id` matches
-  `^fx-[a-z0-9][a-z0-9-]{0,63}$`; and `manifest_id` matches
-  `^manifest-[a-z0-9][a-z0-9-]{0,63}$`.
+  `sanitized-fixture`, or `coordinator-review`; `source_ref` is generated and
+  matches exactly `^src-[0-9a-f]{32}$`.
+- `run_id` matches exactly `^run-[0-9a-f]{32}$`; `lease_id` matches exactly
+  `^lease-[0-9a-f]{32}$`; `fixture_id` matches exactly
+  `^fx-[0-9a-f]{32}$`; `manifest_id` matches exactly
+  `^manifest-[0-9a-f]{32}$`; and `account_ref` matches exactly
+  `^acct-[0-9a-f]{32}$`. These IDs are generated opaque values, never names,
+  labels, ticket IDs, or caller text.
 - `response_id` matches `^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$`; served model
   identifiers match `^[A-Za-z0-9][A-Za-z0-9._/-]{0,127}$`.
-- `repository` matches `^[a-z][a-z0-9-]{1,63}$` and is an identifier, not a
-  URL or filesystem path. `ref` matches
-  `^(?:main|master|codex/[a-z0-9-]{1,63}|refs/tags/[a-z0-9._-]{1,63})$`.
-  `path` matches `^(?:[a-z0-9._-]+/)*[a-z0-9._-]+$`, is at most 255 characters,
-  and contains no `..` segment. `commit` and `tree` are exactly 40 lowercase
-  hexadecimal characters.
+- `repository` is exactly the literal `agent-skills`; `ref` is exactly one of
+  the literals `main` or `codex/jev-p0-contract`; and `path` is exactly one of
+  these repository-relative literals:
+  `plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-contract.md`,
+  `plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-evidence-boundary.md`,
+  or `plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-verification.md`.
+  No other repository, ref, or path is valid. `commit` and `tree` are exactly
+  40 lowercase hexadecimal characters.
 - `server_timestamp_utc`, `client_timestamp_utc`, `captured_at_utc`, and
   `retention_until_utc` match the exact UTC form
   `^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$` and must
   parse as real UTC timestamps. `retention_until_utc` is no later than 90 days
   after the relevant capture timestamp.
-- `request_digest`, `response_digest`, and `provenance_digest` are exactly 64
-  lowercase hexadecimal characters matching `^[0-9a-f]{64}$`; `capability`,
-  `schema_version`, and `endpoint` are the exact literals defined by the
-  contract; and `currency` is exactly `USD` wherever it appears.
+- `request_digest`, `response_digest`, `provenance_digest`, and
+  `acknowledgement_digest` are exactly 64 lowercase hexadecimal characters
+  matching `^[0-9a-f]{64}$`; `capability`, `schema_version`, and `endpoint` are
+  the exact literals defined by the contract; and `currency` is exactly `USD`
+  wherever it appears.
 - `evidence_class` is exactly `live-observation`,
   `sanitized-replay-fixture`, `refusal-record`, or `hold-record`; `status` is
   exactly `complete`, `refused`, or `hold`; and `reason_code` is `none` for
   complete records or one of `R01` through `R25` for refusal/hold records.
 
-The live-observation wrapper's allowed fields are exactly the closed table
-above. The sanitized-fixture wrapper's allowed fields are exactly the fixture
-record fields below plus the same exact digest, ID, timestamp, status, and
-retention grammars. Unknown wrapper metadata, free-text reasons, unbounded
-numbers, or invalid identifiers refuse and are not retained.
+The six class/status field sets above are the complete wrapper schema. Unknown
+wrapper metadata, free-text reasons, unbounded numbers, human-chosen IDs, or
+values outside the finite literal allowlists refuse and are not retained.
 
 ## Closed pre-call budget acknowledgement
 
@@ -122,7 +207,7 @@ numbers, or invalid identifiers refuse and are not retained.
   schema_version: "jev-budget/v1",
   mode: "provider-hard-budget" | "account-hard-budget",
   provider: "openrouter",
-  account_ref: <string matching ^acct-[a-z0-9]{32}$>,
+  account_ref: <string matching ^acct-[0-9a-f]{32}$>,
   cap_amount: 0.01,
   currency: "USD",
   acknowledged_at_utc: <exact UTC timestamp grammar above>,
@@ -138,8 +223,8 @@ numbers, or invalid identifiers refuse and are not retained.
 }
 ```
 
-`account_ref` is generated and non-PII by grammar; it is not an account name,
-email, URL, customer identifier, or free text. `cap_amount` must be the finite
+`account_ref` is generated by the exact hexadecimal grammar; it is not an
+account name, email, URL, customer identifier, or free text. `cap_amount` must be the finite
 JSON number `0.01`, not a string or another numeric value. The
 `acknowledgement_digest` is SHA-256 over the RFC 8785/JCS UTF-8 bytes of this
 object with `acknowledgement_digest` omitted, and its custody repository/ref/
@@ -147,11 +232,11 @@ path/commit/tree must be verified at the exact committed tree. The acknowledgeme
 is valid only when its `run_id`, capability, and `request_digest` exactly match
 the live wrapper. It must be fresh for the run and present before transmission.
 
-Provider-side hard enforcement of this cap or an exact acknowledgement in this
-closed schema is required before the call. A client-only reservation is not
-enough because it cannot prevent post-call overcharge. Missing, mismatched,
-stale, mutable, or unverified acknowledgement is a terminal hold before
-transmission.
+The exact `budget_ack` object in this closed schema is required before every
+live call. There is no direct provider-side or account-level enforcement
+alternative in this contract. A client-only reservation is not enough because
+it cannot prevent post-call overcharge. Missing, mismatched, stale, mutable,
+or unverified acknowledgement is a terminal hold before transmission.
 
 ## Immutable transport authority and raw body sizes
 
@@ -233,16 +318,17 @@ reproduced from its sanitized logical envelope, refuses.
 
 ## Canonical provenance and trusted fixture custody
 
-The canonical provenance object is closed and contains no PII:
+The canonical provenance object is closed and contains only the generated IDs
+and finite literals defined by this document:
 
 ```text
 {
-  fixture_id: <unique fixture identifier>,
+  fixture_id: <string matching ^fx-[0-9a-f]{32}$>,
   source_kind: "coordinator-live" | "provider-response" | "sanitized-fixture" | "coordinator-review",
-  source_ref: <string matching ^src:[a-z0-9][a-z0-9._/-]{0,127}$ and containing no ..>,
+  source_ref: <string matching ^src-[0-9a-f]{32}$>,
   captured_at_utc: <parseable UTC timestamp>,
   authenticated_response_id: "none" | <provider response_id>,
-  manifest_id: <immutable manifest identifier>,
+  manifest_id: <string matching ^manifest-[0-9a-f]{32}$>,
   manifest_commit: <verified commit SHA>,
   manifest_tree: <verified tree SHA>
 }
@@ -251,7 +337,8 @@ The canonical provenance object is closed and contains no PII:
 `provenance_digest` is SHA-256 over the RFC 8785/JCS UTF-8 bytes of exactly
 this canonical provenance object. The digest procedure is the same strict
 parse/JCS/UTF-8/hash procedure above, and the provenance object is hashed
-without adding transport headers, credentials, PII, or mutable timestamps.
+without adding transport headers, credentials, fields outside the closed
+schema, or mutable timestamps.
 
 `provenance.authenticated_response_id` is always present. For a non-complete
 `refused` or `hold` fixture, its only permitted value is the exact JSON string
@@ -300,12 +387,14 @@ The fixture must include a negative identity-binding companion vector: changing
 or deleting the provider response `model`, changing `response_id`, or
 replacing served identity with a client fallback must make replay refuse.
 
-Sanitization removes credentials, authorization headers, secret-bearing state,
-PII, unsafe payloads, and unrelated provider data before retention. It must not
-alter contract fields, identities, question criteria, answer values, or digest
-inputs; if it would, the fixture is refused rather than presented as exact
-replay. Raw request/response bodies, headers, authorization values, compressed
-streams, and unredacted payloads have zero retention.
+Sanitization retains only the closed request/response fields, generated IDs, and
+finite literals defined here. Credentials, authorization headers, secret-bearing
+state, unsafe payloads, unrelated provider data, and any free-text field are
+refused before retention. It must not alter contract fields, identities,
+question criteria, answer values, or digest inputs; if it would, the fixture is
+refused rather than presented as exact replay. Raw request/response bodies,
+headers, authorization values, compressed streams, and unredacted payloads
+have zero retention.
 
 ## Atomic run, budget, and terminal state
 
@@ -323,10 +412,11 @@ The lease is consumed exactly once and cannot be recreated after timeout,
 refusal, process failure, response ambiguity, or a second worker. Concurrency
 is one, retries are zero, and timeout is 30 seconds.
 
-Before transmission, there must be provider-side or account-level hard budget
-enforcement for `$0.01 USD`, or a recorded provider/account acknowledgement
-that the cap is enforced for this run. A client-side reservation alone cannot
-prevent post-call overcharge and is not sufficient authorization.
+Before every live transmission, the exact `budget_ack` object above must be
+present, custody-verified, fresh, and bound to the run, capability, and request
+digest. This contract has no provider-side or account-level enforcement
+alternative. A client-side reservation alone cannot prevent post-call
+overcharge and is not sufficient authorization.
 
 Any cost must be a finite non-negative JSON number, exact literal currency
 `USD`, and amount `<= 0.01`. Missing, string, NaN, Infinity, negative,
@@ -378,16 +468,16 @@ recipient, or state mutation.
 | R11 | Choice distribution differs from total 1 by more than absolute `1e-12`, or has invalid keys/probabilities. | Refuse; no repair, clamping, or renormalization. |
 | R12 | Complete status lacks provider-declared parseable `response_id` or `server_timestamp_utc`. | Terminal hold/refusal; never mark complete. |
 | R13 | Cost is missing, a string, NaN, Infinity, negative, non-USD, malformed, or greater than `0.01`. | Terminal hold/refusal; never estimate or convert. |
-| R14 | Provider/account hard-budget enforcement is absent and `budget_ack` is missing, malformed, stale, mutable, custody-unverified, non-USD, over-cap, or not bound exactly to run/capability/request digest. | Terminal hold before transmission; client reservation alone is insufficient. |
+| R14 | The mandatory `budget_ack` is missing, malformed, stale, mutable, custody-unverified, non-USD, over-cap, or not bound exactly to run/capability/request digest. | Terminal hold before transmission; client reservation alone is insufficient. |
 | R15 | `run_id` or CAS/create-if-absent lease is missing, duplicated, already consumed, or not bound to capability/version/request digest. | Terminal hold/refusal; no call. |
 | R16 | Second, concurrent, or retry call is attempted, or timeout expires. | Terminal refusal; append-only lease cannot be recreated or reopened. |
 | R17 | JCS canonical bytes or paired request/response digest is missing, malformed, recomputed differently, or identity-unbound. | Refuse replay or evidence acceptance. |
-| R18 | Provenance object is non-canonical, contains PII, has missing/wrong provenance digest, or uses a non-JCS hash procedure. | Refuse replay and evidence acceptance. |
+| R18 | Provenance object is non-canonical, contains a field outside its closed schema, has missing/wrong provenance digest, or uses a non-JCS hash procedure. | Refuse replay and evidence acceptance. |
 | R19 | Fixture repository/ref/path/commit/tree is missing, unverified, mutable, or fixture ID does not resolve to the exact committed manifest entry. | Refuse replay custody; terminal hold pending coordinator disposition. |
 | R20 | Fixture is self-recomputed outside the committed manifest, detached from its paired digests, or current bytes differ from custody. | Refuse replay; no self-recomputed acceptance. |
 | R21 | Non-complete provenance lacks the exact JSON string `"none"`, or complete provenance is missing, one-sided, sentinel-valued, client-synthesized, or not exactly equal to `served_identity.response_id`. | Terminal hold/refusal; complete fixture status is forbidden. |
-| R22 | Input contains unknown/free-text/PII/credential-bearing state, question names, instructions, criteria, descriptions, choices, score labels, or wrapper metadata, or minimization/redaction is uncertain. | Refuse before serialization/transmission; retain no rejected input or metadata. |
-| R23 | Fixture, metadata, source reference, log, or report contains PII, key, raw authorization header, unsafe payload, or exceeds retention limit. | Refuse retention and consumption; do not echo material. |
+| R22 | Input contains any unknown field, free-text value, credential-bearing value, or value outside the fixed vocabulary, generated-ID grammar, finite custody allowlist, or numeric bounds, or minimization/redaction is uncertain. | Refuse before serialization/transmission; retain no rejected input or metadata. |
+| R23 | Fixture, metadata, source reference, log, or report contains a field outside its closed schema, a key, raw authorization header, unsafe payload, or exceeds retention limit. | Refuse retention and consumption; do not echo material. |
 | R24 | Consumer is not `support-triage-advisory-v1`, recommendation has unknown/effect fields, or independent application authorization is absent. | Refuse; application retains all authority and effects. |
 | R25 | Any parent RCM, boundary-routing, standard routing, Pi, HAWF, Helmholtz, GMF, or other forbidden surface is requested. | Refuse and stop for coordinator review; no shared-surface mutation. |
 

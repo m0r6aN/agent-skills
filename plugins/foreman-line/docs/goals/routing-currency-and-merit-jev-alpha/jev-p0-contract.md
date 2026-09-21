@@ -289,16 +289,18 @@ The lease is consumed by at most one call and cannot be recreated by retry,
 timeout recovery, process failure, or a second worker. Concurrency is one,
 retries are zero, and the timeout is 30 seconds.
 
-Before transmission, the coordinator must have either provider-side or
-account-level hard budget enforcement for the `$0.01 USD` cap, or a recorded
-provider/account acknowledgement that the cap is enforced for this run. A
-client-side reservation alone cannot prevent post-call overcharge and is not
-sufficient authorization.
+Before every live transmission, the coordinator must provide the exact closed
+`budget_ack` object defined in `jev-p0-evidence-boundary.md`. It is mandatory
+for every live call; this contract has no direct provider-side or account-level
+enforcement alternative. The acknowledgement must be custody-verified, fresh,
+and bound to the current run, capability, and request digest. A client-side
+reservation alone cannot prevent post-call overcharge and is not sufficient
+authorization.
 
-When acknowledgement is used, `budget_ack` is a closed `jev-budget/v1` object
-with exactly these fields and values: `mode` is `provider-hard-budget` or
+`budget_ack` is always a closed `jev-budget/v1` object with exactly these
+fields and values: `mode` is `provider-hard-budget` or
 `account-hard-budget`; `provider` is literal `openrouter`; `account_ref`
-matches `^acct-[a-z0-9]{32}$`; `cap_amount` is the finite JSON number `0.01`;
+matches `^acct-[0-9a-f]{32}$`; `cap_amount` is the finite JSON number `0.01`;
 `currency` is literal `USD`; `acknowledged_at_utc` is the exact UTC timestamp
 form; `acknowledgement_digest` is 64 lowercase hex; `repository`, `ref`,
 `path`, `commit`, and `tree` use the immutable custody grammars; and `run_id`,
@@ -356,11 +358,11 @@ Only the closed state schema may be sent. Pre-send minimization and
 redaction are mandatory; uncertain or unsafe input refuses. This applies to
 the complete transmitted envelope: state, question names, instruction tokens,
 criteria keys/descriptions, choices, score labels, and all wrapper metadata.
-Rejected unsafe/free-text/PII input is not logged, digested, persisted, or
-included in a refusal record. No PII may occur in request/response digests, run
-metadata, manifest paths, provenance objects, source references, logs, review
-reports, or fixture identifiers. Source references are opaque reviewable
-references, not names, emails, ticket IDs, or customer data.
+Rejected unsafe/free-text input is not logged, digested, persisted, or included
+in a refusal record. The fixed literals and generated hexadecimal IDs admit no
+caller names, emails, phone numbers, URLs, ticket identifiers, credentials, or
+other free-text PII; no generic semantic detector is part of acceptance.
+Source references and fixture identifiers are generated opaque values only.
 
 Raw request bodies, raw response bodies, headers, authorization values,
 compressed streams, and unredacted payloads have zero retention. Sanitized
@@ -368,7 +370,7 @@ fixtures and safe live metadata require a `retention_until_utc` and may be
 retained no longer than 90 days after capture, or earlier coordinator
 disposition; after that point they must be deleted or rendered inaccessible
 without changing the immutable custody record. Retention never authorizes
-retaining raw payloads or PII.
+retaining raw payloads or rejected input.
 
 ## Fail-closed rule
 
