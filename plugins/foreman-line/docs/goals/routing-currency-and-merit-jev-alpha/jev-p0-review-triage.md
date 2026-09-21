@@ -483,3 +483,17 @@ proof passed, but the following same-three-file fixes remain:
 Scope and external-boundary compliance passed for `60f9d72`; no network,
 credential, spend, host/Pi, parent, HAWF, Helmholtz, or downstream action
 occurred.
+
+## Twenty-second review disposition
+
+Two fresh independent reviews of `95e41e589771f4620547eb51b723f0be5a31a118`
+returned **REQUEST CHANGES / Gate 3 not ready**. The cumulative coordinator
+proof passed, but one same-three-file consistency fix remains:
+
+| Finding | Disposition |
+|---|---|
+| The contract's R21 equality block requires `fixture.request.capability == fixture.response.capability`, but the duplicated R21 equality blocks in the evidence-boundary and verification artifacts omit that chain despite listing both paths. | Add the capability equality chain to every duplicated R21 block and verify the blocks remain identical in semantic ownership. |
+
+Scope and external-boundary compliance passed for `95e41e5`; no network,
+credential, spend, host/Pi, parent, HAWF, Helmholtz, or downstream action
+occurred.
