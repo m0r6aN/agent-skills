@@ -82,8 +82,8 @@ were not changed.
 
 - **Gate 1:** granted for the original J1–J10 and the plan-review replacement
   decisions recorded below. Gate 2 and Gate 3 remain ungranted.
-- **Gate 2:** not requested by this draft. A later grant must name exact parcel IDs
-  and any bounded live-call spend.
+- **Gate 2:** granted only for the exact parcel `JEV-P0` by the record below.
+  JEV-P1–JEV-P5 remain ungranted and require a later exact parcel-set grant.
 - **Gate 3:** not requested by this draft. Merge remains human-owned.
 
 ## Stop conditions
@@ -114,6 +114,14 @@ The non-locked queue corrections from the plan review are accepted as coordinato
 plan fixes: JEV-P2 is the secret-safe runtime adapter; JEV-P4 is the boundary and
 security scenario parcel; and JEV-P5 is release closure. They do not authorize
 dispatch or alter a locked decision.
+
+## Gate 2 record
+
+**GRANTED 2026-09-21 by Clinton Morgan:** “Grant Gate 2 for JEV-P0.” This authorizes
+dispatch of exactly JEV-P0 through the full shaping, builder, deterministic-check,
+dual-review, triage, and human Gate 3 process. It authorizes no other parcel, no
+additional live call or spend beyond a later explicit bounded authorization, no
+host/Pi or parent-goal change, and no HAWF, Helmholtz, or downstream action.
 
 ## Plan-review Gate 1 reopening
 
