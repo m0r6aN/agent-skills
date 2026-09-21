@@ -48,3 +48,27 @@ The builder completed a new Step 0 restatement covering all findings. The
 coordinator accepted the rework on the same three allowed files. No Gate 3
 request is valid until the rework commit is closed, deterministic evidence is
 recorded, and the two reviews are re-run against the reworked commit.
+
+## Second review round — residual findings and rework
+
+The rework commit `8be1cca7681e08ca4a9f585e1927140ea9e2abc5` was reviewed by
+two fresh, independent frontier sessions. Both kept JEV-P0 **Gate 3 blocked**.
+The coordinator accepted a second same-file rework; no live call, credential
+access, spend, host/Pi action, parent-surface mutation, or merge is authorized.
+
+| Review | Finding | Disposition |
+|---|---|---|
+| A | Cost amount needed an explicit finite, non-negative JSON-number rule with exact `USD` typing. | Fix in second rework. |
+| A | Provenance digest canonicalization needed an explicit RFC 8785/JCS UTF-8 rule and exact fixture custody binding. | Fix in second rework. |
+| A | Verification scope proof used a clean-worktree command rather than an explicit base-to-head comparison. | Fix in second rework. |
+| B | Transport authority needed explicit caller-header/body/endpoint restrictions and exact transmitted-byte measurement. | Fix in second rework. |
+| B | Replay custody needed repository/ref/path/commit/tree manifest verification and rejection of mutable self-recomputed fixtures. | Fix in second rework. |
+| B | Run, budget, and terminal guarantees needed atomic claim semantics, immutable binding, provider-side spend protection/acknowledgement, and append-only state transitions. | Fix in second rework. |
+| B | Privacy boundary needed an allowlisted input schema, minimization/redaction/refusal, PII exclusions, retention limits, and no raw-payload retention. | Fix in second rework. |
+
+The second rework was accepted at Step 0 on the same three allowed documents.
+Builder commit `22944d9900ca52a0c44d401b0cd2aa876fed460d` changed exactly those
+three files from the recorded base `8be1cca`; coordinator scope and whitespace
+checks passed, with Node `v24.7.0` and the previously recorded missing-`ajv`
+environment limitation. Two fresh independent reviews of `22944d9` remain
+required before any Gate 3 ruling.
