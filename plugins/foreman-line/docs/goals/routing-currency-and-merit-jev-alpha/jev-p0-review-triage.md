@@ -72,3 +72,22 @@ three files from the recorded base `8be1cca`; coordinator scope and whitespace
 checks passed, with Node `v24.7.0` and the previously recorded missing-`ajv`
 environment limitation. Two fresh independent reviews of `22944d9` remain
 required before any Gate 3 ruling.
+
+## Third rework disposition
+
+Two fresh independent reviews of `22944d9900ca52a0c44d401b0cd2aa876fed460d`
+both returned **REQUEST CHANGES / Gate 3 not ready**. The coordinator
+reproduced the scope finding: the actual diff is clean, but the parcel's
+documented script filters to allowed paths before testing for forbidden paths,
+so the proof procedure itself is unsound.
+
+| Finding | Evidence | Disposition |
+|---|---|---|
+| P1 | Privacy rules clearly constrain `state.values`, but question names, criteria, and choices remain arbitrary caller-supplied strings that could carry PII/free text. | Fix in third rework: allowlist the complete envelope or explicitly reject unsafe question metadata. |
+| P1/P2 | The prescribed scope proof filters the diff before checking for forbidden paths. | Fix in third rework: enumerate the full base-to-head diff first, then assert exact equality with the three allowed paths. |
+| P2 | The verification execution table still says final checks are “To be recorded.” | Fix in third rework: record the observed Node, scope, whitespace, field-by-field, and review results. |
+| P2 | Provenance permits `authenticated_response_id` and fixture `served_identity.response_id` as separate fields without an explicit equality invariant for complete fixtures. | Fix in third rework: require equality and reject mismatch. |
+
+Gate 3 remains blocked. The third rework is authorized only on the same three
+JEV-P0 documents, with no live call, credential access, spend, external
+mutation, or merge.
