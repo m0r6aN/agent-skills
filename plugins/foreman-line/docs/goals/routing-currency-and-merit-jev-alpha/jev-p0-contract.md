@@ -143,6 +143,18 @@ input before serialization, and refuse rather than guess when minimization or
 redaction is uncertain. The request body is closed and no extra state fields
 are accepted.
 
+The entire question envelope is also allowlisted and bounded. Question names,
+instruction tokens, criterion keys, choice labels, and score labels must match
+the ASCII token grammar `^[a-z][a-z0-9._-]{0,63}$`; each array is duplicate-
+free, with at most 8 instructions, 16 criteria, and 32 choices. Criterion
+descriptions, when present, must be 1–160 characters matching
+`^[A-Za-z0-9][A-Za-z0-9 .,;:/()_-]{0,159}$`; they are not prompts or free-form
+provider instructions. Email, URL, phone-number, credential, identifier, and
+other PII patterns are refused even when they fit the safe character grammar.
+The question list has at most 16 entries. `instructions` is an optional array
+of allowlisted tokens, never arbitrary prose. `score_label` is a token required
+only for `score`; it is forbidden for `noul` and `choice`.
+
 The logical request envelope is:
 
 ```text
@@ -157,10 +169,14 @@ The logical request envelope is:
   state: <the allowlisted state object above>,
   questions: [
     {
-      name: <unique non-empty question name>,
+      name: <unique safe token>,
       type: "noul" | "choice" | "score",
-      criteria: [<one or more unique non-empty criterion names>],
-      choices: [<required only for type "choice">]
+      instructions: [<optional allowlisted safe tokens>],
+      criteria: [
+        { key: <unique safe token>, description: <optional bounded safe text> }
+      ],
+      choices: [<required only for type "choice", safe tokens>],
+      score_label: <required only for type "score", safe token>
     }
   ]
 }
@@ -168,11 +184,17 @@ The logical request envelope is:
 
 Request rules:
 
-- `questions` is non-empty. Question names are unique by exact, case-sensitive
-  comparison. Criterion names are unique within a question and define the
-  complete coverage set for that question.
+- `questions` is non-empty and no larger than 16 entries. Question names are
+  unique by exact, case-sensitive comparison and obey the safe token grammar.
+  Criterion keys are unique within a question and define the complete coverage
+  set for that question; descriptions obey the bounded safe-text rule.
+- `instructions`, when present, contains only safe tokens from a coordinator-
+  approved allowlist. Arbitrary prose, prompts, commands, URLs, identifiers,
+  and PII in instructions refuse.
 - `choices` is required, non-empty, unique, and exact when `type` is `choice`;
-  it is forbidden for `noul` and `score`.
+  every label obeys the safe token grammar, and it is forbidden for `noul` and
+  `score`. `score_label` is required for `score`, obeys the safe token grammar,
+  and is forbidden for `noul` and `choice`.
 - The request must be validated, minimized/redacted, serialized as UTF-8, and
   measured as the exact body bytes immediately before transmission. It must be
   no larger than 65,536 bytes. The transmitted body bytes must equal the
@@ -306,11 +328,14 @@ model, or invoke a host/Pi, HAWF, Helmholtz, or GMF effect.
 ## Privacy, retention, and evidence boundary
 
 Only the allowlisted state schema may be sent. Pre-send minimization and
-redaction are mandatory; uncertain or unsafe input refuses. No PII may occur
-in request/response digests, run metadata, manifest paths, provenance objects,
-source references, logs, review reports, or fixture identifiers. Source
-references are opaque reviewable references, not names, emails, ticket IDs, or
-customer data.
+redaction are mandatory; uncertain or unsafe input refuses. This applies to
+the complete transmitted envelope: state, question names, instruction tokens,
+criteria keys/descriptions, choices, score labels, and all wrapper metadata.
+Rejected unsafe/free-text/PII input is not logged, digested, persisted, or
+included in a refusal record. No PII may occur in request/response digests, run
+metadata, manifest paths, provenance objects, source references, logs, review
+reports, or fixture identifiers. Source references are opaque reviewable
+references, not names, emails, ticket IDs, or customer data.
 
 Raw request bodies, raw response bodies, headers, authorization values,
 compressed streams, and unredacted payloads have zero retention. Sanitized

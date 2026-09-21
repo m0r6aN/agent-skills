@@ -160,6 +160,12 @@ this canonical provenance object. The digest procedure is the same strict
 parse/JCS/UTF-8/hash procedure above, and the provenance object is hashed
 without adding transport headers, credentials, PII, or mutable timestamps.
 
+For a complete fixture, `provenance.authenticated_response_id` is mandatory
+and must equal `fixture.served_identity.response_id` exactly. Both values must
+be present together; a missing, one-sided, or mismatched value is a terminal
+hold/refusal. The provenance value may not be synthesized from a requested
+identity, fixture filename, manifest entry, or client-generated identifier.
+
 A replay fixture must be present in an immutable, reviewable manifest/commit
 custody chain and contain:
 
@@ -187,7 +193,8 @@ retention_until_utc: <bounded retention deadline>
 Trusted custody means the exact repository, ref, path, manifest commit, and
 manifest tree are verified; `fixture_id` resolves to the exact manifest entry
 at that committed tree; the entry contains the exact paired request/response
-digests and provenance digest; and current bytes match the committed bytes.
+digests and provenance digest; `provenance.authenticated_response_id` equals
+`served_identity.response_id`; and current bytes match the committed bytes.
 Mutable working-tree files, uncommitted fixtures, detached copies, missing
 manifest entries, self-recomputed manifest entries, or changed digest pairs
 are not trusted custody and refuse replay.
@@ -281,10 +288,11 @@ recipient, or state mutation.
 | R18 | Provenance object is non-canonical, contains PII, has missing/wrong provenance digest, or uses a non-JCS hash procedure. | Refuse replay and evidence acceptance. |
 | R19 | Fixture repository/ref/path/commit/tree is missing, unverified, mutable, or fixture ID does not resolve to the exact committed manifest entry. | Refuse replay custody; terminal hold pending coordinator disposition. |
 | R20 | Fixture is self-recomputed outside the committed manifest, detached from its paired digests, or current bytes differ from custody. | Refuse replay; no self-recomputed acceptance. |
-| R21 | Input contains unknown/free-text/PII/credential-bearing state, or minimization/redaction is uncertain. | Refuse before serialization/transmission; retain no raw input. |
-| R22 | Fixture, metadata, source reference, log, or report contains PII, key, raw authorization header, unsafe payload, or exceeds retention limit. | Refuse retention and consumption; do not echo material. |
-| R23 | Consumer is not `support-triage-advisory-v1`, recommendation has unknown/effect fields, or independent application authorization is absent. | Refuse; application retains all authority and effects. |
-| R24 | Any parent RCM, boundary-routing, standard routing, Pi, HAWF, Helmholtz, GMF, or other forbidden surface is requested. | Refuse and stop for coordinator review; no shared-surface mutation. |
+| R21 | `provenance.authenticated_response_id` is missing, one-sided, client-synthesized, or not exactly equal to `served_identity.response_id`. | Terminal hold/refusal; complete fixture status is forbidden. |
+| R22 | Input contains unknown/free-text/PII/credential-bearing state, question names, instructions, criteria, descriptions, choices, score labels, or wrapper metadata, or minimization/redaction is uncertain. | Refuse before serialization/transmission; retain no rejected input or metadata. |
+| R23 | Fixture, metadata, source reference, log, or report contains PII, key, raw authorization header, unsafe payload, or exceeds retention limit. | Refuse retention and consumption; do not echo material. |
+| R24 | Consumer is not `support-triage-advisory-v1`, recommendation has unknown/effect fields, or independent application authorization is absent. | Refuse; application retains all authority and effects. |
+| R25 | Any parent RCM, boundary-routing, standard routing, Pi, HAWF, Helmholtz, GMF, or other forbidden surface is requested. | Refuse and stop for coordinator review; no shared-surface mutation. |
 
 Every refusal and hold is fail-closed. No path may silently alias, retry,
 downgrade, substitute, route, escalate, spend, persist unsafe material,

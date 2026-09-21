@@ -12,7 +12,7 @@ is:
 - `plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-verification.md`
 
 Every other path and effect is forbidden. The exact pre-rework base is
-`8be1cca7681e08ca4a9f585e1927140ea9e2abc5`.
+`22944d9900ca52a0c44d401b0cd2aa876fed460d`.
 
 ## Rework closure checklist
 
@@ -24,8 +24,9 @@ The three allowed documents explicitly close these findings:
 2. Provenance is a closed canonical object; `provenance_digest` is SHA-256 of
    its RFC 8785/JCS UTF-8 bytes; fixture IDs resolve to exact committed
    manifest entries at verified commit/tree custody.
-3. Scope proof uses an explicit two-commit comparison from the exact base to
-   the resulting commit, not a clean-worktree claim.
+3. Scope proof first enumerates the complete unfiltered two-commit diff from
+   the exact base to the resulting commit and asserts exact set equality to
+   the three allowed files; only afterward does it run filtered checks.
 4. Endpoint, method, headers, body policy, and redirects are capability-owned;
    caller-controlled `Host`, `:authority`, `Authorization`, content/transfer
    headers, body, endpoint, and redirects refuse; transmitted bytes and final
@@ -60,16 +61,22 @@ version is an environment limitation, not a contract pass.
 Run after the resulting rework commit exists:
 
 ```powershell
-$base = '8be1cca7681e08ca4a9f585e1927140ea9e2abc5'
+$base = '22944d9900ca52a0c44d401b0cd2aa876fed460d'
 $head = git rev-parse HEAD
 $allowed = @(
   'plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-contract.md',
   'plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-evidence-boundary.md',
   'plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-verification.md'
 )
-$changed = @(git diff --name-only "$base..$head" -- $allowed)
-if ($changed.Count -ne 3) { throw "expected exactly three base-to-head changed files; got $($changed.Count)" }
-if (@($changed | Where-Object { $_ -notin $allowed }).Count -ne 0) { throw 'base-to-head includes a forbidden path' }
+# Full enumeration is intentionally unfiltered; no forbidden path can be hidden.
+$allChanged = @(git diff --name-only "$base..$head")
+$expectedSet = @($allowed | Sort-Object -Unique)
+$actualSet = @($allChanged | Sort-Object -Unique)
+$setDelta = @(Compare-Object -ReferenceObject $expectedSet -DifferenceObject $actualSet)
+if ($setDelta.Count -ne 0 -or $actualSet.Count -ne $expectedSet.Count) { throw 'full base-to-head path set is not exactly the Allowed Files set' }
+Write-Output 'full_base_to_head_changed_paths:'
+$allChanged
+# Only after exact full-set equality do filtered checks run.
 git diff --check "$base..$head" -- $allowed
 git diff --name-status "$base..$head" -- $allowed
 Write-Output "base=$base"
@@ -118,6 +125,9 @@ Review the three allowed documents and confirm:
   provider/account budget acknowledgement, and append-only terminal state;
 - allowlisted privacy-safe input, minimization/redaction/refusal, PII-free
   metadata and references, bounded retention, and zero raw-payload retention;
+- complete fixture provenance has both `authenticated_response_id` and
+  `served_identity.response_id`, with exact equality and terminal refusal for
+  missing, one-sided, or mismatched values;
 - existing identity, schema, answer, JCS, size, recommendation, and refusal
   requirements from the first rework remain intact.
 
@@ -142,13 +152,14 @@ collision. The builder does not self-approve or merge.
 
 | Check | Result | Evidence |
 |---|---|---|
-| Starting branch/base | `codex/jev-p0-contract`, base `8be1cca7681e08ca4a9f585e1927140ea9e2abc5` | Confirmed before edits. |
-| `node -v` | To be recorded during final verification | Dependency-free environment probe. |
-| Base-to-head scope comparison | To be recorded after resulting commit | Exact command in section 2. |
-| Base-to-head `git diff --check` | To be recorded after resulting commit | Exact command in section 2. |
+| Starting branch/base | `codex/jev-p0-contract`, base `22944d9900ca52a0c44d401b0cd2aa876fed460d` | Confirmed before edits. |
+| `node -v` | Passed: `v24.7.0`; below shaping requirement `>=24.11.1` | Dependency-free environment probe. |
+| Full base-to-head scope comparison | Passed: full unfiltered set from base `22944d9900ca52a0c44d401b0cd2aa876fed460d` to head `81a7954003e8a5e12a3f254a49c04aaa8faac7f2` exactly equals the three Allowed Files | Full enumeration ran before filtered checks. |
+| Filtered base-to-head `git diff --check` and status | Passed: no whitespace errors; all three allowed paths reported modified | Exact command in section 2, after full-set equality. |
 | Targeted active-spec linter/self-check | Environment limitation: local `ajv` missing; no install | These tools do not lint the three goal documents. |
-| Field-by-field second-rework review | To be recorded during final verification | Checklist above. |
-| Independent frontier reviews | Coordinator-owned; not performed by builder | Required before Gate 3. |
+| Field-by-field second-rework review | Passed as a builder read-only content check: all four residual controls are explicit; this is not independent approval | Checklist above. |
+| Independent frontier review A | Observed result: no fresh report supplied or performed in this builder session (`0/2`) | Must be supplied and triaged by coordinator; no pass inferred. |
+| Independent frontier review B | Observed result: no fresh report supplied or performed in this builder session (`0/2`) | Must be supplied and triaged by coordinator; no pass inferred. |
 | Gate 3 / merge | Not granted; human-owned | No self-approval or merge. |
 
 ## Completion boundary
