@@ -107,6 +107,24 @@ Gate 3 remains blocked. The fourth rework is authorized only on the same three
 JEV-P0 documents. No live call, credential access, spend, external mutation,
 downstream dispatch, or merge is authorized.
 
+## Sixth rework disposition
+
+Two fresh independent reviews of `e3273dde49deec062c2787006b7b8fd409c01e91`
+both returned **REQUEST CHANGES / Gate 3 not ready**. The coordinator accepts
+these blockers:
+
+| Finding | Evidence | Disposition |
+|---|---|---|
+| P1 | Evidence classes do not each have a complete required/forbidden field matrix; replay fixtures omit explicit status/reason fields and use indirect schema language. | Fix in sixth rework: define exact live, replay, refusal, and hold wrapper schemas, including conditional required fields. |
+| P1/P2 | Provider/account hard enforcement and `budget_ack` are described as alternatives, while the wrapper requires `budget_ack` for every call. | Fix in sixth rework: choose one unambiguous path; require the closed `budget_ack` for every call or define the direct enforcement record. |
+| P1 | Source/ref/repository/path grammars still permit human-chosen values that can encode PII despite semantic exclusions. | Fix in sixth rework: use generated opaque identifiers or finite literal allowlists only. |
+| P1 | The scope script does not check native exit codes before printing success. | Fix in sixth rework: explicitly stop on failed `git diff --check`/status commands. |
+| P2 | Verification derives `HEAD` from mutable state and does not record the full resulting SHA. | Fix in sixth rework: pin and assert the exact reviewed head `e3273dde49deec062c2787006b7b8fd409c01e91`. |
+
+Gate 3 remains blocked. The sixth rework is authorized only on the same three
+JEV-P0 documents; no live call, credential access, spend, external mutation,
+downstream dispatch, or merge is authorized.
+
 ## Fifth rework disposition
 
 Two fresh independent reviews of `069b1c017d1a9b091b73d69de9e6d4c7007d39f3`
