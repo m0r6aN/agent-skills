@@ -309,6 +309,22 @@ form; `acknowledgement_digest` is 64 lowercase hex; `repository`, `ref`,
 field is accepted. The acknowledgement digest is the SHA-256 of the JCS UTF-8
 bytes of the object with that digest field omitted. Missing, stale, mismatched,
 mutable, or unverified acknowledgement is a terminal hold before transmission.
+Freshness is deterministic: the coordinator's one UTC clock is sampled when
+the durable lease is claimed (`run_started_at_utc`) and immediately before the
+socket is opened (`transmission_started_at_utc`). The acknowledgement must be
+created on that same clock, satisfy
+`run_started_at_utc <= acknowledged_at_utc <= transmission_started_at_utc`,
+and have the deterministic transmission age
+`transmission_started_at_utc - acknowledged_at_utc` in the range
+`0 seconds <= age < 60 seconds`. It expires at
+`acknowledged_at_utc + 60 seconds`; the socket must open strictly before that
+instant. A future timestamp, a backward clock observation, a missing clock
+sample, an acknowledgement created before run start, a different or consumed
+lease, or any queueing/reuse after validation is a hold before transmission.
+The lease's immutable `run_id + capability + schema_version + request_digest`
+binding is checked again immediately before transmission; the lease is marked
+consumed before the socket opens and the acknowledgement cannot authorize any
+other call.
 
 Every `live-observation` complete wrapper must contain this exact closed cost
 object, with no omitted or extra field:
@@ -379,10 +395,14 @@ Source references and fixture identifiers are generated opaque values only.
 Raw request bodies, raw response bodies, headers, authorization values,
 compressed streams, and unredacted payloads have zero retention. Sanitized
 fixtures and safe live metadata require a `retention_until_utc` and may be
-retained no longer than 90 days after capture, or earlier coordinator
-disposition; after that point they must be deleted or rendered inaccessible
-without changing the immutable custody record. Retention never authorizes
-retaining raw payloads or rejected input.
+retained no longer than 90 days after their explicit capture anchor:
+`provenance.captured_at_utc` for a sanitized replay fixture,
+`client_timestamp_utc` for a live observation, and `recorded_at_utc` for a
+refusal or hold record. The exact rule is
+`anchor <= retention_until_utc <= anchor + 90 days`; earlier coordinator
+disposition may shorten it. After the deadline the material must be deleted or
+rendered inaccessible without changing the immutable custody record. Retention
+never authorizes retaining raw payloads or rejected input.
 
 ## Fail-closed rule
 

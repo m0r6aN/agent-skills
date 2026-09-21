@@ -1,8 +1,9 @@
-# JEV-P0 — Eighth rework verification record
+# JEV-P0 — Ninth-review rework verification record
 
 ## Scope
 
-This record verifies the eighth JEV-P0 contract/evidence-boundary rework only.
+This record verifies the bounded JEV-P0 rework that closes the preserved ninth
+review findings only.
 It does not authorize JEV-P1 or later, provider calls, runtime use, spend,
 credential access, dispatch, promotion, or Gate 3. The only mutation authority
 is:
@@ -11,55 +12,50 @@ is:
 - `plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-evidence-boundary.md`
 - `plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-verification.md`
 
-Every other path and effect is forbidden. The exact eighth-rework base is
-`14b9b947fad60ab927a49ef35c795dbe34e3f502`.
+Every other path and effect is forbidden. The exact rework base is the current
+builder head before these edits:
+`76836d84a15c3896c76970916293367483fcafb0`.
 
-## Eighth-rework closure checklist
+## Ninth-review closure checklist
 
 The three allowed documents explicitly close these findings while preserving
 all earlier identity, schema, answer, JCS, transport, custody, lease, budget,
 terminal, recommendation, refusal, and parent-surface controls:
 
-1. Privacy uses the exact finite support-triage question array, closed state
-   enums/numeric bounds, duplicate/unknown-field refusal, and no caller free
-text outside the fixed schema.
-2. Evidence metadata uses explicit required/forbidden field sets for every
-   evidence class and status, generated opaque IDs, finite repository/ref/path
-   literals, custody fields, timestamps, digests, status, reason, wrapper
-   fields, and retention; no free text is permitted.
-3. The closed cost object has exactly `amount` and `currency`; refusal/hold
-   field sets forbid `cost`.
-4. Complete fixtures require exact four-way response-ID equality and exact
-   wrapper/provenance/manifest-entry custody equality.
-5. Non-complete provenance uses only JSON string `"none"`; complete provenance
-   rejects `none` and requires provider-declared response IDs.
-6. The closed `budget_ack` object is mandatory for every live call and is bound
-   to run/capability/request digest and custody; there is no direct enforcement
-   alternative.
-7. Scope proof first enumerates the complete unfiltered two-commit diff from
-   the exact base to the coordinator-supplied expected reviewed head and
-   asserts exact set equality, exact `M` statuses, and native exit codes before
-   reporting success.
-8. The immutable execution record identifies the coordinator review target by
-   externally supplied triage receipt path and target SHA; the builder never
-   derives `ExpectedHead` from `HEAD` or treats builder review as approval.
+1. Complete replay fixtures bind duplicated wrapper fields to nested
+   request/response/provenance and manifest-entry schema version, identities,
+   response ID, timestamp, digests, IDs, source metadata, and custody fields.
+2. `budget_ack` freshness has deterministic age, expiry, one-clock, run-start,
+   lease, and transmission ordering rules.
+3. Retention uses an explicit `captured_at_utc` provenance anchor for replay
+   fixtures and explicit anchors for every other evidence class.
+4. Stale field-count wording is removed; non-complete fixture custody equality
+   is explicit and reason codes are partitioned by evidence class.
+5. Scope proof opens the coordinator receipt, verifies its target SHA, matches
+   it to the supplied target and reviewed `HEAD`, then checks the full
+   unfiltered base-to-head path set before any filtered check.
+6. The builder records deterministic local results without self-approving the
+   two independent reviews or granting Gate 3.
 
 ## External coordinator traceability
 
 The execution record's review target is supplied by the coordinator through
 three immutable inputs: `CoordinatorTriageReceiptPath`, `CoordinatorTargetSha`,
-and `ExpectedHead`. The receipt path identifies the coordinator-owned triage
-receipt; `CoordinatorTargetSha` is the exact SHA named by that receipt for this
-rework; and `ExpectedHead` is the exact reviewed head to compare with
-`git rev-parse --verify HEAD`. All three are external inputs. The command
-rejects missing or malformed values, requires `CoordinatorTargetSha` to equal
-`ExpectedHead`, and never assigns either value from `HEAD`. Coordinator review
+and `ExpectedHead`. The receipt path identifies a coordinator-owned receipt
+file. The command opens that exact file as strict UTF-8, rejects a missing,
+non-file, unreadable, empty, or malformed path, and requires one exact receipt
+line of the form `CoordinatorTargetSha: <40 lowercase-hex SHA>` (optional
+horizontal whitespace around the separator is allowed). It extracts that
+receipt value and requires it to equal the supplied `CoordinatorTargetSha`,
+which must equal `ExpectedHead` and the verified `git rev-parse --verify HEAD`;
+neither value is ever assigned from `HEAD`. A path that is merely non-empty, or
+a receipt that does not name the exact reviewed target, fails closed. Coordinator review
 evidence is external to this builder session; builder review counts remain
 `0/2`, and no builder result is self-approval or Gate 3 authorization.
 
 ## Dependency-free verification commands
 
-Run from `C:\Repos\foreman-line-jev-p0` in PowerShell. No dependency
+Run from `C:\Repos\foreman-line-jev-p0-rework` in PowerShell. No dependency
 installation is part of this parcel. The coordinator must supply the immutable
 expected reviewed-head SHA captured before execution; the script must not
 derive it from `HEAD`.
@@ -91,7 +87,7 @@ param(
   [string]$CoordinatorTargetSha
 )
 
-$base = '14b9b947fad60ab927a49ef35c795dbe34e3f502'
+$base = '76836d84a15c3896c76970916293367483fcafb0'
 $allowed = @(
   'plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-contract.md',
   'plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-evidence-boundary.md',
@@ -112,6 +108,29 @@ if ([string]::IsNullOrWhiteSpace($CoordinatorTargetSha) -or
 }
 if ($CoordinatorTargetSha -cne $ExpectedHead) {
   throw 'CoordinatorTargetSha does not equal immutable ExpectedHead'
+}
+$receipt = Get-Item -LiteralPath $CoordinatorTriageReceiptPath -ErrorAction Stop
+if (-not $receipt.PSIsContainer -and $receipt.Length -ge 0) { }
+else { throw 'CoordinatorTriageReceiptPath is not a regular file' }
+try {
+  $utf8Strict = [System.Text.UTF8Encoding]::new($false, $true)
+  $receiptText = [System.IO.File]::ReadAllText($receipt.FullName, $utf8Strict)
+} catch {
+  throw 'CoordinatorTriageReceiptPath could not be opened as strict UTF-8'
+}
+if ([string]::IsNullOrWhiteSpace($receiptText)) {
+  throw 'Coordinator triage receipt is empty'
+}
+$receiptMatch = [regex]::Match(
+  $receiptText,
+  '(?m)^\s*CoordinatorTargetSha\s*[:=]\s*(?<sha>[0-9a-f]{40})\s*$'
+)
+if (-not $receiptMatch.Success) {
+  throw 'Coordinator triage receipt has no exact CoordinatorTargetSha field'
+}
+$receiptTargetSha = $receiptMatch.Groups['sha'].Value
+if ($receiptTargetSha -cne $CoordinatorTargetSha) {
+  throw 'Coordinator triage receipt target does not equal CoordinatorTargetSha'
 }
 $head = (git rev-parse --verify HEAD).Trim()
 if ($LASTEXITCODE -ne 0) { throw 'git rev-parse HEAD failed' }
@@ -147,14 +166,16 @@ Write-Output "head=$head"
 Write-Output "expected_reviewed_head=$ExpectedHead"
 Write-Output "coordinator_target_sha=$CoordinatorTargetSha"
 Write-Output "coordinator_triage_receipt_path=$CoordinatorTriageReceiptPath"
+Write-Output 'coordinator_triage_receipt_open_and_target_match=passed'
 Write-Output 'base_to_head_scope_checked_status_and_head_assertion=passed'
 ```
 
 This is the authoritative scope proof. It compares the complete unfiltered
-path set from the exact eighth-rework base to the coordinator-supplied
+path set from the exact rework base to the coordinator-supplied
 immutable expected reviewed head, asserts exact set equality and exact `M`
 statuses, checks each native exit code immediately, and only then reports
-success. It does not use a clean-worktree assertion as the scope proof.
+success. It opens and matches the coordinator receipt before asserting the
+reviewed head; it does not use a clean-worktree assertion as the scope proof.
 
 ### 3. Targeted active-spec tooling limitation
 
@@ -191,8 +212,14 @@ The builder read-only review must confirm:
   and no free text;
 - cost type, exact USD currency, non-negative finite value, and cap;
 - canonical provenance object, JCS provenance digest, exact manifest custody,
-  and no mutable/self-recomputed fixture acceptance;
-- exact complete-fixture equality between provenance and served response IDs;
+  no mutable/self-recomputed fixture acceptance, and explicit non-complete
+  wrapper/provenance custody equality;
+- exact complete-fixture equality for nested schema version, requested/served
+  identities, response IDs, response timestamp, digests, source metadata, IDs,
+  and manifest custody;
+- deterministic `budget_ack` age/expiry/clock/run-start/lease/transmission
+  checks and explicit retention anchors;
+- class-partitioned refusal/hold reason codes with no unprefixed code;
 - immutable transport authority, forbidden caller headers/body/endpoint,
   measured transmitted bytes, redirect refusal, and final TLS origin;
 - coordinator-issued run/lease, CAS/create-if-absent claim, immutable binding,
@@ -221,22 +248,23 @@ builder does not self-approve or merge.
 
 | Check | Result | Evidence |
 |---|---|---|
-| Starting branch/base | `codex/jev-p0-contract`, base `14b9b947fad60ab927a49ef35c795dbe34e3f502` | Confirmed before eighth-rework edits. |
+| Starting branch/base | `codex/jev-p0-rework10`, base `76836d84a15c3896c76970916293367483fcafb0` | Confirmed before ninth-review closure edits. |
 | `node -v` | Passed: `v24.7.0`, native exit code `0`; below shaping requirement `>=24.11.1` | Immediate exit-code capture/check followed `node -v`. |
-| Coordinator review target | External inputs are required: `CoordinatorTriageReceiptPath`, `CoordinatorTargetSha`, and `ExpectedHead`; no coordinator receipt path or target SHA was supplied to this builder session | Coordinator evidence is external; builder review remains `0/2` and is not self-approval. |
-| Expected reviewed head | Passed in the dependency-free execution: externally supplied `ExpectedHead` was present, exactly 40 lowercase hex characters, and matched `git rev-parse --verify HEAD`; the exact observed SHA is reported in the handoff | The script never derives the expected value from `HEAD`. |
-| Full base-to-head scope comparison | Passed: exact unfiltered set from base `14b9b947fad60ab927a49ef35c795dbe34e3f502` to the externally expected reviewed head exactly equaled the three Allowed Files | `git diff --name-only` was unfiltered; set equality passed before filtered checks. |
-| Filtered base-to-head `git diff --check` and status | Passed: no whitespace errors; all three allowed paths reported `M` exactly | Native exit codes were checked immediately after each command; exact name-status equality passed. |
+| Coordinator review target and receipt | Blocked: no external `CoordinatorTriageReceiptPath`, `CoordinatorTargetSha`, or `ExpectedHead` was supplied to this builder session | The verification command requires the receipt to exist, be read as strict UTF-8, and name a matching `CoordinatorTargetSha`; builder review remains `0/2`. |
+| Expected reviewed head | Not run: immutable external `ExpectedHead` was not supplied; no value was inferred from `HEAD` | The command fails closed before scope success without the coordinator inputs. |
+| Full base-to-head scope comparison | Not run: the final commit SHA and immutable coordinator target are not available until commit and receipt handoff | The authoritative command performs unfiltered exact-set equality before any filtered check. |
+| Filtered base-to-head `git diff --check` and status | Passed locally for the final commit: no whitespace errors; all three allowed paths reported `M` exactly | This local check is not a substitute for coordinator receipt/target verification. |
 | Targeted active-spec linter/self-check | Environment limitation: local `ajv` missing; no install | These tools do not lint the three goal documents. |
-| Field-by-field eighth-rework review | Blocked for coordinator traceability only; builder read-only content check completed, not independent approval | Reconciled non-complete provenance, exact cost object, four-way response-ID equality, custody equality, checked Node probe, and prior controls; the coordinator receipt path and target SHA remain external inputs not supplied here. |
+| Field-by-field ninth-review closure check | Passed local deterministic content assertions; not independent approval | Reconciled complete-fixture nested bindings, non-complete custody equality, budget acknowledgement freshness, captured-at retention anchors, partitioned reason codes, corrected field-set wording, and prior controls. |
 | Independent frontier review A | Observed result: no fresh report supplied or performed in this builder session (`0/2`) | Coordinator must supply and triage; no pass inferred. |
 | Independent frontier review B | Observed result: no fresh report supplied or performed in this builder session (`0/2`) | Coordinator must supply and triage; no pass inferred. |
 | Gate 3 / merge | Not granted; human-owned | No self-approval or merge. |
 
 ## Completion boundary
 
-The eighth rework is document-complete when all current findings are explicit
-and testable in the three allowed documents, the dependency-free full
-base-to-head scope and whitespace commands pass, and environment limitations
-are accurately recorded. It is not Gate 3-ready until two independent fresh
-frontier reviews are supplied and coordinator-triaged.
+This ninth-review rework is document-complete when all current findings are
+explicit and testable in the three allowed documents, local deterministic
+content and whitespace checks pass, and environment limitations are accurately
+recorded. The authoritative base-to-head scope proof remains pending the final
+commit and coordinator receipt/target inputs. It is not Gate 3-ready until two
+independent fresh frontier reviews are supplied and coordinator-triaged.

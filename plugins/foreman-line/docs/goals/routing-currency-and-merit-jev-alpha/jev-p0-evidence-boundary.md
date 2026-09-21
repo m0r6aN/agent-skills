@@ -26,6 +26,14 @@ value refuses. Pre-call failures are represented only by `refusal-record` or
 `hold-record`; every `live-observation` record represents an attempted call and
 therefore carries the required `budget_ack`.
 
+Reason codes are partitioned by evidence class while retaining the refusal
+matrix condition as the suffix: a non-complete `live-observation` uses exactly
+`live:R01` through `live:R25`, a non-complete `sanitized-replay-fixture` uses
+exactly `fixture:R01` through `fixture:R25`, and a `refusal-record` or
+`hold-record` uses exactly `evidence:R01` through `evidence:R25`. The suffix
+must name the matching row below; the prefix is not caller-selectable and is
+never omitted. Complete records use only `none`.
+
 ### `live-observation`
 
 `live-observation` with `status: complete` has exactly this required field set:
@@ -58,8 +66,8 @@ client_timestamp_utc, request_digest, budget_ack, source_kind, source_ref,
 status, reason_code, retention_until_utc
 ```
 
-Its exact values include `status: "refused"`, `reason_code: "R01"` through
-`"R25"`, and the same capability, endpoint, schema, source, and budget
+Its exact values include `status: "refused"`, `reason_code: "live:R01"` through
+`"live:R25"`, and the same capability, endpoint, schema, source, and budget
 requirements above. `requested_identity`, `served_identity`, `response_id`,
 `server_timestamp_utc`, `response_digest`, `usage`, and `cost` are forbidden.
 
@@ -72,7 +80,7 @@ status, reason_code, disposition, retention_until_utc
 ```
 
 Its exact values include `status: "hold"`, `disposition: "pending-coordinator"`,
-and `reason_code: "R01"` through `"R25"`. `requested_identity`,
+and `reason_code: "live:R01"` through `"live:R25"`. `requested_identity`,
 `served_identity`, `response_id`, `server_timestamp_utc`, `response_digest`,
 `usage`, and `cost` are forbidden.
 
@@ -105,7 +113,7 @@ retention_until_utc
 
 Its exact values are `evidence_class: "sanitized-replay-fixture"`,
 `source_kind: "sanitized-fixture"`, `status: "refused"`, and
-`reason_code: "R01"` through `"R25"`. `requested_identity`, `served_identity`,
+`reason_code: "fixture:R01"` through `"fixture:R25"`. `requested_identity`, `served_identity`,
 `response_id`, `server_timestamp_utc`,
 `request`, `response`, `request_digest`, and `response_digest` are forbidden.
 The required `provenance` is the exact canonical object with
@@ -122,8 +130,8 @@ disposition, retention_until_utc
 
 Its exact values are `evidence_class: "sanitized-replay-fixture"`,
 `source_kind: "sanitized-fixture"`, `status: "hold"`,
-`disposition: "pending-coordinator"`, and `reason_code: "R01"` through
-`"R25"`. The required `provenance` is the exact canonical object with
+`disposition: "pending-coordinator"`, and `reason_code: "fixture:R01"` through
+`"fixture:R25"`. The required `provenance` is the exact canonical object with
 `authenticated_response_id: "none"`; `provenance_digest` is its JCS digest.
 `requested_identity`,
 `served_identity`, `response_id`, `server_timestamp_utc`, `request`,
@@ -140,7 +148,7 @@ recorded_at_utc, retention_until_utc
 
 Its exact values are `evidence_class: "refusal-record"`,
 `status: "refused"`, `source_kind: "coordinator-review"`, and
-`reason_code: "R01"` through `"R25"`. `disposition`, request/response fields,
+`reason_code: "evidence:R01"` through `"evidence:R25"`. `disposition`, request/response fields,
 custody fields, identities, cost, usage, and budget fields are forbidden.
 
 `hold-record` has exactly this required field set:
@@ -152,7 +160,7 @@ recorded_at_utc, retention_until_utc
 
 Its exact values are `evidence_class: "hold-record"`, `status: "hold"`,
 `disposition: "pending-coordinator"`, `source_kind: "coordinator-review"`,
-and `reason_code: "R01"` through `"R25"`. Request/response fields, custody
+and `reason_code: "evidence:R01"` through `"evidence:R25"`. Request/response fields, custody
 fields, identities, cost, usage, and budget fields are forbidden.
 
 Every complete record requires the exact complete set above; every refused or
@@ -181,7 +189,7 @@ control character. These exact bounds make metadata validation deterministic:
   and is never the literal `none`; served model identifiers match
   `^[A-Za-z0-9][A-Za-z0-9._/-]{0,127}$`.
 - `repository` is exactly the literal `agent-skills`; `ref` is exactly one of
-  the literals `main` or `codex/jev-p0-contract`; and `path` is exactly one of
+  the literals `main` or `codex/jev-p0-rework10`; and `path` is exactly one of
   these repository-relative literals:
   `plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-contract.md`,
   `plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-evidence-boundary.md`,
@@ -191,8 +199,11 @@ control character. These exact bounds make metadata validation deterministic:
 - `server_timestamp_utc`, `client_timestamp_utc`, `captured_at_utc`,
   `recorded_at_utc`, and `retention_until_utc` match the exact UTC form
   `^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$` and must
-  parse as real UTC timestamps. `retention_until_utc` is no later than 90 days
-  after the relevant capture timestamp.
+  parse as real UTC timestamps. The retention anchor is
+  `client_timestamp_utc` for `live-observation`,
+  `provenance.captured_at_utc` for `sanitized-replay-fixture`, and
+  `recorded_at_utc` for `refusal-record` or `hold-record`; in every case
+  `anchor <= retention_until_utc <= anchor + 90 days`.
 - `request_digest`, `response_digest`, `provenance_digest`, and
   `acknowledgement_digest` are exactly 64 lowercase hexadecimal characters
   matching `^[0-9a-f]{64}$`; `capability`, `schema_version`, and `endpoint` are
@@ -201,9 +212,12 @@ control character. These exact bounds make metadata validation deterministic:
 - `evidence_class` is exactly `live-observation`,
   `sanitized-replay-fixture`, `refusal-record`, or `hold-record`; `status` is
   exactly `complete`, `refused`, or `hold`; and `reason_code` is `none` for
-  complete records or one of `R01` through `R25` for refusal/hold records.
+  complete records, `live:R01` through `live:R25` for non-complete live
+  observations, `fixture:R01` through `fixture:R25` for non-complete replay
+  fixtures, or `evidence:R01` through `evidence:R25` for generic refusal/hold
+  records.
 
-The six class/status field sets above are the complete wrapper schema. Unknown
+The class/status field sets above are the complete wrapper schema. Unknown
 wrapper metadata, free-text reasons, unbounded numbers, human-chosen IDs, or
 values outside the finite literal allowlists refuse and are not retained.
 
@@ -239,7 +253,18 @@ JSON number `0.01`, not a string or another numeric value. The
 object with `acknowledgement_digest` omitted, and its custody repository/ref/
 path/commit/tree must be verified at the exact committed tree. The acknowledgement
 is valid only when its `run_id`, capability, and `request_digest` exactly match
-the live wrapper. It must be fresh for the run and present before transmission.
+the live wrapper. Freshness is checked using one coordinator UTC clock:
+`run_started_at_utc` is sampled when the durable lease is claimed and
+`transmission_started_at_utc` immediately before the socket is opened. The
+acknowledgement must satisfy
+`run_started_at_utc <= acknowledged_at_utc <= transmission_started_at_utc`,
+be at most 60 seconds old at transmission, and expire at
+`acknowledged_at_utc + 60 seconds`; the socket must open strictly before that
+expiry. A future timestamp, backward/missing clock sample, acknowledgement
+created before run start, different or consumed lease, or any queueing/reuse
+after validation is a terminal hold. The lease binding is rechecked
+immediately before transmission, the lease is consumed before the socket
+opens, and the acknowledgement cannot authorize another call.
 
 The exact `budget_ack` object in this closed schema is required before every
 live call. There is no direct provider-side or account-level enforcement
@@ -339,7 +364,7 @@ and finite literals defined by this document:
   authenticated_response_id: "none" | <provider response_id>,
   manifest_id: <string matching ^manifest-[0-9a-f]{32}$>,
   repository: "agent-skills",
-  ref: "main" | "codex/jev-p0-contract",
+  ref: "main" | "codex/jev-p0-rework10",
   path: <one of the three finite repository-relative custody paths>,
   manifest_commit: <verified commit SHA>,
   manifest_tree: <verified tree SHA>
@@ -351,6 +376,43 @@ this canonical provenance object. The digest procedure is the same strict
 parse/JCS/UTF-8/hash procedure above, and the provenance object is hashed
 without adding transport headers, credentials, fields outside the closed
 schema, or mutable timestamps.
+
+For a complete fixture, every duplicated wrapper field is explicitly bound to
+its nested source before either digest is accepted:
+
+```text
+fixture.schema_version
+  == fixture.request.schema_version
+  == fixture.response.schema_version
+  == "jev-decisions/v1"
+fixture.requested_identity
+  == fixture.request.requested_identity
+  == fixture.response.requested_identity
+fixture.served_identity == fixture.response.served_identity
+fixture.response_id
+  == fixture.response.response_id
+  == fixture.served_identity.response_id
+  == fixture.provenance.authenticated_response_id
+fixture.server_timestamp_utc == fixture.response.server_timestamp_utc
+fixture.request_digest == JCS-SHA256(fixture.request)
+fixture.response_digest == JCS-SHA256(fixture.response)
+fixture.request_digest == fixture.manifest_entry.request_digest
+fixture.response_digest == fixture.manifest_entry.response_digest
+fixture.provenance_digest == fixture.manifest_entry.provenance_digest
+fixture.fixture_id == fixture.provenance.fixture_id == fixture.manifest_entry.fixture_id
+fixture.manifest_id == fixture.provenance.manifest_id == fixture.manifest_entry.manifest_id
+fixture.source_kind == fixture.provenance.source_kind
+fixture.source_ref == fixture.provenance.source_ref
+fixture.repository == fixture.provenance.repository == fixture.manifest_entry.repository
+fixture.ref == fixture.provenance.ref == fixture.manifest_entry.ref
+fixture.path == fixture.provenance.path == fixture.manifest_entry.path
+fixture.commit == fixture.provenance.manifest_commit == fixture.manifest_entry.commit
+fixture.tree == fixture.provenance.manifest_tree == fixture.manifest_entry.tree
+```
+
+The equality is exact and recursive for the identity objects; no wrapper copy
+may be independently edited or normalized. A missing nested field, one-sided
+copy, timestamp mismatch, digest mismatch, or identity mismatch refuses.
 
 `provenance.authenticated_response_id` is always present. For a non-complete
 `refused` or `hold` fixture, its only permitted value is the exact JSON string
@@ -424,6 +486,29 @@ wrapper custody tuple and provenance custody tuple must be identical:
 `manifest_commit` and `manifest_tree` are exactly 40 lowercase hexadecimal
 characters and equal wrapper `commit` and `tree`; every manifest-entry field
 above is required and exact. Any split-brain mismatch refuses custody.
+
+Non-complete fixtures have no `manifest_entry`, request, response, digest, or
+identity fields, but their remaining custody is still equality-bound:
+
+```text
+fixture.fixture_id == fixture.provenance.fixture_id
+fixture.manifest_id == fixture.provenance.manifest_id
+fixture.source_kind == fixture.provenance.source_kind
+fixture.source_ref == fixture.provenance.source_ref
+(fixture.repository, fixture.ref, fixture.path, fixture.commit, fixture.tree)
+  == (fixture.provenance.repository, fixture.provenance.ref,
+      fixture.provenance.path, fixture.provenance.manifest_commit,
+      fixture.provenance.manifest_tree)
+fixture.provenance.authenticated_response_id == "none"
+```
+
+The `manifest_id` must resolve to the exact coordinator-controlled manifest at
+that custody tuple even when the fixture is refused or held. A missing,
+one-sided, or mismatched value, a mutable working-tree substitute, or any
+`manifest_entry`/request/response field on a non-complete fixture refuses
+custody. This equality is checked before the class-partitioned reason code is
+accepted.
+
 Mutable working-tree files, uncommitted fixtures, detached copies, missing
 manifest entries, self-recomputed manifest entries, or changed digest pairs
 are not trusted custody and refuse replay.
@@ -497,6 +582,11 @@ that the object cannot directly authorize a command, route, escalation, spend,
 recipient, or state mutation.
 
 ## Refusal matrix
+
+The `R01`–`R25` labels in this table are condition suffixes. A serialized
+non-complete record must use the partitioned code for its evidence class
+(`live:Rnn`, `fixture:Rnn`, or `evidence:Rnn`) and the suffix must match this
+table; an unprefixed `Rnn` is invalid.
 
 | Refusal ID | Condition | Required disposition |
 |---|---|---|
