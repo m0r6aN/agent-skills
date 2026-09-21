@@ -121,3 +121,11 @@ authority remains human-owned and not delegated. RCM-P1 remains held; no P1 disp
 host correction, live policy mutation, Pi write, provider spend, or downstream
 consumption is authorized until the remaining P0 evidence boundary is accepted and P1
 is explicitly re-gated.
+
+The coordinator recommendation was ratified and authorized by Clinton Morgan on
+2026-09-20: D13 remains unchanged; the alpha Decisions result is servability-only;
+`MISSING_MODEL_REFUSED` remains the routing outcome; and RCM-P1 remains held. This
+authorization creates no alpha eligibility exception and authorizes no further call,
+provider spend, Gate 1 reopening, host correction, policy or Pi mutation, HAWF action,
+Helmholtz handoff, or downstream consumption. A future alpha-routing proposal must
+return through a separately named Gate 1 eligibility annex and its own evidence chain.

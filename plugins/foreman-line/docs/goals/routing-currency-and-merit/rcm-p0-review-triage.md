@@ -131,3 +131,13 @@ cannot resolve the exact tuple, so `MISSING_MODEL_REFUSED` and the
 refused/disabled-lane/correction-proposal-only disposition remain. D13 is unchanged.
 The correction was merged under the same four-artifact Gate 3 extension in `d045aa7`
 after two fresh independent read-only reviews. HAWF remains untouched.
+
+## Ratified alpha disposition
+
+On 2026-09-20, Clinton Morgan ratified and authorized the coordinator recommendation:
+D13 remains unchanged; the one successful alpha Decisions call is recorded as external
+servability evidence only; `MISSING_MODEL_REFUSED` remains; and RCM-P1 stays held. The
+ratification does not create an alpha eligibility exception, reopen Gate 1, authorize
+another call or spend, change the bounded Gate 3 scope, or authorize HAWF, Helmholtz,
+host, policy, Pi, or downstream action. Any future alpha routing requires a separately
+defined and ratified eligibility surface.

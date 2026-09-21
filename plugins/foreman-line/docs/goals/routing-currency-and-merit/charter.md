@@ -352,6 +352,14 @@ A–K and queue amendments 1–6.” This ratifies the amended decision text and
 parcel ownership/dependency queue recorded in this charter. It does not grant Gate 2,
 Gate 3, provider spend, host correction, or external-effect authority.
 
+**Disposition ratified 2026-09-20 by Clinton Morgan:** “Please proceed with your
+recommendation. Ratified and authorized.” This ratifies the coordinator's disposition
+to keep D13 unchanged, record the single alpha Decisions result as external servability
+evidence only, retain `MISSING_MODEL_REFUSED`, and keep RCM-P1 held. It does not create
+an alpha eligibility exception, reopen Gate 1, authorize another call or spend, change
+the bounded Gate 3 scope, reconcile or hand off HAWF, or authorize host, policy, Pi, or
+downstream changes.
+
 ## Gate 2 record
 
 **GRANTED 2026-09-20 by Clinton Morgan:** “Grant Gate 2 for RCM-P0 and RCM-P1.” This

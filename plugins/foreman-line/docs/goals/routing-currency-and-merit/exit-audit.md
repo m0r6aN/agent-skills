@@ -51,6 +51,10 @@ correction, live policy mutation, Pi writes, credential discovery, network calls
 provider spend, and downstream consumption. The goal remains active and is not
 eligible for `complete` status.
 
+The alpha disposition was ratified and authorized on 2026-09-20: D13 remains
+unchanged, alpha Decisions remains servability-only, and P1 remains held. This is a
+governance disposition, not a completion of the unresolved P0 evidence requirements.
+
 ## Source note
 
 `C:\Users\clint\Downloads\charter.md` is still present, but its hash differs from
