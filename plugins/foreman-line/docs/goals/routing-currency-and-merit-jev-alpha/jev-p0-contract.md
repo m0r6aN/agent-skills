@@ -12,7 +12,7 @@ This is a documentation contract for later parcels. It grants no provider
 call, credential access, spend, runtime effect, consumer authorization, or
 Gate 3 approval. JEV-P0 itself performs zero calls and incurs zero spend.
 
-## Capability and immutable transport binding
+## Capability-owned transport
 
 The sole owned capability key is exactly:
 
@@ -20,24 +20,35 @@ The sole owned capability key is exactly:
 openrouter-alpha-decisions
 ```
 
-The capability owns this immutable endpoint constant; callers do not supply or
-override an endpoint:
+The capability owns these immutable transport constants and policies:
 
 ```text
 CAPABILITY_ENDPOINT = "https://openrouter.ai/api/alpha/decisions"
+CAPABILITY_METHOD = "POST"
+CAPABILITY_HEADERS = {
+  "Accept": "application/json",
+  "Content-Type": "application/json"
+}
+REDIRECT_POLICY = "disabled"
 ```
 
-The only approved operation is `POST` to that constant. A caller-provided URL,
-host, scheme, port, path, method, proxy destination, or redirect target is
-never authoritative and must refuse. The transport must:
+The logical request body is built only from the allowlisted request schema in
+this document. The adapter owns its serialization and transmits exactly the
+measured UTF-8 body bytes; the caller cannot supply or replace a raw body.
+Runtime-only authorization injection, when later authorized, is owned by the
+adapter and is never caller-controlled or represented in evidence.
 
-- send exactly `POST` to host `openrouter.ai`, path `/api/alpha/decisions`,
-  over HTTPS/TLS on the expected final origin;
-- disable redirects rather than following them;
-- require the final TLS origin to remain exactly `https://openrouter.ai` and
-  reject certificate/hostname/chain validation failure; and
-- reject a non-2xx status, missing or non-JSON content type, transport failure,
-  decompression failure, or body truncation.
+The caller must not control or provide `Host`, `:authority`, `Authorization`,
+content headers, transfer headers, endpoint, method, body, proxy destination,
+or redirect behavior. `Content-Length` or equivalent framing is transport-
+derived from the exact body bytes, never caller-supplied. Any attempt to
+provide or override these fields refuses.
+
+The only approved operation is `POST` to the immutable endpoint. The transport
+must require the final TLS origin to remain exactly `https://openrouter.ai`,
+with valid certificate, hostname, and chain verification. It must reject
+redirects, non-2xx status, missing or non-`application/json` content type,
+transport failure, decompression failure, body truncation, and origin drift.
 
 The following are separate surfaces and must refuse substitution or silent
 repointing:
@@ -59,18 +70,18 @@ model    = typesafe/jev-1.13
 surface  = alpha-decisions
 ```
 
-The request identity is not a display label. It is a literal contract value:
+The request identity is not a display label:
 
 - `typesafe/jev-1.13` must not be aliased, normalized, suffix-stripped, or
   replaced with `typesafe/jev-latest`.
-- The capability-owned endpoint and capability key must match their exact
-  literals; the request envelope has no caller-controlled `endpoint` field.
+- The endpoint and capability key must match their exact capability-owned
+  literals; the caller has no endpoint field.
 - A response must repeat the requested identity exactly. Missing, conflicting,
   case-changed, aliased, normalized, or substituted values refuse.
 - The authenticated provider response must supply a `model` field and a
   provider response identifier represented as `response_id`. The normalized
-  `served_identity.model` must equal that response `model` byte-for-byte, and
-  the observation's `response_id` must equal that provider response identifier.
+  `served_identity.model` must equal that response `model` exactly, and the
+  observation's `response_id` must equal that provider response identifier.
 - The client must not synthesize, infer, fallback, suffix-strip, or copy the
   requested model into `served_identity`. Missing or unparseable provider
   fields refuse; the requested identity is never a fallback.
@@ -109,10 +120,30 @@ extra and refuse. All required strings are non-empty UTF-8 strings; JSON
 objects and arrays must not contain duplicate keys; non-finite numbers,
 `null` where a value is required, and malformed JSON refuse.
 
-### Request envelope
+### Allowlisted request envelope and privacy boundary
 
-The caller supplies no endpoint. The later adapter serializes this logical
-request and transmits it only to `CAPABILITY_ENDPOINT`.
+The caller supplies typed logical fields, not an endpoint, headers, or raw
+body. The only permitted `state` shape is:
+
+```text
+state:
+  schema_version: "support-triage-input/v1"
+  values:
+    case_type: "billing" | "technical" | "sales" | "other"
+    urgency_signal: <finite number from 0 through 1>
+    frustration_signal: <finite non-negative JSON number>
+    contact_channel: "email" | "chat" | "phone"
+```
+
+`values` may omit fields that are not available, but unknown keys, free text,
+raw transcripts, names, email addresses, phone numbers, addresses, customer or
+ticket identifiers, tokens, credentials, authorization material, and other
+PII are forbidden. The caller must minimize to this allowlist, redact unsafe
+input before serialization, and refuse rather than guess when minimization or
+redaction is uncertain. The request body is closed and no extra state fields
+are accepted.
+
+The logical request envelope is:
 
 ```text
 {
@@ -123,7 +154,7 @@ request and transmits it only to `CAPABILITY_ENDPOINT`.
     model: "typesafe/jev-1.13",
     surface: "alpha-decisions"
   },
-  state: <JSON object>,
+  state: <the allowlisted state object above>,
   questions: [
     {
       name: <unique non-empty question name>,
@@ -142,11 +173,10 @@ Request rules:
   complete coverage set for that question.
 - `choices` is required, non-empty, unique, and exact when `type` is `choice`;
   it is forbidden for `noul` and `score`.
-- `state` is an application-owned JSON object. It is not a credential store;
-  credentials, authorization headers, or raw secret-bearing material are
-  forbidden in state and in every evidence representation.
-- The logical request must be validated, serialized as UTF-8, and measured as
-  a raw body before transmission. It must be no larger than 65,536 bytes.
+- The request must be validated, minimized/redacted, serialized as UTF-8, and
+  measured as the exact body bytes immediately before transmission. It must be
+  no larger than 65,536 bytes. The transmitted body bytes must equal the
+  measured bytes exactly.
 
 ### Response envelope
 
@@ -208,20 +238,39 @@ The response raw UTF-8 body is measured before JSON parsing or persistence and
 must be no larger than 65,536 bytes. A body that is truncated, decompression-
 failed, not valid UTF-8, or over the limit refuses before parse or persistence.
 
-## Bounded run authority
+## Cost, run, lease, and terminal authority
 
-Each later live run requires a coordinator-issued `run_id` and an atomic
-single-call lease bound to that run. Before transmission, the lease must be
-acquired and the full `$0.01 USD` maximum budget reserved. A lease is consumed
-by at most one call and cannot be recreated by retry, timeout recovery, or a
-second worker. Concurrency is one, retries are zero, and the timeout is 30
-seconds.
+Each later live run requires a coordinator-issued `run_id`, an atomic durable
+single-call lease, and a pre-call reservation for the full `$0.01 USD` cap.
+Atomic claim semantics are CAS/create-if-absent on a durable record: exactly one
+caller can create or transition the lease from `available` to `claimed`; every
+other claimant refuses. The immutable lease binds all of:
 
-The run is terminally held/refused when the provider reports a non-USD cost,
-missing cost, unqualified currency, or a cost above the reserved cap. A hold
-is non-consumable and non-retryable pending coordinator disposition; it is not
-partial success and never silently estimates or converts cost. JEV-P0 itself
-has no run ID, lease, provider call, or spend.
+```text
+run_id + capability + schema_version + request_digest
+```
+
+The lease is consumed by at most one call and cannot be recreated by retry,
+timeout recovery, process failure, or a second worker. Concurrency is one,
+retries are zero, and the timeout is 30 seconds.
+
+Before transmission, the coordinator must have either provider-side or
+account-level hard budget enforcement for the `$0.01 USD` cap, or a recorded
+provider/account acknowledgement that the cap is enforced for this run. A
+client-side reservation alone cannot prevent post-call overcharge and is not
+sufficient authorization.
+
+Any reported cost must be a JSON number that is finite and non-negative, never
+a string, NaN, Infinity, or negative value, and must carry the exact literal
+currency `USD`. The amount must be `<= 0.01`. Missing, non-USD, malformed, or
+over-cap cost is a terminal hold/refusal; it is never estimated, converted, or
+silently accepted.
+
+Run and evidence state transitions are append-only. Once `complete`, `refused`,
+or `hold` is recorded, that terminal state cannot be retried, reopened,
+overwritten, or converted by a later worker. A hold is terminal,
+non-consumable, and non-retryable pending coordinator disposition. JEV-P0
+itself has no run ID, lease, provider call, or spend.
 
 ## Credential and consumer boundary
 
@@ -254,17 +303,31 @@ policy and authorization gate after validating this advisory object. Jev
 answers cannot itself route, escalate, spend, mutate state, select a general
 model, or invoke a host/Pi, HAWF, Helmholtz, or GMF effect.
 
-No other consumer is implied by this contract. Adding one requires a separately
-ratified contract amendment or parcel.
+## Privacy, retention, and evidence boundary
+
+Only the allowlisted state schema may be sent. Pre-send minimization and
+redaction are mandatory; uncertain or unsafe input refuses. No PII may occur
+in request/response digests, run metadata, manifest paths, provenance objects,
+source references, logs, review reports, or fixture identifiers. Source
+references are opaque reviewable references, not names, emails, ticket IDs, or
+customer data.
+
+Raw request bodies, raw response bodies, headers, authorization values,
+compressed streams, and unredacted payloads have zero retention. Sanitized
+fixtures and safe live metadata require a `retention_until_utc` and may be
+retained no longer than 90 days after capture, or earlier coordinator
+disposition; after that point they must be deleted or rendered inaccessible
+without changing the immutable custody record. Retention never authorizes
+retaining raw payloads or PII.
 
 ## Fail-closed rule
 
-Any endpoint, transport, identity, schema, envelope, answer, size,
-authentication, provider-binding, lease, budget, cost, digest, provenance,
-retry, concurrency, timeout, or consumer-boundary failure is a refusal or
-terminal hold. Refusal is explicit and side-effect free: it does not alias,
-normalize, retry, downgrade, substitute, route, persist unsafe material,
-spend, or mutate state.
+Any endpoint, header, body, transport, origin, identity, schema, envelope,
+answer, size, authentication, privacy, lease, budget, cost, digest,
+provenance, custody, retry, concurrency, timeout, or consumer-boundary failure
+is a refusal or terminal hold. Refusal is explicit and side-effect free: it
+does not alias, normalize, retry, downgrade, substitute, route, persist unsafe
+material, spend, or mutate state.
 
 The detailed refusal matrix, evidence classes, replay authority, canonical
 digest procedure, custody rule, and bounded-run rules are defined in
