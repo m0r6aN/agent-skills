@@ -453,3 +453,18 @@ but the following same-three-file fixes remain:
 Scope and external-boundary compliance passed for `dc9d6a76`; no network,
 credential, spend, host/Pi, parent, HAWF, Helmholtz, or downstream action
 occurred.
+
+## Twentieth review disposition
+
+Two fresh independent reviews of `d18d08ba12e5b06d08a6c4ccf11875d0bc77cfda`
+returned **REQUEST CHANGES / Gate 3 not ready**. The cumulative coordinator
+proof passed, but the following same-three-file fixes remain:
+
+| Finding | Disposition |
+|---|---|
+| The finite R21 path set is inconsistent with the closed replay schema: it includes absent `fixture.capability`/`fixture.endpoint` and omits required `fixture.provenance.manifest_id`; `captured_at_utc` and nested request/response equality ownership are ambiguous. | Reconcile the finite path set with the closed schema and equality chains. Include only present, valid paths; explicitly own `fixture.provenance.manifest_id`, nested request/response fields, and `fixture.provenance.captured_at_utc` with a stated comparison rule. Keep missing/one-sided/empty/sentinel values in R23/R22. |
+| Verification scope comparisons use case-insensitive PowerShell sorting/comparison, so case-variant paths could pass the claimed exact three-file/M-status proof. | Use ordinal/case-sensitive path and status comparisons for the exact scope proof, and retain the three-file and all-`M` assertions. |
+
+Scope and external-boundary compliance passed for `d18d08ba`; no network,
+credential, spend, host/Pi, parent, HAWF, Helmholtz, or downstream action
+occurred.
