@@ -241,3 +241,26 @@ P0 Gate 3 acceptance does not itself authorize that rework or authorize JEV-P1.
 The shaped JEV-P1 spec is therefore `status: draft` and is not dispatchable.
 The next human decision is an exact Gate 2 grant for JEV-P1 after the P0
 observation disposition is recorded.
+
+## Tenth review disposition
+
+Two fresh independent reviews of `e907663be491c4d5765b5b8279116a2633c81b4b`
+returned **REQUEST CHANGES / Gate 3 not ready**. The bounded Gate 2 rework
+continues on the same three JEV-P0 artifacts; no merge or Gate 3 acceptance is
+authorized for this rework yet.
+
+| Finding | Disposition |
+|---|---|
+| Complete-fixture equality does not bind a manifest-entry schema version. | Fix in next same-file rework; add the exact manifest-entry schema-version field and equality. |
+| Manifest custody remains wrapper/provenance self-consistency without an independent coordinator trust anchor. | Fix in next same-file rework; define the external coordinator-controlled manifest receipt/resolution contract and fail closed when it is absent or mismatched. |
+| Receipt parsing accepts the first matching line and permits ambiguous newline/duplicate declarations. | Fix in next same-file rework; require one unambiguous closed receipt declaration and reject duplicates or malformed line structure. |
+| The verification table records receipt/target evidence as absent even though the coordinator can supply it. | Fix in next same-file rework; record the exact supplied receipt path, target SHA, and successful execution result without deriving the target from `HEAD`. |
+| Custody path/ref literals do not cover the planned JEV-P1 fixture paths. | Fix in next same-file rework; add the finite approved JEV-P1 fixture paths/ref to the contract without opening arbitrary paths. |
+| Missing live cost/currency can map to either hold or refusal. | Fix in next same-file rework; preserve deterministic `hold` for missing cost/currency and reserve refusal for malformed/unauthorized conditions. |
+| Invalid replay custody cannot be represented by the fixture class/status matrix. | Fix in next same-file rework; route untrusted/malformed custody to generic `evidence:R18/R19` refusal/hold records and reserve `fixture:*` for validated custody. |
+| Retention anchors can be future-dated. | Fix in next same-file rework; bind anchors to the trusted capture/recording clock and reject future anchors. |
+
+The exact three-file scope, clean worktree, `M` statuses, whitespace checks, and
+boundary compliance passed. The review findings are reproduced and accepted as
+rework items; Gate 3 remains closed until a fresh commit receives two passing
+independent reviews.
