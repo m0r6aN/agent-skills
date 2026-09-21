@@ -229,3 +229,13 @@ JEV-P1, general Gate 3, live Jev execution, credential or spend activity,
 host/Pi correction, parent mutation, HAWF reconciliation, or Helmholtz
 dispatch. The earlier independent-review findings remain preserved above as
 known review observations; they are not silently reclassified as resolved.
+
+## Follow-up disposition before JEV-P1
+
+The coordinator retains the nine-review observations as an explicit P0 risk
+register. They must be closed by a bounded same-file P0 rework or accepted by
+an explicit human disposition before JEV-P1 implementation is dispatched; the
+P0 Gate 3 acceptance does not itself authorize that rework or authorize JEV-P1.
+The shaped JEV-P1 spec is therefore `status: draft` and is not dispatchable.
+The next human decision is an exact Gate 2 grant for JEV-P1 after the P0
+observation disposition is recorded.

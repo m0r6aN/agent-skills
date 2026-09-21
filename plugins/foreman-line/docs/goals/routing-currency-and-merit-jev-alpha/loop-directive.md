@@ -12,8 +12,11 @@ Gate 1 is ratified for the original J1–J10 and the plan-review replacement
 decisions. The mandatory plan review returned REQUEST CHANGES and was triaged;
 the replacement decisions and non-locked queue corrections are now ratified or
 accepted as recorded in the charter. Gate 2 is granted only for JEV-P0. Gate 3
-and all later parcel authority remain ungranted. No live provider call, spend,
-host/Pi mutation, or parent-goal surface change is authorized.
+is accepted only for the bounded JEV-P0 handoff after merge and local refresh;
+all later parcel authority remains ungranted. JEV-P1 is shaped as a draft and
+awaits disposition of the preserved P0 review observations plus a new exact
+Gate 2 grant. No live provider call, spend, host/Pi mutation, or parent-goal
+surface change is authorized.
 
 ## Standing authorizations and limits
 
@@ -21,7 +24,10 @@ host/Pi mutation, or parent-goal surface change is authorized.
    Any future locked-decision change reopens Gate 1 for that decision only.
 2. **Gate 2** is granted only for the exact parcel `JEV-P0`. Stop and request a
    new exact parcel-set grant before dispatching JEV-P1 or any later parcel.
-3. **Gate 3** is not granted. Merges remain human-owned.
+3. **Gate 3** is accepted only for the bounded JEV-P0 handoff at merged commit
+   `ef921b65ee59c1c6aaef230383c51450dfc4de42`; it does not authorize JEV-P1+
+   or any live call, spend, host/Pi, parent, HAWF, Helmholtz, or general-routing
+   action. Merges remain human-owned for later parcels.
 4. A future Gate 2 grant may authorize only the exact live-call bound recorded in
    J10: one call per authorized run, zero retries, concurrency one, 30-second
    timeout, 64-KiB request limit, and aggregate cap $0.01 USD per run.

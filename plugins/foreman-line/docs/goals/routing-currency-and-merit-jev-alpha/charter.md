@@ -1,6 +1,6 @@
 # Routing Currency and Merit — Jev Alpha Decisions
 
-**Status:** RATIFIED — Gate 1 complete after plan-review amendments on 2026-09-21
+**Status:** RATIFIED — Gate 1 complete; bounded JEV-P0 Gate 3 accepted after merge on 2026-09-21
 **Prepared:** 2026-09-21
 **Parent context:** `routing-currency-and-merit`
 **Coordinator:** Foreman Line coordinator session
@@ -81,10 +81,13 @@ were not changed.
 ## Human gates
 
 - **Gate 1:** granted for the original J1–J10 and the plan-review replacement
-  decisions recorded below. Gate 2 and Gate 3 remain ungranted.
+  decisions recorded below. Later parcel authority remains ungranted.
 - **Gate 2:** granted only for the exact parcel `JEV-P0` by the record below.
   JEV-P1–JEV-P5 remain ungranted and require a later exact parcel-set grant.
-- **Gate 3:** not requested by this draft. Merge remains human-owned.
+- **Gate 3:** accepted only for the bounded JEV-P0 handoff at merged commit
+  `ef921b65ee59c1c6aaef230383c51450dfc4de42`; it does not grant JEV-P1–P5,
+  live Jev execution, spend, host/Pi action, parent mutation, HAWF, Helmholtz,
+  or general Gate 3.
 
 ## Stop conditions
 
@@ -122,6 +125,14 @@ dispatch of exactly JEV-P0 through the full shaping, builder, deterministic-chec
 dual-review, triage, and human Gate 3 process. It authorizes no other parcel, no
 additional live call or spend beyond a later explicit bounded authorization, no
 host/Pi or parent-goal change, and no HAWF, Helmholtz, or downstream action.
+
+## Gate 3 record
+
+**ACCEPTED 2026-09-21 after merge and local refresh:** Pull request [#38](https://github.com/m0r6aN/agent-skills/pull/38)
+merged at `ef921b65ee59c1c6aaef230383c51450dfc4de42`, and the local coordinator
+branch was refreshed to that same commit. This accepts the bounded JEV-P0
+handoff only. The independent-review observations remain recorded in the P0
+triage; they are not reclassified as resolved by this acceptance.
 
 ## Plan-review Gate 1 reopening
 
