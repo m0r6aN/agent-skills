@@ -232,6 +232,8 @@ known review observations; they are not silently reclassified as resolved.
 
 ## Follow-up disposition before JEV-P1
 
+CoordinatorTargetSha: e907663be491c4d5765b5b8279116a2633c81b4b
+
 The coordinator retains the nine-review observations as an explicit P0 risk
 register. They must be closed by a bounded same-file P0 rework or accepted by
 an explicit human disposition before JEV-P1 implementation is dispatched; the
