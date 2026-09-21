@@ -400,3 +400,20 @@ passed, but the following findings require another same-three-file rework:
 Scope and external-boundary compliance passed for `dbc2db5f`; no network,
 credential, spend, host/Pi, parent, HAWF, Helmholtz, or downstream action
 occurred.
+
+## Seventeenth review disposition
+
+Two fresh independent reviews of cumulative head
+`cf79819848c129581b13ff1289920f4cace2beca` returned **REQUEST CHANGES / Gate 3
+not ready**. The cumulative coordinator proof passed, but the following
+traceability and predicate gaps require another same-three-file rework:
+
+| Finding | Disposition |
+|---|---|
+| Verification calls parcel base `eb88...` the direct parent even though the cumulative head has an intervening chain, and retains fifteenth-review labels. | Distinguish the declared cumulative parcel proof base `eb88...` from the immediate prior candidate `d439...`; update current review ordinal/round labels without changing the intended full-scope proof. |
+| R23 refers to undefined logs/reports. | Restrict R23 to the closed evidence wrapper/retained record schemas defined in this parcel, or define those surfaces explicitly; no unbounded log/report schema. |
+| R17, R20, and R21 can describe the same digest/identity failure. | Add a closed post-custody precedence and narrow predicates: R17 request/response JCS digest procedure only; R20 custody-resolved committed-byte/manifest mismatch only; R21 post-custody identity/provenance equality only. Remove identity-unbound/digest overlap. |
+
+Scope and external-boundary compliance passed for `cf798198`; no network,
+credential, spend, host/Pi, parent, HAWF, Helmholtz, or downstream action
+occurred.
