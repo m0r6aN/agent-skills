@@ -364,3 +364,22 @@ rework:
 Scope and external-boundary compliance passed for `18becc88`; no network,
 credential, spend, host/Pi, parent, HAWF, Helmholtz, or downstream action
 occurred.
+
+## Fifteenth review disposition
+
+Two fresh independent reviews of `eb88b65426c5e37893ac0591be83eef8c91da123`
+returned **REQUEST CHANGES / Gate 3 not ready**. The coordinator proof passed,
+but the following findings require another same-three-file rework under the
+existing bounded Gate 2 grant:
+
+| Finding | Disposition |
+|---|---|
+| The current verification procedure names `c71bdbf` as its base, but the audited commit's actual direct parent is `18becc88`; round metadata is consequently stale. | Use `18becc881b5ebd663aa62b994aa20e5d0338131a` as the current proof base and retain `c71bdbf` only as historical prior-candidate evidence. |
+| The evidence-boundary pre-transmission recheck omits `lease_id`. | Recheck `lease_id` together with run, capability, schema, request digest, and the exact durable lease record before consume/socket open. |
+| Top-level live `acknowledged_at_utc` and nested `budget_ack.acknowledged_at_utc` lack an explicit equality. | Require exact equality or remove the duplicate; freshness must have one authoritative value. |
+| Complete-only fixture schemas coexist with stale prose for non-complete fixture provenance and R21. | Remove impossible non-complete fixture branches and align R21/provenance text to generic evidence records. |
+| Claim/consume evidence is required but has no closed schema. | Define claim/consume as internal durable lease records with explicit fields/equalities, or document their closed representation without adding a new external evidence class. |
+
+Scope and external-boundary compliance passed for `eb88b654`; no network,
+credential, spend, host/Pi, parent, HAWF, Helmholtz, or downstream action
+occurred.
