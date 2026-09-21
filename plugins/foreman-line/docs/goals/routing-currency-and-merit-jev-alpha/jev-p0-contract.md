@@ -322,22 +322,35 @@ The closed internal durable lease record is not a JEV evidence record and is:
 ```text
 lease_record: {
   lease_id: <generated string matching ^lease-[0-9a-f]{32}$>,
-  run_id: <exact coordinator-issued run_id>,
+  run_id: <generated string matching ^run-[0-9a-f]{32}$>,
   capability: "openrouter-alpha-decisions",
   decision_schema_version: "jev-decisions/v1",
-  request_digest: <exact request digest>,
+  request_digest: <64 lowercase hexadecimal characters matching ^[0-9a-f]{64}$>,
   state: "in-flight" | "consumed" | "terminal",
-  claimed_at_utc: <exact UTC timestamp at the claimed event>,
-  consumed_at_utc: <exact UTC timestamp at atomic consume> | absent until consumed,
-  terminal_at_utc: <exact UTC timestamp at terminal transition> | absent until terminal,
+  claimed_at_utc: <timestamp matching ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$>,
+  consumed_at_utc: <timestamp matching ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$> | absent until consumed,
+  terminal_at_utc: <timestamp matching ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$> | absent until terminal,
   transition_actor: "coordinator"
 }
 ```
 
-The record field list is closed: no other field is permitted. Each present
-transition timestamp uses the exact UTC grammar below, is written once by the
-coordinator, and is never rewritten; the absent timestamp conditions above are
-part of the state invariant. The `lease_id`, `run_id`, `capability`, and
+The record field list is closed: no other field is permitted. The generated
+`run_id` and `lease_id` grammars, the 64-lowercase-hexadecimal
+`request_digest`, the exact capability and `decision_schema_version` literals,
+the three exact states, and `transition_actor: "coordinator"` are mandatory.
+Each present transition timestamp uses the exact UTC grammar above, is written
+once by the coordinator, and is never rewritten; the absent timestamp
+conditions above are part of the state invariant. For a complete
+`live-observation`, the immutable transition-time bindings are
+
+```text
+lease_record.claimed_at_utc == live_observation.run_started_at_utc
+lease_record.consumed_at_utc == live_observation.transmission_started_at_utc
+```
+
+`terminal_at_utc` is internal-only and is not represented in live evidence;
+generic refusal/hold records likewise carry no lease transition fields. The
+`lease_id`, `run_id`, `capability`, and
 `request_digest` in a custody-verified `budget_ack` must equal the corresponding
 fields in this exact durable record and in the live evidence record. The live
 record's `schema_version` must equal both the durable record's
@@ -454,6 +467,24 @@ belongs to one row, and no caller-selected status is accepted.
 For R14, the invalid acknowledgement prevents socket open; the coordinator
 finalizes the fresh single-use record through `in-flight -> consumed ->
 terminal` and emits only the generic hold record.
+
+## Ordered custody reason-code precedence
+
+Custody reasons are assigned by validation stage, in this order, and this
+precedence is explicit rather than a general fail-closed fallback:
+
+1. First validate the finite repository/ref/path allowlists, generated ID
+   grammars, numeric bounds, and the outer closed schemas for evidence
+   wrappers, logs, and reports. A finite input, vocabulary, allowlist,
+   generated-ID, or numeric-bound violation is generic `evidence:R22`; an
+   outer wrapper, log, or report field-schema violation is generic
+   `evidence:R23`. These pre-custody violations are never `R19` or `R18`.
+2. Only after that pre-custody validation passes, resolve immutable custody.
+   Missing, unverified, unapproved, mutable, or non-resolving custody is a
+   generic `evidence:R19` hold.
+3. Only after custody and the outer closed schemas pass, a canonical
+   provenance JCS, digest, or procedure failure is generic `evidence:R18`
+   refusal. `R18` does not own generic out-of-schema fields; `R23` owns those.
 
 ## Credential and consumer boundary
 

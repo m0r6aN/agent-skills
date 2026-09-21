@@ -1,8 +1,8 @@
-# JEV-P0 — Bounded Gate 2 builder round 8 verification record
+# JEV-P0 — Bounded Gate 2 builder round 9 verification record
 
 ## Scope
 
-This record verifies the bounded JEV-P0 builder round 8 only.
+This record verifies the bounded JEV-P0 builder round 9 only.
 It does not authorize JEV-P1 or later, provider calls, runtime use, spend,
 credential access, dispatch, promotion, or Gate 3. The only mutation authority
 is:
@@ -12,8 +12,9 @@ is:
 - `plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-verification.md`
 
 Every other path and effect is forbidden. The working branch is
-`codex/jev-p0-rework17`, and the exact current-round base for this builder is
-the direct parent `eb88b65426c5e37893ac0591be83eef8c91da123`.
+`codex/jev-p0-rework18`, starting at `dbc2db5f5dbae7b3df142a22230d69ed6584e5c6`.
+The cumulative current-round scope proof continues to use the round-8 proof
+base `eb88b65426c5e37893ac0591be83eef8c91da123`.
 
 ## Prior-closure preservation and fifteenth-review closure checklist
 
@@ -46,6 +47,12 @@ text outside the fixed schema.
    transmission_started_at_utc <= socket_opened_at_utc`, the 60-second
    age/expiry, future/backward/missing-clock rejection, lease recheck,
    consume-before-socket, and no reuse.
+   The internal lease record is closed and strict: generated `run_id` and
+   `lease_id` grammars, 64-lowercase-hexadecimal `request_digest`, exact
+   capability/schema literals, exact state set, UTC transition grammars, and
+   `claimed_at_utc == live_observation.run_started_at_utc` plus
+   `consumed_at_utc == live_observation.transmission_started_at_utc`; terminal
+   transition time may remain internal-only.
 7. Replay custody requires an independent coordinator manifest receipt/resolution;
    wrapper self-equality and format-only IDs never establish trust.
 8. The finite custody allowlist includes the approved JEV-P1 fixture paths and
@@ -59,7 +66,12 @@ text outside the fixed schema.
    complete-only; claim/consume artifacts are internal durable lease-record
    transitions and never external evidence records; generic refusal/hold uses
    no fixture provenance, R21 uses only generic `evidence:R21`, and R20 emits
-   only `evidence:R20`.
+   only `evidence:R20`. Custody validation is explicitly ordered: pre-custody
+   finite vocabulary/allowlist/generated-ID/numeric violations are R22 and
+   outer wrapper/log/report schema violations are R23, never R19/R18; only
+   after that does unresolved custody become R19 hold, and only after custody
+   plus outer schema pass does canonical provenance JCS/digest/procedure
+   failure become R18 refusal. R18 never owns generic out-of-schema fields.
 9. Retention uses a trusted coordinator capture/recording clock, rejects future
    anchors, and preserves `anchor <= retention <= anchor+90 days`.
 10. Scope proof first enumerates the complete unfiltered direct base-to-head
@@ -132,7 +144,7 @@ and not Gate 3 authorization. The external proof targeted candidate
 | Filtered status | Passed; all three allowed paths were exactly `M` |
 | Independent review count | `0/2` at the time of this prior-candidate coordinator proof; no review approval inferred |
 
-This prior-candidate record does not assert the current round 8 final HEAD,
+This prior-candidate record does not assert the current round 9 final HEAD,
 current base-to-head scope, whitespace, or status results. Those remain
 pending until the coordinator runs the proof below with the current immutable
 expected head. It does not authorize a provider call, merge, or Gate 3.
@@ -162,7 +174,7 @@ limitation, not a contract pass.
 
 ### 2. Full base-to-head scope proof, then filtered checks
 
-Run after the resulting round-8 builder commit exists:
+Run after the resulting round-9 builder commit exists:
 
 ```powershell
 param(
@@ -358,6 +370,17 @@ exactly R16, then R15, then R14; no caller selects a status:
 | 2 | R15 | This is a first invocation with no R16 predicate, no existing same-run `in-flight`, `consumed`, or `terminal` record, and no successful fresh record because `run_id` is missing or the lease service is unavailable or unobservable. | `hold` |
 | 3 | R14 | After a fresh `in-flight` record is successfully created and correctly bound, `budget_ack` is missing, malformed, stale, reused, mutable, custody-unverified, future, backward-clock, expired, over-cap, non-USD, or otherwise invalid. | `hold` |
 
+The three documents must also contain the same ordered custody validation
+precedence before the refusal matrix: (1) validate finite repository/ref/path
+allowlists, generated IDs, numeric bounds, and outer closed wrapper/log/report
+schemas, assigning finite input/vocabulary/allowlist failures to generic
+`evidence:R22` and outer field-schema failures to generic `evidence:R23`, never
+`R19` or `R18`; (2) only after that passes, resolve immutable custody, assigning
+missing, unverified, unapproved, mutable, or non-resolving custody to generic
+`evidence:R19` hold; and (3) only after custody and outer schema pass, assign
+canonical provenance JCS/digest/procedure failures to generic `evidence:R18`
+refusal. `R18` must not own generic out-of-schema fields; `R23` owns them.
+
 Every repeated timestamp section is also a manual consistency requirement and
 must use the one exact grammar
 `^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$` for
@@ -367,9 +390,12 @@ socket_opened_at_utc`; the top-level live-observation
 `acknowledged_at_utc` must equal nested `budget_ack.acknowledged_at_utc`
 exactly, and freshness uses that one value. Claim/consume artifacts are
 internal durable lease-record transitions with a closed field list, not
-external evidence records. Generic refusal/hold records carry no fixture
-provenance, R21 is generic `evidence:R21`, and R20 is exclusively generic
-`evidence:R20`, in addition to the existing freshness and expiry rules.
+external evidence records; the closed lease record binds
+`claimed_at_utc == live_observation.run_started_at_utc` and
+`consumed_at_utc == live_observation.transmission_started_at_utc`, while
+`terminal_at_utc` may remain internal-only. Generic refusal/hold records carry
+no fixture provenance, R21 is generic `evidence:R21`, and R20 is exclusively
+generic `evidence:R20`, in addition to the existing freshness and expiry rules.
 
 ## Field-by-field review
 
@@ -386,8 +412,10 @@ The builder read-only review must confirm:
 - exact complete-fixture equality between provenance and served response IDs;
 - immutable transport authority, forbidden caller headers/body/endpoint,
   measured transmitted bytes, redirect refusal, and final TLS origin;
-- coordinator-issued run/lease, CAS/create-if-absent claim, immutable binding,
-  provider/account budget acknowledgement, and append-only terminal state;
+- coordinator-issued run/lease, exact generated ID and digest grammars,
+  CAS/create-if-absent claim, immutable binding, final exact `lease_id`
+  recheck, provider/account budget acknowledgement, and append-only terminal
+  state;
 - existing identity, schema, answer, JCS, size, recommendation, refusal, and
   parent-surface requirements remain intact.
 

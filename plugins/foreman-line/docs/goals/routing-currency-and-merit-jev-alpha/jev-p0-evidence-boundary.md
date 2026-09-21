@@ -225,7 +225,7 @@ control character. These exact bounds make metadata validation deterministic:
   suffixes permitted by the closed status partition: refusal-record uses
   `evidence:R01`–`evidence:R11`, `evidence:R13`, `evidence:R16`–`evidence:R18`,
   `evidence:R20`, and `evidence:R21`–`evidence:R25`; hold-record uses
-  `evidence:R12`–`evidence:R15` and `evidence:R19`; no class-prefixed status
+  `evidence:R12`–`evidence:R15` and `evidence:R19`; no class-specific status
   code is valid.
 
 The four class/status field sets above are the complete wrapper schema. Unknown
@@ -391,10 +391,10 @@ and finite literals defined by this document:
 ```text
 {
   fixture_id: <string matching ^fx-[0-9a-f]{32}$>,
-  source_kind: "coordinator-live" | "provider-response" | "sanitized-fixture" | "coordinator-review",
+  source_kind: "sanitized-fixture",
   source_ref: <string matching ^src-[0-9a-f]{32}$>,
   captured_at_utc: <timestamp matching the exact UTC grammar above>,
-  authenticated_response_id: "none" | <provider response_id>,
+  authenticated_response_id: <non-empty provider response_id matching ^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$>,
   manifest_id: <string matching ^manifest-[0-9a-f]{32}$>,
   repository: "agent-skills",
   ref: "main" | "codex/jev-p0-contract" | "codex/jev-p1-typed-validator-and-fixture-replay",
@@ -403,6 +403,12 @@ and finite literals defined by this document:
   manifest_tree: <verified tree SHA>
 }
 ```
+
+This is the only valid stored fixture provenance object. The other
+`source_kind` literals allowed by live or generic evidence records are not
+values of this object; any internal or operational shape using them is not a
+fixture provenance object and cannot be stored as one.
+`authenticated_response_id` is never `none` and is never client-synthesized.
 
 `provenance_digest` is SHA-256 over the RFC 8785/JCS UTF-8 bytes of exactly
 this canonical provenance object. The digest procedure is the same strict
@@ -425,10 +431,9 @@ fixture.response_id
 All four values are provider-declared. After custody is resolved, a missing,
 one-sided, empty, sentinel, client-synthesized, or mismatched value is an
 explicit generic `refusal-record` with `evidence:R21`; unresolved custody
-follows the generic `evidence:R19` hold or `evidence:R18` refusal path as
-specified by the matrix. The provenance value may not be synthesized from a
-requested identity, fixture filename, manifest entry, or client-generated
-identifier.
+follows the generic `evidence:R19` hold path. The provenance value may not be
+synthesized from a requested identity, fixture filename, manifest entry, or
+client-generated identifier.
 
 A replay fixture must be present in an immutable, reviewable manifest/commit
 custody chain and contain:
@@ -549,8 +554,8 @@ mismatch in `fixture.requested_identity == fixture.request.requested_identity
 == fixture.response.requested_identity` or in
 `fixture.source_kind/source_ref == fixture.provenance.source_kind/source_ref`
 is an explicit generic `refusal-record` with `evidence:R21` after custody is resolved;
-custody that cannot be resolved follows the explicit `evidence:R19` hold or
-`evidence:R18` refusal path and never becomes a complete fixture.
+custody that cannot be resolved follows the explicit `evidence:R19` hold path
+and never becomes a complete fixture.
 
 ### Independent coordinator manifest receipt/resolution
 
@@ -584,8 +589,11 @@ the exact `manifest_id`, `fixture_id`, repository, ref, path, commit, tree,
 request digest, response digest, and provenance digest from its controlled
 record, then returns the closed receipt above. Missing receipt, missing
 resolution, unknown fields, duplicate fields, wrong authority/version, any
-mismatch, mutable/non-resolving source, or an unapproved ref/path is a
-fail-closed `evidence:R19` hold or `evidence:R18` refusal as applicable.
+mismatch, mutable/non-resolving source, or an unapproved ref/path is assigned
+by the ordered custody stages above: pre-custody allowlist/schema violations
+are `evidence:R22` or `evidence:R23`, unresolved custody is `evidence:R19`
+hold, and only post-custody canonical provenance JCS/digest/procedure failure
+is `evidence:R18` refusal.
 Replay accepts custody only after that external authority resolves the exact
 tuple and all three digests; it never treats wrapper self-equality,
 self-recomputed IDs, or format-only IDs as proof of trust. Receipt IDs and
@@ -622,25 +630,38 @@ creates `in-flight`, never a state. The closed internal durable lease record is:
 
 ```text
 lease_record: {
-  lease_id: <lease ID grammar above>,
-  run_id: <run ID grammar above>,
+  lease_id: <generated string matching ^lease-[0-9a-f]{32}$>,
+  run_id: <generated string matching ^run-[0-9a-f]{32}$>,
   capability: "openrouter-alpha-decisions",
   decision_schema_version: "jev-decisions/v1",
-  request_digest: <64 lowercase hex characters>,
+  request_digest: <64 lowercase hexadecimal characters matching ^[0-9a-f]{64}$>,
   state: "in-flight" | "consumed" | "terminal",
-  claimed_at_utc: <exact UTC timestamp at the claimed event>,
-  consumed_at_utc: <exact UTC timestamp at atomic consume> | absent until consumed,
-  terminal_at_utc: <exact UTC timestamp at terminal transition> | absent until terminal,
+  claimed_at_utc: <timestamp matching ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$>,
+  consumed_at_utc: <timestamp matching ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$> | absent until consumed,
+  terminal_at_utc: <timestamp matching ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$> | absent until terminal,
   transition_actor: "coordinator"
 }
 ```
 
-No other internal record field is permitted. Each present transition timestamp
-is written once by the coordinator and cannot be rewritten. Claim and consume
-artifacts are internal transitions of this same durable record, not a new
-external evidence class; they are never emitted as JEV evidence records. No
-transition reopens, overwrites, or recreates a run. A syntactically valid token
-without its exact record is not a fresh lease. The live wrapper and `budget_ack`
+No other internal record field is permitted. The generated `run_id` and
+`lease_id` grammars, 64-lowercase-hexadecimal `request_digest`, exact
+`capability: "openrouter-alpha-decisions"` and
+`decision_schema_version: "jev-decisions/v1"` literals, exact state set, and
+`transition_actor: "coordinator"` are mandatory. Each present transition
+timestamp is written once by the coordinator and cannot be rewritten. For a
+complete `live-observation`, the immutable transition-time bindings are:
+
+```text
+lease_record.claimed_at_utc == live_observation.run_started_at_utc
+lease_record.consumed_at_utc == live_observation.transmission_started_at_utc
+```
+
+`terminal_at_utc` may remain internal-only and is not represented in live
+evidence; generic refusal/hold records carry no lease transition fields. Claim
+and consume artifacts are internal transitions of this same durable record,
+not a new external evidence class; they are never emitted as JEV evidence
+records. No transition reopens, overwrites, or recreates a run. A syntactically
+valid token without its exact record is not a fresh lease. The live wrapper and `budget_ack`
 must equal the record's exact `lease_id`, `run_id`, capability,
 `decision_schema_version`, and `request_digest`. A losing concurrent invocation
 does not mutate the owner record. Concurrency is one, retries are zero, and
@@ -742,6 +763,24 @@ missing/unavailable predicates hold; a CAS loss to an existing `in-flight`
 owner is R16. R14, R15, and R16 are mutually exclusive, all R16 states and
 tokens are excluded from R15, and their statuses are fixed by the table.
 
+## Ordered custody reason-code precedence
+
+Custody reasons are assigned by validation stage, in this order, and this
+precedence is explicit rather than a general fail-closed fallback:
+
+1. First validate the finite repository/ref/path allowlists, generated ID
+   grammars, numeric bounds, and the outer closed schemas for evidence
+   wrappers, logs, and reports. A finite input, vocabulary, allowlist,
+   generated-ID, or numeric-bound violation is generic `evidence:R22`; an
+   outer wrapper, log, or report field-schema violation is generic
+   `evidence:R23`. These pre-custody violations are never `R19` or `R18`.
+2. Only after that pre-custody validation passes, resolve immutable custody.
+   Missing, unverified, unapproved, mutable, or non-resolving custody is a
+   generic `evidence:R19` hold.
+3. Only after custody and the outer closed schemas pass, a canonical
+   provenance JCS, digest, or procedure failure is generic `evidence:R18`
+   refusal. `R18` does not own generic out-of-schema fields; `R23` owns those.
+
 ## Refusal matrix
 
 | Refusal ID | Condition | Status | Required disposition |
@@ -757,19 +796,19 @@ tokens are excluded from R15, and their statuses are fixed by the table.
 | R09 | After transport and request-identity checks, all required provider-declared metadata is present and individually valid under their exact field grammars, but `model` conflicts with `served_identity.model`, or a provider response ID conflicts with `served_identity.response_id` or `response_id`. | `refused` | Refuse; served identity never becomes a D13 alias. Missing metadata is `R12`; malformed or unparseable present fields are `R10`. |
 | R10 | Schema, envelope, JSON, duplicate-key, extra-field, question, criteria, answer, confidence, type, or any present response metadata field is malformed or unparseable, including malformed `model`, malformed `response_id`, or unparseable `server_timestamp_utc`. Missing provider metadata is explicitly excluded and belongs only to R12. This row has precedence over R09. | `refused` | Refuse; no coercion, repair, conflict reclassification, or partial answer set. |
 | R11 | Choice distribution differs from total 1 by more than absolute `1e-12`, or has invalid keys/probabilities. | `refused` | Refuse; no repair, clamping, or renormalization. |
-| R12 | After transport and request-identity checks, the provider did not declare one or more required complete metadata fields: `model`, `response_id`, or `server_timestamp_utc`. Missing `server_timestamp_utc` belongs only here. | `hold` | Terminal hold with the class-prefixed `R12` code; client-supplied values cannot fill a missing provider declaration. |
+| R12 | After transport and request-identity checks, the provider did not declare one or more required complete metadata fields: `model`, `response_id`, or `server_timestamp_utc`. Missing `server_timestamp_utc` belongs only here. | `hold` | Terminal hold with generic `evidence:R12`; client-supplied values cannot fill a missing provider declaration. |
 | R13 | A live result is missing the `cost` object, `amount`, or `currency`. | `hold` | Deterministic generic `evidence:R13` terminal hold; never mark complete, estimate, or convert. |
 | R13 | A present cost object is malformed, has an extra field, uses a string/NaN/Infinity/negative/over-cap `amount`, uses non-USD `currency`, or is otherwise unauthorized. | `refused` | Deterministic generic `evidence:R13` refusal; never repair, estimate, or convert. |
 | R14 | After a fresh `in-flight` record is successfully created and correctly bound, the mandatory `budget_ack` is missing, malformed, stale, reused, mutable, custody-unverified, non-USD, over-cap, future, backward-clock, expired, or otherwise invalid. | `hold` | Generic `evidence:R14` terminal hold before transmission; the single-use record is finalized without a socket. Any R16 state or token takes precedence. |
 | R15 | This is a first invocation with no R16 predicate, no existing same-run `in-flight`, `consumed`, or `terminal` record, and no successful fresh record because `run_id` or the durable lease service is missing, unavailable, or unobservable. | `hold` | Generic `evidence:R15` terminal hold with no lease/run/budget fields; a CAS loss to an existing `in-flight` owner is R16, not R15. |
 | R16 | An explicit retry, second, or concurrent invocation is observed; an existing same-run durable lease record is `in-flight`, `consumed`, or `terminal`; a supplied token is duplicated, unrecognized, or wrongly bound; or CAS/create-if-absent loses to an existing `in-flight` owner. | `refused` | Generic `evidence:R16` terminal refusal; this row is evaluated before `R15` and `R14`, and no lease can be recreated or reopened. |
 | R17 | JCS canonical bytes or paired request/response digest is missing, malformed, recomputed differently, or identity-unbound. | `refused` | Refuse replay or evidence acceptance. |
-| R18 | Provenance object is non-canonical, contains a field outside its closed schema, has missing/wrong provenance digest, or uses a non-JCS hash procedure. | `refused` | Refuse replay and evidence acceptance. |
-| R19 | Fixture repository/ref/path/commit/tree or the independent coordinator manifest receipt/resolution is missing, unverified, mutable, non-resolving, unapproved, or differs across the wrapper/provenance/manifest-entry/receipt custody tuples. | `hold` | Emit only generic `evidence:R19` `hold-record` with `disposition: "pending-coordinator"`; do not emit a `sanitized-replay-fixture` record. |
+| R18 | After pre-custody validation, outer closed schemas, and immutable custody resolution pass, the canonical provenance object fails its canonical JCS, provenance-digest, or digest-procedure check. Generic out-of-schema fields are not R18. | `refused` | Emit only generic `evidence:R18` `refusal-record`; do not emit a `sanitized-replay-fixture` record. |
+| R19 | After finite allowlists, generated IDs, numeric bounds, and outer closed schemas pass, fixture repository/ref/path/commit/tree or the independent coordinator manifest receipt/resolution is missing, unverified, mutable, non-resolving, has an unapproved custody resolution, or differs across the wrapper/provenance/manifest-entry/receipt custody tuples. | `hold` | Emit only generic `evidence:R19` `hold-record` with `disposition: "pending-coordinator"`; do not emit a `sanitized-replay-fixture` record. |
 | R20 | Fixture is self-recomputed outside the committed manifest, detached from its paired digests, or current bytes differ from custody after receipt resolution. | `refused` | Emit generic `evidence:R20` `refusal-record`; no self-recomputed or mutable fixture acceptance. |
-| R21 | After custody is resolved, a complete replay fixture has missing, one-sided, sentinel-valued, client-synthesized, or unequal response IDs, or its requested-identity or source-kind/source-ref replay equality is unequal. | `refused` | Emit only the generic `refusal-record` field set with `evidence:R21`; do not emit a `sanitized-replay-fixture` record. Unresolved custody follows `R19` or `R18` as stated above. |
-| R22 | Input contains any unknown field, free-text value, credential-bearing value, or value outside the fixed vocabulary, generated-ID grammar, finite custody allowlist, or numeric bounds, or minimization/redaction is uncertain. | `refused` | Refuse before serialization/transmission; retain no rejected input or metadata. |
-| R23 | Fixture, metadata, source reference, log, or report contains a field outside its closed schema, a key, raw authorization header, unsafe payload, or exceeds retention limit. | `refused` | Refuse retention and consumption; do not echo material. |
+| R21 | After custody is resolved, a complete replay fixture has missing, one-sided, sentinel-valued, client-synthesized, or unequal response IDs, or its requested-identity or source-kind/source-ref replay equality is unequal. | `refused` | Emit only the generic `refusal-record` field set with `evidence:R21`; do not emit a `sanitized-replay-fixture` record. Unresolved custody follows `R19` as stated above. |
+| R22 | Before custody resolution, input or metadata violates a finite vocabulary, repository/ref/path allowlist, generated-ID grammar, or numeric bound; or minimization/redaction is uncertain. | `refused` | Emit only generic `evidence:R22` `refusal-record`; refuse before serialization/transmission and retain no rejected input or metadata. |
+| R23 | Before custody resolution, an outer evidence wrapper, log, or report contains an unknown/extra field, raw authorization header, unsafe payload, or exceeds its closed schema or retention limit. | `refused` | Emit only generic `evidence:R23` `refusal-record`; refuse retention and consumption and do not echo material. |
 | R24 | Consumer is not `support-triage-advisory-v1`, recommendation has unknown/effect fields, or independent application authorization is absent. | `refused` | Refuse; application retains all authority and effects. |
 | R25 | Any parent RCM, boundary-routing, standard routing, Pi, HAWF, Helmholtz, GMF, or other forbidden surface is requested. | `refused` | Refuse and stop for coordinator review; no shared-surface mutation. |
 
