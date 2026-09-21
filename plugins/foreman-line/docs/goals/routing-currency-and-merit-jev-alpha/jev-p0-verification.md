@@ -567,6 +567,8 @@ fixture.response.schema_version == fixture.manifest_entry.schema_version`;
 fixture.manifest_entry.manifest_id`;
 `fixture.fixture_id == fixture.provenance.fixture_id ==
 fixture.manifest_entry.fixture_id`;
+`fixture.request.capability == fixture.response.capability ==
+"openrouter-alpha-decisions"`;
 `fixture.requested_identity == fixture.request.requested_identity ==
 fixture.response.requested_identity`;
 `fixture.served_identity == fixture.response.served_identity`;
