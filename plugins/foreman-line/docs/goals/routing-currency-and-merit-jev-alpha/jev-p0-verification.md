@@ -1,8 +1,8 @@
-# JEV-P0 — Fresh rework builder round 6 verification record
+# JEV-P0 — Fresh rework builder round 7 verification record
 
 ## Scope
 
-This record verifies the fresh JEV-P0 rework builder round 6 only.
+This record verifies the fresh JEV-P0 rework builder round 7 only.
 It does not authorize JEV-P1 or later, provider calls, runtime use, spend,
 credential access, dispatch, promotion, or Gate 3. The only mutation authority
 is:
@@ -11,10 +11,11 @@ is:
 - `plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-evidence-boundary.md`
 - `plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-verification.md`
 
-Every other path and effect is forbidden. The exact starting base for this
-builder round is `c71bdbfa0f9597eb44d0c3a01aa853f1f33989a8`.
+Every other path and effect is forbidden. The working branch is
+`codex/jev-p0-rework16`, and the exact starting base for this builder round is
+the direct parent `c71bdbfa0f9597eb44d0c3a01aa853f1f33989a8`.
 
-## Prior-closure preservation and thirteenth-review closure checklist
+## Prior-closure preservation and fourteenth-review closure checklist
 
 The three allowed documents explicitly close these findings while preserving
 all earlier identity, schema, answer, JCS, transport, custody, lease, budget,
@@ -35,8 +36,9 @@ text outside the fixed schema.
 5. Non-complete provenance uses only JSON string `"none"`; complete provenance
    rejects `none` and requires provider-declared response IDs.
 6. The closed `budget_ack` object is mandatory for every live call and is bound
-   to run/capability/request digest and custody; one trusted coordinator UTC
-   clock enforces the exact timestamp grammar and
+   by exact equality to lease_id, run, capability, decision schema, request
+   digest, and the durable lease record; one trusted coordinator UTC clock
+   enforces the exact timestamp grammar and
    `run_started_at_utc <= acknowledged_at_utc <=
    transmission_started_at_utc <= socket_opened_at_utc`, the 60-second
    age/expiry, future/backward/missing-clock rejection, lease recheck,
@@ -45,19 +47,21 @@ text outside the fixed schema.
    wrapper self-equality and format-only IDs never establish trust.
 8. The finite custody allowlist includes the approved JEV-P1 fixture paths and
    planned P1 ref; the closed reason-code/status partition maps R12 to missing
-   metadata only, R10 to malformed/unparseable present response fields, R09 to
-   validly shaped conflicts only, and the ordered R14/R15/R16 pre-call family
-   deterministically (including CAS loss to an existing in-flight owner as
-   R16, never R15); missing cost/currency remains hold-only and malformed or
-   unauthorized cost remains refusal-only. Invalid custody uses generic
-   R18/R19 records with evidence-class prefixes, while R20 emits
-   `evidence:R20`.
+   metadata only, R10 to malformed/unparseable present response fields while
+   explicitly excluding missing provider metadata, R09 to validly shaped
+   conflicts only, and the ordered R14/R15/R16 pre-call family deterministically
+   (including CAS loss to an existing in-flight owner as R16, never R15);
+   missing cost/currency remains hold-only and malformed or unauthorized cost
+   remains refusal-only. Live-observation and sanitized-replay-fixture are
+   complete-only; pre-call refusal/hold uses the narrow generic evidence
+   suffix sets, and R20 emits only `evidence:R20`.
 9. Retention uses a trusted coordinator capture/recording clock, rejects future
    anchors, and preserves `anchor <= retention <= anchor+90 days`.
-10. Scope proof first enumerates the complete unfiltered two-commit diff from
-    the exact base to the coordinator-supplied expected reviewed head and
-    asserts exact set equality, exact `M` statuses, and native exit codes before
-    reporting success.
+10. Scope proof first enumerates the complete unfiltered direct base-to-head
+    diff over one reviewed range from the exact base to the coordinator-supplied
+    expected reviewed head and asserts exact set equality, exact `M` statuses,
+    and native exit codes before reporting success. It does not verify document
+    semantics.
 11. Complete replay equalities include wrapper/request/response requested
     identity and wrapper/provenance source kind/source ref, with explicit
     mismatch refusal.
@@ -113,12 +117,16 @@ and not Gate 3 authorization. The external proof targeted candidate
 | Repository root | `C:\Repos\foreman-line-jev-p0-rework5` |
 | Coordinator target SHA | `c71bdbfa0f9597eb44d0c3a01aa853f1f33989a8` |
 | Observed HEAD | `c71bdbfa0f9597eb44d0c3a01aa853f1f33989a8` (`c71bdbf`) — target/head assertion passed for the prior candidate |
+| Receipt-open | Passed; strict UTF-8, exact closed receipt, and native file-read checks passed |
+| Receipt-target-match | Passed; receipt target, coordinator target, and observed prior HEAD matched exactly |
+| Unfiltered base-to-head scope | Passed; the unfiltered prior-candidate range contained exactly the three allowed documents |
 | Allowed paths | Exact three allowed documents only |
+| Whitespace | Passed; filtered prior-candidate `git diff --check` passed |
+| Native exit checks | Passed; native command exits were checked immediately |
 | Filtered status | Passed; all three allowed paths were exactly `M` |
-| Whitespace/native checks | Passed; filtered `git diff --check` and native command exit checks passed |
 | Independent review count | `0/2` at the time of this prior-candidate coordinator proof; no review approval inferred |
 
-This prior-candidate record does not assert the current round 6 final HEAD,
+This prior-candidate record does not assert the current round 7 final HEAD,
 current base-to-head scope, whitespace, or status results. Those remain
 pending until the coordinator runs the proof below with the current immutable
 expected head. It does not authorize a provider call, merge, or Gate 3.
@@ -310,7 +318,12 @@ The available environment is limited: local `ajv` is missing, Node is
 `v24.7.0` below the shaping package engine floor, and no dependency install is
 authorized. These tools do not lint the three goal documents.
 
-## Semantic decision-table assertions
+## Manual semantic consistency review requirements
+
+The following are manual review requirements for the coordinator or independent
+reviewers. The dependency-free scope script verifies receipt, head, direct
+base-to-head path scope, whitespace, and `M` status only; it does not verify
+these semantic assertions.
 
 The three documents must contain the same closed response-metadata partition.
 After transport and request-identity checks, the exact UTC grammar for
@@ -322,20 +335,24 @@ must be validly shaped before conflict comparison:
 | Evaluation order | Reason | Disjoint predicate | Outcome |
 |---|---|---|---|
 | 1 | R12 | One or more provider-declared complete metadata fields (`model`, `response_id`, or `server_timestamp_utc`) is missing. Missing `server_timestamp_utc` belongs here. | `hold` |
-| 2 | R10 | All required metadata fields are present, but any present response field is malformed or unparseable under its exact grammar, including malformed `model`, malformed `response_id`, or unparseable `server_timestamp_utc`. This row has precedence over R09. | `refused` |
+| 2 | R10 | All required metadata fields are present, but any present response field is malformed or unparseable under its exact grammar, including malformed `model`, malformed `response_id`, or unparseable `server_timestamp_utc`; missing provider metadata is explicitly excluded and belongs only to R12. This row has precedence over R09. | `refused` |
 | 3 | R09 | All required metadata fields are present and individually valid under their exact field grammars, but authenticated response `model` conflicts with `served_identity.model`, or the provider response identifier conflicts with `served_identity.response_id` or `response_id`. | `refused` |
 
-The three documents must also contain the same observable, disjoint pre-call
-lease-state table. Evaluate exactly R16, then R15, then R14; no caller selects a
-status:
+The three documents must also contain the same canonical observable, disjoint
+pre-call lease-state table. `available` means no durable record; `claimed` is
+only the event creating `in-flight`; atomic consume-before-socket is
+`in-flight -> consumed`; completion or terminal refusal/hold is
+`consumed -> terminal`; no transition reopens or recreates a run. Evaluate
+exactly R16, then R15, then R14; no caller selects a status:
 
 | Evaluation order | Reason | Disjoint observable predicate | Outcome |
 |---|---|---|---|
-| 1 | R16 | An explicit retry, second, or concurrent invocation is observed; an existing same-run lease is `in-flight`, `consumed`, or `terminal`; or a supplied lease token is duplicated or bound to the wrong run, capability, schema version, or request digest. A CAS claimant that loses because another claimant already owns an in-flight lease is R16. A reused acknowledgement on such a retry/second/concurrent invocation is also R16. | `refused` |
-| 2 | R15 | This is a first invocation with no retry, second, or concurrency signal, but `run_id` is missing or the durable lease service/create-if-absent operation is unavailable, and no existing same-run in-flight owner is observed. | `hold` |
-| 3 | R14 | This is a first invocation that successfully claims a fresh, correctly bound lease, but `budget_ack` is missing, malformed, stale, reused, mutable, custody-unverified, future, backward-clock, expired, over-cap, non-USD, or otherwise invalid. | `hold` |
+| 1 | R16 | An explicit retry, second, or concurrent invocation is observed; an existing same-run durable lease record is in `in-flight`, `consumed`, or `terminal`; a supplied token is duplicated, unrecognized, or wrongly bound; or CAS/create-if-absent loses to an existing `in-flight` owner. Every R16 state or token is excluded from R15. | `refused` |
+| 2 | R15 | This is a first invocation with no R16 predicate, no existing same-run `in-flight`, `consumed`, or `terminal` record, and no successful fresh record because `run_id` is missing or the lease service is unavailable or unobservable. | `hold` |
+| 3 | R14 | After a fresh `in-flight` record is successfully created and correctly bound, `budget_ack` is missing, malformed, stale, reused, mutable, custody-unverified, future, backward-clock, expired, over-cap, non-USD, or otherwise invalid. | `hold` |
 
-Every repeated timestamp section must use the exact grammar
+Every repeated timestamp section is also a manual consistency requirement and
+must use the one exact grammar
 `^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$` for
 `server_timestamp_utc` and all operational fields, and the exact ordering
 `run_started_at_utc <= acknowledged_at_utc <= transmission_started_at_utc <=
@@ -382,7 +399,7 @@ builder does not self-approve or merge.
 
 | Check | Result | Evidence |
 |---|---|---|
-| Starting branch/base | `codex/jev-p0-rework15`, base `c71bdbfa0f9597eb44d0c3a01aa853f1f33989a8` | Confirmed before fresh rework round 6 edits. |
+| Starting branch/base | `codex/jev-p0-rework16`, direct parent/base `c71bdbfa0f9597eb44d0c3a01aa853f1f33989a8` | Confirmed before fresh rework round 7 edits. |
 | `node -v` | Passed: `v24.7.0`, native exit code `0`; below shaping requirement `>=24.11.1` | Immediate exit-code capture/check followed `node -v`. |
 | `RepositoryRoot` input | Mandatory and documented; the prior-candidate proof used `C:\Repos\foreman-line-jev-p0-rework5` | The proof resolves a literal existing Git root and uses `git -C` for every relative Git operation; unsafe/missing/non-repository roots reject. |
 | Prior-candidate coordinator proof | Passed externally for candidate `c71bdbfa0f9597eb44d0c3a01aa853f1f33989a8` | Exact receipt/path, target/head, base, repository root, three-file scope, whitespace, native exits, and `M` status results are recorded above; this is prior-candidate coordinator evidence, not current-head proof, builder approval, or Gate 3 authorization. |
@@ -395,7 +412,8 @@ builder does not self-approve or merge.
 | Full base-to-head scope comparison | Pending until the coordinator executes the proof after receipt-open, target-match, and `ExpectedHead`; no pass claimed | The script first enumerates the unfiltered base-to-head path set, then checks exact set equality. |
 | Filtered base-to-head `git diff --check` and status | Pending until the coordinator executes the proof; no pass claimed | These checks run only after the unfiltered three-file set and reviewed head are proven. |
 | Targeted active-spec linter/self-check | Environment limitation: local `ajv` missing; no install | These tools do not lint the three goal documents. |
-| Field-by-field fresh-rework review | Blocked for coordinator traceability; read-only content review is not independent approval | Checked the requested thirteenth-review control text locally; current-round coordinator proof and two independent reviews remain external. |
+| Manual semantic consistency review | Required; not claimed by the scope script and not independent approval | Review all three documents for canonical lease vocabulary/state transitions, exact lease/budget/live-record equalities, narrow status/reason suffixes, complete-only observations, one timestamp grammar/order, and R09/R10/R12/R13/R20 rules. |
+| Field-by-field fresh-rework review | Blocked for coordinator traceability; read-only content review is not independent approval | Checked the requested fourteenth-review control text locally; current-round coordinator proof and two independent reviews remain external. |
 | Independent frontier review A | Observed result: no fresh report supplied or performed in this builder session (`0/2`) | Coordinator must supply and triage; no pass inferred. |
 | Independent frontier review B | Observed result: no fresh report supplied or performed in this builder session (`0/2`) | Coordinator must supply and triage; no pass inferred. |
 | Gate 3 / merge | Not granted; human-owned | No self-approval or merge. |

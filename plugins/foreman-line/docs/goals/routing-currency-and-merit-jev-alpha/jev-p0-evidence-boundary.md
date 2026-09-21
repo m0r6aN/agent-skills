@@ -20,17 +20,18 @@ refusal, or hold; these states must not be collapsed.
 ## Closed reason-code and status partition
 
 The `R01`–`R25` values below are condition suffixes, not complete serialized
-codes. A non-complete record must use the prefix owned by its evidence class:
-`live:Rnn` for a live observation, `fixture:Rnn` for a sanitized replay
-fixture, or `evidence:Rnn` for a generic refusal/hold record. An unprefixed
-reason code is invalid. Each condition has exactly one status under the
-following closed partition:
+codes. Complete records use only `reason_code: "none"`. A pre-call refusal or
+hold uses only the generic `refusal-record` or `hold-record` class and the
+`evidence:Rnn` prefix. A class-specific live or fixture refusal/hold code is
+invalid. Each condition has exactly one status under the following authoritative
+closed partition:
 
 | Status class | Reason suffixes and rule |
 |---|---|
-| Refusal-only | `R01`–`R08`, `R11`, `R16`–`R18`, `R20`, and `R22`–`R25`; the named invalid, unsafe, retry, or forbidden condition is always `refused`. |
-| Hold-only | `R14`, `R15`, and `R19`; the missing, stale, unverified, or coordinator-pending condition is always `hold` with `disposition: "pending-coordinator"`. |
-| Explicit split | `R09`: present, validly shaped but conflicting served-model/identity metadata is `refused`; `R10`: malformed or unparseable present response fields are `refused` with precedence over R09; `R12`: missing provider-declared complete metadata is `hold` only; `R13`: missing cost fields are `hold`, while a present malformed or unauthorized cost is `refused`; `R21`: the post-custody replay identity/provenance equality failure is `refused`. |
+| Generic refusal-record | `evidence:R01`–`evidence:R11`, `evidence:R13`, `evidence:R16`–`evidence:R18`, `evidence:R20`, and `evidence:R21`–`evidence:R25`; the named invalid, unsafe, retry, custody, or forbidden condition is `refused`. R20 is reserved exclusively to this class. |
+| Generic hold-record | `evidence:R12`–`evidence:R15` and `evidence:R19`; the missing, stale, unverified, or coordinator-pending condition is `hold` with `disposition: "pending-coordinator"`. Missing cost is `R13` hold, while present malformed or unauthorized cost is `R13` refusal. |
+| Complete | `reason_code: "none"` only; complete is permitted only for `live-observation` with an authenticated provider response or `sanitized-replay-fixture` with resolved custody. |
+| Explicit split | `R09`: present, validly shaped but conflicting served-model/identity metadata is `refused`; `R10`: malformed or unparseable present response fields are `refused` with precedence over R09 and never covers missing provider metadata; `R12`: missing provider-declared complete metadata is `hold` only; `R13`: missing cost fields are generic hold, while a present malformed or unauthorized cost is generic refusal; `R21`: the post-custody replay identity/provenance equality failure is generic refusal. |
 
 The split rows are mutually exclusive as written and take precedence over any
 general fail-closed wording. The detailed pre-call table below is the sole
@@ -43,9 +44,11 @@ status. A complete record always uses `reason_code: "none"`.
 Each record below is a closed JSON object. The listed required set is the
 complete set: every field name not listed for that record is forbidden. A
 missing listed field, an extra field, a wrong literal, or a wrong conditional
-value refuses. Pre-call failures are represented only by `refusal-record` or
-`hold-record`; every `live-observation` record represents an attempted call and
-therefore carries the required `budget_ack`.
+value refuses. `live-observation` exists only as a `complete` record for an
+attempted call that received an authenticated provider response. Pre-call
+refusal/hold is represented only by the generic `refusal-record` or
+`hold-record`; those records deliberately carry no run, lease, budget, or
+operational live-call fields.
 
 ### `live-observation`
 
@@ -54,9 +57,10 @@ therefore carries the required `budget_ack`.
 ```text
 evidence_class, capability, run_id, lease_id, endpoint,
 requested_identity, served_identity, schema_version, response_id,
-server_timestamp_utc, client_timestamp_utc, request_digest, response_digest,
-usage, cost, budget_ack, source_kind, source_ref, status, reason_code,
-retention_until_utc
+server_timestamp_utc, client_timestamp_utc, run_started_at_utc,
+acknowledged_at_utc, transmission_started_at_utc, socket_opened_at_utc,
+request_digest, response_digest, usage, cost, budget_ack, source_kind,
+source_ref, status, reason_code, retention_until_utc
 ```
 
 Its exact conditional values are `evidence_class: "live-observation"`,
@@ -68,35 +72,27 @@ provider-declared, match their exact field grammars, and are bound to the same
 authenticated response;
 `served_identity.model` is exactly the authenticated response `model`, and
 `served_identity.response_id` is exactly that response's identifier. The
-requested model is never a fallback. The `cost` field is exactly the two-field
-object `{ amount: <finite non-negative JSON number <= 0.01>, currency: "USD" }`;
-no cost field is omitted or added, and `currency` is exactly `USD`.
-
-`live-observation` with `status: refused` has exactly this required field set:
-
-```text
-evidence_class, capability, run_id, lease_id, endpoint, schema_version,
-client_timestamp_utc, request_digest, budget_ack, source_kind, source_ref,
-status, reason_code, retention_until_utc
-```
-
-Its exact values include `status: "refused"`, `reason_code: "live:R01"` through
-`"live:R25"`, and the same capability, endpoint, schema, source, and budget
-requirements above. `requested_identity`, `served_identity`, `response_id`,
-`server_timestamp_utc`, `response_digest`, `usage`, and `cost` are forbidden.
-
-`live-observation` with `status: hold` has exactly this required field set:
+requested model is never a fallback. `lease_id`, `run_id`, capability,
+`schema_version`, and `request_digest` equal the exact consumed lease record
+binding; the `budget_ack` carries the same `lease_id`, run, capability,
+decision schema version, and request digest. The claim and consume evidence
+therefore link to this wrapper by exact `lease_id` and binding equality. The
+`run_started_at_utc`, `transmission_started_at_utc`, and `socket_opened_at_utc`
+fields are coordinator runtime/live-record samples; only
+`acknowledged_at_utc` is owned by `budget_ack`. All four operational fields use
+the one exact UTC grammar and satisfy:
 
 ```text
-evidence_class, capability, run_id, lease_id, endpoint, schema_version,
-client_timestamp_utc, request_digest, budget_ack, source_kind, source_ref,
-status, reason_code, disposition, retention_until_utc
+run_started_at_utc <= acknowledged_at_utc <= transmission_started_at_utc <= socket_opened_at_utc
+transmission_started_at_utc - acknowledged_at_utc <= 60 seconds
+socket_opened_at_utc < acknowledged_at_utc + 60 seconds
 ```
 
-Its exact values include `status: "hold"`, `disposition: "pending-coordinator"`,
-and `reason_code: "live:R01"` through `"live:R25"`. `requested_identity`,
-`served_identity`, `response_id`, `server_timestamp_utc`, `response_digest`,
-`usage`, and `cost` are forbidden.
+The `cost` field is exactly the two-field object
+`{ amount: <finite non-negative JSON number <= 0.01>, currency: "USD" }`;
+no cost field is omitted or added, and `currency` is exactly `USD`. There is
+no `live-observation` refused or hold variant; a failed pre-call is never
+called an observation.
 
 ### `sanitized-replay-fixture`
 
@@ -116,48 +112,10 @@ Its exact values include `evidence_class: "sanitized-replay-fixture"`,
 `status: "complete"`, and `reason_code: "none"`. All custody, provenance,
 identity, request, response, and digest equalities below are mandatory.
 
-`sanitized-replay-fixture` with `status: refused` has exactly this required
-field set:
-
-```text
-evidence_class, fixture_id, manifest_id, repository, ref, path, commit, tree,
-provenance, provenance_digest, source_kind, source_ref, status, reason_code,
-retention_until_utc
-```
-
-Its exact values are `evidence_class: "sanitized-replay-fixture"`,
-`source_kind: "sanitized-fixture"`, `status: "refused"`, and
-`reason_code: "fixture:R01"` through `"fixture:R25"`. `requested_identity`, `served_identity`,
-`response_id`, `server_timestamp_utc`,
-`request`, `response`, `request_digest`, and `response_digest` are forbidden.
-The required `provenance` is the exact canonical object with
-`authenticated_response_id: "none"`; `provenance_digest` is its JCS digest.
-This fixture-class refusal is permitted only after the coordinator receipt has
-already resolved the exact custody tuple; missing, malformed, mutable, or
-non-resolving custody must use the generic `refusal-record`/`hold-record`
-classes below instead.
-
-`sanitized-replay-fixture` with `status: hold` has exactly this required field
-set:
-
-```text
-evidence_class, fixture_id, manifest_id, repository, ref, path, commit, tree,
-provenance, provenance_digest, source_kind, source_ref, status, reason_code,
-disposition, retention_until_utc
-```
-
-Its exact values are `evidence_class: "sanitized-replay-fixture"`,
-`source_kind: "sanitized-fixture"`, `status: "hold"`,
-`disposition: "pending-coordinator"`, and `reason_code: "fixture:R01"` through
-`"fixture:R25"`. The required `provenance` is the exact canonical object with
-`authenticated_response_id: "none"`; `provenance_digest` is its JCS digest.
-`requested_identity`,
-`served_identity`, `response_id`, `server_timestamp_utc`, `request`,
-`response`, `request_digest`, and `response_digest` are forbidden.
-This fixture-class hold is permitted only after the coordinator receipt has
-already resolved the exact custody tuple; missing, malformed, mutable, or
-non-resolving custody must use generic `evidence:R18` refusal or `evidence:R19`
-hold records and may not require impossible fixture provenance.
+Only `sanitized-replay-fixture` with `status: complete` is permitted. A fixture
+that is refused or held before it is a complete, custody-resolved replay must
+use the generic `refusal-record` or `hold-record`; `fixture:Rnn` codes are not
+permitted. In particular, `R20` is never class-specific.
 
 ### `refusal-record` and `hold-record`
 
@@ -170,8 +128,12 @@ recorded_at_utc, retention_until_utc
 
 Its exact values are `evidence_class: "refusal-record"`,
 `status: "refused"`, `source_kind: "coordinator-review"`, and
-`reason_code: "evidence:R01"` through `"evidence:R25"`. `disposition`, request/response fields,
-custody fields, identities, cost, usage, and budget fields are forbidden.
+`reason_code` is one of `evidence:R01`–`evidence:R11`, `evidence:R13`,
+`evidence:R16`–`evidence:R18`, `evidence:R20`, or `evidence:R21`–
+`evidence:R25`. `disposition`, request/response fields, custody fields,
+identities, cost, usage, budget fields, run/lease fields, and operational live
+timestamps are forbidden. `evidence:R20` is reserved exclusively to this
+record.
 
 `hold-record` has exactly this required field set:
 
@@ -182,11 +144,12 @@ recorded_at_utc, retention_until_utc
 
 Its exact values are `evidence_class: "hold-record"`, `status: "hold"`,
 `disposition: "pending-coordinator"`, `source_kind: "coordinator-review"`,
-and `reason_code: "evidence:R01"` through `"evidence:R25"`. Request/response fields, custody
-fields, identities, cost, usage, and budget fields are forbidden.
+and `reason_code` is one of `evidence:R12`–`evidence:R15` or `evidence:R19`.
+Request/response fields, custody fields, identities, cost, usage, budget fields,
+run/lease fields, and operational live timestamps are forbidden.
 
 Every complete record requires the exact complete set above; every refused or
-held record requires its exact refused or held set above. No record may move
+held pre-call record requires its exact generic set above. No record may move
 between these sets, add a diagnostic field, or use a free-text reason.
 
 ## Closed evidence metadata schemas
@@ -227,8 +190,9 @@ control character. These exact bounds make metadata validation deterministic:
   No other repository, ref, directory, or path is valid. `commit` and `tree`
   are exactly 40 lowercase hexadecimal characters.
 - `server_timestamp_utc`, `client_timestamp_utc`, `captured_at_utc`,
-  `recorded_at_utc`, `resolved_at_utc`, and `retention_until_utc` all match the
-  one exact UTC grammar
+  `recorded_at_utc`, `resolved_at_utc`, `retention_until_utc`,
+  `run_started_at_utc`, `acknowledged_at_utc`, `transmission_started_at_utc`,
+  and `socket_opened_at_utc` all match the one exact UTC grammar
   `^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$` and must
   be real UTC instants. The retention anchor is coordinator-sampled
   from the trusted capture/recording clock: for a live observation,
@@ -238,14 +202,12 @@ control character. These exact bounds make metadata validation deterministic:
   records. A future anchor relative to that coordinator clock is rejected, and
   the exact invariant is
   `anchor_utc <= retention_until_utc <= anchor_utc + 90 days`.
-- The operational freshness fields `run_started_at_utc`,
-  `acknowledged_at_utc`, `transmission_started_at_utc`, and
-  `socket_opened_at_utc` use that same exact UTC form and must parse as real
-  UTC instants. Every repeated operational section must state the exact order
-  `run_started_at_utc <= acknowledged_at_utc <= transmission_started_at_utc <=
-  socket_opened_at_utc`; the acknowledgement age remains at most 60 seconds
-  at transmission, and the socket-open sample must be strictly before
-  `acknowledged_at_utc + 60 seconds`.
+- The operational freshness fields are coordinator/live-record fields except
+  `acknowledged_at_utc`, which is owned only by `budget_ack`. Every repeated
+  operational section must state the exact order `run_started_at_utc <=
+  acknowledged_at_utc <= transmission_started_at_utc <= socket_opened_at_utc`;
+  the acknowledgement age remains at most 60 seconds at transmission, and the
+  socket-open sample must be strictly before `acknowledged_at_utc + 60 seconds`.
 - `request_digest`, `response_digest`, `provenance_digest`, and
   `acknowledgement_digest` are exactly 64 lowercase hexadecimal characters
   matching `^[0-9a-f]{64}$`; `capability`, `schema_version`, and `endpoint` are
@@ -254,11 +216,14 @@ control character. These exact bounds make metadata validation deterministic:
 - `evidence_class` is exactly `live-observation`,
   `sanitized-replay-fixture`, `refusal-record`, or `hold-record`; `status` is
   exactly `complete`, `refused`, or `hold`; and `reason_code` is `none` for
-  complete records or the class-prefixed `live:R01` through `live:R25`,
-  `fixture:R01` through `fixture:R25`, or `evidence:R01` through `evidence:R25`
-  for non-complete records, subject to the closed status partition above.
+  complete records. Non-complete records use only the generic prefixes and
+  suffixes permitted by the closed status partition: refusal-record uses
+  `evidence:R01`–`evidence:R11`, `evidence:R13`, `evidence:R16`–`evidence:R18`,
+  `evidence:R20`, and `evidence:R21`–`evidence:R25`; hold-record uses
+  `evidence:R12`–`evidence:R15` and `evidence:R19`. `live:Rnn` and `fixture:Rnn`
+  are invalid.
 
-The six class/status field sets above are the complete wrapper schema. Unknown
+The four class/status field sets above are the complete wrapper schema. Unknown
 wrapper metadata, free-text reasons, unbounded numbers, human-chosen IDs, or
 values outside the finite literal allowlists refuse and are not retained.
 
@@ -281,8 +246,10 @@ values outside the finite literal allowlists refuse and are not retained.
   path: <path grammar above>,
   commit: <40 lowercase hex characters>,
   tree: <40 lowercase hex characters>,
+  lease_id: <lease ID grammar above>,
   run_id: <run ID grammar above>,
   capability: "openrouter-alpha-decisions",
+  decision_schema_version: "jev-decisions/v1",
   request_digest: <64 lowercase hex characters>
 }
 ```
@@ -292,14 +259,19 @@ account name, email, URL, customer identifier, or free text. `cap_amount` must b
 JSON number `0.01`, not a string or another numeric value. The
 `acknowledgement_digest` is SHA-256 over the RFC 8785/JCS UTF-8 bytes of this
 object with `acknowledgement_digest` omitted, and its custody repository/ref/
-path/commit/tree must be verified at the exact committed tree. The acknowledgement
-is valid only when its `run_id`, capability, and `request_digest` exactly match
-the live wrapper. Freshness is checked using one trusted coordinator UTC clock:
-`run_started_at_utc` is sampled when the durable lease is claimed,
+path/commit/tree must be verified at the exact committed tree. The
+acknowledgement is valid only when its `lease_id`, `run_id`, capability,
+`decision_schema_version`, and `request_digest` exactly equal the corresponding
+fields in the live durable lease record binding and live wrapper. A syntactically
+valid arbitrary `lease_id` is insufficient. The `budget_ack` owns only
+`acknowledged_at_utc`; it does not own `run_started_at_utc`,
+`transmission_started_at_utc`, or `socket_opened_at_utc`. Those three are
+coordinator runtime/live-record samples. Freshness is checked using one trusted
+coordinator UTC clock: `run_started_at_utc` is sampled at the claim event,
 `transmission_started_at_utc` immediately before the socket is opened, and
 `socket_opened_at_utc` at the actual socket open. All four operational fields,
-including `acknowledged_at_utc`, are mandatory, use the exact UTC grammar
-above, and must satisfy
+including `acknowledged_at_utc`, are mandatory on a complete live observation,
+use the exact UTC grammar above, and must satisfy
 `run_started_at_utc <= acknowledged_at_utc <= transmission_started_at_utc <=
 socket_opened_at_utc`.
 The acknowledgement must be at most 60 seconds old at transmission and expires
@@ -319,7 +291,9 @@ live call. There is no direct provider-side or account-level enforcement
 alternative in this contract. A client-only reservation is not enough because
 it cannot prevent post-call overcharge. Missing, mismatched, stale, mutable,
 unverified, future, backward-clock, expired, or reused acknowledgement is a
-terminal hold before transmission.
+terminal hold before transmission. A pre-call refusal or hold record does not
+carry these operational timestamps, `lease_id`, `run_id`, or `budget_ack`;
+those fields are forbidden by the generic record schemas.
 
 ## Immutable transport authority and raw body sizes
 
@@ -441,7 +415,7 @@ fixture.response_id
 
 All four values are provider-declared. After custody is resolved, a missing,
 one-sided, empty, sentinel, client-synthesized, or mismatched value is an
-explicit `fixture:R21` refusal; unresolved custody follows `evidence:R19` hold
+explicit `evidence:R21` refusal; unresolved custody follows `evidence:R19` hold
 or `evidence:R18` refusal as specified by the matrix. The provenance value may
 not be synthesized from a requested identity, fixture filename, manifest
 entry, or client-generated identifier.
@@ -564,7 +538,7 @@ missing or unequal nested value refuses complete replay. In particular, any
 mismatch in `fixture.requested_identity == fixture.request.requested_identity
 == fixture.response.requested_identity` or in
 `fixture.source_kind/source_ref == fixture.provenance.source_kind/source_ref`
-is an explicit refusal with reason `fixture:R21` after custody is resolved;
+is an explicit refusal with reason `evidence:R21` after custody is resolved;
 custody that cannot be resolved follows the explicit `evidence:R19` hold or
 `evidence:R18` refusal path and never becomes a complete fixture.
 
@@ -622,37 +596,47 @@ have zero retention.
 
 ## Atomic run, budget, and terminal state
 
-Each live run requires a coordinator-issued `run_id`, an atomic durable
-single-call `lease_id`, and a pre-call reservation for the full `$0.01 USD`
-cap. Atomic claim semantics are CAS/create-if-absent on a durable append-only
-record: exactly one caller can create or transition the lease from `available`
-to `claimed`. Claim outcomes are classified by the closed pre-call table below;
-a losing CAS claimant is not generically refused. The immutable lease binds:
+Each live run requires a coordinator-issued `run_id`, a coordinator-generated
+`lease_id`, an atomic durable single-call lease, and a pre-call reservation for
+the full `$0.01 USD` cap. The canonical lease state machine is:
 
 ```text
-run_id + capability + schema_version + request_digest
+available       = no durable lease record exists
+claimed event   = successful CAS/create-if-absent creates state in-flight
+in-flight       -- atomic consume-before-socket --> consumed
+consumed        -- completion or terminal refusal/hold --> terminal
 ```
 
-The lease is consumed exactly once and cannot be recreated after timeout,
-refusal, process failure, response ambiguity, or a second worker. Concurrency
-is one, retries are zero, and timeout is 30 seconds.
+`available` is absence, not a stored state. `claimed` is only the event that
+creates `in-flight`, never a state. The durable record is closed and carries
+`lease_id` plus the exact binding `{run_id, capability, schema_version,
+request_digest}`. No transition reopens, overwrites, or recreates a run. A
+syntactically valid token without its exact record is not a fresh lease. Claim
+evidence records the created lease and binding; consume evidence records the
+same exact lease and binding after `in-flight -> consumed`; the complete live
+wrapper links to that consumed record by exact equality. A losing concurrent
+invocation does not mutate the owner record. Concurrency is one, retries are
+zero, and timeout is 30 seconds.
 
 Before every live transmission, the exact `budget_ack` object above must be
-present, custody-verified, fresh, and bound to the run, capability, and request
-digest. One trusted coordinator UTC clock samples
-`run_started_at_utc` at lease claim, `transmission_started_at_utc`
-immediately before socket open, and `socket_opened_at_utc` at the actual socket
-open. Each operational timestamp, including `acknowledged_at_utc`, must match
-the exact UTC grammar above, be a real UTC instant, and obey
+present, custody-verified, fresh, and bound by exact equality to the durable
+record's `lease_id`, `run_id`, capability, decision schema version, and request
+digest. One trusted coordinator UTC clock samples `run_started_at_utc` at the
+claim event, `transmission_started_at_utc` immediately before socket open, and
+`socket_opened_at_utc` at the actual socket open. `budget_ack` owns only
+`acknowledged_at_utc`; the other three are runtime/live-record samples. Each
+operational timestamp must match the exact UTC grammar above, be a real UTC
+instant, and obey
 `run_started_at_utc <= acknowledged_at_utc <= transmission_started_at_utc <=
 socket_opened_at_utc`. The acknowledgement must be no more than 60 seconds
 old, and the socket must open strictly before `acknowledged_at_utc + 60
 seconds`. Future, backward, or missing clock values are rejected. The
-immutable lease binding is rechecked immediately before transmission, the
-lease is consumed before the socket opens, and neither lease nor
-acknowledgement can be reused. This contract has no provider-side or
-account-level enforcement alternative. A client-side reservation alone cannot
-prevent post-call overcharge and is not sufficient authorization.
+immutable lease-record binding is rechecked immediately before transmission,
+the lease is consumed before the socket opens, and neither lease nor
+acknowledgement can be reused. Completion or terminal refusal/hold then records
+`consumed -> terminal`. This contract has no provider-side or account-level
+enforcement alternative. A client-side reservation alone cannot prevent
+post-call overcharge and is not sufficient authorization.
 
 Any cost must be a finite non-negative JSON number, exact literal currency
 `USD`, and amount `<= 0.01`. Missing `cost`, `amount`, or `currency` is a
@@ -711,20 +695,23 @@ belongs to two rows.
 
 ## Closed pre-call lease-state decision table
 
-Observe the invocation signal, same-run lease state, claim result, and budget
-acknowledgement. Evaluate exactly R16, then R15, then R14; the caller cannot
-select a row:
+Observe the invocation signal, exact same-run lease record, CAS/create-if-absent
+result, and budget acknowledgement. Evaluate exactly R16, then R15, then R14;
+the caller cannot select a row:
 
 | Evaluation order | Reason | Disjoint observable predicate | Outcome |
 |---|---|---|---|
-| 1 | R16 | An explicit retry, second, or concurrent invocation is observed; an existing same-run lease is `in-flight`, `consumed`, or `terminal`; or a supplied lease token is duplicated or bound to the wrong run, capability, schema version, or request digest. A CAS claimant that loses because another claimant already owns an in-flight lease is R16. A reused acknowledgement on such a retry/second/concurrent invocation is also R16. | `refused` |
-| 2 | R15 | This is a first invocation with no retry, second, or concurrency signal, but `run_id` is missing or the durable lease service/create-if-absent operation is unavailable, and no existing same-run in-flight owner is observed. | `hold` |
-| 3 | R14 | This is a first invocation that successfully claims a fresh, correctly bound lease, but `budget_ack` is missing, malformed, stale, reused, mutable, custody-unverified, future, backward-clock, expired, over-cap, non-USD, or otherwise invalid. | `hold` |
+| 1 | R16 | An explicit retry, second, or concurrent invocation is observed; an existing same-run durable lease record is in `in-flight`, `consumed`, or `terminal`; a supplied token is duplicated, unrecognized, or bound to the wrong run, capability, schema version, request digest, or lease record; or CAS/create-if-absent loses to an existing `in-flight` owner. Every R16 state or token is excluded from R15. | `refused` |
+| 2 | R15 | This is a first invocation with no R16 predicate, no existing same-run `in-flight`, `consumed`, or `terminal` record, and no successful fresh record, because `run_id` is missing or the lease service is unavailable or unobservable. | `hold` |
+| 3 | R14 | After a fresh `in-flight` record is successfully created and its `lease_id`, run, capability, decision schema version, request digest, and binding are exact, `budget_ack` is missing, malformed, stale, reused, mutable, custody-unverified, future, backward-clock, expired, over-cap, non-USD, or otherwise invalid. | `hold` |
 
-Each condition belongs to one row. A first invocation with no observed
-in-flight owner is R15 only when the row's missing/unavailable predicates hold;
-a CAS loss to an existing in-flight owner is R16. R14, R15, and R16 are
-mutually exclusive and their statuses are fixed by the table.
+Each condition belongs to one row. For R14, the invalid acknowledgement causes
+the fresh record to finalize through `in-flight -> consumed -> terminal`
+without opening a socket. A first invocation with no observed
+`in-flight`, `consumed`, or `terminal` record is R15 only when the row's
+missing/unavailable predicates hold; a CAS loss to an existing `in-flight`
+owner is R16. R14, R15, and R16 are mutually exclusive, all R16 states and
+tokens are excluded from R15, and their statuses are fixed by the table.
 
 ## Refusal matrix
 
@@ -739,19 +726,19 @@ mutually exclusive and their statuses are fixed by the table.
 | R07 | Requested identity is missing, changed, aliased, normalized, or substituted. | `refused` | Refuse; never use `typesafe/jev-latest` or a served suffix as replacement. |
 | R08 | Response requested identity does not exactly equal request identity. | `refused` | Refuse before consumption or replay. |
 | R09 | After transport and request-identity checks, all required provider-declared metadata is present and individually valid under their exact field grammars, but `model` conflicts with `served_identity.model`, or a provider response ID conflicts with `served_identity.response_id` or `response_id`. | `refused` | Refuse; served identity never becomes a D13 alias. Missing metadata is `R12`; malformed or unparseable present fields are `R10`. |
-| R10 | Schema, envelope, JSON, duplicate-key, extra-field, question, criteria, answer, confidence, type, or any present response metadata field is malformed or unparseable, including malformed `model`, malformed `response_id`, or unparseable `server_timestamp_utc`. This row has precedence over R09. | `refused` | Refuse; no coercion, repair, conflict reclassification, or partial answer set. |
+| R10 | Schema, envelope, JSON, duplicate-key, extra-field, question, criteria, answer, confidence, type, or any present response metadata field is malformed or unparseable, including malformed `model`, malformed `response_id`, or unparseable `server_timestamp_utc`. Missing provider metadata is explicitly excluded and belongs only to R12. This row has precedence over R09. | `refused` | Refuse; no coercion, repair, conflict reclassification, or partial answer set. |
 | R11 | Choice distribution differs from total 1 by more than absolute `1e-12`, or has invalid keys/probabilities. | `refused` | Refuse; no repair, clamping, or renormalization. |
 | R12 | After transport and request-identity checks, the provider did not declare one or more required complete metadata fields: `model`, `response_id`, or `server_timestamp_utc`. Missing `server_timestamp_utc` belongs only here. | `hold` | Terminal hold with the class-prefixed `R12` code; client-supplied values cannot fill a missing provider declaration. |
-| R13 | A live result is missing the `cost` object, `amount`, or `currency`. | `hold` | Deterministic terminal hold with the class-prefixed `R13` code; never mark complete, estimate, or convert. |
-| R13 | A present cost object is malformed, has an extra field, uses a string/NaN/Infinity/negative/over-cap `amount`, uses non-USD `currency`, or is otherwise unauthorized. | `refused` | Deterministic refusal with the class-prefixed `R13` code; never repair, estimate, or convert. |
-| R14 | This is a first invocation that successfully claims a fresh, correctly bound lease, but the mandatory `budget_ack` is missing, malformed, stale, reused, mutable, custody-unverified, non-USD, over-cap, future, backward-clock, expired, or otherwise invalid. | `hold` | Terminal hold before transmission; client reservation alone is insufficient. A reused acknowledgement on a retry/second/concurrent invocation is `R16` by precedence. |
-| R15 | This is a first invocation with no retry, second, or concurrency signal, but `run_id` or the durable lease service/create-if-absent operation is missing or unavailable, and no existing same-run in-flight owner is observed. | `hold` | Terminal hold with the class-prefixed `R15` code; no call. A CAS loss to an existing in-flight owner is `R16`, not R15. |
-| R16 | An explicit retry, second, or concurrent invocation is observed; an existing same-run lease is in-flight, consumed, or terminal; or a supplied lease token is duplicated or bound to the wrong run, capability, schema version, or request digest. A CAS claimant that loses because another claimant already owns an in-flight lease is R16. | `refused` | Terminal refusal; this row is evaluated before `R15` and `R14`, and an append-only lease cannot be recreated or reopened. |
+| R13 | A live result is missing the `cost` object, `amount`, or `currency`. | `hold` | Deterministic generic `evidence:R13` terminal hold; never mark complete, estimate, or convert. |
+| R13 | A present cost object is malformed, has an extra field, uses a string/NaN/Infinity/negative/over-cap `amount`, uses non-USD `currency`, or is otherwise unauthorized. | `refused` | Deterministic generic `evidence:R13` refusal; never repair, estimate, or convert. |
+| R14 | After a fresh `in-flight` record is successfully created and correctly bound, the mandatory `budget_ack` is missing, malformed, stale, reused, mutable, custody-unverified, non-USD, over-cap, future, backward-clock, expired, or otherwise invalid. | `hold` | Generic `evidence:R14` terminal hold before transmission; the single-use record is finalized without a socket. Any R16 state or token takes precedence. |
+| R15 | This is a first invocation with no R16 predicate, no existing same-run `in-flight`, `consumed`, or `terminal` record, and no successful fresh record because `run_id` or the durable lease service is missing, unavailable, or unobservable. | `hold` | Generic `evidence:R15` terminal hold with no lease/run/budget fields; a CAS loss to an existing `in-flight` owner is R16, not R15. |
+| R16 | An explicit retry, second, or concurrent invocation is observed; an existing same-run durable lease record is `in-flight`, `consumed`, or `terminal`; a supplied token is duplicated, unrecognized, or wrongly bound; or CAS/create-if-absent loses to an existing `in-flight` owner. | `refused` | Generic `evidence:R16` terminal refusal; this row is evaluated before `R15` and `R14`, and no lease can be recreated or reopened. |
 | R17 | JCS canonical bytes or paired request/response digest is missing, malformed, recomputed differently, or identity-unbound. | `refused` | Refuse replay or evidence acceptance. |
 | R18 | Provenance object is non-canonical, contains a field outside its closed schema, has missing/wrong provenance digest, or uses a non-JCS hash procedure. | `refused` | Refuse replay and evidence acceptance. |
 | R19 | Fixture repository/ref/path/commit/tree or the independent coordinator manifest receipt/resolution is missing, unverified, mutable, non-resolving, unapproved, or differs across the wrapper/provenance/manifest-entry/receipt custody tuples. | `hold` | Emit only generic `evidence:R19` `hold-record` with `disposition: "pending-coordinator"`; do not emit a `sanitized-replay-fixture` record. |
 | R20 | Fixture is self-recomputed outside the committed manifest, detached from its paired digests, or current bytes differ from custody after receipt resolution. | `refused` | Emit generic `evidence:R20` `refusal-record`; no self-recomputed or mutable fixture acceptance. |
-| R21 | After custody is resolved, non-complete provenance lacks the exact JSON string `"none"`, or complete response IDs are missing, one-sided, sentinel-valued, client-synthesized, or unequal; any requested-identity or source-kind/source-ref replay equality below is also unequal. | `refused` | Refuse the validated fixture with the class-prefixed `R21` code; complete fixture status is forbidden. Unresolved custody follows `R19` or `R18` as stated above. |
+| R21 | After custody is resolved, non-complete provenance lacks the exact JSON string `"none"`, or complete response IDs are missing, one-sided, sentinel-valued, client-synthesized, or unequal; any requested-identity or source-kind/source-ref replay equality below is also unequal. | `refused` | Emit generic `evidence:R21` refusal; complete fixture status is forbidden. Unresolved custody follows `R19` or `R18` as stated above. |
 | R22 | Input contains any unknown field, free-text value, credential-bearing value, or value outside the fixed vocabulary, generated-ID grammar, finite custody allowlist, or numeric bounds, or minimization/redaction is uncertain. | `refused` | Refuse before serialization/transmission; retain no rejected input or metadata. |
 | R23 | Fixture, metadata, source reference, log, or report contains a field outside its closed schema, a key, raw authorization header, unsafe payload, or exceeds retention limit. | `refused` | Refuse retention and consumption; do not echo material. |
 | R24 | Consumer is not `support-triage-advisory-v1`, recommendation has unknown/effect fields, or independent application authorization is absent. | `refused` | Refuse; application retains all authority and effects. |

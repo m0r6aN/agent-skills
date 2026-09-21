@@ -120,7 +120,7 @@ real UTC instant. Evaluate exactly this table:
 | Evaluation order | Reason | Disjoint predicate | Outcome |
 |---|---|---|---|
 | 1 | R12 | One or more provider-declared complete metadata fields (`model`, `response_id`, or `server_timestamp_utc`) is missing. Missing `server_timestamp_utc` belongs here. | `hold` |
-| 2 | R10 | All required metadata fields are present, but any present response field is malformed or unparseable under its exact grammar, including malformed `model`, malformed `response_id`, or unparseable `server_timestamp_utc`. This row has precedence over R09. | `refused` |
+| 2 | R10 | All required metadata fields are present, but any present response field is malformed or unparseable under its exact grammar, including malformed `model`, malformed `response_id`, or unparseable `server_timestamp_utc`; missing provider metadata is explicitly excluded and belongs only to R12. This row has precedence over R09. | `refused` |
 | 3 | R09 | All required metadata fields are present and individually valid under their exact field grammars, but authenticated response `model` conflicts with `served_identity.model`, or the provider response identifier conflicts with `served_identity.response_id` or `response_id`. | `refused` |
 
 R09 owns only present, validly shaped, conflicting values; it never owns a
@@ -300,33 +300,62 @@ failed, not valid UTF-8, or over the limit refuses before parse or persistence.
 
 ## Cost, run, lease, and terminal authority
 
-Each later live run requires a coordinator-issued `run_id`, an atomic durable
-single-call lease, and a pre-call reservation for the full `$0.01 USD` cap.
-Atomic claim semantics are CAS/create-if-absent on a durable record: exactly one
-caller can create or transition the lease from `available` to `claimed`. Claim
-outcomes are classified by the closed pre-call table below; a losing CAS
-claimant is not generically refused. The immutable lease binds all of:
+Each later live run requires a coordinator-issued `run_id`, a coordinator-
+generated `lease_id`, an atomic durable single-call lease, and a pre-call
+reservation for the full `$0.01 USD` cap. The canonical lease vocabulary is
+closed:
+
+- `available` means that no durable lease record exists; it is not a stored
+  state and has no token.
+- A successful CAS/create-if-absent is the `claimed` event. It creates exactly
+  one durable record in state `in-flight`; `claimed` is never a lease state.
+- Atomic consume-before-socket changes that exact record from `in-flight` to
+  `consumed`.
+- Completion or a terminal refusal/hold changes that exact record from
+  `consumed` to `terminal`. A losing concurrent invocation does not mutate the
+  owning record; its own generic refusal record is terminal.
+- No transition reopens, overwrites, or recreates a run. A valid-looking token
+  without its exact durable record is not a fresh lease.
+
+The closed durable lease record is:
 
 ```text
-run_id + capability + schema_version + request_digest
+lease_record: {
+  lease_id: <generated string matching ^lease-[0-9a-f]{32}$>,
+  state: "in-flight" | "consumed" | "terminal",
+  binding: {
+    run_id: <exact coordinator-issued run_id>,
+    capability: "openrouter-alpha-decisions",
+    schema_version: "jev-decisions/v1",
+    request_digest: <exact request digest>
+  }
+}
 ```
 
-The lease is consumed by at most one call and cannot be recreated by retry,
-timeout recovery, process failure, or a second worker. Concurrency is one,
-retries are zero, and the timeout is 30 seconds.
+The `lease_id`, `run_id`, capability, decision schema version, and request
+digest in a custody-verified `budget_ack` must equal the corresponding fields
+in this live durable record binding and in the live evidence record. The
+`budget_ack` binding is not satisfied by a syntactically valid arbitrary
+`lease_id`; the exact record, owner, and request digest must resolve. Claim
+evidence records the created `lease_id` and binding, and consume evidence
+records the same exact `lease_id` and binding after the atomic
+`in-flight -> consumed` transition. Concurrency is one, retries are zero, and
+the timeout is 30 seconds.
 
 Before every live transmission, the coordinator must provide the exact closed
 `budget_ack` object defined in `jev-p0-evidence-boundary.md`. It is mandatory
 for every live call; this contract has no direct provider-side or account-level
 enforcement alternative. The acknowledgement must be custody-verified, fresh,
-and bound to the current run, capability, and request digest. Freshness is
-evaluated only by one trusted coordinator UTC clock: `run_started_at_utc` is
-sampled when the durable lease is claimed, and
-`transmission_started_at_utc` is sampled immediately before the socket opens.
-All four operational timestamps, including the actual socket-open sample, are
-mandatory when the freshness decision is made. Each is a string matching
-`^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$` and must
-parse as a real UTC instant; offsets, leap-second spellings, missing
+and bound to the exact current lease record, run, capability, decision schema,
+and request digest. The one UTC timestamp grammar used by every provider,
+budget, runtime, evidence, retention, and verification timestamp is
+`^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$`; every value
+must parse as a real UTC instant. `run_started_at_utc` is a runtime/live-record
+coordinator sample at the claim event; `acknowledged_at_utc` is owned only by
+`budget_ack`; `transmission_started_at_utc` is a runtime/live-record sample
+immediately before the socket opens; and `socket_opened_at_utc` is a
+runtime/live-record sample at the actual socket open. All four are required on
+a complete live observation. Offsets, leap-second spellings, missing
 milliseconds, and non-UTC suffixes are invalid. They must satisfy:
 
 ```text
@@ -337,11 +366,13 @@ socket_opened_at_utc < acknowledged_at_utc + 60 seconds
 
 The coordinator rejects a future timestamp, a missing sample, any backward
 trusted-clock observation, an acknowledgement before run start, or an expiry
-that has been reached. Immediately before transmission it rechecks the
-immutable lease binding (`run_id`, capability, schema version, and request
-digest), atomically consumes the lease, and only then opens the socket. The
-consumed lease and acknowledgement cannot authorize another call; queueing,
-retry, recreation, or reuse is refused. A client-side reservation alone cannot
+that has been reached. Immediately before transmission it rechecks the exact
+lease-record binding (`lease_id`, `run_id`, capability, schema version, and
+request digest), atomically consumes the record from `in-flight` to `consumed`,
+and only then opens the socket. On completion or terminal refusal/hold it
+records the append-only `consumed -> terminal` transition. The consumed lease
+and acknowledgement cannot authorize another call; queueing, retry,
+recreation, or reuse is refused. A client-side reservation alone cannot
 prevent post-call overcharge and is not sufficient authorization.
 
 `budget_ack` is always a closed `jev-budget/v1` object with exactly these
@@ -351,11 +382,15 @@ matches `^acct-[0-9a-f]{32}$`; `cap_amount` is the finite JSON number `0.01`;
 `currency` is literal `USD`; `acknowledged_at_utc` is the exact UTC timestamp
 form; `acknowledgement_digest` is 64 lowercase hex; `repository`, `ref`,
 `path`, `commit`, and `tree` use the immutable custody grammars; and `run_id`,
-`capability`, and `request_digest` bind it exactly to the current run. No extra
-field is accepted. The acknowledgement digest is the SHA-256 of the JCS UTF-8
-bytes of the object with that digest field omitted. Missing, stale, mismatched,
-mutable, unverified, future, backward-clock, or reused acknowledgement is a
-terminal hold before transmission.
+`lease_id`, `capability`, `decision_schema_version`, and `request_digest` bind it
+exactly to the current lease record. `schema_version` remains the literal
+`jev-budget/v1` for the acknowledgement object itself;
+`decision_schema_version` is the exact `jev-decisions/v1` value compared with
+the lease record and live record. No extra field is accepted. The
+acknowledgement digest is the SHA-256 of the JCS UTF-8 bytes of the object with
+that digest field omitted. Missing, stale, mismatched, mutable, unverified,
+future, backward-clock, or reused acknowledgement is a terminal hold before
+transmission.
 
 Every `live-observation` complete wrapper must contain this exact closed cost
 object, with no omitted or extra field:
@@ -384,18 +419,21 @@ non-consumable, and non-retryable pending coordinator disposition. JEV-P0
 itself has no run ID, lease, provider call, or spend.
 
 The pre-call decision is a closed, observable, disjoint table. Observe the
-invocation signal, same-run lease state, claim result, and budget acknowledgement;
-the caller cannot choose a row:
+invocation signal, exact same-run lease record, CAS/create-if-absent result, and
+budget acknowledgement; the caller cannot choose a row:
 
 | Evaluation order | Reason | Disjoint observable predicate | Outcome |
 |---|---|---|---|
-| 1 | R16 | An explicit retry, second, or concurrent invocation is observed; an existing same-run lease is `in-flight`, `consumed`, or `terminal`; or a supplied lease token is duplicated or bound to the wrong run, capability, schema version, or request digest. A CAS claimant that loses because another claimant already owns an in-flight lease is R16. A reused acknowledgement on such a retry/second/concurrent invocation is also R16. | `refused` |
-| 2 | R15 | This is a first invocation with no retry, second, or concurrency signal, but `run_id` is missing or the durable lease service/create-if-absent operation is unavailable, and no existing same-run in-flight owner is observed. | `hold` |
-| 3 | R14 | This is a first invocation that successfully claims a fresh, correctly bound lease, but `budget_ack` is missing, malformed, stale, reused, mutable, custody-unverified, future, backward-clock, expired, over-cap, non-USD, or otherwise invalid. | `hold` |
+| 1 | R16 | An explicit retry, second, or concurrent invocation is observed; an existing same-run durable lease record is in `in-flight`, `consumed`, or `terminal`; a supplied token is duplicated, unrecognized, or bound to the wrong run, capability, schema version, request digest, or lease record; or CAS/create-if-absent loses to an existing `in-flight` owner. Every R16 state or token is excluded from R15. | `refused` |
+| 2 | R15 | This is a first invocation with no R16 predicate, no existing same-run `in-flight`, `consumed`, or `terminal` record, and no successful fresh record, because `run_id` is missing or the lease service is unavailable or unobservable. | `hold` |
+| 3 | R14 | After a fresh `in-flight` record is successfully created and its `lease_id`, run, capability, decision schema version, request digest, and binding are exact, `budget_ack` is missing, malformed, stale, reused, mutable, custody-unverified, future, backward-clock, expired, over-cap, non-USD, or otherwise invalid. | `hold` |
 
 Evaluate exactly R16, then R15, then R14. R14, R15, and R16 are mutually
-exclusive; each condition belongs to one row, and no caller-selected status is
-accepted.
+exclusive; all R16 states and tokens are excluded from R15, each condition
+belongs to one row, and no caller-selected status is accepted.
+For R14, the invalid acknowledgement prevents socket open; the coordinator
+finalizes the fresh single-use record through `in-flight -> consumed ->
+terminal` and emits only the generic hold record.
 
 ## Credential and consumer boundary
 
