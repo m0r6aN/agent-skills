@@ -1,4 +1,4 @@
-# JEV-P0 — Verification record and negative-proof plan
+# JEV-P0 — Rework verification record and negative-proof plan
 
 ## Scope
 
@@ -11,41 +11,58 @@ for the parcel is:
 - `plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-evidence-boundary.md`
 - `plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-verification.md`
 
-Every other path and effect is forbidden. This file records local checks and
-the evidence still required from the coordinator before Gate 3.
+Every other path and effect is forbidden. This rework closes the eleven
+coordinator-directed Review A/B findings without changing any parent, host,
+runtime, provider, or downstream surface.
 
-## Required local checks
+## Verification authority and environment boundary
 
-Run all commands from `C:\Repos\foreman-line-jev-p0`, in PowerShell, with the
-version probe first. These checks are read-only after authoring the documents.
+These goal documents are Markdown artifacts, not dispatchable frontmatter
+specs. Their content is reviewed against the active JEV-P0 spec; they are not
+the target of the repository frontmatter linter. The frontmatter linter and
+shaping advisory self-check are run coordinator-side against the exact active
+spec only:
 
-### 1. Version and frozen frontmatter lint
+`plugins/foreman-line/docs/specs/active/JEV-P0-alpha-decisions-contract-and-evidence-boundary.md`
+
+The builder must not claim that either tool validated the three contract
+documents. In the current worktree, the targeted checks are environment-
+limited because the local `ajv` dependency is absent, and the installed Node
+version is below the shaping package's declared engine floor. No dependency
+installation is authorized for this parcel.
+
+## Required coordinator-side checks
+
+Run from `C:\Repos\foreman-line-jev-p0`, in PowerShell, with the version probe
+first. These commands are read-only and target only the active spec or the
+allowed document diff.
+
+### 1. Targeted active-spec frontmatter lint
 
 ```powershell
 node -v
 Set-Location plugins/foreman-line/spec-linter
-npx tsx src/cli.ts validate ../docs/specs/active/JEV-P0-alpha-decisions-contract-and-evidence-boundary.md
+npx --no-install tsx src/cli.ts validate ../docs/specs/active/JEV-P0-alpha-decisions-contract-and-evidence-boundary.md
 Set-Location ../../..
 ```
 
-Success requires a supported Node version and linter exit 0 for the exact
-active spec. Advisory warnings may be printed; they are not failures.
+This command does not lint `jev-p0-contract.md`,
+`jev-p0-evidence-boundary.md`, or `jev-p0-verification.md`. A missing local
+dependency is an environment limitation, not a contract-document result.
 
-### 2. Two-layer shaping advisory self-check
+### 2. Targeted active-spec two-layer advisory self-check
 
 ```powershell
 Set-Location plugins/foreman-line/shaping
-npx tsx -e "import { readFileSync } from 'node:fs'; import { selfCheckDraft } from './src/index.ts'; const p = '../docs/specs/active/JEV-P0-alpha-decisions-contract-and-evidence-boundary.md'; const r = selfCheckDraft(readFileSync(p, 'utf8')); console.log(JSON.stringify(r)); if (!r.valid) process.exit(1)"
+npx --no-install tsx -e "import { readFileSync } from 'node:fs'; import { selfCheckDraft } from './src/index.ts'; const p = '../docs/specs/active/JEV-P0-alpha-decisions-contract-and-evidence-boundary.md'; const r = selfCheckDraft(readFileSync(p, 'utf8')); console.log(JSON.stringify(r)); if (!r.valid) process.exit(1)"
 Set-Location ../../..
 ```
 
-Success requires both delegated frontmatter validation and the body-section
-check to pass. The required body sections are `Intent`, `Constraints`,
-`Acceptance Criteria`, `Out of Scope`, and `Context & References`, in order,
-with non-empty `Out of Scope`. This advisory check never promotes or mutates a
-spec.
+This is also targeted only at the active spec. It checks the delegated
+frontmatter layer and required body-section order without writing, moving, or
+promoting any spec.
 
-### 3. Scope, whitespace, and parent-surface checks
+### 3. Exact scope, whitespace, and parent-surface checks
 
 ```powershell
 $allowed = @(
@@ -62,47 +79,69 @@ git diff --check
 git diff -- $allowed
 ```
 
-Success requires exactly the three allowed paths, no forbidden path, no
-whitespace error, and no change to parent RCM, JEV authority, routing, Pi,
-HAWF, Helmholtz, GMF, host, credential, schema, code, test, fixture, receipt,
-or downstream surfaces.
+Success requires exactly the three allowed paths, no whitespace error, and no
+change to parent RCM, JEV authority, routing, Pi, HAWF, Helmholtz, GMF, host,
+credential, schema, code, test, fixture, receipt, or downstream surfaces.
 
-### 4. Field-by-field contract review
+### 4. Rework-content assertions
 
-Review the three documents against the active spec and ratified J1–J10
-replacement decisions. Confirm, at minimum:
+Perform a read-only field-by-field review of the three allowed documents and
+confirm every item in the following checklist:
 
-- Capability ownership and the exact endpoint are literal and exclusive.
-- Requested identity is exact and case-sensitive; served identity is separate
-  and cannot satisfy D13.
-- `jev-decisions/v1`, complete typed envelopes, criteria coverage, answer
-  matching, confidence/distribution rules, response ID, and 64-KiB request and
-  response refusals are explicit.
-- Evidence contains the required safe live metadata, canonical request and
-  response digests, provenance, timestamps, usage, and currency-qualified cost;
-  it excludes credentials and unsafe payloads.
-- One call, zero retries, concurrency one, 30-second timeout, 64-KiB limits,
-  and `$0.01 USD` aggregate cap are explicit and fail closed.
-- Replay is fixture-based and deterministic; live observations are not replay
-  authority.
-- The refusal matrix covers endpoint, identities, schema, malformed or
-  incomplete envelopes, missing answers, malformed distributions,
-  authentication, timeout, size, non-JSON, unqualified cost, digest,
-  provenance, binding, retry, and unauthorized consumer failures.
-- Only `support-triage-advisory-v1` may consume recommendation data, and Jev
-  cannot route, escalate, spend, mutate, or authorize effects.
+1. `served_identity.model` and `response_id` come only from the authenticated
+   provider response; no client synthesis/fallback is possible; served metadata
+   is non-D13; a negative fixture changes/removes `model` or `response_id`.
+2. RFC 8785/JCS is the canonical logical-byte procedure; UTF-8 and SHA-256
+   steps are explicit; raw body bytes are distinct; both JCS vectors are
+   present.
+3. Complete status requires provider-declared parseable `response_id` and
+   `server_timestamp_utc`; missing/unparseable values are terminal holds.
+4. Choice distributions use absolute tolerance `1e-12`; no renormalization,
+   clamping, repair, or silent key insertion is allowed.
+5. Request size is raw UTF-8 serialized body before transmission; response size
+   is raw UTF-8 body before parse/persistence; both are `<= 65,536` bytes.
+6. The endpoint is an immutable capability-owned constant; caller endpoints,
+   redirects, origin changes, method/host/path/TLS mismatches, and transport
+   failures refuse.
+7. A coordinator-issued `run_id`, atomic single-call lease, pre-call budget
+   reservation, concurrency one, zero retries, and terminal non-USD/over-cap
+   holds are explicit.
+8. Fixtures require immutable reviewable manifest/commit custody, fixture ID,
+   paired digests, provenance digest, and the trusted custody rule.
+9. Holds are terminal, non-consumable, and non-retryable pending coordinator
+   disposition; TLS/certificate, redirect, non-2xx, content-type, transport,
+   decompression, and truncation refusals are present.
+10. `support-triage-advisory-v1` has an exact allowlist with no commands,
+    capability tokens, recipients, or effect fields; independent application
+    authorization and negative tests are required.
+11. This verification record targets active-spec lint only and accurately states
+    the dependency/Node environment limitation.
+
+### 5. JCS vector and recommendation negative checks
+
+The later deterministic validator/replay parcel must reproduce these exact
+JCS vectors from the evidence-boundary document:
+
+| Vector | Canonical UTF-8 bytes | SHA-256 |
+|---|---|---|
+| `jev-jcs-request-001` | `{"a":1,"b":[true,"x"]}` | `63e8063d9dc6f0fd5a24b4706818a165fd57c3531b74466cf5dea62bff09b0b6` |
+| `jev-jcs-response-001` | `{"model":"typesafe/jev-1.13","response_id":"r-001","schema_version":"jev-decisions/v1"}` | `dab820809e40697f1bdcc99736067d9d282090766ae72d0e65137daf3cf6bca2` |
+
+The review must also require negative recommendation cases for injected
+`command`, `capability_token`, `recipients`, `effect`, `route`, `escalate`,
+`spend`, or `mutation` fields, and for bypassing the independent application
+authorization gate.
 
 ## Parent-surface negative proof plan
 
-The parcel must prove absence of mutation, not infer it from intent. The
-coordinator should inspect the final path-scoped diff and confirm unchanged
-content for:
+The parcel must prove absence of mutation, not infer it from intent. The final
+path-scoped diff must show unchanged content for:
 
 | Surface | Negative proof |
 |---|---|
-| Parent RCM D13, charter, loop directive, and boundary-routing D10 | No changed path and no contract wording that amends or reinterprets them. |
-| RCM routing registry/policy and standard routing | No changed path, route registration, catalog substitution, or general model-selection authority. |
-| JEV charter and loop directive | No changed path; this parcel records their ratified decisions without editing them. |
+| Parent RCM D13, charter, loop directive, and boundary-routing D10 | No changed path and no wording that amends or reinterprets them. |
+| RCM routing registry/policy and standard routing | No route registration, catalog substitution, or general model-selection authority. |
+| JEV charter and loop directive | No changed path; this parcel records ratified decisions without editing them. |
 | Pi template/settings, host, credentials | No changed path, credential read, setting mutation, or secret-bearing evidence. |
 | HAWF and Helmholtz | No action, handoff, invocation, or changed path. |
 | GMF receipt/envelope contracts | No changed path, receipt minting, or runtime envelope creation. |
@@ -114,43 +153,42 @@ Two independent fresh frontier reviews are required before any Gate 3 request.
 The reviewers must be read-only and independent of both the author and each
 other. Each report must answer:
 
-1. Can a served model identifier, alias, or endpoint mismatch be mistaken for
-   the requested identity or parent RCM D13 eligibility?
-2. Can any evidence, fixture, digest input, log, or review report contain a
-   credential, raw authorization header, or unsafe payload?
-3. Are one-call, zero-retry, timeout, request-size, concurrency, and
-   currency-qualified-cost bounds concrete and fail closed?
-4. Does replay prove the exact canonical request/response bytes and both
-   identities while keeping live observations non-authoritative?
-5. Can malformed, incomplete, non-JSON, or provider-unbound answers escape the
-   refusal matrix?
-6. Can `support-triage-advisory-v1` or any parent/shared surface acquire
-   routing, escalation, spend, mutation, or host/Pi authority by implication?
+1. Can served identity be forged, synthesized, or confused with requested
+   identity or parent RCM D13 eligibility?
+2. Can raw wire bytes, JCS bytes, digests, fixtures, or reports leak a
+   credential or unsafe payload?
+3. Are complete metadata, distribution tolerance, transport, lease, budget,
+   timeout, and cost holds concrete and fail closed?
+4. Does replay require trusted manifest/commit custody and reproduce both JCS
+   vectors and paired identity-bound digests?
+5. Can redirects, non-2xx, content-type, TLS, decompression, truncation,
+   malformed, incomplete, or provider-unbound responses escape refusal?
+6. Can the recommendation object acquire commands, capabilities, recipients,
+   effects, routing, escalation, spend, or mutation without independent
+   application authorization?
+7. Can any parent/shared surface acquire authority by implication?
 
-The builder does not self-approve these reviews. A review finding is triaged by
-the coordinator; unresolved findings block Gate 3.
+The builder does not self-approve these reviews. Findings are triaged by the
+coordinator; unresolved findings block Gate 3.
 
 ## Execution record
 
-The following table is completed after the local checks run. It distinguishes
-passing deterministic checks from coordinator-owned review and merge gates.
-
 | Check | Result | Evidence |
 |---|---|---|
-| Starting branch and commit | `codex/jev-p0-contract` at coordinator commit `0ee3f10` before edits | Confirmed in worktree. |
-| `node -v` | Passed: `v24.7.0` | First verification command; the shaping package declares `>=24.11.1`, so this version is recorded as an environment mismatch. |
-| Frozen spec-linter on exact active spec | Blocked: exit 1 before validation because local `ajv` is missing; no dependency install performed | Exact command in section 1. |
-| Shaping two-layer advisory self-check | Blocked: exit 1 before validation because local `ajv` is missing; no dependency install performed | Exact command in section 2. |
-| Allowed-file/path-scoped diff | Passed: exactly the three allowed files are present; no other changed or untracked paths | Exact command in section 3. |
-| `git diff --check` | Passed: no whitespace errors | Exact command in section 3. |
-| Field-by-field J1–J10 review | Documented coverage completed by builder; independent review remains required | Checklist in section 4. |
+| Starting branch and commit | `codex/jev-p0-contract` at rework starting commit `0d52d12` | Confirmed before edits. |
+| `node -v` | Passed: `v24.7.0`; shaping package declares `>=24.11.1` | First check; the engine-floor mismatch is recorded as an environment limitation. |
+| Targeted active-spec frontmatter lint | Blocked: exit 1 before validation because local `ajv` is missing; no dependency install performed | Targets the active spec only; never the three goal docs. |
+| Targeted active-spec shaping self-check | Blocked: exit 1 before validation because local `ajv` is missing; no dependency install performed | Targets the active spec only. |
+| Exact allowed-file/path-scoped diff | Passed: exactly the three allowed paths; no other changed or untracked paths | Must be exactly three allowed paths. |
+| `git diff --check` | Passed: no whitespace errors | Read-only check. |
+| Eleven-item rework-content review | Completed by builder against sections 4–5; independent review remains required | Checklist in sections 4–5. |
 | Two independent fresh frontier reviews | Coordinator-owned; not performed by builder | Required before Gate 3. |
 | Gate 3 / merge | Not granted; human-owned | No self-approval or merge. |
 
 ## Completion boundary
 
-JEV-P0 is locally complete only when the three allowed documents exist, the
-deterministic checks pass, the path-scoped diff is clean, and the field review
-is recorded. It is not Gate 3-ready until the two independent fresh frontier
-reviews are complete and triaged by the coordinator. JEV-P0 does not itself
-request or grant that gate.
+The rework is document-complete only when all eleven findings are explicitly
+closed in the three allowed documents, the exact scope and whitespace checks
+pass, and the verification record accurately reports the targeted active-spec
+checks and environment limitations. It is not Gate 3-ready until the two
+independent fresh frontier reviews are complete and triaged by the coordinator.
