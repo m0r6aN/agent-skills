@@ -322,10 +322,13 @@ cost: {
 
 `amount` is a JSON number, never a string, `NaN`, `Infinity`, negative value,
 or other non-finite value. Missing fields, extra fields, non-USD currency, or
-over-cap amount is a terminal hold/refusal; cost is never estimated, converted,
-or silently accepted. The evidence-boundary `live-observation` complete field
-set uses this object verbatim, while every refused and held evidence field set
-forbids `cost`.
+over-cap amount is never estimated, converted, or silently accepted. A missing
+`cost` object, `amount`, or `currency` is deterministically a terminal
+`hold`/evidence hold with reason `R13`; a present but malformed, non-USD,
+negative, non-finite, over-cap, extra-field, or otherwise unauthorized cost is
+deterministically a `refused`/evidence refusal with reason `R13`. The
+evidence-boundary `live-observation` complete field set uses this object
+verbatim, while every refused and held evidence field set forbids `cost`.
 
 Run and evidence state transitions are append-only. Once `complete`, `refused`,
 or `hold` is recorded, that terminal state cannot be retried, reopened,
@@ -378,11 +381,13 @@ Source references and fixture identifiers are generated opaque values only.
 
 Raw request bodies, raw response bodies, headers, authorization values,
 compressed streams, and unredacted payloads have zero retention. Sanitized
-fixtures and safe live metadata require a `retention_until_utc` and may be
-retained no longer than 90 days after capture, or earlier coordinator
-disposition; after that point they must be deleted or rendered inaccessible
-without changing the immutable custody record. Retention never authorizes
-retaining raw payloads or rejected input.
+fixtures and safe live metadata require a coordinator-sampled retention anchor
+from the trusted capture/recording clock and a `retention_until_utc`; future
+anchors are rejected, and the exact bound is
+`anchor_utc <= retention_until_utc <= anchor_utc + 90 days`. At or before the
+bound, or on earlier coordinator disposition, the material must be deleted or
+rendered inaccessible without changing the immutable custody record. Retention
+never authorizes retaining raw payloads or rejected input.
 
 ## Fail-closed rule
 
