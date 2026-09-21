@@ -91,3 +91,18 @@ so the proof procedure itself is unsound.
 Gate 3 remains blocked. The third rework is authorized only on the same three
 JEV-P0 documents, with no live call, credential access, spend, external
 mutation, or merge.
+
+## Fourth rework disposition
+
+Two fresh independent reviews of `81a7954003e8a5e12a3f254a49c04aaa8faac7f2`
+both returned **REQUEST CHANGES / Gate 3 not ready**. Their shared findings
+are accepted as blockers:
+
+| Finding | Evidence | Disposition |
+|---|---|---|
+| P1 | The execution table still contains stale “pending final resulting commit” language and calls this the second rework, despite the third-rework commit and recorded checks. | Fix in fourth rework: make the rework number, target hash, scope, whitespace, and review record internally consistent. |
+| P1/P2 | Privacy controls use a non-enumerated “coordinator-approved allowlist” and vague “other PII patterns”; metadata fields such as usage, source kind/ref, fixture IDs, and wrapper metadata are not closed and bounded. | Fix in fourth rework: enumerate deterministic safe grammars/allowlists, bounds, wrapper metadata, and refusal rules for the complete envelope and evidence metadata. |
+
+Gate 3 remains blocked. The fourth rework is authorized only on the same three
+JEV-P0 documents. No live call, credential access, spend, external mutation,
+downstream dispatch, or merge is authorized.
