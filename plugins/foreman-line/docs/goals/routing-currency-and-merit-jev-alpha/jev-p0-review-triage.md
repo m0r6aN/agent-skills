@@ -324,3 +324,22 @@ same-three-file rework under the existing bounded Gate 2 grant:
 Scope and external-boundary compliance passed for `2fe8b456`; no network,
 credential, spend, host/Pi, parent, HAWF, Helmholtz, or downstream action
 occurred.
+
+## Thirteenth review disposition
+
+Two fresh independent reviews of `c71bdbfa0f9597eb44d0c3a01aa853f1f33989a8`
+returned **REQUEST CHANGES / Gate 3 not ready**. The coordinator proof passed,
+but the following findings require another same-three-file rework under the
+existing bounded Gate 2 grant:
+
+| Finding | Disposition |
+|---|---|
+| The documented scope proof still hardcodes the prior base `9380955...` instead of the actual rework base `2fe8b456...`. | Parameterize and record the current round base as `c71bdbf`'s parent `2fe8b456...`; do not scope proof from an older base. |
+| R14/R15/R16 still overlap because losing claimants, contested claims, concurrent calls, and retry states are described by inconsistent predicates. | Define disjoint observable lease states and one total precedence; remove circular “not an R16” guards and contradictory generic claimant language. |
+| Timestamp rules are repeated inconsistently: three-way vs four-way ordering and parseable-vs-exact grammar. | Declare one exact millisecond-`Z` grammar and repeat the same four-field ordering and freshness rule everywhere. |
+| R09 appears in both refusal-only and explicit-split partitions; R09/R10 malformed-identity ownership lacks precedence. | Make the partition closed and exclusive; assign malformed shape/schema to one code and present valid-but-conflicting identity to the other, consistently. |
+| Verification retains stale round labels. | Correct the round references while preserving the prior-candidate proof scope and `0/2` review count. |
+
+Scope and external-boundary compliance passed for `c71bdbfa`; no network,
+credential, spend, host/Pi, parent, HAWF, Helmholtz, or downstream action
+occurred.
