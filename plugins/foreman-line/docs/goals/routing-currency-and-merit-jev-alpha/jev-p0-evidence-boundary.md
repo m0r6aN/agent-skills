@@ -60,6 +60,52 @@ free-text input, or unbounded log excerpt. A boolean or status-only
 authentication observation is the maximum permitted credential-related
 evidence.
 
+## Closed evidence metadata schemas
+
+Evidence wrappers are closed objects: no field outside the schemas below is
+accepted, and every string is ASCII-only printable U+0020–U+007E with no
+control character. These exact bounds make metadata validation deterministic:
+
+- `usage` is exactly `{ input_tokens, output_tokens, total_tokens }`. Each is
+  an integer from 0 through 65,536 except `total_tokens`, which is from 0
+  through 131,072; `total_tokens` must equal the other two fields' sum.
+- `source_kind` is exactly one of `coordinator-live`, `provider-response`,
+  `sanitized-fixture`, or `coordinator-review`.
+- `source_ref` matches `^src:[a-z0-9][a-z0-9._/-]{0,127}$`, contains no `..`,
+  and is not an email, URL, phone, credential, or PII field. It is an opaque
+  repository reference, not free text.
+- `run_id` matches `^run-[0-9a-f]{32}$`; `lease_id` matches
+  `^lease-[0-9a-f]{32}$`; `fixture_id` matches
+  `^fx-[a-z0-9][a-z0-9-]{0,63}$`; and `manifest_id` matches
+  `^manifest-[a-z0-9][a-z0-9-]{0,63}$`.
+- `response_id` matches `^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$`; served model
+  identifiers match `^[A-Za-z0-9][A-Za-z0-9._/-]{0,127}$`.
+- `repository` matches `^[a-z][a-z0-9-]{1,63}$` and is an identifier, not a
+  URL or filesystem path. `ref` matches
+  `^(?:main|master|codex/[a-z0-9-]{1,63}|refs/tags/[a-z0-9._-]{1,63})$`.
+  `path` matches `^(?:[a-z0-9._-]+/)*[a-z0-9._-]+$`, is at most 255 characters,
+  and contains no `..` segment. `commit` and `tree` are exactly 40 lowercase
+  hexadecimal characters.
+- `server_timestamp_utc`, `client_timestamp_utc`, `captured_at_utc`, and
+  `retention_until_utc` match the exact UTC form
+  `^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$` and must
+  parse as real UTC timestamps. `retention_until_utc` is no later than 90 days
+  after the relevant capture timestamp.
+- `request_digest`, `response_digest`, and `provenance_digest` are exactly 64
+  lowercase hexadecimal characters matching `^[0-9a-f]{64}$`; `capability`,
+  `schema_version`, and `endpoint` are the exact literals defined by the
+  contract; and `currency` is exactly `USD` wherever it appears.
+- `evidence_class` is exactly `live-observation`,
+  `sanitized-replay-fixture`, `refusal-record`, or `hold-record`; `status` is
+  exactly `complete`, `refused`, or `hold`; and `reason_code` is `none` for
+  complete records or one of `R01` through `R25` for refusal/hold records.
+
+The live-observation wrapper's allowed fields are exactly the fields listed in
+the minimum record table plus the bounded metadata above; the fixture wrapper's
+allowed fields are exactly those listed in the fixture record. Unknown wrapper
+metadata, free-text reasons, unbounded numbers, PII-bearing values, or invalid
+identifiers refuse and are not retained.
+
 ## Immutable transport authority and raw body sizes
 
 The capability owns the endpoint, method, headers, and body policy. A caller
@@ -145,8 +191,8 @@ The canonical provenance object is closed and contains no PII:
 ```text
 {
   fixture_id: <unique fixture identifier>,
-  source_kind: <allowlisted non-secret source class>,
-  source_ref: <opaque reviewable non-PII reference>,
+  source_kind: "coordinator-live" | "provider-response" | "sanitized-fixture" | "coordinator-review",
+  source_ref: <string matching ^src:[a-z0-9][a-z0-9._/-]{0,127}$ and containing no ..>,
   captured_at_utc: <parseable UTC timestamp>,
   authenticated_response_id: <provider response_id or explicit none>,
   manifest_id: <immutable manifest identifier>,

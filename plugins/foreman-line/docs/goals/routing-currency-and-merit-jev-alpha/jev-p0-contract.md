@@ -143,17 +143,39 @@ input before serialization, and refuse rather than guess when minimization or
 redaction is uncertain. The request body is closed and no extra state fields
 are accepted.
 
-The entire question envelope is also allowlisted and bounded. Question names,
-instruction tokens, criterion keys, choice labels, and score labels must match
-the ASCII token grammar `^[a-z][a-z0-9._-]{0,63}$`; each array is duplicate-
-free, with at most 8 instructions, 16 criteria, and 32 choices. Criterion
-descriptions, when present, must be 1–160 characters matching
-`^[A-Za-z0-9][A-Za-z0-9 .,;:/()_-]{0,159}$`; they are not prompts or free-form
-provider instructions. Email, URL, phone-number, credential, identifier, and
-other PII patterns are refused even when they fit the safe character grammar.
-The question list has at most 16 entries. `instructions` is an optional array
-of allowlisted tokens, never arbitrary prose. `score_label` is a token required
-only for `score`; it is forbidden for `noul` and `choice`.
+The entire question envelope is also allowlisted and bounded. All caller-
+supplied strings in the request are ASCII-only printable characters U+0020
+through U+007E; any non-ASCII byte, control character, NUL, CR, LF, tab, or
+other Unicode character refuses. Question names, instruction tokens, criterion
+keys, choice labels, and score labels must match the exact token grammar
+`^[a-z][a-z0-9._-]{0,63}$`; each array is duplicate-free, with at most 8
+instructions, 16 criteria, and 32 choices. Criterion descriptions, when
+present, must be 1–160 characters matching the exact grammar
+`^[A-Za-z0-9][A-Za-z0-9 .,;:/()_-]{0,159}$`; they are bounded labels, not
+prompts or free-form provider instructions. The question list has at most 16
+entries. `instructions` is an optional array of literal safe tokens, never
+arbitrary prose. `score_label` is a token required only for `score`; it is
+forbidden for `noul` and `choice`.
+
+Before serialization, refuse a complete request if any caller string matches
+one of these exact refusal patterns (the patterns marked `/i` are
+case-insensitive):
+
+```text
+email: (?:^|[^A-Za-z0-9])[A-Za-z0-9.!#$%&'*+/=?^_{}|~-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+(?:$|[^A-Za-z0-9])
+URL: /(?:https?|ftp):\/\/[^\s]+/i or /(?:^|\s)www\.[^\s]+/i
+phone: (?:^|[^0-9])\+?[1-9][0-9]{6,14}(?:$|[^0-9])
+       or (?:^|[^0-9])(?:\+?1[ .-]?)?\(?[2-9][0-9]{2}\)?[ .-][0-9]{3}[ .-][0-9]{4}(?:$|[^0-9])
+credential: /\b(?:bearer|basic)\s+[A-Za-z0-9._~+/=-]{8,}\b/i
+            or /\b(?:password|passwd|secret|api[_-]?key|access[_-]?token|authorization)\s*[:=]\s*[^\s]+/i
+            or /\b(?:sk|pk)_[A-Za-z0-9_-]{16,}\b/
+```
+
+These are the complete refusal patterns; no undefined general PII detector is
+claimed. Strings that do not match the closed field grammar, exceed its length
+or count bound, contain duplicate keys/items, or use unknown fields refuse.
+Rejected strings and their containing envelope are not logged, digested,
+serialized, transmitted, or retained.
 
 The logical request envelope is:
 
