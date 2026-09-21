@@ -468,3 +468,18 @@ proof passed, but the following same-three-file fixes remain:
 Scope and external-boundary compliance passed for `d18d08ba`; no network,
 credential, spend, host/Pi, parent, HAWF, Helmholtz, or downstream action
 occurred.
+
+## Twenty-first review disposition
+
+Two fresh independent reviews of `60f9d72c4191167082fd96db8bf3b6eacc6e5bac`
+returned **REQUEST CHANGES / Gate 3 not ready**. The cumulative coordinator
+proof passed, but the following same-three-file fixes remain:
+
+| Finding | Disposition |
+|---|---|
+| Verification metadata still identifies round 12/rework21, `dc9d6a76`, and the nineteenth-review closure instead of candidate `60f9d72c`, branch `codex/jev-p0-rework22`, immediate prior `d18d08ba`, and the current review ordinal. | Update all current-round metadata, proof narrative, and review labels consistently while retaining earlier candidates only as historical evidence. |
+| The finite R21 blocks omit valid nested request/response paths from the closed schema, including request state/questions and response answers, distributions, and served-identity fields. | Enumerate the complete valid nested schema path set and equality chains consistently in every duplicated R21 block across all three artifacts; retain missing/one-sided/empty/sentinel/invalid routing to R23/R22. |
+
+Scope and external-boundary compliance passed for `60f9d72`; no network,
+credential, spend, host/Pi, parent, HAWF, Helmholtz, or downstream action
+occurred.
