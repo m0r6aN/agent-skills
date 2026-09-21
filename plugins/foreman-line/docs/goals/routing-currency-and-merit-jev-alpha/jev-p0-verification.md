@@ -440,7 +440,7 @@ builder does not self-approve or merge.
 
 | Check | Result | Evidence |
 |---|---|---|
-| Starting branch/base | `codex/jev-p0-rework17`, direct parent/base `eb88b65426c5e37893ac0591be83eef8c91da123` | Confirmed before current builder round 8 edits. |
+| Starting branch/base | `codex/jev-p0-rework18`, direct parent/base `eb88b65426c5e37893ac0591be83eef8c91da123` | Confirmed before current builder round 9 edits. |
 | `node -v` | Passed: `v24.7.0`, native exit code `0`; below shaping requirement `>=24.11.1` | Immediate exit-code capture/check followed `node -v`. |
 | `RepositoryRoot` input | Mandatory and documented; the prior-candidate proof used `C:\Repos\foreman-line-jev-p0-rework5` | The proof resolves a literal existing Git root and uses `git -C` for every relative Git operation; unsafe/missing/non-repository roots reject. |
 | Prior-candidate coordinator proof | Passed externally for candidate `c71bdbfa0f9597eb44d0c3a01aa853f1f33989a8` | Exact receipt/path, target/head, base, repository root, three-file scope, whitespace, native exits, and `M` status results are recorded above; this is prior-candidate coordinator evidence, not current-head proof, builder approval, or Gate 3 authorization. |
