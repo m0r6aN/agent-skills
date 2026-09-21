@@ -1,8 +1,8 @@
-# JEV-P0 — Fresh rework builder round 7 verification record
+# JEV-P0 — Bounded Gate 2 builder round 8 verification record
 
 ## Scope
 
-This record verifies the fresh JEV-P0 rework builder round 7 only.
+This record verifies the bounded JEV-P0 builder round 8 only.
 It does not authorize JEV-P1 or later, provider calls, runtime use, spend,
 credential access, dispatch, promotion, or Gate 3. The only mutation authority
 is:
@@ -12,10 +12,10 @@ is:
 - `plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-verification.md`
 
 Every other path and effect is forbidden. The working branch is
-`codex/jev-p0-rework16`, and the exact starting base for this builder round is
-the direct parent `c71bdbfa0f9597eb44d0c3a01aa853f1f33989a8`.
+`codex/jev-p0-rework17`, and the exact current-round base for this builder is
+the direct parent `eb88b65426c5e37893ac0591be83eef8c91da123`.
 
-## Prior-closure preservation and fourteenth-review closure checklist
+## Prior-closure preservation and fifteenth-review closure checklist
 
 The three allowed documents explicitly close these findings while preserving
 all earlier identity, schema, answer, JCS, transport, custody, lease, budget,
@@ -33,11 +33,14 @@ text outside the fixed schema.
 4. Complete fixtures require exact schema-version equality across wrapper,
    request, response, and manifest entry, plus nested identity, response,
    timestamp, digest, ID, and custody equalities.
-5. Non-complete provenance uses only JSON string `"none"`; complete provenance
-   rejects `none` and requires provider-declared response IDs.
+5. Generic refusal/hold records carry no fixture provenance; complete
+   `sanitized-replay-fixture` provenance rejects `none` and requires
+   provider-declared response IDs.
 6. The closed `budget_ack` object is mandatory for every live call and is bound
    by exact equality to lease_id, run, capability, decision schema, request
-   digest, and the durable lease record; one trusted coordinator UTC clock
+   digest, and the durable lease record; the top-level and nested
+   `acknowledged_at_utc` values must be exactly equal and freshness uses that
+   one value; one trusted coordinator UTC clock
    enforces the exact timestamp grammar and
    `run_started_at_utc <= acknowledged_at_utc <=
    transmission_started_at_utc <= socket_opened_at_utc`, the 60-second
@@ -53,12 +56,15 @@ text outside the fixed schema.
    (including CAS loss to an existing in-flight owner as R16, never R15);
    missing cost/currency remains hold-only and malformed or unauthorized cost
    remains refusal-only. Live-observation and sanitized-replay-fixture are
-   complete-only; pre-call refusal/hold uses the narrow generic evidence
-   suffix sets, and R20 emits only `evidence:R20`.
+   complete-only; claim/consume artifacts are internal durable lease-record
+   transitions and never external evidence records; generic refusal/hold uses
+   no fixture provenance, R21 uses only generic `evidence:R21`, and R20 emits
+   only `evidence:R20`.
 9. Retention uses a trusted coordinator capture/recording clock, rejects future
    anchors, and preserves `anchor <= retention <= anchor+90 days`.
 10. Scope proof first enumerates the complete unfiltered direct base-to-head
-    diff over one reviewed range from the exact base to the coordinator-supplied
+    diff over one direct base-to-head range from the exact base to the
+    coordinator-supplied
     expected reviewed head and asserts exact set equality, exact `M` statuses,
     and native exit codes before reporting success. It does not verify document
     semantics.
@@ -126,7 +132,7 @@ and not Gate 3 authorization. The external proof targeted candidate
 | Filtered status | Passed; all three allowed paths were exactly `M` |
 | Independent review count | `0/2` at the time of this prior-candidate coordinator proof; no review approval inferred |
 
-This prior-candidate record does not assert the current round 7 final HEAD,
+This prior-candidate record does not assert the current round 8 final HEAD,
 current base-to-head scope, whitespace, or status results. Those remain
 pending until the coordinator runs the proof below with the current immutable
 expected head. It does not authorize a provider call, merge, or Gate 3.
@@ -156,7 +162,7 @@ limitation, not a contract pass.
 
 ### 2. Full base-to-head scope proof, then filtered checks
 
-Run after the resulting rework commit exists:
+Run after the resulting round-8 builder commit exists:
 
 ```powershell
 param(
@@ -170,7 +176,7 @@ param(
   [string]$CoordinatorTargetSha
 )
 
-$base = 'c71bdbfa0f9597eb44d0c3a01aa853f1f33989a8'
+$base = 'eb88b65426c5e37893ac0591be83eef8c91da123'
 $allowed = @(
   'plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-contract.md',
   'plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-evidence-boundary.md',
@@ -289,7 +295,8 @@ Write-Output 'base_to_head_scope_checked_status_and_head_assertion=passed'
 ```
 
 This is the authoritative scope proof. It compares the complete unfiltered
-path set from the exact fresh-rework base to the coordinator-supplied
+path set over one direct `$base..$head` range from the exact current-round base
+to the coordinator-supplied
 immutable expected reviewed head, asserts exact set equality and exact `M`
 statuses, checks each native exit code immediately, and only then reports
 success. It does not use a clean-worktree assertion as the scope proof.
@@ -356,7 +363,13 @@ must use the one exact grammar
 `^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$` for
 `server_timestamp_utc` and all operational fields, and the exact ordering
 `run_started_at_utc <= acknowledged_at_utc <= transmission_started_at_utc <=
-socket_opened_at_utc`, in addition to the existing freshness and expiry rules.
+socket_opened_at_utc`; the top-level live-observation
+`acknowledged_at_utc` must equal nested `budget_ack.acknowledged_at_utc`
+exactly, and freshness uses that one value. Claim/consume artifacts are
+internal durable lease-record transitions with a closed field list, not
+external evidence records. Generic refusal/hold records carry no fixture
+provenance, R21 is generic `evidence:R21`, and R20 is exclusively generic
+`evidence:R20`, in addition to the existing freshness and expiry rules.
 
 ## Field-by-field review
 
@@ -399,7 +412,7 @@ builder does not self-approve or merge.
 
 | Check | Result | Evidence |
 |---|---|---|
-| Starting branch/base | `codex/jev-p0-rework16`, direct parent/base `c71bdbfa0f9597eb44d0c3a01aa853f1f33989a8` | Confirmed before fresh rework round 7 edits. |
+| Starting branch/base | `codex/jev-p0-rework17`, direct parent/base `eb88b65426c5e37893ac0591be83eef8c91da123` | Confirmed before current builder round 8 edits. |
 | `node -v` | Passed: `v24.7.0`, native exit code `0`; below shaping requirement `>=24.11.1` | Immediate exit-code capture/check followed `node -v`. |
 | `RepositoryRoot` input | Mandatory and documented; the prior-candidate proof used `C:\Repos\foreman-line-jev-p0-rework5` | The proof resolves a literal existing Git root and uses `git -C` for every relative Git operation; unsafe/missing/non-repository roots reject. |
 | Prior-candidate coordinator proof | Passed externally for candidate `c71bdbfa0f9597eb44d0c3a01aa853f1f33989a8` | Exact receipt/path, target/head, base, repository root, three-file scope, whitespace, native exits, and `M` status results are recorded above; this is prior-candidate coordinator evidence, not current-head proof, builder approval, or Gate 3 authorization. |
@@ -413,14 +426,14 @@ builder does not self-approve or merge.
 | Filtered base-to-head `git diff --check` and status | Pending until the coordinator executes the proof; no pass claimed | These checks run only after the unfiltered three-file set and reviewed head are proven. |
 | Targeted active-spec linter/self-check | Environment limitation: local `ajv` missing; no install | These tools do not lint the three goal documents. |
 | Manual semantic consistency review | Required; not claimed by the scope script and not independent approval | Review all three documents for canonical lease vocabulary/state transitions, exact lease/budget/live-record equalities, narrow status/reason suffixes, complete-only observations, one timestamp grammar/order, and R09/R10/R12/R13/R20 rules. |
-| Field-by-field fresh-rework review | Blocked for coordinator traceability; read-only content review is not independent approval | Checked the requested fourteenth-review control text locally; current-round coordinator proof and two independent reviews remain external. |
+| Field-by-field fifteenth-review closure review | Blocked for coordinator traceability; read-only content review is not independent approval | Checked the requested fifteenth-review control text locally; current-round coordinator proof and two independent reviews remain external. |
 | Independent frontier review A | Observed result: no fresh report supplied or performed in this builder session (`0/2`) | Coordinator must supply and triage; no pass inferred. |
 | Independent frontier review B | Observed result: no fresh report supplied or performed in this builder session (`0/2`) | Coordinator must supply and triage; no pass inferred. |
 | Gate 3 / merge | Not granted; human-owned | No self-approval or merge. |
 
 ## Completion boundary
 
-This fresh rework is document-complete when all current findings are explicit
+This bounded Gate 2 builder round is document-complete when all current findings are explicit
 and testable in the three allowed documents, local deterministic checks and
 environment limitations are accurately recorded, and the coordinator later
 executes the receipt-open, target-match, and full base-to-head scope proof.

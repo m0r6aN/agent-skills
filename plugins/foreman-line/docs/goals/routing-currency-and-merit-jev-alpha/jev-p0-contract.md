@@ -317,30 +317,41 @@ closed:
 - No transition reopens, overwrites, or recreates a run. A valid-looking token
   without its exact durable record is not a fresh lease.
 
-The closed durable lease record is:
+The closed internal durable lease record is not a JEV evidence record and is:
 
 ```text
 lease_record: {
   lease_id: <generated string matching ^lease-[0-9a-f]{32}$>,
+  run_id: <exact coordinator-issued run_id>,
+  capability: "openrouter-alpha-decisions",
+  decision_schema_version: "jev-decisions/v1",
+  request_digest: <exact request digest>,
   state: "in-flight" | "consumed" | "terminal",
-  binding: {
-    run_id: <exact coordinator-issued run_id>,
-    capability: "openrouter-alpha-decisions",
-    schema_version: "jev-decisions/v1",
-    request_digest: <exact request digest>
-  }
+  claimed_at_utc: <exact UTC timestamp at the claimed event>,
+  consumed_at_utc: <exact UTC timestamp at atomic consume> | absent until consumed,
+  terminal_at_utc: <exact UTC timestamp at terminal transition> | absent until terminal,
+  transition_actor: "coordinator"
 }
 ```
 
-The `lease_id`, `run_id`, capability, decision schema version, and request
-digest in a custody-verified `budget_ack` must equal the corresponding fields
-in this live durable record binding and in the live evidence record. The
-`budget_ack` binding is not satisfied by a syntactically valid arbitrary
-`lease_id`; the exact record, owner, and request digest must resolve. Claim
-evidence records the created `lease_id` and binding, and consume evidence
-records the same exact `lease_id` and binding after the atomic
-`in-flight -> consumed` transition. Concurrency is one, retries are zero, and
-the timeout is 30 seconds.
+The record field list is closed: no other field is permitted. Each present
+transition timestamp uses the exact UTC grammar below, is written once by the
+coordinator, and is never rewritten; the absent timestamp conditions above are
+part of the state invariant. The `lease_id`, `run_id`, `capability`, and
+`request_digest` in a custody-verified `budget_ack` must equal the corresponding
+fields in this exact durable record and in the live evidence record. The live
+record's `schema_version` must equal both the durable record's
+`decision_schema_version` and `budget_ack.decision_schema_version`, all exactly
+`jev-decisions/v1`. The `budget_ack` binding is not satisfied by a
+syntactically valid arbitrary `lease_id`; the exact record, coordinator owner,
+and request digest must resolve.
+
+The claim (`available -> in-flight`) and consume (`in-flight -> consumed`)
+artifacts are internal transitions of this durable lease record, not a new
+external evidence class. They are never emitted as JEV evidence records. The
+same exact record fields and transition timestamps bind the live and budget
+fields by equality. Concurrency is one, retries are zero, and timeout is 30
+seconds.
 
 Before every live transmission, the coordinator must provide the exact closed
 `budget_ack` object defined in `jev-p0-evidence-boundary.md`. It is mandatory
@@ -351,8 +362,10 @@ and request digest. The one UTC timestamp grammar used by every provider,
 budget, runtime, evidence, retention, and verification timestamp is
 `^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$`; every value
 must parse as a real UTC instant. `run_started_at_utc` is a runtime/live-record
-coordinator sample at the claim event; `acknowledged_at_utc` is owned only by
-`budget_ack`; `transmission_started_at_utc` is a runtime/live-record sample
+coordinator sample at the claim event; `budget_ack.acknowledged_at_utc` is the
+single freshness value and the top-level live-observation
+`acknowledged_at_utc` is its required exact-equality mirror; no divergent
+duplicate is permitted; `transmission_started_at_utc` is a runtime/live-record sample
 immediately before the socket opens; and `socket_opened_at_utc` is a
 runtime/live-record sample at the actual socket open. All four are required on
 a complete live observation. Offsets, leap-second spellings, missing
@@ -367,9 +380,13 @@ socket_opened_at_utc < acknowledged_at_utc + 60 seconds
 The coordinator rejects a future timestamp, a missing sample, any backward
 trusted-clock observation, an acknowledgement before run start, or an expiry
 that has been reached. Immediately before transmission it rechecks the exact
-lease-record binding (`lease_id`, `run_id`, capability, schema version, and
-request digest), atomically consumes the record from `in-flight` to `consumed`,
-and only then opens the socket. On completion or terminal refusal/hold it
+durable lease record and exact equality of `lease_id`, `run_id`, capability, and
+`request_digest` across `budget_ack`, the live record, and that record, plus
+`live-record.schema_version == budget_ack.decision_schema_version ==
+lease_record.decision_schema_version == "jev-decisions/v1"`; it also rechecks
+`live-observation.acknowledged_at_utc == budget_ack.acknowledged_at_utc` and
+uses that one equal value for freshness. It atomically consumes the record from
+`in-flight` to `consumed`, and only then opens the socket. On completion or terminal refusal/hold it
 records the append-only `consumed -> terminal` transition. The consumed lease
 and acknowledgement cannot authorize another call; queueing, retry,
 recreation, or reuse is refused. A client-side reservation alone cannot
@@ -386,8 +403,11 @@ form; `acknowledgement_digest` is 64 lowercase hex; `repository`, `ref`,
 exactly to the current lease record. `schema_version` remains the literal
 `jev-budget/v1` for the acknowledgement object itself;
 `decision_schema_version` is the exact `jev-decisions/v1` value compared with
-the lease record and live record. No extra field is accepted. The
-acknowledgement digest is the SHA-256 of the JCS UTF-8 bytes of the object with
+the lease record and live record. No extra field is accepted. For a complete
+live observation, the top-level `acknowledged_at_utc` must equal the nested
+`budget_ack.acknowledged_at_utc` byte-for-byte; they represent one timestamp,
+and freshness is computed from that one value. A divergent duplicate is
+invalid. The acknowledgement digest is the SHA-256 of the JCS UTF-8 bytes of the object with
 that digest field omitted. Missing, stale, mismatched, mutable, unverified,
 future, backward-clock, or reused acknowledgement is a terminal hold before
 transmission.

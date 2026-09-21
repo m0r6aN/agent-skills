@@ -7,7 +7,7 @@ JEV evidence is classified before it can be consumed:
 | Class | What it proves | What it cannot prove |
 |---|---|---|
 | `live-observation` | A later explicitly authorized bounded run observed an authenticated provider response and recorded safe metadata. | Replay authority, standard catalog eligibility, D13 eligibility, general service health, or routing approval. |
-| `sanitized-replay-fixture` | A sanitized request/response pair can be validated deterministically against `jev-decisions/v1` and its recorded JCS digests. | That the provider is currently available or that the fixture came from a fresh live call unless provenance says so. |
+| `sanitized-replay-fixture` | A sanitized request/response pair can be validated deterministically against `jev-decisions/v1` and its recorded JCS digests. | That the provider is currently available or that a live call is authorized. |
 | `refusal-record` | A bounded check refused a named condition and did not proceed. | A successful provider result, a retry authorization, or permission to weaken the refusal. |
 | `hold-record` | A required fact is missing or unsafe, so the result is terminally non-consumable pending coordinator disposition. | Permission to retry, estimate, normalize, reopen, or consume the held result. |
 
@@ -72,15 +72,19 @@ provider-declared, match their exact field grammars, and are bound to the same
 authenticated response;
 `served_identity.model` is exactly the authenticated response `model`, and
 `served_identity.response_id` is exactly that response's identifier. The
-requested model is never a fallback. `lease_id`, `run_id`, capability,
-`schema_version`, and `request_digest` equal the exact consumed lease record
-binding; the `budget_ack` carries the same `lease_id`, run, capability,
-decision schema version, and request digest. The claim and consume evidence
-therefore link to this wrapper by exact `lease_id` and binding equality. The
+requested model is never a fallback. `lease_id`, `run_id`, capability, and
+`request_digest` equal the exact consumed lease record; live `schema_version`
+equals both lease-record `decision_schema_version` and
+`budget_ack.decision_schema_version`, all exactly `jev-decisions/v1`. The
+`budget_ack` carries the same `lease_id`, `run_id`, capability, and request digest.
+The internal claim and consume transitions therefore bind this wrapper by exact
+`lease_id` and binding equality; they are not emitted evidence records. The
 `run_started_at_utc`, `transmission_started_at_utc`, and `socket_opened_at_utc`
 fields are coordinator runtime/live-record samples; only
-`acknowledged_at_utc` is owned by `budget_ack`. All four operational fields use
-the one exact UTC grammar and satisfy:
+`budget_ack.acknowledged_at_utc` is the single freshness value; the top-level
+`live-observation.acknowledged_at_utc` is a required exact-equality mirror, and
+divergent duplicates are invalid. All four operational fields use the one exact
+UTC grammar and satisfy:
 
 ```text
 run_started_at_utc <= acknowledged_at_utc <= transmission_started_at_utc <= socket_opened_at_utc
@@ -112,10 +116,10 @@ Its exact values include `evidence_class: "sanitized-replay-fixture"`,
 `status: "complete"`, and `reason_code: "none"`. All custody, provenance,
 identity, request, response, and digest equalities below are mandatory.
 
-Only `sanitized-replay-fixture` with `status: complete` is permitted. A fixture
-that is refused or held before it is a complete, custody-resolved replay must
-use the generic `refusal-record` or `hold-record`; `fixture:Rnn` codes are not
-permitted. In particular, `R20` is never class-specific.
+Only `sanitized-replay-fixture` with `status: complete` is permitted. Generic
+`refusal-record` and `hold-record` objects carry no fixture provenance and use
+only their exact generic field sets and `evidence:Rnn` codes. In particular,
+`R20` is reserved exclusively to generic `evidence:R20` refusal records.
 
 ### `refusal-record` and `hold-record`
 
@@ -203,7 +207,8 @@ control character. These exact bounds make metadata validation deterministic:
   the exact invariant is
   `anchor_utc <= retention_until_utc <= anchor_utc + 90 days`.
 - The operational freshness fields are coordinator/live-record fields except
-  `acknowledged_at_utc`, which is owned only by `budget_ack`. Every repeated
+  `acknowledged_at_utc`, whose single value is owned by `budget_ack` and mirrored
+  exactly at the top level of a live observation. Every repeated
   operational section must state the exact order `run_started_at_utc <=
   acknowledged_at_utc <= transmission_started_at_utc <= socket_opened_at_utc`;
   the acknowledgement age remains at most 60 seconds at transmission, and the
@@ -220,8 +225,8 @@ control character. These exact bounds make metadata validation deterministic:
   suffixes permitted by the closed status partition: refusal-record uses
   `evidence:R01`–`evidence:R11`, `evidence:R13`, `evidence:R16`–`evidence:R18`,
   `evidence:R20`, and `evidence:R21`–`evidence:R25`; hold-record uses
-  `evidence:R12`–`evidence:R15` and `evidence:R19`. `live:Rnn` and `fixture:Rnn`
-  are invalid.
+  `evidence:R12`–`evidence:R15` and `evidence:R19`; no class-prefixed status
+  code is valid.
 
 The four class/status field sets above are the complete wrapper schema. Unknown
 wrapper metadata, free-text reasons, unbounded numbers, human-chosen IDs, or
@@ -262,9 +267,10 @@ object with `acknowledgement_digest` omitted, and its custody repository/ref/
 path/commit/tree must be verified at the exact committed tree. The
 acknowledgement is valid only when its `lease_id`, `run_id`, capability,
 `decision_schema_version`, and `request_digest` exactly equal the corresponding
-fields in the live durable lease record binding and live wrapper. A syntactically
-valid arbitrary `lease_id` is insufficient. The `budget_ack` owns only
-`acknowledged_at_utc`; it does not own `run_started_at_utc`,
+fields in the live durable lease record and live wrapper. A syntactically
+valid arbitrary `lease_id` is insufficient. The `budget_ack` owns the single
+freshness value `acknowledged_at_utc`; the top-level live-observation field is
+only its exact-equality mirror. It does not own `run_started_at_utc`,
 `transmission_started_at_utc`, or `socket_opened_at_utc`. Those three are
 coordinator runtime/live-record samples. Freshness is checked using one trusted
 coordinator UTC clock: `run_started_at_utc` is sampled at the claim event,
@@ -279,10 +285,14 @@ at `acknowledged_at_utc + 60 seconds`; the socket must open strictly before
 that expiry. A future timestamp, backward or missing trusted-clock sample,
 acknowledgement before run start, or reached expiry is rejected.
 
-Immediately before transmission, the immutable lease binding
-(`run_id`, capability, schema version, and request digest) is rechecked against
-the custody-verified acknowledgement and durable lease. The lease is atomically
-consumed before the socket opens. The consumed lease and acknowledgement cannot
+Immediately before transmission, the exact durable lease record and immutable
+lease binding (`lease_id`, `run_id`, capability, `decision_schema_version`, and
+`request_digest`) are rechecked for exact equality against the custody-verified
+acknowledgement and live record, including exact equality of every named lease
+field. The top-level
+`live-observation.acknowledged_at_utc` must equal
+`budget_ack.acknowledged_at_utc` exactly, and that one value is used for
+freshness. The lease is atomically consumed before the socket opens. The consumed lease and acknowledgement cannot
 authorize another call; queueing, retry, recreation, or reuse after validation
 is rejected.
 
@@ -400,11 +410,10 @@ parse/JCS/UTF-8/hash procedure above, and the provenance object is hashed
 without adding transport headers, credentials, fields outside the closed
 schema, or mutable timestamps.
 
-`provenance.authenticated_response_id` is always present. For a non-complete
-`refused` or `hold` fixture, its only permitted value is the exact JSON string
-`"none"`; omitted, `null`, empty, or any other sentinel refuses. For a
-`complete` fixture, it must be a non-empty provider response ID, never `none`,
-and the complete-fixture equality is exact:
+Generic refusal/hold records have no fixture provenance fields. In a complete
+`sanitized-replay-fixture`, `provenance.authenticated_response_id` is required
+to be a non-empty provider response ID, never `none`, and the complete-fixture
+equality is exact:
 
 ```text
 fixture.response_id
@@ -415,10 +424,11 @@ fixture.response_id
 
 All four values are provider-declared. After custody is resolved, a missing,
 one-sided, empty, sentinel, client-synthesized, or mismatched value is an
-explicit `evidence:R21` refusal; unresolved custody follows `evidence:R19` hold
-or `evidence:R18` refusal as specified by the matrix. The provenance value may
-not be synthesized from a requested identity, fixture filename, manifest
-entry, or client-generated identifier.
+explicit generic `refusal-record` with `evidence:R21`; unresolved custody
+follows the generic `evidence:R19` hold or `evidence:R18` refusal path as
+specified by the matrix. The provenance value may not be synthesized from a
+requested identity, fixture filename, manifest entry, or client-generated
+identifier.
 
 A replay fixture must be present in an immutable, reviewable manifest/commit
 custody chain and contain:
@@ -538,7 +548,7 @@ missing or unequal nested value refuses complete replay. In particular, any
 mismatch in `fixture.requested_identity == fixture.request.requested_identity
 == fixture.response.requested_identity` or in
 `fixture.source_kind/source_ref == fixture.provenance.source_kind/source_ref`
-is an explicit refusal with reason `evidence:R21` after custody is resolved;
+is an explicit generic `refusal-record` with `evidence:R21` after custody is resolved;
 custody that cannot be resolved follows the explicit `evidence:R19` hold or
 `evidence:R18` refusal path and never becomes a complete fixture.
 
@@ -608,23 +618,42 @@ consumed        -- completion or terminal refusal/hold --> terminal
 ```
 
 `available` is absence, not a stored state. `claimed` is only the event that
-creates `in-flight`, never a state. The durable record is closed and carries
-`lease_id` plus the exact binding `{run_id, capability, schema_version,
-request_digest}`. No transition reopens, overwrites, or recreates a run. A
-syntactically valid token without its exact record is not a fresh lease. Claim
-evidence records the created lease and binding; consume evidence records the
-same exact lease and binding after `in-flight -> consumed`; the complete live
-wrapper links to that consumed record by exact equality. A losing concurrent
-invocation does not mutate the owner record. Concurrency is one, retries are
-zero, and timeout is 30 seconds.
+creates `in-flight`, never a state. The closed internal durable lease record is:
+
+```text
+lease_record: {
+  lease_id: <lease ID grammar above>,
+  run_id: <run ID grammar above>,
+  capability: "openrouter-alpha-decisions",
+  decision_schema_version: "jev-decisions/v1",
+  request_digest: <64 lowercase hex characters>,
+  state: "in-flight" | "consumed" | "terminal",
+  claimed_at_utc: <exact UTC timestamp at the claimed event>,
+  consumed_at_utc: <exact UTC timestamp at atomic consume> | absent until consumed,
+  terminal_at_utc: <exact UTC timestamp at terminal transition> | absent until terminal,
+  transition_actor: "coordinator"
+}
+```
+
+No other internal record field is permitted. Each present transition timestamp
+is written once by the coordinator and cannot be rewritten. Claim and consume
+artifacts are internal transitions of this same durable record, not a new
+external evidence class; they are never emitted as JEV evidence records. No
+transition reopens, overwrites, or recreates a run. A syntactically valid token
+without its exact record is not a fresh lease. The live wrapper and `budget_ack`
+must equal the record's exact `lease_id`, `run_id`, capability,
+`decision_schema_version`, and `request_digest`. A losing concurrent invocation
+does not mutate the owner record. Concurrency is one, retries are zero, and
+timeout is 30 seconds.
 
 Before every live transmission, the exact `budget_ack` object above must be
-present, custody-verified, fresh, and bound by exact equality to the durable
-record's `lease_id`, `run_id`, capability, decision schema version, and request
-digest. One trusted coordinator UTC clock samples `run_started_at_utc` at the
+present, custody-verified, fresh, and bound by exact equality to the exact
+durable record's `lease_id`, `run_id`, capability, decision schema version, and
+request digest; the live wrapper carries those same equal fields. One trusted coordinator UTC clock samples `run_started_at_utc` at the
 claim event, `transmission_started_at_utc` immediately before socket open, and
-`socket_opened_at_utc` at the actual socket open. `budget_ack` owns only
-`acknowledged_at_utc`; the other three are runtime/live-record samples. Each
+`socket_opened_at_utc` at the actual socket open. `budget_ack` owns the single
+freshness value `acknowledged_at_utc`; the live wrapper's same-named field must
+equal it exactly, and the other three are runtime/live-record samples. Each
 operational timestamp must match the exact UTC grammar above, be a real UTC
 instant, and obey
 `run_started_at_utc <= acknowledged_at_utc <= transmission_started_at_utc <=
@@ -738,7 +767,7 @@ tokens are excluded from R15, and their statuses are fixed by the table.
 | R18 | Provenance object is non-canonical, contains a field outside its closed schema, has missing/wrong provenance digest, or uses a non-JCS hash procedure. | `refused` | Refuse replay and evidence acceptance. |
 | R19 | Fixture repository/ref/path/commit/tree or the independent coordinator manifest receipt/resolution is missing, unverified, mutable, non-resolving, unapproved, or differs across the wrapper/provenance/manifest-entry/receipt custody tuples. | `hold` | Emit only generic `evidence:R19` `hold-record` with `disposition: "pending-coordinator"`; do not emit a `sanitized-replay-fixture` record. |
 | R20 | Fixture is self-recomputed outside the committed manifest, detached from its paired digests, or current bytes differ from custody after receipt resolution. | `refused` | Emit generic `evidence:R20` `refusal-record`; no self-recomputed or mutable fixture acceptance. |
-| R21 | After custody is resolved, non-complete provenance lacks the exact JSON string `"none"`, or complete response IDs are missing, one-sided, sentinel-valued, client-synthesized, or unequal; any requested-identity or source-kind/source-ref replay equality below is also unequal. | `refused` | Emit generic `evidence:R21` refusal; complete fixture status is forbidden. Unresolved custody follows `R19` or `R18` as stated above. |
+| R21 | After custody is resolved, a complete replay fixture has missing, one-sided, sentinel-valued, client-synthesized, or unequal response IDs, or its requested-identity or source-kind/source-ref replay equality is unequal. | `refused` | Emit only the generic `refusal-record` field set with `evidence:R21`; do not emit a `sanitized-replay-fixture` record. Unresolved custody follows `R19` or `R18` as stated above. |
 | R22 | Input contains any unknown field, free-text value, credential-bearing value, or value outside the fixed vocabulary, generated-ID grammar, finite custody allowlist, or numeric bounds, or minimization/redaction is uncertain. | `refused` | Refuse before serialization/transmission; retain no rejected input or metadata. |
 | R23 | Fixture, metadata, source reference, log, or report contains a field outside its closed schema, a key, raw authorization header, unsafe payload, or exceeds retention limit. | `refused` | Refuse retention and consumption; do not echo material. |
 | R24 | Consumer is not `support-triage-advisory-v1`, recommendation has unknown/effect fields, or independent application authorization is absent. | `refused` | Refuse; application retains all authority and effects. |
