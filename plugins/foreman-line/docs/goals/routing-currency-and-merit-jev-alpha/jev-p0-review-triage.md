@@ -107,6 +107,15 @@ Gate 3 remains blocked. The fourth rework is authorized only on the same three
 JEV-P0 documents. No live call, credential access, spend, external mutation,
 downstream dispatch, or merge is authorized.
 
+## Sixth rework result
+
+The sixth rework committed as `2187402c218499fba8b413bec2c6824efd92ed8f`
+from base `e3273dde49deec062c2787006b7b8fd409c01e91`. Coordinator checks
+confirmed exactly the three allowed documents changed, the full unfiltered path
+set matched the allowlist, `git diff --check` and name-status returned success,
+and Node was `v24.7.0`. The builder recorded the active-spec `ajv` limitation
+and no external action. Two fresh reviews of this exact commit remain required.
+
 ## Sixth rework disposition
 
 Two fresh independent reviews of `e3273dde49deec062c2787006b7b8fd409c01e91`
