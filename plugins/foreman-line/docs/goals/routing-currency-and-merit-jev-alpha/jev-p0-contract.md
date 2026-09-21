@@ -474,24 +474,46 @@ Custody reasons are assigned by validation stage, in this order, and this
 precedence is explicit rather than a general fail-closed fallback:
 
 1. First validate the finite repository/ref/path allowlists, generated ID
-   grammars, numeric bounds, and the outer closed schemas for evidence
-   wrappers, logs, and reports. A finite input, vocabulary, allowlist,
-   generated-ID, or numeric-bound violation is generic `evidence:R22`; an
-   outer wrapper, log, or report field-schema violation is generic
-   `evidence:R23`. These pre-custody violations are never `R19` or `R18`.
+   grammars, numeric bounds, and the exact closed evidence-wrapper and
+   retained-record schemas defined in this parcel. A finite input, vocabulary,
+   allowlist, generated-ID, or numeric-bound violation is generic
+   `evidence:R22`; an unknown/extra field, unsafe payload, or retention/schema
+   violation in those defined wrappers or retained records is generic
+   `evidence:R23`. R23 applies only to those explicitly defined closed
+   schemas: no unbounded log or report object is an evidence surface or may be
+   classified by R23. These pre-custody violations are never `R19` or `R18`.
 2. Only after that pre-custody validation passes, resolve immutable custody.
    Missing, unverified, unapproved, mutable, or non-resolving custody is a
    generic `evidence:R19` hold.
-3. Only after custody and the outer closed schemas pass, a canonical
+3. Only after custody and the defined outer schemas pass, a canonical
    provenance JCS, digest, or procedure failure is generic `evidence:R18`
    refusal. `R18` does not own generic out-of-schema fields; `R23` owns those.
+4. Only after `R22`/`R23`, `R19`, and `R18` pass, evaluate `R17` solely for a
+   request/response JCS canonical-byte failure or a paired request/response
+   digest computation/procedure failure, including a missing, malformed, or
+   non-reproducible paired digest. `R17` does not own identity equality or
+   custody-byte/tree/manifest-entry mismatches.
+5. Only after `R17` passes, evaluate `R20` solely for a custody-resolved
+   mismatch between committed fixture bytes, the committed tree, or the
+   manifest-entry custody and the resolved custody record. `R20` explicitly
+   excludes every `R17` canonical-byte or digest-computation/procedure failure.
+6. Only after `R20` passes, evaluate `R21` solely for a post-custody
+   complete-fixture equality failure involving response IDs, requested
+   identity, or source kind/source ref. `R21` explicitly excludes every `R17`
+   digest failure and every `R20` custody mismatch.
+
+The post-custody predicates are ordered and mutually exclusive:
+`R18 -> R17 -> R20 -> R21` after the pre-custody `R22`/`R23` checks and the
+`R19` custody check. No digest-procedure failure may be reclassified as `R20`,
+and no `R21` identity/provenance equality failure may absorb an `R17` or `R20`
+failure.
 
 ## Credential and consumer boundary
 
 Only a later explicitly authorized runtime parcel may receive
 `OPENROUTER_API_KEY` through process-local injection. JEV-P0 and its documents
 must not discover, read, persist, print, hash, transmit, or test credentials.
-Receipts, fixtures, logs, review reports, and evidence contain neither the key
+Receipts, fixtures, retained records, and evidence contain neither the key
 nor a raw authorization header. A later auth observation may be boolean/status-
 only.
 
