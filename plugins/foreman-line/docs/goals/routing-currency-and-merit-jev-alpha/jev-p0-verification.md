@@ -1,8 +1,8 @@
-# JEV-P0 — Fresh rework builder round 4 verification record
+# JEV-P0 — Fresh rework builder round 6 verification record
 
 ## Scope
 
-This record verifies the fresh JEV-P0 rework builder round 4 only.
+This record verifies the fresh JEV-P0 rework builder round 6 only.
 It does not authorize JEV-P1 or later, provider calls, runtime use, spend,
 credential access, dispatch, promotion, or Gate 3. The only mutation authority
 is:
@@ -12,9 +12,9 @@ is:
 - `plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-verification.md`
 
 Every other path and effect is forbidden. The exact starting base for this
-builder round is `2fe8b456b397e2f8f0731f51788a0c5b7b795b4a`.
+builder round is `c71bdbfa0f9597eb44d0c3a01aa853f1f33989a8`.
 
-## Prior-closure preservation and eleventh-review closure checklist
+## Prior-closure preservation and thirteenth-review closure checklist
 
 The three allowed documents explicitly close these findings while preserving
 all earlier identity, schema, answer, JCS, transport, custody, lease, budget,
@@ -44,11 +44,14 @@ text outside the fixed schema.
 7. Replay custody requires an independent coordinator manifest receipt/resolution;
    wrapper self-equality and format-only IDs never establish trust.
 8. The finite custody allowlist includes the approved JEV-P1 fixture paths and
-   planned P1 ref; the closed reason-code/status partition maps R09/R12 and
-   the ordered R14/R15/R16 pre-call family deterministically (and keeps
-   missing cost/currency hold-only and malformed or unauthorized cost
-   refusal-only); invalid custody uses generic R18/R19 records with
-   evidence-class prefixes, while R20 emits `evidence:R20`.
+   planned P1 ref; the closed reason-code/status partition maps R12 to missing
+   metadata only, R10 to malformed/unparseable present response fields, R09 to
+   validly shaped conflicts only, and the ordered R14/R15/R16 pre-call family
+   deterministically (including CAS loss to an existing in-flight owner as
+   R16, never R15); missing cost/currency remains hold-only and malformed or
+   unauthorized cost remains refusal-only. Invalid custody uses generic
+   R18/R19 records with evidence-class prefixes, while R20 emits
+   `evidence:R20`.
 9. Retention uses a trusted coordinator capture/recording clock, rejects future
    anchors, and preserves `anchor <= retention <= anchor+90 days`.
 10. Scope proof first enumerates the complete unfiltered two-commit diff from
@@ -97,51 +100,28 @@ builder result is self-approval or Gate 3 authorization.
 
 ## Prior-candidate coordinator proof evidence
 
-The following is exact prior-candidate evidence supplied by the coordinator;
-it is not proof of this round's final HEAD and is not builder approval. The
-external proof targeted prior candidate
-`9380955cc6b16c4a4a9533113e02eb16429d4989` using receipt path
-`D:\Repos\jev-p0-triage-receipt-round3.txt`.
+The following is exact coordinator evidence for the immediately prior
+candidate in round 5. It is not current-round-head proof, not builder approval,
+and not Gate 3 authorization. The external proof targeted candidate
+`c71bdbfa0f9597eb44d0c3a01aa853f1f33989a8` using receipt path
+`D:\Repos\jev-p0-triage-receipt-round5.txt`.
 
-| Prior-candidate proof item | Recorded result |
+| Prior-candidate coordinator proof item | Recorded result |
 |---|---|
-| Receipt path | `D:\Repos\jev-p0-triage-receipt-round3.txt` |
-| Base | `369207585812dcdfcd237d5241b83c61accbad5b` |
-| Coordinator target SHA | `9380955cc6b16c4a4a9533113e02eb16429d4989` |
-| Observed HEAD | `9380955cc6b16c4a4a9533113e02eb16429d4989` — assertion passed for the prior candidate |
-| Receipt open / target match | `passed` / `passed` |
-| Unfiltered scope | `passed`; exact changed-path set was the three allowed documents only |
-| Whitespace | `passed`; filtered `git diff --check` passed |
-| Filtered status | `passed`; each allowed path was exactly `M` |
-| Native command exits | `passed` for the receipt, HEAD, unfiltered scope, whitespace, and status checks |
+| Receipt path | `D:\Repos\jev-p0-triage-receipt-round5.txt` |
+| Base | `2fe8b456b397e2f8f0731f51788a0c5b7b795b4a` |
+| Repository root | `C:\Repos\foreman-line-jev-p0-rework5` |
+| Coordinator target SHA | `c71bdbfa0f9597eb44d0c3a01aa853f1f33989a8` |
+| Observed HEAD | `c71bdbfa0f9597eb44d0c3a01aa853f1f33989a8` (`c71bdbf`) — target/head assertion passed for the prior candidate |
+| Allowed paths | Exact three allowed documents only |
+| Filtered status | Passed; all three allowed paths were exactly `M` |
+| Whitespace/native checks | Passed; filtered `git diff --check` and native command exit checks passed |
+| Independent review count | `0/2` at the time of this prior-candidate coordinator proof; no review approval inferred |
 
-This prior-candidate record does not assert the current round-3 final HEAD,
+This prior-candidate record does not assert the current round 6 final HEAD,
 current base-to-head scope, whitespace, or status results. Those remain
 pending until the coordinator runs the proof below with the current immutable
-expected head.
-
-## Coordinator proof for implementation candidate `2fe8b456`
-
-The coordinator supplied and executed the following proof for implementation
-candidate `2fe8b456b397e2f8f0731f51788a0c5b7b795b4a`. This is coordinator
-evidence only; it is not builder approval and does not grant Gate 3.
-
-| Proof item | Recorded result |
-|---|---|
-| Receipt path | `D:\Repos\jev-p0-triage-receipt-round4.txt` |
-| Coordinator target SHA | `2fe8b456b397e2f8f0731f51788a0c5b7b795b4a` |
-| Observed HEAD | `2fe8b456b397e2f8f0731f51788a0c5b7b795b4a` — target/head match passed |
-| Base | `9380955cc6b16c4a4a9533113e02eb16429d4989` |
-| Repository root | `C:\Repos\foreman-line-jev-p0-rework4` |
-| Receipt open / target match | `passed` / `passed` |
-| Unfiltered scope | `passed`; exact changed-path set was the three allowed documents only |
-| Filtered status | `passed`; all three allowed paths were exactly `M` |
-| Whitespace/native checks | `passed`; filtered `git diff --check` and native command exit checks passed |
-| Independent review count | `0/2` at the time of this coordinator proof; no review approval inferred |
-
-The proof used the parameterized verification procedure below and checked the
-complete unfiltered base-to-head path set before filtered checks. It does not
-authorize a provider call, merge, or Gate 3.
+expected head. It does not authorize a provider call, merge, or Gate 3.
 
 ## Dependency-free verification commands
 
@@ -182,7 +162,7 @@ param(
   [string]$CoordinatorTargetSha
 )
 
-$base = '9380955cc6b16c4a4a9533113e02eb16429d4989'
+$base = 'c71bdbfa0f9597eb44d0c3a01aa853f1f33989a8'
 $allowed = @(
   'plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-contract.md',
   'plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-evidence-boundary.md',
@@ -330,6 +310,37 @@ The available environment is limited: local `ajv` is missing, Node is
 `v24.7.0` below the shaping package engine floor, and no dependency install is
 authorized. These tools do not lint the three goal documents.
 
+## Semantic decision-table assertions
+
+The three documents must contain the same closed response-metadata partition.
+After transport and request-identity checks, the exact UTC grammar for
+`server_timestamp_utc` is
+`^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$`; `model` and
+`response_id` use their declared exact field grammars and all present values
+must be validly shaped before conflict comparison:
+
+| Evaluation order | Reason | Disjoint predicate | Outcome |
+|---|---|---|---|
+| 1 | R12 | One or more provider-declared complete metadata fields (`model`, `response_id`, or `server_timestamp_utc`) is missing. Missing `server_timestamp_utc` belongs here. | `hold` |
+| 2 | R10 | All required metadata fields are present, but any present response field is malformed or unparseable under its exact grammar, including malformed `model`, malformed `response_id`, or unparseable `server_timestamp_utc`. This row has precedence over R09. | `refused` |
+| 3 | R09 | All required metadata fields are present and individually valid under their exact field grammars, but authenticated response `model` conflicts with `served_identity.model`, or the provider response identifier conflicts with `served_identity.response_id` or `response_id`. | `refused` |
+
+The three documents must also contain the same observable, disjoint pre-call
+lease-state table. Evaluate exactly R16, then R15, then R14; no caller selects a
+status:
+
+| Evaluation order | Reason | Disjoint observable predicate | Outcome |
+|---|---|---|---|
+| 1 | R16 | An explicit retry, second, or concurrent invocation is observed; an existing same-run lease is `in-flight`, `consumed`, or `terminal`; or a supplied lease token is duplicated or bound to the wrong run, capability, schema version, or request digest. A CAS claimant that loses because another claimant already owns an in-flight lease is R16. A reused acknowledgement on such a retry/second/concurrent invocation is also R16. | `refused` |
+| 2 | R15 | This is a first invocation with no retry, second, or concurrency signal, but `run_id` is missing or the durable lease service/create-if-absent operation is unavailable, and no existing same-run in-flight owner is observed. | `hold` |
+| 3 | R14 | This is a first invocation that successfully claims a fresh, correctly bound lease, but `budget_ack` is missing, malformed, stale, reused, mutable, custody-unverified, future, backward-clock, expired, over-cap, non-USD, or otherwise invalid. | `hold` |
+
+Every repeated timestamp section must use the exact grammar
+`^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$` for
+`server_timestamp_utc` and all operational fields, and the exact ordering
+`run_started_at_utc <= acknowledged_at_utc <= transmission_started_at_utc <=
+socket_opened_at_utc`, in addition to the existing freshness and expiry rules.
+
 ## Field-by-field review
 
 The builder read-only review must confirm:
@@ -371,10 +382,10 @@ builder does not self-approve or merge.
 
 | Check | Result | Evidence |
 |---|---|---|
-| Starting branch/base | `codex/jev-p0-rework14`, base `2fe8b456b397e2f8f0731f51788a0c5b7b795b4a` | Confirmed before fresh rework round 4 edits. |
+| Starting branch/base | `codex/jev-p0-rework15`, base `c71bdbfa0f9597eb44d0c3a01aa853f1f33989a8` | Confirmed before fresh rework round 6 edits. |
 | `node -v` | Passed: `v24.7.0`, native exit code `0`; below shaping requirement `>=24.11.1` | Immediate exit-code capture/check followed `node -v`. |
-| `RepositoryRoot` input | Mandatory and documented; the prior candidate proof used `C:\Repos\foreman-line-jev-p0-rework4` | The proof resolves a literal existing Git root and uses `git -C` for every relative Git operation; unsafe/missing/non-repository roots reject. |
-| Prior-candidate coordinator proof | Passed externally for candidates `9380955cc6b16c4a4a9533113e02eb16429d4989` and `2fe8b456b397e2f8f0731f51788a0c5b7b795b4a` | Exact receipt/path, target/head, base, three-file scope, whitespace, and `M` status results for `2fe8b456` are recorded above; this is coordinator evidence, not Gate 3 approval. |
+| `RepositoryRoot` input | Mandatory and documented; the prior-candidate proof used `C:\Repos\foreman-line-jev-p0-rework5` | The proof resolves a literal existing Git root and uses `git -C` for every relative Git operation; unsafe/missing/non-repository roots reject. |
+| Prior-candidate coordinator proof | Passed externally for candidate `c71bdbfa0f9597eb44d0c3a01aa853f1f33989a8` | Exact receipt/path, target/head, base, repository root, three-file scope, whitespace, native exits, and `M` status results are recorded above; this is prior-candidate coordinator evidence, not current-head proof, builder approval, or Gate 3 authorization. |
 | `CoordinatorTriageReceiptPath` input | Pending: coordinator-supplied receipt path remains unverified until the coordinator executes the proof; no path was fabricated or inferred | A coordinator-controlled receipt is required. |
 | `CoordinatorTargetSha` input | Pending: coordinator-supplied target remains unverified until the coordinator executes the proof | The target must come from coordinator input and the exact receipt declaration; it is never derived from `HEAD`. |
 | `ExpectedHead` input | Pending: coordinator-supplied expected head remains unverified until the coordinator executes the proof | `ExpectedHead` must be supplied independently and must equal `CoordinatorTargetSha`. |
@@ -384,7 +395,7 @@ builder does not self-approve or merge.
 | Full base-to-head scope comparison | Pending until the coordinator executes the proof after receipt-open, target-match, and `ExpectedHead`; no pass claimed | The script first enumerates the unfiltered base-to-head path set, then checks exact set equality. |
 | Filtered base-to-head `git diff --check` and status | Pending until the coordinator executes the proof; no pass claimed | These checks run only after the unfiltered three-file set and reviewed head are proven. |
 | Targeted active-spec linter/self-check | Environment limitation: local `ajv` missing; no install | These tools do not lint the three goal documents. |
-| Field-by-field fresh-rework review | Blocked for coordinator traceability; read-only content review is not independent approval | Checked the requested round-3 control text locally; current coordinator proof and two independent reviews remain external. |
+| Field-by-field fresh-rework review | Blocked for coordinator traceability; read-only content review is not independent approval | Checked the requested thirteenth-review control text locally; current-round coordinator proof and two independent reviews remain external. |
 | Independent frontier review A | Observed result: no fresh report supplied or performed in this builder session (`0/2`) | Coordinator must supply and triage; no pass inferred. |
 | Independent frontier review B | Observed result: no fresh report supplied or performed in this builder session (`0/2`) | Coordinator must supply and triage; no pass inferred. |
 | Gate 3 / merge | Not granted; human-owned | No self-approval or merge. |

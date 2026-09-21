@@ -83,8 +83,9 @@ The request identity is not a display label:
   `served_identity.model` must equal that response `model` exactly, and the
   observation's `response_id` must equal that provider response identifier.
 - The client must not synthesize, infer, fallback, suffix-strip, or copy the
-  requested model into `served_identity`. Missing or unparseable provider
-  fields refuse; the requested identity is never a fallback.
+  requested model into `served_identity`. Missing provider-declared complete
+  metadata is `R12` hold; malformed or unparseable present fields are `R10`
+  refusal; the requested identity is never a fallback.
 - `served_identity` and `response_id` are provider-response metadata only. A
   served identifier such as `typesafe/jev-1.13-20260917` cannot establish
   standard catalog eligibility, general routing authority, or parent RCM D13
@@ -108,16 +109,24 @@ The provider response identifier is a non-empty provider field and is never
 the literal `none`. No consumer may infer a requested identity from served metadata, headers, the
 URL, a configured default, or a client-generated value.
 
-Identity adjudication is ordered and mutually exclusive. `R09` owns a
-provider-declared identity value that is present but malformed or conflicting:
-the authenticated response `model` must equal `served_identity.model`, and a
-present provider response identifier must equal both
-`served_identity.response_id` and `response_id`. `R12` owns missing
-provider-declared complete metadata only: after transport and request identity
-checks, if the provider did not declare `model`, `response_id`, or
-`server_timestamp_utc`, the result is a terminal hold. A client-supplied value
-does not satisfy a missing provider declaration. A present but unparseable
-`server_timestamp_utc` is response validation failure `R10`, not `R12`.
+Identity adjudication is closed, ordered, and mutually exclusive after
+transport and request-identity checks. `model` must match
+`^[A-Za-z0-9][A-Za-z0-9._/-]{0,127}$`; `response_id` must match
+`^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$`; and
+`server_timestamp_utc` must match
+`^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$` and be a
+real UTC instant. Evaluate exactly this table:
+
+| Evaluation order | Reason | Disjoint predicate | Outcome |
+|---|---|---|---|
+| 1 | R12 | One or more provider-declared complete metadata fields (`model`, `response_id`, or `server_timestamp_utc`) is missing. Missing `server_timestamp_utc` belongs here. | `hold` |
+| 2 | R10 | All required metadata fields are present, but any present response field is malformed or unparseable under its exact grammar, including malformed `model`, malformed `response_id`, or unparseable `server_timestamp_utc`. This row has precedence over R09. | `refused` |
+| 3 | R09 | All required metadata fields are present and individually valid under their exact field grammars, but authenticated response `model` conflicts with `served_identity.model`, or the provider response identifier conflicts with `served_identity.response_id` or `response_id`. | `refused` |
+
+R09 owns only present, validly shaped, conflicting values; it never owns a
+malformed or unparseable value. R12 owns only missing provider declarations;
+a client-supplied value does not fill one. No condition belongs to two rows and
+no caller selects the reason or status.
 
 ## Versioned typed envelope
 
@@ -241,7 +250,7 @@ response. The adapter must not manufacture missing provider metadata.
     source: "provider-declared"
   },
   response_id: <same provider response identifier>,
-  server_timestamp_utc: <provider-declared parseable UTC timestamp>,
+  server_timestamp_utc: <provider-declared timestamp matching the exact UTC grammar above>,
   answers: [
     {
       name: <exact request question name>,
@@ -278,12 +287,12 @@ Answer rules:
 - `response_id` and `server_timestamp_utc` are mandatory for a complete
   response. `response_id` must be the provider response identifier used in
   `served_identity`; `server_timestamp_utc` must be provider-declared and
-  parseable as UTC. A missing provider declaration is deterministically `hold`
-  with reason `R12`; a present but conflicting or malformed identity value is
-  deterministically `refused` with reason `R09`, while a present but
-  unparseable timestamp is deterministically `refused` with reason `R10`.
-  Client-supplied metadata never fills a missing provider declaration. Neither
-  condition can produce a complete result.
+  match the exact UTC grammar above. Missing provider metadata is
+  deterministically `hold` with reason `R12`; a present malformed or
+  unparseable response field is deterministically `refused` with reason `R10`;
+  a present, validly shaped but conflicting identity value is deterministically
+  `refused` with reason `R09`. Client-supplied metadata never fills a missing
+  provider declaration. None of these conditions can produce a complete result.
 
 The response raw UTF-8 body is measured before JSON parsing or persistence and
 must be no larger than 65,536 bytes. A body that is truncated, decompression-
@@ -294,8 +303,9 @@ failed, not valid UTF-8, or over the limit refuses before parse or persistence.
 Each later live run requires a coordinator-issued `run_id`, an atomic durable
 single-call lease, and a pre-call reservation for the full `$0.01 USD` cap.
 Atomic claim semantics are CAS/create-if-absent on a durable record: exactly one
-caller can create or transition the lease from `available` to `claimed`; every
-other claimant refuses. The immutable lease binds all of:
+caller can create or transition the lease from `available` to `claimed`. Claim
+outcomes are classified by the closed pre-call table below; a losing CAS
+claimant is not generically refused. The immutable lease binds all of:
 
 ```text
 run_id + capability + schema_version + request_digest
@@ -373,27 +383,19 @@ overwritten, or converted by a later worker. A hold is terminal,
 non-consumable, and non-retryable pending coordinator disposition. JEV-P0
 itself has no run ID, lease, provider call, or spend.
 
-The pre-call decision uses one deterministic precedence, so `R14`, `R15`, and
-`R16` are mutually exclusive:
+The pre-call decision is a closed, observable, disjoint table. Observe the
+invocation signal, same-run lease state, claim result, and budget acknowledgement;
+the caller cannot choose a row:
 
-1. `R16` is evaluated first. A second, concurrent, or retry invocation for a
-   run whose lease is already in flight, consumed, or terminal is always
-   `refused`. A supplied lease token that is duplicated or bound to the wrong
-   run, capability, schema version, or request digest is also `R16` refused.
-   This includes a timeout recovery attempt after consume-before-socket and
-   takes precedence over any simultaneously reused budget acknowledgement.
-2. If the invocation is not an `R16` attempt, `R15` applies when `run_id` or
-   the durable lease is missing, or a CAS/create-if-absent claim is unavailable
-   because another claimant owns it; these are `hold`. A consumed lease on the
-   same run is handled by step 1, never by `R15`.
-3. Only after a first invocation successfully claims the correctly bound lease
-   does `R14` apply. A missing, malformed, stale, mutable,
-   custody-unverified, future, backward-clock, expired, over-cap, non-USD,
-   mismatched, or already-consumed/reused `budget_ack` is `hold` before
-   transmission.
+| Evaluation order | Reason | Disjoint observable predicate | Outcome |
+|---|---|---|---|
+| 1 | R16 | An explicit retry, second, or concurrent invocation is observed; an existing same-run lease is `in-flight`, `consumed`, or `terminal`; or a supplied lease token is duplicated or bound to the wrong run, capability, schema version, or request digest. A CAS claimant that loses because another claimant already owns an in-flight lease is R16. A reused acknowledgement on such a retry/second/concurrent invocation is also R16. | `refused` |
+| 2 | R15 | This is a first invocation with no retry, second, or concurrency signal, but `run_id` is missing or the durable lease service/create-if-absent operation is unavailable, and no existing same-run in-flight owner is observed. | `hold` |
+| 3 | R14 | This is a first invocation that successfully claims a fresh, correctly bound lease, but `budget_ack` is missing, malformed, stale, reused, mutable, custody-unverified, future, backward-clock, expired, over-cap, non-USD, or otherwise invalid. | `hold` |
 
-`R14` and `R15` are hold-only, while `R16` is refusal-only. No input condition
-can satisfy two numbered steps or emit both statuses.
+Evaluate exactly R16, then R15, then R14. R14, R15, and R16 are mutually
+exclusive; each condition belongs to one row, and no caller-selected status is
+accepted.
 
 ## Credential and consumer boundary
 
@@ -441,8 +443,9 @@ Source references and fixture identifiers are generated opaque values only.
 Raw request bodies, raw response bodies, headers, authorization values,
 compressed streams, and unredacted payloads have zero retention. Sanitized
 fixtures and safe live metadata require a coordinator-sampled retention anchor
-from the trusted capture/recording clock and a `retention_until_utc`; future
-anchors are rejected, and the exact bound is
+from the trusted capture/recording clock and a `retention_until_utc`; both
+retention timestamps use the exact UTC grammar above, future anchors are
+rejected, and the exact bound is
 `anchor_utc <= retention_until_utc <= anchor_utc + 90 days`. At or before the
 bound, or on earlier coordinator disposition, the material must be deleted or
 rendered inaccessible without changing the immutable custody record. Retention
