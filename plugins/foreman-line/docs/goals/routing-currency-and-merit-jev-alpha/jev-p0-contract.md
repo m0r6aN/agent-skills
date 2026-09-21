@@ -267,8 +267,11 @@ Answer rules:
 - `response_id` and `server_timestamp_utc` are mandatory for a complete
   response. `response_id` must be the provider response identifier used in
   `served_identity`; `server_timestamp_utc` must be provider-declared and
-  parseable as UTC. Missing, conflicting, or unparseable values produce a
-  terminal hold/refusal rather than a complete result.
+  parseable as UTC. After the authenticated identity binding passes, a missing
+  provider-declared value is deterministically `hold` with reason `R12`; a
+  present but conflicting, unparseable, or client-synthesized value is
+  deterministically `refused` with reason `R12`. Neither condition can produce
+  a complete result.
 
 The response raw UTF-8 body is measured before JSON parsing or persistence and
 must be no larger than 65,536 bytes. A body that is truncated, decompression-
@@ -294,9 +297,26 @@ Before every live transmission, the coordinator must provide the exact closed
 `budget_ack` object defined in `jev-p0-evidence-boundary.md`. It is mandatory
 for every live call; this contract has no direct provider-side or account-level
 enforcement alternative. The acknowledgement must be custody-verified, fresh,
-and bound to the current run, capability, and request digest. A client-side
-reservation alone cannot prevent post-call overcharge and is not sufficient
-authorization.
+and bound to the current run, capability, and request digest. Freshness is
+evaluated only by one trusted coordinator UTC clock: `run_started_at_utc` is
+sampled when the durable lease is claimed, and
+`transmission_started_at_utc` is sampled immediately before the socket opens.
+Both samples and `acknowledged_at_utc` are mandatory and must satisfy:
+
+```text
+run_started_at_utc <= acknowledged_at_utc <= transmission_started_at_utc
+transmission_started_at_utc - acknowledged_at_utc <= 60 seconds
+socket_opened_at_utc < acknowledged_at_utc + 60 seconds
+```
+
+The coordinator rejects a future timestamp, a missing sample, any backward
+trusted-clock observation, an acknowledgement before run start, or an expiry
+that has been reached. Immediately before transmission it rechecks the
+immutable lease binding (`run_id`, capability, schema version, and request
+digest), atomically consumes the lease, and only then opens the socket. The
+consumed lease and acknowledgement cannot authorize another call; queueing,
+retry, recreation, or reuse is refused. A client-side reservation alone cannot
+prevent post-call overcharge and is not sufficient authorization.
 
 `budget_ack` is always a closed `jev-budget/v1` object with exactly these
 fields and values: `mode` is `provider-hard-budget` or
@@ -308,7 +328,8 @@ form; `acknowledgement_digest` is 64 lowercase hex; `repository`, `ref`,
 `capability`, and `request_digest` bind it exactly to the current run. No extra
 field is accepted. The acknowledgement digest is the SHA-256 of the JCS UTF-8
 bytes of the object with that digest field omitted. Missing, stale, mismatched,
-mutable, or unverified acknowledgement is a terminal hold before transmission.
+mutable, unverified, future, backward-clock, or reused acknowledgement is a
+terminal hold before transmission.
 
 Every `live-observation` complete wrapper must contain this exact closed cost
 object, with no omitted or extra field:
@@ -335,6 +356,12 @@ or `hold` is recorded, that terminal state cannot be retried, reopened,
 overwritten, or converted by a later worker. A hold is terminal,
 non-consumable, and non-retryable pending coordinator disposition. JEV-P0
 itself has no run ID, lease, provider call, or spend.
+
+The lease precondition has the same closed status partition as the refusal
+matrix: a missing `run_id` or missing/unavailable lease is deterministically
+`hold` with reason `R15`; a duplicated, already-consumed, or incorrectly bound
+lease is deterministically `refused` with reason `R15`. A condition cannot
+emit either status without satisfying its stated rule.
 
 ## Credential and consumer boundary
 

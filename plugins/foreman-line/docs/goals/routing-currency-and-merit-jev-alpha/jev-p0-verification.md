@@ -1,8 +1,8 @@
-# JEV-P0 — Fresh rework builder round 2 verification record
+# JEV-P0 — Fresh rework builder round 3 verification record
 
 ## Scope
 
-This record verifies the fresh JEV-P0 rework builder round 2 only.
+This record verifies the fresh JEV-P0 rework builder round 3 only.
 It does not authorize JEV-P1 or later, provider calls, runtime use, spend,
 credential access, dispatch, promotion, or Gate 3. The only mutation authority
 is:
@@ -12,9 +12,9 @@ is:
 - `plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-verification.md`
 
 Every other path and effect is forbidden. The exact starting base for this
-builder round is `369207585812dcdfcd237d5241b83c61accbad5b`.
+builder round is `9380955cc6b16c4a4a9533113e02eb16429d4989`.
 
-## Tenth-review closure checklist
+## Prior-closure preservation and eleventh-review closure checklist
 
 The three allowed documents explicitly close these findings while preserving
 all earlier identity, schema, answer, JCS, transport, custody, lease, budget,
@@ -35,21 +35,26 @@ text outside the fixed schema.
 5. Non-complete provenance uses only JSON string `"none"`; complete provenance
    rejects `none` and requires provider-declared response IDs.
 6. The closed `budget_ack` object is mandatory for every live call and is bound
-   to run/capability/request digest and custody; there is no direct enforcement
-   alternative.
+   to run/capability/request digest and custody; one trusted coordinator UTC
+   clock enforces run-start ordering, the 60-second age/expiry, future/backward/
+   missing-clock rejection, lease recheck, consume-before-socket, and no reuse.
 7. Replay custody requires an independent coordinator manifest receipt/resolution;
    wrapper self-equality and format-only IDs never establish trust.
 8. The finite custody allowlist includes the approved JEV-P1 fixture paths and
-   planned P1 ref; missing cost/currency is hold-only and malformed or
-   unauthorized cost is refusal-only; invalid custody uses generic R18/R19
-   records.
+   planned P1 ref; the closed reason-code/status partition maps R12 and R15
+   deterministically (and keeps missing cost/currency hold-only and malformed
+   or unauthorized cost refusal-only); invalid custody uses generic R18/R19
+   records with evidence-class prefixes.
 9. Retention uses a trusted coordinator capture/recording clock, rejects future
    anchors, and preserves `anchor <= retention <= anchor+90 days`.
 10. Scope proof first enumerates the complete unfiltered two-commit diff from
     the exact base to the coordinator-supplied expected reviewed head and
     asserts exact set equality, exact `M` statuses, and native exit codes before
     reporting success.
-11. The immutable execution record identifies the coordinator review target by
+11. Complete replay equalities include wrapper/request/response requested
+    identity and wrapper/provenance source kind/source ref, with explicit
+    mismatch refusal.
+12. The immutable execution record identifies the coordinator review target by
     a strictly parsed coordinator receipt, externally supplied target SHA, and
     externally supplied expected head; the builder never derives the target
     from `HEAD` or treats builder review as approval.
@@ -86,12 +91,40 @@ the target and scope results remain blocked. Coordinator review evidence is
 external to this builder session; builder review counts remain `0/2`, and no
 builder result is self-approval or Gate 3 authorization.
 
+## Prior-candidate coordinator proof evidence
+
+The following is exact prior-candidate evidence supplied by the coordinator;
+it is not proof of this round's final HEAD and is not builder approval. The
+external proof targeted prior candidate
+`9380955cc6b16c4a4a9533113e02eb16429d4989` using receipt path
+`D:\Repos\jev-p0-triage-receipt-round3.txt`.
+
+| Prior-candidate proof item | Recorded result |
+|---|---|
+| Receipt path | `D:\Repos\jev-p0-triage-receipt-round3.txt` |
+| Base | `369207585812dcdfcd237d5241b83c61accbad5b` |
+| Coordinator target SHA | `9380955cc6b16c4a4a9533113e02eb16429d4989` |
+| Observed HEAD | `9380955cc6b16c4a4a9533113e02eb16429d4989` — assertion passed for the prior candidate |
+| Receipt open / target match | `passed` / `passed` |
+| Unfiltered scope | `passed`; exact changed-path set was the three allowed documents only |
+| Whitespace | `passed`; filtered `git diff --check` passed |
+| Filtered status | `passed`; each allowed path was exactly `M` |
+| Native command exits | `passed` for the receipt, HEAD, unfiltered scope, whitespace, and status checks |
+
+This prior-candidate record does not assert the current round-3 final HEAD,
+current base-to-head scope, whitespace, or status results. Those remain
+pending until the coordinator runs the proof below with the current immutable
+expected head.
+
 ## Dependency-free verification commands
 
-Run from `C:\Repos\foreman-line-jev-p0-rework2` in PowerShell. No dependency
-installation is part of this parcel. The coordinator must supply the immutable
-expected reviewed-head SHA captured before execution; the script must not
-derive it from `HEAD`.
+Run in PowerShell with an explicit repository root. No dependency installation
+is part of this parcel. The coordinator must supply the immutable expected
+reviewed-head SHA captured before execution; the script must not derive it
+from `HEAD`. The mandatory `RepositoryRoot` parameter is resolved as a literal
+existing directory, must contain the requested repository, and is used for
+every relative Git path. Missing, unsafe, non-directory, or non-repository
+roots are rejected; no stale rework worktree path is embedded.
 
 ### 1. Environment probe
 
@@ -113,6 +146,8 @@ Run after the resulting rework commit exists:
 ```powershell
 param(
   [Parameter(Mandatory = $true)]
+  [string]$RepositoryRoot,
+  [Parameter(Mandatory = $true)]
   [string]$ExpectedHead,
   [Parameter(Mandatory = $true)]
   [string]$CoordinatorTriageReceiptPath,
@@ -120,12 +155,33 @@ param(
   [string]$CoordinatorTargetSha
 )
 
-$base = '369207585812dcdfcd237d5241b83c61accbad5b'
+$base = '9380955cc6b16c4a4a9533113e02eb16429d4989'
 $allowed = @(
   'plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-contract.md',
   'plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-evidence-boundary.md',
   'plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-verification.md'
 )
+if ([string]::IsNullOrWhiteSpace($RepositoryRoot) -or
+    $RepositoryRoot -match '[\x00-\x1F\x7F]') {
+  throw 'RepositoryRoot is missing or unsafe'
+}
+try {
+  $resolvedRepositoryRoot = (Resolve-Path -LiteralPath $RepositoryRoot -ErrorAction Stop).Path
+} catch {
+  throw 'RepositoryRoot could not be resolved'
+}
+if (-not (Test-Path -LiteralPath $resolvedRepositoryRoot -PathType Container)) {
+  throw 'RepositoryRoot is not an existing directory'
+}
+$gitRootOutput = @(git -C $resolvedRepositoryRoot rev-parse --show-toplevel)
+$gitRootExitCode = $LASTEXITCODE
+if ($gitRootExitCode -ne 0) { throw 'RepositoryRoot is not a Git repository' }
+$gitRoot = ($gitRootOutput -join "`n").Trim()
+if ([string]::IsNullOrWhiteSpace($gitRoot)) { throw 'RepositoryRoot Git root is empty' }
+if ([System.IO.Path]::GetFullPath($gitRoot) -cne
+    [System.IO.Path]::GetFullPath($resolvedRepositoryRoot)) {
+  throw 'RepositoryRoot does not resolve to the Git worktree root'
+}
 if ([string]::IsNullOrWhiteSpace($CoordinatorTriageReceiptPath) -or
     $CoordinatorTriageReceiptPath -match '[\x00-\x1F\x7F]' -or
     $CoordinatorTriageReceiptPath -match '\s') {
@@ -177,11 +233,11 @@ if ($CoordinatorTargetSha -cne $ExpectedHead) {
 }
 $receiptOpenResult = 'passed'
 $receiptTargetMatchResult = 'passed'
-$head = (git rev-parse --verify HEAD).Trim()
+$head = (git -C $resolvedRepositoryRoot rev-parse --verify HEAD).Trim()
 if ($LASTEXITCODE -ne 0) { throw 'git rev-parse HEAD failed' }
 if ($head -cne $ExpectedHead) { throw "HEAD does not equal immutable ExpectedHead $ExpectedHead" }
 # First enumerate without any path filter; no forbidden path can be hidden.
-$allChanged = @(git diff --name-only "$base..$head")
+$allChanged = @(git -C $resolvedRepositoryRoot diff --name-only "$base..$head")
 if ($LASTEXITCODE -ne 0) { throw 'git diff --name-only failed' }
 Write-Output 'full_base_to_head_changed_paths:'
 $allChanged
@@ -190,10 +246,10 @@ $actualSet = @($allChanged | Sort-Object -Unique)
 $setDelta = @(Compare-Object -ReferenceObject $expectedSet -DifferenceObject $actualSet)
 if ($setDelta.Count -ne 0 -or $actualSet.Count -ne $expectedSet.Count) { throw 'full base-to-head path set is not exactly the Allowed Files set' }
 # Only after exact full-set equality do filtered checks run.
-git diff --check "$base..$head" -- $allowed
+git -C $resolvedRepositoryRoot diff --check "$base..$head" -- $allowed
 if ($LASTEXITCODE -ne 0) { throw 'git diff --check failed' }
 Write-Output 'filtered_whitespace=passed'
-$nameStatus = @(git diff --name-status "$base..$head" -- $allowed)
+$nameStatus = @(git -C $resolvedRepositoryRoot diff --name-status "$base..$head" -- $allowed)
 if ($LASTEXITCODE -ne 0) { throw 'git diff --name-status failed' }
 $expectedStatus = @(
   "M`tplugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-contract.md",
@@ -207,6 +263,7 @@ if ($nameStatus.Count -ne $expectedStatus.Count -or
 $nameStatus
 Write-Output 'filtered_status=passed'
 Write-Output "base=$base"
+Write-Output "repository_root=$resolvedRepositoryRoot"
 Write-Output "head=$head"
 Write-Output "expected_reviewed_head=$ExpectedHead"
 Write-Output "coordinator_target_sha=$CoordinatorTargetSha"
@@ -287,8 +344,10 @@ builder does not self-approve or merge.
 
 | Check | Result | Evidence |
 |---|---|---|
-| Starting branch/base | `codex/jev-p0-rework11`, base `369207585812dcdfcd237d5241b83c61accbad5b` | Confirmed before fresh rework round 2 edits. |
+| Starting branch/base | `codex/jev-p0-rework13`, base `9380955cc6b16c4a4a9533113e02eb16429d4989` | Confirmed before fresh rework round 3 edits. |
 | `node -v` | Passed: `v24.7.0`, native exit code `0`; below shaping requirement `>=24.11.1` | Immediate exit-code capture/check followed `node -v`. |
+| `RepositoryRoot` input | Mandatory and documented; current worktree is `C:\Repos\foreman-line-jev-p0-rework4` | The proof resolves a literal existing Git root and uses `git -C` for every relative Git operation; unsafe/missing/non-repository roots reject. |
+| Prior-candidate coordinator proof | Passed externally for candidate `9380955cc6b16c4a4a9533113e02eb16429d4989` | Exact receipt/path, target/head, three-file scope, whitespace, and `M` status results are recorded above; this is not current final-HEAD proof. |
 | `CoordinatorTriageReceiptPath` input | Pending: coordinator-supplied receipt path remains unverified until the coordinator executes the proof; no path was fabricated or inferred | A coordinator-controlled receipt is required. |
 | `CoordinatorTargetSha` input | Pending: coordinator-supplied target remains unverified until the coordinator executes the proof | The target must come from coordinator input and the exact receipt declaration; it is never derived from `HEAD`. |
 | `ExpectedHead` input | Pending: coordinator-supplied expected head remains unverified until the coordinator executes the proof | `ExpectedHead` must be supplied independently and must equal `CoordinatorTargetSha`. |
@@ -298,7 +357,7 @@ builder does not self-approve or merge.
 | Full base-to-head scope comparison | Pending until the coordinator executes the proof after receipt-open, target-match, and `ExpectedHead`; no pass claimed | The script first enumerates the unfiltered base-to-head path set, then checks exact set equality. |
 | Filtered base-to-head `git diff --check` and status | Pending until the coordinator executes the proof; no pass claimed | These checks run only after the unfiltered three-file set and reviewed head are proven. |
 | Targeted active-spec linter/self-check | Environment limitation: local `ajv` missing; no install | These tools do not lint the three goal documents. |
-| Field-by-field fresh-rework review | Blocked for coordinator traceability; read-only content review is not independent approval | Checked the requested A–H control text locally; coordinator receipt/target evidence and two independent reviews remain external. |
+| Field-by-field fresh-rework review | Blocked for coordinator traceability; read-only content review is not independent approval | Checked the requested round-3 control text locally; current coordinator proof and two independent reviews remain external. |
 | Independent frontier review A | Observed result: no fresh report supplied or performed in this builder session (`0/2`) | Coordinator must supply and triage; no pass inferred. |
 | Independent frontier review B | Observed result: no fresh report supplied or performed in this builder session (`0/2`) | Coordinator must supply and triage; no pass inferred. |
 | Gate 3 / merge | Not granted; human-owned | No self-approval or merge. |
