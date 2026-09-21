@@ -493,13 +493,30 @@ wrapper custody tuple and provenance custody tuple must be identical:
 
 `manifest_commit` and `manifest_tree` are exactly 40 lowercase hexadecimal
 characters and equal wrapper `commit` and `tree`; every manifest-entry field
-above is required and exact. Any split-brain mismatch refuses custody.
+above is required and exact. Any split-brain mismatch refuses custody. Before
+the immutable custody tuple resolves, missing, unverified, unapproved, or
+non-resolving custody is `R19` only. After it resolves, any mismatch between
+committed fixture bytes/tree and the resolved custody tuple or manifest-entry
+custody, including a mismatch among the wrapper/provenance/manifest-entry/
+receipt custody fields, is exclusively `R20`.
 Mutable working-tree files, uncommitted fixtures, detached copies, missing
 manifest entries, self-recomputed manifest entries, or changed digest pairs
 are not trusted custody and refuse replay.
 
 Complete replay equality is field-for-field and is not satisfied by a matching
-top-level digest alone:
+top-level digest alone. After `R17` and `R20` pass, the closed post-custody
+semantic equality set is the following: `fixture_id`; `manifest_id` wherever
+it is not custody-owned; `schema_version`; `capability`; `endpoint`;
+`requested_identity`; `served_identity`; `response_id`;
+`server_timestamp_utc`; `request`; `response`; `request_digest`;
+`response_digest`; the complete `provenance` object; `provenance_digest`;
+`source_kind`; `source_ref`; and every other explicitly named non-custody
+wrapper or manifest semantic field. Any valid but unequal field in that set is
+`R21`, so no valid unequal replay field has an unowned result. Malformed or
+out-of-vocabulary values remain earlier structural/value failures (`R23` then
+`R22`); provenance or request/response digest computation/procedure failures
+remain `R18` or `R17`; and custody-byte/tree/manifest-entry mismatches remain
+`R20`:
 
 ```text
 fixture.schema_version
@@ -558,8 +575,10 @@ mismatch in `fixture.requested_identity == fixture.request.requested_identity
 == fixture.response.requested_identity` or in
 `fixture.source_kind/source_ref == fixture.provenance.source_kind/source_ref`
 is an explicit generic `refusal-record` with `evidence:R21` after custody is resolved;
-custody that cannot be resolved follows the explicit `evidence:R19` hold path
-and never becomes a complete fixture.
+the same `R21` ownership applies to every unequal valid field in the closed
+post-custody semantic equality set above. Custody that cannot be resolved
+follows the explicit `evidence:R19` hold path and never becomes a complete
+fixture.
 
 ### Independent coordinator manifest receipt/resolution
 
@@ -592,12 +611,14 @@ The coordinator receipt/resolver is the independent trust anchor: it resolves
 the exact `manifest_id`, `fixture_id`, repository, ref, path, commit, tree,
 request digest, response digest, and provenance digest from its controlled
 record, then returns the closed receipt above. Missing receipt, missing
-resolution, unknown fields, duplicate fields, wrong authority/version, any
-mismatch, mutable/non-resolving source, or an unapproved ref/path is assigned
-by the ordered custody stages above: pre-custody allowlist/schema violations
-are `evidence:R22` or `evidence:R23`, unresolved custody is `evidence:R19`
-hold, and only post-custody canonical provenance JCS/digest/procedure failure
-is `evidence:R18` refusal.
+resolution, unknown fields, duplicate fields, wrong authority/version, an
+unapproved ref/path, or a source that is unverified or non-resolving is
+assigned by the ordered custody stages above: structural violations are
+`evidence:R23`, recognized value violations are `evidence:R22`, and only when
+both pass does missing, unverified, unapproved, or non-resolving custody before
+a resolved immutable tuple become `evidence:R19` hold. After resolution, a
+custody mismatch is `evidence:R20`; only post-custody canonical provenance
+JCS/digest/procedure failure is `evidence:R18` refusal.
 Replay accepts custody only after that external authority resolves the exact
 tuple and all three digests; it never treats wrapper self-equality,
 self-recomputed IDs, or format-only IDs as proof of trust. Receipt IDs and
@@ -769,42 +790,58 @@ tokens are excluded from R15, and their statuses are fixed by the table.
 
 ## Ordered custody reason-code precedence
 
-Custody reasons are assigned by validation stage, in this order, and this
-precedence is explicit rather than a general fail-closed fallback:
+Custody reasons are assigned by first failing validation stage, in this exact
+order; validation stops at that stage, and a combined violation is owned by
+the first failing stage rather than being ambiguous:
 
-1. First validate the finite repository/ref/path allowlists, generated ID
-   grammars, numeric bounds, and the exact closed evidence-wrapper and
-   retained-record schemas defined in this parcel. A finite input, vocabulary,
-   allowlist, generated-ID, or numeric-bound violation is generic
-   `evidence:R22`; an unknown/extra field, unsafe payload, or retention/schema
-   violation in those defined wrappers or retained records is generic
-   `evidence:R23`. R23 applies only to those explicitly defined closed
-   schemas: no unbounded log or report object is an evidence surface or may be
-   classified by R23. These pre-custody violations are never `R19` or `R18`.
-2. Only after that pre-custody validation passes, resolve immutable custody.
-   Missing, unverified, unapproved, mutable, or non-resolving custody is a
-   generic `evidence:R19` hold.
-3. Only after custody and the defined outer schemas pass, a canonical
+1. First structurally scan the recognized closed evidence-wrapper and
+   retained-record schemas defined in this document. An unknown/extra field,
+   raw authorization header, unsafe payload, or structural retention/schema
+   violation is generic `evidence:R23` and stops validation. R23 applies only
+   to those explicitly defined closed schemas; no unbounded log or report
+   object is an evidence surface or may be classified by R23.
+2. Only when the structural scan passes, validate recognized field values. A
+   finite vocabulary, repository/ref/path allowlist, generated-ID grammar,
+   numeric bound, or minimization/redaction uncertainty is generic
+   `evidence:R22` and stops validation. Therefore a combined structural and
+   value violation is `R23`, never `R22`; neither pre-custody reason is `R19`
+   or `R18`.
+3. Only after both pre-custody stages pass, resolve immutable custody.
+   Missing, unverified, unapproved, or non-resolving custody before a resolved
+   immutable custody tuple exists is generic `evidence:R19` hold. Once the
+   immutable custody tuple resolves, no custody mismatch is `R19`.
+4. Only after custody and the defined outer schemas pass, a canonical
    provenance JCS, digest, or procedure failure is generic `evidence:R18`
    refusal. `R18` does not own generic out-of-schema fields; `R23` owns those.
-4. Only after `R22`/`R23`, `R19`, and `R18` pass, evaluate `R17` solely for a
-   request/response JCS canonical-byte failure or a paired request/response
-   digest computation/procedure failure, including a missing, malformed, or
+5. Only after `R18` passes, evaluate `R17` solely for a request/response JCS
+   canonical-byte failure or a paired request/response digest
+   computation/procedure failure, including a missing, malformed, or
    non-reproducible paired digest. `R17` does not own identity equality or
    custody-byte/tree/manifest-entry mismatches.
-5. Only after `R17` passes, evaluate `R20` solely for a custody-resolved
-   mismatch between committed fixture bytes, the committed tree, or the
-   manifest-entry custody and the resolved custody record. `R20` explicitly
-   excludes every `R17` canonical-byte or digest-computation/procedure failure.
-6. Only after `R20` passes, evaluate `R21` solely for a post-custody
-   complete-fixture equality failure involving response IDs, requested
-   identity, or source kind/source ref. `R21` explicitly excludes every `R17`
-   digest failure and every `R20` custody mismatch.
+6. Only after `R17` passes and custody is resolved, evaluate `R20` for any
+   mismatch between committed fixture bytes or the committed tree and the
+   resolved immutable custody tuple or manifest-entry custody, including a
+   mismatch among the resolved wrapper/provenance/manifest-entry/receipt
+   custody fields. These custody mismatches are exclusively `R20`, which
+   explicitly excludes every `R17` canonical-byte or digest-computation/
+   procedure failure.
+7. Only after `R20` passes, evaluate `R21` for any unequal valid field in the
+   closed post-custody semantic equality set. That set includes `fixture_id`,
+   `manifest_id` wherever it is not custody-owned, `schema_version`,
+   `capability`, `endpoint`, `requested_identity`, `served_identity`,
+   `response_id`, `server_timestamp_utc`, `request`, `response`,
+   `request_digest`, `response_digest`, the complete `provenance` object,
+   `provenance_digest`, `source_kind`, `source_ref`, and every other explicitly
+   named non-custody wrapper or manifest semantic field. A valid but unequal
+   field has no other post-custody owner. `R21` explicitly excludes `R17`
+   digest computation/procedure failures and `R20` custody-byte/tree/
+   manifest-entry mismatches; malformed or out-of-vocabulary values remain
+   owned by the earlier structural/value stages.
 
-The post-custody predicates are ordered and mutually exclusive:
-`R18 -> R17 -> R20 -> R21` after the pre-custody `R22`/`R23` checks and the
-`R19` custody check. No digest-procedure failure may be reclassified as `R20`,
-and no `R21` identity/provenance equality failure may absorb an `R17` or `R20`
+The predicates are ordered and mutually exclusive:
+`R23 -> R22 -> R19 -> R18 -> R17 -> R20 -> R21`. No digest-procedure failure
+may be reclassified as `R20`, no resolved custody mismatch may be reclassified
+as `R19`, and no `R21` semantic equality failure may absorb an `R17` or `R20`
 failure.
 
 ## Refusal matrix
@@ -828,13 +865,13 @@ failure.
 | R14 | After a fresh `in-flight` record is successfully created and correctly bound, the mandatory `budget_ack` is missing, malformed, stale, reused, mutable, custody-unverified, non-USD, over-cap, future, backward-clock, expired, or otherwise invalid. | `hold` | Generic `evidence:R14` terminal hold before transmission; the single-use record is finalized without a socket. Any R16 state or token takes precedence. |
 | R15 | This is a first invocation with no R16 predicate, no existing same-run `in-flight`, `consumed`, or `terminal` record, and no successful fresh record because `run_id` or the durable lease service is missing, unavailable, or unobservable. | `hold` | Generic `evidence:R15` terminal hold with no lease/run/budget fields; a CAS loss to an existing `in-flight` owner is R16, not R15. |
 | R16 | An explicit retry, second, or concurrent invocation is observed; an existing same-run durable lease record is `in-flight`, `consumed`, or `terminal`; a supplied token is duplicated, unrecognized, or wrongly bound; or CAS/create-if-absent loses to an existing `in-flight` owner. | `refused` | Generic `evidence:R16` terminal refusal; this row is evaluated before `R15` and `R14`, and no lease can be recreated or reopened. |
-| R17 | After `R22`/`R23`, `R19`, and `R18` pass, request/response JCS canonical bytes or paired request/response digest computation/procedure is missing, malformed, or non-reproducible. This row does not classify identity equality or custody mismatch. | `refused` | Emit generic `evidence:R17` `refusal-record`; refuse replay or evidence acceptance. |
+| R17 | After `R23` then `R22`, `R19`, and `R18` pass, request/response JCS canonical bytes or paired request/response digest computation/procedure is missing, malformed, or non-reproducible. This row does not classify identity equality or custody mismatch. | `refused` | Emit generic `evidence:R17` `refusal-record`; refuse replay or evidence acceptance. |
 | R18 | After pre-custody validation, outer closed schemas, and immutable custody resolution pass, the canonical provenance object fails its canonical JCS, provenance-digest, or digest-procedure check. Generic out-of-schema fields are not R18. | `refused` | Emit only generic `evidence:R18` `refusal-record`; do not emit a `sanitized-replay-fixture` record. |
-| R19 | After finite allowlists, generated IDs, numeric bounds, and outer closed schemas pass, fixture repository/ref/path/commit/tree or the independent coordinator manifest receipt/resolution is missing, unverified, mutable, non-resolving, has an unapproved custody resolution, or differs across the wrapper/provenance/manifest-entry/receipt custody tuples. | `hold` | Emit only generic `evidence:R19` `hold-record` with `disposition: "pending-coordinator"`; do not emit a `sanitized-replay-fixture` record. |
-| R20 | After `R17` passes and custody is resolved, committed fixture bytes, the committed tree, or the manifest-entry custody differs from the resolved custody record. This row explicitly excludes every `R17` canonical-byte or digest-computation/procedure failure. | `refused` | Emit generic `evidence:R20` `refusal-record`; no self-recomputed, mutable, or custody-mismatched fixture acceptance. |
-| R21 | After `R17` and `R20` pass and custody is resolved, a complete replay fixture has missing, one-sided, sentinel-valued, client-synthesized, or unequal response IDs, or its requested-identity or source-kind/source-ref equality is unequal. This row explicitly excludes `R17` and `R20`. | `refused` | Emit only the generic `refusal-record` field set with `evidence:R21`; do not emit a `sanitized-replay-fixture` record. Unresolved custody follows `R19` as stated above. |
-| R22 | Before custody resolution, input or metadata violates a finite vocabulary, repository/ref/path allowlist, generated-ID grammar, or numeric bound; or minimization/redaction is uncertain. | `refused` | Emit only generic `evidence:R22` `refusal-record`; refuse before serialization/transmission and retain no rejected input or metadata. |
-| R23 | Before custody resolution, one of the closed evidence-wrapper or retained-record schemas defined in this parcel contains an unknown/extra field, raw authorization header, unsafe payload, or exceeds its closed schema or retention limit. No unbounded log or report object is classified. | `refused` | Emit only generic `evidence:R23` `refusal-record`; refuse retention and consumption and do not echo material. |
+| R19 | After the structural and recognized-value stages pass, custody is still missing, unverified, unapproved, or non-resolving before a resolved immutable custody tuple exists. Once custody resolves, no custody mismatch is R19. | `hold` | Emit only generic `evidence:R19` `hold-record` with `disposition: "pending-coordinator"`; do not emit a `sanitized-replay-fixture` record. |
+| R20 | After `R17` passes and custody is resolved, any committed fixture bytes/tree mismatch with the resolved custody tuple or manifest-entry custody, including a mismatch among wrapper/provenance/manifest-entry/receipt custody fields. This row explicitly excludes every `R17` canonical-byte or digest-computation/procedure failure. | `refused` | Emit only generic `evidence:R20` `refusal-record`; no self-recomputed, mutable, or custody-mismatched fixture acceptance. |
+| R21 | After `R17` and `R20` pass and custody is resolved, any valid but unequal field in the closed post-custody semantic equality set: `fixture_id`, non-custody-owned `manifest_id`, `schema_version`, `capability`, `endpoint`, `requested_identity`, `served_identity`, `response_id`, `server_timestamp_utc`, `request`, `response`, `request_digest`, `response_digest`, the complete `provenance` object, `provenance_digest`, `source_kind`, `source_ref`, or any other explicitly named non-custody wrapper/manifest semantic field. This row explicitly excludes `R17` digest computation/procedure failures and `R20` custody-byte/tree/manifest-entry mismatches. | `refused` | Emit only the generic `refusal-record` field set with `evidence:R21`; do not emit a `sanitized-replay-fixture` record. Unresolved custody follows `R19` as stated above. |
+| R23 | Before custody resolution, first structurally scan the recognized closed evidence-wrapper or retained-record schemas defined in this parcel. An unknown/extra field, raw authorization header, unsafe payload, or structural retention/schema violation is R23 and stops validation. No unbounded log or report object is classified. | `refused` | Emit only generic `evidence:R23` `refusal-record`; refuse retention and consumption and do not echo material. |
+| R22 | Only when the R23 structural scan passes and before custody resolution, a recognized field value violates a finite vocabulary, repository/ref/path allowlist, generated-ID grammar, or numeric bound, or minimization/redaction is uncertain. A combined structural-and-value violation remains R23 because the first failing stage owns the result. | `refused` | Emit only generic `evidence:R22` `refusal-record`; refuse before serialization/transmission and retain no rejected input or metadata. |
 | R24 | Consumer is not `support-triage-advisory-v1`, recommendation has unknown/effect fields, or independent application authorization is absent. | `refused` | Refuse; application retains all authority and effects. |
 | R25 | Any parent RCM, boundary-routing, standard routing, Pi, HAWF, Helmholtz, GMF, or other forbidden surface is requested. | `refused` | Refuse and stop for coordinator review; no shared-surface mutation. |
 

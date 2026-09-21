@@ -1,8 +1,8 @@
-# JEV-P0 — Bounded Gate 2 builder round 10 verification record
+# JEV-P0 — Bounded Gate 2 builder round 11 verification record
 
 ## Scope
 
-This record verifies the bounded JEV-P0 builder round 10 only.
+This record verifies the bounded JEV-P0 builder round 11 only.
 It does not authorize JEV-P1 or later, provider calls, runtime use, spend,
 credential access, dispatch, promotion, or Gate 3. The only mutation authority
 is:
@@ -12,13 +12,19 @@ is:
 - `plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-verification.md`
 
 Every other path and effect is forbidden. The working branch is
-`codex/jev-p0-rework19`, starting from the immediate prior candidate
-`cf79819848c129581b13ff1289920f4cace2beca`. The cumulative parcel proof base
-is `eb88b65426c5e37893ac0591be83eef8c91da123`; the full-scope proof
-intentionally compares `eb88..HEAD`, and `eb88` is not the direct parent of
-this round.
+`codex/jev-p0-rework20`, starting from the immediate prior candidate
+`a83930eb174cc7afedcf3cd06c6d6bf63ab68b8a`. The cumulative parcel proof base
+is `eb88b65426c5e37893ac0591be83eef8c91da123`; the intervening candidates in
+that cumulative chain are `cf79819848c129581b13ff1289920f4cace2beca`,
+`d439b4dfd9c0f9783f76a2dbb0c6a4a7bf4e5241`,
+`dbc2db5f5dbae7b3df142a22230d69ed6584e5c6`, and the immediate prior
+`a83930eb174cc7afedcf3cd06c6d6bf63ab68b8a`. `c71bdbfa0f9597eb44d0c3a01aa853f1f33989a8`
+is historical proof evidence, not part of this immediate-parent chain. The
+full-scope proof compares the cumulative base `eb88..HEAD` so it covers the
+complete parcel change set; `eb88` is not the direct parent, and `c71` is not
+the immediate prior candidate.
 
-## Prior-closure preservation and seventeenth-review closure/current review checklist
+## Prior-closure preservation and eighteenth-review closure/current review checklist
 
 The three allowed documents explicitly close these findings while preserving
 all earlier identity, schema, answer, JCS, transport, custody, lease, budget,
@@ -67,19 +73,26 @@ text outside the fixed schema.
    remains refusal-only. Live-observation and sanitized-replay-fixture are
    complete-only; claim/consume artifacts are internal durable lease-record
    transitions and never external evidence records; generic refusal/hold uses
-   no fixture provenance, R21 uses only generic `evidence:R21`, and R20 emits
-   only `evidence:R20`. Custody validation is explicitly ordered: pre-custody
-   finite vocabulary/allowlist/generated-ID/numeric violations are R22 and
-   only the closed evidence-wrapper and retained-record schemas defined in
-   this parcel are in R23 scope; no unbounded log/report object is classified.
-   After pre-custody R22/R23, unresolved custody is R19 hold, canonical
-   provenance JCS/digest/procedure failure is R18 refusal, request/response
-   JCS canonical-byte or paired request/response digest procedure failure is
-   R17, custody-resolved committed bytes/tree/manifest-entry mismatch is R20,
-   and post-custody complete-fixture response-ID/requested-identity/source-
-   kind/source-ref equality failure is R21. The ordered predicates are
-   mutually exclusive: R18, then R17, then R20, then R21; R20 excludes R17,
-   and R21 excludes R17 and R20. R18 never owns generic out-of-schema fields.
+    no fixture provenance, R21 uses only generic `evidence:R21`, and R20 emits
+    only `evidence:R20`. Custody validation is explicitly first-failure
+    ordered: first structurally scan the recognized closed evidence-wrapper and
+    retained-record schemas defined in this parcel. An unknown/extra field,
+    raw authorization header, unsafe payload, or structural retention/schema
+    violation is R23 and stops validation. Only when that scan passes, validate
+    recognized field values; a finite vocabulary, repository/ref/path allowlist,
+    generated-ID grammar, numeric bound, or minimization/redaction uncertainty
+    is R22. The first failing stage owns the result, so a combined structural-
+    and-value violation is R23, never R22; no unbounded log/report object is
+    classified. After R23 then R22 pass, unresolved custody before a resolved
+    immutable custody tuple exists is R19 hold, canonical provenance
+    JCS/digest/procedure failure is R18 refusal, and request/response JCS
+    canonical-byte or paired request/response digest procedure failure is R17.
+    After R17, custody-resolved committed bytes/tree or manifest-entry custody
+    mismatch is exclusively R20. After R20, any unequal valid field in the
+    closed post-custody semantic equality set is R21. The ordered predicates
+    are mutually exclusive: R23, then R22, then R19, R18, R17, R20, and R21;
+    R20 excludes R17, and R21 excludes R17 and R20. R18 never owns generic
+    out-of-schema fields.
 9. Retention uses a trusted coordinator capture/recording clock, rejects future
    anchors, and preserves `anchor <= retention <= anchor+90 days`.
 10. Scope proof first enumerates the complete unfiltered cumulative base-to-head
@@ -130,9 +143,10 @@ builder result is self-approval or Gate 3 authorization.
 
 ## Prior-candidate coordinator proof evidence
 
-The following is exact coordinator evidence for the immediately prior
-candidate in round 5. It is not current-round-head proof, not builder approval,
-and not Gate 3 authorization. The external proof targeted candidate
+The following is exact coordinator evidence for a historical candidate from
+round 5. It is neither the immediate prior candidate for current round 11 nor
+current-round-head proof, builder approval, or Gate 3 authorization. The
+external proof targeted candidate
 `c71bdbfa0f9597eb44d0c3a01aa853f1f33989a8` using receipt path
 `D:\Repos\jev-p0-triage-receipt-round5.txt`.
 
@@ -152,7 +166,7 @@ and not Gate 3 authorization. The external proof targeted candidate
 | Filtered status | Passed; all three allowed paths were exactly `M` |
 | Independent review count | `0/2` at the time of this prior-candidate coordinator proof; no review approval inferred |
 
-This prior-candidate record does not assert the current round 10 final HEAD,
+This historical-candidate record does not assert the current round 11 final HEAD,
 current base-to-head scope, whitespace, or status results. Those remain
 pending until the coordinator runs the proof below with the current immutable
 expected head. It does not authorize a provider call, merge, or Gate 3.
@@ -182,7 +196,7 @@ limitation, not a contract pass.
 
 ### 2. Full base-to-head scope proof, then filtered checks
 
-Run after the resulting round-10 builder commit exists:
+Run after the resulting round-11 builder commit exists:
 
 ```powershell
 param(
@@ -379,23 +393,33 @@ exactly R16, then R15, then R14; no caller selects a status:
 | 3 | R14 | After a fresh `in-flight` record is successfully created and correctly bound, `budget_ack` is missing, malformed, stale, reused, mutable, custody-unverified, future, backward-clock, expired, over-cap, non-USD, or otherwise invalid. | `hold` |
 
 The three documents must also contain the same ordered custody and post-custody
-validation precedence before the refusal matrix: (1) validate finite
-repository/ref/path allowlists, generated IDs, numeric bounds, and only the
-closed evidence-wrapper and retained-record schemas defined in this parcel,
-assigning finite input/vocabulary/allowlist failures to generic
-`evidence:R22` and those defined-schema failures to generic `evidence:R23`;
-no unbounded log/report object is classified; (2) only after that passes,
-resolve immutable custody, assigning missing, unverified, unapproved, mutable,
-or non-resolving custody to generic `evidence:R19` hold; (3) only after
-custody and defined schema pass, assign canonical provenance JCS/digest/
-procedure failures to generic `evidence:R18` refusal; (4) only after R18,
-assign request/response JCS canonical-byte or paired request/response digest
-computation/procedure failures to R17; (5) only after R17, assign custody-
-resolved committed fixture bytes/tree/manifest-entry custody mismatches to
-R20, explicitly excluding R17; and (6) only after R20, assign post-custody
-complete-fixture response-ID/requested-identity/source-kind/source-ref equality
-failures to R21, explicitly excluding R17 and R20. These predicates are
-mutually exclusive, and R18 never owns generic out-of-schema fields.
+validation precedence before the refusal matrix. First structurally scan the
+recognized closed evidence-wrapper and retained-record schemas defined in this
+parcel: an unknown/extra field, raw authorization header, unsafe payload, or
+structural retention/schema violation is R23 and stops validation. Only when
+that scan passes, validate recognized field values: a finite vocabulary,
+repository/ref/path allowlist, generated-ID grammar, numeric bound, or
+minimization/redaction uncertainty is R22. The first failing stage owns the
+result, so a combined structural-and-value violation is R23, never R22. No
+unbounded log/report object is classified. Only after R23 then R22 pass,
+resolve immutable custody; missing, unverified, unapproved, or non-resolving
+custody before a resolved immutable custody tuple exists is R19 hold; once
+that tuple resolves, no custody mismatch is R19 and any such mismatch is R20.
+After custody and defined schema pass, canonical provenance JCS/digest/procedure
+failures are R18; after R18, request/response JCS canonical-byte or paired
+request/response digest computation/procedure failures are R17; after R17,
+custody-resolved committed fixture bytes/tree or manifest-entry custody
+mismatches are exclusively R20. After R20, any unequal valid field in the
+closed post-custody semantic equality set is R21. That full set includes
+fixture_id, manifest_id wherever it is not custody-owned, schema_version,
+capability/endpoint, requested_identity, served_identity, response_id,
+server_timestamp_utc, request, response, request_digest, response_digest,
+the complete provenance object/provenance_digest, source_kind/source_ref, and
+any other explicitly named non-custody wrapper/manifest semantic field. R21
+explicitly excludes R17 digest computation/procedure failures and R20
+custody-byte/tree/manifest-entry mismatches. The mutually exclusive order is
+R23 -> R22 -> R19 -> R18 -> R17 -> R20 -> R21; R18 never owns generic
+out-of-schema fields, and no valid unequal replay field has an unowned result.
 
 Every repeated timestamp section is also a manual consistency requirement and
 must use the one exact grammar
@@ -457,7 +481,7 @@ builder does not self-approve or merge.
 
 | Check | Result | Evidence |
 |---|---|---|
-| Starting branch/base | `codex/jev-p0-rework19`, immediate prior candidate/direct parent `cf79819848c129581b13ff1289920f4cace2beca`; cumulative proof base `eb88b65426c5e37893ac0591be83eef8c91da123` (not the direct parent) | Confirmed before current builder round 10 edits. |
+| Starting branch/base | `codex/jev-p0-rework20`, immediate prior candidate `a83930eb174cc7afedcf3cd06c6d6bf63ab68b8a`; cumulative proof base `eb88b65426c5e37893ac0591be83eef8c91da123`; intervening candidates are `cf798`, `d439`, `dbc2`, and `a839`; `c71` is historical | Confirmed before current builder round 11 edits. The cumulative base-to-head proof intentionally compares `eb88..HEAD`; the immediate-parent relation is `a839..HEAD` after this round's commit. |
 | `node -v` | Passed: `v24.7.0`, native exit code `0`; below shaping requirement `>=24.11.1` | Immediate exit-code capture/check followed `node -v`. |
 | `RepositoryRoot` input | Mandatory and documented; the prior-candidate proof used `C:\Repos\foreman-line-jev-p0-rework5` | The proof resolves a literal existing Git root and uses `git -C` for every relative Git operation; unsafe/missing/non-repository roots reject. |
 | Prior-candidate coordinator proof | Passed externally for candidate `c71bdbfa0f9597eb44d0c3a01aa853f1f33989a8` | Exact receipt/path, target/head, base, repository root, three-file scope, whitespace, native exits, and `M` status results are recorded above; this is prior-candidate coordinator evidence, not current-head proof, builder approval, or Gate 3 authorization. |
@@ -470,8 +494,8 @@ builder does not self-approve or merge.
 | Full base-to-head scope comparison | Pending until the coordinator executes the proof after receipt-open, target-match, and `ExpectedHead`; no pass claimed | The script first enumerates the unfiltered base-to-head path set, then checks exact set equality. |
 | Filtered base-to-head `git diff --check` and status | Pending until the coordinator executes the proof; no pass claimed | These checks run only after the unfiltered three-file set and reviewed head are proven. |
 | Targeted active-spec linter/self-check | Environment limitation: local `ajv` missing; no install | These tools do not lint the three goal documents. |
-| Manual semantic consistency review | Required; not claimed by the scope script and not independent approval | Review all three documents for canonical lease vocabulary/state transitions, exact lease/budget/live-record equalities, narrow status/reason suffixes, complete-only observations, one timestamp grammar/order, and R09/R10/R12/R13 plus ordered R17/R20/R21 rules. |
-| Field-by-field seventeenth-review closure/current review | Blocked for coordinator traceability; read-only content review is not independent approval | Checked the requested seventeenth-review control text locally; current-round coordinator proof and two independent reviews remain external. |
+| Manual semantic consistency review | Required; not claimed by the scope script and not independent approval | Review all three documents for canonical lease vocabulary/state transitions, exact lease/budget/live-record equalities, narrow status/reason suffixes, complete-only observations, one timestamp grammar/order, R09/R10/R12/R13, first-failure R23/R22 structural/value stages, R19/R20 custody partition, and the full ordered R17/R20/R21 semantic rules. |
+| Field-by-field eighteenth-review closure/current review | Blocked for coordinator traceability; read-only content review is not independent approval | Checked the requested eighteenth-review control text locally; current-round coordinator proof and two independent reviews remain external. |
 | Independent frontier review A | Observed result: no fresh report supplied or performed in this builder session (`0/2`) | Coordinator must supply and triage; no pass inferred. |
 | Independent frontier review B | Observed result: no fresh report supplied or performed in this builder session (`0/2`) | Coordinator must supply and triage; no pass inferred. |
 | Gate 3 / merge | Not granted; human-owned | No self-approval or merge. |
