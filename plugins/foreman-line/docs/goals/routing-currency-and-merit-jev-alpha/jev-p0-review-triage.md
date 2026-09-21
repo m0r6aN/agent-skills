@@ -434,3 +434,22 @@ but the following same-three-file fixes remain:
 Scope and external-boundary compliance passed for `a83930eb`; no network,
 credential, spend, host/Pi, parent, HAWF, Helmholtz, or downstream action
 occurred.
+
+## Nineteenth review disposition
+
+Two fresh independent reviews of `dc9d6a76772097be07832a2fe2b2653fb81fdf87`
+returned **REQUEST CHANGES / Gate 3 not ready**. The coordinator proof passed,
+but the following same-three-file fixes remain:
+
+| Finding | Disposition |
+|---|---|
+| R17 still includes missing/malformed digest conditions owned by R23/R22. | Restrict R17 to present, validly shaped request/response digest inputs whose canonicalization/computation/reproducibility fails. |
+| R19 still includes unapproved custody language that can overlap R22 allowlist failure. | Restrict R19 to unresolved coordinator custody after structural/value validation and allowlist success; invalid ref/path remains R22. |
+| R21 remains open-ended and missing/one-sided/sentinel values can enter it. | Route missing/invalid values to R23/R22 and replace “every other” wording with a finite path-level equality table for valid post-custody fields. |
+| Nested `manifest_entry` lacks an explicit closed recursive field set. | Declare exactly its listed fields and reject nested extras as R23. |
+| Cumulative proof does not assert ancestry. | Add `git merge-base --is-ancestor $base $head` before scope comparison and describe the proof as a single cumulative base-to-head range. |
+| Two prior boundary statements were lost. | Restore the no-credential/raw-header prohibition for logs/review reports and the rule that replay fixtures do not prove fresh live origin absent provenance. |
+
+Scope and external-boundary compliance passed for `dc9d6a76`; no network,
+credential, spend, host/Pi, parent, HAWF, Helmholtz, or downstream action
+occurred.
