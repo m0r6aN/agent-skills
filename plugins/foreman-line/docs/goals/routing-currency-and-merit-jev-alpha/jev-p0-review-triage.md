@@ -107,6 +107,24 @@ Gate 3 remains blocked. The fourth rework is authorized only on the same three
 JEV-P0 documents. No live call, credential access, spend, external mutation,
 downstream dispatch, or merge is authorized.
 
+## Fifth rework disposition
+
+Two fresh independent reviews of `069b1c017d1a9b091b73d69de9e6d4c7007d39f3`
+both returned **REQUEST CHANGES / Gate 3 not ready**. The coordinator accepts
+the following blockers:
+
+| Finding | Evidence | Disposition |
+|---|---|---|
+| P0/P1 | Request privacy still refers to a non-enumerated “coordinator-approved allowlist,” vague identifier/PII predicates, and grammars that can accept arbitrary sensitive labels. | Fix in fifth rework: use literal finite instruction values or remove the field; make every request string and refusal rule mechanically closed. |
+| P0/P1 | Evidence metadata still uses undefined semantic “PII” exclusions and indirect wrapper schemas. | Fix in fifth rework: use derived identifiers/exact enums and a complete conditional wrapper schema with no semantic escape hatch. |
+| P1 | The contract allows a provider/account budget acknowledgement without a closed evidence object binding issuer, account/provider, cap, timestamp, digest, and custody. | Fix in fifth rework: define the exact acknowledgement schema and require it before transmission. |
+| P2 | Non-complete provenance permits an unspecified “explicit none” sentinel; manifest commit/tree fields are not directly tied to the exact digest grammar. | Fix in fifth rework: define the literal sentinel and bind all custody fields to exact lowercase SHA-1 forms. |
+| P1 | Builder verification claims the fourth-rework field-by-field review passed despite these blockers. | Fix in fifth rework: report the content review as blocked until these controls are actually closed. |
+
+Gate 3 remains blocked. The fifth rework is authorized only on the same three
+JEV-P0 documents; no live call, credential access, spend, external mutation,
+downstream dispatch, or merge is authorized.
+
 During dispatch reconciliation, the builder branch advanced within the same
 three-file scope from `81a7954003e8a5e12a3f254a49c04aaa8faac7f2` to
 `11bbd6c009b5cbb2638f41d152f3bc57f85bf8e8`, changing only the verification
