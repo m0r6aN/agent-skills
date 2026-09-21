@@ -323,7 +323,9 @@ cost: {
 `amount` is a JSON number, never a string, `NaN`, `Infinity`, negative value,
 or other non-finite value. Missing fields, extra fields, non-USD currency, or
 over-cap amount is a terminal hold/refusal; cost is never estimated, converted,
-or silently accepted. Refused and held evidence field sets forbid `cost`.
+or silently accepted. The evidence-boundary `live-observation` complete field
+set uses this object verbatim, while every refused and held evidence field set
+forbids `cost`.
 
 Run and evidence state transitions are append-only. Once `complete`, `refused`,
 or `hold` is recorded, that terminal state cannot be retried, reopened,
