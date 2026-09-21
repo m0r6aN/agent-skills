@@ -1,6 +1,6 @@
 # Routing Currency and Merit — Jev Alpha Decisions
 
-**Status:** GATE 1 REOPENED — plan review changes pending ratification on 2026-09-21
+**Status:** RATIFIED — Gate 1 complete after plan-review amendments on 2026-09-21
 **Prepared:** 2026-09-21
 **Parent context:** `routing-currency-and-merit`
 **Coordinator:** Foreman Line coordinator session
@@ -52,8 +52,8 @@ These decisions require Gate 1 ratification.
 - Existing RCM evidence records one earlier HTTP 200 alpha call and retains the
   standard catalog refusal.
 
-These observations are proposal input only; they do not ratify J1–J10 or grant
-runtime authority.
+These observations are accepted as evidence input for the ratified contract; they
+do not grant Gate 2, runtime authority, or permission for another live call.
 
 ## Parcel decomposition
 
@@ -61,26 +61,27 @@ runtime authority.
 |---|---|---|
 | JEV-P0 | Contract and evidence boundary: endpoint, identity, schema, auth, cost, refusal, replay, and privacy rules. | architecture/risk |
 | JEV-P1 | Pure typed request/response validator and deterministic fixture replay. No network. | implementation/standard |
-| JEV-P2 | Credential-free runtime adapter with bounded live-call receipt capture and redaction. | architecture/risk |
-| JEV-P3 | One named consumer workflow using typed Jev answers; no general routing integration. | architecture/risk |
-| JEV-P4 | Negative controls, operational documentation, cost/failure evidence, and release closure. | implementation/standard |
+| JEV-P2 | Secret-safe bounded runtime adapter with live-call receipt capture and redaction; security review required before release. | architecture/risk |
+| JEV-P3 | `support-triage-advisory-v1` consumer contract using typed Jev answers as recommendation data only; no general routing integration. | architecture/risk |
+| JEV-P4 | Boundary and security scenarios: positive, negative, timeout, auth, privacy, cost, refusal, and provider-boundary behavior by environment. | architecture/risk |
+| JEV-P5 | Release closure, operational documentation, evidence index, and proof that parent RCM and standard routing surfaces were not changed. | implementation/standard |
 
-Dependency order: JEV-P0 → JEV-P1 → JEV-P2 → JEV-P3 → JEV-P4. Architecture/risk
+Dependency order: JEV-P0 → JEV-P1 → JEV-P2 → JEV-P3 → JEV-P4 → JEV-P5. Architecture/risk
 parcels require two independent fresh frontier reviews.
 
 ## Exit criterion
 
 The goal exits only when the alpha surface has a ratified contract, deterministic
-fixture validation, a secret-free bounded live adapter, explicit refusal tests,
-currency-qualified usage evidence, one approved consumer workflow, two fresh
-reviews for risk parcels, and a release record proving that the existing RCM D13
-and standard routing surface were not changed.
+fixture validation, a secret-safe bounded live adapter, explicit refusal tests,
+currency-qualified usage evidence, one approved consumer workflow, environment-
+specific security and boundary scenarios, two fresh reviews for risk parcels, and
+a release record proving that the existing RCM D13 and standard routing surface
+were not changed.
 
 ## Human gates
 
-- **Gate 1:** originally granted by the ratification below; currently reopened for
-  the replacement proposals in the plan-review section. No dispatch authority is
-  active until the reopened decisions are ratified.
+- **Gate 1:** granted for the original J1–J10 and the plan-review replacement
+  decisions recorded below. Gate 2 and Gate 3 remain ungranted.
 - **Gate 2:** not requested by this draft. A later grant must name exact parcel IDs
   and any bounded live-call spend.
 - **Gate 3:** not requested by this draft. Merge remains human-owned.
@@ -100,6 +101,20 @@ Gate 2 or Gate 3, authorize any parcel dispatch, authorize a live provider call 
 spend, change the existing RCM D13 decision, add Jev to general routing, or authorize
 host/Pi, HAWF, Helmholtz, or downstream action.
 
+**PLAN-REVIEW AMENDMENTS RATIFIED 2026-09-21 by Clinton Morgan:** “Ratify the
+J1–J10 replacement decisions as recommended.” This ratifies the replacement text
+in the plan-review section, including the separately owned `openrouter-alpha-decisions`
+surface, exact `typesafe/jev-1.13` request identity, recommendation-only
+`support-triage-advisory-v1` consumer, secret-safe runtime boundary, replay and
+refusal requirements, and the one-call/$0.01 USD validation bound. It grants no
+Gate 2 or Gate 3, no live call or spend, and no change to the parent RCM D13,
+boundary-routing D10, Pi, host, HAWF, Helmholtz, or downstream surfaces.
+
+The non-locked queue corrections from the plan review are accepted as coordinator
+plan fixes: JEV-P2 is the secret-safe runtime adapter; JEV-P4 is the boundary and
+security scenario parcel; and JEV-P5 is release closure. They do not authorize
+dispatch or alter a locked decision.
+
 ## Plan-review Gate 1 reopening
 
 The mandatory fresh plan-level review on 2026-09-21 returned **REQUEST CHANGES**.
@@ -109,7 +124,7 @@ spend-bound, and parent-goal collision gaps. The unratified replacement proposal
 below are the only proposed changes; no parcel or live call is authorized while they
 are pending.
 
-### Proposed replacement decisions
+### Ratified replacement decisions
 
 | ID | Proposed replacement after review |
 |---|---|
@@ -120,7 +135,7 @@ are pending.
 | J5 | Runtime credential ownership is process-local `OPENROUTER_API_KEY` injection only; “credential-free” means receipts, fixtures, logs, and evidence contain neither the key nor the authorization header. No credential discovery, persistence, or retry outside the declared bound is allowed. |
 | J6 | Every live call records endpoint, canonical request digest, requested/served identities, schema version, response ID, server/client UTC timestamps, usage, and currency-qualified cost. Missing currency or cost is a hold. |
 | J7 | Replay uses sanitized, provenance-tagged fixtures with canonical JSON SHA-256 request/response digests and explicit requested/served identity binding. Live observations are never replay authority. |
-| J8 | The named consumer is proposed as `support-triage-advisory-v1`, consuming `is_urgent`, `department`, and `frustration` as recommendation data only. Application code owns authorization and all effects; Jev cannot escalate, route, spend, or mutate state. This name remains pending Gate 1 confirmation. |
+| J8 | The named consumer is `support-triage-advisory-v1`, consuming `is_urgent`, `department`, and `frustration` as recommendation data only. Application code owns authorization and all effects; Jev cannot escalate, route, spend, or mutate state. |
 | J9 | Refuse on endpoint, identity, schema, auth, timeout, size, non-JSON, missing answer, malformed distribution, cost-currency, digest, or binding failure; retries are zero unless a later amendment explicitly changes this. |
 | J10 | Until a later Gate 2 grant, the validation bound is one live call per authorized run, zero retries, concurrency one, 30-second timeout, 64-KiB request limit, and aggregate cap $0.01 USD per run. No standing spend authority is created. |
 
