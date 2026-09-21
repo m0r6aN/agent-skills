@@ -68,7 +68,8 @@ the receipt before any target comparison, requires the receipt declaration,
 any target value from `HEAD`.
 
 The receipt file is strict UTF-8 with no BOM and must contain exactly these two
-ASCII lines, with one LF separator, no final LF, and no other bytes:
+ASCII lines, with one LF separator, optionally followed by exactly one final
+LF, and no other bytes:
 
 ```text
 receipt_schema_version=jev-p0-triage-receipt/v1
@@ -76,14 +77,14 @@ target_sha=<exactly 40 lowercase hexadecimal characters>
 ```
 
 The parser uses the complete-file expression
-`\Areceipt_schema_version=jev-p0-triage-receipt/v1\ntarget_sha=[0-9a-f]{40}\z`.
+`\Areceipt_schema_version=jev-p0-triage-receipt/v1\ntarget_sha=([0-9a-f]{40})(?:\n)?\z`.
 Therefore there is exactly one target declaration, no duplicate declaration,
-no CR, no newline-spanning separator, and no ambiguous extra target content.
-Any missing/unreadable receipt, invalid UTF-8, BOM, CR, extra byte, duplicate
-declaration, or malformed line is a receipt-open refusal and the target and
-scope results remain blocked. Coordinator review evidence is external to this
-builder session; builder review counts remain `0/2`, and no builder result is
-self-approval or Gate 3 authorization.
+no CR, no missing separator, no newline-spanning field, and no ambiguous extra
+target content. Any missing/unreadable receipt, invalid UTF-8, BOM, CR, extra
+byte, duplicate declaration, or malformed line is a receipt-open refusal and
+the target and scope results remain blocked. Coordinator review evidence is
+external to this builder session; builder review counts remain `0/2`, and no
+builder result is self-approval or Gate 3 authorization.
 
 ## Dependency-free verification commands
 
@@ -154,7 +155,7 @@ if ($receiptBytes.Length -ge 3 -and
     $receiptBytes[2] -eq 0xBF) {
   throw 'coordinator receipt must not contain a UTF-8 BOM'
 }
-$receiptPattern = '\Areceipt_schema_version=jev-p0-triage-receipt/v1\ntarget_sha=([0-9a-f]{40})\z'
+$receiptPattern = '\Areceipt_schema_version=jev-p0-triage-receipt/v1\ntarget_sha=([0-9a-f]{40})(?:\n)?\z'
 $receiptMatch = [System.Text.RegularExpressions.Regex]::Match(
   $receiptText,
   $receiptPattern,
@@ -288,14 +289,14 @@ builder does not self-approve or merge.
 |---|---|---|
 | Starting branch/base | `codex/jev-p0-rework11`, base `369207585812dcdfcd237d5241b83c61accbad5b` | Confirmed before fresh rework round 2 edits. |
 | `node -v` | Passed: `v24.7.0`, native exit code `0`; below shaping requirement `>=24.11.1` | Immediate exit-code capture/check followed `node -v`. |
-| `CoordinatorTriageReceiptPath` | Blocked: coordinator-supplied path absent; receipt-open not executed | A coordinator-controlled receipt is required; no path was fabricated or inferred. |
-| `CoordinatorTargetSha` | Blocked: coordinator-supplied target absent; receipt target-match not executed | The target must come from coordinator input and the exact receipt declaration; it is never derived from `HEAD`. |
-| `ExpectedHead` | Blocked: coordinator-supplied expected head absent; reviewed-head comparison not executed | `ExpectedHead` must be supplied independently and must equal `CoordinatorTargetSha`. |
-| Receipt-open result | Blocked pending `CoordinatorTriageReceiptPath`; no pass claimed | Strict UTF-8, no BOM, exact two-line closed format, and native file-read evidence are required. |
-| Receipt target-match result | Blocked pending receipt and `CoordinatorTargetSha`; no pass claimed | Receipt `target_sha`, `CoordinatorTargetSha`, and `ExpectedHead` must match exactly. |
+| `CoordinatorTriageReceiptPath` input | Pending: coordinator-supplied receipt path remains unverified until the coordinator executes the proof; no path was fabricated or inferred | A coordinator-controlled receipt is required. |
+| `CoordinatorTargetSha` input | Pending: coordinator-supplied target remains unverified until the coordinator executes the proof | The target must come from coordinator input and the exact receipt declaration; it is never derived from `HEAD`. |
+| `ExpectedHead` input | Pending: coordinator-supplied expected head remains unverified until the coordinator executes the proof | `ExpectedHead` must be supplied independently and must equal `CoordinatorTargetSha`. |
+| Receipt-open result | Pending until the coordinator executes the proof; no pass claimed | Strict UTF-8, no BOM, exact two-line closed format with an optional final LF, and native file-read evidence are required. |
+| Receipt target-match result | Pending until the coordinator executes the proof; no pass claimed | Receipt `target_sha`, `CoordinatorTargetSha`, and `ExpectedHead` must match exactly. |
 | Observed repository head | Not used as a target; no authoritative comparison executed | `git rev-parse --verify HEAD` may only be observed and compared after the coordinator inputs pass. |
-| Full base-to-head scope comparison | Blocked pending receipt-open, target-match, and `ExpectedHead`; no pass claimed | The script first enumerates the unfiltered base-to-head path set, then checks exact set equality. |
-| Filtered base-to-head `git diff --check` and status | Blocked with authoritative scope; no pass claimed | These checks run only after the unfiltered three-file set and reviewed head are proven. |
+| Full base-to-head scope comparison | Pending until the coordinator executes the proof after receipt-open, target-match, and `ExpectedHead`; no pass claimed | The script first enumerates the unfiltered base-to-head path set, then checks exact set equality. |
+| Filtered base-to-head `git diff --check` and status | Pending until the coordinator executes the proof; no pass claimed | These checks run only after the unfiltered three-file set and reviewed head are proven. |
 | Targeted active-spec linter/self-check | Environment limitation: local `ajv` missing; no install | These tools do not lint the three goal documents. |
 | Field-by-field fresh-rework review | Blocked for coordinator traceability; read-only content review is not independent approval | Checked the requested A–H control text locally; coordinator receipt/target evidence and two independent reviews remain external. |
 | Independent frontier review A | Observed result: no fresh report supplied or performed in this builder session (`0/2`) | Coordinator must supply and triage; no pass inferred. |
