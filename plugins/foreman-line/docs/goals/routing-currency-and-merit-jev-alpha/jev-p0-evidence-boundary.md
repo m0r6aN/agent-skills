@@ -29,12 +29,19 @@ following closed partition:
 | Status class | Reason suffixes and rule |
 |---|---|
 | Refusal-only | `R01`–`R11`, `R16`–`R18`, `R20`, and `R22`–`R25`; the named invalid, conflicting, unsafe, retry, or forbidden condition is always `refused`. |
-| Hold-only | `R14` and `R19`; the missing, stale, unverified, or coordinator-pending condition is always `hold` with `disposition: "pending-coordinator"`. |
-| Explicit split | `R12`: missing provider-declared complete metadata is `hold`, while present but conflicting, unparseable, or client-synthesized metadata is `refused`; `R13`: missing cost fields are `hold`, while a present malformed or unauthorized cost is `refused`; `R15`: missing run/lease input is `hold`, while a duplicate, consumed, or incorrectly bound lease is `refused`; `R21`: the post-custody replay identity/provenance equality failure is `refused`. |
+| Hold-only | `R14`, `R15`, and `R19`; the missing, stale, unverified, or coordinator-pending condition is always `hold` with `disposition: "pending-coordinator"`. |
+| Explicit split | `R09`: present malformed or conflicting served-model/identity metadata is `refused`; `R12`: missing provider-declared complete metadata is `hold` only; `R13`: missing cost fields are `hold`, while a present malformed or unauthorized cost is `refused`; `R21`: the post-custody replay identity/provenance equality failure is `refused`. |
 
 The split rows are mutually exclusive as written and take precedence over any
-general fail-closed wording. No condition may emit both statuses, and no
-caller may choose a status. A complete record always uses `reason_code: "none"`.
+general fail-closed wording. For the pre-call budget/lease family, evaluate
+`R16` first, then `R15`, then `R14`: a retry, concurrent invocation,
+post-consume attempt, or wrong-bound/duplicate lease token is `R16` refused; a
+missing/unavailable or contested lease claim is `R15` hold; and a first
+successfully claimed lease with a missing, stale, or reused budget
+acknowledgement is `R14` hold. Thus a reused acknowledgement on a retry is
+`R16`, while a reused acknowledgement on the first claimed invocation is
+`R14`; no condition may emit both statuses. No caller may choose a status. A
+complete record always uses `reason_code: "none"`.
 
 ## Exact evidence-class and status field sets
 
@@ -234,6 +241,14 @@ control character. These exact bounds make metadata validation deterministic:
   records. A future anchor relative to that coordinator clock is rejected, and
   the exact invariant is
   `anchor_utc <= retention_until_utc <= anchor_utc + 90 days`.
+- The operational freshness fields `run_started_at_utc`,
+  `acknowledged_at_utc`, `transmission_started_at_utc`, and
+  `socket_opened_at_utc` use that same exact UTC form and must parse as real
+  UTC instants. They must satisfy
+  `run_started_at_utc <= acknowledged_at_utc <= transmission_started_at_utc
+  <= socket_opened_at_utc`; the acknowledgement age remains at most 60
+  seconds at transmission, and the socket-open sample must be strictly before
+  `acknowledged_at_utc + 60 seconds`.
 - `request_digest`, `response_digest`, `provenance_digest`, and
   `acknowledgement_digest` are exactly 64 lowercase hexadecimal characters
   matching `^[0-9a-f]{64}$`; `capability`, `schema_version`, and `endpoint` are
@@ -624,15 +639,18 @@ is one, retries are zero, and timeout is 30 seconds.
 Before every live transmission, the exact `budget_ack` object above must be
 present, custody-verified, fresh, and bound to the run, capability, and request
 digest. One trusted coordinator UTC clock samples
-`run_started_at_utc` at lease claim and `transmission_started_at_utc`
-immediately before socket open; both samples and `acknowledged_at_utc` must
-obey `run_started_at_utc <= acknowledged_at_utc <=
-transmission_started_at_utc`, the acknowledgement must be no more than 60
-seconds old, and the socket must open strictly before
-`acknowledged_at_utc + 60 seconds`. Future, backward, or missing clock values
-are rejected. The immutable lease binding is rechecked immediately before
-transmission, the lease is consumed before the socket opens, and neither lease
-nor acknowledgement can be reused. This contract has no provider-side or
+`run_started_at_utc` at lease claim, `transmission_started_at_utc`
+immediately before socket open, and `socket_opened_at_utc` at the actual socket
+open. Each operational timestamp, including `acknowledged_at_utc`, must match
+`^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$`, parse as a
+real UTC instant, and obey
+`run_started_at_utc <= acknowledged_at_utc <= transmission_started_at_utc <=
+socket_opened_at_utc`. The acknowledgement must be no more than 60 seconds
+old, and the socket must open strictly before `acknowledged_at_utc + 60
+seconds`. Future, backward, or missing clock values are rejected. The
+immutable lease binding is rechecked immediately before transmission, the
+lease is consumed before the socket opens, and neither lease nor
+acknowledgement can be reused. This contract has no provider-side or
 account-level enforcement alternative. A client-side reservation alone cannot
 prevent post-call overcharge and is not sufficient authorization.
 
@@ -683,21 +701,19 @@ recipient, or state mutation.
 | R06 | Capability key is absent, changed, or belongs to another surface. | `refused` | Refuse; do not infer ownership. |
 | R07 | Requested identity is missing, changed, aliased, normalized, or substituted. | `refused` | Refuse; never use `typesafe/jev-latest` or a served suffix as replacement. |
 | R08 | Response requested identity does not exactly equal request identity. | `refused` | Refuse before consumption or replay. |
-| R09 | Authenticated response `model` is missing/unparseable/conflicting or differs from `served_identity.model`; a present provider response ID conflicts with the served identity. | `refused` | Refuse; served identity never becomes a D13 alias. Missing complete response metadata is `R12`. |
-| R10 | Schema, envelope, JSON, duplicate-key, extra-field, question, criteria, answer, confidence, or type validation fails. | `refused` | Refuse; no coercion, repair, or partial answer set. |
+| R09 | After transport and request-identity checks, a provider-declared identity value is present but malformed or conflicting: `model` differs from `served_identity.model`, or a present provider response ID differs from `served_identity.response_id` or `response_id`. | `refused` | Refuse; served identity never becomes a D13 alias. Missing provider-declared identity metadata is `R12`. |
+| R10 | Schema, envelope, JSON, duplicate-key, extra-field, question, criteria, answer, confidence, type, or present `server_timestamp_utc` parsing validation fails. | `refused` | Refuse; no coercion, repair, or partial answer set. |
 | R11 | Choice distribution differs from total 1 by more than absolute `1e-12`, or has invalid keys/probabilities. | `refused` | Refuse; no repair, clamping, or renormalization. |
-| R12 | After authenticated identity binding passes, complete status lacks a provider-declared `response_id` or `server_timestamp_utc`. | `hold` | Terminal hold with the class-prefixed `R12` code; never mark complete. |
-| R12 | After authenticated identity binding passes, a present complete `response_id` or `server_timestamp_utc` is conflicting, unparseable, or client-synthesized. | `refused` | Refuse with the class-prefixed `R12` code; never mark complete. |
+| R12 | After transport and request-identity checks, the provider did not declare one or more required complete metadata fields: `model`, `response_id`, or `server_timestamp_utc`. | `hold` | Terminal hold with the class-prefixed `R12` code; client-supplied values cannot fill a missing provider declaration. |
 | R13 | A live result is missing the `cost` object, `amount`, or `currency`. | `hold` | Deterministic terminal hold with the class-prefixed `R13` code; never mark complete, estimate, or convert. |
 | R13 | A present cost object is malformed, has an extra field, uses a string/NaN/Infinity/negative/over-cap `amount`, uses non-USD `currency`, or is otherwise unauthorized. | `refused` | Deterministic refusal with the class-prefixed `R13` code; never repair, estimate, or convert. |
-| R14 | The mandatory `budget_ack` is missing, malformed, stale, mutable, custody-unverified, non-USD, over-cap, future, backward-clock, expired, reused, or not bound exactly to run/capability/request digest. | `hold` | Terminal hold before transmission; client reservation alone is insufficient. |
-| R15 | `run_id` or CAS/create-if-absent lease is missing or unavailable. | `hold` | Terminal hold with the class-prefixed `R15` code; no call. |
-| R15 | The lease is duplicated, already consumed, or not bound exactly to capability/version/request digest. | `refused` | Refuse with the class-prefixed `R15` code; no call and no lease recreation. |
-| R16 | Second, concurrent, or retry call is attempted, or timeout expires after a consumed lease. | `refused` | Terminal refusal; append-only lease cannot be recreated or reopened. |
+| R14 | After a first invocation successfully claims the correctly bound lease, the mandatory `budget_ack` is missing, malformed, stale, mutable, custody-unverified, non-USD, over-cap, future, backward-clock, expired, or already consumed/reused. | `hold` | Terminal hold before transmission; client reservation alone is insufficient. A reused acknowledgement on a retry is `R16` by precedence. |
+| R15 | The invocation is not an `R16` retry/concurrency attempt and `run_id` or the CAS/create-if-absent lease is missing, unavailable, or contested by another claimant. | `hold` | Terminal hold with the class-prefixed `R15` code; no call. |
+| R16 | A second, concurrent, or retry invocation is attempted for a run whose lease is already in flight, consumed, or terminal, including timeout recovery after consume-before-socket; or a supplied lease token is duplicated or bound to the wrong run, capability, schema version, or request digest. | `refused` | Terminal refusal; this row is evaluated before `R15` and `R14`, and an append-only lease cannot be recreated or reopened. |
 | R17 | JCS canonical bytes or paired request/response digest is missing, malformed, recomputed differently, or identity-unbound. | `refused` | Refuse replay or evidence acceptance. |
 | R18 | Provenance object is non-canonical, contains a field outside its closed schema, has missing/wrong provenance digest, or uses a non-JCS hash procedure. | `refused` | Refuse replay and evidence acceptance. |
 | R19 | Fixture repository/ref/path/commit/tree or the independent coordinator manifest receipt/resolution is missing, unverified, mutable, non-resolving, unapproved, or differs across the wrapper/provenance/manifest-entry/receipt custody tuples. | `hold` | Emit only generic `evidence:R19` `hold-record` with `disposition: "pending-coordinator"`; do not emit a `sanitized-replay-fixture` record. |
-| R20 | Fixture is self-recomputed outside the committed manifest, detached from its paired digests, or current bytes differ from custody after receipt resolution. | `refused` | Emit generic `evidence:R18` `refusal-record`; no self-recomputed or mutable fixture acceptance. |
+| R20 | Fixture is self-recomputed outside the committed manifest, detached from its paired digests, or current bytes differ from custody after receipt resolution. | `refused` | Emit generic `evidence:R20` `refusal-record`; no self-recomputed or mutable fixture acceptance. |
 | R21 | After custody is resolved, non-complete provenance lacks the exact JSON string `"none"`, or complete response IDs are missing, one-sided, sentinel-valued, client-synthesized, or unequal; any requested-identity or source-kind/source-ref replay equality below is also unequal. | `refused` | Refuse the validated fixture with the class-prefixed `R21` code; complete fixture status is forbidden. Unresolved custody follows `R19` or `R18` as stated above. |
 | R22 | Input contains any unknown field, free-text value, credential-bearing value, or value outside the fixed vocabulary, generated-ID grammar, finite custody allowlist, or numeric bounds, or minimization/redaction is uncertain. | `refused` | Refuse before serialization/transmission; retain no rejected input or metadata. |
 | R23 | Fixture, metadata, source reference, log, or report contains a field outside its closed schema, a key, raw authorization header, unsafe payload, or exceeds retention limit. | `refused` | Refuse retention and consumption; do not echo material. |

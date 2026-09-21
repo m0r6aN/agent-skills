@@ -108,6 +108,17 @@ The provider response identifier is a non-empty provider field and is never
 the literal `none`. No consumer may infer a requested identity from served metadata, headers, the
 URL, a configured default, or a client-generated value.
 
+Identity adjudication is ordered and mutually exclusive. `R09` owns a
+provider-declared identity value that is present but malformed or conflicting:
+the authenticated response `model` must equal `served_identity.model`, and a
+present provider response identifier must equal both
+`served_identity.response_id` and `response_id`. `R12` owns missing
+provider-declared complete metadata only: after transport and request identity
+checks, if the provider did not declare `model`, `response_id`, or
+`server_timestamp_utc`, the result is a terminal hold. A client-supplied value
+does not satisfy a missing provider declaration. A present but unparseable
+`server_timestamp_utc` is response validation failure `R10`, not `R12`.
+
 ## Versioned typed envelope
 
 The literal schema version is:
@@ -267,11 +278,12 @@ Answer rules:
 - `response_id` and `server_timestamp_utc` are mandatory for a complete
   response. `response_id` must be the provider response identifier used in
   `served_identity`; `server_timestamp_utc` must be provider-declared and
-  parseable as UTC. After the authenticated identity binding passes, a missing
-  provider-declared value is deterministically `hold` with reason `R12`; a
-  present but conflicting, unparseable, or client-synthesized value is
-  deterministically `refused` with reason `R12`. Neither condition can produce
-  a complete result.
+  parseable as UTC. A missing provider declaration is deterministically `hold`
+  with reason `R12`; a present but conflicting or malformed identity value is
+  deterministically `refused` with reason `R09`, while a present but
+  unparseable timestamp is deterministically `refused` with reason `R10`.
+  Client-supplied metadata never fills a missing provider declaration. Neither
+  condition can produce a complete result.
 
 The response raw UTF-8 body is measured before JSON parsing or persistence and
 must be no larger than 65,536 bytes. A body that is truncated, decompression-
@@ -301,10 +313,14 @@ and bound to the current run, capability, and request digest. Freshness is
 evaluated only by one trusted coordinator UTC clock: `run_started_at_utc` is
 sampled when the durable lease is claimed, and
 `transmission_started_at_utc` is sampled immediately before the socket opens.
-Both samples and `acknowledged_at_utc` are mandatory and must satisfy:
+All four operational timestamps, including the actual socket-open sample, are
+mandatory when the freshness decision is made. Each is a string matching
+`^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$` and must
+parse as a real UTC instant; offsets, leap-second spellings, missing
+milliseconds, and non-UTC suffixes are invalid. They must satisfy:
 
 ```text
-run_started_at_utc <= acknowledged_at_utc <= transmission_started_at_utc
+run_started_at_utc <= acknowledged_at_utc <= transmission_started_at_utc <= socket_opened_at_utc
 transmission_started_at_utc - acknowledged_at_utc <= 60 seconds
 socket_opened_at_utc < acknowledged_at_utc + 60 seconds
 ```
@@ -357,11 +373,27 @@ overwritten, or converted by a later worker. A hold is terminal,
 non-consumable, and non-retryable pending coordinator disposition. JEV-P0
 itself has no run ID, lease, provider call, or spend.
 
-The lease precondition has the same closed status partition as the refusal
-matrix: a missing `run_id` or missing/unavailable lease is deterministically
-`hold` with reason `R15`; a duplicated, already-consumed, or incorrectly bound
-lease is deterministically `refused` with reason `R15`. A condition cannot
-emit either status without satisfying its stated rule.
+The pre-call decision uses one deterministic precedence, so `R14`, `R15`, and
+`R16` are mutually exclusive:
+
+1. `R16` is evaluated first. A second, concurrent, or retry invocation for a
+   run whose lease is already in flight, consumed, or terminal is always
+   `refused`. A supplied lease token that is duplicated or bound to the wrong
+   run, capability, schema version, or request digest is also `R16` refused.
+   This includes a timeout recovery attempt after consume-before-socket and
+   takes precedence over any simultaneously reused budget acknowledgement.
+2. If the invocation is not an `R16` attempt, `R15` applies when `run_id` or
+   the durable lease is missing, or a CAS/create-if-absent claim is unavailable
+   because another claimant owns it; these are `hold`. A consumed lease on the
+   same run is handled by step 1, never by `R15`.
+3. Only after a first invocation successfully claims the correctly bound lease
+   does `R14` apply. A missing, malformed, stale, mutable,
+   custody-unverified, future, backward-clock, expired, over-cap, non-USD,
+   mismatched, or already-consumed/reused `budget_ack` is `hold` before
+   transmission.
+
+`R14` and `R15` are hold-only, while `R16` is refusal-only. No input condition
+can satisfy two numbered steps or emit both statuses.
 
 ## Credential and consumer boundary
 
