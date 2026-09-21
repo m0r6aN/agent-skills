@@ -417,3 +417,20 @@ traceability and predicate gaps require another same-three-file rework:
 Scope and external-boundary compliance passed for `cf798198`; no network,
 credential, spend, host/Pi, parent, HAWF, Helmholtz, or downstream action
 occurred.
+
+## Eighteenth review disposition
+
+Two fresh independent reviews of `a83930eb174cc7afedcf3cd06c6d6bf63ab68b8a`
+returned **REQUEST CHANGES / Gate 3 not ready**. The coordinator proof passed,
+but the following same-three-file fixes remain:
+
+| Finding | Disposition |
+|---|---|
+| R22/R23 can both match combined value/structure/unsafe failures. | Define a first-failure validation order: structural closed-wrapper/retained-record violations are R23; only after structure passes do recognized-field vocabulary/allowlist/generated-ID/numeric/minimization violations become R22. State that the first failing stage owns the record. |
+| R19 custody-tuple difference overlaps R20 resolved manifest/bytes mismatch. | Restrict R19 to custody resolution unavailable/unverified/unapproved before a resolved tuple exists; assign any mismatch after successful resolution exclusively to R20. |
+| R21 names only a subset of field-for-field replay equalities. | Enumerate the complete post-custody semantic equality set in R21, excluding only R17 digest procedure and R20 custody-byte/tuple mismatches. |
+| Round-5 historical proof is still called “immediately prior,” and cumulative base wording remains inconsistent. | Label c71 proof historical, cf798 the immediate prior candidate, and eb88 the cumulative parcel proof base; update current round metadata consistently. |
+
+Scope and external-boundary compliance passed for `a83930eb`; no network,
+credential, spend, host/Pi, parent, HAWF, Helmholtz, or downstream action
+occurred.
