@@ -232,7 +232,7 @@ known review observations; they are not silently reclassified as resolved.
 
 ## Follow-up disposition before JEV-P1
 
-CoordinatorTargetSha: 9380955cc6b16c4a4a9533113e02eb16429d4989
+CoordinatorTargetSha: 2fe8b456b397e2f8f0731f51788a0c5b7b795b4a
 
 The coordinator retains the nine-review observations as an explicit P0 risk
 register. They must be closed by a bounded same-file P0 rework or accepted by
@@ -294,3 +294,14 @@ not authorize merge or Gate 3 acceptance while they remain open.
 Scope and external-boundary compliance passed for `9380955`; no network,
 credential, spend, host/Pi, parent, HAWF, Helmholtz, or downstream action
 occurred.
+
+## Coordinator proof for round-3 rework
+
+The coordinator supplied receipt
+`D:\Repos\jev-p0-triage-receipt-round4.txt` with
+`target_sha=2fe8b456b397e2f8f0731f51788a0c5b7b795b4a`. Using repository root
+`C:\Repos\foreman-line-jev-p0-rework4` and base
+`9380955cc6b16c4a4a9533113e02eb16429d4989`, the proof opened the strict UTF-8
+receipt, matched the target, asserted `HEAD`, enumerated exactly the three
+allowed paths, confirmed `M` statuses, and passed whitespace/native checks.
+No independent review or Gate 3 approval is implied by this coordinator proof.
