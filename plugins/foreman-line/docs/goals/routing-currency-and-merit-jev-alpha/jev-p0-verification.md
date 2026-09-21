@@ -1,8 +1,8 @@
-# JEV-P0 — Seventh rework verification record
+# JEV-P0 — Eighth rework verification record
 
 ## Scope
 
-This record verifies the seventh JEV-P0 contract/evidence-boundary rework only.
+This record verifies the eighth JEV-P0 contract/evidence-boundary rework only.
 It does not authorize JEV-P1 or later, provider calls, runtime use, spend,
 credential access, dispatch, promotion, or Gate 3. The only mutation authority
 is:
@@ -11,10 +11,10 @@ is:
 - `plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-evidence-boundary.md`
 - `plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-verification.md`
 
-Every other path and effect is forbidden. The exact seventh-rework base is
-`2187402c218499fba8b413bec2c6824efd92ed8f`.
+Every other path and effect is forbidden. The exact eighth-rework base is
+`14b9b947fad60ab927a49ef35c795dbe34e3f502`.
 
-## Seventh-rework closure checklist
+## Eighth-rework closure checklist
 
 The three allowed documents explicitly close these findings while preserving
 all earlier identity, schema, answer, JCS, transport, custody, lease, budget,
@@ -40,6 +40,22 @@ text outside the fixed schema.
    the exact base to the coordinator-supplied expected reviewed head and
    asserts exact set equality, exact `M` statuses, and native exit codes before
    reporting success.
+8. The immutable execution record identifies the coordinator review target by
+   externally supplied triage receipt path and target SHA; the builder never
+   derives `ExpectedHead` from `HEAD` or treats builder review as approval.
+
+## External coordinator traceability
+
+The execution record's review target is supplied by the coordinator through
+three immutable inputs: `CoordinatorTriageReceiptPath`, `CoordinatorTargetSha`,
+and `ExpectedHead`. The receipt path identifies the coordinator-owned triage
+receipt; `CoordinatorTargetSha` is the exact SHA named by that receipt for this
+rework; and `ExpectedHead` is the exact reviewed head to compare with
+`git rev-parse --verify HEAD`. All three are external inputs. The command
+rejects missing or malformed values, requires `CoordinatorTargetSha` to equal
+`ExpectedHead`, and never assigns either value from `HEAD`. Coordinator review
+evidence is external to this builder session; builder review counts remain
+`0/2`, and no builder result is self-approval or Gate 3 authorization.
 
 ## Dependency-free verification commands
 
@@ -51,7 +67,11 @@ derive it from `HEAD`.
 ### 1. Environment probe
 
 ```powershell
-node -v
+$nodeVersion = node -v
+$nodeExitCode = $LASTEXITCODE
+if ($nodeExitCode -ne 0) { throw "node -v failed with exit code $nodeExitCode" }
+Write-Output "node_version=$nodeVersion"
+Write-Output "node_exit_code=$nodeExitCode"
 ```
 
 The shaping package declares `>=24.11.1`; a lower version is an environment
@@ -64,18 +84,34 @@ Run after the resulting rework commit exists:
 ```powershell
 param(
   [Parameter(Mandatory = $true)]
-  [string]$ExpectedHead
+  [string]$ExpectedHead,
+  [Parameter(Mandatory = $true)]
+  [string]$CoordinatorTriageReceiptPath,
+  [Parameter(Mandatory = $true)]
+  [string]$CoordinatorTargetSha
 )
 
-$base = '2187402c218499fba8b413bec2c6824efd92ed8f'
+$base = '14b9b947fad60ab927a49ef35c795dbe34e3f502'
 $allowed = @(
   'plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-contract.md',
   'plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-evidence-boundary.md',
   'plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-verification.md'
 )
+if ([string]::IsNullOrWhiteSpace($CoordinatorTriageReceiptPath) -or
+    $CoordinatorTriageReceiptPath -match '[\x00-\x1F\x7F]' -or
+    $CoordinatorTriageReceiptPath -match '\s') {
+  throw 'CoordinatorTriageReceiptPath is missing or unsafe'
+}
 if ([string]::IsNullOrWhiteSpace($ExpectedHead) -or
     $ExpectedHead -cnotmatch '^[0-9a-f]{40}$') {
   throw 'ExpectedHead is missing or is not exactly 40 lowercase hexadecimal characters'
+}
+if ([string]::IsNullOrWhiteSpace($CoordinatorTargetSha) -or
+    $CoordinatorTargetSha -cnotmatch '^[0-9a-f]{40}$') {
+  throw 'CoordinatorTargetSha is missing or is not exactly 40 lowercase hexadecimal characters'
+}
+if ($CoordinatorTargetSha -cne $ExpectedHead) {
+  throw 'CoordinatorTargetSha does not equal immutable ExpectedHead'
 }
 $head = (git rev-parse --verify HEAD).Trim()
 if ($LASTEXITCODE -ne 0) { throw 'git rev-parse HEAD failed' }
@@ -109,11 +145,13 @@ Write-Output 'filtered_status=passed'
 Write-Output "base=$base"
 Write-Output "head=$head"
 Write-Output "expected_reviewed_head=$ExpectedHead"
+Write-Output "coordinator_target_sha=$CoordinatorTargetSha"
+Write-Output "coordinator_triage_receipt_path=$CoordinatorTriageReceiptPath"
 Write-Output 'base_to_head_scope_checked_status_and_head_assertion=passed'
 ```
 
 This is the authoritative scope proof. It compares the complete unfiltered
-path set from the exact seventh-rework base to the coordinator-supplied
+path set from the exact eighth-rework base to the coordinator-supplied
 immutable expected reviewed head, asserts exact set equality and exact `M`
 statuses, checks each native exit code immediately, and only then reports
 success. It does not use a clean-worktree assertion as the scope proof.
@@ -183,20 +221,21 @@ builder does not self-approve or merge.
 
 | Check | Result | Evidence |
 |---|---|---|
-| Starting branch/base | `codex/jev-p0-contract`, base `2187402c218499fba8b413bec2c6824efd92ed8f` | Confirmed before seventh-rework edits. |
-| `node -v` | Passed: `v24.7.0`; below shaping requirement `>=24.11.1` | Dependency-free environment probe. |
-| Expected reviewed head | Passed: coordinator-supplied `ExpectedHead` was present, exactly 40 lowercase hex characters, and matched `git rev-parse --verify HEAD`; the exact observed SHA is reported in the handoff | The script never derives the expected value from `HEAD`. |
-| Full base-to-head scope comparison | Passed: exact unfiltered set from base `2187402c218499fba8b413bec2c6824efd92ed8f` to the externally expected reviewed head exactly equaled the three Allowed Files | `git diff --name-only` was unfiltered; set equality passed before filtered checks. |
+| Starting branch/base | `codex/jev-p0-contract`, base `14b9b947fad60ab927a49ef35c795dbe34e3f502` | Confirmed before eighth-rework edits. |
+| `node -v` | Passed: `v24.7.0`, native exit code `0`; below shaping requirement `>=24.11.1` | Immediate exit-code capture/check followed `node -v`. |
+| Coordinator review target | External inputs are required: `CoordinatorTriageReceiptPath`, `CoordinatorTargetSha`, and `ExpectedHead`; no coordinator receipt path or target SHA was supplied to this builder session | Coordinator evidence is external; builder review remains `0/2` and is not self-approval. |
+| Expected reviewed head | Passed in the dependency-free execution: externally supplied `ExpectedHead` was present, exactly 40 lowercase hex characters, and matched `git rev-parse --verify HEAD`; the exact observed SHA is reported in the handoff | The script never derives the expected value from `HEAD`. |
+| Full base-to-head scope comparison | Passed: exact unfiltered set from base `14b9b947fad60ab927a49ef35c795dbe34e3f502` to the externally expected reviewed head exactly equaled the three Allowed Files | `git diff --name-only` was unfiltered; set equality passed before filtered checks. |
 | Filtered base-to-head `git diff --check` and status | Passed: no whitespace errors; all three allowed paths reported `M` exactly | Native exit codes were checked immediately after each command; exact name-status equality passed. |
 | Targeted active-spec linter/self-check | Environment limitation: local `ajv` missing; no install | These tools do not lint the three goal documents. |
-| Field-by-field seventh-rework review | Passed as a builder read-only content check; not independent approval | Exact cost object, four-way response-ID equality, custody equality, timestamp grammar, and prior controls were checked. |
+| Field-by-field eighth-rework review | Blocked for coordinator traceability only; builder read-only content check completed, not independent approval | Reconciled non-complete provenance, exact cost object, four-way response-ID equality, custody equality, checked Node probe, and prior controls; the coordinator receipt path and target SHA remain external inputs not supplied here. |
 | Independent frontier review A | Observed result: no fresh report supplied or performed in this builder session (`0/2`) | Coordinator must supply and triage; no pass inferred. |
 | Independent frontier review B | Observed result: no fresh report supplied or performed in this builder session (`0/2`) | Coordinator must supply and triage; no pass inferred. |
 | Gate 3 / merge | Not granted; human-owned | No self-approval or merge. |
 
 ## Completion boundary
 
-The seventh rework is document-complete when all current findings are explicit
+The eighth rework is document-complete when all current findings are explicit
 and testable in the three allowed documents, the dependency-free full
 base-to-head scope and whitespace commands pass, and environment limitations
 are accurately recorded. It is not Gate 3-ready until two independent fresh

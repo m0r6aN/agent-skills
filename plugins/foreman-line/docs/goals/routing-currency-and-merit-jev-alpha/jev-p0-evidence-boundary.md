@@ -99,27 +99,33 @@ field set:
 
 ```text
 evidence_class, fixture_id, manifest_id, repository, ref, path, commit, tree,
-source_kind, source_ref, status, reason_code, retention_until_utc
+provenance, provenance_digest, source_kind, source_ref, status, reason_code,
+retention_until_utc
 ```
 
 Its exact values are `evidence_class: "sanitized-replay-fixture"`,
 `source_kind: "sanitized-fixture"`, `status: "refused"`, and
-`reason_code: "R01"` through `"R25"`. `provenance`, `provenance_digest`,
-`requested_identity`, `served_identity`, `response_id`, `server_timestamp_utc`,
+`reason_code: "R01"` through `"R25"`. `requested_identity`, `served_identity`,
+`response_id`, `server_timestamp_utc`,
 `request`, `response`, `request_digest`, and `response_digest` are forbidden.
+The required `provenance` is the exact canonical object with
+`authenticated_response_id: "none"`; `provenance_digest` is its JCS digest.
 
 `sanitized-replay-fixture` with `status: hold` has exactly this required field
 set:
 
 ```text
 evidence_class, fixture_id, manifest_id, repository, ref, path, commit, tree,
-source_kind, source_ref, status, reason_code, disposition, retention_until_utc
+provenance, provenance_digest, source_kind, source_ref, status, reason_code,
+disposition, retention_until_utc
 ```
 
 Its exact values are `evidence_class: "sanitized-replay-fixture"`,
 `source_kind: "sanitized-fixture"`, `status: "hold"`,
 `disposition: "pending-coordinator"`, and `reason_code: "R01"` through
-`"R25"`. `provenance`, `provenance_digest`, `requested_identity`,
+`"R25"`. The required `provenance` is the exact canonical object with
+`authenticated_response_id: "none"`; `provenance_digest` is its JCS digest.
+`requested_identity`,
 `served_identity`, `response_id`, `server_timestamp_utc`, `request`,
 `response`, `request_digest`, and `response_digest` are forbidden.
 
