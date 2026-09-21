@@ -383,3 +383,20 @@ existing bounded Gate 2 grant:
 Scope and external-boundary compliance passed for `eb88b654`; no network,
 credential, spend, host/Pi, parent, HAWF, Helmholtz, or downstream action
 occurred.
+
+## Sixteenth review disposition
+
+The fresh review pair for `dbc2db5f5dbae7b3df142a22230d69ed6584e5c6` was mixed:
+one **PASS**, one **REQUEST CHANGES / Gate 3 not ready**. The coordinator proof
+passed, but the following findings require another same-three-file rework:
+
+| Finding | Disposition |
+|---|---|
+| Internal lease `run_id`/`request_digest` grammar is broader than the evidence grammar, and claim/consume transition timestamps are not explicitly linked to live samples or declared internal-only. | Use the same strict generated-ID/digest grammars in the internal record; bind `claimed_at_utc` to `run_started_at_utc` and `consumed_at_utc` to `transmission_started_at_utc`, with terminal timestamp explicitly internal-only if not emitted. |
+| R19 custody hold overlaps R22 finite-allowlist refusal; R18 provenance-schema refusal overlaps R23 out-of-schema refusal. | Define validation stages and precedence: pre-custody finite allowlist/schema violations map to R22/R23; only allowlisted, schema-valid inputs reaching custody resolution can map to R19/R18. |
+| R12 matrix still says “class-prefixed” despite generic `evidence:R12` field sets. | Replace the stale serialization phrase with the exact generic code. |
+| Canonical provenance permits live/review source kinds and `authenticated_response_id: none`, although only complete sanitized fixtures embed it. | Narrow the stored fixture provenance schema to `source_kind: sanitized-fixture` and a non-`none` provider response ID, or explicitly separate non-fixture internal provenance from the complete fixture object. |
+
+Scope and external-boundary compliance passed for `dbc2db5f`; no network,
+credential, spend, host/Pi, parent, HAWF, Helmholtz, or downstream action
+occurred.
