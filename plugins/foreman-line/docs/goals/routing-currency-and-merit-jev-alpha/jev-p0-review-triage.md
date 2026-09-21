@@ -275,3 +275,22 @@ receipt, matched the target, asserted `HEAD`, enumerated the unfiltered diff,
 confirmed exactly the three allowed paths with `M` statuses, and passed
 whitespace/native exit checks. No independent review or Gate 3 approval is
 implied by this coordinator proof.
+
+## Eleventh review disposition
+
+Two fresh independent reviews of `9380955cc6b16c4a4a9533113e02eb16429d4989`
+returned **REQUEST CHANGES / Gate 3 not ready**. The findings are reproduced
+and accepted for another same-three-file rework; the bounded Gate 2 grant does
+not authorize merge or Gate 3 acceptance while they remain open.
+
+| Finding | Disposition |
+|---|---|
+| Budget acknowledgement freshness was lost when the next rework branched from the coordinator branch rather than the prior rework commit. | Restore deterministic run-start, acknowledgement-age/expiry, trusted-clock, lease, and transmission-order rules on top of the full prior rework chain. |
+| R12 and R15 can still be emitted as either hold or refusal. | Define a closed reason-code/status partition with deterministic mappings and update the field matrices/refusal table consistently. |
+| The coordinator proof passes externally but the execution table still records receipt, target, head, scope, whitespace, and status as pending. | Record the supplied proof result and exact reviewed SHA in the three-file verification record without self-approval. |
+| Complete replay equality omits wrapper requested identity versus response requested identity and top-level source metadata versus provenance. | Add the missing equalities and fail-closed mismatch rule. |
+| The documented verification working directory is stale and not reproducible for the current candidate. | Parameterize or correct the repository-root instruction in the same verification artifact. |
+
+Scope and external-boundary compliance passed for `9380955`; no network,
+credential, spend, host/Pi, parent, HAWF, Helmholtz, or downstream action
+occurred.
