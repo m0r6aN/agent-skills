@@ -1,7 +1,7 @@
 ---
 ticket: JEV-P1
 title: Jev typed validator and deterministic fixture replay
-status: draft
+status: active
 owner: clinton.morgan
 created: 2026-09-21
 updated: 2026-09-21
@@ -31,9 +31,9 @@ logical request/response envelopes and the sanitized replay evidence classes
 defined by the merged JEV-P0 contract, returning closed refusal results rather
 than normalizing or guessing malformed data.
 
-This is a shaped work order only. It is not dispatchable until the coordinator
-closes or obtains an explicit human disposition for the preserved JEV-P0 review
-observations and a later exact Gate 2 grant names `JEV-P1`.
+This parcel is dispatchable under the exact JEV-P1 Gate 2 grant recorded in the
+JEV alpha charter. The merged JEV-P0 contract and evidence boundary are the
+authoritative inputs; no unresolved P0 review observation blocks this parcel.
 
 ## Constraints
 
@@ -234,8 +234,8 @@ are forbidden.
 - Tests passed: to be recorded by coordinator from builder evidence
 - Tests failed: to be recorded
 - Decisions needed: any contract gap becomes a coordinator amendment
-- Blockers: P0 review-observation disposition and exact Gate 2 grant
-- Next safe action: coordinator requests human Gate 2 for JEV-P1 after P0 disposition
+- Blockers: none recorded at dispatch; Gate 3 remains pending after review
+- Next safe action: dispatch the bounded offline builder in a dedicated worktree
 - Do not touch: all Forbidden Files and Effects
 
 ## Stop-and-Report Rule

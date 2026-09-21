@@ -1,6 +1,6 @@
 # Routing Currency and Merit — Jev Alpha Decisions
 
-**Status:** RATIFIED — Gate 1 complete; bounded JEV-P0 Gate 3 accepted after merge on 2026-09-21
+**Status:** RATIFIED — Gate 1 complete; bounded JEV-P0 Gate 3 accepted after merge; JEV-P1 Gate 2 granted on 2026-09-21
 **Prepared:** 2026-09-21
 **Parent context:** `routing-currency-and-merit`
 **Coordinator:** Foreman Line coordinator session
@@ -82,10 +82,10 @@ were not changed.
 
 - **Gate 1:** granted for the original J1–J10 and the plan-review replacement
   decisions recorded below. Later parcel authority remains ungranted.
-- **Gate 2:** granted only for the exact parcel `JEV-P0` by the record below.
-  JEV-P1–JEV-P5 remain ungranted and require a later exact parcel-set grant.
+- **Gate 2:** granted for the exact parcels recorded below. JEV-P2–JEV-P5
+  remain ungranted and require later exact parcel-set grants.
 - **Gate 3:** accepted only for the bounded JEV-P0 handoff at merged commit
-  `ef921b65ee59c1c6aaef230383c51450dfc4de42`; it does not grant JEV-P1–P5,
+  `cf6c5536c7f7e4d0b6d92dd7ea570f44d49d961e`; it does not grant JEV-P1–P5,
   live Jev execution, spend, host/Pi action, parent mutation, HAWF, Helmholtz,
   or general Gate 3.
 
@@ -128,11 +128,25 @@ host/Pi or parent-goal change, and no HAWF, Helmholtz, or downstream action.
 
 ## Gate 3 record
 
-**ACCEPTED 2026-09-21 after merge and local refresh:** Pull request [#38](https://github.com/m0r6aN/agent-skills/pull/38)
-merged at `ef921b65ee59c1c6aaef230383c51450dfc4de42`, and the local coordinator
-branch was refreshed to that same commit. This accepts the bounded JEV-P0
-handoff only. The independent-review observations remain recorded in the P0
-triage; they are not reclassified as resolved by this acceptance.
+**ACCEPTED 2026-09-21 after merge and local refresh:** The reviewed JEV-P0
+head `981bb6d05d89926a2ce558ae8a66a7ddc73235c0` merged as
+`cf6c5536c7f7e4d0b6d92dd7ea570f44d49d961e`; the local coordinator branch was
+then refreshed to `1d4a857e7aa128fd6557dc160e9b9f4da3295843`. This accepts the
+bounded JEV-P0 handoff only. The independent-review observations remain
+recorded in the P0 triage; they are not reclassified as resolved by this
+acceptance.
+
+## JEV-P1 Gate 2 record
+
+**GRANTED 2026-09-21 by Clinton Morgan:** “Gate 2 grant for JEV-P1 confirmed.
+Proceed with blanket authority to execute any non-destructive actions.” This
+authorizes exactly JEV-P1: the pure, offline typed validator, canonical JCS
+digest implementation, deterministic sanitized-fixture replay, fixtures, and
+tests named by the JEV-P1 spec. It authorizes no network, credentials, live
+provider call, spend, runtime adapter, consumer wiring, general routing,
+parent-surface mutation, host/Pi action, HAWF, Helmholtz, or downstream action.
+Non-destructive authority does not expand the JEV-P1 allowed-file list or
+replace a later exact Gate 3 grant.
 
 ## Plan-review Gate 1 reopening
 
