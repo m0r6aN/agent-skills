@@ -232,7 +232,7 @@ known review observations; they are not silently reclassified as resolved.
 
 ## Follow-up disposition before JEV-P1
 
-CoordinatorTargetSha: e907663be491c4d5765b5b8279116a2633c81b4b
+CoordinatorTargetSha: 9380955cc6b16c4a4a9533113e02eb16429d4989
 
 The coordinator retains the nine-review observations as an explicit P0 risk
 register. They must be closed by a bounded same-file P0 rework or accepted by
@@ -264,3 +264,14 @@ The exact three-file scope, clean worktree, `M` statuses, whitespace checks, and
 boundary compliance passed. The review findings are reproduced and accepted as
 rework items; Gate 3 remains closed until a fresh commit receives two passing
 independent reviews.
+
+## Coordinator proof for fresh rework
+
+The coordinator supplied receipt
+`D:\Repos\jev-p0-triage-receipt-round3.txt` with
+`target_sha=9380955cc6b16c4a4a9533113e02eb16429d4989`. Against base
+`369207585812dcdfcd237d5241b83c61accbad5b`, the proof opened the strict UTF-8
+receipt, matched the target, asserted `HEAD`, enumerated the unfiltered diff,
+confirmed exactly the three allowed paths with `M` statuses, and passed
+whitespace/native exit checks. No independent review or Gate 3 approval is
+implied by this coordinator proof.
