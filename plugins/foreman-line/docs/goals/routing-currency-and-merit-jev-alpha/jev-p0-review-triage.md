@@ -343,3 +343,24 @@ existing bounded Gate 2 grant:
 Scope and external-boundary compliance passed for `c71bdbfa`; no network,
 credential, spend, host/Pi, parent, HAWF, Helmholtz, or downstream action
 occurred.
+
+## Fourteenth review disposition
+
+Two fresh independent reviews of `18becc881b5ebd663aa62b994aa20e5d0338131a`
+returned **REQUEST CHANGES / Gate 3 not ready**. The coordinator proof passed,
+but the following bounded contract/evidence gaps require another same-three-file
+rework:
+
+| Finding | Disposition |
+|---|---|
+| Lease vocabulary is incomplete: `claimed` is not mapped to the `in-flight`/`consumed`/`terminal` decision states, and `lease_id` is not bound to the claimed/consumed record. | Define canonical lease states and transitions, and bind live evidence plus budget acknowledgement to the exact lease record/`lease_id`. |
+| Operational timestamps have no schema owner because only `acknowledged_at_utc` appears in the closed budget acknowledgement and the other fields are absent from the live field set. | Declare ownership explicitly: either add all four to the closed live record (with the exact grammar/order) or state they are ephemeral and never evidence; keep one consistent rule. |
+| Status/reason field schemas allow broad `R01`–`R25` ranges despite the closed partition. | Make valid status/reason pairs authoritative in the field sets; reserve `R20` exclusively for generic `evidence:R20`. |
+| Generic R10 schema wording can still capture missing provider metadata owned by R12. | Explicitly exempt missing `model`, `response_id`, and `server_timestamp_utc` from generic R10 and retain R12 ownership. |
+| Verification prose overstates a two-commit proof and omits some explicit prior-candidate proof rows. | Correct the proof description and record receipt-open, target-match, unfiltered-scope, whitespace, status, and native results explicitly. |
+| `live-observation` permits refused/hold records without provider observations. | Clarify the evidence-class model so only complete records are live observations, or use a distinct attempted-call class with closed fields. |
+| Semantic tables are currently manual prose rather than executable checks. | Label them as manual review requirements unless a deterministic dependency-free checker can be embedded within the same verification artifact. |
+
+Scope and external-boundary compliance passed for `18becc88`; no network,
+credential, spend, host/Pi, parent, HAWF, Helmholtz, or downstream action
+occurred.
