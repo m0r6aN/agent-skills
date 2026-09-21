@@ -13,14 +13,15 @@ is:
 
 Every other path and effect is forbidden. The current round is round 13 on
 branch `codex/jev-p0-rework23`, starting from immediate prior candidate
-`60f9d72c4191167082fd96db8bf3b6eacc6e5bac`. The cumulative parcel proof base
+`95e41e589771f4620547eb51b723f0be5a31a118`. The cumulative parcel proof base
 remains `eb88b65426c5e37893ac0591be83eef8c91da123`; intervening candidates in
 that cumulative chain are `cf79819848c129581b13ff1289920f4cace2beca`,
 `d439b4dfd9c0f9783f76a2dbb0c6a4a7bf4e5241`,
 `dbc2db5f5dbae7b3df142a22230d69ed6584e5c6`,
 `a83930eb174cc7afedcf3cd06c6d6bf63ab68b8a`,
 `dc9d6a76772097be07832a2fe2b2653fb81fdf87`, and
-`d18d08ba12e5b06d08a6c4ccf11875d0bc77cfda`; `60f9d72c` is the immediate prior
+`d18d08ba12e5b06d08a6c4ccf11875d0bc77cfda`,
+`60f9d72c4191167082fd96db8bf3b6eacc6e5bac`; `95e41e589771f4620547eb51b723f0be5a31a118` is the immediate prior
 candidate for this round. `c71bdbfa0f9597eb44d0c3a01aa853f1f33989a8` is
 historical proof evidence, not an intervening or immediate-prior candidate.
 The full-scope proof compares one cumulative base-to-head range `eb88..HEAD`
@@ -687,7 +688,7 @@ builder does not self-approve or merge.
 
 | Check | Result | Evidence |
 |---|---|---|
-| Starting branch/base | `codex/jev-p0-rework23`, immediate prior candidate `60f9d72c4191167082fd96db8bf3b6eacc6e5bac`; cumulative proof base `eb88b65426c5e37893ac0591be83eef8c91da123`; intervening candidates are `cf798`, `d439`, `dbc2`, `a839`, `dc9d`, and `d18d`; `60f9d72c` is the immediate prior candidate for round 13; `c71` is historical | Confirmed before current builder round 13 edits. The proof intentionally compares one cumulative base-to-head range `eb88..HEAD`; it is not a direct-parent proof. |
+| Starting branch/base | `codex/jev-p0-rework23`, immediate prior candidate `95e41e589771f4620547eb51b723f0be5a31a118`; cumulative proof base `eb88b65426c5e37893ac0591be83eef8c91da123`; intervening candidates are `cf798`, `d439`, `dbc2`, `a839`, `dc9d`, `d18d`, and `60f9`; `95e41e5` is the immediate prior candidate for round 13; `c71` is historical | Confirmed before current builder round 13 edits. The proof intentionally compares one cumulative base-to-head range `eb88..HEAD`; it is not a direct-parent proof. |
 | `node -v` | Passed: `v24.7.0`, native exit code `0`; below shaping requirement `>=24.11.1` | Immediate exit-code capture/check followed `node -v`. |
 | `RepositoryRoot` input | Mandatory and documented; the prior-candidate proof used `C:\Repos\foreman-line-jev-p0-rework5` | The proof resolves a literal existing Git root and uses `git -C` for every relative Git operation; unsafe/missing/non-repository roots reject. |
 | Prior-candidate coordinator proof | Passed externally for candidate `c71bdbfa0f9597eb44d0c3a01aa853f1f33989a8` | Exact receipt/path, target/head, base, repository root, three-file scope, whitespace, native exits, and `M` status results are recorded above; this is prior-candidate coordinator evidence, not current-head proof, builder approval, or Gate 3 authorization. |
