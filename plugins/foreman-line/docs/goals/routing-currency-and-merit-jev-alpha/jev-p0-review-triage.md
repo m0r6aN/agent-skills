@@ -107,6 +107,23 @@ Gate 3 remains blocked. The fourth rework is authorized only on the same three
 JEV-P0 documents. No live call, credential access, spend, external mutation,
 downstream dispatch, or merge is authorized.
 
+## Eighth rework disposition
+
+Two fresh independent reviews of `14b9b947fad60ab927a49ef35c795dbe34e3f502`
+returned **REQUEST CHANGES / Gate 3 not ready**. The coordinator accepts the
+document findings:
+
+| Finding | Evidence | Disposition |
+|---|---|---|
+| P1 | The verification record does not contain the exact resulting SHA; it says the value is only in the handoff. | Fix in eighth rework: record the full resulting head in the immutable execution table. |
+| P1 | Non-complete replay fixtures forbid `provenance` in their closed field sets while later text requires the literal JSON sentinel none. | Fix in eighth rework: make non-complete provenance conditional and consistent with each exact field set. |
+| P2 | The documented `node -v` probe lacks an immediate native exit-code assertion. | Fix in eighth rework: check `$LASTEXITCODE` and fail closed. |
+| Gate | The builder record intentionally reports `0/2` because independent reviews are coordinator evidence, not builder self-approval. | Record the two independent reports and triage here; do not convert builder `0/2` into a self-approval. Gate 3 remains human-owned. |
+
+Gate 3 remains blocked. The eighth rework is authorized only on the same three
+JEV-P0 documents; no live call, credential access, spend, external mutation,
+downstream dispatch, or merge is authorized.
+
 ## Seventh rework disposition
 
 Two fresh independent reviews of `2187402c218499fba8b413bec2c6824efd92ed8f`
