@@ -383,3 +383,158 @@ existing bounded Gate 2 grant:
 Scope and external-boundary compliance passed for `eb88b654`; no network,
 credential, spend, host/Pi, parent, HAWF, Helmholtz, or downstream action
 occurred.
+
+## Sixteenth review disposition
+
+The fresh review pair for `dbc2db5f5dbae7b3df142a22230d69ed6584e5c6` was mixed:
+one **PASS**, one **REQUEST CHANGES / Gate 3 not ready**. The coordinator proof
+passed, but the following findings require another same-three-file rework:
+
+| Finding | Disposition |
+|---|---|
+| Internal lease `run_id`/`request_digest` grammar is broader than the evidence grammar, and claim/consume transition timestamps are not explicitly linked to live samples or declared internal-only. | Use the same strict generated-ID/digest grammars in the internal record; bind `claimed_at_utc` to `run_started_at_utc` and `consumed_at_utc` to `transmission_started_at_utc`, with terminal timestamp explicitly internal-only if not emitted. |
+| R19 custody hold overlaps R22 finite-allowlist refusal; R18 provenance-schema refusal overlaps R23 out-of-schema refusal. | Define validation stages and precedence: pre-custody finite allowlist/schema violations map to R22/R23; only allowlisted, schema-valid inputs reaching custody resolution can map to R19/R18. |
+| R12 matrix still says “class-prefixed” despite generic `evidence:R12` field sets. | Replace the stale serialization phrase with the exact generic code. |
+| Canonical provenance permits live/review source kinds and `authenticated_response_id: none`, although only complete sanitized fixtures embed it. | Narrow the stored fixture provenance schema to `source_kind: sanitized-fixture` and a non-`none` provider response ID, or explicitly separate non-fixture internal provenance from the complete fixture object. |
+
+Scope and external-boundary compliance passed for `dbc2db5f`; no network,
+credential, spend, host/Pi, parent, HAWF, Helmholtz, or downstream action
+occurred.
+
+## Seventeenth review disposition
+
+Two fresh independent reviews of cumulative head
+`cf79819848c129581b13ff1289920f4cace2beca` returned **REQUEST CHANGES / Gate 3
+not ready**. The cumulative coordinator proof passed, but the following
+traceability and predicate gaps require another same-three-file rework:
+
+| Finding | Disposition |
+|---|---|
+| Verification calls parcel base `eb88...` the direct parent even though the cumulative head has an intervening chain, and retains fifteenth-review labels. | Distinguish the declared cumulative parcel proof base `eb88...` from the immediate prior candidate `d439...`; update current review ordinal/round labels without changing the intended full-scope proof. |
+| R23 refers to undefined logs/reports. | Restrict R23 to the closed evidence wrapper/retained record schemas defined in this parcel, or define those surfaces explicitly; no unbounded log/report schema. |
+| R17, R20, and R21 can describe the same digest/identity failure. | Add a closed post-custody precedence and narrow predicates: R17 request/response JCS digest procedure only; R20 custody-resolved committed-byte/manifest mismatch only; R21 post-custody identity/provenance equality only. Remove identity-unbound/digest overlap. |
+
+Scope and external-boundary compliance passed for `cf798198`; no network,
+credential, spend, host/Pi, parent, HAWF, Helmholtz, or downstream action
+occurred.
+
+## Eighteenth review disposition
+
+Two fresh independent reviews of `a83930eb174cc7afedcf3cd06c6d6bf63ab68b8a`
+returned **REQUEST CHANGES / Gate 3 not ready**. The coordinator proof passed,
+but the following same-three-file fixes remain:
+
+| Finding | Disposition |
+|---|---|
+| R22/R23 can both match combined value/structure/unsafe failures. | Define a first-failure validation order: structural closed-wrapper/retained-record violations are R23; only after structure passes do recognized-field vocabulary/allowlist/generated-ID/numeric/minimization violations become R22. State that the first failing stage owns the record. |
+| R19 custody-tuple difference overlaps R20 resolved manifest/bytes mismatch. | Restrict R19 to custody resolution unavailable/unverified/unapproved before a resolved tuple exists; assign any mismatch after successful resolution exclusively to R20. |
+| R21 names only a subset of field-for-field replay equalities. | Enumerate the complete post-custody semantic equality set in R21, excluding only R17 digest procedure and R20 custody-byte/tuple mismatches. |
+| Round-5 historical proof is still called “immediately prior,” and cumulative base wording remains inconsistent. | Label c71 proof historical, cf798 the immediate prior candidate, and eb88 the cumulative parcel proof base; update current round metadata consistently. |
+
+Scope and external-boundary compliance passed for `a83930eb`; no network,
+credential, spend, host/Pi, parent, HAWF, Helmholtz, or downstream action
+occurred.
+
+## Nineteenth review disposition
+
+Two fresh independent reviews of `dc9d6a76772097be07832a2fe2b2653fb81fdf87`
+returned **REQUEST CHANGES / Gate 3 not ready**. The coordinator proof passed,
+but the following same-three-file fixes remain:
+
+| Finding | Disposition |
+|---|---|
+| R17 still includes missing/malformed digest conditions owned by R23/R22. | Restrict R17 to present, validly shaped request/response digest inputs whose canonicalization/computation/reproducibility fails. |
+| R19 still includes unapproved custody language that can overlap R22 allowlist failure. | Restrict R19 to unresolved coordinator custody after structural/value validation and allowlist success; invalid ref/path remains R22. |
+| R21 remains open-ended and missing/one-sided/sentinel values can enter it. | Route missing/invalid values to R23/R22 and replace “every other” wording with a finite path-level equality table for valid post-custody fields. |
+| Nested `manifest_entry` lacks an explicit closed recursive field set. | Declare exactly its listed fields and reject nested extras as R23. |
+| Cumulative proof does not assert ancestry. | Add `git merge-base --is-ancestor $base $head` before scope comparison and describe the proof as a single cumulative base-to-head range. |
+| Two prior boundary statements were lost. | Restore the no-credential/raw-header prohibition for logs/review reports and the rule that replay fixtures do not prove fresh live origin absent provenance. |
+
+Scope and external-boundary compliance passed for `dc9d6a76`; no network,
+credential, spend, host/Pi, parent, HAWF, Helmholtz, or downstream action
+occurred.
+
+## Twentieth review disposition
+
+Two fresh independent reviews of `d18d08ba12e5b06d08a6c4ccf11875d0bc77cfda`
+returned **REQUEST CHANGES / Gate 3 not ready**. The cumulative coordinator
+proof passed, but the following same-three-file fixes remain:
+
+| Finding | Disposition |
+|---|---|
+| The finite R21 path set is inconsistent with the closed replay schema: it includes absent `fixture.capability`/`fixture.endpoint` and omits required `fixture.provenance.manifest_id`; `captured_at_utc` and nested request/response equality ownership are ambiguous. | Reconcile the finite path set with the closed schema and equality chains. Include only present, valid paths; explicitly own `fixture.provenance.manifest_id`, nested request/response fields, and `fixture.provenance.captured_at_utc` with a stated comparison rule. Keep missing/one-sided/empty/sentinel values in R23/R22. |
+| Verification scope comparisons use case-insensitive PowerShell sorting/comparison, so case-variant paths could pass the claimed exact three-file/M-status proof. | Use ordinal/case-sensitive path and status comparisons for the exact scope proof, and retain the three-file and all-`M` assertions. |
+
+Scope and external-boundary compliance passed for `d18d08ba`; no network,
+credential, spend, host/Pi, parent, HAWF, Helmholtz, or downstream action
+occurred.
+
+## Twenty-first review disposition
+
+Two fresh independent reviews of `60f9d72c4191167082fd96db8bf3b6eacc6e5bac`
+returned **REQUEST CHANGES / Gate 3 not ready**. The cumulative coordinator
+proof passed, but the following same-three-file fixes remain:
+
+| Finding | Disposition |
+|---|---|
+| Verification metadata still identifies round 12/rework21, `dc9d6a76`, and the nineteenth-review closure instead of candidate `60f9d72c`, branch `codex/jev-p0-rework22`, immediate prior `d18d08ba`, and the current review ordinal. | Update all current-round metadata, proof narrative, and review labels consistently while retaining earlier candidates only as historical evidence. |
+| The finite R21 blocks omit valid nested request/response paths from the closed schema, including request state/questions and response answers, distributions, and served-identity fields. | Enumerate the complete valid nested schema path set and equality chains consistently in every duplicated R21 block across all three artifacts; retain missing/one-sided/empty/sentinel/invalid routing to R23/R22. |
+
+Scope and external-boundary compliance passed for `60f9d72`; no network,
+credential, spend, host/Pi, parent, HAWF, Helmholtz, or downstream action
+occurred.
+
+## Twenty-second review disposition
+
+Two fresh independent reviews of `95e41e589771f4620547eb51b723f0be5a31a118`
+returned **REQUEST CHANGES / Gate 3 not ready**. The cumulative coordinator
+proof passed, but one same-three-file consistency fix remains:
+
+| Finding | Disposition |
+|---|---|
+| The contract's R21 equality block requires `fixture.request.capability == fixture.response.capability`, but the duplicated R21 equality blocks in the evidence-boundary and verification artifacts omit that chain despite listing both paths. | Add the capability equality chain to every duplicated R21 block and verify the blocks remain identical in semantic ownership. |
+
+Scope and external-boundary compliance passed for `95e41e5`; no network,
+credential, spend, host/Pi, parent, HAWF, Helmholtz, or downstream action
+occurred.
+
+## Twenty-third review disposition
+
+Two fresh independent reviews of `3814ade05abc940bf4c4dabc6dccb271720fd8fe`
+returned **REQUEST CHANGES / Gate 3 not ready**. The cumulative coordinator
+proof passed and the R21 blocks were consistent, but one metadata correction
+remains:
+
+| Finding | Disposition |
+|---|---|
+| Round-13 verification metadata labels `60f9d72c` as the immediate prior candidate and lists an outdated intervening chain; the current candidate follows `95e41e589`, while `eb88b654` remains the cumulative base. | Set `95e41e589771f4620547eb51b723f0be5a31a118` as the immediate prior, list `60f9d72c` as an intervening candidate, and keep historical `c71bdbfa` distinct. |
+
+Scope and external-boundary compliance passed for `3814ade`; no network,
+credential, spend, host/Pi, parent, HAWF, Helmholtz, or downstream action
+occurred.
+
+## Twenty-fourth review disposition
+
+Two fresh independent reviews of `981bb6d05d89926a2ce558ae8a66a7ddc73235c0`
+returned **PASS / Gate 3 decision-ready**. The cumulative coordinator proof
+passed, and both reviewers confirmed the round-13 metadata, complete shared
+126-path R21 schema, capability/identity/answer/digest equality chains,
+first-failure boundaries, safety controls, and ancestry-first ordinal scope
+proof.
+
+This is a readiness record only. It does not grant Gate 3, merge the candidate,
+push the candidate branch, authorize live calls, or expand the bounded parcel.
+
+Scope and external-boundary compliance passed for `981bb6d`; no network,
+credential, spend, host/Pi, parent, HAWF, Helmholtz, or downstream action
+occurred.
+
+## Gate 3 closure
+
+The developer granted Gate 3 for the bounded JEV-P0 handoff after confirming
+there were no open PRs. The reviewed head `981bb6d05d89926a2ce558ae8a66a7ddc73235c0`
+was merged into `codex/refresh-actions-and-packages` as merge commit
+`cf6c5536c7f7e4d0b6d92dd7ea570f44d49d961e`. This closure covers only the same
+three JEV-P0 artifacts and does not authorize JEV-P1, live provider calls,
+credential use, spend, host/Pi correction, HAWF/Helmholtz action, or general
+Gate 3 beyond this bounded handoff.
