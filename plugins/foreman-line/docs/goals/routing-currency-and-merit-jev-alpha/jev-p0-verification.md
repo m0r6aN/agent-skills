@@ -224,6 +224,29 @@ $allowed = @(
   'plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-evidence-boundary.md',
   'plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-verification.md'
 )
+function New-OrdinalStringSet {
+  param([AllowNull()][object[]]$Values)
+  $set = [System.Collections.Generic.HashSet[string]]::new(
+    [System.StringComparer]::Ordinal
+  )
+  foreach ($value in $Values) {
+    if ($null -ne $value) { [void]$set.Add([string]$value) }
+  }
+  return ,$set
+}
+function Test-OrdinalStringSetEqual {
+  param(
+    [Parameter(Mandatory = $true)]
+    [System.Collections.Generic.HashSet[string]]$Expected,
+    [Parameter(Mandatory = $true)]
+    [System.Collections.Generic.HashSet[string]]$Actual
+  )
+  if ($Expected.Count -ne $Actual.Count) { return $false }
+  foreach ($value in $Expected) {
+    if (-not $Actual.Contains($value)) { return $false }
+  }
+  return $true
+}
 if ([string]::IsNullOrWhiteSpace($RepositoryRoot) -or
     $RepositoryRoot -match '[\x00-\x1F\x7F]') {
   throw 'RepositoryRoot is missing or unsafe'
@@ -309,10 +332,14 @@ $allChanged = @(git -C $resolvedRepositoryRoot diff --name-only "$base..$head")
 if ($LASTEXITCODE -ne 0) { throw 'git diff --name-only failed' }
 Write-Output 'full_base_to_head_changed_paths:'
 $allChanged
-$expectedSet = @($allowed | Sort-Object -Unique)
-$actualSet = @($allChanged | Sort-Object -Unique)
-$setDelta = @(Compare-Object -ReferenceObject $expectedSet -DifferenceObject $actualSet)
-if ($setDelta.Count -ne 0 -or $actualSet.Count -ne $expectedSet.Count) { throw 'full base-to-head path set is not exactly the Allowed Files set' }
+# HashSet membership uses StringComparer.Ordinal; no PowerShell culture or
+# case-insensitive comparison defaults can alter the exact path-set result.
+$expectedSet = New-OrdinalStringSet $allowed
+$actualSet = New-OrdinalStringSet $allChanged
+if ($allChanged.Count -ne $allowed.Count -or
+    -not (Test-OrdinalStringSetEqual -Expected $expectedSet -Actual $actualSet)) {
+  throw 'full base-to-head path set is not exactly the Allowed Files set'
+}
 # Only after exact full-set equality do filtered checks run.
 git -C $resolvedRepositoryRoot diff --check "$base..$head" -- $allowed
 if ($LASTEXITCODE -ne 0) { throw 'git diff --check failed' }
@@ -324,8 +351,10 @@ $expectedStatus = @(
   "M`tplugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-evidence-boundary.md",
   "M`tplugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-verification.md"
 )
+$expectedStatusSet = New-OrdinalStringSet $expectedStatus
+$actualStatusSet = New-OrdinalStringSet $nameStatus
 if ($nameStatus.Count -ne $expectedStatus.Count -or
-    @(Compare-Object -ReferenceObject $expectedStatus -DifferenceObject $nameStatus).Count -ne 0) {
+    -not (Test-OrdinalStringSetEqual -Expected $expectedStatusSet -Actual $actualStatusSet)) {
   throw 'filtered name-status is not exactly M for the three Allowed Files'
 }
 $nameStatus
@@ -430,49 +459,82 @@ or reproducibility fails are R17; the structural stage owns absent fields as
 R23 and the recognized-value stage owns out-of-grammar values as R22; after
 R17,
 custody-resolved committed fixture bytes/tree or manifest-entry custody
-mismatches are exclusively R20. After R20, any unequal valid field in the
-  closed post-custody semantic equality set is R21. That set is exactly these
-  paths: fixture.evidence_class, fixture.fixture_id, fixture.manifest_id,
-  fixture.schema_version, fixture.capability, fixture.endpoint,
-  fixture.requested_identity, fixture.served_identity, fixture.response_id,
-  fixture.server_timestamp_utc, fixture.request, fixture.response,
-  fixture.request_digest, fixture.response_digest,
-  fixture.provenance.fixture_id, fixture.provenance.source_kind,
-  fixture.provenance.source_ref, fixture.provenance.captured_at_utc,
-  fixture.provenance.authenticated_response_id, fixture.provenance_digest,
-  fixture.source_kind, fixture.source_ref, fixture.status, fixture.reason_code,
-  fixture.retention_until_utc, fixture.manifest_entry.schema_version,
-  fixture.manifest_entry.manifest_id, fixture.manifest_entry.fixture_id,
-  fixture.manifest_entry.request_digest,
-  fixture.manifest_entry.response_digest, and
-  fixture.manifest_entry.provenance_digest. The exact equality paths are:
-  `fixture.schema_version == fixture.request.schema_version ==
-  fixture.response.schema_version == fixture.manifest_entry.schema_version`;
-  `fixture.manifest_id == fixture.provenance.manifest_id ==
-  fixture.manifest_entry.manifest_id`;
-  `fixture.fixture_id == fixture.provenance.fixture_id ==
-  fixture.manifest_entry.fixture_id`;
-  `fixture.requested_identity == fixture.request.requested_identity ==
-  fixture.response.requested_identity`;
-  `fixture.served_identity == fixture.response.served_identity`;
-  `fixture.response_id == fixture.response.response_id ==
-  fixture.served_identity.response_id == fixture.response.served_identity.response_id ==
-  fixture.provenance.authenticated_response_id`;
-  `fixture.server_timestamp_utc == fixture.response.server_timestamp_utc`;
-  `fixture.source_kind == fixture.provenance.source_kind`;
-  `fixture.source_ref == fixture.provenance.source_ref`;
-  `fixture.request_digest == SHA256(JCS-UTF8(fixture.request)) ==
-  fixture.manifest_entry.request_digest`;
-  `fixture.response_digest == SHA256(JCS-UTF8(fixture.response)) ==
-  fixture.manifest_entry.response_digest`; and
-  `fixture.provenance_digest == SHA256(JCS-UTF8(fixture.provenance)) ==
-  fixture.manifest_entry.provenance_digest`. Repository/ref/path/commit/tree and manifest-entry custody tuple
-  fields belong only to R20; request/response digest computation failures
-  belong only to R17. Missing, one-sided, empty, or sentinel values are R23 or
-  R22, never R21. R21 explicitly excludes R17 digest computation/procedure
-  failures and R20 custody-byte/tree/manifest-entry mismatches. The mutually exclusive order is
-R23 -> R22 -> R19 -> R18 -> R17 -> R20 -> R21; R18 never owns generic
-out-of-schema fields, and no valid unequal replay field has an unowned result.
+mismatches are exclusively R20. After R20, evaluate R21 for a present, validly
+shaped, non-empty, non-sentinel value that is unequal in the finite path set
+below. The set is exactly these paths:
+`fixture.evidence_class`, `fixture.fixture_id`, `fixture.manifest_id`,
+`fixture.schema_version`, `fixture.requested_identity`,
+`fixture.served_identity`, `fixture.served_identity.response_id`,
+`fixture.response_id`, `fixture.server_timestamp_utc`, `fixture.request`,
+`fixture.request.schema_version`, `fixture.request.requested_identity`,
+`fixture.request_digest`, `fixture.response`,
+`fixture.response.schema_version`, `fixture.response.requested_identity`,
+`fixture.response.served_identity`,
+`fixture.response.served_identity.response_id`,
+`fixture.response.response_id`, `fixture.response.server_timestamp_utc`,
+`fixture.response_digest`, `fixture.provenance.fixture_id`,
+`fixture.provenance.manifest_id`, `fixture.provenance.source_kind`,
+`fixture.provenance.source_ref`, `fixture.provenance.captured_at_utc`,
+`fixture.provenance.authenticated_response_id`,
+`fixture.provenance_digest`, `fixture.source_kind`, `fixture.source_ref`,
+`fixture.status`, `fixture.reason_code`, `fixture.retention_until_utc`,
+`fixture.manifest_entry.schema_version`,
+`fixture.manifest_entry.manifest_id`,
+`fixture.manifest_entry.fixture_id`,
+`fixture.manifest_entry.request_digest`,
+`fixture.manifest_entry.response_digest`, and
+`fixture.manifest_entry.provenance_digest`.
+
+The exact equality paths are:
+`fixture.schema_version == fixture.request.schema_version ==
+fixture.response.schema_version == fixture.manifest_entry.schema_version`;
+`fixture.manifest_id == fixture.provenance.manifest_id ==
+fixture.manifest_entry.manifest_id`;
+`fixture.fixture_id == fixture.provenance.fixture_id ==
+fixture.manifest_entry.fixture_id`;
+`fixture.requested_identity == fixture.request.requested_identity ==
+fixture.response.requested_identity`;
+`fixture.served_identity == fixture.response.served_identity`;
+`fixture.served_identity.response_id ==
+fixture.response.served_identity.response_id`;
+`fixture.response_id == fixture.response.response_id ==
+fixture.served_identity.response_id ==
+fixture.response.served_identity.response_id ==
+fixture.provenance.authenticated_response_id`;
+`fixture.server_timestamp_utc == fixture.response.server_timestamp_utc`;
+`fixture.source_kind == fixture.provenance.source_kind`;
+`fixture.source_ref == fixture.provenance.source_ref`;
+`fixture.request_digest == SHA256(JCS-UTF8(fixture.request)) ==
+fixture.manifest_entry.request_digest`;
+`fixture.response_digest == SHA256(JCS-UTF8(fixture.response)) ==
+fixture.manifest_entry.response_digest`; and
+`fixture.provenance_digest == SHA256(JCS-UTF8(fixture.provenance)) ==
+fixture.manifest_entry.provenance_digest`.
+
+`fixture.request` and `fixture.response` are compared as the exact closed
+request and response envelope objects defined by the contract, with the nested
+paths listed above compared at their exact values. The singleton paths
+`fixture.evidence_class`, `fixture.status`, and `fixture.reason_code` are
+compared to their exact closed-schema literals. The path
+`fixture.provenance.captured_at_utc` is compared byte-for-byte with the
+coordinator-approved canonical provenance capture timestamp for this fixture
+and is the retention anchor:
+`fixture.provenance.captured_at_utc <= fixture.retention_until_utc <=
+fixture.provenance.captured_at_utc + 90 days`. The path
+`fixture.retention_until_utc` is compared using that exact invariant. All
+listed identity, timestamp, digest, ID, source, object, string, number, and
+array comparisons are exact and case-sensitive. Repository/ref/path/commit/
+tree and `fixture.manifest_entry.repository/ref/path/commit/tree` are
+custody-tuple paths owned only by R20; request/response digest computation
+failures belong only to R17; provenance digest procedure failures belong only
+to R18. A missing, one-sided, empty, sentinel, or invalid listed value is R23
+or R22, never R21.
+
+The predicates are ordered and mutually exclusive:
+`R23 -> R22 -> R19 -> R18 -> R17 -> R20 -> R21`. No digest-procedure failure
+may be reclassified as `R20`, no resolved custody mismatch may be reclassified
+as `R19`, and no `R21` semantic equality failure may absorb an `R17` or `R20`
+failure.
 
 Every repeated timestamp section is also a manual consistency requirement and
 must use the one exact grammar

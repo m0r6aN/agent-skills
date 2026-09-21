@@ -510,15 +510,21 @@ the first failing stage rather than being ambiguous:
    custody fields. These custody mismatches are exclusively `R20`, which
    explicitly excludes every `R17` canonical-byte or digest-computation/
    procedure failure.
-7. Only after `R20` passes, evaluate `R21` for any unequal valid field in the
-   closed post-custody semantic equality set. The finite set is exactly the
-   following paths: `fixture.evidence_class`, `fixture.fixture_id`,
-   `fixture.manifest_id`, `fixture.schema_version`, `fixture.capability`,
-   `fixture.endpoint`, `fixture.requested_identity`,
-   `fixture.served_identity`, `fixture.response_id`,
-   `fixture.server_timestamp_utc`, `fixture.request`, `fixture.response`,
-   `fixture.request_digest`, `fixture.response_digest`,
-   `fixture.provenance.fixture_id`, `fixture.provenance.source_kind`,
+7. Only after `R20` passes, evaluate `R21` for a present, validly shaped,
+   non-empty, non-sentinel value that is unequal in the finite path set below.
+   The set is exactly these paths:
+   `fixture.evidence_class`, `fixture.fixture_id`, `fixture.manifest_id`,
+   `fixture.schema_version`, `fixture.requested_identity`,
+   `fixture.served_identity`, `fixture.served_identity.response_id`,
+   `fixture.response_id`, `fixture.server_timestamp_utc`, `fixture.request`,
+   `fixture.request.schema_version`, `fixture.request.requested_identity`,
+   `fixture.request_digest`, `fixture.response`,
+   `fixture.response.schema_version`, `fixture.response.requested_identity`,
+   `fixture.response.served_identity`,
+   `fixture.response.served_identity.response_id`,
+   `fixture.response.response_id`, `fixture.response.server_timestamp_utc`,
+   `fixture.response_digest`, `fixture.provenance.fixture_id`,
+   `fixture.provenance.manifest_id`, `fixture.provenance.source_kind`,
    `fixture.provenance.source_ref`, `fixture.provenance.captured_at_utc`,
    `fixture.provenance.authenticated_response_id`,
    `fixture.provenance_digest`, `fixture.source_kind`, `fixture.source_ref`,
@@ -528,40 +534,52 @@ the first failing stage rather than being ambiguous:
    `fixture.manifest_entry.fixture_id`,
    `fixture.manifest_entry.request_digest`,
    `fixture.manifest_entry.response_digest`, and
-   `fixture.manifest_entry.provenance_digest`. The exact equality paths are
+   `fixture.manifest_entry.provenance_digest`.
+
+   The exact equality paths are:
    `fixture.schema_version == fixture.request.schema_version ==
-   fixture.response.schema_version == fixture.manifest_entry.schema_version`,
+   fixture.response.schema_version == fixture.manifest_entry.schema_version`;
    `fixture.manifest_id == fixture.provenance.manifest_id ==
-   fixture.manifest_entry.manifest_id`,
+   fixture.manifest_entry.manifest_id`;
    `fixture.fixture_id == fixture.provenance.fixture_id ==
-   fixture.manifest_entry.fixture_id`,
+   fixture.manifest_entry.fixture_id`;
    `fixture.requested_identity == fixture.request.requested_identity ==
-   fixture.response.requested_identity`,
-   `fixture.served_identity == fixture.response.served_identity`,
+   fixture.response.requested_identity`;
+   `fixture.served_identity == fixture.response.served_identity`;
+   `fixture.served_identity.response_id ==
+   fixture.response.served_identity.response_id`;
    `fixture.response_id == fixture.response.response_id ==
-   fixture.served_identity.response_id == fixture.response.served_identity.response_id ==
-   fixture.provenance.authenticated_response_id`,
-   `fixture.server_timestamp_utc == fixture.response.server_timestamp_utc`,
-   `fixture.source_kind == fixture.provenance.source_kind`,
-   `fixture.source_ref == fixture.provenance.source_ref`,
+   fixture.served_identity.response_id ==
+   fixture.response.served_identity.response_id ==
+   fixture.provenance.authenticated_response_id`;
+   `fixture.server_timestamp_utc == fixture.response.server_timestamp_utc`;
+   `fixture.source_kind == fixture.provenance.source_kind`;
+   `fixture.source_ref == fixture.provenance.source_ref`;
    `fixture.request_digest == SHA256(JCS-UTF8(fixture.request)) ==
-   fixture.manifest_entry.request_digest`,
+   fixture.manifest_entry.request_digest`;
    `fixture.response_digest == SHA256(JCS-UTF8(fixture.response)) ==
-   fixture.manifest_entry.response_digest`, and
+   fixture.manifest_entry.response_digest`; and
    `fixture.provenance_digest == SHA256(JCS-UTF8(fixture.provenance)) ==
-   fixture.manifest_entry.provenance_digest`. The singleton paths
-   `fixture.evidence_class`, `fixture.capability`, `fixture.endpoint`,
-   `fixture.status`, `fixture.reason_code`, and
-   `fixture.retention_until_utc` are compared only to their exact closed
-   schema values and retention binding. Repository/ref/path/commit/tree and
-   `manifest_entry.repository/ref/path/commit/tree` are custody-tuple fields
-   owned only by `R20`; request/response digest computation failures belong
-   only to `R17`. Missing, one-sided, empty, or sentinel values are `R23` or
-   `R22`, never `R21`. A valid but unequal field has no other post-custody
-   owner. `R21` explicitly excludes `R17` digest computation/procedure
-   failures and `R20` custody-byte/tree/manifest-entry mismatches; malformed
-   or out-of-vocabulary values remain owned by the earlier structural/value
-   stages.
+   fixture.manifest_entry.provenance_digest`.
+
+   `fixture.request` and `fixture.response` are compared as the exact closed
+   request and response envelope objects defined by this contract, with the
+   nested paths listed above compared at their exact values. The singleton
+   paths `fixture.evidence_class`, `fixture.status`, and `fixture.reason_code`
+   are compared to their exact closed-schema literals. The path
+   `fixture.provenance.captured_at_utc` is compared byte-for-byte with the
+   coordinator-approved canonical provenance capture timestamp for this
+   fixture and is the retention anchor:
+   `fixture.provenance.captured_at_utc <= fixture.retention_until_utc <=
+   fixture.provenance.captured_at_utc + 90 days`. The path
+   `fixture.retention_until_utc` is compared using that exact invariant.
+   All listed identity, timestamp, digest, ID, source, object, string, number,
+   and array comparisons are exact and case-sensitive. Repository/ref/path/
+   commit/tree and `fixture.manifest_entry.repository/ref/path/commit/tree`
+   are custody-tuple paths owned only by `R20`; request/response digest
+   computation failures belong only to `R17`; provenance digest procedure
+   failures belong only to `R18`. A missing, one-sided, empty, sentinel, or
+   invalid listed value is `R23` or `R22`, never `R21`.
 
 The predicates are ordered and mutually exclusive:
 `R23 -> R22 -> R19 -> R18 -> R17 -> R20 -> R21`. No digest-procedure failure
