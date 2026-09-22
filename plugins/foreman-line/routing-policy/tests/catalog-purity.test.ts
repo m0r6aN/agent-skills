@@ -1,9 +1,16 @@
 /**
- * RCM-P1 AC11 + review amendment A2 / F4: purity. A static scan of both new
- * source files for forbidden constructs and permitted imports, plus a
- * runtime probe that replaces ambient clock/randomness/network/timer/process
- * globals with throwing stubs and confirms `readCatalogSnapshot`/
- * `projectEligibility` are unaffected.
+ * RCM-P1 AC11 + review amendment A2 / F4 (and A2 round 2 / R5, R6): purity.
+ *
+ * IMPORTANT, and true only after the A2 round-2 correction (R6): this file
+ * is a REGRESSION TRIPWIRE over a closed list of KNOWN forbidden forms, not
+ * a proof that the two source files cannot reach the host, the clock, or
+ * randomness. A static regex-based scan over source text can always be
+ * evaded by a form nobody has thought of yet (every round of review so far
+ * has found at least one); it can only ever grow the list of forms it
+ * checks, never certify their absence. Likewise, the runtime probe below
+ * only proves that TODAY's code path does not call the specific globals it
+ * stubs, under the specific inputs it exercises — it is not a proof that no
+ * code path anywhere in these two files could ever reach them.
  *
  * F4 rework: the original scanner blocked specific call *shapes*
  * (`Date.now(`, `Math.random(`, ...), which the adversarial review defeated
@@ -27,15 +34,23 @@
  *      `export * from 'x'`, and to check the *exact* named bindings pulled
  *      from each permitted specifier, not just the specifier string.
  *
- * Builder judgment call (flagged in the completion claim, as in the prior
- * round): the Constraints text says these two new modules may import only
- * `node:crypto` and type-only imports, which taken strictly per-file would
- * make the spec's own "eligibility.ts re-exports the reader surface"
- * instruction impossible. This scanner allows exactly one additional
- * specifier for `eligibility.ts`: a relative import/re-export of its own
- * sibling `./catalog-snapshot.js`, with its named bindings checked against
- * an exact expected set — no other external, ambient, or cross-package
- * import is permitted in either file.
+ * A2 round 2 / R5 closed two more gaps the F4 rework itself introduced or
+ * missed: dynamic `import(...)` (the import/export clause parser only ever
+ * looked at declaration-position `import`/`export ... from`, never a call
+ * expression) and `.constructor` (a path to `Function`, and from there to
+ * arbitrary code execution and every global, without ever naming
+ * `Function` or `eval` directly — the reviewer's own smuggle,
+ * `(() => 0).constructor('return this')()`, is a positive control below).
+ *
+ * Builder judgment call (flagged in the completion claim, carried over from
+ * the prior round): the Constraints text says these two new modules may
+ * import only `node:crypto` and type-only imports, which taken strictly
+ * per-file would make the spec's own "eligibility.ts re-exports the reader
+ * surface" instruction impossible. This scanner allows exactly one
+ * additional specifier for `eligibility.ts`: a relative import/re-export of
+ * its own sibling `./catalog-snapshot.js`, with its named bindings checked
+ * against an exact expected set — no other external, ambient, or
+ * cross-package import is permitted in either file.
  */
 import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
@@ -227,6 +242,11 @@ const BANNED_BARE_IDENTIFIERS: readonly string[] = [
   'SharedArrayBuffer',
   'structuredClone',
   'Worker',
+  // A2 round 2 / R5: `.constructor` reaches Function (and from there eval-like
+  // power) without ever naming `Function` or `eval`. Banned as a bare word so
+  // it is caught in every form: property access (`x.constructor`), bracket
+  // access with a string literal (`x['constructor']`), and destructuring.
+  'constructor',
 ]
 
 function bareIdentifierPattern(name: string): RegExp {
@@ -255,12 +275,25 @@ const GLOBAL_CRYPTO_PATTERN = /(?<!node:)\bcrypto\b/
 /** `import.meta` needs its own pattern: `\b` around a literal `.` needs care, and it is not a simple identifier. */
 const IMPORT_META_PATTERN = /\bimport\s*\.\s*meta\b/
 
+/**
+ * Dynamic `import(...)` (A2 round 2 / R5): distinct from every static
+ * `import ... from '...'`/`import '...'` form this file already scans,
+ * none of which have `import` immediately followed by `(`. The original F4
+ * rework dropped this check when the scanner was redesigned around the
+ * import/export clause parser; it belongs back as its own pattern, since a
+ * dynamic import is a call expression, not a declaration clause.
+ */
+const DYNAMIC_IMPORT_PATTERN = /\bimport\s*\(/
+
 for (const source of SOURCES) {
   test(`AC11: ${source.name} never references the global crypto (only node:crypto import)`, () => {
     assert.equal(GLOBAL_CRYPTO_PATTERN.test(stripComments(source.text)), false)
   })
   test(`AC11: ${source.name} never references import.meta`, () => {
     assert.equal(IMPORT_META_PATTERN.test(stripComments(source.text)), false)
+  })
+  test(`AC11: ${source.name} never uses dynamic import(`, () => {
+    assert.equal(DYNAMIC_IMPORT_PATTERN.test(stripComments(source.text)), false)
   })
 }
 
@@ -361,6 +394,29 @@ const DATE_PROBE_CASES: { name: string; code: string; shouldCatch: boolean }[] =
   { name: 'structuredClone', code: 'const c = structuredClone(x)', shouldCatch: true },
   { name: 'Worker', code: 'const w = new Worker(url)', shouldCatch: true },
   { name: 'import.meta', code: 'const u = import.meta.url', shouldCatch: true },
+  // A2 round 2 / R5: dynamic import( and .constructor, which the F4 rework's
+  // import/export clause parser and bare-identifier list both missed.
+  { name: 'dynamic import(', code: "const m = await import('node:os')", shouldCatch: true },
+  {
+    name: 'dynamic import( with a computed specifier',
+    code: "const spec = 'node' + ':os'\nconst m = await import(spec)",
+    shouldCatch: true,
+  },
+  {
+    name: '.constructor property access',
+    code: 'const f = (() => 0).constructor',
+    shouldCatch: true,
+  },
+  {
+    name: "bracket ['constructor'] access",
+    code: "const f = (() => 0)['constructor']",
+    shouldCatch: true,
+  },
+  {
+    name: "the reviewer's exact Function-via-.constructor smuggle",
+    code: "const fsMod = await import('node:fs'); const g = (() => 0).constructor('return this')(); g['pro'+'cess']",
+    shouldCatch: true,
+  },
   // Negative control: the legitimate node:crypto import must NOT be flagged
   // as a global crypto reference (the lookbehind exclusion works).
   {
@@ -379,6 +435,7 @@ function scanSnippetForForbiddenConstructs(code: string): boolean {
   if (hasDisallowedDateReference(stripped)) return true
   if (GLOBAL_CRYPTO_PATTERN.test(stripped)) return true
   if (IMPORT_META_PATTERN.test(stripped)) return true
+  if (DYNAMIC_IMPORT_PATTERN.test(stripped)) return true
   if (/\.sort\s*\(/.test(stripped)) return true
   if (/\.toSorted\s*\(/.test(stripped)) return true
   if (/\.localeCompare\s*\(/.test(stripped)) return true
