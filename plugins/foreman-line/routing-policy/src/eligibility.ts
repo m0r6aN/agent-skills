@@ -125,6 +125,22 @@ export const IDENTITY_REFUSAL_CODES: readonly IdentityRefusalCode[] = Object.fre
 export const CATALOG_FRESHNESS_MAX_AGE_MS = 86_400_000
 
 /**
+ * Review amendment A3 / N1: request-size caps. Each is checked on the single
+ * length read, before any allocation or iteration, so a sparse array or a
+ * Proxy reporting a huge length cannot exhaust memory. Over the identity cap
+ * refuses REQUEST_INVALID_REFUSED; over the endpoint cap refuses
+ * AUTHORITY_INVALID_REFUSED. Primitive exports: an ESM binding cannot be
+ * reassigned by an importer.
+ */
+export const MAX_REQUESTED_IDENTITIES = 256
+export const MAX_APPROVED_ENDPOINTS = 256
+
+/** A length a caller supplied: a non-negative safe integer no larger than `max`. */
+function isBoundedLength(length: unknown, max: number): length is number {
+  return typeof length === 'number' && Number.isSafeInteger(length) && length >= 0 && length <= max
+}
+
+/**
  * Exact `id` values that are meta-routers regardless of catalog presence or
  * price (OQ-3 ruling: `openrouter/auto-beta` joins the charter's two).
  * Matched against the requested `id` alone — real P0 evidence shows OpenRouter
@@ -267,14 +283,9 @@ function validateApprovedConfig(value: unknown): ApprovedConfigShape | null {
   // A2 round 2 / R2: index loop, never `for...of`/`.map`/etc. on
   // `endpoints` — it is caller-owned data, same rule as `identities` in
   // `projectEligibility`.
-  const endpointsLength = endpoints.length
-  if (
-    typeof endpointsLength !== 'number' ||
-    !Number.isInteger(endpointsLength) ||
-    endpointsLength < 0
-  ) {
-    return null
-  }
+  // A3 / N1: capped on this single read, before the Map or the loop.
+  const endpointsLength: unknown = endpoints.length
+  if (!isBoundedLength(endpointsLength, MAX_APPROVED_ENDPOINTS)) return null
 
   const endpointsByProvider = new Map<string, string>()
   for (let i = 0; i < endpointsLength; i += 1) {
@@ -542,14 +553,15 @@ export function projectEligibility(req: {
     }
   }
 
+  // A3 / N3: every provider time is bounded by the evaluation time, not
+  // only the oldest one. Staleness is still measured from the oldest.
   let sourceMs = Number.POSITIVE_INFINITY
   for (const provider of snapshot.providers) {
     const ms = Date.parse(provider.checkedAtUtc as string)
+    if (ms > evalMs) {
+      return { ok: false, level: 'snapshot', code: 'FUTURE_REFUSED' }
+    }
     if (ms < sourceMs) sourceMs = ms
-  }
-
-  if (sourceMs > evalMs) {
-    return { ok: false, level: 'snapshot', code: 'FUTURE_REFUSED' }
   }
 
   const ageMs = evalMs - sourceMs
@@ -598,8 +610,9 @@ export function projectEligibility(req: {
   try {
     const identities = fields.identities
     if (Array.isArray(identities)) {
-      const length = identities.length
-      if (typeof length === 'number' && Number.isInteger(length) && length > 0) {
+      // A3 / N1: capped on this single read, before any allocation or loop.
+      const length: unknown = identities.length
+      if (isBoundedLength(length, MAX_REQUESTED_IDENTITIES) && length > 0) {
         const collected: ExtractedIdentity[] = []
         for (let i = 0; i < length; i += 1) {
           collected.push(extractIdentity(identities[i]))

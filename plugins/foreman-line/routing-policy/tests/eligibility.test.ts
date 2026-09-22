@@ -11,8 +11,11 @@ import { test } from 'node:test'
 import { fileURLToPath } from 'node:url'
 import { readCatalogSnapshot } from '../src/catalog-snapshot.js'
 import type { CatalogSnapshot, IdentityResult, ProjectionResult } from '../src/eligibility.js'
+import * as eligibilityModule from '../src/eligibility.js'
 import {
   IDENTITY_REFUSAL_CODES,
+  MAX_APPROVED_ENDPOINTS,
+  MAX_REQUESTED_IDENTITIES,
   META_ROUTER_IDS,
   projectEligibility,
   REFUSED_VARIANT_SUFFIXES,
@@ -1462,4 +1465,192 @@ test('frozen constants: after every mutation attempt, openrouter/auto still refu
   assert.equal(entry.outcome, 'refused')
   if (entry.outcome !== 'refused') throw new Error('unreachable')
   assert.deepEqual(entry.codes, ['META_ROUTER_REFUSED'])
+})
+
+test('frozen constants: MAX_REQUESTED_IDENTITIES and MAX_APPROVED_ENDPOINTS are 256 and cannot be reassigned', () => {
+  assert.equal(MAX_REQUESTED_IDENTITIES, 256)
+  assert.equal(MAX_APPROVED_ENDPOINTS, 256)
+  const namespace = eligibilityModule as unknown as Record<string, unknown>
+  assert.throws(() => {
+    namespace.MAX_REQUESTED_IDENTITIES = 1
+  }, TypeError)
+  assert.throws(() => {
+    namespace.MAX_APPROVED_ENDPOINTS = 1
+  }, TypeError)
+  assert.equal(MAX_REQUESTED_IDENTITIES, 256)
+  assert.equal(MAX_APPROVED_ENDPOINTS, 256)
+})
+
+// ---------------------------------------------------------------------------
+// Review amendment A3 / N1 — request-size caps, checked on the single length
+// read before any allocation or iteration
+// ---------------------------------------------------------------------------
+
+function distinctIdentities(count: number): { provider: string; id: string }[] {
+  const list: { provider: string; id: string }[] = []
+  for (let i = 0; i < count; i += 1) list.push({ provider: 'openai', id: `cap-probe-${i}` })
+  return list
+}
+
+/** A Proxy over an empty array reporting `length`, counting every element read. */
+function hugeLengthProxy(length: number, counter: { elementReads: number }): unknown[] {
+  return new Proxy([] as unknown[], {
+    get(target, key, receiver) {
+      if (key === 'length') return length
+      if (typeof key === 'string' && /^\d+$/.test(key)) {
+        counter.elementReads += 1
+        return { provider: 'openai', id: 'gpt-4o-mini' }
+      }
+      return Reflect.get(target, key, receiver)
+    },
+  })
+}
+
+function sparseArray(length: number): unknown[] {
+  const sparse: unknown[] = []
+  sparse.length = length
+  return sparse
+}
+
+test('A3 / N1: exactly MAX_REQUESTED_IDENTITIES (256) identities are accepted', () => {
+  const result = project({ identities: distinctIdentities(256) })
+  assert.equal(result.ok, true)
+  if (!result.ok) throw new Error('unreachable')
+  assert.equal(result.results.length, 256)
+})
+
+test('A3 / N1: 257 identities refuse REQUEST_INVALID_REFUSED at request level', () => {
+  const result = project({ identities: distinctIdentities(257) })
+  assert.deepEqual(result, { ok: false, level: 'request', code: 'REQUEST_INVALID_REFUSED' })
+})
+
+test('A3 / N1: a sparse identities array of length 2^32-1 refuses REQUEST_INVALID_REFUSED quickly, never throws', () => {
+  const started = performance.now()
+  assert.doesNotThrow(() => {
+    const result = project({ identities: sparseArray(2 ** 32 - 1) })
+    assert.deepEqual(result, { ok: false, level: 'request', code: 'REQUEST_INVALID_REFUSED' })
+  })
+  assert.ok(performance.now() - started < 1000)
+})
+
+test('A3 / N1: a Proxy identities array reporting length 2^53-1 refuses REQUEST_INVALID_REFUSED without reading any element', () => {
+  const counter = { elementReads: 0 }
+  const started = performance.now()
+  const result = project({ identities: hugeLengthProxy(2 ** 53 - 1, counter) })
+  assert.deepEqual(result, { ok: false, level: 'request', code: 'REQUEST_INVALID_REFUSED' })
+  assert.equal(counter.elementReads, 0)
+  assert.ok(performance.now() - started < 1000)
+})
+
+test('A3 / N1: an identities length that is not a non-negative safe integer refuses without reading any element', () => {
+  for (const length of [-1, 1.5, Number.NaN, Number.POSITIVE_INFINITY, 2 ** 53]) {
+    const counter = { elementReads: 0 }
+    const result = project({ identities: hugeLengthProxy(length, counter) })
+    assert.deepEqual(result, { ok: false, level: 'request', code: 'REQUEST_INVALID_REFUSED' })
+    assert.equal(counter.elementReads, 0)
+  }
+})
+
+function approvedConfigWithEndpoints(count: number): unknown {
+  const endpoints: { provider: string; baseUrl: string }[] = [
+    { provider: 'openai', baseUrl: 'https://api.openai.com/v1' },
+  ]
+  for (let i = 1; i < count; i += 1) {
+    endpoints.push({ provider: `fixture-cap-${i}`, baseUrl: 'https://example.invalid/v1' })
+  }
+  return { authorityRef: 'test-authority', endpoints }
+}
+
+test('A3 / N1: exactly MAX_APPROVED_ENDPOINTS (256) endpoints are accepted', () => {
+  const entry = singleResult(project({ approvedConfig: approvedConfigWithEndpoints(256) }))
+  assert.equal(entry.outcome, 'facts')
+})
+
+test('A3 / N1: 257 endpoints refuse AUTHORITY_INVALID_REFUSED at authority level', () => {
+  const result = project({ approvedConfig: approvedConfigWithEndpoints(257) })
+  assert.deepEqual(result, { ok: false, level: 'authority', code: 'AUTHORITY_INVALID_REFUSED' })
+})
+
+test('A3 / N1: a sparse endpoints array of length 2^32-1 refuses AUTHORITY_INVALID_REFUSED quickly, never throws', () => {
+  const started = performance.now()
+  assert.doesNotThrow(() => {
+    const result = project({
+      approvedConfig: { authorityRef: 'test-authority', endpoints: sparseArray(2 ** 32 - 1) },
+    })
+    assert.deepEqual(result, { ok: false, level: 'authority', code: 'AUTHORITY_INVALID_REFUSED' })
+  })
+  assert.ok(performance.now() - started < 1000)
+})
+
+test('A3 / N1: a Proxy endpoints array reporting length 2^53-1 refuses AUTHORITY_INVALID_REFUSED without reading any element', () => {
+  const counter = { elementReads: 0 }
+  const started = performance.now()
+  const result = project({
+    approvedConfig: {
+      authorityRef: 'test-authority',
+      endpoints: hugeLengthProxy(2 ** 53 - 1, counter),
+    },
+  })
+  assert.deepEqual(result, { ok: false, level: 'authority', code: 'AUTHORITY_INVALID_REFUSED' })
+  assert.equal(counter.elementReads, 0)
+  assert.ok(performance.now() - started < 1000)
+})
+
+// ---------------------------------------------------------------------------
+// Review amendment A3 / N3 — every provider time is bounded by the
+// evaluation time, not only the oldest one
+// ---------------------------------------------------------------------------
+
+test('A3 / N3: a non-oldest provider checkedAtUtc 1 ms after evaluation time refuses FUTURE_REFUSED', () => {
+  const snapshot = mutatedSnapshot((root) => {
+    rec(arr(root.providers)[1]).checkedAtUtc = '2026-09-21T13:00:00.001Z'
+  })
+  const result = project({ snapshot, evaluationTimeUtc: FRESH_EVAL_TIME })
+  assert.deepEqual(result, { ok: false, level: 'snapshot', code: 'FUTURE_REFUSED' })
+})
+
+test('A3 / N3: a non-oldest provider far in the future (2099) refuses FUTURE_REFUSED', () => {
+  const snapshot = mutatedSnapshot((root) => {
+    rec(arr(root.providers)[2]).checkedAtUtc = '2099-01-01T00:00:00.000Z'
+  })
+  const result = project({ snapshot })
+  assert.deepEqual(result, { ok: false, level: 'snapshot', code: 'FUTURE_REFUSED' })
+})
+
+test('A3 / N3: every provider exactly at evaluation time is accepted with ageMs 0', () => {
+  const snapshot = mutatedSnapshot((root) => {
+    for (const provider of arr(root.providers)) {
+      rec(provider).checkedAtUtc = FRESH_EVAL_TIME
+    }
+  })
+  const result = project({ snapshot, evaluationTimeUtc: FRESH_EVAL_TIME })
+  assert.equal(result.ok, true)
+  if (!result.ok) throw new Error('unreachable')
+  assert.equal(result.provenance.ageMs, 0)
+  assert.equal(result.provenance.sourceTimeUtc, FRESH_EVAL_TIME)
+})
+
+// ---------------------------------------------------------------------------
+// N6 — a __proto__ thinking-level key reaches the projected facts verbatim
+// ---------------------------------------------------------------------------
+
+test('N6: a __proto__ thinking-level key appears verbatim in facts.thinkingLevels', () => {
+  const snapshot = mutatedSnapshot((root) => {
+    const target = arr(root.models).find(
+      (model) => rec(model).provider === 'openai' && rec(model).id === 'gpt-4o-mini',
+    )
+    rec(target).thinkingLevelMap = JSON.parse('{"__proto__":"HIGH","low":"low"}')
+  })
+  const entry = singleResult(
+    project({ snapshot, identities: [{ provider: 'openai', id: 'gpt-4o-mini' }] }),
+  )
+  assert.equal(entry.outcome, 'facts')
+  if (entry.outcome !== 'facts') throw new Error('unreachable')
+  assert.deepEqual(entry.facts.thinkingLevels, {
+    status: 'declared',
+    levels: [
+      { level: '__proto__', providerValue: 'HIGH' },
+      { level: 'low', providerValue: 'low' },
+    ],
+  })
 })
