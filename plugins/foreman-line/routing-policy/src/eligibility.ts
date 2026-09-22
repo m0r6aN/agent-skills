@@ -12,9 +12,16 @@
  * the projector and re-exports the reader surface") via a relative import of
  * its sibling module — the only non-`node:crypto`, non-type-only import
  * either new module makes, and it stays inside this parcel's own two files.
+ *
+ * Never throws (review amendment A2 / F5): every function returns a typed
+ * refusal for hostile or malformed input, including a `snapshot` that is not
+ * an object this reader actually issued (`SNAPSHOT_UNVERIFIED_REFUSED`,
+ * checked first — see `SNAPSHOT_REFUSAL_CODES` below), a throwing
+ * `approvedConfig` getter, or a throwing `identities`/identity getter.
  */
 import {
   type CatalogSnapshot,
+  isReaderIssuedSnapshot,
   isValidBaseUrl,
   type ModelRecord,
   type ProviderRecord,
@@ -32,7 +39,7 @@ export type {
 }
 export { readCatalogSnapshot }
 
-/** Step-0 amendment A1: named export for the 12-code snapshot/authority/request pipeline tuple. */
+/** Step-0 amendment A1: named export for the snapshot/authority/request pipeline tuple. */
 export type SnapshotLevelRefusalCode =
   | SnapshotRefusalCode
   | 'TIME_INVALID_REFUSED'
@@ -42,8 +49,20 @@ export type SnapshotLevelRefusalCode =
   | 'AUTHORITY_UNKNOWN_REFUSED'
   | 'AUTHORITY_INVALID_REFUSED'
   | 'REQUEST_INVALID_REFUSED'
+  | 'SNAPSHOT_UNVERIFIED_REFUSED'
 
-/** Pipeline order; first failure wins. Reader-only codes never surface from `projectEligibility`. */
+/**
+ * Pipeline order for documentation purposes; first failure wins at runtime.
+ * `SNAPSHOT_UNVERIFIED_REFUSED` is appended LAST here, at array position 13
+ * (review amendment A2), so every previously-shipped code keeps the same
+ * array index. That is a documentation-order choice only: at runtime
+ * `projectEligibility` checks it FIRST, before time, authority, or request
+ * validation — nothing downstream can be trusted (including which snapshot
+ * providers/models to trust) without first confirming the snapshot object
+ * actually came from `readCatalogSnapshot`. Reader-only codes (`DIGEST_REFUSED`
+ * through `DUPLICATE_IDENTITY_REFUSED`) never surface from `projectEligibility`
+ * itself.
+ */
 export const SNAPSHOT_REFUSAL_CODES: readonly SnapshotLevelRefusalCode[] = [
   'DIGEST_REFUSED',
   'FORMAT_REFUSED',
@@ -57,6 +76,7 @@ export const SNAPSHOT_REFUSAL_CODES: readonly SnapshotLevelRefusalCode[] = [
   'AUTHORITY_UNKNOWN_REFUSED',
   'AUTHORITY_INVALID_REFUSED',
   'REQUEST_INVALID_REFUSED',
+  'SNAPSHOT_UNVERIFIED_REFUSED',
 ]
 
 export type IdentityRefusalCode =
@@ -149,7 +169,7 @@ export interface Provenance {
   readonly approvedConfigRef: string
 }
 
-/** Echoes exactly what the caller sent for this array slot, however malformed. */
+/** Echoes exactly what was read for this identity's `provider`/`id` (see `extractIdentity` — A2 / F2). */
 export interface RequestedIdentity {
   readonly provider: unknown
   readonly id: unknown
@@ -181,6 +201,11 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
 }
 
+/** Own-property presence check (F7): never `in`, which also matches inherited keys. */
+function hasOwn(obj: object, key: string): boolean {
+  return Object.hasOwn(obj, key)
+}
+
 const ISO_TIMESTAMP_PATTERN = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/
 
 /** Strict `YYYY-MM-DDTHH:mm:ss.sssZ`, round-tripping through `toISOString` (AC5). */
@@ -197,10 +222,18 @@ interface ApprovedConfigShape {
   readonly endpointsByProvider: ReadonlyMap<string, string>
 }
 
+/**
+ * Validates and normalizes `approvedConfig`. Every property read here can
+ * throw for a hostile `Proxy` or getter (A2 / F5); the caller wraps this
+ * whole function in a `try`/`catch` and treats any throw as
+ * `AUTHORITY_INVALID_REFUSED`, so this function itself does not need its own
+ * internal guards beyond returning `null` for a structurally-wrong shape.
+ */
 function validateApprovedConfig(value: unknown): ApprovedConfigShape | null {
   if (!isRecord(value)) return null
   const keys = Object.keys(value)
-  if (keys.length !== 2 || !('authorityRef' in value) || !('endpoints' in value)) return null
+  if (keys.length !== 2 || !hasOwn(value, 'authorityRef') || !hasOwn(value, 'endpoints'))
+    return null
   if (typeof value.authorityRef !== 'string' || value.authorityRef.length === 0) return null
   if (!Array.isArray(value.endpoints)) return null
 
@@ -208,8 +241,13 @@ function validateApprovedConfig(value: unknown): ApprovedConfigShape | null {
   for (const rawEndpoint of value.endpoints) {
     if (!isRecord(rawEndpoint)) return null
     const endpointKeys = Object.keys(rawEndpoint)
-    if (endpointKeys.length !== 2 || !('provider' in rawEndpoint) || !('baseUrl' in rawEndpoint))
+    if (
+      endpointKeys.length !== 2 ||
+      !hasOwn(rawEndpoint, 'provider') ||
+      !hasOwn(rawEndpoint, 'baseUrl')
+    ) {
       return null
+    }
     const { provider, baseUrl } = rawEndpoint
     if (typeof provider !== 'string' || provider.length === 0) return null
     if (!isValidBaseUrl(baseUrl)) return null
@@ -249,27 +287,46 @@ function findModel(
   return undefined
 }
 
+/**
+ * A requested identity's `provider`/`id`, each read from the caller-supplied
+ * value exactly once (A2 / F2). A getter that returns a different value on a
+ * later read — flipping after a counted number of accesses, or diverging
+ * between a duplicate check and the actual evaluation — cannot desynchronize
+ * `requested` from what was actually evaluated, because nothing downstream
+ * of this extraction ever reads the original raw value again.
+ */
+interface ExtractedIdentity {
+  readonly provider: unknown
+  readonly id: unknown
+}
+
+function extractIdentity(raw: unknown): ExtractedIdentity {
+  if (isRecord(raw)) {
+    const provider = raw.provider // single read
+    const id = raw.id // single read
+    return { provider, id }
+  }
+  return { provider: undefined, id: undefined }
+}
+
 function evaluateIdentity(
-  item: unknown,
+  extracted: ExtractedIdentity,
   snapshot: CatalogSnapshot,
   endpointsByProvider: ReadonlyMap<string, string>,
 ): IdentityResult {
-  const requested: RequestedIdentity = isRecord(item)
-    ? { provider: item.provider, id: item.id }
-    : { provider: undefined, id: undefined }
+  const requested: RequestedIdentity = { provider: extracted.provider, id: extracted.id }
 
   if (
-    !isRecord(item) ||
-    typeof item.provider !== 'string' ||
-    item.provider.length === 0 ||
-    typeof item.id !== 'string' ||
-    item.id.length === 0
+    typeof extracted.provider !== 'string' ||
+    extracted.provider.length === 0 ||
+    typeof extracted.id !== 'string' ||
+    extracted.id.length === 0
   ) {
     return { requested, outcome: 'refused', codes: ['AMBIGUOUS_IDENTITY_REFUSED'] }
   }
 
-  const provider = item.provider
-  const id = item.id
+  const provider = extracted.provider
+  const id = extracted.id
   const codes: IdentityRefusalCode[] = []
 
   if (META_ROUTER_IDS.includes(id)) {
@@ -362,10 +419,11 @@ function evaluateIdentity(
  * `projectEligibility`: turns requested identities against an already-read
  * `CatalogSnapshot` into facts or refusals. Whole-projection checks run in
  * pipeline order (first failure wins, per `SNAPSHOT_REFUSAL_CODES`); each
- * check's prerequisites explain the order (freshness needs a valid
- * evaluation time; per-identity results need authority and a well-formed
- * request list). Per-identity checks then run independently per identity and
- * *collect* every applicable code, in `IDENTITY_REFUSAL_CODES` order.
+ * check's prerequisites explain the order (snapshot integrity before
+ * anything else; freshness needs a valid evaluation time; per-identity
+ * results need authority and a well-formed request list). Per-identity
+ * checks then run independently per identity and *collect* every applicable
+ * code, in `IDENTITY_REFUSAL_CODES` order. Never throws (A2 / F5).
  */
 export function projectEligibility(req: {
   readonly snapshot: CatalogSnapshot
@@ -374,6 +432,13 @@ export function projectEligibility(req: {
   readonly identities: unknown
 }): ProjectionResult {
   const { snapshot, approvedConfig, evaluationTimeUtc, identities } = req
+
+  // A2 / F1: reject a snapshot this reader did not itself issue (forged, a
+  // post-read mutation attempt on the frozen original, Object.create(real),
+  // or a Proxy of a real one) before trusting anything else about it.
+  if (!isReaderIssuedSnapshot(snapshot)) {
+    return { ok: false, level: 'snapshot', code: 'SNAPSHOT_UNVERIFIED_REFUSED' }
+  }
 
   if (!isValidIsoTimestamp(evaluationTimeUtc)) {
     return { ok: false, level: 'request', code: 'TIME_INVALID_REFUSED' }
@@ -411,31 +476,51 @@ export function projectEligibility(req: {
     return { ok: false, level: 'authority', code: 'AUTHORITY_UNKNOWN_REFUSED' }
   }
 
-  const config = validateApprovedConfig(approvedConfig)
+  // A2 / F5: a throwing Proxy/getter anywhere in approvedConfig (including its
+  // endpoints array or an individual endpoint) refuses AUTHORITY_INVALID_REFUSED,
+  // never propagates.
+  let config: ApprovedConfigShape | null
+  try {
+    config = validateApprovedConfig(approvedConfig)
+  } catch {
+    config = null
+  }
   if (!config) {
     return { ok: false, level: 'authority', code: 'AUTHORITY_INVALID_REFUSED' }
   }
 
-  if (!Array.isArray(identities) || identities.length === 0) {
+  // A2 / F5 + F2: shape-check the request list and extract each identity's
+  // provider/id exactly once, all inside one guard — a throwing Proxy,
+  // throwing `.length`, or a throwing identity getter anywhere in this block
+  // refuses REQUEST_INVALID_REFUSED rather than propagating.
+  let extractedIdentities: readonly ExtractedIdentity[] | null
+  try {
+    extractedIdentities =
+      Array.isArray(identities) && identities.length > 0 ? identities.map(extractIdentity) : null
+  } catch {
+    extractedIdentities = null
+  }
+  if (!extractedIdentities) {
     return { ok: false, level: 'request', code: 'REQUEST_INVALID_REFUSED' }
   }
+
   const seenIdentityIdsByProvider = new Map<string, Set<string>>()
-  for (const item of identities) {
-    if (isRecord(item) && typeof item.provider === 'string' && typeof item.id === 'string') {
-      let idsForProvider = seenIdentityIdsByProvider.get(item.provider)
+  for (const extracted of extractedIdentities) {
+    if (typeof extracted.provider === 'string' && typeof extracted.id === 'string') {
+      let idsForProvider = seenIdentityIdsByProvider.get(extracted.provider)
       if (!idsForProvider) {
         idsForProvider = new Set<string>()
-        seenIdentityIdsByProvider.set(item.provider, idsForProvider)
+        seenIdentityIdsByProvider.set(extracted.provider, idsForProvider)
       }
-      if (idsForProvider.has(item.id)) {
+      if (idsForProvider.has(extracted.id)) {
         return { ok: false, level: 'request', code: 'REQUEST_INVALID_REFUSED' }
       }
-      idsForProvider.add(item.id)
+      idsForProvider.add(extracted.id)
     }
   }
 
-  const results = identities.map((item) =>
-    evaluateIdentity(item, snapshot, config.endpointsByProvider),
+  const results = extractedIdentities.map((extracted) =>
+    evaluateIdentity(extracted, snapshot, config.endpointsByProvider),
   )
 
   const provenance: Provenance = {
