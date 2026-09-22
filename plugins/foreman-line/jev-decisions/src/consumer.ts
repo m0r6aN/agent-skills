@@ -6,6 +6,8 @@ import type {
 } from "./types.ts";
 
 const RESPONSE_ID = /^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/;
+const MODEL = /^[A-Za-z0-9][A-Za-z0-9._/-]{0,127}$/;
+const UTC = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
 const RESPONSE_KEYS = ["schema_version", "capability", "requested_identity", "served_identity", "response_id", "server_timestamp_utc", "answers"];
 const ANSWER_KEYS = ["name", "type", "criteria", "value", "confidence"];
 const CHOICE_ANSWER_KEYS = [...ANSWER_KEYS, "distribution"];
@@ -20,15 +22,17 @@ export type SupportTriageAdvisory = {
 };
 
 function isNoulAnswer(value: unknown): value is NoulAnswer {
-  return isRecord(value) && exactKeys(value, ANSWER_KEYS) && value.name === "is_urgent" && value.type === "noul" && Array.isArray(value.criteria) && typeof value.value === "number" && Number.isFinite(value.value) && typeof value.confidence === "number" && Number.isFinite(value.confidence);
+  return isRecord(value) && exactKeys(value, ANSWER_KEYS) && value.name === "is_urgent" && value.type === "noul" && criteria(value.criteria, "urgent_signal", "customer urgency signal") && finiteRange(value.value, 0, 1) && finiteRange(value.confidence, 0, 1);
 }
 
 function isChoiceAnswer(value: unknown): value is ChoiceAnswer {
-  return isRecord(value) && exactKeys(value, CHOICE_ANSWER_KEYS) && value.name === "department" && value.type === "choice" && Array.isArray(value.criteria) && typeof value.value === "string" && ["billing", "technical", "sales"].includes(value.value) && typeof value.confidence === "number" && Number.isFinite(value.confidence) && isRecord(value.distribution) && exactKeys(value.distribution, ["billing", "technical", "sales"]);
+  if (!isRecord(value) || !exactKeys(value, CHOICE_ANSWER_KEYS) || value.name !== "department" || value.type !== "choice" || !criteria(value.criteria, "department_signal", "support department signal") || typeof value.value !== "string" || !["billing", "technical", "sales"].includes(value.value) || !finiteRange(value.confidence, 0, 1) || !isRecord(value.distribution) || !exactKeys(value.distribution, ["billing", "technical", "sales"])) return false;
+  const distribution = [value.distribution.billing, value.distribution.technical, value.distribution.sales];
+  return distribution.every((item) => finiteRange(item, 0, 1)) && Math.abs(distribution.reduce((sum, item) => sum + (item as number), 0) - 1) <= 1e-12;
 }
 
 function isScoreAnswer(value: unknown): value is ScoreAnswer {
-  return isRecord(value) && exactKeys(value, ANSWER_KEYS) && value.name === "frustration" && value.type === "score" && Array.isArray(value.criteria) && typeof value.value === "number" && Number.isFinite(value.value) && typeof value.confidence === "number" && Number.isFinite(value.confidence);
+  return isRecord(value) && exactKeys(value, ANSWER_KEYS) && value.name === "frustration" && value.type === "score" && criteria(value.criteria, "frustration_signal", "customer frustration signal") && finiteRange(value.value, Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY) && finiteRange(value.confidence, 0, 1);
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -39,6 +43,25 @@ function exactKeys(value: Record<string, unknown>, keys: readonly string[]): boo
   const actual = Object.keys(value).sort();
   const expected = [...keys].sort();
   return actual.length === expected.length && actual.every((key, index) => key === expected[index]);
+}
+
+function finiteRange(value: unknown, min: number, max: number): value is number {
+  return typeof value === "number" && Number.isFinite(value) && value >= min && value <= max;
+}
+
+function criteria(value: unknown, key: string, description: string): boolean {
+  if (!Array.isArray(value) || value.length !== 1 || !isRecord(value[0]) || !exactKeys(value[0], ["key", "description"])) return false;
+  return value[0].key === key && value[0].description === description;
+}
+
+function validTimestamp(value: unknown): value is string {
+  return typeof value === "string" && UTC.test(value) && !Number.isNaN(Date.parse(value));
+}
+
+function validResponse(value: unknown): value is { readonly response_id: string; readonly answers: readonly unknown[] } {
+  if (!isRecord(value) || !exactKeys(value, RESPONSE_KEYS) || value.schema_version !== "jev-decisions/v1" || value.capability !== "openrouter-alpha-decisions" || !isRecord(value.requested_identity) || !exactKeys(value.requested_identity, ["provider", "model", "surface"]) || value.requested_identity.provider !== "openrouter" || value.requested_identity.model !== "typesafe/jev-1.13" || value.requested_identity.surface !== "alpha-decisions" || !isRecord(value.served_identity) || !exactKeys(value.served_identity, ["model", "response_id", "source"]) || typeof value.served_identity.model !== "string" || !MODEL.test(value.served_identity.model) || typeof value.served_identity.response_id !== "string" || !RESPONSE_ID.test(value.served_identity.response_id) || value.served_identity.response_id === "none" || value.served_identity.source !== "provider-declared" || typeof value.response_id !== "string" || !RESPONSE_ID.test(value.response_id) || value.response_id === "none" || value.served_identity.response_id !== value.response_id || !validTimestamp(value.server_timestamp_utc) || !Array.isArray(value.answers) || value.answers.length !== 3) return false;
+  const validAnswers = value.answers.filter((answer) => isNoulAnswer(answer) || isChoiceAnswer(answer) || isScoreAnswer(answer));
+  return validAnswers.length === 3 && new Set(validAnswers.map((answer) => (answer as { name: string }).name)).size === 3;
 }
 
 function answerOrThrow<T>(
@@ -54,7 +77,7 @@ export function createSupportTriageAdvisory(
   response: ValidatedResponse,
 ): SupportTriageAdvisory {
   const candidate = response as unknown;
-  if (!isRecord(candidate) || !exactKeys(candidate, RESPONSE_KEYS) || candidate.schema_version !== "jev-decisions/v1" || candidate.capability !== "openrouter-alpha-decisions" || typeof candidate.response_id !== "string" || !RESPONSE_ID.test(candidate.response_id) || !Array.isArray(candidate.answers) || candidate.answers.length !== 3) throw new TypeError("ValidatedResponse contract violated");
+  if (!validResponse(candidate)) throw new TypeError("ValidatedResponse contract violated");
   const answers = candidate.answers;
   const urgent = answerOrThrow(answers, isNoulAnswer);
   const department = answerOrThrow(answers, isChoiceAnswer);
