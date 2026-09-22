@@ -4,9 +4,13 @@
  *
  * This module is deliberately isolated from the host: no ambient clock, no
  * randomness, no filesystem/network/process access, and no sorting or
- * price-comparison of any kind (spec Constraints; enforced by
- * `tests/catalog-purity.test.ts`). The only runtime import is `node:crypto`,
- * used solely to bind the input bytes to their caller-declared digest.
+ * price-comparison of any kind (spec Constraints). `tests/catalog-purity.test.ts`
+ * checks this file's source text against a closed, growing list of known
+ * forbidden forms and stubs a set of host globals at runtime — a regression
+ * tripwire, not a proof that no code path here could ever reach them (see
+ * that file's own header, review amendment A2 round 2 / R5, R6). The only
+ * runtime import is `node:crypto`, used solely to bind the input bytes to
+ * their caller-declared digest.
  *
  * `readCatalogSnapshot` is the sole constructor of `CatalogSnapshot`, enforced
  * two ways (review amendment A2 / F1): nominally, via a module-private brand
@@ -94,6 +98,43 @@ function hasOwn(obj: object, key: string): boolean {
   return Object.hasOwn(obj, key)
 }
 
+/**
+ * Captured at module load, before any caller code runs (A2 round 2 / R4,
+ * R7). A caller cannot make this module's later `instanceof` check or byte
+ * copy use a different, tampered `Uint8Array` by reassigning the global
+ * `Uint8Array` binding after this module has already loaded.
+ */
+const REAL_UINT8ARRAY_CTOR = Uint8Array
+
+/**
+ * Makes exactly one defensive copy of `bytes` via the module-load-captured
+ * `Uint8Array` constructor, or returns `null` for anything that is not a
+ * `Uint8Array` (including a subclass instance) or that throws while being
+ * copied. Every later step in `readCatalogSnapshot` reads only the returned
+ * copy, never the original `bytes` parameter again.
+ *
+ * This defends against a hostile `Uint8Array` subclass whose own `length`
+ * accessor throws or lies (A2 round 2 / R4, R7): constructing a plain
+ * `Uint8Array` from another typed array reads the source's internal length
+ * slot directly, the same abstract operation the engine itself uses, never
+ * the subclass's overridable `length`/`byteLength`/`buffer` *properties* —
+ * so a throwing getter is never invoked, and a lying getter has no effect,
+ * because this constructor call never consults it in the first place. The
+ * copy this returns is always a genuine, plain `Uint8Array` (verified
+ * empirically), never an instance of the caller's subclass, so no later
+ * `.length` read in this file can hit an overridden accessor again.
+ */
+function makeDefensiveByteCopy(bytes: unknown): Uint8Array | null {
+  try {
+    // `instanceof` itself can throw for a Proxy with a hostile
+    // `getPrototypeOf` trap, so it sits inside this same guard.
+    if (!(bytes instanceof REAL_UINT8ARRAY_CTOR)) return null
+    return new REAL_UINT8ARRAY_CTOR(bytes)
+  } catch {
+    return null
+  }
+}
+
 function bytesEqual(a: Uint8Array, b: Uint8Array): boolean {
   if (a.length !== b.length) return false
   for (let i = 0; i < a.length; i += 1) {
@@ -135,34 +176,53 @@ const READER_ISSUED_SNAPSHOTS = new WeakSet<object>()
  * for an object this reader itself returned from a successful read. Never
  * throws; a non-object, `null`, or `undefined` input simply returns `false`.
  */
-export function isReaderIssuedSnapshot(value: unknown): boolean {
+export function isReaderIssuedSnapshot(value: unknown): value is CatalogSnapshot {
   if (typeof value !== 'object' || value === null) return false
   return READER_ISSUED_SNAPSHOTS.has(value)
 }
 
 const EXPECTED_DIGEST_PATTERN = /^[0-9a-f]{64}$/
 
+/** Any whitespace, backslash, or ASCII control character (A2 round 2 / R8). */
+// biome-ignore lint/suspicious/noControlCharactersInRegex: matching control characters is the point of this check (A2 round 2 / R8)
+const WHITESPACE_BACKSLASH_OR_CONTROL_PATTERN = /[\s\\\u0000-\u001f\u007f]/
+
 /**
  * Exact, case-sensitive `https:` URL with no userinfo, query, or fragment
- * (D13's endpoint-exactness discipline, applied to shape validation). Refuses
- * on a raw scan for `?`, `#`, or `@` *anywhere* in the string first (A2 / F6):
- * the WHATWG `URL` parser normalizes an empty-but-present query/fragment/
- * userinfo component (e.g. `.../v1?`, `...#`, `https://@host`) to an empty
- * `.search`/`.hash`/`.username`, which would otherwise let those characters
- * through undetected. The *stored* value is always the caller's original
- * string, never the parser's normalized form, so no aliasing or
- * normalization is introduced into the data.
+ * (D13's endpoint-exactness discipline, applied to shape validation).
+ *
+ * - Requires the exact lowercase literal prefix `https://` (A2 round 2 / R8):
+ *   `url.protocol === 'https:'` alone is not enough, because the WHATWG
+ *   `URL` parser lowercases the scheme on parse, so `new URL('HTTPS://x').protocol`
+ *   is also `'https:'` even though the caller's original string was not
+ *   lowercase — checking the raw prefix directly closes that gap.
+ * - Refuses on a raw scan for `?`, `#`, or `@` *anywhere* in the string first
+ *   (A2 / F6): the parser normalizes an empty-but-present query/fragment/
+ *   userinfo component (e.g. `.../v1?`, `...#`, `https://@host`) to an empty
+ *   `.search`/`.hash`/`.username`, which would otherwise let those characters
+ *   through undetected.
+ * - Refuses on any whitespace, backslash, or ASCII control character
+ *   anywhere in the string (A2 round 2 / R8), and requires a non-empty
+ *   `hostname` after parsing.
+ *
+ * The *stored* value is always the caller's original string, never the
+ * parser's normalized form, so no aliasing or normalization is introduced
+ * into the data.
  */
 export function isValidBaseUrl(value: unknown): value is string {
   if (typeof value !== 'string') return false
+  if (!value.startsWith('https://')) return false
   if (value.includes('?') || value.includes('#') || value.includes('@')) return false
+  if (WHITESPACE_BACKSLASH_OR_CONTROL_PATTERN.test(value)) return false
   let url: URL
   try {
     url = new URL(value)
   } catch {
     return false
   }
-  return url.protocol === 'https:'
+  if (url.protocol !== 'https:') return false
+  if (url.hostname.length === 0) return false
+  return true
 }
 
 const ENVELOPE_KEYS = ['formatVersion', 'sourceRef', 'providers', 'models'] as const
@@ -339,8 +399,15 @@ function validateEnvelopeShape(parsed: Record<string, unknown>): EnvelopeShape |
  * `readCatalogSnapshot(bytes, expectedSha256)`: binds `bytes` to
  * `expectedSha256` (lowercase hex SHA-256 of the exact bytes), then verifies
  * canonical JSON formatting and the closed `rcm-catalog-snapshot/v1` shape.
- * Never throws (A2 / F5): `null`/`undefined`/non-`Uint8Array` bytes, and any
- * other malformed input, are typed refusals, not exceptions.
+ * Never throws (A2 / F5, and A2 round 2 / R3, R4, R7): `null`/`undefined`/
+ * non-`Uint8Array` bytes, a hostile `Uint8Array` subclass with a throwing or
+ * lying `length`, and a pathological input that would overflow the stack in
+ * `JSON.stringify` or the shape walk, are all typed refusals, not
+ * exceptions. Every step from decoding through the shape walk runs inside
+ * one guard that maps any exception to `FORMAT_REFUSED` (A2 round 2 / R3):
+ * a normal, non-throwing shape-validation failure still refuses
+ * `MALFORMED_REFUSED`, exactly as before — only an actual exception anywhere
+ * in that sequence is reclassified as `FORMAT_REFUSED`.
  */
 export function readCatalogSnapshot(
   bytes: Uint8Array,
@@ -350,12 +417,16 @@ export function readCatalogSnapshot(
     return { ok: false, code: 'DIGEST_REFUSED' }
   }
 
+  // Exactly one defensive copy (A2 round 2 / R4, R7); every step below reads
+  // `safeBytes` only, never the original `bytes` parameter again.
+  const safeBytes = makeDefensiveByteCopy(bytes)
+  if (!safeBytes) {
+    return { ok: false, code: 'FORMAT_REFUSED' }
+  }
+
   let actualDigest: string
   try {
-    if (!(bytes instanceof Uint8Array)) {
-      return { ok: false, code: 'FORMAT_REFUSED' }
-    }
-    actualDigest = createHash('sha256').update(bytes).digest('hex')
+    actualDigest = createHash('sha256').update(safeBytes).digest('hex')
   } catch {
     return { ok: false, code: 'FORMAT_REFUSED' }
   }
@@ -363,39 +434,40 @@ export function readCatalogSnapshot(
     return { ok: false, code: 'DIGEST_REFUSED' }
   }
 
-  let text: string
+  let shape: EnvelopeShape | null
   try {
     // Reject a byte-order-mark before decoding: canonical bytes never carry
     // one, and stripping it silently (as some decoders do) would defeat the
     // byte-for-byte canonical comparison below.
-    if (bytes.length >= 3 && bytes[0] === 0xef && bytes[1] === 0xbb && bytes[2] === 0xbf) {
+    if (
+      safeBytes.length >= 3 &&
+      safeBytes[0] === 0xef &&
+      safeBytes[1] === 0xbb &&
+      safeBytes[2] === 0xbf
+    ) {
       return { ok: false, code: 'FORMAT_REFUSED' }
     }
-    text = new TextDecoder('utf-8', { fatal: true }).decode(bytes)
+    const text = new TextDecoder('utf-8', { fatal: true }).decode(safeBytes)
+    const parsed: unknown = JSON.parse(text)
+
+    // Round-tripping through JSON.stringify(parsed, null, 2) + "\n" and
+    // comparing bytes catches CRLF, duplicate JSON members (JSON.parse keeps
+    // only the last), and numeric overflow (e.g. 1e400 -> Infinity -> "null")
+    // as one generic mechanism, per the spec's canonical-bytes rule. This
+    // stringify call, and the shape walk below, can both throw a stack
+    // RangeError on a pathologically deep input (A2 round 2 / R3) — both sit
+    // inside this same guard, not a separate one.
+    const canonicalBytes = new TextEncoder().encode(`${JSON.stringify(parsed, null, 2)}\n`)
+    if (!bytesEqual(safeBytes, canonicalBytes)) {
+      return { ok: false, code: 'FORMAT_REFUSED' }
+    }
+    if (!isRecord(parsed) || parsed.formatVersion !== 'rcm-catalog-snapshot/v1') {
+      return { ok: false, code: 'FORMAT_REFUSED' }
+    }
+    shape = validateEnvelopeShape(parsed)
   } catch {
     return { ok: false, code: 'FORMAT_REFUSED' }
   }
-
-  let parsed: unknown
-  try {
-    parsed = JSON.parse(text)
-  } catch {
-    return { ok: false, code: 'FORMAT_REFUSED' }
-  }
-
-  // Round-tripping through JSON.stringify(parsed, null, 2) + "\n" and
-  // comparing bytes catches CRLF, duplicate JSON members (JSON.parse keeps
-  // only the last), and numeric overflow (e.g. 1e400 -> Infinity -> "null")
-  // as one generic mechanism, per the spec's canonical-bytes rule.
-  const canonicalBytes = new TextEncoder().encode(`${JSON.stringify(parsed, null, 2)}\n`)
-  if (!bytesEqual(bytes, canonicalBytes)) {
-    return { ok: false, code: 'FORMAT_REFUSED' }
-  }
-  if (!isRecord(parsed) || parsed.formatVersion !== 'rcm-catalog-snapshot/v1') {
-    return { ok: false, code: 'FORMAT_REFUSED' }
-  }
-
-  const shape = validateEnvelopeShape(parsed)
   if (!shape) {
     return { ok: false, code: 'MALFORMED_REFUSED' }
   }
