@@ -265,9 +265,14 @@ async function terminal(port: LeasePort, lease: LeaseRecord): Promise<boolean> {
   try { await port.terminal(lease); return true; } catch { return false; }
 }
 
-async function consumeThenTerminal(port: LeasePort, lease: LeaseRecord): Promise<void> {
+async function consumeThenTerminal(port: LeasePort, lease: LeaseRecord): Promise<boolean> {
   try { await port.consume(lease); } catch { /* refusal remains closed */ }
-  await terminal(port, lease);
+  return terminal(port, lease);
+}
+
+async function closedFailure(input: RuntimeInput, lease: LeaseRecord, status: Status, reason: Reason, recordedAt: string): Promise<RuntimeResult> {
+  if (!(await terminal(input.lease_port, lease))) return generic(input, "hold", "R15", recordedAt);
+  return generic(input, status, reason, recordedAt);
 }
 
 function generic(input: RuntimeInput, status: Status, reason: Reason, recordedAt: string): RuntimeResult {
@@ -309,7 +314,7 @@ function normalizeProvider(value: unknown): { response: ResponseEnvelope; usage:
   if (!Object.prototype.hasOwnProperty.call(value, "cost")) return { reason: "R13", status: "hold" };
   if (!exactKeys(value, ["model", "response_id", "server_timestamp_utc", "answers", "usage", "cost"])) return { reason: "R10", status: "refused" };
   if (!generated(value.model, "model") || !generated(value.response_id, "response") || value.response_id === "none" || !utc(value.server_timestamp_utc)) return { reason: "R10", status: "refused" };
-  if (!isRecord(value.answers) || !isRecord(value.usage) || !isRecord(value.cost)) return { reason: "R10", status: "refused" };
+  if (!isRecord(value.answers) || !exactKeys(value.answers, ["is_urgent", "department", "frustration"]) || !isRecord(value.usage) || !isRecord(value.cost)) return { reason: "R10", status: "refused" };
   const usage = value.usage;
   if (!exactKeys(usage, ["input_tokens", "output_tokens", "total_tokens"]) || !Number.isInteger(usage.input_tokens) || !Number.isInteger(usage.output_tokens) || !Number.isInteger(usage.total_tokens) || usage.input_tokens < 0 || usage.output_tokens < 0 || usage.input_tokens > 65_536 || usage.output_tokens > 65_536 || usage.total_tokens !== usage.input_tokens + usage.output_tokens || usage.total_tokens > 131_072) return { reason: "R10", status: "refused" };
   const cost = value.cost;
@@ -352,30 +357,34 @@ export async function executeDecision(input: RuntimeInput): Promise<RuntimeResul
   try { claim = await input.lease_port.claim({ run_id: input.lease.run_id, lease_id: input.lease.lease_id, request_digest: requestDigest }); } catch { return generic(input, "hold", "R15", recordedAt); }
   if (claim === "unavailable") return generic(input, "hold", "R15", recordedAt);
   if (claim === "occupied") return generic(input, "refused", "R16", recordedAt);
-  const lease = claim.lease;
-  if (!validateLease(lease, requestDigest)) return generic(input, "hold", "R15", recordedAt);
+  if (!isRecord(claim) || !isRecord(claim.lease)) return generic(input, "hold", "R15", recordedAt);
+  const lease = claim.lease as unknown as LeaseRecord;
+  if (!validateLease(lease, requestDigest)) {
+    if (generated(lease.lease_id, "lease") && generated(lease.run_id, "run") && lease.lease_id === input.lease.lease_id && lease.run_id === input.lease.run_id) await terminal(input.lease_port, lease);
+    return generic(input, "hold", "R15", recordedAt);
+  }
   if (lease.lease_id !== input.lease.lease_id || lease.run_id !== input.lease.run_id) return generic(input, "refused", "R16", recordedAt);
   const budgetNow = input.clock.now();
   const budgetReason = validateBudget(input.budget_ack, input, lease, requestDigest, budgetNow);
-  if (budgetReason !== null) { await consumeThenTerminal(input.lease_port, lease); return generic(input, "hold", budgetReason, recordedAt); }
+  if (budgetReason !== null) { if (!(await consumeThenTerminal(input.lease_port, lease))) return generic(input, "hold", "R15", recordedAt); return generic(input, "hold", budgetReason, recordedAt); }
   const budgetSnapshot = JSON.parse(canonicalize(input.budget_ack)) as BudgetAcknowledgement;
   let consumed = false;
   try { consumed = await input.lease_port.consume(lease); } catch { consumed = false; }
-  if (!consumed) { await terminal(input.lease_port, lease); return generic(input, "refused", "R16", recordedAt); }
+  if (!consumed) return closedFailure(input, lease, "refused", "R16", recordedAt);
   const transmissionStarted = input.clock.now();
-  if (!utc(transmissionStarted) || !later(lease.claimed_at_utc, transmissionStarted) || !later(budgetSnapshot.acknowledged_at_utc, transmissionStarted) || Date.parse(transmissionStarted) - Date.parse(budgetSnapshot.acknowledged_at_utc) > MAX_AGE_MS) { await terminal(input.lease_port, lease); return generic(input, "hold", "R14", recordedAt); }
+  if (!utc(transmissionStarted) || !later(lease.claimed_at_utc, transmissionStarted) || !later(budgetSnapshot.acknowledged_at_utc, transmissionStarted) || Date.parse(transmissionStarted) - Date.parse(budgetSnapshot.acknowledged_at_utc) > MAX_AGE_MS) return closedFailure(input, lease, "hold", "R14", recordedAt);
   const apiKey = process.env.OPENROUTER_API_KEY;
-  if (typeof apiKey !== "string" || apiKey.length === 0 || /[\r\n]/.test(apiKey)) { await terminal(input.lease_port, lease); return generic(input, "refused", "R06", recordedAt); }
+  if (typeof apiKey !== "string" || apiKey.length === 0 || /[\r\n]/.test(apiKey)) return closedFailure(input, lease, "refused", "R06", recordedAt);
   let transportResponse: TransportResponse;
   try {
     transportResponse = await input.transport.post({ endpoint: DECISIONS_ENDPOINT, method: "POST", headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json", Accept: "application/json" }, body, timeout_ms: 30_000, redirect: "error", signal: AbortSignal.timeout(30_000) });
-  } catch { await terminal(input.lease_port, lease); return generic(input, "refused", "R04", recordedAt); }
+  } catch { return closedFailure(input, lease, "refused", "R04", recordedAt); }
   let socketOpened: string;
   try {
-    if (!isRecord(transportResponse) || !(transportResponse.body instanceof Uint8Array) || typeof transportResponse.content_type !== "string" || typeof transportResponse.status !== "number" || !equalAuthority(transportResponse.authority)) throw new Error("malformed transport");
+    if (!isRecord(transportResponse) || !(transportResponse.body instanceof Uint8Array) || typeof transportResponse.content_type !== "string" || !Number.isInteger(transportResponse.status) || !equalAuthority(transportResponse.authority)) throw new Error("malformed transport");
     socketOpened = transportResponse.socket_opened_at_utc;
     if (!utc(socketOpened) || Date.parse(socketOpened) < Date.parse(transmissionStarted) || Date.parse(socketOpened) - Date.parse(budgetSnapshot.acknowledged_at_utc) >= MAX_AGE_MS || transportResponse.body.byteLength > RESPONSE_LIMIT || transportResponse.status < 200 || transportResponse.status >= 300 || transportResponse.content_type.toLowerCase() !== "application/json") throw new Error("rejected transport");
-  } catch { await terminal(input.lease_port, lease); return generic(input, "refused", "R04", recordedAt); }
+  } catch { return closedFailure(input, lease, "refused", "R04", recordedAt); }
   let providerBody: unknown;
   try {
     const bodyText = new TextDecoder("utf-8", { fatal: true }).decode(transportResponse.body);
@@ -383,13 +392,13 @@ export async function executeDecision(input: RuntimeInput): Promise<RuntimeResul
     providerBody = JSON.parse(bodyText);
   } catch { await terminal(input.lease_port, lease); return generic(input, "refused", "R04", recordedAt); }
   const normalized = normalizeProvider(providerBody);
-  if ("reason" in normalized) { await terminal(input.lease_port, lease); return generic(input, normalized.status, normalized.reason, recordedAt); }
+  if ("reason" in normalized) return closedFailure(input, lease, normalized.status, normalized.reason, recordedAt);
   const responseValidation = validateResponse(requestValidation.value as ValidatedRequest, normalized.response);
-  if (!responseValidation.ok) { await terminal(input.lease_port, lease); return generic(input, responseValidation.status, responseValidation.reason, recordedAt); }
+  if (!responseValidation.ok) return closedFailure(input, lease, responseValidation.status, responseValidation.reason, recordedAt);
   let responseDigest: string;
-  try { responseDigest = canonicalDigest(responseValidation.value); } catch { await terminal(input.lease_port, lease); return generic(input, "refused", "R17", recordedAt); }
+  try { responseDigest = canonicalDigest(responseValidation.value); } catch { return closedFailure(input, lease, "refused", "R17", recordedAt); }
   const clientTimestamp = input.clock.now();
-  if (!utc(clientTimestamp) || !later(socketOpened, clientTimestamp)) { await terminal(input.lease_port, lease); return generic(input, "refused", "R10", recordedAt); }
+  if (!utc(clientTimestamp) || !later(socketOpened, clientTimestamp)) return closedFailure(input, lease, "refused", "R10", recordedAt);
   if (!(await terminal(input.lease_port, lease))) return generic(input, "hold", "R15", recordedAt);
   const retention = new Date(Date.parse(clientTimestamp) + RETENTION_MS).toISOString();
   const observation: LiveObservation = {
