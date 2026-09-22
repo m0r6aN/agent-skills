@@ -443,6 +443,35 @@ unnamed contract details. They are fixed as follows:
 - `DIGEST_REFUSED` through `DUPLICATE_IDENTITY_REFUSED` come from the reader
   only. `projectEligibility` never returns them.
 
+**Review amendment A2 (2026-09-22).** The adversarial review of `cf20fd8`
+reproduced that a forged or post-read-mutated snapshot yields facts, and that
+hostile inputs throw. A2 adds these binding rules:
+
+- **Reader-issued snapshots only.** The reader deep-freezes every snapshot it
+  returns and records it in a module-private `WeakSet`. `projectEligibility`
+  first checks membership. A snapshot that is absent, not an object, or not
+  reader-issued refuses with the new code `SNAPSHOT_UNVERIFIED_REFUSED`,
+  `level: 'snapshot'`. It is the first entry in the projector's pipeline and is
+  appended to `SNAPSHOT_REFUSAL_CODES` as the 13th code.
+- **Never throw.** `readCatalogSnapshot` and `projectEligibility` return a typed
+  refusal for every input, including `null`, `undefined`, non-`Uint8Array`
+  bytes, proxies, and getters that throw. A throw while reading
+  `approvedConfig` refuses `AUTHORITY_INVALID_REFUSED`. A throw while reading
+  `identities` or any identity refuses `REQUEST_INVALID_REFUSED`. Non-byte
+  input to the reader refuses `FORMAT_REFUSED`.
+- **Read caller input once.** Each identity's `provider` and `id` are read
+  exactly once into a plain copy. The duplicate check, the evaluation, and
+  `requested` all use that copy.
+- **Own properties only.** Closed-shape checks on caller and catalog objects use
+  own-property tests, never `in`. Keys such as `__proto__` in a thinking map are
+  kept verbatim as levels, never dropped.
+- **URL strictness.** A `baseUrl` containing `?`, `#`, or `@` anywhere refuses,
+  including empty query, fragment, and userinfo.
+- **Purity proof.** The runtime probe also stubs the `Date` constructor,
+  `performance.now`, `setTimeout`, `setInterval`, and `setImmediate`. The static
+  scan must include positive-control tests showing it flags every construct the
+  review listed as missed.
+
 ## Session Handoff
 
 The shaper returns this draft path, the base commit, and open questions. No
