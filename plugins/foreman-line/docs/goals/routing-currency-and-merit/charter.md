@@ -367,6 +367,32 @@ authorizes dispatch of exactly those two parcels, subject to the full per-parcel
 and authorizes no other parcel, merge, host correction, provider spend, or external
 effect. Later waves require a new exact parcel-set grant.
 
+**RE-GRANTED 2026-09-22 by Clinton Morgan for RCM-P1**, together with the P0
+evidence-boundary ruling below. This re-grant authorizes dispatch of RCM-P1 only,
+through the full per-parcel loop. It authorizes no merge, no other parcel, no host
+correction, no provider spend, and no network or credential access.
+
+## RCM-P0 evidence-boundary ruling
+
+**RULED 2026-09-22 by Clinton Morgan**, on the coordinator's recommendations:
+
+1. **P0 evidence is accepted as design input only.** The merged `complete:false`
+   evidence releases RCM-P1, but it is not live routing authority. RCM-P1 must model
+   stale freshness, missing approved-configuration authority, endpoint mismatch, and
+   catalog absence (including Jev) as typed refusals, never as warnings or defaults.
+2. **The catalog freshness bound is 24 hours.** This fills the freshness-bound value
+   that D10 and D11 require and matches the daily cadence ratified in OQ3. A snapshot
+   whose source time is older than 24 hours at evaluation refuses. No locked decision
+   changes.
+3. **Endpoint mismatches refuse; no aliasing or path normalization.** The four policy
+   IDs whose catalog `baseUrl` is `https://openrouter.ai/api` while settings configure
+   `https://openrouter.ai/api/v1` (Opus 5, Fable 5.1, Sonnet 5, Haiku 4.5) stay refused
+   under D13 exactly as written. Any host-side correction is a human act outside
+   Foreman.
+4. **This goal does not depend on the Jev alpha child goal.** D13 keeps Jev refused
+   here. The child goal keeps its own owner, gates, and queue, and this goal takes no
+   action on it.
+
 ## Bounded Gate 3 record
 
 **GRANTED 2026-09-20 by Clinton Morgan:** “I explicitly grant Gate 3 for the bounded
