@@ -145,6 +145,73 @@ test('F5: a Proxy with a throwing getPrototypeOf trap refuses with FORMAT_REFUSE
 })
 
 // ---------------------------------------------------------------------------
+// A2 round 2 / R3 — pathologically deep input cannot overflow the stack
+// ---------------------------------------------------------------------------
+
+test('R3: a deeply nested array (200,000 levels) refuses FORMAT_REFUSED, never throws or crashes', () => {
+  const text = '['.repeat(200_000) + ']'.repeat(200_000)
+  const bytes = Buffer.from(text, 'utf8')
+  const digest = digestOf(bytes)
+  assert.doesNotThrow(() => {
+    const result = readCatalogSnapshot(bytes, digest)
+    assert.deepEqual(result, { ok: false, code: 'FORMAT_REFUSED' })
+  })
+})
+
+// ---------------------------------------------------------------------------
+// A2 round 2 / R4, R7 — a hostile Uint8Array subclass cannot lie or throw
+// through its own length
+// ---------------------------------------------------------------------------
+
+class ThrowingLengthBytes extends Uint8Array {
+  override get length(): number {
+    throw new Error('hostile length getter')
+  }
+}
+
+class LyingLengthBytes extends Uint8Array {
+  override get length(): number {
+    return 1 // always lies, regardless of the real byte count
+  }
+}
+
+test('R4/R7: a throwing-length Uint8Array subclass still reads correctly, never throws', () => {
+  const hostile = new ThrowingLengthBytes(fixtureBytes)
+  assert.doesNotThrow(() => {
+    const result = readCatalogSnapshot(hostile, fixtureDigest)
+    // The throwing getter is never invoked at all: the defensive copy reads
+    // the real internal length slot, not the JS-observable accessor, so a
+    // genuinely valid snapshot still reads successfully.
+    assert.equal(result.ok, true)
+  })
+})
+
+test('R4/R7: a lying-length Uint8Array subclass has no effect, never throws', () => {
+  const hostile = new LyingLengthBytes(fixtureBytes)
+  assert.doesNotThrow(() => {
+    const result = readCatalogSnapshot(hostile, fixtureDigest)
+    // The lie ("length is 1") is never consulted; the real, full byte
+    // content is copied and read, so a genuinely valid snapshot still reads
+    // successfully rather than being silently truncated to 1 byte.
+    assert.equal(result.ok, true)
+  })
+})
+
+test('R4/R7: a lying-length subclass cannot hide a real mismatch either', () => {
+  // Corrupt one byte of an otherwise-valid canonical payload; the lying
+  // subclass still can't make the corruption invisible, because the
+  // defensive copy is taken from the true underlying bytes, not the length
+  // the subclass claims.
+  const corrupted = Buffer.from(fixtureBytes)
+  corrupted[50] = (corrupted[50] ?? 0) ^ 0xff
+  const hostile = new LyingLengthBytes(corrupted)
+  assert.doesNotThrow(() => {
+    const result = readCatalogSnapshot(hostile, fixtureDigest)
+    assert.deepEqual(result, { ok: false, code: 'DIGEST_REFUSED' })
+  })
+})
+
+// ---------------------------------------------------------------------------
 // AC2 — Format and canonical bytes
 // ---------------------------------------------------------------------------
 
@@ -381,6 +448,56 @@ const malformedCases: { name: string; mutate: (root: JsonRecord) => void }[] = [
     name: 'model: a baseUrl carrying a bare empty userinfo (@) refuses (A2 / F6)',
     mutate: (root) => {
       rec(arr(root.models)[0]).baseUrl = 'https://@openrouter.ai/api/v1'
+    },
+  },
+  {
+    name: 'model: a baseUrl with an uppercase scheme refuses (A2 round 2 / R8)',
+    mutate: (root) => {
+      rec(arr(root.models)[0]).baseUrl = 'HTTPS://openrouter.ai/api/v1'
+    },
+  },
+  {
+    name: 'model: a baseUrl with a mixed-case scheme refuses (A2 round 2 / R8)',
+    mutate: (root) => {
+      rec(arr(root.models)[0]).baseUrl = 'Https://openrouter.ai/api/v1'
+    },
+  },
+  {
+    // The WHATWG URL parser itself already throws on a genuinely empty host
+    // for a special scheme like https (verified: 'https:///x' actually
+    // parses host "x", not an empty host -- there is no live input where
+    // `new URL()` both succeeds AND returns an empty hostname for this
+    // scheme). This exercises that existing parse-failure path; the
+    // explicit `url.hostname.length === 0` check added for R8 is
+    // defense-in-depth for the same requirement, not separately reachable
+    // through this parser.
+    name: 'model: a baseUrl with no host at all refuses (A2 round 2 / R8)',
+    mutate: (root) => {
+      rec(arr(root.models)[0]).baseUrl = 'https://'
+    },
+  },
+  {
+    name: 'model: a baseUrl carrying a space refuses (A2 round 2 / R8)',
+    mutate: (root) => {
+      rec(arr(root.models)[0]).baseUrl = 'https://openrouter.ai/api /v1'
+    },
+  },
+  {
+    name: 'model: a baseUrl carrying a tab refuses (A2 round 2 / R8)',
+    mutate: (root) => {
+      rec(arr(root.models)[0]).baseUrl = 'https://openrouter.ai/api\t/v1'
+    },
+  },
+  {
+    name: 'model: a baseUrl carrying a backslash refuses (A2 round 2 / R8)',
+    mutate: (root) => {
+      rec(arr(root.models)[0]).baseUrl = 'https://openrouter.ai/api\\v1'
+    },
+  },
+  {
+    name: 'model: a baseUrl carrying a control character refuses (A2 round 2 / R8)',
+    mutate: (root) => {
+      rec(arr(root.models)[0]).baseUrl = 'https://openrouter.ai/api/v1'
     },
   },
   {

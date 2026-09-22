@@ -163,6 +163,74 @@ test('F1: a real snapshot post-read-mutated cannot yield different facts, becaus
 })
 
 // ---------------------------------------------------------------------------
+// A2 round 2 / R1 — req itself is hostile input, never throws
+// ---------------------------------------------------------------------------
+
+test('R1: projectEligibility(null) refuses REQUEST_INVALID_REFUSED, never throws', () => {
+  assert.doesNotThrow(() => {
+    const result = projectEligibility(null)
+    assert.deepEqual(result, { ok: false, level: 'request', code: 'REQUEST_INVALID_REFUSED' })
+  })
+})
+
+test('R1: projectEligibility(undefined) refuses REQUEST_INVALID_REFUSED, never throws', () => {
+  assert.doesNotThrow(() => {
+    const result = projectEligibility(undefined)
+    assert.deepEqual(result, { ok: false, level: 'request', code: 'REQUEST_INVALID_REFUSED' })
+  })
+})
+
+test('R1: a revoked Proxy as req refuses SNAPSHOT_UNVERIFIED_REFUSED, never throws', () => {
+  const { proxy, revoke } = Proxy.revocable({}, {})
+  revoke()
+  assert.doesNotThrow(() => {
+    const result = projectEligibility(proxy)
+    // typeof a revoked Proxy is safely 'object' (no trap involved), but any
+    // property read on it throws -- including the very first read,
+    // `.snapshot` -- so this resolves the same as any other throw while
+    // reading snapshot: SNAPSHOT_UNVERIFIED_REFUSED, not REQUEST_INVALID_REFUSED.
+    assert.deepEqual(result, { ok: false, level: 'snapshot', code: 'SNAPSHOT_UNVERIFIED_REFUSED' })
+  })
+})
+
+test('R1: a req whose snapshot getter throws refuses SNAPSHOT_UNVERIFIED_REFUSED, never throws', () => {
+  const hostile = {
+    get snapshot() {
+      throw new Error('hostile snapshot getter')
+    },
+    approvedConfig: DEFAULT_APPROVED_CONFIG,
+    evaluationTimeUtc: FRESH_EVAL_TIME,
+    identities: [{ provider: 'openai', id: 'gpt-4o-mini' }],
+  }
+  assert.doesNotThrow(() => {
+    const result = projectEligibility(hostile)
+    assert.deepEqual(result, { ok: false, level: 'snapshot', code: 'SNAPSHOT_UNVERIFIED_REFUSED' })
+  })
+})
+
+test('R1: a req whose approvedConfig getter throws (snapshot already read fine) refuses REQUEST_INVALID_REFUSED, never throws', () => {
+  const hostile = {
+    snapshot: baseSnapshot,
+    get approvedConfig(): unknown {
+      throw new Error('hostile approvedConfig getter')
+    },
+    evaluationTimeUtc: FRESH_EVAL_TIME,
+    identities: [{ provider: 'openai', id: 'gpt-4o-mini' }],
+  }
+  assert.doesNotThrow(() => {
+    const result = projectEligibility(hostile)
+    assert.deepEqual(result, { ok: false, level: 'request', code: 'REQUEST_INVALID_REFUSED' })
+  })
+})
+
+test('R1: a non-object req (a string) refuses REQUEST_INVALID_REFUSED, never throws', () => {
+  assert.doesNotThrow(() => {
+    const result = projectEligibility('not an object')
+    assert.deepEqual(result, { ok: false, level: 'request', code: 'REQUEST_INVALID_REFUSED' })
+  })
+})
+
+// ---------------------------------------------------------------------------
 // AC5 — Time inputs
 // ---------------------------------------------------------------------------
 
@@ -310,6 +378,36 @@ test('AC7: an approvedConfig baseUrl carrying a fragment refuses AUTHORITY_INVAL
     approvedConfig: {
       authorityRef: 'x',
       endpoints: [{ provider: 'openrouter', baseUrl: 'https://openrouter.ai/api/v1#frag' }],
+    },
+  })
+  assert.deepEqual(result, { ok: false, level: 'authority', code: 'AUTHORITY_INVALID_REFUSED' })
+})
+
+test('AC7: an approvedConfig baseUrl carrying a bare empty query (?) refuses AUTHORITY_INVALID_REFUSED (R9)', () => {
+  const result = project({
+    approvedConfig: {
+      authorityRef: 'x',
+      endpoints: [{ provider: 'openrouter', baseUrl: 'https://openrouter.ai/api/v1?' }],
+    },
+  })
+  assert.deepEqual(result, { ok: false, level: 'authority', code: 'AUTHORITY_INVALID_REFUSED' })
+})
+
+test('AC7: an approvedConfig baseUrl carrying a bare empty fragment (#) refuses AUTHORITY_INVALID_REFUSED (R9)', () => {
+  const result = project({
+    approvedConfig: {
+      authorityRef: 'x',
+      endpoints: [{ provider: 'openrouter', baseUrl: 'https://openrouter.ai/api/v1#' }],
+    },
+  })
+  assert.deepEqual(result, { ok: false, level: 'authority', code: 'AUTHORITY_INVALID_REFUSED' })
+})
+
+test('AC7: an approvedConfig baseUrl carrying a bare empty userinfo (@) refuses AUTHORITY_INVALID_REFUSED (R9)', () => {
+  const result = project({
+    approvedConfig: {
+      authorityRef: 'x',
+      endpoints: [{ provider: 'openrouter', baseUrl: 'https://@openrouter.ai/api/v1' }],
     },
   })
   assert.deepEqual(result, { ok: false, level: 'authority', code: 'AUTHORITY_INVALID_REFUSED' })
@@ -606,6 +704,106 @@ test('F5: an approvedConfig Proxy with a throwing ownKeys trap refuses AUTHORITY
     const result = project({ approvedConfig: hostileConfig })
     assert.deepEqual(result, { ok: false, level: 'authority', code: 'AUTHORITY_INVALID_REFUSED' })
   })
+})
+
+// ---------------------------------------------------------------------------
+// A2 round 2 / R2 — never call a method on, or iterate, caller-owned data
+// ---------------------------------------------------------------------------
+
+test('R2: an overridden identities.map cannot forge results; real indexed elements are what gets evaluated', () => {
+  const real: unknown[] = [{ provider: 'openai', id: 'gpt-4o-mini' }]
+  // The exact exploit the round-2 review reproduced: overriding .map on the
+  // caller's own array to return forged facts for a different, cheaper-
+  // looking-but-actually-negative-rate identity, without our callback ever
+  // running.
+  ;(real as { map: unknown }).map = () => [
+    {
+      requested: { provider: 'openrouter', id: 'auto' },
+      outcome: 'facts',
+      facts: { id: 'auto', provider: 'openrouter', rates: { input: { value: -1000000 } } },
+    },
+  ]
+  const result = project({ identities: real })
+  assert.equal(result.ok, true)
+  if (!result.ok) throw new Error('unreachable')
+  // The forged result must NOT appear; the real, single indexed element
+  // (openai/gpt-4o-mini) must be what was actually evaluated.
+  assert.equal(result.results.length, 1)
+  assert.deepEqual(result.results[0]?.requested, { provider: 'openai', id: 'gpt-4o-mini' })
+  assert.equal(result.results[0]?.outcome, 'facts')
+})
+
+test('R2: a Symbol.species array subclass has no effect; real indexed elements are still evaluated', () => {
+  class EvilArray extends Array {
+    static override get [Symbol.species]() {
+      return Array
+    }
+  }
+  const identities = EvilArray.from([{ provider: 'openai', id: 'gpt-4o-mini' }])
+  const result = project({ identities })
+  assert.equal(result.ok, true)
+  if (!result.ok) throw new Error('unreachable')
+  assert.equal(result.results.length, 1)
+  assert.deepEqual(result.results[0]?.requested, { provider: 'openai', id: 'gpt-4o-mini' })
+})
+
+test('R2: a Proxy whose map trap returns junk has no effect; real indexed elements are still evaluated', () => {
+  const real = [{ provider: 'openai', id: 'gpt-4o-mini' }]
+  const hostile = new Proxy(real, {
+    get(target, prop, receiver) {
+      if (prop === 'map') {
+        return () => 'junk, not even an array'
+      }
+      return Reflect.get(target, prop, receiver)
+    },
+  })
+  const result = project({ identities: hostile })
+  assert.equal(result.ok, true)
+  if (!result.ok) throw new Error('unreachable')
+  assert.equal(result.results.length, 1)
+  assert.deepEqual(result.results[0]?.requested, { provider: 'openai', id: 'gpt-4o-mini' })
+})
+
+test('R2: a flipping provider getter through a caller-overridden map is still read exactly once', () => {
+  let readCount = 0
+  const flipping = {
+    get provider() {
+      readCount += 1
+      return readCount === 1 ? 'openai' : 'openrouter'
+    },
+    id: 'gpt-4o-mini',
+  }
+  const identities: unknown[] = [flipping]
+  // Also override .map, combining both attack vectors: even if map ran our
+  // callback multiple times (it must not), a single-read extraction would
+  // still be safe; here .map is bypassed entirely by the index loop.
+  ;(identities as { map: unknown }).map = () => {
+    throw new Error('map must never be called')
+  }
+  const result = project({ identities })
+  assert.equal(readCount, 1, 'provider getter must be read exactly once, and .map must never run')
+  assert.equal(result.ok, true)
+  if (!result.ok) throw new Error('unreachable')
+  assert.deepEqual(result.results[0]?.requested, { provider: 'openai', id: 'gpt-4o-mini' })
+})
+
+test('R2: an overridden approvedConfig.endpoints for...of target cannot forge an endpoint match', () => {
+  const endpoints: unknown[] = [{ provider: 'openai', baseUrl: 'https://api.openai.com/v1' }]
+  // Override Symbol.iterator to yield a different, forged endpoint than the
+  // real indexed content -- the index loop must ignore this entirely.
+  ;(endpoints as { [Symbol.iterator]: unknown })[Symbol.iterator] = function* () {
+    yield { provider: 'openai', baseUrl: 'https://forged.example/v1' }
+  }
+  const result = project({
+    approvedConfig: { authorityRef: 'x', endpoints },
+    identities: [{ provider: 'openai', id: 'gpt-4o-mini' }],
+  })
+  assert.equal(result.ok, true)
+  if (!result.ok) throw new Error('unreachable')
+  // The real endpoint (api.openai.com) is what gets used, not the forged one.
+  const entry = result.results[0]
+  assert.ok(entry)
+  assert.equal(entry.outcome, 'facts')
 })
 
 // ---------------------------------------------------------------------------
