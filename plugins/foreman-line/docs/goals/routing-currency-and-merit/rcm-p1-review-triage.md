@@ -75,3 +75,48 @@ real scanner, `tsc`, and `biome`.
 
 Rework round two was dispatched with a Step-0 gate and a test-count tripwire of at
 least 335, with no deletions.
+
+## Builder session loss and resume (2026-09-22)
+
+The round-two builder session was ended by a model-side refusal ("Sonnet 5 can't
+help with this") after committing `b5f8bb5..f92ccf5`. It never delivered a
+completion claim, so its work was treated as untrusted. Before the loss, it had
+breached its Step-0 gate by proceeding without waiting for "Proceed". Its commits
+predated three coordinator corrections: keep the contract signature, keep
+throw-only `FORMAT_REFUSED` mapping, and add an internal-slot byte gate.
+
+A fresh resume session re-verified the inherited work at its Step 0. It confirmed
+R2, R3, R5, R8, and R9 as closed, and R1 and R4/R7 as open. It also found a new
+read-once gap: `approvedConfig.authorityRef` was read three times, so a flipping
+getter could forge `provenance.approvedConfigRef`. It closed everything at
+`c13e4bb`, with 385 tests.
+
+**Routing deviation:** the resume builder ran on the frontier tier instead of the
+standard mid-tier. The mid-tier model had refused the parcel's hostile-input test
+material twice.
+
+## Third review: `c13e4bb` (2026-09-22)
+
+**Reviewer:** a third fresh frontier session, independent of all earlier
+sessions. It was read-only and ran mutation testing: 24 mutants, 22 killed, and
+2 equivalent on every reachable input.
+
+**Verdict:** APPROVE WITH NITS. F1 through F8 and R1 through R9 were all verified
+closed, each with a test that fails when the fix is reverted. All four
+coordinator rulings were verified.
+
+**Coordinator reproduction:** N1, where a sparse identity list of length
+2^32 - 1 under a 256 MB heap ended in a V8 out-of-memory abort, exit 134. N3,
+where a non-oldest provider time of 2099 produced facts.
+
+| Finding | Severity | Summary | Disposition |
+|---|---|---|---|
+| N1 | P2 | A huge `identities` length aborts the process out of memory | Fix under amendment A3 (`3f4a599`): 256-entry caps checked before allocation |
+| N2 | P3 | Patching global prototypes in the same realm defeats the WeakSet and meta-router checks | Accept as documented. A3 puts same-realm tampering out of the threat model, and the README must say so |
+| N3 | P3 | A future provider time is accepted when it is not the oldest | Fix under A3: any provider time later than evaluation refuses `FUTURE_REFUSED` |
+| N4 | P3 | Extra ownKeys and descriptor trap calls on the configuration | Accept. Values are read once and cannot be forged |
+| N5 | P3 | The static scan is bypassable through a computed `constructor` key | Accept. The README already calls the scan a regression tripwire, not a proof |
+| N6 | P3 | The `__proto__` thinking-level key is tested only at the reader | Fix: add a projector test |
+| N7 | P3 | The diff lists the spec as an eighth file | Informational. The coordinator committed the spec |
+
+Rework round three was dispatched with a Step-0 gate and a floor of 385 tests.
