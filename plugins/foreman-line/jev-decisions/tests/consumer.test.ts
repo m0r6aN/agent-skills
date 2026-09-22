@@ -128,15 +128,20 @@ test("maps a validated response to the exact closed advisory", () => {
   ]);
 });
 
-test("uses exact answer names and types rather than position or caller mapping", () => {
+test("uses the canonical P1 answer slots and exact names/types", () => {
   const response = validatedResponse();
-  const answers = response.answers as unknown as Array<Record<string, unknown>>;
-  answers.reverse();
 
   const advisory = createSupportTriageAdvisory(response);
   assert.equal(advisory.is_urgent, 0.95);
   assert.equal(advisory.department, "billing");
   assert.equal(advisory.frustration, 1.04);
+});
+
+test("rejects a reordered answer array that P1 would reject", () => {
+  const response = validatedResponse();
+  const answers = response.answers as unknown as Array<Record<string, unknown>>;
+  answers.reverse();
+  assert.throws(() => createSupportTriageAdvisory(response), new TypeError("ValidatedResponse contract violated"));
 });
 
 test("returns a detached advisory snapshot", () => {

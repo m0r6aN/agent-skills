@@ -60,8 +60,7 @@ function validTimestamp(value: unknown): value is string {
 
 function validResponse(value: unknown): value is { readonly response_id: string; readonly answers: readonly unknown[] } {
   if (!isRecord(value) || !exactKeys(value, RESPONSE_KEYS) || value.schema_version !== "jev-decisions/v1" || value.capability !== "openrouter-alpha-decisions" || !isRecord(value.requested_identity) || !exactKeys(value.requested_identity, ["provider", "model", "surface"]) || value.requested_identity.provider !== "openrouter" || value.requested_identity.model !== "typesafe/jev-1.13" || value.requested_identity.surface !== "alpha-decisions" || !isRecord(value.served_identity) || !exactKeys(value.served_identity, ["model", "response_id", "source"]) || typeof value.served_identity.model !== "string" || !MODEL.test(value.served_identity.model) || typeof value.served_identity.response_id !== "string" || !RESPONSE_ID.test(value.served_identity.response_id) || value.served_identity.response_id === "none" || value.served_identity.source !== "provider-declared" || typeof value.response_id !== "string" || !RESPONSE_ID.test(value.response_id) || value.response_id === "none" || value.served_identity.response_id !== value.response_id || !validTimestamp(value.server_timestamp_utc) || !Array.isArray(value.answers) || value.answers.length !== 3) return false;
-  const validAnswers = value.answers.filter((answer) => isNoulAnswer(answer) || isChoiceAnswer(answer) || isScoreAnswer(answer));
-  return validAnswers.length === 3 && new Set(validAnswers.map((answer) => (answer as { name: string }).name)).size === 3;
+  return isNoulAnswer(value.answers[0]) && isChoiceAnswer(value.answers[1]) && isScoreAnswer(value.answers[2]);
 }
 
 function answerOrThrow<T>(
