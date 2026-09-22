@@ -276,10 +276,11 @@ async function closedFailure(input: RuntimeInput, lease: LeaseRecord, status: St
 }
 
 function generic(input: RuntimeInput, status: Status, reason: Reason, recordedAt: string): RuntimeResult {
-  const retention = new Date(Date.parse(recordedAt) + RETENTION_MS).toISOString();
+  const safeRecordedAt = utc(recordedAt) ? recordedAt : "1970-01-01T00:00:00.000Z";
+  const retention = new Date(Date.parse(safeRecordedAt) + RETENTION_MS).toISOString();
   const sourceRef = generated(input.custody.source_ref, "source") ? input.custody.source_ref : "src-00000000000000000000000000000000";
-  if (status === "hold") return { ok: false, record: { evidence_class: "hold-record", status, reason_code: `evidence:${reason}`, disposition: "pending-coordinator", source_kind: "coordinator-review", source_ref: sourceRef, recorded_at_utc: recordedAt, retention_until_utc: retention } };
-  return { ok: false, record: { evidence_class: "refusal-record", status, reason_code: `evidence:${reason}`, source_kind: "coordinator-review", source_ref: sourceRef, recorded_at_utc: recordedAt, retention_until_utc: retention } };
+  if (status === "hold") return { ok: false, record: { evidence_class: "hold-record", status, reason_code: `evidence:${reason}`, disposition: "pending-coordinator", source_kind: "coordinator-review", source_ref: sourceRef, recorded_at_utc: safeRecordedAt, retention_until_utc: retention } };
+  return { ok: false, record: { evidence_class: "refusal-record", status, reason_code: `evidence:${reason}`, source_kind: "coordinator-review", source_ref: sourceRef, recorded_at_utc: safeRecordedAt, retention_until_utc: retention } };
 }
 
 function buildRequest(state: SupportTriageState): RequestEnvelope {
@@ -390,7 +391,7 @@ export async function executeDecision(input: RuntimeInput): Promise<RuntimeResul
     const bodyText = new TextDecoder("utf-8", { fatal: true }).decode(transportResponse.body);
     if (duplicateJsonKeys(bodyText)) throw new Error("duplicate JSON key");
     providerBody = JSON.parse(bodyText);
-  } catch { await terminal(input.lease_port, lease); return generic(input, "refused", "R04", recordedAt); }
+  } catch { return closedFailure(input, lease, "refused", "R04", recordedAt); }
   const normalized = normalizeProvider(providerBody);
   if ("reason" in normalized) return closedFailure(input, lease, normalized.status, normalized.reason, recordedAt);
   const responseValidation = validateResponse(requestValidation.value as ValidatedRequest, normalized.response);

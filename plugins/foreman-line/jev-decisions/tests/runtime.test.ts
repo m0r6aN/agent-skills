@@ -125,6 +125,27 @@ test("rejects duplicate JSON keys and nested provider extras", async () => {
   if (!extraResult.ok) assert.equal(extraResult.record.reason_code, "evidence:R10");
 });
 
+test("fails closed when malformed provider bytes cannot be terminalized", async () => {
+  const base = await input(provider());
+  const result = await executeDecision({
+    ...base,
+    transport: { post: async () => ({ status: 200, content_type: "application/json", body: new TextEncoder().encode("{bad"), authority: { endpoint: DECISIONS_ENDPOINT, method: "POST", redirects: "disabled", tls: "verified", proxy: "none" }, socket_opened_at_utc: times[3] }) },
+    lease_port: { claim: async () => ({ lease: { ...base.lease, request_digest: canonicalDigest(request()) } }), consume: async () => true, terminal: async () => { throw new Error("terminal unavailable"); } },
+  });
+  assert.equal(result.ok, false);
+  if (!result.ok) assert.equal(result.record.reason_code, "evidence:R15");
+});
+
+test("returns a bounded record when the initial clock is invalid", async () => {
+  const base = await input(provider());
+  const result = await executeDecision({ ...base, clock: { now: () => "not-a-timestamp" } });
+  assert.equal(result.ok, false);
+  if (!result.ok) {
+    assert.equal(result.record.reason_code, "evidence:R22");
+    assert.equal(result.record.recorded_at_utc, "1970-01-01T00:00:00.000Z");
+  }
+});
+
 test("snapshots requested identity in returned observations", async () => {
   process.env.OPENROUTER_API_KEY = "test-only-secret";
   const value = await input(provider());
