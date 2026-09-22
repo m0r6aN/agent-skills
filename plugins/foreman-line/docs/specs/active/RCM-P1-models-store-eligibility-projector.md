@@ -426,6 +426,23 @@ The builder treats these rulings as binding:
 - **OQ-10:** local typecheck works, so native `test`, `typecheck`, and `lint` are
   all mandatory. A toolchain failure is a stop-and-report, not a waiver.
 
+**Step-0 amendment A1 (2026-09-22).** The builder's Step-0 flags exposed two
+unnamed contract details. They are fixed as follows:
+
+- The 12-code pipeline tuple is exported as `SNAPSHOT_REFUSAL_CODES`, next to
+  `IDENTITY_REFUSAL_CODES`.
+- `ProjectionResult` failure levels: `TIME_INVALID_REFUSED` caused by
+  `evaluationTimeUtc` is `level: 'request'`. `TIME_INVALID_REFUSED` caused by a
+  provider `checkedAtUtc`, and `SOURCE_TIME_UNKNOWN_REFUSED`, `FUTURE_REFUSED`,
+  and `STALE_REFUSED`, are `level: 'snapshot'`. `AUTHORITY_*` codes are
+  `level: 'authority'`. `REQUEST_INVALID_REFUSED` is `level: 'request'`. AC14
+  tests assert the level for each.
+- The reader checks `checkedAtUtc` only for type (`string | null`, else
+  `MALFORMED_REFUSED`). The projector checks its ISO format and round-trip
+  (`TIME_INVALID_REFUSED`).
+- `DIGEST_REFUSED` through `DUPLICATE_IDENTITY_REFUSED` come from the reader
+  only. `projectEligibility` never returns them.
+
 ## Session Handoff
 
 The shaper returns this draft path, the base commit, and open questions. No
