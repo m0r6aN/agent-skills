@@ -39,3 +39,39 @@ Amendment A2 was committed alone as `b01b6c7`, before any rework code. The
 rework was dispatched to the builder with a Step-0 gate, a test-count tripwire
 of at least 228 with no deletions, and an instruction to sweep every instance of
 each defect class.
+
+## Second review: `cf4fc2d` (2026-09-22)
+
+**Reviewer:** a second fresh frontier session, independent of the first reviewer
+and the builder, read-only, in a detached worktree.
+
+**Verdict:** REQUEST CHANGES. F1, F3, F6, and F7 were verified closed. F2, F4, and F5
+were not fully closed.
+
+**Coordinator closure check before review:** 335 of 335 tests passed, and typecheck,
+lint, the whitespace check, and both scope searches were green in PowerShell. No
+test was deleted relative to `cf20fd8`. The coordinator probe confirmed that the
+first-round F1, F2, F3, and F5 reproductions now refuse.
+
+**Coordinator reproduction:** R1, where a `null` request throws a destructuring
+error. R2d, where a caller-overridden `identities.map` returns `ok: true` with the
+real digest and provenance alongside forged `openrouter/auto` facts carrying a
+`-1000000` rate. R3, where deeply nested JSON throws `Maximum call stack size
+exceeded`. R5 was not rerun, because the reviewer showed the bypass passing the
+real scanner, `tsc`, and `biome`.
+
+| Finding | Severity | Summary | Disposition |
+|---|---|---|---|
+| R1 | P1 | A hostile or `null` request object throws | Fix: guard the request read under the A2 mapping |
+| R2 | P1 | Caller-owned `map`, species, iterator, or proxy traps run inside the projector, and can forge an `ok: true` result or defeat read-once | Fix: copy by index loop into a local array, and never call caller methods |
+| R3 | P1 | Deep nesting overflows the stack in canonical re-serialization | Fix: every reader step sits inside the `FORMAT_REFUSED` guard |
+| R4 | P1 | `bytes.length` is read twice, once outside a guard | Fix: take a single defensive byte copy and use only that copy |
+| R5 | P1 | The static scan misses dynamic `import()` and `Function` reached via `.constructor` | Fix: ban both, with positive controls. The README must describe the scan as a regression tripwire, not a proof |
+| R6 | P2 | The README and code comments make false never-throw, read-once, and purity claims | Fix after the code fixes |
+| R7 | P3 | A lying `length` subclass lets non-canonical bytes pass | Fix: closed by R4's single copy |
+| R8 | P3 | The URL check accepts surrounding whitespace, an uppercase scheme, and `https:host` | Fix: require lowercase `https://`, no whitespace, and no backslash |
+| R9 | P3 | Test gaps for the approved-config empty `?`/`#`/`@` variants and for R1 through R4 | Fix: add the tests |
+| R10 | P3 | `requested` can hold a live caller object when a field is not a string | Accept as documented. The contract permits echoing caller input, and refusals carry no catalog values |
+
+Rework round two was dispatched with a Step-0 gate and a test-count tripwire of at
+least 335, with no deletions.
