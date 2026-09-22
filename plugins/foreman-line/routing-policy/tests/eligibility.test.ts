@@ -70,12 +70,20 @@ function project(overrides: {
   evaluationTimeUtc?: unknown
   identities?: unknown
 }): ProjectionResult {
+  // Every field below uses `key in overrides`, never `??`: a test that
+  // deliberately passes null/undefined for one of these (F1's snapshot
+  // tests, F7's approvedConfig tests) must have that exact value reach
+  // projectEligibility, not silently fall back to the default.
   return projectEligibility({
-    snapshot: overrides.snapshot ?? baseSnapshot,
+    snapshot: 'snapshot' in overrides ? (overrides.snapshot as CatalogSnapshot) : baseSnapshot,
     approvedConfig:
       'approvedConfig' in overrides ? overrides.approvedConfig : DEFAULT_APPROVED_CONFIG,
-    evaluationTimeUtc: overrides.evaluationTimeUtc ?? FRESH_EVAL_TIME,
-    identities: overrides.identities ?? [{ provider: 'openai', id: 'gpt-4o-mini' }],
+    evaluationTimeUtc:
+      'evaluationTimeUtc' in overrides ? overrides.evaluationTimeUtc : FRESH_EVAL_TIME,
+    identities:
+      'identities' in overrides
+        ? overrides.identities
+        : [{ provider: 'openai', id: 'gpt-4o-mini' }],
   })
 }
 
@@ -87,6 +95,72 @@ function singleResult(result: ProjectionResult): IdentityResult {
   assert.ok(first)
   return first
 }
+
+// ---------------------------------------------------------------------------
+// A2 / F1 — reader-issued snapshot only, checked before anything else
+// ---------------------------------------------------------------------------
+
+test('F1: a forged plain object with the real snapshot shape refuses SNAPSHOT_UNVERIFIED_REFUSED', () => {
+  const forged = { ...baseSnapshot }
+  const result = project({ snapshot: forged })
+  assert.deepEqual(result, { ok: false, level: 'snapshot', code: 'SNAPSHOT_UNVERIFIED_REFUSED' })
+})
+
+test('F1: Object.create(realSnapshot) refuses SNAPSHOT_UNVERIFIED_REFUSED', () => {
+  const derived = Object.create(baseSnapshot)
+  const result = project({ snapshot: derived })
+  assert.deepEqual(result, { ok: false, level: 'snapshot', code: 'SNAPSHOT_UNVERIFIED_REFUSED' })
+})
+
+test('F1: a Proxy of a real snapshot refuses SNAPSHOT_UNVERIFIED_REFUSED', () => {
+  const proxied = new Proxy(baseSnapshot, {})
+  const result = project({ snapshot: proxied })
+  assert.deepEqual(result, { ok: false, level: 'snapshot', code: 'SNAPSHOT_UNVERIFIED_REFUSED' })
+})
+
+test('F1: null or undefined snapshot refuses SNAPSHOT_UNVERIFIED_REFUSED, never throws', () => {
+  // projectEligibility() called directly, not via the project() helper: the
+  // helper's `??` fallback would swallow a deliberate null/undefined snapshot.
+  assert.doesNotThrow(() => {
+    const result = projectEligibility({
+      snapshot: null as unknown as CatalogSnapshot,
+      approvedConfig: DEFAULT_APPROVED_CONFIG,
+      evaluationTimeUtc: FRESH_EVAL_TIME,
+      identities: [{ provider: 'openai', id: 'gpt-4o-mini' }],
+    })
+    assert.deepEqual(result, { ok: false, level: 'snapshot', code: 'SNAPSHOT_UNVERIFIED_REFUSED' })
+  })
+  assert.doesNotThrow(() => {
+    const result = projectEligibility({
+      snapshot: undefined as unknown as CatalogSnapshot,
+      approvedConfig: DEFAULT_APPROVED_CONFIG,
+      evaluationTimeUtc: FRESH_EVAL_TIME,
+      identities: [{ provider: 'openai', id: 'gpt-4o-mini' }],
+    })
+    assert.deepEqual(result, { ok: false, level: 'snapshot', code: 'SNAPSHOT_UNVERIFIED_REFUSED' })
+  })
+})
+
+test('F1: an empty object {} as snapshot refuses SNAPSHOT_UNVERIFIED_REFUSED, never throws', () => {
+  assert.doesNotThrow(() => {
+    const result = project({ snapshot: {} as unknown as CatalogSnapshot })
+    assert.deepEqual(result, { ok: false, level: 'snapshot', code: 'SNAPSHOT_UNVERIFIED_REFUSED' })
+  })
+})
+
+test('F1: a real snapshot post-read-mutated cannot yield different facts, because it is frozen', () => {
+  const target = baseSnapshot.models[0]
+  assert.ok(target)
+  const originalContextWindow = target.contextWindow
+  assert.throws(() => {
+    // @ts-expect-error intentional write to a readonly, frozen field
+    target.contextWindow = -1
+  }, TypeError)
+  assert.equal(target.contextWindow, originalContextWindow)
+  // A genuine, unmutated, reader-issued snapshot still projects normally.
+  const result = project({ identities: [{ provider: target.provider, id: target.id }] })
+  assert.equal(result.ok, true)
+})
 
 // ---------------------------------------------------------------------------
 // AC5 — Time inputs
@@ -221,6 +295,26 @@ test('AC7: an approvedConfig baseUrl carrying userinfo refuses AUTHORITY_INVALID
   assert.deepEqual(result, { ok: false, level: 'authority', code: 'AUTHORITY_INVALID_REFUSED' })
 })
 
+test('AC7: an approvedConfig baseUrl carrying a query refuses AUTHORITY_INVALID_REFUSED (F8)', () => {
+  const result = project({
+    approvedConfig: {
+      authorityRef: 'x',
+      endpoints: [{ provider: 'openrouter', baseUrl: 'https://openrouter.ai/api/v1?x=1' }],
+    },
+  })
+  assert.deepEqual(result, { ok: false, level: 'authority', code: 'AUTHORITY_INVALID_REFUSED' })
+})
+
+test('AC7: an approvedConfig baseUrl carrying a fragment refuses AUTHORITY_INVALID_REFUSED (F8)', () => {
+  const result = project({
+    approvedConfig: {
+      authorityRef: 'x',
+      endpoints: [{ provider: 'openrouter', baseUrl: 'https://openrouter.ai/api/v1#frag' }],
+    },
+  })
+  assert.deepEqual(result, { ok: false, level: 'authority', code: 'AUTHORITY_INVALID_REFUSED' })
+})
+
 test('AC7: a requested provider absent from approvedConfig refuses identity-level ENDPOINT_AUTHORITY_UNKNOWN_REFUSED', () => {
   const result = project({
     approvedConfig: {
@@ -298,6 +392,31 @@ test('AC8: /api approved against a /api/v1 record refuses ENDPOINT_MISMATCH_REFU
   assert.deepEqual(entry.codes, ['ENDPOINT_MISMATCH_REFUSED'])
 })
 
+test('AC8: a trailing slash on the CATALOG-side baseUrl refuses ENDPOINT_MISMATCH_REFUSED (F8)', () => {
+  const snapshot = mutatedSnapshot((root) => {
+    // openrouter/z-ai/glm-5.3 (fixture index 1) normally matches the approved
+    // openrouter endpoint exactly; give the CATALOG record the trailing slash
+    // this time, not the approved side.
+    rec(arr(root.models)[1]).baseUrl = 'https://openrouter.ai/api/v1/'
+  })
+  const result = project({ snapshot, identities: [{ provider: 'openrouter', id: 'z-ai/glm-5.3' }] })
+  const entry = singleResult(result)
+  assert.equal(entry.outcome, 'refused')
+  if (entry.outcome !== 'refused') throw new Error('unreachable')
+  assert.deepEqual(entry.codes, ['ENDPOINT_MISMATCH_REFUSED'])
+})
+
+test('AC8: a host case change on the CATALOG-side baseUrl refuses ENDPOINT_MISMATCH_REFUSED (F8)', () => {
+  const snapshot = mutatedSnapshot((root) => {
+    rec(arr(root.models)[1]).baseUrl = 'https://OpenRouter.ai/api/v1'
+  })
+  const result = project({ snapshot, identities: [{ provider: 'openrouter', id: 'z-ai/glm-5.3' }] })
+  const entry = singleResult(result)
+  assert.equal(entry.outcome, 'refused')
+  if (entry.outcome !== 'refused') throw new Error('unreachable')
+  assert.deepEqual(entry.codes, ['ENDPOINT_MISMATCH_REFUSED'])
+})
+
 // ---------------------------------------------------------------------------
 // AC9 — Catalog absence and identity
 // ---------------------------------------------------------------------------
@@ -364,6 +483,162 @@ test('AC9: a duplicate-containing request list refuses REQUEST_INVALID_REFUSED',
 })
 
 // ---------------------------------------------------------------------------
+// A2 / F2 — each identity field is read exactly once
+// ---------------------------------------------------------------------------
+
+test('F2: an identity id getter is read exactly once, and requested/facts stay consistent', () => {
+  let readCount = 0
+  const item = {
+    provider: 'openai',
+    get id() {
+      readCount += 1
+      return readCount === 1 ? 'gpt-4o-mini' : 'openrouter/auto'
+    },
+  }
+  const result = project({ identities: [item] })
+  assert.equal(readCount, 1, 'id getter must be read exactly once')
+  const entry = singleResult(result)
+  assert.equal(entry.requested.id, 'gpt-4o-mini')
+  assert.equal(entry.outcome, 'facts')
+  if (entry.outcome !== 'facts') throw new Error('unreachable')
+  assert.equal(entry.facts.id, 'gpt-4o-mini')
+})
+
+test('F2: an identity provider getter is read exactly once', () => {
+  let readCount = 0
+  const item = {
+    get provider() {
+      readCount += 1
+      return readCount === 1 ? 'openai' : 'openrouter'
+    },
+    id: 'gpt-4o-mini',
+  }
+  const result = project({ identities: [item] })
+  assert.equal(readCount, 1, 'provider getter must be read exactly once')
+  const entry = singleResult(result)
+  assert.equal(entry.requested.provider, 'openai')
+})
+
+test('F2: a flipping getter cannot desynchronize the duplicate check from evaluation', () => {
+  let readCount = 0
+  const flipping = {
+    provider: 'openai',
+    get id() {
+      readCount += 1
+      return readCount <= 1 ? 'zzz' : 'gpt-4o-mini'
+    },
+  }
+  const result = project({
+    identities: [{ provider: 'openai', id: 'gpt-4o-mini' }, flipping],
+  })
+  // Read exactly once (during extraction), so it is evaluated as "zzz"
+  // throughout: never falsely collides with the first identity in the
+  // duplicate check, and never diverges between the check and the result.
+  assert.equal(readCount, 1)
+  assert.equal(result.ok, true)
+  if (!result.ok) throw new Error('unreachable')
+  assert.deepEqual(
+    result.results.map((r) => [r.requested.id, r.outcome]),
+    [
+      ['gpt-4o-mini', 'facts'],
+      ['zzz', 'refused'],
+    ],
+  )
+})
+
+// ---------------------------------------------------------------------------
+// A2 / F5 — never throw on hostile approvedConfig/identities input
+// ---------------------------------------------------------------------------
+
+test('F5: an identity getter that throws refuses REQUEST_INVALID_REFUSED, never throws', () => {
+  const hostile = {
+    provider: 'openai',
+    get id() {
+      throw new Error('hostile id getter')
+    },
+  }
+  assert.doesNotThrow(() => {
+    const result = project({ identities: [hostile] })
+    assert.deepEqual(result, { ok: false, level: 'request', code: 'REQUEST_INVALID_REFUSED' })
+  })
+})
+
+test('F5: a Proxy of identities with a throwing length getter refuses REQUEST_INVALID_REFUSED, never throws', () => {
+  const real = [{ provider: 'openai', id: 'gpt-4o-mini' }]
+  const hostile = new Proxy(real, {
+    get(target, prop, receiver) {
+      if (prop === 'length') throw new Error('hostile length getter')
+      return Reflect.get(target, prop, receiver)
+    },
+  })
+  assert.doesNotThrow(() => {
+    const result = project({ identities: hostile })
+    assert.deepEqual(result, { ok: false, level: 'request', code: 'REQUEST_INVALID_REFUSED' })
+  })
+})
+
+test('F5: a throwing approvedConfig.endpoints getter refuses AUTHORITY_INVALID_REFUSED, never throws', () => {
+  const hostileConfig = {
+    authorityRef: 'x',
+    get endpoints() {
+      throw new Error('hostile endpoints getter')
+    },
+  }
+  assert.doesNotThrow(() => {
+    const result = project({ approvedConfig: hostileConfig })
+    assert.deepEqual(result, { ok: false, level: 'authority', code: 'AUTHORITY_INVALID_REFUSED' })
+  })
+})
+
+test('F5: an approvedConfig Proxy with a throwing ownKeys trap refuses AUTHORITY_INVALID_REFUSED, never throws', () => {
+  const hostileConfig = new Proxy(
+    {
+      authorityRef: 'x',
+      endpoints: [{ provider: 'openai', baseUrl: 'https://api.openai.com/v1' }],
+    },
+    {
+      ownKeys() {
+        throw new Error('hostile ownKeys')
+      },
+    },
+  )
+  assert.doesNotThrow(() => {
+    const result = project({ approvedConfig: hostileConfig })
+    assert.deepEqual(result, { ok: false, level: 'authority', code: 'AUTHORITY_INVALID_REFUSED' })
+  })
+})
+
+// ---------------------------------------------------------------------------
+// A2 / F7 — approvedConfig shape checks use own properties, never inherited
+// ---------------------------------------------------------------------------
+
+test('F7: an approvedConfig with authorityRef/endpoints only inherited (never own) refuses AUTHORITY_INVALID_REFUSED', () => {
+  const proto = {
+    authorityRef: 'from-prototype',
+    endpoints: [{ provider: 'openai', baseUrl: 'https://api.openai.com/v1' }],
+  }
+  const hostile = Object.create(proto)
+  // Two OWN decoy keys make Object.keys().length happen to equal 2 -- the
+  // same count a legitimate {authorityRef, endpoints} object has -- while
+  // authorityRef/endpoints themselves are only inherited, never own.
+  hostile.decoyA = 1
+  hostile.decoyB = 2
+  const result = project({ approvedConfig: hostile })
+  assert.deepEqual(result, { ok: false, level: 'authority', code: 'AUTHORITY_INVALID_REFUSED' })
+})
+
+test('F7: an approvedConfig endpoint with provider/baseUrl only inherited (never own) refuses AUTHORITY_INVALID_REFUSED', () => {
+  const proto = { provider: 'openai', baseUrl: 'https://api.openai.com/v1' }
+  const hostileEndpoint = Object.create(proto)
+  hostileEndpoint.decoyA = 1
+  hostileEndpoint.decoyB = 2
+  const result = project({
+    approvedConfig: { authorityRef: 'x', endpoints: [hostileEndpoint] },
+  })
+  assert.deepEqual(result, { ok: false, level: 'authority', code: 'AUTHORITY_INVALID_REFUSED' })
+})
+
+// ---------------------------------------------------------------------------
 // AC10 — Rejected classes
 // ---------------------------------------------------------------------------
 
@@ -389,6 +664,14 @@ test('AC10: META_ROUTER_REFUSED for id "openrouter/auto-beta" (also SENTINEL_RAT
   assert.equal(entry.outcome, 'refused')
   if (entry.outcome !== 'refused') throw new Error('unreachable')
   assert.deepEqual(entry.codes, ['META_ROUTER_REFUSED', 'SENTINEL_RATE_REFUSED'])
+})
+
+test('AC10: META_ROUTER_REFUSED for a meta-router id requested but absent from the catalog (nvidia/auto) (F8)', () => {
+  const result = project({ identities: [{ provider: 'nvidia', id: 'auto' }] })
+  const entry = singleResult(result)
+  assert.equal(entry.outcome, 'refused')
+  if (entry.outcome !== 'refused') throw new Error('unreachable')
+  assert.deepEqual(entry.codes, ['META_ROUTER_REFUSED', 'MISSING_MODEL_REFUSED'])
 })
 
 test('AC10: VARIANT_REFUSED for a :free id', () => {
@@ -737,6 +1020,12 @@ test('AC13: provenance carries digest, sourceRef, source/evaluation time, ageMs,
 
 test('AC14: every whole-projection refusal carries its declared level and no results array', () => {
   const cases: { name: string; result: ProjectionResult; level: string; code: string }[] = [
+    {
+      name: 'snapshot unverified (A2 / F1)',
+      result: project({ snapshot: { ...baseSnapshot } }),
+      level: 'snapshot',
+      code: 'SNAPSHOT_UNVERIFIED_REFUSED',
+    },
     {
       name: 'evaluationTimeUtc malformed',
       result: project({ evaluationTimeUtc: 'not-a-time' }),

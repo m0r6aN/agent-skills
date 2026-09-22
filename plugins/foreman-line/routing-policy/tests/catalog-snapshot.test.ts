@@ -8,7 +8,7 @@ import { readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { test } from 'node:test'
 import { fileURLToPath } from 'node:url'
-import { readCatalogSnapshot } from '../src/catalog-snapshot.js'
+import { isReaderIssuedSnapshot, readCatalogSnapshot } from '../src/catalog-snapshot.js'
 
 const here = dirname(fileURLToPath(import.meta.url))
 const fixturePath = join(here, 'fixtures', 'catalog-snapshot', 'baseline.v1.json')
@@ -102,6 +102,46 @@ test('AC1: a null expected digest refuses with DIGEST_REFUSED', () => {
 test('AC1: an undefined expected digest refuses with DIGEST_REFUSED', () => {
   const result = readCatalogSnapshot(fixtureBytes, undefined)
   assert.deepEqual(result, { ok: false, code: 'DIGEST_REFUSED' })
+})
+
+// ---------------------------------------------------------------------------
+// A2 / F5 — never throw on hostile bytes
+// ---------------------------------------------------------------------------
+
+test('F5: null bytes refuse with FORMAT_REFUSED, never throw', () => {
+  assert.doesNotThrow(() => {
+    // biome-ignore lint/suspicious/noExplicitAny: deliberately hostile input for the never-throw probe
+    const result = readCatalogSnapshot(null as any, fixtureDigest)
+    assert.deepEqual(result, { ok: false, code: 'FORMAT_REFUSED' })
+  })
+})
+
+test('F5: undefined bytes refuse with FORMAT_REFUSED, never throw', () => {
+  assert.doesNotThrow(() => {
+    // biome-ignore lint/suspicious/noExplicitAny: deliberately hostile input for the never-throw probe
+    const result = readCatalogSnapshot(undefined as any, fixtureDigest)
+    assert.deepEqual(result, { ok: false, code: 'FORMAT_REFUSED' })
+  })
+})
+
+test('F5: a non-Uint8Array bytes value (plain object) refuses with FORMAT_REFUSED, never throws', () => {
+  assert.doesNotThrow(() => {
+    // biome-ignore lint/suspicious/noExplicitAny: deliberately hostile input for the never-throw probe
+    const result = readCatalogSnapshot({ length: 3, 0: 1, 1: 2, 2: 3 } as any, fixtureDigest)
+    assert.deepEqual(result, { ok: false, code: 'FORMAT_REFUSED' })
+  })
+})
+
+test('F5: a Proxy with a throwing getPrototypeOf trap refuses with FORMAT_REFUSED, never throws', () => {
+  const hostile = new Proxy(fixtureBytes, {
+    getPrototypeOf() {
+      throw new Error('hostile getPrototypeOf')
+    },
+  })
+  assert.doesNotThrow(() => {
+    const result = readCatalogSnapshot(hostile, fixtureDigest)
+    assert.deepEqual(result, { ok: false, code: 'FORMAT_REFUSED' })
+  })
 })
 
 // ---------------------------------------------------------------------------
@@ -326,6 +366,36 @@ const malformedCases: { name: string; mutate: (root: JsonRecord) => void }[] = [
     },
   },
   {
+    name: 'model: a baseUrl carrying a bare empty query (?) refuses (A2 / F6)',
+    mutate: (root) => {
+      rec(arr(root.models)[0]).baseUrl = 'https://openrouter.ai/api/v1?'
+    },
+  },
+  {
+    name: 'model: a baseUrl carrying a bare empty fragment (#) refuses (A2 / F6)',
+    mutate: (root) => {
+      rec(arr(root.models)[0]).baseUrl = 'https://openrouter.ai/api/v1#'
+    },
+  },
+  {
+    name: 'model: a baseUrl carrying a bare empty userinfo (@) refuses (A2 / F6)',
+    mutate: (root) => {
+      rec(arr(root.models)[0]).baseUrl = 'https://@openrouter.ai/api/v1'
+    },
+  },
+  {
+    name: 'model: a non-object thinkingLevelMap (array) refuses (AC3 / F8)',
+    mutate: (root) => {
+      rec(arr(root.models)[1]).thinkingLevelMap = ['high', 'low']
+    },
+  },
+  {
+    name: 'model: a non-object thinkingLevelMap (string) refuses (AC3 / F8)',
+    mutate: (root) => {
+      rec(arr(root.models)[1]).thinkingLevelMap = 'declared'
+    },
+  },
+  {
     name: 'cost: an unknown extra field refuses',
     mutate: (root) => {
       rec(rec(arr(root.models)[0]).cost).extra = 1
@@ -403,6 +473,88 @@ test('AC4: the same id under two different providers is legal (nvidia/openrouter
 })
 
 // ---------------------------------------------------------------------------
+// A2 / F1 — reader-issued snapshot registry
+// ---------------------------------------------------------------------------
+
+test('F1: isReaderIssuedSnapshot is true for a snapshot this reader actually returned', () => {
+  const result = readCatalogSnapshot(fixtureBytes, fixtureDigest)
+  assert.equal(result.ok, true)
+  if (!result.ok) throw new Error('unreachable')
+  assert.equal(isReaderIssuedSnapshot(result.snapshot), true)
+})
+
+test('F1: isReaderIssuedSnapshot is false for a forged plain object with the same shape', () => {
+  const result = readCatalogSnapshot(fixtureBytes, fixtureDigest)
+  assert.equal(result.ok, true)
+  if (!result.ok) throw new Error('unreachable')
+  const forged = { ...result.snapshot }
+  assert.equal(isReaderIssuedSnapshot(forged), false)
+})
+
+test('F1: isReaderIssuedSnapshot is false for Object.create(realSnapshot)', () => {
+  const result = readCatalogSnapshot(fixtureBytes, fixtureDigest)
+  assert.equal(result.ok, true)
+  if (!result.ok) throw new Error('unreachable')
+  const derived = Object.create(result.snapshot)
+  assert.equal(isReaderIssuedSnapshot(derived), false)
+})
+
+test('F1: isReaderIssuedSnapshot is false for a Proxy of a real snapshot', () => {
+  const result = readCatalogSnapshot(fixtureBytes, fixtureDigest)
+  assert.equal(result.ok, true)
+  if (!result.ok) throw new Error('unreachable')
+  const proxied = new Proxy(result.snapshot, {})
+  assert.equal(isReaderIssuedSnapshot(proxied), false)
+})
+
+test('F1: isReaderIssuedSnapshot never throws on null, undefined, or a primitive', () => {
+  assert.equal(isReaderIssuedSnapshot(null), false)
+  assert.equal(isReaderIssuedSnapshot(undefined), false)
+  assert.equal(isReaderIssuedSnapshot('not an object'), false)
+  assert.equal(isReaderIssuedSnapshot(42), false)
+})
+
+test('F1: a real snapshot is deep-frozen; a mutation attempt throws TypeError and leaves it unchanged', () => {
+  const result = readCatalogSnapshot(fixtureBytes, fixtureDigest)
+  assert.equal(result.ok, true)
+  if (!result.ok) throw new Error('unreachable')
+  const firstModel = result.snapshot.models[0]
+  assert.ok(firstModel)
+  const originalContextWindow = firstModel.contextWindow
+  assert.throws(() => {
+    // @ts-expect-error intentional write to a readonly, frozen field
+    firstModel.contextWindow = -1
+  }, TypeError)
+  assert.equal(firstModel.contextWindow, originalContextWindow)
+  assert.throws(() => {
+    // @ts-expect-error intentional write to a readonly, frozen field
+    result.snapshot.sourceRef = 'mutated'
+  }, TypeError)
+})
+
+// ---------------------------------------------------------------------------
+// A2 / F3 — thinking-map keys are kept verbatim, including __proto__
+// ---------------------------------------------------------------------------
+
+test('F3: a thinking-map key literally named __proto__ survives the reader verbatim', () => {
+  const { bytes, digest } = mutated((root) => {
+    // Computed key, not a literal `__proto__:` property definition: the
+    // latter is proto-assignment syntax (Annex B.3.1) and would silently
+    // produce no own property at all, testing nothing.
+    rec(arr(root.models)[1]).thinkingLevelMap = { ['__proto__']: 'HIGH', low: 'low' }
+  })
+  const result = readCatalogSnapshot(bytes, digest)
+  assert.equal(result.ok, true)
+  if (!result.ok) throw new Error('unreachable')
+  const model = result.snapshot.models[1]
+  assert.ok(model?.thinkingLevelMap)
+  assert.equal(Object.hasOwn(model.thinkingLevelMap, '__proto__'), true)
+  // biome-ignore lint/suspicious/noProto: the point of this test is the literal own-property key "__proto__"
+  assert.equal(model.thinkingLevelMap['__proto__'], 'HIGH')
+  assert.deepEqual(Object.keys(model.thinkingLevelMap), ['__proto__', 'low'])
+})
+
+// ---------------------------------------------------------------------------
 // AC15 — Fixture provenance
 // ---------------------------------------------------------------------------
 
@@ -418,33 +570,88 @@ const FACT_FIELDS = [
   'cost',
 ] as const
 
+/**
+ * The explicit P0_DERIVED list (F8 / AC15): every fixture record copied
+ * field-for-field from the committed P0 evidence snapshot. Any fixture
+ * record NOT on this list must instead carry the reserved `fixture-`
+ * provider prefix (Fixture Policy) — checked by the test below this one.
+ */
+const P0_DERIVED: { readonly provider: string; readonly id: string }[] = [
+  { provider: 'openrouter', id: 'nvidia/nemotron-3.5-lightning' },
+  { provider: 'openrouter', id: 'z-ai/glm-5.3' },
+  { provider: 'nvidia', id: 'z-ai/glm-5.3' },
+  { provider: 'openai', id: 'gpt-4o-mini' },
+  { provider: 'openrouter', id: 'anthropic/claude-opus-5' },
+  { provider: 'openrouter', id: 'anthropic/claude-fable-5.1' },
+  { provider: 'openrouter', id: 'anthropic/claude-sonnet-5' },
+  { provider: 'openrouter', id: 'anthropic/claude-haiku-4.5' },
+  { provider: 'openrouter', id: 'auto' },
+  { provider: 'openrouter', id: 'openrouter/auto' },
+  { provider: 'openrouter', id: 'openrouter/auto-beta' },
+  { provider: 'openrouter', id: 'nvidia/nemotron-3.5-lightning:free' },
+  { provider: 'openrouter', id: 'anthropic/claude-fable-5:batch' },
+  { provider: 'opencode-go', id: 'deepseek-v4.1-flash' },
+  { provider: 'opencode', id: 'glm-5.1' },
+]
+
 test('AC15: the fixture reads successfully under its own closed shape and digest', () => {
   const result = readCatalogSnapshot(fixtureBytes, fixtureDigest)
   assert.equal(result.ok, true)
 })
 
-test('AC15: every fixture record deep-equals its matching P0 record on the ten fact fields', () => {
+test('AC15: every P0_DERIVED fixture record deep-equals its matching P0 record on the ten fact fields', () => {
   const p0 = JSON.parse(readFileSync(p0EvidencePath, 'utf8')) as { models: JsonRecord[] }
   const fixture = JSON.parse(fixtureText) as { models: JsonRecord[] }
 
-  assert.ok(fixture.models.length > 0)
-  for (const fixtureModel of fixture.models) {
-    const p0Model = p0.models.find(
-      (m) => m.provider === fixtureModel.provider && m.id === fixtureModel.id,
+  assert.ok(P0_DERIVED.length > 0)
+  for (const identity of P0_DERIVED) {
+    const fixtureModel = fixture.models.find(
+      (m) => m.provider === identity.provider && m.id === identity.id,
     )
     assert.ok(
-      p0Model,
-      `no matching P0 record for ${String(fixtureModel.provider)}/${String(fixtureModel.id)}`,
+      fixtureModel,
+      `P0_DERIVED entry missing from fixture: ${identity.provider}/${identity.id}`,
     )
+    const p0Model = p0.models.find((m) => m.provider === identity.provider && m.id === identity.id)
+    assert.ok(p0Model, `no matching P0 record for ${identity.provider}/${identity.id}`)
     for (const field of FACT_FIELDS) {
       assert.deepEqual(
-        fixtureModel[field],
+        rec(fixtureModel)[field],
         rec(p0Model)[field],
-        `field '${field}' differs for ${String(fixtureModel.provider)}/${String(fixtureModel.id)}`,
+        `field '${field}' differs for ${identity.provider}/${identity.id}`,
       )
     }
     // thinkingLevelMap is optional; present-or-absent must also match P0.
-    assert.deepEqual(fixtureModel.thinkingLevelMap, rec(p0Model).thinkingLevelMap)
+    assert.deepEqual(rec(fixtureModel).thinkingLevelMap, rec(p0Model).thinkingLevelMap)
+  }
+})
+
+test('AC15: every fixture record is either on P0_DERIVED or uses the reserved fixture- provider prefix', () => {
+  const fixture = JSON.parse(fixtureText) as { models: JsonRecord[] }
+  const p0DerivedKeys = new Set(P0_DERIVED.map((i) => `${i.provider}\t${i.id}`))
+  for (const model of fixture.models) {
+    const key = `${String(model.provider)}\t${String(model.id)}`
+    const isP0Derived = p0DerivedKeys.has(key)
+    const usesFixturePrefix =
+      typeof model.provider === 'string' && model.provider.startsWith('fixture-')
+    assert.ok(
+      isP0Derived || usesFixturePrefix,
+      `record ${String(model.provider)}/${String(model.id)} is neither on P0_DERIVED nor fixture--prefixed`,
+    )
+  }
+})
+
+test('AC15: the fixture- prefix rule is actually exercised by at least one hand-built record', () => {
+  const fixture = JSON.parse(fixtureText) as { models: JsonRecord[] }
+  const p0DerivedKeys = new Set(P0_DERIVED.map((i) => `${i.provider}\t${i.id}`))
+  const handBuilt = fixture.models.filter((m) => {
+    const key = `${String(m.provider)}\t${String(m.id)}`
+    return !p0DerivedKeys.has(key)
+  })
+  assert.ok(handBuilt.length > 0, 'expected at least one fixture--prefixed hand-built record')
+  for (const model of handBuilt) {
+    assert.equal(typeof model.provider, 'string')
+    assert.ok((model.provider as string).startsWith('fixture-'))
   }
 })
 
