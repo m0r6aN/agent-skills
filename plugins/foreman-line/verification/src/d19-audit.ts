@@ -392,6 +392,25 @@ const REGISTRY_DATA_LITERAL_COUNT = 8
 const REGISTRY_DATA_LITERAL_DIGEST =
   '2a40a5f4b50ff58a748187d735f5ce22d6af7f50ec078dd6dbcc56a9ba187ed3'
 
+/**
+ * JEV-P1/P2 path values are custody-contract DATA, not filesystem roots.
+ * They are pinned by exact source identity, declaration, direct-array location,
+ * cardinality, and digest; a new or changed value therefore requires an
+ * explicit coordinator amendment instead of silently joining the ruling.
+ */
+const JEV_PATH_DATA_DECLARATIONS: ReadonlyMap<string, string> = new Map([
+  ['jev-decisions/src/replay.ts', 'PATHS'],
+  ['jev-decisions/src/runtime.ts', 'CUSTODY_PATHS'],
+])
+const JEV_PATH_DATA_COUNTS: ReadonlyMap<string, number> = new Map([
+  ['jev-decisions/src/replay.ts', 10],
+  ['jev-decisions/src/runtime.ts', 3],
+])
+const JEV_PATH_DATA_LITERAL_COUNT = 13
+/** SHA-256 of JSON.stringify([...values].sort()) encoded as UTF-8. */
+const JEV_PATH_DATA_LITERAL_DIGEST =
+  '0c6fe241efaa1d50b1cb8df1d37054fb8558090e176d1ef2b8e166e7badae83b'
+
 /** Path-mention characters, checked without a RegExp (scaffold AC-14 bans regex use in src/). */
 function isPathMentionChar(ch: string): boolean {
   return (
@@ -566,6 +585,44 @@ function isRegistryReaderOrContractLiteral(node: Expression, sf: SourceFile): bo
     return false
   }
   return false
+}
+
+/**
+ * Only direct string elements of the two JEV custody-path declarations are
+ * DATA. The declaration identity and direct array shape are part of the pin;
+ * the caller's file identity check supplies the first axis and the digest
+ * reconciliation below supplies the value/cardinality axes.
+ */
+function isJevPathDataLiteral(node: Expression, sf: SourceFile, rel: string): boolean {
+  if (!isStringLiteral(node)) return false
+  const declarationName = JEV_PATH_DATA_DECLARATIONS.get(rel)
+  if (declarationName === undefined) return false
+  const array = node.parent
+  if (array === undefined || !isArrayLiteralExpression(array)) return false
+  const container = array.parent
+  let declaration: Node | undefined
+  if (container !== undefined && isAsExpression(container) && container.expression === array) {
+    declaration = container.parent
+  } else if (container !== undefined && isNewExpression(container)) {
+    declaration = container.parent
+  }
+  if (
+    declaration === undefined ||
+    !isVariableDeclaration(declaration) ||
+    !isIdentifier(declaration.name) ||
+    declaration.name.text !== declarationName
+  ) {
+    return false
+  }
+  const declarationList = declaration.parent
+  if (declarationList === undefined || !isVariableDeclarationList(declarationList)) return false
+  const statement = declarationList.parent
+  return (
+    statement !== undefined &&
+    isVariableStatement(statement) &&
+    statement.parent === sf &&
+    declarationList.getText(sf).startsWith('const ')
+  )
 }
 
 // ─── Result records ──────────────────────────────────────────────────────────
@@ -981,6 +1038,8 @@ interface SweepSink {
   readonly grandfatherInventoryDataValues: string[]
   readonly registryDataSites: Site[]
   readonly registryDataValues: string[]
+  readonly jevPathDataSites: Site[]
+  readonly jevPathDataValues: string[]
   readonly backlogDataSites: Site[]
   readonly suppliedCwdSites: Site[]
   /** A4.1: every swept file (rel path) — pins reconcile only over swept files. */
@@ -1092,6 +1151,11 @@ function sweepFile(
     ) {
       sink.grandfatherInventoryDataSites.push(site(node))
       sink.grandfatherInventoryDataValues.push(value)
+      return
+    }
+    if (isJevPathDataLiteral(node, sf, rel)) {
+      sink.jevPathDataSites.push(site(node))
+      sink.jevPathDataValues.push(value)
       return
     }
     // A7(c)/A7.1: the contract-readers registry's reader/contract/description
@@ -1497,6 +1561,8 @@ function main(argv: readonly string[]): number {
     grandfatherInventoryDataValues: [],
     registryDataSites: [],
     registryDataValues: [],
+    jevPathDataSites: [],
+    jevPathDataValues: [],
     backlogDataSites: [],
     suppliedCwdSites: [],
     sweptFiles: new Set<string>(),
@@ -1673,6 +1739,35 @@ function main(argv: readonly string[]): number {
     }
   }
 
+  const jevPathDataSortedValues = [...sink.jevPathDataValues].sort()
+  const jevPathDataObservedDigest = createHash('sha256')
+    .update(JSON.stringify(jevPathDataSortedValues), 'utf8')
+    .digest('hex')
+  for (const [file, expectedCount] of JEV_PATH_DATA_COUNTS) {
+    if (!sink.sweptFiles.has(file)) {
+      pinMismatches.push(
+        `JEV path DATA declaration: required exact file ${file} is absent from the sweep`,
+      )
+      continue
+    }
+    const observedCount = sink.jevPathDataSites.filter((site) => site.file === file).length
+    if (observedCount !== expectedCount) {
+      pinMismatches.push(
+        `JEV path DATA: ${file} — ${observedCount} pinned literal(s) observed, the pin asserts exactly ${expectedCount}`,
+      )
+    }
+  }
+  if (sink.jevPathDataSites.length !== JEV_PATH_DATA_LITERAL_COUNT) {
+    pinMismatches.push(
+      `JEV path DATA — ${sink.jevPathDataSites.length} pinned literal(s) observed, the pin asserts exactly ${JEV_PATH_DATA_LITERAL_COUNT}`,
+    )
+  }
+  if (jevPathDataObservedDigest !== JEV_PATH_DATA_LITERAL_DIGEST) {
+    digestMismatches.push(
+      `JEV path DATA — expected ${JEV_PATH_DATA_LITERAL_DIGEST}, observed ${jevPathDataObservedDigest}`,
+    )
+  }
+
   const violations = sink.violations
   if (violations.length > 0) {
     console.log(`UNRULED INSTANCES (classes 1-5): ${violations.length} — FAIL`)
@@ -1756,6 +1851,16 @@ function main(argv: readonly string[]): number {
   for (const s of sink.ruledClass3Sites) console.log(`  ${s.file}:${s.line}: ${s.text}`)
   console.log(
     "  dispositions: R2 — the home repo passes its plugin-prefixed specs dir explicitly at the report entry-point call site; and contracts' frozen fixture surface label is DATA, never resolved against a root (STANDING #13 pins).",
+  )
+  console.log(
+    `JEV path DATA (exact declarations + direct array elements): ${sink.jevPathDataSites.length} observed; expected ${JEV_PATH_DATA_LITERAL_COUNT}`,
+  )
+  for (const s of sink.jevPathDataSites) console.log(`  ${s.file}:${s.line}: ${s.text}`)
+  console.log(
+    `  SHA-256(JSON.stringify(sorted values)): expected ${JEV_PATH_DATA_LITERAL_DIGEST}; observed ${jevPathDataObservedDigest}`,
+  )
+  console.log(
+    '  disposition: custody-contract path values are DATA, never resolved against a local root; declaration identity, per-file cardinality, and value digest are pinned.',
   )
   console.log('')
   console.log(

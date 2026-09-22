@@ -22,11 +22,14 @@
 Gate 2, builder rework, deterministic closure, two fresh post-rework adversarial
 reviews, and the bounded human Gate 3 merge are complete. RCM-P0 is accepted only
 as an incomplete evidence handoff; its spec is in `docs/specs/done/` and its four
-evidence files are merged. RCM-P1 remains held because the live-source boundary is
-unresolved and the queue is re-gated on accepted RCM-P0 evidence. The selected
-recovery path is the host-owner sanitized export defined in
-`host-owner-export-request.md`. The bounded Gate 3 grant is explicitly extended to
+evidence files are merged. The bounded Gate 3 grant is explicitly extended to
 refreshes of these same four evidence artifacts under the completed P0 spec only.
+
+**Updated 2026-09-22:** `RCM-P1-released`. Clinton Morgan accepted the P0 evidence
+as design input only, set a 24-hour freshness bound, ruled that endpoint mismatches
+refuse without aliasing, and re-granted Gate 2 for RCM-P1. The full ruling is in
+the charter's "RCM-P0 evidence-boundary ruling" section. RCM-P1 is next in the
+queue. RCM-P2 onward still need a new exact Gate 2 grant.
 
 ## Standing authorizations and limits
 
@@ -119,6 +122,10 @@ dispatch a fresh resume session with the original Step-0 directive before accept
 claim.
 
 ## Current iteration
+
+**2026-09-22:** RCM-P1 is released under the evidence-boundary ruling and Gate 2
+re-grant recorded in the charter. The next step is a fresh RCM-P1 shaping session,
+then coordinator lint. The history below is kept as the record of how P1 was held.
 
 Gate 2 is satisfied for RCM-P0 and RCM-P1. The bounded Gate 3 extension was used only
 for the same four RCM-P0 evidence artifacts: the host-owner export refresh was merged
