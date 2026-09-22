@@ -99,37 +99,61 @@ function hasOwn(obj: object, key: string): boolean {
 }
 
 /**
- * Captured at module load, before any caller code runs (A2 round 2 / R4,
- * R7). A caller cannot make this module's later `instanceof` check or byte
- * copy use a different, tampered `Uint8Array` by reassigning the global
- * `Uint8Array` binding after this module has already loaded.
+ * Byte-gate primitives, all captured at module load before any caller code
+ * runs (A2 round 2 / R4, R7, and the resume correction 3). Reassigning a
+ * global or a prototype method later cannot change what these refer to.
+ *
+ * - `REAL_UINT8ARRAY_CTOR` builds the defensive copy.
+ * - `IS_ARRAY_BUFFER_VIEW` is `ArrayBuffer.isView`, which tests the internal
+ *   `[[ViewedArrayBuffer]]` slot. A Proxy has no such slot, even when it wraps
+ *   a real typed array, and the check runs no trap.
+ * - `typedArrayTagOf` is the `%TypedArray%.prototype[Symbol.toStringTag]`
+ *   getter, bound through the original `call` at load time. It reads the
+ *   internal `[[TypedArrayName]]` slot, returns `undefined` for anything that
+ *   is not a real typed array, and consults no caller-visible property. It
+ *   tells a real `Uint8Array` (or subclass, such as `Buffer`) apart from a
+ *   different typed array whose prototype was swapped to `Uint8Array`'s.
  */
 const REAL_UINT8ARRAY_CTOR = Uint8Array
+const IS_ARRAY_BUFFER_VIEW = ArrayBuffer.isView
+const TYPED_ARRAY_TAG_GETTER = Object.getOwnPropertyDescriptor(
+  Object.getPrototypeOf(Uint8Array.prototype),
+  Symbol.toStringTag,
+)?.get
+const typedArrayTagOf: ((value: unknown) => unknown) | undefined =
+  TYPED_ARRAY_TAG_GETTER === undefined
+    ? undefined
+    : TYPED_ARRAY_TAG_GETTER.call.bind(TYPED_ARRAY_TAG_GETTER)
 
 /**
- * Makes exactly one defensive copy of `bytes` via the module-load-captured
- * `Uint8Array` constructor, or returns `null` for anything that is not a
- * `Uint8Array` (including a subclass instance) or that throws while being
- * copied. Every later step in `readCatalogSnapshot` reads only the returned
+ * Makes exactly one defensive copy of `bytes`, or returns `null` when `bytes`
+ * is not a genuine `Uint8Array` or the copy throws. The caller maps `null` to
+ * `FORMAT_REFUSED`, so this function is the `FORMAT_REFUSED` guard for the
+ * copy. Every later step in `readCatalogSnapshot` reads only the returned
  * copy, never the original `bytes` parameter again.
  *
- * This defends against a hostile `Uint8Array` subclass whose own `length`
- * accessor throws or lies (A2 round 2 / R4, R7): constructing a plain
- * `Uint8Array` from another typed array reads the source's internal length
- * slot directly, the same abstract operation the engine itself uses, never
- * the subclass's overridable `length`/`byteLength`/`buffer` *properties* —
- * so a throwing getter is never invoked, and a lying getter has no effect,
- * because this constructor call never consults it in the first place. The
- * copy this returns is always a genuine, plain `Uint8Array` (verified
- * empirically), never an instance of the caller's subclass, so no later
- * `.length` read in this file can hit an overridden accessor again.
+ * Accepted: a real `Uint8Array` or a real subclass instance, such as `Buffer`,
+ * including one whose own `length` accessor throws or lies. Refused: a Proxy
+ * of any kind (including a Proxy wrapping a real `Uint8Array` or one faking
+ * its prototype), any plain object, and any other typed array or view, even
+ * with its prototype swapped to `Uint8Array.prototype`.
+ *
+ * The gate uses only the two internal-slot checks above. It deliberately
+ * does not use `instanceof`: that consults `getPrototypeOf` (a Proxy trap)
+ * and `Symbol.hasInstance` (which a caller can define on the global
+ * constructor), so it can run caller code. Both slot checks pass only for a
+ * real `Uint8Array`, so the constructor call below takes the typed-array
+ * path. That path reads the source's internal buffer and length slots and
+ * copies element for element with no type conversion. No caller getter, trap,
+ * or iterator runs, and the copy holds exactly the input bytes. The copy is
+ * always a plain `Uint8Array`, never the caller's subclass.
  */
 function makeDefensiveByteCopy(bytes: unknown): Uint8Array | null {
   try {
-    // `instanceof` itself can throw for a Proxy with a hostile
-    // `getPrototypeOf` trap, so it sits inside this same guard.
-    if (!(bytes instanceof REAL_UINT8ARRAY_CTOR)) return null
-    return new REAL_UINT8ARRAY_CTOR(bytes)
+    if (typedArrayTagOf === undefined) return null
+    if (!IS_ARRAY_BUFFER_VIEW(bytes)) return null
+    if (typedArrayTagOf(bytes) !== 'Uint8Array') return null
+    return new REAL_UINT8ARRAY_CTOR(bytes as Uint8Array)
   } catch {
     return null
   }

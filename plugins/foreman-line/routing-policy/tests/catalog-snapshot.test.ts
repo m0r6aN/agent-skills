@@ -212,6 +212,113 @@ test('R4/R7: a lying-length subclass cannot hide a real mismatch either', () => 
 })
 
 // ---------------------------------------------------------------------------
+// Correction 3 (R4/R7 proxy hole): the byte gate checks internal slots that
+// a Proxy cannot fake, so no caller trap runs and only real Uint8Array bytes
+// are copied.
+// ---------------------------------------------------------------------------
+
+/** A handler that counts every trap call, so a test can prove none ran. */
+function countingHandler<T extends object>(
+  counter: { calls: number },
+  overrides: ProxyHandler<T> = {},
+): ProxyHandler<T> {
+  const trapNames = [
+    'get',
+    'has',
+    'ownKeys',
+    'getOwnPropertyDescriptor',
+    'getPrototypeOf',
+    'defineProperty',
+    'set',
+    'deleteProperty',
+    'isExtensible',
+    'preventExtensions',
+    'setPrototypeOf',
+  ] as const
+  const handler: ProxyHandler<T> = {}
+  for (const name of trapNames) {
+    const override = overrides[name] as ((...args: unknown[]) => unknown) | undefined
+    ;(handler as Record<string, unknown>)[name] = (...args: unknown[]) => {
+      counter.calls += 1
+      if (override) return override(...args)
+      return (Reflect[name] as (...a: unknown[]) => unknown)(...args)
+    }
+  }
+  return handler
+}
+
+test('correction 3: a Proxy of a real Uint8Array refuses FORMAT_REFUSED, never throws, and runs no caller trap', () => {
+  const counter = { calls: 0 }
+  const hostile = new Proxy(new Uint8Array(fixtureBytes), countingHandler(counter))
+  assert.doesNotThrow(() => {
+    const result = readCatalogSnapshot(hostile, fixtureDigest)
+    assert.deepEqual(result, { ok: false, code: 'FORMAT_REFUSED' })
+  })
+  assert.equal(counter.calls, 0)
+})
+
+test('correction 3: a plain-object Proxy faking the Uint8Array prototype refuses FORMAT_REFUSED, never throws, and runs no caller trap', () => {
+  const counter = { calls: 0 }
+  const hostile = new Proxy(
+    {},
+    countingHandler<object>(counter, {
+      getPrototypeOf: () => Uint8Array.prototype,
+      get: (_target, key) => {
+        if (key === Symbol.iterator) throw new Error('caller iterator trap')
+        return undefined
+      },
+    }),
+  )
+  assert.doesNotThrow(() => {
+    const result = readCatalogSnapshot(hostile as Uint8Array, fixtureDigest)
+    assert.deepEqual(result, { ok: false, code: 'FORMAT_REFUSED' })
+  })
+  assert.equal(counter.calls, 0)
+})
+
+test('correction 3: a real Float64Array with its prototype swapped to Uint8Array.prototype refuses FORMAT_REFUSED', () => {
+  // Same numeric values as the fixture bytes, so a value-converting copy
+  // would reproduce the fixture exactly and pass the digest. The internal
+  // type tag is still Float64Array, so the gate refuses it.
+  const disguised = new Float64Array(fixtureBytes)
+  Object.setPrototypeOf(disguised, Uint8Array.prototype)
+  assert.equal(disguised instanceof Uint8Array, true)
+  assert.doesNotThrow(() => {
+    const result = readCatalogSnapshot(disguised as unknown as Uint8Array, fixtureDigest)
+    assert.deepEqual(result, { ok: false, code: 'FORMAT_REFUSED' })
+  })
+})
+
+test('correction 3: a caller-defined Uint8Array[Symbol.hasInstance] is never consulted by the byte gate', () => {
+  let hookCalls = 0
+  Object.defineProperty(Uint8Array, Symbol.hasInstance, {
+    configurable: true,
+    value: () => {
+      hookCalls += 1
+      throw new Error('caller hasInstance hook')
+    },
+  })
+  try {
+    assert.doesNotThrow(() => {
+      assert.equal(readCatalogSnapshot(fixtureBytes, fixtureDigest).ok, true)
+      const fake = { length: 3, 0: 1, 1: 2, 2: 3 } as unknown as Uint8Array
+      assert.deepEqual(readCatalogSnapshot(fake, fixtureDigest), {
+        ok: false,
+        code: 'FORMAT_REFUSED',
+      })
+    })
+    assert.equal(hookCalls, 0)
+  } finally {
+    delete (Uint8Array as unknown as Record<symbol, unknown>)[Symbol.hasInstance]
+  }
+})
+
+test('correction 3: a Buffer (a real Uint8Array subclass) still reads successfully', () => {
+  const result = readCatalogSnapshot(Buffer.from(fixtureBytes), fixtureDigest)
+  assert.equal(result.ok, true)
+})
+
+// ---------------------------------------------------------------------------
 // AC2 — Format and canonical bytes
 // ---------------------------------------------------------------------------
 
