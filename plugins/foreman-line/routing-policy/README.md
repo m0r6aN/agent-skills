@@ -258,15 +258,21 @@ P0 recon evidence file at
 deliberate negative control: passed with its own true digest, it refuses with
 `FORMAT_REFUSED`, proving P0 evidence is design input only, never a P1 input.
 
-**`projectEligibility(req)`** takes `req` as `unknown`, not a structured
-object (review amendment A2 round 2 / R1): `req` itself can be `null`,
-`undefined`, a revoked `Proxy`, or an object with a throwing getter on any
-field, so every field is read inside a guard. A non-object `req`, or a throw
-while reading `approvedConfig`/`evaluationTimeUtc`/`identities`, refuses
-`REQUEST_INVALID_REFUSED`; a throw while reading `snapshot` itself refuses
-`SNAPSHOT_UNVERIFIED_REFUSED` — the same code as a `snapshot` that reads
-fine but fails the reader-issued check below, which still runs first, before
-anything else. `projectEligibility` then turns requested `(provider, id)`
+**`projectEligibility(req)`** keeps the contract's declared TypeScript
+type for `req`, but treats it as untrusted at runtime (review amendment A2
+round 2 / R1): `req` can still arrive as `null`, `undefined`, a revoked
+`Proxy`, or an object with a throwing getter on any field. The projector
+copies `req` into an `unknown` local and reads each field exactly once,
+lazily, at the pipeline stage that needs it, each inside its own guard, so
+first-failure-wins order holds. A non-object `req`, or a throw while reading
+`evaluationTimeUtc` or `identities`, refuses `REQUEST_INVALID_REFUSED`. A
+throw while reading `approvedConfig` refuses `AUTHORITY_INVALID_REFUSED`, as
+A2 requires. A throw while reading `snapshot` refuses
+`SNAPSHOT_UNVERIFIED_REFUSED`, the same code as a `snapshot` that reads fine
+but fails the reader-issued check below, which still runs first. The
+approved configuration's `authorityRef` and `endpoints` are each read exactly
+once too, so a getter cannot pass validation and then put a different value
+into provenance. `projectEligibility` then turns requested `(provider, id)`
 identities into `EligibilityFacts` or refusals. Each identity's
 `provider`/`id` is read from the caller's value exactly once, into a plain
 copy that the duplicate check, the evaluation, and the returned `requested`
@@ -294,7 +300,9 @@ character anywhere, or a non-lowercase `https://` prefix, refuses outright
 check). Meta-router ids (`META_ROUTER_IDS`) and any colon-suffixed id
 (`REFUSED_VARIANT_SUFFIXES` names the charter's four; the actual rule is
 default-deny on any colon) always refuse, whether or not the id is present
-in the catalog. A refused identity collects *every* applicable code, in
+in the catalog. These exported lists, and both refusal-code tuples, are
+frozen, and the projector reads the same frozen values, so a caller cannot
+empty `META_ROUTER_IDS` to turn a meta-router into facts. A refused identity collects *every* applicable code, in
 `IDENTITY_REFUSAL_CODES`'s declared order, and never carries facts.
 Whole-projection failures (`SNAPSHOT_REFUSAL_CODES`, spanning both the
 reader's and the projector's codes, with `SNAPSHOT_UNVERIFIED_REFUSED`
@@ -304,12 +312,17 @@ runtime) run first-match-wins in pipeline order and carry a `level` of
 request-level refusal always omits the `results` array.
 
 Both functions are designed to never throw: `null`/`undefined`/non-`Uint8Array`
-bytes (including a `Uint8Array` subclass whose own `length` accessor throws
-or lies — the reader makes exactly one defensive copy via a `Uint8Array`
-constructor reference captured at module load, before any caller code runs,
-which reads the true internal length slot rather than that accessor, review
-amendment A2 round 2 / R4, R7), a pathologically deep input that would
-otherwise overflow the stack in `JSON.stringify` or the shape walk (R3), a
+bytes, a `Proxy` wrapping a real `Uint8Array` or faking its prototype, and
+another typed array disguised with `Uint8Array.prototype` all refuse
+`FORMAT_REFUSED`. The byte gate uses only `ArrayBuffer.isView` and the
+`%TypedArray%.prototype[Symbol.toStringTag]` getter, both captured at module
+load. Both read internal slots, so no caller trap, getter, iterator, or
+`Symbol.hasInstance` hook runs. A real `Uint8Array` or subclass, such as
+`Buffer`, is accepted even when its own `length` accessor throws or lies. The
+reader makes exactly one defensive copy from the internal slots and reads
+only that copy afterwards (review amendment A2 round 2 / R4, R7). Likewise,
+a pathologically deep input that would otherwise overflow the stack in
+`JSON.stringify` or the shape walk (R3), a
 `null`/`{}`/forged/mutated snapshot, `req` itself being hostile (R1), and a
 throwing `Proxy` or getter anywhere in `approvedConfig` or `identities` (R2)
 each resolve to a typed refusal, never an exception. `isValidBaseUrl` and
