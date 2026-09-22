@@ -123,9 +123,30 @@ claim.
 
 ## Current iteration
 
-**2026-09-22:** RCM-P1 is released under the evidence-boundary ruling and Gate 2
-re-grant recorded in the charter. The next step is a fresh RCM-P1 shaping session,
-then coordinator lint. The history below is kept as the record of how P1 was held.
+**2026-09-22, loop stopped at Gate 3:** RCM-P1 is built and its verification
+chain is green. The parcel sits on branch `codex/rcm-p1-builder` at `7faa46a`,
+with 399 of 399 tests passing. The spec is
+`docs/specs/active/RCM-P1-models-store-eligibility-projector.md`, with amendments
+A1–A3. Four fresh reviews and three rework rounds are recorded in
+`rcm-p1-review-triage.md`. The final review returned APPROVE WITH NITS with no
+blocker. Nothing has been merged, pushed, or opened as a pull request.
+
+The following are human decisions:
+
+1. Gate 3: whether to merge RCM-P1.
+2. Whether the charter's HAWF/INDEX ownership sentence blocks that merge. The
+   coordinator let building and review proceed because P1 is an unwired library
+   that creates no routing or ownership authority.
+3. The integration route: a direct merge or a pull request.
+
+After Gate 3, Stage F moves the spec to `docs/specs/done/`, cleans up the P1
+worktrees and branches if authorized, and appends lessons. RCM-P2 onward needs a
+new exact Gate 2 grant. Open disposition: RCM-P5 shaping must consider a
+per-string length cap (review finding S1).
+
+**2026-09-22, earlier:** RCM-P1 was released under the evidence-boundary ruling
+and Gate 2 re-grant recorded in the charter. The history below is kept as the
+record of how P1 was held.
 
 Gate 2 is satisfied for RCM-P0 and RCM-P1. The bounded Gate 3 extension was used only
 for the same four RCM-P0 evidence artifacts: the host-owner export refresh was merged
