@@ -151,8 +151,7 @@ test("returns a detached advisory snapshot", () => {
 });
 
 test("does not copy provider or authority fields into the advisory", () => {
-  const response = validatedResponse() as ValidatedResponse & Record<string, unknown>;
-  response.command = "must-not-cross";
+  const response = validatedResponse();
   const advisory = createSupportTriageAdvisory(response);
 
   assert.equal("served_identity" in advisory, false);
@@ -207,6 +206,20 @@ test("does not produce an advisory when an invalid validated cast lacks an exact
 
   assert.throws(
     () => createSupportTriageAdvisory(invalid),
-    new TypeError("ValidatedResponse answer contract violated"),
+    new TypeError("ValidatedResponse contract violated"),
   );
+});
+
+test("rejects forged answer values and response identifiers at the consumer boundary", () => {
+  const invalidValues = structuredClone(validatedResponse()) as ValidatedResponse;
+  (invalidValues.answers[0] as Record<string, unknown>).value = "urgent";
+  assert.throws(() => createSupportTriageAdvisory(invalidValues), new TypeError("ValidatedResponse contract violated"));
+
+  const invalidDepartment = structuredClone(validatedResponse()) as ValidatedResponse;
+  (invalidDepartment.answers[1] as Record<string, unknown>).value = "operations";
+  assert.throws(() => createSupportTriageAdvisory(invalidDepartment), new TypeError("ValidatedResponse contract violated"));
+
+  const invalidId = structuredClone(validatedResponse()) as ValidatedResponse;
+  (invalidId as ResponseEnvelope & { response_id: string }).response_id = "not allowed\n";
+  assert.throws(() => createSupportTriageAdvisory(invalidId), new TypeError("ValidatedResponse contract violated"));
 });
