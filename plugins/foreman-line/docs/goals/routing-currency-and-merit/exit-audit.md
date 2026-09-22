@@ -32,7 +32,7 @@ loop directive. It is not a substitute for parcel verification or human gates.
 | Parcel | State | Evidence |
 |---|---|---|
 | RCM-P0 | Reviewed as incomplete evidence handoff; bounded refresh merge complete | `rcm-p0-review-triage.md`; merges `794514a`, `37d9ecb`; spec in `docs/specs/done/` |
-| RCM-P1 | Not dispatched | P0 evidence/dependency hold in `loop-directive.md` |
+| RCM-P1 | Built; chain green; awaiting human Gate 3 (2026-09-22) | `rcm-p1-review-triage.md`; branch `codex/rcm-p1-builder` at `7faa46a`; 399/399 tests; spec in `docs/specs/active/` |
 | RCM-P2–P10 | Not dispatched | Strict queue and new Gate 2 requirement |
 
 ## Active blockers
