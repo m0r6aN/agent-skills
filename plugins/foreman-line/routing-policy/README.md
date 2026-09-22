@@ -291,7 +291,9 @@ facts with a sentinel-negative rate, alongside the real digest and
 provenance). Freshness is exactly 24 hours (`CATALOG_FRESHNESS_MAX_AGE_MS`)
 against the oldest `checkedAtUtc` across every provider in the snapshot, not
 only the requested ones; any single `null` provider time refuses the whole
-projection rather than being skipped. Endpoints join by exact, case-sensitive
+projection rather than being skipped. Every provider time, not only the
+oldest, must be no later than the evaluation time: any later one refuses
+`FUTURE_REFUSED` (review amendment A3 / N3). Endpoints join by exact, case-sensitive
 string equality — no trailing-slash trimming, host case-folding, or `/api`
 vs. `/api/v1` aliasing, and a `baseUrl` containing `?`, `#`, or `@` anywhere
 (even empty, e.g. `.../v1?`), whitespace, a backslash, or a control
@@ -302,7 +304,8 @@ check). Meta-router ids (`META_ROUTER_IDS`) and any colon-suffixed id
 default-deny on any colon) always refuse, whether or not the id is present
 in the catalog. These exported lists, and both refusal-code tuples, are
 frozen, and the projector reads the same frozen values, so a caller cannot
-empty `META_ROUTER_IDS` to turn a meta-router into facts. A refused identity collects *every* applicable code, in
+empty `META_ROUTER_IDS` to turn a meta-router into facts. A refused identity
+collects *every* applicable code, in
 `IDENTITY_REFUSAL_CODES`'s declared order, and never carries facts.
 Whole-projection failures (`SNAPSHOT_REFUSAL_CODES`, spanning both the
 reader's and the projector's codes, with `SNAPSHOT_UNVERIFIED_REFUSED`
@@ -311,7 +314,31 @@ runtime) run first-match-wins in pipeline order and carry a `level` of
 `'snapshot' | 'authority' | 'request'`; a snapshot, authority, or
 request-level refusal always omits the `results` array.
 
-Both functions are designed to never throw: `null`/`undefined`/non-`Uint8Array`
+Request size is capped (review amendment A3 / N1). `identities` may hold at
+most `MAX_REQUESTED_IDENTITIES` (256) entries, or the projection refuses
+`REQUEST_INVALID_REFUSED`. `approvedConfig.endpoints` may hold at most
+`MAX_APPROVED_ENDPOINTS` (256) entries, or it refuses
+`AUTHORITY_INVALID_REFUSED`. Each cap is checked on the single length read,
+before any allocation or iteration, and a length that is not a non-negative
+safe integer refuses the same way. A sparse array of length 2^32-1 or a
+Proxy reporting a huge length is therefore refused without reading a single
+element.
+
+The exported contract constants are `CATALOG_FRESHNESS_MAX_AGE_MS`,
+`MAX_REQUESTED_IDENTITIES`, `MAX_APPROVED_ENDPOINTS`, `META_ROUTER_IDS`,
+`REFUSED_VARIANT_SUFFIXES`, `RATE_UNIT`, `SNAPSHOT_REFUSAL_CODES`, and
+`IDENTITY_REFUSAL_CODES`. The arrays are frozen, and the primitives are ESM
+bindings that an importer cannot reassign.
+
+**Threat model (review amendment A3).** Callers are same-process code. The
+refusal guarantees cover hostile values passed as arguments: malformed data,
+proxies, throwing or flipping getters, and overridden methods on the
+caller's own objects. Tampering with shared globals or built-in prototypes
+in the same realm is out of scope, and so is resource exhaustion below the
+caps above.
+
+Within that threat model, both functions return a typed refusal for every
+hostile argument value and never throw: `null`/`undefined`/non-`Uint8Array`
 bytes, a `Proxy` wrapping a real `Uint8Array` or faking its prototype, and
 another typed array disguised with `Uint8Array.prototype` all refuse
 `FORMAT_REFUSED`. The byte gate uses only `ArrayBuffer.isView` and the
