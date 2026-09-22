@@ -272,6 +272,17 @@ function readClock(clock: Clock): string | null {
   }
 }
 
+function deepFreeze<T>(value: T): T {
+  if (typeof value === "object" && value !== null && !Object.isFrozen(value)) {
+    Object.freeze(value);
+    for (const child of Object.values(value as Record<string, unknown>)) deepFreeze(child);
+  }
+  return value;
+}
+
+deepFreeze(REQUESTED_IDENTITY);
+deepFreeze(QUESTIONS);
+
 async function terminal(port: LeasePort, lease: LeaseRecord): Promise<boolean> {
   try { await port.terminal(lease); return true; } catch { return false; }
 }
