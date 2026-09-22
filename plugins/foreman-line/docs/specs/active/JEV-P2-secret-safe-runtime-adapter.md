@@ -166,7 +166,7 @@ test suite. No spend beyond the exact one-call/$0.01 bound is authorized.
 
 ## Session handoff
 
-- Starting commit: `c805095` after P2–P5 Gate 2 record
+- Starting commit: `db8853b` after P2–P5 Gate 2 record and P2 export-scope amendment
 - Ending commit: to be recorded after builder and review closure
 - Next action: dispatch the bounded P2 builder in a dedicated worktree
 - Gate 3: pending after implementation, reviews, merge, and local refresh
