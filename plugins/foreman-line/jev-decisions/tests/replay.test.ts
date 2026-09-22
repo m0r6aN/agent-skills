@@ -44,9 +44,16 @@ test("fails closed for response identity, digest, extra-field, and unsafe-reason
   (responseId.response.served_identity as Record<string, unknown>).response_id = "r-002";
   assert.deepEqual(replayFixture(responseId, receipt), { ok: false, status: "refused", reason: "R23" });
 
-  const digest = structuredClone(complete) as CompleteFixture;
+  const digest = structuredClone(complete) as Record<string, unknown>;
   digest.response_digest = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
   assert.deepEqual(replayFixture(digest, receipt), { ok: false, status: "refused", reason: "R17" });
+
+  const forged = structuredClone(complete) as Record<string, unknown>;
+  const forgedDigest = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
+  forged.response_digest = forgedDigest;
+  (forged.manifest_entry as Record<string, unknown>).response_digest = forgedDigest;
+  const forgedReceipt = { ...receipt, response_digest: forgedDigest };
+  assert.deepEqual(replayFixture(forged, forgedReceipt), { ok: false, status: "refused", reason: "R17" });
 
   const extra = { ...hold, extra: true };
   assert.deepEqual(replayFixture(extra, null), { ok: false, status: "refused", reason: "R23" });

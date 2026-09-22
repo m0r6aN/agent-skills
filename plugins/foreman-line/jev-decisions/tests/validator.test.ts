@@ -41,7 +41,7 @@ test("rejects request metadata changes and free-text state", () => {
   assert.deepEqual(validateRequest(unsafe), { ok: false, status: "refused", reason: "R10" });
 
   const reordered = structuredClone(fixture.request) as RequestEnvelope;
-  reordered.questions = [...reordered.questions].reverse() as RequestEnvelope["questions"];
+  (reordered as Record<string, unknown>).questions = [...reordered.questions].reverse() as RequestEnvelope["questions"];
   assert.deepEqual(validateRequest(reordered), { ok: false, status: "refused", reason: "R10" });
 });
 

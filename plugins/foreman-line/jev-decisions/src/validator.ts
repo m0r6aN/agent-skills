@@ -120,7 +120,7 @@ export function validateResponse(request: ValidatedRequest, value: unknown): Val
   if (!exactKeys(value, RESPONSE_KEYS) || value.schema_version !== "jev-decisions/v1" || value.capability !== "openrouter-alpha-decisions" || !equal(value.requested_identity, request.requested_identity)) return failure("R10");
   if (!record(value.served_identity) || !Object.prototype.hasOwnProperty.call(value.served_identity, "model") || !Object.prototype.hasOwnProperty.call(value.served_identity, "response_id") || !Object.prototype.hasOwnProperty.call(value.served_identity, "source")) return failure("R12");
   if (!validateServed(value.served_identity) || !printable(value.response_id) || !RESPONSE_ID.test(value.response_id) || value.response_id === "none" || !timestamp(value.server_timestamp_utc)) return failure("R10");
-  if (value.served_identity.model !== (value.served_identity.model as string) || value.served_identity.response_id !== value.response_id) return failure("R09");
+  if (value.served_identity.response_id !== value.response_id) return failure("R09");
   if (!Array.isArray(value.answers) || value.answers.length !== 3 || !value.answers.every((answer, index) => validateAnswer(answer, index))) return failure("R10");
   return { ok: true, value: value as ResponseEnvelope };
 }
