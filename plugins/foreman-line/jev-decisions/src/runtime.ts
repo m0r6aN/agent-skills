@@ -31,6 +31,7 @@ const CUSTODY_PATHS = new Set([
   "plugins/foreman-line/jev-decisions/tests/fixtures/hold.json",
 ]);
 const REFS = new Set(["main", "codex/jev-p0-contract", "codex/jev-p1-typed-validator-and-fixture-replay"]);
+const LEASE_KEYS = ["lease_id", "run_id", "capability", "decision_schema_version", "request_digest", "state", "claimed_at_utc", "transition_actor"];
 
 type Status = "refused" | "hold";
 type Reason = "R04" | "R05" | "R09" | "R10" | "R11" | "R12" | "R13" | "R14" | "R15" | "R16" | "R17" | "R18" | "R19" | "R20" | "R21" | "R22" | "R23";
@@ -301,7 +302,7 @@ function validateCustody(value: CustodyMetadata): boolean {
 }
 
 function validateLease(value: LeaseRecord, requestDigest: string): boolean {
-  return generated(value.lease_id, "lease") && generated(value.run_id, "run") && value.capability === CAPABILITY && value.decision_schema_version === DECISION_SCHEMA_VERSION && value.request_digest === requestDigest && generated(value.request_digest, "sha") && value.state === "in-flight" && utc(value.claimed_at_utc) && value.transition_actor === "coordinator";
+  return isRecord(value) && exactKeys(value, LEASE_KEYS) && generated(value.lease_id, "lease") && generated(value.run_id, "run") && value.capability === CAPABILITY && value.decision_schema_version === DECISION_SCHEMA_VERSION && value.request_digest === requestDigest && generated(value.request_digest, "sha") && value.state === "in-flight" && utc(value.claimed_at_utc) && value.transition_actor === "coordinator";
 }
 
 function validateBudget(value: BudgetAcknowledgement, input: RuntimeInput, lease: LeaseRecord, requestDigest: string, now: string): Reason | null {

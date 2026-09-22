@@ -17,15 +17,15 @@ const SERVED_KEYS = ["model", "response_id", "source"];
 const ANSWER_KEYS = ["name", "type", "criteria", "value", "confidence"];
 const CHOICE_ANSWER_KEYS = [...ANSWER_KEYS, "distribution"];
 
-export const REQUESTED_IDENTITY: ProviderIdentity = {
+export const REQUESTED_IDENTITY: ProviderIdentity = deepFreeze({
   provider: "openrouter", model: "typesafe/jev-1.13", surface: "alpha-decisions",
-};
+});
 
-export const QUESTIONS = [
+export const QUESTIONS = deepFreeze([
   { name: "is_urgent", type: "noul", instructions: ["support_triage_v1"], criteria: [{ key: "urgent_signal", description: "customer urgency signal" }] },
   { name: "department", type: "choice", instructions: ["support_triage_v1"], criteria: [{ key: "department_signal", description: "support department signal" }], choices: ["billing", "technical", "sales"] },
   { name: "frustration", type: "score", instructions: ["support_triage_v1"], criteria: [{ key: "frustration_signal", description: "customer frustration signal" }], score_label: "frustration_score" },
-] as const;
+] as const);
 
 const TIMESTAMP = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
 const MODEL = /^[A-Za-z0-9][A-Za-z0-9._/-]{0,127}$/;
@@ -33,6 +33,14 @@ const RESPONSE_ID = /^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/;
 
 function record(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function deepFreeze<T>(value: T): T {
+  if (typeof value === "object" && value !== null && !Object.isFrozen(value)) {
+    Object.freeze(value);
+    for (const child of Object.values(value as Record<string, unknown>)) deepFreeze(child);
+  }
+  return value;
 }
 
 function exactKeys(value: Record<string, unknown>, keys: readonly string[]): boolean {
