@@ -153,6 +153,23 @@ is `replayFixture(fixture, manifestReceipt)`. The receipt is supplied as a
 separate closed value and validated offline; the sanitized fixture schema and
 all JEV-P0 artifacts remain unchanged.
 
+## JEV-P1 Gate 3 record
+
+**ACCEPTED 2026-09-21 by Clinton Morgan:** “Explicit approval is granted for
+all remaining steps.” Following merge of PR #41 and local coordinator refresh,
+the bounded JEV-P1 handoff is accepted at merge commit
+`bd9707a1f7ae7052204c5b06fc75977677216232`. This closes JEV-P1 only: the pure
+offline validator, canonical digest implementation, deterministic fixture
+replay, independent manifest-receipt binding, fixtures, and tests. It does not
+grant JEV-P2–P5, live provider execution, spend, credentials, host/Pi action,
+parent-surface mutation, HAWF, Helmholtz, downstream action, or general
+routing.
+
+Closure evidence: PR #41 merged from `codex/jev-p1-validator`; the refreshed
+coordinator branch is `codex/refresh-actions-and-packages` at the same merge
+commit; `npm test` passed with 8 tests; no unrelated dirty workspace files
+were changed.
+
 ## Plan-review Gate 1 reopening
 
 The mandatory fresh plan-level review on 2026-09-21 returned **REQUEST CHANGES**.

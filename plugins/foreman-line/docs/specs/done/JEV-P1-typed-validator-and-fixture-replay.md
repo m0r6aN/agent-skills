@@ -1,7 +1,7 @@
 ---
 ticket: JEV-P1
 title: Jev typed validator and deterministic fixture replay
-status: active
+status: done
 owner: clinton.morgan
 created: 2026-09-21
 updated: 2026-09-21
@@ -10,7 +10,7 @@ superseded_by: null
 risk: standard
 surfaces:
   - plugins/foreman-line/jev-decisions/
-  - plugins/foreman-line/docs/specs/active/JEV-P1-typed-validator-and-fixture-replay.md
+  - plugins/foreman-line/docs/specs/done/JEV-P1-typed-validator-and-fixture-replay.md
   - plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/
 routing_class: implementation/standard
 permission_profile: builder-standard
@@ -242,15 +242,17 @@ are forbidden.
 
 ## Session Handoff
 
-- Starting commit: to be recorded at Gate 2 dispatch
-- Ending commit: to be recorded by builder
-- Files changed: only Allowed Files
-- Commands run: to be recorded by builder
-- Tests passed: to be recorded by coordinator from builder evidence
-- Tests failed: to be recorded
-- Decisions needed: any contract gap becomes a coordinator amendment
-- Blockers: none recorded at dispatch; Gate 3 remains pending after review
-- Next safe action: dispatch the bounded offline builder in a dedicated worktree
+- Starting commit: `6283e292d7dad50d00466073e816988fdfa5856d`
+- Ending commit: `bd9707a1f7ae7052204c5b06fc75977677216232` (merge of PR #41)
+- Files changed: only the JEV-P1 Allowed Files
+- Commands run: `node -v`; `npm test`; `npm run typecheck`; `npm run lint`;
+  scope, whitespace, and credential scans
+- Tests passed: 8 tests; frozen JCS vectors and replay mutation matrix passed
+- Tests failed: native TypeScript compiler unavailable; Node native syntax
+  validation used by the package scripts passed
+- Decisions needed: none; Gate 3 accepted 2026-09-21
+- Blockers: none
+- Next safe action: request a separate exact Gate 2 grant before JEV-P2
 - Do not touch: all Forbidden Files and Effects
 
 ## Stop-and-Report Rule
