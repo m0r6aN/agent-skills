@@ -32,6 +32,7 @@ const CUSTODY_PATHS = new Set([
 ]);
 const REFS = new Set(["main", "codex/jev-p0-contract", "codex/jev-p1-typed-validator-and-fixture-replay"]);
 const LEASE_KEYS = ["lease_id", "run_id", "capability", "decision_schema_version", "request_digest", "state", "claimed_at_utc", "transition_actor"];
+const CUSTODY_KEYS = ["source_ref", "repository", "ref", "path", "commit", "tree"];
 
 type Status = "refused" | "hold";
 type Reason = "R04" | "R05" | "R09" | "R10" | "R11" | "R12" | "R13" | "R14" | "R15" | "R16" | "R17" | "R18" | "R19" | "R20" | "R21" | "R22" | "R23";
@@ -288,7 +289,7 @@ async function closedFailure(input: RuntimeInput, lease: LeaseRecord, status: St
 function generic(input: RuntimeInput, status: Status, reason: Reason, recordedAt: string): RuntimeResult {
   const safeRecordedAt = utc(recordedAt) ? recordedAt : "1970-01-01T00:00:00.000Z";
   const retention = new Date(Date.parse(safeRecordedAt) + RETENTION_MS).toISOString();
-  const sourceRef = generated(input.custody.source_ref, "source") ? input.custody.source_ref : "src-00000000000000000000000000000000";
+  const sourceRef = isRecord(input.custody) && generated(input.custody.source_ref, "source") ? input.custody.source_ref : "src-00000000000000000000000000000000";
   if (status === "hold") return { ok: false, record: { evidence_class: "hold-record", status, reason_code: `evidence:${reason}`, disposition: "pending-coordinator", source_kind: "coordinator-review", source_ref: sourceRef, recorded_at_utc: safeRecordedAt, retention_until_utc: retention } };
   return { ok: false, record: { evidence_class: "refusal-record", status, reason_code: `evidence:${reason}`, source_kind: "coordinator-review", source_ref: sourceRef, recorded_at_utc: safeRecordedAt, retention_until_utc: retention } };
 }
@@ -297,8 +298,8 @@ function buildRequest(state: SupportTriageState): RequestEnvelope {
   return { schema_version: DECISION_SCHEMA_VERSION, capability: CAPABILITY, requested_identity: REQUESTED_IDENTITY, state, questions: QUESTIONS };
 }
 
-function validateCustody(value: CustodyMetadata): boolean {
-  return generated(value.source_ref, "source") && value.repository === "agent-skills" && REFS.has(value.ref) && CUSTODY_PATHS.has(value.path) && generated(value.commit, "commit") && generated(value.tree, "commit");
+function validateCustody(value: unknown): value is CustodyMetadata {
+  return isRecord(value) && exactKeys(value, CUSTODY_KEYS) && generated(value.source_ref, "source") && value.repository === "agent-skills" && typeof value.ref === "string" && REFS.has(value.ref) && typeof value.path === "string" && CUSTODY_PATHS.has(value.path) && generated(value.commit, "commit") && generated(value.tree, "commit");
 }
 
 function validateLease(value: LeaseRecord, requestDigest: string): boolean {
@@ -356,6 +357,11 @@ function normalizeProvider(value: unknown): { response: ResponseEnvelope; usage:
 export async function executeDecision(input: RuntimeInput): Promise<RuntimeResult> {
   const recordedAt = readClock(input.clock) ?? "not-a-timestamp";
   if (!utc(recordedAt) || !validateCustody(input.custody)) return generic(input, "refused", "R22", recordedAt);
+  try {
+    input = { ...input, custody: JSON.parse(canonicalize(input.custody)) as CustodyMetadata };
+  } catch {
+    return generic(input, "refused", "R22", recordedAt);
+  }
   const request = buildRequest(input.state);
   const requestValidation = validateRequest(request);
   if (!requestValidation.ok) return generic(input, "refused", "R10", recordedAt);

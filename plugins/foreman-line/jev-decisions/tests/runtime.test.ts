@@ -109,6 +109,13 @@ test("does not echo unsafe custody and handles lease/transport boundary failures
   if (!invalidBody.ok) assert.equal(invalidBody.record.reason_code, "evidence:R04");
 });
 
+test("refuses malformed custody without throwing", async () => {
+  const base = await input(provider());
+  const result = await executeDecision({ ...base, custody: null as never });
+  assert.equal(result.ok, false);
+  if (!result.ok) assert.equal(result.record.reason_code, "evidence:R22");
+});
+
 test("rejects duplicate JSON keys and nested provider extras", async () => {
   process.env.OPENROUTER_API_KEY = "test-only-secret";
   const value = await input(provider());
