@@ -146,6 +146,20 @@ test("returns a bounded record when the initial clock is invalid", async () => {
   }
 });
 
+test("terminalizes when a post-claim clock read throws", async () => {
+  const base = await input(provider());
+  const calls: string[] = [];
+  let reads = 0;
+  const result = await executeDecision({
+    ...base,
+    clock: { now: () => { reads += 1; if (reads === 3) throw new Error("clock unavailable"); return times[reads - 1]; } },
+    lease_port: { claim: async () => ({ lease: { ...base.lease, request_digest: canonicalDigest(request()) } }), consume: async () => { calls.push("consume"); return true; }, terminal: async () => { calls.push("terminal"); } },
+  });
+  assert.equal(result.ok, false);
+  if (!result.ok) assert.equal(result.record.reason_code, "evidence:R15");
+  assert.deepEqual(calls, ["consume", "terminal"]);
+});
+
 test("snapshots requested identity in returned observations", async () => {
   process.env.OPENROUTER_API_KEY = "test-only-secret";
   const value = await input(provider());

@@ -261,6 +261,15 @@ function equalAuthority(value: unknown): boolean {
   return isRecord(value) && exactKeys(value, ["endpoint", "method", "redirects", "tls", "proxy"]) && value.endpoint === DECISIONS_ENDPOINT && value.method === "POST" && value.redirects === "disabled" && value.tls === "verified" && value.proxy === "none";
 }
 
+function readClock(clock: Clock): string | null {
+  try {
+    const value = clock.now();
+    return typeof value === "string" ? value : null;
+  } catch {
+    return null;
+  }
+}
+
 async function terminal(port: LeasePort, lease: LeaseRecord): Promise<boolean> {
   try { await port.terminal(lease); return true; } catch { return false; }
 }
@@ -344,7 +353,7 @@ function normalizeProvider(value: unknown): { response: ResponseEnvelope; usage:
 }
 
 export async function executeDecision(input: RuntimeInput): Promise<RuntimeResult> {
-  const recordedAt = input.clock.now();
+  const recordedAt = readClock(input.clock) ?? "not-a-timestamp";
   if (!utc(recordedAt) || !validateCustody(input.custody)) return generic(input, "refused", "R22", recordedAt);
   const request = buildRequest(input.state);
   const requestValidation = validateRequest(request);
@@ -365,14 +374,16 @@ export async function executeDecision(input: RuntimeInput): Promise<RuntimeResul
     return generic(input, "hold", "R15", recordedAt);
   }
   if (lease.lease_id !== input.lease.lease_id || lease.run_id !== input.lease.run_id) return generic(input, "refused", "R16", recordedAt);
-  const budgetNow = input.clock.now();
+  const budgetNow = readClock(input.clock);
+  if (budgetNow === null) return closedFailure(input, lease, "hold", "R15", recordedAt);
   const budgetReason = validateBudget(input.budget_ack, input, lease, requestDigest, budgetNow);
   if (budgetReason !== null) { if (!(await consumeThenTerminal(input.lease_port, lease))) return generic(input, "hold", "R15", recordedAt); return generic(input, "hold", budgetReason, recordedAt); }
   const budgetSnapshot = JSON.parse(canonicalize(input.budget_ack)) as BudgetAcknowledgement;
   let consumed = false;
   try { consumed = await input.lease_port.consume(lease); } catch { consumed = false; }
   if (!consumed) return closedFailure(input, lease, "refused", "R16", recordedAt);
-  const transmissionStarted = input.clock.now();
+  const transmissionStarted = readClock(input.clock);
+  if (transmissionStarted === null) return closedFailure(input, lease, "hold", "R15", recordedAt);
   if (!utc(transmissionStarted) || !later(lease.claimed_at_utc, transmissionStarted) || !later(budgetSnapshot.acknowledged_at_utc, transmissionStarted) || Date.parse(transmissionStarted) - Date.parse(budgetSnapshot.acknowledged_at_utc) > MAX_AGE_MS) return closedFailure(input, lease, "hold", "R14", recordedAt);
   const apiKey = process.env.OPENROUTER_API_KEY;
   if (typeof apiKey !== "string" || apiKey.length === 0 || /[\r\n]/.test(apiKey)) return closedFailure(input, lease, "refused", "R06", recordedAt);
@@ -398,7 +409,8 @@ export async function executeDecision(input: RuntimeInput): Promise<RuntimeResul
   if (!responseValidation.ok) return closedFailure(input, lease, responseValidation.status, responseValidation.reason, recordedAt);
   let responseDigest: string;
   try { responseDigest = canonicalDigest(responseValidation.value); } catch { return closedFailure(input, lease, "refused", "R17", recordedAt); }
-  const clientTimestamp = input.clock.now();
+  const clientTimestamp = readClock(input.clock);
+  if (clientTimestamp === null) return closedFailure(input, lease, "hold", "R15", recordedAt);
   if (!utc(clientTimestamp) || !later(socketOpened, clientTimestamp)) return closedFailure(input, lease, "refused", "R10", recordedAt);
   if (!(await terminal(input.lease_port, lease))) return generic(input, "hold", "R15", recordedAt);
   const retention = new Date(Date.parse(clientTimestamp) + RETENTION_MS).toISOString();
