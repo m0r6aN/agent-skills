@@ -217,6 +217,16 @@ const BANNED_BARE_IDENTIFIERS: readonly string[] = [
   'exports',
   '__dirname',
   '__filename',
+  // coordinator closure-check follow-up: other clock/randomness/ambient
+  // sources the original list omitted
+  'Intl',
+  'Temporal',
+  'navigator',
+  'WebAssembly',
+  'Atomics',
+  'SharedArrayBuffer',
+  'structuredClone',
+  'Worker',
 ]
 
 function bareIdentifierPattern(name: string): RegExp {
@@ -229,6 +239,29 @@ for (const identifier of BANNED_BARE_IDENTIFIERS) {
       assert.equal(bareIdentifierPattern(identifier).test(stripComments(source.text)), false)
     })
   }
+}
+
+/**
+ * The global `crypto` (Web Crypto: `crypto.getRandomValues`,
+ * `crypto.randomUUID`) is a distinct ambient-randomness source from the
+ * `node:crypto` module this parcel legitimately imports `createHash` from.
+ * A plain `\bcrypto\b` ban would also match the "crypto" inside the string
+ * `'node:crypto'`, so this uses a negative lookbehind to exclude only that
+ * exact "node:crypto" occurrence -- a bare `crypto` reference anywhere else
+ * (including right next to a real node:crypto import) is still caught.
+ */
+const GLOBAL_CRYPTO_PATTERN = /(?<!node:)\bcrypto\b/
+
+/** `import.meta` needs its own pattern: `\b` around a literal `.` needs care, and it is not a simple identifier. */
+const IMPORT_META_PATTERN = /\bimport\s*\.\s*meta\b/
+
+for (const source of SOURCES) {
+  test(`AC11: ${source.name} never references the global crypto (only node:crypto import)`, () => {
+    assert.equal(GLOBAL_CRYPTO_PATTERN.test(stripComments(source.text)), false)
+  })
+  test(`AC11: ${source.name} never references import.meta`, () => {
+    assert.equal(IMPORT_META_PATTERN.test(stripComments(source.text)), false)
+  })
 }
 
 /**
@@ -308,6 +341,33 @@ const DATE_PROBE_CASES: { name: string; code: string; shouldCatch: boolean }[] =
   },
   { name: 'Date.parse(value) -- allowed', code: 'const t = Date.parse(value)', shouldCatch: false },
   { name: 'new Date(ms) -- allowed', code: 'const t = new Date(ms)', shouldCatch: false },
+  // Coordinator closure-check follow-up: other clock/randomness/ambient sources.
+  {
+    name: 'Intl.DateTimeFormat().format() reads the clock with no argument',
+    code: 'const t = new Intl.DateTimeFormat().format()',
+    shouldCatch: true,
+  },
+  { name: 'Temporal.Now.instant()', code: 'const t = Temporal.Now.instant()', shouldCatch: true },
+  {
+    name: 'global crypto.getRandomValues()',
+    code: 'const r = crypto.getRandomValues(new Uint8Array(4))',
+    shouldCatch: true,
+  },
+  { name: 'global crypto.randomUUID()', code: 'const id = crypto.randomUUID()', shouldCatch: true },
+  { name: 'navigator', code: 'const ua = navigator.userAgent', shouldCatch: true },
+  { name: 'WebAssembly', code: 'const m = WebAssembly.Module', shouldCatch: true },
+  { name: 'Atomics', code: 'const v = Atomics.load(x, 0)', shouldCatch: true },
+  { name: 'SharedArrayBuffer', code: 'const b = new SharedArrayBuffer(8)', shouldCatch: true },
+  { name: 'structuredClone', code: 'const c = structuredClone(x)', shouldCatch: true },
+  { name: 'Worker', code: 'const w = new Worker(url)', shouldCatch: true },
+  { name: 'import.meta', code: 'const u = import.meta.url', shouldCatch: true },
+  // Negative control: the legitimate node:crypto import must NOT be flagged
+  // as a global crypto reference (the lookbehind exclusion works).
+  {
+    name: "import { createHash } from 'node:crypto' -- allowed, not the global crypto",
+    code: "import { createHash } from 'node:crypto'",
+    shouldCatch: false,
+  },
 ]
 
 /** Every check this file runs against real source, applied to one code snippet. */
@@ -317,6 +377,8 @@ function scanSnippetForForbiddenConstructs(code: string): boolean {
     if (bareIdentifierPattern(identifier).test(stripped)) return true
   }
   if (hasDisallowedDateReference(stripped)) return true
+  if (GLOBAL_CRYPTO_PATTERN.test(stripped)) return true
+  if (IMPORT_META_PATTERN.test(stripped)) return true
   if (/\.sort\s*\(/.test(stripped)) return true
   if (/\.toSorted\s*\(/.test(stripped)) return true
   if (/\.localeCompare\s*\(/.test(stripped)) return true
