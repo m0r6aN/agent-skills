@@ -7,7 +7,7 @@ created: 2026-09-21
 updated: 2026-09-22
 supersedes: null
 superseded_by: null
-risk: architecture/risk
+risk: elevated
 surfaces:
   - plugins/foreman-line/jev-decisions/src/runtime.ts
   - plugins/foreman-line/jev-decisions/src/index.ts
@@ -17,7 +17,7 @@ surfaces:
 routing_class: implementation/standard
 permission_profile: builder-standard
 data_classification: internal
-verification_class: security-sensitive
+verification_class: judgment-required
 involves:
   - routing-currency-and-merit-jev-alpha
   - routing-currency-and-merit

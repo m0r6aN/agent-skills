@@ -22,6 +22,7 @@ export const RATIFIED_PACKAGES = [
   'dispatch',
   'foreman-config',
   'integration',
+  'jev-decisions',
   'mutation-scope-guard',
   'permission-profiles',
   'projection',
