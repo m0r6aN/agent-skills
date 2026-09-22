@@ -8,10 +8,20 @@
  * `tests/catalog-purity.test.ts`). The only runtime import is `node:crypto`,
  * used solely to bind the input bytes to their caller-declared digest.
  *
- * `readCatalogSnapshot` is the sole constructor of `CatalogSnapshot` — the
- * type is nominally branded with a module-private symbol so a plain object
- * built elsewhere is not structurally assignable to it, matching this
- * package's `CatalogSnapshot` contract ("only the reader constructs it").
+ * `readCatalogSnapshot` is the sole constructor of `CatalogSnapshot`, enforced
+ * two ways (review amendment A2 / F1): nominally, via a module-private brand
+ * symbol so a plain object built elsewhere is not *structurally* assignable
+ * to the type; and at runtime, via a module-private `WeakSet` recording every
+ * object this reader actually returns, checked by identity through
+ * `isReaderIssuedSnapshot` (internal helper, not part of the public
+ * Contract — see README). Every returned snapshot is also deep-frozen, so a
+ * caller holding a real snapshot cannot mutate it after the fact either.
+ * `Object.create(snapshot)` and `new Proxy(snapshot, {})` are each a
+ * *different* object identity from `snapshot`, so neither passes the
+ * registry check even though both structurally resemble a real one.
+ *
+ * Every public function is designed to never throw (A2 / F5): hostile or
+ * malformed input is a typed refusal, never an exception.
  *
  * Refusal precedence (first match wins), reflecting the 2026-09-22
  * evidence-boundary ruling that snapshot problems are typed refusals, never
@@ -79,6 +89,11 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
 }
 
+/** Own-property presence check (F7): never `in`, which also matches inherited keys. */
+function hasOwn(obj: object, key: string): boolean {
+  return Object.hasOwn(obj, key)
+}
+
 function bytesEqual(a: Uint8Array, b: Uint8Array): boolean {
   if (a.length !== b.length) return false
   for (let i = 0; i < a.length; i += 1) {
@@ -87,30 +102,67 @@ function bytesEqual(a: Uint8Array, b: Uint8Array): boolean {
   return true
 }
 
+/**
+ * Recursively `Object.freeze`s `value` and everything reachable from its own
+ * enumerable string-keyed properties (arrays included, since array indices
+ * are just string keys). Symbol-keyed properties (the snapshot brand) are
+ * frozen as part of `Object.freeze` on the owning object itself, without
+ * needing a separate visit. Idempotent and cycle-safe (an already-frozen
+ * object is not re-descended).
+ */
+function deepFreeze<T>(value: T): T {
+  if (typeof value !== 'object' || value === null || Object.isFrozen(value)) {
+    return value
+  }
+  Object.freeze(value)
+  for (const key of Object.keys(value as Record<string, unknown>)) {
+    deepFreeze((value as Record<string, unknown>)[key])
+  }
+  return value
+}
+
+/**
+ * Reader-issued snapshot registry (A2 / F1). Every snapshot this reader
+ * successfully constructs is added here, by object identity, after being
+ * deep-frozen. The `WeakSet` itself is never exported — `isReaderIssuedSnapshot`
+ * is the only way to query it — so no other code can add to or forge
+ * membership in it.
+ */
+const READER_ISSUED_SNAPSHOTS = new WeakSet<object>()
+
+/**
+ * Internal helper (not part of the public Contract — see README): true only
+ * for an object this reader itself returned from a successful read. Never
+ * throws; a non-object, `null`, or `undefined` input simply returns `false`.
+ */
+export function isReaderIssuedSnapshot(value: unknown): boolean {
+  if (typeof value !== 'object' || value === null) return false
+  return READER_ISSUED_SNAPSHOTS.has(value)
+}
+
 const EXPECTED_DIGEST_PATTERN = /^[0-9a-f]{64}$/
 
 /**
  * Exact, case-sensitive `https:` URL with no userinfo, query, or fragment
- * (D13's endpoint-exactness discipline, applied to shape validation). Uses
- * the WHATWG `URL` parser purely as a string-shape check; the *stored* value
- * is always the caller's original string, never the parser's normalized
- * form, so no aliasing or normalization is introduced into the data.
+ * (D13's endpoint-exactness discipline, applied to shape validation). Refuses
+ * on a raw scan for `?`, `#`, or `@` *anywhere* in the string first (A2 / F6):
+ * the WHATWG `URL` parser normalizes an empty-but-present query/fragment/
+ * userinfo component (e.g. `.../v1?`, `...#`, `https://@host`) to an empty
+ * `.search`/`.hash`/`.username`, which would otherwise let those characters
+ * through undetected. The *stored* value is always the caller's original
+ * string, never the parser's normalized form, so no aliasing or
+ * normalization is introduced into the data.
  */
 export function isValidBaseUrl(value: unknown): value is string {
   if (typeof value !== 'string') return false
+  if (value.includes('?') || value.includes('#') || value.includes('@')) return false
   let url: URL
   try {
     url = new URL(value)
   } catch {
     return false
   }
-  return (
-    url.protocol === 'https:' &&
-    url.username === '' &&
-    url.password === '' &&
-    url.search === '' &&
-    url.hash === ''
-  )
+  return url.protocol === 'https:'
 }
 
 const ENVELOPE_KEYS = ['formatVersion', 'sourceRef', 'providers', 'models'] as const
@@ -130,23 +182,23 @@ const MODEL_REQUIRED_KEYS = [
 ] as const
 const MODEL_ALL_KEYS = new Set<string>([...MODEL_REQUIRED_KEYS, 'thinkingLevelMap'])
 
-/** Object's own keys equal `required` exactly (no extras, none missing). */
+/** Object's own keys equal `required` exactly (no extras, none missing, own-property only — F7). */
 function hasExactKeySet(obj: Record<string, unknown>, required: readonly string[]): boolean {
   const keys = Object.keys(obj)
   if (keys.length !== required.length) return false
   for (const key of required) {
-    if (!(key in obj)) return false
+    if (!hasOwn(obj, key)) return false
   }
   return true
 }
 
-/** Model's own keys are a subset of the closed set and include every required key. */
+/** Model's own keys are a subset of the closed set and include every required key (own-property only — F7). */
 function hasValidModelKeySet(obj: Record<string, unknown>): boolean {
   for (const key of Object.keys(obj)) {
     if (!MODEL_ALL_KEYS.has(key)) return false
   }
   for (const key of MODEL_REQUIRED_KEYS) {
-    if (!(key in obj)) return false
+    if (!hasOwn(obj, key)) return false
   }
   return true
 }
@@ -166,11 +218,21 @@ function validateCostShape(cost: unknown): { input: CostSide; output: CostSide }
   return { input, output }
 }
 
+/**
+ * Builds the returned map with `Object.create(null)`, not `{}` (A2 / F3): a
+ * plain `{}` inherits the legacy `Object.prototype.__proto__` accessor, so
+ * `map['__proto__'] = someString` silently invokes that accessor instead of
+ * creating an own data property — the level is accepted here but then
+ * vanishes from every later `Object.keys`/`Object.entries` walk. Reading
+ * `value` itself is unaffected: `JSON.parse` always creates a genuine own
+ * `"__proto__"` data property when the source text has that key, so nothing
+ * here needs to change on the read side, only the write side.
+ */
 function validateThinkingLevelMapShape(
   value: unknown,
 ): Readonly<Record<string, string | null>> | null {
   if (!isRecord(value)) return null
-  const map: Record<string, string | null> = {}
+  const map: Record<string, string | null> = Object.create(null)
   for (const [key, mapped] of Object.entries(value)) {
     if (!(typeof mapped === 'string' || mapped === null)) return null
     map[key] = mapped
@@ -277,7 +339,8 @@ function validateEnvelopeShape(parsed: Record<string, unknown>): EnvelopeShape |
  * `readCatalogSnapshot(bytes, expectedSha256)`: binds `bytes` to
  * `expectedSha256` (lowercase hex SHA-256 of the exact bytes), then verifies
  * canonical JSON formatting and the closed `rcm-catalog-snapshot/v1` shape.
- * Never throws; every failure path is a typed `SnapshotRefusalCode`.
+ * Never throws (A2 / F5): `null`/`undefined`/non-`Uint8Array` bytes, and any
+ * other malformed input, are typed refusals, not exceptions.
  */
 export function readCatalogSnapshot(
   bytes: Uint8Array,
@@ -286,20 +349,28 @@ export function readCatalogSnapshot(
   if (typeof expectedSha256 !== 'string' || !EXPECTED_DIGEST_PATTERN.test(expectedSha256)) {
     return { ok: false, code: 'DIGEST_REFUSED' }
   }
-  const actualDigest = createHash('sha256').update(bytes).digest('hex')
+
+  let actualDigest: string
+  try {
+    if (!(bytes instanceof Uint8Array)) {
+      return { ok: false, code: 'FORMAT_REFUSED' }
+    }
+    actualDigest = createHash('sha256').update(bytes).digest('hex')
+  } catch {
+    return { ok: false, code: 'FORMAT_REFUSED' }
+  }
   if (actualDigest !== expectedSha256) {
     return { ok: false, code: 'DIGEST_REFUSED' }
   }
 
-  // Reject a byte-order-mark before decoding: canonical bytes never carry one,
-  // and stripping it silently (as some decoders do) would defeat the
-  // byte-for-byte canonical comparison below.
-  if (bytes.length >= 3 && bytes[0] === 0xef && bytes[1] === 0xbb && bytes[2] === 0xbf) {
-    return { ok: false, code: 'FORMAT_REFUSED' }
-  }
-
   let text: string
   try {
+    // Reject a byte-order-mark before decoding: canonical bytes never carry
+    // one, and stripping it silently (as some decoders do) would defeat the
+    // byte-for-byte canonical comparison below.
+    if (bytes.length >= 3 && bytes[0] === 0xef && bytes[1] === 0xbb && bytes[2] === 0xbf) {
+      return { ok: false, code: 'FORMAT_REFUSED' }
+    }
     text = new TextDecoder('utf-8', { fatal: true }).decode(bytes)
   } catch {
     return { ok: false, code: 'FORMAT_REFUSED' }
@@ -359,5 +430,7 @@ export function readCatalogSnapshot(
     models,
     digestSha256: actualDigest,
   }
+  deepFreeze(snapshot)
+  READER_ISSUED_SNAPSHOTS.add(snapshot)
   return { ok: true, snapshot }
 }
