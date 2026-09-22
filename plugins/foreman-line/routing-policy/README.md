@@ -258,23 +258,40 @@ P0 recon evidence file at
 deliberate negative control: passed with its own true digest, it refuses with
 `FORMAT_REFUSED`, proving P0 evidence is design input only, never a P1 input.
 
-**`projectEligibility({ snapshot, approvedConfig, evaluationTimeUtc, identities })`**
-first confirms `snapshot` is reader-issued (`SNAPSHOT_UNVERIFIED_REFUSED`,
-`level: 'snapshot'`, if not — the very first check, before anything else),
-then turns requested `(provider, id)` identities into `EligibilityFacts` or
-refusals. Each identity's `provider`/`id` is read from the caller's value
-exactly once, into a plain copy that the duplicate check, the evaluation,
-and the returned `requested` field all then share — a getter cannot return a
-different value on a later read and desynchronize what was reported from
-what was evaluated. Freshness is exactly 24 hours
-(`CATALOG_FRESHNESS_MAX_AGE_MS`) against the oldest `checkedAtUtc` across
-every provider in the snapshot, not only the requested ones; any single
-`null` provider time refuses the whole projection rather than being skipped.
-Endpoints join by exact, case-sensitive string equality — no trailing-slash
-trimming, host case-folding, or `/api` vs. `/api/v1` aliasing, and a
-`baseUrl` containing `?`, `#`, or `@` anywhere (even empty, e.g. `.../v1?`)
-refuses outright rather than relying on a URL parser's normalization. Meta-
-router ids (`META_ROUTER_IDS`) and any colon-suffixed id
+**`projectEligibility(req)`** takes `req` as `unknown`, not a structured
+object (review amendment A2 round 2 / R1): `req` itself can be `null`,
+`undefined`, a revoked `Proxy`, or an object with a throwing getter on any
+field, so every field is read inside a guard. A non-object `req`, or a throw
+while reading `approvedConfig`/`evaluationTimeUtc`/`identities`, refuses
+`REQUEST_INVALID_REFUSED`; a throw while reading `snapshot` itself refuses
+`SNAPSHOT_UNVERIFIED_REFUSED` — the same code as a `snapshot` that reads
+fine but fails the reader-issued check below, which still runs first, before
+anything else. `projectEligibility` then turns requested `(provider, id)`
+identities into `EligibilityFacts` or refusals. Each identity's
+`provider`/`id` is read from the caller's value exactly once, into a plain
+copy that the duplicate check, the evaluation, and the returned `requested`
+field all then share — a getter cannot return a different value on a later
+read and desynchronize what was reported from what was evaluated. Neither
+`identities` nor `approvedConfig.endpoints` is ever iterated or has a method
+called on it (review amendment A2 round 2 / R2, the most serious finding of
+that round): both are copied by an index loop that reads `.length` once and
+then reads each element by bracket index, never `.map`/`.forEach`/
+`for...of`/spread/`Array.from` — a caller who overrides `.map` (or
+`Symbol.iterator`, or `Symbol.species`) on their own array cannot substitute
+forged results for what the real, indexed elements actually contain, which
+is the exploit an adversarial review reproduced against an earlier version
+of this code (`.map` overridden to return fabricated `openrouter/auto`
+facts with a sentinel-negative rate, alongside the real digest and
+provenance). Freshness is exactly 24 hours (`CATALOG_FRESHNESS_MAX_AGE_MS`)
+against the oldest `checkedAtUtc` across every provider in the snapshot, not
+only the requested ones; any single `null` provider time refuses the whole
+projection rather than being skipped. Endpoints join by exact, case-sensitive
+string equality — no trailing-slash trimming, host case-folding, or `/api`
+vs. `/api/v1` aliasing, and a `baseUrl` containing `?`, `#`, or `@` anywhere
+(even empty, e.g. `.../v1?`), whitespace, a backslash, or a control
+character anywhere, or a non-lowercase `https://` prefix, refuses outright
+(review amendment A2 round 2 / R8 hardens this beyond the original `?`/`#`/`@`
+check). Meta-router ids (`META_ROUTER_IDS`) and any colon-suffixed id
 (`REFUSED_VARIANT_SUFFIXES` names the charter's four; the actual rule is
 default-deny on any colon) always refuse, whether or not the id is present
 in the catalog. A refused identity collects *every* applicable code, in
@@ -287,31 +304,49 @@ runtime) run first-match-wins in pipeline order and carry a `level` of
 request-level refusal always omits the `results` array.
 
 Both functions are designed to never throw: `null`/`undefined`/non-`Uint8Array`
-bytes, a `null`/`{}`/forged/mutated snapshot, and a throwing `Proxy` or getter
-anywhere in `approvedConfig` or `identities` each resolve to a typed refusal,
-never an exception. `isValidBaseUrl` and `isReaderIssuedSnapshot` are internal
-helpers exported from `catalog-snapshot.ts` for reuse between the two modules
-and by tests — neither is part of the public Contract (`readCatalogSnapshot`
-and `projectEligibility` are).
+bytes (including a `Uint8Array` subclass whose own `length` accessor throws
+or lies — the reader makes exactly one defensive copy via a `Uint8Array`
+constructor reference captured at module load, before any caller code runs,
+which reads the true internal length slot rather than that accessor, review
+amendment A2 round 2 / R4, R7), a pathologically deep input that would
+otherwise overflow the stack in `JSON.stringify` or the shape walk (R3), a
+`null`/`{}`/forged/mutated snapshot, `req` itself being hostile (R1), and a
+throwing `Proxy` or getter anywhere in `approvedConfig` or `identities` (R2)
+each resolve to a typed refusal, never an exception. `isValidBaseUrl` and
+`isReaderIssuedSnapshot` are internal helpers exported from
+`catalog-snapshot.ts` for reuse between the two modules and by tests —
+neither is part of the public Contract (`readCatalogSnapshot` and
+`projectEligibility` are).
 
 Both modules are pure: no ambient clock, randomness, or timers; no `process`,
 environment, filesystem, or network access; no sorting of any kind; no price
 comparison between records. `tests/catalog-purity.test.ts` enforces this with
 a static scan (comment-stripped, then a closed bare-identifier denylist for
-`Math`/`Reflect`/`Function`/`Proxy`/`process`/`globalThis`/`fetch`/timers/etc.,
-plus a `Date`-specific rule allowing only `Date.parse(...)` and
-`new Date(<non-empty, non-spread argument>)`) and an import/export scanner
-that also checks the exact named bindings pulled from each permitted
-specifier, not just the specifier string. A runtime probe additionally
-replaces `fetch`, the `Date` constructor and `Date.now`, `Math.random`,
-`performance.now`, `setTimeout`, `setInterval`, `setImmediate`, and
-`process.env` with throwing stubs and re-runs both functions to confirm they
-are unaffected and deterministic. The only runtime imports either module
-makes are `node:crypto` (the reader, for the digest — and only `createHash`
-from it) and `eligibility.ts`'s own relative import of its sibling
-`catalog-snapshot.ts` (to re-export the reader surface, per this parcel's own
-contract, with its own named-binding set checked exactly) — no other
-dependency, host file, or `PI_OPENROUTER_ROUTING` default is read.
+`Math`/`Reflect`/`Function`/`Proxy`/`process`/`globalThis`/`fetch`/timers/
+`constructor`/etc., a dynamic-`import(`-call check, plus a `Date`-specific
+rule allowing only `Date.parse(...)` and `new Date(<non-empty, non-spread
+argument>)`) and an import/export scanner that also checks the exact named
+bindings pulled from each permitted specifier, not just the specifier
+string. A runtime probe additionally replaces `fetch`, the `Date`
+constructor and `Date.now`, `Math.random`, `performance.now`, `setTimeout`,
+`setInterval`, `setImmediate`, and `process.env` with throwing stubs and
+re-runs both functions to confirm they are unaffected and deterministic.
+**This static scan is a regression tripwire over a closed list of known
+forbidden forms, not a proof of purity** (review amendment A2 round 2 / R5,
+R6 correction of an earlier, overclaiming version of this paragraph): every
+round of adversarial review so far has found at least one construct the
+scanner did not yet check for (aliasing, computed/bracket access, dynamic
+`import(`, `.constructor`), and a regex-based text scan can only ever grow
+that list, never certify the absence of a form nobody has thought of yet.
+Likewise, the runtime probe proves only that today's code path does not
+call the specific globals it stubs, under the specific inputs it exercises
+— not that no code path in these two files could ever reach them. The only
+runtime imports either module makes are `node:crypto` (the reader, for the
+digest — and only `createHash` from it) and `eligibility.ts`'s own relative
+import of its sibling `catalog-snapshot.ts` (to re-export the reader
+surface, per this parcel's own contract, with its own named-binding set
+checked exactly) — no other dependency, host file, or `PI_OPENROUTER_ROUTING`
+default is read.
 
 The one committed fixture, `tests/fixtures/catalog-snapshot/baseline.v1.json`,
 copies its model records field-for-field from the committed P0 evidence
