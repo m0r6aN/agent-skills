@@ -79,7 +79,7 @@ export type CustodyMetadata = {
 export type Clock = { readonly now: () => string };
 
 export type LeasePort = {
-  readonly claim: (lease: LeaseRecord) => Promise<"claimed" | "occupied" | "unavailable">;
+  readonly claim: (request: { readonly run_id: string; readonly lease_id: string; readonly request_digest: string }) => Promise<"occupied" | "unavailable" | { readonly lease: LeaseRecord }>;
   readonly consume: (lease: LeaseRecord) => Promise<boolean>;
   readonly terminal: (lease: LeaseRecord) => Promise<void>;
 };
@@ -87,9 +87,15 @@ export type LeasePort = {
 export type TransportResponse = {
   readonly status: number;
   readonly content_type: string;
-  readonly body_bytes: number;
-  readonly body: unknown;
+  readonly body: Uint8Array;
   readonly socket_opened_at_utc: string;
+  readonly authority: {
+    readonly endpoint: typeof DECISIONS_ENDPOINT;
+    readonly method: "POST";
+    readonly redirects: "disabled";
+    readonly tls: "verified";
+    readonly proxy: "none";
+  };
 };
 
 export type TransportPort = {
@@ -99,6 +105,8 @@ export type TransportPort = {
     readonly headers: Readonly<Record<string, string>>;
     readonly body: string;
     readonly timeout_ms: 30_000;
+    readonly redirect: "error";
+    readonly signal: AbortSignal;
   }) => Promise<TransportResponse>;
 };
 
@@ -187,10 +195,24 @@ function boundedRetention(anchor: string, end: string): boolean {
 
 function later(anchor: string, end: string): boolean { return Date.parse(end) >= Date.parse(anchor); }
 
+function equalAuthority(value: TransportResponse["authority"]): boolean {
+  return value.endpoint === DECISIONS_ENDPOINT && value.method === "POST" && value.redirects === "disabled" && value.tls === "verified" && value.proxy === "none";
+}
+
+async function terminal(port: LeasePort, lease: LeaseRecord): Promise<void> {
+  try { await port.terminal(lease); } catch { /* terminalization is best effort and never leaks input */ }
+}
+
+async function consumeThenTerminal(port: LeasePort, lease: LeaseRecord): Promise<void> {
+  try { await port.consume(lease); } catch { /* refusal remains closed */ }
+  await terminal(port, lease);
+}
+
 function generic(input: RuntimeInput, status: Status, reason: Reason, recordedAt: string): RuntimeResult {
   const retention = new Date(Date.parse(recordedAt) + RETENTION_MS).toISOString();
-  if (status === "hold") return { ok: false, record: { evidence_class: "hold-record", status, reason_code: `evidence:${reason}`, disposition: "pending-coordinator", source_kind: "coordinator-review", source_ref: input.custody.source_ref, recorded_at_utc: recordedAt, retention_until_utc: retention } };
-  return { ok: false, record: { evidence_class: "refusal-record", status, reason_code: `evidence:${reason}`, source_kind: "coordinator-review", source_ref: input.custody.source_ref, recorded_at_utc: recordedAt, retention_until_utc: retention } };
+  const sourceRef = generated(input.custody.source_ref, "source") ? input.custody.source_ref : "src-00000000000000000000000000000000";
+  if (status === "hold") return { ok: false, record: { evidence_class: "hold-record", status, reason_code: `evidence:${reason}`, disposition: "pending-coordinator", source_kind: "coordinator-review", source_ref: sourceRef, recorded_at_utc: recordedAt, retention_until_utc: retention } };
+  return { ok: false, record: { evidence_class: "refusal-record", status, reason_code: `evidence:${reason}`, source_kind: "coordinator-review", source_ref: sourceRef, recorded_at_utc: recordedAt, retention_until_utc: retention } };
 }
 
 function buildRequest(state: SupportTriageState): RequestEnvelope {
@@ -205,16 +227,16 @@ function validateLease(value: LeaseRecord, requestDigest: string): boolean {
   return generated(value.lease_id, "lease") && generated(value.run_id, "run") && value.capability === CAPABILITY && value.decision_schema_version === DECISION_SCHEMA_VERSION && value.request_digest === requestDigest && generated(value.request_digest, "sha") && value.state === "in-flight" && utc(value.claimed_at_utc) && value.transition_actor === "coordinator";
 }
 
-function validateBudget(value: BudgetAcknowledgement, input: RuntimeInput, requestDigest: string, now: string): Reason | null {
+function validateBudget(value: BudgetAcknowledgement, input: RuntimeInput, lease: LeaseRecord, requestDigest: string, now: string): Reason | null {
   const keys = ["schema_version", "mode", "provider", "account_ref", "cap_amount", "currency", "acknowledged_at_utc", "acknowledgement_digest", "repository", "ref", "path", "commit", "tree", "lease_id", "run_id", "capability", "decision_schema_version", "request_digest"];
   if (!isRecord(value) || !exactKeys(value, keys)) return "R14";
-  if (value.schema_version !== "jev-budget/v1" || !["provider-hard-budget", "account-hard-budget"].includes(value.mode as string) || value.provider !== "openrouter" || typeof value.account_ref !== "string" || !/^acct-[0-9a-f]{32}$/.test(value.account_ref) || value.cap_amount !== COST_CAP || value.currency !== "USD" || !utc(value.acknowledged_at_utc) || !generated(value.acknowledgement_digest, "sha") || value.repository !== "agent-skills" || !REFS.has(value.ref as string) || !CUSTODY_PATHS.has(value.path as string) || !generated(value.commit, "commit") || !generated(value.tree, "commit") || value.lease_id !== input.lease.lease_id || value.run_id !== input.lease.run_id || value.capability !== CAPABILITY || value.decision_schema_version !== DECISION_SCHEMA_VERSION || value.request_digest !== requestDigest) return "R14";
+  if (value.schema_version !== "jev-budget/v1" || !["provider-hard-budget", "account-hard-budget"].includes(value.mode as string) || value.provider !== "openrouter" || typeof value.account_ref !== "string" || !/^acct-[0-9a-f]{32}$/.test(value.account_ref) || value.cap_amount !== COST_CAP || value.currency !== "USD" || !utc(value.acknowledged_at_utc) || !generated(value.acknowledgement_digest, "sha") || value.repository !== "agent-skills" || !REFS.has(value.ref as string) || !CUSTODY_PATHS.has(value.path as string) || !generated(value.commit, "commit") || !generated(value.tree, "commit") || value.repository !== input.custody.repository || value.ref !== input.custody.ref || value.path !== input.custody.path || value.commit !== input.custody.commit || value.tree !== input.custody.tree || value.lease_id !== lease.lease_id || value.run_id !== lease.run_id || value.capability !== CAPABILITY || value.decision_schema_version !== DECISION_SCHEMA_VERSION || value.request_digest !== requestDigest) return "R14";
   try {
     const withoutDigest = { ...value } as Record<string, unknown>;
     delete withoutDigest.acknowledgement_digest;
     if (canonicalDigest(withoutDigest) !== value.acknowledgement_digest) return "R14";
   } catch { return "R14"; }
-  if (!later(input.lease.claimed_at_utc, value.acknowledged_at_utc) || !later(value.acknowledged_at_utc, now) || Date.parse(now) - Date.parse(value.acknowledged_at_utc) > MAX_AGE_MS) return "R14";
+  if (!later(lease.claimed_at_utc, value.acknowledged_at_utc) || !later(value.acknowledged_at_utc, now) || Date.parse(now) - Date.parse(value.acknowledged_at_utc) > MAX_AGE_MS) return "R14";
   return null;
 }
 
@@ -264,40 +286,48 @@ export async function executeDecision(input: RuntimeInput): Promise<RuntimeResul
   try { requestDigest = canonicalDigest(request); body = canonicalize(request); } catch { return generic(input, "refused", "R17", recordedAt); }
   if (new TextEncoder().encode(body).byteLength > REQUEST_LIMIT) return generic(input, "refused", "R05", recordedAt);
   if (!validateLease(input.lease, requestDigest)) return generic(input, "hold", "R15", recordedAt);
-  const claim = await input.lease_port.claim(input.lease);
+  let claim: "occupied" | "unavailable" | { readonly lease: LeaseRecord };
+  try { claim = await input.lease_port.claim({ run_id: input.lease.run_id, lease_id: input.lease.lease_id, request_digest: requestDigest }); } catch { return generic(input, "hold", "R15", recordedAt); }
   if (claim === "unavailable") return generic(input, "hold", "R15", recordedAt);
   if (claim === "occupied") return generic(input, "refused", "R16", recordedAt);
+  const lease = claim.lease;
+  if (!validateLease(lease, requestDigest)) return generic(input, "hold", "R15", recordedAt);
   const budgetNow = input.clock.now();
-  const budgetReason = validateBudget(input.budget_ack, input, requestDigest, budgetNow);
-  if (budgetReason !== null) { await input.lease_port.consume(input.lease); await input.lease_port.terminal(input.lease); return generic(input, "hold", budgetReason, recordedAt); }
-  if (!(await input.lease_port.consume(input.lease))) { await input.lease_port.terminal(input.lease); return generic(input, "refused", "R16", recordedAt); }
+  const budgetReason = validateBudget(input.budget_ack, input, lease, requestDigest, budgetNow);
+  if (budgetReason !== null) { await consumeThenTerminal(input.lease_port, lease); return generic(input, "hold", budgetReason, recordedAt); }
+  let consumed = false;
+  try { consumed = await input.lease_port.consume(lease); } catch { consumed = false; }
+  if (!consumed) { await terminal(input.lease_port, lease); return generic(input, "refused", "R16", recordedAt); }
   const transmissionStarted = input.clock.now();
-  if (!utc(transmissionStarted) || !later(input.lease.claimed_at_utc, transmissionStarted) || Date.parse(transmissionStarted) - Date.parse(input.budget_ack.acknowledged_at_utc) > MAX_AGE_MS) { await input.lease_port.terminal(input.lease); return generic(input, "hold", "R14", recordedAt); }
+  if (!utc(transmissionStarted) || !later(lease.claimed_at_utc, transmissionStarted) || Date.parse(transmissionStarted) - Date.parse(input.budget_ack.acknowledged_at_utc) > MAX_AGE_MS) { await terminal(input.lease_port, lease); return generic(input, "hold", "R14", recordedAt); }
   const apiKey = process.env.OPENROUTER_API_KEY;
-  if (typeof apiKey !== "string" || apiKey.length === 0) { await input.lease_port.terminal(input.lease); return generic(input, "refused", "R06", recordedAt); }
+  if (typeof apiKey !== "string" || apiKey.length === 0 || /[\r\n]/.test(apiKey)) { await terminal(input.lease_port, lease); return generic(input, "refused", "R06", recordedAt); }
   let transportResponse: TransportResponse;
   try {
-    transportResponse = await input.transport.post({ endpoint: DECISIONS_ENDPOINT, method: "POST", headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" }, body, timeout_ms: 30_000 });
-  } catch { await input.lease_port.terminal(input.lease); return generic(input, "refused", "R04", recordedAt); }
+    transportResponse = await input.transport.post({ endpoint: DECISIONS_ENDPOINT, method: "POST", headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json", Accept: "application/json" }, body, timeout_ms: 30_000, redirect: "error", signal: AbortSignal.timeout(30_000) });
+  } catch { await terminal(input.lease_port, lease); return generic(input, "refused", "R04", recordedAt); }
   const socketOpened = transportResponse.socket_opened_at_utc;
-  if (!utc(socketOpened) || Date.parse(socketOpened) < Date.parse(transmissionStarted) || Date.parse(socketOpened) - Date.parse(input.budget_ack.acknowledged_at_utc) >= MAX_AGE_MS || transportResponse.body_bytes > RESPONSE_LIMIT || transportResponse.status < 200 || transportResponse.status >= 300 || transportResponse.content_type.toLowerCase() !== "application/json") { await input.lease_port.terminal(input.lease); return generic(input, "refused", "R04", recordedAt); }
-  const normalized = normalizeProvider(transportResponse.body);
-  if ("reason" in normalized) { await input.lease_port.terminal(input.lease); return generic(input, normalized.status, normalized.reason, recordedAt); }
+  if (!equalAuthority(transportResponse.authority) || !utc(socketOpened) || Date.parse(socketOpened) < Date.parse(transmissionStarted) || Date.parse(socketOpened) - Date.parse(input.budget_ack.acknowledged_at_utc) >= MAX_AGE_MS || transportResponse.body.byteLength > RESPONSE_LIMIT || transportResponse.status < 200 || transportResponse.status >= 300 || transportResponse.content_type.toLowerCase() !== "application/json") { await terminal(input.lease_port, lease); return generic(input, "refused", "R04", recordedAt); }
+  let providerBody: unknown;
+  try { providerBody = JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(transportResponse.body)); } catch { await terminal(input.lease_port, lease); return generic(input, "refused", "R04", recordedAt); }
+  const normalized = normalizeProvider(providerBody);
+  if ("reason" in normalized) { await terminal(input.lease_port, lease); return generic(input, normalized.status, normalized.reason, recordedAt); }
   const responseValidation = validateResponse(requestValidation.value as ValidatedRequest, normalized.response);
-  if (!responseValidation.ok) { await input.lease_port.terminal(input.lease); return generic(input, responseValidation.status, responseValidation.reason, recordedAt); }
+  if (!responseValidation.ok) { await terminal(input.lease_port, lease); return generic(input, responseValidation.status, responseValidation.reason, recordedAt); }
   let responseDigest: string;
-  try { responseDigest = canonicalDigest(responseValidation.value); } catch { await input.lease_port.terminal(input.lease); return generic(input, "refused", "R17", recordedAt); }
+  try { responseDigest = canonicalDigest(responseValidation.value); } catch { await terminal(input.lease_port, lease); return generic(input, "refused", "R17", recordedAt); }
   const clientTimestamp = input.clock.now();
-  if (!utc(clientTimestamp) || !later(socketOpened, clientTimestamp)) { await input.lease_port.terminal(input.lease); return generic(input, "refused", "R10", recordedAt); }
-  await input.lease_port.terminal(input.lease);
+  if (!utc(clientTimestamp) || !later(socketOpened, clientTimestamp)) { await terminal(input.lease_port, lease); return generic(input, "refused", "R10", recordedAt); }
+  await terminal(input.lease_port, lease);
   const retention = new Date(Date.parse(clientTimestamp) + RETENTION_MS).toISOString();
+  const budgetSnapshot = JSON.parse(canonicalize(input.budget_ack)) as BudgetAcknowledgement;
   const observation: LiveObservation = {
-    evidence_class: "live-observation", capability: CAPABILITY, run_id: input.lease.run_id, lease_id: input.lease.lease_id, endpoint: DECISIONS_ENDPOINT,
+    evidence_class: "live-observation", capability: CAPABILITY, run_id: lease.run_id, lease_id: lease.lease_id, endpoint: DECISIONS_ENDPOINT,
     requested_identity: REQUESTED_IDENTITY, served_identity: responseValidation.value.served_identity, schema_version: DECISION_SCHEMA_VERSION,
     response_id: responseValidation.value.response_id, server_timestamp_utc: responseValidation.value.server_timestamp_utc, client_timestamp_utc: clientTimestamp,
-    run_started_at_utc: input.lease.claimed_at_utc, acknowledged_at_utc: input.budget_ack.acknowledged_at_utc, transmission_started_at_utc: transmissionStarted,
+    run_started_at_utc: lease.claimed_at_utc, acknowledged_at_utc: input.budget_ack.acknowledged_at_utc, transmission_started_at_utc: transmissionStarted,
     socket_opened_at_utc: socketOpened, request_digest: requestDigest, response_digest: responseDigest, usage: normalized.usage, cost: normalized.cost,
-    budget_ack: input.budget_ack, source_kind: "coordinator-live", source_ref: input.custody.source_ref, status: "complete", reason_code: "none", retention_until_utc: retention,
+    budget_ack: budgetSnapshot, source_kind: "coordinator-live", source_ref: input.custody.source_ref, status: "complete", reason_code: "none", retention_until_utc: retention,
   };
   return { ok: true, observation };
 }

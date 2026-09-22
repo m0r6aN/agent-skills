@@ -18,7 +18,7 @@ function budget(requestDigest: string): BudgetAcknowledgement {
 }
 function provider() { return { model: "typesafe/jev-1.13-20260917", response_id: "r-001", server_timestamp_utc: times[2], answers: { is_urgent: { noul: 0.95, confidence: 0.95 }, department: { choice: "billing", confidence: 0.82, probabilities: { billing: 0.88, technical: 0.12, sales: 0 } }, frustration: { score: 1.04, confidence: 0.94 } }, usage: { input_tokens: 427, output_tokens: 73, total_tokens: 500 }, cost: { amount: 0.000017934, currency: "USD" } }; }
 function ports(responseBody: unknown, calls: string[]): { leasePort: LeasePort; transport: TransportPort } {
-  return { leasePort: { claim: async () => "claimed", consume: async () => { calls.push("consume"); return true; }, terminal: async () => { calls.push("terminal"); } }, transport: { post: async (request) => { calls.push(`${request.method} ${request.endpoint}`); assert.equal(request.endpoint, DECISIONS_ENDPOINT); assert.equal(request.method, "POST"); assert.equal(request.timeout_ms, 30_000); assert.match(request.headers.Authorization, /^Bearer /); return { status: 200, content_type: "application/json", body_bytes: JSON.stringify(responseBody).length, body: responseBody, socket_opened_at_utc: times[3] }; } } };
+  return { leasePort: { claim: async () => ({ lease: { ...lease, request_digest: canonicalDigest(request()) } }), consume: async () => { calls.push("consume"); return true; }, terminal: async () => { calls.push("terminal"); } }, transport: { post: async (request) => { calls.push(`${request.method} ${request.endpoint}`); assert.equal(request.endpoint, DECISIONS_ENDPOINT); assert.equal(request.method, "POST"); assert.equal(request.timeout_ms, 30_000); assert.equal(request.redirect, "error"); assert.ok(request.signal instanceof AbortSignal); assert.equal(request.headers.Accept, "application/json"); assert.match(request.headers.Authorization, /^Bearer /); return { status: 200, content_type: "application/json", body: new TextEncoder().encode(JSON.stringify(responseBody)), authority: { endpoint: DECISIONS_ENDPOINT, method: "POST", redirects: "disabled", tls: "verified", proxy: "none" }, socket_opened_at_utc: times[3] }; } } };
 }
 async function input(body: unknown = provider(), calls: string[] = []): Promise<RuntimeInput> {
   const reqDigest = canonicalDigest(request());
@@ -74,4 +74,33 @@ test("refuses a competing lease before transport and preserves generic shape", a
   const value = await input(provider());
   const result = await executeDecision({ ...value, lease_port: { claim: async () => "occupied", consume: async () => true, terminal: async () => {} } });
   assert.deepEqual(result, { ok: false, record: { evidence_class: "refusal-record", status: "refused", reason_code: "evidence:R16", source_kind: "coordinator-review", source_ref: custody.source_ref, recorded_at_utc: times[0], retention_until_utc: "2026-12-20T12:00:00.000Z" } });
+});
+
+test("does not echo unsafe custody and handles lease/transport boundary failures", async () => {
+  process.env.OPENROUTER_API_KEY = "test-only-secret";
+  const value = await input(provider());
+  const unsafe = { ...value, custody: { ...custody, source_ref: "Bearer secret\r\nX-Leak: yes" } };
+  const unsafeResult = await executeDecision(unsafe);
+  assert.equal(unsafeResult.ok, false);
+  if (!unsafeResult.ok) {
+    assert.equal(unsafeResult.record.source_ref, "src-00000000000000000000000000000000");
+    assert.equal(JSON.stringify(unsafeResult).includes("Bearer secret"), false);
+  }
+
+  const leaseFailure = await executeDecision({ ...value, lease_port: { claim: async () => { throw new Error("untrusted detail"); }, consume: async () => true, terminal: async () => {} } });
+  assert.equal(leaseFailure.ok, false);
+  if (!leaseFailure.ok) assert.equal(leaseFailure.record.reason_code, "evidence:R15");
+
+  const badTransport = { post: async (request: Parameters<TransportPort["post"]>[0]) => {
+    const base = await ports(provider(), []).transport.post(request);
+    return { ...base, authority: { ...base.authority, redirects: "follow" } } as unknown as Awaited<ReturnType<TransportPort["post"]>>;
+  } };
+  const badAuthority = await executeDecision({ ...value, transport: badTransport });
+  assert.equal(badAuthority.ok, false);
+  if (!badAuthority.ok) assert.equal(badAuthority.record.reason_code, "evidence:R04");
+
+  const invalidUtf8 = { post: async () => ({ status: 200, content_type: "application/json", body: new Uint8Array([0xc3, 0x28]), authority: { endpoint: DECISIONS_ENDPOINT, method: "POST", redirects: "disabled", tls: "verified", proxy: "none" }, socket_opened_at_utc: times[3] }) };
+  const invalidBody = await executeDecision({ ...value, transport: invalidUtf8 });
+  assert.equal(invalidBody.ok, false);
+  if (!invalidBody.ok) assert.equal(invalidBody.record.reason_code, "evidence:R04");
 });
