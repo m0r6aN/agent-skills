@@ -14,13 +14,16 @@
  * either new module makes, and it stays inside this parcel's own two files.
  *
  * `projectEligibility` treats every input as hostile, including `req`
- * itself (review amendment A2 round 2 / R1): `req` is `unknown`, read field
- * by field inside guards, so `null`/`undefined`/non-object `req`, a revoked
- * `Proxy`, or a throwing getter on any field all resolve to a typed
- * refusal, never a thrown exception. It also never calls a method on, or
- * iterates, caller-owned data (A2 round 2 / R2, the most serious finding of
- * that round): `identities` and `approvedConfig.endpoints` are each copied
- * by an index loop reading `.length` once and then bracket-indexing, never
+ * itself (review amendment A2 round 2 / R1). The parameter keeps the
+ * contract's declared TypeScript type, but at runtime `req` is copied into
+ * an `unknown` local and each field is read once, lazily, inside its own
+ * guard. A `null`/`undefined`/non-object `req`, a revoked `Proxy`, or a
+ * throwing getter on any field therefore resolves to a typed refusal, never
+ * a thrown exception. Each authority field is also read exactly once. It
+ * never calls a method on, or iterates, caller-owned data (A2 round 2 / R2,
+ * the most serious finding of that round): `identities` and
+ * `approvedConfig.endpoints` are each copied by an index loop reading
+ * `.length` once and then bracket-indexing, never
  * `.map`/`.forEach`/`for...of`/spread/`Array.from` — a caller can otherwise
  * override `.map` (or `Symbol.iterator`, or `Symbol.species`) on their own
  * array to return forged results without our callback ever running, which
@@ -29,7 +32,9 @@
  * `snapshot` that is not an object this reader actually issued
  * (`SNAPSHOT_UNVERIFIED_REFUSED`, checked first — see
  * `SNAPSHOT_REFUSAL_CODES` below), a throwing `approvedConfig` getter, or a
- * throwing `identities`/identity getter.
+ * throwing `identities`/identity getter. Every exported array constant is
+ * frozen, and the module reads those same frozen values, so a caller cannot
+ * empty `META_ROUTER_IDS` or any other list to change an outcome.
  */
 import {
   type CatalogSnapshot,
@@ -75,7 +80,7 @@ export type SnapshotLevelRefusalCode =
  * through `DUPLICATE_IDENTITY_REFUSED`) never surface from `projectEligibility`
  * itself.
  */
-export const SNAPSHOT_REFUSAL_CODES: readonly SnapshotLevelRefusalCode[] = [
+export const SNAPSHOT_REFUSAL_CODES: readonly SnapshotLevelRefusalCode[] = Object.freeze([
   'DIGEST_REFUSED',
   'FORMAT_REFUSED',
   'MALFORMED_REFUSED',
@@ -89,7 +94,7 @@ export const SNAPSHOT_REFUSAL_CODES: readonly SnapshotLevelRefusalCode[] = [
   'AUTHORITY_INVALID_REFUSED',
   'REQUEST_INVALID_REFUSED',
   'SNAPSHOT_UNVERIFIED_REFUSED',
-]
+])
 
 export type IdentityRefusalCode =
   | 'AMBIGUOUS_IDENTITY_REFUSED'
@@ -104,7 +109,7 @@ export type IdentityRefusalCode =
   | 'MODALITY_REFUSED'
 
 /** Declared collection order: a refused identity's `codes` follow this order, not evaluation order. */
-export const IDENTITY_REFUSAL_CODES: readonly IdentityRefusalCode[] = [
+export const IDENTITY_REFUSAL_CODES: readonly IdentityRefusalCode[] = Object.freeze([
   'AMBIGUOUS_IDENTITY_REFUSED',
   'META_ROUTER_REFUSED',
   'VARIANT_REFUSED',
@@ -115,7 +120,7 @@ export const IDENTITY_REFUSAL_CODES: readonly IdentityRefusalCode[] = [
   'SENTINEL_RATE_REFUSED',
   'RATE_REFUSED',
   'MODALITY_REFUSED',
-]
+])
 
 export const CATALOG_FRESHNESS_MAX_AGE_MS = 86_400_000
 
@@ -127,11 +132,11 @@ export const CATALOG_FRESHNESS_MAX_AGE_MS = 86_400_000
  * (the `provider` field is `"openrouter"`, the gateway; `id` carries the
  * meta-router slug verbatim), plus a separate bare `"auto"` id.
  */
-export const META_ROUTER_IDS: readonly string[] = [
+export const META_ROUTER_IDS: readonly string[] = Object.freeze([
   'openrouter/auto',
   'openrouter/auto-beta',
   'auto',
-]
+])
 
 /**
  * The charter's four named colon suffixes, exported for reference. The
@@ -139,7 +144,12 @@ export const META_ROUTER_IDS: readonly string[] = [
  * anywhere in a requested `id` refuses as `VARIANT_REFUSED`, not only these
  * four suffixes.
  */
-export const REFUSED_VARIANT_SUFFIXES: readonly string[] = [':free', ':nitro', ':floor', ':batch']
+export const REFUSED_VARIANT_SUFFIXES: readonly string[] = Object.freeze([
+  ':free',
+  ':nitro',
+  ':floor',
+  ':batch',
+])
 
 export const RATE_UNIT = 'USD per 1M tokens'
 
@@ -246,8 +256,12 @@ function validateApprovedConfig(value: unknown): ApprovedConfigShape | null {
   const keys = Object.keys(value)
   if (keys.length !== 2 || !hasOwn(value, 'authorityRef') || !hasOwn(value, 'endpoints'))
     return null
-  if (typeof value.authorityRef !== 'string' || value.authorityRef.length === 0) return null
+  // Read-once (resume Step-0 finding): each field is read exactly once into
+  // a local, so a getter cannot pass validation with one value and then
+  // return a different one for provenance.
+  const authorityRef = value.authorityRef
   const endpoints = value.endpoints
+  if (typeof authorityRef !== 'string' || authorityRef.length === 0) return null
   if (!Array.isArray(endpoints)) return null
 
   // A2 round 2 / R2: index loop, never `for...of`/`.map`/etc. on
@@ -281,7 +295,7 @@ function validateApprovedConfig(value: unknown): ApprovedConfigShape | null {
     endpointsByProvider.set(provider, baseUrl)
   }
 
-  return { authorityRef: value.authorityRef, endpointsByProvider }
+  return { authorityRef, endpointsByProvider }
 }
 
 function deepFreeze<T>(value: T): T {
@@ -459,24 +473,39 @@ function evaluateIdentity(
  * anything else; freshness needs a valid evaluation time; per-identity
  * results need authority and a well-formed request list). Per-identity
  * checks then run independently per identity and *collect* every applicable
- * code, in `IDENTITY_REFUSAL_CODES` order. Never throws (A2 / F5, and A2
- * round 2 / R1, R2): `req` itself is `unknown` and read defensively — a
- * `null`/`undefined`/non-object `req`, or a throw while reading
- * `approvedConfig`/`evaluationTimeUtc`/`identities`, refuses
- * `REQUEST_INVALID_REFUSED`; a throw specifically while reading `snapshot`
- * refuses `SNAPSHOT_UNVERIFIED_REFUSED`, the same as a snapshot that reads
- * fine but fails `isReaderIssuedSnapshot`.
+ * code, in `IDENTITY_REFUSAL_CODES` order.
+ *
+ * The parameter keeps the contract's declared type, but the runtime treats
+ * `req` as untrusted (A2 / F5, A2 round 2 / R1, and the resume correction
+ * 1). It copies `req` into an `unknown` local and reads each field exactly
+ * once, lazily, at the pipeline stage that needs it, each inside its own
+ * guard. That keeps first-failure-wins order: a stage never reads a field
+ * that a later stage owns. The mapping follows A2:
+ *
+ * - a `req` that is not an object: `REQUEST_INVALID_REFUSED`, level request;
+ * - a throw reading `snapshot`: `SNAPSHOT_UNVERIFIED_REFUSED`, level snapshot;
+ * - a throw reading `evaluationTimeUtc`: `REQUEST_INVALID_REFUSED`, level request;
+ * - a throw reading `approvedConfig` or anything inside it:
+ *   `AUTHORITY_INVALID_REFUSED`, level authority;
+ * - a throw reading `identities` or anything inside it:
+ *   `REQUEST_INVALID_REFUSED`, level request.
  */
-export function projectEligibility(req: unknown): ProjectionResult {
-  if (typeof req !== 'object' || req === null) {
+export function projectEligibility(req: {
+  snapshot: CatalogSnapshot
+  approvedConfig: unknown
+  evaluationTimeUtc: unknown
+  identities: unknown
+}): ProjectionResult {
+  const source: unknown = req
+  if (typeof source !== 'object' || source === null) {
     return { ok: false, level: 'request', code: 'REQUEST_INVALID_REFUSED' }
   }
+  const fields = source as Record<string, unknown>
 
-  // A2 round 2 / R1: reading `.snapshot` off a hostile `req` (a revoked
-  // Proxy, or an object whose `snapshot` getter throws) must not propagate.
+  // Stage 1, snapshot. A revoked Proxy or a throwing getter must not propagate.
   let snapshot: unknown
   try {
-    snapshot = (req as { readonly snapshot?: unknown }).snapshot
+    snapshot = fields.snapshot
   } catch {
     return { ok: false, level: 'snapshot', code: 'SNAPSHOT_UNVERIFIED_REFUSED' }
   }
@@ -488,22 +517,10 @@ export function projectEligibility(req: unknown): ProjectionResult {
     return { ok: false, level: 'snapshot', code: 'SNAPSHOT_UNVERIFIED_REFUSED' }
   }
 
-  // A2 round 2 / R1: the other three fields are read together, after
-  // `snapshot` is already confirmed reader-issued; any throw here (the same
-  // hostile `req` could have a throwing getter on any of these too) refuses
-  // REQUEST_INVALID_REFUSED, never propagates.
-  let approvedConfig: unknown
+  // Stage 2, evaluation time and freshness.
   let evaluationTimeUtc: unknown
-  let identities: unknown
   try {
-    const source = req as {
-      readonly approvedConfig?: unknown
-      readonly evaluationTimeUtc?: unknown
-      readonly identities?: unknown
-    }
-    approvedConfig = source.approvedConfig
-    evaluationTimeUtc = source.evaluationTimeUtc
-    identities = source.identities
+    evaluationTimeUtc = fields.evaluationTimeUtc
   } catch {
     return { ok: false, level: 'request', code: 'REQUEST_INVALID_REFUSED' }
   }
@@ -540,13 +557,20 @@ export function projectEligibility(req: unknown): ProjectionResult {
     return { ok: false, level: 'snapshot', code: 'STALE_REFUSED' }
   }
 
+  // Stage 3, approved configuration authority. A2: a throw reading
+  // `approvedConfig`, its endpoints array, or any endpoint refuses
+  // AUTHORITY_INVALID_REFUSED and never propagates.
+  let approvedConfig: unknown
+  try {
+    approvedConfig = fields.approvedConfig
+  } catch {
+    return { ok: false, level: 'authority', code: 'AUTHORITY_INVALID_REFUSED' }
+  }
+
   if (approvedConfig === undefined || approvedConfig === null) {
     return { ok: false, level: 'authority', code: 'AUTHORITY_UNKNOWN_REFUSED' }
   }
 
-  // A2 / F5: a throwing Proxy/getter anywhere in approvedConfig (including its
-  // endpoints array or an individual endpoint) refuses AUTHORITY_INVALID_REFUSED,
-  // never propagates.
   let config: ApprovedConfigShape | null
   try {
     config = validateApprovedConfig(approvedConfig)
@@ -557,21 +581,22 @@ export function projectEligibility(req: unknown): ProjectionResult {
     return { ok: false, level: 'authority', code: 'AUTHORITY_INVALID_REFUSED' }
   }
 
-  // A2 / F5 + F2, and A2 round 2 / R2: shape-check the request list and
-  // extract each identity's provider/id exactly once, all inside one guard
-  // — a throwing Proxy, throwing `.length`, or a throwing identity getter
-  // anywhere in this block refuses REQUEST_INVALID_REFUSED rather than
-  // propagating. Copies `identities` by an index loop reading `.length`
-  // exactly once, into a fresh local array: NEVER `.map`, `.forEach`,
-  // spread, `for...of`, or `Array.from` on `identities` itself, because all
-  // of those call a method on (or iterate) caller-owned data — a caller can
-  // override `.map` (or `Symbol.iterator`, or `Symbol.species`) on their own
-  // array to return forged results instead of ever running our callback.
-  // The index loop below only ever does `Array.isArray`, one `.length`
-  // read, and plain bracket index reads — none of which name-lookup a
-  // method the caller could have replaced.
+  // Stage 4, the request list. A2 / F5 + F2, and A2 round 2 / R2: read
+  // `identities`, shape-check it, and extract each identity's provider/id
+  // exactly once, all inside one guard. A throwing getter, Proxy, `.length`,
+  // or identity field anywhere in this block refuses REQUEST_INVALID_REFUSED
+  // rather than propagating. Copies `identities` by an index loop reading
+  // `.length` exactly once, into a fresh local array: NEVER `.map`,
+  // `.forEach`, spread, `for...of`, or `Array.from` on `identities` itself,
+  // because all of those call a method on (or iterate) caller-owned data. A
+  // caller can override `.map` (or `Symbol.iterator`, or `Symbol.species`)
+  // on their own array to return forged results instead of ever running our
+  // callback. The index loop below only does `Array.isArray`, one `.length`
+  // read, and plain bracket index reads. A Proxy's get trap can still run on
+  // those reads, but each value is read once and never re-read.
   let extractedIdentities: readonly ExtractedIdentity[] | null = null
   try {
+    const identities = fields.identities
     if (Array.isArray(identities)) {
       const length = identities.length
       if (typeof length === 'number' && Number.isInteger(length) && length > 0) {

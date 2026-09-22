@@ -11,7 +11,23 @@ import { test } from 'node:test'
 import { fileURLToPath } from 'node:url'
 import { readCatalogSnapshot } from '../src/catalog-snapshot.js'
 import type { CatalogSnapshot, IdentityResult, ProjectionResult } from '../src/eligibility.js'
-import { projectEligibility } from '../src/eligibility.js'
+import {
+  IDENTITY_REFUSAL_CODES,
+  META_ROUTER_IDS,
+  projectEligibility,
+  REFUSED_VARIANT_SUFFIXES,
+  SNAPSHOT_REFUSAL_CODES,
+} from '../src/eligibility.js'
+
+/**
+ * The contract's declared `req` type (correction 1). Hostile-input tests pass
+ * values outside that type through this cast; the runtime still refuses them.
+ */
+type ProjectionRequest = Parameters<typeof projectEligibility>[0]
+
+function asRequest(value: unknown): ProjectionRequest {
+  return value as ProjectionRequest
+}
 
 const here = dirname(fileURLToPath(import.meta.url))
 const fixturePath = join(here, 'fixtures', 'catalog-snapshot', 'baseline.v1.json')
@@ -168,14 +184,14 @@ test('F1: a real snapshot post-read-mutated cannot yield different facts, becaus
 
 test('R1: projectEligibility(null) refuses REQUEST_INVALID_REFUSED, never throws', () => {
   assert.doesNotThrow(() => {
-    const result = projectEligibility(null)
+    const result = projectEligibility(asRequest(null))
     assert.deepEqual(result, { ok: false, level: 'request', code: 'REQUEST_INVALID_REFUSED' })
   })
 })
 
 test('R1: projectEligibility(undefined) refuses REQUEST_INVALID_REFUSED, never throws', () => {
   assert.doesNotThrow(() => {
-    const result = projectEligibility(undefined)
+    const result = projectEligibility(asRequest(undefined))
     assert.deepEqual(result, { ok: false, level: 'request', code: 'REQUEST_INVALID_REFUSED' })
   })
 })
@@ -184,7 +200,7 @@ test('R1: a revoked Proxy as req refuses SNAPSHOT_UNVERIFIED_REFUSED, never thro
   const { proxy, revoke } = Proxy.revocable({}, {})
   revoke()
   assert.doesNotThrow(() => {
-    const result = projectEligibility(proxy)
+    const result = projectEligibility(asRequest(proxy))
     // typeof a revoked Proxy is safely 'object' (no trap involved), but any
     // property read on it throws -- including the very first read,
     // `.snapshot` -- so this resolves the same as any other throw while
@@ -203,12 +219,12 @@ test('R1: a req whose snapshot getter throws refuses SNAPSHOT_UNVERIFIED_REFUSED
     identities: [{ provider: 'openai', id: 'gpt-4o-mini' }],
   }
   assert.doesNotThrow(() => {
-    const result = projectEligibility(hostile)
+    const result = projectEligibility(asRequest(hostile))
     assert.deepEqual(result, { ok: false, level: 'snapshot', code: 'SNAPSHOT_UNVERIFIED_REFUSED' })
   })
 })
 
-test('R1: a req whose approvedConfig getter throws (snapshot already read fine) refuses REQUEST_INVALID_REFUSED, never throws', () => {
+test('R1: a req whose approvedConfig getter throws (snapshot already read fine) refuses AUTHORITY_INVALID_REFUSED, never throws', () => {
   const hostile = {
     snapshot: baseSnapshot,
     get approvedConfig(): unknown {
@@ -218,14 +234,121 @@ test('R1: a req whose approvedConfig getter throws (snapshot already read fine) 
     identities: [{ provider: 'openai', id: 'gpt-4o-mini' }],
   }
   assert.doesNotThrow(() => {
-    const result = projectEligibility(hostile)
+    const result = projectEligibility(asRequest(hostile))
+    // A2 conformance (coordinator ruling on the resume Step-0 flag 1): "A
+    // throw while reading approvedConfig refuses AUTHORITY_INVALID_REFUSED".
+    // The round-2 rework asserted REQUEST_INVALID_REFUSED here, which
+    // contradicted A2. This is the one assertion this rework changes.
+    assert.deepEqual(result, { ok: false, level: 'authority', code: 'AUTHORITY_INVALID_REFUSED' })
+  })
+})
+
+test('R1: a req whose evaluationTimeUtc getter throws refuses REQUEST_INVALID_REFUSED, never throws', () => {
+  const hostile = {
+    snapshot: baseSnapshot,
+    approvedConfig: DEFAULT_APPROVED_CONFIG,
+    get evaluationTimeUtc(): unknown {
+      throw new Error('hostile evaluationTimeUtc getter')
+    },
+    identities: [{ provider: 'openai', id: 'gpt-4o-mini' }],
+  }
+  assert.doesNotThrow(() => {
+    const result = projectEligibility(asRequest(hostile))
     assert.deepEqual(result, { ok: false, level: 'request', code: 'REQUEST_INVALID_REFUSED' })
   })
 })
 
+test('R1: a req whose identities getter throws refuses REQUEST_INVALID_REFUSED, never throws', () => {
+  const hostile = {
+    snapshot: baseSnapshot,
+    approvedConfig: DEFAULT_APPROVED_CONFIG,
+    evaluationTimeUtc: FRESH_EVAL_TIME,
+    get identities(): unknown {
+      throw new Error('hostile identities getter')
+    },
+  }
+  assert.doesNotThrow(() => {
+    const result = projectEligibility(asRequest(hostile))
+    assert.deepEqual(result, { ok: false, level: 'request', code: 'REQUEST_INVALID_REFUSED' })
+  })
+})
+
+test('R1: req fields are read lazily in pipeline order, so a stale snapshot wins over a throwing identities getter', () => {
+  let identitiesReads = 0
+  const hostile = {
+    snapshot: baseSnapshot,
+    approvedConfig: DEFAULT_APPROVED_CONFIG,
+    evaluationTimeUtc: '2026-09-22T12:00:00.001Z', // 1 ms past 24h after the fixture's checkedAtUtc
+    get identities(): unknown {
+      identitiesReads += 1
+      throw new Error('hostile identities getter')
+    },
+  }
+  const result = projectEligibility(asRequest(hostile))
+  assert.deepEqual(result, { ok: false, level: 'snapshot', code: 'STALE_REFUSED' })
+  assert.equal(identitiesReads, 0)
+})
+
+test('R1: req fields are read lazily in pipeline order, so an invalid evaluation time wins over a throwing approvedConfig getter', () => {
+  let approvedConfigReads = 0
+  const hostile = {
+    snapshot: baseSnapshot,
+    get approvedConfig(): unknown {
+      approvedConfigReads += 1
+      throw new Error('hostile approvedConfig getter')
+    },
+    evaluationTimeUtc: 'not a time',
+    identities: [{ provider: 'openai', id: 'gpt-4o-mini' }],
+  }
+  const result = projectEligibility(asRequest(hostile))
+  assert.deepEqual(result, { ok: false, level: 'request', code: 'TIME_INVALID_REFUSED' })
+  assert.equal(approvedConfigReads, 0)
+})
+
+test('R1: each req field is read exactly once on the success path', () => {
+  const reads: Record<string, number> = {}
+  const source: Record<string, unknown> = {
+    snapshot: baseSnapshot,
+    approvedConfig: DEFAULT_APPROVED_CONFIG,
+    evaluationTimeUtc: FRESH_EVAL_TIME,
+    identities: [{ provider: 'openai', id: 'gpt-4o-mini' }],
+  }
+  const counted = new Proxy(source, {
+    get(target, key) {
+      if (typeof key === 'string') reads[key] = (reads[key] ?? 0) + 1
+      return target[key as string]
+    },
+  })
+  const result = projectEligibility(asRequest(counted))
+  assert.equal(result.ok, true)
+  assert.deepEqual(reads, { snapshot: 1, evaluationTimeUtc: 1, approvedConfig: 1, identities: 1 })
+})
+
+test('read-once: approvedConfig.authorityRef and .endpoints are each read exactly once, so a flipping getter cannot forge provenance', () => {
+  let authorityReads = 0
+  let endpointsReads = 0
+  const flipping = {
+    get authorityRef(): unknown {
+      authorityReads += 1
+      return authorityReads === 1 ? 'test-authority' : { forged: true }
+    },
+    get endpoints(): unknown {
+      endpointsReads += 1
+      return endpointsReads === 1 ? DEFAULT_APPROVED_CONFIG.endpoints : []
+    },
+  }
+  const result = project({ approvedConfig: flipping })
+  assert.equal(result.ok, true)
+  if (!result.ok) throw new Error('unreachable')
+  assert.equal(result.provenance.approvedConfigRef, 'test-authority')
+  assert.equal(authorityReads, 1)
+  assert.equal(endpointsReads, 1)
+  assert.equal(result.results[0]?.outcome, 'facts')
+})
+
 test('R1: a non-object req (a string) refuses REQUEST_INVALID_REFUSED, never throws', () => {
   assert.doesNotThrow(() => {
-    const result = projectEligibility('not an object')
+    const result = projectEligibility(asRequest('not an object'))
     assert.deepEqual(result, { ok: false, level: 'request', code: 'REQUEST_INVALID_REFUSED' })
   })
 })
@@ -1289,4 +1412,54 @@ test('AC14: every whole-projection refusal carries its declared level and no res
     assert.equal(testCase.result.code, testCase.code, testCase.name)
     assert.ok(!('results' in testCase.result), `${testCase.name}: no results array`)
   }
+})
+
+// ---------------------------------------------------------------------------
+// Exported constants are frozen (coordinator ruling on the resume Step-0
+// flag 3). A same-process caller must not be able to empty META_ROUTER_IDS,
+// or any other exported list, and so turn a refused class into facts.
+// ---------------------------------------------------------------------------
+
+const EXPORTED_CONSTANT_ARRAYS: readonly { name: string; value: readonly unknown[] }[] = [
+  { name: 'META_ROUTER_IDS', value: META_ROUTER_IDS },
+  { name: 'REFUSED_VARIANT_SUFFIXES', value: REFUSED_VARIANT_SUFFIXES },
+  { name: 'SNAPSHOT_REFUSAL_CODES', value: SNAPSHOT_REFUSAL_CODES },
+  { name: 'IDENTITY_REFUSAL_CODES', value: IDENTITY_REFUSAL_CODES },
+]
+
+for (const constant of EXPORTED_CONSTANT_ARRAYS) {
+  test(`frozen constants: ${constant.name} rejects push, splice, index assignment, and length assignment`, () => {
+    const mutable = constant.value as unknown[]
+    const before = [...constant.value]
+    assert.equal(Object.isFrozen(constant.value), true)
+    assert.throws(() => mutable.push('injected'), TypeError)
+    assert.throws(() => mutable.splice(0, mutable.length), TypeError)
+    assert.throws(() => {
+      mutable[0] = 'replaced'
+    }, TypeError)
+    assert.throws(() => {
+      mutable.length = 0
+    }, TypeError)
+    assert.deepEqual([...constant.value], before)
+  })
+}
+
+test('frozen constants: after every mutation attempt, openrouter/auto still refuses META_ROUTER_REFUSED', () => {
+  for (const constant of EXPORTED_CONSTANT_ARRAYS) {
+    const mutable = constant.value as unknown[]
+    try {
+      mutable.length = 0
+    } catch {
+      // expected: frozen
+    }
+    try {
+      mutable.splice(0, mutable.length)
+    } catch {
+      // expected: frozen
+    }
+  }
+  const entry = singleResult(project({ identities: [{ provider: 'openrouter', id: 'auto' }] }))
+  assert.equal(entry.outcome, 'refused')
+  if (entry.outcome !== 'refused') throw new Error('unreachable')
+  assert.deepEqual(entry.codes, ['META_ROUTER_REFUSED'])
 })
