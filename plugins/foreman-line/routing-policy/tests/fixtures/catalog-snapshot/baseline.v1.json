@@ -1,7 +1,11 @@
 {
   "formatVersion": "rcm-catalog-snapshot/v1",
-  "sourceRef": "RCM-P1 fixture: model records copied field-for-field (ten fact fields) from the committed P0 evidence snapshot docs/goals/routing-currency-and-merit/rcm-p0-catalog-snapshot.v1.json (AC15 P0_DERIVED list). checkedAtUtc values are synthetic -- P0 exported none (13/13 absent) -- and are not sourced from any host.",
+  "sourceRef": "RCM-P1 fixture: records under provider \"fixture-static\" are hand-built; every other record is copied field-for-field (ten fact fields) from the committed P0 evidence snapshot docs/goals/routing-currency-and-merit/rcm-p0-catalog-snapshot.v1.json. checkedAtUtc values are synthetic -- P0 exported none (13/13 absent) -- and are not sourced from any host.",
   "providers": [
+    {
+      "providerKey": "fixture-static",
+      "checkedAtUtc": "2026-09-21T12:00:00.000Z"
+    },
     {
       "providerKey": "nvidia",
       "checkedAtUtc": "2026-09-21T12:00:00.000Z"
@@ -415,6 +419,28 @@
         "output": {
           "unit": "USD per 1M tokens",
           "value": 4.4
+        }
+      }
+    },
+    {
+      "provider": "fixture-static",
+      "id": "static-test-model",
+      "baseUrl": "https://fixture-static.example/v1",
+      "api": "openai-completions",
+      "input": [
+        "text"
+      ],
+      "reasoning": false,
+      "contextWindow": 8192,
+      "maxTokens": 4096,
+      "cost": {
+        "input": {
+          "unit": "USD per 1M tokens",
+          "value": 1
+        },
+        "output": {
+          "unit": "USD per 1M tokens",
+          "value": 2
         }
       }
     }
