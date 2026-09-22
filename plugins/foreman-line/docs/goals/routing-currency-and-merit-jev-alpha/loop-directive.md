@@ -14,9 +14,9 @@ the replacement decisions and non-locked queue corrections are now ratified or
 accepted as recorded in the charter. JEV-P0 and JEV-P1 are accepted through
 Gate 3 at their recorded merged commits. JEV-P2 is accepted at Gate 3 at
 merged commit `34fc2f5` after post-merge verification. Gate 2 is granted for
-JEV-P2–P5 in strict sequence, with JEV-P3 as the current dispatch target. No
-live provider call, spend, host/Pi mutation, or parent-goal surface change is
-authorized outside the current parcel scope.
+JEV-P2–P5 in strict sequence, with JEV-P3 PR #44 open and awaiting merge/Gate 3.
+No live provider call, spend, host/Pi mutation, or parent-goal surface change
+is authorized outside the current parcel scope.
 
 ## Standing authorizations and limits
 
@@ -52,7 +52,7 @@ authorized outside the current parcel scope.
    accepted at Gate 3 at merged commit `34fc2f5`; P2 is closed.
 4. **JEV-P3** — `support-triage-advisory-v1` consumer contract; recommendation-only
    data, application-owned effects, no general routing integration; architecture/
-   risk, dual review; Gate 2 granted and current dispatch target.
+   risk, dual review; PR #44 open, Gate 3 pending.
 5. **JEV-P4** — environment-specific positive, negative, timeout, auth, privacy,
    cost, refusal, and provider-boundary scenarios; architecture/risk, dual review.
 6. **JEV-P5** — release closure, operational documentation, evidence index, and

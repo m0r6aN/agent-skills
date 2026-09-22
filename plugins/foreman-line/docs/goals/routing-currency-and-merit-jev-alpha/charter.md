@@ -211,6 +211,20 @@ JEV-P3 is now the next dispatchable parcel under the already-granted strict-
 sequence Gate 2 authorization. JEV-P4 and JEV-P5 remain blocked until their
 predecessors receive their own Gate 3 acceptance.
 
+## JEV-P3 dispatch record
+
+**DISPATCHED 2026-09-22:** The bounded P3 builder completed Step 0 in dedicated
+worktree `C:\Repos\foreman-line-jev-p3` on branch `codex/jev-p3-consumer`.
+PR #44 is open against `codex/refresh-actions-and-packages` at branch HEAD
+`6313489`. The implementation emits the exact six-key
+`support-triage-advisory/v1` object from a canonical validated P1 response;
+27 package tests pass, the configured checks pass, and both independent
+architecture/risk reviews returned PASS.
+
+P3 remains pending merge, local refresh, and human Gate 3 acceptance. No P4/P5
+dispatch, live call, spend, routing, host/Pi, parent, HAWF, Helmholtz, or
+downstream action is authorized by this record.
+
 ## Plan-review Gate 1 reopening
 
 The mandatory fresh plan-level review on 2026-09-21 returned **REQUEST CHANGES**.
