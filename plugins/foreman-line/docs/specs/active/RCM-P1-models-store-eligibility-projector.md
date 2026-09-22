@@ -472,6 +472,24 @@ hostile inputs throw. A2 adds these binding rules:
   scan must include positive-control tests showing it flags every construct the
   review listed as missed.
 
+**Review amendment A3 (2026-09-22).** The third review of `c13e4bb`, reproduced by
+the coordinator, found two gaps. A3 adds these binding rules:
+
+- **Request-size caps.** The exported frozen constant
+  `MAX_REQUESTED_IDENTITIES = 256` bounds the request. An `identities` length
+  greater than 256 refuses `REQUEST_INVALID_REFUSED`, level `request`. The
+  exported frozen constant `MAX_APPROVED_ENDPOINTS = 256` bounds the
+  configuration. An `approvedConfig.endpoints` length greater than 256 refuses
+  `AUTHORITY_INVALID_REFUSED`, level `authority`. Each cap is checked on the
+  single length read, before any allocation or iteration.
+- **Every provider time is bounded.** Any provider `checkedAtUtc` later than the
+  evaluation time refuses `FUTURE_REFUSED`, not only the oldest one. Staleness
+  is still measured from the oldest provider time.
+- **Threat model, stated in the README.** Callers are same-process code. Refusals
+  cover hostile values passed as arguments. Tampering with shared globals or
+  built-in prototypes in the same realm is out of scope, and so is resource
+  exhaustion below the caps.
+
 ## Session Handoff
 
 The shaper returns this draft path, the base commit, and open questions. No
