@@ -12,23 +12,23 @@ Gate 1 is ratified for the original J1–J10 and the plan-review replacement
 decisions. The mandatory plan review returned REQUEST CHANGES and was triaged;
 the replacement decisions and non-locked queue corrections are now ratified or
 accepted as recorded in the charter. JEV-P0 and JEV-P1 are accepted through
-Gate 3 at their recorded merged commits. JEV-P2–P5 remain ungranted. No live
-provider call, spend, host/Pi mutation, or parent-goal surface change is
-authorized.
+Gate 3 at their recorded merged commits. Gate 2 is granted for JEV-P2–P5 in
+strict sequence, with JEV-P2 as the current dispatch target. No live provider
+call, spend, host/Pi mutation, or parent-goal surface change is authorized
+outside the current parcel scope.
 
 ## Standing authorizations and limits
 
 1. **Gate 1** is ratified for the exact J1–J10 replacement text in the charter.
    Any future locked-decision change reopens Gate 1 for that decision only.
-2. **Gate 2** was granted for the exact JEV-P1 parcel recorded in the charter;
-   that parcel is now closed. Stop and request a new exact parcel-set grant
-   before dispatching JEV-P2 or any later parcel.
+2. **Gate 2** is granted for JEV-P2–P5 as an exact strict-sequence parcel set.
+   JEV-P2 is the only parcel currently dispatchable; stop before each later
+   parcel until its predecessor is accepted at Gate 3.
 3. **Gate 3** is accepted for the bounded JEV-P0 handoff at merged commit
    `cf6c5536c7f7e4d0b6d92dd7ea570f44d49d961e` and the bounded JEV-P1 handoff at
    merged commit `bd9707a1f7ae7052204c5b06fc75977677216232`. It does not
    authorize JEV-P2–P5 or any live call, spend, host/Pi, parent, HAWF,
-   Helmholtz, or general-routing action. Merges remain human-owned for later
-   parcels.
+   Helmholtz, or general-routing action. Merges remain human-owned for JEV-P2–P5.
 4. A future Gate 2 grant may authorize only the exact live-call bound recorded in
    J10: one call per authorized run, zero retries, concurrency one, 30-second
    timeout, 64-KiB request limit, and aggregate cap $0.01 USD per run.
@@ -46,7 +46,8 @@ authorized.
    canonical JSON digests, and deterministic sanitized fixture replay; completed
    and accepted at Gate 3.
 3. **JEV-P2** — secret-safe bounded runtime adapter and redacted receipt capture;
-   architecture/risk, security review required before release, dual review.
+   architecture/risk, security review required before release, dual review;
+   Gate 2 granted and current dispatch target.
 4. **JEV-P3** — `support-triage-advisory-v1` consumer contract; recommendation-only
    data, application-owned effects, no general routing integration; architecture/
    risk, dual review.

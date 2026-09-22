@@ -1,6 +1,6 @@
 # Routing Currency and Merit — Jev Alpha Decisions
 
-**Status:** RATIFIED — Gate 1 complete; bounded JEV-P0 Gate 3 accepted after merge; JEV-P1 Gate 2 granted on 2026-09-21
+**Status:** RATIFIED — Gate 1 complete; JEV-P0 and JEV-P1 Gate 3 accepted after merge; Gate 2 granted for JEV-P2–P5 on 2026-09-21
 **Prepared:** 2026-09-21
 **Parent context:** `routing-currency-and-merit`
 **Coordinator:** Foreman Line coordinator session
@@ -82,8 +82,9 @@ were not changed.
 
 - **Gate 1:** granted for the original J1–J10 and the plan-review replacement
   decisions recorded below. Later parcel authority remains ungranted.
-- **Gate 2:** granted for the exact parcels recorded below. JEV-P2–JEV-P5
-  remain ungranted and require later exact parcel-set grants.
+- **Gate 2:** granted for the exact JEV-P2–P5 parcel set recorded below, in
+  strict dependency order; no later parcel dispatches before the predecessor
+  is accepted at Gate 3.
 - **Gate 3:** accepted only for the bounded JEV-P0 handoff at merged commit
   `cf6c5536c7f7e4d0b6d92dd7ea570f44d49d961e`; it does not grant JEV-P1–P5,
   live Jev execution, spend, host/Pi action, parent mutation, HAWF, Helmholtz,
@@ -169,6 +170,22 @@ Closure evidence: PR #41 merged from `codex/jev-p1-validator`; the refreshed
 coordinator branch is `codex/refresh-actions-and-packages` at the same merge
 commit; `npm test` passed with 8 tests; no unrelated dirty workspace files
 were changed.
+
+## JEV-P2–P5 Gate 2 record
+
+**GRANTED 2026-09-21 by Clinton Morgan:** “JEV-P2–P5 gate granted.” This
+authorizes the exact remaining parcel set in strict dependency order: JEV-P2
+secret-safe bounded runtime adapter and redacted receipt capture; JEV-P3 named
+recommendation-only consumer contract; JEV-P4 environment and provider-boundary
+scenarios; and JEV-P5 release closure and non-change proof. Each parcel still
+requires its own spec, deterministic verification, required review, and human
+Gate 3 closure before the next parcel is dispatched.
+
+This grant does not authorize general routing, parent RCM/D13 or D10 mutation,
+Pi/host changes, HAWF, Helmholtz, downstream effects, standing credentials, or
+unbounded spend. Any P2 live call remains limited to the ratified J10 bound:
+one call per authorized run, zero retries, concurrency one, 30-second timeout,
+64-KiB request limit, and aggregate cap $0.01 USD per run.
 
 ## Plan-review Gate 1 reopening
 
