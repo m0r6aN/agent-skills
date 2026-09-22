@@ -223,3 +223,64 @@ npx tsx src/cli.ts validate routing-policy.yaml
 
 Exactly two: `ajv` (validation engine) and `yaml` (policy parsing), both
 machine-enforced by `tests/dependency-allowlist.test.ts`.
+
+## Catalog snapshot reader and eligibility projector (RCM-P1)
+
+`src/catalog-snapshot.ts` and `src/eligibility.ts` are a pure, offline pair
+that turn a versioned, digest-bound catalog snapshot of allowlisted
+`models-store` facts into either normalized eligibility facts or closed,
+typed refusals. They are library code only: not exported from `src/index.ts`,
+not wired into `dispatch/`, and not routing authority. They produce facts and
+refusals only — they never decide a route and never touch dispatch-time
+enforcement (RCM charter D1, D2, D10, D11, D13). Later parcels consume these
+values: RCM-P3 machine-checks policy capability claims against them, and
+RCM-P5 enforces them at dispatch-time preflight.
+
+**`readCatalogSnapshot(bytes, expectedSha256)`** binds the exact input bytes
+to a caller-supplied lowercase-hex SHA-256 digest, then verifies the bytes are
+canonical JSON (`JSON.stringify(parsed, null, 2) + "\n"`, catching CRLF,
+duplicate JSON members, and numeric overflow as one mechanism) in the closed
+`rcm-catalog-snapshot/v1` envelope shape. Success returns a nominally branded
+`CatalogSnapshot` — the brand is a module-private symbol, so no code outside
+this file can construct a value the type checker accepts as one. The P0
+recon evidence file at
+`docs/goals/routing-currency-and-merit/rcm-p0-catalog-snapshot.v1.json` is a
+deliberate negative control: passed with its own true digest, it refuses with
+`FORMAT_REFUSED`, proving P0 evidence is design input only, never a P1 input.
+
+**`projectEligibility({ snapshot, approvedConfig, evaluationTimeUtc, identities })`**
+turns requested `(provider, id)` identities into `EligibilityFacts` or
+refusals. Freshness is exactly 24 hours (`CATALOG_FRESHNESS_MAX_AGE_MS`)
+against the oldest `checkedAtUtc` across every provider in the snapshot, not
+only the requested ones; any single `null` provider time refuses the whole
+projection rather than being skipped. Endpoints join by exact, case-sensitive
+string equality — no trailing-slash trimming, host case-folding, or `/api`
+vs. `/api/v1` aliasing. Meta-router ids (`META_ROUTER_IDS`) and any
+colon-suffixed id (`REFUSED_VARIANT_SUFFIXES` names the charter's four; the
+actual rule is default-deny on any colon) always refuse, whether or not the
+id is present in the catalog. A refused identity collects *every* applicable
+code, in `IDENTITY_REFUSAL_CODES`'s declared order, and never carries facts.
+Whole-projection failures (`SNAPSHOT_REFUSAL_CODES`, spanning both the
+reader's and the projector's codes) run first-match-wins in pipeline order
+and carry a `level` of `'snapshot' | 'authority' | 'request'`; a snapshot,
+authority, or request-level refusal always omits the `results` array.
+
+Both modules are pure: no ambient clock, randomness, or timers; no
+`process`, environment, filesystem, or network access; no sorting of any
+kind; no price comparison between records. `tests/catalog-purity.test.ts`
+enforces this with a static import/construct scan plus a runtime probe that
+replaces `fetch`, `Date.now`, `Math.random`, and `process.env` with throwing
+stubs and re-runs both functions to confirm they are unaffected and
+deterministic. The only runtime imports either module makes are `node:crypto`
+(the reader, for the digest) and `eligibility.ts`'s own relative import of
+its sibling `catalog-snapshot.ts` (to re-export the reader surface, per this
+parcel's own contract) — no other dependency, host file, or `PI_OPENROUTER_ROUTING`
+default is read.
+
+The one committed fixture, `tests/fixtures/catalog-snapshot/baseline.v1.json`,
+copies its model records field-for-field from the committed P0 evidence
+snapshot (`tests/catalog-snapshot.test.ts` deep-equals every record against
+its P0 source on all ten fact fields); only its `checkedAtUtc` values are
+synthetic, since P0 exported none. Negative and edge cases mutate a clone of
+that fixture's parsed bytes in memory and re-derive a canonical digest, rather
+than adding further committed fixtures.
