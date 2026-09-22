@@ -12,24 +12,24 @@ Gate 1 is ratified for the original J1–J10 and the plan-review replacement
 decisions. The mandatory plan review returned REQUEST CHANGES and was triaged;
 the replacement decisions and non-locked queue corrections are now ratified or
 accepted as recorded in the charter. JEV-P0 and JEV-P1 are accepted through
- Gate 3 at their recorded merged commits. JEV-P2 is merged at `34fc2f5` and
- post-merge verification passes; its Gate 3 closure remains human-owned and
- pending. Gate 2 is granted for JEV-P2–P5 in strict sequence, with JEV-P3
- blocked until JEV-P2 Gate 3 acceptance. No live provider call, spend, host/Pi
- mutation, or parent-goal surface change is authorized outside the current
- parcel scope.
+Gate 3 at their recorded merged commits. JEV-P2 is accepted at Gate 3 at
+merged commit `34fc2f5` after post-merge verification. Gate 2 is granted for
+JEV-P2–P5 in strict sequence, with JEV-P3 as the current dispatch target. No
+live provider call, spend, host/Pi mutation, or parent-goal surface change is
+authorized outside the current parcel scope.
 
 ## Standing authorizations and limits
 
 1. **Gate 1** is ratified for the exact J1–J10 replacement text in the charter.
    Any future locked-decision change reopens Gate 1 for that decision only.
 2. **Gate 2** is granted for JEV-P2–P5 as an exact strict-sequence parcel set.
-   JEV-P2 is merged and awaiting Gate 3 acceptance; stop before JEV-P3 and
-   every later parcel until its predecessor is accepted at Gate 3.
+   JEV-P2 is accepted at Gate 3; JEV-P3 is now dispatchable. Stop before JEV-P4
+   and every later parcel until its predecessor is accepted at Gate 3.
 3. **Gate 3** is accepted for the bounded JEV-P0 handoff at merged commit
-   `cf6c5536c7f7e4d0b6d92dd7ea570f44d49d961e` and the bounded JEV-P1 handoff at
-   merged commit `bd9707a1f7ae7052204c5b06fc75977677216232`. It does not
-   authorize JEV-P2–P5 or any live call, spend, host/Pi, parent, HAWF,
+   `cf6c5536c7f7e4d0b6d92dd7ea570f44d49d961e`, the bounded JEV-P1 handoff at
+   merged commit `bd9707a1f7ae7052204c5b06fc75977677216232`, and the bounded
+   JEV-P2 handoff at merged commit `34fc2f54cb39b22faed576fc3460cba1d3631745`.
+   It does not authorize JEV-P3–P5 or any live call, spend, host/Pi, parent, HAWF,
    Helmholtz, or general-routing action. Merges remain human-owned for JEV-P2–P5.
 4. A future Gate 2 grant may authorize only the exact live-call bound recorded in
    J10: one call per authorized run, zero retries, concurrency one, 30-second
@@ -49,10 +49,10 @@ accepted as recorded in the charter. JEV-P0 and JEV-P1 are accepted through
    and accepted at Gate 3.
 3. **JEV-P2** — secret-safe bounded runtime adapter and redacted receipt capture;
    architecture/risk, security review required before release, dual review;
-   merged at `34fc2f5`, post-merge verification passed, Gate 3 closure pending.
+   accepted at Gate 3 at merged commit `34fc2f5`; P2 is closed.
 4. **JEV-P3** — `support-triage-advisory-v1` consumer contract; recommendation-only
    data, application-owned effects, no general routing integration; architecture/
-   risk, dual review.
+   risk, dual review; Gate 2 granted and current dispatch target.
 5. **JEV-P4** — environment-specific positive, negative, timeout, auth, privacy,
    cost, refusal, and provider-boundary scenarios; architecture/risk, dual review.
 6. **JEV-P5** — release closure, operational documentation, evidence index, and

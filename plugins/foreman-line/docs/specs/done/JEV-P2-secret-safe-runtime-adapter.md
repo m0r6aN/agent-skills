@@ -1,10 +1,10 @@
 ---
 ticket: JEV-P2
 title: Jev secret-safe bounded runtime adapter and redacted receipt capture
-status: active
+status: done
 owner: clinton.morgan
 created: 2026-09-21
-updated: 2026-09-21
+updated: 2026-09-22
 supersedes: null
 superseded_by: null
 risk: architecture/risk
@@ -35,9 +35,9 @@ refusal-record, or hold-record. The adapter owns no workflow effects and never
 returns or persists a raw provider body, authorization header, credential, or
 free-text diagnostic.
 
-This parcel is dispatchable under the exact JEV-P2–P5 Gate 2 grant recorded in
-the charter. JEV-P3, P4, and P5 remain sequentially blocked until this parcel
-passes its two fresh reviews, security review, merge, and human Gate 3 closure.
+This parcel was dispatchable under the exact JEV-P2–P5 Gate 2 grant recorded in
+the charter. JEV-P3, P4, and P5 were sequentially blocked until this parcel
+passed its two fresh reviews, security review, merge, and human Gate 3 closure.
 
 ### P2 amendment A1
 
@@ -95,31 +95,31 @@ Neither branch includes raw provider data or free-form diagnostics.
 
 ## Acceptance Criteria
 
-- [ ] **AC1 — Exact request:** The adapter constructs the P0 closed request
+- [x] **AC1 — Exact request:** The adapter constructs the P0 closed request
   with the exact identity, typed state, three questions, canonical request
   digest, and no caller-controlled endpoint/body/header field.
-- [ ] **AC2 — Secret boundary:** Missing credentials, transport errors, and
+- [x] **AC2 — Secret boundary:** Missing credentials, transport errors, and
   provider responses never echo the key, authorization header, raw body, or
   unsafe payload. Static and runtime tests prove this.
-- [ ] **AC3 — Lease/budget authority:** The adapter validates exact lease and
+- [x] **AC3 — Lease/budget authority:** The adapter validates exact lease and
   budget bindings, freshness, timestamps, custody metadata, single-use state,
   and consumes before socket open; retry/concurrency/reuse paths refuse or hold
   with the correct generic code.
-- [ ] **AC4 — Transport bound:** Only the immutable HTTPS endpoint and POST
+- [x] **AC4 — Transport bound:** Only the immutable HTTPS endpoint and POST
   JSON request are used; redirects, non-2xx, non-JSON, invalid UTF-8, truncation,
   body over-limit, timeout, and transport failure produce generic refusal.
-- [ ] **AC5 — Response/cost validation:** Provider metadata is never invented;
+- [x] **AC5 — Response/cost validation:** Provider metadata is never invented;
   normalized response validation delegates to P1; missing metadata is R12 hold,
   malformed metadata/answers is refusal, and cost/usage is closed and bounded.
-- [ ] **AC6 — Redacted observation:** A success emits exactly the P0
+- [x] **AC6 — Redacted observation:** A success emits exactly the P0
   live-observation field set, with request/response JCS digests, bound
   requested/served identities, response ID, timestamps, usage, USD cost, and
   no raw or secret-bearing fields.
-- [ ] **AC7 — Isolation:** Tests use injected fake transport, lease, clock, and
+- [x] **AC7 — Isolation:** Tests use injected fake transport, lease, clock, and
   provider payloads; no test makes a live call or requires a credential. The
   production path has no filesystem, child process, telemetry, retry, or
   workflow-effect dependency.
-- [ ] **AC8 — Scope:** Only `runtime.ts`, the package entrypoint export, and
+- [x] **AC8 — Scope:** Only `runtime.ts`, the package entrypoint export, and
   `runtime.test.ts` are changed in the package; no P1 behavior, P0 document,
   registry, host, or parent surface is changed.
 
@@ -167,6 +167,9 @@ test suite. No spend beyond the exact one-call/$0.01 bound is authorized.
 ## Session handoff
 
 - Starting commit: `db8853b` after P2–P5 Gate 2 record and P2 export-scope amendment
-- Ending commit: to be recorded after builder and review closure
-- Next action: dispatch the bounded P2 builder in a dedicated worktree
-- Gate 3: pending after implementation, reviews, merge, and local refresh
+- Ending commit: `34fc2f54cb39b22faed576fc3460cba1d3631745` (PR #42 merge)
+- Post-merge verification: 19 tests passed; configured syntax checks passed;
+  two architecture reviews and one security review returned PASS.
+- Gate 3: accepted 2026-09-22 by Clinton Morgan; the exact P2 parcel is closed.
+- Next action: shape and dispatch JEV-P3 under the already-granted strict-sequence
+  Gate 2 authorization.

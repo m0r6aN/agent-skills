@@ -1,6 +1,6 @@
 # Routing Currency and Merit — Jev Alpha Decisions
 
-**Status:** RATIFIED — Gate 1 complete; JEV-P0 and JEV-P1 Gate 3 accepted after merge; Gate 2 granted for JEV-P2–P5 on 2026-09-21
+**Status:** RATIFIED — Gate 1 complete; JEV-P0, JEV-P1, and JEV-P2 Gate 3 accepted after merge; Gate 2 granted for JEV-P2–P5 on 2026-09-21
 **Prepared:** 2026-09-21
 **Parent context:** `routing-currency-and-merit`
 **Coordinator:** Foreman Line coordinator session
@@ -202,8 +202,14 @@ refreshed to that commit. Post-merge verification passed with 19 tests and the
 configured syntax checks. Two independent architecture reviews and the
 independent security review all returned PASS before merge.
 
-Gate 3 for JEV-P2 remains human-owned and is not inferred from the merge. JEV-P3
-and later parcels remain blocked until P2 Gate 3 acceptance.
+**ACCEPTED 2026-09-22 by Clinton Morgan:** “explicit JEV-P2 Gate 3 acceptance
+granter”. This accepts the bounded JEV-P2 handoff at the merged commit above;
+it does not expand authority to JEV-P4/P5, parent or shared routing surfaces,
+host/Pi, HAWF, Helmholtz, or general routing.
+
+JEV-P3 is now the next dispatchable parcel under the already-granted strict-
+sequence Gate 2 authorization. JEV-P4 and JEV-P5 remain blocked until their
+predecessors receive their own Gate 3 acceptance.
 
 ## Plan-review Gate 1 reopening
 
