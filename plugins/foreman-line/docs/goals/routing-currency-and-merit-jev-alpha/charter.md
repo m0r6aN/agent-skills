@@ -193,6 +193,18 @@ allowed-file set therefore includes an export-only change to
 `plugins/foreman-line/jev-decisions/src/index.ts`; no P1 behavior or export is
 changed.
 
+## JEV-P2 merge record
+
+**MERGED 2026-09-22 UTC:** PR #42 (`JEV-P2: add bounded secret-safe Jev
+runtime adapter`) merged into `codex/refresh-actions-and-packages` at commit
+`34fc2f54cb39b22faed576fc3460cba1d3631745`. The local integration branch was
+refreshed to that commit. Post-merge verification passed with 19 tests and the
+configured syntax checks. Two independent architecture reviews and the
+independent security review all returned PASS before merge.
+
+Gate 3 for JEV-P2 remains human-owned and is not inferred from the merge. JEV-P3
+and later parcels remain blocked until P2 Gate 3 acceptance.
+
 ## Plan-review Gate 1 reopening
 
 The mandatory fresh plan-level review on 2026-09-21 returned **REQUEST CHANGES**.
