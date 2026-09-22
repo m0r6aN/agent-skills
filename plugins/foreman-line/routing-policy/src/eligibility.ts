@@ -13,11 +13,23 @@
  * its sibling module — the only non-`node:crypto`, non-type-only import
  * either new module makes, and it stays inside this parcel's own two files.
  *
- * Never throws (review amendment A2 / F5): every function returns a typed
- * refusal for hostile or malformed input, including a `snapshot` that is not
- * an object this reader actually issued (`SNAPSHOT_UNVERIFIED_REFUSED`,
- * checked first — see `SNAPSHOT_REFUSAL_CODES` below), a throwing
- * `approvedConfig` getter, or a throwing `identities`/identity getter.
+ * `projectEligibility` treats every input as hostile, including `req`
+ * itself (review amendment A2 round 2 / R1): `req` is `unknown`, read field
+ * by field inside guards, so `null`/`undefined`/non-object `req`, a revoked
+ * `Proxy`, or a throwing getter on any field all resolve to a typed
+ * refusal, never a thrown exception. It also never calls a method on, or
+ * iterates, caller-owned data (A2 round 2 / R2, the most serious finding of
+ * that round): `identities` and `approvedConfig.endpoints` are each copied
+ * by an index loop reading `.length` once and then bracket-indexing, never
+ * `.map`/`.forEach`/`for...of`/spread/`Array.from` — a caller can otherwise
+ * override `.map` (or `Symbol.iterator`, or `Symbol.species`) on their own
+ * array to return forged results without our callback ever running, which
+ * is exactly the exploit the round-2 review reproduced. Every function
+ * returns a typed refusal for hostile or malformed input, including a
+ * `snapshot` that is not an object this reader actually issued
+ * (`SNAPSHOT_UNVERIFIED_REFUSED`, checked first — see
+ * `SNAPSHOT_REFUSAL_CODES` below), a throwing `approvedConfig` getter, or a
+ * throwing `identities`/identity getter.
  */
 import {
   type CatalogSnapshot,
@@ -235,10 +247,24 @@ function validateApprovedConfig(value: unknown): ApprovedConfigShape | null {
   if (keys.length !== 2 || !hasOwn(value, 'authorityRef') || !hasOwn(value, 'endpoints'))
     return null
   if (typeof value.authorityRef !== 'string' || value.authorityRef.length === 0) return null
-  if (!Array.isArray(value.endpoints)) return null
+  const endpoints = value.endpoints
+  if (!Array.isArray(endpoints)) return null
+
+  // A2 round 2 / R2: index loop, never `for...of`/`.map`/etc. on
+  // `endpoints` — it is caller-owned data, same rule as `identities` in
+  // `projectEligibility`.
+  const endpointsLength = endpoints.length
+  if (
+    typeof endpointsLength !== 'number' ||
+    !Number.isInteger(endpointsLength) ||
+    endpointsLength < 0
+  ) {
+    return null
+  }
 
   const endpointsByProvider = new Map<string, string>()
-  for (const rawEndpoint of value.endpoints) {
+  for (let i = 0; i < endpointsLength; i += 1) {
+    const rawEndpoint = endpoints[i]
     if (!isRecord(rawEndpoint)) return null
     const endpointKeys = Object.keys(rawEndpoint)
     if (
@@ -289,11 +315,21 @@ function findModel(
 
 /**
  * A requested identity's `provider`/`id`, each read from the caller-supplied
- * value exactly once (A2 / F2). A getter that returns a different value on a
- * later read — flipping after a counted number of accesses, or diverging
- * between a duplicate check and the actual evaluation — cannot desynchronize
- * `requested` from what was actually evaluated, because nothing downstream
- * of this extraction ever reads the original raw value again.
+ * `raw` value exactly once (A2 / F2): this function itself never reads
+ * `raw.provider` or `raw.id` a second time, and returns a plain object that
+ * the rest of this file (the duplicate check, `evaluateIdentity`, and the
+ * returned `requested` field) uses instead of ever touching `raw` again.
+ *
+ * That guarantee is about *this function's own field reads* — it does not by
+ * itself say anything about how `raw` was obtained (A2 round 2 / R6
+ * correction of an earlier version of this comment that implied it did). A
+ * getter that flips its return value on a later read cannot desynchronize
+ * `requested` from what was evaluated only because the *caller* of this
+ * function (`projectEligibility`) also never re-reads the source array by
+ * any means the caller could intercept (see the index-loop comment there,
+ * A2 round 2 / R2) — a caller-overridden `.map`/`.forEach`/iterator on the
+ * `identities` array is a distinct, separately-fixed vulnerability from a
+ * getter on one identity's own `provider`/`id` fields.
  */
 interface ExtractedIdentity {
   readonly provider: unknown
@@ -423,21 +459,53 @@ function evaluateIdentity(
  * anything else; freshness needs a valid evaluation time; per-identity
  * results need authority and a well-formed request list). Per-identity
  * checks then run independently per identity and *collect* every applicable
- * code, in `IDENTITY_REFUSAL_CODES` order. Never throws (A2 / F5).
+ * code, in `IDENTITY_REFUSAL_CODES` order. Never throws (A2 / F5, and A2
+ * round 2 / R1, R2): `req` itself is `unknown` and read defensively — a
+ * `null`/`undefined`/non-object `req`, or a throw while reading
+ * `approvedConfig`/`evaluationTimeUtc`/`identities`, refuses
+ * `REQUEST_INVALID_REFUSED`; a throw specifically while reading `snapshot`
+ * refuses `SNAPSHOT_UNVERIFIED_REFUSED`, the same as a snapshot that reads
+ * fine but fails `isReaderIssuedSnapshot`.
  */
-export function projectEligibility(req: {
-  readonly snapshot: CatalogSnapshot
-  readonly approvedConfig: unknown
-  readonly evaluationTimeUtc: unknown
-  readonly identities: unknown
-}): ProjectionResult {
-  const { snapshot, approvedConfig, evaluationTimeUtc, identities } = req
+export function projectEligibility(req: unknown): ProjectionResult {
+  if (typeof req !== 'object' || req === null) {
+    return { ok: false, level: 'request', code: 'REQUEST_INVALID_REFUSED' }
+  }
+
+  // A2 round 2 / R1: reading `.snapshot` off a hostile `req` (a revoked
+  // Proxy, or an object whose `snapshot` getter throws) must not propagate.
+  let snapshot: unknown
+  try {
+    snapshot = (req as { readonly snapshot?: unknown }).snapshot
+  } catch {
+    return { ok: false, level: 'snapshot', code: 'SNAPSHOT_UNVERIFIED_REFUSED' }
+  }
 
   // A2 / F1: reject a snapshot this reader did not itself issue (forged, a
   // post-read mutation attempt on the frozen original, Object.create(real),
   // or a Proxy of a real one) before trusting anything else about it.
   if (!isReaderIssuedSnapshot(snapshot)) {
     return { ok: false, level: 'snapshot', code: 'SNAPSHOT_UNVERIFIED_REFUSED' }
+  }
+
+  // A2 round 2 / R1: the other three fields are read together, after
+  // `snapshot` is already confirmed reader-issued; any throw here (the same
+  // hostile `req` could have a throwing getter on any of these too) refuses
+  // REQUEST_INVALID_REFUSED, never propagates.
+  let approvedConfig: unknown
+  let evaluationTimeUtc: unknown
+  let identities: unknown
+  try {
+    const source = req as {
+      readonly approvedConfig?: unknown
+      readonly evaluationTimeUtc?: unknown
+      readonly identities?: unknown
+    }
+    approvedConfig = source.approvedConfig
+    evaluationTimeUtc = source.evaluationTimeUtc
+    identities = source.identities
+  } catch {
+    return { ok: false, level: 'request', code: 'REQUEST_INVALID_REFUSED' }
   }
 
   if (!isValidIsoTimestamp(evaluationTimeUtc)) {
@@ -489,14 +557,31 @@ export function projectEligibility(req: {
     return { ok: false, level: 'authority', code: 'AUTHORITY_INVALID_REFUSED' }
   }
 
-  // A2 / F5 + F2: shape-check the request list and extract each identity's
-  // provider/id exactly once, all inside one guard — a throwing Proxy,
-  // throwing `.length`, or a throwing identity getter anywhere in this block
-  // refuses REQUEST_INVALID_REFUSED rather than propagating.
-  let extractedIdentities: readonly ExtractedIdentity[] | null
+  // A2 / F5 + F2, and A2 round 2 / R2: shape-check the request list and
+  // extract each identity's provider/id exactly once, all inside one guard
+  // — a throwing Proxy, throwing `.length`, or a throwing identity getter
+  // anywhere in this block refuses REQUEST_INVALID_REFUSED rather than
+  // propagating. Copies `identities` by an index loop reading `.length`
+  // exactly once, into a fresh local array: NEVER `.map`, `.forEach`,
+  // spread, `for...of`, or `Array.from` on `identities` itself, because all
+  // of those call a method on (or iterate) caller-owned data — a caller can
+  // override `.map` (or `Symbol.iterator`, or `Symbol.species`) on their own
+  // array to return forged results instead of ever running our callback.
+  // The index loop below only ever does `Array.isArray`, one `.length`
+  // read, and plain bracket index reads — none of which name-lookup a
+  // method the caller could have replaced.
+  let extractedIdentities: readonly ExtractedIdentity[] | null = null
   try {
-    extractedIdentities =
-      Array.isArray(identities) && identities.length > 0 ? identities.map(extractIdentity) : null
+    if (Array.isArray(identities)) {
+      const length = identities.length
+      if (typeof length === 'number' && Number.isInteger(length) && length > 0) {
+        const collected: ExtractedIdentity[] = []
+        for (let i = 0; i < length; i += 1) {
+          collected.push(extractIdentity(identities[i]))
+        }
+        extractedIdentities = collected
+      }
+    }
   } catch {
     extractedIdentities = null
   }
