@@ -74,6 +74,10 @@ test("refuses a competing lease before transport and preserves generic shape", a
   const value = await input(provider());
   const result = await executeDecision({ ...value, lease_port: { claim: async () => "occupied", consume: async () => true, terminal: async () => {} } });
   assert.deepEqual(result, { ok: false, record: { evidence_class: "refusal-record", status: "refused", reason_code: "evidence:R16", source_kind: "coordinator-review", source_ref: custody.source_ref, recorded_at_utc: times[0], retention_until_utc: "2026-12-20T12:00:00.000Z" } });
+
+  const mismatched = await executeDecision({ ...value, lease_port: { claim: async () => ({ lease: { ...value.lease, lease_id: "lease-99999999999999999999999999999999" } }), consume: async () => true, terminal: async () => {} } });
+  assert.equal(mismatched.ok, false);
+  if (!mismatched.ok) assert.equal(mismatched.record.reason_code, "evidence:R16");
 });
 
 test("does not echo unsafe custody and handles lease/transport boundary failures", async () => {
@@ -103,4 +107,35 @@ test("does not echo unsafe custody and handles lease/transport boundary failures
   const invalidBody = await executeDecision({ ...value, transport: invalidUtf8 });
   assert.equal(invalidBody.ok, false);
   if (!invalidBody.ok) assert.equal(invalidBody.record.reason_code, "evidence:R04");
+});
+
+test("rejects duplicate JSON keys and nested provider extras", async () => {
+  process.env.OPENROUTER_API_KEY = "test-only-secret";
+  const value = await input(provider());
+  const duplicateText = JSON.stringify(provider()).replace('"model":"typesafe/jev-1.13-20260917"', '"model":"typesafe/jev-1.13-20260917","model":"typesafe/jev-1.13-20260917"');
+  const duplicate = { post: async () => ({ status: 200, content_type: "application/json", body: new TextEncoder().encode(duplicateText), authority: { endpoint: DECISIONS_ENDPOINT, method: "POST", redirects: "disabled", tls: "verified", proxy: "none" }, socket_opened_at_utc: times[3] }) };
+  const duplicateResult = await executeDecision({ ...value, transport: duplicate });
+  assert.equal(duplicateResult.ok, false);
+  if (!duplicateResult.ok) assert.equal(duplicateResult.record.reason_code, "evidence:R04");
+
+  const extraProvider = provider() as { answers: { is_urgent: Record<string, unknown>; department: Record<string, unknown>; frustration: Record<string, unknown> } } & Record<string, unknown>;
+  extraProvider.answers.department.extra = "discard-me";
+  const extraResult = await executeDecision({ ...(await input(extraProvider)), transport: { post: async () => ({ status: 200, content_type: "application/json", body: new TextEncoder().encode(JSON.stringify(extraProvider)), authority: { endpoint: DECISIONS_ENDPOINT, method: "POST", redirects: "disabled", tls: "verified", proxy: "none" }, socket_opened_at_utc: times[3] }) } });
+  assert.equal(extraResult.ok, false);
+  if (!extraResult.ok) assert.equal(extraResult.record.reason_code, "evidence:R10");
+});
+
+test("snapshots requested identity in returned observations", async () => {
+  process.env.OPENROUTER_API_KEY = "test-only-secret";
+  const value = await input(provider());
+  const result = await executeDecision(value);
+  assert.equal(result.ok, true);
+  if (!result.ok) return;
+  (result.observation.requested_identity as Record<string, unknown>).model = "mutated";
+  assert.equal(REQUESTED_IDENTITY.model, "typesafe/jev-1.13");
+
+  const terminalInput = await input(provider());
+  const terminalFailure = await executeDecision({ ...terminalInput, lease_port: { claim: async () => ({ lease: { ...terminalInput.lease, request_digest: canonicalDigest(request()) } }), consume: async () => true, terminal: async () => { throw new Error("terminal unavailable"); } } });
+  assert.equal(terminalFailure.ok, false);
+  if (!terminalFailure.ok) assert.equal(terminalFailure.record.reason_code, "evidence:R15");
 });

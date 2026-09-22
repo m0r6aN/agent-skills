@@ -195,12 +195,74 @@ function boundedRetention(anchor: string, end: string): boolean {
 
 function later(anchor: string, end: string): boolean { return Date.parse(end) >= Date.parse(anchor); }
 
-function equalAuthority(value: TransportResponse["authority"]): boolean {
-  return value.endpoint === DECISIONS_ENDPOINT && value.method === "POST" && value.redirects === "disabled" && value.tls === "verified" && value.proxy === "none";
+function duplicateJsonKeys(text: string): boolean {
+  let index = 0;
+  const whitespace = () => { while (/\s/.test(text[index] ?? "")) index += 1; };
+  const stringEnd = (): number => {
+    if (text[index] !== '"') return -1;
+    index += 1;
+    while (index < text.length) {
+      if (text[index] === "\\") { index += 2; continue; }
+      if (text[index] === '"') { index += 1; return index; }
+      index += 1;
+    }
+    return -1;
+  };
+  const value = (): boolean => {
+    whitespace();
+    if (text[index] === "{") {
+      index += 1;
+      const keys = new Set<string>();
+      whitespace();
+      if (text[index] === "}") { index += 1; return false; }
+      while (index < text.length) {
+        const keyStart = index;
+        const keyEnd = stringEnd();
+        if (keyEnd < 0) return false;
+        let key: unknown;
+        try { key = JSON.parse(text.slice(keyStart, keyEnd)); } catch { return false; }
+        if (typeof key !== "string") return false;
+        if (keys.has(key)) return true;
+        keys.add(key);
+        whitespace();
+        if (text[index] !== ":") return false;
+        index += 1;
+        if (value()) return true;
+        whitespace();
+        if (text[index] === "}") { index += 1; return false; }
+        if (text[index] !== ",") return false;
+        index += 1;
+        whitespace();
+      }
+      return false;
+    }
+    if (text[index] === "[") {
+      index += 1;
+      whitespace();
+      if (text[index] === "]") { index += 1; return false; }
+      while (index < text.length) {
+        if (value()) return true;
+        whitespace();
+        if (text[index] === "]") { index += 1; return false; }
+        if (text[index] !== ",") return false;
+        index += 1;
+        whitespace();
+      }
+      return false;
+    }
+    if (text[index] === '"') return stringEnd() < 0;
+    while (index < text.length && !",]}".includes(text[index])) index += 1;
+    return false;
+  };
+  return value();
 }
 
-async function terminal(port: LeasePort, lease: LeaseRecord): Promise<void> {
-  try { await port.terminal(lease); } catch { /* terminalization is best effort and never leaks input */ }
+function equalAuthority(value: unknown): boolean {
+  return isRecord(value) && exactKeys(value, ["endpoint", "method", "redirects", "tls", "proxy"]) && value.endpoint === DECISIONS_ENDPOINT && value.method === "POST" && value.redirects === "disabled" && value.tls === "verified" && value.proxy === "none";
+}
+
+async function terminal(port: LeasePort, lease: LeaseRecord): Promise<boolean> {
+  try { await port.terminal(lease); return true; } catch { return false; }
 }
 
 async function consumeThenTerminal(port: LeasePort, lease: LeaseRecord): Promise<void> {
@@ -257,8 +319,8 @@ function normalizeProvider(value: unknown): { response: ResponseEnvelope; usage:
   const urgent = answers.is_urgent;
   const department = answers.department;
   const frustration = answers.frustration;
-  if (!isRecord(urgent) || !isRecord(department) || !isRecord(frustration) || !Object.prototype.hasOwnProperty.call(urgent, "noul") || !Object.prototype.hasOwnProperty.call(department, "choice") || !Object.prototype.hasOwnProperty.call(department, "probabilities") || !Object.prototype.hasOwnProperty.call(frustration, "score")) return { reason: "R10", status: "refused" };
-  if (!isRecord(department.probabilities)) return { reason: "R11", status: "refused" };
+  if (!isRecord(urgent) || !isRecord(department) || !isRecord(frustration) || !exactKeys(urgent, ["noul", "confidence"]) || !exactKeys(department, ["choice", "confidence", "probabilities"]) || !exactKeys(frustration, ["score", "confidence"]) || !Object.prototype.hasOwnProperty.call(urgent, "noul") || !Object.prototype.hasOwnProperty.call(department, "choice") || !Object.prototype.hasOwnProperty.call(department, "probabilities") || !Object.prototype.hasOwnProperty.call(frustration, "score")) return { reason: "R10", status: "refused" };
+  if (!isRecord(department.probabilities) || !exactKeys(department.probabilities, ["billing", "technical", "sales"])) return { reason: "R11", status: "refused" };
   const response = {
     schema_version: DECISION_SCHEMA_VERSION,
     capability: CAPABILITY,
@@ -292,24 +354,34 @@ export async function executeDecision(input: RuntimeInput): Promise<RuntimeResul
   if (claim === "occupied") return generic(input, "refused", "R16", recordedAt);
   const lease = claim.lease;
   if (!validateLease(lease, requestDigest)) return generic(input, "hold", "R15", recordedAt);
+  if (lease.lease_id !== input.lease.lease_id || lease.run_id !== input.lease.run_id) return generic(input, "refused", "R16", recordedAt);
   const budgetNow = input.clock.now();
   const budgetReason = validateBudget(input.budget_ack, input, lease, requestDigest, budgetNow);
   if (budgetReason !== null) { await consumeThenTerminal(input.lease_port, lease); return generic(input, "hold", budgetReason, recordedAt); }
+  const budgetSnapshot = JSON.parse(canonicalize(input.budget_ack)) as BudgetAcknowledgement;
   let consumed = false;
   try { consumed = await input.lease_port.consume(lease); } catch { consumed = false; }
   if (!consumed) { await terminal(input.lease_port, lease); return generic(input, "refused", "R16", recordedAt); }
   const transmissionStarted = input.clock.now();
-  if (!utc(transmissionStarted) || !later(lease.claimed_at_utc, transmissionStarted) || Date.parse(transmissionStarted) - Date.parse(input.budget_ack.acknowledged_at_utc) > MAX_AGE_MS) { await terminal(input.lease_port, lease); return generic(input, "hold", "R14", recordedAt); }
+  if (!utc(transmissionStarted) || !later(lease.claimed_at_utc, transmissionStarted) || !later(budgetSnapshot.acknowledged_at_utc, transmissionStarted) || Date.parse(transmissionStarted) - Date.parse(budgetSnapshot.acknowledged_at_utc) > MAX_AGE_MS) { await terminal(input.lease_port, lease); return generic(input, "hold", "R14", recordedAt); }
   const apiKey = process.env.OPENROUTER_API_KEY;
   if (typeof apiKey !== "string" || apiKey.length === 0 || /[\r\n]/.test(apiKey)) { await terminal(input.lease_port, lease); return generic(input, "refused", "R06", recordedAt); }
   let transportResponse: TransportResponse;
   try {
     transportResponse = await input.transport.post({ endpoint: DECISIONS_ENDPOINT, method: "POST", headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json", Accept: "application/json" }, body, timeout_ms: 30_000, redirect: "error", signal: AbortSignal.timeout(30_000) });
   } catch { await terminal(input.lease_port, lease); return generic(input, "refused", "R04", recordedAt); }
-  const socketOpened = transportResponse.socket_opened_at_utc;
-  if (!equalAuthority(transportResponse.authority) || !utc(socketOpened) || Date.parse(socketOpened) < Date.parse(transmissionStarted) || Date.parse(socketOpened) - Date.parse(input.budget_ack.acknowledged_at_utc) >= MAX_AGE_MS || transportResponse.body.byteLength > RESPONSE_LIMIT || transportResponse.status < 200 || transportResponse.status >= 300 || transportResponse.content_type.toLowerCase() !== "application/json") { await terminal(input.lease_port, lease); return generic(input, "refused", "R04", recordedAt); }
+  let socketOpened: string;
+  try {
+    if (!isRecord(transportResponse) || !(transportResponse.body instanceof Uint8Array) || typeof transportResponse.content_type !== "string" || typeof transportResponse.status !== "number" || !equalAuthority(transportResponse.authority)) throw new Error("malformed transport");
+    socketOpened = transportResponse.socket_opened_at_utc;
+    if (!utc(socketOpened) || Date.parse(socketOpened) < Date.parse(transmissionStarted) || Date.parse(socketOpened) - Date.parse(budgetSnapshot.acknowledged_at_utc) >= MAX_AGE_MS || transportResponse.body.byteLength > RESPONSE_LIMIT || transportResponse.status < 200 || transportResponse.status >= 300 || transportResponse.content_type.toLowerCase() !== "application/json") throw new Error("rejected transport");
+  } catch { await terminal(input.lease_port, lease); return generic(input, "refused", "R04", recordedAt); }
   let providerBody: unknown;
-  try { providerBody = JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(transportResponse.body)); } catch { await terminal(input.lease_port, lease); return generic(input, "refused", "R04", recordedAt); }
+  try {
+    const bodyText = new TextDecoder("utf-8", { fatal: true }).decode(transportResponse.body);
+    if (duplicateJsonKeys(bodyText)) throw new Error("duplicate JSON key");
+    providerBody = JSON.parse(bodyText);
+  } catch { await terminal(input.lease_port, lease); return generic(input, "refused", "R04", recordedAt); }
   const normalized = normalizeProvider(providerBody);
   if ("reason" in normalized) { await terminal(input.lease_port, lease); return generic(input, normalized.status, normalized.reason, recordedAt); }
   const responseValidation = validateResponse(requestValidation.value as ValidatedRequest, normalized.response);
@@ -318,14 +390,13 @@ export async function executeDecision(input: RuntimeInput): Promise<RuntimeResul
   try { responseDigest = canonicalDigest(responseValidation.value); } catch { await terminal(input.lease_port, lease); return generic(input, "refused", "R17", recordedAt); }
   const clientTimestamp = input.clock.now();
   if (!utc(clientTimestamp) || !later(socketOpened, clientTimestamp)) { await terminal(input.lease_port, lease); return generic(input, "refused", "R10", recordedAt); }
-  await terminal(input.lease_port, lease);
+  if (!(await terminal(input.lease_port, lease))) return generic(input, "hold", "R15", recordedAt);
   const retention = new Date(Date.parse(clientTimestamp) + RETENTION_MS).toISOString();
-  const budgetSnapshot = JSON.parse(canonicalize(input.budget_ack)) as BudgetAcknowledgement;
   const observation: LiveObservation = {
     evidence_class: "live-observation", capability: CAPABILITY, run_id: lease.run_id, lease_id: lease.lease_id, endpoint: DECISIONS_ENDPOINT,
-    requested_identity: REQUESTED_IDENTITY, served_identity: responseValidation.value.served_identity, schema_version: DECISION_SCHEMA_VERSION,
+    requested_identity: JSON.parse(canonicalize(REQUESTED_IDENTITY)) as ProviderIdentity, served_identity: JSON.parse(canonicalize(responseValidation.value.served_identity)), schema_version: DECISION_SCHEMA_VERSION,
     response_id: responseValidation.value.response_id, server_timestamp_utc: responseValidation.value.server_timestamp_utc, client_timestamp_utc: clientTimestamp,
-    run_started_at_utc: lease.claimed_at_utc, acknowledged_at_utc: input.budget_ack.acknowledged_at_utc, transmission_started_at_utc: transmissionStarted,
+    run_started_at_utc: lease.claimed_at_utc, acknowledged_at_utc: budgetSnapshot.acknowledged_at_utc, transmission_started_at_utc: transmissionStarted,
     socket_opened_at_utc: socketOpened, request_digest: requestDigest, response_digest: responseDigest, usage: normalized.usage, cost: normalized.cost,
     budget_ack: budgetSnapshot, source_kind: "coordinator-live", source_ref: input.custody.source_ref, status: "complete", reason_code: "none", retention_until_utc: retention,
   };
