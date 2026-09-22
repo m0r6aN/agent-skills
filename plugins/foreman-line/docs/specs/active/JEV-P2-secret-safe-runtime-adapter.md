@@ -10,6 +10,7 @@ superseded_by: null
 risk: architecture/risk
 surfaces:
   - plugins/foreman-line/jev-decisions/src/runtime.ts
+  - plugins/foreman-line/jev-decisions/src/index.ts
   - plugins/foreman-line/jev-decisions/tests/runtime.test.ts
   - plugins/foreman-line/docs/specs/active/JEV-P2-secret-safe-runtime-adapter.md
   - plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/
@@ -37,6 +38,13 @@ free-text diagnostic.
 This parcel is dispatchable under the exact JEV-P2–P5 Gate 2 grant recorded in
 the charter. JEV-P3, P4, and P5 remain sequentially blocked until this parcel
 passes its two fresh reviews, security review, merge, and human Gate 3 closure.
+
+### P2 amendment A1
+
+The coordinator identified that the public API contract requires the runtime
+surface to be exported from the existing package entrypoint. The allowed-file
+set therefore includes `src/index.ts` for an export-only change; no existing
+P1 behavior or export is changed.
 
 ## Constraints
 
@@ -111,9 +119,9 @@ Neither branch includes raw provider data or free-form diagnostics.
   provider payloads; no test makes a live call or requires a credential. The
   production path has no filesystem, child process, telemetry, retry, or
   workflow-effect dependency.
-- [ ] **AC8 — Scope:** Only `runtime.ts` and `runtime.test.ts` are changed in
-  the package; no P1 API, P0 document, registry, host, or parent surface is
-  changed.
+- [ ] **AC8 — Scope:** Only `runtime.ts`, the package entrypoint export, and
+  `runtime.test.ts` are changed in the package; no P1 behavior, P0 document,
+  registry, host, or parent surface is changed.
 
 ## Required tests and reviews
 
@@ -144,6 +152,7 @@ Neither branch includes raw provider data or free-form diagnostics.
 ## Allowed files
 
 - `plugins/foreman-line/jev-decisions/src/runtime.ts`
+- `plugins/foreman-line/jev-decisions/src/index.ts` (export-only)
 - `plugins/foreman-line/jev-decisions/tests/runtime.test.ts`
 - this spec until it moves to `docs/specs/done/` after Gate 3
 

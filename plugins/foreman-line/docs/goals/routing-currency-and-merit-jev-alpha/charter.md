@@ -187,6 +187,12 @@ unbounded spend. Any P2 live call remains limited to the ratified J10 bound:
 one call per authorized run, zero retries, concurrency one, 30-second timeout,
 64-KiB request limit, and aggregate cap $0.01 USD per run.
 
+**P2 amendment A1 recorded 2026-09-21 by the coordinator:** The P2 public
+runtime API must be exported from the existing JEV package entrypoint. The P2
+allowed-file set therefore includes an export-only change to
+`plugins/foreman-line/jev-decisions/src/index.ts`; no P1 behavior or export is
+changed.
+
 ## Plan-review Gate 1 reopening
 
 The mandatory fresh plan-level review on 2026-09-21 returned **REQUEST CHANGES**.
