@@ -120,3 +120,28 @@ where a non-oldest provider time of 2099 produced facts.
 | N7 | P3 | The diff lists the spec as an eighth file | Informational. The coordinator committed the spec |
 
 Rework round three was dispatched with a Step-0 gate and a floor of 385 tests.
+
+## Fourth review, focused on the A3 delta: `7faa46a` (2026-09-22)
+
+**Reviewer:** a fourth fresh frontier session, read-only, reviewing the delta
+`c13e4bb..7faa46a`.
+
+**Verdict:** APPROVE WITH NITS, with no blocker. All eight new behaviour tests fail
+against the pre-A3 projector. The N6 mutant and an N3 `>=` mutant are killed. No
+test was deleted or weakened, and the test-file diff is additions only.
+
+**Coordinator closure check:** 399 of 399 tests passed, and typecheck, lint, the
+whitespace check, and both scope searches were green in PowerShell on Node
+v24.7.0. No test line was removed since `3f4a599`. Coordinator reproduction under
+a 256 MB heap: a sparse identity list of length 2^32 - 1 now refuses
+`REQUEST_INVALID_REFUSED`, a same-size endpoint list refuses
+`AUTHORITY_INVALID_REFUSED`, and a 2099 provider time refuses `FUTURE_REFUSED`.
+
+| Finding | Severity | Summary | Disposition |
+|---|---|---|---|
+| S1 | P2 | The caps bound count, not string size. 256 multi-megabyte IDs raise heap sharply, and 20 MB strings abort out of memory | Accept as documented under A3's resource-exhaustion exclusion. **Open disposition:** RCM-P5 shaping must consider a per-string length cap on dispatch inputs |
+| S2 | P3 | A zero-provider snapshot would reach `new Date(Infinity)` in the new future check | Accept as latent. It is unreachable because the reader refuses an empty `providers` list and the projector accepts only reader-issued snapshots |
+| S3 | P3 | The sparse-endpoints test also passes on pre-A3 code | Informational. The Proxy endpoints test with an element counter discriminates |
+
+**Chain state:** green. RCM-P1 stops at the human Gate 3 merge decision. No merge,
+push, or pull request has been made.
