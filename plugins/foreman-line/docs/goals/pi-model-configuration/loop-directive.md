@@ -1,22 +1,32 @@
 # Loop Directive — Pi Model Configuration
 
 **Goal slug:** `pi-model-configuration`
-**State:** `READY — PMC-P0 SHAPING AUTHORIZED`
+**State:** `BLOCKED — GATE 1 RE-OPEN ON MODEL IDENTITY (M1–M4)`
 **Cleared:** `gate-1-amendment-01.md` (A1–A8) ratified in full 2026-09-23
-**Next human gate:** Gate 2 dispatch approval for PMC-P0
+**Blocking artifact:** `coordinator-lint-pmc-p0.md` (findings L1–L4, items M1–M4)
+**Next human gate:** ratify M1–M4, then Gate 2 dispatch approval for PMC-P0
 
 ## Ownership block
 
 | Field | Value |
 |---|---|
-| Coordinator | **unclaimed** — available to claim at the PMC-P0 boundary |
+| Coordinator | **claimed** by this Pi session on 2026-09-23 at the PMC-P0 boundary, on the owner's explicit direction ("Yes claim the coordinator role and open the PMC-P0 shaping session now") |
 | Claim rule | one goal, one coordinator; transfers only at a parcel boundary |
 | Owner | Clinton Morgan |
-| Last state change | 2026-09-23 — Amendment 01 ratified; scoped Gate 1 closed |
+| Last state change | 2026-09-23 — coordinator claimed; PMC-P0 shaping attempted and **stopped** by coordinator lint |
 
-Coordinator ownership is still unclaimed. PMC-P0 is an unstarted parcel and
-therefore a valid claim boundary: `/goal resume pi-model-configuration` may
-claim it and open the shaping session.
+The PMC-P0 shaping session opened, ran coordinator lint first, and stopped
+before writing a spec draft: the lint falsified load-bearing charter claims
+(see `coordinator-lint-pmc-p0.md`). No spec draft and no `ShapingResult` were
+emitted. Ownership is recorded so a later `/goal resume` does not re-claim
+blindly; transfer only at a parcel boundary.
+
+**Cross-goal sequencing note.** Routing Currency and Merit is live under Claude
+Code coordinator session `e45b4d47-8455-49e9-9629-31c713c1b356` (state
+`RCM-P0-closed-incomplete`, RCM-P1 held) and owns both the `routing-policy/`
+surfaces PMC-P1/P2 must change and the `host-owner-export/` evidence this lint
+consumed. PMC-P0 does not collide on files; **PMC-P1 and PMC-P2 do** and must be
+sequenced with that coordinator before Gate 2 — never co-owned.
 
 ## Standing authorizations (verbatim, with contingencies)
 
@@ -35,9 +45,14 @@ claim it and open the shaping session.
 1. **[DONE]** Owner ratifies A1–A8 → scoped Gate 1 re-open closed.
 2. **[DONE]** Ratified A1–A8 folded into `charter.md` § *Amendment 01* as a
    single amendment commit, committed alone, before any code.
-3. **[NEXT]** Shape PMC-P0: Pi capability/catalogue baseline, the A3 suitability
-   rubric, and the candidate role/lane/authority map that A5 sends to owner
-   ratification. Coordinator lint every factual claim against disk.
+3. **[STOPPED]** Shape PMC-P0. Attempted 2026-09-23; coordinator lint stopped it
+   before a draft. Requires M1–M4 ratification to resume.
+3a. **[NEXT — human gate]** Owner ratifies M1–M4 (model identity) per
+   `coordinator-lint-pmc-p0.md`.
+3b. **[BLOCKED on 3a]** Re-open PMC-P0 shaping: Pi capability/catalogue baseline
+   consumed through the established safe host-owner-export boundary with
+   freshness treated as unratified, the A3 suitability rubric, and the candidate
+   role/lane/authority map that A5.4 sends to owner ratification.
 4. **[BLOCKED on 3]** Gate 2 request for PMC-P0 → dispatch builder in its own
    worktree/branch with a Step 0 restate-and-stop gate.
 5. **[BLOCKED on 4]** PMC-P0 closure check → deterministic pass → **two**
