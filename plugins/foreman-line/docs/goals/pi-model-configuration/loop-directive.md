@@ -1,29 +1,29 @@
 # Loop Directive — Pi Model Configuration
 
 **Goal slug:** `pi-model-configuration`
-**State:** `BLOCKED — AWAITING SCOPED GATE 1 RE-RATIFICATION`
-**Blocking artifact:** `gate-1-amendment-01.md` (items A1–A8)
+**State:** `READY — PMC-P0 SHAPING AUTHORIZED`
+**Cleared:** `gate-1-amendment-01.md` (A1–A8) ratified in full 2026-09-23
+**Next human gate:** Gate 2 dispatch approval for PMC-P0
 
 ## Ownership block
 
 | Field | Value |
 |---|---|
-| Coordinator | **unclaimed** — not claimed by this session |
+| Coordinator | **unclaimed** — available to claim at the PMC-P0 boundary |
 | Claim rule | one goal, one coordinator; transfers only at a parcel boundary |
 | Owner | Clinton Morgan |
-| Last state change | 2026-09-23 — plan review triaged, amendment drafted, loop stopped |
+| Last state change | 2026-09-23 — Amendment 01 ratified; scoped Gate 1 closed |
 
-This session deliberately did **not** claim coordinator ownership. The goal is
-behind a human gate, so there is no parcel boundary at which to claim it and no
-loop to run. A future `/goal resume pi-model-configuration` claims ownership
-only after the gate clears.
+Coordinator ownership is still unclaimed. PMC-P0 is an unstarted parcel and
+therefore a valid claim boundary: `/goal resume pi-model-configuration` may
+claim it and open the shaping session.
 
 ## Standing authorizations (verbatim, with contingencies)
 
 | Gate / action | State |
 |---|---|
 | Gate 1 — original D1–D8, matrix, parcels, exit criterion | Ratified 2026-09-23 |
-| Scoped Gate 1 re-open — A1–A8 | **PENDING — blocks everything below** |
+| Scoped Gate 1 re-open — A1–A8 | **Ratified in full 2026-09-23 — closed** |
 | Plan-level adversarial review | Complete; `REQUEST CHANGES` recorded |
 | Gate 2 — dispatch PMC-P0–PMC-P4 | Not granted |
 | Pi config / Foreman source / templates / tests | Not granted until per-parcel Gate 2 |
@@ -32,16 +32,20 @@ only after the gate clears.
 
 ## Queue (strict order, all blocked)
 
-1. **[BLOCKED]** Owner ratifies A1–A8 → close scoped Gate 1 re-open.
-2. **[BLOCKED on 1]** Fold ratified A1–A8 into `charter.md` as a single
-   amendment commit, committed **alone, before any code**.
-3. **[BLOCKED on 2]** Shape PMC-P0 (capability/catalogue baseline + suitability
-   rubric per A3). Coordinator lint every factual claim against disk.
+1. **[DONE]** Owner ratifies A1–A8 → scoped Gate 1 re-open closed.
+2. **[DONE]** Ratified A1–A8 folded into `charter.md` § *Amendment 01* as a
+   single amendment commit, committed alone, before any code.
+3. **[NEXT]** Shape PMC-P0: Pi capability/catalogue baseline, the A3 suitability
+   rubric, and the candidate role/lane/authority map that A5 sends to owner
+   ratification. Coordinator lint every factual claim against disk.
 4. **[BLOCKED on 3]** Gate 2 request for PMC-P0 → dispatch builder in its own
    worktree/branch with a Step 0 restate-and-stop gate.
 5. **[BLOCKED on 4]** PMC-P0 closure check → deterministic pass → **two**
    independent adversarial reviews (architecture/risk class) → triage.
-6. **[BLOCKED]** PMC-P1 … PMC-P4 per the A7 ownership split.
+6. **[BLOCKED on 5]** Owner ratifies the frozen role/authority map (A5.4) —
+   a human gate, required before PMC-P2 starts.
+7. **[BLOCKED]** PMC-P1 … PMC-P4 per the A7 ownership split, with legacy
+   representation removal serialized into PMC-P4.
 
 ## Per-iteration algorithm
 
@@ -73,9 +77,9 @@ All charter stop conditions remain in force. Additionally, stop and report if:
 
 ## Hook-condition note
 
-Scoped Gate 1 re-ratification is a **human** action and therefore an
-agent-uncompletable condition. If this goal is ever run under a stop-hook whose
-condition is phrased as "Gate 1 ratified" or "charter implemented", the session
-will trap in a stop → feedback → stop cycle. The agent-verifiable end state is
-**"stop-report written and loop stopped awaiting scoped Gate 1
-re-ratification"** — which this directive records.
+Three human gates remain agent-uncompletable: **Gate 2** dispatch approval, the
+**role/authority map ratification** (A5.4), and **Gate 3** merge/activation. If
+this goal is run under a stop-hook whose condition is phrased as any of those,
+or as "charter implemented", the session will trap in a stop → feedback → stop
+cycle. Agent-verifiable end states are of the form **"stop-report written and
+loop stopped awaiting <named gate>"**.
