@@ -116,18 +116,35 @@ authorize or perform.
 
 ## Ratification block
 
-| Item | Amends | Owner decision |
-|---|---|---|
-| A1 | D1 | ☐ ratify ☐ amend ☐ reject |
-| A2 | D3 | ☐ ratify ☐ amend ☐ reject |
-| A3 | D4 | ☐ ratify ☐ amend ☐ reject |
-| A4 | D5 | ☐ ratify ☐ amend ☐ reject |
-| A5 | D7 | ☐ ratify ☐ amend ☐ reject |
-| A6 | D8 | ☐ ratify ☐ amend ☐ reject |
-| A7 | parcel ownership | ☐ ratify ☐ amend ☐ reject |
-| A8 | exit criterion | ☐ ratify ☐ amend ☐ reject |
+**RATIFIED IN FULL by the owner on 2026-09-23.** The scoped Gate 1 re-open is
+closed. The in-force text lives in `charter.md` § *Amendment 01*.
 
-Ratifying A1–A8 closes the scoped Gate 1 re-open and authorizes **parcel
-shaping for PMC-P0 only**. It does **not** grant Gate 2 dispatch, provider
-credential inspection, provider spend, configuration changes, merge, release,
-or default-route activation.
+| Item | Amends | Owner decision | Resolved open choice |
+|---|---|---|---|
+| A1 | D1 | ratified | Launch boundary fails closed **plus** a per-use, owner-only break-glass override emitting a marked exception receipt |
+| A2 | D3 | ratified | No independent fallback → **stop and fail**; reviews are never downgraded, no same-family substitution |
+| A3 | D4 | ratified | Provider tie-break is **per-lane**: frontier/review/security lanes pin one provider; economy lanes take cheapest eligible |
+| A4 | D5 | ratified | As drafted |
+| A5 | D7 | ratified | **Dual representation with a deprecation window**; legacy removal serialized into PMC-P4. Role/authority map frozen by **explicit owner ratification** of PMC-P0 output |
+| A6 | D8 | ratified | `static-conformance` suffices for completion **only if** the receipt enumerates every unproven live/quality claim by name |
+| A7 | parcel ownership | ratified | Opus 5.5 registry change lands **inside PMC-P1**; two reviews for P0/P1/P2/P4, one for P3 |
+| A8 | exit criterion | ratified | As drafted |
+
+### Decisions of record from the ratification exchange
+
+| # | Question | Ratified |
+|---|---|---|
+| Q1 | Provider tie-break when both eligible | per-lane declared preference |
+| Q2 | Launch-boundary strictness | fail closed + break-glass |
+| Q3 | No independent fallback | stop, never downgrade |
+| Q4 | Legacy cutover style | deprecation window, removal in P4 |
+| Q5 | Opus 5.5 delivery site | inside PMC-P1 |
+| Q6 | Static conformance = complete? | yes, with unproven claims named |
+| Q7 | Double-review scope | P0/P1/P2/P4 two, P3 one |
+| Q8 | Who freezes the role map | owner ratification of P0 output |
+| Q9 | Stale Codex charter copy | delete; canonical is `docs/goals/` |
+| Q10 | Commit the goal directory | committed pre-ratification (`39f53b2`) |
+
+This ratification authorizes **parcel shaping for PMC-P0 only**. It does **not**
+grant Gate 2 dispatch, provider credential inspection, provider spend,
+configuration changes, merge, release, or default-route activation.

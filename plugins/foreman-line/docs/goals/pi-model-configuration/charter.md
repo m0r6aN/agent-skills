@@ -4,7 +4,7 @@
 **Created:** 2026-09-23  
 **Owner:** Clinton Morgan  
 **Coordinator:** unassigned — claim only through a generated loop directive at a parcel boundary  
-**Status:** SCOPED GATE 1 RE-OPEN — initial ratification recorded 2026-09-23; plan review requires amendments to D1, D3–D5, D7, and D8 before parcel shaping  
+**Status:** SCOPED GATE 1 CLOSED — initial ratification 2026-09-23; Amendment 01 (A1–A8) ratified 2026-09-23. PMC-P0 shaping authorized; Gate 2 not granted  
 **Mode:** repo-local configuration, routing-policy, and Pi-session integration
 
 ## Objective
@@ -94,6 +94,126 @@ base commit, verification commands, rollback, data class, provider spend
 authority, and whether a live provider call is separately approved. This
 charter grants none of those scopes by itself.
 
+## Amendment 01 — ratified 2026-09-23
+
+Ratified in full against `gate-1-amendment-01.md` (A1–A8, closing plan-review
+findings F1–F9). Where this section conflicts with D1–D8 or the tables above,
+this section governs.
+
+### A1 — amends D1 (route receipt and launch boundary)
+
+A dispatched Pi session is authorized only by an **approved route receipt**
+emitted by the resolver. PMC-P2 owns a **launch boundary** that verifies the
+receipt before any inference and **fails closed** when it is missing, stale,
+mismatched against the requested lane, or unsigned by the resolver.
+
+A **break-glass owner override** exists for the case where the resolver itself
+is broken. It requires explicit owner authorization per use and emits a
+distinctly marked exception receipt naming the bypassed check. It is never
+available to a coordinator, builder, reviewer, or automated retry.
+
+Direct or default Pi invocation is not a Foreman execution path. Interactive Pi
+defaults (D6) sit outside the Foreman execution boundary and carry no parcel
+authority.
+
+### A2 — amends D3 (independence applies to fallbacks)
+
+The independence requirement applies to **primary and fallback alike**. A
+fallback that would collapse reviewer independence is **denied, not
+downgraded**. If no independent, eligible fallback remains, the resolver emits a
+failed/stop receipt naming the unsatisfied constraint and the parcel stops. A
+review is never issued under reduced independence, and no automatic same-family
+substitution exists. Relaxing this requires a future ratified amendment.
+
+### A3 — amends D4 (deterministic resolver ranking)
+
+Selection is by **deterministic resolver ranking**, not by the visual order of
+the matrix. The resolver ranks eligible bindings on: data-class eligibility;
+required capability (tools, structured output); independence obligation;
+available context; remaining budget; verified availability; and a recorded
+quality score.
+
+**Provider tie-break is per-lane and declared, not global.** Frontier,
+adversarial-review, verification, and security/audit lanes **pin a single
+declared provider** so coordination and review remain reproducible and
+independence does not drift with price. Economy, boilerplate, bounded-research,
+and prose lanes resolve to the **cheapest eligible binding**. Standard
+implementation lanes declare their preference explicitly per lane. Remaining
+ties resolve by a documented stable order.
+
+The route receipt records **every ranking input and the chosen binding**, not
+only the winner. PMC-P0 produces the reviewed suitability rubric defining
+"comparable or higher"; PMC-P1 encodes its required eligibility/ranking fields
+and evidence threshold.
+
+### A4 — amends D5 (constraints are resolve-time filters)
+
+The frontier-only and different-family constraints are **binding eligibility
+filters at resolve time**, not advisory preferences. A recorded stop condition
+may halt a lane; it may never silently relax the constraint.
+
+### A5 — amends D7 (representation, role map, migration)
+
+1. **Logical layer** — a provider-neutral lane/candidate vocabulary.
+2. **Binding layer** — provider-specific bindings (`opencode/...`,
+   `openrouter/...`) attached to a logical candidate, carrying eligibility at
+   the *binding* level.
+3. **Fallback references** — explicit and typed; self-referential and dangling
+   references are rejected by **referential-integrity tests**.
+4. **Frozen role/lane map** — a canonical role / lane / routing-class /
+   authority-cap mapping extends `roles:` beyond `coordinator|verifier|builder`
+   to cover all six matrix lanes. Because this map is an **authority** map, it
+   is frozen by **explicit owner ratification of PMC-P0's output**, not by
+   coordinator discretion, and is ratified **before PMC-P2 starts**.
+5. **Migration by deprecation window** — PMC-P1 inventories every policy,
+   evaluator, template, and session consumer and ships the new representation
+   **alongside** the legacy OpenRouter-slug-only representation under
+   compatibility versioning. Removal of the legacy representation is
+   **serialized into PMC-P4** behind a named cutover condition, so a lagging
+   consumer cannot block the contract parcel.
+
+### A6 — amends D8 (three attested evidence states)
+
+| State | Meaning | Authority needed |
+|---|---|---|
+| `static-conformance` | schema, policy, resolver, negative and referential-integrity tests pass with **no provider call** | none beyond Gate 2 |
+| `live-availability` | primary/fallback reachable and enabled on a public, non-sensitive probe | **separate owner authorization** |
+| `model-quality` | lane-level task-quality evidence supporting a "current-best" claim | **separate owner authorization** |
+
+Every receipt must declare which state it attests and may never imply a state
+it did not attest. `static-conformance` is sufficient to call implementation
+complete — **provided the completion receipt enumerates, by name, every live
+and quality claim that remains unproven.** A green static suite is not evidence
+that any model is reachable or performant. `live-availability` and
+`model-quality` are required before activation and before any published
+"current-best" claim.
+
+### A7 — amends implementation-parcel ownership
+
+| Parcel | Owns | Must not touch |
+|---|---|---|
+| PMC-P1 | schemas, policy contract, frontier registry change (incl. Claude Opus 5.5), migration inventory, compatibility versioning, fixtures | resolver, Pi config, human-facing templates |
+| PMC-P2 | resolver, Pi configuration, launch boundary, break-glass path, generated route artifacts | schemas and policy contract (consumes P1 as ratified) |
+| PMC-P3 | canon and human-facing templates only | the PMC-P2 interface — consumes it unchanged |
+| PMC-P4 | conformance/smoke/rollout gate **and** serialized removal of the legacy representation | the ratified contract surface |
+
+The ratified Claude Opus 5.5 selection is delivered **inside PMC-P1** as a
+tested change to `KNOWN_FRONTIER_MODELS` in `routing-policy/src/validator.ts`.
+It cannot be delivered by configuration alone: invariant 5 rejects any
+`model_tiers.frontier` entry absent from that reviewed code constant, and the
+registry currently contains `anthropic/claude-opus-5`, not `-5.5`.
+
+Review load is unchanged: PMC-P0, P1, P2, and P4 each require **two**
+independent adversarial reviews; PMC-P3 requires one.
+
+### A8 — amends the exit criterion
+
+Exit criteria 4 and 5 are satisfied by `static-conformance`. Criteria 2 and 3
+additionally require `live-availability`, and any "current-best" claim requires
+`model-quality`, each under its own owner authorization. Criterion 7's final
+receipt must enumerate, by name, every live validation the owner must still
+authorize or perform.
+
 ## Acceptance / exit criterion
 
 This goal is complete only when, at one declared Foreman Line and Pi version:
@@ -161,11 +281,18 @@ or default-route activation.  The mandatory fresh plan review is recorded in
 D3–D5, D7, and D8; no parcel may be shaped until the owner ratifies the
 corresponding amendment.
 
-The scoped amendment is drafted for ratification in `gate-1-amendment-01.md`
-(items A1–A8, covering F1–F9). Loop state is recorded in `loop-directive.md`;
-coordinator ownership is unclaimed. Coordinator lint on 2026-09-23 verified the
-charter's Pi-version, provider, and routing-policy claims against disk, and
-established one consequence for the owner: because the frontier registry is a
-reviewed code constant in `routing-policy/src/validator.ts` guarded by
-invariant 5, the already-ratified Claude Opus 5.5 selection cannot be delivered
-by configuration alone and lands as a tested code change inside PMC-P1.
+The scoped amendment was drafted in `gate-1-amendment-01.md` (A1–A8, covering
+F1–F9) and **ratified in full by the owner on 2026-09-23**. The ratified text
+is in force in the *Amendment 01* section above. The scoped Gate 1 re-open is
+**closed**.
+
+Coordinator lint on 2026-09-23 verified the charter's Pi-version, provider, and
+routing-policy claims against disk, and established one consequence carried
+into A7: the frontier registry is a reviewed code constant in
+`routing-policy/src/validator.ts` guarded by invariant 5, so the ratified
+Claude Opus 5.5 selection lands as a tested code change inside PMC-P1 rather
+than as configuration.
+
+This ratification authorizes **PMC-P0 shaping only**. It does not grant Gate 2
+dispatch, provider spend, credential inspection, configuration changes, merge,
+release, or default-route activation.
