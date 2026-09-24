@@ -4,7 +4,7 @@
 **Created:** 2026-09-24
 **Owner:** Clinton Morgan
 **Coordinator:** this `/goal` session (Pi); ownership recorded in `loop-directive.md` after plan review
-**Status:** STAGE ZERO CLOSED — Gate 1 fully ratified (D1–D11 incl. plan-review amendments, 0.87.1 pin, PMC scope-guard); ownership confirmed as a **separate queue** by the owner 2026-09-24; entering the PRAC-P0 loop
+**Status:** SHIPPED — PRAC-P0 delivered 2026-09-24 (memo + probe + evidence); two-round adversarial review APPROVE WITH NITS resolved; merge `b1d3e39`; exit criterion met; loop stopped
 **Mode:** repo-local documentation + evidence parcel (no routing authority, no code shipped outside the goal directory)
 **Source directive:** `C:/Users/clint/Documents/Codex/2026-09-23/pl/.audit/directive.md` (3-seat council verdict on frontmatter-driven Pi model routing)
 

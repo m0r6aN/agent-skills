@@ -1,7 +1,7 @@
 ---
 ticket: PRAC-P0
 title: Pi extension/hook API surface compatibility memo
-status: draft
+status: done
 owner: clinton.morgan
 created: 2026-09-24
 updated: 2026-09-24
