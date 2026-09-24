@@ -1,9 +1,9 @@
 # Loop Directive — Pi Model Configuration
 
 **Goal slug:** `pi-model-configuration`
-**State:** `PMC-P0 GATE 2 GRANTED — DISPATCH READY, AWAITING BUILDER STEP 0`
+**State:** `PMC-P0 BUILDER STEP 0 COMPLETE — COORDINATOR RULING ISSUED; FLAGS F1–F6 CLEARED, EVIDENCE RUN UNBLOCKED`
 **Cleared:** Amendment 01 (A1–A8), Amendment 02 (M1–M4), and Amendment 03 Opus correction ratified 2026-09-24
-**Next human gate:** none before builder Step 0; the coordinator rules on Step 0 flags
+**Next human gate:** none; Gate 2 for PMC-P0 already granted and covers the evidence run. The evidence dispatch is a coordinator action.
 
 ## Dispatch record — PMC-P0 (authoritative)
 
@@ -41,7 +41,7 @@ touching the spec: `5eef2f3` added the approved brief (byte-identical, blob
 | Coordinator | **claimed** by this Pi session on 2026-09-23 at the PMC-P0 boundary, on the owner's explicit direction ("Yes claim the coordinator role and open the PMC-P0 shaping session now") |
 | Claim rule | one goal, one coordinator; transfers only at a parcel boundary |
 | Owner | Clinton Morgan |
-| Last state change | 2026-09-23 — Amendment 02 ratified; PMC-P0 shaped to `draft`; loop stopped at Gate 2 |
+| Last state change | 2026-09-24 — PMC-P0 builder Step 0 complete; coordinator ruled flags F1–F6 (cleared, no amendment); evidence run unblocked |
 
 The PMC-P0 shaping session ran coordinator lint first. Its Opus absence finding
 is now historical: Amendment 03 corrects it to the confirmed OpenCode and
@@ -58,6 +58,62 @@ Code coordinator session `e45b4d47-8455-49e9-9629-31c713c1b356` (state
 surfaces PMC-P1/P2 must change and the `host-owner-export/` evidence this lint
 consumed. PMC-P0 does not collide on files; **PMC-P1 and PMC-P2 do** and must be
 sequenced with that coordinator before Gate 2 — never co-owned.
+
+## Step 0 ruling — PMC-P0 (coordinator, 2026-09-24)
+
+The builder session ran Step 0 in a mechanically read-only envelope (plan mode +
+auto-deny + writes disallowed) so it could not write files, probe availability,
+or reach a credential. G1–G4 and the brief-presence check all held on the
+builder's side; the builder's observed spec digest
+(`82d7819c…f30b5b71`), `status: active`, branch, clean tree, and brief digest
+(`9c811c47…dccc0ef5`, 7974 B) match the authoritative dispatch record above. The
+tip `bbf105b` is informational only, as required.
+
+Headline AC2 shape confirmed correct on the builder's restatement: 13 AC2a +
+2 AC2b = 15, Jev excluded; AC2b zero-match is the expected, non-authoritative
+stale-export result and must not be reported as a contradiction or counted
+against AC2a. The evidence run is cleared to proceed.
+
+Rulings on the builder's flags:
+
+- **F1 (no named source for part of the Intent) — cleared, no amendment.** The
+  permitted surface (frozen export + read-only repo files: `routing-policy.yaml`,
+  `src/pi-openrouter.ts`, export projections) plus coordinator preconditions 1–3
+  already fix the disposition. Record what is derivable; where a fact needs a
+  provider call or launching Pi, mark `unknown` / `capability-unverified` and
+  route to A6. Do not infer from model family. State explicitly whether tool-use
+  and structured-output are derivable from the safe field set (AC5).
+- **F2 (spec line ~276 stale shaping-session wording) — accept-as-documented.**
+  That sentence is shaping-session residue; the operative scope is the four-file
+  list under *Allowed Files*, which the builder correctly follows. The builder
+  does not edit the spec. The coordinator records it for a future spec-hygiene
+  pass (a coordinator act, not the builder's). Does not block.
+- **F3 (AC8 two reviews, builder cannot dispatch) — expected hold, no amendment.**
+  Per *Session Handoff*, AC8's two fresh frontier reviews are the coordinator's
+  acceptance input, not builder evidence. The builder's `pmc-p0-verification.md`
+  AC8 section carries every command/digest/version/status it can and records the
+  reviews as `pending — coordinator-owned`. A documented hold is an acceptable
+  outcome; it is not a clean pass and must not be faked.
+- **F4 (verification-environment statement) — cleared; run under PowerShell 7.**
+  Verified on this host: `pwsh` (PowerShell 7.6.6) exposes `Get-FileHash` and
+  `Select-String`; Windows PowerShell 5.1 here is **missing** `Get-FileHash`.
+  `sha256sum` (git-bash) and `node v24.7.0` are present. The spec's *Verification
+  Plan* says Windows PowerShell *or an equivalent Node script* — so run the
+  mandated PowerShell block under **`pwsh`, not `powershell.exe` 5.1**, and report
+  the `pwsh` version. `sha256sum` and `Get-FileHash` agreeing on the pinned
+  digests is expected, not a contradiction. `node -v` first for any Node-script
+  path (lesson #10). No amendment.
+- **F5 (brief has an empty "Pinned execution context" table header, lines 9–10) —
+  informational.** A cosmetic leftover from the removed SHA self-pin (brief
+  commit `a05bc92`). It does not affect the G1–G4 content gates or the authoritative
+  brief digest. No mid-dispatch re-issue; logged for the next brief revision.
+- **F6 (plan-mode / ExitPlanMode conflict) — not a defect.** Plan mode was the
+  deliberate Step 0 envelope. The evidence dispatch will run in a least-privilege
+  write envelope scoped to the four Allowed Files, so plan mode and
+  ExitPlanMode are not involved.
+
+No flag is a real spec gap; none requires an amendment committed alone before
+code. Proceeding to the evidence run.
 
 ## Standing authorizations (verbatim, with contingencies)
 
@@ -78,11 +134,16 @@ sequenced with that coordinator before Gate 2 — never co-owned.
    single amendment commit, committed alone, before any code.
 3. **[DONE]** Coordinator lint falsified model identity (L1–L4); owner ratified
    M1–M4 as Amendment 02; PMC-P0 shaped to `draft` against the corrected matrix.
-4. **[NEXT — human gate]** **Gate 2** dispatch approval for PMC-P0, then
-   dispatch a builder in its own worktree/branch with a Step 0
-   restate-and-stop gate. Promotion `draft → active` happens at Gate 2, not
-   before.
-5. **[BLOCKED on 4]** PMC-P0 closure check → deterministic pass → **two**
+4. **[DONE]** Gate 2 granted 2026-09-24 (PMC-P0 only); spec promoted
+   `draft → active` at `96a24bf`; clean worktree prepared; builder dispatched
+   fresh; **builder Step 0 complete and coordinator ruling issued** (see *Step 0
+   ruling* section above — flags F1–F6 all cleared, no amendment).
+4b. **[NEXT]** Builder evidence run in `D:/Repos/wt-pmc-p0` under the least-
+   privilege four-file write envelope: verify the three export digests, resolve
+   AC2 (13/2), derive AC3–AC5, build AC6 rubric + AC7 role map, write the four
+   evidence artifacts, return the AC-by-AC completion claim in the brief's shape.
+5. **[BLOCKED on 4b]** PMC-P0 coordinator closure check against disk →
+   deterministic pass (PowerShell 7 / `pwsh`, `node -v` first) → **two**
    independent adversarial reviews (elevated / architecture-risk) → triage.
 6. **[BLOCKED on 5]** Owner ratifies the frozen role/authority map (A5.4) —
    a human gate, required before PMC-P2 starts.
