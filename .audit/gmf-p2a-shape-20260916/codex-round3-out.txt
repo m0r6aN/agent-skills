@@ -1,0 +1,8 @@
+TOP 3 BRUTAL FINDINGS
+1. Fresh-state recognition is unsafe: `user_version=0` plus no ledger/v2 objects still accepts a database containing arbitrary non-SQLite application objects, then migrates it instead of rejecting malformed state before DDL.
+2. `PreEffectReceipts` can contradict its `EffectAttempts` parent: its PermissionId, EffectIdentifier, and DescriptorHash have no composite FK/equality constraint to the referenced attempt, so a receipt can be relationally attached to attempt A while claiming A different authority/effect/descriptor.
+3. The claimed immutable `PermissionSpendLedger` is not made immutable: only v2 tables receive update/delete-denial triggers, so raw SQL can alter or delete a recorded spend and thereby invalidate an EffectAttempt's supposedly immutable composite-FK anchor.
+TOP 3 MOVES
+1. Define fresh strictly as `user_version=0` with no non-`sqlite_%` schema objects; classify every other zero-version inventory not matching exact v1 as malformed and reject before any DDL.
+2. Add a UNIQUE parent key on EffectAttempts `(EffectAttemptId, PermissionId, EffectIdentifier, DescriptorHash)` and a matching composite FK from PreEffectReceipts; test mismatched same-attempt values are rejected.
+3. Create v2 migration triggers denying UPDATE/DELETE on PermissionSpendLedger too, include them in canonical-v2 shape validation, and prove referenced spend rewrite/delete fails while the original row remains.

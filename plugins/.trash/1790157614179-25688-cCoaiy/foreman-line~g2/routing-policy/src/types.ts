@@ -1,0 +1,120 @@
+/**
+ * Routing policy shapes (W0-P3): TypeScript types for `routing-policy.yaml`.
+ * Each type has a matching hand-authored JSON Schema in `schemas.ts` — the two
+ * representations are proven to agree by `tests/parity.test.ts`, never by
+ * generating one from the other (ajv's `JSONSchemaType` is banned as a schema
+ * authority in this repo).
+ */
+
+export type ClassName =
+  | 'boilerplate'
+  | 'standard-feature'
+  | 'architecture/risk'
+  | 'implementation/standard'
+
+export const CLASS_NAMES: readonly ClassName[] = [
+  'boilerplate',
+  'standard-feature',
+  'architecture/risk',
+  'implementation/standard',
+]
+
+export type DataClassificationTier = 'public' | 'internal' | 'restricted'
+
+export const DATA_CLASSIFICATION_TIERS: readonly DataClassificationTier[] = [
+  'public',
+  'internal',
+  'restricted',
+]
+
+/**
+ * One entry in `classes`. `allowlist` holds tier names (resolved elsewhere via
+ * `model_tiers`), not concrete model ids. `security_flavored` is a self-declared
+ * flag: when true, every tier in `allowlist` must equal `'frontier'` (the
+ * security hard override), and any class whose key looks security/audit-flavored
+ * by name must carry this flag (the derived guard) — both enforced as semantic
+ * invariants, not by this schema.
+ */
+export interface ClassEntry {
+  readonly allowlist: readonly string[]
+  readonly ceiling_usd: number
+  readonly security_flavored?: boolean
+}
+
+/**
+ * Gateway-level routing constraints the consumer MUST apply to every request
+ * made under a classification. The policy names model ids; on a multi-provider
+ * gateway (OpenRouter) the same id can be served by many upstream hosts with
+ * different retention and training policies, and provider selection is a
+ * request parameter this repository never sends. Declaring the requirement
+ * here makes the consumer's obligation explicit and machine-readable; it does
+ * not enforce it. Field names mirror OpenRouter's `provider` request object.
+ */
+export interface TransportRequirements {
+  /** `deny` = only providers that do not store or train on inputs. */
+  readonly data_collection: 'allow' | 'deny'
+  /** `true` = only Zero-Data-Retention endpoints. */
+  readonly zdr: boolean
+}
+
+/**
+ * One entry in `data_classification`. `eligible_models` must narrow monotonically
+ * from `public` -> `internal` -> `restricted` (D6: classification gates eligibility
+ * before cost optimization) — a semantic invariant, not expressible in this shape.
+ * `internal` and `restricted` must require `data_collection: 'deny'` and
+ * `zdr: true` (invariant g), also enforced by the validator.
+ */
+export interface DataClassificationRule {
+  readonly eligible_models: readonly string[]
+  readonly transport_requirements: TransportRequirements
+}
+
+/**
+ * `coordinator`/`verifier` are pinned to `'frontier'` by D4; `builder` is
+ * resolved per task class (`'per-class'`). The pinning is a semantic invariant,
+ * not a schema `const`, so a schema-valid-but-wrong document (e.g. a non-frontier
+ * coordinator) is distinguishable from a structurally invalid one.
+ */
+export interface RoleAssignment {
+  readonly coordinator: 'frontier'
+  readonly verifier: 'frontier'
+  readonly builder: 'per-class'
+}
+
+export type ShadowTaskType = 'spec_lint' | 'evidence_index' | 'review_triage'
+
+/** Exactly the two roles a shadow route may never fill, in either YAML order. */
+export type ProhibitedShadowRoles =
+  | readonly ['coordinator', 'verifier']
+  | readonly ['verifier', 'coordinator']
+
+/**
+ * A non-authoritative sidecar route. Shadow routes are deliberately separate
+ * from `model_tiers`: they can propose a candidate, but can neither select an
+ * owner nor satisfy a review, approval, or release gate.
+ */
+export interface ShadowRoute {
+  readonly adapter_id: string
+  readonly data_classification: 'public'
+  readonly allowed_task_types: readonly ShadowTaskType[]
+  readonly requires_live_discovery: true
+  readonly candidate_only: true
+  readonly authority: 'none'
+  readonly tools_granted: readonly []
+  readonly effect_capability: 'none'
+  readonly prohibited_roles: ProhibitedShadowRoles
+}
+
+/**
+ * The full routing policy document. `model_tiers` resolves each tier name used
+ * in `classes[*].allowlist` and `roles` to concrete August-2026 model ids; `'frontier'`
+ * is the one tier name the validator's invariants depend on literally — every
+ * other tier name is v0.1 policy content, revisable without touching the validator.
+ */
+export interface RoutingPolicy {
+  readonly classes: Readonly<Record<ClassName, ClassEntry>>
+  readonly data_classification: Readonly<Record<DataClassificationTier, DataClassificationRule>>
+  readonly roles: RoleAssignment
+  readonly model_tiers: Readonly<Record<string, readonly string[]>>
+  readonly shadow_routes: Readonly<Record<string, ShadowRoute>>
+}

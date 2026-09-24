@@ -1,0 +1,18 @@
+# AC10 reject: an unknown key INSIDE a group (`identity.repo_url`). Every
+# group is individually closed, not just the top level.
+identity:
+  project_key: KONE
+  base_branch: main
+  branch_prefix: feat/
+  worktree_root: ../worktrees
+  dispatch_queue: foreman-line-dispatch
+  repo_url: https://example.invalid/repo.git
+
+stack:
+  profile: none
+
+capabilities: {}
+
+policy:
+  audit:
+    require_security_audit_at: [elevated]

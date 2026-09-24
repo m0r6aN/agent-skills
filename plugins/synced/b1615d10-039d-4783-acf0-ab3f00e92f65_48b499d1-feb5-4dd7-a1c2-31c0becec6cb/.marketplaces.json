@@ -1,0 +1,15 @@
+{
+  "etag": "W/\"vSTvgjRiCGbkNP07Hqs1FlJUeN_WWYhn65_1TodlmDM\"",
+  "rows": [
+    {
+      "name": "My Uploads",
+      "scope": "account",
+      "source": {
+        "source": "claudeai"
+      },
+      "id": "marketplace_01Xm3ajE8zwcgVK2BkBLCg8C",
+      "updated_at": "2026-09-21T19:38:19.01485Z"
+    }
+  ],
+  "parserVersion": 2
+}

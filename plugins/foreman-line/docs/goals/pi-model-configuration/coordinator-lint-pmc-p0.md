@@ -1,9 +1,13 @@
-# Coordinator Lint — PMC-P0 shaping attempt
+# Coordinator Lint — PMC-P0 shaping attempt (historical; Opus finding superseded)
 
 **Date:** 2026-09-23
 **Coordinator:** claimed this session (see `loop-directive.md` ownership block)
 **Purpose:** verify every factual claim in `charter.md` on disk before shaping PMC-P0
-**Outcome:** **SHAPING STOPPED — Gate 1 re-open required on model identity**
+**Outcome:** **SHAPING STOPPED — historical model-identity finding superseded by owner Amendment 03 on 2026-09-24**
+
+> Amendment 03 records the owner's direct correction: OpenCode exposes
+> `claude-opus-5-5` and OpenRouter exposes `anthropic/claude-opus-5.5`. The
+> absence finding below is retained for provenance, not as current truth.
 
 Shaping did not proceed to a spec draft. Four load-bearing charter claims are
 contradicted by the best available safe evidence on disk, including one inside

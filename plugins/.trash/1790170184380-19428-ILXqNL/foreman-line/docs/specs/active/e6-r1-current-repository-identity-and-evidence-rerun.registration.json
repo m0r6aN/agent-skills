@@ -1,0 +1,19 @@
+{
+  "ticketKeys": [
+    "m0r6aN/agent-skills#18"
+  ],
+  "links": [
+    {
+      "direction": "commit->ticket",
+      "ticketKey": "m0r6aN/agent-skills#18",
+      "commitSha": "365cdd93fa01615e66d9d7e9fb0753b63a684a1e",
+      "permalink": "https://github.com/m0r6aN/agent-skills/commit/365cdd93fa01615e66d9d7e9fb0753b63a684a1e"
+    },
+    {
+      "direction": "ticket->commit",
+      "ticketKey": "m0r6aN/agent-skills#18",
+      "commitSha": "365cdd93fa01615e66d9d7e9fb0753b63a684a1e",
+      "permalink": "https://github.com/m0r6aN/agent-skills/issues/18#issuecomment-5559140066"
+    }
+  ]
+}

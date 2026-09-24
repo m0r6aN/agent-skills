@@ -1,0 +1,23 @@
+export {
+  classEntrySchema,
+  dataClassificationRuleSchema,
+  roleAssignmentSchema,
+  routingPolicySchema,
+  shadowRouteSchema,
+  transportRequirementsSchema,
+} from './schemas.js'
+export type {
+  ClassEntry,
+  ClassName,
+  DataClassificationRule,
+  DataClassificationTier,
+  ProhibitedShadowRoles,
+  RoleAssignment,
+  RoutingPolicy,
+  ShadowRoute,
+  ShadowTaskType,
+  TransportRequirements,
+} from './types.js'
+export { CLASS_NAMES, DATA_CLASSIFICATION_TIERS } from './types.js'
+export type { ValidationResult } from './validator.js'
+export { KNOWN_FRONTIER_MODELS, validatePolicy } from './validator.js'

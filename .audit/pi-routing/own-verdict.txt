@@ -1,0 +1,13 @@
+TOP 5 BRUTAL FINDINGS
+1. The draft is a broken startup allowlist, not a router: providers belong in models.json, Markdown baseUrls and \$ENV\_VAR escapes will fail auth, and enabledModels only drives Ctrl+P cycling.
+2. Pi auto-routing must not own Foreman control: Foreman fail-closes on exact model IDs, role, risk, classification, and receipts; pi-model-auto can borrow stronger/weaker modes and pi-auto-router can failover, promote, or keep routing when every candidate is over budget.
+3. Session stickiness plus no auto-downgrade will pin a worker on the expensive model after one hard turn and can contaminate coordinator/reviewer/verifier isolation that Foreman requires as separate instances.
+4. The roster is off-canon and third-party: Claude 3.5 Sonnet, GPT-4o-mini, Qwen 32B, and R1 Distill are not on the model-gate; OpenRouter/OpenCode skip public-only Fireworks classification and can leak internal/restricted data.
+5. Packaged Foreman still uses process.cwd() defaults and weaker dispatch identity than standalone repoRoot/pluginRoot envelopes; installing an unreviewed Pi package that executes code into that lag is a second ungoverned control plane.
+
+TOP 5 MOVES
+1. Split config: models.json for OpenCode/OpenRouter with plain https URLs and $OPENROUTER_API_KEY/$OPENCODE_API_KEY; settings.json only defaultProvider, defaultModel, enabledModels, and modelThinkingLevels keyed by provider/modelId.
+2. Adopt pi-model-auto only inside a Foreman worker envelope: exact modeModels pins (Low=cheap coder, Medium=Qwen Coder, High=current Sonnet-class, Ultra=manual/native), modelFilter = envelope allowlist, selectionPolicy=cost, classifier off unless Foreman named it.
+3. Keep Foreman as sole owner of role, risk, approval, evidence, classification, exact IDs, mutation scope, and receipts; Pi may choose among allowlisted worker models and thinking levels, never coordinator/approval/authoritative verifier, never silent substitution.
+4. Map thinking per model not globally: minimal/low for utility, medium for builder, high for reviewer/verifier; raise thinking once before escalating model; start a new session to downgrade.
+5. Sync packaged Foreman to standalone first; review any Pi package source; run pi-auto-router shadow-only for failover telemetry and copy /auto-router explain into receipts; never enable live failover/UVI until it fail-closes like evaluateRouting.

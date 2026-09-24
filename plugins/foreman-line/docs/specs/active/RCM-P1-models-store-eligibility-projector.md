@@ -125,7 +125,7 @@ Every item is proven by a named test in the listed file. `S` is
 - [ ] **AC8 — Exact endpoint join (E).** With approved
   `openrouter → https://openrouter.ai/api/v1`, each of the four fixture records
   at `https://openrouter.ai/api` refuses with `ENDPOINT_MISMATCH_REFUSED`:
-  `anthropic/claude-opus-5`, `anthropic/claude-fable-5.1`,
+  `anthropic/claude-opus-5.5`, `anthropic/claude-fable-5.1`,
   `anthropic/claude-sonnet-5`, `anthropic/claude-haiku-4.5`. A trailing slash,
   host case change, and `/api` versus `/api/v1` each refuse in both directions.
 - [ ] **AC9 — Catalog absence and identity (E).**

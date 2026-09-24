@@ -1,0 +1,107 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "profile"
+  ],
+  "properties": {
+    "profile": {
+      "enum": [
+        "vite-react-ts-tailwind",
+        "nextjs-app-router",
+        "none"
+      ]
+    },
+    "layout": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "route_roots",
+        "style_roots",
+        "component_roots",
+        "theme_files",
+        "ui_primitives"
+      ],
+      "properties": {
+        "route_roots": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "\\S"
+          }
+        },
+        "style_roots": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "\\S"
+          }
+        },
+        "component_roots": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "\\S"
+          }
+        },
+        "theme_files": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "\\S"
+          }
+        },
+        "ui_primitives": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "\\S"
+          }
+        }
+      }
+    },
+    "surfaces_present": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "\\S"
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "profile": {
+            "const": "none"
+          }
+        },
+        "required": [
+          "profile"
+        ]
+      },
+      "then": {
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "layout"
+              ]
+            },
+            {
+              "required": [
+                "surfaces_present"
+              ]
+            }
+          ]
+        }
+      },
+      "else": {
+        "required": [
+          "layout",
+          "surfaces_present"
+        ]
+      }
+    }
+  ]
+}

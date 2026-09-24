@@ -1,0 +1,208 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "identity",
+    "stack",
+    "capabilities",
+    "policy"
+  ],
+  "properties": {
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "project_key",
+        "base_branch",
+        "branch_prefix",
+        "worktree_root",
+        "dispatch_queue"
+      ],
+      "properties": {
+        "project_key": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "pattern": "\\S"
+            }
+          ]
+        },
+        "base_branch": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "branch_prefix": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "worktree_root": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "dispatch_queue": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "pattern": "\\S"
+            }
+          ]
+        }
+      }
+    },
+    "stack": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profile"
+      ],
+      "properties": {
+        "profile": {
+          "enum": [
+            "vite-react-ts-tailwind",
+            "nextjs-app-router",
+            "none"
+          ]
+        },
+        "layout": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "route_roots",
+            "style_roots",
+            "component_roots",
+            "theme_files",
+            "ui_primitives"
+          ],
+          "properties": {
+            "route_roots": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "\\S"
+              }
+            },
+            "style_roots": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "\\S"
+              }
+            },
+            "component_roots": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "\\S"
+              }
+            },
+            "theme_files": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "\\S"
+              }
+            },
+            "ui_primitives": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "\\S"
+              }
+            }
+          }
+        },
+        "surfaces_present": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "\\S"
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "profile": {
+                "const": "none"
+              }
+            },
+            "required": [
+              "profile"
+            ]
+          },
+          "then": {
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "layout"
+                  ]
+                },
+                {
+                  "required": [
+                    "surfaces_present"
+                  ]
+                }
+              ]
+            }
+          },
+          "else": {
+            "required": [
+              "layout",
+              "surfaces_present"
+            ]
+          }
+        }
+      ]
+    },
+    "capabilities": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "\\S"
+      },
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "pattern": "\\S"
+        }
+      }
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "audit"
+      ],
+      "properties": {
+        "audit": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "require_security_audit_at"
+          ],
+          "properties": {
+            "require_security_audit_at": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "low",
+                  "standard",
+                  "elevated",
+                  "critical"
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

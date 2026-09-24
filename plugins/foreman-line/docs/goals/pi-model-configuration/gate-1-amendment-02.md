@@ -2,13 +2,16 @@
 
 **Goal slug:** `pi-model-configuration`
 **Raised:** 2026-09-23 by coordinator lint (`coordinator-lint-pmc-p0.md`, L1–L4)
-**Status:** **RATIFIED IN FULL by the owner on 2026-09-23**
-**Scope:** model identity only — the Gate 1 record's Opus claim, matrix rows 1–2
+**Status:** **RATIFIED IN FULL by the owner on 2026-09-23; M1 superseded by Amendment 03 on 2026-09-24**
+**Scope:** historical model identity decision — the Gate 1 record's Opus claim, matrix rows 1–2
 and 6, D6, the A7/Q5 clause, and exit criterion 2 ownership.
 **Not re-opened:** D2, and A1–A8 other than the A7 Opus clause.
 
 The in-force text is mirrored into `charter.md` § *Amendment 02*, which governs
 on conflict.
+
+For M1, the in-force text is now superseded by `gate-1-amendment-03.md` and
+`charter.md` § *Amendment 03*. M2–M4 remain in force unchanged.
 
 ## Ratified items
 

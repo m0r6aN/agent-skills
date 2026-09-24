@@ -4,7 +4,7 @@
 **Created:** 2026-09-23  
 **Owner:** Clinton Morgan  
 **Coordinator:** unassigned — claim only through a generated loop directive at a parcel boundary  
-**Status:** SCOPED GATE 1 CLOSED — initial ratification 2026-09-23; Amendment 01 (A1–A8) and Amendment 02 (M1–M4, model identity) ratified 2026-09-23. PMC-P0 shaping authorized; Gate 2 not granted  
+**Status:** SCOPED GATE 1 CLOSED — initial ratification 2026-09-23; Amendment 01 (A1–A8), Amendment 02 (M1–M4), and Amendment 03 (Opus identity correction) ratified. PMC-P0 shaping authorized; Gate 2 not granted
 **Mode:** repo-local configuration, routing-policy, and Pi-session integration
 
 ## Objective
@@ -197,11 +197,11 @@ that any model is reachable or performant. `live-availability` and
 | PMC-P3 | canon and human-facing templates only | the PMC-P2 interface — consumes it unchanged |
 | PMC-P4 | conformance/smoke/rollout gate **and** serialized removal of the legacy representation | the ratified contract surface |
 
-The ratified Claude Opus 5.5 selection is delivered **inside PMC-P1** as a
-tested change to `KNOWN_FRONTIER_MODELS` in `routing-policy/src/validator.ts`.
-It cannot be delivered by configuration alone: invariant 5 rejects any
-`model_tiers.frontier` entry absent from that reviewed code constant, and the
-registry currently contains `anthropic/claude-opus-5`, not `-5.5`.
+The ratified Claude Opus selection is delivered **inside PMC-P1** as a tested
+change to `KNOWN_FRONTIER_MODELS` in `routing-policy/src/validator.ts`. It
+cannot be delivered by configuration alone: invariant 5 rejects any
+`model_tiers.frontier` entry absent from that reviewed code constant. The
+then-current registry statement in Amendment 01 is superseded by Amendment 03.
 
 Review load is unchanged: PMC-P0, P1, P2, and P4 each require **two**
 independent adversarial reviews; PMC-P3 requires one.
@@ -216,24 +216,25 @@ authorize or perform.
 
 ## Amendment 02 — ratified 2026-09-23 (model identity)
 
+**M1 is superseded by Amendment 03 below.** M2–M4 remain in force.
+
 Raised by coordinator lint (`coordinator-lint-pmc-p0.md`, findings L1–L4) and
 ratified in full. Full record in `gate-1-amendment-02.md`. Where this section
 conflicts with anything above, including Amendment 01 and the Gate 1 record,
 **this section governs**.
 
-### M1 — Opus identity corrected
+### M1 — Opus identity corrected (superseded)
 
-`claude-opus-5.5` and `claude-opus-5-5` **do not exist** in the Pi catalogue.
-The Gate 1 record's claim that both were "verified" is **withdrawn as
-falsified**. The highest available Opus is `claude-opus-5`.
+Historical M1 asserted that `claude-opus-5.5` and `claude-opus-5-5` did not
+exist in the Pi catalogue. That assertion and the associated withdrawal are
+superseded by Amendment 03.
 
-All Opus routes read **`opencode/claude-opus-5`** and
-**`openrouter/anthropic/claude-opus-5`**, in matrix rows 1 and 2.
+The historical M1 route values were **`opencode/claude-opus-5`** and
+**`openrouter/anthropic/claude-opus-5`**, in matrix rows 1 and 2; current route
+values are defined by Amendment 03.
 
-The Amendment 01 A7/Q5 instruction to add Opus to `KNOWN_FRONTIER_MODELS` is
-**withdrawn**: `anthropic/claude-opus-5` is already present in
-`routing-policy/src/validator.ts`. PMC-P1 makes **no** frontier-registry change
-for Opus, and must not infer discretion to add one.
+The Amendment 01 A7/Q5 instruction was **withdrawn under historical M1**. The
+current registry change is governed by Amendment 03 and the PMC-P1 scope.
 
 ### M2 — typed routing/classification lane refused
 
@@ -278,6 +279,26 @@ M1–M4 rest on the unratified credential-free host-owner export at
 not establish live availability. Every corrected identity still requires
 `live-availability` evidence under A6 before activation, and any "current-best"
 claim still requires `model-quality`.
+
+## Amendment 03 — ratified by owner direction 2026-09-24 (Opus availability correction)
+
+This amendment supersedes **M1 only**. M2–M4 and Amendments 01 A1–A8 remain in
+force. The prior coordinator lint and host-owner export concluded that the
+Opus 5.5 identities were absent. The owner has now confirmed the exact live
+catalogue identities: OpenCode exposes `claude-opus-5-5`, and OpenRouter
+exposes `anthropic/claude-opus-5.5`.
+
+The canonical Opus identities are therefore:
+
+- OpenCode: `opencode/claude-opus-5-5`;
+- OpenRouter: `openrouter/anthropic/claude-opus-5.5`.
+
+The OpenRouter identity is the frontier registry spelling and must replace
+the superseded Opus identity in the live policy, validator registry, fixtures, and
+route expectations. No Anthropic provider registration is needed for this
+correction because OpenRouter already serves the confirmed identity. The
+previous absence finding remains preserved as historical evidence and is not
+used as a current availability claim.
 
 ## Acceptance / exit criterion
 

@@ -1,0 +1,13 @@
+TOP 5 BRUTAL FINDINGS
+1. The draft will not load as written. The baseUrl values use Markdown-link syntax, the env placeholders have escaped underscores (OPENROUTER\_API\_KEY), and the providers block belongs in models.json, not settings.json.
+2. enabledModels only sets which models Ctrl+P cycles through. It does not route anything, so the draft has no automatic routing at all.
+3. The model lineup is out of date and has no clear tiers. It has two 32B OpenCode models that overlap, Claude 3.5 Sonnet and GPT-4o-mini. A minimal default thinking level on every model makes review and verification work weaker.
+4. pi-model-auto sticks with a model for the session and only upgrades. Its classifier picks by semantics, not by Foreman risk. If Foreman lets it choose models by itself, the reviewer or verifier model is picked by a heuristic, and Foreman's evidence trail breaks.
+5. The packaged Foreman Line is behind the standalone repo. It defaults to process.cwd() and hardcodes coordinator/operator identity. A router placed on top of it would get the wrong roots and fake identities.
+
+TOP 5 MOVES
+1. Move providers into ~/.pi/agent/models.json with plain https URLs and env references like OPENROUTER_API_KEY. Keep only defaultProvider, defaultModel, enabledModels and per-model thinking levels in settings.json.
+2. Use pi-auto-router, not pi-model-auto. Run it in shadow mode first and record its explain output with each parcel. Turn on real routing only after its choices match Foreman's role table for about 20 parcels.
+3. Set fixed tiers. Builder tier: cheap coder model, low thinking. Reviewer/verifier tier: a current frontier model on a different provider from the builder, high thinking. Coordinator/approval: pinned frontier model, high thinking, never routed.
+4. Keep these under Foreman's control: role assignment, risk class, approval gates, choosing the reviewer, mutation scope, and signing evidence. Automatic routing may only choose a model inside a tier that Foreman has already assigned, plus failover and budgets. The worker envelope must record the routed model ID.
+5. Before adopting any router, review the package source and pin its version. Update the packaged Foreman Line to match the standalone repo, which has explicit roots and a role-authority helper. Fail closed if a route crosses tiers or the budget runs out.
