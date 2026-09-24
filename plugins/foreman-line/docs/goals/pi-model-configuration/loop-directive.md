@@ -1,7 +1,7 @@
 # Loop Directive — Pi Model Configuration
 
 **Goal slug:** `pi-model-configuration`
-**State:** `PMC-P0 BUILDER STEP 0 COMPLETE — COORDINATOR RULING ISSUED; FLAGS F1–F6 CLEARED, EVIDENCE RUN UNBLOCKED`
+**State:** `PMC-P0 EVIDENCE RUN STOPPED (AC2a endpoint-mismatch stop) — COORDINATOR REPRODUCED; LOOP STOPPED AWAITING SCOPED GATE 1 RE-OPEN (Amendment 04) OWNER DECISION`
 **Cleared:** Amendment 01 (A1–A8), Amendment 02 (M1–M4), and Amendment 03 Opus correction ratified 2026-09-24
 **Next human gate:** none; Gate 2 for PMC-P0 already granted and covers the evidence run. The evidence dispatch is a coordinator action.
 
@@ -41,7 +41,7 @@ touching the spec: `5eef2f3` added the approved brief (byte-identical, blob
 | Coordinator | **claimed** by this Pi session on 2026-09-23 at the PMC-P0 boundary, on the owner's explicit direction ("Yes claim the coordinator role and open the PMC-P0 shaping session now") |
 | Claim rule | one goal, one coordinator; transfers only at a parcel boundary |
 | Owner | Clinton Morgan |
-| Last state change | 2026-09-24 — PMC-P0 builder Step 0 complete; coordinator ruled flags F1–F6 (cleared, no amendment); evidence run unblocked |
+| Last state change | 2026-09-24 — evidence run dispatched under the four-file write envelope; builder stopped cleanly at AC2a (endpoint-mismatch stop condition, wrote nothing); coordinator reproduced the findings on disk; loop stopped awaiting owner decision on Amendment 04 (D-a AC2a comparator, D-b binding 7, D-c verification-command fix) |
 
 The PMC-P0 shaping session ran coordinator lint first. Its Opus absence finding
 is now historical: Amendment 03 corrects it to the confirmed OpenCode and
@@ -115,6 +115,76 @@ Rulings on the builder's flags:
 No flag is a real spec gap; none requires an amendment committed alone before
 code. Proceeding to the evidence run.
 
+## Evidence-run stop and coordinator reproduction — PMC-P0 (2026-09-24)
+
+**Dispatch envelope.** The evidence builder ran headless in a four-file write
+envelope (`Edit(<4 exact Allowed-File paths>)` allow-list, `--permission-prompts
+none` so every unlisted tool including all write-capable MCP tools is
+auto-denied; network/provider CLIs/`git` mutation/`npm` denied). It performed
+the AC2 resolution, hit the spec's **endpoint-mismatch stop condition**, wrote
+none of the four files, made no provider/credential reads, and stopped for the
+ruling. `git status --short` empty before and after; tip stayed at `c4489e7`
+(coordinator's Step 0 commit). This is a **disciplined stop, not a wrong-shaped
+claim** — an acceptable outcome per the brief.
+
+**Coordinator independent reproduction** (node over the digest-verified export;
+all three export digests re-confirmed matching the spec pins first):
+
+- Top-level catalogue keys are `projectionVersion` + `providers` (13 providers).
+  The spec's Verification Plan `$cat.models | Where-Object {…}` field does **not
+  exist** → run literally it returns nothing and would emit 13 false
+  `AC2A_ZERO_MATCH` refusals. (Builder worked around via `providers[].models[]`,
+  which the spec permits as an "equivalent Node script.")
+- **AC2a resolution (provider+id literal, case-sensitive):** 12 bindings resolve
+  to exactly one record (2,3,4,5,6,8 under `opencode`; 9,11,12,13,14,15 under
+  `openrouter`). **Binding 7 `opencode/qwen3.8-flash` = 0 matches** under
+  `opencode`; the id exists only under `opencode-go` (`…/zen/go`) and
+  `qwen-token-plan`. This **falsifies coordinator-lint L5's "present" claim**
+  (L5 checked the id appeared anywhere, not under the AC2 provider).
+- **Endpoint comparison (catalogue record `baseUrl` vs `settings-projection`
+  registered provider `baseUrl`):** settings registers `opencode`→
+  `https://opencode.ai/zen/go/v1` and `openrouter`→`https://openrouter.ai/api/v1`.
+  Catalogue `opencode` records are `…/zen/v1` (54) or `…/zen` (14) — i.e. the
+  host's registered `opencode` endpoint equals the **`opencode-go`** catalogue
+  endpoint, so bindings 2,3,4,5,6,8 diverge; `anthropic-messages` openrouter
+  records (11 `anthropic/claude-sonnet-5`, 15 `anthropic/claude-haiku-4.5`) carry
+  `https://openrouter.ai/api` (no `/v1`) while bindings 9,12,13,14 carry
+  `…/api/v1` (and `routing-policy/src/pi-openrouter.ts:39,53,151` fix `…/api/v1`)
+  → 11 and 15 diverge too. **Under the builder's reading (mismatch vs the
+  settings-registered endpoint), 8 of 12 resolving AC2a bindings would refuse,
+  collapsing the mandated "counts 13 under AC2a" — which the spec author could
+  not have intended. The AC2a "URL mismatch" comparator is therefore undefined.**
+
+**Findings routed to a scoped Gate 1 re-open (Amendment 04, owner decision):**
+
+- **R1 / D-a — AC2a "URL mismatch" comparator is undefined (load-bearing).**
+  AC2a lists "URL mismatch" as a refusal but never says what `baseUrl` is
+  compared *against*. As read, it can mean catalogue-internal non-uniqueness
+  (one provider+id → differing URLs) or catalogue-vs-settings/`pi-openrouter.ts`
+  divergence. The latter makes AC2a's 13 unachievable and would silently convert
+  a settings/catalogue registration observation into a refusal. **Owner must fix
+  the comparator.** Coordinator recommendation: "URL mismatch" refuses only on
+  catalogue-internal non-uniqueness; catalogue-vs-settings endpoint divergence
+  is a recorded `static-conformance` observation (never an availability/absence
+  claim, per precondition 2), not an AC2a refusal.
+- **R2 / D-b — binding 7 `opencode/qwen3.8-flash` disposition (load-bearing).**
+  The frozen export has zero `opencode/qwen3.8-flash` records; preconditions
+  forbid aliasing `opencode-go`→`opencode` on equal endpoints. **Owner must
+  choose**: (i) keep it a named `AC2A_ZERO_MATCH` refusal (honest 12/13 + 1
+  documented refusal; availability/enablement left to A6/PMC-P2); or (ii)
+  extend owner-attestation to binding 7 as Amendment 03 did for bindings 1/10
+  (changes the AC2a/AC2b counts). Coordinator recommendation: (i), plus a
+  PMC-P2 live-availability item; do not alias, do not silently reclassify.
+- **R3 / D-c — Verification Plan field defect (factual fix).**
+  `$cat.models` must be `$cat.providers[].models[]`. A mechanical correction to
+  the spec body (not an acceptance decision), folded into Amendment 04; the
+  coordinator re-promotes afterward (digest updates).
+
+No evidence files were written; the parcel is paused at AC2a pending the
+ratified Amendment 04. Per the loop's amendment-before-code rule, the
+coordinator will not let any builder resolve R1–R3 unilaterally, and will not
+edit the spec outside a ratified, re-promoted amendment.
+
 ## Standing authorizations (verbatim, with contingencies)
 
 | Gate / action | State |
@@ -138,10 +208,15 @@ code. Proceeding to the evidence run.
    `draft → active` at `96a24bf`; clean worktree prepared; builder dispatched
    fresh; **builder Step 0 complete and coordinator ruling issued** (see *Step 0
    ruling* section above — flags F1–F6 all cleared, no amendment).
-4b. **[NEXT]** Builder evidence run in `D:/Repos/wt-pmc-p0` under the least-
-   privilege four-file write envelope: verify the three export digests, resolve
-   AC2 (13/2), derive AC3–AC5, build AC6 rubric + AC7 role map, write the four
-   evidence artifacts, return the AC-by-AC completion claim in the brief's shape.
+4b. **[PAUSED on 4c]** Builder evidence run in `D:/Repos/wt-pmc-p0` under the
+   least-privilege four-file write envelope: verified the three export digests
+   (all match) and ran AC2 resolution, then **stopped on the endpoint-mismatch
+   stop condition with no files written**. Coordinator reproduced on disk.
+4c. **[NEXT — human gate]** Scoped Gate 1 re-open (Amendment 04): owner decides
+   D-a (AC2a "URL mismatch" comparator), D-b (binding 7 disposition), and
+   confirms the D-c verification-command field fix. Coordinator drafts Amendment
+   04 on ratification, commits it alone, re-promotes the spec (new digest), then
+   resumes the evidence run at AC2.
 5. **[BLOCKED on 4b]** PMC-P0 coordinator closure check against disk →
    deterministic pass (PowerShell 7 / `pwsh`, `node -v` first) → **two**
    independent adversarial reviews (elevated / architecture-risk) → triage.
@@ -183,9 +258,11 @@ All charter stop conditions remain in force. Additionally, stop and report if:
 
 ## Hook-condition note
 
-Three human gates remain agent-uncompletable: **Gate 2** dispatch approval, the
-**role/authority map ratification** (A5.4), and **Gate 3** merge/activation. If
-this goal is run under a stop-hook whose condition is phrased as any of those,
-or as "charter implemented", the session will trap in a stop → feedback → stop
-cycle. Agent-verifiable end states are of the form **"stop-report written and
-loop stopped awaiting <named gate>"**.
+Four human gates remain agent-uncompletable: the **Amendment 04 scoped Gate 1
+re-open** (D-a/D-b), **Gate 2** dispatch approval (for later parcels), the
+**role/authority map ratification** (A5.4), and **Gate 3** merge/activation. The
+PMC-P0 loop is currently stopped at the first of these. If this goal is run under
+a stop-hook whose condition is phrased as any of those, or as "charter
+implemented", the session will trap in a stop → feedback → stop cycle.
+Agent-verifiable end states are of the form **"stop-report written and loop
+stopped awaiting <named gate>"**.
