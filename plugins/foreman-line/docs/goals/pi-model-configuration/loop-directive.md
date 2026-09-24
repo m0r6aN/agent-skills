@@ -1,10 +1,10 @@
 # Loop Directive — Pi Model Configuration
 
 **Goal slug:** `pi-model-configuration`
-**State:** `BLOCKED — GATE 1 RE-OPEN ON MODEL IDENTITY (M1–M4)`
-**Cleared:** `gate-1-amendment-01.md` (A1–A8) ratified in full 2026-09-23
-**Blocking artifact:** `coordinator-lint-pmc-p0.md` (findings L1–L4, items M1–M4)
-**Next human gate:** ratify M1–M4, then Gate 2 dispatch approval for PMC-P0
+**State:** `PMC-P0 SHAPED — AWAITING GATE 2 DISPATCH APPROVAL`
+**Cleared:** Amendment 01 (A1–A8) and Amendment 02 (M1–M4) ratified in full 2026-09-23
+**Draft spec:** `docs/specs/active/PMC-P0-pi-capability-and-catalogue-baseline.md` at `status: draft`
+**Next human gate:** Gate 2 dispatch approval for PMC-P0
 
 ## Ownership block
 
@@ -13,13 +13,17 @@
 | Coordinator | **claimed** by this Pi session on 2026-09-23 at the PMC-P0 boundary, on the owner's explicit direction ("Yes claim the coordinator role and open the PMC-P0 shaping session now") |
 | Claim rule | one goal, one coordinator; transfers only at a parcel boundary |
 | Owner | Clinton Morgan |
-| Last state change | 2026-09-23 — coordinator claimed; PMC-P0 shaping attempted and **stopped** by coordinator lint |
+| Last state change | 2026-09-23 — Amendment 02 ratified; PMC-P0 shaped to `draft`; loop stopped at Gate 2 |
 
-The PMC-P0 shaping session opened, ran coordinator lint first, and stopped
-before writing a spec draft: the lint falsified load-bearing charter claims
-(see `coordinator-lint-pmc-p0.md`). No spec draft and no `ShapingResult` were
-emitted. Ownership is recorded so a later `/goal resume` does not re-claim
-blindly; transfer only at a parcel boundary.
+The PMC-P0 shaping session ran coordinator lint first, stopped on falsified
+model-identity claims (`coordinator-lint-pmc-p0.md`, L1–L4), obtained owner
+ratification of M1–M4 as Amendment 02, then completed shaping against the
+corrected matrix. The draft passed both advisory self-check layers — spec-linter
+frontmatter and §4 body sections — which is **advisory only**; coordinator lint
+remains the sole promotion authority. No `ShapingResult` was emitted, per the
+RCM-P0 precedent for coordinator-run goal parcels. Ownership is recorded so a
+later `/goal resume` does not re-claim blindly; transfer only at a parcel
+boundary.
 
 **Cross-goal sequencing note.** Routing Currency and Merit is live under Claude
 Code coordinator session `e45b4d47-8455-49e9-9629-31c713c1b356` (state
@@ -45,22 +49,21 @@ sequenced with that coordinator before Gate 2 — never co-owned.
 1. **[DONE]** Owner ratifies A1–A8 → scoped Gate 1 re-open closed.
 2. **[DONE]** Ratified A1–A8 folded into `charter.md` § *Amendment 01* as a
    single amendment commit, committed alone, before any code.
-3. **[STOPPED]** Shape PMC-P0. Attempted 2026-09-23; coordinator lint stopped it
-   before a draft. Requires M1–M4 ratification to resume.
-3a. **[NEXT — human gate]** Owner ratifies M1–M4 (model identity) per
-   `coordinator-lint-pmc-p0.md`.
-3b. **[BLOCKED on 3a]** Re-open PMC-P0 shaping: Pi capability/catalogue baseline
-   consumed through the established safe host-owner-export boundary with
-   freshness treated as unratified, the A3 suitability rubric, and the candidate
-   role/lane/authority map that A5.4 sends to owner ratification.
-4. **[BLOCKED on 3]** Gate 2 request for PMC-P0 → dispatch builder in its own
-   worktree/branch with a Step 0 restate-and-stop gate.
+3. **[DONE]** Coordinator lint falsified model identity (L1–L4); owner ratified
+   M1–M4 as Amendment 02; PMC-P0 shaped to `draft` against the corrected matrix.
+4. **[NEXT — human gate]** **Gate 2** dispatch approval for PMC-P0, then
+   dispatch a builder in its own worktree/branch with a Step 0
+   restate-and-stop gate. Promotion `draft → active` happens at Gate 2, not
+   before.
 5. **[BLOCKED on 4]** PMC-P0 closure check → deterministic pass → **two**
-   independent adversarial reviews (architecture/risk class) → triage.
+   independent adversarial reviews (elevated / architecture-risk) → triage.
 6. **[BLOCKED on 5]** Owner ratifies the frozen role/authority map (A5.4) —
    a human gate, required before PMC-P2 starts.
-7. **[BLOCKED]** PMC-P1 … PMC-P4 per the A7 ownership split, with legacy
-   representation removal serialized into PMC-P4.
+7. **[BLOCKED on 6]** Sequence Wave 1 with the RCM coordinator before any PMC-P1
+   Gate 2 — `routing-policy/` surfaces are contested, never co-owned.
+8. **[BLOCKED on 7]** PMC-P1 … PMC-P4 per the A7 ownership split as narrowed by
+   Amendment 02 (P1 makes no frontier-registry change; P2 also owns model
+   enablement per M4; legacy-representation removal serialized into P4).
 
 ## Per-iteration algorithm
 

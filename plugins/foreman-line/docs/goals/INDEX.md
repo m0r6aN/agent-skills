@@ -16,7 +16,7 @@ from an index row.
 | Goal | Owner | State | Current authority |
 |---|---|---|---|
 | [governed-model-fleet](governed-model-fleet/charter.md) | /root | gmf_p1_landed_p2a_awaiting_shape | D1-D24 plus A1/P0-P9 ratified; P0 + P1 evidence landed (PRs #28, #33); P1 closure READY; P2A shaping next, no Gate 2 yet |
-| [pi-model-configuration](pi-model-configuration/charter.md) | Pi coordinator session (claimed 2026-09-23) | `gate_1_reopen_model_identity` | D1-D8 plus Amendment 01 (A1-A8) ratified; PMC-P0 shaping stopped by coordinator lint; M1-M4 model-identity re-open pending; no Gate 2, no provider spend, no host change |
+| [pi-model-configuration](pi-model-configuration/charter.md) | Pi coordinator session (claimed 2026-09-23) | `pmc_p0_shaped_awaiting_gate_2` | D1-D8 plus Amendments 01 (A1-A8) and 02 (M1-M4) ratified; PMC-P0 draft spec shaped and self-checked; Gate 2 not granted; Wave 1 needs RCM sequencing; no provider spend, no host change |
 | [foreman-ops-console](foreman-ops-console/charter.md) | current session | `gate_1_ratified_plan_review_pending` | Charter ratified 2026-09-16 (OQ1–OQ5 decided); D8 standing Gate 2 (FOC-P0–P4) + contingent Gate 3 granted; plan-level adversarial review is the mandatory next step |
 
 ## Frozen or stopped goals

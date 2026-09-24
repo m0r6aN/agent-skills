@@ -1,0 +1,22 @@
+{
+  "defaultModel": "qwen/qwen-2.5-coder-32b",
+  "defaultProvider": "opencode",
+  "defaultThinkingLevel": "minimal",
+  "enabledModels": [
+    "opencode:qwen/qwen-2.5-coder-32b",
+    "opencode:deepseek/deepseek-r1-distill-qwen-32b",
+    "openrouter:anthropic/claude-3.5-sonnet",
+    "openrouter:openai/gpt-4o-mini",
+    "openrouter:typesafe/jev-1.13"
+  ],
+  "providers": [
+    {
+      "baseUrl": "https://opencode.ai/zen/go/v1",
+      "providerKey": "opencode"
+    },
+    {
+      "baseUrl": "https://openrouter.ai/api/v1",
+      "providerKey": "openrouter"
+    }
+  ]
+}
