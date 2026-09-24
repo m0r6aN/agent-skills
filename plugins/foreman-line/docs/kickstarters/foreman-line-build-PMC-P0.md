@@ -8,20 +8,35 @@
 
 | Field | Required value |
 |---|---|
-| Worktree | `D:/Repos/wt-pmc-p0` (already created; do **not** work in `D:/Repos/agent-skills`) |
-| Branch | `codex/pmc-p0-evidence` |
-| HEAD | `96a24bf7ab3669b79ff7d0b004466846051c6d71` |
-| Branch created from | `2f6c79446a2eeb9f766f22c759721cb91ffa6e67` |
-| Spec path | `plugins/foreman-line/docs/specs/active/PMC-P0-pi-capability-and-catalogue-baseline.md` |
-| Spec SHA-256 | `82d7819c63e59626ff57495ca84c0d386e091f5f9e4c6076c476a253f30b5b71` |
-| Spec status | `active` (promoted by the coordinator; you never change it) |
-| Worktree state | must be clean before you start |
+**Refusal gates — all four must hold, or stop and report.** These are content
+identities, deliberately not a commit SHA: coordinator bookkeeping commits on
+this branch legitimately move the tip, and a stale SHA pin would force a false
+refusal.
 
-**Do not use** `codex/refresh-actions-and-packages`. That branch is shared and
-has advanced to unrelated PRAC work; a second live session writes to it.
+| # | Gate | Required value |
+|---|---|---|
+| G1 | Worktree path | `D:/Repos/wt-pmc-p0` — do **not** work in `D:/Repos/agent-skills` |
+| G2 | Branch | `codex/pmc-p0-evidence` |
+| G3 | Spec SHA-256 | `82d7819c63e59626ff57495ca84c0d386e091f5f9e4c6076c476a253f30b5b71` at `plugins/foreman-line/docs/specs/active/PMC-P0-pi-capability-and-catalogue-baseline.md`, with `status: active` |
+| G4 | Worktree state | clean (`git status --short` empty) before you start |
 
-If `HEAD`, the branch, the spec digest, or worktree cleanliness does not match
-the table, **stop and report**. Do not "fix" it.
+Also confirm this brief is present at
+`plugins/foreman-line/docs/kickstarters/foreman-line-build-PMC-P0.md` with
+SHA-256 `84760ce07c03467eb3b216d167ab0f9eb30286a1fbb8b84daac66c72c0f1d1da`
+(7006 bytes). If it is absent or differs, stop — that was a real defect once
+already.
+
+**Informational, not a gate:** the branch was created from
+`2f6c79446a2eeb9f766f22c759721cb91ffa6e67`; the spec was promoted at
+`96a24bf7ab3669b79ff7d0b004466846051c6d71`. Record the tip SHA you observe via
+`git rev-parse HEAD` and report it. Do **not** refuse on it, and do **not**
+advance, rebase, reset, or amend it.
+
+**Do not use** `codex/refresh-actions-and-packages`. That branch is shared, has
+advanced to unrelated PRAC work, and a second live session writes to it; the
+main checkout has since moved to another branch entirely.
+
+If G1–G4 or the brief check fails, **stop and report**. Do not "fix" it.
 
 ## Step 0 — restate and STOP
 
