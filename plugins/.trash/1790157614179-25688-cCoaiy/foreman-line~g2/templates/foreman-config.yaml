@@ -1,0 +1,16 @@
+# Copy to <repo-root>/foreman/config.yaml and replace identity values.
+# This file is a template only; it intentionally contains no customer identity.
+identity:
+  project_key: null
+  base_branch: main
+  branch_prefix: work/
+  worktree_root: .worktrees
+  dispatch_queue: null
+stack:
+  profile: none
+capabilities: {}
+policy:
+  audit:
+    require_security_audit_at:
+      - elevated
+      - critical

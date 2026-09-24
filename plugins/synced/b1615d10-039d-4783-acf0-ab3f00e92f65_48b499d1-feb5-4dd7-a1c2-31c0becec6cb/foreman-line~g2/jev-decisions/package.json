@@ -1,0 +1,11 @@
+{
+  "name": "@foreman-line/jev-decisions",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "node --check src/index.ts",
+    "test": "node --test tests/*.test.ts",
+    "lint": "node --check src/index.ts"
+  }
+}

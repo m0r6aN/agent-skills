@@ -1,0 +1,13 @@
+{
+  "type": "object",
+  "propertyNames": {
+    "pattern": "\\S"
+  },
+  "additionalProperties": {
+    "type": "array",
+    "items": {
+      "type": "string",
+      "pattern": "\\S"
+    }
+  }
+}

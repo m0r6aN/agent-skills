@@ -2,7 +2,7 @@
 
 **Goal slug:** `pi-model-configuration`
 **State:** `PMC-P0 SHAPED — AWAITING GATE 2 DISPATCH APPROVAL`
-**Cleared:** Amendment 01 (A1–A8) and Amendment 02 (M1–M4) ratified in full 2026-09-23
+**Cleared:** Amendment 01 (A1–A8), Amendment 02 (M1–M4), and Amendment 03 Opus correction ratified 2026-09-24
 **Draft spec:** `docs/specs/active/PMC-P0-pi-capability-and-catalogue-baseline.md` at `status: draft`
 **Next human gate:** Gate 2 dispatch approval for PMC-P0
 
@@ -15,10 +15,9 @@
 | Owner | Clinton Morgan |
 | Last state change | 2026-09-23 — Amendment 02 ratified; PMC-P0 shaped to `draft`; loop stopped at Gate 2 |
 
-The PMC-P0 shaping session ran coordinator lint first, stopped on falsified
-model-identity claims (`coordinator-lint-pmc-p0.md`, L1–L4), obtained owner
-ratification of M1–M4 as Amendment 02, then completed shaping against the
-corrected matrix. The draft passed both advisory self-check layers — spec-linter
+The PMC-P0 shaping session ran coordinator lint first. Its Opus absence finding
+is now historical: Amendment 03 corrects it to the confirmed OpenCode and
+OpenRouter Opus 5.5 identities. The draft passed both advisory self-check layers — spec-linter
 frontmatter and §4 body sections — which is **advisory only**; coordinator lint
 remains the sole promotion authority. No `ShapingResult` was emitted, per the
 RCM-P0 precedent for coordinator-run goal parcels. Ownership is recorded so a

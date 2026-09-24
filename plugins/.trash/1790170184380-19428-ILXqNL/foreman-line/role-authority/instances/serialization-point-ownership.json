@@ -1,0 +1,5 @@
+{
+  "path": "plugins/foreman-line/role-authority/**",
+  "owner": "WF-P1",
+  "extensionPolicy": "sole"
+}

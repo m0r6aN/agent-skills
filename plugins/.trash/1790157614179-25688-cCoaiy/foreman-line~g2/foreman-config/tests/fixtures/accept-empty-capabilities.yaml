@@ -1,0 +1,25 @@
+# AC10 accept: an empty `capabilities:` map is legal — the group must be
+# PRESENT (explicit declaration), but declaring zero capabilities is a
+# normal state, not an error (D14 posture).
+identity:
+  project_key: KONE
+  base_branch: main
+  branch_prefix: feat/
+  worktree_root: ../worktrees
+  dispatch_queue: foreman-line-dispatch
+
+stack:
+  profile: vite-react-ts-tailwind
+  layout:
+    route_roots: ["src"]
+    style_roots: ["src"]
+    component_roots: ["src/components"]
+    theme_files: ["src/index.css"]
+    ui_primitives: ["src/components/ui"]
+  surfaces_present: ["charts"]
+
+capabilities: {}
+
+policy:
+  audit:
+    require_security_audit_at: [elevated]

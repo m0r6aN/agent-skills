@@ -1,0 +1,15 @@
+TOP 5 BRUTAL FINDINGS
+
+1. [HIGH] Exit 3 presets the answer ("flag all three APIs absent"), contradicting D4/provenance caveat; if the probe finds a real hook, the goal cannot exit, so the gate rewards confirmation.
+2. [HIGH] The runtime probe is impossible as scoped: the `pi` API exists only inside a loaded extension, loading one requires writing ~/.pi/agent/extensions/ (forbidden), and stdlib-only cannot load TS, so it collapses to a docs grep, the very class OQ1 claims to close; dist/*.d.ts is never required.
+3. [HIGH] D6, exit 6 and stop conditions contradict: the spec lives in docs/specs/ (active->done move) and lessons are appended elsewhere; exit 6 is unprovable because routing-policy/ (yaml, validator.ts, fixtures) already has uncommitted edits a goal merge would absorb.
+4. [MED] Hidden dependencies: the proposal source is outside the repo (C:/Users/clint/.../directive.md), so "verbatim restate" is unreviewable; D3 pins a version string on an nvm-bound path with no content hash; pi-jev-budget-guard, the best real-surface evidence, is walled off even from reading.
+5. [MED] D5 is unexamined and D2 violates it: "future adapter runs inside D7/D8 under routing-policy" is a forward routing claim and a paraphrase; "equivalent surface" is a D1-forbidden intent judgment; grep cannot tell quoted API names from asserted ones.
+
+TOP 5 MOVES
+
+1. Rewrite exit 3: each proposal API gets a verified disposition (present/absent/unverifiable); the negative control checks the recorded disposition, not an expected one.
+2. Respec the probe: resolve the package, assert version 0.86.1, sha256 docs/extensions.md, examples/ and dist/**/*.d.ts, grep the shipped exports, and report "absent from shipped types", never "absent at runtime".
+3. Enumerate allowed paths in D6/exit 6 (goal dir, PRAC-P0 spec active->done, lessons append); commit a git-status baseline before dispatch; merge only by explicit pathspec.
+4. Snapshot the directive excerpt into goal-dir evidence/ with a hash, and permit read-only citation of pi-jev-budget-guard source.
+5. Put the API table in fixed columns (API | disposition | citation | probe-line) and lint rows, not prose; use "nearest documented surface (differs: ...)" instead of "equivalent"; make D5 bare pointers with no forward claim.

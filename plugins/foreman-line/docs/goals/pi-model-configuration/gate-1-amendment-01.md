@@ -9,6 +9,10 @@ Opus 5.5 selection, and the P0 → P1 → P2 → P3 → P4 sequence (F10, inform
 **Owner action required:** ratify, amend, or reject each item below. Nothing in
 this document is in force until ratified.
 
+The Opus 5.5 absence claim in this historical amendment was later superseded
+by owner-ratified Amendment 03 on 2026-09-24. The remaining A1–A8 controls
+continue to govern.
+
 ## Coordinator lint record (claims verified on disk, 2026-09-23)
 
 | Charter / review claim | Disk evidence | Result |

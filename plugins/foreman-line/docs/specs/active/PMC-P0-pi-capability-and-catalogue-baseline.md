@@ -4,7 +4,7 @@ title: Pi capability and catalogue baseline
 status: draft
 owner: clinton.morgan
 created: 2026-09-23
-updated: 2026-09-23
+updated: 2026-09-24
 risk: elevated
 surfaces:
   - plugins/foreman-line/docs/goals/pi-model-configuration/
@@ -27,13 +27,16 @@ Catalogue facts prove recorded configuration, never live provider availability.
 
 ## Constraints
 
-Authority baseline is charter `D1`–`D8` as amended by **Amendment 01 (A1–A8)**
-and **Amendment 02 (M1–M4)**; Amendment 02 governs on conflict. Gate 2 names
+Authority baseline is charter `D1`–`D8` as amended by **Amendment 01 (A1–A8)**,
+**Amendment 02 (M1–M4)**, and **Amendment 03 (M1 correction)**; Amendment 03
+governs the Opus identity on conflict. Gate 2 names
 PMC-P0 only. Gate 3 remains human-owned. No Gate 2 exists for any later parcel.
 
-Model identities are the Amendment 02 corrected set. `claude-opus-5` /
-`anthropic/claude-opus-5` are the Opus routes; `claude-opus-5.5` does not exist
-and must not be reintroduced. The typed routing/classification lane is
+Model identities are the Amendment 03 corrected set. `claude-opus-5-5` /
+`anthropic/claude-opus-5.5` are the Opus routes, confirmed by the owner through
+the OpenCode and OpenRouter catalogues. The prior host-owner export's absence
+claim is superseded; it remains historical evidence only. The typed
+routing/classification lane is
 **refused / disabled-lane** and row 6 is single-provider; do not propose a
 substitute classifier or promote an authority-bearing agent into that lane.
 
@@ -76,12 +79,13 @@ parcel introduces no schema field, executable, test, collector, or dependency.
   no case folding, alias substitution, dot/dash conversion, suffix stripping, or
   URL trimming. Zero matches, multiple matches, wrong provider, `:batch` or
   other variant suffixes, and URL mismatch each **refuse** with a named reason.
-- [ ] **AC3 — Opus and Jev dispositions confirmed.** Independently re-derive
-  L1 and L2: record that no `5.5`/`5-5` Opus spelling exists, that
-  `anthropic/claude-opus-5` is present in both the catalogue and
-  `KNOWN_FRONTIER_MODELS`, and that `typesafe/jev-1.13` is enabled in settings
-  yet absent from the catalogue. Confirm or contradict; a contradiction
-  escalates to the coordinator and does not silently revise Amendment 02.
+- [ ] **AC3 — Opus and Jev dispositions confirmed.** Re-derive the corrected
+  model identity: `claude-opus-5-5` is present for OpenCode and
+  `anthropic/claude-opus-5.5` is present for OpenRouter, and the latter is
+  present in `KNOWN_FRONTIER_MODELS`. Record the prior absence finding as
+  superseded by Amendment 03. Re-derive L2 separately: the typed
+  routing/classification lane remains refused / disabled because
+  `typesafe/jev-1.13` is enabled in settings yet absent from the catalogue.
 - [ ] **AC4 — Enablement gap quantified.** Record, exactly, which matrix
   identities appear in `enabledModels` and which do not, with counts. Name
   PMC-P2 as the owner per M4. Do not enable anything or propose a settings edit
@@ -136,6 +140,7 @@ committing, merging, or releasing.
 - [Plan review](../../goals/pi-model-configuration/plan-review-findings.md)
 - [Amendment 01](../../goals/pi-model-configuration/gate-1-amendment-01.md)
 - [Amendment 02](../../goals/pi-model-configuration/gate-1-amendment-02.md)
+- [Amendment 03](../../goals/pi-model-configuration/gate-1-amendment-03.md)
 - [Coordinator lint](../../goals/pi-model-configuration/coordinator-lint-pmc-p0.md)
 - [Loop directive](../../goals/pi-model-configuration/loop-directive.md)
 - [Spec convention](../../SPEC-CONVENTION.md)
@@ -265,11 +270,11 @@ git diff --check
 X=plugins/foreman-line/docs/goals/routing-currency-and-merit/host-owner-export
 sha256sum "$X/catalog-projection.json" "$X/settings-projection.json" "$X/export-manifest.json"
 
-# AC3 — Opus and Jev re-derivation (expect: no 5.5/5-5; opus-5 present; jev absent)
+# AC3 — Opus and Jev re-derivation (expect: Opus 5.5 present; jev absent)
 grep -o '[a-z0-9./-]*opus[a-z0-9./-]*' "$X/catalog-projection.json" | sort -u
 grep -c 'claude-opus-5\.5\|claude-opus-5-5' "$X/catalog-projection.json"
 grep -n 'jev-1.13' "$X/export-manifest.json" "$X/settings-projection.json"
-grep -n 'claude-opus-5' plugins/foreman-line/routing-policy/src/validator.ts
+grep -n 'claude-opus-5\.5' plugins/foreman-line/routing-policy/src/validator.ts
 
 # AC4 — enablement gap
 grep -A 10 '"enabledModels"' "$X/settings-projection.json"

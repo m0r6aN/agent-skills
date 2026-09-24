@@ -1,0 +1,195 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "apiVersion",
+    "taskId",
+    "goalId",
+    "parcelId",
+    "role",
+    "taskType",
+    "riskClass",
+    "allowedFiles",
+    "forbiddenSurfaces",
+    "inputDigest",
+    "acceptanceCriteria",
+    "evidenceRequirements",
+    "budget",
+    "routing"
+  ],
+  "properties": {
+    "apiVersion": {
+      "type": "string",
+      "const": "worker.kaseya/v1"
+    },
+    "taskId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "goalId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "parcelId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "parentTaskId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "role": {
+      "type": "string",
+      "enum": [
+        "judge",
+        "coordinator",
+        "integrator",
+        "builder",
+        "operator",
+        "scout",
+        "verifier",
+        "deepAnalyst",
+        "multimodal",
+        "documentExtractor",
+        "utilityFallback"
+      ]
+    },
+    "taskType": {
+      "type": "string",
+      "minLength": 1
+    },
+    "riskClass": {
+      "type": "string",
+      "enum": [
+        "R0",
+        "R1",
+        "R2",
+        "R3"
+      ]
+    },
+    "requiredCapabilities": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "requiredModality": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "allowedTools": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "allowedFiles": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "forbiddenSurfaces": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "inputRefs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "inputDigest": {
+      "type": "string",
+      "minLength": 1
+    },
+    "acceptanceCriteria": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "verificationPlan": {
+      "type": "string",
+      "minLength": 1
+    },
+    "evidenceRequirements": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "budget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "maxInputTokens",
+        "maxOutputTokens",
+        "maxWallTimeSeconds",
+        "maxCostUsd",
+        "maxParallelChildren"
+      ],
+      "properties": {
+        "maxInputTokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "maxOutputTokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "maxWallTimeSeconds": {
+          "type": "number",
+          "minimum": 0
+        },
+        "maxCostUsd": {
+          "type": "number",
+          "minimum": 0
+        },
+        "maxParallelChildren": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "routing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "diversityRequired"
+      ],
+      "properties": {
+        "preferredModel": {
+          "type": "string",
+          "minLength": 1
+        },
+        "fallbackModels": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "diversityRequired": {
+          "type": "boolean"
+        },
+        "escalationTarget": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}

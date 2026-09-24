@@ -1,0 +1,8 @@
+TOP 3 BRUTAL FINDINGS
+1. The rollback proof is self-contradictory: an incompatible pre-existing `EffectAttempts` view is partial/malformed v2 state that must reject before DDL and remain present, so it cannot demonstrate failure after v2 DDL or assert “no v2 object exists.”
+2. The receipt graph permits cross-attempt splicing: a receipt for attempt A can reference B’s reservation/slot and carry mismatched permission/effect/hash, while a pending marker can pair A with B’s receipt; every declared scalar FK still passes, defeating P1-C107/C109 isolation.
+3. SQLite rowid tables do not make `TEXT PRIMARY KEY` non-null. Every new synthetic-ID primary key can accept NULL (and UNIQUE admits multiple NULLs), so the stated identifiers/primary-key guarantees and current duplicate-only tests are false.
+TOP 3 MOVES
+1. Split malformed-state rejection from rollback testing; start rollback from canonical v1 and inject a deterministic failure after a successful v2 CREATE, then assert exact pre-transaction sqlite_master, user_version, and v1-row restoration.
+2. Add composite candidate keys and composite FKs so receipt reservation, optional slot, duplicated attempt identity, and pending receipt all share the same EffectAttemptId; raw-SQL tests must reject each mismatched-but-existing splice.
+3. Declare every synthetic `TEXT PRIMARY KEY` explicitly `NOT NULL` (or use an equivalent SQLite-enforced form) and add independent raw-SQL NULL-PK, repeated-NULL, duplicate, and dangling-reference rejection tests.
