@@ -4,7 +4,7 @@
 **Created:** 2026-09-23  
 **Owner:** Clinton Morgan  
 **Coordinator:** unassigned — claim only through a generated loop directive at a parcel boundary  
-**Status:** SCOPED GATE 1 CLOSED — initial ratification 2026-09-23; Amendment 01 (A1–A8) ratified 2026-09-23. PMC-P0 shaping authorized; Gate 2 not granted  
+**Status:** SCOPED GATE 1 CLOSED — initial ratification 2026-09-23; Amendment 01 (A1–A8) and Amendment 02 (M1–M4, model identity) ratified 2026-09-23. PMC-P0 shaping authorized; Gate 2 not granted  
 **Mode:** repo-local configuration, routing-policy, and Pi-session integration
 
 ## Objective
@@ -213,6 +213,71 @@ additionally require `live-availability`, and any "current-best" claim requires
 `model-quality`, each under its own owner authorization. Criterion 7's final
 receipt must enumerate, by name, every live validation the owner must still
 authorize or perform.
+
+## Amendment 02 — ratified 2026-09-23 (model identity)
+
+Raised by coordinator lint (`coordinator-lint-pmc-p0.md`, findings L1–L4) and
+ratified in full. Full record in `gate-1-amendment-02.md`. Where this section
+conflicts with anything above, including Amendment 01 and the Gate 1 record,
+**this section governs**.
+
+### M1 — Opus identity corrected
+
+`claude-opus-5.5` and `claude-opus-5-5` **do not exist** in the Pi catalogue.
+The Gate 1 record's claim that both were "verified" is **withdrawn as
+falsified**. The highest available Opus is `claude-opus-5`.
+
+All Opus routes read **`opencode/claude-opus-5`** and
+**`openrouter/anthropic/claude-opus-5`**, in matrix rows 1 and 2.
+
+The Amendment 01 A7/Q5 instruction to add Opus to `KNOWN_FRONTIER_MODELS` is
+**withdrawn**: `anthropic/claude-opus-5` is already present in
+`routing-policy/src/validator.ts`. PMC-P1 makes **no** frontier-registry change
+for Opus, and must not infer discretion to add one.
+
+### M2 — typed routing/classification lane refused
+
+`typesafe/jev-1.13` is enabled in Pi settings but **absent from the catalogue**,
+so it resolves to a missing-model refusal. Matrix row 6's OpenRouter primary is
+**struck**. The lane is ruled **refused / disabled-lane**, consistent with the
+existing Routing Currency and Merit disposition.
+
+No substitute classifier is installed, and no authority-bearing agent may be
+promoted into the lane. The row's OpenCode entries remain strictly
+recommendation-only with validated structured output and no prose,
+implementation, or control-plane authority.
+
+Row 6 is therefore **single-provider**. The A3 resolver must tolerate a lane
+whose provider set is asymmetric across OpenCode and OpenRouter; per-lane
+tie-break may not assume two eligible providers exist.
+
+### M3 — D6 interactive default corrected
+
+D6's recovery-friendly interactive default is corrected to the observed host
+values: provider `opencode`, model **`qwen/qwen-2.5-coder-32b`**, thinking level
+`minimal`. The previously stated `opencode/qwen3.8-flash` was inaccurate.
+
+This is a **documentation correction only**. Changing the host default is not
+authorized by this charter, and D6's substance is unchanged: the interactive
+default confers no parcel authority and sits outside the Foreman execution
+boundary (A1).
+
+### M4 — model-enablement ownership assigned
+
+**None** of the twelve matrix primaries and fallbacks is currently enabled; the
+enabled set and the matrix set are disjoint. Enabling the matrix model set is
+assigned to **PMC-P2** as explicit, named configuration work under its own
+Gate 2, rather than remaining an implicit expectation of exit criterion 2.
+
+### Evidence standing
+
+M1–M4 rest on the unratified credential-free host-owner export at
+`../routing-currency-and-merit/host-owner-export/` (catalog projection SHA-256
+`b0c2dc8cf1412773b4ed4f17fcba10634a997f3b2b2b960d6dca200bdbb171fe`, generated
+`2026-09-20T17:01:26.485Z`). These items **correct falsified claims**; they do
+not establish live availability. Every corrected identity still requires
+`live-availability` evidence under A6 before activation, and any "current-best"
+claim still requires `model-quality`.
 
 ## Acceptance / exit criterion
 
