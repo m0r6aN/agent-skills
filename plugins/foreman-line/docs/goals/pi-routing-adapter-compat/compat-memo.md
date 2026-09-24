@@ -39,6 +39,10 @@ extension, writes only into the evidence dir):
 
 - Resolves the package root and **asserts `package.json` version == 0.87.1** (fails closed
   otherwise).
+- **Fails closed on any missing required surface**: the files `docs/index.md`,
+  `docs/extensions.md`, `dist/core/extensions/types.d.ts` and the directories
+  `examples/extensions/` and `dist/` — a missing/empty surface exits non-zero rather than
+  being recorded as an inspected surface (proven by `check-api-surface.negative-test.mjs`).
 - Enumerates and **SHA-256-hashes** every inspected shipped file: `docs/index.md`,
   `docs/extensions.md`, the `examples/extensions/` catalog, and every `dist/**/*.d.ts`
   (329 files; full list + hashes in `evidence/pi-0.87.1/snapshot.json`).
@@ -48,8 +52,10 @@ extension, writes only into the evidence dir):
 
 Run (from the goal directory): `node probe/check-api-surface.mjs` under `node v24.7.0` —
 **exit 0**, `versionMatch: true`. Raw output: `evidence/pi-0.87.1/probe-output.txt`.
-The negative control `probe/negative-control.mjs` (below) asserts the memo against the
-snapshot.
+The negative control `probe/negative-control.mjs` asserts the memo against the snapshot;
+`probe/check-api-surface.negative-test.mjs` proves the fail-closed contract by running the
+probe against fake package roots with each surface removed (and a version mismatch) and
+asserting non-zero exits.
 
 ## 4. Findings
 
@@ -112,6 +118,7 @@ In PowerShell, from `plugins/foreman-line/docs/goals/pi-routing-adapter-compat/`
 ```powershell
 node -v                                   # expect v24.7.0
 node probe/check-api-surface.mjs          # expect exit 0
+node probe/check-api-surface.negative-test.mjs  # expect exit 0
 node probe/negative-control.mjs           # expect exit 0
 Get-FileHash evidence/pi-0.87.1/directive-excerpt.md -Algorithm SHA256
 ```
