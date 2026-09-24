@@ -20,11 +20,13 @@ refusal.
 | G3 | Spec SHA-256 | `82d7819c63e59626ff57495ca84c0d386e091f5f9e4c6076c476a253f30b5b71` at `plugins/foreman-line/docs/specs/active/PMC-P0-pi-capability-and-catalogue-baseline.md`, with `status: active` |
 | G4 | Worktree state | clean (`git status --short` empty) before you start |
 
-Also confirm this brief is present at
-`plugins/foreman-line/docs/kickstarters/foreman-line-build-PMC-P0.md` with
-SHA-256 `84760ce07c03467eb3b216d167ab0f9eb30286a1fbb8b84daac66c72c0f1d1da`
-(7006 bytes). If it is absent or differs, stop — that was a real defect once
-already.
+Also confirm this brief is **present** at
+`plugins/foreman-line/docs/kickstarters/foreman-line-build-PMC-P0.md` and report
+its observed SHA-256 and byte size. Do not compare that digest against a value
+quoted inside this file: a document cannot carry its own hash. The authoritative
+brief digest is recorded in the coordinator's dispatch record
+(`docs/goals/pi-model-configuration/loop-directive.md`), and the coordinator
+verifies it. If the brief is absent, stop — that was a real defect once already.
 
 **Informational, not a gate:** the branch was created from
 `2f6c79446a2eeb9f766f22c759721cb91ffa6e67`; the spec was promoted at
