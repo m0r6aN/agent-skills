@@ -1,10 +1,38 @@
 # Loop Directive — Pi Model Configuration
 
 **Goal slug:** `pi-model-configuration`
-**State:** `PMC-P0 SHAPED — AWAITING GATE 2 DISPATCH APPROVAL`
+**State:** `PMC-P0 GATE 2 GRANTED — DISPATCH READY, AWAITING BUILDER STEP 0`
 **Cleared:** Amendment 01 (A1–A8), Amendment 02 (M1–M4), and Amendment 03 Opus correction ratified 2026-09-24
-**Draft spec:** `docs/specs/active/PMC-P0-pi-capability-and-catalogue-baseline.md` at `status: draft`
-**Next human gate:** Gate 2 dispatch approval for PMC-P0
+**Next human gate:** none before builder Step 0; the coordinator rules on Step 0 flags
+
+## Dispatch record — PMC-P0 (authoritative)
+
+Gate 2 granted by Clinton Morgan on 2026-09-24 for **PMC-P0 only**, conditioned
+on a fresh clean worktree on a new unique branch.
+
+| Field | Value |
+|---|---|
+| Worktree | `D:/Repos/wt-pmc-p0` |
+| Branch | `codex/pmc-p0-evidence` |
+| Branch created from | `2f6c79446a2eeb9f766f22c759721cb91ffa6e67` |
+| Spec promoted at | `96a24bf7ab3669b79ff7d0b004466846051c6d71` (status-only; body byte-identical to packet draft `eca4c33`) |
+| Spec path | `docs/specs/active/PMC-P0-pi-capability-and-catalogue-baseline.md` |
+| Spec status | `active` |
+| **Spec SHA-256** | `82d7819c63e59626ff57495ca84c0d386e091f5f9e4c6076c476a253f30b5b71` |
+| Builder brief | `docs/kickstarters/foreman-line-build-PMC-P0.md` |
+| **Brief SHA-256** | `9c811c47ed0ae62c989b1a6b3cd3ec470e991aff1600e2e38e9f2d50dccc0ef5` (7974 bytes) |
+
+The brief deliberately carries **no** commit SHA gate and **no** self-digest.
+Its refusal gates are content identities — worktree path, branch, spec digest +
+`status: active`, clean worktree — so coordinator bookkeeping commits on this
+branch cannot force a false Step 0 refusal. The brief digest above is the
+authoritative value; the builder reports what it observes and the coordinator
+compares.
+
+Three coordinator-only dispatch-preparation commits followed promotion, none
+touching the spec: `5eef2f3` added the approved brief (byte-identical, blob
+`cfb2830d`); `6559f50` replaced the brittle HEAD self-pin with content gates;
+`a05bc92` removed the self-referential brief digest.
 
 ## Ownership block
 
