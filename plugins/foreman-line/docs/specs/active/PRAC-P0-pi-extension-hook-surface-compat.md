@@ -113,6 +113,8 @@ plugins/foreman-line/docs/goals/pi-routing-adapter-compat/probe/check-api-surfac
 plugins/foreman-line/docs/goals/pi-routing-adapter-compat/evidence/pi-0.87.1/snapshot.json
 plugins/foreman-line/docs/goals/pi-routing-adapter-compat/evidence/pi-0.87.1/probe-output.txt
 plugins/foreman-line/docs/goals/pi-routing-adapter-compat/evidence/pi-0.87.1/directive-excerpt.md
+plugins/foreman-line/docs/goals/pi-routing-adapter-compat/probe/negative-control.mjs
+plugins/foreman-line/docs/goals/pi-routing-adapter-compat/evidence/pi-0.87.1/negative-control.txt
 ```
 
 No other file may be created, edited, or deleted. Paths outside this list require a

@@ -74,10 +74,10 @@ docs/examples and, where a deterministic check is possible, a read-only probe.
 2. `~/.pi/agent/extensions/` **exists** and already contains one extension,
    `pi-jev-budget-guard` (dated 2026-09-21) — prior Foreman/RCM work on this exact
    boundary. This goal does not touch it.
-3. `docs/extensions.md` exposes **`pi.setModel(model)`** (session-scoped, recorded in
-   session history, restored on resume, does not change `defaultProvider`/`defaultModel`; returns
-   `false` when auth is not configured for the provider) and **`pi.setThinkingLevel()`**
-   (same session-scoped semantics).
+3. *(0.86.1-epoch, superseded — see coordinator-lint L2/L3.)* The 0.86.1 `docs/extensions.md`
+   named **`pi.setModel(model)`** and **`pi.setThinkingLevel()`** in prose. In 0.87.1 those
+   names are absent from the prose and survive only in the shipped type declarations
+   (`setModel`, `setThinkingLevel`, `setActiveTools` in `extensions/types.d.ts`).
 4. No **`beforeLLMTurn`**, **`ctx.session.updateModel`**, or
    **`ctx.session.updateThinkingLevel`** API name was found in `docs/extensions.md`. The
    hook surface is provider-level (e.g. a per-provider-request hook) and session-scoped

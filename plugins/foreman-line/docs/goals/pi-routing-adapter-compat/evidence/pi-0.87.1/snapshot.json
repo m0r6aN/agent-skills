@@ -1,0 +1,1772 @@
+{
+  "probe": "PRAC-P0 check-api-surface.mjs",
+  "command": "node probe/check-api-surface.mjs",
+  "generatedAt": "2026-09-24T20:12:18.146Z",
+  "node": "v24.7.0",
+  "pkgRoot": "D:\\nvm\\v24.7.0\\node_modules\\@earendil-works\\pi-coding-agent",
+  "pinnedVersion": "0.87.1",
+  "installedVersion": "0.87.1",
+  "versionMatch": true,
+  "exitStatus": 0,
+  "inspectedFileCount": 329,
+  "inspectedFiles": [
+    {
+      "path": "docs\\index.md",
+      "bytes": 2521,
+      "sha256": "4842600756741fd249d63759e5cb7bbb183776eda566c0aba7925f590a3ef284"
+    },
+    {
+      "path": "docs\\extensions.md",
+      "bytes": 12280,
+      "sha256": "9f2a2b79e831961167e934f8130ff85ee945b44675eb70e57492bc7fdd033126"
+    },
+    {
+      "path": "examples\\extensions\\README.md",
+      "bytes": 9883,
+      "sha256": "6b56bb6ab541226fbd7296ac91dcd892b886f2afae9a2c298d48ba958e19018e"
+    },
+    {
+      "path": "examples\\extensions\\auto-commit-on-exit.ts",
+      "bytes": 1571,
+      "sha256": "b89b5cb4c6f1f07b0b4291ab85a3c5f025d7d31ebb285821716502452b46af62"
+    },
+    {
+      "path": "examples\\extensions\\bash-spawn-hook.ts",
+      "bytes": 696,
+      "sha256": "c79c87653e20ac6bd9f4813aa4bb01a483b3637700fa2edda220703958532662"
+    },
+    {
+      "path": "examples\\extensions\\bookmark.ts",
+      "bytes": 1555,
+      "sha256": "a71d9449d415ad75c9f3d0d13afde129b9bea2d695b889566db17ecfca256d79"
+    },
+    {
+      "path": "examples\\extensions\\border-status-editor.ts",
+      "bytes": 4444,
+      "sha256": "ccbbfddd4ff402432293b7adb21f58e869f37a5d12d4da81cea10cc5fc2311cd"
+    },
+    {
+      "path": "examples\\extensions\\built-in-tool-renderer.ts",
+      "bytes": 8295,
+      "sha256": "cfbe8f9b0904f9d4de295ea136ce45fc71f207ca98583807efd8ccb0d1d6b940"
+    },
+    {
+      "path": "examples\\extensions\\claude-rules.ts",
+      "bytes": 2488,
+      "sha256": "8a935f14f62c1c1a3e937f5c912c2215e25aa5fa591716e23c86224ce1dc34cd"
+    },
+    {
+      "path": "examples\\extensions\\commands.ts",
+      "bytes": 2594,
+      "sha256": "36716b53da169936c7e1360a4fde1e2fc0c3356a6505f177235f09c5538c6e4f"
+    },
+    {
+      "path": "examples\\extensions\\confirm-destructive.ts",
+      "bytes": 1680,
+      "sha256": "55502f82109df07e922ef3ec41af1b1a5ed33d4d6d56076654ab2bc88e2e0888"
+    },
+    {
+      "path": "examples\\extensions\\custom-compaction.ts",
+      "bytes": 3971,
+      "sha256": "ea797b3508fd8600526f381466e8b08bb84f3d234932a9d6ce512698527d0aa9"
+    },
+    {
+      "path": "examples\\extensions\\custom-footer.ts",
+      "bytes": 2149,
+      "sha256": "1e5f17bec95a48d407fbcc092faf7e1f6021c30cee4a66ec09bc120412292cb2"
+    },
+    {
+      "path": "examples\\extensions\\custom-header.ts",
+      "bytes": 2408,
+      "sha256": "5de09cf861d3965201991d6e837d6b68e8a2e80cb89279ee9177cc05d31f723d"
+    },
+    {
+      "path": "examples\\extensions\\custom-provider-anthropic\\index.ts",
+      "bytes": 19811,
+      "sha256": "52bb733e1a25d9e175a644e6a6e17bbf61071beecf0f2903869baa9579a05ab3"
+    },
+    {
+      "path": "examples\\extensions\\custom-provider-anthropic\\package-lock.json",
+      "bytes": 653,
+      "sha256": "d9a63a6e7ce19f6d93f68110b9f96d90b2ca5f523e39881232dff80bff13c73b"
+    },
+    {
+      "path": "examples\\extensions\\custom-provider-anthropic\\package.json",
+      "bytes": 375,
+      "sha256": "c6ee1f0de9a055a0286752e98fea32837d06c0bd373d7a99f87e1a02cf2ac9a4"
+    },
+    {
+      "path": "examples\\extensions\\custom-provider-gitlab-duo\\index.ts",
+      "bytes": 12148,
+      "sha256": "0c4adac82eff25fef23223af77e11cd53535834fece9731009b125446e213158"
+    },
+    {
+      "path": "examples\\extensions\\custom-provider-gitlab-duo\\package.json",
+      "bytes": 317,
+      "sha256": "6f3d8ab649bcc0794e160c570ef06446836c0cec7889d7dbff92ae317cc27699"
+    },
+    {
+      "path": "examples\\extensions\\custom-provider-gitlab-duo\\test.ts",
+      "bytes": 2697,
+      "sha256": "bd5509992092f298d2e08de6028f3570648324cc315da62907f909365a9e77e0"
+    },
+    {
+      "path": "examples\\extensions\\dirty-repo-guard.ts",
+      "bytes": 1479,
+      "sha256": "0037a69abdf4cf98181db799bef5bdee8981861315eb82ddab78126c2b0f13c4"
+    },
+    {
+      "path": "examples\\extensions\\doom-overlay\\README.md",
+      "bytes": 1322,
+      "sha256": "e17bc73b76c7977ffeef99120c7896ff992cf5938a60c4d7427a7b19fc180d97"
+    },
+    {
+      "path": "examples\\extensions\\doom-overlay\\doom\\build\\doom.js",
+      "bytes": 64607,
+      "sha256": "c3147cf4881c88b4210c017c26828f52aff83f0c4db27d7dad3fe6cda9ade1fb"
+    },
+    {
+      "path": "examples\\extensions\\doom-overlay\\doom\\build\\doom.wasm",
+      "bytes": 380169,
+      "sha256": "571d161956593508cf4ade732ae93753f00484bb526667a8676571cca14dec7d"
+    },
+    {
+      "path": "examples\\extensions\\doom-overlay\\doom\\build.sh",
+      "bytes": 3366,
+      "sha256": "ab09c9b6dc98ea7c1fa8e74c13981ce69b698c01aec77309c5c7d40ad114d38c"
+    },
+    {
+      "path": "examples\\extensions\\doom-overlay\\doom\\doomgeneric_pi.c",
+      "bytes": 1709,
+      "sha256": "98210909e1e7dee71cbbdba64f1db4bebd88b504e861ee36ea42093c59b251a1"
+    },
+    {
+      "path": "examples\\extensions\\doom-overlay\\doom-component.ts",
+      "bytes": 3645,
+      "sha256": "d95dc47c92db0fdc5b0e0b56a277c67f277012d3f7296df745d8a93f64d5a42e"
+    },
+    {
+      "path": "examples\\extensions\\doom-overlay\\doom-engine.ts",
+      "bytes": 4914,
+      "sha256": "706e43f70bd374b73928e5a44d196d1dd5c03d93979d08bdfc01d049b5083855"
+    },
+    {
+      "path": "examples\\extensions\\doom-overlay\\doom-keys.ts",
+      "bytes": 3495,
+      "sha256": "e8bd99a4ce90dd44ad120c58f3b2ba7bc0b0c662bcdc4ed4994d059130be9fdd"
+    },
+    {
+      "path": "examples\\extensions\\doom-overlay\\index.ts",
+      "bytes": 2117,
+      "sha256": "f89818dd75c7d8970458b1dbb9c5e85fea9b86534fd740c898c1f6f9c9f9ceba"
+    },
+    {
+      "path": "examples\\extensions\\doom-overlay\\wad-finder.ts",
+      "bytes": 1719,
+      "sha256": "20254888262081bf96932253bfd346971deefa48d8df011fd3baa7aa2d653b7d"
+    },
+    {
+      "path": "examples\\extensions\\dynamic-resources\\SKILL.md",
+      "bytes": 177,
+      "sha256": "f8f34b0d81aa791a2d56501756fe0ace21fb78ca2754025d093f41d3b0ccaf69"
+    },
+    {
+      "path": "examples\\extensions\\dynamic-resources\\dynamic.json",
+      "bytes": 2091,
+      "sha256": "8c15e4120746d3c69197db1d67d03ce796dda92610c65602d967b546ae1e2dc2"
+    },
+    {
+      "path": "examples\\extensions\\dynamic-resources\\dynamic.md",
+      "bytes": 160,
+      "sha256": "e61e2c971d02d628a58f7c36b9b37bd3e636e4ad60618a7f65e2b41410c38f35"
+    },
+    {
+      "path": "examples\\extensions\\dynamic-resources\\index.ts",
+      "bytes": 457,
+      "sha256": "dfbc49418fe46ebc9696fa335709df2ed0d4c4703da8c1ad0eb317d11fce8433"
+    },
+    {
+      "path": "examples\\extensions\\dynamic-tools.ts",
+      "bytes": 2211,
+      "sha256": "4394098c11f98ffc26e2487acda2e09b9467ef9ff5867def7273cb0c82a2b6c0"
+    },
+    {
+      "path": "examples\\extensions\\entry-renderer.ts",
+      "bytes": 1288,
+      "sha256": "e4c01fcf382972d570ebf37d044e32065eae062fe70987b1b885d75d46aa0b11"
+    },
+    {
+      "path": "examples\\extensions\\event-bus.ts",
+      "bytes": 1348,
+      "sha256": "1185942b7afd83692d9e8da029e8594d702157398c693ec8b3ddb02b0780828a"
+    },
+    {
+      "path": "examples\\extensions\\file-trigger.ts",
+      "bytes": 1033,
+      "sha256": "6f5fc3dc8fa387d8ca6973786c521feb94da58838b0e171a881fb6b3a5243ac0"
+    },
+    {
+      "path": "examples\\extensions\\git-checkpoint.ts",
+      "bytes": 1485,
+      "sha256": "b60c85f797091a1f21ccb2a998027c6229fe995bdd62dbb1cdcc22946768f40b"
+    },
+    {
+      "path": "examples\\extensions\\git-merge-and-resolve.ts",
+      "bytes": 4108,
+      "sha256": "a3c077c87544122abe83b275f3d527f60c80c87f460ea2499d66bde9b4880133"
+    },
+    {
+      "path": "examples\\extensions\\github-issue-autocomplete.ts",
+      "bytes": 5282,
+      "sha256": "4646ef360e57aa98c787ba21ca2f2e8acb3db30c4db0503e64cdbea4a4c2ac65"
+    },
+    {
+      "path": "examples\\extensions\\gondolin\\index.ts",
+      "bytes": 16647,
+      "sha256": "9a9897639de8127a2abe6bb0d00f0005cd9e9cf9d51fd15893a827e67326bf62"
+    },
+    {
+      "path": "examples\\extensions\\gondolin\\package-lock.json",
+      "bytes": 6045,
+      "sha256": "49a1d2c6016b51198bb52249d24a2d96059669f966de1612a478c42c890c1a93"
+    },
+    {
+      "path": "examples\\extensions\\gondolin\\package.json",
+      "bytes": 340,
+      "sha256": "b9c229b30d4ed9ef53fc9acef137c9225f575f8d1739ececb243b6681c7b1069"
+    },
+    {
+      "path": "examples\\extensions\\handoff.ts",
+      "bytes": 5973,
+      "sha256": "ea07b6f680357b677d0f43f0016961ee8cb1331d37ae113e9466a3acffb2e381"
+    },
+    {
+      "path": "examples\\extensions\\hello.ts",
+      "bytes": 640,
+      "sha256": "0aa4e9800c2526914d4c1edb00b2cfa9bd9dd6da5218289994cccd5f5bfa4934"
+    },
+    {
+      "path": "examples\\extensions\\hidden-thinking-label.ts",
+      "bytes": 1451,
+      "sha256": "179dc3704b5c563b49a7f4577222bf9bbaa5becf98b85c75e56ab26c001c5b22"
+    },
+    {
+      "path": "examples\\extensions\\inline-bash.ts",
+      "bytes": 2958,
+      "sha256": "69b9dfc34e7b1ada9afe10cda3384b0b1a6f3c3a47da5fb7d16f914399b023d4"
+    },
+    {
+      "path": "examples\\extensions\\input-transform-streaming.ts",
+      "bytes": 1213,
+      "sha256": "5c251ebda6163c8279e3c6d5f0aee56421ed150255dbb954f08ca7d2280b3ad2"
+    },
+    {
+      "path": "examples\\extensions\\input-transform.ts",
+      "bytes": 1444,
+      "sha256": "cf0f65d610631ca75d18aae1c8f1408139702f674cb2835f8c009b943776474b"
+    },
+    {
+      "path": "examples\\extensions\\interactive-shell.ts",
+      "bytes": 4788,
+      "sha256": "36a7efb5b132e666c643129ce09c3f83f56aed9924563e6b7269e0e126611ecc"
+    },
+    {
+      "path": "examples\\extensions\\mac-system-theme.ts",
+      "bytes": 1197,
+      "sha256": "d7349bae999a798c71b283165e06d0142d41b0264bfdad11ddcb1ec8b62f8710"
+    },
+    {
+      "path": "examples\\extensions\\message-renderer.ts",
+      "bytes": 1929,
+      "sha256": "bedc198df5215c0a758e0743224599003630741a4ff72d4327837ce309e5ec8c"
+    },
+    {
+      "path": "examples\\extensions\\minimal-mode.ts",
+      "bytes": 13938,
+      "sha256": "8f57e0b28ff8d8b9ac9a755dd8a60c0fbdacba9040f4fd04e37b5f285d4c5d11"
+    },
+    {
+      "path": "examples\\extensions\\modal-editor.ts",
+      "bytes": 2417,
+      "sha256": "4742283930949fad1920359540aa9d42c833d2d24eaa49564bfc08f90e328b0d"
+    },
+    {
+      "path": "examples\\extensions\\model-status.ts",
+      "bytes": 957,
+      "sha256": "b6c073c0bdf26ac17e2fed01d02b6447fd4e2763b7b6ca2f2b493574ced25247"
+    },
+    {
+      "path": "examples\\extensions\\notify.ts",
+      "bytes": 2073,
+      "sha256": "70e4333e09ce00d546c116fd2e918abf7616c70b5da6e88ba8ee21a326afd483"
+    },
+    {
+      "path": "examples\\extensions\\overlay-qa-tests.ts",
+      "bytes": 46148,
+      "sha256": "4b1778e9e247c9eb24fe48e13fff0272f6f78b8102b4ed085d03598c3b98773f"
+    },
+    {
+      "path": "examples\\extensions\\overlay-test.ts",
+      "bytes": 5496,
+      "sha256": "c930001ec09fee9a94f1229697e1cce223176e7e44c0b8b40dac544f46e446d0"
+    },
+    {
+      "path": "examples\\extensions\\permission-gate.ts",
+      "bytes": 1019,
+      "sha256": "e32086ba9dd9b4ba0fd308b65241d9affa0b5ecd3f90ef7ea1b9f2b30cab8cc1"
+    },
+    {
+      "path": "examples\\extensions\\pirate.ts",
+      "bytes": 1461,
+      "sha256": "dd6ce684bbe7630e4a749fe133ef8b8b875adbc7e31284b17fe0b8157d51e013"
+    },
+    {
+      "path": "examples\\extensions\\plan-mode\\README.md",
+      "bytes": 2009,
+      "sha256": "1ff8d611b8fbafef4ca1e3dbc72136fbcc166461b69f859b5e961b15147bff39"
+    },
+    {
+      "path": "examples\\extensions\\plan-mode\\index.ts",
+      "bytes": 12135,
+      "sha256": "90fae53e2fada97165f7488520bd54f3cbfe5d2c7e4cfd3bd2aa07ee796e61e8"
+    },
+    {
+      "path": "examples\\extensions\\plan-mode\\utils.ts",
+      "bytes": 4129,
+      "sha256": "12ea28d57cc55e68e8d52a2f1d16df8b2e7f2749cd694d41453028002a2bdad9"
+    },
+    {
+      "path": "examples\\extensions\\preset.ts",
+      "bytes": 14451,
+      "sha256": "7942b7f933f97bcc29024a87f8526969413ba6f87b0bec537648a2926a0a4e29"
+    },
+    {
+      "path": "examples\\extensions\\project-trust.ts",
+      "bytes": 2131,
+      "sha256": "78781c1f2a1613cf31c02a29ff6a6abd86b60bdf34343465e46cd85c01491578"
+    },
+    {
+      "path": "examples\\extensions\\prompt-customizer.ts",
+      "bytes": 1691,
+      "sha256": "429546f46795bccda4078deace5729b8230f6103807d424eaf71817c6e07da0a"
+    },
+    {
+      "path": "examples\\extensions\\protected-paths.ts",
+      "bytes": 808,
+      "sha256": "9ca66b1f3b1b9a61cc5ddc660f92cca2ea66c4264a1bdb6b00e0da5844399fe2"
+    },
+    {
+      "path": "examples\\extensions\\provider-payload.ts",
+      "bytes": 764,
+      "sha256": "e0016077798098f528b1129954c30a28809a1513924d9c2e0efda9328d503a49"
+    },
+    {
+      "path": "examples\\extensions\\qna.ts",
+      "bytes": 3501,
+      "sha256": "a639a65a486fd05a42afcf14aa59dc32e505e41ada43869167ddfd789a3c7da6"
+    },
+    {
+      "path": "examples\\extensions\\question.ts",
+      "bytes": 8494,
+      "sha256": "a1625d2c72a65d859154a7e66bef222d48ca9e3654a8bb910829ad350378a4c4"
+    },
+    {
+      "path": "examples\\extensions\\questionnaire.ts",
+      "bytes": 13565,
+      "sha256": "3f1f719d81152ff013f5d36a97cc3976388d43f2d89bff0f19827d3443d903e6"
+    },
+    {
+      "path": "examples\\extensions\\rainbow-editor.ts",
+      "bytes": 2386,
+      "sha256": "f95f17ba8a0376180bd23510c20151e83aadc74142e989f14227bf5c4196883f"
+    },
+    {
+      "path": "examples\\extensions\\reload-runtime.ts",
+      "bytes": 1185,
+      "sha256": "911f26b872860a551572fa1d94d251ddd476d4ea9483b6052e9658d2784b38fc"
+    },
+    {
+      "path": "examples\\extensions\\rpc-demo.ts",
+      "bytes": 3632,
+      "sha256": "3d54a396eee12eb04ea12d0ea03716a6edd3e8743502b6a529e3b8d429ae640d"
+    },
+    {
+      "path": "examples\\extensions\\sandbox\\index.ts",
+      "bytes": 8983,
+      "sha256": "b5e527aac27254002f27b8bb9de7bc62e242e39eeb7c963683096039e0aa173e"
+    },
+    {
+      "path": "examples\\extensions\\sandbox\\package-lock.json",
+      "bytes": 3118,
+      "sha256": "debbe947f8ca74810b6a7876ede4eb60d58720d4b5d0f5844d1c64c4896a1958"
+    },
+    {
+      "path": "examples\\extensions\\sandbox\\package.json",
+      "bytes": 344,
+      "sha256": "6d27d552003583073113dda5758917db5c66f20ed3b82e0a047f72cd4a860fb2"
+    },
+    {
+      "path": "examples\\extensions\\send-user-message.ts",
+      "bytes": 2832,
+      "sha256": "9261e433c782f354530105e1c9723a19798868f72fd1f5d68af3a4624ad7e446"
+    },
+    {
+      "path": "examples\\extensions\\session-name.ts",
+      "bytes": 785,
+      "sha256": "a0b9fd94e2cc827931150cc409238b473da635ab1a1cddce633cae5937a3ae24"
+    },
+    {
+      "path": "examples\\extensions\\shutdown-command.ts",
+      "bytes": 2045,
+      "sha256": "68dc7f9561aa9b1c0f39cae19c0f41d56171a99875972e5998de3caa75f96e09"
+    },
+    {
+      "path": "examples\\extensions\\snake.ts",
+      "bytes": 9421,
+      "sha256": "3ef506ab52927e866fad096f83b7cbfd0eb50e1504dcabf1b1eb28a06745c937"
+    },
+    {
+      "path": "examples\\extensions\\space-invaders.ts",
+      "bytes": 15174,
+      "sha256": "43281ae25bea645d44db01234f24df80e2f866771d02de0b416ab32fb3883a1f"
+    },
+    {
+      "path": "examples\\extensions\\ssh.ts",
+      "bytes": 7293,
+      "sha256": "c03bdef919457013e3798d10250f34255742fd3dc79885ac3d321b34f6a1149d"
+    },
+    {
+      "path": "examples\\extensions\\status-line.ts",
+      "bytes": 937,
+      "sha256": "26e27b1158e980551f63f46e55dad055ac613779c2b8c39df4cddc11be26103d"
+    },
+    {
+      "path": "examples\\extensions\\structured-output.ts",
+      "bytes": 2187,
+      "sha256": "72a3a665ce3de1419c837db6eb8a0e7a890310c6e02e4d59c454e5c9514c15ec"
+    },
+    {
+      "path": "examples\\extensions\\subagent\\README.md",
+      "bytes": 6298,
+      "sha256": "6a888330bf974657751e09f5d375a9039872d59d6606fc217c5105c7eca51b1a"
+    },
+    {
+      "path": "examples\\extensions\\subagent\\agents\\planner.md",
+      "bytes": 896,
+      "sha256": "452f21f65957753cec3b0772004209c108071be168e627fffd7191234c0ce64e"
+    },
+    {
+      "path": "examples\\extensions\\subagent\\agents\\reviewer.md",
+      "bytes": 933,
+      "sha256": "b5c3f13b67207e8e32de631f8cd52a373d9b956028e2f8c1fd8b737b5f239265"
+    },
+    {
+      "path": "examples\\extensions\\subagent\\agents\\scout.md",
+      "bytes": 1255,
+      "sha256": "3b84e8e01c6e05c8dfbff1c845c0c6371f4f16350735d4d1dbd02bfa98b1d4e6"
+    },
+    {
+      "path": "examples\\extensions\\subagent\\agents\\worker.md",
+      "bytes": 664,
+      "sha256": "ca2b2298fcbd8bfafcfe61977dc8075001a64b9c4d8c289c3b5eaa896efe6238"
+    },
+    {
+      "path": "examples\\extensions\\subagent\\agents.ts",
+      "bytes": 4562,
+      "sha256": "cc85ecd33b89aa575bea3d2a9a9da7654a6305da4de02e5041aa5342a1de29b4"
+    },
+    {
+      "path": "examples\\extensions\\subagent\\index.ts",
+      "bytes": 35714,
+      "sha256": "4facaa61c9c781748dd000eb5d2ec0a75289986d1a6e11ce13971ca5653dc252"
+    },
+    {
+      "path": "examples\\extensions\\subagent\\prompts\\implement-and-review.md",
+      "bytes": 494,
+      "sha256": "019ba4bf42d596ea03fc4564be5b2cc55a06227c95db19a4d5a5bb96697a75f9"
+    },
+    {
+      "path": "examples\\extensions\\subagent\\prompts\\implement.md",
+      "bytes": 579,
+      "sha256": "65462de33c97ac1372cfed270dad9af164605b05028c069dd4c013ff9792675b"
+    },
+    {
+      "path": "examples\\extensions\\subagent\\prompts\\scout-and-plan.md",
+      "bytes": 496,
+      "sha256": "9506399391e0d2c71826c45f26cc332175dd964465f99a8bb880e109f8ed89f4"
+    },
+    {
+      "path": "examples\\extensions\\summarize.ts",
+      "bytes": 5072,
+      "sha256": "9c75e838071773d5bacce27ac8c5305160c56958018884f960c3db96b3d09368"
+    },
+    {
+      "path": "examples\\extensions\\system-prompt-header.ts",
+      "bytes": 528,
+      "sha256": "aa97f1add4fe347b3fc37cd3709950a105b0db5d6cdaf19325b58a9fbfd05223"
+    },
+    {
+      "path": "examples\\extensions\\tic-tac-toe.ts",
+      "bytes": 35382,
+      "sha256": "479597f4e76ef1eae3dae71ec9d5c26978c5b9221f950e3e134078c5b532314b"
+    },
+    {
+      "path": "examples\\extensions\\timed-confirm.ts",
+      "bytes": 2238,
+      "sha256": "c35304599e6f07238ef5472efe9c3f2fef2a022f801750ed792ef9061c7de10f"
+    },
+    {
+      "path": "examples\\extensions\\titlebar-spinner.ts",
+      "bytes": 1623,
+      "sha256": "ec56e7edf954966b5991bcad63141be1a09d17753cdd0c59efca1b9e649dadf2"
+    },
+    {
+      "path": "examples\\extensions\\todo.ts",
+      "bytes": 8848,
+      "sha256": "e46824d00217e25242c186d41837cc84ca81b23f978500323448502a9a424ee2"
+    },
+    {
+      "path": "examples\\extensions\\tool-override.ts",
+      "bytes": 4821,
+      "sha256": "5d3cc796311a16132db810fcd9e437c16abd46978b723b9120734e57cc545726"
+    },
+    {
+      "path": "examples\\extensions\\tools.ts",
+      "bytes": 3869,
+      "sha256": "5eaebc40cffe885fee25c95e3d8aec79cfbd595b6eac8ac5a6de6c4afec3d5d8"
+    },
+    {
+      "path": "examples\\extensions\\trigger-compact.ts",
+      "bytes": 1350,
+      "sha256": "92c3b831f9f7bf01a3e0a2df11f4e404f5ac5843000b94e8340a5d78f3cb3add"
+    },
+    {
+      "path": "examples\\extensions\\truncated-tool.ts",
+      "bytes": 6490,
+      "sha256": "4ed5fbeb6da53eab8d1e04721d77961b8d1b3bf5e11d1512a17fc5a3f58f9955"
+    },
+    {
+      "path": "examples\\extensions\\widget-placement.ts",
+      "bytes": 367,
+      "sha256": "ffabd33cf58efb908de2025aac4cb41daf13dbeee24b5ad8dcd0361b43eff6d7"
+    },
+    {
+      "path": "examples\\extensions\\with-deps\\index.ts",
+      "bytes": 1012,
+      "sha256": "8d4dbc7028c891eac7f0386d25eecea3e9ac0de7fd841b5bb08137e2ec5ab443"
+    },
+    {
+      "path": "examples\\extensions\\with-deps\\package-lock.json",
+      "bytes": 894,
+      "sha256": "61dca5d55dee229697852e07d957d04afc74fe8745f10bd479108fa0c21252cf"
+    },
+    {
+      "path": "examples\\extensions\\with-deps\\package.json",
+      "bytes": 396,
+      "sha256": "57e444872d3cff542e62e6df3c88fb7d97a0ee6804597a37c84de9aae7a0a238"
+    },
+    {
+      "path": "examples\\extensions\\working-indicator.ts",
+      "bytes": 3426,
+      "sha256": "e88295d765b78fd6aac0e93db92b183ee9b7103dc21577e3c5a42665dfad032c"
+    },
+    {
+      "path": "examples\\extensions\\working-message-test.ts",
+      "bytes": 904,
+      "sha256": "91ee09378f13cce142a4314bec1bfe9784e10484c33463c4fe3139c391c117a0"
+    },
+    {
+      "path": "dist\\bun\\cli.d.ts",
+      "bytes": 135,
+      "sha256": "f951bb4417b6bf5e1a405089508ecf011d11de655902b928666243365813ed1c"
+    },
+    {
+      "path": "dist\\bun\\restore-sandbox-env.d.ts",
+      "bytes": 716,
+      "sha256": "9f3b7c1405d592dcf28b76009f16ccbf352e837f3a4663b584bfb846118e5985"
+    },
+    {
+      "path": "dist\\bun\\runtime-setup.d.ts",
+      "bytes": 54,
+      "sha256": "e3e54b8e709e711e0f78170d36847402c8a7adfabfb8b03a4298cce7715837fe"
+    },
+    {
+      "path": "dist\\bun\\sandbox-env-setup.d.ts",
+      "bytes": 58,
+      "sha256": "24031cfccd184dbb6a79aa3023eb998ac6a3d8597ca2dd366df3eb48e6becc22"
+    },
+    {
+      "path": "dist\\cli\\args.d.ts",
+      "bytes": 1887,
+      "sha256": "d1cd867526edcd2009c2a0ff0802930d4f925572d3eb7d0e09a676b01f31377a"
+    },
+    {
+      "path": "dist\\cli\\auth-check.d.ts",
+      "bytes": 989,
+      "sha256": "c8cd12be4e685da14e5a9c4b7931b733506c752dda0a2cf4936df291450e8ff8"
+    },
+    {
+      "path": "dist\\cli\\auth-command.d.ts",
+      "bytes": 1018,
+      "sha256": "b8acca190b9a88c90fd1c0bcf66e8fbd9c05203be243fbab56db1c6cc531ed1e"
+    },
+    {
+      "path": "dist\\cli\\config-selector.d.ts",
+      "bytes": 636,
+      "sha256": "a777b49e8a13f64f7e9bd468d15e487ecd37cb28ee01f8eefdbae1501c4046f2"
+    },
+    {
+      "path": "dist\\cli\\credential-print.d.ts",
+      "bytes": 693,
+      "sha256": "19e9c40c092cd6400ecbdb69f9c594705d28a9c1750b86fa7be19a75cb0e5567"
+    },
+    {
+      "path": "dist\\cli\\file-processor.d.ts",
+      "bytes": 584,
+      "sha256": "8481b60a063beca7fb2a0777ea9cd7f6b805f78ee939fc4ff646ea0f2c3a73f8"
+    },
+    {
+      "path": "dist\\cli\\initial-message.d.ts",
+      "bytes": 658,
+      "sha256": "15764459f00dac7e6ca762d48fc247d0d6e009a177dc7f73a33dafe205512526"
+    },
+    {
+      "path": "dist\\cli\\list-models.d.ts",
+      "bytes": 360,
+      "sha256": "f564f25542a9ad59f4fc3dda685cb2dcb91a47d6f0e114e2e04b1c6971b570e3"
+    },
+    {
+      "path": "dist\\cli\\project-trust.d.ts",
+      "bytes": 420,
+      "sha256": "1ce87bf042c7eacff91565e19ef589357bb9a9863e17fab5b3f1d89fdf3e1336"
+    },
+    {
+      "path": "dist\\cli\\session-picker.d.ts",
+      "bytes": 621,
+      "sha256": "ceb19ff55fbeea924167a77fb7cb373e03a265226b6abec580c4f7046a831734"
+    },
+    {
+      "path": "dist\\cli\\setup.d.ts",
+      "bytes": 77,
+      "sha256": "4c40c1e54bd3021cb06cda85f7271d2a1c18f95e3d95aba3e2c3da0254906695"
+    },
+    {
+      "path": "dist\\cli\\startup-ui.d.ts",
+      "bytes": 1206,
+      "sha256": "f9389ecbe66b4c84bd806e9e69e6fabd968236c2d3fb7446dcc2c985b26b0fd8"
+    },
+    {
+      "path": "dist\\cli.d.ts",
+      "bytes": 64,
+      "sha256": "6f77e82bfb5dd3b1015dd92c63e427d505f9bbbdaa041cad6c704f41c553a536"
+    },
+    {
+      "path": "dist\\config.d.ts",
+      "bytes": 4480,
+      "sha256": "28efe81d96ed0ac7be85a304dbf937bfe7fdd5ef28f99b6a1ac5dd643ea526b3"
+    },
+    {
+      "path": "dist\\core\\agent-session-runtime.d.ts",
+      "bytes": 5230,
+      "sha256": "4a18c0f51669b62a297c83334731c8bb5fed58016619a14d42edce414ff8d105"
+    },
+    {
+      "path": "dist\\core\\agent-session-services.d.ts",
+      "bytes": 3566,
+      "sha256": "ab5dac8701f02587db54abc27d119ea44ebd3708f235d5daf8293abd7b2ea71e"
+    },
+    {
+      "path": "dist\\core\\agent-session.d.ts",
+      "bytes": 31089,
+      "sha256": "ee0b9c2c2fefeef292c9da884b92c0fa5fce73f04bc834655720253d477f391d"
+    },
+    {
+      "path": "dist\\core\\auth-guidance.d.ts",
+      "bytes": 307,
+      "sha256": "41738e1047c27a9c98c6a96e926ed1e4c74b6fc25c765abab579a383c76f1ff6"
+    },
+    {
+      "path": "dist\\core\\auth-storage.d.ts",
+      "bytes": 3379,
+      "sha256": "6197ffc082ffe1ef47894168fea1a575175743eaaa078bb4664ea310115dc9a6"
+    },
+    {
+      "path": "dist\\core\\bash-executor.d.ts",
+      "bytes": 1350,
+      "sha256": "d2a244601fa737997d99cf832e07315690d26549aa0f9176ceab27cafdaa60ec"
+    },
+    {
+      "path": "dist\\core\\bug-report-upload.d.ts",
+      "bytes": 446,
+      "sha256": "f56c0db555f6ecae14a3ee7cf98a98ee98464f5178fab14b9a656c26bea2d078"
+    },
+    {
+      "path": "dist\\core\\bug-report.d.ts",
+      "bytes": 5890,
+      "sha256": "594dca508c9e4c3a30accb2156108afc325535b32cccf5bc7de6188642923bdd"
+    },
+    {
+      "path": "dist\\core\\cache-stats.d.ts",
+      "bytes": 2240,
+      "sha256": "bf23a51f5b22ee643a6f292b6366d74ff1416b5e631fa3af8c134c255a3832d1"
+    },
+    {
+      "path": "dist\\core\\cache-warmer.d.ts",
+      "bytes": 5181,
+      "sha256": "9ec1f639e8383183ff90247ba78047ff22469fc4639ce92936dd7bcf47358734"
+    },
+    {
+      "path": "dist\\core\\compaction\\branch-summarization.d.ts",
+      "bytes": 4250,
+      "sha256": "36376989db49c19167a1478947968158b4ef8184e493cf392e7deaaeaec55943"
+    },
+    {
+      "path": "dist\\core\\compaction\\compaction.d.ts",
+      "bytes": 8015,
+      "sha256": "0e93fec810760cfed03f749be2a79cf1cff8540899b693592139c673d03b35fa"
+    },
+    {
+      "path": "dist\\core\\compaction\\index.d.ts",
+      "bytes": 190,
+      "sha256": "04824d52dcd96d4a12be215a1fdca68dfcaa4790966e6a5822ea166d56592d39"
+    },
+    {
+      "path": "dist\\core\\compaction\\utils.d.ts",
+      "bytes": 1777,
+      "sha256": "8935684f1e5429a8ea600d32b07f08f01b5cd03ba4246bd33d9a876a4a7d7d96"
+    },
+    {
+      "path": "dist\\core\\crash-log.d.ts",
+      "bytes": 1196,
+      "sha256": "e4be7f9ad993eac93cce06b4ceb50787e3812df4325be5116717447fc26e2a4b"
+    },
+    {
+      "path": "dist\\core\\defaults.d.ts",
+      "bytes": 237,
+      "sha256": "b5c2ce629491157f2ab25631d9b2c880b26e58a67a79d8f2330e63e6f8692016"
+    },
+    {
+      "path": "dist\\core\\diagnostics.d.ts",
+      "bytes": 420,
+      "sha256": "4a4590922cc4beeab630d0185cf0fd30ea4d881ec0c690b3f9e90ac3f585d255"
+    },
+    {
+      "path": "dist\\core\\event-bus.d.ts",
+      "bytes": 326,
+      "sha256": "f5c564db4c983eb68de08a12769f45fc45727da25ce9889388a61b8b1d3a862d"
+    },
+    {
+      "path": "dist\\core\\exec.d.ts",
+      "bytes": 760,
+      "sha256": "be65327e88ee3ff61269472e1d461562f7c05562bf215233ef1c2b814544e683"
+    },
+    {
+      "path": "dist\\core\\experimental.d.ts",
+      "bytes": 109,
+      "sha256": "3ea73a0f45b7c56765e14685d67ecd18fdd38f5c2b1f63de7bbabceafa1c17d7"
+    },
+    {
+      "path": "dist\\core\\export-html\\ansi-to-html.d.ts",
+      "bytes": 771,
+      "sha256": "57d23f45aef05ba2b1a52a8e6b0e1f1ba51b55ab0b54e8d42938a438b088977a"
+    },
+    {
+      "path": "dist\\core\\export-html\\index.d.ts",
+      "bytes": 1541,
+      "sha256": "cd83b5d85e893b8ca18742b28038883dd7cf06c98a203e00d74040f78a6a656d"
+    },
+    {
+      "path": "dist\\core\\export-html\\tool-renderer.d.ts",
+      "bytes": 1424,
+      "sha256": "13087483447136c39feb7fafde7e29e79e8d8e2e872f7759c21f5756890737af"
+    },
+    {
+      "path": "dist\\core\\extensions\\index.d.ts",
+      "bytes": 4064,
+      "sha256": "0b933cef77f4963173091f7cb69cc3c9d3c28fe66c537b9027c2280f79349844"
+    },
+    {
+      "path": "dist\\core\\extensions\\jiti-loader.d.ts",
+      "bytes": 76,
+      "sha256": "b7a94357758295b686742207625671bfbfb8c6595afbf8df79b886cc9ac2d54f"
+    },
+    {
+      "path": "dist\\core\\extensions\\jiti-static-loader.d.ts",
+      "bytes": 90,
+      "sha256": "d8aca8486fc24c94da157af1a4e67ba0d4077dca143d3108741e5ee2d587807b"
+    },
+    {
+      "path": "dist\\core\\extensions\\loader.d.ts",
+      "bytes": 1298,
+      "sha256": "85ebf448c25774878ab3c1e8bdd5ee9b3a47431e7ae9054c7d4174c0939622b4"
+    },
+    {
+      "path": "dist\\core\\extensions\\runner.d.ts",
+      "bytes": 10387,
+      "sha256": "09d91c6d543b58cd96ec2e40e9e496f933e53169d3b2fa955a38ede317e7334d"
+    },
+    {
+      "path": "dist\\core\\extensions\\types.d.ts",
+      "bytes": 65137,
+      "sha256": "14d00e645b453f4361440da6fcda86ed6cef9a8fc36d483a621a0250e0d4a396"
+    },
+    {
+      "path": "dist\\core\\extensions\\virtual-modules.d.ts",
+      "bytes": 187,
+      "sha256": "6ed3c5245e221d00016903f56d6e504dac47bf5875dda4a13c22e3c2439396ff"
+    },
+    {
+      "path": "dist\\core\\extensions\\wrapper.d.ts",
+      "bytes": 967,
+      "sha256": "52dc54876228aa9eb907e16258908ae568ebd33cc4ce214e4b9c2f9bf4ec6010"
+    },
+    {
+      "path": "dist\\core\\footer-data-provider.d.ts",
+      "bytes": 2622,
+      "sha256": "2649afb926e5f78694e61faa65f5427dd1c2bc257b6b48588b71259c7c89ba3b"
+    },
+    {
+      "path": "dist\\core\\http-dispatcher.d.ts",
+      "bytes": 811,
+      "sha256": "d0a2f111c02c3126178a992a88d4a82b3f2bd99f6ae762a8dbd8336403b0d1e9"
+    },
+    {
+      "path": "dist\\core\\index.d.ts",
+      "bytes": 2754,
+      "sha256": "d1190c509d7f6efab70c6a0d3d79dc59ecdd0920bf9e73eb4ddb35b5eecb76e6"
+    },
+    {
+      "path": "dist\\core\\keybindings.d.ts",
+      "bytes": 15769,
+      "sha256": "f25fc0ba1f2e643e164d046b1d8454a7549a9712efac21f1969ad2c5f9e56ae2"
+    },
+    {
+      "path": "dist\\core\\messages.d.ts",
+      "bytes": 3188,
+      "sha256": "fdd51b8371984b68f2631f9f64f1259ac77f2d5153068ce75d6158bca27e7a66"
+    },
+    {
+      "path": "dist\\core\\model-config.d.ts",
+      "bytes": 43169,
+      "sha256": "1cb205136152ee4be71a847a7ba89d401980616763bfc270a5e376421d2735ae"
+    },
+    {
+      "path": "dist\\core\\model-registry.d.ts",
+      "bytes": 2756,
+      "sha256": "af1ab358246ecd85419a6c86346dd744e4c669c6b4fd7eded1c5964a90131993"
+    },
+    {
+      "path": "dist\\core\\model-resolver.d.ts",
+      "bytes": 5209,
+      "sha256": "627abed94652c63732d45140b04916ac7623be1e9f72f5207ccd84c251bf711b"
+    },
+    {
+      "path": "dist\\core\\model-runtime.d.ts",
+      "bytes": 6410,
+      "sha256": "1eab731760756334e38beb22bea56a4ca96db380e2e5b91a633365b5449fe328"
+    },
+    {
+      "path": "dist\\core\\models-store.d.ts",
+      "bytes": 1231,
+      "sha256": "33f6ba12e7ce9825f7420f081f6bc48fa0d5f4065a3c339592723ea19fd59fba"
+    },
+    {
+      "path": "dist\\core\\output-guard.d.ts",
+      "bytes": 379,
+      "sha256": "666d8e0b29aa4df3eee7cdff633705d4a272e90b24b762fc28c7d505b913f073"
+    },
+    {
+      "path": "dist\\core\\package-manager.d.ts",
+      "bytes": 7471,
+      "sha256": "1e942503f3e3d826a82650e081a24841acdbed1a86be08f2e278d1a4dc8e037d"
+    },
+    {
+      "path": "dist\\core\\pi-manifest.d.ts",
+      "bytes": 254,
+      "sha256": "4ad99146e2dba1cf2df5360fcbfa4c251d715863ef0b93f15da2c01aafe672fa"
+    },
+    {
+      "path": "dist\\core\\project-trust.d.ts",
+      "bytes": 745,
+      "sha256": "9d1a1913db56876177a98d020aec2b17621a0c04c9c057cb0ae9c9f7ec645acf"
+    },
+    {
+      "path": "dist\\core\\prompt-templates.d.ts",
+      "bytes": 2224,
+      "sha256": "84654adf787a469459affaaaa2817a6f6e602d9be94f8c797b0d58101af1075e"
+    },
+    {
+      "path": "dist\\core\\provider-attribution.d.ts",
+      "bytes": 410,
+      "sha256": "de6a53685c5ee07ebc60c562d1388f8e8b0785baef8834b789f93e4026d1d43f"
+    },
+    {
+      "path": "dist\\core\\provider-composer.d.ts",
+      "bytes": 3513,
+      "sha256": "2e738ed09a6c817bbba020bcbf769eace2654bdd084ddbd337b07cfa377d5101"
+    },
+    {
+      "path": "dist\\core\\radius.d.ts",
+      "bytes": 279,
+      "sha256": "705101a1cd9d9f0e0fdb965f38c462d70b12d491954ad2553c21f64de292beb3"
+    },
+    {
+      "path": "dist\\core\\remote-catalog-provider.d.ts",
+      "bytes": 375,
+      "sha256": "6f12ce07c111cee27695b1c4edab0f53c4cd0f5a38dd966e062c05f9aa5cd6b5"
+    },
+    {
+      "path": "dist\\core\\resolve-config-value.d.ts",
+      "bytes": 2020,
+      "sha256": "4cfbc127ab697ad63496c3c6b092b810c30a445af5894d9a16ff0e170860a6eb"
+    },
+    {
+      "path": "dist\\core\\resource-loader.d.ts",
+      "bytes": 6831,
+      "sha256": "f7c1dac7b3d661dff5fbfe51d1b50dff12b4c4329ae29a280ae713740b162493"
+    },
+    {
+      "path": "dist\\core\\runtime-credentials.d.ts",
+      "bytes": 997,
+      "sha256": "322071908dadf1340fa1a86e1849b4aa4b29ce2996110cf3dfab43ba988eb140"
+    },
+    {
+      "path": "dist\\core\\sdk.d.ts",
+      "bytes": 4960,
+      "sha256": "fbb34394c71e113b1f1fb5dd2e3d1da8d559580b339daace88826cd1a666cc4c"
+    },
+    {
+      "path": "dist\\core\\session-cwd.d.ts",
+      "bytes": 816,
+      "sha256": "f3501b8d230ff58f3c7299f0f60884e3a890e3cee02a3b8746ce384d5756c832"
+    },
+    {
+      "path": "dist\\core\\session-export.d.ts",
+      "bytes": 644,
+      "sha256": "1f0920dd71a44d4927e5c702138ef51d7998e418c2e16f92f994112ed9fbaf07"
+    },
+    {
+      "path": "dist\\core\\session-manager.d.ts",
+      "bytes": 19115,
+      "sha256": "d27e910585a6f41f2d17381516519eefb680f671bd271dcbb09a26de2d4a50f0"
+    },
+    {
+      "path": "dist\\core\\settings-diagnostics.d.ts",
+      "bytes": 616,
+      "sha256": "3d1362c2d64a0bdb973d54ee5e1094e4d0a77e24fb2ee7925d64b56d51ae316e"
+    },
+    {
+      "path": "dist\\core\\settings-manager.d.ts",
+      "bytes": 13955,
+      "sha256": "0531dc8f094401117e237cc97d71b5524b4ff76bf958bda4f552268d76af7d44"
+    },
+    {
+      "path": "dist\\core\\skills.d.ts",
+      "bytes": 2029,
+      "sha256": "8230b7f16b693ce3fbdf814d537105b3539ce7c07ba6cfef9605bf35695cdf58"
+    },
+    {
+      "path": "dist\\core\\slash-commands.d.ts",
+      "bytes": 497,
+      "sha256": "2fd1fe613bf5329b54b3d86957a1dfb9a23ea1ce75fbafba013000fe66125949"
+    },
+    {
+      "path": "dist\\core\\source-info.d.ts",
+      "bytes": 630,
+      "sha256": "90eb424e844c4e93a5226d9498fef6ced3023278bbe121dd70212787cb711dd6"
+    },
+    {
+      "path": "dist\\core\\system-prompt.d.ts",
+      "bytes": 3331,
+      "sha256": "3384fba1e62462b0b14318484f408b1d1442cd5116c566841fae246c5040a2db"
+    },
+    {
+      "path": "dist\\core\\telemetry.d.ts",
+      "bytes": 230,
+      "sha256": "42986806ef2ce7cc4d02520704a2ef9d9e001818f4ce0f32a8de113c8768ad75"
+    },
+    {
+      "path": "dist\\core\\timings.d.ts",
+      "bytes": 395,
+      "sha256": "37b09791677ec31bde5baf59af11f2463ed9322431a46dd2315d300ec4ced60d"
+    },
+    {
+      "path": "dist\\core\\tools\\bash.d.ts",
+      "bytes": 3720,
+      "sha256": "1ef24fc8026ef55aa0f31498aed6ebac9f59d013b5216cc3f9aa2ea3b7840dc2"
+    },
+    {
+      "path": "dist\\core\\tools\\edit-diff.d.ts",
+      "bytes": 4459,
+      "sha256": "c7feeaf2c0d5857fbf8e8dcfcf6a26015c5d8c9e2090f4de2b065f800db0bbb8"
+    },
+    {
+      "path": "dist\\core\\tools\\edit.d.ts",
+      "bytes": 2449,
+      "sha256": "df00e7dec9617a02aa0a08e32275be8027248fac8b76e89a123d2ef0e14b4ade"
+    },
+    {
+      "path": "dist\\core\\tools\\file-mutation-queue.d.ts",
+      "bytes": 279,
+      "sha256": "3e7a344dbfe8ab0c825cac1a6a420969a9a82ff85b2479a9de1d93eec12ed885"
+    },
+    {
+      "path": "dist\\core\\tools\\find.d.ts",
+      "bytes": 1898,
+      "sha256": "8e675dc76b8824936f0814ab2939c9dedbeadaa3cd6eca3e6754f22f7ba45cb7"
+    },
+    {
+      "path": "dist\\core\\tools\\grep.d.ts",
+      "bytes": 1796,
+      "sha256": "cb1b7103658fca88fcc381b1e5f0f42e0e17d900b686c0843fe767a597ac5660"
+    },
+    {
+      "path": "dist\\core\\tools\\index.d.ts",
+      "bytes": 3535,
+      "sha256": "523a167ddca88f8501b1656b7165503c03853264755c3da26ddb8d98f090614e"
+    },
+    {
+      "path": "dist\\core\\tools\\ls.d.ts",
+      "bytes": 1651,
+      "sha256": "9ea1cf0d7a024089d7be0690406207cd2812553cd9330ee45924db43bb44d608"
+    },
+    {
+      "path": "dist\\core\\tools\\output-accumulator.d.ts",
+      "bytes": 1553,
+      "sha256": "0dbff4240a4a81ec8735b3a69c87900ccbe007dfea2015677f34978f1756a5a2"
+    },
+    {
+      "path": "dist\\core\\tools\\path-utils.d.ts",
+      "bytes": 521,
+      "sha256": "3863c166812225ba651bae06bbd5ec377b33529fa09554aa753c2c217b691bbc"
+    },
+    {
+      "path": "dist\\core\\tools\\powershell.d.ts",
+      "bytes": 1227,
+      "sha256": "eb2bfa4574b0bdb02a95e4a3039ea585503d20ba608a3cdb6309bf8b63cc6a4c"
+    },
+    {
+      "path": "dist\\core\\tools\\read.d.ts",
+      "bytes": 1971,
+      "sha256": "dc774dc4c48f15571afbf86e860d1c253717abf22dc6ba921276d3b96db24fde"
+    },
+    {
+      "path": "dist\\core\\tools\\render-utils.d.ts",
+      "bytes": 1061,
+      "sha256": "f54e74c67b449745ff8e3633efb797b31d7247a52c132b2dd9e1904409316075"
+    },
+    {
+      "path": "dist\\core\\tools\\renderers\\bash.d.ts",
+      "bytes": 689,
+      "sha256": "0780ba46c37778b9203296ce84282ae933d72f24d46b35f5b4283685a3c5fb53"
+    },
+    {
+      "path": "dist\\core\\tools\\renderers\\edit.d.ts",
+      "bytes": 913,
+      "sha256": "a1a14cc6110a3efc56b42ae5d1409021816fc53e5d73fb970bef8499e6d1e614"
+    },
+    {
+      "path": "dist\\core\\tools\\renderers\\find.d.ts",
+      "bytes": 494,
+      "sha256": "0e5a97bca7f46237237bea0316d12ee76690a8847d470117cb36970930235790"
+    },
+    {
+      "path": "dist\\core\\tools\\renderers\\grep.d.ts",
+      "bytes": 494,
+      "sha256": "9bb395912d5fcf17c2b6f75e99f70d71f9e85fc693bffffae4ff9e6fde72357c"
+    },
+    {
+      "path": "dist\\core\\tools\\renderers\\index.d.ts",
+      "bytes": 1597,
+      "sha256": "60fc006814649b2f858988b5ed85e61199e21d4ee142e4c3f04432ac82ef895a"
+    },
+    {
+      "path": "dist\\core\\tools\\renderers\\ls.d.ts",
+      "bytes": 486,
+      "sha256": "c9d41a813f64847490b7efb195d83b790c9f6ba1f0e722a8336bcd6e33b11d92"
+    },
+    {
+      "path": "dist\\core\\tools\\renderers\\read.d.ts",
+      "bytes": 569,
+      "sha256": "85a974d15f253e14017e77b26bfc2ef4cf7f7d456f46e8fc5e62788a583464fc"
+    },
+    {
+      "path": "dist\\core\\tools\\renderers\\write.d.ts",
+      "bytes": 498,
+      "sha256": "2743815675ebc4bc505d17115a7c52d3fb0440f5e458dcab58ef6341399ce1ae"
+    },
+    {
+      "path": "dist\\core\\tools\\tool-definition-wrapper.d.ts",
+      "bytes": 1003,
+      "sha256": "2a37a68656fb34330a176bb587a24057e42b0ef75a40d7d67ea3d664bc54aaac"
+    },
+    {
+      "path": "dist\\core\\tools\\truncate.d.ts",
+      "bytes": 2678,
+      "sha256": "bc62cb147ed585182f62166ae8488858a1d6e31e08c0ec62bd29f83b84919726"
+    },
+    {
+      "path": "dist\\core\\tools\\write.d.ts",
+      "bytes": 1330,
+      "sha256": "c38a85e8c740dd43b415517bfdf868f32dd80e77cf5e1e0115753eed9208c852"
+    },
+    {
+      "path": "dist\\core\\trust-manager.d.ts",
+      "bytes": 1409,
+      "sha256": "ff6149fe09204a4b9c1c84626af14b8e38b4275553c03bf15b1e094623d7b08e"
+    },
+    {
+      "path": "dist\\core\\usage-totals.d.ts",
+      "bytes": 725,
+      "sha256": "c618ab8c78244f770a4ca6ad8129350ec87da3f499e97498d4a98d82557d4144"
+    },
+    {
+      "path": "dist\\extensions\\index.d.ts",
+      "bytes": 162,
+      "sha256": "27e93e0bd3ef68ad652811f57539af73f9a278c9fbb79eb96e22d04f974317a5"
+    },
+    {
+      "path": "dist\\extensions\\llama\\client.d.ts",
+      "bytes": 2274,
+      "sha256": "74ce7fbe96ca7b44a568ae9a578400a68b1384763c3263de32948a435709750c"
+    },
+    {
+      "path": "dist\\extensions\\llama\\huggingface.d.ts",
+      "bytes": 777,
+      "sha256": "5f8a086cde908d3bcd1609ec9823b02dc9b78326df0bf48bf5c4e84a1f46369a"
+    },
+    {
+      "path": "dist\\extensions\\llama\\index.d.ts",
+      "bytes": 167,
+      "sha256": "702dba82250c4f095d2769cd8a74f884ec10020f71acff99d60894242ef8cd50"
+    },
+    {
+      "path": "dist\\extensions\\llama\\provider.d.ts",
+      "bytes": 563,
+      "sha256": "0f049b3b78a293739e51045fcca7ee21dc93db9bc7aba161b1100b4e7f17f308"
+    },
+    {
+      "path": "dist\\extensions\\llama\\ui.d.ts",
+      "bytes": 1589,
+      "sha256": "86e72bbfec3945a1a1a3e8791114842b704bb43fc08b6c3b3c5dba332da4a1dd"
+    },
+    {
+      "path": "dist\\index.d.ts",
+      "bytes": 10697,
+      "sha256": "1e89f64c284248e8004bc040be1b8d886f20c158091d4e466cb130fa9d13d458"
+    },
+    {
+      "path": "dist\\main.d.ts",
+      "bytes": 780,
+      "sha256": "cf197873ee07f73d5682fe2236e24989714d1f5c1acf8820264e570a5c17dadc"
+    },
+    {
+      "path": "dist\\migrations.d.ts",
+      "bytes": 1099,
+      "sha256": "f6b9c59c2fd60c4ec802ff2622393e893d173e1927c3b365f934cc01d0de4dc5"
+    },
+    {
+      "path": "dist\\modes\\index.d.ts",
+      "bytes": 600,
+      "sha256": "8655bbe07e10bbb9fbab88a0ac705f647f0d49a637a1d190b3afd8e862102b00"
+    },
+    {
+      "path": "dist\\modes\\interactive\\bug-report.d.ts",
+      "bytes": 695,
+      "sha256": "d6db81b5fbe48519db22ad4f37d9b985274d4093dce6003c5f486e78b9e79e86"
+    },
+    {
+      "path": "dist\\modes\\interactive\\chat-viewport.d.ts",
+      "bytes": 850,
+      "sha256": "9f953b8f56eee16e96b11552343209f0e663e3bbd9c92197c7bbb60dc6612a3d"
+    },
+    {
+      "path": "dist\\modes\\interactive\\components\\armin.d.ts",
+      "bytes": 893,
+      "sha256": "1ad6555fc08ffa9bb2edaa60b71903dda12ac5039d897042006fb6145ed25e73"
+    },
+    {
+      "path": "dist\\modes\\interactive\\components\\assistant-message.d.ts",
+      "bytes": 1171,
+      "sha256": "f12a6a1111b710cb9f4659c2fa98f224934c8469175ecf9bd987152d899fbadc"
+    },
+    {
+      "path": "dist\\modes\\interactive\\components\\bash-execution.d.ts",
+      "bytes": 1180,
+      "sha256": "aef8cfac19f13af5a7a3e08653c7d27e8d1efb5d6a3270b30bca9a236514f205"
+    },
+    {
+      "path": "dist\\modes\\interactive\\components\\bordered-loader.d.ts",
+      "bytes": 585,
+      "sha256": "caec053bad0d1e1ad88531177594542119c4fc82af6b314c49e5cc42d09ecbec"
+    },
+    {
+      "path": "dist\\modes\\interactive\\components\\branch-summary-message.d.ts",
+      "bytes": 661,
+      "sha256": "a8542dd0efce2f58c7a63b8eb401d62a710e85b24f0d1093fd2edf037594fa4b"
+    },
+    {
+      "path": "dist\\modes\\interactive\\components\\compaction-summary-message.d.ts",
+      "bytes": 673,
+      "sha256": "f861374883308ca5fc5a6d3b3e32e65a816a997f265e32f2e2fd7a7bd5811b73"
+    },
+    {
+      "path": "dist\\modes\\interactive\\components\\config-selector.d.ts",
+      "bytes": 3712,
+      "sha256": "c75f420a6090dd9e9b0b19f4ac9156d55c3d322003fa4ff43e63b4b6b9e894cc"
+    },
+    {
+      "path": "dist\\modes\\interactive\\components\\countdown-timer.d.ts",
+      "bytes": 444,
+      "sha256": "48d33c2acffabd3fc250fd8228a36e3a17871a8531d450fac90f909f0ed89f94"
+    },
+    {
+      "path": "dist\\modes\\interactive\\components\\custom-editor.d.ts",
+      "bytes": 1409,
+      "sha256": "cfbc0e5a58cedc2581742dce4c7978b37246918f6794f16a9fec699018709c25"
+    },
+    {
+      "path": "dist\\modes\\interactive\\components\\custom-entry.d.ts",
+      "bytes": 738,
+      "sha256": "e8ae36f705d14154e5d3d5f8034a3b5516fc3019d99f5d3e8935e9000cb25a49"
+    },
+    {
+      "path": "dist\\modes\\interactive\\components\\custom-message.d.ts",
+      "bytes": 891,
+      "sha256": "30544cf9a39878ba894fdf602d17fbd739c56acf16b441101e0ad229e1053316"
+    },
+    {
+      "path": "dist\\modes\\interactive\\components\\daxnuts.d.ts",
+      "bytes": 656,
+      "sha256": "975b03c94ee5c626ae7be1be8eb0005c8c24823a9d3f9bd27a08c56d85f1922b"
+    },
+    {
+      "path": "dist\\modes\\interactive\\components\\diff.d.ts",
+      "bytes": 474,
+      "sha256": "0304977ecd9c6bb692c3f3f6031d71c62c026da047aecb37e24d385cab7c038c"
+    },
+    {
+      "path": "dist\\modes\\interactive\\components\\dynamic-border.d.ts",
+      "bytes": 608,
+      "sha256": "e737c738e56a6601b3d593fae23b79aa7a708fc7a0a2207a34b61c0fb7d8d00b"
+    },
+    {
+      "path": "dist\\modes\\interactive\\components\\earendil-announcement.d.ts",
+      "bytes": 195,
+      "sha256": "417356440cd78156a442d8593339813cb8880874ae9785d27d79aaa40ba7e0e7"
+    },
+    {
+      "path": "dist\\modes\\interactive\\components\\extension-editor.d.ts",
+      "bytes": 1037,
+      "sha256": "2b8b7c058518ce3c00e924a73b006aa996dc16c4f2c5c61a31cd04a59666aa52"
+    },
+    {
+      "path": "dist\\modes\\interactive\\components\\extension-input.d.ts",
+      "bytes": 844,
+      "sha256": "1f0d00242b80a12dc2ef33c30f152a9225ab8697b89772c46f8b7a38ec4b981b"
+    },
+    {
+      "path": "dist\\modes\\interactive\\components\\extension-selector.d.ts",
+      "bytes": 912,
+      "sha256": "b3b03bd4dcdef53f9fbbcdd55948fbd8dec194f4642d685b9323ac4e2df1a2b2"
+    },
+    {
+      "path": "dist\\modes\\interactive\\components\\first-time-setup.d.ts",
+      "bytes": 861,
+      "sha256": "010925c6494bc0d239b5b01f8e5209ffba1f4e230e3208f8c5ffdf9448e7e89b"
+    },
+    {
+      "path": "dist\\modes\\interactive\\components\\footer.d.ts",
+      "bytes": 1279,
+      "sha256": "d549912465d1e698a2e98a057b15ccbec6234267a9e161155c0a6a6ef5f85c30"
+    },
+    {
+      "path": "dist\\modes\\interactive\\components\\index.d.ts",
+      "bytes": 2366,
+      "sha256": "e05f12e5c75c9b1c084892eba29d7c842f5ab4d99b3890660c62b1b1f12d3c4d"
+    },
+    {
+      "path": "dist\\modes\\interactive\\components\\keybinding-hints.d.ts",
+      "bytes": 629,
+      "sha256": "29b8843382f593cfaa1cabda0df62385c76420ff30607565dc78421ab66c225e"
+    },
+    {
+      "path": "dist\\modes\\interactive\\components\\login-dialog.d.ts",
+      "bytes": 2083,
+      "sha256": "f5586168435e0c6924d97c7b1cfa431891f314aff47bdc15c7755b2cfc38842b"
+    },
+    {
+      "path": "dist\\modes\\interactive\\components\\markdown-transform.d.ts",
+      "bytes": 377,
+      "sha256": "f830edbe2f44299b2825185579d336f1362c6d104f6918acd6447cfb4c3f88d9"
+    },
+    {
+      "path": "dist\\modes\\interactive\\components\\mermaid.d.ts",
+      "bytes": 572,
+      "sha256": "95e2514faeba797c0ad499caa54816d55ad0f3643df58bac05f4e3f7f5055edd"
+    },
+    {
+      "path": "dist\\modes\\interactive\\components\\model-selector.d.ts",
+      "bytes": 2021,
+      "sha256": "486e4947a30749b73a99fb94de6795cab33d36c3da6fbb05a1d7207de938c093"
+    },
+    {
+      "path": "dist\\modes\\interactive\\components\\oauth-selector.d.ts",
+      "bytes": 1286,
+      "sha256": "c9a010e20f5425f0c32f92018d7f25b4503ba62a832f5c4b00b57dd834acd850"
+    },
+    {
+      "path": "dist\\modes\\interactive\\components\\scoped-models-selector.d.ts",
+      "bytes": 1731,
+      "sha256": "4b2fea4958cbc1cacb8ae46f36a440ccbab75d836b91c0d90de8bd5e2a985ede"
+    },
+    {
+      "path": "dist\\modes\\interactive\\components\\session-selector-search.d.ts",
+      "bytes": 1030,
+      "sha256": "279ee5f94dde9f14536faceafa580dc8c5f30bbae1c5a1ff15cf72291c03000a"
+    },
+    {
+      "path": "dist\\modes\\interactive\\components\\session-selector.d.ts",
+      "bytes": 3641,
+      "sha256": "b2c8a390ad9a001c93ee0e035525ade3300d6f2d2233bb58b59691f5f8392f39"
+    },
+    {
+      "path": "dist\\modes\\interactive\\components\\settings-selector.d.ts",
+      "bytes": 4523,
+      "sha256": "f4563c28d3a2b794f1627321314eb9cb0e23bfe6fde67e14ea18c2ded2436cb8"
+    },
+    {
+      "path": "dist\\modes\\interactive\\components\\settings-submenu.d.ts",
+      "bytes": 3255,
+      "sha256": "0dc856cc79d065e58bf661b4b21b19d959f5a429f42a91a35f786e82efc322e3"
+    },
+    {
+      "path": "dist\\modes\\interactive\\components\\show-images-selector.d.ts",
+      "bytes": 409,
+      "sha256": "6a7594e4db8e778af8169ca80fe59eaf02e504dabee0885ebe0ca16b0b35d68e"
+    },
+    {
+      "path": "dist\\modes\\interactive\\components\\skill-invocation-message.d.ts",
+      "bytes": 748,
+      "sha256": "b9afbdcd2725938a21c9e7e07855dd0f5c8740a7f984c0bc790e382668bd9647"
+    },
+    {
+      "path": "dist\\modes\\interactive\\components\\status-indicator.d.ts",
+      "bytes": 1502,
+      "sha256": "282b21352f9f6e2b607169db5c6e9e089a3f8d3ca6e8c464a1e7aff4c3e6bb30"
+    },
+    {
+      "path": "dist\\modes\\interactive\\components\\theme-selector.d.ts",
+      "bytes": 445,
+      "sha256": "3b91499ddf55a3000ae525fc7f23e61eb3e2c775639802df1bb0a44b5b88e6e7"
+    },
+    {
+      "path": "dist\\modes\\interactive\\components\\thinking-selector.d.ts",
+      "bytes": 983,
+      "sha256": "9306f328e83778dc8fed656fdd807c30c9b6c17b71ebe11c201e5fe83f846ddc"
+    },
+    {
+      "path": "dist\\modes\\interactive\\components\\tool-execution.d.ts",
+      "bytes": 3083,
+      "sha256": "e92b1f41262c7e68fb4a4b43a527af8441cbbd3811449cc5fe05858ef2a29e85"
+    },
+    {
+      "path": "dist\\modes\\interactive\\components\\tree-selector.d.ts",
+      "bytes": 3880,
+      "sha256": "23897899f877c836f3c4df1101496479e7e25090adbba1b65065ec6a2aa3f912"
+    },
+    {
+      "path": "dist\\modes\\interactive\\components\\trust-selector.d.ts",
+      "bytes": 909,
+      "sha256": "2e917dced9d17da7a29dbac319bde5836b88ac4534d9ffedc425c411cbc8521c"
+    },
+    {
+      "path": "dist\\modes\\interactive\\components\\user-message-selector.d.ts",
+      "bytes": 992,
+      "sha256": "05a3b023bedba884aac5f07cd1be2afcb17a20c83aa71c742d1058237609c765"
+    },
+    {
+      "path": "dist\\modes\\interactive\\components\\user-message.d.ts",
+      "bytes": 643,
+      "sha256": "91e4b9cb1146d2ab5e5846177efd0bf0252254901b622046d86fc453ebe4c79c"
+    },
+    {
+      "path": "dist\\modes\\interactive\\components\\visual-truncate.d.ts",
+      "bytes": 1164,
+      "sha256": "808aa03f18ce2ed309b100eec7bd020d9ca8a377d512fcf0a799fc4bc6f5a893"
+    },
+    {
+      "path": "dist\\modes\\interactive\\external-editor.d.ts",
+      "bytes": 352,
+      "sha256": "bcfb3c53a8ba2d089630fa9e54067f881827d7fd5abdf57d5eba6b5609eac8ed"
+    },
+    {
+      "path": "dist\\modes\\interactive\\interactive-mode.d.ts",
+      "bytes": 16839,
+      "sha256": "f4beb43004161ab6d38807c8641ff3e35c77cc3adfc513141654e37947b91f0c"
+    },
+    {
+      "path": "dist\\modes\\interactive\\model-catalog-refresh.d.ts",
+      "bytes": 495,
+      "sha256": "4fdfb5ce998fef78312e3aca58dbe4f2c04070e26934ecf818a2d39545b418cd"
+    },
+    {
+      "path": "dist\\modes\\interactive\\model-search.d.ts",
+      "bytes": 490,
+      "sha256": "6ee874987594ee89eef440b18f0cb18eea34ea24a1c7d309452bde3aebf5fd7f"
+    },
+    {
+      "path": "dist\\modes\\interactive\\session-share.d.ts",
+      "bytes": 988,
+      "sha256": "24c1781248a91a3ebe1e59bdaedb50597a7a7788364de200f4261b194d34c9c5"
+    },
+    {
+      "path": "dist\\modes\\interactive\\theme\\theme-controller.d.ts",
+      "bytes": 1450,
+      "sha256": "dba15260eb80600a33c7126270e22c0584a40796c4ab830278319c985047be73"
+    },
+    {
+      "path": "dist\\modes\\interactive\\theme\\theme-json.d.ts",
+      "bytes": 5144,
+      "sha256": "333072dd990a1d30228e9b04f070f9eb27bfdc92879230029902a753a9efb60f"
+    },
+    {
+      "path": "dist\\modes\\interactive\\theme\\theme.d.ts",
+      "bytes": 7107,
+      "sha256": "7740f4d956ebfcac1b0441704af52e54c2edbd746fe5d558830d9e11d5f7b29c"
+    },
+    {
+      "path": "dist\\modes\\interactive\\tui-renderer.d.ts",
+      "bytes": 1078,
+      "sha256": "b7bc66e202e909e3fe487dd50921da9b1a7ca448c45ccd9ffd111744de436544"
+    },
+    {
+      "path": "dist\\modes\\json-event.d.ts",
+      "bytes": 1388,
+      "sha256": "8ed959fe14cf0ce76f47309cf0a503d3e21a0ab86793b22e5759dd4d6f747e65"
+    },
+    {
+      "path": "dist\\modes\\print-mode.d.ts",
+      "bytes": 1013,
+      "sha256": "faae861e6262b40c7b718b9687cb786432ee674f1c1cdfbc70c7dcc53e3bba77"
+    },
+    {
+      "path": "dist\\modes\\rpc\\jsonl.d.ts",
+      "bytes": 710,
+      "sha256": "21733fb8506c4b88ce392352521260608a904a5c54dadfa7fd181be25712e4fe"
+    },
+    {
+      "path": "dist\\modes\\rpc\\rpc-client.d.ts",
+      "bytes": 7451,
+      "sha256": "467fbcf2e2922c2f260bd66ad438f8ca2955718aca353ed75cf9586d5bc1ec86"
+    },
+    {
+      "path": "dist\\modes\\rpc\\rpc-mode.d.ts",
+      "bytes": 1013,
+      "sha256": "6c6799bca7017657b3e38e55638bf7233c157082aeb176b90b71343bda3482c4"
+    },
+    {
+      "path": "dist\\modes\\rpc\\rpc-types.d.ts",
+      "bytes": 9801,
+      "sha256": "e968e5be01dc7ad9615f938ae867ef136fa495f13dcf169942e9f781a299d9eb"
+    },
+    {
+      "path": "dist\\package-manager-cli.d.ts",
+      "bytes": 589,
+      "sha256": "1cb7dd6566dabe86c4fec6492766f3dabc1b4cd768630d13648f8110be556c0e"
+    },
+    {
+      "path": "dist\\rpc-entry.d.ts",
+      "bytes": 70,
+      "sha256": "35817d22d692b15b0ba1da7b644c30247c68b7ed26db176612cceb24a31ad1fc"
+    },
+    {
+      "path": "dist\\utils\\abort.d.ts",
+      "bytes": 388,
+      "sha256": "d0bf50239f7412a19adb46c6e73105765a6f15ee711cb3452beda42a4583610a"
+    },
+    {
+      "path": "dist\\utils\\ansi.d.ts",
+      "bytes": 92,
+      "sha256": "3356a039e24b539cac8950b2b1773038c935404928af6ecc842215ff7b72afa8"
+    },
+    {
+      "path": "dist\\utils\\changelog.d.ts",
+      "bytes": 831,
+      "sha256": "56edd56f92b87882017c53e599f500e2bfc984f4fda326b9e049bdb4fa1bcdf9"
+    },
+    {
+      "path": "dist\\utils\\child-process.d.ts",
+      "bytes": 1535,
+      "sha256": "07d4c7fbe2fa57981b5d3a9feefd3dd56376cf370a086c03accb36df1a341b02"
+    },
+    {
+      "path": "dist\\utils\\clipboard-command.d.ts",
+      "bytes": 334,
+      "sha256": "7a9f62321cdb28bedc782a18eb71c0cc96585abb19693b6f3d0adb14c6f433a9"
+    },
+    {
+      "path": "dist\\utils\\clipboard-image.d.ts",
+      "bytes": 436,
+      "sha256": "ecdddd7b986581fa974287cc847ba518174cd6be8d9390f3a06fc370bba5455b"
+    },
+    {
+      "path": "dist\\utils\\clipboard.d.ts",
+      "bytes": 228,
+      "sha256": "66d0c45e1ac3eeed8581a81655923b920247f9522742e27f0a4ca03356aaecc2"
+    },
+    {
+      "path": "dist\\utils\\deprecation.d.ts",
+      "bytes": 231,
+      "sha256": "0aab919cba1d9564c241a70856f86f40dc3c7258abb5f04d0b38131c700231f5"
+    },
+    {
+      "path": "dist\\utils\\exif-orientation.d.ts",
+      "bytes": 298,
+      "sha256": "968dc9abe565b6652b6a7f1b16a4169af996ec70a0f0a322595abeeed9707d6e"
+    },
+    {
+      "path": "dist\\utils\\frontmatter.d.ts",
+      "bytes": 366,
+      "sha256": "8fffbc1ff27f5c4219e14a81bfeb085895792058bb0dbba33c625067c7332c90"
+    },
+    {
+      "path": "dist\\utils\\fs-watch.d.ts",
+      "bytes": 369,
+      "sha256": "e7a6b0c4659c382ff1f9df1cf2d89a0f00e62acfc656284eeaede804d598c0c5"
+    },
+    {
+      "path": "dist\\utils\\git.d.ts",
+      "bytes": 793,
+      "sha256": "e7c6d7456c7a4a33d1723600444e8486fbf6305270df65ad34a3ce03eb145032"
+    },
+    {
+      "path": "dist\\utils\\html.d.ts",
+      "bytes": 293,
+      "sha256": "b5868e217c93239c4b5c1baf9c2af3453073055782174818958b50449cb9bb3e"
+    },
+    {
+      "path": "dist\\utils\\image-convert.d.ts",
+      "bytes": 392,
+      "sha256": "631c328f04fe8beb2474e6e1c06787575d9814d19efc68cfddb26c4c946a9317"
+    },
+    {
+      "path": "dist\\utils\\image-process.d.ts",
+      "bytes": 662,
+      "sha256": "3bee45da14df32f8eb0ceed20cfbfbf3da0be6218c131fe086c2d0996b2db164"
+    },
+    {
+      "path": "dist\\utils\\image-resize-core.d.ts",
+      "bytes": 1046,
+      "sha256": "d50a1d79b5b9701f945be8aa8d9f0db04925695ee6aab1a63c3aafaa62aa1ebc"
+    },
+    {
+      "path": "dist\\utils\\image-resize-worker.d.ts",
+      "bytes": 60,
+      "sha256": "cfafea71ed37efc71e43bd4e2c45c70dc645b461f8354b86b14300c1bcce3dc3"
+    },
+    {
+      "path": "dist\\utils\\image-resize.d.ts",
+      "bytes": 903,
+      "sha256": "55cf52aefff34702d74c009237c1b3ef5bde63cd56a5cb8cb7ce7214a7caf7da"
+    },
+    {
+      "path": "dist\\utils\\json.d.ts",
+      "bytes": 198,
+      "sha256": "23338819cc54c964c0bf8d278f2c939899524529d21d0c2d84b4401705ab83b9"
+    },
+    {
+      "path": "dist\\utils\\management-http.d.ts",
+      "bytes": 1199,
+      "sha256": "12c9424ed53ecf2f9fec1c1f64b9e053612d3e3284632e00107784e3aac7fbef"
+    },
+    {
+      "path": "dist\\utils\\mime.d.ts",
+      "bytes": 227,
+      "sha256": "5d75a76310ce17e3ded8d7bef90e99f294ecb75aa279a78c60269cb16ee25629"
+    },
+    {
+      "path": "dist\\utils\\open-browser.d.ts",
+      "bytes": 388,
+      "sha256": "faaae9e0895ceae5dc114dc9f63959787d7238bafc520039337ef3d58de21638"
+    },
+    {
+      "path": "dist\\utils\\paths.d.ts",
+      "bytes": 1784,
+      "sha256": "a9e4935b83eae77be7da3f4fa1874b75f74526ebc09968bee86d2fb35b996d91"
+    },
+    {
+      "path": "dist\\utils\\photon.d.ts",
+      "bytes": 879,
+      "sha256": "c13bf8c1b830091c5912c2fe4ff8b141581cb96232d7130044ee7220424ea288"
+    },
+    {
+      "path": "dist\\utils\\pi-user-agent.d.ts",
+      "bytes": 108,
+      "sha256": "5926867f1bbea774ad16a400fd3d22a823ea3ba48ae47e2e815331b0abaf2b4f"
+    },
+    {
+      "path": "dist\\utils\\shell.d.ts",
+      "bytes": 1527,
+      "sha256": "1915fa0b50350b8866364e7b6120bfaa2ae4ed678824597b2fccc86808ac60ba"
+    },
+    {
+      "path": "dist\\utils\\sleep.d.ts",
+      "bytes": 167,
+      "sha256": "02ed5098c6c14958d1a69fa390ab6b498c3ca548c571b7a9168dd570f8db103e"
+    },
+    {
+      "path": "dist\\utils\\syntax-highlight.d.ts",
+      "bytes": 640,
+      "sha256": "cd47fcabe77c441dbcbd685fd0ccf39f39979e11714ccc760de58de24646c1f3"
+    },
+    {
+      "path": "dist\\utils\\text.d.ts",
+      "bytes": 313,
+      "sha256": "0c1da4f64727ce0ec221bc356afafd0510c15f946c8b7cbe6abb0474b4ce6809"
+    },
+    {
+      "path": "dist\\utils\\tool-result-images.d.ts",
+      "bytes": 1274,
+      "sha256": "6dee0d11843861cfb16f9c9906ba50e8621e96e2e2e6e9f71571b7157cfde93f"
+    },
+    {
+      "path": "dist\\utils\\tools-manager.d.ts",
+      "bytes": 593,
+      "sha256": "67aabbf3d0a69ca1a97b94b97384a0ce4a54e2efbad0a11666e59dafd31ed128"
+    },
+    {
+      "path": "dist\\utils\\version-check.d.ts",
+      "bytes": 954,
+      "sha256": "3a0d28765f823b5caa7d59dd7f98a77824c2b9eee4111ee56a45f5d927f13a6c"
+    },
+    {
+      "path": "dist\\utils\\windows-self-update.d.ts",
+      "bytes": 222,
+      "sha256": "9d2c6520ec0bb05428dd3b2ed13a64b690c54a8edf9ba67fa1c85075495e9b87"
+    },
+    {
+      "path": "dist\\utils\\wsl.d.ts",
+      "bytes": 191,
+      "sha256": "68ba0c60fd59d16624d405902ab2a53873b8194a1c401d42db38ecc9cecf11b7"
+    },
+    {
+      "path": "dist\\utils\\zip.d.ts",
+      "bytes": 220,
+      "sha256": "fec10e85367a08343829e6672359ea7bd02877535aa1624c18a42103798ea1e0"
+    }
+  ],
+  "apiSearch": {
+    "beforeLLMTurn": {
+      "docsProse": 0,
+      "examples": 0,
+      "shippedTypes": 0
+    },
+    "ctx.session.updateModel": {
+      "docsProse": 0,
+      "examples": 0,
+      "shippedTypes": 0
+    },
+    "ctx.session.updateThinkingLevel": {
+      "docsProse": 0,
+      "examples": 0,
+      "shippedTypes": 0
+    },
+    "updateModel": {
+      "docsProse": 0,
+      "examples": 0,
+      "shippedTypes": 2
+    },
+    "updateThinkingLevel": {
+      "docsProse": 0,
+      "examples": 0,
+      "shippedTypes": 0
+    },
+    "setModel": {
+      "docsProse": 0,
+      "examples": 3,
+      "shippedTypes": 5
+    },
+    "setThinkingLevel": {
+      "docsProse": 0,
+      "examples": 3,
+      "shippedTypes": 4
+    },
+    "setActiveTools": {
+      "docsProse": 1,
+      "examples": 8,
+      "shippedTypes": 3
+    },
+    "TurnStartEvent": {
+      "docsProse": 0,
+      "examples": 0,
+      "shippedTypes": 6
+    },
+    "TurnEndEvent": {
+      "docsProse": 0,
+      "examples": 0,
+      "shippedTypes": 14
+    },
+    "BeforeAgentStartEvent": {
+      "docsProse": 0,
+      "examples": 0,
+      "shippedTypes": 15
+    },
+    "AgentStartEvent": {
+      "docsProse": 0,
+      "examples": 0,
+      "shippedTypes": 21
+    },
+    "AgentBeforeSettleEvent": {
+      "docsProse": 0,
+      "examples": 0,
+      "shippedTypes": 14
+    },
+    "BeforeProviderRequestEvent": {
+      "docsProse": 0,
+      "examples": 0,
+      "shippedTypes": 11
+    },
+    "AfterProviderResponseEvent": {
+      "docsProse": 0,
+      "examples": 0,
+      "shippedTypes": 5
+    }
+  },
+  "signatureLines": {
+    "setModel": [
+      "dist\\core\\agent-session.d.ts:518: setModel(model: Model<any>, options?: ModelMutationOptions): Promise<void>;",
+      "dist\\core\\extensions\\types.d.ts:1081: setModel(model: Model<any>): Promise<boolean>;",
+      "dist\\modes\\rpc\\rpc-client.d.ts:101: setModel(provider: string, modelId: string): Promise<{"
+    ],
+    "setThinkingLevel": [
+      "dist\\core\\agent-session.d.ts:535: setThinkingLevel(level: ThinkingLevel, options?: ModelMutationOptions): void;",
+      "dist\\core\\extensions\\types.d.ts:1088: setThinkingLevel(level: ThinkingLevel): void;",
+      "dist\\modes\\rpc\\rpc-client.d.ts:123: setThinkingLevel(level: ThinkingLevel): Promise<void>;"
+    ],
+    "setActiveTools": [
+      "dist\\core\\extensions\\types.d.ts:1074: setActiveTools(toolNames: string[]): void;"
+    ]
+  },
+  "disposition": {
+    "proposal names": {
+      "beforeLLMTurn": "absent-from-enumerated-surface",
+      "ctx.session.updateModel": "absent-from-enumerated-surface",
+      "ctx.session.updateThinkingLevel": "absent-from-enumerated-surface",
+      "updateModel": "present (shipped types)",
+      "updateThinkingLevel": "absent-from-enumerated-surface"
+    },
+    "actual surface": {
+      "setModel": "present (shipped types)",
+      "setThinkingLevel": "present (shipped types)",
+      "setActiveTools": "present (shipped types)",
+      "TurnStartEvent": "present (shipped types)",
+      "TurnEndEvent": "present (shipped types)",
+      "BeforeAgentStartEvent": "present (shipped types)",
+      "AgentStartEvent": "present (shipped types)",
+      "AgentBeforeSettleEvent": "present (shipped types)",
+      "BeforeProviderRequestEvent": "present (shipped types)",
+      "AfterProviderResponseEvent": "present (shipped types)"
+    }
+  }
+}
