@@ -131,4 +131,9 @@ Mandated reviewer focus questions:
 1. Does every "absent" disposition bound itself to the enumerated 0.87.1 surface, with no
    assertion that any API does not exist at runtime?
 2. Does the memo contain exactly zero routing-design content, and is the governance
-   paragraph verbatim pointer-only with no
+   paragraph verbatim pointer-only with no forward prediction?
+3. Does the probe reproduce on the coordinator's machine, fail closed on a missing path or
+   version mismatch, and never load Pi or write the host extension directory?
+4. Is every real API named as present paired with the "still not an authorization to route"
+   pointer?
+5. Is the directive excerpt hashed and is it the actual in-repo source of the restated claims?
