@@ -17,7 +17,7 @@ refusal.
 |---|---|---|
 | G1 | Worktree path | `D:/Repos/wt-pmc-p0` — do **not** work in `D:/Repos/agent-skills` |
 | G2 | Branch | `codex/pmc-p0-evidence` |
-| G3 | Spec SHA-256 | `82d7819c63e59626ff57495ca84c0d386e091f5f9e4c6076c476a253f30b5b71` at `plugins/foreman-line/docs/specs/active/PMC-P0-pi-capability-and-catalogue-baseline.md`, with `status: active` |
+| G3 | Spec SHA-256 | `133a7690b865d460586e77fb3ee5440116513272db299eceb52b09f8f81b72eb` at `plugins/foreman-line/docs/specs/active/PMC-P0-pi-capability-and-catalogue-baseline.md`, with `status: active` (re-promoted under Amendment 04) |
 | G4 | Worktree state | clean (`git status --short` empty) before you start |
 
 Also confirm this brief is **present** at
@@ -29,10 +29,11 @@ brief digest is recorded in the coordinator's dispatch record
 verifies it. If the brief is absent, stop — that was a real defect once already.
 
 **Informational, not a gate:** the branch was created from
-`2f6c79446a2eeb9f766f22c759721cb91ffa6e67`; the spec was promoted at
-`96a24bf7ab3669b79ff7d0b004466846051c6d71`. Record the tip SHA you observe via
-`git rev-parse HEAD` and report it. Do **not** refuse on it, and do **not**
-advance, rebase, reset, or amend it.
+`2f6c79446a2eeb9f766f22c759721cb91ffa6e67`; the spec was first promoted at
+`96a24bf7ab3669b79ff7d0b004466846051c6d71` and **re-promoted under Amendment 04**
+(the digest in G3 above is the current authoritative one). Record the tip SHA you
+observe via `git rev-parse HEAD` and report it. Do **not** refuse on it, and do
+**not** advance, rebase, reset, or amend it.
 
 **Do not use** `codex/refresh-actions-and-packages`. That branch is shared, has
 advanced to unrelated PRAC work, and a second live session writes to it; the
@@ -92,13 +93,15 @@ itself** — its frontmatter, its `status`, and its acceptance checkboxes.
   install`, that is a flag, not a task.
 - **No promotion, commit of the spec, merge, release, receipt, kickstarter,
   `ShapingResult`, or dispatch** of reviewers or other builders.
-- **No goal-file edits:** charter, amendments 01–03, coordinator lint, loop
+- **No goal-file edits:** charter, amendments 01–04, coordinator lint, loop
   directive, `docs/goals/INDEX.md`, the RCM tree, the PRAC tree, HAWF, GMF, or
   boundary-routing.
 
-## The two traps in this parcel
+## The traps in this parcel
 
-Read these twice; both have already caused a stop in this goal.
+Read these twice; the first two have already caused a stop in this goal, and the
+third and fourth are the Amendment 04 clarifications that end the binding-7 and
+endpoint-divergence stops.
 
 1. **AC2b is not a resolution failure.** Bindings 1
    (`opencode/claude-opus-5-5`) and 10 (`openrouter/anthropic/claude-opus-5.5`)
@@ -114,6 +117,22 @@ Read these twice; both have already caused a stop in this goal.
    evidence only, with freshness **not accepted** and known stale on the Opus
    identity. Catalogue presence is not uptime. An absent record is not a
    verified absence. Every live, reachability, and quality claim is held for A6.
+3. **AC2a binding 7 is a documented refusal, not a failure (Amendment 04, D-b1).**
+   Twelve of the thirteen AC2a bindings resolve to exactly one catalogue record.
+   Binding 7 (`opencode/qwen3.8-flash`) returns **zero matches** because the
+   `qwen3.8-flash` id lives only under providers `opencode-go` and
+   `qwen-token-plan`, never `opencode`. That zero match is the **expected,
+   acceptable AC2a evidence outcome**: record the named refusal `AC2A_ZERO_MATCH`
+   with the raw query; do **not** alias `opencode-go`→`opencode`, do **not**
+   reclassify it as owner-attested, and do **not** treat it as a stop or count it
+   against the thirteen as a pass. Its L5/L6 roles are held to A6 and PMC-P2.
+4. **Endpoint divergence is a finding, not a refusal (Amendment 04, D-a1).** A
+   catalogue `baseUrl` that differs from a `settings-projection.json` registered
+   provider `baseUrl` or from `routing-policy/src/pi-openrouter.ts` is a
+   `static-conformance` **finding for PMC-P1/PMC-P2**, never an AC2a refusal and
+   never an availability/absence claim. Do **not** stop on it. "URL mismatch"
+   refuses **only** when the same literal `provider`+`id` resolves to duplicate
+   or inconsistent `baseUrl` values **within the catalogue**.
 
 ## Completion claim shape
 
@@ -122,7 +141,9 @@ Return, mapped **AC by AC** (AC1–AC8):
 - the evidence supporting each criterion, by artifact path and section;
 - exact commands with **raw output and exit codes**, untruncated;
 - the three export digests you recomputed, against the three pinned values;
-- counts stated as `13` AC2a and `2` AC2b, and enablement as `n of 15`;
+- counts stated as `13` attempted under AC2a (`12` literal resolutions + `1`
+  documented `AC2A_ZERO_MATCH` refusal for binding 7, per Amendment 04 D-b1) and
+  `2` under AC2b, and enablement as `n of 15`;
 - every refusal, `unknown`, `capability-unverified`, and held claim, by name;
 - tool versions;
 - `git status --short` before and after, plus an allowed-path audit proving the
@@ -139,10 +160,15 @@ acceptance.
 
 Stop and report on: a pinned-value mismatch; a digest mismatch or missing export
 file; any route that would read a credential; ambiguous, duplicate, or
-multi-match identity; endpoint mismatch; a ranking input that cannot be
-populated without a provider call; an unauthorized write or effect; a file
-collision with RCM, PRAC, or another live goal; pressure to freeze the role map,
-promote the spec, reconcile the Jev gap, or install dependencies; or evidence
-contradicting Amendment 01, 02 M2–M4, or 03 — **excluding** the expected AC2b
-stale-export result. Record safe refusal detail only; never quote a suspect
+multi-match identity; endpoint mismatch **within a single literal identity** (a
+catalogue-internal inconsistent `baseUrl` — a catalogue-vs-settings/contract
+divergence is a recorded static-conformance finding per Amendment 04 D-a1, not a
+stop); a ranking input that cannot be populated without a provider call; an
+unauthorized write or effect; a file collision with RCM, PRAC, or another live
+goal; pressure to freeze the role map, promote the spec, reconcile the Jev gap,
+or install dependencies; or evidence contradicting Amendment 01, 02 M2–M4, 03, or
+04 — **excluding** the expected AC2b stale-export result, the expected binding 7
+`AC2A_ZERO_MATCH` refusal (acceptable evidence per Amendment 04 D-b1), and
+catalogue-vs-settings/contract endpoint divergences (static-conformance findings
+per Amendment 04 D-a1). Record safe refusal detail only; never quote a suspect
 payload. No repeated attempt may bypass a refusal.

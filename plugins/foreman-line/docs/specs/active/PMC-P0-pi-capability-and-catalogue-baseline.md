@@ -28,8 +28,10 @@ prove recorded configuration, never live provider availability.
 ## Constraints
 
 Authority baseline is charter `D1`–`D8` as amended by **Amendment 01 (A1–A8)**,
-**Amendment 02 (M2–M4)**, and **Amendment 03**, which supersedes Amendment 02
-M1 and governs the Opus identity on conflict. Gate 2 names PMC-P0 only. Gate 3
+**Amendment 02 (M2–M4)**, **Amendment 03** (which supersedes Amendment 02 M1 and
+governs the Opus identity on conflict), and **Amendment 04** (which governs the
+AC2a "URL mismatch" comparator, the binding 7 disposition, and the corrected
+verification query, on conflict). Gate 2 names PMC-P0 only. Gate 3
 remains human-owned. No Gate 2 exists for any later parcel.
 
 Model identities are the Amendment 03 corrected set, enumerated in **AC2**.
@@ -115,6 +117,19 @@ parcel introduces no schema field, executable, test, collector, or dependency.
   trimming. Zero matches, multiple matches, wrong provider, `:batch` or other
   variant suffixes, and URL mismatch each **refuse** with a named reason.
 
+  Per **Amendment 04 (D-a1)**, "URL mismatch" above is a **catalogue-internal**
+  test: it refuses only when the literal `provider`+`id` resolves to records with
+  duplicate or mutually inconsistent `baseUrl` values **within the catalogue**. A
+  catalogue `baseUrl` that differs from a `settings-projection.json` registered
+  provider `baseUrl` or from `routing-policy/src/pi-openrouter.ts` is **not** an
+  AC2a refusal — record it as a `static-conformance` finding for PMC-P1/PMC-P2,
+  never as an availability or absence claim. Per **Amendment 04 (D-b1)**, binding
+  7 (`opencode/qwen3.8-flash`) is **expected** to return `AC2A_ZERO_MATCH`: record
+  the named refusal and its raw zero-match query, do **not** alias or reclassify
+  it, and do **not** count it against the thirteen; the `qwen3.8-flash` id appears
+  only under providers `opencode-go` and `qwen-token-plan`, and its L5
+  economy-primary / L6 recommendation-only roles are **held** to A6 and PMC-P2.
+
   **AC2b — the two `owner-attested` bindings (1 and 10).** These are **not**
   required to resolve in the frozen catalogue, which predates Amendment 03.
   Record each as **`OWNER_ATTESTED_PENDING_LIVE_AVAILABILITY`**, citing
@@ -148,8 +163,11 @@ parcel introduces no schema field, executable, test, collector, or dependency.
   | 14 | `openrouter` | `google/gemini-3.8-flash` | L4 fallback; L5 primary | `catalogue-resolved` |
   | 15 | `openrouter` | `anthropic/claude-haiku-4.5` | L5 fallback | `catalogue-resolved` |
 
-  Counts to report: **13** under AC2a and **2** under AC2b. `13 + 2 = 15`; no
-  binding appears in both classes and none is omitted.
+  Counts to report: **13 attempted under AC2a** — **twelve literal catalogue
+  resolutions plus the one documented `AC2A_ZERO_MATCH` refusal for binding 7**,
+  per Amendment 04 (D-b1) — and **2** under AC2b. `13 + 2 = 15`; no binding
+  appears in both classes and none is omitted. The binding 7 refusal is acceptable
+  AC2a **evidence**, not an unresolved acceptance criterion.
 
   **Excluded, not a candidate:** `openrouter` / `typesafe/jev-1.13`, struck by
   M2. Record its catalogue and settings status as an observation only; never
@@ -246,6 +264,7 @@ reviewers or builders; committing, merging, or releasing.
 - [Amendment 01](../../goals/pi-model-configuration/gate-1-amendment-01.md)
 - [Amendment 02](../../goals/pi-model-configuration/gate-1-amendment-02.md)
 - [Amendment 03](../../goals/pi-model-configuration/gate-1-amendment-03.md)
+- [Amendment 04](../../goals/pi-model-configuration/gate-1-amendment-04.md)
 - [Coordinator lint](../../goals/pi-model-configuration/coordinator-lint-pmc-p0.md)
 - [Loop directive](../../goals/pi-model-configuration/loop-directive.md)
 - [Spec convention](../../SPEC-CONVENTION.md)
@@ -280,7 +299,8 @@ evidence artifacts is created now.
 
 Every path outside Allowed Files is a forbidden write, specifically: **this spec
 file**; this goal's `charter.md`, `gate-1-amendment-01.md`,
-`gate-1-amendment-02.md`, `gate-1-amendment-03.md`, `plan-review-findings.md`,
+`gate-1-amendment-02.md`, `gate-1-amendment-03.md`, `gate-1-amendment-04.md`,
+`plan-review-findings.md`,
 `coordinator-lint-pmc-p0.md`, `loop-directive.md`; `docs/goals/INDEX.md`; the
 entire `docs/goals/routing-currency-and-merit/` tree including
 `host-owner-export/`; the `docs/goals/pi-routing-adapter-compat/` tree; HAWF,
@@ -313,7 +333,13 @@ marking for bindings 1 and 10. Record separately the enablement gap as `n of
 15`, the Jev observations, the `opencode` versus `opencode-go` namespace
 observation without treating equal endpoints as licence to alias providers, and
 variant-suffix identities such as `:batch` as observations never eligible as
-candidates.
+candidates. Per **Amendment 04 (D-a1)** record each resolved binding's catalogue
+`baseUrl` verbatim and flag every catalogue-vs-`settings-projection` /
+`pi-openrouter.ts` endpoint divergence as a named `static-conformance` finding
+assigned to PMC-P1/PMC-P2 (never an availability or absence claim, never an AC2a
+refusal). Per **Amendment 04 (D-b1)** record binding 7 as `AC2A_ZERO_MATCH`
+acceptable evidence with its raw zero-match query, and hold its L5/L6 roles to A6
+and PMC-P2.
 
 ### Suitability rubric
 
@@ -332,7 +358,7 @@ Mark the artifact `awaiting-owner-ratification`.
 
 ## Dependencies, Consumers, and Collision Risk
 
-PMC-P0 depends on the ratified charter plus Amendments 01–03, digest-verified
+PMC-P0 depends on the ratified charter plus Amendments 01–04, digest-verified
 export availability, and the coordinator preconditions above. It does not depend
 on unwritten P1 code.
 
@@ -362,12 +388,18 @@ credential reads. This shaping session dispatches no reviews and no builders.
 
 Stop and report on: a pinned-digest mismatch or missing export file; any route
 that would read a credential; ambiguous, duplicate, or multi-match identity;
-endpoint mismatch; a required ranking input that cannot be populated without a
+endpoint mismatch **within a single literal identity** (a catalogue-internal
+inconsistent `baseUrl`; a catalogue-vs-`settings-projection`/`pi-openrouter.ts`
+divergence is a recorded static-conformance finding per Amendment 04, not a
+stop); a required ranking input that cannot be populated without a
 provider call; an unauthorized write or effect; a file collision with RCM, PRAC,
 or another live goal; pressure to freeze the role map, promote this spec, or
 reconcile the Jev policy gap inside this parcel; or evidence contradicting
-Amendment 01, 02 M2–M4, or 03 — **excluding** the expected, non-authoritative
-stale-export result for bindings 1 and 10. Record safe refusal detail only;
+Amendment 01, 02 M2–M4, 03, or 04 — **excluding** the expected, non-authoritative
+stale-export result for bindings 1 and 10, the expected `AC2A_ZERO_MATCH` refusal
+for binding 7 (acceptable evidence per Amendment 04, D-b1), and
+catalogue-vs-settings/contract endpoint divergences (static-conformance findings
+per Amendment 04, D-a1). Record safe refusal detail only;
 never quote a suspect payload. No repeated attempt may bypass a refusal.
 
 ## Verification Plan
@@ -404,19 +436,30 @@ Select-String -Path 'plugins/foreman-line/routing-policy/routing-policy.yaml' -P
 (Get-Content -Raw -LiteralPath "$X/settings-projection.json" | ConvertFrom-Json).enabledModels
 
 # AC2a — the 13 catalogue-resolved bindings, literal case-sensitive resolution.
-# Example uses binding 3. Repeat per AC2a row, substituting the exact
-# provider/id pair. For AC2a ONLY, a zero match is a named refusal.
+# Example uses binding 3. Repeat per AC2a row, substituting the exact provider/id
+# pair, filtering providers[].models[] on the inner model.provider field (there is
+# NO top-level .models field). Per Amendment 04 (D-b1) a zero match is a named
+# refusal, but binding 7 (opencode/qwen3.8-flash) is EXPECTED to be
+# AC2A_ZERO_MATCH and is recorded as acceptable evidence, not a failure. Per
+# Amendment 04 (D-a1) resolve each binding to its catalogue baseUrl and record
+# any catalogue-vs-settings/contract endpoint divergence as a static-conformance
+# observation; do NOT treat it as an AC2a refusal.
 $cat = Get-Content -Raw -LiteralPath "$X/catalog-projection.json" | ConvertFrom-Json
-$cat.models | Where-Object { $_.provider -ceq 'opencode' -and $_.id -ceq 'gpt-5.6-sol' } |
+$cat.providers | ForEach-Object { $_.models } |
+  Where-Object { $_.provider -ceq 'opencode' -and $_.id -ceq 'gpt-5.6-sol' } |
   Select-Object provider, id, baseUrl, contextWindow, maxTokens, input, reasoning, cost, thinkingLevelMap
+# settings-registered provider baseUrls, for the D-a1 endpoint-divergence observation:
+(Get-Content -Raw -LiteralPath "$X/settings-projection.json" | ConvertFrom-Json).providers
 
 # AC2b — bindings 1 and 10 are owner-attested; the frozen catalogue predates
 # Amendment 03. Run these for the record only. A zero match is EXPECTED and
 # NON-AUTHORITATIVE: do not refuse, do not treat it as a contradiction, and do
 # not count it against AC2a. Report the raw result, then record
 # OWNER_ATTESTED_PENDING_LIVE_AVAILABILITY and mark capability fields unknown.
-$cat.models | Where-Object { $_.provider -ceq 'opencode'   -and $_.id -ceq 'claude-opus-5-5' }
-$cat.models | Where-Object { $_.provider -ceq 'openrouter' -and $_.id -ceq 'anthropic/claude-opus-5.5' }
+$cat.providers | ForEach-Object { $_.models } |
+  Where-Object { $_.provider -ceq 'opencode'   -and $_.id -ceq 'claude-opus-5-5' }
+$cat.providers | ForEach-Object { $_.models } |
+  Where-Object { $_.provider -ceq 'openrouter' -and $_.id -ceq 'anthropic/claude-opus-5.5' }
 
 # AC7 — current role vocabulary and tier order
 Select-String -Path 'plugins/foreman-line/routing-policy/routing-policy.yaml' -Pattern 'roles:|model_tiers:|ORDER IS'
