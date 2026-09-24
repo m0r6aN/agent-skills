@@ -17,6 +17,7 @@ from an index row.
 |---|---|---|---|
 | [governed-model-fleet](governed-model-fleet/charter.md) | /root | gmf_p1_landed_p2a_awaiting_shape | D1-D24 plus A1/P0-P9 ratified; P0 + P1 evidence landed (PRs #28, #33); P1 closure READY; P2A shaping next, no Gate 2 yet |
 | [foreman-ops-console](foreman-ops-console/charter.md) | current session | `gate_1_ratified_plan_review_pending` | Charter ratified 2026-09-16 (OQ1–OQ5 decided); D8 standing Gate 2 (FOC-P0–P4) + contingent Gate 3 granted; plan-level adversarial review is the mandatory next step |
+| [pi-routing-adapter-compat](pi-routing-adapter-compat/charter.md) | this `/goal` Pi session (separate queue, 2026-09-24) | `prac_p0_shipped` | D1-D11 ratified; PRAC-P0 memo + probe + evidence delivered, 2-round adversarial review APPROVE WITH NITS; merge b1d3e39; exit criterion met; memo strictly extension/hook-SDK surface, consumed by PMC-P2/P3 by pointer; zero routing authority, zero host write |
 
 ## Frozen or stopped goals
 

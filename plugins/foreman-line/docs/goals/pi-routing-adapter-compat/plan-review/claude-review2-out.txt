@@ -1,0 +1,22 @@
+REVIEW VERDICT
+APPROVE WITH NITS (the merge must use the exact Allowed Files pathspec; see item 11 and new finding 1)
+
+CONFIRMATION
+1 RESOLVED - Section 4.2 says the name is "absent from the enumerated 0.87.1 surface" and "proposes no mapping". The capability/intent sentence is gone.
+2 RESOLVED - Section 5 is pointer-only and names routing-policy/, D7/D8, RCM D1-D14 and PMC. It no longer paraphrases them.
+3 RESOLVED - The control reads snapshot.json, rejects unbounded "does not exist", and checks for routing-policy. The negation exemption is still broad (new finding 2).
+4 RESOLVED - The claim is relabelled as an unverifiable dated observation, and the charter's item 3 is marked superseded. Nit: own-out.txt:6 only says the APIs "exist". It does not say the 0.86.1 prose named them.
+5 RESOLVED - The snapshot records AgentBeforeSettleEvent at 14 and AfterProviderResponseEvent at 5.
+6 RESOLVED - The examples counts (3/3/8) and rpc-client :101/:123 are recorded and match the snapshot.
+7 RESOLVED - The memo now carries the caveat that this was a coordinator observation and is not probe-backed.
+8 RESOLVED - The full hash is present and matches the hash round 1 verified.
+9 RESOLVED - The snapshot now has a command field. But outDir still uses process.cwd() (check-api-surface.mjs:24), so the output location depends on cwd.
+10 RESOLVED - Section 6 uses PowerShell, runs node -v first, and uses Get-FileHash.
+11 NOT RESOLVED - The triage's "goal dir + spec + INDEX" pathspec is not the Allowed Files set. It would also sweep in charter.md, the triage file, the plan-review briefs and outputs, claude-review2.pid, the launch log, and the deletion of claude.pid and codex.pid. The PMC-P0 spec is still dirty in the working tree.
+
+NEW FINDINGS
+1. [minor] The probe writes to join(process.cwd(),'evidence',...). Running it from the repo root would create evidence/ outside the Allowed Files (D6). Anchor the path to import.meta.url, as negative-control.mjs does.
+2. [minor] The negative control's checks are global substring checks, not per row. The absent marker (line 41) and the "not an authorization" flag (line 49) are checked once each, so one row could drop its flag or disposition and the control would still pass. Its exemption for "does not" and "never" also excuses any design line that contains those words.
+3. [nit] If snapshot.json is missing, or an apiSearch key is absent, the control throws TypeError (lines 21 and 34) instead of printing a FAIL line. The exit is still non-zero.
+
+Note: I could not execute node or sha256sum here because permission was denied. The exit-0 claims are backed by negative-control.txt and snapshot.json (versionMatch true, command recorded), not by my own re-run.
