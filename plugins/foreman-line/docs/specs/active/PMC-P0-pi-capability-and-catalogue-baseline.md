@@ -102,44 +102,61 @@ parcel introduces no schema field, executable, test, collector, or dependency.
   quoting this spec or the coordinator lint. No claim is credited by citation
   alone.
 
-- [ ] **AC2 — Enumerated identity resolution.** The in-scope set is exactly the
-  **fifteen** distinct provider/model bindings below. Resolve each against the
+- [ ] **AC2 — Enumerated identity resolution, in two classes.** The in-scope set
+  is exactly the **fifteen** distinct provider/model bindings below, split into
+  **thirteen `catalogue-resolved`** and **two `owner-attested`**. The two classes
+  have different, non-interchangeable success conditions. A binding's class is
+  fixed by the table; the builder may not reclassify one.
+
+  **AC2a — the thirteen `catalogue-resolved` bindings.** Resolve each against the
   catalogue projection to exactly one provider key, one exact model ID, and its
   exact public `baseUrl`. Comparison is **case-sensitive and literal**: no case
   folding, alias substitution, dot/dash conversion, suffix stripping, or URL
   trimming. Zero matches, multiple matches, wrong provider, `:batch` or other
   variant suffixes, and URL mismatch each **refuse** with a named reason.
 
+  **AC2b — the two `owner-attested` bindings (1 and 10).** These are **not**
+  required to resolve in the frozen catalogue, which predates Amendment 03.
+  Record each as **`OWNER_ATTESTED_PENDING_LIVE_AVAILABILITY`**, citing
+  Amendment 03 as the attesting authority. Run the same literal query for the
+  record and report its result verbatim, marked **non-authoritative**. A zero
+  match is the **expected** outcome: it is neither a refusal, nor a failure, nor
+  a contradiction of Amendment 03, and it must not be counted against AC2a.
+  Any capability field unavailable for these bindings is marked `unknown` per
+  AC5, never inferred from the other Opus entries or from model family.
+
   Lane keys: `L1` frontier-coordination/shaping/architecture-risk;
   `L2` adversarial-review/verification/security-audit; `L3`
   complex-implementation; `L4` standard-implementation; `L5` economy;
   `L6` typed-routing-classification (**disabled**, see AC6).
 
-  | # | Provider | Exact model ID | Lane roles |
-  |---|---|---|---|
-  | 1 | `opencode` | `claude-opus-5-5` | L1 primary; L2 fallback |
-  | 2 | `opencode` | `gpt-6-astra` | L1 fallback; L2 primary |
-  | 3 | `opencode` | `gpt-5.6-sol` | L3 primary |
-  | 4 | `opencode` | `claude-sonnet-5` | L3 fallback |
-  | 5 | `opencode` | `deepseek-v4-pro` | L4 primary |
-  | 6 | `opencode` | `gpt-5.6-terra` | L4 fallback |
-  | 7 | `opencode` | `qwen3.8-flash` | L5 primary; L6 recommendation-only primary |
-  | 8 | `opencode` | `glm-5.3-flash` | L5 fallback; L6 recommendation-only fallback |
-  | 9 | `openrouter` | `openai/gpt-6-astra` | L1 primary; L2 fallback |
-  | 10 | `openrouter` | `anthropic/claude-opus-5.5` | L1 fallback; L2 primary |
-  | 11 | `openrouter` | `anthropic/claude-sonnet-5` | L3 primary |
-  | 12 | `openrouter` | `openai/gpt-5.6-sol` | L3 fallback |
-  | 13 | `openrouter` | `openai/gpt-5.6-terra` | L4 primary |
-  | 14 | `openrouter` | `google/gemini-3.8-flash` | L4 fallback; L5 primary |
-  | 15 | `openrouter` | `anthropic/claude-haiku-4.5` | L5 fallback |
+  | # | Provider | Exact model ID | Lane roles | Resolution class |
+  |---|---|---|---|---|
+  | 1 | `opencode` | `claude-opus-5-5` | L1 primary; L2 fallback | **`owner-attested`** (AC2b) |
+  | 2 | `opencode` | `gpt-6-astra` | L1 fallback; L2 primary | `catalogue-resolved` |
+  | 3 | `opencode` | `gpt-5.6-sol` | L3 primary | `catalogue-resolved` |
+  | 4 | `opencode` | `claude-sonnet-5` | L3 fallback | `catalogue-resolved` |
+  | 5 | `opencode` | `deepseek-v4-pro` | L4 primary | `catalogue-resolved` |
+  | 6 | `opencode` | `gpt-5.6-terra` | L4 fallback | `catalogue-resolved` |
+  | 7 | `opencode` | `qwen3.8-flash` | L5 primary; L6 recommendation-only primary | `catalogue-resolved` |
+  | 8 | `opencode` | `glm-5.3-flash` | L5 fallback; L6 recommendation-only fallback | `catalogue-resolved` |
+  | 9 | `openrouter` | `openai/gpt-6-astra` | L1 primary; L2 fallback | `catalogue-resolved` |
+  | 10 | `openrouter` | `anthropic/claude-opus-5.5` | L1 fallback; L2 primary | **`owner-attested`** (AC2b) |
+  | 11 | `openrouter` | `anthropic/claude-sonnet-5` | L3 primary | `catalogue-resolved` |
+  | 12 | `openrouter` | `openai/gpt-5.6-sol` | L3 fallback | `catalogue-resolved` |
+  | 13 | `openrouter` | `openai/gpt-5.6-terra` | L4 primary | `catalogue-resolved` |
+  | 14 | `openrouter` | `google/gemini-3.8-flash` | L4 fallback; L5 primary | `catalogue-resolved` |
+  | 15 | `openrouter` | `anthropic/claude-haiku-4.5` | L5 fallback | `catalogue-resolved` |
+
+  Counts to report: **13** under AC2a and **2** under AC2b. `13 + 2 = 15`; no
+  binding appears in both classes and none is omitted.
 
   **Excluded, not a candidate:** `openrouter` / `typesafe/jev-1.13`, struck by
   M2. Record its catalogue and settings status as an observation only; never
   resolve it as an eligible binding or propose a replacement.
 
-  Bindings 1 and 10 are `owner-attested` per coordinator precondition 3: record
-  the attestation and any stale-export result **without** treating an absence
-  result as a contradiction.
+  Bindings 1 and 10 follow AC2b and coordinator precondition 3. Their live
+  reachability is established later under A6 `live-availability`, never here.
 
 - [ ] **AC3 — Jev and enablement dispositions re-derived.** Independently
   re-derive, from the export only: that `typesafe/jev-1.13` appears in
@@ -156,8 +173,8 @@ parcel introduces no schema field, executable, test, collector, or dependency.
   settings edit as executed. Note: the coordinator lint's earlier "twelve"
   figure was an unenumerated estimate and is **superseded** by the AC2 set.
 
-- [ ] **AC5 — Capability facts per binding.** For each resolved binding record
-  allowlisted facts only: `contextWindow`, `maxTokens`, `input` modalities,
+- [ ] **AC5 — Capability facts per binding.** For each **AC2a
+  catalogue-resolved** binding record allowlisted facts only: `contextWindow`, `maxTokens`, `input` modalities,
   `reasoning`, numeric `cost` fields with documented units, `thinkingLevelMap`
   coverage, and provider `checkedAt`. Mark every absent field `unknown`. Absence
   of a quality field is **not** evidence of merit. State explicitly whether
@@ -386,11 +403,20 @@ Select-String -Path 'plugins/foreman-line/routing-policy/routing-policy.yaml' -P
 # AC4 — enablement gap
 (Get-Content -Raw -LiteralPath "$X/settings-projection.json" | ConvertFrom-Json).enabledModels
 
-# AC2/AC5 — catalogue identities, literal case-sensitive resolution
+# AC2a — the 13 catalogue-resolved bindings, literal case-sensitive resolution.
+# Example uses binding 3. Repeat per AC2a row, substituting the exact
+# provider/id pair. For AC2a ONLY, a zero match is a named refusal.
 $cat = Get-Content -Raw -LiteralPath "$X/catalog-projection.json" | ConvertFrom-Json
-$cat.models | Where-Object { $_.provider -ceq 'opencode' -and $_.id -ceq 'claude-opus-5-5' } |
+$cat.models | Where-Object { $_.provider -ceq 'opencode' -and $_.id -ceq 'gpt-5.6-sol' } |
   Select-Object provider, id, baseUrl, contextWindow, maxTokens, input, reasoning, cost, thinkingLevelMap
-# repeat per AC2 row, substituting the exact provider/id pair; record zero-match as a refusal
+
+# AC2b — bindings 1 and 10 are owner-attested; the frozen catalogue predates
+# Amendment 03. Run these for the record only. A zero match is EXPECTED and
+# NON-AUTHORITATIVE: do not refuse, do not treat it as a contradiction, and do
+# not count it against AC2a. Report the raw result, then record
+# OWNER_ATTESTED_PENDING_LIVE_AVAILABILITY and mark capability fields unknown.
+$cat.models | Where-Object { $_.provider -ceq 'opencode'   -and $_.id -ceq 'claude-opus-5-5' }
+$cat.models | Where-Object { $_.provider -ceq 'openrouter' -and $_.id -ceq 'anthropic/claude-opus-5.5' }
 
 # AC7 — current role vocabulary and tier order
 Select-String -Path 'plugins/foreman-line/routing-policy/routing-policy.yaml' -Pattern 'roles:|model_tiers:|ORDER IS'
@@ -425,8 +451,11 @@ Mandated reviewer focus questions:
 - Does L6 refuse **before** eligibility and ranking, forbid cross-provider
   fallback and any authority-bearing route, and provably terminate without
   assuming provider symmetry?
-- Is the AC2 set exactly fifteen bindings, with Jev excluded and no lane's
-  primary/fallback/recommendation-only role silently reclassified?
+- Is the AC2 set exactly fifteen bindings — thirteen under AC2a and two under
+  AC2b — with Jev excluded, no binding reclassified between the two classes, and
+  no lane's primary/fallback/recommendation-only role silently changed?
+- Was an expected AC2b zero match anywhere reported as a refusal, a failure, or
+  a contradiction of Amendment 03, or counted against the AC2a thirteen?
 - Could a later parcel mistake the role map for ratified authority, or the
   capability baseline for permission to dispatch or enable models?
 - Did the builder edit this spec, promote its status, or reconcile the Jev
