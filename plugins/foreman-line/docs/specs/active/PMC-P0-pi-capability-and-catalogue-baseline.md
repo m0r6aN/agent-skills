@@ -1,7 +1,7 @@
 ---
 ticket: PMC-P0
 title: Pi capability and catalogue baseline
-status: draft
+status: active
 owner: clinton.morgan
 created: 2026-09-23
 updated: 2026-09-24
