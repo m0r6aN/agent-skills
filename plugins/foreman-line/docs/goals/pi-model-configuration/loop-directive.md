@@ -1,7 +1,10 @@
 # Loop Directive — Pi Model Configuration
 
 **Goal slug:** `pi-model-configuration`
-**State:** `PMC-P0 SHAPED — AWAITING GATE 2 DISPATCH APPROVAL`
+**State:** `PMC-P0 GATE 2 GRANTED — PROMOTED, WORKTREE PREPARED, AWAITING BUILDER EXECUTION`
+**Gate 2:** granted by Clinton Morgan 2026-09-24 for PMC-P0 only, with the condition that the builder use a fresh clean worktree on a new unique branch
+**Dispatch pin:** worktree `D:/Repos/wt-pmc-p0`, branch `codex/pmc-p0-evidence`, HEAD `96a24bf7ab3669b79ff7d0b004466846051c6d71`, spec SHA-256 `82d7819c63e59626ff57495ca84c0d386e091f5f9e4c6076c476a253f30b5b71`
+**Builder brief:** `docs/kickstarters/foreman-line-build-PMC-P0.md`
 **Cleared:** Amendment 01 (A1–A8), Amendment 02 (M1–M4), and Amendment 03 Opus correction ratified 2026-09-24
 **Draft spec:** `docs/specs/active/PMC-P0-pi-capability-and-catalogue-baseline.md` at `status: draft`
 **Next human gate:** Gate 2 dispatch approval for PMC-P0
@@ -50,12 +53,16 @@ sequenced with that coordinator before Gate 2 — never co-owned.
    single amendment commit, committed alone, before any code.
 3. **[DONE]** Coordinator lint falsified model identity (L1–L4); owner ratified
    M1–M4 as Amendment 02; PMC-P0 shaped to `draft` against the corrected matrix.
-4. **[NEXT — human gate]** **Gate 2** dispatch approval for PMC-P0, then
-   dispatch a builder in its own worktree/branch with a Step 0
-   restate-and-stop gate. Promotion `draft → active` happens at Gate 2, not
-   before.
-5. **[BLOCKED on 4]** PMC-P0 closure check → deterministic pass → **two**
-   independent adversarial reviews (elevated / architecture-risk) → triage.
+4. **[DONE]** **Gate 2 granted** 2026-09-24. Coordinator promoted the spec
+   `draft → active` on `codex/pmc-p0-evidence` at `96a24bf` (status-only change;
+   body byte-identical to the packet draft `eca4c33`). Clean worktree prepared
+   at `D:/Repos/wt-pmc-p0` from `2f6c7944`. Builder brief written.
+4a. **[NEXT]** Builder executes PMC-P0 in that worktree, beginning with the
+   Step 0 restate-and-stop gate. Coordinator rules on Step 0 flags before any
+   evidence collection begins.
+5. **[BLOCKED on 4a]** PMC-P0 coordinator closure check against disk →
+   deterministic pass → **two** independent adversarial reviews (elevated /
+   architecture-risk) → triage, reproducing disputed findings before ruling.
 6. **[BLOCKED on 5]** Owner ratifies the frozen role/authority map (A5.4) —
    a human gate, required before PMC-P2 starts.
 7. **[BLOCKED on 6]** Sequence Wave 1 with the RCM coordinator before any PMC-P1
