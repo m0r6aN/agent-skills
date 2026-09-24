@@ -1,9 +1,0 @@
-TOP 3 BRUTAL FINDINGS
-1. Splice gap survives: PreEffectReceipts re-stores PermissionId/EffectIdentifier/DescriptorHash as free TEXT not FK-bound to its EffectAttempt, so a receipt can name a different permission/descriptor than its attempt; it also omits P1-C109's frozen attempt-ordinal field, while EffectAttempts forces AttemptOrdinal NOT NULL despite "where applicable".
-2. Proof can pass vacuously: PRAGMA foreign_keys is per-connection and silently no-ops inside BEGIN IMMEDIATE, yet no ordering or independent-verifier-connection setting is mandated; the partial index WHERE TerminalSequence = 1 duplicates UNIQUE(EffectAttemptId, TerminalSequence), contradicting "no redundant index", while sequence>1 without an original terminal remains insertable.
-3. Scope/authority leak: PendingEffectResolutions(ResolutionKind) freezes P2C quarantine/release shape (P1-C113, explicitly Out of Scope), UNIQUE(PermissionId,SpendIndex) silently decides retry-per-spend without P1-C106 replay/retry linkage, and frontmatter surfaces list only agent-skills shaping files while prose makes keon-systems the sole builder authority.
-
-TOP 3 MOVES
-1. Add UNIQUE(EffectAttemptId, PermissionId, EffectIdentifier, DescriptorHash, AttemptOrdinal) to EffectAttempts, add AttemptOrdinal to PreEffectReceipts, and composite-FK all five columns; make AttemptOrdinal nullable or cite why always applicable.
-2. Mandate PRAGMA foreign_keys=ON before BEGIN on every ledger and verifier connection with a test asserting PRAGMA foreign_keys=1 and a splice-rejection negative; drop the redundant partial index and state terminal-ordering enforcement is P2C-owned.
-3. Remove PendingEffectResolutions (or mark its semantics P2C-reserved via Gate-1 amendment), cite the clause authorizing one-attempt-per-spend or STOP, and reconcile frontmatter surfaces with per-repo Allowed Files so no machine reader infers builder authority from shaping paths.

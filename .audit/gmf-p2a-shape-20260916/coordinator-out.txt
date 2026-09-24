@@ -1,8 +1,0 @@
-TOP 3 BRUTAL FINDINGS
-1. The uncommitted draft is a valid handoff artifact but not a completed shaping session; it cannot be treated as reviewed or promoted merely because its branch is current.
-2. The migration's failure-atomicity requirement is the load-bearing technical risk: SQLite DDL must be made transactional so a failed v1-to-v2 transition does not leave a partly-mutated database.
-3. The two-file builder scope is appropriately narrow only if the new test can independently inspect raw SQLite schema/rows; any need to alter contracts, dispatcher wiring, or existing tests must halt for amendment.
-TOP 3 MOVES
-1. Preserve the draft and result as the sole shaping outputs; run a quick independent red-team against the exact bytes and keep status draft.
-2. Require the future builder's Step 0 to re-hash all frozen inputs, reconcile keon-systems' ahead-of-origin base, and prove the two Allowed Files are available in a new isolated worktree.
-3. Require the final P2A verification plan to demonstrate transactionally safe, idempotent migration with raw-SQL external observation and byte-identical effect-path guards before any P2A-only Gate-2 recommendation.
