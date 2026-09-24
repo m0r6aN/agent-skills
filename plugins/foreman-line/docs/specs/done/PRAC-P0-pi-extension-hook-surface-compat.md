@@ -41,7 +41,10 @@ logic. It must not overlap `pi-model-configuration` (model/config/catalogue/reso
   `.d.ts` declarations), captures SHA-256 hashes of each inspected file, greps the exported
   and proposal API names, and writes result + exit status into the evidence snapshot. It
   reports "absent from the enumerated shipped 0.87.1 surface", never "absent at runtime",
-  and exits non-zero on any missing expected path or a version mismatch.
+  and **fails closed (non-zero) on any missing required surface** — the files
+  `docs/index.md`, `docs/extensions.md`, `dist/core/extensions/types.d.ts` and the
+  directories `examples/extensions/` and `dist/` — or on a version mismatch. A missing or
+  empty surface is a refusal, never a pass.
 - **D4 absence bound.** An "absent" disposition is *not found in the enumerated, hashed
   surface* — never "does not exist at runtime."
 - **D10 snapshot-then-restate.** Before any restatement, copy the directive's API claims
@@ -59,8 +62,10 @@ logic. It must not overlap `pi-model-configuration` (model/config/catalogue/reso
   enumerated 0.87.1 surface. No claim is asserted without citation or probe record.
 - [ ] **AC2 — Snapshot.** `evidence/pi-0.87.1/` contains `snapshot.json` (version, resolved
   package root, enumerated inspected-file list + SHA-256 hashes, probe command + exit status)
-  and `probe-output.txt` (raw capture); the probe exits 0 only when every expected path
-  exists and `package.json` is exactly 0.87.1.
+  and `probe-output.txt` (raw capture); the probe exits 0 only when `package.json` is
+  exactly 0.87.1 AND every required surface exists (`docs/index.md`, `docs/extensions.md`,
+  `examples/extensions/`, `dist/`, `dist/core/extensions/types.d.ts`). A missing surface or
+  a version mismatch exits non-zero, proven by `check-api-surface.negative-test.mjs`.
 - [ ] **AC3 — Dispositions, not pre-decided answers.** Each proposal API
   (`beforeLLMTurn`, `ctx.session.updateModel`, `ctx.session.updateThinkingLevel`) carries a
   verified disposition — present / absent-from-enumerated-surface / unverifiable — derived
@@ -110,6 +115,7 @@ logic. It must not overlap `pi-model-configuration` (model/config/catalogue/reso
 ```
 plugins/foreman-line/docs/goals/pi-routing-adapter-compat/compat-memo.md
 plugins/foreman-line/docs/goals/pi-routing-adapter-compat/probe/check-api-surface.mjs
+plugins/foreman-line/docs/goals/pi-routing-adapter-compat/probe/check-api-surface.negative-test.mjs
 plugins/foreman-line/docs/goals/pi-routing-adapter-compat/evidence/pi-0.87.1/snapshot.json
 plugins/foreman-line/docs/goals/pi-routing-adapter-compat/evidence/pi-0.87.1/probe-output.txt
 plugins/foreman-line/docs/goals/pi-routing-adapter-compat/evidence/pi-0.87.1/directive-excerpt.md
@@ -122,9 +128,11 @@ coordinator-ratified amendment.
 
 ## Verification Plan
 
-Deterministic pass: run the probe from the goal directory in PowerShell (`node -v` first;
-`node probe/check-api-surface.mjs`), and confirm exit 0, `snapshot.json` version field
-== `0.87.1`, and every enumerated-file hash matches the file on disk. Coordinator closure
+Deterministic pass (PowerShell, `node -v` first, from the goal directory):
+`node probe/check-api-surface.mjs` (exit 0; `snapshot.json` version == `0.87.1`, every
+enumerated-file hash matches disk), `node probe/check-api-surface.negative-test.mjs` (exit
+0; proves each missing surface and a version mismatch exit non-zero), and
+`node probe/negative-control.mjs` (exit 0). Coordinator closure
 check: read `compat-memo.md` and confirm AC3/AC4/AC5 dispositions against
 `snapshot.json` before re-running anything.
 
