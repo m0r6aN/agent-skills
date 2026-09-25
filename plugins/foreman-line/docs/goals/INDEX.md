@@ -16,6 +16,8 @@ from an index row.
 | Goal | Owner | State | Current authority |
 |---|---|---|---|
 | [governed-model-fleet](governed-model-fleet/charter.md) | /root | gmf_p1_landed_p2a_awaiting_shape | D1-D24 plus A1/P0-P9 ratified; P0 + P1 evidence landed (PRs #28, #33); P1 closure READY; P2A shaping next, no Gate 2 yet |
+| [pi-model-configuration](pi-model-configuration/charter.md) | Pi coordinator session (claimed 2026-09-23) | `pmc_p0_shaped_awaiting_gate_2` | D1-D8 plus Amendments 01 (A1-A8) and 02 (M1-M4) ratified; PMC-P0 draft spec shaped and self-checked; Gate 2 not granted; Wave 1 needs RCM sequencing; no provider spend, no host change |
+| [pi-routing-adapter-compat](pi-routing-adapter-compat/charter.md) | this `/goal` Pi session (separate queue, 2026-09-24) | `gate_1_ratified_entering_prac_p0` | D1-D11 ratified (incl. plan-review amendments + 0.87.1 pin + PMC scope-guard); Gate 2 granted for PRAC-P0 only; contingent Gate 3 (repo-local, green-chain); memo strictly extension/hook-SDK surface, consumed by PMC-P2/P3 by pointer; zero routing authority, zero host write |
 | [foreman-ops-console](foreman-ops-console/charter.md) | current session | `gate_1_ratified_plan_review_pending` | Charter ratified 2026-09-16 (OQ1–OQ5 decided); D8 standing Gate 2 (FOC-P0–P4) + contingent Gate 3 granted; plan-level adversarial review is the mandatory next step |
 | [pi-routing-adapter-compat](pi-routing-adapter-compat/charter.md) | this `/goal` Pi session (separate queue, 2026-09-24) | `prac_p0_shipped` | D1-D11 ratified; PRAC-P0 memo + probe + evidence delivered, 2-round adversarial review APPROVE WITH NITS; merge b1d3e39; exit criterion met; memo strictly extension/hook-SDK surface, consumed by PMC-P2/P3 by pointer; zero routing authority, zero host write |
 

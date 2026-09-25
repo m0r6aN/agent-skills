@@ -1,0 +1,12 @@
+TOP 5 BRUTAL FINDINGS
+1. P0 rework cannot be resumed because the claimed open target does not exist: PR #27 is a merged SUPERCHARGE-P2 analysis, while GMF-P0 is the separately merged PR #28.
+2. Treating a PR number as goal state would bypass the goal's source of truth: the live loop directive explicitly records P0 and P1 as landed and P2A as next.
+3. Dispatching P2A now would breach the governing sequence: P2A needs shaping first and has no Gate-2 approval.
+4. Reopening GMF-P0 without a concrete defect would violate its frozen evidence role and risks corrupting P1's landed input baseline.
+5. The only active coordinator is /root; any resume action must preserve that serialized ownership and the no-inferred-authority rule.
+TOP 5 MOVES
+1. Correct the resume locator in the durable handoff: PR #28 is the closed GMF-P0 parcel; PR #27 is unrelated and closed.
+2. Treat `gmf_p1_landed_p2a_awaiting_shape` as the authoritative state after reconciling main, PR #28, PR #33, and the loop directive.
+3. Start a fresh, docs-only GMF-P2A shaping session against current main, with exact Allowed Files, branch/worktree, contracts, verification, and two-review route.
+4. Lint every factual P2A claim against the frozen P0/P1 records and stop on any needed canon or contract change for a scoped amendment.
+5. After a shaped P2A spec is independently reviewed, present an exact P2A-only Gate-2 request; do not dispatch, implement, or infer external authority before it is granted.

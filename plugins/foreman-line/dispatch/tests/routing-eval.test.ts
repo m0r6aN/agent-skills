@@ -13,7 +13,7 @@
  *
  * Coverage:
  *   - AC2: standard-feature/internal → anthropic/claude-sonnet-5/standard (spec workflowId)
- *   - AC3: architecture/risk/public  → anthropic/claude-opus-5/frontier  (spec workflowId)
+ *   - AC3: architecture/risk/public  → anthropic/claude-opus-5.5/frontier  (spec workflowId)
  *   - AC4: boilerplate/public        → nvidia/nemotron-3.5-lightning/economy
  *   - AC5: implementation/standard/restricted → anthropic/claude-sonnet-5/standard
  *   - AC6: all 12 class × data_classification combinations (eval matrix + transport)
@@ -72,7 +72,7 @@ test('AC2: standard-feature/internal resolves to anthropic/claude-sonnet-5/stand
   }
 })
 
-test('AC3: architecture/risk/public resolves to anthropic/claude-opus-5/frontier', () => {
+test('AC3: architecture/risk/public resolves to anthropic/claude-opus-5.5/frontier', () => {
   const repoRoot = makeTempRepoRoot()
   try {
     const result = evaluateRouting(
@@ -83,7 +83,7 @@ test('AC3: architecture/risk/public resolves to anthropic/claude-opus-5/frontier
       },
       { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
     )
-    assert.equal(result.resolvedModelId, 'anthropic/claude-opus-5')
+    assert.equal(result.resolvedModelId, 'anthropic/claude-opus-5.5')
     assert.equal(result.resolvedTier, 'frontier')
     assert.equal(result.routingDecisionRef, 'docs/receipts/test-wf-002/routing-decision.json')
   } finally {
@@ -173,23 +173,23 @@ const EVAL_MATRIX: EvalCase[] = [
     expectedModel: 'anthropic/claude-sonnet-5',
     expectedTier: 'standard',
   },
-  // architecture/risk → frontier → anthropic/claude-opus-5 (all three data tiers)
+  // architecture/risk → frontier → anthropic/claude-opus-5.5 (all three data tiers)
   {
     routing_class: 'architecture/risk',
     data_classification: 'public',
-    expectedModel: 'anthropic/claude-opus-5',
+    expectedModel: 'anthropic/claude-opus-5.5',
     expectedTier: 'frontier',
   },
   {
     routing_class: 'architecture/risk',
     data_classification: 'internal',
-    expectedModel: 'anthropic/claude-opus-5',
+    expectedModel: 'anthropic/claude-opus-5.5',
     expectedTier: 'frontier',
   },
   {
     routing_class: 'architecture/risk',
     data_classification: 'restricted',
-    expectedModel: 'anthropic/claude-opus-5',
+    expectedModel: 'anthropic/claude-opus-5.5',
     expectedTier: 'frontier',
   },
   // implementation/standard → standard → anthropic/claude-sonnet-5 (all three data tiers)

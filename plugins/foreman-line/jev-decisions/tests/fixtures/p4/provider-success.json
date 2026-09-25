@@ -1,0 +1,16 @@
+{
+  "model": "typesafe/jev-1.13-20260917",
+  "response_id": "p4-success-001",
+  "server_timestamp_utc": "2026-09-21T12:00:02.000Z",
+  "answers": {
+    "is_urgent": { "noul": 0.95, "confidence": 0.95 },
+    "department": {
+      "choice": "billing",
+      "confidence": 0.82,
+      "probabilities": { "billing": 0.88, "technical": 0.12, "sales": 0 }
+    },
+    "frustration": { "score": 1.04, "confidence": 0.94 }
+  },
+  "usage": { "input_tokens": 427, "output_tokens": 73, "total_tokens": 500 },
+  "cost": { "amount": 0.000017934, "currency": "USD" }
+}

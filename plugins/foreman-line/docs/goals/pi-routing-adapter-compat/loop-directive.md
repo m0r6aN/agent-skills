@@ -1,7 +1,7 @@
 # Loop Directive — Pi Routing Adapter Compatibility (PRAC)
 
 **Goal slug:** `pi-routing-adapter-compat`
-**State:** `prac_p0_shipped` — PRAC-P0 delivered and merged (`b1d3e39`); exit criterion met; loop stopped
+**State:** `gate_1_ratified_entering_prac_p0` — Stage Zero closed; PRAC-P0 shaping next
 **Charter:** `plugins/foreman-line/docs/goals/pi-routing-adapter-compat/charter.md`
 **Next human gate:** none between now and merge — Gate 2 (PRAC-P0) and contingent Gate 3 are granted (green-chain-contingent). The loop stops only on a stop condition or the exit criterion.
 

@@ -1,0 +1,59 @@
+{
+  "mode": "dry-run",
+  "state": {
+    "schema_version": "support-triage-input/v1",
+    "values": {
+      "case_type": "billing",
+      "urgency_signal": 0.9,
+      "frustration_signal": 0.8,
+      "contact_channel": "chat"
+    }
+  },
+  "lease": {
+    "lease_id": "lease-11111111111111111111111111111111",
+    "run_id": "run-22222222222222222222222222222222",
+    "claimed_at_utc": "2026-09-22T12:00:00.000Z"
+  },
+  "budget_ack": {
+    "schema_version": "jev-budget/v1",
+    "mode": "provider-hard-budget",
+    "provider": "openrouter",
+    "account_ref": "acct-44444444444444444444444444444444",
+    "cap_amount": 0.01,
+    "currency": "USD",
+    "acknowledged_at_utc": "2026-09-22T12:00:01.000Z",
+    "repository": "agent-skills",
+    "ref": "main",
+    "path": "plugins/foreman-line/jev-decisions/tests/fixtures/complete.json",
+    "commit": "0000000000000000000000000000000000000001",
+    "tree": "1111111111111111111111111111111111111111"
+  },
+  "custody": {
+    "source_ref": "src-33333333333333333333333333333333",
+    "repository": "agent-skills",
+    "ref": "main",
+    "path": "plugins/foreman-line/jev-decisions/tests/fixtures/complete.json",
+    "commit": "0000000000000000000000000000000000000001",
+    "tree": "1111111111111111111111111111111111111111"
+  },
+  "clock": [
+    "2026-09-22T12:00:00.000Z",
+    "2026-09-22T12:00:01.000Z",
+    "2026-09-22T12:00:02.000Z",
+    "2026-09-22T12:00:03.000Z",
+    "2026-09-22T12:00:04.000Z"
+  ],
+  "socket_opened_at_utc": "2026-09-22T12:00:03.000Z",
+  "synthetic_response": {
+    "model": "typesafe/jev-1.13-20260917",
+    "response_id": "r-container-dry-run",
+    "server_timestamp_utc": "2026-09-22T12:00:02.500Z",
+    "answers": {
+      "is_urgent": { "noul": 0.95, "confidence": 0.95 },
+      "department": { "choice": "billing", "confidence": 0.82, "probabilities": { "billing": 0.88, "technical": 0.12, "sales": 0 } },
+      "frustration": { "score": 1.04, "confidence": 0.94 }
+    },
+    "usage": { "input_tokens": 427, "output_tokens": 73, "total_tokens": 500 },
+    "cost": { "amount": 0.000017934, "currency": "USD" }
+  }
+}
