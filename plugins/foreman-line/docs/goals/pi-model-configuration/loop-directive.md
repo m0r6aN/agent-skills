@@ -1,7 +1,8 @@
 # Loop Directive — Pi Model Configuration
 
 **Goal slug:** `pi-model-configuration`
-**State:** `PMC-P0 REWORK COMPLETE + VERIFIED (12→14 negative cases; deterministic pass green) — COORDINATOR FLAG RULINGS ISSUED (F-G/F-H/F-I) — DELTA RE-REVIEW NEXT`
+**State:** `PMC-P0 VERIFICATION CHAIN GREEN — REWORKS ACCEPTED — AT GATE 3 (OWNER MERGE)`
+**Next human gate:** **Gate 3** — merge `codex/pmc-p0-evidence` (the four evidence artifacts + review/triage paper trail) into main. Delegable only behind the full green chain, which is now complete.
 **Cleared:** Amendment 01 (A1–A8), Amendment 02 (M1–M4), Amendment 03 (Opus), and Amendment 04 (AC2a comparator + binding 7 + verification query) ratified 2026-09-24
 **Next human gate:** none; Gate 2 for PMC-P0 already granted and covers the evidence run. The evidence dispatch is a coordinator action.
 
@@ -308,9 +309,15 @@ changes (path audit clean).
    A3), R2 (+ F-C ruling recorded), R3 (distinct refusal names), R4 (L3
    extension), R5 (prefixed record + N13/N14), B5, B6, plus opportunistic R6/R8.
    Negative cases 12 → 14 (tripwire not violated); deterministic pass green.
-5b. **[NEXT]** PMC-P0 **delta re-review** of the changed sections (rubric
-   §1/§2/§4–§7, baseline §2.1/§3.2, role map L3/C5/§4, verification §4/§8/§11–§14)
-   → triage → Gate 3 merge behind a green chain.
+5b. **[DONE]** Delta re-review (CHANGES REQUESTED on a blocking MINOR: the
+   three A3-derived rules were stated flat without a DERIVED label) → rework-2
+   (labels/chips 1–4) + rework-3 (V§9 digests + self-digest `verify=true`).
+   Coordinator verified all on disk; negative-case count 14 unchanged.
+5c. **[NEXT — human gate]** **Gate 3 merge**: the four evidence artifacts
+   (`pmc-p0-capability-baseline.md`, `pmc-p0-suitability-rubric.md`,
+   `pmc-p0-role-lane-map.md`, `pmc-p0-verification.md`) plus the review/triage
+   paper trail (`pmc-p0-review-A/B/delta-findings.md`) ride in the PR on
+   `codex/pmc-p0-evidence` for owner merge.
 6. **[BLOCKED on 5]** Owner ratifies the frozen role/authority map (A5.4) —
    a human gate, required before PMC-P2 starts.
 7. **[BLOCKED on 6]** Sequence Wave 1 with the RCM coordinator before any PMC-P1
