@@ -1,0 +1,26 @@
+node v24.7.0
+pkgRoot D:\nvm\v24.7.0\node_modules\@earendil-works\pi-coding-agent
+installedVersion 0.87.1 (pinned 0.87.1) MATCH
+inspectedFiles 330
+{
+  "proposal names": {
+    "beforeLLMTurn": "absent-from-enumerated-surface",
+    "ctx.session.updateModel": "absent-from-enumerated-surface",
+    "ctx.session.updateThinkingLevel": "absent-from-enumerated-surface",
+    "updateModel": "present (shipped types)",
+    "updateThinkingLevel": "absent-from-enumerated-surface"
+  },
+  "actual surface": {
+    "setModel": "present (shipped types)",
+    "setThinkingLevel": "present (shipped types)",
+    "setActiveTools": "present (shipped types)",
+    "TurnStartEvent": "present (shipped types)",
+    "TurnEndEvent": "present (shipped types)",
+    "BeforeAgentStartEvent": "present (shipped types)",
+    "AgentStartEvent": "present (shipped types)",
+    "AgentBeforeSettleEvent": "present (shipped types)",
+    "BeforeProviderRequestEvent": "present (shipped types)",
+    "AfterProviderResponseEvent": "present (shipped types)"
+  }
+}
+OK

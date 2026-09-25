@@ -76,3 +76,30 @@ with a negative probe).
 **Disposition:** mechanically installed in `scripts/validate-versions.js` +
 `scripts/validate-versions-test.js` (all-entries comparison, committed
 hermetic negative probe over fixture manifests in a temp git repo); PR #29.
+
+## #43 — A version-pinned API-surface fact rots the moment the package updates
+
+Pi 0.86.1 → 0.87.1 silently removed `pi.setModel` / `pi.setThinkingLevel`
+from `docs/extensions.md` prose; the methods survive only in shipped type
+declarations. A memo carrying the 0.86.1 observation as if current would have
+been wrong, and a "does not exist at runtime" absence claim would have been
+unevidenced. Pin the version, hash the enumerated surface, and word "absent"
+as "absent from the enumerated, hashed N-version surface"; re-verify at
+dispatch, never carry a pre-drift finding forward.
+
+**Disposition:** mechanically installed in `probe/check-api-surface.mjs`
+(asserts `package.json` version, SHA-256s the enumerated docs/examples/types
+surface, fails closed on mismatch); narrative-only elsewhere (PRAC-P0).
+
+## #44 — A verdict that lands while a goal already implements it is near-duplicate work
+
+The council directive's "constrained routing adapter" was already being built
+by `pi-model-configuration` (and the contract/resolver/ledger by
+`routing-policy` + RCM + GMF). The overlap was only visible after Stage Zero
+had trusted a stale read of `INDEX.md`; the index and the working tree both
+changed under the session. Reconcile a new concept against the live goal INDEX
+and the live working tree at intake AND again at dispatch.
+
+**Disposition:** narrative-only coordinator judgment; the `/goal` skill
+already mandates the canon/INDEX check at Stage Zero; the live re-check is the
+coordinator's own discipline (PRAC-P0).

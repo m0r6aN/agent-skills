@@ -1,0 +1,23 @@
+REVIEW VERDICT
+REQUEST CHANGES
+
+FOCUS QUESTIONS
+Q1 CONCERN - The table and Section 7 stay within the enumerated surface, but Section 4.2 says a before-LLM-turn model-swap hook "does not exist under the name the proposal used", which is unbounded existence language that D4 forbids.
+Q2 FAIL - The governance paragraph leaves out routing-policy, which AC4 and D5 require. It paraphrases D7/D8 content instead of pointing. Section 4.2 says "Pi exposes the capability as" setModel plus the turn/provider events, which is the "equivalent surface" intent judgment that plan-review finding 6 banned.
+Q3 PASS - snapshot.json has exitStatus 0, versionMatch true, and 329 files. updateModel shippedTypes is 2 and beforeLLMTurn is 0 on all three surfaces. The probe uses stdlib only, never imports Pi, and exits 1 on a version mismatch or fatal error. A missing required path throws before any write, so it still exits non-zero.
+Q4 CONCERN - The "Change model (internal)" row (agent-session.d.ts:518) is marked "internal" and does not carry the "still not an authorization to route" flag. Only the blanket sentence in Section 5 covers it.
+Q5 PASS - The excerpt's SHA-256 matches 0975965d...f38630cf36 on disk. It names two external sources (foreman-router-brief.md:10 and directive.md:15), but the spec names only directive.md. I could not verify it is verbatim because read access to the external source was denied.
+
+FINDINGS
+1. [major] Section 4.2's "Key consequence" is an unbounded absence claim plus a capability or intent mapping. It hands a would-be adapter author a surface description and a path forward (D1/D5 and plan-review finding 6). Delete it or restrict it to the counts.
+2. [major] The governance paragraph omits routing-policy (AC4) and restates D7/D8 substance in parentheses (D2 says pointer, not restatement).
+3. [major] The negative control is weak. It never reads snapshot.json, so it cannot prove "matches recorded dispositions" (AC5). Its "no " exemption regex neutralizes the design-token scan. It does not check for routing-policy or for "does not exist", so it passes a memo that violates Q1 and Q2.
+4. [major] Section 4.3 says 0.86.1 prose named pi.setModel and pi.setThinkingLevel, but there is no 0.86.1 evidence. The charter baseline said the 0.87.1 docs named them, and a grep finds 0 hits in all of docs/. The claim has no source, which breaks AC1.
+5. [minor] The memo names AgentBeforeSettleEvent and AfterProviderResponseEvent as present, but the probe never searched for them, so the snapshot does not back them (AC1). They do exist in types.d.ts:620 and :549.
+6. [minor] The "Docs prose?" column leaves out that setModel and setThinkingLevel each have 3 hits in examples. It also leaves out rpc-client.d.ts:101 and :123 (setModel(provider, modelId), setThinkingLevel).
+7. [minor] The memo says the host directory ~/.pi/agent/extensions/ "exists", but neither the probe nor the snapshot records this (AC1).
+8. [minor] The truncated hash in Section 6 reads "...303cf36"; the real suffix is "...630cf36".
+9. [minor] AC2 asks for the probe command in the snapshot, but none is recorded. The output directory depends on cwd.
+10. [minor] AC6 asks for PowerShell with node -v run first, but Section 6 does not say so and uses sha256sum (use Get-FileHash).
+11. [minor] AC7 risk: the working tree also modifies PMC-P0's spec (another goal) and has plan-review scratch files outside Allowed Files. The merge needs an explicit pathspec.
+12. [minor] The updateModel explanation is correct: both hits are updateModelSnapshot (a private field) and updateModels (a UI component). Keep it as written.

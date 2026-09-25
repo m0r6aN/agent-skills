@@ -73,8 +73,8 @@ The exact output is:
 }
 ```
 
-No other keys are allowed. The values are copied from the validated P1 answer
-slots by exact answer name and type; confidence, distributions, criteria,
+No other keys are allowed. The values are copied from the canonical validated
+P1 answer slots by exact answer name and type; confidence, distributions, criteria,
 provider metadata, routing instructions, commands, recipients, capability
 tokens, authorization decisions, and effect descriptions are not copied.
 
@@ -95,7 +95,7 @@ tokens, authorization decisions, and effect descriptions are not copied.
 
 ## Acceptance Criteria
 
-- [ ] **AC1 — Exact advisory:** The output has exactly the five named keys and
+- [ ] **AC1 — Exact advisory:** The output has exactly the six named keys and
   exact literals `schema_version: "support-triage-advisory/v1"` and
   `source: "jev"`.
 - [ ] **AC2 — Exact answer mapping:** `is_urgent`, `department`, and
@@ -118,9 +118,10 @@ tokens, authorization decisions, and effect descriptions are not copied.
 
 ## Required tests and reviews
 
-- A complete valid response maps to the exact five-key advisory object.
-- Answer order permutations are rejected by the P1 validator before consumer
-  use; the consumer itself uses exact answer names and types.
+- A complete valid response maps to the exact six-key advisory object.
+- Answer order permutations are rejected by the P1 validator and by the
+  consumer boundary before use; the consumer uses the canonical answer slots
+  and exact answer names and types.
 - Wrong answer names/types, missing answers, extra fields, malformed values,
   missing response ID, and invalid response envelopes cannot produce an
   advisory.
