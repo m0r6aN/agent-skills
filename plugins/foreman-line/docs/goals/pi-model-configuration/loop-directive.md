@@ -1,7 +1,7 @@
 # Loop Directive — Pi Model Configuration
 
 **Goal slug:** `pi-model-configuration`
-**State:** `PMC-P0 AMENDMENT 04 RATIFIED + RE-PROMOTED + BRIEF RE-PINNED — EVIDENCE RUN RESUMING (fresh builder dispatch, re-pinned digests)`
+**State:** `PMC-P0 EVIDENCE RUN COMPLETE (4 files written) — CLOSURE CHECK + DETERMINISTIC PASS GREEN — TWO ADVERSARIAL REVIEWS DONE (Review A CHANGES REQUESTED, Review B ACCEPT) — TRIAGED, REWORK DISPATCHED`
 **Cleared:** Amendment 01 (A1–A8), Amendment 02 (M1–M4), Amendment 03 (Opus), and Amendment 04 (AC2a comparator + binding 7 + verification query) ratified 2026-09-24
 **Next human gate:** none; Gate 2 for PMC-P0 already granted and covers the evidence run. The evidence dispatch is a coordinator action.
 
@@ -194,6 +194,40 @@ ratified Amendment 04. Per the loop's amendment-before-code rule, the
 coordinator will not let any builder resolve R1–R3 unilaterally, and will not
 edit the spec outside a ratified, re-promoted amendment.
 
+## PMC-P0 adversarial review and triage (2026-09-25)
+
+Two independent frontier reviews ran read-only (no Edit/Write, no commit)
+after the coordinator closure check and deterministic pass both went green. Both
+reviews independently recomputed the three export digests, the spec digest, the
+AC2 counts (12 + binding 7 `AC2A_ZERO_MATCH`, AC2b 0/0), and enablement 0 of 15 —
+all match the artifact and the coordinator pass.
+
+- **Review A (general): CHANGES REQUESTED.** One MAJOR, several MINOR/INFO.
+- **Review B (acquisition & leakage): ACCEPT.** No blocker; two LOW wording
+  items; export unchanged, no credential/host material quoted, no
+  availability upgrade, honest refusals.
+
+### Triage (fix / accept-as-documented / informational)
+
+| ID | Sev (reviewer) | Finding | Disposition (coordinator) |
+|---|---|---|---|
+| R1 | MAJOR | Rubric tie-break/ordering: §4 preamble "equal on all ordering keys" contradicts step-1 L5 "cheapest by R5" and the A3 per-lane provider rule; the provider rule's position (filter-before vs tie-break-after R5/R7) is unstated, so its independence not-drift intent (A3) is weakened and PMC-P1 would encode ambiguity. | **FIX (rework)** — encode A3 precisely: provider rule is per-lane and declared; frontier/L2 pin the single declared provider (partition), economy is cheapest-eligible (R5 dominant), standard is declared preference; R7 orders within the selected provider; steps 3–4 resolve residual ties; drop/repair the "equal on all ordering keys" contradiction. |
+| R2 | MINOR | Rubric §6 prose says R6/R7/tool-use are "not" provider-call inputs, contradicting the table above it; builder self-ruled a spec stop condition. | **FIX (rework) + coordinator ruling F-C**: AC6's "route to A6" governs over the generic stop condition; R6/R7 being unpopulatable is the known expected state of a static-conformance parcel. Routing to A6 is correct, not a stop. |
+| R3 | MINOR | AC2a "wrong provider" folded into `AC2A_ZERO_MATCH` with a parenthetical; PMC-P1 loses the distinct refusal name. | **FIX (rework)** — preserve the distinct named refusal (`WRONG_PROVIDER` vs `AC2A_ZERO_MATCH` vs case-mismatch). |
+| R4 | MINOR | A3's declared-preference wording names standard lanes only; applying it to L3 is an extension not labelled as such. | **FIX (rework)** — label the L3 declared-preference as an explicit extension of A3 (standard-lane wording), not a direct A3 statement. |
+| R5 | MINOR | Baseline §2.1 / V§4,V§8 miss the vendor-prefixed record `openrouter/qwen/qwen3.8-flash` (catalogue line 14869) and have no negative case for alias-by-prefix-stripping. | **CONFIRMED on disk** (record exists: provider `openrouter`, id `qwen/qwen3.8-flash`, `…/api/v1`). **FIX (rework)** — record it as an observation (different provider + prefixed id, not binding 7) and add the alias-by-prefix-stripping negative case. |
+| R6 | INFO | Role map §3 C5 labels "L1 primary / L2 primary (bindings 2, 9)" loosely (2 is L1-fallback/L2-primary; 9 is L1-primary/L2-fallback). | accept-as-documented (the §2 table is correct; reword if touching role map). |
+| R7 | INFO | `pi-openrouter.ts` `PI_OPENROUTER_ENABLED_MODELS` enables 11,13,14 while settings enables none — a useful divergence not recorded. | accept-as-documented; note as downstream static-conformance input for PMC-P2. |
+| R8 | INFO | Rubric §5 bullet "no step compares or depends on providers" overstated (step 3 checks cross-provider fallback). | accept-as-documented (termination proof stands; reword opportunistically). |
+| R9 | INFO | Verification record not self-hashed; spec pwsh block never verbatim (F-B). | accept-as-documented (both disclosed; rework regenerates artifact digests + self-hash if the rework touches V§9). |
+| B5 | LOW | Baseline §2.1 "records a real catalogue gap" reads as a flat absence claim; precondition 2 says the export is never an absence proof. | **FIX (rework)** — scope to "in the frozen, freshness-unaccepted export". |
+| B6 | LOW | Rubric §6 R6 row "reachability/enablement is only observable live" — enablement IS statically observable (AC4 0 of 15). | **FIX (rework)** — drop "/enablement"; only reachability is live-only. |
+
+No finding changes a locked decision; nothing re-opens Gate 1. The rework is an
+in-parcel fix of the four evidence artifacts within AC6's "documented stable
+tie-break order" requirement and the provenance/negative-case completeness, not
+a spec amendment.
+
 ## Standing authorizations (verbatim, with contingencies)
 
 | Gate / action | State |
@@ -227,13 +261,18 @@ edit the spec outside a ratified, re-promoted amendment.
    documented `AC2A_ZERO_MATCH` acceptable evidence; AC2a outcome = 12 resolutions
    + 1 refusal), D-c1 (verification query corrected to `providers[].models[]`).
    Isolated amendment commit `430b204` + spec re-promotion + brief re-pin.
-4d. **[NEXT]** Resume the PMC-P0 evidence run in `D:/Repos/wt-pmc-p0` under the
-   re-pinned four-file write envelope (spec `133a7690…`, brief `f953f8ab…`): full
-   AC2 (13 attempted = 12 resolutions + binding 7 `AC2A_ZERO_MATCH`), AC3–AC7, and
-   the four evidence artifacts, returning the AC-by-AC completion claim.
-5. **[BLOCKED on 4d]** PMC-P0 coordinator closure check against disk →
-   deterministic pass (PowerShell 7 / `pwsh`, `node -v` first) → **two**
-   independent adversarial reviews (elevated / architecture-risk) → triage.
+4d. **[DONE]** Evidence run completed under the re-pinned envelope: all four
+   evidence files written; AC2 = 13 attempted (12 resolutions + binding 7
+   `AC2A_ZERO_MATCH`) + 2 AC2b (0/0 expected); enabled 0 of 15; Jev enabled-true /
+   uncatalogued; SCF-1/2/3 endpoint findings; H-* holds recorded.
+5.  **[DONE]** Coordinator closure check (spec `133a7690…`, brief `f953f8ab…`, 3
+   export digests, path audit = exactly four files) + deterministic pass under
+   PowerShell 7 (`pwsh`, `node -v` first) + **two** independent adversarial
+   reviews (elevated / architecture-risk) → **triage recorded** (see below).
+5a. **[NEXT]** PMC-P0 **rework** (own Step 0 gate + negative-case-count tripwire)
+   against the triaged findings R1–R9 (Review A) and B5–B6 (Review B).
+5b. **[BLOCKED on 5a]** Rework closure + deterministic pass → re-review (the
+   changed sections only) → Gate 3 merge behind a green chain.
 6. **[BLOCKED on 5]** Owner ratifies the frozen role/authority map (A5.4) —
    a human gate, required before PMC-P2 starts.
 7. **[BLOCKED on 6]** Sequence Wave 1 with the RCM coordinator before any PMC-P1
