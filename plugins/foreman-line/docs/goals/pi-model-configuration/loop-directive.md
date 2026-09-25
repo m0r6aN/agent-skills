@@ -1,8 +1,8 @@
 # Loop Directive — Pi Model Configuration
 
 **Goal slug:** `pi-model-configuration`
-**State:** `PMC-P0 EVIDENCE RUN STOPPED (AC2a endpoint-mismatch stop) — COORDINATOR REPRODUCED; LOOP STOPPED AWAITING SCOPED GATE 1 RE-OPEN (Amendment 04) OWNER DECISION`
-**Cleared:** Amendment 01 (A1–A8), Amendment 02 (M1–M4), and Amendment 03 Opus correction ratified 2026-09-24
+**State:** `PMC-P0 AMENDMENT 04 RATIFIED + RE-PROMOTED + BRIEF RE-PINNED — EVIDENCE RUN RESUMING (fresh builder dispatch, re-pinned digests)`
+**Cleared:** Amendment 01 (A1–A8), Amendment 02 (M1–M4), Amendment 03 (Opus), and Amendment 04 (AC2a comparator + binding 7 + verification query) ratified 2026-09-24
 **Next human gate:** none; Gate 2 for PMC-P0 already granted and covers the evidence run. The evidence dispatch is a coordinator action.
 
 ## Dispatch record — PMC-P0 (authoritative)
@@ -15,12 +15,12 @@ on a fresh clean worktree on a new unique branch.
 | Worktree | `D:/Repos/wt-pmc-p0` |
 | Branch | `codex/pmc-p0-evidence` |
 | Branch created from | `2f6c79446a2eeb9f766f22c759721cb91ffa6e67` |
-| Spec promoted at | `96a24bf7ab3669b79ff7d0b004466846051c6d71` (status-only; body byte-identical to packet draft `eca4c33`) |
+| Spec promoted at | `96a24bf7ab3669b79ff7d0b004466846051c6d71` (status-only); **re-promoted under Amendment 04** (AC2a semantics + verification query), digest re-pinned |
 | Spec path | `docs/specs/active/PMC-P0-pi-capability-and-catalogue-baseline.md` |
 | Spec status | `active` |
-| **Spec SHA-256** | `82d7819c63e59626ff57495ca84c0d386e091f5f9e4c6076c476a253f30b5b71` |
+| **Spec SHA-256** | `133a7690b865d460586e77fb3ee5440116513272db299eceb52b09f8f81b72eb` |
 | Builder brief | `docs/kickstarters/foreman-line-build-PMC-P0.md` |
-| **Brief SHA-256** | `9c811c47ed0ae62c989b1a6b3cd3ec470e991aff1600e2e38e9f2d50dccc0ef5` (7974 bytes) |
+| **Brief SHA-256** | `f953f8abd9cb6e81c87f6091191be8a8a05ac9561469a1f693df2dd2ae1aa941` (10014 bytes) |
 
 The brief deliberately carries **no** commit SHA gate and **no** self-digest.
 Its refusal gates are content identities — worktree path, branch, spec digest +
@@ -34,6 +34,15 @@ touching the spec: `5eef2f3` added the approved brief (byte-identical, blob
 `cfb2830d`); `6559f50` replaced the brittle HEAD self-pin with content gates;
 `a05bc92` removed the self-referential brief digest.
 
+**Amendment 04 re-pin.** Owner ratified D-a1/D-b1/D-c1 2026-09-24. The isolated
+Amendment 04 commit (`430b204`) carries the amendment file plus the spec
+re-promotion (AC2a semantics, AC2 counts, `providers[].models[]` verification
+query, governing-set references to Amendments 01–04, Forbidden-Files list
+including `gate-1-amendment-04.md`) and the builder brief re-pin (new G3 spec
+digest, the four-trap framing, the 13 = 12+1 completion-claim shape, and the
+endpoint/binding-7 stop exclusions). The digests above are the authoritative
+re-pinned values.
+
 ## Ownership block
 
 | Field | Value |
@@ -41,7 +50,7 @@ touching the spec: `5eef2f3` added the approved brief (byte-identical, blob
 | Coordinator | **claimed** by this Pi session on 2026-09-23 at the PMC-P0 boundary, on the owner's explicit direction ("Yes claim the coordinator role and open the PMC-P0 shaping session now") |
 | Claim rule | one goal, one coordinator; transfers only at a parcel boundary |
 | Owner | Clinton Morgan |
-| Last state change | 2026-09-24 — evidence run dispatched under the four-file write envelope; builder stopped cleanly at AC2a (endpoint-mismatch stop condition, wrote nothing); coordinator reproduced the findings on disk; loop stopped awaiting owner decision on Amendment 04 (D-a AC2a comparator, D-b binding 7, D-c verification-command fix) |
+| Last state change | 2026-09-24 — owner ratified Amendment 04 (D-a1, D-b1, D-c1); isolated amendment commit `430b204` folds the spec re-promotion + brief re-pin; evidence run resuming under re-pinned digests (spec `133a7690…`, brief `f953f8ab…`) |
 
 The PMC-P0 shaping session ran coordinator lint first. Its Opus absence finding
 is now historical: Amendment 03 corrects it to the confirmed OpenCode and
@@ -208,16 +217,21 @@ edit the spec outside a ratified, re-promoted amendment.
    `draft → active` at `96a24bf`; clean worktree prepared; builder dispatched
    fresh; **builder Step 0 complete and coordinator ruling issued** (see *Step 0
    ruling* section above — flags F1–F6 all cleared, no amendment).
-4b. **[PAUSED on 4c]** Builder evidence run in `D:/Repos/wt-pmc-p0` under the
-   least-privilege four-file write envelope: verified the three export digests
-   (all match) and ran AC2 resolution, then **stopped on the endpoint-mismatch
-   stop condition with no files written**. Coordinator reproduced on disk.
-4c. **[NEXT — human gate]** Scoped Gate 1 re-open (Amendment 04): owner decides
-   D-a (AC2a "URL mismatch" comparator), D-b (binding 7 disposition), and
-   confirms the D-c verification-command field fix. Coordinator drafts Amendment
-   04 on ratification, commits it alone, re-promotes the spec (new digest), then
-   resumes the evidence run at AC2.
-5. **[BLOCKED on 4b]** PMC-P0 coordinator closure check against disk →
+4b. **[DONE]** Builder evidence run (first attempt) under the four-file write
+   envelope: verified the three export digests (all match) and ran AC2 resolution,
+   then **stopped on the endpoint-mismatch stop condition with no files written**.
+   Coordinator reproduced on disk and routed R1–R3 to Amendment 04.
+4c. **[DONE]** Amendment 04 scoped Gate 1 re-open ratified by owner 2026-09-24:
+   D-a1 (AC2a "URL mismatch" is catalogue-internal only; catalogue-vs-settings
+   divergence is a static-conformance finding for PMC-P1/P2), D-b1 (binding 7 =
+   documented `AC2A_ZERO_MATCH` acceptable evidence; AC2a outcome = 12 resolutions
+   + 1 refusal), D-c1 (verification query corrected to `providers[].models[]`).
+   Isolated amendment commit `430b204` + spec re-promotion + brief re-pin.
+4d. **[NEXT]** Resume the PMC-P0 evidence run in `D:/Repos/wt-pmc-p0` under the
+   re-pinned four-file write envelope (spec `133a7690…`, brief `f953f8ab…`): full
+   AC2 (13 attempted = 12 resolutions + binding 7 `AC2A_ZERO_MATCH`), AC3–AC7, and
+   the four evidence artifacts, returning the AC-by-AC completion claim.
+5. **[BLOCKED on 4d]** PMC-P0 coordinator closure check against disk →
    deterministic pass (PowerShell 7 / `pwsh`, `node -v` first) → **two**
    independent adversarial reviews (elevated / architecture-risk) → triage.
 6. **[BLOCKED on 5]** Owner ratifies the frozen role/authority map (A5.4) —
@@ -258,11 +272,13 @@ All charter stop conditions remain in force. Additionally, stop and report if:
 
 ## Hook-condition note
 
-Four human gates remain agent-uncompletable: the **Amendment 04 scoped Gate 1
-re-open** (D-a/D-b), **Gate 2** dispatch approval (for later parcels), the
-**role/authority map ratification** (A5.4), and **Gate 3** merge/activation. The
-PMC-P0 loop is currently stopped at the first of these. If this goal is run under
-a stop-hook whose condition is phrased as any of those, or as "charter
-implemented", the session will trap in a stop → feedback → stop cycle.
-Agent-verifiable end states are of the form **"stop-report written and loop
-stopped awaiting <named gate>"**.
+Three human gates remain agent-uncompletable: **Gate 2** dispatch approval (for
+later parcels), the **role/authority map ratification** (A5.4), and **Gate 3**
+merge/activation. Amendment 04's scoped Gate 1 re-open is **ratified** (closed
+2026-09-24). PMC-P0 is currently in its agent-completable evidence run under the
+existing Gate 2 grant — awaiting the builder's evidence completion claim, not a
+human gate. If this goal is run under a stop-hook whose condition is phrased as
+any of the remaining human gates, or as "charter implemented", the session will
+trap in a stop → feedback → stop cycle. Agent-verifiable end states are of the
+form **"builder evidence completion claim pending"** or **"stop-report written
+and loop stopped awaiting <named gate>"**.
