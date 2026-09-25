@@ -51,7 +51,17 @@ re-pinned values.
 | Coordinator | **claimed** by this Pi session on 2026-09-23 at the PMC-P0 boundary, on the owner's explicit direction ("Yes claim the coordinator role and open the PMC-P0 shaping session now") |
 | Claim rule | one goal, one coordinator; transfers only at a parcel boundary |
 | Owner | Clinton Morgan |
-| Last state change | 2026-09-24 — owner ratified Amendment 04 (D-a1, D-b1, D-c1); isolated amendment commit `430b204` folds the spec re-promotion + brief re-pin; evidence run resuming under re-pinned digests (spec `133a7690…`, brief `f953f8ab…`) |
+| Last state change | 2026-09-25 — fresh Pi session resumed the goal (prior coordinator session dead at the 5b→5c boundary); verified the closed chain on disk, pushed `codex/pmc-p0-evidence` to origin, and opened the Gate 3 PR for owner merge |
+
+**Resume record (2026-09-25).** The prior coordinator session ended after rework-3 was
+verified on disk (5b). The resuming session re-verified the state without re-running
+anything: worktree `D:/Repos/wt-pmc-p0` on `codex/pmc-p0-evidence` at `b754a50`, spec
+digest `133a7690…` and brief digest `f953f8ab…` matching the dispatch pin, all four
+evidence artifacts plus the review/triage paper trail present in
+`docs/goals/pi-model-configuration/`. Verification chain was already closed (two
+independent reviews + delta re-review + rework-3, deterministic pass green). The only
+open agent action was publishing the branch and opening the Gate 3 PR. The loop is now
+**stopped awaiting Gate 3 (owner merge)**. Stage-F closure happens after merge.
 
 The PMC-P0 shaping session ran coordinator lint first. Its Opus absence finding
 is now historical: Amendment 03 corrects it to the confirmed OpenCode and
