@@ -1,10 +1,9 @@
 # Loop Directive — Pi Model Configuration
 
 **Goal slug:** `pi-model-configuration`
-**State:** `PMC-P0 VERIFICATION CHAIN GREEN — REWORKS ACCEPTED — AT GATE 3 (OWNER MERGE)`
-**Next human gate:** **Gate 3** — merge `codex/pmc-p0-evidence` (the four evidence artifacts + review/triage paper trail) into main. Delegable only behind the full green chain, which is now complete.
+**State:** `PMC-P0 SHIPPED — PR #47 merged into main; Stage-F closed (spec → done/); PMC-P1+ await A5.4 ratification, RCM sequencing, and per-parcel Gate 2`
+**Next human gate:** **A5.4 role/authority map ratification** (required before PMC-P2); then RCM sequencing before any PMC-P1 Gate 2.
 **Cleared:** Amendment 01 (A1–A8), Amendment 02 (M1–M4), Amendment 03 (Opus), and Amendment 04 (AC2a comparator + binding 7 + verification query) ratified 2026-09-24
-**Next human gate:** none; Gate 2 for PMC-P0 already granted and covers the evidence run. The evidence dispatch is a coordinator action.
 
 ## Dispatch record — PMC-P0 (authoritative)
 
@@ -51,7 +50,7 @@ re-pinned values.
 | Coordinator | **claimed** by this Pi session on 2026-09-23 at the PMC-P0 boundary, on the owner's explicit direction ("Yes claim the coordinator role and open the PMC-P0 shaping session now") |
 | Claim rule | one goal, one coordinator; transfers only at a parcel boundary |
 | Owner | Clinton Morgan |
-| Last state change | 2026-09-25 — fresh Pi session resumed the goal (prior coordinator session dead at the 5b→5c boundary); verified the closed chain on disk, pushed `codex/pmc-p0-evidence` to origin, and opened the Gate 3 PR for owner merge |
+| Last state change | 2026-09-25 — Gate 3 merged (PR #47 → main); Stage-F closed: spec moved to `done/`, INDEX/loop-directive updated, lessons #45–#46 appended. Goal exit criterion for PMC-P0 met; Wave-0 complete. |
 
 **Resume record (2026-09-25).** The prior coordinator session ended after rework-3 was
 verified on disk (5b). The resuming session re-verified the state without re-running
@@ -323,7 +322,8 @@ changes (path audit clean).
    three A3-derived rules were stated flat without a DERIVED label) → rework-2
    (labels/chips 1–4) + rework-3 (V§9 digests + self-digest `verify=true`).
    Coordinator verified all on disk; negative-case count 14 unchanged.
-5c. **[NEXT — human gate]** **Gate 3 merge**: the four evidence artifacts
+5c. **[DONE]** **Gate 3 merge** (PR #47 → main, 2026-09-25); Stage-F closure committed on
+   `codex/pmc-p0-stage-f`. Evidence shipped: the four evidence artifacts
    (`pmc-p0-capability-baseline.md`, `pmc-p0-suitability-rubric.md`,
    `pmc-p0-role-lane-map.md`, `pmc-p0-verification.md`) plus the review/triage
    paper trail (`pmc-p0-review-A/B/delta-findings.md`) ride in the PR on

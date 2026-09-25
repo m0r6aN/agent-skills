@@ -103,3 +103,39 @@ and the live working tree at intake AND again at dispatch.
 **Disposition:** narrative-only coordinator judgment; the `/goal` skill
 already mandates the canon/INDEX check at Stage Zero; the live re-check is the
 coordinator's own discipline (PRAC-P0).
+
+## #45 — A refusal gate must name its comparator, and a shaped spec's example query must run against the real data shape
+
+AC2a listed "URL mismatch" as a refusal without saying what the `baseUrl` was
+compared against; under the plausible catalogue-vs-settings reading, 8 of 12
+otherwise-resolving bindings refused and the mandated "counts: 13 under AC2a"
+collapsed. Separately the Verification Plan's `$cat.models | Where-Object …`
+returned nothing because the real top level is `providers[].models[]` — run
+literally it emits a false `AC2A_ZERO_MATCH` for every binding. Both survived
+the advisory drafting self-check, which never executed the example query. Rules:
+have the shaping/verification step execute a spec's example command against the
+real data shape before promotion, and make every "mismatch"/"absent"/"zero-match"
+refusal name exactly what it is compared against (here: catalogue-internal only,
+per Amendment 04 D-a1).
+
+**Disposition:** the correct operand is now in the spec body (Amendment 04 D-c1,
+`providers[].models[]`) and the comparator is fixed (D-a1). Open disposition: the
+draft self-check is advisory-only and did not catch the field bug — extend it to
+execute spec example queries when the shaping package is next touched (PMC-P0).
+
+## #46 — Identity-resolution "present"/"absent" claims must match on provider AND id, never id alone
+
+Coordinator-lint L5 reported `qwen3.8-flash` "present" by matching the id anywhere
+in the catalogue. The id exists only under `opencode-go`, `qwen-token-plan`, and
+`openrouter/qwen/…` — never under the `opencode` provider the AC2 matrix requires,
+so binding 7 (`opencode/qwen3.8-flash`) is a real `AC2A_ZERO_MATCH`. A
+provider-blind presence claim falsified a locked matrix row and only surfaced when
+a builder resolved it literally. Rule: any catalogue presence/vendor/id claim is
+matched on `provider` + `id` together, case-sensitively, and a per-provider
+absence is never asserted as a cross-provider absence (the export is not an
+absence proof).
+
+**Disposition:** mechanically installed in the builder brief (literal
+`provider`+`id` resolution, the 12+1 / `AC2A_ZERO_MATCH` trap, and
+`AC2A_WRONG_PROVIDER`/`AC2A_PREFIX_ALIAS_REFUSED` diagnostics); the coordinator
+lint should match on the paired key too (PMC-P0).
