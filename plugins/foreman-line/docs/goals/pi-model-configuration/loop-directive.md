@@ -1,7 +1,7 @@
 # Loop Directive — Pi Model Configuration
 
 **Goal slug:** `pi-model-configuration`
-**State:** `PMC-P0 EVIDENCE RUN COMPLETE (4 files written) — CLOSURE CHECK + DETERMINISTIC PASS GREEN — TWO ADVERSARIAL REVIEWS DONE (Review A CHANGES REQUESTED, Review B ACCEPT) — TRIAGED, REWORK DISPATCHED`
+**State:** `PMC-P0 REWORK COMPLETE + VERIFIED (12→14 negative cases; deterministic pass green) — COORDINATOR FLAG RULINGS ISSUED (F-G/F-H/F-I) — DELTA RE-REVIEW NEXT`
 **Cleared:** Amendment 01 (A1–A8), Amendment 02 (M1–M4), Amendment 03 (Opus), and Amendment 04 (AC2a comparator + binding 7 + verification query) ratified 2026-09-24
 **Next human gate:** none; Gate 2 for PMC-P0 already granted and covers the evidence run. The evidence dispatch is a coordinator action.
 
@@ -228,6 +228,41 @@ in-parcel fix of the four evidence artifacts within AC6's "documented stable
 tie-break order" requirement and the provenance/negative-case completeness, not
 a spec amendment.
 
+### Rework closure + coordinator flag rulings (2026-09-25)
+
+Rework verified on disk (coordinator re-ran the deterministic pass on the
+reworked artifacts; `node -v` first, then a Node-equivalent pass — the spec's
+permitted alternative — green): 3 export digests match; AC2a 12 + binding 7
+`AC2A_ZERO_MATCH`; AC2b 0/0; enabled 0 of 15; Jev enabled-true/uncatalogued;
+prefixed `openrouter/qwen/qwen3.8-flash` = 1 record (confirming R5). Negative-case
+count 12 → 14; artifact digests regenerated. The four files remain the only
+changes (path audit clean).
+
+- **F-G (refusal-name encoding) — ACCEPT set form.** Binding 7 keeps its
+  D-b1-mandated name `AC2A_ZERO_MATCH` as the primary; the additionally diagnosed
+  conditions (`AC2A_WRONG_PROVIDER`, `AC2A_PREFIX_ALIAS_REFUSED`, etc.) are recorded
+  as a **diagnostic set** alongside it. This satisfies both D-b1 and R3's
+  distinct-name requirement.
+- **F-H (three derived rules) — ACCEPT as documented, marked derived.**
+  `PINNED_PROVIDER_NO_ELIGIBLE` (proposed name), pin-as-**partition** (a fallback
+  never crosses the pinned provider), and L3/L4 "declared preference" = **ordered
+  preference** (not a partition) are each faithful readings of A3 ("pin a single
+  declared provider", "declare their preference explicitly"). They are within AC6's
+  mandate to state the tie-break explicitly, they are labelled "derived from A3",
+  and they do **not** freeze the map — the role map and provider declarations stay
+  `awaiting-owner-ratification` (A5.4).
+- **F-I (tooling) — ACCEPT as documented.** Same as F-B: the spec's Verification
+  Plan permits an equivalent Node script; the coordinator's own PowerShell-7 pass
+  (`node -v` first) is the authoritative deterministic pass and is green. Review B
+  independently confirmed the blocked commands are honest refusals, not a hidden
+  boundary problem.
+- **Still-held (unchanged):** F-A (spec misnames the Jev location — `routing-policy.yaml`
+  has no `jev`; the gap is real and correctly not fixed — spec-hygiene note for a
+  later pass), F-D (Pi 0.86.1 semantics not re-verified; launching Pi is
+  prohibited → A6/PMC-P2), F-E (tool-use/structured-output → A6 probes / fresh RCM
+  export), F-F (manifest still lists `anthropic/claude-opus-5`; predates amendment 03,
+  consistent with AC2b).
+
 ## Standing authorizations (verbatim, with contingencies)
 
 | Gate / action | State |
@@ -269,10 +304,13 @@ a spec amendment.
    export digests, path audit = exactly four files) + deterministic pass under
    PowerShell 7 (`pwsh`, `node -v` first) + **two** independent adversarial
    reviews (elevated / architecture-risk) → **triage recorded** (see below).
-5a. **[NEXT]** PMC-P0 **rework** (own Step 0 gate + negative-case-count tripwire)
-   against the triaged findings R1–R9 (Review A) and B5–B6 (Review B).
-5b. **[BLOCKED on 5a]** Rework closure + deterministic pass → re-review (the
-   changed sections only) → Gate 3 merge behind a green chain.
+5a. **[DONE]** Rework complete and verified on disk: R1 (rubric ordering per
+   A3), R2 (+ F-C ruling recorded), R3 (distinct refusal names), R4 (L3
+   extension), R5 (prefixed record + N13/N14), B5, B6, plus opportunistic R6/R8.
+   Negative cases 12 → 14 (tripwire not violated); deterministic pass green.
+5b. **[NEXT]** PMC-P0 **delta re-review** of the changed sections (rubric
+   §1/§2/§4–§7, baseline §2.1/§3.2, role map L3/C5/§4, verification §4/§8/§11–§14)
+   → triage → Gate 3 merge behind a green chain.
 6. **[BLOCKED on 5]** Owner ratifies the frozen role/authority map (A5.4) —
    a human gate, required before PMC-P2 starts.
 7. **[BLOCKED on 6]** Sequence Wave 1 with the RCM coordinator before any PMC-P1
