@@ -1,0 +1,13 @@
+TOP 5 BRUTAL FINDINGS
+1. Absence-evidence is weaker than presence-evidence and the charter never defines what counts as proving an API is "absent." D4/D7 assume a deterministic check can prove absence, but a read-only search of docs+examples only proves "not found in the documented surface of 0.86.1," not "does not exist." The central claim of the whole goal is exactly these absence claims, so this is load-bearing and under-specified.
+2. Nothing points TO the memo. D2/D5 make the memo point outward to canon, but no artifact points to the memo; a reader who would benefit (RCM owners, a future adapter author) has no discoverability path. The memo can be correct and complete yet un-findable.
+3. D6's write-scope list omits the two files outside the goal dir this goal must touch: the parcel spec under docs/specs/ (which also MOVES to /done at Stage F) and the INDEX.md row the owning coordinator must add. As worded, D6 is silent on both, inviting either an accidental write or a bogus stop.
+4. D3 pins to 0.86.1 but does not require the memo to declare its own staleness. A fast-moving harness means the memo is a point-in-time artifact; without a validity marker a future reader treats it as evergreen and acts on stale API surface facts.
+5. D5 negates the rejected APIs but does not pair the REAL APIs (pi.setModel, pi.setThinkingLevel exist) with the same "and still not used for routing" pointer. The memo will name exactly the surface a would-be adapter author needs; leaving the permissibility frame off the real APIs hands them a false sense of green light.
+
+TOP 5 MOVES
+1. Add an explicit absence-evidence rule to D4: state the exact search scope (docs index + examples catalog + exported type surface, by name), require the recorded command AND its output, and mandate "not found in the documented 0.86.1 surface" wording over "does not exist."
+2. Extend exit-criterion item 2 to require the recorded search command/output as evidence, and item 5's negative control to also assert "real APIs named but flagged not-authorized."
+3. Reinforce D5 to cover both directions: rejected APIs absent; real APIs present but still not an authorization.
+4. Require a freshness marker inside the memo (Pi version, recorded-on date, "valid for 0.86.1 only").
+5. Clarify D6 to (a) name the docs/specs active->done move as in-scope parcel-file lifecycle and (b) state the INDEX.md row is coordinator-owned and added once, a pointer to the memo rides in that row.
