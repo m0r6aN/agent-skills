@@ -423,3 +423,25 @@ actual owner mechanisms. Do not evade the detector or edit verification under
 this release. Two independent implementation reviews, reconciliation onto accepted
 main, targeted integration checks and complete remote CI remain merge gates.
 Production still requires actual P2C/P2D/P2E custody, sender and initiating caller.
+### Step 0 dispositions and builder release
+
+The fresh builder verified 20eb3bf and spec blob f4fb9a9 with a clean tree,
+actual predecessor byte matches and Node 24.19.0. Coordinator accepts the restated
+five-file plan and AC matrix and releases implementation after this record.
+
+For this private offline coding assignment, the coordinator explicitly substitutes
+the native agent dispatch record for the builder template's minted runtime routing
+receipt. The agent inherits the coordinator's frontier model configuration; the
+native dispatch API supplies no independently attested exact engine version or
+Foreman runtime receipt. Neither is fabricated. This limited workflow exception
+uses the user's delegated decision authority and applies only to development,
+with two independent frontier reviews retained. It does not authorize a governed
+provider launch or weaken the production receipt/identity requirements being built.
+
+AC4 requires independent-process begin races. For recordDecision and finish, a
+legitimate private claim cannot be transferred to a second owner instance. Test
+those CAS boundaries with a competing isolated SQLite process updating the row
+between callback and CAS, while separately proving cross-instance/restart claim
+refusal. Require exactly one acknowledged revision change and stale-claim refusal;
+no production test hook, transferable claim or proof reconstruction is added.
+This exercises contention without contradicting the private-capability contract.
