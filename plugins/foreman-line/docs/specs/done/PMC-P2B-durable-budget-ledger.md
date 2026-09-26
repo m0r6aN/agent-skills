@@ -1,7 +1,7 @@
 ---
 ticket: PMC-P2B
 title: Durable micro-USD budget ledger and attempt state
-status: active
+status: done
 owner: clinton.morgan
 created: 2026-09-26
 updated: 2026-09-26
