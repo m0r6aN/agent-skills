@@ -522,3 +522,17 @@ P3A offline runtime, N materialization and P4A1 durable admission are released t
 builders; P publisher construction is being amended before implementation.
 No inference, credential read, production budget or host configuration change
 occurred. User delegation covers the necessary PMC/RCM prerequisite decisions.
+
+### E2 pure-planner checkpoint closure — 2026-09-26
+
+PR68 is accepted on main 04dfd9f1ff3811b3da8c686dee1ee61a0dc9dbda at 22:58:18Z,
+following all twelve successful checks on exact head
+4e0d1d7fc36b9bc93f9e11cccf36327d4df05644. Root and frontier D independently
+approve planner source c6b5 and combined 739cbaa. Combined dispatch479, routing964,
+both typechecks/lints and actual D19 (21 packages/202 files) pass; six focused
+planner tests also pass independently. Only E2 checkpoint 1 closes. Its parent
+spec remains active for the real entry/CLI/installation after D acceptance.
+D completion is owned by the HRO native frontier builder under release d765b93;
+the separate PMC app task's latest draft-response-only scope remains respected.
+P publisher and both Luna repair/audit slices remain in progress. Production
+custody, live billing evidence and measured HRO exit remain open.

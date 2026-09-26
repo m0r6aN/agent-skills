@@ -288,3 +288,29 @@ D; P publisher released0aae48f after accepted N/C and fresh frontier A Step0.
 P4A1 sourceb633101 has two approvals; exact six-site audit enrollment released
 3c766ba to Luna. P3A4d11fa2 still has independent findings; complete repair
 releasedaab16ab. Full production/billing/live measured exit remains open.
+
+### E2 pure-planner checkpoint closure — 2026-09-26
+
+PR68 is accepted on main 04dfd9f1ff3811b3da8c686dee1ee61a0dc9dbda at 22:58:18Z,
+following all twelve successful checks on exact head
+4e0d1d7fc36b9bc93f9e11cccf36327d4df05644. Root and frontier D independently
+approve planner source c6b5 and combined 739cbaa. Combined dispatch479, routing964,
+both typechecks/lints and actual D19 (21 packages/202 files) pass; six focused
+planner tests also pass independently. Only E2 checkpoint 1 closes. Its parent
+spec remains active for the real entry/CLI/installation after D acceptance.
+D completion is owned by the HRO native frontier builder under release d765b93;
+the separate PMC app task's latest draft-response-only scope remains respected.
+P publisher and both Luna repair/audit slices remain in progress. Production
+custody, live billing evidence and measured HRO exit remain open.
+
+### Recovery admission combined acceptance — 2026-09-26
+
+Source b633101 and audit 255dbd have two independent approvals. Root and frontier
+D approve combined d6c0cd8. Full verification 658/658, dispatch 492/492, applicable
+typecheck/lint and actual D19 pass. Remote checks remain before acceptance on main.
+Production admission and recovery broker are still pending separate construction.
+P3A aaa2870 receives two independent change requests: actual producer receipt
+contracts and bounded file reads remain wrong. Remaining repair is reassigned to
+frontier D after fresh Step0 and explicit release; two new independent reviews
+will be required because D becomes its author. Transport fa519c8 is frozen for
+root/frontier A review. P publisher remains in progress. Full live exit stays open.
