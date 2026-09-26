@@ -3,6 +3,556 @@ import { createHash } from 'node:crypto'
 import { readFileSync } from 'node:fs'
 import { test } from 'node:test'
 import * as publicApi from '../src/index.js'
+import { materializePublicModelResponseV1 } from '../src/public-observation-producer.js'
+
+const rawFixture = readFileSync(
+  new URL('./fixtures/public-model-response-v1.json', import.meta.url),
+)
+const rawSha = '94453fc7a3d2691dc31c1cad724e5d81a546a25094f9df23d5e299edd3e75ab0'
+const rawSource = `openrouter-public-text-materialization/v1:sha256:${rawSha}`
+function rawInput(names = ['fixture/text-reasoner']) {
+  return {
+    bytes: new Uint8Array(rawFixture),
+    requestedIdentities: names.map((id) => ({ provider: 'openrouter', id })),
+    profile: 'openrouter-public-text-materialization/v1',
+    endpoint: 'https://openrouter.ai/api/v1/models',
+    domain: 'public-text-output',
+    requestStartedAtUtc: '2026-09-26T12:00:00.000Z',
+    completeReceivedAtUtc: '2026-09-26T12:00:01.000Z',
+    evaluationTimeUtc: '2026-09-26T12:00:02.000Z',
+    complete: true,
+  }
+}
+function rawDocument() {
+  return JSON.parse(rawFixture.toString())
+}
+function rawWith(document: unknown, names?: string[]) {
+  return { ...rawInput(names), bytes: new TextEncoder().encode(JSON.stringify(document)) }
+}
+function rawRefuses(input: unknown, code: string) {
+  assert.deepEqual(materializePublicModelResponseV1(input), { ok: false, evidenceOnly: true, code })
+}
+
+test('raw v1 hostile envelopes and byte storage refuse without invoking caller code', () => {
+  let reads = 0
+  const getter = { ...rawInput() }
+  Object.defineProperty(getter, 'bytes', {
+    get() {
+      reads++
+      throw new Error('getter')
+    },
+    enumerable: true,
+  })
+  rawRefuses(getter, 'INPUT_REFUSED')
+  const thrown = new Proxy(
+    {},
+    {
+      get() {
+        reads++
+        throw 0
+      },
+    },
+  )
+  rawRefuses(
+    new Proxy(
+      {},
+      {
+        ownKeys() {
+          throw thrown
+        },
+      },
+    ),
+    'INPUT_REFUSED',
+  )
+  const proxy = Proxy.revocable({}, {})
+  proxy.revoke()
+  rawRefuses(proxy.proxy, 'INPUT_REFUSED')
+  for (const bytes of [
+    new Proxy(rawFixture, {}),
+    new Uint16Array(4),
+    new Uint8Array(new SharedArrayBuffer(4)),
+    new Uint8Array(Reflect.construct(ArrayBuffer, [4, { maxByteLength: 8 }])),
+  ]) {
+    rawRefuses({ ...rawInput(), bytes }, 'INPUT_REFUSED')
+  }
+  const detached = new Uint8Array(4)
+  structuredClone(detached, { transfer: [detached.buffer] })
+  rawRefuses({ ...rawInput(), bytes: detached }, 'INPUT_REFUSED')
+  const sparse = rawInput()
+  delete sparse.requestedIdentities[0]
+  rawRefuses(sparse, 'INPUT_REFUSED')
+  rawRefuses({ ...rawInput(), extra: true }, 'INPUT_REFUSED')
+  rawRefuses(
+    {
+      ...rawInput(),
+      requestedIdentities: [rawInput().requestedIdentities[0], rawInput().requestedIdentities[0]],
+    },
+    'INPUT_REFUSED',
+  )
+  assert.equal(reads, 0)
+})
+
+test('raw v1 profile, source times and acquisition declarations are separate refusal gates', () => {
+  for (const replacement of [
+    { profile: 'v2' },
+    { endpoint: 'https://example.invalid' },
+    { domain: 'global' },
+    { requestedIdentities: [{ provider: 'opencode', id: 'x' }] },
+  ]) {
+    rawRefuses({ ...rawInput(), ...replacement }, 'PROFILE_REFUSED')
+  }
+  rawRefuses({ ...rawInput(), complete: false }, 'COMPLETENESS_UNPROVEN')
+  for (const replacement of [
+    { completeReceivedAtUtc: '2026-09-26T11:59:59.999Z' },
+    { evaluationTimeUtc: '2026-09-26T12:00:00.999Z' },
+    { evaluationTimeUtc: '2026-09-27T12:00:01.001Z' },
+    { requestStartedAtUtc: '2026-09-26T11:59:50.999Z' },
+    { evaluationTimeUtc: '2026-02-30T12:00:02.000Z' },
+  ])
+    rawRefuses({ ...rawInput(), ...replacement }, 'SOURCE_REFUSED')
+  assert.equal(
+    materializePublicModelResponseV1({
+      ...rawInput(),
+      requestStartedAtUtc: '2026-09-26T11:59:51.000Z',
+      evaluationTimeUtc: '2026-09-27T12:00:01.000Z',
+    }).ok,
+    true,
+  )
+})
+
+test('raw v1 malformed JSON and UTF-8 never fabricate complete absence', () => {
+  for (const source of [
+    '{"data":[],"data":[],"links":{"next":null},"total_count":0}',
+    '{',
+    `${rawFixture}null`,
+    '{"data":[],"links":{"next":null},"total_count":NaN}',
+    '{"data":[],"links":{"next":null},"total_count":0,"x":"\\ud800"}',
+  ]) {
+    rawRefuses(
+      { ...rawInput(['missing']), bytes: new TextEncoder().encode(source) },
+      'SOURCE_REFUSED',
+    )
+  }
+  for (const bytes of [
+    new Uint8Array([0xff]),
+    new Uint8Array([0xe2, 0x82]),
+    new Uint8Array([0xef, 0xbb, 0xbf, ...rawFixture]),
+  ]) {
+    rawRefuses({ ...rawInput(), bytes }, 'SOURCE_REFUSED')
+  }
+})
+
+test('raw v1 byte/scope/row ceilings are inclusive and overflow is bounded', () => {
+  const bytes = new Uint8Array(8 * 1024 * 1024).fill(32)
+  bytes.set(rawFixture)
+  assert.equal(materializePublicModelResponseV1({ ...rawInput(), bytes }).ok, true)
+  rawRefuses({ ...rawInput(), bytes: new Uint8Array(bytes.length + 1) }, 'BOUNDS_REFUSED')
+  assert.equal(
+    materializePublicModelResponseV1(
+      rawInput(Array.from({ length: 256 }, (_, i) => `missing/${i}`)),
+    ).ok,
+    true,
+  )
+  rawRefuses(rawInput(Array.from({ length: 257 }, (_, i) => `missing/${i}`)), 'BOUNDS_REFUSED')
+  const d = rawDocument()
+  d.data = Array.from({ length: 10000 }, (_, i) => ({
+    id: `model/${i}`,
+    architecture: { output_modalities: ['text'] },
+  }))
+  d.total_count = 10000
+  assert.equal(materializePublicModelResponseV1(rawWith(d, ['missing'])).ok, true)
+  d.data.push({ id: 'extra', architecture: { output_modalities: ['text'] } })
+  d.total_count++
+  rawRefuses(rawWith(d, ['missing']), 'BOUNDS_REFUSED')
+})
+
+test('raw v1 decoded UTF-8 limits include escaped scalars and reject one-over before allocation', () => {
+  for (const content of ['é'.repeat(2048), '😀'.repeat(1024)]) {
+    const d = rawDocument()
+    d.extraDescription = content
+    // Row metadata is unprojected, but still bounded while parsing.
+    delete d.extraDescription
+    d.data[0].description = content
+    assert.equal(materializePublicModelResponseV1(rawWith(d)).ok, true)
+    d.data[0].description += 'a'
+    rawRefuses(rawWith(d), 'BOUNDS_REFUSED')
+  }
+  const d = rawDocument()
+  d.data[0].description = 'é'.repeat(2048)
+  const escaped = JSON.stringify(d).replaceAll('é', '\\u00e9')
+  assert.equal(
+    materializePublicModelResponseV1({ ...rawInput(), bytes: new TextEncoder().encode(escaped) })
+      .ok,
+    true,
+  )
+  rawRefuses(
+    { ...rawInput(), requestedIdentities: [{ provider: 'openrouter', id: 'é'.repeat(2049) }] },
+    'BOUNDS_REFUSED',
+  )
+})
+
+test('raw v1 missing and malformed non-domain facts are incomplete, never absent', () => {
+  for (const mutate of [
+    (d: ReturnType<typeof rawDocument>) => {
+      delete d.data[0].pricing
+    },
+    (d: ReturnType<typeof rawDocument>) => {
+      d.data[0].pricing.prompt = '-1'
+    },
+    (d: ReturnType<typeof rawDocument>) => {
+      d.data[0].pricing.prompt = '1e-6'
+    },
+    (d: ReturnType<typeof rawDocument>) => {
+      d.data[0].context_length = 0
+    },
+    (d: ReturnType<typeof rawDocument>) => {
+      d.data[0].top_provider.max_completion_tokens = 1.5
+    },
+    (d: ReturnType<typeof rawDocument>) => {
+      d.data[0].architecture.input_modalities = ['audio']
+    },
+    (d: ReturnType<typeof rawDocument>) => {
+      d.data[0].reasoning.supported_efforts = ['low', 'low']
+    },
+  ]) {
+    const d = rawDocument()
+    mutate(d)
+    rawRefuses(rawWith(d), 'INCOMPLETE_SCOPE')
+    const result = materializePublicModelResponseV1(
+      rawWith(d, ['fixture/text-reasoner', 'missing']),
+    )
+    assert.ok(result.ok && result.kind === 'complete-response-with-absence')
+    assert.deepEqual(result.inventory[0], {
+      identity: rawInput().requestedIdentities[0],
+      kind: 'incomplete',
+      code: 'REQUIRED_FACT_MISSING',
+    })
+  }
+})
+
+test('raw v1 source mutations bind exact bytes/time/scope and returned bytes have no retained authority', () => {
+  const first = materializePublicModelResponseV1(rawInput())
+  assert.ok(first.ok && first.kind === 'catalog')
+  const d = rawDocument()
+  d.data[0].pricing.request = '99'
+  const changed = materializePublicModelResponseV1(rawWith(d))
+  assert.ok(changed.ok && changed.kind === 'catalog')
+  assert.deepEqual(changed.inventory, first.inventory)
+  assert.notEqual(
+    changed.acceptedSource.sourceEvidenceSha256,
+    first.acceptedSource.sourceEvidenceSha256,
+  )
+  const time = materializePublicModelResponseV1({
+    ...rawInput(),
+    completeReceivedAtUtc: '2026-09-26T12:00:01.001Z',
+  })
+  assert.ok(time.ok && time.kind === 'catalog')
+  assert.equal(time.acceptedSource.sourceEvidenceSha256, first.acceptedSource.sourceEvidenceSha256)
+  assert.notEqual(time.canonicalSha256, first.canonicalSha256)
+  assert.ok(Object.isFrozen(first.inventory) && Object.isFrozen(first.inventory[0]))
+  first.canonicalBytes.fill(0)
+  const next = materializePublicModelResponseV1(rawInput())
+  assert.ok(next.ok && next.kind === 'catalog')
+  assert.equal(sha(next.canonicalBytes), next.canonicalSha256)
+})
+
+test('raw v1 depth, aggregate UTF-8 and expanded value budgets accept exactly their limits', () => {
+  for (const extra of [0, 1]) {
+    let nested: unknown = null
+    for (let i = 0; i < 16 + extra; i++) nested = [nested]
+    rawRefuses(rawWith(nested), extra ? 'BOUNDS_REFUSED' : 'COMPLETENESS_UNPROVEN')
+    const strings = {
+      padding: [...Array(255).fill('é'.repeat(2048)), `${'a'.repeat(4089)}${extra ? 'a' : ''}`],
+    }
+    rawRefuses(rawWith(strings), extra ? 'BOUNDS_REFUSED' : 'COMPLETENESS_UNPROVEN')
+    const values = {
+      v: [...Array.from({ length: 26 }, () => Array(10000).fill(0)), Array(2115 + extra).fill(0)],
+    }
+    rawRefuses(rawWith(values), extra ? 'BOUNDS_REFUSED' : 'COMPLETENESS_UNPROVEN')
+  }
+})
+
+test('raw v1 scope cardinality preflight precedes child descriptor traps', () => {
+  let descendants = 0
+  const identities = new Proxy(new Array(70000), {
+    ownKeys() {
+      descendants++
+      throw 0
+    },
+    getOwnPropertyDescriptor(target, key) {
+      if (key !== 'length') descendants++
+      return Reflect.getOwnPropertyDescriptor(target, key)
+    },
+  })
+  rawRefuses({ ...rawInput(), requestedIdentities: identities }, 'BOUNDS_REFUSED')
+  assert.equal(descendants, 0)
+})
+
+test('raw v1 requested scope string budget charges UTF-8 including exact and one-over', () => {
+  const names = Array.from(
+    { length: 256 },
+    (_, i) => `${i.toString().padStart(3, '0')}${'é'.repeat(2036)}aa`,
+  )
+  // Each identity charges 4,077 ID bytes plus ten provider and ten key bytes.
+  // Remove 256 bytes to reach exactly 1,048,576 across the scope.
+  for (let i = 0; i < names.length; i++) names[i] = (names[i] as string).slice(0, -1)
+  assert.equal(materializePublicModelResponseV1(rawInput(names)).ok, true)
+  names[0] += 'a'
+  rawRefuses(rawInput(names), 'BOUNDS_REFUSED')
+})
+
+test('raw v1 exact coverage modality limits and required fact limits remain distinct', () => {
+  for (const count of [16, 17]) {
+    const d = rawDocument()
+    d.data[1].architecture.output_modalities = [
+      'text',
+      ...Array.from({ length: count - 1 }, (_, i) => `other-${i}`),
+    ]
+    const result = materializePublicModelResponseV1(rawWith(d))
+    if (count === 16) assert.equal(result.ok, true)
+    else rawRefuses(rawWith(d), 'COMPLETENESS_UNPROVEN')
+  }
+  for (const count of [64, 65]) {
+    const d = rawDocument()
+    d.data[0].architecture.input_modalities = [
+      'text',
+      ...Array.from({ length: count - 1 }, (_, i) => `other-${i}`),
+    ]
+    if (count === 64) assert.equal(materializePublicModelResponseV1(rawWith(d)).ok, true)
+    else rawRefuses(rawWith(d), 'INCOMPLETE_SCOPE')
+  }
+})
+
+test('raw v1 exact decimal projection neither rounds source rates nor invents missing fees', () => {
+  for (const [source, expected] of [
+    ['0', 0],
+    ['0.000001', 1],
+    ['0.000000000001', 0.000001],
+    ['0000.750000', 750000],
+  ] as const) {
+    const d = rawDocument()
+    d.data[0].pricing.prompt = source
+    const result = materializePublicModelResponseV1(rawWith(d))
+    assert.ok(result.ok && result.kind === 'catalog')
+    const row = result.inventory[0]
+    assert.ok(row?.kind === 'facts')
+    assert.equal(row.facts.cost.input.value, expected)
+    assert.deepEqual(Object.keys(row.facts.cost), ['input', 'output'])
+  }
+  for (const source of [
+    '0.12345678901234567890123456789012',
+    '9'.repeat(65),
+    '0.'.concat('0'.repeat(32), '1'),
+    '+1',
+    'Infinity',
+  ]) {
+    const d = rawDocument()
+    d.data[0].pricing.prompt = source
+    rawRefuses(rawWith(d), 'INCOMPLETE_SCOPE')
+  }
+})
+
+test('raw v1 performs no ambient acquisition, time or randomness and old UTF-16 mode stays separate', (context) => {
+  context.mock.method(globalThis, 'fetch', () => {
+    throw new Error('forbidden acquisition')
+  })
+  context.mock.method(Date, 'now', () => {
+    throw new Error('forbidden time')
+  })
+  context.mock.method(Math, 'random', () => {
+    throw new Error('forbidden randomness')
+  })
+  assert.equal(materializePublicModelResponseV1(rawInput()).ok, true)
+  const text = JSON.stringify({ x: 'é'.repeat(4096) })
+  const legacy = rawProjection(text)
+  refuses(legacy.input, legacy.trust, 'SOURCE_INVALID', 6)
+  rawRefuses({ ...rawInput(), bytes: new TextEncoder().encode(text) }, 'BOUNDS_REFUSED')
+})
+
+test('raw v1 literal canonical output binds the exact response and positive effort observations', () => {
+  assert.equal(sha(rawFixture), rawSha)
+  const result = materializePublicModelResponseV1(rawInput())
+  assert.ok(result.ok && result.kind === 'catalog')
+  const expected = `{
+  "formatVersion": "rcm-catalog-snapshot/v1",
+  "sourceRef": "openrouter-public-text-materialization/v1:sha256:94453fc7a3d2691dc31c1cad724e5d81a546a25094f9df23d5e299edd3e75ab0",
+  "providers": [
+    {
+      "providerKey": "openrouter",
+      "checkedAtUtc": "2026-09-26T12:00:01.000Z"
+    }
+  ],
+  "models": [
+    {
+      "provider": "openrouter",
+      "id": "fixture/text-reasoner",
+      "baseUrl": "https://openrouter.ai/api/v1",
+      "api": "openai-completions",
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": true,
+      "contextWindow": 32768,
+      "maxTokens": 4096,
+      "cost": {
+        "input": {
+          "unit": "USD per 1M tokens",
+          "value": 0.75
+        },
+        "output": {
+          "unit": "USD per 1M tokens",
+          "value": 3
+        }
+      },
+      "thinkingLevelMap": {
+        "high": "high",
+        "low": "low"
+      }
+    }
+  ]
+}
+`
+  assert.equal(new TextDecoder().decode(result.canonicalBytes), expected)
+  assert.equal(result.canonicalSha256, sha(new TextEncoder().encode(expected)))
+  assert.equal(
+    result.canonicalSha256,
+    '92968910ac5b383f0393e45cfb218f0ad111d34e59369b6fa2a55e3a13f45270',
+  )
+  assert.deepEqual(result.acceptedSource, {
+    profileId: 'openrouter-public-text-materialization',
+    profileVersion: 'v1',
+    sourceEvidenceRef: rawSource,
+    sourceEvidenceSha256: rawSha,
+    canonicalSha256: result.canonicalSha256,
+    requestedIdentities: rawInput().requestedIdentities,
+  })
+  assert.equal(readCatalogSnapshot(result.canonicalBytes, result.canonicalSha256).ok, true)
+  const adapted = evaluateCatalogEligibility({
+    canonicalBytes: result.canonicalBytes,
+    expectedSha256: result.canonicalSha256,
+    acceptedSource: result.acceptedSource,
+    identities: result.requestedIdentities,
+    evaluationTimeUtc: rawInput().evaluationTimeUtc,
+    approvedConfig: {
+      authorityRef: 'synthetic-fixture-only',
+      endpoints: [{ provider: 'openrouter', baseUrl: 'https://openrouter.ai/api/v1' }],
+    },
+  })
+  assert.equal(adapted.stage, 'projector')
+  if (adapted.stage === 'projector') assert.equal(adapted.result.ok, true)
+  assert.ok(!Object.hasOwn(publicApi, 'materializePublicModelResponseV1'))
+})
+
+test('raw v1 mixed absence retains complete scope and never substitutes incomplete rows', () => {
+  const names = [
+    'fixture/text-reasoner',
+    'fixture/missing-b',
+    'fixture/unknown-reasoning',
+    'fixture/missing-a',
+  ]
+  const result = materializePublicModelResponseV1(rawInput(names))
+  assert.ok(result.ok && result.kind === 'complete-response-with-absence')
+  assert.deepEqual(result.requestedIdentities, rawInput(names).requestedIdentities)
+  assert.deepEqual(
+    result.inventory.map((row) => row.kind),
+    ['facts', 'absent-in-domain', 'incomplete', 'absent-in-domain'],
+  )
+  assert.deepEqual(
+    result.absentIdentities,
+    rawInput(['fixture/missing-b', 'fixture/missing-a']).requestedIdentities,
+  )
+  assert.equal(result.sourceSha256, rawSha)
+  assert.ok(!('canonicalBytes' in result) && !('acceptedSource' in result))
+  rawRefuses(rawInput(['fixture/text-reasoner', 'fixture/unknown-reasoning']), 'INCOMPLETE_SCOPE')
+  const empty = materializePublicModelResponseV1(
+    rawWith({ data: [], links: { next: null }, total_count: 0 }),
+  )
+  assert.ok(empty.ok && empty.kind === 'complete-response-with-absence')
+})
+
+test('raw v1 coverage failures block catalog and absence before classifying rows', () => {
+  const mutations = [
+    (d: ReturnType<typeof rawDocument>) => {
+      delete d.links
+    },
+    (d: ReturnType<typeof rawDocument>) => {
+      delete d.links.next
+    },
+    (d: ReturnType<typeof rawDocument>) => {
+      d.links.next = ''
+    },
+    (d: ReturnType<typeof rawDocument>) => {
+      d.links.other = null
+    },
+    (d: ReturnType<typeof rawDocument>) => {
+      delete d.total_count
+    },
+    (d: ReturnType<typeof rawDocument>) => {
+      d.total_count = 1
+    },
+    (d: ReturnType<typeof rawDocument>) => {
+      d.total_count = 2.5
+    },
+    (d: ReturnType<typeof rawDocument>) => {
+      d.extra = true
+    },
+    (d: ReturnType<typeof rawDocument>) => {
+      d.data[1].id = d.data[0].id
+    },
+    (d: ReturnType<typeof rawDocument>) => {
+      d.data[1].id = ''
+    },
+    (d: ReturnType<typeof rawDocument>) => {
+      delete d.data[1].architecture.output_modalities
+    },
+    (d: ReturnType<typeof rawDocument>) => {
+      d.data[1].architecture.output_modalities = ['image']
+    },
+    (d: ReturnType<typeof rawDocument>) => {
+      d.data[1].architecture.output_modalities = ['text', 'text']
+    },
+    (d: ReturnType<typeof rawDocument>) => {
+      d.data[1].architecture.output_modalities = ['text', 'UPPER']
+    },
+  ]
+  for (const mutate of mutations)
+    for (const names of [['fixture/text-reasoner'], ['fixture/absent']]) {
+      const d = rawDocument()
+      mutate(d)
+      rawRefuses(rawWith(d, names), 'COMPLETENESS_UNPROVEN')
+    }
+})
+
+test('raw v1 refuses unknown reasoning instead of false and never emits off', () => {
+  for (const efforts of [
+    [],
+    ['none'],
+    ['low', 'low'],
+    ['minimal'],
+    ['low', 'future'],
+    null,
+    'low',
+  ]) {
+    const d = rawDocument()
+    d.data[0].reasoning.supported_efforts = efforts
+    rawRefuses(rawWith(d), 'INCOMPLETE_SCOPE')
+  }
+  const d = rawDocument()
+  d.data[0].reasoning.supported_efforts = ['none', 'low', 'medium', 'high', 'xhigh', 'max']
+  const result = materializePublicModelResponseV1(rawWith(d))
+  assert.ok(result.ok && result.kind === 'catalog')
+  const row = result.inventory[0]
+  assert.ok(row?.kind === 'facts')
+  assert.deepEqual(row.facts.thinkingLevelMap, {
+    max: 'max',
+    xhigh: 'xhigh',
+    high: 'high',
+    medium: 'medium',
+    low: 'low',
+  })
+})
+
 import {
   evaluateCatalogEligibility,
   producePublicObservationSnapshot,
