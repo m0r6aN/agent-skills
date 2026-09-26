@@ -1,9 +1,9 @@
 # Goal Charter — Hybrid Routing Optimization
 
-**Goal slug:** `hybrid-routing-optimization`  
-**Created:** 2026-09-26  
-**Owner:** Clinton Morgan  
-**Intended implementation agent:** GPT Luna (`gpt-5.6-luna` in the current agent catalog)  
+**Goal slug:** `hybrid-routing-optimization`
+**Created:** 2026-09-26
+**Owner:** Clinton Morgan
+**Intended implementation agent:** GPT Luna (`gpt-5.6-luna` in the current agent catalog)
 **Status:** Ratified HRO direction; coordinated implementation authorized on 2026-09-26, subject to evidence and independent review
 **Scope:** Extend the existing Foreman Line routing and Pi adapter work with explicit provider mappings, deterministic caching, and measured optimization.
 
