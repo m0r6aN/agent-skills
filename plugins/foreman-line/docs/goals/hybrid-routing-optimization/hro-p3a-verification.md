@@ -207,3 +207,20 @@ and other bounded suites). Log: TEMP/hro-p3a-membership-verification.log. The sa
 two D19 mutation suites remain excluded and unclaimed; actual D19 failed as above.
 Diff/scope checks pass. Freeze clean and stop for root plus independent A review;
 this builder report is not source acceptance or an audit waiver.
+
+## Membership repair independent source acceptance — 2026-09-26
+
+Root and independent frontier A approve 385a94f1ed7c4e0b93f8dc098328d6ac0fc068c2.
+Root independently ran all 24 driver tests and the original wrong-ticket probe;
+the probe now returns PREREQUISITE_UNAVAILABLE. A independently ran the same
+24-test driver suite, verification typecheck/full lint and actual D19. Source
+validates the actual B schema before checking every link against the sole joined
+ticket. Both directions and mixed good/bad links refuse before measured writes;
+genuine producer positives remain. Zero/multiple-link controls are explicitly
+synthetic and preserve other schema-valid link fields without count/head rules.
+
+Final runtime blob is 0dbffbc73bb8d2f701179d4bdca93d9e0206fe9a. Actual D19 still
+fails at exactly four class-5 sites: verifyInitial resolve ordinals 0/1/2 at lines
+1184/1317/1317 and buildContext ordinal 0 at1678. Source acceptance does not waive
+that audit. The separately proposed exact enrollment, combined-main checks and
+remote acceptance remain required; production intake is not provided by this slice.
