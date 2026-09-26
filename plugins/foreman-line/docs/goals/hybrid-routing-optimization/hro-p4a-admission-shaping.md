@@ -74,3 +74,19 @@ C/D/E/P3 and full HRO live evidence remain separate gates.
 
 Documentation checks: frozen linter, required body sections, local links and exact
 two-file whitespace/diff checks; final handoff reports actual results and clean hash.
+
+## Delegated design ratification — 2026-09-26
+
+Coordinator and independent reviewer A APPROVE16ebc41a3890bd71a6d7cdc6c686bee71265788f.
+Both inspected actual B1 initialization/persistence contracts and the complete
+bounded design. Root adopts the distinct immutable SQLite admission owner, fresh
+bootstrap-only rule, permanent conservative restart holds and proposed numerical
+bounds under the user's explicit prerequisite delegation. The added32 retained
+local-installation cap is accepted as a bound, not a measured capacity result.
+
+This ratifies the contract and exact five-file future envelope only. A genuine
+builder Step0 and explicit runtime release remain necessary. Production constructor
+refuses; no actual business-intent uniqueness, installed production authority,
+provider evidence, live result or goal completion is claimed. B1's existing R2
+reopening remains unchanged. Frozen lint/link/diff checks passed; no runtime tests
+were run or inferred by design review.
