@@ -1,7 +1,7 @@
 ---
 ticket: HRO-P1B
 title: Offline injected consumer compatibility for mapping proposals
-status: draft
+status: active
 owner: clinton.morgan
 created: 2026-09-26
 updated: 2026-09-26
@@ -26,7 +26,7 @@ This is a conformance harness with no production consumer wiring.
 
 ## Constraints
 
-- Draft pending coordinator lint/Gate 2; depends on accepted P1a and its tooling,
+- Coordinator Gate 2 below; depends on accepted P1a and its tooling,
   validation bounds and frozen-copy discipline. No new dependencies.
 - Only HRO package changes. Type-only imports of RoutingInput/RoutingResult from
   dispatch/src/index.ts (public barrel) are allowed. No runtime dispatch imports
@@ -185,3 +185,25 @@ Only HRO barrel/README overlap P1a; serialize after acceptance. No upstream edit
 
 Stop on upstream runtime imports, authoritative schema changes, production
 adapter wiring, receipt writes, network/host access or any unlisted file.
+
+## Gate 2 and isolated implementation release — 2026-09-26
+
+Coordinator grants Gate 2 under the user's standing authority for the five
+allowed implementation paths only. P1a's frozen fb32705 has two independent
+approvals; reviewed A2 audit enrollment is integrated at 379f144. PR54's full
+corrected remote gate remains pending, so private implementation may proceed
+against this reviewed base but P1b integration/merge must follow successful
+P1a merge and its own independent reviews. No failed predecessor gate is waived.
+
+Builder workspace: D:/Repos/agent-skills-worktrees/hro-p1a-20260926, reused only
+after clean checkout verification; branch codex/hro-p1b-20260926. The original
+P1a branch and frozen commits are preserved. Use a fresh GPT-5.6-Luna builder
+session, Node24.19.0, existing package tooling and standing constraints at
+plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md. Verify the exact
+documentation commit/spec blob, restate boundaries and stop for Step-0 release.
+Report any actual contract gap before implementation; do not invent owner APIs.
+
+Return a local frozen commit, test counts, typecheck/lint and exact scope/import
+proof. No push, provider calls, Pi writes, actual dispatch or production receipt
+creation. Later integration must preserve all accepted PMC/RCM exports and
+rerun the unchanged public-interface checks on the reconciled base.
