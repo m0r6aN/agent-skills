@@ -1,7 +1,7 @@
 ---
 ticket: RCM-P1B
 title: Scoped public-observation canonical snapshot producer
-status: draft
+status: active
 owner: clinton.morgan
 created: 2026-09-26
 updated: 2026-09-26
@@ -21,7 +21,8 @@ verification_class: judgment-required
 Produce digest-bound, explicitly scoped canonical RCM snapshots from retained
 public metadata using reviewed exact extraction profiles. Every requested
 identity has either complete facts or a named refusal. No partial source is
-advertised as a full catalog. Draft only: the retained v4 field mapping is ratified; public API freeze and independent producer review remain prerequisites to implementation dispatch.
+advertised as a full catalog. The retained v4 mapping and public API are ratified;
+the independent contract review and scoped Gate 2 are recorded below.
 
 ## Constraints
 
@@ -34,7 +35,7 @@ historical P1 spec/schema/reader/projector in this parcel.
 
 ## Contract
 
-Draft API shape (not dispatchable until P1A wrapper/API freeze):
+Frozen API shape (scoped private implementation under Gate 2 below):
 
 ```typescript
 type Identity = Readonly<{ provider: string; id: string }>;
@@ -246,10 +247,9 @@ explicitly synthetic endpoint authority. This proves schema compatibility only; 
 is not live availability, source freshness at future evaluation time or execution
 permission. Dated evidence must naturally become stale; never reset its timestamps.
 
-This concrete shape remains draft pending accepted P1A public API/export freeze,
-serialized barrel edit order and independent producer-contract review. The profileId/
-profileVersion split and result envelope here are proposed public API choices to freeze
-with P1A, not a dispatched implementation. No raw provider parser, acquisition step,
+The accepted P1A API and independent producer-contract review satisfy the shape
+prerequisites; Gate 2 below freezes the type names and serialized integration order.
+No raw provider parser, acquisition step,
 legacy export converter, OpenCode enrichment or schema change is authorized.
 ## Acceptance Criteria
 
@@ -333,6 +333,38 @@ preserves and retests prior exports. No shared reader/projector algorithm edits.
 
 ## Stop-and-Report Rule
 
-Remain draft until P1A wrapper/API freeze and independent producer review. Stop affected work
+Respect the scoped Gate 2 and predecessor integration gate below. Stop affected work
 for missing mandatory facts, unsupported source semantics, a required schema
 change, authority inference or a request for provider/config side effects.
+
+## Gate 2 and public-type freeze — 2026-09-26
+
+The coordinator grants private implementation under the user's explicit scoped
+prerequisite authority. P1A's final implementation 4201ac4 has two independent
+approvals (27 focused/426 full tests). Its merge onto accepted PMC main 6ff38a3
+is at de39306; integration verification and its own remote merge gate remain
+pending. Producer integration must follow that successful wrapper merge.
+No dependency gate is waived by permitting independent private implementation.
+
+Supported P1A exports are evaluateCatalogEligibility, CatalogIdentity,
+AcceptedCatalogSource, CatalogEligibilityInput, CatalogAdapterRefusalCode and
+CatalogEligibilityResult. In the API block above, Identity and AcceptedSource
+are aliases of those accepted CatalogIdentity and AcceptedCatalogSource types,
+not new structures to evolve independently. Export the producer function and
+ProducerCandidate, ProducerTrust, InventoryStatus, InventoryCode, FactField,
+InventoryEntry, ProducerRefusalCode and ProductionResult as shown; preserve every
+existing barrel export. No name collision exists on this pinned base.
+
+Builder workspace D:/Repos/agent-skills-worktrees/hro-rcm-producer-20260926;
+branch codex/hro-rcm-producer-20260926; base before this spec amendment e23a925.
+Only the five Allowed Files may change. A fresh builder verifies the exact spec
+blob and clean head, reads standing constraints, restates scope and stops for
+coordinator Step-0 release. Return local commit, tests and exact source/profile
+reproduction; no push, acquisition, provider calls or configuration effects.
+
+Private branches may proceed independently. Shared integration order is merged
+PMC-P1a, accepted RCM-P1A wrapper, PMC-P1b projection, then this producer; rebase
+on the accepted predecessor and preserve its public exports, reader algorithms
+and schemas. The coordinator may reverse the two independent final additive
+parcels only through an explicit recorded handoff before shared-file edits.
+The retained dated observations are testable evidence, not evergreen live facts.
