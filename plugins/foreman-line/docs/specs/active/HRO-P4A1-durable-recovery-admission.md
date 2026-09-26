@@ -358,3 +358,40 @@ field, requiring BOUNDS_REFUSED before ownKeys; retain the129-intents control.
 Pair actual262144 and262145 UTF8-JSON inputs on separate unused fixtures and prove
 the over-limit refusal creates neither store. Freeze test/report repair after
 focused tests, typecheck/lint and diff checks, then STOP for two final reviews.
+
+### Separate audit enrollment amendment
+
+The actual D19 audit on repaired runtime208ca3c reports exactly six class-4
+noninstances in recovery-admission.ts: settings/page-size, settings/pragmas,
+transaction/begin, transaction/commit, transaction/rollback, and initialization/schema.
+They are synchronous DatabaseSync.exec calls, not subprocesses. Root source review
+and13 focused final tests atb633101 pass, but audit acceptance remains open.
+
+Proposed follow-up envelope, all under plugins/foreman-line:
+
+- verification/src/d19-audit.ts
+- verification/tests/hro-recovery-admission-audit.test.ts
+- docs/goals/hybrid-routing-optimization/hro-p4a1-verification.md
+
+Use the accepted PMC ledger/intent AST-plus-token fingerprint mechanism, a new
+independently fixed six-site set keyed by exact recovery-admission.ts path, owner,
+call ordinal and syntax fingerprint, with complete relevant declaration/import/
+SQLite receiver provenance and external references pinned. Derive the reviewed
+constants from frozen accepted runtime, never from the currently swept file at
+runtime. Assert every expected declaration/site/cardinality, including missing or
+extra sites, and fail enrollment as a whole on provenance changes. Existing ledger,
+intent, controller, registry and other audit rules remain unchanged. No class-wide
+DatabaseSync exception, name-only allowlist, file skip, auto-enrollment or runtime
+refactor. Reuse established syntax fingerprint helpers without weakening them.
+
+Actual child-audit regression controls must pair approved source (six expected
+sites) with formatting/comment-only variants, and reject removed/added/duplicate/
+moved SQL calls, modified SQL/receiver/construction/imports, changed relevant owner
+logic or schema, extra provenance reference/rebinding, and a similarly named call
+outside the fixed owner/path. Keep existing ledger/intent counts intact. Pin source
+identity and documented syntactic audit limits; this is no proof of all runtime
+behavior. Run targeted new and existing audit suites, full verification checks,
+actual plugin-wide audit and diff/scope checks. Source/runtime/tests and contract
+reader sets are not amended by this audit-only slice. Independent review of this
+amendment, a read-only builder Step0, explicit release and two independent final
+reviews precede integration. No implementation is released by this paragraph.
