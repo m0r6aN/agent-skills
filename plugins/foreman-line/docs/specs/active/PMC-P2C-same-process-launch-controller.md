@@ -26,8 +26,9 @@ JSON, resolver decisions and receipts never authorize inference.
 
 This is a concrete review draft, NOT a build release. The complete episode-owner
 primitive below does not exist in the inspected predecessors. Its acceptance and
-implementation are a prerequisite, not an assumed trusted service. Explicit
-scope decisions remain in Readiness. No implementation is authorized here.
+implementation are a prerequisite, not an assumed trusted service. V8 resolves
+the owner/version decisions; implementation and review gates remain in Readiness.
+No implementation is authorized here.
 
 ## Constraints
 
@@ -36,9 +37,9 @@ scope decisions remain in Readiness. No implementation is authorized here.
 - Amendment 05 governs: same-process registry authority, public OpenRouter chat
   only, exact money, no automatic retry, nonpublic/L6 refusal, empty break-glass.
 - P2A frozen spec blob `d65ff524bba2eda6c9e38de44c78aac4aae1c59f`; actual types,
-  resolver and handoff inspected at `02de2b462481f7d66c2920e844e8de387825dbe1`.
-  Its pending refusal-order repair does not change its public types. Integration
-  must pin independently accepted repaired source before dispatch.
+  resolver/types inspected at merged `4b86643acd4e5cdf183e85cf1cd1c2ace51e0182`
+  (repaired `bb89be9`, public types unchanged). Integration must include accepted
+  P2A/P2B and separately accepted P2B1 before dispatch.
 - P2B frozen spec blob `b8b6061f86239196f208467e849c845754d0d2a6`; actual money,
   ledger and handoff at `835a6dd82ee4e50652362e7201a79b7451bbd221`. Later
   `9f91757` is documentation only. Older local A/B drafts do not supersede these.
@@ -46,7 +47,8 @@ scope decisions remain in Readiness. No implementation is authorized here.
   `computePmcCostV1` is the sole money calculator. Use actual exported types,
   not copied approximations or a second ranking, policy validator or rate parser.
 - Node 24.19.0, existing dependencies. No network/SDK imports in controller core.
-  No schema/storage changes, initialization, budget provisioning or host writes.
+  Controller adds no schema/storage changes, initialization, budget provisioning
+  or host writes. P2B1 separately owns its storage; P2B stays unchanged.
 - L1/L2 remain opencode-pinned and refuse this transport before dependency effects.
   L6 and legacy routing/classification aliases refuse; no redirect to another lane.
   Initial public-only scope does not close full HRO live acceptance criteria.
@@ -98,8 +100,10 @@ not permission for a pass-through implementation in P2C.
 
 `route` is a request proposal, never policy or owner evidence. The episode owner
 authenticates intentRef against its pre-existing authoritative task record and
-compares EVERY workflow/task/episode/request/lane/version/attempt field. It returns
-the approved request with controller-computed requestDigest, or refuses. Caller
+compares EVERY workflow/task/episode/request/lane/version/attempt field. Trusted setup
+preissues episode/request IDs BEFORE caller digest creation. Begin validates the
+unchanged approved request and controller-computed requestDigest, or refuses; it
+never substitutes IDs, rewrites fields or repairs a mismatched digest. Caller
 fallback claims never substitute for owner-sourced prior proof. IntentRef possession
 alone is not authority: the installed owner is scoped to the initiating workflow/
 task and authenticates that origin outside ordinary JSON. No public task/episode
@@ -159,7 +163,8 @@ internal record is constructed by reviewed P2E code, never selected by input.
 ```typescript
 type InstallationPortsV1 = Readonly<{
   clock: () => unknown;
-  owner: EpisodeOwnerPortV1;
+  owner: IntentOwnerV1;
+  originCapability: object;
   acquire: (request: PmcRouteRequestV1) => unknown;
   revalidate: (claims: RevalidationV1) => unknown;
   ledger: LocalPmcLedger;
@@ -220,84 +225,74 @@ must serialize with this synchronous revalidate/consume/send section. Asynchrono
 mutable authority needs a separately reviewed fence; equal digests alone are not
 that fence. No task callback runs inside this section.
 
-### Missing episode-owner prerequisite: precise proposed port
+### Ratified separate owner prerequisite and proof composition
 
-P2A checks supplied two-attempt history. P2B has metadata, budget_scopes and attempts;
-no history enumeration, task-to-episode custody, decision digest, matrix role,
-prior quality or semantic success/failure. Request-ID uniqueness cannot prevent
-laundering an existing business intent through new request/episode IDs.
+[PMC-P2B1](PMC-P2B1-durable-intent-custody.md) is the sole proposed owner of
+persistent business-intent custody and IntentOwnerV1. V8 resolves the separate
+owner choice; its draft still needs independent review and implementation. P2B's
+metadata/budget_scopes/attempts and existing five operations remain unchanged.
+Production construction refuses INSTALLATION_REFUSED until accepted custody exists.
 
-Proposed owner is governed workflow/task authority installed by P2E, holding a
-durable intent record. It alone allocates episode/request IDs and authorizes fresh
-business intent. Smallest needed operation: durable compare-and-set claim on that
-intent record, not a generic event system. No such implementation was found.
-Production creation refuses INSTALLATION_REFUSED until an accepted owner exists.
+Import B1 types instead of redeclaring a competing port. Trusted P2E setup issues
+identities before caller digest construction and installs an origin capability
+from its private initiating-task registry. P2C never exposes that capability or
+owner methods to request JSON. Begin is synchronous and receives exactly
+`{intentRef,request:route,computedRequestDigest}` plus the installation's captured
+origin capability. It validates every immutable template field, ID and supplied
+digest. Success returns Result value containing claim, unchanged request, exact
+P2A episode Claim, authenticated budgetEvidence and BudgetScopeV1. Failure returns
+EPISODE_REFUSED; unknown/throw/thenable/lost acknowledgement blocks. No remint.
 
-```typescript
-type EpisodeOwnerPortV1 = Readonly<{
-  begin: (input: LaunchInputV1, computedRequestDigest: Digest) => unknown;
-  recordDecision: (claim: object, decision: PmcRouteDecisionV1,
-    decisionDigest: Digest, wireDigest: Digest, scopeId: Id) => unknown;
-  finish: (claim: object, observation: OwnerFinishV1) => unknown;
-}>;
-type OwnerFinishV1 = Readonly<{
-  ledger: AttemptV1 | null;
-  disposition: 'terminal-no-send' | 'terminal-failed-settled' | 'succeeded' | 'uncertain';
-  terminalProof: object | null;
-}>;
-```
+P2C implements the private selection/completion WeakMaps required by B1; they are
+not assumed present merely because this draft names ports. Selection capability is
+inserted only from the direct real P2A successful result plus verified owned P2D
+wire, unchanged computed cost and authenticated selected candidate quality/matrix
+role. It binds owner instance/claim/request, decision/wire digests, scope and cost.
+Pass `owner.recordDecision(claim, selectionCapability)` and require Result ok:true
+before reserve. B1 never imports P2C runtime, receives callback-selected strings
+as authority or interprets caller decision JSON as an authenticated result.
 
-claim/terminalProof are identity capabilities issued into private registries;
-unknown shapes/copies never authenticate. begin returns exactly `{ok:false}` or
-`{ok:true,claim,request,episode,budgetEvidence,scope}`. claim is a frozen identity
-recognized by this owner instance; request is owner-approved PmcRouteRequestV1;
-episode is exact P2A episode Claim; budgetEvidence is EvidenceRef; scope is
-BudgetScopeV1. recordDecision/finish return exactly `{ok:true}` or `{ok:false}`.
-These are synchronous durable acknowledgements; throw/thenable/lost ack refuses
-and quarantines the intent. Underlying claim is durable; restart cannot reissue
-capabilities without owner reconciliation.
+Completion capability is created only from controller-owned invocation state,
+acknowledged direct P2B reconciliation and separately authenticated P2D semantic
+proof. It binds the exact original claim/request/selection/wire and ledger identity,
+proof refs/digests, charge and semantic outcome. Pass it to owner.finish and require
+acknowledged Result ok:true. P2B AttemptV1 JSON and knowledge of a proofId alone do
+not authenticate. Captured authenticators resolve exact private identities; no
+public mint or generic reconciliation API. B1's exact union/nullability rules apply.
 
-Minimum durable record binds authenticated business intent/origin, workflow/task/
-lane/version, owner-allocated episode, policy/config, ledger/epoch/scope/account/
-class, and ordered maximum-two attempts. Each retains request ID/digest, decision
-digest, selected binding/provider/matrix role, primary quality/evidence, wire
-digest, reconciliation proof refs/digests and state pending/terminal-no-send/
-terminal-failed-settled/succeeded/uncertain. Retain for full ledger epoch, no TTL,
-deletion or restart reset. Capacity exhaustion refuses. Exact persistence schema,
-caps and authentication implementation need separately reviewed prerequisite
-scope; this draft does NOT authorize that work.
+Keep private per-claim phase `reserveNeverInvoked` until immediately BEFORE calling
+reserve, then irreversibly `reserveMayHaveRun`. Only the former can authenticate
+pre-reserve closure with ledger:null. A refusal with no selected decision closes
+as closed-refused, returns null receipt and permanently ends that intent. An authenticated selected
+pre-reserve no-send may support the declared fallback only if its selection was
+primary. Proof failure may hold; if even that durable write fails, pending blocks.
+After reserve may have run, closure needs acknowledged matching ledger reconciliation;
+absence of a response/receipt never supplies no-send proof.
 
-begin atomically checks authoritative intent mapping and complete history, then
-appends pending claim before returning prior history excluding this claim. Any
-pending/uncertain prior blocks concurrent/new-ID/new-episode requests. Changed
-payload cannot acquire a second initial claim. Fresh business intent requires
-explicit owner authorization, never a caller UUID. Only declared terminal fallback
-can be automatic second attempt after authenticated prior no-send/failed-settled
-closure. Prior success or selected matrix fallback ends episode. No third attempt,
-version/policy/config/provider/scope reset. P2A remains sole suitability selector.
+Owner held/closed-refused with no selection remain distinct from P2A attempts.
+Pending/held/uncertain/refused block BEFORE any projection/resolver call; exclude
+current pending and all unselected states from P2A history without resetting them.
+Only one authenticated selected-primary no-send/failed-settled prior may support
+the predeclared second request ID. Prior success or matrix fallback ends the episode.
+No third attempt, new IDs/episode, changed-payload initial retry, TTL or automatic
+recovery. The owner retains full-epoch history; capacity exhaustion refuses.
 
-recordDecision durably binds selected decision/final wire BEFORE reserve. finish
-acknowledges terminal history only after authenticated ledger reconciliation and
-semantic outcome proof agree; charged failure is not automatically success. Any
-ambiguous finish remains pending/uncertain. Before reserve, controller-owned proof
-that reserve/consume/send never ran may close no-send. Once reserve may have run,
-no-send needs controller/sender proof AND acknowledged ledger cancellation.
+The two stores are NOT one transaction:
 
-Ordered fail-closed composition is NOT a transaction across two stores:
-
-| Last boundary / failure | Required retained state and recovery |
+| Last boundary / failure | Required retained state |
 |---|---|
-| Owner begin, before decision/reserve | Pending claim blocks all new IDs; owner reconciliation proves no reserve/send before closure, never automatically reopens initial. |
-| Decision recorded, reserve failure/lost ack | Pending claim; no permit/send. Reservation may exist. No guessed refund/retry; reconcile exact original request. |
-| Reserve acknowledged, mint/check failure | Reserved liability plus pending claim. In-process proof may cancel only when registry proves no invocation; cancellation acknowledgement precedes owner closure. |
-| Consume failure/lost ack or crash before sender | No send from this path; possible consumed liability retained. Restart never infers no-send from absent receipt; explicit reconciliation only. |
-| Consume acknowledged, send/response/audit/settle/finish failure | Consumed/uncertain liability and pending/uncertain owner state block retry. Authenticated proof reconciles original request; never remint it. |
-| Ledger terminal commit, owner finish failure | Money terminal state is not episode closure. Pending claim blocks until authenticated reconciliation; no second send. |
+| begin before selection/reserve | Pending blocks; only private never-invoked proof may close refused. Restart cannot recreate that proof. |
+| selection commit or reserve lost acknowledgement | Pending owner; reservation may exist. No permit/send, refund or retry. |
+| reserve acknowledged, mint/check failure | Reserved liability and pending owner; genuine no-send cancellation acknowledgement precedes finish. |
+| consume failed/lost acknowledgement | Possible consumed liability and pending owner; no send from this path. Missing receipt never proves no-send. |
+| send/response/audit/reconcile failure | Consumed/uncertain liability and pending/uncertain/held custody; no remint. |
+| ledger terminal commit, finish failure | Money closure is not intent closure; pending blocks. No recovery operation exists in this slice. |
 
-No rollback deletes claims/refunds. Missing owner storage, stale epoch, incomplete
-history or expected identity mismatch refuses. Hostile OS writers/old legitimate
-backup rollback cannot be solved by WeakMap; owner storage must document protection
-and recovery assumptions before activation.
+Missing/corrupt owner store or identity/epoch mismatch refuses. Persistent pending
+has no restart capability and stays blocked. Same-identity OS backup rollback and
+privileged writers lie outside the file-store guarantee; B1 states exact custody
+assumptions and conservative availability loss. Actual B1 storage is mandatory in
+P2C durability tests, not a process-local map.
 
 ### Final wire, terminal proof and P2D seam
 
@@ -387,13 +382,20 @@ priceEvidence and acknowledged AttemptV1. No public mint/fromJSON/sign or serial
 authority. Copies, proxies, reused/cross-instance/restart identities fail lookup.
 
 1. Capture/preflight; compute requestDigest from owned declaration-order tuple
-   `["pmc-request/v1",intentRef,route without requestDigest,payloadJson]`;
-   require supplied digest equality. Nested route fields use P2A declaration order.
+   `["pmc-request/v1",intentRef,routeDigestMaterial,payloadJson]`; require supplied
+   digest equality. routeDigestMaterial removes only top-level requestDigest and,
+   for supplied fallback Claims, their two evidence fields at
+   attempt.priorDisposition.evidence and attempt.primaryQuality.evidence. Preserve
+   every other field, Claim status/value and array order, in P2A declaration order.
+   These exact evidence exclusions prevent hashing evidence that must itself bind
+   the resulting digest; they do not exempt evidence from authentication.
    Digest does not authenticate lineage; owner begin does.
 2. Check installation; durably begin owner claim; acquire authentic evidence,
    clock, RCM facts, tariffs; snapshot ledger and compute exact costs. Compose
    context using owner history/budget evidence; call P2A once.
-3. Refusal closes only with authenticated pre-reserve no-send custody. For success,
+3. Refusal before selection closes as closed-refused only with authenticated
+   never-invoked-reserve custody and null receipt; otherwise pending/held blocks.
+   For success,
    decisionDigest hashes the fixed UTF-8 JSON tuple
    `["pmc-decision/v1",requestDigest,complete successful decision]`, including
    audit/independence obligations, never incidental property order.
@@ -411,15 +413,20 @@ authority. Copies, proxies, reused/cross-instance/restart identities fail lookup
    return/invocation.
 8. Await outcome, authenticate proof, settle/cancel through P2B, durably finish
    owner outcome; return bounded receipt. Every error after consume is uncertain
-   unless authenticated terminal evidence proves otherwise. New turn/fallback
-   needs new owner-approved request/reservation/permit; uncertainty blocks it.
+   unless authenticated terminal evidence proves otherwise. A fallback
+   requires the second PREISSUED request ID and fresh reservation/permit under the
+   same intent; new turns cannot reset that intent and uncertainty blocks it.
 
 Digest serialization is bounded owned JSON without toJSON, whitespace or caller
 property order. Request uses P2A declared nested field order; wire uses WireV1
 declaration order (headers content-type then accept). Complete decision includes
 imported nested records: recursively order their own string keys by Unicode code
 point, preserve every array order, use JSON string/number escaping and UTF-8 bytes.
-Pin literal nested-order/hash fixtures before building; no hash is authenticity.
+Pin literal initial and fallback nested-order/hash fixtures, including evidence excluded from
+request material but included in the complete decision hash. Independently verify
+ALL excluded evidence, including its current requestDigest and provenance; no hash
+is authenticity. Trusted caller setup fills those evidence associations after
+computing the request digest, before launch; launch never rewrites them.
 P2B's existing cost/scopes/snapshot hashing is forwarded unchanged, never rewritten
 to this controller's serialization convention. Refusal/audit outputs retain P2A
 output caps (131,072 visited values and 2,097,152 string units); no raw prompt/body,
@@ -448,7 +455,8 @@ decision/wire/reservation exists, receipt is null; null never implies no liabili
 
 ## Out of Scope
 
-Episode-owner storage or ledger extension; HTTP/Pi implementation; HMAC/IPC/signing;
+P2B1 owner storage implementation or ledger extension; HTTP/Pi implementation;
+HMAC/IPC/signing;
 v0 evaluator changes; schema/money/ranking rewrites; provider calls/spend, real
 budget creation, host credentials/config; unsupported provider/protocol/nonpublic
 activation; HRO implementation; public mint/test mode.
@@ -457,6 +465,7 @@ activation; HRO implementation; public mint/test mode.
 
 - [Amendment 05](../../goals/pi-model-configuration/gate-1-amendment-05.md)
 - [Composition/source notes](../../goals/pi-model-configuration/pmc-p2c-composition-notes.md)
+- [P2B1 durable owner](PMC-P2B1-durable-intent-custody.md)
 - [P2 inventory](../../goals/pi-model-configuration/pmc-p2-design-inventory.md)
 - [P2D](PMC-P2D-openrouter-terminal-transport.md), [P2E](PMC-P2E-config-caller-migration.md)
 - Frozen A/B Git blobs/source pins above supersede older local drafts.
@@ -472,14 +481,14 @@ Future implementation only after prerequisites and explicit release:
 - plugins/foreman-line/docs/goals/pi-model-configuration/pmc-p2c-verification.md
 
 No owner persistence/SDK/network source is allowed. Additional files require scoped
-amendment. This shaping session writes ONLY this spec and composition notes.
-No new ShapingResult: coordinator's exact two-file envelope overrides that general
-shaping output; existing parcel stays draft.
+amendment. This shaping session writes ONLY this spec, B1 draft and composition notes.
+No new ShapingResult: coordinator's exact three-file envelope overrides that
+general shaping output; both parcels stay draft.
 
 ## Verification Plan
 
 Advisory shaping: frozen spec-linter, required-body self-check, local links,
-git diff --check, exact two-file diff. No live probe. Future implementation:
+git diff --check, exact three-file diff. No live probe. Future implementation:
 Node 24.19.0 existing dispatch tests/typecheck/lint and actual P2A/v0 regressions;
 real temporary P2B/accepted owner crash/concurrency tests; native exit checks;
 import/export review. Fake-only AC3/5 cannot pass durability; fake P2D cannot pass
@@ -487,16 +496,18 @@ production AC7.
 
 ## Readiness
 
-R1 BLOCKING PROPOSAL: accept smallest durable workflow intent-owner primitive above,
-identify actual owner/storage and authorize separately, or ratify an explicit P2B
-extension after independent review. No fourth table/new implementation authority
-is granted here. See composition notes for alternative comparison.
+R1 DECISION RESOLVED, IMPLEMENTATION BLOCKING: Amendment 05 V8 ratifies separate
+PMC-P2B1 intent custody, keeping P2B unchanged. B1's concrete draft schema/ports
+still require two independent reviews, Gate 2 and accepted implementation. No
+fourth ledger table or implied owner service. P2C must use actual accepted B1 in
+crash/concurrency tests and implement its private proof adapters.
 
-R2 BLOCKING PROPOSAL: initial governed execution is explicit pmc/v1 only; legacy
-v0 evaluateRouting unchanged/non-authoritative. Inventory found no existing
-governed Pi caller to adapt. This proposed narrowing replaces earlier trusted v0
-launch adapter requirement ONLY after coordinator ratification/independent review.
-Until then canon remains unresolved, draft nondispatchable; no silent v0 deletion.
+R2 DECISION RESOLVED, MIGRATION STILL REQUIRED: V8 ratifies explicit pmc/v1-only
+initial governed execution, superseding the earlier trusted-v0 launch adapter
+requirement. Preserve evaluateRouting/v0 selection unchanged as non-authoritative
+evidence. Unsupported versions/legacy aliases refuse before Pi effects. P2E must
+provide an exercised opt-in parcel/Pi caller; an unused export and generic
+interactive Pi do not establish governed migration.
 
 R3 PRODUCTION GATE: P2D must freeze/implement supported payload schema, source-based
 semantic/billing-bound verifier and private proof registry, plus pinned restricted
@@ -504,6 +515,12 @@ session construction. Installed SDK types support custom stream, not proof of th
 properties. Offline composition release requires explicit reviewed limitations
 and still cannot waive R1 real-custody tests.
 
-P2A repaired-source acceptance and P2B accepted integration pins remain dispatch
+Accepted P2A/P2B integration pins and B1 implementation acceptance remain dispatch
 gates. Two independent reviews follow. No activation/full HRO exit, provider
 availability, actual billing accuracy or owner durability is claimed.
+
+Reviewers must answer: Can any unselected held/refused state reopen an initial
+attempt? Does every proof capability trace to a direct authenticated owner result
+rather than caller JSON? Does each ambiguous cross-store boundary block replay?
+Can ID assignment change the digest after the caller created it? Do v0 preservation
+and explicit-v1 entry coexist without claiming migration before an actual caller?

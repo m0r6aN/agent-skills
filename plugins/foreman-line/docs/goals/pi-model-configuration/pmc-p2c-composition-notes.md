@@ -4,15 +4,18 @@
 `42a3d68806d4ff0eefb1ce8872cdec0758cb7d12`, branch
 `codex/hro-pmc-p2c-shaping-20260926`. Coordinator accepted Step 0 and released only
 this file and [P2C draft](../../specs/active/PMC-P2C-same-process-launch-controller.md).
-No build, new prerequisite implementation, activation or caller migration is
-authorized here. Remaining decisions are explicit, not silently adopted.
+That was the initial two-file shaping envelope. After V8, coordinator released
+exactly three documents at `6446cbfff1817cc149df5a6ab491188aaffdeab1`: this file,
+P2C and the new [B1 draft](../../specs/active/PMC-P2B1-durable-intent-custody.md).
+No build, activation or caller migration is authorized. R1/R2 decisions are now
+ratified; concrete B1 review and implementation remain outstanding.
 
 ## Exact source evidence
 
 | Source | Inspected object / finding |
 |---|---|
 | P2A frozen spec | Git blob `d65ff524bba2eda6c9e38de44c78aac4aae1c59f`, read as blob, not commit path |
-| P2A types/resolver/handoff | `02de2b462481f7d66c2920e844e8de387825dbe1`; complete request/context/decision/Claim/EvidenceRef exports. Refusal-order repair pending, types frozen. |
+| P2A types/resolver/handoff | `4b86643acd4e5cdf183e85cf1cd1c2ace51e0182` merged source; repaired bb89be9 types unchanged. Actual request/context/decision/Claim/EvidenceRef exports read again for B1 shaping. |
 | P2B frozen spec | Git blob `b8b6061f86239196f208467e849c845754d0d2a6` |
 | P2B source/handoff | `835a6dd82ee4e50652362e7201a79b7451bbd221`; actual money.ts, ledger.ts, verification handoff. Later `9f91757` docs only. |
 | Caller inventory | P2B source object's pmc-p2-caller-inventory.md, discovery on bb5a6e7; repeat on accepted integration base |
@@ -38,9 +41,9 @@ CostValueDigest includes requestDigest and original accepted price lexemes. Forw
 computed value/priceEvidence unchanged; attach independently authenticated EvidenceRef.
 Numeric catalog facts cannot become billing evidence through Number.toString().
 
-## R1: smallest missing custody primitive and alternatives
+## R1: decision resolved; concrete custody draft and implementation pending
 
-Recommended proposal: governed workflow/task owner holds one durable intent-to-episode
+V8 ratifies a separate governed workflow/task owner holding one durable intent-to-episode
 record and atomic claim, returning complete P2A history. begin claims before reserve;
 recordDecision binds selection/wire before reserve; finish follows acknowledged
 ledger reconciliation. Lost acknowledgement leaves pending state blocking all new
@@ -55,17 +58,17 @@ No implementation was found; this is a blocker, not an assumed working service.
 | Extend P2B attempts/metadata with intent/episode and atomic claim | Could put claim/reserve in one SQLite transaction | Changes frozen schema/API, authority and recovery. Pre-reserve claim needs actual pending state, not merely a metadata read. Separate scoped amendment/two reviews required; no fourth table inferred. |
 | Separate workflow/task-owner durable intent record (recommended proposal) | Keeps business authority with its owner; minimal begin/recordDecision/finish consumer seam | No existing store assumed. Needs scoped implementation/storage caps/identity/rollback protection/recovery. Claim, reserve, consume/send, ledger reconcile, owner finish. Failures block conservatively; no two-store atomicity/automatic rollback. |
 
-Coordinator chooses/ratifies after independent design review. No new parcel or
-source edits are authorized here. Ledger-local choice requires explicit port/order/
-dependency amendment before P2C release. A named but unimplemented trusted port is
-not custody evidence. Frozen P2B source/schema remain unchanged.
+V8 selected the separate-owner alternative after independent design review. The
+comparison above is historical rationale, not a reopened choice. This three-file
+release shapes B1 only; no source edits are authorized. A named but unimplemented
+trusted port is not custody evidence. Frozen P2B source/schema remain unchanged.
 
 Automatic recovery is absent: no ledger inspect API currently exists. Owner
 reconciliation needs separately accepted evidence/inspection authority; until then,
 pending intent stays blocked and liability retained. Availability loss is explicit,
 not permission to invent proof or issue a new ID.
 
-## R2: v0 adapter decision
+## R2: explicit-v1 decision resolved; actual migration pending
 
 Inventory found no tracked createAgentSession/streamSimple inference caller.
 prepareDispatch prepares legacy routing/artifacts; executeDispatch creates worktree
@@ -73,15 +76,15 @@ and Stage-C receipt. Generic dockerfile.pi launches interactive Pi outside gover
 boundary and is not version-pinned here. Jev/routing/classification registry entries
 are static declarations, not launch authority.
 
-Proposal requiring coordinator ratification AND independent review: initial governed
-entry executes explicit pmc/v1 only, preserves v0 evaluateRouting exactly, refuses
-unsupported versions without upgrading. P2E adds opt-in actual governed handoff;
-it cannot label an unused export migration or insert inference into old prepare/
-execute calls. Earlier v0 adapter requirement remains canon until accepted. The
-draft records this conflict and stays nondispatchable; no silent deletion.
+V8 ratification after independent review: initial governed entry executes explicit
+pmc/v1 only, preserves v0 evaluateRouting exactly, and refuses unsupported versions
+without upgrading. This supersedes the initial trusted-v0 launch adapter requirement.
+P2E adds an opt-in actual governed handoff; it cannot label an unused export
+migration or insert inference into old prepare/execute calls. Draft remains
+nondispatchable for implementation/review gates, not an unresolved v0 decision.
 
 No user authority re-ask is implied: root holds recorded decision delegation.
-These are coordinator review/ratification decisions. Full HRO still requires an
+Those coordinator decisions are now ratified in V8. Full HRO still requires an
 actual exercised parcel/Pi caller, not merely a new exported function.
 
 ## Actual Pi 0.87.1 seam and R3 production gate
@@ -118,7 +121,7 @@ separate/non-exported, no network imports/credentials/public test flag. Producti
 installation ports are explicitly TCB; arbitrary privileged in-process JavaScript
 is outside the isolation claim.
 
-## Review targets and verification
+## Prior two-file shaping verification (historical)
 
 Draft specifies closed request/result/code unions, evidence/owner/terminal ports,
 bounds, preflight priority, digest inputs, one-use permits, failure behavior and
@@ -152,3 +155,55 @@ Freeze exact CAS transitions and capability/proof custody; no generic recovery
 framework or P2B schema changes. Both actual owner tests and independently accepted
 P2A/P2B integration pins remain release gates. The reviewer inspected repaired
 P2A bb89be9 and unchanged ledger835a6dd, no implementation tests/provider calls.
+
+## B1 concrete proposal and P2C reconciliation - 2026-09-26
+
+B1 proposes one separate Node 24.19.0 built-in SQLite store per fixed installation/
+ledger epoch, initialized with a closed <=128-intent batch. Two owner tables,
+maximum two preissued request slots, bounded canonical records and CAS revisions;
+no fourth budget-ledger table, new ledger method or general workflow engine.
+Private trusted initialization issues episode/request IDs before caller digest.
+Begin only validates. Installation owns the fixed root/identity and preapproved
+business batch; no separate global registry or cross-root discovery service is
+invented. Privileged reinstallation, OS writers and same-identity backup rollback
+are outside its guarantee and must be prevented operationally.
+
+Selected records and unselected held/closed-refused records are distinct unions.
+Pending/uncertain/held/refused block before projection, so omission cannot reset
+history. Only authenticated selected-primary closure supports the declared second
+attempt; success/matrix fallback ends intent. Restart leaves pending blocked;
+there is no proof reconstruction, TTL, automatic rollback, retry or recovery.
+
+The B1/P2C composition contract now names the actual proof producer obligations:
+P2E authenticates initiating-task/setup origin; P2C creates selection capabilities
+only from its direct resolver and verified-wire results; completion capabilities
+require private invocation custody plus direct acknowledged P2B and P2D proofs.
+B1 checks through captured private authenticators with no controller runtime import.
+These adapters are still unimplemented; shape review is not authenticity evidence.
+Synthetic issuers prove B1 contract behavior only. Actual B1 must feature in P2C
+cross-store durability tests, with conservative loss of availability on every
+ambiguous boundary. Unselected pre-reserve refusal closes with null launch receipt
+only when controller custody proves reserve was never invoked.
+
+The request digest recipe now excludes exactly the two fallback Claim evidence
+fields, whose current-request binding would otherwise create a recursive digest.
+Semantic values/status remain hashed; all excluded evidence is independently
+authenticated and included in complete decisionDigest. Trusted preparation fills
+those associations after digest computation, before launch; begin never rewrites.
+Literal fallback hash fixtures are required. This changes no P2A request type.
+
+R1/R2 architectural decisions are resolved by V8. B1 exact schema/ports still need
+two independent reviews and Gate 2. P2A/P2B accepted integration, B1 implementation,
+P2C adapters, P2D real billing/terminal proof and P2E exercised opt-in caller remain
+gates. D19 requires reviewed B1-specific enrollment if its exact SQLite/root
+mechanisms are flagged; no generic waiver or detector evasion. Contract-readers,
+mutation-scope and D19 precede any future implementation PR.
+
+Advisory shaping checks for this three-document revision: Node 24.19.0 frozen
+spec-linter validates both B1 and C; existing selfCheckDraft reports valid
+frontmatter/body with no errors or warnings. All local Markdown links resolve,
+UTF-8 reads succeed and git diff --check passes. Tooling/dependencies are borrowed
+read-only from the existing P2A integration donor with TSX_DISABLE_CACHE=1. No
+implementation tests, dependency mutations, provider/network calls, host/config
+writes, PR or push. The local documentation commit is a review handoff only;
+both specs remain draft and non-dispatchable.
