@@ -44,6 +44,8 @@ export {
   piOpenRouterRoutingSchema,
   validatePiOpenRouterRouting,
 } from './pi-openrouter.js'
+export { resolvePmcRouteV1 } from './pmc-resolver.js'
+export type * from './pmc-resolver-types.js'
 export type {
   ProviderBindingProjectionResult,
   ProviderBindingProjectionV1,
