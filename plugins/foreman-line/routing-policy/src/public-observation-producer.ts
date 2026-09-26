@@ -4,6 +4,49 @@ import { type ModelRecord, readCatalogSnapshot } from './catalog-snapshot.js'
 
 type Identity = CatalogIdentity
 type AcceptedSource = AcceptedCatalogSource
+export type MaterializerInputV1 = Readonly<{
+  bytes: Uint8Array
+  requestedIdentities: readonly Identity[]
+  profile: 'openrouter-public-text-materialization/v1'
+  endpoint: 'https://openrouter.ai/api/v1/models'
+  domain: 'public-text-output'
+  requestStartedAtUtc: string
+  completeReceivedAtUtc: string
+  evaluationTimeUtc: string
+  complete: true
+}>
+export type MaterializerInventoryRowV1 =
+  | Readonly<{ identity: Identity; kind: 'facts'; facts: ModelRecord }>
+  | Readonly<{ identity: Identity; kind: 'incomplete'; code: 'REQUIRED_FACT_MISSING' }>
+  | Readonly<{ identity: Identity; kind: 'absent-in-domain' }>
+export type MaterializerRefusalCodeV1 =
+  | 'INPUT_REFUSED'
+  | 'BOUNDS_REFUSED'
+  | 'PROFILE_REFUSED'
+  | 'COMPLETENESS_UNPROVEN'
+  | 'SOURCE_REFUSED'
+  | 'INCOMPLETE_SCOPE'
+export type MaterializerResultV1 =
+  | Readonly<{
+      ok: true
+      evidenceOnly: true
+      kind: 'catalog'
+      requestedIdentities: readonly Identity[]
+      inventory: readonly MaterializerInventoryRowV1[]
+      canonicalBytes: Uint8Array
+      canonicalSha256: string
+      acceptedSource: AcceptedCatalogSource
+    }>
+  | Readonly<{
+      ok: true
+      evidenceOnly: true
+      kind: 'complete-response-with-absence'
+      requestedIdentities: readonly Identity[]
+      inventory: readonly MaterializerInventoryRowV1[]
+      absentIdentities: readonly Identity[]
+      sourceSha256: string
+    }>
+  | Readonly<{ ok: false; evidenceOnly: true; code: MaterializerRefusalCodeV1 }>
 export type ProducerCandidate = Readonly<{
   manifestBytes: Uint8Array
   projectionBytes: Uint8Array
@@ -281,7 +324,13 @@ class BoundedJson {
   private at = 0
   private values = 0
   private units = 0
-  constructor(private readonly source: string) {}
+  constructor(
+    private readonly source: string,
+    private readonly stringMode: 'utf16' | 'utf8' = 'utf16',
+    initialStringBytes = 0,
+  ) {
+    this.units = initialStringBytes
+  }
   parse(): unknown {
     const value = this.value(0)
     this.space()
@@ -292,6 +341,7 @@ class BoundedJson {
     while (' \t\r\n'.includes(this.source[this.at] ?? '\0')) this.at++
   }
   private string(): string {
+    if (this.stringMode === 'utf8') return this.utf8String()
     const start = this.at++
     let units = 0
     while (this.at < this.source.length) {
@@ -311,6 +361,46 @@ class BoundedJson {
       } else check(char !== undefined && char.charCodeAt(0) >= 32)
       units++
       check(units <= STRING_LIMIT, 'INPUT_LIMIT_EXCEEDED')
+    }
+    return fail()
+  }
+  // Charge decoded scalar UTF-8 bytes before allocating the decoded string. The
+  // historical parser deliberately retains its original UTF-16 counting mode.
+  private utf8String(): string {
+    const start = this.at++
+    let bytes = 0
+    let high = false
+    while (this.at < this.source.length) {
+      let code = this.source.charCodeAt(this.at++)
+      if (code === 34) {
+        check(!high)
+        this.units += bytes
+        check(this.units <= TOTAL_STRING_LIMIT, 'INPUT_LIMIT_EXCEEDED')
+        return JSON.parse(this.source.slice(start, this.at)) as string
+      }
+      if (code === 92) {
+        const escaped = this.source[this.at++]
+        if (escaped === 'u') {
+          const hex = this.source.slice(this.at, this.at + 4)
+          check(hex.length === 4 && /^[0-9a-fA-F]{4}$/.test(hex))
+          this.at += 4
+          code = Number.parseInt(hex, 16)
+        } else {
+          check(escaped !== undefined && '"\\/bfnrt'.includes(escaped))
+          code = 32 // Every non-unicode JSON escape decodes to one ASCII byte.
+        }
+      } else check(code >= 32)
+      if (high) {
+        check(code >= 0xdc00 && code <= 0xdfff)
+        high = false
+        bytes += 4
+      } else if (code >= 0xd800 && code <= 0xdbff) high = true
+      else {
+        check(code < 0xdc00 || code > 0xdfff)
+        bytes += code < 0x80 ? 1 : code < 0x800 ? 2 : 3
+      }
+      check(bytes + (high ? 4 : 0) <= STRING_LIMIT, 'INPUT_LIMIT_EXCEEDED')
+      check(this.units + bytes <= TOTAL_STRING_LIMIT, 'INPUT_LIMIT_EXCEEDED')
     }
     return fail()
   }
@@ -383,10 +473,16 @@ class BoundedJson {
     return new JsonNumber(this.source.slice(start, this.at))
   }
 }
-function decode(bytes: Uint8Array): unknown {
+function decode(
+  bytes: Uint8Array,
+  mode: 'utf16' | 'utf8' = 'utf16',
+  initialStringBytes = 0,
+): unknown {
   check(!(bytes[0] === 0xef && bytes[1] === 0xbb && bytes[2] === 0xbf))
   return new BoundedJson(
     new TextDecoder('utf-8', { fatal: true, ignoreBOM: true }).decode(bytes),
+    mode,
+    initialStringBytes,
   ).parse()
 }
 function integer(value: unknown, minimum = 0): number {
@@ -441,19 +537,31 @@ function equalRational(a: Rational, b: Rational): boolean {
 function price(value: unknown): { unit: string; value: number } {
   const row = object(value, ['value', 'unit', 'sourceValuePerToken'])
   check(row.unit === UNIT && row.value instanceof JsonNumber)
-  const source = text(row.sourceValuePerToken)
+  return observedPrice(row.sourceValuePerToken, row.value.token)
+}
+function observedPrice(raw: unknown, declaredToken?: string): { unit: string; value: number } {
+  const source = text(raw)
   check(/^[0-9]+(?:\.[0-9]+)?$/.test(source))
   const parts = source.split('.')
   check(source.replace('.', '').length <= 64 && (parts[1]?.length ?? 0) <= 32)
   const exact = rational(source)
   if (exact.coefficient !== 0n) exact.scale -= 6
-  check(equalRational(exact, rational(row.value.token)))
+  const token = declaredToken ?? `${exact.coefficient}e${-exact.scale}`
+  check(equalRational(exact, rational(token)))
   // Nearest IEEE-754 representation is permitted only when its serialized decimal
   // preserves the exact validated amount; no overflow or nonzero underflow.
-  const numeric = Number(row.value.token)
+  const numeric = Number(token)
   check(Number.isFinite(numeric) && numeric >= 0 && (numeric !== 0 || exact.coefficient === 0n))
   check(equalRational(exact, rational(String(numeric))))
   return { unit: UNIT, value: numeric }
+}
+function effortMap(efforts: readonly string[], includeOff: boolean): Record<string, string> {
+  const map: Record<string, string> = {}
+  for (const level of ['max', 'xhigh', 'high', 'medium', 'low', ...(includeOff ? ['off'] : [])]) {
+    const observed = level === 'off' ? 'none' : level
+    if (efforts.includes(observed)) map[level] = observed
+  }
+  return map
 }
 function instant(
   value: unknown,
@@ -552,15 +660,15 @@ function completeRow(value: unknown, checkedAt: string): ModelRecord {
     efforts.length > 0 &&
       efforts.every((v) => ['max', 'xhigh', 'high', 'medium', 'low', 'none'].includes(v)),
   )
-  const expectedLevels = ['max', 'xhigh', 'high', 'medium', 'low', 'off'].filter((v) =>
-    efforts.includes(v === 'off' ? 'none' : v),
-  )
+  const expectedMap = effortMap(efforts, true)
+  const expectedLevels = Object.keys(expectedMap)
   check(row.thinkingLevelMap !== null && typeof row.thinkingLevelMap === 'object')
   check(Object.keys(row.thinkingLevelMap).length <= FACT_LIST_LIMIT, 'INPUT_LIMIT_EXCEEDED')
   const levels = object(row.thinkingLevelMap, expectedLevels)
   const thinkingLevelMap: Record<string, string> = {}
   for (const level of expectedLevels) {
-    const observed = level === 'off' ? 'none' : level
+    const observed = expectedMap[level]
+    check(observed !== undefined)
     check(levels[level] === observed)
     thinkingLevelMap[level] = observed
   }
@@ -970,6 +1078,208 @@ function validateBindings(
       assessment.residualModalitiesPreserved === true &&
       assessment.jev === 'excluded optional-disabled L6; not part of AC2',
   )
+}
+
+const RAW_PROFILE_ID = 'openrouter-public-text-materialization'
+const RAW_PROFILE = `${RAW_PROFILE_ID}/v1`
+function rawObject(value: unknown): Obj {
+  check(
+    value !== null &&
+      typeof value === 'object' &&
+      !Array.isArray(value) &&
+      !(value instanceof JsonNumber),
+  )
+  return value as Obj
+}
+function rawString(value: unknown): string {
+  const result = text(value)
+  for (let i = 0; i < result.length; i++) {
+    const code = result.charCodeAt(i)
+    if (code >= 0xd800 && code <= 0xdbff) {
+      const low = result.charCodeAt(++i)
+      check(low >= 0xdc00 && low <= 0xdfff)
+    } else check(code < 0xdc00 || code > 0xdfff)
+  }
+  check(new TextEncoder().encode(result).length <= STRING_LIMIT, 'INPUT_LIMIT_EXCEEDED')
+  return result
+}
+function rawFacts(row: Obj): ModelRecord {
+  const architecture = rawObject(row.architecture)
+  const modalities = strings(architecture.input_modalities, FACT_LIST_LIMIT)
+  const input = modalities.filter((v) => v === 'text' || v === 'image')
+  check(input.length > 0)
+  const reasoning = rawObject(row.reasoning)
+  const efforts = strings(reasoning.supported_efforts, FACT_LIST_LIMIT)
+  check(efforts.every((v) => ['max', 'xhigh', 'high', 'medium', 'low', 'none'].includes(v)))
+  const thinkingLevelMap = effortMap(efforts, false)
+  check(Object.keys(thinkingLevelMap).length > 0)
+  const pricing = rawObject(row.pricing)
+  const top = rawObject(row.top_provider)
+  return {
+    provider: 'openrouter',
+    id: text(row.id),
+    baseUrl: BASE_URL,
+    api: 'openai-completions',
+    input,
+    reasoning: true,
+    contextWindow: integer(row.context_length, 1),
+    maxTokens: integer(top.max_completion_tokens, 1),
+    cost: { input: observedPrice(pricing.prompt), output: observedPrice(pricing.completion) },
+    thinkingLevelMap,
+  }
+}
+
+/** Pure raw-response evidence. Successful normalization authenticates no acquisition. */
+export function materializePublicModelResponseV1(input: unknown): MaterializerResultV1 {
+  let stage: MaterializerRefusalCodeV1 = 'INPUT_REFUSED'
+  try {
+    const cache = new Map<object, Obj>()
+    const owned = capture(
+      input,
+      [
+        'bytes',
+        'requestedIdentities',
+        'profile',
+        'endpoint',
+        'domain',
+        'requestStartedAtUtc',
+        'completeReceivedAtUtc',
+        'evaluationTimeUtc',
+        'complete',
+      ],
+      cache,
+    )
+    const identities = scope(owned.requestedIdentities, cache)
+    let captureBytes = 0
+    const charge = (value: string) => {
+      check(value.length <= STRING_LIMIT, 'INPUT_LIMIT_EXCEEDED')
+      const bytes = new TextEncoder().encode(value).length
+      check(bytes <= STRING_LIMIT, 'INPUT_LIMIT_EXCEEDED')
+      captureBytes += bytes
+      check(captureBytes <= TOTAL_STRING_LIMIT, 'INPUT_LIMIT_EXCEEDED')
+    }
+    // Source strings share one budget. The byte buffer and output artifacts do not.
+    for (const [key, value] of Object.entries(owned)) {
+      charge(key)
+      if (key !== 'bytes' && typeof value === 'string') charge(value)
+    }
+    for (const identity of identities) {
+      rawString(identity.provider)
+      rawString(identity.id)
+      charge('provider')
+      charge(identity.provider)
+      charge('id')
+      charge(identity.id)
+    }
+    stage = 'PROFILE_REFUSED'
+    check(
+      owned.profile === RAW_PROFILE &&
+        owned.endpoint === ENDPOINT &&
+        owned.domain === 'public-text-output',
+    )
+    check(identities.every((identity) => identity.provider === 'openrouter'))
+    stage = 'INPUT_REFUSED'
+    byteLength(owned.bytes)
+    const bytes = new ByteArray(owned.bytes as Uint8Array)
+    stage = 'SOURCE_REFUSED'
+    const started = instant(owned.requestStartedAtUtc, true)
+    const received = instant(owned.completeReceivedAtUtc, true)
+    const evaluated = instant(owned.evaluationTimeUtc, true)
+    check(started.nanos <= received.nanos && received.nanos <= evaluated.nanos)
+    check(
+      received.millis - started.millis <= 10000 && evaluated.millis - received.millis <= 86400000,
+    )
+    const decoded = decode(bytes, 'utf8', captureBytes)
+    stage = 'COMPLETENESS_UNPROVEN'
+    check(owned.complete === true)
+    const envelope = object(decoded, ['data', 'links', 'total_count'])
+    const links = object(envelope.links, ['next'])
+    check(links.next === null)
+    const data = list(envelope.data)
+    check(integer(envelope.total_count) === data.length)
+    const rows = new Map<string, Obj>()
+    for (const value of data) {
+      const row = rawObject(value)
+      const id = rawString(row.id)
+      check(!rows.has(id))
+      const architecture = rawObject(row.architecture)
+      check(
+        Array.isArray(architecture.output_modalities) &&
+          architecture.output_modalities.length <= 16,
+      )
+      const outputs = strings(architecture.output_modalities, 16)
+      check(outputs.length > 0 && outputs.includes('text'))
+      check(outputs.every((v) => /^[a-z0-9_-]{1,64}$/.test(v)))
+      rows.set(id, row)
+    }
+    stage = 'SOURCE_REFUSED'
+    const inventory: MaterializerInventoryRowV1[] = identities.map((identity) => {
+      const row = rows.get(identity.id)
+      if (!row) return { identity, kind: 'absent-in-domain' }
+      try {
+        return { identity, kind: 'facts', facts: rawFacts(row) }
+      } catch {
+        return { identity, kind: 'incomplete', code: 'REQUIRED_FACT_MISSING' }
+      }
+    })
+    const absentIdentities = inventory
+      .filter((row) => row.kind === 'absent-in-domain')
+      .map((row) => row.identity)
+    const sourceSha256 = hash(bytes)
+    if (absentIdentities.length > 0)
+      return freeze({
+        ok: true,
+        evidenceOnly: true,
+        kind: 'complete-response-with-absence',
+        requestedIdentities: identities,
+        inventory,
+        absentIdentities,
+        sourceSha256,
+      })
+    if (inventory.some((row) => row.kind !== 'facts'))
+      return Object.freeze({
+        ok: false,
+        evidenceOnly: true,
+        code: 'INCOMPLETE_SCOPE',
+      })
+    const sourceRef = `${RAW_PROFILE}:sha256:${sourceSha256}`
+    const document = {
+      formatVersion: 'rcm-catalog-snapshot/v1',
+      sourceRef,
+      providers: [{ providerKey: 'openrouter', checkedAtUtc: received.canonical }],
+      models: inventory.map((row) => {
+        check(row.kind === 'facts')
+        return row.facts
+      }),
+    }
+    const canonicalBytes = new TextEncoder().encode(`${JSON.stringify(document, null, 2)}\n`)
+    check(canonicalBytes.length <= BYTE_LIMIT, 'INPUT_LIMIT_EXCEEDED')
+    const canonicalSha256 = hash(canonicalBytes)
+    check(readCatalogSnapshot(canonicalBytes, canonicalSha256).ok)
+    return freeze({
+      ok: true,
+      evidenceOnly: true,
+      kind: 'catalog',
+      requestedIdentities: identities,
+      inventory,
+      canonicalBytes,
+      canonicalSha256,
+      acceptedSource: {
+        profileId: RAW_PROFILE_ID,
+        profileVersion: 'v1',
+        canonicalSha256,
+        sourceEvidenceRef: sourceRef,
+        sourceEvidenceSha256: sourceSha256,
+        requestedIdentities: identities,
+      },
+    })
+  } catch (error) {
+    return Object.freeze({
+      ok: false,
+      evidenceOnly: true,
+      code: refusalCodes.get(error as object) === 'INPUT_LIMIT_EXCEEDED' ? 'BOUNDS_REFUSED' : stage,
+    })
+  }
 }
 
 /** Offline evidence transformation only. Caller pins express acceptance, not authentication. */
