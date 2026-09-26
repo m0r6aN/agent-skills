@@ -228,7 +228,7 @@ function copy(
 			)
 				fail("INPUT_REFUSED");
 		}
-		chargeCaptured(prior, state, depth, precharged);
+		chargeCaptured(prior, state, depth, true);
 		return prior;
 	}
 	state.active.add(value);

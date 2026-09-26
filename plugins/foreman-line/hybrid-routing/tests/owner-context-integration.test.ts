@@ -458,27 +458,28 @@ test("retained producer evidence assembles six real rows and preserves synthetic
 	assert.deepEqual(context.projection.policy, policy);
 	const realCatalog = evaluateCatalogEligibility(catalogInput);
 	assert.equal(realCatalog.stage, "projector");
-	if (realCatalog.stage === "projector" && realCatalog.result.ok) {
-		assert.deepEqual(context.catalog.provenance, realCatalog.result.provenance);
-		assert.deepEqual(
-			context.catalog.results,
-			realCatalog.result.results.map((row) =>
-				row.outcome === "facts"
-					? {
-							provider: row.requested.provider,
-							providerModelId: row.requested.id,
-							outcome: "facts",
-							facts: row.facts,
-						}
-					: {
-							provider: row.requested.provider,
-							providerModelId: row.requested.id,
-							outcome: "refused",
-							codes: row.codes,
-						},
-			),
-		);
-	}
+	if (realCatalog.stage !== "projector") throw new Error("unreachable");
+	assert.equal(realCatalog.result.ok, true);
+	if (!realCatalog.result.ok) throw new Error("retained catalog refused");
+	assert.deepEqual(context.catalog.provenance, realCatalog.result.provenance);
+	assert.deepEqual(
+		context.catalog.results,
+		realCatalog.result.results.map((row) =>
+			row.outcome === "facts"
+				? {
+						provider: row.requested.provider,
+						providerModelId: row.requested.id,
+						outcome: "facts",
+						facts: row.facts,
+					}
+				: {
+						provider: row.requested.provider,
+						providerModelId: row.requested.id,
+						outcome: "refused",
+						codes: row.codes,
+					},
+		),
+	);
 	const refusalInput = {
 		...catalogInput,
 		approvedConfig: {
@@ -490,26 +491,26 @@ test("retained producer evidence assembles six real rows and preserves synthetic
 	};
 	const refusalCatalog = evaluateCatalogEligibility(refusalInput);
 	assert.equal(refusalCatalog.stage, "projector");
-	if (refusalCatalog.stage === "projector" && refusalCatalog.result.ok) {
-		const refusalAssembly = preparePmcOwnerContextV1({
-			policy,
-			catalogInput: refusalInput,
-			catalogSource: { status: "unknown" },
-			ownerContext,
-		});
-		assert.equal(refusalAssembly.ok, true);
-		if (refusalAssembly.ok) {
-			assert.deepEqual(
-				(refusalAssembly.context as AnyRecord).catalog.results,
-				refusalCatalog.result.results.map((row) => ({
-					provider: row.requested.provider,
-					providerModelId: row.requested.id,
-					outcome: "refused",
-					codes: row.outcome === "refused" ? row.codes : [],
-				})),
-			);
-		}
-	}
+	if (refusalCatalog.stage !== "projector") throw new Error("unreachable");
+	assert.equal(refusalCatalog.result.ok, true);
+	if (!refusalCatalog.result.ok) throw new Error("retained refusal refused");
+	const refusalAssembly = preparePmcOwnerContextV1({
+		policy,
+		catalogInput: refusalInput,
+		catalogSource: { status: "unknown" },
+		ownerContext,
+	});
+	assert.equal(refusalAssembly.ok, true);
+	if (!refusalAssembly.ok) throw new Error("retained refusal assembly refused");
+	assert.deepEqual(
+		(refusalAssembly.context as AnyRecord).catalog.results,
+		refusalCatalog.result.results.map((row) => ({
+			provider: row.requested.provider,
+			providerModelId: row.requested.id,
+			outcome: "refused",
+			codes: row.outcome === "refused" ? row.codes : [],
+		})),
+	);
 });
 
 test("real adapter and resolver integration selects only with synthetic dynamic claims", () => {

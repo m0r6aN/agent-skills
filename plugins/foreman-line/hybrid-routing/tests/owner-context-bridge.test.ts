@@ -133,24 +133,117 @@ function aggregateStringInput(overBy: number): Record<string, unknown> {
 	return value;
 }
 
-function ordinaryNodeInput(entries: number): Record<string, unknown> {
+function expandedOrdinaryNodes(value: unknown, precharged = false): number {
+	if (typeof value === "string") return precharged ? 0 : 1;
+	if (value === null || typeof value !== "object") return precharged ? 0 : 1;
+	if (ArrayBuffer.isView(value)) return precharged ? 0 : 1;
+	if (Array.isArray(value)) {
+		let total = precharged ? 0 : 1;
+		total += value.length + Reflect.ownKeys(value).length;
+		for (const key of Reflect.ownKeys(value)) {
+			if (key === "length") continue;
+			const descriptor = Object.getOwnPropertyDescriptor(value, key);
+			if (descriptor && "value" in descriptor)
+				total += expandedOrdinaryNodes(descriptor.value, true);
+		}
+		return total;
+	}
+	let total = precharged ? 0 : 1;
+	for (const key of Reflect.ownKeys(value)) {
+		total += 1;
+		const descriptor = Object.getOwnPropertyDescriptor(value, key);
+		if (descriptor && "value" in descriptor)
+			total += expandedOrdinaryNodes(descriptor.value);
+	}
+	return total;
+}
+
+const CONTRACT_NODE_LIMIT = 131072;
+
+function arithmeticOrdinaryInput(target: number): Record<string, unknown> {
 	const value = input() as any;
-	value.catalogSource = Object.fromEntries(
-		Array.from({ length: entries }, (_, index) => [`node-${index}`, null]),
+	value.catalogSource = {};
+	const base = expandedOrdinaryNodes(value);
+	const remaining = target - base + 1;
+	assert.ok(remaining >= 3);
+	const entries = Math.floor((remaining - 1) / 2);
+	const useArrayTail = remaining - (1 + entries * 2) === 1;
+	const source = Object.fromEntries(
+		Array.from({ length: entries }, (_, index) => [
+			`node-${index}`,
+			useArrayTail && index === 0 ? [] : null,
+		]),
 	);
+	value.catalogSource = source;
+	assert.equal(expandedOrdinaryNodes(value), target);
 	return value;
 }
 
-function expandedAliasInput(entries: number): Record<string, unknown> {
+function arithmeticAliasInput(target: number): Record<string, unknown> {
 	const value = input() as any;
+	value.catalogSource = {};
+	value.ownerContext.bindings = {};
+	const base = expandedOrdinaryNodes(value);
+	const aliasCount = 256;
+	const remaining = target - base;
+	const sharedEntries = Math.max(
+		1,
+		Math.floor((remaining - aliasCount * 2) / (aliasCount * 2)),
+	);
+	const aliasDelta = aliasCount * (2 + sharedEntries * 2);
+	const filler = remaining - aliasDelta;
+	assert.ok(filler >= 0);
+	const fillerEntries = Math.floor(filler / 2);
+	const useArrayTail = filler - fillerEntries * 2 === 1;
+	value.catalogSource = Object.fromEntries(
+		Array.from({ length: fillerEntries }, (_, index) => [
+			`filler-${index}`,
+			useArrayTail && index === 0 ? [] : null,
+		]),
+	);
 	const shared = Object.fromEntries(
-		Array.from({ length: entries }, (_, index) => [`alias-${index}`, null]),
+		Array.from({ length: sharedEntries }, (_, index) => [
+			`alias-${index}`,
+			null,
+		]),
 	);
-	(value.ownerContext as any).bindings = Array.from(
-		{ length: 256 },
-		() => shared,
+	value.ownerContext.bindings = Object.fromEntries(
+		Array.from({ length: aliasCount }, (_, index) => [`slot-${index}`, shared]),
 	);
+	assert.equal(expandedOrdinaryNodes(value), target);
 	return value;
+}
+
+function ordinaryBoundaryBuilder(value: Record<string, unknown>): string {
+	const source = value.catalogSource as Record<string, unknown>;
+	const entries = Object.keys(source).length;
+	const arrayTail = Array.isArray(source[Object.keys(source)[0] ?? ""]);
+	const tail = arrayTail ? "index === 0 ? [] : null" : "null";
+	return `(value) => { value.catalogSource = Object.fromEntries(Array.from({ length: ${entries} }, (_, index) => [\`node-\${index}\`, ${tail}])); return value; }`;
+}
+
+function aliasBoundaryBuilder(value: Record<string, unknown>): string {
+	const source = value.catalogSource as Record<string, unknown>;
+	const bindings = (value.ownerContext as Record<string, unknown>)
+		.bindings as Record<string, Record<string, unknown>>;
+	const shared = Object.values(bindings)[0] ?? {};
+	const fillerEntries = Object.keys(source).length;
+	const sharedEntries = Object.keys(shared).length;
+	const fillerArrayTail = Array.isArray(source[Object.keys(source)[0] ?? ""]);
+	const fillerTail = fillerArrayTail ? "index === 0 ? [] : null" : "null";
+	return `(value) => { value.catalogSource = Object.fromEntries(Array.from({ length: ${fillerEntries} }, (_, index) => [\`filler-\${index}\`, ${fillerTail}])); const shared = Object.fromEntries(Array.from({ length: ${sharedEntries} }, (_, index) => [\`alias-\${index}\`, null])); value.ownerContext.bindings = Object.fromEntries(Array.from({ length: 256 }, (_, index) => [\`slot-\${index}\`, shared])); return value; }`;
+}
+
+function aggregateBoundaryBuilder(overBy: number): string {
+	const value = input() as Record<string, unknown>;
+	value.catalogSource = {};
+	const keys = Array.from({ length: 513 }, (_, index) => `aggregate-${index}`);
+	const remaining =
+		2097152 -
+		stringUnits(value) -
+		keys.reduce((total, key) => total + key.length, 0) +
+		overBy;
+	return `(value) => { const keys = Array.from({ length: 513 }, (_, index) => \`aggregate-\${index}\`); let remaining = ${remaining}; value.catalogSource = Object.fromEntries(keys.map((key) => { const length = Math.min(4096, Math.max(0, remaining)); remaining -= length; return [key, "x".repeat(length)]; })); return value; }`;
 }
 
 function nestedObject(count: number): unknown {
@@ -207,7 +300,7 @@ export async function load(url, context, nextLoad) {
 	const serialized = JSON.stringify({
 		...value,
 		catalogInput: {
-			...(value.catalogInput as Record<string, unknown>),
+			...(value.catalogInput as unknown as Record<string, unknown>),
 			canonicalBytes: Array.from(
 				(value.catalogInput as any).canonicalBytes as Uint8Array,
 			),
@@ -246,6 +339,94 @@ process.stdout.write("__COUNTS__" + JSON.stringify({
 		counts: { projection: number; catalog: number };
 	};
 	return { stage: parsed.stage, ...parsed.counts };
+}
+
+function instrumentedBuilder(builder: string): {
+	stage: string;
+	code?: string;
+	projection: number;
+	catalog: number;
+} {
+	const target = new URL("../../routing-policy/src/index.ts", import.meta.url)
+		.href;
+	const loader = `
+const target = ${JSON.stringify(target)};
+export async function resolve(specifier, context, nextResolve) {
+  if (specifier.includes("/routing-policy/src/index.") && !specifier.startsWith(target)) {
+    const source = \
+      \`import * as actual from \${JSON.stringify(target)};\\n\
+globalThis.__counts ??= { projection: 0, catalog: 0 };\\n\
+export const projectProviderBindingsV1 = (...args) => {\\n\
+  globalThis.__counts.projection++;\\n\
+  return actual.projectProviderBindingsV1(...args);\\n\
+};\\n\
+export const evaluateCatalogEligibility = (...args) => {\\n\
+  globalThis.__counts.catalog++;\\n\
+  return actual.evaluateCatalogEligibility(...args);\\n\
+};\`;
+    return { url: "data:text/javascript," + encodeURIComponent(source), shortCircuit: true };
+  }
+  return nextResolve(specifier, context, nextResolve);
+}
+export async function load(url, context, nextLoad) {
+  if (url.startsWith("data:text/javascript,")) return {
+    format: "module",
+    source: decodeURIComponent(url.slice("data:text/javascript,".length)),
+    shortCircuit: true,
+  };
+  return nextLoad(url, context, nextLoad);
+}
+`;
+	const value = input();
+	const serialized = JSON.stringify({
+		...value,
+		catalogInput: {
+			...(value.catalogInput as unknown as Record<string, unknown>),
+			canonicalBytes: Array.from(
+				(value.catalogInput as any).canonicalBytes as Uint8Array,
+			),
+		},
+	});
+	const script = `
+import { preparePmcOwnerContextV1 } from "./src/index.ts";
+const seed = ${serialized};
+seed.catalogInput.canonicalBytes = Uint8Array.from(seed.catalogInput.canonicalBytes);
+const input = (${builder})(seed);
+const result = preparePmcOwnerContextV1(input);
+process.stdout.write("__COUNTS__" + JSON.stringify({
+  stage: result.ok ? "success" : result.stage,
+  code: result.ok || result.stage !== "bridge" ? null : result.code,
+  counts: globalThis.__counts,
+}));
+`;
+	const child = spawnSync(
+		process.execPath,
+		[
+			"--import",
+			"tsx/esm",
+			"--loader",
+			`data:text/javascript,${encodeURIComponent(loader)}`,
+			"--input-type=module",
+			"--eval",
+			script,
+		],
+		{ cwd: process.cwd(), encoding: "utf8" },
+	);
+	assert.equal(child.status, 0, child.stderr);
+	const line = child.stdout
+		.split(/\r?\n/)
+		.find((entry) => entry.startsWith("__COUNTS__"));
+	assert.ok(line, child.stdout);
+	const parsed = JSON.parse(line.slice("__COUNTS__".length)) as {
+		stage: string;
+		code: string | null;
+		counts: { projection: number; catalog: number };
+	};
+	return {
+		stage: parsed.stage,
+		...(parsed.code === null ? {} : { code: parsed.code }),
+		...parsed.counts,
+	};
 }
 
 test("assembles real projection and catalog rows without validating owner claims", () => {
@@ -396,6 +577,111 @@ test("isolated instrumentation verifies first refusal and zero later owner calls
 	for (const value of captureBoundaryCases) {
 		assert.deepEqual(instrumentedCounts(value), {
 			stage: "bridge",
+			projection: 0,
+			catalog: 0,
+		});
+	}
+
+	const invalidOrdinaryShapes = [
+		"(value) => { value.ownerContext.episode = Symbol('invalid'); return value; }",
+		"(value) => { Object.defineProperty(value.ownerContext, 'hidden', { value: null, enumerable: false }); return value; }",
+		"(value) => { Object.defineProperty(value.ownerContext, 'episode', { get() { return null; }, enumerable: true }); return value; }",
+		"(value) => { value.ownerContext.episode = () => null; return value; }",
+		"(value) => { value.ownerContext.episode = Promise.resolve(null); return value; }",
+		"(value) => { value.ownerContext.episode = new Date(); return value; }",
+		"(value) => { value.ownerContext.episode = value.ownerContext; return value; }",
+		"(value) => { value.ownerContext.episode = undefined; return value; }",
+		"(value) => { value.ownerContext.episode = NaN; return value; }",
+		"(value) => { value.ownerContext.bindings = new Array(1); return value; }",
+		"(value) => { value.ownerContext.bindings = [null]; Object.defineProperty(value.ownerContext.bindings, 'extra', { value: null, enumerable: true }); return value; }",
+	];
+	for (const builder of invalidOrdinaryShapes) {
+		assert.deepEqual(instrumentedBuilder(builder), {
+			stage: "bridge",
+			code: "INPUT_REFUSED",
+			projection: 0,
+			catalog: 0,
+		});
+	}
+
+	const ordinaryAtLimit = arithmeticOrdinaryInput(CONTRACT_NODE_LIMIT);
+	assert.deepEqual(
+		instrumentedBuilder(ordinaryBoundaryBuilder(ordinaryAtLimit)),
+		{
+			stage: "success",
+			projection: 1,
+			catalog: 1,
+		},
+	);
+	assert.deepEqual(
+		instrumentedBuilder(
+			ordinaryBoundaryBuilder(arithmeticOrdinaryInput(CONTRACT_NODE_LIMIT + 1)),
+		),
+		{ stage: "bridge", code: "BOUNDS_REFUSED", projection: 0, catalog: 0 },
+	);
+	const aliasAtLimit = arithmeticAliasInput(CONTRACT_NODE_LIMIT);
+	assert.deepEqual(instrumentedBuilder(aliasBoundaryBuilder(aliasAtLimit)), {
+		stage: "success",
+		projection: 1,
+		catalog: 1,
+	});
+	assert.deepEqual(
+		instrumentedBuilder(
+			aliasBoundaryBuilder(arithmeticAliasInput(CONTRACT_NODE_LIMIT + 1)),
+		),
+		{ stage: "bridge", code: "BOUNDS_REFUSED", projection: 0, catalog: 0 },
+	);
+
+	const exactLimits = [
+		{
+			builder:
+				"(value) => { let nested = null; for (let index = 0; index < 18; index++) nested = { child: nested }; value.ownerContext.episode = nested; return value; }",
+		},
+		{
+			builder:
+				"(value) => { value.ownerContext.bindings = new Array(256).fill(null); return value; }",
+		},
+		{
+			builder:
+				'(value) => { value.ownerContext.policyDigest = "x".repeat(4096); return value; }',
+		},
+		{ builder: aggregateBoundaryBuilder(0) },
+		{
+			builder:
+				"(value) => { value.catalogInput.canonicalBytes = new Uint8Array(8 * 1024 * 1024); return value; }",
+		},
+	];
+	for (const { builder } of exactLimits) {
+		const result = instrumentedBuilder(builder);
+		assert.equal(result.stage === "bridge", false);
+		assert.deepEqual(
+			{ projection: result.projection, catalog: result.catalog },
+			{ projection: 1, catalog: 1 },
+		);
+	}
+	const overLimits = [
+		{
+			builder:
+				"(value) => { let nested = null; for (let index = 0; index < 19; index++) nested = { child: nested }; value.ownerContext.episode = nested; return value; }",
+		},
+		{
+			builder:
+				"(value) => { value.ownerContext.bindings = new Array(257).fill(null); return value; }",
+		},
+		{
+			builder:
+				'(value) => { value.ownerContext.policyDigest = "x".repeat(4097); return value; }',
+		},
+		{ builder: aggregateBoundaryBuilder(1) },
+		{
+			builder:
+				"(value) => { value.catalogInput.canonicalBytes = new Uint8Array(8 * 1024 * 1024 + 1); return value; }",
+		},
+	];
+	for (const { builder } of overLimits) {
+		assert.deepEqual(instrumentedBuilder(builder), {
+			stage: "bridge",
+			code: "BOUNDS_REFUSED",
 			projection: 0,
 			catalog: 0,
 		});
@@ -630,23 +916,18 @@ test("accepts exact depth, ordinary-node, string, and aggregate limits before on
 	(depthOver.ownerContext as any).episode = nestedObject(19);
 	assert.equal(isBounds(preparePmcOwnerContextV1(depthOver)), true);
 
-	let low = 0;
-	let high = 70000;
-	while (high - low > 1) {
-		const middle = Math.floor((low + high) / 2);
-		if (isBounds(preparePmcOwnerContextV1(ordinaryNodeInput(middle))))
-			high = middle;
-		else low = middle;
-	}
-	assert.equal(
-		isBounds(preparePmcOwnerContextV1(ordinaryNodeInput(low))),
-		false,
+	const ordinaryExact = arithmeticOrdinaryInput(CONTRACT_NODE_LIMIT);
+	assert.equal(expandedOrdinaryNodes(ordinaryExact), CONTRACT_NODE_LIMIT);
+	assert.equal(isBounds(preparePmcOwnerContextV1(ordinaryExact)), false);
+	assert.deepEqual(
+		preparePmcOwnerContextV1(arithmeticOrdinaryInput(CONTRACT_NODE_LIMIT + 1)),
+		{
+			ok: false,
+			evidenceOnly: true,
+			stage: "bridge",
+			code: "BOUNDS_REFUSED",
+		},
 	);
-	assert.equal(
-		isBounds(preparePmcOwnerContextV1(ordinaryNodeInput(high))),
-		true,
-	);
-	assert.ok(low < 131072 && high > 0);
 
 	const stringAtLimit = input();
 	(stringAtLimit.ownerContext as any).policyDigest = "x".repeat(4096);
@@ -663,21 +944,17 @@ test("accepts exact depth, ordinary-node, string, and aggregate limits before on
 		true,
 	);
 
-	let aliasLow = 0;
-	let aliasHigh = 1024;
-	while (aliasHigh - aliasLow > 1) {
-		const middle = Math.floor((aliasLow + aliasHigh) / 2);
-		if (isBounds(preparePmcOwnerContextV1(expandedAliasInput(middle))))
-			aliasHigh = middle;
-		else aliasLow = middle;
-	}
-	assert.equal(
-		isBounds(preparePmcOwnerContextV1(expandedAliasInput(aliasLow))),
-		false,
-	);
-	assert.equal(
-		isBounds(preparePmcOwnerContextV1(expandedAliasInput(aliasHigh))),
-		true,
+	const aliasExact = arithmeticAliasInput(CONTRACT_NODE_LIMIT);
+	assert.equal(expandedOrdinaryNodes(aliasExact), CONTRACT_NODE_LIMIT);
+	assert.equal(isBounds(preparePmcOwnerContextV1(aliasExact)), false);
+	assert.deepEqual(
+		preparePmcOwnerContextV1(arithmeticAliasInput(CONTRACT_NODE_LIMIT + 1)),
+		{
+			ok: false,
+			evidenceOnly: true,
+			stage: "bridge",
+			code: "BOUNDS_REFUSED",
+		},
 	);
 });
 
