@@ -1,7 +1,7 @@
 ---
 ticket: PMC-P2B
 title: Durable micro-USD budget ledger and attempt state
-status: draft
+status: active
 owner: clinton.morgan
 created: 2026-09-26
 updated: 2026-09-26
@@ -212,15 +212,15 @@ routing-policy regressions. Verify exact diff authority and no network imports.
 
 ## Readiness
 
-Draft, not dispatchable. The SQLite design is coordinator accepted, but accepted
-P1/predecessor public contracts and P2A interface freeze remain prerequisites.
-Freeze concrete initialization/open ports and failure codes before dispatch.
+Gate 2 below releases private implementation. The SQLite design and concrete ports are accepted;
+P1/predecessor public contracts and the P2A interface freeze are pinned below.
+Concrete initialization/open ports and failure codes are defined below.
 Two independent implementation reviews remain required. Do not substitute an
 in-memory ledger to get tests green or infer activation from design acceptance.
 
-## Concrete owner, money and ledger ports — draft proposal
+## Concrete owner, money and ledger ports
 
-This supplement is proposed for independent contract review, not a build release.
+This supplement was independently reviewed; Gate 2 below is the build release.
 It resolves the earlier unspecified initializer/open/proof surface without
 changing the three-table SQLite design. All records below are closed; null is
 explicit, fields are required, and returned plain data is deeply owned/frozen.
@@ -493,3 +493,33 @@ The public AttemptV1 still reports the current proof only.
 
 The revised proposal remains draft pending independent re-review and accepted
 predecessor pin; there is no implementation release or weakening of P2A.
+## Gate 2 private ledger implementation release — 2026-09-26
+
+The user's explicit HRO prerequisite delegation grants scoped implementation and
+merge decisions subject to independent review. Fresh review approved revised
+contract eca5dd5197a92d5247a46b67826f47276fca899d with no blocking findings after
+requestDigest/output-domain fixes and bounded proof-lineage clarification.
+Earlier draft labels record shaping history and are superseded by this release.
+
+PMC-P1b is merged as60a62b1cccf06e6a23bfe2294beb758799d5e317 after two reviews and
+full green CI. P2A's accepted contract e598906 is pinned for private build at
+spec blobd65ff524bba2eda6c9e38de44c78aac4aae1c59f in c26179f. Its implementation
+is being built separately. P2B consumes that frozen VALUE-port correspondence;
+it must not import or wait for a future resolver/controller implementation to
+perform its independent money/storage work. P2C composition still requires both
+accepted implementations and exact request/evidence/digest field matching.
+
+Builder worktree D:/Repos/agent-skills-worktrees/hro-pmc-p1-shaping-20260926 is
+reused only after clean branch creation, now codex/hro-pmc-p2b-20260926. Original
+shaping branch is preserved. Fresh frontier builder inspects exact head/spec and
+real Node/SQLite API, restates and stops at Step0. Five implementation files only;
+no source-policy/HRO/Pi/host configuration or upstream validator edits. Node24.19.0.
+
+Meaningful permanent tests cover the complete money/domain/replay/proof/state/
+storage/failure/bounds/concurrency matrix. Real isolated SQLite process tests are
+required; no public test-bypass or replacement in-memory ledger. Use exact digest
+tuple fixtures and record trusted-port boundaries in the handoff. Independent
+implementation reviews will verify actual behavior, not merely design acceptance.
+Two fresh frontier reviews plus green full remote CI are required before merge.
+No real ledger initialization, budget provisioning, provider spend or activation
+is authorized by this implementation parcel; tests use isolated temporary roots.
