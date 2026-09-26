@@ -84,8 +84,25 @@ type EvidenceRef = Readonly<{
 type Claim<T> =
   | Readonly<{ status: 'unknown' }>
   | Readonly<{ status: 'supplied'; value: T; evidence: EvidenceRef }>;
+type ReviewSubject = Readonly<{
+  subjectId: Id; role: 'builder' | 'coordinator'; artifactDigest: Digest;
+  instanceId: Claim<Id>; family: Claim<Text>;
+}>;
+type IndependenceObligations = Readonly<{
+  policyAuthorityRef: Text; policyAuthorityDigest: Digest;
+  determinationId: Id; determinationDigest: Digest; artifactDigest: Digest;
+  currentSelection: Readonly<{
+    excludedInstanceIds: readonly Id[]; excludedFamilies: readonly Text[];
+    subjectIds: readonly Id[];
+  }>;
+  futureReview: Readonly<{
+    duty: 'separate-l2-review' | 'parcel-review';
+    subjectBindingId: Text; subjectInstanceId: Id; subjectFamily: Text | null;
+    distinctInstance: true; differentFamily: boolean;
+  }> | null;
+}>;
 type PmcRouteRequestV1 = Readonly<{
-  version: 'pmc/v1'; workflowId: Id; taskId: Id; requestId: Id;
+  version: 'pmc/v1'; workflowId: Id; taskId: Id; episodeId: Id; requestId: Id;
   requestDigest: Digest; lane: PmcLaneId;
   subRole: LanePolicyV1['subRoles'][number];
   routingClass: LanePolicyV1['routingClasses'][number]; dataClass: DataClass;
@@ -106,7 +123,7 @@ type PmcRouteRequestV1 = Readonly<{
 }>;
 type CatalogClaim = Readonly<{
   source: Claim<Readonly<{ profileId: Text; profileVersion: Text;
-    snapshotDigest: Digest; configAuthorityRef: Text }>>;
+    profileDigest: Digest; snapshotDigest: Digest; configAuthorityRef: Text }>>;
   provenance: Provenance;
   results: readonly (
     | Readonly<{ provider: PmcProvider; providerModelId: Text;
@@ -117,6 +134,7 @@ type CatalogClaim = Readonly<{
 }>;
 type BindingClaims = Readonly<{
   bindingId: Text;
+  protocol: Claim<Text>; catalogBaseUrl: Claim<Text>;
   family: Claim<Text>; instanceId: Claim<Id>; frontier: Claim<boolean>;
   dataClasses: Claim<readonly DataClass[]>;
   transport: Claim<Readonly<{ data_collection: 'allow' | 'deny'; zdr: boolean }>>;
@@ -125,9 +143,12 @@ type BindingClaims = Readonly<{
   cost: Claim<Readonly<{
     currency: 'USD'; maximumMicroUsd: UInt;
     maximumInputTokens: UInt; maximumOutputTokens: UInt;
-    tariffDigest: Digest; priceEvidenceDigest: Digest;
+    sourceProfileId: Text; sourceProfileVersion: Text;
+    sourceProfileDigest: Digest; tariffDigest: Digest; priceEvidenceDigest: Digest;
+    costValueDigest: Digest;
     ranking:
-      | Readonly<{ kind: 'projected'; usd: Rational }>
+      | Readonly<{ kind: 'projected'; inputTokens: UInt; outputTokens: UInt;
+          usd: Rational }>
       | Readonly<{ kind: 'unit-price'; outputUsdPerMillion: Rational;
           inputUsdPerMillion: Rational }>;
   }>>;
@@ -137,11 +158,24 @@ type PmcResolverContextV1 = Readonly<{
   configDigest: Digest; evaluationTimeUtc: Utc;
   evidenceMode: 'supplied-production-claims' | 'synthetic-offline';
   catalog: CatalogClaim;
+  episode: Claim<Readonly<{
+    episodeId: Id; workflowId: Id; taskId: Id; lane: PmcLaneId;
+    version: 'pmc/v1'; policyDigest: Digest; configDigest: Digest;
+    attempts: readonly Readonly<{
+      requestId: Id; requestDigest: Digest; decisionDigest: Digest;
+      bindingId: Text; provider: PmcProvider; matrixRole: 'primary' | 'fallback';
+      disposition: 'terminal-no-send' | 'terminal-failed-settled' | 'succeeded' | 'uncertain';
+    }>[];
+  }>>;
   freshness: Claim<Readonly<{ maximumAgeMs: UInt }>>;
   independence: Claim<Readonly<{
-    requireDifferentFamily: boolean; requireDistinctInstance: boolean;
-    excludedFamilies: readonly Text[]; excludedInstanceIds: readonly Id[];
-    artifactDigest: Digest | null;
+    policyAuthorityRef: Text; policyAuthorityDigest: Digest;
+    determination: Claim<Readonly<{
+      determinationId: Id; determinationDigest: Digest; artifactDigest: Digest;
+      reviewedLane: 'L1' | 'L3' | 'L4' | 'L5';
+      differentFamilyRequired: boolean;
+    }>>;
+    artifactDigest: Digest; subjects: readonly ReviewSubject[];
   }>>;
   budget: Claim<Readonly<{
     ledgerId: Id; epoch: Id; scopeId: Id; workflowId: Id; accountId: Id;
@@ -178,7 +212,10 @@ P2A can only check internal consistency of those claims. Do not label a claim
 Request snapshot precedes context access. Reject accessors, symbols, hidden or
 extra properties, sparse/extended arrays, cycles, nonplain prototypes, nonfinite
 numbers and functions without invoking getters, iterators or `toJSON`. Catch
-boundary failures into fixed codes; reflective Proxy traps cannot be made a
+boundary failures into fixed codes without inspecting thrown objects (no
+instanceof, name/message reads, coercion or caller-controlled error formatting).
+Only the owned captured snapshot reaches validation, comparison and output;
+no caller references escape. Reflective Proxy traps cannot be made a
 hard execution-time sandbox, so hostile executable objects are outside the
 ordinary-data termination guarantee. Bound each request/context traversal to
 65,536 visited values/keys, depth 16, individual strings 2048 UTF-16 units and
@@ -186,8 +223,11 @@ aggregate strings 1,048,576 units; count repeated references by expanded size.
 P1 validation retains its existing independent bounds and vocabulary. No silent
 truncation, saturation, normalization, overflow, field coercion or default.
 
-Array caps: 256 bindings/catalog results; 64 excluded families and 64 instance
-IDs; two modalities; 11 identity refusal codes; all arrays duplicate-free.
+Array caps: 256 bindings/catalog results; 64 review subjects, excluded families,
+instance IDs and subject IDs; two episode attempts; two modalities; 11 identity
+refusal codes; all arrays duplicate-free. Review subjects have unique subjectId;
+episode attempts have unique requestId. Derived exclusion sets deduplicate equal
+family/instance values, preserving first subject order.
 The P1 envelope retains 256 candidates, 256 bindings, six lanes and 1536 lane
 occurrences without projecting away declarations. For the requested lane, audit
 all declared occurrences, including off-pin and fallback declarations, in policy
@@ -204,10 +244,22 @@ then array index; no input key order dependence):
 2. Context plain-data/bounds/schema failure: `CONTEXT_REFUSED`; invalid P1
    policy/envelope: `POLICY_REFUSED`. Call the accepted P1 validator, never a
    second policy validator. Preserve its bounded code/path list as `policyErrors`.
+   For cost rationals ONLY, structural validation requires the closed two-field
+   object and string numerator/denominator of 0..2048 UTF-16 units each. It does
+   not apply the Rational semantic refinement here: empty, nondecimal, signed,
+   leading-zero, >64-digit (but <=2048-unit), zero-denominator, unreduced and
+   over-magnitude strings survive capture and are candidate `COST_INVALID` at R5.
+   A nonstring, missing/extra field, wrong container, accessor, >2048-unit string
+   or traversal/aggregate limit breach is instead `CONTEXT_REFUSED`, with no
+   candidate traversal. UInt/Digest/currency/tag shape failures remain structural.
+   Never parse a rational before its structural and 64-digit checks pass.
 3. Lane/subrole/class mismatch: `LANE_REQUEST_REFUSED`; request/context scope,
    version, digest, time or duplicate/missing identity inconsistency:
-   `CONTEXT_BINDING_REFUSED`. Unknown global freshness, independence or budget
+   `CONTEXT_BINDING_REFUSED`. Unknown global freshness, independence, episode or budget
    claim: `GLOBAL_EVIDENCE_UNPROVEN`.
+   Here digest/scope means envelope and EvidenceRef policy/config/request/lane/
+   binding associations; validly shaped cost payload source/count/value semantic
+   disagreement is deferred to R5, not promoted to this global code.
 4. Global evidence only (binding evidence is handled per candidate): future evidence: `FRESHNESS_FUTURE_REFUSED`; expired or older-than-authorized
    evidence: `FRESHNESS_STALE_REFUSED`. Require observation <= evaluation <=
    expiry and evaluation-observation <= authorized maximum age, inclusive.
@@ -220,8 +272,10 @@ then array index; no input key order dependence):
    this class even when P1 says `unresolved-non-dispatching`; no inherited amount.
    `remaining = authorizedLimit - settled - outstanding` uses integer/BigInt
    subtraction with range checks; negative means `BUDGET_EXCEEDED`.
-6. Fallback unknown/uncertain prior outcome: `PRIOR_ATTEMPT_UNCERTAIN`; invalid
-   primary occurrence/reference/history or third attempt: `FALLBACK_REFUSED`.
+6. Any supplied episode attempt with uncertain disposition, or fallback unknown/
+   uncertain prior outcome: `PRIOR_ATTEMPT_UNCERTAIN`. Initial with nonempty
+   history, invalid primary occurrence/reference/history, success replay or third
+   attempt: `FALLBACK_REFUSED`. No retry can relabel itself initial.
 7. Evaluate all candidate filters below, then rank survivors. Empty survivor set
    yields `PINNED_PROVIDER_NO_ELIGIBLE` for L1/L2, otherwise `NO_ELIGIBLE_BINDING`.
 
@@ -240,6 +294,97 @@ the same prior digest, lane, policy/config and primary binding. Changed policy/
 config across automatic fallback refuses. Digests are opaque equality values;
 P2C computes/authenticates them, P2A does not claim to hash supplied content.
 
+Episode history is complete for `(workflowId, taskId, episodeId, lane)`, not a
+caller-chosen retry window. Its outer receipt binds the current request; embedded
+attempt references bind the actual earlier requests/decisions. P2C authenticates
+completeness and stable episode custody across restarts and request-ID changes.
+P2A checks supplied equality, array length/order, policy/config/version, exact
+matrix occurrence/provider and request-reference consistency only. It cannot
+detect an authenticated-looking omitted history or invented new episode. Initial
+means zero earlier attempts; fallback means exactly one earlier selected primary,
+matching every request.attempt prior reference and disposition. Two earlier
+attempts always stop; a prior matrix fallback or success is terminal. Reopening
+initial may not reset the pair, uncertainty, provider, version or budget scope.
+
+### Semantic agreement with P1 and RCM
+
+Compare each known P1 field with its corresponding supplied/live value below;
+never choose the more favorable source. Conflict refuses that candidate pending
+a reviewed policy/evidence update. Equality is of meaning, not whole historical
+receipt objects. Unknown P1 values may be supplemented through the trusted
+evidence port; supplementation remains a supplied claim inside P2A. Missing a
+fact needed by a current filter refuses; it never becomes false or zero.
+
+| P1 declaration | Comparison and conflict code |
+|---|---|
+| bindingId, logicalCandidateId and provider/providerModelId/piHostModelId | Exact policy identity and association; RCM provider/model must match; `IDENTITY_UNPROVEN`. A claim cannot rename a binding. |
+| protocol, catalogBaseUrl | Exact supplied protocol/catalogBaseUrl and RCM api/baseUrl; `ENDPOINT_MISMATCH`. No URL normalization or provider alias. Unknown identity evidence is `IDENTITY_UNPROVEN`. |
+| logical family | Exact supplied family; `INDEPENDENCE_VIOLATION`. Unknown family needed by current/future obligations is `INDEPENDENCE_UNPROVEN`. |
+| dataClasses; transportRequirements | Set equality for classes, exact data_collection and zdr values against supplied claims; `DATA_CLASS_INELIGIBLE` / `PRIVACY_UNPROVEN`. No widening policy restrictions. |
+| toolUse, structuredOutput, reasoning | Actual boolean equality, including false, against supplied tool/structured claims or RCM reasoning; `CAPABILITY_MISSING`. |
+| inputModalities, thinkingLevels | Set equality against RCM input modalities and supported non-null thinking-map keys; order irrelevant, duplicate-free. Compare actual support, not metadata/target-string identity; `CAPABILITY_MISSING`. Exact requested map entry must still exist. |
+| contextWindow, maxTokens | Exact numeric equality with RCM values, then capacity checks; `CONTEXT_INSUFFICIENT`. |
+| enabled; availability.available | Exact boolean equality with supplied enabled/available, including recorded false vs live true; `AVAILABILITY_UNVERIFIED`. |
+| qualityByLane | Exact numeric score equality for requested lane against supplied quality; `QUALITY_UNRECORDED`. Other lanes cannot substitute. |
+| rates | Known binary input/output numeric values and unit agree with corresponding RCM catalogue facts; `COST_INVALID`. These remain catalogue facts only, never exact billed-rate lexemes or authentication of the cost port. |
+
+Availability checkedAtUtc/attestationRef, quality evidenceRef and other historical
+receipt refs/timestamps need not equal refreshed evidence. Current receipts must
+independently satisfy scope, state and freshness; changed metadata cannot excuse
+a conflicting boolean/score. No historical-metadata equality test substitutes
+for semantic comparison. Unknown RCM facts still cannot be fabricated.
+
+### Independence obligations and custody
+
+The closed independence claim names policy authority, an explicit risk/review
+determination and relevant artifact/counterpart subjects. P2C authenticates their
+content, completeness and custody. Every subject/determination evidence receipt
+is global (`bindingId:null`) and binds this call; the containing subjectId and
+artifactDigest are part of the authenticated content. Unknown determination is
+`GLOBAL_EVIDENCE_UNPROVEN`; mismatched artifact or policy authority scope is
+`CONTEXT_BINDING_REFUSED`. The determination names the lane whose work is reviewed:
+it equals this lane for L1/L3/L4/L5 and identifies the actual artifact lane for L2.
+An L3 determination with differentFamilyRequired=false is inconsistent and
+refuses `CONTEXT_BINDING_REFUSED`; L4's family duty comes from this named
+determination, not from a guessed risk-to-family map.
+
+P2A derives `IndependenceObligations` from accepted lane constants plus this
+determination, never from caller-controlled waive flags:
+
+- L1 cannot self-verify. Its selected instance is the subject of a future
+  separate L2 review with distinctInstance=true; family difference follows the
+  named determination. Existing review subjects, if any, are excluded as needed
+  to keep that relationship distinct. No future reviewer identity is invented.
+- L2 performs a current check: subjects must include every applicable builder
+  and coordinator instance for the artifact (at least one subject). Exclude all
+  those instances. Exclude builder artifact families when differentFamilyRequired
+  or reviewedLane=L3, and coordinator families where that determination requires
+  independence. Unknown required counterpart instance/family refuses the current
+  candidate with `INDEPENDENCE_UNPROVEN`; matching one refuses with
+  `INDEPENDENCE_VIOLATION`. P2A checks supplied structure; P2C proves completeness.
+- L3 records a future separately dispatched L2 reviewer, distinct instance and
+  different family from the selected builder. L4 records the parcel-review duty,
+  distinct instance and the named determination's family requirement. L5 retains
+  that parcel-review duty and any explicit family requirement and is never a
+  verifier. These future duties do not require a present reviewer identity or
+  exclusion of the builder from itself. For L3/L4/L5 currentSelection exclusions
+  are empty; their supplied counterpart list must be empty, not a fake reviewer.
+
+Every selected L1/L3/L4/L5 instance must be known to name its future distinct-
+instance duty. Selected family must be known when the future duty requires
+family difference or a current exclusion uses family; otherwise an unknown
+family is represented by subjectFamily=null and does not refuse selection.
+A supplied known family is retained even when no family exclusion applies.
+For L1, current exclusions are all supplied counterpart instances
+and, when required by the determination, their families; an empty list is valid
+when no counterpart exists yet. For L2 futureReview=null; current exclusions and
+subjectIds are the derived sets above. Output duty `separate-l2-review` applies
+to L1/L3; `parcel-review` applies to L4/L5. This records an outstanding controller
+workflow duty, never permission to skip review, ratify, merge or verify oneself.
+P2C carries it forward and authenticates its fulfillment at review dispatch.
+External family/frontier classifications still require explicit named authority;
+P2A invents no family registry or frontier evidence.
+
 ### Candidate filters and exact order
 
 For every occurrence compute a fixed ordered refusal set: identity/endpoint,
@@ -257,7 +402,7 @@ away the remaining bounded ranking inputs. Use only these candidate codes:
 Per-binding stale/future evidence uses the corresponding freshness codes above.
 
 - Identity: held identity or any P1/RCM identity refusal is ineligible. Exact
-  protocol and catalogBaseUrl must be recorded in P1 and match RCM api/baseUrl;
+  supplied protocol and catalogBaseUrl must agree with known P1 and RCM api/baseUrl;
   provider/model/Pi host IDs remain distinct and unchanged. Owner-attested
   identity does not waive exact catalog and live evidence requirements.
 - R1: binding dataClasses must contain the request class under policy authority.
@@ -271,13 +416,13 @@ Per-binding stale/future evidence uses the corresponding freshness codes above.
   unknown/missing thinking level refuses, no clamping/substitution/default.
   Reasoning required with `off` refuses. Compare recorded P1 capability facts
   with RCM; contradictory facts refuse rather than pick a favorable source.
-- R3: require supplied family and instance for candidates whenever their exclusion
-  check applies. Compare exact declared family, never infer from provider/model
-  spelling. L2 requires distinct instance; declared different-family obligations
-  and exclusion completeness come from dispatch evidence. L1 frontier and L2
+- R3: require supplied family and instance for current exclusions and future-duty
+  subjects only where required above. Compare exact declared family, never infer from provider/model
+  spelling. L2 requires distinct instance and all derived family exclusions.
+  L1 frontier and L2
   frontier require supplied true frontier declaration from named policy authority,
   never price/quality/reputation. Lane independence declarations cannot be waived
-  by a false context flag; unresolved obligations refuse (review question Q2).
+  by false/empty supplied values; unresolved required obligations refuse.
 - R4: requiredContextTokens and requiredOutputTokens are positive; maxima positive
   and at least the corresponding requirements; ranking counts, if present, are
   <= maxima. Require RCM contextWindow >= requiredContextTokens and maxTokens >=
@@ -307,8 +452,31 @@ noncanonical/overbound values as COST_INVALID. P2A never reconstructs lexemes
 from P1/RCM binary numbers. Projected rank value must not exceed the maximum
 bound expressed in USD; no equality with rounded reserve is presumed.
 
+The exact cost-value evidence content binds bindingId/provider/model, requestDigest,
+currency, sourceProfileId/sourceProfileVersion/sourceProfileDigest, tariffDigest,
+priceEvidenceDigest, maximumInputTokens/maximumOutputTokens, maximumMicroUsd and
+the entire ranking discriminant/counts/returned rational values. `costValueDigest`
+names that content; P2C authenticates it and the outer cost receipt. Source profile
+ID/version/digest equal catalog.source profileId/profileVersion/profileDigest;
+profileDigest identifies the trusted source-profile content, while snapshotDigest
+identifies the catalogue snapshot; neither is inferred from the other. P2C
+authenticates both through its source authority, not an invented RCM fact field;
+price evidence binds that source independently of its binary numeric projection.
+Max counts equal request maxima. Projected inputTokens/outputTokens exactly equal
+request.rankingTokens; null rankingTokens requires unit-price and no rank counts.
+Semantic binding mismatch is candidate `COST_INVALID`; malformed field types
+remain global `CONTEXT_REFUSED`. P2B exclusively computes charges and rounding;
+P2C maps accepted outputs without recalculation, truncation or rounding. Output
+precision beyond this port's 64 canonical digits refuses, even when the helper
+supports a larger value. P2B's actual helper field correspondence and precision
+must be checked at composition review; this proposal changes only P2A's port.
+Digest-only forgery or a different otherwise valid value under an unchanged
+digest cannot be detected by P2A equality checks alone. P2C's authentication must
+reject those substitutions; P2A verifies the available cross-field associations
+and rational bounds without pretending to authenticate or recalculate charges.
+
 For an initial request rank all eligible lane occurrences, preserving the
-rubric's explicit primary-before-fallback tie-break (see Q1). L1/L2 partition
+rubric's explicit primary-before-fallback tie-break. L1/L2 partition
 strictly to opencode; L3/L4 put openrouter before opencode. Within each of these
 provider groups compare quality descending. L5 compares exact projected USD
 ascending when rankingTokens exists; otherwise exact output unit price then
@@ -376,7 +544,8 @@ type PmcRouteDecisionV1 =
       version: 'pmc/v1'; authority: 'selection-only'; bindingId: Text;
       provider: PmcProvider; providerModelId: Text; piHostModelId: Text;
       protocol: Text; baseUrl: Text; maximumMicroUsd: UInt;
-      terminal: boolean; audit: PmcAuditV1;
+      terminal: boolean; independenceObligations: IndependenceObligations;
+      audit: PmcAuditV1;
     }> }>
   | Readonly<{ ok: false; code: StopCode; audit: PmcAuditV1 }>;
 ```
@@ -404,32 +573,33 @@ the empty bounded audit (add this literal to StopCode). Never return an unaudite
 selection or silently truncate candidates. Trusted caller owns audit storage;
 P2A logs nothing and exposes no raw exception text.
 
-### Coordinator questions before dispatch
+### Recorded coordinator resolutions (draft, 2026-09-26)
 
-Q1. The rubric ranks all occurrences with primary-before-fallback as a late tie,
-while D8 says fallback only after primary degradation. Recommendation: preserve
-the rubric comparator literally; an initial winner labelled fallback is terminal
-and never gets an invented fallback of its own. Confirm that reading or obtain
-an explicit owner ruling before restricting initial selection to primaries.
+Q1 resolved: preserve all-occurrence initial ranking. Initial means no earlier
+attempt in the same authenticated episode; a selected matrix fallback is terminal.
+P2C authenticates complete history; P2A checks supplied consistency only.
 
-Q2. P1 encodes textual independence obligations, not risk-to-exclusion derivation
-or a frontier evidence registry. Recommendation: P2C supplies authenticated
-complete obligations from dispatch/owner declarations; P2A refuses unresolved
-obligations, enforces L2 distinct-instance and all required family exclusions,
-and does not invent a family/frontier map. Confirm exact minimum exclusions for
-L1, L3 and risk-dependent L4 before candidate-ready status; false/empty input must
-not waive the policy declaration. L5's separate reviewer remains a controller
-workflow obligation, not evidence that the selected builder is a reviewer.
+Q2 resolved: closed named determination/subject inputs derive current selection
+exclusions and outstanding future controller review duties from lane constants.
+False/empty inputs cannot waive required current exclusions or future duties.
+Family/frontier authority and evidence custody remain explicitly external.
 
-Q3. P1 recorded declarations and later live claims can conflict. Recommendation:
-refuse conflicting recorded facts; only unknown P1 fields may be supplemented
-through explicitly authenticated P2C evidence. Confirm this conservative rule
-without rewriting P1 or treating historical evidence as current authority.
+Q3 resolved: the field-by-field semantic table governs conflicts, including known
+availability booleans and lane scores. Fresh receipt metadata is independent;
+unknown P1 facts may be supplemented without becoming authentic inside P2A.
+P1/RCM binary prices remain catalogue facts, never exact billed-rate evidence.
 
-Q4. P2B money helper's exact output names are not implemented yet. Recommendation:
-accept the bounded value representation above as the P2A-facing composition port;
-P2C adapts canonical P2B outputs without arithmetic duplication. Confirm bounds
-and cost-source bindings in independent review, not a speculative helper import.
+Q4 resolved: retain 64-digit exact rational values and integer micro-USD maxima;
+freeze named source/profile/currency/tariff/max/ranking-count/value bindings.
+P2B alone computes charges/rounding, P2C maps without arithmetic. Unsupported
+helper precision refuses. P2B concrete output correspondence remains a composition
+review obligation, not authority to alter its draft in this revision.
+
+Cost precedence resolved: capture/shape/type limits fail globally; bounded cost
+strings fail canonicality/range locally at R5. No invalid string is classified
+both ways. The initial structural ceiling is 2048 units; 64 digits is the later
+semantic port ceiling. These are coordinator-authorized draft resolutions, not
+implementation or dispatch acceptance.
 
 ## Acceptance Criteria
 
@@ -448,6 +618,41 @@ and cost-source bindings in independent review, not a speculative helper import.
    refuses, and audit output carries only allowlisted facts/refs, no raw evidence bodies.
 5. Handoff freezes exact API/type/code names, public RCM dependency and unproven
    operational claims. Two independent reviews pass before the controller consumes it.
+6. Episode vectors cover: higher-ranked matrix fallback wins initial and is
+   terminal; populated history relabelled initial refuses; prior success,
+   uncertain disposition, omitted/mismatched prior reference, changed provider/
+   version/policy/config, selected fallback replay and a third attempt refuse.
+   P2C composition tests separately prove omitted history/new-episode laundering
+   cannot pass authentication; a pure P2A fixture cannot prove that custody.
+7. Independence vectors cover each lane: L1 self-verification cannot discharge
+   its future duty; L2 empty/missing required subjects, unknown counterpart
+   instance/family and matching builder/coordinator exclusions refuse; L3 cannot
+   waive family difference; L4 unknown determination refuses and a supplied risk
+   determination controls family duty; L5 retains parcel review and never gains
+   verifier authority. L3/L4/L5 selection with no future reviewer yet succeeds
+   when otherwise eligible, records its duty and never excludes itself.
+   Unknown family alone does not refuse when neither a current exclusion nor
+   the future duty requires family difference; the future subjectFamily is null.
+8. Semantic comparison vectors independently mutate every table row, including
+   false-to-true availability, numeric lane-quality differences, actual capability
+   false/set changes and policy restriction widening. Fresh receipt refs/times
+   alone do not conflict; stale replacements still refuse. Unknown P1 facts may
+   be supplemented, but fabricated receipts remain unproven production authority.
+   P1/RCM Number-to-string rates cannot authenticate an exact billed-rate value.
+9. Cost-port vectors mutate source profile ID/version/digest, currency shape,
+   tariff/price/value evidence digest association, maxima and ranking counts or
+   returned value; verify the documented global/local boundary. Test nonstring,
+   missing/extra field, wrong container, accessor, 2049-unit string and aggregate
+   overflow as CONTEXT_REFUSED before any candidate processing. Separately test
+   empty, signed/exponent/nondecimal, leading-zero, 65-digit through 2048-unit,
+   zero-denominator, unreduced and over-magnitude strings as candidate COST_INVALID
+   with full audit when all global checks pass. Test canonical 64-digit in-range
+   rationals and exact comparisons near the maximum; unsupported helper precision
+   refuses without rounding/truncation. Other candidates may remain eligible.
+   Forged thrown objects with getters/Symbol.hasInstance cannot be inspected by
+   failure classification; refusal paths perform no IO.
+   Attribute digest/content-forgery failures to P2C authentication tests, not to
+   unsupported pure-resolver authenticity claims.
 
 ## Out of Scope
 
@@ -485,7 +690,7 @@ validate --repo-root <this-worktree> <this-spec>` with exact resolved local path
 ## Open Decisions and Stop Conditions
 
 Draft becomes candidate-ready after accepted P1a/P1b and supported RCM interfaces
-are pinned, Q1-Q4 are resolved and this bounded request/result/refusal proposal
+are pinned and this revised bounded request/result/refusal proposal
 is independently reviewed and accepted.
 Unresolved names are not permission to cast or deep-import. Version authority is
 already recorded by Amendment 05, so no new user authority question is needed.
