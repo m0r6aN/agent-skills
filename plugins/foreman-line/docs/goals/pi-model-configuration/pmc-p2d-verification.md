@@ -123,3 +123,22 @@ Preserved SHA-256 source pins:
 The builder does not approve its own source. Root and an independent reviewer must
 review the frozen nine-file implementation and distinguish offline evidence from
 production readiness before integration. No push or merge was performed.
+
+## Independent review of fa519c8d574e60acbeb8fc8aaafed07ce8e31f65
+
+Root requests changes for SSE event-byte accounting. Frontier A found, and root
+independently reproduced, an event containing 40,000 CRLF comment lines followed
+by a valid data line: 160,151 raw bytes are accepted with a known charge despite
+the 131,072-byte event cap. The LF control is 120,149 bytes and correctly succeeds.
+The parser strips CR before adding line bytes plus one, losing one byte per CRLF.
+Probe: TEMP/hro-d-review-a-event-bound.mts. Charge raw framing bytes, including
+both CR and LF, before normalization; retain complete split-boundary behavior.
+Require exact-limit and plus-one LF/CRLF controls, including split CRLF/multibyte
+chunks, without loosening total response, event count, JSON or text limits.
+
+Root separately read all three source modules and independently passed 68 focused
+tests, dispatch typecheck and changed-file lint (six informational style notices,
+no errors). These checks do not invalidate the reproduced boundary defect. A's
+remaining independent review is still in progress. Production remains disabled;
+no live network or SDK dependency/configuration changes are authorized by repair.
+The accepted-main C reader enrollment must still be verified during integration.
