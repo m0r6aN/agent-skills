@@ -139,3 +139,27 @@ in every refusal assertion.
 This enrollment remains syntactic and exact-file scoped. It does not claim
 general dataflow or runtime integrity beyond the six enrolled calls, and it
 does not alter the production recovery-admission runtime.
+
+## Combined integration acceptance — 2026-09-26
+
+Root approves audit 255dbd85fda0e7080fee3350c8e6c08c610e83fa and combined
+ d6c0cd8d5f0756d270e2f6f65e14286ef4309d32 after reconciling its fixed declarations,
+call roles and external references against the accepted runtime. Independent
+frontier D also approves this exact combined head. Runtime/test diff against
+approved b633101 is empty. Existing ledger and intent pins remain unchanged.
+D independently ran the actual audit, typecheck/lint and three further mutations
+(const to let, unary guard change, type-only DatabaseSync import); each mutation
+refused with recovery 0/6. No mutated source was executed.
+
+Root combined evidence on local Node 24.19.0:
+
+- Full verification: 658/658, exit 0, including the 19-group new mutation suite.
+- Full dispatch: 492/492, exit 0 (67cfe84; later change is audit/report only).
+- Dispatch and verification typechecks and changed-file lint: exit 0.
+- Independent actual D19: PASS, ledger 10/10, intent 9/9, recovery 6/6.
+- Runtime remains the reviewed offline owner; production construction still
+  refuses without inspecting input. These results do not activate HRO recovery.
+
+Root logs: TEMP/hro-p4a1-combined-verification.log and
+TEMP/hro-p4a1-combined-dispatch.log. Independent probe:
+TEMP/hro-p4a1-independent-probe.mjs. Remote checks and merge remain required.

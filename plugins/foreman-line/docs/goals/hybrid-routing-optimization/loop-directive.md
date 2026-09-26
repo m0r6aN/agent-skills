@@ -302,3 +302,15 @@ D completion is owned by the HRO native frontier builder under release d765b93;
 the separate PMC app task's latest draft-response-only scope remains respected.
 P publisher and both Luna repair/audit slices remain in progress. Production
 custody, live billing evidence and measured HRO exit remain open.
+
+### Recovery admission combined acceptance — 2026-09-26
+
+Source b633101 and audit 255dbd have two independent approvals. Root and frontier
+D approve combined d6c0cd8. Full verification 658/658, dispatch 492/492, applicable
+typecheck/lint and actual D19 pass. Remote checks remain before acceptance on main.
+Production admission and recovery broker are still pending separate construction.
+P3A aaa2870 receives two independent change requests: actual producer receipt
+contracts and bounded file reads remain wrong. Remaining repair is reassigned to
+frontier D after fresh Step0 and explicit release; two new independent reviews
+will be required because D becomes its author. Transport fa519c8 is frozen for
+root/frontier A review. P publisher remains in progress. Full live exit stays open.
