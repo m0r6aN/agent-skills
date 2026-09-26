@@ -57,3 +57,15 @@ read only during the phase capture. Closed success/failure envelopes, exact
 rate/thinking contracts, enumerable data descriptors, refusal-code arrays, and
 evaluator-invalid classification are covered. Independent frontier review is
 still required before integration.
+
+## Second capture repair — builder evidence
+
+Source85d48b38ea2f71532dccbda1ef4b4aef2a0615fb changes only consumer source and
+tests from coordinator base63fab351. Builder recorded RED28 total with25 pass/
+3 fail, then GREEN28/28 (16 inherited P1a plus12 P1b), typecheck and lint;
+unchanged dispatch126 and routing399 also passed. Dependencies were not changed.
+The added regressions cover once-only record/array/callback descriptors, exact
+8192 versus8193 shared expanded values, and key-limit refusal before descriptors.
+Independent reproduction reports one descriptor read, oversized-key unsafe reads0,
+and correct phase codes at both value boundaries. Two fresh final frontier
+reviews remain required; these are builder results, not independent approval.
