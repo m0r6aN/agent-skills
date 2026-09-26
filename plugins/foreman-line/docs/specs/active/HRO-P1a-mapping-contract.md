@@ -9,6 +9,8 @@ supersedes: null
 superseded_by: null
 risk: elevated
 surfaces:
+  - scripts/
+  - .github/workflows/foreman-line-ci.yml
   - plugins/foreman-line/hybrid-routing/
   - plugins/foreman-line/docs/goals/hybrid-routing-optimization/
 routing_class: architecture/risk
@@ -183,3 +185,48 @@ remains elevated risk despite low file overlap.
 
 Stop on any unlisted file, upstream schema/import, real-model mapping invention,
 evaluator edit, host/network access or runtime authority requirement.
+
+## Amendment A1 — repository CI inclusion (2026-09-26)
+
+Coordinator ratified under the standing HRO authority after an independent gap
+review: the fixed 19-package CI runner omits the new hybrid-routing package.
+The following three paths extend Allowed Files (eleven total):
+
+- scripts/foreman-line-ci.mjs
+- scripts/foreman-line-ci.test.mjs
+- .github/workflows/foreman-line-ci.yml
+
+Insert hybrid-routing after foreman-config in both independently maintained
+package allowlists, retaining relative order of the existing nineteen. Adjust
+counts to 20 installs, 60 checks and 80 total subprocess calls, with correct
+phase-offset failure injection. Add focused evidence that a hybrid-routing
+check failure makes the aggregate fail. Change only the workflow's descriptive
+package-count step label. Preserve install-before-check ordering, offline
+behavior, subprocess isolation, failure aggregation, triggers and job names.
+No runner framework, workflow permissions or package behavior change is allowed.
+Run the injected-process runner suite and require the complete combined branch
+package pipeline to pass in CI before merge. Existing package and unchanged
+routing-policy checks remain required. Include this additive integration delta
+in both independent implementation reviews. This amendment does not authorize
+runtime routing or any shared policy/dispatch implementation change.
+
+## Amendment A2 — D19 audit enrollment (2026-09-26)
+
+Coordinator ratified under the user's standing authority after PR54's complete
+twenty-package CI found the newly added package absent from D19's independent
+ratified-package allowlist. All twenty installs and fifty-nine of sixty checks
+passed; mutation-scope-guard's existing audit integration test correctly refused.
+The source implementation remains approved at fb32705; this is audit enrollment.
+
+Extend Allowed Files with exactly one path (twelve implementation paths total):
+`plugins/foreman-line/verification/src/ratified-packages.ts`.
+Add the literal `hybrid-routing` after `foreman-config`; preserve every existing
+entry, order, audit rule, waiver, test and runtime API. The D19 allowlist includes
+Jev and is distinct from the twenty-package CI list; do not equate their counts.
+No new waiver, discovery bypass, weakened audit, or mutation-scope test edit is
+authorized. This records the package's already-ratified existence, not eligibility.
+
+Validate the actual D19 sweep and unchanged mutation-scope-guard tests, verify
+the one-entry diff and unchanged HRO source, and obtain independent review of
+this delta. Require the entire corrected CI pipeline and remote required checks
+green before merge. Retain the failed run as evidence; never relabel it a pass.
