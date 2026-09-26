@@ -64,3 +64,32 @@ reproduction is C:/Users/clint/AppData/Local/Temp/hro-p1b-final-a.mts. Boundary
 fixtures deliberately distinguish capture-limit from later schema refusal; an
 invalid eventual schema is not permission to miscount its bounded capture.
 Two fresh final frontier approvals still required before merge.
+## Third review disposition — 77813bc3b8c416dfd241bf332d77dfa4fc12f723
+
+Reviewer A approved after28 HRO/126 dispatch/399 routing tests plus159
+independent probes (48 boundary/depth cases). Reviewer B ran the same suites and
+77 independent assertions but identified two P2 requirements. Coordinator accepts
+both; the A approval does not waive the independently demonstrated gap.
+
+1. Array length proves minimum remaining-value overflow before child descriptors,
+   but the implementation collects descriptors before that preflight. Root of31
+   distinct256-element arrays plus a224-element proxy array totals8193 values;
+   its throwing first numeric descriptor is read once and yields input_invalid.
+   Move known minimum-value preflight immediately after valid length, before
+   child descriptor reads/allocation; require input_limit_exceeded and zero reads.
+2. Persist the explicitly required acceptance matrix in package tests: forged
+   digest/source/config pins and clock/age; future/stale/exact/zero-age boundaries;
+   missing/duplicate/wrong requested and facts identities; wrong protocol; invalid
+   modality sets; exact deeply frozen nested oracle/evaluator input and caller
+   mutation independence. Temporary independent probes passing are not durable
+   regression coverage. Map each family to a named committed test/table and
+   assert phase code plus zero downstream calls on prerequisite refusal.
+
+Reproduction: C:/Users/clint/AppData/Local/Temp/hro-p1b-review-b-final.mts.
+Other reviewer probe matrix:
+C:/Users/clint/AppData/Local/Temp/hro-p1b-repaired-independent-a.mts.
+The next Luna repair is limited to this preflight ordering and persistent tests,
+plus accurate handoff.28 total/12 P1b is the tripwire. Demonstrate RED for ordering,
+GREEN for the complete stored matrix, preserve all prior fixes and the unchanged
+five-file allowlist/frozen spec. Do not stop after only the one failing regression.
+Two fresh final reviews still gate integration; no production behavior authorized.
