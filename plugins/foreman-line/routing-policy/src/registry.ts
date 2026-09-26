@@ -5,6 +5,7 @@
  */
 import type { SchemaFile } from '../../schema-scaffold/src/registry.js'
 import { piOpenRouterRoutingSchema } from './pi-openrouter.js'
+import { providerBindingPolicyV1Schema } from './provider-binding-schemas.js'
 import {
   classEntrySchema,
   dataClassificationRuleSchema,
@@ -24,4 +25,5 @@ export const allSchemaFiles: readonly SchemaFile[] = [
   { name: 'role-assignment', schema: roleAssignmentSchema },
   { name: 'shadow-route', schema: shadowRouteSchema },
   { name: 'pi-openrouter-routing', schema: piOpenRouterRoutingSchema },
+  { name: 'provider-binding-policy-v1', schema: providerBindingPolicyV1Schema },
 ]

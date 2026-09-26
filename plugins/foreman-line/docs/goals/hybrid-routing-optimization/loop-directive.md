@@ -61,6 +61,25 @@ commit; no publish/merge until two independent implementation reviews close.
 
 Persist decisions, evidence and queue changes here. Continue independent authorized work while a prerequisite waits. If no meaningful work remains, report the exact missing input and resume when it arrives. Never mark the full goal complete merely because P1 or fixture tests pass. Stop on user's request, unresolved security findings, unauthorized external effects, or genuine missing user-only credentials/ownership decisions.
 
+## P1a Stage-F closure — 2026-09-26
+
+PR54 merged as `59b48a0b47e9ccba0499121649801cf7d36ba285` after both
+independent implementation approvals, separately reviewed A2 audit enrollment,
+and every corrected full remote CI check passed at 379f144. The spec is now
+`docs/specs/done/HRO-P1a-mapping-contract.md` with status done. Earlier shaping
+artifacts and review hashes remain historical records, not rewritten evidence.
+Original branches/frozen commits are retained for traceability; the clean HRO
+workspace is reused on `codex/hro-p1b-20260926`, with separate specification
+release commit 057e3bf and a fresh GPT-5.6-Luna builder at Step 0. P1b remains
+offline and gets its own two reviews; no P1a acceptance authorizes runtime use.
+
+PMC-P1a final source 12b0aa0 has both independent approvals and a clean verified
+integration (471 tests/typecheck/lint); PR55 is queued after PR54. RCM-P1A final
+source 4201ac4 has both independent approvals (27 focused/426 full tests) and
+awaits integration after PMC. Remaining live/cache/receipt/configuration/operator
+and measured-smoke exits are still open. The coordinator remains responsible
+under unchanged delegated authority; no human decision is presently required.
+
 ## Implementation checkpoint — 2026-09-26
 
 RCM library PR51 and source/closure PR52 are merged; source profile v4 is accepted for six conservative OpenRouter catalog-fact rows with explicit remaining refusals. PMC binding/controlled-launch design PR53 merged as 2997b198cb73a6a7e85d215464a86f97a9c8b571 behind green CI. PMC-P1a implementation is frozen at 7e77a0ae1f8cc3d8c696c914a40879f0cb97f3f4 in hro-pmc-p1a-20260926, with two fresh independent implementation reviews underway. Builder reports 470 routing-policy, 126 dispatch and 126 spec-linter tests, pending independent acceptance.
