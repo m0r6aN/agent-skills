@@ -1669,3 +1669,170 @@ test('unbound authenticators refuse and a failed first bind consumes its latch',
   assert.deepEqual(custody.bind(hostile, hostile), { ok: false, code: 'INSTALLATION_REFUSED' })
   assert.equal(reads, 0)
 })
+
+for (const [label, bytes, character] of [
+  ['ASCII above request UTF16 cap', 262145, 'x'],
+  ['ASCII exact byte cap', 1048576, 'x'],
+  ['ASCII one byte over', 1048577, 'x'],
+  ['multibyte exact byte cap', 1048576, '€'],
+  ['multibyte one byte over', 1048577, '€'],
+] as const)
+  test(`final body independent budget: ${label}`, async (t) => {
+    const f = setup(t),
+      verify = f.ports.transport.verify
+    let verifications = 0,
+      preparedBody = ''
+    f.syntheticProfile.transformBody = (value) => {
+      value.messages[0].content = ''
+      const room = bytes - Buffer.byteLength(JSON.stringify(value), 'utf8')
+      const width = Buffer.byteLength(character, 'utf8')
+      value.messages[0].content =
+        character.repeat(Math.floor(room / width)) + 'x'.repeat(room % width)
+      preparedBody = JSON.stringify(value)
+      return value
+    }
+    f.ports.transport.verify = (wire, claims) => {
+      verifications++
+      assert.equal(Buffer.byteLength(wire.body, 'utf8'), bytes)
+      return verify(wire, claims)
+    }
+    const b = f.boot.custody.bind(f.ports, f.observations)
+    assert(b.ok)
+    const result = await b.controller.launch(f.request)
+    // Assert outside the captured prepare boundary so an assertion throw cannot
+    // masquerade as the expected one-over refusal.
+    assert.equal(Buffer.byteLength(preparedBody, 'utf8'), bytes)
+    assert(preparedBody.length > 262144)
+    if (bytes <= 1048576) {
+      assert.equal(result.ok, true, JSON.stringify(result))
+      assert.equal(result.receipt?.disposition, 'succeeded')
+      assert.equal(verifications, 2)
+      assert.equal(f.sends(), 1)
+    } else {
+      assert.deepEqual(result, { ok: false, code: 'WIRE_REFUSED', receipt: null })
+      assert.equal(verifications, 0)
+      assert.equal(f.sends(), 0)
+      const snapshot = f.ledger.snapshot({ scopeId: 'scope' })
+      assert(snapshot.ok)
+      assert.equal(snapshot.value.outstandingMicroUsd, 0)
+    }
+  })
+
+for (const dimension of ['string', 'aggregate', 'nodes'] as const)
+  test(`final body exception preserves ordinary wire metadata ${dimension} budget`, async (t) => {
+    for (const over of [false, true]) {
+      const f = setup(t),
+        prepare = f.ports.transport.prepare
+      let reached = 0,
+        verifications = 0,
+        measuredBudget = 0
+      // Invalid headers are intentional: a terminal capture sentinel distinguishes
+      // the ordinary bound from later closed-schema rejection without a public port.
+      f.ports.transport.prepare = async (q, d) => {
+        const w = await prepare(q, d)
+        const metadata: Fixture = {}
+        w.headers = metadata
+        const units = (v: Fixture): number =>
+          typeof v === 'string'
+            ? v.length
+            : v && typeof v === 'object'
+              ? Object.entries(v).reduce((n, [k, x]) => n + k.length + units(x), 0)
+              : 0
+        const nodes = (v: Fixture): number =>
+          v && typeof v === 'object'
+            ? 1 +
+              Reflect.ownKeys(v).reduce<number>(
+                (n, k) =>
+                  n +
+                  1 +
+                  (Array.isArray(v) && k === 'length'
+                    ? 0
+                    : nodes(Object.getOwnPropertyDescriptor(v, k)?.value)),
+                0,
+              )
+            : 1
+        if (dimension === 'string') metadata.body = 'x'.repeat(2048 + Number(over))
+        if (dimension === 'aggregate') for (let i = 0; i < 513; i++) metadata[`s${i}`] = ''
+        if (dimension === 'nodes') for (let i = 0; i < 32700; i++) metadata[`n${i}`] = null
+        metadata.sentinel = {}
+        const { boundProof: _proof, ...ordinary } = w
+        if (dimension === 'aggregate') {
+          // Count the body key, but exclude only its value from string units.
+          let left = 1048576 - units({ ...ordinary, body: '' })
+          for (let i = 0; i < 513; i++) {
+            const count = Math.min(left, 2048)
+            metadata[`s${i}`] = 'x'.repeat(count)
+            left -= count
+          }
+          assert.equal(left, 0)
+          metadata.s512 += over ? 'x' : ''
+          assert.equal(units({ ...ordinary, body: '' }), 1048576 + Number(over))
+        }
+        if (dimension === 'nodes') {
+          // Add nodes in pairs; an empty array contributes one extra length key.
+          delete metadata.sentinel
+          const pairs = (65535 - nodes({ ...ordinary, headers: { ...metadata, sentinel: {} } })) / 2
+          assert(Number.isInteger(pairs))
+          for (let i = 0; i < pairs; i++) metadata[`n${32700 + i}`] = null
+          metadata.n0 = []
+          if (over) metadata.n1 = []
+          metadata.sentinel = {}
+          assert.equal(nodes(ordinary), 65536 + Number(over))
+        }
+        measuredBudget =
+          dimension === 'string'
+            ? metadata.body.length
+            : dimension === 'aggregate'
+              ? units({ ...ordinary, body: '' })
+              : nodes(ordinary)
+        metadata.sentinel = new Proxy(
+          {},
+          {
+            ownKeys() {
+              reached++
+              throw null
+            },
+          },
+        )
+        return w
+      }
+      f.ports.transport.verify = () => {
+        verifications++
+        return { accepted: false }
+      }
+      const b = f.boot.custody.bind(f.ports, f.observations)
+      assert(b.ok)
+      assert.deepEqual(await b.controller.launch(f.request), {
+        ok: false,
+        code: 'WIRE_REFUSED',
+        receipt: null,
+      })
+      assert.equal(
+        measuredBudget,
+        (dimension === 'string' ? 2048 : dimension === 'aggregate' ? 1048576 : 65536) +
+          Number(over),
+      )
+      assert.equal(reached, over ? 0 : 1)
+      assert.equal(verifications, 0)
+      assert.equal(f.sends(), 0)
+    }
+  })
+
+test('wire-only body exception does not exempt top-level or nested request body strings', async () => {
+  const f = emptyInstallation(),
+    boot = createPmcControllerCustodyV1('synthetic-offline')
+  assert(boot.ok)
+  const b = boot.custody.bind(f.ports, f.observations)
+  assert(b.ok)
+  for (const value of [
+    { body: 'x'.repeat(2049) },
+    { nested: { body: 'x'.repeat(2049) } },
+    { payloadJson: 'x'.repeat(262145) },
+  ])
+    assert.deepEqual(await b.controller.launch({ override: 'requested', ...value }), {
+      ok: false,
+      code: 'BOUNDS_REFUSED',
+      receipt: null,
+    })
+  assert.equal(f.effects(), 0)
+})

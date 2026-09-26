@@ -146,3 +146,88 @@ credential read, production store, host configuration, live smoke or savings
 measurement occurred. No exactly-once delivery or two-store atomicity is claimed.
 The P2D/P2E production gates, independent implementation reviews, reader enrollment,
 combined integration, remote CI and merge remain coordinator-owned.
+
+## Source-review body-budget repair
+
+Repair release base: `29b542eeed44dca5e92e2e1ee7cce3b535d84532`.
+Both independent reviews held the original source for the same final-body bound
+error; the baseline 86/442 green tests did not establish this omitted boundary.
+The coordinator clarified the contract and separately released exactly three
+existing files: controller.ts, pmc-controller.test.ts and this report. Types,
+barrel, predecessors, registry/audit, manifests and dependencies are unchanged.
+
+Only the final wire body's value now bypasses ordinary UTF-16 string/aggregate
+charging. Its independent cap remains 1,048,576 UTF-8 bytes; normal depth and
+key/value-node accounting occur before that branch. Other metadata, nested body
+keys and original request payloadJson retain their original bounds. A sweep of
+capture call sites found final wire ownership at ownWire's capture call; retained
+owned wire/proof observations do not recapture its body with a different budget.
+
+Nine permanent tests supplement, rather than replace, the original baseline:
+
+- ASCII body of 262,145 bytes succeeds, independently exceeding the request limit.
+- ASCII and three-byte-character JSON bodies at exactly 1,048,576 bytes succeed
+  through real temporary B1/P2B stores and two proof verifications/one synthetic send.
+  Each corresponding 1,048,577-byte body refuses WIRE_REFUSED before verification,
+  reservation or send. Sizes are independently asserted outside the captured port,
+  so an assertion throw cannot masquerade as expected refusal.
+- Metadata independently measures 2,048/2,049 string units (including nested body),
+  1,048,576/1,048,577 aggregate units excluding only the body value, and
+  65,536/65,537 nodes including the body's key/value. Deliberately malformed headers
+  end in a trapped sentinel: reaching it at the exact bound, but not one over,
+  distinguishes capture enforcement from later schema rejection. These are capture
+  controls, not claims that those malformed headers are valid transport input.
+- Request top-level/nested body strings remain ordinary; payloadJson still refuses
+  262,145 UTF-16 units. Existing exact request/depth/alias controls remain intact.
+
+Genuine RED before controller edits, native exit 1:
+
+```text
+node --import tsx --test --test-name-pattern='final body independent budget|final body exception|wire-only body' tests/pmc-controller.test.ts
+✖ final body independent budget: ASCII above request UTF16 cap
+✖ final body independent budget: ASCII exact byte cap
+✖ final body independent budget: multibyte exact byte cap
+✖ final body exception preserves ordinary wire metadata aggregate budget
+ℹ tests 9
+ℹ pass 5
+ℹ fail 4
+```
+
+The three valid-body cases returned WIRE_REFUSED; the exact metadata aggregate
+case could not reach its sentinel. After the isolated accounting fix the same
+nine controls passed, native exit 0 (9 passed, 0 failed). Final verification uses
+Node 24.19.0 with the same process PATH/TSX_DISABLE_CACHE and existing dependencies.
+No unchanged routing suites are repeated for this narrow repair. The earlier
+Contract B failure remains a separate enrollment gate; this repair makes no new
+D19/audit claim and performs no provider/Pi/configuration operation.
+Repair verification log, from the dispatch package directory:
+
+```text
+node --import tsx --test --test-reporter=spec tests/pmc-controller.test.ts
+ℹ tests 95
+ℹ pass 95
+ℹ fail 0
+FINAL_FOCUSED_NATIVE_EXIT=0
+
+node --import tsx --test --test-reporter=spec tests/*.test.ts
+ℹ tests 451
+ℹ pass 451
+ℹ fail 0
+FROZEN_DISPATCH_NATIVE_EXIT=0
+
+npm.cmd run typecheck
+> tsc --noEmit
+FROZEN_TYPECHECK_NATIVE_EXIT=0
+
+npm.cmd run lint
+> biome check .
+Checked 27 files in 69ms. No fixes applied.
+FROZEN_LINT_NATIVE_EXIT=0
+```
+
+The final full suite includes the strengthened outside-callback measurements for
+all new body and metadata controls. It retains every original test, with zero
+skips/cancellations/todos. Native exits were captured immediately after each
+command, before summarizing output. `git diff --check` passed, and the repair diff
+contains only the three authorized paths. Fresh independent source reviews and
+separate Contract B enrollment remain required; the builder does not self-approve.

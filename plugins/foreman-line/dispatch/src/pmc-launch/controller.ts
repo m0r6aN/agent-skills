@@ -84,7 +84,11 @@ const byteBuffer = Object.getOwnPropertyDescriptor(bytePrototype, 'buffer')?.get
 const bufferLength = Object.getOwnPropertyDescriptor(ArrayBuffer.prototype, 'byteLength')?.get
 const resizable = Object.getOwnPropertyDescriptor(ArrayBuffer.prototype, 'resizable')?.get
 // Each alias is traversed once per occurrence. No caller iterator or bulk descriptors.
-function capture(input: unknown, bytePath = '', largePath = 'payloadJson'): unknown {
+function capture(
+  input: unknown,
+  bytePath = '',
+  largePath: 'payloadJson' | 'body' | '' = 'payloadJson',
+): unknown {
   let remaining = 65536,
     units = 0
   const active = new Set<object>()
@@ -100,7 +104,9 @@ function capture(input: unknown, bytePath = '', largePath = 'payloadJson'): unkn
     if (depth > 16) fail('BOUNDS_REFUSED')
     if (!paid) reserve(1)
     if (typeof v === 'string') {
-      charge(v, path === largePath)
+      // Only the final wire body value has an independent UTF-8 budget.
+      // Its key and value node were already charged normally.
+      if (!(largePath === 'body' && path === 'body')) charge(v, path === largePath)
       if (path === largePath && Buffer.byteLength(v, 'utf8') > 1048576) fail('BOUNDS_REFUSED')
       return v
     }
