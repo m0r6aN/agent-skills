@@ -184,3 +184,18 @@ close/error controls prove the event path, not an unrelated fake promise. All ot
 bounds, source pins, scope/generation rules, completeness predicates and production
 gates remain unchanged. Frozen lint/body/link/whitespace checks precede handoff;
 fresh app-PMC/root review remains required. No runtime or provider effect occurred.
+## Delegated final design ratification — 2026-09-26
+
+Coordinator and independent PMC reviewer APPROVEc4f1e22b0d15f53b0ac600b940748225d54cf720.
+Both reviewed the complete final contract and cleanup-acknowledgement correction;
+retained producer20af5e8f3fc0c857ce5569ebdcb28ad504c0aed8 and adapter
+39347c4018a3dbf1c0cd9abf0a6e2e9da262bdf8 remain unchanged. No remaining required
+finding. Root ratifies the strict complete-envelope profile, additive pure
+materializer, exact scope/generation custody, operation-owned cancellation and
+original-promise terminal-cleanup protocol under delegated prerequisite authority.
+
+This accepts design only. Checkpoint N pure materialization and checkpoint P
+publisher/fixed metadata transport each require their own concrete implementation
+amendment, actual Step0 and release. No runtime, live endpoint compatibility,
+production bootstrap, provider/account evidence, billing bound or model launch
+is inferred. Frozen lint/link/diff checks pass; no runtime tests were claimed.
