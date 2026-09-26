@@ -143,3 +143,15 @@ This is builder verification, not independent approval. Root and another frontie
 reviewer must inspect the frozen repair; combined integration and remote gates
 remain. No live provider, credentials, configuration, installation, push or merge
 was used.
+
+## Escaped fixture correction
+
+After source review at 3a976f0cf99f6732ff3a6e3ffeeacad15d34fcd7, corrected the
+combined-budget test's replacement literal to emit actual backslash-u JSON escapes.
+Previously JavaScript interpreted that replacement as the same literal scalar, so
+that branch did not independently exercise escaped wire representation. This is a
+one-line test correction only; materializer runtime and all 168 tests are preserved.
+Node 24.19.0 focused producer suite: 168 passed, zero failed/skipped, exit 0.
+Package typecheck and changed-test Biome check both exited 0. Full routing and D19
+were not rerun for this test-only correction; their earlier results remain attached
+to the unchanged runtime source. Exactly this report and the existing test changed.

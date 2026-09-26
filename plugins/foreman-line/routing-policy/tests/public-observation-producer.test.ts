@@ -102,7 +102,7 @@ test('raw v1 combined source budget counts decoded escaped UTF-8 bytes', () => {
   const d = JSON.parse(new TextDecoder().decode(q.bytes))
   d.data[0].reviewPadding[0] = 'é'.repeat(2000)
   const literal = JSON.stringify(d)
-  const escaped = literal.replaceAll('é', '\u00e9')
+  const escaped = literal.replaceAll('é', '\\u00e9')
   assert.equal(closedInputStringBytes(q) + decodedStringBytes(d), 1048576)
   assert.equal(
     materializePublicModelResponseV1({ ...q, bytes: new TextEncoder().encode(literal) }).ok,
