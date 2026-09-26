@@ -177,6 +177,70 @@ type RevalidationV1 = Readonly<{
 }>;
 ```
 
+### Private bootstrap and observation arguments (Step 0 amendment)
+
+B1 captures selection/completion authenticators when it opens. C therefore cannot
+first receive an already-open owner and only then invent the callbacks it needs.
+Freeze this private two-stage constructor, using actual B1 OwnerPorts types:
+
+```typescript
+type ControllerObservationContextV1 = Readonly<{
+  request: LaunchInputV1;
+  decision: Extract<PmcRouteDecisionV1, {ok:true}>;
+  wire: WireV1;
+  consumed: AttemptV1;
+}>;
+type ControllerObservationPortsV1 = Readonly<{
+  observe: (proof: object, invocation: object,
+    current: ControllerObservationContextV1) => unknown;
+}>;
+type ControllerBootstrapV1 = Readonly<{
+  authenticateSelection: OwnerPorts['authenticateSelection'];
+  authenticateCompletion: OwnerPorts['authenticateCompletion'];
+  bind: (ports: unknown, observations: unknown) =>
+    | Readonly<{ok:true,controller:PmcLaunchControllerV1}>
+    | Readonly<{ok:false,code:'INSTALLATION_REFUSED'}>;
+}>;
+declare function createPmcControllerCustodyV1(mode: unknown):
+  | Readonly<{ok:true,custody:ControllerBootstrapV1}>
+  | Readonly<{ok:false,code:'INSTALLATION_REFUSED'}>;
+```
+
+The private constructor accepts only the exact primitive evidence modes
+`supplied-production-claims` or `synthetic-offline`, selected by reviewed
+installation/test composition, never a request/config/task field. No public mode
+switch or runtime factory is barrel-exported. Creation allocates only private
+capability registries; no clock, storage, owner, credential, SDK or network call.
+Authenticators return `{accepted:false}` before successful bind and authenticate
+only capabilities minted by this controller from its direct acknowledged calls.
+
+Installation obtains these captured authenticators, opens real B1 with them and
+its own origin/clock ports, then calls bind once with unchanged InstallationPortsV1
+and the separate closed ControllerObservationPortsV1. The first bind attempt
+consumes the latch even on failure; no owner/port replacement or rebind. Do not
+retain or freeze caller records/functions; capture descriptors/method identities
+once and reject unknown fields/accessors/thenables. No predecessor source changes.
+Bootstrap authenticators are verifiers, not public capability issuers. Failed bind
+does not create a controller, invoke an owner transition or repair durable state.
+
+C mints a private per-launch invocation identity and invokes observe only for the
+proof object returned directly by its captured send. It supplies its owned current
+request, actual successful resolver result, exact wire and acknowledged consumed
+attempt. The registry result is exactly `{accepted:false}` or
+`{accepted:true,proofId:Id,observation:Observation}` with the closed Observation,
+Charge and finite TransportCode unions already specified by P2D. These private
+SDK-free types may be shared from controller-types.ts; do not import Pi/D runtime
+into C or introduce a public issuer. Capture/validate the returned ordinary data;
+the callback itself comes only from trusted installation's C3 registry. Copies,
+cross-invocation proofs and ID knowledge without direct observation custody refuse.
+No added field widens InstallationPortsV1 or changes TerminalPortV1 signatures.
+
+This explicit private constructor amendment requires two independent design
+reviews before release. It closes construction order and finite-capability gaps;
+it does not establish production authority or accept synthetic claims as real.
+
+### Acquisition and revalidation (continued)
+
 `acquire` is synchronous, without provider/catalog refresh. Accepted closed return
 is `{context, catalogInput, catalogSource, prices, runtimeDigest, evidenceDigest, expiresAtUtc,
 scopeId, classCeilingMicroUsd, ceilingAuthorityRef, ceilingAuthorityDigest}`.
@@ -283,7 +347,7 @@ The two stores are NOT one transaction:
 |---|---|
 | begin before selection/reserve | Pending blocks; only private never-invoked proof may close refused. Restart cannot recreate that proof. |
 | selection commit or reserve lost acknowledgement | Pending owner; reservation may exist. No permit/send, refund or retry. |
-| reserve acknowledged, mint/check failure | Reserved liability and pending owner; genuine no-send cancellation acknowledgement precedes finish. |
+| reserve acknowledged, mint/check/final revalidation failure before consume | Reserved liability and pending owner remain. D proofs require an acknowledged consumed attempt; C has no authentic pre-consume cancellation proof. No cancel, owner finish, refund or retry is manufactured. |
 | consume failed/lost acknowledgement | Possible consumed liability and pending owner; no send from this path. Missing receipt never proves no-send. |
 | send/response/audit/reconcile failure | Consumed/uncertain liability and pending/uncertain/held custody; no remint. |
 | ledger terminal commit, finish failure | Money closure alone is not intent closure; pending blocks. Lost owner acknowledgement quarantines the local instance. Normal reopen can use a valid durably committed authenticated primary terminal closure only for the predeclared second attempt, per B1's explicit disposition; no recovery operation, R1 replay or third attempt exists. |
@@ -505,7 +569,7 @@ decision/wire/reservation exists, receipt is null; null never implies no liabili
 | 4 | Permit copies/proxy/JSON/cross-instance/reuse/reentrancy/refusal send zero times; authentic consume sends once. Exact immutable bytes/headers/endpoint/effort/proof; mutation requires fresh authorization or refuses. |
 | 5 | Crash/failure at every table boundary using real temporary P2B SQLite and accepted owner preserves liabilities/blocks replay. Commit lost ack/audit/finish failure never refunds/retries. No two-store atomicity claim. |
 | 6 | Separate non-exported synthetic harness cannot select HTTPS/credentials/production factory; no request test flag. Timeout/abort/HTTP error never proves no-send; unknown retains full bound; actual over-bound freeze uses unchanged ledger. |
-| 7 | P2D contract tests bind body parsing/effort/privacy/tools/count to private proof; unproven billing component refuses. Payload/header hooks finish before freeze; actual Pi caught-hook negative control; no invented terminal hooks. |
+| 7 | Offline C acceptance: documented D-port contract tests bind body/effort/privacy/tools/count to private proof using an explicitly synthetic network-incapable fixture; unproven billing component refuses. No actual-Pi conformance claim follows. Later D/production acceptance separately requires actual post-hook freeze, caught-hook negative control and all terminal/runtime/billing evidence. No invented terminal hooks or fake-only production acceptance. |
 | 8 | Export/diff check: no public factory/mint/sender/ledger/authenticator/test bypass. Existing v0 evaluator regressions unchanged. Two independent architecture reviews approve exact contracts; production gaps remain named. |
 
 ## Out of Scope
@@ -553,8 +617,8 @@ production AC7.
 ## Readiness
 
 R1 DECISION RESOLVED, IMPLEMENTATION BLOCKING: Amendment 05 V8 ratifies separate
-PMC-P2B1 intent custody, keeping P2B unchanged. B1's released implementation is
-held for bounded-capture repair, two final reviews and audited integration. No
+PMC-P2B1 intent custody, keeping P2B unchanged. B1's repaired implementation has
+two independent source approvals; audited integration remains outstanding. No
 fourth ledger table or implied owner service. P2C must use actual accepted B1 in
 crash/concurrency tests and implement its private proof adapters.
 
