@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict'
+import { spawnSync } from 'node:child_process'
 import { readFileSync } from 'node:fs'
 import { test } from 'node:test'
+import { fileURLToPath } from 'node:url'
 import {
   type BindingEvidenceV1,
   type EvidenceValue,
@@ -19,6 +21,170 @@ const recorded = (value: unknown) => ({
   value,
   evidenceRef: 'synthetic-test-only',
 })
+
+// Each child imports the real owner for the first time after instrumentation.
+// No production hook, cross-test module patch or persistent helper file is needed.
+const validatorLifecycleProbe = `
+import assert from 'node:assert/strict'
+import { readFileSync } from 'node:fs'
+import { createRequire } from 'node:module'
+const [scenario, ownerUrl, fixtureUrl] = process.argv.slice(1)
+const require = createRequire(ownerUrl)
+const library = require('ajv')
+const original = Object.getOwnPropertyDescriptor(library, 'Ajv')
+const RealAjv = library.Ajv
+let constructions = 0
+let compilations = 0
+let executions = 0
+let executionFault = false
+const compiled = []
+Object.defineProperty(library, 'Ajv', {
+  ...original,
+  value: new Proxy(RealAjv, {
+    construct(target, args) {
+      constructions++
+      assert.deepEqual(args, [{ allErrors: false, strict: true }])
+      if (scenario === 'construction' && constructions === 1) throw Error('constructor fault')
+      const instance = Reflect.construct(target, args)
+      const compile = instance.compile
+      instance.compile = function(schema) {
+        compilations++
+        if (scenario === 'persistent' || (scenario === 'compile' && compilations === 1)) {
+          throw Error('compile fault')
+        }
+        const validate = Reflect.apply(compile, this, [schema])
+        compiled.push(validate)
+        return new Proxy(validate, {
+          apply(target, receiver, args) {
+            executions++
+            if (executionFault) throw Error('execution fault')
+            return Reflect.apply(target, receiver, args)
+          },
+        })
+      }
+      return instance
+    },
+  }),
+})
+try {
+  const { validateProviderBindingPolicyV1: validate } = await import(ownerUrl)
+  const fixture = () => JSON.parse(readFileSync(new URL(fixtureUrl), 'utf8'))
+  const boundary = { valid: false, errors: [{ code: 'VALIDATION_BOUNDARY_FAILED', path: '' }] }
+  const plain = { valid: false, errors: [{ code: 'PLAIN_DATA_REFUSED', path: '' }] }
+  assert.equal(constructions, 0, 'import must not construct Ajv')
+  assert.equal(compilations, 0, 'import must not compile')
+  const hostile = Object.defineProperty({}, 'x', { get() { throw Error('must not run') } })
+  const rejected = [hostile, { x: 'x'.repeat(2049) }, Array(65536).fill(null)]
+  for (const input of rejected) assert.deepEqual(validate(input), plain)
+  assert.equal(constructions, 0, 'capture refusal must precede construction')
+  if (scenario === 'persistent') {
+    assert.deepEqual(validate(fixture()), boundary)
+    assert.deepEqual(validate(fixture()), boundary)
+    assert.deepEqual([constructions, compilations, executions], [2, 2, 0])
+  } else if (scenario === 'construction' || scenario === 'compile') {
+    assert.deepEqual(validate(fixture()), boundary)
+    assert.equal(constructions, 1, 'failure must not retry in the same call')
+    assert.equal(executions, 0)
+    assert.equal(validate(fixture()).valid, true)
+    assert.equal(validate(fixture()).valid, true)
+    assert.equal(constructions, 2)
+    assert.equal(compilations, scenario === 'construction' ? 1 : 2)
+    assert.equal(executions, 2)
+    assert.equal(compiled.length, 1)
+  } else {
+    if (scenario === 'cold-schema') {
+      const malformed = fixture()
+      malformed.bindings[0].provider = 'invalid'
+      assert.deepEqual(validate(malformed), { valid: false, errors: [{ code: 'SCHEMA_INVALID', path: '/bindings/0/provider' }] })
+      assert.equal(compilations, 1, 'schema-invalid ordinary data must reach cold Ajv')
+    }
+    const input = fixture()
+    const first = validate(input)
+    assert.equal(first.valid, true)
+    assert.deepEqual(first.value, input)
+    assert.notEqual(first.value, input)
+    assert.equal(Object.isFrozen(first.value.bindings[0].eligibility), true)
+    const firstSaved = structuredClone(first)
+    if (scenario === 'execution') {
+      input.bindings[0].provider = 'invalid'
+      const refusal = validate(input)
+      assert.deepEqual(refusal, { valid: false, errors: [{ code: 'SCHEMA_INVALID', path: '/bindings/0/provider' }] })
+      const saved = structuredClone(refusal)
+      executionFault = true
+      assert.deepEqual(validate(fixture()), boundary)
+      executionFault = false
+      assert.equal(validate(fixture()).valid, true)
+      assert.deepEqual(refusal, saved)
+      assert.equal(executions, 4)
+    } else {
+      input.bindings[0].provider = 'invalid'
+      const a = validate(input)
+      assert.deepEqual(a, { valid: false, errors: [{ code: 'SCHEMA_INVALID', path: '/bindings/0/provider' }] })
+      const savedA = structuredClone(a)
+      assert.equal(validate(fixture()).valid, true)
+      const other = fixture()
+      other.provenance.mappingVersion = 12
+      const b = validate(other)
+      assert.deepEqual(b, { valid: false, errors: [{ code: 'SCHEMA_INVALID', path: '/provenance/mappingVersion' }] })
+      const savedB = structuredClone(b)
+      assert.equal(validate(fixture()).valid, true)
+      const semantic = fixture()
+      assert.equal(validate(semantic).valid, true)
+      semantic.bindings[0].logicalCandidateId = 'missing'
+      assert.deepEqual(validate(semantic), { valid: false, errors: [{ code: 'MISSING_CANDIDATE', path: '/bindings/0/logicalCandidateId' }] })
+      // Schema refusal still takes precedence over the independent semantic error.
+      semantic.provenance.mappingVersion = 12
+      assert.deepEqual(validate(semantic), b)
+      const expectedExecutions = scenario === 'cold-schema' ? 9 : 8
+      assert.equal(executions, expectedExecutions, 'all plain snapshots must reach the real validator')
+      for (const value of rejected) assert.deepEqual(validate(value), plain)
+      assert.equal(executions, expectedExecutions, 'warm capture refusals must not reach Ajv')
+      assert.deepEqual(a, savedA)
+      assert.deepEqual(b, savedB)
+    }
+    assert.deepEqual(first, firstSaved)
+    assert.equal(constructions, 1)
+    assert.equal(compilations, 1)
+    assert.equal(compiled.length, 1)
+  }
+} finally {
+  Object.defineProperty(library, 'Ajv', original)
+  assert.equal(library.Ajv, RealAjv)
+}
+`
+
+for (const scenario of [
+  'reuse',
+  'cold-schema',
+  'construction',
+  'compile',
+  'persistent',
+  'execution',
+]) {
+  test(`compiled validator lifecycle: ${scenario}`, () => {
+    const result = spawnSync(
+      process.execPath,
+      [
+        '--import',
+        'tsx',
+        '--input-type=module',
+        '--eval',
+        validatorLifecycleProbe,
+        scenario,
+        new URL('../src/provider-bindings.ts', import.meta.url).href,
+        new URL('./fixtures/pmc-provider-binding-policy-v1.json', import.meta.url).href,
+      ],
+      {
+        cwd: fileURLToPath(new URL('..', import.meta.url)),
+        encoding: 'utf8',
+        timeout: 30_000,
+        maxBuffer: 1_048_576,
+      },
+    )
+    assert.ifError(result.error)
+    assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`)
+  })
+}
 
 test('all fifteen canonical declarations validate losslessly with six frozen lanes', () => {
   const input = fixture()
