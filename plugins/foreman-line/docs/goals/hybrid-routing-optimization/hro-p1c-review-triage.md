@@ -135,3 +135,15 @@ B1 StageF60e7c15 and separately approved cache dispositionbf56c08. Runtime sourc
 has no merge conflict. Documentation conflicts retained historical checkpoints
 and the later superseding checkpoint. Separate combined review/checks are required
 before PR and merge; source approval does not waive them or the live HRO exit.
+
+## Combined acceptance — e499590 / cae2e19
+
+Independent PMC reviewer approved integrated e499590 after serial Node24.19
+checks: hybrid53, full routing-policy suite, readers71 and mutation-scope44;
+all four package typecheck/lint commands passed. The retained routing output was
+truncated, so no independently confirmed routing test count is asserted here.
+Actual D19 passed21 packages/199 source files/zero unruled instances. Source/tests
+match7133; accepted owners matchmain727. Cache disposition remains held, not
+implemented. Documentation-only approval appendixcae2e19 was separately reviewed
+and approved without repeating unchanged suites. All native check exits were0.
+Remote PR checks and merge are still required; the overall HRO exit remains open.
