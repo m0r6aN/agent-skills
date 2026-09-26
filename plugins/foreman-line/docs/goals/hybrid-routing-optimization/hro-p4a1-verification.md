@@ -70,8 +70,10 @@ The focused suite proves:
 2. actual B1 IDs, exact independent request-digest fixtures and immutable
    SQLite registration;
 3. existing B1/admission refusal, aliases, schema tampering and no repair;
-4. exact-name junction refusal before canonicalization, exact 256-KiB UTF-8
-   acceptance, and 129/70,000 top-level length refusal before own-key descent;
+4. matching-target junction refusal before canonicalization, exact 256-KiB UTF-8
+   acceptance, exact 256-KiB-plus-one refusal with no stores, and 129/70,000
+   length refusal before own-key descent (the 70,000 array is under an unknown
+   field and therefore exercises the general expanded-array preflight);
 5. hostile input and bound refusal before mutation;
 6. independent-process same-root race with one complete winner;
 7. B1 uncertainty before and after COMMIT;

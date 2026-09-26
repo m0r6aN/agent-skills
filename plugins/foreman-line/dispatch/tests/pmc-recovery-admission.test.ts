@@ -11,7 +11,7 @@ import {
   symlinkSync,
 } from 'node:fs'
 import { tmpdir } from 'node:os'
-import { join } from 'node:path'
+import { basename, join } from 'node:path'
 import { DatabaseSync } from 'node:sqlite'
 import { type TestContext, test } from 'node:test'
 import { openIntentOwnerV1 } from '../src/pmc-launch/intent-custody.js'
@@ -221,15 +221,15 @@ test('existing admission, B1, aliases, and tampering refuse without repair', (t)
     db.close()
   }
   assert.equal(createOfflineRecoveryAdmissionV1(f.input).ok, false)
-  const target = join(tmpdir(), `hro-p4a1-fixture-target-${randomUUID().replaceAll('-', '')}`)
-  mkdirSync(target)
-  t.after(() => rmSync(target, { recursive: true, force: true }))
-  const link = join(tmpdir(), `hro-p4a1-fixture-${randomUUID().replaceAll('-', '')}`)
-  const linkedInput = { ...f.input, fixtureId: randomUUID().replaceAll('-', ''), root: link }
-  rmSync(f.root, { recursive: true, force: true })
+  const junctionFixture = fixture(t)
+  const target = junctionFixture.root
+  const parent = join(tmpdir(), `hro-p4a1-junction-parent-${randomUUID().replaceAll('-', '')}`)
+  mkdirSync(parent)
+  t.after(() => rmSync(parent, { recursive: true, force: true }))
+  const link = join(parent, basename(target))
   symlinkSync(target, link, process.platform === 'win32' ? 'junction' : 'dir')
   t.after(() => rmSync(link, { recursive: true, force: true }))
-  assert.deepEqual(createOfflineRecoveryAdmissionV1(linkedInput), {
+  assert.deepEqual(createOfflineRecoveryAdmissionV1({ ...junctionFixture.input, root: link }), {
     ok: false,
     code: 'PATH_REFUSED',
   })
@@ -264,6 +264,25 @@ test('capture accepts the exact 256 KiB UTF-8 boundary without array index charg
   assert.equal(Buffer.byteLength(JSON.stringify(boundary), 'utf8'), 262144)
   const result = createOfflineRecoveryAdmissionV1(boundary)
   assert(result.ok, JSON.stringify(result))
+
+  const overFixture = fixture(t)
+  const exactPayload = JSON.parse(present(boundary.intents[0]).payloadJson) as string
+  const over = {
+    ...overFixture.input,
+    intents: [
+      {
+        ...overFixture.input.intents[0],
+        payloadJson: JSON.stringify(`${exactPayload}x`),
+      },
+    ],
+  } as OfflineInputV1
+  assert.equal(Buffer.byteLength(JSON.stringify(over), 'utf8'), 262145)
+  assert.deepEqual(createOfflineRecoveryAdmissionV1(over), {
+    ok: false,
+    code: 'BOUNDS_REFUSED',
+  })
+  assert.equal(existsSync(join(overFixture.root, 'pmc-intent-v1.sqlite')), false)
+  assert.equal(existsSync(join(overFixture.root, 'hro-recovery-admission-v1.sqlite')), false)
 })
 
 test('hostile closed input and bounds are refused before B1 or admission mutation', (t) => {
@@ -297,20 +316,20 @@ test('hostile closed input and bounds are refused before B1 or admission mutatio
     code: 'BOUNDS_REFUSED',
   })
   assert.equal(intentOwnKeys, 0)
-  let hugeIntentOwnKeys = 0
-  const hugeIntents = new Array(70000)
-  hugeIntents[0] = f.input.intents[0]
-  const hugeProxy = new Proxy(hugeIntents, {
+  let hugeArrayOwnKeys = 0
+  const hugeArray = new Array(70000)
+  hugeArray[0] = f.input.intents[0]
+  const hugeProxy = new Proxy(hugeArray, {
     ownKeys() {
-      hugeIntentOwnKeys++
+      hugeArrayOwnKeys++
       throw new Error('must preflight expanded length')
     },
   })
-  assert.deepEqual(createOfflineRecoveryAdmissionV1({ ...f.input, intents: hugeProxy }), {
+  assert.deepEqual(createOfflineRecoveryAdmissionV1({ ...f.input, extraArray: hugeProxy }), {
     ok: false,
     code: 'BOUNDS_REFUSED',
   })
-  assert.equal(hugeIntentOwnKeys, 0)
+  assert.equal(hugeArrayOwnKeys, 0)
   assert.equal(existsSync(join(f.root, 'pmc-intent-v1.sqlite')), false)
   assert.equal(existsSync(join(f.root, 'hro-recovery-admission-v1.sqlite')), false)
   const proxied = new Proxy(f.input, {
