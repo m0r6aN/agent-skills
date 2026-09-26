@@ -82,11 +82,20 @@ callback captures normalized context/options, runs final transforms, freezes and
 resolves the prepare promise with WireV1. The Pi stream remains pending. send then
 emits provisional text and returns its proof; it does NOT await final Pi result.
 Only after C.launch returns, private installation calls finishInvocation(result)
-to release final done/error and dispose the session. The finish closure is not
-network-capable and cannot authorize another launch. If C fails unexpectedly,
-finally aborts/disposes the pending session and preserves liability. The caller
-gets C result/output, never the actual session/runtime. Bound setup and hook waits
-to 30 seconds; mark cancelled so late callbacks cannot create a valid proof.
+to release final done/error, await the retained prompt promise, dispose and return
+owned bounded completed text or a typed failure. The finish closure is not
+network-capable and cannot authorize another launch. A caught unexpected C
+rejection passes null through this private wrapper, never task JSON. Provisional
+text stays private and is discarded on output failure; C's real disposition and
+liability remain authoritative. Finalizer replay returns the same promise/result.
+The caller gets C result plus this explicit output union, never session/runtime.
+Bound setup and hook waits to 30 seconds. One idempotent terminalizer first
+invalidates the rendezvous, settles preparation and publishes/ends the final error
+stream BEFORE awaiting abort or prompt settlement. A late stream callback receives
+the retained terminal error and cannot issue proof. Observe timed-out hook/prompt
+rejections; never await them without a deadline. Normal final event drainage must
+precede disposal. A separate 5-second cleanup deadline returns PI_REFUSED and
+disposes once without claiming the runtime drained or erasing settled liability.
 Review must approve this private orchestration and verify no circular wait.
 
 **C2 — authenticated profile custody and comparison.** prepare lacks acquire's
@@ -106,6 +115,29 @@ whether it lives in C or installation; D cannot edit the reviewed C draft here.
 Both proposals must be explicitly disposed before dispatch, even if judged to be
 clarifications rather than contract amendments. If signatures change, return to
 C review rather than silently implementing a widened port. Core C remains SDK-free.
+
+**C3 — finite private observation registry.** Independent review found that a
+sender-only WeakMap plus factory result containing only terminal/finalizer leaves
+C unable to read semantic/charge facts before reconciliation. The revised D spec
+therefore freezes a shared installation-owned registry with three role-separated
+capabilities: D-only registration; C-only direct-send observation and immutable
+semantic/charge lookup; and unchanged ledger proof authenticators. C observation
+must bind the exact proof identity, complete consumed AttemptV1 and retained
+request/decision/wire before the ledger can authenticate its unique proofId.
+Registration alone does not establish C custody; an ID or copied object cannot
+do so. Reads are non-destructive so C and ledger can authenticate the same record
+through reconciliation/replay. This is an explicit C/P2E composition amendment
+subject to independent re-review, with TerminalPortV1 and public exports unchanged.
+
+## Independent design review disposition
+
+Both independent reviews of 9ec702 requested changes. Reviewer A identified the
+missing completed-text channel and pending-stream cleanup ordering; reviewer B
+identified missing observation-to-reconciliation capabilities and independently
+confirmed the cleanup defect. The coordinator corrected all three in this draft.
+Neither initial verdict is an approval. The corrected frozen contract must return
+to both reviewers, followed by explicit C1/C2/C3 disposition and matching C draft
+clarifications before runtime release. No production evidence gate is waived.
 
 ## Response and accounting choices
 

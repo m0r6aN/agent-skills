@@ -74,6 +74,9 @@ receives actual imported Pi constructors/functions (ModelRuntime.create,
 createAgentSession, SettingsManager.inMemory, SessionManager.inMemory,
 AssistantMessageEventStream, createExtensionRuntime), a closed ResourceLoader, authentic profile custody,
 one synchronous credential supplier and a captured controller launch function.
+It also receives the installation-owned observation registry's D-only register
+capability described below. C and ledger receive separate captured read/authenticate
+capabilities; none is reachable from task data or the returned terminal port.
 Factories are available only to reviewed P2E installation, never task code.
 No arbitrary sender/http-client injection in the production factory; test assembly
 has a separate non-exported fake factory with no credential/HTTPS dependency.
@@ -85,11 +88,12 @@ streamSimple callback captures the actual normalized context/options, completes
 transforms and freeze, and resolves a private preparation promise with WireV1.
 The Pi stream remains pending. C then reserves/consumes and invokes send; sender
 returns evidence without waiting for Pi final done. After C.launch resolves, the
-private P2E wrapper calls finishInvocation(result) to release final done/error and
-dispose the session. Neither the caller nor Pi receives a permit/raw sender.
+private P2E wrapper calls finishInvocation(result) to release final done/error,
+drain the retained prompt promise and return bounded completed text before
+disposing the session. Neither the caller nor Pi receives a permit/raw sender.
 The rendezvous is per invocation, rejects concurrent/reentrant/second streams,
 and compares the initial payload/request/model to its retained prepare inputs.
-A preparation failure aborts/disposes the pending session without inference.
+A preparation failure terminalizes the pending stream before cleanup, without inference.
 Setup/hook preparation has a 30-second deadline; cancellation prevents a late
 callback from issuing proof. Supplied cwd/system text is approved public profile
 data, never discovered from the user workspace.
@@ -111,10 +115,37 @@ Failure invalidates it. Exact wire identity and all bytes/claims must match.
 
 
 The finite private factory result is exactly
-`{terminal:TerminalPortV1, finishInvocation:(result:LaunchResultV1)=>Promise<void>}`.
+`{terminal:TerminalPortV1, finishInvocation:(result:LaunchResultV1|null)=>Promise<InvocationOutput>}`.
+`InvocationOutput` is the owned closed union
+`{kind:'completed',text:string,finish:'stop'|'length'}` or
+`{kind:'failed',code:TransportCode}`. Text is at most the same 1 MiB UTF-8
+response bound; it is copied from the private captured response, never a caller
+field. Only acknowledged successful semantic reconciliation and completed Pi
+prompt drainage can produce completed. No partial text is returned on failure.
+Provisional Pi text events remain private and must not be presented as completed.
 finishInvocation accepts only the result delivered directly by its installed C
-wrapper for that invocation, emits one final event and disposes; it does no I/O
-other than local session cleanup. No arbitrary result injection through task JSON.
+wrapper for that invocation; null denotes that wrapper's caught unexpected C
+rejection. It does no I/O other than local session cleanup. No arbitrary result
+injection through task JSON. Replay returns the same retained finalization promise
+and owned result, never another event, send or accounting transition.
+
+One idempotent local terminalizer handles success, preparation refusal/timeout,
+cancellation, reserve/revalidation/consume denial, reconciliation failure and
+unexpected C rejection. Retain the actual prompt promise immediately, attach its
+rejection observer, and own both preparation and stream settlement independently.
+First invalidate the rendezvous and unused proofs; settle preparation if pending;
+publish exactly one bounded final/error result and end any created stream BEFORE
+awaiting abort, waitForIdle or prompt settlement. If failure occurs before stream
+creation, retain the terminal failure so a late callback immediately gets an
+already-ended error stream and cannot publish WireV1/proof or send. A timed-out
+hook promise is observed but never awaited again; its late result is ignored.
+After normal done/error publication await the retained prompt's settlement before
+session disposal. Cleanup has a separate 5-second deadline; after that deadline
+dispose once, observe remaining promise rejections and return failed PI_REFUSED,
+never claim successful drainage. Do not await an unbounded abort/waitForIdle.
+The deadline bounds return, not a claim that arbitrary runtime code was cancelled.
+Cleanup cannot refund, change C's disposition or erase ledger liability. Local
+output failure after a reconciled success does not authorize another inference.
 Private authentic profile custody is exactly a per-request record containing
 `requestDigest, policyDigest, configDigest, runtimeDigest, catalogDigest,
 evidenceDigest, expiresAtUtc` (C refinements), `price:PmcPriceInputV1`,
@@ -319,11 +350,39 @@ consume and invoking its captured send. DNS/TLS/connect failure, HTTP redirect,
 status error, abort, timeout or empty response after the marker never proves zero
 charge. Abort destroys once, never recreates a request.
 
-One private sender WeakMap binds empty proof identity to Observation plus exact
-wire/request/decision and ledgerId/epoch/scope/requestDigest/maximum/cost digest
-from AttemptV1. No public proof issuer/reconciliation function. C receives only
+One private installation-owned observation registry uses a WeakMap binding empty
+proof identity to owned Observation, exact wire/request/decision and the complete
+acknowledged consumed AttemptV1. No public proof issuer/reconciliation function.
+Its role-separated captured capabilities are finite:
+
+- D alone calls register with its newly issued empty proof identity, owned
+  observation, exact prepared wire/decision/request and consumed AttemptV1.
+  Registration returns `{accepted:false}` or `{accepted:true,proofId:Id}`.
+  Duplicate identity/ID, mismatched retained invocation or absent controller
+  custody refuses; no caller-supplied proofId is accepted. IDs are unique in the
+  retained epoch. Registration alone does not grant controller observation custody.
+- C alone calls observe after receiving that exact proof directly from its
+  captured send call. It supplies its privately retained invocation, complete
+  request/decision/wire and acknowledged consumed AttemptV1. Result is
+  `{accepted:false}` or `{accepted:true,proofId:Id,observation:Observation}`.
+  Registry compares all retained identities and values and records this direct
+  controller observation before returning an owned immutable observation. C uses
+  its semantic/Charge union to choose existing cancel/settle and owner completion.
+- Ledger gets only existing authenticateSettlement/authenticateNoSendProof
+  capabilities. They resolve `{proofId}` only while C holds the matching observed
+  invocation custody, compare the complete ledger authentication context against
+  the retained consumed attempt, and return exactly P2B's existing accepted/refused
+  schema. A known ID without the matching observed invocation cannot authenticate.
+
+The registry lives in reviewed private installation, with D register and C observe
+implemented as invocation-bound closures. No new public export, caller-supplied
+registry or runtime-selected issuer is allowed. Reads are non-destructive: the
+same immutable record must serve C semantic authentication and ledger proof
+authentication through reconciliation/idempotent replay. Finished invocation
+custody cannot authorize another invocation. Copied, cross-invocation and restart
+proofs refuse; retention does not recreate capabilities after restart. C receives only
 its existing `{kind:'terminal',proof}` or `{kind:'uncertain',proof:object|null}`.
-Private installation maps unique proofId wrappers to exact identities for existing
+This shared registry maps unique proofId wrappers to exact identities for existing
 P2B accepted schema: ledgerId, epoch, requestId, requestDigest, scopeId, proofRef,
 proofDigest and noSend:true OR outcome:{kind:'known',actualMicroUsd} / {kind:'unknown'}.
 Raw tags/IDs/JSON/copies/restart objects cannot authenticate. Owner completion uses
@@ -385,7 +444,8 @@ valid account charge can still reconcile exactly. No retries to repair parsing.
 
 Emit pinned Pi events start, text_start(index 0), text_delta*, text_end, then done
 (reason stop or length) only after complete stream AND C's acknowledged successful
-semantic reconciliation. Setup may emit error directly; post-start failures emit
+semantic reconciliation. Setup failure must emit error directly if a stream exists;
+otherwise its retained failure terminalizes any late stream. Post-start failures emit
 error reason error/aborted and end stream once. No thinking/tool/deferred events.
 Partial content is provisional, never an execution receipt. Pi AssistantMessage
 uses the actual api/provider/model, responseId, timestamp and TextContent; no
@@ -416,7 +476,7 @@ error even if all text arrived; no successful done before owner/ledger closure.
 | 5 | SSE split at every UTF-8 and CRLF boundary, duplicate/trailing usage/DONE, error/status/encoding/timeout/abort, content bound, unsupported delta/finish/cost and usage overruns; event order conforms to actual Pi type/runtime stream result and terminates once. |
 | 6 | Raw cost fixtures 0, 0.000001, 0.0000001, exponent, malformed, duplicate, overflow and over-bound show exact known integer or unknown preservation using unchanged real ledger. Estimate/placeholder Pi Usage never becomes ledger actual. Restart/lost ack uses actual accepted B1 and temporary SQLite, never map-only custody. |
 | 7 | Tariff/profile mismatch, broad endpoint slug, tier alias, server fallback, unsupported max_price precision, missing framing/tokenizer/hidden-output/cache/fee proof all refuse BEFORE reserve. Production certificate evidence is separately reviewed; synthetic good-profile fixtures do not close that gate. |
-| 8 | Private rendezvous one-shot/mismatch/concurrency tests; real predecessor types compile. Export review finds no public factory/mint/sender/credential/test mode. Two independent concrete reviews distinguish actual-code, fake-network and production-evidence coverage. Useful L5 candidate remains disabled until every readiness gate passes. |
+| 8 | Private rendezvous one-shot/mismatch/concurrency tests; real predecessor types compile. Start solely from documented factory/registry capabilities and real ledger: known success, failed-settled, no-send, unknown, copied and cross-invocation proofs. Actual Pi tests cover failure before stream creation, a never-resolving hook, C rejection after preparation, finalizer replay and cleanup timeout. On ordinary failure both stream.result and prompt settle; timeout returns failure and observes remaining promises without claiming drainage. Successful completed text is bounded and returned only after reconciliation/drain. Export review finds no public factory/mint/sender/credential/test mode. Two independent concrete reviews distinguish actual-code, fake-network and production-evidence coverage. Useful L5 candidate remains disabled until every readiness gate passes. |
 
 ## Out of Scope
 
