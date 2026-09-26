@@ -1,7 +1,7 @@
 ---
 ticket: PMC-P2C
 title: Same-process one-use launch controller
-status: draft
+status: active
 owner: clinton.morgan
 created: 2026-09-26
 updated: 2026-09-26
@@ -293,7 +293,7 @@ that fence. No task callback runs inside this section.
 
 [PMC-P2B1](../done/PMC-P2B1-durable-intent-custody.md) is the sole owner of
 persistent business-intent custody and IntentOwnerV1. V8 resolves the separate
-owner choice. Its repaired implementation has two independent source and audit approvals; combined integration and remote acceptance remain prerequisites. P2B's
+owner choice. Its repaired implementation has two independent source and audit approvals; combined integration and all twelve remote checks were accepted in PR63/main727c055. P2B's
 metadata/budget_scopes/attempts and existing five operations remain unchanged.
 Production construction refuses INSTALLATION_REFUSED until accepted custody exists.
 
@@ -618,7 +618,7 @@ production AC7.
 
 R1 DECISION RESOLVED, IMPLEMENTATION BLOCKING: Amendment 05 V8 ratifies separate
 PMC-P2B1 intent custody, keeping P2B unchanged. B1's repaired implementation has
-two independent source approvals; audited integration remains outstanding. No
+two independent source approvals and two audit approvals; PR63/main727c055 completes audited integration after twelve green remote checks. No
 fourth ledger table or implied owner service. P2C must use actual accepted B1 in
 crash/concurrency tests and implement its private proof adapters.
 
@@ -644,3 +644,16 @@ attempt? Does every proof capability trace to a direct authenticated owner resul
 rather than caller JSON? Does each ambiguous cross-store boundary block replay?
 Can ID assignment change the digest after the caller created it? Do v0 preservation
 and explicit-v1 entry coexist without claiming migration before an actual caller?
+
+## Gate 2 controller release — 2026-09-26
+
+Root releases only the five Allowed Files after builder Step0 at5764eba and
+bootstrap ratificationd260bf6. Both independent design approvals cover5764eba;
+B1 is accepted main727c055 with StageF60e7c15. Combined base d88a0f4 preserves
+A/B/B1/F source pins and the reviewed C contracts; only B1 completed links changed.
+The frontier builder uses isolated hro-pmc-p2c-20260926 and the stated test-first
+sequence. SDK-free synthetic-offline actual resolver/ledger/owner composition
+must be tested; actual-Pi and production evidence remain later gates. No provider,
+credential, host configuration, production initialization or automatic recovery.
+Type-only barrel additions only. Local frozen handoff, two independent source
+reviews, integration and full remote checks precede merge. Root owns release.
