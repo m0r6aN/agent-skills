@@ -59,13 +59,13 @@ extra keys/non-object route/non-string payload refuse. Complete semantic field
 validation and C's denial priority belong to C, not an entry-specific selector.
 
 The executable main uses ONLY the zero-argument production bootstrap below.
-Internal `runEntry(argv, stdin, stdout, installation)` is testable with explicit
+Internal `runEntry(argv, stdin, stdout, installationFactory)` is testable with explicit
 in-memory I/O; it is not barrel-exported and cannot load arbitrary modules or
 manufacture installation from JSON. No automatic invocation when imported for
 tests. Its numeric return is the exit status; executable main sets exitCode.
 Its arguments are exactly readonly string[] argv, stdin `{read:()=>Promise<
 Uint8Array|null>,stop:()=>void}`, stdout `{write:(line:string)=>Promise<boolean>}`
-and EntryInstallation. null is EOF; true acknowledges a completed write. These
+and a captured zero-argument `() => EntryInstallation` installationFactory. Invoke that captured factory exactly once only after complete bounded framing and basic top-level validation; help, invalid argv and refused input invoke it zero times. Main supplies only createProductionEntry, never a factory selected by task data, environment or module path. Tests may supply a private offline composition factory. A thrown or malformed factory result produces PRODUCTION_EVIDENCE_MISSING without invoking controller or transport. null is EOF; true acknowledges a completed write. These
 are main/test-owned adapters, never user-provided payload fields. On input failure
 stop once and observe any pending read rejection; do not wait indefinitely for it.
 One output write has a separate 5-second deadline; false/throw/timeout exits 1
@@ -237,7 +237,7 @@ serialization is not a reversible host apply and never supplies credentials.
 1. Invoke the actual new command in a child process: help, valid launch→production
    refusal, malformed/duplicate/oversize/trailing/slow input, unknown args and
    injection fields. Trap credential/file/network/Pi accesses before main. Assert
-   exact output/exit and zero provider work. This is entry coverage, not live use.
+   exact output/exit and zero provider work. Instrument installationFactory: help, invalid argv and every framing/basic-input refusal call it zero times; valid input calls it once. No task-selected factory is permitted. This is entry coverage, not live use.
 2. Exercise same runEntry/bindEntry path with accepted actual C/B1/P2B/D offline
    assembly: success, no-send, failed-settled, unknown, C rejection, finish/close/
    stdout failure and concurrent/replayed entry. Verify C-before-Pi, direct-result
