@@ -241,3 +241,15 @@ Documentation checks completed successfully:
 Coordinator integration should preserve the DRAFT state and route C1/C2 through
 concrete independent review. Accepted B1/C and any HRO caller integration are not
 implied by this documentation commit.
+
+## Matching controller clarification accepted
+
+Two independent frontier reviewers APPROVE matching C clarification at
+`a44ecec91097783730cce85ca4b103fbbbfc2fd2`. One independently checked unchanged
+public TypeScript contract blocks/digest algorithms, exact D72dea and B1 625030
+identity, actual ledger authentication/idempotency order, valid specs and local
+links. The other confirmed private registry custody, acyclic rendezvous and
+bounded output/finalization. These are C-composition approvals only; D's independent
+72dea approvals are recorded separately above. No source implementation release
+occurs here. B1 capture repair/final reviews/audit integration and accepted C
+implementation remain predecessors to actual D runtime conformance.
