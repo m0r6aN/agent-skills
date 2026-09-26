@@ -155,3 +155,22 @@ Node 24.19.0 focused producer suite: 168 passed, zero failed/skipped, exit 0.
 Package typecheck and changed-test Biome check both exited 0. Full routing and D19
 were not rerun for this test-only correction; their earlier results remain attached
 to the unchanged runtime source. Exactly this report and the existing test changed.
+
+## Independent acceptance and combined integration checkpoint
+
+Root and independent frontier D approve final runtime3a976f0 after the combined
+string-budget repair. Root reran168 focused tests/typecheck, inspected complete
+source/repair/preservation and ran20 additional hostile/domain controls. D reran
+168/typecheck/lint and independently probed genuinely escaped combined boundaries.
+D then corrected the nonblocking escaped-fixture typo in testa257e50; root inspected
+that exact one-line delta and unchanged runtime. The false escaped test branch is
+fixed, not carried as deferred evidence. All168 focused tests/typecheck/lint passed
+on that correction. No runtime source changed after the two approvals.
+
+Combined accepted main/controller/C-closure plus N at52b3bf passed964 routing and
+53 hybrid tests. Subsequenta257e50 changes only that test literal/report;3c6ca35 adds
+already-reviewed P4A design ratification. Current predecessor links follow C to
+done. This checkpoint is not the final combined approval or remote CI result;
+those are recorded separately before merge. Production publisher/acquisition,
+admission/recovery, installed authority, provider billing bounds and live measured
+HRO exit remain open. No inference, credential or host configuration operation.

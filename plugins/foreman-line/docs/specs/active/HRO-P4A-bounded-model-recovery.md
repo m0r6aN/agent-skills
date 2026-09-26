@@ -241,7 +241,7 @@ production adapters; universal crash recovery or activation of E's refusing entr
 
 - [Shaping notes and immutable pins](../../goals/hybrid-routing-optimization/hro-p4a-recovery-shaping.md)
 - [HRO charter](../../goals/hybrid-routing-optimization/charter.md)
-- [PMC C design](PMC-P2C-same-process-launch-controller.md)
+- [PMC C design](../done/PMC-P2C-same-process-launch-controller.md)
 - [PMC D design](PMC-P2D-openrouter-terminal-transport.md)
 - [Standing constraints](../../kickstarters/STANDING-CONSTRAINTS.md)
 

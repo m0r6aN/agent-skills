@@ -638,7 +638,7 @@ completeness; modifying B1, C, D or E contracts; new receipts or production laun
 - [Catalog adapter](../../../routing-policy/src/catalog-eligibility-adapter.ts)
 - [Accepted source semantics](../../goals/routing-currency-and-merit/source-observation-amendment-20260926.md)
 - [Accepted extraction profile](../../goals/routing-currency-and-merit/openrouter-source-profile-20260926.md)
-- [C design](PMC-P2C-same-process-launch-controller.md)
+- [C design](../done/PMC-P2C-same-process-launch-controller.md)
 - [Official models reference](https://openrouter.ai/docs/api/api-reference/models/list-all-models-and-their-properties)
 - [Standing constraints](../../kickstarters/STANDING-CONSTRAINTS.md)
 
