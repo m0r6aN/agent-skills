@@ -148,6 +148,15 @@ At b698f57 reviewer A approved; reviewer B closed both original findings and
 requested the state-aware replay correction above. That additional correction
 and three real-ledger replay tests return to independent review before approval.
 
+Both independent frontier reviewers APPROVE final corrected P2D design at
+`72dea19ef474c19e0a303b6861f572896bd6accc`. Root accepts C1/C2/C3 under the user's
+blanket HRO and prerequisite decision authority and mirrors their exact private
+wiring in the C draft. This disposition does not waive independent review of the
+matching C clarification, B1 source repair/acceptance, actual-runtime conformance
+or any production evidence gate. Public signatures and ledger schema remain
+unchanged. B1's explicit committed-terminal versus lost-ack disposition is carried
+verbatim from625030; pending owner state still blocks after ledger-only closure.
+
 ## Response and accounting choices
 
 The draft defines a deliberately small parser, not the entirety of OpenRouter.

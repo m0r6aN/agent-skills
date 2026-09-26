@@ -286,7 +286,7 @@ The two stores are NOT one transaction:
 | reserve acknowledged, mint/check failure | Reserved liability and pending owner; genuine no-send cancellation acknowledgement precedes finish. |
 | consume failed/lost acknowledgement | Possible consumed liability and pending owner; no send from this path. Missing receipt never proves no-send. |
 | send/response/audit/reconcile failure | Consumed/uncertain liability and pending/uncertain/held custody; no remint. |
-| ledger terminal commit, finish failure | Money closure is not intent closure; pending blocks. No recovery operation exists in this slice. |
+| ledger terminal commit, finish failure | Money closure alone is not intent closure; pending blocks. Lost owner acknowledgement quarantines the local instance. Normal reopen can use a valid durably committed authenticated primary terminal closure only for the predeclared second attempt, per B1's explicit disposition; no recovery operation, R1 replay or third attempt exists. |
 
 Missing/corrupt owner store or identity/epoch mismatch refuses. Persistent pending
 has no restart capability and stays blocked. Same-identity OS backup rollback and
@@ -372,6 +372,55 @@ uses cancelWithNoSendProof. Thrown sender without proof retains consumed liabili
 and SEND_UNCERTAIN, never a fabricated observation. Owner finish gets acknowledged
 AttemptV1 and separately authenticated semantic outcome; failure returns
 RECONCILIATION_REQUIRED. Audit failure cannot authorize resend.
+
+### Ratified C/P2D/P2E private composition
+
+Coordinator disposition C1/C2/C3 accepts the concrete P2D design independently
+approved at `72dea19ef474c19e0a303b6861f572896bd6accc`. This section makes the
+previously implicit private wiring explicit; public controller/terminal types and
+digest algorithms remain unchanged. Two independent reviews of this matching C
+clarification remain a release gate. It supplies no production evidence.
+
+C1: P2E calls C.launch FIRST with original seed payload and preissued B1 IDs.
+Only C's prepare call after zero-effect denials/acquisition/selection constructs
+the private one-shot Pi session. Its custom stream finishes transformations and
+resolves preparation with final WireV1 while Pi remains pending. C reserves,
+consumes, calls send, authenticates its observation and reconciles both stores
+without waiting for Pi final done. P2E's private wrapper then calls the captured
+finishInvocation with the direct C result (null for caught unexpected rejection).
+The finalizer returns bounded completed text only after acknowledged semantic
+success and prompt drainage, or a typed failure with no provisional text. An
+idempotent terminalizer publishes the final/error stream before abort/idle waits;
+late callbacks cannot issue proof. Five-second bounded cleanup may fail output
+without changing real C disposition/liability or authorizing another inference.
+Actual Pi types/lifecycle stay in D/P2E; C remains SDK-free.
+
+C2: reviewed installation wraps successful authentic acquisition to retain the
+per-request profile defined exactly by P2D. Terminal.prepare resolves it only by
+the retained request identity; verify compares EVERY RevalidationV1 field plus
+exact request/decision/wire using existing digest algorithms. Mere JSON fields,
+caller accepted tags or matching digest text cannot create profile custody.
+No extra prepare parameter or guessed decision field is introduced.
+
+C3: private installation constructs one observation registry with separately
+captured invocation-bound D registration, C direct-send observe, and existing
+ledger authentication capabilities, exactly as frozen by P2D. D register alone
+does not grant C observation custody. C observe requires proof received directly
+from its captured send and compares retained request/decision/wire and the complete
+acknowledged consumed AttemptV1. The immutable returned semantic/Charge and unique
+proofId drive existing cancel/settle and owner completion. Reads are non-destructive
+so both C and ledger can authenticate the same record; copied/cross-invocation
+proofs or known IDs without observed invocation custody refuse. Initial ledger
+authentication compares consumed state; replay compares immutable attempt fields
+and only the exact proof-derived terminal state, actual/null, proofRef/proofDigest
+and monotonic update timestamp. The existing ledger authenticates its CURRENT
+attempt before checking idempotency; whole consumed-record equality on replay is
+incorrect. No new ledger operation, proof remint, owner finish retry or send follows.
+
+Offline composition tests must start from these documented capabilities and real
+B1/P2B stores, covering successful/failed-settled/no-send/unknown reconciliation,
+same-proof ledger idempotency and wrong state/charge/proof rejection. Synthetic
+registry issuers in tests do not become production profile/proof authority.
 
 ### Permit and algorithm
 
@@ -503,8 +552,8 @@ production AC7.
 ## Readiness
 
 R1 DECISION RESOLVED, IMPLEMENTATION BLOCKING: Amendment 05 V8 ratifies separate
-PMC-P2B1 intent custody, keeping P2B unchanged. B1's concrete draft schema/ports
-still require two independent reviews, Gate 2 and accepted implementation. No
+PMC-P2B1 intent custody, keeping P2B unchanged. B1's released implementation is
+held for bounded-capture repair, two final reviews and audited integration. No
 fourth ledger table or implied owner service. P2C must use actual accepted B1 in
 crash/concurrency tests and implement its private proof adapters.
 
