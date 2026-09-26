@@ -85,3 +85,61 @@ durable workflow admission, downstream launch composition and live HRO exit are
 not implemented or completed here. Two independent source reviews, combined
 integration and required remote checks still precede merge. No provider/Pi,
 credential, configuration, production SQLite, push or merge activity occurred.
+
+## Combined source-string budget repair — 2026-09-26
+
+Repair release: 8d75bfde7d7010d4412bd9f8f9d39c34807915d7; accounting
+clarification: 4a7e59971260b7922d80f5485ab572df22ea804a. Only the existing
+producer, its test file and this report changed in this repair.
+
+The raw materializer now charges the closed input keys and string values plus
+expanded identity keys/values before parsing, and seeds the existing UTF-8 parser
+with that total. Decoded response strings consume the remainder of the same
+1,048,576-byte budget. Raw bytes remain independently capped at 8 MiB. The
+historical parser still defaults to UTF-16 with a zero initial counter; retained
+v2 API and byte fixtures are unchanged.
+
+RED: before the producer change, the independently counted combined-boundary test
+accepted its exact-limit catalog input, then failed because the one-byte-over
+input returned success instead of BOUNDS_REFUSED (Node 24.19.0, test-name pattern
+`raw v1 combined source budget exact`, exit 1). Preliminary fixture construction
+failures were corrected before this RED and are not defect evidence. A later
+four-fraction-digit timestamp control reached SOURCE_REFUSED, so it was replaced
+with valid metadata/response accounting controls rather than changing timestamp
+validation.
+
+GREEN: three new tests independently calculate decoded UTF-8 bytes using Buffer,
+including closed-input overhead, repeated provider/key strings, catalog and
+complete-absence variants, and escaped versus literal multibyte strings. Both
+captures are individually below 1 MiB in the exact/one-over paired test. Existing
+scope and response aggregate boundaries now include the other capture's overhead;
+256-identity multibyte exact/one-over controls remain. No production accounting
+helper supplies fixture expectations.
+
+Actual Node 24.19.0 checks after the repair:
+
+- Focused producer suite: 168 passed, zero failed/skipped, exit 0.
+- Full routing-policy suite: 964 passed, zero failed/skipped, exit 0.
+- Package TypeScript check: exit 0.
+- Full package Biome check: exit 0; the same existing informational literal-key
+  suggestion in catalog-snapshot.test.ts remains untouched.
+- Actual D19 audit: exit 0, 21 packages / 198 source files, zero unruled instances,
+  fixed cardinalities reconciled. No audit changes.
+- Preservation: only the two authorized code/test paths changed; raw and retained
+  fixtures, canonical reader, catalog adapter, public barrel and dependencies are
+  unchanged. Full producer regression retains the historical byte/hash controls.
+- git diff --check: exit 0.
+
+Commands ran from routing-policy: the pinned Node executable invoked
+node_modules/tsx/dist/cli.mjs with --test tests/public-observation-producer.test.ts
+and --test tests/*.test.ts, node_modules/typescript/bin/tsc --noEmit, and
+node_modules/@biomejs/biome/bin/biome check . . The actual D19 CLI ran from the
+repository root with the verification TSX loader and this worktree's plugin root.
+Local logs: rcm-n-repair-focused.log, rcm-n-repair-full.log,
+rcm-n-repair-typecheck.log, rcm-n-repair-lint.log and rcm-n-repair-d19.log in the host
+TEMP directory. The genuine RED is in the builder tool transcript.
+
+This is builder verification, not independent approval. Root and another frontier
+reviewer must inspect the frozen repair; combined integration and remote gates
+remain. No live provider, credentials, configuration, installation, push or merge
+was used.

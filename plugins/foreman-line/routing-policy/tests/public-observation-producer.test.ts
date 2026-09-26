@@ -33,6 +33,88 @@ function rawRefuses(input: unknown, code: string) {
   assert.deepEqual(materializePublicModelResponseV1(input), { ok: false, evidenceOnly: true, code })
 }
 
+// Independent accounting over decoded fixture data, never producer helpers.
+function decodedStringBytes(v: unknown): number {
+  if (typeof v === 'string') return Buffer.byteLength(v)
+  if (Array.isArray(v)) return v.reduce((n, x) => n + decodedStringBytes(x), 0)
+  if (v && typeof v === 'object')
+    return Object.entries(v).reduce(
+      (n, [k, x]) => n + Buffer.byteLength(k) + decodedStringBytes(x),
+      0,
+    )
+  return 0
+}
+function closedInputStringBytes(q: ReturnType<typeof rawInput>): number {
+  const { bytes: _bytes, ...metadata } = q
+  return 5 + decodedStringBytes(metadata) // bytes key, excluding the buffer
+}
+function combinedBoundary(names: string[], extra = 0) {
+  const d = rawDocument()
+  d.data[0].reviewPadding = Array<string>(300).fill('')
+  const q = rawInput(names)
+  let left = 1048576 + extra - closedInputStringBytes(q) - decodedStringBytes(d)
+  for (let i = 0; i < 300 && left > 0; i++) {
+    const n = Math.min(4000, left)
+    d.data[0].reviewPadding[i] = 'x'.repeat(n)
+    left -= n
+  }
+  assert.equal(left, 0)
+  assert.equal(closedInputStringBytes(q) + decodedStringBytes(d), 1048576 + extra)
+  assert(closedInputStringBytes(q) < 1048576 && decodedStringBytes(d) < 1048576)
+  return { ...q, bytes: new TextEncoder().encode(JSON.stringify(d)) }
+}
+test('raw v1 combined source budget exact and one-over for both variants', () => {
+  for (const names of [
+    ['fixture/text-reasoner'],
+    Array.from({ length: 100 }, (_, i) => 'z'.repeat(3995) + String(i).padStart(5, '0')),
+  ]) {
+    const r = materializePublicModelResponseV1(combinedBoundary(names))
+    assert.ok(r.ok)
+    assert.equal(r.kind, names.length === 1 ? 'catalog' : 'complete-response-with-absence')
+    rawRefuses(combinedBoundary(names, 1), 'BOUNDS_REFUSED')
+  }
+})
+test('raw v1 combined source budget includes metadata and repeated scope strings', () => {
+  const q = combinedBoundary(['fixture/text-reasoner'])
+  const d = JSON.parse(new TextDecoder().decode(q.bytes))
+  let remaining = closedInputStringBytes(q)
+  for (let i = 0; i < d.data[0].reviewPadding.length && remaining > 0; i++) {
+    const n = Math.min(4000 - d.data[0].reviewPadding[i].length, remaining)
+    d.data[0].reviewPadding[i] += 'x'.repeat(n)
+    remaining -= n
+  }
+  assert.equal(remaining, 0)
+  assert.equal(decodedStringBytes(d), 1048576)
+  rawRefuses({ ...q, bytes: new TextEncoder().encode(JSON.stringify(d)) }, 'BOUNDS_REFUSED')
+  rawRefuses(
+    {
+      ...q,
+      requestedIdentities: [
+        ...q.requestedIdentities,
+        { provider: 'openrouter', id: 'fixture/absent' },
+      ],
+    },
+    'BOUNDS_REFUSED',
+  )
+})
+test('raw v1 combined source budget counts decoded escaped UTF-8 bytes', () => {
+  const q = combinedBoundary(['fixture/text-reasoner'])
+  const d = JSON.parse(new TextDecoder().decode(q.bytes))
+  d.data[0].reviewPadding[0] = 'é'.repeat(2000)
+  const literal = JSON.stringify(d)
+  const escaped = literal.replaceAll('é', '\u00e9')
+  assert.equal(closedInputStringBytes(q) + decodedStringBytes(d), 1048576)
+  assert.equal(
+    materializePublicModelResponseV1({ ...q, bytes: new TextEncoder().encode(literal) }).ok,
+    true,
+  )
+  assert.equal(
+    materializePublicModelResponseV1({ ...q, bytes: new TextEncoder().encode(escaped) }).ok,
+    true,
+  )
+  d.data[0].reviewPadding[1] += 'x'
+  rawRefuses({ ...q, bytes: new TextEncoder().encode(JSON.stringify(d)) }, 'BOUNDS_REFUSED')
+})
 test('raw v1 hostile envelopes and byte storage refuse without invoking caller code', () => {
   let reads = 0
   const getter = { ...rawInput() }
@@ -262,7 +344,10 @@ test('raw v1 depth, aggregate UTF-8 and expanded value budgets accept exactly th
     for (let i = 0; i < 16 + extra; i++) nested = [nested]
     rawRefuses(rawWith(nested), extra ? 'BOUNDS_REFUSED' : 'COMPLETENESS_UNPROVEN')
     const strings = {
-      padding: [...Array(255).fill('é'.repeat(2048)), `${'a'.repeat(4089)}${extra ? 'a' : ''}`],
+      padding: [
+        ...Array(255).fill('é'.repeat(2048)),
+        `${'a'.repeat(4089 - closedInputStringBytes(rawInput()))}${extra ? 'a' : ''}`,
+      ],
     }
     rawRefuses(rawWith(strings), extra ? 'BOUNDS_REFUSED' : 'COMPLETENESS_UNPROVEN')
     const values = {
@@ -289,15 +374,18 @@ test('raw v1 scope cardinality preflight precedes child descriptor traps', () =>
 })
 
 test('raw v1 requested scope string budget charges UTF-8 including exact and one-over', () => {
-  const names = Array.from(
-    { length: 256 },
-    (_, i) => `${i.toString().padStart(3, '0')}${'é'.repeat(2036)}aa`,
-  )
-  // Each identity charges 4,077 ID bytes plus ten provider and ten key bytes.
-  // Remove 256 bytes to reach exactly 1,048,576 across the scope.
-  for (let i = 0; i < names.length; i++) names[i] = (names[i] as string).slice(0, -1)
+  const names = Array.from({ length: 256 }, (_, i) => String(i).padStart(3, '0'))
+  let remaining =
+    1048576 - closedInputStringBytes(rawInput(names)) - decodedStringBytes(rawDocument())
+  for (let i = 0; i < names.length && remaining > 0; i++) {
+    const n = Math.min(4096 - Buffer.byteLength(names[i] as string), remaining)
+    names[i] += 'é'.repeat(Math.floor(n / 2)) + 'a'.repeat(n % 2)
+    remaining -= n
+  }
+  assert.equal(remaining, 0)
+  assert.equal(closedInputStringBytes(rawInput(names)) + decodedStringBytes(rawDocument()), 1048576)
   assert.equal(materializePublicModelResponseV1(rawInput(names)).ok, true)
-  names[0] += 'a'
+  names[255] += 'a'
   rawRefuses(rawInput(names), 'BOUNDS_REFUSED')
 })
 

@@ -327,7 +327,10 @@ class BoundedJson {
   constructor(
     private readonly source: string,
     private readonly stringMode: 'utf16' | 'utf8' = 'utf16',
-  ) {}
+    initialStringBytes = 0,
+  ) {
+    this.units = initialStringBytes
+  }
   parse(): unknown {
     const value = this.value(0)
     this.space()
@@ -470,11 +473,16 @@ class BoundedJson {
     return new JsonNumber(this.source.slice(start, this.at))
   }
 }
-function decode(bytes: Uint8Array, mode: 'utf16' | 'utf8' = 'utf16'): unknown {
+function decode(
+  bytes: Uint8Array,
+  mode: 'utf16' | 'utf8' = 'utf16',
+  initialStringBytes = 0,
+): unknown {
   check(!(bytes[0] === 0xef && bytes[1] === 0xbb && bytes[2] === 0xbf))
   return new BoundedJson(
     new TextDecoder('utf-8', { fatal: true, ignoreBOM: true }).decode(bytes),
     mode,
+    initialStringBytes,
   ).parse()
 }
 function integer(value: unknown, minimum = 0): number {
@@ -1142,13 +1150,26 @@ export function materializePublicModelResponseV1(input: unknown): MaterializerRe
       cache,
     )
     const identities = scope(owned.requestedIdentities, cache)
-    let scopeBytes = 0
+    let captureBytes = 0
+    const charge = (value: string) => {
+      check(value.length <= STRING_LIMIT, 'INPUT_LIMIT_EXCEEDED')
+      const bytes = new TextEncoder().encode(value).length
+      check(bytes <= STRING_LIMIT, 'INPUT_LIMIT_EXCEEDED')
+      captureBytes += bytes
+      check(captureBytes <= TOTAL_STRING_LIMIT, 'INPUT_LIMIT_EXCEEDED')
+    }
+    // Source strings share one budget. The byte buffer and output artifacts do not.
+    for (const [key, value] of Object.entries(owned)) {
+      charge(key)
+      if (key !== 'bytes' && typeof value === 'string') charge(value)
+    }
     for (const identity of identities) {
       rawString(identity.provider)
       rawString(identity.id)
-      scopeBytes +=
-        new TextEncoder().encode(identity.provider + identity.id).length + 'providerid'.length
-      check(scopeBytes <= TOTAL_STRING_LIMIT, 'INPUT_LIMIT_EXCEEDED')
+      charge('provider')
+      charge(identity.provider)
+      charge('id')
+      charge(identity.id)
     }
     stage = 'PROFILE_REFUSED'
     check(
@@ -1168,7 +1189,7 @@ export function materializePublicModelResponseV1(input: unknown): MaterializerRe
     check(
       received.millis - started.millis <= 10000 && evaluated.millis - received.millis <= 86400000,
     )
-    const decoded = decode(bytes, 'utf8')
+    const decoded = decode(bytes, 'utf8', captureBytes)
     stage = 'COMPLETENESS_UNPROVEN'
     check(owned.complete === true)
     const envelope = object(decoded, ['data', 'links', 'total_count'])
