@@ -107,3 +107,35 @@ frontier D approve audit-only amendmenta53f2af226a6cfd5c7d04266ef42665b776c48be;
 implementation needs genuine Step0 and explicit release. Existing runtime is
 frozen. Combined integration, actual audit acceptance and remote checks remain
 before merge. Source acceptance is offline only and does not admit production.
+
+## D19 audit enrollment
+
+The released audit enrollment adds one exact-file pin set for the six reviewed
+SQLite `exec` sites in
+`dispatch/src/pmc-launch/recovery-admission.ts`. It pins the 21 accepted
+declarations, six call roles, and 78 external identifier provenance records by
+AST fingerprint and exact cardinality. The existing PMC ledger (10/10) and
+intent-custody (9/9) pins remain unchanged; no prior acceptance pin was
+weakened or widened.
+
+The actual D19 audit over 21 ratified packages and 200 source files reports:
+
+- 0 unruled class-1 through class-5 instances;
+- PMC ledger 10/10;
+- PMC intent custody 9/9;
+- PMC recovery admission 6/6;
+- final result `PASS`.
+
+The dedicated mutation suite runs the actual audit subprocess over temporary
+ratified-package copies and passes 19/19 cases. It covers missing, duplicate,
+nested, renamed and changed owner declarations; all nine imports; all four
+top-level variables; each six-site mutation; constructor and defensive-option
+changes; receiver assignment and shadowing; external provenance assignment and
+shadowing; a real subprocess call; a same-name owner in another file; and an
+empty exact owner. Approved formatting/comments and unrelated source continue
+to pass, while the existing ledger and intent-custody outputs remain required
+in every refusal assertion.
+
+This enrollment remains syntactic and exact-file scoped. It does not claim
+general dataflow or runtime integrity beyond the six enrolled calls, and it
+does not alter the production recovery-admission runtime.
