@@ -155,6 +155,7 @@ import {
   isVariableDeclarationList,
   isVariableStatement,
 } from 'typescript/unstable/ast/is'
+import { createScanner } from 'typescript/unstable/ast/scanner'
 import { API } from 'typescript/unstable/sync'
 import { RATIFIED_PACKAGES } from './ratified-packages.js'
 
@@ -1104,74 +1105,70 @@ const PMC_OWNER_NAMES = new Set([
   'fail',
 ])
 const PMC_DECLARATIONS = new Map<string, string>([
-  ['import:node:crypto', '8dbba24fb53ecebbbd6c46121b28e7ec24ec71bab2e3f64d84c0b91dbe89a55d'],
-  ['import:node:fs', 'a3723d55ddfe3294e9fc1c8933ad914ca7b7a378ed33cc0f535e012a9ce066c5'],
-  ['import:node:path', 'c46627f6dc7479d89bb503a511f2498a98e822e2b4f0f5aaa7de1375f613349a'],
-  ['import:node:sqlite', '5e0169745da8686b1efbeb81ba8ae76aa750023251fd06d6ccc1ab1cf67340ff'],
-  ['import:node:url', 'b997041f4da76c207d8e239e99723e47e398e1147438d1a30d0759caadd782e5'],
-  ['import:./money.js', '98b92f75a537ed2651f70943d14db8c06838b483317494832c45ce418b5466f4'],
-  ['fail', '3397b5372f6d2cd7e4c5ce9f8181e6a72d8e813825485f1f7898e7576b2210c3'],
-  ['path', 'd986073bdbe6ab49d99742959706436c3e354da84bf7495cae4747e4a1452c7d'],
-  ['schema', '042a9e353cc2d4b99f280a5eb2d4b8e580e04704deefbe3043fb99e64c46f04e'],
-  ['settings', '3633c4aadf69fc9cc69fb88925238ebce3c801c4d530889e76a7e859b0990c2f'],
-  ['connection', '6e8bdc088f1418d32d03a214afabac34993c8f947666ec87b69f50b0ed1bfdaf'],
-  ['transaction', '41f3ccfbe5e89ec1b49c4a5e334eecfe4e17dafb4eede900d5818b480931c2db'],
-  ['initializeLocalPmcLedger', 'a1c0afec12f9b1134d2baf08f1213dec6c1d24580457072852e9e18769715e91'],
+  ['import:node:crypto', '4e4a7b05ef4a93dd8c3808d4fdc416418d11334f8188e8b1c7a106b9251874f6'],
+  ['import:node:fs', '39f845d0506c0c5e178bead8ded5ec262bf3bd865bf59f0efc6dd09b394cf702'],
+  ['import:node:path', 'ba8a6b398f583f079b7c2f907171255995fd9aa65f366fb09beb92450b8f15fc'],
+  ['import:node:sqlite', '10dffce406a49a8a94305c6b842c5b70fea547e34c7f99e92f1f8efee2a894f2'],
+  ['import:node:url', '5153148ad1c2e7c5daff67d72a1dba70214a73023eb135e2482164ad1af1bf80'],
+  ['import:./money.js', '73cb1783ef4538395d24f1784b1e042cdba8d16451c908687294b280f2f9032a'],
+  ['fail', 'e06c46170065f2ee1fb0d0b5ff8eddb597946d47904c1c811a611055b6e98c44'],
+  ['path', '7daa1fd62c552098604e9255264f5999574647f56fbb7f110e13d81066378746'],
+  ['schema', '4bd91759fffb7ab4b9bd54d485e5d2341f8a77d49fd50f1d06394fc4c859e822'],
+  ['settings', '11e09ebc70fad8bd588495516270c31d90e6049ed25c8583ed6fe2720265afed'],
+  ['connection', '0c47d4f8bc27105cc59143682f0d0a4495141f2ee06ca0d65afe36440cdc9340'],
+  ['transaction', '320c4ce935914ca1b92b9cb7ac3b75eda5fbb1f9987fe03d1bab4b28f153c455'],
+  ['initializeLocalPmcLedger', '6bd8ec26a0410ee87c81aa1db4b557f641ff34261636b353038f7bb85ecef805'],
 ])
 const PMC_CALLS = new Map<string, readonly [string, string]>([
   [
     'path:0',
-    ['path/root-normalization', '94b722b11bc3fdb548bd58c6b3e291986917e51037da2f92354d76fdfe43bdc9'],
+    ['path/root-normalization', 'cda4bae7786987ef20f319acab4911fee95a2b7a03ad524a28172dc78c704729'],
   ],
   [
     'path:1',
     [
       'path/canonical-comparison',
-      '94b722b11bc3fdb548bd58c6b3e291986917e51037da2f92354d76fdfe43bdc9',
+      'cda4bae7786987ef20f319acab4911fee95a2b7a03ad524a28172dc78c704729',
     ],
   ],
   [
     'settings:0',
-    ['settings/pragmas', '7d1bd59fb7ede22ca2f972f076a27475267ada4be64efaec8f9c659470956dd2'],
+    ['settings/pragmas', '0dc2232951b5b5db8d3b269dcf3fb86462eee8606cc551eaaa920b6c6884cb1e'],
   ],
   [
     'transaction:0',
-    ['transaction/begin', '6b0e646e3f8c6544303dcc7438362e92a259854d23195bba5d091b8585bb95e5'],
+    ['transaction/begin', '0003e9d043d95fa174c167c7bde6abb11392397a4954d53d83337cc57128e022'],
   ],
   [
     'transaction:1',
-    ['transaction/commit', 'd7bdab8a7e6584879eabf8a2ed20d426fbe18e22f2a048fcff1f655cf914139e'],
+    ['transaction/commit', '79fba6428b2efa15bdc3b6dce08a3e58c3e3c05d8fd7830071f737291baed710'],
   ],
   [
     'transaction:2',
-    ['transaction/rollback', '731543457c76d8838031d0a759712fd7d7e5267418efacd74ab82563ecd34512'],
+    ['transaction/rollback', 'a89ab9db5111a0c2755290a8edcff23f10559ba805a64a316810451dd457ba9b'],
   ],
   [
     'initializeLocalPmcLedger:0',
-    ['initialize/begin', 'ef07a41f01b7209b7f8141e5b02330afb69ed5c93fcf3f5917688585906beb68'],
+    ['initialize/begin', '111a02d7b2431c5dd45835f1f5997497cd4a62a7821d6b507f4c4d95e007b036'],
   ],
   [
     'initializeLocalPmcLedger:1',
-    ['initialize/schema', '675f557c8e8a606611b294c0096705fb46f15a037cfb2ba0dcc31ef71bb09a90'],
+    ['initialize/schema', '395518982624315c4d8cdd88c9a01b2121e74095c1feee58776342a04534fbc9'],
   ],
   [
     'initializeLocalPmcLedger:2',
-    ['initialize/commit', 'd7bdab8a7e6584879eabf8a2ed20d426fbe18e22f2a048fcff1f655cf914139e'],
+    ['initialize/commit', '79fba6428b2efa15bdc3b6dce08a3e58c3e3c05d8fd7830071f737291baed710'],
   ],
   [
     'initializeLocalPmcLedger:3',
-    ['initialize/rollback', '731543457c76d8838031d0a759712fd7d7e5267418efacd74ab82563ecd34512'],
+    ['initialize/rollback', 'a89ab9db5111a0c2755290a8edcff23f10559ba805a64a316810451dd457ba9b'],
   ],
 ])
 const PMC_PROVENANCE_NAMES = new Set([
+  ...PMC_OWNER_NAMES,
   'DatabaseSync',
   'isAbsolute',
   'resolve',
-  'settings',
-  'transaction',
-  'connection',
-  'path',
-  'fail',
   'schema',
   'lstatSync',
   'normalize',
@@ -1184,21 +1181,49 @@ const PMC_PROVENANCE_NAMES = new Set([
   'openSync',
   'readdirSync',
 ])
-const PMC_REFERENCE_DIGEST = '534cf1154e0af1b312fd8dbae9c99b57767f5e16604eda19eac037f3b7c365fc'
+const PMC_REFERENCE_DIGEST = '9245867438bed01ca9c6019520b5689b5b0da1a888880e52474338e1129dbac1'
 
-/** Ordered AST kinds plus exact leaf-token text; trivia and token offsets are omitted.
+/** Ordered AST kinds plus EVERY syntax token; trivia and offsets are omitted.
  * Complete owners retain guards, control flow, receiver construction and call order.
  * This is a bounded syntactic pin, not a general dataflow or runtime integrity proof.
  */
 function pmcAstValue(node: Node, sf: SourceFile): unknown {
+  if (node.kind <= SyntaxKind.LastToken) return [node.kind, node.getText(sf)]
   const children: unknown[] = []
+  let position = node.getStart(sf)
+  let invalid = false
+  const gap = (end: number): void => {
+    if (end < position || end > node.end) {
+      invalid = true
+      return
+    }
+    // TS7 forEachChild omits scalar operators, declaration flags and punctuation.
+    // Scan all gaps, retaining AST leaves for contextual regex/template tokens.
+    const scanner = createScanner(false, sf.languageVariant, sf.text, position, end - position)
+    for (let kind = scanner.scan(); kind !== SyntaxKind.EndOfFile; kind = scanner.scan()) {
+      if (
+        scanner.isUnterminated() ||
+        kind === SyntaxKind.Unknown ||
+        kind === SyntaxKind.ConflictMarkerTrivia
+      )
+        invalid = true
+      if (
+        kind !== SyntaxKind.SingleLineCommentTrivia &&
+        kind !== SyntaxKind.MultiLineCommentTrivia &&
+        kind !== SyntaxKind.NewLineTrivia &&
+        kind !== SyntaxKind.WhitespaceTrivia
+      )
+        children.push([kind, scanner.getTokenText()])
+    }
+    if (scanner.isUnterminated()) invalid = true
+  }
   node.forEachChild((child) => {
+    gap(child.getStart(sf))
     children.push(pmcAstValue(child, sf))
+    position = child.end
   })
-  return [
-    node.kind,
-    children.length ? children : node.kind <= SyntaxKind.LastToken ? node.getText(sf) : [],
-  ]
+  gap(node.end)
+  return [node.kind, invalid ? 'invalid token span' : children]
 }
 function pmcDigest(value: unknown): string {
   return createHash('sha256').update(JSON.stringify(value)).digest('hex')

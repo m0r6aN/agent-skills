@@ -59,6 +59,34 @@ test('PMC ledger: real D19 pins guarded paths and SQLite provenance', async (t) 
       assert.ok(source.includes(from), name)
       mutations.push([name, source.replace(from, to)])
     }
+    await t.test('JSDoc and unrelated source changes preserve enrollment', () => {
+      writeFileSync(
+        join(root, ledger),
+        source.replaceAll('function ', '/** Ordinary documentation. */\nfunction ') +
+          '\nconst unrelatedAuditControl = 1 + 2\n',
+      )
+      const result = run()
+      assert.equal(result.status, 0, result.output)
+      assert.match(result.output, /PMC ledger: 10 observed; expected 10/)
+    })
+    replace('token collision: unary guard operator', '!isAbsolute(root)', '+isAbsolute(root)')
+    replace('token collision: type-only import', '{ DatabaseSync,', '{ type DatabaseSync,')
+    replace('token collision: schema declaration kind', 'const schema =', 'let schema =')
+    replace('token: schema var declaration', 'const schema =', 'var schema =')
+    replace('token: local declaration kind', 'let current =', 'const current =')
+    replace('token: unary bitwise guard', '!isAbsolute(root)', '~isAbsolute(root)')
+    replace('token: async modifier', 'function path(', 'async function path(')
+    replace('token: generator punctuation', 'function path(', 'function* path(')
+    replace('token: postfix operator', 'return filename', 'return filename++')
+    replace('token: ASI changes return structure', 'return filename', 'return\nfilename')
+    replace('token: unterminated comment refuses', 'return filename', 'return filename /*')
+    replace(
+      'token: export modifier',
+      'export function initializeLocalPmcLedger',
+      'function initializeLocalPmcLedger',
+    )
+    replace('token: import type modifier removed', 'type SQLInputValue', 'SQLInputValue')
+    replace('token: import clause type-only', 'import { createHash }', 'import type { createHash }')
     const owners = [
       'path',
       'settings',
@@ -185,6 +213,7 @@ test('PMC ledger: real D19 pins guarded paths and SQLite provenance', async (t) 
       'connection',
       'settings',
       'transaction',
+      'initializeLocalPmcLedger',
       'fail',
       'schema',
     ]) {

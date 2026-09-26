@@ -35,16 +35,25 @@ the rest of the file continues through every existing detector.
 
 ## Fingerprint algorithm and limitations
 
-`pmcAstValue` recursively visits TypeScript AST children in order and serializes
-each node as `[SyntaxKind, children]`. A childless token uses its exact token text
-instead of a child array; a childless non-token uses an empty array. SHA-256 over
-the UTF-8 JSON serialization is the fixed reviewed fingerprint. Offsets, trivia,
-comments and incidental punctuation absent from the AST are not values. Literal
-contents, operators, identifiers, optional-call tokens, wrappers, statement order
-and control flow are values. Formatting and comments have positive controls.
+`pmcAstValue` recursively preserves ordered TypeScript AST structure and **all
+syntax tokens**. The installed TypeScript 7 AST API has no `getChildren` method;
+`forEachChild` alone omits semantic tokens. For each non-token node, the algorithm
+scans every leading, inter-child and trailing gap within its syntactic span using
+the installed TypeScript scanner, interleaving `[SyntaxKind, exact token text]`
+gap tokens with recursively represented children. AST token leaves keep exact
+text, including context-sensitive regex and template tokens. Nodes serialize as
+`[SyntaxKind, children]`; SHA-256 of the UTF-8 JSON is the fixed reviewed pin.
+Whitespace and line/block comments (including JSDoc) are omitted. Operators,
+modifiers, type-only markers, declaration keywords, punctuation, literal contents,
+identifiers, wrappers, statement order and control flow are retained. AST structure
+also distinguishes line breaks that change automatic semicolon insertion.
+Overlapping/out-of-parent gaps, unknown/conflict tokens and unterminated scanned
+tokens produce an invalid-span value that cannot match a reviewed pin. This is
+not a substitute for the package typecheck or a general malformed-source validator.
 
-Outside the selected declarations, references to the explicitly listed protected
-provenance names are inventoried in traversal order. Each entry includes the
+Outside the selected declarations, references to every pinned owner (derived
+directly from `PMC_OWNER_NAMES`, including `initializeLocalPmcLedger`) and the
+listed protected provenance names are inventoried in traversal order. Each entry includes the
 ancestor SyntaxKind sequence and the immediate parent's AST fingerprint. Their
 fixed aggregate digest catches added assignments or shadow bindings outside the
 owners as well as changes to their existing call-site context. This is a bounded
@@ -124,3 +133,39 @@ controls (or equivalent counted coverage), fullverification341 baseline and44
 mutation-scope tests. Run real-treeD19, affectedtypecheck/lint and sourcefreezechecks.
 Fresh Step0/release, localcommit/handoff and two independentfinalrepairapprovals
 remain required. No ledger edit, provider/config effect, push or merge by builder.
+
+## Token-completeness repair — 2026-09-26
+
+Step 0 independently confirmed clean head `1846446c4f2c46026d9e91c2d253310c9cae1a12`,
+the active three-file amendment, standing constraints and frozen ledger/money.
+The coordinator released the narrow repair. An independent eight-case probe
+reproduced all four required misses before implementation. The permanent RED run
+reported 172 tests, 161 passing and 11 failing (ten negative controls plus the
+parent): unary plus/bitwise guard operators, type-only import forms, const/let/var
+declarations, and initializer assignment/shadowing. Existing positive controls
+passed. No previous test was removed.
+
+The repaired representation covers all declaration, call and reference-context
+pins. All 24 fixed pin entries were regenerated locally from the unchanged
+reviewed ledger after fixing the representation; runtime enrollment still never
+learns pins. Added permanent controls also exercise async/export modifiers,
+generator punctuation, postfix operators, ASI changes, malformed comments,
+ordinary comments/whitespace/JSDoc and unrelated source additions. The protection
+name set now includes every pinned owner by construction.
+
+Final local results with Node 24.19.0:
+
+- Focused audit suite: **175/175**, up from 158; no skips.
+- Full verification suite: **358/358**, up from 341; no skips.
+- Mutation-scope suite: **44/44**; no skips.
+- Verification and mutation-scope typecheck and lint: passed.
+- Real-tree D19: **10 observed / 10 expected**, zero unruled instances, PASS.
+- Independent eight-case probe: every result matches its expected exit status;
+  the four reproduced misses now refuse while baseline/unrelated additions pass.
+- Pin-generation span probe: all 24 entries collected without any invalid-span
+  fallback in the frozen reviewed source.
+- `git diff --check`: passed; ledger and money diff against `835a6dd`: empty.
+
+Local evidence uses the OS temporary-directory prefix `pmc-token-`; no log or
+generation helper is a repository artifact. Fresh independent reviews and remote
+CI remain coordinator gates; this builder does not push, merge or reconcile P2A.
