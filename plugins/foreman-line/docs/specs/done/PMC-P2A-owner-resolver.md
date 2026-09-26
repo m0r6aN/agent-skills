@@ -1,7 +1,7 @@
 ---
 ticket: PMC-P2A
 title: Pure versioned PMC owner resolver
-status: draft
+status: done
 owner: clinton.morgan
 created: 2026-09-26
 updated: 2026-09-26
@@ -41,9 +41,9 @@ Neither decision kind is executable launch authority.
 - Reuse P1 bounds and refusal discipline; reject malformed/hostile/oversized input
   with bounded code/path output, no untrusted evidence text in refusals.
 
-### Bounded public contract proposed for independent review
+### Frozen bounded public contract
 
-This is a DRAFT contract freeze proposal, not dispatch authority. Inspected
+This reviewed contract is released for private build by Gate 2 below. Inspected
 predecessors: PMC-P1a `12b0aa07560d1f516aec255c42a7f79dc2aed449` exports
 `ProviderBindingPolicyV1`, `BindingEvidenceV1`, `EvidenceValue`, `EvidenceState`,
 `PmcLaneId`, `PmcProvider`, `LanePolicyV1`, `ProviderBindingValidationErrorV1`
@@ -51,11 +51,11 @@ and `validateProviderBindingPolicyV1`. RCM wrapper
 `4201ac4edf8069efa0857d9841341d62b2429648` exports
 `evaluateCatalogEligibility`, `CatalogEligibilityInput/Result`, `EligibilityFacts`,
 `Provenance`, `IdentityRefusalCode`, `SnapshotLevelRefusalCode` and
-`CatalogAdapterRefusalCode`. These heads were inspected read-only; their presence
-is not acceptance of their eventual combined integration. P1b's
-`ProviderBindingProjectionV1` remains SPEC-ONLY: its lossless envelope is
+`CatalogAdapterRefusalCode`. Their combined main integration is e6daf7e. P1b source 7dce9d5 has two
+independent implementation approvals; its actual public ProviderBindingProjectionV1
+is the lossless envelope
 `{schemaVersion:'pmc-provider-binding-projection/v1', evidenceOnly:true,
-policy:ProviderBindingPolicyV1}`. Pin its actual accepted export/commit before build.
+policy:ProviderBindingPolicyV1}`. The exact reviewed source/base pins and remaining merge gate are recorded below.
 
 Export only `resolvePmcRouteV1(request: unknown, context: unknown):
 PmcRouteDecisionV1` and the concrete public types below from the existing barrel.
@@ -689,9 +689,9 @@ validate --repo-root <this-worktree> <this-spec>` with exact resolved local path
 
 ## Open Decisions and Stop Conditions
 
-Draft becomes candidate-ready after accepted P1a/P1b and supported RCM interfaces
-are pinned and this revised bounded request/result/refusal proposal
-is independently reviewed and accepted.
+The predecessor interfaces and revised bounded contract are now pinned and
+independently accepted for private build. Predecessor green main merge is still
+required before P2A integration; no failed predecessor gate is waived.
 Unresolved names are not permission to cast or deep-import. Version authority is
 already recorded by Amendment 05, so no new user authority question is needed.
 P2A cannot depend on a future P2B module: its cost-value port is injected until
@@ -710,3 +710,29 @@ implementation, dispatch, production evidence or activation. P2B helper-to-port
 correspondence remains a composition obligation; no duplicated arithmetic.
 Coordinator accepts this disposition. The combined PMC-P1a/RCM-P1A main merge is
 e6daf7e8cd3bc7b7ae61f9646465f8cea60de2c9, but P1b remains in its separate build.
+## Gate 2 private implementation release — 2026-09-26
+
+The user delegated necessary PMC/RCM prerequisites and decisions to the HRO
+coordinator. Revised contract e598906 received independent approval with no
+blocking findings. P1b source7dce9d573e2c74d5162fe3c7b38a8831a8a6ec6d now has two
+independent implementation approvals, including505 routing/126 dispatch/126
+spec-linter checks. Its actual exports are ProviderBindingProjectionV1,
+ProviderBindingProjectionResult, providerBindingProjectionV1Schema and
+projectProviderBindingsV1. It forwards accepted P1a value/errors in an ok-tagged
+projection result. P1a uses valid/value, never valid/policy. RCM wrapper and P1a
+are merged together in main e6daf7e8cd3bc7b7ae61f9646465f8cea60de2c9.
+
+Private build base is a343ac54f5abad26ec055111d902ae93efcf141f (PR57, full remote
+CI pending). Builder workspace is
+D:/Repos/agent-skills-worktrees/hro-pmc-p1a-integration-20260926, new branch
+codex/hro-pmc-p2a-20260926. Old accepted branches are retained. Fresh frontier
+builder verifies exact documentation head/spec, restates and stops at Step0.
+Only the six Allowed Files may change. Do not alter frozen predecessor schemas,
+producer, draft ledger/controller, v0 selection, Pi or host configuration.
+
+P2A integration must follow PR57's successful main merge and preserve all later
+producer exports. Two fresh frontier implementation reviews and complete green
+remote CI are required for P2A merge. This authorizes pure offline implementation,
+not provider calls or production activation. P2B remains an injected value port;
+its helper contract is being reconciled separately to P2A, without making this
+resolver depend on an unimplemented future module or duplicating money arithmetic.

@@ -186,7 +186,7 @@ new budget amounts, host configuration, caller migration and activation.
 
 - [Amendment 05](../../goals/pi-model-configuration/gate-1-amendment-05.md)
 - [P2 inventory](../../goals/pi-model-configuration/pmc-p2-design-inventory.md)
-- [P2A](PMC-P2A-owner-resolver.md)
+- [P2A](../done/PMC-P2A-owner-resolver.md)
 - [Node 24 SQLite API](https://nodejs.org/download/release/v24.14.0/docs/api/sqlite.html)
 - [SQLite transactions](https://www.sqlite.org/lang_transaction.html)
 - [SQLite durability settings](https://www.sqlite.org/pragma.html#pragma_synchronous)

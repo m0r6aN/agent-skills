@@ -430,3 +430,16 @@ P2B source 835a6dd has two independent approvals; the isolated integration branc
 contains accepted main through PR59. Review the combined result and complete CI
 before Gate 3. P2A source bb89be9 is separately in two final reviews; its contract
 is unchanged. The P2C design remains a draft until concrete custody gaps close.
+
+## PMC-P2A Stage-F closure — 2026-09-26
+
+PR61 merged as4b86643acd4e5cdf183e85cf1cd1c2ace51e0182 at
+2026-09-26T17:37:04Z after both final implementation approvals, independent combined
+verification and all twelve remote checks succeeded on725d741. Combined review
+verified byte-identical resolver/types/tests/fixture, additive retained producer
+exports,49 independent HRO/RCM tests and16 public API integration assertions.
+Root consumed those results and matched the exact reviewed head for merge.
+Spec is done; current predecessor links move with it, historical evidence stays.
+Frozen source/donor worktrees remain while active dependents use their packages.
+P2B audit repair is active; P2C/P2D/P2E and full HRO runtime/measured exit remain
+open. No pure resolver result authorizes execution or proves source authenticity.
