@@ -1,7 +1,7 @@
 # HRO-P2 feasibility and proposed outcome-based amendment
 
-Status: DRAFT for independent review. Proposed SQLite choice-cache implementation
-is held; no charter or exit criterion is silently changed by this document.
+Status: RATIFIED by the delegated coordinator on 2026-09-26 after two independent plan approvals at e5ae1c3848544aeb08992a8607cb7c67bb548858. Proposed SQLite choice-cache implementation
+is held and not implemented. Charter D1/D4/D5, package dependencies, checkpoints, acceptance and exit are explicitly amended alongside this record. Full AC6 benchmarking remains incomplete.
 
 ## Evidence and decision boundary
 
@@ -45,9 +45,9 @@ f9f22ccaeaf8d1c1db6c805269575b1c7f3cc0ad. Execution used the existing P2F depend
 checkout after confirming source/fixture identity. No reviewed repository files,
 dependencies, providers, credentials or settings changed during the probe.
 
-## Proposed explicit charter amendment
+## Ratified explicit charter amendment
 
-Under the user's blanket goal decision authority, the coordinator proposes:
+Under the user's blanket goal decision authority, the coordinator ratifies:
 
 1. Do not build/adopt this SQLite winner-hint design or introduce PMC-P2G solely
    to save sorting. There is no measured justification for its cost and complexity.
@@ -79,7 +79,7 @@ Under the user's blanket goal decision authority, the coordinator proposes:
 Independent reviewers must assess whether the evidence supports holding this
 specific implementation, whether the proposed scope change is explicit and
 consistent with the optimization objective, and whether any remaining requirement
-is accidentally waived. Ratification and actual charter edits follow review;
+is accidentally waived. Ratification and actual charter edits accompany this reviewed disposition;
 there is no runtime dispatch or goal-completion claim in this draft.
 
 ## Local reproducibility records
@@ -105,3 +105,9 @@ Replays must verify the pinned source/fixture and harness bytes, native exit and
 accepted survivor count. New timings are a new observation, not a replacement
 for the original run or proof of complete-path benefit. The independent review
 may corroborate this bounded hold without asserting a production benchmark.
+
+
+Both independent reviews verified harness/source/fixture identity and replayed the
+4/64 cases successfully, reproducing key sizes18928/171849 and the direction of
+the cost comparison. They approved this bounded deferral, not cache infeasibility
+in general or a complete-path performance claim. No runtime implementation follows.

@@ -25,7 +25,7 @@ compilation reuse nor storing an unused hint satisfies this parcel.
 
 ## Constraints
 
-**DRAFT, nondispatchable.** This is a proposed architecture requiring independent
+**HELD, not implemented; draft retained for traceability.** The ratified [feasibility disposition](../../goals/hybrid-routing-optimization/hro-p2-feasibility-and-amendment.md) defers this specific design. It does not satisfy implementation AC6 or authorize PMC-P2G. This is a proposed architecture requiring independent
 design review and a bounded PMC owner prerequisite before HRO implementation.
 No runtime authority follows from this document. The current two-argument owner
 API has no cache seam: calling it unchanged after lookup adds work. This proposal
