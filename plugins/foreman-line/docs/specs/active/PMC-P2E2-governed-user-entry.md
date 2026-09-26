@@ -259,7 +259,7 @@ approval-cli changes, new ranking/schema/money semantics and full live exit.
 - [Parent/root decisions](PMC-P2E-config-caller-migration.md)
 - [Inventory](../../goals/pi-model-configuration/pmc-p2-caller-inventory.md)
 - [B1](../done/PMC-P2B1-durable-intent-custody.md)
-- [C](PMC-P2C-same-process-launch-controller.md)
+- [C](../done/PMC-P2C-same-process-launch-controller.md)
 - [D](PMC-P2D-openrouter-terminal-transport.md)
 - [P1 projection](../../../routing-policy/src/provider-binding-projection.ts)
 - [RCM public adapter](../../../routing-policy/src/catalog-eligibility-adapter.ts)
