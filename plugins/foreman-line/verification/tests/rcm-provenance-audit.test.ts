@@ -74,6 +74,15 @@ test('RCM provenance: real D19 audit enforces exact identity, AST position, valu
       ['different operator', source.replace('baseline.file ===', 'baseline.file !==')],
       ['different call', source.replace(check, check.replace('check(', 'other('))],
       ['member call', source.replace(check, check.replace('check(', 'object.check('))],
+      ['optional call', source.replace(check, check.replace('check(', 'check?.('))],
+      [
+        'optional file access',
+        source.replace(check, check.replace('baseline.file', 'baseline?.file')),
+      ],
+      [
+        'optional table access',
+        source.replace(check, check.replace('baseline.table', 'baseline?.table')),
+      ],
       [
         'function moved below module scope',
         source.replace(validationFunction, `function outer() {\n${validationFunction}\n}`),

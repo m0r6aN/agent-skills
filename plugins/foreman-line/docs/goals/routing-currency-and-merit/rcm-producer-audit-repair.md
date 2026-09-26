@@ -1,5 +1,35 @@
 # Producer integration audit repair
 
+## Optional-chain repair verification
+
+Fresh Step 0 verified clean c586fc76c41a6643e1f3f3c074ea8d8819be08f8 and
+active spec blob 1c1966e13b95be5b64afe68a907a4d2194779125. After coordinator
+release, the predicate gained explicit questionDotToken rejection on the check
+call and both baseline property accesses. These are the only participating AST
+nodes that admit optional-chain syntax; their callee/receivers must already be
+identifiers. The string literals, binary expressions, expression statement and
+direct function declaration do not introduce another optional-chain position.
+Existing location, operand, value, cardinality and other audit rules are unchanged.
+This remains a structural provenance rule, not a whole-function semantic audit
+or exact-byte template check; generic type arguments and function modifiers are
+outside this narrow repair, as confirmed by the coordinator.
+
+Three permanent, independently restored fixtures cover optional check call,
+optional baseline.file access and optional baseline.table access. Before the fix,
+all three incorrectly passed the audit: RED was 26 passed and 4 failed counted
+tests (three children plus parent). After the fix, the focused matrix passes
+30/30, including the accepted current source and every earlier negative control.
+Verification full suite passes 183/183; typecheck and lint pass. The existing
+mutation-scope-guard suite passes 44/44, including AC7's actual D19 subprocess.
+Checks used Node v24.19.0 and existing dependencies without installation or
+shared-tree mutation. An initial lint check requested only wrapping one new test
+fixture; that formatting was corrected before the successful final checks.
+
+Only the audit source, its provenance test and this report changed. Producer,
+evidence, schemas, exports and dependencies are unchanged. No full twenty-package
+local pipeline, network operation or push was performed. Fresh independent final
+reviews and remote CI remain coordinator gates.
+
 ## Independent repair review A: changes required
 
 Review of 797d1ab513b6f17300bd93acf1f63f31a62ef1aa reproduced two unexpected

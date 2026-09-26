@@ -337,6 +337,7 @@ function isRcmProvenanceLiteral(node: Expression, sf: SourceFile, rel: string): 
   const member = equality.left
   if (
     !isPropertyAccessExpression(member) ||
+    member.questionDotToken !== undefined ||
     !isIdentifier(member.expression) ||
     member.expression.text !== 'baseline' ||
     member.name.text !== 'file'
@@ -355,6 +356,7 @@ function isRcmProvenanceLiteral(node: Expression, sf: SourceFile, rel: string): 
     !isBinaryExpression(guard) ||
     guard.operatorToken.kind !== SyntaxKind.EqualsEqualsEqualsToken ||
     !isPropertyAccessExpression(guard.left) ||
+    guard.left.questionDotToken !== undefined ||
     !isIdentifier(guard.left.expression) ||
     guard.left.expression.text !== 'baseline' ||
     guard.left.name.text !== 'table' ||
@@ -366,6 +368,7 @@ function isRcmProvenanceLiteral(node: Expression, sf: SourceFile, rel: string): 
   if (
     !call ||
     !isCallExpression(call) ||
+    call.questionDotToken !== undefined ||
     !isIdentifier(call.expression) ||
     call.expression.text !== 'check' ||
     call.arguments.length !== 1 ||
