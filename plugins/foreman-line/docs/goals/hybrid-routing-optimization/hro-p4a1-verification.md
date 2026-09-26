@@ -1,0 +1,88 @@
+# HRO P4A1 implementation verification
+
+This report records the bounded offline implementation released after the
+HRO-P4A1 Step 0 dispositions. It does not claim production installation,
+business-intent uniqueness, provider evidence, broker composition, or live HRO
+completion.
+
+## Frozen implementation envelope
+
+The implementation contains exactly these five new files:
+
+- `plugins/foreman-line/dispatch/src/pmc-launch/recovery-admission.ts`
+- `plugins/foreman-line/dispatch/src/pmc-launch/recovery-admission-types.ts`
+- `plugins/foreman-line/dispatch/tests/pmc-recovery-admission.test.ts`
+- `plugins/foreman-line/dispatch/tests/fixtures/pmc-recovery-admission-worker.ts`
+- `plugins/foreman-line/docs/goals/hybrid-routing-optimization/hro-p4a1-verification.md`
+
+No existing owner, schema, barrel, dependency, provider, Pi, credential or
+configuration file is changed. The dependency link is a read-only junction to
+the matching-lock donor worktree; no install or package mutation was run.
+
+## Contract evidence
+
+The production constructor returns `PREREQUISITE_UNAVAILABLE` before reading
+its argument or touching the filesystem. The offline constructor is private in
+scope, calls the actual `initializeIntentOwnerV1` with its fixed captured setup
+adapter, retains actual episode/R1/R2 projections, and stores only the original
+request digest and durable identity fields.
+
+The admission store is exactly two STRICT tables, `admission_meta` and
+`episodes`, with only the expected implicit primary/unique indexes. It uses
+exclusive file creation, `mode=rw`, defensive SQLite, extensions disabled,
+DELETE journal, `synchronous=EXTRA`, `trusted_schema=OFF`, foreign keys,
+`busy_timeout=1000`, 4096-byte pages and a 4-MiB page/file bound. The complete
+batch is written under `BEGIN IMMEDIATE`, committed, reread and validated before
+the capability is returned.
+
+Input capture is closed and owned: accessors, symbols, thenables, cycles,
+non-plain prototypes, unknown keys, non-finite values and hostile traps refuse.
+The declared depth, expanded-node, ordinary-string, path, payload, 128-intent,
+256-KiB UTF-8 and registration bounds are enforced before the B1 mutation.
+Aliases are charged at expanded cost. Roots are existing temporary fixture
+directories with the fixed name, canonical path confinement, no reparse/symlink
+components, regular single-link artifacts and nonzero filesystem identity.
+
+The private broker claim is consumed before its successful return and cannot be
+replayed. A process race is arbitrated by B1's exclusive store and admission
+file creation. Any B1/admission commit or close uncertainty retains artifacts
+and exposes no capability. A restart has no API for reconstructing a claim or
+admission.
+
+## Verification run
+
+Using Node `v24.19.0` from `D:\nvm\v24.19.0\node.exe`:
+
+- Focused recovery suite: 12 passed, 0 failed.
+- Full dispatch suite: 69 tests passed; 8 unrelated test files could not load
+  because the intentionally absent dependency junction does not provide
+  `ajv`/`yaml` for packages outside this slice.
+- Focused Biome check over all four runtime/test files: passed.
+- Dispatch typecheck: no diagnostics for the five P4A1 files. The repository
+  typecheck still reports pre-existing missing `ajv`/`yaml` declarations in
+  unrelated packages because dependencies are intentionally not installed.
+
+The focused suite proves:
+
+1. zero-read production refusal;
+2. actual B1 IDs, exact independent request-digest fixtures and immutable
+   SQLite registration;
+3. existing B1/admission refusal, aliases, schema tampering and no repair;
+4. hostile input and bound refusal before mutation;
+5. independent-process same-root race with one complete winner;
+6. B1 uncertainty before and after COMMIT;
+7. admission uncertainty before and after COMMIT;
+8. one-use claim consumption;
+9. actual B1 plus actual ledger paired terminal behavior, where an acknowledged
+   owner terminal commit permits only predeclared R2 and ledger-only closure
+   remains blocked.
+
+The subprocess fixture is test-only fault instrumentation. It is restored in
+the child process and is not a production port, mode switch or authority path.
+
+## Remaining gates
+
+Two independent implementation source reviews, combined integration checks and
+remote CI remain required. The future production constructor and P4A broker
+composition must be implemented and reviewed separately; this offline fixture
+does not authenticate production authority or storage custody.
