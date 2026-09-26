@@ -115,3 +115,31 @@ Independent implementation reviews, separately reviewed audit/reader enrollment,
 reconciliation onto accepted main, integration checks and remote CI remain gates.
 No provider call, budget provisioning, real sender, production activation, push,
 merge or full-HRO completion is claimed.
+
+## Coordinator review triage: capture preflight repair
+
+Frozen e6b2956 received one independent APPROVE and one REQUEST CHANGES. The
+blocking P2 finding is accepted: Object.getOwnPropertyDescriptors at capture line109
+materializes every caller descriptor before enforcing visit/array bounds. Reviewer
+probe saw 70,001 descriptor traps on an oversized70,000-entry array before refusal.
+This is a resource-bound defect, not an established custody/state-machine bypass.
+
+Repair within original runtime/test/report envelope only: preflight actual array
+length and minimum expanded traversal budget before own-key enumeration or child
+value descriptors. For ordinary records, preflight own-key cardinality and key
+string budgets before fetching child descriptors. Preserve exact advertised
+16depth/65,536visit/2,048perstring/1,048,576aggregate bounds, expanded aliases,
+accessor/iterator refusal, hostile-trap typed refusals and owned immutable capture.
+Key enumeration itself and arbitrary Proxy trap internals cannot be made bounded
+by this helper; make no sandbox claim. Do not invoke accessors/iterators or count
+bulk descriptor materialization as a bound. Add permanent overbound negatives
+showing no child-descriptor traversal, setup authentication or I/O; include sparse
+and dense arrays, record cardinality/aggregate keys, exact boundary and late caller
+mutation/refusal. Native AST/audit fingerprints remain deferred until repaired
+source receives two independent approvals.
+
+Fresh Step0 inspection/restate/STOP precedes coordinator repair release. Builder
+writes only intent-custody.ts, pmc-intent-custody.test.ts and this verification
+record. No owner schema/types/worker/ledger or external integration edits; no
+source acceptance from prior partial approval. Run focused RED/GREEN, full dispatch
+and affected typecheck/lint, frozen predecessor/scope checks, localcommit/handoff.
