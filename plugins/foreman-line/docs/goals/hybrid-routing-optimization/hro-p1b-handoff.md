@@ -14,11 +14,15 @@ clock, performs network/provider work, or claims PMC/RCM runtime authority.
 ## Verification
 
 - Node `v24.19.0`; package dependencies installed from the existing lockfile.
-- `npm test`: 20 focused tests passed, 0 failed.
+- `npm test`: 20 focused tests passed, 0 failed (16 inherited P1a tests plus
+  4 new P1b tests).
 - `npm run lint`: passed; 7 package files checked.
-- `npm run typecheck`: blocked by missing pre-existing workspace dependencies
-  (`ajv`, `yaml`, and MCP SDK) in the dispatch dependency graph; no parcel
-  source diagnostics remain after the local type fixes.
+- `npm run typecheck`: passed under Node `v24.19.0` after installing the
+  existing locked dependencies for the actual import graph offline.
+- Unchanged dispatch suite: 126 passed, 0 failed; dispatch typecheck passed.
+- Unchanged routing-policy suite: 399 passed, 0 failed; typecheck passed.
+  Routing-policy lint passed with one existing informational
+  `useLiteralKeys` diagnostic in `catalog-snapshot.test.ts:777`.
 - The implementation changes exactly the five active-spec paths.
 - Dispatch imports are type-only; no runtime evaluator/receipt/config/network
   imports are present.
