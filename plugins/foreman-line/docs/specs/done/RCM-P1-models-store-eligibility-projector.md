@@ -1,10 +1,10 @@
 ---
 ticket: RCM-P1
 title: Pure catalog-snapshot reader and eligibility projector
-status: active
+status: done
 owner: clinton.morgan
 created: 2026-09-22
-updated: 2026-09-22
+updated: 2026-09-26
 supersedes: null
 superseded_by: null
 risk: standard
@@ -508,3 +508,7 @@ Stop and report if work needs any of the following:
 - a change to P0 evidence or goal controls
 - wiring into dispatch
 - resolving any open question without a ruling
+
+## Stage-F closure — 2026-09-26
+
+Merged PR51 as 700beba5e6387a9471ecea7a8757b226930ba925 following independent integration approval, 399 passing tests under Node24.19.0, typecheck/lint, and green repository CI. Integration evidence is in ../../goals/routing-currency-and-merit/rcm-p1-hro-integration-20260926.md. The original reviewed builder worktree remains preserved; the clean integration workspace is retained temporarily for prerequisite evidence. This closes only the pure unwired library parcel. Public adapter, actual producer, dispatch currency enforcement and full RCM/HRO goal exits remain open. S1 string bounds remain the recorded later predicate-boundary follow-up.

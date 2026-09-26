@@ -126,7 +126,7 @@ claim.
 **2026-09-22, loop stopped at Gate 3:** RCM-P1 is built and its verification
 chain is green. The parcel sits on branch `codex/rcm-p1-builder` at `7faa46a`,
 with 399 of 399 tests passing. The spec is
-`docs/specs/active/RCM-P1-models-store-eligibility-projector.md`, with amendments
+`docs/specs/done/RCM-P1-models-store-eligibility-projector.md`, with amendments
 A1–A3. Four fresh reviews and three rework rounds are recorded in
 `rcm-p1-review-triage.md`. The final review returned APPROVE WITH NITS with no
 blocker. Nothing has been merged, pushed, or opened as a pull request.
@@ -167,3 +167,7 @@ authorization creates no alpha eligibility exception and authorizes no further c
 provider spend, Gate 1 reopening, host correction, policy or Pi mutation, HAWF action,
 Helmholtz handoff, or downstream consumption. A future alpha-routing proposal must
 return through a separately named Gate 1 eligibility annex and its own evidence chain.
+
+## Scoped prerequisite delegation and P1 closure — 2026-09-26
+
+The user explicitly authorized HRO coordinator task 01a0ddb6-5fed-7d82-b2f0-075315440dc1 to coordinate and approve necessary RCM/PMC prerequisites, subject to independent review. This overrides historical P1 gate holds below for this bounded work; it does not transfer unrelated RCM or Jev queues. The former named RCM owner was not active during the collision audit. PR51 merged as 700beba5e6387a9471ecea7a8757b226930ba925 after fresh independent integration approval, 399 tests/typecheck/lint on Node24.19.0, and green CI. P1 is done. The HRO coordinator owns the next scoped adapter/source prerequisite parcels; their concrete reviewed specs control dispatch. Actual runtime/goal acceptance remains open.

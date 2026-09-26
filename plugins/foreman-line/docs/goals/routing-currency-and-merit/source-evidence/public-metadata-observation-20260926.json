@@ -1,0 +1,151 @@
+{
+  "evidenceVersion": "rcm-public-metadata-observation-v1",
+  "status": "supplemental-proposal-evidence-not-canonical-snapshot",
+  "generatedAtUtc": "2026-09-26T13:54:29.6032335Z",
+  "purpose": "Bounded unauthenticated public metadata observation for source-contract review",
+  "boundary": {
+    "credentialsRead": false,
+    "authHeadersSent": false,
+    "inferenceCalls": false,
+    "piConfigRead": false,
+    "piConfigWritten": false,
+    "rawResponseRetained": false,
+    "rawHostDocumentsHashed": false,
+    "publicResponseBytesHashedInMemory": true
+  },
+  "observations": [
+    {
+      "providerKey": "openrouter",
+      "sourceProfile": "openrouter-public-models-v1",
+      "endpoint": "https://openrouter.ai/api/v1/models",
+      "method": "GET",
+      "runs": [
+        {
+          "requestStartedAtUtc": "2026-09-26T13:53:59.2989591Z",
+          "responseReceivedAtUtc": "2026-09-26T13:53:59.6496767Z",
+          "checkedAtUtc": "2026-09-26T13:53:59.6496767Z",
+          "status": 200,
+          "responseByteLength": 751088,
+          "responseBytesSha256": "73b9f09e1d64a72ba8042cae0c1379a544617d012314c945ca9c6ed76aedec9e",
+          "httpDate": "Sat, 26 Sep 2026 13:54:00 GMT",
+          "lastModified": null,
+          "etag": null,
+          "modelCount": 458,
+          "requiredIdentityCount": 15,
+          "requiredIdentityMissing": ["typesafe/jev-1.13"]
+        },
+        {
+          "requestStartedAtUtc": "2026-09-26T13:53:59.7993342Z",
+          "responseReceivedAtUtc": "2026-09-26T13:53:59.8658455Z",
+          "checkedAtUtc": "2026-09-26T13:53:59.8658455Z",
+          "status": 200,
+          "responseByteLength": 751088,
+          "responseBytesSha256": "73b9f09e1d64a72ba8042cae0c1379a544617d012314c945ca9c6ed76aedec9e",
+          "httpDate": "Sat, 26 Sep 2026 13:54:00 GMT",
+          "lastModified": null,
+          "etag": null,
+          "modelCount": 458,
+          "requiredIdentityCount": 15,
+          "requiredIdentityMissing": ["typesafe/jev-1.13"]
+        }
+      ],
+      "providerDeclaredTime": null,
+      "exactResponseDigestStable": true,
+      "fieldCoverage": {
+        "present": ["id", "architecture", "context_length", "pricing", "supported_parameters", "top_provider"],
+        "unknown": ["provider catalog refresh time"],
+        "omitted": ["raw response body from evidence artifact"]
+      }
+    },
+    {
+      "providerKey": "opencode",
+      "sourceProfile": "opencode-zen-v1-models-v1",
+      "endpoint": "https://opencode.ai/zen/v1/models",
+      "method": "GET",
+      "runs": [
+        {
+          "requestStartedAtUtc": "2026-09-26T13:53:59.9829572Z",
+          "responseReceivedAtUtc": "2026-09-26T13:54:00.1700197Z",
+          "checkedAtUtc": "2026-09-26T13:54:00.1700197Z",
+          "status": 200,
+          "responseByteLength": 6901,
+          "responseBytesSha256": "53ea2cb44f86927fc8de92cb827c437a8c849fd0ca6380901c91049292496efa",
+          "httpDate": "Sat, 26 Sep 2026 13:54:01 GMT",
+          "lastModified": null,
+          "etag": null,
+          "modelCount": 82
+        },
+        {
+          "requestStartedAtUtc": "2026-09-26T13:54:00.1734564Z",
+          "responseReceivedAtUtc": "2026-09-26T13:54:00.2712893Z",
+          "checkedAtUtc": "2026-09-26T13:54:00.2712893Z",
+          "status": 200,
+          "responseByteLength": 6901,
+          "responseBytesSha256": "53ea2cb44f86927fc8de92cb827c437a8c849fd0ca6380901c91049292496efa",
+          "httpDate": "Sat, 26 Sep 2026 13:54:01 GMT",
+          "lastModified": null,
+          "etag": null,
+          "modelCount": 82
+        }
+      ],
+      "providerDeclaredTime": null,
+      "exactResponseDigestStable": true,
+      "fieldCoverage": {
+        "present": ["id", "object", "owned_by", "created"],
+        "unknown": ["contextWindow", "maxTokens", "input modalities", "reasoning", "prices", "thinking levels", "provider catalog refresh time"],
+        "omitted": ["raw response body from evidence artifact"]
+      },
+      "documentationCorroboration": {
+        "url": "https://opencode.ai/docs/en/zen/",
+        "documentedFields": ["model ID", "protocol/endpoint mapping", "published input/output prices"],
+        "notDocumentedForThisContract": ["contextWindow", "maxTokens", "input modalities", "reasoning", "thinking levels", "provider refresh timestamp"]
+      }
+    },
+    {
+      "providerKey": "opencode-go",
+      "sourceProfile": "opencode-zen-go-v1-models-v1",
+      "endpoint": "https://opencode.ai/zen/go/v1/models",
+      "method": "GET",
+      "runs": [
+        {
+          "requestStartedAtUtc": "2026-09-26T13:54:00.2786641Z",
+          "responseReceivedAtUtc": "2026-09-26T13:54:00.3629071Z",
+          "checkedAtUtc": "2026-09-26T13:54:00.3629071Z",
+          "status": 200,
+          "responseByteLength": 3569,
+          "responseBytesSha256": "cb57a2ee39cce885ac5e69c288a9ec7066f01abb2627d2b0c5f9bb5ba77aa557",
+          "httpDate": "Sat, 26 Sep 2026 13:54:01 GMT",
+          "lastModified": null,
+          "etag": null,
+          "modelCount": 43
+        },
+        {
+          "requestStartedAtUtc": "2026-09-26T13:54:00.3658621Z",
+          "responseReceivedAtUtc": "2026-09-26T13:54:00.4518509Z",
+          "checkedAtUtc": "2026-09-26T13:54:00.4518509Z",
+          "status": 200,
+          "responseByteLength": 3569,
+          "responseBytesSha256": "cb57a2ee39cce885ac5e69c288a9ec7066f01abb2627d2b0c5f9bb5ba77aa557",
+          "httpDate": "Sat, 26 Sep 2026 13:54:01 GMT",
+          "lastModified": null,
+          "etag": null,
+          "modelCount": 43
+        }
+      ],
+      "providerDeclaredTime": null,
+      "exactResponseDigestStable": true,
+      "fieldCoverage": {
+        "present": ["id", "object", "owned_by", "created"],
+        "unknown": ["contextWindow", "maxTokens", "input modalities", "reasoning", "prices", "thinking levels", "provider catalog refresh time"],
+        "omitted": ["raw response body from evidence artifact"]
+      }
+    }
+  ],
+  "routingLimitations": [
+    "OpenRouter required identity typesafe/jev-1.13 is absent from the current public catalog response.",
+    "OpenCode /zen/v1 and /zen/go/v1 are separate exact source profiles; no cross-namespace substitution is allowed.",
+    "OpenCode live metadata does not establish context, modality, reasoning, max-token, pricing, or thinking-level facts.",
+    "A fresh observation age does not prove provider-internal publication currency or live inference availability.",
+    "This artifact is not an rcm-catalog-snapshot/v1 input and does not authorize dispatch, spend, Pi writes, or promotion."
+  ]
+}
