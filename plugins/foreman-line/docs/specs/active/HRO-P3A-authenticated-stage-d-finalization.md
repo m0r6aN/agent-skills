@@ -772,3 +772,25 @@ close handles on all outcomes, and reject truncation, growth and replacement.
 This clarification is not a runtime release. Independent design review, root
 ratification and explicit Step0 release remain before edits. Production intake
 and the separate D19 enrollment gate remain open.
+
+### Clarification ratification and frontier repair release — 2026-09-26
+
+Root and independent frontier A approve c378af3824d2819f9fd5653557b087622690a6b1,
+including the explicit field join between distinct registration types. Root accepts
+frontier D's fresh stopped Step0 at aaa2870 and its six-file plan; source remains
+unchanged beneath subsequent clarification/review documentation.
+
+Under delegated goal/prerequisite authority, release the remaining P3A repair to
+frontier D in the existing six-file envelope. Read and follow the final clarification
+before coding. Replace invented initial receipt conventions with actual producer
+contracts and genuine successful producer fixtures. Enforce bounded handle reads,
+identity checks, actual-byte aggregate accounting and deterministic growth/replacement
+controls. Preserve all closed duplicate/alias/phase/owner/guard repairs and optional
+schema fields. No alternate provenance, new source files, predecessor edits,
+production intake or runtime activation. Report actual test/typecheck/lint/audit
+results; the existing three-site D19 failure stays a separate follow-up.
+
+Freeze clean source/test/report changes and STOP for two fresh independent reviews
+by root and frontier A. D is now author and cannot approve its own repair. This
+release supersedes only the builder assignment and defective initial-fixture/read
+implementation; it does not expand the approved runtime or authority boundary.
