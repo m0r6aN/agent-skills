@@ -128,6 +128,12 @@ Registration alone does not establish C custody; an ID or copied object cannot
 do so. Reads are non-destructive so C and ledger can authenticate the same record
 through reconciliation/replay. This is an explicit C/P2E composition amendment
 subject to independent re-review, with TerminalPortV1 and public exports unchanged.
+The unchanged ledger authenticates before checking idempotency and supplies its
+current attempt. Compare immutable attempt identity/cost/creation fields exactly;
+initial authentication matches the consumed snapshot, while replay matches only
+the exact terminal state/charge/proof fields derived from the same observed proof
+and validated monotonic update time. Whole consumed-record equality would wrongly
+refuse legitimate replay. Do not skip mutable fields or mint replacement proofs.
 
 ## Independent design review disposition
 
@@ -138,6 +144,9 @@ confirmed the cleanup defect. The coordinator corrected all three in this draft.
 Neither initial verdict is an approval. The corrected frozen contract must return
 to both reviewers, followed by explicit C1/C2/C3 disposition and matching C draft
 clarifications before runtime release. No production evidence gate is waived.
+At b698f57 reviewer A approved; reviewer B closed both original findings and
+requested the state-aware replay correction above. That additional correction
+and three real-ledger replay tests return to independent review before approval.
 
 ## Response and accounting choices
 

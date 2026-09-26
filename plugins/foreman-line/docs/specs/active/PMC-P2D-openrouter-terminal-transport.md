@@ -370,9 +370,21 @@ Its role-separated captured capabilities are finite:
   its semantic/Charge union to choose existing cancel/settle and owner completion.
 - Ledger gets only existing authenticateSettlement/authenticateNoSendProof
   capabilities. They resolve `{proofId}` only while C holds the matching observed
-  invocation custody, compare the complete ledger authentication context against
-  the retained consumed attempt, and return exactly P2B's existing accepted/refused
-  schema. A known ID without the matching observed invocation cannot authenticate.
+  invocation custody and return exactly P2B's existing accepted/refused schema.
+  Always compare exact ledgerId, epoch, requestId, requestDigest, scopeId,
+  maximumMicroUsd, costValueDigest and createdAtUtc against the retained consumed
+  attempt. Initial authentication requires the complete original consumed state
+  and fields. Ledger replays pass the current terminal attempt, not the original
+  consumed value: accept only state, actualMicroUsd, proofRef and proofDigest
+  derived from THIS immutable observed proof (known -> settled with exact charge;
+  unknown -> uncertain with null actual; no-send -> cancelled with null actual),
+  plus a valid updatedAtUtc no earlier than the retained consumed timestamp and
+  no later than the trusted current clock. Never ignore mutable fields or accept
+  an arbitrary terminal state. Cancelled liability is released by the ledger's
+  state accounting; its actualMicroUsd remains null, not a fabricated measured zero.
+  This permits unchanged ledger idempotency, not a new send, proof mint, owner
+  finish retry or liability relaxation. A known ID without the matching observed
+  invocation cannot authenticate.
 
 The registry lives in reviewed private installation, with D register and C observe
 implemented as invocation-bound closures. No new public export, caller-supplied
@@ -476,7 +488,7 @@ error even if all text arrived; no successful done before owner/ledger closure.
 | 5 | SSE split at every UTF-8 and CRLF boundary, duplicate/trailing usage/DONE, error/status/encoding/timeout/abort, content bound, unsupported delta/finish/cost and usage overruns; event order conforms to actual Pi type/runtime stream result and terminates once. |
 | 6 | Raw cost fixtures 0, 0.000001, 0.0000001, exponent, malformed, duplicate, overflow and over-bound show exact known integer or unknown preservation using unchanged real ledger. Estimate/placeholder Pi Usage never becomes ledger actual. Restart/lost ack uses actual accepted B1 and temporary SQLite, never map-only custody. |
 | 7 | Tariff/profile mismatch, broad endpoint slug, tier alias, server fallback, unsupported max_price precision, missing framing/tokenizer/hidden-output/cache/fee proof all refuse BEFORE reserve. Production certificate evidence is separately reviewed; synthetic good-profile fixtures do not close that gate. |
-| 8 | Private rendezvous one-shot/mismatch/concurrency tests; real predecessor types compile. Start solely from documented factory/registry capabilities and real ledger: known success, failed-settled, no-send, unknown, copied and cross-invocation proofs. Actual Pi tests cover failure before stream creation, a never-resolving hook, C rejection after preparation, finalizer replay and cleanup timeout. On ordinary failure both stream.result and prompt settle; timeout returns failure and observes remaining promises without claiming drainage. Successful completed text is bounded and returned only after reconciliation/drain. Export review finds no public factory/mint/sender/credential/test mode. Two independent concrete reviews distinguish actual-code, fake-network and production-evidence coverage. Useful L5 candidate remains disabled until every readiness gate passes. |
+| 8 | Private rendezvous one-shot/mismatch/concurrency tests; real predecessor types compile. Start solely from documented factory/registry capabilities and real ledger: known success, failed-settled, no-send, unknown, copied and cross-invocation proofs. Apply the identical proof twice for known, unknown and no-send; independently reject wrong terminal state, charge, proof fields and timestamp. Actual Pi tests cover failure before stream creation, a never-resolving hook, C rejection after preparation, finalizer replay and cleanup timeout. On ordinary failure both stream.result and prompt settle; timeout returns failure and observes remaining promises without claiming drainage. Successful completed text is bounded and returned only after reconciliation/drain. Export review finds no public factory/mint/sender/credential/test mode. Two independent concrete reviews distinguish actual-code, fake-network and production-evidence coverage. Useful L5 candidate remains disabled until every readiness gate passes. |
 
 ## Out of Scope
 
