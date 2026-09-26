@@ -67,3 +67,25 @@ separate narrowly reviewed follow-up after runtime stabilizes; no renaming or
 indirection to evade detection and no new audit path in this repair envelope.
 
 Source repair remains stopped for a genuine read-only Step0 and explicit release.
+
+A's final review adds these remaining original obligations (no scope expansion):
+
+- R2 exact multiset: A appended a validly hashed duplicate HarnessClaimResult after
+  verification/drain. Publication and final D both succeeded. First-match claim
+  lookup and verification of only recorded evidence permit extra chain entries.
+  Enforce the exact expected claim/ref multiset and reject unexplained additions
+  at each subsequent snapshot, including after drain and before publication.
+- R3 envelopes: verdict-envelope reads also require the same1MiB/preparse bounds;
+  a receipt-only stat check does not cover readFileSync of the separate envelope.
+- R5 expanded capture: verification alias footprints omit the object node; its
+  string branch increments nodes without testing the maximum. Both modules reuse
+  footprints at greater depths without charging maximum relative subtree depth.
+  Fix complete expanded node/string/depth accounting; test exact/+1 and the same
+  shared subtree at shallower/deeper placement. Do not rely on no cycles alone.
+- R6 guard controls: the new AC21 assertions inspect current text but do not inject
+  forbidden tokens and prove guard rejection. Implement real negative controls for
+  the precise exception and retained prohibitions in the existing test file.
+
+Additional independent reproduction: TEMP/p3a-review-a-duplicate.ts. These are
+required parts of the original six-file repair, not permission for new owner APIs,
+other source files, alternate receipt schemas or broader audit exceptions.
