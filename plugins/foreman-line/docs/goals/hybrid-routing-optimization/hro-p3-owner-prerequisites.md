@@ -21,9 +21,14 @@ Shaping starts at `f41f0adfa5888a42a9a135a1eb052a38a0c7474c` on
   :801 emits a claim and StageOutput envelope. No final kind:stage D producer.
 - verification/src/human-gate/index.ts:1004 executeHumanGate returns closed only
   after the approval/Jira path; :1129 writes StageDClosure as a claim. Its supplied
-  decision/package/dependencies are not authenticated human origin by themselves.
+  decision/package/dependencies are not authenticated authority by themselves.
+  Intake authenticates the actual authorized actor under existing delegation;
+  decidedBy must not mislabel an agent as human. No new human-only gate is added.
 - integration/src/exit-vehicle.ts:183 scans/validates the chain; :285 requires
   fixed kind/stage/sequence; :329 and :363 are real E/F runners. Retain these gates.
+  runStageF calls emitClosureReceipt, not executeClosure; a supplied ClosureRecord
+  does not authenticate merge/Jira completion. Actual upstream closure intake is
+  a separate production prerequisite, not authority created by a receipt hash.
 - receipts/src/validator.ts:10-15 explicitly excludes content-hash recomputation.
   Existing approval/src/canonical.ts provides canonicalization; owners can use it
   without adding receipts->approval or integration->verification dependency cycles.
@@ -53,6 +58,11 @@ exists at these seams; the actual type is StageOutput<VerificationVerdict>.
    interface first, so neither implementation requires a fabricated production
    seal. Offline implementation acceptance is separately possible; production
    requires genuine joined owners. No circular production-readiness claim.
+4. P3A's independently testable shared registry freezes all phases through E/F,
+   separate installed E/F capabilities and three bounded acknowledgement records.
+   P3A acceptance does not require P3B; P3B/combined acceptance owns actual A->E->F.
+   Finalization is synchronous after completed drain/publication. Workflow busy
+   persists across broader asynchronous operations; finalizer has no await.
 
 Root adopted these directions for a reviewable draft after Step 0. Both specs
 remain nondispatchable pending independent design review, root ratification of
@@ -71,7 +81,10 @@ this shape and need exact owner paths/contracts before production dispatch:
 - Named test-run results bound to expected checks and exact verified head.
 - Expected independent review slots and completed reviewer-output provenance.
 - Coordinator disposition intake bound to exact review/finding identities.
-- Genuine human decision intake and authorized human-gate transport.
+- Authenticated authorized-decision intake under existing delegation and authorized
+  human-gate transport, preserving actual actor and authority attribution.
+- Genuine upstream closure-owner merge/Jira completion intake for ClosureRecord;
+  runStageF's local receipt emission is not that producer.
 - Installation entry retaining issuers and statically captured stage functions.
 - Genuine P3 denominator/capture/measurement publisher issuing the private seal.
 

@@ -74,20 +74,31 @@ claim is accepted. Capture the real acknowledged E document/ref and existing
 IntegrationResult prRef/ciJobs/auditTrigger in the private session. These values
 retain their existing caller/owner contract; this amendment does not upgrade
 supplied CI or audit values into independently authenticated GitHub results.
-The authorized workflow must retain the existing real gate assembly and human
-merge controls. No weakening, fabricated success or bypass via raw emitter.
+The authorized workflow must retain the existing real gate assembly and approval/
+merge controls under existing delegation, with accurate actor/authority attribution.
+No new human-only gate, weakening, fabricated success or bypass via raw emitter.
 
 For F, require the same session's acknowledged E receipt as exact current tip,
 kind:stage E, subjectKind:IntegrationResult, claimRef:null. Validate E's actual
 predecessor is that session's final D and repeat the measured chain/profile/head
 bindings. Run real emitClosureReceipt with the actual E tip so F is N+2 and links
 to E.hash. Keep actual ClosureRecord and existing closure/gate ownership intact.
+Actual runStageF calls emitClosureReceipt, not executeClosure: a successful
+receipt write does not execute or authenticate merge/Jira completion. A supplied
+ClosureRecord alone is descriptive. The production workflow requires an installed
+upstream closure owner to bind its genuine merge/Jira results and actual actor/
+authority to the exact ClosureRecord, verified head and session. That producer's
+exact source/intake contract remains a production prerequisite, just as actual
+CI/audit provenance does; no caller accepted flag or registry acknowledgement
+supplies it. Offline fixtures prove local composition only.
 F cannot adopt an arbitrary E at a larger sequence, a half-closed claim or a
 serialized prior session. This parcel adds no merge, Jira or retry authority.
 
 ### Lifecycle, writes and bounds
 
-The same cooperative session serializes finalized-D -> integrated-E -> sealed-F.
+The complete P3A registry already defines finalized-D -> integrated-E -> sealed-F;
+P3B uses its distinct installed E/F capabilities and closed acknowledgement records.
+It adds no registry phase, issuer or field. The same cooperative session serializes them.
 Set busy before callbacks and retain it across any await. No later measured
 launch is allowed. Wrong phase, duplicate/reentrant E/F or concurrent writer
 refuses before effects. Existing legacy duplicate behavior is unchanged.
@@ -123,7 +134,7 @@ task payload. No claim of HRO metrics, live proof or cache completion follows.
 | 1 | Existing legacy A0/B1/C2/D3/E4/F5 path remains valid through real runners; all existing wrong-stage/sequence/head/chain and closure tests still pass. |
 | 2 | Actual P3A producer with real harness/verdict/closure claims -> final D at N>3 -> real runStageE N+1 -> real runStageF N+2; assert every kind/stage/claimRef, subject/ref, head, correlation, sequence and recomputed hash. |
 | 3 | Raw D claim, arbitrary longer stage chain, fabricated pass/subject, unknown/serialized/cloned capability, foreign workflow/root, missing/changed seal or expected plan cannot select measured profile or fall back to legacy. |
-| 4 | PR-ref full-head mismatch, head changed since verification, mutated CI/audit result binding, modified predecessor refs, stored-hash rewrite and cross-session E/F each refuse at their named gate before write. Preserve actual gate/closure composition. |
+| 4 | PR-ref full-head mismatch, head changed since verification, mutated CI/audit result binding, modified predecessor refs, stored-hash rewrite and cross-session E/F each refuse at their named gate before write. Supplied ClosureRecord/forged upstream completion cannot establish production closure custody; genuine installed completion retains exact actor/delegation. Offline tests do not claim executeClosure or live merge/Jira occurred. |
 | 5 | Intervening append, duplicate sequence, filename lie, path escape, chain gap, claim tip, wrong E-to-D linkage and bounded-read overflow refuse; mutate each dimension independently. |
 | 6 | Busy, repeated/reentrant E/F, caller writeFn, exclusive-create collision, pre/post-write fault and process loss produce no duplicate or overwrite; uncertain state cannot become sealed. No merge/Jira/provider effects in offline suite. |
 | 7 | No integration->verification/dispatch import, no public receipts barrel/schema/manifest change, no emitter shortcut. Production remains unavailable without actual installation/provenance/telemetry owners. |
@@ -132,7 +143,7 @@ task payload. No claim of HRO metrics, live proof or cache completion follows.
 
 Changing legacy sequence semantics, general arbitrary-sequence acceptance,
 cryptographic authenticity from self-hashes, hostile-process locks, restart
-recovery, test-run/review/human-decision producers, telemetry collection, new
+recovery, test-run/review/authorized-decision or upstream closure producers, telemetry collection, new
 ledger exports, merge authorization, transport or production activation.
 
 ## Context & References

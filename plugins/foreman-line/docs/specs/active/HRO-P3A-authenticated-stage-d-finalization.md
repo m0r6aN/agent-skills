@@ -89,11 +89,14 @@ the results that happen to arrive. It records:
    high/critical cannot be waived. Use actual `assembleVerdict` rules, and bind
    its exact output to the captured complete inputs. No findings may disappear
    by concatenation, duplicate identifiers or an empty replacement array.
-4. Genuine human decision intake and actual `prepareHumanGate` /
+4. Authenticated authorized decision intake under the existing delegation and actual `prepareHumanGate` /
    `executeHumanGate` completion. Require approved, closed output and exact
    approval/closure/verdict refs; declined, half-closed, missing or fabricated
-   decisions hold. Existing human-gate effects require their existing authority;
-   this parcel grants no Jira or human-approval authority.
+   decisions hold. Preserve the actual actor in decidedBy and bind the intake to
+   its genuine authority/delegation evidence; never relabel an authorized agent
+   as a human. The existing API's human-gate name creates no new human-only gate.
+   Existing effects require their existing authority; this parcel grants no Jira
+   or approval authority and cannot expand or revoke existing delegation.
 
 Each captured HarnessResult.claims item must match exactly one returned on-chain
 receipt with kind:claim, stage:D, claimRef equal to claim, subjectKind
@@ -105,7 +108,7 @@ payload and links. Do not synthesize a receipt when a producer did not emit one.
 
 Missing actual upstream producers are explicit prerequisites: authenticated named
 test-run intake; completed reviewer-output intake; coordinator-disposition and
-human-decision intake; installed workflow composition. Their exact source paths
+authorized-decision intake; installed workflow composition. Their exact source paths
 and APIs must be frozen by their owners before production implementation dispatch.
 Tests may exercise isolated contract behavior with labelled test installation,
 but cannot claim these production prerequisites exist.
@@ -138,8 +141,13 @@ type FinalizationV1 =
       |'WRITE_REFUSED'|'WRITE_UNCERTAIN'};
 ```
 
-Capture first; set busy before invoking any owner operation and keep it across
-awaits. Phases are capturing -> draining -> publishing -> finalized-D, or held.
+The finalizer is synchronous: it starts only after all asynchronous draining and
+telemetry publication have completed and acknowledged their results. It contains
+no await and returns FinalizationV1, never a Promise. It synchronously owns the
+writer busy guard during validation/write/reread. The broader workflow sets busy
+before asynchronous owner operations and retains it across their awaits.
+Phases are capturing -> draining -> publishing -> finalized-D -> integrated-E ->
+sealed-F, with held reachable on uncertainty from any nonterminal phase.
 Passive completion observations can finish admitted work while draining; writer
 reentry refuses rather than awaiting itself. No new measured launch after closing
 admission, and no later verification call that uses a model in this scope.
@@ -152,7 +160,49 @@ Unexpected tip changes hold. Independent concurrent processes are unsupported.
 Use exclusive create for the new final receipt; never overwrite. A fault before
 write is typed; ambiguous/partial completion holds, with no automatic retry or
 JSON-based reopening. A same-session duplicate after acknowledged finalization
-returns the same immutable reference only after verifying unchanged finalized tip.
+returns the same immutable reference only in finalized-D after verifying the
+unchanged finalized tip. After integrated-E or sealed-F, finalization returns
+PHASE_REFUSED without writes; this does not erase the historical D reference.
+
+### Complete shared registry lifecycle
+
+P3A freezes E/F transitions now; P3B consumes them without extending this module.
+Installation retains separate workflow-admission, verification-finalizer,
+P3-publisher, E-owner and F-owner capabilities. Each operation requires exact issuer identity and session
+membership; the public session token alone cannot advance or acknowledge a phase.
+Capabilities are not transferable across installations, sessions or owner roles.
+The closed transition contract is:
+
+| Operation / installed owner | Required phase and evidence | Resulting phase |
+|---|---|---|
+| closeAdmission / workflow | capturing, no new launches thereafter | draining |
+| acknowledgeDrain / workflow | draining, admitted work complete and no pending measured checks | publishing |
+| registerSeal / P3 publisher | publishing, genuine complete publication and exact current tip | publishing, seal fixed once |
+| acknowledgeFinalD / verification | publishing, seal plus all expected evidence, direct acknowledged final write/reread | finalized-D |
+| acknowledgeE / E owner | finalized-D, direct real runner E write/reread, exact D predecessor and head/profile | integrated-E |
+| acknowledgeF / F owner | integrated-E, direct real runner F write/reread, exact E predecessor and owner-bound closure input | sealed-F |
+| hold / active owner | any nonterminal phase, failed/uncertain operation | held |
+
+Writer acquisition requires the matching current phase and no active writer;
+release after success advances only via the corresponding acknowledgement.
+Failure cannot advance; uncertainty holds. Passive completion intake while
+draining is permitted but cannot acquire writer authority or reopen admission.
+held and sealed-F have no advancing operation. Duplicate E/F acknowledgements,
+wrong owner, phase skipping and stale acknowledgements refuse without mutation.
+Only the documented read-only D duplicate is permitted, with its unchanged-tip
+test; no duplicate silently repairs a partial write.
+
+At most one D, one E and one F acknowledgement record per session. Each closed
+record has exactly stage, receiptRef, predecessorRef, sequence, verifiedHeadSha
+and subjectDigest; stage fixes the permitted phase and owner. References and
+digests retain the named refinements. Records are derived from the genuine
+captured owner document and verified reread, not caller summaries. Store owned
+frozen reference/digest records, not arbitrary raw ReceiptDocuments in the shared
+registry. Owners may retain only the bounded appropriate document content needed
+for their checks under the existing 1-MiB document/16-MiB aggregate limit; never
+retain raw review output, prompts or telemetry bodies in acknowledgement records.
+Acknowledgement proves the specific owner write/custody, not independent merge,
+CI or Jira authentication. P3B requires the upstream closure authority separately.
 
 Before writing, verification re-reads bounded files, validates every document and
 the entire contiguous sequence from genesis, filename/document agreement, unique
@@ -193,8 +243,8 @@ capacity evidence; boundary and one-over tests are required.
 | 3 | Real receipt/envelope payload/ref/hash/claimRef/stage/kind/correlation tampering, rewritten stored hash chain, path escape/symlink and stale build/head each refuse. Mutation controls prove every named gate. |
 | 4 | Missing P3 issuer/seal, incomplete denominator, late launch, fake complete record, cloned/session JSON/replayed cross-session capability refuse. Unavailable production intake returns PREREQUISITE_UNAVAILABLE; fixtures cannot activate production. |
 | 5 | Busy/reentrant/concurrent finalization, intervening raw writer, exclusive-create conflict and before/after-write faults hold without duplicate or overwrite; acknowledged duplicate returns only the original verified tip. |
-| 6 | Every numerical limit and one-over, throwing getters/proxies/ports, cycles, nonfinite values and alias expansion return bounded typed results. No production network, human approval or provider calls in offline verification. |
-| 7 | Existing harness/pipeline/human-gate and receipts behavior remains valid; P3B composes the actual final receipt through real E/F with no downstream dependency cycle. Separate implementation acceptance and production activation are reported honestly. |
+| 6 | Every numerical limit and one-over, throwing getters/proxies/ports, cycles, nonfinite values and alias expansion return bounded typed results. Authorized delegated actor is accurately attributed; forged actor/authority refuses and no new human-only gate appears. No production approval/network/provider effects in offline verification. |
+| 7 | Existing harness/pipeline/human-gate and receipts behavior remains valid. P3A independently tests final D and the complete registry interface using labelled owner-capability controls: wrong issuer, phase skipping, stale/duplicate acknowledgements, bounded records, held/terminal states and finalizer duplicate after E/F refusal. Synchronous finalizer returns a non-Promise after completed drain/publication. P3B/combined acceptance owns real P3A->E->F composition; it is not a prerequisite for accepting P3A. |
 
 ## Out of Scope
 
