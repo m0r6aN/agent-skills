@@ -46,3 +46,44 @@ then receive coordinator release before edits. Require RED/GREEN evidence,
 complete AC matrix, affected package checks and a frozen local commit. Two
 independent final frontier approvals plus integration/remote CI remain required.
 No provider calls, configuration effects, savings or live execution are claimed.
+## Second review round: 287d9fc held for required coverage and lint
+
+Both independent frontier reviewers REQUEST CHANGES on
+287d9fcfd4fd08ebba93c4829e59dc1e2b2cd925. They independently close the two runtime
+defects: byte-containing ancestor aliases no longer escape, and a131073-byte leaf
+reaches the catalog owner without spending ordinary nodes. Do not undo those fixes.
+No further runtime authority bypass was identified. Required remaining work:
+
+1. AC5 must use actual HRO validateMappingProposal and validateConsumerCompatibility
+   successful result objects, not PMC validateProviderBindingPolicyV1 and
+   projectProviderBindingsV1 mislabeled P1a/P1b. Construct real HRO successes using
+   existing fixtures/exports and assert success before substitution. Include both
+   actual HRO results in every inappropriate envelope slot alongside the existing
+   fabricated projection, actual owner selection and serialized permit cases.
+   No JSON recast or label can stand in for the required real result.
+2. Extend the retained-producer-to-bridge-to-real-resolver chain beyond success:
+   named refusals, genuinely incomplete producer scope, exact preserved retained
+   provenance/refusal arrays/policy values. Add an adapter-valid subset that
+   actually reaches the intended resolver lane-coverage refusal. The current
+   shortened identities case stops at adapter SCOPE_REFUSED and does not test
+   that later gate. Label synthetic dynamic authority claims truthfully.
+3. AC6: genuine class extending Uint8Array, not a plain instance with iterator
+   override; mutation DURING capture, not only after return; independent invalid
+   ordinary shapes; exact at/over ordinary depth/node/per-string/aggregate bounds
+   and expanded aliases under the actual20/131072/4096/2097152 contract. Extend
+   real-export subprocess call instrumentation so capture-boundary refusals prove
+   zero projection/catalog calls and each later refusal proves no later call.
+   Tests must assert the intended refusal boundary, not merely any refusal.
+4. Full hybrid-routing package biome check . currently exits1: three formatting
+   errors and four warnings across source and both newtestfiles. Format/fix only
+   authorized files and rerun the actual full package lint. Earlier 'clean' report
+   is superseded by independent nativeexit evidence. Do not suppress lint rules.
+
+Fresh Step0: inspect this exact frozen head, actual exports/fixtures and all four
+remaining groups; provide a compact case-to-assertion plan, then STOP with no edits.
+After root release, existing four-file runtime/test/index write envelope applies;
+no new files/manifest/dependency/owner changes. Index needs no artificial edit.
+Finish each required assertion, then full hybrid/routing tests/typecheck/lint,
+actual native exit checks, scope/diff verification and local frozen commit. Report
+commands accurately; test counts alone do not establish acceptance-criterion
+coverage. Both final independent reviews must be renewed before integration.
