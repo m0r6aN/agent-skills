@@ -378,3 +378,19 @@ any of the remaining human gates, or as "charter implemented", the session will
 trap in a stop → feedback → stop cycle. Agent-verifiable end states are of the
 form **"builder evidence completion claim pending"** or **"stop-report written
 and loop stopped awaiting <named gate>"**.
+
+## Scoped HRO prerequisite closure — 2026-09-26
+
+The user's explicit HRO prerequisite delegation authorizes this bounded sequence
+despite earlier historical gate holds; unrelated PMC queues are not transferred.
+PMC-P1a merged via PR55 as 6ff38a3ba7c3a991024237d27eec21a48e132f25 after two
+independent final approvals, independent integration verification (471 routing
+tests, typecheck and lint) and complete green remote twenty-package CI. The spec
+is moved to done with its original contract preserved. Seven legacy schemas and
+all previous public APIs remain unchanged. This is a static evidence contract,
+not an activation or full PMC completion record.
+
+Shared integration order remains PMC-P1a, RCM-P1A wrapper, then lossless PMC-P1b
+projection and source-producer additions on the accepted base. HRO owns only the
+necessary prerequisite coordination under the recorded delegation. Original
+reviewed branches are retained; there is no destructive workspace cleanup.
