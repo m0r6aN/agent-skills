@@ -236,17 +236,26 @@ test('hostile acknowledgement and seal accessors become typed refusals', () => {
     denominatorDigest: '1'.repeat(64),
     coverage: 'complete' as const,
   }
-  const hostileSeal = new Proxy(sealTarget, {
+  Object.defineProperty(sealTarget, 'coverage', {
+    enumerable: true,
     get: () => {
       throw new Error('getter')
     },
   })
+  const hostileSeal = new Proxy(sealTarget, {})
   assert.deepEqual(result.publication.registerSealV1(publication.value, hostileSeal), {
     ok: false,
     code: 'EVIDENCE_REFUSED',
   })
 
-  const seal: SealV1 = { ...sealTarget }
+  const seal: SealV1 = {
+    workflowId: input.workflowId,
+    correlationId: input.correlationId,
+    verifiedHeadSha: input.verifiedHeadSha,
+    telemetryReceiptRef: ref(7),
+    denominatorDigest: '1'.repeat(64),
+    coverage: 'complete',
+  }
   assert.deepEqual(result.publication.registerSealV1(publication.value, seal), {
     ok: true,
     value: null,
@@ -255,11 +264,14 @@ test('hostile acknowledgement and seal accessors become typed refusals', () => {
   const verification = result.verification.beginWriterV1()
   assert.equal(verification.ok, true)
   if (!verification.ok) return
-  const hostileAck = new Proxy(ack('D', 8, ref(7)), {
+  const ackTarget = ack('D', 8, ref(7))
+  Object.defineProperty(ackTarget, 'stage', {
+    enumerable: true,
     get: () => {
       throw new Error('getter')
     },
   })
+  const hostileAck = new Proxy(ackTarget, {})
   assert.deepEqual(result.verification.acknowledgeFinalDV1(verification.value, hostileAck), {
     ok: false,
     code: 'EVIDENCE_REFUSED',

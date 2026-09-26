@@ -144,7 +144,10 @@ interface CaptureState {
   strings: number
   active: Set<object>
   captured: Map<object, unknown>
-  footprints: Map<object, { readonly nodes: number; readonly strings: number }>
+  footprints: Map<
+    object,
+    { readonly nodes: number; readonly strings: number; readonly relativeDepth: number }
+  >
 }
 
 function refuse<T>(code: CodeV1): ResultV1<T> {
@@ -187,6 +190,7 @@ function copyOwned(value: unknown, state: CaptureState, depth: number): unknown 
   if (previous !== undefined) {
     const footprint = state.footprints.get(value)
     if (footprint === undefined) throw new CaptureFailure()
+    if (depth + footprint.relativeDepth > MAX_DEPTH) throw new CaptureFailure()
     state.remaining -= footprint.nodes
     state.strings += footprint.strings
     if (state.remaining < 0 || state.strings > MAX_TOTAL_STRING) throw new CaptureFailure()
@@ -196,6 +200,7 @@ function copyOwned(value: unknown, state: CaptureState, depth: number): unknown 
   const startingStrings = state.strings
   state.remaining -= 1
   if (state.remaining < 0) throw new CaptureFailure()
+  let relativeDepth = 0
   state.active.add(value)
   try {
     const array = Array.isArray(value)
@@ -217,6 +222,7 @@ function copyOwned(value: unknown, state: CaptureState, depth: number): unknown 
       ) {
         throw new CaptureFailure()
       }
+      if (state.remaining < lengthDescriptor.value) throw new CaptureFailure()
       const keys = Reflect.ownKeys(value)
       if (keys.length !== lengthDescriptor.value + 1) throw new CaptureFailure()
       state.remaining -= lengthDescriptor.value + keys.length
@@ -234,8 +240,16 @@ function copyOwned(value: unknown, state: CaptureState, depth: number): unknown 
         if (key.length > MAX_STRING) throw new CaptureFailure()
         state.strings += key.length
         if (state.strings > MAX_TOTAL_STRING) throw new CaptureFailure()
+        const child = copyOwned(descriptor.value, state, depth + 1)
+        if (descriptor.value !== null && typeof descriptor.value === 'object') {
+          const childFootprint = state.footprints.get(descriptor.value)
+          if (childFootprint !== undefined)
+            relativeDepth = Math.max(relativeDepth, childFootprint.relativeDepth + 1)
+        } else {
+          relativeDepth = Math.max(relativeDepth, 1)
+        }
         Object.defineProperty(output, key, {
-          value: copyOwned(descriptor.value, state, depth + 1),
+          value: child,
           enumerable: true,
           writable: true,
           configurable: true,
@@ -244,6 +258,7 @@ function copyOwned(value: unknown, state: CaptureState, depth: number): unknown 
       state.footprints.set(value, {
         nodes: startingRemaining - state.remaining,
         strings: state.strings - startingStrings,
+        relativeDepth,
       })
       return output
     } else {
@@ -260,8 +275,16 @@ function copyOwned(value: unknown, state: CaptureState, depth: number): unknown 
         if (key.length > MAX_STRING) throw new CaptureFailure()
         state.strings += key.length
         if (state.strings > MAX_TOTAL_STRING) throw new CaptureFailure()
+        const child = copyOwned(descriptor.value, state, depth + 1)
+        if (descriptor.value !== null && typeof descriptor.value === 'object') {
+          const childFootprint = state.footprints.get(descriptor.value)
+          if (childFootprint !== undefined)
+            relativeDepth = Math.max(relativeDepth, childFootprint.relativeDepth + 1)
+        } else {
+          relativeDepth = Math.max(relativeDepth, 1)
+        }
         Object.defineProperty(output, key, {
-          value: copyOwned(descriptor.value, state, depth + 1),
+          value: child,
           enumerable: true,
           writable: true,
           configurable: true,
@@ -270,6 +293,7 @@ function copyOwned(value: unknown, state: CaptureState, depth: number): unknown 
       state.footprints.set(value, {
         nodes: startingRemaining - state.remaining,
         strings: state.strings - startingStrings,
+        relativeDepth,
       })
       return output
     }
@@ -294,10 +318,16 @@ function capture(value: unknown): unknown {
 
 function exactRecord(value: unknown, keys: readonly string[]): Record<string, unknown> | null {
   if (typeof value !== 'object' || value === null || Array.isArray(value)) return null
-  const record = value as Record<string, unknown>
-  const ownKeys = Object.keys(record)
-  if (ownKeys.length !== keys.length || keys.some((key) => !Object.hasOwn(record, key))) return null
-  return record
+  const descriptors = Object.getOwnPropertyDescriptors(value)
+  const ownKeys = Object.keys(descriptors)
+  if (ownKeys.length !== keys.length) return null
+  const output: Record<string, unknown> = Object.create(null)
+  for (const key of keys) {
+    const descriptor = descriptors[key]
+    if (descriptor === undefined || !('value' in descriptor) || !descriptor.enumerable) return null
+    output[key] = descriptor.value
+  }
+  return output
 }
 
 function boundedString(value: unknown, name: string): string | null {

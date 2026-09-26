@@ -12,7 +12,7 @@ import {
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { test } from 'node:test'
-import { canonicalize, sha256Hex } from '../../approval/src/index.js'
+import { canonicalize, type JsonValue, sha256Hex } from '../../approval/src/index.js'
 import type { RegistrationV1 } from '../../receipts/src/measured-workflow-internal.js'
 import { recordBuildResult } from '../src/harness/index.js'
 import {
@@ -162,6 +162,41 @@ function mintStageC(
   return { ...dispatch, correlation }
 }
 
+function rewriteChain(
+  fixture: ReturnType<typeof makeFixture>,
+  mutate: (document: Record<string, unknown>, index: number) => void,
+): void {
+  const directory = join(fixture.repoRoot, 'docs', 'receipts', fixture.workflowId)
+  let previousHash: string | null = null
+  for (const [index, name] of readdirSync(directory)
+    .filter((item) => /^\d{6}-/.test(item))
+    .sort()
+    .entries()) {
+    const path = join(directory, name)
+    const document = JSON.parse(readFileSync(path, 'utf8')) as Record<string, unknown>
+    mutate(document, index)
+    document.prevHash = previousHash
+    delete document.hash
+    document.hash = sha256Hex(canonicalize(document as unknown as JsonValue))
+    writeFileSync(path, JSON.stringify(document))
+    previousHash = String(document.hash)
+    if (document.stage === 'C') {
+      const ref = fixture.input.registration.dispatchReceiptRef as { hash: string }
+      ref.hash = String(document.hash)
+    }
+    if (document.stage === 'D') {
+      const ref = fixture.input.registration.buildReceiptRef as { hash: string }
+      ref.hash = String(document.hash)
+    }
+  }
+}
+
+function nestedSubject(depth: number): Record<string, unknown> {
+  let value: Record<string, unknown> = { leaf: 'x' }
+  for (let index = 0; index < depth; index++) value = { child: value }
+  return value
+}
+
 test('production constructor is an unread/refusal boundary', () => {
   let reads = 0
   const hostile = new Proxy(
@@ -252,6 +287,130 @@ test('offline input binds the supplied BuildResult to the Stage-D bridge receipt
       buildResult: { ...fixture.input.buildResult, branch: 'feat/forged' },
     })
     assert.deepEqual(mismatched, { ok: false, code: 'PREREQUISITE_UNAVAILABLE' })
+  } finally {
+    rmSync(fixture.repoRoot, { recursive: true, force: true })
+  }
+})
+
+test('initial DispatchOrder parcel tampering is refused before owner execution', () => {
+  const fixture = makeFixture()
+  try {
+    rewriteChain(fixture, (document, index) => {
+      if (index === 2) document.subject = { parcelRef: 'KONE-999' }
+    })
+    assert.deepEqual(createOfflineMeasuredVerificationV1(fixture.input), {
+      ok: false,
+      code: 'PREREQUISITE_UNAVAILABLE',
+    })
+  } finally {
+    rmSync(fixture.repoRoot, { recursive: true, force: true })
+  }
+})
+
+test('structured receipt depth and string one-over bounds refuse at construction', () => {
+  for (const mutation of [
+    (document: Record<string, unknown>) => {
+      document.subject = nestedSubject(40)
+    },
+    (document: Record<string, unknown>) => {
+      document.subject = { padding: 'x'.repeat(4097) }
+    },
+  ]) {
+    const fixture = makeFixture()
+    try {
+      rewriteChain(fixture, (document, index) => {
+        if (index === 0) mutation(document)
+      })
+      assert.deepEqual(createOfflineMeasuredVerificationV1(fixture.input), {
+        ok: false,
+        code: 'PREREQUISITE_UNAVAILABLE',
+      })
+    } finally {
+      rmSync(fixture.repoRoot, { recursive: true, force: true })
+    }
+  }
+})
+
+test('duplicate harness claim after drain is refused before measurement publication', async () => {
+  const fixture = makeFixture()
+  try {
+    const created = createOfflineMeasuredVerificationV1(fixture.input)
+    assert.equal(created.ok, true)
+    if (!created.ok) return
+    assert.deepEqual(await created.value.runVerificationV1(), { ok: true, value: null })
+    assert.deepEqual(created.value.closeAdmissionV1(), { ok: true, value: null })
+    assert.deepEqual(await created.value.drainV1(), { ok: true, value: null })
+    const directory = join(fixture.repoRoot, 'docs', 'receipts', fixture.workflowId)
+    const documents = readdirSync(directory)
+      .filter((name) => /^\d{6}-/.test(name))
+      .sort()
+      .map(
+        (name) =>
+          JSON.parse(readFileSync(join(directory, name), 'utf8')) as Record<string, unknown>,
+      )
+    const original = documents.find((document) => document.subjectKind === 'HarnessClaimResult')
+    const tip = documents.at(-1)
+    assert.ok(original)
+    assert.ok(tip)
+    if (original === undefined || tip === undefined) return
+    const duplicate: Record<string, unknown> = {
+      ...original,
+      sequence: Number(tip.sequence) + 1,
+      prevHash: tip.hash,
+    }
+    delete duplicate.hash
+    duplicate.hash = sha256Hex(canonicalize(duplicate as unknown as JsonValue))
+    const duplicateSequence = Number(duplicate.sequence)
+    writeFileSync(
+      join(directory, `${String(duplicateSequence).padStart(6, '0')}-D-harness-claim-result.json`),
+      JSON.stringify(duplicate),
+    )
+    assert.deepEqual(created.value.publishFixtureMeasurementV1(), {
+      ok: false,
+      code: 'WRITE_REFUSED',
+    })
+  } finally {
+    rmSync(fixture.repoRoot, { recursive: true, force: true })
+  }
+})
+
+test('oversized verdict envelope is bounded before final-D reads it', async () => {
+  const fixture = makeFixture()
+  try {
+    const created = createOfflineMeasuredVerificationV1(fixture.input)
+    assert.equal(created.ok, true)
+    if (!created.ok) return
+    assert.deepEqual(await created.value.runVerificationV1(), { ok: true, value: null })
+    const envelope = join(
+      fixture.repoRoot,
+      'docs',
+      'receipts',
+      fixture.workflowId,
+      'verification-verdict.envelope.json',
+    )
+    writeFileSync(envelope, `${readFileSync(envelope, 'utf8')}${' '.repeat(1024 * 1024 + 1)}`)
+    assert.deepEqual(created.value.closeAdmissionV1(), { ok: true, value: null })
+    assert.deepEqual(await created.value.drainV1(), { ok: true, value: null })
+    assert.equal(created.value.publishFixtureMeasurementV1().ok, true)
+    assert.deepEqual(finalizeMeasuredStageDV1(created.value.session), {
+      ok: false,
+      code: 'CHAIN_REFUSED',
+    })
+  } finally {
+    rmSync(fixture.repoRoot, { recursive: true, force: true })
+  }
+})
+
+test('capture alias expansion charges shared bounded arrays', () => {
+  const fixture = makeFixture()
+  try {
+    const shared = Array.from({ length: 256 }, () => 'x'.repeat(4096))
+    const refused = createOfflineMeasuredVerificationV1({
+      ...fixture.input,
+      order: { ...fixture.input.order, injectedSkills: shared },
+      buildResult: { ...fixture.input.buildResult, commitShas: shared },
+    })
+    assert.deepEqual(refused, { ok: false, code: 'PREREQUISITE_UNAVAILABLE' })
   } finally {
     rmSync(fixture.repoRoot, { recursive: true, force: true })
   }

@@ -2,7 +2,7 @@ import {
   existsSync,
   lstatSync,
   mkdirSync,
-  readdirSync,
+  opendirSync,
   readFileSync,
   statSync,
   writeFileSync,
@@ -167,6 +167,7 @@ interface OwnedContext {
   findingOffsets: Map<string, number>
   evidence: Map<string, EvidenceDigestV1>
   verdictEnvelopeDigest: string | null
+  receiptSnapshot: Set<string> | null
 }
 
 const contexts = new WeakMap<object, OwnedContext>()
@@ -177,6 +178,7 @@ const MAX_TOTAL_STRING = 2 * 1024 * 1024
 const MAX_RECEIPTS = 1024
 const MAX_RECEIPT_BYTES = 1024 * 1024
 const MAX_CHAIN_BYTES = 16 * 1024 * 1024
+const MAX_DIRECTORY_ENTRIES = 4096
 const REF_KEYS = ['hash', 'locator'] as const
 const FINAL_SUBJECT_KEYS = [
   'version',
@@ -210,13 +212,17 @@ interface CaptureState {
   strings: number
   active: Set<object>
   copies: Map<object, unknown>
-  footprints: Map<object, { readonly nodes: number; readonly strings: number }>
+  footprints: Map<
+    object,
+    { readonly nodes: number; readonly strings: number; readonly relativeDepth: number }
+  >
 }
 
 function own(value: unknown, state: CaptureState, depth = 0): unknown {
   if (depth > MAX_DEPTH) throw new Refusal()
   if (typeof value === 'string') {
     state.nodes += 1
+    if (state.nodes > MAX_NODES) throw new Refusal()
     state.strings += value.length
     if (value.length > MAX_STRING || state.strings > MAX_TOTAL_STRING) throw new Refusal()
     return value
@@ -238,15 +244,17 @@ function own(value: unknown, state: CaptureState, depth = 0): unknown {
   if (prior !== undefined) {
     const footprint = state.footprints.get(value)
     if (footprint === undefined) throw new Refusal()
+    if (depth + footprint.relativeDepth > MAX_DEPTH) throw new Refusal()
     state.nodes += footprint.nodes
     state.strings += footprint.strings
     if (state.nodes > MAX_NODES || state.strings > MAX_TOTAL_STRING) throw new Refusal()
     return prior
   }
+  const startingNodes = state.nodes
   state.nodes += 1
   if (state.nodes > MAX_NODES) throw new Refusal()
-  const startingNodes = state.nodes
   const startingStrings = state.strings
+  let relativeDepth = 0
   state.active.add(value)
   try {
     const prototype = Object.getPrototypeOf(value)
@@ -270,6 +278,7 @@ function own(value: unknown, state: CaptureState, depth = 0): unknown {
         throw new Refusal()
       length = lengthDescriptor.value
     }
+    if (array && state.nodes + length > MAX_NODES) throw new Refusal()
     const keys = Reflect.ownKeys(value)
     if (array && keys.length !== length + 1) throw new Refusal()
     state.nodes += keys.length
@@ -284,8 +293,16 @@ function own(value: unknown, state: CaptureState, depth = 0): unknown {
         throw new Refusal()
       state.strings += key.length
       if (key.length > MAX_STRING || state.strings > MAX_TOTAL_STRING) throw new Refusal()
+      const child = own(descriptor.value, state, depth + 1)
+      if (descriptor.value !== null && typeof descriptor.value === 'object') {
+        const childFootprint = state.footprints.get(descriptor.value)
+        if (childFootprint !== undefined)
+          relativeDepth = Math.max(relativeDepth, childFootprint.relativeDepth + 1)
+      } else {
+        relativeDepth = Math.max(relativeDepth, 1)
+      }
       Object.defineProperty(output, key, {
-        value: own(descriptor.value, state, depth + 1),
+        value: child,
         enumerable: true,
         writable: true,
         configurable: true,
@@ -294,6 +311,7 @@ function own(value: unknown, state: CaptureState, depth = 0): unknown {
     state.footprints.set(value, {
       nodes: state.nodes - startingNodes,
       strings: state.strings - startingStrings,
+      relativeDepth,
     })
     return output
   } finally {
@@ -667,27 +685,269 @@ function conforming(name: string): boolean {
   return true
 }
 
+interface JsonBudget {
+  nodes: number
+  strings: number
+}
+
+function boundedJsonParse(text: string, budget: JsonBudget): unknown {
+  let index = 0
+
+  const failJson = (): never => {
+    throw new Refusal()
+  }
+  const chargeNode = (): void => {
+    budget.nodes += 1
+    if (budget.nodes > MAX_NODES) throw new Refusal()
+  }
+  const chargeString = (value: string): void => {
+    if (value.length > MAX_STRING) throw new Refusal()
+    budget.strings += value.length
+    if (budget.strings > MAX_TOTAL_STRING) throw new Refusal()
+  }
+  const whitespace = (code: number): boolean =>
+    code === 0x20 || code === 0x09 || code === 0x0a || code === 0x0d
+  const skip = (): void => {
+    while (index < text.length && whitespace(text.charCodeAt(index))) index += 1
+  }
+  const hex = (code: number): number => {
+    if (code >= 48 && code <= 57) return code - 48
+    if (code >= 65 && code <= 70) return code - 55
+    if (code >= 97 && code <= 102) return code - 87
+    return -1
+  }
+  const parseString = (): string => {
+    if (text.charCodeAt(index) !== 34) return failJson()
+    index += 1
+    let output = ''
+    while (index < text.length) {
+      const code = text.charCodeAt(index)
+      index += 1
+      if (code === 34) {
+        chargeString(output)
+        return output
+      }
+      if (code < 0x20) return failJson()
+      if (code !== 92) {
+        output += String.fromCharCode(code)
+      } else {
+        if (index >= text.length) return failJson()
+        const escapeCode = text.charCodeAt(index)
+        index += 1
+        const escapes: Record<number, string> = {
+          34: '"',
+          47: '/',
+          92: '\\',
+          98: '\b',
+          102: '\f',
+          110: '\n',
+          114: '\r',
+          116: '\t',
+        }
+        if (escapes[escapeCode] !== undefined) {
+          output += escapes[escapeCode]
+        } else if (escapeCode === 117) {
+          if (index + 4 > text.length) return failJson()
+          let value = 0
+          for (let digit = 0; digit < 4; digit++) {
+            const part = hex(text.charCodeAt(index + digit))
+            if (part < 0) return failJson()
+            value = value * 16 + part
+          }
+          index += 4
+          output += String.fromCharCode(value)
+        } else {
+          return failJson()
+        }
+      }
+      if (output.length > MAX_STRING) throw new Refusal()
+    }
+    return failJson()
+  }
+  const parseNumber = (): number => {
+    const start = index
+    while (
+      index < text.length &&
+      !whitespace(text.charCodeAt(index)) &&
+      !',]}'.includes(text[index] as string)
+    ) {
+      index += 1
+      if (index - start > 64) throw new Refusal()
+    }
+    const token = text.slice(start, index)
+    const isDigit = (value: string | undefined): boolean =>
+      value !== undefined && value >= '0' && value <= '9'
+    let cursor = 0
+    if (token[cursor] === '-') cursor += 1
+    if (token[cursor] === '0') {
+      cursor += 1
+      if (isDigit(token[cursor])) return failJson()
+    } else {
+      if (!isDigit(token[cursor]) || token[cursor] === '0') return failJson()
+      while (isDigit(token[cursor])) cursor += 1
+    }
+    if (token[cursor] === '.') {
+      cursor += 1
+      const fractionStart = cursor
+      while (isDigit(token[cursor])) cursor += 1
+      if (cursor === fractionStart) return failJson()
+    }
+    if (token[cursor] === 'e' || token[cursor] === 'E') {
+      cursor += 1
+      if (token[cursor] === '+' || token[cursor] === '-') cursor += 1
+      const exponentStart = cursor
+      while (isDigit(token[cursor])) cursor += 1
+      if (cursor === exponentStart) return failJson()
+    }
+    if (cursor !== token.length) return failJson()
+    const value = Number(token)
+    if (!Number.isFinite(value)) return failJson()
+    chargeNode()
+    return value
+  }
+  const parseValue = (depth: number): unknown => {
+    if (depth > MAX_DEPTH) throw new Refusal()
+    skip()
+    const code = text.charCodeAt(index)
+    if (code === 34) {
+      chargeNode()
+      return parseString()
+    }
+    if (code === 123) {
+      chargeNode()
+      index += 1
+      const output: Record<string, unknown> = Object.create(null)
+      let count = 0
+      skip()
+      if (text.charCodeAt(index) === 125) {
+        index += 1
+        return output
+      }
+      while (true) {
+        if (++count > 256) throw new Refusal()
+        skip()
+        const key = parseString()
+        chargeNode()
+        if (Object.hasOwn(output, key)) throw new Refusal()
+        skip()
+        if (text.charCodeAt(index) !== 58) return failJson()
+        index += 1
+        output[key] = parseValue(depth + 1)
+        skip()
+        if (text.charCodeAt(index) === 125) {
+          index += 1
+          return output
+        }
+        if (text.charCodeAt(index) !== 44) return failJson()
+        index += 1
+      }
+    }
+    if (code === 91) {
+      chargeNode()
+      index += 1
+      const output: unknown[] = []
+      skip()
+      if (text.charCodeAt(index) === 93) {
+        index += 1
+        return output
+      }
+      while (true) {
+        if (output.length >= 256) throw new Refusal()
+        output.push(parseValue(depth + 1))
+        skip()
+        if (text.charCodeAt(index) === 93) {
+          index += 1
+          return output
+        }
+        if (text.charCodeAt(index) !== 44) return failJson()
+        index += 1
+      }
+    }
+    if (text.startsWith('true', index)) {
+      index += 4
+      chargeNode()
+      return true
+    }
+    if (text.startsWith('false', index)) {
+      index += 5
+      chargeNode()
+      return false
+    }
+    if (text.startsWith('null', index)) {
+      index += 4
+      chargeNode()
+      return null
+    }
+    return parseNumber()
+  }
+
+  const value = parseValue(0)
+  skip()
+  if (index !== text.length) throw new Refusal()
+  return value
+}
+
+function readBoundedJsonFile(
+  pathValue: string,
+  budget = { nodes: 0, strings: 0 },
+): {
+  readonly bytes: Buffer
+  readonly value: unknown
+} {
+  const link = lstatSync(pathValue)
+  if (link.isSymbolicLink() || !link.isFile()) throw new Refusal()
+  const size = statSync(pathValue, { bigint: true }).size
+  if (size > BigInt(MAX_RECEIPT_BYTES)) throw new Refusal()
+  const bytes = readFileSync(pathValue)
+  if (bytes.length > MAX_RECEIPT_BYTES) throw new Refusal()
+  return { bytes, value: boundedJsonParse(bytes.toString('utf8'), budget) }
+}
+
+function receiptNames(directory: string): string[] {
+  const directoryStat = lstatSync(directory)
+  if (directoryStat.isSymbolicLink() || !directoryStat.isDirectory()) throw new Refusal()
+  const names: string[] = []
+  const handle = opendirSync(directory)
+  let entries = 0
+  try {
+    while (true) {
+      const entry = handle.readSync()
+      if (entry === null) break
+      if (++entries > MAX_DIRECTORY_ENTRIES) throw new Refusal()
+      if (entry.isSymbolicLink()) throw new Refusal()
+      if (conforming(entry.name)) {
+        if (!entry.isFile()) throw new Refusal()
+        names.push(entry.name)
+      }
+    }
+  } finally {
+    handle.closeSync()
+  }
+  return names.sort()
+}
+
 function readRows(repoRoot: string, workflowId: string): ReceiptRow[] {
   const directory = join(repoRoot, 'docs', 'receipts', workflowId)
-  const names = readdirSync(directory).filter(conforming).sort()
+  const names = receiptNames(directory)
   if (names.length > MAX_RECEIPTS) throw new Refusal()
   let aggregateBytes = 0n
   const sizes = names.map((name) => {
     const absolutePath = join(directory, name)
+    const link = lstatSync(absolutePath)
+    if (link.isSymbolicLink() || !link.isFile()) throw new Refusal()
     const bytes = statSync(absolutePath, { bigint: true }).size
     if (bytes > BigInt(MAX_RECEIPT_BYTES)) throw new Refusal()
     aggregateBytes += bytes
     if (aggregateBytes > BigInt(MAX_CHAIN_BYTES)) throw new Refusal()
     return { name, absolutePath }
   })
-  const rows = sizes.map(({ name, absolutePath }) =>
-    rowFor(
-      repoRoot,
-      workflowId,
-      name,
-      JSON.parse(readFileSync(absolutePath, 'utf8')) as Record<string, unknown>,
-    ),
-  )
+  const budget = { nodes: 0, strings: 0 }
+  const rows = sizes.map(({ name, absolutePath }) => {
+    const bounded = readBoundedJsonFile(absolutePath, budget)
+    if (typeof bounded.value !== 'object' || bounded.value === null || Array.isArray(bounded.value))
+      throw new Refusal()
+    return rowFor(repoRoot, workflowId, name, bounded.value as Record<string, unknown>)
+  })
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i] as ReceiptRow
     const result = validateReceiptDocument(row.document)
@@ -761,7 +1021,8 @@ function verifyCapturedEvidence(ctx: OwnedContext): void {
     ctx.input.registration.workflowId,
     'verification-verdict.envelope.json',
   )
-  if (sha256Hex(readFileSync(envelopePath)) !== ctx.verdictEnvelopeDigest) throw new Refusal()
+  const envelope = readBoundedJsonFile(envelopePath)
+  if (sha256Hex(envelope.bytes) !== ctx.verdictEnvelopeDigest) throw new Refusal()
 }
 
 function verifyInitial(
@@ -783,12 +1044,33 @@ function verifyInitial(
   const build = rows.find((row) =>
     refMatches(row, input.registration.buildReceiptRef),
   ) as ReceiptRow
-  if (!['A', 'B', 'C'].every((stage, index) => rows[index]?.document.stage === stage))
-    throw new Refusal()
+  const initialKinds = ['Intake', 'Plan', 'DispatchOrder']
+  for (let index = 0; index < initialKinds.length; index++) {
+    const row = rows[index] as ReceiptRow | undefined
+    if (
+      row === undefined ||
+      row.document.kind !== 'stage' ||
+      row.document.claimRef !== null ||
+      row.document.stage !== (['A', 'B', 'C'][index] as string) ||
+      row.document.subjectKind !== initialKinds[index] ||
+      sha256Hex(canonicalize(row.document.subject as JsonValue)) !==
+        sha256Hex(canonicalize({ parcelRef: input.order.parcelRef } as unknown as JsonValue))
+    )
+      throw new Refusal()
+    const correlation = row.document.correlation as Record<string, unknown>
+    if (
+      correlation.workflowId !== input.registration.workflowId ||
+      correlation.correlationId !== input.registration.correlationId
+    )
+      throw new Refusal()
+  }
   if (
     dispatch.document.stage !== 'C' ||
+    dispatch.document.kind !== 'stage' ||
     dispatch.document.sequence !== 2 ||
     build.document.stage !== 'D' ||
+    build.document.kind !== 'claim' ||
+    build.document.claimRef !== 'build-result' ||
     build.document.sequence !== 3 ||
     build.document.subjectKind !== 'BuildResult' ||
     sha256Hex(canonicalize(build.document.subject as JsonValue)) !==
@@ -857,25 +1139,46 @@ function resultOf(
   return fail(errorCode)
 }
 
-function actualClaimRows(ctx: OwnedContext, claims: readonly HarnessClaimResult[]): void {
+function actualClaimRows(ctx: OwnedContext, harness: HarnessResult): void {
   const rows = readRows(ctx.repoRoot, ctx.input.registration.workflowId)
-  for (const claim of claims) {
-    const row = rows.find(
-      (candidate) =>
-        candidate.document.claimRef === claim.claim &&
-        candidate.document.subjectKind === 'HarnessClaimResult',
-    )
+  const claimRows = rows.filter((row) => row.document.subjectKind === 'HarnessClaimResult')
+  if (
+    claimRows.length !== harness.claims.length ||
+    harness.receiptLocators.length !== harness.claims.length ||
+    new Set(harness.receiptLocators).size !== harness.receiptLocators.length
+  )
+    throw new Refusal()
+  for (let index = 0; index < harness.claims.length; index++) {
+    const claim = harness.claims[index] as HarnessClaimResult
+    const locator = harness.receiptLocators[index] as string
+    const row = rows.find((candidate) => candidate.locator === locator)
     if (
       row === undefined ||
       row.document.kind !== 'claim' ||
+      row.document.claimRef !== claim.claim ||
+      row.document.subjectKind !== 'HarnessClaimResult' ||
       JSON.stringify(row.document.subject) !==
         JSON.stringify({ claim: claim.claim, passed: claim.passed, evidence: claim.evidence })
     )
       throw new Refusal()
   }
-  const actual = claims.map((claim) => claim.claim).sort()
+  const actual = claimRows.map((row) => String(row.document.claimRef)).sort()
   const expected = [...ctx.input.expected.claims].sort()
-  if (JSON.stringify(actual) !== JSON.stringify(expected) || claims.some((claim) => !claim.passed))
+  if (
+    JSON.stringify(actual) !== JSON.stringify(expected) ||
+    harness.claims.some((claim) => !claim.passed)
+  )
+    throw new Refusal()
+}
+
+function verifyReceiptSnapshot(ctx: OwnedContext): void {
+  if (ctx.receiptSnapshot === null) throw new Refusal()
+  const rows = readRows(ctx.repoRoot, ctx.input.registration.workflowId)
+  const actual = new Set(rows.map((row) => row.locator))
+  if (
+    actual.size !== ctx.receiptSnapshot.size ||
+    [...actual].some((locator) => !ctx.receiptSnapshot?.has(locator))
+  )
     throw new Refusal()
 }
 
@@ -957,7 +1260,8 @@ async function executeVerification(
       repoRoot: ctx.repoRoot,
       pluginRoot: ctx.pluginRoot,
     })
-    actualClaimRows(ctx, harness.claims)
+    actualClaimRows(ctx, harness)
+    for (const locator of harness.receiptLocators) captureEvidence(ctx, locator)
     const findings: AdversarialFinding[] = []
     let findingOffset = 0
     for (const expectedReview of input.expected.reviews) {
@@ -1054,7 +1358,7 @@ async function executeVerification(
     if (verdictRow === undefined) throw new Refusal()
     captureEvidence(ctx, verdictOutput.receiptLocator)
     ctx.verdictEnvelopeDigest = sha256Hex(
-      readFileSync(join(ctx.repoRoot, ...verdictOutput.envelopePath.split('/'))),
+      readBoundedJsonFile(join(ctx.repoRoot, ...verdictOutput.envelopePath.split('/'))).bytes,
     )
     ctx.verdictRef = { hash: String(verdictRow.document.hash), locator: verdictRow.locator }
     assertLiveRoot(ctx)
@@ -1126,6 +1430,11 @@ async function executeVerification(
       throw new Refusal()
     ctx.closureRef = { hash: String(closureRow.document.hash), locator: closureLocator }
     if (ctx.closureRef === null || ctx.verdictRef === null) throw new Refusal()
+    ctx.receiptSnapshot = new Set([
+      ...ctx.initialRows.map((row) => row.locator),
+      ...ctx.evidence.keys(),
+    ])
+    verifyReceiptSnapshot(ctx)
     const completed = ctx.owner.workflow.completeWorkV1(work)
     if (!completed.ok) throw new Refusal()
     const ended = ctx.owner.workflow.endWriterV1(lease)
@@ -1179,6 +1488,7 @@ function buildContext(input: OfflineInputV1): OwnedContext {
     findingOffsets: new Map(),
     evidence: new Map(),
     verdictEnvelopeDigest: null,
+    receiptSnapshot: null,
   }
 }
 
@@ -1211,6 +1521,8 @@ export function createOfflineMeasuredVerificationV1(input: unknown): ResultV1<Of
       if (owned.runPromise === null) return resultOf('PHASE_REFUSED')
       const result = await owned.runPromise
       if (!result.ok) return result
+      assertLiveRoot(owned)
+      verifyReceiptSnapshot(owned)
       const drained = owned.owner.workflow.acknowledgeDrainV1()
       if (!drained.ok) return drained
       owned.drained = true
@@ -1221,6 +1533,8 @@ export function createOfflineMeasuredVerificationV1(input: unknown): ResultV1<Of
       const lease = owned.owner.publication.beginWriterV1()
       if (!lease.ok) return lease
       try {
+        assertLiveRoot(owned)
+        verifyReceiptSnapshot(owned)
         const rows = readRows(owned.repoRoot, owned.input.registration.workflowId)
         const tip = rows[rows.length - 1]
         if (tip === undefined) throw new Refusal()
@@ -1246,6 +1560,9 @@ export function createOfflineMeasuredVerificationV1(input: unknown): ResultV1<Of
         )
         if (measurement === undefined) throw new Refusal()
         const ref = { hash: String(measurement.document.hash), locator }
+        if (owned.receiptSnapshot === null) throw new Refusal()
+        owned.receiptSnapshot.add(locator)
+        verifyReceiptSnapshot(owned)
         const registered: SealV1 = {
           workflowId: owned.input.registration.workflowId,
           correlationId: String(correlation.correlationId),
@@ -1292,6 +1609,7 @@ export function finalizeMeasuredStageDV1(session: object): FinalizationV1 {
       assertLiveRoot(context)
       verifyInitial(context.input, context.repoRoot, context.specAbsolutePath, context.pluginRoot)
       verifyCapturedEvidence(context)
+      verifyReceiptSnapshot(context)
       const rows = readRows(context.repoRoot, context.input.registration.workflowId)
       const tip = rows[rows.length - 1]
       if (
@@ -1320,6 +1638,7 @@ export function finalizeMeasuredStageDV1(session: object): FinalizationV1 {
     assertLiveRoot(context)
     verifyInitial(context.input, context.repoRoot, context.specAbsolutePath, context.pluginRoot)
     verifyCapturedEvidence(context)
+    verifyReceiptSnapshot(context)
     const rows = readRows(context.repoRoot, context.input.registration.workflowId)
     const tip = rows[rows.length - 1]
     if (tip === undefined || !refMatches(tip, context.measurementRef)) throw new Refusal()
@@ -1369,6 +1688,9 @@ export function finalizeMeasuredStageDV1(session: object): FinalizationV1 {
     const row = reread.find((candidate) => candidate.locator === locator)
     if (row === undefined || JSON.stringify(row.document.subject) !== JSON.stringify(subject))
       throw new Refusal()
+    if (context.receiptSnapshot === null) throw new Refusal()
+    context.receiptSnapshot.add(locator)
+    verifyReceiptSnapshot(context)
     const ack: AckV1 = {
       stage: 'D',
       receiptRef: { hash: String(row.document.hash), locator },
