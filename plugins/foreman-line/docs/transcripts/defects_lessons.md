@@ -139,3 +139,9 @@ absence proof).
 `provider`+`id` resolution, the 12+1 / `AC2A_ZERO_MATCH` trap, and
 `AC2A_WRONG_PROVIDER`/`AC2A_PREFIX_ALIAS_REFUSED` diagnostics); the coordinator
 lint should match on the paired key too (PMC-P0).
+
+## RCM-P1 integration — historical fixture identity is not current policy identity
+
+Reconciliation retained the reviewed P0-derived Opus 5 fixture while main policy correctly names Opus 5.5. Replacing historical evidence to match current policy would falsify provenance. Integration review confirmed source/test identity and all399 tests.
+
+**Disposition:** installed in the bounded RCM integration handoff and review mandate; no general policy rule or automatic identifier rewrite is added.

@@ -9,7 +9,7 @@
 - Coordinator workspace: `D:/Repos/agent-skills-worktrees/hro-coordination-20260926`.
 - Coordinator branch: `codex/hro-coordination-20260926`, starting at `1b0f98ab53612017bb5306fa51fcc237308a6c95` (observed origin/main).
 - Original planning records remain preserved in `C:/Users/clint/.codex/worktrees/6d47/agent-skills`; this workspace holds the working coordination copy and copied planning evidence.
-- State: amended P1a/P1b passed schema/body lint on Node 24.19.0; P1a promoted for isolated Luna implementation. PMC A5.4 PR #49 merged at `5d5716d8dc65d05f821bb3c21238ad6c9fda530c` after independent approval and green CI. RCM-P1 reconciliation is underway in a separate worktree.
+- State: amended P1a/P1b passed schema/body lint on Node 24.19.0; P1a promoted for isolated Luna implementation. PMC A5.4 PR #49 merged at `5d5716d8dc65d05f821bb3c21238ad6c9fda530c` after independent approval and green CI. RCM-P1 merged via PR51 as 700beba5e6387a9471ecea7a8757b226930ba925 after independent approval and green CI; all 399 tests passed. PMC-P1a/P1b shapes are independently corrected and source-observation semantics are reviewed; implementation and adapters remain open.
 
 ## Standing authority
 
