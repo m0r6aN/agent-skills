@@ -1,7 +1,7 @@
 ---
 ticket: RCM-HRO
 title: Private authenticated public catalog publication
-status: draft
+status: active
 owner: clinton.morgan
 created: 2026-09-26
 updated: 2026-09-26
@@ -9,6 +9,7 @@ supersedes: null
 superseded_by: null
 risk: critical
 surfaces:
+  - plugins/foreman-line/routing-policy/
   - plugins/foreman-line/docs/
 routing_class: architecture/risk
 permission_profile: builder-architecture
@@ -683,3 +684,28 @@ Do both candidate variants share atomic generation invalidation? Can an incomple
 row enter the absent set or a failed episode quietly reuse old positive data?
 Can equal identity/generation values let one registered scope's absence handle
 verify for another scope under the same owner?
+
+## Checkpoint N implementation release — 2026-09-26
+
+Root accepts the builder's genuine final Step0 atdd0425852c0b7d5a2af9660aa1fe992c27da5599.
+Amended design8dca233 has two independent approvals and delegated ratification.
+Exactly the four checkpoint N source/test/fixture/report paths above are released;
+this supersedes prior docs-only wording solely for checkpoint N. Checkpoint P and
+all production acquisition/activation remain unreleased.
+
+Module-local exports are MaterializerInputV1, MaterializerInventoryRowV1,
+MaterializerRefusalCodeV1, MaterializerResultV1 and
+materializePublicModelResponseV1(input:unknown):MaterializerResultV1. They implement
+the existing reviewed closed unions and actual owner types; no barrel expansion.
+Use explicit UTF-8 parser mode and shared pure price/effort helpers while preserving
+legacy default UTF-16 behavior, retained v2 none-to-off mapping, old public API and
+byte-pinned canonical outputs. No copied reader, price arithmetic or fabricated
+historical validation objects. Literal independently authored expected bytes,
+source references, rates, effort maps and exact full scopes precede code.
+
+Preserve genuine RED/GREEN, full routing regression/typecheck/lint and actual
+reader/adapter compatibility plus hostile/limit/refusal controls. No dependencies,
+network/provider/Pi/credential/configuration effects. Freeze a clean exact-scope
+source/report commit and stop for two independent source reviews; combined main
+integration and remote checks still precede merge. Fixtures and digests remain
+evidence only, never production custody or live endpoint compatibility.
