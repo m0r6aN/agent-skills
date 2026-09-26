@@ -138,4 +138,3 @@ Drafts:
 The former combined draft was uncommitted and is replaced by these two drafts;
 there is no competing PMC-P1 dispatch spec. This review-fix closure records
 shaping corrections only, not the future implementation review results.
-
