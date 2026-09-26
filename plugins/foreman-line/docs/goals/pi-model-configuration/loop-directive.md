@@ -408,3 +408,13 @@ cleanup. The wrapper confers no authority on caller-declared source evidence.
 PMC-P1b now owns the next shared-file integration. The isolated RCM producer
 may build concurrently but lands after the accepted projection. Live routing,
 provider configuration and paid inference have not been activated.
+## PMC-P1b Stage F closure — 2026-09-26
+
+PR57 merged as60a62b1cccf06e6a23bfe2294beb758799d5e317 after two independent
+approvals of7dce9d5 and complete green remote twenty-package CI at a343ac5.
+Independent evidence includes505 routing/126 dispatch/126 spec-linter tests,
+typecheck/lint, all8 old schemas byte-identical and75 old plus4 new exports.
+The lossless projection spec is moved to done; links are updated. Branches remain
+retained. This remains static evidence, not model activation or HRO completion.
+The next RCM producer integration retains the complete projection contract and
+its own two approvals; PMC-P2A private build continues behind the accepted API.

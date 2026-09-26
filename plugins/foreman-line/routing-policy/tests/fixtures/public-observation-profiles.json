@@ -1,0 +1,7 @@
+{
+  "profileId": "openrouter-conservative-rcm-v1-intersection",
+  "profileVersion": "v2",
+  "sourceEvidenceRef": "plugins/foreman-line/docs/goals/routing-currency-and-merit/source-evidence/pmc-binding-coverage-openrouter-20260926-v4.json",
+  "expectedManifestSha256": "e97f76bb303ac3b19aa8b327695beaf4e0a48c1fa78598d11c468f432f224562",
+  "expectedProjectionSha256": "abb09a4078348433e6ebb9c84b2d7a6fe3f83ff4500977ef2de5ce913a384d96"
+}
