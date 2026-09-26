@@ -422,3 +422,18 @@ change to assert the combined bound, rather than preserving that interpretation.
 This paragraph records the root decision. Runtime repair remains stopped pending
 the builder's genuine read-only repair Step0 and an explicit repair release.
 Two independent final source reviews and combined integration remain required.
+
+## Accepted prerequisite integration and fresh Step0
+
+Checkpoint N is accepted through PR67 main98bf162adef813d8557e22a78d0b904593009173
+(all12 exact-head checks passed). P checkout ce0ad76 contains that main merge and
+N closure4477c0a. Frontier D completed a genuine read-only Step0 at9d3ba8d before
+those ancestry/docs-only merges: no blocking source-contract mismatch. N producer
+blobc9a8be0b9d25f983687a7c3e696093bf8ab8cbbf matches approved3a976f0; reader4806f5b,
+adapter39347c4, Ccontrollerdc2a3c0 and Ctypes92030dd match accepted sources.
+The exact six proposed P source/test/report paths remain unchanged. Root supplied
+19 absent same-package dependency junctions only after lock hash equality with
+E1 donor; no installs or donor writes. Native/shared transport and actual N/reader/
+adapter/C offline composition remain mandatory. P is ready for the next frontier
+builder's actual-source handoff and explicit runtime release; none is implied by
+this readiness record. D is completing the separately authorized transport parcel.
