@@ -10,6 +10,8 @@ superseded_by: null
 risk: elevated
 surfaces:
   - plugins/foreman-line/hybrid-routing/
+  - plugins/foreman-line/contract-readers/
+  - plugins/foreman-line/verification/
   - plugins/foreman-line/docs/goals/hybrid-routing-optimization/
 routing_class: architecture/risk
 permission_profile: builder-architecture
@@ -248,3 +250,42 @@ All unknown thrown values and malformed/thenable results must yield the stated
 typed outcomes without examining unsafe exception properties or prototypes.
 These clarifications resolve Step-0 flags without changing the five-file scope
 or authorizing production behavior.
+
+## Integration amendment: Contract B reader declaration — 2026-09-26
+
+Both independent reviews approve unchanged HRO source 5ea6c7a. Review B also
+approved combined mainline head 9e902a4 after HRO35, routing505, dispatch126,
+typechecks, HRO lint, D19,159 hostile cases,12 additional probes and six mutation
+controls. Full CI runs36256897838/36256895104 separately failed Contract B's
+reader-inventory sweep; all other package check cells passed.
+
+The coordinator rules consumer-compatibility.ts a genuine Contract B additive
+lockstep reader: it repeats the routing-class vocabulary and validates membership.
+Adding a vocabulary member requires changing that local set. Declare it under
+contractB.readers; do not mark it a nonreader, hide its literals or add a runtime
+import to evade the sweep. Consumer production code and its approved tests stay
+unchanged. This is a narrowly scoped integration correction.
+
+Extend Allowed Files solely with:
+- plugins/foreman-line/contract-readers/src/registry-data.ts
+- plugins/foreman-line/contract-readers/tests/touch-set.test.ts
+- plugins/foreman-line/verification/src/d19-audit.ts
+- plugins/foreman-line/docs/goals/hybrid-routing-optimization/hro-p1b-final-acceptance.md
+
+Add the one reader with its explicit additive-lockstep rationale. Preserve both
+contract registries' existing entries and all negative reader rulings. Extend the
+permanent sweep tests with the declaration/rationale and a deletion negative
+control proving that removing this real reader is detected. The D19 registry
+DATA pin must be recomputed from the actual sorted observed literals: exactly
+one additional value (8 to9), new exact digest, unchanged structural predicate.
+Do not broaden the predicate or weaken missing/duplicate/spurious-literal checks.
+No unrelated audit, producer, schema, export or dependency source changes.
+
+Gate2 is granted for this repair under standing authority. Fresh Luna builder
+inspects exact branch/head/spec and stops at Step0; coordinator then releases.
+Workspace hro-p1b-integration-20260926, branchcodex/hro-p1b-integration-20260926.
+Verify Contract B RED then GREEN, contract-readers tests/typecheck/lint, D19,
+mutation-scope-guard regression, verification typecheck/lint and unchanged HRO
+checks. Reuse only absent-target matching-lock dependency junctions. Two
+independent reviews of this declaration/pin repair and green full CI remain
+required; previous source approvals are preserved, not extended to unseen changes.
