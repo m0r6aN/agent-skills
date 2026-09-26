@@ -86,8 +86,10 @@ Both commit through the same per-scope CAS and invalidate all old positive and
 negative handles. An absence candidate retains the full original requested scope
 and the exact nonempty set of all genuinely absent identities, including when
 other rows have facts or missing required facts. It emits no shrunken canonical
-snapshot. Private verifyAbsenceV1 validates exact membership/current generation;
-catalog acquisition on an absence generation holds rather than returning old bytes.
+snapshot. Private verifyAbsenceV1 accepts the registered scope handle and checks
+exact private registration/handle-to-scope membership before generation or absent
+identity membership; equal identity/generation values cannot substitute for scope.
+Catalog acquisition on an absence generation holds rather than returning old bytes.
 
 Incomplete-only operations refuse without a new handle. Other authorized callers
 may still acquire an unexpired prior generation; the failed recovery episode must
@@ -98,3 +100,10 @@ runtime Gate 2 and independent review are still required.
 Repair validation passed: frozen linter, required body, relative links and diff
 whitespace checks. Exactly the same two documents changed; no runtime or endpoint
 activity occurred.
+
+Scope-binding repair adds scope:object to AbsenceInput and an explicit paired
+same-owner A/B test with identical identity/generation: A's handle verifies for A
+and returns SCOPE_REFUSED for B. All other bounds, variant/CAS rules and owner
+contracts remain unchanged. No runtime or provider activity is authorized.
+Scope-binding validation passed the frozen linter, body, local-link and whitespace
+checks with exactly the same two-document envelope.

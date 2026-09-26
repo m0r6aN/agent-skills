@@ -214,9 +214,12 @@ unsupported profiles, successful JSON alone, 404 and failed/partial responses
 never issue an absence handle. P4A may negative-cache only through the installed
 issuer's private verification port, with its original 30-second/256-entry limits.
 
-Private synchronous `verifyAbsenceV1` requires the absence handle, one exact
-identity and expected current generation. It checks issuer identity, current
-variant/generation, unchanged full scope and domain/provenance, identity membership
+Private synchronous `verifyAbsenceV1` requires the registered scope handle, absence
+handle, one exact identity and expected current generation. It first checks issuer
+identity, exact private scope registration and handle-to-scope membership; a
+foreign registered scope returns SCOPE_REFUSED before generation or absence checks.
+Equal identities/generation numbers never substitute for exact scope identity.
+It then checks current variant/generation, unchanged full scope and domain/provenance, identity membership
 in the absent set and current validity. It returns a detached bounded verified
 record or typed refusal; a verified record is evidence for the installed P4A
 consumer, never a transferable capability. Facts/incomplete rows, foreign scope,
@@ -247,7 +250,7 @@ type CatalogRead =
   | {ok:true; canonicalBytes:Uint8Array; expectedSha256:string;
       acceptedSource:AcceptedCatalogSource; provenance:PublicationProvenance}
   | {ok:false; code:ReadCode};
-type AbsenceInput = {handle:object; identity:Identity; expectedGeneration:number};
+type AbsenceInput = {scope:object; handle:object; identity:Identity; expectedGeneration:number};
 type AbsenceRead =
   | {ok:true; identity:Identity; requestedIdentities:readonly Identity[];
       generation:number; provenance:PublicationProvenance}
@@ -360,7 +363,7 @@ remain unchanged; catalog publication alone closes neither.
 | 1 | Retained producer API and actual retained fixtures unchanged; new raw-response version uses real canonical reader/adapter, exact identities/locators/decimal prices, explicit unknowns and no invented historical artifacts. |
 | 2 | Fixed GET capture: task URL/header/adapter substitution, redirects, 401/403/non-200, encoding, malformed/duplicate JSON, truncated stream, deadline and cancellation all refuse with zero credential/inference/config access. Exact bounds and one-over negatives. |
 | 3 | Regenerated artifacts reproduce from retained fresh bytes and installed profile; changed bytes/profile/time/identity fail independently. Hash-only and success-JSON inputs cannot authenticate source. |
-| 4 | Complete scoped absence issues a privately verifiable handle; generic INCOMPLETE_SCOPE, incomplete/unsupported facts, filtered/partial/paginated responses, 404 and out-of-domain claims do not. Mixed facts+absent+incomplete retains full scope; exact absent set equals every absent row, and only those identities verify. Incomplete-only refuses with no handle and no success for its failed episode, while another authorized caller may still acquire an unexpired prior generation. Independently mutate scope, identity, generation, domain and validity. |
+| 4 | Complete scoped absence issues a privately verifiable handle; generic INCOMPLETE_SCOPE, incomplete/unsupported facts, filtered/partial/paginated responses, 404 and out-of-domain claims do not. Mixed facts+absent+incomplete retains full scope; exact absent set equals every absent row, and only those identities verify. Incomplete-only refuses with no handle and no success for its failed episode, while another authorized caller may still acquire an unexpired prior generation. Independently mutate scope, identity, generation, domain and validity. Same-owner registered scopes A/B with identical identity and generation: A's absence handle verifies with A but returns SCOPE_REFUSED with B before generation/absence membership checks. |
 | 5 | Concurrent catalog/absence candidates for the same generation have exactly one acknowledged publication; positive-to-absence and absence-to-positive replacement invalidate ALL old variant handles. Current absence makes catalog acquisition refuse, including facts rows in a mixed result. Losing CAS, timeout/cancel, malformed candidate and stale handle never replace or acquire. Other scopes remain isolated; capacity is bounded. |
 | 6 | Direct/serialized/copied/cross-instance/cross-mode handles refuse; mutation of acquired bytes does not alter retained state. Restart destroys authority and cannot reopen P4A participation or workflow admission. |
 | 7 | Actual offline RCM-to-C composition preserves synchronous acquire and request-bound source evidence. Missing quality/billing/account/budget claims refuse; catalog success never creates permit, approval or refresh after B1 begin. |
@@ -420,3 +423,5 @@ the exact text-response domain? Can CAS/cancellation/restart resurrect authority
 Does synchronous C acquisition gain unrelated claims or hidden network work?
 Do both candidate variants share atomic generation invalidation? Can an incomplete
 row enter the absent set or a failed episode quietly reuse old positive data?
+Can equal identity/generation values let one registered scope's absence handle
+verify for another scope under the same owner?
