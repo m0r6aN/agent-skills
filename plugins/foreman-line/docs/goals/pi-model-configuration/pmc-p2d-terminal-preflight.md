@@ -96,3 +96,19 @@ never a shipped absolute import):
 | `dist/core/resource-loader.d.ts` | `f7c1dac7b3d661dff5fbfe51d1b50dff12b4c4329ae29a280ae713740b162493` |
 | `dist/core/session-manager.d.ts` | `d27e910585a6f41f2d17381516519eefb680f671bd271dcbb09a26de2d4a50f0` |
 | `dist/core/extensions/types.d.ts` | `14d00e645b453f4361440da6fcda86ed6cef9a8fc36d483a621a0250e0d4a396` |
+
+## Endpoint and service-tier follow-up
+
+The official [endpoint listing contract](https://openrouter.ai/docs/api/api-reference/endpoints/list-all-endpoints-for-a-model)
+exposes endpoint-specific max_prompt_tokens, max_completion_tokens, context_length,
+pricing, provider name, tag and supported parameters. These are more relevant than
+model-wide cheapest pricing for a pinned route. Their presence alone is not proof
+that every billed component is bounded by those fields; the shaping review must
+justify the bound and authenticate exact retained endpoint evidence.
+
+The official [service-tier contract](https://openrouter.ai/docs/guides/features/service-tiers)
+says nondefault tiers require an explicit opt-in and billing follows the endpoint
+actually used. Initial P2D should therefore exclude tier variants and tier-specific
+slugs unless independently supported, and bind the chosen standard endpoint and
+fallback controls. Do not infer a discounted rate from a requested tier or model
+alias. This is a proposed constraint for review, not implemented behavior.
