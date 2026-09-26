@@ -19,8 +19,17 @@ Additional temporary independent probes passed: 1,000 rational-cost vectors,
 refusal, and over-bound freeze with continued reconciliation. Final source head,
 spec blob and clean checkout matched the review pins; reviewer made no changes.
 
-Second independent review, predecessor reconciliation and full remote CI remain
-pending. Windows-local process-crash tests do not prove hardware power-loss
+Independent reviewer B approved documentation head
+9f91757f0a28d296f460f7eace1d9e666c0cb4b4 with unchanged implementation 835a6dd.
+It independently checked the state, durability, path, proof and cleanup boundaries,
+passed dispatch182/routing505 plus typecheck/lint, and passed 2,000 fixed-denominator
+BigInt-oracle cost vectors. No blocking findings or repository mutations.
+
+Integration worktree: D:/Repos/agent-skills-worktrees/hro-pmc-p2b-integration-20260926,
+branch codex/hro-pmc-p2b-integration-20260926. Main through merged HRO PR59
+26c72690c65302561fd15a171dd629cf19cdb963 reconciled without conflicts. Combined
+verification and full remote CI remain pending; neither approval grants activation.
+Windows-local process-crash tests do not prove hardware power-loss
 durability. P2C authenticates composition and episode custody; this module does
 not grant a permit, prove live availability, initialize production funds or
 authorize activation. Full HRO exit remains open.

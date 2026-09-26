@@ -98,3 +98,13 @@ The lossless projection spec is moved to done; links are updated. Branches remai
 retained. This remains static evidence, not model activation or HRO completion.
 The next RCM producer integration retains the complete projection contract and
 its own two approvals; PMC-P2A private build continues behind the accepted API.
+## HRO-P1b Stage-F closure — 2026-09-26
+
+PR59 merged at 2026-09-26T17:22:58Z as
+26c72690c65302561fd15a171dd629cf19cdb963. Both independent consumer and reader-audit
+reviews passed; independent combined verification approved 5a4937e; all twelve
+remote checks succeeded at that exact head before the matched-head merge.
+The consumer spec moves to done. This is offline compatibility evidence only;
+owner bridge, cache, execution, receipts and measured live exit remain open.
+Frozen worktrees remain as traceability and read-only dependency donors during
+active integration; cleanup follows when those dependents are finished.
