@@ -215,3 +215,19 @@ confirmation is now accurately recorded as independently approved by B1; validat
 wording now names this exact two-document repair. Frozen lint/body/link/diff checks
 precede local handoff; fresh root/B1 review remains required. No runtime tests,
 production activation or live evidence is claimed by this documentation change.
+## Offline design ratification — 2026-09-26
+
+Coordinator and independent PMC reviewer APPROVE53e92b35ded3f49d5c6d6826c544061876988726.
+The reviewer inspected the full amended specification, actual harness/review/
+verdict/human-gate/E/F seams and all seven frozen owner blobs. Root independently
+reviewed the full contract and shared-chain repair; frozen lint/diff checks pass.
+No remaining required design finding. Prior B1 review of a9cdc51 identified the
+same shared-chain gap; this approval covers its concrete53e92b3 repair.
+
+Root ratifies the offline-only constructors, exact five-file implementation
+envelope, bounds, role-separated D/E/F interfaces and nonreclaimable canonical
+chain admission under delegated goal authority. Production construction must
+remain unconditional PREREQUISITE_UNAVAILABLE with zero input reads/effects.
+Actual builder Step0 is underway in the isolated Luna runtime checkout; a separate
+explicit release still precedes runtime edits. No runtime or production evidence
+is claimed by design approval; P3/B composition and live requirements remain.
