@@ -141,6 +141,7 @@ function capture(value: unknown, depth: number, budget: Budget): unknown {
 				length > MAX_ARRAY
 			)
 				throw LIMIT;
+			if (budget.values > MAX_VALUES - length) throw LIMIT;
 			if (Object.getPrototypeOf(value) !== Array.prototype)
 				throw new Error("invalid");
 			const keys = Reflect.ownKeys(value);
@@ -168,7 +169,6 @@ function capture(value: unknown, depth: number, budget: Budget): unknown {
 				budget.strings += key.length;
 				if (budget.strings > MAX_STRINGS) throw LIMIT;
 			}
-			if (budget.values > MAX_VALUES - length) throw LIMIT;
 			const result: unknown[] = new Array(length);
 			budget.seen.set(value, result);
 			for (let i = 0; i < length; i++)

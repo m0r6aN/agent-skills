@@ -69,3 +69,46 @@ The added regressions cover once-only record/array/callback descriptors, exact
 Independent reproduction reports one descriptor read, oversized-key unsafe reads0,
 and correct phase codes at both value boundaries. Two fresh final frontier
 reviews remain required; these are builder results, not independent approval.
+
+## Third capture repair — Luna builder evidence
+
+The narrow repair keeps the frozen spec, P1a implementation, five-file allowlist,
+and all earlier repairs unchanged. Array capture now performs the known minimum
+remaining-value check immediately after validating `length`, before collecting
+child descriptors or allocating the owned array. The 31 distinct 256-element
+arrays plus a 224-element proxy-array regression therefore returns
+`input_limit_exceeded` with zero child descriptor reads.
+
+The TDD sequence recorded a meaningful RED of 29 total tests with 28 passing and
+the new preflight regression failing as `input_invalid` after one hostile
+descriptor read. After adding the durable matrix, the intermediate 35-test run
+was 33 passing and 2 failing: the preflight regression plus an adapter-invalid
+test wrapper mistake, which was corrected before the source repair was judged.
+Final GREEN is 35 total tests passing, with 16 inherited P1a tests and 19 P1b
+tests. The historical 28 total / 12 P1b count remains the tripwire.
+
+### Permanent acceptance-matrix coverage
+
+| Required family | Committed test/table | Required outcome asserted |
+|---|---|---|
+| Array minimum preflight | `preflights minimum remaining array values before child descriptors` | 8,193-value overflow, `input_limit_exceeded`, zero child descriptor reads |
+| Digest/source/config pins | `acceptance matrix: forged eligibility pins refuse before evaluation` | Each forged pin yields `eligibility_mismatch`; evaluator calls remain zero |
+| Clock and age | `acceptance matrix: future, stale, exact, and zero-age evidence boundaries` | Forged clock, future, stale, exact inclusive, and zero-age boundaries with phase/call counts |
+| Requested/facts identities | `acceptance matrix: requested and facts identities require one exact match` | Missing, duplicate, wrong requested, and wrong facts identities refuse before evaluation |
+| Protocol and modalities | `acceptance matrix: facts protocol and modalities are exact` | Wrong protocol and empty, duplicate, unsupported, and non-string modalities refuse before evaluation |
+| Frozen owned adapter inputs | `acceptance matrix: oracle and evaluator inputs are deeply frozen and caller mutations do not leak` | Exact nested oracle/evaluator shapes are deeply frozen; later caller mutations do not alter returned evidence |
+| Phase codes and downstream calls | `acceptance matrix: phase codes stop downstream callbacks after prerequisite failure` | Mapping, input, adapter, eligibility, evaluator, and route phase codes plus exact oracle/evaluator call counts |
+
+## Final verification
+
+- Node `v24.19.0`; no dependency, manifest, lockfile, provider, config,
+  receipt, or upstream changes.
+- HRO `npm test`: 35 passed, 0 failed.
+- HRO `npm run typecheck`: passed.
+- HRO `npm run lint`: passed; 7 package files checked.
+- Unchanged dispatch suite: 126 passed, 0 failed; dispatch typecheck passed.
+- Unchanged routing-policy suite: 399 passed, 0 failed; routing-policy typecheck passed.
+- The worktree remains within the five active-spec paths; dispatch access remains
+  type-only and no runtime evaluator/receipt/config/network imports were added.
+- Two fresh final frontier reviews remain required before integration; these are
+  builder results, not independent approval.

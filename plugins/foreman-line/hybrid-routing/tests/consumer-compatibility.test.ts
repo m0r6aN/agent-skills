@@ -476,3 +476,427 @@ test("rejects an oversized key before touching its descriptor", () => {
 	if (!result.ok) assert.equal(result.code, "input_limit_exceeded");
 	assert.equal(descriptorReads, 0);
 });
+
+test("preflights minimum remaining array values before child descriptors", () => {
+	let descriptorReads = 0;
+	const throwing = new Proxy(Array(224).fill(0), {
+		getOwnPropertyDescriptor(target, key) {
+			if (key === "0") {
+				descriptorReads++;
+				throw new Error("descriptor should not be read");
+			}
+			return Reflect.getOwnPropertyDescriptor(target, key);
+		},
+	});
+	const oversized = [
+		...Array.from({ length: 31 }, () => Array(256).fill(0)),
+		throwing,
+	];
+
+	const result = validateConsumerCompatibility(oversized, deps);
+	assert.equal(result.ok, false);
+	if (!result.ok) assert.equal(result.code, "input_limit_exceeded");
+	assert.equal(descriptorReads, 0);
+});
+
+test("acceptance matrix: forged eligibility pins refuse before evaluation", () => {
+	for (const [field, forged] of [
+		["digestSha256", "c".repeat(64)],
+		["sourceRef", "forged/source"],
+		["approvedConfigRef", "forged/config"],
+	] as const) {
+		let evaluatorCalls = 0;
+		const result = validateConsumerCompatibility(request, {
+			eligibilityOracle: () => {
+				const response = structuredClone(oracle);
+				response.provenance[field] = forged;
+				return response;
+			},
+			evaluateOffline: () => {
+				evaluatorCalls++;
+				return routing;
+			},
+		});
+		assert.equal(result.ok, false);
+		if (!result.ok) assert.equal(result.code, "eligibility_mismatch");
+		assert.equal(evaluatorCalls, 0);
+	}
+});
+
+test("acceptance matrix: future, stale, exact, and zero-age evidence boundaries", () => {
+	const cases = [
+		{
+			name: "forged clock",
+			evaluationTimeUtc: "2026-09-26T12:29:00.000Z",
+			sourceTimeUtc: "2026-09-26T12:00:00.000Z",
+			ageMs: 1740000,
+			maxAgeMs: 1800000,
+			code: "eligibility_stale" as const,
+		},
+		{
+			name: "future",
+			evaluationTimeUtc: "2026-09-26T12:30:00.000Z",
+			sourceTimeUtc: "2026-09-26T12:31:00.000Z",
+			ageMs: -60000,
+			maxAgeMs: 1800000,
+			code: "eligibility_stale" as const,
+		},
+		{
+			name: "stale",
+			evaluationTimeUtc: "2026-09-26T12:30:00.000Z",
+			sourceTimeUtc: "2026-09-26T11:59:00.000Z",
+			ageMs: 1860000,
+			maxAgeMs: 1800000,
+			code: "eligibility_stale" as const,
+		},
+		{
+			name: "exact",
+			evaluationTimeUtc: "2026-09-26T12:30:00.000Z",
+			sourceTimeUtc: "2026-09-26T12:00:00.000Z",
+			ageMs: 1800000,
+			maxAgeMs: 1800000,
+			code: null,
+		},
+		{
+			name: "zero-age",
+			evaluationTimeUtc: "2026-09-26T12:30:00.000Z",
+			sourceTimeUtc: "2026-09-26T12:30:00.000Z",
+			ageMs: 0,
+			maxAgeMs: 0,
+			code: null,
+		},
+	];
+
+	for (const scenario of cases) {
+		const localRequest = structuredClone(request);
+		localRequest.expectedEligibility.maxAgeMs = scenario.maxAgeMs;
+		const localOracle = structuredClone(oracle);
+		localOracle.provenance.evaluationTimeUtc = scenario.evaluationTimeUtc;
+		localOracle.provenance.sourceTimeUtc = scenario.sourceTimeUtc;
+		localOracle.provenance.ageMs = scenario.ageMs;
+		localOracle.provenance.maxAgeMs = scenario.maxAgeMs;
+		let evaluatorCalls = 0;
+		const result = validateConsumerCompatibility(localRequest, {
+			eligibilityOracle: () => localOracle,
+			evaluateOffline: () => {
+				evaluatorCalls++;
+				return routing;
+			},
+		});
+		assert.equal(result.ok, scenario.code === null, scenario.name);
+		if (scenario.code !== null && !result.ok)
+			assert.equal(result.code, scenario.code, scenario.name);
+		assert.equal(evaluatorCalls, scenario.code === null ? 1 : 0, scenario.name);
+	}
+});
+
+test("acceptance matrix: requested and facts identities require one exact match", () => {
+	const cases = [
+		{
+			name: "missing result",
+			mutate: (response: typeof oracle) => {
+				response.results = [];
+			},
+			code: "eligibility_invalid" as const,
+		},
+		{
+			name: "duplicate result",
+			mutate: (response: typeof oracle) => {
+				const first = response.results[0];
+				if (!first) throw new Error("missing fixture result");
+				response.results = [structuredClone(first), structuredClone(first)];
+			},
+			code: "eligibility_invalid" as const,
+		},
+		{
+			name: "wrong requested identity",
+			mutate: (response: typeof oracle) => {
+				const first = response.results[0];
+				if (!first) throw new Error("missing fixture result");
+				first.requested.provider = "other-provider";
+			},
+			code: "eligibility_mismatch" as const,
+		},
+		{
+			name: "wrong facts identity",
+			mutate: (response: typeof oracle) => {
+				const first = response.results[0];
+				if (!first) throw new Error("missing fixture result");
+				first.facts.provider = "other-provider";
+			},
+			code: "eligibility_mismatch" as const,
+		},
+	] as const;
+
+	for (const scenario of cases) {
+		let evaluatorCalls = 0;
+		const result = validateConsumerCompatibility(request, {
+			eligibilityOracle: () => {
+				const response = structuredClone(oracle);
+				scenario.mutate(response);
+				return response;
+			},
+			evaluateOffline: () => {
+				evaluatorCalls++;
+				return routing;
+			},
+		});
+		assert.equal(result.ok, false, scenario.name);
+		if (!result.ok) assert.equal(result.code, scenario.code, scenario.name);
+		assert.equal(evaluatorCalls, 0, scenario.name);
+	}
+});
+
+test("acceptance matrix: facts protocol and modalities are exact", () => {
+	const cases = [
+		{
+			name: "wrong protocol",
+			mutate: (response: typeof oracle) => {
+				const first = response.results[0];
+				if (!first) throw new Error("missing fixture result");
+				first.facts.api = "other-protocol";
+			},
+			code: "eligibility_mismatch" as const,
+		},
+		{
+			name: "empty modalities",
+			mutate: (response: typeof oracle) => {
+				const first = response.results[0];
+				if (!first) throw new Error("missing fixture result");
+				first.facts.inputModalities = [];
+			},
+			code: "eligibility_invalid" as const,
+		},
+		{
+			name: "duplicate modalities",
+			mutate: (response: typeof oracle) => {
+				const first = response.results[0];
+				if (!first) throw new Error("missing fixture result");
+				first.facts.inputModalities = ["text", "text"];
+			},
+			code: "eligibility_invalid" as const,
+		},
+		{
+			name: "unsupported modality",
+			mutate: (response: typeof oracle) => {
+				const first = response.results[0];
+				if (!first) throw new Error("missing fixture result");
+				(
+					first.facts as unknown as { inputModalities: unknown }
+				).inputModalities = ["audio"];
+			},
+			code: "eligibility_invalid" as const,
+		},
+		{
+			name: "non-string modality",
+			mutate: (response: typeof oracle) => {
+				const first = response.results[0];
+				if (!first) throw new Error("missing fixture result");
+				(
+					first.facts as unknown as { inputModalities: unknown }
+				).inputModalities = [42];
+			},
+			code: "eligibility_invalid" as const,
+		},
+	] as const;
+
+	for (const scenario of cases) {
+		let evaluatorCalls = 0;
+		const result = validateConsumerCompatibility(request, {
+			eligibilityOracle: () => {
+				const response = structuredClone(oracle);
+				scenario.mutate(response);
+				return response;
+			},
+			evaluateOffline: () => {
+				evaluatorCalls++;
+				return routing;
+			},
+		});
+		assert.equal(result.ok, false, scenario.name);
+		if (!result.ok) assert.equal(result.code, scenario.code, scenario.name);
+		assert.equal(evaluatorCalls, 0, scenario.name);
+	}
+});
+
+function assertDeepFrozen(value: unknown): void {
+	if (value === null || typeof value !== "object") return;
+	assert.equal(Object.isFrozen(value), true);
+	for (const child of Object.values(value)) assertDeepFrozen(child);
+}
+
+test("acceptance matrix: oracle and evaluator inputs are deeply frozen and caller mutations do not leak", () => {
+	const localRequest = structuredClone(request);
+	const localOracle = structuredClone(oracle);
+	const localRouting = structuredClone(routing);
+	let oracleInput: unknown;
+	let evaluatorInput: unknown;
+	const result = validateConsumerCompatibility(localRequest, {
+		eligibilityOracle: (input) => {
+			oracleInput = input;
+			assertDeepFrozen(input);
+			assert.deepEqual(Object.keys(input).sort(), [
+				"evaluationTimeUtc",
+				"identities",
+			]);
+			const identity = input.identities[0];
+			if (!identity) throw new Error("missing frozen identity");
+			assert.deepEqual(Object.keys(identity).sort(), ["id", "provider"]);
+			return localOracle;
+		},
+		evaluateOffline: (input) => {
+			evaluatorInput = input;
+			assertDeepFrozen(input);
+			assert.deepEqual(input, localRequest.routingInput);
+			return localRouting;
+		},
+	});
+	assert.equal(result.ok, true);
+	assertDeepFrozen(oracleInput);
+	assertDeepFrozen(evaluatorInput);
+
+	localRequest.proposal.logicalCandidateId = "caller-mutated";
+	localOracle.provenance.sourceRef = "caller-mutated/source";
+	localRouting.result.resolvedModelId = "caller-mutated/model";
+	if (result.ok) {
+		assert.equal(
+			result.proposal.logicalCandidateId,
+			proposal.logicalCandidateId,
+		);
+		assert.equal(
+			result.routing.routingDecisionRef,
+			routing.result.routingDecisionRef,
+		);
+		assert.equal(
+			result.routing.resolvedModelId,
+			routing.result.resolvedModelId,
+		);
+	}
+});
+
+test("acceptance matrix: phase codes stop downstream callbacks after prerequisite failure", () => {
+	const cases = [
+		{
+			name: "mapping refusal",
+			request: { ...request, proposal: { ...proposal, provider: "other" } },
+			deps,
+			code: "mapping_refused" as const,
+			oracleCalls: 0,
+			evaluatorCalls: 0,
+		},
+		{
+			name: "input invalid",
+			request: { ...request, routingInput: { ...routingInput, extra: true } },
+			deps,
+			code: "input_invalid" as const,
+			oracleCalls: 0,
+			evaluatorCalls: 0,
+		},
+		{
+			name: "adapter invalid",
+			request,
+			deps: { ...deps, eligibilityOracle: undefined as never },
+			code: "adapter_invalid" as const,
+			oracleCalls: 0,
+			evaluatorCalls: 0,
+		},
+		{
+			name: "eligibility refusal",
+			request,
+			deps: {
+				eligibilityOracle: () => ({
+					ok: false,
+					level: "authority",
+					code: "DENIED",
+				}),
+				evaluateOffline: () => routing,
+			},
+			code: "eligibility_refused" as const,
+			oracleCalls: 1,
+			evaluatorCalls: 0,
+		},
+		{
+			name: "eligibility mismatch",
+			request,
+			deps: {
+				eligibilityOracle: () => {
+					const response = structuredClone(oracle);
+					const first = response.results[0];
+					if (!first) throw new Error("missing fixture result");
+					first.facts.api = "other-protocol";
+					return response;
+				},
+				evaluateOffline: () => routing,
+			},
+			code: "eligibility_mismatch" as const,
+			oracleCalls: 1,
+			evaluatorCalls: 0,
+		},
+		{
+			name: "evaluator refusal",
+			request,
+			deps: {
+				eligibilityOracle: () => oracle,
+				evaluateOffline: () => ({ ok: false, code: "NO_ROUTE" }),
+			},
+			code: "evaluator_refused" as const,
+			oracleCalls: 1,
+			evaluatorCalls: 1,
+		},
+		{
+			name: "evaluator invalid",
+			request,
+			deps: {
+				eligibilityOracle: () => oracle,
+				evaluateOffline: () => null,
+			},
+			code: "evaluator_invalid" as const,
+			oracleCalls: 1,
+			evaluatorCalls: 1,
+		},
+		{
+			name: "route mismatch",
+			request,
+			deps: {
+				eligibilityOracle: () => oracle,
+				evaluateOffline: () => ({
+					ok: true,
+					result: { ...routing.result, resolvedModelId: "other" },
+				}),
+			},
+			code: "route_mismatch" as const,
+			oracleCalls: 1,
+			evaluatorCalls: 1,
+		},
+	] as const;
+
+	for (const scenario of cases) {
+		if (typeof scenario.deps.eligibilityOracle !== "function") {
+			const result = validateConsumerCompatibility(
+				scenario.request,
+				scenario.deps as never,
+			);
+			assert.equal(result.ok, false, scenario.name);
+			if (!result.ok) assert.equal(result.code, scenario.code, scenario.name);
+			assert.equal(scenario.oracleCalls, 0, scenario.name);
+			assert.equal(scenario.evaluatorCalls, 0, scenario.name);
+			continue;
+		}
+		let oracleCalls = 0;
+		let evaluatorCalls = 0;
+		const result = validateConsumerCompatibility(scenario.request, {
+			eligibilityOracle: (_input) => {
+				oracleCalls++;
+				return scenario.deps.eligibilityOracle();
+			},
+			evaluateOffline: (_input) => {
+				evaluatorCalls++;
+				return scenario.deps.evaluateOffline();
+			},
+		});
+		assert.equal(result.ok, false, scenario.name);
+		if (!result.ok) assert.equal(result.code, scenario.code, scenario.name);
+		assert.equal(oracleCalls, scenario.oracleCalls, scenario.name);
+		assert.equal(evaluatorCalls, scenario.evaluatorCalls, scenario.name);
+	}
+});
