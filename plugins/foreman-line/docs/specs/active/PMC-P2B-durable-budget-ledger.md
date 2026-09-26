@@ -416,3 +416,27 @@ BudgetSnapshotV1, AttemptV1, LedgerIdentity, LedgerCode, LedgerResult<T>,
 LocalPmcLedger and the two factory functions. Operation request/proof types may
 remain module-private unless a later accepted consumer requires an explicit
 additive export; do not invent another public dispatcher or authority token.
+### Existing-file SQLite open and initialization race
+
+The pinned Node24.19 source enables SQLITE_OPEN_URI while its ordinary writable
+constructor also supplies CREATE. Therefore a prior exists check followed by an
+ordinary path constructor is insufficient. For normal operations construct an
+internally generated percent-encoded file URI string from the verified absolute
+filename, with the sole query mode=rw; pass its string form, not a URL object that
+may normalize away the query. Accept no caller URI/query/VFS/locking parameters.
+Verify this behavior with actual missing/existing temporary files on Windows and
+remote CI; unsupported behavior refuses rather than falling back to create mode.
+
+Owner initialization exclusively claims the fixed database filename with wx after
+empty-root/path checks, closes that owned empty placeholder, then opens the
+claimed file with mode=rw and commits schema/metadata/scopes together. A competing
+initializer encounters the existing file and refuses. Crashes after the claim
+leave an unusable store requiring explicit owner reconciliation; no automatic
+placeholder deletion or second initializer repairs it. Normal open rejects empty
+files and validates identity/schema before any persistence-changing PRAGMA; then
+configures/verifies required settings before mutation. Hot-journal recovery stays
+SQLite-owned and is not a manual file-repair path.
+
+Primary source basis (API/design evidence only, not an implementation test):
+[Node24.19 DatabaseSync open flags](https://raw.githubusercontent.com/nodejs/node/v24.19.0/src/node_sqlite.cc)
+and [SQLite URI mode semantics](https://www.sqlite.org/uri.html).
