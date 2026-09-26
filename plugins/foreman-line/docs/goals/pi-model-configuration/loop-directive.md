@@ -462,3 +462,21 @@ intent custody, C controller, D transport and E exercised initiating caller rema
 open, as do HRO caching/measurement/recovery/configuration/diagnostic/live exits.
 Neither resolver values nor the ledger alone authorize or prove a provider send.
 No production budget, provider call or host configuration was created in P2B.
+## PMC-P2B1 Stage-F closure — 2026-09-26
+
+PR63 merged as727c0554f11990da778e7647e7a108f3ca6f95aa at19:48:53Z after all twelve
+remote checks succeeded on reviewed head0c3bae513e4a9dd1cb604b0cde3c50d651ad08ee.
+Two independent source approvals cover3f31181; two independent audit approvals
+coverf2ae2f7; separate combined approval covers0c3bae5. Root combined verification
+passed356 dispatch,944 routing-policy,71 contract-readers and44 mutation-scope
+tests, all typechecks/lints and actual-tree D19. Audit-head verification passed580
+cases and an independent222-case mutation suite. D19 enrolls exactly B1 9/9,
+ledger10/10 and registryDATA10/10, retaining runtimeblobc2d967de9dc6b0f1fe17f4aafe528a8678194432.
+
+B1 specification moves to done and current predecessor links follow it. Durable
+intent custody is accepted, not production authority or a provider-send claim.
+Controller bootstrap amendment5764eba has two independent design approvals and
+root ratificationd260bf6; fresh Step0 is complete, release still explicit. E1
+legacy retirement is separately released after E01–04 disposition; E2, D and HRO
+receipt/recovery/configuration/diagnostic/live gates remain open. No provider,
+credential, production budget or host configuration operation occurred in B1.

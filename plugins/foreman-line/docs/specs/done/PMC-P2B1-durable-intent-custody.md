@@ -1,7 +1,7 @@
 ---
 ticket: PMC-P2B1
 title: Minimal durable workflow-intent custody
-status: active
+status: done
 owner: clinton.morgan
 created: 2026-09-26
 updated: 2026-09-26
@@ -359,7 +359,7 @@ general event stores, IPC/signing and claims of hostile-OS rollback prevention.
 
 - [Amendment 05 V8](../../goals/pi-model-configuration/gate-1-amendment-05.md)
 - [Composition and source evidence](../../goals/pi-model-configuration/pmc-p2c-composition-notes.md)
-- [P2C consumer](PMC-P2C-same-process-launch-controller.md)
+- [P2C consumer](../active/PMC-P2C-same-process-launch-controller.md)
 - [Standing constraints](../../kickstarters/STANDING-CONSTRAINTS.md)
 
 ## Allowed Files
