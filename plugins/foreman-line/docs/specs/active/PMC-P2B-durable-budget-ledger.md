@@ -440,3 +440,13 @@ SQLite-owned and is not a manual file-repair path.
 Primary source basis (API/design evidence only, not an implementation test):
 [Node24.19 DatabaseSync open flags](https://raw.githubusercontent.com/nodejs/node/v24.19.0/src/node_sqlite.cc)
 and [SQLite URI mode semantics](https://www.sqlite.org/uri.html).
+The supported runtime profile is the pinned Node24.19.0 used by repository CI.
+Do not infer all SQLite options are supported merely from the package's broader
+engine minimum. DELETE, synchronous=EXTRA, busy_timeout and foreign_keys have
+readback checks; configure integer reads on every money/count statement via
+setReadBigInts(true). Defensive mode is a connection option, not an invented
+PRAGMA: the pinned Node source checks the returned sqlite3_db_config setting
+against the requested option. Require that reviewed constructor behavior and
+explicit defensive:true; fail on unsupported runtime/settings. Keep extension
+loading and double-quoted string literals disabled explicitly. Tests must name
+which properties are read back versus enforced by the pinned checked API.
