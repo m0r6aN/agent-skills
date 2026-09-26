@@ -264,3 +264,15 @@ runtime release yet. P3A8a76e738 and P4A193f54bd received independent change
 requests; explicit repairs34071db and8a64539 are active with Luna. D transport
 implementation remains active. Production custody, billing bound and full live
 measurement remain open; no inference/credentials/host configuration activity.
+
+### Catalog materializer N acceptance — 2026-09-26
+
+PR67 accepted on main98bf162adef813d8557e22a78d0b904593009173 at22:28:13Z;
+all12 checks successful on exactheadaa13b47. N source and combined integration
+have independent reviews. Checkpoint N is complete; publication parent stays
+active for P. P construction773daa is ratified, and frontier D's fresh read-only
+Step0 at9d3ba8d confirms actual N/reader/adapter/C source compatibility. P runtime
+release remains explicit. Pure E2 planner released separately after reviewed
+amendmentae3fb12; D-dependent entry stays gated. D transport completion is being
+reassigned inside HRO: the separate PMC app task's latest user scope is draft
+response only and is honored. Its existing implementation work is preserved.

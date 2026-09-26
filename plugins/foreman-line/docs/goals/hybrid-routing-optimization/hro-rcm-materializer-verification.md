@@ -187,3 +187,12 @@ The reviewer did not count its own test correction as independent approval;
 root independently checked that one-line correction and runtime preservation.
 No unintended owner/API/schema/barrel/dependency changes. Remote exact-head
 checks and merge remain required. No offline result is production acceptance.
+
+## Checkpoint N accepted on main — 2026-09-26
+
+PR67 merged at2026-09-26T22:28:13Z as98bf162adef813d8557e22a78d0b904593009173.
+Exact reviewed head aa13b47eefa6a108745d7e453ed84a68ae2ca372 passed all12 remote
+checks before root's delegated merge. Source and combined independent approvals
+remain scoped above. This closes checkpoint N only: the parent publication spec
+remains active because checkpoint P transport/publication is still unimplemented.
+No live/provider/authentication/configuration or measured goal exit is implied.
