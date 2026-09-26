@@ -179,3 +179,11 @@ thrown values as opaque. Memoize completed caller-object captures separately
 from active-cycle detection, while charging expanded owned aliases against every
 resource budget. Two independent final reviews verified these repairs and exact
 limits; combined integration retained both PMC and RCM public exports.
+## RCM producer — prove exact integer source values before binary conversion
+
+SafeInteger(Number(token)) cannot establish mathematical integrality: a retained
+fraction can round to an integer. Validate bounded exact decimal/exponent tokens
+before conversion for metadata counts/status/byte lengths as well as model facts.
+Independently repinned source negatives ensure digest rejection does not hide the
+semantic check. The corrected producer retains equivalent integral encodings and
+original canonical bytes; two final reviews tested rounding and large-token cases.

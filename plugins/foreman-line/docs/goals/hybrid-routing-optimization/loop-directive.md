@@ -87,3 +87,14 @@ RCM library PR51 and source/closure PR52 are merged; source profile v4 is accept
 RCM-P1A wrapper Step 0 verified clean base 1dc353ab69cf6d62ac2f4e6662e529ff9e6129c9 and spec blob 906f91d5061826ab671d939d369b67bbf28175c6; implementation released in hro-rcm-p1-integration-20260926 on codex/hro-rcm-p1a-wrapper-20260926. Private isolated work may overlap; shared barrel integration remains PMC-P1a then RCM-P1A, preserving all accepted exports. Subsequent projection/producer work uses the reconciled accepted base. Producer contract review approved retained evidence transformation subject to the release conditions now recorded in its draft; no producer implementation released yet.
 
 HRO-P1a repaired head 5e051437ba9a63c46d14c543e8d3198153f95137 still failed both independent rereviews on resource preflight ordering. Luna is released for the narrow repair and permanent boundary regressions recorded in hro-p1a-review-triage.md; do not publish the uncorrected head. HRO-P1b and all later runtime/cache/receipt work remain queued. SQLite ledger refinement remains reviewed draft design, not implementation. No full goal completion or live routing claim is made.
+
+## PMC-P1b Stage F closure — 2026-09-26
+
+PR57 merged as60a62b1cccf06e6a23bfe2294beb758799d5e317 after two independent
+approvals of7dce9d5 and complete green remote twenty-package CI at a343ac5.
+Independent evidence includes505 routing/126 dispatch/126 spec-linter tests,
+typecheck/lint, all8 old schemas byte-identical and75 old plus4 new exports.
+The lossless projection spec is moved to done; links are updated. Branches remain
+retained. This remains static evidence, not model activation or HRO completion.
+The next RCM producer integration retains the complete projection contract and
+its own two approvals; PMC-P2A private build continues behind the accepted API.

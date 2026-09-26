@@ -44,6 +44,8 @@ export {
   piOpenRouterRoutingSchema,
   validatePiOpenRouterRouting,
 } from './pi-openrouter.js'
+export { resolvePmcRouteV1 } from './pmc-resolver.js'
+export type * from './pmc-resolver-types.js'
 export type {
   ProviderBindingProjectionResult,
   ProviderBindingProjectionV1,
@@ -71,6 +73,17 @@ export type {
   ProviderBindingValidationResultV1,
 } from './provider-bindings.js'
 export { validateProviderBindingPolicyV1 } from './provider-bindings.js'
+export type {
+  FactField,
+  InventoryCode,
+  InventoryEntry,
+  InventoryStatus,
+  ProducerCandidate,
+  ProducerRefusalCode,
+  ProducerTrust,
+  ProductionResult,
+} from './public-observation-producer.js'
+export { producePublicObservationSnapshot } from './public-observation-producer.js'
 export {
   classEntrySchema,
   dataClassificationRuleSchema,

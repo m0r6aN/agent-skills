@@ -123,6 +123,9 @@ export const contractB: ContractReaderEntry = {
     // the typed source; also a Contract A reader (VERIFICATION_CLASSES). ADD
     // a class and this file must change.
     'plugins/foreman-line/spec-linter/src/types.ts',
+    // LOCKSTEP (additive): validates routing_class against the complete local
+    // vocabulary. ADD a class and this consumer's membership set must change.
+    'plugins/foreman-line/hybrid-routing/src/consumer-compatibility.ts',
     // LOCKSTEP (additive): the .json restatement of the same vocabulary. ADD
     // a class and this file's enum literal must change.
     'plugins/foreman-line/spec-linter/schemas/spec-frontmatter.schema.json',

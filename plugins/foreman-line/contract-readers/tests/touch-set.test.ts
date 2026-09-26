@@ -527,6 +527,8 @@ test('A2(b)(2)/(4) Contract B — every surfaced file is adjudicated; both signa
   //   spec-linter/src/types.ts         — LOCKSTEP: restates ROUTING_CLASSES in full, and is also
   //                                      a Contract A reader (VERIFICATION_CLASSES). ADD a class
   //                                      and this file must change.
+  //   hybrid-routing/src/consumer-compatibility.ts — LOCKSTEP: validates routing_class against a
+  //                                      local membership set. ADD a class and this file must change.
   //   dispatch/src/routing-eval/index.ts — A5(b), RE-ADJUDICATED and UNDECLARED (review E B1, the
   //                                      BLOCKER): imports `CLASS_NAMES` from the home package
   //                                      (`:30`) and builds a Set from it (`:552,556`) but holds no
@@ -695,6 +697,22 @@ test('A4(c) MUTATION: appending a spurious out-of-scope reader to contractB.read
   assert.ok(
     actualOutOfScope.includes(normalizeSeparators(spurious)),
     'the spurious README.md entry must appear in the mutated out-of-scope set',
+  )
+})
+
+test('Contract B MUTATION: deleting the genuine consumer reader is detected by the sweep', () => {
+  const genuine = 'plugins/foreman-line/hybrid-routing/src/consumer-compatibility.ts'
+  assert.ok(
+    contractB.readers.includes(genuine),
+    'the additive lockstep consumer must remain declared in the real Contract B registry',
+  )
+  const mutatedReaders = contractB.readers.filter((reader) => reader !== genuine)
+  const declared = new Set(mutatedReaders.flatMap((reader) => readerFiles(reader)))
+  const surfaced = new Set([...contractBFieldSignal, ...contractBValueSignal])
+  const surfacedButUndeclared = [...surfaced].filter((file) => !declared.has(file))
+  assert.ok(
+    surfacedButUndeclared.includes(genuine),
+    'deleting the real consumer reader must leave its on-disk lockstep surface surfaced but undeclared',
   )
 })
 
