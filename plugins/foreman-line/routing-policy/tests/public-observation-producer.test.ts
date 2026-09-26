@@ -479,6 +479,91 @@ test('exact decimal comparison rejects binary-rounding equality and lossy Number
   refuses(fixture.input, fixture.trust, 'SOURCE_INVALID', 6)
 })
 
+function retainedInteger(target: 'manifest' | 'projection', original: string, replacement: string) {
+  const input = candidate()
+  const source = (target === 'manifest' ? manifestBytes : projectionBytes).toString()
+  assert.ok(source.includes(original))
+  const bytes = new TextEncoder().encode(source.replace(original, replacement))
+  if (target === 'manifest') input.manifestBytes = bytes
+  else {
+    input.projectionBytes = bytes
+    const manifest = JSON.parse(manifestBytes.toString())
+    manifest.sealedProjection.sha256 = sha(bytes)
+    manifest.sealedProjection.byteLength = bytes.length
+    input.manifestBytes = encode(manifest)
+  }
+  return {
+    input,
+    trust: {
+      ...pins,
+      expectedManifestSha256: sha(input.manifestBytes),
+      expectedProjectionSha256: sha(input.projectionBytes),
+    },
+  }
+}
+
+for (const [target, field, original, fraction, integral] of [
+  ['projection', 'context', '"value": 1050000', '1050000.00000000001', '1.050000e6'],
+  ['projection', 'max tokens', '"value": 128000', '128000.000000000001', '128000.000'],
+  ['manifest', 'HTTP status', '"status": 200', '200.000000000000001', '2000e-1'],
+  ['manifest', 'sealed byte length', '"byteLength": 13348', '13348.0000000000001', '13348.0'],
+  ['manifest', 'requested count', '"requestedIdCount": 7', '7.00000000000000001', '0.7e1'],
+] as const) {
+  test(`exact integer validation refuses rounded fractional ${field} after repinning`, () => {
+    const { input, trust } = retainedInteger(target, original, original.replace(/\d+$/, fraction))
+    refuses(input, trust, 'SOURCE_INVALID', 6)
+  })
+  test(`exact integer validation preserves integral decimal/exponent ${field}`, () => {
+    const { input, trust } = retainedInteger(target, original, original.replace(/\d+$/, integral))
+    const result = producePublicObservationSnapshot(input, trust)
+    assert.ok(result.ok)
+    assert.equal(result.canonicalBytes.length, 4359)
+    assert.equal(
+      result.digestSha256,
+      '5901c16ed192870d53952375392710b514f37b18a5451da6c4a5966aa7e916bb',
+    )
+  })
+}
+
+for (const token of [
+  '9007199254740991',
+  '9007199254740991.000',
+  '90071992547409910e-1',
+  '9.007199254740991e15',
+  `9007199254740991${'0'.repeat(1000)}e-1000`,
+  `9007199254740991e+${'0'.repeat(1000)}0`,
+]) {
+  test(`integer context accepts exact safe maximum encoding ${token.slice(0, 40)}`, () => {
+    const { input, trust } = retainedInteger('projection', '"value": 1050000', `"value": ${token}`)
+    const result = producePublicObservationSnapshot(input, trust)
+    assert.ok(result.ok)
+    const read = readCatalogSnapshot(result.canonicalBytes, result.digestSha256)
+    assert.ok(read.ok)
+    assert.equal(read.snapshot.models[0]?.contextWindow, Number.MAX_SAFE_INTEGER)
+  })
+}
+
+for (const token of [
+  '9007199254740991.1',
+  '9007199254740992',
+  '9007199254740992.0',
+  '90071992547409920e-1',
+  '9.007199254740992e15',
+  '1e309',
+  '1e-324',
+  '-1e-324',
+  '0',
+  '-0.0e999999',
+  `1e${'9'.repeat(1000)}`,
+  `1e-${'9'.repeat(1000)}`,
+  `1${'0'.repeat(1000)}1e-1001`,
+]) {
+  test(`integer context refuses fractional/range/underflow encoding ${token.slice(0, 40)}`, () => {
+    const { input, trust } = retainedInteger('projection', '"value": 1050000', `"value": ${token}`)
+    refuses(input, trust, 'SOURCE_INVALID', 6)
+  })
+}
+
 test('price source accepts exact maximum digit/fraction budgets and zero', () => {
   for (const source of [`${'0'.repeat(57)}0.00001`, `0.00001${'0'.repeat(27)}`, '0']) {
     const { input, trust } = repinned((_m, p) => {

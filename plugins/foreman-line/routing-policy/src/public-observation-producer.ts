@@ -391,9 +391,32 @@ function decode(bytes: Uint8Array): unknown {
 }
 function integer(value: unknown, minimum = 0): number {
   check(value instanceof JsonNumber)
-  const n = Number(value.token)
-  check(Number.isSafeInteger(n) && n >= minimum)
-  return n
+  const match = /^(-?)([0-9]+)(?:\.([0-9]+))?(?:[eE]([+-]?)([0-9]+))?$/.exec(value.token)
+  check(match)
+  const fraction = match[3] ?? ''
+  const digits = `${match[2]}${fraction}`.replace(/^0+/, '')
+  if (digits.length === 0) {
+    check(minimum === 0)
+    return 0
+  }
+  check(match[1] !== '-')
+  let exponent = 0
+  for (const digit of match[5] ?? '') {
+    exponent = exponent * 10 + digit.charCodeAt(0) - 48
+    // Beyond this bound no nonzero coefficient in this bounded token can
+    // compensate the exponent to produce a safe integer. Never expand it.
+    check(exponent <= value.token.length + 16)
+  }
+  if (match[4] === '-') exponent = -exponent
+  let end = digits.length
+  while (digits[end - 1] === '0') end--
+  const scale = fraction.length - exponent - (digits.length - end)
+  // Removing trailing zeroes leaves a nonzero final digit: positive scale
+  // is necessarily fractional. Safe integers have at most 16 decimal digits.
+  check(scale <= 0 && end - scale <= 16)
+  const exact = BigInt(digits.slice(0, end)) * 10n ** BigInt(-scale)
+  check(exact >= BigInt(minimum) && exact <= 9007199254740991n)
+  return Number(exact)
 }
 type Rational = { coefficient: bigint; scale: number }
 function rational(token: string): Rational {

@@ -527,6 +527,13 @@ number token. Conversion uses the nearest IEEE-754 representation only if its
 serialized decimal preserves that exact amount. Overflow, nonzero underflow and
 lossy decimal representations refuse. No rational fields are added to RCM v1.
 
+Integer facts and custody/count fields also validate the original decimal token
+before Number conversion. Trailing-zero normalization proves integrality; bounded
+exponent processing and at most 16 resulting digits precede an exact safe-range
+check. Mathematically integral decimal/exponent spellings remain valid, including
+the exact safe-integer maximum. Fractions that IEEE-754 would round to integers,
+overflow and nonzero underflow refuse.
+
 Original UTC observations with 1–9 fractional digits retain full precision for
 ordering. Canonical observation time truncates conservatively to milliseconds.
 The selected complete receipt—not HTTP Date, generation time, mtime or model
@@ -593,11 +600,17 @@ submillisecond time, full source validation, hostile storage/descriptors/proxies
 ownership, missing authority and scope-preserving refusals. The unchanged active
 producer spec also passes the sibling spec-linter.
 
-Private-build verification: 119 focused tests and 617 full package tests passed;
+Private-build verification after the integer repair: 148 focused tests and 646 full package tests passed;
 typecheck, lint, spec-linter and whitespace checks passed. Lint retains one
 pre-existing informational suggestion in `tests/catalog-snapshot.test.ts`.
 RED/GREEN evidence included the initially missing export, valid-scope accounting
 through malformed envelope fields, and contradictory coverage/binding counts.
+Integer repair adds 29 tests to the 119 focused/617 full baseline. Seven RED cases
+reproduced rounded fractions in context, max tokens, HTTP status, sealed byte
+length and requested count, plus a fraction near the safe maximum and a long
+fractional coefficient. GREEN coverage also preserves integral decimal/exponent
+encodings and exercises safe boundaries, long coefficients/exponents, overflow
+and underflow. The retained six-row canonical byte count and digest are unchanged.
 
 Private implementation base: `8217a585f35317bebe2d43cafb2ed29888b2d408`;
 frozen spec blob: `11fee5e09e1710edbe3ab41478750046126859f8`. Public barrel audit
