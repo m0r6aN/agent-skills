@@ -1285,3 +1285,268 @@ test('sole N raw JSON boundary rejects duplicate keys and malformed response', a
     assert.deepEqual(await p, { kind: 'refused', code: 'MATERIALIZATION_REFUSED' })
   }
 })
+
+// These fixtures exercise one real owner/shared-engine installation. Clock reads
+// can cross either boundary; no injected finished transport result is used.
+function clockBoundaryFixture() {
+  const base = fixture()
+  let utcMs = 0,
+    monoMs = 0,
+    reads = 0,
+    hook: (n: number) => void = () => {}
+  const origin = Date.parse('2026-09-26T12:00:00.000Z')
+  const made = createOfflineCatalogPublicationOwnerV1(base.input, {
+    ...base.runtime,
+    readClock: () => {
+      hook(++reads)
+      return { utc: new Date(origin + utcMs).toISOString(), monoMs }
+    },
+  })
+  assert(made.ok)
+  const owner = made.owner,
+    registered = owner.registerCatalogScopeV1({ scopeId: 's0' })
+  assert(registered.ok)
+  const scope = registered.scope
+  const register = () => {
+    const r = owner.registerRefreshOperationV1({
+      scope,
+      expectedGeneration: 0,
+      deadlineMonoMs: 20000,
+    })
+    assert(r.ok)
+    return r
+  }
+  return {
+    base,
+    owner,
+    scope,
+    register,
+    set: (u: number, m = u) => {
+      utcMs = u
+      monoMs = m
+    },
+    onRead: (fn: (n: number) => void) => {
+      hook = fn
+    },
+    readCount: () => reads,
+    open: (op: ReturnType<typeof register>) =>
+      owner.requestCatalogRefreshV1({ operation: op.operation }),
+    capacity: () =>
+      owner.registerRefreshOperationV1({
+        scope,
+        expectedGeneration: 0,
+        deadlineMonoMs: monoMs + 10000,
+      }),
+  }
+}
+for (const dimension of ['utc', 'mono'] as const)
+  test(`shared clock ${dimension} rollback owner-to-transport refuses before open and reclaims slots`, async () => {
+    const f = clockBoundaryFixture()
+    f.set(10)
+    const operations = Array.from({ length: 4 }, () => f.register())
+    let next = true
+    f.onRead(() => {
+      if (next) {
+        next = false
+        f.set(11)
+      } else f.set(dimension === 'utc' ? 10 : 11, dimension === 'mono' ? 10 : 11)
+    })
+    const first = operations[0]
+    assert(first)
+    const p = f.open(first)
+    await flush()
+    assert.equal(f.base.counts().opens, 0)
+    assert.deepEqual(await p, { kind: 'refused', code: 'INSTALLATION_REFUSED' })
+    assert.equal(f.base.counts().opens, 0)
+    f.onRead(() => {})
+    f.set(12)
+    for (const operation of operations.slice(1))
+      assert.deepEqual(await f.open(operation), { kind: 'refused', code: 'INSTALLATION_REFUSED' })
+    for (let i = 0; i < 4; i++) assert(f.capacity().ok)
+    assert.deepEqual(f.capacity(), { ok: false, code: 'CAPACITY_REFUSED' })
+  })
+for (const dimension of ['utc', 'mono'] as const)
+  test(`shared clock ${dimension} rollback transport-to-owner refuses instead of publishing`, async () => {
+    const f = clockBoundaryFixture(),
+      operation = f.register()
+    f.set(10)
+    const p = f.open(operation)
+    f.set(12)
+    f.base.complete()
+    f.set(dimension === 'utc' ? 11 : 12, dimension === 'mono' ? 11 : 12)
+    await flush()
+    assert.deepEqual(await p, { kind: 'refused', code: 'INSTALLATION_REFUSED' })
+    assert.equal(f.base.counts().opens, 1)
+    f.set(13)
+    for (let i = 0; i < 4; i++) assert(f.capacity().ok)
+  })
+for (const dimension of ['utc', 'mono'] as const)
+  test(`shared clock ${dimension} fault after open latches before deadline and retains four cleanup slots`, async () => {
+    const f = clockBoundaryFixture(),
+      operations = Array.from({ length: 4 }, () => f.register())
+    f.set(10)
+    const promises = operations.map(f.open)
+    assert.equal(f.base.counts().opens, 4)
+    // An owner read advances the common history without creating a fifth operation.
+    f.set(20)
+    assert.deepEqual(f.capacity(), { ok: false, code: 'CAPACITY_REFUSED' })
+    const e = f.base.events[0]
+    assert(e)
+    e.socketAssigned()
+    e.socketConnected()
+    e.response({ statusCode: 200, rawHeaders: ['content-type', 'application/json'] })
+    e.data(rawBytes())
+    f.set(dimension === 'utc' ? 19 : 20, dimension === 'mono' ? 19 : 20)
+    e.responseEnded()
+    await flush()
+    let outcomes: unknown[] | undefined
+    void Promise.all(promises).then((x) => {
+      outcomes = x
+    })
+    await flush()
+    assert.deepEqual(outcomes, Array(4).fill({ kind: 'refused', code: 'INSTALLATION_REFUSED' }))
+    f.set(20000)
+    for (const wake of [...f.base.wakes.values()]) wake()
+    assert.deepEqual(await Promise.all(promises), outcomes)
+    assert.deepEqual(f.capacity(), { ok: false, code: 'CAPACITY_REFUSED' })
+    e.responseClosed()
+    e.requestClosed()
+    await flush()
+    assert.deepEqual(f.capacity(), { ok: false, code: 'CAPACITY_REFUSED' })
+    e.socketClosed()
+    await flush()
+    assert(f.capacity().ok)
+    assert.deepEqual(f.capacity(), { ok: false, code: 'CAPACITY_REFUSED' })
+    e.socketClosed()
+    e.responseEnded()
+    e.error()
+    await flush()
+    assert.deepEqual(f.capacity(), { ok: false, code: 'CAPACITY_REFUSED' })
+  })
+test('shared clock fault with missing connection evidence never releases active slots', async () => {
+  const f = clockBoundaryFixture(),
+    operations = Array.from({ length: 4 }, () => f.register())
+  f.set(10)
+  const ps = operations.map(f.open)
+  f.set(20)
+  assert.deepEqual(f.capacity(), { ok: false, code: 'CAPACITY_REFUSED' })
+  f.set(19)
+  const denied = f.capacity()
+  assert.deepEqual(denied, { ok: false, code: 'INSTALLATION_REFUSED' })
+  let outcomes: unknown[] | undefined
+  void Promise.all(ps).then((x) => {
+    outcomes = x
+  })
+  await flush()
+  assert.deepEqual(outcomes, Array(4).fill({ kind: 'refused', code: 'INSTALLATION_REFUSED' }))
+  for (const e of f.base.events) {
+    e.socketAssigned()
+    e.requestClosed()
+    e.socketClosed()
+  }
+  f.set(20000)
+  await flush()
+  assert.deepEqual(f.capacity(), { ok: false, code: 'CAPACITY_REFUSED' })
+})
+for (const increasing of [false, true])
+  for (const absent of [false, true])
+    test(`shared clock ${increasing ? 'increasing' : 'equal'} permits ${absent ? 'absence' : 'catalog'} publication`, async () => {
+      const f = clockBoundaryFixture()
+      if (increasing) f.onRead((n) => f.set(n))
+      const operation = f.register(),
+        p = f.open(operation)
+      f.base.complete(
+        0,
+        absent
+          ? new TextEncoder().encode('{"data":[],"links":{"next":null},"total_count":0}')
+          : rawBytes(),
+      )
+      const r = await p
+      assert.equal(r.kind, absent ? 'absent' : 'published')
+      assert.equal(f.base.counts().opens, 1)
+    })
+
+test('shared clock fault fixes all siblings before callbacks and preserves prior results', async () => {
+  const f = fixture()
+  let ms = 0,
+    armed = false,
+    callbacks = 0
+  let cancelSiblings = () => {}
+  const callbackResults: unknown[] = []
+  const made = createOfflineCatalogPublicationOwnerV1(f.input, {
+    ...f.runtime,
+    readClock: () => ({
+      utc: new Date(Date.parse('2026-09-26T12:00:00.000Z') + ms).toISOString(),
+      monoMs: ms,
+    }),
+    clearWake: (timer: object) => {
+      f.runtime.clearWake(timer)
+      if (armed) {
+        callbacks++
+        cancelSiblings()
+      }
+    },
+  })
+  assert(made.ok)
+  const owner = made.owner,
+    s = owner.registerCatalogScopeV1({ scopeId: 's0' })
+  assert(s.ok)
+  const register = () => {
+    const r = owner.registerRefreshOperationV1({
+      scope: s.scope,
+      expectedGeneration: 0,
+      deadlineMonoMs: 10000,
+    })
+    assert(r.ok)
+    return r
+  }
+  const prior = register()
+  assert.deepEqual(
+    owner.cancelRefreshOperationV1({
+      operation: prior.operation,
+      cancellation: prior.cancellation,
+    }),
+    { ok: true, outcome: 'cancelled' },
+  )
+  const ops = Array.from({ length: 4 }, register),
+    ps = ops.map((op) => owner.requestCatalogRefreshV1({ operation: op.operation }))
+  cancelSiblings = () => {
+    for (const op of ops)
+      callbackResults.push(
+        owner.cancelRefreshOperationV1({ operation: op.operation, cancellation: op.cancellation }),
+      )
+  }
+  ms = 20
+  assert.deepEqual(
+    owner.registerRefreshOperationV1({
+      scope: s.scope,
+      expectedGeneration: 0,
+      deadlineMonoMs: 10000,
+    }),
+    { ok: false, code: 'CAPACITY_REFUSED' },
+  )
+  armed = true
+  ms = 19
+  assert.deepEqual(
+    owner.registerRefreshOperationV1({
+      scope: s.scope,
+      expectedGeneration: 0,
+      deadlineMonoMs: 10000,
+    }),
+    { ok: false, code: 'INSTALLATION_REFUSED' },
+  )
+  assert(callbacks > 0)
+  assert.equal(callbackResults.length, callbacks * 4)
+  assert.deepEqual(
+    callbackResults,
+    Array(callbacks * 4).fill({ ok: true, outcome: 'already-settled' }),
+  )
+  assert.deepEqual(
+    await Promise.all(ps),
+    Array(4).fill({ kind: 'refused', code: 'INSTALLATION_REFUSED' }),
+  )
+  assert.deepEqual(await owner.requestCatalogRefreshV1({ operation: prior.operation }), {
+    kind: 'refused',
+    code: 'CANCELLED',
+  })
+})

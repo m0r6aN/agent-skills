@@ -285,6 +285,7 @@ export function createOfflineCatalogPublicationOwnerV1(
       fail('INSTALLATION_REFUSED')
     }
     let last: ClockReadingV1 | null = null
+    let clockFault = () => {}
     const now = (): ClockReadingV1 => {
       try {
         const x = closed(r.readClock(), ['utc', 'monoMs'])
@@ -293,13 +294,16 @@ export function createOfflineCatalogPublicationOwnerV1(
         last = t
         return t
       } catch {
+        clockFault()
         fail('INSTALLATION_REFUSED')
       }
     }
     const initial = now()
     for (const d of declarations.values())
       if (d.policyExpiresAtUtc <= initial.utc) fail('INSTALLATION_REFUSED')
-    const transport = createOfflineMetadataTransportV1(r)
+    // Every clock read in this installation, including transport reads, crosses
+    // the same validated history. The independent native factory is unchanged.
+    const transport = createOfflineMetadataTransportV1({ ...r, readClock: now })
     if (!transport.ok) fail('INSTALLATION_REFUSED')
     const scopes = new WeakMap<object, Scope>(),
       registered = new Set<string>(),
@@ -312,17 +316,21 @@ export function createOfflineCatalogPublicationOwnerV1(
       o.released = true
       live.delete(o)
     }
+    const finishLatch = (o: Operation) => {
+      if (o.timer) {
+        const timer = o.timer
+        o.timer = null
+        try {
+          r.clearWake(timer)
+        } catch {}
+      }
+      release(o)
+    }
     const settle = (o: Operation, value: RefreshResult) => {
       if (o.result) return
       o.result = value
       o.deliver(value)
-      if (o.timer) {
-        try {
-          r.clearWake(o.timer)
-        } catch {}
-        o.timer = null
-      }
-      release(o)
+      finishLatch(o)
     }
     const deny = (o: Operation, code: RefreshCode) => {
       if (o.result) return
@@ -330,6 +338,21 @@ export function createOfflineCatalogPublicationOwnerV1(
       try {
         o.controller.abort()
       } catch {}
+    }
+    clockFault = () => {
+      const affected = [...live].filter((o) => !o.result)
+      // Latch the entire bounded set before any timer/abort callback can reenter
+      // and settle a sibling operation with a different outcome.
+      for (const o of affected) {
+        o.result = refused('INSTALLATION_REFUSED')
+        o.deliver(o.result)
+      }
+      for (const o of affected) {
+        finishLatch(o)
+        try {
+          o.controller.abort()
+        } catch {}
+      }
     }
     const check = (o: Operation, t: ClockReadingV1) => {
       if (o.result) return false

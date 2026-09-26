@@ -168,3 +168,54 @@ late callbacks and stable refusal codes. Run focused/full dispatch, typecheck,
 full lint, actual D19, predecessor preservation and diff/scope checks. No native
 request policy, N/adapter/C/B1/ledger, dependencies or production refusal changes.
 Freeze clean and STOP for root plus independent frontier D review before integration.
+
+## Shared-clock repair implementation handoff
+
+Implemented under explicit release 47906bc361494a25cf3e86dfe54e5566dbd17d8d.
+The owner now supplies its validated clock closure to the offline transport.
+Every installed clock read therefore compares against the same retained UTC and
+monotonic history. A rejected reading does not replace that history. A private
+two-phase notification fixes every unsettled live operation to
+INSTALLATION_REFUSED before timer cleanup or abort callbacks. Previously fixed
+results remain fixed; never-started capacity releases, while running capacity
+still waits for the original connected/closed transport settlement. There is no
+new public API, permanent poison state, reset or revival mechanism.
+
+Test-first evidence: the completed RED run of the 11 new boundary controls had
+7 failures and 4 equal/increasing positive passes against the old implementation
+(TEMP/rcm-p-clock-repair-red.log). The same 11 passed after the repair
+(TEMP/rcm-p-clock-repair-green.log). Earlier interrupted exploratory runs are not
+claimed as completed RED evidence. A twelfth control records reentrant sibling
+cancellation outcomes outside the cleanup callback, proving all sibling results
+were fixed first and preserving a prior cancellation result.
+
+The permanent controls cover UTC-only and monotonic-only rollback in both
+owner-to-transport and transport-to-owner directions, pre-open zero I/O and slot
+recovery, four running slots retained across outward refusal/deadline/late hooks,
+release only after connected and all applicable close acknowledgements, missing
+connection evidence retaining capacity, and equal/increasing actual-N catalog and
+absence publication. The low-level fixture drives the real shared engine rather
+than supplying a fabricated finished transport result.
+
+Validation with D:/nvm/v24.19.0/node.exe and the existing matched-lock dependencies:
+
+- Focused publication/metadata transport: 74 passed; TEMP/rcm-p-clock-focused.log.
+- Full dispatch: 547 passed; TEMP/rcm-p-clock-dispatch.log. Subsequent test-only
+  callback-result assertion tightening was rerun in the 74-test focused suite.
+- Routing policy: 964 passed; TEMP/rcm-p-clock-routing.log.
+- Hybrid routing: 53 passed; TEMP/rcm-p-clock-hybrid.log.
+- Contract readers: 72 passed; TEMP/rcm-p-clock-contract-readers.log.
+- Mutation-scope guard: 44 passed; TEMP/rcm-p-clock-mutation-scope-guard.log.
+- Dispatch typecheck and full lint: exit 0; TEMP/rcm-p-clock-typecheck.log and
+  TEMP/rcm-p-clock-lint.log. A missing test callback annotation was corrected before
+  these final checks.
+- Actual D19: exit 0, PASS, unchanged DATA 11/11 and digest; TEMP/rcm-p-clock-d19.log.
+- Diff/scope and predecessor preservation: only this report, catalog-publication.ts
+  and pmc-catalog-publication.test.ts changed from the release. Native transport,
+  its tests/types, N/adapter/C/B1/ledger, dependencies and public barrels unchanged.
+
+No network/provider/configuration access or production activation was performed.
+The production constructor still refuses before reading its input. This is a
+builder handoff, not independent approval; root and a different frontier reviewer
+must review the frozen repair before integration. Existing activation limitations
+and live-proof gates above remain in force.
