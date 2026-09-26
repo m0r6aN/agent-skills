@@ -164,3 +164,41 @@ Final verification with process-local Node 24.19.0, native exit 0:
 
 No provider calls, production claims, Pi/configuration changes, pushes or merges.
 Two independent final reviews and coordinator integration/CI remain required.
+
+## Catalogue freshness ordering repair — 2026-09-26
+
+Repair base: `8f8ffe9b22833060b2fa6d940765dbb29c1aec1a`; frozen spec remains
+`d65ff524bba2eda6c9e38de44c78aac4aae1c59f`. Coordinator accepted the fresh
+Step 0 inspection and released this bounded repair.
+
+Stage 4 now checks the catalogue source receipt, catalogue provenance, then
+episode, freshness, independence and budget receipts in that order. The earlier
+scope checks retain all receipts and precedence over missing-global refusals.
+Independence determination and subject value receipts still precede enclosing
+evidence; candidate filters and all public contracts remain unchanged.
+
+Permanent tests add 32 competing future/stale vectors, in both directions and
+normal/reversed object-key order. Four source-before-provenance controls passed
+before the repair; all 28 provenance-before-later-receipt vectors failed RED.
+Those cover episode, freshness, nested determination, subject instance/family,
+enclosing independence and budget. All 32 passed GREEN after the phase repair.
+
+Final verification used process-local Node `v24.19.0` and the existing package
+script executables directly, without npm or dependency mutation. Each native
+exit was 0:
+
+- Focused `node node_modules/tsx/dist/cli.mjs --test --test-name-pattern
+  'catalog freshness order' tests/pmc-resolver.test.ts`: 32/32 passed.
+- Routing `node node_modules/tsx/dist/cli.mjs --test tests/*.test.ts`:
+  790/790 passed, no skips (285 resolver tests).
+- Routing `node node_modules/typescript/bin/tsc --noEmit`: passed.
+- Routing `node node_modules/@biomejs/biome/bin/biome check .`: passed; only
+  the existing informational suggestion in unchanged catalog-snapshot.test.ts.
+- Unchanged dispatch `node node_modules/tsx/dist/cli.mjs --test tests/*.test.ts`:
+  126/126 passed, no skips.
+- `git diff --check`: passed; diff limited to resolver source, resolver tests and
+  this handoff. Frozen spec, dependencies, dispatch and public API are unchanged.
+
+The self-review found no additional required changes. This is local conformance
+evidence only; two independent final reviews and coordinator integration/CI remain
+required. No provider calls, production activation, push or merge occurred.

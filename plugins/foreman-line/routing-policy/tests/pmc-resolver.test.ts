@@ -11,6 +11,62 @@ const stale = (claim: Fixture) => {
 const future = (claim: Fixture) => {
   claim.evidence.observedAtUtc = '2026-09-26T12:00:00.001Z'
 }
+const provenanceFreshness = (f: Fixture, kind: 'stale' | 'future') => {
+  f.context.catalog.provenance.sourceTimeUtc =
+    kind === 'stale' ? '2026-09-26T10:59:59.999Z' : '2026-09-26T12:00:00.001Z'
+  f.context.catalog.provenance.ageMs = kind === 'stale' ? 3600001 : 0
+}
+for (const reversed of [false, true]) {
+  for (const first of ['stale', 'future'] as const) {
+    const expected = first === 'stale' ? 'FRESHNESS_STALE_REFUSED' : 'FRESHNESS_FUTURE_REFUSED'
+    const earlier = first === 'stale' ? stale : future
+    const later = first === 'stale' ? future : stale
+    test(`catalog freshness order source before provenance ${first} ${reversed}`, () => {
+      const f = fixture()
+      earlier(f.context.catalog.source)
+      provenanceFreshness(f, first === 'stale' ? 'future' : 'stale')
+      if (reversed) {
+        f.context.catalog = reverseRecord(f.context.catalog)
+        f.context = reverseRecord(f.context)
+      }
+      refused(f, expected)
+    })
+    for (const field of [
+      'episode',
+      'freshness',
+      'determination',
+      'subjectInstance',
+      'subjectFamily',
+      'independence',
+      'budget',
+    ]) {
+      test(`catalog freshness order provenance before ${field} ${first} ${reversed}`, () => {
+        const f = fixture()
+        setLane(f, 'L1')
+        const s = subject(f)
+        f.context.independence.value.subjects = [s]
+        const claim =
+          field === 'determination'
+            ? f.context.independence.value.determination
+            : field === 'subjectInstance'
+              ? s.instanceId
+              : field === 'subjectFamily'
+                ? s.family
+                : f.context[field]
+        provenanceFreshness(f, first)
+        later(claim)
+        if (reversed) {
+          f.context.independence.value.subjects = [reverseRecord(s)]
+          f.context.independence.value = reverseRecord(f.context.independence.value)
+          f.context.independence = reverseRecord(f.context.independence)
+          f.context.catalog = reverseRecord(f.context.catalog)
+          f.context = reverseRecord(f.context)
+        }
+        refused(f, expected)
+      })
+    }
+  }
+}
 for (const reversed of [false, true]) {
   test(`binding family precedes instance freshness ${reversed}`, () => {
     const f = fixture(),

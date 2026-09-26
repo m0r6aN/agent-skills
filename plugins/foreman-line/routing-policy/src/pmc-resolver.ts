@@ -676,15 +676,14 @@ function evaluate(
     r.requestDigest === requestDigest &&
     r.lane === q.lane &&
     r.bindingId === bindingId
-  const globalRefs = [
-    ...refs(c.catalog.source),
+  const laterGlobalRefs = [
     ...refs(c.episode),
     ...refs(c.freshness),
     ...independenceRefs(c.independence),
     ...refs(c.budget),
   ]
   if (
-    globalRefs.some((r) => !matches(r, null)) ||
+    [...refs(c.catalog.source), ...laterGlobalRefs].some((r) => !matches(r, null)) ||
     c.bindings.some((b) => bindingRefs(b).some((r) => !matches(r, b.bindingId)))
   )
     return halt('CONTEXT_BINDING_REFUSED')
@@ -754,13 +753,15 @@ function evaluate(
     return halt('GLOBAL_EVIDENCE_UNPROVEN')
   const source = c.catalog.source.value,
     maxAge = c.freshness.value.maximumAgeMs
-  for (const r of globalRefs) {
-    const failure = freshness(r, now, maxAge)
-    if (failure) return halt(failure as StopCode)
-  }
+  const sourceFailure = freshness(c.catalog.source.evidence, now, maxAge)
+  if (sourceFailure) return halt(sourceFailure as StopCode)
   if (sourceTime > now) return halt('FRESHNESS_FUTURE_REFUSED')
   if (now - sourceTime > Math.min(maxAge, provenance.maxAgeMs, 86400000))
     return halt('FRESHNESS_STALE_REFUSED')
+  for (const r of laterGlobalRefs) {
+    const failure = freshness(r, now, maxAge)
+    if (failure) return halt(failure as StopCode)
+  }
   const budget = c.budget.value
   if (budget.frozen) return halt('BUDGET_FROZEN')
   const liabilities = BigInt(budget.settledMicroUsd) + BigInt(budget.outstandingMicroUsd)
