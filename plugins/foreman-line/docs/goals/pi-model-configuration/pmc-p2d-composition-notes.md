@@ -290,3 +290,19 @@ accumulator rewrite or production accounting claim is made.
 Frozen linter, required-body/local-link checks and exact three-document whitespace
 inspection precede handoff. All runtime conformance/installation tests remain future
 requirements. No package install, runtime edit, provider call or credential access.
+## Amended design acceptance — 2026-09-26
+
+Coordinator and independent B1 reviewer APPROVE8a2a322c2278994b502f046a91f7a6033fe43e2d
+following actual C/Pi source inspection, exact three-document comparison and
+frozen lint/link/diff checks. Root ratifies the four corrections and exact nine-file
+future envelope under the user's delegated prerequisite authority. Fixed development
+dependencies, C-owned wire binding, stop-only completion and private nonaccounting
+Pi totals are accepted; no production certificate or live conformance is inferred.
+
+C source93f8021 has two independent final source approvals and is frozen here.
+Its separately scoped reader/audit enrollment and main integration remain shipping
+gates, not authorization to alter C. D may prepare an isolated offline build against
+that frozen accepted source; actual Step0 restatement and explicit runtime release
+still precede edits. Production construction/preparation must refuse absent genuine
+billing/installation evidence before reserve, credential supplier or HTTPS. Synthetic
+private tests cannot unlock production. No provider calls/configuration are released.
