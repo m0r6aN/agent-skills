@@ -313,8 +313,18 @@ state; local instance quarantines the intent and returns COMMIT_UNCERTAIN. No
 resolver/reserve/send occurs after failed begin; failed recordDecision prevents
 reserve/send (the resolver has already run). Reservation failure
 or lost acknowledgement means liability MAY exist; no receipt absence refund.
-After ledger terminal commit, failed owner finish blocks fallback until separately
-authorized future recovery (none supplied). Successful closed-refused returns null
+After ledger terminal commit, owner finish that has not durably established an
+authenticated terminal closure blocks fallback; ledger closure alone cannot repair
+owner custody. Lost acknowledgement quarantines the current instance and invalidates
+its capabilities. Reopen revalidates persisted custody normally: a valid committed
+primary terminal-no-send or terminal-failed-settled row may enable only the
+predeclared second attempt, even if its commit acknowledgement was lost. The closed
+Slot schema stores no acknowledgement marker and makes no permanent cross-restart
+acknowledgement-loss claim. Pending/held/uncertain remains blocking. Never retry or
+remint the first attempt or manufacture a completion capability from stored JSON.
+Success, closed-refused, selected fallback and an already-used second slot remain
+terminal; identity/revision/linkage/expiry/prior-quality checks and rollback
+exclusions are unchanged. Successful closed-refused returns null
 P2C receipt and remains closed. No timeout, restart or missing proof is no-send.
 
 Security scope: SQLite transactional durability assumes a correctly behaving local
@@ -445,3 +455,15 @@ between callback and CAS, while separately proving cross-instance/restart claim
 refusal. Require exactly one acknowledged revision change and stale-claim refusal;
 no production test hook, transferable claim or proof reconstruction is added.
 This exercises contention without contradicting the private-capability contract.
+
+### Coordinator disposition: terminal commit versus lost acknowledgement
+
+Blanket goal/prerequisite authority covers this explicit contract clarification.
+Independent frontier disposition review approved the distinction between current
+instance quarantine and normally validated durable terminal custody after reopen.
+This is not recovery authority or a waiver of owner completion. Builder must add
+paired faults: after owner COMMIT/before acknowledgement permits only eligible R2
+on reopen; after ledger reconciliation/before owner COMMIT stays blocked. The
+quarantined instance refuses, R1 cannot replay, and no third attempt exists.
+Source acceptance still requires two independent implementation reviews and all
+integration/remote gates; this disposition review is not either source approval.
