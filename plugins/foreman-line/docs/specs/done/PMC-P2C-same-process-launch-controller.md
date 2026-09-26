@@ -1,7 +1,7 @@
 ---
 ticket: PMC-P2C
 title: Same-process one-use launch controller
-status: active
+status: done
 owner: clinton.morgan
 created: 2026-09-26
 updated: 2026-09-26
@@ -591,7 +591,7 @@ activation; HRO implementation; public mint/test mode.
 - [P2B1 durable owner](../done/PMC-P2B1-durable-intent-custody.md)
 - [P2A](../done/PMC-P2A-owner-resolver.md), [P2B](../done/PMC-P2B-durable-budget-ledger.md)
 - [P2 inventory](../../goals/pi-model-configuration/pmc-p2-design-inventory.md)
-- [P2D](PMC-P2D-openrouter-terminal-transport.md), [P2E](PMC-P2E-config-caller-migration.md)
+- [P2D](../active/PMC-P2D-openrouter-terminal-transport.md), [P2E](../active/PMC-P2E-config-caller-migration.md)
 - Frozen A/B Git blobs/source pins above supersede older local drafts.
 
 ## Allowed Files
