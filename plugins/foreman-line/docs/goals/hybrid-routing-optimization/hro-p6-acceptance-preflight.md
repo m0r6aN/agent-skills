@@ -120,3 +120,11 @@ execution/report parcel around them and obtain independent review. Freeze the
 workload and baseline before collecting results. This preparatory note deliberately
 contains no guessed telemetry API, execution harness, minting path or fabricated
 receipt. Implementation and live collection remain unreleased.
+
+## Independent preparation review
+
+Frontier A independently approves this note at 7268abe5b12e00a0db863f861c4b51cd8b5622ef
+as preparation only. It preserves the narrow quality claim, six-attempt cap,
+failed/unknown outcomes, custody/billing prerequisites and full-charter exit.
+Actual shared-process entry and measured workflow composition still require the
+future reviewed protocol; no live or implementation release is implied.
