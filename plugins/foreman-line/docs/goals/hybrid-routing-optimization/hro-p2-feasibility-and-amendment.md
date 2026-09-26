@@ -81,3 +81,27 @@ specific implementation, whether the proposed scope change is explicit and
 consistent with the optimization objective, and whether any remaining requirement
 is accidentally waived. Ratification and actual charter edits follow review;
 there is no runtime dispatch or goal-completion claim in this draft.
+
+## Local reproducibility records
+
+Final second-run harness: C:/Users/clint/AppData/Local/Temp/hro-choice-feasibility-20260926.mjs,
+SHA2561b2942cb814fc15ec24bb4d8865edc3d802ec2b09898fc450623fef8dea9a024.
+Key-size probe: C:/Users/clint/AppData/Local/Temp/hro-choice-key-size-20260926.mjs,
+SHA2562d22d2c091381028d95851994f13c949afce0b6122cfdbc1ec9f87f465351616.
+These are temporary, machine-specific evidence harnesses, not shipped runtime or
+portable benchmark assets. The first run's128/256 refusal observations remain in
+the reviewer tool transcript only; the final harness tests4/64. No result file was
+retained by the measuring reviewer and no digest for an absent result is asserted.
+
+Literal replay (use a separate process; each harness temporarily instruments sort):
+
+```powershell
+$env:TSX_DISABLE_CACHE='1'
+& D:/nvm/v24.19.0/node.exe --import file:///D:/Repos/agent-skills-worktrees/hro-pmc-schema-reuse-shaping-20260926/plugins/foreman-line/routing-policy/node_modules/tsx/dist/loader.mjs C:/Users/clint/AppData/Local/Temp/hro-choice-feasibility-20260926.mjs
+& D:/nvm/v24.19.0/node.exe --import file:///D:/Repos/agent-skills-worktrees/hro-pmc-schema-reuse-shaping-20260926/plugins/foreman-line/routing-policy/node_modules/tsx/dist/loader.mjs C:/Users/clint/AppData/Local/Temp/hro-choice-key-size-20260926.mjs
+```
+
+Replays must verify the pinned source/fixture and harness bytes, native exit and
+accepted survivor count. New timings are a new observation, not a replacement
+for the original run or proof of complete-path benefit. The independent review
+may corroborate this bounded hold without asserting a production benchmark.
