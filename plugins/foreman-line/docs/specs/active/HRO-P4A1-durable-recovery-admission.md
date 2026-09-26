@@ -316,3 +316,29 @@ bounds and source preservation. No existing owner/schema/barrel/dependency edits
 provider/Pi/credential/configuration effects or public factory/mint. Freeze a clean
 five-file source/report handoff and stop for two independent source reviews;
 combined integration, relevant package checks and remote CI still gate merge.
+
+## P4A1 independent review repair release — 2026-09-26
+
+Root and independent frontier D request changes at93f54bd26d89201b61292e0dc2f10e1a51fa442e.
+Both reproduced input-junction acceptance with store creation, exact262144 JSON
+UTF-8 input falsely rejected, and70,000-element array ownKeys invoked before
+observable bound refusal. Root probe: TEMP/hro-p4a1-root-probe.mts. Existing12
+focused tests pass but omit these defects; no full-suite/typecheck pass was claimed.
+
+Root accepts Luna's genuine read-only repair Step0 and releases the same five-file
+scope for correction. Check supplied path components before realpath and retain
+canonical confinement/identity checks afterward. Array index names are not part
+of JSON serialized capture cost; preserve all value/punctuation/escape accounting.
+Preflight observable array length/minimum expanded node cost before ownKeys or
+child descriptors; at the closed top-level intents field also preflight its128
+item cap before enumeration. Pair exact/+1 and actual junction controls with
+zero stores/effects on refusals; exercise both129 intents and70,000 unknown-array
+bounds without descendant traps. No source/API/SQLite semantics are widened.
+
+Root added absent sibling dependency links only after matching each package lock
+against the read-only E1 integration donor. Existing links were preserved and no
+install/donor write occurred. Run full dispatch tests/typecheck and relevant lint
+with pinned Node24.19 after focused RED/GREEN; do not label unrelated load failures
+as a pass. Preserve actual B1/ledger/R2/race/commit-uncertainty tests, production
+zero-read refusal and unchanged owners. Update the existing report, freeze clean
+and STOP for two independent final source reviews and later combined/remote gates.
