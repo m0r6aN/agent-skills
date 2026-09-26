@@ -60,3 +60,30 @@ commit; no publish/merge until two independent implementation reviews close.
 ## Stop and continuation
 
 Persist decisions, evidence and queue changes here. Continue independent authorized work while a prerequisite waits. If no meaningful work remains, report the exact missing input and resume when it arrives. Never mark the full goal complete merely because P1 or fixture tests pass. Stop on user's request, unresolved security findings, unauthorized external effects, or genuine missing user-only credentials/ownership decisions.
+
+## P1a Stage-F closure — 2026-09-26
+
+PR54 merged as `59b48a0b47e9ccba0499121649801cf7d36ba285` after both
+independent implementation approvals, separately reviewed A2 audit enrollment,
+and every corrected full remote CI check passed at 379f144. The spec is now
+`docs/specs/done/HRO-P1a-mapping-contract.md` with status done. Earlier shaping
+artifacts and review hashes remain historical records, not rewritten evidence.
+Original branches/frozen commits are retained for traceability; the clean HRO
+workspace is reused on `codex/hro-p1b-20260926`, with separate specification
+release commit 057e3bf and a fresh GPT-5.6-Luna builder at Step 0. P1b remains
+offline and gets its own two reviews; no P1a acceptance authorizes runtime use.
+
+PMC-P1a final source 12b0aa0 has both independent approvals and a clean verified
+integration (471 tests/typecheck/lint); PR55 is queued after PR54. RCM-P1A final
+source 4201ac4 has both independent approvals (27 focused/426 full tests) and
+awaits integration after PMC. Remaining live/cache/receipt/configuration/operator
+and measured-smoke exits are still open. The coordinator remains responsible
+under unchanged delegated authority; no human decision is presently required.
+
+## Implementation checkpoint — 2026-09-26
+
+RCM library PR51 and source/closure PR52 are merged; source profile v4 is accepted for six conservative OpenRouter catalog-fact rows with explicit remaining refusals. PMC binding/controlled-launch design PR53 merged as 2997b198cb73a6a7e85d215464a86f97a9c8b571 behind green CI. PMC-P1a implementation is frozen at 7e77a0ae1f8cc3d8c696c914a40879f0cb97f3f4 in hro-pmc-p1a-20260926, with two fresh independent implementation reviews underway. Builder reports 470 routing-policy, 126 dispatch and 126 spec-linter tests, pending independent acceptance.
+
+RCM-P1A wrapper Step 0 verified clean base 1dc353ab69cf6d62ac2f4e6662e529ff9e6129c9 and spec blob 906f91d5061826ab671d939d369b67bbf28175c6; implementation released in hro-rcm-p1-integration-20260926 on codex/hro-rcm-p1a-wrapper-20260926. Private isolated work may overlap; shared barrel integration remains PMC-P1a then RCM-P1A, preserving all accepted exports. Subsequent projection/producer work uses the reconciled accepted base. Producer contract review approved retained evidence transformation subject to the release conditions now recorded in its draft; no producer implementation released yet.
+
+HRO-P1a repaired head 5e051437ba9a63c46d14c543e8d3198153f95137 still failed both independent rereviews on resource preflight ordering. Luna is released for the narrow repair and permanent boundary regressions recorded in hro-p1a-review-triage.md; do not publish the uncorrected head. HRO-P1b and all later runtime/cache/receipt work remain queued. SQLite ledger refinement remains reviewed draft design, not implementation. No full goal completion or live routing claim is made.

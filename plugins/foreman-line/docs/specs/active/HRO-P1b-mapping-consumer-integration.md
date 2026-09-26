@@ -145,7 +145,7 @@ retry, discovery, fallback execution, selection, scheduling, merge and release.
 
 ## Context & References
 
-- [P1a validator](HRO-P1a-mapping-contract.md)
+- [P1a validator](../done/HRO-P1a-mapping-contract.md)
 - [Owner handoffs](../../goals/hybrid-routing-optimization/hro-p1-coordination.md)
 - [Dispatch public barrel](../../../dispatch/src/index.ts)
 - [Evaluator public contract](../../../dispatch/src/routing-eval/index.ts)

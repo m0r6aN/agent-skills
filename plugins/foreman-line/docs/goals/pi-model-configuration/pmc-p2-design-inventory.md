@@ -33,6 +33,7 @@ checkout and installed Pi sources. Pin accepted implementation commits at dispat
 | Hidden auxiliary inference | Disable extensions/discovery, warming, automatic compaction/retries/background network unless proven through the same gate. Each later request needs a fresh reservation/permit. |
 | Budget ceiling masquerades as remaining funds | Scope-authorized limit minus settled plus all outstanding liabilities; atomic reserve/consume. Unknown costs/liabilities never released by timeout or missing response. |
 | Floating point price precision | Micro-USD safe-integer ledger; authenticated bounded decimal rate lexemes, <=18 fractional digits, exact rational total then ceil once. Numeric catalog projections are not billed-price authority. |
+| Handwritten ledger locking/journal recovery | Coordinator accepts built-in Node 24.19.0 DatabaseSync with verified DELETE/EXTRA durability, 1,000 ms busy timeout and SQLite-owned locking/recovery. No dependency or custom stale-lock deletion. P2B remains draft pending accepted predecessors and concrete ports. |
 | Pi sparse thinking-map broadening | Installed pi-ai models.js:554 accepts omitted basic levels and clamps; OpenAI chat may map absent off to none. Source maps stay facts only. Explicit null denials in generated Pi config plus exact prelaunch/final-wire guard; no automatic clamp, mandatory reasoning off refuses. P2D/E add negative tests. |
 | Unresolved break-glass authority | Empty initial bypass set; every override refuses. No guessed privileged owner token. |
 | Fabricated family/privacy/quality evidence | Required unknown facts refuse. Initial governed entry public-only; internal/restricted refuse regardless of policy declarations. |
@@ -70,6 +71,53 @@ unsafe magnitude or an unprovable bound refuses. Exact rational charge component
 are summed before ceiling to micro-USD. Provider-reported actual charge remains a
 separate authenticated settlement observation; conservative rounded liability is
 not represented as observed billing. Unknown settlement retains the bound.
+
+## Accepted SQLite ledger design, implementation still pending
+
+[P2B](../../specs/active/PMC-P2B-durable-budget-ledger.md) freezes the storage
+contract: pinned Node 24.19.0 built-in `node:sqlite` DatabaseSync, fixed local
+database path, 1,000 ms busy timeout, extensions off, defensive mode/foreign keys
+on, and verified effective `journal_mode=DELETE` plus `synchronous=EXTRA` on
+every connection. SQLite owns transaction locking and journal recovery. No manual
+stale-lock deletion, custom journal, WAL/checkpoint machinery or new dependency.
+
+Three STRICT tables hold versioned ledger identity/epoch, authorized budget scopes
+and retained request attempts. Fixed prepared SQL binds all values; BigInt reads
+and JavaScript BigInt sums avoid unsafe Number conversion and SQL SUM overflow.
+BEGIN IMMEDIATE serializes the read/check/state transition/commit across processes.
+No callback or external IO runs inside a transaction. Only committed consume can
+precede a send; ambiguous commit never grants send/retry/refund authority. Preserve
+consumed/uncertain liabilities across restart, authenticate any release, and
+record an over-bound observed charge plus scope freeze atomically. Close in finally
+after rollback where needed, preserving the original failure.
+
+Initialization is a separate trusted one-time owner operation; ordinary open never
+creates a database/schema and requires expected ledger ID and initialized epoch
+from trusted durable authority outside the store. Missing, empty, mismatched,
+corrupt or unsupported storage refuses. Replayed/interrupted initialization and
+recovery need explicit reconciliation, never a silent zero balance. Local trusted
+OS/storage is the threat model; no protection against hostile OS writers or old
+backup rollback is claimed. Database/journal paths cannot escape the owned root;
+network shares are unsupported.
+
+Caps are 256 scopes, 10,000 retained attempts total, 1,000 per scope, 16 KiB UTF-8
+exact evidence per request, 4,096 UTF-16 code units per field string, 128 per ID,
+and 512 code units of fixed diagnostic text. Check count caps atomically and use
+indexed bounded reads. Capacity refuses new reservations without preventing
+bounded reconciliation of existing attempts. Never delete replay IDs/liabilities
+to make space. Compaction or epoch rollover needs a future reviewed contract.
+Tests can seed valid near-capacity fixtures directly; real process concurrency,
+crash/commit ambiguity, wrong/missing epoch, IO failure and public transition tests
+remain required. Process kills do not establish hardware power-loss durability.
+
+Coordinator's local in-memory probe reported Node 24.19.0 / SQLite 3.53.3: API
+availability only, not a durable ledger implementation or acceptance result.
+Official basis: [Node SQLite API](https://nodejs.org/download/release/v24.14.0/docs/api/sqlite.html),
+[SQLite transactions](https://www.sqlite.org/lang_transaction.html) and
+[SQLite durability settings](https://www.sqlite.org/pragma.html#pragma_synchronous).
+The design is coordinator accepted; P2B is not dispatchable until its predecessor
+contracts are accepted and concrete initialization/open ports are frozen. Two
+independent implementation reviews remain mandatory.
 
 ## Installed Pi 0.87.1 facts, local inspection only
 
@@ -134,3 +182,9 @@ TSX_DISABLE_CACHE=1. All seven new documents passed whitespace/local-link checks
 tracked charter diff passed git diff --check. Superseded P2B/P2C draft filenames
 have no references in the revised specs. Documentation only; no implementation
 tests, live evidence, config mutations or commits are claimed. P1 docs unchanged.
+
+SQLite design amendment verification (2026-09-26): revised P2B passed the same
+installed spec-linter with explicit target path and TSX_DISABLE_CACHE=1 on Node
+24.19.0 (exit 0). Both amended documents passed local-link and git diff --check
+validation. The amendment changes only this inventory and the draft P2B spec;
+no ledger implementation, runtime durability test or dispatch acceptance claimed.
