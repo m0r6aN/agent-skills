@@ -233,9 +233,35 @@ test("snapshots hostile proxies without invoking iterators or leaking late throw
 	);
 	assert.equal(prototypeResult.ok, false);
 	if (!prototypeResult.ok) assert.equal(prototypeResult.code, "input_invalid");
+	let ownKeysCalled = false;
+	const huge = new Proxy(new Array(1_000_000), {
+		ownKeys() {
+			ownKeysCalled = true;
+			throw new Error("ownKeys must not run");
+		},
+	});
+	const hugeResult = validateMappingProposal(huge, projection(), context);
+	assert.equal(hugeResult.ok, false);
+	if (!hugeResult.ok) assert.equal(hugeResult.code, "input_limit_exceeded");
+	assert.equal(ownKeysCalled, false);
 });
 
 test("enforces structural array bounds and counts primitive values across all inputs", () => {
+	const exactBindings = Array.from({ length: 256 }, (_, index) => ({
+		proposal: proposal({
+			bindingId: `exact-${index}`,
+			providerModelId: `model-${index}`,
+		}),
+		conformance: "allowed" as const,
+	}));
+	const firstExact = exactBindings[0];
+	assert.ok(firstExact);
+	const exactResult = validateMappingProposal(
+		firstExact.proposal,
+		projection(exactBindings),
+		context,
+	);
+	assert.equal(exactResult.ok, true);
 	const tooManyBindings = Array.from({ length: 257 }, () => ({
 		proposal: proposal(),
 		conformance: "allowed",
@@ -270,6 +296,38 @@ test("enforces structural array bounds and counts primitive values across all in
 	);
 	assert.equal(floodResult.ok, false);
 	if (!floodResult.ok) assert.equal(floodResult.code, "input_limit_exceeded");
+});
+
+test("distinguishes the exact visited-value limit from one value over", () => {
+	const base = { ...proposal(), padding: [] as unknown[] };
+	const valueCount = (value: unknown): number => {
+		if (value === null || typeof value !== "object") return 1;
+		if (Array.isArray(value))
+			return 1 + value.reduce((total, item) => total + valueCount(item), 0);
+		return (
+			1 +
+			Object.values(value).reduce((total, item) => total + valueCount(item), 0)
+		);
+	};
+	let remaining =
+		8192 - valueCount(base) - valueCount(projection()) - valueCount(context);
+	while (remaining > 0) {
+		if (remaining === 1) {
+			base.padding.push(0);
+			remaining = 0;
+		} else {
+			const length = Math.min(255, remaining - 1);
+			base.padding.push(Array.from({ length }, () => 0));
+			remaining -= length + 1;
+		}
+	}
+	const exact = validateMappingProposal(base, projection(), context);
+	assert.equal(exact.ok, false);
+	if (!exact.ok) assert.equal(exact.code, "input_invalid");
+	const over = { ...base, padding: [...base.padding, 0] };
+	const overLimit = validateMappingProposal(over, projection(), context);
+	assert.equal(overLimit.ok, false);
+	if (!overLimit.ok) assert.equal(overLimit.code, "input_limit_exceeded");
 });
 
 test("uses one aggregate string budget across proposal, projection, and context", () => {
@@ -313,6 +371,38 @@ test("accepts a string exactly at the per-string limit", () => {
 		context,
 	);
 	assert.equal(result.ok, true);
+});
+
+test("distinguishes the exact aggregate string limit from one byte over", () => {
+	const base = { ...proposal(), padding: [] as string[] };
+	const stringUnits = (value: unknown): number => {
+		if (typeof value === "string") return value.length;
+		if (Array.isArray(value))
+			return value.reduce((total, item) => total + stringUnits(item), 0);
+		if (value && typeof value === "object")
+			return Object.values(value).reduce(
+				(total, item) => total + stringUnits(item),
+				0,
+			);
+		return 0;
+	};
+	let remaining =
+		262144 -
+		stringUnits(base) -
+		stringUnits(projection()) -
+		stringUnits(context);
+	while (remaining > 2048) {
+		base.padding.push("x".repeat(2048));
+		remaining -= 2048;
+	}
+	if (remaining > 0) base.padding.push("x".repeat(remaining));
+	const exact = validateMappingProposal(base, projection(), context);
+	assert.equal(exact.ok, false);
+	if (!exact.ok) assert.equal(exact.code, "input_invalid");
+	const over = { ...base, padding: [...base.padding, "x"] };
+	const overLimit = validateMappingProposal(over, projection(), context);
+	assert.equal(overLimit.ok, false);
+	if (!overLimit.ok) assert.equal(overLimit.code, "input_limit_exceeded");
 });
 
 test("rejects invalid dates and hashes while accepting exact age boundary", () => {
