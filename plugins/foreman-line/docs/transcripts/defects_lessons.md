@@ -170,3 +170,12 @@ visited values, including the root.
 **Disposition:** permanent regression and two independent schema-valid exact-limit
 probes; corrected handoff terminology and unchanged seven legacy schemas recorded
 in PMC-P1a acceptance. Static conformance still establishes no live authority.
+
+## RCM-P1A — classify hostile failures without inspecting them
+
+An arbitrary thrown proxy can throw again during instanceof or property reads.
+Identify internally created refusals by private identity, and treat all other
+thrown values as opaque. Memoize completed caller-object captures separately
+from active-cycle detection, while charging expanded owned aliases against every
+resource budget. Two independent final reviews verified these repairs and exact
+limits; combined integration retained both PMC and RCM public exports.
