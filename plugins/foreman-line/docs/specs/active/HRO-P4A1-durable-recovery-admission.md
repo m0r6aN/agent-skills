@@ -395,3 +395,22 @@ actual plugin-wide audit and diff/scope checks. Source/runtime/tests and contrac
 reader sets are not amended by this audit-only slice. Independent review of this
 amendment, a read-only builder Step0, explicit release and two independent final
 reviews precede integration. No implementation is released by this paragraph.
+
+### Audit enrollment ratification and release
+
+Root and frontier D approve amendmenta53f2af. Root accepts Luna's read-only
+Step0 against accepted runtime blob18134494b439750673aeae024bab7143be32aefe:
+settings ordinals0/1, transaction0/1/2 and writeAdmission0 are the six fixed sites.
+Exactly21 relevant declarations (nine imports, four variables, eight functions)
+and78 external provenance records are proposed using the established syntax/token
+algorithm; the frozen external digest is
+fda9b3dae1622547928e7b2945b706406eb819c66e4ba2cd78eddc3050a99f92.
+Constants must be independently reconciled during source review; none may be
+learned from audited source at run time. Existing ledger10/intent9 remain fixed.
+
+Explicitly release the three audit-only paths above, test-first. Source acceptance
+recordb22ac99 was added by root after Step0 began; preserve it in the report.
+Run actual child audit/mutation controls, relevant existing suites, full package
+checks and real plugin audit. Freeze clean audit/report commit and STOP for two
+independent reviews. Runtime and all existing pins remain unchanged; no broad
+waiver, owner refactor, dependency/install or host configuration change.
