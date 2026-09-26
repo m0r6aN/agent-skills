@@ -1,16 +1,15 @@
 ---
 ticket: PMC-P2E
-title: Derived Pi configuration plan and governed caller migration
+title: Governed caller retirement and new user-entry split record
 status: draft
 owner: clinton.morgan
 created: 2026-09-26
 updated: 2026-09-26
-supersedes: null
-superseded_by: null
-risk: elevated
+risk: critical
 surfaces:
   - plugins/foreman-line/dispatch/
-  - plugins/foreman-line/docs/goals/pi-model-configuration/
+  - plugins/foreman-line/jev-decisions/
+  - plugins/foreman-line/tests/
 routing_class: architecture/risk
 permission_profile: builder-architecture
 data_classification: internal
@@ -19,123 +18,118 @@ verification_class: judgment-required
 
 ## Intent
 
-Produce a reviewable one-way configuration plan and expose one governed entry
-composing accepted PMC selection, ledger, controller and owned transport.
-Migrate or explicitly disable discovered governed legacy callers before public
-activation, while keeping interactive Pi outside Foreman authority. HRO consumes
-this entry and never gains a separate resolver or permit issuer.
+Split the broad P2E proposal into explicit retirement of existing governed legacy
+executors (E1) and a new opt-in user entry with evidence-only configuration planning
+(E2). There is no existing approval-cli inference handoff to migrate. Preserve
+worktree dispatch, pure v0 selection and unrelated interactive/evaluation tools.
+This parent is a DRAFT coordination record, not a runtime work order.
 
 ## Constraints
 
-- Accepted P1 and P2A-D APIs only; no ranking, monetary, policy schema or capability
-  duplication. Amendment 05 is canon. Node 24.19.0, existing dependencies.
-- Plan generation is pure; no host apply/default/credential write, provider probe
-  or activation side effect. Approved evidence is source, not ambient settings.
-- Initial entry is public-only/OpenRouter chat; internal/restricted and other
-  providers/protocols refuse. Pinned L1/L2 opencode remains refused, never migrated
-  to OpenRouter for convenience. Full HRO live exit stays open.
-- All governed legacy/v1 L6 aliases and missing intent refuse before initialization,
-  discovery or inference, regardless of legacy registry/template entries.
-- Scope does not include HRO implementation or unknown callers. Before dispatch
-  inventory exact call sites and either prove the bounded migration below suffices
-  or split additional caller adapters with exact paths. Do not claim closure by
-  documentation when executable governed bypasses remain.
+Source inspection base: `d98e176e6ce6d6164679d35dc21647ef47f33f67`.
+Amendment 05 V6/V8 requires explicit pmc/v1 execution and pre-effect legacy/L6
+refusal. C/D composition approvals are design evidence, not accepted runtime.
+The coordinator authorized only four shaping documents; no ShapingResult,
+tasks/plan.md, tasks/todo.md, source, tests, configuration or lock edits are part
+of this assignment. The task/checkpoint record lives here and in the child specs.
 
-### Configuration and caller contract
+| Parcel | Outcome | Dependency / release condition |
+|---|---|---|
+| PMC-P2E1 | Retire three real governed legacy executors, with explicit behavior loss | Root decisions E-01/E-02, two independent design reviews, exact release |
+| PMC-P2E2 | New separately invoked CLI; private composition; pure disabled configuration plan | Root E-03/E-04; accepted B1/C/D runtime before composition acceptance; E1 before activation |
 
-planPmcPiConfigurationV1 consumes accepted policy and authenticated exact identity,
-protocol, endpoint, capability, enabled/availability/quality/privacy evidence.
-Output a closed plan of supported public registrations/enablement changes,
-refusals, input digests, rollback diff and named unproven claims. Credential
-references are opaque handles only; no raw keys, interpolation commands or env
-expressions. Preserve unrelated settings/interactive defaults. Unknown/held
-facts cannot generate an enabled entry; do not alias opencode and opencode-go.
-This artifact is evidence-only until a separately executed authorized apply.
+E1 can be designed before C/D implementation. E2 design can proceed concurrently,
+but its real composition acceptance cannot substitute stub controllers/stores for
+accepted predecessors. No new tasks or parallel builders are dispatched by this
+record. Each child needs fresh base reconciliation, Step 0 and explicit Gate 2.
 
-Translate sparse observed source thinking facts into explicit Pi denials: each
-unobserved/unsupported off/minimal/low/medium/high/xhigh/max level is null in the
-generated model configuration (or an independently verified equivalent guard),
-never merely absent. Keep observed provider values exact; no invented mapping.
-Mandatory reasoning disallows off. Final controller/transport guard is still
-required because Pi 0.87.1 treats omitted basic levels as supported and clamps.
+### Root decisions ratified — 2026-09-26
 
-Expose launchGovernedPmc over explicit versioned request and trusted installation
-ports in process, returning audit/result or typed refusal. It calls the accepted
-controller/owned stream only. No generic sender, default Pi launch, serialized
-permit input, test-mode flag or public mint API. Classification/lane normalize
-through a closed mapping before initialization; aliases cannot hide L6.
+- **E-01 (ratified):** retire ALL `executeShadowRoute` adapter execution, not
+  merely L6. Its public-only candidate analysis is useful but lacks the PMC
+  intent/budget/terminal composition. Preserve its pure hash helper, types,
+  declarations and v0 selector. The old shadow contract's candidate/skip receipts
+  cease; the delegated coordinator accepts this cross-owner behavior loss under the user-authorized prerequisite scope.
+- **E-02 (ratified):** retire `executeDecision` and the direct Jev smoke.
+  No compatibility flag or synthetic credential escape. Pure Jev validators,
+  replay and consumer logic stay. The offline lab source stays untouched, but its
+  relocated dry-run simulation calls the retired API and will no longer produce
+  its former success result. The delegated coordinator acknowledges that dependency impact and will
+  assign any later lab adaptation separately; it is not a network bypass.
+- **E-03 (ratified):** introduce E2's explicit source CLI, not an npm bin,
+  public factory or automatic approval-cli send. Initial shipped production
+  bootstrap refuses; exercising that command proves a user entry exists, not
+  that paid inference works. No runtime constructor is added to the barrel.
+- **E-04 (ratified):** the config plan remains a non-executable disabled
+  review artifact with empty apply/rollback patches. Authenticated origin setup,
+  actual production acquisition and all-component billing proof remain separate
+  release prerequisites; no generic JSON-to-authority loader is supplied.
 
-Update approval-cli's explicit governed-inference handoff to consume this entry;
-executeDispatch remains a worktree/Stage-C operation and does not pretend that
-receipt creation launches Pi. Do not add an implicit provider call to an existing
-prepare/execute invocation. Existing callers requesting actual governed inference
-must pass explicit lane/version/public request and accepted ports, or refuse.
-Inventory each discovered script/CLI/session/HRO call site with actual file path,
-status migrated/disabled/outside-boundary and test proving its disposition. Files
-outside the allowlist require a separately scoped migration parcel, not a bypass.
+These recommendations deliberately prioritize V6/V8 over preserving old execution
+availability. This is retirement with an acknowledged service gap, not a claim
+that E2 already provides an equivalent production replacement. Root's instruction
+to continue drafting is not acceptance of those tradeoffs.
 
-Milestone 1: public synthetic offline conformance, fake transport incapable of
-network, test-only evidence never accepted in production. Milestone 2: actual
-public activation only after accepted live availability, lane quality, capability,
-privacy, exact endpoints, fresh catalog/config, budget authorities, installation
-custody and terminal coverage are evidenced. Record every missing claim by name.
-No additional user authority ritual for already authorized preparation; applicable
-provider spend/host apply authority is exercised only on concrete reviewed actions.
-Initial public activation cannot close nonpublic, other-provider or full HRO exit.
+### Ordered task/checkpoint record
+
+1. Independently review inventory and dispose E-01/E-02. Reconcile the shadow/Jev
+   owners' existing contracts; do not silently overwrite their release promises.
+2. Release/build E1 only in its listed paths; negative tests prove zero dependency
+   effects even for legacy inputs previously accepted. Checkpoint: exact behavior
+   retirement and unchanged pure APIs independently accepted.
+3. Dispose E-03/E-04 and pin accepted B1/C/D. Release E2's pure planner, entry
+   framing and private composition in its listed paths. Checkpoint: actual CLI
+   and actual predecessor composition exercised offline, production still held.
+4. Before ANY later activation, refresh the inventory, prove every governed
+   executor migrated/disabled, obtain authentic origin/profile/endpoint/billing/
+   quality/privacy/availability facts and separate concrete spend authorization.
+   HRO's actual live/measurement/configuration/recovery exits remain open.
 
 ## Acceptance Criteria
 
-1. Plan is deterministic, lossless about unknown/refused facts, exact endpoints
-   and digests; it preserves defaults/unrelated fields and contains no credentials.
-   No host apply occurs; held identities cannot be enabled from static fixtures.
-2. Governed public supported calls use one accepted controller/transport; all
-   v0/v1 L6, missing intent, internal/restricted, unsupported protocols/providers,
-   unsigned JSON and break-glass requests refuse before initialization/send.
-   v0 model selection stays tier-ordered; no duplicate HRO resolver exists.
-3. Exact caller inventory plus negative tests demonstrate every governed entry is
-   migrated or disabled before activation. Unknown/unmigrated paths explicitly
-   block activation; interactive sessions remain non-authoritative.
-4. Offline synthetic evidence cannot enter production. Actual public activation
-   readiness names every unresolved live/quality/privacy/budget/config claim and
-   unsupported HRO requirement. Two independent reviews accept migration evidence.
-5. Config/entry negatives prove sparse catalog maps never enable omitted levels,
-   off does not become none for mandatory reasoning, and automatic clamping or
-   a forged broader Pi supported-level list cannot widen profile authority.
+1. E1 and E2 are separate DRAFTs with exact proposed file envelopes, closed
+   behavior contracts, test obligations, predecessor gates and owner decisions.
+2. Inventory distinguishes actual sends, injected executors, pure evidence,
+   tests, offline lab and external-boundary tools; no nonexistent handoff or
+   blanket host-wide governance claim remains.
+3. No child claims that a plan, disabled entry, synthetic observation, missing
+   receipt or bounded timeout proves activation, zero charge or full HRO exit.
 
 ## Out of Scope
 
-Host apply/enablement, real provider probes/spend, interactive defaults, unsupported
-protocols/providers/nonpublic requests, HMAC, HRO source changes, v0 removal,
-new budget values, evidence fabrication and automatic/full HRO activation.
+All runtime implementation/release, host apply, new budget/store initialization,
+vendor-inquiry transmission, provider calls, credential access, Pi imports,
+HRO source changes, policy/schema/money changes and generic tool removal.
 
 ## Context & References
 
+- [E1](PMC-P2E1-legacy-inference-disposition.md)
+- [E2](PMC-P2E2-governed-user-entry.md)
+- [Caller inventory](../../goals/pi-model-configuration/pmc-p2-caller-inventory.md)
 - [Amendment 05](../../goals/pi-model-configuration/gate-1-amendment-05.md)
-- [P2D](PMC-P2D-openrouter-terminal-transport.md)
-- [P1b](../done/PMC-P1b-provider-binding-projection.md)
-- [P2 inventory](../../goals/pi-model-configuration/pmc-p2-design-inventory.md)
+- [Controller](PMC-P2C-same-process-launch-controller.md)
+- [Transport](PMC-P2D-openrouter-terminal-transport.md)
+- [Standing constraints](../../kickstarters/STANDING-CONSTRAINTS.md)
 
 ## Allowed Files
 
-- plugins/foreman-line/dispatch/src/pmc-launch/config-plan.ts
-- plugins/foreman-line/dispatch/src/pmc-launch/governed-entry.ts
-- plugins/foreman-line/dispatch/src/approval-cli/index.ts
-- plugins/foreman-line/dispatch/src/index.ts
-- plugins/foreman-line/dispatch/tests/pmc-governed-entry.test.ts
-- plugins/foreman-line/dispatch/tests/pmc-config-plan.test.ts
-- plugins/foreman-line/docs/goals/pi-model-configuration/pmc-p2e-verification.md
+Current documentation shaping only:
+
+- plugins/foreman-line/docs/specs/active/PMC-P2E-config-caller-migration.md
+- plugins/foreman-line/docs/specs/active/PMC-P2E1-legacy-inference-disposition.md
+- plugins/foreman-line/docs/specs/active/PMC-P2E2-governed-user-entry.md
+- plugins/foreman-line/docs/goals/pi-model-configuration/pmc-p2-caller-inventory.md
+
+This replaces the parent's proposed implementation envelope; no approval-cli
+mutation is delegated. Child Allowed Files are future proposals, not this grant.
 
 ## Verification Plan
 
-Node 24.19.0 existing offline tools: dispatch `npm.cmd test`, `npm.cmd run
-typecheck`, `npm.cmd run lint` plus unchanged routing-policy regressions; check
-native exits. Network-denied fake transport for conformance. Search all governed
-call sites and map each hit to migration/disable test evidence; no host execution.
-Check exact diff allowlist and no implicit provider call introduced in worktree
-dispatch. HRO integration receives a separate exact-path parcel handoff.
+Use existing Node 24.19.0 and frozen donor spec-linter `validate` on each draft;
+check required sections, local links, exact four-file diff and `git diff --check`.
+No runtime test is necessary or authorized for this document-only turn. Record
+source pins and advisory results in the inventory; commit only these four files.
 
-## Readiness
-
-Draft until P2D accepted and caller inventory bounds the concrete migration.
-If callers exceed the allowlist, split remaining adapters before activation.
-Do not claim a new unused entry point alone has migrated existing callers.
+Reviewer focus: Does retirement hide a broken consumer? Is any real governed
+executor mislabeled outside scope? Can a caller smuggle authority through the new
+entry? Does a refusal-only milestone incorrectly replace the original live exit?
