@@ -140,9 +140,7 @@ function snapshot(input: unknown): unknown {
     )
       throw new Error('prototype')
     active.add(value)
-    const keys = Reflect.ownKeys(value)
-    if (keys.length > 65536 - visits) throw new Error('key bound')
-    const output: Record<string, unknown> | unknown[] = array ? [] : {}
+    let keys: readonly PropertyKey[]
     let length = 0
     if (array) {
       const descriptor = Object.getOwnPropertyDescriptor(value, 'length')
@@ -154,12 +152,19 @@ function snapshot(input: unknown): unknown {
       )
         throw new Error('array length')
       length = descriptor.value
+      keys = Reflect.ownKeys(value)
+      if (keys.length - 1 > 65536 - visits) throw new Error('key bound')
       if (keys.length !== length + 1) throw new Error('sparse or extended array')
+    } else {
+      keys = Reflect.ownKeys(value)
+      if (keys.length > 65536 - visits) throw new Error('key bound')
     }
+    const output: Record<string, unknown> | unknown[] = array ? [] : {}
     for (const key of keys) {
       if (array && key === 'length') continue
       if (typeof key !== 'string') throw new Error('symbol')
       charge(key)
+      if (visits >= 65536 || depth + 1 > 16) throw new Error('traversal bound')
       const descriptor = Object.getOwnPropertyDescriptor(value, key)
       if (!descriptor || !('value' in descriptor) || !descriptor.enumerable)
         throw new Error('accessor or hidden property')

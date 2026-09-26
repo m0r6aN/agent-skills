@@ -62,11 +62,14 @@ increments added canonical, reference, lane, evidence, bounds and public-API tes
 An initial duplicate-candidate test hit schema `uniqueItems` before the intended
 semantic check; differing observation text now isolates duplicate-ID validation.
 
-- V1 tests: **69 passed** in the final full suite. Local canon review added an
+- V1 tests: **70 passed** in the final full suite. The PMC-P1a repair adds
+  permanent 65,535/65,536/65,537 array-boundary and insertion-order regressions;
+  65,535 visited values reach schema validation while 65,536 and 65,537 refuse
+  on the plain-data traversal bound. Local canon review added an
   explicit failing test for L2 coordinator acceptance; the corrected constant,
   fixture and schema preserve that ratified gate. Additional hostile proxies prove
   no caller graph reread and root cardinality rejection before child access.
-- Full routing-policy suite: **470 passed**, including RCM, v0 and new schema parity.
+- Full routing-policy suite: **471 passed**, including RCM, v0 and new schema parity.
 - `generate`: **8 schemas generated**; all seven pre-existing schema files byte-identical
   against the pinned base (parcel-time Git diff, not a permanent byte-pin test).
 - Typecheck initially exposed absent local `schema-scaffold` Ajv installation;
