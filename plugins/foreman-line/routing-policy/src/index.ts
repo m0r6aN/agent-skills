@@ -1,4 +1,35 @@
 export type {
+  AcceptedCatalogSource,
+  CatalogAdapterRefusalCode,
+  CatalogEligibilityInput,
+  CatalogEligibilityResult,
+  CatalogIdentity,
+} from './catalog-eligibility-adapter.js'
+export { evaluateCatalogEligibility } from './catalog-eligibility-adapter.js'
+export type {
+  CatalogSnapshot,
+  CostSide,
+  ModelRecord,
+  ProviderRecord,
+  SnapshotReadResult,
+  SnapshotRefusalCode,
+} from './catalog-snapshot.js'
+export { readCatalogSnapshot } from './catalog-snapshot.js'
+export type {
+  EligibilityFacts,
+  IdentityRefusalCode,
+  IdentityResult,
+  InputModality,
+  ProjectionLevel,
+  ProjectionResult,
+  Provenance,
+  RateFact,
+  RequestedIdentity,
+  SnapshotLevelRefusalCode,
+  ThinkingLevels,
+} from './eligibility.js'
+export { projectEligibility } from './eligibility.js'
+export type {
   PiOpenRouterAuthority,
   PiOpenRouterCapability,
   PiOpenRouterLane,

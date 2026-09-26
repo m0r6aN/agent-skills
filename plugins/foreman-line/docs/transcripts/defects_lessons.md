@@ -158,3 +158,15 @@ must inspect both lists rather than equating their counts (D19 also includes Jev
 review and corrected full green CI recorded in HRO-P1a's review triage. Resource
 boundaries are likewise tested before forbidden enumeration/descriptor reads,
 not merely by eventual refusal after unbounded work.
+
+## PMC-P1a boundaries — count values, not skipped array metadata
+
+Counting an array's length property against the visited-value ceiling caused
+exact-limit valid policies to refuse depending on object insertion order.
+The repaired validator counts actual children and accepts the inclusive limit
+in either order. Boundary evidence must distinguish array elements from total
+visited values, including the root.
+
+**Disposition:** permanent regression and two independent schema-valid exact-limit
+probes; corrected handoff terminology and unchanged seven legacy schemas recorded
+in PMC-P1a acceptance. Static conformance still establishes no live authority.
