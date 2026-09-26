@@ -143,3 +143,28 @@ Probe files are TEMP/hro-p-clock-review.mjs, hro-p-clock-mono-review.mjs and
 hro-p-clock-utc-review.mjs. These run actual publication/N with fake native input,
 not a provider request. The source remains frozen for fresh builder Step0 and
 explicit release. Two independent repair reviews remain before integration.
+
+## Shared-clock repair Step0 acceptance and release — 2026-09-26
+
+Root accepts frontier A's read-only Step0 at 2a377b9 and ratifies its minimal
+three-file repair: catalog-publication.ts, pmc-catalog-publication.test.ts and
+this report. Pass the already captured owner history-validating clock into the
+offline transport so every installed read checks the same UTC/monotonic history.
+The independent fixed native transport factory and public/private APIs stay as-is.
+
+A detected installation-clock fault must latch INSTALLATION_REFUSED on unsettled
+live operations before invoking abort callbacks. It cannot later become a deadline
+or successful publication. Already fixed results stay fixed. Never-started slots
+release without I/O; running slots retain capacity until their original transport
+settles under existing connected/closed cleanup requirements. A rejected clock
+reading never lowers the retained history. This is a private fault notification,
+not a new permanent poisoning policy, caller reset, revival or cancellation API.
+
+Under delegated authority, release this bounded repair now, test-first. Pair
+independent UTC/monotonic rollback in both boundary directions with equal/increasing
+positive catalog and absence controls. Cover pre-open zero I/O/capacity recovery,
+post-open four-slot hold across deadlines and delayed closes, no-connect hold,
+late callbacks and stable refusal codes. Run focused/full dispatch, typecheck,
+full lint, actual D19, predecessor preservation and diff/scope checks. No native
+request policy, N/adapter/C/B1/ledger, dependencies or production refusal changes.
+Freeze clean and STOP for root plus independent frontier D review before integration.
