@@ -87,3 +87,30 @@ Finish each required assertion, then full hybrid/routing tests/typecheck/lint,
 actual native exit checks, scope/diff verification and local frozen commit. Report
 commands accurately; test counts alone do not establish acceptance-criterion
 coverage. Both final independent reviews must be renewed before integration.
+
+## Third review round: b17f5b2 alias accounting and independent boundaries
+
+Independent review requests changes at b17f5b2a467be79933c0d6a990a36a5879db7e5c.
+Genuine HRO substitutions, retained producer provenance/refusals/incomplete scope,
+resolver coverage, byte subclass/capture mutation and package lint are now closed.
+Preserve those repairs. Two bounded issues remain:
+
+1. copy already reserves the ordinary object node before the memoized-alias path;
+   chargeCaptured reserves the alias root again. An independently counted envelope
+   with exactly 131072 expanded ordinary nodes reaches projection with distinct
+   objects but returns bridge BOUNDS_REFUSED when two empty objects share identity.
+   Charge every expanded alias occurrence exactly once, preserving cycle, depth,
+   string and byte protections. Add arithmetic exact/one-over fixtures; binary
+   search of the implementation cutoff is not an independent contract oracle.
+   A review mutation halving NODE_LIMIT to65536 still passes the current purported
+   exact-boundary test. Required tests must detect that contract regression.
+2. Complete the already-required capture-boundary subprocess instrumentation for
+   ordinary invalid shapes and all capture limits. Assert the named first refusal
+   code plus zero projection and catalog calls, not only stage. Independently count
+   expanded aliases and exact numeric limits rather than discover implementation
+   cutoffs. Include earlier required phase assertions without widening authority.
+
+Fresh Step0 inspect/restate/STOP before repair. Same original four-file envelope;
+index need not change. No owner/runtime contract, manifests or dependency edits.
+Provide failing-before/passing-after evidence, complete package checks, exact scope
+and frozen local commit. Both final independent reviewers must inspect the repair.
