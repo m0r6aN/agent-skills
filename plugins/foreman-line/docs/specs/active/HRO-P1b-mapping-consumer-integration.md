@@ -207,3 +207,44 @@ Return a local frozen commit, test counts, typecheck/lint and exact scope/import
 proof. No push, provider calls, Pi writes, actual dispatch or production receipt
 creation. Later integration must preserve all accepted PMC/RCM exports and
 rerun the unchanged public-interface checks on the reconciled base.
+
+## A1 — Step-0 boundary clarifications
+
+The coordinator confirms the closed top-level request has exactly five keys:
+proposal, projection, context, routingInput and expectedEligibility. The last
+object has exactly digestSha256, sourceRef, approvedConfigRef and maxAgeMs.
+digestSha256 is lowercase hexadecimal of length 64; sourceRef and
+approvedConfigRef are nonempty strings bounded to 2,048 UTF-16 units, preserved
+exactly without normalization. maxAgeMs is an integer in [0,86400000]. All
+timestamps use P1a's exact UTC millisecond round-trip format.
+
+routingInput has exactly routing_class, data_classification and workflowId as
+own enumerable data properties. Reject extras, accessors and unsupported plain
+data as for every request field. workflowId is a bounded nonempty opaque string
+in this offline API, never a file path to dereference. Classification is exactly
+public, internal or restricted. The current legacy routing class vocabulary is
+boilerplate, standard-feature, architecture/risk or implementation/standard;
+reject other values here rather than inventing new PMC runtime classes. This
+local compatibility check is not a new owning policy enum or runtime import.
+
+"Original routing fields" in step 6 means the validated RoutingResult returned
+by evaluateOffline, including its transportRequirements; it does not add a
+transportRequirements field to RoutingInput. Preserve that result's exact values.
+
+Use a fresh bounded owned capture per phase: complete request, oracle response,
+and evaluator response. Each phase has the inclusive P1a ceilings (8,192 visited
+values, 262,144 aggregate UTF-16 string units including keys, 2,048 per string,
+depth 8 from that phase root and at most 256 array elements unless a smaller
+field-specific cap applies). No budget reset within a phase. Shared caller
+objects are captured once per phase while their expanded occurrences still
+consume value/depth/string budgets; cycles refuse. P1a validates only the owned
+request's three mapping fields under its own existing bound contract.
+
+Dependencies are a separate closed plain record with exactly the two own
+enumerable function-valued callbacks. Inspect descriptors without invoking
+accessors; capture each callback once and never reread the caller container.
+Do not mutate/freeze caller functions. Only callback input data is owned/frozen.
+All unknown thrown values and malformed/thenable results must yield the stated
+typed outcomes without examining unsafe exception properties or prototypes.
+These clarifications resolve Step-0 flags without changing the five-file scope
+or authorizing production behavior.
