@@ -266,3 +266,16 @@ until these amendments receive two independent reviews and B1 audited acceptance
 Native frontier dispatch substitution must be recorded at Gate2; no minted runtime
 receipt or exact engine revision is fabricated. P2E installation drafting must
 consume the final reviewed bootstrap/observe types, not an invented parallel API.
+
+## Bootstrap amendment ratification — 2026-09-26
+
+The delegated coordinator ratifies the four Step0 composition decisions at
+5764eba8da1485b7850db067041036d211712e12 after two independent design approvals.
+Both reviewers checked actual accepted A/B/B1 contracts. Root reconciled the
+preconsume failure rule and historical shaping scope; both approved the final
+wording. Private two-stage custody, separate observation authority, retained
+preconsume liability and offline C versus actual-Pi D acceptance are controlling.
+This is no production approval and no controller implementation release. B1
+accepted audited integration, fresh Step0 and an explicit exact-file release
+remain prerequisites. The specification's five-file implementation envelope is
+unchanged; authentic installation facts and live billing evidence remain open.
