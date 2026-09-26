@@ -144,6 +144,7 @@ interface CaptureState {
   strings: number
   active: Set<object>
   captured: Map<object, unknown>
+  footprints: Map<object, { readonly nodes: number; readonly strings: number }>
 }
 
 function refuse<T>(code: CodeV1): ResultV1<T> {
@@ -158,25 +159,24 @@ function freezeOwned<T>(value: T): T {
   return value
 }
 
-function copyOwned(
-  value: unknown,
-  state: CaptureState,
-  depth: number,
-  precharged = false,
-): unknown {
+function copyOwned(value: unknown, state: CaptureState, depth: number): unknown {
   if (depth > MAX_DEPTH) throw new CaptureFailure()
-  if (!precharged) {
+  if (typeof value === 'string') {
     state.remaining -= 1
     if (state.remaining < 0) throw new CaptureFailure()
-  }
-  if (typeof value === 'string') {
     if (value.length > MAX_STRING) throw new CaptureFailure()
     state.strings += value.length
     if (state.strings > MAX_TOTAL_STRING) throw new CaptureFailure()
     return value
   }
-  if (value === null || typeof value === 'boolean') return value
+  if (value === null || typeof value === 'boolean') {
+    state.remaining -= 1
+    if (state.remaining < 0) throw new CaptureFailure()
+    return value
+  }
   if (typeof value === 'number') {
+    state.remaining -= 1
+    if (state.remaining < 0) throw new CaptureFailure()
     if (!Number.isFinite(value)) throw new CaptureFailure()
     return value
   }
@@ -185,8 +185,17 @@ function copyOwned(
   if (state.active.has(value)) throw new CaptureFailure()
   const previous = state.captured.get(value)
   if (previous !== undefined) {
-    return copyOwned(previous, state, depth, true)
+    const footprint = state.footprints.get(value)
+    if (footprint === undefined) throw new CaptureFailure()
+    state.remaining -= footprint.nodes
+    state.strings += footprint.strings
+    if (state.remaining < 0 || state.strings > MAX_TOTAL_STRING) throw new CaptureFailure()
+    return previous
   }
+  const startingRemaining = state.remaining
+  const startingStrings = state.strings
+  state.remaining -= 1
+  if (state.remaining < 0) throw new CaptureFailure()
   state.active.add(value)
   try {
     const array = Array.isArray(value)
@@ -196,7 +205,6 @@ function copyOwned(
     ) {
       throw new CaptureFailure()
     }
-    const keys = Reflect.ownKeys(value)
     if (array) {
       const lengthDescriptor = Object.getOwnPropertyDescriptor(value, 'length')
       if (
@@ -205,40 +213,66 @@ function copyOwned(
         !Number.isSafeInteger(lengthDescriptor.value) ||
         lengthDescriptor.value < 0 ||
         lengthDescriptor.value > MAX_WORK ||
-        keys.length !== lengthDescriptor.value + 1
+        lengthDescriptor.value < 0
       ) {
         throw new CaptureFailure()
       }
+      const keys = Reflect.ownKeys(value)
+      if (keys.length !== lengthDescriptor.value + 1) throw new CaptureFailure()
       state.remaining -= lengthDescriptor.value + keys.length
       if (state.remaining < 0) throw new CaptureFailure()
+      const output: Record<string, unknown> | unknown[] = []
+      state.captured.set(value, output)
+      for (const key of keys) {
+        if (key === 'length') continue
+        if (typeof key !== 'string') throw new CaptureFailure()
+        if (!/^(0|[1-9][0-9]*)$/.test(key) || Number(key) >= lengthDescriptor.value)
+          throw new CaptureFailure()
+        const descriptor = Object.getOwnPropertyDescriptor(value, key)
+        if (descriptor === undefined || !('value' in descriptor) || !descriptor.enumerable)
+          throw new CaptureFailure()
+        if (key.length > MAX_STRING) throw new CaptureFailure()
+        state.strings += key.length
+        if (state.strings > MAX_TOTAL_STRING) throw new CaptureFailure()
+        Object.defineProperty(output, key, {
+          value: copyOwned(descriptor.value, state, depth + 1),
+          enumerable: true,
+          writable: true,
+          configurable: true,
+        })
+      }
+      state.footprints.set(value, {
+        nodes: startingRemaining - state.remaining,
+        strings: state.strings - startingStrings,
+      })
+      return output
     } else {
+      const keys = Reflect.ownKeys(value)
       state.remaining -= keys.length
       if (state.remaining < 0) throw new CaptureFailure()
-    }
-    const output: Record<string, unknown> | unknown[] = array ? [] : Object.create(null)
-    state.captured.set(value, output)
-    for (const key of keys) {
-      if (array && key === 'length') continue
-      if (typeof key !== 'string') throw new CaptureFailure()
-      if (array && (!/^(0|[1-9][0-9]*)$/.test(key) || Number(key) >= (value as unknown[]).length)) {
-        throw new CaptureFailure()
+      const output: Record<string, unknown> = Object.create(null)
+      state.captured.set(value, output)
+      for (const key of keys) {
+        if (typeof key !== 'string') throw new CaptureFailure()
+        const descriptor = Object.getOwnPropertyDescriptor(value, key)
+        if (descriptor === undefined || !('value' in descriptor) || !descriptor.enumerable)
+          throw new CaptureFailure()
+        if (key.length > MAX_STRING) throw new CaptureFailure()
+        state.strings += key.length
+        if (state.strings > MAX_TOTAL_STRING) throw new CaptureFailure()
+        Object.defineProperty(output, key, {
+          value: copyOwned(descriptor.value, state, depth + 1),
+          enumerable: true,
+          writable: true,
+          configurable: true,
+        })
       }
-      const descriptor = Object.getOwnPropertyDescriptor(value, key)
-      if (descriptor === undefined || !('value' in descriptor) || !descriptor.enumerable) {
-        throw new CaptureFailure()
-      }
-      if (key.length > MAX_STRING) throw new CaptureFailure()
-      state.strings += key.length
-      if (state.strings > MAX_TOTAL_STRING) throw new CaptureFailure()
-      const child = copyOwned(descriptor.value, state, depth + 1, array)
-      Object.defineProperty(output, key, {
-        value: child,
-        enumerable: true,
-        writable: true,
-        configurable: true,
+      state.footprints.set(value, {
+        nodes: startingRemaining - state.remaining,
+        strings: state.strings - startingStrings,
       })
+      return output
     }
-    return output
   } finally {
     state.active.delete(value)
   }
@@ -252,6 +286,7 @@ function capture(value: unknown): unknown {
       strings: 0,
       active: new Set(),
       captured: new Map(),
+      footprints: new Map(),
     },
     0,
   )
@@ -417,6 +452,22 @@ function sealRecord(value: unknown): SealV1 | null {
   })
 }
 
+function guardedAck(value: unknown): AckV1 | null {
+  try {
+    return recordForAck(value)
+  } catch {
+    return null
+  }
+}
+
+function guardedSeal(value: unknown): SealV1 | null {
+  try {
+    return sealRecord(value)
+  } catch {
+    return null
+  }
+}
+
 interface LeaseInfo {
   readonly session: SessionInfo
   readonly role: RoleV1
@@ -567,7 +618,7 @@ function verificationPort(info: SessionInfo): VerificationPortV1 {
         info.seal === null
       )
         return refuse('PHASE_REFUSED')
-      const record = recordForAck(value)
+      const record = guardedAck(value)
       if (
         record === null ||
         record.stage !== 'D' ||
@@ -593,7 +644,7 @@ function publicationPort(info: SessionInfo): PublicationPortV1 {
         info.seal !== null
       )
         return refuse('PHASE_REFUSED')
-      const record = sealRecord(value)
+      const record = guardedSeal(value)
       if (
         record === null ||
         record.workflowId.toLowerCase() !== info.registration.workflowId.toLowerCase() ||
@@ -617,7 +668,7 @@ function integrationPort(info: SessionInfo): IntegrationPortV1 {
         info.finalD === null
       )
         return refuse('PHASE_REFUSED')
-      const record = recordForAck(value)
+      const record = guardedAck(value)
       if (
         record === null ||
         record.stage !== 'E' ||
@@ -644,7 +695,7 @@ function closurePort(info: SessionInfo): ClosurePortV1 {
         info.integratedE === null
       )
         return refuse('PHASE_REFUSED')
-      const record = recordForAck(value)
+      const record = guardedAck(value)
       if (
         record === null ||
         record.stage !== 'F' ||

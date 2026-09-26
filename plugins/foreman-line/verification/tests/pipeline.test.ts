@@ -1235,10 +1235,29 @@ test('AC-21: src/pipeline performs no process spawn, git operation, Jira call, s
     'headroom_compress',
     'Skill(',
   ]
+  const driverName = 'stage-d-finalization.ts'
+  const permittedDriverOwnerTokens = new Set([
+    'runHarness(',
+    'dispatchReview',
+    'collectAdversarialFindings',
+  ])
   for (const name of readdirSync(dir)) {
     const text = readFileSync(join(dir, name), 'utf8')
-    for (const token of forbidden) {
+    const tokens =
+      name === driverName
+        ? forbidden.filter((token) => !permittedDriverOwnerTokens.has(token))
+        : forbidden
+    for (const token of tokens) {
       assert.ok(!text.includes(token), `src/pipeline/${name} contains forbidden token '${token}'`)
+    }
+    if (name === driverName) {
+      for (const token of permittedDriverOwnerTokens) {
+        assert.ok(text.includes(token), `${name} must transparently name owner token '${token}'`)
+      }
+    } else {
+      for (const token of permittedDriverOwnerTokens) {
+        assert.ok(!text.includes(token), `${name} must not import offline owner token '${token}'`)
+      }
     }
   }
 })

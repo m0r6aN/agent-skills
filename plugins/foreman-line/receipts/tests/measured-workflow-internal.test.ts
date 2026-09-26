@@ -135,7 +135,7 @@ test('seal and D/E/F acknowledgements enforce exact predecessors and phase progr
     verifiedHeadSha: input.verifiedHeadSha,
     telemetryReceiptRef: ref(7),
     denominatorDigest: '1'.repeat(64),
-    coverage: 'complete',
+    coverage: 'complete' as const,
   }
   assert.deepEqual(result.publication.registerSealV1(sealLease.value, { ...seal, extra: true }), {
     ok: false,
@@ -219,4 +219,49 @@ test('capture rejects unknown keys, cycles, accessors, nonfinite values, aliases
       code: 'SESSION_REFUSED',
     })
   }
+})
+
+test('hostile acknowledgement and seal accessors become typed refusals', () => {
+  const { result, input } = open()
+  assert.deepEqual(result.workflow.closeAdmissionV1(), { ok: true, value: null })
+  assert.deepEqual(result.workflow.acknowledgeDrainV1(), { ok: true, value: null })
+  const publication = result.publication.beginWriterV1()
+  assert.equal(publication.ok, true)
+  if (!publication.ok) return
+  const sealTarget = {
+    workflowId: input.workflowId,
+    correlationId: input.correlationId,
+    verifiedHeadSha: input.verifiedHeadSha,
+    telemetryReceiptRef: ref(7),
+    denominatorDigest: '1'.repeat(64),
+    coverage: 'complete' as const,
+  }
+  const hostileSeal = new Proxy(sealTarget, {
+    get: () => {
+      throw new Error('getter')
+    },
+  })
+  assert.deepEqual(result.publication.registerSealV1(publication.value, hostileSeal), {
+    ok: false,
+    code: 'EVIDENCE_REFUSED',
+  })
+
+  const seal: SealV1 = { ...sealTarget }
+  assert.deepEqual(result.publication.registerSealV1(publication.value, seal), {
+    ok: true,
+    value: null,
+  })
+  assert.deepEqual(result.publication.endWriterV1(publication.value), { ok: true, value: null })
+  const verification = result.verification.beginWriterV1()
+  assert.equal(verification.ok, true)
+  if (!verification.ok) return
+  const hostileAck = new Proxy(ack('D', 8, ref(7)), {
+    get: () => {
+      throw new Error('getter')
+    },
+  })
+  assert.deepEqual(result.verification.acknowledgeFinalDV1(verification.value, hostileAck), {
+    ok: false,
+    code: 'EVIDENCE_REFUSED',
+  })
 })

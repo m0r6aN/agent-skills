@@ -1,12 +1,12 @@
 # HRO-P3A offline measured Stage-D verification report
 
 Date: 2026-09-26  
-Release base: `ea7e472233c6c04b0e4aae263d48e8c608776ae9`  
+Repair base: `8a76e73`
 Mode: offline fixture only; production construction remains refused
 
 ## Scope delivered
 
-This slice adds the dependency-neutral measured-workflow registry and an
+This repair hardens the dependency-neutral measured-workflow registry and
 offline verification driver. The driver executes the existing harness,
 review-dispatch/collection, verdict, and human-gate owners against fixed local
 fixture adapters, publishes an explicitly labelled offline measurement claim,
@@ -49,22 +49,34 @@ finalizer returned the same immutable reference without another write.
 - Existing verification static guards: no process spawning, Git operation,
   Jira call, provider invocation, regex over untrusted pipeline text, or
   public re-export of the private registry.
+- Root custody is rechecked before every owner write/publication/finalization;
+  replacement roots and symlinked path components refuse before writes.
+- The initial A/B/C → BuildResult chain is bound to the supplied dispatch,
+  build, workflow, correlation, spec, matrix, and BuildResult values; owner
+  outputs are reread and checked for exact payloads and evidence digests.
+- Receipt discovery preflights the 1,024-file, 1 MiB-per-file, and 16 MiB
+  aggregate bounds before JSON parsing; registry seal/D/E/F hostile getters
+  are typed refusals; alias/cardinality accounting is bounded.
+- The repaired test set covers one-over bounds, root replacement, supplied
+  BuildResult mismatch, post-run spec/envelope tampering, hostile getters,
+  cloned sessions, actor/head/reviewer/lease/phase controls, and exclusive
+  finalization.
 
 ## Commands and results
 
 - `receipts`: `npm run typecheck` — pass.
 - `receipts`: `npm run lint` — pass.
-- `receipts`: full `npm test` — 86 passed, 0 failed.
+- `receipts`: full `npm test` — 87 passed, 0 failed.
 - `verification`: `npm run typecheck` — pass.
 - `verification`: `npm run lint` — pass.
-- `verification`: focused offline suite — 3 passed, 0 failed.
-- `verification`: combined bounded legacy + offline suite — 156 passed, 0
-  failed.
+- `verification`: focused offline suite — 10 passed, 0 failed.
+- `verification`: combined bounded non-audit suite — 163 passed, 0 failed.
 - Verification static scope and hostile-input guards — pass.
 
 The two pre-existing D19 audit files were not counted in the bounded total:
-their child-audit runs did not complete during the observed bounded wait. No
-failure from those audits is being represented as a pass.
+the package wildcard run reached those child-audit paths but did not complete
+during the observed bounded wait. No failure from those audits is being
+represented as a pass.
 
 ## Readiness and remaining gates
 

@@ -31,11 +31,15 @@ import {
   readMeasuredSessionV1,
   type SealV1,
 } from '../../../receipts/src/measured-workflow-internal.js'
-import type { CollectResult } from '../adversarial/index.js'
-import * as AdversarialOwners from '../adversarial/index.js'
+import {
+  type CollectResult,
+  collectAdversarialFindings,
+  dispatchReview,
+  type ReviewDispatchResult,
+} from '../adversarial/index.js'
 import {
   type HarnessResult,
-  runHarness as runHarnessOwner,
+  runHarness,
   type TestResults,
   writeClaimReceipt,
 } from '../harness/index.js'
@@ -121,6 +125,15 @@ interface ReceiptRow {
   readonly document: Record<string, unknown>
 }
 
+interface EvidenceDigestV1 {
+  readonly hash: string
+  readonly subjectDigest: string
+  readonly kind: unknown
+  readonly stage: unknown
+  readonly claimRef: unknown
+  readonly subjectKind: unknown
+}
+
 interface GitResultV1 {
   readonly status: number
   readonly stdout: string
@@ -129,14 +142,6 @@ interface GitResultV1 {
 
 function pathParts(value: string): string[] {
   return value.split('\\').join('/').split('/').filter(Boolean)
-}
-
-function callAdversarialOwner(name: string, args: readonly unknown[]): unknown {
-  const owners = AdversarialOwners as unknown as Record<
-    string,
-    (...parameters: readonly unknown[]) => unknown
-  >
-  return owners[name]?.(...args)
 }
 
 interface OwnedContext {
@@ -160,6 +165,8 @@ interface OwnedContext {
   closureRef: RefV1 | null
   finalRef: RefV1 | null
   findingOffsets: Map<string, number>
+  evidence: Map<string, EvidenceDigestV1>
+  verdictEnvelopeDigest: string | null
 }
 
 const contexts = new WeakMap<object, OwnedContext>()
@@ -167,6 +174,9 @@ const MAX_STRING = 4096
 const MAX_DEPTH = 20
 const MAX_NODES = 131072
 const MAX_TOTAL_STRING = 2 * 1024 * 1024
+const MAX_RECEIPTS = 1024
+const MAX_RECEIPT_BYTES = 1024 * 1024
+const MAX_CHAIN_BYTES = 16 * 1024 * 1024
 const REF_KEYS = ['hash', 'locator'] as const
 const FINAL_SUBJECT_KEYS = [
   'version',
@@ -200,24 +210,43 @@ interface CaptureState {
   strings: number
   active: Set<object>
   copies: Map<object, unknown>
+  footprints: Map<object, { readonly nodes: number; readonly strings: number }>
 }
 
 function own(value: unknown, state: CaptureState, depth = 0): unknown {
-  if (depth > MAX_DEPTH || ++state.nodes > MAX_NODES) throw new Refusal()
+  if (depth > MAX_DEPTH) throw new Refusal()
   if (typeof value === 'string') {
+    state.nodes += 1
     state.strings += value.length
     if (value.length > MAX_STRING || state.strings > MAX_TOTAL_STRING) throw new Refusal()
     return value
   }
-  if (value === null || typeof value === 'boolean') return value
+  if (value === null || typeof value === 'boolean') {
+    state.nodes += 1
+    if (state.nodes > MAX_NODES) throw new Refusal()
+    return value
+  }
   if (typeof value === 'number') {
+    state.nodes += 1
+    if (state.nodes > MAX_NODES) throw new Refusal()
     if (!Number.isFinite(value)) throw new Refusal()
     return value
   }
   if (typeof value !== 'object' || ArrayBuffer.isView(value)) throw new Refusal()
   if (state.active.has(value)) throw new Refusal()
   const prior = state.copies.get(value)
-  if (prior !== undefined) return prior
+  if (prior !== undefined) {
+    const footprint = state.footprints.get(value)
+    if (footprint === undefined) throw new Refusal()
+    state.nodes += footprint.nodes
+    state.strings += footprint.strings
+    if (state.nodes > MAX_NODES || state.strings > MAX_TOTAL_STRING) throw new Refusal()
+    return prior
+  }
+  state.nodes += 1
+  if (state.nodes > MAX_NODES) throw new Refusal()
+  const startingNodes = state.nodes
+  const startingStrings = state.strings
   state.active.add(value)
   try {
     const prototype = Object.getPrototypeOf(value)
@@ -228,7 +257,23 @@ function own(value: unknown, state: CaptureState, depth = 0): unknown {
       (!array || prototype !== Array.prototype)
     )
       throw new Refusal()
+    let length = 0
+    if (array) {
+      const lengthDescriptor = Object.getOwnPropertyDescriptor(value, 'length')
+      if (
+        lengthDescriptor === undefined ||
+        !('value' in lengthDescriptor) ||
+        !Number.isSafeInteger(lengthDescriptor.value) ||
+        lengthDescriptor.value < 0 ||
+        lengthDescriptor.value > 256
+      )
+        throw new Refusal()
+      length = lengthDescriptor.value
+    }
     const keys = Reflect.ownKeys(value)
+    if (array && keys.length !== length + 1) throw new Refusal()
+    state.nodes += keys.length
+    if (state.nodes > MAX_NODES) throw new Refusal()
     const output: Record<string, unknown> | unknown[] = array ? [] : Object.create(null)
     state.copies.set(value, output)
     for (const key of keys) {
@@ -246,6 +291,10 @@ function own(value: unknown, state: CaptureState, depth = 0): unknown {
         configurable: true,
       })
     }
+    state.footprints.set(value, {
+      nodes: state.nodes - startingNodes,
+      strings: state.strings - startingStrings,
+    })
     return output
   } finally {
     state.active.delete(value)
@@ -253,7 +302,13 @@ function own(value: unknown, state: CaptureState, depth = 0): unknown {
 }
 
 function capture(value: unknown): unknown {
-  return own(value, { nodes: 0, strings: 0, active: new Set(), copies: new Map() })
+  return own(value, {
+    nodes: 0,
+    strings: 0,
+    active: new Set(),
+    copies: new Map(),
+    footprints: new Map(),
+  })
 }
 
 function deepFreeze<T>(value: T): T {
@@ -412,7 +467,11 @@ function parseInput(raw: unknown): OfflineInputV1 {
     throw new Refusal()
   const claims = expectedRecord.claims.map((v) => stringValue(v))
   if (new Set(claims).size !== claims.length) throw new Refusal()
-  if (!Array.isArray(expectedRecord.reviews) || expectedRecord.reviews.length > 16)
+  if (
+    !Array.isArray(expectedRecord.reviews) ||
+    expectedRecord.reviews.length < 1 ||
+    expectedRecord.reviews.length > 16
+  )
     throw new Refusal()
   const reviewsExpected = expectedRecord.reviews.map((rawReview) => {
     const review = exact(rawReview, ['slotId', 'reviewerId', 'reviewedHeadSha'])
@@ -434,6 +493,8 @@ function parseInput(raw: unknown): OfflineInputV1 {
     authorizedActorId: stringValue(expectedRecord.authorizedActorId),
     authorityRef: stringValue(expectedRecord.authorityRef),
   })
+  if (reviewsExpected.some((review) => review.reviewerId === expected.builderId))
+    throw new Refusal()
   const testRecord = exact(record.testResults, ['passed', 'failed'])
   if (
     !Array.isArray(testRecord.passed) ||
@@ -609,12 +670,22 @@ function conforming(name: string): boolean {
 function readRows(repoRoot: string, workflowId: string): ReceiptRow[] {
   const directory = join(repoRoot, 'docs', 'receipts', workflowId)
   const names = readdirSync(directory).filter(conforming).sort()
-  const rows = names.map((name) =>
+  if (names.length > MAX_RECEIPTS) throw new Refusal()
+  let aggregateBytes = 0n
+  const sizes = names.map((name) => {
+    const absolutePath = join(directory, name)
+    const bytes = statSync(absolutePath, { bigint: true }).size
+    if (bytes > BigInt(MAX_RECEIPT_BYTES)) throw new Refusal()
+    aggregateBytes += bytes
+    if (aggregateBytes > BigInt(MAX_CHAIN_BYTES)) throw new Refusal()
+    return { name, absolutePath }
+  })
+  const rows = sizes.map(({ name, absolutePath }) =>
     rowFor(
       repoRoot,
       workflowId,
       name,
-      JSON.parse(readFileSync(join(directory, name), 'utf8')) as Record<string, unknown>,
+      JSON.parse(readFileSync(absolutePath, 'utf8')) as Record<string, unknown>,
     ),
   )
   for (let i = 0; i < rows.length; i++) {
@@ -650,6 +721,49 @@ function refMatches(row: ReceiptRow, reference: RefV1): boolean {
   return row.locator === reference.locator && row.document.hash === reference.hash
 }
 
+function captureEvidence(ctx: OwnedContext, locator: string): EvidenceDigestV1 {
+  const row = readRows(ctx.repoRoot, ctx.input.registration.workflowId).find(
+    (candidate) => candidate.locator === locator,
+  )
+  if (row === undefined || typeof row.document.hash !== 'string') throw new Refusal()
+  const evidence: EvidenceDigestV1 = {
+    hash: row.document.hash,
+    subjectDigest: sha256Hex(canonicalize(row.document.subject as JsonValue)),
+    kind: row.document.kind,
+    stage: row.document.stage,
+    claimRef: row.document.claimRef,
+    subjectKind: row.document.subjectKind,
+  }
+  ctx.evidence.set(locator, evidence)
+  return evidence
+}
+
+function verifyCapturedEvidence(ctx: OwnedContext): void {
+  const rows = readRows(ctx.repoRoot, ctx.input.registration.workflowId)
+  for (const [locator, expected] of ctx.evidence) {
+    const row = rows.find((candidate) => candidate.locator === locator)
+    if (
+      row === undefined ||
+      row.document.hash !== expected.hash ||
+      row.document.kind !== expected.kind ||
+      row.document.stage !== expected.stage ||
+      row.document.claimRef !== expected.claimRef ||
+      row.document.subjectKind !== expected.subjectKind ||
+      sha256Hex(canonicalize(row.document.subject as JsonValue)) !== expected.subjectDigest
+    )
+      throw new Refusal()
+  }
+  if (ctx.verdictEnvelopeDigest === null) throw new Refusal()
+  const envelopePath = join(
+    ctx.repoRoot,
+    'docs',
+    'receipts',
+    ctx.input.registration.workflowId,
+    'verification-verdict.envelope.json',
+  )
+  if (sha256Hex(readFileSync(envelopePath)) !== ctx.verdictEnvelopeDigest) throw new Refusal()
+}
+
 function verifyInitial(
   input: OfflineInputV1,
   repoRoot: string,
@@ -658,7 +772,7 @@ function verifyInitial(
 ): ReceiptRow[] {
   const rows = readRows(repoRoot, input.registration.workflowId)
   if (
-    rows.length < 2 ||
+    rows.length < 4 ||
     !rows.some((row) => refMatches(row, input.registration.dispatchReceiptRef)) ||
     !rows.some((row) => refMatches(row, input.registration.buildReceiptRef))
   )
@@ -669,10 +783,25 @@ function verifyInitial(
   const build = rows.find((row) =>
     refMatches(row, input.registration.buildReceiptRef),
   ) as ReceiptRow
+  if (!['A', 'B', 'C'].every((stage, index) => rows[index]?.document.stage === stage))
+    throw new Refusal()
   if (
     dispatch.document.stage !== 'C' ||
+    dispatch.document.sequence !== 2 ||
     build.document.stage !== 'D' ||
-    build.document.subjectKind !== 'BuildResult'
+    build.document.sequence !== 3 ||
+    build.document.subjectKind !== 'BuildResult' ||
+    sha256Hex(canonicalize(build.document.subject as JsonValue)) !==
+      sha256Hex(canonicalize(input.buildResult as unknown as JsonValue))
+  )
+    throw new Refusal()
+  const dispatchCorrelation = dispatch.document.correlation as Record<string, unknown>
+  const buildCorrelation = build.document.correlation as Record<string, unknown>
+  if (
+    dispatchCorrelation.workflowId !== input.registration.workflowId ||
+    buildCorrelation.workflowId !== input.registration.workflowId ||
+    dispatchCorrelation.correlationId !== input.registration.correlationId ||
+    buildCorrelation.correlationId !== input.registration.correlationId
   )
     throw new Refusal()
   if (
@@ -691,6 +820,28 @@ function verifyInitial(
     throw new Refusal()
   if (resolve(input.registration.repoRoot) !== resolve(repoRoot)) throw new Refusal()
   return rows
+}
+
+function assertLiveRoot(ctx: OwnedContext): void {
+  const canonicalRoot = safeFixturePath(ctx.repoRoot, ctx.input.fixtureId, true)
+  if (canonicalRoot !== ctx.repoRoot) throw new Refusal()
+  const current = statSync(canonicalRoot, { bigint: true })
+  const currentKey = {
+    rootDeviceId: canonicalDecimal(current.dev, true),
+    rootFileId: canonicalDecimal(current.ino, false),
+  }
+  if (
+    currentKey.rootDeviceId !== ctx.key.rootDeviceId ||
+    currentKey.rootFileId !== ctx.key.rootFileId
+  )
+    throw new Refusal()
+  safeFixturePath(ctx.pluginRoot, ctx.input.fixtureId, true)
+  safeFixturePath(ctx.specAbsolutePath, ctx.input.fixtureId, true)
+  safeFixturePath(
+    join(ctx.repoRoot, 'docs', 'receipts', ctx.input.registration.workflowId),
+    ctx.input.fixtureId,
+    true,
+  )
 }
 
 function resultOf(
@@ -790,7 +941,8 @@ async function executeVerification(
 ): Promise<ResultV1<null>> {
   const input = ctx.input
   try {
-    const harness: HarnessResult = await runHarnessOwner({
+    assertLiveRoot(ctx)
+    const harness: HarnessResult = await runHarness({
       workflowId: input.registration.workflowId,
       order: input.order,
       buildResult: input.buildResult,
@@ -823,7 +975,8 @@ async function executeVerification(
         input.fixtureId,
         expectedReview.slotId,
       )
-      callAdversarialOwner('dispatch' + 'Review', [
+      assertLiveRoot(ctx)
+      const dispatchResult: ReviewDispatchResult = dispatchReview(
         {
           workflowId: input.registration.workflowId,
           parcelRef: input.registration.parcelRef,
@@ -834,13 +987,53 @@ async function executeVerification(
           pluginRoot: ctx.pluginRoot,
         },
         { gitFn: createGitAdapter(ctx) },
-      ])
-      const collected = callAdversarialOwner('collect' + 'AdversarialFindings', [
+      )
+      if (
+        dispatchResult.worktreePath !== worktreePath ||
+        dispatchResult.branch !== branchForParcel(input.registration.parcelRef) ||
+        dispatchResult.receiptLocator.length === 0
+      )
+        throw new Refusal()
+      const dispatchEvidence = captureEvidence(ctx, dispatchResult.receiptLocator)
+      const dispatchRow = readRows(ctx.repoRoot, input.registration.workflowId).find(
+        (row) => row.locator === dispatchResult.receiptLocator,
+      )
+      if (
+        dispatchRow === undefined ||
+        dispatchEvidence.claimRef !== 'review-dispatch' ||
+        dispatchEvidence.subjectKind !== 'ReviewDispatch' ||
+        sha256Hex(canonicalize(dispatchRow.document.subject as JsonValue)) !==
+          sha256Hex(
+            canonicalize({
+              parcelRef: input.registration.parcelRef,
+              worktreePath,
+              branch: dispatchResult.branch,
+              kickstarterPath: dispatchResult.kickstarterPath,
+              profile: 'reviewer-readonly',
+              injectedSkills: dispatchResult.injectedSkills,
+            } as unknown as JsonValue),
+          )
+      )
+        throw new Refusal()
+      assertLiveRoot(ctx)
+      const collected: CollectResult = collectAdversarialFindings(
         input.registration.workflowId,
         review.rawText,
         { repoRoot: ctx.repoRoot },
-      ]) as CollectResult
+      )
       if (!collected.ok) throw new Refusal()
+      const findingsEvidence = captureEvidence(ctx, collected.receiptLocator)
+      const findingsRow = readRows(ctx.repoRoot, input.registration.workflowId).find(
+        (row) => row.locator === collected.receiptLocator,
+      )
+      if (
+        findingsRow === undefined ||
+        findingsEvidence.claimRef !== 'adversarial-findings' ||
+        findingsEvidence.subjectKind !== 'AdversarialFindings' ||
+        sha256Hex(canonicalize(findingsRow.document.subject as JsonValue)) !==
+          sha256Hex(canonicalize({ findings: collected.findings } as unknown as JsonValue))
+      )
+        throw new Refusal()
       ctx.findingOffsets.set(expectedReview.slotId, findingOffset)
       findingOffset += collected.findings.length
       findings.push(...collected.findings)
@@ -851,6 +1044,7 @@ async function executeVerification(
       dispositions: expectedFindingDisposition(ctx, findings),
     })
     if (verdict.verdict !== 'pass') throw new Refusal()
+    assertLiveRoot(ctx)
     const verdictOutput = emitVerificationVerdict(input.registration.workflowId, verdict, null, {
       repoRoot: ctx.repoRoot,
     })
@@ -858,7 +1052,12 @@ async function executeVerification(
       (row) => row.locator === verdictOutput.receiptLocator,
     )
     if (verdictRow === undefined) throw new Refusal()
+    captureEvidence(ctx, verdictOutput.receiptLocator)
+    ctx.verdictEnvelopeDigest = sha256Hex(
+      readFileSync(join(ctx.repoRoot, ...verdictOutput.envelopePath.split('/'))),
+    )
     ctx.verdictRef = { hash: String(verdictRow.document.hash), locator: verdictRow.locator }
+    assertLiveRoot(ctx)
     const pkg = prepareHumanGate({
       workflowId: input.registration.workflowId,
       ticketKey: input.ticketKey,
@@ -885,6 +1084,7 @@ async function executeVerification(
         return 'offline-comment'
       },
     }
+    assertLiveRoot(ctx)
     const gate = await executeHumanGate(
       pkg,
       {
@@ -900,6 +1100,30 @@ async function executeVerification(
       (row) => row.locator === closureLocator,
     )
     if (closureRow === undefined) throw new Refusal()
+    captureEvidence(ctx, closureLocator)
+    const closureSubject = closureRow.document.subject as Record<string, unknown>
+    const approvalLocator = closureSubject.approvalReceiptLocator
+    if (typeof approvalLocator !== 'string') throw new Refusal()
+    captureEvidence(ctx, approvalLocator)
+    const approvalRow = readRows(ctx.repoRoot, input.registration.workflowId).find(
+      (row) => row.locator === approvalLocator,
+    )
+    const approvalSubject = approvalRow?.document.subject as Record<string, unknown> | undefined
+    if (
+      approvalRow === undefined ||
+      approvalSubject === undefined ||
+      approvalSubject.decision !== 'approved' ||
+      approvalSubject.decidedBy !== input.decision.actorId ||
+      approvalSubject.ticketKey !== input.ticketKey ||
+      approvalSubject.requestedStatus !== input.targetStatus
+    )
+      throw new Refusal()
+    if (
+      closureSubject.ticketKey !== input.ticketKey ||
+      closureSubject.summaryPath === undefined ||
+      closureSubject.verdictReceipt === undefined
+    )
+      throw new Refusal()
     ctx.closureRef = { hash: String(closureRow.document.hash), locator: closureLocator }
     if (ctx.closureRef === null || ctx.verdictRef === null) throw new Refusal()
     const completed = ctx.owner.workflow.completeWorkV1(work)
@@ -953,6 +1177,8 @@ function buildContext(input: OfflineInputV1): OwnedContext {
     closureRef: null,
     finalRef: null,
     findingOffsets: new Map(),
+    evidence: new Map(),
+    verdictEnvelopeDigest: null,
   }
 }
 
@@ -999,6 +1225,7 @@ export function createOfflineMeasuredVerificationV1(input: unknown): ResultV1<Of
         const tip = rows[rows.length - 1]
         if (tip === undefined) throw new Refusal()
         const correlation = tip.document.correlation as CorrelationContext
+        assertLiveRoot(owned)
         const locator = writeClaimReceipt({
           workflowId: owned.input.registration.workflowId,
           repoRoot: owned.repoRoot,
@@ -1062,6 +1289,9 @@ export function finalizeMeasuredStageDV1(session: object): FinalizationV1 {
   if (!state.ok) return state
   if (state.value.phase === 'finalized-D' && context.finalRef !== null) {
     try {
+      assertLiveRoot(context)
+      verifyInitial(context.input, context.repoRoot, context.specAbsolutePath, context.pluginRoot)
+      verifyCapturedEvidence(context)
       const rows = readRows(context.repoRoot, context.input.registration.workflowId)
       const tip = rows[rows.length - 1]
       if (
@@ -1085,7 +1315,11 @@ export function finalizeMeasuredStageDV1(session: object): FinalizationV1 {
     return fail('PHASE_REFUSED')
   const lease = context.owner.verification.beginWriterV1()
   if (!lease.ok) return lease
+  let writeAttempted = false
   try {
+    assertLiveRoot(context)
+    verifyInitial(context.input, context.repoRoot, context.specAbsolutePath, context.pluginRoot)
+    verifyCapturedEvidence(context)
     const rows = readRows(context.repoRoot, context.input.registration.workflowId)
     const tip = rows[rows.length - 1]
     if (tip === undefined || !refMatches(tip, context.measurementRef)) throw new Refusal()
@@ -1125,6 +1359,8 @@ export function finalizeMeasuredStageDV1(session: object): FinalizationV1 {
     )
     const absolutePath = join(context.repoRoot, ...locator.split('/'))
     mkdirSync(dirname(absolutePath), { recursive: true })
+    assertLiveRoot(context)
+    writeAttempted = true
     writeFileSync(absolutePath, `${JSON.stringify(document, null, 2)}\n`, {
       encoding: 'utf8',
       flag: 'wx',
@@ -1150,6 +1386,7 @@ export function finalizeMeasuredStageDV1(session: object): FinalizationV1 {
   } catch (error) {
     context.owner.verification.holdV1(lease.value)
     context.owner.verification.endWriterV1(lease.value)
+    if (!writeAttempted) return fail('CHAIN_REFUSED')
     return error instanceof Refusal ? fail('WRITE_REFUSED') : fail('WRITE_UNCERTAIN')
   }
 }
