@@ -667,3 +667,35 @@ packages, not a claim that contents prove install flags. Do not reinstall or tou
 global packages/credentials/configuration. Run genuine missing-case RED/GREEN,
 full affected checks, freeze the exact nine-file source/report commit and STOP
 for root plus another independent frontier review. No push/merge/provider call.
+
+### Combined scaffold compatibility amendment — proposed 2026-09-26
+
+Combined head be38c5a passes dispatch567, routing964, readers72, mutation44 and
+applicable checks, but full verification is 657/658: W3-P1 scaffold AC1 currently
+requires its devDependencies map to equal dispatch's whole map. The two previously
+reviewed exact Pi0.87.1 development dependencies are dispatch-only conformance
+fixtures, not verification tooling. Adding them to unrelated packages would expand
+dependency scope without a runtime need. This is a real failed integration gate.
+
+Amend that one static scaffold assertion to retain exact shared tooling membership
+(@biomejs/biome, @types/node, tsx, typescript) and exact version parity, while allowing
+only dispatch's two explicitly named SDK additions, each exactly0.87.1. Verification
+must have exactly its shared four keys; dispatch must have exactly those four plus
+@earendil-works/pi-coding-agent and @earendil-works/pi-ai. No arbitrary extras,
+missing tools, version drift, range pins, waived assertion or broad subset test.
+Keep every engine/export/script/runtime-dependency/config assertion unchanged.
+This is a narrow current-scope clarification of the historical W3-P1 sibling pattern,
+not a change to any package manifest, lockfile, runtime or production dependency.
+
+Proposed implementation envelope: existing verification/tests/scaffold.test.ts and
+this parcel's existing verification report only. A test-local assertion helper may
+support real positive manifests plus synthetic negative controls: shared version
+drift, each missing shared key, unexpected extras on either side, either missing
+SDK addition and either changed SDK version/range. Do not mutate repository
+manifests in tests. Run focused scaffold and full verification, verification
+ typecheck/lint and actual D19; preserve source/lock identity and all prior checks.
+
+Root records the failure and proposes this amendment under delegated prerequisite
+authority. Independent contract review, genuine stopped Step0 and explicit release
+precede edits; two independent fix reviews and all combined/remote gates still
+precede merge. PR70 remains draft and cannot merge with the current failure.
