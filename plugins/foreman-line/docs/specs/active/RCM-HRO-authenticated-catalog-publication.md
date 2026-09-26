@@ -741,3 +741,14 @@ change to assert the combined bound, rather than preserving that interpretation.
 This paragraph records the root decision. Runtime repair remains stopped pending
 the builder's genuine read-only repair Step0 and an explicit repair release.
 Two independent final source reviews and combined integration remain required.
+## Checkpoint N repair release — 2026-09-26
+
+Root accepts the genuine read-only repair Step0 at4a7e599 from the reassigned
+frontier builder. Release exactly the existing producer, producer test and
+hro-rcm-materializer-verification.md for the combined-budget repair above; the
+raw fixture and all other sources remain frozen. Capture the independently
+calculated exact/one-over failure before code, then focused/full regression,
+typecheck/lint, actual D19 and source-preservation evidence. Freeze clean and stop.
+The repair author will not independently approve this source; root and a different
+frontier reviewer must complete final independent reviews before integration.
+No provider/network, dependency, configuration, push or merge operation is granted.
