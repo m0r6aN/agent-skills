@@ -170,3 +170,25 @@ control: exit 0, three authorizations and OUT_OF_SCOPE refusal as expected.
 resolver, barrel and both packages' manifests/locks returned exit 0.
 Final source blob: f9f22ccaeaf8d1c1db6c805269575b1c7f3cc0ad.
 Final test blob: e14910cadb32445b3fbc5419aa9cc3169787ba59.
+
+## Coordinator acceptance for integration (not Stage F closure)
+
+Two independent frontier implementation reviews APPROVE frozen
+`fb722c4bd8031c9d4d736196d2c78cf4d4833dde`, with no blocking finding. Neither
+reviewer implemented this change. Reviewer A independently passed 366 binding/
+projection/resolver tests, typecheck and changed-file lint. Reviewer B passed the
+same 366 tests plus 35 hybrid tests and typecheck; an additional actual-Ajv probe
+confirmed returned error stability after error-object mutation and one compilation
+even with capture-phase reentry. Both verified exact three-file scope and unchanged
+head. These establish semantics and mechanism only, not measured latency savings.
+
+Coordinator independently inspected capture-before-init, successful-only assignment,
+unchanged full semantic walk, immutable schema and synchronous owned-data validation.
+Focused76 tests/typecheck pass. Combined branch on accepted main71fd489 contains
+only this runtime delta and prior reviewed P2B/HRO closure documents. Full combined
+checks pass: routing-policy944, hybrid-routing35, contract-readers70 and
+mutation-scope44; all four typechecks/lints exit0. Existing routing-policy lint
+informational __proto__ message is unchanged. No predecessor runtime is modified.
+
+Independent combined-head inspection and remote CI remain required. No provider
+call, savings claim, active-runtime result, merge or full-HRO completion is recorded.
