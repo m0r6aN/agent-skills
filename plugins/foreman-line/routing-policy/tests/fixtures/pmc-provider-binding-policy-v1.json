@@ -1,0 +1,2000 @@
+{
+  "schemaVersion": "pmc-provider-binding-policy/v1",
+  "compatibility": "additive-v0-preserved",
+  "provenance": {
+    "sourceRef": "host-owner-export/catalog-projection.json",
+    "sourceRevision": "PMC-P0-reviewed-static-baseline-2026-09-25",
+    "contentSha256": "b0c2dc8cf1412773b4ed4f17fcba10634a997f3b2b2b960d6dca200bdbb171fe",
+    "catalogVersion": {
+      "status": "recorded",
+      "value": "projectionVersion:1",
+      "evidenceRef": "pmc-p0-capability-baseline.md#1"
+    },
+    "mappingVersion": "PMC-P0-ratified-2026-09-25",
+    "policySchemaVersion": "pmc-provider-binding-policy/v1",
+    "roleMapVersion": "PMC-P0-section-4-2026-09-25",
+    "foremanRevision": "ad878b310763609205a0e80ed631c0da76e1e833",
+    "piRuntimeVersion": {
+      "status": "recorded",
+      "value": "0.86.1",
+      "evidenceRef": "pmc-p0-capability-baseline.md#8-holds"
+    },
+    "acquiredAtUtc": {
+      "status": "recorded",
+      "value": "2026-09-20T17:01:26.485Z",
+      "evidenceRef": "pmc-p0-capability-baseline.md#1"
+    },
+    "evidenceState": "static-conformance",
+    "freshnessAcceptance": "not-accepted"
+  },
+  "candidates": [
+    {
+      "logicalCandidateId": "candidate-1",
+      "family": {
+        "status": "unknown",
+        "reason": "No coordinator-approved family declaration"
+      }
+    },
+    {
+      "logicalCandidateId": "candidate-2",
+      "family": {
+        "status": "unknown",
+        "reason": "No coordinator-approved family declaration"
+      }
+    },
+    {
+      "logicalCandidateId": "candidate-3",
+      "family": {
+        "status": "unknown",
+        "reason": "No coordinator-approved family declaration"
+      }
+    },
+    {
+      "logicalCandidateId": "candidate-4",
+      "family": {
+        "status": "unknown",
+        "reason": "No coordinator-approved family declaration"
+      }
+    },
+    {
+      "logicalCandidateId": "candidate-5",
+      "family": {
+        "status": "unknown",
+        "reason": "No coordinator-approved family declaration"
+      }
+    },
+    {
+      "logicalCandidateId": "candidate-6",
+      "family": {
+        "status": "unknown",
+        "reason": "No coordinator-approved family declaration"
+      }
+    },
+    {
+      "logicalCandidateId": "candidate-7",
+      "family": {
+        "status": "unknown",
+        "reason": "No coordinator-approved family declaration"
+      }
+    },
+    {
+      "logicalCandidateId": "candidate-8",
+      "family": {
+        "status": "unknown",
+        "reason": "No coordinator-approved family declaration"
+      }
+    },
+    {
+      "logicalCandidateId": "candidate-9",
+      "family": {
+        "status": "unknown",
+        "reason": "No coordinator-approved family declaration"
+      }
+    },
+    {
+      "logicalCandidateId": "candidate-10",
+      "family": {
+        "status": "unknown",
+        "reason": "No coordinator-approved family declaration"
+      }
+    },
+    {
+      "logicalCandidateId": "candidate-11",
+      "family": {
+        "status": "unknown",
+        "reason": "No coordinator-approved family declaration"
+      }
+    },
+    {
+      "logicalCandidateId": "candidate-12",
+      "family": {
+        "status": "unknown",
+        "reason": "No coordinator-approved family declaration"
+      }
+    },
+    {
+      "logicalCandidateId": "candidate-13",
+      "family": {
+        "status": "unknown",
+        "reason": "No coordinator-approved family declaration"
+      }
+    },
+    {
+      "logicalCandidateId": "candidate-14",
+      "family": {
+        "status": "unknown",
+        "reason": "No coordinator-approved family declaration"
+      }
+    },
+    {
+      "logicalCandidateId": "candidate-15",
+      "family": {
+        "status": "unknown",
+        "reason": "No coordinator-approved family declaration"
+      }
+    }
+  ],
+  "bindings": [
+    {
+      "bindingId": "1",
+      "logicalCandidateId": "candidate-1",
+      "provider": "opencode",
+      "providerModelId": "claude-opus-5-5",
+      "piHostModelId": "opencode/claude-opus-5-5",
+      "protocol": {
+        "status": "unknown",
+        "reason": "OWNER_ATTESTED_PENDING_LIVE_AVAILABILITY"
+      },
+      "catalogBaseUrl": {
+        "status": "unknown",
+        "reason": "OWNER_ATTESTED_PENDING_LIVE_AVAILABILITY"
+      },
+      "identityState": "owner-attested",
+      "identityRefusalCodes": [],
+      "eligibility": {
+        "dataClasses": {
+          "status": "unknown",
+          "reason": "OpenCode data policy unestablished"
+        },
+        "transportRequirements": {
+          "status": "unknown",
+          "reason": "OpenCode transport policy unestablished"
+        },
+        "toolUse": {
+          "status": "unknown",
+          "reason": "capability-unverified"
+        },
+        "structuredOutput": {
+          "status": "unknown",
+          "reason": "capability-unverified"
+        },
+        "reasoning": {
+          "status": "unknown",
+          "reason": "OWNER_ATTESTED_PENDING_LIVE_AVAILABILITY"
+        },
+        "inputModalities": {
+          "status": "unknown",
+          "reason": "OWNER_ATTESTED_PENDING_LIVE_AVAILABILITY"
+        },
+        "thinkingLevels": {
+          "status": "unknown",
+          "reason": "thinking levels unobserved"
+        },
+        "contextWindow": {
+          "status": "unknown",
+          "reason": "OWNER_ATTESTED_PENDING_LIVE_AVAILABILITY"
+        },
+        "maxTokens": {
+          "status": "unknown",
+          "reason": "OWNER_ATTESTED_PENDING_LIVE_AVAILABILITY"
+        },
+        "rates": {
+          "status": "unknown",
+          "reason": "No recorded rates"
+        },
+        "enabled": {
+          "status": "recorded",
+          "value": false,
+          "evidenceRef": "pmc-p0-capability-baseline.md#6-ac4-enablement-gap"
+        },
+        "availability": {
+          "status": "unknown",
+          "reason": "A6 live-availability required"
+        },
+        "qualityByLane": {
+          "status": "unknown",
+          "reason": "A6 model-quality required"
+        }
+      }
+    },
+    {
+      "bindingId": "2",
+      "logicalCandidateId": "candidate-2",
+      "provider": "opencode",
+      "providerModelId": "gpt-6-astra",
+      "piHostModelId": "opencode/gpt-6-astra",
+      "protocol": {
+        "status": "recorded",
+        "value": "openai-responses",
+        "evidenceRef": "pmc-p0-capability-baseline.md#binding-2"
+      },
+      "catalogBaseUrl": {
+        "status": "recorded",
+        "value": "https://opencode.ai/zen/v1",
+        "evidenceRef": "pmc-p0-capability-baseline.md#binding-2"
+      },
+      "identityState": "catalog-recorded",
+      "identityRefusalCodes": [],
+      "eligibility": {
+        "dataClasses": {
+          "status": "unknown",
+          "reason": "OpenCode data policy unestablished"
+        },
+        "transportRequirements": {
+          "status": "unknown",
+          "reason": "OpenCode transport policy unestablished"
+        },
+        "toolUse": {
+          "status": "unknown",
+          "reason": "capability-unverified"
+        },
+        "structuredOutput": {
+          "status": "unknown",
+          "reason": "capability-unverified"
+        },
+        "reasoning": {
+          "status": "recorded",
+          "value": true,
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-2"
+        },
+        "inputModalities": {
+          "status": "recorded",
+          "value": [
+            "image",
+            "text"
+          ],
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-2"
+        },
+        "thinkingLevels": {
+          "status": "recorded",
+          "value": [
+            "high",
+            "low",
+            "max",
+            "medium",
+            "xhigh"
+          ],
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-2"
+        },
+        "contextWindow": {
+          "status": "recorded",
+          "value": 1050000,
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-2"
+        },
+        "maxTokens": {
+          "status": "recorded",
+          "value": 128000,
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-2"
+        },
+        "rates": {
+          "status": "recorded",
+          "value": {
+            "input": 10,
+            "output": 50,
+            "unit": "USD per 1M tokens"
+          },
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-2"
+        },
+        "enabled": {
+          "status": "recorded",
+          "value": false,
+          "evidenceRef": "pmc-p0-capability-baseline.md#6-ac4-enablement-gap"
+        },
+        "availability": {
+          "status": "unknown",
+          "reason": "A6 live-availability required"
+        },
+        "qualityByLane": {
+          "status": "unknown",
+          "reason": "A6 model-quality required"
+        }
+      }
+    },
+    {
+      "bindingId": "3",
+      "logicalCandidateId": "candidate-3",
+      "provider": "opencode",
+      "providerModelId": "gpt-5.6-sol",
+      "piHostModelId": "opencode/gpt-5.6-sol",
+      "protocol": {
+        "status": "recorded",
+        "value": "openai-responses",
+        "evidenceRef": "pmc-p0-capability-baseline.md#binding-3"
+      },
+      "catalogBaseUrl": {
+        "status": "recorded",
+        "value": "https://opencode.ai/zen/v1",
+        "evidenceRef": "pmc-p0-capability-baseline.md#binding-3"
+      },
+      "identityState": "catalog-recorded",
+      "identityRefusalCodes": [],
+      "eligibility": {
+        "dataClasses": {
+          "status": "unknown",
+          "reason": "OpenCode data policy unestablished"
+        },
+        "transportRequirements": {
+          "status": "unknown",
+          "reason": "OpenCode transport policy unestablished"
+        },
+        "toolUse": {
+          "status": "unknown",
+          "reason": "capability-unverified"
+        },
+        "structuredOutput": {
+          "status": "unknown",
+          "reason": "capability-unverified"
+        },
+        "reasoning": {
+          "status": "recorded",
+          "value": true,
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-3"
+        },
+        "inputModalities": {
+          "status": "recorded",
+          "value": [
+            "image",
+            "text"
+          ],
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-3"
+        },
+        "thinkingLevels": {
+          "status": "recorded",
+          "value": [
+            "high",
+            "low",
+            "max",
+            "medium",
+            "xhigh"
+          ],
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-3"
+        },
+        "contextWindow": {
+          "status": "recorded",
+          "value": 1050000,
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-3"
+        },
+        "maxTokens": {
+          "status": "recorded",
+          "value": 128000,
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-3"
+        },
+        "rates": {
+          "status": "recorded",
+          "value": {
+            "input": 4,
+            "output": 20,
+            "unit": "USD per 1M tokens"
+          },
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-3"
+        },
+        "enabled": {
+          "status": "recorded",
+          "value": false,
+          "evidenceRef": "pmc-p0-capability-baseline.md#6-ac4-enablement-gap"
+        },
+        "availability": {
+          "status": "unknown",
+          "reason": "A6 live-availability required"
+        },
+        "qualityByLane": {
+          "status": "unknown",
+          "reason": "A6 model-quality required"
+        }
+      }
+    },
+    {
+      "bindingId": "4",
+      "logicalCandidateId": "candidate-4",
+      "provider": "opencode",
+      "providerModelId": "claude-sonnet-5",
+      "piHostModelId": "opencode/claude-sonnet-5",
+      "protocol": {
+        "status": "recorded",
+        "value": "anthropic-messages",
+        "evidenceRef": "pmc-p0-capability-baseline.md#binding-4"
+      },
+      "catalogBaseUrl": {
+        "status": "recorded",
+        "value": "https://opencode.ai/zen",
+        "evidenceRef": "pmc-p0-capability-baseline.md#binding-4"
+      },
+      "identityState": "catalog-recorded",
+      "identityRefusalCodes": [],
+      "eligibility": {
+        "dataClasses": {
+          "status": "unknown",
+          "reason": "OpenCode data policy unestablished"
+        },
+        "transportRequirements": {
+          "status": "unknown",
+          "reason": "OpenCode transport policy unestablished"
+        },
+        "toolUse": {
+          "status": "unknown",
+          "reason": "capability-unverified"
+        },
+        "structuredOutput": {
+          "status": "unknown",
+          "reason": "capability-unverified"
+        },
+        "reasoning": {
+          "status": "recorded",
+          "value": true,
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-4"
+        },
+        "inputModalities": {
+          "status": "recorded",
+          "value": [
+            "image",
+            "text"
+          ],
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-4"
+        },
+        "thinkingLevels": {
+          "status": "recorded",
+          "value": [
+            "max",
+            "xhigh"
+          ],
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-4"
+        },
+        "contextWindow": {
+          "status": "recorded",
+          "value": 1000000,
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-4"
+        },
+        "maxTokens": {
+          "status": "recorded",
+          "value": 128000,
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-4"
+        },
+        "rates": {
+          "status": "recorded",
+          "value": {
+            "input": 2,
+            "output": 10,
+            "unit": "USD per 1M tokens"
+          },
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-4"
+        },
+        "enabled": {
+          "status": "recorded",
+          "value": false,
+          "evidenceRef": "pmc-p0-capability-baseline.md#6-ac4-enablement-gap"
+        },
+        "availability": {
+          "status": "unknown",
+          "reason": "A6 live-availability required"
+        },
+        "qualityByLane": {
+          "status": "unknown",
+          "reason": "A6 model-quality required"
+        }
+      }
+    },
+    {
+      "bindingId": "5",
+      "logicalCandidateId": "candidate-5",
+      "provider": "opencode",
+      "providerModelId": "deepseek-v4-pro",
+      "piHostModelId": "opencode/deepseek-v4-pro",
+      "protocol": {
+        "status": "recorded",
+        "value": "openai-completions",
+        "evidenceRef": "pmc-p0-capability-baseline.md#binding-5"
+      },
+      "catalogBaseUrl": {
+        "status": "recorded",
+        "value": "https://opencode.ai/zen/v1",
+        "evidenceRef": "pmc-p0-capability-baseline.md#binding-5"
+      },
+      "identityState": "catalog-recorded",
+      "identityRefusalCodes": [],
+      "eligibility": {
+        "dataClasses": {
+          "status": "unknown",
+          "reason": "OpenCode data policy unestablished"
+        },
+        "transportRequirements": {
+          "status": "unknown",
+          "reason": "OpenCode transport policy unestablished"
+        },
+        "toolUse": {
+          "status": "unknown",
+          "reason": "capability-unverified"
+        },
+        "structuredOutput": {
+          "status": "unknown",
+          "reason": "capability-unverified"
+        },
+        "reasoning": {
+          "status": "recorded",
+          "value": true,
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-5"
+        },
+        "inputModalities": {
+          "status": "recorded",
+          "value": [
+            "text"
+          ],
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-5"
+        },
+        "thinkingLevels": {
+          "status": "recorded",
+          "value": [
+            "high",
+            "max"
+          ],
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-5"
+        },
+        "contextWindow": {
+          "status": "recorded",
+          "value": 1000000,
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-5"
+        },
+        "maxTokens": {
+          "status": "recorded",
+          "value": 384000,
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-5"
+        },
+        "rates": {
+          "status": "recorded",
+          "value": {
+            "input": 1.74,
+            "output": 3.84,
+            "unit": "USD per 1M tokens"
+          },
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-5"
+        },
+        "enabled": {
+          "status": "recorded",
+          "value": false,
+          "evidenceRef": "pmc-p0-capability-baseline.md#6-ac4-enablement-gap"
+        },
+        "availability": {
+          "status": "unknown",
+          "reason": "A6 live-availability required"
+        },
+        "qualityByLane": {
+          "status": "unknown",
+          "reason": "A6 model-quality required"
+        }
+      }
+    },
+    {
+      "bindingId": "6",
+      "logicalCandidateId": "candidate-6",
+      "provider": "opencode",
+      "providerModelId": "gpt-5.6-terra",
+      "piHostModelId": "opencode/gpt-5.6-terra",
+      "protocol": {
+        "status": "recorded",
+        "value": "openai-responses",
+        "evidenceRef": "pmc-p0-capability-baseline.md#binding-6"
+      },
+      "catalogBaseUrl": {
+        "status": "recorded",
+        "value": "https://opencode.ai/zen/v1",
+        "evidenceRef": "pmc-p0-capability-baseline.md#binding-6"
+      },
+      "identityState": "catalog-recorded",
+      "identityRefusalCodes": [],
+      "eligibility": {
+        "dataClasses": {
+          "status": "unknown",
+          "reason": "OpenCode data policy unestablished"
+        },
+        "transportRequirements": {
+          "status": "unknown",
+          "reason": "OpenCode transport policy unestablished"
+        },
+        "toolUse": {
+          "status": "unknown",
+          "reason": "capability-unverified"
+        },
+        "structuredOutput": {
+          "status": "unknown",
+          "reason": "capability-unverified"
+        },
+        "reasoning": {
+          "status": "recorded",
+          "value": true,
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-6"
+        },
+        "inputModalities": {
+          "status": "recorded",
+          "value": [
+            "image",
+            "text"
+          ],
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-6"
+        },
+        "thinkingLevels": {
+          "status": "recorded",
+          "value": [
+            "high",
+            "low",
+            "max",
+            "medium",
+            "xhigh"
+          ],
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-6"
+        },
+        "contextWindow": {
+          "status": "recorded",
+          "value": 1050000,
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-6"
+        },
+        "maxTokens": {
+          "status": "recorded",
+          "value": 128000,
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-6"
+        },
+        "rates": {
+          "status": "recorded",
+          "value": {
+            "input": 2.5,
+            "output": 15,
+            "unit": "USD per 1M tokens"
+          },
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-6"
+        },
+        "enabled": {
+          "status": "recorded",
+          "value": false,
+          "evidenceRef": "pmc-p0-capability-baseline.md#6-ac4-enablement-gap"
+        },
+        "availability": {
+          "status": "unknown",
+          "reason": "A6 live-availability required"
+        },
+        "qualityByLane": {
+          "status": "unknown",
+          "reason": "A6 model-quality required"
+        }
+      }
+    },
+    {
+      "bindingId": "7",
+      "logicalCandidateId": "candidate-7",
+      "provider": "opencode",
+      "providerModelId": "qwen3.8-flash",
+      "piHostModelId": "opencode/qwen3.8-flash",
+      "protocol": {
+        "status": "unknown",
+        "reason": "AC2A_ZERO_MATCH"
+      },
+      "catalogBaseUrl": {
+        "status": "unknown",
+        "reason": "AC2A_ZERO_MATCH"
+      },
+      "identityState": "held",
+      "identityRefusalCodes": [
+        "AC2A_ZERO_MATCH",
+        "AC2A_WRONG_PROVIDER",
+        "AC2A_PREFIX_ALIAS_REFUSED"
+      ],
+      "eligibility": {
+        "dataClasses": {
+          "status": "unknown",
+          "reason": "OpenCode data policy unestablished"
+        },
+        "transportRequirements": {
+          "status": "unknown",
+          "reason": "OpenCode transport policy unestablished"
+        },
+        "toolUse": {
+          "status": "unknown",
+          "reason": "capability-unverified"
+        },
+        "structuredOutput": {
+          "status": "unknown",
+          "reason": "capability-unverified"
+        },
+        "reasoning": {
+          "status": "unknown",
+          "reason": "AC2A_ZERO_MATCH"
+        },
+        "inputModalities": {
+          "status": "unknown",
+          "reason": "AC2A_ZERO_MATCH"
+        },
+        "thinkingLevels": {
+          "status": "unknown",
+          "reason": "thinking levels unobserved"
+        },
+        "contextWindow": {
+          "status": "unknown",
+          "reason": "AC2A_ZERO_MATCH"
+        },
+        "maxTokens": {
+          "status": "unknown",
+          "reason": "AC2A_ZERO_MATCH"
+        },
+        "rates": {
+          "status": "unknown",
+          "reason": "No recorded rates"
+        },
+        "enabled": {
+          "status": "recorded",
+          "value": false,
+          "evidenceRef": "pmc-p0-capability-baseline.md#6-ac4-enablement-gap"
+        },
+        "availability": {
+          "status": "unknown",
+          "reason": "A6 live-availability required"
+        },
+        "qualityByLane": {
+          "status": "unknown",
+          "reason": "A6 model-quality required"
+        }
+      }
+    },
+    {
+      "bindingId": "8",
+      "logicalCandidateId": "candidate-8",
+      "provider": "opencode",
+      "providerModelId": "glm-5.3-flash",
+      "piHostModelId": "opencode/glm-5.3-flash",
+      "protocol": {
+        "status": "recorded",
+        "value": "openai-completions",
+        "evidenceRef": "pmc-p0-capability-baseline.md#binding-8"
+      },
+      "catalogBaseUrl": {
+        "status": "recorded",
+        "value": "https://opencode.ai/zen/v1",
+        "evidenceRef": "pmc-p0-capability-baseline.md#binding-8"
+      },
+      "identityState": "catalog-recorded",
+      "identityRefusalCodes": [],
+      "eligibility": {
+        "dataClasses": {
+          "status": "unknown",
+          "reason": "OpenCode data policy unestablished"
+        },
+        "transportRequirements": {
+          "status": "unknown",
+          "reason": "OpenCode transport policy unestablished"
+        },
+        "toolUse": {
+          "status": "unknown",
+          "reason": "capability-unverified"
+        },
+        "structuredOutput": {
+          "status": "unknown",
+          "reason": "capability-unverified"
+        },
+        "reasoning": {
+          "status": "recorded",
+          "value": true,
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-8"
+        },
+        "inputModalities": {
+          "status": "recorded",
+          "value": [
+            "image",
+            "text"
+          ],
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-8"
+        },
+        "thinkingLevels": {
+          "status": "recorded",
+          "value": [
+            "high",
+            "low",
+            "max"
+          ],
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-8"
+        },
+        "contextWindow": {
+          "status": "recorded",
+          "value": 1000000,
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-8"
+        },
+        "maxTokens": {
+          "status": "recorded",
+          "value": 131072,
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-8"
+        },
+        "rates": {
+          "status": "recorded",
+          "value": {
+            "input": 0.15,
+            "output": 0.5,
+            "unit": "USD per 1M tokens"
+          },
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-8"
+        },
+        "enabled": {
+          "status": "recorded",
+          "value": false,
+          "evidenceRef": "pmc-p0-capability-baseline.md#6-ac4-enablement-gap"
+        },
+        "availability": {
+          "status": "unknown",
+          "reason": "A6 live-availability required"
+        },
+        "qualityByLane": {
+          "status": "unknown",
+          "reason": "A6 model-quality required"
+        }
+      }
+    },
+    {
+      "bindingId": "9",
+      "logicalCandidateId": "candidate-9",
+      "provider": "openrouter",
+      "providerModelId": "openai/gpt-6-astra",
+      "piHostModelId": "openrouter/openai/gpt-6-astra",
+      "protocol": {
+        "status": "recorded",
+        "value": "openai-completions",
+        "evidenceRef": "pmc-p0-capability-baseline.md#binding-9"
+      },
+      "catalogBaseUrl": {
+        "status": "recorded",
+        "value": "https://openrouter.ai/api/v1",
+        "evidenceRef": "pmc-p0-capability-baseline.md#binding-9"
+      },
+      "identityState": "catalog-recorded",
+      "identityRefusalCodes": [],
+      "eligibility": {
+        "dataClasses": {
+          "status": "recorded",
+          "value": [
+            "public",
+            "internal",
+            "restricted"
+          ],
+          "evidenceRef": "routing-policy.yaml#data_classification"
+        },
+        "transportRequirements": {
+          "status": "recorded",
+          "value": {
+            "data_collection": "deny",
+            "zdr": true
+          },
+          "evidenceRef": "routing-policy.yaml#data_classification.internal.transport_requirements"
+        },
+        "toolUse": {
+          "status": "unknown",
+          "reason": "capability-unverified"
+        },
+        "structuredOutput": {
+          "status": "unknown",
+          "reason": "capability-unverified"
+        },
+        "reasoning": {
+          "status": "recorded",
+          "value": true,
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-9"
+        },
+        "inputModalities": {
+          "status": "recorded",
+          "value": [
+            "image",
+            "text"
+          ],
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-9"
+        },
+        "thinkingLevels": {
+          "status": "recorded",
+          "value": [
+            "high",
+            "low",
+            "max",
+            "medium",
+            "xhigh"
+          ],
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-9"
+        },
+        "contextWindow": {
+          "status": "recorded",
+          "value": 1050000,
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-9"
+        },
+        "maxTokens": {
+          "status": "recorded",
+          "value": 128000,
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-9"
+        },
+        "rates": {
+          "status": "recorded",
+          "value": {
+            "input": 10,
+            "output": 50,
+            "unit": "USD per 1M tokens"
+          },
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-9"
+        },
+        "enabled": {
+          "status": "recorded",
+          "value": false,
+          "evidenceRef": "pmc-p0-capability-baseline.md#6-ac4-enablement-gap"
+        },
+        "availability": {
+          "status": "unknown",
+          "reason": "A6 live-availability required"
+        },
+        "qualityByLane": {
+          "status": "unknown",
+          "reason": "A6 model-quality required"
+        }
+      }
+    },
+    {
+      "bindingId": "10",
+      "logicalCandidateId": "candidate-10",
+      "provider": "openrouter",
+      "providerModelId": "anthropic/claude-opus-5.5",
+      "piHostModelId": "openrouter/anthropic/claude-opus-5.5",
+      "protocol": {
+        "status": "unknown",
+        "reason": "OWNER_ATTESTED_PENDING_LIVE_AVAILABILITY"
+      },
+      "catalogBaseUrl": {
+        "status": "unknown",
+        "reason": "OWNER_ATTESTED_PENDING_LIVE_AVAILABILITY"
+      },
+      "identityState": "owner-attested",
+      "identityRefusalCodes": [],
+      "eligibility": {
+        "dataClasses": {
+          "status": "recorded",
+          "value": [
+            "public",
+            "internal",
+            "restricted"
+          ],
+          "evidenceRef": "routing-policy.yaml#data_classification"
+        },
+        "transportRequirements": {
+          "status": "recorded",
+          "value": {
+            "data_collection": "deny",
+            "zdr": true
+          },
+          "evidenceRef": "routing-policy.yaml#data_classification.internal.transport_requirements"
+        },
+        "toolUse": {
+          "status": "unknown",
+          "reason": "capability-unverified"
+        },
+        "structuredOutput": {
+          "status": "unknown",
+          "reason": "capability-unverified"
+        },
+        "reasoning": {
+          "status": "unknown",
+          "reason": "OWNER_ATTESTED_PENDING_LIVE_AVAILABILITY"
+        },
+        "inputModalities": {
+          "status": "unknown",
+          "reason": "OWNER_ATTESTED_PENDING_LIVE_AVAILABILITY"
+        },
+        "thinkingLevels": {
+          "status": "unknown",
+          "reason": "thinking levels unobserved"
+        },
+        "contextWindow": {
+          "status": "unknown",
+          "reason": "OWNER_ATTESTED_PENDING_LIVE_AVAILABILITY"
+        },
+        "maxTokens": {
+          "status": "unknown",
+          "reason": "OWNER_ATTESTED_PENDING_LIVE_AVAILABILITY"
+        },
+        "rates": {
+          "status": "unknown",
+          "reason": "No recorded rates"
+        },
+        "enabled": {
+          "status": "recorded",
+          "value": false,
+          "evidenceRef": "pmc-p0-capability-baseline.md#6-ac4-enablement-gap"
+        },
+        "availability": {
+          "status": "unknown",
+          "reason": "A6 live-availability required"
+        },
+        "qualityByLane": {
+          "status": "unknown",
+          "reason": "A6 model-quality required"
+        }
+      }
+    },
+    {
+      "bindingId": "11",
+      "logicalCandidateId": "candidate-11",
+      "provider": "openrouter",
+      "providerModelId": "anthropic/claude-sonnet-5",
+      "piHostModelId": "openrouter/anthropic/claude-sonnet-5",
+      "protocol": {
+        "status": "recorded",
+        "value": "anthropic-messages",
+        "evidenceRef": "pmc-p0-capability-baseline.md#binding-11"
+      },
+      "catalogBaseUrl": {
+        "status": "recorded",
+        "value": "https://openrouter.ai/api",
+        "evidenceRef": "pmc-p0-capability-baseline.md#binding-11"
+      },
+      "identityState": "catalog-recorded",
+      "identityRefusalCodes": [],
+      "eligibility": {
+        "dataClasses": {
+          "status": "recorded",
+          "value": [
+            "public",
+            "internal",
+            "restricted"
+          ],
+          "evidenceRef": "routing-policy.yaml#data_classification"
+        },
+        "transportRequirements": {
+          "status": "recorded",
+          "value": {
+            "data_collection": "deny",
+            "zdr": true
+          },
+          "evidenceRef": "routing-policy.yaml#data_classification.internal.transport_requirements"
+        },
+        "toolUse": {
+          "status": "unknown",
+          "reason": "capability-unverified"
+        },
+        "structuredOutput": {
+          "status": "unknown",
+          "reason": "capability-unverified"
+        },
+        "reasoning": {
+          "status": "recorded",
+          "value": true,
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-11"
+        },
+        "inputModalities": {
+          "status": "recorded",
+          "value": [
+            "image",
+            "text"
+          ],
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-11"
+        },
+        "thinkingLevels": {
+          "status": "recorded",
+          "value": [
+            "high",
+            "low",
+            "max",
+            "medium",
+            "off",
+            "xhigh"
+          ],
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-11"
+        },
+        "contextWindow": {
+          "status": "recorded",
+          "value": 1000000,
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-11"
+        },
+        "maxTokens": {
+          "status": "recorded",
+          "value": 128000,
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-11"
+        },
+        "rates": {
+          "status": "recorded",
+          "value": {
+            "input": 2,
+            "output": 10,
+            "unit": "USD per 1M tokens"
+          },
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-11"
+        },
+        "enabled": {
+          "status": "recorded",
+          "value": false,
+          "evidenceRef": "pmc-p0-capability-baseline.md#6-ac4-enablement-gap"
+        },
+        "availability": {
+          "status": "unknown",
+          "reason": "A6 live-availability required"
+        },
+        "qualityByLane": {
+          "status": "unknown",
+          "reason": "A6 model-quality required"
+        }
+      }
+    },
+    {
+      "bindingId": "12",
+      "logicalCandidateId": "candidate-12",
+      "provider": "openrouter",
+      "providerModelId": "openai/gpt-5.6-sol",
+      "piHostModelId": "openrouter/openai/gpt-5.6-sol",
+      "protocol": {
+        "status": "recorded",
+        "value": "openai-completions",
+        "evidenceRef": "pmc-p0-capability-baseline.md#binding-12"
+      },
+      "catalogBaseUrl": {
+        "status": "recorded",
+        "value": "https://openrouter.ai/api/v1",
+        "evidenceRef": "pmc-p0-capability-baseline.md#binding-12"
+      },
+      "identityState": "catalog-recorded",
+      "identityRefusalCodes": [],
+      "eligibility": {
+        "dataClasses": {
+          "status": "recorded",
+          "value": [
+            "public",
+            "internal",
+            "restricted"
+          ],
+          "evidenceRef": "routing-policy.yaml#data_classification"
+        },
+        "transportRequirements": {
+          "status": "recorded",
+          "value": {
+            "data_collection": "deny",
+            "zdr": true
+          },
+          "evidenceRef": "routing-policy.yaml#data_classification.internal.transport_requirements"
+        },
+        "toolUse": {
+          "status": "unknown",
+          "reason": "capability-unverified"
+        },
+        "structuredOutput": {
+          "status": "unknown",
+          "reason": "capability-unverified"
+        },
+        "reasoning": {
+          "status": "recorded",
+          "value": true,
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-12"
+        },
+        "inputModalities": {
+          "status": "recorded",
+          "value": [
+            "image",
+            "text"
+          ],
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-12"
+        },
+        "thinkingLevels": {
+          "status": "recorded",
+          "value": [
+            "high",
+            "low",
+            "max",
+            "medium",
+            "off",
+            "xhigh"
+          ],
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-12"
+        },
+        "contextWindow": {
+          "status": "recorded",
+          "value": 1050000,
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-12"
+        },
+        "maxTokens": {
+          "status": "recorded",
+          "value": 128000,
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-12"
+        },
+        "rates": {
+          "status": "recorded",
+          "value": {
+            "input": 2,
+            "output": 10,
+            "unit": "USD per 1M tokens"
+          },
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-12"
+        },
+        "enabled": {
+          "status": "recorded",
+          "value": false,
+          "evidenceRef": "pmc-p0-capability-baseline.md#6-ac4-enablement-gap"
+        },
+        "availability": {
+          "status": "unknown",
+          "reason": "A6 live-availability required"
+        },
+        "qualityByLane": {
+          "status": "unknown",
+          "reason": "A6 model-quality required"
+        }
+      }
+    },
+    {
+      "bindingId": "13",
+      "logicalCandidateId": "candidate-13",
+      "provider": "openrouter",
+      "providerModelId": "openai/gpt-5.6-terra",
+      "piHostModelId": "openrouter/openai/gpt-5.6-terra",
+      "protocol": {
+        "status": "recorded",
+        "value": "openai-completions",
+        "evidenceRef": "pmc-p0-capability-baseline.md#binding-13"
+      },
+      "catalogBaseUrl": {
+        "status": "recorded",
+        "value": "https://openrouter.ai/api/v1",
+        "evidenceRef": "pmc-p0-capability-baseline.md#binding-13"
+      },
+      "identityState": "catalog-recorded",
+      "identityRefusalCodes": [],
+      "eligibility": {
+        "dataClasses": {
+          "status": "recorded",
+          "value": [
+            "public",
+            "internal",
+            "restricted"
+          ],
+          "evidenceRef": "routing-policy.yaml#data_classification"
+        },
+        "transportRequirements": {
+          "status": "recorded",
+          "value": {
+            "data_collection": "deny",
+            "zdr": true
+          },
+          "evidenceRef": "routing-policy.yaml#data_classification.internal.transport_requirements"
+        },
+        "toolUse": {
+          "status": "unknown",
+          "reason": "capability-unverified"
+        },
+        "structuredOutput": {
+          "status": "unknown",
+          "reason": "capability-unverified"
+        },
+        "reasoning": {
+          "status": "recorded",
+          "value": true,
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-13"
+        },
+        "inputModalities": {
+          "status": "recorded",
+          "value": [
+            "image",
+            "text"
+          ],
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-13"
+        },
+        "thinkingLevels": {
+          "status": "recorded",
+          "value": [
+            "high",
+            "low",
+            "max",
+            "medium",
+            "off",
+            "xhigh"
+          ],
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-13"
+        },
+        "contextWindow": {
+          "status": "recorded",
+          "value": 1050000,
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-13"
+        },
+        "maxTokens": {
+          "status": "recorded",
+          "value": 128000,
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-13"
+        },
+        "rates": {
+          "status": "recorded",
+          "value": {
+            "input": 2,
+            "output": 12,
+            "unit": "USD per 1M tokens"
+          },
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-13"
+        },
+        "enabled": {
+          "status": "recorded",
+          "value": false,
+          "evidenceRef": "pmc-p0-capability-baseline.md#6-ac4-enablement-gap"
+        },
+        "availability": {
+          "status": "unknown",
+          "reason": "A6 live-availability required"
+        },
+        "qualityByLane": {
+          "status": "unknown",
+          "reason": "A6 model-quality required"
+        }
+      }
+    },
+    {
+      "bindingId": "14",
+      "logicalCandidateId": "candidate-14",
+      "provider": "openrouter",
+      "providerModelId": "google/gemini-3.8-flash",
+      "piHostModelId": "openrouter/google/gemini-3.8-flash",
+      "protocol": {
+        "status": "recorded",
+        "value": "openai-completions",
+        "evidenceRef": "pmc-p0-capability-baseline.md#binding-14"
+      },
+      "catalogBaseUrl": {
+        "status": "recorded",
+        "value": "https://openrouter.ai/api/v1",
+        "evidenceRef": "pmc-p0-capability-baseline.md#binding-14"
+      },
+      "identityState": "catalog-recorded",
+      "identityRefusalCodes": [],
+      "eligibility": {
+        "dataClasses": {
+          "status": "recorded",
+          "value": [
+            "public",
+            "internal",
+            "restricted"
+          ],
+          "evidenceRef": "routing-policy.yaml#data_classification"
+        },
+        "transportRequirements": {
+          "status": "recorded",
+          "value": {
+            "data_collection": "deny",
+            "zdr": true
+          },
+          "evidenceRef": "routing-policy.yaml#data_classification.internal.transport_requirements"
+        },
+        "toolUse": {
+          "status": "unknown",
+          "reason": "capability-unverified"
+        },
+        "structuredOutput": {
+          "status": "unknown",
+          "reason": "capability-unverified"
+        },
+        "reasoning": {
+          "status": "recorded",
+          "value": true,
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-14"
+        },
+        "inputModalities": {
+          "status": "recorded",
+          "value": [
+            "image",
+            "text"
+          ],
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-14"
+        },
+        "thinkingLevels": {
+          "status": "recorded",
+          "value": [
+            "high",
+            "low",
+            "medium"
+          ],
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-14"
+        },
+        "contextWindow": {
+          "status": "recorded",
+          "value": 1048576,
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-14"
+        },
+        "maxTokens": {
+          "status": "recorded",
+          "value": 65536,
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-14"
+        },
+        "rates": {
+          "status": "recorded",
+          "value": {
+            "input": 0.75,
+            "output": 3.75,
+            "unit": "USD per 1M tokens"
+          },
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-14"
+        },
+        "enabled": {
+          "status": "recorded",
+          "value": false,
+          "evidenceRef": "pmc-p0-capability-baseline.md#6-ac4-enablement-gap"
+        },
+        "availability": {
+          "status": "unknown",
+          "reason": "A6 live-availability required"
+        },
+        "qualityByLane": {
+          "status": "unknown",
+          "reason": "A6 model-quality required"
+        }
+      }
+    },
+    {
+      "bindingId": "15",
+      "logicalCandidateId": "candidate-15",
+      "provider": "openrouter",
+      "providerModelId": "anthropic/claude-haiku-4.5",
+      "piHostModelId": "openrouter/anthropic/claude-haiku-4.5",
+      "protocol": {
+        "status": "recorded",
+        "value": "anthropic-messages",
+        "evidenceRef": "pmc-p0-capability-baseline.md#binding-15"
+      },
+      "catalogBaseUrl": {
+        "status": "recorded",
+        "value": "https://openrouter.ai/api",
+        "evidenceRef": "pmc-p0-capability-baseline.md#binding-15"
+      },
+      "identityState": "catalog-recorded",
+      "identityRefusalCodes": [],
+      "eligibility": {
+        "dataClasses": {
+          "status": "recorded",
+          "value": [
+            "public",
+            "internal",
+            "restricted"
+          ],
+          "evidenceRef": "routing-policy.yaml#data_classification"
+        },
+        "transportRequirements": {
+          "status": "recorded",
+          "value": {
+            "data_collection": "deny",
+            "zdr": true
+          },
+          "evidenceRef": "routing-policy.yaml#data_classification.internal.transport_requirements"
+        },
+        "toolUse": {
+          "status": "unknown",
+          "reason": "capability-unverified"
+        },
+        "structuredOutput": {
+          "status": "unknown",
+          "reason": "capability-unverified"
+        },
+        "reasoning": {
+          "status": "recorded",
+          "value": true,
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-15"
+        },
+        "inputModalities": {
+          "status": "recorded",
+          "value": [
+            "image",
+            "text"
+          ],
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-15"
+        },
+        "thinkingLevels": {
+          "status": "unknown",
+          "reason": "thinking levels unobserved"
+        },
+        "contextWindow": {
+          "status": "recorded",
+          "value": 200000,
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-15"
+        },
+        "maxTokens": {
+          "status": "recorded",
+          "value": 64000,
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-15"
+        },
+        "rates": {
+          "status": "recorded",
+          "value": {
+            "input": 1,
+            "output": 5,
+            "unit": "USD per 1M tokens"
+          },
+          "evidenceRef": "pmc-p0-capability-baseline.md#binding-15"
+        },
+        "enabled": {
+          "status": "recorded",
+          "value": false,
+          "evidenceRef": "pmc-p0-capability-baseline.md#6-ac4-enablement-gap"
+        },
+        "availability": {
+          "status": "unknown",
+          "reason": "A6 live-availability required"
+        },
+        "qualityByLane": {
+          "status": "unknown",
+          "reason": "A6 model-quality required"
+        }
+      }
+    }
+  ],
+  "lanes": [
+    {
+      "lane": "L1",
+      "roleFamily": "coordinator",
+      "subRoles": [
+        "coordinator",
+        "shaper",
+        "architect"
+      ],
+      "routingClasses": [
+        "architecture/risk"
+      ],
+      "authorityCap": "coordinate-shape-no-ratification-gates-self-review-approval-merge-release-bypass",
+      "frontierOnly": true,
+      "independence": "distinct-instance-family-where-required-unknown-refuses",
+      "humanGates": [
+        "owner-gate-1",
+        "dispatch-gate-2",
+        "owner-gate-3",
+        "owner-only-break-glass"
+      ],
+      "providerRule": {
+        "mode": "pin",
+        "providers": [
+          "opencode"
+        ],
+        "offPin": "historical-nonselectable"
+      },
+      "qualityTolerance": 0,
+      "enabled": true,
+      "rankingRequirements": {
+        "hardFilters": [
+          "R1",
+          "R2",
+          "R3",
+          "R4",
+          "R6"
+        ],
+        "budgetFilter": "R5",
+        "qualityEvidence": "R7-per-lane",
+        "unknownRequiredFacts": "refuse",
+        "missingEstimates": "unit-price-comparison-does-not-waive-budget",
+        "order": [
+          "pinned-provider-partition",
+          "quality-descending",
+          "primary-before-fallback",
+          "provider-code-point",
+          "model-id-code-point"
+        ]
+      },
+      "budgetPolicyRef": [
+        {
+          "routingClass": "architecture/risk",
+          "status": "existing-policy",
+          "sourceRef": "routing-policy.yaml#classes.architecture/risk"
+        }
+      ]
+    },
+    {
+      "lane": "L2",
+      "roleFamily": "verifier",
+      "subRoles": [
+        "adversarial-reviewer",
+        "verifier",
+        "security-auditor"
+      ],
+      "routingClasses": [
+        "architecture/risk",
+        "review/security"
+      ],
+      "authorityCap": "verdict-recommendation-no-edit-self-acceptance-approval-merge-release-bypass",
+      "frontierOnly": true,
+      "independence": "distinct-instance-family-where-required-unknown-refuses-primary-and-fallback",
+      "humanGates": [
+        "owner-gate-1",
+        "dispatch-gate-2",
+        "owner-gate-3",
+        "owner-only-break-glass",
+        "coordinator-acceptance"
+      ],
+      "providerRule": {
+        "mode": "pin",
+        "providers": [
+          "opencode"
+        ],
+        "offPin": "historical-nonselectable"
+      },
+      "qualityTolerance": 0,
+      "enabled": true,
+      "rankingRequirements": {
+        "hardFilters": [
+          "R1",
+          "R2",
+          "R3",
+          "R4",
+          "R6"
+        ],
+        "budgetFilter": "R5",
+        "qualityEvidence": "R7-per-lane",
+        "unknownRequiredFacts": "refuse",
+        "missingEstimates": "unit-price-comparison-does-not-waive-budget",
+        "order": [
+          "pinned-provider-partition",
+          "quality-descending",
+          "primary-before-fallback",
+          "provider-code-point",
+          "model-id-code-point"
+        ]
+      },
+      "budgetPolicyRef": [
+        {
+          "routingClass": "architecture/risk",
+          "status": "existing-policy",
+          "sourceRef": "routing-policy.yaml#classes.architecture/risk"
+        },
+        {
+          "routingClass": "review/security",
+          "status": "unresolved-non-dispatching",
+          "sourceRef": "PMC-P2-approved-budget-required"
+        }
+      ]
+    },
+    {
+      "lane": "L3",
+      "roleFamily": "builder",
+      "subRoles": [
+        "builder-complex"
+      ],
+      "routingClasses": [
+        "implementation/complex"
+      ],
+      "authorityCap": "scoped-execution-no-self-review-approval-merge-release-bypass",
+      "frontierOnly": false,
+      "independence": "independent-reviewer-family-required-unknown-refuses",
+      "humanGates": [
+        "owner-gate-1",
+        "dispatch-gate-2",
+        "owner-gate-3",
+        "owner-only-break-glass"
+      ],
+      "providerRule": {
+        "mode": "prefer",
+        "providers": [
+          "openrouter",
+          "opencode"
+        ]
+      },
+      "qualityTolerance": 0,
+      "enabled": true,
+      "rankingRequirements": {
+        "hardFilters": [
+          "R1",
+          "R2",
+          "R3",
+          "R4",
+          "R6"
+        ],
+        "budgetFilter": "R5",
+        "qualityEvidence": "R7-per-lane",
+        "unknownRequiredFacts": "refuse",
+        "missingEstimates": "unit-price-comparison-does-not-waive-budget",
+        "order": [
+          "provider-preference",
+          "quality-descending",
+          "primary-before-fallback",
+          "provider-code-point",
+          "model-id-code-point"
+        ]
+      },
+      "budgetPolicyRef": [
+        {
+          "routingClass": "implementation/complex",
+          "status": "unresolved-non-dispatching",
+          "sourceRef": "PMC-P2-approved-budget-required"
+        }
+      ]
+    },
+    {
+      "lane": "L4",
+      "roleFamily": "builder",
+      "subRoles": [
+        "builder-standard"
+      ],
+      "routingClasses": [
+        "standard-feature",
+        "implementation/standard"
+      ],
+      "authorityCap": "scoped-execution-no-self-review-approval-merge-release-bypass",
+      "frontierOnly": false,
+      "independence": "independent-reviewer-where-risk-requires-unknown-refuses",
+      "humanGates": [
+        "owner-gate-1",
+        "dispatch-gate-2",
+        "owner-gate-3",
+        "owner-only-break-glass"
+      ],
+      "providerRule": {
+        "mode": "prefer",
+        "providers": [
+          "openrouter",
+          "opencode"
+        ]
+      },
+      "qualityTolerance": 0,
+      "enabled": true,
+      "rankingRequirements": {
+        "hardFilters": [
+          "R1",
+          "R2",
+          "R3",
+          "R4",
+          "R6"
+        ],
+        "budgetFilter": "R5",
+        "qualityEvidence": "R7-per-lane",
+        "unknownRequiredFacts": "refuse",
+        "missingEstimates": "unit-price-comparison-does-not-waive-budget",
+        "order": [
+          "provider-preference",
+          "quality-descending",
+          "primary-before-fallback",
+          "provider-code-point",
+          "model-id-code-point"
+        ]
+      },
+      "budgetPolicyRef": [
+        {
+          "routingClass": "standard-feature",
+          "status": "existing-policy",
+          "sourceRef": "routing-policy.yaml#classes.standard-feature"
+        },
+        {
+          "routingClass": "implementation/standard",
+          "status": "existing-policy",
+          "sourceRef": "routing-policy.yaml#classes.implementation/standard"
+        }
+      ]
+    },
+    {
+      "lane": "L5",
+      "roleFamily": "builder",
+      "subRoles": [
+        "builder-economy"
+      ],
+      "routingClasses": [
+        "boilerplate"
+      ],
+      "authorityCap": "scoped-execution-no-security-self-review-approval-merge-release-final-verification-bypass",
+      "frontierOnly": false,
+      "independence": "parcel-review-required-never-verifier",
+      "humanGates": [
+        "owner-gate-1",
+        "dispatch-gate-2",
+        "owner-gate-3",
+        "owner-only-break-glass"
+      ],
+      "providerRule": {
+        "mode": "cheapest",
+        "providers": [
+          "opencode",
+          "openrouter"
+        ]
+      },
+      "qualityTolerance": 0,
+      "enabled": true,
+      "rankingRequirements": {
+        "hardFilters": [
+          "R1",
+          "R2",
+          "R3",
+          "R4",
+          "R6"
+        ],
+        "budgetFilter": "R5",
+        "qualityEvidence": "R7-per-lane",
+        "unknownRequiredFacts": "refuse",
+        "missingEstimates": "unit-price-comparison-does-not-waive-budget",
+        "order": [
+          "projected-cost-ascending-or-output-then-input-unit-price",
+          "quality-descending",
+          "primary-before-fallback",
+          "provider-code-point",
+          "model-id-code-point"
+        ]
+      },
+      "budgetPolicyRef": [
+        {
+          "routingClass": "boilerplate",
+          "status": "existing-policy",
+          "sourceRef": "routing-policy.yaml#classes.boilerplate"
+        }
+      ]
+    },
+    {
+      "lane": "L6",
+      "roleFamily": "classifier",
+      "subRoles": [
+        "routing-classifier"
+      ],
+      "routingClasses": [
+        "routing/classification"
+      ],
+      "authorityCap": "recommend-only-no-prose-execution-review-approval-merge-release-verification-control-plane-promotion",
+      "frontierOnly": false,
+      "independence": "no-authority",
+      "humanGates": [
+        "owner-gate-1",
+        "dispatch-gate-2",
+        "owner-gate-3",
+        "owner-only-break-glass",
+        "ratified-amendment-before-reenablement"
+      ],
+      "providerRule": {
+        "mode": "disabled-before-filters-no-hop",
+        "providers": [
+          "opencode"
+        ]
+      },
+      "qualityTolerance": 0,
+      "enabled": false,
+      "rankingRequirements": {
+        "hardFilters": [
+          "R1",
+          "R2",
+          "R3",
+          "R4",
+          "R6"
+        ],
+        "budgetFilter": "R5",
+        "qualityEvidence": "R7-per-lane",
+        "unknownRequiredFacts": "refuse",
+        "missingEstimates": "unit-price-comparison-does-not-waive-budget",
+        "order": []
+      },
+      "budgetPolicyRef": [
+        {
+          "routingClass": "routing/classification",
+          "status": "unresolved-non-dispatching",
+          "sourceRef": "PMC-P2-approved-budget-required"
+        }
+      ]
+    }
+  ],
+  "laneBindings": [
+    {
+      "lane": "L1",
+      "bindingId": "1",
+      "matrixRole": "primary",
+      "fallbackBindingId": "2"
+    },
+    {
+      "lane": "L1",
+      "bindingId": "2",
+      "matrixRole": "fallback",
+      "fallbackBindingId": null
+    },
+    {
+      "lane": "L1",
+      "bindingId": "9",
+      "matrixRole": "primary",
+      "fallbackBindingId": "10"
+    },
+    {
+      "lane": "L1",
+      "bindingId": "10",
+      "matrixRole": "fallback",
+      "fallbackBindingId": null
+    },
+    {
+      "lane": "L2",
+      "bindingId": "2",
+      "matrixRole": "primary",
+      "fallbackBindingId": "1"
+    },
+    {
+      "lane": "L2",
+      "bindingId": "1",
+      "matrixRole": "fallback",
+      "fallbackBindingId": null
+    },
+    {
+      "lane": "L2",
+      "bindingId": "10",
+      "matrixRole": "primary",
+      "fallbackBindingId": "9"
+    },
+    {
+      "lane": "L2",
+      "bindingId": "9",
+      "matrixRole": "fallback",
+      "fallbackBindingId": null
+    },
+    {
+      "lane": "L3",
+      "bindingId": "3",
+      "matrixRole": "primary",
+      "fallbackBindingId": "4"
+    },
+    {
+      "lane": "L3",
+      "bindingId": "4",
+      "matrixRole": "fallback",
+      "fallbackBindingId": null
+    },
+    {
+      "lane": "L3",
+      "bindingId": "11",
+      "matrixRole": "primary",
+      "fallbackBindingId": "12"
+    },
+    {
+      "lane": "L3",
+      "bindingId": "12",
+      "matrixRole": "fallback",
+      "fallbackBindingId": null
+    },
+    {
+      "lane": "L4",
+      "bindingId": "5",
+      "matrixRole": "primary",
+      "fallbackBindingId": "6"
+    },
+    {
+      "lane": "L4",
+      "bindingId": "6",
+      "matrixRole": "fallback",
+      "fallbackBindingId": null
+    },
+    {
+      "lane": "L4",
+      "bindingId": "13",
+      "matrixRole": "primary",
+      "fallbackBindingId": "14"
+    },
+    {
+      "lane": "L4",
+      "bindingId": "14",
+      "matrixRole": "fallback",
+      "fallbackBindingId": null
+    },
+    {
+      "lane": "L5",
+      "bindingId": "7",
+      "matrixRole": "primary",
+      "fallbackBindingId": "8"
+    },
+    {
+      "lane": "L5",
+      "bindingId": "8",
+      "matrixRole": "fallback",
+      "fallbackBindingId": null
+    },
+    {
+      "lane": "L5",
+      "bindingId": "14",
+      "matrixRole": "primary",
+      "fallbackBindingId": "15"
+    },
+    {
+      "lane": "L5",
+      "bindingId": "15",
+      "matrixRole": "fallback",
+      "fallbackBindingId": null
+    },
+    {
+      "lane": "L6",
+      "bindingId": "7",
+      "matrixRole": "primary",
+      "fallbackBindingId": "8"
+    },
+    {
+      "lane": "L6",
+      "bindingId": "8",
+      "matrixRole": "fallback",
+      "fallbackBindingId": null
+    }
+  ]
+}
