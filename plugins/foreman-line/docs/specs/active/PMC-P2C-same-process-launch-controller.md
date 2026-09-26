@@ -383,12 +383,10 @@ authority. Copies, proxies, reused/cross-instance/restart identities fail lookup
 
 1. Capture/preflight; compute requestDigest from owned declaration-order tuple
    `["pmc-request/v1",intentRef,routeDigestMaterial,payloadJson]`; require supplied
-   digest equality. routeDigestMaterial removes only top-level requestDigest and,
-   for supplied fallback Claims, their two evidence fields at
-   attempt.priorDisposition.evidence and attempt.primaryQuality.evidence. Preserve
-   every other field, Claim status/value and array order, in P2A declaration order.
-   These exact evidence exclusions prevent hashing evidence that must itself bind
-   the resulting digest; they do not exempt evidence from authentication.
+   digest equality. routeDigestMaterial removes only top-level requestDigest.
+   Preserve every other field, including complete fallback Claims and their
+   evidence, in P2A declaration order. Both prior Claim EvidenceRefs bind the
+   earlier priorRequestDigest and primaryBindingId, so there is no self-reference.
    Digest does not authenticate lineage; owner begin does.
 2. Check installation; durably begin owner claim; acquire authentic evidence,
    clock, RCM facts, tariffs; snapshot ledger and compute exact costs. Compose
@@ -425,11 +423,16 @@ property order. Request uses P2A declared nested field order; wire uses WireV1
 declaration order (headers content-type then accept). Complete decision includes
 imported nested records: recursively order their own string keys by Unicode code
 point, preserve every array order, use JSON string/number escaping and UTF-8 bytes.
-Pin literal initial and fallback nested-order/hash fixtures, including evidence excluded from
-request material but included in the complete decision hash. Independently verify
-ALL excluded evidence, including its current requestDigest and provenance; no hash
-is authenticity. Trusted caller setup fills those evidence associations after
-computing the request digest, before launch; launch never rewrites them.
+Pin literal initial and fallback nested-order/hash fixtures, including full prior
+evidence in request material. The decision tuple retains requestDigest and every
+actual successful owner-decision field; do not invent fields absent from P2A.
+Independently authenticate prior Claim evidence against the prior request and
+primary binding, with original observation/expiry. Current episode and budget
+EvidenceRefs bind the current request. No hash is authenticity and launch never
+rewrites supplied evidence. A real-P2A R1-to-R2 successful fallback fixture must
+distinguish these domains; independently rebinding either prior claim to R2 must
+return CONTEXT_BINDING_REFUSED before reservation/send. Changing prior evidence
+must change requestDigest; literal fixtures pin all nested ordering.
 P2B's existing cost/scopes/snapshot hashing is forwarded unchanged, never rewritten
 to this controller's serialization convention. Refusal/audit outputs retain P2A
 output caps (131,072 visited values and 2,097,152 string units); no raw prompt/body,

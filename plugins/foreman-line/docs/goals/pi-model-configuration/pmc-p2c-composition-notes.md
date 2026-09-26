@@ -185,12 +185,13 @@ cross-store durability tests, with conservative loss of availability on every
 ambiguous boundary. Unselected pre-reserve refusal closes with null launch receipt
 only when controller custody proves reserve was never invoked.
 
-The request digest recipe now excludes exactly the two fallback Claim evidence
-fields, whose current-request binding would otherwise create a recursive digest.
-Semantic values/status remain hashed; all excluded evidence is independently
-authenticated and included in complete decisionDigest. Trusted preparation fills
-those associations after digest computation, before launch; begin never rewrites.
-Literal fallback hash fixtures are required. This changes no P2A request type.
+The request digest recipe includes complete fallback Claim evidence and excludes
+only top-level requestDigest. Actual P2A binds both prior Claims to priorRequestDigest
+and primaryBindingId; only current episode/budget evidence binds the current request.
+There is no recursive digest. Prior quality observation and expiry remain unchanged,
+and begin never rewrites evidence. Real successful R1-to-R2 composition and literal
+full-evidence hash fixtures pin these distinct domains. This corrects the earlier
+shaping proposal and changes no P2A type or implementation.
 
 R1/R2 architectural decisions are resolved by V8. B1 exact schema/ports still need
 two independent reviews and Gate 2. P2A/P2B accepted integration, B1 implementation,
@@ -218,3 +219,16 @@ digest serialization. Coordinator accepts/applies both; no authority change.
 The complete crash/concurrency matrix remains mandatory regardless of the tight
 implementation sizing estimate. No source implementation or production approval.
 Second independent design review and A's correction acceptance remain pending.
+
+## B1/P2C review B source-compatibility correction — 2026-09-26
+
+Review B found one blocker at51440f7: draft fallback evidence incorrectly bound
+current requestDigest. Root confirmed merged P2A's explicit prior-request exception
+in resolver lines692-701 and frozen spec. Accept and correct B1/C to preserve prior
+Claims with priorRequestDigest/primaryBindingId; current episode/budget evidence
+still binds current request. Restore the simpler complete-route-minus-top-digest
+hash recipe; no recursive dependency exists. Add real successful R1-to-R2 fallback
+composition plus independent wrong-domain negatives and literal evidence hash
+fixtures. Do not modify P2A or merely assert all malformed fallbacks refuse.
+No other blocking design finding. Both reviewers must accept this corrected draft
+before B1 dispatch; implementation and production gates remain unchanged.

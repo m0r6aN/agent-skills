@@ -294,14 +294,16 @@ Validate linkage/freshness against captured clock and setup authority times,
 without extending underlying authority expiry. Time can refuse, never reopen. These
 references describe authenticated owner projection, never attest catalog/price
 facts. Primary-quality evidence preserves original authenticated model-quality
-source, value, observation time and expiry while binding its derived reference to
-the current request; owner custody cannot invent a fresh quality observation.
-Fallback prior Claim evidence must be similarly owner-authenticated and
-bound to the current request; callers propose it and begin compares, not rewrites.
+source, value, observation time and expiry and binds the earlier priorRequestDigest
+and primaryBindingId, as does priorDisposition evidence. These are P2A's explicit
+exception to current-request binding; owner custody cannot invent a fresh quality
+observation. Both prior Claims must be owner-authenticated; callers propose them
+and begin compares, not rewrites.
 Unknown or expired authority blocks rather than fabricating evidence. Trusted
-P2E caller preparation fills current-request evidence references after computing
-the P2C digest material, which excludes exactly the two fallback evidence fields;
-begin validates the completed input and does not repair it. No new B1 preparation
+P2E caller preparation retains the prior evidence before computing the P2C digest
+over the complete route except top-level requestDigest. Current owner episode and
+budget evidence bind the resulting digest. Begin validates the completed input
+and does not repair it. No new B1 preparation
 API or proof mint is introduced.
 
 Cross-store order is claim, selected/wire record, reserve, consume, sole send,
@@ -334,7 +336,7 @@ external anchor, cryptographic attestation or rollback recovery claim.
 | 5 | Both initial selections, one declared primary-closure fallback, success/fallback termination, pending/held/uncertain/refused, undeclared second and third attempts. Mutate each identity/proof dimension independently. |
 | 6 | Failure injection before/after each commit and lost ack: begin, selection, reserve, consume, send, cancellation/settlement, finish. Actual P2B file plus owner file; liability retained and no second send. No map-only durability substitute. |
 | 7 | Forged AttemptV1/decision/proof JSON and authentic proof with wrong semantic outcome/scope/wire/charge denied; pre-reserve closure proves reserve never invoked; unknown failures remain pending/held. Private synthetic issuers cannot construct production installation. |
-| 8 | P2A projection and evidence preserve complete history, exact request linkage and original authority expiry. Typecheck actual predecessor types; no public runtime export, circular runtime imports, new ledger operation/table, network or dependency changes. Two independent architecture reviews approve draft before dispatch. |
+| 8 | P2A projection and evidence preserve complete history, exact request linkage and original authority expiry. Real resolver fixture succeeds from primary R1 closure to preissued R2 fallback: both prior Claims bind R1/primaryBindingId, current episode/budget bind R2. Rebinding either prior Claim independently to R2 returns CONTEXT_BINDING_REFUSED before reserve/send. Full-prior-evidence request hashes have literal nested-order fixtures and change when evidence changes. Typecheck actual predecessor types; no public runtime export, circular runtime imports, new ledger operation/table, network or dependency changes. Two independent architecture reviews approve draft before dispatch. |
 
 ## Out of Scope
 
