@@ -1093,9 +1093,199 @@ function crossPackageSrcSpecifier(spec: string, ownPkg: string): string | null {
   return null
 }
 
+// PMC-P2B integration amendment: these are reviewed AST values, not type-based exemptions.
+const PMC_LEDGER_FILE = 'dispatch/src/pmc-launch/ledger.ts'
+const PMC_OWNER_NAMES = new Set([
+  'path',
+  'settings',
+  'transaction',
+  'initializeLocalPmcLedger',
+  'connection',
+  'fail',
+])
+const PMC_DECLARATIONS = new Map<string, string>([
+  ['import:node:crypto', '8dbba24fb53ecebbbd6c46121b28e7ec24ec71bab2e3f64d84c0b91dbe89a55d'],
+  ['import:node:fs', 'a3723d55ddfe3294e9fc1c8933ad914ca7b7a378ed33cc0f535e012a9ce066c5'],
+  ['import:node:path', 'c46627f6dc7479d89bb503a511f2498a98e822e2b4f0f5aaa7de1375f613349a'],
+  ['import:node:sqlite', '5e0169745da8686b1efbeb81ba8ae76aa750023251fd06d6ccc1ab1cf67340ff'],
+  ['import:node:url', 'b997041f4da76c207d8e239e99723e47e398e1147438d1a30d0759caadd782e5'],
+  ['import:./money.js', '98b92f75a537ed2651f70943d14db8c06838b483317494832c45ce418b5466f4'],
+  ['fail', '3397b5372f6d2cd7e4c5ce9f8181e6a72d8e813825485f1f7898e7576b2210c3'],
+  ['path', 'd986073bdbe6ab49d99742959706436c3e354da84bf7495cae4747e4a1452c7d'],
+  ['schema', '042a9e353cc2d4b99f280a5eb2d4b8e580e04704deefbe3043fb99e64c46f04e'],
+  ['settings', '3633c4aadf69fc9cc69fb88925238ebce3c801c4d530889e76a7e859b0990c2f'],
+  ['connection', '6e8bdc088f1418d32d03a214afabac34993c8f947666ec87b69f50b0ed1bfdaf'],
+  ['transaction', '41f3ccfbe5e89ec1b49c4a5e334eecfe4e17dafb4eede900d5818b480931c2db'],
+  ['initializeLocalPmcLedger', 'a1c0afec12f9b1134d2baf08f1213dec6c1d24580457072852e9e18769715e91'],
+])
+const PMC_CALLS = new Map<string, readonly [string, string]>([
+  [
+    'path:0',
+    ['path/root-normalization', '94b722b11bc3fdb548bd58c6b3e291986917e51037da2f92354d76fdfe43bdc9'],
+  ],
+  [
+    'path:1',
+    [
+      'path/canonical-comparison',
+      '94b722b11bc3fdb548bd58c6b3e291986917e51037da2f92354d76fdfe43bdc9',
+    ],
+  ],
+  [
+    'settings:0',
+    ['settings/pragmas', '7d1bd59fb7ede22ca2f972f076a27475267ada4be64efaec8f9c659470956dd2'],
+  ],
+  [
+    'transaction:0',
+    ['transaction/begin', '6b0e646e3f8c6544303dcc7438362e92a259854d23195bba5d091b8585bb95e5'],
+  ],
+  [
+    'transaction:1',
+    ['transaction/commit', 'd7bdab8a7e6584879eabf8a2ed20d426fbe18e22f2a048fcff1f655cf914139e'],
+  ],
+  [
+    'transaction:2',
+    ['transaction/rollback', '731543457c76d8838031d0a759712fd7d7e5267418efacd74ab82563ecd34512'],
+  ],
+  [
+    'initializeLocalPmcLedger:0',
+    ['initialize/begin', 'ef07a41f01b7209b7f8141e5b02330afb69ed5c93fcf3f5917688585906beb68'],
+  ],
+  [
+    'initializeLocalPmcLedger:1',
+    ['initialize/schema', '675f557c8e8a606611b294c0096705fb46f15a037cfb2ba0dcc31ef71bb09a90'],
+  ],
+  [
+    'initializeLocalPmcLedger:2',
+    ['initialize/commit', 'd7bdab8a7e6584879eabf8a2ed20d426fbe18e22f2a048fcff1f655cf914139e'],
+  ],
+  [
+    'initializeLocalPmcLedger:3',
+    ['initialize/rollback', '731543457c76d8838031d0a759712fd7d7e5267418efacd74ab82563ecd34512'],
+  ],
+])
+const PMC_PROVENANCE_NAMES = new Set([
+  'DatabaseSync',
+  'isAbsolute',
+  'resolve',
+  'settings',
+  'transaction',
+  'connection',
+  'path',
+  'fail',
+  'schema',
+  'lstatSync',
+  'normalize',
+  'parse',
+  'dirname',
+  'join',
+  'realpathSync',
+  'pathToFileURL',
+  'closeSync',
+  'openSync',
+  'readdirSync',
+])
+const PMC_REFERENCE_DIGEST = '534cf1154e0af1b312fd8dbae9c99b57767f5e16604eda19eac037f3b7c365fc'
+
+/** Ordered AST kinds plus exact leaf-token text; trivia and token offsets are omitted.
+ * Complete owners retain guards, control flow, receiver construction and call order.
+ * This is a bounded syntactic pin, not a general dataflow or runtime integrity proof.
+ */
+function pmcAstValue(node: Node, sf: SourceFile): unknown {
+  const children: unknown[] = []
+  node.forEachChild((child) => {
+    children.push(pmcAstValue(child, sf))
+  })
+  return [
+    node.kind,
+    children.length ? children : node.kind <= SyntaxKind.LastToken ? node.getText(sf) : [],
+  ]
+}
+function pmcDigest(value: unknown): string {
+  return createHash('sha256').update(JSON.stringify(value)).digest('hex')
+}
+function pmcLedgerPins(sf: SourceFile, errors: string[]): Map<CallExpression, string> {
+  const selected = new Set<Node>()
+  const counts = new Map<string, number>()
+  const calls = new Map<CallExpression, string>()
+  const callCounts = new Map<string, number>()
+  const fingerprint = (node: Node): string => pmcDigest(pmcAstValue(node, sf))
+  const startErrors = errors.length
+  for (const node of sf.statements) {
+    const key =
+      isFunctionDeclaration(node) && node.name && PMC_OWNER_NAMES.has(node.name.text)
+        ? node.name.text
+        : isImportDeclaration(node) && isStringLiteral(node.moduleSpecifier)
+          ? `import:${node.moduleSpecifier.text}`
+          : isVariableStatement(node) &&
+              node.declarationList.declarations.some(
+                (declaration) =>
+                  isIdentifier(declaration.name) && declaration.name.text === 'schema',
+              )
+            ? 'schema'
+            : null
+    if (key === null) continue
+    selected.add(node)
+    counts.set(key, (counts.get(key) ?? 0) + 1)
+    if (fingerprint(node) !== PMC_DECLARATIONS.get(key))
+      errors.push(`PMC ledger declaration fingerprint: ${key}`)
+    if (!isFunctionDeclaration(node)) continue
+    let ordinal = 0
+    const visit = (child: Node): void => {
+      if (
+        isCallExpression(child) &&
+        (calleeName(child) === 'resolve' || calleeName(child) === 'exec')
+      ) {
+        const callKey = `${key}:${ordinal++}`
+        const expected = PMC_CALLS.get(callKey)
+        callCounts.set(callKey, (callCounts.get(callKey) ?? 0) + 1)
+        if (!expected || fingerprint(child) !== expected[1])
+          errors.push(`PMC ledger call fingerprint: ${callKey}`)
+        else calls.set(child, expected[0])
+      }
+      child.forEachChild(visit)
+    }
+    node.forEachChild(visit)
+  }
+  for (const key of PMC_DECLARATIONS.keys()) {
+    if (counts.get(key) !== 1)
+      errors.push(
+        'PMC ledger declaration cardinality: ' +
+          key +
+          '; expected 1, observed ' +
+          (counts.get(key) ?? 0),
+      )
+  }
+  for (const key of PMC_CALLS.keys()) {
+    if (callCounts.get(key) !== 1)
+      errors.push(
+        'PMC ledger call cardinality: ' +
+          key +
+          '; expected 1, observed ' +
+          (callCounts.get(key) ?? 0),
+      )
+  }
+  // References outside the complete pinned owners/imports/schema are also pinned.
+  // Additional assignments or shadow bindings cannot silently change their provenance.
+  const references: unknown[] = []
+  const visitReferences = (node: Node, ancestors: readonly number[]): void => {
+    if (selected.has(node)) return
+    if (isIdentifier(node) && PMC_PROVENANCE_NAMES.has(node.text)) {
+      references.push([ancestors, fingerprint(node.parent)])
+    }
+    node.forEachChild((child) => visitReferences(child, [...ancestors, node.kind]))
+  }
+  visitReferences(sf, [])
+  if (pmcDigest(references) !== PMC_REFERENCE_DIGEST)
+    errors.push('PMC ledger external reference provenance fingerprint')
+  // Enrollment is all-or-nothing; reconciliation still runs when owners/sites disappear.
+  return errors.length === startErrors ? calls : new Map()
+}
+
 // ─── Per-file sweep ──────────────────────────────────────────────────────────
 
 interface SweepSink {
+  readonly pmcErrors: string[]
+  readonly pmcSites: (Site & { role: string })[]
   readonly violations: Finding[]
   readonly e1Sites: Site[]
   readonly e2Sites: Site[]
@@ -1134,6 +1324,8 @@ function sweepFile(
   // A3.3 / A3.4 pre-passes.
   const regexBindings = collectRegexBindings(sf)
   const hasCwdImport = importsProcessCwd(sf)
+  const pmcPins =
+    rel === PMC_LEDGER_FILE ? pmcLedgerPins(sf, sink.pmcErrors) : new Map<CallExpression, string>()
 
   const site = (node: Node): Site => {
     const { line } = sf.getLineAndCharacterOfPosition(node.getStart(sf))
@@ -1286,6 +1478,8 @@ function sweepFile(
       violate(3, node)
     }
   }
+
+  for (const [call, role] of pmcPins) sink.pmcSites.push({ ...site(call), role })
 
   const e1SeenPerFile = { count: 0 }
   const e4Handled = new Set<number>()
@@ -1477,7 +1671,7 @@ function sweepFile(
     }
 
     // ── class 4 / E1: subprocess cwd, decided from the actual argument (A2.5) ──
-    if (isCallExpression(node) && isSpawnFamilyCall(node, regexBindings)) {
+    if (isCallExpression(node) && !pmcPins.has(node) && isSpawnFamilyCall(node, regexBindings)) {
       const options = optionsArgument(node)
       if (options === null) {
         violate(4, node)
@@ -1509,7 +1703,8 @@ function sweepFile(
     if (isCallExpression(node) && calleeName(node) === 'resolve') {
       if (namesARoot(firstArgumentName(node))) {
         const pinned =
-          rel === 'projection/src/path-guard.ts' && guardedByAbsoluteRootAssertion(node)
+          (rel === 'projection/src/path-guard.ts' && guardedByAbsoluteRootAssertion(node)) ||
+          pmcPins.has(node)
         if (!pinned) violate(5, node)
       }
     }
@@ -1624,6 +1819,8 @@ function main(argv: readonly string[]): number {
   }
 
   const sink: SweepSink = {
+    pmcErrors: [],
+    pmcSites: [],
     violations: [],
     e1Sites: [],
     e2Sites: [],
@@ -1716,7 +1913,12 @@ function main(argv: readonly string[]): number {
   // count per pinned file and FAILS on mismatch, over or under, whenever the
   // pinned file was actually swept. A pinned file absent from the tree (a
   // synthetic fixture) leaves that pin vacuous, not failed. ──
-  const pinMismatches: string[] = []
+  const pinMismatches: string[] = [...sink.pmcErrors]
+  const pmcExpected = sink.sweptFiles.has(PMC_LEDGER_FILE) ? PMC_CALLS.size : 0
+  if (sink.pmcSites.length !== pmcExpected)
+    pinMismatches.push(
+      `PMC ledger site cardinality: expected ${pmcExpected}, observed ${sink.pmcSites.length}`,
+    )
   if (!sink.sweptFiles.has(RCM_PROVENANCE_FILE)) {
     pinMismatches.push(`RCM provenance DATA: required exact file ${RCM_PROVENANCE_FILE} is absent`)
   }
@@ -1865,6 +2067,12 @@ function main(argv: readonly string[]): number {
 
   console.log('')
   console.log('ENUMERATED EXCEPTIONS (reported while passing — lesson #41/#42):')
+  console.log(`PMC ledger: ${sink.pmcSites.length} observed; expected ${pmcExpected}`)
+  for (const site of sink.pmcSites)
+    console.log(`  ${site.role}: ${site.file}:${site.line}: ${site.text}`)
+  console.log(
+    '  disposition: exact reviewed guarded-root and SQLite calls; AST owners, import/connection/reference provenance and call roles/counts pinned. Syntactic only; no general dataflow or runtime integrity claim.',
+  )
   console.log(
     "E1 and E4 are PINNED sets, and so is E2's dynamic-form entry (identity + location + value, STANDING #13 / A2.3);",
   )
