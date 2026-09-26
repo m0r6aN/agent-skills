@@ -27,3 +27,43 @@ six files. Root accepts the correction direction but rejects a blanket AC21 skip
 for the new driver. The precise guard compatibility amendment is in the spec.
 Production intake/custody remains unavailable; fixture success cannot promote it.
 This is review/contract documentation; source repair awaits explicit release.
+
+## Second independent repair review — 4d11fa2646c09c4a56187e66744c217027fff22a
+
+Root and frontier A still request changes. Closed mechanisms include the original
+root replacement, supplied BuildResult mismatch, stale spec, hostile seal/Ack
+getters and oversized review-array reflection probes. Transparent owner imports
+are now present. This does not close remaining R2/R3/R6 obligations:
+
+- R2: independently root and A changed only C.subject.parcelRef to KONE-999 while
+  input/registration remained KONE-123, recomputed the ordinary chain and supplied
+  exact updated C/build refs. Construction, actual owner run, measurement and final
+  D all succeeded. Bind the dispatch subject to the supplied order and parcel
+  using the actual owner schema; full initial A/B/C correlation/kind/subject/ref
+  constraints must be checked before any owner writes, not only at a later owner.
+- R3: root's valid initial receipt with depth40 subject reaches final D; A's valid
+  initial receipt with4097-unit subject string does likewise. readRows does byte
+  preflight but JSON.parse/canonicalization do not enforce the required structured
+  bounds before expansion. Enforce depth20, strings4096, nodes131072 and aggregate
+  capture limits on bounded receipt/envelope input before parsing/expansion, with
+  exact/+1 controls. Bounded byte reads and directory iteration must not allocate
+  an unrestricted directory/file first; validate each actual file path/type and
+  receipt-directory confinement. A later owner refusal is not constructor proof.
+- R6: pair these original named obligations with actual success controls and
+  independent one-dimension mutations; do not describe source inspection as tests.
+  Exact actual owner payload/ref/claim links remain mandatory at each owner handoff.
+
+Root probes: TEMP/hro-p3a-review2-generator.mjs and generated
+hro-p3a-review2-probe.mts. A probe: TEMP/p3a-review-a-repair.ts. The separate root
+external-file-symlink and A-correlation probes refused during owner execution;
+we do not claim they achieved a final-D bypass. Their constructor ordering still
+requires the contract's pre-write validation.
+
+Actual D19 now has direct evidence: both reviewers ran it to completion with
+exit1, exactly three class5 root-normalization sites in stage-d-finalization.ts
+(line821 twice and1144 at this commit). Root logTEMP/hro-p3a-root-d19.log. Record
+this concrete failure instead of only a wildcard timeout. Audit enrollment is a
+separate narrowly reviewed follow-up after runtime stabilizes; no renaming or
+indirection to evade detection and no new audit path in this repair envelope.
+
+Source repair remains stopped for a genuine read-only Step0 and explicit release.
