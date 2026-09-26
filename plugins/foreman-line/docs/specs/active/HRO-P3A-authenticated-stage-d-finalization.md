@@ -831,3 +831,51 @@ Run affected driver/pipeline/bounded regression suites, both relevant typecheck/
 lint checks, actual D19 and diff/scope checks. Preserve known four-site audit
 failure without detector changes. Freeze clean source/test/report and STOP for
 root+A independent review. No other source/contract/dependency/host or live change.
+
+### Measured Stage-D audit enrollment — proposed 2026-09-26
+
+The repaired source has four class-5 normalization expressions, all in the exact
+verification/src/pipeline/stage-d-finalization.ts owner: verifyInitial ordinal 0
+resolves the approved spec against repoRoot; ordinals 1 and 2 compare the admitted
+registration root with repoRoot; buildContext ordinal 0 derives the root basename.
+At candidate 385a94f these occur at lines 1184, 1317 (two) and 1678. Final pinning
+must use the independently accepted source, never line numbers alone.
+
+Proposed implementation envelope is verification/src/d19-audit.ts, new
+verification/tests/hro-measured-stage-d-audit.test.ts and this parcel's existing
+verification report. Root owns this spec amendment separately. Reuse the existing
+pmcAstValue gap-token AST fingerprint mechanism unchanged, preserving accepted
+ledger, intent-custody, recovery-admission and DATA enrollments. Integrate against
+accepted main before building so the older P3 checkout cannot overwrite newer pins.
+No detector bypass, broad path whitelist, runtime-source change or audit waiver.
+
+Enrollment is exact-file, exact-owner/ordinal and all-or-none for four calls.
+Fingerprint the enclosing verifyInitial/buildContext implementations plus the
+relevant root, bounded-capture, identity and schema guard declarations/imports;
+protect references to those bindings outside their declarations. In particular,
+safeFixturePath's three resolve calls are protected guard context, not additional
+sites being enrolled. Declaration-kind tokens, imports and semantically relevant
+operators/literals must remain fingerprinted. Comments/formatting and unrelated
+safe declarations may change without weakening the protected closure.
+
+When verification is a ratified package in the audit's discovered scope, require
+the exact owner file and all four sites; empty/deleted owner files must fail,
+not become vacuous. Preserve unrelated package-only audit fixture behavior and
+existing completeness rules. Prove the scoped missing-owner requirement with
+actual audit executions. Do not use another file or arbitrary caller flag to
+select enrollment or silently re-enroll changed source.
+
+Permanent copy-only mutations must exercise changed arguments/operators/guards/
+bounds/unary expressions, type-only imports and const/let/var changes; deleted,
+duplicated, renamed or nested owners; shifted, moved, added or missing sites;
+other file names; empty/deleted exact owner; helper/import mutations and external
+path-binding reassignment. Mutants must never execute. Valid formatting/comments
+and unrelated-safe controls pass; every protected mutation yields zero of four
+enrolled with an audit refusal. Preserve ledger 10, intent custody 9, recovery
+admission 6 and current DATA pins on the combined accepted tree. Run focused
+mutation tests, actual D19, applicable typecheck/lint and affected audit regressions.
+
+This is a design proposal only. Final runtime source acceptance, independent
+amendment review, a fresh stopped builder Step 0 and explicit root release must
+precede implementation. This audit certifies only the reviewed offline owner's
+normalization sites; genuine production intake and full measured exit remain open.
