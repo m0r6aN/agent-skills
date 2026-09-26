@@ -241,3 +241,41 @@ private offline implementation on accepted P2A main and immutable, twice-reviewe
 P2B source. P2B audit integration remains a prerequisite for B1 integration and
 merge. The exact scope, sequencing exception and verification obligations are
 recorded in the B1 specification. P2C remains draft pending actual B1 acceptance.
+
+## Controller Step 0 construction dispositions (draft for review)
+
+At0994f91 the frontier builder stopped before implementation and identified four
+concrete contract decisions. Root proposes the explicit C-spec amendment:
+
+1. Private two-stage custody constructor returns B1 selection/completion verifiers
+   before B1 open; a one-attempt bind then captures already-open B1 and other ports.
+   Unbound/failed verifiers refuse; no public issuer or mutable replacement.
+2. Separate closed observation argument supplies C3 observe without widening the
+   existing closed InstallationPortsV1. Direct-send identity plus full owned
+   request/decision/wire/consumed-attempt context binds the private observation.
+3. Reserved but not consumed has no D proof. Retain pending owner/reserved liability
+   after final revalidation/permit failure instead of manufacturing cancellation.
+   Existing never-reserved B1 closure remains distinct. No new recovery or retry.
+4. C's offline AC7 uses explicit synthetic network-incapable D contracts; actual Pi
+   terminal/hook/billing conformance belongs to later D acceptance. This breaks the
+   C-needs-accepted-D / D-needs-accepted-C implementation cycle without waiving any
+   production test or full-HRO live requirement.
+
+All five runtime write paths remain unchanged. No implementation release occurs
+until these amendments receive two independent reviews and B1 audited acceptance.
+Native frontier dispatch substitution must be recorded at Gate2; no minted runtime
+receipt or exact engine revision is fabricated. P2E installation drafting must
+consume the final reviewed bootstrap/observe types, not an invented parallel API.
+
+## Bootstrap amendment ratification — 2026-09-26
+
+The delegated coordinator ratifies the four Step0 composition decisions at
+5764eba8da1485b7850db067041036d211712e12 after two independent design approvals.
+Both reviewers checked actual accepted A/B/B1 contracts. Root reconciled the
+preconsume failure rule and historical shaping scope; both approved the final
+wording. Private two-stage custody, separate observation authority, retained
+preconsume liability and offline C versus actual-Pi D acceptance are controlling.
+This is no production approval and no controller implementation release. B1
+accepted audited integration, fresh Step0 and an explicit exact-file release
+remain prerequisites. The specification's five-file implementation envelope is
+unchanged; authentic installation facts and live billing evidence remain open.

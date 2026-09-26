@@ -129,6 +129,9 @@ export const contractB: ContractReaderEntry = {
     // LOCKSTEP (additive, PMC-P2B1): validates routingClass against the full
     // literal vocabulary. ADD a class and the owner's membership list must change.
     'plugins/foreman-line/dispatch/src/pmc-launch/intent-custody.ts',
+    // LOCKSTEP (additive, PMC-P2C): validates routingClass against the full
+    // literal vocabulary. ADD a class and this controller's membership list must change.
+    'plugins/foreman-line/dispatch/src/pmc-launch/controller.ts',
     // LOCKSTEP (additive): the .json restatement of the same vocabulary. ADD
     // a class and this file's enum literal must change.
     'plugins/foreman-line/spec-linter/schemas/spec-frontmatter.schema.json',

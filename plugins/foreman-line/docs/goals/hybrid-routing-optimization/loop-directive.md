@@ -208,3 +208,25 @@ production/measurement gates remain open. P3 owner contracts and authenticated
 catalog-publication designs remain under review; P4A repaired45b50e6 has two design
 approvals and delegated ratification3c6ca35, not runtime dispatch. Pending billing
 inquiry has not been sent; no provider/credential/configuration activity occurred.
+
+## Coordination checkpoint after PMC-P2E1 acceptance — 2026-09-26
+
+PR65 merged as3d1480efd7c4517b63d3f5c49b33a668ede58a56 after all twelve remote
+checks succeeded on92ab5bc. Legacy bypass execution is retired and explicitly
+refuses; pure APIs remain. C source93f8021 has two final approvals, with separate
+Contract B reader/audit enrollment343250e in progress. D's actual pinned-source
+Step0 requires portable dependency declarations, C-owned wire identity, stop-only
+completed output and private nonaccounting Pi totals; these are docs corrections
+before runtime release. E2 remains separate.
+
+P3A offline design53e92b35 is in fresh final review after root/workflow admission
+uniqueness was corrected. Production construction remains unconditionally refused.
+Authenticated catalog design d8b26d57 needs one final transport-cleanup acknowledgement
+clarification; full response completeness and cancellation ownership are otherwise
+reviewed. P4A1 durable bootstrap admission draft16ebc41 is under independent review.
+These records are progress, not authentic production claims or full goal completion.
+
+Live billing-bound evidence remains pending; prepared inquiry has not been sent.
+No provider inference, credential/configuration activity, fabricated telemetry or
+savings claim. Continue authorized independent work while the external evidence
+is unresolved. Original dirty checkout remains read-only.

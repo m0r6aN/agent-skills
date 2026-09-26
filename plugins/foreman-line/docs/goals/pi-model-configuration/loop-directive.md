@@ -480,3 +480,23 @@ root ratificationd260bf6; fresh Step0 is complete, release still explicit. E1
 legacy retirement is separately released after E01–04 disposition; E2, D and HRO
 receipt/recovery/configuration/diagnostic/live gates remain open. No provider,
 credential, production budget or host configuration operation occurred in B1.
+
+## PMC-P2E1 Stage F — 2026-09-26
+
+PR65 https://github.com/m0r6aN/agent-skills/pull/65 merged at21:13:12Z as
+3d1480efd7c4517b63d3f5c49b33a668ede58a56 after all twelve remote checks succeeded
+on exact reviewed head92ab5bc780475038d4e1f40dfb20a14dc9202db5. Two independent
+source approvals cover2632d695; two audit approvals covereaabcb41; independent
+combined review covers32b5cd62. Final docs92ab5bc record that evidence unchanged.
+Combined tests: dispatch378, Jev50, direct/import6, hybrid53, routing944, readers71,
+mutation44 and focused audit42; applicable typecheck/lint/syntax pass. Actual D19
+passes21 packages/199 files with zero unruled instances. Full622 verification
+result is separately scoped in the audit report, never claimed newly rerun.
+
+The E1 specification moves to done; current links follow it. Legacy shadow/Jev
+execution and direct smoke now refuse before effects. Pure APIs remain. This is
+an intentional compatibility change, not a runnable production replacement.
+C source93f8021 has two final approvals; reader/audit enrollment is released343250e.
+D actual Step0 exposed four bounded contract corrections under review; E2 and
+production prerequisites remain gated. No provider call, credential read or host
+configuration change occurred. User delegation still governs prerequisite work.
