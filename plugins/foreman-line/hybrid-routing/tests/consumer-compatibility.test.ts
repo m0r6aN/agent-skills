@@ -218,3 +218,169 @@ test("rejects route identity and weak restricted transport", () => {
 	assert.equal(weak.ok, false);
 	if (!weak.ok) assert.equal(weak.code, "evaluator_invalid");
 });
+
+test("rejects incomplete rates and malformed declared thinking levels", () => {
+	const emptyRates = validateConsumerCompatibility(request, {
+		...deps,
+		eligibilityOracle: () => ({
+			...oracle,
+			results: [{ ...oracle.results[0], facts: { ...facts, rates: {} } }],
+		}),
+	});
+	assert.equal(emptyRates.ok, false);
+	const badLevels = validateConsumerCompatibility(request, {
+		...deps,
+		eligibilityOracle: () => ({
+			...oracle,
+			results: [
+				{
+					...oracle.results[0],
+					facts: {
+						...facts,
+						thinkingLevels: { status: "declared", levels: [null, 42] },
+					},
+				},
+			],
+		}),
+	});
+	assert.equal(badLevels.ok, false);
+});
+
+test("rejects open envelopes, hidden properties, and oversized shared descendants", () => {
+	const extra = validateConsumerCompatibility(request, {
+		...deps,
+		eligibilityOracle: () => ({ ...oracle, unexpected: true }),
+	});
+	assert.equal(extra.ok, false);
+	const hidden = {} as Record<string, unknown>;
+	Object.defineProperties(hidden, {
+		eligibilityOracle: { value: deps.eligibilityOracle },
+		evaluateOffline: { value: deps.evaluateOffline },
+	});
+	const hiddenResult = validateConsumerCompatibility(request, hidden as never);
+	assert.equal(hiddenResult.ok, false);
+	const shared = Array(64).fill("x".repeat(2048));
+	const overBudget = validateConsumerCompatibility(request, {
+		...deps,
+		eligibilityOracle: () => ({ ...oracle, extra: Array(256).fill(shared) }),
+	});
+	assert.equal(overBudget.ok, false);
+});
+
+test("rejects malformed refusal arrays and classifies null evaluator output", () => {
+	const refusal = validateConsumerCompatibility(request, {
+		...deps,
+		eligibilityOracle: () => ({
+			...oracle,
+			results: [
+				{
+					requested: oracle.results[0]?.requested,
+					outcome: "refused",
+					codes: [],
+				},
+			],
+		}),
+	});
+	assert.equal(refusal.ok, false);
+	const nullEvaluator = validateConsumerCompatibility(request, {
+		...deps,
+		evaluateOffline: () => null,
+	});
+	assert.equal(nullEvaluator.ok, false);
+	if (!nullEvaluator.ok) assert.equal(nullEvaluator.code, "evaluator_invalid");
+});
+
+test("validates every rate, thinking entry, and closed success/failure envelope", () => {
+	for (const changedRates of [
+		{
+			input: { value: Number.NaN, unit: "USD per 1M tokens" },
+			output: facts.rates.output,
+		},
+		{ input: { value: 1, unit: "EUR" }, output: facts.rates.output },
+		{
+			input: { value: -1, unit: "USD per 1M tokens" },
+			output: facts.rates.output,
+		},
+		{
+			input: facts.rates.input,
+			output: { value: 2, unit: "USD per 1M tokens", extra: true },
+		},
+	]) {
+		const result = validateConsumerCompatibility(request, {
+			...deps,
+			eligibilityOracle: () => ({
+				...oracle,
+				results: [
+					{ ...oracle.results[0], facts: { ...facts, rates: changedRates } },
+				],
+			}),
+		});
+		assert.equal(result.ok, false);
+	}
+	for (const levels of [
+		{
+			status: "declared",
+			levels: [
+				{ level: "low", providerValue: null },
+				{ level: "low", providerValue: "LOW" },
+			],
+		},
+		{
+			status: "declared",
+			levels: Array.from({ length: 33 }, (_, i) => ({
+				level: `l${i}`,
+				providerValue: null,
+			})),
+		},
+		{ status: "declared", levels: [{ level: "low", providerValue: 1 }] },
+	]) {
+		const result = validateConsumerCompatibility(request, {
+			...deps,
+			eligibilityOracle: () => ({
+				...oracle,
+				results: [
+					{ ...oracle.results[0], facts: { ...facts, thinkingLevels: levels } },
+				],
+			}),
+		});
+		assert.equal(result.ok, false);
+	}
+	const extraEvaluator = validateConsumerCompatibility(request, {
+		...deps,
+		evaluateOffline: () => ({ ...routing, extra: true }),
+	});
+	assert.equal(extraEvaluator.ok, false);
+	const malformedFailure = validateConsumerCompatibility(request, {
+		...deps,
+		evaluateOffline: () => ({ ok: false, code: "NO", extra: true }),
+	});
+	assert.equal(malformedFailure.ok, false);
+});
+
+test("charges shared expansions, keys, and depth while preserving batch continuation", () => {
+	const shared = Array(64).fill("x".repeat(2048));
+	const tooManyStrings = validateConsumerCompatibility(request, {
+		...deps,
+		eligibilityOracle: () => ({ ...oracle, extra: Array(256).fill(shared) }),
+	});
+	assert.equal(tooManyStrings.ok, false);
+	const hugeKey = validateConsumerCompatibility(
+		{ ...request, ["x".repeat(300000)]: 1 },
+		deps,
+	);
+	assert.equal(hugeKey.ok, false);
+	const depth = {
+		x: { x: { x: { x: { x: { x: { x: { x: { x: 1 } } } } } } } },
+	};
+	const tooDeep = validateConsumerCompatibility(
+		{ ...request, extra: depth },
+		deps,
+	);
+	assert.equal(tooDeep.ok, false);
+	const results = [
+		tooManyStrings,
+		validateConsumerCompatibility(request, deps),
+	];
+	assert.equal(results[0]?.ok, false);
+	assert.equal(results[1]?.ok, true);
+});

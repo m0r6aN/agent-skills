@@ -30,3 +30,30 @@ clock, performs network/provider work, or claims PMC/RCM runtime authority.
 P1a implementation files remain unchanged. Integration must reconcile against
 the latest mainline after P1a PR54 merge (`59b48a0`) and rerun unchanged
 dispatch/routing-policy regressions plus independent architecture/risk review.
+
+## Repair verification
+
+The first implementation review identified six accepted contract defects:
+incomplete rates/thinking validation, alias/key budget undercharging, open
+response envelopes, nonenumerable properties, malformed refusal-code arrays,
+and null evaluator phase classification. The repair adds RED regressions for
+each family before the GREEN implementation and keeps all changes within the
+same five paths.
+
+- HRO tests: 25 passed, 0 failed (16 inherited P1a tests plus 9 P1b repair
+  tests; the prior 20/4 count remains the historical tripwire).
+- HRO typecheck: passed under Node `v24.19.0`.
+- HRO lint: passed; 7 files checked.
+- Unchanged dispatch suite: 126 passed, 0 failed.
+- Unchanged routing-policy suite: 399 passed, 0 failed.
+- Existing locked dependencies were installed offline for hybrid-routing,
+  dispatch, routing-policy, contracts, schema-scaffold, shaping, projection,
+  receipts, permission-profiles, role-authority, skill-injection, spec-linter,
+  worker-envelopes, and foreman-config. No manifests or lockfiles changed.
+
+The repaired capture charges memoized aliases from the owned snapshot at each
+expanded depth, including keys and descendants, while caller descriptors are
+read only during the phase capture. Closed success/failure envelopes, exact
+rate/thinking contracts, enumerable data descriptors, refusal-code arrays, and
+evaluator-invalid classification are covered. Independent frontier review is
+still required before integration.

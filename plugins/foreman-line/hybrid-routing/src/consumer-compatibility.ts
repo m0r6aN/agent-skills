@@ -82,7 +82,11 @@ function exact(value: RecordValue, keys: readonly string[]): boolean {
 	const own = Reflect.ownKeys(value);
 	return (
 		own.length === keys.length &&
-		own.every((key) => typeof key === "string" && keys.includes(key))
+		own.every((key) => {
+			if (typeof key !== "string" || !keys.includes(key)) return false;
+			const descriptor = Object.getOwnPropertyDescriptor(value, key);
+			return descriptor?.enumerable === true && "value" in descriptor;
+		})
 	);
 }
 function data(value: object, key: string): unknown {
@@ -109,7 +113,10 @@ function capture(value: unknown, depth: number, budget: Budget): unknown {
 	if (typeof value !== "object" || depth > 8 || budget.active.has(value))
 		throw new Error("invalid");
 	const prior = budget.seen.get(value);
-	if (prior !== undefined) return prior;
+	if (prior !== undefined) {
+		charge(prior, depth, budget, new WeakSet<object>());
+		return prior;
+	}
 	budget.active.add(value);
 	try {
 		if (Array.isArray(value)) {
@@ -125,8 +132,12 @@ function capture(value: unknown, depth: number, budget: Budget): unknown {
 			const keys = Reflect.ownKeys(value);
 			if (keys.length !== length + 1 || !keys.includes("length"))
 				throw new Error("invalid");
-			for (let i = 0; i < length; i++)
+			for (let i = 0; i < length; i++) {
 				if (!keys.includes(String(i))) throw new Error("invalid");
+				const descriptor = Object.getOwnPropertyDescriptor(value, String(i));
+				if (!descriptor?.enumerable || !("value" in descriptor))
+					throw new Error("invalid");
+			}
 			for (const key of keys)
 				if (
 					typeof key !== "string" ||
@@ -136,6 +147,11 @@ function capture(value: unknown, depth: number, budget: Budget): unknown {
 							Number(key) >= length))
 				)
 					throw new Error("invalid");
+			for (const key of keys) {
+				if (typeof key !== "string" || key.length > MAX_STRING) throw LIMIT;
+				budget.strings += key.length;
+				if (budget.strings > MAX_STRINGS) throw LIMIT;
+			}
 			if (budget.values > MAX_VALUES - length) throw LIMIT;
 			const result: unknown[] = new Array(length);
 			budget.seen.set(value, result);
@@ -152,11 +168,56 @@ function capture(value: unknown, depth: number, budget: Budget): unknown {
 			throw LIMIT;
 		const result = Object.create(null) as RecordValue;
 		budget.seen.set(value, result);
-		for (const key of keys as string[])
+		for (const key of keys as string[]) {
+			const descriptor = Object.getOwnPropertyDescriptor(value, key);
+			if (!descriptor?.enumerable || !("value" in descriptor))
+				throw new Error("accessor");
+			if (key.length > MAX_STRING) throw LIMIT;
+			budget.strings += key.length;
+			if (budget.strings > MAX_STRINGS) throw LIMIT;
 			result[key] = capture(data(value, key), depth + 1, budget);
+		}
 		return result;
 	} finally {
 		budget.active.delete(value);
+	}
+}
+function charge(
+	value: unknown,
+	depth: number,
+	budget: Budget,
+	active: WeakSet<object>,
+): void {
+	if (++budget.values > MAX_VALUES) throw LIMIT;
+	if (typeof value === "string") {
+		budget.strings += value.length;
+		if (value.length > MAX_STRING || budget.strings > MAX_STRINGS) throw LIMIT;
+		return;
+	}
+	if (value === null || typeof value === "boolean" || typeof value === "number")
+		return;
+	if (typeof value !== "object" || depth > 8 || active.has(value))
+		throw new Error("invalid");
+	active.add(value);
+	try {
+		if (Array.isArray(value)) {
+			if (value.length > MAX_ARRAY || budget.values > MAX_VALUES - value.length)
+				throw LIMIT;
+			budget.strings += 6;
+			for (let i = 0; i < value.length; i++) budget.strings += String(i).length;
+			if (budget.strings > MAX_STRINGS) throw LIMIT;
+			for (let i = 0; i < value.length; i++)
+				charge(value[i], depth + 1, budget, active);
+			return;
+		}
+		for (const [key, child] of Object.entries(value)) {
+			if (key.length > MAX_STRING) throw LIMIT;
+			budget.strings += key.length;
+			if (budget.strings > MAX_STRINGS) throw LIMIT;
+			charge(child, depth + 1, budget, active);
+		}
+	} finally {
+		active.delete(value);
 	}
 }
 function owned(value: unknown): unknown {
@@ -248,13 +309,62 @@ function expected(value: unknown): {
 		: null;
 }
 function refusal(value: RecordValue): string | null {
-	return value.ok === false &&
+	return exact(value, ["ok", "level", "code"]) &&
+		value.ok === false &&
 		(value.level === "snapshot" ||
 			value.level === "authority" ||
 			value.level === "request") &&
 		safeCode(value.code)
 		? value.code
 		: null;
+}
+function codes(value: unknown): value is string[] {
+	return (
+		Array.isArray(value) &&
+		value.length >= 1 &&
+		value.length <= 32 &&
+		value.every((item) => safeCode(item)) &&
+		new Set(value).size === value.length
+	);
+}
+function rates(value: unknown): boolean {
+	if (!record(value) || !exact(value, ["input", "output"])) return false;
+	for (const side of [value.input, value.output]) {
+		if (
+			!record(side) ||
+			!exact(side, ["value", "unit"]) ||
+			typeof side.value !== "number" ||
+			!Number.isFinite(side.value) ||
+			side.value < 0 ||
+			side.unit !== "USD per 1M tokens"
+		)
+			return false;
+	}
+	return true;
+}
+function thinking(value: unknown): boolean {
+	if (!record(value)) return false;
+	if (exact(value, ["status"]) && value.status === "unknown") return true;
+	if (
+		!exact(value, ["status", "levels"]) ||
+		value.status !== "declared" ||
+		!Array.isArray(value.levels) ||
+		value.levels.length > 32
+	)
+		return false;
+	const seen = new Set<string>();
+	return value.levels.every((entry) => {
+		if (
+			!record(entry) ||
+			!exact(entry, ["level", "providerValue"]) ||
+			!string(entry.level) ||
+			(entry.providerValue !== null && !string(entry.providerValue)) ||
+			seen.has(entry.level)
+		)
+			return false;
+		seen.add(entry.level);
+		return true;
+	});
 }
 function frozen<T>(value: T): T {
 	if (value && typeof value === "object" && !Object.isFrozen(value)) {
@@ -324,6 +434,7 @@ export function validateConsumerCompatibility(
 		const code = refusal(oracle);
 		if (code !== null) return fail("eligibility_refused", code);
 		if (
+			!exact(oracle, ["ok", "provenance", "results"]) ||
 			oracle.ok !== true ||
 			!record(oracle.provenance) ||
 			!Array.isArray(oracle.results)
@@ -375,20 +486,41 @@ export function validateConsumerCompatibility(
 		if (
 			!record(result) ||
 			!record(result.requested) ||
+			!exact(result.requested, ["provider", "id"])
+		)
+			return fail("eligibility_invalid");
+		if (
 			result.requested.provider !== proposal.provider ||
 			result.requested.id !== proposal.providerModelId
 		)
 			return fail("eligibility_mismatch");
 		if (result.outcome === "refused")
-			return fail(
-				"eligibility_refused",
-				Array.isArray(result.codes) && safeCode(result.codes[0])
-					? result.codes[0]
-					: undefined,
-			);
-		if (result.outcome !== "facts" || !record(result.facts))
+			return exact(result, ["requested", "outcome", "codes"]) &&
+				codes(result.codes)
+				? fail("eligibility_refused", result.codes[0])
+				: fail("eligibility_invalid");
+		if (
+			result.outcome !== "facts" ||
+			!exact(result, ["requested", "outcome", "facts"]) ||
+			!record(result.facts)
+		)
 			return fail("eligibility_invalid");
 		const facts = result.facts;
+		if (
+			!exact(facts, [
+				"provider",
+				"id",
+				"baseUrl",
+				"api",
+				"reasoning",
+				"contextWindow",
+				"maxTokens",
+				"inputModalities",
+				"rates",
+				"thinkingLevels",
+			])
+		)
+			return fail("eligibility_invalid");
 		if (
 			facts.provider !== proposal.provider ||
 			facts.id !== proposal.providerModelId ||
@@ -408,16 +540,8 @@ export function validateConsumerCompatibility(
 			facts.inputModalities.length === 0 ||
 			new Set(facts.inputModalities).size !== facts.inputModalities.length ||
 			facts.inputModalities.some((x) => x !== "text" && x !== "image") ||
-			!record(facts.rates) ||
-			!record(facts.thinkingLevels)
-		)
-			return fail("eligibility_invalid");
-		const levels = facts.thinkingLevels;
-		if (levels.status !== "unknown" && levels.status !== "declared")
-			return fail("eligibility_invalid");
-		if (
-			levels.status === "declared" &&
-			(!Array.isArray(levels.levels) || levels.levels.length > 32)
+			!rates(facts.rates) ||
+			!thinking(facts.thinkingLevels)
 		)
 			return fail("eligibility_invalid");
 		let rawEval: unknown;
@@ -432,9 +556,16 @@ export function validateConsumerCompatibility(
 		} catch {
 			return fail("evaluator_invalid");
 		}
-		if (evaluated.ok === false && safeCode(evaluated.code))
-			return fail("evaluator_refused", evaluated.code);
-		if (evaluated.ok !== true || !record(evaluated.result))
+		if (!record(evaluated)) return fail("evaluator_invalid");
+		if (evaluated.ok === false)
+			return exact(evaluated, ["ok", "code"]) && safeCode(evaluated.code)
+				? fail("evaluator_refused", evaluated.code)
+				: fail("evaluator_invalid");
+		if (
+			evaluated.ok !== true ||
+			!exact(evaluated, ["ok", "result"]) ||
+			!record(evaluated.result)
+		)
 			return fail("evaluator_invalid");
 		const routingResult = evaluated.result;
 		if (
