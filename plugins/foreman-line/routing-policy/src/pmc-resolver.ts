@@ -1,5 +1,6 @@
 import type { EvidenceValue, ProviderBindingPolicyV1 } from './index.js'
 import type {
+  BindingClaims,
   CandidateAudit,
   CandidateCode,
   Claim,
@@ -551,17 +552,34 @@ const recordedConflict = <T>(
   value: T | undefined,
   equal: (a: T, b: T) => boolean = (a, b) => a === b,
 ) => declaration.status === 'recorded' && value !== undefined && !equal(declaration.value, value)
-function refs(value: unknown): EvidenceRef[] {
-  const found: EvidenceRef[] = []
-  const walk = (v: unknown) => {
-    if (v === null || typeof v !== 'object') return
-    const r = v as Record<string, unknown>
-    if (r.status === 'supplied' && Object.hasOwn(r, 'evidence'))
-      found.push(r.evidence as EvidenceRef)
-    for (const [key, child] of Object.entries(r)) if (key !== 'evidence') walk(child)
-  }
-  walk(value)
-  return found
+// Only validated claims enter here. Nested Claim.value fields precede evidence
+// in the frozen declaration; caller property order never controls precedence.
+const refs = (claim: Claim<unknown>): EvidenceRef[] =>
+  claim.status === 'supplied' ? [claim.evidence] : []
+function bindingRefs(b: BindingClaims): EvidenceRef[] {
+  return [
+    b.protocol,
+    b.catalogBaseUrl,
+    b.family,
+    b.instanceId,
+    b.frontier,
+    b.dataClasses,
+    b.transport,
+    b.toolUse,
+    b.structuredOutput,
+    b.enabled,
+    b.available,
+    b.quality,
+    b.cost,
+  ].flatMap(refs)
+}
+function independenceRefs(claim: PmcResolverContextV1['independence']): EvidenceRef[] {
+  if (claim.status === 'unknown') return []
+  return [
+    ...refs(claim.value.determination),
+    ...claim.value.subjects.flatMap((s) => [...refs(s.instanceId), ...refs(s.family)]),
+    claim.evidence,
+  ]
 }
 function freshness(ref: EvidenceRef, now: number, maxAge: number): CandidateCode | null {
   const observed = Date.parse(ref.observedAtUtc),
@@ -658,23 +676,30 @@ function evaluate(
     r.requestDigest === requestDigest &&
     r.lane === q.lane &&
     r.bindingId === bindingId
-  const globalClaims = [c.catalog.source, c.episode, c.freshness, c.independence, c.budget]
-  const globalRefs = globalClaims.flatMap(refs)
+  const globalRefs = [
+    ...refs(c.catalog.source),
+    ...refs(c.episode),
+    ...refs(c.freshness),
+    ...independenceRefs(c.independence),
+    ...refs(c.budget),
+  ]
   if (
     globalRefs.some((r) => !matches(r, null)) ||
-    c.bindings.some((b) => refs(b).some((r) => !matches(r, b.bindingId)))
+    c.bindings.some((b) => bindingRefs(b).some((r) => !matches(r, b.bindingId)))
   )
     return halt('CONTEXT_BINDING_REFUSED')
   if (
     q.attempt.kind === 'fallback' &&
-    refs(q.attempt).some(
-      (r) =>
-        !matches(
-          r,
-          q.attempt.kind === 'fallback' ? q.attempt.primaryBindingId : null,
-          q.attempt.kind === 'fallback' ? q.attempt.priorRequestDigest : '',
-        ),
-    )
+    [q.attempt.priorDisposition, q.attempt.primaryQuality]
+      .flatMap(refs)
+      .some(
+        (r) =>
+          !matches(
+            r,
+            q.attempt.kind === 'fallback' ? q.attempt.primaryBindingId : null,
+            q.attempt.kind === 'fallback' ? q.attempt.priorRequestDigest : '',
+          ),
+      )
   )
     return halt('CONTEXT_BINDING_REFUSED')
   if (c.episode.status === 'supplied') {
@@ -705,6 +730,19 @@ function evaluate(
     )
       return halt('CONTEXT_BINDING_REFUSED')
   }
+  const provenance = c.catalog.provenance
+  const now = Date.parse(c.evaluationTimeUtc),
+    sourceTime = Date.parse(provenance.sourceTimeUtc)
+  const availableSource = suppliedValue(c.catalog.source)
+  if (
+    provenance.evaluationTimeUtc !== c.evaluationTimeUtc ||
+    (availableSource !== undefined &&
+      (provenance.digestSha256 !== availableSource.snapshotDigest ||
+        provenance.approvedConfigRef !== availableSource.configAuthorityRef)) ||
+    (sourceTime <= now && provenance.ageMs !== now - sourceTime) ||
+    provenance.maxAgeMs > 86400000
+  )
+    return halt('CONTEXT_BINDING_REFUSED')
   if (
     c.catalog.source.status === 'unknown' ||
     c.episode.status === 'unknown' ||
@@ -715,18 +753,7 @@ function evaluate(
   )
     return halt('GLOBAL_EVIDENCE_UNPROVEN')
   const source = c.catalog.source.value,
-    provenance = c.catalog.provenance
-  const now = Date.parse(c.evaluationTimeUtc),
-    sourceTime = Date.parse(provenance.sourceTimeUtc),
     maxAge = c.freshness.value.maximumAgeMs
-  if (
-    provenance.evaluationTimeUtc !== c.evaluationTimeUtc ||
-    provenance.digestSha256 !== source.snapshotDigest ||
-    provenance.approvedConfigRef !== source.configAuthorityRef ||
-    (sourceTime <= now && provenance.ageMs !== now - sourceTime) ||
-    provenance.maxAgeMs > 86400000
-  )
-    return halt('CONTEXT_BINDING_REFUSED')
   for (const r of globalRefs) {
     const failure = freshness(r, now, maxAge)
     if (failure) return halt(failure as StopCode)
@@ -825,7 +852,7 @@ function evaluate(
     const add = (code: CandidateCode) => {
       if (!codes.includes(code)) codes.push(code)
     }
-    const checkFresh = (...values: unknown[]) => {
+    const checkFresh = (...values: Claim<unknown>[]) => {
       for (const ref of values.flatMap(refs)) {
         const failure = freshness(ref, now, maxAge)
         if (failure) add(failure)
@@ -911,7 +938,7 @@ function evaluate(
       recordedConflict(logical.family, family)
     )
       add('INDEPENDENCE_VIOLATION')
-    checkFresh(claims.instanceId, claims.family)
+    checkFresh(claims.family, claims.instanceId)
     if (q.lane === 'L1' || q.lane === 'L2') {
       if (claims.frontier.status === 'unknown') add('FRONTIER_UNPROVEN')
       else if (!claims.frontier.value) add('FRONTIER_REQUIRED')
@@ -1009,7 +1036,7 @@ function evaluate(
           freshness(q.attempt.priorDisposition.evidence, now, maxAge) !== null)
       )
         add('FALLBACK_SUITABILITY_UNPROVEN')
-      checkFresh(q.attempt.primaryQuality, q.attempt.priorDisposition)
+      checkFresh(q.attempt.priorDisposition, q.attempt.primaryQuality)
     }
     candidates.push({
       occurrenceIndex: index,

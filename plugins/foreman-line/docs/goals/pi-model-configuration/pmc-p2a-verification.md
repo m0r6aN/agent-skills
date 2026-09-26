@@ -116,3 +116,51 @@ Node requires an ESM file URL; the corrected exact command above passed.
 No full local 20-package pipeline, provider calls, push, Pi/configuration changes,
 RCM implementation edits, schema changes, launch/controller work or subagents.
 Only the six spec-allowed files are part of this implementation diff.
+
+## Independent-review precedence repair — 2026-09-26
+
+Repair base: `1de938c27310c2e357bcc8249170749175f7545c`; frozen spec remains
+`d65ff524bba2eda6c9e38de44c78aac4aae1c59f`. Coordinator released the fresh
+builder after actual Step 0 inspection. This repairs both accepted P2 findings
+without changing API, schema, authority or allowed scope.
+
+Evidence traversal now uses explicit typed declarations, not caller key order.
+The coordinator confirmed literal Claim order (`status`, `value`, `evidence`):
+independence determination and subject claims precede the enclosing receipt;
+subjects retain array order and instance-before-family order. Binding claims use
+family-before-instance order; fallback uses disposition-before-quality order.
+Candidate filter stage order remains unchanged. Shape validation already walks
+its declared field list; remaining generic walks only capture/freeze/count data
+or canonicalize semantic duplicates and do not choose evidence refusal priority.
+
+Available catalogue evaluation time, recomputed age and maximum-age checks run
+before the aggregate unknown-global return. Snapshot/config associations require
+only the supplied catalogue source; unknown unrelated budget, episode,
+freshness, independence or determination cannot hide those conflicts. A genuinely
+unknown source leaves its unavailable digest/config comparisons unproven. It does
+not suppress independent provenance checks or invent replacement facts.
+
+Permanent coverage adds 46 tests (253 resolver tests, 758 routing total): reordered
+global/nested evidence, nested-before-enclosing receipts, subject array order,
+binding/fallback freshness-code order, five provenance inconsistencies crossed
+with five unrelated unknown claims, unavailable-source prerequisites, and valid
+unknown-global refusals. Existing repeated/reordered successful selection tests
+remain green. The first 42 new tests produced 31 RED failures and then all passed.
+The four binding/fallback tests were independently run against the original
+source: all four failed, then passed with the repaired source restored byte-for-byte.
+An initial attempted test append used an incorrect relative path and made no edit;
+the successful append and actual RED evidence followed it.
+
+Final verification with process-local Node 24.19.0, native exit 0:
+
+- Routing `npm.cmd test`: 758/758 passed, no skips.
+- Routing `npm.cmd run typecheck`: passed.
+- Routing `npm.cmd run lint`: passed; only the existing informational
+  `useLiteralKeys` suggestion in unchanged catalog-snapshot.test.ts.
+- Unchanged dispatch `npm.cmd test`: 126/126 passed, no skips.
+- Focused restored-source binding/fallback tests: 4/4 passed.
+- `git diff --check`: passed; only resolver source, resolver tests and this handoff
+  changed from the repair base; no public type/barrel/fixture/dependency edits.
+
+No provider calls, production claims, Pi/configuration changes, pushes or merges.
+Two independent final reviews and coordinator integration/CI remain required.

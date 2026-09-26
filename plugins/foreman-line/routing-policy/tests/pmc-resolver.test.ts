@@ -3,6 +3,109 @@ import { readFileSync } from 'node:fs'
 import { test } from 'node:test'
 import { resolvePmcRouteV1 } from '../src/index.js'
 
+const reverseRecord = (value: Record<string, unknown>) =>
+  Object.fromEntries(Object.entries(value).reverse())
+const stale = (claim: Fixture) => {
+  claim.evidence.expiresAtUtc = '2026-09-26T11:59:59.999Z'
+}
+const future = (claim: Fixture) => {
+  claim.evidence.observedAtUtc = '2026-09-26T12:00:00.001Z'
+}
+for (const reversed of [false, true]) {
+  test(`binding family precedes instance freshness ${reversed}`, () => {
+    const f = fixture(),
+      b = f.context.bindings[2]
+    stale(b.family)
+    future(b.instanceId)
+    if (reversed) f.context.bindings[2] = reverseRecord(b)
+    assert.deepEqual(
+      receipt(f).candidates[2]?.refusals.filter((c) => c.startsWith('FRESHNESS_')),
+      ['FRESHNESS_STALE_REFUSED', 'FRESHNESS_FUTURE_REFUSED'],
+    )
+  })
+  test(`fallback disposition precedes quality freshness ${reversed}`, () => {
+    const f = fixture()
+    fallback(f)
+    stale(f.request.attempt.priorDisposition)
+    future(f.request.attempt.primaryQuality)
+    if (reversed) f.request.attempt = reverseRecord(f.request.attempt)
+    assert.deepEqual(
+      receipt(f).candidates[3]?.refusals.filter((c) => c.startsWith('FRESHNESS_')),
+      ['FRESHNESS_STALE_REFUSED', 'FRESHNESS_FUTURE_REFUSED'],
+    )
+  })
+  test(`declared nested subject freshness order ignores key order ${reversed}`, () => {
+    const f = fixture()
+    setLane(f, 'L1')
+    const s = subject(f)
+    stale(s.instanceId)
+    future(s.family)
+    f.context.independence.value.subjects = [reversed ? reverseRecord(s) : s]
+    refused(f, 'FRESHNESS_STALE_REFUSED')
+  })
+  test(`nested claim value precedes enclosing evidence ${reversed}`, () => {
+    const f = fixture()
+    stale(f.context.independence.value.determination)
+    future(f.context.independence)
+    if (reversed) f.context.independence = reverseRecord(f.context.independence)
+    refused(f, 'FRESHNESS_STALE_REFUSED')
+  })
+  test(`declared global freshness order ignores context key order ${reversed}`, () => {
+    const f = fixture()
+    stale(f.context.episode)
+    future(f.context.freshness)
+    if (reversed) f.context = reverseRecord(f.context)
+    refused(f, 'FRESHNESS_STALE_REFUSED')
+  })
+  test(`review subject array index precedes later subject ${reversed}`, () => {
+    const f = fixture()
+    setLane(f, 'L1')
+    const a = subject(f),
+      b = subject(f, 'coordinator')
+    stale(a.family)
+    future(b.instanceId)
+    f.context.independence.value.subjects = [a, b].map((s) => (reversed ? reverseRecord(s) : s))
+    refused(f, 'FRESHNESS_STALE_REFUSED')
+  })
+}
+const provenanceConflicts: [string, unknown][] = [
+  ['evaluationTimeUtc', '2026-09-26T12:00:00.001Z'],
+  ['digestSha256', 'c'.repeat(64)],
+  ['approvedConfigRef', 'different'],
+  ['ageMs', 1],
+  ['maxAgeMs', 86400001],
+]
+for (const [field, value] of provenanceConflicts) {
+  for (const unknown of ['episode', 'freshness', 'independence', 'budget', 'determination']) {
+    test(`available provenance ${field} precedes unknown ${unknown}`, () => {
+      const f = fixture()
+      f.context.catalog.provenance[field] = value
+      if (unknown === 'determination')
+        f.context.independence.value.determination = { status: 'unknown' }
+      else f.context[unknown] = { status: 'unknown' }
+      refused(f, 'CONTEXT_BINDING_REFUSED')
+    })
+  }
+  test(`unknown source gates only dependent provenance ${field}`, () => {
+    const f = fixture()
+    f.context.catalog.source = { status: 'unknown' }
+    f.context.catalog.provenance[field] = value
+    refused(
+      f,
+      ['digestSha256', 'approvedConfigRef'].includes(field)
+        ? 'GLOBAL_EVIDENCE_UNPROVEN'
+        : 'CONTEXT_BINDING_REFUSED',
+    )
+  })
+}
+for (const field of ['episode', 'freshness', 'independence', 'budget']) {
+  test(`consistent provenance retains unknown ${field} refusal`, () => {
+    const f = fixture()
+    f.context[field] = { status: 'unknown' }
+    refused(f, 'GLOBAL_EVIDENCE_UNPROVEN')
+  })
+}
+
 const fixture = () =>
   JSON.parse(readFileSync(new URL('./fixtures/pmc-resolver-v1.json', import.meta.url), 'utf8'))
 type Fixture = ReturnType<typeof fixture>
