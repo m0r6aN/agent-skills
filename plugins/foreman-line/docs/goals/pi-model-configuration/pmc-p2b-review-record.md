@@ -58,3 +58,21 @@ unchanged from 835a6dd, all routing-policy source/tests unchanged from accepted
 Independent combined review, targeted integration checks and all remote CI remain
 required before merging PR60. No provider calls, production funds, host settings
 or live activation are part of this integration.
+## PMC-P2B Stage-F closure — 2026-09-26
+
+PR60 merged as 71fd4895a60f90318b517818da14dea94b627fb0 at
+2026-09-26T18:26:02Z. All twelve remote checks succeeded on exact reviewed head
+0404ec8b19ef5864b8bbd824ffc288c2f8dddff6 before matched-head merge. Both ledger
+source reviews and both final audit repair reviews remain applicable unchanged.
+Independent combined review approved that head after 28 actual resolver/money/
+temporary-SQLite composition assertions and exact-tree D19 (ledger 10/10, retained
+RCM provenance 1/1, zero unruled instances). Coordinator combined checks passed:
+182 dispatch, 938 routing-policy, 70 contract-readers and 44 mutation-scope tests,
+all four package typechecks/lints and affected specification validation.
+
+Spec is done and current predecessor links follow it. P2A and P2B are both accepted
+main prerequisites; B1's narrow private-build sequencing hold is resolved. B1
+intent custody, C controller, D transport and E exercised initiating caller remain
+open, as do HRO caching/measurement/recovery/configuration/diagnostic/live exits.
+Neither resolver values nor the ledger alone authorize or prove a provider send.
+No production budget, provider call or host configuration was created in P2B.

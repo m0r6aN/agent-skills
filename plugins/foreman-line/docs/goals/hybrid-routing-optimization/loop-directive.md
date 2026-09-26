@@ -108,3 +108,20 @@ The consumer spec moves to done. This is offline compatibility evidence only;
 owner bridge, cache, execution, receipts and measured live exit remain open.
 Frozen worktrees remain as traceability and read-only dependency donors during
 active integration; cleanup follows when those dependents are finished.
+
+## P1c repair ownership and accepted ledger checkpoint — 2026-09-26
+
+PMC-P2B PR60 merged as 71fd489 with all twelve checks green and independent source,
+audit and combined approval. Its Stage-F record is in the PMC loop directive.
+P1c source 435c710 is held for five accepted findings recorded at local HRO head
+a824dca in hro-p1c-review-triage.md; root reproduced the mutable-byte alias escape
+and separate byte/ordinary-node budget defect. No P1c acceptance or live claim.
+
+Native child-agent creation and reviving the earlier Luna child repeatedly reached
+the agent thread limit. The coordinator resumed the user's existing assigned task
+"Implement hybrid routing optimization" (01a0ddc2-2250-70a3-82ea-6a5bb273714e),
+explicitly configured gpt-5.6-luna/high, for this repair only. It must use
+D:/Repos/agent-skills-worktrees/hro-p1c-shaping-20260926, exact four-file envelope,
+inspect/restate/STOP, then explicit coordinator release. Its default cwd is read-only.
+No new user-owned task or competing coordinator loop was created. Root task
+01a0ddb6-5fed-7d82-b2f0-075315440dc1 retains all reviews, integration and release.
