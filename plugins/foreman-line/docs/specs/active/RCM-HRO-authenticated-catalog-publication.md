@@ -1071,3 +1071,28 @@ typecheck/lint, actual D19 and source-preservation evidence. Freeze clean and st
 The repair author will not independently approve this source; root and a different
 frontier reviewer must complete final independent reviews before integration.
 No provider/network, dependency, configuration, push or merge operation is granted.
+
+## Checkpoint P implementation release — 2026-09-26
+
+Root accepts frontier A's genuine read-only Step0 at
+585891033e6502fe8e7e66058d08142a1daa067e, following D's earlier independent
+actual-source check. N is accepted on main98bf162 through PR67 with all12 remote
+checks; accepted C and N are present. Construction773daa has root/A reviews and
+ratification7c10eee. Root releases exactly the six P source/test/report paths in
+the construction amendment, with no owner/barrel/dependency changes.
+
+Implement actual fixed native HTTPS bridge now, shared finite offline engine,
+closed construction/capabilities, four retained transport slots, connected-plus-
+close cleanup acknowledgement, full-scope N catalog/absence, one cancellation-
+checked generation CAS, expiry and synchronous acquisition. Production constructor
+still unconditionally refuses with zero input reads/effects. Do not replace the
+native bridge with a stub or claim close alone completes hidden DNS work.
+Actual N/reader/adapter/C composition and guarded native-event tests are required;
+fixture source claims remain explicitly unauthenticated production evidence.
+
+Use supplied19 matched-lock dependency junctions without installs or donor writes.
+Test-first, full affected checks and actual D19, then freeze a clean six-file
+source/report commit and STOP for root plus an independent frontier review.
+Any actual audit enrollment discovered remains a separate bounded follow-up;
+no detection evasion, broad waiver, live metadata/inference call, credential or
+host configuration action is included. This is delegated Gate2 for P only.
