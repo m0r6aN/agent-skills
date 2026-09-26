@@ -105,7 +105,7 @@ provider calls/spend, evidence fabrication, nonpublic activation and HRO source.
 ## Context & References
 
 - [Amendment 05](../../goals/pi-model-configuration/gate-1-amendment-05.md)
-- [P2A](../done/PMC-P2A-owner-resolver.md), [P2B](PMC-P2B-durable-budget-ledger.md)
+- [P2A](../done/PMC-P2A-owner-resolver.md), [P2B](../done/PMC-P2B-durable-budget-ledger.md)
 - [P2 inventory](../../goals/pi-model-configuration/pmc-p2-design-inventory.md)
 
 ## Allowed Files
