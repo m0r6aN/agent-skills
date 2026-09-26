@@ -36,3 +36,17 @@ other. Neither can merge without its own completed review and green CI.
 
 No live routing, provider availability, configuration mutation, cache benefit or
 full HRO exit is claimed by this record.
+
+## Contract B reader-inventory repair
+
+The bounded integration repair adds the genuine additive lockstep reader
+`plugins/foreman-line/hybrid-routing/src/consumer-compatibility.ts` to
+`contractB`. The consumer repeats the routing-class vocabulary and validates
+membership, so adding a class requires changing its local membership set. The
+permanent sweep records this rationale and includes a deletion negative control
+that detects removal of the declared reader from the registry.
+
+The D19 registry DATA pin is recomputed from the actual sorted observed values:
+cardinality 9 and SHA-256(JSON.stringify(sorted values))
+`d5a4c056a28824b3417e0dfa37e0191c437cc16a1fdc83dcd85ffa9467d565cd`. The
+structural predicate and all prior negative reader rulings are unchanged.
