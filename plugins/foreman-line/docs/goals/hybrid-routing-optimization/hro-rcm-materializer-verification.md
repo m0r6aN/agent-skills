@@ -174,3 +174,16 @@ done. This checkpoint is not the final combined approval or remote CI result;
 those are recorded separately before merge. Production publisher/acquisition,
 admission/recovery, installed authority, provider billing bounds and live measured
 HRO exit remain open. No inference, credential or host configuration operation.
+
+## Final combined approval before PR
+
+Independent frontier D approves combinede67bb1fab5535ee65583ca2a947f3d62e9b0f491.
+Actual dispatch473, contract-readers72, mutation44 and focused N168 all pass;
+all four package typechecks/lints, actual D19, both changed spec lint checks,
+15 local links and whitespace checks pass. N runtime exactly matches the
+root/D-approved3a976f0. Root's full964 routing and53 hybrid results remain
+separately scoped above; the later changes were test-literal/docs only.
+The reviewer did not count its own test correction as independent approval;
+root independently checked that one-line correction and runtime preservation.
+No unintended owner/API/schema/barrel/dependency changes. Remote exact-head
+checks and merge remain required. No offline result is production acceptance.

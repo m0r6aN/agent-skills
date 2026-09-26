@@ -252,3 +252,15 @@ P3A offline runtime, N materialization and P4A1 durable admission are released t
 builders; P publisher construction is being amended before implementation.
 No inference, credential read, production budget or host configuration change
 occurred. User delegation covers the necessary PMC/RCM prerequisite decisions.
+## RCM N integration checkpoint — 2026-09-26
+
+N materialization final runtime3a976f0 has two independent approvals after fixing
+combined structured capture accounting. Test-only escape correctiona257e50 has
+separate root review. Combinede67bb1f is independently approved:964 routing,
+53 hybrid,473 dispatch,72 readers,44 mutation,168 focused N and applicable
+checks pass (exact run scopes in hro-rcm-materializer-verification.md).
+P construction773daa5 has two design approvals and ratification7c10eee; no P
+runtime release yet. P3A8a76e738 and P4A193f54bd received independent change
+requests; explicit repairs34071db and8a64539 are active with Luna. D transport
+implementation remains active. Production custody, billing bound and full live
+measurement remain open; no inference/credentials/host configuration activity.
