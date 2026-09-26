@@ -1,5 +1,31 @@
 # PMC-P2A implementation review disposition
 
+## Final review of02de2b4: catalogue/global freshness ordering
+
+Accept the final reviewer A's P2 finding. The typed receipt traversal and
+available-provenance-before-unknown repairs pass their new tests, but stage4
+still checks all global receipts before raw catalogue provenance freshness.
+Declared context order puts catalog.source receipt, then catalog.provenance,
+then episode/freshness/independence/budget. A future catalogue timestamp alone
+returns FUTURE; adding a stale episode currently changes it to STALE. Reordered
+context keys reproduce the same incorrect priority. Root reproduced the retained
+probe at C:/Users/clint/AppData/Local/Temp/pmc-p2a-final-review-a.mts.
+
+Repair this existing frozen-order requirement within the same allowed source,
+tests and handoff. Check source receipt then catalogue provenance then remaining
+global receipts; preserve each earlier typed traversal's nested declaration order.
+Add competing future/stale cases in BOTH directions, including source receipt
+versus provenance and provenance versus every later global claim. Preserve global
+stage precedence and genuinely missing prerequisite refusals. No public type,
+policy, schema, money, authority, producer, ledger or controller changes.
+
+Reviewer evidence:758 routing,126 dispatch, typecheck/lint passed;20 combined
+provenance/unknown cases in both key orders, four semantic-cost cases, reordered
+valid selection,200 malformed-leaf cases and owned bounded audit checks passed.
+No other concrete finding. Spec remains d65ff524bba2eda6c9e38de44c78aac4aae1c59f.
+Fresh Step0, coordinator release, permanent RED/GREEN, full targeted checks and
+two independent final approvals remain the gates. No push or merge by builder.
+
 Coordinator, 2026-09-26: accept both P2 findings from independent review A of
 0db995bd74309afb57733fbf14193202591d73d9. The reviewer observed 712 routing tests,
 126 dispatch tests, typecheck/lint and 43 additional negatives pass. Source scope
