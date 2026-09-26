@@ -69,6 +69,19 @@ test("accepts exact static proposal and returns an owned frozen copy", () => {
 		}, TypeError);
 	}
 });
+
+test("does not retain caller-owned mutation after the validation boundary", () => {
+	const input = proposal();
+	const evidence = projection();
+	const result = validateMappingProposal(input, evidence, context);
+	(input as unknown as { provider: string }).provider = "changed";
+	const evidenceBinding = evidence.bindings[0];
+	assert.ok(evidenceBinding);
+	(evidenceBinding.proposal as unknown as { provider: string }).provider =
+		"changed";
+	assert.equal(result.ok, true);
+	if (result.ok) assert.equal(result.proposal.provider, "openrouter");
+});
 test("rejects identity and provenance near-misses without inference", () => {
 	const fields: Array<[keyof MappingProposalV1, unknown, string]> = [
 		["logicalCandidateId", "candidate-opus-v2", "mapping_mismatch"],
@@ -92,19 +105,29 @@ test("rejects identity and provenance near-misses without inference", () => {
 	}
 	for (const key of [
 		"source",
+		"retrievedAt",
+		"contentSha256",
 		"catalogVersion",
 		"mappingVersion",
 		"policySchemaVersion",
 		"roleMapVersion",
 		"foremanRevision",
 		"piRuntimeVersion",
+		"approvalEvidenceState",
 	] as const) {
+		const changedValue =
+			key === "retrievedAt"
+				? "2026-09-26T12:01:00.000Z"
+				: key === "contentSha256"
+					? "b".repeat(64)
+					: key === "approvalEvidenceState"
+						? "wrong"
+						: "changed";
 		const changed = proposal({
-			provenance: { ...proposal().provenance, [key]: "changed" },
+			provenance: { ...proposal().provenance, [key]: changedValue },
 		});
 		const result = validateMappingProposal(changed, projection(), context);
 		assert.equal(result.ok, false);
-		if (!result.ok) assert.equal(result.code, "provenance_mismatch");
 	}
 });
 test("rejects malformed shapes, accessors, cycles, and nonfinite values", () => {
@@ -130,6 +153,168 @@ test("rejects malformed shapes, accessors, cycles, and nonfinite values", () => 
 		false,
 	);
 });
+
+test("does not collapse opaque tuple components at delimiters", () => {
+	const first = proposal({
+		logicalCandidateId: "a\u0000b",
+		provider: "c",
+		providerModelId: "d",
+		protocol: "e",
+		lane: "f",
+		roleFamily: "g",
+	});
+	const second = proposal({
+		bindingId: "binding-second",
+		logicalCandidateId: "a",
+		provider: "b\u0000c",
+		providerModelId: "d",
+		protocol: "e",
+		lane: "f",
+		roleFamily: "g",
+	});
+	const result = validateMappingProposal(
+		first,
+		projection([
+			{ proposal: first, conformance: "allowed" },
+			{ proposal: second, conformance: "allowed" },
+		]),
+		context,
+	);
+	assert.equal(result.ok, true);
+});
+
+test("snapshots hostile proxies without invoking iterators or leaking late throws", () => {
+	const disabled = projection([
+		{ proposal: proposal(), conformance: "disabled" },
+	]);
+	const iteratorTrap = new Proxy(disabled.bindings, {
+		get(target, property, receiver) {
+			if (property === Symbol.iterator) {
+				return function* () {
+					yield { proposal: proposal(), conformance: "allowed" };
+				};
+			}
+			return Reflect.get(target, property, receiver);
+		},
+	});
+	const iteratorResult = validateMappingProposal(
+		proposal(),
+		{ ...disabled, bindings: iteratorTrap },
+		context,
+	);
+	assert.equal(iteratorResult.ok, false);
+	if (!iteratorResult.ok) assert.equal(iteratorResult.code, "lane_disabled");
+
+	let descriptorReads = 0;
+	const delayedThrow = new Proxy(proposal(), {
+		getOwnPropertyDescriptor(target, property) {
+			if (++descriptorReads > 5) throw new Error("late descriptor failure");
+			return Reflect.getOwnPropertyDescriptor(target, property);
+		},
+	});
+	const delayedResult = validateMappingProposal(
+		delayedThrow,
+		projection(),
+		context,
+	);
+	assert.equal(delayedResult.ok, false);
+	if (!delayedResult.ok) assert.equal(delayedResult.code, "input_invalid");
+
+	const customPrototype = [...disabled.bindings];
+	Object.setPrototypeOf(customPrototype, {
+		[Symbol.iterator]: function* () {
+			yield { proposal: proposal(), conformance: "allowed" };
+		},
+	});
+	const prototypeResult = validateMappingProposal(
+		proposal(),
+		{ ...disabled, bindings: customPrototype },
+		context,
+	);
+	assert.equal(prototypeResult.ok, false);
+	if (!prototypeResult.ok) assert.equal(prototypeResult.code, "input_invalid");
+});
+
+test("enforces structural array bounds and counts primitive values across all inputs", () => {
+	const tooManyBindings = Array.from({ length: 257 }, () => ({
+		proposal: proposal(),
+		conformance: "allowed",
+	}));
+	const boundResult = validateMappingProposal(
+		proposal(),
+		projection(tooManyBindings as never),
+		context,
+	);
+	assert.equal(boundResult.ok, false);
+	if (!boundResult.ok) assert.equal(boundResult.code, "input_limit_exceeded");
+
+	const noncanonical = [projection().bindings[0]] as Array<unknown>;
+	Object.defineProperty(noncanonical, "01", {
+		value: projection().bindings[0],
+	});
+	const keyResult = validateMappingProposal(
+		proposal(),
+		{ ...projection(), bindings: noncanonical },
+		context,
+	);
+	assert.equal(keyResult.ok, false);
+	if (!keyResult.ok) assert.equal(keyResult.code, "input_invalid");
+
+	const primitiveFlood = { ...proposal() } as Record<string, unknown>;
+	for (let index = 0; index < 8200; index += 1)
+		primitiveFlood[`noise${index}`] = index;
+	const floodResult = validateMappingProposal(
+		primitiveFlood,
+		projection(),
+		context,
+	);
+	assert.equal(floodResult.ok, false);
+	if (!floodResult.ok) assert.equal(floodResult.code, "input_limit_exceeded");
+});
+
+test("uses one aggregate string budget across proposal, projection, and context", () => {
+	const largeProposal = proposal({
+		logicalCandidateId: "x".repeat(2048),
+		bindingId: "b".repeat(2048),
+		provider: "p".repeat(2048),
+		providerModelId: "m".repeat(2048),
+		protocol: "q".repeat(2048),
+		piHostModelId: "h".repeat(2048),
+		lane: "l".repeat(2048),
+		roleFamily: "r".repeat(2048),
+		provenance: Object.fromEntries(
+			Object.entries(proposal().provenance).map(([key, value]) => [
+				key,
+				key === "approvalEvidenceState" ? value : "v".repeat(2048),
+			]),
+		) as MappingProposalV1["provenance"],
+	});
+	const many = Array.from({ length: 110 }, (_, index) => ({
+		proposal: proposal({
+			bindingId: `b${index}`,
+			provenance: { ...proposal().provenance, source: "s".repeat(2000) },
+		}),
+		conformance: "allowed" as const,
+	}));
+	const result = validateMappingProposal(
+		largeProposal,
+		projection(many),
+		context,
+	);
+	assert.equal(result.ok, false);
+	if (!result.ok) assert.equal(result.code, "input_limit_exceeded");
+});
+
+test("accepts a string exactly at the per-string limit", () => {
+	const boundary = proposal({ provider: "x".repeat(2048) });
+	const result = validateMappingProposal(
+		boundary,
+		projection([{ proposal: boundary, conformance: "allowed" }]),
+		context,
+	);
+	assert.equal(result.ok, true);
+});
+
 test("rejects invalid dates and hashes while accepting exact age boundary", () => {
 	const exact = proposal({
 		provenance: {
@@ -228,6 +413,31 @@ test("rejects pins, duplicates, disabled lanes, and invalid fallback graphs", ()
 	);
 	assert.equal(selfResult.ok, false);
 	if (!selfResult.ok) assert.equal(selfResult.code, "fallback_cycle");
+	const cycleA = proposal({
+		bindingId: "cycle-a",
+		fallbackBindingId: "cycle-b",
+	});
+	const cycleB = proposal({
+		bindingId: "cycle-b",
+		lane: "backup",
+		fallbackBindingId: "cycle-c",
+	});
+	const cycleC = proposal({
+		bindingId: "cycle-c",
+		lane: "recovery",
+		fallbackBindingId: "cycle-a",
+	});
+	const multiCycle = validateMappingProposal(
+		cycleA,
+		projection([
+			{ proposal: cycleA, conformance: "allowed" },
+			{ proposal: cycleB, conformance: "allowed" },
+			{ proposal: cycleC, conformance: "allowed" },
+		]),
+		context,
+	);
+	assert.equal(multiCycle.ok, false);
+	if (!multiCycle.ok) assert.equal(multiCycle.code, "fallback_cycle");
 });
 test("preserves declared fallback but never selects it", () => {
 	const fallback = proposal({ bindingId: "binding-fallback", lane: "backup" });

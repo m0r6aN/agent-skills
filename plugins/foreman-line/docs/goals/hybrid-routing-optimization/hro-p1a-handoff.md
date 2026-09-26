@@ -17,7 +17,9 @@ receipt, dispatch, routing-policy, PMC, or RCM surface is touched.
 
 - Node `v24.19.0`; package dependencies installed with `npm ci --ignore-scripts
   --no-audit --no-fund --offline`.
-- `npm test`: 8 passed, 0 failed.
+- `npm test`: 14 focused tests passed, 0 failed after independent review
+  rework; the added cases cover hostile proxies, array shape, aggregate limits,
+  multi-node cycles, tuple collisions, all provenance fields, and mutation.
 - `npm run typecheck`: passed.
 - `npm run lint`: passed; 5 package files checked.
 - Unchanged routing-policy regression: 69 passed, 0 failed under Node 24.19.0.
@@ -39,8 +41,11 @@ receipt, dispatch, routing-policy, PMC, or RCM surface is touched.
   untracked HRO files in the original planning worktree. Only those newly
   created duplicates were removed after verification; the original planning
   records were preserved.
+- Review A/B requested changes to the original implementation; `b2b1060`
+  contains the bounded owned-graph parser repair and expanded coverage.
 - Local commits: `a60fa52` contains the package implementation;
   `7ac871e` contains the coordinator-ratified A1 spec amendment; the final
-  local CI/handoff commit contains the amended eleven-file parcel.
+  local CI/handoff commit is `2708c3d`; repair commit `b2b1060` is the current
+  review head.
 
 Independent architecture/risk reviews remain required before merge.
