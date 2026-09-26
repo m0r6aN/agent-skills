@@ -467,3 +467,55 @@ on reopen; after ledger reconciliation/before owner COMMIT stays blocked. The
 quarantined instance refuses, R1 cannot replay, and no third attempt exists.
 Source acceptance still requires two independent implementation reviews and all
 integration/remote gates; this disposition review is not either source approval.
+
+### Separate integration amendment: B1 reader and mutation audit enrollment
+
+The coordinator authorizes this narrow prerequisite under the user's blanket HRO
+and necessary PMC/RCM authority. Runtime implementation remains frozen at
+`e6b2956cc5dbed2abddfdf9989190406b59a44e4`, reconciled without source changes onto
+accepted main `71fd4895a60f90318b517818da14dea94b627fb0` at `81cf951`.
+This is a separate audit repair, not permission to suppress a failing detector.
+Two independent source reviews remain outstanding and are not replaced by it.
+
+Contract B: intent-custody.ts validates routingClass against the complete literal
+vocabulary. Under existing additive LOCKSTEP criterion, a new supported routing
+class requires this list to change: declare the exact file as a genuine reader,
+update the explicit ruling and exact expected reader/touch sets, and update only
+the registry DATA count/digest required by that precise additional path. Preserve
+all other declarations and sweep signals; do not weaken inventory detection.
+
+D19: enroll only the exact intent-custody.ts file's three guarded resolve(root)
+and six SQLite exec sites after independently verifying their actual ownership,
+values, control flow and counts. Reuse the accepted complete AST-plus-gap-token
+fingerprint mechanism; do not change its semantics. Pin complete direct owning
+functions, fixed schema, rejection guards, constructors/imports/protected bindings
+and every external owner/provenance reference context needed to establish these
+sites. Fixed pins derive only from the frozen B1 source. Missing/extra/renamed/
+nested/changed declarations, calls, guards or provenance fail all-or-nothing.
+No name/type/annotation/file blanket exemption, live-source learned baseline or
+generic sqlite/resolve waiver. Every unrelated detector and existing P2B/RCM pin
+remains effective. State honestly that this is bounded syntax, not dataflow or
+hostile-runtime integrity proof.
+
+Exact builder write envelope (five files, all plugin-relative):
+- verification/src/d19-audit.ts
+- verification/tests/pmc-intent-custody-audit.test.ts
+- contract-readers/src/registry-data.ts
+- contract-readers/tests/touch-set.test.ts
+- docs/goals/pi-model-configuration/pmc-p2b1-audit-repair.md
+
+All runtime files, existing verification tests, manifests/dependencies and other
+registries are read-only. Permanent real-audit mutation tests must cover every
+owner/site, guard polarity/unary operators/import type/declaration keywords,
+constructor/options/schema/SQL changes, external owner reassignment and shadowing,
+missing/extra sites, empty exact file and same-named owners elsewhere. Comments/
+whitespace and unrelated safe source changes must still pass. No mutation source
+is executed. Add genuine reader positive and undeclared-reader negative controls.
+Run RED/GREEN, full verification/contract-readers/mutation-scope tests plus affected
+typecheck/lint, actual-tree audit, frozen-runtime comparison and diff/scope checks.
+
+Builder must first inspect/restate this exact amendment and STOP without editing.
+Coordinator release follows Step 0. Local commit/frozen handoff only; no push,
+merge, provider calls, production SQLite/budget/config/credential operations.
+Two independent audit implementation reviews, combined source/audit verification
+and all remote checks remain required before acceptance.
