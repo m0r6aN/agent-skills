@@ -142,3 +142,17 @@ no errors). These checks do not invalidate the reproduced boundary defect. A's
 remaining independent review is still in progress. Production remains disabled;
 no live network or SDK dependency/configuration changes are authorized by repair.
 The accepted-main C reader enrollment must still be verified during integration.
+
+The second independent reviewer completes its request-changes verdict with a
+required AC8 coverage gap: registry-only tests construct terminal rows by hand,
+while the actual Pi composition reconciles only once. Retain same-proof replay
+through the actual SQLite ledger for known, unknown and no-send outcomes, plus
+tampered terminal state, amount, proof fields and timestamp refusal controls.
+A's TEMP/hro-d-review-a-ledger-replay.mts passes all three current real-ledger
+paths; root reran it successfully. This is missing permanent coverage, not a
+claimed runtime replay defect. A also verified 35/35 SDK pins, exact dependency
+versions, prior lockfile preservation and actual D19. No additional runtime defect.
+
+Repair envelope may include the existing pmc-owned-sender.test.ts alongside the
+parser, parser tests and this report; no other runtime/owner/dependency change.
+Native Luna is completing read-only Step0. Runtime edits still await release.
