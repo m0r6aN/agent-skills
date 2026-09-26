@@ -92,3 +92,18 @@ Two independent implementation source reviews, combined integration checks and
 remote CI remain required. The future production constructor and P4A broker
 composition must be implemented and reviewed separately; this offline fixture
 does not authenticate production authority or storage custody.
+
+## Independent source acceptance and separate audit gap
+
+Root and independent frontier D approve finalb63310141a81a07704e7ac644b4bcaf96889f264.
+Both checked corrected matching-target junction, unknown-field array preflight and
+exact/+1 JSON budget controls, with13 focused tests passing independently. Runtime
+remains208ca3c; D also reran typecheck and changed-test lint. Prior full369 dispatch
+and package checks remain scoped to208ca3c, before test-only repairb633101.
+
+Actual root D19 run fails exactly six SQLite.exec class-4 noninstances in this new
+owner. This is recorded as a failure, not omitted or waived. Root and independent
+frontier D approve audit-only amendmenta53f2af226a6cfd5c7d04266ef42665b776c48be;
+implementation needs genuine Step0 and explicit release. Existing runtime is
+frozen. Combined integration, actual audit acceptance and remote checks remain
+before merge. Source acceptance is offline only and does not admit production.
