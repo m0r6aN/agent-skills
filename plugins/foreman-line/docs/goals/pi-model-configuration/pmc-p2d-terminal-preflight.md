@@ -112,3 +112,63 @@ actually used. Initial P2D should therefore exclude tier variants and tier-speci
 slugs unless independently supported, and bind the chosen standard endpoint and
 fallback controls. Do not infer a discounted rate from a requested tier or model
 alias. This is a proposed constraint for review, not implemented behavior.
+## Concrete shaping follow-up and additional source pins
+
+2026-09-26: read-only inspection and official documentation research informed
+the [concrete draft](../../specs/active/PMC-P2D-openrouter-terminal-transport.md)
+and [composition notes](pmc-p2d-composition-notes.md). No source import, runtime
+session, provider inference, authenticated request or real credential access.
+
+The actual runtime can be constructed with explicit memory stores and a tokenless
+native provider; non-openrouter credential reads must THROW before ambient auth,
+not return undefined. Registration still performs a local refresh. The pinned
+remote catalog and Radius implementations return before network for allowNetwork
+false. Actual runtime tests must prove these source-derived reachability claims.
+The SDK also generates structured preamble/cwd system sections; the closed
+projection binds these explicitly rather than silently discarding them.
+
+Useful retained candidate is public L5 google/gemini-3.8-flash at low, from the
+already retained RCM v4 coverage/projection. It has no authenticated exact endpoint
+tariff, all-components billing ceiling, or activation proof from this shaping.
+Reasoning exclude does not remove reasoning cost. No initial production numeric
+reserve bound is invented. Integer-inexpressible raw account cost leaves the
+unchanged P2B reservation unknown; no rounding or exact-zero substitution.
+
+Paths below are relative to the installed source root recorded above. Both
+coding-agent and its nested pi-ai package report version 0.87.1. These hashes
+are inspection pins, not a runtime import or live-provider compatibility claim.
+
+| Source | SHA-256 |
+|---|---|
+| `package.json` | `627631b613ba4ca29eba8df793f5280fd20b19f01d73826e9ffda14c15def5dc` |
+| `dist/core/model-config.js` | `68c447ff2ef729331713e044dae41b7416dbafbf96c83773308e2eb9c3f86107` |
+| `dist/core/model-runtime.js` | `bae3c3feb7928c7702c3d98a3454660bee1647064dd449472fc6308c354fbc25` |
+| `dist/core/runtime-credentials.js` | `2bf389ca2b04bd4dcee56433ca845cd8d9d96d0ccf84d2d0e9ad2a5e3957bda1` |
+| `dist/core/remote-catalog-provider.js` | `789f462d9cd4a050267a2243d0a5a6fc34bdd0f948e40b7e6a8ac8cf1865c105` |
+| `dist/core/provider-attribution.js` | `da98e466cbaacad5d2ccdf6d37b650580e81691f2ebe7f3ca3fb04c62fc83a73` |
+| `dist/core/cache-warmer.js` | `9c4b000930d6d3c567073102f6b6a52660110bb0f79cf78dd72c4dd1ebc87fc0` |
+| `dist/core/agent-session.js` | `5ebfae51db5a900596145159428e7cb57d195af9d54a28f41d4ac8ff1bfd5729` |
+| `dist/core/agent-session.d.ts` | `ee0b9c2c2fefeef292c9da884b92c0fa5fce73f04bc834655720253d477f391d` |
+| `dist/core/system-prompt.js` | `c6b7bc71a76a7901a10bc89f0452508cb3be4bc112ae5f883e4edadc938080aa` |
+| `dist/core/extensions/loader.js` | `81106b07522aaf9197858c4679fecd7fbd23c346376d6e1f2cc3dd5294d543f4` |
+| `dist/core/extensions/loader.d.ts` | `85ebf448c25774878ab3c1e8bdd5ee9b3a47431e7ae9054c7d4174c0939622b4` |
+| `node_modules/@earendil-works/pi-ai/package.json` | `0422fc7227a158c3c843c1540edfff017d2103be33ee48b882e2ff9032a5f7d2` |
+| `node_modules/@earendil-works/pi-ai/dist/models.js` | `75fa33149fb608bc4a7b7a0586c8ca8f0024465d580091b0c426c0baf3fbc80a` |
+| `node_modules/@earendil-works/pi-ai/dist/models.d.ts` | `920a510c7a525d8188fb9abe4835713e19281a6c6948bbb6ab8814f076ac2cf1` |
+| `node_modules/@earendil-works/pi-ai/dist/models-store.d.ts` | `775c2f2d3f6d4a39d947818b593e034d7f5e90bc1f3524730bf41aed89a8fa60` |
+| `node_modules/@earendil-works/pi-ai/dist/types.d.ts` | `5e08c1db4740b95b7107d3c3540a6d0e414a82d9c75fab950150827c994e14a3` |
+| `node_modules/@earendil-works/pi-ai/dist/auth/types.d.ts` | `6358ddc2437eb24a0662b7e59b1b9205896689821eb0966821fb2131a0ebc2bd` |
+| `node_modules/@earendil-works/pi-ai/dist/auth/resolve.js` | `82ee45ecec319f59536759312a4de25313a8bb8cb7ce43db43d18edc10fef305` |
+| `node_modules/@earendil-works/pi-ai/dist/providers/radius.js` | `c50694f71a7cac5d15630b3d8c2e7dee830eb756b4296f899899e7729889969e` |
+| `node_modules/@earendil-works/pi-ai/dist/utils/event-stream.d.ts` | `5340224387a0b7c1413b4733e4b009faecc87f090b43658c470d53d0cf0e7c82` |
+| `node_modules/@earendil-works/pi-ai/dist/utils/diagnostics.d.ts` | `ca69c6883f6a82f8e87dd87b0d8f4ef8b643cafda20eaaaf1dffb633f4fc6ce6` |
+
+Additional final trace pins (pi-agent-core also 0.87.1):
+
+| Source | SHA-256 |
+|---|---|
+| `dist/core/settings-manager.js` | `5368b155ec26d88374cec9e66b8e588b5041a0fb0047414f70b34e13892c4f48` |
+| `node_modules/@earendil-works/pi-ai/dist/utils/text.js` | `95037d5b787075ffb951cdeaf3b93aeb89735d10b31b82e19d2921f505ac2b04` |
+| `node_modules/@earendil-works/pi-agent-core/package.json` | `26f991ea26187d52978c303811f32032c9fcdaec197d4dcf08d793bedffdb87c` |
+| `node_modules/@earendil-works/pi-agent-core/dist/agent.js` | `3a890712a7a02fc29754a2af61b758cba43eec97d289e446cd7e432ed0093085` |
+| `node_modules/@earendil-works/pi-agent-core/dist/agent-loop.js` | `75da7290cd348c070328de834a810503d00fd5ff1ea2cc204786fb498bd046df` |
