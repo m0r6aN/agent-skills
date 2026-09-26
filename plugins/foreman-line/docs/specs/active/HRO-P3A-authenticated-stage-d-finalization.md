@@ -671,3 +671,23 @@ the reproduced defects, then the complete mandatory control matrix, applicable
 package suites/typecheck/lint and honest audit status. The report must map each
 acceptance criterion to executed evidence, not count inspection as mutation proof.
 No runtime edit is released by this documentation commit alone.
+
+## P3A implementation repair release — 2026-09-26
+
+Root and independent frontier A approve compatibility amendmentdc18b925; the
+builder's genuine read-only repair Step0 has reproduced the blocking findings.
+Root releases R1–R7 correction in exactly the original five implementation/report
+files plus verification/tests/pipeline.test.ts. The appended narrow guard rule,
+not the proposed blanket file exclusion, is authoritative. Retain all existing
+production refusal and offline-only custody boundaries. No other owner, barrel,
+manifest, schema, dependency, profile or source path may change.
+
+Implement substantive defect RED then GREEN and the complete required acceptance
+matrix; each executed control must have reviewable evidence. Use actual owner
+contracts and transparent named calls. If another existing static/audit rule
+requires enrollment, report its exact failure and proposed ownership amendment;
+never concatenate identifiers, hide imports or waive a failing required audit.
+Matching-lock read-only dependency links remain allowed, never donor installs.
+Freeze a clean six-file repair/report commit and stop for two independent source
+reviews. Full package checks and honest audit results precede integration; fixture
+checks never establish production custody or completed HRO live acceptance.
