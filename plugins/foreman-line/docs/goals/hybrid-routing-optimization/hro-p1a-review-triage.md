@@ -31,4 +31,24 @@ Review B independently installed the package from its lockfile in a temporary
 directory using Node24.19.0 offline; tests, typecheck and lint passed. Package
 portability did not explain the semantic failures. Reviewers made no source edits.
 
+## Second independent review round
+
+Both fresh reviewers requested changes on repaired head
+`5e051437ba9a63c46d14c543e8d3198153f95137`. The original semantic failures
+are repaired, but one resource-preflight defect remains: array own-key enumeration
+occurs before the length ceiling is checked. A million-element dense array
+allocated approximately 66 MB merely to refuse; a 257-element proxy invoked its
+prohibited ownKeys trap before reading length. Review B also demonstrated child
+descriptor reads beyond the remaining shared visited-value capacity.
+
+Disposition: fix within the existing contract and eleven-file scope. Read the
+own length descriptor before array key enumeration; check known child counts
+before allocating/traversing children and remaining capacity before each next
+descriptor. Permanent sentinel tests must prove rejected operations are untouched,
+with exact/one-over binding, aggregate-string and visited-value boundary pairs.
+Both reviewers independently passed 14 package tests, 17 runner tests, typecheck
+and lint; those results do not clear the remaining finding. Neither edited code.
+The coordinator released Luna to restate and perform this narrow repair under
+existing authority. Both independent approvals remain required on the new head.
+
 Both final verdicts are request-changes. Review B additionally accepted 262,684 aggregate string units via independent per-argument budgets; this exceeds the 262,144 combined ceiling and is part of the accepted resource-limit repair. On 2026-09-26 the coordinator released Luna after its Step-0 restatement, with all findings accepted and no disputed reproductions. Original tests remain the minimum tripwire; semantic boundary additions are required.

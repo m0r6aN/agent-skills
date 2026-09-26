@@ -309,6 +309,18 @@ transformation and distinguish synthetic test success from production evidence.
 
 ## Evidence Required
 
+Independent contract review approved this draft on 2026-09-26 after reproducing
+the retained byte lengths/digests, six complete records plus Haiku's explicit
+refusal, rational price conversion, six acceptedSource fields, and the actual
+reader/projector's exact 24-hour boundary using synthetic endpoint authority.
+This is contract/evidence verification, not implementation or live approval.
+Before release, freeze accepted P1A and producer public types and record their
+barrel integration order. Implementation must reject unknown nested fields and
+unsupported profile/version literals. Negative source fixtures must be repinned
+independently where needed so they exercise semantic validation beyond the
+digest gate. Pretraversal, hostile-input, timestamp, rational-price and complete
+requested-inventory tests remain mandatory.
+
 Accepted mapping table/profile versions and retained source evidence; merged P1;
 P1A compatibility; coordinator-recorded barrel serialization; all checks and
 independent review. Real producer evidence must preserve incomplete identities
