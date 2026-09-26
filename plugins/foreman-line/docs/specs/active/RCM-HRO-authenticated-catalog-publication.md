@@ -886,7 +886,7 @@ completeness; modifying B1, C, D or E contracts; new receipts or production laun
 - [Catalog adapter](../../../routing-policy/src/catalog-eligibility-adapter.ts)
 - [Accepted source semantics](../../goals/routing-currency-and-merit/source-observation-amendment-20260926.md)
 - [Accepted extraction profile](../../goals/routing-currency-and-merit/openrouter-source-profile-20260926.md)
-- [C design](PMC-P2C-same-process-launch-controller.md)
+- [C design](../done/PMC-P2C-same-process-launch-controller.md)
 - [Official models reference](https://openrouter.ai/docs/api/api-reference/models/list-all-models-and-their-properties)
 - [Standing constraints](../../kickstarters/STANDING-CONSTRAINTS.md)
 
@@ -1028,3 +1028,46 @@ Guarded bridge and shared-engine tests must pair connect-then-close completion w
 early-close-without-connect permanent hold, including late error/lookup events that
 cannot manufacture socketConnected. These are synthetic event controls grounded in
 the pinned Node source, not claims of actual DNS execution or cancellation.
+
+## Checkpoint N combined string-budget clarification — 2026-09-26
+
+Root review of frozen source7c9003a identified an ambiguity in the structured
+capture limit. The 1 MiB UTF-8 aggregate is ONE per materializer invocation; scope
+capture and response parsing do not each replenish it. This is bounded accounting
+clarification, not a claim that the existing separate limits are unbounded.
+
+Charge the decoded UTF-8 byte lengths of all closed MaterializerInputV1 object
+keys, its profile/endpoint/domain and three timestamp string values, and each
+expanded requested identity's provider/id keys and string values. Repeated values
+are charged at every occurrence. Arrays do not add string index keys; booleans,
+numbers and structural JSON punctuation do not count toward this STRING budget.
+The bytes field's key is charged, but the raw byte buffer uses its separate8MiB
+limit. Seed raw response parsing with the already charged capture total, then
+charge every decoded response object key and string value to the same counter.
+Exact1,048,576 combined bytes is allowed, one more returns BOUNDS_REFUSED before
+retaining the excess decoded string. Existing per-string, depth/value, scope,
+body and schema limits still apply independently. Output copies/canonical artifacts
+retain their separate reviewed limits; they are not a second source-capture pass.
+
+Preserve the historical parser's default UTF-16 accounting and retained producer
+API/bytes. A narrowly scoped helper parameter may supply the initial raw UTF-8
+counter; no global mutable budget or duplicated parser. Tests must independently
+calculate closed-input overhead and pair exact/one-over combined scope+response
+cases, including two individually sub-limit captures whose sum exceeds1MiB.
+Existing tests that permit a full1MiB scope plus additional response strings must
+change to assert the combined bound, rather than preserving that interpretation.
+
+This paragraph records the root decision. Runtime repair remains stopped pending
+the builder's genuine read-only repair Step0 and an explicit repair release.
+Two independent final source reviews and combined integration remain required.
+## Checkpoint N repair release — 2026-09-26
+
+Root accepts the genuine read-only repair Step0 at4a7e599 from the reassigned
+frontier builder. Release exactly the existing producer, producer test and
+hro-rcm-materializer-verification.md for the combined-budget repair above; the
+raw fixture and all other sources remain frozen. Capture the independently
+calculated exact/one-over failure before code, then focused/full regression,
+typecheck/lint, actual D19 and source-preservation evidence. Freeze clean and stop.
+The repair author will not independently approve this source; root and a different
+frontier reviewer must complete final independent reviews before integration.
+No provider/network, dependency, configuration, push or merge operation is granted.

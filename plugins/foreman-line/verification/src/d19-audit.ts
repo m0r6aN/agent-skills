@@ -459,29 +459,27 @@ const GRANDFATHER_INVENTORY_PLUGIN_LITERAL_DIGEST =
  */
 const REGISTRY_DATA_FILE = 'contract-readers/src/registry-data.ts'
 const REGISTRY_DATA_DECLARATION_NAMES: ReadonlySet<string> = new Set(['contractA', 'contractB'])
-const REGISTRY_DATA_LITERAL_COUNT = 10
+const REGISTRY_DATA_LITERAL_COUNT = 11
 /** SHA-256 of JSON.stringify([...values].sort()) encoded as UTF-8. */
 const REGISTRY_DATA_LITERAL_DIGEST =
-  'dda1e79b0cfbf2767aef8eb37d67f235647e046fd52c98a53bdcd23809de748d'
+  '03adbbf53a4c30c42db51268b8749bea0c88217e633e1aedc570926202a13af6'
 
 /**
- * JEV-P1/P2 path values are custody-contract DATA, not filesystem roots.
+ * Retained JEV replay path values are custody-contract DATA, not filesystem roots.
  * They are pinned by exact source identity, declaration, direct-array location,
  * cardinality, and digest; a new or changed value therefore requires an
  * explicit coordinator amendment instead of silently joining the ruling.
  */
 const JEV_PATH_DATA_DECLARATIONS: ReadonlyMap<string, string> = new Map([
   ['jev-decisions/src/replay.ts', 'PATHS'],
-  ['jev-decisions/src/runtime.ts', 'CUSTODY_PATHS'],
 ])
 const JEV_PATH_DATA_COUNTS: ReadonlyMap<string, number> = new Map([
   ['jev-decisions/src/replay.ts', 10],
-  ['jev-decisions/src/runtime.ts', 3],
 ])
-const JEV_PATH_DATA_LITERAL_COUNT = 13
+const JEV_PATH_DATA_LITERAL_COUNT = 10
 /** SHA-256 of JSON.stringify([...values].sort()) encoded as UTF-8. */
 const JEV_PATH_DATA_LITERAL_DIGEST =
-  '0c6fe241efaa1d50b1cb8df1d37054fb8558090e176d1ef2b8e166e7badae83b'
+  '2f40b0bb22bd0a0c008e40b5340bddeb7b8c5f0c1af22c716a086cd0bdfc8d8b'
 
 /** Path-mention characters, checked without a RegExp (scaffold AC-14 bans regex use in src/). */
 function isPathMentionChar(ch: string): boolean {
@@ -660,7 +658,7 @@ function isRegistryReaderOrContractLiteral(node: Expression, sf: SourceFile): bo
 }
 
 /**
- * Only direct string elements of the two JEV custody-path declarations are
+ * Only direct string elements of the retained JEV replay PATHS declaration are
  * DATA. The declaration identity and direct array shape are part of the pin;
  * the caller's file identity check supplies the first axis and the digest
  * reconciliation below supplies the value/cardinality axes.

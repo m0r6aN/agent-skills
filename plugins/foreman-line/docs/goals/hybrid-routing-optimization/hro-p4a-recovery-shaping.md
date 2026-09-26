@@ -111,3 +111,24 @@ implemented by these clarifications.
 Repair validation passed: frozen spec-linter, required body sections, relative
 links and whitespace checks. The changed-file list remains exactly the two
 authorized documents; no runtime tests or production activity were performed.
+
+## Delegated design ratification — 2026-09-26
+
+The coordinator and independent hro_p1c_review_a reviewer approve repaired draft
+45b50e66be7d3a4a29519063aeae87c1270ce8b8. Coordinator independently inspected
+actual producer incomplete-scope behavior and B1 terminal eligibility/reopen;
+reviewer repeated frozen lint and exact-scope checks. Both original findings are
+closed; neither review claims runtime implementation or production readiness.
+
+Under the user's blanket goal authority and explicit PMC/RCM prerequisite grant,
+the coordinator adopts decisions1–5 above, including all proposed numerical
+bounds as conservative operational limits, not measured throughput guarantees.
+The one-participation budget survives negative eviction, version change and
+restart; existing B1 terminal reopen is distinct from broker restart permission.
+Only separately authenticated complete absence can populate negatives.
+
+This is design ratification only. Runtime Gate2 remains closed pending concrete
+publication/materialization and durable workflow-admission owner contracts,
+reviewed exact source envelopes, accepted C/D/P3 composition and fresh Step0.
+The publication prerequisite is being shaped separately; no source or provider
+activation follows from this record. Full HRO exit is unchanged.

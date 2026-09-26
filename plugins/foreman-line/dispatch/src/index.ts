@@ -36,6 +36,13 @@ export type {
 } from './kompress-adapter/index.js'
 export { KompressError, kompressContext } from './kompress-adapter/index.js'
 export type {
+  ControllerCode,
+  LaunchInputV1,
+  LaunchReceiptV1,
+  LaunchResultV1,
+  PmcLaunchControllerV1,
+} from './pmc-launch/controller-types.js'
+export type {
   CandidateRecord,
   DispatchIdentity,
   McpClientFactory,

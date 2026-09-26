@@ -148,3 +148,119 @@ A source-backed billing-bound gap prevents paid live activation. Vendor inquiry
 is prepared, not sent; user was asked whether existing contractual evidence is
 available. No credentials, host configuration, provider inference or spend used.
 Independent implementation continues while that evidence question is pending.
+
+## Coordinated continuation checkpoint — 2026-09-26, after PR63
+
+This checkpoint supersedes earlier continuation status without erasing history.
+PMC-P2B1 mergedPR63 as727c0554f11990da778e7647e7a108f3ca6f95aa at19:48:53Z,
+with two source, two audit and separate combined approvals plus all twelve remote
+checks green. StageF60e7c15 moves its spec to done. C design5764eba has two
+independent approvals, ratificationd260bf6 and fresh builder Step0; controller
+implementation releasedc55bd6d in its isolated worktree, exact five-file envelope.
+E/E1/E2 splitfe5a144 has two design approvals; E01–04 ratified7375c3b. Frontier
+E1 builder releasedb1b0add for explicit legacy executor retirement only, exact
+eight-file envelope. E2 and D runtime remain unreleased pending predecessors.
+
+Choice-cache dispositione5ae1c3 received two independent plan approvals and
+reproducibility replays. Charter reconciliation6d2d859 separately reviewed and
+approved; the specific SQLite choice cache is held/not implemented. Initial fresh
+selection and schema compilation reuse remain distinct, with zero choice-cache
+events. D8 negative caching and bounded refresh remain mandatory. Full latency/
+cost/quality and live smoke requirements are unchanged; no savings claimed.
+
+P1cb17f5b2 was held after independent discovery of double-charged ordinary alias
+roots and incomplete independent boundary assertions. Roottriage73fa8af and actual
+Luna Step0 preceded the current third narrow repair release. Prior HRO-token,
+producer/refusal, byte-budget and lint findings are closed; fresh final reviews
+still required. Same user-selected Luna, no silent model switch or goal completion.
+
+P3 receipt shapingaad7e77 found existing dispatch-tip and later fixed-sequence
+constraints; bounded workflow-session/measurement checkpoint design is being
+reconciled with actual D/E/F owners. A crash remains incomplete evidence, never
+zero spend. P4a recovery shaping is independently queued. All source work remains
+isolated; the original checkout is read-only. The user's blanket authority and
+explicit PMC/RCM prerequisite delegation continue to govern coordination.
+
+The live billing-bound evidence question is still pending. Prepared inquiryd98e176
+has not been sent. No provider inference, credentials, production funding, host
+configuration or release has occurred. Continue independent implementation while
+that external evidence is unresolved; do not report the full HRO goal complete.
+
+## Stage F — HRO-P1c accepted, 2026-09-26
+
+PR64 https://github.com/m0r6aN/agent-skills/pull/64 merged at20:33:04Z as
+ a11c9413c80961f09500984633c59ce7ca9ddf5a. Reviewed PR head was
+ aa17051fccb8432b45c959eec1707e2bfcb1ce07; all twelve remote checks completed
+ SUCCESS before exact-head merge. Two independent final source approvals cover
+7133eb21; separate combined approval/checks cover e499590 and documentation-only
+approval covers cae2e19. Final acceptance record aa17051 contains no source change.
+
+The P1c spec moved to done and its current shaping link follows it. This delivers
+bounded owner context assembly, not live launch authority. The separately approved
+choice-cache disposition is now on main: held/not implemented, mandatory D8 and
+full live measurement unchanged. Original dirty checkout was not touched.
+
+PMC C source d38b42d is frozen for two independent reviews:86 focused and442
+full dispatch tests pass; its genuine Contract B reader needs separate inventory
+and associated audit enrollment. E1 source2632 has both independent approvals;
+narrow retirement audit is being implemented separately. D/E2 runtime and actual
+production/measurement gates remain open. P3 owner contracts and authenticated
+catalog-publication designs remain under review; P4A repaired45b50e6 has two design
+approvals and delegated ratification3c6ca35, not runtime dispatch. Pending billing
+inquiry has not been sent; no provider/credential/configuration activity occurred.
+
+## Coordination checkpoint after PMC-P2E1 acceptance — 2026-09-26
+
+PR65 merged as3d1480efd7c4517b63d3f5c49b33a668ede58a56 after all twelve remote
+checks succeeded on92ab5bc. Legacy bypass execution is retired and explicitly
+refuses; pure APIs remain. C source93f8021 has two final approvals, with separate
+Contract B reader/audit enrollment343250e in progress. D's actual pinned-source
+Step0 requires portable dependency declarations, C-owned wire identity, stop-only
+completed output and private nonaccounting Pi totals; these are docs corrections
+before runtime release. E2 remains separate.
+
+P3A offline design53e92b35 is in fresh final review after root/workflow admission
+uniqueness was corrected. Production construction remains unconditionally refused.
+Authenticated catalog design d8b26d57 needs one final transport-cleanup acknowledgement
+clarification; full response completeness and cancellation ownership are otherwise
+reviewed. P4A1 durable bootstrap admission draft16ebc41 is under independent review.
+These records are progress, not authentic production claims or full goal completion.
+
+Live billing-bound evidence remains pending; prepared inquiry has not been sent.
+No provider inference, credential/configuration activity, fabricated telemetry or
+savings claim. Continue authorized independent work while the external evidence
+is unresolved. Original dirty checkout remains read-only.
+
+## PMC-P2C Stage F — 2026-09-26
+
+PR66 https://github.com/m0r6aN/agent-skills/pull/66 merged at21:45:21Z as
+ced19f9913079fd3dd7eff5a281d27ea2055a2e0 after all twelve remote checks succeeded
+on exact reviewed head6ac7e3c71581c316be15be650c6782b51da37bcb. Two independent
+source approvals cover93f8021; two reader/audit approvals cover57b7058; independent
+combined approval coversb704d87. Combined dispatch473, routing944, hybrid53,
+mutation44, readers72 and focused audit17 pass, with applicable typechecks/lints.
+Actual D19 passes21 packages/201 files with zero unruled instances. Full637
+verification evidence remains scoped to0eae3a1, before the test-only follow-up;
+this closure does not claim a fresh full-suite rerun.
+
+The C specification moves to done and the current inventory link follows it.
+The one-use controller and Contract B reader enrollment are accepted prerequisites.
+This does not supply production installation, tariff/all-components billing bounds,
+account authority, live Pi transport or measured HRO exit evidence. D runtime is
+released under amended design8a2a322 and root releasee56b756. E2 remains separate.
+P3A offline runtime, N materialization and P4A1 durable admission are released to
+builders; P publisher construction is being amended before implementation.
+No inference, credential read, production budget or host configuration change
+occurred. User delegation covers the necessary PMC/RCM prerequisite decisions.
+## RCM N integration checkpoint — 2026-09-26
+
+N materialization final runtime3a976f0 has two independent approvals after fixing
+combined structured capture accounting. Test-only escape correctiona257e50 has
+separate root review. Combinede67bb1f is independently approved:964 routing,
+53 hybrid,473 dispatch,72 readers,44 mutation,168 focused N and applicable
+checks pass (exact run scopes in hro-rcm-materializer-verification.md).
+P construction773daa5 has two design approvals and ratification7c10eee; no P
+runtime release yet. P3A8a76e738 and P4A193f54bd received independent change
+requests; explicit repairs34071db and8a64539 are active with Luna. D transport
+implementation remains active. Production custody, billing bound and full live
+measurement remain open; no inference/credentials/host configuration activity.
