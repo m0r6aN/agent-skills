@@ -114,3 +114,24 @@ Fresh Step0 inspect/restate/STOP before repair. Same original four-file envelope
 index need not change. No owner/runtime contract, manifests or dependency edits.
 Provide failing-before/passing-after evidence, complete package checks, exact scope
 and frozen local commit. Both final independent reviewers must inspect the repair.
+
+## Final source acceptance — 7133eb21, 2026-09-26
+
+Two independent source approvals: coordinator and hro_p1c_review_a. Both inspected
+actual source/contracts and ran all 53 hybrid tests, typecheck and full-package
+lint under Node 24.19.0. The reviewer additionally used TEMP-only mutations:
+halved/doubled node limits and restoration of alias double-charge were detected;
+the unmodified control passed. Neither reviewer changed source.
+
+The three-file repair charges the already-reserved alias root once while charging
+its expanded descendants. Arithmetic fixtures independently fix 131072/131073
+boundaries; hostile children preserve accessors/symbols and other invalid values.
+Call-count instrumentation distinguishes capture (0/0), projection (1/0), catalog
+(1/1) and successful traversal. Earlier genuine HRO substitution, retained-owner,
+byte ownership, byte-budget, refusal and provenance findings remain closed.
+
+Integration e499590fa059896d123fd97eefbef60ae5881941 merges accepted main727c055,
+B1 StageF60e7c15 and separately approved cache dispositionbf56c08. Runtime source
+has no merge conflict. Documentation conflicts retained historical checkpoints
+and the later superseding checkpoint. Separate combined review/checks are required
+before PR and merge; source approval does not waive them or the live HRO exit.
