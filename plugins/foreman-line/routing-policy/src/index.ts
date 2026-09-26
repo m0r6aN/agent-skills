@@ -44,6 +44,14 @@ export {
   piOpenRouterRoutingSchema,
   validatePiOpenRouterRouting,
 } from './pi-openrouter.js'
+export type {
+  ProviderBindingProjectionResult,
+  ProviderBindingProjectionV1,
+} from './provider-binding-projection.js'
+export {
+  projectProviderBindingsV1,
+  providerBindingProjectionV1Schema,
+} from './provider-binding-projection.js'
 export { PMC_LANE_POLICIES_V1, providerBindingPolicyV1Schema } from './provider-binding-schemas.js'
 export type {
   BindingEvidenceV1,
