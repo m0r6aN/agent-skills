@@ -21,13 +21,12 @@ verification_class: judgment-required
 Produce digest-bound, explicitly scoped canonical RCM snapshots from retained
 public metadata using reviewed exact extraction profiles. Every requested
 identity has either complete facts or a named refusal. No partial source is
-advertised as a full catalog. Draft only: actual field mappings await retained
-per-model source data and independent review before implementation dispatch.
+advertised as a full catalog. Draft only: the retained v4 field mapping is ratified; public API freeze and independent producer review remain prerequisites to implementation dispatch.
 
 ## Constraints
 
 Requires merged RCM-P1 and accepted P1A wrapper contract. No acquisition/network,
-inference, credentials, raw host documents, filesystem/config writes or policy
+unapproved inference, credentials, raw host documents, filesystem/config writes or policy
 changes inside the producer. Caller supplies bytes, evidence, requested IDs and
 time. Use Node 24.19.0 and existing dependencies. Scope at most 256 requested
 provider/ID pairs; no implicit model discovery or promotion. No changes to the
@@ -35,64 +34,234 @@ historical P1 spec/schema/reader/projector in this parcel.
 
 ## Contract
 
-Input: explicit requested provider/ID set; retained public response bytes or
-an allowlisted per-model projection; corresponding accepted source observation
-manifest; approved extraction-profile version; caller evaluation time. Every
-source contribution binds its exact acquisition URL, response digest/length,
-retained-projection digest if applicable, field locators, provider and profile.
-A hash of discarded response bytes plus aggregate coverage is insufficient.
-Keep execution endpoint/protocol observations distinct from approvedConfig;
-source evidence cannot authorize execution configuration.
+Draft API shape (not dispatchable until P1A wrapper/API freeze):
 
-Preserve original high-precision timestamps. For rcm-public-observation/v2,
-validate request-start <= complete-response-receipt <= evaluation time and
-successful parse; truncate complete-receipt UTC time conservatively to exact
-millisecond ISO for checkedAtUtc. The 24-hour bound measures observation age,
-not provider refresh or availability. providerDeclaredTime remains separate and
-unknown when absent. Never substitute HTTP Date, model created, host mtime,
-export time or another source's timestamp. Multiple contributing observations
-use the oldest contributing checked time for the affected provider; any unknown,
-stale, mismatched or malformed required contribution refuses that production.
+```typescript
+type Identity = Readonly<{ provider: string; id: string }>;
+type ProducerCandidate = Readonly<{
+  manifestBytes: Uint8Array;
+  projectionBytes: Uint8Array;
+  requestedIdentities: readonly Identity[];
+  evaluationTimeUtc: string;
+}>;
+type ProducerTrust = Readonly<{
+  profileId: 'openrouter-conservative-rcm-v1-intersection';
+  profileVersion: 'v2';
+  sourceEvidenceRef: string;
+  expectedManifestSha256: string;
+  expectedProjectionSha256: string;
+}>;
+type AcceptedSource = Readonly<{
+  profileId: string; profileVersion: string; canonicalSha256: string;
+  sourceEvidenceRef: string; sourceEvidenceSha256: string;
+  requestedIdentities: readonly Identity[];
+}>; // exactly the P1A closed object; no additional fields
+type InventoryStatus = 'complete' | 'absent' | 'missing-required-facts'
+  | 'source-invalid' | 'unsupported-profile';
+type InventoryCode = 'COMPLETE' | 'IDENTITY_ABSENT'
+  | 'REASONING_UNKNOWN_REFUSED' | 'REQUIRED_FACT_MISSING'
+  | 'SOURCE_INVALID' | 'UNSUPPORTED_PROFILE';
+type FactField = 'identity' | 'baseUrl' | 'api' | 'input' | 'reasoning'
+  | 'contextWindow' | 'maxTokens' | 'cost' | 'thinkingLevelMap';
+type InventoryEntry = Readonly<{
+  provider: string; id: string; status: InventoryStatus;
+  code: InventoryCode; fields: readonly FactField[];
+}>;
+type ProducerRefusalCode = 'INPUT_INVALID' | 'INPUT_LIMIT_EXCEEDED'
+  | 'DIGEST_MISMATCH' | 'UNSUPPORTED_PROFILE' | 'SOURCE_INVALID'
+  | 'OBSERVATION_TIME_REFUSED' | 'INCOMPLETE_SCOPE' | 'CANONICAL_READER_REFUSED';
+type ProductionResult =
+  | Readonly<{ ok: true; evidenceOnly: true; canonicalBytes: Uint8Array;
+      digestSha256: string; acceptedSource: AcceptedSource;
+      inventory: readonly InventoryEntry[]; sourceInventory: readonly InventoryEntry[] }>
+  | Readonly<{ ok: false; evidenceOnly: true; code: ProducerRefusalCode;
+      inventory: readonly InventoryEntry[]; sourceInventory: readonly InventoryEntry[] }>;
+declare function producePublicObservationSnapshot(candidate: unknown, trusted: unknown): ProductionResult;
+```
 
-Each requested identity receives one ordered inventory entry: complete, absent,
-missing-required-facts, source-invalid, or unsupported-profile, with bounded
-codes and field names only. Do not drop missing/held identities. Output is either
-{ok:true,canonicalBytes,digest,acceptedSource,inventory} when every requested
-identity is complete, or {ok:false,inventory} with no canonical success artifact.
-A caller can propose a new explicit smaller scope as a separate decision, never
-silently reduce the requested set. Unrequested source records are excluded by
-the recorded scope, not represented as absent from the upstream full catalog.
+Both arguments are runtime-validated closed objects. The coordinator supplies
+`trusted` separately from candidate bytes; a manifest's own digest/profile text
+cannot establish its acceptance. Copy trusted pins before inspecting candidate
+content. Hash each owned exact byte copy and compare with its independently
+accepted expected digest before decoding it. Verify manifest.sealedProjection
+sha256/byteLength also matches projection bytes. This nested link supplements,
+never replaces, the independent projection pin. `sourceEvidenceRef` names the
+versioned retained manifest; output snapshot.sourceRef and
+acceptedSource.sourceEvidenceRef equal that exact trusted reference;
+acceptedSource.sourceEvidenceSha256 equals expectedManifestSha256.
+The producer proves consistency with accepted evidence, not authenticity of a
+caller-provided trust object. Trust cannot be inferred from candidate input.
 
-Canonical output contains exactly the requested complete identities and their
-providers, preserving requested order. sourceRef binds the versioned manifest
-reference; acceptedSource carries its digest, profile/version, canonical digest,
-and exact requested coverage. Serialize UTF-8/no BOM, two-space JSON plus one LF,
-hash exact bytes, and validate through the sole RCM-P1 reader. No snapshot casts.
-Missing P1 required fields cannot become false, zero, empty lists or invented
-limits. Preserve explicit null/unknown facts only where P1 already permits them.
+Exactly one initial profile is supported: the pair above maps exactly to retained
+sourceProfile `openrouter-conservative-rcm-v1-intersection-v2`. Do not split,
+normalize or guess profile names. IDs/references are opaque case-sensitive strings;
+reject empty, whitespace-only or surrounding-whitespace strings. Requested scope
+is 1..256 unique provider/ID pairs, with collision-free tuple equality and original
+order. An OpenCode identity is unsupported-profile, never enriched from OpenRouter.
 
-Before parse cap each source at 8 MiB and aggregate retained bytes at 16 MiB;
-cap model records at 10000, providers at 256, field strings at 4096 characters,
-thinking-map entries at 64, graph depth at 16 and visited values at 262144.
-Return typed refusal on excess or malformed data; never truncate or log raw data.
-Closed reviewed source projections only; raw provider response profiles must
-explicitly describe allowed extraction, ignored fields, numeric units and null
-semantics before implementation. Never infer absent capability as unsupported
-or supported without an explicit provider-defined field meaning.
+For every structurally valid requested scope, inventory has one entry per identity
+in that exact order, including refusals. Only complete scope can return success.
+Source-wide invalidity marks every requested row source-invalid (or
+unsupported-profile for an unsupported accepted profile); malformed scope itself
+returns INPUT_INVALID and empty inventory because no valid scope exists. No failure
+variant contains canonicalBytes, digestSha256 or acceptedSource. sourceInventory
+accounts for the manifest's complete sourceScope.requestedIds, in manifest order,
+independently of requested subset. It is empty only when the source cannot be
+validated, and never claims upstream full-catalog coverage. Per-row fields contain
+only the finite FactField names, and complete rows have fields: []. No raw source
+values, exception text, endpoints or source prose appear in diagnostic fields.
+
+The seven-row OpenRouter scope therefore fails INCOMPLETE_SCOPE with six complete
+entries plus Haiku missing-required-facts/REASONING_UNKNOWN_REFUSED, fields:
+['reasoning']. A separately supplied six-row requested scope can succeed while its
+sourceInventory still records all seven. Do not derive that smaller scope from the
+six available rows. A missing requested OpenRouter identity is absent; an explicitly
+retained null projection is missing-required-facts, never absent or reasoning:false.
+The retained manifest's eight OpenCode binding rows remain unsupported by this
+profile and are accounted for if requested; they are not part of its seven-row
+sourceScope. Jev remains excluded and disabled; no optional L6 promotion occurs.
+
+### Retained evidence and closed shapes
+
+Initial reproducible inputs, relative to the RCM goal's source-evidence directory:
+
+- manifest: pmc-binding-coverage-openrouter-20260926-v4.json; SHA-256
+  e97f76bb303ac3b19aa8b327695beaf4e0a48c1fa78598d11c468f432f224562;
+  12,850 bytes. Its preserved internal evidenceVersion is
+  rcm-openrouter-pmc-binding-coverage-v3, despite the v4 filename. Do not rewrite it.
+- projection: openrouter-rcm-v1-conservative-projection-20260926.json; SHA-256
+  abb09a4078348433e6ebb9c84b2d7a6fe3f83ff4500977ef2de5ce913a384d96;
+  13,348 bytes; formatVersion rcm-openrouter-conservative-projection/v1.
+
+The manifest's closed root keys are evidenceVersion, status, generatedAtUtc,
+supersedes, sourceScope, ratifiedBindingSource, sealedProjection, mappingProfile,
+bindings, correctionMap, assessment. Projection's closed root keys are formatVersion,
+sourceProfile, sourceEndpoint, sourceResponseBytesSha256, sourceResponseByteLength,
+sourceResponseRun, rows, excludedRefusals, thinkingLevelSemantics. Nested closed key
+sets and tagged complete/refused binding variants are exactly those in these pinned
+artifacts; implementation must encode them explicitly, not accept arbitrary objects
+or cast parsed JSON. Existing historical status/proposal prose stays sealed evidence;
+only the separate profile decision supplies acceptance. No raw-fetch response shape
+or host converter is accepted by this initial API. Future evidence must retain this
+reviewed shape and use new separately accepted pins and original acquisition times.
+
+Validate the complete manifest and projection, not only requested rows. Require
+unique row/refusal identities; no overlap; all sourceScope identities accounted for
+exactly once across rows/excludedRefusals; counts and coverage agree. Require selected
+response run to exist uniquely, status 200, and its response digest/length to equal
+projection sourceResponseBytesSha256/sourceResponseByteLength and the sealedProjection
+sourceResponseSha256. Require exact acquisition endpoint
+https://openrouter.ai/api/v1/models and approved profile agreement throughout.
+Retained raw response digest is a custody link; discarded raw bytes cannot be
+recomputed or authenticated by this producer. Do not fetch them.
+
+### Field mapping, time and numeric semantics
+
+Closed complete rows contain provider, id, sourceRecordLocator, baseUrl, api,
+inputModalities, reasoning, contextWindow, maxTokens, cost, thinkingLevelMap,
+sourceProjectionCheckedAtUtc. Refusal rows contain provider, id, sourceRecordLocator,
+projectedRcmV1:null, refusalCode, reason; currently the only supported refusal is
+REASONING_UNKNOWN_REFUSED. Require exact retained locators as data; never execute
+locator text. Map complete rows to RCM facts as follows:
+
+| RCM field | Retained source and validation |
+| --- | --- |
+| provider, id | Exact row identity; no aliases or namespace replacement |
+| baseUrl, api | baseUrl.value and api.value, approved profile constants https://openrouter.ai/api/v1 and openai-completions; execution authority remains separate |
+| input | inputModalities.projected, exactly the ordered sourceValue intersection with text/image; residualSourceModalities preserves the complementary ordered source list |
+| reasoning | true only with nonempty reasoning.supportedEfforts and the explicit reviewed_profile_inference_from_nonempty_live_supported_efforts status; documentedPerModelSchema remains false |
+| contextWindow, maxTokens | Corresponding positive safe-integer value and exact context_length/top_provider.max_completion_tokens locators |
+| cost | input/output unit USD per 1M tokens and validated numeric value; retain sourceValuePerToken as evidence |
+| thinkingLevelMap | Exact observed max/xhigh/high/medium/low identity mapping, none -> off; omitted levels stay omitted, no minimal/default/clamping |
+
+Reasoning inference is expressly ratified profile behavior; it is neither a
+provider-documented catalog-field guarantee nor an unknown value. Empty/absent
+efforts are unknown/refusal. A fact map is not Pi config: omitted levels refuse
+and mandatory reasoning cannot become off. Provider capabilities beyond text/image
+remain residual evidence; intersection does not claim those capabilities absent.
+
+Validate sourceValuePerToken as a nonnegative plain decimal string (no exponent,
+sign or whitespace), with at most 64 digits total and 32 fractional digits. Parse
+its coefficient/scale exactly, multiply rationally by 1,000,000, and compare against
+the exact decimal rational of the retained JSON cost.value token before Number
+conversion. Never use binary floating-point multiplication as evidence equality.
+RCM v1 accepts finite numbers, not rationals: convert once with documented nearest
+IEEE-754 representation; reject overflow, nonzero underflow, and values whose
+serialized Number decimal does not preserve the validated decimal amount. Preserve
+the original string and exact evidence bytes; do not add rational fields to RCM v1.
+The current six rows satisfy this rule, including 0.75 and 3.75.
+
+Preserve original observedRequestStartedAtUtc/observedResponseReceivedAtUtc strings.
+Validate real UTC calendars with 1..9 fractional digits, compare without discarding
+submillisecond precision, and require start <= complete receipt <= evaluation time.
+Evaluation time is exact millisecond UTC ISO. Truncate selected complete receipt
+conservatively to milliseconds; verify the manifest canonical timestamps and each
+sourceProjectionCheckedAtUtc equal the corresponding truncations. Projection binds
+run 2, so checkedAtUtc is 2026-09-26T14:08:44.529Z for these artifacts, not the
+manifest generatedAtUtc. If multiple runs contribute, use their oldest receipt for
+the affected provider. Refuse future, unknown or age > 86,400,000 ms; equality passes.
+Age is observation age, never provider refresh or live availability. Preserve null
+providerDeclaredTime. HTTP Date, model creation, mtime, generation and another
+source's observation cannot replace receipt time. Successful retained projection
+parse and the accepted run declaration establish the retained-observation chain;
+no claim is made to reparse discarded raw response bytes.
+
+### Bounds, serialization and ownership
+
+Before byte copy/hash/decode, cap each genuine Uint8Array at 8 MiB and total at
+16 MiB, using internal byte lengths rather than caller properties or iteration;
+reject proxies, detached/shared or unsupported byte storage. Copy once. Before
+materializing unbounded JSON, enforce depth 16, 262,144 visited values including
+primitives, 4,096 UTF-16 units per string/key and 1,048,576 aggregate string/key
+units with a bounded token pass. Reject duplicate JSON keys, nonfinite numbers,
+extra keys, invalid encoding/BOM and trailing non-whitespace. Bounds precede each
+allocation/traversal; no truncation. Cap every array at 10,000 entries, source/model
+records at 10,000, requested identities/providers at 256, efforts/modalities/thinking
+map entries at 64; check each collection count before copying/walking its elements.
+Trusted/candidate plain object envelopes reject cycles, accessors, sparse arrays,
+extra index-like properties and throwing proxies. Read descriptors into owned
+snapshots once, index arrays explicitly, never caller iterators/methods/toJSON.
+Catch all hostile boundary failures as typed refusals without reading thrown values.
+
+Construct exactly {formatVersion:'rcm-catalog-snapshot/v1',sourceRef,providers,models}
+in that property order; providers follow first requested occurrence, models preserve
+requested order. Model keys follow the table, and thinking keys use the fixed order
+max,xhigh,high,medium,low,off restricted to observed keys. Cost side keys are unit,value.
+Serialize UTF-8/no BOM, two-space JSON and one LF, then hash exact canonical bytes.
+Pass bytes and digest through the sole readCatalogSnapshot; reader refusal becomes
+CANONICAL_READER_REFUSED, without forging a branded snapshot. acceptedSource contains
+only the P1A fields above; canonicalSha256 equals digestSha256 and requestedIdentities
+is an owned exact scope copy. P1A separately checks sourceRef/digest/scope and requires
+independent approvedConfig. This producer never invokes eligibility or supplies
+approvedConfig. Freeze owned plain results deeply; canonicalBytes is a fresh owned
+Uint8Array (typed-array elements cannot be frozen), with no retained mutable alias.
+Output-byte mutation cannot alter inputs, other calls or its already computed digest.
 
 ## Source Mapping Gate
 
-Current evidence only establishes that OpenCode machine lists supply IDs and
-that OpenRouter lists contain richer top-level structures. No real per-model
-projection or exact field-semantic mapping is approved by this draft.
-The source task must supply reproducible data and a mapping table for each P1
-field, including protocol, execution baseUrl, reasoning, input modalities,
-contextWindow, maxTokens, prices/units and thinking levels. Documentation-based
-fields need their own retained evidence/profile. ID-only OpenCode records remain
-missing-required-facts until evidence exists; no cross-provider enrichment.
-Coordinator records accepted profile versions before promoting this draft.
+The profile decision openrouter-source-profile-20260926.md ratifies the conservative
+v4 mapping, including reasoning inference and six-row scoped production. Independent
+review already converted all six rows through the actual RCM reader/projector with
+explicitly synthetic endpoint authority. This proves schema compatibility only; it
+is not live availability, source freshness at future evaluation time or execution
+permission. Dated evidence must naturally become stale; never reset its timestamps.
 
+This concrete shape remains draft pending accepted P1A public API/export freeze,
+serialized barrel edit order and independent producer-contract review. The profileId/
+profileVersion split and result envelope here are proposed public API choices to freeze
+with P1A, not a dispatched implementation. No raw provider parser, acquisition step,
+legacy export converter, OpenCode enrichment or schema change is authorized.
 ## Acceptance Criteria
+
+- Seven-row scope refuses with Haiku null/unknown; separately declared six-row
+  scope succeeds and retains the seven-row source inventory. Fifteen-row requests
+  additionally account for all eight unsupported OpenCode identities.
+- Independent pins reject self-pinning, swapped manifest/projection, changed source
+  digests/locators/counts and stale original observations; exact sourceRef and closed
+  acceptedSource fields interoperate with P1A without adding authority.
+- Test exact and one-over limits for bytes/counts/values/strings/depth, hostile
+  proxies/iterators/accessors, duplicate keys/tuples, deterministic ordering,
+  ownership, rational price mismatch and no false reasoning default.
 
 - Every requested identity appears exactly once in result inventory. Missing or
   incomplete records cause no canonical success artifact; scoped success never
@@ -122,6 +291,10 @@ fallback, receipts, cache, merge/release, and full HRO completion.
 
 ## Context & References
 
+- plugins/foreman-line/docs/goals/routing-currency-and-merit/openrouter-source-profile-20260926.md
+- plugins/foreman-line/docs/goals/routing-currency-and-merit/source-evidence/pmc-binding-coverage-openrouter-20260926-v4.json
+- plugins/foreman-line/docs/goals/routing-currency-and-merit/source-evidence/openrouter-rcm-v1-conservative-projection-20260926.json
+
 - plugins/foreman-line/docs/goals/routing-currency-and-merit/source-observation-amendment-20260926.md
 - plugins/foreman-line/docs/specs/active/RCM-P1A-sanitized-snapshot-adapter.md
 - plugins/foreman-line/docs/goals/routing-currency-and-merit/source-evidence/public-metadata-observation-20260926.json
@@ -136,6 +309,18 @@ transformation and distinguish synthetic test success from production evidence.
 
 ## Evidence Required
 
+Independent contract review approved this draft on 2026-09-26 after reproducing
+the retained byte lengths/digests, six complete records plus Haiku's explicit
+refusal, rational price conversion, six acceptedSource fields, and the actual
+reader/projector's exact 24-hour boundary using synthetic endpoint authority.
+This is contract/evidence verification, not implementation or live approval.
+Before release, freeze accepted P1A and producer public types and record their
+barrel integration order. Implementation must reject unknown nested fields and
+unsupported profile/version literals. Negative source fixtures must be repinned
+independently where needed so they exercise semantic validation beyond the
+digest gate. Pretraversal, hostile-input, timestamp, rational-price and complete
+requested-inventory tests remain mandatory.
+
 Accepted mapping table/profile versions and retained source evidence; merged P1;
 P1A compatibility; coordinator-recorded barrel serialization; all checks and
 independent review. Real producer evidence must preserve incomplete identities
@@ -148,6 +333,6 @@ preserves and retests prior exports. No shared reader/projector algorithm edits.
 
 ## Stop-and-Report Rule
 
-Remain draft until actual field mappings/data are reviewed. Stop affected work
+Remain draft until P1A wrapper/API freeze and independent producer review. Stop affected work
 for missing mandatory facts, unsupported source semantics, a required schema
 change, authority inference or a request for provider/config side effects.

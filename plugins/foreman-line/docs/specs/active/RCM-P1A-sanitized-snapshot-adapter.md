@@ -1,7 +1,7 @@
 ---
 ticket: RCM-P1A
 title: Supported bounded catalog eligibility wrapper
-status: draft
+status: active
 owner: clinton.morgan
 created: 2026-09-26
 updated: 2026-09-26
@@ -136,3 +136,7 @@ Typed stale/unknown refusal is expected behavior, not grounds for substitution.
 ## Independent shape review disposition
 
 The fresh review identified missing sourceRef binding. The exact closed acceptedSource fields and equality check above close that gap; negative coverage is mandatory. Source declarations remain trusted caller input, never authenticated by self-description. Coordinator accepts this correction; implementation release remains sequenced after PMC-P1a shared-barrel acceptance.
+
+## Coordinator Gate 2 and integration order
+
+Granted 2026-09-26 after independent contract review and sourceRef-binding correction. This wrapper depends only on merged RCM-P1 APIs, not new PMC APIs. Private isolated implementation may proceed alongside PMC-P1a; public-barrel integration remains serialized: accept/merge PMC-P1a first, then update this branch to that exact base, preserve all PMC exports and rerun checks/review the combined barrel before merge. No simultaneous edits occur in the same worktree. Builder workspace is D:/Repos/agent-skills-worktrees/hro-rcm-p1-integration-20260926, reused after its clean merged integration parcel, branch codex/hro-rcm-p1a-wrapper-20260926. Prior reviewed commits and original RCM builder worktree remain preserved. Step0 must confirm exact base/spec and four implementation paths before release. No provider/configuration/dispatch effect is authorized.

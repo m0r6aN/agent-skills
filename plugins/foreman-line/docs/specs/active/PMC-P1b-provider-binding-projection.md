@@ -113,7 +113,7 @@ receipt changes; live availability/quality evidence; legacy removal; goal exit.
 
 ## Context & References
 
-- [Accepted predecessor scope](PMC-P1a-provider-binding-contract.md)
+- [Accepted predecessor scope](../done/PMC-P1a-provider-binding-contract.md)
 - [Design, review fixes and inventory](../../goals/pi-model-configuration/pmc-p1-design-compatibility.md)
 - [PMC charter](../../goals/pi-model-configuration/charter.md)
 - [Ratified role map](../../goals/pi-model-configuration/pmc-p0-role-lane-map.md)
