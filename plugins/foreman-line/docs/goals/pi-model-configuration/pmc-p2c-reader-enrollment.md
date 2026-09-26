@@ -158,3 +158,20 @@ checks/tc/lint follow the test-only addition. No invented full rerun. Root logs:
 C:/Users/clint/AppData/Local/Temp/hro-c-root-enrollment-review-20260926.log,
 hro-c-root-readers-review-20260926.log and hro-c-root-actual-d19-20260926.log.
 Combined accepted-main/StageF integration, regression and remote checks remain.
+
+## Combined controller integration acceptance — 2026-09-26
+
+Independent combined reviewer APPROVEb704d8746f4857a0962fa756cb425156606abe31.
+Accepted E1/main and StageF integration is documentation-only relative to the
+approved controller/audit tree. Root combined dispatch473/473, typecheck and lint
+pass. Independent routing944, hybrid53 and mutation44 pass with each package's
+typecheck/lint. Actual D19 passes21 packages/201 files, DATA11/11 and all retained
+pins. Final reader72 and audit17 checks above remain applicable; no source change
+or repeated full637 result is invented. Active C spec lint, current local links,
+source-preservation and whitespace checks pass; no unresolved source/audit finding.
+
+This accepts controller composition and its syntactic reader/audit enrollment.
+The controller has no production transport or credential supplier implementation;
+synthetic offline controls do not establish authentic live inputs, a cost ceiling
+or executed inference. D/E2 and full HRO live/measured exit remain separate. Remote
+CI and exact reviewed-head merge still gate shipment.
