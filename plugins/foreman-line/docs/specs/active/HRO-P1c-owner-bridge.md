@@ -1,7 +1,7 @@
 ---
 ticket: HRO-P1C
 title: Evidence-only context assembly for the PMC owner resolver
-status: draft
+status: active
 owner: clinton.morgan
 created: 2026-09-26
 updated: 2026-09-26
@@ -24,7 +24,7 @@ governed caller and the original HRO execution/measurement exit remain open.
 
 ## Constraints
 
-Draft only: no implementation release. Gate 2 requires coordinator ratification,
+Reviewed contract: the scoped private build release is recorded below. Gate 2 requires coordinator ratification,
 exact file ownership, clean accepted base and independent design review. Standing
 constraints apply. PMC-P2A source at `725d74107642ecf510974f71d21c00bf6909f149`
 is the inspected base; coordinator reports its unchanged accepted integration
@@ -238,3 +238,22 @@ bounds enforced before expansion, including repeated aliases and byte ownership?
 Does every negative integration case reach its named real owner invariant? Does
 the future controller consumer remain explicitly unwired, and can the draft be
 implemented literally without adding a second resolver or a dispatch cycle?
+
+## Design acceptance and Gate 2 — 2026-09-26
+
+Coordinator accepts the independent design approval ofba3fbdb under the user's
+blanket HRO decision authority. One evidence-only context assembly is the smallest
+real RCM-to-PMC row/provenance translation seam; no second resolver or implicit
+validation/authorization promise. PMC-P2A is merged at4b86643, HRO-P1b at26c7269.
+This offline P1c library slice can build against those actual accepted exports;
+controller adoption and the original HRO runtime/measured exit remain open.
+
+Private build workspace D:/Repos/agent-skills-worktrees/hro-p1c-shaping-20260926,
+branch codex/hro-p1c-20260926; frozen shaping branch is retained. User-selected
+GPT-5.6-Luna high builds exactly the four Allowed Files, then returns tests and a
+local commit. Fresh actual-file Step0 and coordinator release are mandatory.
+No proposal-to-permit conversion, dependency/owner changes, host/provider effects,
+production wiring, push or merge. Two independent frontier implementation reviews,
+combined integration and full remote CI gate acceptance. Include contract-readers
+and mutation-scope/D19 among pre-PR checks when new code triggers their inventory;
+stop for a narrow amendment instead of weakening or evading them.

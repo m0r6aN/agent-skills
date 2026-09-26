@@ -113,3 +113,45 @@ Each has exact file authority, a fresh base handoff and two independent reviews.
 P2A is candidate-ready only after P1 acceptance and API freeze; all drafts remain
 non-dispatchable until their own readiness conditions are met. A fake transport
 pass cannot close P2D terminal coverage or P2E actual caller/activation evidence.
+
+
+## V8: explicit governed entry and durable intent custody — 2026-09-26
+
+Ratified by the HRO coordinator under the user's blanket decision authority and
+explicit necessary-PMC/RCM-prerequisite delegation. Independent concrete P2C design
+review at689f4e7 accepted these directions, contingent on the closure requirements
+recorded in pmc-p2c-composition-notes.md. No implementation or activation waiver.
+
+Initial governed execution accepts explicit pmc/v1 only. Preserve legacy v0
+selection semantics and evaluateRouting unchanged; v0 results remain evidence,
+never launch authority. This supersedes any earlier initial trusted-v0 launch
+adapter requirement. Unsupported versions and legacy L6/intent aliases refuse
+before Pi initialization/discovery/inference. P2E must supply an actual opt-in
+parcel/Pi caller; an unused export is not migration. Generic interactive Pi remains
+outside this boundary and cannot be claimed governed.
+
+Add the smallest separate durable workflow-intent custody prerequisite PMC-P2B1
+before P2C. Keep P2B's reviewed three-table budget schema and API unchanged.
+This owner authenticates pre-existing business intent, preissues episode/request
+identities through trusted setup, and durably claims once before reservation.
+Launch begin validates identities and digest; it never rewrites them. New UUIDs,
+payload changes, or episode names cannot create business authority.
+
+Store held/closed-refused records without fabricated selection fields; exclude
+those from P2A attempts but block resolver invocation/reopening. Project only
+fully authenticated selected prior attempts; current pending claim is excluded.
+Pending/uncertain/held states block, prior success or matrix fallback terminates,
+and only one authenticated primary no-send/failed-settled history may support the
+declared second attempt. No third attempt or automatic reset/recovery/expiry.
+
+Order remains claim, record selection/wire, reserve, consume, sole send, ledger
+reconciliation, owner finish. These stores are not one transaction. Lost ack,
+missing/corrupt storage or failed owner finish retains a blocking state; do not
+infer no-send/refund from absent receipts. Pre-reserve no-selection closure needs
+controller custody proving reservation was never invoked and returns null receipt.
+
+P2B1 exact schema, caps, proof ports, trusted setup, concurrent/restart behavior,
+file boundary and test matrix must be shaped and independently reviewed before
+Gate2. P2C requires actual accepted owner storage in durability tests, not a map.
+P2D's real payload/billing proof, restricted Pi construction and one-operation
+sender remain production gates. No live provider/model availability is implied.
