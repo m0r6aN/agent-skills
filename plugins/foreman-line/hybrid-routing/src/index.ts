@@ -13,3 +13,7 @@ export type {
 	ProposalProvenance,
 } from "./mapping-proposal.js";
 export { validateMappingProposal } from "./mapping-proposal.js";
+export {
+	type PmcOwnerContextAssemblyResultV1,
+	preparePmcOwnerContextV1,
+} from "./owner-context-bridge.js";
