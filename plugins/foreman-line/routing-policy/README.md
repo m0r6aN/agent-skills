@@ -475,3 +475,148 @@ and authority, never production availability evidence. Integration is serialized
 after PMC-P1a acceptance: preserve all PMC barrel exports on that exact merged
 base and rerun focused tests, full tests, typecheck, lint, spec validation and
 independent review before coordinator-authorized integration.
+
+## Public observation producer (RCM-P1B)
+
+`producePublicObservationSnapshot(candidate: unknown, trusted: unknown)` is a pure,
+offline transformation of separately accepted retained manifest/projection bytes.
+It does not fetch public metadata, inspect the host, read credentials, infer
+execution authority, write configuration, or invoke eligibility. The caller
+supplies `manifestBytes`, `projectionBytes`, `requestedIdentities` and
+`evaluationTimeUtc`. The separately supplied trust object contains exactly
+`profileId`, `profileVersion`, `sourceEvidenceRef`, `expectedManifestSha256` and
+`expectedProjectionSha256`. Candidate text cannot approve its own pins.
+
+The only supported pair is `openrouter-conservative-rcm-v1-intersection` / `v2`,
+mapping to retained `openrouter-conservative-rcm-v1-intersection-v2`. The trust
+object declares caller acceptance; neither a fabricated reference nor a matching
+hash authenticates the original acquisition. Historical proposal/version prose
+inside the retained evidence remains unchanged. Independent profile ratification
+is recorded in `docs/goals/routing-currency-and-merit/openrouter-source-profile-20260926.md`.
+
+The public types are `ProducerCandidate`, `ProducerTrust`, `InventoryStatus`,
+`InventoryCode`, `FactField`, `InventoryEntry`, `ProducerRefusalCode` and
+`ProductionResult`. Identity and accepted-source structures reuse the supported
+P1A `CatalogIdentity` and `AcceptedCatalogSource` types. The latter retains exactly
+its six fields. No reader/projector/schema ownership changes are introduced.
+
+Success returns `evidenceOnly: true`, exact canonical bytes and SHA-256,
+`acceptedSource`, requested `inventory` and complete retained `sourceInventory`.
+Every valid requested identity is accounted for in its original order. A scope
+that includes Haiku refuses `INCOMPLETE_SCOPE`: Haiku is
+`missing-required-facts` / `REASONING_UNKNOWN_REFUSED` with `fields: ['reasoning']`.
+It is never converted to `reasoning: false`. Fifteen-binding requests also report
+eight unsupported OpenCode identities. Only a separately declared six-row scope
+can succeed; its source inventory still contains all seven OpenRouter identities.
+No failure contains canonical bytes, digest or accepted-source fields. Malformed
+scope has no valid inventory. Source-wide errors mark every valid requested row
+invalid; unsupported accepted profiles mark every requested row unsupported.
+Jev remains outside the disabled optional L6 scope.
+
+The complete retained source is checked, including unrequested rows, nested closed
+shapes, counts, unique identities/runs, binding locators, response digest/length,
+the independent projection pin and the additional manifest-to-projection seal.
+Input modalities are an ordered text/image intersection with preserved residuals.
+Reasoning is the specifically reviewed nonempty-effort inference; omitted levels
+stay omitted, and exact `none` maps to `off`. These sparse facts are not Pi config.
+
+Prices compare decimal coefficient/scale values exactly before conversion. Source
+per-token strings permit at most 64 digits, including at most 32 fractional digits;
+the exact amount is multiplied by one million and compared to the original JSON
+number token. Conversion uses the nearest IEEE-754 representation only if its
+serialized decimal preserves that exact amount. Overflow, nonzero underflow and
+lossy decimal representations refuse. No rational fields are added to RCM v1.
+
+Integer facts and custody/count fields also validate the original decimal token
+before Number conversion. Trailing-zero normalization proves integrality; bounded
+exponent processing and at most 16 resulting digits precede an exact safe-range
+check. Mathematically integral decimal/exponent spellings remain valid, including
+the exact safe-integer maximum. Fractions that IEEE-754 would round to integers,
+overflow and nonzero underflow refuse.
+
+Original UTC observations with 1–9 fractional digits retain full precision for
+ordering. Canonical observation time truncates conservatively to milliseconds.
+The selected complete receipt—not HTTP Date, generation time, mtime or model
+creation time—sets `checkedAtUtc`. Equality at 86,400,000 milliseconds age passes;
+one millisecond older refuses. Provider-declared unknown time stays null. These
+dated observations naturally expire and must never be refreshed by rewriting time.
+
+Resource ceilings are 8 MiB per input / 16 MiB combined before byte copying,
+depth 16, 262,144 visited JSON values including primitives, 4,096 UTF-16 units
+per string/key and 1,048,576 aggregate string/key units per JSON document.
+Arrays/source collections cap at 10,000, requested identities at 256, and fact
+collections at 64. The bounded token parser enforces budgets while reading tokens,
+before allocating their values; duplicate keys, malformed encoding/BOM, malformed
+numbers and trailing data refuse. Plain envelopes have closed shallow shapes:
+unknown fields and arbitrary object graphs are rejected without traversal;
+identity descriptors are captured once, while expanded string occurrences still
+consume the scope budget. Cycles, accessors, sparse arrays, unsupported byte
+storage and caller iterators are never used as data. Unknown thrown values are
+contained by identity without inspecting their properties. As with P1A, a
+synchronous API cannot impose a deadline on caller-written proxy traps.
+
+Canonical output is two-space UTF-8 JSON without BOM, ending in one LF, with
+fixed field order and requested model order. Exact output bytes/digest pass through
+the sole `readCatalogSnapshot` before success. Plain output objects are deeply
+frozen. `canonicalBytes` is a fresh owned `Uint8Array`; its elements cannot be
+frozen, and caller mutation cannot alter source inputs, other calls, or the digest
+already computed. P1A must separately verify the source/digest/scope and requires
+independent `approvedConfig`. Producer success provides no execution permission,
+privacy assurance, budget, quality, availability or full-catalog claim.
+
+### Retained evidence reproduction and handoff
+
+The focused test reads the actual checked-in source evidence without rewriting it.
+Its explicit six-ID scope is GPT-6 Astra, Claude Opus 5.5, Claude Sonnet 5, GPT-5.6
+Sol, GPT-5.6 Terra and Gemini 3.8 Flash, using their exact retained OpenRouter IDs.
+The test's evaluation time is explicitly `2026-09-26T15:00:00.000Z`; wrapper
+interoperability uses clearly synthetic endpoint authority, never live permission.
+
+| Reproduced item | Exact result |
+| --- | --- |
+| v4 manifest bytes | 12,850 |
+| Manifest SHA-256 | `e97f76bb303ac3b19aa8b327695beaf4e0a48c1fa78598d11c468f432f224562` |
+| Projection bytes | 13,348 |
+| Projection SHA-256 | `abb09a4078348433e6ebb9c84b2d7a6fe3f83ff4500977ef2de5ce913a384d96` |
+| Selected observation | Run 2; `2026-09-26T14:08:44.5298097Z` |
+| Canonical observation | `2026-09-26T14:08:44.529Z` |
+| Canonical six-row bytes | 4,359 |
+| Canonical SHA-256 | `5901c16ed192870d53952375392710b514f37b18a5451da6c4a5966aa7e916bb` |
+| Requested/source inventory | 6 / 7; seven-row and fifteen-binding requests refuse |
+
+The canonical digest uses `sourceEvidenceRef` exactly
+`plugins/foreman-line/docs/goals/routing-currency-and-merit/source-evidence/pmc-binding-coverage-openrouter-20260926-v4.json`.
+The manifest still identifies its internal evidence version as v3. Discarded raw
+response bytes cannot be recomputed or authenticated by this producer. Haiku's
+reasoning and the eight OpenCode fact sets remain unresolved; synthetic wrapper
+success does not fill those gaps.
+
+Verification uses Node 24.19.0 and existing lockfiles installed offline. From this
+package run `node --import tsx --test tests/public-observation-producer.test.ts`,
+`npm test`, `npm run typecheck` and `npm run lint`. Negative evidence fixtures are
+independently repinned where needed to test semantic checks beyond the digest
+gate. Coverage includes exact/one-over resource limits, decimal precision,
+submillisecond time, full source validation, hostile storage/descriptors/proxies,
+ownership, missing authority and scope-preserving refusals. The unchanged active
+producer spec also passes the sibling spec-linter.
+
+Private-build verification after the integer repair: 148 focused tests and 646 full package tests passed;
+typecheck, lint, spec-linter and whitespace checks passed. Lint retains one
+pre-existing informational suggestion in `tests/catalog-snapshot.test.ts`.
+RED/GREEN evidence included the initially missing export, valid-scope accounting
+through malformed envelope fields, and contradictory coverage/binding counts.
+Integer repair adds 29 tests to the 119 focused/617 full baseline. Seven RED cases
+reproduced rounded fractions in context, max tokens, HTTP status, sealed byte
+length and requested count, plus a fraction near the safe maximum and a long
+fractional coefficient. GREEN coverage also preserves integral decimal/exponent
+encodings and exercises safe boundaries, long coefficients/exponents, overflow
+and underflow. The retained six-row canonical byte count and digest are unchanged.
+
+Private implementation base: `8217a585f35317bebe2d43cafb2ed29888b2d408`;
+frozen spec blob: `11fee5e09e1710edbe3ab41478750046126859f8`. Public barrel audit
+preserves all 75 prior exports and adds exactly eight types plus one function
+(84 total). Only the five parcel-allowed files change. Shared integration remains
+coordinator-owned: accepted PMC-P1a, merged RCM-P1A wrapper, PMC-P1b projection,
+then this producer. Preserve predecessor exports when rebasing and repeat all
+integration checks. Two independent frontier reviews remain required before
+integration; this private build does not authorize merge, push or deployment.
