@@ -29,3 +29,20 @@ follows accepted PMC-P1b. Two fresh independent frontier reviews must accept the
 repaired head before merge. Keep the six-row canonical result4,359bytes SHA256
 5901c16ed192870d53952375392710b514f37b18a5451da6c4a5966aa7e916bb unless a
 reviewed contract change is explicitly necessary; no such change is now needed.
+## Final independent approvals and integration
+
+Both fresh frontier reviewers approved d8dda8fbd9f13c1a877ed22d3171feaa2bd33a61
+with no actionable findings. Each independently passed148 focused/646 full tests,
+typecheck/lint and scope/whitespace checks. A passed76 additional repinned hostile
+numeric/time/ownership probes; B passed61 additional numeric probes, including
+200,000-digit tokens, and reran spec validation. Canonical4359 bytes and original
+5901c16e digest remain unchanged. Five original implementation paths and three
+repair paths are preserved; no reader/wrapper/schema mutation.
+
+Independent combined verification approved046b6a5a9e1f1cbfc1beb9cdc6b08380cd0d7fd3:
+653 tests,21 explicit parity tests,typecheck/lint/specs and exact88-export union
+passed. Component source/schema/tests/README, reader/wrapper/P1a and8 old schemas
+match their accepted blobs. PMC-P1b then merged as60a62b1 via PR57 after full green
+CI. Main merged into this integration branch atef70f3a with documentation only;
+routing-policy diff versus verified046b6a5 is empty. No redundant local rerun is
+claimed. Full remote twenty-package CI at this PR's final head remains required.
