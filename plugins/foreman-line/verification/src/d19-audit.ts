@@ -459,10 +459,10 @@ const GRANDFATHER_INVENTORY_PLUGIN_LITERAL_DIGEST =
  */
 const REGISTRY_DATA_FILE = 'contract-readers/src/registry-data.ts'
 const REGISTRY_DATA_DECLARATION_NAMES: ReadonlySet<string> = new Set(['contractA', 'contractB'])
-const REGISTRY_DATA_LITERAL_COUNT = 9
+const REGISTRY_DATA_LITERAL_COUNT = 10
 /** SHA-256 of JSON.stringify([...values].sort()) encoded as UTF-8. */
 const REGISTRY_DATA_LITERAL_DIGEST =
-  'd5a4c056a28824b3417e0dfa37e0191c437cc16a1fdc83dcd85ffa9467d565cd'
+  'dda1e79b0cfbf2767aef8eb37d67f235647e046fd52c98a53bdcd23809de748d'
 
 /**
  * JEV-P1/P2 path values are custody-contract DATA, not filesystem roots.
@@ -1306,9 +1306,194 @@ function pmcLedgerPins(sf: SourceFile, errors: string[]): Map<CallExpression, st
   return errors.length === startErrors ? calls : new Map()
 }
 
+// PMC-P2B1: fixed values from twice-approved 3f31181, runtime blob c2d967d.
+// This independently enrolled set shares only the accepted syntax fingerprint
+// algorithm above; ledger pins and their reconciliation remain unchanged.
+const PMC_INTENT_FILE = 'dispatch/src/pmc-launch/intent-custody.ts'
+const PMC_INTENT_OWNER_NAMES = new Set([
+  'path',
+  'settings',
+  'transaction',
+  'initializeIntentOwnerV1',
+  'connect',
+  'fail',
+  'io',
+  'nativeCode',
+  'rows',
+])
+const PMC_INTENT_VARIABLE_NAMES = new Set(['schema', 'FILE', 'FILE_LIMIT', 'initializing', 'codes'])
+const PMC_INTENT_DECLARATIONS = new Map<string, string>([
+  ['import:node:crypto', '820072253bb7efeaa79baed68ed217cc4b5a9c52755ce9892b0c6c28df7c4bbc'],
+  ['import:node:fs', '39f845d0506c0c5e178bead8ded5ec262bf3bd865bf59f0efc6dd09b394cf702'],
+  ['import:node:path', 'ba8a6b398f583f079b7c2f907171255995fd9aa65f366fb09beb92450b8f15fc'],
+  ['import:node:sqlite', '10dffce406a49a8a94305c6b842c5b70fea547e34c7f99e92f1f8efee2a894f2'],
+  ['import:node:url', '5153148ad1c2e7c5daff67d72a1dba70214a73023eb135e2482164ad1af1bf80'],
+  [
+    'import:../../../routing-policy/src/index.js',
+    'c13e8004d4586e7c1ecc0324a9b796f03e3c41e6abf60a80eb942052a3b0a674',
+  ],
+  [
+    'import:./intent-custody-types.js',
+    '3c9a12f1545ce1c68b0e1a475b1be43bfb5dc51997739519f40c852351eae5b8',
+  ],
+  ['FILE', 'ed15088c26d185d28f24979c5b0618d0be9ba6a0543d3eb05d57fc41b1c7a8c0'],
+  ['FILE_LIMIT', 'b8ced40540ace219187491c702f80f542309c6ee689fea69230c0fa8b864035d'],
+  ['codes', 'd10d1ef6447c633f25d40f78efca9d4604d266bcbaa406aee63372ed20fd67e4'],
+  ['fail', 'c937d8a9b2553adcd00d846f78b74c47540393d1f1141c1a2773c159567be08c'],
+  ['nativeCode', 'b0c2021adcba832c4906d0d4cfe781804816d6d3a1688599148dbec06c574a4e'],
+  ['io', '6e704de8187d16204bebd01e6e5ca53541a7f6fa59fe159331b5bbd3a2b4ee04'],
+  ['path', 'ada05197ae298e82e627bab94146961c77198c720efd81aad6e9cb1b5ad98949'],
+  ['schema', 'fbcee6c88749ad02a842eb2275b4bb4442e08c138ed70e50a479a34e245b7ec9'],
+  ['rows', 'f6257495e7d50fbc2780a264d501718236d493f150a413d0cfd73b6a598defdb'],
+  ['settings', 'a4cb7cdd298e11aa2c12f932ef9a334005f860f0ae03ccc92344a6e3c0641f0f'],
+  ['connect', 'f92de828fffac4189059a82c372ee243c085eceb003accd8ffef69c7bf4e01d3'],
+  ['transaction', '5b06d413abdd0dfadfe09e645b104d5440ad815f7885a5bfc5fc06829c2fa2b4'],
+  ['initializing', '81bcb9809da975297c4a3737189defd9238381e8dcc9856c6208dc05118352a5'],
+  ['initializeIntentOwnerV1', '56eb2d7de9b49a8980c725ac8c4b946bfb751e3b5787912784249b0d1002c97e'],
+])
+const PMC_INTENT_CALLS = new Map<string, readonly [string, string]>([
+  [
+    'path:0',
+    ['path/root-normalization', 'cda4bae7786987ef20f319acab4911fee95a2b7a03ad524a28172dc78c704729'],
+  ],
+  [
+    'path:1',
+    ['path/ancestor-start', 'cda4bae7786987ef20f319acab4911fee95a2b7a03ad524a28172dc78c704729'],
+  ],
+  [
+    'path:2',
+    [
+      'path/canonical-comparison',
+      'cda4bae7786987ef20f319acab4911fee95a2b7a03ad524a28172dc78c704729',
+    ],
+  ],
+  [
+    'settings:0',
+    ['settings/page-size', 'd3c9d937a6fd6eeb5d7acee81cd502dc9d3f9b94b600da6f883cde3e33442fef'],
+  ],
+  [
+    'settings:1',
+    ['settings/pragmas', '151c644889b5b2232f70c3f584291e6e8af0527568a412ba7450916476b8abdb'],
+  ],
+  [
+    'transaction:0',
+    ['transaction/begin', '111a02d7b2431c5dd45835f1f5997497cd4a62a7821d6b507f4c4d95e007b036'],
+  ],
+  [
+    'transaction:1',
+    ['transaction/commit', '79fba6428b2efa15bdc3b6dce08a3e58c3e3c05d8fd7830071f737291baed710'],
+  ],
+  [
+    'transaction:2',
+    ['transaction/rollback', 'a89ab9db5111a0c2755290a8edcff23f10559ba805a64a316810451dd457ba9b'],
+  ],
+  [
+    'initializeIntentOwnerV1:0',
+    ['initialize/schema', '395518982624315c4d8cdd88c9a01b2121e74095c1feee58776342a04534fbc9'],
+  ],
+])
+const PMC_INTENT_PROVENANCE_NAMES = new Set([
+  ...PMC_INTENT_OWNER_NAMES,
+  ...PMC_INTENT_VARIABLE_NAMES,
+  'DatabaseSync',
+  'randomUUID',
+  'isAbsolute',
+  'resolve',
+  'lstatSync',
+  'normalize',
+  'parse',
+  'dirname',
+  'join',
+  'realpathSync',
+  'pathToFileURL',
+  'closeSync',
+  'openSync',
+  'readdirSync',
+])
+const PMC_INTENT_REFERENCE_DIGEST =
+  '979e0f608d80579f8ee5cfc654244a9e6738bcc684ec9a845b83613500b4e294'
+
+function pmcIntentPins(sf: SourceFile, errors: string[]): Map<CallExpression, string> {
+  const selected = new Set<Node>()
+  const counts = new Map<string, number>()
+  const calls = new Map<CallExpression, string>()
+  const callCounts = new Map<string, number>()
+  const fingerprint = (node: Node): string => pmcDigest(pmcAstValue(node, sf))
+  const startErrors = errors.length
+  for (const node of sf.statements) {
+    const key =
+      isFunctionDeclaration(node) && node.name && PMC_INTENT_OWNER_NAMES.has(node.name.text)
+        ? node.name.text
+        : isImportDeclaration(node) && isStringLiteral(node.moduleSpecifier)
+          ? `import:${node.moduleSpecifier.text}`
+          : isVariableStatement(node)
+            ? (node.declarationList.declarations
+                .map((declaration) => (isIdentifier(declaration.name) ? declaration.name.text : ''))
+                .find((name) => PMC_INTENT_VARIABLE_NAMES.has(name)) ?? null)
+            : null
+    if (key === null) continue
+    selected.add(node)
+    counts.set(key, (counts.get(key) ?? 0) + 1)
+    if (fingerprint(node) !== PMC_INTENT_DECLARATIONS.get(key))
+      errors.push(`PMC intent custody declaration fingerprint: ${key}`)
+    if (!isFunctionDeclaration(node)) continue
+    let ordinal = 0
+    const visit = (child: Node): void => {
+      if (
+        isCallExpression(child) &&
+        (calleeName(child) === 'resolve' || calleeName(child) === 'exec')
+      ) {
+        const callKey = `${key}:${ordinal++}`
+        const expected = PMC_INTENT_CALLS.get(callKey)
+        callCounts.set(callKey, (callCounts.get(callKey) ?? 0) + 1)
+        if (!expected || fingerprint(child) !== expected[1])
+          errors.push(`PMC intent custody call fingerprint: ${callKey}`)
+        else calls.set(child, expected[0])
+      }
+      child.forEachChild(visit)
+    }
+    node.forEachChild(visit)
+  }
+  for (const key of PMC_INTENT_DECLARATIONS.keys()) {
+    if (counts.get(key) !== 1)
+      errors.push(
+        'PMC intent custody declaration cardinality: ' +
+          key +
+          '; expected 1, observed ' +
+          (counts.get(key) ?? 0),
+      )
+  }
+  for (const key of PMC_INTENT_CALLS.keys()) {
+    if (callCounts.get(key) !== 1)
+      errors.push(
+        'PMC intent custody call cardinality: ' +
+          key +
+          '; expected 1, observed ' +
+          (callCounts.get(key) ?? 0),
+      )
+  }
+  // References outside the complete pinned owners/imports/schema are also pinned.
+  // Additional assignments or shadow bindings cannot silently change their provenance.
+  const references: unknown[] = []
+  const visitReferences = (node: Node, ancestors: readonly number[]): void => {
+    if (selected.has(node)) return
+    if (isIdentifier(node) && PMC_INTENT_PROVENANCE_NAMES.has(node.text)) {
+      references.push([ancestors, fingerprint(node.parent)])
+    }
+    node.forEachChild((child) => visitReferences(child, [...ancestors, node.kind]))
+  }
+  visitReferences(sf, [])
+  if (pmcDigest(references) !== PMC_INTENT_REFERENCE_DIGEST)
+    errors.push('PMC intent custody external reference provenance fingerprint')
+  // Enrollment is all-or-nothing; reconciliation still runs when owners/sites disappear.
+  return errors.length === startErrors ? calls : new Map()
+}
+
 // ─── Per-file sweep ──────────────────────────────────────────────────────────
 
 interface SweepSink {
+  readonly pmcIntentErrors: string[]
+  readonly pmcIntentSites: (Site & { role: string })[]
   readonly pmcErrors: string[]
   readonly pmcSites: (Site & { role: string })[]
   readonly violations: Finding[]
@@ -1350,7 +1535,11 @@ function sweepFile(
   const regexBindings = collectRegexBindings(sf)
   const hasCwdImport = importsProcessCwd(sf)
   const pmcPins =
-    rel === PMC_LEDGER_FILE ? pmcLedgerPins(sf, sink.pmcErrors) : new Map<CallExpression, string>()
+    rel === PMC_LEDGER_FILE
+      ? pmcLedgerPins(sf, sink.pmcErrors)
+      : rel === PMC_INTENT_FILE
+        ? pmcIntentPins(sf, sink.pmcIntentErrors)
+        : new Map<CallExpression, string>()
 
   const site = (node: Node): Site => {
     const { line } = sf.getLineAndCharacterOfPosition(node.getStart(sf))
@@ -1504,7 +1693,8 @@ function sweepFile(
     }
   }
 
-  for (const [call, role] of pmcPins) sink.pmcSites.push({ ...site(call), role })
+  for (const [call, role] of pmcPins)
+    (rel === PMC_INTENT_FILE ? sink.pmcIntentSites : sink.pmcSites).push({ ...site(call), role })
 
   const e1SeenPerFile = { count: 0 }
   const e4Handled = new Set<number>()
@@ -1844,6 +2034,8 @@ function main(argv: readonly string[]): number {
   }
 
   const sink: SweepSink = {
+    pmcIntentErrors: [],
+    pmcIntentSites: [],
     pmcErrors: [],
     pmcSites: [],
     violations: [],
@@ -1938,7 +2130,12 @@ function main(argv: readonly string[]): number {
   // count per pinned file and FAILS on mismatch, over or under, whenever the
   // pinned file was actually swept. A pinned file absent from the tree (a
   // synthetic fixture) leaves that pin vacuous, not failed. ──
-  const pinMismatches: string[] = [...sink.pmcErrors]
+  const pinMismatches: string[] = [...sink.pmcErrors, ...sink.pmcIntentErrors]
+  const pmcIntentExpected = sink.sweptFiles.has(PMC_INTENT_FILE) ? PMC_INTENT_CALLS.size : 0
+  if (sink.pmcIntentSites.length !== pmcIntentExpected)
+    pinMismatches.push(
+      `PMC intent custody site cardinality: expected ${pmcIntentExpected}, observed ${sink.pmcIntentSites.length}`,
+    )
   const pmcExpected = sink.sweptFiles.has(PMC_LEDGER_FILE) ? PMC_CALLS.size : 0
   if (sink.pmcSites.length !== pmcExpected)
     pinMismatches.push(
@@ -2094,6 +2291,11 @@ function main(argv: readonly string[]): number {
   console.log('ENUMERATED EXCEPTIONS (reported while passing — lesson #41/#42):')
   console.log(`PMC ledger: ${sink.pmcSites.length} observed; expected ${pmcExpected}`)
   for (const site of sink.pmcSites)
+    console.log(`  ${site.role}: ${site.file}:${site.line}: ${site.text}`)
+  console.log(
+    `PMC intent custody: ${sink.pmcIntentSites.length} observed; expected ${pmcIntentExpected}`,
+  )
+  for (const site of sink.pmcIntentSites)
     console.log(`  ${site.role}: ${site.file}:${site.line}: ${site.text}`)
   console.log(
     '  disposition: exact reviewed guarded-root and SQLite calls; AST owners, import/connection/reference provenance and call roles/counts pinned. Syntactic only; no general dataflow or runtime integrity claim.',
