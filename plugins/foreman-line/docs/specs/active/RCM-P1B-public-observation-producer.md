@@ -10,6 +10,7 @@ superseded_by: null
 risk: elevated
 surfaces:
   - plugins/foreman-line/routing-policy/
+  - plugins/foreman-line/verification/
 routing_class: architecture/risk
 permission_profile: builder-architecture
 data_classification: internal
