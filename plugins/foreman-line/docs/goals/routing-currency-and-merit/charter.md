@@ -400,6 +400,25 @@ correction, no provider spend, and no network or credential access.
    here. The child goal keeps its own owner, gates, and queue, and this goal takes no
    action on it.
 
+## Version-boundary amendment — accepted prerequisite review, 2026-09-26
+
+Under the user's authorized prerequisite work, the coordinator accepted the
+independent PMC-P2 review and recorded the boundary before PMC-P2A dispatch.
+[PMC Amendment 05](../pi-model-configuration/gate-1-amendment-05.md) V1 governs:
+
+- D3/D4 remain unchanged for legacy v0: classification/capability filtering and
+  declared tier order, with no runtime sort or price ranking.
+- Explicit PMC v1 uses the ratified PMC lane/rubric ranking including L5 price
+  ordering. This version-scoped exception does not migrate v0, alter historical
+  fixture identities, allow cross-version fallback, or create an HRO resolver.
+- D1/D10/D11/D13 remain binding on policy authority, offline fresh catalog facts
+  and exact endpoints. Unknown facts refuse; live network catalog lookup remains
+  prohibited in dispatch. Disabled L6 refuses across both governed launch paths.
+
+This is a documented implementation-boundary amendment, not acceptance of stale
+P0 evidence, activation, host mutation, parcel closure or a relaxation of HRO's
+full live exit. Historical gate records below retain their original scope.
+
 ## Bounded Gate 3 record
 
 **GRANTED 2026-09-20 by Clinton Morgan:** “I explicitly grant Gate 3 for the bounded
