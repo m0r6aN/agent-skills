@@ -1,7 +1,7 @@
 ---
 ticket: HRO-P4A1
 title: Durable admission for bounded recovery bootstrap
-status: draft
+status: active
 owner: clinton.morgan
 created: 2026-09-26
 updated: 2026-09-26
@@ -9,6 +9,7 @@ supersedes: null
 superseded_by: null
 risk: critical
 surfaces:
+  - plugins/foreman-line/dispatch/
   - plugins/foreman-line/docs/
 routing_class: architecture/risk
 permission_profile: builder-architecture
@@ -263,3 +264,55 @@ commit checks for this release. Future runtime checks require actual temporary
 SQLite stores, isolated process races/faults, source-preservation checks, dispatch
 tests/typecheck/lint and actual audit enrollment through its separate owner if
 required. Never suppress scanners or claim synthetic authority is production proof.
+
+## Offline implementation release and Step0 dispositions — 2026-09-26
+
+Luna completed actual read-only Step0 and stopped at48aab911484722a47ea2291e8a26fdb9fafd904f,
+checking the real B1 initialization/SQLite/refusal and test seams. Design16ebc41
+has two independent frontier approvals and ratification48aab91. Root accepts Step0
+and releases exactly the five new implementation paths above under delegated goal
+and prerequisite authority. Earlier docs-only wording remains historical only for
+this offline slice; production remains unconditional PREREQUISITE_UNAVAILABLE.
+
+The seven implementation questions are disposed as follows:
+
+1. Literal SQL spelling/order is an implementation choice within the already frozen
+   exact two STRICT tables, names, columns, types, constraints and no-extra-schema
+   contract. Freeze it in the implementation and independently inspect actual
+   sqlite_schema/PRAGMA results and malformed-schema fixtures. Only expected implicit
+   primary/unique indices are allowed; cross-column request-ID uniqueness is checked.
+2. The root already exists. Test installation creates its fresh temporary directory
+   before calling the factory. The admission owner never creates caller directories.
+3. The 256-KiB limit is UTF-8 bytes of the closed owned JSON representation for input
+   and registration separately, including keys, punctuation and escapes. Charge
+   incrementally before expansion; aliases count as expanded JSON. Individual
+   ordinary/payload/path UTF-16 and depth/node limits also apply independently.
+4. Preserve B1 COMMIT_UNCERTAIN, IO_FAILED, BUSY and PATH_REFUSED as the corresponding
+   new codes. Map its STORAGE_INVALID, STORAGE_MISSING, IDENTITY_MISMATCH and
+   SETTINGS_REFUSED to STORAGE_INVALID; other B1 denials map to B1_REFUSED. Existing
+   B1 ALREADY_EXISTS alone does not prove successful recovery admission. New owner's
+   own prevalidation uses its declared INPUT/BOUNDS/PATH codes. Any possibly mutated
+   or uncertain failure still withholds capability and preserves artifacts.
+5. Test-only DatabaseSync prototype fault instrumentation is permitted in isolated
+   child processes, restored/contained without a production port or mode switch.
+   Preserve genuine after-COMMIT versus before-COMMIT outcomes; do not relabel a
+   native owner's returned uncertainty code or infer rollback from a thrown call.
+6. Reserve the bounded local slot synchronously after prevalidation and before B1
+   invocation; at32 retained successful/uncertain reservations return BOUNDS_REFUSED
+   before invoking B1 or writing. Failures after that invocation retain a held slot;
+   invalid prevalidation does not allocate. Derive canonical root identity from
+   actual bigint dev/file identifiers, with the exact B1 workflow ID as tuple key;
+   path aliases cannot split admission. No floats, caller identity override or
+   delimiter-collision key. Refuse unsupported/zero file identity. Existing fixed
+   B1/store exclusivity still denies any alternate workflow in the same used root.
+7. Offline fixture ownership is the explicit trusted test-installation assumption,
+   backed by actual path confinement/no-reparse checks and the harness's created
+   directory. A matching name alone is not production ownership/authentication.
+   Ordinary production task input has no route to the offline constructor; private
+   module import compromise is outside the cooperative boundary. Report this limit.
+
+Preserve genuine RED/GREEN, actual B1/SQLite/process-race/fault/R2 controls, all
+bounds and source preservation. No existing owner/schema/barrel/dependency edits,
+provider/Pi/credential/configuration effects or public factory/mint. Freeze a clean
+five-file source/report handoff and stop for two independent source reviews;
+combined integration, relevant package checks and remote CI still gate merge.
