@@ -219,3 +219,20 @@ The production constructor still refuses before reading its input. This is a
 builder handoff, not independent approval; root and a different frontier reviewer
 must review the frozen repair before integration. Existing activation limitations
 and live-proof gates above remain in force.
+
+## Root repair review — 7621fa204dea2bce03ca7f1512fafd9a84932c6f
+
+Root approves the three-file repair after reviewing the shared-history and two-phase
+fault-latch changes and all new tests. Root independently ran 74 focused tests,
+dispatch typecheck and changed-file lint successfully. The three original rollback
+probes, adapted only to allow the now-correct pre-open refusal, each return
+INSTALLATION_REFUSED at the first rollback instead of publishing generation 1.
+Probe copies: TEMP/hro-p-clock-review-root-fixed.mjs,
+hro-p-clock-mono-review-root-fixed.mjs and hro-p-clock-utc-review-root-fixed.mjs.
+
+All unsettled live outcomes are fixed before timer-clear/abort callbacks run.
+Already settled outcomes remain unchanged; running operations retain capacity
+until original transport cleanup settles. The independent native factory and
+predecessors are unchanged. Root log: TEMP/hro-p-root-repair-focused.log.
+Independent frontier D review, combined-main checks and remote acceptance remain
+required. This is source acceptance by one reviewer, not production readiness.
