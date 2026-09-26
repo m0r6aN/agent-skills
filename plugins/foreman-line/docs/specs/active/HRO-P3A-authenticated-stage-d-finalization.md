@@ -1,7 +1,7 @@
 ---
 ticket: HRO-P3A
 title: Authenticated measured Stage D finalization
-status: draft
+status: active
 owner: clinton.morgan
 created: 2026-09-26
 updated: 2026-09-26
@@ -9,6 +9,8 @@ supersedes: null
 superseded_by: null
 risk: critical
 surfaces:
+  - plugins/foreman-line/receipts/
+  - plugins/foreman-line/verification/
   - plugins/foreman-line/docs/
 routing_class: architecture/risk
 permission_profile: builder-architecture
@@ -615,3 +617,23 @@ links, inspect the exact two-document repair diff. Independent reviewers must tr
 validly hashed forged pass and complete-looking but omitted expected review.
 Runtime acceptance requires actual owner composition and refusal-stage assertions;
 isolated fixture success is not production authentication or P3 completion.
+
+## Offline implementation release — 2026-09-26
+
+Luna completed genuine read-only Step0 and stopped at53e92b35, inspecting actual
+owner seams, exclusive final-write requirements and the exact five-file plan.
+Design53e92b35 has independent coordinator/PMC approvals and ratificationea8a9ef.
+Root accepts Step0 and explicitly releases exactly the five new implementation
+paths enumerated above, under delegated goal authority. This supersedes the earlier
+docs-only and nondispatchable wording solely for this OFFLINE slice.
+
+Use actual owner functions, private dependency-neutral registry, genuine temporary
+filesystem/receipt effects and fixed network-incapable fixture adapters. Production
+constructor remains unconditional PREREQUISITE_UNAVAILABLE before any input read
+or effect. No existing owner/barrel/schema/manifest/dependency edits. Independently
+fixed expected fixtures, full receipt payload/hash checks, canonical-chain admission
+and numerical/hostile/race/fault controls are mandatory. Record genuine RED and
+GREEN, applicable package regression/typecheck/lint and exact source preservation.
+Freeze a clean source/report handoff and stop for two independent source reviews;
+combined integration and remote checks still precede merge. No provider, credentials,
+configuration, actual Jira or production activation is authorized by this release.
