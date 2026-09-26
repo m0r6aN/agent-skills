@@ -155,6 +155,7 @@ import {
   isVariableDeclarationList,
   isVariableStatement,
 } from 'typescript/unstable/ast/is'
+import { createScanner } from 'typescript/unstable/ast/scanner'
 import { API } from 'typescript/unstable/sync'
 import { RATIFIED_PACKAGES } from './ratified-packages.js'
 
@@ -1093,9 +1094,223 @@ function crossPackageSrcSpecifier(spec: string, ownPkg: string): string | null {
   return null
 }
 
+// PMC-P2B integration amendment: these are reviewed AST values, not type-based exemptions.
+const PMC_LEDGER_FILE = 'dispatch/src/pmc-launch/ledger.ts'
+const PMC_OWNER_NAMES = new Set([
+  'path',
+  'settings',
+  'transaction',
+  'initializeLocalPmcLedger',
+  'connection',
+  'fail',
+])
+const PMC_DECLARATIONS = new Map<string, string>([
+  ['import:node:crypto', '4e4a7b05ef4a93dd8c3808d4fdc416418d11334f8188e8b1c7a106b9251874f6'],
+  ['import:node:fs', '39f845d0506c0c5e178bead8ded5ec262bf3bd865bf59f0efc6dd09b394cf702'],
+  ['import:node:path', 'ba8a6b398f583f079b7c2f907171255995fd9aa65f366fb09beb92450b8f15fc'],
+  ['import:node:sqlite', '10dffce406a49a8a94305c6b842c5b70fea547e34c7f99e92f1f8efee2a894f2'],
+  ['import:node:url', '5153148ad1c2e7c5daff67d72a1dba70214a73023eb135e2482164ad1af1bf80'],
+  ['import:./money.js', '73cb1783ef4538395d24f1784b1e042cdba8d16451c908687294b280f2f9032a'],
+  ['fail', 'e06c46170065f2ee1fb0d0b5ff8eddb597946d47904c1c811a611055b6e98c44'],
+  ['path', '7daa1fd62c552098604e9255264f5999574647f56fbb7f110e13d81066378746'],
+  ['schema', '4bd91759fffb7ab4b9bd54d485e5d2341f8a77d49fd50f1d06394fc4c859e822'],
+  ['settings', '11e09ebc70fad8bd588495516270c31d90e6049ed25c8583ed6fe2720265afed'],
+  ['connection', '0c47d4f8bc27105cc59143682f0d0a4495141f2ee06ca0d65afe36440cdc9340'],
+  ['transaction', '320c4ce935914ca1b92b9cb7ac3b75eda5fbb1f9987fe03d1bab4b28f153c455'],
+  ['initializeLocalPmcLedger', '6bd8ec26a0410ee87c81aa1db4b557f641ff34261636b353038f7bb85ecef805'],
+])
+const PMC_CALLS = new Map<string, readonly [string, string]>([
+  [
+    'path:0',
+    ['path/root-normalization', 'cda4bae7786987ef20f319acab4911fee95a2b7a03ad524a28172dc78c704729'],
+  ],
+  [
+    'path:1',
+    [
+      'path/canonical-comparison',
+      'cda4bae7786987ef20f319acab4911fee95a2b7a03ad524a28172dc78c704729',
+    ],
+  ],
+  [
+    'settings:0',
+    ['settings/pragmas', '0dc2232951b5b5db8d3b269dcf3fb86462eee8606cc551eaaa920b6c6884cb1e'],
+  ],
+  [
+    'transaction:0',
+    ['transaction/begin', '0003e9d043d95fa174c167c7bde6abb11392397a4954d53d83337cc57128e022'],
+  ],
+  [
+    'transaction:1',
+    ['transaction/commit', '79fba6428b2efa15bdc3b6dce08a3e58c3e3c05d8fd7830071f737291baed710'],
+  ],
+  [
+    'transaction:2',
+    ['transaction/rollback', 'a89ab9db5111a0c2755290a8edcff23f10559ba805a64a316810451dd457ba9b'],
+  ],
+  [
+    'initializeLocalPmcLedger:0',
+    ['initialize/begin', '111a02d7b2431c5dd45835f1f5997497cd4a62a7821d6b507f4c4d95e007b036'],
+  ],
+  [
+    'initializeLocalPmcLedger:1',
+    ['initialize/schema', '395518982624315c4d8cdd88c9a01b2121e74095c1feee58776342a04534fbc9'],
+  ],
+  [
+    'initializeLocalPmcLedger:2',
+    ['initialize/commit', '79fba6428b2efa15bdc3b6dce08a3e58c3e3c05d8fd7830071f737291baed710'],
+  ],
+  [
+    'initializeLocalPmcLedger:3',
+    ['initialize/rollback', 'a89ab9db5111a0c2755290a8edcff23f10559ba805a64a316810451dd457ba9b'],
+  ],
+])
+const PMC_PROVENANCE_NAMES = new Set([
+  ...PMC_OWNER_NAMES,
+  'DatabaseSync',
+  'isAbsolute',
+  'resolve',
+  'schema',
+  'lstatSync',
+  'normalize',
+  'parse',
+  'dirname',
+  'join',
+  'realpathSync',
+  'pathToFileURL',
+  'closeSync',
+  'openSync',
+  'readdirSync',
+])
+const PMC_REFERENCE_DIGEST = '9245867438bed01ca9c6019520b5689b5b0da1a888880e52474338e1129dbac1'
+
+/** Ordered AST kinds plus EVERY syntax token; trivia and offsets are omitted.
+ * Complete owners retain guards, control flow, receiver construction and call order.
+ * This is a bounded syntactic pin, not a general dataflow or runtime integrity proof.
+ */
+function pmcAstValue(node: Node, sf: SourceFile): unknown {
+  if (node.kind <= SyntaxKind.LastToken) return [node.kind, node.getText(sf)]
+  const children: unknown[] = []
+  let position = node.getStart(sf)
+  let invalid = false
+  const gap = (end: number): void => {
+    if (end < position || end > node.end) {
+      invalid = true
+      return
+    }
+    // TS7 forEachChild omits scalar operators, declaration flags and punctuation.
+    // Scan all gaps, retaining AST leaves for contextual regex/template tokens.
+    const scanner = createScanner(false, sf.languageVariant, sf.text, position, end - position)
+    for (let kind = scanner.scan(); kind !== SyntaxKind.EndOfFile; kind = scanner.scan()) {
+      if (
+        scanner.isUnterminated() ||
+        kind === SyntaxKind.Unknown ||
+        kind === SyntaxKind.ConflictMarkerTrivia
+      )
+        invalid = true
+      if (
+        kind !== SyntaxKind.SingleLineCommentTrivia &&
+        kind !== SyntaxKind.MultiLineCommentTrivia &&
+        kind !== SyntaxKind.NewLineTrivia &&
+        kind !== SyntaxKind.WhitespaceTrivia
+      )
+        children.push([kind, scanner.getTokenText()])
+    }
+    if (scanner.isUnterminated()) invalid = true
+  }
+  node.forEachChild((child) => {
+    gap(child.getStart(sf))
+    children.push(pmcAstValue(child, sf))
+    position = child.end
+  })
+  gap(node.end)
+  return [node.kind, invalid ? 'invalid token span' : children]
+}
+function pmcDigest(value: unknown): string {
+  return createHash('sha256').update(JSON.stringify(value)).digest('hex')
+}
+function pmcLedgerPins(sf: SourceFile, errors: string[]): Map<CallExpression, string> {
+  const selected = new Set<Node>()
+  const counts = new Map<string, number>()
+  const calls = new Map<CallExpression, string>()
+  const callCounts = new Map<string, number>()
+  const fingerprint = (node: Node): string => pmcDigest(pmcAstValue(node, sf))
+  const startErrors = errors.length
+  for (const node of sf.statements) {
+    const key =
+      isFunctionDeclaration(node) && node.name && PMC_OWNER_NAMES.has(node.name.text)
+        ? node.name.text
+        : isImportDeclaration(node) && isStringLiteral(node.moduleSpecifier)
+          ? `import:${node.moduleSpecifier.text}`
+          : isVariableStatement(node) &&
+              node.declarationList.declarations.some(
+                (declaration) =>
+                  isIdentifier(declaration.name) && declaration.name.text === 'schema',
+              )
+            ? 'schema'
+            : null
+    if (key === null) continue
+    selected.add(node)
+    counts.set(key, (counts.get(key) ?? 0) + 1)
+    if (fingerprint(node) !== PMC_DECLARATIONS.get(key))
+      errors.push(`PMC ledger declaration fingerprint: ${key}`)
+    if (!isFunctionDeclaration(node)) continue
+    let ordinal = 0
+    const visit = (child: Node): void => {
+      if (
+        isCallExpression(child) &&
+        (calleeName(child) === 'resolve' || calleeName(child) === 'exec')
+      ) {
+        const callKey = `${key}:${ordinal++}`
+        const expected = PMC_CALLS.get(callKey)
+        callCounts.set(callKey, (callCounts.get(callKey) ?? 0) + 1)
+        if (!expected || fingerprint(child) !== expected[1])
+          errors.push(`PMC ledger call fingerprint: ${callKey}`)
+        else calls.set(child, expected[0])
+      }
+      child.forEachChild(visit)
+    }
+    node.forEachChild(visit)
+  }
+  for (const key of PMC_DECLARATIONS.keys()) {
+    if (counts.get(key) !== 1)
+      errors.push(
+        'PMC ledger declaration cardinality: ' +
+          key +
+          '; expected 1, observed ' +
+          (counts.get(key) ?? 0),
+      )
+  }
+  for (const key of PMC_CALLS.keys()) {
+    if (callCounts.get(key) !== 1)
+      errors.push(
+        'PMC ledger call cardinality: ' +
+          key +
+          '; expected 1, observed ' +
+          (callCounts.get(key) ?? 0),
+      )
+  }
+  // References outside the complete pinned owners/imports/schema are also pinned.
+  // Additional assignments or shadow bindings cannot silently change their provenance.
+  const references: unknown[] = []
+  const visitReferences = (node: Node, ancestors: readonly number[]): void => {
+    if (selected.has(node)) return
+    if (isIdentifier(node) && PMC_PROVENANCE_NAMES.has(node.text)) {
+      references.push([ancestors, fingerprint(node.parent)])
+    }
+    node.forEachChild((child) => visitReferences(child, [...ancestors, node.kind]))
+  }
+  visitReferences(sf, [])
+  if (pmcDigest(references) !== PMC_REFERENCE_DIGEST)
+    errors.push('PMC ledger external reference provenance fingerprint')
+  // Enrollment is all-or-nothing; reconciliation still runs when owners/sites disappear.
+  return errors.length === startErrors ? calls : new Map()
+}
+
 // ─── Per-file sweep ──────────────────────────────────────────────────────────
 
 interface SweepSink {
+  readonly pmcErrors: string[]
+  readonly pmcSites: (Site & { role: string })[]
   readonly violations: Finding[]
   readonly e1Sites: Site[]
   readonly e2Sites: Site[]
@@ -1134,6 +1349,8 @@ function sweepFile(
   // A3.3 / A3.4 pre-passes.
   const regexBindings = collectRegexBindings(sf)
   const hasCwdImport = importsProcessCwd(sf)
+  const pmcPins =
+    rel === PMC_LEDGER_FILE ? pmcLedgerPins(sf, sink.pmcErrors) : new Map<CallExpression, string>()
 
   const site = (node: Node): Site => {
     const { line } = sf.getLineAndCharacterOfPosition(node.getStart(sf))
@@ -1286,6 +1503,8 @@ function sweepFile(
       violate(3, node)
     }
   }
+
+  for (const [call, role] of pmcPins) sink.pmcSites.push({ ...site(call), role })
 
   const e1SeenPerFile = { count: 0 }
   const e4Handled = new Set<number>()
@@ -1477,7 +1696,7 @@ function sweepFile(
     }
 
     // ── class 4 / E1: subprocess cwd, decided from the actual argument (A2.5) ──
-    if (isCallExpression(node) && isSpawnFamilyCall(node, regexBindings)) {
+    if (isCallExpression(node) && !pmcPins.has(node) && isSpawnFamilyCall(node, regexBindings)) {
       const options = optionsArgument(node)
       if (options === null) {
         violate(4, node)
@@ -1509,7 +1728,8 @@ function sweepFile(
     if (isCallExpression(node) && calleeName(node) === 'resolve') {
       if (namesARoot(firstArgumentName(node))) {
         const pinned =
-          rel === 'projection/src/path-guard.ts' && guardedByAbsoluteRootAssertion(node)
+          (rel === 'projection/src/path-guard.ts' && guardedByAbsoluteRootAssertion(node)) ||
+          pmcPins.has(node)
         if (!pinned) violate(5, node)
       }
     }
@@ -1624,6 +1844,8 @@ function main(argv: readonly string[]): number {
   }
 
   const sink: SweepSink = {
+    pmcErrors: [],
+    pmcSites: [],
     violations: [],
     e1Sites: [],
     e2Sites: [],
@@ -1716,7 +1938,12 @@ function main(argv: readonly string[]): number {
   // count per pinned file and FAILS on mismatch, over or under, whenever the
   // pinned file was actually swept. A pinned file absent from the tree (a
   // synthetic fixture) leaves that pin vacuous, not failed. ──
-  const pinMismatches: string[] = []
+  const pinMismatches: string[] = [...sink.pmcErrors]
+  const pmcExpected = sink.sweptFiles.has(PMC_LEDGER_FILE) ? PMC_CALLS.size : 0
+  if (sink.pmcSites.length !== pmcExpected)
+    pinMismatches.push(
+      `PMC ledger site cardinality: expected ${pmcExpected}, observed ${sink.pmcSites.length}`,
+    )
   if (!sink.sweptFiles.has(RCM_PROVENANCE_FILE)) {
     pinMismatches.push(`RCM provenance DATA: required exact file ${RCM_PROVENANCE_FILE} is absent`)
   }
@@ -1865,6 +2092,12 @@ function main(argv: readonly string[]): number {
 
   console.log('')
   console.log('ENUMERATED EXCEPTIONS (reported while passing — lesson #41/#42):')
+  console.log(`PMC ledger: ${sink.pmcSites.length} observed; expected ${pmcExpected}`)
+  for (const site of sink.pmcSites)
+    console.log(`  ${site.role}: ${site.file}:${site.line}: ${site.text}`)
+  console.log(
+    '  disposition: exact reviewed guarded-root and SQLite calls; AST owners, import/connection/reference provenance and call roles/counts pinned. Syntactic only; no general dataflow or runtime integrity claim.',
+  )
   console.log(
     "E1 and E4 are PINNED sets, and so is E2's dynamic-form entry (identity + location + value, STANDING #13 / A2.3);",
   )
