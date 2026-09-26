@@ -384,3 +384,95 @@ test("charges shared expansions, keys, and depth while preserving batch continua
 	assert.equal(results[0]?.ok, false);
 	assert.equal(results[1]?.ok, true);
 });
+
+test("captures records, arrays, and callbacks through one descriptor read", () => {
+	const oneRead = <T extends object>(value: T, reads: Record<string, number>) =>
+		new Proxy(value, {
+			getOwnPropertyDescriptor(target, key) {
+				const name = String(key);
+				reads[name] = (reads[name] ?? 0) + 1;
+				if (reads[name] > 1) throw new Error("descriptor reread");
+				return Reflect.getOwnPropertyDescriptor(target, key);
+			},
+		});
+
+	const routingReads: Record<string, number> = {};
+	const routingResult = validateConsumerCompatibility(
+		{ ...request, routingInput: oneRead({ ...routingInput }, routingReads) },
+		deps,
+	);
+	assert.equal(routingResult.ok, true);
+	assert.deepEqual(routingReads, {
+		routing_class: 1,
+		data_classification: 1,
+		workflowId: 1,
+	});
+
+	const modalityReads: Record<string, number> = {};
+	const oracleResult = validateConsumerCompatibility(request, {
+		...deps,
+		eligibilityOracle: () => ({
+			...oracle,
+			results: [
+				{
+					...oracle.results[0],
+					facts: {
+						...facts,
+						inputModalities: oneRead(["text"], modalityReads),
+					},
+				},
+			],
+		}),
+	});
+	assert.equal(oracleResult.ok, true);
+	assert.equal(modalityReads["0"], 1);
+	assert.equal(modalityReads.length, 1);
+
+	const dependencyReads: Record<string, number> = {};
+	const dependencyResult = validateConsumerCompatibility(
+		request,
+		oneRead(deps, dependencyReads),
+	);
+	assert.equal(dependencyResult.ok, true);
+	assert.deepEqual(dependencyReads, {
+		eligibilityOracle: 1,
+		evaluateOffline: 1,
+	});
+});
+
+test("charges each shared expanded occurrence once at the exact value boundary", () => {
+	const shared = Array(256).fill(0);
+	const exactShared = [...Array(31).fill(shared), Array(223).fill(0)];
+	const exactCopied = exactShared.map((value) => [...value]);
+	const exactSharedResult = validateConsumerCompatibility(exactShared, deps);
+	const exactCopiedResult = validateConsumerCompatibility(exactCopied, deps);
+	assert.equal(exactSharedResult.ok, false);
+	assert.equal(exactCopiedResult.ok, false);
+	if (!exactSharedResult.ok)
+		assert.equal(exactSharedResult.code, "input_invalid");
+	if (!exactCopiedResult.ok)
+		assert.equal(exactCopiedResult.code, "input_invalid");
+
+	const over = [...exactCopied.slice(0, -1), Array(224).fill(0)];
+	const overResult = validateConsumerCompatibility(over, deps);
+	assert.equal(overResult.ok, false);
+	if (!overResult.ok) assert.equal(overResult.code, "input_limit_exceeded");
+});
+
+test("rejects an oversized key before touching its descriptor", () => {
+	let descriptorReads = 0;
+	const key = "x".repeat(2049);
+	const hostile = new Proxy(
+		{ [key]: 0 },
+		{
+			getOwnPropertyDescriptor() {
+				descriptorReads++;
+				throw new Error("descriptor should not be read");
+			},
+		},
+	);
+	const result = validateConsumerCompatibility(hostile, deps);
+	assert.equal(result.ok, false);
+	if (!result.ok) assert.equal(result.code, "input_limit_exceeded");
+	assert.equal(descriptorReads, 0);
+});

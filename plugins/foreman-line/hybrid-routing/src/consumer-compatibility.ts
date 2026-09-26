@@ -89,10 +89,20 @@ function exact(value: RecordValue, keys: readonly string[]): boolean {
 		})
 	);
 }
-function data(value: object, key: string): unknown {
-	const descriptor = Object.getOwnPropertyDescriptor(value, key);
-	if (!descriptor || !("value" in descriptor)) throw new Error("accessor");
-	return descriptor.value;
+function exactValues(
+	value: RecordValue,
+	keys: readonly string[],
+): RecordValue | null {
+	const own = Reflect.ownKeys(value);
+	if (own.length !== keys.length) return null;
+	const result = Object.create(null) as RecordValue;
+	for (const key of own) {
+		if (typeof key !== "string" || !keys.includes(key)) return null;
+		const descriptor = Object.getOwnPropertyDescriptor(value, key);
+		if (!descriptor?.enumerable || !("value" in descriptor)) return null;
+		result[key] = descriptor.value;
+	}
+	return result;
 }
 function capture(value: unknown, depth: number, budget: Budget): unknown {
 	if (++budget.values > MAX_VALUES) throw LIMIT;
@@ -114,13 +124,17 @@ function capture(value: unknown, depth: number, budget: Budget): unknown {
 		throw new Error("invalid");
 	const prior = budget.seen.get(value);
 	if (prior !== undefined) {
-		charge(prior, depth, budget, new WeakSet<object>());
+		charge(prior, depth, budget, new WeakSet<object>(), false);
 		return prior;
 	}
 	budget.active.add(value);
 	try {
 		if (Array.isArray(value)) {
-			const length = data(value, "length");
+			const lengthDescriptor = Object.getOwnPropertyDescriptor(value, "length");
+			const length =
+				lengthDescriptor && "value" in lengthDescriptor
+					? lengthDescriptor.value
+					: undefined;
 			if (
 				typeof length !== "number" ||
 				!Number.isSafeInteger(length) ||
@@ -132,11 +146,13 @@ function capture(value: unknown, depth: number, budget: Budget): unknown {
 			const keys = Reflect.ownKeys(value);
 			if (keys.length !== length + 1 || !keys.includes("length"))
 				throw new Error("invalid");
+			const descriptors = new Map<string, PropertyDescriptor>();
 			for (let i = 0; i < length; i++) {
 				if (!keys.includes(String(i))) throw new Error("invalid");
 				const descriptor = Object.getOwnPropertyDescriptor(value, String(i));
 				if (!descriptor?.enumerable || !("value" in descriptor))
 					throw new Error("invalid");
+				descriptors.set(String(i), descriptor);
 			}
 			for (const key of keys)
 				if (
@@ -156,7 +172,11 @@ function capture(value: unknown, depth: number, budget: Budget): unknown {
 			const result: unknown[] = new Array(length);
 			budget.seen.set(value, result);
 			for (let i = 0; i < length; i++)
-				result[i] = capture(data(value, String(i)), depth + 1, budget);
+				result[i] = capture(
+					descriptors.get(String(i))?.value,
+					depth + 1,
+					budget,
+				);
 			return result;
 		}
 		if (!record(value)) throw new Error("invalid");
@@ -169,13 +189,13 @@ function capture(value: unknown, depth: number, budget: Budget): unknown {
 		const result = Object.create(null) as RecordValue;
 		budget.seen.set(value, result);
 		for (const key of keys as string[]) {
-			const descriptor = Object.getOwnPropertyDescriptor(value, key);
-			if (!descriptor?.enumerable || !("value" in descriptor))
-				throw new Error("accessor");
 			if (key.length > MAX_STRING) throw LIMIT;
 			budget.strings += key.length;
 			if (budget.strings > MAX_STRINGS) throw LIMIT;
-			result[key] = capture(data(value, key), depth + 1, budget);
+			const descriptor = Object.getOwnPropertyDescriptor(value, key);
+			if (!descriptor?.enumerable || !("value" in descriptor))
+				throw new Error("accessor");
+			result[key] = capture(descriptor.value, depth + 1, budget);
 		}
 		return result;
 	} finally {
@@ -187,8 +207,9 @@ function charge(
 	depth: number,
 	budget: Budget,
 	active: WeakSet<object>,
+	countRoot = true,
 ): void {
-	if (++budget.values > MAX_VALUES) throw LIMIT;
+	if (countRoot && ++budget.values > MAX_VALUES) throw LIMIT;
 	if (typeof value === "string") {
 		budget.strings += value.length;
 		if (value.length > MAX_STRING || budget.strings > MAX_STRINGS) throw LIMIT;
@@ -250,20 +271,20 @@ function safeCode(value: unknown): value is string {
 
 function dependencies(value: unknown): ConsumerDependencies | null {
 	try {
-		if (
-			!record(value) ||
-			!exact(value, ["eligibilityOracle", "evaluateOffline"])
-		)
+		if (!record(value)) return null;
+		const captured = exactValues(value, [
+			"eligibilityOracle",
+			"evaluateOffline",
+		]);
+		if (!captured) return null;
+		const oracle = captured.eligibilityOracle;
+		const evaluator = captured.evaluateOffline;
+		if (typeof oracle !== "function" || typeof evaluator !== "function")
 			return null;
-		const oracle = data(value, "eligibilityOracle");
-		const evaluator = data(value, "evaluateOffline");
-		return typeof oracle === "function" && typeof evaluator === "function"
-			? {
-					eligibilityOracle:
-						oracle as ConsumerDependencies["eligibilityOracle"],
-					evaluateOffline: evaluator as ConsumerDependencies["evaluateOffline"],
-				}
-			: null;
+		return {
+			eligibilityOracle: oracle as ConsumerDependencies["eligibilityOracle"],
+			evaluateOffline: evaluator as ConsumerDependencies["evaluateOffline"],
+		};
 	} catch {
 		return null;
 	}
