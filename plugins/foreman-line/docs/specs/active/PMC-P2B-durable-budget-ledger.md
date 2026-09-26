@@ -303,7 +303,7 @@ persisted outside this store by that owner before initialization is considered
 usable. Lost acknowledgement/interruption requires explicit reconciliation.
 
 BudgetScopeV1 is {scopeId:Id,authorityDigest:Digest,currency:USD,
-authorizedLimitMicroUsd:Micro,workflowId:Id,accountId:Id,routingClass:Id}.
+authorizedLimitMicroUsd:Micro,workflowId:Id,accountId:Id,routingClass:bounded nonempty string}.
 Initialize 1..256 unique scopes, also unique by workflow/account/routingClass.
 Scope IDs and allocations are fixed for this epoch; reserve cannot create or
 rename scopes, increase limits or reset spent balances. New-class provisioning,
@@ -401,3 +401,18 @@ existing storage, verifies settings/identity and closes in finally. Thus no
 undocumented shutdown operation or process-exit flush grants durability. Fixed
 clock monotonicity compares a mutation with the affected record's stored time;
 it does not infer real-world freshness from an injected clock.
+RoutingClass preserves exact existing slash-bearing class names (for example
+implementation/standard); it is not an opaque Id. P2C checks the authorized class
+against request and policy. ScopesDigest is SHA-256 of UTF-8 JSON serialization
+of the array of complete scopes in supplied order, with each record in its above
+declaration order. Snapshot hashing likewise uses the stated field order and
+owned nested scope order; no caller toJSON or incidental property order applies.
+
+Freeze exported type names inside money.ts as PmcPriceInputV1,
+PmcCostValueV1, PmcMoneyCodeV1 and PmcMoneyResultV1; function computePmcCostV1.
+Inside ledger.ts use PmcLedgerOwnerPortsV1, PmcLedgerTrustedPortsV1,
+PmcLedgerInitializeRequestV1, PmcLedgerOpenRequestV1, BudgetScopeV1,
+BudgetSnapshotV1, AttemptV1, LedgerIdentity, LedgerCode, LedgerResult<T>,
+LocalPmcLedger and the two factory functions. Operation request/proof types may
+remain module-private unless a later accepted consumer requires an explicit
+additive export; do not invent another public dispatcher or authority token.
