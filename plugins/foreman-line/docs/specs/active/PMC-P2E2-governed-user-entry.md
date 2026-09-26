@@ -337,3 +337,16 @@ match the existing E1 integration donor. No dependency/manifest changes or write
 through donor links. RED/GREEN planner tests, full dispatch and routing-policy
 checks, typecheck/lint, scope/diff review and two independent source reviews precede
 integration. This amendment is a reviewable boundary, not implementation release.
+
+### Checkpoint 1 ratification and implementation release
+
+Root and independent frontier D approve amendment
+ ae3fb1296cfeaecbab58ae893710f79d714efdbd. Root accepts A's genuine read-only
+Step0 and releases exactly the three checkpoint-1 paths above, test-first, against
+this checkout's real accepted projection/adapter. All19 absent same-package
+node_modules junctions were supplied after matching lock hashes; no installs or
+donor writes occurred. Run the bounded and full affected checks, freeze source
+and inventory evidence in one clean commit, then STOP for two independent source
+reviews. Do not implement entry/CLI/installation or import Pi. Module-mock failure
+remains a test-mechanism checkpoint, never permission for a runtime injection seam.
+This delegated Gate2 covers pure evidence planning only; parent E2 stays active.
