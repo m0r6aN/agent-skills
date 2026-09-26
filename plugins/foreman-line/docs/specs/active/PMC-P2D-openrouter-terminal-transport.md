@@ -501,7 +501,7 @@ IPC/HMAC, generic extension support, production activation and full HRO exit.
 
 - [Amendment 05](../../goals/pi-model-configuration/gate-1-amendment-05.md)
 - [P2C](PMC-P2C-same-process-launch-controller.md)
-- [P2B1](PMC-P2B1-durable-intent-custody.md)
+- [P2B1](../done/PMC-P2B1-durable-intent-custody.md)
 - [Source preflight](../../goals/pi-model-configuration/pmc-p2d-terminal-preflight.md)
 - [Composition notes](../../goals/pi-model-configuration/pmc-p2d-composition-notes.md)
 

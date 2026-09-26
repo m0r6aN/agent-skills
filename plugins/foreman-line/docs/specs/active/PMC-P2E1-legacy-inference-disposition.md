@@ -173,3 +173,37 @@ builder uses isolated hro-pmc-p2e1-20260926; root retains independent reviews,
 integration, remote checks and merge. No E2 implementation or production activity.
 Test-first checkpoints and native-exit verification are mandatory. Existing
 matched-lock dependency junctions are read-only; never install through a donor.
+## Audit amendment 01 — retired Jev path enrollment
+
+Source 2632d695031fa4e874896c78e6ee39adeaebf36c has two independent approvals
+(coordinator and PMC-P2B1 reviewer). Integration 973fc82b639235eb7794c4612fe2f85b65a0eff1
+includes accepted main 727c0554f11990da778e7647e7a108f3ca6f95aa and B1 closure.
+The earlier report that D19 failed solely on Jev was incomplete: the old source
+branch also lacked ten accepted ledger enrollments. Integration resolves those
+without a waiver. Actual integrated D19 has zero unruled sites; the remaining
+failure is the obsolete three runtime CUSTODY_PATHS literals removed by E1.
+
+The coordinator authorizes a separate, narrow audit repair, subject to genuine
+Step0 restate-and-stop and explicit implementation release. Exactly three paths:
+
+- plugins/foreman-line/verification/src/d19-audit.ts
+- plugins/foreman-line/verification/tests/pmc-legacy-retirement-audit.test.ts
+- plugins/foreman-line/docs/goals/pi-model-configuration/pmc-p2e1-audit-repair.md
+
+Remove only Jev runtime CUSTODY_PATHS enrollment/count. Retain replay.ts PATHS,
+its exact declaration/direct-array identity and value/context checks. Aggregate
+count changes from 13 to 10; independently observed retained replay digest is
+2f40b0bb22bd0a0c008e40b5340bddeb7b8c5f0c1af22c716a086cd0bdfc8d8b.
+Update obsolete two-declaration comments. Preserve all other audit rules, pins,
+AST/scanner traversal and accepted RCM/ledger/B1 enrollments.
+
+Permanent tests must invoke the real audit with accepted replay and formatting
+positive controls, and independently reject missing, extra, changed, moved,
+wrong-declaration, wrong-shape and reference-context literals. Reintroducing the
+former runtime declaration with its three historical values must be unruled;
+retirement must not leave a dormant exemption. Never execute mutated source.
+Run verification tests/typecheck/lint, audit mutation controls and readers, then
+actual integrated D19. Record exact native exits and counts, initial failure,
+source-review correction and final result. Two independent audit reviews and
+combined verification remain required before merge. No runtime source changes,
+provider calls, Pi configuration, dependency installation or audit bypass.
