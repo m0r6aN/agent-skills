@@ -6,6 +6,14 @@ from an index row.
 
 ## Coordinator pickup queue
 
+## Active delegated coordination
+
+| Goal | Owner | State | Current authority |
+|---|---|---|---|
+| [hybrid-routing-optimization](hybrid-routing-optimization/charter.md) | Codex task `01a0ddb6-5fed-7d82-b2f0-075315440dc1` | P1 owner-boundary reconciliation and shaping | User granted blanket HRO decision authority on 2026-09-26 and approved necessary PMC/RCM prerequisites; Luna builder; independent review required |
+
+## Coordinator pickup queue
+
 | Goal | State | Entry | Current authority |
 |---|---|---|---|
 | [hierarchical-coordination-sidecars](hierarchical-coordination-sidecars/charter.md) | `awaiting_coordinator_claim` | `/goal resume hierarchical-coordination-sidecars` | Goal intake requested; Gate 1/2 absent; Gate 3 human |
