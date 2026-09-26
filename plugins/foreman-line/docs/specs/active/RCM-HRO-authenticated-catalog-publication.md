@@ -367,7 +367,7 @@ cannot revive an expired never-invoked operation. A registered operation that wa
 never invoked releases its slot exactly once on cancellation or deadline expiry,
 with no I/O. A running operation never releases its slot merely because the caller
 promise refused or a timer/cancel fired. It releases only after the real owned
-transport acknowledges terminal cleanup: no active request/socket/body reader,
+transport acknowledges terminal cleanup by settlement of its ORIGINAL readMetadataV1 promise (fulfillment or rejection): no active request/socket/body reader,
 no scheduled retry or producer capable of I/O. A success/refusal after genuine
 transport termination and synchronous candidate processing releases once. A
 cancelled/timed-out pending transport retains the slot until that acknowledgement;
@@ -433,6 +433,30 @@ GET and stream termination/cancellation, without redirects, environment proxy,
 credential reads, caller headers or generic fetch injection. Production factory
 captures that implementation statically. Private network-incapable tests exercise
 the same bounded response handling with a distinct installation provenance domain.
+The original readMetadataV1 promise is also the existing terminal-cleanup
+acknowledgement; no new callback, handle or API is added. It MUST NOT fulfill or
+reject until the actual owned request/socket/body reader and every producer of I/O
+have conclusively terminated. This condition applies equally to success and all
+failure paths. Failed HTTP status, stream/parser bounds, malformed response,
+abort and timeout destroy/terminate the owned transport as appropriate, then await
+actual terminal close/cleanup before the original promise rejects. Calling destroy,
+observing an error, issuing abort or firing a timer is not itself close acknowledgement.
+If no transport was created, conclusive absence of active owned I/O permits immediate
+settlement. Complete body receipt alone does not permit fulfillment while an owned
+socket or reader remains active.
+
+The publisher separately races its outward caller result against the owner
+cancellation/deadline latch. That outward bounded refusal does not settle the
+original transport promise and never releases capacity. Retain and observe the
+original promise immediately, including its rejection, until actual cleanup. If
+cleanup is uncertain the original promise remains pending and the slot remains
+held, even though the caller already received CANCELLED or DEADLINE_EXCEEDED.
+A later original fulfillment or rejection acknowledges cleanup and permits exactly
+one slot release; it cannot replace a latched refusal, enter materialization/CAS,
+issue a handle or publish a late candidate. On ordinary non-cancelled completion,
+retain the slot through synchronous candidate processing before release. Distinguish
+this original promise from any raced/wrapped outward promise in implementation and
+tests; settling the outward race never counts as transport acknowledgement.
 Closed shared private publisher/transport types live in
 `dispatch/src/pmc-launch/catalog-publication-types.ts`; raw-response pure types and
 profile validation remain in the RCM producer owner.
@@ -488,6 +512,17 @@ acknowledgement allowing exactly one replacement slot, timeout, duplicate cleanu
 and uncertain cleanup. No race may undercount actual active transport or refund
 P4A participation.
 
+Cleanup-acknowledgement controls must use the actual bounded transport adapter
+with a network-incapable low-level test harness. For cancellation and timeout,
+delay the actual close acknowledgement after outward refusal; assert the original
+readMetadataV1 promise is still unsettled and four such operations still refuse a
+fifth registration. Deliver actual close, assert original rejection and exactly
+one slot release, then admit precisely the newly available capacity. Late success
+and duplicate close/error signals cannot publish or release twice. Also exercise
+ordinary success and HTTP/parse/bounds rejection, proving the original promise
+settles only after cleanup on both fulfillment and rejection. Uncertain cleanup
+keeps the original pending and slot held. Do not substitute an independently
+resolved fake promise for the adapter's cleanup event path.
 R2 paired controls cover full terminal envelopes producing catalog versus absence,
 and missing links/next/count, non-null next, extra envelope/link keys, fractional/
 negative/unsafe/over-limit/mismatched counts, duplicate/unclassifiable ids and absent/

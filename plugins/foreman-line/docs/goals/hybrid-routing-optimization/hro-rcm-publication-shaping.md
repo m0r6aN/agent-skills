@@ -157,3 +157,30 @@ No quality, account billing, entitlement, authorization or live HRO claim is mad
 Validation: frozen donor frontmatter lint, required sections, local links and
 exact two-document whitespace/diff checks. Runtime tests remain future acceptance
 requirements; no runtime implementation is authorized by this handoff.
+## Terminal cleanup acknowledgement clarification
+
+Root accepted read-only Step 0 at d8b26d57085c8e4381d049b9dbaaef108dd716bf and
+released exactly these two documents for the remaining R1 clarification. The
+original readMetadataV1 promise now explicitly acknowledges terminal cleanup on
+BOTH fulfillment and rejection. No new interface or runtime edit is introduced.
+
+The original promise cannot settle while owned request/socket/body-reader/I/O
+work remains active. Error/abort/destroy/timer notification is not conclusive close.
+Success, HTTP/parse/bounds failure, cancellation and timeout all observe actual
+terminal cleanup before original settlement. No-created-transport paths may settle
+once absence of owned I/O is conclusive.
+
+A separate outward cancellation/deadline race preserves bounded caller refusal;
+it is never cleanup acknowledgement. Uncertain cleanup leaves the original promise
+pending and slot occupied. Later original settlement releases the slot once without
+overriding the latched refusal or publishing. Normal completion retains capacity
+through synchronous candidate processing. The original rejection is observed
+immediately, avoiding abandoned/unhandled promise failures.
+
+Actual-adapter offline tests must delay close after outward refusal, demonstrate
+an unsettled original promise and fifth-operation capacity refusal, then acknowledge
+close and release exactly once. Paired success/rejection/cancel/timeout and duplicate
+close/error controls prove the event path, not an unrelated fake promise. All other
+bounds, source pins, scope/generation rules, completeness predicates and production
+gates remain unchanged. Frozen lint/body/link/whitespace checks precede handoff;
+fresh app-PMC/root review remains required. No runtime or provider effect occurred.
