@@ -1,0 +1,448 @@
+{
+  "formatVersion": "rcm-catalog-snapshot/v1",
+  "sourceRef": "RCM-P1 fixture: records under provider \"fixture-static\" are hand-built; every other record is copied field-for-field (ten fact fields) from the committed P0 evidence snapshot docs/goals/routing-currency-and-merit/rcm-p0-catalog-snapshot.v1.json. checkedAtUtc values are synthetic -- P0 exported none (13/13 absent) -- and are not sourced from any host.",
+  "providers": [
+    {
+      "providerKey": "fixture-static",
+      "checkedAtUtc": "2026-09-21T12:00:00.000Z"
+    },
+    {
+      "providerKey": "nvidia",
+      "checkedAtUtc": "2026-09-21T12:00:00.000Z"
+    },
+    {
+      "providerKey": "openai",
+      "checkedAtUtc": "2026-09-21T12:00:00.000Z"
+    },
+    {
+      "providerKey": "opencode",
+      "checkedAtUtc": "2026-09-21T12:00:00.000Z"
+    },
+    {
+      "providerKey": "opencode-go",
+      "checkedAtUtc": "2026-09-21T12:00:00.000Z"
+    },
+    {
+      "providerKey": "openrouter",
+      "checkedAtUtc": "2026-09-21T12:00:00.000Z"
+    }
+  ],
+  "models": [
+    {
+      "provider": "openrouter",
+      "id": "nvidia/nemotron-3.5-lightning",
+      "baseUrl": "https://openrouter.ai/api/v1",
+      "api": "openai-completions",
+      "input": [
+        "text"
+      ],
+      "reasoning": true,
+      "contextWindow": 262144,
+      "maxTokens": 131072,
+      "cost": {
+        "input": {
+          "unit": "USD per 1M tokens",
+          "value": 0.08
+        },
+        "output": {
+          "unit": "USD per 1M tokens",
+          "value": 0.2
+        }
+      }
+    },
+    {
+      "provider": "openrouter",
+      "id": "z-ai/glm-5.3",
+      "baseUrl": "https://openrouter.ai/api/v1",
+      "api": "openai-completions",
+      "input": [
+        "text"
+      ],
+      "reasoning": true,
+      "contextWindow": 1048575,
+      "maxTokens": 943717,
+      "cost": {
+        "input": {
+          "unit": "USD per 1M tokens",
+          "value": 1.4
+        },
+        "output": {
+          "unit": "USD per 1M tokens",
+          "value": 4.4
+        }
+      },
+      "thinkingLevelMap": {
+        "high": "high",
+        "low": "low",
+        "max": "max",
+        "medium": null,
+        "minimal": null,
+        "off": null,
+        "xhigh": null
+      }
+    },
+    {
+      "provider": "nvidia",
+      "id": "z-ai/glm-5.3",
+      "baseUrl": "https://integrate.api.nvidia.com/v1",
+      "api": "openai-completions",
+      "input": [
+        "text"
+      ],
+      "reasoning": true,
+      "contextWindow": 1000000,
+      "maxTokens": 131072,
+      "cost": {
+        "input": {
+          "unit": "USD per 1M tokens",
+          "value": 0
+        },
+        "output": {
+          "unit": "USD per 1M tokens",
+          "value": 0
+        }
+      }
+    },
+    {
+      "provider": "openai",
+      "id": "gpt-4o-mini",
+      "baseUrl": "https://api.openai.com/v1",
+      "api": "openai-responses",
+      "input": [
+        "image",
+        "text"
+      ],
+      "reasoning": false,
+      "contextWindow": 128000,
+      "maxTokens": 16384,
+      "cost": {
+        "input": {
+          "unit": "USD per 1M tokens",
+          "value": 0.15
+        },
+        "output": {
+          "unit": "USD per 1M tokens",
+          "value": 0.6
+        }
+      }
+    },
+    {
+      "provider": "openrouter",
+      "id": "anthropic/claude-opus-5",
+      "baseUrl": "https://openrouter.ai/api",
+      "api": "anthropic-messages",
+      "input": [
+        "image",
+        "text"
+      ],
+      "reasoning": true,
+      "contextWindow": 1000000,
+      "maxTokens": 128000,
+      "cost": {
+        "input": {
+          "unit": "USD per 1M tokens",
+          "value": 5
+        },
+        "output": {
+          "unit": "USD per 1M tokens",
+          "value": 25
+        }
+      },
+      "thinkingLevelMap": {
+        "high": "high",
+        "low": "low",
+        "max": "max",
+        "medium": "medium",
+        "minimal": null,
+        "off": "none",
+        "xhigh": "xhigh"
+      }
+    },
+    {
+      "provider": "openrouter",
+      "id": "anthropic/claude-fable-5.1",
+      "baseUrl": "https://openrouter.ai/api",
+      "api": "anthropic-messages",
+      "input": [
+        "image",
+        "text"
+      ],
+      "reasoning": true,
+      "contextWindow": 1000000,
+      "maxTokens": 128000,
+      "cost": {
+        "input": {
+          "unit": "USD per 1M tokens",
+          "value": 10
+        },
+        "output": {
+          "unit": "USD per 1M tokens",
+          "value": 50
+        }
+      },
+      "thinkingLevelMap": {
+        "high": "high",
+        "low": "low",
+        "max": "max",
+        "medium": "medium",
+        "minimal": null,
+        "off": null,
+        "xhigh": "xhigh"
+      }
+    },
+    {
+      "provider": "openrouter",
+      "id": "anthropic/claude-sonnet-5",
+      "baseUrl": "https://openrouter.ai/api",
+      "api": "anthropic-messages",
+      "input": [
+        "image",
+        "text"
+      ],
+      "reasoning": true,
+      "contextWindow": 1000000,
+      "maxTokens": 128000,
+      "cost": {
+        "input": {
+          "unit": "USD per 1M tokens",
+          "value": 2
+        },
+        "output": {
+          "unit": "USD per 1M tokens",
+          "value": 10
+        }
+      },
+      "thinkingLevelMap": {
+        "high": "high",
+        "low": "low",
+        "max": "max",
+        "medium": "medium",
+        "minimal": null,
+        "off": "none",
+        "xhigh": "xhigh"
+      }
+    },
+    {
+      "provider": "openrouter",
+      "id": "anthropic/claude-haiku-4.5",
+      "baseUrl": "https://openrouter.ai/api",
+      "api": "anthropic-messages",
+      "input": [
+        "image",
+        "text"
+      ],
+      "reasoning": true,
+      "contextWindow": 200000,
+      "maxTokens": 64000,
+      "cost": {
+        "input": {
+          "unit": "USD per 1M tokens",
+          "value": 1
+        },
+        "output": {
+          "unit": "USD per 1M tokens",
+          "value": 5
+        }
+      }
+    },
+    {
+      "provider": "openrouter",
+      "id": "auto",
+      "baseUrl": "https://openrouter.ai/api/v1",
+      "api": "openai-completions",
+      "input": [
+        "image",
+        "text"
+      ],
+      "reasoning": true,
+      "contextWindow": 2000000,
+      "maxTokens": 30000,
+      "cost": {
+        "input": {
+          "unit": "USD per 1M tokens",
+          "value": 0
+        },
+        "output": {
+          "unit": "USD per 1M tokens",
+          "value": 0
+        }
+      }
+    },
+    {
+      "provider": "openrouter",
+      "id": "openrouter/auto",
+      "baseUrl": "https://openrouter.ai/api/v1",
+      "api": "openai-completions",
+      "input": [
+        "image",
+        "text"
+      ],
+      "reasoning": true,
+      "contextWindow": 2000000,
+      "maxTokens": 4096,
+      "cost": {
+        "input": {
+          "unit": "USD per 1M tokens",
+          "value": -1000000
+        },
+        "output": {
+          "unit": "USD per 1M tokens",
+          "value": -1000000
+        }
+      }
+    },
+    {
+      "provider": "openrouter",
+      "id": "openrouter/auto-beta",
+      "baseUrl": "https://openrouter.ai/api/v1",
+      "api": "openai-completions",
+      "input": [
+        "image",
+        "text"
+      ],
+      "reasoning": true,
+      "contextWindow": 2000000,
+      "maxTokens": 4096,
+      "cost": {
+        "input": {
+          "unit": "USD per 1M tokens",
+          "value": -1000000
+        },
+        "output": {
+          "unit": "USD per 1M tokens",
+          "value": -1000000
+        }
+      }
+    },
+    {
+      "provider": "openrouter",
+      "id": "nvidia/nemotron-3.5-lightning:free",
+      "baseUrl": "https://openrouter.ai/api/v1",
+      "api": "openai-completions",
+      "input": [
+        "text"
+      ],
+      "reasoning": true,
+      "contextWindow": 1000000,
+      "maxTokens": 65536,
+      "cost": {
+        "input": {
+          "unit": "USD per 1M tokens",
+          "value": 0
+        },
+        "output": {
+          "unit": "USD per 1M tokens",
+          "value": 0
+        }
+      }
+    },
+    {
+      "provider": "openrouter",
+      "id": "anthropic/claude-fable-5:batch",
+      "baseUrl": "https://openrouter.ai/api/v1",
+      "api": "openai-completions",
+      "input": [
+        "image",
+        "text"
+      ],
+      "reasoning": true,
+      "contextWindow": 1000000,
+      "maxTokens": 128000,
+      "cost": {
+        "input": {
+          "unit": "USD per 1M tokens",
+          "value": 5
+        },
+        "output": {
+          "unit": "USD per 1M tokens",
+          "value": 25
+        }
+      },
+      "thinkingLevelMap": {
+        "high": "high",
+        "low": "low",
+        "max": "max",
+        "medium": "medium",
+        "minimal": null,
+        "off": null,
+        "xhigh": "xhigh"
+      }
+    },
+    {
+      "provider": "opencode-go",
+      "id": "deepseek-v4.1-flash",
+      "baseUrl": "https://opencode.ai/zen/go/v1",
+      "api": "openai-completions",
+      "input": [
+        "image",
+        "text"
+      ],
+      "reasoning": true,
+      "contextWindow": 1000000,
+      "maxTokens": 384000,
+      "cost": {
+        "input": {
+          "unit": "USD per 1M tokens",
+          "value": 0.15
+        },
+        "output": {
+          "unit": "USD per 1M tokens",
+          "value": 0.6
+        }
+      },
+      "thinkingLevelMap": {
+        "high": "high",
+        "low": "low",
+        "max": "max",
+        "medium": null,
+        "minimal": null,
+        "off": null,
+        "xhigh": null
+      }
+    },
+    {
+      "provider": "opencode",
+      "id": "glm-5.1",
+      "baseUrl": "https://opencode.ai/zen/v1",
+      "api": "openai-completions",
+      "input": [
+        "text"
+      ],
+      "reasoning": true,
+      "contextWindow": 204800,
+      "maxTokens": 131072,
+      "cost": {
+        "input": {
+          "unit": "USD per 1M tokens",
+          "value": 1.4
+        },
+        "output": {
+          "unit": "USD per 1M tokens",
+          "value": 4.4
+        }
+      }
+    },
+    {
+      "provider": "fixture-static",
+      "id": "static-test-model",
+      "baseUrl": "https://fixture-static.example/v1",
+      "api": "openai-completions",
+      "input": [
+        "text"
+      ],
+      "reasoning": false,
+      "contextWindow": 8192,
+      "maxTokens": 4096,
+      "cost": {
+        "input": {
+          "unit": "USD per 1M tokens",
+          "value": 1
+        },
+        "output": {
+          "unit": "USD per 1M tokens",
+          "value": 2
+        }
+      }
+    }
+  ]
+}
