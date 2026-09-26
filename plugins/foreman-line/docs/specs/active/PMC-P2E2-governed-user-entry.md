@@ -350,3 +350,33 @@ and inventory evidence in one clean commit, then STOP for two independent source
 reviews. Do not implement entry/CLI/installation or import Pi. Module-mock failure
 remains a test-mechanism checkpoint, never permission for a runtime injection seam.
 This delegated Gate2 covers pure evidence planning only; parent E2 stays active.
+
+### Remaining entry contract clarification — proposed 2026-09-26
+
+Accepted planner code and tests remain unchanged. Independent frontier A's actual
+D/C/B1 preflight identifies one naming correction: D exposes its private Output
+union through composePmcTerminalV1().finishInvocation; it does not export a type
+named InvocationOutput. E2 shall derive its internal alias using a type-only
+import of composePmcTerminalV1 and
+Awaited<ReturnType<ReturnType<typeof composePmcTerminalV1>['finishInvocation']>>.
+Import TransportCode from its actual owner openrouter-chat-stream.ts and OwnerCode
+from intent-custody-types.ts. Do not copy unions, amend D exports or change barrels.
+
+Remaining implementation is five new paths: dispatch/src/pmc-launch/governed-entry.ts,
+entry-cli.ts and installation.ts in that same directory; dispatch/tests/pmc-governed-entry.test.ts
+and pmc-entry-cli.test.ts. The existing docs/goals/pi-model-configuration/pmc-p2-caller-inventory.md
+is the sixth touched path. All paths are beneath plugins/foreman-line. No planner,
+predecessor, package or lockfile changes are released by this clarification.
+
+Actual lifecycle remains C custody creation, genuine B1 open with its authenticators,
+one-time binding, C launch, D finalization with that direct result (or null on
+unexpected rejection), then closing that B1 instance once. B1 close cannot refund,
+reconcile or clear pending/unknown liability. Preserve reserved-before-consume,
+unknown liability and cleanup-failure test cases. CLI requires its own bounded
+2 MiB structural framing scanner; D's 1 MiB parser cannot be reused unchanged.
+Production bootstrap remains unconditional zero-read refusal until separately
+reviewed genuine installation/billing authority exists.
+
+This is a proposed contract clarification only. PR70 must be accepted, another
+independent reviewer must approve this clarification, and the selected builder
+must complete fresh stopped Step 0 before root explicitly releases implementation.
