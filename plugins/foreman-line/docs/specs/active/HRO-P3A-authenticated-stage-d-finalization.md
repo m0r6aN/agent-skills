@@ -814,3 +814,20 @@ case; rejection must precede measured owner writes. No new API or source path.
 Source remains stopped for a fresh focused builder Step0 and explicit release.
 All other independent source checks stand; D19's four normalization sites still
 need their separately reviewed enrollment after final source acceptance.
+
+### Membership repair Step0 acceptance and release — 2026-09-26
+
+Root accepts frontier D's stopped Step0 at f673365 and independent reproduction
+of the root/A link finding. Explicitly release exactly stage-d-finalization.ts,
+its existing test and hro-p3a-verification.md under their existing paths. Add the
+post-schema every-link sole-ticket join. Test both valid direction values, mixed
+good/bad links and refusal before measured writes. Preserve genuine producer
+positives and optional profile coverage. Separate schema-consistent synthetic
+controls may demonstrate that zero/multiple same-ticket links and unrelated
+registration commit/permalink values do not acquire newly invented restrictions;
+do not describe those edited controls as genuine completed registration evidence.
+
+Run affected driver/pipeline/bounded regression suites, both relevant typecheck/
+lint checks, actual D19 and diff/scope checks. Preserve known four-site audit
+failure without detector changes. Freeze clean source/test/report and STOP for
+root+A independent review. No other source/contract/dependency/host or live change.
