@@ -51,4 +51,22 @@ and lint; those results do not clear the remaining finding. Neither edited code.
 The coordinator released Luna to restate and perform this narrow repair under
 existing authority. Both independent approvals remain required on the new head.
 
+## Final implementation acceptance
+
+Both independent reviewers approved frozen head
+`fb327058f0d16661782ffac29ae151d6aab50ac6` with no blocking findings.
+Each passed sixteen validator tests, seventeen injected CI-runner tests,
+sixty-nine unchanged routing-policy tests, typecheck and lint under Node24.19.0.
+Independent probes confirmed exact/one-over bindings, aggregate strings and
+visited values, nested residual budgets, empty-container/property-order cases,
+typed hostile-proxy refusal, no caller rereads or prohibited descriptor access,
+owned frozen outputs and complete provenance/fallback/tuple validation.
+Both asserted the final reviewed worktree clean and unchanged.
+
+Coordinator integrated the four reviewed implementation commits without conflict
+at `0f60d45`; the separately ratified A1 specification was already present.
+The full twenty-package combined CI remains the pre-merge gate. Review acceptance
+is limited to the evidence-only validator and its CI registration; it establishes
+no live availability, execution authority, cost savings or full HRO completion.
+
 Both final verdicts are request-changes. Review B additionally accepted 262,684 aggregate string units via independent per-argument budgets; this exceeds the 262,144 combined ceiling and is part of the accepted resource-limit repair. On 2026-09-26 the coordinator released Luna after its Step-0 restatement, with all findings accepted and no disputed reproductions. Original tests remain the minimum tripwire; semantic boundary additions are required.
