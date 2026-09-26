@@ -637,3 +637,37 @@ GREEN, applicable package regression/typecheck/lint and exact source preservatio
 Freeze a clean source/report handoff and stop for two independent source reviews;
 combined integration and remote checks still precede merge. No provider, credentials,
 configuration, actual Jira or production activation is authorized by this release.
+
+## P3A review repair and legacy guard compatibility amendment — 2026-09-26
+
+Root accepts the builder's genuine read-only repair Step0 at8a76e738 after two
+independent REQUEST CHANGES reviews. R1–R7 are recorded in
+[review triage](../../goals/hybrid-routing-optimization/hro-p3a-review-triage.md).
+All runtime corrections implement the existing contract; no production authority,
+receipt schema, owner semantics or numerical limit is weakened.
+
+The one narrow additional source envelope is
+plugins/foreman-line/verification/tests/pipeline.test.ts. Its legacy AC21 currently
+forbids the real orchestration calls required by this reviewed offline driver.
+Retain the existing test for every pipeline source, including the new driver.
+Only for the exact basename stage-d-finalization.ts permit these three required
+owner tokens: runHarness(, dispatchReview, collectAdversarialFindings. Keep every
+other existing prohibition for that file, and all prohibitions for every legacy
+file. No whole-file skip, broad allowlist, generic opt-out, dynamic module lookup,
+computed owner-name spelling or weakened process/network/provider boundary.
+Use transparent named static imports and calls; source/audit failures must be
+reported and resolved through explicit owner scope, never hidden by spelling.
+
+Pair the guard amendment with negative controls showing a forbidden process or
+provider/launcher primitive still fails for the driver and all three owner-call
+tokens remain forbidden in legacy files. The actual driver still uses only fixed
+private offline adapters; these exceptions do not authorize live reviewer, Jira,
+Git process, provider or network effects. No new dependency or framework is needed.
+
+After independent review of this compatibility amendment, a separate explicit
+repair release may authorize the original five source/test/report files plus this
+one guard test (exactly six). The builder must first record substantive RED for
+the reproduced defects, then the complete mandatory control matrix, applicable
+package suites/typecheck/lint and honest audit status. The report must map each
+acceptance criterion to executed evidence, not count inspection as mutation proof.
+No runtime edit is released by this documentation commit alone.
