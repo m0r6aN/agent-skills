@@ -21,12 +21,26 @@ receipt, dispatch, routing-policy, PMC, or RCM surface is touched.
 - `npm run typecheck`: passed.
 - `npm run lint`: passed; 5 package files checked.
 - Unchanged routing-policy regression: 69 passed, 0 failed under Node 24.19.0.
+- CI runner contract tests: 17 passed, 0 failed after adding the 20th package,
+  60 checks, 80 subprocess calls, corrected failure offsets, and explicit
+  hybrid-routing failure propagation.
 - Scope proof: the tracked implementation set is exactly the eight Allowed Files
-  above; `node_modules/` is ignored and no other source tree was modified.
+  above plus the three A1 CI files; `node_modules/` is ignored and no other
+  source tree was modified.
 - Import proof: the HRO source imports only its own local module and has no
   imports from PMC, RCM, routing-policy, dispatch, receipts, Jev, host files,
   network libraries, or configuration surfaces.
-- Local commit: pending after coordinator review of this handoff.
+- The package checks were executed with Node 24.19.0 and the repository-matched
+  pinned `tsx`, TypeScript and Biome binaries from the already-installed local
+  Foreman toolchain. An initial direct npm-script attempt correctly failed closed
+  before package-local dev binaries were available; no source result was taken
+  from that attempt.
+- An accidental first pass used relative patch paths and created duplicate
+  untracked HRO files in the original planning worktree. Only those newly
+  created duplicates were removed after verification; the original planning
+  records were preserved.
+- Local commits: `a60fa52` contains the package implementation;
+  `7ac871e` contains the coordinator-ratified A1 spec amendment; the final
+  local CI/handoff commit contains the amended eleven-file parcel.
 
 Independent architecture/risk reviews remain required before merge.
-
