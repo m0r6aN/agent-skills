@@ -89,3 +89,26 @@ A's final review adds these remaining original obligations (no scope expansion):
 Additional independent reproduction: TEMP/p3a-review-a-duplicate.ts. These are
 required parts of the original six-file repair, not permission for new owner APIs,
 other source files, alternate receipt schemas or broader audit exceptions.
+
+## Third submission independent review — aaa2870f92db757ddf86d2ec78c7ccc3f6f62a1d
+
+Root and frontier D request changes. D independently ran the 15 driver tests,
+which all pass but preserve the invented fixture convention. Genuine upstream
+contracts are still unsupported: A emits ShapingResult with an approval manifest,
+B emits RegistrationResult, and C emits its compression/routing/skills projection.
+verifyInitial instead requires Intake/Plan and parcel-only subjects for all three.
+The prior explicit release required actual producer contracts, not alternate ones.
+
+The second blocker is readBoundedJsonFile: it stat-checks then uses unbounded
+readFileSync. Growth or replacement can allocate beyond the limit. readRows also
+charges earlier stat sizes rather than captured bytes. Require bounded fd reads,
+actual aggregate-byte charging, identity rechecks and deterministic race controls.
+Duplicate-claim snapshot checks, the bounded structured parser and expanded alias
+footprint repairs are present; these findings do not reopen already closed work.
+Actual D19's three-site failure remains a separate audit gate, not a passed check.
+
+The coordinator reassigns remaining repair to frontier D after repeated Luna
+submissions missed explicit obligations. D performed a fresh read-only Step0 at
+this exact head, identifies the same six-file envelope and has stopped. D will
+become author and therefore cannot approve its repair. Root and frontier A must
+independently review it. No production authority is added by this reassignment.

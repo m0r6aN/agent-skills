@@ -724,3 +724,46 @@ actual D19's three-site failure, not merely an unfinished wildcard run. Enrollme
 follows stable runtime separately; do not rename/indirect calls to evade the audit.
 Run full affected checks, freeze clean six-file source/report commit and STOP for
 two independent reviews. No live, credential, host configuration or merge action.
+
+### Genuine initial-owner contract clarification — proposed for independent review
+
+The coordinator confirms the actual A receipt subject is the approval manifest
+{projectedResult,specSet,approvedHash}, its subjectKind is ShapingResult, and B's
+subject is the actual RegistrationResult. C's DispatchOrder subject is a projection
+of kompressArtifactId, kompressReceiptRef, compressedText, routingDecisionRef,
+injectedSkills and optional permissionProfile. It does not attest parcelRef or
+stepZeroRestatement. Never require a synthetic parcel-only subject or describe
+those omitted fields as authenticated by C.
+
+For this offline fixture slice, support exactly one approved spec and one registered
+ticket. Reject ambiguous/multi-parcel input. Validate actual exported shaping,
+registration, dispatch and build schemas and preserve their optional fields. Bind
+A's approvedHash to its exact canonical manifest and spec bytes; bind the supplied
+registration to B and the sole approved spec/ticket; bind C's complete projection
+to the corresponding order fields and compression evidence. The supplied parcel,
+ticket key and spec must agree through that sole registration membership.
+
+Only the actual fixed workflow-local routing-decision.json and kompress.json
+sidecars emitted by existing owners may supply their missing evidence. Read them
+with the same bounded, identity-checked capture and structural limits as other
+initial evidence. Reconstruct Step 0 using the actual prepareDispatch convention,
+including parcel, workflow, resolved model, injected skills and artifact id. Bind
+routing class/data class to the approved spec and require exact fixed sidecar refs.
+Retain content digests in the private initial snapshot and revalidate before later
+owner writes. No caller-selected paths, private admission flags, minting callback,
+alternate receipt schema or new production authority. These checks establish
+internal consistency of an explicitly offline fixture, not authenticity of a
+production approval, routing decision or invocation.
+
+Successful tests must use actual A/B producer helpers and actual prepareDispatch /
+executeDispatch, with only test-local compression and worktree boundaries synthetic.
+Mutations must independently alter A manifest/hash/spec, B membership, C projection,
+order and fixed sidecars, proving refusal before measured owner writes. Preserve
+all existing adversarial controls, exact/+1 bounds and the six-file repair envelope.
+Bounded file reads must use handles, compare identities around capture, consume
+at most the remaining byte cap plus one detection byte, charge captured bytes,
+close handles on all outcomes, and reject truncation, growth and replacement.
+
+This clarification is not a runtime release. Independent design review, root
+ratification and explicit Step0 release remain before edits. Production intake
+and the separate D19 enrollment gate remain open.
