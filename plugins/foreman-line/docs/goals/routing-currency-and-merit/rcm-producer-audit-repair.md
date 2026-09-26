@@ -1,5 +1,24 @@
 # Producer integration audit repair
 
+## Independent repair review A: changes required
+
+Review of 797d1ab513b6f17300bd93acf1f63f31a62ef1aa reproduced two unexpected
+audit passes: check?.(...) and baseline?.table in the pinned guard. TypeScript's
+isCallExpression/isPropertyAccessExpression include optional-chain nodes, so the
+current predicate accepts syntax outside the approved direct-call/access shape.
+Root independently reproduced both exit-0 results using the retained review probe
+C:/Users/clint/AppData/Local/Temp/rcm-audit-review-a.mts. Accept P2 finding.
+
+Repair within the same three files: explicitly reject optional-chain tokens on
+the check call and BOTH property accesses. Sweep every participating AST node
+for the same widened-guard mistake. Preserve exact existing argument/operand,
+location/value/cardinality checks; do not broaden the exception. Add independent
+negative cases for optional check, optional baseline.file and optional
+baseline.table, demonstrating RED-to-GREEN. Confirm the ordinary current source
+still passes and all earlier negative controls remain enforced. Producer stays
+unchanged. Fresh Step 0 and coordinator release precede edits; two independent
+final approvals plus refreshed CI remain required. No new authority is needed.
+
 Coordinator triage, 2026-09-26. PR #58 head b3c412f failed both full CI runs
 36255363980 and 36255360886. Each reported only mutation-scope-guard test failure;
 all other 20-package test/typecheck/lint cells passed. Its actual D19 subprocess
