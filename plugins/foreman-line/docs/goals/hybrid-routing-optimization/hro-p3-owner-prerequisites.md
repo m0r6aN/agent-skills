@@ -93,13 +93,12 @@ effects remain gated by their existing owner and authorization. Offline test
 installation can use deterministic transports to test actual local owner logic;
 that is explicitly not evidence of live authenticated decisions or services.
 
-The coordinator reconciled the parent final-D subject at 1c304f6; separate independent confirmation remains pending. This amendment preserves that reviewed subject and does not edit the parent P3 or P3B.
+The coordinator reconciled the parent final-D subject at 1c304f6; independent reviewer B1 approved that reconciliation. This amendment preserves that reviewed subject and does not edit the parent P3 or P3B.
 
 ## Verification and scope
 
 Original shaping envelope: the two linked specs and this note. The later offline amendment narrows its own editing envelope to P3A and this note. No ShapingResult,
-source, schemas, manifests, charter or original P3 edits. The explicit three-doc
-instruction overrides the generic shaping artifact step.
+source, schemas, manifests, charter or original P3 edits. The explicit two-document repair instruction overrides the generic shaping artifact step.
 
 Validation uses the existing frozen spec-linter donor under Node 24.19.0 with
 read-only dependencies, plus required-body/local-link checks and git diff --check.
@@ -123,7 +122,7 @@ the user's blanket goal/prerequisite authority. This is not measured capacity or
 runtime authorization. Parent P3 now references the exact P3A subject, result codes,
 authorized decision and interface-first sequencing; its old narrower subject and
 VERDICT_REFUSED spelling are superseded by P3A's reviewed EVIDENCE_REFUSED contract.
-This reconciliation requires separate independent confirmation before combined release.
+Independent reviewer B1 approved the 1c304f6 parent reconciliation; combined runtime release still requires its separate implementation and composition gates.
 
 P3A/B remain nondispatchable until a bounded implementation envelope and genuine
 Step0 are accepted. Missing production intake/installation/seal contracts remain
@@ -184,3 +183,35 @@ with P3B. Legacy six-stage semantics and full-head gates are unchanged.
 Validation for this amendment: frozen donor frontmatter lint, required sections,
 local links and exact two-file whitespace/diff inspection. Runtime acceptance is
 specified, not run here. No production, D5 completion, savings or live proof claim.
+## Shared-chain admission repair
+
+Root and independent B1 review requested one remaining amendment at
+ a9cdc51acf19b6a8b977a2a0e2792b82c923596e: per-session busy guards did not prevent
+two legitimate installations from writing the same root/workflow chain. Root
+accepted Step 0 and released exactly P3A spec plus this note; no runtime is released.
+
+The spec adds only an installation-private third createSessionV1 argument,
+ChainKeyV1. Verification derives it from the actual canonical validated root's
+bigint unsigned-64 device and positive file ID plus lowercase workflow UUID.
+Public fixture input/registration stay unchanged. Receipts captures and compares
+closed keys without filesystem imports or treating JSON as authority.
+
+Module-wide tuple reservation is atomic before second custody/effects and remains
+nonreclaimable through failed post-reservation setup, held and all terminal phases.
+Its capacity shares the existing 32-retained-session cap. New installations,
+fixture/provenance labels and Windows spelling/UUID casing cannot reset admission.
+Verification rechecks canonical root identity before each writing owner operation;
+unsupported/zero file identities refuse, never fall back to textual paths.
+
+Tests require real Windows aliases where supported, explicit unavailable reporting
+for a missing genuine short-path alias, symlink/junction refusal, root replacement
+and same-chain concurrency/terminal negatives. Separate actual roots and separate
+workflow UUIDs are positive controls. Synthetic registry keys prove comparison
+only, not filesystem authentication. Cooperative single-process and no-reopen
+limitations remain; no hostile-process security claim is added.
+
+The exact five-file future implementation envelope is preserved. Parent 1c304f6
+confirmation is now accurately recorded as independently approved by B1; validation
+wording now names this exact two-document repair. Frozen lint/body/link/diff checks
+precede local handoff; fresh root/B1 review remains required. No runtime tests,
+production activation or live evidence is claimed by this documentation change.

@@ -362,8 +362,9 @@ InstallationV1, session, lease or owner port. Methods are captured private closu
 There is no dispose/reset/reopen operation in this slice. Held and terminal sessions count against this bound; a new installation cannot reclaim quota. Boundary tests use isolated child module instances/processes, never an exported reset.
 
 ```ts
+type ChainKeyV1 = {rootDeviceId:string; rootFileId:string; workflowId:string};
 type InstallationV1 = {
-  createSessionV1(registration:unknown, fixtureId:unknown):ResultV1<OwnerBundleV1>;
+  createSessionV1(registration:unknown, fixtureId:unknown, chainKey:unknown):ResultV1<OwnerBundleV1>;
 };
 type OwnerBundleV1 = {
   session:object; workflow:WorkflowPortV1; verification:VerificationPortV1;
@@ -432,6 +433,57 @@ is handled by verification's private evidence/reread, only in finalized-D with
 unchanged tip. After E/F it refuses. Registry methods perform no filesystem reads
 or content-hash authentication: captured owners do these before registration.
 
+#### Unique canonical receipt-chain admission
+
+The installed verification wrapper alone derives ChainKeyV1, then supplies it as
+createSessionV1's third argument. Public OfflineInputV1 and RegistrationV1 are
+unchanged: neither accepts a chain key, identity override or canonicalization
+callback. JSON, a path string or a self-asserted filesystem identifier cannot
+establish custody. The private receipts module validates/captures closed key data
+and compares keys; it performs no filesystem operations and imports no owner.
+
+Verification validates the existing fixture root as a directory, canonicalizes its
+actual filesystem path and confirms confinement under the approved temporary root.
+It rejects symlink/junction components, ambiguous or unsupported paths and root
+identity failures. Obtain bigint directory device/file identifiers from the actual
+filesystem, never floating-point or caller-supplied values. rootDeviceId is the
+canonical decimal encoding of unsigned 64-bit dev (0 allowed); rootFileId is the
+canonical decimal encoding of a positive unsigned 64-bit file ID/inode. Maximum
+is 18446744073709551615; no sign, whitespace or leading zeros except the sole dev
+value '0'. Zero/unsupported inode or out-of-range identity refuses before owner
+writes, rather than falling back to a textual path key. workflowId is the validated
+UUID lowercased in the private key; it must equal registration.workflowId under
+that normalization. Receipt payload casing remains unchanged. The actual harness
+accepts UUID casing, so a differently cased UUID cannot create a second admission.
+
+The owned key denotes (actual root directory identity, workflow UUID), independent
+of path spelling, installation, fixtureId, head, correlationId or provenance label.
+Verification retains canonical root and key privately and rechecks root identity,
+confinement and prohibited components before each owner operation that can write,
+including measurement publication and synchronous finalization. A changed root or
+unverifiable identity holds; it never derives a replacement key for the session.
+Use the captured validated root for actual owner calls. This is cooperative local
+custody, not protection against hostile filesystem changes during an owner call.
+
+After all registration/key validation, receipts performs one synchronous module-wide
+check-and-reserve with no await or external callback between check and reservation.
+An existing tuple returns SESSION_REFUSED before allocating a second session,
+owner bundle, work/writer lease or any owner effect. Use nested maps or an unambiguous
+bounded tuple encoding, never delimiter concatenation that could collide. The
+reservation spans every installation created by this module instance. Successful
+reservation and retained-session capacity accounting are one atomic admission;
+invalid or capacity-refused input does not reserve a new key. Preserve the existing
+32-retained-session cap, so the reservation set is also bounded to 32 entries.
+
+Reservations are nonreclaimable for this module lifetime: held, finalized-D,
+integrated-E, sealed-F, lost caller references and failed post-reservation setup all
+retain their key and capacity. No reset/dispose, new installation, changed fixture
+label or alternate path spelling can reclaim it. Failed post-reservation setup
+must leave a bounded held reservation even if no driver was returned. Restart or
+separately loaded module instances are not a recovery mechanism; existing no-reopen
+and cooperative single-process installation constraints remain. Unit tests may
+exercise private key comparison with labelled fixture keys, but filesystem-owner
+checks require real directories and cannot claim authenticity from those fixtures.
 #### Offline driver and deterministic execution
 
 ```ts
@@ -511,6 +563,21 @@ installation. Test-only fault instrumentation stays in tests and is never a publ
 callback port. The report names offline fixture identity and distinguishes fixture
 service responses from actual owner execution and absent production intake.
 
+
+Canonical-admission controls must demonstrate same-root/workflow duplicate refusal
+within one installation and across two, before any second owner write; repeat in
+busy, held, finalized-D, integrated-E and sealed-F states and after post-reservation
+setup failure. Assert unchanged session/key capacity on duplicate attempts. Use
+real Windows directory aliases for case, separator, trailing-separator and dot
+segments, plus differently cased UUIDs. A supported real short-path alias must
+resolve to the same identity and refuse a duplicate; if the host supplies no such
+alias, record that control as unavailable, never fabricate a passing alias test.
+Junction/symlink paths refuse rather than becoming separate identities. Include
+root replacement/identity recheck refusal and zero/unsupported/out-of-range inode
+controls. Genuine different roots with the same UUID and different UUIDs in the
+same root remain admissible within bounds. Distinct installation/domain labels on
+the same tuple never create a positive control. Registry tests alone do not prove
+Windows canonicalization; report which real filesystem alias controls executed.
 ## Out of Scope
 
 Telemetry collection, production bootstrap/intake implementation, C/D transport,
@@ -544,7 +611,7 @@ paths remain separate future parcels, never an unspecified builder expansion.
 ## Verification Plan
 
 Lint frontmatter using the frozen donor, validate required body sections and local
-links, inspect the exact three-document diff. Independent reviewers must try a
+links, inspect the exact two-document repair diff. Independent reviewers must try a
 validly hashed forged pass and complete-looking but omitted expected review.
 Runtime acceptance requires actual owner composition and refusal-stage assertions;
 isolated fixture success is not production authentication or P3 completion.
