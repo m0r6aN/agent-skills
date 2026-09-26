@@ -699,3 +699,22 @@ Root records the failure and proposes this amendment under delegated prerequisit
 authority. Independent contract review, genuine stopped Step0 and explicit release
 precede edits; two independent fix reviews and all combined/remote gates still
 precede merge. PR70 remains draft and cannot merge with the current failure.
+
+### Scaffold amendment ratification and repair release — 2026-09-26
+
+Root ratifies the amendment after independent frontier D approval and Luna's
+stopped read-only Step 0 at d9f2e65. The actual clean integration checkout is
+D:/Repos/agent-skills-worktrees/hro-pmc-p2d-runtime-20260926 on
+codex/hro-pmc-d-integration-20260926. Focused reproduction is 7/8 with only AC1
+failing. Shared tools are exactly pinned (2.5.14, 26.6.2, 4.23.15, 7.0.2 in the
+order named above), with the two dispatch-only SDK packages each 0.87.1.
+
+Luna is explicitly released to edit only verification/tests/scaffold.test.ts and
+docs/goals/pi-model-configuration/pmc-p2d-verification.md. Shared tool versions
+must match and be exact numeric x.y.z pins; even equal range strings on both sides
+must fail. Include each missing tool on each side, extras on either side, drift,
+equal ranges, either missing SDK and either changed/ranged SDK as negative
+controls. Keep all remaining assertions. No manifests, locks, runtime changes,
+installs or provider activity. Run focused and full verification, applicable
+typecheck/lint and actual D19. Freeze clean for root and independent A review;
+PR70 stays draft until both approvals and exact-head CI pass.
