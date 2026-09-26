@@ -1,7 +1,7 @@
 ---
 ticket: PMC-P1B
 title: Lossless provider binding projection and consumer compatibility inventory
-status: draft
+status: active
 owner: clinton.morgan
 created: 2026-09-26
 updated: 2026-09-26
@@ -26,7 +26,7 @@ Preserve every declaration and constraint; projection creates no route authority
 
 ## Constraints
 
-- Draft pending coordinator lint and Gate 2. Sequential dependency: accepted
+- Gate 2 granted under the explicit HRO prerequisite delegation. Sequential dependency: accepted
   PMC-P1a implementation, including independent reviews and recorded export/base.
   Start only after P1a releases the shared barrel, schema registry and parity test.
 - Consume the accepted P1a validateProviderBindingPolicyV1 and type/schema;
@@ -53,11 +53,10 @@ type ProviderBindingProjectionV1 = Readonly<{
 }>;
 type ProviderBindingProjectionResult =
   | Readonly<{ ok: true; projection: ProviderBindingProjectionV1 }>
-  | Readonly<{ ok: false; errors: readonly ProviderBindingValidationIssue[] }>;
+  | Readonly<{ ok: false; errors: readonly ProviderBindingValidationErrorV1[] }>;
 ```
 
-Use the accepted P1a issue type/name; if its final name differs, bind the alias
-without changing its meaning. `projectProviderBindingsV1(input: unknown)` first
+Use the accepted P1a ProviderBindingValidationErrorV1 directly. `projectProviderBindingsV1(input: unknown)` first
 calls the accepted P1a validator. On invalid input return its deterministic typed
 errors without partial output. On valid input return the full owned, deep-frozen
 validated policy in the closed envelope above. No flattened subset, field
@@ -163,3 +162,21 @@ accepted P1a on the reconciled RCM base; no concurrent mutation of these paths.
 Stop for an incompatible predecessor contract, required P1a validator/schema
 change, unlisted file, frozen-contract change or production execution authority.
 Do not weaken validation or widen this parcel to resolve an upstream conflict.
+
+## Gate 2 and frozen predecessor — 2026-09-26
+
+The user authorized completion of necessary PMC/RCM prerequisites, including
+scoped decisions and merges after independent review. Coordinator releases this
+private build against main e6daf7e8cd3bc7b7ae61f9646465f8cea60de2c9:
+PMC-P1a merged in PR55; supported RCM-P1A wrapper merged in PR56. The existing
+validator returns ProviderBindingValidationResultV1 with valid true/policy or
+valid false/errors, whose item type is ProviderBindingValidationErrorV1.
+Projection retains its own specified ok discriminant and forwards those errors.
+
+Builder worktree: D:/Repos/agent-skills-worktrees/hro-pmc-p1b-20260926.
+Branch: codex/hro-pmc-p1b-20260926. Fresh builder must restate and stop at Step 0
+before editing. The eight-file allowlist is unchanged. No runtime activation.
+Integration of this projection precedes RCM producer additions; the latter may
+build in its separate worktree but must preserve this accepted public barrel.
+Two independent frontier implementation reviews and green full remote CI remain
+merge requirements. Historical owner gate holds do not override this delegation.

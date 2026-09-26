@@ -98,3 +98,17 @@ Historical Pending rows above are replaced by these dispositions:
 The Node 24.7.0 statement above is historical. Luna verified with local
 `D:/nvm/v24.19.0/node.exe`; subsequent verification will pin that runtime.
 Gate 2 will be recorded against the amended spec and exact builder branch.
+
+## RCM-P1A Stage F closure — 2026-09-26
+
+PR56 merged as e6daf7e8cd3bc7b7ae61f9646465f8cea60de2c9 after both independent
+final reviews approved 4201ac4edf8069efa0857d9841341d62b2429648. Independent
+combined integration passed 498 routing tests, typecheck, lint and spec validation;
+the public barrel preserved the 75-export union. Complete remote twenty-package
+CI passed at final PR head e23a9251b0365aeaf68302f36bb259a4a59a9ed3. The spec is
+moved to done; original reviewed branches remain retained without destructive
+cleanup. The wrapper confers no authority on caller-declared source evidence.
+
+PMC-P1b now owns the next shared-file integration. The isolated RCM producer
+may build concurrently but lands after the accepted projection. Live routing,
+provider configuration and paid inference have not been activated.

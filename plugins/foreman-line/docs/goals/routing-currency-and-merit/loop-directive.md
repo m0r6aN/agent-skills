@@ -171,3 +171,17 @@ return through a separately named Gate 1 eligibility annex and its own evidence 
 ## Scoped prerequisite delegation and P1 closure — 2026-09-26
 
 The user explicitly authorized HRO coordinator task 01a0ddb6-5fed-7d82-b2f0-075315440dc1 to coordinate and approve necessary RCM/PMC prerequisites, subject to independent review. This overrides historical P1 gate holds below for this bounded work; it does not transfer unrelated RCM or Jev queues. The former named RCM owner was not active during the collision audit. PR51 merged as 700beba5e6387a9471ecea7a8757b226930ba925 after fresh independent integration approval, 399 tests/typecheck/lint on Node24.19.0, and green CI. P1 is done. The HRO coordinator owns the next scoped adapter/source prerequisite parcels; their concrete reviewed specs control dispatch. Actual runtime/goal acceptance remains open.
+
+## RCM-P1A Stage F closure — 2026-09-26
+
+PR56 merged as e6daf7e8cd3bc7b7ae61f9646465f8cea60de2c9 after both independent
+final reviews approved 4201ac4edf8069efa0857d9841341d62b2429648. Independent
+combined integration passed 498 routing tests, typecheck, lint and spec validation;
+the public barrel preserved the 75-export union. Complete remote twenty-package
+CI passed at final PR head e23a9251b0365aeaf68302f36bb259a4a59a9ed3. The spec is
+moved to done; original reviewed branches remain retained without destructive
+cleanup. The wrapper confers no authority on caller-declared source evidence.
+
+PMC-P1b now owns the next shared-file integration. The isolated RCM producer
+may build concurrently but lands after the accepted projection. Live routing,
+provider configuration and paid inference have not been activated.
