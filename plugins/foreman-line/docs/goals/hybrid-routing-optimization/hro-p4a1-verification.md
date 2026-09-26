@@ -39,8 +39,11 @@ Input capture is closed and owned: accessors, symbols, thenables, cycles,
 non-plain prototypes, unknown keys, non-finite values and hostile traps refuse.
 The declared depth, expanded-node, ordinary-string, path, payload, 128-intent,
 256-KiB UTF-8 and registration bounds are enforced before the B1 mutation.
-Aliases are charged at expanded cost. Roots are existing temporary fixture
-directories with the fixed name, canonical path confinement, no reparse/symlink
+Array minimum-cost and the closed top-level `intents` cap are checked from the
+observable length before own-key enumeration. Array costs include only JSON
+punctuation and values; object keys retain their escaped UTF-8 costs. Aliases
+are charged at expanded cost. Roots are existing temporary fixture directories
+with the fixed name, caller and canonical component checks, no reparse/symlink
 components, regular single-link artifacts and nonzero filesystem identity.
 
 The private broker claim is consumed before its successful return and cannot be
@@ -53,14 +56,13 @@ admission.
 
 Using Node `v24.19.0` from `D:\nvm\v24.19.0\node.exe`:
 
-- Focused recovery suite: 12 passed, 0 failed.
-- Full dispatch suite: 69 tests passed; 8 unrelated test files could not load
-  because the intentionally absent dependency junction does not provide
-  `ajv`/`yaml` for packages outside this slice.
-- Focused Biome check over all four runtime/test files: passed.
-- Dispatch typecheck: no diagnostics for the five P4A1 files. The repository
-  typecheck still reports pre-existing missing `ajv`/`yaml` declarations in
-  unrelated packages because dependencies are intentionally not installed.
+- Focused recovery suite: 13 passed, 0 failed.
+- Full dispatch suite: 369 passed, 0 failed, 0 skipped.
+- Dispatch Biome check: 28 files checked, 0 errors.
+- Dispatch typecheck: passed with no diagnostics.
+- Nineteen absent sibling `node_modules` directories were linked read-only after
+  each package-lock SHA-256 matched the E1 donor; no install or donor write was
+  performed.
 
 The focused suite proves:
 
@@ -68,12 +70,14 @@ The focused suite proves:
 2. actual B1 IDs, exact independent request-digest fixtures and immutable
    SQLite registration;
 3. existing B1/admission refusal, aliases, schema tampering and no repair;
-4. hostile input and bound refusal before mutation;
-5. independent-process same-root race with one complete winner;
-6. B1 uncertainty before and after COMMIT;
-7. admission uncertainty before and after COMMIT;
-8. one-use claim consumption;
-9. actual B1 plus actual ledger paired terminal behavior, where an acknowledged
+4. exact-name junction refusal before canonicalization, exact 256-KiB UTF-8
+   acceptance, and 129/70,000 top-level length refusal before own-key descent;
+5. hostile input and bound refusal before mutation;
+6. independent-process same-root race with one complete winner;
+7. B1 uncertainty before and after COMMIT;
+8. admission uncertainty before and after COMMIT;
+9. one-use claim consumption;
+10. actual B1 plus actual ledger paired terminal behavior, where an acknowledged
    owner terminal commit permits only predeclared R2 and ledger-only closure
    remains blocked.
 

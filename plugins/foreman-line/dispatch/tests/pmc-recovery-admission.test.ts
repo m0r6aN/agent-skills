@@ -224,10 +224,46 @@ test('existing admission, B1, aliases, and tampering refuse without repair', (t)
   const target = join(tmpdir(), `hro-p4a1-fixture-target-${randomUUID().replaceAll('-', '')}`)
   mkdirSync(target)
   t.after(() => rmSync(target, { recursive: true, force: true }))
-  const link = join(tmpdir(), `hro-p4a1-fixture-link-${randomUUID().replaceAll('-', '')}`)
+  const link = join(tmpdir(), `hro-p4a1-fixture-${randomUUID().replaceAll('-', '')}`)
+  const linkedInput = { ...f.input, fixtureId: randomUUID().replaceAll('-', ''), root: link }
+  rmSync(f.root, { recursive: true, force: true })
   symlinkSync(target, link, process.platform === 'win32' ? 'junction' : 'dir')
   t.after(() => rmSync(link, { recursive: true, force: true }))
-  assert.equal(createOfflineRecoveryAdmissionV1({ ...f.input, root: link }).ok, false)
+  assert.deepEqual(createOfflineRecoveryAdmissionV1(linkedInput), {
+    ok: false,
+    code: 'PATH_REFUSED',
+  })
+  assert.deepEqual(readdirSync(target), [])
+})
+
+test('capture accepts the exact 256 KiB UTF-8 boundary without array index charges', (t) => {
+  const f = fixture(t)
+  let low = 0
+  let high = 262144
+  let boundary: OfflineInputV1 | undefined
+  while (low <= high) {
+    const length = Math.floor((low + high) / 2)
+    const candidate = {
+      ...f.input,
+      intents: [
+        {
+          ...f.input.intents[0],
+          payloadJson: JSON.stringify('x'.repeat(length)),
+        },
+      ],
+    } as OfflineInputV1
+    const bytes = Buffer.byteLength(JSON.stringify(candidate), 'utf8')
+    if (bytes <= 262144) {
+      if (bytes === 262144) boundary = candidate
+      low = length + 1
+    } else {
+      high = length - 1
+    }
+  }
+  assert(boundary)
+  assert.equal(Buffer.byteLength(JSON.stringify(boundary), 'utf8'), 262144)
+  const result = createOfflineRecoveryAdmissionV1(boundary)
+  assert(result.ok, JSON.stringify(result))
 })
 
 test('hostile closed input and bounds are refused before B1 or admission mutation', (t) => {
@@ -247,6 +283,34 @@ test('hostile closed input and bounds are refused before B1 or admission mutatio
     ok: false,
     code: 'BOUNDS_REFUSED',
   })
+  let intentOwnKeys = 0
+  const tooManyIntents = new Array(129)
+  tooManyIntents[0] = f.input.intents[0]
+  const tooManyProxy = new Proxy(tooManyIntents, {
+    ownKeys() {
+      intentOwnKeys++
+      throw new Error('must preflight intents length')
+    },
+  })
+  assert.deepEqual(createOfflineRecoveryAdmissionV1({ ...f.input, intents: tooManyProxy }), {
+    ok: false,
+    code: 'BOUNDS_REFUSED',
+  })
+  assert.equal(intentOwnKeys, 0)
+  let hugeIntentOwnKeys = 0
+  const hugeIntents = new Array(70000)
+  hugeIntents[0] = f.input.intents[0]
+  const hugeProxy = new Proxy(hugeIntents, {
+    ownKeys() {
+      hugeIntentOwnKeys++
+      throw new Error('must preflight expanded length')
+    },
+  })
+  assert.deepEqual(createOfflineRecoveryAdmissionV1({ ...f.input, intents: hugeProxy }), {
+    ok: false,
+    code: 'BOUNDS_REFUSED',
+  })
+  assert.equal(hugeIntentOwnKeys, 0)
   assert.equal(existsSync(join(f.root, 'pmc-intent-v1.sqlite')), false)
   assert.equal(existsSync(join(f.root, 'hro-recovery-admission-v1.sqlite')), false)
   const proxied = new Proxy(f.input, {

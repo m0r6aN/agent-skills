@@ -127,6 +127,8 @@ function capture(input: unknown, options: { payload?: boolean } = {}): unknown {
         length < 0)
     )
       fail('INPUT_REFUSED')
+    if (array && depth === 1 && key === 'intents' && length > 128) fail('BOUNDS_REFUSED')
+    if (array && nodes + 2 * length > NODE_LIMIT) fail('BOUNDS_REFUSED')
     const names = Reflect.ownKeys(value)
     if (
       array &&
@@ -153,8 +155,10 @@ function capture(input: unknown, options: { payload?: boolean } = {}): unknown {
         const descriptor = Object.getOwnPropertyDescriptor(value, name)
         if (!descriptor?.enumerable || !('value' in descriptor)) fail('INPUT_REFUSED')
         if (count++ > 0) charge(bytes, ',')
-        charge(bytes, JSON.stringify(name))
-        if (!array) charge(bytes, ':')
+        if (!array) {
+          charge(bytes, JSON.stringify(name))
+          charge(bytes, ':')
+        }
         nodes++
         const child = copy(descriptor.value, depth + 1, name)
         if (array) Object.defineProperty(owned, name, { value: child, enumerable: true })
@@ -278,6 +282,7 @@ function rootInfo(raw: string, fixtureId: string, workflowId: string): RootInfo 
   )
     fail('PATH_REFUSED')
   const resolved = resolve(raw)
+  checkDirectoryParts(resolved)
   const real = realpathSync(resolved)
   checkDirectoryParts(real)
   const temp = realpathSync(tmpdir())
