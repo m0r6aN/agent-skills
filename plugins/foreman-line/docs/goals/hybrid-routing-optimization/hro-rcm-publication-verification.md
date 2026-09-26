@@ -118,3 +118,28 @@ metadata availability without credentials remains an activation prerequisite;
 proves refusal/custody ordering, not a completed paid inference or complete
 production evidence. Production installation/profile authority, P4A admission,
 live transport proof and full HRO success remain separate release gates.
+
+## Independent source review — b86dcbe00ce837e2c7c2fa10403a87840a4ebe46
+
+Root and frontier D request changes for one reproduced blocker. The publication
+owner and transport engine each keep a separate history for the same installed
+clock. Sequence 0,1,2,3,2,4,5,6,7 crosses from owner 3 to transport 2 but publishes
+generation 1. Root independently reran D's probe. D also separately reproduced
+UTC-only and monotonic-only rollback; neither dimension is protected at the seam.
+The required nondecreasing history is installation-wide, not per wrapper.
+
+Repair must share validated history across every owner/transport read while
+preserving the independent fixed native transport factory. Rollback must retain
+INSTALLATION_REFUSED: before opening, no I/O and no occupied capacity; after
+opening, existing connected/closed cleanup rules continue to hold capacity until
+authenticated settlement. Keep equal/increasing positive controls and independent
+UTC/monotonic rollback controls in both directions across the boundary. No changes
+to N, adapter, C/B1/ledger, existing native request policy or production refusal.
+
+Both reviewers independently passed 62 focused tests, dispatch typecheck and
+changed-file lint. Root read all three modules; D additionally inspected native
+cleanup, CAS/cancellation, custody and bounds. Existing tests miss this defect.
+Probe files are TEMP/hro-p-clock-review.mjs, hro-p-clock-mono-review.mjs and
+hro-p-clock-utc-review.mjs. These run actual publication/N with fake native input,
+not a provider request. The source remains frozen for fresh builder Step0 and
+explicit release. Two independent repair reviews remain before integration.
