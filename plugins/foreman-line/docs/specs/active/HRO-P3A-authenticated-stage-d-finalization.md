@@ -738,10 +738,15 @@ those omitted fields as authenticated by C.
 For this offline fixture slice, support exactly one approved spec and one registered
 ticket. Reject ambiguous/multi-parcel input. Validate actual exported shaping,
 registration, dispatch and build schemas and preserve their optional fields. Bind
-A's approvedHash to its exact canonical manifest and spec bytes; bind the supplied
-registration to B and the sole approved spec/ticket; bind C's complete projection
-to the corresponding order fields and compression evidence. The supplied parcel,
-ticket key and spec must agree through that sole registration membership.
+A's approvedHash to its exact canonical manifest and spec bytes. RegistrationV1
+is distinct from B's RegistrationResult: compare its workflowId/correlationId with
+B.correlation and the initial chain; require RegistrationV1.parcelRef ===
+input.ticketKey === order.parcelRef === B.subject.ticketKeys[0], with exactly one
+B ticket. Require the sole A parcelSpecRefs/specSet entry to resolve the captured
+specPath and exact digest. Preserve the complete schema-valid B subject/links;
+never compare these distinct registration objects structurally or invent missing
+parcel/spec fields in B. Bind C's complete projection to the corresponding order
+fields and compression evidence.
 
 Only the actual fixed workflow-local routing-decision.json and kompress.json
 sidecars emitted by existing owners may supply their missing evidence. Read them
