@@ -230,3 +230,19 @@ binding mutations, unknown facts, decimal/effort mapping, hostile inputs and exa
 bounds. Full routing tests/typecheck/lint and retained-output checks remain future
 runtime acceptance. This amendment is checked by frozen linter, body/local links,
 exact two-document whitespace/scope checks and a clean local handoff commit.
+
+## Checkpoint N amended-design acceptance — 2026-09-26
+
+Full publication designc4f1e22 received independent coordinator/PMC approvals and
+ratificationf2dcb7c in its retained shaping checkout. Coordinator and independent
+reviewer D now APPROVE the concrete checkpoint N amendment8dca233ce21d9083cc0368cabff5b7104d932f85.
+The source binding, raw-byte retention, positive-only effort map, typed refusal
+categories and explicit UTF-8 mode fit the actual sole reader/adapter/producer.
+Old retained v2 semantics and byte-pinned output remain mandatory invariants.
+Frozen lint/link/diff checks pass; no remaining design finding.
+
+Root ratifies that deliberate narrower new profile and the exact four-file N
+runtime/report envelope under delegated prerequisite authority. This is design
+acceptance; builder must restate the final amended source plan and stop for explicit
+runtime release. Checkpoint P transport/publication, live endpoint compatibility,
+authentic production acquisition and all downstream launch evidence remain separate.
