@@ -1,7 +1,7 @@
 ---
 ticket: PMC-P2F
 title: Reuse the fixed provider-binding schema validator inside its owner
-status: active
+status: done
 owner: clinton.morgan
 created: 2026-09-26
 updated: 2026-09-26
