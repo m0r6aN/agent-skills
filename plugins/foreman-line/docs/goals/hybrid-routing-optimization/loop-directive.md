@@ -60,3 +60,7 @@ commit; no publish/merge until two independent implementation reviews close.
 ## Stop and continuation
 
 Persist decisions, evidence and queue changes here. Continue independent authorized work while a prerequisite waits. If no meaningful work remains, report the exact missing input and resume when it arrives. Never mark the full goal complete merely because P1 or fixture tests pass. Stop on user's request, unresolved security findings, unauthorized external effects, or genuine missing user-only credentials/ownership decisions.
+
+## Implementation checkpoint — 2026-09-26
+
+RCM library PR51 and source/closure PR52 are merged; source profile v4 is accepted for six conservative OpenRouter catalog-fact rows with explicit remaining refusals. PMC binding/controlled-launch design PR53 is updated against main and awaiting renewed CI. PMC-P1a builder workspace is hro-pmc-p1a-20260926 at base ad878b310763609205a0e80ed631c0da76e1e833; shared barrel sequence is PMC-P1a then RCM-P1A wrapper, then subsequent projection/producer edits on a new accepted base. HRO-P1a head2708c3d failed both independent reviews on hostile-input correctness; Luna is released to repair every finding in hro-p1a-review-triage.md. Do not publish that uncorrected head. HRO-P1b and all later runtime/cache/receipt work remain queued. No full goal completion or live routing claim is made.
