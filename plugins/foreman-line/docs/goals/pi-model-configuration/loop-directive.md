@@ -418,3 +418,65 @@ The lossless projection spec is moved to done; links are updated. Branches remai
 retained. This remains static evidence, not model activation or HRO completion.
 The next RCM producer integration retains the complete projection contract and
 its own two approvals; PMC-P2A private build continues behind the accepted API.
+## PMC-P2B integration sequencing — 2026-09-26
+
+Under the user's explicit prerequisite delegation, the HRO coordinator authorizes
+independent ledger integration ahead of the repaired P2A implementation merge.
+P2B depends on the frozen P2A value contract, imports no P2A implementation, and
+cannot select or launch a model. Both remain mandatory before P2C composition.
+This changes merge order only; it grants no runtime use, live funding, credentials,
+configuration changes or exception to either independent review or full CI.
+P2B source 835a6dd has two independent approvals; the isolated integration branch
+contains accepted main through PR59. Review the combined result and complete CI
+before Gate 3. P2A source bb89be9 is separately in two final reviews; its contract
+is unchanged. The P2C design remains a draft until concrete custody gaps close.
+
+## PMC-P2A Stage-F closure — 2026-09-26
+
+PR61 merged as4b86643acd4e5cdf183e85cf1cd1c2ace51e0182 at
+2026-09-26T17:37:04Z after both final implementation approvals, independent combined
+verification and all twelve remote checks succeeded on725d741. Combined review
+verified byte-identical resolver/types/tests/fixture, additive retained producer
+exports,49 independent HRO/RCM tests and16 public API integration assertions.
+Root consumed those results and matched the exact reviewed head for merge.
+Spec is done; current predecessor links move with it, historical evidence stays.
+Frozen source/donor worktrees remain while active dependents use their packages.
+P2B audit repair is active; P2C/P2D/P2E and full HRO runtime/measured exit remain
+open. No pure resolver result authorizes execution or proves source authenticity.
+
+## PMC-P2B Stage-F closure — 2026-09-26
+
+PR60 merged as 71fd4895a60f90318b517818da14dea94b627fb0 at
+2026-09-26T18:26:02Z. All twelve remote checks succeeded on exact reviewed head
+0404ec8b19ef5864b8bbd824ffc288c2f8dddff6 before matched-head merge. Both ledger
+source reviews and both final audit repair reviews remain applicable unchanged.
+Independent combined review approved that head after 28 actual resolver/money/
+temporary-SQLite composition assertions and exact-tree D19 (ledger 10/10, retained
+RCM provenance 1/1, zero unruled instances). Coordinator combined checks passed:
+182 dispatch, 938 routing-policy, 70 contract-readers and 44 mutation-scope tests,
+all four package typechecks/lints and affected specification validation.
+
+Spec is done and current predecessor links follow it. P2A and P2B are both accepted
+main prerequisites; B1's narrow private-build sequencing hold is resolved. B1
+intent custody, C controller, D transport and E exercised initiating caller remain
+open, as do HRO caching/measurement/recovery/configuration/diagnostic/live exits.
+Neither resolver values nor the ledger alone authorize or prove a provider send.
+No production budget, provider call or host configuration was created in P2B.
+## PMC-P2B1 Stage-F closure — 2026-09-26
+
+PR63 merged as727c0554f11990da778e7647e7a108f3ca6f95aa at19:48:53Z after all twelve
+remote checks succeeded on reviewed head0c3bae513e4a9dd1cb604b0cde3c50d651ad08ee.
+Two independent source approvals cover3f31181; two independent audit approvals
+coverf2ae2f7; separate combined approval covers0c3bae5. Root combined verification
+passed356 dispatch,944 routing-policy,71 contract-readers and44 mutation-scope
+tests, all typechecks/lints and actual-tree D19. Audit-head verification passed580
+cases and an independent222-case mutation suite. D19 enrolls exactly B1 9/9,
+ledger10/10 and registryDATA10/10, retaining runtimeblobc2d967de9dc6b0f1fe17f4aafe528a8678194432.
+
+B1 specification moves to done and current predecessor links follow it. Durable
+intent custody is accepted, not production authority or a provider-send claim.
+Controller bootstrap amendment5764eba has two independent design approvals and
+root ratificationd260bf6; fresh Step0 is complete, release still explicit. E1
+legacy retirement is separately released after E01–04 disposition; E2, D and HRO
+receipt/recovery/configuration/diagnostic/live gates remain open. No provider,
+credential, production budget or host configuration operation occurred in B1.

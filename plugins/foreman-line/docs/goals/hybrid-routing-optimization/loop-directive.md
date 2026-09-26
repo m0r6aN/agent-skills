@@ -98,3 +98,53 @@ The lossless projection spec is moved to done; links are updated. Branches remai
 retained. This remains static evidence, not model activation or HRO completion.
 The next RCM producer integration retains the complete projection contract and
 its own two approvals; PMC-P2A private build continues behind the accepted API.
+## HRO-P1b Stage-F closure — 2026-09-26
+
+PR59 merged at 2026-09-26T17:22:58Z as
+26c72690c65302561fd15a171dd629cf19cdb963. Both independent consumer and reader-audit
+reviews passed; independent combined verification approved 5a4937e; all twelve
+remote checks succeeded at that exact head before the matched-head merge.
+The consumer spec moves to done. This is offline compatibility evidence only;
+owner bridge, cache, execution, receipts and measured live exit remain open.
+Frozen worktrees remain as traceability and read-only dependency donors during
+active integration; cleanup follows when those dependents are finished.
+
+## P1c repair ownership and accepted ledger checkpoint — 2026-09-26
+
+PMC-P2B PR60 merged as 71fd489 with all twelve checks green and independent source,
+audit and combined approval. Its Stage-F record is in the PMC loop directive.
+P1c source 435c710 is held for five accepted findings recorded at local HRO head
+a824dca in hro-p1c-review-triage.md; root reproduced the mutable-byte alias escape
+and separate byte/ordinary-node budget defect. No P1c acceptance or live claim.
+
+Native child-agent creation and reviving the earlier Luna child repeatedly reached
+the agent thread limit. The coordinator resumed the user's existing assigned task
+"Implement hybrid routing optimization" (01a0ddc2-2250-70a3-82ea-6a5bb273714e),
+explicitly configured gpt-5.6-luna/high, for this repair only. It must use
+D:/Repos/agent-skills-worktrees/hro-p1c-shaping-20260926, exact four-file envelope,
+inspect/restate/STOP, then explicit coordinator release. Its default cwd is read-only.
+No new user-owned task or competing coordinator loop was created. Root task
+01a0ddb6-5fed-7d82-b2f0-075315440dc1 retains all reviews, integration and release.
+## Continuation checkpoint: validator reuse accepted, final bridge repair held
+
+PMC-P2F merged in PR62 at2eb994b4 after two independent source reviews, separate
+combined-head review and all12remote checks. It reuses only compiled fixed schema,
+never validation results or authority; actual choice reuse remains HRO-P2 work.
+
+HRO-P1c287d source closes original byte-alias/budget defects but both reviews still
+require genuine HRO artifact substitutions, retained-producer refusal coverage,
+exact boundary/during-capture tests and full-package lint. Repair Step0 requested
+against roottriage2360b34 in existing Luna task; no replacementmodel or acceptance.
+
+PMC-P2B1 repaired3f31181 has both final independent source approvals; narrow
+Contract B/D19 enrollment is released separately in integrationworktreeb8565c8.
+C/D composition design is independently approved; runtime predecessors and all
+live evidence gates remain open. P2E caller inventory found real legacy execution
+surfaces and no existing Pi inference CLI; scoped split drafts are in progress.
+
+HRO-P2 corrected01c20f5 design has an independent approval but remains draft;
+bounded performance-feasibility measurement precedes root adoption decision.
+A source-backed billing-bound gap prevents paid live activation. Vendor inquiry
+is prepared, not sent; user was asked whether existing contractual evidence is
+available. No credentials, host configuration, provider inference or spend used.
+Independent implementation continues while that evidence question is pending.
