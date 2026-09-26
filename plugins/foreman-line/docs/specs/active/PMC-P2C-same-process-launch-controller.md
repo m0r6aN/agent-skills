@@ -126,8 +126,12 @@ aggregate UTF-16 string units <=1,048,576, ordinary string <=2,048 units.
 validate both BEFORE parsing. Charge aliases by expanded size. P2A retains its
 independent bounds, including two history attempts and 256 binding/catalog items.
 No truncation/coercion/default/normalization. Proxy traps are outside ordinary-data
-execution-time guarantees; trapped failures still deny. Final wire has the same
-byte cap; response handling remains P2D-owned and bounded.
+execution-time guarantees; trapped failures still deny. The final WireV1.body
+string has an independent 1,048,576-byte UTF-8 cap. It does not inherit the
+payloadJson UTF-16 cap or consume the ordinary metadata aggregate string budget.
+Its key and value-node still count normally; all other wire metadata retains the
+ordinary depth/node/key/string/aggregate bounds. No other string is exempt.
+Response handling remains P2D-owned and bounded.
 
 For structurally capturable requests, use this deterministic first-failure order:
 
@@ -657,3 +661,20 @@ must be tested; actual-Pi and production evidence remain later gates. No provide
 credential, host configuration, production initialization or automatic recovery.
 Type-only barrel additions only. Local frozen handoff, two independent source
 reviews, integration and full remote checks precede merge. Root owns release.
+## Wire-body capture clarification and repair gate — 2026-09-26
+
+Independent reviewer and coordinator reproduced an unintended rejection in
+source d38b42d139b3ad4f71314518f9bfd204f85e9d81: final body capture inherited
+request payloadJson's 262144 UTF-16 limit; merely lifting that limit still charges
+body text to ordinary metadata's aggregate, rejecting the exact permitted byte
+boundary. The independent final-body byte budget above clarifies the existing
+final-wire cap without changing request bounds or production billing authority.
+
+Repair is limited to controller.ts, pmc-controller.test.ts and pmc-p2c-verification.md
+under their original package/doc paths. Fresh Step0 and explicit release required.
+Preserve all other source and contracts. Permanent independent controls must cover
+ASCII and multibyte exact1048576 and one-over body bytes, body content exceeding
+262144 UTF-16 but within its byte bound, unchanged request-payload limits and
+unchanged ordinary metadata limits. Body key/value-node remain ordinarily counted.
+Test-count baseline86 focused/442 dispatch must not shrink. Two fresh final source
+reviews and separate Contract B/audit enrollment still gate integration.
