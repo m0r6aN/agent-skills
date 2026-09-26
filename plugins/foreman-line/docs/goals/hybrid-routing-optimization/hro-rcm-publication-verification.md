@@ -236,3 +236,17 @@ until original transport cleanup settles. The independent native factory and
 predecessors are unchanged. Root log: TEMP/hro-p-root-repair-focused.log.
 Independent frontier D review, combined-main checks and remote acceptance remain
 required. This is source acceptance by one reviewer, not production readiness.
+
+## Independent frontier repair acceptance — 2026-09-26
+
+Frontier D independently approves source 7621fa204dea2bce03ca7f1512fafd9a84932c6f.
+D ran all 74 focused tests, dispatch typecheck and lint, and independently exercised
+UTC-only and monotonic-only rollback probes. Both now refuse publication. No new
+source defect was identified. D did not author this repair; root and D approvals
+therefore satisfy the two independent source-review requirement.
+
+Combined-main integration and exact-head remote checks remain required. Integration
+will follow transport PR70 acceptance so the isolated integration checkout can
+retain its real pinned SDK dependencies without duplicating installation. The
+production constructor remains refusal-only; these approvals do not certify live
+billing bounds, credential custody, or measured production completion.
