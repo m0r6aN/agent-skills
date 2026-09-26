@@ -70,3 +70,24 @@ Advisory shaping checks passed with the existing read-only spec-linter donor
 and Node 24.19.0: frontmatter/schema validation, required body sections and local
 relative Markdown links. Only the two authorized documents are committed.
 Independent design approval and runtime file authorization remain outstanding.
+
+## Independent review correction
+
+Review of 3a17553285d8dd76c26d595bf16aca6b2fa76a53 requested two precise changes.
+The actual money helper includes requestDigest in costValueDigest; caching the
+complete cost value would defeat reuse across otherwise equivalent fresh requests.
+The revised key explicitly retains economic/ranking/profile/tariff fields and
+excludes costValueDigest, priceEvidenceDigest and cost EvidenceRef. Those omitted
+fields remain intact in current authenticated acquisition, validation and audit;
+the projection never grants authority. Required integration tests call the real
+computePmcCostV1 for two different request digests and prove distinct money digests
+but equal selection keys and real reuse. No hand-written equal digest fixture
+can satisfy that case.
+
+The resolver's occurrenceIndex is a global policy.laneBindings offset; the policy
+allows 1536 entries while one evaluated lane has at most 256 occurrences. The
+record therefore accepts 0..1535 with exact current tuple matching, not 0..255
+or a silently renumbered lane-local offset. A valid winner above 255 must pass
+cold/warm parity and reuse tests; out-of-range/mismatched tuples become misses.
+These corrections do not approve the owner factory, effective-key interpretation,
+SQLite/TTL/measurement decisions or deferred C adoption. All remain review gates.

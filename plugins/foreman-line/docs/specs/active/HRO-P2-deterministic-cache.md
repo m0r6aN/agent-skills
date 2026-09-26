@@ -120,8 +120,18 @@ Freeze the concrete key projection in the owner prerequisite and literal tests:
   arrays retain original order and distinctions.
 - Each current candidate in occurrence order: occurrenceIndex, bindingId,
   provider/providerModelId from the policy, refusal codes, and either rank:null
-  or providerGroup, matrixRole, quality, provider/providerModelId and the full
-  supplied cost VALUE. Do not serialize cost EvidenceRef as cached authority.
+  or providerGroup, matrixRole, quality, provider/providerModelId and this exact
+  selection-relevant supplied cost projection: currency, maximumMicroUsd,
+  maximumInputTokens, maximumOutputTokens, sourceProfileId, sourceProfileVersion,
+  sourceProfileDigest, tariffDigest and ranking. Ranking retains its discriminant
+  and every field: projected inputTokens/outputTokens/usd numerator/denominator,
+  or unit-price outputUsdPerMillion/inputUsdPerMillion numerator/denominator.
+  Exclude costValueDigest and priceEvidenceDigest from this key projection; these
+  bind current request/evidence custody and are not comparator inputs. In
+  particular the real money helper hashes requestDigest into costValueDigest.
+  Do not serialize cost EvidenceRef as cached authority. The original complete
+  cost claim remains in fresh validation/audit and current acquisition custody;
+  key projection neither rewrites it nor exempts any authentication or money check.
 
 This is an explicit proposal to key *effective owner selection inputs* after
 fresh validation, not cache raw authority inputs. Dynamic budget/availability/
@@ -134,7 +144,11 @@ This interpretation of charter D4 requires coordinator/owner ratification.
 Key UTF-8 length <=131072; overbound keys bypass storage and run normal selection.
 Each record is exactly `{version:'pmc-choice-record/v1',key,createdAtUtc,
 expiresAtUtc,occurrenceIndex,bindingId,provider,providerModelId}`. Text identity
-fields use existing owner refinements; occurrenceIndex is a safe integer 0..255.
+fields use existing owner refinements; occurrenceIndex is a safe integer 0..1535,
+the global policy.laneBindings index used by the actual resolver. It is not a
+lane-local ordinal: a lane can have <=256 occurrences whose global indexes exceed
+255. Require exact current occurrence-index/binding/provider/model association;
+never truncate, renumber or infer an index from a binding ID alone.
 No rank, claim, selected decision, prior permit or arbitrary data in the record.
 createdAtUtc is this invocation's already validated evaluationTimeUtc; expiresAtUtc
 is exactly createdAtUtc plus 60 seconds. Accept only created <= current evaluation
@@ -192,6 +206,17 @@ Integration with the governed receipt system belongs to its later owner parcel.
    after full current validation. Wrong key, wrong occurrence, expired/future row,
    forged inferior/duplicate hint, oversized/malformed records and callback faults
    become misses. No key work/cache callback precedes owner early refusals.
+   Use actual computePmcCostV1 twice with two distinct current requestDigest
+   values and otherwise identical approved price/count inputs. Assert the real
+   costValueDigest values differ, current claims/audits remain request-bound,
+   and the projected keys match and reuse a hint after fresh validation. Also
+   test distinct request-specific priceEvidenceDigest values with unchanged
+   approved tariff/economic values; new evidence is authenticated normally.
+   Independently mutate each included cost field and every ranking branch field
+   to prove key separation. Build a valid policy with a winning global
+   laneBindings occurrenceIndex >255 (within 1535), and prove cold/warm parity
+   and actual reuse of that exact occurrence; negative 1536/index-mismatch cases
+   miss without changing the owner result.
 4. Use real temporary SQLite for exact reads, bounded capacity/eviction, atomic
    upserts, independent-process contention, corrupt schema/rows, missing/unusable
    storage and lost write acknowledgement. Assert no ledger/B1 files change.
