@@ -234,6 +234,259 @@ owned records. Closed results exclude arbitrary exception text, prompts, review
 raw output, credentials or telemetry content. These are proposals, not measured
 capacity evidence; boundary and one-over tests are required.
 
+### Bounded offline implementation slice — 2026-09-26
+
+This amendment is a docs-only release from 1c304f6d1a18a659d6b8f2c83fd1836ef59e1738.
+It proposes an independently dispatchable OFFLINE slice, still draft pending
+independent review and explicit runtime release. The production contracts above
+remain prerequisites, not APIs implemented by this slice. No existing owner hook
+changes, copied harness planning algorithm or dynamically supplied owner functions.
+
+#### Closed constructors and fixture data
+
+The new verification module statically imports and retains runHarness,
+dispatchReview, collectAdversarialFindings, assembleVerdict,
+emitVerificationVerdict, prepareHumanGate, executeHumanGate and writeClaimReceipt.
+It invokes those actual functions and privately captures their returned values and
+bounded reread documents. Constructor capture validates all fixture data and the initial bounded full A/B/C chain, referenced dispatch/build payloads and hashes before any owner write; those initial documents are explicitly offline fixture provenance. No caller-provided HarnessResult, verdict, closure,
+receipt array or boolean can replace execution. Existing schemas remain mandatory.
+
+All records below are closed, owned, deeply frozen ordinary data unless explicitly
+identified as opaque capabilities or installed method records. Unknown keys,
+accessors, symbols, functions, thenables, cycles and invalid refinements refuse;
+alias-expanded capture obeys the existing bounds. A named existing schema means
+that exact owner's schema plus rejection of unknown keys, not an open object.
+Optional properties are not silently defaulted. All listed data keys are required.
+
+```ts
+type CodeV1 = 'SESSION_REFUSED' | 'PHASE_REFUSED' | 'PREREQUISITE_UNAVAILABLE'
+  | 'EVIDENCE_REFUSED' | 'COVERAGE_INCOMPLETE' | 'CHAIN_REFUSED'
+  | 'WRITE_REFUSED' | 'WRITE_UNCERTAIN';
+type ResultV1<T> = {ok:true; value:T} | {ok:false; code:CodeV1};
+type RefV1 = {hash:string; locator:string};
+type RegistrationV1 = {
+  workflowId:string; correlationId:string; parcelRef:string; repoRoot:string;
+  verifiedHeadSha:string; dispatchReceiptRef:RefV1; buildReceiptRef:RefV1;
+  specDigest:string; matrixDigest:string; expectedPlanDigest:string;
+};
+type ReviewExpectationV1 = {
+  slotId:string; reviewerId:string; reviewedHeadSha:string;
+};
+type OfflineExpectedV1 = {
+  claims:readonly string[]; reviews:readonly ReviewExpectationV1[];
+  builderId:string; authorizedActorId:string; authorityRef:string;
+};
+type OfflineReviewV1 = {
+  slotId:string; reviewerId:string; reviewedHeadSha:string; rawText:string;
+};
+type OfflineDispositionV1 = {
+  slotId:string; findingIndex:number; findingDigest:string;
+  disposition:'accept'|'rework'; note:string;
+};
+type OfflineDecisionV1 = {
+  actorId:string; authorityRef:string; decision:'approve'|'decline'; note:string;
+};
+type OfflineMatrixResultV1 = {name:string; passed:boolean; evidence:string};
+type OfflineInputV1 = {
+  domain:'offline-fixture/v1'; fixtureId:string; registration:RegistrationV1;
+  pluginRoot:string; specPath:string; order:DispatchOrder; buildResult:BuildResult;
+  expected:OfflineExpectedV1; testResults:TestResults;
+  matrixResults:readonly OfflineMatrixResultV1[];
+  reviews:readonly OfflineReviewV1[];
+  dispositions:readonly OfflineDispositionV1[]; decision:OfflineDecisionV1;
+  ticketKey:string; targetStatus:string; denominatorDigest:string;
+};
+function createProductionMeasuredVerificationV1(input:unknown):
+  {ok:false; code:'PREREQUISITE_UNAVAILABLE'};
+function createOfflineMeasuredVerificationV1(input:unknown):ResultV1<OfflineDriverV1>;
+```
+
+Production construction always returns the stated refusal, even for hostile input:
+no property read, registry allocation, file access, callback, subprocess or network.
+There is no mode flag, environment switch or fixture upgrade operation. The offline
+constructor returns only the driver below; installation capabilities never escape
+through that driver. Receipt schema/final-D subject stay unchanged. Domain and
+fixtureId are retained in private session custody and every driver/report fixture
+identity; the measurement claim explicitly labels them. A receipt alone never
+reconstructs the domain or a capability. Future production consumers must require
+production installation custody; this slice cannot create that custody.
+
+FixtureId is 1..64 ASCII letters/digits/hyphens, explicitly fixture-labelled in
+reports. Workflow/correlation/order/build validation uses actual owner schemas.
+Registration refs/digests retain earlier refinements; all content digests are
+SHA-256 of existing canonical representation (spec/matrix digests bind exact file
+bytes). expectedPlanDigest is SHA-256 of canonical OfflineExpectedV1; it is not
+inferred from returned results. Claims are unique 1..256 identifiers, reviews
+1..16 unique slots with unique reviewer IDs distinct from builderId, all at the
+registered head. Matrix result names are unique and belong to expected matrix
+claims. Expected review slots and raw review records must match one-to-one. Dispositions/reviews are bounded by the earlier 256-finding/16-slot caps;
+TestResults has exactly passed/failed arrays of unique names, disjoint and at most
+256 combined. Matrix results at most 256. Every ordinary string remains <=4096
+UTF-16 units, including offline review text; fixtures fit rather than loosening
+capture limits. Expected sets are frozen before any owner call. Empty findings
+are permitted for an expected completed review, not an absent review.
+
+Fixture expectations are independently fixed by the test installation and checked
+against actual harness results/receipts. extractAcs (harness:496) and
+resolveRequiredChecks (:644) are private: do not copy them or infer the expected
+set from runHarness outputs. This slice does not implement a production planner.
+Spec/matrix bytes are captured before calls and reread at finalization; stale
+contents, head or build/dispatch linkage refuse. Paths are canonical, bounded,
+symlink-free and confined: specPath is repository-relative; pluginRoot is the
+explicit trusted read-only fixture/plugin tree; writes are only inside the
+installation-owned temporary repoRoot. The constructor is for trusted offline test setup only; repoRoot must resolve beneath the OS temporary directory to a fixture-owned directory named hro-p3a-fixture-<fixtureId>, with no symlink components. Ordinary task input cannot invoke this installation path. No ambient cwd, PATH-selected executable,
+network client, provider, environment credential or actual Jira adapter is used.
+
+The wrapper converts owned fixture data into fixed internal adapters, never
+accepts adapter functions. Matrix adapters return only their captured named
+fixture result. The git adapter recognizes exactly dispatchReview's branch
+verification and worktree-add commands, with exact captured cwd/branch/path;
+branch verification returns the fixture head, worktree-add creates only a fresh
+fixture directory, all other commands fail. No process is spawned. Review paths
+are derived as repoRoot/.hro-offline/<fixtureId>/<slotId>, slotId restricted like
+fixtureId; no caller path override. dispatchReview still performs its genuine
+profile, kickstarter, receipt and no-clobber work. No launchReviewer call.
+The fixed Jira adapter offers one deterministic fixture transition with id
+'offline-transition', name/toStatus equal to targetStatus, accepts that exact
+issue/id and returns 'offline-comment' for its local comment acknowledgement.
+Existing project/decision gates still execute. These responses simulate services
+and are labelled fixtures; they do not prove a real checkout, review or Jira action.
+
+#### Setup, sessions, leases and owner ports
+
+The dependency-neutral module has one internal setup export:
+`createOfflineMeasuredWorkflowInstallationV1(): InstallationV1`. Each call creates
+an offline-only installation; enforce a conservative 32-retained-session bound module-wide,
+not resettable by creating another installation. No receipt/JSON can instantiate
+InstallationV1, session, lease or owner port. Methods are captured private closures.
+There is no dispose/reset/reopen operation in this slice. Held and terminal sessions count against this bound; a new installation cannot reclaim quota. Boundary tests use isolated child module instances/processes, never an exported reset.
+
+```ts
+type InstallationV1 = {
+  createSessionV1(registration:unknown, fixtureId:unknown):ResultV1<OwnerBundleV1>;
+};
+type OwnerBundleV1 = {
+  session:object; workflow:WorkflowPortV1; verification:VerificationPortV1;
+  publication:PublicationPortV1; integration:IntegrationPortV1; closure:ClosurePortV1;
+};
+type SessionStateV1 = {
+  domain:'offline-fixture/v1'; fixtureId:string; registration:RegistrationV1;
+  phase:'capturing'|'draining'|'publishing'|'finalized-D'|'integrated-E'|'sealed-F'|'held';
+  busy:boolean; outstandingWork:number;
+  seal:SealV1|null; finalD:AckV1|null; integratedE:AckV1|null; sealedF:AckV1|null;
+};
+type WriterPortV1 = {
+  readStateV1():ResultV1<SessionStateV1>;
+  beginWriterV1():ResultV1<object>;
+  endWriterV1(lease:object):ResultV1<null>;
+  holdV1(lease:object):ResultV1<null>;
+};
+type WorkflowPortV1 = WriterPortV1 & {
+  admitWorkV1():ResultV1<object>;
+  completeWorkV1(work:object):ResultV1<null>;
+  closeAdmissionV1():ResultV1<null>;
+  acknowledgeDrainV1():ResultV1<null>;
+};
+type VerificationPortV1 = WriterPortV1 & {
+  acknowledgeFinalDV1(lease:object, record:unknown):ResultV1<null>;
+};
+type PublicationPortV1 = WriterPortV1 & {
+  registerSealV1(lease:object, record:unknown):ResultV1<null>;
+};
+type IntegrationPortV1 = WriterPortV1 & {
+  acknowledgeEV1(lease:object, record:unknown):ResultV1<null>;
+};
+type ClosurePortV1 = WriterPortV1 & {
+  acknowledgeFV1(lease:object, record:unknown):ResultV1<null>;
+};
+```
+
+There are no unspecified methods or getter properties. Bundle/session identity is
+unique and frozen; ordinary registration data is captured before registry entry.
+Only the installed wrapper keeps this bundle. Registry unit tests may directly
+create explicitly offline bundles; that is not a production authority API.
+SealV1 is exactly the reviewed six-field seal record; AckV1 is exactly the reviewed
+ six-field D/E/F acknowledgement record. readStateV1 returns an owned frozen
+ snapshot only to its own installed role, with no capabilities, raw documents or
+ ability to change phase. Existing reviewed record refinements apply verbatim.
+Verification retains evidence; registry retains only bounded registration/seal/
+acknowledgement records and capability membership, never raw review text.
+
+At most one active writer lease per session, tied to exact issuing owner and
+session, single release, not clonable or reusable. Workflow writes are permitted
+in capturing/draining; publication and verification writes only in publishing;
+E writes only in finalized-D, F writes only in integrated-E. Every transition checks
+its issuing role, exact phase and lease as appropriate. Acknowledgement transitions
+occur while that writer holds its lease, then endWriter releases that same lease
+in the resulting phase. Lease release never rewinds phase or clears held. Errors
+with possible writes call hold before release; busy/reentry refuses without waiting.
+
+admitWork is allowed only in capturing, maximum 256 outstanding tokens per session;
+completeWork accepts each own token once in capturing/draining, including during
+an awaiting writer. It cannot write or issue authority. closeAdmission is allowed
+once in capturing and moves to draining, permitting existing work to finish.
+acknowledgeDrain requires draining, zero tokens and no active writer, and moves to
+publishing. Registering a seal is once-only and requires publishing. D acknowledgement additionally requires the registered seal and exact seal receipt predecessor. E requires predecessor equal to acknowledged D and sequence D+1; F requires predecessor equal to acknowledged E and sequence E+1. All heads agree with registration. D, E and F acknowledgements each occur once in their reviewed phases; identical duplicates
+are not new transitions. Finalizer's already-acknowledged D read-only duplicate
+is handled by verification's private evidence/reread, only in finalized-D with
+unchanged tip. After E/F it refuses. Registry methods perform no filesystem reads
+or content-hash authentication: captured owners do these before registration.
+
+#### Offline driver and deterministic execution
+
+```ts
+type OfflineDriverV1 = {
+  domain:'offline-fixture/v1'; fixtureId:string; session:object;
+  runVerificationV1():Promise<ResultV1<null>>;
+  closeAdmissionV1():ResultV1<null>;
+  drainV1():Promise<ResultV1<null>>;
+  publishFixtureMeasurementV1():ResultV1<RefV1>;
+};
+function finalizeMeasuredStageDV1(session:object):FinalizationV1;
+```
+
+runVerification is single-use: acquire work token and workflow writer before the
+first owner call; retain both across awaits and release in finally (holding on
+uncertain side effects). It calls real runHarness, every expected dispatchReview
+and collectAdversarialFindings, maps slot-local finding indices to deterministic
+concatenation in expected review order without dropping entries, calls actual
+assembleVerdict and emitVerificationVerdict, then prepareHumanGate and
+executeHumanGate. Map actorId exactly to decidedBy; verify actorId/authorityRef
+against captured fixture expectations and bind each disposition to the captured
+slot/index/content digest (SHA-256 of the canonical actual finding object). No raw fixture pass, reviewer text or authorityRef is
+production authentication. A non-pass, failed collection, unexpected output,
+declined/half-closed result or mismatch cannot produce final D. The wrapper
+retains exact actual results/refs and rereads their expected payloads; emit verdict
+with null reworkSignal only for its actual passing verdict. Failures are typed and
+cannot turn an emitted failure claim into a successful finalization.
+
+closeAdmission delegates to the workflow port. drain waits only for the driver's
+already admitted verification promise; it does not poll or launch anything. It
+then requires successful complete evidence and acknowledges drain. Missing run or
+failed verification refuses. If closeAdmission races before any run, later runVerification refuses rather than starting work. No admitted external jobs or arbitrary promises exist
+in this offline driver. The registry's separate tokens permit bounded phase tests.
+
+publishFixtureMeasurement acquires the publication lease only after drain. It
+uses actual writeClaimReceipt and existing chain/correlation conventions to append
+a real kind:claim, stage:D, claimRef:'offline-measurement',
+subjectKind:'OfflineMeasuredFixture' receipt. Its closed subject is exactly
+{version:'hro-offline-measurement/v1', fixtureId, denominatorDigest,
+coverage:'complete'}. Complete refers only to the declared offline fixture; it
+asserts no genuine telemetry coverage or savings. The subject digest and exact
+captured bytes/ref are reread and verified before the reviewed seal is registered;
+no receipt-list parameter or direct public seal registration exists. One call only;
+uncertain publication holds. Later real P3 replaces this fixture owner through a
+separately reviewed production installation, not by flipping a flag.
+
+Finalization remains the reviewed synchronous single-session API and exact subject.
+It consults only its private successful verification/publication custody, validates
+full actual chain/content hashes and expected captured payloads, writes exclusive
+final D and registers its acknowledgement under the verification lease. No await,
+callback injection, raw verdict or arbitrary subject parameter. Test driver/report
+must retain offline identity even though the unchanged final-D subject is shared.
+P3B must not promote offline identity to production; E/F registry controls here
+are labelled offline controls, with actual E/F composition owned by P3B acceptance.
+
 ## Acceptance Criteria
 
 | AC | Required evidence |
@@ -245,6 +498,18 @@ capacity evidence; boundary and one-over tests are required.
 | 5 | Busy/reentrant/concurrent finalization, intervening raw writer, exclusive-create conflict and before/after-write faults hold without duplicate or overwrite; acknowledged duplicate returns only the original verified tip. |
 | 6 | Every numerical limit and one-over, throwing getters/proxies/ports, cycles, nonfinite values and alias expansion return bounded typed results. Authorized delegated actor is accurately attributed; forged actor/authority refuses and no new human-only gate appears. No production approval/network/provider effects in offline verification. |
 | 7 | Existing harness/pipeline/human-gate and receipts behavior remains valid. P3A independently tests final D and the complete registry interface using labelled owner-capability controls: wrong issuer, phase skipping, stale/duplicate acknowledgements, bounded records, held/terminal states and finalizer duplicate after E/F refusal. Synchronous finalizer returns a non-Promise after completed drain/publication. P3B/combined acceptance owns real P3A->E->F composition; it is not a prerequisite for accepting P3A. |
+
+Additional offline-slice acceptance is mandatory: production constructor must
+refuse hostile inputs with zero reads/effects; offline fixture arrays/results must
+never activate production. Exercise actual owners against independently authored
+fixture expected sets, including missing/extra AC and matrix results; do not mirror
+the harness extraction implementation in expected-value code. Assert full captured
+owner payloads/claimRefs/hashes and actor attribution, not only a passing final D.
+Exercise all closed constructor keys, one-over bounds, wrong leases/role/session,
+duplicate token completion, close/drain races and no reset through a second
+installation. Test-only fault instrumentation stays in tests and is never a public
+callback port. The report names offline fixture identity and distinguishes fixture
+service responses from actual owner execution and absent production intake.
 
 ## Out of Scope
 
@@ -261,18 +526,20 @@ authorization, receipt schema changes and changes to legacy stage semantics.
 
 ## Allowed Files
 
-This release permits only this spec, the P3B spec and their companion notes.
-Future candidate runtime envelope, NOT released: receipts/src/measured-workflow-internal.ts,
-receipts/tests/measured-workflow-internal.test.ts;
-verification/src/pipeline/stage-d-finalization.ts,
-verification/tests/stage-d-finalization.test.ts. Narrow producer-capture changes,
-if necessary, are limited to verification/src/harness/index.ts,
-verification/src/adversarial/index.ts, verification/src/pipeline/index.ts,
-verification/src/human-gate/index.ts and their existing harness.test.ts,
-adversarial-dispatch.test.ts, adversarial-collect.test.ts, pipeline.test.ts, human-gate.test.ts and
-human-gate-execute.test.ts. A released implementation spec must select the exact
-needed subset. Missing installation/intake file ownership blocks production
-dispatch; it does not authorize extra files. No public barrel/schema/manifest edits.
+This docs-only amendment permits exactly this spec and
+`docs/goals/hybrid-routing-optimization/hro-p3-owner-prerequisites.md` under the
+plugin. It does not release runtime work. After independent design review and an
+explicit runtime release, the proposed implementation envelope is exactly:
+
+- plugins/foreman-line/receipts/src/measured-workflow-internal.ts
+- plugins/foreman-line/receipts/tests/measured-workflow-internal.test.ts
+- plugins/foreman-line/verification/src/pipeline/stage-d-finalization.ts
+- plugins/foreman-line/verification/tests/stage-d-finalization.test.ts
+- plugins/foreman-line/docs/goals/hybrid-routing-optimization/hro-p3a-verification.md
+
+All five are new files. No existing owner hooks, public barrel, schema, manifest,
+dependency, parent P3 or P3B modifications. Production planner/intake/installation
+paths remain separate future parcels, never an unspecified builder expansion.
 
 ## Verification Plan
 

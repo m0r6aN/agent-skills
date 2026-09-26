@@ -93,14 +93,11 @@ effects remain gated by their existing owner and authorization. Offline test
 installation can use deterministic transports to test actual local owner logic;
 that is explicitly not evidence of live authenticated decisions or services.
 
-The final D subject proposed here adds build/head/expected-plan/human-closure
-references beyond the earlier P3 draft. This is an explicit proposed owner
-amendment, not a silent claim the drafts already agree. Root must reconcile P3's
-finalization subject before a combined runtime release. Original P3 is untouched.
+The coordinator reconciled the parent final-D subject at 1c304f6; separate independent confirmation remains pending. This amendment preserves that reviewed subject and does not edit the parent P3 or P3B.
 
 ## Verification and scope
 
-Exact shaping envelope: the two linked specs and this note. No ShapingResult,
+Original shaping envelope: the two linked specs and this note. The later offline amendment narrows its own editing envelope to P3A and this note. No ShapingResult,
 source, schemas, manifests, charter or original P3 edits. The explicit three-doc
 instruction overrides the generic shaping artifact step.
 
@@ -131,3 +128,59 @@ This reconciliation requires separate independent confirmation before combined r
 P3A/B remain nondispatchable until a bounded implementation envelope and genuine
 Step0 are accepted. Missing production intake/installation/seal contracts remain
 explicit; no approval, CI, merge, Jira, runtime or live measurement is fabricated.
+
+## Offline implementation-slice amendment — 2026-09-26
+
+Root accepted Step 0 at clean 1c304f6d1a18a659d6b8f2c83fd1836ef59e1738 and released
+exactly P3A spec plus this note for amendment. This supersedes earlier candidate
+source envelopes, not production prerequisite gates. No runtime is released;
+independent amended-design review and explicit runtime release remain required.
+
+The exact future five-file envelope is the two new receipts internal/test files,
+the two new verification stage-d-finalization/test files, and
+`plugins/foreman-line/docs/goals/hybrid-routing-optimization/hro-p3a-verification.md`,
+fully enumerated in P3A. No existing harness/adversarial/pipeline/human-gate hooks
+or tests change. No source, public barrel, dependency, schema, manifest, original
+P3, P3B or ShapingResult belongs to this two-document amendment.
+
+The spec now freezes constructors, registration, opaque session/work/writer leases,
+role-separated workflow/verification/publication/E/F ports and their closed state
+snapshots. Setup is explicitly offline-only and module-wide bounded to 32 retained sessions, including held/terminal sessions; creating
+another installation cannot reset session admission. Held sessions have no reopen
+or reset. The production constructor always returns PREREQUISITE_UNAVAILABLE
+before touching input, allocating custody or doing I/O. No mode flag or fixture
+upgrade exists. Installation custody is cooperative, not hostile-module security.
+
+The offline driver captures static actual owner exports and invokes the real
+harness, review dispatch/collection, verdict assembly/emission and human gate.
+Closed fixture data become fixed internal network-incapable matrix/git/Jira
+adapters. No supplied HarnessResult, pass, closure or arbitrary owner callback is
+accepted. Actual owner execution is genuine; fixture named tests/review text/git
+checkout/Jira answers and authorization remain explicitly synthetic. Fixture actor
+attribution remains accurate, with no fabricated human or new human-only gate.
+
+Expected fixtures are fixed independently before execution. Actual harness AC
+extraction at harness/index.ts:496 and matrix selection at :644 are private;
+this slice neither copies them nor invents a production planner. Actual outputs
+and emitted payloads must match the complete independent expected set. Production
+planning, named-test invocation provenance, reviewer completion, dispositions,
+authorized decisions and installation remain separately owned future contracts.
+
+The offline publisher uses the real claim writer and rereads a receipt whose
+subject labels offline fixture provenance. It does not prove real denominator or
+telemetry completeness. The existing reviewed final-D subject/API stays exact;
+domain is retained privately and in driver/fixture/report identity. No receipt
+hash or JSON can turn an offline capability into production custody. Real P3 must
+supply the production publisher/installation in a later reviewed composition.
+
+P3A freezes and tests all D/E/F registry phases, records and role guards now; the
+internal state snapshot contains no capabilities and cannot advance phase. E/F
+ports are retained by installation, not leaked through the offline verification
+driver. Future joined installation must route those exact ports to actual E/F
+owners; that wiring remains a P3B/production composition prerequisite, not an
+arbitrary callback registration in this slice. Real runStageE/F acceptance stays
+with P3B. Legacy six-stage semantics and full-head gates are unchanged.
+
+Validation for this amendment: frozen donor frontmatter lint, required sections,
+local links and exact two-file whitespace/diff inspection. Runtime acceptance is
+specified, not run here. No production, D5 completion, savings or live proof claim.
