@@ -179,3 +179,13 @@ the preserved endpoint constant, and the documented lab call. It does not prove
 absence of external host importers. E1 must receive independent review and audit
 integration before being described as chain-green; E2 and full HRO live acceptance
 remain separate. No push, merge, provider call or activation occurred here.
+
+## E2 pure-planner checkpoint preparation — 2026-09-26
+
+Frontier A completed read-only Step0 at1e6c676. Root separates the planner from
+D-dependent entry/installation/CLI work using the amended active E2 spec. Three
+future files only: config-plan.ts, its test, and this inventory. Real owners stay
+mandatory; isolated child module substitution is only for defensive result shapes
+those owners reject before projection and explicit call-count controls. No runtime
+injection, source-custody claim, Pi/config apply or production activation follows.
+Implementation remains stopped until independent amendment review and root release.
