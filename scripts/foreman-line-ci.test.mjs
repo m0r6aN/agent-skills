@@ -5,7 +5,7 @@ import { run } from './foreman-line-ci.mjs'
 
 // Deliberately independent of the runner's allowlist. Every spawn is injected.
 const packages = [
-  'approval', 'contract-readers', 'contracts', 'dispatch', 'foreman-config',
+  'approval', 'contract-readers', 'contracts', 'dispatch', 'foreman-config', 'hybrid-routing',
   'integration', 'mutation-scope-guard', 'permission-profiles', 'projection',
   'receipts', 'registration', 'role-authority', 'routing-policy',
   'schema-scaffold', 'shaping', 'skill-injection', 'spec-linter', 'verification',
@@ -14,7 +14,7 @@ const packages = [
 const root = process.cwd()
 const npmCli = join(root, 'fake npm', 'npm-cli.js')
 
-test('all 19 installs precede all 57 checks, using explicit Node/npm without a shell', () => {
+test('all 20 installs precede all 60 checks, using explicit Node/npm without a shell', () => {
   const calls = []
   const result = run({ root, npmCli, spawn: (...args) => {
     calls.push(args)
@@ -25,7 +25,7 @@ test('all 19 installs precede all 57 checks, using explicit Node/npm without a s
     ...packages.flatMap((pkg) => ['test', 'typecheck', 'lint'].map((check) =>
       [pkg, ['run', check, '--ignore-scripts']])),
   ]
-  assert.equal(calls.length, 76)
+  assert.equal(calls.length, 80)
   for (const [index, [pkg, args]] of expected.entries()) {
     assert.deepEqual(calls[index], [process.execPath, [npmCli, ...args], {
       cwd: join(root, 'plugins', 'foreman-line', pkg), stdio: 'inherit', shell: false,
@@ -44,7 +44,7 @@ test('offline installs never retry online; failed install prevents every check',
     return { status: calls.length === 2 ? 1 : 0 }
   } })
   assert.equal(result.exitCode, 1)
-  assert.equal(calls.length, 19)
+  assert.equal(calls.length, 20)
   for (const [index, [, args, options]] of calls.entries()) {
     assert.deepEqual(args, [npmCli, 'ci', '--ignore-scripts', '--no-audit', '--no-fund', '--offline'])
     assert.equal(options.cwd, join(root, 'plugins', 'foreman-line', packages[index]))
@@ -58,8 +58,8 @@ test('offline installs never retry online; failed install prevents every check',
 for (const [index, check] of ['test', 'typecheck', 'lint'].entries()) {
   test(`${check} failure remains nonzero after all later checks succeed`, () => {
     let calls = 0
-    const result = run({ root, npmCli, spawn: () => ({ status: calls++ === 19 + index ? 2 : 0 }) })
-    assert.equal(calls, 76)
+    const result = run({ root, npmCli, spawn: () => ({ status: calls++ === 20 + index ? 2 : 0 }) })
+    assert.equal(calls, 80)
     assert.equal(result.exitCode, 1)
     assert.equal(result.outcomes[0][check], 'fail')
     assert.deepEqual(result.outcomes.at(-1), {
@@ -80,10 +80,10 @@ for (const [label, failure] of [
       let calls = 0
       const result = run({ root, npmCli, spawn: () => {
         calls++
-        return calls === (phase === 'install' ? 1 : 20) ? failure() : { status: 0 }
+        return calls === (phase === 'install' ? 1 : 21) ? failure() : { status: 0 }
       } })
       assert.equal(result.exitCode, 1)
-      assert.equal(calls, phase === 'install' ? 19 : 76)
+      assert.equal(calls, phase === 'install' ? 20 : 80)
       assert.equal(result.outcomes[0][phase === 'install' ? 'ci' : 'test'], 'fail')
       assert.equal(result.outcomes.at(-1).lint, phase === 'install' ? 'skipped' : 'pass')
       assert.equal(JSON.stringify(result).includes('::error::'), false)
@@ -94,12 +94,20 @@ for (const [label, failure] of [
 test('multiple failures are all retained rather than overwritten by later success', () => {
   let calls = 0
   const result = run({ root, npmCli, spawn: () => ({
-    status: [19, 23, 27].includes(calls++) ? 1 : 0,
+    status: [20, 24, 28].includes(calls++) ? 1 : 0,
   }) })
-  assert.equal(calls, 76)
+  assert.equal(calls, 80)
   assert.equal(result.exitCode, 1)
   assert.equal(result.outcomes[0].test, 'fail')
   assert.equal(result.outcomes[1].typecheck, 'fail')
   assert.equal(result.outcomes[2].lint, 'fail')
   assert.equal(result.outcomes.at(-1).lint, 'pass')
+})
+
+test('a hybrid-routing check failure propagates to the aggregate result', () => {
+  let calls = 0
+  const result = run({ root, npmCli, spawn: () => ({ status: calls++ === 35 ? 1 : 0 }) })
+  assert.equal(calls, 80)
+  assert.equal(result.exitCode, 1)
+  assert.equal(result.outcomes[5].test, 'fail')
 })
