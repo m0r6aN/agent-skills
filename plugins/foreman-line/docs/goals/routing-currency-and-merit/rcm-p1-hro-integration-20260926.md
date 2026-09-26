@@ -1,7 +1,7 @@
 # RCM-P1 prerequisite integration handoff
 
 Date: 2026-09-26
-Status: locally reconciled and verified; independent integration review pending
+Status: independently approved; ready for CI-gated integration
 
 ## Scope and authority
 
@@ -89,3 +89,7 @@ remains an explicit RCM-P5 shaping consideration, not silently fixed here.
 The coordinator will commission independent review of the integration before
 publication. No push, mainline merge, release, or Stage-F closure is performed by
 this task. There are no local verification blockers.
+
+## Independent integration disposition
+
+The fresh rcm_integration_review agent approved integration commit 783d87a76f1d2d263d8a602326a2e99026fd6e1a after independently rerunning all 399 tests, typecheck, and lint on Node v24.19.0. It confirmed reviewed-source preservation and the intended historical-fixture distinction. The subsequent merge of main through cc1fec479c034012f6bb89975293cca6d85498cf changed only prerequisite and HRO planning documents; the routing-policy and RCM-P1 spec diff against the reviewed commit is empty. The HRO coordinator accepts this bounded prerequisite under the user's explicit prerequisite authority. Public exports and live source acquisition remain separate reviewed work.
