@@ -78,7 +78,7 @@ the test-owned directory verified beneath the OS temporary parent. Runtime sourc
 acceptance remains separate from this inventory/audit enrollment. Two independent
 audit reviews, combined integration, E1 prerequisite acceptance and remote CI
 remain coordinator gates; this report grants none of them.
-## Final native verification
+## Initial enrollment native verification (0eae3a1)
 
 Commands ran from their respective package directories. Native exits were saved
 immediately before output summaries; full output was collected, not truncated
@@ -105,3 +105,39 @@ runtime came from audit subprocess tests; it completed without timeout or retry.
 the two approved count/digest constants. No dispatch/routing-policy source changed;
 all five changed paths are within the amendment. No unchanged runtime test suite
 was repeated or claimed as a new result for this enrollment.
+## Coordinator-released context-control follow-up
+
+Initial enrollment commit: `0eae3a147e21caf35b0406e171ac572c1d09a1d5`.
+The 637-test full verification result above belongs to that initial implementation,
+not a claimed full rerun after this follow-up. Before frozen handoff, the coordinator
+identified that the original unrelated-declaration/filesystem negatives removed the
+approved reader and therefore could fail on cardinality independently of context.
+The coordinator released a test/report-only addition within the original envelope.
+
+Two paired controls now KEEP all11 approved registry values and append the same
+controller literal in an unrelated declaration or readFileSync call. Both assert:
+actual native audit exit1; exactly one unruled class3 site in registry-data.ts;
+11/11 cardinality and the fixed digest still matching; no registry cardinality or
+value mismatch; unchanged other owner pins. Neither copied source is executed.
+These controls establish the context defense independently of the value/count pin.
+
+Expanded focused verification on the final test source:
+
+```text
+node --import tsx --test tests/pmc-controller-reader-audit.test.ts
+✔ retained pin plus unrelated declaration
+✔ retained pin plus filesystem use
+ℹ tests 17
+ℹ pass 17
+ℹ fail 0
+native exit 0
+npm.cmd run typecheck
+FOLLOWUP_TYPECHECK_NATIVE_EXIT=0
+npm.cmd run lint
+Checked 29 files in 68ms. No fixes applied.
+FOLLOWUP_LINT_NATIVE_EXIT=0
+```
+
+The full suite was not repeated for this test-only addition, per coordinator
+disposition. Runtime, registry and detector source are unchanged from initial
+0eae3a1. `git diff --check` passed. Fresh independent reviews remain required.

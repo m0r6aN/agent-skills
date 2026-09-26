@@ -114,6 +114,31 @@ test('PMC controller registry: actual D19 fixed DATA enrollment and bounded ruli
         assert.match(result.output, /PIN (CARDINALITY|VALUE DIGEST) MISMATCH: A7 registry DATA/)
         assert.match(result.output, /RESULT: FAIL/)
       })
+    for (const [name, appended] of [
+      ['retained pin plus unrelated declaration', `\nconst unrelatedPath = '${reader}'\n`],
+      [
+        'retained pin plus filesystem use',
+        `\nimport {readFileSync} from 'node:fs'\nreadFileSync('${reader}')\n`,
+      ],
+    ] as const)
+      await t.test(name, () => {
+        writeFileSync(join(root, registryFile), source + appended)
+        const result = run()
+        assert.equal(result.status, 1, result.output)
+        unchangedPins(result.output)
+        assert.match(
+          result.output,
+          /cardinality reconciliation: expected 11; observed 11; file swept/,
+        )
+        assert.ok(result.output.includes(`expected ${expectedDigest}; observed ${expectedDigest}`))
+        assert.doesNotMatch(
+          result.output,
+          /PIN (CARDINALITY|VALUE DIGEST) MISMATCH: A7 registry DATA/,
+        )
+        assert.match(result.output, /UNRULED INSTANCES \(classes 1-5\): 1 — FAIL/)
+        assert.match(result.output, /class 3.*contract-readers\/src\/registry-data\.ts/)
+        assert.match(result.output, /RESULT: FAIL/)
+      })
     await t.test('same source relocated to another filename', () => {
       writeFileSync(join(root, registryFile), '')
       writeFileSync(moved, source)
