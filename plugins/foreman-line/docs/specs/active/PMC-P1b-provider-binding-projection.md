@@ -169,7 +169,7 @@ The user authorized completion of necessary PMC/RCM prerequisites, including
 scoped decisions and merges after independent review. Coordinator releases this
 private build against main e6daf7e8cd3bc7b7ae61f9646465f8cea60de2c9:
 PMC-P1a merged in PR55; supported RCM-P1A wrapper merged in PR56. The existing
-validator returns ProviderBindingValidationResultV1 with valid true/policy or
+validator returns ProviderBindingValidationResultV1 with valid true/value or
 valid false/errors, whose item type is ProviderBindingValidationErrorV1.
 Projection retains its own specified ok discriminant and forwards those errors.
 
