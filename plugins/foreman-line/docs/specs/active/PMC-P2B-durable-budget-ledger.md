@@ -217,3 +217,180 @@ P1/predecessor public contracts and P2A interface freeze remain prerequisites.
 Freeze concrete initialization/open ports and failure codes before dispatch.
 Two independent implementation reviews remain required. Do not substitute an
 in-memory ledger to get tests green or infer activation from design acceptance.
+
+## Concrete owner, money and ledger ports — draft proposal
+
+This supplement is proposed for independent contract review, not a build release.
+It resolves the earlier unspecified initializer/open/proof surface without
+changing the three-table SQLite design. All records below are closed; null is
+explicit, fields are required, and returned plain data is deeply owned/frozen.
+Id is ASCII [A-Za-z0-9][A-Za-z0-9._:-]{0,127}; Digest is lowercase SHA-256 hex;
+Utc is exact round-trip UTC milliseconds; Micro is a nonnegative safe integer.
+No module exports are added to the dispatch public barrel in P2B: trusted P2C
+imports the two specified internal pmc-launch modules after acceptance.
+
+### Money input/output and P2A correspondence
+
+`computePmcCostV1(input: unknown): PmcMoneyResultV1` accepts exactly:
+
+- version: pmc-price/v1; currency: USD.
+- identity: {bindingId: Id, provider: openrouter|opencode,
+  providerModelId: bounded nonempty string}.
+- sourceProfileId/sourceProfileVersion: bounded nonempty strings;
+  sourceProfileDigest, tariffDigest, priceEvidenceDigest: Digest.
+- inputRate and outputRate: each {value: decimal string,
+  unit: USD per token | USD per 1M tokens}.
+- perRequestFeeUsd: decimal string; otherFees: none-attested.
+- maximumInputTokens and maximumOutputTokens: nonnegative safe integers.
+- rankingTokens: null or {input: nonnegative safe integer,
+  output: nonnegative safe integer}, each no greater than its maximum.
+
+Decimal grammar is (0|[1-9][0-9]{0,15})(.[0-9]{1,18})? with the dot literal;
+preserve the exact accepted lexeme including fractional trailing zeros. The
+bounded fixed tariff covers input tokens, output tokens and one known flat fee.
+Unknown fee categories, tiered/unbounded pricing, discounts or missing explicit
+fee evidence refuse; do not silently assume the fee is zero. Authentication of
+these source assertions belongs to the trusted composition port, not this pure
+helper. No Number-to-string conversion can create this evidence.
+
+Result is {ok:false,code:PmcMoneyCodeV1} or {ok:true,value:PmcCostValueV1,
+priceEvidence:owned exact accepted input}. Codes are MONEY_INPUT_INVALID,
+MONEY_LIMIT_EXCEEDED, MONEY_UNIT_UNSUPPORTED, MONEY_FEE_UNSUPPORTED,
+MONEY_PRECISION_UNSUPPORTED and MONEY_OVERFLOW. A valid value has exactly the
+P2A BindingClaims.cost supplied-value fields: currency, maximumMicroUsd,
+maximumInputTokens, maximumOutputTokens, sourceProfileId/sourceProfileVersion,
+sourceProfileDigest, tariffDigest, priceEvidenceDigest, costValueDigest and
+ranking. Do not construct an EvidenceRef or supplied claim in the helper.
+
+MaximumMicroUsd is ceil((maximum input cost + maximum output cost + flat fee)
+* 1,000,000) once, checked against the safe integer ceiling. With rankingTokens,
+ranking is {kind:projected,inputTokens,outputTokens,usd:{numerator,denominator}};
+its exact total includes the flat fee, without rounding. Without rankingTokens,
+ranking is {kind:unit-price,outputUsdPerMillion,inputUsdPerMillion}; a nonzero
+flat fee refuses MONEY_FEE_UNSUPPORTED because unit-price ordering cannot
+represent it. Rational strings use P2A's canonical reduced <=64-digit contract;
+zero is 0/1, denominator positive. Unsupported output precision refuses.
+Bound arithmetic intermediates to 128 decimal digits; check operand and product
+bounds before multiplication. No truncation/saturation/float arithmetic.
+
+CostValueDigest is SHA-256 over UTF-8 JSON of the fixed ordered tuple
+["pmc-cost-value/v1", exact accepted input fields in the declaration order above,
+computed maximumMicroUsd, computed ranking], with nested records serialized in
+their declared field order and no optional fields. Freeze the concrete tuple
+layout in tests and the implementation handoff before consumption; P2C forwards
+the digest/value and original evidence, never computes money again. A digest is
+content binding, not authenticity. Independent composition review must compare
+every value field against the accepted P2A shape before P2C dispatch.
+
+### Initialization, open and fixed budget scopes
+
+`initializeLocalPmcLedger(request: unknown, ownerPorts): LedgerResult<LedgerIdentity>`
+and `createLocalPmcLedger(request: unknown, trustedPorts): LedgerResult<LocalPmcLedger>`
+are separate synchronous operations. OwnerPorts is a closed record containing
+clock and authenticateInitialization; TrustedPorts contains clock,
+authenticateSettlement and authenticateNoSendProof. Capture each own enumerable
+function descriptor once; never invoke getters or freeze caller functions.
+Callbacks run before transactions, return unknown, and are bounded/captured
+before use. Throws/thenables refuse; never inspect arbitrary thrown objects.
+
+Initialization request is {root:absolute local path, ledgerId:Id, epoch:Id,
+initializationAuthorityDigest:Digest, scopes:readonly BudgetScopeV1[]}.
+Authenticator receives an owned frozen request and must return exactly
+{accepted:true,ledgerId,epoch,initializationAuthorityDigest,scopesDigest} matching
+the complete request, or {accepted:false}; its authority is privately supplied by
+the trusted owner, never selected by request data. Expected identity/epoch are
+persisted outside this store by that owner before initialization is considered
+usable. Lost acknowledgement/interruption requires explicit reconciliation.
+
+BudgetScopeV1 is {scopeId:Id,authorityDigest:Digest,currency:USD,
+authorizedLimitMicroUsd:Micro,workflowId:Id,accountId:Id,routingClass:Id}.
+Initialize 1..256 unique scopes, also unique by workflow/account/routingClass.
+Scope IDs and allocations are fixed for this epoch; reserve cannot create or
+rename scopes, increase limits or reset spent balances. New-class provisioning,
+limit changes and epoch rollover remain separately reviewed owner operations.
+Reject mismatched authority rather than replacing a scope. Persist this tuple's
+uniqueness in budget_scopes. This bounded initial implementation deliberately has
+no public scope-registration or automatic reinitialization operation.
+
+Open request is exactly {root,expectedLedgerId,expectedEpoch,
+expectedInitializationAuthorityDigest}. Ordinary open must neither create root,
+database nor schema. Fixed filename is pmc-budget-v1.sqlite; journal is its SQLite
+-journal companion. Initialization requires a newly allocated empty local root,
+with verified ownership/path bounds and neither file present; never overwrite.
+Normal reads/open use an existing-file mode; recheck every connection's effective
+SQLite settings and identity. All paths are diagnostic-free and never accepted
+from request IDs. Trust model excludes hostile OS writers, not accidental reuse
+of the wrong root, missing storage or legitimate stale rollback limitations.
+
+### Operations and authenticated reconciliation
+
+LocalPmcLedger is an owned frozen capability exposing only:
+
+- snapshot({scopeId}): LedgerResult<BudgetSnapshotV1>.
+- reserve({requestId,scopeId,requestDigest,costValue,priceEvidence}):
+  LedgerResult<AttemptV1>. Recompute with the sole money helper, require exact
+  value/digest match, and persist original evidence. This is consistency, not
+  independent tariff authentication. Refuse every existing request ID.
+- consume({requestId,requestDigest}): LedgerResult<AttemptV1>; only reserved may
+  transition. Success means durable commit acknowledged; it is never itself a
+  public send permit. Duplicate or mismatched consume refuses.
+- settle({requestId,requestDigest,observation:unknown}): LedgerResult<AttemptV1>.
+  Private authenticateSettlement receives owned request context and observation,
+  returns a matching closed proof or refusal. Proof is {accepted:true,ledgerId,
+  epoch,requestId,requestDigest,scopeId,proofRef,proofDigest,
+  outcome:{kind:known,actualMicroUsd:Micro}|{kind:unknown}}.
+- cancelWithNoSendProof({requestId,requestDigest,proof:unknown}):
+  LedgerResult<AttemptV1>. Private authenticator returns {accepted:true,ledgerId,
+  epoch,requestId,requestDigest,scopeId,proofRef,proofDigest,noSend:true}, or
+  {accepted:false}. Only trusted owner/sole sender can attest actual no-send;
+  arbitrary task JSON cannot act as the authenticator.
+
+All proof IDs/digests bind the exact durable request, scope and ledger epoch.
+Unknown settlement moves consumed to uncertain and keeps maximum liability;
+known settlement moves consumed/uncertain to settled and stores actual charge.
+Known over-bound charge is recorded and freezes the scope atomically. Exact
+replay of the same accepted settlement/proof is idempotent; altered proof, amount,
+request or conflicting terminal outcome refuses, never rewrites history.
+No-send can cancel reserved, consumed or uncertain only after authentication;
+settled known charges are not refundable through this operation. Unknown
+observations cannot demote known settlement. A frozen/full scope still permits
+reconciliation of existing attempts; it refuses new reservations.
+
+AttemptV1 is a closed diagnostic value: ledgerId,epoch,requestId,scopeId,
+requestDigest,costValueDigest,maximumMicroUsd,state (reserved|consumed|uncertain|
+settled|cancelled),actualMicroUsd (Micro|null),proofRef (bounded string|null),
+proofDigest (Digest|null),createdAtUtc,updatedAtUtc. Return no raw price evidence
+or storage paths; durable evidence is retained privately. LedgerIdentity is
+{ledgerId,epoch,initializationAuthorityDigest,schemaVersion:1}.
+BudgetSnapshotV1 is {ledgerId,epoch,scope:BudgetScopeV1,settledMicroUsd,
+outstandingMicroUsd,remainingMicroUsd,frozen,freezeReason:null|over-bound,
+observedAtUtc,snapshotDigest}. If exact totals exceed public Micro range, return
+LEDGER_OVERFLOW instead of saturation; stored observations remain intact.
+Otherwise remaining is max(0,limit-settled-outstanding), with exact nonnegative
+BigInt arithmetic and explicit frozen/over-limit refusal on reserve. Snapshot
+hash covers the declared ordered fields except itself; freezes cannot be hidden
+by clamping remaining. This derived zero is not fabricated balance authority.
+
+LedgerResult<T> is {ok:true,value:T}|{ok:false,code:LedgerCode}. Closed codes:
+LEDGER_INPUT_INVALID, LEDGER_LIMIT_EXCEEDED, LEDGER_AUTHORITY_REFUSED,
+LEDGER_PATH_REFUSED, LEDGER_ALREADY_EXISTS, LEDGER_STORAGE_MISSING,
+LEDGER_IDENTITY_MISMATCH, LEDGER_SCHEMA_UNSUPPORTED, LEDGER_STORAGE_INVALID,
+LEDGER_SETTINGS_REFUSED, LEDGER_BUSY, LEDGER_IO_FAILED, LEDGER_COMMIT_UNCERTAIN,
+LEDGER_SCOPE_UNKNOWN, LEDGER_SCOPE_FROZEN, LEDGER_REQUEST_EXISTS,
+LEDGER_REQUEST_UNKNOWN, LEDGER_REQUEST_CONFLICT, LEDGER_STATE_REFUSED,
+LEDGER_BUDGET_EXCEEDED, LEDGER_CAPACITY_EXCEEDED, LEDGER_OVERFLOW,
+LEDGER_COST_REFUSED, LEDGER_PROOF_REFUSED, LEDGER_CLOCK_REFUSED.
+Do not append arbitrary SQL, exception, evidence or path text. Error classification
+must be narrow and safe; unknown write/commit acknowledgement retains uncertainty
+rather than permitting a send. Tests exercise actual SQLite boundaries, not a
+replacement in-memory implementation or a public fault-bypass switch.
+
+Capture all ordinary request/proof graphs before validation with depth16,
+65,536 visited values/keys, 1MiB aggregate string units and existing per-field
+bounds; charge aliases by expanded size, reject accessors/prototype surprises/
+cycles/nonfinite/thenable data. The 16KiB UTF-8 evidence bound also applies before
+persistence, and record capacities remain checked inside BEGIN IMMEDIATE.
+Initialization and proof callbacks are trusted code, not a hard execution-time
+sandbox; their returned data still receives bounded validation. Clock returns
+exact Utc before the transaction; invalid/throwing/future-regressing updates
+refuse without resetting prior timestamps or granting a refund.
