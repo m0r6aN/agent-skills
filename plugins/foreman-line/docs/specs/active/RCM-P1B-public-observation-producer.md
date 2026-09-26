@@ -1,7 +1,7 @@
 ---
 ticket: RCM-P1B
 title: Scoped public-observation canonical snapshot producer
-status: draft
+status: active
 owner: clinton.morgan
 created: 2026-09-26
 updated: 2026-09-26
@@ -10,6 +10,7 @@ superseded_by: null
 risk: elevated
 surfaces:
   - plugins/foreman-line/routing-policy/
+  - plugins/foreman-line/verification/
 routing_class: architecture/risk
 permission_profile: builder-architecture
 data_classification: internal
@@ -21,7 +22,8 @@ verification_class: judgment-required
 Produce digest-bound, explicitly scoped canonical RCM snapshots from retained
 public metadata using reviewed exact extraction profiles. Every requested
 identity has either complete facts or a named refusal. No partial source is
-advertised as a full catalog. Draft only: the retained v4 field mapping is ratified; public API freeze and independent producer review remain prerequisites to implementation dispatch.
+advertised as a full catalog. The retained v4 mapping and public API are ratified;
+the independent contract review and scoped Gate 2 are recorded below.
 
 ## Constraints
 
@@ -34,7 +36,7 @@ historical P1 spec/schema/reader/projector in this parcel.
 
 ## Contract
 
-Draft API shape (not dispatchable until P1A wrapper/API freeze):
+Frozen API shape (scoped private implementation under Gate 2 below):
 
 ```typescript
 type Identity = Readonly<{ provider: string; id: string }>;
@@ -246,10 +248,9 @@ explicitly synthetic endpoint authority. This proves schema compatibility only; 
 is not live availability, source freshness at future evaluation time or execution
 permission. Dated evidence must naturally become stale; never reset its timestamps.
 
-This concrete shape remains draft pending accepted P1A public API/export freeze,
-serialized barrel edit order and independent producer-contract review. The profileId/
-profileVersion split and result envelope here are proposed public API choices to freeze
-with P1A, not a dispatched implementation. No raw provider parser, acquisition step,
+The accepted P1A API and independent producer-contract review satisfy the shape
+prerequisites; Gate 2 below freezes the type names and serialized integration order.
+No raw provider parser, acquisition step,
 legacy export converter, OpenCode enrichment or schema change is authorized.
 ## Acceptance Criteria
 
@@ -333,6 +334,80 @@ preserves and retests prior exports. No shared reader/projector algorithm edits.
 
 ## Stop-and-Report Rule
 
-Remain draft until P1A wrapper/API freeze and independent producer review. Stop affected work
+Respect the scoped Gate 2 and predecessor integration gate below. Stop affected work
 for missing mandatory facts, unsupported source semantics, a required schema
 change, authority inference or a request for provider/config side effects.
+
+## Gate 2 and public-type freeze — 2026-09-26
+
+The coordinator grants private implementation under the user's explicit scoped
+prerequisite authority. P1A's final implementation 4201ac4 has two independent
+approvals (27 focused/426 full tests). Its merge onto accepted PMC main 6ff38a3
+is at de39306; integration verification and its own remote merge gate remain
+pending. Producer integration must follow that successful wrapper merge.
+No dependency gate is waived by permitting independent private implementation.
+
+Supported P1A exports are evaluateCatalogEligibility, CatalogIdentity,
+AcceptedCatalogSource, CatalogEligibilityInput, CatalogAdapterRefusalCode and
+CatalogEligibilityResult. In the API block above, Identity and AcceptedSource
+are aliases of those accepted CatalogIdentity and AcceptedCatalogSource types,
+not new structures to evolve independently. Export the producer function and
+ProducerCandidate, ProducerTrust, InventoryStatus, InventoryCode, FactField,
+InventoryEntry, ProducerRefusalCode and ProductionResult as shown; preserve every
+existing barrel export. No name collision exists on this pinned base.
+
+Builder workspace D:/Repos/agent-skills-worktrees/hro-rcm-producer-20260926;
+branch codex/hro-rcm-producer-20260926; base before this spec amendment e23a925.
+Only the five Allowed Files may change. A fresh builder verifies the exact spec
+blob and clean head, reads standing constraints, restates scope and stops for
+coordinator Step-0 release. Return local commit, tests and exact source/profile
+reproduction; no push, acquisition, provider calls or configuration effects.
+
+Private branches may proceed independently. Shared integration order is merged
+PMC-P1a, accepted RCM-P1A wrapper, PMC-P1b projection, then this producer; rebase
+on the accepted predecessor and preserve its public exports, reader algorithms
+and schemas. The coordinator may reverse the two independent final additive
+parcels only through an explicit recorded handoff before shared-file edits.
+The retained dated observations are testable evidence, not evergreen live facts.
+
+## Integration amendment: D19 provenance-data ruling — 2026-09-26
+
+Full CI at b3c412f4dd30a5a532b65ce4f4ca8b884e93f686 failed the
+mutation-scope-guard D19 audit in both runs 36255363980 and 36255360886.
+All other package checks passed. The sole new class-3 instance is the exact
+baseline.file comparison in validateBindings in public-observation-producer.ts.
+It compares retained manifest provenance in memory; it does not resolve a path,
+read the baseline document, or infer runtime authority. The coordinator rules
+this one literal as pinned provenance DATA under the existing D19 exception
+discipline. This does not waive the audit or change the accepted producer.
+
+Extend Allowed Files and surfaces solely for this integration repair with:
+- plugins/foreman-line/verification/src/d19-audit.ts
+- plugins/foreman-line/verification/tests/rcm-provenance-audit.test.ts
+- plugins/foreman-line/docs/goals/routing-currency-and-merit/rcm-producer-audit-repair.md
+
+The exception must bind exact source file, direct top-level validateBindings
+function, exact baseline.file strict-equality operand, direct string literal
+value, and the existing check-call boolean expression position. It must not
+accept a different function, declaration, property, operator, call, source file,
+indirection or sibling literal. Reconcile exactly one matching site and exact
+value; missing file/site, duplicates and changed values fail. Report the ruling
+and observed cardinality in the audit output. Do not evade the audit through
+string rewriting, hashing or encoding the producer's comparison. Do not add a
+general comparison exemption or exempt the producer file.
+
+Permanent tests must run the actual audit against temporary source fixtures:
+accepted current tree passes; missing/changed/duplicated site, changed location,
+an adjacent unruled repo-shaped literal and equivalent literal used as a
+filesystem call argument fail. Existing audit classes and pin counts remain
+enforced. Fixture creation must preserve the other pinned inventories and omit
+dependencies/build output. Test verification typecheck/lint and the existing
+mutation-scope-guard audit regression, then full remote CI. No production source,
+source evidence, schemas, public exports or dependency changes are authorized.
+
+Gate 2 is granted under standing prerequisite authority, conditional on a fresh
+builder's actual Step 0 inspect/restate-and-stop. Workspace is the existing
+hro-rcm-p1-integration-20260926, branch codex/hro-rcm-p1b-integration-20260926.
+This amendment supersedes the five-file-only statement only for this narrow
+integration repair. Two independent reviews must accept the exception and its
+negative coverage before updated PR #58 can merge behind green full CI.

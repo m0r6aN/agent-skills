@@ -133,6 +133,7 @@ import {
   isCallExpression,
   isElementAccessExpression,
   isExportDeclaration,
+  isExpressionStatement,
   isFunctionDeclaration,
   isFunctionExpression,
   isIdentifier,
@@ -316,6 +317,76 @@ const E2_DYNAMIC_PINNED_COUNT = 1
  */
 const RULED_REPORT_SPECS_DIR = `${REPO_LITERAL}/docs/specs/active`
 const RULED_CONTRACTS_SURFACE = `${REPO_LITERAL}/contracts`
+
+// RCM-P1B: a retained manifest provenance comparison, never a filesystem input.
+// Only this direct AST position and value are ruled; absence also fails below.
+const RCM_PROVENANCE_FILE = 'routing-policy/src/public-observation-producer.ts'
+const RCM_PROVENANCE_VALUE = `${REPO_LITERAL}/docs/specs/active/PMC-P0-pi-capability-and-catalogue-baseline.md`
+
+function isRcmProvenanceLiteral(node: Expression, sf: SourceFile, rel: string): boolean {
+  if (rel !== RCM_PROVENANCE_FILE || !isStringLiteral(node) || node.text !== RCM_PROVENANCE_VALUE)
+    return false
+  const equality = node.parent
+  if (
+    !equality ||
+    !isBinaryExpression(equality) ||
+    equality.right !== node ||
+    equality.operatorToken.kind !== SyntaxKind.EqualsEqualsEqualsToken
+  )
+    return false
+  const member = equality.left
+  if (
+    !isPropertyAccessExpression(member) ||
+    member.questionDotToken !== undefined ||
+    !isIdentifier(member.expression) ||
+    member.expression.text !== 'baseline' ||
+    member.name.text !== 'file'
+  )
+    return false
+  const conjunction = equality.parent
+  if (
+    !conjunction ||
+    !isBinaryExpression(conjunction) ||
+    conjunction.left !== equality ||
+    conjunction.operatorToken.kind !== SyntaxKind.AmpersandAmpersandToken
+  )
+    return false
+  const guard = conjunction.right
+  if (
+    !isBinaryExpression(guard) ||
+    guard.operatorToken.kind !== SyntaxKind.EqualsEqualsEqualsToken ||
+    !isPropertyAccessExpression(guard.left) ||
+    guard.left.questionDotToken !== undefined ||
+    !isIdentifier(guard.left.expression) ||
+    guard.left.expression.text !== 'baseline' ||
+    guard.left.name.text !== 'table' ||
+    !isStringLiteral(guard.right) ||
+    guard.right.text !== 'AC2'
+  )
+    return false
+  const call = conjunction.parent
+  if (
+    !call ||
+    !isCallExpression(call) ||
+    call.questionDotToken !== undefined ||
+    !isIdentifier(call.expression) ||
+    call.expression.text !== 'check' ||
+    call.arguments.length !== 1 ||
+    call.arguments[0] !== conjunction
+  )
+    return false
+  const statement = call.parent
+  if (!statement || !isExpressionStatement(statement) || statement.expression !== call) return false
+  const body = statement.parent
+  const declaration = body?.parent
+  return (
+    declaration !== undefined &&
+    isFunctionDeclaration(declaration) &&
+    declaration.name?.text === 'validateBindings' &&
+    declaration.body === body &&
+    declaration.parent === sf
+  )
+}
 
 /**
  * Wave 0 (WF-P1): the D33 `SerializationPointOwnership.path` surface LABEL —
@@ -1032,6 +1103,7 @@ interface SweepSink {
   readonly e2DynamicUnpinnedSites: Site[]
   readonly e4Sites: Site[]
   readonly ruledClass3Sites: Site[]
+  readonly rcmProvenanceSites: Site[]
   readonly grandfatherInventoryStructuralDeclarationSites: Site[]
   readonly grandfatherInventoryDeclarationSites: Site[]
   readonly grandfatherInventoryDataSites: Site[]
@@ -1141,6 +1213,10 @@ function sweepFile(
   const adjudicateClass3 = (node: Expression, value: string): void => {
     // Ruled non-instances, pinned by identity + location + value (STANDING #13):
     const parent = node.parent
+    if (isRcmProvenanceLiteral(node, sf, rel)) {
+      sink.rcmProvenanceSites.push(site(node))
+      return
+    }
     // GSO-P1: the 41 plugin-prefixed entries in the frozen inventory are DATA.
     // File identity, direct AST location, cardinality, and value digest are all
     // checked separately below; no other literal in this file is covered.
@@ -1555,6 +1631,7 @@ function main(argv: readonly string[]): number {
     e2DynamicUnpinnedSites: [],
     e4Sites: [],
     ruledClass3Sites: [],
+    rcmProvenanceSites: [],
     grandfatherInventoryStructuralDeclarationSites: [],
     grandfatherInventoryDeclarationSites: [],
     grandfatherInventoryDataSites: [],
@@ -1640,6 +1717,14 @@ function main(argv: readonly string[]): number {
   // pinned file was actually swept. A pinned file absent from the tree (a
   // synthetic fixture) leaves that pin vacuous, not failed. ──
   const pinMismatches: string[] = []
+  if (!sink.sweptFiles.has(RCM_PROVENANCE_FILE)) {
+    pinMismatches.push(`RCM provenance DATA: required exact file ${RCM_PROVENANCE_FILE} is absent`)
+  }
+  if (sink.rcmProvenanceSites.length !== 1) {
+    pinMismatches.push(
+      `RCM provenance DATA: ${sink.rcmProvenanceSites.length} observed; expected exactly 1`,
+    )
+  }
   const reconcilePins = (
     setName: string,
     expectedByFile: ReadonlyMap<string, number>,
@@ -1847,6 +1932,12 @@ function main(argv: readonly string[]): number {
   console.log('')
   console.log(
     `Ruled class-3 non-instances (reported, pinned by identity+location+value): ${sink.ruledClass3Sites.length}`,
+  )
+  console.log(`RCM provenance DATA: ${sink.rcmProvenanceSites.length} observed; expected 1`)
+  for (const s of sink.rcmProvenanceSites) console.log(`  ${s.file}:${s.line}: ${s.text}`)
+  console.log(
+    '  disposition: exact retained baseline.file value in the direct validateBindings check is DATA; ' +
+      'file, literal, strict comparison, companion guard, call position and cardinality are pinned.',
   )
   for (const s of sink.ruledClass3Sites) console.log(`  ${s.file}:${s.line}: ${s.text}`)
   console.log(

@@ -112,7 +112,7 @@ new budget values, evidence fabrication and automatic/full HRO activation.
 
 - [Amendment 05](../../goals/pi-model-configuration/gate-1-amendment-05.md)
 - [P2D](PMC-P2D-openrouter-terminal-transport.md)
-- [P1b](PMC-P1b-provider-binding-projection.md)
+- [P1b](../done/PMC-P1b-provider-binding-projection.md)
 - [P2 inventory](../../goals/pi-model-configuration/pmc-p2-design-inventory.md)
 
 ## Allowed Files
