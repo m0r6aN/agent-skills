@@ -133,3 +133,22 @@ Local Markdown references resolve; git diff --check passes. Native exits checked
 Only the two authorized documents changed. No implementation tests, provider calls,
 configuration writes, dependency installs, PR or merge occurred. Local docs commit
 is a handoff, not acceptance/promotion; status remains draft.
+
+## Coordinator disposition after independent review — 2026-09-26
+
+Independent design reviewer approved architectural direction at689f4e7 and kept
+P2C nondispatchable. Coordinator ratifies R1 separate durable intent custody and
+R2 explicit-v1-only governed entry through Amendment05 V8. R3 remains production
+gate. User prerequisite delegation already covers these decisions; no new human
+approval is required.
+
+Shape PMC-P2B1 as a separate minimal prerequisite, with actual storage and closed
+ports. Clarify P2C before build: trusted setup preissues request/episode IDs before
+caller digest creation; begin only validates. Distinct held/closed-refused state
+covers failures with no selected binding, never fabricated P2A attempt fields.
+Only selected authenticated prior attempts enter P2A history; held/pending/uncertain
+owner state blocks before resolver, so filtering cannot reset history to empty.
+Freeze exact CAS transitions and capability/proof custody; no generic recovery
+framework or P2B schema changes. Both actual owner tests and independently accepted
+P2A/P2B integration pins remain release gates. The reviewer inspected repaired
+P2A bb89be9 and unchanged ledger835a6dd, no implementation tests/provider calls.
