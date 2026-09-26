@@ -678,3 +678,34 @@ ASCII and multibyte exact1048576 and one-over body bytes, body content exceeding
 unchanged ordinary metadata limits. Body key/value-node remain ordinarily counted.
 Test-count baseline86 focused/442 dispatch must not shrink. Two fresh final source
 reviews and separate Contract B/audit enrollment still gate integration.
+
+## Contract B enrollment amendment — preparation gate
+
+Source93f8021 has two independent final approvals. Combined integration92b965f
+retains genuine complete routing-class validation in controller.ts, which makes
+it a Contract B reader. Prepare a separate enrollment with exactly five paths:
+
+- plugins/foreman-line/contract-readers/src/registry-data.ts
+- plugins/foreman-line/contract-readers/tests/touch-set.test.ts
+- plugins/foreman-line/verification/src/d19-audit.ts
+- plugins/foreman-line/verification/tests/pmc-controller-reader-audit.test.ts
+- plugins/foreman-line/docs/goals/pi-model-configuration/pmc-p2c-reader-enrollment.md
+
+Register the exact controller path under Contract B with its additive-lockstep
+rationale; no Contract A expansion and no deletion/waiver of vocabulary validation.
+Add meaningful permanent reader-membership/touch-set controls. Registry DATA gains
+exactly one approved literal:10 becomes11; independently calculate the new fixed
+sorted-value digest in actual Step0 and record it before implementation release.
+No detector algorithm, ruling context or unrelated pin changes are authorized.
+
+Combined real-reader and real-audit mutation controls must detect wrong contract
+membership, file/value/context relocation, renaming, substitution, duplication and
+unrelated filesystem-path use. Reader tests own Contract B membership; D19 retains
+its existing permitted contractA/contractB ruling contexts and detects departures
+from those contexts. Do not claim D19 alone distinguishes A from B. Preserve all
+RCM/ledger/B1/Jev pins.
+Retain formatting-positive and unchanged-source controls; never execute mutated
+source. Existing controller/runtime/tests/barrel and all predecessor code remain
+unchanged. Actual Step0 restate-and-STOP precedes explicit release; this paragraph
+only authorizes inspection and a concrete plan. Two independent audit reviews,
+combined checks and all remote checks remain required before merge.
