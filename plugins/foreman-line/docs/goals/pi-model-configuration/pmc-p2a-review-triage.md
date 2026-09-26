@@ -62,3 +62,27 @@ unchanged dispatch regressions and diff/scope checks; update the allowed handoff
 Gate 2 remains authorized. Fresh repair builder inspects actual head/spec and
 stops at Step 0 before coordinator release. Return a local frozen source commit;
 no push/merge. Two independent final reviews and full CI remain required.
+
+## Final implementation acceptance and integration — 2026-09-26
+
+Two fresh independent reviewers approve bb89be96407dd5f2c45ab2b82f08472cda160bd6,
+against frozen spec d65ff524bba2eda6c9e38de44c78aac4aae1c59f, with no actionable
+findings. Both independently passed routing790/dispatch126 and typecheck/lint.
+Reviewer A added405 independent probes (all pairwise global freshness contests,
+reversed nested property order, provenance/unknown combinations,250 malformed
+leaves and bounded hostile inputs). Reviewer B added41 independent probes across
+freshness, unknown precedence, costs, ownership, lanes, fallback/replay/third-send
+refusals. The catalog-order defect is closed; scope/head/clean-tree checks passed.
+
+Separate integration worktree hro-pmc-p2a-integration-20260926 on branch
+codex/hro-pmc-p2a-integration-20260926 merges accepted main26c7269 as2b479d9.
+Resolver implementation remains byte-identical; barrel merge preserves producer
+and resolver exports. The only spec delta from reviewed frozen content updates
+the moved P1b predecessor link. Targeted combined checks pass: routing938,
+contract-readers70, mutation-scope44 plus all three typecheck/lint runs. Tests use
+Node24.19.0 and read-only same-package dependency junctions after lockfile hash
+comparison. No dependency manifests changed or installs through junctions.
+Independent combined verification and full remote CI still gate merge. Both P2A
+and P2B are required before controlled execution composition. This proves offline
+selection only, not evidence authenticity, complete episode custody, billing or
+live provider availability. Full HRO exit remains open.
