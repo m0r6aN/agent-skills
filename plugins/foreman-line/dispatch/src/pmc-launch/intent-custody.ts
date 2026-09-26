@@ -107,24 +107,42 @@ function capture(input: unknown): unknown {
     const array = Array.isArray(value)
     if (Object.getPrototypeOf(value) !== (array ? Array.prototype : Object.prototype))
       fail('INPUT_REFUSED')
-    const descriptors = Object.getOwnPropertyDescriptors(value),
-      names = Reflect.ownKeys(descriptors)
-    if (visits + names.length > 65536) fail('BOUNDS_REFUSED')
+    // Read only the array length before enumeration. Each child costs both a key
+    // visit and a value visit, including every occurrence of an alias.
+    const lengthDescriptor = array ? Object.getOwnPropertyDescriptor(value, 'length') : undefined
+    const length = lengthDescriptor?.value
+    if (
+      array &&
+      (!lengthDescriptor ||
+        !('value' in lengthDescriptor) ||
+        !Number.isSafeInteger(length) ||
+        length < 0)
+    )
+      fail('INPUT_REFUSED')
+    if (array && visits + 2 * length > 65536) fail('BOUNDS_REFUSED')
+    const names = Reflect.ownKeys(value)
+    if (visits + 2 * (names.length - (array ? 1 : 0)) > 65536) fail('BOUNDS_REFUSED')
+    let index = 0
+    for (const key of names) {
+      if (typeof key !== 'string') fail('INPUT_REFUSED')
+      if (array && key === 'length') continue
+      if (array && key !== String(index++)) fail('INPUT_REFUSED')
+      units += key.length
+      if (units > 1048576 || key.length > 2048) fail('BOUNDS_REFUSED')
+    }
+    if (array && (names.length !== length + 1 || index !== length)) fail('INPUT_REFUSED')
     active.add(value)
     const owned: Data = {}
     for (const key of names) {
       if (typeof key !== 'string') fail('INPUT_REFUSED')
       if (array && key === 'length') continue
       visits++
-      units += key.length
-      if (units > 1048576 || key.length > 2048) fail('BOUNDS_REFUSED')
-      const d = descriptors[key]
+      const d = Object.getOwnPropertyDescriptor(value, key)
       if (!d || !('value' in d) || !d.enumerable || key === 'then') fail('INPUT_REFUSED')
       Object.defineProperty(owned, key, { value: copy(d.value, depth + 1), enumerable: true })
     }
     active.delete(value)
     if (!array) return Object.freeze(owned)
-    const length = descriptors.length?.value
     if (
       typeof length !== 'number' ||
       names.length !== length + 1 ||

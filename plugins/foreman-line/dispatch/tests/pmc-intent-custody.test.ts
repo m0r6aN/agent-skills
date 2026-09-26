@@ -888,6 +888,150 @@ for (const [name, mutate] of Object.entries({
     assert.equal(calls, 0)
     assert.equal(existsSync(join(root, 'pmc-intent-v1.sqlite')), false)
   })
+for (const mode of ['dense', 'sparse', 'minimum', 'record', 'keys', 'long-key'])
+  test(`AC1 capture preflight ${mode} refuses before child descriptors`, (t) => {
+    const root = temporary(t)
+    const array = ['dense', 'sparse', 'minimum'].includes(mode)
+    const target: FixtureData = array
+      ? mode === 'sparse'
+        ? new Array(70000)
+        : Array(mode === 'minimum' ? 32768 : 70000).fill(null)
+      : Object.fromEntries(
+          Array.from({ length: mode === 'record' ? 32768 : mode === 'keys' ? 513 : 1 }, (_, i) => [
+            mode === 'record'
+              ? String(i)
+              : String(i).padEnd(mode === 'long-key' ? 2049 : 2048, 'x'),
+            null,
+          ]),
+        )
+    let keys = 0,
+      children = 0,
+      lengths = 0,
+      auth = 0
+    const input = new Proxy(target, {
+      ownKeys(value) {
+        keys++
+        return Reflect.ownKeys(value)
+      },
+      getOwnPropertyDescriptor(value, key) {
+        if (key === 'length') lengths++
+        else children++
+        return Reflect.getOwnPropertyDescriptor(value, key)
+      },
+    })
+    assert.deepEqual(
+      initializeIntentOwnerV1(
+        { ...proposal(root), extra: input },
+        {
+          authenticateSetup() {
+            auth++
+            return { accepted: true }
+          },
+        },
+      ),
+      { ok: false, code: 'BOUNDS_REFUSED' },
+    )
+    assert.equal(children, 0)
+    assert.equal(keys, array ? 0 : 1)
+    assert.equal(lengths, array ? 1 : 0)
+    assert.equal(auth, 0)
+    assert.equal(existsSync(join(root, 'pmc-intent-v1.sqlite')), false)
+  })
+
+test('AC1 capture preflight charges expanded aliases before repeating child descent', () => {
+  let keys = 0,
+    children = 0,
+    lengths = 0
+  const shared = new Proxy(Array(32764).fill(null), {
+    ownKeys(value) {
+      keys++
+      return Reflect.ownKeys(value)
+    },
+    getOwnPropertyDescriptor(value, key) {
+      if (key === 'length') lengths++
+      else children++
+      return Reflect.getOwnPropertyDescriptor(value, key)
+    },
+  })
+  assert.deepEqual(initializeIntentOwnerV1([shared, shared], {}), {
+    ok: false,
+    code: 'BOUNDS_REFUSED',
+  })
+  assert.equal(keys, 1)
+  assert.equal(lengths, 2)
+  assert.equal(children, 32764)
+})
+
+for (const mode of ['visits', 'key-units', 'string', 'depth'])
+  for (const over of [false, true])
+    test(`AC1 capture preflight ${mode} exact boundary over=${over}`, () => {
+      let input: unknown
+      if (mode === 'visits') input = Array(over ? 32768 : 32767).fill(null)
+      else if (mode === 'key-units')
+        input = Object.fromEntries(
+          Array.from({ length: 512 }, (_, i) => [
+            String(i).padEnd(2048, 'x'),
+            over && i === 511 ? 'x' : null,
+          ]),
+        )
+      else if (mode === 'string') input = 'x'.repeat(over ? 2049 : 2048)
+      else {
+        input = null
+        for (let i = 0; i < (over ? 17 : 16); i++) input = { x: input }
+      }
+      // Within-budget captures reach the setup shape check; these deliberately
+      // are not setup proposals. The visit boundary is 65,535: complete trees
+      // have 1 + 2 * edges visits, so 65,536 cannot be a complete capture.
+      assert.deepEqual(initializeIntentOwnerV1(input, {}), {
+        ok: false,
+        code: over ? 'BOUNDS_REFUSED' : 'INPUT_REFUSED',
+      })
+    })
+
+for (const mode of ['length-throw', 'keys-throw', 'child-throw', 'delete-child', 'shrink-array'])
+  test(`AC1 capture preflight typed late refusal ${mode}`, (t) => {
+    const root = temporary(t)
+    let auth = 0,
+      getters = 0
+    const target: FixtureData = mode === 'delete-child' ? { a: 1, b: 2 } : [1, 2]
+    const input = new Proxy(target, {
+      ownKeys(value) {
+        if (mode === 'keys-throw') throw new Error('hostile keys')
+        const keys = Reflect.ownKeys(value)
+        if (mode === 'shrink-array') value.length = 1
+        return keys
+      },
+      getOwnPropertyDescriptor(value, key) {
+        if (
+          (mode === 'length-throw' && key === 'length') ||
+          (mode === 'child-throw' && key === '0')
+        )
+          throw new Error('hostile descriptor')
+        if (mode === 'delete-child' && key === 'a') delete value.b
+        return Reflect.getOwnPropertyDescriptor(value, key)
+      },
+      get() {
+        getters++
+        throw new Error('must not read values')
+      },
+    })
+    assert.deepEqual(
+      initializeIntentOwnerV1(
+        { ...proposal(root), extra: input },
+        {
+          authenticateSetup() {
+            auth++
+            return { accepted: true }
+          },
+        },
+      ),
+      { ok: false, code: 'INPUT_REFUSED' },
+    )
+    assert.equal(auth, 0)
+    assert.equal(getters, 0)
+    assert.equal(existsSync(join(root, 'pmc-intent-v1.sqlite')), false)
+  })
+
 for (const answer of [
   null,
   { accepted: true, extra: 1 },
