@@ -107,3 +107,53 @@ and returns SCOPE_REFUSED for B. All other bounds, variant/CAS rules and owner
 contracts remain unchanged. No runtime or provider activity is authorized.
 Scope-binding validation passed the frozen linter, body, local-link and whitespace
 checks with exactly the same two-document envelope.
+
+## R1/R2 operation and completeness repair
+
+Root accepted Step 0 at d0f93082d39067b4c9df63784a53159434e37dc2 and released only
+this note and the existing specification. This is a docs-only draft repair;
+independent app-PMC/coordinator review and later runtime Gate 2 remain required.
+Owner/source pins, retained producer/adapter semantics, scope binding, atomic
+catalog/absence generation replacement and production gates are unchanged.
+
+R1 adds closed private registration, single-use request and owner cancellation
+ports. Registration owns scope/generation/deadline and reserves one of four slots;
+request receives only its opaque operation. A separate exact cancellation identity
+is retained by trusted operation ownership, never coalesced waiters. Individual
+waiter abandonment does not cancel another waiter or refund P4A participation.
+Cancellation/deadline is rechecked after materialization immediately before the
+callback-free synchronous CAS for BOTH publishing variants. Late completion cannot
+publish; cancellation after acknowledged publication cannot revoke it.
+
+Reclamation is explicit: never-invoked registrations expire/cancel and release
+once; running cancelled/timed-out operations retain their slot until actual terminal
+transport cleanup acknowledgement. Uncertain cleanup keeps capacity held even
+after the bounded caller refusal. Four means actual live plus cleanup-pending work,
+not just unresolved promises. Terminal weak identity records prevent replay from
+allocating a new slot; timers are cleared and no unbounded strong tombstone list
+exists. Fresh registrations never restore an episode's spent participation.
+
+R2 freezes the exact full envelope data/links.next/total_count and requires null
+next plus a safe bounded count equal to the entire data array. Every row has a
+unique valid id and explicit architecture.output_modalities satisfying the exact
+text-token predicate. Unknown/missing whole-response coverage cannot produce a
+positive catalog or ABSENCE. Missing facts after proven coverage remain incomplete;
+nontext residual modality observations do not acquire capability authority.
+
+The official reference and its embedded OpenAPI were reread on 2026-09-26:
+[models reference](https://openrouter.ai/docs/api/api-reference/models/list-all-models-and-their-properties).
+The schema requires links.next and total_count, whereas the abbreviated example
+omits them. The strict proposed profile refuses that abbreviated envelope rather
+than inventing a legacy success mode. It may refuse the actual endpoint; production
+compatibility is an honest future evidence gate. Documentation retrieval only was
+performed, never a metadata/provider API call, credential lookup or live inference.
+
+Paired tests are specified for catalog/absence cancellation, one abandoned waiter
+versus a continuing waiter, registered expiry, delayed/uncertain cleanup, stale
+capability replay, exact complete envelopes and every missing/ambiguous coverage
+case. Pure materialization remains evidenceOnly, and true custody remains private.
+No quality, account billing, entitlement, authorization or live HRO claim is made.
+
+Validation: frozen donor frontmatter lint, required sections, local links and
+exact two-document whitespace/diff checks. Runtime tests remain future acceptance
+requirements; no runtime implementation is authorized by this handoff.

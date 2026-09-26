@@ -68,6 +68,39 @@ pagination indicator, incompatible schema/domain change, truncated body or
 unestablished completeness returns COMPLETENESS_UNPROVEN. Do not concatenate pages
 from different generations or infer completeness from Content-Length alone.
 Revalidate this pinned documentation/profile contract before future activation.
+The accepted full-response envelope has exactly these own keys:
+`{data: RawModelRow[], links: {next: null}, total_count: number}`. Both links and
+its next key are required; links has no other key. total_count is a safe integer
+0..10000 and must equal data.length before any row is omitted or projected. Empty
+inventory is admissible only with data:[], links:{next:null}, total_count:0 and all
+other transport/profile gates satisfied. No data-only legacy mode is accepted.
+Unknown top-level/link keys, missing metadata, non-null next (including an empty
+string), invalid/mismatching counts or pagination indicators return
+COMPLETENESS_UNPROVEN. Never follow a response link. The official reference's
+embedded OpenAPI requires data, links.next and total_count; its abbreviated example
+omits the last two. This strict reviewed profile intentionally refuses that example
+and may refuse the actual endpoint until compatible production evidence exists.
+
+Every raw row, including unrequested rows, must have a valid exact model id under
+the existing RCM identity rules; all ids must be unique across the entire data
+array. Before claiming coverage, every row must have an own architecture object
+with own output_modalities array: 1..16 distinct strings, each 1..64 ASCII
+lowercase letters/digits/underscore/hyphen, including the case-sensitive token
+text exactly once. This is the precise text-domain membership predicate. Do not
+infer membership from modality, name, tokenizer, requested identity or a default.
+Additional modality tokens remain observed residual modalities under the existing
+RCM rules; their presence does not authorize any nontext capability. Missing,
+malformed or text-absent membership on any row makes whole-response coverage
+unproven, rather than dropping the row. Non-domain fact omissions remain explicit
+incomplete rows only after coverage is proven. Duplicate or unclassifiable ids
+also refuse coverage: ignoring them could fabricate absence.
+
+Coverage additionally requires the genuine complete bounded fixed no-query GET,
+unchanged accepted profile and valid transport termination. The materializer checks
+this predicate before either catalog or absence success. Missing/unknown coverage
+returns COMPLETENESS_UNPROVEN for both variants, with no candidate publication or
+handle; supplied complete:true cannot override it. This establishes coverage only
+of this reviewed public-text domain, never account entitlement, quality or billing.
 
 Public metadata is hostile input. Discard unneeded descriptions/links and never
 follow them. Provider HTTP errors remain transport/refusal evidence, never ABSENCE.
@@ -157,8 +190,7 @@ it cannot issue production capabilities. Production composition must use the rea
 reviewed fixed transport and accepted profile, not a success-shaped JSON adapter.
 
 Proposed private ports are asynchronous `requestCatalogRefreshV1` and synchronous
-`acquirePublishedCatalogV1`. A request supplies only a previously registered scope
-handle, expected generation and remaining episode deadline. Registration freezes
+`acquirePublishedCatalogV1`. A request supplies only a previously registered operation handle. Operation registration captures the previously registered scope, expected generation and remaining episode deadline. Registration freezes
 workflow/trust scope, endpoint/profile/domain and sorted exact identities; it
 cannot expand mappings or endpoint authority. Unknown/copied/serialized handles,
 new identities, changed installation or scope refuse before transport.
@@ -166,7 +198,7 @@ new identities, changed installation or scope refuse before transport.
 Refresh returns a closed result tagged published, absent or refused. Published
 contains a private publication handle and monotonic local generation. Absent
 contains a private ABSENCE handle. Refused contains only a bounded typed code:
-INPUT_REFUSED, CAPACITY_REFUSED, TRANSPORT_REFUSED, DEADLINE_EXCEEDED,
+INPUT_REFUSED, CAPACITY_REFUSED, TRANSPORT_REFUSED, DEADLINE_EXCEEDED, CANCELLED,
 COMPLETENESS_UNPROVEN, MATERIALIZATION_REFUSED, PUBLICATION_CONFLICT or
 INSTALLATION_REFUSED. Error strings/body content never become authority or logs.
 
@@ -236,14 +268,25 @@ integer. Scope/identity arrays are canonical sorted unique sets within the bound
 Type names below are proposed contracts, not existing exports.
 
 ```ts
-type RefreshInput = {scope: object; expectedGeneration: number; deadlineMonoMs: number};
+type OperationRegistration = {scope:object; expectedGeneration:number; deadlineMonoMs:number};
+type OperationRegistrationResult =
+  | {ok:true; operation:object; cancellation:object}
+  | {ok:false; code:'INPUT_REFUSED'|'CAPACITY_REFUSED'|'DEADLINE_EXCEEDED'|'INSTALLATION_REFUSED'};
+type RefreshInput = {operation:object};
+type CancelInput = {operation:object; cancellation:object};
+type CancelResult =
+  | {ok:true; outcome:'cancelled'|'already-cancelled'|'already-settled'}
+  | {ok:false; code:'INPUT_REFUSED'|'INSTALLATION_REFUSED'};
+function registerRefreshOperationV1(input:unknown):OperationRegistrationResult;
+function requestCatalogRefreshV1(input:unknown):Promise<RefreshResult>;
+function cancelRefreshOperationV1(input:unknown):CancelResult;
 type RefreshResult =
   | {kind:'published'; handle:object; generation:number}
   | {kind:'absent'; handle:object; generation:number;
       requestedIdentities:readonly Identity[]; absentIdentities:readonly Identity[]}
   | {kind:'refused'; code:RefreshCode};
 type RefreshCode = 'INPUT_REFUSED'|'CAPACITY_REFUSED'|'TRANSPORT_REFUSED'
-  |'DEADLINE_EXCEEDED'|'COMPLETENESS_UNPROVEN'|'MATERIALIZATION_REFUSED'
+  |'DEADLINE_EXCEEDED'|'CANCELLED'|'COMPLETENESS_UNPROVEN'|'MATERIALIZATION_REFUSED'
   |'PUBLICATION_CONFLICT'|'INSTALLATION_REFUSED';
 type AcquireInput = {scope:object; handle:object; expectedGeneration:number};
 type CatalogRead =
@@ -277,6 +320,69 @@ type Candidate =
       provenance:PublicationProvenance};
 ```
 
+### Registered operation ownership and reclamation
+
+The three operation functions above are private installation-retained ports, not
+public barrel or task APIs. Registration validates/captures its exact closed input,
+authenticates scope ownership, reserves one of the existing four operation slots
+and creates two distinct frozen empty identities in private custody. The effective
+deadline is min(requested deadline, registration monotonic time + 10000ms); an
+already-expired deadline refuses before allocation. Scope, generation and deadline
+cannot be changed at invocation. Invalid, foreign, cloned or serialized identities
+refuse; no cancellation can be authenticated from a plain record or AbortSignal.
+
+Registration is not a transport call. Its operation can invoke refresh exactly once;
+mark invoked synchronously before transport. A second invocation returns
+INPUT_REFUSED with no I/O or slot allocation, including while the first is pending.
+P4A coalesces the first operation's promise; waiters do not invoke it again. The
+broker's trusted operation owner retains cancellation identity, never individual
+waiters. A waiter timeout/abandonment changes only that waiter's result and spent
+participation. It cannot abort a valid other waiter, revoke publication or extend
+an operation. No waiter signal is forwarded as the transport's operation signal.
+
+cancelRefreshOperationV1 authenticates both exact same-installation identities,
+latches cancellation synchronously and aborts only the internally owned transport
+controller. Abort/cleanup failures cannot escape the typed boundary or clear the latch; retain the occupied slot when terminal cleanup is uncertain. Never accept a task-supplied signal/controller. First preterminal cancel
+returns cancelled; repeated cancel returns already-cancelled. After a settled
+non-cancel outcome (including acknowledged publication or timeout), return
+already-settled without changing it. Cancellation before invocation consumes the
+operation's invocation opportunity permanently; its refresh result is CANCELLED
+with zero transport. Cancelled pending operations produce CANCELLED, never a late
+candidate. Timeout similarly fixes DEADLINE_EXCEEDED. Once either terminal refusal
+is latched, later completion cannot override it; first latched refusal wins.
+
+Check owner cancellation/deadline before transport, after every awaited boundary,
+and after materialization immediately before CAS. Read the trusted clock before
+the last cancellation-latch check; then perform cancellation/deadline/generation
+checks and record replacement synchronously with no external callback or await.
+Both catalog and absence use this exact path. A cancellation after acknowledged
+CAS is already-settled and does not revoke or roll back the published generation.
+No cancelled result issues a catalog/absence handle, adopts old data as refresh
+success, refunds participation or modifies another scope's current record.
+
+All registered, running and cleanup-pending operations count against the same
+four slots. Registration schedules a bounded owner deadline wakeup; fresh
+registration/invocation also checks expiry synchronously, so a delayed timer
+cannot revive an expired never-invoked operation. A registered operation that was
+never invoked releases its slot exactly once on cancellation or deadline expiry,
+with no I/O. A running operation never releases its slot merely because the caller
+promise refused or a timer/cancel fired. It releases only after the real owned
+transport acknowledges terminal cleanup: no active request/socket/body reader,
+no scheduled retry or producer capable of I/O. A success/refusal after genuine
+transport termination and synchronous candidate processing releases once. A
+cancelled/timed-out pending transport retains the slot until that acknowledgement;
+if cleanup is uncertain, hold the slot and refuse new capacity rather than exceeding
+four. The caller still receives its bounded refusal by the operation deadline;
+uncertain cleanup does not authorize another operation or an unbounded caller wait.
+
+Keep live/cleanup-pending operations strongly retained only within those four
+slots. Cleared timer and terminal outcomes remain associated through weak identity
+maps while callers retain capabilities; no unbounded strong tombstone list. A
+released operation is never registered again, and every old-cap replay is rejected
+or returns its terminal cancel disposition without consuming a new slot. A new
+registration creates new identities and does not reset any P4A episode budget.
+Restart loses all operation/scope/cancellation authority; existing restart rules
+remain. Tests must assert physical adapter activity counts, not only promise counts.
 Candidate generation denotes expectedGeneration+1 and remains unissued until
 CAS acknowledges it. Candidate catalog inventory must contain only facts; absence
 inventory must cover each original identity exactly once, and absentIdentities
@@ -322,7 +428,7 @@ shape `{status:200, mediaType:'application/json', contentEncoding:'identity',
 requestStartedAtUtc:string, completeReceivedAtUtc:string, complete:true,
 bytes:Uint8Array}` against actual terminal-capture custody; a matching object
 supplied by a caller cannot establish it. Transport failure maps to
-TRANSPORT_REFUSED or DEADLINE_EXCEEDED. This module owns the exact fixed Node HTTPS
+TRANSPORT_REFUSED, DEADLINE_EXCEEDED or CANCELLED according to the latched owner outcome. This module owns the exact fixed Node HTTPS
 GET and stream termination/cancellation, without redirects, environment proxy,
 credential reads, caller headers or generic fetch injection. Production factory
 captures that implementation statically. Private network-incapable tests exercise
@@ -369,6 +475,28 @@ remain unchanged; catalog publication alone closes neither.
 | 7 | Actual offline RCM-to-C composition preserves synchronous acquire and request-bound source evidence. Missing quality/billing/account/budget claims refuse; catalog success never creates permit, approval or refresh after B1 begin. |
 | 8 | Separate production contract review validates installed fixed fetch/profile/custody before any enabling claim; fixtures cannot establish production authenticity. Real failures remain typed with no fallback credentials or model substitution. |
 
+
+R1 paired controls are mandatory for catalog and absence candidates: cancellation
+before invocation, during body read and after materialization/before CAS; late
+success never publishes; post-CAS cancellation preserves acknowledged generation.
+Two coalesced waiters exercise abandonment of either waiter while the other still
+receives success; only operation-owner cancellation aborts both. Foreign/cross-scope
+or cloned cancellation identities, duplicate invocation and old-cap replay have no
+effects. Exercise four registered-never-invoked expiry/reclamation, four cancelled
+running transports with delayed cleanup (fifth registration still refuses), cleanup
+acknowledgement allowing exactly one replacement slot, timeout, duplicate cleanup
+and uncertain cleanup. No race may undercount actual active transport or refund
+P4A participation.
+
+R2 paired controls cover full terminal envelopes producing catalog versus absence,
+and missing links/next/count, non-null next, extra envelope/link keys, fractional/
+negative/unsafe/over-limit/mismatched counts, duplicate/unclassifiable ids and absent/
+malformed/text-absent output_modalities anywhere in data. All coverage negatives
+return COMPLETENESS_UNPROVEN with no publication in either path. Include genuine
+empty terminal inventory and mixed text-plus-residual modalities; compare exact
+absent set against the complete original scope. A data-only abbreviated example
+is explicitly a refusal fixture, not a compatibility success. Real endpoint
+compatibility remains future evidence, not established by these offline controls.
 ## Out of Scope
 
 Runtime edits or endpoint calls in this shaping release; durable workflow
