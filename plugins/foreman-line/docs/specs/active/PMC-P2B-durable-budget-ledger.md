@@ -233,10 +233,10 @@ imports the two specified internal pmc-launch modules after acceptance.
 
 `computePmcCostV1(input: unknown): PmcMoneyResultV1` accepts exactly:
 
-- version: pmc-price/v1; currency: USD.
+- version: pmc-price/v1; currency: USD; requestDigest: Digest.
 - identity: {bindingId: Id, provider: openrouter|opencode,
   providerModelId: bounded nonempty string}.
-- sourceProfileId/sourceProfileVersion: bounded nonempty strings;
+- sourceProfileId/sourceProfileVersion: nonempty strings of at most 2048 UTF-16 units;
   sourceProfileDigest, tariffDigest, priceEvidenceDigest: Digest.
 - inputRate and outputRate: each {value: decimal string,
   unit: USD per token | USD per 1M tokens}.
@@ -450,3 +450,46 @@ against the requested option. Require that reviewed constructor behavior and
 explicit defensive:true; fail on unsupported runtime/settings. Keep extension
 loading and double-quoted string literals disabled explicitly. Tests must name
 which properties are read back versus enforced by the pinned checked API.
+### Independent concrete-contract review disposition
+
+Fresh review of b085498 requested two correspondence fixes, both accepted by the
+coordinator. P1: requestDigest is now an explicit required helper input and part
+of the exact accepted-input tuple hashed into costValueDigest. It binds the
+P2A request identified by the authenticated EvidenceRef; P2C must match it and
+forward the unchanged computed value/digest, not recompute a different digest.
+This is content consistency, not authenticity inferred from arbitrary JSON.
+
+P2: successful values must fit the COMPLETE P2A cost-port domain, not merely the
+safe reservation field. Source profile ID/version are 1..2048 UTF-16 units,
+preserved exactly. Every returned ranking rational (both projected and each
+unit-price value) is canonical/reduced, at most64 digits per component AND lies
+in [0, Number.MAX_SAFE_INTEGER / 1,000,000] USD or USD/million as appropriate.
+Compare this ceiling using exact cross-products, never floating-point division.
+Outside magnitude refuses MONEY_OVERFLOW; outside precision refuses
+MONEY_PRECISION_UNSUPPORTED. Overlong source profile text refuses
+MONEY_LIMIT_EXCEEDED. No result may be labelled ok:true and then require P2C to
+truncate, narrow or repair it for P2A. Request/evidence bindings and all maxima/
+ranking counts must correspond exactly at the later P2C composition boundary.
+
+Regression requirements include requestDigest separation with otherwise identical
+inputs, profile text at2048/2049, exact rational ceiling/plus-one-unit boundaries,
+and the reviewer case input10000 USD/token, maximum input1, output rate0, fee0,
+null ranking: reservation is safe but unit price is outside P2A's domain, so the
+helper refuses rather than returning an incompatible success.
+
+Optional replay clarification accepted: idempotence applies only to the current
+stored accepted proof and exact content. Once a new authenticated known proof
+reconciles uncertainty, an earlier unknown proof is superseded and returns
+LEDGER_STATE_REFUSED; it cannot overwrite/demote the settled record. A changed
+proof with the same currently stored proof identity returns LEDGER_PROOF_REFUSED.
+No unbounded history or fourth table is introduced. Repeated unknown observations
+with new proof identities while already uncertain refuse LEDGER_STATE_REFUSED;
+they do not overwrite the retained unknown observation. When reconciling to known
+or authenticated no-send, retain the one preceding unknown reference/digest in
+bounded private attempts columns for provenance, without making old proof replays
+successful. There can be at most one unknown and one terminal proof per attempt.
+This preserves monetary observations and bounded lineage without event sourcing.
+The public AttemptV1 still reports the current proof only.
+
+The revised proposal remains draft pending independent re-review and accepted
+predecessor pin; there is no implementation release or weakening of P2A.
