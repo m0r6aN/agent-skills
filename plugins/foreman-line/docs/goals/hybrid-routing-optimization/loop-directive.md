@@ -185,3 +185,26 @@ The live billing-bound evidence question is still pending. Prepared inquiryd98e1
 has not been sent. No provider inference, credentials, production funding, host
 configuration or release has occurred. Continue independent implementation while
 that external evidence is unresolved; do not report the full HRO goal complete.
+
+## Stage F — HRO-P1c accepted, 2026-09-26
+
+PR64 https://github.com/m0r6aN/agent-skills/pull/64 merged at20:33:04Z as
+ a11c9413c80961f09500984633c59ce7ca9ddf5a. Reviewed PR head was
+ aa17051fccb8432b45c959eec1707e2bfcb1ce07; all twelve remote checks completed
+ SUCCESS before exact-head merge. Two independent final source approvals cover
+7133eb21; separate combined approval/checks cover e499590 and documentation-only
+approval covers cae2e19. Final acceptance record aa17051 contains no source change.
+
+The P1c spec moved to done and its current shaping link follows it. This delivers
+bounded owner context assembly, not live launch authority. The separately approved
+choice-cache disposition is now on main: held/not implemented, mandatory D8 and
+full live measurement unchanged. Original dirty checkout was not touched.
+
+PMC C source d38b42d is frozen for two independent reviews:86 focused and442
+full dispatch tests pass; its genuine Contract B reader needs separate inventory
+and associated audit enrollment. E1 source2632 has both independent approvals;
+narrow retirement audit is being implemented separately. D/E2 runtime and actual
+production/measurement gates remain open. P3 owner contracts and authenticated
+catalog-publication designs remain under review; P4A repaired45b50e6 has two design
+approvals and delegated ratification3c6ca35, not runtime dispatch. Pending billing
+inquiry has not been sent; no provider/credential/configuration activity occurred.
