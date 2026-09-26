@@ -26,7 +26,7 @@ execution are separate claims; this DRAFT does not authorize any of them to run.
 ## Constraints
 
 Base `d98e176e6ce6d6164679d35dc21647ef47f33f67`; root decisions E-03/E-04
-and two independent design reviews are prerequisites. C/D design approvals do
+and two independent design reviews are prerequisites. C bootstrap amendment 5764eba8da1485b7850db067041036d211712e12 must be ratified before this composition is released; its contracts below are explicit dependencies, not approval by this draft. C/D design approvals do
 not establish runtime availability. Before build release pin actual accepted
 B1/C/D exports and internal constructors; if their signatures cannot support
 this finite composition, return to contract review, never cast a fake class.
@@ -170,6 +170,16 @@ external source implementations already exist:
   authenticate immutable fields plus exact proof-derived terminal state/charge/
   proof/timestamp, not equality to the old consumed snapshot. No public lookup,
   caller proof IDs, registry selected by data or remint across restart.
+- Follow C's two-stage construction: createPmcControllerCustodyV1 with the trusted
+  exact mode, obtain its authenticators, open the real existing B1 owner with those
+  captured callbacks, then bind once. Unbound or failed custody refuses; failed
+  first bind consumes its latch. No replacement authenticator or second owner bind.
+  Supply the separate ControllerObservationPortsV1 capability sharing the D-register/
+  C-observe/ledger-auth registry; do not add it to unchanged InstallationPorts.
+  Import the SDK-free observation/charge/transport types from the accepted contract.
+- A reserved-before-consume revalidation/permit failure retains reserved liability
+  and pending B1 ownership. No consumed D proof exists there. Entry finalization
+  and owner close must not manufacture cancellation, completion, refund or retry.
 - C owns selection/completion WeakMaps and authenticators for B1; installation
   routes those exact capabilities rather than reimplementing selection/proof
   issuance. Only D's sole owned sender can obtain the real credential, at its
@@ -201,7 +211,7 @@ every original refusal/unknown/provenance in those result records, deeply owned.
 Use policy binding order, <=256 entries, no price sorting. Each entry is exactly
 `{bindingId,provider,providerModelId,piHostModelId,identityState,sourceFacts,
 thinkingLevelMap,enabled:false}`, where sourceFacts is the matching authentic-
-source CLAIM's EligibilityFacts or null, not a newly authenticated fact. Exact
+source CLAIM's EligibilityFacts or null, not a newly authenticated fact. identityState is exactly 'absent' | 'ambiguous' | 'refused' | 'facts'. Match projector result rows by requested.provider and requested.id against the exact binding provider/providerModelId. Zero matching rows means absent; more than one means ambiguous, regardless of row outcomes; exactly one outcome refused row means refused; exactly one outcome facts row means facts. Only the last case copies sourceFacts; all other states use null. These labels describe supplied unauthenticated evidence and grant no authority. Exact
 provider/id comparison only; zero/multiple matches yields null, never an alias.
 
 thinkingLevelMap has exactly off/minimal/low/medium/high/xhigh/max keys. Copy only
@@ -232,9 +242,9 @@ serialization is not a reversible host apply and never supplies credentials.
    assembly: success, no-send, failed-settled, unknown, C rejection, finish/close/
    stdout failure and concurrent/replayed entry. Verify C-before-Pi, direct-result
    finalization, completed text only after reconciliation/drain, retained liability
-   and state-aware proof replay. Fake C-only tests cannot close composition.
+   and state-aware proof replay. Include real B1 open before one-attempt bind, unbound/failed/repeated bind refusal, shared observation-custody separation, and reserved-before-consume failure retaining both reservation and pending owner through entry cleanup. Fake C-only tests cannot close composition.
 3. Planner preserves owner results/unknowns, all seven map keys, exact provider
-   values and disabled entries; caller mutation cannot change returned values.
+   values and disabled entries; all four identityState cases (including duplicate mixed facts/refusal rows) map exactly and never authenticate source claims; caller mutation cannot change returned values.
    No supplied evidence tag enables bootstrap or writes config. Prove sparse/null/
 mandatory-reasoning/clamp negatives and unchanged v0/approval-cli behavior.
 
