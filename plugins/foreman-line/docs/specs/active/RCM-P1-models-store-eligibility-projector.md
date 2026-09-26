@@ -125,7 +125,7 @@ Every item is proven by a named test in the listed file. `S` is
 - [ ] **AC8 — Exact endpoint join (E).** With approved
   `openrouter → https://openrouter.ai/api/v1`, each of the four fixture records
   at `https://openrouter.ai/api` refuses with `ENDPOINT_MISMATCH_REFUSED`:
-  `anthropic/claude-opus-5.5`, `anthropic/claude-fable-5.1`,
+  `anthropic/claude-opus-5`, `anthropic/claude-fable-5.1`,
   `anthropic/claude-sonnet-5`, `anthropic/claude-haiku-4.5`. A trailing slash,
   host case change, and `/api` versus `/api/v1` each refuse in both directions.
 - [ ] **AC9 — Catalog absence and identity (E).**
@@ -425,6 +425,70 @@ The builder treats these rulings as binding:
   list and changes no locked decision.
 - **OQ-10:** local typecheck works, so native `test`, `typecheck`, and `lint` are
   all mandatory. A toolchain failure is a stop-and-report, not a waiver.
+
+**Step-0 amendment A1 (2026-09-22).** The builder's Step-0 flags exposed two
+unnamed contract details. They are fixed as follows:
+
+- The 12-code pipeline tuple is exported as `SNAPSHOT_REFUSAL_CODES`, next to
+  `IDENTITY_REFUSAL_CODES`.
+- `ProjectionResult` failure levels: `TIME_INVALID_REFUSED` caused by
+  `evaluationTimeUtc` is `level: 'request'`. `TIME_INVALID_REFUSED` caused by a
+  provider `checkedAtUtc`, and `SOURCE_TIME_UNKNOWN_REFUSED`, `FUTURE_REFUSED`,
+  and `STALE_REFUSED`, are `level: 'snapshot'`. `AUTHORITY_*` codes are
+  `level: 'authority'`. `REQUEST_INVALID_REFUSED` is `level: 'request'`. AC14
+  tests assert the level for each.
+- The reader checks `checkedAtUtc` only for type (`string | null`, else
+  `MALFORMED_REFUSED`). The projector checks its ISO format and round-trip
+  (`TIME_INVALID_REFUSED`).
+- `DIGEST_REFUSED` through `DUPLICATE_IDENTITY_REFUSED` come from the reader
+  only. `projectEligibility` never returns them.
+
+**Review amendment A2 (2026-09-22).** The adversarial review of `cf20fd8`
+reproduced that a forged or post-read-mutated snapshot yields facts, and that
+hostile inputs throw. A2 adds these binding rules:
+
+- **Reader-issued snapshots only.** The reader deep-freezes every snapshot it
+  returns and records it in a module-private `WeakSet`. `projectEligibility`
+  first checks membership. A snapshot that is absent, not an object, or not
+  reader-issued refuses with the new code `SNAPSHOT_UNVERIFIED_REFUSED`,
+  `level: 'snapshot'`. It is the first entry in the projector's pipeline and is
+  appended to `SNAPSHOT_REFUSAL_CODES` as the 13th code.
+- **Never throw.** `readCatalogSnapshot` and `projectEligibility` return a typed
+  refusal for every input, including `null`, `undefined`, non-`Uint8Array`
+  bytes, proxies, and getters that throw. A throw while reading
+  `approvedConfig` refuses `AUTHORITY_INVALID_REFUSED`. A throw while reading
+  `identities` or any identity refuses `REQUEST_INVALID_REFUSED`. Non-byte
+  input to the reader refuses `FORMAT_REFUSED`.
+- **Read caller input once.** Each identity's `provider` and `id` are read
+  exactly once into a plain copy. The duplicate check, the evaluation, and
+  `requested` all use that copy.
+- **Own properties only.** Closed-shape checks on caller and catalog objects use
+  own-property tests, never `in`. Keys such as `__proto__` in a thinking map are
+  kept verbatim as levels, never dropped.
+- **URL strictness.** A `baseUrl` containing `?`, `#`, or `@` anywhere refuses,
+  including empty query, fragment, and userinfo.
+- **Purity proof.** The runtime probe also stubs the `Date` constructor,
+  `performance.now`, `setTimeout`, `setInterval`, and `setImmediate`. The static
+  scan must include positive-control tests showing it flags every construct the
+  review listed as missed.
+
+**Review amendment A3 (2026-09-22).** The third review of `c13e4bb`, reproduced by
+the coordinator, found two gaps. A3 adds these binding rules:
+
+- **Request-size caps.** The exported frozen constant
+  `MAX_REQUESTED_IDENTITIES = 256` bounds the request. An `identities` length
+  greater than 256 refuses `REQUEST_INVALID_REFUSED`, level `request`. The
+  exported frozen constant `MAX_APPROVED_ENDPOINTS = 256` bounds the
+  configuration. An `approvedConfig.endpoints` length greater than 256 refuses
+  `AUTHORITY_INVALID_REFUSED`, level `authority`. Each cap is checked on the
+  single length read, before any allocation or iteration.
+- **Every provider time is bounded.** Any provider `checkedAtUtc` later than the
+  evaluation time refuses `FUTURE_REFUSED`, not only the oldest one. Staleness
+  is still measured from the oldest provider time.
+- **Threat model, stated in the README.** Callers are same-process code. Refusals
+  cover hostile values passed as arguments. Tampering with shared globals or
+  built-in prototypes in the same realm is out of scope, and so is resource
+  exhaustion below the caps.
 
 ## Session Handoff
 
