@@ -254,3 +254,18 @@ and d19.log.
 Builder verification is not independent acceptance. Freeze for two source reviews;
 accepted D and separately released entry/installation/CLI work remain prerequisites
 for later E2 checkpoints. No host apply or production-enablement claim is made.
+
+## E2 planner source and combined acceptance
+
+Root and independent frontier D approve sourcec6b5bd31f05a5031009b74c23adec49f46c9b2ce
+and combined739cbaaabc0651936bc6446e16b3cac33e8205af with accepted main N/C and
+N closure4477c0a. Planner runtime is unchanged from the frozen author handoff.
+Root and D each ran all6 planner tests successfully. D's first invocation from
+repo root caused test-child loader-resolution failures; the documented dispatch
+working directory passes, and that corrected run is the recorded result.
+
+Root combined dispatch479 and routing964 pass; both package typechecks/full lints
+pass (one unchanged routing informational suggestion). Actual D19 passes21 packages,
+202 source files, zero unruled instances. Diff/scope clean. This is acceptance of
+the pure disabled planner checkpoint, not the unfinished E2 entry/CLI/installation
+or production apply. Exact-head remote checks and merge still follow.

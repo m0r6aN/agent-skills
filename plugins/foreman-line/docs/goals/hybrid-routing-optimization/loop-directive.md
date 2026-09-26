@@ -276,3 +276,15 @@ release remains explicit. Pure E2 planner released separately after reviewed
 amendmentae3fb12; D-dependent entry stays gated. D transport completion is being
 reassigned inside HRO: the separate PMC app task's latest user scope is draft
 response only and is honored. Its existing implementation work is preserved.
+
+### E2 pure planner combined checkpoint
+
+Sourcec6b5 and combined739cbaa have root and frontier D independent approval.
+The planner calls accepted owners, preserves exact identities/refusals/effort
+facts, leaves all entries disabled and emits empty apply/rollback patches.
+Combined479 dispatch/964 routing, both typechecks/lints and D19 (21 packages,
+202 files) pass. Remote acceptance remains. E2 entry/CLI/installation still await
+D; P publisher released0aae48f after accepted N/C and fresh frontier A Step0.
+P4A1 sourceb633101 has two approvals; exact six-site audit enrollment released
+3c766ba to Luna. P3A4d11fa2 still has independent findings; complete repair
+releasedaab16ab. Full production/billing/live measured exit remains open.
