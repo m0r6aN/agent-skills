@@ -1,7 +1,7 @@
 ---
 ticket: PMC-P2E1
 title: Explicit retirement of governed legacy inference executors
-status: active
+status: done
 owner: clinton.morgan
 created: 2026-09-26
 updated: 2026-09-26
@@ -117,10 +117,10 @@ migration, routing-policy changes and E2 implementation.
 
 ## Context & References
 
-- [Parent and root decisions](PMC-P2E-config-caller-migration.md)
+- [Parent and root decisions](../active/PMC-P2E-config-caller-migration.md)
 - [Inventory](../../goals/pi-model-configuration/pmc-p2-caller-inventory.md)
 - [Amendment 05](../../goals/pi-model-configuration/gate-1-amendment-05.md)
-- [Existing shadow contract](KONE-TBD-cerebras-shadow-operational-dispatch.md)
+- [Existing shadow contract](../active/KONE-TBD-cerebras-shadow-operational-dispatch.md)
 - [Shadow executor](../../../dispatch/src/routing-eval/shadow.ts)
 - [Jev runtime](../../../jev-decisions/src/runtime.ts)
 - [Direct smoke](../../../tests/jev-smoke-test.mjs)

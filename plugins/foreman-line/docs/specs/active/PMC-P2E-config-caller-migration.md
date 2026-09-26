@@ -103,7 +103,7 @@ HRO source changes, policy/schema/money changes and generic tool removal.
 
 ## Context & References
 
-- [E1](PMC-P2E1-legacy-inference-disposition.md)
+- [E1](../done/PMC-P2E1-legacy-inference-disposition.md)
 - [E2](PMC-P2E2-governed-user-entry.md)
 - [Caller inventory](../../goals/pi-model-configuration/pmc-p2-caller-inventory.md)
 - [Amendment 05](../../goals/pi-model-configuration/gate-1-amendment-05.md)

@@ -144,3 +144,20 @@ other detector mechanisms/pins are unchanged. No remaining audit finding.
 
 This accepts the narrow repair only. Combined P1c/main integration and its checks,
 remote PR checks and delegated exact-head merge remain outstanding.
+
+## Combined integration acceptance — 2026-09-26
+
+Independent reviewer approves 32b5cd622e7c4db03432ff0887e6964769161a7b,
+which combines accepted P1c/main and its Stage F documentation with the reviewed
+E1 source and audit repair. Source-only merge introduced no conflict or further
+runtime edit. On that exact head: dispatch378, Jev50, standalone6, hybrid53,
+routing944, readers71, mutation44 and focused audit42 all pass; applicable
+typecheck/lint/syntax checks exit0. Actual D19 sweeps21 packages/199 source files
+with zero unruled instances. Logs: C:/Users/clint/AppData/Local/Temp/e1-combined-review-32b5cd6.
+The earlier full622 verification result remains accurately scoped above.
+
+This record supersedes the earlier pre-integration limit about P1c ancestry.
+Compatibility loss is intentional: legacy shadow, Jev execution and direct smoke
+refuse with LEGACY_EXECUTION_RETIRED; pure APIs remain. No runnable production
+entry is introduced. E2 and live evidence remain separate gates. Remote checks
+and exact-head delegated merge remain outstanding.

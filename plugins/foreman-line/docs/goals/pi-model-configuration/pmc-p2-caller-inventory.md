@@ -65,7 +65,7 @@ kept pure v0/validation/declarations/offline lab unchanged. Root separately rele
 E1's exact eight-file implementation at b1b0add7738e9b0e9a14c025107a98456fdfb421;
 E2 runtime and all activation remain unreleased.
 
-[E1](../../specs/active/PMC-P2E1-legacy-inference-disposition.md) replaces the three
+[E1](../../specs/done/PMC-P2E1-legacy-inference-disposition.md) replaces the three
 governed executors with exact refusals. Consumers must handle the typed retirement
 or fixed exit-2 result; they cannot obtain equivalence by pointing old inputs at
 E2. Shadow candidate/skip receipts and Jev live observations cease. Unknown host
