@@ -37,6 +37,29 @@ other. Neither can merge without its own completed review and green CI.
 No live routing, provider availability, configuration mutation, cache benefit or
 full HRO exit is claimed by this record.
 
+## Final reviews and predecessor reconciliation
+
+Reviewer B independently approved consumer integration9e902a4:35 HRO,505
+routing,126 dispatch tests/typechecks, HRO lint and D19 passed;159 hostile-input
+cases (48 boundaries),12 additional probes and six mutation controls passed.
+Full CI then exposed the separately recorded Contract B inventory omission.
+
+Both independent final correction reviewers approved7252f8e without findings.
+They reproduced the genuine additive reader classification, preserved prior
+rulings, independently computed all nine literal occurrences and the exact
+digest, and confirmed HRO production/tests unchanged. Checks included70 reader,
+44 mutation-guard and35 HRO tests/typechecks/lints; reviewer B also ran153
+verification tests. Independent deletion/duplication/value/location controls
+failed as intended. This acceptance does not extend to unseen source changes.
+
+RCM producer PR58 merged as326e958 after its two final repair approvals and
+complete green CI. Integration63fc68262e9f1e5927c6b93ed329aa6c8a56d435
+merges that actual main into this HRO branch. HRO/contract-reader package diffs
+from7252f8e and routing-policy diff fromea4027a are empty. D19 combines the
+approved RCM predicate and HRO registry count/digest. Combined-tree independent
+checks and refreshed full CI are the remaining PR59 merge gates. This record
+also carries the already-merged producer's Stage F documentation closure.
+
 ## Contract B reader-inventory repair
 
 The bounded integration repair adds the genuine additive lockstep reader

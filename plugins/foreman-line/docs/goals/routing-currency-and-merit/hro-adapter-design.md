@@ -8,7 +8,7 @@ legacy-host normalizer is removed: it would always yield unknown timestamps and
 adds no production data. The old host export remains negative evidence only.
 
 [RCM-P1A](../../specs/active/RCM-P1A-sanitized-snapshot-adapter.md) owns the wrapper
-and explicit source-scope binding. [RCM-P1B](../../specs/active/RCM-P1B-public-observation-producer.md)
+and explicit source-scope binding. [RCM-P1B](../../specs/done/RCM-P1B-public-observation-producer.md)
 separately owns production serialization only after real field mappings are
 reviewed. RCM/PMC barrel edits may occur in either coordinator-recorded order;
 the second preserves exports and repeats checks on the exact merged base.

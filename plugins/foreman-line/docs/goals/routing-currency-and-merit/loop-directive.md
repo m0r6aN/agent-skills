@@ -185,3 +185,20 @@ cleanup. The wrapper confers no authority on caller-declared source evidence.
 PMC-P1b now owns the next shared-file integration. The isolated RCM producer
 may build concurrently but lands after the accepted projection. Live routing,
 provider configuration and paid inference have not been activated.
+
+## RCM-P1B Stage F closure — 2026-09-26
+
+PR58 merged as 326e958fd536093f76ebcc9c6d3032bcc2f7e736 at17:12:34Z,
+with final head ea4027a1c61cecd7a8d327f75a14f0c9feeec871. Producer source
+d8dda8f had two independent approvals and combined owner verification at653
+routing tests. Full CI exposed the provenance DATA audit integration gap; its
+exact AST/value/location/cardinality repair received two final independent
+approvals, including three optional-chain negative controls. Both complete
+remote CI runs and all ancillary checks passed at the exact merged head.
+
+The active spec is moved to done and current adapter-design reference updated.
+The six-model canonical artifact remains4359 bytes with digest
+5901c16ed192870d53952375392710b514f37b18a5451da6c4a5966aa7e916bb.
+Incomplete identities remain explicit refusals. This closes only the bounded
+producer prerequisite; it does not establish live eligibility, authentication,
+activation, quality, provider spend or full RCM/HRO completion.
