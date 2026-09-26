@@ -156,3 +156,22 @@ versions, prior lockfile preservation and actual D19. No additional runtime defe
 Repair envelope may include the existing pmc-owned-sender.test.ts alongside the
 parser, parser tests and this report; no other runtime/owner/dependency change.
 Native Luna is completing read-only Step0. Runtime edits still await release.
+
+## Repair Step0 acceptance and release — 2026-09-26
+
+Root accepts native Luna's stopped read-only Step0 against fa519c8 runtime.
+Report-only cb16480 and 277f47e retain the complete independent findings.
+Under delegated goal authority, release exactly four existing files:
+openrouter-chat-stream.ts, pmc-openrouter-stream.test.ts,
+pmc-owned-sender.test.ts and this report, at their existing dispatch/report paths.
+
+Charge the actual CR/LF framing before normalization. Test exact 131072/+1 bytes
+for LF and CRLF with comments/multiline data and split CRLF/UTF-8 controls, retaining
+all other bounds. Add real SQLite ledger same-proof known/unknown/no-send replay
+and terminal tamper controls; existing temporary passing probes are supporting
+evidence, not substitutes for permanent tests. Preserve contained TEMP cleanup.
+Run red controls, focused transport, full dispatch, typecheck/lint, real D19 and
+diff/scope checks. No dependency/install, predecessor source, sender/Pi port,
+production constructor, live call or host configuration change. Freeze clean and
+stop for root and independent frontier A reviews. C reader enrollment remains a
+combined-main gate rather than a waived failed test.
