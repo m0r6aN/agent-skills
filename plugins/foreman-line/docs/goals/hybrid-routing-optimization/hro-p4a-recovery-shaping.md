@@ -35,10 +35,26 @@ comment explicitly rejects treating references/digests as authentication. The
 missing prerequisite is an installed authentic fetch/publication/acquisition
 owner, not a boolean added to producer output.
 
+Producer `INCOMPLETE_SCOPE` returns no snapshot and combines absent,
+missing-required-facts and unsupported-profile rows. It cannot authorize a
+negative-cache entry. The separate publisher prerequisite must authenticate
+bounded complete ABSENCE for exact identity, trust/account scope, endpoint/profile,
+generation and observation/validity interval. Partial discovery and evidence-only
+absent rows without that proof hold without negative insertion. AC4 pairs genuine
+complete absence with generic/incomplete/unsupported refusal and independently
+tests every binding. Existing response and episode bounds remain unchanged.
+
 B1 has a closed maximum 128 registered intents. Its pending, held, uncertain,
 closed-refused and succeeded states block further launch. Only selected primary
 terminal-no-send/failed-settled permits the predeclared second slot; lost-ack local
-quarantine cannot be bypassed. P2A verifies that prior binding/request/digest and
+quarantine cannot be bypassed in that instance. Normal B1 reopen can permit only
+predeclared R2 when an authenticated primary terminal commit completed before its
+acknowledgement was lost; ledger-only reconciliation with no owner terminal commit
+remains blocked. The paired existing B1 AC6 fixtures cover both terminal kinds.
+P4A AC7 now preserves that distinction and all identity/revision/linkage/expiry/
+original-quality checks, without R1 replay, a third attempt or renewed metadata
+participation. Broker restart refusal is a separate admission boundary and cannot
+redefine B1's accepted reopen behavior. P2A verifies that prior binding/request/digest and
 disposition match its single previous primary, then selects only its declared
 fallback. This is not a general multi-step fallback engine.
 
@@ -58,6 +74,8 @@ installation evidence. A working offline broker would not close that live gap.
    workflow owner to durably admit an installation generation before exposing it;
    process loss holds its registered intents. This closes refresh-budget reset
    without quietly modifying B1 or adding an unreviewed persistence subsystem.
+   The hold applies to broker metadata preparation; normal authenticated B1
+   terminal-state reopen retains its existing predeclared-R2 authority.
 3. Commission the separate RCM authenticated metadata fetch/publication seam and
    workflow admission contract before production implementation dispatch. Their
    exact files and implementations are not authorized by this two-document scope.
@@ -84,3 +102,12 @@ Markdown link passed. No dependencies were installed or linked into this tree.
 The final staged diff must remain exactly these two documents and pass
 `git diff --cached --check` before the local handoff commit. No runtime tests were
 run: this release produces reviewable design, not implementation evidence.
+
+Independent review repair: clarified authenticated ABSENCE versus producer
+INCOMPLETE_SCOPE and local lost-ack quarantine versus accepted B1 terminal reopen.
+The original numerical proposals, draft status and owner gates remain intact.
+No publisher, admission owner, recovery authority or production activation was
+implemented by these clarifications.
+Repair validation passed: frozen spec-linter, required body sections, relative
+links and whitespace checks. The changed-file list remains exactly the two
+authorized documents; no runtime tests or production activity were performed.

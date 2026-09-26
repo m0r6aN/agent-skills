@@ -56,6 +56,23 @@ version/CAS and authentic acquisition by C. No arbitrary caller URL, credential,
 fetch function, successful JSON or digest can install this port or authorize a
 snapshot. The offline producer remains its normalization dependency.
 
+That owner must also authenticate a bounded ABSENCE outcome independently of
+snapshot success: complete source coverage for the exact provider/model identity,
+approved endpoint/profile and trust/account scope, publication generation,
+observation time and validity interval. Completeness must exclude partial,
+truncated or unfinished paginated discovery. Bind the outcome to the requested
+identity set and accepted source provenance; no structural record alone is proof.
+The same operation, byte, identity and deadline bounds apply. This is a required
+new publisher contract, not an existing producer result or permission to expand
+discovery scope. If authenticated completeness cannot be established, hold without
+inserting an identity-negative entry.
+
+Actual producer `INCOMPLETE_SCOPE` can contain absent, missing-required-facts or
+unsupported-profile inventory and returns no canonical snapshot. Neither that
+generic refusal nor its evidence-only inventory authenticates ABSENCE. An absent
+row requires the separate publisher proof above; incomplete/unsupported/source
+refusals never become absence by being cached.
+
 Without that port, the broker returns PREREQUISITE_UNAVAILABLE without network or
 launch calls. Production evidence cannot be synthesized from fixture custody.
 New catalog identities never change mapping approvals, aliases, tiers, fallback
@@ -138,7 +155,9 @@ Coalescing key is the exact workflow/authority scope, provider, approved endpoin
 profile/version, accepted publication generation, mapping/policy versions and
 sorted requested-identity set. No coalescing across different trust/account
 scopes. Negative keys additionally bind the exact requested identity and typed
-absence reason. Only authenticated catalog absence is a negative identity entry;
+absence reason. Only publisher-authenticated complete ABSENCE, bound as above,
+is a negative identity entry; its validity caps the 30-second TTL. Missing proof,
+generic INCOMPLETE_SCOPE or evidence-only inventory cannot populate the cache;
 timeouts, authentication errors, endpoint errors, rate limits and outages are
 distinct holds/cooldown observations, never evidence of model absence. A version
 change invalidates the old negative entry but not any episode's spent bit.
@@ -153,7 +172,10 @@ any episode in that generation after process loss. Missing/uncertain admission
 acknowledgement also holds. This prerequisite belongs to the workflow owner; an
 in-memory map, UUID, marker owned only by the restarted broker, TTL or empty B1
 history is insufficient. No replacement generation may silently reregister those
-same intents. A separately reviewed recovery authority is required to lift holds.
+same intents. A separately reviewed recovery authority is required to lift these
+broker admission holds. This prohibits renewed metadata preparation, not B1's
+existing normal reopen of authenticated committed terminal state. Broker restart
+rules neither revoke that owner contract nor furnish permission to launch R2.
 
 If durable admission custody is unavailable, production broker installation
 refuses. This draft does not add a third SQLite store or alter B1's schema. Tests
@@ -168,7 +190,15 @@ is inserted into C, RCM, the resolver or the consume-to-send critical section.
 An unselected closed-refused, pending, held, uncertain or succeeded B1 intent
 cannot be reset by this broker. Reserved pre-consume liability has no authentic D
 cancellation proof and remains outstanding; missing acknowledgement is no-send
-evidence for neither budget nor owner.
+evidence for neither budget nor owner. Lost acknowledgement quarantines the local
+B1 instance, which refuses further claims. On normal reopen, an authenticated
+owner terminal commit may still permit only the predeclared R2: primary
+terminal-no-send or terminal-failed-settled, with unchanged identity, revision,
+linkage, original quality and current expiry/budget checks. If only ledger
+reconciliation committed, or owner state remains pending/held/uncertain, reopen
+does not permit R2. Neither case permits replay of R1 or a third attempt. The
+broker does not repair, replay or infer the missing acknowledgement; any accepted
+R2 uses existing owner authority without restarting this metadata episode.
 
 Only existing B1/P2A can admit the predeclared R2 following authenticated selected
 primary terminal-no-send or terminal-failed-settled. Bind priorDisposition and
@@ -194,10 +224,10 @@ claim. This draft adds no receipt schema or telemetry writer.
 | 1 | Exact mapping/registered-alias positives; unknown preview slug, similar name, cross-provider guess and unapproved newly discovered identity all hold without inference. |
 | 2 | Real producer/reader/adapter replay under authentic test installation; malformed, stale, mismatched digest/profile/scope and evidenceOnly-as-authority negatives. Missing production publisher refuses with zero network/C calls. |
 | 3 | Same-key concurrent misses share one operation; different trust/version/scope keys do not. Duplicate episode callers spend once. 4-operation/128-episode/256-identity and byte boundaries plus one-over cases; total deadline includes waiting/validation/publication. |
-| 4 | 30-second version-scoped negatives suppress repeated absence; expiry, eviction, version change and 5-second cooldown never reset participation. Auth/endpoint/rate/outage/404 distinctions stay typed. No unbounded queue or late-result resurrection. |
-| 5 | Real durable admission process-loss tests: before/after admission acknowledgement, before/after refresh invocation, ready-before-handoff and handoff-before-C-ack all refuse replay on reopen; cross-process duplicate owner is denied. No fake admission authority. |
+| 4 | Paired authenticated complete ABSENCE inserts a version-scoped negative versus generic INCOMPLETE_SCOPE, absent evidence-only inventory, incomplete/unsupported rows or missing completeness proof inserting none. Independently vary exact identity, scope, generation and validity; mismatches refuse insertion. Valid negatives expire at the earlier of 30 seconds or proof validity; expiry, eviction, version change and 5-second cooldown never reset participation. Auth/endpoint/rate/outage/404 distinctions stay typed. No unbounded queue or late-result resurrection. |
+| 5 | Real durable admission process-loss tests: before/after admission acknowledgement, before/after refresh invocation, ready-before-handoff and handoff-before-C-ack all refuse metadata-episode replay on broker reopen; cross-process duplicate broker owner is denied. This does not override the distinct accepted B1 terminal-state reopen in AC7. No fake admission authority. |
 | 6 | Actual C/B1/P2A/P2B composition proves refresh precedes begin; acquire stays synchronous; original request unchanged; ready confers no authority; stale-at-launch refuses. Independent parcel progresses while affected/dependent parcel holds. |
-| 7 | Actual R1-to-R2 successful fixture and wrong-domain evidence negatives; missing mapping/no-selection, reserved, pending, uncertain, lost ack, success, exhausted R2 and invented third attempt deny redispatch. Budget includes outstanding liability. |
+| 7 | Actual R1-to-R2 successful fixture and wrong-domain evidence negatives. Paired faults for both primary terminal-no-send and terminal-failed-settled: owner COMMIT before lost acknowledgement permits only predeclared R2 on normal authenticated B1 reopen; ledger reconciliation before owner COMMIT remains blocked on reopen. The quarantined instance refuses in both cases. Preserve identity/revision/linkage/expiry/original-quality checks; deny R1 replay and third attempt. Missing mapping/no-selection, reserved, pending, held, uncertain, success and exhausted R2 deny redispatch. Budget includes outstanding liability; no case restarts the broker episode. |
 | 8 | Hostile input and throwing/malformed/cancelled ports return typed bounded holds; synthetic fixtures cannot select production mode. No provider/config/receipt writes in offline suite. |
 
 ## Out of Scope
@@ -231,3 +261,5 @@ or B1 budget? Does evidence-only discovery become authority anywhere? Can missin
 mapping create a fallback proof? Is the durable admission prerequisite concrete
 enough to refuse production until owned? Are proposed limits compatible with the
 actual producer and B1? Does any prose imply C/D/E are already production-ready?
+Does generic producer refusal accidentally become authenticated absence? Does
+broker restart refusal accidentally erase B1's accepted terminal-commit reopen?
