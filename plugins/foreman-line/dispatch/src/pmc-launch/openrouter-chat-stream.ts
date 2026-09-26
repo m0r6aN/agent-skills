@@ -248,10 +248,10 @@ export class PmcChatStreamV1 {
       newline = text.indexOf('\n')
     while (newline !== -1) {
       let line = text.slice(begin, newline)
-      if (line.endsWith('\r')) line = line.slice(0, -1)
-      if (line.includes('\r')) refuse('STREAM_UNCERTAIN')
       this.eventBytes += Buffer.byteLength(line, 'utf8') + 1
       if (this.eventBytes > 131072) refuse('STREAM_UNCERTAIN')
+      if (line.endsWith('\r')) line = line.slice(0, -1)
+      if (line.includes('\r')) refuse('STREAM_UNCERTAIN')
       if (line === '') {
         if (this.data.length) {
           if (++this.eventCount > 16384) refuse('STREAM_UNCERTAIN')

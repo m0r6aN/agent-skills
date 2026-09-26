@@ -126,6 +126,68 @@ test('every UTF-8/CRLF split yields the same complete bounded stop observation',
     assert.equal(result.costLexeme, '0.000005')
   }
 })
+
+function boundedEventBody(newline: '\n' | '\r\n', eventBytes: number): string {
+  const role = chunk(choice({ role: 'assistant' }))
+  const roleSplit = role.indexOf('"object"')
+  assert(roleSplit > 0)
+  const suffix = `data: ${role.slice(0, roleSplit)}${newline}data: ${role.slice(roleSplit)}${newline}${newline}`
+  const commentBytes = eventBytes - Buffer.byteLength(suffix, 'utf8')
+  assert(commentBytes > newline.length + 1)
+  const first = `:${'x'.repeat(commentBytes - newline.length - 1)}${newline}${suffix}`
+  assert.equal(Buffer.byteLength(first, 'utf8'), eventBytes)
+  const tail = [chunk(choice({ content: 'hé😀' }, 'stop')), chunk([], usage), '[DONE]']
+    .map((x) => `data: ${x}${newline}${newline}`)
+    .join('')
+  return first + tail
+}
+
+function boundarySplits(bytes: Buffer): number[] {
+  const splits = new Set([0, bytes.length])
+  const lf = bytes.indexOf(0x0a)
+  if (lf >= 0) {
+    splits.add(lf)
+    splits.add(lf + 1)
+  }
+  const crlf = bytes.indexOf(Buffer.from('\r\n'))
+  if (crlf >= 0) splits.add(crlf + 1)
+  for (const marker of ['é', '😀']) {
+    const at = bytes.indexOf(Buffer.from(marker))
+    assert(at >= 0)
+    splits.add(at + 1)
+    splits.add(at + Buffer.byteLength(marker, 'utf8') - 1)
+  }
+  return [...splits]
+}
+
+for (const newline of ['\n', '\r\n'] as const)
+  for (const [eventBytes, accepted] of [
+    [131072, true],
+    [131073, false],
+  ] as const)
+    test(`${JSON.stringify(newline)} event framing is exact at ${eventBytes} bytes`, () => {
+      const bytes = Buffer.from(boundedEventBody(newline, eventBytes))
+      for (const split of boundarySplits(bytes)) {
+        const parser = new PmcChatStreamV1(profile)
+        const run = () => {
+          parser.push(bytes.subarray(0, split))
+          parser.push(bytes.subarray(split))
+          return parser.finish()
+        }
+        if (!accepted) {
+          assert.throws(run, `${JSON.stringify(newline)} split ${split}`)
+          continue
+        }
+        const result = run()
+        assert.equal(result.text, 'hé😀')
+        assert.deepEqual(result.observation, {
+          kind: 'response',
+          semantic: 'stop',
+          charge: { kind: 'known', actualMicroUsd: 5 },
+        })
+      }
+    })
+
 test('length and fractional charge retain independent semantic/accounting facts', () => {
   const parser = new PmcChatStreamV1(profile)
   parser.push(Buffer.from(body('length', '0.0000001')))

@@ -175,3 +175,39 @@ diff/scope checks. No dependency/install, predecessor source, sender/Pi port,
 production constructor, live call or host configuration change. Freeze clean and
 stop for root and independent frontier A reviews. C reader enrollment remains a
 combined-main gate rather than a waived failed test.
+
+## Repair verification
+
+The parser now charges each completed raw SSE line, including both bytes of a
+CRLF terminator, before removing the terminal CR for field interpretation. The
+existing pending-line and whole-response bounds remain unchanged.
+
+The permanent parser controls construct valid comment-heavy multiline events at
+exactly 131,072 and 131,073 raw bytes for both LF and CRLF. Exact events pass;
+the plus-one events refuse. Each case includes LF/CRLF split positions and
+UTF-8 splits inside `é` and `😀`, followed by valid stop, usage and DONE events.
+
+The sender test now initializes and reopens the actual SQLite ledger, consumes a
+real reservation, registers and observes one private proof, and replays that
+same proof twice for known, unknown and no-send outcomes. The known-charge path
+also mutates persisted terminal state, amount, proof reference, proof digest and
+timestamp one at a time; each replay refuses and the fixture restores the row.
+All temporary roots are contained beneath the system temporary directory and
+removed in `finally` blocks.
+
+Pinned Node `v24.19.0` verification completed:
+
+- Focused parser and sender tests: 72/72 passed.
+- Full dispatch suite: 548/548 passed.
+- Dispatch typecheck: passed with no diagnostics.
+- Dispatch Biome check: passed with six pre-existing informational style notices
+  and no errors.
+- `git diff --check`: passed.
+
+The actual D19 audit with explicit `--plugin-root` passed with 0 unruled
+class-1 through class-5 instances, ledger 10/10, intent custody 9/9 and exit
+0. The post-fix review probes report LF 120,149-byte acceptance, CRLF
+160,151-byte refusal, and `REPLAY_OK` for known settled, unknown uncertain and
+no-send cancelled actual SQLite outcomes. Final scope and clean checks passed.
+Production remains disabled and no predecessor, dependency, sender, Pi-port,
+credential or host configuration source was changed.

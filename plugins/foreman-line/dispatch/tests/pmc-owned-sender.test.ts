@@ -1,9 +1,17 @@
 import assert from 'node:assert/strict'
+import { createHash } from 'node:crypto'
 import { EventEmitter } from 'node:events'
+import { mkdtempSync, realpathSync, rmSync } from 'node:fs'
 import https from 'node:https'
 import { syncBuiltinESMExports } from 'node:module'
 import net from 'node:net'
+import { tmpdir } from 'node:os'
+import { dirname, join } from 'node:path'
+import { DatabaseSync } from 'node:sqlite'
 import { test } from 'node:test'
+import type { Observation } from '../src/pmc-launch/controller-types.js'
+import { createLocalPmcLedger, initializeLocalPmcLedger } from '../src/pmc-launch/ledger.js'
+import { computePmcCostV1 } from '../src/pmc-launch/money.js'
 import {
   createOwnedHttpsSenderV1,
   createTerminalObservationRegistryV1,
@@ -286,6 +294,183 @@ for (const mode of ['unknown', 'no-send'] as const)
       assert.deepEqual(authenticate({ ...terminal, ...delta }, { proofId: registered.proofId }), {
         accepted: false,
       })
+  })
+
+const replayDigest = 'a'.repeat(64)
+const replayScope = {
+  scopeId: 'scope',
+  authorityDigest: replayDigest,
+  currency: 'USD',
+  authorizedLimitMicroUsd: 10,
+  workflowId: 'workflow',
+  accountId: 'account',
+  routingClass: 'implementation/standard',
+}
+const replayPrice = computePmcCostV1({
+  version: 'pmc-price/v1',
+  currency: 'USD',
+  requestDigest: replayDigest,
+  identity: { bindingId: 'binding', provider: 'openrouter', providerModelId: 'model' },
+  sourceProfileId: 'profile',
+  sourceProfileVersion: '1',
+  sourceProfileDigest: replayDigest,
+  tariffDigest: replayDigest,
+  priceEvidenceDigest: replayDigest,
+  inputRate: { value: '0.000006', unit: 'USD per token' },
+  outputRate: { value: '0', unit: 'USD per token' },
+  perRequestFeeUsd: '0',
+  otherFees: 'none-attested',
+  maximumInputTokens: 1,
+  maximumOutputTokens: 0,
+  rankingTokens: { input: 1, output: 0 },
+})
+assert(replayPrice.ok)
+
+for (const mode of ['known', 'unknown', 'no-send'] as const)
+  test(`actual SQLite ledger replays the same ${mode} proof`, () => {
+    const temp = realpathSync(tmpdir())
+    const root = mkdtempSync(join(temp, 'pmc-d-replay-'))
+    const now = '2026-09-26T12:00:02.000Z'
+    const clock = () => now
+    try {
+      const initialized = initializeLocalPmcLedger(
+        {
+          root,
+          ledgerId: 'ledger',
+          epoch: 'epoch',
+          initializationAuthorityDigest: replayDigest,
+          scopes: [replayScope],
+        },
+        {
+          clock,
+          authenticateInitialization: (request) => ({
+            accepted: true,
+            ledgerId: request.ledgerId,
+            epoch: request.epoch,
+            initializationAuthorityDigest: request.initializationAuthorityDigest,
+            scopesDigest: createHash('sha256').update(JSON.stringify(request.scopes)).digest('hex'),
+          }),
+        },
+      )
+      assert(initialized.ok)
+      const registry = createTerminalObservationRegistryV1(clock)
+      const ledger = createLocalPmcLedger(
+        {
+          root,
+          expectedLedgerId: 'ledger',
+          expectedEpoch: 'epoch',
+          expectedInitializationAuthorityDigest: replayDigest,
+        },
+        {
+          clock,
+          authenticateNoSendProof: registry.authenticateNoSendProof,
+          authenticateSettlement: registry.authenticateSettlement,
+        },
+      )
+      assert(ledger.ok)
+      const reserved = ledger.value.reserve({
+        requestId: 'request',
+        scopeId: 'scope',
+        requestDigest: replayDigest,
+        costValue: replayPrice.value,
+        priceEvidence: replayPrice.priceEvidence,
+      })
+      assert(reserved.ok)
+      const consumed = ledger.value.consume({ requestId: 'request', requestDigest: replayDigest })
+      assert(consumed.ok)
+      const proof = Object.freeze({})
+      const route = {}
+      const decision = {}
+      const wire = {}
+      const invocation = {}
+      const observation: Observation =
+        mode === 'no-send'
+          ? ({ kind: 'no-send', code: 'CREDENTIAL_REFUSED' } as const)
+          : ({
+              kind: 'response',
+              semantic: 'stop',
+              charge:
+                mode === 'known'
+                  ? { kind: 'known', actualMicroUsd: 3 }
+                  : { kind: 'unknown', reason: 'precision' },
+            } as const)
+      const registered = registry.register(
+        proof,
+        route,
+        decision,
+        wire,
+        consumed.value,
+        observation,
+      )
+      assert(registered.accepted)
+      assert(
+        registry.observe(proof, invocation, {
+          request: { route },
+          decision,
+          wire,
+          consumed: consumed.value,
+        }).accepted,
+      )
+      const request = { requestId: 'request', requestDigest: replayDigest }
+      const replay = () =>
+        mode === 'no-send'
+          ? ledger.value.cancelWithNoSendProof({
+              ...request,
+              proof: { proofId: registered.proofId },
+            })
+          : ledger.value.settle({
+              ...request,
+              observation: { proofId: registered.proofId },
+            })
+      const first = replay()
+      assert(first.ok)
+      assert.deepEqual(replay(), first)
+
+      if (mode === 'known') {
+        const file = join(root, 'pmc-budget-v1.sqlite')
+        const tamper = (sql: string, ...args: (string | number | null)[]) => {
+          const db = new DatabaseSync(file)
+          try {
+            db.prepare(sql).run(...args)
+          } finally {
+            db.close()
+          }
+          const refused = replay()
+          assert.equal(refused.ok, false)
+          const restore = new DatabaseSync(file)
+          try {
+            restore
+              .prepare(
+                'UPDATE attempts SET state=?,actualMicroUsd=?,proofRef=?,proofDigest=?,updatedAtUtc=? WHERE requestId=?',
+              )
+              .run(
+                first.value.state,
+                first.value.actualMicroUsd,
+                first.value.proofRef,
+                first.value.proofDigest,
+                first.value.updatedAtUtc,
+                'request',
+              )
+          } finally {
+            restore.close()
+          }
+        }
+        tamper(
+          "UPDATE attempts SET state='uncertain',actualMicroUsd=NULL WHERE requestId=?",
+          'request',
+        )
+        tamper('UPDATE attempts SET actualMicroUsd=? WHERE requestId=?', 4, 'request')
+        tamper("UPDATE attempts SET proofRef='tampered' WHERE requestId=?", 'request')
+        tamper('UPDATE attempts SET proofDigest=? WHERE requestId=?', 'c'.repeat(64), 'request')
+        tamper(
+          "UPDATE attempts SET updatedAtUtc='2026-09-26T12:00:03.000Z' WHERE requestId=?",
+          'request',
+        )
+      }
+    } finally {
+      assert.equal(dirname(realpathSync(root)), temp)
+      rmSync(root, { recursive: true, force: true })
+    }
   })
 
 for (const mode of [
