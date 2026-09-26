@@ -112,3 +112,34 @@ tests. The historical 28 total / 12 P1b count remains the tripwire.
   type-only and no runtime evaluator/receipt/config/network imports were added.
 - Two fresh final frontier reviews remain required before integration; these are
   builder results, not independent approval.
+
+## Final matrix rework — tests-only evidence
+
+The final review found no production defect, but six temporary source mutants
+survived the prior 19 consumer tests. This rework changes only this test file
+and this handoff record. The acceptance matrix now independently forges
+`ageMs`, the response `maxAgeMs`, the requested model `id`, and the facts model
+`id`; each case asserts its exact `eligibility_stale` or
+`eligibility_mismatch` phase and zero evaluator calls. The oracle callback
+assertion compares the complete owned request, including the exact evaluation
+clock, provider/model identity values, and one-item identities array.
+
+The focused HRO run remains 19 P1b tests plus 16 inherited P1a tests: 35
+passed, 0 failed. Running the current test file against each temporary mutant
+produced one failing matrix test and exit code 1 for all six controls:
+
+| Mutant control | Durable regression that fails it |
+|---|---|
+| `age.ts` | forged `ageMs` boundary |
+| `maxAge.ts` | mismatched response maximum age |
+| `requestedId.ts` | wrong requested model identity |
+| `factsId.ts` | wrong facts model identity |
+| `oracleValues.ts` | complete oracle request identity values |
+| `oracleClock.ts` | complete oracle request evaluation clock |
+
+The mutant copies and temporary test runners are evidence-only files under
+`C:\\Users\\clint\\AppData\\Local\\Temp\\hro-final-matrix-a`; none are
+tracked or committed. Production source, dependencies, manifests, lockfiles,
+and upstream packages remain unchanged. This negative-control evidence does
+not replace the two required independent final reviews or mainline integration
+gates.

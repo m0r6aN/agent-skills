@@ -534,6 +534,23 @@ test("acceptance matrix: future, stale, exact, and zero-age evidence boundaries"
 			code: "eligibility_stale" as const,
 		},
 		{
+			name: "forged age",
+			evaluationTimeUtc: "2026-09-26T12:30:00.000Z",
+			sourceTimeUtc: "2026-09-26T12:00:00.000Z",
+			ageMs: 1799999,
+			maxAgeMs: 1800000,
+			code: "eligibility_stale" as const,
+		},
+		{
+			name: "mismatched response maximum age",
+			evaluationTimeUtc: "2026-09-26T12:30:00.000Z",
+			sourceTimeUtc: "2026-09-26T12:00:00.000Z",
+			ageMs: 1800000,
+			maxAgeMs: 1800000,
+			responseMaxAgeMs: 1799999,
+			code: "eligibility_stale" as const,
+		},
+		{
 			name: "future",
 			evaluationTimeUtc: "2026-09-26T12:30:00.000Z",
 			sourceTimeUtc: "2026-09-26T12:31:00.000Z",
@@ -574,7 +591,10 @@ test("acceptance matrix: future, stale, exact, and zero-age evidence boundaries"
 		localOracle.provenance.evaluationTimeUtc = scenario.evaluationTimeUtc;
 		localOracle.provenance.sourceTimeUtc = scenario.sourceTimeUtc;
 		localOracle.provenance.ageMs = scenario.ageMs;
-		localOracle.provenance.maxAgeMs = scenario.maxAgeMs;
+		localOracle.provenance.maxAgeMs =
+			"responseMaxAgeMs" in scenario
+				? (scenario.responseMaxAgeMs ?? scenario.maxAgeMs)
+				: scenario.maxAgeMs;
 		let evaluatorCalls = 0;
 		const result = validateConsumerCompatibility(localRequest, {
 			eligibilityOracle: () => localOracle,
@@ -618,11 +638,29 @@ test("acceptance matrix: requested and facts identities require one exact match"
 			code: "eligibility_mismatch" as const,
 		},
 		{
+			name: "wrong requested model identity",
+			mutate: (response: typeof oracle) => {
+				const first = response.results[0];
+				if (!first) throw new Error("missing fixture result");
+				first.requested.id = "other-model";
+			},
+			code: "eligibility_mismatch" as const,
+		},
+		{
 			name: "wrong facts identity",
 			mutate: (response: typeof oracle) => {
 				const first = response.results[0];
 				if (!first) throw new Error("missing fixture result");
 				first.facts.provider = "other-provider";
+			},
+			code: "eligibility_mismatch" as const,
+		},
+		{
+			name: "wrong facts model identity",
+			mutate: (response: typeof oracle) => {
+				const first = response.results[0];
+				if (!first) throw new Error("missing fixture result");
+				first.facts.id = "other-model";
 			},
 			code: "eligibility_mismatch" as const,
 		},
@@ -735,13 +773,15 @@ test("acceptance matrix: oracle and evaluator inputs are deeply frozen and calle
 		eligibilityOracle: (input) => {
 			oracleInput = input;
 			assertDeepFrozen(input);
-			assert.deepEqual(Object.keys(input).sort(), [
-				"evaluationTimeUtc",
-				"identities",
-			]);
-			const identity = input.identities[0];
-			if (!identity) throw new Error("missing frozen identity");
-			assert.deepEqual(Object.keys(identity).sort(), ["id", "provider"]);
+			assert.deepEqual(input, {
+				evaluationTimeUtc: context.evaluationTimeUtc,
+				identities: [
+					{
+						provider: proposal.provider,
+						id: proposal.providerModelId,
+					},
+				],
+			});
 			return localOracle;
 		},
 		evaluateOffline: (input) => {
