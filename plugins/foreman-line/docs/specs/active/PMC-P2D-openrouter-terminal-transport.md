@@ -1,7 +1,7 @@
 ---
 ticket: PMC-P2D
 title: Owned OpenRouter chat terminal transport
-status: draft
+status: active
 owner: clinton.morgan
 created: 2026-09-26
 updated: 2026-09-26
@@ -609,3 +609,32 @@ ratified useful lane and source-map level; independent quality/privacy/availabil
 evidence. No real production certificate is present. Offline implementation may
 be released only with an explicit reviewed refusal-only production limitation;
 that release cannot count as public activation or full HRO completion.
+
+## Offline runtime/setup release — 2026-09-26
+
+The frontier PMC builder completed fresh actual Step0 and stopped at572f395,
+rechecking all35 inspection hashes, actual predecessor sources and portable
+package exports. Root accepts that Step0 under delegated prerequisite authority.
+Exactly the nine implementation paths above are released. Direct new development
+dependencies are only coding-agent0.87.1 and pi-ai0.87.1; no direct pi-agent-core
+import/dependency is needed or authorized without a concrete follow-up disposition.
+
+Use only this isolated checkout's real dependency directories, inspecting every
+target before setup. Installing the two exact packages and existing sibling lock
+closures is authorized with scripts disabled, normal lock generation for dispatch
+only and no changes to sibling manifests/locks. Empty task-owned npm user/global
+configuration and a hygienic child environment prevent ambient credential/proxy
+use. Necessary public npm-registry retrieval of locked dependencies is authorized
+if the local cache is insufficient; this is package setup, never a provider API
+call. Do not use an alternate registry or run package install scripts. Recheck all
+35 actual resolved pins and nominal compatibility before dynamic Pi import.
+Mismatch holds for review; never silently repin, cast or suppress errors.
+
+Preserve guards-before-import and genuine RED/GREEN, actual Pi/C/B1/ledger offline
+composition, exact wire identity, stop-only completion and private diagnostic
+retention. Production remains refusal-only before reserve, credential supplier or
+HTTPS without genuine production evidence. No provider call, host configuration,
+credential read, new dependency outside the frozen set or predecessor edit.
+C reader/audit/main acceptance remains a shipping gate. Freeze a clean source/report
+handoff after focused and appropriate regression/typecheck/lint checks; two source
+reviews, combined checks and remote CI still precede merge or activation.
