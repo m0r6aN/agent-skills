@@ -1,7 +1,7 @@
 ---
 ticket: PMC-P2E1
 title: Explicit retirement of governed legacy inference executors
-status: draft
+status: active
 owner: clinton.morgan
 created: 2026-09-26
 updated: 2026-09-26
@@ -160,3 +160,16 @@ Refresh tracked executor search and one-time unchanged-file/export comparison.
 Reviewer focus: Can alternate policy, a barrel alias, dry-run marker or a direct
 script still reach inference? Did retirement inspect arguments before refusing?
 Are consumers/test losses disclosed rather than hidden? Is pure v0 unchanged?
+
+## Gate 2 release — 2026-09-26
+
+The delegated coordinator releases the exact eight Allowed Files after genuine
+Step0 inspect/restate/STOP, two independent full-split design approvals at
+fe5a144dbd5518ad74e97ecd9d6f19ddb0056c8f and explicit E-01–E-04 ratification at
+7375c3b1b1a32964205121fbc5da3b7590c56ae1. The shadow/Jev owner disposition accepts
+all legacy executor retirement and the disclosed offline-lab compatibility loss;
+pure validation/replay/selection and unrelated tools remain unchanged. Frontier
+builder uses isolated hro-pmc-p2e1-20260926; root retains independent reviews,
+integration, remote checks and merge. No E2 implementation or production activity.
+Test-first checkpoints and native-exit verification are mandatory. Existing
+matched-lock dependency junctions are read-only; never install through a donor.
