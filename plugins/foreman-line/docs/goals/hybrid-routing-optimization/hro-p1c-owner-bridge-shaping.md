@@ -5,7 +5,7 @@
 `codex/hro-p1c-shaping-20260926`, inspected clean base
 `725d74107642ecf510974f71d21c00bf6909f149`. Coordinator accepted Step 0 and
 released exactly this file and
-[HRO-P1c draft](../../specs/active/HRO-P1c-owner-bridge.md).
+[HRO-P1c accepted spec](../../specs/done/HRO-P1c-owner-bridge.md).
 No implementation, publication or activation is authorized.
 
 ## Source inspection and missing value

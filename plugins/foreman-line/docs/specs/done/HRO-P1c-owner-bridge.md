@@ -1,7 +1,7 @@
 ---
 ticket: HRO-P1C
 title: Evidence-only context assembly for the PMC owner resolver
-status: active
+status: done
 owner: clinton.morgan
 created: 2026-09-26
 updated: 2026-09-26
@@ -257,3 +257,11 @@ production wiring, push or merge. Two independent frontier implementation review
 combined integration and full remote CI gate acceptance. Include contract-readers
 and mutation-scope/D19 among pre-PR checks when new code triggers their inventory;
 stop for a narrow amendment instead of weakening or evading them.
+
+## Stage F closure
+
+Merged PR64 at a11c9413c80961f09500984633c59ce7ca9ddf5a on
+2026-09-26T20:33:04Z after two independent final source reviews, separate combined
+review, local owner/audit checks and all twelve remote checks on exact head
+aa17051fccb8432b45c959eec1707e2bfcb1ce07. Source7133eb21 is accepted. This library
+parcel does not close the full charter's production, recovery or measurement exit.
