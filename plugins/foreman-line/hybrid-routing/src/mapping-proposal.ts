@@ -147,9 +147,6 @@ function ownSnapshot(value: unknown, depth: number, budget: Budget): unknown {
 	budget.active.add(value);
 	try {
 		if (Array.isArray(value)) {
-			if (Object.getPrototypeOf(value) !== Array.prototype)
-				throw new Error("invalid");
-			const keys = Reflect.ownKeys(value);
 			const length = valueDescriptor(value, "length").value;
 			if (
 				typeof length !== "number" ||
@@ -158,6 +155,10 @@ function ownSnapshot(value: unknown, depth: number, budget: Budget): unknown {
 				length > MAX_BINDINGS
 			)
 				throw new Error("limit");
+			if (budget.values > MAX_VALUES - length) throw new Error("limit");
+			if (Object.getPrototypeOf(value) !== Array.prototype)
+				throw new Error("invalid");
+			const keys = Reflect.ownKeys(value);
 			if (keys.length !== length + 1 || !keys.includes("length"))
 				throw new Error("invalid");
 			for (let index = 0; index < length; index += 1) {
@@ -176,18 +177,23 @@ function ownSnapshot(value: unknown, depth: number, budget: Budget): unknown {
 					throw new Error("invalid");
 			}
 			const result: unknown[] = new Array(length);
-			for (let index = 0; index < length; index += 1)
+			for (let index = 0; index < length; index += 1) {
+				if (budget.values >= MAX_VALUES) throw new Error("limit");
 				result[index] = ownSnapshot(
 					valueDescriptor(value, String(index)).value,
 					depth + 1,
 					budget,
 				);
+			}
 			return result;
 		}
 		if (!isPlainRecord(value)) throw new Error("invalid");
+		const keys = Reflect.ownKeys(value);
+		if (budget.values > MAX_VALUES - keys.length) throw new Error("limit");
 		const result = Object.create(null) as PlainRecord;
-		for (const key of Reflect.ownKeys(value)) {
+		for (const key of keys) {
 			if (typeof key !== "string") throw new Error("invalid");
+			if (budget.values >= MAX_VALUES) throw new Error("limit");
 			result[key] = ownSnapshot(
 				valueDescriptor(value, key).value,
 				depth + 1,
