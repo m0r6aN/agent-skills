@@ -342,3 +342,19 @@ with pinned Node24.19 after focused RED/GREEN; do not label unrelated load failu
 as a pass. Preserve actual B1/ledger/R2/race/commit-uncertainty tests, production
 zero-read refusal and unchanged owners. Update the existing report, freeze clean
 and STOP for two independent final source reviews and later combined/remote gates.
+
+### Regression-only repair release — 2026-09-26
+
+Root and frontier D request changes to208ca3c's regression coverage only. Both
+reviews find the three runtime repairs correct; root independently reran the
+original matching-target junction, exact262144 and oversized-array probes.
+Luna's clean read-only repair Step0 at208ca3c is accepted. Release exactly
+ dispatch/tests/pmc-recovery-admission.test.ts and the existing P4A1 verification
+report, under plugins/foreman-line; no runtime/types/worker changes.
+Use a canonical target whose basename exactly matches fixtureId, reached through
+a caller junction, so old canonicalize-first source would admit it. Assert no
+store mutation. Independently exercise a70000-element array under an unknown
+field, requiring BOUNDS_REFUSED before ownKeys; retain the129-intents control.
+Pair actual262144 and262145 UTF8-JSON inputs on separate unused fixtures and prove
+the over-limit refusal creates neither store. Freeze test/report repair after
+focused tests, typecheck/lint and diff checks, then STOP for two final reviews.
