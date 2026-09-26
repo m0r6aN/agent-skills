@@ -95,3 +95,32 @@ Local evidence is retained in the OS temporary directory under
 `pmc-audit-mutation-full.log`, `pmc-audit-typecheck.log`, `pmc-audit-lint.log` and
 `pmc-audit-real-tree.log`. These logs are local handoff evidence, not repository
 artifacts or substitutes for the required fresh reviews and remote CI.
+
+## Coordinator triage of independent repair reviews — 2026-09-26
+
+Both reviewers withhold approval ofdef8884. Root reproduced reviewer B's eight-case
+probe with Node24.19.0: unary ! to + in the absolute-root guard, runtime import to
+type-only, and const schema to let all incorrectly retained D19 PASS10/10.
+Initializer reassignment outside its declaration also passed. This is a bounded
+fingerprint defect, not demonstrated runtime path escape. Ledger remains unchanged.
+
+Accept these as required repair within the same three-file amendment. Replace the
+incomplete forEachChild-only semantic representation with a complete syntactic
+TOKEN representation that includes operators, modifiers, import/export type-only
+markers, declaration kind and punctuation wherever meaningful. Do not patch only
+the reported scalar properties; cover EVERY semantic token in enrolled owners,
+imports, schema, calls and external-reference contexts. Comments/whitespace remain
+irrelevant. Regenerate pins from unchanged reviewed ledger only after the algorithm
+is fixed. Retain exact file/owner/site/value/cardinality refusal and all existing
+unrelated inventories. This is still bounded syntax, not general dataflow proof.
+
+Reconcile protected provenance identifiers against EVERY pinned owner, including
+initializeLocalPmcLedger, so its external reassignment or shadowing cannot be
+silently excluded. No blanket binding-name/annotation/file exemption. Add permanent
+RED/GREEN controls for the three reproduced token collisions and owner reassignment,
+plus representative operator/modifier/declaration token changes, positive ordinary
+comments/whitespace and unrelated-source changes. Keep all existing158focused
+controls (or equivalent counted coverage), fullverification341 baseline and44
+mutation-scope tests. Run real-treeD19, affectedtypecheck/lint and sourcefreezechecks.
+Fresh Step0/release, localcommit/handoff and two independentfinalrepairapprovals
+remain required. No ledger edit, provider/config effect, push or merge by builder.
