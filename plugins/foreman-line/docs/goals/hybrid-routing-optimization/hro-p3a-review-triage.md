@@ -112,3 +112,16 @@ submissions missed explicit obligations. D performed a fresh read-only Step0 at
 this exact head, identifies the same six-file envelope and has stopped. D will
 become author and therefore cannot approve its repair. Root and frontier A must
 independently review it. No production authority is added by this reassignment.
+
+## Frontier repair review — 5fe7699038abc931b21de975b437bfac339b03ae
+
+Root and frontier A request one remaining consistency repair: a valid B link can
+name a ticket outside its sole ticketKeys member and still admit the session.
+Both reran TEMP/hro-p3a-a-link-probe.mts successfully. Actual producer construction
+supports the narrow links[].ticketKey membership rule now recorded in the spec;
+no registration/build head equality or new link-count requirement is inferred.
+
+A independently passed22 driver/87 receipt tests, both typechecks/full lints, and
+reproduced the four-site D19 failure. Root inspected genuine schema/owner joins,
+fixed sidecar capture and bounded fd changes; remaining repair does not reopen
+closed read/fixture/provenance fixes. Final pins wait for stable approved source.

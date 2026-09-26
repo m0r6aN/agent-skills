@@ -794,3 +794,23 @@ Freeze clean source/test/report changes and STOP for two fresh independent revie
 by root and frontier A. D is now author and cannot approve its own repair. This
 release supersedes only the builder assignment and defective initial-fixture/read
 implementation; it does not expand the approved runtime or authority boundary.
+
+### Sole-ticket link-membership clarification — 2026-09-26
+
+Root and independent frontier A reproduced a remaining internal inconsistency at
+5fe7699038abc931b21de975b437bfac339b03ae: changing only a schema-valid B link's
+ticketKey to KONE-999, while sole ticketKeys/order/measured registration remain
+KONE-123, rehashing the chain and refs, still admits the session. The actual
+registration producer derives links from its registered ticket keys.
+
+Root adopts the reviewers' narrow requirement: every B.subject.links entry must
+have ticketKey equal to B.subject.ticketKeys[0], already the unique joined ticket.
+Preserve the complete schema-valid links otherwise. Do not add a link-count rule,
+change their direction/permalink/commit fields, or equate registration commitSha
+with verified build head. This is offline consistency, not production authenticity.
+Retain a schema-valid wrong-ticket negative control and genuine positive producer
+case; rejection must precede measured owner writes. No new API or source path.
+
+Source remains stopped for a fresh focused builder Step0 and explicit release.
+All other independent source checks stand; D19's four normalization sites still
+need their separately reviewed enrollment after final source acceptance.
