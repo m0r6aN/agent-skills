@@ -1,17 +1,28 @@
 import {
+  closeSync,
   existsSync,
+  fstatSync,
   lstatSync,
   mkdirSync,
   opendirSync,
-  readFileSync,
+  openSync,
+  readSync,
   statSync,
   writeFileSync,
 } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { dirname, join, relative, resolve } from 'node:path'
+import { Ajv, type ValidateFunction } from 'ajv'
+import { parse as parseYaml } from 'yaml'
 import type { JsonValue } from '../../../approval/src/index.js'
 import { canonicalize, RECEIPT_SCHEMA_VERSION, sha256Hex } from '../../../approval/src/index.js'
 import type { CorrelationContext } from '../../../contracts/src/index.js'
+import {
+  buildResultSchema,
+  dispatchOrderSchema,
+  registrationResultSchema,
+  shapingResultSchema,
+} from '../../../contracts/src/index.js'
 import type { BuildResult, DispatchOrder } from '../../../contracts/src/stages/c-dispatch.js'
 import type {
   AdversarialFinding,
@@ -156,6 +167,7 @@ interface OwnedContext {
     readonly workflowId: string
   }
   readonly expectedPlanDigest: string
+  readonly sidecarDigests: readonly string[]
   readonly initialRows: readonly ReceiptRow[]
   runPromise: Promise<ResultV1<null>> | null
   runResult: ResultV1<null> | null
@@ -205,6 +217,22 @@ function exact(value: unknown, keys: readonly string[]): Record<string, unknown>
   if (ownKeys.length !== keys.length || keys.some((key) => !Object.hasOwn(record, key)))
     throw new Refusal()
   return record
+}
+
+// Compile actual owner schemas only inside the constructor's typed refusal boundary.
+let ownerValidators: readonly ValidateFunction[] | undefined
+function validateOwners(values: readonly unknown[]): void {
+  if (ownerValidators === undefined) {
+    const ajv = new Ajv({ allErrors: true })
+    const compiled = [
+      shapingResultSchema,
+      registrationResultSchema,
+      dispatchOrderSchema,
+      buildResultSchema,
+    ].map((schema) => ajv.compile(schema))
+    ownerValidators = compiled
+  }
+  if (values.some((value, index) => !ownerValidators?.[index]?.(value))) throw new Refusal()
 }
 
 interface CaptureState {
@@ -448,6 +476,11 @@ function parseInput(raw: unknown): OfflineInputV1 {
     'stepZeroRestatement',
     'routingDecisionRef',
     'injectedSkills',
+    ...(typeof record.order === 'object' &&
+    record.order !== null &&
+    Object.hasOwn(record.order, 'permissionProfile')
+      ? ['permissionProfile']
+      : []),
   ]) as unknown as DispatchOrder
   stringValue(order.parcelRef)
   stringValue(order.stepZeroRestatement)
@@ -887,20 +920,82 @@ function boundedJsonParse(text: string, budget: JsonBudget): unknown {
   return value
 }
 
+interface ByteBudget {
+  bytes: number
+}
+function readBoundedBytes(pathValue: string, budget: ByteBudget = { bytes: 0 }): Buffer {
+  const parents: { path: string; dev: bigint; ino: bigint }[] = []
+  for (let parent = dirname(pathValue); ; parent = dirname(parent)) {
+    const stat = lstatSync(parent, { bigint: true })
+    if (stat.isSymbolicLink() || !stat.isDirectory()) throw new Refusal()
+    parents.push({ path: parent, dev: stat.dev, ino: stat.ino })
+    if (dirname(parent) === parent) break
+  }
+  const checkParents = (): void => {
+    for (const parent of parents) {
+      const stat = lstatSync(parent.path, { bigint: true })
+      if (
+        stat.isSymbolicLink() ||
+        !stat.isDirectory() ||
+        stat.dev !== parent.dev ||
+        stat.ino !== parent.ino
+      )
+        throw new Refusal()
+    }
+  }
+  const before = lstatSync(pathValue, { bigint: true })
+  const cap = Math.min(MAX_RECEIPT_BYTES, MAX_CHAIN_BYTES - budget.bytes)
+  if (before.isSymbolicLink() || !before.isFile() || cap < 0 || before.size > BigInt(cap))
+    throw new Refusal()
+  const same = (a: typeof before, b: typeof before): boolean =>
+    a.dev === b.dev &&
+    a.ino === b.ino &&
+    a.size === b.size &&
+    a.mtimeNs === b.mtimeNs &&
+    a.ctimeNs === b.ctimeNs &&
+    b.isFile() &&
+    !b.isSymbolicLink()
+  const fd = openSync(pathValue, 'r')
+  try {
+    checkParents()
+    if (
+      !same(before, fstatSync(fd, { bigint: true })) ||
+      !same(before, lstatSync(pathValue, { bigint: true }))
+    )
+      throw new Refusal()
+    // One extra byte detects growth without ever allocating/reading an unbounded file.
+    const buffer = Buffer.alloc(cap + 1)
+    let length = 0
+    while (length < buffer.length) {
+      const count = readSync(fd, buffer, length, buffer.length - length, null)
+      if (count === 0) break
+      length += count
+      budget.bytes += count
+      if (length > cap || budget.bytes > MAX_CHAIN_BYTES) throw new Refusal()
+    }
+    if (
+      BigInt(length) !== before.size ||
+      !same(before, fstatSync(fd, { bigint: true })) ||
+      !same(before, lstatSync(pathValue, { bigint: true }))
+    )
+      throw new Refusal()
+    checkParents()
+    return buffer.subarray(0, length)
+  } finally {
+    closeSync(fd)
+  }
+}
+
 function readBoundedJsonFile(
   pathValue: string,
   budget = { nodes: 0, strings: 0 },
-): {
-  readonly bytes: Buffer
-  readonly value: unknown
-} {
-  const link = lstatSync(pathValue)
-  if (link.isSymbolicLink() || !link.isFile()) throw new Refusal()
-  const size = statSync(pathValue, { bigint: true }).size
-  if (size > BigInt(MAX_RECEIPT_BYTES)) throw new Refusal()
-  const bytes = readFileSync(pathValue)
-  if (bytes.length > MAX_RECEIPT_BYTES) throw new Refusal()
-  return { bytes, value: boundedJsonParse(bytes.toString('utf8'), budget) }
+  byteBudget: ByteBudget = { bytes: 0 },
+): { readonly bytes: Buffer; readonly value: unknown } {
+  const bytes = readBoundedBytes(pathValue, byteBudget)
+  return {
+    bytes,
+    value: boundedJsonParse(new TextDecoder('utf-8', { fatal: true }).decode(bytes), budget),
+  }
 }
 
 function receiptNames(directory: string): string[] {
@@ -926,7 +1021,12 @@ function receiptNames(directory: string): string[] {
   return names.sort()
 }
 
-function readRows(repoRoot: string, workflowId: string): ReceiptRow[] {
+function readRows(
+  repoRoot: string,
+  workflowId: string,
+  byteBudget: ByteBudget = { bytes: 0 },
+  budget = { nodes: 0, strings: 0 },
+): ReceiptRow[] {
   const directory = join(repoRoot, 'docs', 'receipts', workflowId)
   const names = receiptNames(directory)
   if (names.length > MAX_RECEIPTS) throw new Refusal()
@@ -941,9 +1041,8 @@ function readRows(repoRoot: string, workflowId: string): ReceiptRow[] {
     if (aggregateBytes > BigInt(MAX_CHAIN_BYTES)) throw new Refusal()
     return { name, absolutePath }
   })
-  const budget = { nodes: 0, strings: 0 }
   const rows = sizes.map(({ name, absolutePath }) => {
-    const bounded = readBoundedJsonFile(absolutePath, budget)
+    const bounded = readBoundedJsonFile(absolutePath, budget, byteBudget)
     if (typeof bounded.value !== 'object' || bounded.value === null || Array.isArray(bounded.value))
       throw new Refusal()
     return rowFor(repoRoot, workflowId, name, bounded.value as Record<string, unknown>)
@@ -1030,8 +1129,10 @@ function verifyInitial(
   repoRoot: string,
   specAbsolutePath: string,
   pluginRoot: string,
-): ReceiptRow[] {
-  const rows = readRows(repoRoot, input.registration.workflowId)
+): { rows: ReceiptRow[]; sidecarDigests: readonly string[] } {
+  const byteBudget = { bytes: 0 }
+  const structureBudget = { nodes: 0, strings: 0 }
+  const rows = readRows(repoRoot, input.registration.workflowId, byteBudget, structureBudget)
   if (
     rows.length < 4 ||
     !rows.some((row) => refMatches(row, input.registration.dispatchReceiptRef)) ||
@@ -1044,7 +1145,7 @@ function verifyInitial(
   const build = rows.find((row) =>
     refMatches(row, input.registration.buildReceiptRef),
   ) as ReceiptRow
-  const initialKinds = ['Intake', 'Plan', 'DispatchOrder']
+  const initialKinds = ['ShapingResult', 'RegistrationResult', 'DispatchOrder']
   for (let index = 0; index < initialKinds.length; index++) {
     const row = rows[index] as ReceiptRow | undefined
     if (
@@ -1052,9 +1153,7 @@ function verifyInitial(
       row.document.kind !== 'stage' ||
       row.document.claimRef !== null ||
       row.document.stage !== (['A', 'B', 'C'][index] as string) ||
-      row.document.subjectKind !== initialKinds[index] ||
-      sha256Hex(canonicalize(row.document.subject as JsonValue)) !==
-        sha256Hex(canonicalize({ parcelRef: input.order.parcelRef } as unknown as JsonValue))
+      row.document.subjectKind !== initialKinds[index]
     )
       throw new Refusal()
     const correlation = row.document.correlation as Record<string, unknown>
@@ -1064,6 +1163,120 @@ function verifyInitial(
     )
       throw new Refusal()
   }
+  const a = exact(rows[0]?.document.subject, ['projectedResult', 'specSet', 'approvedHash'])
+  const b = rows[1]?.document.subject as { ticketKeys: string[] }
+  validateOwners([a.projectedResult, b, input.order, input.buildResult])
+  const shaped = a.projectedResult as { parcelSpecRefs: string[] }
+  if (
+    shaped.parcelSpecRefs.length !== 1 ||
+    !Array.isArray(a.specSet) ||
+    a.specSet.length !== 1 ||
+    b.ticketKeys.length !== 1 ||
+    b.ticketKeys[0] !== input.ticketKey ||
+    input.ticketKey !== input.order.parcelRef
+  )
+    throw new Refusal()
+  const specEntry = exact(a.specSet[0], ['ref', 'contentHash'])
+  if (
+    specEntry.ref !== shaped.parcelSpecRefs[0] ||
+    typeof specEntry.ref !== 'string' ||
+    resolve(repoRoot, specEntry.ref) !== specAbsolutePath ||
+    specEntry.contentHash !== input.registration.specDigest ||
+    a.approvedHash !==
+      sha256Hex(
+        canonicalize({ projectedResult: a.projectedResult, specSet: a.specSet } as JsonValue),
+      )
+  )
+    throw new Refusal()
+  const c = exact(dispatch.document.subject, [
+    'kompressArtifactId',
+    'kompressReceiptRef',
+    'compressedText',
+    'routingDecisionRef',
+    'injectedSkills',
+    ...(input.order.permissionProfile !== undefined ? ['permissionProfile'] : []),
+  ])
+  const prefix = `docs/receipts/${input.registration.workflowId}/`
+  const routingCapture = readBoundedJsonFile(
+    join(repoRoot, prefix, 'routing-decision.json'),
+    structureBudget,
+    byteBudget,
+  )
+  const compressionCapture = readBoundedJsonFile(
+    join(repoRoot, prefix, 'kompress.json'),
+    structureBudget,
+    byteBudget,
+  )
+  const routing = exact(routingCapture.value, [
+    'workflowId',
+    'routing_class',
+    'data_classification',
+    'resolvedTier',
+    'resolvedModelId',
+    'transportRequirements',
+    'timestamp',
+    'policyRef',
+  ])
+  const compression = exact(compressionCapture.value, [
+    'workflowId',
+    'artifactId',
+    'compressedTokens',
+    'originalTokens',
+    'tokensSaved',
+    'transforms',
+    'sessionScoped',
+    'timestamp',
+  ])
+  const specBytes = readBoundedBytes(specAbsolutePath, byteBudget)
+  const specText = new TextDecoder('utf-8', { fatal: true }).decode(specBytes)
+  const normalizedSpec = specText.replaceAll('\r\n', '\n')
+  const frontmatterEnd = normalizedSpec.indexOf('\n---', 4)
+  if (!normalizedSpec.startsWith('---\n') || frontmatterEnd < 4) throw new Refusal()
+  const fm = parseYaml(normalizedSpec.slice(4, frontmatterEnd)) as Record<string, unknown>
+  if (
+    fm === null ||
+    typeof fm !== 'object' ||
+    routing.routing_class !== fm.routing_class ||
+    routing.data_classification !== fm.data_classification ||
+    routing.workflowId !== input.registration.workflowId ||
+    compression.workflowId !== input.registration.workflowId ||
+    compression.sessionScoped !== true ||
+    c.kompressArtifactId !== compression.artifactId ||
+    c.kompressReceiptRef !== `${prefix}kompress.json` ||
+    c.routingDecisionRef !== `${prefix}routing-decision.json` ||
+    input.order.routingDecisionRef !== c.routingDecisionRef ||
+    c.permissionProfile !== input.order.permissionProfile ||
+    input.order.permissionProfile !== fm.permission_profile ||
+    JSON.stringify(c.injectedSkills) !== JSON.stringify(input.order.injectedSkills)
+  )
+    throw new Refusal()
+  const transport = exact(routing.transportRequirements, ['data_collection', 'zdr'])
+  if (
+    (transport.data_collection !== 'allow' && transport.data_collection !== 'deny') ||
+    typeof transport.zdr !== 'boolean' ||
+    routing.policyRef !== 'routing-policy/routing-policy.yaml' ||
+    !Array.isArray(compression.transforms) ||
+    compression.transforms.some((value) => typeof value !== 'string')
+  )
+    throw new Refusal()
+  for (const key of ['compressedTokens', 'originalTokens', 'tokensSaved']) {
+    const value = compression[key]
+    if (typeof value !== 'number' || !Number.isSafeInteger(value) || value < 0) throw new Refusal()
+  }
+  stringValue(routing.resolvedTier)
+  stringValue(routing.timestamp)
+  stringValue(compression.timestamp)
+  stringValue(c.compressedText)
+  stringValue(compression.artifactId)
+  stringValue(routing.resolvedModelId)
+  const stepZero = [
+    `Parcel: ${input.ticketKey}`,
+    `Workflow ID: ${input.registration.workflowId}`,
+    `Resolved model: ${routing.resolvedModelId}`,
+    `Injected skills: ${input.order.injectedSkills.join(', ')}`,
+    `Kompress artifact ID: ${compression.artifactId}`,
+  ].join('\n')
+  if (input.order.stepZeroRestatement !== stepZero) throw new Refusal()
   if (
     dispatch.document.stage !== 'C' ||
     dispatch.document.kind !== 'stage' ||
@@ -1091,9 +1304,9 @@ function verifyInitial(
     input.buildResult.branch.length === 0
   )
     throw new Refusal()
-  const specDigest = sha256Hex(readFileSync(specAbsolutePath))
+  const specDigest = sha256Hex(specBytes)
   const matrixDigest = sha256Hex(
-    readFileSync(join(pluginRoot, 'skill-injection', 'skill-injection.yaml')),
+    readBoundedBytes(join(pluginRoot, 'skill-injection', 'skill-injection.yaml'), byteBudget),
   )
   if (
     specDigest !== input.registration.specDigest ||
@@ -1101,7 +1314,10 @@ function verifyInitial(
   )
     throw new Refusal()
   if (resolve(input.registration.repoRoot) !== resolve(repoRoot)) throw new Refusal()
-  return rows
+  return {
+    rows,
+    sidecarDigests: [sha256Hex(routingCapture.bytes), sha256Hex(compressionCapture.bytes)],
+  }
 }
 
 function assertLiveRoot(ctx: OwnedContext): void {
@@ -1124,6 +1340,14 @@ function assertLiveRoot(ctx: OwnedContext): void {
     ctx.input.fixtureId,
     true,
   )
+  const initial = verifyInitial(ctx.input, ctx.repoRoot, ctx.specAbsolutePath, ctx.pluginRoot)
+  if (
+    ctx.initialRows
+      .slice(0, 4)
+      .some((row, index) => row.document.hash !== initial.rows[index]?.document.hash) ||
+    JSON.stringify(initial.sidecarDigests) !== JSON.stringify(ctx.sidecarDigests)
+  )
+    throw new Refusal()
 }
 
 function resultOf(
@@ -1460,7 +1684,7 @@ function buildContext(input: OfflineInputV1): OwnedContext {
     rootFileId: canonicalDecimal(stat.ino, false),
     workflowId: input.registration.workflowId.toLowerCase(),
   }
-  const initialRows = verifyInitial(input, repoRoot, specAbsolutePath, pluginRoot)
+  const initial = verifyInitial(input, repoRoot, specAbsolutePath, pluginRoot)
   const expectedPlanDigest = sha256Hex(canonicalize(input.expected as unknown as JsonValue))
   if (expectedPlanDigest !== input.registration.expectedPlanDigest) throw new Refusal()
   const created = createOfflineMeasuredWorkflowInstallationV1().createSessionV1(
@@ -1477,7 +1701,8 @@ function buildContext(input: OfflineInputV1): OwnedContext {
     specAbsolutePath,
     key,
     expectedPlanDigest,
-    initialRows,
+    initialRows: initial.rows,
+    sidecarDigests: initial.sidecarDigests,
     runPromise: null,
     runResult: null,
     drained: false,
@@ -1521,12 +1746,16 @@ export function createOfflineMeasuredVerificationV1(input: unknown): ResultV1<Of
       if (owned.runPromise === null) return resultOf('PHASE_REFUSED')
       const result = await owned.runPromise
       if (!result.ok) return result
-      assertLiveRoot(owned)
-      verifyReceiptSnapshot(owned)
-      const drained = owned.owner.workflow.acknowledgeDrainV1()
-      if (!drained.ok) return drained
-      owned.drained = true
-      return { ok: true, value: null }
+      try {
+        assertLiveRoot(owned)
+        verifyReceiptSnapshot(owned)
+        const drained = owned.owner.workflow.acknowledgeDrainV1()
+        if (!drained.ok) return drained
+        owned.drained = true
+        return { ok: true, value: null }
+      } catch {
+        return fail('CHAIN_REFUSED')
+      }
     }
     const publishFixtureMeasurementV1 = (): ResultV1<RefV1> => {
       if (!owned.drained || owned.measurementRef !== null) return fail('PHASE_REFUSED')

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { randomUUID } from 'node:crypto'
-import {
+import fs, {
   cpSync,
   mkdirSync,
   readdirSync,
@@ -9,11 +9,22 @@ import {
   rmSync,
   writeFileSync,
 } from 'node:fs'
+import { syncBuiltinESMExports } from 'node:module'
 import { tmpdir } from 'node:os'
-import { dirname, join } from 'node:path'
+import { join } from 'node:path'
 import { test } from 'node:test'
-import { canonicalize, type JsonValue, sha256Hex } from '../../approval/src/index.js'
+import {
+  canonicalize,
+  computeApprovalSubject,
+  type JsonValue,
+  mintGenesisReceipt,
+  sha256Hex,
+  writeReceiptDocument,
+} from '../../approval/src/index.js'
+import type { CorrelationContext } from '../../contracts/src/index.js'
+import { executeDispatch, prepareDispatch } from '../../dispatch/src/approval-cli/index.js'
 import type { RegistrationV1 } from '../../receipts/src/measured-workflow-internal.js'
+import { mintStageBReceipt } from '../../registration/src/receipt.js'
 import { recordBuildResult } from '../src/harness/index.js'
 import {
   createOfflineMeasuredVerificationV1,
@@ -24,7 +35,9 @@ import {
 
 const matrixSource = join(process.cwd(), '..', 'skill-injection', 'skill-injection.yaml')
 
-function makeFixture(): { input: OfflineInputV1; repoRoot: string; workflowId: string } {
+async function makeFixture(
+  permissionProfile = false,
+): Promise<{ input: OfflineInputV1; repoRoot: string; workflowId: string }> {
   const fixtureId = `fixture-${randomUUID().slice(0, 8)}`
   const repoRoot = join(tmpdir(), `hro-p3a-fixture-${fixtureId}`)
   mkdirSync(repoRoot)
@@ -37,8 +50,81 @@ function makeFixture(): { input: OfflineInputV1; repoRoot: string; workflowId: s
   const workflowId = randomUUID()
   const specPath = 'specs/parcel-spec.md'
   mkdirSync(join(repoRoot, 'specs'), { recursive: true })
-  writeFileSync(join(repoRoot, specPath), '# Fixture\n\nAC-1: first criterion\n')
-  const stageC = mintStageC(repoRoot, workflowId)
+  writeFileSync(
+    join(repoRoot, specPath),
+    (permissionProfile ? '---\npermission_profile: builder-standard\n' : '---\n') +
+      'routing_class: architecture/risk\ndata_classification: public\nsurfaces: [plugins/foreman-line/dispatch/]\n---\n# Fixture\n\nAC-1: first criterion\n',
+  )
+  mkdirSync(join(pluginRoot, 'routing-policy'), { recursive: true })
+  cpSync(
+    join(process.cwd(), '..', 'routing-policy', 'routing-policy.yaml'),
+    join(pluginRoot, 'routing-policy', 'routing-policy.yaml'),
+  )
+  const correlation = {
+    correlationId: randomUUID(),
+    sessionId: randomUUID(),
+    workflowId,
+    runId: randomUUID(),
+  } as CorrelationContext
+  const approved = computeApprovalSubject({ parcelSpecRefs: [specPath], epics: [] }, repoRoot)
+  const stageA = mintGenesisReceipt(
+    correlation,
+    { ...approved.subject, approvedHash: approved.approvedHash },
+    '2026-09-26T00:00:00.000Z',
+  )
+  writeReceiptDocument(stageA.document, stageA.ref.locator, repoRoot)
+  const stageB = mintStageBReceipt(
+    correlation,
+    stageA.document.hash,
+    {
+      ticketKeys: ['KONE-123'],
+      links: [
+        {
+          direction: 'ticket->commit',
+          ticketKey: 'KONE-123',
+          commitSha: 'abc1234',
+          permalink: 'https://example.invalid/commit/abc1234',
+        },
+      ],
+    },
+    '2026-09-26T00:00:01.000Z',
+  )
+  writeReceiptDocument(stageB.document, stageB.locator, repoRoot)
+  const worktreePath = join(repoRoot, 'worktree')
+  const pkg = await prepareDispatch(
+    {
+      candidate: {
+        ticketKey: 'KONE-123',
+        summary: 'Offline parcel',
+        priority: 'Medium',
+        status: 'To Do',
+        workflowId,
+        priorReceiptLocator: stageB.locator,
+      },
+      specPath: join(repoRoot, specPath),
+      worktreePath,
+      compressFn: async () => ({
+        compressed: 'compressed-spec-text',
+        hash: 'mock-artifact-id-xyz',
+        originalTokens: 200,
+        compressedTokens: 50,
+        tokensSaved: 150,
+        transforms: ['semantic-dedup'],
+      }),
+    },
+    { repoRoot, pluginRoot },
+  )
+  const executed = await executeDispatch(pkg, worktreePath, {
+    repoRoot,
+    pluginRoot,
+    dispatchWorktreeFn: () => ({ code: 0, stdout: 'offline fixture', stderr: '' }),
+  })
+  const stageC = {
+    locator: executed.receiptLocator,
+    hash: JSON.parse(readFileSync(join(repoRoot, executed.receiptLocator), 'utf8')).hash as string,
+    correlation,
+  }
+
   const buildResult = {
     branch: 'feat/hro-p3a',
     commitShas: ['abc1234'],
@@ -82,12 +168,7 @@ function makeFixture(): { input: OfflineInputV1; repoRoot: string; workflowId: s
     registration,
     pluginRoot,
     specPath,
-    order: {
-      parcelRef: 'KONE-123',
-      stepZeroRestatement: 'fixture',
-      routingDecisionRef: 'docs/receipts/route.json',
-      injectedSkills: ['test-coverage'],
-    },
+    order: executed.order,
     buildResult,
     expected,
     testResults: { passed: ['test AC-1 covers first criterion'], failed: [] },
@@ -116,54 +197,8 @@ function makeFixture(): { input: OfflineInputV1; repoRoot: string; workflowId: s
   return { input, repoRoot, workflowId }
 }
 
-function mintStageC(
-  repoRoot: string,
-  workflowId: string,
-): {
-  locator: string
-  hash: string
-  correlation: { correlationId: string; sessionId: string; workflowId: string; runId: string }
-} {
-  const correlation = {
-    correlationId: randomUUID(),
-    sessionId: randomUUID(),
-    workflowId,
-    runId: randomUUID(),
-  }
-  let previousHash: string | null = null
-  let dispatch: { locator: string; hash: string } | null = null
-  for (const [sequence, stage, subjectKind] of [
-    [0, 'A', 'Intake'] as const,
-    [1, 'B', 'Plan'] as const,
-    [2, 'C', 'DispatchOrder'] as const,
-  ]) {
-    const draft = {
-      schemaVersion: '1',
-      kind: 'stage',
-      stage,
-      claimRef: null,
-      correlation,
-      sequence,
-      prevHash: previousHash,
-      timestamp: '2026-09-26T00:00:00.000Z',
-      subjectKind,
-      subject: { parcelRef: 'KONE-123' },
-      signature: null,
-    }
-    const hash = sha256Hex(canonicalize(draft))
-    const locator = `docs/receipts/${workflowId}/${String(sequence).padStart(6, '0')}-${stage}-${subjectKind.replace(/[A-Z]/g, (letter, index) => (index === 0 ? letter.toLowerCase() : `-${letter.toLowerCase()}`))}.json`
-    const abs = join(repoRoot, ...locator.split('/'))
-    mkdirSync(dirname(abs), { recursive: true })
-    writeFileSync(abs, `${JSON.stringify({ ...draft, hash }, null, 2)}\n`)
-    previousHash = hash
-    if (stage === 'C') dispatch = { locator, hash }
-  }
-  if (dispatch === null) throw new Error('missing dispatch fixture')
-  return { ...dispatch, correlation }
-}
-
 function rewriteChain(
-  fixture: ReturnType<typeof makeFixture>,
+  fixture: Awaited<ReturnType<typeof makeFixture>>,
   mutate: (document: Record<string, unknown>, index: number) => void,
 ): void {
   const directory = join(fixture.repoRoot, 'docs', 'receipts', fixture.workflowId)
@@ -197,7 +232,7 @@ function nestedSubject(depth: number): Record<string, unknown> {
   return value
 }
 
-test('production constructor is an unread/refusal boundary', () => {
+test('production constructor is an unread/refusal boundary', async () => {
   let reads = 0
   const hostile = new Proxy(
     {},
@@ -220,7 +255,7 @@ test('production constructor is an unread/refusal boundary', () => {
 })
 
 test('offline driver executes actual owners and publishes a measured final-D handoff', async () => {
-  const fixture = makeFixture()
+  const fixture = await makeFixture()
   try {
     const created = createOfflineMeasuredVerificationV1(fixture.input)
     assert.equal(created.ok, true)
@@ -262,8 +297,8 @@ test('offline driver executes actual owners and publishes a measured final-D han
   }
 })
 
-test('offline input rejects a forged pass result and cloned session', () => {
-  const fixture = makeFixture()
+test('offline input rejects a forged pass result and cloned session', async () => {
+  const fixture = await makeFixture()
   try {
     const forged = createOfflineMeasuredVerificationV1({
       ...fixture.input,
@@ -279,8 +314,8 @@ test('offline input rejects a forged pass result and cloned session', () => {
   }
 })
 
-test('offline input binds the supplied BuildResult to the Stage-D bridge receipt', () => {
-  const fixture = makeFixture()
+test('offline input binds the supplied BuildResult to the Stage-D bridge receipt', async () => {
+  const fixture = await makeFixture()
   try {
     const mismatched = createOfflineMeasuredVerificationV1({
       ...fixture.input,
@@ -292,8 +327,8 @@ test('offline input binds the supplied BuildResult to the Stage-D bridge receipt
   }
 })
 
-test('initial DispatchOrder parcel tampering is refused before owner execution', () => {
-  const fixture = makeFixture()
+test('initial DispatchOrder extra-field tampering is refused before owner execution', async () => {
+  const fixture = await makeFixture()
   try {
     rewriteChain(fixture, (document, index) => {
       if (index === 2) document.subject = { parcelRef: 'KONE-999' }
@@ -307,7 +342,7 @@ test('initial DispatchOrder parcel tampering is refused before owner execution',
   }
 })
 
-test('structured receipt depth and string one-over bounds refuse at construction', () => {
+test('structured receipt depth and string one-over bounds refuse at construction', async () => {
   for (const mutation of [
     (document: Record<string, unknown>) => {
       document.subject = nestedSubject(40)
@@ -316,7 +351,7 @@ test('structured receipt depth and string one-over bounds refuse at construction
       document.subject = { padding: 'x'.repeat(4097) }
     },
   ]) {
-    const fixture = makeFixture()
+    const fixture = await makeFixture()
     try {
       rewriteChain(fixture, (document, index) => {
         if (index === 0) mutation(document)
@@ -332,7 +367,7 @@ test('structured receipt depth and string one-over bounds refuse at construction
 })
 
 test('duplicate harness claim after drain is refused before measurement publication', async () => {
-  const fixture = makeFixture()
+  const fixture = await makeFixture()
   try {
     const created = createOfflineMeasuredVerificationV1(fixture.input)
     assert.equal(created.ok, true)
@@ -375,7 +410,7 @@ test('duplicate harness claim after drain is refused before measurement publicat
 })
 
 test('oversized verdict envelope is bounded before final-D reads it', async () => {
-  const fixture = makeFixture()
+  const fixture = await makeFixture()
   try {
     const created = createOfflineMeasuredVerificationV1(fixture.input)
     assert.equal(created.ok, true)
@@ -401,8 +436,8 @@ test('oversized verdict envelope is bounded before final-D reads it', async () =
   }
 })
 
-test('capture alias expansion charges shared bounded arrays', () => {
-  const fixture = makeFixture()
+test('capture alias expansion charges shared bounded arrays', async () => {
+  const fixture = await makeFixture()
   try {
     const shared = Array.from({ length: 256 }, () => 'x'.repeat(4096))
     const refused = createOfflineMeasuredVerificationV1({
@@ -416,8 +451,8 @@ test('capture alias expansion charges shared bounded arrays', () => {
   }
 })
 
-test('review cardinality is refused before reflective enumeration', () => {
-  const fixture = makeFixture()
+test('review cardinality is refused before reflective enumeration', async () => {
+  const fixture = await makeFixture()
   try {
     const claims = new Proxy(
       Array.from({ length: 257 }, () => 'AC-over-bound'),
@@ -437,8 +472,8 @@ test('review cardinality is refused before reflective enumeration', () => {
   }
 })
 
-test('receipt preflight refuses a receipt one byte over the per-file bound', () => {
-  const fixture = makeFixture()
+test('receipt preflight refuses a receipt one byte over the per-file bound', async () => {
+  const fixture = await makeFixture()
   try {
     const receiptPath = join(
       fixture.repoRoot,
@@ -454,8 +489,8 @@ test('receipt preflight refuses a receipt one byte over the per-file bound', () 
   }
 })
 
-test('receipt preflight refuses an aggregate chain over the 16 MiB bound before parsing', () => {
-  const fixture = makeFixture()
+test('receipt preflight refuses an aggregate chain over the 16 MiB bound before parsing', async () => {
+  const fixture = await makeFixture()
   try {
     const receiptDir = join(
       fixture.repoRoot,
@@ -480,7 +515,7 @@ test('receipt preflight refuses an aggregate chain over the 16 MiB bound before 
 })
 
 test('live root replacement is refused before a writing owner runs', async () => {
-  const fixture = makeFixture()
+  const fixture = await makeFixture()
   const replacement = `${fixture.repoRoot}-replacement`
   try {
     const created = createOfflineMeasuredVerificationV1(fixture.input)
@@ -506,7 +541,7 @@ test('live root replacement is refused before a writing owner runs', async () =>
 })
 
 test('spec tampering after owner completion blocks finalization', async () => {
-  const fixture = makeFixture()
+  const fixture = await makeFixture()
   try {
     const created = createOfflineMeasuredVerificationV1(fixture.input)
     assert.equal(created.ok, true)
@@ -526,7 +561,7 @@ test('spec tampering after owner completion blocks finalization', async () => {
 })
 
 test('verdict envelope tampering blocks finalization after measured completion', async () => {
-  const fixture = makeFixture()
+  const fixture = await makeFixture()
   try {
     const created = createOfflineMeasuredVerificationV1(fixture.input)
     assert.equal(created.ok, true)
@@ -549,5 +584,279 @@ test('verdict envelope tampering blocks finalization after measured completion',
     })
   } finally {
     rmSync(fixture.repoRoot, { recursive: true, force: true })
+  }
+})
+
+test('actual optional permission profile survives the producer chain', async () => {
+  const fixture = await makeFixture(true)
+  try {
+    assert.equal(fixture.input.order.permissionProfile, 'builder-standard')
+    const created = createOfflineMeasuredVerificationV1(fixture.input)
+    assert.equal(created.ok, true)
+    if (created.ok)
+      assert.deepEqual(await created.value.runVerificationV1(), { ok: true, value: null })
+  } finally {
+    rmSync(fixture.repoRoot, { recursive: true, force: true })
+  }
+})
+
+test('fixed sidecar mutation after construction refuses before measured owner writes', async () => {
+  for (const name of ['routing-decision.json', 'kompress.json']) {
+    const fixture = await makeFixture()
+    try {
+      const created = createOfflineMeasuredVerificationV1(fixture.input)
+      assert.equal(created.ok, true)
+      const directory = join(fixture.repoRoot, 'docs', 'receipts', fixture.workflowId)
+      const before = readdirSync(directory).sort()
+      const path = join(directory, name)
+      const value = JSON.parse(readFileSync(path, 'utf8'))
+      value.timestamp = '2026-09-25T00:00:00.000Z'
+      writeFileSync(path, JSON.stringify(value))
+      if (created.ok) assert.equal((await created.value.runVerificationV1()).ok, false)
+      assert.deepEqual(readdirSync(directory).sort(), before)
+    } finally {
+      rmSync(fixture.repoRoot, { recursive: true, force: true })
+    }
+  }
+})
+
+test('receipt reads use bounded handles and reject growth after opening', async (t) => {
+  const fixture = await makeFixture()
+  const target = join(fixture.repoRoot, fixture.input.registration.dispatchReceiptRef.locator)
+  const originalOpen = fs.openSync
+  let opened = 0
+  let maximumRead = 0
+  const originalRead = fs.readSync
+  const readMock = t.mock.method(fs, 'readSync', (...args: unknown[]) => {
+    maximumRead = Math.max(maximumRead, typeof args[3] === 'number' ? args[3] : 0)
+    return Reflect.apply(originalRead, fs, args)
+  })
+  const mock = t.mock.method(fs, 'openSync', (...args: Parameters<typeof fs.openSync>) => {
+    const fd = originalOpen(...args)
+    if (String(args[0]) === target) {
+      opened++
+      fs.appendFileSync(target, ' '.repeat(1048577))
+    }
+    return fd
+  })
+  syncBuiltinESMExports()
+  try {
+    assert.equal(createOfflineMeasuredVerificationV1(fixture.input).ok, false)
+    assert.equal(opened, 1)
+    assert.ok(maximumRead <= 1048577, `requested ${maximumRead} bytes`)
+  } finally {
+    mock.mock.restore()
+    readMock.mock.restore()
+    syncBuiltinESMExports()
+    rmSync(fixture.repoRoot, { recursive: true, force: true })
+  }
+})
+
+test('genuine initial owner evidence rejects independent manifest, membership, projection and order mutations', async () => {
+  const mutations: ((fixture: Awaited<ReturnType<typeof makeFixture>>) => void)[] = [
+    (f) =>
+      rewriteChain(f, (doc, index) => {
+        if (index === 0) (doc.subject as Record<string, unknown>).approvedHash = '0'.repeat(64)
+      }),
+    (f) =>
+      rewriteChain(f, (doc, index) => {
+        if (index === 0)
+          (
+            (doc.subject as { specSet: { contentHash: string }[] }).specSet[0] as {
+              contentHash: string
+            }
+          ).contentHash = '0'.repeat(64)
+      }),
+    (f) =>
+      rewriteChain(f, (doc, index) => {
+        if (index === 0)
+          (
+            doc.subject as { projectedResult: { parcelSpecRefs: string[] } }
+          ).projectedResult.parcelSpecRefs.push('specs/other.md')
+      }),
+    (f) =>
+      rewriteChain(f, (doc, index) => {
+        if (index === 1) (doc.subject as { ticketKeys: string[] }).ticketKeys = ['KONE-999']
+      }),
+    (f) =>
+      rewriteChain(f, (doc, index) => {
+        if (index === 1) (doc.subject as { ticketKeys: string[] }).ticketKeys.push('KONE-124')
+      }),
+    (f) =>
+      rewriteChain(f, (doc, index) => {
+        if (index === 1) (doc.subject as { links: unknown[] }).links = [{ direction: 'invalid' }]
+      }),
+    (f) =>
+      rewriteChain(f, (doc, index) => {
+        if (index === 2)
+          (doc.subject as Record<string, unknown>).kompressArtifactId = 'wrong-artifact'
+      }),
+    (f) =>
+      rewriteChain(f, (doc, index) => {
+        if (index === 2)
+          (doc.subject as Record<string, unknown>).kompressReceiptRef =
+            'docs/receipts/other/kompress.json'
+      }),
+    (f) =>
+      rewriteChain(f, (doc, index) => {
+        if (index === 2) (doc.subject as Record<string, unknown>).injectedSkills = ['other']
+      }),
+    (f) => {
+      ;(f.input.order as { stepZeroRestatement: string }).stepZeroRestatement += '\nforged'
+    },
+    (f) => {
+      ;(f.input.order as { parcelRef: string }).parcelRef = 'KONE-999'
+    },
+    (f) => {
+      ;(f.input as { ticketKey: string }).ticketKey = 'KONE-999'
+    },
+    (f) => {
+      writeFileSync(join(f.repoRoot, f.input.specPath), 'changed spec')
+    },
+    (f) => {
+      const path = join(f.repoRoot, 'docs', 'receipts', f.workflowId, 'routing-decision.json')
+      const value = JSON.parse(readFileSync(path, 'utf8'))
+      value.routing_class = 'boilerplate'
+      writeFileSync(path, JSON.stringify(value))
+    },
+    (f) => {
+      const path = join(f.repoRoot, 'docs', 'receipts', f.workflowId, 'kompress.json')
+      const value = JSON.parse(readFileSync(path, 'utf8'))
+      value.artifactId = 'wrong-artifact'
+      writeFileSync(path, JSON.stringify(value))
+    },
+  ]
+  for (const [index, mutate] of mutations.entries()) {
+    const fixture = await makeFixture()
+    try {
+      mutate(fixture)
+      const directory = join(fixture.repoRoot, 'docs', 'receipts', fixture.workflowId)
+      const before = readdirSync(directory).sort()
+      assert.equal(
+        createOfflineMeasuredVerificationV1(fixture.input).ok,
+        false,
+        `mutation ${index}`,
+      )
+      assert.deepEqual(readdirSync(directory).sort(), before)
+    } finally {
+      rmSync(fixture.repoRoot, { recursive: true, force: true })
+    }
+  }
+})
+
+test('exact per-file byte cap accepts whitespace padding; one byte over refuses', async () => {
+  for (const extra of [0, 1]) {
+    const fixture = await makeFixture()
+    try {
+      const path = join(fixture.repoRoot, fixture.input.registration.dispatchReceiptRef.locator)
+      const bytes = readFileSync(path)
+      writeFileSync(path, Buffer.concat([bytes, Buffer.alloc(1048576 + extra - bytes.length, 32)]))
+      assert.equal(createOfflineMeasuredVerificationV1(fixture.input).ok, extra === 0)
+    } finally {
+      rmSync(fixture.repoRoot, { recursive: true, force: true })
+    }
+  }
+})
+
+test('fd capture rejects replacement and truncation during reads and closes handles', async (t) => {
+  for (const mode of ['replace', 'truncate', 'throw']) {
+    const fixture = await makeFixture()
+    const target = join(fixture.repoRoot, fixture.input.registration.dispatchReceiptRef.locator)
+    const originalOpen = fs.openSync,
+      originalRead = fs.readSync,
+      originalClose = fs.closeSync
+    let targetFd: number | undefined
+    let injected = false,
+      closed = false
+    const openMock = t.mock.method(fs, 'openSync', (...args: Parameters<typeof fs.openSync>) => {
+      const fd = originalOpen(...args)
+      if (String(args[0]) === target) targetFd = fd
+      return fd
+    })
+    const readMock = t.mock.method(fs, 'readSync', (...args: unknown[]) => {
+      if (args[0] === targetFd && !injected) {
+        injected = true
+        if (mode === 'throw') throw new Error('offline read failure')
+        if (mode === 'truncate') fs.truncateSync(target, 0)
+        else {
+          renameSync(target, `${target}.old`)
+          writeFileSync(target, readFileSync(`${target}.old`))
+        }
+      }
+      return Reflect.apply(originalRead, fs, args)
+    })
+    const closeMock = t.mock.method(fs, 'closeSync', (fd: number) => {
+      if (fd === targetFd) closed = true
+      return originalClose(fd)
+    })
+    syncBuiltinESMExports()
+    try {
+      assert.equal(createOfflineMeasuredVerificationV1(fixture.input).ok, false, mode)
+      assert.equal(injected, true)
+      assert.equal(closed, true)
+    } finally {
+      openMock.mock.restore()
+      readMock.mock.restore()
+      closeMock.mock.restore()
+      syncBuiltinESMExports()
+      rmSync(fixture.repoRoot, { recursive: true, force: true })
+    }
+  }
+})
+
+test('actual captured aggregate bytes accept exactly 16 MiB and refuse plus one', async () => {
+  for (const extra of [0, 1]) {
+    const fixture = await makeFixture()
+    try {
+      const directory = join(fixture.repoRoot, 'docs', 'receipts', fixture.workflowId)
+      let previous = JSON.parse(
+        readFileSync(
+          join(fixture.repoRoot, fixture.input.registration.buildReceiptRef.locator),
+          'utf8',
+        ),
+      )
+      // Additional closed receipt documents exercise scanning only; they are not claimed as owner outputs.
+      for (let sequence = 4; sequence < 16; sequence++) {
+        const { hash: previousHash, ...fields } = previous
+        const draft = {
+          ...fields,
+          sequence,
+          prevHash: previousHash,
+          subjectKind: 'BoundProbe',
+          claimRef: `bound-${sequence}`,
+          subject: {},
+        }
+        previous = { ...draft, hash: sha256Hex(canonicalize(draft as JsonValue)) }
+        writeFileSync(
+          join(directory, `${String(sequence).padStart(6, '0')}-D-bound-probe.json`),
+          JSON.stringify(previous),
+        )
+      }
+      const metadata = [
+        join(fixture.repoRoot, fixture.input.specPath),
+        join(fixture.input.pluginRoot, 'skill-injection', 'skill-injection.yaml'),
+        join(directory, 'routing-decision.json'),
+        join(directory, 'kompress.json'),
+      ].reduce((total, path) => total + readFileSync(path).length, 0)
+      const paths = readdirSync(directory)
+        .filter((name) => /^\d{6}-/.test(name))
+        .sort()
+        .map((name) => join(directory, name))
+      let remaining = 16777216 + extra - metadata
+      for (const [index, path] of paths.entries()) {
+        const bytes = readFileSync(path)
+        const laterMinimum = paths
+          .slice(index + 1)
+          .reduce((total, later) => total + readFileSync(later).length, 0)
+        const size = Math.min(1048576, remaining - laterMinimum)
+        assert.ok(size >= bytes.length)
+        writeFileSync(path, Buffer.concat([bytes, Buffer.alloc(size - bytes.length, 32)]))
+        remaining -= size
+      }
+      assert.equal(remaining, 0)
+      assert.equal(createOfflineMeasuredVerificationV1(fixture.input).ok, extra === 0)
+    } finally {
+      rmSync(fixture.repoRoot, { recursive: true, force: true })
+    }
   }
 })

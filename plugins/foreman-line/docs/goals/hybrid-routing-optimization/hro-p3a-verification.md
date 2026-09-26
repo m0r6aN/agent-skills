@@ -92,3 +92,81 @@ coordinator disposition intake, authorized decision intake, installed
 production composition, genuine telemetry publisher, and P3B E/F integration
 remain separate prerequisites. Two independent source reviews are required
 before coordinator acceptance; no push, merge, or activation is included here.
+
+## Frontier repair after genuine-owner and bounded-read review — 2026-09-26
+
+This section supersedes the earlier initial-chain/read claims. The repair follows
+ratified clarification c378af3824d2819f9fd5653557b087622690a6b1 and release
+297bb139854df92950abe656200b1d1bd5f1faaa. It changes only the Stage-D driver,
+its existing test file, and this report, within the six-file envelope. The private
+receipt registry, its tests, pipeline guards, predecessors, exports, schemas,
+packages and dependency locks remain unchanged.
+
+The fixture now uses actual computeApprovalSubject/mintGenesisReceipt and
+mintStageBReceipt helpers, then actual prepareDispatch/executeDispatch. Only the
+compression call and worktree launch boundaries are synthetic. Both absent and
+present permissionProfile survive the actual producer chain. The new validation
+uses the exported A/B/C/build schemas inside the typed refusal boundary. It joins
+the sole approved spec and ticket to RegistrationV1 and preserves B links. C is
+validated as its real projection; parcelRef and Step 0 are reconstructed/bound
+through B, the order and the fixed owner sidecars, never falsely attributed to C.
+This remains offline consistency evidence, not production authority.
+
+Fixed routing-decision.json and kompress.json are bounded and their captured
+content digests retained privately. Initial receipts, spec/matrix and sidecar
+custody are rechecked before later owner writes. Capture uses read-only file
+handles, bounded allocation/read requests, actual-byte aggregate accounting,
+file/ancestor identity checks before and after capture, and finally-close on
+all outcomes. Growth, replacement, truncation and injected read faults refuse.
+UTF-8 decoding is fatal; existing JSON structural and duplicate-key bounds remain.
+A capture admits at most 1 MiB per document and 16 MiB total scanned initial
+receipt/sidecar/spec/matrix bytes, with one extra detection byte only. Drain
+revalidation failures retain the closed CHAIN_REFUSED result instead of rejecting
+with an exception.
+
+RED evidence is retained in the system temporary directory:
+- hro-p3a-genuine-red.log: actual producer fixtures fail the prior invented
+  Intake/Plan/parcel-only validation.
+- hro-p3a-capture-red.log: sidecar mutation after construction was accepted.
+- hro-p3a-fd-red.log: growth after open caused an oversized 1,049,550-byte read
+  request, despite the 1 MiB bound.
+
+Final checks use D:/nvm/v24.19.0/node.exe and existing matched dependency links;
+no installation or donor mutation occurred. Logs are under the system temporary
+folder (C:/Users/clint/AppData/Local/Temp on this host):
+- hro-p3a-frontier-verification.log: 175 passed, zero failed, exit 0; includes
+  all 168 prior bounded tests and seven added groups (22 driver tests total).
+- hro-p3a-frontier-receipts.log: 87 passed, zero failed, exit 0.
+- hro-p3a-frontier-verification-tc.log and hro-p3a-frontier-receipts-tc.log:
+  both typechecks exit 0.
+- hro-p3a-frontier-verification-lint.log and hro-p3a-frontier-receipts-lint.log:
+  both complete package Biome checks exit 0.
+- hro-p3a-aggregate.log: exact 16 MiB accepts and plus one refuses, exit 0.
+- hro-p3a-frontier-d19.log: actual D19 exit 1, RESULT: FAIL.
+
+The bounded verification command selects every tests/*.test.ts except the two
+existing audit mutation suites pmc-ledger-audit.test.ts and
+rcm-provenance-audit.test.ts. Those two suites were not rerun or counted as passed;
+the actual D19 failure is separately recorded. Commands are Node --import tsx
+--test followed by that explicit file selection (receipts uses all tests), Node
+node_modules/typescript/bin/tsc --noEmit, and the existing Biome binary check .
+D19 is Node --import tsx src/d19-audit.ts --plugin-root followed by this worktree's
+absolute plugins/foreman-line directory.
+
+D19 now finds exactly FOUR class-5 sites in stage-d-finalization.ts: the new
+resolve(repoRoot, specEntry.ref) manifest/spec-path join; the two existing resolve
+calls in the registration/root equality check; and the existing root-basename
+resolve. The necessary manifest join is visible rather than hidden to evade the
+auditor. No detector, pin, registry or exception changed. Audit enrollment is a
+separate prerequisite; this source repair does not claim audit acceptance.
+
+The mutation matrix independently covers A hash/manifest/spec, B membership and
+links, C artifact/reference/skills, order parcel/Step 0, ticket identity and both
+fixed sidecars. File tests cover exact/+1 document and aggregate bounds, growth
+before descriptor capture, replacement/truncation/read failure during capture,
+and descriptor closure. Existing duplicate-after-drain, root replacement,
+expanded-alias and finalization controls remain. No live provider, credentials,
+host configuration, production store, push, merge or activation was used.
+
+Freeze for root and independent frontier review; the repair author does not
+approve this source. Production intake and the separate D19 gate remain open.
