@@ -63,6 +63,17 @@ export type {
   ProviderBindingValidationResultV1,
 } from './provider-bindings.js'
 export { validateProviderBindingPolicyV1 } from './provider-bindings.js'
+export type {
+  FactField,
+  InventoryCode,
+  InventoryEntry,
+  InventoryStatus,
+  ProducerCandidate,
+  ProducerRefusalCode,
+  ProducerTrust,
+  ProductionResult,
+} from './public-observation-producer.js'
+export { producePublicObservationSnapshot } from './public-observation-producer.js'
 export {
   classEntrySchema,
   dataClassificationRuleSchema,
