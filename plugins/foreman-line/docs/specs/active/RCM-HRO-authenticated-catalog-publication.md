@@ -135,6 +135,18 @@ must not silently shrink the scope to obtain success. The pure materializer can
 report scoped absence evidence, but only the private publisher may authenticate
 its acquisition and issue an ABSENCE capability.
 
+Candidate variants are closed: `catalog` requires facts for every identity in the
+original requested scope and contains canonical bytes/declarations for exactly
+that scope; `complete-response-with-absence` retains that entire scope and its
+inventory plus the complete nonempty set of exact absent identities. The latter
+contains no canonical bytes or accepted catalog declarations. Facts, incomplete
+and absent rows may coexist there only when complete response coverage proves
+each absent row independently; incomplete rows never enter the absent set.
+Unsupported requested provider/profile/domain refuses before acquisition rather
+than generating absence. No candidate selects only the first missing identity or
+shrinks canonical scope. With no absent identities and any incomplete row,
+materialization refuses publication and returns no handle.
+
 ### Private publication and acquisition
 
 Proposed private `createCatalogPublicationOwnerV1` captures trusted installation
@@ -169,6 +181,17 @@ Handles are frozen empty objects authenticated through private identity maps;
 JSON, hashes and structurally matching objects confer no custody. Replace/delete
 old handle entries on publication so stale versions cannot be acquired.
 
+Both candidate variants use this SAME scope generation, CAS, deadline and
+acknowledgement path. A winning catalog OR absence publication replaces the entire
+current record and invalidates every older catalog and absence handle atomically.
+An absent result therefore includes the acknowledged new generation, full original
+scope and bounded exact absent-identity set. No separate negative-generation map
+or unacknowledged absence result is allowed. An incomplete-only or other refused
+operation does not publish and returns no handle; an existing generation may
+remain available to other authorized callers until replaced/expired. That is not
+success for the failed recovery episode: it holds without adopting old data or
+refunding its spent refresh participation. No hidden global revocation is required.
+
 Synchronous acquisition checks exact owner/handle/scope/generation, current
 authority/profile, time/expiry and original source provenance; returns detached
 bounded bytes and accepted catalog declarations from privately retained records.
@@ -176,6 +199,11 @@ It performs no fetch, await, refresh or caller callback. Re-run the real canonic
 reader and adapter boundary when composing C's input; a previous publication is
 not cached eligibility. Copies of returned data are evidence only and mutation
 cannot change retained bytes or a later acquisition.
+
+Acquisition is variant-specific. If the current scope record is an absence
+publication, catalog acquisition returns CURRENT_ABSENCE; it never falls back to
+older positive bytes, including when the requested identity has a facts row in
+the mixed inventory. Catalog acquisition requires a current catalog handle.
 
 The issuer authenticates ABSENCE only when an acknowledged, complete validated
 response covers the exact requested identity within this TEXT domain. Bind
@@ -185,6 +213,120 @@ domain is not globally absent. Producer INCOMPLETE_SCOPE, missing required facts
 unsupported profiles, successful JSON alone, 404 and failed/partial responses
 never issue an absence handle. P4A may negative-cache only through the installed
 issuer's private verification port, with its original 30-second/256-entry limits.
+
+Private synchronous `verifyAbsenceV1` requires the absence handle, one exact
+identity and expected current generation. It checks issuer identity, current
+variant/generation, unchanged full scope and domain/provenance, identity membership
+in the absent set and current validity. It returns a detached bounded verified
+record or typed refusal; a verified record is evidence for the installed P4A
+consumer, never a transferable capability. Facts/incomplete rows, foreign scope,
+stale/cross-instance/copied handles and out-of-domain identities refuse. There is
+no fetch, callback, refresh or lifetime extension during verification.
+
+### Frozen proposed interfaces and transport ownership
+
+All input records below have exactly the listed own data keys; outputs are owned
+and bounded. Symbols/accessors/extra keys, thenables, invalid numbers and malformed
+identities refuse. Handles are opaque frozen empty object identities. `Identity`
+is exactly `{provider:'openrouter', id:string}`; `Generation` is a safe nonnegative
+integer. Scope/identity arrays are canonical sorted unique sets within the bounds.
+Type names below are proposed contracts, not existing exports.
+
+```ts
+type RefreshInput = {scope: object; expectedGeneration: number; deadlineMonoMs: number};
+type RefreshResult =
+  | {kind:'published'; handle:object; generation:number}
+  | {kind:'absent'; handle:object; generation:number;
+      requestedIdentities:readonly Identity[]; absentIdentities:readonly Identity[]}
+  | {kind:'refused'; code:RefreshCode};
+type RefreshCode = 'INPUT_REFUSED'|'CAPACITY_REFUSED'|'TRANSPORT_REFUSED'
+  |'DEADLINE_EXCEEDED'|'COMPLETENESS_UNPROVEN'|'MATERIALIZATION_REFUSED'
+  |'PUBLICATION_CONFLICT'|'INSTALLATION_REFUSED';
+type AcquireInput = {scope:object; handle:object; expectedGeneration:number};
+type CatalogRead =
+  | {ok:true; canonicalBytes:Uint8Array; expectedSha256:string;
+      acceptedSource:AcceptedCatalogSource; provenance:PublicationProvenance}
+  | {ok:false; code:ReadCode};
+type AbsenceInput = {handle:object; identity:Identity; expectedGeneration:number};
+type AbsenceRead =
+  | {ok:true; identity:Identity; requestedIdentities:readonly Identity[];
+      generation:number; provenance:PublicationProvenance}
+  | {ok:false; code:ReadCode};
+type ReadCode = 'INPUT_REFUSED'|'HANDLE_REFUSED'|'GENERATION_REFUSED'
+  |'SCOPE_REFUSED'|'IDENTITY_NOT_ABSENT'|'CURRENT_ABSENCE'|'EXPIRED'
+  |'SOURCE_REFUSED'|'INSTALLATION_REFUSED';
+type PublicationProvenance = {
+  workflowId:string; trustScopeId:string; profile:'openrouter-public-text-materialization/v1';
+  endpoint:'https://openrouter.ai/api/v1/models'; domain:'public-text-output';
+  generation:number; sourceSha256:string; requestStartedAtUtc:string;
+  completeReceivedAtUtc:string; validUntilUtc:string;
+};
+type InventoryRow =
+  | {identity:Identity; kind:'facts'; facts:ModelRecord}
+  | {identity:Identity; kind:'incomplete'; code:'REQUIRED_FACT_MISSING'}
+  | {identity:Identity; kind:'absent-in-domain'};
+type Candidate =
+  | {kind:'catalog'; requestedIdentities:readonly Identity[];
+      inventory:readonly InventoryRow[]; canonicalBytes:Uint8Array;
+      acceptedSource:AcceptedCatalogSource; provenance:PublicationProvenance}
+  | {kind:'complete-response-with-absence'; requestedIdentities:readonly Identity[];
+      inventory:readonly InventoryRow[]; absentIdentities:readonly Identity[];
+      provenance:PublicationProvenance};
+```
+
+Candidate generation denotes expectedGeneration+1 and remains unissued until
+CAS acknowledges it. Candidate catalog inventory must contain only facts; absence
+inventory must cover each original identity exactly once, and absentIdentities
+must equal all and only absent-in-domain rows. Reuse actual RCM ModelRecord and
+AcceptedCatalogSource types, not local copies. These candidate records are private
+publisher-owned data, not public materializer authority. The public pure new
+materializer accepts `unknown` and validates this closed data contract:
+
+```ts
+type MaterializerInput = {
+  bytes:Uint8Array; requestedIdentities:readonly Identity[];
+  profile:'openrouter-public-text-materialization/v1';
+  endpoint:'https://openrouter.ai/api/v1/models'; domain:'public-text-output';
+  requestStartedAtUtc:string; completeReceivedAtUtc:string; evaluationTimeUtc:string;
+  complete:true;
+};
+type MaterializerResult =
+  | {ok:true; evidenceOnly:true; kind:'catalog';
+      requestedIdentities:readonly Identity[]; inventory:readonly InventoryRow[];
+      canonicalBytes:Uint8Array; canonicalSha256:string; acceptedSource:AcceptedCatalogSource}
+  | {ok:true; evidenceOnly:true; kind:'complete-response-with-absence';
+      requestedIdentities:readonly Identity[]; inventory:readonly InventoryRow[];
+      absentIdentities:readonly Identity[]; sourceSha256:string}
+  | {ok:false; evidenceOnly:true; code:'INPUT_REFUSED'|'BOUNDS_REFUSED'
+      |'PROFILE_REFUSED'|'COMPLETENESS_UNPROVEN'|'SOURCE_REFUSED'|'INCOMPLETE_SCOPE'};
+```
+
+Its complete flag and acquisition timestamps are evidence declarations only;
+production owner supplies them from genuine captured transport, not task JSON.
+The materializer verifies response/domain completeness under the reviewed profile
+before classifying absence. It has no generation, workflow authority, handles or
+issuer. Private publication adds those bindings from installed scope after genuine
+transport capture. Reproducible source references/digests are computed under the
+new profile, never copied from the historical manifest or treated as authority.
+
+Fixed transport implementation proposal:
+`dispatch/src/pmc-launch/catalog-metadata-transport.ts`, with no public barrel export.
+Its private captured `readMetadataV1` accepts exactly
+`{deadlineMonoMs:number, signal:AbortSignal}` from the installed owner, not task
+data; trusted cancellation objects are not serialized input. Its return is
+`Promise<unknown>` at the external boundary. The owner validates the sole success
+shape `{status:200, mediaType:'application/json', contentEncoding:'identity',
+requestStartedAtUtc:string, completeReceivedAtUtc:string, complete:true,
+bytes:Uint8Array}` against actual terminal-capture custody; a matching object
+supplied by a caller cannot establish it. Transport failure maps to
+TRANSPORT_REFUSED or DEADLINE_EXCEEDED. This module owns the exact fixed Node HTTPS
+GET and stream termination/cancellation, without redirects, environment proxy,
+credential reads, caller headers or generic fetch injection. Production factory
+captures that implementation statically. Private network-incapable tests exercise
+the same bounded response handling with a distinct installation provenance domain.
+Closed shared private publisher/transport types live in
+`dispatch/src/pmc-launch/catalog-publication-types.ts`; raw-response pure types and
+profile validation remain in the RCM producer owner.
 
 Publication is memory-atomic, not durable. Restart destroys all issuer identity,
 handles and generations; old data cannot reinstall authority. No JSON disk cache,
@@ -218,8 +360,8 @@ remain unchanged; catalog publication alone closes neither.
 | 1 | Retained producer API and actual retained fixtures unchanged; new raw-response version uses real canonical reader/adapter, exact identities/locators/decimal prices, explicit unknowns and no invented historical artifacts. |
 | 2 | Fixed GET capture: task URL/header/adapter substitution, redirects, 401/403/non-200, encoding, malformed/duplicate JSON, truncated stream, deadline and cancellation all refuse with zero credential/inference/config access. Exact bounds and one-over negatives. |
 | 3 | Regenerated artifacts reproduce from retained fresh bytes and installed profile; changed bytes/profile/time/identity fail independently. Hash-only and success-JSON inputs cannot authenticate source. |
-| 4 | Complete scoped absence issues a privately verifiable handle; generic INCOMPLETE_SCOPE, incomplete/unsupported facts, filtered/partial/paginated responses, 404 and out-of-domain claims do not. Independently mutate scope, identity, generation, domain and validity. |
-| 5 | Concurrent same-generation candidates have exactly one acknowledged publication; losing CAS, timeout/cancel, malformed candidate and stale handle never replace or acquire. Other scopes remain isolated; capacity is bounded. |
+| 4 | Complete scoped absence issues a privately verifiable handle; generic INCOMPLETE_SCOPE, incomplete/unsupported facts, filtered/partial/paginated responses, 404 and out-of-domain claims do not. Mixed facts+absent+incomplete retains full scope; exact absent set equals every absent row, and only those identities verify. Incomplete-only refuses with no handle and no success for its failed episode, while another authorized caller may still acquire an unexpired prior generation. Independently mutate scope, identity, generation, domain and validity. |
+| 5 | Concurrent catalog/absence candidates for the same generation have exactly one acknowledged publication; positive-to-absence and absence-to-positive replacement invalidate ALL old variant handles. Current absence makes catalog acquisition refuse, including facts rows in a mixed result. Losing CAS, timeout/cancel, malformed candidate and stale handle never replace or acquire. Other scopes remain isolated; capacity is bounded. |
 | 6 | Direct/serialized/copied/cross-instance/cross-mode handles refuse; mutation of acquired bytes does not alter retained state. Restart destroys authority and cannot reopen P4A participation or workflow admission. |
 | 7 | Actual offline RCM-to-C composition preserves synchronous acquire and request-bound source evidence. Missing quality/billing/account/budget claims refuse; catalog success never creates permit, approval or refresh after B1 begin. |
 | 8 | Separate production contract review validates installed fixed fetch/profile/custody before any enabling claim; fixtures cannot establish production authenticity. Real failures remain typed with no fallback credentials or model substitution. |
@@ -257,9 +399,14 @@ adding `plugins/foreman-line/routing-policy/tests/fixtures/public-model-response
 Checkpoint P would add `plugins/foreman-line/dispatch/src/pmc-launch/catalog-publication.ts`,
 `plugins/foreman-line/dispatch/src/pmc-launch/catalog-publication-types.ts` and
 `plugins/foreman-line/dispatch/tests/pmc-catalog-publication.test.ts`.
-No barrel change or generic injected production fetch is proposed. Exact terminal
-transport/profile source ownership and any additional fixture/test file require
-an independently reviewed implementation amendment before either checkpoint.
+Checkpoint P additionally proposes
+`plugins/foreman-line/dispatch/src/pmc-launch/catalog-metadata-transport.ts` and
+`plugins/foreman-line/dispatch/tests/pmc-catalog-metadata-transport.test.ts`.
+These five P paths freeze proposed publisher/types/fixed-transport ownership;
+checkpoint N owns the raw response profile and materialization types. No barrel
+change or generic injected production fetch is proposed. Independent review and
+an explicit implementation amendment remain necessary before either checkpoint;
+the named future paths grant no runtime write authority in this shaping release.
 
 ## Verification Plan
 
@@ -271,3 +418,5 @@ Reviewers must ask: can a task choose acquisition authority? Can old artifact
 labels or a digest fabricate freshness/custody? Is complete absence confined to
 the exact text-response domain? Can CAS/cancellation/restart resurrect authority?
 Does synchronous C acquisition gain unrelated claims or hidden network work?
+Do both candidate variants share atomic generation invalidation? Can an incomplete
+row enter the absent set or a failed episode quietly reuse old positive data?

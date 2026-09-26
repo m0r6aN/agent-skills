@@ -48,8 +48,9 @@ single refresh operation. New documentation/profile changes require fresh review
 The [draft specification](../../specs/active/RCM-HRO-authenticated-catalog-publication.md)
 proposes normalization checkpoint N in routing-policy and private publication
 checkpoint P in dispatch, each with named future source/test paths. Those paths
-are proposals only; independent review must freeze raw schema, exact extraction
-rules and real terminal transport ownership before implementation release.
+are proposals only; the repaired spec freezes private candidate/read/verification
+types and fixed terminal transport ownership explicitly. Independent review must
+approve that contract and its raw schema/extraction rules before implementation release.
 Keep existing canonical validation/decimal conversion under RCM ownership.
 
 Proposed limits align with P4A/producer: 10-second operation, four active fetches,
@@ -77,3 +78,23 @@ integration checkout with its read-only dependencies, required body sections and
 all relative Markdown links. The official documentation link was read directly.
 The exact two-file staged diff must pass whitespace checks before local commit.
 No runtime tests were claimed for this documentation-only shape.
+
+## Publication variant repair
+
+Catalog and complete-response-with-absence are the only publishing candidates.
+Both commit through the same per-scope CAS and invalidate all old positive and
+negative handles. An absence candidate retains the full original requested scope
+and the exact nonempty set of all genuinely absent identities, including when
+other rows have facts or missing required facts. It emits no shrunken canonical
+snapshot. Private verifyAbsenceV1 validates exact membership/current generation;
+catalog acquisition on an absence generation holds rather than returning old bytes.
+
+Incomplete-only operations refuse without a new handle. Other authorized callers
+may still acquire an unexpired prior generation; the failed recovery episode must
+hold and cannot adopt it as refresh success. No global revocation is implied.
+The fixed transport and its tests have named future dispatch paths; task URLs,
+credentials and generic production fetch injection remain prohibited. Future
+runtime Gate 2 and independent review are still required.
+Repair validation passed: frozen linter, required body, relative links and diff
+whitespace checks. Exactly the same two documents changed; no runtime or endpoint
+activity occurred.
