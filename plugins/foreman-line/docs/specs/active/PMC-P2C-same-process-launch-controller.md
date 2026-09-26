@@ -291,9 +291,9 @@ that fence. No task callback runs inside this section.
 
 ### Ratified separate owner prerequisite and proof composition
 
-[PMC-P2B1](PMC-P2B1-durable-intent-custody.md) is the sole proposed owner of
+[PMC-P2B1](PMC-P2B1-durable-intent-custody.md) is the sole owner of
 persistent business-intent custody and IntentOwnerV1. V8 resolves the separate
-owner choice; its draft still needs independent review and implementation. P2B's
+owner choice. Its repaired implementation has two independent source and audit approvals; combined integration and remote acceptance remain prerequisites. P2B's
 metadata/budget_scopes/attempts and existing five operations remain unchanged.
 Production construction refuses INSTALLATION_REFUSED until accepted custody exists.
 
@@ -518,7 +518,7 @@ authority. Copies, proxies, reused/cross-instance/restart identities fail lookup
    acknowledged reserved AttemptV1 (all identity/epoch/scope/cost fields).
 6. Synchronous final section: lookup permit, mark in-progress BEFORE callbacks,
    revalidate authority/time/expiry/proof/claims. Failure invalidates permit,
-   retains reservation pending authenticated no-send; no reentrant use.
+   retains reserved liability and pending owner; no reentrant use, cancellation, finish, refund or retry without a separately reviewed recovery authority.
 7. Delete permit BEFORE ledger.consume({requestId,requestDigest}). Only matching
    acknowledged consumed AttemptV1 advances. Immediately invoke captured send
    with same owned WireV1 and consumed AttemptV1; no await or external port between
@@ -601,14 +601,14 @@ Future implementation only after prerequisites and explicit release:
 - plugins/foreman-line/docs/goals/pi-model-configuration/pmc-p2c-verification.md
 
 No owner persistence/SDK/network source is allowed. Additional files require scoped
-amendment. This shaping session writes ONLY this spec, B1 draft and composition notes.
-No new ShapingResult: coordinator's exact three-file envelope overrides that
-general shaping output; both parcels stay draft.
+amendment. Historical initial shaping wrote this spec, B1 draft and composition notes; that three-document release is closed. The current bootstrap amendment writes ONLY this spec and composition notes; B1 is frozen.
+No new ShapingResult: coordinator's exact two-document amendment envelope overrides that
+general shaping output; this controller stays draft until explicitly released.
 
 ## Verification Plan
 
 Advisory shaping: frozen spec-linter, required-body self-check, local links,
-git diff --check, exact three-file diff. No live probe. Future implementation:
+git diff --check, exact two-document amendment diff. No live probe. Future implementation:
 Node 24.19.0 existing dispatch tests/typecheck/lint and actual P2A/v0 regressions;
 real temporary P2B/accepted owner crash/concurrency tests; native exit checks;
 import/export review. Fake-only AC3/5 cannot pass durability; fake P2D cannot pass
