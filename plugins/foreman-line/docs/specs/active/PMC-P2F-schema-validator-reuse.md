@@ -1,7 +1,7 @@
 ---
 ticket: PMC-P2F
 title: Reuse the fixed provider-binding schema validator inside its owner
-status: draft
+status: active
 owner: clinton.morgan
 created: 2026-09-26
 updated: 2026-09-26
@@ -67,8 +67,7 @@ change is needed.
   call still invokes it normally, without promising recovery from a persistent
   execution fault.
 - Preserve capture limits, refusal precedence, first schema-error path,
-  semantic error order/cap and immutable successful policy ownership. A malformed
-  plain-data input still refuses before compilation/validation, cold or warm.
+  semantic error order/cap and immutable successful policy ownership. A snapshot-rejected input still refuses before compilation/validation, cold or warm.
   Retention must never authorize skipping validation of equal objects, equal
   digests, a previously accepted object or a mutated caller-owned object.
 - Ajv's `errors` is mutable state. Read the current failing invocation's first
@@ -163,3 +162,27 @@ failure or retrying within the current invocation? Do alternating errors retain
 their own paths? Are cold/import tests actually isolated from earlier warm calls?
 Does execution-fault instrumentation preserve the real library path elsewhere?
 Can any change skip current claim validation or change refusal/ranking behavior?
+
+## Gate 2 private implementation release — 2026-09-26
+
+Independent frontier design review approved 1be2778f5cf22904195de71931fa960838bd338f
+with no blocking findings. Coordinator accepts the narrow owner optimization
+under the user's HRO/PMC prerequisite delegation. Clarify the input wording:
+only snapshot-rejected input stops before Ajv; schema-invalid ordinary data still
+reaches Ajv, cold or warm. No schema or validation semantics change is authorized.
+This release supersedes the draft dispatch wording above.
+
+Implement only the three Allowed Files, using Node 24.19.0 and existing matched-lock
+read-only dependencies. Accepted main is 71fd489; original owner source/schema pins
+remain unchanged at release. Workspace is
+D:/Repos/agent-skills-worktrees/hro-pmc-schema-reuse-shaping-20260926, builder branch
+codex/hro-pmc-schema-reuse-20260926. Preserve the frozen shaping branch at 1be2778.
+
+A frontier builder must verify head/spec, inspect/restate and STOP at Step 0 before
+coordinator release. The native offline agent dispatch substitutes the template's
+minted provider-runtime receipt for this development task only; do not fabricate
+an independently attested engine version or execution receipt. No provider launch,
+production authority or runtime receipt obligation is relaxed. Two independent
+frontier implementation reviews and complete integration/remote CI remain gates.
+No push, merge, provider call, host change, dependency install, generated refresh,
+public injection/reset API or policy/result memoization by the builder.
