@@ -112,3 +112,22 @@ each spec; unlocated installation/intake paths remain implementation gates.
 
 No initial model-choice cache events, F-schema-cache routing savings, live proof,
 unknown-liability reconciliation or full D5 completion is claimed by P3A/B.
+
+## Delegated design ratification and parent reconciliation — 2026-09-26
+
+Coordinator and independent PMC reviewer approve repaired design
+ a75f8d682e565af0413ab6ab9b974dd0a607e50a. All four review findings are closed:
+authorized delegated actor attribution, independent P3A acceptance, complete
+shared D/E/F lifecycle with synchronous finalizer and role-separated acknowledgements,
+and truthful distinction between F receipt emission and actual upstream closure.
+
+The coordinator adopts the closed types, lifecycle and conservative bounds under
+the user's blanket goal/prerequisite authority. This is not measured capacity or
+runtime authorization. Parent P3 now references the exact P3A subject, result codes,
+authorized decision and interface-first sequencing; its old narrower subject and
+VERDICT_REFUSED spelling are superseded by P3A's reviewed EVIDENCE_REFUSED contract.
+This reconciliation requires separate independent confirmation before combined release.
+
+P3A/B remain nondispatchable until a bounded implementation envelope and genuine
+Step0 are accepted. Missing production intake/installation/seal contracts remain
+explicit; no approval, CI, merge, Jira, runtime or live measurement is fabricated.

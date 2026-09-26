@@ -85,21 +85,29 @@ writes a kind:'claim' VerificationVerdict and StageOutput envelope. It does NOT
 produce kind:'stage', stage:'D' finalization. No such aggregation function exists
 on this verification path. Do not relabel that claim or invent an existing API.
 
-A separate verification-owner prerequisite proposes private
-`finalizeMeasuredStageDV1(session: object): FinalizationResult`, where session is
-looked up by identity in installation custody. It uses acknowledged real verdict
-claim/envelope, measurement claim, final tip and external denominator already
-bound in custody; caller fields cannot supply authority. It validates the actual
-verdict/envelope, requires pass with null reworkSignal, checks referenced receipt
-hashes/correlation and complete coverage, then exclusively appends kind:'stage',
-stage:'D', claimRef:null at actual tip.sequence+1. Proposed subjectKind
-`MeasuredVerificationHandoff` has exactly version:'hro-measured-d/v1',
-verdictReceiptRef, telemetryReceiptRef, denominatorDigest and coverage:'complete';
-references use existing ReceiptRef. FinalizationResult is exactly
-`{ok:true,receipt:ReceiptRef}` or `{ok:false,code:'SESSION_REFUSED'|'PHASE_REFUSED'|
-'COVERAGE_INCOMPLETE'|'VERDICT_REFUSED'|'CHAIN_REFUSED'|'WRITE_REFUSED'|'WRITE_UNCERTAIN'}`.
-These are proposed private owner contracts, not current exports. Rework/incomplete
-evidence may be recorded but cannot produce this passing handoff.
+The reviewed [P3A owner contract](HRO-P3A-authenticated-stage-d-finalization.md)
+proposes private synchronous `finalizeMeasuredStageDV1(session: object): FinalizationV1`
+after asynchronous drain and telemetry publication have completed. Session identity
+resolves installation custody; caller fields supply no authority. It binds the
+complete expected verification/review/disposition plan, real build/head, actual
+verdict/envelope, authorized decision under existing delegation, owner closure,
+measurement claim, current tip and external denominator. It recomputes content
+hashes and validates full linkage; self-hashes do not authenticate execution.
+Only complete passing evidence can append kind:stage, stage:D, claimRef:null at
+tip.sequence+1. No literal-human-only gate or fabricated actor identity is added.
+
+SubjectKind MeasuredVerificationHandoff has exactly version:'hro-measured-d/v1',
+verifiedHeadSha, buildReceiptRef, verdictReceiptRef, humanClosureReceiptRef,
+telemetryReceiptRef, denominatorDigest, expectedPlanDigest and coverage:'complete'.
+Receipt references are closed hash/locator records under P3A refinements. Its
+FinalizationV1 is `{ok:true,receipt:ReceiptRef}` or `{ok:false,code:...}` with exactly
+SESSION_REFUSED, PHASE_REFUSED, PREREQUISITE_UNAVAILABLE, EVIDENCE_REFUSED,
+COVERAGE_INCOMPLETE, CHAIN_REFUSED, WRITE_REFUSED or WRITE_UNCERTAIN.
+These remain proposed private contracts, not shipped exports. P3A owns the shared
+complete D/E/F lifecycle; P3 owns genuine telemetry seal publication. P3A offline
+acceptance is independent; [P3B](HRO-P3B-measured-integration-profile.md) and combined
+acceptance own actual P3A-to-E-to-F composition. Missing authentic intake or
+installation remains a production refusal, never fixture-derived authority.
 
 Separately amend integration/src/exit-vehicle.ts:278-309: runStageE/F currently
 require stage predecessors D at sequence3 and E at sequence4. Preserve the real
