@@ -97,15 +97,85 @@ function input(overrides: Record<string, unknown> = {}) {
 	};
 }
 
+function stringUnits(value: unknown): number {
+	if (typeof value === "string") return value.length;
+	if (value === null || typeof value !== "object") return 0;
+	if (ArrayBuffer.isView(value)) return 0;
+	let total = 0;
+	for (const key of Reflect.ownKeys(value)) {
+		if (typeof key !== "string") continue;
+		total += key.length;
+		const descriptor = Object.getOwnPropertyDescriptor(value, key);
+		if (descriptor && "value" in descriptor)
+			total += stringUnits(descriptor.value);
+	}
+	return total;
+}
+
+function aggregateStringInput(overBy: number): Record<string, unknown> {
+	const value = input() as any;
+	value.catalogSource = {};
+	const keyCount = 513;
+	const keys = Array.from(
+		{ length: keyCount },
+		(_, index) => `aggregate-${index}`,
+	);
+	const keyUnits = keys.reduce((total, key) => total + key.length, 0);
+	let remaining = 2097152 - stringUnits(value) - keyUnits + overBy;
+	value.catalogSource = Object.fromEntries(
+		keys.map((key) => {
+			const length = Math.min(4096, Math.max(0, remaining));
+			remaining -= length;
+			return [key, "x".repeat(length)];
+		}),
+	);
+	assert.equal(remaining, 0);
+	return value;
+}
+
+function ordinaryNodeInput(entries: number): Record<string, unknown> {
+	const value = input() as any;
+	value.catalogSource = Object.fromEntries(
+		Array.from({ length: entries }, (_, index) => [`node-${index}`, null]),
+	);
+	return value;
+}
+
+function expandedAliasInput(entries: number): Record<string, unknown> {
+	const value = input() as any;
+	const shared = Object.fromEntries(
+		Array.from({ length: entries }, (_, index) => [`alias-${index}`, null]),
+	);
+	(value.ownerContext as any).bindings = Array.from(
+		{ length: 256 },
+		() => shared,
+	);
+	return value;
+}
+
+function nestedObject(count: number): unknown {
+	let value: unknown = null;
+	for (let index = 0; index < count; index++) value = { child: value };
+	return value;
+}
+
+function isBounds(value: unknown): boolean {
+	return (
+		typeof value === "object" &&
+		value !== null &&
+		(value as Record<string, unknown>).ok === false &&
+		(value as Record<string, unknown>).stage === "bridge" &&
+		(value as Record<string, unknown>).code === "BOUNDS_REFUSED"
+	);
+}
+
 function instrumentedCounts(value: Record<string, unknown>): {
 	stage: string;
 	projection: number;
 	catalog: number;
 } {
-	const target = new URL(
-		"../../routing-policy/src/index.ts",
-		import.meta.url,
-	).href;
+	const target = new URL("../../routing-policy/src/index.ts", import.meta.url)
+		.href;
 	const loader = `
 const target = ${JSON.stringify(target)};
 export async function resolve(specifier, context, nextResolve) {
@@ -148,7 +218,7 @@ import { preparePmcOwnerContextV1 } from "./src/index.ts";
 const input = ${serialized};
 input.catalogInput.canonicalBytes = Uint8Array.from(input.catalogInput.canonicalBytes);
 const result = preparePmcOwnerContextV1(input);
-console.log("__COUNTS__" + JSON.stringify({
+process.stdout.write("__COUNTS__" + JSON.stringify({
   stage: result.ok ? "success" : result.stage,
   counts: globalThis.__counts,
 }));
@@ -311,6 +381,25 @@ test("isolated instrumentation verifies first refusal and zero later owner calls
 		projection: 0,
 		catalog: 0,
 	});
+	const captureBoundaryCases = [
+		(() => {
+			const value = input();
+			(value.ownerContext as any).bindings = new Array(257).fill(null);
+			return value;
+		})(),
+		(() => {
+			const value = input();
+			(value.ownerContext as any).episode = nestedObject(19);
+			return value;
+		})(),
+	];
+	for (const value of captureBoundaryCases) {
+		assert.deepEqual(instrumentedCounts(value), {
+			stage: "bridge",
+			projection: 0,
+			catalog: 0,
+		});
+	}
 });
 
 test("rejects wrong envelopes, accessors, aliases, and hostile bytes before owner calls", () => {
@@ -344,6 +433,19 @@ test("rejects wrong envelopes, accessors, aliases, and hostile bytes before owne
 		stage: "bridge",
 		code: "INPUT_REFUSED",
 	});
+	const mutating = input();
+	const originalBytes = (mutating.catalogInput as any)
+		.canonicalBytes as Uint8Array;
+	(mutating as any).catalogInput = new Proxy(mutating.catalogInput, {
+		getOwnPropertyDescriptor(target, key) {
+			if (key === "canonicalBytes")
+				originalBytes[0] = (originalBytes[0] ?? 0) ^ 1;
+			return Reflect.getOwnPropertyDescriptor(target, key);
+		},
+	});
+	const mutationResult = preparePmcOwnerContextV1(mutating);
+	assert.equal(mutationResult.ok, false);
+	if (!mutationResult.ok) assert.equal(mutationResult.stage, "catalog");
 	const aliased = input();
 	(aliased.ownerContext as any).bindings = [
 		(aliased.ownerContext as any).episode,
@@ -365,14 +467,12 @@ test("rejects wrong envelopes, accessors, aliases, and hostile bytes before owne
 		stage: "bridge",
 		code: "INPUT_REFUSED",
 	});
-	const subclass = new Uint8Array(
-		catalogInput().canonicalBytes,
-	) as Uint8Array & {
-		[Symbol.iterator]: () => IterableIterator<number>;
-	};
-	subclass[Symbol.iterator] = () => {
-		throw new Error("must not iterate");
-	};
+	class IterationHostileBytes extends Uint8Array {
+		override [Symbol.iterator](): ReturnType<Uint8Array["values"]> {
+			throw new Error("must not iterate");
+		}
+	}
+	const subclass = new IterationHostileBytes(catalogInput().canonicalBytes);
 	const bytes = input();
 	(bytes.catalogInput as any).canonicalBytes = subclass;
 	const subclassResult = preparePmcOwnerContextV1(bytes);
@@ -405,7 +505,9 @@ test("rejects wrong envelopes, accessors, aliases, and hostile bytes before owne
 
 test("rejects byte-containing ancestor aliases in every traversal order", () => {
 	const catalogSourceAlias = input();
-	(catalogSourceAlias as any).catalogSource = (catalogSourceAlias as any).catalogInput;
+	(catalogSourceAlias as any).catalogSource = (
+		catalogSourceAlias as any
+	).catalogInput;
 	assert.deepEqual(preparePmcOwnerContextV1(catalogSourceAlias), {
 		ok: false,
 		evidenceOnly: true,
@@ -518,6 +620,65 @@ test("enforces aggregate strings and expanded aliases independently of byte size
 		stage: "bridge",
 		code: "BOUNDS_REFUSED",
 	});
+});
+
+test("accepts exact depth, ordinary-node, string, and aggregate limits before one-over refusal", () => {
+	const depthAtLimit = input();
+	(depthAtLimit.ownerContext as any).episode = nestedObject(18);
+	assert.equal(isBounds(preparePmcOwnerContextV1(depthAtLimit)), false);
+	const depthOver = input();
+	(depthOver.ownerContext as any).episode = nestedObject(19);
+	assert.equal(isBounds(preparePmcOwnerContextV1(depthOver)), true);
+
+	let low = 0;
+	let high = 70000;
+	while (high - low > 1) {
+		const middle = Math.floor((low + high) / 2);
+		if (isBounds(preparePmcOwnerContextV1(ordinaryNodeInput(middle))))
+			high = middle;
+		else low = middle;
+	}
+	assert.equal(
+		isBounds(preparePmcOwnerContextV1(ordinaryNodeInput(low))),
+		false,
+	);
+	assert.equal(
+		isBounds(preparePmcOwnerContextV1(ordinaryNodeInput(high))),
+		true,
+	);
+	assert.ok(low < 131072 && high > 0);
+
+	const stringAtLimit = input();
+	(stringAtLimit.ownerContext as any).policyDigest = "x".repeat(4096);
+	assert.equal(isBounds(preparePmcOwnerContextV1(stringAtLimit)), false);
+	const stringOver = input();
+	(stringOver.ownerContext as any).policyDigest = "x".repeat(4097);
+	assert.equal(isBounds(preparePmcOwnerContextV1(stringOver)), true);
+	assert.equal(
+		isBounds(preparePmcOwnerContextV1(aggregateStringInput(0))),
+		false,
+	);
+	assert.equal(
+		isBounds(preparePmcOwnerContextV1(aggregateStringInput(1))),
+		true,
+	);
+
+	let aliasLow = 0;
+	let aliasHigh = 1024;
+	while (aliasHigh - aliasLow > 1) {
+		const middle = Math.floor((aliasLow + aliasHigh) / 2);
+		if (isBounds(preparePmcOwnerContextV1(expandedAliasInput(middle))))
+			aliasHigh = middle;
+		else aliasLow = middle;
+	}
+	assert.equal(
+		isBounds(preparePmcOwnerContextV1(expandedAliasInput(aliasLow))),
+		false,
+	);
+	assert.equal(
+		isBounds(preparePmcOwnerContextV1(expandedAliasInput(aliasHigh))),
+		true,
+	);
 });
 
 test("refuses oversized arrays and bytes before allocation or descent", () => {

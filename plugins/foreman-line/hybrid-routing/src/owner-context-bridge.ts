@@ -273,8 +273,17 @@ function copy(
 			const descriptor = Object.getOwnPropertyDescriptor(value, key);
 			if (!descriptor || !("value" in descriptor) || !descriptor.enumerable)
 				fail("INPUT_REFUSED");
-			const child = copy(descriptor.value, state, depth + 1, [...path, key], array);
-			if (state.bytes.has(descriptor.value) || state.byteContaining.has(descriptor.value))
+			const child = copy(
+				descriptor.value,
+				state,
+				depth + 1,
+				[...path, key],
+				array,
+			);
+			if (
+				state.bytes.has(descriptor.value) ||
+				state.byteContaining.has(descriptor.value)
+			)
 				containsBytes = true;
 			Object.defineProperty(output, key, {
 				value: child,

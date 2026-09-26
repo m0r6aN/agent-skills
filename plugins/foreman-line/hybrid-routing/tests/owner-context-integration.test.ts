@@ -6,13 +6,12 @@ import { test } from "node:test";
 import {
 	evaluateCatalogEligibility,
 	producePublicObservationSnapshot,
-	projectProviderBindingsV1,
 	resolvePmcRouteV1,
-	validateProviderBindingPolicyV1,
 } from "../../routing-policy/src/index.js";
 import {
 	preparePmcOwnerContextV1,
 	validateConsumerCompatibility,
+	validateMappingProposal,
 } from "../src/index.js";
 
 type AnyRecord = Record<string, any>;
@@ -53,8 +52,8 @@ const retainedIds = [
 	"google/gemini-3.8-flash",
 ];
 
-function retainedCatalog(ids: readonly string[] = retainedIds) {
-	const input = {
+function retainedInput(ids: readonly string[] = retainedIds) {
+	return {
 		manifestBytes: new Uint8Array(manifestBytes),
 		projectionBytes: new Uint8Array(projectionBytes),
 		requestedIdentities: ids.map((id) => ({
@@ -63,6 +62,10 @@ function retainedCatalog(ids: readonly string[] = retainedIds) {
 		})),
 		evaluationTimeUtc: "2026-09-26T15:00:00.000Z",
 	};
+}
+
+function retainedCatalog(ids: readonly string[] = retainedIds) {
+	const input = retainedInput(ids);
 	const production = producePublicObservationSnapshot(input, pins);
 	assert.equal(production.ok, true);
 	if (!production.ok) throw new Error("retained producer fixture refused");
@@ -71,7 +74,15 @@ function retainedCatalog(ids: readonly string[] = retainedIds) {
 
 function retainedResolverPolicy(ids: readonly string[]) {
 	const policy = structuredClone(fixture.context.projection.policy);
-	for (const [index, id] of ids.entries()) {
+	const policyIds = (() => {
+		if (ids.length !== 1) return ids;
+		const first = ids[0];
+		const fallback = retainedIds[1];
+		if (first === undefined || fallback === undefined)
+			throw new Error("retained resolver policy requires two identities");
+		return [first, fallback];
+	})();
+	for (const [index, id] of policyIds.entries()) {
 		const binding = policy.bindings[index + 2] as AnyRecord;
 		binding.provider = "openrouter";
 		binding.providerModelId = id;
@@ -80,7 +91,7 @@ function retainedResolverPolicy(ids: readonly string[]) {
 	policy.laneBindings = policy.laneBindings
 		.filter((entry: AnyRecord) => entry.lane !== "L4")
 		.concat(
-			ids.map((id, index) => ({
+			policyIds.map((_id, index) => ({
 				lane: "L4",
 				bindingId: `binding-${index + 2}`,
 				matrixRole: index === 0 ? "primary" : "fallback",
@@ -90,13 +101,18 @@ function retainedResolverPolicy(ids: readonly string[]) {
 	return policy;
 }
 
-function retainedResolverCase() {
-	const ids = retainedIds.slice(0, 2);
+function retainedResolverCase(
+	ids: readonly string[] = retainedIds.slice(0, 2),
+) {
 	const { input, production } = retainedCatalog(ids);
 	if (!production.ok) throw new Error("retained producer fixture refused");
-	const document = JSON.parse(new TextDecoder().decode(production.canonicalBytes)) as AnyRecord;
+	const document = JSON.parse(
+		new TextDecoder().decode(production.canonicalBytes),
+	) as AnyRecord;
 	const sourceTimeUtc = document.providers[0].checkedAtUtc as string;
-	const endTimeUtc = new Date(Date.parse(input.evaluationTimeUtc) + 3600000).toISOString();
+	const endTimeUtc = new Date(
+		Date.parse(input.evaluationTimeUtc) + 3600000,
+	).toISOString();
 	const baseline = refreshedOwnerContext();
 	const ownerContext = baseline.ownerContext;
 	ownerContext.evaluationTimeUtc = input.evaluationTimeUtc;
@@ -106,7 +122,8 @@ function retainedResolverCase() {
 	const refresh = (value: unknown): void => {
 		if (value === null || typeof value !== "object") return;
 		const record = value as AnyRecord;
-		if (Object.hasOwn(record, "observedAtUtc")) record.observedAtUtc = sourceTimeUtc;
+		if (Object.hasOwn(record, "observedAtUtc"))
+			record.observedAtUtc = sourceTimeUtc;
 		if (Object.hasOwn(record, "expiresAtUtc")) record.expiresAtUtc = endTimeUtc;
 		for (const child of Object.values(record)) refresh(child);
 	};
@@ -119,7 +136,8 @@ function retainedResolverCase() {
 		binding.family.value = `retained-family-${index}`;
 		binding.instanceId.value = `retained-instance-${index}`;
 		binding.cost.value.sourceProfileId = production.acceptedSource.profileId;
-		binding.cost.value.sourceProfileVersion = production.acceptedSource.profileVersion;
+		binding.cost.value.sourceProfileVersion =
+			production.acceptedSource.profileVersion;
 		binding.cost.value.sourceProfileDigest = "a".repeat(64);
 	}
 	const catalogSource = structuredClone(baseline.catalogSource);
@@ -129,9 +147,14 @@ function retainedResolverCase() {
 	catalogSource.value.profileDigest = "a".repeat(64);
 	catalogSource.value.snapshotDigest = production.digestSha256;
 	catalogSource.value.configAuthorityRef = "retained-test-config";
-	catalogSource.evidence.sourceRef = production.acceptedSource.sourceEvidenceRef;
-	catalogSource.evidence.sourceDigest = production.acceptedSource.sourceEvidenceSha256;
-	const baseUrl = models[0]!.baseUrl as string;
+	catalogSource.evidence.sourceRef =
+		production.acceptedSource.sourceEvidenceRef;
+	catalogSource.evidence.sourceDigest =
+		production.acceptedSource.sourceEvidenceSha256;
+	const firstModel = models[0];
+	if (firstModel === undefined)
+		throw new Error("retained catalog has no models");
+	const baseUrl = firstModel.baseUrl as string;
 	const catalogInput = {
 		canonicalBytes: production.canonicalBytes,
 		expectedSha256: production.digestSha256,
@@ -272,35 +295,147 @@ function refreshedOwnerContext() {
 	return { ownerContext, catalogSource: context.catalog.source, catalog };
 }
 
+function actualHroSuccesses() {
+	const proposal = {
+		schema: "hro-mapping-proposal/v1" as const,
+		logicalCandidateId: "candidate-opus",
+		bindingId: "binding-opus-primary",
+		provider: "openrouter",
+		providerModelId: "anthropic/claude-opus-5.5",
+		protocol: "openai-chat-completions",
+		piHostModelId: "openrouter/anthropic/claude-opus-5.5",
+		lane: "frontier",
+		roleFamily: "coordinator",
+		fallbackBindingId: null,
+		provenance: {
+			source: "fixture-only",
+			retrievedAt: "2026-09-26T12:00:00.000Z",
+			contentSha256: "a".repeat(64),
+			catalogVersion: "catalog/v1",
+			mappingVersion: "mapping/v1",
+			policySchemaVersion: "policy/v1",
+			roleMapVersion: "roles/v1",
+			foremanRevision: "foreman/test",
+			piRuntimeVersion: "pi/test",
+			approvalEvidenceState: "static-conformance" as const,
+		},
+	};
+	const projection = {
+		schema: "hro-binding-projection-draft/v1" as const,
+		evidenceRef: "fixture://hro-p1a/static-v1",
+		bindings: [{ proposal, conformance: "allowed" as const }],
+	};
+	const mappingContext = {
+		evaluationTimeUtc: "2026-09-26T12:30:00.000Z",
+		maxEvidenceAgeMs: 86400000,
+		expectedEvidenceRef: "fixture://hro-p1a/static-v1",
+		expectedContentSha256: "a".repeat(64),
+	};
+	const mapping = validateMappingProposal(proposal, projection, mappingContext);
+	assert.equal(mapping.ok, true);
+	if (!mapping.ok) throw new Error("HRO mapping fixture refused");
+	const request = {
+		proposal,
+		projection,
+		context: mappingContext,
+		routingInput: {
+			routing_class: "architecture/risk",
+			data_classification: "internal",
+			workflowId: "wf-hro-p1c",
+		},
+		expectedEligibility: {
+			digestSha256: "b".repeat(64),
+			sourceRef: "snapshot/v1",
+			approvedConfigRef: "config/v1",
+			maxAgeMs: 1800000,
+		},
+	};
+	const oracle = {
+		ok: true as const,
+		provenance: {
+			digestSha256: request.expectedEligibility.digestSha256,
+			sourceRef: request.expectedEligibility.sourceRef,
+			sourceTimeUtc: "2026-09-26T12:00:00.000Z",
+			evaluationTimeUtc: mappingContext.evaluationTimeUtc,
+			ageMs: 1800000,
+			maxAgeMs: request.expectedEligibility.maxAgeMs,
+			approvedConfigRef: request.expectedEligibility.approvedConfigRef,
+		},
+		results: [
+			{
+				requested: {
+					provider: proposal.provider,
+					id: proposal.providerModelId,
+				},
+				outcome: "facts" as const,
+				facts: {
+					provider: proposal.provider,
+					id: proposal.providerModelId,
+					baseUrl: "https://example.invalid",
+					api: proposal.protocol,
+					reasoning: true,
+					contextWindow: 200000,
+					maxTokens: 4096,
+					inputModalities: ["text"],
+					rates: {
+						input: { value: 1, unit: "USD per 1M tokens" },
+						output: { value: 2, unit: "USD per 1M tokens" },
+					},
+					thinkingLevels: { status: "unknown" },
+				},
+			},
+		],
+	};
+	const routing = {
+		ok: true as const,
+		result: {
+			resolvedModelId: proposal.logicalCandidateId,
+			resolvedTier: "frontier",
+			transportRequirements: { data_collection: "deny" as const, zdr: true },
+			routingDecisionRef: "offline/hro-p1c",
+		},
+	};
+	const compatibility = validateConsumerCompatibility(request, {
+		eligibilityOracle: () => oracle,
+		evaluateOffline: () => routing,
+	});
+	assert.equal(compatibility.ok, true);
+	if (!compatibility.ok) throw new Error("HRO consumer fixture refused");
+	return { mapping, compatibility };
+}
+
 test("retained producer evidence assembles six real rows and preserves synthetic dynamic unknowns", () => {
 	const { input, production } = retainedCatalog();
+	const policy = expandedPolicy(retainedIds);
+	const catalogInput = {
+		canonicalBytes: production.canonicalBytes,
+		expectedSha256: production.digestSha256,
+		approvedConfig: {
+			authorityRef: "SYNTHETIC-test-only-endpoint-authority",
+			endpoints: [
+				{ provider: "openrouter", baseUrl: "https://openrouter.ai/api/v1" },
+			],
+		},
+		evaluationTimeUtc: input.evaluationTimeUtc,
+		identities: input.requestedIdentities,
+		acceptedSource: production.acceptedSource,
+	};
+	const ownerContext = {
+		policyDigest: "a".repeat(64),
+		configDigest: "a".repeat(64),
+		evaluationTimeUtc: input.evaluationTimeUtc,
+		evidenceMode: "synthetic-offline",
+		episode: { status: "unknown" },
+		freshness: { status: "unknown" },
+		independence: { status: "unknown" },
+		budget: { status: "unknown" },
+		bindings: [],
+	};
 	const result = preparePmcOwnerContextV1({
-		policy: expandedPolicy(retainedIds),
-		catalogInput: {
-			canonicalBytes: production.canonicalBytes,
-			expectedSha256: production.digestSha256,
-			approvedConfig: {
-				authorityRef: "SYNTHETIC-test-only-endpoint-authority",
-				endpoints: [
-					{ provider: "openrouter", baseUrl: "https://openrouter.ai/api/v1" },
-				],
-			},
-			evaluationTimeUtc: input.evaluationTimeUtc,
-			identities: input.requestedIdentities,
-			acceptedSource: production.acceptedSource,
-		},
+		policy,
+		catalogInput,
 		catalogSource: { status: "unknown" },
-		ownerContext: {
-			policyDigest: "a".repeat(64),
-			configDigest: "a".repeat(64),
-			evaluationTimeUtc: input.evaluationTimeUtc,
-			evidenceMode: "synthetic-offline",
-			episode: { status: "unknown" },
-			freshness: { status: "unknown" },
-			independence: { status: "unknown" },
-			budget: { status: "unknown" },
-			bindings: [],
-		},
+		ownerContext,
 	});
 	assert.equal(result.ok, true);
 	if (!result.ok) return;
@@ -320,6 +455,61 @@ test("retained producer evidence assembles six real rows and preserves synthetic
 		input.evaluationTimeUtc,
 	);
 	assert.equal(context.catalog.results.length, 6);
+	assert.deepEqual(context.projection.policy, policy);
+	const realCatalog = evaluateCatalogEligibility(catalogInput);
+	assert.equal(realCatalog.stage, "projector");
+	if (realCatalog.stage === "projector" && realCatalog.result.ok) {
+		assert.deepEqual(context.catalog.provenance, realCatalog.result.provenance);
+		assert.deepEqual(
+			context.catalog.results,
+			realCatalog.result.results.map((row) =>
+				row.outcome === "facts"
+					? {
+							provider: row.requested.provider,
+							providerModelId: row.requested.id,
+							outcome: "facts",
+							facts: row.facts,
+						}
+					: {
+							provider: row.requested.provider,
+							providerModelId: row.requested.id,
+							outcome: "refused",
+							codes: row.codes,
+						},
+			),
+		);
+	}
+	const refusalInput = {
+		...catalogInput,
+		approvedConfig: {
+			authorityRef: "retained-test-config-refusal",
+			endpoints: [
+				{ provider: "openrouter", baseUrl: "https://other.invalid/v1" },
+			],
+		},
+	};
+	const refusalCatalog = evaluateCatalogEligibility(refusalInput);
+	assert.equal(refusalCatalog.stage, "projector");
+	if (refusalCatalog.stage === "projector" && refusalCatalog.result.ok) {
+		const refusalAssembly = preparePmcOwnerContextV1({
+			policy,
+			catalogInput: refusalInput,
+			catalogSource: { status: "unknown" },
+			ownerContext,
+		});
+		assert.equal(refusalAssembly.ok, true);
+		if (refusalAssembly.ok) {
+			assert.deepEqual(
+				(refusalAssembly.context as AnyRecord).catalog.results,
+				refusalCatalog.result.results.map((row) => ({
+					provider: row.requested.provider,
+					providerModelId: row.requested.id,
+					outcome: "refused",
+					codes: row.outcome === "refused" ? row.codes : [],
+				})),
+			);
+		}
+	}
 });
 
 test("real adapter and resolver integration selects only with synthetic dynamic claims", () => {
@@ -357,8 +547,43 @@ test("retained producer bytes traverse the real bridge and resolver", () => {
 	if (decision.ok) {
 		assert.equal(decision.decision.authority, "selection-only");
 		assert.equal(decision.decision.provider, "openrouter");
-		assert.equal(decision.decision.providerModelId, retained.catalogInput.identities[0]!.id);
+		const firstIdentity = retained.catalogInput.identities[0];
+		assert.ok(firstIdentity);
+		assert.equal(decision.decision.providerModelId, firstIdentity.id);
 	}
+});
+
+test("retained producer incompleteness refuses early and adapter-valid subset reaches resolver coverage", () => {
+	const incomplete = producePublicObservationSnapshot(
+		retainedInput([...retainedIds, "anthropic/claude-haiku-4.5"]),
+		pins,
+	);
+	assert.equal(incomplete.ok, false);
+	if (!incomplete.ok) {
+		assert.equal(incomplete.code, "INCOMPLETE_SCOPE");
+		assert.equal(
+			incomplete.inventory.at(-1)?.code,
+			"REASONING_UNKNOWN_REFUSED",
+		);
+		assert.equal(
+			incomplete.sourceInventory.at(-1)?.code,
+			"REASONING_UNKNOWN_REFUSED",
+		);
+	}
+	const one = retainedResolverCase();
+	const subset = retainedResolverCase(retainedIds.slice(0, 1));
+	one.catalogInput = subset.catalogInput;
+	const assembled = preparePmcOwnerContextV1({
+		policy: one.policy,
+		catalogInput: one.catalogInput,
+		catalogSource: one.catalogSource,
+		ownerContext: one.ownerContext,
+	});
+	assert.equal(assembled.ok, true);
+	if (!assembled.ok) return;
+	const decision = resolvePmcRouteV1(one.request, assembled.context);
+	assert.equal(decision.ok, false);
+	if (!decision.ok) assert.equal(decision.code, "CONTEXT_BINDING_REFUSED");
 });
 
 test("P1b oracle consumes real RCM projector rows while its v0 evaluator stays fixture-only", () => {
@@ -442,7 +667,7 @@ test("P1b oracle consumes real RCM projector rows while its v0 evaluator stays f
 		},
 	};
 	const result = validateConsumerCompatibility(request, {
-		eligibilityOracle: (oracleRequest) => {
+		eligibilityOracle: (_oracleRequest) => {
 			const real = evaluateCatalogEligibility(catalogInput);
 			if (real.stage !== "projector" || !real.result.ok) return real;
 			const row = real.result.results[0];
@@ -466,7 +691,10 @@ test("P1b oracle consumes real RCM projector rows while its v0 evaluator stays f
 					},
 					results: [
 						{
-							requested: { provider: row.requested.provider, id: row.requested.id },
+							requested: {
+								provider: row.requested.provider,
+								id: row.requested.id,
+							},
 							outcome: "facts",
 							facts: {
 								provider: row.facts.provider,
@@ -485,11 +713,13 @@ test("P1b oracle consumes real RCM projector rows while its v0 evaluator stays f
 									row.facts.thinkingLevels.status === "declared"
 										? {
 												status: "declared",
-												levels: row.facts.thinkingLevels.levels.map((level: AnyRecord) => ({
-													level: level.level,
-													providerValue: level.providerValue,
-												})),
-										  }
+												levels: row.facts.thinkingLevels.levels.map(
+													(level: AnyRecord) => ({
+														level: level.level,
+														providerValue: level.providerValue,
+													}),
+												),
+											}
 										: { status: "unknown" },
 							},
 						},
@@ -526,16 +756,13 @@ test("P1b oracle consumes real RCM projector rows while its v0 evaluator stays f
 
 test("P1a, P1b, projection, selection, and permit-shaped values never substitute into owner slots", () => {
 	const baseline = refreshedOwnerContext();
+	const hro = actualHroSuccesses();
 	const base = {
 		policy: fixture.context.projection.policy,
 		catalogInput: baseline.catalog,
 		catalogSource: baseline.catalogSource,
 		ownerContext: baseline.ownerContext,
 	};
-	const p1a = validateProviderBindingPolicyV1(base.policy);
-	assert.equal(p1a.valid, true);
-	const p1b = projectProviderBindingsV1(base.policy);
-	assert.equal(p1b.ok, true);
 	const projection = {
 		schemaVersion: "pmc-provider-binding-projection/v1",
 		evidenceOnly: true,
@@ -551,13 +778,29 @@ test("P1a, P1b, projection, selection, and permit-shaped values never substitute
 		authority: "selection-only",
 		launch: true,
 	};
-	const substitutions = [p1a, p1b, projection, selection, permit];
-	for (const slot of ["policy", "catalogInput", "catalogSource", "ownerContext"] as const) {
+	const substitutions = [
+		hro.mapping,
+		hro.compatibility,
+		projection,
+		selection,
+		permit,
+	];
+	for (const slot of [
+		"policy",
+		"catalogInput",
+		"catalogSource",
+		"ownerContext",
+	] as const) {
 		for (const value of substitutions) {
 			const candidate = { ...base, [slot]: value };
 			const result = preparePmcOwnerContextV1(candidate);
-			const selected = result.ok && resolvePmcRouteV1(fixture.request, result.context).ok;
-			assert.equal(selected, false, `${slot} accepted a substitution as a selection`);
+			const selected =
+				result.ok && resolvePmcRouteV1(fixture.request, result.context).ok;
+			assert.equal(
+				selected,
+				false,
+				`${slot} accepted a substitution as a selection`,
+			);
 		}
 	}
 });
