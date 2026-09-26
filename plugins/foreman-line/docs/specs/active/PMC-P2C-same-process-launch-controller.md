@@ -227,7 +227,7 @@ that fence. No task callback runs inside this section.
 
 ### Ratified separate owner prerequisite and proof composition
 
-[PMC-P2B1](PMC-P2B1-durable-intent-custody.md) is the sole proposed owner of
+[PMC-P2B1](../done/PMC-P2B1-durable-intent-custody.md) is the sole proposed owner of
 persistent business-intent custody and IntentOwnerV1. V8 resolves the separate
 owner choice; its draft still needs independent review and implementation. P2B's
 metadata/budget_scopes/attempts and existing five operations remain unchanged.
@@ -471,7 +471,7 @@ activation; HRO implementation; public mint/test mode.
 
 - [Amendment 05](../../goals/pi-model-configuration/gate-1-amendment-05.md)
 - [Composition/source notes](../../goals/pi-model-configuration/pmc-p2c-composition-notes.md)
-- [P2B1 durable owner](PMC-P2B1-durable-intent-custody.md)
+- [P2B1 durable owner](../done/PMC-P2B1-durable-intent-custody.md)
 - [P2A](../done/PMC-P2A-owner-resolver.md), [P2B](../done/PMC-P2B-durable-budget-ledger.md)
 - [P2 inventory](../../goals/pi-model-configuration/pmc-p2-design-inventory.md)
 - [P2D](PMC-P2D-openrouter-terminal-transport.md), [P2E](PMC-P2E-config-caller-migration.md)

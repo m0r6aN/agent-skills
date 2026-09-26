@@ -6,7 +6,7 @@
 this file and [P2C draft](../../specs/active/PMC-P2C-same-process-launch-controller.md).
 That was the initial two-file shaping envelope. After V8, coordinator released
 exactly three documents at `6446cbfff1817cc149df5a6ab491188aaffdeab1`: this file,
-P2C and the new [B1 draft](../../specs/active/PMC-P2B1-durable-intent-custody.md).
+P2C and the new [accepted B1 contract](../../specs/done/PMC-P2B1-durable-intent-custody.md).
 No build, activation or caller migration is authorized. R1/R2 decisions are now
 ratified; concrete B1 review and implementation remain outstanding.
 
