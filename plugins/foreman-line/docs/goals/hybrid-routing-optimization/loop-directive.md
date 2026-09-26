@@ -125,3 +125,39 @@ D:/Repos/agent-skills-worktrees/hro-p1c-shaping-20260926, exact four-file envelo
 inspect/restate/STOP, then explicit coordinator release. Its default cwd is read-only.
 No new user-owned task or competing coordinator loop was created. Root task
 01a0ddb6-5fed-7d82-b2f0-075315440dc1 retains all reviews, integration and release.
+## Coordinated continuation checkpoint — 2026-09-26, after PR63
+
+This checkpoint supersedes earlier continuation status without erasing history.
+PMC-P2B1 mergedPR63 as727c0554f11990da778e7647e7a108f3ca6f95aa at19:48:53Z,
+with two source, two audit and separate combined approvals plus all twelve remote
+checks green. StageF60e7c15 moves its spec to done. C design5764eba has two
+independent approvals, ratificationd260bf6 and fresh builder Step0; controller
+implementation releasedc55bd6d in its isolated worktree, exact five-file envelope.
+E/E1/E2 splitfe5a144 has two design approvals; E01–04 ratified7375c3b. Frontier
+E1 builder releasedb1b0add for explicit legacy executor retirement only, exact
+eight-file envelope. E2 and D runtime remain unreleased pending predecessors.
+
+Choice-cache dispositione5ae1c3 received two independent plan approvals and
+reproducibility replays. Charter reconciliation6d2d859 separately reviewed and
+approved; the specific SQLite choice cache is held/not implemented. Initial fresh
+selection and schema compilation reuse remain distinct, with zero choice-cache
+events. D8 negative caching and bounded refresh remain mandatory. Full latency/
+cost/quality and live smoke requirements are unchanged; no savings claimed.
+
+P1cb17f5b2 was held after independent discovery of double-charged ordinary alias
+roots and incomplete independent boundary assertions. Roottriage73fa8af and actual
+Luna Step0 preceded the current third narrow repair release. Prior HRO-token,
+producer/refusal, byte-budget and lint findings are closed; fresh final reviews
+still required. Same user-selected Luna, no silent model switch or goal completion.
+
+P3 receipt shapingaad7e77 found existing dispatch-tip and later fixed-sequence
+constraints; bounded workflow-session/measurement checkpoint design is being
+reconciled with actual D/E/F owners. A crash remains incomplete evidence, never
+zero spend. P4a recovery shaping is independently queued. All source work remains
+isolated; the original checkout is read-only. The user's blanket authority and
+explicit PMC/RCM prerequisite delegation continue to govern coordination.
+
+The live billing-bound evidence question is still pending. Prepared inquiryd98e176
+has not been sent. No provider inference, credentials, production funding, host
+configuration or release has occurred. Continue independent implementation while
+that external evidence is unresolved; do not report the full HRO goal complete.
