@@ -230,3 +230,37 @@ Live billing-bound evidence remains pending; prepared inquiry has not been sent.
 No provider inference, credential/configuration activity, fabricated telemetry or
 savings claim. Continue authorized independent work while the external evidence
 is unresolved. Original dirty checkout remains read-only.
+
+## PMC-P2C Stage F — 2026-09-26
+
+PR66 https://github.com/m0r6aN/agent-skills/pull/66 merged at21:45:21Z as
+ced19f9913079fd3dd7eff5a281d27ea2055a2e0 after all twelve remote checks succeeded
+on exact reviewed head6ac7e3c71581c316be15be650c6782b51da37bcb. Two independent
+source approvals cover93f8021; two reader/audit approvals cover57b7058; independent
+combined approval coversb704d87. Combined dispatch473, routing944, hybrid53,
+mutation44, readers72 and focused audit17 pass, with applicable typechecks/lints.
+Actual D19 passes21 packages/201 files with zero unruled instances. Full637
+verification evidence remains scoped to0eae3a1, before the test-only follow-up;
+this closure does not claim a fresh full-suite rerun.
+
+The C specification moves to done and the current inventory link follows it.
+The one-use controller and Contract B reader enrollment are accepted prerequisites.
+This does not supply production installation, tariff/all-components billing bounds,
+account authority, live Pi transport or measured HRO exit evidence. D runtime is
+released under amended design8a2a322 and root releasee56b756. E2 remains separate.
+P3A offline runtime, N materialization and P4A1 durable admission are released to
+builders; P publisher construction is being amended before implementation.
+No inference, credential read, production budget or host configuration change
+occurred. User delegation covers the necessary PMC/RCM prerequisite decisions.
+## RCM N integration checkpoint — 2026-09-26
+
+N materialization final runtime3a976f0 has two independent approvals after fixing
+combined structured capture accounting. Test-only escape correctiona257e50 has
+separate root review. Combinede67bb1f is independently approved:964 routing,
+53 hybrid,473 dispatch,72 readers,44 mutation,168 focused N and applicable
+checks pass (exact run scopes in hro-rcm-materializer-verification.md).
+P construction773daa5 has two design approvals and ratification7c10eee; no P
+runtime release yet. P3A8a76e738 and P4A193f54bd received independent change
+requests; explicit repairs34071db and8a64539 are active with Luna. D transport
+implementation remains active. Production custody, billing bound and full live
+measurement remain open; no inference/credentials/host configuration activity.

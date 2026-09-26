@@ -500,3 +500,25 @@ C source93f8021 has two final approvals; reader/audit enrollment is released3432
 D actual Step0 exposed four bounded contract corrections under review; E2 and
 production prerequisites remain gated. No provider call, credential read or host
 configuration change occurred. User delegation still governs prerequisite work.
+
+## PMC-P2C Stage F — 2026-09-26
+
+PR66 https://github.com/m0r6aN/agent-skills/pull/66 merged at21:45:21Z as
+ced19f9913079fd3dd7eff5a281d27ea2055a2e0 after all twelve remote checks succeeded
+on exact reviewed head6ac7e3c71581c316be15be650c6782b51da37bcb. Two independent
+source approvals cover93f8021; two reader/audit approvals cover57b7058; independent
+combined approval coversb704d87. Combined dispatch473, routing944, hybrid53,
+mutation44, readers72 and focused audit17 pass, with applicable typechecks/lints.
+Actual D19 passes21 packages/201 files with zero unruled instances. Full637
+verification evidence remains scoped to0eae3a1, before the test-only follow-up;
+this closure does not claim a fresh full-suite rerun.
+
+The C specification moves to done and the current inventory link follows it.
+The one-use controller and Contract B reader enrollment are accepted prerequisites.
+This does not supply production installation, tariff/all-components billing bounds,
+account authority, live Pi transport or measured HRO exit evidence. D runtime is
+released under amended design8a2a322 and root releasee56b756. E2 remains separate.
+P3A offline runtime, N materialization and P4A1 durable admission are released to
+builders; P publisher construction is being amended before implementation.
+No inference, credential read, production budget or host configuration change
+occurred. User delegation covers the necessary PMC/RCM prerequisite decisions.
