@@ -122,7 +122,7 @@ provider calls/spend and HRO implementation.
 
 - [P2 design inventory](../../goals/pi-model-configuration/pmc-p2-design-inventory.md)
 - [Accepted Amendment 05](../../goals/pi-model-configuration/gate-1-amendment-05.md)
-- [PMC-P1a](PMC-P1a-provider-binding-contract.md), [PMC-P1b](PMC-P1b-provider-binding-projection.md)
+- [PMC-P1a](../done/PMC-P1a-provider-binding-contract.md), [PMC-P1b](PMC-P1b-provider-binding-projection.md)
 - [Ratified map](../../goals/pi-model-configuration/pmc-p0-role-lane-map.md)
 - [Rubric](../../goals/pi-model-configuration/pmc-p0-suitability-rubric.md)
 

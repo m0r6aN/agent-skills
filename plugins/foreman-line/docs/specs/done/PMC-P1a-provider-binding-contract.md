@@ -1,7 +1,7 @@
 ---
 ticket: PMC-P1A
 title: Provider-neutral binding contract schema and validation
-status: active
+status: done
 owner: clinton.morgan
 created: 2026-09-26
 updated: 2026-09-26

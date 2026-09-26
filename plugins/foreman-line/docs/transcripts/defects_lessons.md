@@ -145,3 +145,37 @@ lint should match on the paired key too (PMC-P0).
 Reconciliation retained the reviewed P0-derived Opus 5 fixture while main policy correctly names Opus 5.5. Replacing historical evidence to match current policy would falsify provenance. Integration review confirmed source/test identity and all399 tests.
 
 **Disposition:** installed in the bounded RCM integration handoff and review mandate; no general policy rule or automatic identifier rewrite is added.
+
+## HRO-P1a integration — package CI and audit enrollment are separate
+
+Adding a package to the CI runner did not enroll it in D19's independent
+ratified-package allowlist. Full combined CI exposed the omission through the
+existing mutation-scope audit test. The correction added only the ratified
+package name; no waiver or weakened test was needed. Future package additions
+must inspect both lists rather than equating their counts (D19 also includes Jev).
+
+**Disposition:** scoped A2 ratification, one-line registration, independent audit
+review and corrected full green CI recorded in HRO-P1a's review triage. Resource
+boundaries are likewise tested before forbidden enumeration/descriptor reads,
+not merely by eventual refusal after unbounded work.
+
+## PMC-P1a boundaries — count values, not skipped array metadata
+
+Counting an array's length property against the visited-value ceiling caused
+exact-limit valid policies to refuse depending on object insertion order.
+The repaired validator counts actual children and accepts the inclusive limit
+in either order. Boundary evidence must distinguish array elements from total
+visited values, including the root.
+
+**Disposition:** permanent regression and two independent schema-valid exact-limit
+probes; corrected handoff terminology and unchanged seven legacy schemas recorded
+in PMC-P1a acceptance. Static conformance still establishes no live authority.
+
+## RCM-P1A — classify hostile failures without inspecting them
+
+An arbitrary thrown proxy can throw again during instanceof or property reads.
+Identify internally created refusals by private identity, and treat all other
+thrown values as opaque. Memoize completed caller-object captures separately
+from active-cycle detection, while charging expanded owned aliases against every
+resource budget. Two independent final reviews verified these repairs and exact
+limits; combined integration retained both PMC and RCM public exports.

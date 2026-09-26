@@ -296,7 +296,7 @@ fallback, receipts, cache, merge/release, and full HRO completion.
 - plugins/foreman-line/docs/goals/routing-currency-and-merit/source-evidence/openrouter-rcm-v1-conservative-projection-20260926.json
 
 - plugins/foreman-line/docs/goals/routing-currency-and-merit/source-observation-amendment-20260926.md
-- plugins/foreman-line/docs/specs/active/RCM-P1A-sanitized-snapshot-adapter.md
+- plugins/foreman-line/docs/specs/done/RCM-P1A-sanitized-snapshot-adapter.md
 - plugins/foreman-line/docs/goals/routing-currency-and-merit/source-evidence/public-metadata-observation-20260926.json
 
 ## Verification Plan

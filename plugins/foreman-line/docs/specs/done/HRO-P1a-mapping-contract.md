@@ -1,7 +1,7 @@
 ---
 ticket: HRO-P1A
 title: Isolated mapping proposal validator and static conformance fixtures
-status: active
+status: done
 owner: clinton.morgan
 created: 2026-09-26
 updated: 2026-09-26
@@ -12,6 +12,7 @@ surfaces:
   - scripts/
   - .github/workflows/foreman-line-ci.yml
   - plugins/foreman-line/hybrid-routing/
+  - plugins/foreman-line/verification/src/ratified-packages.ts
   - plugins/foreman-line/docs/goals/hybrid-routing-optimization/
 routing_class: architecture/risk
 permission_profile: builder-architecture

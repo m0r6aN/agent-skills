@@ -5,6 +5,7 @@
  *  - Every canonical sample (typed against `types.ts`) validates against its schema.
  */
 import assert from 'node:assert/strict'
+import { readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { test } from 'node:test'
 import { fileURLToPath } from 'node:url'
@@ -13,6 +14,12 @@ import {
   registerNoDriftTests,
   registerSampleValidationTests,
 } from '../../schema-scaffold/src/test-scaffold.js'
+import {
+  type ProviderBindingPolicyV1,
+  type ProviderBindingProjectionV1,
+  projectProviderBindingsV1,
+  validateProviderBindingPolicyV1,
+} from '../src/index.js'
 import { allSchemaFiles } from '../src/registry.js'
 import { shadowRouteSchema } from '../src/schemas.js'
 import {
@@ -27,6 +34,20 @@ import {
 import type { ShadowRoute } from '../src/types.js'
 
 const schemasDir = join(dirname(fileURLToPath(import.meta.url)), '..', 'schemas')
+const pmcResult = validateProviderBindingPolicyV1(
+  JSON.parse(
+    readFileSync(
+      new URL('./fixtures/pmc-provider-binding-policy-v1.json', import.meta.url),
+      'utf8',
+    ),
+  ),
+)
+assert.equal(pmcResult.valid, true)
+if (!pmcResult.valid) throw new Error('Invalid PMC parity sample')
+const sampleProviderBindingPolicy: ProviderBindingPolicyV1 = pmcResult.value
+const projectionResult = projectProviderBindingsV1(sampleProviderBindingPolicy)
+assert.ok(projectionResult.ok)
+const sampleProviderBindingProjection: ProviderBindingProjectionV1 = projectionResult.projection
 
 const samplesByName: ReadonlyMap<string, unknown> = new Map<string, unknown>([
   ['routing-policy', sampleRoutingPolicy],
@@ -36,13 +57,15 @@ const samplesByName: ReadonlyMap<string, unknown> = new Map<string, unknown>([
   ['role-assignment', sampleRoleAssignment],
   ['shadow-route', sampleShadowRoute],
   ['pi-openrouter-routing', samplePiOpenRouterRouting],
+  ['provider-binding-policy-v1', sampleProviderBindingPolicy],
+  ['provider-binding-projection-v1', sampleProviderBindingProjection],
 ])
 
 registerNoDriftTests(allSchemaFiles, schemasDir)
 registerSampleValidationTests(allSchemaFiles, samplesByName)
 
 test('every exported routing-policy type has a committed schema file', () => {
-  assert.equal(allSchemaFiles.length, 7)
+  assert.equal(allSchemaFiles.length, 9)
 })
 
 test('shadow prohibited_roles type and schema accept either exact role order', () => {
