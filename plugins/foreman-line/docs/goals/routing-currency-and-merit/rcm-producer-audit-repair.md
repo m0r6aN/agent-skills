@@ -25,4 +25,53 @@ Builder Step 0 inspected exact head 114efab and spec blob
 direct top-level validateBindings function, direct check expression statement,
 sole argument the existing conjunction, exact strict baseline.file comparison
 and baseline.table AC2 guard. Exception count must remain exactly one, including
-absence/duplicate rejection. Implementation and independent reviews are pending.
+absence/duplicate rejection. Implementation evidence follows; independent reviews
+remain pending.
+
+## Builder implementation and verification
+
+Builder resumed at clean af9b0d780140ecf98aa86ebc129f2853a1329585 with the
+same frozen spec. Only the three amendment-authorized files changed. The producer,
+retained evidence, schemas, public exports and package manifests/locks are unchanged.
+
+The audit now recognizes only a direct string literal at the approved source path:
+the right operand of strict baseline.file equality, that equality the left operand
+of the conjunction with strict baseline.table equality to literal AC2, the sole
+argument of the direct check call, and a direct expression statement in the body
+of the direct top-level validateBindings function declaration. No parenthesis,
+template, indirect value, member call, alternative property or nested statement
+enrolls. The literal value is pinned. An unconditional reconciliation requires the
+file and exactly one accepted site. The report prints the count, source location
+and DATA ruling. Existing mechanisms and inventories retain their previous rules.
+
+Permanent tests invoke the actual target audit subprocess on temporary copies of
+all ratified packages, excluding dependencies, tests and build output. Each negative
+case is independently restored from the accepted producer source; no production
+file is rewritten during testing. The matrix covers missing/changed/duplicate
+sites, wrong function and nesting, declaration versus statement, receiver/property,
+element access, strict operator, callee/member call, argument count, conjunction,
+companion guard, indirection/template spelling, adjacent literal, filesystem-call
+argument, wrong file and missing file. Controls also show the existing registry
+pin and another audit class remain enforced.
+
+RED on the original audit: 22 counted tests, 18 pass and 4 fail (three failing
+children plus their parent): accepted source still failed, while deleting the
+site or file incorrectly passed. First GREEN: 22/22. Expanded matrix: 27/27.
+Verification full suite: 180/180; mutation-scope-guard existing suite: 32/32,
+including the actual D19 subprocess on the integration tree. Verification
+typecheck and lint pass on Node v24.19.0. A final test-only refinement wraps only
+the validation function for the module-nesting negative fixture, keeping valid
+TypeScript syntax; the focused 27-test matrix and typecheck/lint were rerun.
+No full local twenty-package pipeline was started. Full remote CI and two
+independent reviews remain coordinator gates; this record does not claim them.
+
+Missing sibling dependencies were prepared without manifest/lock changes:
+matching-lock read-only junctions for contracts, foreman-config and
+mutation-scope-guard use hro-coordination-20260926; permission-profiles, projection,
+receipts, shaping and skill-injection use hro-pmc-p1b-20260926. Every target was
+absent before junction creation and each corresponding package-lock SHA-256 was
+compared. Registration had no installed matching donor and used existing-lock
+offline npm ci with ignore-scripts/no-audit/no-fund (102 packages). An initial
+verification typecheck/full-suite attempt exposed those missing dependencies;
+all final reported checks ran after their preparation. No shared dependency tree
+was installed into or mutated.
