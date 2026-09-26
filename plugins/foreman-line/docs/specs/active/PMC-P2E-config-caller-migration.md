@@ -43,24 +43,24 @@ but its real composition acceptance cannot substitute stub controllers/stores fo
 accepted predecessors. No new tasks or parallel builders are dispatched by this
 record. Each child needs fresh base reconciliation, Step 0 and explicit Gate 2.
 
-### Root decisions required, not yet ratified
+### Root decisions ratified — 2026-09-26
 
-- **E-01 (recommended):** retire ALL `executeShadowRoute` adapter execution, not
+- **E-01 (ratified):** retire ALL `executeShadowRoute` adapter execution, not
   merely L6. Its public-only candidate analysis is useful but lacks the PMC
   intent/budget/terminal composition. Preserve its pure hash helper, types,
   declarations and v0 selector. The old shadow contract's candidate/skip receipts
-  cease; root must accept this cross-owner behavior loss before release.
-- **E-02 (recommended):** retire `executeDecision` and the direct Jev smoke.
+  cease; the delegated coordinator accepts this cross-owner behavior loss under the user-authorized prerequisite scope.
+- **E-02 (ratified):** retire `executeDecision` and the direct Jev smoke.
   No compatibility flag or synthetic credential escape. Pure Jev validators,
   replay and consumer logic stay. The offline lab source stays untouched, but its
   relocated dry-run simulation calls the retired API and will no longer produce
-  its former success result. Root must acknowledge that dependency impact and
+  its former success result. The delegated coordinator acknowledges that dependency impact and will
   assign any later lab adaptation separately; it is not a network bypass.
-- **E-03 (recommended):** introduce E2's explicit source CLI, not an npm bin,
+- **E-03 (ratified):** introduce E2's explicit source CLI, not an npm bin,
   public factory or automatic approval-cli send. Initial shipped production
   bootstrap refuses; exercising that command proves a user entry exists, not
   that paid inference works. No runtime constructor is added to the barrel.
-- **E-04 (recommended):** the config plan remains a non-executable disabled
+- **E-04 (ratified):** the config plan remains a non-executable disabled
   review artifact with empty apply/rollback patches. Authenticated origin setup,
   actual production acquisition and all-component billing proof remain separate
   release prerequisites; no generic JSON-to-authority loader is supplied.

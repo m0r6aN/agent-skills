@@ -58,7 +58,7 @@ One-time source pins (Git blobs, not permanent moving-base assertions):
 
 The [parent](../../specs/active/PMC-P2E-config-caller-migration.md) records root
 E-01/E-02 retirement decisions and E-03/E-04 command/plan choices. Recommendations
-are not yet ratified. The coordinator directed continued drafting and explicitly
+were ratified by the delegated coordinator after two independent full-split approvals at fe5a144dbd5518ad74e97ecd9d6f19ddb0056c8f. The coordinator explicitly
 kept pure v0/validation/declarations/offline lab unchanged; no runtime release.
 
 [E1](../../specs/active/PMC-P2E1-legacy-inference-disposition.md) replaces the three
@@ -106,7 +106,7 @@ plugins/foreman-line/spec-linter directory, the exact command form was
 for E, E1 and E2; every native exit was 0. No dependencies were installed or edited.
 The required-body/link pass was a read-only PowerShell check, not a gate grant.
 
-Handoff: frozen local documentation commit only. Root retains E-01..E-04,
+Handoff: reviewed design and E-01..E-04 ratification only. Root retains
 independent design review, fresh-base/constructor reconciliation and every runtime
 release. Current narrow shape supplies no source approvals, no production
 installation and no replacement claim for full HRO live acceptance.
