@@ -638,3 +638,32 @@ credential read, new dependency outside the frozen set or predecessor edit.
 C reader/audit/main acceptance remains a shipping gate. Freeze a clean source/report
 handoff after focused and appropriate regression/typecheck/lint checks; two source
 reviews, combined checks and remote CI still precede merge or activation.
+
+### Reassigned completion release — 2026-09-26
+
+The separate PMC app task's latest user instruction limits it to a draft response;
+that scope is honored. Under the HRO user's explicit prerequisite-completion
+and blanket decision authority, root reassigns this unfinished nine-file parcel
+to frontier D inside HRO. Existing eight in-progress paths are preserved, not
+reset or treated as accepted source. D's genuine read-only Step0 ate56b756 found
+all35 local inspection hashes matching, actual direct/nested Pi0.87.1 directories,
+old lock entries/versions/integrities preserved, and53 parser/sender tests passing.
+Typecheck currently fails on missing composition/profile exports; the Pi port is
+only a production-refusal stub and the verification report does not yet exist.
+
+Root explicitly releases completion in the same nine-file envelope above. Existing
+spec, custody, nominal Pi types, bounds and no-live restrictions remain. Complete
+the real private Pi rendezvous and actual guarded Pi/C/B1/ledger composition,
+including stop/known and unknown truncation, no-send, replay, failure and cleanup.
+The seed test's missing exported offline composer/makeSender shape is not an
+approved runtime API: replace that unfinished assumption with the reviewed
+installation-private statically owned sender and test-only guarded native-boundary
+substitution. No shipped generic fake sender/factory, mode flag or structural Pi
+class substitution. No other source/package change is authorized.
+
+Existing installation execution provenance is reported as prior builder evidence;
+D's direct hash/directory/lock checks are independent evidence of the resulting
+packages, not a claim that contents prove install flags. Do not reinstall or touch
+global packages/credentials/configuration. Run genuine missing-case RED/GREEN,
+full affected checks, freeze the exact nine-file source/report commit and STOP
+for root plus another independent frontier review. No push/merge/provider call.
