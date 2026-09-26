@@ -558,6 +558,252 @@ independently. Retained producer canonical bytes, historical artifacts and publi
 API behavior must remain unchanged. Tests and report distinguish synthetic raw
 fixture conformance from actual endpoint compatibility or authenticated acquisition.
 
+### Checkpoint P construction amendment — offline implementation boundary
+
+Root accepted the genuine read-only P Step0 at
+c96569e9b8695a4cdfb120110f95cc45f582bde2 and released only this spec and its
+existing shaping notes to freeze construction. No P implementation is released.
+The following closes missing constructor/scope/runtime signatures; it preserves
+all existing Refresh/Read/Cancel unions, four-slot accounting, shared generation
+CAS, cancellation ordering and ORIGINAL transport-promise cleanup protocol.
+
+The production factory is deliberately unavailable in this checkpoint:
+
+```ts
+function createProductionCatalogPublicationOwnerV1(input:unknown):
+  {ok:false;code:'INSTALLATION_REFUSED'};
+
+type OfflinePublicationInputV1 = {
+  domain:'offline-fixture/v1'; fixtureId:string;
+  workflowId:string; generationId:string;
+  scopes:readonly {
+    scopeId:string; trustScopeId:string;
+    requestedIdentities:readonly Identity[]; policyExpiresAtUtc:string;
+  }[];
+};
+type ClockReadingV1 = {utc:string;monoMs:number};
+type OfflinePublicationRuntimeV1 = {
+  readClock:()=>unknown;
+  scheduleWake:(delayMs:number,wake:()=>void)=>unknown;
+  clearWake:(timer:object)=>unknown;
+  requestDriver:OfflineMetadataDriverV1;
+};
+type ScopeRegistrationV1 = {scopeId:string};
+type ScopeRegistrationResultV1 =
+  | {ok:true;scope:object}
+  | {ok:false;code:'INPUT_REFUSED'|'CAPACITY_REFUSED'|'INSTALLATION_REFUSED'};
+type CatalogPublicationOwnerV1 = {
+  domain:'offline-fixture/v1';
+  registerCatalogScopeV1:(input:unknown)=>ScopeRegistrationResultV1;
+  registerRefreshOperationV1:(input:unknown)=>OperationRegistrationResult;
+  requestCatalogRefreshV1:(input:unknown)=>Promise<RefreshResult>;
+  cancelRefreshOperationV1:(input:unknown)=>CancelResult;
+  acquirePublishedCatalogV1:(input:unknown)=>CatalogRead;
+  verifyAbsenceV1:(input:unknown)=>AbsenceRead;
+};
+function createOfflineCatalogPublicationOwnerV1(input:unknown,runtime:unknown):
+  | {ok:true;owner:CatalogPublicationOwnerV1}
+  | {ok:false;code:'INPUT_REFUSED'|'INSTALLATION_REFUSED'};
+```
+
+Production returns the stated refusal unconditionally, without reading even a
+hostile input, clock, environment, admission object or transport. No mode switch,
+generic public factory or production issuer accepting offline callbacks exists.
+The private module exports these named factories/types only for reviewed internal
+composition/tests; no dispatch barrel change. Domain on the offline owner is a
+label, not its authority: actual private registry membership establishes custody,
+and another owner/consumer may not authenticate it from the label or matching JSON.
+Offline fixture publication exercises mechanics, not operational workflow admission,
+production profile acceptance or a restartable preparation budget. No P4A broker
+or production C installation may be bootstrapped from it.
+
+Construction captures the closed ordinary input and closed runtime's own enumerable
+method descriptors once. No accessors, symbols, extras, thenables or caller-selected
+module/URL/profile are accepted. Never freeze caller functions, timer objects or
+capabilities. Runtime and low-level driver are an explicit offline TCB, not a
+sandbox for arbitrary callback code; their ordinary returns/events remain unknown
+until bounded validation. Node native clocks/timers and the statically imported
+HTTPS request function are the only proposed future production implementations.
+No callback supplied to the offline factory can be promoted to that production path.
+
+fixtureId is 1..64 ASCII letters/digits/hyphens. workflowId, generationId, scopeId
+and trustScopeId are nonempty 1..128 ASCII letters/digits/dot/underscore/colon/hyphen.
+Scopes number 1..128 with unique scopeId. Each identity list is 1..256 unique
+OpenRouter identities under N's existing exact identity rules; require canonical
+provider/id lexical order rather than silently sorting caller input. Different
+scopeIds may intentionally have equal identities and trustScopeId; they still get
+distinct scope capabilities. All ordinary construction/registration data retain
+depth16,262144 expanded values,4096 UTF-8 bytes per string and1MiB aggregate string
+bounds; opaque trusted runtime/capability objects are not traversed as ordinary data.
+
+The constructor retains every scope declaration immutably before any scope can be
+registered. The installation fixes endpoint/profile/domain to the reviewed constants;
+input cannot supply alternatives. registerCatalogScopeV1 accepts only {scopeId},
+selects that exact captured declaration and creates one frozen empty identity.
+Unknown or already-registered scopeId returns INPUT_REFUSED; no replacement,
+extension, deregistration or scope eviction exists. Initial generation is zero.
+Scope capacity is never shared by equal labels or arrays. Registration methods are
+retained by trusted offline installation, not handed to task payloads. Operation
+registration still requires the issued scope identity and its existing closed input.
+A failed construction or scope registration issues no capability and starts no I/O.
+
+Clock returns are exactly ClockReadingV1. utc and policyExpiresAtUtc are canonical
+UTC millisecond strings (YYYY-MM-DDTHH:mm:ss.sssZ), valid by round-trip date check.
+monoMs and operation deadlineMonoMs are finite, nonnegative and
+<=Number.MAX_SAFE_INTEGER; fractions are allowed. Effective operation deadlines
+retain the existing min(requested, registration time +10000ms) bound and must be
+strictly after registration time before allocation.
+Owner clock readings must not decrease in either UTC milliseconds or monotonic time.
+Unknown, malformed, throwing or backward readings refuse INSTALLATION_REFUSED.
+Construction requires every policy expiry strictly after the captured current UTC.
+Subsequent registration/refresh/read verifies the same immutable profile and relevant
+scope expiry; expiration cannot be repaired by editing a caller record. Publication
+validUntilUtc is min(policy expiry, complete receipt UTC +24h for catalog/+30s for
+absence). UTC receipt ordering is request start <=complete receipt <=evaluation;
+provider dates and publication time never replace these captured times. Acquire/
+verify refuse EXPIRED at or after validUntilUtc or policy expiry. Trusted clock
+reads are allowed synchronously there; no task callback, await, fetch or refresh is.
+
+scheduleWake receives a finite delay in0..10000ms and the owner's bound wake closure,
+returning exactly {timer:object}; timer identity is opaque. clearWake receives that
+same timer and must return undefined. Capture these functions once; catch all throws
+without inspecting thrown values. A wake can only recheck the captured operation's
+clock/deadline/latch, never extend it or select another operation. Record operation
+ownership before scheduling so synchronous/reentrant fixture callbacks cannot race
+unregistered state. A timer failure maps INSTALLATION_REFUSED and latches refusal;
+if I/O might exist, keep capacity until the original transport acknowledges cleanup.
+Native production scheduling is not replaceable by fixture functions. Cleared or
+late wakeups are harmless under the existing terminal/weak-identity rules.
+After a terminal outcome is fixed, including acknowledged CAS, timer-clear failure
+cannot rewrite it or roll publication back. Late wakeups first check terminal state
+without reading a clock. Slot release still follows actual transport cleanup, not
+timer-clear success or failure.
+
+### Shared fixed transport and closed offline driver
+
+This is the only low-level test seam; no injected fetch, readMetadata success
+record, materializer, source verifier or independently resolved cleanup promise.
+The actual transport state machine receives the following finite interface:
+
+```ts
+type FixedMetadataRequestV1 = {
+  method:'GET';url:'https://openrouter.ai/api/v1/models';
+  headers:{Accept:'application/json';'Accept-Encoding':'identity'};
+  agent:false;rejectUnauthorized:true;maxHeaderSize:16384;
+};
+type MetadataResponseHeadV1 = {statusCode:number;rawHeaders:readonly string[]};
+type MetadataEventsV1 = {
+  socketAssigned:()=>void;
+  response:(head:unknown)=>void;
+  data:(chunk:unknown)=>void;
+  responseEnded:()=>void;
+  responseClosed:()=>void;
+  requestClosed:()=>void;
+  socketClosed:()=>void;
+  error:()=>void;
+};
+type MetadataRequestControlV1 = {end:()=>unknown;destroy:()=>unknown};
+type OfflineMetadataDriverV1 = {
+  open:(request:FixedMetadataRequestV1,events:MetadataEventsV1)=>unknown;
+};
+```
+
+open returns exactly MetadataRequestControlV1 with captured callable own data
+methods; end/destroy must return undefined. Shared code constructs the fixed request
+record internally, calls open at most once and end at most once, and owns destruction.
+It installs callbacks before start and tolerates synchronous/reentrant fixture
+events. Fixture closures never receive publisher maps, publication capabilities or
+materialization authority. The production bridge, when separately enabled, statically
+binds actual node:https and translates its owned ClientRequest/IncomingMessage/socket
+events into this same finite interface. It maps response aborted/error to error
+and requires actual IncomingMessage.complete before emitting responseEnded; owned
+request/socket/response close events supply their corresponding acknowledgements.
+Destroy covers all owned request/response/socket resources and is never itself an
+acknowledgement. It does not cast fixture objects as Node
+instances. No TLS/socket connection is made in this checkpoint's tests. Tests prove
+the shared parser/event path, not TLS, DNS, live compatibility or production custody.
+
+Production request construction uses agent:false (no shared pool/warming/reuse),
+TLS verification and maxHeaderSize16384. No custom lookup, proxy/environment routing,
+credential, query, body, redirect, fallback or retry is accepted. The two explicit
+headers above are fixed; Node's necessary protocol-generated Host/Connection headers
+are not caller authority. All received header data are bounded before copying:
+rawHeaders is an even dense array of at most256 name/value pairs; each string and
+the sum of UTF-8 name/value bytes plus four separator bytes per pair are <=16384.
+Native parser maxHeaderSize also enforces the16KiB wire-header bound. The retained
+header budget is a conservative secondary bound, not a claim that reconstructed
+rawHeaders reproduce wire whitespace or status-line bytes exactly.
+
+Names must be HTTP token text; values refuse CR/LF/NUL/control characters except
+horizontal tab. Duplicate Content-Type, Content-Encoding or Content-Length refuses.
+Content-Type is required: application/json with optional sole charset=utf-8 parameter
+(case-insensitive tokens, surrounding HTTP whitespace permitted). Content-Encoding
+must be absent or identity; absence denotes HTTP identity encoding, not a model fact
+default. Content-Length, if present, is an unsigned decimal <=8MiB and must equal
+captured body bytes at end; it never proves response/domain completeness. Other
+bounded headers are informational and discarded. Non-200, redirects, malformed
+headers or excess bounds latch transport refusal and destroy owned I/O.
+
+Chunks must be genuine fixed, nonshared/nonresizable Uint8Array byte views, copied
+without caller iteration. Charge the8MiB aggregate before retaining each chunk.
+Fatal UTF-8 decoding is required; N remains the sole raw JSON/profile materializer,
+including duplicate-key and full-coverage checks. Header/framing/UTF-8 parser
+failures belong to transport; N JSON/profile refusal follows fulfilled transport
+cleanup during synchronous candidate processing, with the slot still retained.
+It cannot retroactively reject the already-settled transport promise. Only one socket assignment and
+one response are permitted. Shared event state requires response end/close, request
+close and owned socket close before success; error/premature close refuses. On failure
+require request close and, if assigned, socket close, plus response close if a response
+exists. No-request prevalidation failure may reject immediately. Once open was invoked,
+a throw/malformed control never proves no I/O: await the owned close acknowledgements,
+or retain the original promise pending if cleanup is uncertain. Late/duplicate events
+cannot settle twice, issue evidence or release a slot twice.
+
+requestStartedAtUtc and completeReceivedAtUtc come from the captured trusted clock
+at owned start and complete body receipt, not at cleanup completion. readMetadataV1's
+success record remains exactly the existing seven-key shape; no extra proof/cleanup
+API is introduced. Its original promise is observed from creation. The owner supplies
+its own AbortSignal and races only the outward caller result; timeout/cancel and parser
+refusal cannot convert destroy/error/abort into a terminal-close acknowledgement.
+
+### Failure mapping, prerequisites and paired controls
+
+Malformed/bounded construction or registration input maps INPUT_REFUSED; capacity
+uses the existing CAPACITY_REFUSED. Missing installation, invalid captured runtime,
+clock/timer failure or invalid current authority maps INSTALLATION_REFUSED. Transport
+status/header/body/UTF-8/driver failures map TRANSPORT_REFUSED unless an earlier
+CANCELLED or DEADLINE_EXCEEDED latch already wins. Existing typed read failures and
+scope-before-generation precedence remain unchanged. N's COMPLETENESS_UNPROVEN is
+forwarded; its other refusals map MATERIALIZATION_REFUSED, retaining bounded original
+code privately without adding result keys. No N refusal publishes a generation.
+
+N is called by its actual static module export, never an injected implementation.
+Preserve its exact MaterializerResultV1 inventory, source/profile/raw-byte/canonical
+bindings and original scope. Retain the captured raw bytes privately as already
+chosen. Catalog success must pass the sole reader; C composition uses the actual
+adapter and genuine request-bound fixture custody, not copied successful JSON.
+Publication supplies neither C's whole acquire record nor quality/billing/account/
+budget/intent authority. Missing those claims remains refusal with no inference.
+
+Before P runtime release integrate reviewed/accepted N implementation and accepted
+C source into this checkout. Neither is present at P's c96569e Step0. P4A1's ratified
+48aab911484722a47ea2291e8a26fdb9fafd904f design has no production admission constructor
+that succeeds and no transferable admission verifier; do not invent one here. Future
+operational P4A composition must directly obtain its genuine admission/claim and
+installation custody under its own release. The offline factory is not that bridge.
+
+Permanent paired controls add: hostile production input with zero reads/effects;
+closed constructor/runtime/driver rejection; exact scope registration and duplicate/
+unknown/foreign scope refusal; equal-label scopes with distinct authority; immutable
+expiry/profile; monotonic/UTC rollback and timer faults;16KiB header boundary/+1 and
+all fixed request fields; fragmented byte/multibyte limits; late/duplicate events;
+open/end/destroy throws; and both successful and refused original promises settling
+only after actual shared-adapter close events. Keep all existing catalog/absence CAS,
+four-slot delayed-cleanup, coalesced-waiter, cancellation and scope-binding controls.
+Do not substitute a fake finished promise for the driver event sequence. Import real
+N/reader/adapter and actual C in offline integration tests after prerequisite merges.
+Fixtures cannot establish operational workflow admission or enable a production path.
+
 ### C composition and activation boundary
 
 C acquire remains synchronous and runs after B1 begin. Refresh/publication must
@@ -664,7 +910,9 @@ Checkpoint P would add `plugins/foreman-line/dispatch/src/pmc-launch/catalog-pub
 Checkpoint P additionally proposes
 `plugins/foreman-line/dispatch/src/pmc-launch/catalog-metadata-transport.ts` and
 `plugins/foreman-line/dispatch/tests/pmc-catalog-metadata-transport.test.ts`.
-These five P paths freeze proposed publisher/types/fixed-transport ownership;
+Checkpoint P also proposes
+`plugins/foreman-line/docs/goals/hybrid-routing-optimization/hro-rcm-publication-verification.md`.
+These exactly six P paths freeze proposed publisher/types/fixed-transport/report ownership;
 checkpoint N owns the raw response profile and materialization types. No barrel
 change or generic injected production fetch is proposed. Independent review and
 an explicit implementation amendment remain necessary before either checkpoint;

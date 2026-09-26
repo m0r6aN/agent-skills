@@ -246,3 +246,94 @@ runtime/report envelope under delegated prerequisite authority. This is design
 acceptance; builder must restate the final amended source plan and stop for explicit
 runtime release. Checkpoint P transport/publication, live endpoint compatibility,
 authentic production acquisition and all downstream launch evidence remain separate.
+
+## Checkpoint P construction amendment
+
+Root accepted the genuine read-only P Step0 at
+c96569e9b8695a4cdfb120110f95cc45f582bde2 and released exactly this note and the
+existing active publication spec for construction shaping. No runtime release,
+provider/Pi/configuration attempt, installation or production activation follows.
+The existing c4f1e22 publication protocol and N8dca233 materializer decisions remain.
+
+Actual inspected pins, recorded for this shaping checkpoint only:
+
+| Source | Frozen reference |
+|---|---|
+| Retained RCM producer | blob20af5e8f3fc0c857ce5569ebdcb28ad504c0aed8 |
+| Sole canonical reader | blob4806f5b5af32d4a40526ab7125c31205c2b9fb6a |
+| RCM adapter | blob39347c4018a3dbf1c0cd9abf0a6e2e9da262bdf8 |
+| Accepted C controller at93f8021 | blobdc2a3c0e8c83eb05c66757731a043c4da76d5145 |
+| C controller types at93f8021 | blob92030ddadf31e53052442be0511ff27de8e04702 |
+| P4A1 ratified design | commit48aab911484722a47ea2291e8a26fdb9fafd904f; spec blob0c030a65503c19d11be4f1ceece184b15afc7b8f |
+
+N runtime exports and C implementation are absent from P's starting checkout.
+Accepted N source and accepted C integration must arrive before P implementation.
+P4A1 deliberately has no successful production constructor or portable admission
+verifier. Therefore this P slice cannot manufacture genuine production installation
+or workflow admission from a supplied claim, profile label, hash or fixture callback.
+
+Root accepted the following concrete construction dispositions, now frozen in the
+spec for independent review:
+
+- createProductionCatalogPublicationOwnerV1 unconditionally returns
+  INSTALLATION_REFUSED with zero input reads or effects. A distinct
+  createOfflineCatalogPublicationOwnerV1 captures only the closed fixture record
+  and closed offline runtime; no mode flag or generic production fetch exists.
+- The fixture record predeclares1..128 immutable scopes. Scope registration accepts
+  only {scopeId}, returns one private identity, and rejects repeat/unknown IDs.
+  Identical scope contents still produce distinct scope identities. Scope fields
+  cannot expand profile, endpoint, identities, workflow or policy expiry.
+- Exactly six named owner methods: registerCatalogScopeV1,
+  registerRefreshOperationV1, requestCatalogRefreshV1, cancelRefreshOperationV1,
+  acquirePublishedCatalogV1 and verifyAbsenceV1. Existing result unions are unchanged.
+- Captured readClock/scheduleWake/clearWake and one offline requestDriver are the
+  entire runtime record. Clock readings are closed UTC/monotonic pairs with explicit
+  validation/rollback refusal; timer handles stay opaque. Trusted clock reads may
+  occur during synchronous acquisition; task callbacks may not. Terminal outcomes
+  cannot be rewritten by timer teardown failure or stale wakeups.
+- The closed low-level driver supplies request controls and socket/response/body/
+  error/close events to the actual shared transport state machine. It cannot return
+  publisher success or a separately resolved cleanup promise. The future production
+  bridge statically binds node:https, checks real response completeness and owns
+  destruction; fixtures are not cast as genuine Node requests/sockets.
+- Fixed request means only the reviewed no-query credential-free GET, fixed explicit
+  headers, no agent pool/reuse, TLS verification and16KiB native header cap. Bounded
+  retained header fields are separately limited. The transport owns header/framing/
+  UTF-8 errors; N remains the sole raw JSON/profile materializer after transport
+  cleanup. N refusal cannot retroactively change the original transport promise.
+- Existing typed refusal mapping is explicit. No new public code, data key, authority
+  issuer or admission bridge is introduced. Offline capabilities never establish
+  operational workflow admission, production source custody or C production authority.
+
+The original cancellation/CAS/four-slot protocol remains: registration owns capacity,
+only one invocation, outward timeout/refusal is distinct from original transport
+settlement, and uncertain cleanup holds capacity. Both catalog and absence candidates
+share one generation CAS and invalidate old variant handles. SourceRef/raw retention,
+N's exact result/schema/effort/refusal semantics, scope completeness and30-second
+absence versus24-hour catalog maximum validity remain unchanged.
+
+Six future P source/test/report paths are now proposed, all under plugins/foreman-line:
+
+1. dispatch/src/pmc-launch/catalog-publication.ts
+2. dispatch/src/pmc-launch/catalog-publication-types.ts
+3. dispatch/src/pmc-launch/catalog-metadata-transport.ts
+4. dispatch/tests/pmc-catalog-publication.test.ts
+5. dispatch/tests/pmc-catalog-metadata-transport.test.ts
+6. docs/goals/hybrid-routing-optimization/hro-rcm-publication-verification.md
+
+No existing owner/runtime/barrel/dependency/audit change is authorized by that future
+envelope. A genuine reader/audit enrollment discovered later remains separately scoped.
+Future paired controls use actual N/reader/adapter/C after prerequisite integration,
+network-incapable low-level events for cleanup, both catalog/absence variants,
+retained four-slot capacity until close, UTC/monotonic/timer faults, exact header/body/
+capture boundaries, scope identity and zero-effect production refusal. No fake body
+result or independent finished promise can prove transport cleanup or live authority.
+
+This amendment itself runs only frozen spec lint, required sections/local links,
+whitespace/scope/source-preservation checks and a clean two-document commit. Two
+independent reviews and explicit P implementation release remain required.
+P construction amendment checks (docs only): frozen spec-linter native exit0;
+all7 required body sections present; all9 local Markdown links resolve;
+git diff --check passes; exactly the two authorized documents changed. These are
+advisory shaping checks, not implementation or production acceptance. The explicit
+two-document amendment envelope excludes any new ShapingResult/receipt artifact.
