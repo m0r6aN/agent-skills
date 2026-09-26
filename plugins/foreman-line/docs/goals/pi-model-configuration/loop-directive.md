@@ -418,3 +418,15 @@ The lossless projection spec is moved to done; links are updated. Branches remai
 retained. This remains static evidence, not model activation or HRO completion.
 The next RCM producer integration retains the complete projection contract and
 its own two approvals; PMC-P2A private build continues behind the accepted API.
+## PMC-P2B integration sequencing — 2026-09-26
+
+Under the user's explicit prerequisite delegation, the HRO coordinator authorizes
+independent ledger integration ahead of the repaired P2A implementation merge.
+P2B depends on the frozen P2A value contract, imports no P2A implementation, and
+cannot select or launch a model. Both remain mandatory before P2C composition.
+This changes merge order only; it grants no runtime use, live funding, credentials,
+configuration changes or exception to either independent review or full CI.
+P2B source 835a6dd has two independent approvals; the isolated integration branch
+contains accepted main through PR59. Review the combined result and complete CI
+before Gate 3. P2A source bb89be9 is separately in two final reviews; its contract
+is unchanged. The P2C design remains a draft until concrete custody gaps close.
