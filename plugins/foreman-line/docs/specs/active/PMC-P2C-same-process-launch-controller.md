@@ -521,7 +521,7 @@ activation; HRO implementation; public mint/test mode.
 - [Amendment 05](../../goals/pi-model-configuration/gate-1-amendment-05.md)
 - [Composition/source notes](../../goals/pi-model-configuration/pmc-p2c-composition-notes.md)
 - [P2B1 durable owner](PMC-P2B1-durable-intent-custody.md)
-- [P2A](../done/PMC-P2A-owner-resolver.md), [P2B](PMC-P2B-durable-budget-ledger.md)
+- [P2A](../done/PMC-P2A-owner-resolver.md), [P2B](../done/PMC-P2B-durable-budget-ledger.md)
 - [P2 inventory](../../goals/pi-model-configuration/pmc-p2-design-inventory.md)
 - [P2D](PMC-P2D-openrouter-terminal-transport.md), [P2E](PMC-P2E-config-caller-migration.md)
 - Frozen A/B Git blobs/source pins above supersede older local drafts.
