@@ -148,7 +148,7 @@ No hidden built-in provider call is delegated. Version drift refuses.
 
 | Parcel | Owns | Exact implementation scope count | Dependencies |
 |---|---|---|---|
-| [P2A](../../specs/active/PMC-P2A-owner-resolver.md) | Pure versioned owner decision | 6 allowed files | Accepted P1b/RCM public API freeze; version canon already recorded |
+| [P2A](../../specs/done/PMC-P2A-owner-resolver.md) | Pure versioned owner decision | 6 allowed files | Accepted P1b/RCM public API freeze; version canon already recorded |
 | [P2B](../../specs/active/PMC-P2B-durable-budget-ledger.md) | Exact money/durable reservations | 5 allowed files | A contract freeze; no runtime dependency on future controller |
 | [P2C](../../specs/active/PMC-P2C-same-process-launch-controller.md) | Private permit and consume/send core | 5 allowed files | Accepted A/B; same-process trusted ports |
 | [P2D](../../specs/active/PMC-P2D-openrouter-terminal-transport.md) | One owned chat protocol/HTTPS operation | 6 allowed files | Accepted C, pinned Pi surface |

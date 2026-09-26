@@ -418,3 +418,15 @@ The lossless projection spec is moved to done; links are updated. Branches remai
 retained. This remains static evidence, not model activation or HRO completion.
 The next RCM producer integration retains the complete projection contract and
 its own two approvals; PMC-P2A private build continues behind the accepted API.
+## PMC-P2A Stage-F closure — 2026-09-26
+
+PR61 merged as4b86643acd4e5cdf183e85cf1cd1c2ace51e0182 at
+2026-09-26T17:37:04Z after both final implementation approvals, independent combined
+verification and all twelve remote checks succeeded on725d741. Combined review
+verified byte-identical resolver/types/tests/fixture, additive retained producer
+exports,49 independent HRO/RCM tests and16 public API integration assertions.
+Root consumed those results and matched the exact reviewed head for merge.
+Spec is done; current predecessor links move with it, historical evidence stays.
+Frozen source/donor worktrees remain while active dependents use their packages.
+P2B audit repair is active; P2C/P2D/P2E and full HRO runtime/measured exit remain
+open. No pure resolver result authorizes execution or proves source authenticity.
