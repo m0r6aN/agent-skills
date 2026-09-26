@@ -46,20 +46,58 @@ catalog caching/refresh coalescing remain chartered; this slice does not ship th
 
 ## Proposed decisions requiring owner disposition
 
+Coordinator direction adopted after targeted feasibility review: the revised
+draft below implements these choices, still subject to independent design review
+and exact owner release. Original shape aad7e7769773bd9d0ab810c7da5de3a043221fa1
+did not include the discovered final-D/fixed-sequence integration prerequisites.
+
 | ID | Proposed smallest disposition | Blocking consequence if not accepted |
 |---|---|---|
-| P3-D1 Capture/publication split | Accept bounded private process capture as partial measurement only; canonical publication is separate. Preserve D5 gap for standalone/crash evidence. | Do not describe checkpoint fixtures as complete telemetry or release-wide cost evidence. |
-| P3-D2 Canonical placement | Verification owner approves one genuine declared measurement claim immediately after BuildResult, before verification claims. Keep dispatch-tip guard and existing envelope intact. | No receipt publication; no fake claimRef/workflow or parallel chain. |
-| P3-D3 Writer custody | Restrict first adoption to demonstrably exclusive coordinator workflow custody, with all writers quiescent, plus exclusive file creation and exact replay/conflict checks. Freeze actual installation mechanism. | Existing read-then-overwrite APIs cannot establish it. A common append/custody prerequisite needs its own exact owner scope if exclusivity cannot be established. |
-| P3-D4 Private owner projections | C/D owners approve minimized authenticated event hooks and observed usage/timing/identity projections, preserving mandatory audit and launch semantics; public launch receipt unchanged. | Existing LaunchReceipt/Observation alone cannot supply all D5 fields. No guessed usage/cost/served identity. |
-| P3-D5 Non-parcel and crash completion | Either constrain the measured release use case to a real checkpoint-capable flow or separately shape durable non-parcel observation custody with receipt owner. Reconcile full HRO D5 before completion. | Standalone CLI and crashed collectors remain incomplete/unpublished; this draft grants no waiver of their events. |
+| P3-D1 Capture/publication split | Restrict initial production and measurement to legitimate checkpoint-capable Foreman parcels. Capture all admitted invocations/events, then publish at final checkpoint. | No fixture-only full delivery or release-wide cost claim. |
+| P3-D2 Canonical placement | Genuine declared measurement claim AFTER all measured invocations/checks, BEFORE new final-D stage handoff. Keep dispatch-tip guard and existing envelope. | New verification finalization and integration actual-sequence contracts are prerequisites. |
+| P3-D3 Writer custody | Private installation session captures genuine stage functions, phase/busy before callbacks across awaits; all admitted writers serialize, publication uses exclusive create. Cooperative one-writer process only. | No global/hostile-process lock claim; independent concurrent writers would require separate shared-append adoption. |
+| P3-D4 Private owner projections | C/D approve minimized authenticated event hooks and usage/timing/identity projections; public launch receipt and mandatory gates unchanged. | Existing LaunchReceipt/Observation do not supply every D5 field; freeze actual hook paths after source acceptance. |
+| P3-D5 Non-parcel and crash completion | Standalone production CHECKPOINT_REQUIRED before effects until separate reviewed contract. External declared denominator detects missing capture; existing ledger.snapshot reports aggregate liability only. | Missing evidence blocks measured success/savings. No universal crash reconstruction requirement and no inferred zero events/charges. |
 
-P3-D1 is deliberately a scope disclosure, not permission to drop required events.
-A successful standalone launch cannot be retroactively assigned to a fabricated
-parcel. A crash with no returned report cannot even attest its own incomplete
-record; external baseline accounting must mark coverage unproven. A new process
-must not interpret an empty collector as evidence of zero historic calls/spend.
-This is why this slice is not a full D5 delivery and requires D5 disposition.
+No successful standalone production launch is activated by this release. Its
+typed refusal precedes acquisition/reservation/credentials/send. The external
+denominator is owner-declared before admission, retained in real parcel/experiment
+evidence, and cannot be minted or reduced by the volatile collector. Match exact
+planned/admitted/refused/completed/missing identities. Missing denominator itself
+blocks completeness. Crash with no returned report cannot attest its own loss;
+compare against external evidence and mark coverage unproven. An actual snapshot
+can report settled/outstanding amounts without event reconstruction or savings.
+
+## Newly verified finalization and integration gap
+
+Actual runHarness awaits matrix checks before it writes claims
+(verification/src/harness/index.ts:719-739). Publishing immediately after
+BuildResult would miss later measured checks. Admission closes only after all
+admitted inference/check work, and no later launch is accepted in that scope.
+
+emitVerificationVerdict (verification/src/pipeline/index.ts:801-941) emits a
+VerificationVerdict CLAIM receipt plus a StageOutput envelope. There is no final
+kind:stage D producer on this path. Proposed new private finalizeMeasuredStageDV1
+must validate the genuine pass verdict/envelope, measurement coverage/denominator,
+receipt references/hash/correlation and actual tip, then emit a separate approved
+MeasuredVerificationHandoff stage profile. It does not turn a claim into a stage
+or bypass judgment, human approval, rework, CI or integration gates.
+
+Actual integration/src/exit-vehicle.ts:278-309,338,365 pins kind:stage D at exactly
+3 and E at exactly4. Its real runners cannot continue a longer claim-bearing
+workflow unchanged. The separate integration-owner amendment must preserve those
+runners and their substantive gates, accept actual sequence ONLY under the
+approved measured-handoff profile, and continue to reject claim predecessors,
+wrong stages, gaps/duplicates, correlation forks, stale tips and forged handoffs.
+Keep the old six-stage path valid. Using lower-level emitIntegrationReceipt or
+emitClosureReceipt to avoid these checks is expressly excluded.
+
+Private session lifecycle is capturing -> draining -> publishing -> finalized-D
+-> integrated-E -> sealed-F, with held on uncertain writes. Busy is acquired
+before callbacks and held across awaits; recursive/concurrent entry refuses.
+All admitted genuine writers run through it. Raw exports outside this installation
+remain independently callable: no hostile-code/process guarantee follows. A
+later unexpected disk tip causes hold, not a retry or relabeling of evidence.
 
 ## Wrong-but-literal checks
 
@@ -77,22 +115,35 @@ This is why this slice is not a full D5 delivery and requires D5 disposition.
   only authenticated ledger actual counts, with estimates separately labeled.
 - Add a lock file while other writers ignore it: rejected; no exclusive custody
   is established. Existing writeReceiptDocument is not an atomic append API.
+- Treat existing verdict emission as final-D stage: rejected; actual emitter
+  produces a claim and envelope, requiring a separately implemented owner stage.
+- Remove all sequence checks in runStageE/F: rejected; measured-profile admission
+  retains actual contiguous chain, stage/kind, correlation and tip checks.
 - Ignore collector overflow/crash and report complete: rejected; coverage states
   and bounded incomplete reasons are mandatory, and process loss may leave no
   evidence at all. No total-spend/savings claim from a partial known subtotal.
 
 ## Dependency and proposed file split
 
-1. Ratify P3-D1 through D5 and reconcile cache amendment into charter separately.
+1. Independently review the adopted P3-D1 through D5 direction and exact owner
+   contracts; reconcile cache amendment into charter separately.
 2. Accept actual C/D/E and B1 composition, then freeze concrete private hook paths
    against those implementations. No production hooks are assumed from draft text.
-3. Shape/release capture: dispatch/src/pmc-launch/telemetry.ts,
+3. Shape/release capture: dispatch/src/pmc-launch/telemetry.ts and
    dispatch/tests/pmc-telemetry.test.ts plus exact accepted C/D hook/test paths.
-4. Shape/release checkpoint adoption: verification/src/harness/routing-telemetry.ts,
-   verification/tests/routing-telemetry.test.ts, verification/src/harness/index.ts,
-   verification/tests/chainwalk.test.ts, integration/tests/closure.test.ts.
-   This is conditional on legitimate claim declaration and enforced writer custody.
-5. Produce docs/goals/hybrid-routing-optimization/hro-p3-baseline.md from explicit
+   Separately freeze actual installation ownership for proposed
+   dispatch/src/pmc-launch/measured-workflow.ts and
+   dispatch/tests/pmc-measured-workflow.test.ts; reconcile dependency direction
+   with actual E source before dispatch, never introduce a package cycle.
+4. Verification prerequisite: verification/src/harness/routing-telemetry.ts,
+   verification/tests/routing-telemetry.test.ts,
+   verification/src/pipeline/stage-d-finalization.ts and
+   verification/tests/stage-d-finalization.test.ts; pipeline/index.ts only if a
+   reviewed genuine verdict-emission hook is needed. No public barrel assumed.
+5. Integration prerequisite: integration/src/exit-vehicle.ts,
+   integration/tests/exit-vehicle.test.ts and integration/tests/closure.test.ts.
+   Test real longer measured D/E/F and unchanged historical path; no emitter bypass.
+6. Produce docs/goals/hybrid-routing-optimization/hro-p3-baseline.md from explicit
    workloads and evidence. Offline counts/arithmetic are distinct from live proof.
 
 All paths above are plugin-relative proposals, not current write authority.

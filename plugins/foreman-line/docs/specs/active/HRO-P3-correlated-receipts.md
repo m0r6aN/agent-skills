@@ -24,9 +24,12 @@ settlement evidence, and publish a bounded measurement claim only at a legitimat
 existing parcel checkpoint. Reuse ReceiptDocument and PMC money custody. A route
 decision, observation, aggregate or receipt confers no execution authority.
 
-This is a design umbrella with two proposed implementation slices, not one broad
-runtime release. It does not complete D5 for standalone CLI calls or crashes.
-Those gaps remain explicit prerequisite decisions rather than omitted events.
+This is a design umbrella with separately released owner prerequisites, not one
+broad runtime release. Initial production/measurement is restricted to legitimate
+checkpoint-capable Foreman parcels. Standalone production activation remains held
+before effects until a separate telemetry contract is reviewed. Lost capture
+blocks measured success/savings; universal crash-event reconstruction is not a
+prerequisite for delivering this restricted workflow safely.
 
 ## Constraints
 
@@ -60,8 +63,10 @@ between DispatchOrder and BuildResult. Never append after a sealing ClosureRecor
 replace an existing stage receipt, allocate an alternate sequence namespace, or
 mint a fake workflow/genesis/claim to make a CLI invocation fit the chain.
 
-Proposed canonical location: one real Stage-D measurement claim immediately after
-the acknowledged BuildResult and before verification claims begin. Proposed
+Proposed canonical location: one real Stage-D measurement claim AFTER all measured
+invocations and verification checks, BEFORE finalized Stage-D stage handoff to E.
+Close launch admission first; later measured launches require a new reviewed scope.
+Proposed
 subjectKind is `RoutingTelemetry`; claimRef must identify a measurement claim
 actually declared by the governing parcel and approved by the verification owner.
 The literal name alone is not a claim declaration or permission. A workflow
@@ -69,34 +74,76 @@ without that declaration has no such checkpoint. The new receipt inherits the
 actual workflow/correlation; session/run identity follows the existing writer's
 execution semantics. Event-level invocation identity is retained independently.
 
-All subsequent existing writers must continue from the new tip. Preserve the
-BuildResult dispatch-tip guard. Freeze an integration test through actual
-BuildResult, telemetry, verification, integration and sealing before adopting
-this placement. A structurally valid envelope alone proves neither hash integrity
-nor compatibility with downstream stage-specific consumers.
+Preserve the BuildResult dispatch-tip guard. runHarness awaits matrix callbacks
+before writing claims (harness/index.ts:719-739), so capture remains active through
+these and any admitted adversarial/review calls. E/F continuation after publication
+must perform no model invocation in this measured scope. A structurally valid
+envelope proves neither canonical hash integrity nor stage-consumer compatibility.
+
+Concrete missing predecessor: emitVerificationVerdict (pipeline/index.ts:801-941)
+writes a kind:'claim' VerificationVerdict and StageOutput envelope. It does NOT
+produce kind:'stage', stage:'D' finalization. No such aggregation function exists
+on this verification path. Do not relabel that claim or invent an existing API.
+
+A separate verification-owner prerequisite proposes private
+`finalizeMeasuredStageDV1(session: object): FinalizationResult`, where session is
+looked up by identity in installation custody. It uses acknowledged real verdict
+claim/envelope, measurement claim, final tip and external denominator already
+bound in custody; caller fields cannot supply authority. It validates the actual
+verdict/envelope, requires pass with null reworkSignal, checks referenced receipt
+hashes/correlation and complete coverage, then exclusively appends kind:'stage',
+stage:'D', claimRef:null at actual tip.sequence+1. Proposed subjectKind
+`MeasuredVerificationHandoff` has exactly version:'hro-measured-d/v1',
+verdictReceiptRef, telemetryReceiptRef, denominatorDigest and coverage:'complete';
+references use existing ReceiptRef. FinalizationResult is exactly
+`{ok:true,receipt:ReceiptRef}` or `{ok:false,code:'SESSION_REFUSED'|'PHASE_REFUSED'|
+'COVERAGE_INCOMPLETE'|'VERDICT_REFUSED'|'CHAIN_REFUSED'|'WRITE_REFUSED'|'WRITE_UNCERTAIN'}`.
+These are proposed private owner contracts, not current exports. Rework/incomplete
+evidence may be recorded but cannot produce this passing handoff.
+
+Separately amend integration/src/exit-vehicle.ts:278-309: runStageE/F currently
+require stage predecessors D at sequence3 and E at sequence4. Preserve the real
+runners and PR-head, stage/kind, chain/correlation, filename/sequence, tip and
+closure checks. Replace fixed positions ONLY for a validated measured-handoff
+profile: E requires the actual final D stage and its referenced pass/telemetry
+evidence; F requires the resulting real E stage at the actual tip. No claim is a
+stage predecessor. Reject extra/wrong-stage tails, gaps, duplicate stages and
+conflicting handoffs. Preserve the historical six-stage path under its existing
+contract; do not broadly admit arbitrary longer chains. No lower-level emitter
+bypass. Test real BuildResult -> D claims/verdict -> telemetry -> finalized D ->
+real E -> real F with canonical hash verification and all negative controls.
 
 ### Split implementation contracts
 
 | Slice | Owns | Dependency and limit |
 |---|---|---|
-| P3 capture | Private C/D observation projection, bounded in-memory collection, deterministic report | Accepted C/D source and internal-hook amendment; usable offline with actual predecessor results. No durable-publication claim. |
-| P3 checkpoint | Producer-validated subject and serialized canonical receipt publication | Capture plus verification-owner claim/placement and writer-custody decisions. A real eligible parcel checkpoint is mandatory. |
+| P3 capture/session | Private C/D projections, external denominator, bounded collection and lifecycle | Accepted C/D/E source and installation amendment; no standalone activation. |
+| Verification finalization prerequisite | Measurement claim publication and genuine final D stage | Capture/session plus approved claim/subject and writer lifecycle; implementation absent today. |
+| Integration continuation prerequisite | Actual-sequence D/E/F with preserved real runners | Accepted final D contract; no raw-emitter bypass. |
 
-The PMC governed CLI may execute independently of any parcel BuildResult flow.
-Such an invocation still receives a distinct observation/invocation identity,
-but cannot be published as this canonical receipt. Its collection is marked
-`unpublished-no-checkpoint`; it may return a bounded audit-only report through an
-approved caller seam, never an invented ReceiptRef. No automatic later attachment
-to an unrelated parcel is permitted. If the process exits before publication,
-in-memory evidence is lost and cannot be reconstructed from silence.
+PMC CLI shape can exist outside a parcel flow; this release does not activate
+that production mode. Missing legitimate admitted workflow/checkpoint returns
+typed CHECKPOINT_REQUIRED from the initiating caller before acquisition,
+reservation, credential access or send. Offline observations stay synthetic and
+unpublished; no invented ReceiptRef or later attachment to an unrelated parcel.
 
-This partial slice cannot satisfy universal D5 event retention. Before production
-adoption, owners must either require a legitimate checkpoint-capable parcel
-context for the measured use case, or separately approve durable non-parcel
-observation custody and its mapping to the existing receipt owner. This document
-does not choose a second chain, sidecar journal, ledger export or new public API.
-Standalone execution itself remains governed by C/D/E; telemetry incompleteness
-does not authorize, retry or cancel it.
+The coordinator declares a bounded external invocation denominator before
+admission: approved planned invocation IDs and measured scope, retained outside
+the volatile collector by the existing parcel/experiment evidence owner. The
+collector cannot author or shrink it. Match identities, not merely counts; report
+declared/admitted/refused/completed/missing separately. Every known invocation and
+event remains counted. Plan changes require owner approval before admission.
+Process loss, missing denominator or missing capture means coverage unproven;
+an empty restarted collector cannot attest zero historic calls/charges. Measured
+success/savings requires complete coverage and acknowledged publication.
+
+After interruption the legitimate caller may use EXISTING
+ledger.snapshot({scopeId}) for scope-level settled/outstanding liabilities, with
+ledger/epoch/snapshot digest and observedAtUtc. It does not reconstruct events or
+attribute aggregate differences to missing attempts. Shared-scope activity and
+non-atomic timing must be disclosed. Snapshot refusal means unknown, not zero.
+No new ledger export, second ledger or recovery authority is needed. Universal
+crash-event reconstruction is not claimed or required for this restricted release.
 
 ### Private capture and correlation proposal
 
@@ -201,11 +248,44 @@ counts, evidence mode and capture/publication state. Capture loss, pending attem
 missing checkpoint, write failure and uncertain publication remain distinguishable.
 No post-crash empty collector may assert zero prior invocations or charges.
 
-### Receipt publication and concurrency decision
+### Private lifecycle and receipt publication
+
+The installation owns a private session per normalized repository/workflow,
+capturing genuine statically imported stage functions and authoritative receipt
+references. Its identity registry cannot be reconstructed from caller JSON. No
+arbitrary supplied writer callbacks, boolean lock claims or public constructor.
+Proposed phases are capturing, draining, publishing, finalized-D, integrated-E,
+sealed-F and held. A separate busy flag is set before any admitted writer or
+callback and retained across awaits. Concurrent/reentrant entry refuses. Phase
+advancement occurs only on acknowledged completion; uncertain writes become held
+without automatic retry. All admitted BuildResult, harness/adversarial/verdict,
+publication and real E/F writers run through this installation lifecycle.
+
+Writer busy guards stage-writing entry, not passive observation delivery. An
+approved verification callback may perform its predeclared governed invocation
+while capture is active; its observation only appends bounded collector data and
+cannot reenter a stage writer. Track admitted in-flight invocations separately
+from writer busy. Draining waits for both the active writer/check and all admitted
+invocations to finish; it cannot deadlock by holding a gate needed for their
+passive terminal observations. Undeclared invocation IDs refuse before effects.
+
+New governed launch requires capturing phase. Draining closes admission, awaits
+all admitted work, verifies the external denominator and freezes the collection;
+it cannot run publication while a verification callback can still emit an event.
+Any callback after closure marks coverage conflict/held and cannot rewrite frozen
+evidence. E/F performs no later measured model calls. Missing session or legitimate
+checkpoint refuses production before effects. Installation wiring is a new owner
+prerequisite; existing raw exports are not magically locked by these wrappers.
+
+This is cooperative one-writer-process custody only. Other processes and direct
+raw-library callers are outside this guarantee; production installation must not
+schedule them against this workflow. Unexpected tip changes hold. A lock ignored
+by other writers is insufficient. Shared append adoption becomes a separate
+prerequisite only if independent concurrent writers are a supported requirement.
 
 Publication is a coordinator-controlled checkpoint operation, not a C/D callback.
 It accepts only a finished bounded collection and a real approved claim context,
-checks that the current valid chain tip is the expected BuildResult, allocates
+checks that the current valid chain tip is the expected final Stage-D claim, allocates
 next sequence from disk, hashes/validates the subject and envelope, and publishes
 exact bytes at receiptPath. No arbitrary caller locator/root or receipt body.
 No signing claim: signature remains null. Re-read the published bytes and verify
@@ -213,12 +293,10 @@ the expected canonical hash before acknowledging success.
 
 The current writeReceiptDocument overwrites, and allocateSequence is a read, not
 an atomic reservation. Do not call this combination concurrently and claim safety.
-Proposed restricted first adoption requires coordinator-owned exclusive workflow
-writer custody spanning tip check through publication, with all other stage
-writers quiescent. A caller boolean or a lock ignored by existing writers is
-insufficient. The verification owner must freeze how installation establishes
-that custody; absent such a mechanism publication refuses. If concurrent writers
-are required, a separately scoped shared append primitive/adoption is prerequisite.
+The private installation lifecycle spans tip check through publication, with all
+admitted writers quiescent. Its owner must implement and test that custody; absent
+the genuine session publication refuses. This does not establish atomic append
+against independent processes or raw writers outside the admitted installation.
 
 The bounded writer must use exclusive creation, typed I/O handling and no-overwrite
 collision checks; identical previously published bytes can acknowledge replay
@@ -243,15 +321,20 @@ that is separate from provider execution outcome.
 4. Each structural/boundary violation is independently refused at its intended
    gate. Exercise every cap at/over, aliases, observer throw/reentrancy, mutation,
    overflow, conflict and missing final observations without authority effects.
-5. Real A/C/BuildResult/D/E/F receipt fixtures traverse existing validators and
-   stage consumers; verify hashes using existing canonicalizer, not structural
-   chain validation alone. C-to-BuildResult guard still fails unauthorized insertion.
+5. Real A/C/BuildResult/D-claims/verdict/telemetry/finalized-D/E/F fixtures traverse
+   actual amended runners. Verify canonical hashes, real verdict envelope and
+   handoff references. C-to-BuildResult guard stays intact; raw claim, wrong
+   stage/kind, forged pass, wrong PR head, gaps, duplicate stages, correlation fork,
+   stale tip and wrong measured profile refuse. Historical path remains valid.
 6. Real checkpoint publication tests cover stale tip, sealed chain, undeclared
    claim, wrong correlation, missing custody, concurrent writer refusal, same-byte
    replay, conflict, partial write and lost acknowledgement. No chain fork/overwrite.
-7. Standalone CLI, pre-BuildResult failure and process crash controls cannot create
-   fake workflows/claims or report complete durable coverage. Missing observations
-   remain explicit gaps, never inferred zero calls/charges or success.
+7. Standalone production CHECKPOINT_REQUIRED observes zero acquisition/reservation/
+   credential/send calls. Pre-BuildResult failure and crash cannot produce fake
+   claims or complete coverage. External denominator detects missing invocations;
+   actual ledger snapshot reports aggregate liability only. Concurrent/reentrant
+   writer and late-launch refusal hold across awaits; uncertain writes hold.
+   Missing/changed denominator and late callbacks block passing finalization.
 8. A baseline report enumerates workload, mode, invocation/attempt denominators,
    observation window, actual/estimated/unknown values, quality and latency scope.
    Offline fixtures prove arithmetic/association only, not savings or live behavior.
@@ -261,8 +344,9 @@ that is separate from provider execution outcome.
 Provider calls, billing activation, credentials/configuration, choice caching,
 recommendation execution, negative-cache implementation, changing resolver gates,
 new ledger exports, a second ledger/event bus, autonomous crash recovery, receipt
-schema primitives, generic concurrent append migration and standalone durable
-receipt custody. D5/full HRO completion is not awarded by this partial slice.
+schema primitives, generic concurrent append migration and standalone production
+activation/durable custody. D5/full HRO completion is not awarded by drafting this
+slice; actual measured workflow, billing/live gates and review remain required.
 
 ## Context & References
 
@@ -286,10 +370,21 @@ silently into an unbounded parcel:
   dispatch/tests/pmc-telemetry.test.ts, plus exactly named accepted C/D internal
   implementation hook files/tests. Their source does not yet exist at this base;
   those paths must be frozen after acceptance before any capture dispatch.
-- Checkpoint: new verification/src/harness/routing-telemetry.ts and
-  verification/tests/routing-telemetry.test.ts; verification/src/harness/index.ts
-  and verification/tests/chainwalk.test.ts only for reviewed checkpoint adoption.
-  Existing integration/tests/closure.test.ts verifies continuation/sealing.
+- Installation prerequisite: proposed new dispatch/src/pmc-launch/measured-workflow.ts
+  and dispatch/tests/pmc-measured-workflow.test.ts, plus exact accepted C/D/E
+  installation/caller files to be named before dispatch. No dispatch-to-verification
+  cycle may be introduced: the final installation owner/module location must be
+  reconciled with actual E source before freezing this proposal.
+- Verification prerequisite: new verification/src/harness/routing-telemetry.ts,
+  verification/tests/routing-telemetry.test.ts,
+  verification/src/pipeline/stage-d-finalization.ts and
+  verification/tests/stage-d-finalization.test.ts; existing
+  verification/src/pipeline/index.ts only if its genuine verdict-emission lifecycle
+  requires an explicit hook. No public barrel export is assumed.
+- Integration prerequisite: integration/src/exit-vehicle.ts,
+  integration/tests/exit-vehicle.test.ts and integration/tests/closure.test.ts.
+  This separately reviewed amendment preserves real gate/runners while supporting
+  the measured final-D profile at actual sequence positions.
 - Report: docs/goals/hybrid-routing-optimization/hro-p3-baseline.md after evidence.
 
 No receipt outer schema/generated schema, contracts, ledger/money source, public
@@ -311,7 +406,10 @@ authorized provider evidence, truthful billing bounds and controlled budget.
 
 ## Readiness
 
-Not ready to dispatch. Decisions P3-D1 through P3-D5 in the companion notes are
-unratified. Accepted C/D/E hooks, checkpoint writer custody and declared claim
-semantics are absent. Standalone/crash durable capture remains an explicit D5
-gap. No offline result may substitute for those dependencies or actual live proof.
+Not ready to dispatch. The coordinator adopted the directions P3-D1 through P3-D5
+for this revised draft; exact contracts remain subject to independent review and
+owner Gate 2. Accepted C/D/E hooks, private lifecycle, declared claim semantics,
+new final-D producer and actual-sequence integration adoption are absent.
+Standalone production remains held. Lost capture blocks measured success/savings;
+aggregate ledger snapshot does not repair event coverage. No offline result
+substitutes for these implementations or actual live proof.
