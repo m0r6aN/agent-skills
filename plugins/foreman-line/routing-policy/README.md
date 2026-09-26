@@ -395,3 +395,79 @@ its P0 source on all ten fact fields); only its `checkedAtUtc` values are
 synthetic, since P0 exported none. Negative and edge cases mutate a clone of
 that fixture's parsed bytes in memory and re-derive a canonical digest, rather
 than adding further committed fixtures.
+
+### Supported bounded catalog adapter (RCM-P1A)
+
+The package barrel exports `evaluateCatalogEligibility(input: unknown):
+CatalogEligibilityResult`, `readCatalogSnapshot`, `projectEligibility`, and their
+public data/result types. Internal snapshot brand helpers remain unexported from
+the barrel. The wrapper always uses the actual object returned by the sole
+reader; it does not duplicate eligibility rules or construct branded snapshots.
+
+`CatalogEligibilityInput` describes the intended input: `canonicalBytes:
+Uint8Array`, `expectedSha256: string`, `evaluationTimeUtc: string`, `identities:
+readonly CatalogIdentity[]`, `approvedConfig: { authorityRef: string; endpoints:
+readonly { provider: string; baseUrl: string }[] } | null`, and `acceptedSource:
+AcceptedCatalogSource`. Each `CatalogIdentity` is `{ provider: string; id:
+string }`. Runtime input remains unknown and hostile input returns a typed
+refusal without logging its contents.
+
+`AcceptedCatalogSource` has exactly six fields: `profileId`, `profileVersion`,
+`canonicalSha256`, `sourceEvidenceRef`, `sourceEvidenceSha256`, and
+`requestedIdentities`. The first five are nonempty strings; both digests are
+lowercase 64-character SHA-256 hexadecimal strings. These are caller-approved
+provenance declarations. The wrapper has no external evidence bytes and does
+not authenticate the profile/version, evidence digest, or approval. A fabricated
+reference cannot prove authority. Canonical digest and snapshot `sourceRef`
+must match the declaration. Requested identities, declared scope and snapshot
+models must match exactly without duplicates; provider records must exactly
+cover the model providers. Request ordering is preserved in projector results.
+A scoped artifact cannot establish a full catalog. Incomplete producers must
+supply refusal inventory separately rather than silently dropping identities.
+
+`CatalogEligibilityResult` is a discriminated union:
+
+```ts
+type CatalogEligibilityResult =
+  | { readonly stage: 'adapter'; readonly ok: false;
+      readonly code: CatalogAdapterRefusalCode }
+  | { readonly stage: 'reader';
+      readonly result: Extract<SnapshotReadResult, { ok: false }> }
+  | { readonly stage: 'projector'; readonly result: ProjectionResult }
+```
+
+`CatalogAdapterRefusalCode` is `INPUT_REFUSED | BOUNDS_REFUSED |
+SOURCE_BINDING_REFUSED | SCOPE_REFUSED`. Reader refusal codes and projector
+codes/levels/results retain their original values inside `result`; projector
+`ok: true` still requires examining each identity's `outcome`. Every returned
+envelope and nested object is owned and frozen, including refusal results.
+
+Limits are inclusive: 8 MiB of canonical bytes, 4096 characters per string/key,
+256 entries per array (including identities/endpoints), graph depth 16 with
+the root at depth zero, and 65,536 visited values including primitives and
+strings. Array length metadata is not a graph child. Caller data and decoded
+reader facts each receive a separate bounded pass. Bytes are checked before
+reader parsing and copied through native typed-array slots, without calling
+caller iterators or overridden getters. Detached, shared and resizable storage,
+typed-array proxies and non-byte views refuse. Other data is copied once from
+own enumerable data descriptors into owned plain objects/arrays. Cycles,
+accessors, sparse arrays, symbol fields, unsupported prototypes and throwing
+proxies refuse. Array lengths are checked before key enumeration; known child
+counts are reserved before traversal/allocation. Object key enumeration itself
+uses JavaScript's native `Reflect.ownKeys`; arbitrary proxy traps are caller code
+and cannot be given a CPU/memory deadline by a synchronous pure API.
+
+`approvedConfig` values pass unchanged to the projector after copying; authority
+must come from separately accepted repository evidence, never source acquisition
+URLs, catalog metadata or Pi settings. Source timestamps are not manufactured:
+unknown/stale values retain P1 refusals. Successful facts establish snapshot
+consistency only, not live model availability, currency beyond the explicit
+observation semantics, execution permission, ranking or dispatch authority.
+
+Handoff: RCM-P1A is a prerequisite API only. RCM-P1B owns any reviewed production
+producer and source field mappings; this adapter performs no acquisition or
+legacy-export conversion. Tests use explicitly synthetic sources, timestamps
+and authority, never production availability evidence. Integration is serialized
+after PMC-P1a acceptance: preserve all PMC barrel exports on that exact merged
+base and rerun focused tests, full tests, typecheck, lint, spec validation and
+independent review before coordinator-authorized integration.
