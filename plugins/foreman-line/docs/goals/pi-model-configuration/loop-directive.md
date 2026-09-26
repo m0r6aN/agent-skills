@@ -1,9 +1,9 @@
 # Loop Directive — Pi Model Configuration
 
 **Goal slug:** `pi-model-configuration`
-**State:** `PMC-P0 SHIPPED — PR #47 merged into main; Stage-F closed (spec → done/); PMC-P1+ await A5.4 ratification, RCM sequencing, and per-parcel Gate 2`
-**Next human gate:** **A5.4 role/authority map ratification** (required before PMC-P2); then RCM sequencing before any PMC-P1 Gate 2.
-**Cleared:** Amendment 01 (A1–A8), Amendment 02 (M1–M4), Amendment 03 (Opus), and Amendment 04 (AC2a comparator + binding 7 + verification query) ratified 2026-09-24
+**State:** `PMC-P0 SHIPPED + A5.4 RATIFIED (role/lane map frozen with L1/L2=opencode, L4/L3=openrouter, δ_L=0, classes accepted) — next: RCM sequencing before Wave 1`
+**Next human gate:** **RCM sequencing** before any PMC-P1 Gate 2; then per-parcel Gate 2 (PMC-P1…P4) and Gate 3 per parcel.
+**Cleared:** Amendment 01 (A1–A8), Amendment 02 (M1–M4), Amendment 03 (Opus), Amendment 04 (AC2a comparator + binding 7 + verification query), and **A5.4 role/authority map** — all ratified by 2026-09-25
 
 ## Dispatch record — PMC-P0 (authoritative)
 
@@ -50,7 +50,7 @@ re-pinned values.
 | Coordinator | **claimed** by this Pi session on 2026-09-23 at the PMC-P0 boundary, on the owner's explicit direction ("Yes claim the coordinator role and open the PMC-P0 shaping session now") |
 | Claim rule | one goal, one coordinator; transfers only at a parcel boundary |
 | Owner | Clinton Morgan |
-| Last state change | 2026-09-25 — Gate 3 merged (PR #47 → main); Stage-F closed: spec moved to `done/`, INDEX/loop-directive updated, lessons #45–#46 appended. Goal exit criterion for PMC-P0 met; Wave-0 complete. |
+| Last state change | 2026-09-25 — A5.4 role/authority map **ratified** (L1/L2=opencode, L4/L3=openrouter, δ_L=0, classes accepted); recorded in role map §4. PMC-P0 shipped + Stage F closed. Next: RCM sequencing before Wave 1. |
 
 **Resume record (2026-09-25).** The prior coordinator session ended after rework-3 was
 verified on disk (5b). The resuming session re-verified the state without re-running
@@ -328,10 +328,12 @@ changes (path audit clean).
    `pmc-p0-role-lane-map.md`, `pmc-p0-verification.md`) plus the review/triage
    paper trail (`pmc-p0-review-A/B/delta-findings.md`) ride in the PR on
    `codex/pmc-p0-evidence` for owner merge.
-6. **[BLOCKED on 5]** Owner ratifies the frozen role/authority map (A5.4) —
-   a human gate, required before PMC-P2 starts.
-7. **[BLOCKED on 6]** Sequence Wave 1 with the RCM coordinator before any PMC-P1
-   Gate 2 — `routing-policy/` surfaces are contested, never co-owned.
+6. **[DONE]** A5.4 role/authority map **ratified** 2026-09-25: mapping + `classifier`
+   family accepted; L1/L2 pin `opencode`; L4 (and L3 extension) prefer `openrouter`;
+   routing classes `review/security`, `implementation/complex`,
+   `routing/classification` accepted; `δ_L = 0`; binding 7 held. (See role map §4.)
+7. **[NEXT]** Sequence Wave 1 with the RCM coordinator before any PMC-P1 Gate 2 —
+   `routing-policy/` surfaces are contested, never co-owned.
 8. **[BLOCKED on 7]** PMC-P1 … PMC-P4 per the A7 ownership split as narrowed by
    Amendment 02 (P1 makes no frontier-registry change; P2 also owns model
    enablement per M4; legacy-representation removal serialized into P4).
