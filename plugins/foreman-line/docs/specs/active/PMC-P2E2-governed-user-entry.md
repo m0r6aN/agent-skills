@@ -296,3 +296,57 @@ covered rather than only a helper? Does a lifecycle failure preserve successful
 accounting without exposing provisional text? Are private capability inputs finite
 and compatible with accepted C/D? Are source-map unknowns still denied? Does the
 unavailable production bootstrap remain a named gap in HRO's original live exit?
+
+## E2 checkpoint 1: pure planner release boundary — 2026-09-26
+
+The read-only actual-source Step0 at 1e6c676fffc2f8ca078699c2dbc6cd554261e0ff
+confirms that the pure planner depends only on the accepted provider-binding
+projection and public catalog-eligibility adapter. It does not depend on D's
+transport implementation. Checkpoint 1 may therefore be released separately after
+review of this amendment. The entry, installation and CLI checkpoints still need
+accepted actual D and their own read-only Step0/release. This does not close E2.
+
+Checkpoint 1 has exactly three permitted implementation/report paths:
+
+- plugins/foreman-line/dispatch/src/pmc-launch/config-plan.ts
+- plugins/foreman-line/dispatch/tests/pmc-config-plan.test.ts
+- plugins/foreman-line/docs/goals/pi-model-configuration/pmc-p2-caller-inventory.md
+
+Use the exact existing planner contract above. Invoke each real owner once even
+when the other refuses. Preserve both actual typed results. Successful entries
+follow policy binding order, never inferred aliases or ranking; all remain disabled.
+The seven-key map and eight missing claims remain fixed; both patches stay empty.
+Deep ownership/freezing applies to newly constructed result records, without
+freezing caller objects or introducing runtime dependency injection.
+
+Actual owner validation rejects duplicate requested identities before projection;
+actual canonical reader data cannot contain duplicate known effort keys. Thus the
+ambiguous-row and duplicate-known-level defensive branches cannot honestly be
+claimed as real-owner integration coverage. Cover normal, absent, refused, facts,
+unknown/null/clamp and mutation behavior with actual owner fixtures. Cover those
+unreachable defensive branches with isolated test-local owner-result substitution
+in a child using Node's module-mock facility, installed before planner import.
+If that facility is incompatible with the pinned Node/loader, stop for a bounded
+test-mechanism decision; do not export a helper or add a shipped injection seam.
+Mark substituted cases explicitly as defensive-unit coverage, including duplicate
+mixed facts/refusal rows and duplicate known effort levels. Owner-call counting
+may use the same test-local facility; it must not replace the real-owner controls.
+
+Supply only absent node_modules junctions whose same-package lockfile hashes
+match the existing E1 integration donor. No dependency/manifest changes or writes
+through donor links. RED/GREEN planner tests, full dispatch and routing-policy
+checks, typecheck/lint, scope/diff review and two independent source reviews precede
+integration. This amendment is a reviewable boundary, not implementation release.
+
+### Checkpoint 1 ratification and implementation release
+
+Root and independent frontier D approve amendment
+ ae3fb1296cfeaecbab58ae893710f79d714efdbd. Root accepts A's genuine read-only
+Step0 and releases exactly the three checkpoint-1 paths above, test-first, against
+this checkout's real accepted projection/adapter. All19 absent same-package
+node_modules junctions were supplied after matching lock hashes; no installs or
+donor writes occurred. Run the bounded and full affected checks, freeze source
+and inventory evidence in one clean commit, then STOP for two independent source
+reviews. Do not implement entry/CLI/installation or import Pi. Module-mock failure
+remains a test-mechanism checkpoint, never permission for a runtime injection seam.
+This delegated Gate2 covers pure evidence planning only; parent E2 stays active.

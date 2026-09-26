@@ -264,3 +264,27 @@ runtime release yet. P3A8a76e738 and P4A193f54bd received independent change
 requests; explicit repairs34071db and8a64539 are active with Luna. D transport
 implementation remains active. Production custody, billing bound and full live
 measurement remain open; no inference/credentials/host configuration activity.
+
+### Catalog materializer N acceptance — 2026-09-26
+
+PR67 accepted on main98bf162adef813d8557e22a78d0b904593009173 at22:28:13Z;
+all12 checks successful on exactheadaa13b47. N source and combined integration
+have independent reviews. Checkpoint N is complete; publication parent stays
+active for P. P construction773daa is ratified, and frontier D's fresh read-only
+Step0 at9d3ba8d confirms actual N/reader/adapter/C source compatibility. P runtime
+release remains explicit. Pure E2 planner released separately after reviewed
+amendmentae3fb12; D-dependent entry stays gated. D transport completion is being
+reassigned inside HRO: the separate PMC app task's latest user scope is draft
+response only and is honored. Its existing implementation work is preserved.
+
+### E2 pure planner combined checkpoint
+
+Sourcec6b5 and combined739cbaa have root and frontier D independent approval.
+The planner calls accepted owners, preserves exact identities/refusals/effort
+facts, leaves all entries disabled and emits empty apply/rollback patches.
+Combined479 dispatch/964 routing, both typechecks/lints and D19 (21 packages,
+202 files) pass. Remote acceptance remains. E2 entry/CLI/installation still await
+D; P publisher released0aae48f after accepted N/C and fresh frontier A Step0.
+P4A1 sourceb633101 has two approvals; exact six-site audit enrollment released
+3c766ba to Luna. P3A4d11fa2 still has independent findings; complete repair
+releasedaab16ab. Full production/billing/live measured exit remains open.
