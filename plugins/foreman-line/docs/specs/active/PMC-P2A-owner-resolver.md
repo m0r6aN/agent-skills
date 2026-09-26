@@ -664,7 +664,7 @@ provider calls/spend and HRO implementation.
 
 - [P2 design inventory](../../goals/pi-model-configuration/pmc-p2-design-inventory.md)
 - [Accepted Amendment 05](../../goals/pi-model-configuration/gate-1-amendment-05.md)
-- [PMC-P1a](PMC-P1a-provider-binding-contract.md), [PMC-P1b](PMC-P1b-provider-binding-projection.md)
+- [PMC-P1a](../done/PMC-P1a-provider-binding-contract.md), [PMC-P1b](PMC-P1b-provider-binding-projection.md)
 - [Ratified map](../../goals/pi-model-configuration/pmc-p0-role-lane-map.md)
 - [Rubric](../../goals/pi-model-configuration/pmc-p0-suitability-rubric.md)
 
@@ -698,3 +698,15 @@ P2A cannot depend on a future P2B module: its cost-value port is injected until
 P2C composes the accepted ledger/money implementation. Synthetic evidence is
 confined to offline conformance and cannot mint a production permit. Full HRO
 live exit remains unchanged.
+
+## Independent revised-contract disposition — 2026-09-26
+
+Fresh read-only reviewer approved draft e598906def119c312efb5997474273273122b8b0
+with no blocking contract findings, conditional on accepted P1b API/base pin.
+The review explicitly accepted episode consistency versus controller custody,
+derived lane exclusions versus future review duties, field-level evidence
+reconciliation, and bounded exact cost port/error precedence. It did not approve
+implementation, dispatch, production evidence or activation. P2B helper-to-port
+correspondence remains a composition obligation; no duplicated arithmetic.
+Coordinator accepts this disposition. The combined PMC-P1a/RCM-P1A main merge is
+e6daf7e8cd3bc7b7ae61f9646465f8cea60de2c9, but P1b remains in its separate build.
