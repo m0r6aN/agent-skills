@@ -527,6 +527,9 @@ test('A2(b)(2)/(4) Contract B — every surfaced file is adjudicated; both signa
   //   spec-linter/src/types.ts         — LOCKSTEP: restates ROUTING_CLASSES in full, and is also
   //                                      a Contract A reader (VERIFICATION_CLASSES). ADD a class
   //                                      and this file must change.
+  //   dispatch/src/pmc-launch/intent-custody.ts — LOCKSTEP: validates routingClass
+  //                                      against the full literal vocabulary; adding a class
+  //                                      requires changing this owner's membership list.
   //   hybrid-routing/src/consumer-compatibility.ts — LOCKSTEP: validates routing_class against a
   //                                      local membership set. ADD a class and this file must change.
   //   dispatch/src/routing-eval/index.ts — A5(b), RE-ADJUDICATED and UNDECLARED (review E B1, the
@@ -719,6 +722,32 @@ test('Contract B MUTATION: deleting the genuine consumer reader is detected by t
 // ---------------------------------------------------------------------------
 // F1 (A2(d)): every REAL registry entry, not only fixtures, is schema-valid.
 // ---------------------------------------------------------------------------
+
+test('Contract B: intent custody is an additive LOCKSTEP reader with exact touch set', () => {
+  const genuine = 'plugins/foreman-line/dispatch/src/pmc-launch/intent-custody.ts'
+  assert.deepEqual(
+    [...contractB.readers].sort(),
+    [
+      genuine,
+      'plugins/foreman-line/hybrid-routing/src/consumer-compatibility.ts',
+      'plugins/foreman-line/spec-linter/src/schemas.ts',
+      'plugins/foreman-line/spec-linter/src/types.ts',
+      'plugins/foreman-line/spec-linter/schemas/spec-frontmatter.schema.json',
+    ].sort(),
+  )
+  assert.ok(new Set([...contractBFieldSignal, ...contractBValueSignal]).has(genuine))
+  const mutatedReaders = contractB.readers.filter((reader) => reader !== genuine)
+  const declared = new Set(mutatedReaders.flatMap(readerFiles))
+  const surfaced = new Set([...contractBFieldSignal, ...contractBValueSignal])
+  assert.ok([...surfaced].filter((file) => !declared.has(file)).includes(genuine))
+  assert.deepEqual(
+    deriveTouchSet(
+      registry.flatMap((entry) => entry.readers.flatMap(readerFiles)),
+      repoRoot,
+    ).files,
+    [...contractB.readers].sort(),
+  )
+})
 
 test('A2(d)/F1: every entry in the real registry validates against contractReaderEntrySchema', () => {
   const ajv = new Ajv({ allErrors: true })

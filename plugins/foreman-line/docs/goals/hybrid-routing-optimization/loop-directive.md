@@ -125,3 +125,26 @@ D:/Repos/agent-skills-worktrees/hro-p1c-shaping-20260926, exact four-file envelo
 inspect/restate/STOP, then explicit coordinator release. Its default cwd is read-only.
 No new user-owned task or competing coordinator loop was created. Root task
 01a0ddb6-5fed-7d82-b2f0-075315440dc1 retains all reviews, integration and release.
+## Continuation checkpoint: validator reuse accepted, final bridge repair held
+
+PMC-P2F merged in PR62 at2eb994b4 after two independent source reviews, separate
+combined-head review and all12remote checks. It reuses only compiled fixed schema,
+never validation results or authority; actual choice reuse remains HRO-P2 work.
+
+HRO-P1c287d source closes original byte-alias/budget defects but both reviews still
+require genuine HRO artifact substitutions, retained-producer refusal coverage,
+exact boundary/during-capture tests and full-package lint. Repair Step0 requested
+against roottriage2360b34 in existing Luna task; no replacementmodel or acceptance.
+
+PMC-P2B1 repaired3f31181 has both final independent source approvals; narrow
+Contract B/D19 enrollment is released separately in integrationworktreeb8565c8.
+C/D composition design is independently approved; runtime predecessors and all
+live evidence gates remain open. P2E caller inventory found real legacy execution
+surfaces and no existing Pi inference CLI; scoped split drafts are in progress.
+
+HRO-P2 corrected01c20f5 design has an independent approval but remains draft;
+bounded performance-feasibility measurement precedes root adoption decision.
+A source-backed billing-bound gap prevents paid live activation. Vendor inquiry
+is prepared, not sent; user was asked whether existing contractual evidence is
+available. No credentials, host configuration, provider inference or spend used.
+Independent implementation continues while that evidence question is pending.

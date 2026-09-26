@@ -1,6 +1,6 @@
 # PMC-P2F fixed schema validator reuse — implementation handoff
 
-**2026-09-26: private implementation complete; independent implementation review pending.**
+**2026-09-26: accepted and merged; Stage F closed.**
 Gate 2 released the exact three-file scope at
 2bc35e99708b1290a184e5d7614fc9b984e4e4c3, active spec blob
 2faf7b0c08e249b20ea1d89e0721d1bb7493eb7f. Earlier shaping findings below remain
@@ -33,7 +33,7 @@ approval or a builder release for this draft.
 
 ## Chosen boundary
 
-The [released spec](../../specs/active/PMC-P2F-schema-validator-reuse.md) proposes one
+The [released spec](../../specs/done/PMC-P2F-schema-validator-reuse.md) proposes one
 private lazy retained compiled validator for the fixed recursively frozen schema.
 Input snapshotting stays first, and initialization remains inside the existing
 typed try/catch. Publish the retained reference only after compile succeeds.
@@ -192,3 +192,13 @@ informational __proto__ message is unchanged. No predecessor runtime is modified
 
 Independent combined-head inspection and remote CI remain required. No provider
 call, savings claim, active-runtime result, merge or full-HRO completion is recorded.
+
+## Stage F closure
+
+PR62 https://github.com/m0r6aN/agent-skills/pull/62 merged at2026-09-26T19:10:18Z,
+matching reviewed head4bbf31360633b4350d7498bafc609565db67842f. Merge commit:
+2eb994b4dca3e0d1220953c30d1a64d0e5bdfc37. All12remote checks SUCCESS, including
+both complete foreman-line test and integration-report runs36264269459/36264266738
+and plugin validation runs36264269406/36264266771. Two independent source reviews
+and separate combined-head review were approved before merge. Done-spec move
+records acceptance; no measured timing, live inference or HRO completion is claimed.
