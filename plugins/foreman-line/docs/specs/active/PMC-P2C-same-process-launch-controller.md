@@ -399,8 +399,9 @@ authority. Copies, proxies, reused/cross-instance/restart identities fail lookup
    decisionDigest hashes the fixed UTF-8 JSON tuple
    `["pmc-decision/v1",requestDigest,complete successful decision]`, including
    audit/independence obligations, never incidental property order.
-4. Await prepare, own/bound-check final wire, verify proof/selected claims, compute
-   wireDigest, and acknowledge owner.recordDecision.
+4. Await prepare, own/bound-check final wire, compute wireDigest, then verify
+   proof/selected claims using complete RevalidationV1, and acknowledge
+   owner.recordDecision.
 5. reserve({requestId,scopeId,requestDigest,costValue,priceEvidence}) with unchanged
    P2B outputs. Failure means no permit and blocked custody. Mint only on matching
    acknowledged reserved AttemptV1 (all identity/epoch/scope/cost fields).
@@ -417,6 +418,8 @@ authority. Copies, proxies, reused/cross-instance/restart identities fail lookup
    requires the second PREISSUED request ID and fresh reservation/permit under the
    same intent; new turns cannot reset that intent and uncertainty blocks it.
 
+requestDigest, decisionDigest and wireDigest are lowercase hexadecimal SHA-256
+of the specified UTF-8 serialization, as is bodyDigest of its exact UTF-8 body.
 Digest serialization is bounded owned JSON without toJSON, whitespace or caller
 property order. Request uses P2A declared nested field order; wire uses WireV1
 declaration order (headers content-type then accept). Complete decision includes

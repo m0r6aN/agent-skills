@@ -207,3 +207,14 @@ read-only from the existing P2A integration donor with TSX_DISABLE_CACHE=1. No
 implementation tests, dependency mutations, provider/network calls, host/config
 writes, PR or push. The local documentation commit is a review handoff only;
 both specs remain draft and non-dispatchable.
+
+## B1/P2C concrete review A triage — 2026-09-26
+
+Independent reviewer A inspected33044f2 and actual accepted P2A/P2B types. It
+accepted the bounded two-table custody architecture and composition direction,
+with two required P2C prose fixes: compute wireDigest before verify consumes
+complete RevalidationV1, and specify lowercase SHA-256 over each prescribed UTF-8
+digest serialization. Coordinator accepts/applies both; no authority change.
+The complete crash/concurrency matrix remains mandatory regardless of the tight
+implementation sizing estimate. No source implementation or production approval.
+Second independent design review and A's correction acceptance remain pending.
