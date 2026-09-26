@@ -211,3 +211,25 @@ class-1 through class-5 instances, ledger 10/10, intent custody 9/9 and exit
 no-send cancelled actual SQLite outcomes. Final scope and clean checks passed.
 Production remains disabled and no predecessor, dependency, sender, Pi-port,
 credential or host configuration source was changed.
+
+## Independent repair source acceptance — 2026-09-26
+
+Root and frontier A approve e963782ab68a16ea8a4c302090437856630068f9. Runtime changes
+only raw SSE framing-byte accounting before CR normalization. Exact 131072/+1
+LF/CRLF multiline/comment controls and split boundaries pass. Root independently
+reran the original probe: LF 120149 bytes succeeds; CRLF 160151 bytes now refuses
+STREAM_UNCERTAIN. A ran the new boundary tests against a TEMP old-parser copy and
+observed the intended CRLF plus-one failure. No mutated source was installed.
+
+Root ran all 75 focused tests including actual pinned Pi, dispatch typecheck and
+changed-file lint (informational notices only). A independently ran 72 parser/
+sender tests, typecheck, full lint, actual D19 and all three real-ledger temporary
+replay probes. Permanent tests now reserve/consume/reconcile through actual SQLite
+and exercise same-proof replay plus restored terminal tampering. Source/owner/
+dependency preservation is exact. Builder full548 is separately recorded evidence.
+
+Source is accepted for combined-main integration, not production activation. The
+existing old-base Contract B reader failure must disappear with accepted C
+enrollment and the combined suite must pass before remote checks/merge. Root will
+reuse this now-frozen isolated worktree under a new integration branch, preserving
+its real pinned dependency directories without installation or donor junctions.
