@@ -148,9 +148,11 @@ readCatalogSnapshot validation. Share private pure helpers only under the explic
 RCM amendment; do not implement a competing catalog reader or copied price math.
 Preserve observed text/image intersection and residual modalities. The reviewed
 reasoning inference requires nonempty observed supported_efforts; absent/empty
-remains unknown and cannot become false. Exact effort mappings preserve the
-accepted conservative semantics; missing levels and mandatory-reasoning off
-refuse. No Pi defaults or clamping supply metadata. New shape/profile changes
+remains unknown and cannot become false. The new raw v1 profile deliberately
+narrows effort mapping as specified below: it never emits off, even when none is
+observed. The retained-artifact API's existing reviewed none-to-off mapping and
+fixtures remain unchanged. Missing levels and mandatory-reasoning off refuse.
+No Pi defaults or clamping supply metadata. New shape/profile changes
 require review, not runtime widening.
 
 Retain exact captured response bytes or a bounded lossless allowlisted field
@@ -467,6 +469,94 @@ generation reset or recreated owner may reset the workflow admission/refresh
 budget. A new process can publish only under separately valid workflow admission;
 otherwise it refuses. This parcel cannot grant such admission.
 
+### Checkpoint N materializer disposition — 2026-09-26
+
+This docs-only amendment starts at c4f1e22b0d15f53b0ac600b940748225d54cf720.
+Root accepted the genuine read-only checkpoint N Step0 and disposed the following
+details. Runtime implementation is not released; independent amended-design
+review and explicit root release remain required.
+
+materializePublicModelResponseV1 accepts unknown and validates the existing closed
+MaterializerInput/MaterializerResult contract above. Reuse the exact InventoryRow
+union and imported ModelRecord/AcceptedCatalogSource; add no result keys or
+unsupported inventory variant. Unsupported requested providers return
+PROFILE_REFUSED before raw materialization. Missing/malformed non-domain required
+facts produce incomplete/REQUIRED_FACT_MISSING after coverage is proven. Malformed
+identity, duplicate identity or missing/malformed text-domain membership anywhere
+in the response returns COMPLETENESS_UNPROVEN for both candidate variants. Missing
+or invalid whole-response envelope metadata has the same coverage refusal.
+Incomplete-only scope returns INCOMPLETE_SCOPE. Mixed facts/incomplete/absence
+retains every original requested identity; absentIdentities equals all and only
+absent-in-domain rows. No incomplete row becomes absence or a partial catalog.
+
+The new source profile declaration is exactly:
+
+- profileId: openrouter-public-text-materialization
+- profileVersion: v1
+- sourceEvidenceRef and canonical sourceRef: the literal prefix
+  `openrouter-public-text-materialization/v1:sha256:` followed immediately by
+  the lowercase 64-character SHA-256 of the exact raw response bytes
+- sourceEvidenceSha256: that raw-byte digest
+- canonicalSha256: SHA-256 of the actual generated canonical bytes
+- requestedIdentities: the complete original requested scope
+- canonical provider checkedAtUtc: completeReceivedAtUtc, never request start,
+  evaluation time, publication time or a provider-created timestamp
+
+Choose the raw-byte retention branch: the publisher retains the actual captured
+raw response bytes unchanged, with its captured timestamps/profile and private
+provenance. The pure materializer defensively copies input bytes for computation;
+its return schema does not grow raw-byte or fabricated manifest fields. The source
+reference is reproducible evidence, not custody or acceptance authority. No
+historical filenames, refusal binding 7, baseline counts or ratification labels
+are generated. Caller-supplied complete/times/profile declarations remain
+evidenceOnly until the separately installed publisher authenticates acquisition.
+
+Field locations are exact JSON Pointers into the retained response, using the
+actual zero-based row index: /data/<index>/id,
+/data/<index>/architecture/input_modalities,
+/data/<index>/architecture/output_modalities,
+/data/<index>/context_length, /data/<index>/top_provider/max_completion_tokens,
+/data/<index>/pricing/prompt, /data/<index>/pricing/completion and
+/data/<index>/reasoning/supported_efforts. These define the extraction profile;
+they do not add fields to ModelRecord or the result union. Extra request fees,
+other rates/modalities and unprojected observations remain in the retained raw
+bytes. Prompt/completion price projection proves only those observed rates, never
+zero request fees, account billing completeness, an execution ceiling or entitlement.
+Missing required observations cannot be replaced by defaults or inferred from
+names, Pi configuration, context length or another row.
+
+Raw reasoning mapping is explicitly narrower than retained v2. Accept only an
+own reasoning.supported_efforts array of unique known strings from
+max/xhigh/high/medium/low/none. Require at least one positive effort from
+max/xhigh/high/medium/low; emit reasoning:true only as the reviewed profile
+inference and map each observed positive effort identically in that fixed order.
+Never emit off or minimal. Observed none is retained only in the original raw
+evidence and is omitted from the canonical map. None-only, missing, empty,
+malformed, duplicate or unknown efforts make the row incomplete. No verified
+general raw mandatory-reasoning signal exists here: do not invent mandatory:false,
+recognize a guessed mandatory flag, or treat none as authorization for off.
+This deliberate new-profile restriction does not modify retained producer v2's
+none-to-off behavior or its byte-pinned fixtures.
+
+Share private pure decimal-price and positive-effort projection helpers where
+semantically compatible; do not copy price arithmetic or manufacture a retained
+projection object to pass historical-profile validation. The sole canonical
+reader must validate every generated catalog, and the existing adapter must
+consume its exact new AcceptedCatalogSource in tests. No new reader or authority
+constructor is permitted. New raw parsing enforces 4,096 UTF-8 bytes per decoded
+string and 1 MiB aggregate retained strings, with existing depth/value/body bounds;
+retained parsing keeps its existing UTF-16 behavior unchanged. Use an explicit
+private parsing mode, not a silent limit change to the old public entry point.
+
+Checkpoint N controls additionally pair catalog/absence full-envelope success with
+each coverage refusal; exact source references/digests/timestamps and JSON Pointer
+mapping; decimal conversion; positive-only effort mapping and none-only refusal;
+malformed/incomplete versus absent rows; exact scope; hostile capture/bytes and
+UTF-8 versus retained UTF-16 boundary cases. Mutate raw bytes/profile/time/identity
+independently. Retained producer canonical bytes, historical artifacts and public
+API behavior must remain unchanged. Tests and report distinguish synthetic raw
+fixture conformance from actual endpoint compatibility or authenticated acquisition.
+
 ### C composition and activation boundary
 
 C acquire remains synchronous and runs after B1 begin. Refresh/publication must
@@ -561,7 +651,12 @@ Current release permits exactly these documents:
 Future source proposals, NOT current authorization: checkpoint N would amend
 `plugins/foreman-line/routing-policy/src/public-observation-producer.ts` and
 `plugins/foreman-line/routing-policy/tests/public-observation-producer.test.ts`,
-adding `plugins/foreman-line/routing-policy/tests/fixtures/public-model-response-v1.json`.
+adding `plugins/foreman-line/routing-policy/tests/fixtures/public-model-response-v1.json`
+and `plugins/foreman-line/docs/goals/hybrid-routing-optimization/hro-rcm-materializer-verification.md`.
+These are exactly four future checkpoint N files; no barrel, reader, adapter,
+dependency, retained artifact or publisher file changes. This docs-only amendment
+changes only this spec and the existing shaping notes; the four runtime/report
+paths remain unreleased pending independent design review and root release.
 Checkpoint P would add `plugins/foreman-line/dispatch/src/pmc-launch/catalog-publication.ts`,
 `plugins/foreman-line/dispatch/src/pmc-launch/catalog-publication-types.ts` and
 `plugins/foreman-line/dispatch/tests/pmc-catalog-publication.test.ts`.

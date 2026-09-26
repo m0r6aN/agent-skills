@@ -184,3 +184,49 @@ close/error controls prove the event path, not an unrelated fake promise. All ot
 bounds, source pins, scope/generation rules, completeness predicates and production
 gates remain unchanged. Frozen lint/body/link/whitespace checks precede handoff;
 fresh app-PMC/root review remains required. No runtime or provider effect occurred.
+
+## Checkpoint N concrete materializer disposition
+
+Read-only Step0 at c4f1e22b0d15f53b0ac600b940748225d54cf720 inspected the actual
+producer, canonical reader, adapter and retained producer tests. Root released
+only this note and the existing publication spec to freeze the remaining N details.
+No runtime implementation, dependency setup, endpoint/Pi/configuration call or
+production authority follows from this amendment.
+
+The exact future N envelope is existing public-observation-producer.ts and its
+existing test, new tests/fixtures/public-model-response-v1.json under routing-policy,
+and docs/goals/hybrid-routing-optimization/hro-rcm-materializer-verification.md.
+No barrel, reader, adapter, retained evidence, dependency or publisher changes.
+Two independent amended-design reviews and explicit root release precede coding.
+
+New AcceptedCatalogSource uses profileId openrouter-public-text-materialization,
+profileVersion v1, sourceEvidenceRef/sourceRef exactly
+`openrouter-public-text-materialization/v1:sha256:` plus lowercase raw SHA-256,
+sourceEvidenceSha256 of those raw bytes, canonicalSha256 of actual canonical bytes,
+and the full requested scope. Provider checkedAtUtc is completeReceivedAtUtc.
+The publisher retains actual raw bytes unchanged; pure results gain no new keys.
+Exact index-based JSON Pointers in the spec bind each projected observation back
+to those bytes. No synthetic historical manifest or self-authenticating hash.
+
+The new raw profile intentionally never maps none to off. It accepts only unique
+known supported_efforts and requires a positive max/xhigh/high/medium/low effort;
+observed positive levels map identically. None survives only in retained raw
+evidence. None-only/missing/empty/malformed/duplicate/unknown effort observations
+are incomplete, not reasoning:false. There is no reviewed general mandatory-off
+signal, so no invented boolean or guessed mandatory field. Old retained v2 mapping,
+historical fixtures and canonical bytes remain unchanged, including none-to-off.
+
+Missing/malformed non-domain required facts are incomplete; unsupported requested
+provider is PROFILE_REFUSED; malformed coverage is COMPLETENESS_UNPROVEN for both
+variants. The reviewed InventoryRow union stays closed. New parsing uses explicit
+UTF-8 string limits while retained parsing preserves UTF-16 behavior. Pure price
+and effort helpers may be shared only without changing old semantics. Raw request
+fees and extra observed rates remain evidence, never implied zero or complete
+account tariff. Actual sole-reader and adapter tests prove representation
+compatibility; they cannot prove production acquisition or endpoint compatibility.
+
+Future RED/GREEN covers paired full-envelope variants, independent coverage and
+binding mutations, unknown facts, decimal/effort mapping, hostile inputs and exact
+bounds. Full routing tests/typecheck/lint and retained-output checks remain future
+runtime acceptance. This amendment is checked by frozen linter, body/local links,
+exact two-document whitespace/scope checks and a clean local handoff commit.
