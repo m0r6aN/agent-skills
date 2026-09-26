@@ -372,3 +372,21 @@ close without connection and no forged completion from late lookup/error events.
 
 The correction is docs only and requires fresh independent reviews. Accepted N/C
 integration and explicit P runtime release remain prerequisites.
+
+## Checkpoint P construction ratification — 2026-09-26
+
+Root and independent frontier A approve final construction amendment773daa5c947f4e9dde10f0ae1b5c0a1552ac9499.
+Both inspected the actual Node24.19 net behavior supporting the conservative
+connection-plus-close cleanup rule. Fixed native HTTPS bridge delivery and guarded
+native-listener tests are part of checkpoint P; production owner construction still
+refuses unconditionally. Missing observed connection can retain a slot indefinitely;
+outward refusal remains bounded and no reset creates replacement capacity.
+
+All original response completeness, exact scope, generation CAS, cancellation,
+raw-byte/source/profile binding and separate authenticity requirements remain.
+This records delegated design ratification, not P runtime implementation release.
+Accepted N/C source must first be integrated; a fresh actual-source Step0 must
+verify concrete N imports, reader/adapter/C composition and source/test envelope.
+Exactly six future P paths remain proposed. Actual endpoint compatibility, production
+admission/profile custody, account/quality/billing/budget claims and HRO live exit
+remain separate. No endpoint/inference, credential or host configuration action.
