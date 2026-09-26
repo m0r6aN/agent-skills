@@ -709,3 +709,19 @@ source. Existing controller/runtime/tests/barrel and all predecessor code remain
 unchanged. Actual Step0 restate-and-STOP precedes explicit release; this paragraph
 only authorizes inspection and a concrete plan. Two independent audit reviews,
 combined checks and all remote checks remain required before merge.
+
+### Enrollment Step0 acceptance and release — 2026-09-26
+
+The builder completed actual Step0 and stopped at dd36d721e9222b7523c6b17ea555b3d0519ef043.
+The coordinator independently imported the actual registry data and reproduced
+its existing ten-value digest, then added only the approved controller path to
+that material. SHA-256 of UTF-8 JSON.stringify([...values].sort()), retaining
+repeated values, is fixed to 03adbbf53a4c30c42db51268b8749bea0c88217e633e1aedc570926202a13af6
+for eleven values. Existing digest dda1e79b0cfbf2767aef8eb37d67f235647e046fd52c98a53bdcd23809de748d
+was independently reproduced first. Material is both complete description strings
+and all reader occurrences; schemas/types/schema JSON occur twice each.
+
+Under the user's prerequisite authority, the coordinator now releases exactly the
+five-file enrollment envelope above. No source/runtime or audit-algorithm change.
+Preserve genuine RED evidence, then focused and applicable regression checks.
+Two independent reviews and integration/remote gates remain required.
