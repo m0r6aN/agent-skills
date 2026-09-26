@@ -132,3 +132,15 @@ kept this repair bounded and preserved both initial failures. Builder self-revie
 does not replace the two independent audit reviews. Combined integration checks,
 remote checks and delegated coordinator merge authority remain with the coordinator.
 This local handoff does not claim Stage F or production readiness.
+
+## Independent audit acceptance — 2026-09-26
+
+Coordinator and independent PMC reviewer approve eaabcb4180cba946274925079eec215718ed29ca.
+Both inspected exact constants/maps/comments, all permanent mutation controls,
+preserved owner sources and scope; each independently ran42 focused tests,
+verification typecheck/lint and actual D19 with native exit0. Historical runtime
+values are individually unruled, retained replay values remain pinned and all
+other detector mechanisms/pins are unchanged. No remaining audit finding.
+
+This accepts the narrow repair only. Combined P1c/main integration and its checks,
+remote PR checks and delegated exact-head merge remain outstanding.
