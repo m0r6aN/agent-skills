@@ -35,8 +35,7 @@ implementation remain predecessors. Read actual types rather than copying them.
 Pi source root is development evidence only:
 `D:/nvm/v24.7.0/node_modules/@earendil-works/pi-coding-agent`, version 0.87.1.
 Exact additional hashes and official sources are in the preflight and composition
-notes. Node executable is 24.19.0; existing dependencies only. No vendor edits,
-package installation, absolute shipped import, network experiment or host settings.
+notes. Node executable is 24.19.0. This docs-only amendment performs no package installation. A later explicitly released runtime slice may install only the pinned development dependencies below in its isolated checkout. No vendor edits, absolute shipped import, provider experiment or host settings.
 
 Provider is exactly openrouter; API exactly openai-completions; URL exactly
 `https://openrouter.ai/api/v1/chat/completions`; POST only, public L3..L5 only.
@@ -54,7 +53,7 @@ functions in the three allowed source files, not a generic service framework:
 type TransportCode = 'PAYLOAD_REFUSED' | 'PROFILE_REFUSED' | 'PI_REFUSED'
   | 'HEADERS_REFUSED' | 'BOUND_REFUSED' | 'HOOK_REFUSED' | 'ABORTED'
   | 'CREDENTIAL_REFUSED' | 'HTTP_UNCERTAIN' | 'STREAM_UNCERTAIN'
-  | 'USAGE_UNKNOWN' | 'COST_PRECISION_UNKNOWN' | 'PROOF_REFUSED';
+  | 'USAGE_UNKNOWN' | 'COST_PRECISION_UNKNOWN' | 'PROOF_REFUSED' | 'OUTPUT_TRUNCATED';
 type Charge = {kind:'unknown'; reason:'missing'|'malformed'|'precision'|'incomplete'}
   | {kind:'known'; actualMicroUsd:number};
 type Observation = {kind:'no-send'; code:TransportCode}
@@ -111,17 +110,24 @@ verify compares EVERY RevalidationV1 field to its retained authenticated profile
 and request/decision/wire, checks expiry synchronously, and returns only C's
 accepted union. Repeated verify of the same pending proof is allowed because C
 verifies both before reserve and at final revalidation; send consumes it once.
-Failure invalidates it. Exact wire identity and all bytes/claims must match.
+Failure invalidates it. C ownWire captures a fresh owned wire object while retaining
+boundProof; do not require the preparation object's identity. At the first direct
+call from the installed C verify path, authenticate private boundProof membership,
+all retained wire bytes/fields and every RevalidationV1 field before binding that
+exact C-owned wire object. Bind only after every check succeeds. Subsequent verify,
+send and observation registration require that same C-owned object plus unchanged
+proof/fields/claims; a structurally equal clone, preparation object, foreign proof
+or attempted rebinding refuses. A failed first verification permanently invalidates
+that invocation's proof. No task-callable wire-adoption or binding API is added.
 
 
 The finite private factory result is exactly
 `{terminal:TerminalPortV1, finishInvocation:(result:LaunchResultV1|null)=>Promise<InvocationOutput>}`.
 `InvocationOutput` is the owned closed union
-`{kind:'completed',text:string,finish:'stop'|'length'}` or
+`{kind:'completed',text:string,finish:'stop'}` or
 `{kind:'failed',code:TransportCode}`. Text is at most the same 1 MiB UTF-8
 response bound; it is copied from the private captured response, never a caller
-field. Only acknowledged successful semantic reconciliation and completed Pi
-prompt drainage can produce completed. No partial text is returned on failure.
+field. Only semantic stop, C receipt disposition succeeded, acknowledged reconciliation and completed Pi prompt drainage can produce completed. No partial text is returned on failure.
 Provisional Pi text events remain private and must not be presented as completed.
 finishInvocation accepts only the result delivered directly by its installed C
 wrapper for that invocation; null denotes that wrapper's caught unexpected C
@@ -455,8 +461,14 @@ attest excluded billing components. Count overruns are semantic failure; a compl
 valid account charge can still reconcile exactly. No retries to repair parsing.
 
 Emit pinned Pi events start, text_start(index 0), text_delta*, text_end, then done
-(reason stop or length) only after complete stream AND C's acknowledged successful
-semantic reconciliation. Setup failure must emit error directly if a stream exists;
+(reason stop only) after complete stream AND C's acknowledged successful semantic
+reconciliation. Preserve length in the Observation semantic sent to C. Actual C
+maps known-charge length to terminal-failed-settled, so after that reconciliation
+emit private Pi error with OUTPUT_TRUNCATED and return failed OUTPUT_TRUNCATED;
+never done(length), completed partial text or a rewritten succeeded receipt.
+Unknown-charge length remains uncertain with the full existing liability and owner
+block; truncation must not synthesize a known charge or supersede reconciliation/
+unknown-liability refusal. Existing failure/cleanup precedence still applies. Setup failure must emit error directly if a stream exists;
 otherwise its retained failure terminalizes any late stream. Post-start failures emit
 error reason error/aborted and end stream once. No thinking/tool/deferred events.
 Partial content is provisional, never an execution receipt. Pi AssistantMessage
@@ -471,11 +483,58 @@ usage they are zero-valued NOT-YET-OBSERVED placeholders. Always attach diagnost
 accountingAuthority:'pmc-ledger',usageObserved:boolean}}`. Estimated total is sum
 of estimated components, never a fabricated split of account cost. Unknown detail
 counts remain represented by diagnostic evidence, not a claim of measured zero.
-Do not expose Pi usage totals as actual spend; P2E presents only reconciled receipt
-and output text. If the actual pinned session cannot preserve this distinction,
-refuse integration rather than claim numeric placeholders are actual accounting.
+Do not expose Pi usage totals as actual spend. The pinned getSessionStats path calls
+addUsageToTotals, which sums usage.cost.total without inspecting diagnostics.
+This internal accumulation is permitted only inside the private one-shot session:
+it is compatibility estimation, never accounting. Do not change Pi's accumulator.
+Retain and test the diagnostic on the actual assistant message/session; the
+accumulator itself is not required to interpret it. No session, statistics, usage
+object or estimate is exported to callers or used for permit, ledger, liability,
+actual-spend metrics or savings. P2E presents only C's reconciled receipt and bounded
+output text. If diagnostics are lost from the actual session or private estimates
+escape this boundary, refuse integration rather than relabel them as actual cost.
 Ledger proof uses only the separate Charge union above. Unknown settlement emits
 error even if all text arrived; no successful done before owner/ledger closure.
+
+### Portable pinned Pi dependency boundary
+
+This amendment from 343250e08eaee72581d7b925a7b9b6796f9e3536 changes documentation
+only. Independent design review and a fresh builder Step 0 precede runtime release.
+Future dispatch devDependencies are exactly @earendil-works/pi-coding-agent:0.87.1
+and @earendil-works/pi-ai:0.87.1 for the directly imported nominal declarations.
+If an actual direct pi-agent-core type import is required, the builder's Step 0
+must name that symbol/import and declare @earendil-works/pi-agent-core:0.87.1 before
+install; otherwise omit that direct dependency. No floating version/range or
+runtime-selected version. This does not authorize arbitrary extra dependencies.
+
+The coding-agent root package exports ModelRuntime, createAgentSession,
+SettingsManager, SessionManager, ResourceLoader and createExtensionRuntime; pi-ai
+exports the model/context/options/event-stream types through its declared exports.
+Use portable package specifiers and exact actual types. Production adapter modules
+use type-only Pi imports until reviewed private installation supplies the genuine
+constructors/functions. No ts-ignore, absolute local import, structural class cast,
+copy of Pi class types or donor node_modules resolution satisfies this contract.
+
+Install only in the future runtime checkout's own real dependency directory,
+never through an existing dependency junction or into a donor/global installation.
+The builder must inspect the target first and stop for an isolated setup if it is
+a junction; do not mutate its target or replace another owner's dependencies.
+Commit normal package.json/package-lock.json changes and run normal CI typecheck
+plus real Pi tests from that locked installation. Check all 35 existing source
+hashes against the actual resolved package files, including nested/hoisted pi-ai
+and pi-agent-core resolution. Version equality alone is insufficient. A mismatch
+or incompatible nominal duplicate resolution holds for an approved amendment;
+never silently repin, downgrade or cast it away. Existing 35 inspection pins stay
+unchanged. Guarded dynamic import and private actual-runtime construction are
+required tests, not claims established by inspecting installed declarations.
+
+Additional actual-composition controls must start from C's genuine ownWire clone,
+prove two verifies and one send on that object, and reject original/clone/cross-wire
+substitution. Real known-charge length must settle through unchanged C/B1/ledger
+and return OUTPUT_TRUNCATED with no completed text; stop succeeds, unknown-cost
+length stays unknown and failed cleanup cannot become success. Actual Pi session
+retains the diagnostic while its internal numeric accumulator remains private;
+assert external output has only the reviewed receipt/text or failure contract.
 
 ## Acceptance Criteria
 
@@ -493,7 +552,7 @@ error even if all text arrived; no successful done before owner/ledger closure.
 ## Out of Scope
 
 Other protocols/providers, built-in sender delegation, tools/images/multiturn
-agents, real calls/probes/spend, credentials/host settings, extra dependencies,
+agents, real calls/probes/spend, credentials/host settings, dependencies beyond the pinned development set below,
 ledger/controller/owner rewrites, ranking/model map changes, raw receipt storage,
 IPC/HMAC, generic extension support, production activation and full HRO exit.
 
@@ -516,8 +575,10 @@ Future implementation only after reviewed contract and explicit dispatch:
 - plugins/foreman-line/dispatch/tests/pmc-owned-sender.test.ts
 - plugins/foreman-line/dispatch/tests/pmc-pi-runtime.test.ts
 - plugins/foreman-line/docs/goals/pi-model-configuration/pmc-p2d-verification.md
+- plugins/foreman-line/dispatch/package.json
+- plugins/foreman-line/dispatch/package-lock.json
 
-No barrel, dependency/lock/config, C/B/B1/A/RCM changes. This shaping task writes
+Exactly nine future implementation files are listed above. No barrel, other dependency/lock/config, C/B/B1/A/RCM changes. This shaping task writes
 ONLY this draft, terminal-preflight and composition-notes; no ShapingResult under
 the coordinator's explicit three-document envelope.
 
@@ -527,9 +588,7 @@ Shaping: existing frozen donor spec-linter; required body/local-link checks;
 git diff --check and exact three-file diff. No source execution or inference.
 Future runtime: Node24.19.0; from plugins/foreman-line/dispatch run `npm.cmd test`,
 `npm.cmd run typecheck`, `npm.cmd run lint` and check exit codes. Temporary actual
-Pi module typecheck harness resolves the pinned installed declarations; shipped
-imports remain injected/portable and package dependencies unchanged. Network is
-blocked before actual-code tests import approved modules; inspect imports first.
+Pi typecheck must resolve the isolated checkout's locked portable package declarations as part of normal dispatch CI typecheck, not an absolute-path-only side harness. Network, ambient-auth/file and subprocess guards are installed before dynamic imports in actual-code tests; inspect imports first.
 Fake streams prove parser/controller logic, not actual Pi initialization, TLS,
 provider identity, endpoint pricing or paid bounds. Live evidence requires its
 own future authorization, authoritative profile and nonzero accepted reserve.
