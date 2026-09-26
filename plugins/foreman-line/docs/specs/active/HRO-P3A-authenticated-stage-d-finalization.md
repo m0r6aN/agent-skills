@@ -691,3 +691,36 @@ Matching-lock read-only dependency links remain allowed, never donor installs.
 Freeze a clean six-file repair/report commit and stop for two independent source
 reviews. Full package checks and honest audit results precede integration; fixture
 checks never establish production custody or completed HRO live acceptance.
+
+### Second repair implementation release — 2026-09-26
+
+Root accepts Luna's genuine read-only Step0 at4d11fa2 with persisted findings
+500a51f/3d7776a. The builder reproduced mismatched C parcel, duplicate post-drain
+claim and depth40/4097-string receipt finalization. Existing over1MiB refusal
+is retained. Root and independent A both request closure of original R2/R3/R5/R6.
+Explicitly release the same six runtime/test/report files from34071db; no new
+source, schema, barrel, dependency, public port or audit path.
+
+Before any owner write, validate the actual complete initial chain and admitted
+order/build against real owner schemas/conventions, parcel, correlation, head,
+refs and payloads. Update labelled initial fixtures to conform to those actual
+contracts; do not relax validation to preserve incomplete fake payloads. Preserve
+exact owned snapshots and claim/ref multisets, reject unexplained additions at
+run/drain/publication/finalization, and retain every actual owner payload/link.
+No first-match acceptance of duplicate claims or self-consistent rewritten data.
+
+Use bounded directory iteration and bounded file reads, actual path/type/component
+checks, and a structural JSON preflight before JSON.parse/expansion. Existing
+receipt/envelope byte limits and ordinary depth/node/string capture limits apply;
+all envelope reads are covered. No unbounded read followed by a size check. This
+bounds input but does not replace the actual receipt schema or canonical hashing.
+Fix full subtree node/string/depth accounting in both captures, including object
+nodes, string-node checks and deeper repeated aliases. Preserve typed refusals.
+
+Run the complete named positive/mutation/one-over/fault/concurrency matrix in the
+Step0 plan, including actual injected AC21 forbidden-token controls and required
+filesystem cases. Record unavailable actual short-path aliases honestly. Report
+actual D19's three-site failure, not merely an unfinished wildcard run. Enrollment
+follows stable runtime separately; do not rename/indirect calls to evade the audit.
+Run full affected checks, freeze clean six-file source/report commit and STOP for
+two independent reviews. No live, credential, host configuration or merge action.
