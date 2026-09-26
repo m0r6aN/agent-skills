@@ -458,10 +458,10 @@ const GRANDFATHER_INVENTORY_PLUGIN_LITERAL_DIGEST =
  */
 const REGISTRY_DATA_FILE = 'contract-readers/src/registry-data.ts'
 const REGISTRY_DATA_DECLARATION_NAMES: ReadonlySet<string> = new Set(['contractA', 'contractB'])
-const REGISTRY_DATA_LITERAL_COUNT = 8
+const REGISTRY_DATA_LITERAL_COUNT = 9
 /** SHA-256 of JSON.stringify([...values].sort()) encoded as UTF-8. */
 const REGISTRY_DATA_LITERAL_DIGEST =
-  '2a40a5f4b50ff58a748187d735f5ce22d6af7f50ec078dd6dbcc56a9ba187ed3'
+  'd5a4c056a28824b3417e0dfa37e0191c437cc16a1fdc83dcd85ffa9467d565cd'
 
 /**
  * JEV-P1/P2 path values are custody-contract DATA, not filesystem roots.
