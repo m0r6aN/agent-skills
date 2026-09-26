@@ -141,3 +141,20 @@ FOLLOWUP_LINT_NATIVE_EXIT=0
 The full suite was not repeated for this test-only addition, per coordinator
 disposition. Runtime, registry and detector source are unchanged from initial
 0eae3a1. `git diff --check` passed. Fresh independent reviews remain required.
+## Independent final enrollment acceptance — 2026-09-26
+
+Coordinator and independent reviewer A APPROVE57b7058a8348f4a078961e4b27268afae5b5f3fb.
+Each independently ran72 reader tests,17 final audit controls, both packages'
+typechecks/lints and actual D19, all native0. Digest independently reproduces
+03adbbf53a4c30c42db51268b8749bea0c88217e633e1aedc570926202a13af6 at11 values.
+Pin-preserving unrelated-declaration/filesystem negatives prove class3 rejection
+while the exact DATA digest/count remain valid; membership tests separately prove
+B-only enrollment. Detector diff is exactly count/digest constants, no new waiver.
+C source/types/barrel/tests remain byte-identical to reviewed93f8021. Scope is the
+five authorized files; other ledger/B1/RCM/Jev pins remain unchanged.
+
+Initial full637 verification evidence remains scoped to0eae3a1; final17 focused
+checks/tc/lint follow the test-only addition. No invented full rerun. Root logs:
+C:/Users/clint/AppData/Local/Temp/hro-c-root-enrollment-review-20260926.log,
+hro-c-root-readers-review-20260926.log and hro-c-root-actual-d19-20260926.log.
+Combined accepted-main/StageF integration, regression and remote checks remain.
