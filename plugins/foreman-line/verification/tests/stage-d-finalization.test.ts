@@ -860,3 +860,61 @@ test('actual captured aggregate bytes accept exactly 16 MiB and refuse plus one'
     }
   }
 })
+
+test('schema-valid B link ticket mismatch refuses before measured writes in both directions', async () => {
+  for (const direction of ['ticket->commit', 'commit->ticket'] as const) {
+    for (const mixed of [false, true]) {
+      const fixture = await makeFixture()
+      try {
+        rewriteChain(fixture, (document, index) => {
+          if (index !== 1) return
+          const subject = document.subject as {
+            links: { direction: string; ticketKey: string; commitSha: string; permalink: string }[]
+          }
+          const wrong = {
+            direction,
+            ticketKey: 'KONE-999',
+            commitSha: 'unrelated-registration-commit',
+            permalink: 'https://example.invalid/registration',
+          }
+          subject.links = mixed ? [...subject.links, wrong] : [wrong]
+        })
+        const directory = join(fixture.repoRoot, 'docs', 'receipts', fixture.workflowId)
+        const before = readdirSync(directory).sort()
+        assert.equal(
+          createOfflineMeasuredVerificationV1(fixture.input).ok,
+          false,
+          `${direction} mixed=${mixed}`,
+        )
+        assert.deepEqual(readdirSync(directory).sort(), before)
+      } finally {
+        rmSync(fixture.repoRoot, { recursive: true, force: true })
+      }
+    }
+  }
+})
+
+test('synthetic schema-valid B zero and multiple same-ticket links add no count or commit restrictions', async () => {
+  // Edited controls prove relational validation only, not genuine completed registration evidence.
+  for (const count of [0, 3]) {
+    const fixture = await makeFixture()
+    try {
+      rewriteChain(fixture, (document, index) => {
+        if (index !== 1) return
+        const subject = document.subject as { links: unknown[] }
+        subject.links = Array.from({ length: count }, (_, i) => ({
+          direction: i % 2 ? 'ticket->commit' : 'commit->ticket',
+          ticketKey: 'KONE-123',
+          commitSha: `registration-only-${i}`,
+          permalink: `https://example.invalid/registration/${i}`,
+        }))
+      })
+      const created = createOfflineMeasuredVerificationV1(fixture.input)
+      assert.equal(created.ok, true, `count=${count}`)
+      if (created.ok)
+        assert.deepEqual(await created.value.runVerificationV1(), { ok: true, value: null })
+    } finally {
+      rmSync(fixture.repoRoot, { recursive: true, force: true })
+    }
+  }
+})

@@ -1164,7 +1164,7 @@ function verifyInitial(
       throw new Refusal()
   }
   const a = exact(rows[0]?.document.subject, ['projectedResult', 'specSet', 'approvedHash'])
-  const b = rows[1]?.document.subject as { ticketKeys: string[] }
+  const b = rows[1]?.document.subject as { ticketKeys: string[]; links: { ticketKey: string }[] }
   validateOwners([a.projectedResult, b, input.order, input.buildResult])
   const shaped = a.projectedResult as { parcelSpecRefs: string[] }
   if (
@@ -1176,6 +1176,7 @@ function verifyInitial(
     input.ticketKey !== input.order.parcelRef
   )
     throw new Refusal()
+  if (b.links.some((link) => link.ticketKey !== b.ticketKeys[0])) throw new Refusal()
   const specEntry = exact(a.specSet[0], ['ref', 'contentHash'])
   if (
     specEntry.ref !== shaped.parcelSpecRefs[0] ||

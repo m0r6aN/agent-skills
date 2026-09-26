@@ -170,3 +170,40 @@ host configuration, production store, push, merge or activation was used.
 
 Freeze for root and independent frontier review; the repair author does not
 approve this source. Production intake and the separate D19 gate remain open.
+
+## Sole-ticket link membership repair — 2026-09-26
+
+Implemented only after explicit release 12519f23da422f112ece3f4d3628e273e643e7e8,
+following ruling f67336567f5dbaaab414bfef212c341f9171fb1e. Exactly the existing
+driver, its test and this report changed. After the actual RegistrationResult
+schema and sole-ticket join validate, every B link must name that same ticket.
+The check neither changes link fields nor imposes count, commit/head equality,
+permalink or direction restrictions beyond the accepted schema.
+
+The permanent negative group covers both direction values and a wrong link alone
+or alongside valid links, rehashing the actual initial chain and refs so unrelated
+hash checks cannot mask the defect. It refuses before measured receipt writes.
+Actual producer-positive and optional-profile tests remain. Separate explicitly
+synthetic schema-valid controls exercise zero links and multiple same-ticket links
+with registration-only commit/permalink values; they are not represented as genuine
+completed registration evidence.
+
+Node24.19 RED: TEMP/hro-p3a-membership-red.log, exit 1 (wrong-ticket link admitted;
+positive synthetic controls pass). GREEN: TEMP/hro-p3a-membership-green.log, exit 0,
+both new groups pass. Both verification and receipts typechecks and full package
+lints exit 0; logs TEMP/hro-p3a-membership-{verification,receipts}-{tc,lint}.log.
+The earlier 87-test receipts result remains scoped to unchanged receipts source;
+that suite was not rerun for this two-line owner repair.
+
+Actual D19 still exits 1 with exactly four class-5 sites; see
+TEMP/hro-p3a-membership-d19.log. The expressions are unchanged, now at lines 1184,
+1317 (two calls) and 1678. No audit algorithm, constants, schema, source outside the
+three-file envelope, dependency, production authority or live activity changed.
+Final audit enrollment must use the independently approved final owner source.
+
+Final bounded verification rerun: 177 passed, zero failed, exit 0, including all
+175 prior tests and the two new groups (24 driver tests plus pipeline/static guards
+and other bounded suites). Log: TEMP/hro-p3a-membership-verification.log. The same
+two D19 mutation suites remain excluded and unclaimed; actual D19 failed as above.
+Diff/scope checks pass. Freeze clean and stop for root plus independent A review;
+this builder report is not source acceptance or an audit waiver.
