@@ -1,7 +1,7 @@
 ---
 ticket: HRO-P4A1
 title: Durable admission for bounded recovery bootstrap
-status: active
+status: done
 owner: clinton.morgan
 created: 2026-09-26
 updated: 2026-09-26
@@ -414,3 +414,16 @@ Run actual child audit/mutation controls, relevant existing suites, full package
 checks and real plugin audit. Freeze clean audit/report commit and STOP for two
 independent reviews. Runtime and all existing pins remain unchanged; no broad
 waiver, owner refactor, dependency/install or host configuration change.
+
+## Accepted offline recovery-admission parcel — 2026-09-26
+
+PR69 (https://github.com/m0r6aN/agent-skills/pull/69) merged at
+2026-09-26T23:27:17Z as c1f6fdd67c7a5251d57eb0241cc75ea06381cac2. All twelve
+remote checks passed on exact reviewed head e5cf0d7f7e6cf7196fd3f1dfb847b79ba4889c48.
+Root and frontier D approved runtime and audit/combined source independently;
+combined dispatch 492/492 and verification 658/658, typechecks, changed-file lint
+and actual D19 passed. The standalone admission spec moves to done.
+
+Only this offline prerequisite closes. Production installation/admission authority,
+P4A broker, repaired publisher and transport, measured receipt integration and live
+HRO acceptance remain open. No provider call, account access or config apply ran.
