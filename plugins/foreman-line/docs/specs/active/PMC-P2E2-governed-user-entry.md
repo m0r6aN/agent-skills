@@ -380,3 +380,12 @@ reviewed genuine installation/billing authority exists.
 This is a proposed contract clarification only. PR70 must be accepted, another
 independent reviewer must approve this clarification, and the selected builder
 must complete fresh stopped Step 0 before root explicitly releases implementation.
+
+### Remaining entry clarification accepted — 2026-09-26
+
+Root ratifies aa8eff57670e13d515faeb1f41e7ff8404efbabe after frontier A's preflight
+and independent frontier D approval against actual D/C/B1 source. D confirmed
+that the private release wrapper calls closeIntentOwnerV1(owner), not an invented
+owner.close method. The actual owner type imports and return-derived D union
+require no predecessor changes. All six touched paths above are retained.
+PR70 acceptance, a fresh builder Step 0 and explicit runtime release remain pending.
