@@ -305,6 +305,103 @@ test('oversized arrays refuse before ownKeys and child access', () => {
   assert.equal(inspected, 0)
 })
 
+test('a caller trap throwing a revoked proxy becomes an input refusal', () => {
+  const thrown = Proxy.revocable({}, {})
+  thrown.revoke()
+  adapterRefusal(
+    new Proxy(
+      {},
+      {
+        ownKeys() {
+          throw thrown.proxy
+        },
+      },
+    ),
+    'INPUT_REFUSED',
+  )
+})
+
+test('classification never inspects a thrown value prototype or properties', () => {
+  let inspections = 0
+  const thrown = new Proxy(
+    {},
+    {
+      getPrototypeOf() {
+        inspections++
+        throw Error('prototype inspection')
+      },
+      get() {
+        inspections++
+        throw Error('property inspection')
+      },
+    },
+  )
+  adapterRefusal(
+    new Proxy(
+      {},
+      {
+        ownKeys() {
+          throw thrown
+        },
+      },
+    ),
+    'INPUT_REFUSED',
+  )
+  assert.equal(inspections, 0)
+})
+
+for (const singleRead of [false, true]) {
+  test(`shared identity is captured once with a ${singleRead ? 'single-read' : 'passive'} proxy`, () => {
+    const input = fixture()
+    const expected = evaluateCatalogEligibility(input)
+    const reads = new Map<PropertyKey, number>()
+    let enumerations = 0
+    const identity = new Proxy(
+      { provider: 'fixture', id: 'model' },
+      {
+        ownKeys(target) {
+          enumerations++
+          return Reflect.ownKeys(target)
+        },
+        getOwnPropertyDescriptor(target, key) {
+          const count = (reads.get(key) ?? 0) + 1
+          reads.set(key, count)
+          if (singleRead && count > 1) throw Error('caller object recaptured')
+          return Reflect.getOwnPropertyDescriptor(target, key)
+        },
+      },
+    )
+    input.identities = [identity]
+    input.acceptedSource.requestedIdentities = [identity]
+    assert.deepEqual(evaluateCatalogEligibility(input), expected)
+    assert.equal(enumerations, 1)
+    assert.deepEqual([...reads.values()], [1, 1])
+  })
+}
+
+test('shared captures charge expanded primitive occurrences to the value budget', () => {
+  const shared = Array(256).fill('leaf')
+  const groups = Array(256).fill(shared)
+  adapterRefusal({ ...fixture(), approvedConfig: groups }, 'BOUNDS_REFUSED')
+})
+
+test('a completed capture is rechecked at its deeper alias depth', () => {
+  const shared = { leaf: 1 }
+  let nested: unknown = shared
+  for (let i = 0; i < 13; i++) nested = { child: nested }
+  const input = { ...fixture(), approvedConfig: { first: shared, later: nested } }
+  assert.equal(evaluateCatalogEligibility(input).stage, 'projector')
+  input.approvedConfig.later = { child: nested }
+  adapterRefusal(input, 'BOUNDS_REFUSED')
+})
+
+test('shared completed siblings do not hide an active ancestor cycle', () => {
+  const shared = { leaf: 1 }
+  const cyclic: Record<string, unknown> = { first: shared, again: shared }
+  cyclic.self = cyclic
+  adapterRefusal({ ...fixture(), approvedConfig: cyclic }, 'INPUT_REFUSED')
+})
+
 test('strings, depth, and primitive aggregate values consume finite budgets', () => {
   adapterRefusal({ ...fixture(), evaluationTimeUtc: 'x'.repeat(4097) }, 'BOUNDS_REFUSED')
   let nested: unknown = 1

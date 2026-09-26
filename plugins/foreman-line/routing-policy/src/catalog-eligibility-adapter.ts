@@ -39,9 +39,11 @@ export type CatalogEligibilityResult =
   | { readonly stage: 'reader'; readonly result: Extract<SnapshotReadResult, { ok: false }> }
   | { readonly stage: 'projector'; readonly result: ProjectionResult }
 
+const refusalCodes = new WeakMap<object, CatalogAdapterRefusalCode>()
 class Refusal extends Error {
-  constructor(readonly code: CatalogAdapterRefusalCode) {
+  constructor(code: CatalogAdapterRefusalCode) {
     super(code)
+    refusalCodes.set(this, code)
   }
 }
 
@@ -71,11 +73,21 @@ function bytesCopy(value: unknown): Uint8Array {
 interface Budget {
   remaining: number
   active: Set<object>
+  captured: Map<object, Record<string, unknown> | unknown[]>
 }
 
 function reserve(budget: Budget, count: number): void {
   if (count > budget.remaining) throw new Refusal('BOUNDS_REFUSED')
   budget.remaining -= count
+}
+
+/** Recheck each expanded occurrence using only completed, owned captures. */
+function chargeCaptured(value: unknown, budget: Budget, depth: number): void {
+  if (depth > 16) throw new Refusal('BOUNDS_REFUSED')
+  if (typeof value !== 'object' || value === null) return
+  const children = Object.values(value)
+  reserve(budget, children.length)
+  for (const child of children) chargeCaptured(child, budget, depth + 1)
 }
 
 /** Each node is reserved by its parent, including primitives. Never reread caller fields. */
@@ -94,6 +106,11 @@ function copy(value: unknown, budget: Budget, depth: number, bytes = false): unk
   )
     return value
   if (typeof value !== 'object' || budget.active.has(value)) throw new Refusal('INPUT_REFUSED')
+  const captured = budget.captured.get(value)
+  if (captured) {
+    chargeCaptured(captured, budget, depth)
+    return captured
+  }
   budget.active.add(value)
   try {
     const array = Array.isArray(value)
@@ -139,6 +156,7 @@ function copy(value: unknown, budget: Budget, depth: number, bytes = false): unk
         configurable: true,
       })
     }
+    budget.captured.set(value, result)
     return result
   } finally {
     budget.active.delete(value)
@@ -186,7 +204,7 @@ function freeze<T>(value: T): T {
 /** Pure bounded wrapper. A fabricated reference cannot prove authority or live availability. */
 export function evaluateCatalogEligibility(input: unknown): CatalogEligibilityResult {
   try {
-    const budget: Budget = { remaining: VALUE_LIMIT - 1, active: new Set() }
+    const budget: Budget = { remaining: VALUE_LIMIT - 1, active: new Set(), captured: new Map() }
     const owned = copy(input, budget, 0)
     if (
       !record(owned, [
@@ -230,7 +248,7 @@ export function evaluateCatalogEligibility(input: unknown): CatalogEligibilityRe
     // Reader-owned facts are bounded too, without copying/forging the branded snapshot.
     copy(
       { providers: snapshot.providers, models: snapshot.models, sourceRef: snapshot.sourceRef },
-      { remaining: VALUE_LIMIT - 1, active: new Set() },
+      { remaining: VALUE_LIMIT - 1, active: new Set(), captured: new Map() },
       0,
     )
     const modelScope = identitySet(snapshot.models.map(({ provider, id }) => ({ provider, id })))
@@ -253,7 +271,8 @@ export function evaluateCatalogEligibility(input: unknown): CatalogEligibilityRe
     return Object.freeze({
       stage: 'adapter',
       ok: false,
-      code: error instanceof Refusal ? error.code : 'INPUT_REFUSED',
+      // WeakMap lookup uses identity only, even for revoked proxies or primitive throws.
+      code: refusalCodes.get(error as object) ?? 'INPUT_REFUSED',
     })
   }
 }

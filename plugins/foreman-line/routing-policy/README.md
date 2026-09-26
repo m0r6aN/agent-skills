@@ -450,7 +450,11 @@ reader facts each receive a separate bounded pass. Bytes are checked before
 reader parsing and copied through native typed-array slots, without calling
 caller iterators or overridden getters. Detached, shared and resizable storage,
 typed-array proxies and non-byte views refuse. Other data is copied once from
-own enumerable data descriptors into owned plain objects/arrays. Cycles,
+own enumerable data descriptors into owned plain objects/arrays. Shared object
+identities reuse their completed captures without rereading caller descriptors;
+each expanded occurrence still consumes the value budget and is checked at its
+own graph depth using captured data. Refusal classification uses internal error
+identity only, without inspecting arbitrary thrown values. Cycles,
 accessors, sparse arrays, symbol fields, unsupported prototypes and throwing
 proxies refuse. Array lengths are checked before key enumeration; known child
 counts are reserved before traversal/allocation. Object key enumeration itself
