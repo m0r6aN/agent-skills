@@ -115,3 +115,80 @@ Independent implementation reviews, separately reviewed audit/reader enrollment,
 reconciliation onto accepted main, integration checks and remote CI remain gates.
 No provider call, budget provisioning, real sender, production activation, push,
 merge or full-HRO completion is claimed.
+
+## Coordinator review triage: capture preflight repair
+
+Frozen e6b2956 received one independent APPROVE and one REQUEST CHANGES. The
+blocking P2 finding is accepted: Object.getOwnPropertyDescriptors at capture line109
+materializes every caller descriptor before enforcing visit/array bounds. Reviewer
+probe saw 70,001 descriptor traps on an oversized70,000-entry array before refusal.
+This is a resource-bound defect, not an established custody/state-machine bypass.
+
+Repair within original runtime/test/report envelope only: preflight actual array
+length and minimum expanded traversal budget before own-key enumeration or child
+value descriptors. For ordinary records, preflight own-key cardinality and key
+string budgets before fetching child descriptors. Preserve exact advertised
+16depth/65,536visit/2,048perstring/1,048,576aggregate bounds, expanded aliases,
+accessor/iterator refusal, hostile-trap typed refusals and owned immutable capture.
+Key enumeration itself and arbitrary Proxy trap internals cannot be made bounded
+by this helper; make no sandbox claim. Do not invoke accessors/iterators or count
+bulk descriptor materialization as a bound. Add permanent overbound negatives
+showing no child-descriptor traversal, setup authentication or I/O; include sparse
+and dense arrays, record cardinality/aggregate keys, exact boundary and late caller
+mutation/refusal. Native AST/audit fingerprints remain deferred until repaired
+source receives two independent approvals.
+
+Fresh Step0 inspection/restate/STOP precedes coordinator repair release. Builder
+writes only intent-custody.ts, pmc-intent-custody.test.ts and this verification
+record. No owner schema/types/worker/ledger or external integration edits; no
+source acceptance from prior partial approval. Run focused RED/GREEN, full dispatch
+and affected typecheck/lint, frozen predecessor/scope checks, localcommit/handoff.
+
+## Capture preflight repair evidence
+
+Coordinator released the three-file repair after Step 0 at
+`e210c7d6054436f92fe63f525859213c68d005e0`. The repair removes bulk descriptor
+materialization from capture. Arrays read one own length data descriptor and
+check minimum expanded visits before own-key enumeration. Records and arrays
+check key cardinality, key lengths and aggregate key units before fetching any
+child descriptor; each child descriptor is fetched once. Array shape is checked
+against the retained length snapshot, missing late descriptors refuse, and values
+are still recursively captured into owned frozen data. Every alias occurrence
+pays its expanded visit and string cost. Limits remain depth 16, visits 65,536,
+individual strings 2,048 and aggregate string/key units 1,048,576.
+
+Six initial public-entry regression tests failed before the repair: the dense
+70,000-element array fetched 70,000 child descriptors, minimum-cost array and
+record cases fetched 32,768, aggregate keys fetched 513, and a long key fetched
+one. The oversized sparse array returned INPUT_REFUSED after enumeration instead
+of early BOUNDS_REFUSED. All six pass after repair, including valid setup root
+and authority fixtures with hostile extra input: zero child descriptors, no setup
+authentication, no owner file; oversized arrays additionally make zero ownKeys
+calls. Only the length descriptor is fetched for those arrays.
+
+Twenty permanent focused tests pass. Additional controls cover repeated aliases
+(only the first alias enumerates children), exact aggregate key/string/depth
+limits, and the last complete visit budget (65,535; a complete tree uses
+1 + 2 * edges visits). Within-bound arbitrary inputs reach INPUT_REFUSED at the
+setup shape gate, whereas over-bound inputs yield BOUNDS_REFUSED. Length/key/child
+descriptor throws, deletion of a later child and shrinking an array after key
+enumeration produce typed refusals without property gets, authentication or an
+owner file. Existing immutable-output and custody tests remain passing.
+
+With pinned Node 24.19.0, process-local PATH and TSX_DISABLE_CACHE=1:
+
+- Focused `--import tsx --test --test-name-pattern 'capture preflight'
+  tests/pmc-intent-custody.test.ts`: 20 passed, zero failed/skipped.
+- Full `node_modules/tsx/dist/cli.mjs --test tests/*.test.ts`: 356 passed,
+  zero failed/skipped (174 owner cases).
+- `node_modules/typescript/bin/tsc --noEmit`: exit 0.
+- `node_modules/@biomejs/biome/bin/biome check .`: exit 0, 24 files.
+- Frozen-base comparison against e210c7d: no changes to routing-policy,
+  ledger/money, owner types or worker. Exact repair scope is the owner source,
+  its tests and this record; no dependencies or audit mechanisms changed.
+
+Own-key enumeration itself and arbitrary Proxy trap internals are not bounded
+by this helper. Capture is not an atomic snapshot of hostile mutable runtime
+state and makes no sandbox guarantee. Both independent source approvals must be
+renewed for this repair. Audit fingerprints remain deferred until that acceptance;
+reader enrollment, integration and remote gates remain outstanding.
