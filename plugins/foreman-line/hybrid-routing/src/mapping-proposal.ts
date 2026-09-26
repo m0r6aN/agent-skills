@@ -10,6 +10,7 @@ export type ProposalProvenance = Readonly<{
 	piRuntimeVersion: string;
 	approvalEvidenceState: "static-conformance";
 }>;
+
 export type MappingProposalV1 = Readonly<{
 	schema: "hro-mapping-proposal/v1";
 	logicalCandidateId: string;
@@ -23,6 +24,7 @@ export type MappingProposalV1 = Readonly<{
 	fallbackBindingId: string | null;
 	provenance: ProposalProvenance;
 }>;
+
 export type HroBindingProjectionDraftV1 = Readonly<{
 	schema: "hro-binding-projection-draft/v1";
 	evidenceRef: string;
@@ -31,12 +33,14 @@ export type HroBindingProjectionDraftV1 = Readonly<{
 		conformance: "allowed" | "disabled";
 	}>[];
 }>;
+
 export type MappingValidationContext = Readonly<{
 	evaluationTimeUtc: string;
 	maxEvidenceAgeMs: number;
 	expectedEvidenceRef: string;
 	expectedContentSha256: string;
 }>;
+
 export type MappingRejectionCode =
 	| "input_invalid"
 	| "input_limit_exceeded"
@@ -50,18 +54,15 @@ export type MappingRejectionCode =
 	| "duplicate_binding"
 	| "fallback_cycle"
 	| "lane_disabled";
+
 export type MappingProposalResult =
 	| Readonly<{ ok: true; evidenceOnly: true; proposal: MappingProposalV1 }>
 	| Readonly<{ ok: false; evidenceOnly: true; code: MappingRejectionCode }>;
 
 type PlainRecord = Record<string, unknown>;
-type ParseState = {
-	active: WeakSet<object>;
-	visited: WeakSet<object>;
-	count: number;
-	strings: number;
-};
-type ParseFailure = "input_invalid" | "input_limit_exceeded";
+type Failure = "input_invalid" | "input_limit_exceeded";
+type Budget = { active: WeakSet<object>; values: number; strings: number };
+
 const PROVENANCE_KEYS = [
 	"source",
 	"retrievedAt",
@@ -106,116 +107,140 @@ const HASH_PATTERN = /^[0-9a-f]{64}$/;
 function fail(code: MappingRejectionCode): MappingProposalResult {
 	return { ok: false, evidenceOnly: true, code };
 }
-function isRecord(value: unknown): value is PlainRecord {
+
+function isPlainRecord(value: unknown): value is PlainRecord {
 	if (value === null || typeof value !== "object" || Array.isArray(value))
 		return false;
 	const prototype = Object.getPrototypeOf(value);
 	return prototype === Object.prototype || prototype === null;
 }
-function keysExactly(value: PlainRecord, expected: readonly string[]): boolean {
+
+function hasExactly(value: PlainRecord, expected: readonly string[]): boolean {
 	const keys = Reflect.ownKeys(value);
 	return (
 		keys.length === expected.length &&
 		keys.every((key) => typeof key === "string" && expected.includes(key))
 	);
 }
-function read(value: PlainRecord, key: string): unknown {
+
+function valueDescriptor(value: object, key: string): PropertyDescriptor {
 	const descriptor = Object.getOwnPropertyDescriptor(value, key);
 	if (!descriptor || !("value" in descriptor)) throw new Error("accessor");
-	return descriptor.value;
+	return descriptor;
 }
-function scan(value: unknown, depth: number, state: ParseState): void {
+
+function ownSnapshot(value: unknown, depth: number, budget: Budget): unknown {
+	if (++budget.values > MAX_VALUES) throw new Error("limit");
 	if (typeof value === "string") {
-		state.strings += value.length;
-		if (value.length > MAX_STRING || state.strings > MAX_STRINGS)
+		budget.strings += value.length;
+		if (value.length > MAX_STRING || budget.strings > MAX_STRINGS)
 			throw new Error("limit");
-		return;
+		return value;
 	}
-	if (value === null || typeof value === "boolean") return;
+	if (value === null || typeof value === "boolean") return value;
 	if (typeof value === "number") {
 		if (!Number.isFinite(value)) throw new Error("invalid");
-		return;
+		return value;
 	}
 	if (typeof value !== "object") throw new Error("invalid");
-	if (depth > MAX_DEPTH || ++state.count > MAX_VALUES) throw new Error("limit");
-	if (state.active.has(value)) throw new Error("invalid");
-	if (state.visited.has(value)) return;
-	state.visited.add(value);
-	state.active.add(value);
+	if (depth > MAX_DEPTH || budget.active.has(value)) throw new Error("invalid");
+	budget.active.add(value);
 	try {
 		if (Array.isArray(value)) {
+			if (Object.getPrototypeOf(value) !== Array.prototype)
+				throw new Error("invalid");
 			const keys = Reflect.ownKeys(value);
+			const length = valueDescriptor(value, "length").value;
 			if (
-				keys.some(
-					(key) =>
-						typeof key !== "string" || (key !== "length" && !/^\d+$/.test(key)),
+				typeof length !== "number" ||
+				!Number.isSafeInteger(length) ||
+				length < 0 ||
+				length > MAX_BINDINGS
+			)
+				throw new Error("limit");
+			if (keys.length !== length + 1 || !keys.includes("length"))
+				throw new Error("invalid");
+			for (let index = 0; index < length; index += 1) {
+				const key = String(index);
+				if (!keys.includes(key)) throw new Error("invalid");
+			}
+			for (const key of keys) {
+				if (typeof key !== "string" || key === "length") continue;
+				const index = Number(key);
+				if (
+					!Number.isSafeInteger(index) ||
+					index < 0 ||
+					index >= length ||
+					String(index) !== key
 				)
-			)
-				throw new Error("invalid");
-			const lengthDescriptor = Object.getOwnPropertyDescriptor(value, "length");
-			if (
-				!lengthDescriptor ||
-				!("value" in lengthDescriptor) ||
-				typeof lengthDescriptor.value !== "number"
-			)
-				throw new Error("invalid");
-			for (let index = 0; index < lengthDescriptor.value; index += 1) {
-				if (!Object.hasOwn(value, index)) throw new Error("invalid");
-				const descriptor = Object.getOwnPropertyDescriptor(
-					value,
-					String(index),
+					throw new Error("invalid");
+			}
+			const result: unknown[] = new Array(length);
+			for (let index = 0; index < length; index += 1)
+				result[index] = ownSnapshot(
+					valueDescriptor(value, String(index)).value,
+					depth + 1,
+					budget,
 				);
-				if (!descriptor || !("value" in descriptor))
-					throw new Error("accessor");
-				scan(descriptor.value, depth + 1, state);
-			}
-		} else if (isRecord(value)) {
-			for (const key of Reflect.ownKeys(value)) {
-				if (typeof key !== "string") throw new Error("invalid");
-				scan(read(value, key), depth + 1, state);
-			}
-		} else throw new Error("invalid");
+			return result;
+		}
+		if (!isPlainRecord(value)) throw new Error("invalid");
+		const result = Object.create(null) as PlainRecord;
+		for (const key of Reflect.ownKeys(value)) {
+			if (typeof key !== "string") throw new Error("invalid");
+			result[key] = ownSnapshot(
+				valueDescriptor(value, key).value,
+				depth + 1,
+				budget,
+			);
+		}
+		return result;
 	} finally {
-		state.active.delete(value);
+		budget.active.delete(value);
 	}
 }
-function scanInput(value: unknown): ParseFailure | null {
+
+function snapshotInputs(
+	proposal: unknown,
+	projection: unknown,
+	context: unknown,
+): [unknown, unknown, unknown] | Failure {
 	try {
-		scan(value, 0, {
-			active: new WeakSet(),
-			visited: new WeakSet(),
-			count: 0,
-			strings: 0,
-		});
-		return null;
+		const budget: Budget = { active: new WeakSet(), values: 0, strings: 0 };
+		return [
+			ownSnapshot(proposal, 0, budget),
+			ownSnapshot(projection, 0, budget),
+			ownSnapshot(context, 0, budget),
+		];
 	} catch (error) {
 		return error instanceof Error && error.message === "limit"
 			? "input_limit_exceeded"
 			: "input_invalid";
 	}
 }
+
 function string(value: unknown): value is string {
 	return (
 		typeof value === "string" && value.length > 0 && value.trim() === value
 	);
 }
+
 function exactDate(value: unknown): value is string {
 	if (!string(value) || !DATE_PATTERN.test(value)) return false;
 	const date = new Date(value);
 	return !Number.isNaN(date.valueOf()) && date.toISOString() === value;
 }
+
 function hash(value: unknown): value is string {
 	return typeof value === "string" && HASH_PATTERN.test(value);
 }
+
 function parseProvenance(value: unknown): ProposalProvenance | null {
-	if (!isRecord(value) || !keysExactly(value, PROVENANCE_KEYS)) return null;
-	const result = Object.fromEntries(
-		PROVENANCE_KEYS.map((key) => [key, read(value, key)]),
-	) as PlainRecord;
+	if (!isPlainRecord(value) || !hasExactly(value, PROVENANCE_KEYS)) return null;
 	if (
-		!string(result.source) ||
-		!exactDate(result.retrievedAt) ||
-		!hash(result.contentSha256)
+		!string(value.source) ||
+		!exactDate(value.retrievedAt) ||
+		!hash(value.contentSha256)
 	)
 		return null;
 	for (const key of [
@@ -225,17 +250,15 @@ function parseProvenance(value: unknown): ProposalProvenance | null {
 		"roleMapVersion",
 		"foremanRevision",
 		"piRuntimeVersion",
-	])
-		if (!string(result[key])) return null;
-	if (result.approvalEvidenceState !== "static-conformance") return null;
-	return result as unknown as ProposalProvenance;
+	] as const)
+		if (!string(value[key])) return null;
+	if (value.approvalEvidenceState !== "static-conformance") return null;
+	return value as ProposalProvenance;
 }
+
 function parseProposal(value: unknown): MappingProposalV1 | null {
-	if (!isRecord(value) || !keysExactly(value, PROPOSAL_KEYS)) return null;
-	const result = Object.fromEntries(
-		PROPOSAL_KEYS.map((key) => [key, read(value, key)]),
-	) as PlainRecord;
-	if (result.schema !== "hro-mapping-proposal/v1") return null;
+	if (!isPlainRecord(value) || !hasExactly(value, PROPOSAL_KEYS)) return null;
+	if (value.schema !== "hro-mapping-proposal/v1") return null;
 	for (const key of [
 		"logicalCandidateId",
 		"bindingId",
@@ -245,66 +268,65 @@ function parseProposal(value: unknown): MappingProposalV1 | null {
 		"piHostModelId",
 		"lane",
 		"roleFamily",
-	])
-		if (!string(result[key])) return null;
-	if (result.fallbackBindingId !== null && !string(result.fallbackBindingId))
+	] as const)
+		if (!string(value[key])) return null;
+	if (value.fallbackBindingId !== null && !string(value.fallbackBindingId))
 		return null;
-	const provenance = parseProvenance(result.provenance);
-	if (!provenance) return null;
-	return { ...result, provenance } as unknown as MappingProposalV1;
+	const provenance = parseProvenance(value.provenance);
+	return provenance ? ({ ...value, provenance } as MappingProposalV1) : null;
 }
+
 function parseProjection(value: unknown): HroBindingProjectionDraftV1 | null {
-	if (!isRecord(value) || !keysExactly(value, PROJECTION_KEYS)) return null;
-	const evidenceRef = read(value, "evidenceRef");
-	const bindings = read(value, "bindings");
 	if (
-		!string(evidenceRef) ||
-		!Array.isArray(bindings) ||
-		bindings.length > MAX_BINDINGS
+		!isPlainRecord(value) ||
+		!hasExactly(value, PROJECTION_KEYS) ||
+		value.schema !== "hro-binding-projection-draft/v1"
 	)
 		return null;
-	const parsed: {
+	if (
+		!string(value.evidenceRef) ||
+		!Array.isArray(value.bindings) ||
+		value.bindings.length > MAX_BINDINGS
+	)
+		return null;
+	const bindings: {
 		proposal: MappingProposalV1;
 		conformance: "allowed" | "disabled";
 	}[] = [];
-	for (const binding of bindings) {
-		if (!isRecord(binding) || !keysExactly(binding, BINDING_KEYS)) return null;
-		const proposal = parseProposal(read(binding, "proposal"));
-		const conformance = read(binding, "conformance");
-		if (!proposal || (conformance !== "allowed" && conformance !== "disabled"))
+	for (let index = 0; index < value.bindings.length; index += 1) {
+		const binding = value.bindings[index];
+		if (!isPlainRecord(binding) || !hasExactly(binding, BINDING_KEYS))
 			return null;
-		parsed.push({ proposal, conformance });
+		const proposal = parseProposal(binding.proposal);
+		if (
+			!proposal ||
+			(binding.conformance !== "allowed" && binding.conformance !== "disabled")
+		)
+			return null;
+		bindings.push({ proposal, conformance: binding.conformance });
 	}
-	if (read(value, "schema") !== "hro-binding-projection-draft/v1") return null;
 	return {
 		schema: "hro-binding-projection-draft/v1",
-		evidenceRef,
-		bindings: parsed,
+		evidenceRef: value.evidenceRef,
+		bindings,
 	};
 }
+
 function parseContext(value: unknown): MappingValidationContext | null {
-	if (!isRecord(value) || !keysExactly(value, CONTEXT_KEYS)) return null;
-	const evaluationTimeUtc = read(value, "evaluationTimeUtc");
-	const maxEvidenceAgeMs = read(value, "maxEvidenceAgeMs");
-	const expectedEvidenceRef = read(value, "expectedEvidenceRef");
-	const expectedContentSha256 = read(value, "expectedContentSha256");
+	if (!isPlainRecord(value) || !hasExactly(value, CONTEXT_KEYS)) return null;
 	if (
-		!exactDate(evaluationTimeUtc) ||
-		typeof maxEvidenceAgeMs !== "number" ||
-		!Number.isInteger(maxEvidenceAgeMs) ||
-		maxEvidenceAgeMs < 0 ||
-		maxEvidenceAgeMs > 86400000 ||
-		!string(expectedEvidenceRef) ||
-		!hash(expectedContentSha256)
+		!exactDate(value.evaluationTimeUtc) ||
+		typeof value.maxEvidenceAgeMs !== "number" ||
+		!Number.isInteger(value.maxEvidenceAgeMs) ||
+		value.maxEvidenceAgeMs < 0 ||
+		value.maxEvidenceAgeMs > 86400000 ||
+		!string(value.expectedEvidenceRef) ||
+		!hash(value.expectedContentSha256)
 	)
 		return null;
-	return {
-		evaluationTimeUtc,
-		maxEvidenceAgeMs,
-		expectedEvidenceRef,
-		expectedContentSha256,
-	};
+	return value as MappingValidationContext;
 }
+
 function freeze<T>(value: T): T {
 	if (value && typeof value === "object" && !Object.isFrozen(value)) {
 		Object.freeze(value);
@@ -313,16 +335,18 @@ function freeze<T>(value: T): T {
 	}
 	return value;
 }
+
 function tuple(proposal: MappingProposalV1): string {
-	return [
+	return JSON.stringify([
 		proposal.logicalCandidateId,
 		proposal.provider,
 		proposal.providerModelId,
 		proposal.protocol,
 		proposal.lane,
 		proposal.roleFamily,
-	].join("\u0000");
+	]);
 }
+
 function ageIsStale(
 	proposal: MappingProposalV1,
 	context: MappingValidationContext,
@@ -338,83 +362,86 @@ export function validateMappingProposal(
 	projection: unknown,
 	context: unknown,
 ): MappingProposalResult {
-	const failures = [
-		scanInput(proposal),
-		scanInput(projection),
-		scanInput(context),
-	];
-	const failure = failures.find(Boolean);
-	if (failure) return fail(failure);
-	const parsedProposal = parseProposal(proposal);
-	const parsedProjection = parseProjection(projection);
-	const parsedContext = parseContext(context);
-	if (!parsedProposal || !parsedProjection || !parsedContext)
-		return fail("input_invalid");
-	if (parsedProjection.evidenceRef !== parsedContext.expectedEvidenceRef)
-		return fail("provenance_mismatch");
-	const byId = new Map<
-		string,
-		{ proposal: MappingProposalV1; conformance: "allowed" | "disabled" }
-	>();
-	const tuples = new Set<string>();
-	for (const binding of parsedProjection.bindings) {
-		if (
-			byId.has(binding.proposal.bindingId) ||
-			tuples.has(tuple(binding.proposal))
-		)
-			return fail("duplicate_binding");
-		byId.set(binding.proposal.bindingId, binding);
-		tuples.add(tuple(binding.proposal));
-		if (
-			binding.proposal.provenance.contentSha256 !==
-			parsedContext.expectedContentSha256
-		)
+	try {
+		const snapshot = snapshotInputs(proposal, projection, context);
+		if (typeof snapshot === "string") return fail(snapshot);
+		const [ownedProposal, ownedProjection, ownedContext] = snapshot;
+		const parsedProposal = parseProposal(ownedProposal);
+		const parsedProjection = parseProjection(ownedProjection);
+		const parsedContext = parseContext(ownedContext);
+		if (!parsedProposal || !parsedProjection || !parsedContext)
+			return fail("input_invalid");
+		if (parsedProjection.evidenceRef !== parsedContext.expectedEvidenceRef)
 			return fail("provenance_mismatch");
-		if (ageIsStale(binding.proposal, parsedContext))
-			return fail("provenance_stale");
-	}
-	for (const binding of parsedProjection.bindings) {
-		const fallback = binding.proposal.fallbackBindingId;
-		if (fallback !== null && !byId.has(fallback)) return fail("fallback_cycle");
-		if (fallback !== null && byId.get(fallback)?.conformance === "disabled")
-			return fail("lane_disabled");
-		if (fallback === binding.proposal.bindingId) return fail("fallback_cycle");
-	}
-	for (const binding of parsedProjection.bindings) {
-		const seen = new Set<string>();
-		let current: string | null = binding.proposal.bindingId;
-		while (current !== null) {
-			if (seen.has(current)) return fail("fallback_cycle");
-			seen.add(current);
-			current = byId.get(current)?.proposal.fallbackBindingId ?? null;
+		const byId = new Map<
+			string,
+			{ proposal: MappingProposalV1; conformance: "allowed" | "disabled" }
+		>();
+		const tuples = new Set<string>();
+		for (const binding of parsedProjection.bindings) {
+			if (
+				byId.has(binding.proposal.bindingId) ||
+				tuples.has(tuple(binding.proposal))
+			)
+				return fail("duplicate_binding");
+			byId.set(binding.proposal.bindingId, binding);
+			tuples.add(tuple(binding.proposal));
+			if (
+				binding.proposal.provenance.contentSha256 !==
+				parsedContext.expectedContentSha256
+			)
+				return fail("provenance_mismatch");
+			if (ageIsStale(binding.proposal, parsedContext))
+				return fail("provenance_stale");
 		}
+		for (const binding of parsedProjection.bindings) {
+			const fallback = binding.proposal.fallbackBindingId;
+			if (fallback !== null && !byId.has(fallback))
+				return fail("fallback_cycle");
+			if (fallback !== null && byId.get(fallback)?.conformance === "disabled")
+				return fail("lane_disabled");
+			if (fallback === binding.proposal.bindingId)
+				return fail("fallback_cycle");
+		}
+		for (const binding of parsedProjection.bindings) {
+			const seen = new Set<string>();
+			let current: string | null = binding.proposal.bindingId;
+			while (current !== null) {
+				if (seen.has(current)) return fail("fallback_cycle");
+				seen.add(current);
+				current = byId.get(current)?.proposal.fallbackBindingId ?? null;
+			}
+		}
+		const selected = byId.get(parsedProposal.bindingId);
+		if (!selected) return fail("mapping_missing");
+		if (selected.conformance === "disabled") return fail("lane_disabled");
+		const expected = selected.proposal;
+		if (
+			expected.provider !== parsedProposal.provider ||
+			expected.providerModelId !== parsedProposal.providerModelId
+		)
+			return fail("provider_model_mismatch");
+		if (expected.protocol !== parsedProposal.protocol)
+			return fail("protocol_unsupported");
+		for (const key of [
+			"logicalCandidateId",
+			"piHostModelId",
+			"lane",
+			"roleFamily",
+		] as const)
+			if (expected[key] !== parsedProposal[key])
+				return fail("mapping_mismatch");
+		if (expected.fallbackBindingId !== parsedProposal.fallbackBindingId)
+			return fail("fallback_undeclared");
+		for (const key of PROVENANCE_KEYS)
+			if (expected.provenance[key] !== parsedProposal.provenance[key])
+				return fail("provenance_mismatch");
+		return freeze({
+			ok: true,
+			evidenceOnly: true,
+			proposal: structuredClone(parsedProposal),
+		});
+	} catch {
+		return fail("input_invalid");
 	}
-	const selected = byId.get(parsedProposal.bindingId);
-	if (!selected) return fail("mapping_missing");
-	if (selected.conformance === "disabled") return fail("lane_disabled");
-	const expected = selected.proposal;
-	if (
-		expected.provider !== parsedProposal.provider ||
-		expected.providerModelId !== parsedProposal.providerModelId
-	)
-		return fail("provider_model_mismatch");
-	if (expected.protocol !== parsedProposal.protocol)
-		return fail("protocol_unsupported");
-	for (const key of [
-		"logicalCandidateId",
-		"piHostModelId",
-		"lane",
-		"roleFamily",
-	] as const)
-		if (expected[key] !== parsedProposal[key]) return fail("mapping_mismatch");
-	if (expected.fallbackBindingId !== parsedProposal.fallbackBindingId)
-		return fail("fallback_undeclared");
-	for (const key of PROVENANCE_KEYS)
-		if (expected.provenance[key] !== parsedProposal.provenance[key])
-			return fail("provenance_mismatch");
-	return freeze({
-		ok: true,
-		evidenceOnly: true,
-		proposal: structuredClone(parsedProposal),
-	});
 }
