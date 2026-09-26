@@ -454,8 +454,8 @@ the result is deterministic.
 |---|---|---|
 | `pmc-p0-capability-baseline.md` | 24661 | `32b868cf6cb048e2bd21518b99293940c9812925264ae60dadc075acc526e1db` |
 | `pmc-p0-suitability-rubric.md` | 22366 | `0a3e3b4f44f77ade039cc67be0ff32f6d69b45e122369e1ec55910a9f6481139` |
-| `pmc-p0-role-lane-map.md` | 11632 | `2691ea3e4fd61a4965c17d35712611398fb032888b1501dd894edc23b5592254` |
-| `pmc-p0-verification.md` | see self-digest below | normalized self-digest `e6b93bfaafa981360d8506e5bb9d341171a72fabcb624ed58b538d9be60eafab` |
+| `pmc-p0-role-lane-map.md` | 11867 | `9545043658708d7017ed59a3c51133da869111aa186c7aff8709e0c14281aaaa` (superseded `2691ea3e…` by the A5.4 ratification edit 2026-09-25) |
+| `pmc-p0-verification.md` | see self-digest below | normalized self-digest `13c3e7041fcfe6cb5eaaf841bb0b538d7844925756aa5a4b4047f696c09445dd` |
 
 **Self-digest convention.** A file cannot contain its own raw SHA-256. The
 value above is the SHA-256 of this file with that 64-character value replaced
