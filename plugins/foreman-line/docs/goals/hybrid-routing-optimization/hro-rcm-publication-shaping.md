@@ -293,7 +293,7 @@ spec for independent review:
   cannot be rewritten by timer teardown failure or stale wakeups.
 - The closed low-level driver supplies request controls and socket/response/body/
   error/close events to the actual shared transport state machine. It cannot return
-  publisher success or a separately resolved cleanup promise. The future production
+  publisher success or a separately resolved cleanup promise. P delivers the actual native
   bridge statically binds node:https, checks real response completeness and owns
   destruction; fixtures are not cast as genuine Node requests/sockets.
 - Fixed request means only the reviewed no-query credential-free GET, fixed explicit
@@ -337,3 +337,38 @@ all7 required body sections present; all9 local Markdown links resolve;
 git diff --check passes; exactly the two authorized documents changed. These are
 advisory shaping checks, not implementation or production acceptance. The explicit
 two-document amendment envelope excludes any new ShapingResult/receipt artifact.
+
+### P native bridge correction
+
+P must implement the actual statically wired Node HTTPS bridge and shared engine,
+not defer bridge delivery until activation. The transport module exports internal
+createFixedMetadataTransportV1() and createOfflineMetadataTransportV1(runtime:unknown)
+with exact signatures frozen in the spec; the existing type module owns their closed
+types. Native translator/shared engine remain unexported. The fixed factory captures
+native clocks/timers and static HTTPS request, accepts no substitutions and performs
+no I/O during construction. The offline owner uses only the separate offline factory.
+Production owner construction remains unconditional zero-input/effect
+INSTALLATION_REFUSED. Six future files, seven-key success and readMetadataV1 signature
+remain unchanged; no barrel, generic fetch, test mode or dependency is introduced.
+
+Guarded isolated-child tests in the existing transport test file must intercept the
+Node request boundary before importing the actual bridge and guard all native network
+entry points. Synthetic request/response/socket events exercise actual listeners,
+fixed fields, complete-property checks, owned destruction and original-promise
+fulfillment/rejection cleanup. Offline-driver tests alone are insufficient. These
+tests authorize no endpoint calls and establish no live TLS or installation custody.
+
+Pinned local Node24.19.0 net source SHA-256 is
+eba05bb24bdd1e208632a1df0fdeeb8e4bdf6ffc062cb19e92f0e7a8c37f60af.
+lookupAndConnectMultiple can return before emitting lookup after early destruction;
+socket close does not prove its uncancellable lookup has finished. Keep default
+native selection and no custom lookup. Add only socketConnected to the finite event
+interface, emitted from actual owned socket connect. After request creation, require
+observed connection plus all existing close acknowledgements before original-promise
+settlement. Failed lookup/connect without this event conservatively holds capacity
+indefinitely, even after close; outward refusal remains bounded, with no reset or
+eviction. Paired native/shared controls prove normal connected cleanup versus early
+close without connection and no forged completion from late lookup/error events.
+
+The correction is docs only and requires fresh independent reviews. Accepted N/C
+integration and explicit P runtime release remain prerequisites.

@@ -623,7 +623,8 @@ module/URL/profile are accepted. Never freeze caller functions, timer objects or
 capabilities. Runtime and low-level driver are an explicit offline TCB, not a
 sandbox for arbitrary callback code; their ordinary returns/events remain unknown
 until bounded validation. Node native clocks/timers and the statically imported
-HTTPS request function are the only proposed future production implementations.
+HTTPS request function are the native implementations delivered in P; only their
+production owner activation remains separately gated.
 No callback supplied to the offline factory can be promoted to that production path.
 
 fixtureId is 1..64 ASCII letters/digits/hyphens. workflowId, generationId, scopeId
@@ -681,7 +682,7 @@ timer-clear success or failure.
 
 ### Shared fixed transport and closed offline driver
 
-This is the only low-level test seam; no injected fetch, readMetadata success
+This is the only shipped offline seam; no injected fetch, readMetadata success
 record, materializer, source verifier or independently resolved cleanup promise.
 The actual transport state machine receives the following finite interface:
 
@@ -694,6 +695,7 @@ type FixedMetadataRequestV1 = {
 type MetadataResponseHeadV1 = {statusCode:number;rawHeaders:readonly string[]};
 type MetadataEventsV1 = {
   socketAssigned:()=>void;
+  socketConnected:()=>void;
   response:(head:unknown)=>void;
   data:(chunk:unknown)=>void;
   responseEnded:()=>void;
@@ -713,7 +715,7 @@ methods; end/destroy must return undefined. Shared code constructs the fixed req
 record internally, calls open at most once and end at most once, and owns destruction.
 It installs callbacks before start and tolerates synchronous/reentrant fixture
 events. Fixture closures never receive publisher maps, publication capabilities or
-materialization authority. The production bridge, when separately enabled, statically
+materialization authority. P must implement the actual native bridge; it statically
 binds actual node:https and translates its owned ClientRequest/IncomingMessage/socket
 events into this same finite interface. It maps response aborted/error to error
 and requires actual IncomingMessage.complete before emitting responseEnded; owned
@@ -957,3 +959,72 @@ network/provider/Pi/credential/configuration effects. Freeze a clean exact-scope
 source/report commit and stop for two independent source reviews; combined main
 integration and remote checks still precede merge. Fixtures and digests remain
 evidence only, never production custody or live endpoint compatibility.
+
+### P native bridge delivery and conservative DNS cleanup
+
+P includes the actual statically wired node:https bridge and shared transport engine
+in catalog-metadata-transport.ts. Implementation is not deferred until activation.
+Freeze these internal module exports, with types owned by catalog-publication-types.ts:
+
+```ts
+type FixedMetadataTransportV1 = {
+  readMetadataV1:(input:{deadlineMonoMs:number;signal:AbortSignal})=>Promise<unknown>;
+};
+function createFixedMetadataTransportV1():FixedMetadataTransportV1;
+function createOfflineMetadataTransportV1(runtime:unknown):
+  | {ok:true;transport:FixedMetadataTransportV1}
+  | {ok:false;code:'INSTALLATION_REFUSED'};
+```
+
+Both factories live in the transport module; native translator and shared engine
+remain unexported. No barrel, dependency, extra file or generic requester is added.
+The fixed factory captures native Date/performance clock reads and timers, binds
+statically imported HTTPS request, and accepts no driver, clock or mode. Construction
+performs no I/O. Only readMetadataV1 can start the fixed request after validation;
+its clocks/timers obey the existing validity rules. The separate offline factory
+captures exactly OfflinePublicationRuntimeV1 under the existing closed-runtime rules.
+The offline publication owner uses only that offline factory. The production owner
+still returns INSTALLATION_REFUSED without inspecting input or constructing either
+transport. Internal export accessibility does not establish publication authority.
+No live invocation is authorized. The existing seven-key success remains unchanged.
+
+The existing transport test file must exercise the actual fixed factory and native
+translator in an isolated child. Install test-only built-in request interception
+before importing the actual module; synchronize built-in ESM exports. Guard original
+HTTP/HTTPS requests, net/TLS connections and DNS entry points against accidental
+network access. Instrumentation stays entirely in that test file, with no shipped
+test flag or substitution port. Synthetic Node event/stream primitives are identified
+as synthetic; do not cast fixture objects as genuine request/socket instances.
+Drive the bridge's attached socket/response/data/end/aborted/error/close listeners.
+Assert actual fixed request arguments, end/destroy calls, real complete-property
+translation, and all owned resource destruction. Paired normal/error tests must
+withhold each applicable close and prove original-promise retention, then complete
+acknowledgements and prove single settlement. Complete=false/missing, invalid input,
+duplicate/reordered events and abort/error/destroy without close are required.
+Offline-driver-only tests cannot satisfy these native bridge obligations. Existing
+offline publisher tests retain four-slot/CAS/outward-cancellation coverage against
+the shared engine; neither test family proves live TLS or production custody.
+
+Close events alone do not acknowledge outstanding DNS. Local read-only evidence:
+Node v24.19.0, process.binding('natives').net SHA-256
+eba05bb24bdd1e208632a1df0fdeeb8e4bdf6ffc062cb19e92f0e7a8c37f60af.
+lookupAndConnectMultiple's DNS callback returns when !self.connecting before emitting
+lookup; its comment explicitly notes the lookup cannot be cancelled. An early
+destroy therefore can close a socket while its lookup remains unobserved. P keeps
+default native address selection and adds no custom/task-selected lookup.
+
+The minimal additional finite driver event is socketConnected, emitted by the native
+translator only on its owned socket's actual connect event. A completed connection
+proves that the preceding default lookup has completed. Require this event in
+addition to all previously specified close acknowledgements before settling any
+original transport promise after request creation. This deliberately conservative
+rule also holds failed lookups or failed connections forever when no connection was
+observed, even if other events suggest completion; no fabricated lookup completion,
+reset, eviction or timeout releases that slot. Caller timeout/refusal remains bounded
+and separate. Pre-open validation still rejects immediately. The earlier failure
+close checklist is necessary but not sufficient: unobserved connection/lookup
+completion keeps cleanup uncertain. Normal success necessarily observes connection.
+Guarded bridge and shared-engine tests must pair connect-then-close completion with
+early-close-without-connect permanent hold, including late error/lookup events that
+cannot manufacture socketConnected. These are synthetic event controls grounded in
+the pinned Node source, not claims of actual DNS execution or cancellation.
