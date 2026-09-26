@@ -64,8 +64,11 @@ semantic check; differing observation text now isolates duplicate-ID validation.
 
 - V1 tests: **70 passed** in the final full suite. The PMC-P1a repair adds
   permanent 65,535/65,536/65,537 array-boundary and insertion-order regressions;
-  65,535 visited values reach schema validation while 65,536 and 65,537 refuse
-  on the plain-data traversal bound. Local canon review added an
+  arrays containing 65,535 elements consume 65,536 visited values including the
+  root and reach schema validation; arrays containing 65,536 or 65,537 elements
+  exceed the traversal bound. Independent schema-valid policy probes additionally
+  prove inclusive acceptance at 65,536 visits in either property order and refusal
+  at 65,537. Local canon review added an
   explicit failing test for L2 coordinator acceptance; the corrected constant,
   fixture and schema preserve that ratified gate. Additional hostile proxies prove
   no caller graph reread and root cardinality rejection before child access.

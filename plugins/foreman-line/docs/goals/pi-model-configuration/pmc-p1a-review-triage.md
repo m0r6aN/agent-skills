@@ -28,3 +28,20 @@ the builder must recheck the unchanged head before edits and preserve every
 existing test/schema/API. Expected edits are only the validator, focused tests
 and verification handoff. No provider/configuration effects or publication.
 Both independent reviews must approve the repaired frozen head before integration.
+
+## Repaired-head acceptance
+
+Both independent final reviews approved
+`12b0aa07560d1f516aec255c42a7f79dc2aed449`, with no blocking findings.
+Each passed 471 routing-policy, 126 dispatch and 126 spec-linter tests, typecheck
+and lint; each verified seven legacy schemas unchanged and the exact clean head.
+Both independently tested schema-valid policies at 65,535 and 65,536 visited
+values, reordered properties and 65,537 refusal. Exact aggregate-string limits,
+compound remaining budgets and hostile preflight protections also passed.
+
+Both noted the same nonblocking handoff typo confusing array element counts
+with visited values. The coordinator corrected that prose on integration;
+reviewed implementation is unchanged. Original and repair commits were
+cherry-picked without conflict as 353536f and d7b9d0d atop the reviewed HRO
+integration branch. Required combined CI, merge and Stage-F closure remain
+pending. This static contract grants no execution or live-evidence authority.
