@@ -1,5 +1,6 @@
 // biome-ignore-all lint/suspicious/noExplicitAny: JSON fixture assertions use structural test data.
 import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
@@ -94,6 +95,87 @@ function input(overrides: Record<string, unknown> = {}) {
 		},
 		...overrides,
 	};
+}
+
+function instrumentedCounts(value: Record<string, unknown>): {
+	stage: string;
+	projection: number;
+	catalog: number;
+} {
+	const target = new URL(
+		"../../routing-policy/src/index.ts",
+		import.meta.url,
+	).href;
+	const loader = `
+const target = ${JSON.stringify(target)};
+export async function resolve(specifier, context, nextResolve) {
+  if (specifier.includes("/routing-policy/src/index.") && !specifier.startsWith(target)) {
+    const source = \
+      \`import * as actual from \${JSON.stringify(target)};\n\
+globalThis.__counts ??= { projection: 0, catalog: 0 };\n\
+export const projectProviderBindingsV1 = (...args) => {\n\
+  globalThis.__counts.projection++;\n\
+  return actual.projectProviderBindingsV1(...args);\n\
+};\n\
+export const evaluateCatalogEligibility = (...args) => {\n\
+  globalThis.__counts.catalog++;\n\
+  return actual.evaluateCatalogEligibility(...args);\n\
+};\`;
+    return { url: "data:text/javascript," + encodeURIComponent(source), shortCircuit: true };
+  }
+  return nextResolve(specifier, context, nextResolve);
+}
+export async function load(url, context, nextLoad) {
+  if (url.startsWith("data:text/javascript,")) return {
+    format: "module",
+    source: decodeURIComponent(url.slice("data:text/javascript,".length)),
+    shortCircuit: true,
+  };
+  return nextLoad(url, context, nextLoad);
+}
+`;
+	const serialized = JSON.stringify({
+		...value,
+		catalogInput: {
+			...(value.catalogInput as Record<string, unknown>),
+			canonicalBytes: Array.from(
+				(value.catalogInput as any).canonicalBytes as Uint8Array,
+			),
+		},
+	});
+	const script = `
+import { preparePmcOwnerContextV1 } from "./src/index.ts";
+const input = ${serialized};
+input.catalogInput.canonicalBytes = Uint8Array.from(input.catalogInput.canonicalBytes);
+const result = preparePmcOwnerContextV1(input);
+console.log("__COUNTS__" + JSON.stringify({
+  stage: result.ok ? "success" : result.stage,
+  counts: globalThis.__counts,
+}));
+`;
+	const child = spawnSync(
+		process.execPath,
+		[
+			"--import",
+			"tsx/esm",
+			"--loader",
+			`data:text/javascript,${encodeURIComponent(loader)}`,
+			"--input-type=module",
+			"--eval",
+			script,
+		],
+		{ cwd: process.cwd(), encoding: "utf8" },
+	);
+	assert.equal(child.status, 0, child.stderr);
+	const line = child.stdout
+		.split(/\r?\n/)
+		.find((entry) => entry.startsWith("__COUNTS__"));
+	assert.ok(line, child.stdout);
+	const parsed = JSON.parse(line.slice("__COUNTS__".length)) as {
+		stage: string;
+		counts: { projection: number; catalog: number };
+	};
+	return { stage: parsed.stage, ...parsed.counts };
 }
 
 test("assembles real projection and catalog rows without validating owner claims", () => {
@@ -206,6 +288,31 @@ test("preserves exact projection and catalog refusals and phase order", () => {
 	);
 });
 
+test("isolated instrumentation verifies first refusal and zero later owner calls", () => {
+	assert.deepEqual(instrumentedCounts(input()), {
+		stage: "success",
+		projection: 1,
+		catalog: 1,
+	});
+	assert.deepEqual(instrumentedCounts({ ...input(), policy: {} }), {
+		stage: "projection",
+		projection: 1,
+		catalog: 0,
+	});
+	const badCatalog = input();
+	(badCatalog.catalogInput as any).expectedSha256 = "0".repeat(64);
+	assert.deepEqual(instrumentedCounts(badCatalog), {
+		stage: "catalog",
+		projection: 1,
+		catalog: 1,
+	});
+	assert.deepEqual(instrumentedCounts({ ...input(), extra: true }), {
+		stage: "bridge",
+		projection: 0,
+		catalog: 0,
+	});
+});
+
 test("rejects wrong envelopes, accessors, aliases, and hostile bytes before owner calls", () => {
 	assert.equal(preparePmcOwnerContextV1({ ...input(), extra: true }).ok, false);
 	assert.deepEqual(
@@ -294,6 +401,123 @@ test("rejects wrong envelopes, accessors, aliases, and hostile bytes before owne
 			code: "INPUT_REFUSED",
 		});
 	}
+});
+
+test("rejects byte-containing ancestor aliases in every traversal order", () => {
+	const catalogSourceAlias = input();
+	(catalogSourceAlias as any).catalogSource = (catalogSourceAlias as any).catalogInput;
+	assert.deepEqual(preparePmcOwnerContextV1(catalogSourceAlias), {
+		ok: false,
+		evidenceOnly: true,
+		stage: "bridge",
+		code: "INPUT_REFUSED",
+	});
+
+	const nestedAlias = input();
+	(nestedAlias.ownerContext as any).episode = (nestedAlias as any).catalogInput;
+	assert.deepEqual(preparePmcOwnerContextV1(nestedAlias), {
+		ok: false,
+		evidenceOnly: true,
+		stage: "bridge",
+		code: "INPUT_REFUSED",
+	});
+
+	const reordered = input();
+	const reorderedInput = (reordered as any).catalogInput;
+	const reorderedEnvelope = {
+		policy: (reordered as any).policy,
+		catalogSource: reorderedInput,
+		ownerContext: (reordered as any).ownerContext,
+		catalogInput: reorderedInput,
+	};
+	assert.deepEqual(preparePmcOwnerContextV1(reorderedEnvelope), {
+		ok: false,
+		evidenceOnly: true,
+		stage: "bridge",
+		code: "INPUT_REFUSED",
+	});
+});
+
+test("keeps the canonical byte budget independent from ordinary nodes", () => {
+	const large = input();
+	const document = JSON.parse(
+		new TextDecoder().decode((large.catalogInput as any).canonicalBytes),
+	) as any;
+	document.models[0].thinkingLevelMap = Object.fromEntries(
+		Array.from({ length: 9000 }, (_, index) => [`level-${index}`, "HIGH"]),
+	);
+	const canonicalBytes = new TextEncoder().encode(
+		`${JSON.stringify(document, null, 2)}\n`,
+	);
+	assert.ok(canonicalBytes.byteLength > 131072);
+	const digest = createHash("sha256").update(canonicalBytes).digest("hex");
+	(large as any).catalogInput = {
+		...(large as any).catalogInput,
+		canonicalBytes,
+		expectedSha256: digest,
+		acceptedSource: {
+			...(large as any).catalogInput.acceptedSource,
+			canonicalSha256: digest,
+		},
+	};
+	const result = preparePmcOwnerContextV1(large);
+	assert.equal(
+		result.ok === false &&
+			result.stage === "bridge" &&
+			result.code === "BOUNDS_REFUSED",
+		false,
+	);
+});
+
+test("enforces aggregate strings and expanded aliases independently of byte size", () => {
+	const exactBytes = input();
+	const canonicalBytes = new Uint8Array(8 * 1024 * 1024);
+	const digest = createHash("sha256").update(canonicalBytes).digest("hex");
+	(exactBytes as any).catalogInput = {
+		...(exactBytes as any).catalogInput,
+		canonicalBytes,
+		expectedSha256: digest,
+		acceptedSource: {
+			...(exactBytes as any).catalogInput.acceptedSource,
+			canonicalSha256: digest,
+		},
+	};
+	const exactBytesResult = preparePmcOwnerContextV1(exactBytes);
+	assert.equal(
+		exactBytesResult.ok === false &&
+			exactBytesResult.stage === "bridge" &&
+			exactBytesResult.code === "BOUNDS_REFUSED",
+		false,
+	);
+
+	const aggregate = input();
+	(aggregate as any).catalogSource = Object.fromEntries(
+		Array.from({ length: 513 }, (_, index) => [
+			`source-${index}`,
+			"x".repeat(4096),
+		]),
+	);
+	assert.deepEqual(preparePmcOwnerContextV1(aggregate), {
+		ok: false,
+		evidenceOnly: true,
+		stage: "bridge",
+		code: "BOUNDS_REFUSED",
+	});
+
+	const shared = Object.fromEntries(
+		Array.from({ length: 1024 }, (_, index) => [`claim-${index}`, index]),
+	);
+	const expandedAliases = input();
+	(expandedAliases.ownerContext as any).bindings = Array.from(
+		{ length: 256 },
+		() => shared,
+	);
+	assert.deepEqual(preparePmcOwnerContextV1(expandedAliases), {
+		ok: false,
+		evidenceOnly: true,
+		stage: "bridge",
+		code: "BOUNDS_REFUSED",
+	});
 });
 
 test("refuses oversized arrays and bytes before allocation or descent", () => {

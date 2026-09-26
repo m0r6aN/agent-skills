@@ -119,9 +119,11 @@ interface CaptureState {
 	active: Set<object>;
 	captured: Map<object, OwnedValue>;
 	bytes: Set<object>;
+	byteContaining: Set<object>;
+	bytePaths: Map<object, readonly string[]>;
 }
 
-function copyBytes(value: object, state: CaptureState): Uint8Array {
+function copyBytes(value: object): Uint8Array {
 	try {
 		if (!isView(value) || byteTagGetter?.call(value) !== "Uint8Array")
 			fail("INPUT_REFUSED");
@@ -131,7 +133,6 @@ function copyBytes(value: object, state: CaptureState): Uint8Array {
 		const buffer = byteBufferGetter?.call(value);
 		bufferLengthGetter?.call(buffer);
 		if (resizableGetter?.call(buffer)) fail("INPUT_REFUSED");
-		reserve(state, length);
 		return new byteArray(value as Uint8Array);
 	} catch (error) {
 		if (error instanceof CaptureFailure) throw error;
@@ -213,11 +214,20 @@ function copy(
 		)
 			fail("INPUT_REFUSED");
 		state.bytes.add(value);
-		return copyBytes(value, state);
+		return copyBytes(value);
 	}
 	if (state.active.has(value)) fail("INPUT_REFUSED");
 	const prior = state.captured.get(value);
 	if (prior) {
+		if (state.byteContaining.has(value)) {
+			const originalPath = state.bytePaths.get(value);
+			if (
+				!originalPath ||
+				originalPath.length !== path.length ||
+				originalPath.some((segment, index) => segment !== path[index])
+			)
+				fail("INPUT_REFUSED");
+		}
 		chargeCaptured(prior, state, depth, precharged);
 		return prior;
 	}
@@ -232,6 +242,7 @@ function copy(
 		)
 			fail("INPUT_REFUSED");
 		let length = 0;
+		let containsBytes = false;
 		if (array) {
 			const descriptor = Object.getOwnPropertyDescriptor(value, "length");
 			if (
@@ -262,14 +273,21 @@ function copy(
 			const descriptor = Object.getOwnPropertyDescriptor(value, key);
 			if (!descriptor || !("value" in descriptor) || !descriptor.enumerable)
 				fail("INPUT_REFUSED");
+			const child = copy(descriptor.value, state, depth + 1, [...path, key], array);
+			if (state.bytes.has(descriptor.value) || state.byteContaining.has(descriptor.value))
+				containsBytes = true;
 			Object.defineProperty(output, key, {
-				value: copy(descriptor.value, state, depth + 1, [...path, key], array),
+				value: child,
 				enumerable: true,
 				writable: true,
 				configurable: true,
 			});
 		}
 		state.captured.set(value, output);
+		if (containsBytes) {
+			state.byteContaining.add(value);
+			state.bytePaths.set(value, path);
+		}
 		return output;
 	} catch (error) {
 		if (error instanceof CaptureFailure) throw error;
@@ -288,6 +306,8 @@ function capture(input: unknown): unknown {
 			active: new Set(),
 			captured: new Map(),
 			bytes: new Set(),
+			byteContaining: new Set(),
+			bytePaths: new Map(),
 		},
 		0,
 		[],

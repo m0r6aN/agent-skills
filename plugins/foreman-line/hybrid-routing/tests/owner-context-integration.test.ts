@@ -4,10 +4,16 @@ import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
 import {
+	evaluateCatalogEligibility,
 	producePublicObservationSnapshot,
+	projectProviderBindingsV1,
 	resolvePmcRouteV1,
+	validateProviderBindingPolicyV1,
 } from "../../routing-policy/src/index.js";
-import { preparePmcOwnerContextV1 } from "../src/index.js";
+import {
+	preparePmcOwnerContextV1,
+	validateConsumerCompatibility,
+} from "../src/index.js";
 
 type AnyRecord = Record<string, any>;
 const fixture = JSON.parse(
@@ -47,11 +53,11 @@ const retainedIds = [
 	"google/gemini-3.8-flash",
 ];
 
-function retainedCatalog() {
+function retainedCatalog(ids: readonly string[] = retainedIds) {
 	const input = {
 		manifestBytes: new Uint8Array(manifestBytes),
 		projectionBytes: new Uint8Array(projectionBytes),
-		requestedIdentities: retainedIds.map((id) => ({
+		requestedIdentities: ids.map((id) => ({
 			provider: "openrouter",
 			id,
 		})),
@@ -61,6 +67,89 @@ function retainedCatalog() {
 	assert.equal(production.ok, true);
 	if (!production.ok) throw new Error("retained producer fixture refused");
 	return { input, production };
+}
+
+function retainedResolverPolicy(ids: readonly string[]) {
+	const policy = structuredClone(fixture.context.projection.policy);
+	for (const [index, id] of ids.entries()) {
+		const binding = policy.bindings[index + 2] as AnyRecord;
+		binding.provider = "openrouter";
+		binding.providerModelId = id;
+		binding.piHostModelId = `openrouter/${id}`;
+	}
+	policy.laneBindings = policy.laneBindings
+		.filter((entry: AnyRecord) => entry.lane !== "L4")
+		.concat(
+			ids.map((id, index) => ({
+				lane: "L4",
+				bindingId: `binding-${index + 2}`,
+				matrixRole: index === 0 ? "primary" : "fallback",
+				fallbackBindingId: index === 0 ? "binding-3" : null,
+			})),
+		);
+	return policy;
+}
+
+function retainedResolverCase() {
+	const ids = retainedIds.slice(0, 2);
+	const { input, production } = retainedCatalog(ids);
+	if (!production.ok) throw new Error("retained producer fixture refused");
+	const document = JSON.parse(new TextDecoder().decode(production.canonicalBytes)) as AnyRecord;
+	const sourceTimeUtc = document.providers[0].checkedAtUtc as string;
+	const endTimeUtc = new Date(Date.parse(input.evaluationTimeUtc) + 3600000).toISOString();
+	const baseline = refreshedOwnerContext();
+	const ownerContext = baseline.ownerContext;
+	ownerContext.evaluationTimeUtc = input.evaluationTimeUtc;
+	ownerContext.bindings = ownerContext.bindings.filter((binding: AnyRecord) =>
+		ids.some((_, index) => binding.bindingId === `binding-${index + 2}`),
+	);
+	const refresh = (value: unknown): void => {
+		if (value === null || typeof value !== "object") return;
+		const record = value as AnyRecord;
+		if (Object.hasOwn(record, "observedAtUtc")) record.observedAtUtc = sourceTimeUtc;
+		if (Object.hasOwn(record, "expiresAtUtc")) record.expiresAtUtc = endTimeUtc;
+		for (const child of Object.values(record)) refresh(child);
+	};
+	refresh(ownerContext);
+	const models = document.models as AnyRecord[];
+	for (const [index, binding] of ownerContext.bindings.entries()) {
+		const model = models[index] as AnyRecord;
+		binding.protocol.value = model.api;
+		binding.catalogBaseUrl.value = model.baseUrl;
+		binding.family.value = `retained-family-${index}`;
+		binding.instanceId.value = `retained-instance-${index}`;
+		binding.cost.value.sourceProfileId = production.acceptedSource.profileId;
+		binding.cost.value.sourceProfileVersion = production.acceptedSource.profileVersion;
+		binding.cost.value.sourceProfileDigest = "a".repeat(64);
+	}
+	const catalogSource = structuredClone(baseline.catalogSource);
+	refresh(catalogSource);
+	catalogSource.value.profileId = production.acceptedSource.profileId;
+	catalogSource.value.profileVersion = production.acceptedSource.profileVersion;
+	catalogSource.value.profileDigest = "a".repeat(64);
+	catalogSource.value.snapshotDigest = production.digestSha256;
+	catalogSource.value.configAuthorityRef = "retained-test-config";
+	catalogSource.evidence.sourceRef = production.acceptedSource.sourceEvidenceRef;
+	catalogSource.evidence.sourceDigest = production.acceptedSource.sourceEvidenceSha256;
+	const baseUrl = models[0]!.baseUrl as string;
+	const catalogInput = {
+		canonicalBytes: production.canonicalBytes,
+		expectedSha256: production.digestSha256,
+		approvedConfig: {
+			authorityRef: "retained-test-config",
+			endpoints: [{ provider: "openrouter", baseUrl }],
+		},
+		evaluationTimeUtc: input.evaluationTimeUtc,
+		identities: input.requestedIdentities,
+		acceptedSource: production.acceptedSource,
+	};
+	return {
+		policy: retainedResolverPolicy(ids),
+		catalogInput,
+		catalogSource,
+		ownerContext,
+		request: structuredClone(fixture.request),
+	};
 }
 
 function expandedPolicy(ids: readonly string[]) {
@@ -250,6 +339,226 @@ test("real adapter and resolver integration selects only with synthetic dynamic 
 	if (decision.ok) {
 		assert.equal(decision.decision.authority, "selection-only");
 		assert.equal(decision.decision.providerModelId, "model-2");
+	}
+});
+
+test("retained producer bytes traverse the real bridge and resolver", () => {
+	const retained = retainedResolverCase();
+	const assembled = preparePmcOwnerContextV1({
+		policy: retained.policy,
+		catalogInput: retained.catalogInput,
+		catalogSource: retained.catalogSource,
+		ownerContext: retained.ownerContext,
+	});
+	assert.equal(assembled.ok, true);
+	if (!assembled.ok) return;
+	const decision = resolvePmcRouteV1(retained.request, assembled.context);
+	assert.equal(decision.ok, true);
+	if (decision.ok) {
+		assert.equal(decision.decision.authority, "selection-only");
+		assert.equal(decision.decision.provider, "openrouter");
+		assert.equal(decision.decision.providerModelId, retained.catalogInput.identities[0]!.id);
+	}
+});
+
+test("P1b oracle consumes real RCM projector rows while its v0 evaluator stays fixture-only", () => {
+	const ids = retainedIds.slice(0, 1);
+	const { input, production } = retainedCatalog(ids);
+	assert.equal(production.ok, true);
+	if (!production.ok) return;
+	const catalogInput = {
+		canonicalBytes: production.canonicalBytes,
+		expectedSha256: production.digestSha256,
+		approvedConfig: {
+			authorityRef: "p1b-oracle-config",
+			endpoints: [
+				{ provider: "openrouter", baseUrl: "https://openrouter.ai/api/v1" },
+			],
+		},
+		evaluationTimeUtc: input.evaluationTimeUtc,
+		identities: input.requestedIdentities,
+		acceptedSource: production.acceptedSource,
+	};
+	const proposal = {
+		schema: "hro-mapping-proposal/v1" as const,
+		logicalCandidateId: "retained-candidate-0",
+		bindingId: "retained-binding-0",
+		provider: "openrouter",
+		providerModelId: ids[0],
+		protocol: "openai-completions",
+		piHostModelId: `openrouter/${ids[0]}`,
+		lane: "frontier",
+		roleFamily: "coordinator",
+		fallbackBindingId: null,
+		provenance: {
+			source: "fixture-only",
+			retrievedAt: input.evaluationTimeUtc,
+			contentSha256: "a".repeat(64),
+			catalogVersion: "catalog/v1",
+			mappingVersion: "mapping/v1",
+			policySchemaVersion: "policy/v1",
+			roleMapVersion: "roles/v1",
+			foremanRevision: "foreman/test",
+			piRuntimeVersion: "pi/test",
+			approvalEvidenceState: "static-conformance" as const,
+		},
+	};
+	const eligibility = evaluateCatalogEligibility(catalogInput);
+	assert.equal(eligibility.stage, "projector");
+	if (eligibility.stage !== "projector" || !eligibility.result.ok) return;
+	const expectedEligibility = {
+		digestSha256: eligibility.result.provenance.digestSha256,
+		sourceRef: eligibility.result.provenance.sourceRef,
+		approvedConfigRef: eligibility.result.provenance.approvedConfigRef,
+		maxAgeMs: eligibility.result.provenance.maxAgeMs,
+	};
+	const request = {
+		proposal,
+		projection: {
+			schema: "hro-binding-projection-draft/v1" as const,
+			evidenceRef: "fixture://hro-p1a/static-v1",
+			bindings: [{ proposal, conformance: "allowed" as const }],
+		},
+		context: {
+			evaluationTimeUtc: input.evaluationTimeUtc,
+			maxEvidenceAgeMs: expectedEligibility.maxAgeMs,
+			expectedEvidenceRef: "fixture://hro-p1a/static-v1",
+			expectedContentSha256: "a".repeat(64),
+		},
+		routingInput: {
+			routing_class: "architecture/risk",
+			data_classification: "internal",
+			workflowId: "wf-retained",
+		},
+		expectedEligibility,
+	};
+	const routing = {
+		ok: true as const,
+		result: {
+			resolvedModelId: proposal.logicalCandidateId,
+			resolvedTier: "frontier",
+			transportRequirements: { data_collection: "deny" as const, zdr: true },
+			routingDecisionRef: "offline/retained-p1b",
+		},
+	};
+	const result = validateConsumerCompatibility(request, {
+		eligibilityOracle: (oracleRequest) => {
+			const real = evaluateCatalogEligibility(catalogInput);
+			if (real.stage !== "projector" || !real.result.ok) return real;
+			const row = real.result.results[0];
+			const sourceTimeUtc = new Date(
+				Date.parse(real.result.provenance.sourceTimeUtc),
+			).toISOString();
+			const ageMs =
+				Date.parse(real.result.provenance.evaluationTimeUtc) -
+				Date.parse(sourceTimeUtc);
+			if (row?.outcome === "facts") {
+				return {
+					ok: true,
+					provenance: {
+						digestSha256: real.result.provenance.digestSha256,
+						sourceRef: real.result.provenance.sourceRef,
+						sourceTimeUtc,
+						evaluationTimeUtc: real.result.provenance.evaluationTimeUtc,
+						ageMs,
+						maxAgeMs: real.result.provenance.maxAgeMs,
+						approvedConfigRef: real.result.provenance.approvedConfigRef,
+					},
+					results: [
+						{
+							requested: { provider: row.requested.provider, id: row.requested.id },
+							outcome: "facts",
+							facts: {
+								provider: row.facts.provider,
+								id: row.facts.id,
+								baseUrl: row.facts.baseUrl,
+								api: row.facts.api,
+								reasoning: row.facts.reasoning,
+								contextWindow: row.facts.contextWindow,
+								maxTokens: row.facts.maxTokens,
+								inputModalities: [...row.facts.inputModalities],
+								rates: {
+									input: { ...row.facts.rates.input },
+									output: { ...row.facts.rates.output },
+								},
+								thinkingLevels:
+									row.facts.thinkingLevels.status === "declared"
+										? {
+												status: "declared",
+												levels: row.facts.thinkingLevels.levels.map((level: AnyRecord) => ({
+													level: level.level,
+													providerValue: level.providerValue,
+												})),
+										  }
+										: { status: "unknown" },
+							},
+						},
+					],
+				};
+			}
+			return {
+				ok: true,
+				provenance: {
+					digestSha256: real.result.provenance.digestSha256,
+					sourceRef: real.result.provenance.sourceRef,
+					sourceTimeUtc,
+					evaluationTimeUtc: real.result.provenance.evaluationTimeUtc,
+					ageMs,
+					maxAgeMs: real.result.provenance.maxAgeMs,
+					approvedConfigRef: real.result.provenance.approvedConfigRef,
+				},
+				results: [
+					{
+						requested: {
+							provider: row?.requested.provider ?? "openrouter",
+							id: row?.requested.id ?? ids[0],
+						},
+						outcome: "refused",
+						codes: row?.codes ?? ["UNKNOWN"],
+					},
+				],
+			};
+		},
+		evaluateOffline: () => routing,
+	});
+	assert.equal(result.ok, true);
+});
+
+test("P1a, P1b, projection, selection, and permit-shaped values never substitute into owner slots", () => {
+	const baseline = refreshedOwnerContext();
+	const base = {
+		policy: fixture.context.projection.policy,
+		catalogInput: baseline.catalog,
+		catalogSource: baseline.catalogSource,
+		ownerContext: baseline.ownerContext,
+	};
+	const p1a = validateProviderBindingPolicyV1(base.policy);
+	assert.equal(p1a.valid, true);
+	const p1b = projectProviderBindingsV1(base.policy);
+	assert.equal(p1b.ok, true);
+	const projection = {
+		schemaVersion: "pmc-provider-binding-projection/v1",
+		evidenceOnly: true,
+		policy: base.policy,
+	};
+	const assembled = preparePmcOwnerContextV1(base);
+	assert.equal(assembled.ok, true);
+	if (!assembled.ok) return;
+	const selection = resolvePmcRouteV1(fixture.request, assembled.context);
+	assert.equal(selection.ok, true);
+	const permit = {
+		permit: "serialized-owner-permit-shaped-value",
+		authority: "selection-only",
+		launch: true,
+	};
+	const substitutions = [p1a, p1b, projection, selection, permit];
+	for (const slot of ["policy", "catalogInput", "catalogSource", "ownerContext"] as const) {
+		for (const value of substitutions) {
+			const candidate = { ...base, [slot]: value };
+			const result = preparePmcOwnerContextV1(candidate);
+			const selected = result.ok && resolvePmcRouteV1(fixture.request, result.context).ok;
+			assert.equal(selected, false, `${slot} accepted a substitution as a selection`);
+		}
 	}
 });
 
