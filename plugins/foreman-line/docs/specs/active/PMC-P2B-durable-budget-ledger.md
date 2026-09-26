@@ -348,9 +348,10 @@ LocalPmcLedger is an owned frozen capability exposing only:
 All proof IDs/digests bind the exact durable request, scope and ledger epoch.
 Unknown settlement moves consumed to uncertain and keeps maximum liability;
 known settlement moves consumed/uncertain to settled and stores actual charge.
-Known over-bound charge is recorded and freezes the scope atomically. Exact
-replay of the same accepted settlement/proof is idempotent; altered proof, amount,
-request or conflicting terminal outcome refuses, never rewrites history.
+Known over-bound charge is recorded and freezes the scope atomically. Exact replay of the same accepted settlement/proof is idempotent. A new
+authenticated known observation may reconcile uncertain state. Reusing a proof
+identity with changed content, mismatched request or conflicting terminal outcome
+refuses, never rewrites history.
 No-send can cancel reserved, consumed or uncertain only after authentication;
 settled known charges are not refundable through this operation. Unknown
 observations cannot demote known settlement. A frozen/full scope still permits
@@ -392,5 +393,11 @@ cycles/nonfinite/thenable data. The 16KiB UTF-8 evidence bound also applies befo
 persistence, and record capacities remain checked inside BEGIN IMMEDIATE.
 Initialization and proof callbacks are trusted code, not a hard execution-time
 sandbox; their returned data still receives bounded validation. Clock returns
-exact Utc before the transaction; invalid/throwing/future-regressing updates
+exact Utc before the transaction; invalid/throwing or record-time-regressing updates
 refuse without resetting prior timestamps or granting a refund.
+The capability retains only owned bounded configuration and captured trusted ports,
+not an open SQLite connection. Open validates then closes; each operation opens
+existing storage, verifies settings/identity and closes in finally. Thus no
+undocumented shutdown operation or process-exit flush grants durability. Fixed
+clock monotonicity compares a mutation with the affected record's stored time;
+it does not infer real-world freshness from an injected clock.
