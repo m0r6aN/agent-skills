@@ -459,10 +459,10 @@ const GRANDFATHER_INVENTORY_PLUGIN_LITERAL_DIGEST =
  */
 const REGISTRY_DATA_FILE = 'contract-readers/src/registry-data.ts'
 const REGISTRY_DATA_DECLARATION_NAMES: ReadonlySet<string> = new Set(['contractA', 'contractB'])
-const REGISTRY_DATA_LITERAL_COUNT = 10
+const REGISTRY_DATA_LITERAL_COUNT = 11
 /** SHA-256 of JSON.stringify([...values].sort()) encoded as UTF-8. */
 const REGISTRY_DATA_LITERAL_DIGEST =
-  'dda1e79b0cfbf2767aef8eb37d67f235647e046fd52c98a53bdcd23809de748d'
+  '03adbbf53a4c30c42db51268b8749bea0c88217e633e1aedc570926202a13af6'
 
 /**
  * Retained JEV replay path values are custody-contract DATA, not filesystem roots.

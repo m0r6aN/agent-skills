@@ -527,6 +527,8 @@ test('A2(b)(2)/(4) Contract B — every surfaced file is adjudicated; both signa
   //   spec-linter/src/types.ts         — LOCKSTEP: restates ROUTING_CLASSES in full, and is also
   //                                      a Contract A reader (VERIFICATION_CLASSES). ADD a class
   //                                      and this file must change.
+  //   dispatch/src/pmc-launch/controller.ts — LOCKSTEP: validates the complete literal
+  //                                      routing vocabulary; an added class changes its membership list.
   //   dispatch/src/pmc-launch/intent-custody.ts — LOCKSTEP: validates routingClass
   //                                      against the full literal vocabulary; adding a class
   //                                      requires changing this owner's membership list.
@@ -729,6 +731,7 @@ test('Contract B: intent custody is an additive LOCKSTEP reader with exact touch
     [...contractB.readers].sort(),
     [
       genuine,
+      'plugins/foreman-line/dispatch/src/pmc-launch/controller.ts',
       'plugins/foreman-line/hybrid-routing/src/consumer-compatibility.ts',
       'plugins/foreman-line/spec-linter/src/schemas.ts',
       'plugins/foreman-line/spec-linter/src/types.ts',
@@ -759,4 +762,35 @@ test('A2(d)/F1: every entry in the real registry validates against contractReade
       `registry entry '${entry.contract}' failed schema validation: ${JSON.stringify(validate.errors)}`,
     )
   }
+})
+
+test('PMC controller reader: exact Contract B membership and real touch-set provenance', () => {
+  const path = 'plugins/foreman-line/dispatch/src/pmc-launch/controller.ts'
+  const check = (a: readonly ContractReader[], b: readonly ContractReader[]) => {
+    assert.equal(a.flatMap(readerFiles).filter((v) => v === path).length, 0)
+    assert.equal(b.flatMap(readerFiles).filter((v) => v === path).length, 1)
+    const resolved = deriveTouchSet(b.flatMap(readerFiles), repoRoot)
+    assert.ok(hasResolutionProvenance(resolved))
+    assert.equal(resolved.files.filter((v) => v === path).length, 1)
+  }
+  check(contractA.readers, contractB.readers)
+  assert.ok(contractBValueSignal.includes(path))
+  const without = contractB.readers.filter((v) => v !== path)
+  for (const [name, a, b] of [
+    ['deleted', contractA.readers, without],
+    ['wrong contract', [...contractA.readers, path], without],
+    ['duplicated', contractA.readers, [...contractB.readers, path]],
+    [
+      'renamed',
+      contractA.readers,
+      [...without, path.replace('controller.ts', 'controller-other.ts')],
+    ],
+    [
+      'substituted',
+      contractA.readers,
+      [...without, 'plugins/foreman-line/dispatch/src/pmc-launch/intent-custody.ts'],
+    ],
+    ['also in Contract A', [...contractA.readers, path], contractB.readers],
+  ] as const)
+    assert.throws(() => check(a, b), assert.AssertionError, name)
 })
