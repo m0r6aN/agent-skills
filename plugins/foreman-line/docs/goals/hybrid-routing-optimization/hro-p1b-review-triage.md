@@ -36,3 +36,31 @@ package/unchanged dispatch/routing suites; no duplicate full20 local pipeline.
 Return a clean local code head, RED/GREEN counts, verification and scope/import
 proof. Two fresh independent frontier reviews must approve the repaired head
 before integration. No push, provider/config/receipt calls or runtime activation.
+## Second review — 428763b04a20952a3358892125c53112c7108f76
+
+Fresh final reviewer A passed25 HRO tests/typecheck/lint but requests three fixes.
+The broader exact envelopes, rates/thinking/refusal validation, phase codes,
+string/array ceilings, identities/provenance, freezing and continuation now pass.
+
+1. P1: capture validates descriptors and then data() rereads them; dependency
+   exact() also reads descriptors before callbacks are reread. Proxies with a
+   valid first descriptor and nonenumerable second descriptor succeed, while
+   valid once-readable properties refuse. Capture each descriptor exactly once,
+   validate it, consume its captured value. Arrays/length/callbacks included.
+2. P2: capture() counts a shared object occurrence and charge() counts its root
+   again. Exactly8192 expanded values in a root array containing31 aliases to a
+   256-primitive array plus one223-primitive array incorrectly exceed the limit;
+   equivalent unshared copies reach normal schema refusal. Count each occurrence
+   once, preserving both shared capture and expanded accounting.
+3. P2: record key length/aggregate checks happen after descriptor reads. A2049-unit
+   key invokes a hostile descriptor then returns input_invalid. Check/charge the
+   key before any descriptor access so known limit violations refuse immediately.
+
+Coordinator accepts all three as existing-contract defects. No spec amendment,
+P1a change or allowlist expansion. The next Luna repair is narrowly these fixes
+plus meaningful RED/GREEN regressions.25 total/9 P1b is the new tripwire. Retain
+all prior repaired behavior and required unchanged regression suites. Independent
+reproduction is C:/Users/clint/AppData/Local/Temp/hro-p1b-final-a.mts. Boundary
+fixtures deliberately distinguish capture-limit from later schema refusal; an
+invalid eventual schema is not permission to miscount its bounded capture.
+Two fresh final frontier approvals still required before merge.
