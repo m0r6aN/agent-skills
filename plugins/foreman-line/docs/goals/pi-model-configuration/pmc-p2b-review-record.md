@@ -33,3 +33,28 @@ Windows-local process-crash tests do not prove hardware power-loss
 durability. P2C authenticates composition and episode custody; this module does
 not grant a permit, prove live availability, initialize production funds or
 authorize activation. Full HRO exit remains open.
+
+## Final audit repair acceptance and P2A reconciliation — 2026-09-26
+
+Two fresh independent frontier reviewers approved frozen repair
+3b957ee2bdddc7df401b5e5cb3d5d676a4405006 with no blocking findings. This supersedes
+the rejected def8884 repair; it does not alter previously approved ledger/money.
+Review A independently ran 358 verification tests, 44 mutation-scope tests,
+typecheck, changed-file lint and real-tree D19 (10/10 PMC sites, zero unruled).
+Its 19 additional probes included five harmless controls and fourteen syntax or
+reference mutations. Review B independently ran 175 PMC audit tests, 30 existing
+RCM audit tests and 28 probes spanning contextual tokens, ASI, modifiers and
+external owner references. Both verified a clean frozen tree and unchanged
+ledger/money against 835a6dd. The audit remains bounded syntax enforcement,
+not a claim of general dataflow or runtime-integrity proof.
+
+Coordinator merged accepted main P2A 4b86643 and its Stage-F documentation plus
+terminal source preflight through closure branch 7d353dc. Combined merge e538eb1
+retains both independent loop records and the accepted done P2A specification;
+the obsolete draft active P2A copy is removed. Source checks confirm ledger/money
+unchanged from 835a6dd, all routing-policy source/tests unchanged from accepted
+4b86643, and audit implementation/tests unchanged from reviewed 3b957ee.
+
+Independent combined review, targeted integration checks and all remote CI remain
+required before merging PR60. No provider calls, production funds, host settings
+or live activation are part of this integration.
