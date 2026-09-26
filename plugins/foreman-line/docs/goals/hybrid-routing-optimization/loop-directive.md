@@ -314,3 +314,15 @@ contracts and bounded file reads remain wrong. Remaining repair is reassigned to
 frontier D after fresh Step0 and explicit release; two new independent reviews
 will be required because D becomes its author. Transport fa519c8 is frozen for
 root/frontier A review. P publisher remains in progress. Full live exit stays open.
+
+### Recovery-admission parcel accepted on main — 2026-09-26
+
+PR69 merged as c1f6fdd67c7a5251d57eb0241cc75ea06381cac2 at23:27:17Z after all
+12 remote checks passed on e5cf0d7f7e6cf7196fd3f1dfb847b79ba4889c48. P4A1's offline
+admission and narrowly pinned audit are complete; spec moves to done. Combined
+492 dispatch/658 verification and applicable checks pass with independent reviews.
+P publisher clock repair is released47906bc to frontier A; transport byte/replay
+repair is releasedf3a2390 to native Luna; genuine receipt/bounded-read repair is
+released297bb13 to frontier D after root+A clarified actual owner joins. Each
+still requires two repair reviews and integration. Live billing evidence, production
+custody, entry, recovery broker, diagnostics/proposals and measured exit remain open.
