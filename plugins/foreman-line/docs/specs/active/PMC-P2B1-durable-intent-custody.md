@@ -1,7 +1,7 @@
 ---
 ticket: PMC-P2B1
 title: Minimal durable workflow-intent custody
-status: draft
+status: active
 owner: clinton.morgan
 created: 2026-09-26
 updated: 2026-09-26
@@ -21,7 +21,7 @@ verification_class: judgment-required
 Prevent an authorized workflow intent from buying another initial attempt through
 new request IDs, episode names, changed payloads or restart. Provide one bounded
 durable owner before P2C, separate from the unchanged P2B budget ledger. This is a
-review proposal, not implementation authorization; it remains nondispatchable.
+reviewed contract released for private implementation by Gate 2 below.
 
 ## Constraints
 
@@ -354,7 +354,7 @@ general event stores, IPC/signing and claims of hostile-OS rollback prevention.
 
 ## Allowed Files
 
-Future implementation only after review, prerequisite pins and explicit release:
+Private implementation is restricted to these five files:
 
 - plugins/foreman-line/dispatch/src/pmc-launch/intent-custody.ts
 - plugins/foreman-line/dispatch/src/pmc-launch/intent-custody-types.ts
@@ -362,7 +362,7 @@ Future implementation only after review, prerequisite pins and explicit release:
 - plugins/foreman-line/dispatch/tests/fixtures/pmc-intent-custody-worker.ts
 - plugins/foreman-line/docs/goals/pi-model-configuration/pmc-p2b1-verification.md
 
-Current shaping edits only this draft, P2C draft and composition notes. No
+The completed shaping envelope was this draft, P2C draft and composition notes. No
 ShapingResult; exact three-document coordinator envelope overrides generic output.
 
 ## Verification Plan
@@ -392,3 +392,34 @@ accepted P2A/P2B integration pins and explicit Gate 2 are required. B1 acceptanc
 can prove durable storage and private synthetic contract tests; P2C needs actual B1
 in its composition tests. Production additionally needs P2E real fixed-installation setup/origin
 authority and P2D semantic/billing/terminal proofs. No live/full-HRO claim follows.
+
+## Gate 2 private implementation release — 2026-09-26
+
+Both independent frontier design reviewers approved corrected contract
+09216fafc140539f2760dfdea8a8eaa6cb3ecc07. Review A accepted the wire-order,
+SHA-256 and prior-request evidence corrections; review B accepted the actual P2A
+prior-request binding and successful two-attempt test requirements. No blocking
+design findings remain. This release supersedes draft readiness wording above.
+
+Under the user's delegated prerequisite authority, the coordinator authorizes a
+private offline build on merged P2A 4b86643acd4e5cdf183e85cf1cd1c2ace51e0182 and
+twice-reviewed immutable P2B source 835a6dd82ee4e50652362e7201a79b7451bbd221.
+Combined private base is 82b6332. Its P2A merge conflict retained the accepted main
+specification; ledger and money are byte-identical to the reviewed source.
+P2B's separate D19 audit integration is still under review. This narrow sequencing
+exception permits B1 development only: B1 integration and merge must wait for
+accepted P2B integration and audit checks. No failed gate is waived.
+
+Workspace: D:/Repos/agent-skills-worktrees/hro-pmc-p2b1-20260926, branch
+codex/hro-pmc-p2b1-20260926. Fresh frontier builder inspects exact head/spec and
+predecessors, restates the contract and stops at Step 0 for coordinator release.
+Only the five Allowed Files may change. Tests must use actual temporary SQLite
+stores, real predecessor APIs, process races and boundary fault injection.
+Do not modify the ledger, resolver, dependencies, public barrel or host config.
+No provider calls, production setup, budget allocation, push or merge.
+
+D19 enrollment is a separately scoped review after implementation identifies the
+actual owner mechanisms. Do not evade the detector or edit verification under
+this release. Two independent implementation reviews, reconciliation onto accepted
+main, targeted integration checks and complete remote CI remain merge gates.
+Production still requires actual P2C/P2D/P2E custody, sender and initiating caller.

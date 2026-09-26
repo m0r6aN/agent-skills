@@ -232,3 +232,12 @@ composition plus independent wrong-domain negatives and literal evidence hash
 fixtures. Do not modify P2A or merely assert all malformed fallbacks refuse.
 No other blocking design finding. Both reviewers must accept this corrected draft
 before B1 dispatch; implementation and production gates remain unchanged.
+
+
+## Final design acceptance and B1 private release — 2026-09-26
+
+Both independent reviewers approved corrected 09216fa. B1 Gate 2 now permits
+private offline implementation on accepted P2A main and immutable, twice-reviewed
+P2B source. P2B audit integration remains a prerequisite for B1 integration and
+merge. The exact scope, sequencing exception and verification obligations are
+recorded in the B1 specification. P2C remains draft pending actual B1 acceptance.
