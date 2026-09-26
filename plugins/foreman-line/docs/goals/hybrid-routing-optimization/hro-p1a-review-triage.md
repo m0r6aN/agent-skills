@@ -69,4 +69,25 @@ The full twenty-package combined CI remains the pre-merge gate. Review acceptanc
 is limited to the evidence-only validator and its CI registration; it establishes
 no live availability, execution authority, cost savings or full HRO completion.
 
+## A2 combined-CI correction
+
+PR54's initial complete remote run at 1799446 passed twenty installs and
+fifty-nine of sixty checks; mutation-scope-guard's existing D19 audit check
+refused because hybrid-routing was absent from the independent ratified-package
+list. The audit correctly enforced enrollment. A2 was ratified alone at d6ab960;
+fc1672d adds only that package name, with no waiver, audit or test weakening.
+
+Independent A2 review approved the exact one-line delta. The actual D19 sweep
+passed across twenty-one packages and 186 source files with zero unruled
+instances. Builder ran all forty-four mutation-scope tests; independent review
+ran the thirty-two-test guard file including its actual D19 subprocess, all green.
+All eleven previously approved implementation paths remain byte-identical.
+Corrected full remote CI is still required before merge.
+
+The redundant local full run was explicitly superseded and stopped after five
+installs, before any package check ran; its seventeen runner tests passed.
+Tracked runner/child identities were verified gone, and its temporary log was
+preserved. Neither that incomplete run nor the initial failed remote run is
+recorded as passing evidence.
+
 Both final verdicts are request-changes. Review B additionally accepted 262,684 aggregate string units via independent per-argument budgets; this exceeds the 262,144 combined ceiling and is part of the accepted resource-limit repair. On 2026-09-26 the coordinator released Luna after its Step-0 restatement, with all findings accepted and no disputed reproductions. Original tests remain the minimum tripwire; semantic boundary additions are required.
