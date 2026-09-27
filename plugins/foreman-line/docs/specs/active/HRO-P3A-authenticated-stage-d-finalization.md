@@ -879,3 +879,24 @@ This is a design proposal only. Final runtime source acceptance, independent
 amendment review, a fresh stopped builder Step 0 and explicit root release must
 precede implementation. This audit certifies only the reviewed offline owner's
 normalization sites; genuine production intake and full measured exit remain open.
+
+### Audit design ratification and Step 0 preparation — 2026-09-26
+
+Root ratifies 0a8ef276d66d8e5d1ba8afa6db11b25c90b8f4b6 after independent frontier A
+review. A confirmed existing ledger/provenance audit fixtures copy all ratified
+package source trees; the required verification owner will therefore be present.
+New sparse/missing-owner controls must fail without caller-selected scope flags.
+The final runtime source 385a94f has root+A approval and blob
+0dbffbc73bb8d2f701179d4bdca93d9e0206fe9a.
+
+Isolated branch codex/hro-p3a-audit-20260926 at d2a2c208 combines accepted main
+c1f6fdd with accepted P3 source/docs adbb3a5. Existing newer audit owners are
+preserved. Missing dependency directories were linked only to same-package,
+SHA256-equal-lock E1 donor directories; no package installation or donor mutation.
+Use Node24.19.0 with process-local PATH, and treat those dependency links read-only.
+
+Luna may perform read-only Step 0 now: verify the combined tree and owner blob,
+enumerate the full protected declaration/import/external-reference closure and
+four exact calls, reproduce actual D19's four-site refusal, and restate tests and
+three-path implementation envelope. STOP for explicit release. Do not infer
+implementation permission from this preparation or change accepted runtime source.
