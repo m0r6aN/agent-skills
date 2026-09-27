@@ -599,7 +599,7 @@ const CASE_MUTATORS: Readonly<Record<string, CaseMutator>> = {
 for (const [name, mutator] of Object.entries(CASE_MUTATORS)) {
   test(`${name}: ${mutator.dimension} is rejected`, () => {
     const base =
-      mutator.dimension.includes('would') || mutator.dimension.includes('shadow')
+      name === 'case-probe-shadow-would-confusion'
         ? caseById('vec-shadow-path-outside-1')
         : caseById('vec-enforced-path-outside-1')
     assert.deepEqual(validateGoldenVectorCase(base), [], 'base case validates clean')
