@@ -1235,10 +1235,49 @@ test('AC-21: src/pipeline performs no process spawn, git operation, Jira call, s
     'headroom_compress',
     'Skill(',
   ]
+  const driverName = 'stage-d-finalization.ts'
+  const permittedDriverOwnerTokens = new Set([
+    'runHarness(',
+    'dispatchReview',
+    'collectAdversarialFindings',
+  ])
+  const violations = (name: string, text: string): string[] => {
+    const tokens =
+      name === driverName
+        ? forbidden.filter((token) => !permittedDriverOwnerTokens.has(token))
+        : forbidden
+    return tokens.filter((token) => text.includes(token))
+  }
   for (const name of readdirSync(dir)) {
     const text = readFileSync(join(dir, name), 'utf8')
-    for (const token of forbidden) {
-      assert.ok(!text.includes(token), `src/pipeline/${name} contains forbidden token '${token}'`)
+    for (const token of violations(name, text)) {
+      assert.fail(`src/pipeline/${name} contains forbidden token '${token}'`)
+    }
+    if (name === driverName) {
+      for (const token of permittedDriverOwnerTokens) {
+        assert.ok(text.includes(token), `${name} must transparently name owner token '${token}'`)
+      }
+    } else {
+      for (const token of permittedDriverOwnerTokens) {
+        assert.ok(!text.includes(token), `${name} must not import offline owner token '${token}'`)
+      }
+    }
+  }
+
+  const driverSource = readFileSync(join(dir, driverName), 'utf8')
+  for (const token of forbidden.filter((candidate) => !permittedDriverOwnerTokens.has(candidate))) {
+    assert.ok(
+      violations(driverName, driverSource + token).includes(token),
+      `driver negative control failed to inject forbidden token '${token}'`,
+    )
+  }
+  for (const name of readdirSync(dir).filter((candidate) => candidate !== driverName)) {
+    const source = readFileSync(join(dir, name), 'utf8')
+    for (const token of permittedDriverOwnerTokens) {
+      assert.ok(
+        violations(name, source + token).includes(token),
+        `${name} negative control failed to inject legacy-forbidden token '${token}'`,
+      )
     }
   }
 })
