@@ -110,7 +110,7 @@ These tables discharge the F05 Step0 field-table obligation recorded in `../../g
 
 General wire bounds for every document below: UTF-8 request/result at most 1 MiB, object depth at most 16, unknown fields/unknown enum values/missing required data fail structural validation, over-limit input rejected before expensive traversal, overflow is a protocol error and never truncation of a refusal list, unpaired Unicode surrogates rejected. Narrower field limits override general limits. (P1-S06, P1-S07)
 
-`$def` placement inside the fixed ceiling (each schema file is closed draft-07 and carries `$defs` for the shapes named here): `lifecycle-event.schema.json` holds `LifecycleEvent` and its payload shapes; `admitted-context.schema.json` holds `AdmittedContext` and the two principal variants; `authorize-action-input.schema.json` holds `AuthorizeActionInput`, `EffectiveActionClass`, `LeaseCasDescriptor`, `GitGateEvidenceRef`, `ObservedEffect`; `decision-envelope.schema.json` holds `DecisionEnvelope` (policy-result and shadow-policy-result variants), `ProtocolError`, `UpstreamPolicyEvidence`, `EffectResult`, `IdempotencyBinding`, `Violation`, `Obligation`; `repository-read-request.schema.json` holds `ReadRequest`; `host-capability.schema.json` holds `HostCapability`; `latency-contract.schema.json` holds `LatencyContract` and `CacheDescriptor`; `golden-vector.schema.json` holds `GoldenVectorFixture` and `GoldenVectorCase`. (derived (F05); 25-file ceiling, P1-S01)
+`$def` placement inside the fixed ceiling (each schema file is closed draft-07 and carries `$defs` for the shapes named here): `lifecycle-event.schema.json` holds `LifecycleEvent` and its payload shapes; `admitted-context.schema.json` holds `AdmittedContext` and the two principal variants; `authorize-action-input.schema.json` holds `AuthorizeActionInput`, `EffectiveActionClass`, `PolicyIdentity`, `LeaseCasDescriptor`, `GitGateEvidenceRef`, `ObservedEffect`; `decision-envelope.schema.json` holds `DecisionEnvelope` (policy-result and shadow-policy-result variants), `PrincipalProjection`, `ProtocolError`, `UpstreamPolicyEvidence`, `AssuranceClaim`, `AssuranceEvidenceRef`, `EffectResult`, `IdempotencyBinding`, `Violation`, `Obligation`; `repository-read-request.schema.json` holds `ReadRequest`; `host-capability.schema.json` holds `HostCapability`; `latency-contract.schema.json` holds `LatencyContract` and `CacheDescriptor`; `golden-vector.schema.json` holds `GoldenVectorFixture` and `GoldenVectorCase`. Every `$ref` used by these files resolves to a named `$defs` entry in exactly one of them; no shape referenced from a schema file is left types.ts-only. (derived (F05); 25-file ceiling, P1-S01; rework R2)
 
 ### F05.2 LifecycleEvent wire shapes
 
@@ -233,7 +233,16 @@ Explicitly absent (unknown fields, structural failure): `capabilityRef`, `permit
 
 P1 digest literal: `sha256:` plus exactly 64 lowercase hex characters. Encode/decode is explicit at the package boundary; embedded upstream values are never retagged or recomputed. (F01, coordinator disposition).
 
-Canonical encoder (the only hashing path for new P1 digests): UTF-8 bytes of the canonical JSON encoding of `{domain, apiVersion, payload}` where object keys are sorted recursively by UTF-16 code-unit order, array order is preserved, strings use standard JSON string escaping (the JSON.stringify escaping of the validated document: quotation mark, reverse solidus and control characters U+0000–U+001F escaped; all other code units emitted literally as UTF-8), numbers are decimal safe integers only (no fraction, no exponent, no NaN/Infinity/negative zero), and absent optional members are omitted while required nullable members serialize as `null`. No Unicode normalization of keys or values and no path case folding occurs anywhere in hashing. `apiVersion` in every preimage is the literal `0.1.0`. (F01, P1-S08, derived (byte-level pin of the stated "JSON string escaping" rule)).
+Canonical encoder (the only hashing path for new P1 digests). The encoder is byte-total: every value has exactly one valid byte encoding, produced by this complete rule set applied to the validated document (absent optional members are omitted before encoding; required nullable members are serialized as `null`).
+
+1. Structural framing (compact form): no insignificant whitespace anywhere; object and array separators are exactly `,` and `:` with no surrounding spaces; objects are written `{`…`}` and arrays `[`…`]` with no interior padding.
+2. Member order: object keys sorted recursively by UTF-16 code-unit order at every depth; array order preserved exactly as validated.
+3. Strings: exactly the JSON.stringify escape set of the validated document — quotation mark, reverse solidus and control characters U+0000–U+001F escaped (the controls as `\u00XX` lowercase hex); every other code unit emitted literally as UTF-8; no other escapes (no escaped solidus, no `\u` escapes for non-ASCII).
+4. Numbers: bound to the `SafeInt` domain (nonnegative safe integers) restated here: every encoded number is an integer in the closed range 0 to 2^53−1; NaN, ±Infinity, negative zero, fractions, exponents and unsafe integers are rejected before hashing. Integer lexeme: digits only, no sign, no leading zeros except the value `0` itself.
+5. Atoms: `true`, `false` and `null` as bare lexemes.
+6. Wrapper and hash: the encoded document is `{domain, apiVersion, payload}` written under rules 1–5, encoded as UTF-8 without BOM, hashed with SHA-256, emitted as 64 lowercase hex characters and tagged `sha256:`.
+
+No Unicode normalization of keys or values and no path case folding occurs anywhere in hashing. `apiVersion` in every preimage is the literal `0.1.0`. (F01, P1-S08, derived (byte-level pin of the stated "JSON string escaping" rule); rework R1/R4).
 
 | Digest | domain literal | payload | Owner | Provenance |
 |---|---|---|---|---|
@@ -259,7 +268,7 @@ These values are embedded in the pinned registry document inside PolicyIdentity 
 
 ### F05.6 policyDigest preimage (byte level)
 
-`policyDigest` is a separately versioned P1 policy identity; `sourceSnapshotCommit` alone is explicitly insufficient. The preimage bytes are exactly the UTF-8 encoding of the canonical JSON (F05.5) of `{domain: "foreman-line.kernel-contracts.policy", apiVersion: "0.1.0", payload: PolicyIdentity}`; nothing else is hashed. (F05, F01).
+`policyDigest` is a separately versioned P1 policy identity; `sourceSnapshotCommit` alone is explicitly insufficient. `PolicyIdentity` is a named `$defs` entry of `authorize-action-input.schema.json` (the file that owns the policyDigest preimage shape), addressed as `$ref: authorize-action-input.schema.json#/$defs/PolicyIdentity`. The preimage bytes are exactly the UTF-8 encoding of the canonical JSON (F05.5) of `{domain: "foreman-line.kernel-contracts.policy", apiVersion: "0.1.0", payload: PolicyIdentity}`; nothing else is hashed. (F05, F01; rework R2).
 
 #### PolicyIdentity
 
@@ -323,7 +332,7 @@ Defined only for results produced after valid admission and established authoriz
 | requestDigest | Digest | required | F05.5 | F01 |
 | inputDigest | Digest | required | F05.5 | F01 |
 | policyDigest | Digest | required | F05.6 | F05 |
-| principal | object: principalRef (Id), principalClass (P0 PrincipalClass verbatim) | required | safe projection only; no credential or authority booleans | envelope prose, P1-S04 |
+| principal | PrincipalProjection (discriminated union below) | required | safe projection only; no credential or authority booleans; charter §5 authenticated-principalRef-or-anonymous-classification rule | envelope prose, P1-S04, charter §5 |
 | assurance | AssuranceClaim (F05.9) | required | derived independently from request evidence | F02 |
 | obligations | Array<Obligation, 64> | required, may be empty | overflow is a protocol error | P1-S07 |
 | goalRevision | SafeInt | conditional | required exactly for state-bound decisions (state/lease/gate/effect evaluation); absent otherwise, e.g. anonymous content-only | envelope prose |
@@ -332,6 +341,25 @@ Defined only for results produced after valid admission and established authoriz
 | wouldDecision | enum(ALLOW, REFUSE, ADVISORY, CONFLICT, REQUIRE_HUMAN) | required if and only if mode is shadow; absent otherwise | the only shadow-specific metadata field; never an actual hook refusal; shadow never downgrades protocol, admission or read-confidentiality failures | P1-S17, P1-R02 |
 
 Shadow policy-result semantics: `decision` is ADVISORY; `code` carries the evaluated policy code exactly as enforcing mode would emit so shadow/enforced pairs compare directly; `wouldDecision` is the only shadow metadata (no wouldViolations, wouldObligations or would-envelope). Metadata required only on this variant and absent elsewhere. (derived (shadow prose reading); P1-S17).
+
+#### PrincipalProjection (discriminated union; $def of decision-envelope.schema.json)
+
+Discriminant `principalClass` (closed): `anonymous-read` selects the anonymous variant; every other P0 `PrincipalClass` value selects the authenticated variant. Charter §5 mandates authenticated `principalRef` OR anonymous-read classification — never both, never neither. (F05 rework R3; charter §5).
+
+Authenticated variant (`principalClass` = coordinator, shaper, builder, human-developer, independent-reviewer, ci-service, host-adapter, kernel-operator):
+
+| Field | Type | Required | Constraints | Provenance |
+|---|---|---|---|---|
+| principalClass | P0 PrincipalClass minus anonymous-read | required | discriminant | F05.8, F04 |
+| principalRef | Id | required | authenticated principal identity; identifies, never authenticates; no credential or authority booleans | envelope prose, P1-S04 |
+
+Anonymous variant (`principalClass` = anonymous-read):
+
+| Field | Type | Required | Constraints | Provenance |
+|---|---|---|---|---|
+| principalClass | literal `anonymous-read` | required | discriminant | charter §5 |
+
+The anonymous variant carries NO `principalRef` member (unknown field, structural failure). The mandated "legitimate anonymous content" positive vector constructs exactly this union member; F04's "anonymous has no control query" is unchanged. (F05 rework R3).
 
 #### Violation
 
@@ -361,7 +389,7 @@ Typed obligation payloads (each closed; all keys required):
 
 ### F05.9 AssuranceClaim (F02)
 
-P1 `assuranceLevel` union (closed): `structural`, `mediated`, `detected-only`, `ci-enforced`, `human-judgment`, `unsupported-host`, `degraded-read-only`. Derived independently from request evidence; P0 source labels appear only inside UpstreamPolicyEvidence and are never mapped into this union. Each level requires its evidence references or an explicit missing-assurance reason. P1 contract fixtures claim `structural` only. (F02, P1-S11).
+P1 `assuranceLevel` union (closed): `structural`, `mediated`, `detected-only`, `ci-enforced`, `human-judgment`, `unsupported-host`, `degraded-read-only`. Derived independently from request evidence; P0 source labels appear only inside UpstreamPolicyEvidence and are never mapped into this union. Each level requires its evidence references or an explicit missing-assurance reason. P1 contract fixtures claim `structural` only. `AssuranceClaim` and `AssuranceEvidenceRef` are named `$defs` entries of `decision-envelope.schema.json` (they hang off `DecisionEnvelope.assurance`), addressed as `$ref: decision-envelope.schema.json#/$defs/AssuranceClaim` and `$ref: decision-envelope.schema.json#/$defs/AssuranceEvidenceRef`. (F02, P1-S11; rework R2).
 
 #### AssuranceClaim
 
