@@ -1,7 +1,7 @@
 ---
 ticket: FK-P1
 title: Foreman Kernel - lifecycle admission and decision contracts
-status: active
+status: done
 owner: clinton.morgan
 created: 2026-09-07
 updated: 2026-09-27
@@ -337,7 +337,7 @@ Defined only for results produced after valid admission and established authoriz
 | principal | PrincipalProjection (discriminated union below) | required | safe projection only; no credential or authority booleans; charter §5 authenticated-principalRef-or-anonymous-classification rule | envelope prose, P1-S04, charter §5 |
 | assurance | AssuranceClaim (F05.9) | required | derived independently from request evidence | F02 |
 | obligations | Array<Obligation, 64> | required, may be empty | overflow is a protocol error | P1-S07 |
-| goalRevision | SafeInt | conditional | required exactly for state-bound decisions (state/lease/gate/effect evaluation); absent otherwise, e.g. anonymous content-only | envelope prose |
+| goalRevision | SafeInt | conditional | required exactly for state-bound decisions (state/lease/gate/effect evaluation); absent otherwise, e.g. anonymous content-only. "State-bound" means results whose code is in the state/lease/gate/effect family (STATE_REVISION_STALE, lease conflicts, GATE_NOT_SATISFIED, EFFECT_APPLIED/EFFECT_NOOP); policy-decision results (POLICY_ALLOW, mediated refusals) never require goalRevision — coordinator ruling 2026-09-27 (dual-review L2-2) | envelope prose |
 | policyEvidence | UpstreamPolicyEvidence or null | required key, nullable | nullable only for anonymous content-only results; forbidden on protocol errors | F02, F03 |
 | mode | enum(shadow, enforcing, degraded-read-only) | required | trusted echo of runtime configuration/promotion state | P1-R01 |
 | wouldDecision | enum(ALLOW, REFUSE, ADVISORY, CONFLICT, REQUIRE_HUMAN) | required if and only if mode is shadow; absent otherwise | the only shadow-specific metadata field; never an actual hook refusal; shadow never downgrades protocol, admission or read-confidentiality failures | P1-S17, P1-R02 |
