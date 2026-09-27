@@ -27,7 +27,7 @@ or automatic repair; conservative bounds. This explicitly extends the prerequisi
 scope while leaving P4A's original two-document parcel and B1 schema untouched.
 The 1-second SQLite contention bound is not an end-to-end I/O guarantee.
 
-The [spec](../../specs/active/HRO-P4A1-durable-recovery-admission.md) freezes a
+The [spec](../../specs/done/HRO-P4A1-durable-recovery-admission.md) freezes a
 private installed factory that calls and retains the actual B1 initialization
 acknowledgement itself. Caller-supplied init results cannot authenticate freshness.
 The fixed admission file shares the actual B1 root, removing alternate-journal
