@@ -43,11 +43,13 @@ Everything under this subheading is volatile operational state and is the declar
 region 2. The ownership rule and the `Ratified authority` records are above it as direct body of
 the parent heading, outside this subtree.
 
-**Owner of record.** Codex coordinator thread `01a07c0b-90eb-7bf0-88f4-0ca912ef87fb`, continuing on 2026-09-07 under the developer instruction recorded in `authorization-20260907-unattended.md`.
+**Owner of record.** omp coordinator session (successor), claimed 2026-09-27 under explicit owner direction ("foreman-kernel is the goal of interest"; "take ownership, and proceed to goal completion"), succeeding the RS-1 issuing session named in `fk-rescope-RS1-2026-09-27.md` (RS-1.5).
 
-**Current coordinator worktree:** `D:/Repos/agent-skills-worktrees/foreman-kernel-unattended-20260907`.
-**Current coordinator branch:** `codex/foreman-kernel-unattended-20260907`.
+**Current coordinator worktree:** record work only in `D:/Repos/agent-skills` `plugins/foreman-line/docs/goals/foreman-kernel/`; parcel implementation runs in isolated named worktrees from verified base `609c97f663a1b124107342ee7245fc6177244fb9` per standing authorization 8.
+**Current coordinator branch:** `reconcile/refresh-actions` @ `609c97f663a1b124107342ee7245fc6177244fb9` (integration branch carrying the delegated FK-P0 Gate-3 merges).
 **Published handoff boundary:** `fe31042bbe4370cb81b38632720849983c7be04c`.
+
+**Handoff record — 2026-09-27.** The owner directed a successor coordinator to determine where the prior session left off, take ownership, and proceed to goal completion. Verified boundary state before claim, from git and disk rather than memory: FK-P0 Gate-3 merges are complete on `reconcile/refresh-actions` — `a986b45` (R31 registry, package byte-identical to accepted `1747c1d`, verified by empty `git diff 1747c1d HEAD -- plugins/foreman-line/authority-registry`) and `609c97f` (preparation packet), both under RS-1.5's delegated merge step; amendment RS-1 is in force (ledger L6); no builder or reviewer was in flight (FK-P1+ undispatched per `fk-p1-p21-dispatch-plan.md`, FK-P1 Stage-A shaped with F05 open); the §15.2 fresh plan review recorded as "dispatched" had no result on disk and was re-dispatched by this owner as five independent review lenses, recorded in `plan-review-findings.md`. Ownership transfers to this session at this parcel boundary. The 2026-09-26/27 record wave (reconciliation, dispatch plan, marginal-value quantification, RS-1, charter status edits) was uncommitted at claim time and is committed by this owner to the integration branch.
 
 **Handoff record — 2026-09-07.** The developer directed this session to move forward during a six-hour absence. The clean goal/implementation/handoff source worktrees were preserved, and no matching source-worktree process was observed. That observation is not a declaration that an older session was proven dead. New work is on isolated coordinator and recovery branches. The recorded September 4 ownership provenance remains in the published handoff's exact source copies.
 
@@ -88,6 +90,8 @@ subheading, back to direct body of `## COORDINATOR OWNERSHIP`, so the five publi
 their `list-item:1..5` anchors. See the ordering note there.)_
 
 ## Current state — update at every stop or parcel closure
+
+**STATE 2026-09-27 (live) — SUCCESSOR COORDINATOR CLAIMED THE GOAL; FK-P0 CLOSED AT THE MERGE LEVEL; RS-1 PROGRAM IN FORCE.** FK-P0 Gate-3 merges are on `reconcile/refresh-actions`: `a986b45` (R31 registry — package byte-identical to accepted `1747c1d`) and `609c97f` (preparation packet), both performed under RS-1.5's delegated merge step. Amendment RS-1 (ledger L6) governs the program: in scope FK-P1–FK-P11 plus retargeted FK-P17′/FK-P18′; deferred FK-P12–FK-P16/P19/P21 to post-wave value checks; FK-P20 dropped; FK-P2 elevated immediately after FK-P1. The §15.2 fresh plan review, previously "dispatched" with no result on disk, was re-dispatched by this owner as five independent review lenses and is recorded in `plan-review-findings.md`. FK-P1 is the active dispatch: merged-P0 base `609c97f` verified; F05 exact field table in preparation, then independent field review, then builder under the standing Gate 2 grant. Owner-of-record transferred to this session at this parcel boundary (handoff record above). This block supersedes the STATE 2026-09-07 block below, which is retained verbatim as history.
 
 **STATE 2026-09-07 — R31 accepted and published at1747c1df7dfa4677d345390ac673c3d15c82b980 after751/751 complete chain and two fresh final APPROVE verdicts.** Package equals tested2fc3940; runtime521214e/source8d remain fixed. Parent fresh fetch verified159 implementation manifest entries. Isolated integration with main476b8df passed:153 reviewed upstream deltas,398 unchanged protected inputs, repository-aware validate/sweep and generation direct0, no byte changes or ref mutation. Exact hypothetical treea9df33c is locally retained/reproducible from published inputs. Failed28 and two harness failures remain preserved. HumanGate3/actualmerge and FK-P1 merged dependency remain open; no merge or StageF.
 

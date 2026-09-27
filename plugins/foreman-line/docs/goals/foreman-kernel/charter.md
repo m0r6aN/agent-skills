@@ -3,8 +3,9 @@
 **Prepared:** 2026-09-07
 **Goal:** `foreman-kernel`
 **Owner:** Clinton Morgan
-**Status (living state — updated 2026-09-26):** Development consolidation of the recovered ratified charter and the ratified September 7 infrastructure recommendations, adopted into the live tree 2026-09-14 via PR #22 (`8b3733b`). Live-owner reconciliation completed 2026-09-26 (`fk-reconciliation-2026-09-26.md`); the fresh independent review of the incorporated changes (§15.2) remains outstanding. FK-P0 executed in the live tree 2026-09-26 as the canon-authority and enforcement registry at docs level (`fk-p0-canon-authority-enforcement-registry.md`); the code-level registry is accepted at R31 on `codex/fk-p0-r31-source-adoption-20260907` (`1747c1d`, 751/751, two APPROVE reviews) and is pending the human Gate 3 merge — it is not in this tree. FK-P1 Stage A is shaped on `codex/foreman-kernel-resume-20260908`; FK-P1–FK-P21 are not dispatched (`fk-p1-p21-dispatch-plan.md`). Gate 3 remains human-owned.
-**Coordinator:** The current owner in the authoritative goal loop directive; no transfer claimed here.
+**Status (living state — updated 2026-09-27):** Development consolidation of the recovered ratified charter and the ratified September 7 infrastructure recommendations, adopted into the live tree 2026-09-14 via PR #22 (`8b3733b`). Live-owner reconciliation completed 2026-09-26 (`fk-reconciliation-2026-09-26.md`); the fresh independent review of the incorporated changes (§15.2) remains outstanding. FK-P0 executed in the live tree 2026-09-26 as the canon-authority and enforcement registry at docs level (`fk-p0-canon-authority-enforcement-registry.md`); the code-level registry is accepted at R31 on `codex/fk-p0-r31-source-adoption-20260907` (`1747c1d`, 751/751, two APPROVE reviews) and is pending the human Gate 3 merge — it is not in this tree. FK-P1 Stage A is shaped on `codex/foreman-kernel-resume-20260908`; FK-P1–FK-P21 are not dispatched (`fk-p1-p21-dispatch-plan.md`). Gate 3 remains human-owned.
+**Coordinator:** the coordinator session named in `loop-directive.md`; owner-of-record handoff reconciled 2026-09-27 (RS-1.5).
+**Status note (2026-09-27):** FK-P0 Gate-3 merges complete (`a986b45` R31 registry, `609c97f` preparation packet); ratification ledger §4.1 (L1–L6) is live; amendment RS-1 (program re-scope) is in force — `fk-rescope-RS1-2026-09-27.md`; §15.2 fresh plan review dispatched.
 **Mode:** Repo-Local Parcel Mode
 **Suggested companion path:** `plugins/foreman-line/docs/goals/foreman-kernel/FOREMAN-KERNEL-DEVELOPMENT-CHARTER.md`
 
@@ -139,6 +140,7 @@ by its id rather than by its date or its position.
 | L3 | 2026-09-01 | Amendment A1 — decision-path latency budget | D21; FK-P1 and FK-P17 scope; Wave 0 exit; integration scenario 14; §13 items 7 and 9 | `proposed-amendment-A1-decision-path-latency-budget.md`, ratification record at foot |
 | L4 | 2026-09-07 | Amendment A1.8 — ratification ledger (with A1.9, its Entry-id keying) | §4.1 itself; header status line, §4 preamble, and §10 Gate 1 restatements replaced by pointers to §4.1; ledger rows keyed by stable Entry id. Adds no locked decision, changes no gate, alters no parcel, scenario, or exit criterion. | `amendment-A1.8-ratification-ledger.md`; A1.9 at `7e7dc7d`; `authorization-20260907-unattended.md`. This is the instruments' own required row. |
 | L5 | 2026-09-07 | Infrastructure adoption INF-1–INF-8 | §14 and its detailed carrier mapping; D21 rationale/cold-deadline clarification; U1 assigned to coordinator contract resolution, FK-P18 production, FK-P19 verification and FK-P21 retention. No parcel added or dependency removed. | `amendment-A4-infrastructure-adoption-20260907.md`; developer recommendations ratified September 7 and continuation authorization in `authorization-20260907-unattended.md`. |
+| L6 | 2026-09-27 | Amendment RS-1 — program re-scope + Gate-3 delegation | Wave 3 split (FK-P9–P11 in scope; FK-P12–P15 deferred to a post-Wave-3a value check); Wave 4 reduced (FK-P17′/FK-P18′ in scope and retargeted to the shipped mediated surfaces; FK-P16/FK-P19/FK-P21 deferred to a post-P17′/P18′ value check; FK-P20 dropped); FK-P2 elevated to head of Wave 0 after FK-P1; exit criterion amended (RS-1.4); Gate-3 merge git step delegated to the coordinator session under owner blanket authority for green chains (RS-1.5); owner-of-record handoff reconciled. | `fk-rescope-RS1-2026-09-27.md`; owner direction 2026-09-27 (blanket authority + “Proceed with your recommendations”); evidence `fk-wave3-4-marginal-value-2026-09-27.md`. |
 
 **Appending a row is the only way to change the binding set.** Any amendment document that changes this charter must produce a row here, whether or not it changes the binding set. An unrowed amendment is a proposal; stable rows record actual ratification events, not inferred approvals.
 
@@ -235,6 +237,8 @@ launch without package-local installation.
 
 ### Wave 3  -  Durable operational state
 
+> **RS-1 in force (ledger L6):** FK-P9–FK-P11 are Wave 3a (in scope); FK-P12–FK-P15 are deferred to a post-Wave-3a value check — `fk-rescope-RS1-2026-09-27.md`.
+
 | Parcel | Outcome | Risk / routing | Dependencies |
 |---|---|---|---|
 | FK-P9  -  SQLite storage and migration ABI | Owns schema migrations, events/goals/artifact tables, WAL/busy policy, transactional migration startup, newer-schema/corruption refusal, online backup/checkpoint recovery, and the storage package exports. | critical / architecture-risk | FK-P1 |
@@ -251,6 +255,8 @@ points and migrations recover or fail closed; projections are deterministic; and
 field-level Git/SQLite authority matrix stops on divergence rather than overwriting.
 
 ### Wave 4  -  Hook adapter and enforcement promotion
+
+> **RS-1 in force (ledger L6):** FK-P17′/FK-P18′ are in scope and retargeted to the shipped mediated surfaces (FK-P17′ no longer depends on FK-P16); FK-P16, FK-P19, FK-P21 are deferred to a post-FK-P17′/FK-P18′ value check; FK-P20 is dropped — `fk-rescope-RS1-2026-09-27.md`.
 
 | Parcel | Outcome | Risk / routing | Dependencies |
 |---|---|---|---|
@@ -327,7 +333,7 @@ The goal is not complete until all scenarios have durable evidence:
 
 ## 9. Goal exit criterion
 
-This goal exits only when:
+This goal exits only when (as amended by RS-1, ledger L6 — RS-1.4 in `fk-rescope-RS1-2026-09-27.md` is the binding amended criterion; deferred fragments FK-P12–FK-P16, FK-P19, FK-P21 are follow-on-goal candidates named at exit, never claimed satisfied):
 
 1. Waves 0–4 and FK-P0 through FK-P21 are merged through the required human Gate 3
    process.
