@@ -1,7 +1,7 @@
 ---
 ticket: FK-P1
 title: Foreman Kernel - lifecycle admission and decision contracts
-status: draft
+status: active
 owner: clinton.morgan
 created: 2026-09-07
 updated: 2026-09-27
@@ -25,11 +25,11 @@ Define the versioned, provider-neutral contracts consumed by FK-P2–FK-P21: lif
 
 ### Dependency and dispatch boundary
 
-**Not dispatchable.** FK-P0 remains an unsatisfied dependency. Before activation, the coordinator must record FK-P0's actual human-merged main SHA, exported contract/type/schema identities and R30 adoption evidence; reconcile this draft against that accepted upstream contract; pin the resulting source base; and complete independent review and coordinator lint. No candidate P0 API or generated registry is accepted by this draft. No downstream dependency edge is removed.
+**Activated 2026-09-27 (coordinator, Step-0 flag F4).** FK-P0's dependency is satisfied: the R31 registry package merged into the live tree at `a986b45` (byte-identical to accepted `1747c1d`) with the preparation packet at `609c97f` (retroactively confirmed under RS-2.1); upstream field reconciliation completed (`R31-to-P1-field-reconciliation-20260907.md`, F01–F05 accepted); the F05 exact field tables completed three independent review sessions (two rework rounds closing R1–R4 and Q1–Q3, then scoped verification — APPROVE); Step-0 restate ruled 2026-09-27 (flags F1–F4). Source base pinned at `eb258d5`. The FK-P0 corpus amendment R32 must land before this parcel's verification chain is accepted (RS-2.5 item 5). No downstream dependency edge is removed.
 
-Proposed isolated builder branch: `codex/fk-p1-lifecycle-admission-decision-contracts`; worktree: `D:/Repos/agent-skills-worktrees/fk-p1-lifecycle-admission-decision-contracts`. Neither is created or granted by this draft. Verify availability and exact merged base at dispatch. The new package directory is proposed, with collision checks repeated before activation. Existing frozen `contracts/` owns pipeline A–F contracts; P1 must not edit it or invent another ShapingResult/receipt format.
+Isolated builder branch: `codex/fk-p1-lifecycle-admission-decision-contracts`; worktree: `D:/Repos/agent-skills-worktrees/fk-p1-lifecycle-admission-decision-contracts` — created 2026-09-27 at dispatch from base `eb258d5`, availability verified. The new package directory is approved; existing frozen `contracts/` owns pipeline A–F contracts; P1 must not edit it or invent another ShapingResult/receipt format.
 
-The coordinator records defaults/gaps in the linked shaping-decisions file under the September7 authority. This spec remains draft until those decisions and accepted P0 compatibility are recorded. Builder Step0 restates exact source SHA, consumers, shapes, write ceiling, assurance limits, verification commands and blockers before coordinator confirmation. Standing constraints apply: `plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md`.
+The coordinator records defaults/gaps in the linked shaping-decisions file under the September7 authority; those decisions and accepted P0 compatibility are recorded (activation above). Builder Step 0 restated exact source SHA, consumers, shapes, write ceiling, assurance limits, verification commands and blockers and was coordinator-confirmed 2026-09-27. Standing constraints apply: `plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md`.
 
 ### Package and version rules
 
@@ -229,7 +229,7 @@ Explicitly absent (unknown fields, structural failure): `capabilityRef`, `permit
 
 `IdempotencyBinding`: `principalRef` (Id), `operationId` (Id), `repositoryRef` (Id), `worktreeRef` (Id), `payloadDigest` (Digest); all keys required. Same key with different binding yields IDEMPOTENCY_CONFLICT; same completed binding returns the recorded result without repeating effects. (P1-S09).
 
-**Binding scope (transition-only).** Idempotency bindings are TRANSITION-ONLY: `trustedBindings.idempotencyKey` MUST be null unless the request is state-bound (transition/effect evaluation with an anchored authenticated principal, repository identity and worktree identity); anonymous content-only requests MUST carry null; a non-null binding whose `principalRef`, `repositoryRef` or `worktreeRef` cannot be anchored to the request's admitted context and repository identity is a structural failure rejected before any evaluation. Content-only reads have no defined binding semantics. (coordinator ruling 2026-09-27 on re-review Q1; P1-S09).
+**Binding scope (transition-only).** Idempotency bindings are TRANSITION-ONLY: `trustedBindings.idempotencyKey` MUST be null unless the request is state-bound (transition/effect evaluation with an anchored authenticated principal, repository identity and worktree identity); anonymous content-only requests MUST carry null; a non-null binding whose `principalRef`, `repositoryRef` or `worktreeRef` cannot be anchored to the request's admitted context and repository identity is a structural failure rejected before any evaluation, surfaced as `INVALID_REQUEST` (protocol-error result kind; safe diagnostic `field path only`) per F05.12. Content-only reads have no defined binding semantics. (coordinator ruling 2026-09-27 on re-review Q1; code mapping per coordinator ruling 2026-09-27 Step-0 F3; P1-S09).
 
 ### F05.5 Digest rules (F01)
 
@@ -477,7 +477,7 @@ Closed `WireCode` union (28 values): the eleven mediated codes, SESSION_ENROLLME
 | STATE_REVISION_STALE | P12 | policy-result | CONFLICT | mediated group 5; stale state/cache bindings | revision numbers only | refusal-registry prose |
 | GATE_NOT_SATISFIED | P12 | policy-result | REQUIRE_HUMAN | mediated group 5; missing human gate only, inside authorized context | gate id only | refusal-registry prose |
 | SESSION_ENROLLMENT_MISSING | P16/P17 detector | policy-result | ADVISORY | none; detected-only, never a promoted hook-refusal class | enrollment id only | derived (detected-only prose) |
-| INVALID_REQUEST | P6/P13 boundary | protocol-error | none | contract outcome | field path only | boundary-code prose |
+| INVALID_REQUEST | P6/P13 boundary (incl. structurally invalid or context-unanchorable idempotency bindings per F05.4) | protocol-error | none | contract outcome | field path only | boundary-code prose; coordinator ruling 2026-09-27 (Step-0 F3) |
 | UNSUPPORTED_VERSION | P6/P13 boundary | protocol-error | none | contract outcome | version literal only | boundary-code prose |
 | PAYLOAD_LIMIT_EXCEEDED | validators | protocol-error | none | contract outcome; also the 64-entry rule-id/violation/obligation overflow vehicle | field name only | P1-S07, F05 |
 | ADMISSION_REQUIRED | P13 | protocol-error | none | contract outcome | none beyond the fixed safe diagnostic | boundary-code prose |
