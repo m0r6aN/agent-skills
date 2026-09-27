@@ -1,0 +1,1594 @@
+{
+  "plugins/foreman-line/approval/README.md": [
+    "100644",
+    "8d5bac98809e526e1bcca042e49abe8ae3d9b357"
+  ],
+  "plugins/foreman-line/approval/package.json": [
+    "100644",
+    "fd91ff1c3c6796c9bf7d453174e98daafea50a83"
+  ],
+  "plugins/foreman-line/approval/tsconfig.json": [
+    "100644",
+    "c53451e71f99bb3b6c43e1c02bc21b1f03ca1863"
+  ],
+  "plugins/foreman-line/authority-registry/README.md": [
+    "100644",
+    "e9b87b5325eab6215b7f9c551279926990df1445"
+  ],
+  "plugins/foreman-line/authority-registry/authority-enforcement-registry.yaml": [
+    "100644",
+    "f21a8ad323d061bf2d59a6f112cef976664477b5"
+  ],
+  "plugins/foreman-line/authority-registry/biome.json": [
+    "100644",
+    "ce6c716501bdb5de40135212a877c11b9991601d"
+  ],
+  "plugins/foreman-line/authority-registry/package-lock.json": [
+    "100644",
+    "48f06224f229d861ab27511c414f4947a00994eb"
+  ],
+  "plugins/foreman-line/authority-registry/package.json": [
+    "100644",
+    "492a45adbb41f61bc921ddeafec5a4e9b8e99140"
+  ],
+  "plugins/foreman-line/authority-registry/schemas/authority-enforcement-registry.schema.json": [
+    "100644",
+    "045bc7a5766b0370646a69f40e5ab1bba0f95686"
+  ],
+  "plugins/foreman-line/authority-registry/src/cli.ts": [
+    "100644",
+    "ccb5b6ec42d0e8ede2469847effbc4bcf4263507"
+  ],
+  "plugins/foreman-line/authority-registry/src/generate.ts": [
+    "100644",
+    "d82a1aaf9e1cb3941e92c60a6880617836243e17"
+  ],
+  "plugins/foreman-line/authority-registry/src/index.ts": [
+    "100644",
+    "bbae2ff3f1ef19d8f398e7a065dcabf36991f266"
+  ],
+  "plugins/foreman-line/authority-registry/src/registry.ts": [
+    "100644",
+    "a9ba93783cf2586303b663463147458a860720ac"
+  ],
+  "plugins/foreman-line/authority-registry/src/schemas.ts": [
+    "100644",
+    "52a74fdfdb57210c452520d5e5062d45bd0c0efe"
+  ],
+  "plugins/foreman-line/authority-registry/src/types.ts": [
+    "100644",
+    "5ca45624ac19d5d4c1403dc5fd42480839aea402"
+  ],
+  "plugins/foreman-line/authority-registry/src/validate.ts": [
+    "100644",
+    "3369ed3148a0826ae4d3aa52f9b578fab0fbaf26"
+  ],
+  "plugins/foreman-line/authority-registry/tests/bare-specifier.test.ts": [
+    "100644",
+    "941b8833e0778002150cb5e7c182a2a5c675093d"
+  ],
+  "plugins/foreman-line/authority-registry/tests/corpus-sweep.test.ts": [
+    "100644",
+    "4176b0d1286d582c0f6a91a789311cc6076d7c41"
+  ],
+  "plugins/foreman-line/authority-registry/tests/dependency-allowlist.test.ts": [
+    "100644",
+    "289d5bc7f4af54232e185cfdcdbc9915cce4b1fb"
+  ],
+  "plugins/foreman-line/authority-registry/tests/fixtures/pass-minimal.yaml": [
+    "100644",
+    "f21a8ad323d061bf2d59a6f112cef976664477b5"
+  ],
+  "plugins/foreman-line/authority-registry/tests/parity.test.ts": [
+    "100644",
+    "0f38755d2181264360c5faa84310b9c3b0ff363f"
+  ],
+  "plugins/foreman-line/authority-registry/tests/schema-validation.test.ts": [
+    "100644",
+    "3df251fc1b3a23770e7f8496e7582ca00e3d1a3f"
+  ],
+  "plugins/foreman-line/authority-registry/tests/semantic-invariants.test.ts": [
+    "100644",
+    "6f8f11dbbcb5be84115268793cc935fb248dca16"
+  ],
+  "plugins/foreman-line/authority-registry/tests/support/assert-ok.ts": [
+    "100644",
+    "839144240741c177a1c16bd9b82d886262762fb6"
+  ],
+  "plugins/foreman-line/authority-registry/tsconfig.json": [
+    "100644",
+    "cb09a4476b1a5503155fe9aa244614bf6234e195"
+  ],
+  "plugins/foreman-line/docs/COORDINATOR-PATTERN.md": [
+    "100644",
+    "01ead16e7993d75bdf90f2a4d921b64db519d7f0"
+  ],
+  "plugins/foreman-line/docs/FOREMAN-LINE-PLAN.md": [
+    "100644",
+    "cfeb86c03a24fa7b3a30abf3c99fab476319eb21"
+  ],
+  "plugins/foreman-line/docs/SPEC-CONVENTION.md": [
+    "100644",
+    "1641eecc232f3300d8c713fb0507b036d54f68ca"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/A1.8-coordinator-review-and-exact-ratification-text.md": [
+    "100644",
+    "21bfe6d823dfb3292c15e99c9d4758d7be7d8d04"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/A2-PARKED-known-unowned-risk.md": [
+    "100644",
+    "991ca958328b57ed917f3609f43aef66d8215d08"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/A2-adversarial-review-findings.md": [
+    "100644",
+    "470bef97374abc016993b9d5ea3aff94ca7579d0"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/A2-r2-adversarial-review-findings.md": [
+    "100644",
+    "ffcee84f4ebd4cee99e692f984a74944c0f14665"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/A2-r3-adversarial-review-findings.md": [
+    "100644",
+    "cf970c33c450ee7e696374abdcbd9599986caab4"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/ADR-001-runtime-infrastructure-posture.md": [
+    "100644",
+    "9134fbf064705cd02588058f92e6909f02e7984e"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-BLOCKER-volatile-canon-source.md": [
+    "100644",
+    "7377291f375b6c8375e98bbbda2f5a3f1773cc17"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-GATE-3-package.md": [
+    "100644",
+    "41ee23cc0f361c2b38c8b779d264bff37e9088b8"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-MERGE-READY-material.md": [
+    "100644",
+    "dda4bd980a216dbd36bc8df589cf7ce881b4af06"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-STOP-REPORT-for-developer.md": [
+    "100644",
+    "40af4ae38dff28f8371f11d510ed06b982969c81"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-amendment-R14.md": [
+    "100644",
+    "bffc2bead28f49b2943606ea5e93fb37b053cfd3"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-amendment-R15.md": [
+    "100644",
+    "d3a55ff58ad318ef11ca2f1e4e7de60072c63fcf"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-amendment-R16.md": [
+    "100644",
+    "87a6475a93e3e8036559076cbd9e3d95eabd8f60"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-amendment-R19.md": [
+    "100644",
+    "04275812d99a24824876c2b49d636e486339e97b"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-amendment-R20.md": [
+    "100644",
+    "996140c554595f9d525740fa984de5414d84dde4"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-amendment-R21.md": [
+    "100644",
+    "793a34ba9da569c71775a192522215565f4b7701"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-amendment-R22.md": [
+    "100644",
+    "e680e0aa3d2379d820a9fb9ddbd40f121a528296"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-amendment-R23.md": [
+    "100644",
+    "9d87bba290cb0c00179c60c37f4a706e1168a088"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-amendment-R30.md": [
+    "100644",
+    "fbe8ec90e63d56db55ec8045bb76bbc57d6b1402"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-amendment-R31.md": [
+    "100644",
+    "48466d6065aff26d1e167d77dbd42e2562fc1fc5"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-coordinator-closure-check.md": [
+    "100644",
+    "e14f8c27580c2a9fdbb6c91d01036004b359030e"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-review-A-findings.md": [
+    "100644",
+    "04f99fdefb51254ebbf4e4034e4ebe5c575b9393"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-rework1-step0-rulings.md": [
+    "100644",
+    "1d3a7a398b1ba676b2e2047e295c189850e06572"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-round6-STOP-REPORT.md": [
+    "100644",
+    "a3dfeaa040d2b67b2318d836a1b22bfb451d9151"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-round6-baseline-closure-20260907.md": [
+    "100644",
+    "a46e5132c35174ef94de032b154a6298ddebf25b"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-round6-execution-ruling-20260907.md": [
+    "100644",
+    "48147177b86a7c34c26a7aba2a59e405f25e732c"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-round6-recovery-record.md": [
+    "100644",
+    "630c69b08d9e742aeaaeaf2a94cee73230a990f1"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-round6-recovery-step0-ruling.md": [
+    "100644",
+    "227bb1cc086b00f31b9f3be58330b1f5dafca207"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-triage-round1.md": [
+    "100644",
+    "123f3ad6d043ffcd0738b0011a151e0195ef21cb"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/FOREMAN-KERNEL-DEVELOPMENT-CHARTER.md": [
+    "100644",
+    "ce0a313bef1cdf638d16abced7986497e2d4f866"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/GOAL-FINDING-inherited-canon-provenance.md": [
+    "100644",
+    "24c27d252c71844a99c43681c89745ca2d14b7ed"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/R30-coordinator-disposition-20260907.md": [
+    "100644",
+    "1c1c8a5602111b037c414a9210ca2ea633f1f332"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/R30-implementation-ruling-20260907.md": [
+    "100644",
+    "33966df1baf651b5b19027d7501cb8f37a828953"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/R30-plan-and-source-review-20260907.md": [
+    "100644",
+    "f4767311ccc837b6f872b5b91ae9e9601d2c194b"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/R30-source-expectations-20260907.md": [
+    "100644",
+    "f094bf8de3b3dc5c5ee7db6d8d559f2784d3639f"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/R30-source-integration.json": [
+    "100644",
+    "7c0334c20ab8bbc8ab6d5a7735160053ddba9460"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/R30-step0-mapping-20260907.md": [
+    "100644",
+    "00c50551d56d522918ec996d59d6c86862992d05"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/R30-verification-closure-20260907.json": [
+    "100644",
+    "a581201067537d350bf9d92cce95a3ac65dc3f01"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/R31-coordinator-decision-20260907.md": [
+    "100644",
+    "2c18f28517f0f0f732f1d776e7d185e03a496d24"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/R31-full-run28-test-migration-review-20260907.md": [
+    "100644",
+    "f6eb0ccd5c7e8d0ee4364f7931d37b4a44c6db26"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/R31-full-run28-test-migration-ruling-20260907.md": [
+    "100644",
+    "735e950bf885b77dd376b282c38939efa8fd1270"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/R31-implementation-ruling-20260907.md": [
+    "100644",
+    "48b07708a8cd56417dca8b21e6f20d09857921d9"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/R31-migration-evidence-review-20260907.md": [
+    "100644",
+    "19a698a08a2d628ae72e1e827f29a2cdca5ac9e9"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/R31-migration-evidence-ruling-20260907.md": [
+    "100644",
+    "7e8c691824eb7ecef7e9a55b8391431084b76c9a"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/R31-source-expectations-20260907.md": [
+    "100644",
+    "2dcd80da67b5bb70e978defec896fb80f9910471"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/R31-source-integration-20260907.json": [
+    "100644",
+    "ff8dd93dd6704c6e4c867367a6cfe8c392cf7df9"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/R31-source-plan-review-20260907.md": [
+    "100644",
+    "7ce869f1f7ee509e54d329f630de10d371c05d32"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/R31-step0-mapping-20260907.md": [
+    "100644",
+    "b536f4133fde310b6e9227829d838557a9f4965f"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/R31-step0-review-20260907.md": [
+    "100644",
+    "c3ba9e19f664bd19655d2c68b30e0bf3890ea802"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/adoption-review-20260907.md": [
+    "100644",
+    "5e7b375c160ea4dc3c0beea0f2c6971944649bf5"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/amendment-A1.8-ratification-ledger.md": [
+    "100644",
+    "d72985e1618c0ea9a7c9f4666a94e574db5b1e5b"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/amendment-A4-infrastructure-adoption-20260907.md": [
+    "100644",
+    "80f9e445b7a3180890763b029df91bdec2030902"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/authorization-20260907-unattended.md": [
+    "100644",
+    "12a49a1084d0def06bcd126a9ecc25ff810178cd"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/charter.md": [
+    "100644",
+    "3002a353536262cc1f9e564e1f94467b85a79668"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30-final-review-authority/metadata.json": [
+    "100644",
+    "40ccac6282c21769c852da6eeacc0c13514b483e"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30-final-review-authority/probe-output.log": [
+    "100644",
+    "a796970ca9f98ecb27d95a349dcaa4ff400a5e2c"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30-final-review-authority/probe.mjs": [
+    "100644",
+    "08033219df22da586b9dcbd05aa491cdcca155a0"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30-final-review-authority/review.md": [
+    "100644",
+    "4d6ccc3ef789de68a8c38e8843691d3f762aeca2"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30-final-review-history/metadata.json": [
+    "100644",
+    "6df6182c42b71821ed87682397280569151d6428"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30-final-review-history/probe-output.log": [
+    "100644",
+    "c8d559ef529b3e8164c11b8e82ea3a7cf6514e9a"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30-final-review-history/probe.mjs": [
+    "100644",
+    "277eaace40a4e282baecae0de12fa71bf8d88d78"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30-final-review-history/review.md": [
+    "100644",
+    "0c04161588b1379f4e0216d18b55da8a5eefcdb0"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/01-npm-ci.log": [
+    "100644",
+    "9c4af7d6d2068979ec1e8049a0bc6bd02714b780"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/02-red-adoption-counts.log": [
+    "100644",
+    "1bc5ffbd68ec7eb9f815d3acabc646e3c3af5ba5"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/03-typecheck-increment.log": [
+    "100644",
+    "cf9f7ceae96b9520970846685586e84af76832d0"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/04-typecheck-increment.log": [
+    "100644",
+    "6fa04c29e6f85d946943d561de506bbd37688dd5"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/05-generate-first.log": [
+    "100644",
+    "d4855946a15ddfda43a328a237a7de3a5774a106"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/06-generate-frozen-anchors.log": [
+    "100644",
+    "c943707a6273437803b8edd6a495df7ee58e9953"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/07-generate-approved-masked-ids.log": [
+    "100644",
+    "17ae75a830b7d1b250b479ced85d43821287d171"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/08-typecheck-tests.log": [
+    "100644",
+    "ecce9cd37b9b01d8c9ca0c358681fd727b6169d3"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/09-validate-increment.log": [
+    "100644",
+    "3d1c5d321265bb0e526729f2b8ccc3e15d11262e"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/10-typecheck-expanded-controls.log": [
+    "100644",
+    "6fa04c29e6f85d946943d561de506bbd37688dd5"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/11-format-increment.log": [
+    "100644",
+    "375f1d08e8fb6bbcef2212d43fc39d896e939365"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/12-oracle-counts-increment.log": [
+    "100644",
+    "e31f63f4cb85e1f87121a5f7a877548b5c8bcdb9"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/13-typecheck-r30-9.log": [
+    "100644",
+    "6fa04c29e6f85d946943d561de506bbd37688dd5"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/14-generate-r30-9.log": [
+    "100644",
+    "17ae75a830b7d1b250b479ced85d43821287d171"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/15-validate-r30-9.log": [
+    "100644",
+    "6c004068b90edbf41ded7bb37fe18665001e3eca"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/16-generate-final-shapes.log": [
+    "100644",
+    "17ae75a830b7d1b250b479ced85d43821287d171"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/17-head-pin-validation.exit": [
+    "100644",
+    "18748286e5b8b4de5db905f87cdfed1a7d48fe60"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/17-head-pin-validation.json": [
+    "100644",
+    "eb801e5840602fe9517c64f2896c5149c61e68ff"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/18-focused-r30-semantic.log": [
+    "100644",
+    "a95ea3348dd3b34c0f1e6fa01b5f9ac0c5aec9b8"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/19-focused-r30-semantic-corrected.log": [
+    "100644",
+    "e23c3ff8803246780f2f4213c4f24618dea25fd9"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/20-focused-r30-semantic.log": [
+    "100644",
+    "52b1e2deefa6189a08aabc5582663fbc628d6b77"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/21-focused-r30-corpus.log": [
+    "100644",
+    "16bca36f2a1bf8678e325d9d14743819b7bb5c6e"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/22-format-final.log": [
+    "100644",
+    "3c97bc46def9cfd079a030d85d849efac4a31bb7"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/23-typecheck-checkpoint.log": [
+    "100644",
+    "233ea4638d5dbb3493291062b2f5f55c7d9183be"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/24-final-npm-ci.log": [
+    "100644",
+    "9c4af7d6d2068979ec1e8049a0bc6bd02714b780"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/25-final-typecheck.log": [
+    "100644",
+    "233ea4638d5dbb3493291062b2f5f55c7d9183be"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/26-completion-observation.json": [
+    "100644",
+    "ffd63df65f20e9b4061671a2f95793d1cb0dbcd1"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/26-final-npm-test.log": [
+    "100644",
+    "e1738e9cd0d994f79c97a2b500c1731c2b90f4f3"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/26-live-process-start-evidence.json": [
+    "100644",
+    "9621a80f33836283763f4d5d9173a07807b60364"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/27-repair-format.log": [
+    "100644",
+    "5668ea055d0577f3a10b736e96aaaebbe980ae7c"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/27-repair-format.metadata.json": [
+    "100644",
+    "5b21fb800430d3c58f400879cae8714e9c2909d1"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/28-focused-historical-repairs.log": [
+    "100644",
+    "6b20a1cdc61bbbb7760d3f4a4a9b5496dc1513fe"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/28-focused-historical-repairs.metadata.json": [
+    "100644",
+    "4ac982347d91f5744e30abb665969fd9e267089a"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/29-repair-final-format.log": [
+    "100644",
+    "eb8af6a325f4d29c8ad428907899114c0e5678b7"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/29-repair-final-format.metadata.json": [
+    "100644",
+    "c89d754e83f75ab3e8a4800f780ee99bfbb96c26"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/30-focused-historical-final.log": [
+    "100644",
+    "cbb1b5713869a8bb865483c36638727dfa09fb84"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/30-focused-historical-final.metadata.json": [
+    "100644",
+    "963c68425f7b7588e90d1d7b65f40809509117f4"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/31-final-npm-ci.log": [
+    "100644",
+    "46161c7c7a634d3f3cbda76faee91187f0957a25"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/31-final-npm-ci.metadata.json": [
+    "100644",
+    "4b0f323126d5a1727fc65ea85d9ea0bfaf24c924"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/32-final-typecheck.log": [
+    "100644",
+    "233ea4638d5dbb3493291062b2f5f55c7d9183be"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/32-final-typecheck.metadata.json": [
+    "100644",
+    "862265f54e761814df99eceba75f04d4d88435d3"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/33-cancel-owned-processes.json": [
+    "100644",
+    "a2507cd38d14a42b8d54d02d08ae23e1ad09ab3f"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/33-cancellation.json": [
+    "100644",
+    "171195a236e42bede6438906fb3f99414115cf91"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/33-final-npm-test.log": [
+    "100644",
+    "94a618a9da66a34c3bb43ff1ae0d4374a6791f72"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/33-final-npm-test.metadata.json": [
+    "100644",
+    "29b71edcf3ea4fc9a086790103cf94c7af0344cc"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/34-oracle-format.log": [
+    "100644",
+    "261b40450a0ae9d26e7d011a91c3c24aa67762ad"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/34-oracle-format.metadata.json": [
+    "100644",
+    "73767bc2f414a35bf70c9d05edf21124b6431171"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/35-focused-oracle-and-historical.log": [
+    "100644",
+    "35c21e6d57793e45719d6b276e09c5c6b184243e"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/35-focused-oracle-and-historical.metadata.json": [
+    "100644",
+    "18ce915d4e7e65706440141e116332e7f1d6face"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/36-oracle-checkpoint-checks.log": [
+    "100644",
+    "35460cdd1e1ad7b29d7d2d9b606ab05a5c352f65"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/36-oracle-checkpoint-checks.metadata.json": [
+    "100644",
+    "9e04e22151c6bb851f2fa9f48d604ee5a09bb30a"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/37-final-npm-ci.log": [
+    "100644",
+    "9c4af7d6d2068979ec1e8049a0bc6bd02714b780"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/37-final-npm-ci.metadata.json": [
+    "100644",
+    "b5ecdc8b92ae5e76e8aef55c763ceb30dc0b8617"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/38-final-typecheck.log": [
+    "100644",
+    "233ea4638d5dbb3493291062b2f5f55c7d9183be"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/38-final-typecheck.metadata.json": [
+    "100644",
+    "ae8c5e1d0368c35be8c527a55a163e022915f1c6"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/39-final-npm-test.log": [
+    "100644",
+    "9ebb9a7352feffc8f618df790dcedcb8f6a6636a"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/39-final-npm-test.metadata.json": [
+    "100644",
+    "f15424c70d700eb149fb72c3da4fdb2847e4b9d2"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/40-final-biome.log": [
+    "100644",
+    "bf45054f87acca3a9003e28dfe401e2a4b175948"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/40-final-biome.metadata.json": [
+    "100644",
+    "65146dc7c3358c23de85dff73ebf823ebaa819ba"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/41-final-validate.log": [
+    "100644",
+    "f9603fb1ddb75a1cabd68108fc116935a41b9bd9"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/41-final-validate.metadata.json": [
+    "100644",
+    "d38ab8608e5487d89d0692f9f067ccd6faf69c92"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/42-final-sweep.log": [
+    "100644",
+    "f9603fb1ddb75a1cabd68108fc116935a41b9bd9"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/42-final-sweep.metadata.json": [
+    "100644",
+    "5ec4e623a934ed3f6d4b105a820ae7f3b5186bd0"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/43-final-generate-one.hashes.json": [
+    "100644",
+    "928d620f63ce53e40bd4c70806771120604e6b7b"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/43-final-generate-one.log": [
+    "100644",
+    "17ae75a830b7d1b250b479ced85d43821287d171"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/43-final-generate-one.metadata.json": [
+    "100644",
+    "c4e12d2882572c958a3429cdf93e118d75a49b51"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/44-final-generate-two.hashes.json": [
+    "100644",
+    "928d620f63ce53e40bd4c70806771120604e6b7b"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/44-final-generate-two.log": [
+    "100644",
+    "17ae75a830b7d1b250b479ced85d43821287d171"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/44-final-generate-two.metadata.json": [
+    "100644",
+    "baa056ef7f8cb695fbd1a89599772104752af2df"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/45-final-evidence-collector.log": [
+    "100644",
+    "023bd34e05f9536d1ac082e7ae879552efeb9ac1"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/45-final-evidence-collector.metadata.json": [
+    "100644",
+    "4217fed11bd518ad24d828b7f395e2759c1fef75"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/46-final-scope-check.json": [
+    "100644",
+    "44e3c0ea728333444012e33d322654e3e1a54fba"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/47-final-scope-check.log": [
+    "100644",
+    "6fa04c29e6f85d946943d561de506bbd37688dd5"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/47-final-scope-check.metadata.json": [
+    "100644",
+    "e6b381564b3c5d6ef3bee90596140c298877e453"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/48-final-node-version.log": [
+    "100644",
+    "8942bd99d22197871abd5d350373757f34dd8b76"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/48-final-node-version.metadata.json": [
+    "100644",
+    "5e1a80d65dc932ce5cefdfa322214aa118200207"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/49-final-npm-version.log": [
+    "100644",
+    "8870a59f0c856d6deb88af86ddce7f882f238262"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/49-final-npm-version.metadata.json": [
+    "100644",
+    "ebaaf02228fddae40c620a3df311b8b7f6315a30"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/50-raw-evidence-whitespace-check.log": [
+    "100644",
+    "11c941fb37adb7e1b67ef6a084b37354a8bfec0c"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/50-raw-evidence-whitespace-check.metadata.json": [
+    "100644",
+    "02af53efd3f1ab075015ab8fa4eb268db2c76eb7"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/51-authored-evidence-check.log": [
+    "100644",
+    "6fa04c29e6f85d946943d561de506bbd37688dd5"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/checkpoint-artifact-hashes.json": [
+    "100644",
+    "519a1a847e78a34f1fc9f931a8b64c934f38d70a"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/collect-final-evidence.mjs": [
+    "100644",
+    "2cde840ea9c5c558408bab07a6d121550bb46971"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/development-notes.md": [
+    "100644",
+    "eb27d9de53bb5d612d277cf3e08ed39ef759b6e3"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/evidence-manifest.json": [
+    "100644",
+    "6a8d51ba2a43b520d220dcdd722b25032bf0c0b1"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/final-adoption-delta.json": [
+    "100644",
+    "2fc67b605f340ccacf6d0bee761ca4df003d6993"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/final-artifact-hashes.json": [
+    "100644",
+    "fb360a2f1ed367a408539da5e5dfa6babdadb4be"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/final-chain-timing-recovery.json": [
+    "100644",
+    "30fc0c6c7a31618304b3c8c79c4bb667d06377b9"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/final-handoff.md": [
+    "100644",
+    "22076ab62dd51f903321377c101d943a2e05a43e"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/final-source-snapshot-hashes.json": [
+    "100644",
+    "1c3909a5a175a1c62cd022905ccbc5063e89ab97"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/final-source-working-hashes.json": [
+    "100644",
+    "b9d16d82de370beda83637df49338f16724ccd97"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/final-test-coverage.json": [
+    "100644",
+    "e598ff786651ff51277a5ccf38c355bffb1879a6"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/final-tracked-byte-delta.json": [
+    "100644",
+    "1f688a497d3060cd3ada2c4242cdb8693c66c148"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/initial-tracked-hashes.json": [
+    "100644",
+    "844b9d438c1b2e5510567cc6dd86557631e97b98"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/node-version.log": [
+    "100644",
+    "8942bd99d22197871abd5d350373757f34dd8b76"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/npm-version.log": [
+    "100644",
+    "8870a59f0c856d6deb88af86ddce7f882f238262"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/run-final-tail.ps1": [
+    "100644",
+    "0c4933e24ce82d4466366bd82c0a493086341026"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/01-npm-ci.log": [
+    "100644",
+    "46161c7c7a634d3f3cbda76faee91187f0957a25"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/01-npm-ci.metadata.json": [
+    "100644",
+    "9c8be9ab0049e55ba558e4906145a7d30def39f5"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/02-source-discovery.json": [
+    "100644",
+    "602e19455e8f1cda381bca75876b680ac475989a"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/02-source-discovery.log": [
+    "100644",
+    "4eb3fcf236bf1a960301bc355a65e2a9e3411ccc"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/02-source-discovery.metadata.json": [
+    "100644",
+    "8030cd5ffad781924eda32736ceee59f6d751dce"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/03-initial-draft-unvalidated.json": [
+    "100644",
+    "80d32da2561fcec5127c0240218969f482693a1d"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/03-step0-contract.log": [
+    "100644",
+    "e9d9a73de64535ea8251fa3a0d570048ad642e0c"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/03-step0-contract.metadata.json": [
+    "100644",
+    "4d5388731207bbbbb1599fbdcbc336e927b2dad0"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/03-step0-proposed-contract.json": [
+    "100644",
+    "80d32da2561fcec5127c0240218969f482693a1d"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/04-step0-contract.log": [
+    "100644",
+    "e9d9a73de64535ea8251fa3a0d570048ad642e0c"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/04-step0-contract.metadata.json": [
+    "100644",
+    "10c9329e0f4766a3628d2e9693ef89ba925e68e6"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/04-step0-proposed-contract.json": [
+    "100644",
+    "ffae1a8872ce98c748b8735402a11f3b7f714268"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/05-source-byte-check.json": [
+    "100644",
+    "e306a7504952f185ca0edfa3d313f2cbd8f17956"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/06-complete-item-correspondence.json": [
+    "100644",
+    "e72918cc3965578cede5e9005e1a60526d94d867"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/06-item-correspondence.log": [
+    "100644",
+    "d4c4e6569f2cbed3175066af9b6bdc841aeba797"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/06-item-correspondence.metadata.json": [
+    "100644",
+    "60eb805130965268fbd3bb1284727d29eb84c328"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/07-scope-metadata-preparation-error.log": [
+    "100644",
+    "54f569b2c6a43334cd5f0ca05602e0dc790f188d"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/08-step0-scope-check.json": [
+    "100644",
+    "4627651f0ee0e6ac75e517b627294119b421659e"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/09-exact-migration-proposal.json": [
+    "100644",
+    "a7928687be5bc66e77dce68e6f35aa1382c91d1c"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/09-exact-migration-proposal.log": [
+    "100644",
+    "aa053a048007a36d13701afb098a77857b0c8c8b"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/09-exact-migration-proposal.metadata.json": [
+    "100644",
+    "f4aa28d4dbe77f2574e6e69df44de347f99dae52"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/10-final-step0-scope.json": [
+    "100644",
+    "01f4d142ed1ddd7b655af7ccb78de5cf2e82120f"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/11-red-source-controls.log": [
+    "100644",
+    "13734eb2bfd82bff0092f19a700fded40c683396"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/11-red-source-controls.metadata.json": [
+    "100644",
+    "593fac60f6fe22c2b60bfb311b51af855dcaaf88"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/12-development-typecheck.log": [
+    "100644",
+    "233ea4638d5dbb3493291062b2f5f55c7d9183be"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/12-development-typecheck.metadata.json": [
+    "100644",
+    "9bcec07635a312d808a580260b170ce825d0534a"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/13-development-generation.log": [
+    "100644",
+    "6395432acbdebbeae8d231a3ec43b8bad931d58f"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/13-development-generation.metadata.json": [
+    "100644",
+    "a6f956e028f6bfbd9f62a35ca0b6cfa4ff2b7a46"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/14-development-validate.log": [
+    "100644",
+    "e47352c875d64c1f0c65af3e4943135d8f7d8dad"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/14-development-validate.metadata.json": [
+    "100644",
+    "ffd7f9f896049af273721d46f455154901a5c12f"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/15-development-typecheck.log": [
+    "100644",
+    "c147834a151912f6773de87068354b59abb23171"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/15-development-typecheck.metadata.json": [
+    "100644",
+    "161fe05d0899daf7ebd683cc9f7795314242ab19"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/16-focused-semantic.log": [
+    "100644",
+    "645d530e2a847976a6b3e936b1861ede40559d92"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/16-focused-semantic.metadata.json": [
+    "100644",
+    "5052c642d363d9b8583456c0447a6f2b7dc722c5"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/17-focused-corpus.log": [
+    "100644",
+    "e50e75a03629e9e8d041c812a711f6132874ddab"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/17-focused-corpus.metadata.json": [
+    "100644",
+    "34ebf545420198ef72512322bab2f098fd942136"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/18-development-notes.md": [
+    "100644",
+    "45fd06b72f785422ae45a273535c89155d623708"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/19-development-typecheck.log": [
+    "100644",
+    "06172fbc9e2e8444489a8b1d14b0e8d4977edfb2"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/19-development-typecheck.metadata.json": [
+    "100644",
+    "84f1d4b946f972b1fcea9cccc1534564305869c7"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/20-development-biome.log": [
+    "100644",
+    "85daf8f6afa40a3447e7aeb286df24599884accc"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/20-development-biome.metadata.json": [
+    "100644",
+    "50c3ed949490ffcacffa6d9b7f302d1dff82eedd"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/21-focused-semantic.log": [
+    "100644",
+    "7a41d9cb044d02ec6188484f83b65a7df6a2cf3e"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/21-focused-semantic.metadata.json": [
+    "100644",
+    "77da8ceb417a3131e91aa7eaeb94d5bd63c89b9e"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/22-focused-corpus.log": [
+    "100644",
+    "6f8c6faebf4433ba575a80c117c49e71f57be5e7"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/22-focused-corpus.metadata.json": [
+    "100644",
+    "b63da42e4b0e2783777b96c4571de6d1b2c04e38"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/23-development-biome.log": [
+    "100644",
+    "104cc473006861f6a1a27e7bcbd6ca2e22e8343a"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/23-development-biome.metadata.json": [
+    "100644",
+    "7b777c353d5986cc9d1a045e4b5c5eb1c654ab89"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/24-development-typecheck.log": [
+    "100644",
+    "233ea4638d5dbb3493291062b2f5f55c7d9183be"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/24-development-typecheck.metadata.json": [
+    "100644",
+    "9e78a99b20a7cc4d27fb55b8ec9cad3253e27aab"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/25-focused-semantic.log": [
+    "100644",
+    "5d9b6a55a344144e34a8bd230778e1eab95bbed9"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/25-focused-semantic.metadata.json": [
+    "100644",
+    "2594952b8a767ef01367dc73bbea2d1d0b1c3db3"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/26-full-npm-ci.log": [
+    "100644",
+    "9c4af7d6d2068979ec1e8049a0bc6bd02714b780"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/26-full-npm-ci.metadata.json": [
+    "100644",
+    "d6f21ae5f19e2334846d5ccdcd72fdee77e9bb34"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/27-full-typecheck.log": [
+    "100644",
+    "233ea4638d5dbb3493291062b2f5f55c7d9183be"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/27-full-typecheck.metadata.json": [
+    "100644",
+    "2132507644bd8a098b2a9db357ad2bab32dc3afb"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/28-full-test.log": [
+    "100644",
+    "da04ca5cff79ae4e2305fdcdd3edd0278bc7be64"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/28-full-test.metadata.json": [
+    "100644",
+    "fd3389d2bee8a7efadbfe37de6ff11e0ddd81adc"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/29-full-run-failure-diagnosis.md": [
+    "100644",
+    "16d6b32b287850e58cd058e891192967f65a6d2c"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/30-test-migration-biome.log": [
+    "100644",
+    "1522bba753e79b7a77dafd86ef424fe3c19635bd"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/30-test-migration-biome.metadata.json": [
+    "100644",
+    "dfd098802f58112d21097cd53b1eca48a397df4a"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/31-test-migration-typecheck.log": [
+    "100644",
+    "233ea4638d5dbb3493291062b2f5f55c7d9183be"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/31-test-migration-typecheck.metadata.json": [
+    "100644",
+    "a38806369e8194b55b3bafc5d1c6afd48731e0a7"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/32-test-migration-focused.log": [
+    "100644",
+    "5c6a1eb4b4b85aaa649e95d0db428b6ed7ca5429"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/32-test-migration-focused.metadata.json": [
+    "100644",
+    "0b1452048af7b028c7cc1fd857d56b231bd31263"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/33-test-migration-checkpoint.md": [
+    "100644",
+    "352787429b6e8422b0715cd94672fb7995d35c0f"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/34-full-npm-ci.log": [
+    "100644",
+    "9c4af7d6d2068979ec1e8049a0bc6bd02714b780"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/34-full-npm-ci.metadata.json": [
+    "100644",
+    "2a492ff6199de0af03089ca21533dc85e3cc0260"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/35-full-typecheck.log": [
+    "100644",
+    "233ea4638d5dbb3493291062b2f5f55c7d9183be"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/35-full-typecheck.metadata.json": [
+    "100644",
+    "4f5b86b732b5f54be8a200856747649abcdcdea3"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/36-full-test.log": [
+    "100644",
+    "c563156888ca9165069a1d1456d2b38fda8ba6a9"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/36-full-test.metadata.json": [
+    "100644",
+    "ff78827d99ce99257583ad160a8f00023f861cad"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/37-full-biome.log": [
+    "100644",
+    "cd7eed898844132c0176d49cfe21839287b50e6d"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/37-full-biome.metadata.json": [
+    "100644",
+    "ae59452cf3b8b7213886bf5f65b413e059dcfc22"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/38-full-validate.log": [
+    "100644",
+    "e47352c875d64c1f0c65af3e4943135d8f7d8dad"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/38-full-validate.metadata.json": [
+    "100644",
+    "c20b46a4891886efb2e727540aa4365a93a822fa"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/39-full-sweep.log": [
+    "100644",
+    "e47352c875d64c1f0c65af3e4943135d8f7d8dad"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/39-full-sweep.metadata.json": [
+    "100644",
+    "2cfdf4d8c987caf20875a00ba637f3bbd166399f"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/40-full-generate-one.log": [
+    "100644",
+    "6395432acbdebbeae8d231a3ec43b8bad931d58f"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/40-full-generate-one.metadata.json": [
+    "100644",
+    "3ddf3619571a5500a1b3fe4e8dced0efb2f676a9"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/41-full-generate-two.log": [
+    "100644",
+    "6395432acbdebbeae8d231a3ec43b8bad931d58f"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/41-full-generate-two.metadata.json": [
+    "100644",
+    "b4e70c7dc4066932a983e5875533a79a636824f5"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/42-node-version.log": [
+    "100644",
+    "8942bd99d22197871abd5d350373757f34dd8b76"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/42-node-version.metadata.json": [
+    "100644",
+    "a4e609462b26f81a2d075b260640384ed9297367"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/43-npm-version.log": [
+    "100644",
+    "8870a59f0c856d6deb88af86ddce7f882f238262"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/43-npm-version.metadata.json": [
+    "100644",
+    "f383bba83eb8b970b4d8f7528015cc81ff9a492d"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/44-final-integrity.log": [
+    "100644",
+    "6e7fcee09debf2566b6fc1fad223a76442171db7"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/44-final-integrity.metadata.json": [
+    "100644",
+    "17ab732c63fa90fd0414834a25ebbb7c76ffd8c7"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/45-final-coverage.log": [
+    "100644",
+    "7e52f4c979b0c83304c0c6ba8159a3147188887c"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/45-final-coverage.metadata.json": [
+    "100644",
+    "feab1ccd46bd37a153f6bc23bafb0880c0544585"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/46-final-package-scope.log": [
+    "100644",
+    "6fa04c29e6f85d946943d561de506bbd37688dd5"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/46-final-package-scope.metadata.json": [
+    "100644",
+    "ebc502576d7900e23aa8c716723d5096925e825f"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/47-authored-evidence-whitespace.log": [
+    "100644",
+    "6fa04c29e6f85d946943d561de506bbd37688dd5"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/47-authored-evidence-whitespace.metadata.json": [
+    "100644",
+    "1ae8119a54abf1b346f56b001cbfb2bc5b48692d"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/build-evidence-manifest.mjs": [
+    "100644",
+    "1c9b60c710f8d64a3b7d4d3daabda4d996986270"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/collect-coverage.mjs": [
+    "100644",
+    "6774091bb9d6c87ff9528a3e8876acb865495c09"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/correspondence.mjs": [
+    "100644",
+    "a3847703d0929a9dd0121f2fa0fb623ad881af04"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/discover.mjs": [
+    "100644",
+    "c83d2030cc23fac1bda666649062501ed2d1948f"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/evidence-manifest.json": [
+    "100644",
+    "c6a860fd09fe3de8f8e96245bf29a318bfbee971"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/final-chain.json": [
+    "100644",
+    "b94411e263e4487ee7adcdbb91d2bc31108e85fb"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/final-handoff.md": [
+    "100644",
+    "c03d1ef4e6346e570471c891330ebc957421d589"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/final-integrity.json": [
+    "100644",
+    "e0b14d47a2596579c2d129356bc40ea73d361e0f"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/final-integrity.ts": [
+    "100644",
+    "b933ca7eece92cb0ccb10ff81ec45fd24c52af78"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/final-test-coverage.json": [
+    "100644",
+    "7c9c95a25efddbb5c9d8f5e91b5f86d0c66ac57a"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/initial-package-hashes.json": [
+    "100644",
+    "75b9053b8f8764159cfe31360c413d8c01470591"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/migration-proposal.mjs": [
+    "100644",
+    "0208642ff9816847093b76c2cbceeac8cb87221d"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/monitor-notes.md": [
+    "100644",
+    "cf8fc3f7ce7bcc9a69343a467d22cb3d98efc93b"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/propose-contract.mjs": [
+    "100644",
+    "2ff9341c6c1a48b7673ab922055b813157b01066"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/step0-evidence-manifest.json": [
+    "100644",
+    "87289d8f22da83c0110479d7e5e19b8659d07420"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/01-node.exit.txt": [
+    "100644",
+    "4f7a785dd7628c27fc642ff2ce09313d13405577"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/01-node.metadata.json": [
+    "100644",
+    "801e2a7bfc4f341cf752fdef21e269e55f59e06e"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/01-node.running.json": [
+    "100644",
+    "39b0a6468be4c1dd19be39c86dc250b2e5827a95"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/01-node.stderr.log": [
+    "100644",
+    "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/01-node.stdout.log": [
+    "100644",
+    "d19530bd505ce41c1dfbe2421a7dfef78c4764e0"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/02-install.exit.txt": [
+    "100644",
+    "94677296ef4f075fba725381b828734d1f743a1e"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/02-install.metadata.json": [
+    "100644",
+    "48f1a16821b335cbdd11db10df66048be52efc18"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/02-install.running.json": [
+    "100644",
+    "9c59395d5aa54ba306577d1ec4e0a7e7e7784abd"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/02-install.stderr.log": [
+    "100644",
+    "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/02-install.stdout.log": [
+    "100644",
+    "06a2499163eba85e792853e9a0792c29a422657b"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/03-typecheck.exit.txt": [
+    "100644",
+    "e2438e47ee198b6eafea132415c396d8be3554ff"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/03-typecheck.metadata.json": [
+    "100644",
+    "6e427c868f8c458bd2a86907748fad6f91671872"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/03-typecheck.running.json": [
+    "100644",
+    "fc0f9d7d30b2256d024fdc45b4c45610eac4e531"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/03-typecheck.stderr.log": [
+    "100644",
+    "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/03-typecheck.stdout.log": [
+    "100644",
+    "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/04-test.added-test-names.txt": [
+    "100644",
+    "bde0ed577309933868660a641798f5ca11508046"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/04-test.corpus-progress.log": [
+    "100644",
+    "b770e7ca1a340512772b95427e3ac938eb136a41"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/04-test.exit.txt": [
+    "100644",
+    "6bb37024408ba8c1ad6679e2945069cca67f2ef1"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/04-test.metadata.json": [
+    "100644",
+    "ce3d976df56e83b0b3c8598db58a4ee4d594ecd7"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/04-test.running.json": [
+    "100644",
+    "1473b380fb0524917bd8ee4bc255f5b855e35b76"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/04-test.semantic-progress.log": [
+    "100644",
+    "903003421b9b74b57b682fa11078531b0d0fbdc4"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/04-test.stderr.log": [
+    "100644",
+    "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/04-test.stdout.log": [
+    "100644",
+    "403dc02376da3366eab26a2289c823ffa11ef7ba"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/04-test.totals.json": [
+    "100644",
+    "46e4c16fb1046b01b599e4b8475078e0addc2671"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/05-biome.exit.txt": [
+    "100644",
+    "b30c21fdb3fb24935e7ad55b7bdb0b87de5bdfab"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/05-biome.metadata.json": [
+    "100644",
+    "f8937edb1d5bb2c6cd6cd548b5e127d31ff47216"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/05-biome.running.json": [
+    "100644",
+    "07f7845e36582c9eb9061fe5b6b04cf87f260f33"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/05-biome.stderr.log": [
+    "100644",
+    "4005952fd42a09d017aa7dfcdbd5b0377b63fc9b"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/05-biome.stdout.log": [
+    "100644",
+    "33b520b4a406e76cfe3d854bac722a0732d35223"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/06-validate.exit.txt": [
+    "100644",
+    "c13b318fd8d9a571582c75c823eb5e0135f03a54"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/06-validate.metadata.json": [
+    "100644",
+    "d81319d7f238dd4a8a3d64be7458c457759394e4"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/06-validate.running.json": [
+    "100644",
+    "b404d2fd40737f52b2638b370b83207bc42acb4b"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/06-validate.stderr.log": [
+    "100644",
+    "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/06-validate.stdout.log": [
+    "100644",
+    "32bbd993ae05d4271fa5fcc2f6c990de5dc6591d"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/07-sweep.exit.txt": [
+    "100644",
+    "a68a6360f1877e926ea1d3ab0e0dad45bdf5fd73"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/07-sweep.metadata.json": [
+    "100644",
+    "ab06177b9d1013ca2400a6f50fa4e8e5db91d2c2"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/07-sweep.running.json": [
+    "100644",
+    "5bc9f82a515f38fef1da3f9c2ac767a8e6834e9d"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/07-sweep.stderr.log": [
+    "100644",
+    "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/07-sweep.stdout.log": [
+    "100644",
+    "32bbd993ae05d4271fa5fcc2f6c990de5dc6591d"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/08-generate.after-sha256.csv": [
+    "100644",
+    "4b366519db66a96a6b311f8bd6d50e0d80c82cd2"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/08-generate.before-sha256.csv": [
+    "100644",
+    "4b366519db66a96a6b311f8bd6d50e0d80c82cd2"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/08-generate.exit.txt": [
+    "100644",
+    "fb798f77af9c44129f8d7ae2ecd155bc037fc1c2"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/08-generate.metadata.json": [
+    "100644",
+    "6a8e0123bb6a51184447e402f7541d8bd0241736"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/08-generate.running.json": [
+    "100644",
+    "46ea89d7bb2f31b6998a23b4ce1170d596e7a02f"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/08-generate.stderr.log": [
+    "100644",
+    "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/08-generate.stdout.log": [
+    "100644",
+    "49cc14475cf6601effb41bcdb1112b62a8c8e8bd"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/09-status.exit.txt": [
+    "100644",
+    "85e3b540da355f94ce25571da43b34092d5363ba"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/09-status.metadata.json": [
+    "100644",
+    "0d3ab4419bdecceb53abda2c8f245c2a7480f97f"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/09-status.running.json": [
+    "100644",
+    "b1d2c7d270be82106005c0cdf2ffa03a0922c54c"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/09-status.stderr.log": [
+    "100644",
+    "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/09-status.stdout.log": [
+    "100644",
+    "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/10-scope.exit.txt": [
+    "100644",
+    "c725717efa3855899c374704dfc7bf19292ebf15"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/10-scope.metadata.json": [
+    "100644",
+    "7065ff61c763b93193b9cfb23bd8f239402efbb7"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/10-scope.provenance.csv": [
+    "100644",
+    "91e3413fe6b4adf08f1a26056fa03f0439bf0c6f"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/10-scope.running.json": [
+    "100644",
+    "781941d88eef169c5270738e0c55cc479e21135d"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/10-scope.stderr.log": [
+    "100644",
+    "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/10-scope.stdout.log": [
+    "100644",
+    "4b266b49ba71a881b16122e6823fff8ac21f545b"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/BUILDER-HANDOFF.md": [
+    "100644",
+    "4567cb1aa5e2e87f4d02682f476669057b990614"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/baseline-metadata.json": [
+    "100644",
+    "1a0eb54c7f84908f5d2c322ccd3532f2228fb843"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/baseline-tracked-sha256.csv": [
+    "100644",
+    "07de1ee5053acf06a50e9fe1d12cbacfaf59a1b2"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/evidence-sha256.csv": [
+    "100644",
+    "11df4fe8ac1bb710b0bb2a59e87cf569eae2895c"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/final-integrity.json": [
+    "100644",
+    "7bb1a5442023430468f1e05d70edb7a6e967b734"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/final-tracked-sha256.csv": [
+    "100644",
+    "07de1ee5053acf06a50e9fe1d12cbacfaf59a1b2"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/fk-p0-progress-corpus-sweep-lnwaCS.log": [
+    "100644",
+    "b770e7ca1a340512772b95427e3ac938eb136a41"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/fk-p0-progress-semantic-invariants-zK3ZEb.log": [
+    "100644",
+    "5403cfe713e12e469c833c97d53c2b9bf275d4b0"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/run-command.ps1": [
+    "100644",
+    "7b1cc27bf547822160ece03e143c318e84168655"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/loop-directive.md": [
+    "100644",
+    "38d17985c98c62790a2399b0d9e43637139de678"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/main-source-compatibility-20260907.json": [
+    "100644",
+    "7f9c7de65c33fa93b2df82ecc96660a5a322ef9c"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/main-source-impact-20260907.md": [
+    "100644",
+    "323a36e307e011e030f046b470422e982e5e3295"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/plan-review-findings.md": [
+    "100644",
+    "d4e4b064a2de0b5385e98c14e64e1458e206a469"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/proposed-amendment-A1-decision-path-latency-budget.md": [
+    "100644",
+    "ce23a0e697b1876909821d76d033ad0e66319614"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/proposed-amendment-A2-ci-backstop-host-independence.md": [
+    "100644",
+    "f0f3eed8499613e9ac5fb380c60070f0e1f7f129"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/proposed-amendment-A2-r2-backstop-independence.md": [
+    "100644",
+    "74750bac9810a51df9bae3f40dee929aac62e11e"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/proposed-amendment-A2-r3-backstop-independence.md": [
+    "100644",
+    "2d98d89390d220c980f33893b83497344804fb3f"
+  ],
+  "plugins/foreman-line/docs/goals/foreman-kernel/proposed-amendment-A2-r4-backstop-independence.md": [
+    "100644",
+    "e5e5f5338ce0c9ce560d180775e51f366e7384f7"
+  ],
+  "plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md": [
+    "100644",
+    "5d64994848f6260d48023cb820c624dd46805c7a"
+  ],
+  "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md": [
+    "100644",
+    "7f13cf6fab5804398c8571372fd05bb14ce8b343"
+  ],
+  "plugins/foreman-line/permission-profiles/README.md": [
+    "100644",
+    "e6b148761868a7fafc08f460f0a99557e04d7ae7"
+  ],
+  "plugins/foreman-line/permission-profiles/package.json": [
+    "100644",
+    "a3165cba483d6499108330295b9ba25af2487b05"
+  ],
+  "plugins/foreman-line/permission-profiles/permission-profiles.yaml": [
+    "100644",
+    "1cfe883fa67c5462be625ebd293d854f91113dc4"
+  ],
+  "plugins/foreman-line/permission-profiles/src/types.ts": [
+    "100644",
+    "b65c65b608760292d3cded68df3e726581c8daa0"
+  ],
+  "plugins/foreman-line/permission-profiles/src/validator.ts": [
+    "100644",
+    "5aa4b67f704b2b6dbffda05501401bb13ffa0f4d"
+  ],
+  "plugins/foreman-line/permission-profiles/tsconfig.json": [
+    "100644",
+    "c53451e71f99bb3b6c43e1c02bc21b1f03ca1863"
+  ],
+  "plugins/foreman-line/schema-scaffold/README.md": [
+    "100644",
+    "af542c85f95d33545d5eef576c542ae4fc5d7c50"
+  ],
+  "plugins/foreman-line/schema-scaffold/biome.json": [
+    "100644",
+    "b0ca092de3aa11ae135bcf4dbe1a2028192aae04"
+  ],
+  "plugins/foreman-line/schema-scaffold/package-lock.json": [
+    "100644",
+    "584c5e77069dc0721eeabfc939bd0f1b5f0c00dd"
+  ],
+  "plugins/foreman-line/schema-scaffold/package.json": [
+    "100644",
+    "491151d337831e5a0e8ede30d7c846db29899262"
+  ],
+  "plugins/foreman-line/schema-scaffold/src/generate.ts": [
+    "100644",
+    "a7c9d7b4ac3cf29fe5c89a3e8901068778ffd6cb"
+  ],
+  "plugins/foreman-line/schema-scaffold/src/index.ts": [
+    "100644",
+    "b8e302a0f0d0b51cc0d551c9cdc28e8dedd77bcf"
+  ],
+  "plugins/foreman-line/schema-scaffold/src/registry.ts": [
+    "100644",
+    "097555bb4655f96ed6c97da46bb359a4fdf53f1a"
+  ],
+  "plugins/foreman-line/schema-scaffold/src/test-scaffold.ts": [
+    "100644",
+    "700dbd3a0cf2ae0e2373569f24456fac3063c45e"
+  ],
+  "plugins/foreman-line/schema-scaffold/tests/dependency-allowlist.test.ts": [
+    "100644",
+    "3a3dbc7bce35de9e15e8bb0d98580d6224bdf89a"
+  ],
+  "plugins/foreman-line/schema-scaffold/tests/generate.test.ts": [
+    "100644",
+    "0bc515ec104d9d9bfeb66041c4c5e3680e8d8cc0"
+  ],
+  "plugins/foreman-line/schema-scaffold/tests/test-scaffold.test.ts": [
+    "100644",
+    "7d155f59efc1f503ec1829c886bc0d0469997d6e"
+  ],
+  "plugins/foreman-line/schema-scaffold/tsconfig.json": [
+    "100644",
+    "c53451e71f99bb3b6c43e1c02bc21b1f03ca1863"
+  ],
+  "plugins/foreman-line/skills/goal/SKILL.md": [
+    "100644",
+    "f276535191d4daa04e814a750c99f6a46fa58da8"
+  ],
+  "plugins/foreman-line/skills/parcel-driven-development/SKILL.md": [
+    "100644",
+    "c064223bf533b4d80c73208b8519a5b06b8d20ff"
+  ],
+  "plugins/foreman-line/spec-linter/README.md": [
+    "100644",
+    "74634b30c65c44725a4c49047c3194b3ddeefc94"
+  ],
+  "plugins/foreman-line/spec-linter/package.json": [
+    "100644",
+    "74675c724ca6ee0644dd59534cc56022a9a7a458"
+  ],
+  "plugins/foreman-line/spec-linter/schemas/spec-frontmatter.schema.json": [
+    "100644",
+    "7e52ff8787d4f9ed439eafc3496cf4374182c03d"
+  ],
+  "plugins/foreman-line/spec-linter/src/cli.ts": [
+    "100644",
+    "cccc7ae16fe39c9bb4503327f822716af01bee6e"
+  ],
+  "plugins/foreman-line/spec-linter/src/validate.ts": [
+    "100644",
+    "0f5b8fd2d913170211ca122ee301c6994942696c"
+  ],
+  "plugins/foreman-line/spec-linter/tsconfig.json": [
+    "100644",
+    "c53451e71f99bb3b6c43e1c02bc21b1f03ca1863"
+  ]
+}

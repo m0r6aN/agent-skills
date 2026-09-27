@@ -1,0 +1,35 @@
+{
+  "advisorySelfCheck": {
+    "valid": true,
+    "frontmatter": {
+      "valid": true,
+      "errors": [],
+      "warnings": []
+    },
+    "body": {
+      "valid": true,
+      "errors": []
+    },
+    "errors": []
+  }
+}
+{
+  "emitted": {
+    "artifactPath": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-unattended-20260907\\plugins\\foreman-line\\docs\\specs\\active\\fk-p1-lifecycle-admission-decision-contracts-20260907.shaping-result.json",
+    "artifactRef": "plugins/foreman-line/docs/specs/active/fk-p1-lifecycle-admission-decision-contracts-20260907.shaping-result.json",
+    "payload": {
+      "parcelSpecRefs": [
+        "plugins/foreman-line/docs/specs/active/FK-P1-lifecycle-admission-decision-contracts.md"
+      ],
+      "epics": []
+    }
+  }
+}
+{
+  "readback": {
+    "parcelSpecRefs": [
+      "plugins/foreman-line/docs/specs/active/FK-P1-lifecycle-admission-decision-contracts.md"
+    ],
+    "epics": []
+  }
+}

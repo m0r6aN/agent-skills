@@ -43,13 +43,18 @@ Everything under this subheading is volatile operational state and is the declar
 region 2. The ownership rule and the `Ratified authority` records are above it as direct body of
 the parent heading, outside this subtree.
 
-**Owner of record.** Codex coordinator thread `01a07c0b-90eb-7bf0-88f4-0ca912ef87fb`, continuing on 2026-09-07 under the developer instruction recorded in `authorization-20260907-unattended.md`.
+**Owner of record.** The Codex coordinator session resumed on 2026-09-04, holding
+crash-recovery ownership under the developer's explicit ruling that the second 2026-09-03
+Claude Code coordinator and the round-6 builder are dead.
 
-**Current coordinator worktree:** `D:/Repos/agent-skills-worktrees/foreman-kernel-unattended-20260907`.
-**Current coordinator branch:** `codex/foreman-kernel-unattended-20260907`.
-**Published handoff boundary:** `fe31042bbe4370cb81b38632720849983c7be04c`.
-
-**Handoff record — 2026-09-07.** The developer directed this session to move forward during a six-hour absence. The clean goal/implementation/handoff source worktrees were preserved, and no matching source-worktree process was observed. That observation is not a declaration that an older session was proven dead. New work is on isolated coordinator and recovery branches. The recorded September 4 ownership provenance remains in the published handoff's exact source copies.
+**Handoff record — 2026-09-04.** The developer explicitly ruled both the second 2026-09-03
+Claude Code coordinator and its round-6 builder dead and directed transfer of Foreman Kernel
+crash-recovery ownership to this Codex session. The transfer preserves the clean parcel worktree
+at `249903529d2f25aa99617de370a0e3738dab02cf`, the incomplete round-6 package and stop report,
+and every recorded open obligation. No completion, review, Gate 3, push, merge, or Stage F claim
+is inherited from the dead sessions. This session must inventory the committed package, establish
+the current test baseline, and dispatch a fresh builder through Step 0 before implementation
+continues.
 
 **Disambiguation for a future reader:** two coordinator sessions held this goal on 2026-09-03.
 The first reproduced the inherited green chain and wrote `FK-P0-MERGE-READY-material.md`; the
@@ -88,10 +93,6 @@ subheading, back to direct body of `## COORDINATOR OWNERSHIP`, so the five publi
 their `list-item:1..5` anchors. See the ordering note there.)_
 
 ## Current state — update at every stop or parcel closure
-
-**STATE 2026-09-07 — R31 accepted and published at1747c1df7dfa4677d345390ac673c3d15c82b980 after751/751 complete chain and two fresh final APPROVE verdicts.** Package equals tested2fc3940; runtime521214e/source8d remain fixed. Parent fresh fetch verified159 implementation manifest entries. Isolated integration with main476b8df passed:153 reviewed upstream deltas,398 unchanged protected inputs, repository-aware validate/sweep and generation direct0, no byte changes or ref mutation. Exact hypothetical treea9df33c is locally retained/reproducible from published inputs. Failed28 and two harness failures remain preserved. HumanGate3/actualmerge and FK-P1 merged dependency remain open; no merge or StageF.
-
-This progress supersedes older state labels below. Read `CURRENT-RESUME.md` and `LIVE-PUBLICATION-MANIFEST.json` for published branches, fullSHAs and hashes. A1.8/A1.9 and INF adoption are ratified and separately integrated through R30. FK-P1 StageA draft/review/advisory/ShapingResult are complete but P1 implementation remains pending its mergedP0 dependency. U1 draft and provider observations are published; named preP18 choices remain. This coordinator-only operational update is confined to declared volatile state; implementation source snapshot65c4714 and its worktree remain unchanged.
 
 **STATE 2026-09-04 #2 (live) — ROUND 6 RECOVERY BUILD ACTIVE. The developer ruled the prior
 coordinator and round-6 builder dead and transferred ownership to this Codex session. Replacement
@@ -339,17 +340,6 @@ The plan-review transcript is
    a prohibition and was sitting in a section declared volatile, curated `ruleIds: []` with a
    boilerplate rationale asserting it stated no rule. It states a rule.
 
-## September 7 continuation authority
-
-The developer instruction recorded verbatim in `authorization-20260907-unattended.md` authorizes this coordinator to make the decisions and perform the non-destructive actions needed to advance this existing goal. Covered decisions do not require repeated permission requests. Record contract or source changes before implementation and retain exact parcel write boundaries, substantive fail-closed guarantees, complete verification and independent review.
-
-Publication of the named source, continuation and evidence branches is authorized. This is a scoped exception to older external-effect wording for Git publication only. It creates no authority for deployment, spending, credentials, repository-settings mutation or destructive cleanup. Human Gate3 remains the merge boundary; publication and passing tests do not manufacture its satisfaction.
-
-Preparatory shaping of downstream parcels may proceed in isolated documents while their implementation dependencies remain pending. A draft does not satisfy a dependency, and implementation dispatch retains the charter's dependency order and exact Allowed Files.
-
-Source preservation applies to all prior worktrees and the published handoff. The already-published September7 companion was captured under the developer's explicit publication request; this does not create a general exception to standing authorization8 for unrelated ambient work.
-
-
 ## Per-parcel algorithm
 
 1. Verify the current queue item and all dependencies against Git, not memory.
@@ -383,7 +373,7 @@ Source preservation applies to all prior worktrees and the published handoff. Th
 
 | Parcel | State | Depends on |
 |---|---|---|
-| FK-P0 — Canon authority and enforcement registry | **R31 final1747c1d accepted:751/751 complete chain, two fresh APPROVE verdicts, isolated main476 integration passed. HumanGate3/actualmerge pending; failed attempts retained.** | none |
+| FK-P0 — Canon authority and enforcement registry | **ROUND 6 RECOVERY BUILD ACTIVE — Newton completed Step 0 at `dd1b434`; inherited baseline 583 total / 561 pass / 22 fail; implementation authorized after the live-snapshot ruling. Not pushed, not merged, Stage F not run.** | none |
 | FK-P1 — Lifecycle, admission, and decision contracts | pending | FK-P0 |
 | FK-P2 — Spec-body compiler | pending | FK-P0, FK-P1 |
 | FK-P3 — Pure dispatch decisions | pending | FK-P1 |
