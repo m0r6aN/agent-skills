@@ -1,0 +1,177 @@
+{
+  "recordedUtc": "2026-09-07T16:50:47.832088+00:00",
+  "sourceSnapshot": "8d500704c9e3d6d8b652bbe838aa3623f88203fc",
+  "preparedMetadataHead": "99c8f1c19ffc5dcba1fcebd0fdf4abadb5e9ef23",
+  "state": "Proposed Step0 mapping and read-only preparation evidence only; independent mapping review and implementation ruling pending. No R31 implementation validation claimed.",
+  "hashSemantics": "SHA256 of exact independently measured working bytes and staged Git blob bytes. Manifest excludes itself.",
+  "files": [
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/R31-step0-mapping-20260907.md",
+      "bytes": 50677,
+      "workingBytesSha256": "668dee6e73c6c527ac3ea9c4fb31c3373d78a9bb618b50726ee78b3f6b01a370",
+      "stagedGitBlobSha256": "668dee6e73c6c527ac3ea9c4fb31c3373d78a9bb618b50726ee78b3f6b01a370"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/01-npm-ci.log",
+      "bytes": 162,
+      "workingBytesSha256": "0cc499381f3c0853931af42dd6ac50095440a01711426bbe8f3fe9e9d255e3f8",
+      "stagedGitBlobSha256": "0cc499381f3c0853931af42dd6ac50095440a01711426bbe8f3fe9e9d255e3f8"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/01-npm-ci.metadata.json",
+      "bytes": 173,
+      "workingBytesSha256": "6f5a70110703bab40f5e371bf8e58f13cbd70668febbe12c33258878f0c2a7c7",
+      "stagedGitBlobSha256": "6f5a70110703bab40f5e371bf8e58f13cbd70668febbe12c33258878f0c2a7c7"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/02-source-discovery.json",
+      "bytes": 464077,
+      "workingBytesSha256": "8bedeb8990b69e84352bed1d8619aeced4a6bba1397512a8d46165821f779720",
+      "stagedGitBlobSha256": "8bedeb8990b69e84352bed1d8619aeced4a6bba1397512a8d46165821f779720"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/02-source-discovery.log",
+      "bytes": 180211,
+      "workingBytesSha256": "cc788c47cc9389ea8f420b89745713d8e9a07e5dedba9d242ca28063c22c7a83",
+      "stagedGitBlobSha256": "cc788c47cc9389ea8f420b89745713d8e9a07e5dedba9d242ca28063c22c7a83"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/02-source-discovery.metadata.json",
+      "bytes": 223,
+      "workingBytesSha256": "e388876e20311afd4e8968966461fe68f621e727823a7a65f141cc603b868898",
+      "stagedGitBlobSha256": "e388876e20311afd4e8968966461fe68f621e727823a7a65f141cc603b868898"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/03-initial-draft-unvalidated.json",
+      "bytes": 20489,
+      "workingBytesSha256": "9baa45a761fee221bd6f887b8bb1e8e08461bd9d2c43c1e5975aeb5a2139d0b4",
+      "stagedGitBlobSha256": "9baa45a761fee221bd6f887b8bb1e8e08461bd9d2c43c1e5975aeb5a2139d0b4"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/03-step0-contract.log",
+      "bytes": 732,
+      "workingBytesSha256": "db4901d82730a6965445ce934610e5c4a6b62a8994daceea9f683b2383dfb596",
+      "stagedGitBlobSha256": "db4901d82730a6965445ce934610e5c4a6b62a8994daceea9f683b2383dfb596"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/03-step0-contract.metadata.json",
+      "bytes": 257,
+      "workingBytesSha256": "c7815bbb08f0eed7c158ec6c5198fc6bfdbdf210054ba3c55e2da81b1776eb52",
+      "stagedGitBlobSha256": "c7815bbb08f0eed7c158ec6c5198fc6bfdbdf210054ba3c55e2da81b1776eb52"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/03-step0-proposed-contract.json",
+      "bytes": 20489,
+      "workingBytesSha256": "9baa45a761fee221bd6f887b8bb1e8e08461bd9d2c43c1e5975aeb5a2139d0b4",
+      "stagedGitBlobSha256": "9baa45a761fee221bd6f887b8bb1e8e08461bd9d2c43c1e5975aeb5a2139d0b4"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/04-step0-contract.log",
+      "bytes": 732,
+      "workingBytesSha256": "db4901d82730a6965445ce934610e5c4a6b62a8994daceea9f683b2383dfb596",
+      "stagedGitBlobSha256": "db4901d82730a6965445ce934610e5c4a6b62a8994daceea9f683b2383dfb596"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/04-step0-contract.metadata.json",
+      "bytes": 441,
+      "workingBytesSha256": "230e87bfaed6fad8f58f5e97a115c36181aea5569961c7f65f94686bd44b9e00",
+      "stagedGitBlobSha256": "230e87bfaed6fad8f58f5e97a115c36181aea5569961c7f65f94686bd44b9e00"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/04-step0-proposed-contract.json",
+      "bytes": 20511,
+      "workingBytesSha256": "295ca6c48d75ca138f411e3e49b71b8cdb582b9adc37350d7570e73448fc1366",
+      "stagedGitBlobSha256": "295ca6c48d75ca138f411e3e49b71b8cdb582b9adc37350d7570e73448fc1366"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/05-source-byte-check.json",
+      "bytes": 6073,
+      "workingBytesSha256": "9ac9eb4d5f444f1740a9400cf0b70aad90d49b554f3e8fa580ae12fd40e69462",
+      "stagedGitBlobSha256": "9ac9eb4d5f444f1740a9400cf0b70aad90d49b554f3e8fa580ae12fd40e69462"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/06-complete-item-correspondence.json",
+      "bytes": 367551,
+      "workingBytesSha256": "54a3b4924284a9b7c80f6df2aeb600d96f50f8f824811f238f6308d6f9326344",
+      "stagedGitBlobSha256": "54a3b4924284a9b7c80f6df2aeb600d96f50f8f824811f238f6308d6f9326344"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/06-item-correspondence.log",
+      "bytes": 124,
+      "workingBytesSha256": "b355baefafafa436484a7ba72333e3a304712f2bec7f3b0e377efbad19529a1a",
+      "stagedGitBlobSha256": "b355baefafafa436484a7ba72333e3a304712f2bec7f3b0e377efbad19529a1a"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/06-item-correspondence.metadata.json",
+      "bytes": 208,
+      "workingBytesSha256": "fb9764cce810d6da74198b8d3abf70743baa2162fd30299f6d32455e5a201299",
+      "stagedGitBlobSha256": "fb9764cce810d6da74198b8d3abf70743baa2162fd30299f6d32455e5a201299"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/07-scope-metadata-preparation-error.log",
+      "bytes": 305,
+      "workingBytesSha256": "d5800fe1d355f884021b173fd900649f478ef9601e3b1430011dacef6e828f67",
+      "stagedGitBlobSha256": "d5800fe1d355f884021b173fd900649f478ef9601e3b1430011dacef6e828f67"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/08-step0-scope-check.json",
+      "bytes": 353,
+      "workingBytesSha256": "4112a609d7397ea2efa9c7654e1523c719bbd4faa83eaecefa644a6574979c2e",
+      "stagedGitBlobSha256": "4112a609d7397ea2efa9c7654e1523c719bbd4faa83eaecefa644a6574979c2e"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/09-exact-migration-proposal.json",
+      "bytes": 9623,
+      "workingBytesSha256": "fbde4a225acfaa6bb1f264ed90697352370866f6e2ecb9fe8da64140b76dd90d",
+      "stagedGitBlobSha256": "fbde4a225acfaa6bb1f264ed90697352370866f6e2ecb9fe8da64140b76dd90d"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/09-exact-migration-proposal.log",
+      "bytes": 631,
+      "workingBytesSha256": "4303ff06d0fe1cd0e8623d541aa6d213b2cbdedd0cddcfd21c834dd5173c294e",
+      "stagedGitBlobSha256": "4303ff06d0fe1cd0e8623d541aa6d213b2cbdedd0cddcfd21c834dd5173c294e"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/09-exact-migration-proposal.metadata.json",
+      "bytes": 245,
+      "workingBytesSha256": "bb6eae545b3906331c3d70a801a44f16bf1ea309c9a8a0eec0e073c76760e210",
+      "stagedGitBlobSha256": "bb6eae545b3906331c3d70a801a44f16bf1ea309c9a8a0eec0e073c76760e210"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/10-final-step0-scope.json",
+      "bytes": 483,
+      "workingBytesSha256": "bca56135cc9aa7857aec80c3b46b3372517abee9a55f35a2a948592b0ee810f2",
+      "stagedGitBlobSha256": "bca56135cc9aa7857aec80c3b46b3372517abee9a55f35a2a948592b0ee810f2"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/correspondence.mjs",
+      "bytes": 2449,
+      "workingBytesSha256": "1c26e4b6fd172e2c28e8794fce8622d8329a264a13abe50c831ae2bb5cd92886",
+      "stagedGitBlobSha256": "1c26e4b6fd172e2c28e8794fce8622d8329a264a13abe50c831ae2bb5cd92886"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/discover.mjs",
+      "bytes": 2136,
+      "workingBytesSha256": "ca8837c80a36de131050cd421e4b874bb16158e74681869f072dc9faf4e7fd36",
+      "stagedGitBlobSha256": "ca8837c80a36de131050cd421e4b874bb16158e74681869f072dc9faf4e7fd36"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/initial-package-hashes.json",
+      "bytes": 2894,
+      "workingBytesSha256": "66b1d1d7d00259739c44a7a1b04d9adcbce4d8bff8a11c515c67bfcec364348e",
+      "stagedGitBlobSha256": "66b1d1d7d00259739c44a7a1b04d9adcbce4d8bff8a11c515c67bfcec364348e"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/migration-proposal.mjs",
+      "bytes": 6662,
+      "workingBytesSha256": "a74475ffe979de663ab51324445189a8c42d05dc77713c6121a96325a2d17789",
+      "stagedGitBlobSha256": "a74475ffe979de663ab51324445189a8c42d05dc77713c6121a96325a2d17789"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/propose-contract.mjs",
+      "bytes": 4653,
+      "workingBytesSha256": "8ff20f01f28e5167de91ea4a30665359e14538330e55ca22f55c437043ab368e",
+      "stagedGitBlobSha256": "8ff20f01f28e5167de91ea4a30665359e14538330e55ca22f55c437043ab368e"
+    }
+  ]
+}

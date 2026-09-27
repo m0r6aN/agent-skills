@@ -1,0 +1,877 @@
+TAP version 13
+# Subtest: R30 adopted sample has source-authored counts before accepting generated output
+ok 1 - R30 adopted sample has source-authored counts before accepting generated output
+  ---
+  duration_ms: 23.2368
+  type: 'test'
+  ...
+# Subtest: R30 all 72 complete published shapes agree with the independent source mapping
+ok 2 - R30 all 72 complete published shapes agree with the independent source mapping
+  ---
+  duration_ms: 48.6453
+  type: 'test'
+  ...
+# Subtest: R30 exact adopted registry and reviewed paraphrases validate without new grants
+ok 3 - R30 exact adopted registry and reviewed paraphrases validate without new grants
+  ---
+  duration_ms: 546.1357
+  type: 'test'
+  ...
+# Subtest: R30 preserves all 19 complete historical reconciliations and appends only one named migration
+ok 4 - R30 preserves all 19 complete historical reconciliations and appends only one named migration
+  ---
+  duration_ms: 465.5618
+  type: 'test'
+  ...
+# Subtest: R30 exact baseline-to-adoption item and rule delta preserves all post-R13 identities
+ok 5 - R30 exact baseline-to-adoption item and rule delta preserves all post-R13 identities
+  ---
+  duration_ms: 425.5256
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses statement word with repaired incidental digests
+ok 6 - R30 reserved shape refuses statement word with repaired incidental digests
+  ---
+  duration_ms: 233.8209
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses statement negation with repaired incidental digests
+ok 7 - R30 reserved shape refuses statement negation with repaired incidental digests
+  ---
+  duration_ms: 141.7036
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses statement number with repaired incidental digests
+ok 8 - R30 reserved shape refuses statement number with repaired incidental digests
+  ---
+  duration_ms: 187.8444
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses statement scope with repaired incidental digests
+ok 9 - R30 reserved shape refuses statement scope with repaired incidental digests
+  ---
+  duration_ms: 228.5384
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses subject with repaired incidental digests
+ok 10 - R30 reserved shape refuses subject with repaired incidental digests
+  ---
+  duration_ms: 200.298
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses claim with repaired incidental digests
+ok 11 - R30 reserved shape refuses claim with repaired incidental digests
+  ---
+  duration_ms: 202.3769
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses decision with repaired incidental digests
+ok 12 - R30 reserved shape refuses decision with repaired incidental digests
+  ---
+  duration_ms: 182.7327
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses classification with repaired incidental digests
+ok 13 - R30 reserved shape refuses classification with repaired incidental digests
+  ---
+  duration_ms: 188.4681
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses owner with repaired incidental digests
+ok 14 - R30 reserved shape refuses owner with repaired incidental digests
+  ---
+  duration_ms: 135.7135
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses severity with repaired incidental digests
+ok 15 - R30 reserved shape refuses severity with repaired incidental digests
+  ---
+  duration_ms: 165.8897
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses refusal code with repaired incidental digests
+ok 16 - R30 reserved shape refuses refusal code with repaired incidental digests
+  ---
+  duration_ms: 129.5166
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses goals with repaired incidental digests
+ok 17 - R30 reserved shape refuses goals with repaired incidental digests
+  ---
+  duration_ms: 133.9026
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses roles with repaired incidental digests
+ok 18 - R30 reserved shape refuses roles with repaired incidental digests
+  ---
+  duration_ms: 172.7035
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses stages with repaired incidental digests
+ok 19 - R30 reserved shape refuses stages with repaired incidental digests
+  ---
+  duration_ms: 150.4654
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses operations with repaired incidental digests
+ok 20 - R30 reserved shape refuses operations with repaired incidental digests
+  ---
+  duration_ms: 186.627
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses hosts with repaired incidental digests
+ok 21 - R30 reserved shape refuses hosts with repaired incidental digests
+  ---
+  duration_ms: 264.8135
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses pairings with repaired incidental digests
+ok 22 - R30 reserved shape refuses pairings with repaired incidental digests
+  ---
+  duration_ms: 196.6306
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses retirement with repaired incidental digests
+ok 23 - R30 reserved shape refuses retirement with repaired incidental digests
+  ---
+  duration_ms: 193.2883
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses retirement evidence with repaired incidental digests
+ok 24 - R30 reserved shape refuses retirement evidence with repaired incidental digests
+  ---
+  duration_ms: 247.9451
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses missing basis ref with repaired incidental digests
+ok 25 - R30 reserved shape refuses missing basis ref with repaired incidental digests
+  ---
+  duration_ms: 151.5236
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses corroboration as basis with repaired incidental digests
+ok 26 - R30 reserved shape refuses corroboration as basis with repaired incidental digests
+  ---
+  duration_ms: 178.4477
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses source substitution with repaired incidental digests
+ok 27 - R30 reserved shape refuses source substitution with repaired incidental digests
+  ---
+  duration_ms: 201.9612
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses location digest with repaired incidental digests
+ok 28 - R30 reserved shape refuses location digest with repaired incidental digests
+  ---
+  duration_ms: 236.0952
+  type: 'test'
+  ...
+# Subtest: R30 reserved shape refuses value digest with repaired incidental digests
+ok 29 - R30 reserved shape refuses value digest with repaired incidental digests
+  ---
+  duration_ms: 175.6837
+  type: 'test'
+  ...
+# Subtest: R30 C04/events cannot revert assurance to independently-verified through legacy fallback
+ok 30 - R30 C04/events cannot revert assurance to independently-verified through legacy fallback
+  ---
+  duration_ms: 184.641
+  type: 'test'
+  ...
+# Subtest: R30 C19/warm cannot revert assurance to detected through legacy fallback
+ok 31 - R30 C19/warm cannot revert assurance to detected through legacy fallback
+  ---
+  duration_ms: 127.9782
+  type: 'test'
+  ...
+# Subtest: R30 C23/no-late-allow cannot revert assurance to structural through legacy fallback
+ok 32 - R30 C23/no-late-allow cannot revert assurance to structural through legacy fallback
+  ---
+  duration_ms: 129.3341
+  type: 'test'
+  ...
+# Subtest: R30 L01/continuation cannot revert assurance to narrative through legacy fallback
+ok 33 - R30 L01/continuation cannot revert assurance to narrative through legacy fallback
+  ---
+  duration_ms: 141.4176
+  type: 'test'
+  ...
+# Subtest: R30 required reserved set refuses remove independently of incidental digests
+ok 34 - R30 required reserved set refuses remove independently of incidental digests
+  ---
+  duration_ms: 138.378
+  type: 'test'
+  ...
+# Subtest: R30 required reserved set refuses substitute independently of incidental digests
+ok 35 - R30 required reserved set refuses substitute independently of incidental digests
+  ---
+  duration_ms: 147.3051
+  type: 'test'
+  ...
+# Subtest: R30 exact basis correspondence refuses copied digest
+ok 36 - R30 exact basis correspondence refuses copied digest
+  ---
+  duration_ms: 142.8813
+  type: 'test'
+  ...
+# Subtest: R30 exact basis correspondence refuses repaired digest
+ok 37 - R30 exact basis correspondence refuses repaired digest
+  ---
+  duration_ms: 135.6616
+  type: 'test'
+  ...
+# Subtest: R30 exact basis correspondence refuses locator
+ok 38 - R30 exact basis correspondence refuses locator
+  ---
+  duration_ms: 132.5929
+  type: 'test'
+  ...
+# Subtest: R30 exact basis correspondence refuses missing inventory membership
+ok 39 - R30 exact basis correspondence refuses missing inventory membership
+  ---
+  duration_ms: 139.2949
+  type: 'test'
+  ...
+# Subtest: R30 exact basis correspondence refuses borrowed statement
+ok 40 - R30 exact basis correspondence refuses borrowed statement
+  ---
+  duration_ms: 146.0981
+  type: 'test'
+  ...
+# Subtest: R30 exact basis correspondence refuses shared-item swap
+ok 41 - R30 exact basis correspondence refuses shared-item swap
+  ---
+  duration_ms: 177.3923
+  type: 'test'
+  ...
+# Subtest: R30 C02/self-application is exact noncontrolling provenance rather than a runtime grant
+ok 42 - R30 C02/self-application is exact noncontrolling provenance rather than a runtime grant
+  ---
+  duration_ms: 244.1766
+  type: 'test'
+  ...
+# Subtest: R30 C03/adoption is exact noncontrolling provenance rather than a runtime grant
+ok 43 - R30 C03/adoption is exact noncontrolling provenance rather than a runtime grant
+  ---
+  duration_ms: 212.6583
+  type: 'test'
+  ...
+# Subtest: R30 C18/reaffirm is exact noncontrolling provenance rather than a runtime grant
+ok 44 - R30 C18/reaffirm is exact noncontrolling provenance rather than a runtime grant
+  ---
+  duration_ms: 206.7163
+  type: 'test'
+  ...
+# Subtest: R30 L01/continuation is exact noncontrolling provenance rather than a runtime grant
+ok 45 - R30 L01/continuation is exact noncontrolling provenance rather than a runtime grant
+  ---
+  duration_ms: 240.3769
+  type: 'test'
+  ...
+# Subtest: R30 L02/publication is exact noncontrolling provenance rather than a runtime grant
+ok 46 - R30 L02/publication is exact noncontrolling provenance rather than a runtime grant
+  ---
+  duration_ms: 254.2103
+  type: 'test'
+  ...
+# Subtest: R30 L03/shaping is exact noncontrolling provenance rather than a runtime grant
+ok 47 - R30 L03/shaping is exact noncontrolling provenance rather than a runtime grant
+  ---
+  duration_ms: 211.1955
+  type: 'test'
+  ...
+# Subtest: R30 U02/original-event is exact noncontrolling provenance rather than a runtime grant
+ok 48 - R30 U02/original-event is exact noncontrolling provenance rather than a runtime grant
+  ---
+  duration_ms: 325.6468
+  type: 'test'
+  ...
+# Subtest: R30 U03/reopen-event is exact noncontrolling provenance rather than a runtime grant
+ok 49 - R30 U03/reopen-event is exact noncontrolling provenance rather than a runtime grant
+  ---
+  duration_ms: 230.7017
+  type: 'test'
+  ...
+# Subtest: R30 U04/a1-event is exact noncontrolling provenance rather than a runtime grant
+ok 50 - R30 U04/a1-event is exact noncontrolling provenance rather than a runtime grant
+  ---
+  duration_ms: 218.3767
+  type: 'test'
+  ...
+# Subtest: R30 applicable C42/gates covers coordinator/shaping/state-transition on supported and unsupported hosts
+not ok 51 - R30 applicable C42/gates covers coordinator/shaping/state-transition on supported and unsupported hosts
+  ---
+  duration_ms: 91.5691
+  type: 'test'
+  location: 'D:\\Repos\\agent-skills-worktrees\\fk-p0-r30-adoption-20260907\\plugins\\foreman-line\\authority-registry\\tests\\semantic-invariants.test.ts:1:975'
+  failureType: 'testCodeFailure'
+  error: |-
+    {"outcome":"RESOLVED","authoritySubject":"verification.u1-dispatch-and-promotion-prerequisites","authorityClaim":"p18-dispatch-and-promotion-require-valid-prerequisites","decision":"REFUSE","classification":"pre-action-refusal","assurance":"human-ratified","enforcementOwner":"kernel-policy","severity":"critical","controllingRuleIds":["rule.fk-charter.f95b77d201bc.gates"],"consideredRuleIds":["rule.fk-charter.f95b77d201bc.gates"]}
+    + actual - expected
+    
+    + 'RESOLVED'
+    - 'REFUSE'
+         ^
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'REFUSE'
+  actual: 'RESOLVED'
+  operator: 'strictEqual'
+  stack: |-
+    <anonymous> (D:\Repos\agent-skills-worktrees\fk-p0-r30-adoption-20260907\plugins\foreman-line\authority-registry\tests\semantic-invariants.test.ts:5537:14)
+    TestContext.<anonymous> (D:\Repos\agent-skills-worktrees\fk-p0-r30-adoption-20260907\plugins\foreman-line\authority-registry\tests\semantic-invariants.test.ts:67:13)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1106:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+    Test.postRun (node:internal/test_runner/test:1235:19)
+    Test.run (node:internal/test_runner/test:1163:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:788:7)
+  ...
+# Subtest: R30 applicable C42/gates covers coordinator/step-zero/state-transition on supported and unsupported hosts
+not ok 52 - R30 applicable C42/gates covers coordinator/step-zero/state-transition on supported and unsupported hosts
+  ---
+  duration_ms: 87.6713
+  type: 'test'
+  location: 'D:\\Repos\\agent-skills-worktrees\\fk-p0-r30-adoption-20260907\\plugins\\foreman-line\\authority-registry\\tests\\semantic-invariants.test.ts:1:975'
+  failureType: 'testCodeFailure'
+  error: |-
+    {"outcome":"RESOLVED","authoritySubject":"verification.u1-dispatch-and-promotion-prerequisites","authorityClaim":"p18-dispatch-and-promotion-require-valid-prerequisites","decision":"REFUSE","classification":"pre-action-refusal","assurance":"human-ratified","enforcementOwner":"kernel-policy","severity":"critical","controllingRuleIds":["rule.fk-charter.f95b77d201bc.gates"],"consideredRuleIds":["rule.fk-charter.f95b77d201bc.gates"]}
+    + actual - expected
+    
+    + 'RESOLVED'
+    - 'REFUSE'
+         ^
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'REFUSE'
+  actual: 'RESOLVED'
+  operator: 'strictEqual'
+  stack: |-
+    <anonymous> (D:\Repos\agent-skills-worktrees\fk-p0-r30-adoption-20260907\plugins\foreman-line\authority-registry\tests\semantic-invariants.test.ts:5537:14)
+    TestContext.<anonymous> (D:\Repos\agent-skills-worktrees\fk-p0-r30-adoption-20260907\plugins\foreman-line\authority-registry\tests\semantic-invariants.test.ts:67:13)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1106:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+    Test.postRun (node:internal/test_runner/test:1235:19)
+    Test.run (node:internal/test_runner/test:1163:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:788:7)
+  ...
+# Subtest: R30 applicable C42/gates covers shaper/shaping/spec-mutation on supported and unsupported hosts
+not ok 53 - R30 applicable C42/gates covers shaper/shaping/spec-mutation on supported and unsupported hosts
+  ---
+  duration_ms: 89.7285
+  type: 'test'
+  location: 'D:\\Repos\\agent-skills-worktrees\\fk-p0-r30-adoption-20260907\\plugins\\foreman-line\\authority-registry\\tests\\semantic-invariants.test.ts:1:975'
+  failureType: 'testCodeFailure'
+  error: |-
+    {"outcome":"RESOLVED","authoritySubject":"verification.u1-dispatch-and-promotion-prerequisites","authorityClaim":"p18-dispatch-and-promotion-require-valid-prerequisites","decision":"REFUSE","classification":"pre-action-refusal","assurance":"human-ratified","enforcementOwner":"kernel-policy","severity":"critical","controllingRuleIds":["rule.fk-charter.f95b77d201bc.gates"],"consideredRuleIds":["rule.fk-charter.f95b77d201bc.gates"]}
+    + actual - expected
+    
+    + 'RESOLVED'
+    - 'REFUSE'
+         ^
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'REFUSE'
+  actual: 'RESOLVED'
+  operator: 'strictEqual'
+  stack: |-
+    <anonymous> (D:\Repos\agent-skills-worktrees\fk-p0-r30-adoption-20260907\plugins\foreman-line\authority-registry\tests\semantic-invariants.test.ts:5537:14)
+    TestContext.<anonymous> (D:\Repos\agent-skills-worktrees\fk-p0-r30-adoption-20260907\plugins\foreman-line\authority-registry\tests\semantic-invariants.test.ts:67:13)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1106:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+    Test.postRun (node:internal/test_runner/test:1235:19)
+    Test.run (node:internal/test_runner/test:1163:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:788:7)
+  ...
+# Subtest: R30 applicable C42/gates covers reviewer/adversarial-review/receipt-validation on supported and unsupported hosts
+not ok 54 - R30 applicable C42/gates covers reviewer/adversarial-review/receipt-validation on supported and unsupported hosts
+  ---
+  duration_ms: 95.6372
+  type: 'test'
+  location: 'D:\\Repos\\agent-skills-worktrees\\fk-p0-r30-adoption-20260907\\plugins\\foreman-line\\authority-registry\\tests\\semantic-invariants.test.ts:1:975'
+  failureType: 'testCodeFailure'
+  error: |-
+    {"outcome":"RESOLVED","authoritySubject":"verification.u1-dispatch-and-promotion-prerequisites","authorityClaim":"p18-dispatch-and-promotion-require-valid-prerequisites","decision":"REFUSE","classification":"pre-action-refusal","assurance":"human-ratified","enforcementOwner":"kernel-policy","severity":"critical","controllingRuleIds":["rule.fk-charter.f95b77d201bc.gates"],"consideredRuleIds":["rule.fk-charter.f95b77d201bc.gates"]}
+    + actual - expected
+    
+    + 'RESOLVED'
+    - 'REFUSE'
+         ^
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'REFUSE'
+  actual: 'RESOLVED'
+  operator: 'strictEqual'
+  stack: |-
+    <anonymous> (D:\Repos\agent-skills-worktrees\fk-p0-r30-adoption-20260907\plugins\foreman-line\authority-registry\tests\semantic-invariants.test.ts:5537:14)
+    TestContext.<anonymous> (D:\Repos\agent-skills-worktrees\fk-p0-r30-adoption-20260907\plugins\foreman-line\authority-registry\tests\semantic-invariants.test.ts:67:13)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1106:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+    Test.postRun (node:internal/test_runner/test:1235:19)
+    Test.run (node:internal/test_runner/test:1163:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:788:7)
+  ...
+# Subtest: R30 applicable C42/gates covers coordinator/merge/state-transition on supported and unsupported hosts
+not ok 55 - R30 applicable C42/gates covers coordinator/merge/state-transition on supported and unsupported hosts
+  ---
+  duration_ms: 86.3292
+  type: 'test'
+  location: 'D:\\Repos\\agent-skills-worktrees\\fk-p0-r30-adoption-20260907\\plugins\\foreman-line\\authority-registry\\tests\\semantic-invariants.test.ts:1:975'
+  failureType: 'testCodeFailure'
+  error: |-
+    {"outcome":"RESOLVED","authoritySubject":"verification.u1-dispatch-and-promotion-prerequisites","authorityClaim":"p18-dispatch-and-promotion-require-valid-prerequisites","decision":"REFUSE","classification":"pre-action-refusal","assurance":"human-ratified","enforcementOwner":"kernel-policy","severity":"critical","controllingRuleIds":["rule.fk-charter.f95b77d201bc.gates"],"consideredRuleIds":["rule.fk-charter.f95b77d201bc.gates"]}
+    + actual - expected
+    
+    + 'RESOLVED'
+    - 'REFUSE'
+         ^
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'REFUSE'
+  actual: 'RESOLVED'
+  operator: 'strictEqual'
+  stack: |-
+    <anonymous> (D:\Repos\agent-skills-worktrees\fk-p0-r30-adoption-20260907\plugins\foreman-line\authority-registry\tests\semantic-invariants.test.ts:5537:14)
+    TestContext.<anonymous> (D:\Repos\agent-skills-worktrees\fk-p0-r30-adoption-20260907\plugins\foreman-line\authority-registry\tests\semantic-invariants.test.ts:67:13)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1106:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+    Test.postRun (node:internal/test_runner/test:1235:19)
+    Test.run (node:internal/test_runner/test:1163:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:788:7)
+  ...
+# Subtest: R30 applicable C42/contract covers shaper/shaping/spec-mutation on supported and unsupported hosts
+not ok 56 - R30 applicable C42/contract covers shaper/shaping/spec-mutation on supported and unsupported hosts
+  ---
+  duration_ms: 86.2815
+  type: 'test'
+  location: 'D:\\Repos\\agent-skills-worktrees\\fk-p0-r30-adoption-20260907\\plugins\\foreman-line\\authority-registry\\tests\\semantic-invariants.test.ts:1:975'
+  failureType: 'testCodeFailure'
+  error: |-
+    {"outcome":"RESOLVED","authoritySubject":"verification.u1-reviewed-contract-boundaries","authorityClaim":"u1-contract-covers-control-inputs-lifecycle-negatives-and-outcomes","decision":"REQUIRE_HUMAN","classification":"independent-review-human-judgment","assurance":"human-ratified","enforcementOwner":"independent-reviewer","severity":"critical","controllingRuleIds":["rule.fk-charter.f95b77d201bc.contract"],"consideredRuleIds":["rule.fk-charter.f95b77d201bc.contract"]}
+    + actual - expected
+    
+    + 'RESOLVED'
+    - 'REQUIRE_HUMAN'
+         ^
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'REQUIRE_HUMAN'
+  actual: 'RESOLVED'
+  operator: 'strictEqual'
+  stack: |-
+    <anonymous> (D:\Repos\agent-skills-worktrees\fk-p0-r30-adoption-20260907\plugins\foreman-line\authority-registry\tests\semantic-invariants.test.ts:5537:14)
+    TestContext.<anonymous> (D:\Repos\agent-skills-worktrees\fk-p0-r30-adoption-20260907\plugins\foreman-line\authority-registry\tests\semantic-invariants.test.ts:67:13)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1106:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+    Test.postRun (node:internal/test_runner/test:1235:19)
+    Test.run (node:internal/test_runner/test:1163:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:788:7)
+  ...
+# Subtest: R30 applicable C42/contract covers reviewer/step-zero/repo-read on supported and unsupported hosts
+not ok 57 - R30 applicable C42/contract covers reviewer/step-zero/repo-read on supported and unsupported hosts
+  ---
+  duration_ms: 91.1048
+  type: 'test'
+  location: 'D:\\Repos\\agent-skills-worktrees\\fk-p0-r30-adoption-20260907\\plugins\\foreman-line\\authority-registry\\tests\\semantic-invariants.test.ts:1:975'
+  failureType: 'testCodeFailure'
+  error: |-
+    {"outcome":"RESOLVED","authoritySubject":"verification.u1-reviewed-contract-boundaries","authorityClaim":"u1-contract-covers-control-inputs-lifecycle-negatives-and-outcomes","decision":"REQUIRE_HUMAN","classification":"independent-review-human-judgment","assurance":"human-ratified","enforcementOwner":"independent-reviewer","severity":"critical","controllingRuleIds":["rule.fk-charter.f95b77d201bc.contract"],"consideredRuleIds":["rule.fk-charter.f95b77d201bc.contract"]}
+    + actual - expected
+    
+    + 'RESOLVED'
+    - 'REQUIRE_HUMAN'
+         ^
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'REQUIRE_HUMAN'
+  actual: 'RESOLVED'
+  operator: 'strictEqual'
+  stack: |-
+    <anonymous> (D:\Repos\agent-skills-worktrees\fk-p0-r30-adoption-20260907\plugins\foreman-line\authority-registry\tests\semantic-invariants.test.ts:5537:14)
+    TestContext.<anonymous> (D:\Repos\agent-skills-worktrees\fk-p0-r30-adoption-20260907\plugins\foreman-line\authority-registry\tests\semantic-invariants.test.ts:67:13)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1106:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+    Test.postRun (node:internal/test_runner/test:1235:19)
+    Test.run (node:internal/test_runner/test:1163:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:788:7)
+  ...
+# Subtest: R30 applicable U01/stable-ids covers coordinator/build/repo-mutation on supported and unsupported hosts
+not ok 58 - R30 applicable U01/stable-ids covers coordinator/build/repo-mutation on supported and unsupported hosts
+  ---
+  duration_ms: 88.656
+  type: 'test'
+  location: 'D:\\Repos\\agent-skills-worktrees\\fk-p0-r30-adoption-20260907\\plugins\\foreman-line\\authority-registry\\tests\\semantic-invariants.test.ts:1:975'
+  failureType: 'testCodeFailure'
+  error: |-
+    {"outcome":"RESOLVED","authoritySubject":"goal.ratification-ledger.stable-entry-identities","authorityClaim":"event-ids-are-stable-ordered-and-referenceable","decision":"REQUIRE_HUMAN","classification":"independent-review-human-judgment","assurance":"human-ratified","enforcementOwner":"independent-reviewer","severity":"critical","controllingRuleIds":["rule.fk-charter.11307b6ee77e.stable-ids"],"consideredRuleIds":["rule.fk-charter.11307b6ee77e.stable-ids"]}
+    + actual - expected
+    
+    + 'RESOLVED'
+    - 'REQUIRE_HUMAN'
+         ^
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'REQUIRE_HUMAN'
+  actual: 'RESOLVED'
+  operator: 'strictEqual'
+  stack: |-
+    <anonymous> (D:\Repos\agent-skills-worktrees\fk-p0-r30-adoption-20260907\plugins\foreman-line\authority-registry\tests\semantic-invariants.test.ts:5537:14)
+    TestContext.<anonymous> (D:\Repos\agent-skills-worktrees\fk-p0-r30-adoption-20260907\plugins\foreman-line\authority-registry\tests\semantic-invariants.test.ts:67:13)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1106:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+    Test.postRun (node:internal/test_runner/test:1235:19)
+    Test.run (node:internal/test_runner/test:1163:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:788:7)
+  ...
+# Subtest: R30 applicable U01/stable-ids covers shaper/shaping/spec-mutation on supported and unsupported hosts
+not ok 59 - R30 applicable U01/stable-ids covers shaper/shaping/spec-mutation on supported and unsupported hosts
+  ---
+  duration_ms: 84.9303
+  type: 'test'
+  location: 'D:\\Repos\\agent-skills-worktrees\\fk-p0-r30-adoption-20260907\\plugins\\foreman-line\\authority-registry\\tests\\semantic-invariants.test.ts:1:975'
+  failureType: 'testCodeFailure'
+  error: |-
+    {"outcome":"RESOLVED","authoritySubject":"goal.ratification-ledger.stable-entry-identities","authorityClaim":"event-ids-are-stable-ordered-and-referenceable","decision":"REQUIRE_HUMAN","classification":"independent-review-human-judgment","assurance":"human-ratified","enforcementOwner":"independent-reviewer","severity":"critical","controllingRuleIds":["rule.fk-charter.11307b6ee77e.stable-ids"],"consideredRuleIds":["rule.fk-charter.11307b6ee77e.stable-ids"]}
+    + actual - expected
+    
+    + 'RESOLVED'
+    - 'REQUIRE_HUMAN'
+         ^
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'REQUIRE_HUMAN'
+  actual: 'RESOLVED'
+  operator: 'strictEqual'
+  stack: |-
+    <anonymous> (D:\Repos\agent-skills-worktrees\fk-p0-r30-adoption-20260907\plugins\foreman-line\authority-registry\tests\semantic-invariants.test.ts:5537:14)
+    TestContext.<anonymous> (D:\Repos\agent-skills-worktrees\fk-p0-r30-adoption-20260907\plugins\foreman-line\authority-registry\tests\semantic-invariants.test.ts:67:13)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1106:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+    Test.postRun (node:internal/test_runner/test:1235:19)
+    Test.run (node:internal/test_runner/test:1163:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:788:7)
+  ...
+# Subtest: R30 applicable U01/stable-ids covers kernel/runtime/receipt-validation on supported and unsupported hosts
+not ok 60 - R30 applicable U01/stable-ids covers kernel/runtime/receipt-validation on supported and unsupported hosts
+  ---
+  duration_ms: 86.7872
+  type: 'test'
+  location: 'D:\\Repos\\agent-skills-worktrees\\fk-p0-r30-adoption-20260907\\plugins\\foreman-line\\authority-registry\\tests\\semantic-invariants.test.ts:1:975'
+  failureType: 'testCodeFailure'
+  error: |-
+    {"outcome":"RESOLVED","authoritySubject":"goal.ratification-ledger.stable-entry-identities","authorityClaim":"event-ids-are-stable-ordered-and-referenceable","decision":"REQUIRE_HUMAN","classification":"independent-review-human-judgment","assurance":"human-ratified","enforcementOwner":"independent-reviewer","severity":"critical","controllingRuleIds":["rule.fk-charter.11307b6ee77e.stable-ids"],"consideredRuleIds":["rule.fk-charter.11307b6ee77e.stable-ids"]}
+    + actual - expected
+    
+    + 'RESOLVED'
+    - 'REQUIRE_HUMAN'
+         ^
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'REQUIRE_HUMAN'
+  actual: 'RESOLVED'
+  operator: 'strictEqual'
+  stack: |-
+    <anonymous> (D:\Repos\agent-skills-worktrees\fk-p0-r30-adoption-20260907\plugins\foreman-line\authority-registry\tests\semantic-invariants.test.ts:5537:14)
+    TestContext.<anonymous> (D:\Repos\agent-skills-worktrees\fk-p0-r30-adoption-20260907\plugins\foreman-line\authority-registry\tests\semantic-invariants.test.ts:67:13)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1106:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+    Test.postRun (node:internal/test_runner/test:1235:19)
+    Test.run (node:internal/test_runner/test:1163:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:788:7)
+  ...
+# Subtest: R30 applicable C11/carriers covers shaper/shaping/spec-mutation on supported and unsupported hosts
+not ok 61 - R30 applicable C11/carriers covers shaper/shaping/spec-mutation on supported and unsupported hosts
+  ---
+  duration_ms: 87.6199
+  type: 'test'
+  location: 'D:\\Repos\\agent-skills-worktrees\\fk-p0-r30-adoption-20260907\\plugins\\foreman-line\\authority-registry\\tests\\semantic-invariants.test.ts:1:975'
+  failureType: 'testCodeFailure'
+  error: |-
+    {"outcome":"RESOLVED","authoritySubject":"infrastructure.storage-carriers","authorityClaim":"storage-carriers-retain-exact-duties","decision":"REQUIRE_HUMAN","classification":"independent-review-human-judgment","assurance":"human-ratified","enforcementOwner":"independent-reviewer","severity":"critical","controllingRuleIds":["rule.fk-charter.5602e9c0f2d7.carriers"],"consideredRuleIds":["rule.fk-charter.5602e9c0f2d7.carriers"]}
+    + actual - expected
+    
+    + 'RESOLVED'
+    - 'REQUIRE_HUMAN'
+         ^
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'REQUIRE_HUMAN'
+  actual: 'RESOLVED'
+  operator: 'strictEqual'
+  stack: |-
+    <anonymous> (D:\Repos\agent-skills-worktrees\fk-p0-r30-adoption-20260907\plugins\foreman-line\authority-registry\tests\semantic-invariants.test.ts:5537:14)
+    TestContext.<anonymous> (D:\Repos\agent-skills-worktrees\fk-p0-r30-adoption-20260907\plugins\foreman-line\authority-registry\tests\semantic-invariants.test.ts:67:13)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1106:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+    Test.postRun (node:internal/test_runner/test:1235:19)
+    Test.run (node:internal/test_runner/test:1163:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:788:7)
+  ...
+# Subtest: R30 applicable C34/manifest covers shaper/step-zero/repo-mutation on supported and unsupported hosts
+not ok 62 - R30 applicable C34/manifest covers shaper/step-zero/repo-mutation on supported and unsupported hosts
+  ---
+  duration_ms: 87.9555
+  type: 'test'
+  location: 'D:\\Repos\\agent-skills-worktrees\\fk-p0-r30-adoption-20260907\\plugins\\foreman-line\\authority-registry\\tests\\semantic-invariants.test.ts:1:975'
+  failureType: 'testCodeFailure'
+  error: |-
+    {"outcome":"RESOLVED","authoritySubject":"corpus.exhaustive-disposition-manifest","authorityClaim":"complete-corpus-has-one-disposition-per-item","decision":"REQUIRE_HUMAN","classification":"independent-review-human-judgment","assurance":"human-ratified","enforcementOwner":"independent-reviewer","severity":"critical","controllingRuleIds":["rule.fk-charter.6bef45e68858.manifest"],"consideredRuleIds":["rule.fk-charter.6bef45e68858.manifest"]}
+    + actual - expected
+    
+    + 'RESOLVED'
+    - 'REQUIRE_HUMAN'
+         ^
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'REQUIRE_HUMAN'
+  actual: 'RESOLVED'
+  operator: 'strictEqual'
+  stack: |-
+    <anonymous> (D:\Repos\agent-skills-worktrees\fk-p0-r30-adoption-20260907\plugins\foreman-line\authority-registry\tests\semantic-invariants.test.ts:5537:14)
+    TestContext.<anonymous> (D:\Repos\agent-skills-worktrees\fk-p0-r30-adoption-20260907\plugins\foreman-line\authority-registry\tests\semantic-invariants.test.ts:67:13)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1106:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+    Test.postRun (node:internal/test_runner/test:1235:19)
+    Test.run (node:internal/test_runner/test:1163:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:788:7)
+  ...
+# Subtest: R30 applicable C32/accounting covers shaper/shaping/spec-mutation on supported and unsupported hosts
+not ok 63 - R30 applicable C32/accounting covers shaper/shaping/spec-mutation on supported and unsupported hosts
+  ---
+  duration_ms: 94.6603
+  type: 'test'
+  location: 'D:\\Repos\\agent-skills-worktrees\\fk-p0-r30-adoption-20260907\\plugins\\foreman-line\\authority-registry\\tests\\semantic-invariants.test.ts:1:975'
+  failureType: 'testCodeFailure'
+  error: |-
+    {"outcome":"RESOLVED","authoritySubject":"measurement.acceptance-accounting-and-unknowns","authorityClaim":"accounting-defines-window-components-and-unknowns","decision":"REQUIRE_HUMAN","classification":"independent-review-human-judgment","assurance":"human-ratified","enforcementOwner":"independent-reviewer","severity":"critical","controllingRuleIds":["rule.fk-charter.5ab7daa95afc.accounting"],"consideredRuleIds":["rule.fk-charter.5ab7daa95afc.accounting"]}
+    + actual - expected
+    
+    + 'RESOLVED'
+    - 'REQUIRE_HUMAN'
+         ^
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'REQUIRE_HUMAN'
+  actual: 'RESOLVED'
+  operator: 'strictEqual'
+  stack: |-
+    <anonymous> (D:\Repos\agent-skills-worktrees\fk-p0-r30-adoption-20260907\plugins\foreman-line\authority-registry\tests\semantic-invariants.test.ts:5537:14)
+    TestContext.<anonymous> (D:\Repos\agent-skills-worktrees\fk-p0-r30-adoption-20260907\plugins\foreman-line\authority-registry\tests\semantic-invariants.test.ts:67:13)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1106:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+    Test.postRun (node:internal/test_runner/test:1235:19)
+    Test.run (node:internal/test_runner/test:1163:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:788:7)
+  ...
+# Subtest: R30 applicable C43/window covers coordinator/closure/repo-mutation on supported and unsupported hosts
+not ok 64 - R30 applicable C43/window covers coordinator/closure/repo-mutation on supported and unsupported hosts
+  ---
+  duration_ms: 77.3692
+  type: 'test'
+  location: 'D:\\Repos\\agent-skills-worktrees\\fk-p0-r30-adoption-20260907\\plugins\\foreman-line\\authority-registry\\tests\\semantic-invariants.test.ts:1:975'
+  failureType: 'testCodeFailure'
+  error: |-
+    {"outcome":"RESOLVED","authoritySubject":"measurement.coordinator-accepted-window-baseline","authorityClaim":"coordinator-records-green-chain-and-human-merge-acceptance","decision":"REQUIRE_HUMAN","classification":"independent-review-human-judgment","assurance":"human-ratified","enforcementOwner":"independent-reviewer","severity":"critical","controllingRuleIds":["rule.fk-charter.24841a6c1279.window"],"consideredRuleIds":["rule.fk-charter.24841a6c1279.window"]}
+    + actual - expected
+    
+    + 'RESOLVED'
+    - 'REQUIRE_HUMAN'
+         ^
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'REQUIRE_HUMAN'
+  actual: 'RESOLVED'
+  operator: 'strictEqual'
+  stack: |-
+    <anonymous> (D:\Repos\agent-skills-worktrees\fk-p0-r30-adoption-20260907\plugins\foreman-line\authority-registry\tests\semantic-invariants.test.ts:5537:14)
+    TestContext.<anonymous> (D:\Repos\agent-skills-worktrees\fk-p0-r30-adoption-20260907\plugins\foreman-line\authority-registry\tests\semantic-invariants.test.ts:67:13)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1106:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+    Test.postRun (node:internal/test_runner/test:1235:19)
+    Test.run (node:internal/test_runner/test:1163:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:788:7)
+  ...
+# Subtest: R30 applicable L04/preservation covers operator/runtime/repo-read on supported and unsupported hosts
+not ok 65 - R30 applicable L04/preservation covers operator/runtime/repo-read on supported and unsupported hosts
+  ---
+  duration_ms: 84.6674
+  type: 'test'
+  location: 'D:\\Repos\\agent-skills-worktrees\\fk-p0-r30-adoption-20260907\\plugins\\foreman-line\\authority-registry\\tests\\semantic-invariants.test.ts:1:975'
+  failureType: 'testCodeFailure'
+  error: |-
+    {"outcome":"RESOLVED","authoritySubject":"goal.continuation.source-preservation-and-ambient-boundary","authorityClaim":"preserve-worktrees-handoff-and-ambient-boundary","decision":"REFUSE","classification":"pre-action-refusal","assurance":"human-ratified","enforcementOwner":"kernel-policy","severity":"critical","controllingRuleIds":["rule.fk-loop-directive.923c5c059572.preservation"],"consideredRuleIds":["rule.fk-loop-directive.923c5c059572.preservation"]}
+    + actual - expected
+    
+    + 'RESOLVED'
+    - 'REFUSE'
+         ^
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'REFUSE'
+  actual: 'RESOLVED'
+  operator: 'strictEqual'
+  stack: |-
+    <anonymous> (D:\Repos\agent-skills-worktrees\fk-p0-r30-adoption-20260907\plugins\foreman-line\authority-registry\tests\semantic-invariants.test.ts:5537:14)
+    TestContext.<anonymous> (D:\Repos\agent-skills-worktrees\fk-p0-r30-adoption-20260907\plugins\foreman-line\authority-registry\tests\semantic-invariants.test.ts:67:13)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1106:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+    Test.postRun (node:internal/test_runner/test:1235:19)
+    Test.run (node:internal/test_runner/test:1163:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:788:7)
+  ...
+# Subtest: R30 exact correspondence does not bypass protected operation or migration refusal
+ok 66 - R30 exact correspondence does not bypass protected operation or migration refusal
+  ---
+  duration_ms: 186.4721
+  type: 'test'
+  ...
+# Subtest: R30 approved reference-edge set rejects missing refs with repaired incidental digests
+ok 67 - R30 approved reference-edge set rejects missing refs with repaired incidental digests
+  ---
+  duration_ms: 121.6565
+  type: 'test'
+  ...
+# Subtest: R30 approved reference-edge set rejects extra refs with repaired incidental digests
+ok 68 - R30 approved reference-edge set rejects extra refs with repaired incidental digests
+  ---
+  duration_ms: 124.3332
+  type: 'test'
+  ...
+# Subtest: R30 approved reference-edge set rejects reordered refs with repaired incidental digests
+ok 69 - R30 approved reference-edge set rejects reordered refs with repaired incidental digests
+  ---
+  duration_ms: 125.231
+  type: 'test'
+  ...
+# Subtest: R30 approved reference-edge set rejects swapped refs with repaired incidental digests
+ok 70 - R30 approved reference-edge set rejects swapped refs with repaired incidental digests
+  ---
+  duration_ms: 127.2285
+  type: 'test'
+  ...
+# Subtest: R30 approved reference-edge set rejects duplicate refs with repaired incidental digests
+not ok 71 - R30 approved reference-edge set rejects duplicate refs with repaired incidental digests
+  ---
+  duration_ms: 72.1845
+  type: 'test'
+  location: 'D:\\Repos\\agent-skills-worktrees\\fk-p0-r30-adoption-20260907\\plugins\\foreman-line\\authority-registry\\tests\\semantic-invariants.test.ts:1:975'
+  failureType: 'testCodeFailure'
+  error: '[{"code":"SCHEMA_INVALID","message":"/rules/146/sourceRefs must NOT have duplicate items (items ## 0 and 3 are identical)","locator":"/rules/146/sourceRefs"}]'
+  code: 'ERR_TEST_FAILURE'
+  name: 'TestAssertionError'
+  stack: |-
+    ok (D:\Repos\agent-skills-worktrees\fk-p0-r30-adoption-20260907\plugins\foreman-line\authority-registry\tests\support\assert-ok.ts:28:9)
+    r30AuthorityRefusal (D:\Repos\agent-skills-worktrees\fk-p0-r30-adoption-20260907\plugins\foreman-line\authority-registry\tests\semantic-invariants.test.ts:5201:3)
+    <anonymous> (D:\Repos\agent-skills-worktrees\fk-p0-r30-adoption-20260907\plugins\foreman-line\authority-registry\tests\semantic-invariants.test.ts:5561:5)
+    TestContext.<anonymous> (D:\Repos\agent-skills-worktrees\fk-p0-r30-adoption-20260907\plugins\foreman-line\authority-registry\tests\semantic-invariants.test.ts:67:13)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1106:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+    Test.postRun (node:internal/test_runner/test:1235:19)
+    Test.run (node:internal/test_runner/test:1163:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:788:7)
+  ...
+# Subtest: R30 reciprocal inventory edge set rejects missing membership
+ok 72 - R30 reciprocal inventory edge set rejects missing membership
+  ---
+  duration_ms: 164.409
+  type: 'test'
+  ...
+# Subtest: R30 reciprocal inventory edge set rejects extra membership
+ok 73 - R30 reciprocal inventory edge set rejects extra membership
+  ---
+  duration_ms: 134.282
+  type: 'test'
+  ...
+# Subtest: R30 reciprocal inventory edge set rejects cross-item membership
+ok 74 - R30 reciprocal inventory edge set rejects cross-item membership
+  ---
+  duration_ms: 134.0768
+  type: 'test'
+  ...
+# Subtest: R30 reciprocal inventory edge set rejects duplicate membership
+not ok 75 - R30 reciprocal inventory edge set rejects duplicate membership
+  ---
+  duration_ms: 74.2055
+  type: 'test'
+  location: 'D:\\Repos\\agent-skills-worktrees\\fk-p0-r30-adoption-20260907\\plugins\\foreman-line\\authority-registry\\tests\\semantic-invariants.test.ts:1:975'
+  failureType: 'testCodeFailure'
+  error: '[{"code":"SCHEMA_INVALID","message":"/sources/0/inventoryItems/84/ruleIds must NOT have duplicate items (items ## 58 and 24 are identical)","locator":"/sources/0/inventoryItems/84/ruleIds"}]'
+  code: 'ERR_TEST_FAILURE'
+  name: 'TestAssertionError'
+  stack: |-
+    ok (D:\Repos\agent-skills-worktrees\fk-p0-r30-adoption-20260907\plugins\foreman-line\authority-registry\tests\support\assert-ok.ts:28:9)
+    r30AuthorityRefusal (D:\Repos\agent-skills-worktrees\fk-p0-r30-adoption-20260907\plugins\foreman-line\authority-registry\tests\semantic-invariants.test.ts:5201:3)
+    <anonymous> (D:\Repos\agent-skills-worktrees\fk-p0-r30-adoption-20260907\plugins\foreman-line\authority-registry\tests\semantic-invariants.test.ts:5584:5)
+    TestContext.<anonymous> (D:\Repos\agent-skills-worktrees\fk-p0-r30-adoption-20260907\plugins\foreman-line\authority-registry\tests\semantic-invariants.test.ts:67:13)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1106:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+    Test.postRun (node:internal/test_runner/test:1235:19)
+    Test.run (node:internal/test_runner/test:1163:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:788:7)
+  ...
+# Subtest: R30 singleton component identity refuses suffix substitution
+ok 76 - R30 singleton component identity refuses suffix substitution
+  ---
+  duration_ms: 127.1588
+  type: 'test'
+  ...
+# Subtest: R30 singleton component identity refuses borrowed suffix
+ok 77 - R30 singleton component identity refuses borrowed suffix
+  ---
+  duration_ms: 142.6258
+  type: 'test'
+  ...
+# Subtest: R30 preserves ordinary unrelated legacy singleton and nonliteral-paraphrase refusals
+ok 78 - R30 preserves ordinary unrelated legacy singleton and nonliteral-paraphrase refusals
+  ---
+  duration_ms: 205.9056
+  type: 'test'
+  ...
+# Subtest: R30 corroboration adds exactly 67 reciprocal edges without changing the designated bases
+ok 79 - R30 corroboration adds exactly 67 reciprocal edges without changing the designated bases
+  ---
+  duration_ms: 19.7561
+  type: 'test'
+  ...
+1..79
+# tests 79
+# suites 0
+# pass 62
+# fail 17
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 14580.5178
+DIRECT_EXIT=1

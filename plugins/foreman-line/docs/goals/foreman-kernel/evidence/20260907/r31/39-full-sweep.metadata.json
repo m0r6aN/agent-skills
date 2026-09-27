@@ -1,0 +1,8 @@
+{
+  "command": "npx tsx src/cli.ts sweep authority-enforcement-registry.yaml --repo-root ../../..",
+  "checkpoint": "2fc39405988df4d7073f20d69b65a276329be83d",
+  "startUtc": "2026-09-07T18:29:09.4632748Z",
+  "endUtc": "2026-09-07T18:29:20.4581177Z",
+  "elapsedSeconds": 10.9984571,
+  "directExit": 0
+}

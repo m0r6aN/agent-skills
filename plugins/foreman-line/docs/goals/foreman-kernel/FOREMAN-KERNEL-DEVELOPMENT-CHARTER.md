@@ -3,7 +3,7 @@
 **Prepared:** 2026-09-07
 **Goal:** `foreman-kernel`
 **Owner:** Clinton Morgan
-**Status (living state — updated 2026-09-26):** Development consolidation of the recovered ratified charter and the ratified September 7 infrastructure recommendations, adopted into the live tree 2026-09-14 via PR #22 (`8b3733b`). Live-owner reconciliation completed 2026-09-26 (`fk-reconciliation-2026-09-26.md`); the fresh independent review of the incorporated changes (§15.2) remains outstanding. FK-P0 executed in the live tree 2026-09-26 as the canon-authority and enforcement registry at docs level (`fk-p0-canon-authority-enforcement-registry.md`); the code-level registry is accepted at R31 on `codex/fk-p0-r31-source-adoption-20260907` (`1747c1d`, 751/751, two APPROVE reviews) and is pending the human Gate 3 merge — it is not in this tree. FK-P1 Stage A is shaped on `codex/foreman-kernel-resume-20260908`; FK-P1–FK-P21 are not dispatched (`fk-p1-p21-dispatch-plan.md`). Gate 3 remains human-owned.
+**Status:** Development consolidation of the recovered ratified charter and the ratified September 7 infrastructure recommendations. Pending live-source adoption and review of the incorporated changes.
 **Coordinator:** The current owner in the authoritative goal loop directive; no transfer claimed here.
 **Mode:** Repo-Local Parcel Mode
 **Suggested companion path:** `plugins/foreman-line/docs/goals/foreman-kernel/FOREMAN-KERNEL-DEVELOPMENT-CHARTER.md`
@@ -94,9 +94,7 @@ dispatches.” D1–D17 were ratified. The required fresh plan review returned
 SHOULD-FIX findings; D3, D7–D9, D13–D17, new D18–D20, the parcel graph, and affected
 exit criteria were placed under a scoped Gate 1 re-open. The developer explicitly
 re-ratified them on 2026-08-31 with: “Re-ratify Gate 1 amendments R1–R13 and resume
-Gate 2.” Subsequent amendments are ratified individually. **The binding set is the
-ledger in §4.1, not a range restated in prose:** every ratification event appends a row
-there, so no prose sentence in this charter needs editing when a decision is added.
+Gate 2.” D1–D20 and the amended graph/exits are binding.
 
 | ID | Decision | Reasoning |
 |---|---|---|
@@ -120,27 +118,6 @@ there, so no prose sentence in this charter needs editing when a decision is add
 | D18 | `authorizeAction` is a dedicated provider-neutral policy engine, not a hook or control-handler implementation detail. It combines authenticated principal, repository/worktree identity, compiled Allowed Files, role posture, leases/revisions, gate evidence, outage mode, and post-diff obligations against golden lifecycle vectors. | Without an owning engine parcel, thin adapters or the control catalog would have to reimplement policy and violate D12. |
 | D19 | Public read APIs are content-only by default. Any repository read uses an admission-bound `repoId` plus exact relative path resolved inside one mounted read-only root, with canonical containment, symlink/reparse refusal, regular-file checks, and byte limits. Arbitrary host paths are forbidden. | Read-only access can still disclose unrelated source, secrets, container files, or the SQLite volume. Mutation authority and read confidentiality are separate boundaries. |
 | D20 | First-release enforcement is claimed only for Claude Code on Windows 11 with Docker Desktop and the tested plugin/launcher shape. The MCP protocol and Linux container image remain provider-neutral; native-Linux-host or Codex enforcement is not claimed until separate process-boundary evidence exists. | Two harness shapes do not prove host, path, filesystem, or lifecycle parity. The claim must match the demonstrated platform matrix. |
-| D21 | The kernel's decision path carries a stated latency budget, measured on the D20 platform matrix. Two spans are distinguished: `kernelDecisionLatency` (request received at the decision surface → response written) is kernel-owned and budgeted at p50 ≤ 5 ms, p95 ≤ 20 ms, p99 ≤ 50 ms warm; `mediatedActionLatency` (host lifecycle entry → hook exit, inclusive of adapter and transport) is budgeted at p99 ≤ 150 ms. First-call-after-start cost is reported separately against a ≤ 2000 ms allowance and is never folded into a warm percentile. Exceeding a budget is a recorded obligation, not a refusal. Exceeding the hard deadline of 1000 ms on a single decision is treated as kernel-unreachable and inherits the D8 outage posture unchanged. Authorization results may be cached only when bound to `goalRevision`, `policyDigest`, and compiled-scope digest; a cache entry whose binding no longer matches produces `STATE_REVISION_STALE` rather than a stale ALLOW. | D8's enforcement claim depends on adapters that remain loaded and enabled. Latency is the most probable cause of an operator disabling one, which converts a claimed mechanical control into an undetected gap. The measured D20 budgets constrain transport choice and prevent unsound caching; they do not establish a universal claim that every network round trip necessarily exceeds the budget. |
-
-### 4.1 Ratification ledger
-
-Authoritative record of what is binding and when it became binding. Any statement
-elsewhere in this charter that appears to enumerate the binding set is a convenience
-restatement; this table governs. A decision is in force only if a row below puts it there.
-
-Each row carries a unique ledger entry id. Ids are stable, assigned in order, and never
-reused or renumbered; amendments and the authority registry reference a ratification event
-by its id rather than by its date or its position.
-
-| Entry | Date | Instrument | Scope ratified | Record |
-|---|---|---|---|---|
-| L1 | 2026-08-31 | Original Gate 1 | D1–D17, the FK-P0–FK-P21 graph, wave exits, scenarios, goal exit criteria | “Ratify Gate 1 and authorize Gate 2 dispatches.” |
-| L2 | 2026-08-31 | Scoped Gate 1 re-open, plan-review amendments R1–R13 | D3, D7–D9, D13–D17, new D18–D20, amended graph and affected exit criteria | “Re-ratify Gate 1 amendments R1–R13 and resume Gate 2.” |
-| L3 | 2026-09-01 | Amendment A1 — decision-path latency budget | D21; FK-P1 and FK-P17 scope; Wave 0 exit; integration scenario 14; §13 items 7 and 9 | `proposed-amendment-A1-decision-path-latency-budget.md`, ratification record at foot |
-| L4 | 2026-09-07 | Amendment A1.8 — ratification ledger (with A1.9, its Entry-id keying) | §4.1 itself; header status line, §4 preamble, and §10 Gate 1 restatements replaced by pointers to §4.1; ledger rows keyed by stable Entry id. Adds no locked decision, changes no gate, alters no parcel, scenario, or exit criterion. | `amendment-A1.8-ratification-ledger.md`; A1.9 at `7e7dc7d`; `authorization-20260907-unattended.md`. This is the instruments' own required row. |
-| L5 | 2026-09-07 | Infrastructure adoption INF-1–INF-8 | §14 and its detailed carrier mapping; D21 rationale/cold-deadline clarification; U1 assigned to coordinator contract resolution, FK-P18 production, FK-P19 verification and FK-P21 retention. No parcel added or dependency removed. | `amendment-A4-infrastructure-adoption-20260907.md`; developer recommendations ratified September 7 and continuation authorization in `authorization-20260907-unattended.md`. |
-
-**Appending a row is the only way to change the binding set.** Any amendment document that changes this charter must produce a row here, whether or not it changes the binding set. An unrowed amendment is a proposal; stable rows record actual ratification events, not inferred approvals.
 
 ## 5. First-release architecture
 
@@ -201,14 +178,12 @@ reviews.
 | Parcel | Outcome | Risk / routing | Dependencies |
 |---|---|---|---|
 | FK-P0  -  Canon authority and enforcement registry | Reconciles operative gate/authority statements; defines the structured constraint taxonomy and operation authority matrix; inventories every standing rule by enforcement destination. | critical / architecture-risk | none |
-| FK-P1 — Lifecycle, admission, and decision contracts | Versioned lifecycle event, authenticated-principal/local-capability admission, `authorizeAction`, decision envelope, refusal-code, assurance-level, repository identity, content/read-capability boundary, host-path normalization split, golden vectors, and the D21 decision-path latency contract — the two measured spans and their observation points, the hard-deadline-to-outage mapping, and the revision-bound caching rule whose violation yields `STATE_REVISION_STALE`. | critical / architecture-risk | FK-P0 |
+| FK-P1  -  Lifecycle, admission, and decision contracts | Versioned lifecycle event, authenticated-principal/local-capability admission, `authorizeAction`, decision envelope, refusal-code, assurance-level, repository identity, content/read-capability boundary, host-path normalization split, and golden vectors. | critical / architecture-risk | FK-P0 |
 | FK-P2  -  Spec-body compiler | Parses required spec sections and compiles exact non-glob Allowed Files plus frozen/forbidden surfaces; rejects ambiguity, traversal, equivalent-path, symlink/reparse escape, and missing authority. | critical / architecture-risk | FK-P0, FK-P1 |
 
 **Wave 0 exit:** contracts and fixtures are merged; exact path authority can be compiled
-without reading `surfaces:` as mutation permission; the D21 latency contract is specified
-with both measured spans, their observation points, the hard-deadline-to-outage mapping,
-and the revision-bound caching rule; and plan-level contradictions have no unresolved
-implementation consequence.
+without reading `surfaces:` as mutation permission; plan-level contradictions have no
+unresolved implementation consequence.
 
 ### Wave 1  -  Pure trust core
 
@@ -255,7 +230,7 @@ field-level Git/SQLite authority matrix stops on divergence rather than overwrit
 | Parcel | Outcome | Risk / routing | Dependencies |
 |---|---|---|---|
 | FK-P16  -  Claude lifecycle adapter, shadow mode | Capability-preflighted SessionStart/PreToolUse/PostToolUse/Stop adapter for the D20 matrix; enrollment heartbeat; host-path normalization; calls FK-P12 and records would-allow/would-refuse/detected-only results. Owns Claude hook registration, not Codex or shared Docker files. | critical / architecture-risk | FK-P12, FK-P13, FK-P15 |
-| FK-P17 — Bypass and outage harness | Exercises shell, subprocess, custom-tool/MCP, symlink/reparse, subagent, mediated bypass, hook non-enrollment, stale state, service timeout, and restart; produces the mechanical/detected/unsupported matrix; and produces the D21 latency profile on the D20 platform — warm percentiles for both measured spans, the first-call-after-start figure, and a hard-deadline case proving the unreachable path inherits the D8 outage posture rather than failing open. | critical / architecture-risk | FK-P16 |
+| FK-P17  -  Bypass and outage harness | Exercises shell, subprocess, custom-tool/MCP, symlink/reparse, subagent, mediated bypass, hook non-enrollment, stale state, service timeout, and restart; produces the mechanical/detected/unsupported matrix. | critical / architecture-risk | FK-P16 |
 | FK-P18  -  CI scope and state-evidence backstops | Mirrors exact-scope, enrollment, state/evidence, and dirty-reviewer invariants in CI; negative control intentionally bypasses the hook and must fail CI before enforcement can promote. Owns only its named workflow/CI integration points. | critical / architecture-risk | FK-P17 |
 | FK-P19  -  High-confidence refusal enforcement | Promotes only the five mediated classes whose negative controls, corpus sweeps, authorization-engine vectors, and FK-P18 CI backstops pass; implements degraded read-only mode and fail-closed governed mutation. | critical / architecture-risk | FK-P17, FK-P18 |
 | FK-P20  -  Second-host feasibility and host registration | Probes Codex lifecycle capabilities; either ships a thin adapter with process-boundary parity or records the unsupported gap. Owns Codex manifest changes; no Claude-hook or Docker-file edits. | elevated / architecture-risk | FK-P19 |
@@ -317,14 +292,6 @@ The goal is not complete until all scenarios have durable evidence:
     probe on its declared host/filesystem matrix; unsupported lifecycle events are
     reported as gaps.
 
-14. **Decision-path latency:** on the D20 platform, a warm kernel serves a
-    representative governed-mutation decision within the D21 budget for both measured
-    spans; the first-call-after-start figure is recorded separately; a decision
-    exceeding the hard deadline is reported as kernel-unreachable and inherits the D8
-    outage posture without failing open; and an authorization cache entry whose
-    `goalRevision`, `policyDigest`, or compiled-scope digest no longer matches produces
-    `STATE_REVISION_STALE` rather than a stale ALLOW.
-
 ## 9. Goal exit criterion
 
 This goal exits only when:
@@ -358,11 +325,10 @@ This goal exits only when:
 
 ### Gate 1  -  charter ratification
 
-**RE-CLEARED 2026-08-31 — nondelegable developer re-ratification recorded.** The
+**RE-CLEARED 2026-08-31  -  nondelegable developer re-ratification recorded.** The
 original Gate 1 was cleared, the fresh plan review returned six decision-changing
-BLOCKERs, and the resulting scoped re-open for R1–R13 was explicitly re-ratified. The
-set in force — including every amendment ratified after this date — is the ledger in
-§4.1. Gate 1 remains nondelegable for each amendment individually.
+BLOCKERs, and the resulting scoped re-open for R1–R13 was explicitly re-ratified. D1–D20,
+FK-P0–FK-P21, the amended wave exits, scenarios, and goal exit criteria are in force.
 
 ### Gate 2  -  parcel dispatch
 
@@ -442,11 +408,9 @@ Ratifying this charter confirms:
 5. the Allowed-Files compiler and rule-retirement standard (D10–D13);
 6. durable field-authoritative SQLite state, local control capability, read-volume
    isolation, and pure/effect separation (D14–D16);
-7. versioned typed tool contracts, the read-confidentiality boundary, and the
-   decision-path latency contract with its revision-bound caching rule
-   (D17, D19, D21);
+7. versioned typed tool contracts plus the read-confidentiality boundary (D17, D19);
 8. the FK-P0 through FK-P21 dependency graph and Wave 0–4 exit criteria;
-9. the explicit out-of-scope list and fourteen integration scenarios;
+9. the explicit out-of-scope list and thirteen integration scenarios;
 10. standing Gate-2 dispatch authorization under the stated contingencies; and
 11. nondelegated human Gate 3 for every merge.
 
@@ -460,8 +424,10 @@ proceed in dependency order under the stated contingencies.
 
 ## 14. Ratified infrastructure adoption, 2026-09-07
 
-This section adopts the eight September 7 ratified recommendations into the live charter under L5. The detailed Carriers paragraphs assign obligations without adding parcels or dependency edges. The preserved companion is provenance; its older sections 1-13 do not replace this charter. Amendments A1 and A1.8/A1.9 stand as recorded in L3/L4. Newly adopted normative source content requires a separately reviewed FK-P0 corpus/contract amendment before an implementation verification claim can cover it. The unchanged Round 6 candidate remains a distinct baseline, not evidence for this adopted corpus.
-`INF-1` through `INF-8` are traceability labels local to this
+This section carries the eight ADR review recommendations Clint ratified with
+"Your recommendations are ratified, as written." It assigns those requirements
+to the existing FK parcels without adding parcels, changing dependencies, or
+renumbering D1-D20. `INF-1` through `INF-8` are traceability labels local to this
 section, not claims to unused global D numbers. The implementation mapping and
 launch procedure are a reviewable consolidation of ratified intent, not evidence
 that this text has already landed in the live goal worktree.
@@ -476,12 +442,9 @@ direction. Do not claim every filesystem operation in remote development crosses
 the network or that every network hop necessarily exceeds a latency budget.
 
 Future coordinator, sidecar, retrieval, and worker hosting stays open to separately
-ratified designs. The `hierarchical-coordination-sidecars` goal retains its own
-owner, charter, and gates. The former `heterogeneous-agent-worker-fabric` record was
-deleted 2026-09-26 per the coordinator audit (goal-status-report-2026-09-26.md); its
-extractable design lives in
-`foreman-line-boundary-routing/hawf-extract-worker-lane-contracts.md`.
-This kernel release creates neither hierarchical commissioning nor a
+ratified designs. The `hierarchical-coordination-sidecars` and
+`heterogeneous-agent-worker-fabric` goals retain their own owners, charters, and
+gates. This kernel release creates neither hierarchical commissioning nor a
 distributed execution fabric by implication. HCS's A3 proposal is not imported
 as ratified authority. Preserve neutral kernel contracts for those future consumers
 without assigning this goal their implementation work.
@@ -552,16 +515,28 @@ the actual external-effect authority; this document grants none automatically.
 
 ### INF-5: Reconcile A1 and measure both latency spans
 
-A1 is ratified and already adopted as D21 and ledger entry L3. Its numerical budgets, both latency spans, revision-bound cache rule and D8 outage mapping remain binding. The source artifact's old not-yet-landed wording is historical and has been corrected.
+The recovered adjacent A1 text identifies D21, names FK-P1 and FK-P17, distinguishes
+kernel decision latency from lifecycle-entry-to-hook-exit latency, and separately
+reports cold start. It records ratification on 2026-09-01 while retaining
+contradictory language saying it is not in force. The saved August 31 charter
+predates A1. Reconcile the current charter, amendment ledger, and exact adoption
+before changing a latency contract or assigning any decision ID.
 
-| Span or condition | Adopted D21 budget |
+Recovered A1 values, provided only as reconciliation anchors, are:
+
+| Span or condition | Value in the recovered A1 |
 |---|---|
 | Warm kernel decision | p50 <= 5 ms; p95 <= 20 ms; p99 <= 50 ms |
 | End-to-end mediated action | p99 <= 150 ms |
 | First call after startup | separately reported allowance <= 2000 ms |
 | Per-decision hard deadline | 1000 ms, mapped to the existing outage posture |
 
-The first-call allowance is an observation budget and does not extend the 1000 ms decision deadline or permit a late ALLOW. FK-P1 specifies the observation points and which startup work lies outside the decision span. Budget overruns remain recorded obligations; hard-deadline overruns inherit D8. No cache eligibility is broadened to satisfy a performance target.
+Do not implement those anchors merely because they appear here. Confirm the live
+adopted text and any later amendment, including how cold-start accounting relates
+to the hard deadline and which observations participate in each percentile.
+Do not invent a new authorization-cache policy, widen existing cache eligibility,
+or use cached decisions to manufacture authority. Resolve a genuine contract gap
+through a narrowly scoped amendment before implementing that gap.
 
 **Carriers:** FK-P0 records reconciliation; FK-P1 owns the adopted decision-path
 contract; FK-P16 implements the adapter; FK-P17 measures both spans, cold start,
@@ -637,14 +612,6 @@ automatically choose Azure, authorize spend, or widen D20.
 
 **Carriers:** FK-P9/FK-P14 define backup and restore; FK-P15 proves recovery;
 FK-P21 records limitations, objectives, results, and revisit evidence.
-
-### Adoption dependencies and evidence ownership
-
-- U1 (backstop independence) now has a named contract-resolution owner: this goal's coordinator. FK-P18 implements the reviewed producer contract and supplies evidence; FK-P19 independently verifies that evidence at promotion; FK-P21 consolidates and retains evidence that must already exist before promotion. FK-P21 cannot be the first producer of promotion prerequisites.
-- Before FK-P18 implementation dispatch, a concrete independently reviewed contract must bind protected verifier/workflow control, builder-input limits, credentials and runner lifecycle, independent negative controls, evidence identities/retention, and bounded unsupported/unavailable outcomes. Missing or invalid evidence refuses promotion. This is an affected-parcel dependency, not a hold on upstream evaluator work. No old A2 draft is revived by this assignment.
-- The coordinator owns an observation-window baseline now: an accepted parcel means a parcel accepted through its required green chain and human merge gate; record elapsed times, queue delay, included cost components and unknowns. With no accepted parcels, report zero accepted and undefined cost per accepted parcel. Do not manufacture billing telemetry.
-- FK-P9/FK-P14 define backup/restore boundaries and objectives before their affected acceptance gates; FK-P15 measures recovery. Unknown numeric objectives do not block orthogonal work, and no objective is claimed met without measurement.
-- The detailed INF carrier paragraphs govern. The companion's section 16 is a convenience summary and cannot narrow them. Existing packaging, HCS and worker-fabric serialization ownership is checked before affected edits; no foreign goal scope is imported.
 
 ## 15. Dispatch readiness and operating sequence
 

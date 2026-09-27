@@ -1,0 +1,35 @@
+{
+  "state": "Verification complete; final independent review pending",
+  "remoteBranch": "codex/fk-p0-r30-adoption-20260907",
+  "remoteCommit": "c35ff72ef45fb19d647cede6acf5a13636911db7",
+  "testedPackageSubject": "f8093410cead451f204d08ae25f3a70b34208213",
+  "sourceSnapshot": "65c471416e4a3916695815e951ffbe389288560e",
+  "independentlyVerifiedRemoteEvidenceFiles": 96,
+  "evidenceManifestSha256": "e9f63e75a30d8d53414a696febc619381b83f212297322dd495172124a01cd9c",
+  "packageDiffFromTestedSubject": [],
+  "independentFullLogTotals": {
+    "tests": 686,
+    "pass": 686,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "directExit": 0,
+    "perFileTests": [
+      1,
+      137,
+      1,
+      5,
+      23,
+      519
+    ]
+  },
+  "evidenceEntryPoint": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/final-handoff.md",
+  "remaining": [
+    "Two fresh final independent reviews and disposition",
+    "R31 selective source adoption and separate current-main integration verification",
+    "Human Gate3; no merge or StageF performed"
+  ],
+  "recordedUtc": "2026-09-07T16:21:14.898376+00:00",
+  "timingBasis": "Publication and hash verification were observed directly earlier in this session; this timestamp is the record write time, not a reconstructed command boundary."
+}

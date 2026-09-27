@@ -1,0 +1,10 @@
+{
+  "command": "npm",
+  "arguments": [
+    "ci"
+  ],
+  "startUtc": "2026-09-07T15:43:52.9989736Z",
+  "endUtc": "2026-09-07T15:44:00.9578038Z",
+  "elapsedSeconds": 7.9157099,
+  "directExit": 0
+}

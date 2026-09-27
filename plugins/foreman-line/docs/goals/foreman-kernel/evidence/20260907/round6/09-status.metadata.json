@@ -1,0 +1,15 @@
+{
+  "startedUtc": "2026-09-07T14:14:37.5347465Z",
+  "stdoutSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+  "endedUtc": "2026-09-07T14:14:37.6662707Z",
+  "step": "09-status",
+  "directExit": 0,
+  "stderrSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+  "command": [
+    "git.exe",
+    "status",
+    "--porcelain=v1"
+  ],
+  "elapsedMs": 130,
+  "head": "0ee165720f8d1e3a91eb283cb770400b23f61bf5"
+}

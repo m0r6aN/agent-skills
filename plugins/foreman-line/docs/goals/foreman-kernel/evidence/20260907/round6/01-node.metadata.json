@@ -1,0 +1,14 @@
+{
+  "stderrSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+  "step": "01-node",
+  "head": "0ee165720f8d1e3a91eb283cb770400b23f61bf5",
+  "startedUtc": "2026-09-07T13:49:38.1256414Z",
+  "elapsedMs": 245,
+  "stdoutSha256": "B99372377FD9E05E4EEE36B57572623996C0DB38E8FE8000C6C016C6EA0290C0",
+  "endedUtc": "2026-09-07T13:49:38.3745445Z",
+  "directExit": 0,
+  "command": [
+    "node.exe",
+    "-v"
+  ]
+}

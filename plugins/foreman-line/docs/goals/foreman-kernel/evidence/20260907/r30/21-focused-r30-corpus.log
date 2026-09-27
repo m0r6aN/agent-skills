@@ -1,0 +1,71 @@
+TAP version 13
+# Subtest: R30 INF-1 real governed source mutation fails exact value binding
+ok 1 - R30 INF-1 real governed source mutation fails exact value binding
+  ---
+  duration_ms: 9427.4062
+  type: 'test'
+  ...
+# Subtest: R30 INF-2 real governed source mutation fails exact value binding
+ok 2 - R30 INF-2 real governed source mutation fails exact value binding
+  ---
+  duration_ms: 6811.3934
+  type: 'test'
+  ...
+# Subtest: R30 INF-3 real governed source mutation fails exact value binding
+ok 3 - R30 INF-3 real governed source mutation fails exact value binding
+  ---
+  duration_ms: 6809.9699
+  type: 'test'
+  ...
+# Subtest: R30 INF-4 real governed source mutation fails exact value binding
+ok 4 - R30 INF-4 real governed source mutation fails exact value binding
+  ---
+  duration_ms: 6409.3782
+  type: 'test'
+  ...
+# Subtest: R30 INF-5 real governed source mutation fails exact value binding
+ok 5 - R30 INF-5 real governed source mutation fails exact value binding
+  ---
+  duration_ms: 6248.2398
+  type: 'test'
+  ...
+# Subtest: R30 INF-6 real governed source mutation fails exact value binding
+ok 6 - R30 INF-6 real governed source mutation fails exact value binding
+  ---
+  duration_ms: 8189.7508
+  type: 'test'
+  ...
+# Subtest: R30 INF-7 real governed source mutation fails exact value binding
+ok 7 - R30 INF-7 real governed source mutation fails exact value binding
+  ---
+  duration_ms: 6194.265
+  type: 'test'
+  ...
+# Subtest: R30 INF-8 real governed source mutation fails exact value binding
+ok 8 - R30 INF-8 real governed source mutation fails exact value binding
+  ---
+  duration_ms: 6111.373
+  type: 'test'
+  ...
+# Subtest: R30 new continuation authority is governed outside every volatile region
+ok 9 - R30 new continuation authority is governed outside every volatile region
+  ---
+  duration_ms: 6561.7783
+  type: 'test'
+  ...
+# Subtest: R30 prior anchor freeze retains ledger identities and rejects ambiguous current ledger anchors
+ok 10 - R30 prior anchor freeze retains ledger identities and rejects ambiguous current ledger anchors
+  ---
+  duration_ms: 8034.5529
+  type: 'test'
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 10
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 72024.2025
+DIRECT_EXIT=0

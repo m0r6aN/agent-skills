@@ -1,0 +1,12 @@
+{"name":"shipped positive control","valid":true,"codes":[],"matching":[]}
+{"name":"delete former head","valid":false,"codes":["MIGRATION_EVIDENCE_INVALID","RECONCILIATION_MISSING"],"matching":["required rework migration 'registry-rework-40394be' is missing"]}
+{"name":"rewrite canonical former head","valid":false,"codes":["MIGRATION_EVIDENCE_INVALID"],"matching":["reconciliation 'registry-rework-40394be' differs from its complete canonical record manifest"]}
+{"name":"delete current head and reanchor promoted record","valid":false,"codes":["MIGRATION_EVIDENCE_INVALID","RECONCILIATION_MISSING"],"matching":["reconciliation 'registry-rework-40394be' holds a pinned record digest and cannot be the migration chain head; deleting the head invalidates the document rather than promoting a pinned record out of its pin"]}
+{"name":"fabricate unbound head Git reference","valid":false,"codes":["MIGRATION_EVIDENCE_INVALID"],"matching":["migration chain head 'registry-rework-66a514d' carries a git-commit reference that is neither bound by its prior binding-manifest command nor equal to the document's own sourceSnapshotCommit"]}
+{"name":"head self cycle","valid":false,"codes":["MIGRATION_EVIDENCE_INVALID"],"matching":["binding manifest chain contains a cycle"]}
+{"name":"fork same predecessor","valid":false,"codes":["MIGRATION_EVIDENCE_INVALID"],"matching":["binding manifest chain forks at 'ebeef1c026daa9363be384e1b284c4167c1d33c5e5709ed5068412f45dfce952': registry-rework-66a514d, registry-rework-independent-fork"]}
+{"name":"single well-formed successor admitted","valid":true,"codes":[],"matching":[]}
+{"name":"new shipped head protected on future demotion","valid":false,"codes":["MIGRATION_EVIDENCE_INVALID"],"matching":["reconciliation 'registry-rework-66a514d' differs from its complete canonical record manifest"]}
+{"name":"second unregistered successor refused","valid":false,"codes":["MIGRATION_EVIDENCE_INVALID"],"matching":["reconciliation 'registry-rework-independent1' differs from its complete canonical record manifest"]}
+INDEPENDENT_PROBES=10 PASS
+DIRECT_EXIT=0
