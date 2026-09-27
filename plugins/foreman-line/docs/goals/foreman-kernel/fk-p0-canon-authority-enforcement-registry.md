@@ -4,7 +4,8 @@
 **Date:** 2026-09-26
 **Routing class:** `architecture/risk` (charter: critical / architecture-risk)
 **Status:** docs-level execution complete; code-level registry accepted at R31 and
-Gate-3-pending (see §8)
+Gate-3-pending (see §8) (superseded: FK-P0 Gate-3 merges complete 2026-09-27 on
+`reconcile/refresh-actions`, `a986b45`/`609c97f`, under RS-2.1)
 **Authority basis:** coordinator decision 2026-09-26 under owner blanket authority
 
 FK-P0's charter outcome is reconnaissance/consolidation: "Reconciles operative
@@ -105,11 +106,11 @@ destination is where the rule is actually enforced or recorded.
 |---|---|
 | D1 goal separation | charter/Gate-1 authority (this registry) |
 | D2 Git canon vs SQLite operational authority | FK-P9/FK-P11 field-level authority matrix; divergence-stop |
-| D3 trust core / read-only / control / adapter split + distinct local capability | FK-P1 admission contract, FK-P13 control catalog |
-| D4 bounded first-release scope | charter exit criteria; review |
+| D3 trust core / read-only / control / adapter split + distinct local capability | FK-P1 admission contract, FK-P13 control catalog — carrier deferred (FK-P12/P13/P16) or dropped (FK-P20) per RS-1; decision fragment named in the RS-2.3 exit annex (B5) |
+| D4 bounded first-release scope | charter exit criteria; review — carrier deferred (FK-P12/P13/P16) or dropped (FK-P20) per RS-1; decision fragment named in the RS-2.3 exit annex (B5) |
 | D5 no generic `mintReceipt`; no authority minting | contract (FK-P1) + review + admission |
 | D6 receipt tools structural-only labels | tool schemas (FK-P1/FK-P4) |
-| D7 one portable MCP contract; first adapter Claude Code; enrollment detection | FK-P16/FK-P20; heartbeat + CI (class F) |
+| D7 one portable MCP contract; first adapter Claude Code; enrollment detection | FK-P16/FK-P20; heartbeat + CI (class F) — carrier deferred (FK-P12/P13/P16) or dropped (FK-P20) per RS-1; decision fragment named in the RS-2.3 exit annex (B5) |
 | D8 shadow mode first; fail-closed governed mutation after CI green | FK-P16/FK-P18/FK-P19 promotion gates |
 | D9 human gates preserved; evidence-derived satisfaction | FK-P12 gate evidence; REQUIRE_HUMAN stop reports |
 | D10 exact Allowed Files compiled; `surfaces:` never mutation permission | FK-P2 compiler (class A) |
@@ -117,10 +118,10 @@ destination is where the rule is actually enforced or recorded.
 | D12 hooks are adapters; policy lives in the kernel | FK-P12 owning engine; review of FK-P16 |
 | D13 pre-action checks backed by post-diff + CI; reviewer fail-closed on opaque shell | FK-P18 CI backstops + FK-P16 obligations |
 | D14 SQLite WAL operational state; migration/idempotency/lease semantics | FK-P9/FK-P10 contracts and tests |
-| D15 no external credentials; narrow host-local control capability | FK-P7/FK-P14 image composition; D15 tests |
+| D15 no external credentials; narrow host-local control capability | FK-P7/FK-P14 image composition; D15 tests — carrier deferred (FK-P12/P13/P16) or dropped (FK-P20) per RS-1; decision fragment named in the RS-2.3 exit annex (B5) |
 | D16 split mixed functions before exposure | FK-P3 pure decisions + recorders |
 | D17 versioned schemas, stable refusal codes, digests, assurance levels | FK-P1 contract + parity tests (FK-P6) |
-| D18 `authorizeAction` is a dedicated engine | FK-P12 |
+| D18 `authorizeAction` is a dedicated engine | FK-P12 — carrier deferred (FK-P12/P13/P16) or dropped (FK-P20) per RS-1; decision fragment named in the RS-2.3 exit annex (B5) |
 | D19 content-only reads; capability-bound repo reads | FK-P4 reader + FK-P6 schema limits |
 | D20 D20 platform matrix; no unproven host claims | FK-P17/FK-P20/FK-P21 evidence binding |
 
@@ -194,7 +195,7 @@ one enforcement destination. `surfaces:` is never a destination (D10).
 | Inventory every standing rule by enforcement destination (§6 outcome) | **Satisfied** for the standing-rule corpus | §4 (42 rules, one destination each) |
 | Record applicable operational rules (INF-3) | **Satisfied** | §5 |
 | Record A1 reconciliation (INF-5) | **Satisfied at record level** | reconciliation doc §2. **Gap:** the adopted A1 text/ledger is not in the live tree — cause: it exists only on the FK branches pending the human Gate-3 merge; adopting it here would pre-empt that merge. No latency contract changed; no decision ID assigned |
-| Inventory rules **and corpus obligations** (INF-7) | **Satisfied for rules; obligations defined, manifest not produced** | §6. **Gap:** no revision-bound per-item disposition manifest in the live tree — cause: producing it requires the registry tooling (Gate-3-pending, §8) and the FK-P19 sweep machinery; charter assigns the manifest binding to FK-P21 |
+| Inventory rules **and corpus obligations** (INF-7) | **Satisfied for rules; obligations defined, manifest not produced** | §6. **Gap:** no revision-bound per-item disposition manifest in the live tree — cause: producing it requires the registry tooling (Gate-3-pending, §8) and the FK-P19 sweep machinery; charter assigns the manifest binding to FK-P21 (FK-P21 deferred per RS-1.2; obligation named in the RS-2.3 exit annex — RS-2.2) |
 | Wave-0 exit fragment attributable to P0: "plan-level contradictions have no unresolved implementation consequence" | **Satisfied** | every contradiction found in reconciliation has a recorded disposition (rows 6, 7, 11, 13, 16) with named follow-ups |
 | Wave-0 exit "contracts and fixtures are merged; exact path authority can be compiled without reading `surfaces:`" | **Not FK-P0's** | FK-P1/FK-P2 outcomes; dispatch plan gates them |
 

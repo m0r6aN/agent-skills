@@ -35,7 +35,9 @@ identity migration. Do not introduce a subheading above them.
 - Scoped Gate 1 re-ratification commit:
   `26fb2b56e4861b6122a95f1d413394c0dcd3b4a1`
 - Standing Gate 2: active for FK-P0 through FK-P21 under the charter contingencies
-- Gate 3: not delegated; every merge is a human action
+- Gate 3: delegated merge git step for fully-green chains only (RS-2.1, L7 — the
+  `COORDINATOR-PATTERN.md` "merge it" rule); main/PR merges, repository-settings changes,
+  deployment, and destructive cleanup remain human acts
 
 ### Owner of record and handoff state
 
@@ -91,7 +93,7 @@ their `list-item:1..5` anchors. See the ordering note there.)_
 
 ## Current state — update at every stop or parcel closure
 
-**STATE 2026-09-27 (live) — SUCCESSOR COORDINATOR CLAIMED THE GOAL; FK-P0 CLOSED AT THE MERGE LEVEL; RS-1 PROGRAM IN FORCE.** FK-P0 Gate-3 merges are on `reconcile/refresh-actions`: `a986b45` (R31 registry — package byte-identical to accepted `1747c1d`) and `609c97f` (preparation packet), both performed under RS-1.5's delegated merge step. Amendment RS-1 (ledger L6) governs the program: in scope FK-P1–FK-P11 plus retargeted FK-P17′/FK-P18′; deferred FK-P12–FK-P16/P19/P21 to post-wave value checks; FK-P20 dropped; FK-P2 elevated immediately after FK-P1. The §15.2 fresh plan review, previously "dispatched" with no result on disk, was re-dispatched by this owner as five independent review lenses and is recorded in `plan-review-findings.md`. FK-P1 is the active dispatch: merged-P0 base `609c97f` verified; F05 exact field table in preparation, then independent field review, then builder under the standing Gate 2 grant. Owner-of-record transferred to this session at this parcel boundary (handoff record above). This block supersedes the STATE 2026-09-07 block below, which is retained verbatim as history.
+**STATE 2026-09-27 (live) — SUCCESSOR COORDINATOR CLAIMED THE GOAL; FK-P0 CLOSED AT THE MERGE LEVEL; RS-1 PROGRAM IN FORCE.** FK-P0 Gate-3 merges are on `reconcile/refresh-actions`: `a986b45` (R31 registry — package byte-identical to accepted `1747c1d`) and `609c97f` (preparation packet), both performed under RS-1.5's delegated merge step. Amendment RS-1 (ledger L6) governs the program: in scope FK-P1–FK-P11 plus retargeted FK-P17′/FK-P18′; deferred FK-P12–FK-P16/P19/P21 to post-wave value checks; FK-P20 dropped; FK-P2 elevated immediately after FK-P1. The §15.2 plan review completed 2026-09-27 (five independent lenses, 43 findings, 17 BLOCKER — `plan-review-findings.md`); its four Gate-1 questions were disposed by the owner and recorded as amendment RS-2 (L7, `fk-rs2-gate1-reratification-2026-09-27.md`): scoped Gate-3 delegation ratified, INF obligations reassigned/stranded, RS-1.4 sole exit + annex, FK-P2 narrowed with the D10 wiring deferred to negotiated FK-P2B. FK-P1 is the active dispatch: merged-P0 base `609c97f` verified; F05 field tables complete in the spec (independent field review in flight), then builder under the standing Gate 2 grant. FK-P0 corpus amendment R32 is required before FK-P1's verification chain is trusted (registry drift: consolidated-charter locators + COORDINATOR-PATTERN value). Owner-of-record transferred to this session at this parcel boundary (handoff record above). This block supersedes the STATE 2026-09-07 block below, which is retained verbatim as history.
 
 **STATE 2026-09-07 — R31 accepted and published at1747c1df7dfa4677d345390ac673c3d15c82b980 after751/751 complete chain and two fresh final APPROVE verdicts.** Package equals tested2fc3940; runtime521214e/source8d remain fixed. Parent fresh fetch verified159 implementation manifest entries. Isolated integration with main476b8df passed:153 reviewed upstream deltas,398 unchanged protected inputs, repository-aware validate/sweep and generation direct0, no byte changes or ref mutation. Exact hypothetical treea9df33c is locally retained/reproducible from published inputs. Failed28 and two harness failures remain preserved. HumanGate3/actualmerge and FK-P1 merged dependency remain open; no merge or StageF.
 
@@ -331,8 +333,12 @@ The plan-review transcript is
 5. **No external-system effects:** no Jira, cloud, deployment, publication, external
    communication, Docker-socket, signing, billing, credential, or repository-settings
    mutation.
-6. **Gate 3 is not delegated.** Never merge. Present the complete green chain and exact
-   merge target to the human.
+6. **Gate 3 — delegated merge git step (RS-2.1, L7; the `COORDINATOR-PATTERN.md` "merge it"
+   rule).** Present the complete green chain and exact merge target in the record. The
+   coordinator merges the git step into the goal's integration branch only when every
+   verification step is green; any red step voids the delegation for that chain. Main/PR
+   merges, repository-settings changes, deployment, and destructive cleanup remain human
+   acts — stop and report for those. Delegation never manufactures a gate's satisfaction.
 7. A push or PR may occur only when the active parcel contract and developer authority
    clearly cover it; otherwise prepare local PR material and stop before the external
    action.
@@ -387,28 +393,28 @@ Source preservation applies to all prior worktrees and the published handoff. Th
 
 | Parcel | State | Depends on |
 |---|---|---|
-| FK-P0 — Canon authority and enforcement registry | **R31 final1747c1d accepted:751/751 complete chain, two fresh APPROVE verdicts, isolated main476 integration passed. HumanGate3/actualmerge pending; failed attempts retained.** | none |
-| FK-P1 — Lifecycle, admission, and decision contracts | pending | FK-P0 |
-| FK-P2 — Spec-body compiler | pending | FK-P0, FK-P1 |
-| FK-P3 — Pure dispatch decisions | pending | FK-P1 |
+| FK-P0 — Canon authority and enforcement registry | **MERGED 2026-09-27: `a986b45` (R31 registry) + `609c97f` (preparation packet) on `reconcile/refresh-actions`, retroactively confirmed under RS-2.1; R31 chain 751/751 + two fresh APPROVE verdicts + isolated main476 integration preserved; failed attempts retained.** | none |
+| FK-P1 — Lifecycle, admission, and decision contracts | **ACTIVE** — Stage A shaped; F05 field tables complete 2026-09-27 under independent field review; builder next | FK-P0 (merged) |
+| FK-P2 — Spec-body compiler | **next after FK-P1 (RS-1.3)**; scope narrowed by RS-2.4: compiler + hostile fixtures only, spec-grammar pinned; D10 wiring = **FK-P2B**, needs windows | FK-P0 (merged), FK-P1 |
+| FK-P3 — Pure dispatch decisions | queued behind RCM Window R + boundary-routing/scaffolder negotiation (RS-2.4) | FK-P1 |
 | FK-P4 — Verifier facade | pending | FK-P1, FK-P2, FK-P3 |
 | FK-P5 — Clean-room trust-core spike | pending | FK-P4 |
 | FK-P6 — Read-only MCP server | pending | FK-P4, FK-P5 |
 | FK-P7 — Stateless verifier image and launcher | pending | FK-P6 |
 | FK-P8 — Stateless harness portability proof | pending | FK-P7 |
-| FK-P9 — SQLite storage and migration ABI | pending | FK-P1 |
-| FK-P10 — Lease and transition engine | pending | FK-P9 |
-| FK-P11 — Legacy import and projection engine | pending | FK-P9, FK-P10 |
-| FK-P12 — Authorization policy engine | pending | FK-P2, FK-P10 |
-| FK-P13 — Admission-protected control catalog | pending | FK-P6, FK-P10, FK-P11, FK-P12 |
-| FK-P14 — Stateful image composition and operator lifecycle | pending | FK-P7, FK-P13 |
-| FK-P15 — Stateful restart and admission proof | pending | FK-P14 |
-| FK-P16 — Claude lifecycle adapter, shadow mode | pending | FK-P12, FK-P13, FK-P15 |
-| FK-P17 — Bypass and outage harness | pending | FK-P16 |
-| FK-P18 — CI scope and state-evidence backstops | pending | FK-P17 |
-| FK-P19 — High-confidence refusal enforcement | pending | FK-P17, FK-P18 |
-| FK-P20 — Second-host feasibility and host registration | pending | FK-P19 |
-| FK-P21 — Exit evidence manifest and clean-room proof | pending | FK-P19, FK-P20 |
+| FK-P9 — SQLite storage and migration ABI | pending (Wave 3a) | FK-P1 |
+| FK-P10 — Lease and transition engine | pending (Wave 3a) | FK-P9 |
+| FK-P11 — Legacy import and projection engine | pending (Wave 3a) | FK-P9, FK-P10 |
+| FK-P12 — Authorization policy engine | **DEFERRED (RS-1.1)** — follow-on candidate; decision fragments named in the RS-2.3 exit annex | — |
+| FK-P13 — Admission-protected control catalog | **DEFERRED (RS-1.1)** — follow-on candidate | — |
+| FK-P14 — Stateful image composition and operator lifecycle | **DEFERRED (RS-1.1)** — follow-on candidate | — |
+| FK-P15 — Stateful restart and admission proof | **DEFERRED (RS-1.1)** — follow-on candidate | — |
+| FK-P16 — Claude lifecycle adapter, shadow mode | **DEFERRED (RS-1.2)** — follow-on candidate | — |
+| FK-P17′ — Bypass and outage harness (RS-1.2 retarget: shipped surfaces) | pending (Wave 4); **A1/D21 measurement carrier (RS-2.2)** | shipped surfaces + FK-P2 compiled-scope output where available |
+| FK-P18′ — CI scope and state-evidence backstops (RS-1.2 retarget) | pending (Wave 4); A1.3 coarse CI bounds only; holds on the §14 U1 contract (E7) | FK-P17′ |
+| FK-P19 — High-confidence refusal enforcement | **DEFERRED (RS-1.2)** — follow-on candidate | — |
+| FK-P20 — Second-host feasibility and host registration | **DROPPED (RS-1.2)** — no longer a parcel | — |
+| FK-P21 — Exit evidence manifest and clean-room proof | **DEFERRED (RS-1.2)** — follow-on candidate; manifest/retention obligations in the RS-2.3 exit annex | — |
 
 Parallelism is allowed only after contracts merge and only for parcels with no shared
 serialization point. The coordinator owns sequencing for manifests, lockfiles, package
