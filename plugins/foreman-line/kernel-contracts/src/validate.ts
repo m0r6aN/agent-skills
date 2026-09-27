@@ -42,6 +42,7 @@ import {
   P0_ASSURANCE_LEVELS,
   P0_ENFORCEMENT_OWNERS,
   P0_RESOLUTION_REASON_CODES,
+  P0_RESOLVED_DECISIONS,
   P0_RULE_CLASSIFICATIONS,
   P0_SEVERITIES,
   PATH_FORMS,
@@ -133,6 +134,34 @@ function checkString(
   }
   if (unpaired) {
     add(issues, 'INVALID_REQUEST', path, `${what} contains an unpaired Unicode surrogate`)
+  }
+}
+
+function checkAsciiBytes(
+  issues: ValidationIssue[],
+  path: string,
+  value: unknown,
+  maxBytes: number,
+  what: string,
+): void {
+  if (typeof value !== 'string') {
+    add(issues, 'INVALID_REQUEST', path, `${what} must be a string`)
+    return
+  }
+  const { bytes, unpaired } = scanString(value)
+  if (bytes > maxBytes) {
+    add(issues, 'PAYLOAD_LIMIT_EXCEEDED', path, `${what} exceeds ${maxBytes} UTF-8 bytes`)
+    return
+  }
+  if (unpaired) {
+    add(issues, 'INVALID_REQUEST', path, `${what} contains an unpaired Unicode surrogate`)
+    return
+  }
+  for (let i = 0; i < value.length; i += 1) {
+    if (value.charCodeAt(i) > 0x7f) {
+      add(issues, 'INVALID_REQUEST', path, `${what} must be ASCII`)
+      return
+    }
   }
 }
 
@@ -1161,13 +1190,7 @@ function validateUpstreamPolicyEvidence(
     ])
     checkString(issues, `${path}.subject`, value.subject, MAX_STRING_BYTES, 'subject')
     checkString(issues, `${path}.claim`, value.claim, MAX_STRING_BYTES, 'claim')
-    checkEnum(
-      issues,
-      `${path}.decision`,
-      value.decision,
-      ['ALLOW', 'REFUSE', 'ADVISORY', 'REQUIRE_HUMAN'],
-      'decision',
-    )
+    checkEnum(issues, `${path}.decision`, value.decision, P0_RESOLVED_DECISIONS, 'decision')
     checkEnum(
       issues,
       `${path}.classification`,
@@ -1423,7 +1446,7 @@ export function validateDecisionEnvelope(doc: unknown): ValidationIssue[] {
     ['goalRevision'],
   )
   checkApiVersion(issues, '$.apiVersion', obj.apiVersion)
-  checkString(issues, '$.toolVersion', obj.toolVersion, 128, 'toolVersion')
+  checkAsciiBytes(issues, '$.toolVersion', obj.toolVersion, 128, 'toolVersion')
   checkEnum(issues, '$.code', obj.code, WIRE_CODES, 'code')
   if (checkArray(issues, '$.violations', obj.violations, MAX_LIST_MEMBERS, 'violations')) {
     obj.violations.forEach((entry: unknown, index: number) => {
@@ -1450,6 +1473,45 @@ export function validateDecisionEnvelope(doc: unknown): ValidationIssue[] {
     checkEnum(issues, '$.decision', obj.decision, DECISION_SET, 'decision')
   }
 
+  // F05.12 registry binding (AC3): the code's registry row is the authority for
+  // the result kind and the allowed decision on every policy-result variant.
+  // Shadow rows carry ADVISORY plus the row's enforcing disposition as
+  // wouldDecision (uniform rule, including the non-refusal rows).
+  const codeRule = WIRE_CODE_RULES.find((candidate) => candidate.code === obj.code)
+  if (codeRule !== undefined) {
+    const registryDecision =
+      codeRule.resultKind === 'policy-result' &&
+      codeRule.allowedDecision !== 'none' &&
+      codeRule.allowedDecision !== 'APPLIED' &&
+      codeRule.allowedDecision !== 'NOOP'
+        ? codeRule.allowedDecision
+        : null
+    if (registryDecision === null) {
+      add(
+        issues,
+        'INVALID_REQUEST',
+        '$.code',
+        'code is not valid on a policy-result envelope per the wire-code registry',
+      )
+    } else if (isShadow) {
+      if (obj.wouldDecision !== registryDecision) {
+        add(
+          issues,
+          'INVALID_REQUEST',
+          '$.wouldDecision',
+          "shadow wouldDecision must equal the registry row's enforcing disposition",
+        )
+      }
+    } else if (obj.decision !== registryDecision) {
+      add(
+        issues,
+        'INVALID_REQUEST',
+        '$.decision',
+        "decision must equal the registry row's allowed decision",
+      )
+    }
+  }
+
   const isAnonymous =
     isPlainObject(obj.principal) && obj.principal.principalClass === 'anonymous-read'
   if (obj.policyEvidence === null) {
@@ -1474,6 +1536,31 @@ export function validateDecisionEnvelope(doc: unknown): ValidationIssue[] {
   }
 
   const code = obj.code
+  // F05.7 gate-cause rules: an unresolved policy-evidence outcome is never
+  // GATE_NOT_SATISFIED, and GATE_NOT_SATISFIED requires a resolved gate cause.
+  const evidence = obj.policyEvidence
+  const unresolvedEvidence = isPlainObject(evidence) && evidence.outcome === 'REQUIRE_HUMAN'
+  const gateCause =
+    isPlainObject(evidence) &&
+    evidence.outcome === 'RESOLVED' &&
+    evidence.decision === 'REQUIRE_HUMAN'
+  if (code === 'GATE_NOT_SATISFIED') {
+    if (unresolvedEvidence) {
+      add(
+        issues,
+        'INVALID_REQUEST',
+        '$.code',
+        'unresolved policy evidence is never GATE_NOT_SATISFIED (F05.7)',
+      )
+    } else if (!gateCause) {
+      add(
+        issues,
+        'INVALID_REQUEST',
+        '$.code',
+        'GATE_NOT_SATISFIED requires a resolved gate cause (policyEvidence RESOLVED with decision REQUIRE_HUMAN)',
+      )
+    }
+  }
   if (typeof code === 'string' && (STATE_BOUND_CODES as readonly string[]).includes(code)) {
     if (obj.goalRevision === undefined) {
       add(
@@ -1510,10 +1597,10 @@ export function validateProtocolError(doc: unknown): ValidationIssue[] {
   if (obj === null) return issues
   checkConst(issues, '$.resultKind', obj.resultKind, 'protocol-error', 'resultKind')
   checkEnum(issues, '$.protocolCode', obj.protocolCode, PROTOCOL_CODES, 'protocolCode')
-  checkString(issues, '$.safeDiagnostic', obj.safeDiagnostic, 256, 'safeDiagnostic')
+  checkAsciiBytes(issues, '$.safeDiagnostic', obj.safeDiagnostic, 256, 'safeDiagnostic')
   checkNullableId(issues, '$.correlationRef', obj.correlationRef)
   if (obj.apiVersion !== null) checkString(issues, '$.apiVersion', obj.apiVersion, 32, 'apiVersion')
-  checkString(issues, '$.toolVersion', obj.toolVersion, 128, 'toolVersion')
+  checkAsciiBytes(issues, '$.toolVersion', obj.toolVersion, 128, 'toolVersion')
   return issues
 }
 
@@ -1533,7 +1620,7 @@ export function validateEffectResult(doc: unknown): ValidationIssue[] {
   if (obj === null) return issues
   checkConst(issues, '$.resultKind', obj.resultKind, 'effect-result', 'resultKind')
   checkApiVersion(issues, '$.apiVersion', obj.apiVersion)
-  checkString(issues, '$.toolVersion', obj.toolVersion, 128, 'toolVersion')
+  checkAsciiBytes(issues, '$.toolVersion', obj.toolVersion, 128, 'toolVersion')
   checkEnum(issues, '$.decision', obj.decision, ['APPLIED', 'NOOP'], 'decision')
   checkEnum(issues, '$.code', obj.code, ['EFFECT_APPLIED', 'EFFECT_NOOP'], 'code')
   if (
@@ -1806,16 +1893,7 @@ export function validateGoldenVectorCase(doc: unknown): ValidationIssue[] {
       'decision is required for this registry row',
     )
   } else if (expectedDecision !== rule.allowedDecision) {
-    if (expectedDecision === 'ADVISORY' && rule.shadowWouldDecision !== null) {
-      if (obj.expectedWouldDecision !== rule.shadowWouldDecision) {
-        add(
-          issues,
-          'INVALID_REQUEST',
-          '$.expectedWouldDecision',
-          'shadow case must carry the registry row’s shadow would-decision',
-        )
-      }
-    } else {
+    if (!(expectedDecision === 'ADVISORY' && rule.shadowWouldDecision !== null)) {
       add(
         issues,
         'INVALID_REQUEST',
@@ -1823,6 +1901,23 @@ export function validateGoldenVectorCase(doc: unknown): ValidationIssue[] {
         'decision disagrees with the wire-code registry row',
       )
     }
+  }
+  // Uniform shadow rule (coordinator ruling, rework R2): whenever a would
+  // decision is present it equals the registry row's enforcing disposition,
+  // including the non-refusal rows.
+  if (
+    obj.expectedWouldDecision !== null &&
+    rule.allowedDecision !== 'none' &&
+    rule.allowedDecision !== 'APPLIED' &&
+    rule.allowedDecision !== 'NOOP' &&
+    obj.expectedWouldDecision !== rule.allowedDecision
+  ) {
+    add(
+      issues,
+      'INVALID_REQUEST',
+      '$.expectedWouldDecision',
+      "expectedWouldDecision must equal the registry row's enforcing disposition",
+    )
   }
 
   // Digest binding shape: request digests for wire requests, input digests for

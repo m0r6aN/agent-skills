@@ -207,6 +207,10 @@ export const P0_RESOLUTION_REASON_CODES = [
 ] as const
 export type P0ResolutionReasonCode = (typeof P0_RESOLUTION_REASON_CODES)[number]
 
+/** P0 resolved-decision subset (AuthorityResolution RESOLVED outcome), verbatim. */
+export const P0_RESOLVED_DECISIONS = ['ALLOW', 'REFUSE', 'ADVISORY', 'REQUIRE_HUMAN'] as const
+export type P0ResolvedDecision = (typeof P0_RESOLVED_DECISIONS)[number]
+
 // --- P1 runtime assurance union (F05.9) ------------------------------------
 
 export const ASSURANCE_LEVELS = [
@@ -920,7 +924,7 @@ export type UpstreamPolicyEvidence =
       readonly outcome: 'RESOLVED'
       readonly subject: string
       readonly claim: string
-      readonly decision: 'ALLOW' | 'REFUSE' | 'ADVISORY' | 'REQUIRE_HUMAN'
+      readonly decision: P0ResolvedDecision
       readonly classification: P0RuleClassification
       readonly assurance: P0AssuranceLevel
       readonly enforcementOwner: P0EnforcementOwner

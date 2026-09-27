@@ -21,6 +21,7 @@ import {
   type ValidationCode,
   type ValidationIssue,
   validateAuthorizeActionInput,
+  validateGoldenVectorCase,
   validateGoldenVectorFixture,
   validateLifecycleEvent,
   validateReadRequest,
@@ -561,3 +562,54 @@ test('registry rows agree with every case expectation', () => {
     assert.equal(entry.expectedResponseKind, rule.resultKind, entry.caseId)
   }
 })
+
+// ---------------------------------------------------------------------------
+// Case-level registry-binding negatives (rework R2, coordinator-ruled vehicle):
+// each named entry mutates exactly one expectation dimension of a valid case
+// and the test asserts validateGoldenVectorCase rejects it — same discipline as
+// the mutator registry (a no-op mutation fails loudly).
+// ---------------------------------------------------------------------------
+
+interface CaseMutator {
+  readonly dimension: string
+  readonly apply: (entry: GoldenCase) => void
+}
+
+const CASE_MUTATORS: Readonly<Record<string, CaseMutator>> = {
+  'case-probe-decision-code-confusion': {
+    dimension: 'expectedDecision disagrees with the registry row allowed decision',
+    apply: (entry) => {
+      entry.expectedDecision = 'ALLOW'
+    },
+  },
+  'case-probe-effect-code-on-policy-result': {
+    dimension: 'expectedResponseKind disagrees with the registry row result kind',
+    apply: (entry) => {
+      entry.expectedResponseKind = 'protocol-error'
+    },
+  },
+  'case-probe-shadow-would-confusion': {
+    dimension: 'expectedWouldDecision disagrees with the registry row enforcing disposition',
+    apply: (entry) => {
+      entry.expectedWouldDecision = 'ALLOW'
+    },
+  },
+}
+
+for (const [name, mutator] of Object.entries(CASE_MUTATORS)) {
+  test(`${name}: ${mutator.dimension} is rejected`, () => {
+    const base =
+      mutator.dimension.includes('would') || mutator.dimension.includes('shadow')
+        ? caseById('vec-shadow-path-outside-1')
+        : caseById('vec-enforced-path-outside-1')
+    assert.deepEqual(validateGoldenVectorCase(base), [], 'base case validates clean')
+    const mutated = clone(base)
+    mutator.apply(mutated)
+    const issues = validateGoldenVectorCase(mutated)
+    assert.ok(issues.length > 0, 'mutated case must fail cross-field validation')
+    assert.ok(
+      issues.some((issue) => issue.path.startsWith('$.expected')),
+      `mutation must break its named expectation dimension, got ${JSON.stringify(issues)}`,
+    )
+  })
+}

@@ -49,7 +49,18 @@ additionally enforce what JSON Schema draft-07 cannot express: UTF-8 byte
 bounds (schema `maxLength` counts code points and is only a pre-filter),
 negative zero, unpaired surrogates, the 1 MiB document bound, the depth-16
 bound, and the F05.4/F05.8 cross-field rules. The two layers agree on every
-rejection the schema can express (`tests/schema-validation.test.ts`).
+rejection the schema can express (`tests/schema-validation.test.ts`), including
+the ASCII bounds on `safeDiagnostic`/`toolVersion` (rework R2 F3).
+
+Live `DecisionEnvelope` inputs carry the full F05.12 registry binding (AC3):
+the code's registry row constrains result kind and allowed decision on both
+policy-result variants; shadow rows carry `ADVISORY` plus the row's enforcing
+disposition as `wouldDecision` (uniform rule including non-refusal rows). The
+F05.7 gate-cause rules hold: unresolved policy evidence is never
+`GATE_NOT_SATISFIED`, and `GATE_NOT_SATISFIED` requires `policyEvidence`
+`RESOLVED` with decision `REQUIRE_HUMAN`. Per the dual-review L2-2 ruling the
+F05.8 `goalRevision` row's clarifying sentence binds: `goalRevision` is required
+exactly for the state/lease/gate/effect codes named in that row.
 
 ## Golden-vector construction (coordinator-ruled 2026-09-27)
 

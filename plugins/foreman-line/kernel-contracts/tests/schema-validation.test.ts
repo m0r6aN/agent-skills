@@ -15,8 +15,10 @@ import { allSchemaFiles } from '../src/schemas.js'
 import {
   validateAuthorizeActionInput,
   validateDecisionEnvelope,
+  validateEffectResult,
   validateGoldenVectorCase,
   validateLifecycleEvent,
+  validateProtocolError,
   validateReadRequest,
 } from '../src/validate.js'
 
@@ -385,6 +387,52 @@ test('result schemas accept their samples and reject cross-variant confusion', (
   assert.equal(protocolError(sampleProtocolError), true)
   assert.equal(envelope(sampleProtocolError), false)
   assert.ok(validateDecisionEnvelope(sampleProtocolError).length > 0)
+})
+
+test('ASCII bounds agree across schema and validator layers', () => {
+  const ajv = compileAll()
+  const protocolError = schemaValidator(ajv, 'decision-envelope', 'ProtocolError')
+  const effectResult = schemaValidator(ajv, 'decision-envelope', 'EffectResult')
+  const envelope = schemaValidator(ajv, 'decision-envelope', 'DecisionEnvelope')
+  const nonAscii = String.fromCharCode(0xe9)
+
+  const badDiagnostic = { ...sampleProtocolError, safeDiagnostic: `x${nonAscii}y` }
+  assert.equal(protocolError(badDiagnostic), false)
+  assert.ok(validateProtocolError(badDiagnostic).some((i) => i.code === 'INVALID_REQUEST'))
+
+  const badErrorTool = { ...sampleProtocolError, toolVersion: `tool-${nonAscii}` }
+  assert.equal(protocolError(badErrorTool), false)
+  assert.ok(validateProtocolError(badErrorTool).some((i) => i.code === 'INVALID_REQUEST'))
+
+  const badEnvelopeTool = { ...sampleDecisionEnvelope, toolVersion: `tool-${nonAscii}` }
+  assert.equal(envelope(badEnvelopeTool), false)
+  assert.ok(validateDecisionEnvelope(badEnvelopeTool).some((i) => i.code === 'INVALID_REQUEST'))
+
+  const effectSample = {
+    resultKind: 'effect-result',
+    apiVersion: '0.1.0',
+    toolVersion: 'tool-1',
+    decision: 'APPLIED',
+    code: 'EFFECT_APPLIED',
+    idempotencyKey: {
+      principalRef: 'principal-builder-1',
+      operationId: 'op-transition-1',
+      repositoryRef: 'repo-main',
+      worktreeRef: 'wt-0001',
+      payloadDigest: digestA,
+    },
+    effectDigest: null,
+    goalRevision: 7,
+  }
+  const badEffectTool = { ...effectSample, toolVersion: `tool-${nonAscii}` }
+  assert.equal(effectResult(badEffectTool), false)
+  assert.ok(validateEffectResult(badEffectTool).some((i) => i.code === 'INVALID_REQUEST'))
+
+  const tooLongDiagnostic = { ...sampleProtocolError, safeDiagnostic: 'x'.repeat(257) }
+  assert.equal(protocolError(tooLongDiagnostic), false)
+  assert.ok(
+    validateProtocolError(tooLongDiagnostic).some((i) => i.code === 'PAYLOAD_LIMIT_EXCEEDED'),
+  )
 })
 
 test('golden-vector case: schema rejects unknown enums; validator rejects registry-inconsistent expectations', () => {

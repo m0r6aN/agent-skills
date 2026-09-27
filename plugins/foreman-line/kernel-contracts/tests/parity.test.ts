@@ -20,6 +20,8 @@ import {
   P0_EVIDENCE_KINDS,
   P0_GOVERNANCE_OPERATION_IDS,
   P0_PRINCIPAL_CLASSES,
+  P0_RESOLUTION_REASON_CODES,
+  P0_RESOLVED_DECISIONS,
   P0_RULE_CLASSIFICATIONS,
   P0_SEVERITIES,
   ROLE_SELECTIONS,
@@ -109,4 +111,17 @@ test('P0 resolution has no CONFLICT outcome and retains the three reason codes v
     resolution.includes("'REGISTRY_INVALID' | 'INVALID_QUERY_SCOPE' | 'NO_APPLICABLE_AUTHORITY'"),
   )
   assert.ok(!resolution.includes("outcome: 'CONFLICT'"))
+})
+
+function unionFrom(resolution: string, marker: string): string[] {
+  const start = resolution.indexOf(marker)
+  assert.ok(start >= 0, `upstream resolution must declare ${marker}`)
+  const line = resolution.slice(start, resolution.indexOf('\n', start))
+  return [...line.matchAll(/'([^']*)'/g)].map((match) => match[1] as string)
+}
+
+test('P0 resolved-decision subset and reason codes are verbatim in package consts', () => {
+  const resolution = upstream.slice(upstream.indexOf('export type AuthorityResolution'))
+  assert.deepEqual(unionFrom(resolution, 'readonly decision:'), [...P0_RESOLVED_DECISIONS])
+  assert.deepEqual(unionFrom(resolution, 'readonly reasonCode:'), [...P0_RESOLUTION_REASON_CODES])
 })

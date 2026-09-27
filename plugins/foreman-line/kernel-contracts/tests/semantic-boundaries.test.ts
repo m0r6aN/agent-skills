@@ -494,6 +494,157 @@ test('shadow policy-result requires decision ADVISORY and a wouldDecision', () =
   assert.deepEqual(validateDecisionEnvelope(doc), [])
 })
 
+// --- F05.12 registry binding on live envelopes (AC3) -----------------------
+
+test('envelope registry binding: decision must equal the registry row allowed decision', () => {
+  const doc = baseEnvelope()
+  doc.code = 'GATE_NOT_SATISFIED'
+  doc.decision = 'ALLOW'
+  doc.policyEvidence = {
+    outcome: 'RESOLVED',
+    subject: 'subject-1',
+    claim: 'claim-1',
+    decision: 'REQUIRE_HUMAN',
+    classification: 'pre-action-refusal',
+    assurance: 'human-ratified',
+    enforcementOwner: 'human-merge-operator',
+    severity: 'high',
+    controllingRuleIds: ['rule-1'],
+    consideredRuleIds: [],
+  }
+  assert.ok(
+    validateDecisionEnvelope(doc).some(
+      (issue) => issue.path === '$.decision' && issue.message.includes('registry'),
+    ),
+  )
+  doc.decision = 'REQUIRE_HUMAN'
+  assert.ok(
+    validateDecisionEnvelope(doc).every((issue) => issue.path !== '$.decision'),
+    'registry-consistent decision passes the binding check',
+  )
+})
+
+test('envelope registry binding: effect codes are invalid on policy-result', () => {
+  const doc = baseEnvelope()
+  doc.code = 'EFFECT_APPLIED'
+  doc.decision = 'ALLOW'
+  assert.ok(
+    validateDecisionEnvelope(doc).some(
+      (issue) => issue.path === '$.code' && issue.message.includes('registry'),
+    ),
+  )
+})
+
+test('envelope registry binding: protocol and adapter codes are invalid on policy-result', () => {
+  for (const code of ['KERNEL_UNREACHABLE', 'INVALID_REQUEST', 'PAYLOAD_LIMIT_EXCEEDED']) {
+    const doc = baseEnvelope()
+    doc.code = code
+    assert.ok(
+      validateDecisionEnvelope(doc).some(
+        (issue) => issue.path === '$.code' && issue.message.includes('registry'),
+      ),
+      code,
+    )
+  }
+})
+
+test('envelope registry binding: shadow wouldDecision equals the registry disposition', () => {
+  const doc = baseEnvelope()
+  doc.mode = 'shadow'
+  doc.code = 'WORKTREE_MISMATCH'
+  doc.decision = 'ADVISORY'
+  doc.wouldDecision = 'ALLOW'
+  assert.ok(
+    validateDecisionEnvelope(doc).some(
+      (issue) => issue.path === '$.wouldDecision' && issue.message.includes('registry'),
+    ),
+  )
+  doc.wouldDecision = 'REFUSE'
+  assert.deepEqual(validateDecisionEnvelope(doc), [])
+})
+
+test('envelope registry binding: uniform non-refusal shadow pairings pass', () => {
+  const conflict = baseEnvelope()
+  conflict.mode = 'shadow'
+  conflict.code = 'STATE_REVISION_STALE'
+  conflict.decision = 'ADVISORY'
+  conflict.wouldDecision = 'CONFLICT'
+  assert.deepEqual(validateDecisionEnvelope(conflict), [])
+  const advisory = baseEnvelope()
+  advisory.mode = 'shadow'
+  advisory.code = 'SESSION_ENROLLMENT_MISSING'
+  advisory.decision = 'ADVISORY'
+  advisory.wouldDecision = 'ADVISORY'
+  assert.deepEqual(validateDecisionEnvelope(advisory), [])
+  const gate = baseEnvelope()
+  gate.mode = 'shadow'
+  gate.code = 'GATE_NOT_SATISFIED'
+  gate.decision = 'ADVISORY'
+  gate.wouldDecision = 'REQUIRE_HUMAN'
+  gate.policyEvidence = {
+    outcome: 'RESOLVED',
+    subject: 'subject-1',
+    claim: 'claim-1',
+    decision: 'REQUIRE_HUMAN',
+    classification: 'pre-action-refusal',
+    assurance: 'human-ratified',
+    enforcementOwner: 'human-merge-operator',
+    severity: 'high',
+    controllingRuleIds: ['rule-1'],
+    consideredRuleIds: [],
+  }
+  assert.deepEqual(validateDecisionEnvelope(gate), [])
+})
+
+// --- F05.7 gate-cause rules ------------------------------------------------
+
+test('F05.7: unresolved policy evidence is never GATE_NOT_SATISFIED', () => {
+  const doc = baseEnvelope()
+  doc.code = 'GATE_NOT_SATISFIED'
+  doc.decision = 'REQUIRE_HUMAN'
+  doc.policyEvidence = {
+    outcome: 'REQUIRE_HUMAN',
+    subject: 'subject-1',
+    reasonCode: 'REGISTRY_INVALID',
+    controllingRuleIds: [],
+    consideredRuleIds: [],
+  }
+  assert.ok(
+    validateDecisionEnvelope(doc).some(
+      (issue) => issue.path === '$.code' && issue.message.includes('unresolved'),
+    ),
+  )
+})
+
+test('F05.7: GATE_NOT_SATISFIED requires a resolved gate cause', () => {
+  const withoutEvidence = baseEnvelope()
+  withoutEvidence.code = 'GATE_NOT_SATISFIED'
+  withoutEvidence.decision = 'REQUIRE_HUMAN'
+  withoutEvidence.policyEvidence = null
+  assert.ok(
+    validateDecisionEnvelope(withoutEvidence).some(
+      (issue) => issue.path === '$.code' && issue.message.includes('gate cause'),
+    ),
+  )
+  const nonGateResolved = baseEnvelope()
+  nonGateResolved.code = 'GATE_NOT_SATISFIED'
+  nonGateResolved.decision = 'REQUIRE_HUMAN'
+  nonGateResolved.policyEvidence = resolvedPolicyEvidence()
+  assert.ok(
+    validateDecisionEnvelope(nonGateResolved).some(
+      (issue) => issue.path === '$.code' && issue.message.includes('gate cause'),
+    ),
+  )
+  const gateCause = baseEnvelope()
+  gateCause.code = 'GATE_NOT_SATISFIED'
+  gateCause.decision = 'REQUIRE_HUMAN'
+  gateCause.policyEvidence = { ...resolvedPolicyEvidence(), decision: 'REQUIRE_HUMAN' }
+  assert.ok(
+    validateDecisionEnvelope(gateCause).every((issue) => issue.path !== '$.code'),
+    'RESOLVED REQUIRE_HUMAN evidence is a gate cause',
+  )
+})
+
 test('assurance: empty evidence with null reason is INVALID_REQUEST', () => {
   const doc = baseEnvelope()
   doc.assurance = { assuranceLevel: 'mediated', evidence: [], missingAssuranceReason: null }
