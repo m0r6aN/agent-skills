@@ -3,7 +3,7 @@
 **Prepared:** 2026-09-07
 **Goal:** `foreman-kernel`
 **Owner:** Clinton Morgan
-**Status:** Development consolidation of the recovered ratified charter and the ratified September 7 infrastructure recommendations. Pending live-source adoption and review of the incorporated changes.
+**Status (living state — updated 2026-09-26):** Development consolidation of the recovered ratified charter and the ratified September 7 infrastructure recommendations, adopted into the live tree 2026-09-14 via PR #22 (`8b3733b`). Live-owner reconciliation completed 2026-09-26 (`fk-reconciliation-2026-09-26.md`); the fresh independent review of the incorporated changes (§15.2) remains outstanding. FK-P0 executed in the live tree 2026-09-26 as the canon-authority and enforcement registry at docs level (`fk-p0-canon-authority-enforcement-registry.md`); the code-level registry is accepted at R31 on `codex/fk-p0-r31-source-adoption-20260907` (`1747c1d`, 751/751, two APPROVE reviews) and is pending the human Gate 3 merge — it is not in this tree. FK-P1 Stage A is shaped on `codex/foreman-kernel-resume-20260908`; FK-P1–FK-P21 are not dispatched (`fk-p1-p21-dispatch-plan.md`). Gate 3 remains human-owned.
 **Coordinator:** The current owner in the authoritative goal loop directive; no transfer claimed here.
 **Mode:** Repo-Local Parcel Mode
 **Suggested companion path:** `plugins/foreman-line/docs/goals/foreman-kernel/FOREMAN-KERNEL-DEVELOPMENT-CHARTER.md`
@@ -442,9 +442,12 @@ direction. Do not claim every filesystem operation in remote development crosses
 the network or that every network hop necessarily exceeds a latency budget.
 
 Future coordinator, sidecar, retrieval, and worker hosting stays open to separately
-ratified designs. The `hierarchical-coordination-sidecars` and
-`heterogeneous-agent-worker-fabric` goals retain their own owners, charters, and
-gates. This kernel release creates neither hierarchical commissioning nor a
+ratified designs. The `hierarchical-coordination-sidecars` goal retains its own
+owner, charter, and gates. The former `heterogeneous-agent-worker-fabric` record was
+deleted 2026-09-26 per the coordinator audit (goal-status-report-2026-09-26.md); its
+extractable design lives in
+`foreman-line-boundary-routing/hawf-extract-worker-lane-contracts.md`.
+This kernel release creates neither hierarchical commissioning nor a
 distributed execution fabric by implication. HCS's A3 proposal is not imported
 as ratified authority. Preserve neutral kernel contracts for those future consumers
 without assigning this goal their implementation work.
