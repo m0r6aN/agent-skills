@@ -1,0 +1,23 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "riskClass",
+    "minDistinctModelFamilies"
+  ],
+  "properties": {
+    "riskClass": {
+      "type": "string",
+      "enum": [
+        "R0",
+        "R1",
+        "R2",
+        "R3"
+      ]
+    },
+    "minDistinctModelFamilies": {
+      "type": "integer",
+      "minimum": 1
+    }
+  }
+}

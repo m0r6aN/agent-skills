@@ -1,0 +1,74 @@
+{
+  "schemaVersion": "1",
+  "kind": "stage",
+  "stage": "D",
+  "claimRef": null,
+  "correlation": {
+    "correlationId": "4f145582-9c9c-423c-92e9-9d4f5a88a71a",
+    "sessionId": "8b73f5fb-bb6a-443d-81d5-75cd7b8b2d34",
+    "workflowId": "a5b1975a-7497-4200-bac2-5d8a6fd6c749",
+    "runId": "f9d1011e-b37c-4249-9fbd-b9981f72011a"
+  },
+  "sequence": 3,
+  "prevHash": "79cab6a278157a619c47c911dafe626e44a30c92333544464c20cb1dcc4ab69d",
+  "timestamp": "2026-09-06T13:56:41.846Z",
+  "subjectKind": "VerificationVerdict",
+  "subject": {
+    "verdict": "pass",
+    "harnessClaims": [
+      {
+        "claim": "E6-R1 AC1 repository-identity boundary",
+        "passed": true,
+        "evidence": "Frozen base reproduced 42 tracked files / 79 lines; target locked search is 0 / 0."
+      },
+      {
+        "claim": "E6-R1 AC2 living references and historical annotations",
+        "passed": true,
+        "evidence": "Canonical marketplace resolves Audit Suite through m0r6an-agent-skills; stale living keys are zero; 35/35 historical Markdown records carry the non-rerun annotation."
+      },
+      {
+        "claim": "E6-R1 AC3 migration provenance",
+        "passed": true,
+        "evidence": "Both stale RegistrationResult sidecars are absent; both replacements are schema-rejected non-registration provenance and bind reachable commit 48d1db73ad0a6e9c2d9bd76f92f3a44d9fb7fcf0 objects."
+      },
+      {
+        "claim": "E6-R1 AC4 current effective-rules evidence",
+        "passed": true,
+        "evidence": "Fresh authenticated read-only capture equals stored main b30873ec2db566b185cdfcf1a191e4f8ec8be1ee, branch rules, and full rulesets 17746056/22369510; structural guard and stripped-capture negative pass."
+      },
+      {
+        "claim": "E6-R1 AC5 Stage A approval",
+        "passed": true,
+        "evidence": "Human-supplied exact slug produced schema-valid sequence-0 Stage A receipt with approved spec-set hash."
+      },
+      {
+        "claim": "E6-R1 AC6 Stage B issue linkage",
+        "passed": true,
+        "evidence": "Exactly one scoped open test issue m0r6aN/agent-skills#18 exists; issue-to-commit and commit-to-issue links match sequence-1 Stage B without Jira transport."
+      },
+      {
+        "claim": "E6-R1 AC7 Stage C and builder scope",
+        "passed": true,
+        "evidence": "Shipped dispatch created the isolated builder and sequence-2 Stage C; original 45-path build plus 3-path E6-R1B rework has exact 46-path builder-owned union, missing 0, extra 0."
+      },
+      {
+        "claim": "E6-R1 AC8 deterministic implementation verification",
+        "passed": true,
+        "evidence": "Coordinator reproduced 251/251 integration tests (explained +1), typecheck, Biome, active-spec lint, JSON/path checks, plugin validation, and marketplace resolution with direct exit 0."
+      },
+      {
+        "claim": "E6-R1 AC9 independent implementation review",
+        "passed": true,
+        "evidence": "Two independent reviewer-readonly re-reviews assessed exact builder SHA 7013a7f0928243aa796b99caeaa8878e0bd7fea9 and returned PASS with adversarial-findings []."
+      },
+      {
+        "claim": "E6-R1 authority and Stage-D readiness",
+        "passed": true,
+        "evidence": "Before D the conforming chain is exactly A/B/C and valid; no PR, merge, Jira write, ruleset mutation, issue-state mutation, other-repository write, frozen-emitter change, or extra receipt occurred."
+      }
+    ],
+    "adversarialFindings": []
+  },
+  "signature": null,
+  "hash": "ec674455331b9df9a86631a25cc160073d9b445ea6d349cd2aed94597d7796c9"
+}
