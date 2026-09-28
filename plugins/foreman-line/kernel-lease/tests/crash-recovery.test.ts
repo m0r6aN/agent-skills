@@ -223,7 +223,7 @@ for (const row of CR) {
             goals: 1,
             goalRevision: 0,
             transitions: 0,
-            leases: 0,
+            leases: row.scenario === 'requestTransition' ? 1 : 0,
             idempotency_keys: 0,
             projection_cursors: 0,
             cursorSeq: -1,

@@ -136,7 +136,7 @@ test('one tested refusal per code (fault-injection matrix)', () => {
       ownerPrincipalRef: 'principal-a',
       casRevision: 0,
       acquiredAtMicros: T0 - 10,
-      expiresAtMicros: T0 - 1,
+      expiresAtMicros: T0 + 60_000_000,
       releasedAtMicros: null,
     })
     insertLease(storage, {
@@ -148,13 +148,15 @@ test('one tested refusal per code (fault-injection matrix)', () => {
       expiresAtMicros: T0 + 60_000_000,
       releasedAtMicros: T0 - 5,
     })
+    // goal-exp carries the expired-but-unreleased lease (LEASE_EXPIRED).
+    insertGoal(storage, { goalId: 'goal-exp', revision: 0, status: 'active', updatedAtMicros: T0 })
     insertLease(storage, {
-      leaseId: 'lease-other',
-      goalId: 'goal-1',
-      ownerPrincipalRef: 'principal-b',
+      leaseId: 'lease-exp',
+      goalId: 'goal-exp',
+      ownerPrincipalRef: 'principal-a',
       casRevision: 0,
       acquiredAtMicros: T0 - 10,
-      expiresAtMicros: T0 + 60_000_000,
+      expiresAtMicros: T0 - 1,
       releasedAtMicros: null,
     })
     insertTransition(storage, {
@@ -182,7 +184,7 @@ test('one tested refusal per code (fault-injection matrix)', () => {
       operationId: 'op-inflight',
       repositoryRef: 'repo-1',
       worktreeRef: 'wt-1',
-      payloadDigest: `sha256:${'if'.repeat(32)}`,
+      payloadDigest: `sha256:${'1f'.repeat(32)}`,
       effectDigest: null,
       recordedAtMicros: T0 - 10,
       completedAtMicros: null,
@@ -215,8 +217,8 @@ test('one tested refusal per code (fault-injection matrix)', () => {
     expectCode(
       () =>
         renewLease(engine, {
-          goalId: 'goal-1',
-          leaseId: 'lease-1',
+          goalId: 'goal-exp',
+          leaseId: 'lease-exp',
           durationMicros: 5_000_000,
           expectedRevision: 0,
           idempotencyKey: bind('err-02'),
@@ -228,7 +230,7 @@ test('one tested refusal per code (fault-injection matrix)', () => {
       () =>
         releaseLease(engine, {
           goalId: 'goal-1',
-          leaseId: 'lease-other',
+          leaseId: 'lease-1',
           expectedRevision: 0,
           idempotencyKey: bind('err-03', 'principal-c'),
         }),
@@ -319,6 +321,15 @@ test('one tested refusal per code (fault-injection matrix)', () => {
       pendingTransitionId: 'tr-side',
       updatedAtMicros: T0,
     })
+    insertLease(storage, {
+      leaseId: 'lease-p',
+      goalId: 'goal-pending',
+      ownerPrincipalRef: 'principal-a',
+      casRevision: 0,
+      acquiredAtMicros: T0 - 10,
+      expiresAtMicros: T0 + 60_000_000,
+      releasedAtMicros: null,
+    })
     expectCode(
       () =>
         requestTransition(engine, {
@@ -397,7 +408,8 @@ test('one tested refusal per code (fault-injection matrix)', () => {
         }),
       'IDEMPOTENCY_CONFLICT',
     )
-    // 17 IDEMPOTENCY_IN_FLIGHT
+    // 17 IDEMPOTENCY_IN_FLIGHT (same key AND same payloadDigest: an incomplete
+    // binding is never re-executed; a differing digest would conflict first)
     expectCode(
       () =>
         claimLease(engine, {
@@ -405,7 +417,10 @@ test('one tested refusal per code (fault-injection matrix)', () => {
           leaseId: 'lease-x',
           durationMicros: 5_000_000,
           expectedRevision: 0,
-          idempotencyKey: bind('op-inflight'),
+          idempotencyKey: {
+            ...bind('op-inflight'),
+            payloadDigest: `sha256:${'1f'.repeat(32)}`,
+          },
         }),
       'IDEMPOTENCY_IN_FLIGHT',
     )
@@ -449,18 +464,30 @@ test('one tested refusal per code (fault-injection matrix)', () => {
       'ENGINE_ARGUMENT_INVALID',
     )
     // 22 STORAGE_FAILURE (a closed substrate handle wrapped at the seam)
-    const closedError = expectCode(
-      () =>
-        claimLease(engine, {
-          goalId: 'goal-1',
-          leaseId: 'lease-x',
-          durationMicros: 5_000_000,
-          expectedRevision: 0,
-          idempotencyKey: bind('err-22'),
-        }),
-      'STORAGE_FAILURE',
-    )
-    assert.deepEqual(closedError.diagnostic, { storageCode: 'STORAGE_CLOSED' })
+    const closedRoot = mkdtempSync(join(tmpdir(), 'fk-p10-err-'))
+    const closedStorage = openStorage(configFor(closedRoot))
+    closeStorage(closedStorage)
+    const closedEngine = createEngine({
+      storage: closedStorage,
+      clock: fixedClock(T0),
+      toolVersion: 'kernel-lease-test',
+    })
+    try {
+      const closedError = expectCode(
+        () =>
+          claimLease(closedEngine, {
+            goalId: 'goal-1',
+            leaseId: 'lease-x',
+            durationMicros: 5_000_000,
+            expectedRevision: 0,
+            idempotencyKey: bind('err-22'),
+          }),
+        'STORAGE_FAILURE',
+      )
+      assert.deepEqual(closedError.diagnostic, { storageCode: 'STORAGE_CLOSED' })
+    } finally {
+      rmSync(closedRoot, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+    }
   } finally {
     // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
     // and turns rmSync's EPERM into the reported failure, masking the real one.

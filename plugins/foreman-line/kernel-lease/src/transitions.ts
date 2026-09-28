@@ -134,10 +134,12 @@ export function requestTransition(
     ({ now, binding }) => {
       const goal = readGoalChecked(engine.storage, goalId)
       const lease = requireStateWriteLease(engine.storage, goalId, binding, now)
-      checkCas(goal, expectedRevision)
+      // T7's at-most-one-pending rule fires for a SECOND request before the
+      // CAS layer (T10 CN-07 names the loser code TRANSITION_PENDING_EXISTS).
       if (goal.pendingTransitionId !== null) {
         throw engineError('TRANSITION_PENDING_EXISTS', {})
       }
+      checkCas(goal, expectedRevision)
       const edge = findEdge(goal.status, targetStatus)
       if (edge.verdict !== 'LEGAL') {
         throw engineError('ILLEGAL_TRANSITION', { fromStatus: goal.status, toStatus: targetStatus })
@@ -355,10 +357,12 @@ export function applyTransition(
     ({ now, binding }) => {
       const goal = readGoalChecked(engine.storage, goalId)
       const lease = requireStateWriteLease(engine.storage, goalId, binding, now)
-      checkCas(goal, expectedRevision)
+      // T7's at-most-one-pending rule fires for a SECOND request before the
+      // CAS layer (the request half of this atomic operation).
       if (goal.pendingTransitionId !== null) {
         throw engineError('TRANSITION_PENDING_EXISTS', {})
       }
+      checkCas(goal, expectedRevision)
       const edge = findEdge(goal.status, targetStatus)
       if (edge.verdict !== 'LEGAL') {
         throw engineError('ILLEGAL_TRANSITION', { fromStatus: goal.status, toStatus: targetStatus })

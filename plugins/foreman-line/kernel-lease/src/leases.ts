@@ -248,8 +248,8 @@ export interface Executed<T> {
  * The shared effectful pipeline (T6/T7). First-failure order, pinned by the
  * precedence tests and the README: structural input → idempotency (replay /
  * `IDEMPOTENCY_CONFLICT` / `IDEMPOTENCY_IN_FLIGHT`) → trusted clock → the
- * operation's preconditions (goal → lease → CAS → transition/gate) → write
- * set. Exactly one `withTransaction` per operation; the binding is re-checked
+ * operation's preconditions (goal → lease → the operation's state guards —
+ * pending/transition — then CAS → edge/gate) → write set. Exactly one `withTransaction` per operation; the binding is re-checked
  * inside it so same-binding racers converge on one applied effect and one
  * replay.
  */

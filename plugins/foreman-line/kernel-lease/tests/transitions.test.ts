@@ -355,7 +355,6 @@ test('decide re-validates the edge from the CURRENT status at decide time (scena
       goalId: 'goal-1',
       revision: 2,
       status: 'awaiting-human',
-      pendingTransitionId: 'tr-1',
       updatedAtMicros: T0,
     })
     insertLease(storage, {
@@ -377,6 +376,9 @@ test('decide re-validates the edge from the CURRENT status at decide time (scena
       createdAtMicros: T0 - 10,
       decidedAtMicros: null,
     })
+    // The goal's pending pointer FKs the transitions table: set it only once
+    // the transition row exists (an inline value at insertGoal violates the FK).
+    updateGoalRow(storage, 'goal-1', { goalId: 'goal-1' }, { pendingTransitionId: 'tr-1' })
     const engine = createEngine({ storage, clock: fixedClock(T0), toolVersion: 'kernel-lease-test' })
     // active→completed (L4) was legal when requested; awaiting-human→completed
     // (X08) is illegal from the current status.
@@ -424,7 +426,6 @@ test('decide reject records transition.rejected and leaves status unchanged', ()
       goalId: 'goal-1',
       revision: 1,
       status: 'active',
-      pendingTransitionId: 'tr-1',
       updatedAtMicros: T0,
     })
     insertLease(storage, {
@@ -446,6 +447,9 @@ test('decide reject records transition.rejected and leaves status unchanged', ()
       createdAtMicros: T0 - 10,
       decidedAtMicros: null,
     })
+    // The goal's pending pointer FKs the transitions table: set it only once
+    // the transition row exists (an inline value at insertGoal violates the FK).
+    updateGoalRow(storage, 'goal-1', { goalId: 'goal-1' }, { pendingTransitionId: 'tr-1' })
     const engine = createEngine({ storage, clock: fixedClock(T0), toolVersion: 'kernel-lease-test' })
     const result = decideTransition(engine, {
       goalId: 'goal-1',

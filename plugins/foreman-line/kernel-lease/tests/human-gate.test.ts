@@ -291,7 +291,7 @@ test('AC6: supplied refs are bound into the recorded event (satisfaction derivab
 })
 
 test('AC6 residual statement is present and no genuineness claim exists in shipped text', () => {
-  const readme = readFileSync(join(FIXTURES, '..', 'README.md'), 'utf8')
+  const readme = readFileSync(join(FIXTURES, '..', '..', 'README.md'), 'utf8')
   assert.match(readme, /fabricated/i)
   assert.match(readme, /BY DESIGN/i)
   // The claim-honesty sweep: shipped text never claims refs are verified genuine.
