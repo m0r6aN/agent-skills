@@ -19,9 +19,20 @@ containment beyond the one proven row (D13).
 | `npm test` | registry completeness, channel tests against real surfaces in throwaway temp workspaces, measure determinism, record honesty rules, hypothesis binding, three-state pin tests |
 | `npm run typecheck` / `npm run lint` | `tsc --noEmit` / `biome check .` |
 
-Verification chain (spec Verification Plan, sequential Node lane):
-`node -v` (>=22) → `npm ci` (lockfile unchanged) → `npm run typecheck` →
-`npm test` → `npm run lint` → `npm run matrix` → `npm run measure`.
+Verification chain (spec Verification Plan, sequential Node lane) — **two
+installs, in order, before the chain proper** (closure FIX 1; a clean checkout
+without the real-surface dependency trees fails the preflight test with one
+named environment error — never skipped, never passed):
+
+1. `npm ci` in `plugins/foreman-line/dispatch/` FIRST (real-surface
+   dependencies), then in the remaining real-surface dependency packages
+   (`permission-profiles`, `receipts`, `routing-policy`, `skill-injection`,
+   `projection`, `shaping`, `spec-linter` — runtime closure; `contracts`,
+   `foreman-config`, `role-authority`, `schema-scaffold`, `worker-envelopes` —
+   typecheck closure);
+2. `npm ci` in the harness (lockfile unchanged);
+3. `node -v` (>=22) → `npm run typecheck` → `npm test` → `npm run lint` →
+   `npm run matrix` → `npm run measure`.
 
 ## Evidence model
 
@@ -55,7 +66,13 @@ Verification chain (spec Verification Plan, sequential Node lane):
   surface changes mid-run — the observation is recorded on disk before the
   run fails); known-base states emit KNOWN-GAP records; any other drift fails
   closed (`PIN_DRIFT`). The FK-P2 compiled-scope reference (MEAS-05) is
-  three-state the same way (`FK2_REFERENCE_DRIFT` on shape drift).
+  three-state the same way (`FK2_REFERENCE_DRIFT` on shape drift). **Expected
+  in a dirty shared checkout**: a concurrent writer's uncommitted bytes on a
+  pinned surface (e.g. `dispatch/**`) are neither the pin nor any known base,
+  so `tests/surface-pins.test.ts` FAILS CLOSED with `PIN_DRIFT` — the harness
+  refuses to run its matrix against unclassifiable live drift. That is the
+  pin-integrity rule working as designed; the committed bytes are the
+  verified-green reference.
 - **Probe-derived signals only**: `effectLanded`/`realpathVerified` come from
   the case's own before/after probes — never constants. Contradictory signals
   (no refusal, no effect) refuse emission as `SIGNAL_AMBIGUOUS`, recorded as an
