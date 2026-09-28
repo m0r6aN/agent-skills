@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { canonicalDigest } from "../src/index.ts";
+import * as runtime from "../src/runtime.ts";
 import { DECISIONS_ENDPOINT, executeDecision, type BudgetAcknowledgement, type LeasePort, type RuntimeInput, type TransportPort } from "../src/runtime.ts";
 import { QUESTIONS, REQUESTED_IDENTITY } from "../src/validator.ts";
 
@@ -26,158 +27,111 @@ async function input(body: unknown = provider(), calls: string[] = []): Promise<
   return { state, lease: configuredLease, budget_ack: budget(reqDigest), custody, clock: { now: (() => { let index = 0; return () => times[Math.min(index++, times.length - 1)]; })() }, lease_port: ports(body, calls).leasePort, transport: ports(body, calls).transport };
 }
 
-test("executes one bounded call and returns only a redacted live observation", async () => {
+function retired(error: unknown): boolean {
+  assert.equal(typeof runtime.LegacyDecisionRetiredError, "function");
+  assert.ok(error instanceof runtime.LegacyDecisionRetiredError);
+  assert.equal(error.name, "LegacyDecisionRetiredError");
+  assert.equal(error.code, "LEGACY_EXECUTION_RETIRED");
+  assert.equal(error.message, "Legacy governed inference is retired.");
+  return true;
+}
+
+test("formerly successful input rejects before clock, lease or transport with no observation", async () => {
   const calls: string[] = [];
   const value = await input(provider(), calls);
-  process.env.OPENROUTER_API_KEY = "test-only-secret";
-  const result = await executeDecision({ ...value, lease_port: ports(provider(), calls).leasePort, transport: ports(provider(), calls).transport });
-  assert.equal(result.ok, true);
-  if (!result.ok) return;
-  assert.equal(result.observation.endpoint, DECISIONS_ENDPOINT);
-  assert.deepEqual(result.observation.requested_identity, REQUESTED_IDENTITY);
-  assert.equal(result.observation.served_identity.model, "typesafe/jev-1.13-20260917");
-  assert.equal(result.observation.cost.currency, "USD");
-  assert.equal(JSON.stringify(result).includes("test-only-secret"), false);
-  assert.deepEqual(calls, ["consume", "POST https://openrouter.ai/api/alpha/decisions", "terminal"]);
+  Object.defineProperty(value, "clock", { value: { now: () => { calls.push("clock"); throw new Error("clock must not run"); } } });
+  const promise = executeDecision(value);
+  assert.ok(promise instanceof Promise);
+  await assert.rejects(promise, retired);
+  assert.deepEqual(calls, []);
 });
 
-test("refuses missing credentials without opening transport", async () => {
-  delete process.env.OPENROUTER_API_KEY;
-  const calls: string[] = [];
-  const value = await input(provider(), calls);
-  const result = await executeDecision(value);
-  assert.equal(result.ok, false);
-  if (result.ok) return;
-  assert.equal(result.record.reason_code, "evidence:R06");
-  assert.deepEqual(calls, ["consume", "terminal"]);
-});
-
-test("holds missing cost and refuses malformed transport/provider results", async () => {
-  process.env.OPENROUTER_API_KEY = "test-only-secret";
-  const missingCost = { ...provider() } as Record<string, unknown>;
-  delete missingCost.cost;
-  const calls: string[] = [];
-  const result = await executeDecision({ ...(await input(missingCost, calls)), lease_port: ports(missingCost, calls).leasePort, transport: ports(missingCost, calls).transport });
-  assert.equal(result.ok, false);
-  if (!result.ok) assert.equal(result.record.reason_code, "evidence:R13");
-  assert.equal(JSON.stringify(result).includes("test-only-secret"), false);
-
-  const missingMetadata = { ...provider() } as Record<string, unknown>;
-  delete missingMetadata.server_timestamp_utc;
-  const metadataResult = await executeDecision({ ...(await input(missingMetadata)), lease_port: ports(missingMetadata, []).leasePort, transport: ports(missingMetadata, []).transport });
-  assert.equal(metadataResult.ok, false);
-  if (!metadataResult.ok) assert.equal(metadataResult.record.reason_code, "evidence:R12");
-});
-
-test("refuses a competing lease before transport and preserves generic shape", async () => {
-  process.env.OPENROUTER_API_KEY = "test-only-secret";
-  const value = await input(provider());
-  const result = await executeDecision({ ...value, lease_port: { claim: async () => "occupied", consume: async () => true, terminal: async () => {} } });
-  assert.deepEqual(result, { ok: false, record: { evidence_class: "refusal-record", status: "refused", reason_code: "evidence:R16", source_kind: "coordinator-review", source_ref: custody.source_ref, recorded_at_utc: times[0], retention_until_utc: "2026-12-20T12:00:00.000Z" } });
-
-  const mismatched = await executeDecision({ ...value, lease_port: { claim: async () => ({ lease: { ...value.lease, lease_id: "lease-99999999999999999999999999999999" } }), consume: async () => true, terminal: async () => {} } });
-  assert.equal(mismatched.ok, false);
-  if (!mismatched.ok) assert.equal(mismatched.record.reason_code, "evidence:R16");
-});
-
-test("does not echo unsafe custody and handles lease/transport boundary failures", async () => {
-  process.env.OPENROUTER_API_KEY = "test-only-secret";
-  const value = await input(provider());
-  const unsafe = { ...value, custody: { ...custody, source_ref: "Bearer secret\r\nX-Leak: yes" } };
-  const unsafeResult = await executeDecision(unsafe);
-  assert.equal(unsafeResult.ok, false);
-  if (!unsafeResult.ok) {
-    assert.equal(unsafeResult.record.source_ref, "src-00000000000000000000000000000000");
-    assert.equal(JSON.stringify(unsafeResult).includes("Bearer secret"), false);
-  }
-
-  const leaseFailure = await executeDecision({ ...value, lease_port: { claim: async () => { throw new Error("untrusted detail"); }, consume: async () => true, terminal: async () => {} } });
-  assert.equal(leaseFailure.ok, false);
-  if (!leaseFailure.ok) assert.equal(leaseFailure.record.reason_code, "evidence:R15");
-
-  const badTransport = { post: async (request: Parameters<TransportPort["post"]>[0]) => {
-    const base = await ports(provider(), []).transport.post(request);
-    return { ...base, authority: { ...base.authority, redirects: "follow" } } as unknown as Awaited<ReturnType<TransportPort["post"]>>;
-  } };
-  const badAuthority = await executeDecision({ ...value, transport: badTransport });
-  assert.equal(badAuthority.ok, false);
-  if (!badAuthority.ok) assert.equal(badAuthority.record.reason_code, "evidence:R04");
-
-  const invalidUtf8 = { post: async () => ({ status: 200, content_type: "application/json", body: new Uint8Array([0xc3, 0x28]), authority: { endpoint: DECISIONS_ENDPOINT, method: "POST", redirects: "disabled", tls: "verified", proxy: "none" }, socket_opened_at_utc: times[3] }) };
-  const invalidBody = await executeDecision({ ...value, transport: invalidUtf8 });
-  assert.equal(invalidBody.ok, false);
-  if (!invalidBody.ok) assert.equal(invalidBody.record.reason_code, "evidence:R04");
-});
-
-test("refuses malformed custody without throwing", async () => {
-  const base = await input(provider());
-  const result = await executeDecision({ ...base, custody: null as never });
-  assert.equal(result.ok, false);
-  if (!result.ok) assert.equal(result.record.reason_code, "evidence:R22");
-});
-
-test("rejects duplicate JSON keys and nested provider extras", async () => {
-  process.env.OPENROUTER_API_KEY = "test-only-secret";
-  const value = await input(provider());
-  const duplicateText = JSON.stringify(provider()).replace('"model":"typesafe/jev-1.13-20260917"', '"model":"typesafe/jev-1.13-20260917","model":"typesafe/jev-1.13-20260917"');
-  const duplicate = { post: async () => ({ status: 200, content_type: "application/json", body: new TextEncoder().encode(duplicateText), authority: { endpoint: DECISIONS_ENDPOINT, method: "POST", redirects: "disabled", tls: "verified", proxy: "none" }, socket_opened_at_utc: times[3] }) };
-  const duplicateResult = await executeDecision({ ...value, transport: duplicate });
-  assert.equal(duplicateResult.ok, false);
-  if (!duplicateResult.ok) assert.equal(duplicateResult.record.reason_code, "evidence:R04");
-
-  const extraProvider = provider() as { answers: { is_urgent: Record<string, unknown>; department: Record<string, unknown>; frustration: Record<string, unknown> } } & Record<string, unknown>;
-  extraProvider.answers.department.extra = "discard-me";
-  const extraResult = await executeDecision({ ...(await input(extraProvider)), transport: { post: async () => ({ status: 200, content_type: "application/json", body: new TextEncoder().encode(JSON.stringify(extraProvider)), authority: { endpoint: DECISIONS_ENDPOINT, method: "POST", redirects: "disabled", tls: "verified", proxy: "none" }, socket_opened_at_utc: times[3] }) } });
-  assert.equal(extraResult.ok, false);
-  if (!extraResult.ok) assert.equal(extraResult.record.reason_code, "evidence:R10");
-});
-
-test("fails closed when malformed provider bytes cannot be terminalized", async () => {
-  const base = await input(provider());
-  const result = await executeDecision({
-    ...base,
-    transport: { post: async () => ({ status: 200, content_type: "application/json", body: new TextEncoder().encode("{bad"), authority: { endpoint: DECISIONS_ENDPOINT, method: "POST", redirects: "disabled", tls: "verified", proxy: "none" }, socket_opened_at_utc: times[3] }) },
-    lease_port: { claim: async () => ({ lease: { ...base.lease, request_digest: canonicalDigest(request()) } }), consume: async () => true, terminal: async () => { throw new Error("terminal unavailable"); } },
+for (const field of ["state", "lease", "budget_ack", "custody", "clock", "lease_port", "transport"]) {
+  test("retirement never reads input field " + field, async () => {
+    let reads = 0;
+    const value = await input();
+    Object.defineProperty(value, field, { get() { reads += 1; throw new Error("input must not be inspected"); } });
+    // Other fields cannot reach credential access even in the pre-retirement RED run.
+    if (field !== "clock") Object.defineProperty(value, "clock", { value: { now() { throw new Error("clock forbidden"); } } });
+    await assert.rejects(executeDecision(value), retired);
+    assert.equal(reads, 0);
   });
-  assert.equal(result.ok, false);
-  if (!result.ok) assert.equal(result.record.reason_code, "evidence:R15");
-});
+}
 
-test("returns a bounded record when the initial clock is invalid", async () => {
-  const base = await input(provider());
-  const result = await executeDecision({ ...base, clock: { now: () => "not-a-timestamp" } });
-  assert.equal(result.ok, false);
-  if (!result.ok) {
-    assert.equal(result.record.reason_code, "evidence:R22");
-    assert.equal(result.record.recorded_at_utc, "1970-01-01T00:00:00.000Z");
-  }
-});
-
-test("terminalizes when a post-claim clock read throws", async () => {
-  const base = await input(provider());
-  const calls: string[] = [];
+test("null, primitive, revoked proxy and reentrant getters receive the same typed refusal", async () => {
   let reads = 0;
-  const result = await executeDecision({
-    ...base,
-    clock: { now: () => { reads += 1; if (reads === 3) throw new Error("clock unavailable"); return times[reads - 1]; } },
-    lease_port: { claim: async () => ({ lease: { ...base.lease, request_digest: canonicalDigest(request()) } }), consume: async () => { calls.push("consume"); return true; }, terminal: async () => { calls.push("terminal"); } },
-  });
-  assert.equal(result.ok, false);
-  if (!result.ok) assert.equal(result.record.reason_code, "evidence:R15");
-  assert.deepEqual(calls, ["consume", "terminal"]);
+  const trap = () => { reads += 1; throw new Error("argument trap"); };
+  const hostile = new Proxy({}, { get: trap, ownKeys: trap, getOwnPropertyDescriptor: trap, getPrototypeOf: trap });
+  const revoked = Proxy.revocable({}, {});
+  revoked.revoke();
+  const accessor = Object.defineProperty({}, "clock", { get() {
+    reads += 1;
+    void executeDecision(hostile as RuntimeInput).catch(() => {});
+    throw new Error("reentry forbidden");
+  } });
+  for (const value of [null, undefined, 1, "legacy", hostile, revoked.proxy, accessor]) {
+    await assert.rejects(executeDecision(value as RuntimeInput), retired);
+  }
+  assert.equal(reads, 0);
 });
 
-test("snapshots requested identity in returned observations", async () => {
-  process.env.OPENROUTER_API_KEY = "test-only-secret";
-  const value = await input(provider());
-  const result = await executeDecision(value);
-  assert.equal(result.ok, true);
-  if (!result.ok) return;
-  (result.observation.requested_identity as Record<string, unknown>).model = "mutated";
-  assert.equal(REQUESTED_IDENTITY.model, "typesafe/jev-1.13");
+const oldScenarios: ReadonlyArray<{
+  name: string;
+  prepare: (value: RuntimeInput) => RuntimeInput;
+}> = [
+  { name: "missing cost", prepare: value => {
+    const body = provider() as Record<string, unknown>; delete body.cost;
+    return { ...value, transport: ports(body, []).transport };
+  } },
+  { name: "missing server metadata", prepare: value => {
+    const body = provider() as Record<string, unknown>; delete body.server_timestamp_utc;
+    return { ...value, transport: ports(body, []).transport };
+  } },
+  { name: "competing lease", prepare: value => ({ ...value, lease_port: { ...value.lease_port, claim: async () => "occupied" } }) },
+  { name: "mismatched lease", prepare: value => ({ ...value, lease: { ...value.lease, lease_id: "lease-99999999999999999999999999999999" } }) },
+  { name: "unsafe custody", prepare: value => ({ ...value, custody: { ...value.custody, source_ref: "Bearer unsafe\r\nX-Leak: yes" } }) },
+  { name: "lease failure", prepare: value => ({ ...value, lease_port: { ...value.lease_port, claim: async () => { throw new Error("lease failed"); } } }) },
+  { name: "malformed custody", prepare: value => ({ ...value, custody: null as never }) },
+  { name: "terminal failure", prepare: value => ({ ...value, lease_port: { ...value.lease_port, terminal: async () => { throw new Error("terminal failed"); } } }) },
+  { name: "invalid initial clock", prepare: value => ({ ...value, clock: { now: () => "not-a-timestamp" } }) },
+  { name: "post-claim clock failure", prepare: value => {
+    let reads = 0;
+    return { ...value, clock: { now: () => { if (++reads === 3) throw new Error("clock failed"); return times[reads - 1]; } } };
+  } },
+  ...["redirect authority", "invalid UTF-8", "duplicate JSON keys", "nested provider extras", "malformed bytes and failed terminalization"].map(name => ({
+    name,
+    prepare(value: RuntimeInput): RuntimeInput {
+      const body = provider();
+      if (name === "nested provider extras") Object.assign(body.answers.department, { extra: "discard-me" });
+      let bytes = new TextEncoder().encode(JSON.stringify(body));
+      if (name === "invalid UTF-8") bytes = new Uint8Array([0xc3, 0x28]);
+      if (name === "duplicate JSON keys") bytes = new TextEncoder().encode('{"model":"a","model":"b"}');
+      if (name === "malformed bytes and failed terminalization") bytes = new TextEncoder().encode("{bad");
+      return { ...value, transport: { post: async () => ({
+        status: 200, content_type: "application/json", body: bytes, socket_opened_at_utc: times[3],
+        authority: { endpoint: DECISIONS_ENDPOINT, method: "POST", redirects: name === "redirect authority" ? "follow" : "disabled", tls: "verified", proxy: "none" },
+      } as never) }, ...(name === "malformed bytes and failed terminalization" ? {
+        lease_port: { ...value.lease_port, terminal: async () => { throw new Error("terminal failed"); } },
+      } : {}) };
+    },
+  })),
+];
+for (const scenario of oldScenarios) {
+  test("old runtime scenario refuses without inspecting its configured faults: " + scenario.name, async () => {
+    const value = scenario.prepare(await input());
+    let reads = 0;
+    const guarded = new Proxy(value, { get() { reads += 1; throw new Error("input access forbidden"); } });
+    await assert.rejects(executeDecision(guarded), retired);
+    assert.equal(reads, 0);
+  });
+}
 
-  const terminalInput = await input(provider());
-  const terminalFailure = await executeDecision({ ...terminalInput, lease_port: { claim: async () => ({ lease: { ...terminalInput.lease, request_digest: canonicalDigest(request()) } }), consume: async () => true, terminal: async () => { throw new Error("terminal unavailable"); } } });
-  assert.equal(terminalFailure.ok, false);
-  if (!terminalFailure.ok) assert.equal(terminalFailure.record.reason_code, "evidence:R15");
+test("concurrent invocations stay retired and do not mutate pure provider identity", async () => {
+  const before = JSON.stringify(REQUESTED_IDENTITY);
+  const calls: string[] = [];
+  const value = await input(provider(), calls);
+  Object.defineProperty(value, "clock", { get() { calls.push("clock"); throw new Error("forbidden"); } });
+  await Promise.all(Array.from({ length: 8 }, () => assert.rejects(executeDecision(value), retired)));
+  assert.deepEqual(calls, []);
+  assert.equal(JSON.stringify(REQUESTED_IDENTITY), before);
 });

@@ -123,6 +123,15 @@ export const contractB: ContractReaderEntry = {
     // the typed source; also a Contract A reader (VERIFICATION_CLASSES). ADD
     // a class and this file must change.
     'plugins/foreman-line/spec-linter/src/types.ts',
+    // LOCKSTEP (additive): validates routing_class against the complete local
+    // vocabulary. ADD a class and this consumer's membership set must change.
+    'plugins/foreman-line/hybrid-routing/src/consumer-compatibility.ts',
+    // LOCKSTEP (additive, PMC-P2B1): validates routingClass against the full
+    // literal vocabulary. ADD a class and the owner's membership list must change.
+    'plugins/foreman-line/dispatch/src/pmc-launch/intent-custody.ts',
+    // LOCKSTEP (additive, PMC-P2C): validates routingClass against the full
+    // literal vocabulary. ADD a class and this controller's membership list must change.
+    'plugins/foreman-line/dispatch/src/pmc-launch/controller.ts',
     // LOCKSTEP (additive): the .json restatement of the same vocabulary. ADD
     // a class and this file's enum literal must change.
     'plugins/foreman-line/spec-linter/schemas/spec-frontmatter.schema.json',
