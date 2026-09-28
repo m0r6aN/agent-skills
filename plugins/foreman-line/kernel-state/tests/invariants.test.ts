@@ -313,6 +313,80 @@ test('consume wakeup is a guarded write (second consume touches zero rows)', () 
   })
 })
 
+test('guarded writes: unknown patch member refuses with STORAGE_ARGUMENT_INVALID (F2)', () => {
+  withStorage((storage) => {
+    insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'open', updatedAtMicros: T0 })
+    assert.throws(
+      () =>
+        updateGoalRow(storage, 'goal-1', { revision: 0 }, { status: 'closed', bogus: 1 } as never),
+      (error: unknown) => {
+        assert.ok(error instanceof StorageError)
+        assert.equal(error.code, 'STORAGE_ARGUMENT_INVALID')
+        assert.equal(error.diagnostic.fieldPath, 'patch.bogus')
+        return true
+      },
+    )
+    // Failing-when-broken: without the unknown member the update applies.
+    assert.equal(updateGoalRow(storage, 'goal-1', { revision: 0 }, { status: 'closed' }), 1)
+  })
+})
+
+test('guarded writes: wrong-shape patch value refuses pre-write (F2)', () => {
+  withStorage((storage) => {
+    insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'open', updatedAtMicros: T0 })
+    assert.throws(
+      () => updateGoalRow(storage, 'goal-1', { revision: 0 }, { status: 'not a valid id!!' }),
+      (error: unknown) => {
+        assert.ok(error instanceof StorageError)
+        assert.equal(error.code, 'STORAGE_ARGUMENT_INVALID')
+        assert.equal(error.diagnostic.fieldPath, 'patch.status')
+        return true
+      },
+    )
+    // Pre-write refusal: nothing poisoned the row (a raw TEXT bind would have).
+    assert.equal(getGoal(storage, 'goal-1')?.status, 'open')
+    // Failing-when-broken: a shape-valid value passes.
+    assert.equal(updateGoalRow(storage, 'goal-1', { revision: 0 }, { status: 'closed' }), 1)
+  })
+})
+
+test('guarded writes: wrong-type guard refuses pre-write (F2)', () => {
+  withStorage((storage) => {
+    insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'open', updatedAtMicros: T0 })
+    assert.throws(
+      () =>
+        updateGoalRow(storage, 'goal-1', { updatedAtMicros: 'soon' } as never, {
+          status: 'closed',
+        }),
+      (error: unknown) => {
+        assert.ok(error instanceof StorageError)
+        assert.equal(error.code, 'STORAGE_ARGUMENT_INVALID')
+        assert.equal(error.diagnostic.fieldPath, 'guards.updatedAtMicros')
+        return true
+      },
+    )
+    assert.equal(getGoal(storage, 'goal-1')?.status, 'open')
+    // Failing-when-broken: a type-correct guard passes.
+    assert.equal(updateGoalRow(storage, 'goal-1', { updatedAtMicros: T0 }, { status: 'closed' }), 1)
+  })
+})
+
+test('guarded writes: identity members cannot be patched', () => {
+  withStorage((storage) => {
+    insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'open', updatedAtMicros: T0 })
+    assert.throws(
+      () => updateGoalRow(storage, 'goal-1', { revision: 0 }, { goalId: 'goal-renamed' } as never),
+      (error: unknown) => {
+        assert.ok(error instanceof StorageError)
+        assert.equal(error.code, 'STORAGE_ARGUMENT_INVALID')
+        assert.equal(error.diagnostic.fieldPath, 'patch.goalId')
+        return true
+      },
+    )
+    assert.ok(getGoal(storage, 'goal-1') !== null, 'the primary key must be untouched')
+  })
+})
+
 test('nested withTransaction refuses (STORAGE_ARGUMENT_INVALID)', () => {
   withStorage((storage) => {
     withTransaction(storage, (inner) => {

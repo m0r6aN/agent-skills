@@ -96,12 +96,20 @@ const openWritePaths = new Set<string>()
 function assertPragmas(driver: DriverConnection): void {
   const foreignKeys = driver.pragma('foreign_keys')
   const synchronous = driver.pragma('synchronous')
+  const recursiveTriggers = driver.pragma('recursive_triggers')
   const fkValue = firstRowValue(foreignKeys)
   const syncValue = firstRowValue(synchronous)
+  const recursiveValue = firstRowValue(recursiveTriggers)
   if (fkValue !== 1 && fkValue !== '1') {
     throw storageError('STORAGE_IO_FAILURE', { driverCode: 'os-error' })
   }
   if (syncValue !== 2 && syncValue !== '2') {
+    throw storageError('STORAGE_IO_FAILURE', { driverCode: 'os-error' })
+  }
+  // AC6's INSERT-OR-REPLACE rejection rides on this setting (the implicit
+  // conflict-resolution delete only fires delete triggers when recursive
+  // triggers are on): a silently non-applied value must fail the open.
+  if (recursiveValue !== 1 && recursiveValue !== '1') {
     throw storageError('STORAGE_IO_FAILURE', { driverCode: 'os-error' })
   }
 }

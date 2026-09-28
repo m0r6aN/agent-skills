@@ -16,6 +16,8 @@ import {
   closeStorage,
   type OpenStorageConfig,
   openStorage,
+  openStorageWithDriver,
+  realConnect,
   verifyStorage,
   WAL_AUTOCHECKPOINT_PAGES,
 } from '../src/open.js'
@@ -58,7 +60,41 @@ test('open asserts the WAL/busy pragma policy and records the busy budget', () =
   assert.equal(fk[0]?.foreign_keys, 1)
   const auto = storage.driver.pragma('wal_autocheckpoint') as { wal_autocheckpoint: number }[]
   assert.equal(auto[0]?.wal_autocheckpoint, WAL_AUTOCHECKPOINT_PAGES)
+  const recursive = storage.driver.pragma('recursive_triggers') as { recursive_triggers: number }[]
+  assert.equal(recursive[0]?.recursive_triggers, 1, 'recursive_triggers=ON')
   closeStorage(storage)
+  cleanup(roots)
+})
+
+test('post-open assertions refuse when recursive_triggers is not ON (F4 hardening)', () => {
+  const roots = tempPair()
+  const real = openStorage(configFor(roots.root))
+  closeStorage(real)
+  // The pragma seam reports a silently non-applied recursive_triggers value:
+  // AC6's INSERT-OR-REPLACE rejection rides on it, so the open must refuse.
+  let refused: unknown
+  try {
+    openStorageWithDriver(configFor(roots.root), (path, opts) => {
+      const connection = realConnect(path, opts)
+      return {
+        exec: (sql: string) => {
+          connection.exec(sql)
+        },
+        prepare: (sql: string) => connection.prepare(sql),
+        pragma: (source: string) => {
+          if (source === 'recursive_triggers') return [{ recursive_triggers: 0 }]
+          return connection.pragma(source)
+        },
+        close: () => {
+          connection.close()
+        },
+      }
+    })
+  } catch (error) {
+    refused = error
+  }
+  assert.ok(refused instanceof StorageError, 'open must refuse a non-ON recursive_triggers value')
+  assert.equal(refused instanceof StorageError ? refused.code : 'none', 'STORAGE_IO_FAILURE')
   cleanup(roots)
 })
 

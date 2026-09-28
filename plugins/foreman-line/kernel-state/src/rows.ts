@@ -306,6 +306,99 @@ function toColumns(row: Record<string, unknown>): Record<string, unknown> {
   return out
 }
 
+/** Closed member kinds for guarded-update guards and patches. */
+type MemberKind = 'safeInt' | 'id' | 'digest' | 'idOrNull' | 'micros' | 'microsOrNull'
+
+function validateMember(kind: MemberKind, value: unknown, fieldPath: string): void {
+  switch (kind) {
+    case 'safeInt':
+      requireSafeInt(value, fieldPath)
+      return
+    case 'id':
+      requireId(value, fieldPath)
+      return
+    case 'digest':
+      requireDigest(value, fieldPath)
+      return
+    case 'idOrNull':
+      requireIdOrNull(value, fieldPath, true)
+      return
+    case 'micros':
+      requireMicrosOrNull(value, fieldPath)
+      return
+    case 'microsOrNull':
+      requireMicrosOrNull(value, fieldPath, true)
+  }
+}
+
+/**
+ * Fail closed on any guard/patch member outside the primitive's closed set or
+ * failing its shape — before anything is bound or written (F2). Guard sets
+ * cover the row's columns; patch sets exclude identity columns (a patch must
+ * never rewrite a primary key).
+ */
+function validateUpdateInput(
+  kind: 'guards' | 'patch',
+  input: Record<string, unknown>,
+  closed: Record<string, MemberKind>,
+): void {
+  for (const [member, value] of Object.entries(input)) {
+    const memberKind = closed[member]
+    if (memberKind === undefined) {
+      throw storageError('STORAGE_ARGUMENT_INVALID', { fieldPath: `${kind}.${member}` })
+    }
+    if (value === undefined) continue
+    validateMember(memberKind, value, `${kind}.${member}`)
+  }
+}
+
+const GOAL_GUARD_MEMBERS: Record<string, MemberKind> = {
+  goalId: 'id',
+  revision: 'safeInt',
+  status: 'id',
+  pendingTransitionId: 'idOrNull',
+  updatedAtMicros: 'micros',
+}
+
+const GOAL_PATCH_MEMBERS: Record<string, MemberKind> = {
+  revision: 'safeInt',
+  status: 'id',
+  pendingTransitionId: 'idOrNull',
+  updatedAtMicros: 'micros',
+}
+
+const TRANSITION_GUARD_MEMBERS: Record<string, MemberKind> = {
+  transitionId: 'id',
+  goalId: 'id',
+  status: 'id',
+  requestedBy: 'id',
+  operationId: 'id',
+  payloadDigest: 'digest',
+  createdAtMicros: 'micros',
+  decidedAtMicros: 'microsOrNull',
+}
+
+const TRANSITION_PATCH_MEMBERS: Record<string, MemberKind> = {
+  status: 'id',
+  decidedAtMicros: 'microsOrNull',
+}
+
+const LEASE_GUARD_MEMBERS: Record<string, MemberKind> = {
+  leaseId: 'id',
+  goalId: 'id',
+  ownerPrincipalRef: 'id',
+  casRevision: 'safeInt',
+  acquiredAtMicros: 'micros',
+  expiresAtMicros: 'microsOrNull',
+  releasedAtMicros: 'microsOrNull',
+}
+
+const LEASE_PATCH_MEMBERS: Record<string, MemberKind> = {
+  casRevision: 'safeInt',
+  expiresAtMicros: 'microsOrNull',
+  releasedAtMicros: 'microsOrNull',
+}
+
 function guardedUpdate(
   storage: Storage,
   table: string,
@@ -446,7 +539,7 @@ export function getGoal(storage: Storage, goalId: string): GoalRow | null {
   )
 }
 
-export interface GoalUpdate {
+export type GoalUpdate = {
   revision?: number
   status?: string
   pendingTransitionId?: string | null
@@ -460,6 +553,8 @@ export function updateGoalRow(
   guards: Partial<GoalRow>,
   patch: GoalUpdate,
 ): number {
+  validateUpdateInput('guards', guards, GOAL_GUARD_MEMBERS)
+  validateUpdateInput('patch', patch, GOAL_PATCH_MEMBERS)
   return guardedUpdate(
     storage,
     'goals',
@@ -502,7 +597,7 @@ export function insertTransition(storage: Storage, input: NewTransitionRow): voi
   )
 }
 
-export interface TransitionUpdate {
+export type TransitionUpdate = {
   status?: string
   decidedAtMicros?: number | null
 }
@@ -513,6 +608,8 @@ export function updateTransitionRow(
   guards: Partial<TransitionRow>,
   patch: TransitionUpdate,
 ): number {
+  validateUpdateInput('guards', guards, TRANSITION_GUARD_MEMBERS)
+  validateUpdateInput('patch', patch, TRANSITION_PATCH_MEMBERS)
   return guardedUpdate(
     storage,
     'transitions',
@@ -553,7 +650,7 @@ export function insertLease(storage: Storage, input: NewLeaseRow): void {
   )
 }
 
-export interface LeaseUpdate {
+export type LeaseUpdate = {
   casRevision?: number
   expiresAtMicros?: number | null
   releasedAtMicros?: number | null
@@ -565,6 +662,8 @@ export function updateLeaseRow(
   guards: Partial<LeaseRow>,
   patch: LeaseUpdate,
 ): number {
+  validateUpdateInput('guards', guards, LEASE_GUARD_MEMBERS)
+  validateUpdateInput('patch', patch, LEASE_PATCH_MEMBERS)
   return guardedUpdate(
     storage,
     'leases',

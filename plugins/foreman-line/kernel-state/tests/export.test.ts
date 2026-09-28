@@ -90,16 +90,40 @@ function configFor(root: string, clock: Clock): OpenStorageConfig {
 }
 
 function insertSampleRows(storage: Storage, order: 'forward' | 'interleaved'): void {
-  // The goal row must precede its dependents (FK) and the event rows keep their
-  // relative order (event_seq is generated content); the surrounding rows are
-  // inserted in genuinely different orders per EXPD-01.
-  insertGoal(storage, {
-    goalId: 'goal-1',
-    revision: 1,
-    status: 'open',
-    pendingTransitionId: null,
-    updatedAtMicros: T0,
-  })
+  // The goals table carries a genuinely permuted multi-row content-stable
+  // ordering across the variants (caller-keyed rows, identical content): the
+  // export's row-order normalization is what makes the two exports identical.
+  // Dependent rows keep relative order where generation makes content
+  // insertion-dependent (events: event_seq).
+  const goals = {
+    g1: () =>
+      insertGoal(storage, {
+        goalId: 'goal-1',
+        revision: 1,
+        status: 'open',
+        pendingTransitionId: null,
+        updatedAtMicros: T0,
+      }),
+    g2: () =>
+      insertGoal(storage, {
+        goalId: 'goal-2',
+        revision: 0,
+        status: 'blocked',
+        pendingTransitionId: null,
+        updatedAtMicros: T0 + 20,
+      }),
+    g3: () =>
+      insertGoal(storage, {
+        goalId: 'goal-3',
+        revision: 2,
+        status: 'closed',
+        pendingTransitionId: null,
+        updatedAtMicros: T0 + 30,
+      }),
+  }
+  const goalSequence =
+    order === 'forward' ? [goals.g1, goals.g2, goals.g3] : [goals.g3, goals.g1, goals.g2]
+  for (const insert of goalSequence) insert()
   const inserts = {
     evt1: () =>
       insertEvent(storage, {
