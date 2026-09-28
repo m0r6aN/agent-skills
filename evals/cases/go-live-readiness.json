@@ -1,0 +1,43 @@
+{
+  "skill_name": "go-live-readiness",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "We are promoting to production Friday - are we actually ready to go live",
+        "top_k": 3
+      },
+      {
+        "prompt": "The RC is cut - run the release readiness gates before we ship",
+        "top_k": 3
+      },
+      {
+        "prompt": "Run a pre-launch audit with release gates and tell us if this system is ready to go live",
+        "top_k": 3
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "Simplify this working function for readability",
+        "owner": "code-simplification"
+      },
+      {
+        "prompt": "Break this release into ordered implementable tasks",
+        "owner": "planning-and-task-breakdown"
+      }
+    ]
+  },
+  "evals": [
+    {
+      "id": 1,
+      "kind": "dialogue",
+      "dialogue_justification": "The skill's deliverable is an assessment verdict (ship/hold/ship-with-constraints) - assessment-shaped, with no build output.",
+      "prompt": "Staging scenarios pass but the payment surface review found one open High finding and two scenarios were never run in staging. What is your verdict?",
+      "expected_output": "A hold verdict naming the blocking finding, the unverified scenarios, and their owners",
+      "expectations": [
+        "Returns hold rather than ship while a High finding is open",
+        "Treats the never-run scenarios as unverified blockers, not implicit passes",
+        "Names owners for each blocker instead of issuing a vague not-ready"
+      ]
+    }
+  ]
+}

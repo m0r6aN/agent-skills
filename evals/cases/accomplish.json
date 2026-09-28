@@ -1,0 +1,44 @@
+{
+  "skill_name": "accomplish",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "Our deploy pipeline is flaky and slow - just make it reliable, get it done without a big plan",
+        "top_k": 3
+      },
+      {
+        "prompt": "Keep an eye on tonight's batch job and ping me if anything looks off",
+        "top_k": 3
+      },
+      {
+        "prompt": "Drive this cost-cutting push to done across the team - own the outcome until it is verifiable",
+        "top_k": 3
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "The app crashes with a TypeError when I click save, help me find the root cause",
+        "owner": "debugging-and-error-recovery"
+      },
+      {
+        "prompt": "Write the API documentation for the orders service",
+        "owner": "documentation-and-adrs"
+      }
+    ]
+  },
+  "evals": [
+    {
+      "id": 1,
+      "kind": "dialogue",
+      "dialogue_justification": "The skill's deliverable is an interview-confirmed goal block plus an execution-mode decision - a conversation, not files.",
+      "prompt": "Our checkout flow keeps losing orders and nobody agrees on what fixed looks like. Get this to done.",
+      "expected_output": "A confirmed six-field goal with observable verification evidence and guardrails, agreed before any execution begins",
+      "expectations": [
+        "Asks clarifying questions one at a time with a concrete guess attached instead of starting work or batching questions",
+        "Pins an observable verification surface rather than accepting a vague finish line",
+        "States iteration cap, budget, and stop conditions before executing",
+        "Does not declare completion without verification evidence passing"
+      ]
+    }
+  ]
+}

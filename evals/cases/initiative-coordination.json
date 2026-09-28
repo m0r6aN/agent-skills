@@ -1,0 +1,43 @@
+{
+  "skill_name": "initiative-coordination",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "This effort spans three services with separate repos - coordinate the tracks and prove the integration boundaries hold",
+        "top_k": 3
+      },
+      {
+        "prompt": "Five agents across separate sessions are building related services - keep one persisted picture of initiative state",
+        "top_k": 3
+      },
+      {
+        "prompt": "Our release depends on billing and notifications composing correctly - own the integration surface between them",
+        "top_k": 3
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "Simplify this working function for readability",
+        "owner": "code-simplification"
+      },
+      {
+        "prompt": "Write the API documentation for the orders service",
+        "owner": "documentation-and-adrs"
+      }
+    ]
+  },
+  "evals": [
+    {
+      "id": 1,
+      "kind": "dialogue",
+      "dialogue_justification": "Grades the coordinator stop-and-report handoff on missing decisions, which is conversational coordination, not files.",
+      "prompt": "Two tracks disagree on the auth contract for the gateway-to-runtime surface and no owner decision exists. Both agents want to keep building. What do you do?",
+      "expected_output": "Work halts at the boundary with a recorded decision request to the owner, not continued building on an assumed contract",
+      "expectations": [
+        "Stops the affected tracks instead of letting agents build on an undecided contract",
+        "Records the missing decision with an explicit owner in durable state",
+        "Does not silently resolve the contract disagreement"
+      ]
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 ---
 name: test-driven-development
-description: Drives development with tests. Use when implementing any logic, fixing any bug, or changing any behavior. Use when you need to prove that code works, when a bug report arrives, or when you're about to modify existing functionality.
+description: Drives development with tests. Use when implementing any logic, fixing any bug, or changing any behavior. Follow the red-green-refactor cycle: write a failing test first, then the minimal code to make it pass. Use when you need to prove that code works, when a bug report arrives, or when you're about to modify existing functionality.
 ---
 
 # Test-Driven Development

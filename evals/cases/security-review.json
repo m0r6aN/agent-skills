@@ -1,0 +1,43 @@
+{
+  "skill_name": "security-review",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "Is this Dockerfile secure? Audit it for exposed secrets and known CVEs",
+        "top_k": 3
+      },
+      {
+        "prompt": "Threat-model our new agent tool chain for prompt injection and tenant isolation gaps",
+        "top_k": 3
+      },
+      {
+        "prompt": "Audit this Kubernetes manifest for exposed secrets and weak authorization",
+        "top_k": 3
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "Simplify this working function for readability",
+        "owner": "code-simplification"
+      },
+      {
+        "prompt": "Break this release into ordered implementable tasks",
+        "owner": "planning-and-task-breakdown"
+      }
+    ]
+  },
+  "evals": [
+    {
+      "id": 1,
+      "kind": "dialogue",
+      "dialogue_justification": "Grades the scope-clarification dialogue the skill requires when review scope is ambiguous.",
+      "prompt": "Review our system for security issues.",
+      "expected_output": "Concise scoping questions establishing the target class and depth before any findings are produced",
+      "expectations": [
+        "Asks what is being reviewed (target class) instead of assuming the whole estate",
+        "States the default standard-review depth explicitly instead of inventing scope",
+        "Does not produce findings before scope is established"
+      ]
+    }
+  ]
+}

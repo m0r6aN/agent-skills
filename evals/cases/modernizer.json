@@ -1,0 +1,43 @@
+{
+  "skill_name": "modernizer",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "Extract behavioral contracts from the legacy monolith so we can rebuild it instead of attempting a blind rewrite",
+        "top_k": 3
+      },
+      {
+        "prompt": "Have the agent inventory legacy behavior into validated contracts, then generate a target-native implementation",
+        "top_k": 3
+      },
+      {
+        "prompt": "We need a receipt pack proving the rebuilt service matches legacy within tolerance before release",
+        "top_k": 3
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "Write the API documentation for the orders service",
+        "owner": "documentation-and-adrs"
+      },
+      {
+        "prompt": "Set up a CI pipeline that runs our test suite on every push",
+        "owner": "ci-cd-and-automation"
+      }
+    ]
+  },
+  "evals": [
+    {
+      "id": 1,
+      "kind": "dialogue",
+      "dialogue_justification": "Grades the human-in-the-loop escalation dialogue on uncovered behavior, not implementation output.",
+      "prompt": "Two legacy modules compute tax totals differently and no contract covers which one is canonical. Release pressure is mounting to just pick one. What do you do?",
+      "expected_output": "Escalation to human-in-the-loop resolution with both behaviors evidenced; no implementation from an unapproved contract",
+      "expectations": [
+        "Refuses to implement either behavior without an approved contract covering it",
+        "Surfaces both candidate behaviors with evidence for the human gate",
+        "Time pressure does not cause the validation gate to be skipped"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "skill_name": "parcel-compiler",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "Implement the stubbed compile command in pcc under its frozen command contract",
+        "top_k": 3
+      },
+      {
+        "prompt": "Review the parcel compiler canonicalization and hashing utilities for correctness",
+        "top_k": 3
+      },
+      {
+        "prompt": "Is the pcc verify command actually implemented yet, or is it still a stub",
+        "top_k": 3
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "Write the API documentation for the orders service",
+        "owner": "documentation-and-adrs"
+      },
+      {
+        "prompt": "Simplify this working function for readability",
+        "owner": "code-simplification"
+      }
+    ]
+  },
+  "evals": [
+    {
+      "id": 1,
+      "kind": "dialogue",
+      "dialogue_justification": "Grades the capability-claim audit response - an assessment of stated maturity, not a build.",
+      "prompt": "A teammate claims pcc is a working end-to-end compiler and wants to demo compiling a parcel with it tomorrow. Respond.",
+      "expected_output": "A correction stating pcc is a 0.1.0 scaffold with stubbed operational commands, with implemented primitives reported separately from stubs",
+      "expectations": [
+        "States that the operational commands are stubbed and return NOT_IMPLEMENTED",
+        "Lists implemented primitives separately from remaining stubs",
+        "Does not endorse the demo as a working-compiler showcase"
+      ]
+    }
+  ]
+}

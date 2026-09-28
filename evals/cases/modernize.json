@@ -1,0 +1,43 @@
+{
+  "skill_name": "modernize",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "Rebuild our legacy claims system in the new stack and prove behavioral equivalence with reconciliation evidence",
+        "top_k": 3
+      },
+      {
+        "prompt": "Our team needs a contract-first modernization workflow - extract requirements and contracts, validate with humans, then verify parity with reconciliation reports",
+        "top_k": 3
+      },
+      {
+        "prompt": "Our team is porting a mainframe module to the cloud and must show replayable receipts that the new system matches the old",
+        "top_k": 3
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "Write a failing test for this bug before fixing it",
+        "owner": "test-driven-development"
+      },
+      {
+        "prompt": "Simplify this working function for readability",
+        "owner": "code-simplification"
+      }
+    ]
+  },
+  "evals": [
+    {
+      "id": 1,
+      "kind": "dialogue",
+      "dialogue_justification": "Grades the ambiguity-escalation dialogue required before the human validation gate, not the build outputs.",
+      "prompt": "Discovery found a discount rule in legacy code that contradicts the documented policy, with no test covering either version. The human gate is next week. What do you do?",
+      "expected_output": "The ambiguity is escalated to the human validation gate with evidence for both readings, and implementation does not proceed on a guess",
+      "expectations": [
+        "Presents both readings with their evidence instead of picking one silently",
+        "Routes the conflict to the human validation gate before implementation",
+        "Does not implement either reading ahead of approval"
+      ]
+    }
+  ]
+}
