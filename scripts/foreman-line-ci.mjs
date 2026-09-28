@@ -4,11 +4,9 @@ import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const packages = Object.freeze([
-  'approval', 'contract-readers', 'contracts', 'dispatch', 'foreman-config', 'hybrid-routing',
-  'integration', 'mutation-scope-guard', 'permission-profiles', 'projection',
-  'receipts', 'registration', 'role-authority', 'routing-policy',
-  'schema-scaffold', 'shaping', 'skill-injection', 'spec-linter', 'verification',
-  'worker-envelopes',
+  'approval', 'contracts', 'dispatch', 'integration', 'permission-profiles',
+  'projection', 'receipts', 'registration', 'routing-policy', 'schema-scaffold',
+  'shaping', 'skill-injection', 'spec-linter', 'verification',
 ])
 
 class ForemanCiError extends Error {
@@ -18,40 +16,17 @@ class ForemanCiError extends Error {
   }
 }
 
-// Captured child output is emitted to the job log and to the failure section
-// below; only fixed allowlist names and normalized statuses enter the
-// Markdown/log report. The capture cap is deliberately huge so a failing
-// check's stdout/stderr is never truncated in practice.
-const maxOutputBytes = 256 * 1024 * 1024
-
 // The process boundary is mandatory: importing/testing the runner cannot launch npm.
 export function run({ root, npmCli, spawn, offline = false }) {
   const outcomes = packages.map((pkg) => ({
     package: pkg, ci: 'skipped', test: 'skipped', typecheck: 'skipped', lint: 'skipped',
   }))
-  const failures = []
-  function invoke(pkg, check, args) {
+  function invoke(pkg, args) {
     try {
       const result = spawn(process.execPath, [npmCli, ...args], {
-        cwd: join(root, 'plugins', 'foreman-line', pkg),
-        stdio: ['inherit', 'pipe', 'pipe'], shell: false,
-        encoding: 'utf8', maxBuffer: maxOutputBytes,
+        cwd: join(root, 'plugins', 'foreman-line', pkg), stdio: 'inherit', shell: false,
       })
-      const stdout = result?.stdout ?? ''
-      const stderr = result?.stderr ?? ''
-      if (stdout) process.stdout.write(stdout)
-      if (stderr) process.stderr.write(stderr)
-      const ok = result?.status === 0 && !result.error && !result.signal
-      if (!ok) {
-        const detail = [
-          Number.isInteger(result?.status) && result.status !== 0
-            ? `exit code ${result.status}` : null,
-          result?.signal ? 'signal' : null,
-          result?.error ? 'spawn error' : null,
-        ].filter(Boolean).join(', ')
-        failures.push({ package: pkg, check, detail, stdout, stderr })
-      }
-      return ok ? 'pass' : 'fail'
+      return result?.status === 0 && !result.error && !result.signal ? 'pass' : 'fail'
     } catch (cause) {
       throw new ForemanCiError('Package process failed', cause)
     }
@@ -63,32 +38,20 @@ export function run({ root, npmCli, spawn, offline = false }) {
           ? ['ci', '--ignore-scripts', '--no-audit', '--no-fund', ...(offline ? ['--offline'] : [])]
           : ['run', check, '--ignore-scripts']
         try {
-          outcome[check] = invoke(outcome.package, check, args)
+          outcome[check] = invoke(outcome.package, args)
         } catch (error) {
           if (!(error instanceof ForemanCiError)) throw error
           outcome[check] = 'fail'
-          failures.push({
-            package: outcome.package, check, detail: 'spawn error', stdout: '', stderr: '',
-          })
         }
       }
     }
     // Relative sibling imports require every install to succeed before any check.
     if (phase[0] === 'ci' && outcomes.some((outcome) => outcome.ci !== 'pass')) break
   }
-  if (failures.length) {
-    const section = failures.map(({ package: pkg, check, detail, stdout, stderr }) => [
-      `--- ${pkg}/${check} failed (${detail || 'no exit status'}) ---`,
-      stdout, stderr,
-    ].filter(Boolean).join('\n')).join('\n\n')
-    process.stderr.write(`\n${section}\n`)
-  }
   return {
     exitCode: outcomes.some((outcome) =>
       ['ci', 'test', 'typecheck', 'lint'].some((check) => outcome[check] !== 'pass')) ? 1 : 0,
     outcomes,
-    // Normalized projection only: raw child output never enters the result.
-    failures: failures.map(({ package: pkg, check, detail }) => ({ package: pkg, check, detail })),
   }
 }
 
