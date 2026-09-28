@@ -24,7 +24,7 @@ test('item1: a link-write failure occurs AFTER the receipt is committed, and the
   // succeed; the Jira link write then fails.
   let landed: readonly string[] = []
   await assert.rejects(
-    register({ slug: fx.slug, repoRoot: fx.repoRoot, adapter, timestamp: TS }),
+    register({ slug: fx.slug, projectKey: 'KONE', repoRoot: fx.repoRoot, adapter, timestamp: TS }),
     (err: unknown) => {
       assert.ok(err instanceof RegistrationError)
       landed = err.landed
@@ -49,7 +49,13 @@ test('item1: a link-write failure occurs AFTER the receipt is committed, and the
   // Re-run (same adapter, link write now allowed): reconcile writes the link
   // idempotently and creates NOTHING new.
   adapter.failOnLink = false
-  const outcome = await register({ slug: fx.slug, repoRoot: fx.repoRoot, adapter, timestamp: TS })
+  const outcome = await register({
+    slug: fx.slug,
+    projectKey: 'KONE',
+    repoRoot: fx.repoRoot,
+    adapter,
+    timestamp: TS,
+  })
   assert.equal(outcome.mode, 'reconcile')
   assert.equal(adapter.createCalls.length, 2, 're-run must create no duplicates')
   assert.equal(adapter.linkCalls.length, 1, 're-run writes the previously-failed link')

@@ -1,93 +1,185 @@
 {
   "provenance": {
-    "note": "REAL captured responses from the live GitHub API — coordinator-captured (CLOSE-P1 spec Design item 2). NOT hand-written. Each member's 'capture' field is the verbatim JSON body returned by the command in its 'command' field. Do not edit captures; recapture instead.",
-    "capturedBy": "coordinator",
-    "capturedAt": "2026-07-28T13:28:00-04:00",
-    "repoMainSha": "1de7284"
+    "note": "REAL captured responses from the live GitHub API for E6-R1. NOT hand-written. Each capture is the verbatim parsed JSON body returned by its exact read-only command. The three commands were immediately repeated and deep-compared before this fixture was written.",
+    "capturedBy": "E6-R1 isolated builder",
+    "capturedAt": "2026-09-06T12:34:03.4033843Z",
+    "repository": "m0r6aN/agent-skills",
+    "repoMainSha": "b30873ec2db566b185cdfcf1a191e4f8ec8be1ee",
+    "repoMainShaCommand": "gh api repos/m0r6aN/agent-skills/commits/main --jq .sha",
+    "recaptureVerification": {
+      "method": "Immediate second read of every capture command followed by deep structural comparison",
+      "structurallyEqual": true
+    }
   },
   "branchRules": {
-    "command": "gh api repos/KaseyaOne/kaseya-one-productivity-tools/rules/branches/main",
-    "endpoint": "branch-rules (repos/:owner/:repo/rules/branches/:branch) — carries NO bypass-actor field anywhere (coordinator finding, 2026-07-28); bypass actors live on the ruleset endpoint",
+    "command": "gh api repos/m0r6aN/agent-skills/rules/branches/main",
+    "endpoint": "branch-rules (repos/:owner/:repo/rules/branches/:branch); ruleset IDs identify the complete merge-gating ruleset captures below",
     "capture": [
       {
-        "type": "repository_visibility",
-        "parameters": { "public": false, "internal": false, "private": true },
-        "ruleset_source_type": "Enterprise",
-        "ruleset_source": "kaseya",
-        "ruleset_id": 8520252
-      },
-      {
         "type": "deletion",
         "ruleset_source_type": "Repository",
-        "ruleset_source": "KaseyaOne/kaseya-one-productivity-tools",
-        "ruleset_id": 19044225
+        "ruleset_source": "m0r6aN/agent-skills",
+        "ruleset_id": 17746056
       },
       {
         "type": "non_fast_forward",
         "ruleset_source_type": "Repository",
-        "ruleset_source": "KaseyaOne/kaseya-one-productivity-tools",
-        "ruleset_id": 19044225
-      },
-      {
-        "type": "deletion",
-        "ruleset_source_type": "Repository",
-        "ruleset_source": "KaseyaOne/kaseya-one-productivity-tools",
-        "ruleset_id": 19402394
-      },
-      {
-        "type": "non_fast_forward",
-        "ruleset_source_type": "Repository",
-        "ruleset_source": "KaseyaOne/kaseya-one-productivity-tools",
-        "ruleset_id": 19402394
+        "ruleset_source": "m0r6aN/agent-skills",
+        "ruleset_id": 17746056
       },
       {
         "type": "pull_request",
         "parameters": {
           "required_approving_review_count": 0,
-          "dismiss_stale_reviews_on_push": true,
+          "dismiss_stale_reviews_on_push": false,
           "required_reviewers": [],
           "require_code_owner_review": false,
-          "dismissal_restriction": { "enabled": false, "allowed_actors": [] },
           "require_last_push_approval": false,
-          "required_review_thread_resolution": false,
-          "allowed_merge_methods": ["merge", "squash", "rebase"]
+          "required_review_thread_resolution": true,
+          "require_extra_approval_for_unattributed_changes": false,
+          "allowed_merge_methods": [
+            "merge",
+            "squash",
+            "rebase"
+          ]
         },
         "ruleset_source_type": "Repository",
-        "ruleset_source": "KaseyaOne/kaseya-one-productivity-tools",
-        "ruleset_id": 19402394
+        "ruleset_source": "m0r6aN/agent-skills",
+        "ruleset_id": 22369510
       },
       {
-        "type": "code_scanning",
+        "type": "required_status_checks",
         "parameters": {
-          "code_scanning_tools": [
+          "strict_required_status_checks_policy": true,
+          "do_not_enforce_on_create": false,
+          "required_status_checks": [
             {
-              "tool": "CodeQL",
-              "security_alerts_threshold": "high_or_higher",
-              "alerts_threshold": "errors"
+              "context": "test",
+              "integration_id": 15368
+            },
+            {
+              "context": "integration-report",
+              "integration_id": 15368
             }
           ]
         },
         "ruleset_source_type": "Repository",
-        "ruleset_source": "KaseyaOne/kaseya-one-productivity-tools",
-        "ruleset_id": 19402394
-      },
-      {
-        "type": "code_quality",
-        "parameters": { "severity": "errors" },
-        "ruleset_source_type": "Repository",
-        "ruleset_source": "KaseyaOne/kaseya-one-productivity-tools",
-        "ruleset_id": 19402394
+        "ruleset_source": "m0r6aN/agent-skills",
+        "ruleset_id": 22369510
       }
     ]
   },
-  "rulesetBypass": {
-    "command": "gh api repos/KaseyaOne/kaseya-one-productivity-tools/rulesets/19402394 --jq '{id, name, enforcement, bypass_actors}'",
-    "endpoint": "ruleset (repos/:owner/:repo/rulesets/:id) — the surface that carries bypass_actors; captured empty (no bypass actors configured)",
-    "capture": {
-      "bypass_actors": [],
-      "enforcement": "active",
-      "id": 19402394,
-      "name": "tools protector"
+  "rulesetBypasses": [
+    {
+      "command": "gh api repos/m0r6aN/agent-skills/rulesets/17746056",
+      "endpoint": "ruleset (repos/:owner/:repo/rulesets/:id); full response carrying bypass_actors",
+      "capture": {
+        "id": 17746056,
+        "name": "main",
+        "target": "branch",
+        "source_type": "Repository",
+        "source": "m0r6aN/agent-skills",
+        "enforcement": "active",
+        "conditions": {
+          "ref_name": {
+            "exclude": [],
+            "include": [
+              "~DEFAULT_BRANCH",
+              "~ALL"
+            ]
+          }
+        },
+        "rules": [
+          {
+            "type": "deletion"
+          },
+          {
+            "type": "non_fast_forward"
+          }
+        ],
+        "node_id": "RRS_lACqUmVwb3NpdG9yec5LwzXHzgEOyIg",
+        "created_at": "2026-06-16T09:30:55.502-04:00",
+        "updated_at": "2026-06-16T09:32:23.764-04:00",
+        "bypass_actors": [],
+        "current_user_can_bypass": "never",
+        "_links": {
+          "self": {
+            "href": "https://api.github.com/repos/m0r6aN/agent-skills/rulesets/17746056"
+          },
+          "html": {
+            "href": "https://github.com/m0r6aN/agent-skills/rules/17746056"
+          }
+        }
+      }
+    },
+    {
+      "command": "gh api repos/m0r6aN/agent-skills/rulesets/22369510",
+      "endpoint": "ruleset (repos/:owner/:repo/rulesets/:id); full response carrying bypass_actors",
+      "capture": {
+        "id": 22369510,
+        "name": "main-pr-gate",
+        "target": "branch",
+        "source_type": "Repository",
+        "source": "m0r6aN/agent-skills",
+        "enforcement": "active",
+        "conditions": {
+          "ref_name": {
+            "exclude": [],
+            "include": [
+              "~DEFAULT_BRANCH"
+            ]
+          }
+        },
+        "rules": [
+          {
+            "type": "pull_request",
+            "parameters": {
+              "required_approving_review_count": 0,
+              "dismiss_stale_reviews_on_push": false,
+              "required_reviewers": [],
+              "require_code_owner_review": false,
+              "require_last_push_approval": false,
+              "required_review_thread_resolution": true,
+              "require_extra_approval_for_unattributed_changes": false,
+              "allowed_merge_methods": [
+                "merge",
+                "squash",
+                "rebase"
+              ]
+            }
+          },
+          {
+            "type": "required_status_checks",
+            "parameters": {
+              "strict_required_status_checks_policy": true,
+              "do_not_enforce_on_create": false,
+              "required_status_checks": [
+                {
+                  "context": "test",
+                  "integration_id": 15368
+                },
+                {
+                  "context": "integration-report",
+                  "integration_id": 15368
+                }
+              ]
+            }
+          }
+        ],
+        "node_id": "RRS_lACqUmVwb3NpdG9yec5LwzXHzgFVVOY",
+        "created_at": "2026-09-05T23:39:07.891-04:00",
+        "updated_at": "2026-09-05T23:54:03.041-04:00",
+        "bypass_actors": [],
+        "current_user_can_bypass": "never",
+        "_links": {
+          "self": {
+            "href": "https://api.github.com/repos/m0r6aN/agent-skills/rulesets/22369510"
+          },
+          "html": {
+            "href": "https://github.com/m0r6aN/agent-skills/rules/22369510"
+          }
+        }
+      }
     }
-  }
+  ]
 }

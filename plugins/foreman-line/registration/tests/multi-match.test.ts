@@ -29,7 +29,7 @@ test('item2: an ambiguous (multi-match) idempotency lookup stops and reports, cr
   adapter.seed('[TEST] [epic-demo-idea] decoy two')
 
   await assert.rejects(
-    register({ slug: fx.slug, repoRoot: fx.repoRoot, adapter, timestamp: TS }),
+    register({ slug: fx.slug, projectKey: 'KONE', repoRoot: fx.repoRoot, adapter, timestamp: TS }),
     (err: unknown) => err instanceof RegistrationError && /match/.test(err.message),
   )
   // Stop-and-report: no create was attempted past the ambiguous lookup.

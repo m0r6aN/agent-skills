@@ -1,7 +1,9 @@
-PS C:\Repos\kaseya-one-productivity-tools> node -v                        # MUST be >=22 per spec — run in PowerShell, NOT Git Bash (nvm default there is v20)
+> **Repository identity migration (2026-09-06):** Repository identifiers and paths in this historical record were normalized to `m0r6aN/agent-skills`. Recorded commands were not rerun; all other historical outcomes remain as captured.
+
+PS D:\Repos\agent-skills> node -v                        # MUST be >=22 per spec — run in PowerShell, NOT Git Bash (nvm default there is v20)
 v24.11.1
-PS C:\Repos\kaseya-one-productivity-tools> git status --short             # blast radius check: parcel work must be only skills/parcel-compiler/ (untracked)
- M kaseya-one-productivity-tools.code-workspace                           # pre-existing, pre-dispatch (workspace folder removal) — verified unrelated via git diff
+PS D:\Repos\agent-skills> git status --short             # blast radius check: parcel work must be only skills/parcel-compiler/ (untracked)
+ M agent-skills.code-workspace                           # pre-existing, pre-dispatch (workspace folder removal) — verified unrelated via git diff
  M package.json                                                           # pre-existing, pre-dispatch (root engines >=20 -> >=24.11.1) — verified unrelated via git diff
 ?? docs/kickstarters/adverserial_review.md
 ?? docs/kickstarters/foreman-line-parcel-PCC-P0.md
@@ -9,9 +11,9 @@ PS C:\Repos\kaseya-one-productivity-tools> git status --short             # blas
 ?? docs/transcripts/build-W0-P1-deterministic-pass.md
 ?? docs/transcripts/defects_lessons.md
 ?? skills/parcel-compiler/                                                # the parcel. builder built in main working tree, NOT an isolated branch/worktree — process defect, logged in defects_lessons
-PS C:\Repos\kaseya-one-productivity-tools> cd skills\parcel-compiler\tool
-PS C:\Repos\kaseya-one-productivity-tools\skills\parcel-compiler\tool> npx tsc --noEmit
-PS C:\Repos\kaseya-one-productivity-tools\skills\parcel-compiler\tool> npx tsx --test test/*.test.ts     # expect 55/55, >=25 per AC12
+PS D:\Repos\agent-skills> cd skills\parcel-compiler\tool
+PS D:\Repos\agent-skills\skills\parcel-compiler\tool> npx tsc --noEmit
+PS D:\Repos\agent-skills\skills\parcel-compiler\tool> npx tsx --test test/*.test.ts     # expect 55/55, >=25 per AC12
 ▶ canonicalize – RFC 8785 test vectors
   ✔ empty object (1.9709ms)
   ✔ empty array (0.3725ms)
@@ -97,16 +99,16 @@ PS C:\Repos\kaseya-one-productivity-tools\skills\parcel-compiler\tool> npx tsx -
 ℹ skipped 0
 ℹ todo 0
 ℹ duration_ms 6414.9256
-PS C:\Repos\kaseya-one-productivity-tools\skills\parcel-compiler\tool> npx biome check .
+PS D:\Repos\agent-skills\skills\parcel-compiler\tool> npx biome check .
 Checked 10 files in 20ms. No fixes applied.
-PS C:\Repos\kaseya-one-productivity-tools\skills\parcel-compiler\tool> # AC3 lockfile check (spec verification plan focus b): zero non-dev packages
-PS C:\Repos\kaseya-one-productivity-tools\skills\parcel-compiler\tool> # package-lock root entry keys: name, version, bin, devDependencies, engines (no "dependencies")
-PS C:\Repos\kaseya-one-productivity-tools\skills\parcel-compiler\tool> # 62 locked packages, 0 with dev=false — all transitive from biome/tsx/typescript/@types/node
-PS C:\Repos\kaseya-one-productivity-tools\skills\parcel-compiler\tool> # live CLI smoke at the real process boundary (coordinator-side, independent of test suite):
-PS C:\Repos\kaseya-one-productivity-tools\skills\parcel-compiler\tool> npx tsx src/cli.ts               # usage listing all 9 commands + exit-code contract -> exit 0
-PS C:\Repos\kaseya-one-productivity-tools\skills\parcel-compiler\tool> npx tsx src/cli.ts --version     # 0.1.0-scaffold -> exit 0
-PS C:\Repos\kaseya-one-productivity-tools\skills\parcel-compiler\tool> npx tsx src/cli.ts compile foo.md  # NOT_IMPLEMENTED [pcc-scaffold 0.1.0] on stderr -> exit 2
-PS C:\Repos\kaseya-one-productivity-tools\skills\parcel-compiler\tool> npx tsx src/cli.ts bogus         # unknown command 'bogus' + usage on stderr -> exit 2
+PS D:\Repos\agent-skills\skills\parcel-compiler\tool> # AC3 lockfile check (spec verification plan focus b): zero non-dev packages
+PS D:\Repos\agent-skills\skills\parcel-compiler\tool> # package-lock root entry keys: name, version, bin, devDependencies, engines (no "dependencies")
+PS D:\Repos\agent-skills\skills\parcel-compiler\tool> # 62 locked packages, 0 with dev=false — all transitive from biome/tsx/typescript/@types/node
+PS D:\Repos\agent-skills\skills\parcel-compiler\tool> # live CLI smoke at the real process boundary (coordinator-side, independent of test suite):
+PS D:\Repos\agent-skills\skills\parcel-compiler\tool> npx tsx src/cli.ts               # usage listing all 9 commands + exit-code contract -> exit 0
+PS D:\Repos\agent-skills\skills\parcel-compiler\tool> npx tsx src/cli.ts --version     # 0.1.0-scaffold -> exit 0
+PS D:\Repos\agent-skills\skills\parcel-compiler\tool> npx tsx src/cli.ts compile foo.md  # NOT_IMPLEMENTED [pcc-scaffold 0.1.0] on stderr -> exit 2
+PS D:\Repos\agent-skills\skills\parcel-compiler\tool> npx tsx src/cli.ts bogus         # unknown command 'bogus' + usage on stderr -> exit 2
 
 # ============================================================================
 # REWORK PASS (adversarial review findings, attempt 2 — attempt 1 rejected as
@@ -121,12 +123,12 @@ PS C:\Repos\kaseya-one-productivity-tools\skills\parcel-compiler\tool> npx tsx s
 #   N-4  deps.test.ts:37-42 every lockfile package (non-root) asserted "dev": true
 #   N-2  README.md:35-37 "Packaging status" — bin documented non-functional pre-packaging
 # ============================================================================
-PS C:\Repos\kaseya-one-productivity-tools\skills\parcel-compiler\tool> node -v
+PS D:\Repos\agent-skills\skills\parcel-compiler\tool> node -v
 v24.11.1
-PS C:\Repos\kaseya-one-productivity-tools\skills\parcel-compiler\tool> npx tsc --noEmit                 # exit 0
-PS C:\Repos\kaseya-one-productivity-tools\skills\parcel-compiler\tool> npx biome check .
+PS D:\Repos\agent-skills\skills\parcel-compiler\tool> npx tsc --noEmit                 # exit 0
+PS D:\Repos\agent-skills\skills\parcel-compiler\tool> npx biome check .
 Checked 10 files in 21ms. No fixes applied.
-PS C:\Repos\kaseya-one-productivity-tools\skills\parcel-compiler\tool> npx tsx --test test/*.test.ts    # expect 78/78 (55 + SF-2:3 + SF-1:18 net + N-1:1 + N-4:1)
+PS D:\Repos\agent-skills\skills\parcel-compiler\tool> npx tsx --test test/*.test.ts    # expect 78/78 (55 + SF-2:3 + SF-1:18 net + N-1:1 + N-4:1)
 ▶ canonicalize – RFC 8785 §3.2.2.3 rejects non-finite numbers
   ✔ NaN throws (0.6561ms)
   ✔ Infinity throws (0.1763ms)

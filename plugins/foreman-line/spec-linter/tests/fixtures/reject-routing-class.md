@@ -10,6 +10,7 @@ superseded_by: null
 risk: standard
 surfaces: [docs/SPEC-CONVENTION.md]
 routing_class: unknown-class
+verification_class: judgment-required
 permission_profile: standard-build
 ---
 

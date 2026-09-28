@@ -71,6 +71,7 @@ test('AC10: the receipt written by a full register() validates and chains from t
   const fx = singleStoryFixture()
   const outcome = await register({
     slug: fx.slug,
+    projectKey: 'KONE',
     repoRoot: fx.repoRoot,
     adapter: new FakeAdapter(),
     timestamp: TS,

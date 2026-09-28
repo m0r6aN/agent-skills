@@ -1,4 +1,6 @@
-You are the builder for parcel W0-P2. Your workspace is the worktree at C:\Repos\foreman-line-W0-P2 on branch feat/foreman-line-W0-P2 — verify with `git branch --show-current` before anything else. You never work in C:\Repos\kaseya-one-productivity-tools's main working tree, and you never touch main. The spec is committed in your worktree at docs/specs/active/W0-P2-parcel-schema-v02.md — read it in full before doing anything else.
+> **Repository identity migration (2026-09-06):** Repository identifiers and paths in this historical record were normalized to `m0r6aN/agent-skills`. Recorded commands were not rerun; all other historical outcomes remain as captured.
+
+You are the builder for parcel W0-P2. Your workspace is the worktree at C:\Repos\foreman-line-W0-P2 on branch feat/foreman-line-W0-P2 — verify with `git branch --show-current` before anything else. You never work in D:\Repos\agent-skills's main working tree, and you never touch main. The spec is committed in your worktree at docs/specs/active/W0-P2-parcel-schema-v02.md — read it in full before doing anything else.
 
 ## Step 0 — before writing any code
 

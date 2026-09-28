@@ -15,18 +15,38 @@
  */
 
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
-import { join } from 'node:path'
+import { isAbsolute, join } from 'node:path'
 import { parse } from 'yaml'
 import type {
   ClassName,
   DataClassificationTier,
   RoutingPolicy,
+  TransportRequirements,
 } from '../../../routing-policy/src/index.js'
 import {
   CLASS_NAMES,
   DATA_CLASSIFICATION_TIERS,
   validatePolicy,
 } from '../../../routing-policy/src/index.js'
+
+export type {
+  ParcelShadowAuthorization,
+  ResolvedParcelShadowAuthorization,
+  ShadowCandidateResult,
+  ShadowInvocationRequest,
+  ShadowRoutingDependencies,
+  ShadowRoutingInput,
+  ShadowRoutingOptions,
+  ShadowRoutingResult,
+  ShadowSkippedResult,
+} from './shadow.js'
+export {
+  executeShadowRoute,
+  hashShadowPublicInput,
+  SHADOW_LIMITS,
+  ShadowRoutingError,
+} from './shadow.js'
+export type { TransportRequirements }
 
 // ─── Error class ──────────────────────────────────────────────────────────────
 
@@ -38,6 +58,7 @@ export class RoutingError extends Error {
     | 'POLICY_INVALID'
     | 'POLICY_UNREADABLE'
     | 'RECEIPT_WRITE_FAILED'
+    | 'ROOT_NOT_ABSOLUTE'
 
   constructor(code: RoutingError['code'], message: string) {
     super(message)
@@ -58,10 +79,20 @@ export interface RoutingInput {
 }
 
 export interface RoutingResult {
-  /** The single resolved concrete model ID (e.g. 'claude-sonnet-5'). */
+  /** The single resolved concrete model ID (an OpenRouter slug, e.g. 'anthropic/claude-sonnet-5'). */
   readonly resolvedModelId: string
   /** The policy tier that produced the resolved model (e.g. 'standard'). */
   readonly resolvedTier: string
+  /**
+   * Gateway routing constraints the caller MUST apply to every request made
+   * for this task (policy `data_classification.<tier>.transport_requirements`,
+   * mirroring OpenRouter's `provider` object). A model id names a model, not a
+   * host; on a multi-provider gateway these two fields are what keep
+   * non-public prompts off providers that store or train on inputs. This
+   * package selects the model and hands the obligation on — it does not send
+   * requests.
+   */
+  readonly transportRequirements: TransportRequirements
   /** Repo-relative path to the written routing receipt JSON. */
   readonly routingDecisionRef: string
 }
@@ -70,28 +101,44 @@ export interface RoutingOptions {
   /**
    * Absolute path to the repository root. All file operations (policy read,
    * receipt write) resolve relative to this path.
-   * Defaults to process.cwd(). Tests pass a tmp directory.
+   * Required. Never derived from process.cwd().
    */
-  readonly repoRoot?: string
+  readonly repoRoot: string
+  /**
+   * Absolute path to the installed plugin root. Frozen policy assets are read
+   * from here, while receipts are always written under repoRoot.
+   */
+  readonly pluginRoot: string
 }
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const POLICY_REPO_PATH = 'plugins/foreman-line/routing-policy/routing-policy.yaml'
+const POLICY_PLUGIN_PATH = 'routing-policy/routing-policy.yaml'
+
+function assertAbsoluteRoot(root: string, name: string): void {
+  if (!isAbsolute(root)) {
+    throw new RoutingError(
+      'ROOT_NOT_ABSOLUTE',
+      `evaluateRouting: ${name} '${root}' is not an absolute path; refusing cwd-relative resolution`,
+    )
+  }
+}
 
 // ─── Evaluation ──────────────────────────────────────────────────────────────
 
-export function evaluateRouting(input: RoutingInput, options: RoutingOptions = {}): RoutingResult {
-  const repoRoot = options.repoRoot ?? process.cwd()
+export function evaluateRouting(input: RoutingInput, options: RoutingOptions): RoutingResult {
+  const { repoRoot, pluginRoot } = options
+  assertAbsoluteRoot(repoRoot, 'repoRoot')
+  assertAbsoluteRoot(pluginRoot, 'pluginRoot')
 
   // 1. Load the frozen policy YAML
   let rawYaml: string
   try {
-    rawYaml = readFileSync(join(repoRoot, POLICY_REPO_PATH), 'utf8')
+    rawYaml = readFileSync(join(pluginRoot, ...POLICY_PLUGIN_PATH.split('/')), 'utf8')
   } catch (err) {
     throw new RoutingError(
       'POLICY_UNREADABLE',
-      `Cannot read routing policy at ${POLICY_REPO_PATH}: ${String(err)}`,
+      `Cannot read routing policy at ${POLICY_PLUGIN_PATH} under ${pluginRoot}: ${String(err)}`,
     )
   }
 
@@ -102,7 +149,7 @@ export function evaluateRouting(input: RoutingInput, options: RoutingOptions = {
   } catch (err) {
     throw new RoutingError(
       'POLICY_INVALID',
-      `Cannot parse routing policy YAML at ${POLICY_REPO_PATH}: ${String(err)}`,
+      `Cannot parse routing policy YAML at ${POLICY_PLUGIN_PATH}: ${String(err)}`,
     )
   }
 
@@ -183,14 +230,20 @@ export function evaluateRouting(input: RoutingInput, options: RoutingOptions = {
   // Write routing receipt — mkdirSync with recursive:true handles pre-existing dirs;
   // both calls are wrapped so ENOSPC/EACCES/ENAMETOOLONG surface as RoutingError
   const receiptDir = join(repoRoot, 'docs', 'receipts', input.workflowId)
+  const transportRequirements: TransportRequirements = {
+    data_collection: dataClassRule.transport_requirements.data_collection,
+    zdr: dataClassRule.transport_requirements.zdr,
+  }
+
   const receipt = {
     workflowId: input.workflowId,
     routing_class: input.routing_class,
     data_classification: input.data_classification,
     resolvedTier,
     resolvedModelId,
+    transportRequirements,
     timestamp: new Date().toISOString(),
-    policyRef: POLICY_REPO_PATH,
+    policyRef: POLICY_PLUGIN_PATH,
   }
   try {
     mkdirSync(receiptDir, { recursive: true })
@@ -205,6 +258,7 @@ export function evaluateRouting(input: RoutingInput, options: RoutingOptions = {
   return {
     resolvedModelId,
     resolvedTier,
+    transportRequirements,
     routingDecisionRef: `docs/receipts/${input.workflowId}/routing-decision.json`,
   }
 }
