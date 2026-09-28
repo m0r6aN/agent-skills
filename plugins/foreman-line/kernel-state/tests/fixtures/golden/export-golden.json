@@ -1,0 +1,312 @@
+{
+  "class": "POS-06",
+  "records": [
+    {
+      "id": "POS-06",
+      "input": {
+        "seed": "operations",
+        "note": "committed golden export bytes (fixture bytes, not a moving external file)"
+      },
+      "expectedOutcome": "golden-bytes-match"
+    }
+  ],
+  "operations": [
+    {
+      "op": "insertGoal",
+      "row": {
+        "goalId": "goal-0002",
+        "revision": 0,
+        "status": "blocked",
+        "updatedAtMicros": 1700000000000001
+      }
+    },
+    {
+      "op": "insertGoal",
+      "row": {
+        "goalId": "goal-0001",
+        "revision": 1,
+        "status": "open",
+        "pendingTransitionId": null,
+        "updatedAtMicros": 1700000000000000
+      }
+    },
+    {
+      "op": "insertTransition",
+      "row": {
+        "transitionId": "tr-0001",
+        "goalId": "goal-0001",
+        "status": "pending",
+        "requestedBy": "principal-1",
+        "operationId": "op-0003",
+        "payloadDigest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "createdAtMicros": 1700000000000003,
+        "decidedAtMicros": null
+      }
+    },
+    {
+      "op": "updateGoalRow",
+      "goalId": "goal-0002",
+      "guards": {
+        "revision": 0,
+        "status": "blocked"
+      },
+      "patch": {
+        "pendingTransitionId": "tr-0001"
+      }
+    },
+    {
+      "op": "insertEvent",
+      "row": {
+        "eventId": "evt-0002",
+        "goalId": "goal-0001",
+        "kind": "updated",
+        "payload": "{\"b\":2,\"a\":1}",
+        "payloadDigest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "principalRef": "principal-1",
+        "operationId": "op-0002",
+        "recordedAtMicros": 1700000000000002
+      }
+    },
+    {
+      "op": "insertEvent",
+      "row": {
+        "eventId": "evt-0001",
+        "goalId": "goal-0001",
+        "kind": "created",
+        "payload": "{\"n\":1}",
+        "payloadDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "principalRef": "principal-1",
+        "operationId": "op-0001",
+        "recordedAtMicros": 1700000000000001
+      }
+    },
+    {
+      "op": "insertLease",
+      "row": {
+        "leaseId": "lease-0001",
+        "goalId": "goal-0001",
+        "ownerPrincipalRef": "principal-1",
+        "casRevision": 3,
+        "acquiredAtMicros": 1700000000000004,
+        "expiresAtMicros": null,
+        "releasedAtMicros": null
+      }
+    },
+    {
+      "op": "insertLease",
+      "row": {
+        "leaseId": "lease-0002",
+        "goalId": "goal-0001",
+        "ownerPrincipalRef": "principal-2",
+        "casRevision": 2,
+        "acquiredAtMicros": 1700000000000002,
+        "expiresAtMicros": 1700000000000009,
+        "releasedAtMicros": 1700000000000008
+      }
+    },
+    {
+      "op": "insertIdempotencyKey",
+      "row": {
+        "principalRef": "principal-1",
+        "operationId": "op-0001",
+        "repositoryRef": "repo-1",
+        "worktreeRef": "wt-1",
+        "payloadDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "effectDigest": null,
+        "recordedAtMicros": 1700000000000005,
+        "completedAtMicros": null
+      }
+    },
+    {
+      "op": "insertArtifact",
+      "row": {
+        "artifactId": "art-0001",
+        "goalId": "goal-0001",
+        "kind": "evidence",
+        "digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "locator": "evidence/run-1/log.txt",
+        "recordedBy": "principal-1",
+        "recordedAtMicros": 1700000000000006
+      }
+    },
+    {
+      "op": "setProjectionCursor",
+      "row": {
+        "projectionId": "proj-0001",
+        "goalId": "goal-0001",
+        "lastAppliedEventSeq": 2,
+        "updatedAtMicros": 1700000000000007
+      }
+    },
+    {
+      "op": "insertWakeupHandoff",
+      "row": {
+        "wakeupId": "wk-0001",
+        "goalId": "goal-0001",
+        "kind": "wakeup",
+        "fromSessionRef": "sess-1",
+        "toSessionRef": "sess-2",
+        "createdAtMicros": 1700000000000008
+      }
+    },
+    {
+      "op": "insertWakeupHandoff",
+      "row": {
+        "wakeupId": "wk-0002",
+        "goalId": "goal-0002",
+        "kind": "handoff",
+        "fromSessionRef": "sess-2",
+        "toSessionRef": null,
+        "createdAtMicros": 1700000000000009
+      }
+    },
+    {
+      "op": "consumeWakeupHandoff",
+      "wakeupId": "wk-0002",
+      "consumedAtMicros": 1700000000000010
+    }
+  ],
+  "exportDocument": {
+    "domain": "foreman-line.kernel-state.storage-export",
+    "apiVersion": "0.1.0",
+    "payload": {
+      "schemaVersion": 1,
+      "migrationHistoryDigest": "sha256:73b6bb1d281cb3dbdab6b569e27e798e4c6784eb94137fd8fe54d7c499e1272c",
+      "tables": {
+        "schema_migrations": [
+          {
+            "version": 1,
+            "name": "initial",
+            "digest": "sha256:b7b01bd6ecbc4a6b4cf960d60adacdcefa537ed4aa7dd8b8c683ec35bdf08661",
+            "applied_at_micros": 1700000000000100
+          }
+        ],
+        "goals": [
+          {
+            "goal_id": "goal-0001",
+            "revision": 1,
+            "status": "open",
+            "pending_transition_id": null,
+            "updated_at_micros": 1700000000000000
+          },
+          {
+            "goal_id": "goal-0002",
+            "revision": 0,
+            "status": "blocked",
+            "pending_transition_id": "tr-0001",
+            "updated_at_micros": 1700000000000001
+          }
+        ],
+        "events": [
+          {
+            "event_seq": 1,
+            "event_id": "evt-0002",
+            "goal_id": "goal-0001",
+            "kind": "updated",
+            "payload": "{\"b\":2,\"a\":1}",
+            "payload_digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "principal_ref": "principal-1",
+            "operation_id": "op-0002",
+            "recorded_at_micros": 1700000000000002
+          },
+          {
+            "event_seq": 2,
+            "event_id": "evt-0001",
+            "goal_id": "goal-0001",
+            "kind": "created",
+            "payload": "{\"n\":1}",
+            "payload_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "principal_ref": "principal-1",
+            "operation_id": "op-0001",
+            "recorded_at_micros": 1700000000000001
+          }
+        ],
+        "transitions": [
+          {
+            "transition_id": "tr-0001",
+            "goal_id": "goal-0001",
+            "status": "pending",
+            "requested_by": "principal-1",
+            "operation_id": "op-0003",
+            "payload_digest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "created_at_micros": 1700000000000003,
+            "decided_at_micros": null
+          }
+        ],
+        "leases": [
+          {
+            "lease_id": "lease-0001",
+            "goal_id": "goal-0001",
+            "owner_principal_ref": "principal-1",
+            "cas_revision": 3,
+            "acquired_at_micros": 1700000000000004,
+            "expires_at_micros": null,
+            "released_at_micros": null
+          },
+          {
+            "lease_id": "lease-0002",
+            "goal_id": "goal-0001",
+            "owner_principal_ref": "principal-2",
+            "cas_revision": 2,
+            "acquired_at_micros": 1700000000000002,
+            "expires_at_micros": 1700000000000009,
+            "released_at_micros": 1700000000000008
+          }
+        ],
+        "idempotency_keys": [
+          {
+            "principal_ref": "principal-1",
+            "operation_id": "op-0001",
+            "repository_ref": "repo-1",
+            "worktree_ref": "wt-1",
+            "payload_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "effect_digest": null,
+            "recorded_at_micros": 1700000000000005,
+            "completed_at_micros": null
+          }
+        ],
+        "artifacts": [
+          {
+            "artifact_id": "art-0001",
+            "goal_id": "goal-0001",
+            "kind": "evidence",
+            "digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "locator": "evidence/run-1/log.txt",
+            "recorded_by": "principal-1",
+            "recorded_at_micros": 1700000000000006
+          }
+        ],
+        "projection_cursors": [
+          {
+            "projection_id": "proj-0001",
+            "goal_id": "goal-0001",
+            "last_applied_event_seq": 2,
+            "updated_at_micros": 1700000000000007
+          }
+        ],
+        "wakeup_handoffs": [
+          {
+            "wakeup_id": "wk-0001",
+            "goal_id": "goal-0001",
+            "kind": "wakeup",
+            "from_session_ref": "sess-1",
+            "to_session_ref": "sess-2",
+            "created_at_micros": 1700000000000008,
+            "consumed_at_micros": null
+          },
+          {
+            "wakeup_id": "wk-0002",
+            "goal_id": "goal-0002",
+            "kind": "handoff",
+            "from_session_ref": "sess-2",
+            "to_session_ref": null,
+            "created_at_micros": 1700000000000009,
+            "consumed_at_micros": 1700000000000010
+          }
+        ]
+      }
+    }
+  },
+  "exportDocumentBytes": "{\"apiVersion\":\"0.1.0\",\"domain\":\"foreman-line.kernel-state.storage-export\",\"payload\":{\"migrationHistoryDigest\":\"sha256:73b6bb1d281cb3dbdab6b569e27e798e4c6784eb94137fd8fe54d7c499e1272c\",\"schemaVersion\":1,\"tables\":{\"artifacts\":[{\"artifact_id\":\"art-0001\",\"digest\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"goal_id\":\"goal-0001\",\"kind\":\"evidence\",\"locator\":\"evidence/run-1/log.txt\",\"recorded_at_micros\":1700000000000006,\"recorded_by\":\"principal-1\"}],\"events\":[{\"event_id\":\"evt-0002\",\"event_seq\":1,\"goal_id\":\"goal-0001\",\"kind\":\"updated\",\"operation_id\":\"op-0002\",\"payload\":\"{\\\"b\\\":2,\\\"a\\\":1}\",\"payload_digest\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"principal_ref\":\"principal-1\",\"recorded_at_micros\":1700000000000002},{\"event_id\":\"evt-0001\",\"event_seq\":2,\"goal_id\":\"goal-0001\",\"kind\":\"created\",\"operation_id\":\"op-0001\",\"payload\":\"{\\\"n\\\":1}\",\"payload_digest\":\"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"principal_ref\":\"principal-1\",\"recorded_at_micros\":1700000000000001}],\"goals\":[{\"goal_id\":\"goal-0001\",\"pending_transition_id\":null,\"revision\":1,\"status\":\"open\",\"updated_at_micros\":1700000000000000},{\"goal_id\":\"goal-0002\",\"pending_transition_id\":\"tr-0001\",\"revision\":0,\"status\":\"blocked\",\"updated_at_micros\":1700000000000001}],\"idempotency_keys\":[{\"completed_at_micros\":null,\"effect_digest\":null,\"operation_id\":\"op-0001\",\"payload_digest\":\"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"principal_ref\":\"principal-1\",\"recorded_at_micros\":1700000000000005,\"repository_ref\":\"repo-1\",\"worktree_ref\":\"wt-1\"}],\"leases\":[{\"acquired_at_micros\":1700000000000004,\"cas_revision\":3,\"expires_at_micros\":null,\"goal_id\":\"goal-0001\",\"lease_id\":\"lease-0001\",\"owner_principal_ref\":\"principal-1\",\"released_at_micros\":null},{\"acquired_at_micros\":1700000000000002,\"cas_revision\":2,\"expires_at_micros\":1700000000000009,\"goal_id\":\"goal-0001\",\"lease_id\":\"lease-0002\",\"owner_principal_ref\":\"principal-2\",\"released_at_micros\":1700000000000008}],\"projection_cursors\":[{\"goal_id\":\"goal-0001\",\"last_applied_event_seq\":2,\"projection_id\":\"proj-0001\",\"updated_at_micros\":1700000000000007}],\"schema_migrations\":[{\"applied_at_micros\":1700000000000100,\"digest\":\"sha256:b7b01bd6ecbc4a6b4cf960d60adacdcefa537ed4aa7dd8b8c683ec35bdf08661\",\"name\":\"initial\",\"version\":1}],\"transitions\":[{\"created_at_micros\":1700000000000003,\"decided_at_micros\":null,\"goal_id\":\"goal-0001\",\"operation_id\":\"op-0003\",\"payload_digest\":\"sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\",\"requested_by\":\"principal-1\",\"status\":\"pending\",\"transition_id\":\"tr-0001\"}],\"wakeup_handoffs\":[{\"consumed_at_micros\":null,\"created_at_micros\":1700000000000008,\"from_session_ref\":\"sess-1\",\"goal_id\":\"goal-0001\",\"kind\":\"wakeup\",\"to_session_ref\":\"sess-2\",\"wakeup_id\":\"wk-0001\"},{\"consumed_at_micros\":1700000000000010,\"created_at_micros\":1700000000000009,\"from_session_ref\":\"sess-2\",\"goal_id\":\"goal-0002\",\"kind\":\"handoff\",\"to_session_ref\":null,\"wakeup_id\":\"wk-0002\"}]}}}",
+  "storageExportDigest": "sha256:217a6fa68573364002ae90e890c95d6a0e10e2efadb26a8b5204577aeee17a5c"
+}
