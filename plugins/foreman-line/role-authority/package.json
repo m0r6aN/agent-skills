@@ -1,0 +1,29 @@
+{
+  "name": "@foreman-line/role-authority",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Frozen role and authority contracts (WF-P1) for the heterogeneous-agent-worker-fabric goal: role/risk taxonomy, family-diversity field, serialization-point ownership, and data-classification eligibility field shape.",
+  "engines": {
+    "node": ">=22"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "generate": "tsx src/generate.ts",
+    "generate:instances": "tsx src/generate-instances.ts",
+    "test": "tsx --test tests/*.test.ts",
+    "lint": "biome check ."
+  },
+  "dependencies": {
+    "ajv": "8.20.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.14",
+    "@types/node": "26.6.2",
+    "tsx": "4.23.15",
+    "typescript": "7.0.2"
+  }
+}
