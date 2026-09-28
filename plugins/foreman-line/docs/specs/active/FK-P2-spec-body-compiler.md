@@ -46,6 +46,8 @@ FK-P2 compiles against the exact on-disk SPEC-CONVENTION revision read at shapin
 | Schema revision label | `v0.4`, revision date `2026-09-27` |
 | Artifact grammar binding | the compiled-scope artifact embeds both digests and the revision label |
 
+**Pin enforcement and the known-base gap (coordinator ruling 2026-09-27, Step-0 flag A).** The pinned revision is the SPEC-CONVENTION schema-v0.4 state of 2026-09-27, which exists on disk only as the uncommitted RCM-P2 delta (`docs/SPEC-CONVENTION.md` is in RCM-P2's §12 write set — FK-P2 never touches it). `tests/grammar-pin.test.ts` reads the live `docs/SPEC-CONVENTION.md` and classifies exactly three states: (a) live bytes match the pinned digests above → PASS; (b) live bytes equal the known pre-v0.4 base state (the committed bytes at base `7f3391c` — 18,344 bytes total / 6,610-byte §4 range; exact digests recorded as test constants and reported in the completion claim) → record a machine-readable KNOWN-GAP (`blocked: RCM-P2 schema-v0.4 delta uncommitted`) and pass — the gap is named in the exit annex until closed; (c) ANY other state → FAIL (fail-closed on real drift). The gap closes automatically when the RCM-P2 delta lands (case (a) becomes active); if the delta is reverted instead, a spec amendment re-pins to the reverted grammar.
+
 The pin lives in `src/parse-spec.ts` as an exported constant; `tests/grammar-pin.test.ts` recomputes the section digest from the on-disk file and fails on drift. A grammar revision change (including RCM-P2 additive fields) is a **spec amendment that bumps the pin and the artifact version** — never a silent re-pin. The pin is deliberately load-bearing per RS-2.4; the fail-closed drift test is the mechanism, not an incidental byte-pin.
 
 ### D10 scope-authority rule (the defect this compiler fixes)
@@ -214,6 +216,8 @@ Proposed builder ceiling, inactive until dispatch:
 - `plugins/foreman-line/spec-body-compiler/tests/fixtures/positive/pos-04-surfaces-not-authority.md`
 - `plugins/foreman-line/spec-body-compiler/tests/fixtures/golden/d10-empty-authority.md`
 - `plugins/foreman-line/spec-body-compiler/tests/fixtures/canonical/encoder-vectors.json`
+
+**Forbidden-surface mapping (coordinator ruling 2026-09-27, Step-0 flag C).** The single `**Forbidden surfaces (exact):**` paragraph below is the compiled source of both artifact arrays: entries annotated `frozen` map to `frozenSurfaces`; all other entries map to `forbiddenSurfaces`. CONF-01/CONF-02 assert each array against its mapped entries.
 
 Exact 39-file ceiling. Nothing outside this package is writable. No shared manifest/export/schema/workflow/lockfile is writable; FK-P2 owns only its new package manifest, lockfile, and exports. If implementation needs a path not listed here, the coordinator records a spec amendment before code; no implied neighboring-path permission.
 
