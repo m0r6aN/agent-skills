@@ -1,10 +1,8 @@
-import { Ajv, type ValidateFunction } from 'ajv'
+import { Ajv } from 'ajv'
 import {
   type PMC_LANE_POLICIES_V1,
   providerBindingPolicyV1Schema,
 } from './provider-binding-schemas.js'
-
-let policyValidator: ValidateFunction | undefined
 
 export type PmcProvider = 'opencode' | 'openrouter'
 export type PmcLaneId = 'L1' | 'L2' | 'L3' | 'L4' | 'L5' | 'L6'
@@ -223,14 +221,11 @@ export function validateProviderBindingPolicyV1(input: unknown): ProviderBinding
     else if (errors.length === 127) errors.push({ code: 'ERRORS_TRUNCATED', path: '' })
   }
   try {
-    // Retain only a successful compile of the frozen schema, never input/results.
-    // Initialization stays lazy and inside this typed library-failure boundary.
-    policyValidator ??= new Ajv({ allErrors: false, strict: true }).compile(
+    // Compile inside the typed boundary: a library failure is a typed refusal.
+    // Fail-fast Ajv avoids building an unbounded intermediate error list.
+    const validate = new Ajv({ allErrors: false, strict: true }).compile(
       providerBindingPolicyV1Schema,
     )
-    const validate = policyValidator
-    // Owned plain data and this synchronous schema cannot reenter validation;
-    // copy the current error path before any later call can replace Ajv.errors.
     if (!validate(owned))
       return {
         valid: false,
