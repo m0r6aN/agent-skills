@@ -12,21 +12,23 @@ and the triaged plan review at
 > at a parcel boundary through this block and a session handoff. If ownership
 > is ambiguous or another coordinator is live, stop and report; never assume.
 
-### Current ownership and stop state — 2026-08-01
+### Current ownership and stop state — 2026-08-02
 
-The primary Codex coordinator owns this current WGT-P0A parcel boundary. The
-fresh Step 0 inventory in the named isolated worktree found the ratified base,
-tracked Foreman bootstrap, exact branch/worktree, and exact Allowed Files; the
-builder's partial edits remain unclaimed until this coordinator verifies them.
-WGT-D1 through WGT-D10 and WGT-A1 through WGT-A6 remain ratified.
+The primary Codex coordinator owns the separately recorded WGT-R1 Foreman
+current-state reconciliation boundary in the named isolated worktree. WGT-P0A
+is archived and merged; WGT-P0B, WGT-P0C, WGT-P1, WGT-P3A, and WGT-P3B are
+recorded as completed/reconciled in the verified initiative state. The current
+website remediation is WGT-P2A in a separate `keon-systems-web` worktree; its
+focused redirect and Runtime E2E checks are green, but its production build is
+environment-blocked, so it is not publishable or mergeable.
 
-The old missing-source preflight stop is historical and was resolved by the
-merged tracked-plugin bootstrap. It is not the current stop state and does not
-authorize external action. The current stop state is coordinator verification
-of the bounded P0A record reconciliation, including exact-scope checks and the
-two required fresh read-only reviews. No product, package, test, contract,
-external-control, outreach, publication, payment, customer-data, deployment,
-Gmail, or Kaseya action is authorized.
+WGT-D1 through WGT-D10 and WGT-A1 through WGT-A6 remain ratified. The old
+missing-source preflight stop is historical and was resolved by the merged
+tracked-plugin bootstrap. It is not the current stop state and does not
+authorize external action. WGT-R1 is docs-only control-plane reconciliation;
+no product, package, test, contract, external-control, outreach, publication,
+payment, customer-data, deployment, Gmail, or Kaseya action is authorized in
+this parcel.
 
 ## Standing authorizations
 
@@ -96,17 +98,48 @@ standing constraints referenced by each kickstarter.
 
 ## Current queue and dependency order
 
-1. **WGT-P0A — current parcel.** Complete coordinator reconciliation and the
-   exact-scope review chain in this isolated Foreman worktree. Gate 3 remains
-   withheld.
-2. **WGT-P0B — next safe action.** After green P0A and coordinator acceptance,
-   reconcile the authoritative initiative records in a separate `keon-docs`
-   repo-owned branch/worktree.
-3. **WGT-P0C — deferred.** Reconcile existing Linear state only after P0A and
-   P0B are independently verified; create no duplicate backlog or WGT record.
+The originally staged reconciliation chain is complete and remains preserved in
+the historical sections below:
 
-No parcel crosses a red or unknown gate. The ratified dependency-ready queue
-follows only after this exact `WGT-P0A -> WGT-P0B -> WGT-P0C` chain is green.
+1. **WGT-P0A — DONE / archived.** Durable locator:
+   `plugins/foreman-line/docs/specs/done/WGT-P0A-foreman-record-reconciliation.md`;
+   the verified merge is `1ada3cc429668d7e57e070fd1a43a15b961ee3df`.
+2. **WGT-P0B — DONE / reconciled.** The coordinator's current initiative
+   snapshot records the separate `keon-docs` reconciliation as complete; no
+   durable P0B locator is present in this repository, so this statement is
+   held/unverified here and is not used as authorization.
+3. **WGT-P0C — DONE / reconciled.** The coordinator's current Linear snapshot
+   records existing-state reconciliation without a duplicate WGT record; no
+   durable P0C locator is present in this repository, so this statement is
+   held/unverified here and is not used as authorization.
+
+The verified downstream state is:
+
+4. **WGT-P1 — DONE / merged.** Coordinator snapshot only; no durable locator
+   is present in this repository, so this state is held/unverified here.
+5. **WGT-P3A — DONE / merged.** Coordinator snapshot only; no durable locator
+   is present in this repository, so this state is held/unverified here.
+6. **WGT-P3B — DONE / merged and Stage F archived.** Durable external evidence
+   locator: Linear comment `67d70532-9d14-4386-a4e7-12c8914eb8f3` on P3B; the
+   website remains prelaunch and non-purchasable.
+7. **WGT-P2A — CURRENT / RED-UNMERGED; P2 STATE CONTRADICTORY.** Durable
+   locator:
+   `D:/Repos/keon-systems-web-worktrees/wgt-p2a-redirect-e2e-remediation-20260802/docs/INITIATIVES/keon-proof-led-commercial-entry/WGT-P2A-redirect-e2e-remediation.md`;
+   current Linear evidence is comment `12008bf6-5551-4a61-ab40-335ac44aa93c`
+   on KEO-158. Focused redirect is 20/20 and Runtime-specific E2E is 3/3,
+   but the isolated production build is environment-blocked. The in-tree
+   ratified amendment says P2 is merged/closed, while the current Linear
+   evidence says P2 remains red/unmerged; WGT-R1 does not resolve that
+   contradiction. No publication or merge may occur until the contradiction,
+   build, and full required verification are resolved green.
+8. **WGT-P4 — BLOCKED.** Do not dispatch across the unresolved P2/P2A
+   dependency or the P2 state contradiction. Payment, intake, legal,
+   deployment, and customer-data gates remain preserved.
+
+No dependent parcel crosses a red or unknown gate. The ratified dependency
+graph and human/external milestones remain authoritative after this current
+state correction. WGT-R1 made no Linear mutation, Gmail search, outreach,
+payment, intake, deployment, or Kaseya action.
 
 ## Historical queue and dependency order — retained for audit
 

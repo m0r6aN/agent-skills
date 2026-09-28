@@ -7,7 +7,7 @@ import { spawnSync } from 'node:child_process'
 import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { test } from 'node:test'
-import { normalizeMaintainedConfig, PACKAGE_ROOT } from './helpers.js'
+import { PACKAGE_ROOT } from './helpers.js'
 
 // ─── AC-1: headless-launch probe evidence (hermetic proxy) ───────────────────
 // The probe itself is an integration/spike deliverable run outside the unit
@@ -49,11 +49,7 @@ test('AC-2: src/adversarial exists and package.json/tsconfig.json/biome.json are
     )
     assert.equal(mainVersion.status, 0, `git show origin/main:${name} must succeed`)
     const current = readFileSync(join(PACKAGE_ROOT, name), 'utf8')
-    assert.deepEqual(
-      normalizeMaintainedConfig(name, current),
-      normalizeMaintainedConfig(name, mainVersion.stdout),
-      `${name} must preserve its frozen shape relative to origin/main`,
-    )
+    assert.equal(current, mainVersion.stdout, `${name} must be byte-identical to origin/main`)
   }
 })
 
