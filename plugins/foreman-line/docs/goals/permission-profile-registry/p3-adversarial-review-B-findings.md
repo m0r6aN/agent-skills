@@ -1,5 +1,7 @@
 # P3 Adversarial Review B — Findings (v2, against commit 8ce32f2)
 
+> **Repository identity migration (2026-09-06):** Repository identifiers and paths in this historical record were normalized to `m0r6aN/agent-skills`. Recorded commands were not rerun; all other historical outcomes remain as captured.
+
 **Reviewer:** Reviewer B (independent, zero shared context with Reviewer A)
 **Session:** Top-level VSCode extension Claude Code session, normal (non-bypass) permission mode. NOT an Agent/Task-tool subagent. NOT `--dangerously-skip-permissions`.
 **Date:** 2026-07-20
@@ -13,7 +15,7 @@
 
 - **Session type:** Top-level Claude Code process (VSCode extension). NOT an Agent/Task-tool background subagent.
 - **Permission mode:** Normal (non-bypass). NOT `--dangerously-skip-permissions`.
-- **Cwd at session start:** `c:\Repos\kaseya-one-productivity-tools` (main repo). The review worktree was created during this session from the committed `8ce32f2`.
+- **Cwd at session start:** `D:\Repos\agent-skills` (main repo). The review worktree was created during this session from the committed `8ce32f2`.
 
 **Constraint on interactive probe reproduction:** This session cannot spawn new top-level `claude` CLI processes. Any attempt to do so via shell would produce a subprocess — a fundamentally different invocation mode than a human opening a new terminal window with `claude`, and exactly the mode the spec excludes as "a different invocation mode whose settings-loading is not the thing under test." I therefore verify the emitter's output and the structural correctness of the probe setup but cannot independently demonstrate runtime enforcement via an interactive session. This limitation is reported for each focus question below.
 

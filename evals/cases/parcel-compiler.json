@@ -1,0 +1,23 @@
+{
+  "skill_name": "parcel-compiler",
+  "trigger": {
+    "positive": [
+      { "prompt": "Extend the pcc Parcel Compiler scaffold without violating its frozen command contracts", "top_k": 3 },
+      { "prompt": "Inspect the parcel compiler canonicalization and Git utility behavior", "top_k": 3 },
+      { "prompt": "Prepare a proof-gated parcel for one of the compiler's stubbed commands", "top_k": 3 }
+    ],
+    "negative": [
+      { "prompt": "Implement a feature using red-green-refactor", "owner": "test-driven-development" },
+      { "prompt": "Ship this release after reviewing its readiness gates", "owner": "go-live-readiness" }
+    ]
+  },
+  "evals": [
+    {
+      "id": 1,
+      "kind": "dialogue",
+      "prompt": "Inspect and extend the proof-gated Parcel Compiler scaffold.",
+      "expected_output": "A bounded plan that preserves the compiler's frozen command and canonicalization contracts.",
+      "expectations": ["The response treats the scaffold contracts as frozen", "The response avoids claiming unimplemented handlers are operational"]
+    }
+  ]
+}

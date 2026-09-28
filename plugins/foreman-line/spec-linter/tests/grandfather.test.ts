@@ -14,10 +14,18 @@
  *   non-whitespace-only string; empty/null rejected for every spec.
  */
 import assert from 'node:assert/strict'
+import { readdirSync, readFileSync } from 'node:fs'
+import { dirname, join, relative } from 'node:path'
 import { test } from 'node:test'
-import { GRANDFATHER_ALLOWLIST, WAIVER_KINDS, waiversFor } from '../src/grandfather.js'
+import { fileURLToPath } from 'node:url'
+import {
+  GRANDFATHER_ALLOWLIST,
+  GRANDFATHER_VERIFICATION_CLASS_MISSING_INVENTORY,
+  WAIVER_KINDS,
+  waiversFor,
+} from '../src/grandfather.js'
 import { sampleSpecFrontmatter } from '../src/testing.js'
-import { validateSpecFrontmatter } from '../src/validate.js'
+import { parseFrontmatter, validateSpecFrontmatter } from '../src/validate.js'
 
 // --- allowlist membership + value-pin invariants ------------------------------
 
@@ -67,8 +75,12 @@ test('each grandfathered basename maps to exactly its inventoried, value-pinned 
   }
 })
 
-test('exactly two waiver kinds exist', () => {
-  assert.deepEqual([...WAIVER_KINDS].sort(), ['permission-profile-legacy', 'routing-class-legacy'])
+test('exactly three waiver kinds exist', () => {
+  assert.deepEqual([...WAIVER_KINDS].sort(), [
+    'permission-profile-legacy',
+    'routing-class-legacy',
+    'verification-class-missing',
+  ])
 })
 
 test('a basename not on the allowlist has no waivers', () => {
@@ -90,6 +102,37 @@ function doc(overrides: Record<string, unknown>): Record<string, unknown> {
 }
 
 const IN_DONE = { parentDirName: 'done' } as const
+const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..')
+
+function collectParseableDoneSpecs(directory: string): string[] {
+  const results: string[] = []
+  for (const entry of readdirSync(directory, { withFileTypes: true })) {
+    if (entry.name === '.git' || entry.name === 'node_modules') continue
+    const path = join(directory, entry.name)
+    if (entry.isDirectory()) {
+      results.push(...collectParseableDoneSpecs(path))
+    } else if (entry.isFile() && entry.name.endsWith('.md')) {
+      const ref = relative(repoRoot, path).split('\\').join('/')
+      if (ref.startsWith('plugins/synced/')) continue
+      if (ref.startsWith('plugins/cache/')) continue
+      if (!ref.includes('/docs/specs/done/') && !ref.startsWith('docs/specs/done/')) continue
+      const doc = parseFrontmatter(readFileSync(path, 'utf8'))
+      if (doc !== null && typeof doc === 'object' && !Array.isArray(doc)) {
+        if (!Object.hasOwn(doc, 'verification_class')) results.push(ref)
+      }
+    }
+  }
+  return results
+}
+
+function inventoryDoc(ref: string): Record<string, unknown> {
+  const path = join(repoRoot, ...ref.split('/'))
+  const doc = parseFrontmatter(readFileSync(path, 'utf8'))
+  assert.notEqual(doc, null, `${ref}: no parseable frontmatter`)
+  assert.equal(typeof doc, 'object', `${ref}: frontmatter must be an object`)
+  assert.ok(!Array.isArray(doc), `${ref}: frontmatter must not be an array`)
+  return doc as Record<string, unknown>
+}
 
 // --- non-grandfathered files: full validation ------------------------------------
 
@@ -238,6 +281,126 @@ test('routing-class-legacy file gets no permission_profile waiver', () => {
   })
   assert.equal(result.valid, false)
   assert.ok(result.errors.some((e) => e.includes('/permission_profile')))
+})
+
+// --- GSO-P1 verification_class missing-field waiver --------------------------
+
+test('GSO-P1 inventory is source-frozen at exactly 42 identities', () => {
+  assert.equal(GRANDFATHER_VERIFICATION_CLASS_MISSING_INVENTORY.length, 42)
+  assert.equal(new Set(GRANDFATHER_VERIFICATION_CLASS_MISSING_INVENTORY).size, 42)
+})
+
+test('GSO-P1 inventory reconciliation: every frozen identity is derived from disk', () => {
+  const derived = new Set(collectParseableDoneSpecs(repoRoot))
+  for (const ref of GRANDFATHER_VERIFICATION_CLASS_MISSING_INVENTORY) {
+    assert.ok(derived.has(ref), `frozen identity is absent from the derived set: ${ref}`)
+  }
+})
+
+test('GSO-P1 inventory reconciliation: every derived identity is frozen', () => {
+  const frozen = new Set<string>(GRANDFATHER_VERIFICATION_CLASS_MISSING_INVENTORY)
+  for (const ref of collectParseableDoneSpecs(repoRoot)) {
+    assert.ok(frozen.has(ref), `derived identity is absent from the frozen inventory: ${ref}`)
+  }
+})
+
+test('GSO-P1 every exact inventoried done document waives only its missing verification_class field', () => {
+  for (const ref of GRANDFATHER_VERIFICATION_CLASS_MISSING_INVENTORY) {
+    const document = inventoryDoc(ref)
+    assert.ok(!Object.hasOwn(document, 'verification_class'), `${ref}: field must be absent`)
+    const result = validateSpecFrontmatter(document, {
+      documentRef: ref,
+      basename: ref.slice(ref.lastIndexOf('/') + 1),
+      parentDirName: 'done',
+    })
+    assert.deepEqual(result.errors, [], ref)
+    assert.equal(
+      result.warnings.filter((warning) =>
+        warning.startsWith('grandfathered (verification-class-missing):'),
+      ).length,
+      1,
+      ref,
+    )
+  }
+})
+
+const INVENTORIED_REF = GRANDFATHER_VERIFICATION_CLASS_MISSING_INVENTORY[0]
+
+test('GSO-P1 exact canonical documentRef downgrades only the missing-field error', () => {
+  const result = validateSpecFrontmatter(doc({ verification_class: undefined }), {
+    documentRef: INVENTORIED_REF,
+  })
+  assert.equal(result.valid, true, JSON.stringify(result.errors))
+  assert.ok(result.warnings.some((warning) => warning.includes('verification-class-missing')))
+})
+
+test('GSO-P1 absent, malformed, noncanonical, and out-of-root documentRef values receive no waiver', () => {
+  const invalidRefs: readonly (string | undefined)[] = [
+    undefined,
+    INVENTORIED_REF.replaceAll('/', '\\'),
+    `./${INVENTORIED_REF}`,
+    INVENTORIED_REF.replace('docs/', 'docs/../docs/'),
+    `C:/${INVENTORIED_REF}`,
+  ]
+  for (const documentRef of invalidRefs) {
+    const result = validateSpecFrontmatter(doc({ verification_class: undefined }), { documentRef })
+    assert.equal(result.valid, false, String(documentRef))
+    assert.ok(
+      result.errors.some((error) => error.includes('verification_class')),
+      String(documentRef),
+    )
+    assert.ok(!result.warnings.some((warning) => warning.includes('verification-class-missing')))
+  }
+})
+
+test('GSO-P1 runtime-null documentRef fails closed without throwing or receiving a waiver', () => {
+  const result = validateSpecFrontmatter(doc({ verification_class: undefined }), {
+    documentRef: null as unknown as string,
+  })
+  assert.equal(result.valid, false)
+  assert.ok(result.errors.some((error) => error.includes('verification_class')))
+  assert.ok(!result.warnings.some((warning) => warning.includes('verification-class-missing')))
+})
+
+test('GSO-P1 runtime-number documentRef fails closed without throwing or receiving a waiver', () => {
+  const result = validateSpecFrontmatter(doc({ verification_class: undefined }), {
+    documentRef: 42 as unknown as string,
+  })
+  assert.equal(result.valid, false)
+  assert.ok(result.errors.some((error) => error.includes('verification_class')))
+  assert.ok(!result.warnings.some((warning) => warning.includes('verification-class-missing')))
+})
+
+test('GSO-P1 runtime-object documentRef fails closed without throwing or receiving a waiver', () => {
+  const result = validateSpecFrontmatter(doc({ verification_class: undefined }), {
+    documentRef: {} as unknown as string,
+  })
+  assert.equal(result.valid, false)
+  assert.ok(result.errors.some((error) => error.includes('verification_class')))
+  assert.ok(!result.warnings.some((warning) => warning.includes('verification-class-missing')))
+})
+
+test('GSO-P1 copied or moved document identity, present unknown value, and unrelated errors remain blocking', () => {
+  const moved = validateSpecFrontmatter(doc({ verification_class: undefined }), {
+    documentRef: INVENTORIED_REF.replace('/done/', '/active/'),
+  })
+  assert.equal(moved.valid, false)
+  assert.ok(moved.errors.some((error) => error.includes('verification_class')))
+
+  const unknown = validateSpecFrontmatter(doc({ verification_class: 'mechanical-default' }), {
+    documentRef: INVENTORIED_REF,
+  })
+  assert.equal(unknown.valid, false)
+  assert.ok(unknown.errors.some((error) => error.includes('verification_class')))
+  assert.ok(!unknown.warnings.some((warning) => warning.includes('verification-class-missing')))
+
+  const unrelated = validateSpecFrontmatter(
+    doc({ verification_class: undefined, risk: undefined }),
+    { documentRef: INVENTORIED_REF },
+  )
+  assert.equal(unrelated.valid, false)
+  assert.ok(unrelated.errors.some((error) => error.includes('risk')))
+  assert.ok(unrelated.warnings.some((warning) => warning.includes('verification-class-missing')))
 })
 
 // --- data_classification (AC5) ------------------------------------------------------

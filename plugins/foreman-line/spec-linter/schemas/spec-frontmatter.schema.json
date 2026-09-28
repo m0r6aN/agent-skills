@@ -10,7 +10,8 @@
     "updated",
     "risk",
     "surfaces",
-    "routing_class"
+    "routing_class",
+    "verification_class"
   ],
   "properties": {
     "ticket": {
@@ -80,6 +81,13 @@
         "implementation/standard"
       ]
     },
+    "verification_class": {
+      "type": "string",
+      "enum": [
+        "equivalence-provable",
+        "judgment-required"
+      ]
+    },
     "permission_profile": {
       "type": "string",
       "pattern": "\\S",
@@ -95,6 +103,13 @@
     "data_classification": {
       "type": "string",
       "pattern": "\\S"
+    },
+    "involves": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "\\S"
+      }
     }
   }
 }

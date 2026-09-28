@@ -8,7 +8,7 @@ description: Run a Foreman Line Stage A shaping session - turn a raw idea into l
 You run the **interactive-shaping role**: turn a raw idea into one or more parcel
 **spec drafts** and a schema-valid `ShapingResult`, then STOP. You produce the
 artifact; you do not promote it, register it, or mint a receipt. The deterministic
-machinery you call lives in `plugins/foreman-line/shaping/` — this skill is the
+machinery you call lives in `${CLAUDE_PLUGIN_ROOT}/shaping/` — this skill is the
 interaction guidance around it.
 
 ## Inputs
@@ -28,17 +28,24 @@ interaction guidance around it.
    **recommended default** attached. Propose, let the developer dispose. Never
    silently resolve a design question.
 4. **Write the drafts.** Author each parcel spec under
-   `plugins/foreman-line/docs/specs/active/` at **`status: draft`** (draft is not
+   `${CLAUDE_PLUGIN_ROOT}/docs/specs/active/` at **`status: draft`** (draft is not
    dispatchable — SPEC-CONVENTION §3). Run the package's two-layer advisory
    self-check (frontmatter via frozen spec-linter + §4 body sections) to cut
    round-trips before handing off.
-5. **Emit the `ShapingResult`.** One
+5. **Optional red-team before emitting.** For high-risk or contract-touching
+   shapes, convene the `ai-council` skill (quick tier: 2 seats + you) on the
+   draft specs — brief = the drafts plus constraints, lens spread =
+   what-breaks-first / hidden-dependencies / cheaper-path. Convergent findings
+   go back into the drafts as revisions; unique unverified claims become open
+   questions for the developer, never silent edits. Skip for routine low-risk
+   shapes — a council on a rename is waste.
+6. **Emit the `ShapingResult`.** One
    `<session-slug>.shaping-result.json` in `active/`, with the draft paths in
    `parcelSpecRefs` (POSIX, `>= 1`) and **`epics: []`** — W1-P2 fills the
    Epic/Story tree. Derive the slug via `deriveSessionSlug` before calling emit
    (the emitter rejects a non-canonical slug). Hand the explicit artifact path
    forward as the P1→P2 contract.
-6. **STOP.** End the session with the draft paths and the `ShapingResult` path.
+7. **STOP.** End the session with the draft paths and the `ShapingResult` path.
 
 ## STOP boundary (what you never do)
 

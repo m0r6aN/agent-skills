@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "1",
+  "kind": "stage",
+  "stage": "B",
+  "claimRef": null,
+  "correlation": {
+    "correlationId": "4f145582-9c9c-423c-92e9-9d4f5a88a71a",
+    "sessionId": "392ca0ac-717c-4fc4-a985-5bd3cbb6eadf",
+    "workflowId": "a5b1975a-7497-4200-bac2-5d8a6fd6c749",
+    "runId": "9ebde928-daeb-421f-ac6d-e732f70e5c73"
+  },
+  "sequence": 1,
+  "prevHash": "c4a77c5e9e87d43d8a060a64f87e8cce46a644769ecaa9adc0938afa58ab9077",
+  "timestamp": "2026-09-06T12:15:10.641Z",
+  "subjectKind": "RegistrationResult",
+  "subject": {
+    "ticketKeys": [
+      "m0r6aN/agent-skills#18"
+    ],
+    "links": [
+      {
+        "direction": "commit->ticket",
+        "ticketKey": "m0r6aN/agent-skills#18",
+        "commitSha": "365cdd93fa01615e66d9d7e9fb0753b63a684a1e",
+        "permalink": "https://github.com/m0r6aN/agent-skills/commit/365cdd93fa01615e66d9d7e9fb0753b63a684a1e"
+      },
+      {
+        "direction": "ticket->commit",
+        "ticketKey": "m0r6aN/agent-skills#18",
+        "commitSha": "365cdd93fa01615e66d9d7e9fb0753b63a684a1e",
+        "permalink": "https://github.com/m0r6aN/agent-skills/issues/18#issuecomment-5559140066"
+      }
+    ]
+  },
+  "signature": null,
+  "hash": "bbb01bab0d20201494f456247a0052a034e71ed45722b35dfd7764763d5e0d3a"
+}

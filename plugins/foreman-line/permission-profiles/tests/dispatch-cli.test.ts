@@ -74,6 +74,8 @@ test('exit 2 on a --profile value not in PROFILE_NAMES (before any git mutation)
     'nope',
     '--path',
     join(tmpdir(), 'p3-cli-should-not-exist'),
+    '--cwd',
+    packageRoot,
   ])
   assert.equal(status, 2)
   assert.ok(stderr.includes('unknown --profile'))
@@ -85,7 +87,7 @@ test('exit 0 end-to-end: creates worktree + settings via the real CLI entry poin
   try {
     const wt = join(base, 'wt')
     const { status, stdout, stderr } = runDispatch(
-      ['--parcel', 'PX', '--profile', 'reviewer-readonly', '--path', wt],
+      ['--parcel', 'PX', '--profile', 'reviewer-readonly', '--path', wt, '--cwd', repo],
       repo,
     )
     assert.equal(status, 0, stderr)
@@ -102,7 +104,7 @@ test('exit 1 no-clobber: --path already exists', () => {
     const wt = join(base, 'wt')
     mkdirSync(wt)
     const { status, stderr } = runDispatch(
-      ['--parcel', 'PX', '--profile', 'builder-standard', '--path', wt],
+      ['--parcel', 'PX', '--profile', 'builder-standard', '--path', wt, '--cwd', repo],
       repo,
     )
     assert.equal(status, 1)
