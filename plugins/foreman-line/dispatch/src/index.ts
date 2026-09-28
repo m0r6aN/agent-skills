@@ -36,50 +36,20 @@ export type {
 } from './kompress-adapter/index.js'
 export { KompressError, kompressContext } from './kompress-adapter/index.js'
 export type {
-  ControllerCode,
-  LaunchInputV1,
-  LaunchReceiptV1,
-  LaunchResultV1,
-  PmcLaunchControllerV1,
-} from './pmc-launch/controller-types.js'
-export type {
   CandidateRecord,
-  DispatchIdentity,
   McpClientFactory,
   McpToolClient,
   QueryOptions,
   RankedCandidateList,
 } from './query/index.js'
-export {
-  buildCandidateJql,
-  DispatchIdentityUndeclared,
-  queryAndRankCandidates,
-  SITE_URL,
-  scanReceiptsForResolution,
-} from './query/index.js'
+export { buildCandidateJql, queryAndRankCandidates, SITE_URL } from './query/index.js'
 // W2-P3: routing-eval
 export type {
-  ParcelShadowAuthorization,
-  ResolvedParcelShadowAuthorization,
   RoutingInput,
   RoutingOptions,
   RoutingResult,
-  ShadowCandidateResult,
-  ShadowInvocationRequest,
-  ShadowRoutingDependencies,
-  ShadowRoutingInput,
-  ShadowRoutingOptions,
-  ShadowRoutingResult,
-  ShadowSkippedResult,
 } from './routing-eval/index.js'
-export {
-  evaluateRouting,
-  executeShadowRoute,
-  hashShadowPublicInput,
-  RoutingError,
-  SHADOW_LIMITS,
-  ShadowRoutingError,
-} from './routing-eval/index.js'
+export { evaluateRouting, RoutingError } from './routing-eval/index.js'
 // W2-P5: skill-resolver
 export type {
   SkillResolverInput,

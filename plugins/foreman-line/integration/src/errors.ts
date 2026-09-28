@@ -8,7 +8,6 @@ export class IntegrationError extends Error {
     | 'RECEIPT_WRITE_FAILED'
     | 'PLAN_INVALID'
     | 'POSTURE_INVALID'
-    | 'PUSH_FAILED'
 
   constructor(code: IntegrationError['code'], message: string) {
     super(message)
