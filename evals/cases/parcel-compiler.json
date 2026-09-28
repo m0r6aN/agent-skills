@@ -2,22 +2,42 @@
   "skill_name": "parcel-compiler",
   "trigger": {
     "positive": [
-      { "prompt": "Extend the pcc Parcel Compiler scaffold without violating its frozen command contracts", "top_k": 3 },
-      { "prompt": "Inspect the parcel compiler canonicalization and Git utility behavior", "top_k": 3 },
-      { "prompt": "Prepare a proof-gated parcel for one of the compiler's stubbed commands", "top_k": 3 }
+      {
+        "prompt": "Implement the stubbed compile command in pcc under its frozen command contract",
+        "top_k": 3
+      },
+      {
+        "prompt": "Review the parcel compiler canonicalization and hashing utilities for correctness",
+        "top_k": 3
+      },
+      {
+        "prompt": "Is the pcc verify command actually implemented yet, or is it still a stub",
+        "top_k": 3
+      }
     ],
     "negative": [
-      { "prompt": "Implement a feature using red-green-refactor", "owner": "test-driven-development" },
-      { "prompt": "Ship this release after reviewing its readiness gates", "owner": "go-live-readiness" }
+      {
+        "prompt": "Write the API documentation for the orders service",
+        "owner": "documentation-and-adrs"
+      },
+      {
+        "prompt": "Simplify this working function for readability",
+        "owner": "code-simplification"
+      }
     ]
   },
   "evals": [
     {
       "id": 1,
       "kind": "dialogue",
-      "prompt": "Inspect and extend the proof-gated Parcel Compiler scaffold.",
-      "expected_output": "A bounded plan that preserves the compiler's frozen command and canonicalization contracts.",
-      "expectations": ["The response treats the scaffold contracts as frozen", "The response avoids claiming unimplemented handlers are operational"]
+      "dialogue_justification": "Grades the capability-claim audit response - an assessment of stated maturity, not a build.",
+      "prompt": "A teammate claims pcc is a working end-to-end compiler and wants to demo compiling a parcel with it tomorrow. Respond.",
+      "expected_output": "A correction stating pcc is a 0.1.0 scaffold with stubbed operational commands, with implemented primitives reported separately from stubs",
+      "expectations": [
+        "States that the operational commands are stubbed and return NOT_IMPLEMENTED",
+        "Lists implemented primitives separately from remaining stubs",
+        "Does not endorse the demo as a working-compiler showcase"
+      ]
     }
   ]
 }
