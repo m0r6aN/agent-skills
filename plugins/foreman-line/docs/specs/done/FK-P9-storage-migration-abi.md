@@ -1,7 +1,7 @@
 ---
 ticket: FK-P9
 title: Foreman Kernel - SQLite storage and migration ABI
-status: draft
+status: done
 owner: clinton.morgan
 created: 2026-09-28
 updated: 2026-09-28

@@ -100,7 +100,7 @@ function insertSampleRows(storage: Storage, order: 'forward' | 'interleaved'): v
       insertGoal(storage, {
         goalId: 'goal-1',
         revision: 1,
-        status: 'open',
+        status: 'active',
         pendingTransitionId: null,
         updatedAtMicros: T0,
       }),
@@ -108,7 +108,7 @@ function insertSampleRows(storage: Storage, order: 'forward' | 'interleaved'): v
       insertGoal(storage, {
         goalId: 'goal-2',
         revision: 0,
-        status: 'blocked',
+        status: 'awaiting-human',
         pendingTransitionId: null,
         updatedAtMicros: T0 + 20,
       }),
@@ -116,7 +116,7 @@ function insertSampleRows(storage: Storage, order: 'forward' | 'interleaved'): v
       insertGoal(storage, {
         goalId: 'goal-3',
         revision: 2,
-        status: 'closed',
+        status: 'completed',
         pendingTransitionId: null,
         updatedAtMicros: T0 + 30,
       }),
@@ -189,7 +189,7 @@ function insertSampleRows(storage: Storage, order: 'forward' | 'interleaved'): v
       insertTransition(storage, {
         transitionId: 'tr-1',
         goalId: 'goal-1',
-        status: 'pending',
+        status: 'completed',
         requestedBy: 'principal-1',
         operationId: 'op-3',
         payloadDigest: `sha256:${'d'.repeat(64)}`,
@@ -282,7 +282,7 @@ test('EXPD-03: in-memory objects with different member order encode identically'
         {
           goal_id: 'g',
           revision: 1,
-          status: 'open',
+          status: 'active',
           pending_transition_id: null,
           updated_at_micros: 5,
         },
@@ -295,7 +295,7 @@ test('EXPD-03: in-memory objects with different member order encode identically'
         {
           updated_at_micros: 5,
           pending_transition_id: null,
-          status: 'open',
+          status: 'active',
           revision: 1,
           goal_id: 'g',
         },

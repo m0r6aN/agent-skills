@@ -74,7 +74,7 @@ test('FULL-01: insert past max_page_count is STORAGE_DISK_FULL with clean rollba
   const root = mkdtempSync(join(tmpdir(), 'fkp9-full1-'))
   const storage = openStorage(configFor(root))
   storage.driver.pragma(`max_page_count=${expected.input.maxPageCount ?? 6}`)
-  insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'open', updatedAtMicros: T0 })
+  insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'active', updatedAtMicros: T0 })
   const error = expectCode(() => {
     for (let i = 0; i < 50; i += 1) {
       insertEvent(storage, {

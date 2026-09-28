@@ -71,7 +71,7 @@ test('registry names match the spec registry table extracted from the pinned spe
     '..',
     'docs',
     'specs',
-    'active',
+    'done',
     'FK-P9-storage-migration-abi.md',
   )
   const specText = readFileSync(specPath, 'utf8')
