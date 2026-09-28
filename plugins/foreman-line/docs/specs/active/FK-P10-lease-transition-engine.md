@@ -509,10 +509,16 @@ neighboring-path permission.
 **FK-P9 schema amendment requests (FK-P9 OQ-5 routing; coordinator ruling 2026-09-28,
 OQ-8 — the coordinator lands the FK-P9 amendment record + migration as a tiny
 predecessor before builder code; this spec never edits `kernel-state/**`):**
-- **A1 (correctness-adjacent — ties to OQ-1's vocabulary):** DB-level `CHECK`
-  constraints encoding the T1 status vocabulary on `goals.status`/`transitions.status`,
-  delivered as a new file in `kernel-state/migrations/` through a recorded FK-P9 spec
-  amendment.
+- **A1a (correctness-adjacent — ties to OQ-1's vocabulary; LANDED):** DB-level `CHECK`
+  constraints encoding the T1 status vocabulary on `goals.status`, delivered as
+  `kernel-state/migrations/0002-goal-status-checks.sql` (FK-P9 amendment A1/A2,
+  `287085ce`).
+- **A1b (follow-on, dispatched with the FK-P10 build):** the same DB-level `CHECK`
+  pattern for `transitions.status`, its vocabulary taken verbatim from this spec's T-tables
+  at build time, delivered as `kernel-state/migrations/0003-*.sql` through the same
+  recorded FK-P9 amendment route (coordinator ruling 2026-09-28, Step-0 flag F2: the
+  A1a scope of `goals.status`-only was my dispatch-brief narrowing of this text;
+  `transitions.status` keeps substrate enforcement for defense-in-depth parity).
 - **A2 (performance-only, explicitly NOT correctness-blocking):** `CREATE INDEX
   events_goal_operation ON events (goal_id, operation_id)` to bound replay lookup (T6
   reconstruction scans the goal's event stream by `operation_id`), same amendment
@@ -670,7 +676,7 @@ three-state known-base rule.
 | `plugins/foreman-line/docs/goals/foreman-kernel/charter.md` | `29a08a63b8e1c540bfa6863a0244dddb7e08b1e3889dac64d10892f87b06b693` | D2, D5, D9, D14, D17; §6 Wave-3a FK-P10 row + Wave-3 exit; §12 serialization; §15.3 dispatch contract; INF-6 carrier line |
 | `plugins/foreman-line/docs/goals/foreman-kernel/fk-p1-p21-dispatch-plan.md` | `51c410c5deb63fd7390fe712d7c77e4b06ae05c223d00821713d9216508bbacf` | FK-P10 row + owned surfaces; RS-1/RS-2 annotations; review routing |
 | `plugins/foreman-line/docs/goals/foreman-kernel/fk-rs2-gate1-reratification-2026-09-27.md` | `bb12ccb5c279b8c32095814c4a89ec577b4e0d7aa368656cd56c91a38d16b2ea` | RS-2.2 strand split (INF-8 process-boundary proof stranded); RS-2.3 Wave-3a exit honesty |
-| `plugins/foreman-line/docs/goals/foreman-kernel/fk-exit-annex-draft-2026-09-27.md` | `d2142ac74aa36c32dbbad16512132f2d1fc0ec0c20e8babd6bdf29457808fb55` | what this parcel must NOT claim (stranded INF-4/INF-6/INF-8 rows; FK-P15's stranded process-boundary fragment). Re-pinned 2026-09-28 (coordinator) — the shaping-time pin `115f5ed3…` was the pre-extension committed state; the previously-dirty extension is now committed at the pinned value |
+| `plugins/foreman-line/docs/goals/foreman-kernel/fk-exit-annex-draft-2026-09-27.md` | `cceb32dd7c4979dd8d75bdf7e8aa53a63db17883331216d7e30fd590c49dfc11` | what this parcel must NOT claim (stranded INF-4/INF-6/INF-8 rows; FK-P15's stranded process-boundary fragment). Re-pinned 2026-09-28 (coordinator, second advance) — superseded `d2142ac7…` when the legacy status-vocabulary mapping remainder landed; committed-bytes rule held throughout |
 | `plugins/foreman-line/docs/specs/done/FK-P1-lifecycle-admission-decision-contracts.md` | `ec2d892288933845c32191e587a19b8a9f650e12d31538d28c78ca54552068a2` | F05.1 bounds; F05.4 `IdempotencyBinding`/`LeaseCasDescriptor`/`GitGateEvidenceRef`; F05.5 digest rules; F05.8 `stop-report-emission`; F05.10 diagnostics; F05.11 `EffectResult`; F05.12 `IDEMPOTENCY_CONFLICT`/`STATE_REVISION_STALE`; P1-S09 semantics |
 | `plugins/foreman-line/docs/specs/done/FK-P9-storage-migration-abi.md` | `f713bb43e96da78fd8e85a41ed8a18677761c3725b8af6fcc300571d30aab6f9` | substrate contract tables; `withTransaction` composition seam; OQ-5 migration-serialization ruling; CONC-03 concurrency lesson; MIG-02 child-process-kill precedent; canonical-conformance cross-check pattern |
 | `plugins/foreman-line/docs/specs/done/FK-P17-bypass-outage-matrix.md` | `932a0262497b5a3f5e8a75c8732b085b581ad48d54081b7bc238c29d7d97880c` | pin-integrity rule; environment-prerequisite Verification Plan pattern; T4 mapping-never-redefines pattern; skip-and-record; banned-claim scan; nearest-rank measurement pattern |
@@ -804,7 +810,7 @@ if FK-P10 rolls back) and deletes no operator data.
 
 ## Shaping questions — RESOLVED by coordinator ruling 2026-09-28 (dispositions recorded at the end of this section; no open questions remain)
 
-1. **OQ-1 — Goal-status vocabulary.** The closed six-value set (`proposed`, `active`,
+1. **OQ-1 — Goal-status vocabulary.** The closed five-value set (`proposed`, `active`,
    `awaiting-human`, `completed`, `cancelled`) is proposed here (T1) because
    `goals.status`'s vocabulary is *(P10)* in the FK-P9 schema and no existing record
    fixes it. Confirm or amend, including the literal spelling `awaiting-human` against
@@ -857,6 +863,8 @@ if FK-P10 rolls back) and deletes no operator data.
 
 ### Coordinator Rulings — Resolved Decisions (2026-09-28)
 
+**Flagged-risk ACK completion (Step-0 flag F4):** the ACK covers (a)–(g) in full — the two previously-unnamed entries: **(b)** cross-process wall-clock skew affects absolute lease expiry; recorded in the contention evidence, never compensated by policy invented in this package; **(g)** the pin handshake (shaping pinned the pre-extension annex state; the coordinator re-pinned at `d2142ac7` and again at `cceb32dd` as record work landed — the committed-bytes rule held throughout).
+
 All eleven shaping questions above are resolved by coordinator ruling 2026-09-28;
 the dispositions are incorporated in substance at the normative locations named
 below. Flagged risks (a)–(g) are **ACK'd as designed** — (a) is normative per OQ-2
@@ -866,7 +874,7 @@ depend on it); (e)/(f) the MIG-02 and CONC-03 precedents bind — asserted outco
 never "no crash". The 10 mandated reviewer-focus questions in the Verification Plan
 stand as the review mandate.
 
-- **OQ-1 — CONFIRMED with mapping note** (T1): the six-value kebab vocabulary stands;
+- **OQ-1 — CONFIRMED with mapping note** (T1): the five-value kebab vocabulary stands;
   D9's `awaiting_human` stop-report label maps to the `awaiting-human` goal status
   (spelling normalized at the record boundary; domains distinct).
 - **OQ-2 — CONFIRMED as proposed; binding addition normative** (AC6): the interim
@@ -901,7 +909,7 @@ stand as the review mandate.
   the amendment path (policy change = recorded spec amendment bumping the constant,
   the FK-P2 pin-bump pattern); owner policy may amend (RPO/RTO-row pattern).
 - **Pin re-pin (coordinator, verbatim)** (Context & References): the exit-annex pin
-  row binds `d2142ac74aa36c32dbbad16512132f2d1fc0ec0c20e8babd6bdf29457808fb55` —
-  "re-pinned 2026-09-28 (coordinator) — the shaping-time pin `115f5ed3…` was the
-  pre-extension committed state; the previously-dirty extension is now committed at
-  the pinned value".
+  row binds `cceb32dd7c4979dd8d75bdf7e8aa53a63db17883331216d7e30fd590c49dfc11` —
+  "re-pinned 2026-09-28 (coordinator, second advance) — `d2142ac7…` was superseded
+  when the legacy status-vocabulary mapping remainder (A1/A2 boundary) landed; the
+  committed-bytes rule held throughout the pin handshake".
