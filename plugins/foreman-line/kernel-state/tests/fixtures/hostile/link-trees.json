@@ -1,0 +1,72 @@
+{
+  "class": "C7",
+  "provenance": "Case names and reason pairings per the amended spec C7 cell (coordinator ruling 2026-09-28, rework F3; clarification: PATH-15 keeps outside-root).",
+  "records": [
+    {
+      "id": "PATH-14",
+      "input": {
+        "scenario": "final-component-file-symlink-in-root",
+        "note": "final component is a file symlink (in-root target) — link-target per mechanism semantics (coordinator ruling 2026-09-28, rework F3)",
+        "tree": {
+          "files": ["target.db"],
+          "links": [{ "path": "state.db", "target": "target.db", "kind": "file-symlink" }]
+        },
+        "open": "state.db"
+      },
+      "expectedCode": "STORAGE_PATH_REFUSED",
+      "expectedReasonCode": "link-target"
+    },
+    {
+      "id": "PATH-15",
+      "input": {
+        "scenario": "junction-intermediate-out-of-root",
+        "note": "dir symlink/junction at an intermediate component (out-of-root target) — keeps outside-root: the out-of-root target is the defining violation (coordinator ruling 2026-09-28, rework F3 clarification)",
+        "tree": {
+          "dirs": ["sub"],
+          "links": [{ "path": "sub", "target": "<outside-root-dir>", "kind": "junction" }]
+        },
+        "open": "sub/state.db"
+      },
+      "expectedCode": "STORAGE_PATH_REFUSED",
+      "expectedReasonCode": "outside-root"
+    },
+    {
+      "id": "PATH-16",
+      "input": {
+        "scenario": "junction-intermediate-in-root",
+        "note": "junction at an intermediate component (in-root target) — link-component = link at a non-final component where no higher-precedence violation defines the row (coordinator ruling 2026-09-28, rework F3)",
+        "tree": {
+          "dirs": ["real"],
+          "files": ["real/state.db"],
+          "links": [{ "path": "sub", "target": "real", "kind": "junction" }]
+        },
+        "open": "sub/state.db"
+      },
+      "expectedCode": "STORAGE_PATH_REFUSED",
+      "expectedReasonCode": "link-component"
+    },
+    {
+      "id": "PATH-17",
+      "input": {
+        "scenario": "final-target-directory",
+        "note": "final target is a directory (non-regular)",
+        "tree": { "dirs": ["state.db"] },
+        "open": "state.db"
+      },
+      "expectedCode": "STORAGE_PATH_REFUSED",
+      "expectedReasonCode": "not-regular"
+    },
+    {
+      "id": "PATH-18",
+      "input": {
+        "scenario": "opened-target-substitution",
+        "note": "opened-target substitution race — detected by the re-verify contract (link-target names the wrong-target failure)",
+        "tree": { "files": ["state.db"] },
+        "open": "state.db",
+        "substitute": "replace-with-different-regular-file"
+      },
+      "expectedCode": "STORAGE_PATH_REFUSED",
+      "expectedReasonCode": "link-target"
+    }
+  ]
+}
