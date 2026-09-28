@@ -1,0 +1,29 @@
+{
+  "name": "@foreman-line/bypass-outage-harness",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "FK-P17′ bypass + outage matrix and A1/D21 measurement instrument (RS-1.2/RS-2.2). Runs the ten-class matrix against the SHIPPED mediated surfaces (hooks/model-gate.mjs, dispatch approval-cli, mutation-scope-guard) as read-only runtime inputs and emits the mechanical/detected/unsupported classification matrix with per-case evidence artifacts, plus the IP-1→IP-4 measurement retarget. Measures and records only; claims nothing (D13).",
+  "engines": {
+    "node": ">=22"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test tests/*.test.ts",
+    "lint": "biome check .",
+    "matrix": "tsx src/index.ts matrix",
+    "measure": "tsx src/index.ts measure"
+  },
+  "dependencies": {
+    "ajv": "8.20.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.14",
+    "@types/node": "26.6.2",
+    "tsx": "4.23.15",
+    "typescript": "7.0.2"
+  }
+}
