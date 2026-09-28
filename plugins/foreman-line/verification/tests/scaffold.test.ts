@@ -14,6 +14,132 @@ function readJson(path: string): Record<string, unknown> {
   return JSON.parse(readFileSync(path, 'utf8')) as Record<string, unknown>
 }
 
+type DependencyMap = Record<string, string>
+
+const SHARED_DEV_DEPENDENCIES: DependencyMap = {
+  '@biomejs/biome': '2.5.14',
+  '@types/node': '26.6.2',
+  tsx: '4.23.15',
+  typescript: '7.0.2',
+}
+
+const DISPATCH_ONLY_DEV_DEPENDENCIES: DependencyMap = {
+  '@earendil-works/pi-coding-agent': '0.87.1',
+  '@earendil-works/pi-ai': '0.87.1',
+}
+
+const EXACT_VERSION = /^\d+\.\d+\.\d+$/
+
+function assertExactPinnedDependencies(
+  actual: DependencyMap,
+  expected: DependencyMap,
+  label: string,
+): void {
+  assert.deepEqual(Object.keys(actual).sort(), Object.keys(expected).sort(), `${label} keys`)
+  for (const [name, expectedVersion] of Object.entries(expected)) {
+    assert.match(expectedVersion, EXACT_VERSION, `${label} expected ${name} must be an exact pin`)
+    assert.match(actual[name] ?? '', EXACT_VERSION, `${label} ${name} must be an exact pin`)
+    assert.equal(actual[name], expectedVersion, `${label} ${name} version`)
+  }
+}
+
+function assertScaffoldDevDependencies(verification: DependencyMap, dispatch: DependencyMap): void {
+  const expectedDispatch = { ...SHARED_DEV_DEPENDENCIES, ...DISPATCH_ONLY_DEV_DEPENDENCIES }
+  assertExactPinnedDependencies(
+    verification,
+    SHARED_DEV_DEPENDENCIES,
+    'verification devDependencies',
+  )
+  assertExactPinnedDependencies(dispatch, expectedDispatch, 'dispatch devDependencies')
+  for (const name of Object.keys(SHARED_DEV_DEPENDENCIES)) {
+    assert.equal(verification[name], dispatch[name], `shared ${name} version parity`)
+  }
+}
+
+function expectScaffoldDependencyFailure(
+  verification: DependencyMap,
+  dispatch: DependencyMap,
+  description: string,
+): void {
+  assert.throws(() => assertScaffoldDevDependencies(verification, dispatch), description)
+}
+
+function runScaffoldDependencyNegativeControls(
+  verification: DependencyMap,
+  dispatch: DependencyMap,
+): void {
+  for (const name of Object.keys(SHARED_DEV_DEPENDENCIES)) {
+    const missingVerification = { ...verification }
+    delete missingVerification[name]
+    expectScaffoldDependencyFailure(
+      missingVerification,
+      dispatch,
+      `missing shared verification dependency ${name} is refused`,
+    )
+
+    const missingDispatch = { ...dispatch }
+    delete missingDispatch[name]
+    expectScaffoldDependencyFailure(
+      verification,
+      missingDispatch,
+      `missing shared dispatch dependency ${name} is refused`,
+    )
+  }
+
+  expectScaffoldDependencyFailure(
+    { ...verification, 'unexpected-verification-tool': '1.0.0' },
+    dispatch,
+    'unexpected verification dependency is refused',
+  )
+  expectScaffoldDependencyFailure(
+    verification,
+    { ...dispatch, 'unexpected-dispatch-tool': '1.0.0' },
+    'unexpected dispatch dependency is refused',
+  )
+
+  const verificationDrift = { ...verification, typescript: '7.0.3' }
+  expectScaffoldDependencyFailure(
+    verificationDrift,
+    dispatch,
+    'shared verification version drift is refused',
+  )
+  const dispatchDrift = { ...dispatch, tsx: '4.23.14' }
+  expectScaffoldDependencyFailure(
+    verification,
+    dispatchDrift,
+    'shared dispatch version drift is refused',
+  )
+
+  const sharedRange = { ...verification, '@types/node': '^26.6.2' }
+  const dispatchSharedRange = { ...dispatch, '@types/node': '^26.6.2' }
+  expectScaffoldDependencyFailure(
+    sharedRange,
+    dispatchSharedRange,
+    'equal shared version ranges are refused',
+  )
+
+  for (const name of Object.keys(DISPATCH_ONLY_DEV_DEPENDENCIES)) {
+    const missingSdk = { ...dispatch }
+    delete missingSdk[name]
+    expectScaffoldDependencyFailure(
+      verification,
+      missingSdk,
+      `missing SDK dependency ${name} is refused`,
+    )
+
+    expectScaffoldDependencyFailure(
+      verification,
+      { ...dispatch, [name]: '0.87.2' },
+      `changed SDK dependency ${name} is refused`,
+    )
+    expectScaffoldDependencyFailure(
+      verification,
+      { ...dispatch, [name]: '^0.87.1' },
+      `ranged SDK dependency ${name} is refused`,
+    )
+  }
+}
+
 function readSrcFiles(): { readonly path: string; readonly text: string }[] {
   const files: { path: string; text: string }[] = []
   const walk = (dir: string): void => {
@@ -47,7 +173,10 @@ test('AC-1: verification package scaffold matches the W1/W2 sibling pattern', ()
   const dispatchDeps = dispatchPkg.dependencies as Record<string, string>
   assert.equal(deps.ajv, dispatchDeps.ajv)
   assert.equal(deps.yaml, dispatchDeps.yaml)
-  assert.deepEqual(pkg.devDependencies, dispatchPkg.devDependencies)
+  const verificationDevDependencies = pkg.devDependencies as DependencyMap
+  const dispatchDevDependencies = dispatchPkg.devDependencies as DependencyMap
+  assertScaffoldDevDependencies(verificationDevDependencies, dispatchDevDependencies)
+  runScaffoldDependencyNegativeControls(verificationDevDependencies, dispatchDevDependencies)
   assert.ok(existsSync(join(PACKAGE_ROOT, 'src', 'index.ts')))
   assert.ok(existsSync(join(PACKAGE_ROOT, 'src', 'harness', 'index.ts')))
 })
