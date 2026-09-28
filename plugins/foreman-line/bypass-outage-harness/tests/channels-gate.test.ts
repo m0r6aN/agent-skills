@@ -7,6 +7,8 @@
 import { strict as assert } from 'node:assert'
 import { test } from 'node:test'
 import {
+  buildMb01Outcome,
+  buildSst01Outcome,
   runCtl01,
   runCtl02,
   runCtl03,
@@ -17,7 +19,7 @@ import {
   runV8Sst02,
   runV8Sst03,
 } from '../src/channels/gate.js'
-import { buildCaseRecord } from '../src/record.js'
+import { buildCaseRecord, buildCaseRecordOrRefusal } from '../src/record.js'
 import { type CaseRow, loadRegistry } from '../src/vectors.js'
 
 function rowFor(id: string): CaseRow {
@@ -104,4 +106,45 @@ test('CTL-03: in-scope dispatch proceeds to the Stage-C receipt (allow baseline)
   const evidence = record.effectEvidence as Record<string, unknown>
   assert.equal(evidence.stageCReceiptWritten, true)
   assert.equal(evidence.refusalCode, null)
+})
+
+test('R2: MB-01 records BOTH branches — refusal and falsifying allow (AC4/OQ-5)', () => {
+  const refused = buildMb01Outcome({
+    startExitCode: 0,
+    preExitCode: 2,
+    blockMessagePresent: true,
+    mutationLanded: false,
+    target: null,
+  })
+  const refusedRecord = buildCaseRecordOrRefusal(rowFor('BYP-MB-01'), refused)
+  assert.ok('classification' in refusedRecord)
+  assert.equal(refusedRecord.classification, 'mechanical')
+  assert.equal(refusedRecord.mechanismPolicyClass, 'model-membership')
+  assert.equal(refusedRecord.hypothesisFalsified, false)
+
+  const allowed = buildMb01Outcome({
+    startExitCode: 0,
+    preExitCode: 0,
+    blockMessagePresent: false,
+    mutationLanded: true,
+    target: '/tmp/forged',
+  })
+  const allowedRecord = buildCaseRecordOrRefusal(rowFor('BYP-MB-01'), allowed)
+  assert.ok('classification' in allowedRecord)
+  assert.equal(allowedRecord.classification, 'unsupported')
+  assert.equal(allowedRecord.hypothesisFalsified, true, 'the allow branch falsifies the hypothesis')
+})
+
+test('R2: SST-01 records BOTH branches — collateral refusal and falsifying allow', () => {
+  const refused = buildSst01Outcome({ preExitCode: 2, mutationLanded: false })
+  const refusedRecord = buildCaseRecordOrRefusal(rowFor('SST-01'), refused)
+  assert.ok('classification' in refusedRecord)
+  assert.equal(refusedRecord.classification, 'mechanical')
+  assert.equal(refusedRecord.collateral, true)
+
+  const allowed = buildSst01Outcome({ preExitCode: 0, mutationLanded: true })
+  const allowedRecord = buildCaseRecordOrRefusal(rowFor('SST-01'), allowed)
+  assert.ok('classification' in allowedRecord)
+  assert.equal(allowedRecord.classification, 'unsupported')
+  assert.equal(allowedRecord.hypothesisFalsified, true)
 })

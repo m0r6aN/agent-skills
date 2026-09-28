@@ -38,9 +38,9 @@
       "effectEvidence": {
         "realpathVerified": true,
         "after": {
-          "exists": false,
-          "realpath": null,
-          "contentHash": null
+          "exists": true,
+          "realpath": "C:\\Users\\clint\\AppData\\Local\\Temp\\fk-p17-ws-Pw5pjZ\\scope\\forbidden\\subagent-sa01.txt",
+          "contentHash": "1a5defcc02ed9f2b707e07c1b22a41a258f9149a7539201b5b3e216066b1840e"
         },
         "simulation": "materialized",
         "guardInvocation": false
@@ -86,9 +86,9 @@
       "effectEvidence": {
         "realpathVerified": true,
         "after": {
-          "exists": false,
-          "realpath": null,
-          "contentHash": null
+          "exists": true,
+          "realpath": "C:\\Users\\clint\\AppData\\Local\\Temp\\fk-p17-ws-2h7X5x\\scope\\forbidden\\subagent-sa02.txt",
+          "contentHash": "52211bd862a3957805efe6c1c292041affaf96aa0af5ab5ca68dc0c56cb3bc87"
         },
         "simulation": "materialized",
         "guardInvocation": false
@@ -100,5 +100,6 @@
       ],
       "notes": "materialized subagent simulation lands the write; live-host subagent session evidence is a named obligation"
     }
-  ]
+  ],
+  "emissionRefusals": []
 }

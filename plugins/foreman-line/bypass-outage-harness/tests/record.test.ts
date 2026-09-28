@@ -7,9 +7,11 @@ import { strict as assert } from 'node:assert'
 import { test } from 'node:test'
 import { CanonicalEncodeError, canonicalJson, sanitizeText } from '../src/canonical.js'
 import { HarnessError } from '../src/errors.js'
+import { deriveGapRecords, type MatrixRow } from '../src/index.js'
 import {
   BANNED_CLAIM_PHRASES,
   buildCaseRecord,
+  buildCaseRecordOrRefusal,
   type CaseOutcome,
   deriveClassification,
   deriveMechanism,
@@ -212,4 +214,48 @@ test('canonical bytes: sorted keys, integer-only numbers, no BOM', () => {
   )
   const bytes = new TextEncoder().encode(canonicalJson({ a: 'x' }))
   assert.notEqual(bytes[0], 0xef, 'no BOM')
+})
+
+const matrixRow = (overrides: Partial<MatrixRow> = {}): MatrixRow => ({
+  caseId: 'X-1',
+  kind: 'vector',
+  vectorClass: 'V1',
+  exercised: 'yes',
+  status: 'exercised',
+  classification: 'unsupported',
+  collateral: false,
+  mechanismPolicyClass: 'none',
+  artifact: 'a.json#X-1',
+  hypothesisFalsified: false,
+  gapRecord: null,
+  dispositionNote: '',
+  emissionRefusal: null,
+  ...overrides,
+})
+
+test('R4: gap records derive from the FINAL rows — stale gaps cannot survive', () => {
+  const staleRows = [
+    matrixRow({
+      caseId: 'MEAS-01',
+      kind: 'measurement',
+      exercised: 'gap',
+      status: 'not-exercised',
+      gapRecord: { code: 'not-exercised', reason: 'blocked: pending', obligation: 'x' },
+    }),
+  ]
+  assert.equal(deriveGapRecords(staleRows).length, 1)
+  // after the refresh the row is exercised — the derived gap records must empty
+  const refreshedRows = [matrixRow({ caseId: 'MEAS-01', kind: 'measurement' })]
+  assert.deepEqual(deriveGapRecords(refreshedRows), [])
+})
+
+test('R1: ambiguous signals become a RECORDED emission refusal, never a classification', () => {
+  const ambiguousOutcome = outcome({
+    observed: signals({ refusalObserved: false, effectLanded: false }),
+  })
+  const refusal = buildCaseRecordOrRefusal(row(), ambiguousOutcome)
+  assert.ok(!('classification' in refusal), 'no classification may be emitted')
+  assert.equal(refusal.code, 'SIGNAL_AMBIGUOUS')
+  assert.equal(refusal.exercised, 'yes')
+  assert.ok(refusal.reason.length > 0)
 })

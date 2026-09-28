@@ -137,5 +137,6 @@
       "obligations": [],
       "notes": "control allow-baseline: in-scope mutation through the shipped CLI proceeds to the Stage-C receipt"
     }
-  ]
+  ],
+  "emissionRefusals": []
 }

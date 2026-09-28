@@ -40,7 +40,7 @@
         "realpathVerified": true,
         "after": {
           "exists": true,
-          "realpath": "C:\\Users\\clint\\AppData\\Local\\Temp\\fk-p17-ws-xlI117\\scope\\forbidden\\mcp-write.txt",
+          "realpath": "C:\\Users\\clint\\AppData\\Local\\Temp\\fk-p17-ws-gOg3IA\\scope\\forbidden\\mcp-write.txt",
           "contentHash": "41070bf412fe84e66c715a2c7b4d078c05c7d7ef2d77991aa0fbab742d131f82"
         },
         "preToolExitCode": 0,
@@ -86,9 +86,9 @@
       "effectEvidence": {
         "realpathVerified": true,
         "after": {
-          "exists": false,
-          "realpath": null,
-          "contentHash": null
+          "exists": true,
+          "realpath": "C:\\Users\\clint\\AppData\\Local\\Temp\\fk-p17-ws-usxMgB\\scope\\forbidden\\custom-write.txt",
+          "contentHash": "6630a09bdba5d8a2134e7a3e90c4e05416147d077996a4e7552b245beacc6f87"
         },
         "preToolExitCode": 0,
         "guardInvocation": false
@@ -98,5 +98,6 @@
       "obligations": [],
       "notes": "write via a custom command tool; the PreToolUse gate passes it as model policy (never scope)"
     }
-  ]
+  ],
+  "emissionRefusals": []
 }

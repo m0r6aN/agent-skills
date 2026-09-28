@@ -34,6 +34,14 @@ export class HarnessError extends Error {
   }
 }
 
+/** Narrowing read of an unknown error's `code` field (never an inline cast). */
+export function errorCodeOf(err: unknown): string | null {
+  if (typeof err === 'object' && err !== null && 'code' in err && typeof err.code === 'string') {
+    return err.code
+  }
+  return null
+}
+
 /**
  * Wrap an external call, rethrowing any failure as a typed HarnessError
  * (standing constraint #1). The original error is retained under `details.cause`.

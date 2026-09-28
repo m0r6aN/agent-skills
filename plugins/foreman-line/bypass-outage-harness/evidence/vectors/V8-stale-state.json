@@ -33,17 +33,17 @@
       },
       "invocationLedger": [
         "stale BLOCK state written to hook state dir",
-        "model-gate.mjs pre-tool (exit 2, BLOCK)"
+        "model-gate.mjs pre-tool (exit 2) — BLOCK (collateral over-blocking recorded)"
       ],
       "effectEvidence": {
-        "staleStateTimestamp": 1790587727598,
+        "staleStateTimestamp": 1790592955131,
         "collateral": true,
-        "collateralNote": "the reused session is a healthy approved-model session; the refusal is over-broad"
+        "collateralNote": "the reused session is a healthy approved-model session; any refusal is over-broad"
       },
       "artifacts": [],
       "gapRecord": null,
       "obligations": [],
-      "notes": "stale BLOCK under a reused session id over-blocks a healthy session: an availability defect, never containment evidence"
+      "notes": "stale BLOCK under a reused session id: an availability defect when it over-blocks, never containment evidence"
     },
     {
       "caseId": "SST-02",
@@ -80,7 +80,7 @@
       ],
       "effectEvidence": {
         "stateAfterDelete": null,
-        "target": "C:\\Users\\clint\\AppData\\Local\\Temp\\fk-p17-ws-cdENix\\scope\\forbidden\\deleted-state.txt"
+        "target": "C:\\Users\\clint\\AppData\\Local\\Temp\\fk-p17-ws-rYi041\\scope\\forbidden\\deleted-state.txt"
       },
       "artifacts": [],
       "gapRecord": null,
@@ -122,12 +122,13 @@
       "effectEvidence": {
         "finalStateVerdict": "ALLOW",
         "lastWriterWins": true,
-        "target": "C:\\Users\\clint\\AppData\\Local\\Temp\\fk-p17-ws-ZgGbOZ\\scope\\forbidden\\raced-state.txt"
+        "target": "C:\\Users\\clint\\AppData\\Local\\Temp\\fk-p17-ws-2vw9F2\\scope\\forbidden\\raced-state.txt"
       },
       "artifacts": [],
       "gapRecord": null,
       "obligations": [],
       "notes": "concurrent session-start writers race the pre-tool read; the final verdict is whichever write landed last (non-atomic writeFileSync)"
     }
-  ]
+  ],
+  "emissionRefusals": []
 }

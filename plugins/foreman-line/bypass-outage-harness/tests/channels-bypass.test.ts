@@ -6,8 +6,18 @@
 
 import { strict as assert } from 'node:assert'
 import { test } from 'node:test'
-import { BYPASS_RUNNERS, runBypSh01, runLinkCase } from '../src/channels/bypass.js'
-import { buildCaseRecord, type CaseOutcome } from '../src/record.js'
+import {
+  BYPASS_RUNNERS,
+  buildSh01Outcome,
+  runBypSh01,
+  runLinkCase,
+} from '../src/channels/bypass.js'
+import {
+  buildCaseRecord,
+  buildCaseRecordOrRefusal,
+  type CaseEvidenceRecord,
+  type CaseOutcome,
+} from '../src/record.js'
 import { type CaseRow, loadRegistry } from '../src/vectors.js'
 
 function rowFor(id: string): CaseRow {
@@ -125,4 +135,98 @@ test('NRE-01/02/03: non-enrollment lands with detectorAbsence and never a refusa
     assert.equal(evidence.detectorAbsence, true, id)
     assert.equal(record.observed?.refusalObserved, false, id)
   }
+})
+
+const emptyProbe = { exists: false, realpath: null, contentHash: null }
+const landedProbe = { exists: true, realpath: '/tmp/x', contentHash: 'aa' }
+
+test('R1: effectLanded derives from probes — a hardcoded signal cannot pass', () => {
+  const noEffect = buildSh01Outcome({
+    before: emptyProbe,
+    after: emptyProbe,
+    refusalObserved: false,
+    detectionObserved: false,
+    refusalSource: null,
+    guardInvocation: false,
+    ledger: [],
+  })
+  assert.equal(noEffect.observed?.effectLanded, false, 'no probe, no effect signal')
+  const effectEvidence = noEffect.effectEvidence as Record<string, unknown>
+  assert.equal(
+    effectEvidence.realpathVerified,
+    false,
+    'realpathVerified only from a resolved probe',
+  )
+})
+
+test('R1: runtime rows report probe-derived signals (five-row fabricated-evidence class)', async () => {
+  for (const id of ['BYP-SP-01', 'BYP-SP-02', 'BYP-MC-02', 'BYP-SA-01', 'BYP-SA-02']) {
+    const row = rowFor(id)
+    const record = buildCaseRecord(row, await runnerFor(BYPASS_RUNNERS, id)(row))
+    const after = record.effectEvidence.after
+    assert.ok(
+      after !== null && typeof after === 'object' && 'exists' in after && 'realpath' in after,
+      id,
+    )
+    assert.equal(record.observed?.effectLanded, after.exists, `${id}: signal must equal the probe`)
+    assert.equal(
+      (record.effectEvidence as Record<string, unknown>).realpathVerified,
+      after.exists && after.realpath !== null,
+      `${id}: realpathVerified must come from the probe`,
+    )
+  }
+})
+
+test('R2: the must-prove row records the REFUTED branch (AC4/OQ-5)', () => {
+  const refuted = buildSh01Outcome({
+    before: emptyProbe,
+    after: emptyProbe,
+    refusalObserved: true,
+    detectionObserved: false,
+    refusalSource: 'model-gate',
+    guardInvocation: false,
+    ledger: ['model-gate.mjs pre-tool (exit 2, BLOCK)'],
+  })
+  const record = buildCaseRecordOrRefusal(rowFor('BYP-SH-01'), refuted)
+  assert.ok('classification' in record, 'refuted outcomes are records, not thrown failures')
+  assert.equal(record.classification, 'mechanical')
+  assert.equal(record.hypothesisFalsified, true, 'refutation falsifies the recorded hypothesis')
+  const effectEvidence = record.effectEvidence as Record<string, unknown>
+  const namedSignals = effectEvidence.namedSignals
+  assert.ok(namedSignals !== null && typeof namedSignals === 'object')
+  assert.ok(
+    'effectObservation' in namedSignals && 'guardNonInvocation' in namedSignals,
+    'both named signals must carry status in the refuted branch',
+  )
+})
+
+test('R2: the must-prove row records the PROVEN branch two-sided', () => {
+  const proven = buildSh01Outcome({
+    before: emptyProbe,
+    after: landedProbe,
+    refusalObserved: false,
+    detectionObserved: false,
+    refusalSource: null,
+    guardInvocation: false,
+    ledger: [],
+  })
+  const record = buildCaseRecordOrRefusal(rowFor('BYP-SH-01'), proven)
+  assert.ok('classification' in record)
+  assert.equal(record.classification, 'unsupported')
+  assert.equal(record.hypothesisFalsified, false)
+})
+
+test('R2: an ambiguous must-prove outcome refuses emission, recorded — never reshaped', () => {
+  const ambiguous = buildSh01Outcome({
+    before: emptyProbe,
+    after: emptyProbe,
+    refusalObserved: false,
+    detectionObserved: false,
+    refusalSource: null,
+    guardInvocation: false,
+    ledger: [],
+  })
+  const record = buildCaseRecordOrRefusal(rowFor('BYP-SH-01'), ambiguous)
+  assert.ok(!('classification' in record), 'ambiguous signals must not yield a classification')
+  assert.equal(record.code, 'SIGNAL_AMBIGUOUS')
 })

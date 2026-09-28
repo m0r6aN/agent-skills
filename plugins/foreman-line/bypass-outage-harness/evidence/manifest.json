@@ -2,63 +2,63 @@
   "artifacts": [
     {
       "path": "evidence/vectors/V1-shell.json",
-      "sha256": "769851b44890577cac57a0d8918842b3f07df455e83ed5cd40490158501e021f"
+      "sha256": "4231817810ece7c35166db5f9005f078c195f722772581e4c2e7d298a0334e82"
     },
     {
       "path": "evidence/vectors/V2-subprocess.json",
-      "sha256": "1a9e938b3b0fa91186213aa9da63bbf84a2ee918eafccef764646c9322c0a32f"
+      "sha256": "ee74728e715285beffe629b2a6f935b49af8a186fd5913f698c81e823f24d896"
     },
     {
       "path": "evidence/vectors/V3-mcp-tool.json",
-      "sha256": "dab115ac643ce3f8a117a3eb8a5f90eb870ac6fe0d8ce984c4a666358be9d458"
+      "sha256": "c450b88cd37a6b67862e47e63e18d8de1048660ca95a3b77fde07b8b6848500f"
     },
     {
       "path": "evidence/vectors/V4-symlink-reparse.json",
-      "sha256": "81b2a556ab138f019edeb911aad171fadf53a6b89e09342cfac5fa4741a631ff"
+      "sha256": "44b12aecfdd25ee070fb77ca4a658fa60c21c8253078cdbcf562a11cee0bbca7"
     },
     {
       "path": "evidence/vectors/V5-subagent.json",
-      "sha256": "8f865170a1805b2cbc96eba8b8bb1758d27b8f1392da7ffac134eb393c2a167c"
+      "sha256": "afe8fb206cb060773af605c8a6f7c6f4f3633b7d08f4b5b04dee8da3cd13fcbb"
     },
     {
       "path": "evidence/vectors/V6-mediated-bypass.json",
-      "sha256": "b6b40369b358ae5f89317a7df238779af06c95ed8946261d71ff29b0fbb15ebd"
+      "sha256": "4f83096330660cbf1c2c5ccaea8177dff71b03c28cf9c3be180ee2c15b48772b"
     },
     {
       "path": "evidence/vectors/V7-non-enrollment.json",
-      "sha256": "95562a47cc679467c0f6814b675d3bf1206d2554b744710711a71e5a664e1b3e"
+      "sha256": "5759849cb793c9567e9b794791548841bc4ed81ace4ca5f2270cf596fbd24ebd"
     },
     {
       "path": "evidence/vectors/V8-stale-state.json",
-      "sha256": "aa1fd71e13fdaa0bc1f2fc17462638d31cb64be805397aea5baa632dfce3b583"
+      "sha256": "f4c7cb2e9f19d2e5d683971ae9c2f7c29b545f9b0364b9b1338517b7f3a31a0b"
     },
     {
       "path": "evidence/vectors/V9-service-timeout.json",
-      "sha256": "f89a997afcdfbfefd60000268ddda29704567759094b1705650b4ad478feb9b2"
+      "sha256": "55c24711732dbcf6d490a5e35a4d89fa50e3ae5515875183181b8ac51b5cd54e"
     },
     {
       "path": "evidence/vectors/V10-restart.json",
-      "sha256": "74e037793ef172df5d3697691b3f954c342b9b690b26001f30a15a397d7a0ae3"
+      "sha256": "d8b137f387a8fd66419ea9d5c6b7574aa287e48e55674d82ef0e6b6b371d9777"
     },
     {
       "path": "evidence/controls.json",
-      "sha256": "28646208515d58831698632f75f5c1a16f209ef5844ea0e8b9af99d0a4ae1c0c"
+      "sha256": "e47a781606136dcce5ea19c15b1b6782622c536087447c63ebb7c0289ce072a1"
     },
     {
       "path": "evidence/matrix.json",
-      "sha256": "5fbba7925a9ad94cadc9ec445fbc03b6916a3491c1c9f72225076299cbfe71ba"
+      "sha256": "f786add5cbbe67bb5f4268a50bf609b5da715e14047806d25fb66c57289a7c14"
     },
     {
       "path": "evidence/summary.json",
-      "sha256": "2e493de2d2d845a146f6f81f1102602210221d6c38a2d2f52e9148f7a7a458f0"
+      "sha256": "54d818e8009799a7c6c3db9377d5a5d3b4712c5d35f0e3e1e419a5cd7b937e34"
     },
     {
       "path": "evidence/measurements.jsonl",
-      "sha256": "49d7fd0892a861b67716b80d17e240d370f5a82492a014700e54c26028c577e2"
+      "sha256": "62c15803664fab68185acbababdeec22529a615d19a0b065b2111ee79ebdbdd1"
     },
     {
       "path": "evidence/measurement-summary.json",
-      "sha256": "9de62e9d98f44b3e8475c07e75a2228e9a4da159f1ac28f7c06b580486a2d9c7"
+      "sha256": "7e75f0c314f5cdc192be86af3529ee75bf8292be97eab032629acada90211191"
     }
   ],
   "readOnlyInputSurfaces": [
@@ -66,6 +66,7 @@
       "id": "standing-constraints",
       "path": "docs/kickstarters/STANDING-CONSTRAINTS.md",
       "preDigest": "57e345f9294cb8fcd8c3d90325505c80903648f60522f820061a5f8f288a86ac",
+      "postDigest": "57e345f9294cb8fcd8c3d90325505c80903648f60522f820061a5f8f288a86ac",
       "pinnedDigest": "57e345f9294cb8fcd8c3d90325505c80903648f60522f820061a5f8f288a86ac",
       "state": "match"
     },
@@ -73,6 +74,7 @@
       "id": "charter",
       "path": "docs/goals/foreman-kernel/charter.md",
       "preDigest": "29a08a63b8e1c540bfa6863a0244dddb7e08b1e3889dac64d10892f87b06b693",
+      "postDigest": "29a08a63b8e1c540bfa6863a0244dddb7e08b1e3889dac64d10892f87b06b693",
       "pinnedDigest": "29a08a63b8e1c540bfa6863a0244dddb7e08b1e3889dac64d10892f87b06b693",
       "state": "match"
     },
@@ -80,6 +82,7 @@
       "id": "dispatch-plan",
       "path": "docs/goals/foreman-kernel/fk-p1-p21-dispatch-plan.md",
       "preDigest": "51c410c5deb63fd7390fe712d7c77e4b06ae05c223d00821713d9216508bbacf",
+      "postDigest": "51c410c5deb63fd7390fe712d7c77e4b06ae05c223d00821713d9216508bbacf",
       "pinnedDigest": "51c410c5deb63fd7390fe712d7c77e4b06ae05c223d00821713d9216508bbacf",
       "state": "match"
     },
@@ -87,6 +90,7 @@
       "id": "rs2-reratification",
       "path": "docs/goals/foreman-kernel/fk-rs2-gate1-reratification-2026-09-27.md",
       "preDigest": "bb12ccb5c279b8c32095814c4a89ec577b4e0d7aa368656cd56c91a38d16b2ea",
+      "postDigest": "bb12ccb5c279b8c32095814c4a89ec577b4e0d7aa368656cd56c91a38d16b2ea",
       "pinnedDigest": "bb12ccb5c279b8c32095814c4a89ec577b4e0d7aa368656cd56c91a38d16b2ea",
       "state": "match"
     },
@@ -94,6 +98,7 @@
       "id": "rescope-rs1",
       "path": "docs/goals/foreman-kernel/fk-rescope-RS1-2026-09-27.md",
       "preDigest": "53251e4faeab5f7d11fe322e19bae82dc54a905d49def53ca990e9daaeb43cb1",
+      "postDigest": "53251e4faeab5f7d11fe322e19bae82dc54a905d49def53ca990e9daaeb43cb1",
       "pinnedDigest": "53251e4faeab5f7d11fe322e19bae82dc54a905d49def53ca990e9daaeb43cb1",
       "state": "match"
     },
@@ -101,6 +106,7 @@
       "id": "exit-annex",
       "path": "docs/goals/foreman-kernel/fk-exit-annex-draft-2026-09-27.md",
       "preDigest": "115f5ed3f9d47d0d9d821252b28573cda0a7eac4b5ea130fa3a8b905d1178fc6",
+      "postDigest": "115f5ed3f9d47d0d9d821252b28573cda0a7eac4b5ea130fa3a8b905d1178fc6",
       "pinnedDigest": "115f5ed3f9d47d0d9d821252b28573cda0a7eac4b5ea130fa3a8b905d1178fc6",
       "state": "match"
     },
@@ -108,6 +114,7 @@
       "id": "marginal-value",
       "path": "docs/goals/foreman-kernel/fk-wave3-4-marginal-value-2026-09-27.md",
       "preDigest": "e7feaf8dcfafb31db7ddea4903508c812e2ef1e460cb3a07c8f493e3b5889d92",
+      "postDigest": "e7feaf8dcfafb31db7ddea4903508c812e2ef1e460cb3a07c8f493e3b5889d92",
       "pinnedDigest": "e7feaf8dcfafb31db7ddea4903508c812e2ef1e460cb3a07c8f493e3b5889d92",
       "state": "match"
     },
@@ -115,6 +122,7 @@
       "id": "spec-convention",
       "path": "docs/SPEC-CONVENTION.md",
       "preDigest": "7ac315005cde6ad6def848b83de1d1b644e321c5d9f6434bc925deb6daba8703",
+      "postDigest": "7ac315005cde6ad6def848b83de1d1b644e321c5d9f6434bc925deb6daba8703",
       "pinnedDigest": "70508684d2c929d1331ed0cd9a147fcc2206593a04fbf210314e22fb80cba0a8",
       "state": "known-base"
     },
@@ -122,6 +130,7 @@
       "id": "fk-p1-contracts",
       "path": "docs/specs/done/FK-P1-lifecycle-admission-decision-contracts.md",
       "preDigest": "ec2d892288933845c32191e587a19b8a9f650e12d31538d28c78ca54552068a2",
+      "postDigest": "ec2d892288933845c32191e587a19b8a9f650e12d31538d28c78ca54552068a2",
       "pinnedDigest": "ec2d892288933845c32191e587a19b8a9f650e12d31538d28c78ca54552068a2",
       "state": "match"
     },
@@ -129,6 +138,7 @@
       "id": "fk-p2-spec",
       "path": "docs/specs/done/FK-P2-spec-body-compiler.md",
       "preDigest": "d55247cc309f622283e9fe72e5a4fe3e7140599fc81786b5f83c0de9e02eba5a",
+      "postDigest": "d55247cc309f622283e9fe72e5a4fe3e7140599fc81786b5f83c0de9e02eba5a",
       "pinnedDigest": "d55247cc309f622283e9fe72e5a4fe3e7140599fc81786b5f83c0de9e02eba5a",
       "state": "match"
     },
@@ -136,6 +146,7 @@
       "id": "model-gate",
       "path": "hooks/model-gate.mjs",
       "preDigest": "a01c12db4f1ef0220e6da085a945c712e342a22be31ee06450e703984a814065",
+      "postDigest": "a01c12db4f1ef0220e6da085a945c712e342a22be31ee06450e703984a814065",
       "pinnedDigest": "a01c12db4f1ef0220e6da085a945c712e342a22be31ee06450e703984a814065",
       "state": "match"
     },
@@ -143,6 +154,7 @@
       "id": "hooks-json",
       "path": "hooks/hooks.json",
       "preDigest": "038e6b79903ae4f170dd70a893a8da7b9b981905f9463e865d692e1286fc009a",
+      "postDigest": "038e6b79903ae4f170dd70a893a8da7b9b981905f9463e865d692e1286fc009a",
       "pinnedDigest": "038e6b79903ae4f170dd70a893a8da7b9b981905f9463e865d692e1286fc009a",
       "state": "match"
     },
@@ -150,6 +162,7 @@
       "id": "model-gate-policy",
       "path": "hooks/model-gate.policy.json",
       "preDigest": "d1dfa19a8c2d5f5f00deed08bd8c388ddbf28eefd8cd991111eea681bd7c7a16",
+      "postDigest": "d1dfa19a8c2d5f5f00deed08bd8c388ddbf28eefd8cd991111eea681bd7c7a16",
       "pinnedDigest": "d1dfa19a8c2d5f5f00deed08bd8c388ddbf28eefd8cd991111eea681bd7c7a16",
       "state": "match"
     },
@@ -157,6 +170,7 @@
       "id": "approval-cli",
       "path": "dispatch/src/approval-cli/index.ts",
       "preDigest": "1eceee9253163c829bc80fd5e96f1f3810a672e2871a436f04a48eb0b876281d",
+      "postDigest": "1eceee9253163c829bc80fd5e96f1f3810a672e2871a436f04a48eb0b876281d",
       "pinnedDigest": "1eceee9253163c829bc80fd5e96f1f3810a672e2871a436f04a48eb0b876281d",
       "state": "match"
     },
@@ -164,6 +178,7 @@
       "id": "guard",
       "path": "mutation-scope-guard/src/guard.ts",
       "preDigest": "43a9eaa7d64a46a28611e55cfd758d65231d8b66b88593a6195b98155e9c375d",
+      "postDigest": "43a9eaa7d64a46a28611e55cfd758d65231d8b66b88593a6195b98155e9c375d",
       "pinnedDigest": "43a9eaa7d64a46a28611e55cfd758d65231d8b66b88593a6195b98155e9c375d",
       "state": "match"
     },
@@ -171,6 +186,7 @@
       "id": "match",
       "path": "mutation-scope-guard/src/match.ts",
       "preDigest": "ce4bdf4444c31096c48495ed9f2f30c55661a3d04b4db1a8e18b5fcbcda32db0",
+      "postDigest": "ce4bdf4444c31096c48495ed9f2f30c55661a3d04b4db1a8e18b5fcbcda32db0",
       "pinnedDigest": "ce4bdf4444c31096c48495ed9f2f30c55661a3d04b4db1a8e18b5fcbcda32db0",
       "state": "match"
     },
@@ -178,6 +194,7 @@
       "id": "guard-errors",
       "path": "mutation-scope-guard/src/errors.ts",
       "preDigest": "efb83529e882e1a8567ac2cfbc913f65183c287dca5747755c75155f761ca994",
+      "postDigest": "efb83529e882e1a8567ac2cfbc913f65183c287dca5747755c75155f761ca994",
       "pinnedDigest": "efb83529e882e1a8567ac2cfbc913f65183c287dca5747755c75155f761ca994",
       "state": "match"
     },
@@ -185,6 +202,7 @@
       "id": "spec-body-compiler",
       "path": "spec-body-compiler/src/index.ts",
       "preDigest": "1dfd1304be4f6a389b0b437592d4494a43e7b66897c6daef40b69aa8dbaf2f57",
+      "postDigest": "1dfd1304be4f6a389b0b437592d4494a43e7b66897c6daef40b69aa8dbaf2f57",
       "pinnedDigest": "1dfd1304be4f6a389b0b437592d4494a43e7b66897c6daef40b69aa8dbaf2f57",
       "state": "match"
     },
@@ -192,6 +210,7 @@
       "id": "fk-p17-spec",
       "path": "docs/specs/active/FK-P17-bypass-outage-matrix.md",
       "preDigest": "0a53c3bb0b6113188c98a4bc3b8543465d6de8dc80b115e17f6d1b9f0aef8c91",
+      "postDigest": "0a53c3bb0b6113188c98a4bc3b8543465d6de8dc80b115e17f6d1b9f0aef8c91",
       "pinnedDigest": "0a53c3bb0b6113188c98a4bc3b8543465d6de8dc80b115e17f6d1b9f0aef8c91",
       "state": "match"
     }

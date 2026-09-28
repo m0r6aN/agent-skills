@@ -51,10 +51,25 @@ Verification chain (spec Verification Plan, sequential Node lane):
   in `measurement-summary.json`; IP-4 is an `INSTRUMENT_UNREACHABLE` gap. D8
   outage-posture inheritance is recorded **not-proven**, never claimed.
 - **Three-state pins**: the 18 external pins + the spec are digested into
-  `manifest.json` pre/post each run (`READ_ONLY_SURFACE_VIOLATION` if a surface
-  changes mid-run); known-base states emit KNOWN-GAP records; any other drift
-  fails closed (`PIN_DRIFT`). The FK-P2 compiled-scope reference (MEAS-05) is
+  `manifest.json` pre **and post** each run (`READ_ONLY_SURFACE_VIOLATION` if a
+  surface changes mid-run — the observation is recorded on disk before the
+  run fails); known-base states emit KNOWN-GAP records; any other drift fails
+  closed (`PIN_DRIFT`). The FK-P2 compiled-scope reference (MEAS-05) is
   three-state the same way (`FK2_REFERENCE_DRIFT` on shape drift).
+- **Probe-derived signals only**: `effectLanded`/`realpathVerified` come from
+  the case's own before/after probes — never constants. Contradictory signals
+  (no refusal, no effect) refuse emission as `SIGNAL_AMBIGUOUS`, recorded as an
+  emission-refusal entry — never reshaped into a passing classification.
+  Refuted outcomes (a shipped surface refuses/detects the mutation) are
+  recorded with `hypothesisFalsified: true` and both named signals' status —
+  the must-prove row is genuinely two-sided.
+- **Measurement gates (OQ-4 verbatim)**: warm `N ≥ 200` per measured seam
+  (MEAS-01 mediated / MEAS-03 kernel separately), cold `N ≥ 10` and deadline
+  `N ≥ 3` per riding case (deadline records carry `TMO-01`/`TMO-02`); an
+  aggregate can never mask a short group. Each obligation row binds its own
+  budget source (the deadline population compares against the T3/MEAS-04
+  1,000,000 µs hard-deadline literal, never a warm p99 literal). A late
+  response can never erase the terminal outcome (schema-enforced write-once).
 - **Banned-claim scan**: every emitted byte is scanned for enforcement /
   promotion / non-enrollment-refusal / stranded-INF claim vocabulary;
   `summary.json` records the result (its own scan block excluded as

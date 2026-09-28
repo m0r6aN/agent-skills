@@ -41,7 +41,7 @@
         "terminalOutcome": "unreachable",
         "deadlineDisposition": "terminal-unreachable",
         "lateResponseIgnored": false,
-        "elapsedMicros": 1645210,
+        "elapsedMicros": 1198837,
         "hookExitCode": null,
         "hookSignal": "SIGKILL",
         "d8OutagePostureInheritance": "not-proven"
@@ -88,7 +88,7 @@
         "terminalOutcome": "unreachable",
         "deadlineDisposition": "terminal-unreachable",
         "lateResponseIgnored": true,
-        "elapsedMicros": 1528307,
+        "elapsedMicros": 1276098,
         "hookExitCode": 0,
         "d8OutagePostureInheritance": "not-proven"
       },
@@ -97,5 +97,6 @@
       "obligations": [],
       "notes": "late-completed response past the deadline: lateResponsePolicy ignore-terminal-outcome holds; the terminal outcome is never overwritten"
     }
-  ]
+  ],
+  "emissionRefusals": []
 }

@@ -12,7 +12,8 @@
       "artifact": "evidence/vectors/V1-shell.json#BYP-SH-01",
       "hypothesisFalsified": false,
       "gapRecord": null,
-      "dispositionNote": "derived from observed signals per T4"
+      "dispositionNote": "derived from observed signals per T4",
+      "emissionRefusal": null
     },
     {
       "caseId": "BYP-SH-02",
@@ -26,7 +27,8 @@
       "artifact": "evidence/vectors/V1-shell.json#BYP-SH-02",
       "hypothesisFalsified": false,
       "gapRecord": null,
-      "dispositionNote": "derived from observed signals per T4"
+      "dispositionNote": "derived from observed signals per T4",
+      "emissionRefusal": null
     },
     {
       "caseId": "BYP-SH-03",
@@ -40,7 +42,8 @@
       "artifact": "evidence/vectors/V1-shell.json#BYP-SH-03",
       "hypothesisFalsified": false,
       "gapRecord": null,
-      "dispositionNote": "derived from observed signals per T4"
+      "dispositionNote": "derived from observed signals per T4",
+      "emissionRefusal": null
     },
     {
       "caseId": "BYP-SP-01",
@@ -54,7 +57,8 @@
       "artifact": "evidence/vectors/V2-subprocess.json#BYP-SP-01",
       "hypothesisFalsified": false,
       "gapRecord": null,
-      "dispositionNote": "derived from observed signals per T4"
+      "dispositionNote": "derived from observed signals per T4",
+      "emissionRefusal": null
     },
     {
       "caseId": "BYP-SP-02",
@@ -68,7 +72,8 @@
       "artifact": "evidence/vectors/V2-subprocess.json#BYP-SP-02",
       "hypothesisFalsified": false,
       "gapRecord": null,
-      "dispositionNote": "derived from observed signals per T4"
+      "dispositionNote": "derived from observed signals per T4",
+      "emissionRefusal": null
     },
     {
       "caseId": "BYP-MC-01",
@@ -82,7 +87,8 @@
       "artifact": "evidence/vectors/V3-mcp-tool.json#BYP-MC-01",
       "hypothesisFalsified": false,
       "gapRecord": null,
-      "dispositionNote": "derived from observed signals per T4"
+      "dispositionNote": "derived from observed signals per T4",
+      "emissionRefusal": null
     },
     {
       "caseId": "BYP-MC-02",
@@ -96,7 +102,8 @@
       "artifact": "evidence/vectors/V3-mcp-tool.json#BYP-MC-02",
       "hypothesisFalsified": false,
       "gapRecord": null,
-      "dispositionNote": "derived from observed signals per T4"
+      "dispositionNote": "derived from observed signals per T4",
+      "emissionRefusal": null
     },
     {
       "caseId": "BYP-LK-01",
@@ -110,7 +117,8 @@
       "artifact": "evidence/vectors/V4-symlink-reparse.json#BYP-LK-01",
       "hypothesisFalsified": false,
       "gapRecord": null,
-      "dispositionNote": "derived from observed signals per T4"
+      "dispositionNote": "derived from observed signals per T4",
+      "emissionRefusal": null
     },
     {
       "caseId": "BYP-LK-02",
@@ -124,7 +132,8 @@
       "artifact": "evidence/vectors/V4-symlink-reparse.json#BYP-LK-02",
       "hypothesisFalsified": false,
       "gapRecord": null,
-      "dispositionNote": "derived from observed signals per T4"
+      "dispositionNote": "derived from observed signals per T4",
+      "emissionRefusal": null
     },
     {
       "caseId": "BYP-LK-03",
@@ -138,7 +147,8 @@
       "artifact": "evidence/vectors/V4-symlink-reparse.json#BYP-LK-03",
       "hypothesisFalsified": false,
       "gapRecord": null,
-      "dispositionNote": "derived from observed signals per T4"
+      "dispositionNote": "derived from observed signals per T4",
+      "emissionRefusal": null
     },
     {
       "caseId": "BYP-LK-04",
@@ -152,7 +162,8 @@
       "artifact": "evidence/vectors/V4-symlink-reparse.json#BYP-LK-04",
       "hypothesisFalsified": false,
       "gapRecord": null,
-      "dispositionNote": "derived from observed signals per T4"
+      "dispositionNote": "derived from observed signals per T4",
+      "emissionRefusal": null
     },
     {
       "caseId": "BYP-SA-01",
@@ -166,7 +177,8 @@
       "artifact": "evidence/vectors/V5-subagent.json#BYP-SA-01",
       "hypothesisFalsified": false,
       "gapRecord": null,
-      "dispositionNote": "derived from observed signals per T4"
+      "dispositionNote": "derived from observed signals per T4",
+      "emissionRefusal": null
     },
     {
       "caseId": "BYP-SA-02",
@@ -180,7 +192,8 @@
       "artifact": "evidence/vectors/V5-subagent.json#BYP-SA-02",
       "hypothesisFalsified": false,
       "gapRecord": null,
-      "dispositionNote": "derived from observed signals per T4"
+      "dispositionNote": "derived from observed signals per T4",
+      "emissionRefusal": null
     },
     {
       "caseId": "BYP-MB-01",
@@ -194,7 +207,8 @@
       "artifact": "evidence/vectors/V6-mediated-bypass.json#BYP-MB-01",
       "hypothesisFalsified": false,
       "gapRecord": null,
-      "dispositionNote": "derived from observed signals per T4"
+      "dispositionNote": "derived from observed signals per T4",
+      "emissionRefusal": null
     },
     {
       "caseId": "BYP-MB-02",
@@ -208,7 +222,8 @@
       "artifact": "evidence/vectors/V6-mediated-bypass.json#BYP-MB-02",
       "hypothesisFalsified": false,
       "gapRecord": null,
-      "dispositionNote": "derived from observed signals per T4"
+      "dispositionNote": "derived from observed signals per T4",
+      "emissionRefusal": null
     },
     {
       "caseId": "BYP-MB-03",
@@ -222,7 +237,8 @@
       "artifact": "evidence/vectors/V6-mediated-bypass.json#BYP-MB-03",
       "hypothesisFalsified": false,
       "gapRecord": null,
-      "dispositionNote": "derived from observed signals per T4"
+      "dispositionNote": "derived from observed signals per T4",
+      "emissionRefusal": null
     },
     {
       "caseId": "NRE-01",
@@ -236,7 +252,8 @@
       "artifact": "evidence/vectors/V7-non-enrollment.json#NRE-01",
       "hypothesisFalsified": false,
       "gapRecord": null,
-      "dispositionNote": "derived from observed signals per T4"
+      "dispositionNote": "derived from observed signals per T4",
+      "emissionRefusal": null
     },
     {
       "caseId": "NRE-02",
@@ -250,7 +267,8 @@
       "artifact": "evidence/vectors/V7-non-enrollment.json#NRE-02",
       "hypothesisFalsified": false,
       "gapRecord": null,
-      "dispositionNote": "derived from observed signals per T4"
+      "dispositionNote": "derived from observed signals per T4",
+      "emissionRefusal": null
     },
     {
       "caseId": "NRE-03",
@@ -264,7 +282,8 @@
       "artifact": "evidence/vectors/V7-non-enrollment.json#NRE-03",
       "hypothesisFalsified": false,
       "gapRecord": null,
-      "dispositionNote": "derived from observed signals per T4"
+      "dispositionNote": "derived from observed signals per T4",
+      "emissionRefusal": null
     },
     {
       "caseId": "SST-01",
@@ -278,7 +297,8 @@
       "artifact": "evidence/vectors/V8-stale-state.json#SST-01",
       "hypothesisFalsified": false,
       "gapRecord": null,
-      "dispositionNote": "derived from observed signals per T4"
+      "dispositionNote": "derived from observed signals per T4",
+      "emissionRefusal": null
     },
     {
       "caseId": "SST-02",
@@ -292,7 +312,8 @@
       "artifact": "evidence/vectors/V8-stale-state.json#SST-02",
       "hypothesisFalsified": false,
       "gapRecord": null,
-      "dispositionNote": "derived from observed signals per T4"
+      "dispositionNote": "derived from observed signals per T4",
+      "emissionRefusal": null
     },
     {
       "caseId": "SST-03",
@@ -306,7 +327,8 @@
       "artifact": "evidence/vectors/V8-stale-state.json#SST-03",
       "hypothesisFalsified": false,
       "gapRecord": null,
-      "dispositionNote": "derived from observed signals per T4"
+      "dispositionNote": "derived from observed signals per T4",
+      "emissionRefusal": null
     },
     {
       "caseId": "TMO-01",
@@ -320,7 +342,8 @@
       "artifact": "evidence/vectors/V9-service-timeout.json#TMO-01",
       "hypothesisFalsified": false,
       "gapRecord": null,
-      "dispositionNote": "derived from observed signals per T4"
+      "dispositionNote": "derived from observed signals per T4",
+      "emissionRefusal": null
     },
     {
       "caseId": "TMO-02",
@@ -334,7 +357,8 @@
       "artifact": "evidence/vectors/V9-service-timeout.json#TMO-02",
       "hypothesisFalsified": false,
       "gapRecord": null,
-      "dispositionNote": "derived from observed signals per T4"
+      "dispositionNote": "derived from observed signals per T4",
+      "emissionRefusal": null
     },
     {
       "caseId": "RST-01",
@@ -348,7 +372,8 @@
       "artifact": "evidence/vectors/V10-restart.json#RST-01",
       "hypothesisFalsified": false,
       "gapRecord": null,
-      "dispositionNote": "derived from observed signals per T4"
+      "dispositionNote": "derived from observed signals per T4",
+      "emissionRefusal": null
     },
     {
       "caseId": "RST-02",
@@ -362,7 +387,8 @@
       "artifact": "evidence/vectors/V10-restart.json#RST-02",
       "hypothesisFalsified": false,
       "gapRecord": null,
-      "dispositionNote": "derived from observed signals per T4"
+      "dispositionNote": "derived from observed signals per T4",
+      "emissionRefusal": null
     },
     {
       "caseId": "CTL-01",
@@ -376,7 +402,8 @@
       "artifact": "evidence/controls.json#CTL-01",
       "hypothesisFalsified": false,
       "gapRecord": null,
-      "dispositionNote": "derived from observed signals per T4"
+      "dispositionNote": "derived from observed signals per T4",
+      "emissionRefusal": null
     },
     {
       "caseId": "CTL-02",
@@ -390,7 +417,8 @@
       "artifact": "evidence/controls.json#CTL-02",
       "hypothesisFalsified": false,
       "gapRecord": null,
-      "dispositionNote": "derived from observed signals per T4"
+      "dispositionNote": "derived from observed signals per T4",
+      "emissionRefusal": null
     },
     {
       "caseId": "CTL-03",
@@ -404,7 +432,8 @@
       "artifact": "evidence/controls.json#CTL-03",
       "hypothesisFalsified": false,
       "gapRecord": null,
-      "dispositionNote": "derived from observed signals per T4"
+      "dispositionNote": "derived from observed signals per T4",
+      "emissionRefusal": null
     },
     {
       "caseId": "MEAS-01",
@@ -418,7 +447,8 @@
       "artifact": "evidence/measurements.jsonl",
       "hypothesisFalsified": false,
       "gapRecord": null,
-      "dispositionNote": "measurement carrier (T3): classification vocabulary applies to matrix/control rows; disposition bound in evidence/measurement-summary.json"
+      "dispositionNote": "measurement carrier (T3): classification vocabulary applies to matrix/control rows; disposition bound in evidence/measurement-summary.json",
+      "emissionRefusal": null
     },
     {
       "caseId": "MEAS-02",
@@ -432,7 +462,8 @@
       "artifact": "evidence/measurements.jsonl",
       "hypothesisFalsified": false,
       "gapRecord": null,
-      "dispositionNote": "measurement carrier (T3): classification vocabulary applies to matrix/control rows; disposition bound in evidence/measurement-summary.json"
+      "dispositionNote": "measurement carrier (T3): classification vocabulary applies to matrix/control rows; disposition bound in evidence/measurement-summary.json",
+      "emissionRefusal": null
     },
     {
       "caseId": "MEAS-03",
@@ -446,7 +477,8 @@
       "artifact": "evidence/measurements.jsonl",
       "hypothesisFalsified": false,
       "gapRecord": null,
-      "dispositionNote": "measurement carrier (T3): classification vocabulary applies to matrix/control rows; disposition bound in evidence/measurement-summary.json"
+      "dispositionNote": "measurement carrier (T3): classification vocabulary applies to matrix/control rows; disposition bound in evidence/measurement-summary.json",
+      "emissionRefusal": null
     },
     {
       "caseId": "MEAS-04",
@@ -460,7 +492,8 @@
       "artifact": "evidence/measurements.jsonl",
       "hypothesisFalsified": false,
       "gapRecord": null,
-      "dispositionNote": "measurement carrier (T3): classification vocabulary applies to matrix/control rows; disposition bound in evidence/measurement-summary.json"
+      "dispositionNote": "measurement carrier (T3): classification vocabulary applies to matrix/control rows; disposition bound in evidence/measurement-summary.json",
+      "emissionRefusal": null
     },
     {
       "caseId": "MEAS-05",
@@ -474,7 +507,8 @@
       "artifact": "evidence/measurement-summary.json#meas05",
       "hypothesisFalsified": false,
       "gapRecord": null,
-      "dispositionNote": "measurement carrier (T3): classification vocabulary applies to matrix/control rows; disposition bound in evidence/measurement-summary.json"
+      "dispositionNote": "measurement carrier (T3): classification vocabulary applies to matrix/control rows; disposition bound in evidence/measurement-summary.json",
+      "emissionRefusal": null
     }
   ]
 }

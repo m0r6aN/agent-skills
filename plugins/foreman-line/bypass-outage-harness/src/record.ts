@@ -83,6 +83,52 @@ export interface CaseEvidenceRecord {
   readonly notes: string
 }
 
+/**
+ * A REFUSED-EMISSION entry (R1/coordinator ruling): when observed signals
+ * resolve to T4-ambiguous, the classification emission is refused AND the
+ * refusal is recorded here — never reshaped into a passing classification and
+ * never silently dropped.
+ */
+export interface EmissionRefusalEntry {
+  readonly caseId: string
+  readonly kind: 'vector' | 'control' | 'measurement'
+  readonly vectorClass: string | null
+  readonly code: 'SIGNAL_AMBIGUOUS'
+  readonly reason: string
+  readonly observed: ObservedSignals | null
+  readonly exercised: 'yes'
+}
+
+export type CaseRecordOrRefusal = CaseEvidenceRecord | EmissionRefusalEntry
+
+function isEmissionRefusalEntry(value: CaseRecordOrRefusal): value is EmissionRefusalEntry {
+  return 'code' in value
+}
+
+export { isEmissionRefusalEntry as isEmissionRefusal }
+
+/**
+ * Build a case record, converting SIGNAL_AMBIGUOUS into a recorded
+ * emission-refusal entry. Every other typed failure still throws.
+ */
+export function buildCaseRecordOrRefusal(row: CaseRow, outcome: CaseOutcome): CaseRecordOrRefusal {
+  try {
+    return buildCaseRecord(row, outcome)
+  } catch (err) {
+    if (err instanceof HarnessError && err.code === 'SIGNAL_AMBIGUOUS') {
+      return {
+        caseId: row.id,
+        kind: row.kind,
+        vectorClass: row.vectorClass,
+        code: 'SIGNAL_AMBIGUOUS',
+        reason: sanitizeText(err.message),
+        observed: outcome.observed,
+        exercised: 'yes',
+      }
+    }
+    throw err
+  }
+}
 /** T4 derivation: observed signals → classification. Throws SIGNAL_AMBIGUOUS. */
 export function deriveClassification(observed: ObservedSignals): Classification {
   const { refusalObserved, effectLanded, detectionObserved } = observed

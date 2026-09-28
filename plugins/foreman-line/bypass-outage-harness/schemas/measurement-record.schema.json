@@ -29,5 +29,17 @@
     "hostFactsDigest": { "type": "string", "minLength": 1 },
     "deadlineDisposition": { "enum": ["terminal-unreachable", null] },
     "lateResponseIgnored": { "type": ["boolean", "null"] }
-  }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "lateResponseIgnored": { "const": true } },
+        "required": ["lateResponseIgnored"]
+      },
+      "then": {
+        "properties": { "deadlineDisposition": { "const": "terminal-unreachable" } },
+        "required": ["deadlineDisposition"]
+      }
+    }
+  ]
 }

@@ -453,7 +453,8 @@ export async function runMeas04(hostDigest: string): Promise<MeasurementRun> {
         const run = await runDeadlineRepeat(caseId, flavor, target)
         const fields = run.observation.fields()
         records.push({
-          caseId: 'MEAS-04',
+          // R6b: deadline records ride their case (population gate is per case).
+          caseId,
           span: 'mediatedActionLatency',
           population: 'deadline',
           elapsedMicros: run.elapsedMicros,

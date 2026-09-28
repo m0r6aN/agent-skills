@@ -45,6 +45,57 @@ export const POPULATION_MINIMUMS: Readonly<Record<Population, number>> = {
   deadline: 3,
 }
 
+/**
+ * Required measurement groups (OQ-4 verbatim: warm N ≥ 200 PER SEAM, cold and
+ * deadline PER CASE). The gate is per group — an aggregate can never mask one
+ * seam or case falling below its minimum (R6b).
+ */
+export interface RequiredGroup {
+  readonly key: string
+  readonly kind: 'seam' | 'case'
+  readonly population: Population
+  readonly required: number
+  readonly budgetSource: string
+}
+
+export const REQUIRED_GROUPS: readonly RequiredGroup[] = [
+  {
+    key: 'mediatedActionLatency',
+    kind: 'seam',
+    population: 'warm',
+    required: 200,
+    budgetSource: 'F05.16 mediatedActionLatency p99 literal',
+  },
+  {
+    key: 'kernelDecisionLatency',
+    kind: 'seam',
+    population: 'warm',
+    required: 200,
+    budgetSource: 'F05.16 kernelDecisionLatency p50/p95/p99 literals',
+  },
+  {
+    key: 'MEAS-02',
+    kind: 'case',
+    population: 'cold',
+    required: 10,
+    budgetSource: 'F05.16 firstCallObservation max literal',
+  },
+  {
+    key: 'TMO-01',
+    kind: 'case',
+    population: 'deadline',
+    required: 3,
+    budgetSource: 'T3/MEAS-04 hard deadline literal',
+  },
+  {
+    key: 'TMO-02',
+    kind: 'case',
+    population: 'deadline',
+    required: 3,
+    budgetSource: 'T3/MEAS-04 hard deadline literal',
+  },
+]
+
 /** F05.16 budget literals (µs). */
 export const BUDGETS = {
   mediatedActionLatencyP99: 150_000,
@@ -84,8 +135,41 @@ export interface SpanSummary {
   readonly p95: number
   readonly p99: number
   readonly max: number
-  readonly budgetMicros: number | null
+  readonly budgetMicros: number
+  readonly budgetSource: string
   readonly budgetMiss: boolean
+}
+
+export interface BudgetBinding {
+  readonly budgetMicros: number
+  readonly budgetSource: string
+}
+
+/**
+ * The budget literal a cell is compared against (R5): each population/span
+ * binds to ITS OWN source — the deadline population uses the T3/MEAS-04 hard
+ * deadline, never a warm p99 literal.
+ */
+export function budgetFor(span: Span, population: Population): BudgetBinding {
+  if (population === 'deadline') {
+    return { budgetMicros: BUDGETS.hardDeadline, budgetSource: 'T3/MEAS-04 hard deadline literal' }
+  }
+  if (span === 'firstCallObservation') {
+    return {
+      budgetMicros: BUDGETS.firstCallObservationMax,
+      budgetSource: 'F05.16 firstCallObservation max literal',
+    }
+  }
+  if (span === 'kernelDecisionLatency') {
+    return {
+      budgetMicros: BUDGETS.kernelDecisionLatencyP99,
+      budgetSource: 'F05.16 kernelDecisionLatency p50/p95/p99 literals',
+    }
+  }
+  return {
+    budgetMicros: BUDGETS.mediatedActionLatencyP99,
+    budgetSource: 'F05.16 mediatedActionLatency p99 literal',
+  }
 }
 
 /**
@@ -116,27 +200,26 @@ export function percentilesFor(
     }
   }
   const sorted = records.map((r) => r.elapsedMicros).sort((a, b) => a - b)
-  const budgetMicros =
-    span === 'mediatedActionLatency'
-      ? BUDGETS.mediatedActionLatencyP99
-      : span === 'firstCallObservation'
-        ? BUDGETS.firstCallObservationMax
-        : BUDGETS.kernelDecisionLatencyP99
+  const binding = budgetFor(span, population)
   const p50 = nearestRank(sorted, 50)
   const p95 = nearestRank(sorted, 95)
   const p99 = nearestRank(sorted, 99)
   const max = sorted[sorted.length - 1] ?? 0
-  // Budget rule: firstCallObservation is a max-rule (every cold call ≤ budget);
-  // the warm spans are p99-rules; kernelDecisionLatency also carries p50/p95
-  // rules checked by the summary obligation rows.
+  // Budget rule (R5 — each cell compares against its OWN source): the deadline
+  // population binds the T3/MEAS-04 hard deadline; firstCallObservation is a
+  // max-rule; the warm spans are p99-rules (kernelDecisionLatency also carries
+  // p50/p95 rules); deadline observations are expected to cross their deadline
+  // — the miss is the measured regime, recorded as an obligation.
   const budgetMiss =
-    span === 'firstCallObservation'
-      ? max > budgetMicros
-      : span === 'kernelDecisionLatency'
-        ? p99 > budgetMicros ||
-          p95 > BUDGETS.kernelDecisionLatencyP95 ||
-          p50 > BUDGETS.kernelDecisionLatencyP50
-        : p99 > budgetMicros
+    population === 'deadline'
+      ? true
+      : span === 'firstCallObservation'
+        ? max > binding.budgetMicros
+        : span === 'kernelDecisionLatency'
+          ? p99 > binding.budgetMicros ||
+            p95 > BUDGETS.kernelDecisionLatencyP95 ||
+            p50 > BUDGETS.kernelDecisionLatencyP50
+          : p99 > binding.budgetMicros
   return {
     span,
     population,
@@ -146,29 +229,50 @@ export function percentilesFor(
     p95,
     p99,
     max,
-    budgetMicros,
+    budgetMicros: binding.budgetMicros,
+    budgetSource: binding.budgetSource,
     budgetMiss,
   }
 }
 
 export interface PopulationStatus {
+  readonly key: string
+  readonly kind: 'seam' | 'case'
   readonly population: Population
   readonly required: number
   readonly observed: number
   readonly complete: boolean
+  readonly budgetSource: string
 }
 
-/** Per-population accounting over retained records (claim gate). */
+function observedCount(records: readonly MeasurementRecord[], group: RequiredGroup): number {
+  return records.filter((r) =>
+    r.population !== group.population
+      ? false
+      : group.kind === 'seam'
+        ? r.span === group.key
+        : r.caseId === group.key,
+  ).length
+}
+
+/**
+ * Per-group accounting over retained records (R6b claim gate): warm N ≥ 200
+ * PER SEAM, cold/deadline PER CASE. Absent groups count as 0 — an aggregate
+ * can never mask a missing or short group.
+ */
 export function populationStatus(
   records: readonly MeasurementRecord[],
 ): readonly PopulationStatus[] {
-  return (['warm', 'cold', 'deadline'] as const).map((population) => {
-    const observed = records.filter((r) => r.population === population).length
+  return REQUIRED_GROUPS.map((group) => {
+    const observed = observedCount(records, group)
     return {
-      population,
-      required: POPULATION_MINIMUMS[population],
+      key: group.key,
+      kind: group.kind,
+      population: group.population,
+      required: group.required,
       observed,
-      complete: observed >= POPULATION_MINIMUMS[population],
+      complete: observed >= group.required,
+      budgetSource: group.budgetSource,
     }
   })
 }
@@ -179,7 +283,9 @@ export function assertPopulationsComplete(records: readonly MeasurementRecord[])
   if (incomplete.length > 0) {
     throw new HarnessError(
       'MEASUREMENT_INCOMPLETE',
-      `population minimums not met: ${incomplete.map((s) => `${s.population} ${s.observed}/${s.required}`).join(', ')}`,
+      `population minimums not met: ${incomplete
+        .map((s) => `${s.kind} ${s.key} (${s.population}) ${s.observed}/${s.required}`)
+        .join(', ')}`,
       { incomplete },
     )
   }

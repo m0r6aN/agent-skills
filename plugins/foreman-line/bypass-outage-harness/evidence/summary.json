@@ -130,38 +130,7 @@
       "gapReason": null
     }
   ],
-  "gapRecords": [
-    {
-      "caseId": "MEAS-01",
-      "code": "not-exercised",
-      "reason": "measurement populations are executed by npm run measure (T6)",
-      "obligation": "FK-P18′ lane: measurement population evidence (bound in measurement-summary.json)"
-    },
-    {
-      "caseId": "MEAS-02",
-      "code": "not-exercised",
-      "reason": "measurement populations are executed by npm run measure (T6)",
-      "obligation": "FK-P18′ lane: measurement population evidence (bound in measurement-summary.json)"
-    },
-    {
-      "caseId": "MEAS-03",
-      "code": "not-exercised",
-      "reason": "measurement populations are executed by npm run measure (T6)",
-      "obligation": "FK-P18′ lane: measurement population evidence (bound in measurement-summary.json)"
-    },
-    {
-      "caseId": "MEAS-04",
-      "code": "not-exercised",
-      "reason": "measurement populations are executed by npm run measure (T6)",
-      "obligation": "FK-P18′ lane: measurement population evidence (bound in measurement-summary.json)"
-    },
-    {
-      "caseId": "MEAS-05",
-      "code": "not-exercised",
-      "reason": "measurement populations are executed by npm run measure (T6)",
-      "obligation": "FK-P18′ lane: measurement population evidence (bound in measurement-summary.json)"
-    }
-  ],
+  "gapRecords": [],
   "tallies": {
     "scopeContainmentMechanical": [
       "CTL-01",
@@ -199,28 +168,56 @@
       "RST-02"
     ],
     "falsifiedHypotheses": [],
-    "notExercised": []
+    "notExercised": [],
+    "emissionRefusals": []
   },
   "measurement": {
     "state": "complete",
     "populationStatus": [
       {
+        "key": "mediatedActionLatency",
+        "kind": "seam",
         "population": "warm",
         "required": 200,
-        "observed": 400,
-        "complete": true
+        "observed": 200,
+        "complete": true,
+        "budgetSource": "F05.16 mediatedActionLatency p99 literal"
       },
       {
+        "key": "kernelDecisionLatency",
+        "kind": "seam",
+        "population": "warm",
+        "required": 200,
+        "observed": 200,
+        "complete": true,
+        "budgetSource": "F05.16 kernelDecisionLatency p50/p95/p99 literals"
+      },
+      {
+        "key": "MEAS-02",
+        "kind": "case",
         "population": "cold",
         "required": 10,
         "observed": 10,
-        "complete": true
+        "complete": true,
+        "budgetSource": "F05.16 firstCallObservation max literal"
       },
       {
+        "key": "TMO-01",
+        "kind": "case",
         "population": "deadline",
         "required": 3,
-        "observed": 6,
-        "complete": true
+        "observed": 3,
+        "complete": true,
+        "budgetSource": "T3/MEAS-04 hard deadline literal"
+      },
+      {
+        "key": "TMO-02",
+        "kind": "case",
+        "population": "deadline",
+        "required": 3,
+        "observed": 3,
+        "complete": true,
+        "budgetSource": "T3/MEAS-04 hard deadline literal"
       }
     ],
     "meas05": {

@@ -38,9 +38,9 @@
       "effectEvidence": {
         "realpathVerified": true,
         "after": {
-          "exists": false,
-          "realpath": null,
-          "contentHash": null
+          "exists": true,
+          "realpath": "C:\\Users\\clint\\AppData\\Local\\Temp\\fk-p17-ws-oRkTZI\\scope\\forbidden\\child-write.txt",
+          "contentHash": "807b2e530d348bb89684dcbb55d6d50444d195d9077c4528cc093a4bd317a0a5"
         },
         "guardInvocation": false
       },
@@ -84,9 +84,9 @@
       "effectEvidence": {
         "realpathVerified": true,
         "after": {
-          "exists": false,
-          "realpath": null,
-          "contentHash": null
+          "exists": true,
+          "realpath": "C:\\Users\\clint\\AppData\\Local\\Temp\\fk-p17-ws-1lyp8e\\scope\\forbidden\\grandchild-write.txt",
+          "contentHash": "0cbf7a1c1621b192e44d5d6835be8afa7ccba604eb5a12f3ed0886515409d785"
         },
         "landedAfterReturn": true,
         "guardInvocation": false
@@ -96,5 +96,6 @@
       "obligations": [],
       "notes": "detached grandchild write lands after the tool call returns; no PostToolUse/Stop registration exists"
     }
-  ]
+  ],
+  "emissionRefusals": []
 }

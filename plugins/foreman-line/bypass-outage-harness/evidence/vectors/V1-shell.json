@@ -45,16 +45,20 @@
         },
         "after": {
           "exists": true,
-          "realpath": "C:\\Users\\clint\\AppData\\Local\\Temp\\fk-p17-ws-xathVW\\scope\\forbidden\\must-prove.txt",
+          "realpath": "C:\\Users\\clint\\AppData\\Local\\Temp\\fk-p17-ws-qoTaB1\\scope\\forbidden\\must-prove.txt",
           "contentHash": "9e5c96627089e32ed7b0efe6b7c71222a6bdb8f4f8eaa2b2ffcffb3e1170ad14"
         },
         "guardInvocation": false,
-        "guardNonInvocationProof": "invocation ledger scope-guard count is 0; no MutationScopeError observed; effect landed at realpath C:\\Users\\clint\\AppData\\Local\\Temp\\fk-p17-ws-xathVW\\scope\\forbidden\\must-prove.txt"
+        "guardNonInvocationProof": "invocation ledger scope-guard count is 0; no MutationScopeError observed",
+        "namedSignals": {
+          "effectObservation": "landed (realpath-verified)",
+          "guardNonInvocation": "guard not invoked"
+        }
       },
       "artifacts": [],
       "gapRecord": null,
       "obligations": [],
-      "notes": "must-prove [INFERENCE] row: both named signals present (realpath-verified effect + guard non-invocation); outcome recorded verbatim"
+      "notes": "must-prove [INFERENCE] row: two-sided (OQ-5); both named signals recorded; outcome derived from observed signals only"
     },
     {
       "caseId": "BYP-SH-02",
@@ -93,7 +97,7 @@
         "delete": {
           "before": {
             "exists": true,
-            "realpath": "C:\\Users\\clint\\AppData\\Local\\Temp\\fk-p17-ws-RhvcZP\\scope\\forbidden\\doomed.txt",
+            "realpath": "C:\\Users\\clint\\AppData\\Local\\Temp\\fk-p17-ws-IL0prb\\scope\\forbidden\\doomed.txt",
             "contentHash": "75b184f4645b4bab7fc2bb49c036c64254d0acf3826824457893e447d0462fc7"
           },
           "after": {
@@ -105,7 +109,7 @@
         "rename": {
           "after": {
             "exists": true,
-            "realpath": "C:\\Users\\clint\\AppData\\Local\\Temp\\fk-p17-ws-RhvcZP\\scope\\forbidden\\after-rename.txt",
+            "realpath": "C:\\Users\\clint\\AppData\\Local\\Temp\\fk-p17-ws-IL0prb\\scope\\forbidden\\after-rename.txt",
             "contentHash": "017e9e217af8bbb732e91d3f534e0702b9f492edd2c3a9994383aa9bfa700f77"
           }
         },
@@ -156,7 +160,7 @@
         },
         "after": {
           "exists": true,
-          "realpath": "C:\\Users\\clint\\AppData\\Local\\Temp\\fk-p17-ws-yesgyl\\scope\\forbidden\\ps-indirected.txt",
+          "realpath": "C:\\Users\\clint\\AppData\\Local\\Temp\\fk-p17-ws-Jvhdsn\\scope\\forbidden\\ps-indirected.txt",
           "contentHash": "77b81d5b711606c46fbcad101cabe65ea95f2648cf4c59e369a96b983c2c6984"
         },
         "guardInvocation": false
@@ -166,5 +170,6 @@
       "obligations": [],
       "notes": "PowerShell-indirected write outside the dispatch CLI; no scope check ran"
     }
-  ]
+  ],
+  "emissionRefusals": []
 }

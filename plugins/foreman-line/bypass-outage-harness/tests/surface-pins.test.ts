@@ -5,15 +5,32 @@
  */
 
 import { strict as assert } from 'node:assert'
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
 import { test } from 'node:test'
+import { fileURLToPath } from 'node:url'
+import { HarnessError } from '../src/errors.js'
+import {
+  assertNoReadOnlyViolation,
+  computeReadOnlyViolations,
+  readOnlySurfaceRows,
+  setEvidenceRootForTest,
+} from '../src/index.js'
 import {
   classifyFk2Reference,
   classifyPin,
   type PinEntry,
+  type PinSnapshotRow,
   SPEC_SHA256,
   SURFACE_PINS,
   snapshotPins,
 } from '../src/surface-refs.js'
+
+function dirnameOf(p: string): string {
+  const normalized = p.replaceAll('\\', '/')
+  return normalized.slice(0, normalized.lastIndexOf('/'))
+}
 
 const entry: PinEntry = {
   id: 'x',
@@ -68,4 +85,61 @@ test('FK-P2 reference three-state: present / absent / drift (MEAS-05)', () => {
   assert.equal(classifyFk2Reference(goodArtifact, undefined), 'absent')
   assert.equal(classifyFk2Reference({ artifactVersion: '9.9.9' }, 'sha256:y'), 'drift')
   assert.equal(classifyFk2Reference(null, null), 'absent')
+})
+
+const pinRow = (id: string, digest: string): PinSnapshotRow => ({
+  id,
+  path: `${id}.ts`,
+  liveDigest: digest,
+  pinnedDigest: 'aa'.repeat(32),
+  state: 'match',
+  gapReason: null,
+})
+
+test('manifest rows bind pre AND post digests of every surface (R3)', () => {
+  const pre = [pinRow('a', '11'.repeat(32)), pinRow('b', '22'.repeat(32))]
+  const post = [pinRow('a', '11'.repeat(32)), pinRow('b', '33'.repeat(32))]
+  const rows = readOnlySurfaceRows(pre, post)
+  assert.equal(rows.length, 2)
+  for (const row of rows) {
+    assert.ok('preDigest' in row && 'postDigest' in row, 'both digests must be bound')
+    assert.ok(typeof row.preDigest === 'string' && typeof row.postDigest === 'string')
+  }
+  assert.equal(rows[1]?.postDigest, '33'.repeat(32))
+})
+
+test('read-only violations are computed from pre/post digests (R3)', () => {
+  const pre = [pinRow('a', '11'.repeat(32))]
+  assert.deepEqual(computeReadOnlyViolations(pre, [pinRow('a', '11'.repeat(32))]), [])
+  const violations = computeReadOnlyViolations(pre, [pinRow('a', '99'.repeat(32))])
+  assert.equal(violations.length, 1)
+  assert.equal(violations[0]?.path, 'a.ts')
+})
+
+test('a violation is RECORDED on disk before the run fails (R3)', () => {
+  const tmp = mkdtempSync(join(tmpdir(), 'fk-p17-r3-'))
+  try {
+    writeFileSync(join(tmp, 'summary.json'), '{"tallies":{}}', 'utf8')
+    writeFileSync(join(tmp, 'manifest.json'), '{"artifacts":[]}', 'utf8')
+    setEvidenceRootForTest(tmp)
+    const pre = [pinRow('a', '11'.repeat(32))]
+    assert.throws(
+      () => assertNoReadOnlyViolation(pre, [pinRow('a', '99'.repeat(32))]),
+      (err: unknown) => err instanceof HarnessError && err.code === 'READ_ONLY_SURFACE_VIOLATION',
+    )
+    const summary = JSON.parse(readFileSync(join(tmp, 'summary.json'), 'utf8')) as {
+      readOnlySurfaceViolation?: unknown[]
+    }
+    const manifest = JSON.parse(readFileSync(join(tmp, 'manifest.json'), 'utf8')) as {
+      readOnlySurfaceViolation?: unknown[]
+    }
+    assert.ok(
+      (summary.readOnlySurfaceViolation?.length ?? 0) > 0,
+      'summary must carry the recorded observation',
+    )
+    assert.ok((manifest.readOnlySurfaceViolation?.length ?? 0) > 0)
+    setEvidenceRootForTest(join(dirnameOf(fileURLToPath(import.meta.url)), '..', 'evidence'))
+  } finally {
+    rmSync(tmp, { recursive: true, force: true })
+  }
 })

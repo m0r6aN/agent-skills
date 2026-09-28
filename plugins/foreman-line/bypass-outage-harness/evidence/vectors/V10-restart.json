@@ -40,7 +40,7 @@
       "effectEvidence": {
         "carryoverDisposition": "state carried over across restart and was consulted without re-validation",
         "realpathVerified": true,
-        "target": "C:\\Users\\clint\\AppData\\Local\\Temp\\fk-p17-ws-tleAkt\\scope\\forbidden\\restart-carryover.txt"
+        "target": "C:\\Users\\clint\\AppData\\Local\\Temp\\fk-p17-ws-crUmNF\\scope\\forbidden\\restart-carryover.txt"
       },
       "artifacts": [],
       "gapRecord": null,
@@ -86,7 +86,7 @@
         "hookSignal": "SIGKILL",
         "hostDependent": true,
         "realpathVerified": true,
-        "target": "C:\\Users\\clint\\AppData\\Local\\Temp\\fk-p17-ws-jHw7b9\\scope\\forbidden\\crash-mid-decision.txt"
+        "target": "C:\\Users\\clint\\AppData\\Local\\Temp\\fk-p17-ws-j2QUNC\\scope\\forbidden\\crash-mid-decision.txt"
       },
       "artifacts": [],
       "gapRecord": null,
@@ -95,5 +95,6 @@
       ],
       "notes": "a crashed hook produces no refusal; host-dependent disposition after a crash is recorded as an evidence obligation, never claimed"
     }
-  ]
+  ],
+  "emissionRefusals": []
 }
