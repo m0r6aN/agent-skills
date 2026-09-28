@@ -1,0 +1,169 @@
+{
+  "ip3ComparabilityCaveat": "IP-3 is an analog of, not identical to, the D21 kernelDecisionLatency literal (request-received to response-written at the decision surface); no measurement row presents IP-3 numbers as the D21 span itself.",
+  "instrumentPoints": [
+    {
+      "id": "IP-1",
+      "status": "established",
+      "clock": "adapter-monotonic"
+    },
+    {
+      "id": "IP-2",
+      "status": "established",
+      "clock": "adapter-monotonic"
+    },
+    {
+      "id": "IP-3",
+      "status": "established",
+      "clock": "kernel-monotonic-analog",
+      "note": "guard-seam analog (FK-P12 decision boundary unbuilt — recorded as such)"
+    },
+    {
+      "id": "IP-4",
+      "status": "gap",
+      "code": "INSTRUMENT_UNREACHABLE",
+      "note": "hook-internal decision (evaluate :81) unreachable without modifying the hook; never estimated"
+    }
+  ],
+  "spans": [
+    {
+      "span": "mediatedActionLatency",
+      "population": "warm",
+      "n": 200,
+      "min": 68422,
+      "p50": 159502,
+      "p95": 498424,
+      "p99": 573795,
+      "max": 785116,
+      "budgetMicros": 150000,
+      "budgetMiss": true
+    },
+    {
+      "span": "firstCallObservation",
+      "population": "cold",
+      "n": 10,
+      "min": 90808,
+      "p50": 125178,
+      "p95": 233955,
+      "p99": 233955,
+      "max": 233955,
+      "budgetMicros": 2000000,
+      "budgetMiss": false
+    },
+    {
+      "span": "kernelDecisionLatency",
+      "population": "warm",
+      "n": 200,
+      "min": 1,
+      "p50": 2,
+      "p95": 7,
+      "p99": 18,
+      "max": 231,
+      "budgetMicros": 50000,
+      "budgetMiss": false
+    },
+    {
+      "span": "mediatedActionLatency",
+      "population": "deadline",
+      "n": 6,
+      "min": 1232848,
+      "p50": 1260889,
+      "p95": 1387751,
+      "p99": 1387751,
+      "max": 1387751,
+      "budgetMicros": 150000,
+      "budgetMiss": true
+    }
+  ],
+  "firstCallObservation": {
+    "reportedSeparately": true,
+    "foldedIntoWarm": false
+  },
+  "deadlineCases": {
+    "repeatsPerCase": 3,
+    "ridesCases": [
+      "TMO-01",
+      "TMO-02"
+    ],
+    "deadlineDispositionSamples": [
+      "terminal-unreachable",
+      "terminal-unreachable",
+      "terminal-unreachable",
+      "terminal-unreachable",
+      "terminal-unreachable",
+      "terminal-unreachable"
+    ],
+    "lateResponseIgnoredSamples": [
+      false,
+      false,
+      false,
+      true,
+      true,
+      true
+    ],
+    "policy": "lateResponsePolicy: ignore-terminal-outcome — enforced by the record shape"
+  },
+  "d8OutagePostureInheritance": {
+    "disposition": "not-proven",
+    "note": "the shipped surfaces implement no deadline or outage posture; inheritance recorded not-proven, never claimed"
+  },
+  "populations": [
+    {
+      "population": "warm",
+      "required": 200,
+      "observed": 400,
+      "complete": true
+    },
+    {
+      "population": "cold",
+      "required": 10,
+      "observed": 10,
+      "complete": true
+    },
+    {
+      "population": "deadline",
+      "required": 3,
+      "observed": 6,
+      "complete": true
+    }
+  ],
+  "claim": "made",
+  "obligations": [
+    {
+      "span": "mediatedActionLatency",
+      "population": "warm",
+      "rule": "p99 <= 150000",
+      "observed": 573795,
+      "budgetMicros": 150000,
+      "kind": "budget-miss-obligation"
+    },
+    {
+      "span": "mediatedActionLatency",
+      "population": "deadline",
+      "rule": "p99 <= 150000",
+      "observed": 1387751,
+      "budgetMicros": 150000,
+      "kind": "budget-miss-obligation"
+    }
+  ],
+  "meas05": {
+    "state": "measured",
+    "gapReason": null,
+    "divergenceRows": [
+      {
+        "probePath": "pkg/src/b.ts",
+        "compiledAuthority": "outside",
+        "guardVerdict": "accepted",
+        "surfaces": "pkg/**",
+        "note": "D10 divergence: guard authorization derived from surfaces: is broader than the compiled Allowed Files reference authority"
+      }
+    ],
+    "compiledAuthority": [
+      "pkg/src/a.ts"
+    ],
+    "guardAcceptedOutsideAuthority": [
+      "pkg/src/b.ts"
+    ]
+  },
+  "hostFactsDigest": "sha256:4f4d1378a884842d1b6696c3622e8dd5be7fbdd361fcd01ce1899ba3c3463c2e",
+  "recordCount": 416
+}

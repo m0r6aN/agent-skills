@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "foreman-line.bypass-outage-harness/measurement-record",
+  "title": "FK-P17′ measurement record (one measurements.jsonl line)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "caseId",
+    "span",
+    "population",
+    "elapsedMicros",
+    "budgetMicros",
+    "clock",
+    "observationPoint",
+    "sequenceIndex",
+    "hostFactsDigest",
+    "deadlineDisposition",
+    "lateResponseIgnored"
+  ],
+  "properties": {
+    "caseId": { "type": "string", "minLength": 1 },
+    "span": { "enum": ["kernelDecisionLatency", "mediatedActionLatency", "firstCallObservation"] },
+    "population": { "enum": ["warm", "cold", "deadline"] },
+    "elapsedMicros": { "type": "integer", "minimum": 0 },
+    "budgetMicros": { "type": ["integer", "null"], "minimum": 0 },
+    "clock": { "enum": ["adapter-monotonic", "kernel-monotonic-analog"] },
+    "observationPoint": { "enum": ["IP-1→IP-2", "IP-3"] },
+    "sequenceIndex": { "type": "integer", "minimum": 0 },
+    "hostFactsDigest": { "type": "string", "minLength": 1 },
+    "deadlineDisposition": { "enum": ["terminal-unreachable", null] },
+    "lateResponseIgnored": { "type": ["boolean", "null"] }
+  }
+}

@@ -1,0 +1,253 @@
+{
+  "run": {
+    "command": "matrix",
+    "hostFacts": {
+      "platform": "win32",
+      "release": "10.0.26200",
+      "arch": "x64",
+      "nodeVersion": "v24.7.0",
+      "cpuCount": 20,
+      "totalMemBytes": 33914183680,
+      "hostnameDigest": "e7febbbb4c853c790bd0d783aed4a2f723e4500f290a485103cd925950b47816",
+      "tempRoot": "C:\\Users\\clint\\AppData\\Local\\Temp",
+      "caseInsensitiveFs": true
+    },
+    "hostFactsDigest": "sha256:4f4d1378a884842d1b6696c3622e8dd5be7fbdd361fcd01ce1899ba3c3463c2e"
+  },
+  "pinStates": [
+    {
+      "id": "standing-constraints",
+      "path": "docs/kickstarters/STANDING-CONSTRAINTS.md",
+      "state": "match",
+      "gapReason": null
+    },
+    {
+      "id": "charter",
+      "path": "docs/goals/foreman-kernel/charter.md",
+      "state": "match",
+      "gapReason": null
+    },
+    {
+      "id": "dispatch-plan",
+      "path": "docs/goals/foreman-kernel/fk-p1-p21-dispatch-plan.md",
+      "state": "match",
+      "gapReason": null
+    },
+    {
+      "id": "rs2-reratification",
+      "path": "docs/goals/foreman-kernel/fk-rs2-gate1-reratification-2026-09-27.md",
+      "state": "match",
+      "gapReason": null
+    },
+    {
+      "id": "rescope-rs1",
+      "path": "docs/goals/foreman-kernel/fk-rescope-RS1-2026-09-27.md",
+      "state": "match",
+      "gapReason": null
+    },
+    {
+      "id": "exit-annex",
+      "path": "docs/goals/foreman-kernel/fk-exit-annex-draft-2026-09-27.md",
+      "state": "match",
+      "gapReason": null
+    },
+    {
+      "id": "marginal-value",
+      "path": "docs/goals/foreman-kernel/fk-wave3-4-marginal-value-2026-09-27.md",
+      "state": "match",
+      "gapReason": null
+    },
+    {
+      "id": "spec-convention",
+      "path": "docs/SPEC-CONVENTION.md",
+      "state": "known-base",
+      "gapReason": "blocked: RCM-P2 schema-v0.4 delta uncommitted"
+    },
+    {
+      "id": "fk-p1-contracts",
+      "path": "docs/specs/done/FK-P1-lifecycle-admission-decision-contracts.md",
+      "state": "match",
+      "gapReason": null
+    },
+    {
+      "id": "fk-p2-spec",
+      "path": "docs/specs/done/FK-P2-spec-body-compiler.md",
+      "state": "match",
+      "gapReason": null
+    },
+    {
+      "id": "model-gate",
+      "path": "hooks/model-gate.mjs",
+      "state": "match",
+      "gapReason": null
+    },
+    {
+      "id": "hooks-json",
+      "path": "hooks/hooks.json",
+      "state": "match",
+      "gapReason": null
+    },
+    {
+      "id": "model-gate-policy",
+      "path": "hooks/model-gate.policy.json",
+      "state": "match",
+      "gapReason": null
+    },
+    {
+      "id": "approval-cli",
+      "path": "dispatch/src/approval-cli/index.ts",
+      "state": "match",
+      "gapReason": null
+    },
+    {
+      "id": "guard",
+      "path": "mutation-scope-guard/src/guard.ts",
+      "state": "match",
+      "gapReason": null
+    },
+    {
+      "id": "match",
+      "path": "mutation-scope-guard/src/match.ts",
+      "state": "match",
+      "gapReason": null
+    },
+    {
+      "id": "guard-errors",
+      "path": "mutation-scope-guard/src/errors.ts",
+      "state": "match",
+      "gapReason": null
+    },
+    {
+      "id": "spec-body-compiler",
+      "path": "spec-body-compiler/src/index.ts",
+      "state": "match",
+      "gapReason": null
+    },
+    {
+      "id": "fk-p17-spec",
+      "path": "docs/specs/active/FK-P17-bypass-outage-matrix.md",
+      "state": "match",
+      "gapReason": null
+    }
+  ],
+  "gapRecords": [
+    {
+      "caseId": "MEAS-01",
+      "code": "not-exercised",
+      "reason": "measurement populations are executed by npm run measure (T6)",
+      "obligation": "FK-P18′ lane: measurement population evidence (bound in measurement-summary.json)"
+    },
+    {
+      "caseId": "MEAS-02",
+      "code": "not-exercised",
+      "reason": "measurement populations are executed by npm run measure (T6)",
+      "obligation": "FK-P18′ lane: measurement population evidence (bound in measurement-summary.json)"
+    },
+    {
+      "caseId": "MEAS-03",
+      "code": "not-exercised",
+      "reason": "measurement populations are executed by npm run measure (T6)",
+      "obligation": "FK-P18′ lane: measurement population evidence (bound in measurement-summary.json)"
+    },
+    {
+      "caseId": "MEAS-04",
+      "code": "not-exercised",
+      "reason": "measurement populations are executed by npm run measure (T6)",
+      "obligation": "FK-P18′ lane: measurement population evidence (bound in measurement-summary.json)"
+    },
+    {
+      "caseId": "MEAS-05",
+      "code": "not-exercised",
+      "reason": "measurement populations are executed by npm run measure (T6)",
+      "obligation": "FK-P18′ lane: measurement population evidence (bound in measurement-summary.json)"
+    }
+  ],
+  "tallies": {
+    "scopeContainmentMechanical": [
+      "CTL-01",
+      "CTL-02"
+    ],
+    "modelMembershipRefusals": [
+      "BYP-MB-01",
+      "SST-01"
+    ],
+    "unsupportedWithEffectEvidence": [
+      "CTL-03",
+      "BYP-SH-01",
+      "BYP-SH-02",
+      "BYP-SH-03",
+      "BYP-SP-01",
+      "BYP-SP-02",
+      "BYP-MC-01",
+      "BYP-MC-02",
+      "BYP-LK-01",
+      "BYP-LK-02",
+      "BYP-LK-03",
+      "BYP-LK-04",
+      "BYP-SA-01",
+      "BYP-SA-02",
+      "BYP-MB-02",
+      "BYP-MB-03",
+      "NRE-01",
+      "NRE-02",
+      "NRE-03",
+      "SST-02",
+      "SST-03",
+      "TMO-01",
+      "TMO-02",
+      "RST-01",
+      "RST-02"
+    ],
+    "falsifiedHypotheses": [],
+    "notExercised": []
+  },
+  "measurement": {
+    "state": "complete",
+    "populationStatus": [
+      {
+        "population": "warm",
+        "required": 200,
+        "observed": 400,
+        "complete": true
+      },
+      {
+        "population": "cold",
+        "required": 10,
+        "observed": 10,
+        "complete": true
+      },
+      {
+        "population": "deadline",
+        "required": 3,
+        "observed": 6,
+        "complete": true
+      }
+    ],
+    "meas05": {
+      "state": "measured",
+      "gapReason": null,
+      "divergenceRows": [
+        {
+          "probePath": "pkg/src/b.ts",
+          "compiledAuthority": "outside",
+          "guardVerdict": "accepted",
+          "surfaces": "pkg/**",
+          "note": "D10 divergence: guard authorization derived from surfaces: is broader than the compiled Allowed Files reference authority"
+        }
+      ],
+      "compiledAuthority": [
+        "pkg/src/a.ts"
+      ],
+      "guardAcceptedOutsideAuthority": [
+        "pkg/src/b.ts"
+      ]
+    }
+  },
+  "bannedClaimScan": {
+    "scannedArtifacts": 12,
+    "phrasesChecked": 21,
+    "violations": [],
+    "result": "clean",
+    "scanScope": "all emitted artifacts; summary.json scanned minus this scan block (self-reference)"
+  }
+}

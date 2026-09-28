@@ -1,0 +1,286 @@
+{
+  "vectorClass": "V4",
+  "className": "Symlink / reparse",
+  "channel": "symlink-reparse",
+  "channelSurface": "raw-fs write-through; post-hoc changedPaths reporting seam",
+  "cases": [
+    {
+      "caseId": "BYP-LK-01",
+      "kind": "vector",
+      "vectorClass": "V4",
+      "className": "Symlink / reparse",
+      "channel": "symlink-reparse",
+      "scenario": "file-symlink write-through (in-scope link to out-of-scope target) + in-scope symlink control",
+      "exercised": "yes",
+      "status": "exercised",
+      "classification": "unsupported",
+      "classificationBasis": "derived from observed signals per T4",
+      "collateral": false,
+      "mechanismPolicyClass": "none",
+      "refusalSource": null,
+      "hypothesis": {
+        "classification": "unsupported",
+        "basis": "match.ts is lexical (no symlink resolution, case-sensitive) on a case-insensitive fs; isWellFormedPath (:123) accepts trailing dot/space segments, so forbiddenSurfaces evades"
+      },
+      "hypothesisFalsified": false,
+      "guardInvocation": true,
+      "observed": {
+        "refusalObserved": false,
+        "effectLanded": true,
+        "detectionObserved": false,
+        "refusalSource": null,
+        "collateralObserved": false
+      },
+      "invocationLedger": [
+        "node -e write through link/alias spelling(s)",
+        "postHocCheck (shipped) on reported path(s): accepted unless noted in evidence"
+      ],
+      "effectEvidence": {
+        "hostCaseInsensitive": true,
+        "trees": [
+          {
+            "treeId": "file-symlink",
+            "materialized": true,
+            "realpathVerified": true,
+            "before": {
+              "exists": true,
+              "realpath": "C:\\Users\\clint\\AppData\\Local\\Temp\\fk-p17-ws-QU5Gnz\\outside\\target.txt",
+              "contentHash": "0682c5f2076f099c34cfdd15a9e063849ed437a49677e6fcc5b4198c76575be5"
+            },
+            "after": {
+              "exists": true,
+              "realpath": "C:\\Users\\clint\\AppData\\Local\\Temp\\fk-p17-ws-QU5Gnz\\outside\\target.txt",
+              "contentHash": "8bf5a1b458f7a4ed3e22806a92366d07e8447b75ea50fbc6b940b68de3bfaeb3"
+            },
+            "landedRealpath": "C:\\Users\\clint\\AppData\\Local\\Temp\\fk-p17-ws-QU5Gnz\\outside\\target.txt",
+            "reportedPath": "scope/link.txt",
+            "postHocAccepted": true,
+            "postHocError": null
+          },
+          {
+            "treeId": "in-scope-symlink",
+            "materialized": true,
+            "realpathVerified": true,
+            "before": {
+              "exists": true,
+              "realpath": "C:\\Users\\clint\\AppData\\Local\\Temp\\fk-p17-ws-QU5Gnz\\scope\\real\\target.txt",
+              "contentHash": "0682c5f2076f099c34cfdd15a9e063849ed437a49677e6fcc5b4198c76575be5"
+            },
+            "after": {
+              "exists": true,
+              "realpath": "C:\\Users\\clint\\AppData\\Local\\Temp\\fk-p17-ws-QU5Gnz\\scope\\real\\target.txt",
+              "contentHash": "8bf5a1b458f7a4ed3e22806a92366d07e8447b75ea50fbc6b940b68de3bfaeb3"
+            },
+            "landedRealpath": "C:\\Users\\clint\\AppData\\Local\\Temp\\fk-p17-ws-QU5Gnz\\scope\\real\\target.txt",
+            "reportedPath": "scope/links/inlink.txt",
+            "postHocAccepted": true,
+            "postHocError": null
+          }
+        ]
+      },
+      "artifacts": [],
+      "gapRecord": null,
+      "obligations": [],
+      "notes": "lexical matching (match.ts: no symlink resolution, case-sensitive) accepts the reported path while the effect lands at the realpath target"
+    },
+    {
+      "caseId": "BYP-LK-02",
+      "kind": "vector",
+      "vectorClass": "V4",
+      "className": "Symlink / reparse",
+      "channel": "symlink-reparse",
+      "scenario": "directory-junction write-through + regular-file control",
+      "exercised": "yes",
+      "status": "exercised",
+      "classification": "unsupported",
+      "classificationBasis": "derived from observed signals per T4",
+      "collateral": false,
+      "mechanismPolicyClass": "none",
+      "refusalSource": null,
+      "hypothesis": {
+        "classification": "unsupported",
+        "basis": "match.ts is lexical (no symlink resolution, case-sensitive) on a case-insensitive fs; isWellFormedPath (:123) accepts trailing dot/space segments, so forbiddenSurfaces evades"
+      },
+      "hypothesisFalsified": false,
+      "guardInvocation": true,
+      "observed": {
+        "refusalObserved": false,
+        "effectLanded": true,
+        "detectionObserved": false,
+        "refusalSource": null,
+        "collateralObserved": false
+      },
+      "invocationLedger": [
+        "node -e write through link/alias spelling(s)",
+        "postHocCheck (shipped) on reported path(s): accepted unless noted in evidence"
+      ],
+      "effectEvidence": {
+        "hostCaseInsensitive": true,
+        "trees": [
+          {
+            "treeId": "junction",
+            "materialized": true,
+            "realpathVerified": true,
+            "before": {
+              "exists": false,
+              "realpath": null,
+              "contentHash": null
+            },
+            "after": {
+              "exists": true,
+              "realpath": "C:\\Users\\clint\\AppData\\Local\\Temp\\fk-p17-ws-XfPLXn\\outside\\odir\\file.txt",
+              "contentHash": "8bf5a1b458f7a4ed3e22806a92366d07e8447b75ea50fbc6b940b68de3bfaeb3"
+            },
+            "landedRealpath": "C:\\Users\\clint\\AppData\\Local\\Temp\\fk-p17-ws-XfPLXn\\outside\\odir\\file.txt",
+            "reportedPath": "scope/jdir/file.txt",
+            "postHocAccepted": true,
+            "postHocError": null
+          },
+          {
+            "treeId": "regular-file",
+            "materialized": true,
+            "realpathVerified": true,
+            "before": {
+              "exists": true,
+              "realpath": "C:\\Users\\clint\\AppData\\Local\\Temp\\fk-p17-ws-XfPLXn\\outside\\target.txt",
+              "contentHash": "0682c5f2076f099c34cfdd15a9e063849ed437a49677e6fcc5b4198c76575be5"
+            },
+            "after": {
+              "exists": true,
+              "realpath": "C:\\Users\\clint\\AppData\\Local\\Temp\\fk-p17-ws-XfPLXn\\outside\\target.txt",
+              "contentHash": "8bf5a1b458f7a4ed3e22806a92366d07e8447b75ea50fbc6b940b68de3bfaeb3"
+            },
+            "landedRealpath": "C:\\Users\\clint\\AppData\\Local\\Temp\\fk-p17-ws-XfPLXn\\outside\\target.txt",
+            "reportedPath": "outside/target.txt",
+            "postHocAccepted": false,
+            "postHocError": "OUT_OF_SCOPE"
+          }
+        ]
+      },
+      "artifacts": [],
+      "gapRecord": null,
+      "obligations": [],
+      "notes": "lexical matching (match.ts: no symlink resolution, case-sensitive) accepts the reported path while the effect lands at the realpath target"
+    },
+    {
+      "caseId": "BYP-LK-03",
+      "kind": "vector",
+      "vectorClass": "V4",
+      "className": "Symlink / reparse",
+      "channel": "symlink-reparse",
+      "scenario": "case-variant reported changed path for an exact forbidden entry",
+      "exercised": "yes",
+      "status": "exercised",
+      "classification": "unsupported",
+      "classificationBasis": "derived from observed signals per T4",
+      "collateral": false,
+      "mechanismPolicyClass": "none",
+      "refusalSource": null,
+      "hypothesis": {
+        "classification": "unsupported",
+        "basis": "match.ts is lexical (no symlink resolution, case-sensitive) on a case-insensitive fs; isWellFormedPath (:123) accepts trailing dot/space segments, so forbiddenSurfaces evades"
+      },
+      "hypothesisFalsified": false,
+      "guardInvocation": true,
+      "observed": {
+        "refusalObserved": false,
+        "effectLanded": true,
+        "detectionObserved": false,
+        "refusalSource": null,
+        "collateralObserved": false
+      },
+      "invocationLedger": [
+        "node -e write through link/alias spelling(s)",
+        "postHocCheck (shipped) on reported path(s): accepted unless noted in evidence"
+      ],
+      "effectEvidence": {
+        "hostCaseInsensitive": true,
+        "trees": [
+          {
+            "treeId": "case-variant",
+            "materialized": true,
+            "realpathVerified": true,
+            "before": {
+              "exists": true,
+              "realpath": "C:\\Users\\clint\\AppData\\Local\\Temp\\fk-p17-ws-cmP9XP\\scope\\Forbidden\\secret.txt",
+              "contentHash": "0682c5f2076f099c34cfdd15a9e063849ed437a49677e6fcc5b4198c76575be5"
+            },
+            "after": {
+              "exists": true,
+              "realpath": "C:\\Users\\clint\\AppData\\Local\\Temp\\fk-p17-ws-cmP9XP\\scope\\Forbidden\\secret.txt",
+              "contentHash": "8bf5a1b458f7a4ed3e22806a92366d07e8447b75ea50fbc6b940b68de3bfaeb3"
+            },
+            "landedRealpath": "C:\\Users\\clint\\AppData\\Local\\Temp\\fk-p17-ws-cmP9XP\\scope\\Forbidden\\secret.txt",
+            "reportedPath": "scope/Forbidden/secret.txt",
+            "postHocAccepted": true,
+            "postHocError": null
+          }
+        ]
+      },
+      "artifacts": [],
+      "gapRecord": null,
+      "obligations": [],
+      "notes": "lexical matching (match.ts: no symlink resolution, case-sensitive) accepts the reported path while the effect lands at the realpath target"
+    },
+    {
+      "caseId": "BYP-LK-04",
+      "kind": "vector",
+      "vectorClass": "V4",
+      "className": "Symlink / reparse",
+      "channel": "symlink-reparse",
+      "scenario": "trailing-dot alias segment for an exact forbidden entry",
+      "exercised": "yes",
+      "status": "exercised",
+      "classification": "unsupported",
+      "classificationBasis": "derived from observed signals per T4",
+      "collateral": false,
+      "mechanismPolicyClass": "none",
+      "refusalSource": null,
+      "hypothesis": {
+        "classification": "unsupported",
+        "basis": "match.ts is lexical (no symlink resolution, case-sensitive) on a case-insensitive fs; isWellFormedPath (:123) accepts trailing dot/space segments, so forbiddenSurfaces evades"
+      },
+      "hypothesisFalsified": false,
+      "guardInvocation": true,
+      "observed": {
+        "refusalObserved": false,
+        "effectLanded": true,
+        "detectionObserved": false,
+        "refusalSource": null,
+        "collateralObserved": false
+      },
+      "invocationLedger": [
+        "node -e write through link/alias spelling(s)",
+        "postHocCheck (shipped) on reported path(s): accepted unless noted in evidence"
+      ],
+      "effectEvidence": {
+        "hostCaseInsensitive": true,
+        "trees": [
+          {
+            "treeId": "trailing-dot-alias",
+            "materialized": true,
+            "realpathVerified": true,
+            "before": {
+              "exists": false,
+              "realpath": null,
+              "contentHash": null
+            },
+            "after": {
+              "exists": true,
+              "realpath": "C:\\Users\\clint\\AppData\\Local\\Temp\\fk-p17-ws-LcevkK\\scope\\forbidden\\secret.txt.",
+              "contentHash": "8bf5a1b458f7a4ed3e22806a92366d07e8447b75ea50fbc6b940b68de3bfaeb3"
+            },
+            "landedRealpath": "C:\\Users\\clint\\AppData\\Local\\Temp\\fk-p17-ws-LcevkK\\scope\\forbidden\\secret.txt.",
+            "reportedPath": "scope/forbidden/secret.txt.",
+            "postHocAccepted": true,
+            "postHocError": null
+          }
+        ]
+      },
+      "artifacts": [],
+      "gapRecord": null,
+      "obligations": [],
+      "notes": "lexical matching (match.ts: no symlink resolution, case-sensitive) accepts the reported path while the effect lands at the realpath target"
+    }
+  ]
+}
