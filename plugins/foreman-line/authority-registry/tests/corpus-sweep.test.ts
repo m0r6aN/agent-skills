@@ -707,13 +707,19 @@ test('R3 weakening a loop stop body fails even when the heading remains', () => 
     )
     ok(source && item)
     const path = join(tempRoot, source.path)
-    writeFileSync(
-      path,
-      readFileSync(path, 'utf8').replace(
-        /6\. \*\*Gate 3 is not delegated\.\*\* Never merge\. Present the complete green chain and exact\r?\n\s+merge target to the human\./,
-        '6. **Gate 3 is delegated.** Merge freely.',
-      ),
+    const content = readFileSync(path, 'utf8')
+    // R32 migration: the mutation target follows the CURRENT loop stop-6 body. Was: the regex
+    // targeted '6. **Gate 3 is not delegated.** Never merge. Present the complete green chain
+    // and exact merge target to the human.' - the RS-2.1 (L7) loop rewrite replaced that body
+    // with the delegated-merge-git-step text below, so the old regex matched nothing and the
+    // mutation was a silent no-op. Subject preserved: weakening a loop stop BODY is refused even
+    // though the heading/item remains registered.
+    const mutated = content.replace(
+      /6\. \*\*Gate 3 — delegated merge git step \(RS-2\.1, L7; the `COORDINATOR-PATTERN\.md` "merge it"\r?\n\s+rule\)\.\*\* Present the complete green chain and exact merge target in the record\. The\r?\n\s+coordinator merges the git step into the goal's integration branch only when every\r?\n\s+verification step is green; any red step voids the delegation for that chain\. Main\/PR\r?\n\s+merges, repository-settings changes, deployment, and destructive cleanup remain human\r?\n\s+acts — stop and report for those\. Delegation never manufactures a gate's satisfaction\./,
+      '6. **Gate 3 is delegated.** Merge freely.',
     )
+    assert.notEqual(mutated, content, 'the loop-stop weakening must actually change the source')
+    writeFileSync(path, mutated)
     ok(
       sweepRegistrySources(registry, tempRoot).violations.some(
         (v) => v.code === 'VALUE_DIGEST_MISMATCH' || v.code === 'LOCATOR_MISSING',
@@ -1739,8 +1745,17 @@ function duplicateCoordinatorGate2Result() {
 
 test('R13 duplicate identical Gate 2 keyed row emits LOCATOR_DUPLICATE', () => {
   const result = duplicateCoordinatorGate2Result()
+  // R32 migration: the test name keeps the historical refusal ('LOCATOR_DUPLICATE') as the
+  // recorded subject. R32.2 gives duplicate table keys a deterministic occurrence suffix
+  // (:table-row:2 and :table-row:2:2), so the duplicate no longer collides with the registered
+  // locator; it is refused by structural coverage at its own occurrence locator instead. The
+  // subject is preserved - a duplicated keyed row cannot stand - and the exact new refusal is
+  // pinned below. Was: the sweep emitted LOCATOR_DUPLICATE for the colliding key.
   ok(
-    result.violations.some((violation) => violation.code === 'LOCATOR_DUPLICATE'),
+    result.violations.some(
+      (violation) =>
+        violation.code === 'SOURCE_ITEM_UNCOVERED' && violation.locator?.endsWith(':table-row:2:2'),
+    ),
     JSON.stringify(result.violations, null, 2),
   )
 })
@@ -1748,7 +1763,17 @@ test('R13 duplicate identical Gate 2 keyed row emits LOCATOR_DUPLICATE', () => {
 test('R13 duplicate table text cannot bypass structural coverage', () => {
   const result = duplicateCoordinatorGate2Result()
   assert.equal(result.valid, false)
-  ok(result.violations.some((violation) => violation.code === 'LOCATOR_DUPLICATE'))
+  // R32 migration: was LOCATOR_DUPLICATE (duplicate keys collided on one anchor). R32.2's
+  // deterministic occurrence suffix gives the duplicate row the locator ':table-row:2:2', which
+  // the structural-coverage refusal names exactly. Subject preserved: duplicate table text cannot
+  // bypass coverage.
+  ok(
+    result.violations.some(
+      (violation) =>
+        violation.code === 'SOURCE_ITEM_UNCOVERED' && violation.locator?.endsWith(':table-row:2:2'),
+    ),
+    JSON.stringify(result.violations, null, 2),
+  )
 })
 
 for (const baseline of [
@@ -2430,8 +2455,17 @@ test('R30 prior anchor freeze retains ledger identities and rejects ambiguous cu
     writeFileSync(path, content.replace(l4, `${l4}\n${l4}`))
     const result = sweepRegistrySources(registry, root)
     assert.equal(result.valid, false)
+    // R32 migration: was a message match on /ambiguous|multiple|unique|duplicate/i - the pre-R32
+    // sweep refused a duplicated current ledger anchor as ambiguous. R32.2's deterministic
+    // occurrence suffix resolves the duplicate key (:table-row:L4:2), and the unreviewed duplicate
+    // row is refused by structural coverage at that occurrence locator. Subject preserved: a
+    // duplicated current ledger row is refused - it cannot enter the corpus unreviewed - and the
+    // prior-anchor freeze above still retains the ledger paragraph identity.
     ok(
-      result.violations.some((entry) => /ambiguous|multiple|unique|duplicate/i.test(entry.message)),
+      result.violations.some(
+        (entry) =>
+          entry.code === 'SOURCE_ITEM_UNCOVERED' && entry.locator?.endsWith(':table-row:L4:2'),
+      ),
       JSON.stringify(result.violations),
     )
   } finally {

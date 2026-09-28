@@ -7,6 +7,11 @@ import { API as TypeScriptApi } from 'typescript/unstable/sync'
 import { parse } from 'yaml'
 import AjvModule, { type Ajv as AjvType } from '../node_modules/ajv/dist/ajv.js'
 import {
+  R32_ITEM_MIGRATIONS,
+  R32_RULE_STATEMENT_MIGRATIONS,
+  R32_SOURCE_SNAPSHOT,
+} from './r32-migrations.js'
+import {
   NORMATIVE_MARKDOWN_AUDIT_KEYS,
   R12_LEGACY_MARKDOWN_RULE_TARGETS,
   R12_PRIOR_REGISTRY_COMMIT,
@@ -21,6 +26,13 @@ import {
   R31_RULE_SHAPES,
   R31_SOURCE_ITEMS,
   R31_SOURCE_SNAPSHOT,
+  R32_RECONCILIATION_CONSEQUENCE,
+  R32_RECONCILIATION_DISPOSITION,
+  R32_RECONCILIATION_TOPIC,
+  R32_RECORD_DIGEST,
+  R32_RECORD_REF_ITEM_IDS,
+  R32_RECORD_RULE_IDS,
+  R32_RECORD_SUPERSEDES,
 } from './registry.js'
 import { authorityEnforcementRegistrySchema } from './schemas.js'
 import {
@@ -33,6 +45,7 @@ import {
   type CanonSource,
   GOAL_SCOPES,
   HOST_POSTURES,
+  type InventoryItem,
   OPERATION_SCOPES,
   type OperationId,
   PRINCIPAL_CLASSES,
@@ -79,6 +92,12 @@ const REQUIRED_REWORK_MIGRATIONS = [
   'registry-rework-df8155a',
   'registry-rework-40394be',
   'registry-rework-66a514d',
+  // Demoted from chain head by R32's `registry-rework-521214e`. Same R22 obligation 7 pattern as
+  // the demotions before it: while it was the head this entry would have declared it ineligible;
+  // now that a successor chains above it, the pin binds it by bytes and `recordDigestPinFor` finds
+  // it here instead of in the head constant. The pinned value is its existing R31 record digest -
+  // history pins never advance.
+  'registry-rework-446700d',
 ] as const
 /**
  * AC4 obligation 6 as amended by R22 - the shipped chain head, bound through channels that do NOT
@@ -97,14 +116,14 @@ const REQUIRED_REWORK_MIGRATIONS = [
  * invalidate the shipped registry. Measured: it does exactly that, AND still admits the
  * delete-and-substitute attack, because a pin binds only a record that is still present.
  */
-const SHIPPED_CHAIN_HEAD_ID = 'registry-rework-446700d'
+const SHIPPED_CHAIN_HEAD_ID = 'registry-rework-521214e'
 /**
  * The canonical record digest of the shipped head, consulted ONLY once the record is no longer the
  * head. While it IS the head it stays bound to the live manifest, so appending a legitimately
  * amended registry does not require regenerating or re-pinning anything; once a successor demotes
- * it, it becomes a historical record and is bound exactly like the eleven before it.
+ * it, it becomes a historical record and is bound exactly like the records before it.
  */
-const SHIPPED_CHAIN_HEAD_RECORD_DIGEST = R31_RECORD_DIGEST
+const SHIPPED_CHAIN_HEAD_RECORD_DIGEST = R32_RECORD_DIGEST
 const REQUIRED_OPERATIONS = [
   'gate1.ratify',
   'gate2.dispatch',
@@ -360,6 +379,12 @@ const R11_PROTECTED_NORMATIVE_ITEMS: Readonly<Record<string, string>> = {
 }
 
 const RECONCILIATION_CONTRACT = {
+  'registry-rework-521214e': {
+    topic: R32_RECONCILIATION_TOPIC,
+    status: 'superseded-by-amendment',
+    refs: R32_RECORD_REF_ITEM_IDS.map((entry) => `${entry.sourceId}:${entry.itemId}`),
+    rules: [...R32_RECORD_RULE_IDS],
+  },
   'registry-rework-446700d': {
     topic: R31_RECONCILIATION.topic,
     status: R31_RECONCILIATION.migrationStatus,
@@ -595,16 +620,24 @@ const SEMANTIC_EQUIVALENCE: readonly {
   },
   {
     authoritySubject: 'gate3.merge-authority',
-    authorityClaim: 'human-owned-nondelegated',
+    authorityClaim:
+      'gate3-human-owned-for-main-pr-settings-deployment-and-destructive-cleanup-with-green-chain-integration-merge-step-delegation-voided-by-any-red-step',
     ruleIds: [
       'rule.fk-charter.b1ac4aa9eddf',
       'rule.fk-charter.c74628d41600',
       'rule.fk-loop-directive.08b3cbb91027',
       'rule.fk-loop-directive.7eb6018d9e57',
       'rule.fk-loop-directive.2743c2f8c558',
-      'rule.foreman-line-plan.c92333c21e64',
     ],
-    rationale: 'Each item states that the merge decision remains human-owned.',
+    rationale:
+      'Each live restatement states the RS-2.1 Gate-3 ruling: human-owned for main/PR merges, repository-settings changes, deployment and destructive cleanup, with the voidable green-chain integration merge-step delegation. The historical plan Stage F rule keeps its historical claim as historical-only narrative of its unchanged text.',
+  },
+  {
+    authoritySubject: 'goal.exit-supersession',
+    authorityClaim: 'inherited-nine-exit-tests-superseded-by-rs1-4-rs2-3',
+    ruleIds: ['rule.fk-charter.1d6405c6eacd', 'rule.fk-charter.6a8d073a64f1'],
+    rationale:
+      'The §9 supersession paragraph and the §16 opening sentence independently state that the inherited nine exit conditions are historical text, superseded as exit tests by RS-1.4 as amended by RS-2.3 with its exit annex.',
   },
   {
     authoritySubject: 'verification.issue-authority',
@@ -660,6 +693,7 @@ const PRIOR_R10_BINDING_MANIFEST_DIGEST =
   '99d9bed01cd5a7957457e24c82cbcc3645ebf591415d6072c26130d3b8a2e8d7'
 
 const RECONCILIATION_PROSE: Readonly<Record<string, readonly [string, string]>> = {
+  'registry-rework-521214e': [R32_RECONCILIATION_DISPOSITION, R32_RECONCILIATION_CONSEQUENCE],
   'registry-rework-446700d': [
     R31_RECONCILIATION.scopedDisposition,
     R31_RECONCILIATION.unresolvedConsequence,
@@ -753,6 +787,8 @@ const RECONCILIATION_PROSE: Readonly<Record<string, readonly [string, string]>> 
 
 const RECONCILIATION_RECORD_DIGESTS: Readonly<Record<string, string>> = {
   'registry-rework-66a514d': '6d39f17f70b25ce44030e729c62d975b45a8597b99af8c22f19c6a3cbfba92d7',
+  // Demoted from chain head by R32; bound at its existing R31 record digest, byte-stable.
+  'registry-rework-446700d': R31_RECORD_DIGEST,
   'gate-namespace-count': '23f3549859f81eddfd5645dc3de3ffe07997c624cd75d61d3410645b710968d3',
   'gate3-delegation': '13f5094dc781381ad5c1124f094af5f6f57b462c73df3fd3925e2b844c3f53c6',
   'spec-linter-profile-behavior':
@@ -1612,6 +1648,38 @@ function referenceKey(sourceId: string, itemId: string): string {
   return `${sourceId}\u0000${itemId}`
 }
 
+/**
+ * The R32 typed remap of a pinned R30 rule shape: source references re-bind to the live inventory
+ * items (same item ids, current locator and value digests) and any R32 statement migration is
+ * applied. Every other shape field is untouched, so a remapped comparison still fails closed on
+ * any semantic drift.
+ */
+function r32RemapShape(
+  shape: Omit<AuthorityRule, 'bindingDigest'>,
+  itemsByRef: ReadonlyMap<string, InventoryItem>,
+): Omit<AuthorityRule, 'bindingDigest'> {
+  const rebound = (ref: SourceRef): SourceRef => {
+    const item = itemsByRef.get(referenceKey(ref.sourceId, ref.itemId))
+    return item === undefined
+      ? ref
+      : {
+          sourceId: ref.sourceId,
+          itemId: ref.itemId,
+          locatorDigest: locatorDigestFor(item.locator),
+          valueDigest: item.valueDigest,
+        }
+  }
+  const statement = R32_RULE_STATEMENT_MIGRATIONS.find(
+    (entry) => entry.ruleId === shape.ruleId,
+  )?.newStatement
+  return {
+    ...shape,
+    sourceRefs: shape.sourceRefs.map(rebound),
+    authorityBasisRef: rebound(shape.authorityBasisRef),
+    normalizedStatement: statement ?? shape.normalizedStatement,
+  }
+}
+
 function isLegacyReconciliationSourceRef(reconciliationId: string, sourceRef: SourceRef): boolean {
   return (LEGACY_RECONCILIATION_SOURCE_REFS[reconciliationId] ?? []).some(
     (expected) => canonicalJson(expected) === canonicalJson(sourceRef),
@@ -2098,7 +2166,7 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
     }
   }
 
-  const expectedNormativeMarkdownAudit = NORMATIVE_MARKDOWN_AUDIT_KEYS.map((key) => {
+  const expectedNormativeMarkdownAudit = NORMATIVE_MARKDOWN_AUDIT_KEYS.flatMap((key) => {
     const separator = key.indexOf(':')
     const sourceId = key.slice(0, separator)
     const locatorAnchor = key.slice(separator + 1)
@@ -2106,20 +2174,35 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
     const item = source?.inventoryItems.find(
       (candidate) => candidate.locator.anchor === locatorAnchor,
     )
-    if (item === undefined) return null
+    // R32: a retired item retires its audit candidacy with it, with its final digests pinned in
+    // R32_ITEM_MIGRATIONS; any other missing candidate still fails closed below.
+    if (
+      item === undefined &&
+      R32_ITEM_MIGRATIONS.some(
+        (entry) =>
+          entry.disposition === 'retired' &&
+          entry.sourceId === sourceId &&
+          entry.priorAnchor === locatorAnchor,
+      )
+    ) {
+      return []
+    }
+    if (item === undefined) return [null]
     const { itemId } = item
     const published = item.ruleIds.length > 0
-    return {
-      sourceId,
-      itemId,
-      valueDigest: item.valueDigest,
-      disposition: published ? 'publish' : 'exclude',
-      ruleIds: item.ruleIds,
-      exclusionCode: published ? null : item.exclusionDisposition,
-      rationale: published
-        ? `Audit candidate ${itemId} is published by its exact source-bound rule set.`
-        : `Audit candidate ${itemId} is excluded as ${item.exclusionDisposition}; this exact source item does not independently impose an operative FK rule.`,
-    }
+    return [
+      {
+        sourceId,
+        itemId,
+        valueDigest: item.valueDigest,
+        disposition: published ? 'publish' : 'exclude',
+        ruleIds: item.ruleIds,
+        exclusionCode: published ? null : item.exclusionDisposition,
+        rationale: published
+          ? `Audit candidate ${itemId} is published by its exact source-bound rule set.`
+          : `Audit candidate ${itemId} is excluded as ${item.exclusionDisposition}; this exact source item does not independently impose an operative FK rule.`,
+      },
+    ]
   })
   if (
     expectedNormativeMarkdownAudit.some((record) => record === null) ||
@@ -2129,7 +2212,12 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
     violations.push(
       violation(
         'RULE_SEMANTICS_UNCURATED',
-        'normative Markdown audit must equal the exact 202 item-specific source-authored dispositions',
+        // W2b: the count is derived from the expected rows, never a stale literal (it read "the
+        // exact 202" after the derived audit had already moved to its R32 size).
+        `normative Markdown audit must equal the exact ${
+          expectedNormativeMarkdownAudit.filter((record) => record !== null).length +
+          R31_AUDIT_ROWS.length
+        } item-specific source-authored dispositions`,
       ),
     )
   }
@@ -2304,7 +2392,7 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
     if (
       source === undefined ||
       item === undefined ||
-      source.snapshotEvidence.commit !== R31_SOURCE_SNAPSHOT ||
+      source.snapshotEvidence.commit !== R32_SOURCE_SNAPSHOT ||
       source.inventoryItems.filter(
         (candidate) =>
           candidate.locator.kind === expected.locator.kind &&
@@ -2360,7 +2448,51 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
       )
     }
   }
+  // R32: the exact reviewed bindings of the typed prior-to-new migration. A retired item must be
+  // gone; a migrated or adopted item must sit exactly at its new locator with its new value. This
+  // is the reviewable pin set for the R32 corpus amendment.
+  for (const expected of R32_ITEM_MIGRATIONS) {
+    const item = itemsByRef.get(referenceKey(expected.sourceId, expected.itemId))
+    if (expected.disposition === 'retired') {
+      if (item !== undefined) {
+        violations.push(
+          violation(
+            'AUTHORITY_ESCALATION',
+            `R32 retired item '${expected.unit}' (${expected.sourceId}:${expected.itemId}) is still present`,
+            { ruleId: expected.itemId },
+          ),
+        )
+      }
+      continue
+    }
+    if (
+      item === undefined ||
+      expected.newAnchor === null ||
+      expected.newLocatorDigest === null ||
+      expected.newValueDigest === null ||
+      item.locator.anchor !== expected.newAnchor ||
+      locatorDigestFor(item.locator) !== expected.newLocatorDigest ||
+      item.valueDigest !== expected.newValueDigest
+    ) {
+      violations.push(
+        violation(
+          'AUTHORITY_ESCALATION',
+          `R32 migrated item '${expected.unit}' differs from its typed prior-to-new binding`,
+          { ruleId: expected.itemId },
+        ),
+      )
+    }
+  }
   for (const expected of R30_SOURCE_ITEMS) {
+    // R32: a unit covered by the typed prior-to-new migration is checked against its R32 binding
+    // below, never against the superseded R30 pin.
+    if (
+      R32_ITEM_MIGRATIONS.some(
+        (entry) => entry.sourceId === expected.sourceId && entry.itemId === expected.itemId,
+      )
+    ) {
+      continue
+    }
     const item = itemsByRef.get(referenceKey(expected.sourceId, expected.itemId))
     const ownRules = R30_RULE_SHAPES.filter(
       (rule) =>
@@ -2395,9 +2527,20 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
   for (const rule of document.rules) {
     const r30Expected = R30_RULE_SHAPES.find((expected) => expected.ruleId === rule.ruleId)
     const { bindingDigest: _r30Binding, ...r30Shape } = rule
+    const r32MigratedBasis = R32_ITEM_MIGRATIONS.some(
+      (entry) =>
+        entry.sourceId === rule.authorityBasisRef.sourceId &&
+        entry.itemId === rule.authorityBasisRef.itemId,
+    )
+    const expectedShape =
+      r30Expected === undefined
+        ? undefined
+        : r32MigratedBasis
+          ? r32RemapShape(r30Expected, itemsByRef)
+          : r30Expected
     const r30Exact =
-      r30Expected !== undefined && canonicalJson(r30Shape) === canonicalJson(r30Expected)
-    if (r30Expected !== undefined && !r30Exact) {
+      expectedShape !== undefined && canonicalJson(r30Shape) === canonicalJson(expectedShape)
+    if (expectedShape !== undefined && !r30Exact) {
       violations.push(
         violation(
           'AUTHORITY_ESCALATION',
@@ -2435,17 +2578,25 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
         item.sourceId === r30Expected?.authorityBasisRef.sourceId &&
         item.itemId === r30Expected.authorityBasisRef.itemId,
     )
+    // R32: a migrated basis binds its R32 successor binding, not the superseded R30 pin.
+    const r32Basis = R32_ITEM_MIGRATIONS.find(
+      (entry) =>
+        entry.sourceId === r30Expected?.authorityBasisRef.sourceId &&
+        entry.itemId === r30Expected?.authorityBasisRef.itemId,
+    )
+    const expectedBasisAnchor = r32Basis?.newAnchor ?? r30Basis?.locator.anchor
+    const expectedBasisLocatorDigest = r32Basis?.newLocatorDigest ?? r30Basis?.locatorDigest
+    const expectedBasisValueDigest = r32Basis?.newValueDigest ?? r30Basis?.valueDigest
     const basisStatementMatches =
       r30Expected !== undefined
         ? r30Exact &&
           basisItem !== undefined &&
-          r30Basis !== undefined &&
-          basisItem.itemId === r30Basis.itemId &&
-          basisItem.locator.kind === r30Basis.locator.kind &&
-          basisItem.locator.anchor === r30Basis.locator.anchor &&
-          locatorDigestFor(basisItem.locator) === r30Basis.locatorDigest &&
-          sha256(normalizeRuleText(basisItem.normalizedExcerpt)) === r30Basis.valueDigest &&
-          basisItem.valueDigest === r30Basis.valueDigest &&
+          (r30Basis !== undefined || r32Basis !== undefined) &&
+          basisItem.itemId === r30Expected.authorityBasisRef.itemId &&
+          basisItem.locator.anchor === expectedBasisAnchor &&
+          locatorDigestFor(basisItem.locator) === expectedBasisLocatorDigest &&
+          sha256(normalizeRuleText(basisItem.normalizedExcerpt)) === expectedBasisValueDigest &&
+          basisItem.valueDigest === expectedBasisValueDigest &&
           basisItem.ruleIds.includes(rule.ruleId)
         : basisItem !== undefined &&
           (normalizeRuleText(rule.normalizedStatement) ===
@@ -2591,15 +2742,21 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
           (expected) =>
             expected.sourceId === sourceRef.sourceId && expected.itemId === sourceRef.itemId,
         )
+        // R32: a migrated reference binds its R32 successor binding, not the superseded R30 pin.
+        const r32Reference = R32_ITEM_MIGRATIONS.find(
+          (entry) => entry.sourceId === sourceRef.sourceId && entry.itemId === sourceRef.itemId,
+        )
+        const expectedAnchor = r32Reference?.newAnchor ?? r30Reference?.locator.anchor
+        const expectedLocatorDigest = r32Reference?.newLocatorDigest ?? r30Reference?.locatorDigest
+        const expectedValueDigest = r32Reference?.newValueDigest ?? r30Reference?.valueDigest
         const r30ReferenceExact =
           r30Exact &&
-          r30Reference !== undefined &&
-          item.itemId === r30Reference.itemId &&
-          item.locator.kind === r30Reference.locator.kind &&
-          item.locator.anchor === r30Reference.locator.anchor &&
-          locatorDigestFor(item.locator) === r30Reference.locatorDigest &&
-          item.valueDigest === r30Reference.valueDigest &&
-          sha256(normalizeRuleText(item.normalizedExcerpt)) === r30Reference.valueDigest &&
+          (r30Reference !== undefined || r32Reference !== undefined) &&
+          item.itemId === sourceRef.itemId &&
+          item.locator.anchor === expectedAnchor &&
+          locatorDigestFor(item.locator) === expectedLocatorDigest &&
+          item.valueDigest === expectedValueDigest &&
+          sha256(normalizeRuleText(item.normalizedExcerpt)) === expectedValueDigest &&
           item.ruleIds.includes(rule.ruleId)
         const expectedRuleId = `rule.${sourceRef.sourceId}.${item.itemId.replace(/^item\./, '')}`
         const expectedCompoundPrefix = `${expectedRuleId}.`
@@ -3445,7 +3602,7 @@ export function validateRegistry(
     try {
       const blob = execFileSync(
         'git',
-        ['cat-file', 'blob', `${R31_SOURCE_SNAPSHOT}:${R31_DECISION_PATH}`],
+        ['cat-file', 'blob', `${R32_SOURCE_SNAPSHOT}:${R31_DECISION_PATH}`],
         { cwd: options.repoRoot, stdio: ['ignore', 'pipe', 'ignore'] },
       )
       if (sha256(blob) !== R31_DECISION_BLOB_DIGEST)
@@ -3791,6 +3948,7 @@ function markdownDocumentMap(content: string): MarkdownDocumentMap {
   const headings: { level: number; text: string }[] = []
   const occurrences = new Map<string, number>()
   const tableGroups = new Map<string, number>()
+  const tableKeyOccurrences = new Map<string, number>()
   let cursor = 0
   while (cursor < lines.length) {
     const line = lines[cursor] ?? ''
@@ -3848,7 +4006,12 @@ function markdownDocumentMap(content: string): MarkdownDocumentMap {
     const tableGroup = tableGroups.get(headingPath) ?? 1
     const tablePrefix =
       table && tableGroup > 1 ? `${headingPath} > table-group:${tableGroup}` : headingPath
-    const anchor = `md-block:${tablePrefix}:${kind}:${table ? tableKey : occurrence}`
+    // R32: mirrors generate - duplicate first-column keys in one table get occurrence suffixes.
+    const tableKeyCount = table
+      ? (tableKeyOccurrences.get(`${tablePrefix}\u0000${tableKey}`) ?? 0) + 1
+      : 0
+    if (table) tableKeyOccurrences.set(`${tablePrefix}\u0000${tableKey}`, tableKeyCount)
+    const anchor = `md-block:${tablePrefix}:${kind}:${table ? (tableKeyCount > 1 ? `${tableKey}:${tableKeyCount}` : tableKey) : occurrence}`
     blockCounts.set(anchor, (blockCounts.get(anchor) ?? 0) + 1)
     if (!blocks.has(anchor)) blocks.set(anchor, text)
     cursor = end

@@ -5,6 +5,14 @@ import { fileURLToPath } from 'node:url'
 import { parse, stringify } from 'yaml'
 import { generate } from '../../schema-scaffold/src/generate.js'
 import {
+  R32_ANCHOR_MIGRATIONS,
+  R32_ITEM_MIGRATIONS,
+  R32_PRIOR_REGISTRY_COMMIT,
+  R32_RULE_STATEMENT_MIGRATIONS,
+  R32_SOURCE_SNAPSHOT,
+  type R32AnchorMigration,
+} from './r32-migrations.js'
+import {
   allSchemaFiles,
   NORMATIVE_MARKDOWN_AUDIT_KEYS,
   R12_LEGACY_MARKDOWN_RULE_TARGETS,
@@ -24,6 +32,14 @@ import {
   R31_RULE_SHAPES,
   R31_SOURCE_ITEMS,
   R31_SOURCE_SNAPSHOT,
+  R32_BINDING_MANIFEST,
+  R32_RECONCILIATION_CONSEQUENCE,
+  R32_RECONCILIATION_DISPOSITION,
+  R32_RECONCILIATION_TOPIC,
+  R32_RECORD_DIGEST,
+  R32_RECORD_REF_ITEM_IDS,
+  R32_RECORD_RULE_IDS,
+  R32_RECORD_SUPERSEDES,
 } from './registry.js'
 import type {
   AuthorityEffect,
@@ -73,8 +89,15 @@ const SNAPSHOT = '51857a3a7796b393c0c0a68712f98c06e7015d79'
  * 51857a3 is descriptive of the initial dispatch rather than a binding target. Binding a hash to a
  * commit whose bytes were not the ones hashed would be a knowingly false statement, so this
  * advances and the advance is recorded as a typed migration record.
+ *
+ * R32 residual, stated rather than disguised: thirteen of the eighteen sources hash bytes equal to
+ * this commit; five (SPEC-CONVENTION.md, spec-linter README/schema/cli, permission-profiles
+ * types.ts) hash the then-current worktree state of the final 2026-09-27 schema-v0.4 stream, which
+ * the coordinator commits alongside this amendment. Their inventory digests bind the hashed
+ * worktree bytes; their snapshot attestation records this commit's bytes; the R32 record names the
+ * residual for independent review.
  */
-const CURRENT_SNAPSHOT = R31_SOURCE_SNAPSHOT
+const CURRENT_SNAPSHOT = R32_SOURCE_SNAPSHOT
 
 /**
  * The three volatile regions R24 authorizes, with the extents R27 corrected.
@@ -182,7 +205,7 @@ function volatileRegionsFor(sources: readonly CanonSource[]): VolatileRegion[] {
 }
 
 const R12_GATE2_ALLOW_ITEMS = new Set([
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 10. Human gates and standing authorizations requested > ### Gate 2 — parcel dispatch:paragraph:1',
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 10. Human gates and standing authorizations requested > ### Gate 2  -  parcel dispatch:paragraph:1',
   'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:list-item:4',
   'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:1',
 ])
@@ -314,8 +337,10 @@ const SOURCE_DEFINITIONS: readonly SourceDefinition[] = [
     anchors: [
       ' *   0  all specs valid (advisory warnings do not affect exit code)',
       ' *   1  at least one schema or semantic-invariant violation (every violation on stderr)',
-      ' *   2  usage error: missing/unreadable path, bad invocation, or directory with no .md files',
-      'process.exitCode = run(process.argv.slice(2))',
+      // R32: the usage block wraps differently in the 2026-09-27 cli.ts revision; the anchor line
+      // re-pins to the exit-code-2 entry's first line and carries the typed prior-to-new migration.
+      ' *   2  usage error: missing/unreadable path, bad invocation, a non-absolute',
+      'process.exitCode = await run(process.argv.slice(2))',
     ],
   },
   {
@@ -504,6 +529,7 @@ function markdownBindingBlocks(document: MarkdownDocumentMap): LocatedText[] {
   const headings: { level: number; text: string }[] = []
   const structuralOccurrences = new Map<string, number>()
   const tableGroups = new Map<string, number>()
+  const tableKeyOccurrences = new Map<string, number>()
   const blocks: LocatedText[] = []
   let cursor = 0
   while (cursor < lines.length) {
@@ -565,7 +591,15 @@ function markdownBindingBlocks(document: MarkdownDocumentMap): LocatedText[] {
     const tableGroup = tableGroups.get(headingPath) ?? 1
     const tablePrefix =
       table && tableGroup > 1 ? `${headingPath} > table-group:${tableGroup}` : headingPath
-    const anchor = `md-block:${tablePrefix}:${kind}:${table ? tableKey : structuralOrdinal}`
+    // R32: a table whose first-column key repeats inside one table (the charter 17 ledger
+    // repeats its date keys) would otherwise collide on one anchor; later occurrences carry a
+    // deterministic occurrence suffix so every row stays uniquely locatable. The validator's
+    // block map mirrors this exactly.
+    const tableKeyCount = table
+      ? (tableKeyOccurrences.get(`${tablePrefix}\u0000${tableKey}`) ?? 0) + 1
+      : 0
+    if (table) tableKeyOccurrences.set(`${tablePrefix}\u0000${tableKey}`, tableKeyCount)
+    const anchor = `md-block:${tablePrefix}:${kind}:${table ? (tableKeyCount > 1 ? `${tableKey}:${tableKeyCount}` : tableKey) : structuralOrdinal}`
     blocks.push({
       locator: {
         kind: table ? 'table-row' : list ? 'numbered-item' : 'line-excerpt',
@@ -808,7 +842,23 @@ function r31ItemFor(sourceId: string, located: LocatedText) {
   }
   return expected
 }
+/**
+ * The R32 typed prior-to-new lookup for a re-anchored item, by either side of its migration.
+ *
+ * Item identity is pinned through the rename: a heading-path or table-key edit re-anchors the
+ * structural slot but must not mint a new identity, so the id carried across is the prior
+ * derivation's, never a re-learned hash of the new locator.
+ */
+function r32MigrationFor(sourceId: string, anchor: string): R32AnchorMigration | undefined {
+  return R32_ANCHOR_MIGRATIONS.find(
+    (entry) =>
+      entry.sourceId === sourceId && (entry.newAnchor === anchor || entry.priorAnchor === anchor),
+  )
+}
+
 function itemIdFor(definition: SourceDefinition, located: LocatedText): string {
+  const r32 = r32MigrationFor(definition.sourceId, located.locator.anchor)
+  if (r32 !== undefined) return r32.itemId
   const r31 = r31ItemFor(definition.sourceId, located)
   if (r31 !== undefined) return r31.itemId
   if (
@@ -2160,6 +2210,17 @@ const R10_CURATED_ITEM_SEMANTICS: Readonly<
 }
 
 const CURATED_ITEM_CLASSIFICATIONS: Readonly<Record<string, RuleClassification>> = {
+  // R32: the RS-1 (L6) and RS-2 (L7) ledger rows and the two exit-supersession statements are new
+  // normative text adopted by this amendment. The rows are ratification provenance (like L4/L5);
+  // the supersession statements restrict exit claims and refuse the inherited nine as exit tests.
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 4. Locked decisions > ### 4.1 Ratification ledger:table-row:L6':
+    'narrative-provenance',
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 4. Locked decisions > ### 4.1 Ratification ledger:table-row:L7':
+    'narrative-provenance',
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 9. Goal exit criterion:paragraph:2':
+    'pre-action-refusal',
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 16. Completion accounting for the infrastructure requirements:paragraph:1':
+    'pre-action-refusal',
   'fk-charter:D1': 'ci-static-check',
   'fk-charter:D2': 'ci-static-check',
   'fk-charter:D3': 'pre-action-refusal',
@@ -2180,86 +2241,86 @@ const CURATED_ITEM_CLASSIFICATIONS: Readonly<Record<string, RuleClassification>>
   'fk-charter:D18': 'ci-static-check',
   'fk-charter:D19': 'pre-action-refusal',
   'fk-charter:D20': 'ci-static-check',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel:paragraph:1': 'narrative-provenance',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 2. Problem statement:list-item:1':
+  'fk-charter:md-block:# Foreman Kernel Development Charter:paragraph:1': 'narrative-provenance',
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 2. Problem statement:list-item:1':
     'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 4. Locked decisions:paragraph:1':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 4. Locked decisions:paragraph:1':
     'independent-review-human-judgment',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 0 — Authority and contracts:table-row:FK-P2 — Spec-body compiler':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 0  -  Authority and contracts:table-row:FK-P2  -  Spec-body compiler':
     'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 0 — Authority and contracts:paragraph:1':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 0  -  Authority and contracts:paragraph:1':
     'ci-static-check',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 1 — Pure trust core:paragraph:1':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 1  -  Pure trust core:paragraph:1':
     'ci-static-check',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 2 — Stateless read-only MCP and container:paragraph:1':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 2  -  Stateless read-only MCP and container:paragraph:1':
     'ci-static-check',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:paragraph:1':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 3  -  Durable operational state:paragraph:2':
     'ci-static-check',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P18 — CI scope and state-evidence backstops':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 4  -  Hook adapter and enforcement promotion:table-row:FK-P18  -  CI scope and state-evidence backstops':
     'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:paragraph:1':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 4  -  Hook adapter and enforcement promotion:paragraph:2':
     'ci-static-check',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:1':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 9. Goal exit criterion:list-item:1':
     'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:2':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 9. Goal exit criterion:list-item:2':
     'ci-static-check',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:3':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 9. Goal exit criterion:list-item:3':
     'ci-static-check',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:4':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 9. Goal exit criterion:list-item:4':
     'ci-static-check',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:5':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 9. Goal exit criterion:list-item:5':
     'ci-static-check',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:6':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 9. Goal exit criterion:list-item:6':
     'ci-static-check',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:7':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 9. Goal exit criterion:list-item:7':
     'ci-static-check',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:8':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 9. Goal exit criterion:list-item:8':
     'ci-static-check',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:9':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 9. Goal exit criterion:list-item:9':
     'ci-static-check',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 10. Human gates and standing authorizations requested > ### Gate 1 — charter ratification:paragraph:1':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 10. Human gates and standing authorizations requested > ### Gate 1  -  charter ratification:paragraph:1':
     'independent-review-human-judgment',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 10. Human gates and standing authorizations requested > ### Gate 2 — parcel dispatch:paragraph:1':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 10. Human gates and standing authorizations requested > ### Gate 2  -  parcel dispatch:paragraph:1':
     'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 10. Human gates and standing authorizations requested > ### Gate 3 — merge:paragraph:1':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 10. Human gates and standing authorizations requested > ### Gate 3  -  merge:paragraph:1':
     'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:1':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 11. Stop conditions:list-item:1':
     'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:2':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 11. Stop conditions:list-item:2':
     'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:3':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 11. Stop conditions:list-item:3':
     'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:4':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 11. Stop conditions:list-item:4':
     'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:5':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 11. Stop conditions:list-item:5':
     'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:6':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 11. Stop conditions:list-item:6':
     'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:7':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 11. Stop conditions:list-item:7':
     'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:8':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 11. Stop conditions:list-item:8':
     'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:9':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 11. Stop conditions:list-item:9':
     'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:10':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 11. Stop conditions:list-item:10':
     'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:11':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 11. Stop conditions:list-item:11':
     'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:12':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 11. Stop conditions:list-item:12':
     'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:13':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 11. Stop conditions:list-item:13':
     'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:14':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 11. Stop conditions:list-item:14':
     'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:15':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 11. Stop conditions:list-item:15':
     'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:16':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 11. Stop conditions:list-item:16':
     'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:17':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 11. Stop conditions:list-item:17':
     'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 13. Gate 1 decision list:list-item:11':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 13. Gate 1 decision list:list-item:11':
     'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 13. Gate 1 decision list:paragraph:2':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 13. Gate 1 decision list:paragraph:2':
     'narrative-provenance',
   'fk-plan-review-findings:R1': 'narrative-provenance',
   'fk-plan-review-findings:R2': 'pre-action-refusal',
@@ -2561,9 +2622,9 @@ const CURATED_ITEM_CLASSIFICATIONS: Readonly<Record<string, RuleClassification>>
     'ci-static-check',
   'spec-linter-cli: *   1  at least one schema or semantic-invariant violation (every violation on stderr)':
     'ci-static-check',
-  'spec-linter-cli: *   2  usage error: missing/unreadable path, bad invocation, or directory with no .md files':
+  'spec-linter-cli: *   2  usage error: missing/unreadable path, bad invocation, a non-absolute':
     'ci-static-check',
-  'spec-linter-cli:process.exitCode = run(process.argv.slice(2))': 'ci-static-check',
+  'spec-linter-cli:process.exitCode = await run(process.argv.slice(2))': 'ci-static-check',
   'spec-linter-readme:md-block:# @foreman-line/spec-linter > ## The four v0.2 fields:table-row:`permission_profile:`':
     'unsupported',
   'spec-linter-readme:md-block:# @foreman-line/spec-linter > ## The four v0.2 fields:paragraph:1':
@@ -2707,86 +2768,86 @@ const CURATED_ITEM_CLASSIFICATIONS: Readonly<Record<string, RuleClassification>>
     'unsupported',
   'permission-profiles-readme:md-block:# Foreman Line — Permission-Profile Registry, Validator + Dispatch-Time Emitter (P1 + P3) > ## Session-start-load bound — with its failure modes (F-H):list-item:3':
     'unsupported',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition:paragraph:1':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition:paragraph:1':
     'independent-review-human-judgment',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:1':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:1':
     'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:2':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:2':
     'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:3':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:3':
     'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:4':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:4':
     'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:5':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:5':
     'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 0 — Authority and contracts:table-row:FK-P0 — Canon authority and enforcement registry':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 0  -  Authority and contracts:table-row:FK-P0  -  Canon authority and enforcement registry':
     'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 0 — Authority and contracts:table-row:FK-P1 — Lifecycle, admission, and decision contracts':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 0  -  Authority and contracts:table-row:FK-P1 — Lifecycle, admission, and decision contracts':
     'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 1 — Pure trust core:table-row:FK-P3 — Pure dispatch decisions':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 1  -  Pure trust core:table-row:FK-P3  -  Pure dispatch decisions':
     'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 1 — Pure trust core:table-row:FK-P4 — Verifier facade':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 1  -  Pure trust core:table-row:FK-P4  -  Verifier facade':
     'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 1 — Pure trust core:table-row:FK-P5 — Clean-room trust-core spike':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 1  -  Pure trust core:table-row:FK-P5  -  Clean-room trust-core spike':
     'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 2 — Stateless read-only MCP and container:table-row:FK-P6 — Read-only MCP server':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 2  -  Stateless read-only MCP and container:table-row:FK-P6  -  Read-only MCP server':
     'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 2 — Stateless read-only MCP and container:table-row:FK-P7 — Stateless verifier image and launcher':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 2  -  Stateless read-only MCP and container:table-row:FK-P7  -  Stateless verifier image and launcher':
     'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 2 — Stateless read-only MCP and container:table-row:FK-P8 — Stateless harness portability proof':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 2  -  Stateless read-only MCP and container:table-row:FK-P8  -  Stateless harness portability proof':
     'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P9 — SQLite storage and migration ABI':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 3  -  Durable operational state:table-row:FK-P9  -  SQLite storage and migration ABI':
     'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P10 — Lease and transition engine':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 3  -  Durable operational state:table-row:FK-P10  -  Lease and transition engine':
     'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P11 — Legacy import and projection engine':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 3  -  Durable operational state:table-row:FK-P11  -  Legacy import and projection engine':
     'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P12 — Authorization policy engine':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 3  -  Durable operational state:table-row:FK-P12  -  Authorization policy engine':
     'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P13 — Admission-protected control catalog':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 3  -  Durable operational state:table-row:FK-P13  -  Admission-protected control catalog':
     'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P14 — Stateful image composition and operator lifecycle':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 3  -  Durable operational state:table-row:FK-P14  -  Stateful image composition and operator lifecycle':
     'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P15 — Stateful restart and admission proof':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 3  -  Durable operational state:table-row:FK-P15  -  Stateful restart and admission proof':
     'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P16 — Claude lifecycle adapter, shadow mode':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 4  -  Hook adapter and enforcement promotion:table-row:FK-P16  -  Claude lifecycle adapter, shadow mode':
     'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P17 — Bypass and outage harness':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 4  -  Hook adapter and enforcement promotion:table-row:FK-P17 — Bypass and outage harness':
     'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P19 — High-confidence refusal enforcement':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 4  -  Hook adapter and enforcement promotion:table-row:FK-P19  -  High-confidence refusal enforcement':
     'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P20 — Second-host feasibility and host registration':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 4  -  Hook adapter and enforcement promotion:table-row:FK-P20  -  Second-host feasibility and host registration':
     'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P21 — Exit evidence manifest and clean-room proof':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 4  -  Hook adapter and enforcement promotion:table-row:FK-P21  -  Exit evidence manifest and clean-room proof':
     'pre-action-refusal',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:1':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 8. Integration scenarios:list-item:1':
     'ci-static-check',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:2':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 8. Integration scenarios:list-item:2':
     'ci-static-check',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:3':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 8. Integration scenarios:list-item:3':
     'ci-static-check',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:4':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 8. Integration scenarios:list-item:4':
     'ci-static-check',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:5':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 8. Integration scenarios:list-item:5':
     'ci-static-check',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:6':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 8. Integration scenarios:list-item:6':
     'ci-static-check',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:7':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 8. Integration scenarios:list-item:7':
     'ci-static-check',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:8':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 8. Integration scenarios:list-item:8':
     'ci-static-check',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:9':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 8. Integration scenarios:list-item:9':
     'ci-static-check',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:10':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 8. Integration scenarios:list-item:10':
     'ci-static-check',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:11':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 8. Integration scenarios:list-item:11':
     'ci-static-check',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:12':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 8. Integration scenarios:list-item:12':
     'ci-static-check',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:13':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 8. Integration scenarios:list-item:13':
     'ci-static-check',
   // Integration scenario 14 (decision-path latency), added by ratified amendment A1.
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:14':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 8. Integration scenarios:list-item:14':
     'ci-static-check',
 }
 
@@ -2805,6 +2866,20 @@ function curatedClassificationFor(sourceId: string, locatorAnchor: string): Rule
   return classification
 }
 const CURATED_ITEM_IDENTITIES: Readonly<Record<string, readonly [string, string]>> = {
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 4. Locked decisions > ### 4.1 Ratification ledger:table-row:L6':
+    [
+      'goal.ratification-ledger.rs1-ratification',
+      'l6-ratifies-rs1-program-rescope-and-gate3-delegation',
+    ],
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 4. Locked decisions > ### 4.1 Ratification ledger:table-row:L7':
+    [
+      'goal.ratification-ledger.rs2-ratification',
+      'l7-ratifies-rs2-gate1-scoped-reratification-and-rs1-propagation',
+    ],
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 9. Goal exit criterion:paragraph:2':
+    ['goal.exit-supersession', 'inherited-nine-exit-tests-superseded-by-rs1-4-rs2-3'],
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 16. Completion accounting for the infrastructure requirements:paragraph:1':
+    ['goal.exit-supersession', 'inherited-nine-exit-tests-superseded-by-rs1-4-rs2-3'],
   'fk-charter:D1': ['goal.separation', 'separate-foreman-kernel-goal'],
   'fk-charter:D2': ['canon.operational-authority-boundary', 'git-canon-sqlite-operational-split'],
   'fk-charter:D3': ['kernel.surface-admission-separation', 'read-control-admission-separated'],
@@ -2831,118 +2906,112 @@ const CURATED_ITEM_IDENTITIES: Readonly<Record<string, readonly [string, string]
   'fk-charter:D18': ['kernel.authorize-action-owner', 'provider-neutral-policy-engine'],
   'fk-charter:D19': ['repository.read-confidentiality', 'admission-bound-contained-read'],
   'fk-charter:D20': ['host.support-claim', 'first-release-enforcement-is-host-specific'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:2': [
-    'goal-exit.control-catalogs',
-    'pinned-images-expose-separated-catalogs-with-read-confidentiality',
-  ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:3': [
-    'goal-exit.scenario-proof',
-    'clean-room-confidentiality-portability-and-admission-scenarios-pass',
-  ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:4': [
-    'goal-exit.durable-state',
-    'sqlite-recovery-concurrency-and-projection-evidence-pass',
-  ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:5': [
-    'goal-exit.enforcement-promotion',
-    'refusal-vectors-bypass-sweeps-and-independent-review-precede-enforcement',
-  ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:6': [
-    'goal-exit.ci-backstop',
-    'ci-catches-out-of-scope-mutation-and-missing-enrollment-before-promotion',
-  ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:7': [
-    'goal-exit.authority-nonmanufacture',
-    'tools-and-container-credentials-cannot-manufacture-protected-authority-or-effects',
-  ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:8': [
-    'goal-exit.evidence-manifest',
-    'committed-manifest-binds-source-artifact-host-review-and-mutation-evidence',
-  ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:9': [
-    'goal-exit.honest-reporting',
-    'final-report-separates-assurance-and-unsupported-host-claims',
-  ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:2': [
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 9. Goal exit criterion:list-item:2':
+    [
+      'goal-exit.control-catalogs',
+      'pinned-images-expose-separated-catalogs-with-read-confidentiality',
+    ],
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 9. Goal exit criterion:list-item:3':
+    [
+      'goal-exit.scenario-proof',
+      'clean-room-confidentiality-portability-and-admission-scenarios-pass',
+    ],
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 9. Goal exit criterion:list-item:4':
+    ['goal-exit.durable-state', 'sqlite-recovery-concurrency-and-projection-evidence-pass'],
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 9. Goal exit criterion:list-item:5':
+    [
+      'goal-exit.enforcement-promotion',
+      'refusal-vectors-bypass-sweeps-and-independent-review-precede-enforcement',
+    ],
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 9. Goal exit criterion:list-item:6':
+    [
+      'goal-exit.ci-backstop',
+      'ci-catches-out-of-scope-mutation-and-missing-enrollment-before-promotion',
+    ],
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 9. Goal exit criterion:list-item:7':
+    [
+      'goal-exit.authority-nonmanufacture',
+      'tools-and-container-credentials-cannot-manufacture-protected-authority-or-effects',
+    ],
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 9. Goal exit criterion:list-item:8':
+    [
+      'goal-exit.evidence-manifest',
+      'committed-manifest-binds-source-artifact-host-review-and-mutation-evidence',
+    ],
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 9. Goal exit criterion:list-item:9':
+    ['goal-exit.honest-reporting', 'final-report-separates-assurance-and-unsupported-host-claims'],
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 11. Stop conditions:list-item:2': [
     'goal-stop.ratification-drift',
     'stop-on-unratified-review-change',
   ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:4': [
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 11. Stop conditions:list-item:4': [
     'goal-stop.stage-contract-boundary',
     'stop-on-out-of-parcel-stage-contract-change',
   ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:5': [
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 11. Stop conditions:list-item:5': [
     'goal-stop.allowed-files',
     'stop-on-unlisted-required-file',
   ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:6': [
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 11. Stop conditions:list-item:6': [
     'goal-stop.surfaces-authority-confusion',
     'stop-if-exact-paths-require-treating-surfaces-as-permission',
   ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:7': [
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 11. Stop conditions:list-item:7': [
     'goal-stop.mediation-overclaim',
     'stop-on-complete-shell-or-unsupported-host-mediation-claim',
   ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:8': [
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 11. Stop conditions:list-item:8': [
     'goal-stop.protected-authority-mint',
     'stop-on-tool-manufactured-human-independent-merge-or-closure-authority',
   ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:9': [
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 11. Stop conditions:list-item:9': [
     'goal-stop.external-capability',
     'stop-on-container-external-or-broad-host-capability',
   ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:10': [
-    'goal-stop.identity-and-control-admission',
-    'stop-on-self-asserted-identity-or-read-client-control-discovery',
-  ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:11': [
-    'goal-stop.read-confinement',
-    'stop-on-arbitrary-host-path-or-state-volume-read',
-  ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:12': [
-    'goal-stop.migration-history',
-    'stop-on-manufactured-historical-approval-or-authorization',
-  ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:13': [
-    'goal-stop.security-boundary',
-    'stop-on-security-boundary-that-cannot-close-in-parcel',
-  ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:14': [
-    'goal-stop.tripwire',
-    'stop-on-repeated-tripwire-or-rework-cap',
-  ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:15': [
-    'goal-stop.worktree-isolation',
-    'stop-on-ambient-or-other-worktree-mutation',
-  ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:17': [
-    'goal-stop.exit-evidence',
-    'stop-on-empty-queue-with-unproved-exit',
-  ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 0 — Authority and contracts:paragraph:1':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 11. Stop conditions:list-item:10':
+    [
+      'goal-stop.identity-and-control-admission',
+      'stop-on-self-asserted-identity-or-read-client-control-discovery',
+    ],
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 11. Stop conditions:list-item:11':
+    ['goal-stop.read-confinement', 'stop-on-arbitrary-host-path-or-state-volume-read'],
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 11. Stop conditions:list-item:12':
+    ['goal-stop.migration-history', 'stop-on-manufactured-historical-approval-or-authorization'],
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 11. Stop conditions:list-item:13':
+    ['goal-stop.security-boundary', 'stop-on-security-boundary-that-cannot-close-in-parcel'],
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 11. Stop conditions:list-item:14':
+    ['goal-stop.tripwire', 'stop-on-repeated-tripwire-or-rework-cap'],
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 11. Stop conditions:list-item:15':
+    ['goal-stop.worktree-isolation', 'stop-on-ambient-or-other-worktree-mutation'],
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 11. Stop conditions:list-item:17':
+    ['goal-stop.exit-evidence', 'stop-on-empty-queue-with-unproved-exit'],
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 0  -  Authority and contracts:paragraph:1':
     [
       'wave-exit.authority-contracts',
       'wave-zero-contracts-path-authority-and-reconciliations-complete',
     ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 1 — Pure trust core:paragraph:1':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 1  -  Pure trust core:paragraph:1':
     [
       'wave-exit.pure-trust-core',
       'wave-one-evaluators-deterministic-contracted-and-clean-room-proven',
     ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 2 — Stateless read-only MCP and container:paragraph:1':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 2  -  Stateless read-only MCP and container:paragraph:1':
     ['wave-exit.stateless-verifier', 'wave-two-pinned-read-only-image-portable-and-state-confined'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:paragraph:1':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 3  -  Durable operational state:paragraph:2':
     [
       'wave-exit.durable-state',
       'wave-three-ownership-recovery-idempotency-and-projection-invariants-hold',
     ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:paragraph:1':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 4  -  Hook adapter and enforcement promotion:paragraph:2':
     [
       'wave-exit.enforcement-promotion',
       'wave-four-refusal-detection-recovery-and-evidence-claims-are-bound',
     ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 13. Gate 1 decision list:list-item:11':
-    ['gate3.merge-authority', 'human-owned-nondelegated'],
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 13. Gate 1 decision list:list-item:11':
+    [
+      'gate3.merge-authority',
+      'gate3-human-owned-for-main-pr-settings-deployment-and-destructive-cleanup-with-green-chain-integration-merge-step-delegation-voided-by-any-red-step',
+    ],
   'fk-plan-review-findings:R1': [
     'authorization.engine-placement',
     'dedicated-policy-engine-parcel-added',
@@ -2988,7 +3057,10 @@ const CURATED_ITEM_IDENTITIES: Readonly<Record<string, readonly [string, string]
   'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:list-item:4':
     ['gate2.dispatch-grant', 'coordinator-may-dispatch-fk-p0-through-fk-p21-conditionally'],
   'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## COORDINATOR OWNERSHIP — read before dispatching anything:list-item:5':
-    ['gate3.merge-authority', 'human-owned-nondelegated'],
+    [
+      'gate3.merge-authority',
+      'gate3-human-owned-for-main-pr-settings-deployment-and-destructive-cleanup-with-green-chain-integration-merge-step-delegation-voided-by-any-red-step',
+    ],
   'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Role and canon:paragraph:1':
     [
       'verification.issue-authority',
@@ -3025,7 +3097,10 @@ const CURATED_ITEM_IDENTITIES: Readonly<Record<string, readonly [string, string]
   'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:5':
     ['goal.external-effects-authorization', 'goal-authorizes-no-external-system-effects'],
   'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:6':
-    ['gate3.merge-authority', 'human-owned-nondelegated'],
+    [
+      'gate3.merge-authority',
+      'gate3-human-owned-for-main-pr-settings-deployment-and-destructive-cleanup-with-green-chain-integration-merge-step-delegation-voided-by-any-red-step',
+    ],
   'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Standing authorizations and their limits:list-item:7':
     [
       'scm.external-write-authority',
@@ -3052,7 +3127,10 @@ const CURATED_ITEM_IDENTITIES: Readonly<Record<string, readonly [string, string]
   'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:9':
     ['review.finding-triage', 'findings-triaged-and-disputed-blockers-reproduced'],
   'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:10':
-    ['gate3.merge-authority', 'human-owned-nondelegated'],
+    [
+      'gate3.merge-authority',
+      'gate3-human-owned-for-main-pr-settings-deployment-and-destructive-cleanup-with-green-chain-integration-merge-step-delegation-voided-by-any-red-step',
+    ],
   'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Per-parcel algorithm:list-item:11':
     ['closure.stage-f-prerequisite', 'stage-f-only-after-human-merge'],
   'fk-loop-directive:md-block:# Foreman Kernel — Coordinator Loop Directive > ## Queue and dependency order:paragraph:1':
@@ -3365,9 +3443,11 @@ const CURATED_ITEM_IDENTITIES: Readonly<Record<string, readonly [string, string]
   ],
   'spec-linter-cli: *   1  at least one schema or semantic-invariant violation (every violation on stderr)':
     ['spec-linter.exit-code.one', 'schema-or-semantic-violations-exit-one'],
-  'spec-linter-cli: *   2  usage error: missing/unreadable path, bad invocation, or directory with no .md files':
-    ['spec-linter.exit-code.two', 'usage-and-input-errors-exit-two'],
-  'spec-linter-cli:process.exitCode = run(process.argv.slice(2))': [
+  'spec-linter-cli: *   2  usage error: missing/unreadable path, bad invocation, a non-absolute': [
+    'spec-linter.exit-code.two',
+    'usage-and-input-errors-exit-two',
+  ],
+  'spec-linter-cli:process.exitCode = await run(process.argv.slice(2))': [
     'spec-linter.process-entrypoint',
     'process-exit-code-is-set-from-cli-run-result',
   ],
@@ -3641,48 +3721,46 @@ const CURATED_ITEM_IDENTITIES: Readonly<Record<string, readonly [string, string]
     'permission-profile.shaping-agent.deny.write-skills',
     'configured-denial',
   ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel:paragraph:1': [
+  'fk-charter:md-block:# Foreman Kernel Development Charter:paragraph:1': [
     'goal.ratification-status',
     'fully-ratified-with-scoped-gate1-and-standing-gate2',
   ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 2. Problem statement:list-item:1': [
-    'standing-constraints.read-obligation',
-    'agents-reread-and-remember-standing-constraints',
-  ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 4. Locked decisions:paragraph:1': [
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 2. Problem statement:list-item:1':
+    ['standing-constraints.read-obligation', 'agents-reread-and-remember-standing-constraints'],
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 4. Locked decisions:paragraph:1': [
     'gate1.ratification-record',
     'original-and-scoped-reratification-bind-d1-through-d20',
   ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 0 — Authority and contracts:table-row:FK-P2 — Spec-body compiler':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 0  -  Authority and contracts:table-row:FK-P2  -  Spec-body compiler':
     ['parcel.fk-p2', 'spec-compiler-depends-on-fk-p0-and-fk-p1'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P18 — CI scope and state-evidence backstops':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 4  -  Hook adapter and enforcement promotion:table-row:FK-P18  -  CI scope and state-evidence backstops':
     ['parcel.fk-p18', 'ci-backstop-depends-on-fk-p17-and-owns-ci-files'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:1': [
-    'goal.exit-merge',
-    'all-parcels-require-human-gate3-merge',
-  ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 10. Human gates and standing authorizations requested > ### Gate 1 — charter ratification:paragraph:1':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 9. Goal exit criterion:list-item:1':
+    [
+      'goal.exit-merge',
+      'gate3-human-owned-for-main-pr-settings-deployment-and-destructive-cleanup-with-green-chain-integration-merge-step-delegation-voided-by-any-red-step',
+    ],
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 10. Human gates and standing authorizations requested > ### Gate 1  -  charter ratification:paragraph:1':
     ['gate1.reratification-status', 'scoped-r1-r13-reratification-is-in-force'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 10. Human gates and standing authorizations requested > ### Gate 2 — parcel dispatch:paragraph:1':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 10. Human gates and standing authorizations requested > ### Gate 2  -  parcel dispatch:paragraph:1':
     ['gate2.dispatch-grant', 'coordinator-may-dispatch-fk-p0-through-fk-p21-conditionally'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 10. Human gates and standing authorizations requested > ### Gate 3 — merge:paragraph:1':
-    ['gate3.merge-authority', 'human-owned-nondelegated'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:1': [
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 10. Human gates and standing authorizations requested > ### Gate 3  -  merge:paragraph:1':
+    [
+      'gate3.merge-authority',
+      'gate3-human-owned-for-main-pr-settings-deployment-and-destructive-cleanup-with-green-chain-integration-merge-step-delegation-voided-by-any-red-step',
+    ],
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 11. Stop conditions:list-item:1': [
     'goal.stop.gate1-ambiguity',
     'stop-when-gate1-or-locked-decision-is-ambiguous',
   ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:3': [
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 11. Stop conditions:list-item:3': [
     'goal.stop.serialization-ownership',
     'stop-when-owned-serialization-point-has-no-ratified-sequence',
   ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:16': [
-    'goal.stop.user-change-collision',
-    'stop-on-user-owned-required-file-collision',
-  ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 13. Gate 1 decision list:paragraph:2': [
-    'gate1.decision-list-record',
-    'ratification-and-dispatch-history-recorded',
-  ],
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 11. Stop conditions:list-item:16':
+    ['goal.stop.user-change-collision', 'stop-on-user-owned-required-file-collision'],
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 13. Gate 1 decision list:paragraph:2':
+    ['gate1.decision-list-record', 'ratification-and-dispatch-history-recorded'],
   'fk-plan-review-findings:md-block:# Foreman Kernel — Plan-Level Adversarial Review Findings > ## Scoped Gate 1 re-open:list-item:6':
     ['gate1.review-reratification-record', 'r1-through-r13-reopen-closed-and-gate2-active'],
   'spec-convention:md-block:# Spec-Driven Development Convention > ## 10. Adoption Path:list-item:4':
@@ -3710,108 +3788,88 @@ const CURATED_ITEM_IDENTITIES: Readonly<Record<string, readonly [string, string]
       'permission-profile.reviewer-shell-access',
       'bare-shell-denial-prohibited-for-hostile-probing',
     ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition:paragraph:1': [
-    'verification.issue-authority',
-    'architecture-risk-two-fresh-independent-reviews-required',
-  ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:1':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition:paragraph:1':
+    ['verification.issue-authority', 'architecture-risk-two-fresh-independent-reviews-required'],
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:1':
     ['enforcement.refusal.worktree-branch', 'worktree-and-branch-mismatch-refusal-class'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:2':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:2':
     ['enforcement.refusal.path-scope', 'outside-allowed-files-and-frozen-surface-refusal-class'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:3':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:3':
     ['enforcement.refusal.reviewer-mutation', 'reviewer-mutation-and-dirty-worktree-refusal-class'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:4':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:4':
     [
       'enforcement.refusal.policy-bypass',
       'policy-self-modification-and-mediated-bypass-refusal-class',
     ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:5':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:5':
     ['enforcement.refusal.state-lease-gate', 'lease-revision-and-gate-refusal-class'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 0 — Authority and contracts:table-row:FK-P0 — Canon authority and enforcement registry':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 0  -  Authority and contracts:table-row:FK-P0  -  Canon authority and enforcement registry':
     ['parcel.fk-p0', 'authority-registry-first-with-no-dependency'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 0 — Authority and contracts:table-row:FK-P1 — Lifecycle, admission, and decision contracts':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 0  -  Authority and contracts:table-row:FK-P1 — Lifecycle, admission, and decision contracts':
     ['parcel.fk-p1', 'lifecycle-contracts-depend-on-fk-p0'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 1 — Pure trust core:table-row:FK-P3 — Pure dispatch decisions':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 1  -  Pure trust core:table-row:FK-P3  -  Pure dispatch decisions':
     ['parcel.fk-p3', 'pure-dispatch-depends-on-fk-p1'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 1 — Pure trust core:table-row:FK-P4 — Verifier facade':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 1  -  Pure trust core:table-row:FK-P4  -  Verifier facade':
     ['parcel.fk-p4', 'verifier-facade-dependency-contract'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 1 — Pure trust core:table-row:FK-P5 — Clean-room trust-core spike':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 1  -  Pure trust core:table-row:FK-P5  -  Clean-room trust-core spike':
     ['parcel.fk-p5', 'clean-room-spike-depends-on-fk-p4'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 2 — Stateless read-only MCP and container:table-row:FK-P6 — Read-only MCP server':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 2  -  Stateless read-only MCP and container:table-row:FK-P6  -  Read-only MCP server':
     ['parcel.fk-p6', 'read-only-mcp-dependency-contract'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 2 — Stateless read-only MCP and container:table-row:FK-P7 — Stateless verifier image and launcher':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 2  -  Stateless read-only MCP and container:table-row:FK-P7  -  Stateless verifier image and launcher':
     ['parcel.fk-p7', 'stateless-image-depends-on-fk-p6'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 2 — Stateless read-only MCP and container:table-row:FK-P8 — Stateless harness portability proof':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 2  -  Stateless read-only MCP and container:table-row:FK-P8  -  Stateless harness portability proof':
     ['parcel.fk-p8', 'portability-proof-depends-on-fk-p7'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P9 — SQLite storage and migration ABI':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 3  -  Durable operational state:table-row:FK-P9  -  SQLite storage and migration ABI':
     ['parcel.fk-p9', 'storage-abi-depends-on-fk-p1'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P10 — Lease and transition engine':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 3  -  Durable operational state:table-row:FK-P10  -  Lease and transition engine':
     ['parcel.fk-p10', 'lease-engine-depends-on-fk-p9'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P11 — Legacy import and projection engine':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 3  -  Durable operational state:table-row:FK-P11  -  Legacy import and projection engine':
     ['parcel.fk-p11', 'projection-engine-dependency-contract'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P12 — Authorization policy engine':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 3  -  Durable operational state:table-row:FK-P12  -  Authorization policy engine':
     ['parcel.fk-p12', 'authorization-engine-dependency-contract'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P13 — Admission-protected control catalog':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 3  -  Durable operational state:table-row:FK-P13  -  Admission-protected control catalog':
     ['parcel.fk-p13', 'control-catalog-dependency-contract'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P14 — Stateful image composition and operator lifecycle':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 3  -  Durable operational state:table-row:FK-P14  -  Stateful image composition and operator lifecycle':
     ['parcel.fk-p14', 'stateful-image-dependency-contract'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P15 — Stateful restart and admission proof':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 3  -  Durable operational state:table-row:FK-P15  -  Stateful restart and admission proof':
     ['parcel.fk-p15', 'restart-proof-depends-on-fk-p14'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P16 — Claude lifecycle adapter, shadow mode':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 4  -  Hook adapter and enforcement promotion:table-row:FK-P16  -  Claude lifecycle adapter, shadow mode':
     ['parcel.fk-p16', 'claude-adapter-dependency-and-ownership-contract'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P17 — Bypass and outage harness':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 4  -  Hook adapter and enforcement promotion:table-row:FK-P17 — Bypass and outage harness':
     ['parcel.fk-p17', 'bypass-harness-depends-on-fk-p16'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P19 — High-confidence refusal enforcement':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 4  -  Hook adapter and enforcement promotion:table-row:FK-P19  -  High-confidence refusal enforcement':
     ['parcel.fk-p19', 'enforcement-promotion-dependency-contract'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P20 — Second-host feasibility and host registration':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 4  -  Hook adapter and enforcement promotion:table-row:FK-P20  -  Second-host feasibility and host registration':
     ['parcel.fk-p20', 'second-host-probe-depends-on-fk-p19'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P21 — Exit evidence manifest and clean-room proof':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 4  -  Hook adapter and enforcement promotion:table-row:FK-P21  -  Exit evidence manifest and clean-room proof':
     ['parcel.fk-p21', 'exit-evidence-dependency-contract'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:1': [
-    'integration-scenario.clean-room-lint',
-    'compile-and-refuse-path-ambiguity',
-  ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:2': [
-    'integration-scenario.read-confidentiality',
-    'bounded-repository-read-with-containment',
-  ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:3': [
-    'integration-scenario.pure-routing',
-    'repeatable-routing-with-zero-writes',
-  ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:4': [
-    'integration-scenario.structural-honesty',
-    'tampered-chain-never-overclaimed',
-  ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:5': [
-    'integration-scenario.control-admission',
-    'anonymous-control-denied',
-  ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:6': [
-    'integration-scenario.restart-recovery',
-    'restart-restores-state-and-projection',
-  ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:7': [
-    'integration-scenario.split-brain',
-    'single-lease-and-stale-transition-conflict',
-  ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:8': [
-    'integration-scenario.scope-refusal',
-    'structured-refusal-plus-diff-and-ci-detection',
-  ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:9': [
-    'integration-scenario.reviewer-posture',
-    'reviewer-mutation-and-dirty-completion-refuse',
-  ],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:10':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 8. Integration scenarios:list-item:1':
+    ['integration-scenario.clean-room-lint', 'compile-and-refuse-path-ambiguity'],
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 8. Integration scenarios:list-item:2':
+    ['integration-scenario.read-confidentiality', 'bounded-repository-read-with-containment'],
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 8. Integration scenarios:list-item:3':
+    ['integration-scenario.pure-routing', 'repeatable-routing-with-zero-writes'],
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 8. Integration scenarios:list-item:4':
+    ['integration-scenario.structural-honesty', 'tampered-chain-never-overclaimed'],
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 8. Integration scenarios:list-item:5':
+    ['integration-scenario.control-admission', 'anonymous-control-denied'],
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 8. Integration scenarios:list-item:6':
+    ['integration-scenario.restart-recovery', 'restart-restores-state-and-projection'],
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 8. Integration scenarios:list-item:7':
+    ['integration-scenario.split-brain', 'single-lease-and-stale-transition-conflict'],
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 8. Integration scenarios:list-item:8':
+    ['integration-scenario.scope-refusal', 'structured-refusal-plus-diff-and-ci-detection'],
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 8. Integration scenarios:list-item:9':
+    ['integration-scenario.reviewer-posture', 'reviewer-mutation-and-dirty-completion-refuse'],
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 8. Integration scenarios:list-item:10':
     ['integration-scenario.human-gate', 'require-human-with-nonlooping-stop-report'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:11':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 8. Integration scenarios:list-item:11':
     ['integration-scenario.outage-posture', 'mutation-blocked-and-read-only-degraded'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:12':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 8. Integration scenarios:list-item:12':
     ['integration-scenario.enrollment-honesty', 'bypass-refusal-distinct-from-absence-detection'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:13':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 8. Integration scenarios:list-item:13':
     ['integration-scenario.host-capability', 'supported-host-probe-and-gap-reporting'],
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:14':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 8. Integration scenarios:list-item:14':
     [
       'integration-scenario.decision-path-latency',
       'warm-kernel-meets-the-d21-budget-with-outage-and-stale-cache-evidence',
@@ -3835,6 +3893,136 @@ function authorityIdentityFor(
     : { authoritySubject: identity[0], authorityClaim: identity[1] }
 }
 const CURATED_ITEM_APPLICABILITY = {
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 4. Locked decisions > ### 4.1 Ratification ledger:table-row:L6':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator', 'shaper', 'builder', 'reviewer', 'kernel'],
+      stages: [
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'receipt-validation',
+      ],
+      hosts: ['any'],
+    },
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 4. Locked decisions > ### 4.1 Ratification ledger:table-row:L7':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator', 'shaper', 'builder', 'reviewer', 'kernel'],
+      stages: [
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'receipt-validation',
+      ],
+      hosts: ['any'],
+    },
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 9. Goal exit criterion:paragraph:2':
+    {
+      goals: ['foreman-kernel'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 16. Completion accounting for the infrastructure requirements:paragraph:1':
+    {
+      goals: ['foreman-kernel'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
   'fk-charter:D1': {
     goals: ['foreman-kernel'],
     roles: ['ci'],
@@ -4176,7 +4364,7 @@ const CURATED_ITEM_APPLICABILITY = {
     operations: ['repo-read', 'repo-mutation', 'control-call'],
     hosts: ['claude-windows-docker-loaded', 'unsupported-host'],
   },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel:paragraph:1': {
+  'fk-charter:md-block:# Foreman Kernel Development Charter:paragraph:1': {
     goals: ['foreman-kernel'],
     roles: [
       'developer',
@@ -4218,49 +4406,50 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 2. Problem statement:list-item:1': {
-    goals: ['foreman-kernel'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 4. Locked decisions:paragraph:1': {
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 2. Problem statement:list-item:1':
+    {
+      goals: ['foreman-kernel'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 4. Locked decisions:paragraph:1': {
     goals: ['foreman-kernel'],
     roles: ['reviewer'],
     stages: ['adversarial-review', 'merge'],
@@ -4282,7 +4471,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 0 — Authority and contracts:table-row:FK-P2 — Spec-body compiler':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 0  -  Authority and contracts:table-row:FK-P2  -  Spec-body compiler':
     {
       goals: ['foreman-kernel'],
       roles: ['coordinator'],
@@ -4290,7 +4479,7 @@ const CURATED_ITEM_APPLICABILITY = {
       operations: ['state-transition'],
       hosts: ['provider-neutral'],
     },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P18 — CI scope and state-evidence backstops':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 4  -  Hook adapter and enforcement promotion:table-row:FK-P18  -  CI scope and state-evidence backstops':
     {
       goals: ['foreman-kernel'],
       roles: ['coordinator'],
@@ -4298,49 +4487,50 @@ const CURATED_ITEM_APPLICABILITY = {
       operations: ['state-transition'],
       hosts: ['provider-neutral'],
     },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:1': {
-    goals: ['foreman-kernel'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 10. Human gates and standing authorizations requested > ### Gate 1 — charter ratification:paragraph:1':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 9. Goal exit criterion:list-item:1':
+    {
+      goals: ['foreman-kernel'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 10. Human gates and standing authorizations requested > ### Gate 1  -  charter ratification:paragraph:1':
     {
       goals: ['foreman-kernel'],
       roles: ['reviewer'],
@@ -4363,7 +4553,7 @@ const CURATED_ITEM_APPLICABILITY = {
         'ci',
       ],
     },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 10. Human gates and standing authorizations requested > ### Gate 2 — parcel dispatch:paragraph:1':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 10. Human gates and standing authorizations requested > ### Gate 2  -  parcel dispatch:paragraph:1':
     {
       goals: ['foreman-kernel'],
       roles: ['coordinator'],
@@ -4371,7 +4561,7 @@ const CURATED_ITEM_APPLICABILITY = {
       operations: ['state-transition'],
       hosts: ['provider-neutral'],
     },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 10. Human gates and standing authorizations requested > ### Gate 3 — merge:paragraph:1':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 10. Human gates and standing authorizations requested > ### Gate 3  -  merge:paragraph:1':
     {
       goals: ['foreman-kernel'],
       roles: ['coordinator'],
@@ -4379,7 +4569,7 @@ const CURATED_ITEM_APPLICABILITY = {
       operations: ['repo-mutation', 'state-transition'],
       hosts: ['any'],
     },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:1': {
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 11. Stop conditions:list-item:1': {
     goals: ['foreman-kernel'],
     roles: [
       'developer',
@@ -4421,7 +4611,7 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:3': {
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 11. Stop conditions:list-item:3': {
     goals: ['foreman-kernel'],
     roles: [
       'developer',
@@ -4463,49 +4653,50 @@ const CURATED_ITEM_APPLICABILITY = {
       'ci',
     ],
   },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:16': {
-    goals: ['foreman-kernel'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 13. Gate 1 decision list:list-item:11':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 11. Stop conditions:list-item:16':
+    {
+      goals: ['foreman-kernel'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 13. Gate 1 decision list:list-item:11':
     {
       goals: ['foreman-kernel'],
       roles: ['coordinator'],
@@ -4513,48 +4704,49 @@ const CURATED_ITEM_APPLICABILITY = {
       operations: ['state-transition'],
       hosts: ['any'],
     },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 13. Gate 1 decision list:paragraph:2': {
-    goals: ['foreman-kernel'],
-    roles: [
-      'developer',
-      'coordinator',
-      'shaper',
-      'builder',
-      'reviewer',
-      'ci',
-      'host-adapter',
-      'kernel',
-      'operator',
-    ],
-    stages: [
-      'stage-zero',
-      'shaping',
-      'step-zero',
-      'build',
-      'deterministic-verify',
-      'adversarial-review',
-      'merge',
-      'closure',
-      'runtime',
-    ],
-    operations: [
-      'source-inventory',
-      'spec-mutation',
-      'repo-read',
-      'repo-mutation',
-      'state-transition',
-      'control-call',
-      'receipt-validation',
-      'external-write',
-    ],
-    hosts: [
-      'provider-neutral',
-      'claude-windows-docker-loaded',
-      'claude-windows-docker-unenrolled',
-      'unsupported-host',
-      'ci',
-    ],
-  },
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 13. Gate 1 decision list:paragraph:2':
+    {
+      goals: ['foreman-kernel'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
   'fk-plan-review-findings:R1': {
     goals: ['foreman-kernel'],
     roles: [
@@ -7943,24 +8135,23 @@ const CURATED_ITEM_APPLICABILITY = {
       ],
       hosts: ['ci'],
     },
-  'spec-linter-cli: *   2  usage error: missing/unreadable path, bad invocation, or directory with no .md files':
-    {
-      goals: ['all-foreman-goals'],
-      roles: ['ci'],
-      stages: ['deterministic-verify'],
-      operations: [
-        'source-inventory',
-        'spec-mutation',
-        'repo-read',
-        'repo-mutation',
-        'state-transition',
-        'control-call',
-        'receipt-validation',
-        'external-write',
-      ],
-      hosts: ['ci'],
-    },
-  'spec-linter-cli:process.exitCode = run(process.argv.slice(2))': {
+  'spec-linter-cli: *   2  usage error: missing/unreadable path, bad invocation, a non-absolute': {
+    goals: ['all-foreman-goals'],
+    roles: ['ci'],
+    stages: ['deterministic-verify'],
+    operations: [
+      'source-inventory',
+      'spec-mutation',
+      'repo-read',
+      'repo-mutation',
+      'state-transition',
+      'control-call',
+      'receipt-validation',
+      'external-write',
+    ],
+    hosts: ['ci'],
+  },
+  'spec-linter-cli:process.exitCode = await run(process.argv.slice(2))': {
     goals: ['all-foreman-goals'],
     roles: ['ci'],
     stages: ['deterministic-verify'],
@@ -11005,161 +11196,7 @@ const CURATED_ITEM_APPLICABILITY = {
         'ci',
       ],
     },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:2': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['deterministic-verify', 'merge', 'closure'],
-    operations: ['source-inventory', 'state-transition'],
-    hosts: ['any'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:3': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['deterministic-verify', 'merge', 'closure'],
-    operations: ['source-inventory', 'state-transition'],
-    hosts: ['any'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:4': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['deterministic-verify', 'merge', 'closure'],
-    operations: ['source-inventory', 'state-transition'],
-    hosts: ['any'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:5': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['deterministic-verify', 'merge', 'closure'],
-    operations: ['source-inventory', 'state-transition'],
-    hosts: ['any'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:6': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['deterministic-verify', 'merge', 'closure'],
-    operations: ['source-inventory', 'state-transition'],
-    hosts: ['any'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:7': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['deterministic-verify', 'merge', 'closure'],
-    operations: ['source-inventory', 'state-transition'],
-    hosts: ['any'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:8': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['deterministic-verify', 'merge', 'closure'],
-    operations: ['source-inventory', 'state-transition'],
-    hosts: ['any'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 9. Goal exit criterion:list-item:9': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['deterministic-verify', 'merge', 'closure'],
-    operations: ['source-inventory', 'state-transition'],
-    hosts: ['any'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:2': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['any'],
-    operations: ['any'],
-    hosts: ['any'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:4': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['any'],
-    operations: ['any'],
-    hosts: ['any'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:5': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['any'],
-    operations: ['any'],
-    hosts: ['any'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:6': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['any'],
-    operations: ['any'],
-    hosts: ['any'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:7': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['any'],
-    operations: ['any'],
-    hosts: ['any'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:8': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['any'],
-    operations: ['any'],
-    hosts: ['any'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:9': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['any'],
-    operations: ['any'],
-    hosts: ['any'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:10': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['any'],
-    operations: ['any'],
-    hosts: ['any'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:11': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['any'],
-    operations: ['any'],
-    hosts: ['any'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:12': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['any'],
-    operations: ['any'],
-    hosts: ['any'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:13': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['any'],
-    operations: ['any'],
-    hosts: ['any'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:14': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['any'],
-    operations: ['any'],
-    hosts: ['any'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:15': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['any'],
-    operations: ['any'],
-    hosts: ['any'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 11. Stop conditions:list-item:17': {
-    goals: ['foreman-kernel'],
-    roles: ['coordinator'],
-    stages: ['any'],
-    operations: ['any'],
-    hosts: ['any'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 0 — Authority and contracts:paragraph:1':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 9. Goal exit criterion:list-item:2':
     {
       goals: ['foreman-kernel'],
       roles: ['coordinator'],
@@ -11167,7 +11204,7 @@ const CURATED_ITEM_APPLICABILITY = {
       operations: ['source-inventory', 'state-transition'],
       hosts: ['any'],
     },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 1 — Pure trust core:paragraph:1':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 9. Goal exit criterion:list-item:3':
     {
       goals: ['foreman-kernel'],
       roles: ['coordinator'],
@@ -11175,7 +11212,7 @@ const CURATED_ITEM_APPLICABILITY = {
       operations: ['source-inventory', 'state-transition'],
       hosts: ['any'],
     },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 2 — Stateless read-only MCP and container:paragraph:1':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 9. Goal exit criterion:list-item:4':
     {
       goals: ['foreman-kernel'],
       roles: ['coordinator'],
@@ -11183,7 +11220,7 @@ const CURATED_ITEM_APPLICABILITY = {
       operations: ['source-inventory', 'state-transition'],
       hosts: ['any'],
     },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:paragraph:1':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 9. Goal exit criterion:list-item:5':
     {
       goals: ['foreman-kernel'],
       roles: ['coordinator'],
@@ -11191,7 +11228,7 @@ const CURATED_ITEM_APPLICABILITY = {
       operations: ['source-inventory', 'state-transition'],
       hosts: ['any'],
     },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:paragraph:1':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 9. Goal exit criterion:list-item:6':
     {
       goals: ['foreman-kernel'],
       roles: ['coordinator'],
@@ -11199,14 +11236,184 @@ const CURATED_ITEM_APPLICABILITY = {
       operations: ['source-inventory', 'state-transition'],
       hosts: ['any'],
     },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition:paragraph:1': {
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 9. Goal exit criterion:list-item:7':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['deterministic-verify', 'merge', 'closure'],
+      operations: ['source-inventory', 'state-transition'],
+      hosts: ['any'],
+    },
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 9. Goal exit criterion:list-item:8':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['deterministic-verify', 'merge', 'closure'],
+      operations: ['source-inventory', 'state-transition'],
+      hosts: ['any'],
+    },
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 9. Goal exit criterion:list-item:9':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['deterministic-verify', 'merge', 'closure'],
+      operations: ['source-inventory', 'state-transition'],
+      hosts: ['any'],
+    },
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 11. Stop conditions:list-item:2': {
     goals: ['foreman-kernel'],
-    roles: ['reviewer'],
-    stages: ['adversarial-review'],
-    operations: ['receipt-validation'],
+    roles: ['coordinator'],
+    stages: ['any'],
+    operations: ['any'],
     hosts: ['any'],
   },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:1':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 11. Stop conditions:list-item:4': {
+    goals: ['foreman-kernel'],
+    roles: ['coordinator'],
+    stages: ['any'],
+    operations: ['any'],
+    hosts: ['any'],
+  },
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 11. Stop conditions:list-item:5': {
+    goals: ['foreman-kernel'],
+    roles: ['coordinator'],
+    stages: ['any'],
+    operations: ['any'],
+    hosts: ['any'],
+  },
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 11. Stop conditions:list-item:6': {
+    goals: ['foreman-kernel'],
+    roles: ['coordinator'],
+    stages: ['any'],
+    operations: ['any'],
+    hosts: ['any'],
+  },
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 11. Stop conditions:list-item:7': {
+    goals: ['foreman-kernel'],
+    roles: ['coordinator'],
+    stages: ['any'],
+    operations: ['any'],
+    hosts: ['any'],
+  },
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 11. Stop conditions:list-item:8': {
+    goals: ['foreman-kernel'],
+    roles: ['coordinator'],
+    stages: ['any'],
+    operations: ['any'],
+    hosts: ['any'],
+  },
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 11. Stop conditions:list-item:9': {
+    goals: ['foreman-kernel'],
+    roles: ['coordinator'],
+    stages: ['any'],
+    operations: ['any'],
+    hosts: ['any'],
+  },
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 11. Stop conditions:list-item:10':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['any'],
+      operations: ['any'],
+      hosts: ['any'],
+    },
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 11. Stop conditions:list-item:11':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['any'],
+      operations: ['any'],
+      hosts: ['any'],
+    },
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 11. Stop conditions:list-item:12':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['any'],
+      operations: ['any'],
+      hosts: ['any'],
+    },
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 11. Stop conditions:list-item:13':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['any'],
+      operations: ['any'],
+      hosts: ['any'],
+    },
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 11. Stop conditions:list-item:14':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['any'],
+      operations: ['any'],
+      hosts: ['any'],
+    },
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 11. Stop conditions:list-item:15':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['any'],
+      operations: ['any'],
+      hosts: ['any'],
+    },
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 11. Stop conditions:list-item:17':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['any'],
+      operations: ['any'],
+      hosts: ['any'],
+    },
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 0  -  Authority and contracts:paragraph:1':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['deterministic-verify', 'merge', 'closure'],
+      operations: ['source-inventory', 'state-transition'],
+      hosts: ['any'],
+    },
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 1  -  Pure trust core:paragraph:1':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['deterministic-verify', 'merge', 'closure'],
+      operations: ['source-inventory', 'state-transition'],
+      hosts: ['any'],
+    },
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 2  -  Stateless read-only MCP and container:paragraph:1':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['deterministic-verify', 'merge', 'closure'],
+      operations: ['source-inventory', 'state-transition'],
+      hosts: ['any'],
+    },
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 3  -  Durable operational state:paragraph:2':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['deterministic-verify', 'merge', 'closure'],
+      operations: ['source-inventory', 'state-transition'],
+      hosts: ['any'],
+    },
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 4  -  Hook adapter and enforcement promotion:paragraph:2':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator'],
+      stages: ['deterministic-verify', 'merge', 'closure'],
+      operations: ['source-inventory', 'state-transition'],
+      hosts: ['any'],
+    },
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition:paragraph:1':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['reviewer'],
+      stages: ['adversarial-review'],
+      operations: ['receipt-validation'],
+      hosts: ['any'],
+    },
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:1':
     {
       goals: ['foreman-kernel'],
       roles: ['builder'],
@@ -11214,7 +11421,7 @@ const CURATED_ITEM_APPLICABILITY = {
       operations: ['repo-mutation'],
       hosts: ['claude-windows-docker-loaded'],
     },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:2':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:2':
     {
       goals: ['foreman-kernel'],
       roles: ['builder'],
@@ -11222,7 +11429,7 @@ const CURATED_ITEM_APPLICABILITY = {
       operations: ['repo-mutation'],
       hosts: ['claude-windows-docker-loaded'],
     },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:3':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:3':
     {
       goals: ['foreman-kernel'],
       roles: ['reviewer'],
@@ -11230,7 +11437,7 @@ const CURATED_ITEM_APPLICABILITY = {
       operations: ['repo-mutation'],
       hosts: ['claude-windows-docker-loaded'],
     },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:4':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:4':
     {
       goals: ['foreman-kernel'],
       roles: ['builder'],
@@ -11238,7 +11445,7 @@ const CURATED_ITEM_APPLICABILITY = {
       operations: ['repo-mutation'],
       hosts: ['claude-windows-docker-loaded'],
     },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:5':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 5. First-release architecture > ### Initial enforceable refusal classes:list-item:5':
     {
       goals: ['foreman-kernel'],
       roles: ['coordinator', 'builder'],
@@ -11246,7 +11453,7 @@ const CURATED_ITEM_APPLICABILITY = {
       operations: ['state-transition', 'control-call'],
       hosts: ['claude-windows-docker-loaded'],
     },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 0 — Authority and contracts:table-row:FK-P0 — Canon authority and enforcement registry':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 0  -  Authority and contracts:table-row:FK-P0  -  Canon authority and enforcement registry':
     {
       goals: ['foreman-kernel'],
       roles: ['coordinator'],
@@ -11254,7 +11461,7 @@ const CURATED_ITEM_APPLICABILITY = {
       operations: ['state-transition'],
       hosts: ['provider-neutral'],
     },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 0 — Authority and contracts:table-row:FK-P1 — Lifecycle, admission, and decision contracts':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 0  -  Authority and contracts:table-row:FK-P1 — Lifecycle, admission, and decision contracts':
     {
       goals: ['foreman-kernel'],
       roles: ['coordinator'],
@@ -11262,7 +11469,7 @@ const CURATED_ITEM_APPLICABILITY = {
       operations: ['state-transition'],
       hosts: ['provider-neutral'],
     },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 1 — Pure trust core:table-row:FK-P3 — Pure dispatch decisions':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 1  -  Pure trust core:table-row:FK-P3  -  Pure dispatch decisions':
     {
       goals: ['foreman-kernel'],
       roles: ['coordinator'],
@@ -11270,7 +11477,7 @@ const CURATED_ITEM_APPLICABILITY = {
       operations: ['state-transition'],
       hosts: ['provider-neutral'],
     },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 1 — Pure trust core:table-row:FK-P4 — Verifier facade':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 1  -  Pure trust core:table-row:FK-P4  -  Verifier facade':
     {
       goals: ['foreman-kernel'],
       roles: ['coordinator'],
@@ -11278,7 +11485,7 @@ const CURATED_ITEM_APPLICABILITY = {
       operations: ['state-transition'],
       hosts: ['provider-neutral'],
     },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 1 — Pure trust core:table-row:FK-P5 — Clean-room trust-core spike':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 1  -  Pure trust core:table-row:FK-P5  -  Clean-room trust-core spike':
     {
       goals: ['foreman-kernel'],
       roles: ['coordinator'],
@@ -11286,7 +11493,7 @@ const CURATED_ITEM_APPLICABILITY = {
       operations: ['state-transition'],
       hosts: ['provider-neutral'],
     },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 2 — Stateless read-only MCP and container:table-row:FK-P6 — Read-only MCP server':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 2  -  Stateless read-only MCP and container:table-row:FK-P6  -  Read-only MCP server':
     {
       goals: ['foreman-kernel'],
       roles: ['coordinator'],
@@ -11294,7 +11501,7 @@ const CURATED_ITEM_APPLICABILITY = {
       operations: ['state-transition'],
       hosts: ['provider-neutral'],
     },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 2 — Stateless read-only MCP and container:table-row:FK-P7 — Stateless verifier image and launcher':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 2  -  Stateless read-only MCP and container:table-row:FK-P7  -  Stateless verifier image and launcher':
     {
       goals: ['foreman-kernel'],
       roles: ['coordinator'],
@@ -11302,7 +11509,7 @@ const CURATED_ITEM_APPLICABILITY = {
       operations: ['state-transition'],
       hosts: ['provider-neutral'],
     },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 2 — Stateless read-only MCP and container:table-row:FK-P8 — Stateless harness portability proof':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 2  -  Stateless read-only MCP and container:table-row:FK-P8  -  Stateless harness portability proof':
     {
       goals: ['foreman-kernel'],
       roles: ['coordinator'],
@@ -11310,7 +11517,7 @@ const CURATED_ITEM_APPLICABILITY = {
       operations: ['state-transition'],
       hosts: ['provider-neutral'],
     },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P9 — SQLite storage and migration ABI':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 3  -  Durable operational state:table-row:FK-P9  -  SQLite storage and migration ABI':
     {
       goals: ['foreman-kernel'],
       roles: ['coordinator'],
@@ -11318,7 +11525,7 @@ const CURATED_ITEM_APPLICABILITY = {
       operations: ['state-transition'],
       hosts: ['provider-neutral'],
     },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P10 — Lease and transition engine':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 3  -  Durable operational state:table-row:FK-P10  -  Lease and transition engine':
     {
       goals: ['foreman-kernel'],
       roles: ['coordinator'],
@@ -11326,7 +11533,7 @@ const CURATED_ITEM_APPLICABILITY = {
       operations: ['state-transition'],
       hosts: ['provider-neutral'],
     },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P11 — Legacy import and projection engine':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 3  -  Durable operational state:table-row:FK-P11  -  Legacy import and projection engine':
     {
       goals: ['foreman-kernel'],
       roles: ['coordinator'],
@@ -11334,7 +11541,7 @@ const CURATED_ITEM_APPLICABILITY = {
       operations: ['state-transition'],
       hosts: ['provider-neutral'],
     },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P12 — Authorization policy engine':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 3  -  Durable operational state:table-row:FK-P12  -  Authorization policy engine':
     {
       goals: ['foreman-kernel'],
       roles: ['coordinator'],
@@ -11342,7 +11549,7 @@ const CURATED_ITEM_APPLICABILITY = {
       operations: ['state-transition'],
       hosts: ['provider-neutral'],
     },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P13 — Admission-protected control catalog':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 3  -  Durable operational state:table-row:FK-P13  -  Admission-protected control catalog':
     {
       goals: ['foreman-kernel'],
       roles: ['coordinator'],
@@ -11350,7 +11557,7 @@ const CURATED_ITEM_APPLICABILITY = {
       operations: ['state-transition'],
       hosts: ['provider-neutral'],
     },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P14 — Stateful image composition and operator lifecycle':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 3  -  Durable operational state:table-row:FK-P14  -  Stateful image composition and operator lifecycle':
     {
       goals: ['foreman-kernel'],
       roles: ['coordinator'],
@@ -11358,7 +11565,7 @@ const CURATED_ITEM_APPLICABILITY = {
       operations: ['state-transition'],
       hosts: ['provider-neutral'],
     },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 3 — Durable operational state:table-row:FK-P15 — Stateful restart and admission proof':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 3  -  Durable operational state:table-row:FK-P15  -  Stateful restart and admission proof':
     {
       goals: ['foreman-kernel'],
       roles: ['coordinator'],
@@ -11366,7 +11573,7 @@ const CURATED_ITEM_APPLICABILITY = {
       operations: ['state-transition'],
       hosts: ['provider-neutral'],
     },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P16 — Claude lifecycle adapter, shadow mode':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 4  -  Hook adapter and enforcement promotion:table-row:FK-P16  -  Claude lifecycle adapter, shadow mode':
     {
       goals: ['foreman-kernel'],
       roles: ['coordinator'],
@@ -11374,7 +11581,7 @@ const CURATED_ITEM_APPLICABILITY = {
       operations: ['state-transition'],
       hosts: ['provider-neutral'],
     },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P17 — Bypass and outage harness':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 4  -  Hook adapter and enforcement promotion:table-row:FK-P17 — Bypass and outage harness':
     {
       goals: ['foreman-kernel'],
       roles: ['coordinator'],
@@ -11382,7 +11589,7 @@ const CURATED_ITEM_APPLICABILITY = {
       operations: ['state-transition'],
       hosts: ['provider-neutral'],
     },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P19 — High-confidence refusal enforcement':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 4  -  Hook adapter and enforcement promotion:table-row:FK-P19  -  High-confidence refusal enforcement':
     {
       goals: ['foreman-kernel'],
       roles: ['coordinator'],
@@ -11390,7 +11597,7 @@ const CURATED_ITEM_APPLICABILITY = {
       operations: ['state-transition'],
       hosts: ['provider-neutral'],
     },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P20 — Second-host feasibility and host registration':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 4  -  Hook adapter and enforcement promotion:table-row:FK-P20  -  Second-host feasibility and host registration':
     {
       goals: ['foreman-kernel'],
       roles: ['coordinator'],
@@ -11398,7 +11605,7 @@ const CURATED_ITEM_APPLICABILITY = {
       operations: ['state-transition'],
       hosts: ['provider-neutral'],
     },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 6. Parcel decomposition > ### Wave 4 — Hook adapter and enforcement promotion:table-row:FK-P21 — Exit evidence manifest and clean-room proof':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 6. Parcel decomposition > ### Wave 4  -  Hook adapter and enforcement promotion:table-row:FK-P21  -  Exit evidence manifest and clean-room proof':
     {
       goals: ['foreman-kernel'],
       roles: ['coordinator'],
@@ -11406,78 +11613,39 @@ const CURATED_ITEM_APPLICABILITY = {
       operations: ['state-transition'],
       hosts: ['provider-neutral'],
     },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:1': {
-    goals: ['foreman-kernel'],
-    roles: ['ci'],
-    stages: ['deterministic-verify'],
-    operations: ['spec-mutation'],
-    hosts: ['provider-neutral'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:2': {
-    goals: ['foreman-kernel'],
-    roles: ['ci'],
-    stages: ['deterministic-verify'],
-    operations: ['repo-read'],
-    hosts: ['provider-neutral'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:3': {
-    goals: ['foreman-kernel'],
-    roles: ['ci'],
-    stages: ['deterministic-verify'],
-    operations: ['control-call'],
-    hosts: ['provider-neutral'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:4': {
-    goals: ['foreman-kernel'],
-    roles: ['ci'],
-    stages: ['deterministic-verify'],
-    operations: ['receipt-validation'],
-    hosts: ['provider-neutral'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:5': {
-    goals: ['foreman-kernel'],
-    roles: ['ci'],
-    stages: ['deterministic-verify'],
-    operations: ['control-call'],
-    hosts: ['claude-windows-docker-loaded'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:6': {
-    goals: ['foreman-kernel'],
-    roles: ['ci'],
-    stages: ['deterministic-verify'],
-    operations: ['state-transition'],
-    hosts: ['claude-windows-docker-loaded'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:7': {
-    goals: ['foreman-kernel'],
-    roles: ['ci'],
-    stages: ['deterministic-verify'],
-    operations: ['state-transition'],
-    hosts: ['claude-windows-docker-loaded'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:8': {
-    goals: ['foreman-kernel'],
-    roles: ['ci'],
-    stages: ['deterministic-verify'],
-    operations: ['repo-mutation'],
-    hosts: ['claude-windows-docker-loaded'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:9': {
-    goals: ['foreman-kernel'],
-    roles: ['ci'],
-    stages: ['deterministic-verify'],
-    operations: ['repo-mutation'],
-    hosts: ['claude-windows-docker-loaded'],
-  },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:10':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 8. Integration scenarios:list-item:1':
     {
       goals: ['foreman-kernel'],
       roles: ['ci'],
       stages: ['deterministic-verify'],
-      operations: ['state-transition'],
-      hosts: ['claude-windows-docker-loaded'],
+      operations: ['spec-mutation'],
+      hosts: ['provider-neutral'],
     },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:11':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 8. Integration scenarios:list-item:2':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['ci'],
+      stages: ['deterministic-verify'],
+      operations: ['repo-read'],
+      hosts: ['provider-neutral'],
+    },
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 8. Integration scenarios:list-item:3':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['ci'],
+      stages: ['deterministic-verify'],
+      operations: ['control-call'],
+      hosts: ['provider-neutral'],
+    },
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 8. Integration scenarios:list-item:4':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['ci'],
+      stages: ['deterministic-verify'],
+      operations: ['receipt-validation'],
+      hosts: ['provider-neutral'],
+    },
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 8. Integration scenarios:list-item:5':
     {
       goals: ['foreman-kernel'],
       roles: ['ci'],
@@ -11485,7 +11653,47 @@ const CURATED_ITEM_APPLICABILITY = {
       operations: ['control-call'],
       hosts: ['claude-windows-docker-loaded'],
     },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:12':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 8. Integration scenarios:list-item:6':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['ci'],
+      stages: ['deterministic-verify'],
+      operations: ['state-transition'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 8. Integration scenarios:list-item:7':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['ci'],
+      stages: ['deterministic-verify'],
+      operations: ['state-transition'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 8. Integration scenarios:list-item:8':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['ci'],
+      stages: ['deterministic-verify'],
+      operations: ['repo-mutation'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 8. Integration scenarios:list-item:9':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['ci'],
+      stages: ['deterministic-verify'],
+      operations: ['repo-mutation'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 8. Integration scenarios:list-item:10':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['ci'],
+      stages: ['deterministic-verify'],
+      operations: ['state-transition'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 8. Integration scenarios:list-item:11':
     {
       goals: ['foreman-kernel'],
       roles: ['ci'],
@@ -11493,7 +11701,15 @@ const CURATED_ITEM_APPLICABILITY = {
       operations: ['control-call'],
       hosts: ['claude-windows-docker-loaded'],
     },
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:13':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 8. Integration scenarios:list-item:12':
+    {
+      goals: ['foreman-kernel'],
+      roles: ['ci'],
+      stages: ['deterministic-verify'],
+      operations: ['control-call'],
+      hosts: ['claude-windows-docker-loaded'],
+    },
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 8. Integration scenarios:list-item:13':
     {
       goals: ['foreman-kernel'],
       roles: ['ci'],
@@ -11503,7 +11719,7 @@ const CURATED_ITEM_APPLICABILITY = {
     },
   // Scenario 14 is proved on the D20 platform like every other scenario, so it carries the same
   // CI / deterministic-verify / control-call applicability as scenario 13.
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 8. Integration scenarios:list-item:14':
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 8. Integration scenarios:list-item:14':
     {
       goals: ['foreman-kernel'],
       roles: ['ci'],
@@ -11902,14 +12118,31 @@ function buildSource(definition: SourceDefinition): {
           })(),
       }
     }
+    // R32: the R30 reviewed units re-anchor through the typed migration; the drift guard accepts
+    // exactly the migrated locator and value and nothing else, so a unit cannot drift behind its
+    // migration entry.
     const r30Item = R30_SOURCE_ITEMS.find(
-      (item) => item.sourceId === definition.sourceId && item.locator.anchor === locator.anchor,
+      (item) =>
+        item.sourceId === definition.sourceId &&
+        (r32MigrationFor(item.sourceId, item.locator.anchor)?.newAnchor ?? item.locator.anchor) ===
+          locator.anchor,
     )
     if (r30Item !== undefined) {
+      const r32 = r32MigrationFor(definition.sourceId, locator.anchor)
+      const expectedLocatorDigest =
+        r32 === undefined
+          ? r30Item.locatorDigest
+          : locatorDigestFor({ kind: r30Item.locator.kind, anchor: r32.newAnchor })
+      const expectedValueDigest =
+        r32 === undefined
+          ? r30Item.valueDigest
+          : (R32_ITEM_MIGRATIONS.find(
+              (entry) => entry.sourceId === definition.sourceId && entry.itemId === r30Item.itemId,
+            )?.newValueDigest ?? valueDigest)
       if (
         r30Item.itemId !== itemId ||
-        r30Item.locatorDigest !== locatorDigestFor(locator) ||
-        r30Item.valueDigest !== valueDigest
+        expectedLocatorDigest !== locatorDigestFor(locator) ||
+        expectedValueDigest !== valueDigest
       ) {
         throw new Error(`R30 reviewed source mapping drift: ${r30Item.unit}`)
       }
@@ -12960,7 +13193,46 @@ function buildRegistry(): AuthorityEnforcementRegistry {
       return { ...item, ruleIds: [...new Set([...item.ruleIds, ...corroborating])] }
     }),
   }))
-  const rules = built.flatMap((entry) => entry.rules)
+  // R32: normalize every rule against the live inventory. Re-anchored and re-valued items keep
+  // their identities, so this pass re-binds each rule's source references to the current locator
+  // and value digests, re-states the statements whose own source clause the RS-1/RS-2 edits
+  // changed, and re-derives the binding digest. No other rule field is touched; a reference to a
+  // vanished item fails closed rather than silently surviving.
+  const liveItemRefs = new Map<string, SourceRef>()
+  for (const source of sources) {
+    for (const item of source.inventoryItems) {
+      liveItemRefs.set(`${source.sourceId} ${item.itemId}`, {
+        sourceId: source.sourceId,
+        itemId: item.itemId,
+        locatorDigest: locatorDigestFor(item.locator),
+        valueDigest: item.valueDigest,
+      })
+    }
+  }
+  const restatedStatements = new Map<string, string>(
+    R32_RULE_STATEMENT_MIGRATIONS.map((entry) => [entry.ruleId, entry.newStatement]),
+  )
+  const rules = built
+    .flatMap((entry) => entry.rules)
+    .map((rule) => {
+      const reboundRef = (ref: SourceRef): SourceRef => {
+        const live = liveItemRefs.get(`${ref.sourceId} ${ref.itemId}`)
+        if (live === undefined) {
+          throw new Error(
+            `R32 rebind: rule '${rule.ruleId}' references missing item '${ref.sourceId}:${ref.itemId}'`,
+          )
+        }
+        return live
+      }
+      const rebound: AuthorityRule = {
+        ...structuredClone(rule),
+        sourceRefs: rule.sourceRefs.map(reboundRef),
+        authorityBasisRef: reboundRef(rule.authorityBasisRef),
+        normalizedStatement: restatedStatements.get(rule.ruleId) ?? rule.normalizedStatement,
+        bindingDigest: '',
+      }
+      return { ...rebound, bindingDigest: bindingDigestFor(rebound) }
+    })
   const operation = operationAuthority({
     gate1: [
       refFor(sources, 'fk-charter', 'item.cd014d6d90c5'),
@@ -12984,7 +13256,7 @@ function buildRegistry(): AuthorityEnforcementRegistry {
       refFor(sources, 'fk-loop-directive', 'item.e3065db62b43'),
     ],
   })
-  const normativeMarkdownAudit = NORMATIVE_MARKDOWN_AUDIT_KEYS.map((key) => {
+  const normativeMarkdownAudit = NORMATIVE_MARKDOWN_AUDIT_KEYS.flatMap((key) => {
     const separator = key.indexOf(':')
     const sourceId = key.slice(0, separator)
     const locatorAnchor = key.slice(separator + 1)
@@ -12992,7 +13264,19 @@ function buildRegistry(): AuthorityEnforcementRegistry {
     const item = source?.inventoryItems.find(
       (candidate) => candidate.locator.anchor === locatorAnchor,
     )
-    if (item === undefined) throw new Error(`R13 audit candidate '${key}' is missing`)
+    if (item === undefined) {
+      // R32: a retired item retires its audit candidacy with it. The vanished item's final
+      // locator and value digests stay pinned in R32_ITEM_MIGRATIONS, exactly the R24/R28
+      // reduction discipline; any other missing candidate still fails closed.
+      const retired = R32_ITEM_MIGRATIONS.some(
+        (entry) =>
+          entry.disposition === 'retired' &&
+          entry.sourceId === sourceId &&
+          entry.priorAnchor === locatorAnchor,
+      )
+      if (!retired) throw new Error(`R13 audit candidate '${key}' is missing`)
+      return []
+    }
     const { itemId } = item
     const published = item.ruleIds.length > 0
     return {
@@ -13014,21 +13298,28 @@ function buildRegistry(): AuthorityEnforcementRegistry {
     sources,
     rules,
     operationAuthority: operation,
-    reconciliations: structuredClone(priorR13Registry().reconciliations),
+    reconciliations: [],
     normativeMarkdownAudit: [...normativeMarkdownAudit, ...structuredClone(R31_AUDIT_ROWS)],
     volatileRegions: volatileRegionsFor(sources),
   }
-  // Historical attestations retain the exact committed bytes and their original source subject.
-  const prior = registryAtCommit(R31_PRIOR_REGISTRY_COMMIT)
-  const history = structuredClone(prior.reconciliations)
+  // Historical attestations retain the exact committed bytes and their original source subject:
+  // the R31 registry's complete record set, including its now-pinned former head.
+  const priorR30 = registryAtCommit(R31_PRIOR_REGISTRY_COMMIT)
+  const priorR31 = registryAtCommit(R32_PRIOR_REGISTRY_COMMIT)
+  const history = structuredClone(priorR31.reconciliations)
   const adopted = { ...provisional, reconciliations: history }
   if (
-    registryBindingManifestDigest(prior) !== R31_PRIOR_MANIFEST ||
-    registryBindingManifestDigest(adopted) !== R31_BINDING_MANIFEST
+    registryBindingManifestDigest(priorR30) !== R31_PRIOR_MANIFEST ||
+    registryBindingManifestDigest(priorR31) !== R31_BINDING_MANIFEST ||
+    registryBindingManifestDigest(adopted) !== R32_BINDING_MANIFEST
   )
-    throw new Error('R31 independently reviewed binding manifest mismatch')
-  const record = structuredClone(R31_RECONCILIATION)
-  for (const evidence of record.observedEvidence) {
+    throw new Error('R32 independently reviewed binding manifest mismatch')
+  const r31Record = history.find(
+    (candidate) => candidate.reconciliationId === R31_RECONCILIATION.reconciliationId,
+  )
+  if (r31Record === undefined || canonicalJson(r31Record) !== canonicalJson(R31_RECONCILIATION))
+    throw new Error('R31 migration record changed')
+  for (const evidence of r31Record.observedEvidence) {
     if (
       evidence.kind === 'git-commit' &&
       sha256(execFileSync('git', ['cat-file', '-p', evidence.reference], { cwd: repoRoot })) !==
@@ -13044,9 +13335,75 @@ function buildRegistry(): AuthorityEnforcementRegistry {
     ) !== R31_DECISION_BLOB_DIGEST
   )
     throw new Error('R31 plan decision Git blob mismatch')
-  if (sha256(canonicalJson(record)) !== R31_RECORD_DIGEST)
+  if (sha256(canonicalJson(r31Record)) !== R31_RECORD_DIGEST)
     throw new Error('R31 independently reviewed reconciliation pin mismatch')
+  const record = r32ReconciliationRecord(sources)
+  if (sha256(canonicalJson(record)) !== R32_RECORD_DIGEST)
+    throw new Error('R32 independently reviewed reconciliation pin mismatch')
   return { ...adopted, reconciliations: [...history, record] }
+}
+
+/**
+ * The R32 typed prior-to-new migration record: the chain head that supersedes the R31 bindings for
+ * exactly the items and rules the R32 mapping names. Its two chain commands bind the prior
+ * registry's manifest to the manifest recomputed live, its two Git commits bind the prior registry
+ * and the source snapshot, and its refs are resolved against the live inventory so the record
+ * cannot describe items the corpus does not carry.
+ */
+function r32ReconciliationRecord(sources: readonly CanonSource[]): ReconciliationRecord {
+  const observedRefs = R32_RECORD_REF_ITEM_IDS.map((entry) =>
+    refFor(sources, entry.sourceId, entry.itemId),
+  )
+  const gitEvidence = (reference: string): ReconciliationEvidence => ({
+    kind: 'git-commit',
+    reference,
+    digest: sha256(execFileSync('git', ['cat-file', '-p', reference], { cwd: repoRoot })),
+  })
+  const commandEvidence = (reference: string): ReconciliationEvidence => ({
+    kind: 'command-result',
+    reference,
+    digest: sha256(reference),
+  })
+  return {
+    reconciliationId: 'registry-rework-521214e',
+    topic: R32_RECONCILIATION_TOPIC,
+    observedRefs,
+    observedEvidence: [
+      gitEvidence(R32_PRIOR_REGISTRY_COMMIT),
+      gitEvidence(R32_SOURCE_SNAPSHOT),
+      commandEvidence(
+        canonicalJson({
+          actorClass: 'coordinator',
+          commandId: 'registry-binding-manifest-r31',
+          exitCode: 0,
+          inputDigest: sha256(R32_PRIOR_REGISTRY_COMMIT),
+          resultDigest: R31_BINDING_MANIFEST,
+          tool: '@foreman-line/authority-registry',
+          toolVersion: '0.1.0',
+        }),
+      ),
+      commandEvidence(
+        canonicalJson({
+          actorClass: 'coordinator',
+          commandId: 'superseding-binding-manifest-r32',
+          exitCode: 0,
+          inputDigest: R31_BINDING_MANIFEST,
+          resultDigest: R32_BINDING_MANIFEST,
+          tool: '@foreman-line/authority-registry',
+          toolVersion: '0.1.0',
+        }),
+      ),
+    ],
+    authoritativeRuleIds: [...R32_RECORD_RULE_IDS],
+    scopedDisposition: R32_RECONCILIATION_DISPOSITION,
+    unresolvedConsequence: R32_RECONCILIATION_CONSEQUENCE,
+    migrationStatus: 'superseded-by-amendment',
+    supersedingEvidence: refFor(
+      sources,
+      R32_RECORD_SUPERSEDES.sourceId,
+      R32_RECORD_SUPERSEDES.itemId,
+    ),
+  }
 }
 function buildMinimal(full: AuthorityEnforcementRegistry): AuthorityEnforcementRegistry {
   return structuredClone(full)

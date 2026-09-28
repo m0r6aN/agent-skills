@@ -57,5 +57,10 @@ test('R13 typed canonical sample carries the normative Markdown audit contract',
   const sample = parse(
     readFileSync(join(packageRoot, 'tests', 'fixtures', 'pass-minimal.yaml'), 'utf8'),
   ) as AuthorityEnforcementRegistry & { normativeMarkdownAudit?: unknown[] }
-  assert.equal(sample.normativeMarkdownAudit?.length, 202)
+  // R32 migration: was 202 (the R31 audit: 198 historical rows + the 4 typed R31 append rows).
+  // R32 retires exactly two FOREMAN-LINE-PLAN §5 audit candidacies (item.389ca82e4c31 and
+  // item.a9cf544f084d - the other three retired §5 rows were never audit candidates), so
+  // 202 - 2 = 200 rows. Derivation and predecessor rows are pinned in semantic-invariants.test.ts
+  // ("R13 every excluded audit candidate...") via R32_ITEM_MIGRATIONS.
+  assert.equal(sample.normativeMarkdownAudit?.length, 200)
 })

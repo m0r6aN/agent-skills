@@ -1,4 +1,5 @@
 import type { SchemaFile } from '../../schema-scaffold/src/registry.js'
+import { R32_ANCHOR_MIGRATIONS } from './r32-migrations.js'
 import { authorityEnforcementRegistrySchema } from './schemas.js'
 import type {
   AuthorityRule,
@@ -29,29 +30,29 @@ export const R14_PRIOR_REGISTRY_COMMIT = 'df8155a01989f69e9872ef5c08bfc18ad6b8cb
 export const R15_PRIOR_REGISTRY_COMMIT = '40394be5fb7a5376579025513236019ad48dd86c'
 
 export const R13_NORMATIVE_MARKDOWN_AUDIT_KEYS = [
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 1. Objective:list-item:2',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 1. Objective:list-item:3',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 1. Objective:paragraph:2',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 2. Problem statement:list-item:3',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 2. Problem statement:list-item:4',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 3. Authority hierarchy:paragraph:1',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 3. Authority hierarchy:paragraph:2',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Common decision envelope:list-item:2',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Common decision envelope:list-item:6',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Common decision envelope:paragraph:2',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:paragraph:2',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:paragraph:3',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 7. Explicitly not doing in this goal:list-item:1',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 7. Explicitly not doing in this goal:list-item:2',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 7. Explicitly not doing in this goal:list-item:3',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 12. Known serialization points and repo constraints:list-item:2',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 12. Known serialization points and repo constraints:list-item:3',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 12. Known serialization points and repo constraints:list-item:4',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 12. Known serialization points and repo constraints:list-item:6',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 12. Known serialization points and repo constraints:list-item:7',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 13. Gate 1 decision list:list-item:1',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 13. Gate 1 decision list:list-item:4',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 13. Gate 1 decision list:list-item:10',
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 1. Objective:list-item:2',
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 1. Objective:list-item:3',
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 1. Objective:paragraph:2',
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 2. Problem statement:list-item:3',
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 2. Problem statement:list-item:4',
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 3. Authority hierarchy:paragraph:1',
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 3. Authority hierarchy:paragraph:2',
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 5. First-release architecture > ### Common decision envelope:list-item:2',
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 5. First-release architecture > ### Common decision envelope:list-item:6',
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 5. First-release architecture > ### Common decision envelope:paragraph:2',
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 5. First-release architecture > ### Initial enforceable refusal classes:paragraph:2',
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 5. First-release architecture > ### Initial enforceable refusal classes:paragraph:3',
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 7. Explicitly not doing in this goal:list-item:1',
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 7. Explicitly not doing in this goal:list-item:2',
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 7. Explicitly not doing in this goal:list-item:3',
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 12. Known serialization points and repo constraints:list-item:2',
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 12. Known serialization points and repo constraints:list-item:3',
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 12. Known serialization points and repo constraints:list-item:4',
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 12. Known serialization points and repo constraints:list-item:6',
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 12. Known serialization points and repo constraints:list-item:7',
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 13. Gate 1 decision list:list-item:1',
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 13. Gate 1 decision list:list-item:4',
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 13. Gate 1 decision list:list-item:10',
   'fk-plan-review-findings:md-block:# Foreman Kernel — Plan-Level Adversarial Review Findings:paragraph:1',
   'fk-plan-review-findings:md-block:# Foreman Kernel — Plan-Level Adversarial Review Findings:paragraph:2',
   'fk-plan-review-findings:md-block:# Foreman Kernel — Plan-Level Adversarial Review Findings > ## Blocker triage:table-row:B1',
@@ -78,7 +79,7 @@ export const R13_NORMATIVE_MARKDOWN_AUDIT_KEYS = [
   'spec-convention:md-block:# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.6 Schema v0.2 Fields (added W0-P2):list-item:2',
   'spec-convention:md-block:# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.6 Schema v0.2 Fields (added W0-P2):list-item:3',
   'spec-convention:md-block:# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.7 `surfaces:` Canonical Vocabulary (added W0-P2):paragraph:3',
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.8 `Allowed Files` Mutation Authority:paragraph:4',
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.9 `expertise:`, `inputs:`, `min_context:`, `thinking_level:` (schema v0.4, added 2026-09-27 — RCM-P2):paragraph:3',
   'spec-convention:md-block:# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.2 Constraints:paragraph:1',
   'spec-convention:md-block:# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.4 Out of Scope:paragraph:1',
   'spec-convention:md-block:# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.5 Context & References:paragraph:1',
@@ -177,23 +178,23 @@ export const R13_NORMATIVE_MARKDOWN_AUDIT_KEYS = [
 ] as const
 
 export const R13_NORMATIVE_MARKDOWN_PUBLICATION_KEYS: ReadonlySet<string> = new Set([
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 3. Authority hierarchy:paragraph:2',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Common decision envelope:paragraph:2',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:paragraph:2',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 5. First-release architecture > ### Initial enforceable refusal classes:paragraph:3',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 7. Explicitly not doing in this goal:list-item:1',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 7. Explicitly not doing in this goal:list-item:2',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 7. Explicitly not doing in this goal:list-item:3',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 12. Known serialization points and repo constraints:list-item:2',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 12. Known serialization points and repo constraints:list-item:3',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 12. Known serialization points and repo constraints:list-item:4',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 12. Known serialization points and repo constraints:list-item:6',
-  'fk-charter:md-block:# Goal Charter — Foreman Kernel > ## 12. Known serialization points and repo constraints:list-item:7',
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 3. Authority hierarchy:paragraph:2',
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 5. First-release architecture > ### Common decision envelope:paragraph:2',
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 5. First-release architecture > ### Initial enforceable refusal classes:paragraph:2',
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 5. First-release architecture > ### Initial enforceable refusal classes:paragraph:3',
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 7. Explicitly not doing in this goal:list-item:1',
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 7. Explicitly not doing in this goal:list-item:2',
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 7. Explicitly not doing in this goal:list-item:3',
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 12. Known serialization points and repo constraints:list-item:2',
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 12. Known serialization points and repo constraints:list-item:3',
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 12. Known serialization points and repo constraints:list-item:4',
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 12. Known serialization points and repo constraints:list-item:6',
+  'fk-charter:md-block:# Foreman Kernel Development Charter > ## 12. Known serialization points and repo constraints:list-item:7',
   'spec-convention:md-block:# Spec-Driven Development Convention > ## 4. Required Spec Schema:paragraph:1',
   'spec-convention:md-block:# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.6 Schema v0.2 Fields (added W0-P2):list-item:1',
   'spec-convention:md-block:# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.6 Schema v0.2 Fields (added W0-P2):list-item:2',
   'spec-convention:md-block:# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.6 Schema v0.2 Fields (added W0-P2):list-item:3',
-  'spec-convention:md-block:# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.8 `Allowed Files` Mutation Authority:paragraph:4',
+  'spec-convention:md-block:# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.9 `expertise:`, `inputs:`, `min_context:`, `thinking_level:` (schema v0.4, added 2026-09-27 — RCM-P2):paragraph:3',
   'spec-convention:md-block:# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.2 Constraints:paragraph:1',
   'spec-convention:md-block:# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.4 Out of Scope:paragraph:1',
   'spec-convention:md-block:# Spec-Driven Development Convention > ## 4. Required Spec Schema > ### 4.5 Context & References:paragraph:1',
@@ -5398,9 +5399,14 @@ export const R30_RULE_SHAPES: readonly Omit<AuthorityRule, 'bindingDigest'>[] = 
     },
   },
 ]
-export const R30_AUDIT_KEYS = R30_SOURCE_ITEMS.map(
-  (item) => item.sourceId + ':' + item.locator.anchor,
-)
+// R32: the R30 audit keys are live lookups, so they follow their units through the typed anchor
+// migration. R30_SOURCE_ITEMS itself stays byte-stable; only the derived key re-anchors.
+export const R30_AUDIT_KEYS = R30_SOURCE_ITEMS.map((item) => {
+  const migration = R32_ANCHOR_MIGRATIONS.find(
+    (entry) => entry.sourceId === item.sourceId && entry.priorAnchor === item.locator.anchor,
+  )
+  return item.sourceId + ':' + (migration?.newAnchor ?? item.locator.anchor)
+})
 export const NORMATIVE_MARKDOWN_AUDIT_KEYS = [
   ...R13_NORMATIVE_MARKDOWN_AUDIT_KEYS,
   ...R30_AUDIT_KEYS,
@@ -5742,3 +5748,51 @@ export const R31_RECONCILIATION: ReconciliationRecord = {
     valueDigest: '4f3ee9daa1a008f7002cce5742fa585387976783bb9a1a333f5cd6ab5a1d4d19',
   },
 }
+
+// R32 literals: the FK-P0 corpus/contract amendment R32 (docs/goals/foreman-kernel/
+// FK-P0-corpus-amendment-R32-2026-09-27.md) adopts the live consolidated charter and the
+// RS-1/RS-2-era canon through one typed prior-to-new migration record. History pins above are
+// untouched; the R31 head record is demoted to a pinned record by validate.ts exactly as R22
+// obligation 7 describes.
+export const R32_BINDING_MANIFEST =
+  // W2b rework: the W2-1/W2-2 corrections (adoption applicability shapes; statement-migration
+  // rows) re-value twelve rules, so the reviewed live manifest advances. Prior value
+  // 4b541bd25b5ce993a7e640f481da80b39de6d17b1234deb2c77e7bb5300b723b (pre-W2b R32 corpus);
+  // derivation: registryBindingManifestDigest over the corrected corpus, asserted live by
+  // generate.ts and by validate's chain walk.
+  'd7b9d84157186891595a56a631b6a1d6b5bcd71c9137f216c0871b8caf4ea218'
+// W2b rework: advances with R32_BINDING_MANIFEST - the corrected head record's
+// superseding-binding-manifest-r32 command binds the corrected manifest, so the record's
+// canonical digest moves. Prior value c178a7d5599d8b7589378acbcae5d688c715c0b619e0f0439f4d13fbab87fa18
+// (pre-W2b R32 head record); derivation: sha256(canonicalJson(the constructed R32 record)),
+// asserted by generate.ts and pinned as validate's SHIPPED_CHAIN_HEAD_RECORD_DIGEST.
+export const R32_RECORD_DIGEST = 'd827f55cc873589d0cbec3c3bf9cbcee38542280e038dc97f90fa99d3937d9a3'
+export const R32_RECONCILIATION_TOPIC =
+  'R31 registry bindings superseded by the FK-P0 corpus/contract amendment R32 re-pin to the live consolidated charter and the RS-1/RS-2-era canon.'
+export const R32_RECONCILIATION_DISPOSITION = `R32 re-pins the unchanged eighteen-source corpus to the live consolidated charter and the RS-1/RS-2-era canon through this typed prior-to-new migration, never a silent rewrite. The charter's heading paths rename (H1 "Goal Charter — Foreman Kernel" to "Foreman Kernel Development Charter", heading separators normalized to "  -  ") and its structure grows (Read this first, §15 dispatch readiness, §16 completion accounting rewrite, §17 source record, §4.1 rows L6/L7); the COORDINATOR-PATTERN dispatch-table value (commit 497ae69) and the SPEC-CONVENTION/spec-linter schema-v0.4 stream are adopted as source values. 269 typed item entries bind the change: identities are preserved across 235 locator re-anchors (item ids pinned to their prior derivations), 20 same-anchor re-values and 47 combined re-anchor/re-value rows record every prior and new locator/value digest, 14 spec-linter structural constructs retire with their final digests pinned here and in R32_ITEM_MIGRATIONS, and 4 rule-bearing adoptions enter (L6, L7, the §9 exit-supersession paragraph, the §16 opening sentence). Gate-3 authority is re-baselined per RS-2.1 (ledger L7): the live Gate-3 claims become "gate3-human-owned-for-main-pr-settings-deployment-and-destructive-cleanup-with-green-chain-integration-merge-step-delegation-voided-by-any-red-step" — Gate 3 human-owned for main/PR merges, repository-settings changes, deployment and destructive cleanup; the coordinator holds the COORDINATOR-PATTERN "merge it" delegation for the merge git step of a fully-green verification chain into the goal's integration branch; any red step voids the delegation for that chain — covering rule.fk-charter.d9's amended clause, the §10 Gate 3 body, §13 item 11, §9 item 1 (goal.exit-merge), loop standing authorization 6 and the Ratified-authority Gate-3 item. The historical plan Stage F rule (rule.foreman-line-plan.c92333c21e64) keeps claim "human-owned-nondelegated" as historical-only narrative of its unchanged source text. Ten R30-pinned rule statements are re-stated against their new source clauses (the RS-2.2 INF carrier annotations, the INF-5 measurement retarget to FK-P17′, the deleted worker-fabric record, and the INF traceability-labels sentence); every other rule shape, every rule identity outside the named retirements, and every item identity outside them is preserved. History pins stay byte-stable: RECONCILIATION_RECORD_DIGESTS values, R30_SOURCE_ITEMS, R30_RULE_SHAPES, R31_SOURCE_ITEMS, R31_RULE_SHAPES and R31_RECONCILIATION are untouched, and the demoted R31 head is pinned at its existing record digest. The source baseline advances to commit 6356bca419b4a139528ceb3de38fb51aabb989d3 with a stated residual: five sources (SPEC-CONVENTION.md, spec-linter README/schema/cli, permission-profiles types.ts) hash the final 2026-09-27 schema-v0.4 worktree stream that the coordinator commits with this amendment.`
+export const R32_RECONCILIATION_CONSEQUENCE =
+  'Future binding changes require another typed prior-to-new migration; human Gate 3, complete verification, independent review and exact source/authority boundaries remain mandatory. No diagnostic, source annotation, record membership or claim value grants operational authority, manufactures a gate, or claims any historical command was rerun.'
+export const R32_RECORD_REF_ITEM_IDS: readonly { sourceId: string; itemId: string }[] = [
+  { sourceId: 'fk-charter', itemId: 'item.d9' },
+  { sourceId: 'fk-charter', itemId: 'item.c74628d41600' },
+  { sourceId: 'fk-charter', itemId: 'item.b1ac4aa9eddf' },
+  { sourceId: 'fk-charter', itemId: 'item.e9ec57edc0a2' },
+  { sourceId: 'fk-loop-directive', itemId: 'item.7eb6018d9e57' },
+  { sourceId: 'fk-loop-directive', itemId: 'item.08b3cbb91027' },
+  { sourceId: 'fk-charter', itemId: 'item.5722ad7bc5ab' },
+  { sourceId: 'fk-charter', itemId: 'item.6a8d073a64f1' },
+  { sourceId: 'coordinator-pattern', itemId: 'item.6fa5b60d426b' },
+]
+export const R32_RECORD_SUPERSEDES: { sourceId: string; itemId: string } = {
+  sourceId: 'fk-charter',
+  itemId: 'item.5722ad7bc5ab',
+}
+export const R32_RECORD_RULE_IDS: readonly string[] = [
+  'rule.fk-charter.d9',
+  'rule.fk-charter.c74628d41600',
+  'rule.fk-charter.b1ac4aa9eddf',
+  'rule.fk-charter.e9ec57edc0a2',
+  'rule.fk-loop-directive.7eb6018d9e57',
+  'rule.fk-charter.5722ad7bc5ab',
+  'rule.fk-charter.6a8d073a64f1',
+]

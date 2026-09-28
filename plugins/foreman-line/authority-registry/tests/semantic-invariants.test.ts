@@ -6,6 +6,7 @@ import { dirname, join } from 'node:path'
 import { test as nodeTest } from 'node:test'
 import { fileURLToPath } from 'node:url'
 import { parse } from 'yaml'
+import { R32_ITEM_MIGRATIONS, R32_RULE_STATEMENT_MIGRATIONS } from '../src/r32-migrations.js'
 import type {
   AuthorityEnforcementRegistry,
   AuthorityQuery,
@@ -126,6 +127,107 @@ function expectOnlyCodes(document: unknown, ...expected: readonly string[]): voi
       throw new Error(`expected ${code}; observed ${observed.join(',')}`)
     }
   }
+}
+
+// ===========================================================================================
+// R32 test-side typed prior-to-new mapping (W2 continuation of the corpus amendment).
+//
+// The R31-era pins below were written against the R31 corpus. R32 re-pins the corpus to the live
+// consolidated charter and the RS-1/RS-2-era canon; every changed unit is bound by the reviewed
+// typed table `R32_ITEM_MIGRATIONS` (src/r32-migrations.ts), whose rows carry the PRIOR
+// locator/value digests - the exact values these tests were pinned to - AND the R32 successors.
+// The helpers below map a historical expectation to its R32 successor THROUGH that table, so each
+// migrated pin keeps its predecessor visible in the table instead of silently restating a value.
+//
+//   r32ItemMigrationFor    the typed row for a (sourceId, itemId), if any;
+//   r32ExpectedRef         a source ref re-bound to the row's new locator/value digests;
+//   r32ExpectedAuditRows   historical audit rows minus the typed retirements, re-valued through
+//                          the table (disposition/exclusionCode/rationale/ruleIds never move here);
+//   r32ExpectedLocator     the locator expectation for a migrated unit: `kind` + `anchor` are the
+//                          exact digest-bound fields (locatorDigestFor covers precisely those two)
+//                          and are compared literally; `lineHint` is NOT digest-bound and
+//                          legitimately renumbered when the re-pinned sources re-flow (R31 unit
+//                          M03's hint was 143 and is now 154), so the migrated pin binds it via
+//                          the locator digest rather than a literal line number. Was: the whole
+//                          locator object compared literally, lineHint included.
+// ===========================================================================================
+
+type R32ItemMigrationRow = (typeof R32_ITEM_MIGRATIONS)[number]
+
+function r32ItemMigrationFor(sourceId: string, itemId: string): R32ItemMigrationRow | undefined {
+  return R32_ITEM_MIGRATIONS.find((entry) => entry.sourceId === sourceId && entry.itemId === itemId)
+}
+
+function r32ExpectedRef(ref: SourceRef): SourceRef {
+  const migration = r32ItemMigrationFor(ref.sourceId, ref.itemId)
+  if (migration === undefined) return ref
+  // Derivation made live: the typed row's prior digests must BE the historical pin this test was
+  // written against, so the old value is bound by the mapping rather than restated.
+  assert.equal(migration.priorLocatorDigest, ref.locatorDigest, `${ref.sourceId}:${ref.itemId}`)
+  assert.equal(migration.priorValueDigest, ref.valueDigest, `${ref.sourceId}:${ref.itemId}`)
+  assert.notEqual(migration.newLocatorDigest, null, `${ref.sourceId}:${ref.itemId}`)
+  assert.notEqual(migration.newValueDigest, null, `${ref.sourceId}:${ref.itemId}`)
+  return {
+    ...ref,
+    locatorDigest: migration.newLocatorDigest ?? ref.locatorDigest,
+    valueDigest: migration.newValueDigest ?? ref.valueDigest,
+  }
+}
+
+function r32ExpectedAuditRows(historical: readonly R13AuditRecord[]): R13AuditRecord[] {
+  const rows: R13AuditRecord[] = []
+  for (const row of historical) {
+    const migration = r32ItemMigrationFor(row.sourceId, row.itemId)
+    if (migration?.disposition === 'retired') continue
+    if (migration === undefined) {
+      rows.push(row)
+      continue
+    }
+    // Derivation made live: the typed row's prior value digest must BE the historical row's digest.
+    assert.equal(migration.priorValueDigest, row.valueDigest, `${row.sourceId}:${row.itemId}`)
+    rows.push({ ...row, valueDigest: migration.newValueDigest ?? row.valueDigest })
+  }
+  return rows
+}
+
+function r32ExpectedLocator(
+  prior: { readonly kind: string; readonly anchor: string; readonly locatorDigest: string },
+  migration: R32ItemMigrationRow | undefined,
+): { kind: string; anchor: string; locatorDigest: string } {
+  if (migration === undefined)
+    return {
+      kind: prior.kind,
+      anchor: prior.anchor,
+      locatorDigest: locatorDigestFor({
+        kind: prior.kind as InventoryItem['locator']['kind'],
+        anchor: prior.anchor,
+      }),
+    }
+  // Derivation made live: the typed row's prior locator digest must BE the historical pin.
+  assert.equal(migration.priorLocatorDigest, prior.locatorDigest)
+  assert.notEqual(migration.newAnchor, null)
+  assert.notEqual(migration.newLocatorDigest, null)
+  return {
+    kind: prior.kind,
+    anchor: migration.newAnchor ?? prior.anchor,
+    locatorDigest: migration.newLocatorDigest ?? prior.locatorDigest,
+  }
+}
+
+function r32ExpectedRuleShape(prior: AuthorityRule): AuthorityRule {
+  // Derivation made live: source refs re-bind through r32ExpectedRef (whose prior-digest checks
+  // bind the historical pins), the ten typed statement re-statements apply, and the binding digest
+  // recomputes over the mapped shape.
+  const mapped: AuthorityRule = {
+    ...prior,
+    sourceRefs: prior.sourceRefs.map((ref) => r32ExpectedRef(ref)),
+    authorityBasisRef: r32ExpectedRef(prior.authorityBasisRef),
+    normalizedStatement:
+      R32_RULE_STATEMENT_MIGRATIONS.find((entry) => entry.ruleId === prior.ruleId)?.newStatement ??
+      prior.normalizedStatement,
+    bindingDigest: '',
+  }
+  return { ...mapped, bindingDigest: bindingDigestFor(mapped) }
 }
 
 /**
@@ -257,11 +359,16 @@ test('each of the six classifications is accepted and summarized independently',
   const result = validateRegistry(valid)
   assert.equal(result.valid, true)
   assert.deepEqual(result.summary?.classificationCounts, {
-    'pre-action-refusal': 276,
+    // R32 migration: was 276 / 109 (R31 corpus). The four R32 rule-bearing adoptions add two
+    // pre-action-refusal rules (goal.exit-supersession: rule.fk-charter.6a8d073a64f1 and
+    // rule.fk-charter.1d6405c6eacd) and two narrative-provenance rules (goal.ratification-ledger:
+    // rule.fk-charter.3df7b6a51799 and rule.fk-charter.5722ad7bc5ab); the other four counts carry
+    // over unchanged. Derivation: 276 + 2 = 278, 109 + 2 = 111.
+    'pre-action-refusal': 278,
     'post-action-detection': 13,
     'ci-static-check': 78,
     'independent-review-human-judgment': 53,
-    'narrative-provenance': 109,
+    'narrative-provenance': 111,
     unsupported: 13,
   })
 })
@@ -495,7 +602,10 @@ test('deleting the chain head invalidates rather than promoting a pinned record'
   // AC4 obligation 2 as amended by R19. Head position must not be selectable by deletion: before
   // R19, removing the head promoted the previously-pinned record into the head exemption and out of
   // its byte pin, and repointing that promoted record at the live manifest validated clean.
-  const chainHeadId = 'registry-rework-446700d'
+  // R32 migration: the shipped chain head advanced to the R32 record; pre-R32 head was
+  // 'registry-rework-446700d' (now a pinned history record). Subject preserved: the head is
+  // whatever record validate binds to the live manifest.
+  const chainHeadId = 'registry-rework-521214e'
   const kept = structuredClone(valid).reconciliations.filter(
     (record) => record.reconciliationId !== chainHeadId,
   )
@@ -1338,7 +1448,11 @@ test('R4 shipped Gate 3 competitors resolve without test-time subject rewriting'
     host: 'provider-neutral',
   })
   assert.equal(result.outcome, 'RESOLVED')
-  if (result.outcome === 'RESOLVED') assert.equal(result.authorityClaim, 'human-owned-nondelegated')
+  if (result.outcome === 'RESOLVED')
+    assert.equal(
+      result.authorityClaim,
+      'gate3-human-owned-for-main-pr-settings-deployment-and-destructive-cleanup-with-green-chain-integration-merge-step-delegation-voided-by-any-red-step',
+    ) // R32 migration (RS-2.1): was 'human-owned-nondelegated'
 })
 
 const shippedResolverVectors = [
@@ -1358,7 +1472,8 @@ const shippedResolverVectors = [
     operation: 'state-transition',
     host: 'provider-neutral',
     outcome: 'RESOLVED',
-    claim: 'human-owned-nondelegated',
+    claim:
+      'gate3-human-owned-for-main-pr-settings-deployment-and-destructive-cleanup-with-green-chain-integration-merge-step-delegation-voided-by-any-red-step', // R32 migration (RS-2.1): was 'human-owned-nondelegated'
   },
   {
     subject: 'permission-profile.registry-state',
@@ -2065,8 +2180,20 @@ function r13Audit(document: AuthorityEnforcementRegistry = full): R13AuditRecord
 test('R13 normative Markdown audit has exactly 145 source-authored records', () => {
   const baseline = r30Baseline()
   assert.equal(baseline.normativeMarkdownAudit.length, 145)
-  assert.deepEqual(r13Audit().slice(0, 145), baseline.normativeMarkdownAudit)
-  assert.equal(r13Audit().length, 202)
+  // R32 migration: the live audit preserves every R30 source-authored row under its (sourceId,
+  // itemId) identity, re-valued through the typed R32_ITEM_MIGRATIONS successors, minus the two
+  // FOREMAN-LINE-PLAN §5 audit candidacies R32 retired (item.389ca82e4c31 and item.a9cf544f084d,
+  // historical rows 137/138; the other three retired §5 rows were never audit candidates). The
+  // mapped R30 rows therefore number 145 - 2 = 143 and remain the live prefix in the reviewed
+  // order. Was: the live prefix of 145 equaled the R30 rows verbatim and the live audit totaled
+  // 202 rows. The prior digests stay visible: each row's priorValueDigest is pinned in
+  // R32_ITEM_MIGRATIONS.
+  const expected = r32ExpectedAuditRows(baseline.normativeMarkdownAudit)
+  assert.equal(expected.length, 143)
+  assert.deepEqual(r13Audit().slice(0, 143), expected)
+  // R32 migration: was 202 (the R31 audit: 198 historical rows + the 4 typed R31 append rows).
+  // 202 - 2 retired audit candidacies = 200.
+  assert.equal(r13Audit().length, 200)
 })
 
 test('R13 normative Markdown audit binds every candidate to its exact item and value', () => {
@@ -2130,8 +2257,17 @@ test('R13 every excluded audit candidate has one item-specific rationale', () =>
   const proposed = r31Contract()
   assert.equal(historical.length, 198)
   assert.equal(proposed.audit.length, 4)
-  assert.deepEqual(r13Audit().slice(0, 198), historical)
-  assert.deepEqual(r13Audit(), [...historical, ...proposed.audit])
+  // R32 migration: was `r13Audit().slice(0, 198) deepEqual historical` and
+  // `r13Audit() deepEqual [...historical, ...proposed.audit]` (202 rows). R32 retires exactly two
+  // audit candidacies (foreman-line-plan:item.389ca82e4c31 and item.a9cf544f084d, historical rows
+  // 137/138) and re-values the changed units through R32_ITEM_MIGRATIONS; the mapped historical
+  // rows are 198 - 2 = 196, the complete audit is 196 + 4 = 200 rows, and the reviewed order is
+  // preserved. Prior values stay visible: every re-valued row's priorValueDigest is pinned in
+  // R32_ITEM_MIGRATIONS. Was: 198-row verbatim prefix and a 202-row concatenation.
+  const expectedHistorical = r32ExpectedAuditRows(historical)
+  assert.equal(expectedHistorical.length, 196)
+  assert.deepEqual(r13Audit().slice(0, 196), expectedHistorical)
+  assert.deepEqual(r13Audit(), [...expectedHistorical, ...r32ExpectedAuditRows(proposed.audit)])
   for (const record of proposed.audit) {
     const unit = proposed.units.find(
       (candidate) => candidate.sourceId === record.sourceId && candidate.itemId === record.itemId,
@@ -2141,7 +2277,19 @@ test('R13 every excluded audit candidate has one item-specific rationale', () =>
       .find((source) => source.sourceId === unit.sourceId)
       ?.inventoryItems.find((candidate) => candidate.itemId === unit.itemId)
     ok(item)
-    assert.deepEqual(item.locator, unit.locator)
+    // R32 migration: the locator's `lineHint` moved with the re-pinned sources (R31 unit M03's
+    // hint was 143 and is now 154) and is not digest-bound; the migrated pin compares the
+    // digest-bound locator fields (kind, anchor) and the locator digest exactly. Was: the whole
+    // locator object compared literally, lineHint included.
+    const expectedLocator = r32ExpectedLocator(
+      { ...unit.locator, locatorDigest: unit.locatorDigest },
+      r32ItemMigrationFor(unit.sourceId, unit.itemId),
+    )
+    assert.deepEqual(
+      { kind: item.locator.kind, anchor: item.locator.anchor },
+      { kind: expectedLocator.kind, anchor: expectedLocator.anchor },
+    )
+    assert.equal(locatorDigestFor(item.locator), expectedLocator.locatorDigest)
     assert.equal(record.valueDigest, unit.valueDigest)
     assert.deepEqual(record.ruleIds, unit.ruleIds)
   }
@@ -2801,7 +2949,10 @@ for (const vector of [
     const result = resolveNatural('gate3.merge-authority', 'coordinator', 'merge', vector.operation)
     assert.equal(result.outcome, 'RESOLVED')
     if (result.outcome === 'RESOLVED') {
-      assert.equal(result.authorityClaim, 'human-owned-nondelegated')
+      assert.equal(
+        result.authorityClaim,
+        'gate3-human-owned-for-main-pr-settings-deployment-and-destructive-cleanup-with-green-chain-integration-merge-step-delegation-voided-by-any-red-step',
+      ) // R32 migration (RS-2.1): was 'human-owned-nondelegated'
     }
   })
 }
@@ -3757,15 +3908,27 @@ test('R9 shared semantic identities are limited to the exact curated equivalent 
         ],
       ],
       [
-        'gate3.merge-authority|human-owned-nondelegated',
+        'gate3.merge-authority|gate3-human-owned-for-main-pr-settings-deployment-and-destructive-cleanup-with-green-chain-integration-merge-step-delegation-voided-by-any-red-step', // R32 migration (RS-2.1): was 'gate3.merge-authority|human-owned-nondelegated'
         [
+          // R32 migration: was this gate-3 group PLUS 'rule.foreman-line-plan.c92333c21e64'.
+          // That historical Stage F rule keeps 'human-owned-nondelegated' as historical-only
+          // narrative of its unchanged source text (R32 record §R32.3), so it leaves this group
+          // and its subject|claim key becomes a singleton. The group is now the five live
+          // restatements.
           'rule.fk-charter.b1ac4aa9eddf',
           'rule.fk-charter.c74628d41600',
           'rule.fk-loop-directive.08b3cbb91027',
           'rule.fk-loop-directive.2743c2f8c558',
           'rule.fk-loop-directive.7eb6018d9e57',
-          'rule.foreman-line-plan.c92333c21e64',
         ],
+      ],
+      [
+        // R32 migration: new shared identity adopted by the R32 rule-bearing adoptions - the §9
+        // supersession and §16 completion-accounting paragraphs restate the same exit-supersession
+        // claim (R32_ITEM_MIGRATIONS dispositions 'adopted' for item.6a8d073a64f1 and
+        // item.1d6405c6eacd). There was no predecessor group; the R31 list stopped at gate-3.
+        'goal.exit-supersession|inherited-nine-exit-tests-superseded-by-rs1-4-rs2-3',
+        ['rule.fk-charter.1d6405c6eacd', 'rule.fk-charter.6a8d073a64f1'],
       ],
       [
         'goal.stop.serialization-ownership|stop-when-owned-serialization-point-has-no-ratified-sequence',
@@ -4167,7 +4330,11 @@ test('R14 a new rule wearing an approved Gate 2 rule name cannot inherit its ALL
 // and reads as "allowed", which is the trap that caught every party to this parcel at least once.
 // ===========================================================================================
 
-const CHAIN_HEAD_ID = 'registry-rework-446700d'
+// R32 migration: the shipped chain head advanced to the R32 record. Pre-R32 head was
+// 'registry-rework-446700d' (the R31 record, now a pinned history record). Subject preserved:
+// every mutation below targets whichever record validate binds to the live manifest, so the
+// mutation targets follow the CURRENT head's command layout and never a pinned predecessor.
+const CHAIN_HEAD_ID = 'registry-rework-521214e'
 
 type Reconciliation = AuthorityEnforcementRegistry['reconciliations'][number]
 type Evidence = Reconciliation['observedEvidence'][number]
@@ -4176,6 +4343,22 @@ function headOf(document: AuthorityEnforcementRegistry): Reconciliation {
   const head = document.reconciliations.find((record) => record.reconciliationId === CHAIN_HEAD_ID)
   ok(head, `${CHAIN_HEAD_ID} must be present`)
   return head
+}
+
+/**
+ * R32 migration: at R31 the chain head WAS the reserved R31 record, so the decision-diagnostic
+ * and exact-migration mutations below resolved their target with `headOf`. R32 demotes that
+ * record into the pinned set (`registry-rework-446700d`, carrying the `r31-plan-decision-git-blob`
+ * diagnostic) and puts the R32 record at the head, so those mutations target the reserved record
+ * itself. Subject preserved: the R31 record's decision diagnostic and custody tuple reject
+ * repaired substitutions byte-exactly, wherever the record sits in the chain.
+ */
+function r31RecordOf(document: AuthorityEnforcementRegistry): Reconciliation {
+  const record = document.reconciliations.find(
+    (entry) => entry.reconciliationId === 'registry-rework-446700d',
+  )
+  ok(record, 'the reserved R31 record must be present')
+  return record
 }
 
 /** Clone the shipped registry, mutate its chain head, and PROVE the mutation changed something. */
@@ -4451,7 +4634,11 @@ test('AC4 O4 hermetic residual remains explicit for a generic nonreserved succes
   const originalDigest = target.digest
   assert.notEqual(originalDigest, 'a'.repeat(64))
   Object.assign(target, { digest: 'a'.repeat(64) })
-  assert.deepEqual(headMutated.reconciliations.slice(0, 21), full.reconciliations)
+  // R32 migration: was slice(0, 21) - the R31 chain was 20 pinned records + the R31 head. R32
+  // demotes the R31 head into the pinned set (RECONCILIATION_RECORD_DIGESTS gains its entry) and
+  // appends the R32 head, so the pinned prefix is 22 records (21 pinned + the R32 head) and the
+  // generic successor appended by rechain() sits at index 22.
+  assert.deepEqual(headMutated.reconciliations.slice(0, 22), full.reconciliations)
   assert.equal(registryBindingManifestDigest(headMutated), registryBindingManifestDigest(before))
   const restored = structuredClone(headMutated)
   const restoredTarget = restored.reconciliations
@@ -4470,14 +4657,22 @@ test('AC4 O4 hermetic residual remains explicit for a generic nonreserved succes
     'explicit hermetic-only residual: a generic nonreserved successor digest has no independent object-byte binding',
   )
 
-  const reservedMutated = withMutatedHead((record) => {
-    const reservedTarget = record.observedEvidence.find(
-      (evidence) => evidence.kind === 'git-commit',
-    )
-    ok(reservedTarget)
-    assert.notEqual(reservedTarget.digest, 'a'.repeat(64))
-    Object.assign(reservedTarget, { digest: 'a'.repeat(64) })
-  })
+  // R32 migration: this reserved mutation used to ride `withMutatedHead`, because at R31 the
+  // chain head WAS the reserved R31 record. R32 demotes that record into the pinned set and puts
+  // the R32 record at the head, so the mutation now targets the reserved R31 record itself
+  // (registry-rework-446700d) and the exact-R31-record diagnostic is asserted unchanged.
+  // Was: withMutatedHead(...) against 'registry-rework-446700d' in its then-head position.
+  const reservedMutated = structuredClone(full)
+  const reservedR31 = reservedMutated.reconciliations.find(
+    (record) => record.reconciliationId === 'registry-rework-446700d',
+  )
+  ok(reservedR31)
+  const reservedTarget = reservedR31.observedEvidence.find(
+    (evidence) => evidence.kind === 'git-commit',
+  )
+  ok(reservedTarget)
+  assert.notEqual(reservedTarget.digest, 'a'.repeat(64))
+  Object.assign(reservedTarget, { digest: 'a'.repeat(64) })
   expectCode(reservedMutated, 'MIGRATION_EVIDENCE_INVALID')
   expectMessage(
     reservedMutated,
@@ -5396,7 +5591,28 @@ test('R30 all 72 complete published shapes agree with the independent source map
     assert.equal(rule.severity, 'critical', unit)
     assert.equal(rule.authoritySubject, row[4]?.trim(), unit)
     assert.equal(rule.authorityClaim, row[5]?.trim(), unit)
-    assert.equal(rule.normalizedStatement, normalizeRuleText(row[6]?.trim() ?? ''), unit)
+    // R32 migration: the ten re-stated R30 statements (R32_RULE_STATEMENT_MIGRATIONS: the INF
+    // traceability-labels clause, the HCF/HAWF deletion clause, and the eight .carriers rules that
+    // gain their exact RS-2.2 source qualifier) replace the mapping-doc statement with their
+    // reviewed successors; each typed row pins priorStatement = this exact doc statement, so the
+    // historical subject stays visible. Every unmoved rule keeps the doc statement verbatim.
+    // Was: normalizedStatement equaled normalizeRuleText(row[6]) for all 72.
+    const statementMigration = R32_RULE_STATEMENT_MIGRATIONS.find(
+      (entry) => entry.ruleId === rule.ruleId,
+    )
+    if (statementMigration === undefined) {
+      assert.equal(rule.normalizedStatement, normalizeRuleText(row[6]?.trim() ?? ''), unit)
+    } else {
+      // R32 migration: the statement migrates to the typed R32 re-statement
+      // (R32_RULE_STATEMENT_MIGRATIONS.newStatement = the historical statement plus EXACTLY the
+      // source-gained qualifier, per record section R32.2) exactly. Was: normalizedStatement
+      // equaled normalizeRuleText(row[6]) - the mapping-doc statement, still pinned on site in
+      // row[6] and now re-asserted as the typed row's priorStatement (W2b correction: the rows'
+      // prior values had been mis-recorded and the successors carried the gained qualifier twice;
+      // the table now conforms to R32.2 and this derivation check binds it).
+      assert.equal(statementMigration.priorStatement, normalizeRuleText(row[6]?.trim() ?? ''), unit)
+      assert.equal(rule.normalizedStatement, statementMigration.newStatement, unit)
+    }
     assert.deepEqual(rule.applicability, presets.get(row[3]), unit)
     assert.deepEqual(rule.pairedRuleIds, [], unit)
     assert.equal(rule.retirementState, 'active-reading', unit)
@@ -5411,17 +5627,40 @@ test('R30 all 72 complete published shapes agree with the independent source map
       unit,
     )
     const expectedRefs = references.get(unit)
-    ok(expectedRefs, unit)
+    ok(expectedRefs)
     assert.equal(rule.ruleId, expectedRefs.ruleId, unit)
-    assert.deepEqual(rule.authorityBasisRef, expectedRefs.basis, `${unit}: exact designated basis`)
-    assert.deepEqual(rule.sourceRefs, expectedRefs.refs, `${unit}: exact ordered source refs`)
+    // R32 migration: the R30 mapping's locator/value digest pins re-bind through the typed
+    // R32_ITEM_MIGRATIONS successors (r32ExpectedRef proves each row's prior digests ARE these doc
+    // pins before returning the new ones). Units the R32 re-pin left untouched keep the doc pins
+    // verbatim. Was: basis and refs compared to the mapping-doc pins as written (e.g. C02's basis
+    // locatorDigest 78e8b879... is now its R32 successor 43ff291e...).
+    assert.deepEqual(
+      rule.authorityBasisRef,
+      r32ExpectedRef(expectedRefs.basis),
+      `${unit}: exact designated basis`,
+    )
+    assert.deepEqual(
+      rule.sourceRefs,
+      expectedRefs.refs.map((ref) => r32ExpectedRef(ref)),
+      `${unit}: exact ordered source refs`,
+    )
   }
   assert.deepEqual(classes, { IJ: 37, PR: 21, PD: 5, NP: 9 })
 })
 
 test('R30 exact adopted registry and reviewed paraphrases validate without new grants', () => {
   assert.deepEqual(validateRegistry(full).violations, [])
-  assert.deepEqual(full.operationAuthority, r30Baseline().operationAuthority)
+  // R32 migration: the adopted operationAuthority rows carry the same operations, principals and
+  // (sourceId, itemId) evidence identities; only the evidence refs' locator/value digests re-bind
+  // through R32_ITEM_MIGRATIONS (gate1.ratify, gate2.dispatch, gate3.merge, closure.record). The
+  // row keys are unchanged and no principal is added - the subject ("R30's adopted
+  // operationAuthority, no new grants") is preserved. Was: the rows deep-equaled the R30 baseline
+  // verbatim, evidence digests included.
+  const expected = r30Baseline().operationAuthority.map((row) => ({
+    ...row,
+    requiredGitEvidence: row.requiredGitEvidence.map((ref) => r32ExpectedRef(ref)),
+  }))
+  assert.deepEqual(full.operationAuthority, expected)
 })
 
 test('R30 preserves all 19 complete historical reconciliations and appends only one named migration', () => {
@@ -5728,6 +5967,8 @@ for (const axis of ['missing', 'extra', 'reordered', 'swapped', 'duplicate'] as 
 }
 for (const axis of ['missing', 'extra', 'cross-item', 'duplicate'] as const) {
   test(`R30 reciprocal inventory edge set rejects ${axis} membership`, () => {
+    let mutatedRuleId = ''
+    let mutatedItemId = ''
     const document = r30Mutate('C23/no-late-allow', (rule, candidate) => {
       const ref = rule.sourceRefs[2]
       ok(ref)
@@ -5735,6 +5976,8 @@ for (const axis of ['missing', 'extra', 'cross-item', 'duplicate'] as const) {
         .find((source) => source.sourceId === ref.sourceId)
         ?.inventoryItems.find((entry) => entry.itemId === ref.itemId)
       ok(item)
+      mutatedRuleId = rule.ruleId
+      mutatedItemId = item.itemId
       const ids = [...item.ruleIds]
       if (axis === 'missing') ids.splice(ids.indexOf(rule.ruleId), 1)
       else if (axis === 'extra') ids.push('rule.fk-charter.d1')
@@ -5742,7 +5985,34 @@ for (const axis of ['missing', 'extra', 'cross-item', 'duplicate'] as const) {
       else ids[ids.indexOf(rule.ruleId)] = r30Rule('U01/stable-ids').ruleId
       Object.assign(item, { ruleIds: ids })
     })
-    r30AuthorityRefusal(document, axis === 'duplicate' ? 'ruleIds' : undefined)
+    if (axis === 'duplicate') {
+      r30AuthorityRefusal(document, 'ruleIds')
+      return
+    }
+    // R32 migration: was `r30AuthorityRefusal(document)` - the R30 source-unit pin refused the
+    // membership change with AUTHORITY_ESCALATION 'R30 reviewed source unit ...'. R32 re-keyed the
+    // L5 corroboration item into R32_ITEM_MIGRATIONS, and the typed prior-to-new binding supersedes
+    // the R30 pin for such units ("checked against its R32 binding, never against the superseded
+    // R30 pin"). The reciprocal edge set is still refused: a removed or cross-linked edge is named
+    // exactly by the typed-binding refusal, and a phantom addition moves the derived audit's
+    // ruleIds and is refused by the audit binding. Subject preserved: a missing/extra/cross
+    // membership on the reciprocal edge set cannot stand. Predecessor pins recorded here because
+    // they no longer fire for migrated units: AUTHORITY_ESCALATION 'R30 reviewed source unit ...
+    // does not match its exact locator and value'.
+    const result = validateRegistry(document)
+    assert.equal(result.valid, false)
+    ok(
+      result.violations.some((entry) =>
+        axis === 'extra'
+          ? entry.code === 'RULE_SEMANTICS_UNCURATED' &&
+            entry.message.includes('normative Markdown audit')
+          : entry.code === 'MIGRATION_EVIDENCE_INVALID' &&
+            entry.message.includes(
+              `rule identity '${mutatedRuleId}' does not bind inventory identity '${mutatedItemId}'`,
+            ),
+      ),
+      JSON.stringify(result.violations),
+    )
   })
 }
 for (const axis of ['suffix substitution', 'borrowed suffix'] as const) {
@@ -5801,6 +6071,19 @@ test('R30 corroboration adds exactly 67 reciprocal edges without changing the de
           entry.refs.some((ref) => ref.sourceId === source.sourceId && ref.itemId === item.itemId),
         )
         .map((entry) => entry.ruleId)
+      // R32 migration: the reciprocal set preserves the legacy links plus the R30 corroboration
+      // additions plus the R31 contract links (unchanged) AND the rule links of the R32 typed
+      // adoptions - each adopted item (L6/L7/§9/§16) gains its adoption rule's edge. The adoption
+      // rule ids derive from the pinned r32AdoptionRules shapes, not from the live registry.
+      // Was: the expected set stopped at the R31 links (e.g. fk-charter:item.3df7b6a51799 expected
+      // [] and now carries ['rule.fk-charter.3df7b6a51799']).
+      const adoptionLinks = r32AdoptionRules
+        .filter((rule) =>
+          rule.sourceRefs.some(
+            (ref) => ref.sourceId === source.sourceId && ref.itemId === item.itemId,
+          ),
+        )
+        .map((rule) => rule.ruleId)
       assert.deepEqual(
         [...item.ruleIds].sort(),
         [
@@ -5808,6 +6091,7 @@ test('R30 corroboration adds exactly 67 reciprocal edges without changing the de
             ...(priorItem?.ruleIds ?? []),
             ...additions,
             ...r31ExpectedItemRuleIds(source.sourceId, item.itemId),
+            ...adoptionLinks,
           ]),
         ].sort(),
         `${source.sourceId}:${item.itemId}: exact reciprocal set preserves legacy links`,
@@ -5838,7 +6122,16 @@ test('R30 corroboration adds exactly 67 reciprocal edges without changing the de
 })
 
 test('R31 independently prescribed successor counts and source snapshot are adopted', () => {
-  assert.equal(full.sourceSnapshotCommit, '8d500704c9e3d6d8b652bbe838aa3623f88203fc')
+  assert.equal(full.sourceSnapshotCommit, '6356bca419b4a139528ceb3de38fb51aabb989d3') // R32 migration: was 8d500704c9e3d6d8b652bbe838aa3623f88203fc (R31 source snapshot)
+  // R32 migration: was [18, 1585, 542, 202, 21] (the R31-prescribed successor counts). The R32
+  // corpus re-pin moves each count with a visible derivation:
+  //   items: 1585 + 200 corpus additions (73 fk-charter, 61 fk-plan-review-findings, 7
+  //     spec-convention, 1 foreman-line-plan, 16 spec-frontmatter-schema, 15 spec-linter-validator,
+  //     21 spec-linter-cli, 6 spec-linter-readme) - 19 typed retirements
+  //     (R32_ITEM_MIGRATIONS disposition 'retired') = 1766;
+  //   rules: 542 + the 4 rule-bearing adoptions (r32AdoptionRules) = 546;
+  //   audit: 202 - 2 retired FOREMAN-LINE-PLAN §5 audit candidacies = 200;
+  //   reconciliations: 21 + the R32 head append (the R31 head demoting into the pinned set) = 22.
   assert.deepEqual(
     [
       full.sources.length,
@@ -5847,11 +6140,289 @@ test('R31 independently prescribed successor counts and source snapshot are adop
       full.normativeMarkdownAudit.length,
       full.reconciliations.length,
     ],
-    [18, 1585, 542, 202, 21],
+    [18, 1766, 546, 200, 22],
   )
   assert.ok(full.rules.some((r) => r.ruleId === 'rule.standing-constraints.constraint-14'))
 })
 
+// R32 migration (test-side adoption pin): the four rule-bearing adoptions R32 introduced (the
+// §4.1 rows L6/L7 and the §9 supersession / §16 completion-accounting paragraphs become
+// rule-bearing items; R32_ITEM_MIGRATIONS dispositions 'adopted' for item.3df7b6a51799,
+// item.5722ad7bc5ab, item.6a8d073a64f1, item.1d6405c6eacd). These full shapes are the independent
+// test-side pin of the adopted rules - predecessor visible: the R31 list of new rules was exactly
+// [r31Contract().newRule] and nothing else, so these four are the complete R32 addition.
+const r32AdoptionRules: readonly AuthorityRule[] = [
+  {
+    ruleId: 'rule.fk-charter.3df7b6a51799',
+    authoritySubject: 'goal.ratification-ledger.rs1-ratification',
+    authorityClaim: 'l6-ratifies-rs1-program-rescope-and-gate3-delegation',
+    normalizedStatement:
+      '| L6 | 2026-09-27 | Amendment RS-1 — program re-scope + Gate-3 delegation | Wave 3 split (FK-P9–P11 in scope; FK-P12–P15 deferred to a post-Wave-3a value check); Wave 4 reduced (FK-P17′/FK-P18′ in scope and retargeted to the shipped mediated surfaces; FK-P16/FK-P19/FK-P21 deferred to a post-P17′/P18′ value check; FK-P20 dropped); FK-P2 elevated to head of Wave 0 after FK-P1; exit criterion amended (RS-1.4); Gate-3 merge git step delegated to the coordinator session under owner blanket authority for green chains (RS-1.5); owner-of-record handoff reconciled. | `fk-rescope-RS1-2026-09-27.md`; owner direction 2026-09-27 (blanket authority + “Proceed with your recommendations”); evidence `fk-wave3-4-marginal-value-2026-09-27.md`. |',
+    sourceRefs: [
+      {
+        sourceId: 'fk-charter',
+        itemId: 'item.3df7b6a51799',
+        locatorDigest: '03d51a0890b771c4b672b0d38501a17e0228f521cd734b8264cc638b0e2caa7c',
+        valueDigest: '08aff1aba3fa5454f2a521771d101ae651434f70e034d10dfec8c344dcd08884',
+      },
+    ],
+    authorityBasisRef: {
+      sourceId: 'fk-charter',
+      itemId: 'item.3df7b6a51799',
+      locatorDigest: '03d51a0890b771c4b672b0d38501a17e0228f521cd734b8264cc638b0e2caa7c',
+      valueDigest: '08aff1aba3fa5454f2a521771d101ae651434f70e034d10dfec8c344dcd08884',
+    },
+    applicability: {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator', 'shaper', 'builder', 'reviewer', 'kernel'],
+      stages: [
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'receipt-validation',
+      ],
+      hosts: ['any'],
+    },
+    severity: 'medium',
+    classification: 'narrative-provenance',
+    decision: 'ADVISORY',
+    refusalCode: null,
+    enforcementOwner: 'provenance-only',
+    assurance: 'narrative',
+    pairedRuleIds: [],
+    retirementState: 'active-reading',
+    retirementEvidence: {
+      predicate: null,
+      negativeRefusalTest: null,
+      corpusSweep: null,
+      independentBypassAttempt: null,
+    },
+    bindingDigest: '7de9c3acda79514bf68aaf3492be34929731346facedc177737702ef6d854876',
+  },
+  {
+    ruleId: 'rule.fk-charter.5722ad7bc5ab',
+    authoritySubject: 'goal.ratification-ledger.rs2-ratification',
+    authorityClaim: 'l7-ratifies-rs2-gate1-scoped-reratification-and-rs1-propagation',
+    normalizedStatement:
+      '| L7 | 2026-09-27 | Amendment RS-2 — Gate-1 scoped re-ratification + RS-1 propagation | Gate-3 delegated merge git step for fully-green chains (D9 Gate-3 clause amended; §10/§13/loop SA6 restated; a986b45/609c97f retroactively confirmed); INF carriers reassigned/stranded (INF-5 → FK-P17′; INF-8 in-scope fragments FK-P9/FK-P11; rest named in exit annex); RS-1.4 (a)–(f) sole binding exit with annex; FK-P2 narrowed to compiler+fixtures, rewiring deferred to negotiated FK-P2B; corpus amendment R32 required before verification claims cover new content. | `fk-rs2-gate1-reratification-2026-09-27.md`; owner rulings 2026-09-27 in the §15.2 Gate-1 re-open. |',
+    sourceRefs: [
+      {
+        sourceId: 'fk-charter',
+        itemId: 'item.5722ad7bc5ab',
+        locatorDigest: '7ecafdd34559bf0957817e1df4a8db965cfc4d2c4795236aa8f4570f77bbc3ed',
+        valueDigest: '1f1c87616d4f979458a701aabea7a58b0d5dc3c4a8601ea23572715270d83eea',
+      },
+    ],
+    authorityBasisRef: {
+      sourceId: 'fk-charter',
+      itemId: 'item.5722ad7bc5ab',
+      locatorDigest: '7ecafdd34559bf0957817e1df4a8db965cfc4d2c4795236aa8f4570f77bbc3ed',
+      valueDigest: '1f1c87616d4f979458a701aabea7a58b0d5dc3c4a8601ea23572715270d83eea',
+    },
+    applicability: {
+      goals: ['foreman-kernel'],
+      roles: ['coordinator', 'shaper', 'builder', 'reviewer', 'kernel'],
+      stages: [
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'receipt-validation',
+      ],
+      hosts: ['any'],
+    },
+    severity: 'medium',
+    classification: 'narrative-provenance',
+    decision: 'ADVISORY',
+    refusalCode: null,
+    enforcementOwner: 'provenance-only',
+    assurance: 'narrative',
+    pairedRuleIds: [],
+    retirementState: 'active-reading',
+    retirementEvidence: {
+      predicate: null,
+      negativeRefusalTest: null,
+      corpusSweep: null,
+      independentBypassAttempt: null,
+    },
+    bindingDigest: '3a3839b90546fe23fb6875c19dc0342aa3efff03a7613b4c7155a186e502f2a1',
+  },
+  {
+    ruleId: 'rule.fk-charter.6a8d073a64f1',
+    authoritySubject: 'goal.exit-supersession',
+    authorityClaim: 'inherited-nine-exit-tests-superseded-by-rs1-4-rs2-3',
+    normalizedStatement:
+      '**Superseded as exit tests by RS-2.3 (L7).** The sole binding exit is RS-1.4 (a)–(f) as amended by RS-2.3, including its exit annex (every deferred parcel FK-P12–FK-P16/FK-P19/FK-P21, the dropped FK-P20, and every stranded obligation named in RS-2.2 — listed as NOT satisfied, as follow-on-goal candidates). The numbered items below are retained as historical text only.',
+    sourceRefs: [
+      {
+        sourceId: 'fk-charter',
+        itemId: 'item.6a8d073a64f1',
+        locatorDigest: 'd5ed363f863e9177e056d85921704d1c11df752ba57fd2f55eba9263beb4aa1a',
+        valueDigest: '4b1f945c5af5acfc5c9e23314506ab9812c66c6b5d2567f9b0893e09db596ce8',
+      },
+    ],
+    authorityBasisRef: {
+      sourceId: 'fk-charter',
+      itemId: 'item.6a8d073a64f1',
+      locatorDigest: 'd5ed363f863e9177e056d85921704d1c11df752ba57fd2f55eba9263beb4aa1a',
+      valueDigest: '4b1f945c5af5acfc5c9e23314506ab9812c66c6b5d2567f9b0893e09db596ce8',
+    },
+    applicability: {
+      goals: ['foreman-kernel'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+    severity: 'critical',
+    classification: 'pre-action-refusal',
+    decision: 'REFUSE',
+    refusalCode: 'FK_CANON_RULE_REFUSED',
+    enforcementOwner: 'kernel-policy',
+    assurance: 'structural',
+    pairedRuleIds: [],
+    retirementState: 'active-reading',
+    retirementEvidence: {
+      predicate: null,
+      negativeRefusalTest: null,
+      corpusSweep: null,
+      independentBypassAttempt: null,
+    },
+    bindingDigest: 'a50d4167c3a40928440c20d5ebcc5949e3e2e446a7ed9410fbef6d27e5496414',
+  },
+  {
+    ruleId: 'rule.fk-charter.1d6405c6eacd',
+    authoritySubject: 'goal.exit-supersession',
+    authorityClaim: 'inherited-nine-exit-tests-superseded-by-rs1-4-rs2-3',
+    normalizedStatement:
+      'The inherited nine goal exit conditions in section 9 are superseded as exit tests by RS-1.4 as amended by RS-2.3 (L6/L7); they remain historical text, and the RS-2.3 exit annex names every stranded obligation. These rows explain how the ratified infrastructure recommendations must be traced through the existing evidence, without replacing an integration proof with prose.',
+    sourceRefs: [
+      {
+        sourceId: 'fk-charter',
+        itemId: 'item.1d6405c6eacd',
+        locatorDigest: 'ee5b323c554c99b30b6e7eb8b90a17df5b4af3683244f28d8ec026099c4aa24c',
+        valueDigest: '62b9e6d4d3faa3fe397394e4394be9832dd3d110753e5445efb3806d0ed339dd',
+      },
+    ],
+    authorityBasisRef: {
+      sourceId: 'fk-charter',
+      itemId: 'item.1d6405c6eacd',
+      locatorDigest: 'ee5b323c554c99b30b6e7eb8b90a17df5b4af3683244f28d8ec026099c4aa24c',
+      valueDigest: '62b9e6d4d3faa3fe397394e4394be9832dd3d110753e5445efb3806d0ed339dd',
+    },
+    applicability: {
+      goals: ['foreman-kernel'],
+      roles: [
+        'developer',
+        'coordinator',
+        'shaper',
+        'builder',
+        'reviewer',
+        'ci',
+        'host-adapter',
+        'kernel',
+        'operator',
+      ],
+      stages: [
+        'stage-zero',
+        'shaping',
+        'step-zero',
+        'build',
+        'deterministic-verify',
+        'adversarial-review',
+        'merge',
+        'closure',
+        'runtime',
+      ],
+      operations: [
+        'source-inventory',
+        'spec-mutation',
+        'repo-read',
+        'repo-mutation',
+        'state-transition',
+        'control-call',
+        'receipt-validation',
+        'external-write',
+      ],
+      hosts: [
+        'provider-neutral',
+        'claude-windows-docker-loaded',
+        'claude-windows-docker-unenrolled',
+        'unsupported-host',
+        'ci',
+      ],
+    },
+    severity: 'critical',
+    classification: 'pre-action-refusal',
+    decision: 'REFUSE',
+    refusalCode: 'FK_CANON_RULE_REFUSED',
+    enforcementOwner: 'kernel-policy',
+    assurance: 'structural',
+    pairedRuleIds: [],
+    retirementState: 'active-reading',
+    retirementEvidence: {
+      predicate: null,
+      negativeRefusalTest: null,
+      corpusSweep: null,
+      independentBypassAttempt: null,
+    },
+    bindingDigest: 'fc3fc6cd430e56b176b9f6301aab40a7ff87fba4a75b7ab96a4d5f3aee6ee71a',
+  },
+]
 // R31 expectations come from independently reviewed pre-generation source artifacts.
 function r31Oracle<T>(name: string): T {
   return JSON.parse(
@@ -5911,16 +6482,31 @@ test('R31 full source-authored rule shapes, designated bases and ordered referen
       ?.inventoryItems.find((candidate) => candidate.itemId === expected.itemId)
     ok(item)
     for (const key of [
-      'locator',
       'normalizedExcerpt',
       'valueDigest',
       'ruleIds',
       'exclusionDisposition',
     ] as const)
       assert.deepEqual(item[key], expected[key])
-    assert.equal(locatorDigestFor(item.locator), expected.locatorDigest)
+    // R32 migration: the locator's `lineHint` legitimately renumbered with the re-pinned sources
+    // (R31 unit M03's hint was 143 and is now 154) and is not digest-bound; the migrated pin
+    // compares the digest-bound locator fields (kind, anchor) and the locator digest exactly.
+    // Was: `item['locator']` deep-equaled the oracle locator, lineHint included.
+    const expectedLocator = r32ExpectedLocator(
+      { ...expected.locator, locatorDigest: expected.locatorDigest },
+      r32ItemMigrationFor(expected.sourceId, expected.itemId),
+    )
+    assert.deepEqual(
+      { kind: item.locator.kind, anchor: item.locator.anchor },
+      { kind: expectedLocator.kind, anchor: expectedLocator.anchor },
+    )
+    assert.equal(locatorDigestFor(item.locator), expectedLocator.locatorDigest)
   }
-  assert.deepEqual(full.normativeMarkdownAudit.slice(198), oracle.audit)
+  // R32 migration: was slice(198) equal to the oracle's four rows. R32 retires two historical
+  // audit candidacies ahead of them (foreman-line-plan:item.389ca82e4c31, item.a9cf544f084d), so
+  // the same four independently reviewed append rows now occupy 196..199 behind the 196 mapped
+  // historical rows.
+  assert.deepEqual(full.normativeMarkdownAudit.slice(196), r32ExpectedAuditRows(oracle.audit))
 })
 
 test('R31 complete prior-item correspondence and exact reciprocal sets include every current item', () => {
@@ -5934,7 +6520,16 @@ test('R31 complete prior-item correspondence and exact reciprocal sets include e
     }[]
   }>('06-complete-item-correspondence.json')
   assert.equal(oracle.rows.length, 176)
+  // R32 migration: every R31-era item keeps its complete correspondence pin, re-bound through the
+  // typed R32_ITEM_MIGRATIONS successors (r32ExpectedLocator proves each row's prior locator
+  // digest IS the historical pin before returning the successor). Value digests follow the typed
+  // successor; a re-valued item's literal excerpt is bound by that digest (valueDigest is the
+  // SHA-256 of the normalized excerpt) instead of by literal text, and the locator's `lineHint` is
+  // bound by the locator digest instead of a literal line number - both hints legitimately move
+  // with the re-pinned sources and neither is digest-exempt. Was: locator/normalizedExcerpt
+  // compared literally (lineHint included) against the R31 oracle/prior values.
   const expectedKeys = new Set<string>()
+  const additions: { sourceId: string; item: InventoryItem }[] = []
   for (const source of full.sources) {
     const prior = baseline.sources.find((candidate) => candidate.sourceId === source.sourceId)
     ok(prior)
@@ -5945,37 +6540,174 @@ test('R31 complete prior-item correspondence and exact reciprocal sets include e
       const expected: InventoryItem | undefined =
         row?.expectedAfter ??
         prior.inventoryItems.find((candidate) => candidate.itemId === item.itemId)
-      ok(expected, `no unreviewed item ${source.sourceId}:${item.itemId}`)
+      if (expected === undefined) {
+        additions.push({ sourceId: source.sourceId, item })
+        continue
+      }
       expectedKeys.add(`${source.sourceId}:${item.itemId}`)
-      for (const key of [
-        'locator',
-        'normalizedExcerpt',
-        'valueDigest',
-        'ruleIds',
-        'exclusionDisposition',
-      ] as const)
-        assert.deepEqual(item[key], expected[key], `${source.sourceId}:${item.itemId}:${key}`)
+      const migration = r32ItemMigrationFor(source.sourceId, item.itemId)
+      assert.notEqual(migration?.disposition, 'retired', `${source.sourceId}:${item.itemId}`)
+      const expectedLocator = r32ExpectedLocator(
+        { ...expected.locator, locatorDigest: locatorDigestFor(expected.locator) },
+        migration,
+      )
+      assert.deepEqual(
+        { kind: item.locator.kind, anchor: item.locator.anchor },
+        { kind: expectedLocator.kind, anchor: expectedLocator.anchor },
+        `${source.sourceId}:${item.itemId}:locator`,
+      )
+      assert.equal(
+        locatorDigestFor(item.locator),
+        expectedLocator.locatorDigest,
+        `${source.sourceId}:${item.itemId}:locator`,
+      )
+      if (migration?.newValueDigest !== undefined && migration.newValueDigest !== null) {
+        assert.equal(
+          sha256(normalizeRuleText(item.normalizedExcerpt)),
+          item.valueDigest,
+          `${source.sourceId}:${item.itemId}:normalizedExcerpt`,
+        )
+      } else {
+        assert.equal(
+          item.normalizedExcerpt,
+          expected.normalizedExcerpt,
+          `${source.sourceId}:${item.itemId}:normalizedExcerpt`,
+        )
+      }
+      assert.equal(
+        item.valueDigest,
+        migration?.newValueDigest ?? expected.valueDigest,
+        `${source.sourceId}:${item.itemId}:valueDigest`,
+      )
+      assert.deepEqual(item.ruleIds, expected.ruleIds, `${source.sourceId}:${item.itemId}:ruleIds`)
+      assert.equal(
+        item.exclusionDisposition,
+        expected.exclusionDisposition,
+        `${source.sourceId}:${item.itemId}:exclusionDisposition`,
+      )
     }
   }
-  assert.equal(expectedKeys.size, 1585)
+  // R32 migration: expectedKeys.size was 1585 - every R31 item had a reviewed row or prior. The
+  // R32 corpus retires 19 typed units and adds 200 corpus items, so 1585 - 19 = 1566 items keep
+  // their exact R31-era correspondence pins and 200 items are R32 additions bound below.
+  assert.equal(expectedKeys.size, 1566)
   for (const source of baseline.sources)
-    for (const item of source.inventoryItems)
-      ok(expectedKeys.has(`${source.sourceId}:${item.itemId}`))
+    for (const item of source.inventoryItems) {
+      const migration = r32ItemMigrationFor(source.sourceId, item.itemId)
+      if (!expectedKeys.has(`${source.sourceId}:${item.itemId}`))
+        assert.equal(migration?.disposition, 'retired', `${source.sourceId}:${item.itemId}`)
+    }
+  // R32 corpus additions: no R31-era predecessor exists, so each addition is bound by its exact
+  // per-source count and by the generator's documented identity derivation - an unpinned item id
+  // derives from its (sourceId, locator) or from its anchor (generate.ts `itemIdFor` fallbacks),
+  // so the id binds the locator and an addition cannot wear a squatted identity. The four typed
+  // adoptions (R32_ITEM_MIGRATIONS disposition 'adopted') carry their ids from the migration row.
+  const additionsBySource = new Map<string, number>()
+  for (const { sourceId, item } of additions) {
+    additionsBySource.set(sourceId, (additionsBySource.get(sourceId) ?? 0) + 1)
+    const migration = r32ItemMigrationFor(sourceId, item.itemId)
+    if (migration?.disposition === 'adopted') continue
+    const idFromLocator = `item.${sha256(canonicalJson({ sourceId, locator: item.locator })).slice(0, 12)}`
+    const idFromAnchor = `item.${sha256(item.locator.anchor).slice(0, 12)}`
+    ok(
+      item.itemId === idFromLocator || item.itemId === idFromAnchor,
+      `addition identity must derive from its locator: ${sourceId}:${item.itemId}`,
+    )
+  }
+  // R32 migration: these per-source addition counts are the R32 adoption inventory
+  // (1585 + 200 - 19 = 1766); predecessor recorded as the R31 universe, which had no additions
+  // beyond the oracle's `before: null` rows.
   assert.deepEqual(
-    full.rules.filter((rule) => !baseline.rules.some((old) => old.ruleId === rule.ruleId)),
-    [r31Contract().newRule],
+    Object.fromEntries([...additionsBySource.entries()].sort(([l], [r]) => l.localeCompare(r))),
+    {
+      'fk-charter': 73,
+      'fk-plan-review-findings': 61,
+      'foreman-line-plan': 1,
+      'spec-convention': 7,
+      'spec-frontmatter-schema': 16,
+      'spec-linter-cli': 21,
+      'spec-linter-readme': 6,
+      'spec-linter-validator': 15,
+    },
   )
+  // R32 migration: was [r31Contract().newRule] exactly - one reviewed new rule at R31. R32 adds
+  // the four typed rule-bearing adoptions (r32AdoptionRules, pinned in full).
+  const addedRules = full.rules.filter(
+    (rule) => !baseline.rules.some((old) => old.ruleId === rule.ruleId),
+  )
+  const expectedAdded = [r31Contract().newRule, ...r32AdoptionRules]
   assert.deepEqual(
-    full.rules.filter((rule) =>
-      baseline.rules.some(
-        (old) => old.ruleId === rule.ruleId && old.bindingDigest !== rule.bindingDigest,
-      ),
+    addedRules.map((rule) => rule.ruleId).sort(),
+    expectedAdded.map((rule) => rule.ruleId).sort(),
+  )
+  for (const expected of expectedAdded)
+    assert.deepEqual(
+      addedRules.find((rule) => rule.ruleId === expected.ruleId),
+      expected,
+    )
+  // R32 migration (RS-2.1): the gate-3 claim re-baseline on five live restatements plus
+  // goal.exit-merge; the historical plan Stage F rule (rule.foreman-line-plan.c92333c21e64)
+  // deliberately keeps 'human-owned-nondelegated' and is not in this list. Predecessors inline.
+  const gate3Claim =
+    'gate3-human-owned-for-main-pr-settings-deployment-and-destructive-cleanup-with-green-chain-integration-merge-step-delegation-voided-by-any-red-step'
+  const claimRebaselines: readonly (readonly [string, string])[] = [
+    ['rule.fk-charter.e9ec57edc0a2', 'all-parcels-require-human-gate3-merge'],
+    ['rule.fk-charter.c74628d41600', 'human-owned-nondelegated'],
+    ['rule.fk-charter.b1ac4aa9eddf', 'human-owned-nondelegated'],
+    ['rule.fk-loop-directive.08b3cbb91027', 'human-owned-nondelegated'],
+    ['rule.fk-loop-directive.7eb6018d9e57', 'human-owned-nondelegated'],
+    ['rule.fk-loop-directive.2743c2f8c558', 'human-owned-nondelegated'],
+  ]
+  for (const [ruleId, was] of claimRebaselines) {
+    const rule = full.rules.find((candidate) => candidate.ruleId === ruleId)
+    ok(rule)
+    assert.equal(rule.authorityClaim, gate3Claim, `${ruleId}: was '${was}'`)
+  }
+  // R32 migration: was [r31Contract().thesisAfter] exactly - one re-digested rule at R31. R32
+  // re-digests exactly the rules it touches: rules referencing a unit bound by R32_ITEM_MIGRATIONS
+  // (their source refs re-bind to the successors pinned in the item correspondence above), the ten
+  // typed statement re-statements (R32_RULE_STATEMENT_MIGRATIONS), and the six claim re-baselines
+  // above - plus the R31 thesis re-statement. The exact successor shape of the R31 thesis rule
+  // stays pinned by its own oracle; the re-bound successors' values are the typed pins.
+  const changedRules = full.rules.filter((rule) =>
+    baseline.rules.some(
+      (old) => old.ruleId === rule.ruleId && old.bindingDigest !== rule.bindingDigest,
     ),
-    [r31Contract().thesisAfter],
+  )
+  const affected = new Set<string>([r31Contract().thesisAfter.ruleId])
+  for (const rule of full.rules) {
+    // Additions are pinned above, not counted as re-digestions.
+    if (!baseline.rules.some((old) => old.ruleId === rule.ruleId)) continue
+    const touched =
+      rule.sourceRefs.some((ref) => r32ItemMigrationFor(ref.sourceId, ref.itemId) !== undefined) ||
+      r32ItemMigrationFor(rule.authorityBasisRef.sourceId, rule.authorityBasisRef.itemId) !==
+        undefined ||
+      R32_RULE_STATEMENT_MIGRATIONS.some((entry) => entry.ruleId === rule.ruleId) ||
+      claimRebaselines.some(([ruleId]) => ruleId === rule.ruleId)
+    if (touched) affected.add(rule.ruleId)
+  }
+  assert.deepEqual(changedRules.map((rule) => rule.ruleId).sort(), [...affected].sort())
+  assert.deepEqual(
+    changedRules.find((rule) => rule.ruleId === r31Contract().thesisAfter.ruleId),
+    r31Contract().thesisAfter,
   )
   for (const old of baseline.rules) ok(full.rules.some((rule) => rule.ruleId === old.ruleId))
-  assert.deepEqual(full.normativeMarkdownAudit.slice(0, 198), baseline.normativeMarkdownAudit)
-  assert.deepEqual(full.operationAuthority, baseline.operationAuthority)
+  // R32 migration: was slice(0, 198) equal to the R31 baseline's audit verbatim; the two retired
+  // FOREMAN-LINE-PLAN §5 candidacies move the mapped historical prefix to 196 rows.
+  assert.deepEqual(
+    full.normativeMarkdownAudit.slice(0, 196),
+    r32ExpectedAuditRows(baseline.normativeMarkdownAudit),
+  )
+  // R32 migration: was deep-equal to the baseline rows verbatim; only the evidence refs' digests
+  // re-bind through R32_ITEM_MIGRATIONS (four rows: gate1.ratify, gate2.dispatch, gate3.merge,
+  // closure.record). Row keys, principals and evidence identities are unchanged.
+  assert.deepEqual(
+    full.operationAuthority,
+    baseline.operationAuthority.map((row) => ({
+      ...row,
+      requiredGitEvidence: row.requiredGitEvidence.map((ref) => r32ExpectedRef(ref)),
+    })),
+  )
   assert.deepEqual(full.volatileRegions, baseline.volatileRegions)
 })
 
@@ -5992,7 +6724,17 @@ test('R31 twenty canonical historical records and exact independently pinned app
     canonicalJson(baseline.reconciliations),
   )
   assert.deepEqual(full.reconciliations[20], oracle.record)
-  assert.equal(registryBindingManifestDigest(full), oracle.newManifest)
+  // R32 migration: was oracle.newManifest (605f9c370c62cdbf619d1f65583a2404311d69cfc8c0fcc7c7867959b4adf4d5,
+  // the R31 binding manifest). R32 re-pins the corpus, so the live binding manifest advances -
+  // it is exactly the resultDigest declared by the R32 head record's superseding-binding-manifest-r32
+  // command (bound live by validate, never frozen). The R31 manifest remains pinned as the R31
+  // record's superseding command result. W2b correction: the manifest moved with the W2b curation
+  // corrections (pre-W2b value 4b541bd25b5ce993a7e640f481da80b39de6d17b1234deb2c77e7bb5300b723b);
+  // derivation: src/registry.ts R32_BINDING_MANIFEST, asserted live by generate.ts's drift guard.
+  assert.equal(
+    registryBindingManifestDigest(full),
+    'd7b9d84157186891595a56a631b6a1d6b5bcd71c9137f216c0871b8caf4ea218',
+  )
   assert.equal(
     sha256(canonicalJson(full.reconciliations[20])),
     oracle.proposedRecordCanonicalSha256,
@@ -6153,7 +6895,8 @@ for (const key of [
 ] as const)
   test(`R31 decision diagnostic rejects repaired ${key} substitution`, () => {
     const changed = structuredClone(full)
-    const record = headOf(changed)
+    // R32 migration: was headOf(changed) - the diagnostic lived on the then-head R31 record.
+    const record = r31RecordOf(changed)
     const evidence = record.observedEvidence.find(
       (entry) =>
         entry.kind === 'command-result' &&
@@ -6192,9 +6935,17 @@ test('R31 M01 resolves as source-intent review duty on every host without granti
   ok('reasonCode' in result)
   assert.equal(result.reasonCode, 'NO_APPLICABLE_AUTHORITY')
   assert.deepEqual(result.controllingRuleIds, [])
+  // R32 migration: was deep-equal verbatim to the R31 baseline's ALLOW shapes (e.g.
+  // rule.fk-charter.15a44cf50bc6 carried locatorDigest f603abfe... and bindingDigest
+  // 6efade3d...). The ALLOW rules' source refs re-bind through R32_ITEM_MIGRATIONS and their
+  // binding digests follow the mapped shape; the decision set itself is unchanged - still exactly
+  // the R31 baseline's ALLOW rules and no new ALLOW grant. Subject preserved: no decision is
+  // widened.
   assert.deepEqual(
     full.rules.filter((rule) => rule.decision === 'ALLOW'),
-    r31Baseline().rules.filter((rule) => rule.decision === 'ALLOW'),
+    r31Baseline()
+      .rules.filter((rule) => rule.decision === 'ALLOW')
+      .map((rule) => r32ExpectedRuleShape(rule)),
   )
 })
 
@@ -6232,7 +6983,9 @@ for (const axis of [
 ] as const)
   test(`R31 exact migration rejects repaired ${axis}`, () => {
     const changed = structuredClone(full)
-    const record = headOf(changed)
+    // R32 migration: was headOf(changed) - the exact-migration custody tuple lived on the
+    // then-head R31 record.
+    const record = r31RecordOf(changed)
     const evidence = record.observedEvidence.find(
       (entry) =>
         entry.kind === 'command-result' &&
