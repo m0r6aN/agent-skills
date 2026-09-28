@@ -70,3 +70,15 @@ rounding actual charges or relabeling an estimate as an enforced bound.
 
 Other independent gates remain: runtime conformance, current approved mapping,
 quality/privacy/availability, installation custody and a concrete smoke budget.
+
+## Public credit-control follow-up — 2026-09-26
+
+Read-only follow-up found no replacement for the still-missing exact billable
+bound. [OpenRouter limits](https://openrouter.ai/docs/api_reference/limits)
+describes an estimated token-cost hold, excluding request/plugin/image fees and
+limited to some account classes. Key caps and remaining-credit fields are useful
+controls, but that documentation does not establish the approved route's complete
+per-request bound. [Parameter documentation](https://openrouter.ai/docs/api_reference/parameters)
+still qualifies combined reasoning/output limits by provider. No key/account was
+queried, created, changed or funded; no inference was attempted. This is source
+review, not a production attestation or a new provider choice.
