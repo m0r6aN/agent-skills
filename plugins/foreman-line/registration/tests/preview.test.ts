@@ -17,7 +17,7 @@ test('item5: preview returns the built payloads + planned actions and makes ZERO
   const adapter = new FakeAdapter()
   const headBefore = git(fx.repoRoot, ['rev-parse', 'HEAD']).trim()
 
-  const result = preview({ slug: fx.slug, repoRoot: fx.repoRoot, adapter })
+  const result = preview({ slug: fx.slug, projectKey: 'KONE', repoRoot: fx.repoRoot, adapter })
 
   // Mode + payload fidelity (reference shapes).
   assert.equal(result.mode, 'first')

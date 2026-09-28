@@ -10,9 +10,15 @@
  *
  * `parseFrontmatter` extracts and parses YAML frontmatter from a spec .md file.
  */
+
+import { posix } from 'node:path'
 import { Ajv, type SchemaObject } from 'ajv'
 import { parse } from 'yaml'
-import { waiversFor } from './grandfather.js'
+import {
+  isGrandfatheredVerificationClassMissing,
+  VERIFICATION_CLASS_MISSING_WAIVER_KIND,
+  waiversFor,
+} from './grandfather.js'
 import { specFrontmatterSchema } from './schemas.js'
 
 export interface ValidationResult {
@@ -39,6 +45,23 @@ export interface ValidateOptions {
    * (CLOSE-P2 rework R1a).
    */
   readonly parentDirName?: string
+  /**
+   * Canonical POSIX repository-relative identity supplied by a caller that
+   * already knows the repository root. It is used exclusively to evaluate the
+   * v0.3 verification_class missing-field waiver; it never broadens the older
+   * basename/value-pinned waivers above.
+   */
+  readonly documentRef?: string
+  /**
+   * P1a (SPEC-CONVENTION §4.8 resolution order, step 2): project vocabulary
+   * extensions from a `foreman/config.yaml` `capabilities:` block — either
+   * the parsed capabilities object itself or its key list. The config is
+   * passed EXPLICITLY by the caller (the CLI's `--config <path>` flag, or a
+   * programmatic caller); the linter never resolves a config location from
+   * `process.cwd()` or `__dirname` walking (D19 discipline). Absent means
+   * base vocabulary only, and that is not an error.
+   */
+  readonly capabilityExtensions?: readonly string[] | Readonly<Record<string, unknown>>
 }
 
 /**
@@ -55,11 +78,65 @@ export const KNOWN_SURFACE_PREFIXES: readonly string[] = [
   'config/',
 ]
 
+/**
+ * Base canonical vocabulary of known `involves:` capability areas — the
+ * executable representation of SPEC-CONVENTION §4.8 (resolution order,
+ * step 1). An `involves:` entry matching neither this set nor the caller-
+ * supplied project extensions triggers a NON-BLOCKING advisory warning,
+ * exactly as unknown `surfaces:` entries do (locked D14: never a gate).
+ * New canonical areas are added to SPEC-CONVENTION §4.8 via PR — that is
+ * the extension point; do not add them here alone. Project-local additions
+ * live in `foreman/config.yaml` `capabilities:`, not here.
+ */
+export const KNOWN_INVOLVES_CAPABILITIES: readonly string[] = [
+  'source_control',
+  'ticketing',
+  'auditing',
+  'documentation',
+  'compression',
+  'design_system',
+]
+
 const ajv = new Ajv({ allErrors: true })
 const validateStructure = ajv.compile(specFrontmatterSchema as SchemaObject)
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
+}
+
+/** A canonical POSIX repository-relative path, never an ambient or absolute root. */
+function isCanonicalDocumentRef(value: string): boolean {
+  if (
+    value.length === 0 ||
+    value.includes('\\') ||
+    value.startsWith('/') ||
+    /^[A-Za-z]:/.test(value)
+  ) {
+    return false
+  }
+  if (value === '.' || value.startsWith('../') || value.includes('/../')) return false
+  return posix.normalize(value) === value
+}
+
+function canWaiveVerificationClassMissing(doc: unknown, documentRef: string | undefined): boolean {
+  return (
+    typeof documentRef === 'string' &&
+    isCanonicalDocumentRef(documentRef) &&
+    isGrandfatheredVerificationClassMissing(documentRef) &&
+    isRecord(doc) &&
+    !Object.hasOwn(doc, 'verification_class')
+  )
+}
+
+function isVerificationClassMissingError(error: {
+  readonly keyword: string
+  readonly params: unknown
+}): boolean {
+  return (
+    error.keyword === 'required' &&
+    isRecord(error.params) &&
+    error.params.missingProperty === 'verification_class'
+  )
 }
 
 /** Semantic invariant: status 'superseded' requires non-null superseded_by. */
@@ -88,6 +165,13 @@ export function validateSpecFrontmatter(doc: unknown, options?: ValidateOptions)
     for (const err of validateStructure.errors ?? []) {
       const path = err.instancePath.length > 0 ? err.instancePath : '(root)'
       const message = `${path} ${err.message ?? 'is invalid'}`
+      if (
+        isVerificationClassMissingError(err) &&
+        canWaiveVerificationClassMissing(doc, options?.documentRef)
+      ) {
+        warnings.push(`grandfathered (${VERIFICATION_CLASS_MISSING_WAIVER_KIND}): ${message}`)
+        continue
+      }
       // A waiver applies only when the error is on its own field AND the
       // file's actual value is one of the pinned historical values (R1b).
       const waiver = waivers.find(
@@ -124,6 +208,29 @@ export function validateSpecFrontmatter(doc: unknown, options?: ValidateOptions)
         if (!hasKnownPrefix) {
           warnings.push(
             `advisory: surfaces entry '${entry}' does not begin with a known vocabulary prefix (${KNOWN_SURFACE_PREFIXES.join(', ')}) — see SPEC-CONVENTION §4`,
+          )
+        }
+      }
+    }
+
+    // Advisory: involves entry outside the known vocabulary (P1a, §4.8).
+    // Same format family and same non-blocking posture as the surfaces
+    // advisory above — an unknown value NEVER changes `valid` or the exit
+    // code (locked D14). Resolution order: base set, then project
+    // extensions passed explicitly by the caller.
+    const extensions = options?.capabilityExtensions
+    const extensionKeys = Array.isArray(extensions)
+      ? extensions
+      : extensions !== undefined
+        ? Object.keys(extensions)
+        : []
+    const involves = Array.isArray(doc.involves) ? (doc.involves as unknown[]) : []
+    for (const entry of involves) {
+      if (typeof entry === 'string') {
+        const known = KNOWN_INVOLVES_CAPABILITIES.includes(entry) || extensionKeys.includes(entry)
+        if (!known) {
+          warnings.push(
+            `advisory: involves entry '${entry}' does not name a known capability area (${KNOWN_INVOLVES_CAPABILITIES.join(', ')}) — see SPEC-CONVENTION §4.8`,
           )
         }
       }

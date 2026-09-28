@@ -169,7 +169,14 @@ export function branchForParcel(parcel: string): string {
  */
 export function dispatchWorktree(options: DispatchOptions): DispatchResult {
   const { parcel, profile, path } = options
-  const cwd = options.cwd ?? process.cwd()
+  const cwd = options.cwd
+  if (cwd === undefined || cwd.length === 0) {
+    return {
+      code: 2,
+      stdout: '',
+      stderr: 'error: --cwd is required; dispatch must receive an explicit repository root\n',
+    }
+  }
   const registryPath = options.registryPath ?? SHIPPED_REGISTRY_PATH
 
   // Step 1 — unknown profile name is a usage error (bad argument value),

@@ -22,8 +22,8 @@ import { isAbsolute, join } from 'node:path'
 import type { ShapingResult } from '../../contracts/src/index.js'
 import { assertContainedPath } from '../../projection/src/index.js'
 import { canonicalize, type JsonValue } from './canonical.js'
+import { assertAbsoluteRoot } from './errors.js'
 import { sha256Hex } from './hash.js'
-import { DEFAULT_REPO_ROOT } from './paths.js'
 
 export interface SpecSetEntry {
   readonly ref: string
@@ -48,8 +48,10 @@ export interface ComputedSubject {
  */
 export function computeSpecSet(
   parcelSpecRefs: readonly string[],
-  repoRoot: string = DEFAULT_REPO_ROOT,
+  repoRoot: string,
 ): SpecSetEntry[] {
+  // Required + absolute (P2b-i/R3 + path-guard ruling).
+  assertAbsoluteRoot(repoRoot, 'computeSpecSet')
   return parcelSpecRefs.map((ref) => {
     const absPath = isAbsolute(ref) ? ref : join(repoRoot, ...ref.split('/'))
     assertContainedPath(repoRoot, absPath, ref)
@@ -64,7 +66,7 @@ export function computeSpecSet(
  */
 export function computeApprovalSubject(
   projectedResult: ShapingResult,
-  repoRoot: string = DEFAULT_REPO_ROOT,
+  repoRoot: string,
 ): ComputedSubject {
   const specSet = computeSpecSet(projectedResult.parcelSpecRefs, repoRoot)
   const subject: ApprovalSubject = { projectedResult, specSet }

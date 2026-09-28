@@ -1,21 +1,30 @@
 # Foreman Line — Routing Policy Schema + Validator (W0-P3)
 
 The policy-as-code artifact that governs model/agent-count selection at
-dispatch (plan §5, D5/D6). This parcel ships the schema, the TypeScript type,
-the concrete v0 `routing-policy.yaml`, and a validator. It does **not**
-evaluate the policy at dispatch time (W2-P3) and does not type any routing
-decision record (W0-P4 / the frozen `DispatchOrder.routingDecisionRef`).
+dispatch (plan §5, D5/D6). This package ships the schema, the TypeScript type,
+the concrete v0.3 `routing-policy.yaml`, and a validator. Primary-model policy
+evaluation and the optional shadow-route execution boundary live in
+`@foreman-line/dispatch`; this package does not perform provider transport.
 
 ## Schema shape
 
-`RoutingPolicy` = `{ classes, data_classification, roles, model_tiers }`.
+`RoutingPolicy` = `{ classes, data_classification, roles, model_tiers, shadow_routes }`.
 
 - **`classes`** — keyed by `routing_class` value; MUST include the four
   reconciled values (`boilerplate`, `standard-feature`, `architecture/risk`,
   `implementation/standard`) but may carry additional class keys. Each entry:
   `allowlist` (tier names), `ceiling_usd` (> 0), optional `security_flavored`.
 - **`data_classification`** — exactly `public` / `internal` / `restricted`,
-  each an `eligible_models` list.
+  each an `eligible_models` list plus a `transport_requirements` block
+  (`data_collection: allow|deny`, `zdr: boolean`, mirroring OpenRouter's
+  `provider` request object). On a multi-provider gateway a model id does not
+  determine which upstream host serves the request; these two request
+  parameters do. This repository never sends requests, so the block is a
+  **declared obligation on the consumer**, not an enforcement — but invariant 7
+  rejects any policy that declares anything weaker than `deny` + `true` for
+  non-public data. Pair it with OpenRouter's account-wide privacy settings
+  (disable training providers; per-group ZDR) so the strict values are the
+  default regardless of what the consumer sends.
 - **`roles`** — `coordinator`, `verifier`, `builder`. Schema only requires
   non-empty strings; the frontier pin is enforced as an invariant, not a
   schema `const`, so a schema-valid-but-wrong document is distinguishable from
@@ -25,16 +34,45 @@ decision record (W0-P4 / the frozen `DispatchOrder.routingDecisionRef`).
   literally, and its *contents* are anchored against a validator-code
   registry (see "Frontier-tier anchoring registry" below), not left to the
   policy document's own say-so. **Every other tier name (`standard`,
-  `economy` in v0) is this parcel's own policy content, revisable quarterly
+  `economy` in v0.3) is this parcel's own policy content, revisable quarterly
   without touching the validator** — it intentionally diverges from plan
   §5's illustrative `small`/`medium`/`large` labels, which were never
-  binding.
+  binding. **Order within a tier is the selection rule:** the dispatcher
+  (`dispatch/src/routing-eval`) walks a class's allowlist tiers in order and
+  picks the first model eligible under the task's data classification. There
+  is no price comparison at dispatch time, so cost optimization is expressed
+  by list order. The shipped economy order selects Nemotron 3.5 Lightning
+  for boilerplate in all three classifications, preserving each classification's
+  transport requirements. Later entries are eligibility alternatives; the
+  evaluator does not retry them on provider health or quota failures.
+  Ids are bare OpenRouter slugs (`vendor/model`); the consumer
+  prepends its own provider prefix. No `:nitro`/`:floor`/`:free`/`:batch`
+  variant suffixes — those are transport concerns or unusable in an agent loop.
+- **`shadow_routes`** — separately governed advisory sidecars, never model
+  tiers. May be empty (v0.3 ships none); no particular route key is required
+  by the schema. Any route declared must be public-only and candidate-only. A
+  route declares its adapter, approved task types, live discovery requirement,
+  zero authority, no tools/effects, and exclusion from the Coordinator and
+  verifier roles. The policy neither contains credentials nor records a host's
+  current availability; the host verifies availability at invocation time and
+  the Parcel supplies the exact public inputs.
+  `tests/fixtures/accept-shadow-route.yaml` is the canonical valid example.
+
+## Pi/OpenRouter structured-decision registry
+
+`templates/pi-openrouter-routing.json` is the Pi execution-plane configuration
+template. Its base URL is `https://openrouter.ai/api/v1`, and its enabled list
+contains the exact OpenRouter model id `typesafe/jev-1.13`. The capability
+validator keeps Jev limited to `routing` and `classification` lanes with
+`recommend-only` authority; it cannot be used for prose generation,
+implementation, approval, merge, or policy bypass. No credential is stored in
+the template.
 
 Types live in `src/types.ts`; schemas in `schemas/*.json` (hand-authored as
 `SchemaObject`, never ajv's `JSONSchemaType`); `tests/parity.test.ts` proves
 the two never drift.
 
-## The five enforced invariants
+## The eight enforced invariants
 
 1. **Classification gates before cost (D6):** `eligible_models` must narrow
    monotonically — `restricted ⊆ internal ⊆ public`.
@@ -51,6 +89,89 @@ the two never drift.
    schema layer (a static bound needs no cross-field logic).
 5. **Frontier-tier anchoring:** every model id in `model_tiers.frontier` must
    belong to `KNOWN_FRONTIER_MODELS`. See below.
+6. **Tier models are classification-eligible:** every model id in any
+   `model_tiers.*` list must appear in `data_classification.public.eligible_models`.
+   Because invariant 1 already forces `internal` and `restricted` to be
+   subsets of `public`, a model absent from `public` is dispatchable under no
+   classification at all — the tier list would be advertising a route that
+   cannot exist, or one a tier-only caller would take unchecked.
+7. **Non-public transport requirements:** `internal` and `restricted` must
+   declare `transport_requirements: { data_collection: deny, zdr: true }`. A
+   model id names a model, not a host; on OpenRouter the same id is
+   load-balanced across many providers with differing retention and training
+   policies. The policy cannot send requests, but it can refuse to be the
+   document that declared non-public prompts may reach a training provider.
+8. **Shadow-route containment:** every shadow route is public-only, requires
+   live discovery, has no authority/tools/effects, is candidate-only, and
+   excludes the Coordinator and verifier. The route key must equal its adapter
+   id, preventing a policy entry from silently referring to a different adapter.
+
+## Shadow routes (execution boundary)
+
+A shadow route is an optional public-analysis sidecar. The shipped v0.3 policy
+declares none: the former `cerebras-shadow` entry never had an adapter,
+credential, or production caller behind it, and on OpenRouter fast inference
+(Cerebras, Groq) is a provider preference on an existing model id under the
+same credential — nothing is left for a separate adapter to add. The execution
+boundary below is retained so a route can still be declared later as a policy
+entry plus a host-local adapter, without a schema change.
+
+The executable entry
+point is `executeShadowRoute` from `@foreman-line/dispatch`. Before discovery,
+it requires a public Parcel authorization reference, a policy- and
+Parcel-allowed task type, and a SHA-256 binding to the exact canonical JSON
+input (`hashShadowPublicInput`). It also requires an independent reviewer
+identity distinct from the adapter.
+
+Caller-constructed authorization fields are claims, not authority. The caller
+must inject a trusted host-local `resolveParcelAuthorization(authorizationRef)`
+boundary. It must return exactly `parcelId`, `dataClassification`,
+`allowedTaskTypes`, and `publicInputSha256`; dispatch independently validates
+that record and requires it to match every request claim and the actual input
+digest. A missing, throwing, malformed, non-public, or mismatched resolver
+fails closed before discovery without persisting raw resolver details.
+
+Canonical public input must be dense JSON and is capped at 65,536 UTF-8 bytes.
+Sparse arrays, cycles, non-finite numbers, non-plain/accessor-bearing objects,
+and non-JSON values are rejected. Authorization references are capped at 512
+bytes, reviewer identities at 256 bytes, Parcel identities at 128 bytes, and
+allowed-task lists at 16 unique values of at most 128 bytes each.
+Dispatch canonicalizes, hashes, parses into a deep clone, and recursively
+freezes this input before its first asynchronous dependency call. Authorization,
+discovery, or caller-side mutation therefore cannot change the exact snapshot
+later supplied to the adapter.
+The same pre-await snapshot freezes `workflowId`, route/task selection, every
+Parcel claim field and a copied allowed-task list, authorization reference, and
+independent reviewer. Authorization comparison, policy resolution, discovery,
+invocation, receipts, and review binding use only that snapshot. The three
+dependency function references are also captured before awaiting resolution,
+so an async closure cannot replace discovery or invocation mid-flight.
+
+The caller also injects host-local `discoverAdapter` and `invokeAdapter`
+functions; the repository provides no provider credential or network
+implementation.
+Discovery runs on every invocation. Only the exact normalized object
+`{ status: 'verified_available' }` permits provider execution. Any exception,
+unavailable result, or malformed/extended discovery value writes a normalized
+skip receipt and proceeds without the shadow provider.
+
+The frozen invocation request is fixed to a runtime-frozen empty tools array,
+no effect capability, no authority, and candidate-only use. Untrusted output must have exactly a
+non-empty `candidate` string and a non-empty-string `evidence_refs` array;
+candidate text is capped at 32,768 UTF-8 bytes, with at most 64 evidence
+references of at most 2,048 bytes each. Sparse/extended arrays and additional
+authority/gate fields are rejected before receipt creation. An accepted result has fixed
+`gateImpact: 'none'`, `approvalImpact: 'none'`, and
+`reviewImpact: 'pending_independent_review'`. The receipt binds the candidate
+digest to that pending reviewer but deliberately does not store raw candidate,
+probe, or provider-failure content. A candidate never counts as the independent
+review itself. Accepted evidence references are defensively copied and frozen;
+candidate and skip results, their no-tools arrays, and the independent-review
+binding are runtime-frozen so later mutation cannot create digest/receipt drift.
+
+Do not add provider API keys, provider requests, probe outcomes, or other
+availability state to this policy file. Actual adapter discovery and provider
+transport remain host/operator-owned integration work.
 
 ## Frontier-tier anchoring registry
 
@@ -62,12 +183,23 @@ define its own notion of "frontier" would mean it could satisfy every other
 invariant while quietly redefining frontier to point at a cheaper model,
 silently gutting D4's pinning and the §5 security hard-override in one edit.
 
-`src/validator.ts` therefore carries `KNOWN_FRONTIER_MODELS` — v0:
-`['claude-opus-4-8']` — as a constant in reviewed, tested code, not as
-policy content. Invariant 5 rejects any `model_tiers.frontier` entry absent
-from this registry. This is intentional friction: redefining what counts as
-frontier (the quarterly model revisit plan §5 anticipates) requires a code
-change with a test, never a one-line policy-file edit.
+`src/validator.ts` therefore carries `KNOWN_FRONTIER_MODELS` — v0.3
+(September 2026, OpenRouter slugs):
+`['anthropic/claude-opus-5.5', 'anthropic/claude-fable-5.1', 'openai/gpt-6-astra', 'openai/gpt-5.6-sol', 'openai/gpt-5.5', 'google/gemini-3.1-pro-preview']`
+(`openai/gpt-6-astra` added by SUPERCHARGE-P1, verified 2026-09-14)
+— as a constant in reviewed, tested code, not as policy content. Invariant 5
+rejects any `model_tiers.frontier` entry absent from this registry. This is
+intentional friction: redefining what counts as frontier (the quarterly model
+revisit plan §5 anticipates) requires a code change with a test, never a
+one-line policy-file edit.
+
+Registry rules of thumb: ids are OpenRouter slugs verbatim (`vendor/model`;
+Anthropic ids use dots there — `anthropic/claude-fable-5.1` — the opposite of
+OpenCode Zen's dashes; Gemini 3.1 Pro exists only as `-preview`); free,
+`:free`, and contributor-tier models are never frontier because they may train
+on submitted data or be rate-capped, and the coordinator and verifier see
+everything; and `*-pro` tiers priced at $30/$180 per 1M tokens are excluded
+because they exhaust a $25 class ceiling in a single turn.
 
 ## Exit-code contract
 
@@ -91,3 +223,400 @@ npx tsx src/cli.ts validate routing-policy.yaml
 
 Exactly two: `ajv` (validation engine) and `yaml` (policy parsing), both
 machine-enforced by `tests/dependency-allowlist.test.ts`.
+
+## Catalog snapshot reader and eligibility projector (RCM-P1)
+
+`src/catalog-snapshot.ts` and `src/eligibility.ts` are a pure, offline pair
+that turn a versioned, digest-bound catalog snapshot of allowlisted
+`models-store` facts into either normalized eligibility facts or closed,
+typed refusals. They are library code only: not exported from `src/index.ts`,
+not wired into `dispatch/`, and not routing authority. They produce facts and
+refusals only — they never decide a route and never touch dispatch-time
+enforcement (RCM charter D1, D2, D10, D11, D13). Later parcels consume these
+values: RCM-P3 machine-checks policy capability claims against them, and
+RCM-P5 enforces them at dispatch-time preflight.
+
+**`readCatalogSnapshot(bytes, expectedSha256)`** binds the exact input bytes
+to a caller-supplied lowercase-hex SHA-256 digest, then verifies the bytes are
+canonical JSON (`JSON.stringify(parsed, null, 2) + "\n"`, catching CRLF,
+duplicate JSON members, and numeric overflow as one mechanism) in the closed
+`rcm-catalog-snapshot/v1` envelope shape. Success returns a `CatalogSnapshot`
+that is deep-frozen and enforced as reader-issued two ways (review amendment
+A2): nominally, via a module-private brand symbol, so no code outside this
+file can construct a value the *type checker* accepts as one; and at runtime,
+via a module-private `WeakSet` recording every object this reader actually
+returns, checked by identity through the internal helper
+`isReaderIssuedSnapshot` (not part of the public Contract — a caller has no
+reason to call it directly; `projectEligibility` calls it internally, first,
+before trusting anything else about the snapshot it was given). A forged
+plain object with the right shape, `Object.create(realSnapshot)`, and
+`new Proxy(realSnapshot, {})` are each a different object identity from the
+real snapshot and are rejected by that check; the deep-freeze separately
+stops a caller from mutating a *real* snapshot in place after reading it. The
+P0 recon evidence file at
+`docs/goals/routing-currency-and-merit/rcm-p0-catalog-snapshot.v1.json` is a
+deliberate negative control: passed with its own true digest, it refuses with
+`FORMAT_REFUSED`, proving P0 evidence is design input only, never a P1 input.
+
+**`projectEligibility(req)`** keeps the contract's declared TypeScript
+type for `req`, but treats it as untrusted at runtime (review amendment A2
+round 2 / R1): `req` can still arrive as `null`, `undefined`, a revoked
+`Proxy`, or an object with a throwing getter on any field. The projector
+copies `req` into an `unknown` local and reads each field exactly once,
+lazily, at the pipeline stage that needs it, each inside its own guard, so
+first-failure-wins order holds. A non-object `req`, or a throw while reading
+`evaluationTimeUtc` or `identities`, refuses `REQUEST_INVALID_REFUSED`. A
+throw while reading `approvedConfig` refuses `AUTHORITY_INVALID_REFUSED`, as
+A2 requires. A throw while reading `snapshot` refuses
+`SNAPSHOT_UNVERIFIED_REFUSED`, the same code as a `snapshot` that reads fine
+but fails the reader-issued check below, which still runs first. The
+approved configuration's `authorityRef` and `endpoints` are each read exactly
+once too, so a getter cannot pass validation and then put a different value
+into provenance. `projectEligibility` then turns requested `(provider, id)`
+identities into `EligibilityFacts` or refusals. Each identity's
+`provider`/`id` is read from the caller's value exactly once, into a plain
+copy that the duplicate check, the evaluation, and the returned `requested`
+field all then share — a getter cannot return a different value on a later
+read and desynchronize what was reported from what was evaluated. Neither
+`identities` nor `approvedConfig.endpoints` is ever iterated or has a method
+called on it (review amendment A2 round 2 / R2, the most serious finding of
+that round): both are copied by an index loop that reads `.length` once and
+then reads each element by bracket index, never `.map`/`.forEach`/
+`for...of`/spread/`Array.from` — a caller who overrides `.map` (or
+`Symbol.iterator`, or `Symbol.species`) on their own array cannot substitute
+forged results for what the real, indexed elements actually contain, which
+is the exploit an adversarial review reproduced against an earlier version
+of this code (`.map` overridden to return fabricated `openrouter/auto`
+facts with a sentinel-negative rate, alongside the real digest and
+provenance). Freshness is exactly 24 hours (`CATALOG_FRESHNESS_MAX_AGE_MS`)
+against the oldest `checkedAtUtc` across every provider in the snapshot, not
+only the requested ones; any single `null` provider time refuses the whole
+projection rather than being skipped. Every provider time, not only the
+oldest, must be no later than the evaluation time: any later one refuses
+`FUTURE_REFUSED` (review amendment A3 / N3). Endpoints join by exact, case-sensitive
+string equality — no trailing-slash trimming, host case-folding, or `/api`
+vs. `/api/v1` aliasing, and a `baseUrl` containing `?`, `#`, or `@` anywhere
+(even empty, e.g. `.../v1?`), whitespace, a backslash, or a control
+character anywhere, or a non-lowercase `https://` prefix, refuses outright
+(review amendment A2 round 2 / R8 hardens this beyond the original `?`/`#`/`@`
+check). Meta-router ids (`META_ROUTER_IDS`) and any colon-suffixed id
+(`REFUSED_VARIANT_SUFFIXES` names the charter's four; the actual rule is
+default-deny on any colon) always refuse, whether or not the id is present
+in the catalog. These exported lists, and both refusal-code tuples, are
+frozen, and the projector reads the same frozen values, so a caller cannot
+empty `META_ROUTER_IDS` to turn a meta-router into facts. A refused identity
+collects *every* applicable code, in
+`IDENTITY_REFUSAL_CODES`'s declared order, and never carries facts.
+Whole-projection failures (`SNAPSHOT_REFUSAL_CODES`, spanning both the
+reader's and the projector's codes, with `SNAPSHOT_UNVERIFIED_REFUSED`
+appended last in the array for index stability even though it runs first at
+runtime) run first-match-wins in pipeline order and carry a `level` of
+`'snapshot' | 'authority' | 'request'`; a snapshot, authority, or
+request-level refusal always omits the `results` array.
+
+Request size is capped (review amendment A3 / N1). `identities` may hold at
+most `MAX_REQUESTED_IDENTITIES` (256) entries, or the projection refuses
+`REQUEST_INVALID_REFUSED`. `approvedConfig.endpoints` may hold at most
+`MAX_APPROVED_ENDPOINTS` (256) entries, or it refuses
+`AUTHORITY_INVALID_REFUSED`. Each cap is checked on the single length read,
+before any allocation or iteration, and a length that is not a non-negative
+safe integer refuses the same way. A sparse array of length 2^32-1 or a
+Proxy reporting a huge length is therefore refused without reading a single
+element.
+
+The exported contract constants are `CATALOG_FRESHNESS_MAX_AGE_MS`,
+`MAX_REQUESTED_IDENTITIES`, `MAX_APPROVED_ENDPOINTS`, `META_ROUTER_IDS`,
+`REFUSED_VARIANT_SUFFIXES`, `RATE_UNIT`, `SNAPSHOT_REFUSAL_CODES`, and
+`IDENTITY_REFUSAL_CODES`. The arrays are frozen, and the primitives are ESM
+bindings that an importer cannot reassign.
+
+**Threat model (review amendment A3).** Callers are same-process code. The
+refusal guarantees cover hostile values passed as arguments: malformed data,
+proxies, throwing or flipping getters, and overridden methods on the
+caller's own objects. Tampering with shared globals or built-in prototypes
+in the same realm is out of scope, and so is resource exhaustion below the
+caps above.
+
+Within that threat model, both functions return a typed refusal for every
+hostile argument value and never throw: `null`/`undefined`/non-`Uint8Array`
+bytes, a `Proxy` wrapping a real `Uint8Array` or faking its prototype, and
+another typed array disguised with `Uint8Array.prototype` all refuse
+`FORMAT_REFUSED`. The byte gate uses only `ArrayBuffer.isView` and the
+`%TypedArray%.prototype[Symbol.toStringTag]` getter, both captured at module
+load. Both read internal slots, so no caller trap, getter, iterator, or
+`Symbol.hasInstance` hook runs. A real `Uint8Array` or subclass, such as
+`Buffer`, is accepted even when its own `length` accessor throws or lies. The
+reader makes exactly one defensive copy from the internal slots and reads
+only that copy afterwards (review amendment A2 round 2 / R4, R7). Likewise,
+a pathologically deep input that would otherwise overflow the stack in
+`JSON.stringify` or the shape walk (R3), a
+`null`/`{}`/forged/mutated snapshot, `req` itself being hostile (R1), and a
+throwing `Proxy` or getter anywhere in `approvedConfig` or `identities` (R2)
+each resolve to a typed refusal, never an exception. `isValidBaseUrl` and
+`isReaderIssuedSnapshot` are internal helpers exported from
+`catalog-snapshot.ts` for reuse between the two modules and by tests —
+neither is part of the public Contract (`readCatalogSnapshot` and
+`projectEligibility` are).
+
+Both modules are pure: no ambient clock, randomness, or timers; no `process`,
+environment, filesystem, or network access; no sorting of any kind; no price
+comparison between records. `tests/catalog-purity.test.ts` enforces this with
+a static scan (comment-stripped, then a closed bare-identifier denylist for
+`Math`/`Reflect`/`Function`/`Proxy`/`process`/`globalThis`/`fetch`/timers/
+`constructor`/etc., a dynamic-`import(`-call check, plus a `Date`-specific
+rule allowing only `Date.parse(...)` and `new Date(<non-empty, non-spread
+argument>)`) and an import/export scanner that also checks the exact named
+bindings pulled from each permitted specifier, not just the specifier
+string. A runtime probe additionally replaces `fetch`, the `Date`
+constructor and `Date.now`, `Math.random`, `performance.now`, `setTimeout`,
+`setInterval`, `setImmediate`, and `process.env` with throwing stubs and
+re-runs both functions to confirm they are unaffected and deterministic.
+**This static scan is a regression tripwire over a closed list of known
+forbidden forms, not a proof of purity** (review amendment A2 round 2 / R5,
+R6 correction of an earlier, overclaiming version of this paragraph): every
+round of adversarial review so far has found at least one construct the
+scanner did not yet check for (aliasing, computed/bracket access, dynamic
+`import(`, `.constructor`), and a regex-based text scan can only ever grow
+that list, never certify the absence of a form nobody has thought of yet.
+Likewise, the runtime probe proves only that today's code path does not
+call the specific globals it stubs, under the specific inputs it exercises
+— not that no code path in these two files could ever reach them. The only
+runtime imports either module makes are `node:crypto` (the reader, for the
+digest — and only `createHash` from it) and `eligibility.ts`'s own relative
+import of its sibling `catalog-snapshot.ts` (to re-export the reader
+surface, per this parcel's own contract, with its own named-binding set
+checked exactly) — no other dependency, host file, or `PI_OPENROUTER_ROUTING`
+default is read.
+
+The one committed fixture, `tests/fixtures/catalog-snapshot/baseline.v1.json`,
+copies its model records field-for-field from the committed P0 evidence
+snapshot (`tests/catalog-snapshot.test.ts` deep-equals every record against
+its P0 source on all ten fact fields); only its `checkedAtUtc` values are
+synthetic, since P0 exported none. Negative and edge cases mutate a clone of
+that fixture's parsed bytes in memory and re-derive a canonical digest, rather
+than adding further committed fixtures.
+
+### Supported bounded catalog adapter (RCM-P1A)
+
+The package barrel exports `evaluateCatalogEligibility(input: unknown):
+CatalogEligibilityResult`, `readCatalogSnapshot`, `projectEligibility`, and their
+public data/result types. Internal snapshot brand helpers remain unexported from
+the barrel. The wrapper always uses the actual object returned by the sole
+reader; it does not duplicate eligibility rules or construct branded snapshots.
+
+`CatalogEligibilityInput` describes the intended input: `canonicalBytes:
+Uint8Array`, `expectedSha256: string`, `evaluationTimeUtc: string`, `identities:
+readonly CatalogIdentity[]`, `approvedConfig: { authorityRef: string; endpoints:
+readonly { provider: string; baseUrl: string }[] } | null`, and `acceptedSource:
+AcceptedCatalogSource`. Each `CatalogIdentity` is `{ provider: string; id:
+string }`. Runtime input remains unknown and hostile input returns a typed
+refusal without logging its contents.
+
+`AcceptedCatalogSource` has exactly six fields: `profileId`, `profileVersion`,
+`canonicalSha256`, `sourceEvidenceRef`, `sourceEvidenceSha256`, and
+`requestedIdentities`. The first five are nonempty strings; both digests are
+lowercase 64-character SHA-256 hexadecimal strings. These are caller-approved
+provenance declarations. The wrapper has no external evidence bytes and does
+not authenticate the profile/version, evidence digest, or approval. A fabricated
+reference cannot prove authority. Canonical digest and snapshot `sourceRef`
+must match the declaration. Requested identities, declared scope and snapshot
+models must match exactly without duplicates; provider records must exactly
+cover the model providers. Request ordering is preserved in projector results.
+A scoped artifact cannot establish a full catalog. Incomplete producers must
+supply refusal inventory separately rather than silently dropping identities.
+
+`CatalogEligibilityResult` is a discriminated union:
+
+```ts
+type CatalogEligibilityResult =
+  | { readonly stage: 'adapter'; readonly ok: false;
+      readonly code: CatalogAdapterRefusalCode }
+  | { readonly stage: 'reader';
+      readonly result: Extract<SnapshotReadResult, { ok: false }> }
+  | { readonly stage: 'projector'; readonly result: ProjectionResult }
+```
+
+`CatalogAdapterRefusalCode` is `INPUT_REFUSED | BOUNDS_REFUSED |
+SOURCE_BINDING_REFUSED | SCOPE_REFUSED`. Reader refusal codes and projector
+codes/levels/results retain their original values inside `result`; projector
+`ok: true` still requires examining each identity's `outcome`. Every returned
+envelope and nested object is owned and frozen, including refusal results.
+
+Limits are inclusive: 8 MiB of canonical bytes, 4096 characters per string/key,
+256 entries per array (including identities/endpoints), graph depth 16 with
+the root at depth zero, and 65,536 visited values including primitives and
+strings. Array length metadata is not a graph child. Caller data and decoded
+reader facts each receive a separate bounded pass. Bytes are checked before
+reader parsing and copied through native typed-array slots, without calling
+caller iterators or overridden getters. Detached, shared and resizable storage,
+typed-array proxies and non-byte views refuse. Other data is copied once from
+own enumerable data descriptors into owned plain objects/arrays. Shared object
+identities reuse their completed captures without rereading caller descriptors;
+each expanded occurrence still consumes the value budget and is checked at its
+own graph depth using captured data. Refusal classification uses internal error
+identity only, without inspecting arbitrary thrown values. Cycles,
+accessors, sparse arrays, symbol fields, unsupported prototypes and throwing
+proxies refuse. Array lengths are checked before key enumeration; known child
+counts are reserved before traversal/allocation. Object key enumeration itself
+uses JavaScript's native `Reflect.ownKeys`; arbitrary proxy traps are caller code
+and cannot be given a CPU/memory deadline by a synchronous pure API.
+
+`approvedConfig` values pass unchanged to the projector after copying; authority
+must come from separately accepted repository evidence, never source acquisition
+URLs, catalog metadata or Pi settings. Source timestamps are not manufactured:
+unknown/stale values retain P1 refusals. Successful facts establish snapshot
+consistency only, not live model availability, currency beyond the explicit
+observation semantics, execution permission, ranking or dispatch authority.
+
+Handoff: RCM-P1A is a prerequisite API only. RCM-P1B owns any reviewed production
+producer and source field mappings; this adapter performs no acquisition or
+legacy-export conversion. Tests use explicitly synthetic sources, timestamps
+and authority, never production availability evidence. Integration is serialized
+after PMC-P1a acceptance: preserve all PMC barrel exports on that exact merged
+base and rerun focused tests, full tests, typecheck, lint, spec validation and
+independent review before coordinator-authorized integration.
+
+## Public observation producer (RCM-P1B)
+
+`producePublicObservationSnapshot(candidate: unknown, trusted: unknown)` is a pure,
+offline transformation of separately accepted retained manifest/projection bytes.
+It does not fetch public metadata, inspect the host, read credentials, infer
+execution authority, write configuration, or invoke eligibility. The caller
+supplies `manifestBytes`, `projectionBytes`, `requestedIdentities` and
+`evaluationTimeUtc`. The separately supplied trust object contains exactly
+`profileId`, `profileVersion`, `sourceEvidenceRef`, `expectedManifestSha256` and
+`expectedProjectionSha256`. Candidate text cannot approve its own pins.
+
+The only supported pair is `openrouter-conservative-rcm-v1-intersection` / `v2`,
+mapping to retained `openrouter-conservative-rcm-v1-intersection-v2`. The trust
+object declares caller acceptance; neither a fabricated reference nor a matching
+hash authenticates the original acquisition. Historical proposal/version prose
+inside the retained evidence remains unchanged. Independent profile ratification
+is recorded in `docs/goals/routing-currency-and-merit/openrouter-source-profile-20260926.md`.
+
+The public types are `ProducerCandidate`, `ProducerTrust`, `InventoryStatus`,
+`InventoryCode`, `FactField`, `InventoryEntry`, `ProducerRefusalCode` and
+`ProductionResult`. Identity and accepted-source structures reuse the supported
+P1A `CatalogIdentity` and `AcceptedCatalogSource` types. The latter retains exactly
+its six fields. No reader/projector/schema ownership changes are introduced.
+
+Success returns `evidenceOnly: true`, exact canonical bytes and SHA-256,
+`acceptedSource`, requested `inventory` and complete retained `sourceInventory`.
+Every valid requested identity is accounted for in its original order. A scope
+that includes Haiku refuses `INCOMPLETE_SCOPE`: Haiku is
+`missing-required-facts` / `REASONING_UNKNOWN_REFUSED` with `fields: ['reasoning']`.
+It is never converted to `reasoning: false`. Fifteen-binding requests also report
+eight unsupported OpenCode identities. Only a separately declared six-row scope
+can succeed; its source inventory still contains all seven OpenRouter identities.
+No failure contains canonical bytes, digest or accepted-source fields. Malformed
+scope has no valid inventory. Source-wide errors mark every valid requested row
+invalid; unsupported accepted profiles mark every requested row unsupported.
+Jev remains outside the disabled optional L6 scope.
+
+The complete retained source is checked, including unrequested rows, nested closed
+shapes, counts, unique identities/runs, binding locators, response digest/length,
+the independent projection pin and the additional manifest-to-projection seal.
+Input modalities are an ordered text/image intersection with preserved residuals.
+Reasoning is the specifically reviewed nonempty-effort inference; omitted levels
+stay omitted, and exact `none` maps to `off`. These sparse facts are not Pi config.
+
+Prices compare decimal coefficient/scale values exactly before conversion. Source
+per-token strings permit at most 64 digits, including at most 32 fractional digits;
+the exact amount is multiplied by one million and compared to the original JSON
+number token. Conversion uses the nearest IEEE-754 representation only if its
+serialized decimal preserves that exact amount. Overflow, nonzero underflow and
+lossy decimal representations refuse. No rational fields are added to RCM v1.
+
+Integer facts and custody/count fields also validate the original decimal token
+before Number conversion. Trailing-zero normalization proves integrality; bounded
+exponent processing and at most 16 resulting digits precede an exact safe-range
+check. Mathematically integral decimal/exponent spellings remain valid, including
+the exact safe-integer maximum. Fractions that IEEE-754 would round to integers,
+overflow and nonzero underflow refuse.
+
+Original UTC observations with 1–9 fractional digits retain full precision for
+ordering. Canonical observation time truncates conservatively to milliseconds.
+The selected complete receipt—not HTTP Date, generation time, mtime or model
+creation time—sets `checkedAtUtc`. Equality at 86,400,000 milliseconds age passes;
+one millisecond older refuses. Provider-declared unknown time stays null. These
+dated observations naturally expire and must never be refreshed by rewriting time.
+
+Resource ceilings are 8 MiB per input / 16 MiB combined before byte copying,
+depth 16, 262,144 visited JSON values including primitives, 4,096 UTF-16 units
+per string/key and 1,048,576 aggregate string/key units per JSON document.
+Arrays/source collections cap at 10,000, requested identities at 256, and fact
+collections at 64. The bounded token parser enforces budgets while reading tokens,
+before allocating their values; duplicate keys, malformed encoding/BOM, malformed
+numbers and trailing data refuse. Plain envelopes have closed shallow shapes:
+unknown fields and arbitrary object graphs are rejected without traversal;
+identity descriptors are captured once, while expanded string occurrences still
+consume the scope budget. Cycles, accessors, sparse arrays, unsupported byte
+storage and caller iterators are never used as data. Unknown thrown values are
+contained by identity without inspecting their properties. As with P1A, a
+synchronous API cannot impose a deadline on caller-written proxy traps.
+
+Canonical output is two-space UTF-8 JSON without BOM, ending in one LF, with
+fixed field order and requested model order. Exact output bytes/digest pass through
+the sole `readCatalogSnapshot` before success. Plain output objects are deeply
+frozen. `canonicalBytes` is a fresh owned `Uint8Array`; its elements cannot be
+frozen, and caller mutation cannot alter source inputs, other calls, or the digest
+already computed. P1A must separately verify the source/digest/scope and requires
+independent `approvedConfig`. Producer success provides no execution permission,
+privacy assurance, budget, quality, availability or full-catalog claim.
+
+### Retained evidence reproduction and handoff
+
+The focused test reads the actual checked-in source evidence without rewriting it.
+Its explicit six-ID scope is GPT-6 Astra, Claude Opus 5.5, Claude Sonnet 5, GPT-5.6
+Sol, GPT-5.6 Terra and Gemini 3.8 Flash, using their exact retained OpenRouter IDs.
+The test's evaluation time is explicitly `2026-09-26T15:00:00.000Z`; wrapper
+interoperability uses clearly synthetic endpoint authority, never live permission.
+
+| Reproduced item | Exact result |
+| --- | --- |
+| v4 manifest bytes | 12,850 |
+| Manifest SHA-256 | `e97f76bb303ac3b19aa8b327695beaf4e0a48c1fa78598d11c468f432f224562` |
+| Projection bytes | 13,348 |
+| Projection SHA-256 | `abb09a4078348433e6ebb9c84b2d7a6fe3f83ff4500977ef2de5ce913a384d96` |
+| Selected observation | Run 2; `2026-09-26T14:08:44.5298097Z` |
+| Canonical observation | `2026-09-26T14:08:44.529Z` |
+| Canonical six-row bytes | 4,359 |
+| Canonical SHA-256 | `5901c16ed192870d53952375392710b514f37b18a5451da6c4a5966aa7e916bb` |
+| Requested/source inventory | 6 / 7; seven-row and fifteen-binding requests refuse |
+
+The canonical digest uses `sourceEvidenceRef` exactly
+`plugins/foreman-line/docs/goals/routing-currency-and-merit/source-evidence/pmc-binding-coverage-openrouter-20260926-v4.json`.
+The manifest still identifies its internal evidence version as v3. Discarded raw
+response bytes cannot be recomputed or authenticated by this producer. Haiku's
+reasoning and the eight OpenCode fact sets remain unresolved; synthetic wrapper
+success does not fill those gaps.
+
+Verification uses Node 24.19.0 and existing lockfiles installed offline. From this
+package run `node --import tsx --test tests/public-observation-producer.test.ts`,
+`npm test`, `npm run typecheck` and `npm run lint`. Negative evidence fixtures are
+independently repinned where needed to test semantic checks beyond the digest
+gate. Coverage includes exact/one-over resource limits, decimal precision,
+submillisecond time, full source validation, hostile storage/descriptors/proxies,
+ownership, missing authority and scope-preserving refusals. The unchanged active
+producer spec also passes the sibling spec-linter.
+
+Private-build verification after the integer repair: 148 focused tests and 646 full package tests passed;
+typecheck, lint, spec-linter and whitespace checks passed. Lint retains one
+pre-existing informational suggestion in `tests/catalog-snapshot.test.ts`.
+RED/GREEN evidence included the initially missing export, valid-scope accounting
+through malformed envelope fields, and contradictory coverage/binding counts.
+Integer repair adds 29 tests to the 119 focused/617 full baseline. Seven RED cases
+reproduced rounded fractions in context, max tokens, HTTP status, sealed byte
+length and requested count, plus a fraction near the safe maximum and a long
+fractional coefficient. GREEN coverage also preserves integral decimal/exponent
+encodings and exercises safe boundaries, long coefficients/exponents, overflow
+and underflow. The retained six-row canonical byte count and digest are unchanged.
+
+Private implementation base: `8217a585f35317bebe2d43cafb2ed29888b2d408`;
+frozen spec blob: `11fee5e09e1710edbe3ab41478750046126859f8`. Public barrel audit
+preserves all 75 prior exports and adds exactly eight types plus one function
+(84 total). Only the five parcel-allowed files change. Shared integration remains
+coordinator-owned: accepted PMC-P1a, merged RCM-P1A wrapper, PMC-P1b projection,
+then this producer. Preserve predecessor exports when rebasing and repeat all
+integration checks. Two independent frontier reviews remain required before
+integration; this private build does not authorize merge, push or deployment.

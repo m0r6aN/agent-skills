@@ -1,0 +1,23 @@
+{
+  "skill_name": "go-live-readiness",
+  "trigger": {
+    "positive": [
+      { "prompt": "Run a go-live readiness assessment for this existing system", "top_k": 3 },
+      { "prompt": "Check whether this release candidate is ready to launch", "top_k": 3 },
+      { "prompt": "Perform a pre-launch audit and report the gates that still block release", "top_k": 3 }
+    ],
+    "negative": [
+      { "prompt": "Perform a defensive security review of this Dockerfile", "owner": "security-review" },
+      { "prompt": "Coordinate implementation across several repositories", "owner": "initiative-coordination" }
+    ]
+  },
+  "evals": [
+    {
+      "id": 1,
+      "kind": "dialogue",
+      "prompt": "Assess this existing system for go-live readiness without building new features.",
+      "expected_output": "A sequenced readiness assessment with evidence, failed gates, and remediation boundaries.",
+      "expectations": ["The response distinguishes assessment from remediation", "The response names release-blocking gates"]
+    }
+  ]
+}

@@ -4,9 +4,11 @@
  * `tests/parity.test.ts` proves each schema agrees with its `types.ts` counterpart
  * via a canonical sample, and that the committed `schemas/*.json` files never drift.
  *
- * The four semantic invariants (classification-gates-before-cost, coordinator/
- * verifier frontier pinning, the security override, and its derived name-guard)
- * are intentionally NOT encoded here — they are cross-field business rules
+ * Seven of the eight invariants (classification-gates-before-cost, coordinator/
+ * verifier frontier pinning, the security override and derived name-guard,
+ * frontier anchoring, tier-models-are-classification-eligible, non-public
+ * transport requirements, and shadow-route containment) are intentionally NOT
+ * encoded here — they are cross-field business rules
  * enforced by `validator.ts`, kept distinct from pure structural shape so a
  * schema-valid-but-semantically-wrong document is distinguishable from a
  * structurally invalid one (both classes of rejecting fixture are needed
@@ -29,16 +31,27 @@ export const classEntrySchema: SchemaObject = {
   },
 }
 
+export const transportRequirementsSchema: SchemaObject = {
+  type: 'object',
+  additionalProperties: false,
+  required: ['data_collection', 'zdr'],
+  properties: {
+    data_collection: { enum: ['allow', 'deny'] },
+    zdr: { type: 'boolean' },
+  },
+}
+
 export const dataClassificationRuleSchema: SchemaObject = {
   type: 'object',
   additionalProperties: false,
-  required: ['eligible_models'],
+  required: ['eligible_models', 'transport_requirements'],
   properties: {
     eligible_models: {
       type: 'array',
       items: { type: 'string', minLength: 1 },
       minItems: 1,
     },
+    transport_requirements: transportRequirementsSchema,
   },
 }
 
@@ -53,10 +66,48 @@ export const roleAssignmentSchema: SchemaObject = {
   },
 }
 
+export const shadowRouteSchema: SchemaObject = {
+  type: 'object',
+  additionalProperties: false,
+  required: [
+    'adapter_id',
+    'data_classification',
+    'allowed_task_types',
+    'requires_live_discovery',
+    'candidate_only',
+    'authority',
+    'tools_granted',
+    'effect_capability',
+    'prohibited_roles',
+  ],
+  properties: {
+    adapter_id: { type: 'string', minLength: 1 },
+    data_classification: { const: 'public' },
+    allowed_task_types: {
+      type: 'array',
+      items: { enum: ['spec_lint', 'evidence_index', 'review_triage'] },
+      minItems: 1,
+      uniqueItems: true,
+    },
+    requires_live_discovery: { const: true },
+    candidate_only: { const: true },
+    authority: { const: 'none' },
+    tools_granted: { type: 'array', maxItems: 0 },
+    effect_capability: { const: 'none' },
+    prohibited_roles: {
+      type: 'array',
+      items: { enum: ['coordinator', 'verifier'] },
+      minItems: 2,
+      maxItems: 2,
+      uniqueItems: true,
+    },
+  },
+}
+
 export const routingPolicySchema: SchemaObject = {
   type: 'object',
   additionalProperties: false,
-  required: ['classes', 'data_classification', 'roles', 'model_tiers'],
+  required: ['classes', 'data_classification', 'roles', 'model_tiers', 'shadow_routes'],
   properties: {
     classes: {
       type: 'object',
@@ -89,6 +140,12 @@ export const routingPolicySchema: SchemaObject = {
           minItems: 1,
         },
       },
+    },
+    shadow_routes: {
+      // May be empty. Any route present must satisfy `shadowRouteSchema` and
+      // the validator's containment invariant; no provider name is required.
+      type: 'object',
+      additionalProperties: shadowRouteSchema,
     },
   },
 }
