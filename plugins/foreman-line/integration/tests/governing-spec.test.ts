@@ -11,7 +11,7 @@
  * Hermetic: descriptors injected directly; the disk loader seam is never run.
  */
 import assert from 'node:assert/strict'
-import { readFileSync } from 'node:fs'
+import { readdirSync, readFileSync } from 'node:fs'
 import { test } from 'node:test'
 import {
   type ActiveSpecDescriptor,
@@ -150,9 +150,19 @@ test('AC6: glob ** covers a nested .ts; * stays within a single segment', () => 
   )
 })
 
-test('AC6: no new runtime dependency is introduced (package.json has no dependencies)', () => {
+test('FL-R2-A1: only reviewed yaml is a runtime dependency; no direct spec-linter edge', () => {
   const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8')) as {
     dependencies?: Record<string, string>
   }
-  assert.equal(pkg.dependencies === undefined || Object.keys(pkg.dependencies).length === 0, true)
+  assert.deepEqual(pkg.dependencies, { yaml: '2.9.0' })
+  const src = new URL('../src/', import.meta.url)
+  for (const file of readdirSync(src, { recursive: true, encoding: 'utf8' }).filter((name) =>
+    name.endsWith('.ts'),
+  )) {
+    assert.doesNotMatch(
+      readFileSync(new URL(file.replaceAll('\\', '/'), src), 'utf8'),
+      /(?:from\s*|import\s*\(\s*)['"][^'"\r\n]*spec-linter/,
+      `${file} must not import spec-linter`,
+    )
+  }
 })
