@@ -247,6 +247,150 @@ acceptance; builder must restate the final amended source plan and stop for expl
 runtime release. Checkpoint P transport/publication, live endpoint compatibility,
 authentic production acquisition and all downstream launch evidence remain separate.
 
+## Checkpoint P construction amendment
+
+Root accepted the genuine read-only P Step0 at
+c96569e9b8695a4cdfb120110f95cc45f582bde2 and released exactly this note and the
+existing active publication spec for construction shaping. No runtime release,
+provider/Pi/configuration attempt, installation or production activation follows.
+The existing c4f1e22 publication protocol and N8dca233 materializer decisions remain.
+
+Actual inspected pins, recorded for this shaping checkpoint only:
+
+| Source | Frozen reference |
+|---|---|
+| Retained RCM producer | blob20af5e8f3fc0c857ce5569ebdcb28ad504c0aed8 |
+| Sole canonical reader | blob4806f5b5af32d4a40526ab7125c31205c2b9fb6a |
+| RCM adapter | blob39347c4018a3dbf1c0cd9abf0a6e2e9da262bdf8 |
+| Accepted C controller at93f8021 | blobdc2a3c0e8c83eb05c66757731a043c4da76d5145 |
+| C controller types at93f8021 | blob92030ddadf31e53052442be0511ff27de8e04702 |
+| P4A1 ratified design | commit48aab911484722a47ea2291e8a26fdb9fafd904f; spec blob0c030a65503c19d11be4f1ceece184b15afc7b8f |
+
+N runtime exports and C implementation are absent from P's starting checkout.
+Accepted N source and accepted C integration must arrive before P implementation.
+P4A1 deliberately has no successful production constructor or portable admission
+verifier. Therefore this P slice cannot manufacture genuine production installation
+or workflow admission from a supplied claim, profile label, hash or fixture callback.
+
+Root accepted the following concrete construction dispositions, now frozen in the
+spec for independent review:
+
+- createProductionCatalogPublicationOwnerV1 unconditionally returns
+  INSTALLATION_REFUSED with zero input reads or effects. A distinct
+  createOfflineCatalogPublicationOwnerV1 captures only the closed fixture record
+  and closed offline runtime; no mode flag or generic production fetch exists.
+- The fixture record predeclares1..128 immutable scopes. Scope registration accepts
+  only {scopeId}, returns one private identity, and rejects repeat/unknown IDs.
+  Identical scope contents still produce distinct scope identities. Scope fields
+  cannot expand profile, endpoint, identities, workflow or policy expiry.
+- Exactly six named owner methods: registerCatalogScopeV1,
+  registerRefreshOperationV1, requestCatalogRefreshV1, cancelRefreshOperationV1,
+  acquirePublishedCatalogV1 and verifyAbsenceV1. Existing result unions are unchanged.
+- Captured readClock/scheduleWake/clearWake and one offline requestDriver are the
+  entire runtime record. Clock readings are closed UTC/monotonic pairs with explicit
+  validation/rollback refusal; timer handles stay opaque. Trusted clock reads may
+  occur during synchronous acquisition; task callbacks may not. Terminal outcomes
+  cannot be rewritten by timer teardown failure or stale wakeups.
+- The closed low-level driver supplies request controls and socket/response/body/
+  error/close events to the actual shared transport state machine. It cannot return
+  publisher success or a separately resolved cleanup promise. P delivers the actual native
+  bridge statically binds node:https, checks real response completeness and owns
+  destruction; fixtures are not cast as genuine Node requests/sockets.
+- Fixed request means only the reviewed no-query credential-free GET, fixed explicit
+  headers, no agent pool/reuse, TLS verification and16KiB native header cap. Bounded
+  retained header fields are separately limited. The transport owns header/framing/
+  UTF-8 errors; N remains the sole raw JSON/profile materializer after transport
+  cleanup. N refusal cannot retroactively change the original transport promise.
+- Existing typed refusal mapping is explicit. No new public code, data key, authority
+  issuer or admission bridge is introduced. Offline capabilities never establish
+  operational workflow admission, production source custody or C production authority.
+
+The original cancellation/CAS/four-slot protocol remains: registration owns capacity,
+only one invocation, outward timeout/refusal is distinct from original transport
+settlement, and uncertain cleanup holds capacity. Both catalog and absence candidates
+share one generation CAS and invalidate old variant handles. SourceRef/raw retention,
+N's exact result/schema/effort/refusal semantics, scope completeness and30-second
+absence versus24-hour catalog maximum validity remain unchanged.
+
+Six future P source/test/report paths are now proposed, all under plugins/foreman-line:
+
+1. dispatch/src/pmc-launch/catalog-publication.ts
+2. dispatch/src/pmc-launch/catalog-publication-types.ts
+3. dispatch/src/pmc-launch/catalog-metadata-transport.ts
+4. dispatch/tests/pmc-catalog-publication.test.ts
+5. dispatch/tests/pmc-catalog-metadata-transport.test.ts
+6. docs/goals/hybrid-routing-optimization/hro-rcm-publication-verification.md
+
+No existing owner/runtime/barrel/dependency/audit change is authorized by that future
+envelope. A genuine reader/audit enrollment discovered later remains separately scoped.
+Future paired controls use actual N/reader/adapter/C after prerequisite integration,
+network-incapable low-level events for cleanup, both catalog/absence variants,
+retained four-slot capacity until close, UTC/monotonic/timer faults, exact header/body/
+capture boundaries, scope identity and zero-effect production refusal. No fake body
+result or independent finished promise can prove transport cleanup or live authority.
+
+This amendment itself runs only frozen spec lint, required sections/local links,
+whitespace/scope/source-preservation checks and a clean two-document commit. Two
+independent reviews and explicit P implementation release remain required.
+P construction amendment checks (docs only): frozen spec-linter native exit0;
+all7 required body sections present; all9 local Markdown links resolve;
+git diff --check passes; exactly the two authorized documents changed. These are
+advisory shaping checks, not implementation or production acceptance. The explicit
+two-document amendment envelope excludes any new ShapingResult/receipt artifact.
+
+### P native bridge correction
+
+P must implement the actual statically wired Node HTTPS bridge and shared engine,
+not defer bridge delivery until activation. The transport module exports internal
+createFixedMetadataTransportV1() and createOfflineMetadataTransportV1(runtime:unknown)
+with exact signatures frozen in the spec; the existing type module owns their closed
+types. Native translator/shared engine remain unexported. The fixed factory captures
+native clocks/timers and static HTTPS request, accepts no substitutions and performs
+no I/O during construction. The offline owner uses only the separate offline factory.
+Production owner construction remains unconditional zero-input/effect
+INSTALLATION_REFUSED. Six future files, seven-key success and readMetadataV1 signature
+remain unchanged; no barrel, generic fetch, test mode or dependency is introduced.
+
+Guarded isolated-child tests in the existing transport test file must intercept the
+Node request boundary before importing the actual bridge and guard all native network
+entry points. Synthetic request/response/socket events exercise actual listeners,
+fixed fields, complete-property checks, owned destruction and original-promise
+fulfillment/rejection cleanup. Offline-driver tests alone are insufficient. These
+tests authorize no endpoint calls and establish no live TLS or installation custody.
+
+Pinned local Node24.19.0 net source SHA-256 is
+eba05bb24bdd1e208632a1df0fdeeb8e4bdf6ffc062cb19e92f0e7a8c37f60af.
+lookupAndConnectMultiple can return before emitting lookup after early destruction;
+socket close does not prove its uncancellable lookup has finished. Keep default
+native selection and no custom lookup. Add only socketConnected to the finite event
+interface, emitted from actual owned socket connect. After request creation, require
+observed connection plus all existing close acknowledgements before original-promise
+settlement. Failed lookup/connect without this event conservatively holds capacity
+indefinitely, even after close; outward refusal remains bounded, with no reset or
+eviction. Paired native/shared controls prove normal connected cleanup versus early
+close without connection and no forged completion from late lookup/error events.
+
+The correction is docs only and requires fresh independent reviews. Accepted N/C
+integration and explicit P runtime release remain prerequisites.
+
+## Checkpoint P construction ratification — 2026-09-26
+
+Root and independent frontier A approve final construction amendment773daa5c947f4e9dde10f0ae1b5c0a1552ac9499.
+Both inspected the actual Node24.19 net behavior supporting the conservative
+connection-plus-close cleanup rule. Fixed native HTTPS bridge delivery and guarded
+native-listener tests are part of checkpoint P; production owner construction still
+refuses unconditionally. Missing observed connection can retain a slot indefinitely;
+outward refusal remains bounded and no reset creates replacement capacity.
+
+All original response completeness, exact scope, generation CAS, cancellation,
+raw-byte/source/profile binding and separate authenticity requirements remain.
+This records delegated design ratification, not P runtime implementation release.
+Accepted N/C source must first be integrated; a fresh actual-source Step0 must
+verify concrete N imports, reader/adapter/C composition and source/test envelope.
+Exactly six future P paths remain proposed. Actual endpoint compatibility, production
+admission/profile custody, account/quality/billing/budget claims and HRO live exit
+remain separate. No endpoint/inference, credential or host configuration action.
+
 ## Checkpoint N combined string-budget clarification — 2026-09-26
 
 Root review of frozen source7c9003a identified an ambiguity in the structured
@@ -278,3 +422,18 @@ change to assert the combined bound, rather than preserving that interpretation.
 This paragraph records the root decision. Runtime repair remains stopped pending
 the builder's genuine read-only repair Step0 and an explicit repair release.
 Two independent final source reviews and combined integration remain required.
+
+## Accepted prerequisite integration and fresh Step0
+
+Checkpoint N is accepted through PR67 main98bf162adef813d8557e22a78d0b904593009173
+(all12 exact-head checks passed). P checkout ce0ad76 contains that main merge and
+N closure4477c0a. Frontier D completed a genuine read-only Step0 at9d3ba8d before
+those ancestry/docs-only merges: no blocking source-contract mismatch. N producer
+blobc9a8be0b9d25f983687a7c3e696093bf8ab8cbbf matches approved3a976f0; reader4806f5b,
+adapter39347c4, Ccontrollerdc2a3c0 and Ctypes92030dd match accepted sources.
+The exact six proposed P source/test/report paths remain unchanged. Root supplied
+19 absent same-package dependency junctions only after lock hash equality with
+E1 donor; no installs or donor writes. Native/shared transport and actual N/reader/
+adapter/C offline composition remain mandatory. P is ready for the next frontier
+builder's actual-source handoff and explicit runtime release; none is implied by
+this readiness record. D is completing the separately authorized transport parcel.
