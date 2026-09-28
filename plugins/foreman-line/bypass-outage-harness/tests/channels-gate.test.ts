@@ -9,6 +9,7 @@ import { test } from 'node:test'
 import {
   buildMb01Outcome,
   buildSst01Outcome,
+  loadDispatchSurface,
   runCtl01,
   runCtl02,
   runCtl03,
@@ -27,6 +28,12 @@ function rowFor(id: string): CaseRow {
   assert.ok(row !== undefined, `registry row ${id} missing`)
   return row
 }
+
+test('preflight: real-surface environment prerequisite — never skipped, never passed', async () => {
+  // A missing dependency install must fail with ONE clear named error
+  // (ENV_PREREQ_MESSAGE), not a bare resolver crash (closure FIX 1).
+  await loadDispatchSurface()
+})
 
 test('BYP-MB-01: unapproved-model tool call refused by the real gate (policy-class only)', async () => {
   const row = rowFor('BYP-MB-01')

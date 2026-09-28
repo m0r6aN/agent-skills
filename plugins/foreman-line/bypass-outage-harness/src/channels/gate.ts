@@ -15,11 +15,8 @@ import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node
 import { dirname, join } from 'node:path'
 import type { Writable } from 'node:stream'
 import { fileURLToPath } from 'node:url'
-import {
-  type DispatchWorktreeInput,
-  executeDispatch,
-  prepareDispatch,
-} from '../../../dispatch/src/approval-cli/index.js'
+import type * as DispatchSurface from '../../../dispatch/src/approval-cli/index.js'
+import type { DispatchWorktreeInput } from '../../../dispatch/src/approval-cli/index.js'
 import { canonicalJson, sha256Hex } from '../canonical.js'
 import { errorCodeOf, HarnessError } from '../errors.js'
 import type { CaseOutcome, ObservedSignals } from '../record.js'
@@ -140,6 +137,51 @@ export function readHookState(sessionId: string): Record<string, unknown> | null
 
 const APPROVED_MODEL = 'claude-sonnet-5'
 const UNAPPROVED_MODEL = 'claude-opus-5[1m]'
+
+/**
+ * The one named error for a missing real-surface dependency install. Empirically
+ * the real-surface closure needs `npm ci` in its dependency packages (starting
+ * with dispatch) — see README "Environment provisioning"; the harness install
+ * alone does not resolve them (each real-surface package owns its own
+ * dependency tree).
+ */
+export const ENV_PREREQ_MESSAGE =
+  'environment prerequisite: npm ci in plugins/foreman-line/dispatch/ and the other real-surface dependency packages (README: Environment provisioning) — never skipped, never passed'
+
+type DispatchSurfaceModule = typeof DispatchSurface
+
+let dispatchSurface: DispatchSurfaceModule | null = null
+
+/**
+ * Runtime-selected load of the real dispatch surface (closure FIX 1): the
+ * module resolves its npm dependencies from the real-surface packages' own
+ * node_modules. A module-not-found there is an ENVIRONMENT prerequisite
+ * failure surfaced as ONE named error — never skipped, never passed. A static
+ * import cannot express this boundary (it would crash the test runner at load
+ * with a bare resolver error instead of naming the fix).
+ */
+export async function loadDispatchSurface(): Promise<DispatchSurfaceModule> {
+  if (dispatchSurface !== null) return dispatchSurface
+  try {
+    dispatchSurface = await import('../../../dispatch/src/approval-cli/index.js')
+    return dispatchSurface
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err)
+    const missingModule =
+      typeof err === 'object' &&
+      err !== null &&
+      'code' in err &&
+      err.code === 'ERR_MODULE_NOT_FOUND'
+    if (missingModule) {
+      throw new HarnessError('CHANNEL_SETUP_FAILED', ENV_PREREQ_MESSAGE, { cause: message })
+    }
+    throw new HarnessError(
+      'CHANNEL_SETUP_FAILED',
+      `real dispatch surface failed to load: ${message}`,
+      { cause: message },
+    )
+  }
+}
 
 // ─── V6 mediated bypass ───────────────────────────────────────────────────────
 
@@ -542,8 +584,9 @@ export async function runCtl01(_row: CaseRow): Promise<CaseOutcome> {
       forbiddenSurfaces: [],
     }
     let refusal: string | null = null
+    const dispatchSurface = await loadDispatchSurface()
     try {
-      await prepareDispatch(
+      await dispatchSurface.prepareDispatch(
         {
           candidate: {
             ticketKey: 'FK-P17-TEST',
@@ -647,7 +690,8 @@ async function runControlExecute(
       allowedFiles: ['pkg/**'],
       forbiddenSurfaces: [],
     }
-    const pkg = await prepareDispatch(
+    const dispatchSurface = await loadDispatchSurface()
+    const pkg = await dispatchSurface.prepareDispatch(
       {
         candidate: {
           ticketKey: 'FK-P17-TEST',
@@ -674,7 +718,7 @@ async function runControlExecute(
     let refusal: string | null = null
     let receiptLocator: string | null = null
     try {
-      const result = await executeDispatch(pkg, join(ws.root, 'worktree'), {
+      const result = await dispatchSurface.executeDispatch(pkg, join(ws.root, 'worktree'), {
         repoRoot: ws.root,
         pluginRoot: controlPluginRoot(),
         dispatchWorktreeFn: (opts: DispatchWorktreeInput) => {
