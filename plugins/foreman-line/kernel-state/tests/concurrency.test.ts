@@ -67,7 +67,7 @@ function seed(storage: ReturnType<typeof openStorage>): void {
 const CLOCK_URL = join(PKG_ROOT, 'src', 'clock.js').split('\\').join('/')
 const OPEN_URL = join(PKG_ROOT, 'src', 'open.js').split('\\').join('/')
 const RACER_SOURCE = [
-  'import { existsSync, writeFileSync } from "node:fs"',
+  'import { existsSync, readFileSync, writeFileSync } from "node:fs"',
   `import { fixedClock } from "file://${CLOCK_URL}"`,
   `import { openStorageWithDriver, closeStorage, realConnect } from "file://${OPEN_URL}"`,
   'const root = process.argv[2]',
@@ -75,7 +75,10 @@ const RACER_SOURCE = [
   'const id = process.argv[4]',
   'const marker = dir + "/read-" + id',
   'const peer = dir + "/read-" + (1 - Number(id))',
-  'const storage = openStorageWithDriver(',
+  'const abortPath = dir + "/abort"',
+  'let storage',
+  'try {',
+  '  storage = openStorageWithDriver(',
   '  {',
   '    storageRoot: root,',
   '    databaseFileName: "state.db",',
@@ -105,7 +108,16 @@ const RACER_SOURCE = [
   '            const wait = (p) => {',
   '              const start = Date.now()',
   '              while (!existsSync(p)) {',
-  '                if (Date.now() - start > 30000) throw new Error("rendezvous timeout")',
+  '                // Peer-death escape: the parent drops an abort marker (with',
+  '                // the dead peer cause) the moment a racer dies, so a',
+  '                // survivor never spins into a misleading timeout.',
+  '                if (existsSync(abortPath)) {',
+  '                  const cause = readFileSync(abortPath, "utf8")',
+  '                  throw new Error("HARNESS_RENDEZVOUS_ABORT " + cause)',
+  '                }',
+  '                if (Date.now() - start > 30000) {',
+  '                  throw new Error("HARNESS_RENDEZVOUS_TIMEOUT peer never reached " + p)',
+  '                }',
   '              }',
   '            }',
   '            wait(peer)',
@@ -127,7 +139,14 @@ const RACER_SOURCE = [
   '      close: () => real.close(),',
   '    }',
   '  },',
-  ')',
+  '  )',
+  '} catch (error) {',
+  '  // Harness failures must never launder into product-shaped errors: the raw',
+  '  // cause lands in the abort marker before boundary wrapping hides it.',
+  '  const text = error && error.message ? error.message : String(error)',
+  '  if (!existsSync(abortPath)) writeFileSync(abortPath, "racer " + id + " failed: " + text)',
+  '  throw error',
+  '}',
   'const rows = storage.driver.prepare("SELECT version FROM schema_migrations ORDER BY version").all()',
   'console.log(JSON.stringify(rows))',
   'closeStorage(storage)',
@@ -211,6 +230,12 @@ test('CONC-03: two processes genuinely race open + migrate; loser observes migra
   const rendezvous = mkdtempSync(join(tmpdir(), 'fkp9-conc3r-'))
   writeFileSync(join(root, 'racer.mts'), RACER_SOURCE)
   const script = join(root, 'racer.mts')
+  // Seed the database before the race: the file is initialized (WAL
+  // conversion done) so fresh-create/WAL-conversion contention cannot kill a
+  // racer's open — the race is the migration apply, deterministically.
+  const seed = new Database(join(root, 'state.db'))
+  seed.pragma('journal_mode = WAL')
+  seed.close()
   // Both racers run at the same time (true concurrency): the rendezvous at the
   // pre-apply ledger read guarantees both pass readAppliedMigrations before
   // either commits, so the under-lock single-apply re-check decides the loser's
@@ -228,22 +253,54 @@ test('CONC-03: two processes genuinely race open + migrate; loser observes migra
     child.stderr?.on('data', (chunk: Buffer) => errChunks.push(chunk))
     return { out: chunks, err: errChunks }
   })
+  // Peer-death escape: the moment a racer dies, drop an abort marker carrying
+  // its cause so the survivor's barrier exits promptly with that cause.
+  children.forEach((child, i) => {
+    child.on('exit', (code) => {
+      if (code !== 0 && !existsSync(join(rendezvous, 'abort'))) {
+        const detail = Buffer.concat(outputs[i]?.err ?? [])
+          .toString('utf8')
+          .slice(0, 400)
+        writeFileSync(join(rendezvous, 'abort'), `racer ${i} exited ${String(code)}: ${detail}`)
+      }
+    })
+  })
   const exits = await Promise.all(children.map((child) => once(child, 'exit')))
-  for (let i = 0; i < children.length; i += 1) {
-    const [code] = exits[i] as [number | null]
-    const output = Buffer.concat((outputs[i] as { out: Buffer[] }).out).toString('utf8')
-    const errors = Buffer.concat((outputs[i] as { err: Buffer[] }).err).toString('utf8')
-    assert.equal(code, 0, `racer ${i} exit ${code}: out=${output} err=${errors}`)
+  const report = (): string => {
+    const parts: string[] = []
+    for (let i = 0; i < children.length; i += 1) {
+      parts.push(`--- racer ${i} out ---\n${Buffer.concat(outputs[i]?.out ?? []).toString('utf8')}`)
+      parts.push(`--- racer ${i} err ---\n${Buffer.concat(outputs[i]?.err ?? []).toString('utf8')}`)
+    }
+    const abort = existsSync(join(rendezvous, 'abort'))
+      ? readFileSync(join(rendezvous, 'abort'), 'utf8')
+      : '(none)'
+    parts.push(`--- abort marker ---\n${abort}`)
+    parts.push(
+      `markers: read-0=${String(existsSync(join(rendezvous, 'read-0')))} read-1=${String(existsSync(join(rendezvous, 'read-1')))}`,
+    )
+    return parts.join('\n')
   }
-  // The race genuinely happened: both crossed the pre-apply read.
-  assert.ok(existsSync(join(rendezvous, 'read-0')), 'racer 0 must pass the pre-apply read')
-  assert.ok(existsSync(join(rendezvous, 'read-1')), 'racer 1 must pass the pre-apply read')
+  const codes = exits.map((exit) => (exit as [number | null])[0])
+  const markersOk = existsSync(join(rendezvous, 'read-0')) && existsSync(join(rendezvous, 'read-1'))
+  // Print BOTH children's captured outputs before any assertion can abort the
+  // report — a harness failure must surface as a test failure carrying the
+  // peer's cause, never laundered into a product-shaped error.
+  if (codes.some((code) => code !== 0) || !markersOk) {
+    console.error(report())
+  }
+  assert.equal(
+    codes.filter((code) => code !== 0).length,
+    0,
+    `racer(s) exited non-zero (harness report follows)\n${report()}`,
+  )
+  assert.ok(markersOk, `pre-apply rendezvous markers missing\n${report()}`)
   // Exactly one apply (PK) and the loser OBSERVES the migrated state.
   const storage = openStorage(configFor(root))
   const ledger = storage.driver.prepare('SELECT version FROM schema_migrations').all() as {
     version: number
   }[]
-  assert.equal(ledger.length, 2, 'each version is applied exactly once')
+  assert.equal(ledger.length, 3, 'each version is applied exactly once')
   closeStorage(storage)
   rmSync(root, { recursive: true, force: true })
   rmSync(rendezvous, { recursive: true, force: true })

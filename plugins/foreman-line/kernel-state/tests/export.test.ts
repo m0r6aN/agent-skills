@@ -189,7 +189,7 @@ function insertSampleRows(storage: Storage, order: 'forward' | 'interleaved'): v
       insertTransition(storage, {
         transitionId: 'tr-1',
         goalId: 'goal-1',
-        status: 'pending',
+        status: 'completed',
         requestedBy: 'principal-1',
         operationId: 'op-3',
         payloadDigest: `sha256:${'d'.repeat(64)}`,

@@ -19,12 +19,15 @@ import { fileURLToPath } from 'node:url'
 import { fixedClock } from '../src/clock.js'
 import { StorageError } from '../src/errors.js'
 import { closeStorage, type OpenStorageConfig, openStorageWithDriver } from '../src/open.js'
-import { insertGoal } from '../src/rows.js'
+import { insertGoal, insertTransition } from '../src/rows.js'
 
 const HERE = dirname(fileURLToPath(import.meta.url))
 const PKG_ROOT = resolve(HERE, '..')
 const PACKAGED_0001 = readFileSync(join(PKG_ROOT, 'migrations', '0001-initial.sql'))
 const PACKAGED_0002 = readFileSync(join(PKG_ROOT, 'migrations', '0002-goal-status-checks.sql'))
+const PACKAGED_0003 = readFileSync(
+  join(PKG_ROOT, 'migrations', '0003-transitions-status-checks.sql'),
+)
 
 const MIGRATION = JSON.parse(
   readFileSync(join(HERE, 'fixtures', 'hostile', 'migration.json'), 'utf8'),
@@ -72,7 +75,7 @@ const CHILD_SOURCE = [
   '  {',
   '    migrationDir: set,',
   '    beforeStatement: (info) => {',
-  '      if (info.version === 2 && info.statementIndex === 1) {',
+  '      if (info.version === Number(process.argv[5]) && info.statementIndex === 1) {',
   '        writeFileSync(marker, "in-transaction")',
   '        for (;;) {}',
   '      }',
@@ -90,21 +93,20 @@ function waitForMarker(marker: string, deadlineMs: number): boolean {
   return false
 }
 
-test('MIG-02: real child-process kill mid-migration leaves no half-applied schema', async () => {
-  const record = MIGRATIONS_MIG02()
-  assert.equal(record.expectedOutcome, 'reopen-at-last-committed-no-half-applied-schema')
+async function runKillScenario(faultVersion: number): Promise<void> {
   const root = mkdtempSync(join(tmpdir(), 'fkp9-mig2-'))
   const set = mkdtempSync(join(tmpdir(), 'fkp9-mig2s-'))
   const marker = join(root, 'fault-marker')
-  // The crash now covers the REAL packaged 0002 (A1/A2): the kill lands
-  // between its first DDL and its copy statement, mid-transaction.
+  // The kill fixture covers the REAL packaged migrations: the kill lands
+  // between the faulted migration's first DDL and its copy statement.
   writeFileSync(join(set, '0001-a.sql'), PACKAGED_0001)
   writeFileSync(join(set, '0002-b.sql'), PACKAGED_0002)
+  writeFileSync(join(set, '0003-c.sql'), PACKAGED_0003)
   writeFileSync(join(root, 'child.mts'), CHILD_SOURCE)
 
   const child = spawn(
     process.execPath,
-    ['--import', 'tsx', join(root, 'child.mts'), root, set, marker],
+    ['--import', 'tsx', join(root, 'child.mts'), root, set, marker, String(faultVersion)],
     {
       cwd: PKG_ROOT,
       stdio: 'ignore',
@@ -118,24 +120,27 @@ test('MIG-02: real child-process kill mid-migration leaves no half-applied schem
   const [exit] = await once(child, 'exit')
   assert.notEqual(exit, undefined, 'killed child must terminate')
 
-  // Reopen with a 0001-only set so nothing re-applies: the database is at the
-  // last committed version and nothing from 0002 is observable.
-  const setOnlyOne = mkdtempSync(join(tmpdir(), 'fkp9-mig2o-'))
-  writeFileSync(join(setOnlyOne, '0001-a.sql'), PACKAGED_0001)
+  // Reopen with a set truncated before the faulted version so nothing
+  // re-applies: the database is at the last committed version.
+  const inspectFiles: { name: string; sql: Buffer }[] = [{ name: '0001-a.sql', sql: PACKAGED_0001 }]
+  if (faultVersion >= 3) inspectFiles.push({ name: '0002-b.sql', sql: PACKAGED_0002 })
+  const inspectSet = mkdtempSync(join(tmpdir(), 'fkp9-mig2o-'))
+  for (const file of inspectFiles) writeFileSync(join(inspectSet, file.name), file.sql)
   const inspect = openStorageWithDriver(configFor(root), undefined, {
-    migrationDir: setOnlyOne,
+    migrationDir: inspectSet,
   })
   const versions = inspect.driver.prepare('SELECT version FROM schema_migrations').all() as {
     version: number
   }[]
   assert.deepEqual(
     versions.map((row) => row.version),
-    [1],
+    Array.from({ length: faultVersion - 1 }, (_, i) => i + 1),
     'the interrupted migration must leave the ledger at the last committed version',
   )
+  const leftoverName = faultVersion >= 3 ? 'transitions_v2' : 'goals_v2'
   const objects = inspect.driver
-    .prepare("SELECT name FROM sqlite_master WHERE name = 'goals_v2'")
-    .all()
+    .prepare('SELECT name FROM sqlite_master WHERE name = ?')
+    .all(leftoverName)
   assert.equal(objects.length, 0, 'no half-applied schema may be observable')
   closeStorage(inspect)
 
@@ -148,10 +153,10 @@ test('MIG-02: real child-process kill mid-migration leaves no half-applied schem
   }[]
   assert.deepEqual(
     after.map((row) => row.version),
-    [1, 2],
+    [1, 2, 3],
   )
-  // The real 0002 landed intact: the status CHECK is live (A1) and the
-  // lookup-bound events(goal_id, operation_id) index exists (A2).
+  // The real migrations landed intact: the A1 goals CHECK, the A1b
+  // transitions CHECK, and the A2 lookup-bound index are all live.
   assert.throws(
     () =>
       insertGoal(rerun, {
@@ -168,6 +173,24 @@ test('MIG-02: real child-process kill mid-migration leaves no half-applied schem
     },
   )
   insertGoal(rerun, { goalId: 'goal-ok', revision: 0, status: 'active', updatedAtMicros: 1 })
+  assert.throws(
+    () =>
+      insertTransition(rerun, {
+        transitionId: 'tr-bogus',
+        goalId: 'goal-ok',
+        status: 'pending',
+        requestedBy: 'principal-1',
+        operationId: 'op-1',
+        payloadDigest: `sha256:${'a'.repeat(64)}`,
+        createdAtMicros: 1,
+      }),
+    (error: unknown) => {
+      assert.ok(error instanceof StorageError)
+      assert.equal(error.code, 'STORAGE_CONSTRAINT_VIOLATION')
+      assert.equal(error.diagnostic.reasonCode, 'check')
+      return true
+    },
+  )
   const index = rerun.driver
     .prepare(
       "SELECT name FROM sqlite_master WHERE type = 'index' AND name = 'events_goal_operation_idx'",
@@ -178,7 +201,17 @@ test('MIG-02: real child-process kill mid-migration leaves no half-applied schem
 
   rmSync(root, { recursive: true, force: true })
   rmSync(set, { recursive: true, force: true })
-  rmSync(setOnlyOne, { recursive: true, force: true })
+  rmSync(inspectSet, { recursive: true, force: true })
+}
+
+test('MIG-02: real child-process kill mid-migration leaves no half-applied schema', async () => {
+  const record = MIGRATIONS_MIG02()
+  assert.equal(record.expectedOutcome, 'reopen-at-last-committed-no-half-applied-schema')
+  await runKillScenario(2)
+})
+
+test('MIG-02 kill fixture extended to 0003 (A1b): kill mid-0003 keeps v2 intact', async () => {
+  await runKillScenario(3)
 })
 
 function MIGRATIONS_MIG02(): (typeof MIGRATION.records)[number] {
