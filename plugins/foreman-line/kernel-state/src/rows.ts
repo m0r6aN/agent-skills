@@ -83,6 +83,8 @@ export interface IdempotencyKeyRow {
   effectDigest: string | null
   recordedAtMicros: number
   completedAtMicros: number | null
+  /** Canonical bytes of the recorded EffectResult (A1d); null = no recorded result. */
+  recordedResult: Uint8Array | null
 }
 
 export interface ArtifactRow {
@@ -196,6 +198,13 @@ function normalizeEventRow(row: unknown): EventRow {
   }
 }
 
+function bytesField(record: Record<string, unknown>, key: string): Uint8Array | null {
+  const value = record[key]
+  if (value === null) return null
+  if (value instanceof Uint8Array) return new Uint8Array(value)
+  return normalizeFailure()
+}
+
 function normalizeIdempotencyRow(row: unknown): IdempotencyKeyRow {
   const record = normalizedRecord(row)
   return {
@@ -207,6 +216,7 @@ function normalizeIdempotencyRow(row: unknown): IdempotencyKeyRow {
     effectDigest: nullableStringField(record, 'effect_digest'),
     recordedAtMicros: numberField(record, 'recorded_at_micros'),
     completedAtMicros: nullableNumberField(record, 'completed_at_micros'),
+    recordedResult: bytesField(record, 'recorded_result'),
   }
 }
 
@@ -799,6 +809,77 @@ export function getIdempotencyKey(
       requireId(key.worktreeRef, 'worktreeRef'),
     ],
     normalizeIdempotencyRow,
+  )
+}
+
+/** A completed binding recorded with its EffectResult's canonical bytes (A1d). */
+export interface CompletedBindingRow {
+  principalRef: string
+  operationId: string
+  repositoryRef: string
+  worktreeRef: string
+  payloadDigest: string
+  effectDigest?: string | null
+  /** Canonical bytes of the recorded EffectResult — required, stored verbatim. */
+  recordedResult: Uint8Array
+  recordedAtMicros?: number
+  completedAtMicros?: number
+}
+
+/**
+ * Record a completed binding together with its recorded EffectResult's
+ * canonical bytes (A1d). The unified completion write: both APPLIED and NOOP
+ * completions store their result, so a later replay never re-derives values
+ * (FK-P10 T6's "replayed result is the revision as originally recorded").
+ */
+export function recordCompletedBinding(storage: Storage, input: CompletedBindingRow): void {
+  if (!(input.recordedResult instanceof Uint8Array)) {
+    throw storageError('STORAGE_ARGUMENT_INVALID', { fieldPath: 'recordedResult' })
+  }
+  run(
+    storage,
+    `INSERT INTO idempotency_keys (principal_ref, operation_id, repository_ref, worktree_ref, payload_digest, effect_digest, recorded_result, recorded_at_micros, completed_at_micros)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [
+      requireId(input.principalRef, 'principalRef'),
+      requireId(input.operationId, 'operationId'),
+      requireId(input.repositoryRef, 'repositoryRef'),
+      requireId(input.worktreeRef, 'worktreeRef'),
+      requireDigest(input.payloadDigest, 'payloadDigest'),
+      input.effectDigest === undefined || input.effectDigest === null
+        ? null
+        : requireDigest(input.effectDigest, 'effectDigest'),
+      input.recordedResult,
+      requireMicrosOrNull(input.recordedAtMicros ?? storage.clock.nowMicros(), 'recordedAtMicros'),
+      requireMicrosOrNull(
+        input.completedAtMicros ?? storage.clock.nowMicros(),
+        'completedAtMicros',
+      ),
+    ],
+    'idempotency_keys',
+  )
+}
+
+function normalizeRecordedResult(row: unknown): Uint8Array | null {
+  return bytesField(normalizedRecord(row), 'recorded_result')
+}
+
+/**
+ * Read the recorded result bytes for a binding (A1d). `null` means "no
+ * recorded result" (a legacy row without one, or an absent binding) — the
+ * consumer must treat null as absence and must NOT invent a result.
+ */
+export function getRecordedResult(storage: Storage, key: IdempotencyKeyLookup): Uint8Array | null {
+  return readOne(
+    storage,
+    `SELECT recorded_result FROM idempotency_keys WHERE principal_ref = ? AND operation_id = ? AND repository_ref = ? AND worktree_ref = ?`,
+    [
+      requireId(key.principalRef, 'principalRef'),
+      requireId(key.operationId, 'operationId'),
+      requireId(key.repositoryRef, 'repositoryRef'),
+      requireId(key.worktreeRef, 'worktreeRef'),
+    ],
+    normalizeRecordedResult,
   )
 }
 

@@ -25,12 +25,15 @@ import {
   openStorage,
   openStorageWithDriver,
 } from '../src/open.js'
-import { getGoal, insertGoal, insertTransition } from '../src/rows.js'
+import { getGoal, getRecordedResult, insertGoal, insertTransition } from '../src/rows.js'
 
 const HERE = dirname(fileURLToPath(import.meta.url))
 const PKG_ROOT = resolve(HERE, '..')
 const PACKAGED_0001 = readFileSync(join(PKG_ROOT, 'migrations', '0001-initial.sql'))
 const PACKAGED_0002 = readFileSync(join(PKG_ROOT, 'migrations', '0002-goal-status-checks.sql'))
+const PACKAGED_0003 = readFileSync(
+  join(PKG_ROOT, 'migrations', '0003-transitions-status-checks.sql'),
+)
 
 interface MigrationRecord {
   id: string
@@ -366,7 +369,7 @@ test('POS-01: fresh create migrates to head', () => {
   }[]
   assert.deepEqual(
     versions.map((row) => row.version),
-    [1, 2, 3],
+    [1, 2, 3, 4],
   )
   closeStorage(storage)
   rmSync(root, { recursive: true, force: true })
@@ -382,7 +385,7 @@ test('POS-02: reopen at head lands at head', () => {
   const applied = second.driver.prepare('SELECT count(*) AS c FROM schema_migrations').get() as {
     c: number
   }
-  assert.equal(applied.c, 3)
+  assert.equal(applied.c, 4)
   closeStorage(second)
   rmSync(root, { recursive: true, force: true })
 })
@@ -473,7 +476,7 @@ test('A1: prior-schema databases migrate forward transactionally', () => {
   }[]
   assert.deepEqual(
     versions.map((row) => row.version),
-    [1, 2, 3],
+    [1, 2, 3, 4],
   )
   const kept = head.driver
     .prepare("SELECT status, revision FROM goals WHERE goal_id = 'goal-keep'")
@@ -651,7 +654,7 @@ test('A1b: prior-schema (v2) databases migrate forward transactionally to v3', (
   }[]
   assert.deepEqual(
     versions.map((row) => row.version),
-    [1, 2, 3],
+    [1, 2, 3, 4],
   )
   const kept = head.driver
     .prepare("SELECT status FROM transitions WHERE transition_id = 'tr-keep'")
@@ -756,6 +759,50 @@ test('FK gate: broken-FK state refuses the migration pre-COMMIT (foreign_key_che
   closeStorage(inspect)
   rmSync(root, { recursive: true, force: true })
   rmSync(setOne, { recursive: true, force: true })
+})
+
+test('A1d: prior-schema (v3) databases migrate forward transactionally to v4', () => {
+  const root = mkdtempSync(join(tmpdir(), 'fkp9-a1dfwd-'))
+  const setThree = mkdtempSync(join(tmpdir(), 'fkp9-a1dfwds-'))
+  // Genuine prior-schema (version 3) database: packaged 0001..0003 under
+  // their packaged names and bytes.
+  writeSet(setThree, [
+    { name: '0001-initial.sql', sql: PACKAGED_0001 },
+    { name: '0002-goal-status-checks.sql', sql: PACKAGED_0002 },
+    { name: '0003-transitions-status-checks.sql', sql: PACKAGED_0003 },
+  ])
+  const third = openStorageWithDriver(configFor(root), undefined, { migrationDir: setThree })
+  // A legacy binding row without a stored result (pre-A1d shape).
+  third.driver
+    .prepare(
+      "INSERT INTO idempotency_keys (principal_ref, operation_id, repository_ref, worktree_ref, payload_digest, effect_digest, recorded_at_micros, completed_at_micros) VALUES ('principal-1', 'op-1', 'repo-1', 'wt-1', 'sha256:" +
+        'a'.repeat(64) +
+        "', NULL, 5, 6)",
+    )
+    .run()
+  closeStorage(third)
+  // Forward with the packaged set (0001..0004): lands at version 4 with the
+  // row preserved and the new column reading null (no invented results).
+  const head = openStorage(configFor(root))
+  const versions = head.driver
+    .prepare('SELECT version FROM schema_migrations ORDER BY version')
+    .all() as {
+    version: number
+  }[]
+  assert.deepEqual(
+    versions.map((row) => row.version),
+    [1, 2, 3, 4],
+  )
+  const stored = getRecordedResult(head, {
+    principalRef: 'principal-1',
+    operationId: 'op-1',
+    repositoryRef: 'repo-1',
+    worktreeRef: 'wt-1',
+  })
+  assert.equal(stored, null, 'legacy rows without stored results read null')
+  closeStorage(head)
+  rmSync(root, { recursive: true, force: true })
+  rmSync(setThree, { recursive: true, force: true })
 })
 
 test('migration digests are file-bytes digests and drift when bytes change', () => {

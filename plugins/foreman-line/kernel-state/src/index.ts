@@ -67,6 +67,7 @@ export {
 } from './open.js'
 export {
   type ArtifactRow,
+  type CompletedBindingRow,
   consumeWakeupHandoff,
   type EventQuery,
   type EventRow,
@@ -76,6 +77,7 @@ export {
   getIdempotencyKey,
   getLease,
   getProjectionCursor,
+  getRecordedResult,
   getTransition,
   getUnreleasedLease,
   type IdempotencyKeyLookup,
@@ -98,6 +100,7 @@ export {
   type NewWakeupHandoffRow,
   type ProjectionCursorRow,
   queryEvents,
+  recordCompletedBinding,
   type SchemaMigrationRow,
   type SetProjectionCursorRow,
   setProjectionCursor,
