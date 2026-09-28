@@ -23,7 +23,7 @@
 |---|---|---|
 | INF-5 full D21 two-span/cold/deadline measurement at contract level | FK-P16 measurement + FK-P21 recording | **Partial only**: FK-P17′ measures on shipped surfaces (RS-2.2 retarget); §8 scenario 14 / full D21 evidence NOT satisfied |
 | INF-8 process-boundary recovery + stale-authority-refusal proof | FK-P14/FK-P15 | NOT satisfied (contract fragments FK-P9/FK-P11 only) |
-| INF-4 retained-evidence manifest, protected verifier identity, retention/retrieval | FK-P21 (+ FK-P18′ CI pieces) | NOT satisfied beyond FK-P18′'s in-scope CI backstops |
+| INF-4 retained-evidence manifest, protected verifier identity, retention/retrieval | FK-P21 (+ FK-P18′ CI pieces) | NOT satisfied beyond FK-P18′'s in-scope CI backstops. Extension (FK-P17′ OQ-3 ruling 2026-09-28): the FK-P17′ harness evidence lives package-locally (`bypass-outage-harness/evidence/` paths) and dies on rollback — no retention destination exists; harness evidence rows carry the same NOT-satisfied status |
 | INF-7 revision-bound corpus manifest binding | FK-P19/FK-P21 | NOT satisfied |
 | INF-1/INF-2/INF-3/INF-6 residual assembly (matrix binding, exact-placement proof, measured build reporting, baseline assembly) | FK-P14/FK-P20/FK-P21 | NOT satisfied (named rows in §16 annotated per RS-2.2) |
 | U1 backstop-independence evidence chain (protected verifier/workflow control, runner lifecycle identity, independent negative controls, evidence identities/retention, bounded unsupported outcomes) | FK-P18 production / FK-P19 verification / FK-P21 retention | NOT satisfied — §14 pre-FK-P18′ contract dependency stands (E7); concrete U1 choices still open |
