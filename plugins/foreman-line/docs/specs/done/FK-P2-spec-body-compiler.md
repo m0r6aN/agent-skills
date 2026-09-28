@@ -1,7 +1,7 @@
 ---
 ticket: FK-P2
 title: Foreman Kernel - spec-body compiler
-status: draft
+status: done
 owner: clinton.morgan
 created: 2026-09-27
 updated: 2026-09-27
