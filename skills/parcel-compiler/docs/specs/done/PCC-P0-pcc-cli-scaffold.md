@@ -15,6 +15,8 @@ routing_class: implementation/standard   # scaffold work; no frontier routing re
 
 # PCC-P0 - Proof-Gated Parcel Compiler CLI Scaffold
 
+> **Repository identity migration (2026-09-06):** Repository identifiers and paths in this historical record were normalized to `m0r6aN/agent-skills`. Recorded commands were not rerun; all other historical outcomes remain as captured.
+
 ## Intent
 
 Scaffold `pcc`, the Proof-Gated Parcel Compiler CLI - the trust-path binary that will compile parcel plans, seal claims, and verify receipt chains for the Foreman Line. This parcel ships the command surface, the exit-code contract, the CLI router, and the three trust-path utility primitives (RFC 8785 canonicalization, hashing, git base-SHA resolution) with tests. **Every command is a stub that exits 2 NOT_IMPLEMENTED.** The deliverable is the frozen shape of the tool, not its behavior - identical in spirit to W0-P1: later parcels implement commands against this surface without renegotiating it.
@@ -23,7 +25,7 @@ This parcel re-executes the lost PR-0. The original was built and verified only 
 
 ## Constraints
 
-- **Location:** `skills/parcel-compiler/tool/` in `kaseya-one-productivity-tools` (local: `C:\Repos\kaseya-one-productivity-tools`).
+- **Location:** `skills/parcel-compiler/tool/` in `agent-skills` (local: `D:\Repos\agent-skills`).
 - **Stack:** TypeScript, Node >=22, ESM-only. Tests via `npx tsx --test`. Lint/format with `biome`.
 - **Zero runtime dependencies - ratified.** PR-0 deviated from a "commander-based" note and flagged it; this spec ratifies the deviation as a constraint. `pcc` sits in the trust path of every claim and receipt; its supply-chain surface is Node itself and nothing else. `package.json` MUST have no `dependencies` entry (devDependencies for tsc/tsx/biome only), and a test MUST enforce this by reading `package.json`.
 - **Command surface (9 commands, frozen by this parcel):**

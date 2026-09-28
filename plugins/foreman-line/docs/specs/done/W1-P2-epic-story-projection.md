@@ -16,13 +16,15 @@ permission_profile: builder-deps   # new package needs an ajv install (network e
 
 # W1-P2 - Epic/Story projection generator
 
+> **Repository identity migration (2026-09-06):** Repository identifiers and paths in this historical record were normalized to `m0r6aN/agent-skills`. Recorded commands were not rerun; all other historical outcomes remain as captured.
+
 ## Intent
 
 Ship the Stage A->B seam of the Foreman Line: the deterministic capability that takes a schema-valid `ShapingResult` emitted by the shipped W1-P1 package (with `epics: []`) and produces a *proposal* filling `ShapingResult.epics` with a two-level Epic/Story tree - one Epic per `ShapingResult`, one Story per `parcelSpecRef`. This is a **projection only**: no Jira registration (W1-P4), no human approval or receipts (W1-P3), no `status` flips. The output is a new, schema-re-validated, RFC 8785-canonicalizable artifact that W1-P3's approval flow consumes. The parcel proves the plan's core claim - specs are the source of truth, the Epic/Story tree is a projection of them (plan D1) - by deriving every tree node from the referenced spec drafts, never from fabricated placeholder values.
 
 ## Constraints
 
-- **Location:** new package `plugins/foreman-line/projection/` in `kaseya-one-productivity-tools` (local: `C:\Repos\kaseya-one-productivity-tools`) - sibling to the frozen `plugins/foreman-line/contracts/` and the shipped W1-P1 `plugins/foreman-line/shaping/` package. **Not folded into `shaping`** - `shaping` is shipped and read-only (coordinator ruling Q1). No skill and no kickstarter template ship in this parcel (the productized shaping role is W1-P1's; projection is a mechanical downstream step).
+- **Location:** new package `plugins/foreman-line/projection/` in `agent-skills` (local: `D:\Repos\agent-skills`) - sibling to the frozen `plugins/foreman-line/contracts/` and the shipped W1-P1 `plugins/foreman-line/shaping/` package. **Not folded into `shaping`** - `shaping` is shipped and read-only (coordinator ruling Q1). No skill and no kickstarter template ship in this parcel (the productized shaping role is W1-P1's; projection is a mechanical downstream step).
 - **Stack:** TypeScript, ESM-only. `engines.node >= 24.11.1` (repo-root precedent, defects_lessons #10 - NOT `>=22`). Tests via `node --test` (`npx tsx --test`). Lint/format with `biome`.
 - **Runtime dependency allowlist:** exactly one runtime dependency - `ajv` (schema re-validation engine only). A test MUST assert `package.json`'s `dependencies` keys equal exactly `{ajv}`, machine-enforced per the W0-P3/W0-P4/SCAF-P1/W1-P1 pattern.
 - **Standing rule (binding):** ajv's `JSONSchemaType` is banned as a schema authority anywhere in this repo. This parcel authors **no new stage schema** - it re-validates the filled payload against the frozen `shapingResultSchema` (`plugins/foreman-line/contracts/src/stages/a-intake.ts`), imported, never re-declared.

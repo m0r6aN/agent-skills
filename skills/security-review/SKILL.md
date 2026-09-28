@@ -16,6 +16,20 @@ This skill performs defensive technical security reviews across these target cla
 
 It produces clear, evidence-backed findings with severity, locator, impact, remediation, and coverage notes. For formal reviews, it can also produce a Markdown report and JSON findings sidecar.
 
+## Overview
+
+Security review is worth little if it can't tell an attacker where to strike, or if it invents risk to look thorough. This skill performs strictly defensive, evidence-backed inspection: every finding carries a specific locator, a calibrated severity, and a concrete remediation, and every area not reviewed is named explicitly as a coverage gap instead of silently omitted. It never exploits, attacks, or modifies the system under review — the goal is an honest map of risk, not a demonstration of what could go wrong.
+
+## When to Use
+
+- Reviewing, auditing, or hardening a repo, file, Dockerfile, Kubernetes manifest, or IaC stack (Terraform/Pulumi/Bicep)
+- Assessing a deployed API, service, or architecture for security weaknesses
+- Threat-modeling an agentic AI system — agents, tools, prompts, memory, or a POML/tool chain
+- The user mentions OWASP, ASVS, CWE, CVEs, vulnerabilities, prompt injection, model/tool safety, tenant isolation, secrets, authorization, or asks "is this secure?"
+- As the technical-findings pass before a formal compliance mapping (SOC 2, FedRAMP, CMMC, HIPAA, PCI DSS, NIST 800-53/171) via `compliance-review`
+
+Do NOT use this skill to exploit, attack, brute-force, or perform destructive testing against a live system — even one the user owns — without explicit authorization for active testing.
+
 ## Operating principles
 
 - Be defensive only.
@@ -447,6 +461,38 @@ Safe alternatives:
 * Reproduction in a local lab
 * Secure test-case design
 * Logging/detection recommendations
+
+## Common Rationalizations
+
+| Rationalization | Reality |
+|---|---|
+| "This looks bad, I'll call it Critical to be safe." | Severity must be calibrated, not inflated for effect. If it wouldn't wake someone up at 2am, it's probably not Critical — inflated severity trains people to ignore the report. |
+| "I didn't have time to check the deployment config, I'll just leave it out." | Unknowns and skipped areas must be listed in Coverage gaps. Silently omitting a scope area is indistinguishable from claiming it was reviewed and clean. |
+| "The user asked me to review this API — I can also just try the injection to confirm it." | Prefer passive inspection unless active testing is explicitly authorized. Confirming a suspected vuln by exploiting it crosses from review into unauthorized testing. |
+| "This finding seems minor, I won't bother giving a locator." | Every finding must have a specific locator. A finding without a locator can't be verified, prioritized, or fixed. |
+| "The user wants SOC 2 mapping, I'll just do that directly." | Technical findings come first. Compliance-framework mapping is a separate handoff to `compliance-review`, not something to shortcut into this skill. |
+| "I'm fairly sure this is exploitable, I'll write it up as confirmed." | Confidence (High/Medium/Low) is a required field precisely because "fairly sure" and "confirmed" are different claims — don't launder one into the other. |
+
+## Red Flags
+
+- A finding with severity but no locator, evidence, or remediation
+- A Critical/High severity assigned without a realistic, describable path to compromise
+- Coverage gaps left unstated when parts of the target were not reviewed
+- Any exploitation, credential attack, fuzzing, or destructive test performed without explicit authorization
+- A live service reviewed without confirming the user owns or is authorized to test it
+- A report that asserts a CVE or vulnerability class without evidence supporting the specific claim
+- Formal compliance-framework mapping performed inside this skill instead of handed off to `compliance-review`
+
+## Verification
+
+Before delivering a security review:
+
+- [ ] Every finding has a specific locator, severity, confidence, impact, and remediation
+- [ ] Severity is calibrated against the rubric, not inflated or deflated
+- [ ] Coverage and coverage gaps are both stated explicitly
+- [ ] No exploitation, credential attack, destructive testing, or unauthorized probing occurred
+- [ ] Live-service review confirms authorization before any active check
+- [ ] Compliance-framework mapping (if requested) is deferred to `compliance-review`, not performed here
 
 ## Quality bar
 

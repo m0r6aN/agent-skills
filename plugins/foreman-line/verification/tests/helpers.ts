@@ -25,6 +25,29 @@ const REAL_MATRIX_PATH = join(
 
 export const PACKAGE_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 
+/**
+ * Compare frozen package configuration while permitting dependency/toolchain
+ * maintenance and formatter schema URL refreshes.
+ */
+export function normalizeMaintainedConfig(name: string, text: string): unknown {
+  if (name === 'package.json') {
+    const manifest = JSON.parse(text) as Record<string, unknown>
+    for (const group of ['dependencies', 'devDependencies']) {
+      const values = manifest[group]
+      if (values && typeof values === 'object' && !Array.isArray(values)) {
+        manifest[group] = Object.keys(values).sort()
+      }
+    }
+    return manifest
+  }
+  if (name === 'biome.json') {
+    const config = JSON.parse(text) as Record<string, unknown>
+    delete config.$schema
+    return config
+  }
+  return text
+}
+
 /** Fresh tmpDir with the real skill-injection.yaml copied in. */
 export function makeTempRepoRoot(options: { matrix?: boolean } = {}): string {
   const tempRoot = mkdtempSync(join(tmpdir(), 'w3p1-test-'))

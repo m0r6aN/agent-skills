@@ -86,13 +86,141 @@ test('AC5d: validateChain([]) is invalid — chain contains no receipts', () => 
   assert.ok(result.errors.some((e) => e.includes('chain contains no receipts')))
 })
 
-// AC6: isSealed
-test('AC6: isSealed is true when the highest-sequence receipt is stage F', () => {
+// AC6, tightened by FL-R1-A1: structural validity and terminal closure identity.
+test('AC6: isSealed is true for a valid terminal stage-F ClosureRecord', () => {
   assert.equal(isSealed(loadChain('chain-sealed')), true)
 })
 
 test('AC6: isSealed is false when the highest-sequence receipt is not stage F', () => {
   assert.equal(isSealed(loadChain('chain-unsealed')), false)
+})
+
+test('FL-R1 AC-1: an empty chain is unsealed', () => {
+  assert.equal(isSealed([]), false)
+})
+
+const nonSealingTips: readonly [string, Partial<ReceiptDocument>][] = [
+  [
+    'half-closed claim',
+    { kind: 'claim', claimRef: 'stage-f-half-closed', subjectKind: 'HalfClosedClosure' },
+  ],
+  ['wrong kind with ClosureRecord subject', { kind: 'claim', claimRef: 'closure-claim' }],
+  ['stage receipt with HalfClosedClosure subject', { subjectKind: 'HalfClosedClosure' }],
+  ['stage receipt with another subject', { subjectKind: 'IntegrationResult' }],
+  ['ClosureRecord outside stage F', { stage: 'E' }],
+]
+
+for (const [name, overrides] of nonSealingTips) {
+  test(`FL-R1 AC-2: a structurally valid ${name} is unsealed`, () => {
+    const chain = loadChain('chain-sealed')
+    const tip = chain.pop()
+    assert.ok(tip)
+    chain.push({ ...tip, ...overrides })
+    const validation = validateChain(chain)
+    assert.equal(validation.valid, true, JSON.stringify(validation.errors))
+    assert.equal(isSealed(chain), false)
+  })
+}
+
+const invalidPrefixes: readonly [string, Partial<ReceiptDocument>, string][] = [
+  ['duplicate sequence', { sequence: 0 }, 'sequence values must be exactly'],
+  ['pointer mismatch', { prevHash: '0'.repeat(64) }, 'does not match'],
+  ['schema violation', { timestamp: 'invalid' }, '/timestamp'],
+  ['claimRef invariant violation', { claimRef: 'not-null' }, 'claimRef must be null'],
+]
+
+for (const [name, overrides, error] of invalidPrefixes) {
+  test(`FL-R1 AC-3: appending ClosureRecord cannot seal a ${name}`, () => {
+    const chain = loadChain('chain-sealed')
+    const prior = chain[1]
+    assert.ok(prior)
+    chain[1] = { ...prior, ...overrides }
+    const validation = validateChain(chain)
+    assert.equal(validation.valid, false)
+    assert.ok(validation.errors.some((message) => message.includes(error)))
+    assert.equal(isSealed(chain), false)
+  })
+}
+
+test('FL-R1 AC-3: a terminal ClosureRecord with a sequence gap cannot seal', () => {
+  const chain = loadChain('chain-sealed')
+  const tip = chain.pop()
+  assert.ok(tip)
+  chain.push({ ...tip, sequence: tip.sequence + 1 })
+  const validation = validateChain(chain)
+  assert.equal(validation.valid, false)
+  assert.ok(
+    validation.errors.some((message) => message.includes('sequence values must be exactly')),
+  )
+  assert.equal(isSealed(chain), false)
+})
+
+for (const key of ['workflowId', 'correlationId'] as const) {
+  test(`FL-R1 AC-3: appending ClosureRecord cannot seal a divergent ${key}`, () => {
+    const chain = loadChain('chain-sealed')
+    const prior = chain[1]
+    assert.ok(prior)
+    chain[1] = {
+      ...prior,
+      correlation: { ...prior.correlation, [key]: '99999999-9999-9999-9999-999999999999' },
+    }
+    const validation = validateChain(chain)
+    assert.equal(validation.valid, false)
+    assert.ok(validation.errors.some((message) => message.includes('diverges')))
+    assert.equal(isSealed(chain), false)
+  })
+}
+
+for (const malformed of [null, 42, { correlation: null }]) {
+  test(`FL-R1 AC-3: malformed member ${JSON.stringify(malformed)} cannot be sealed by F`, () => {
+    const chain = loadChain('chain-sealed')
+    chain[1] = malformed as unknown as ReceiptDocument
+    assert.equal(validateChain(chain).valid, false)
+    assert.equal(isSealed(chain), false)
+  })
+}
+
+test('FL-R1 AC-4: half-closed retries seal only when a terminal ClosureRecord is appended', () => {
+  const chain = loadChain('chain-sealed')
+  const closure = chain.pop()
+  assert.ok(closure)
+  const halfClosed: ReceiptDocument = {
+    ...closure,
+    kind: 'claim',
+    claimRef: 'stage-f-half-closed',
+    subjectKind: 'HalfClosedClosure',
+  }
+  const retry: ReceiptDocument = {
+    ...halfClosed,
+    sequence: halfClosed.sequence + 1,
+    prevHash: halfClosed.hash,
+    hash: 'd'.repeat(64),
+  }
+  for (const claim of [halfClosed, retry]) {
+    chain.push(claim)
+    const validation = validateChain(chain)
+    assert.equal(validation.valid, true, JSON.stringify(validation.errors))
+    assert.equal(isSealed(chain), false)
+  }
+  chain.push({
+    ...closure,
+    sequence: retry.sequence + 1,
+    prevHash: retry.hash,
+    hash: 'e'.repeat(64),
+  })
+  const validation = validateChain(chain)
+  assert.equal(validation.valid, true, JSON.stringify(validation.errors))
+  assert.equal(isSealed(chain), true)
+})
+
+test('FL-R1 AC-1: an earlier ClosureRecord does not seal a nonterminal tip', () => {
+  const chain = loadChain('chain-sealed')
+  const closure = chain[chain.length - 1]
+  assert.ok(closure)
+  chain.push({ ...closure, stage: 'E', sequence: closure.sequence + 1, prevHash: closure.hash })
+  const validation = validateChain(chain)
+  assert.equal(validation.valid, true, JSON.stringify(validation.errors))
+  assert.equal(isSealed(chain), false)
 })
 
 // Step 0 ratification: single-file directory validates as a trivial chain.

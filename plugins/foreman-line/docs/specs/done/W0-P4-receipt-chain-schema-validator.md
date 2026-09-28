@@ -15,13 +15,15 @@ routing_class: architecture/risk   # W0 contract work routes frontier per policy
 
 # W0-P4 - Receipt Chain Schema + Validator
 
+> **Repository identity migration (2026-09-06):** Repository identifiers and paths in this historical record were normalized to `m0r6aN/agent-skills`. Recorded commands were not rerun; all other historical outcomes remain as captured.
+
 ## Intent
 
 Define the frozen shape of the receipt document that `ReceiptRef` (`plugins/foreman-line/contracts/src/envelope.ts:17`, doc-commented "Shape is owned by W0-P4") points to: what bytes `hash` is computed over, how receipts link into a per-parcel chain, where the chain is stored, and how a receipt or chain is structurally validated. This is D8's mandate ("every stage emits an RFC 8785 canonical receipt... the Trust Wall demands a walkable chain") and closes the split PCC-P0 froze open ("W0-P4 owns receipt shape, claim manifest schema, chain linkage, signatures; pcc consumes them later via `receipt verify` and `status`"). Ships as schema + a thin structural validator - no hash recomputation, no signature verification, no cryptographic tamper detection. Those remain pcc's `receipt verify` job by design; this parcel gives that future command a shape to walk and a document to recompute hashes against, not the recomputation itself.
 
 ## Constraints
 
-- **Location:** `plugins/foreman-line/receipts/` in `kaseya-one-productivity-tools` (local: `C:\Repos\kaseya-one-productivity-tools`) - sibling to the frozen `plugins/foreman-line/contracts/` and `plugins/foreman-line/routing-policy/`, same foundation tier.
+- **Location:** `plugins/foreman-line/receipts/` in `agent-skills` (local: `D:\Repos\agent-skills`) - sibling to the frozen `plugins/foreman-line/contracts/` and `plugins/foreman-line/routing-policy/`, same foundation tier.
 - **Stack:** TypeScript, Node >=22, ESM-only. Tests via `node --test` (`npx tsx --test`). Lint/format with `biome`.
 - **Standing rule from the W0-P1 rework (binding on this parcel):** ajv's `JSONSchemaType` is banned as a schema authority anywhere in this repo; every schema is standard JSON Schema draft-07 typed as `SchemaObject`.
 - **Runtime dependency allowlist:** exactly one runtime dependency - `ajv` (validation engine only; receipts are pure generated JSON, not YAML-authored, so `routing-policy`'s `yaml` dependency does not apply here). A test MUST assert `package.json`'s `dependencies` keys equal exactly `{ajv}`, machine-enforced per the W0-P3 pattern.

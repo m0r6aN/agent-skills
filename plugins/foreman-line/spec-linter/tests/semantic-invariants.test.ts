@@ -52,6 +52,38 @@ test('AC6b routing_class: rejects a value outside the four-value enum', () => {
   assert.ok(result.errors.some((e) => e.includes('routing_class')))
 })
 
+// b.1 verification_class: required two-value enum -------------------------
+
+test('GSO-P1 verification_class: judgment-required is accepted', () => {
+  const result = validateSpecFrontmatter(loadFixture('valid-spec.md'))
+  assert.equal(result.valid, true, JSON.stringify(result.errors))
+})
+
+test('GSO-P1 verification_class: equivalence-provable is accepted', () => {
+  const result = validateSpecFrontmatter(loadFixture('valid-verification-class-equivalence.md'))
+  assert.equal(result.valid, true, JSON.stringify(result.errors))
+})
+
+test('GSO-P1 verification_class: omission is rejected without another violation', () => {
+  const result = validateSpecFrontmatter(loadFixture('reject-verification-class-missing.md'))
+  assert.equal(result.valid, false)
+  assert.deepEqual(
+    result.errors.filter((error) => !error.includes('verification_class')),
+    [],
+  )
+  assert.ok(result.errors.some((error) => error.includes('verification_class')))
+})
+
+test('GSO-P1 verification_class: an unknown value is rejected without another violation', () => {
+  const result = validateSpecFrontmatter(loadFixture('reject-verification-class-unknown.md'))
+  assert.equal(result.valid, false)
+  assert.deepEqual(
+    result.errors.filter((error) => !error.includes('verification_class')),
+    [],
+  )
+  assert.ok(result.errors.some((error) => error.includes('verification_class')))
+})
+
 // c. surfaces: non-empty ----------------------------------------------------
 
 test('AC6c surfaces: passing fixture (valid-spec.md, non-empty array)', () => {
@@ -163,4 +195,60 @@ test('surfaces vocabulary warning: known prefix produces no vocabulary warning',
   assert.ok(
     !result.warnings.some((w) => w.includes('does not begin with a known vocabulary prefix')),
   )
+})
+
+// P1a: involves — unit-level D14 proof and resolution order --------------------
+
+test('P1a D14: an unknown involves value NEVER flips valid — warning only', () => {
+  const doc = loadFixture('valid-involves-unknown.md')
+  const result = validateSpecFrontmatter(doc)
+  assert.equal(result.valid, true)
+  assert.deepEqual(result.errors, [])
+  assert.equal(result.warnings.filter((w) => w.includes("involves entry 'divination'")).length, 1)
+})
+
+test('P1a AC4: capabilityExtensions as a KEY LIST resolves a non-canonical value (no advisory)', () => {
+  const doc = loadFixture('valid-involves-extension.md')
+  const result = validateSpecFrontmatter(doc, { capabilityExtensions: ['telemetry'] })
+  assert.equal(result.valid, true)
+  assert.ok(!result.warnings.some((w) => w.includes('involves entry')))
+})
+
+test('P1a AC4: capabilityExtensions as a PARSED OBJECT resolves the same value', () => {
+  const doc = loadFixture('valid-involves-extension.md')
+  const result = validateSpecFrontmatter(doc, {
+    capabilityExtensions: { telemetry: ['otel-instrument'] },
+  })
+  assert.equal(result.valid, true)
+  assert.ok(!result.warnings.some((w) => w.includes('involves entry')))
+})
+
+test('P1a AC4 reject twin: without extensions the same doc DOES warn (extension path proven live)', () => {
+  const doc = loadFixture('valid-involves-extension.md')
+  const result = validateSpecFrontmatter(doc)
+  assert.equal(result.valid, true)
+  assert.equal(result.warnings.filter((w) => w.includes("involves entry 'telemetry'")).length, 1)
+})
+
+test('P1a AC3: involves: [] and absence are both silent (no advisory, no error)', () => {
+  for (const name of ['valid-involves-empty.md', 'valid-spec.md']) {
+    const result = validateSpecFrontmatter(loadFixture(name))
+    assert.equal(result.valid, true, name)
+    assert.ok(!result.warnings.some((w) => w.includes('involves')), name)
+  }
+})
+
+test('P1a AC3: malformed involves SHAPES are schema rejections (the only hard half)', () => {
+  for (const name of [
+    'reject-involves-non-array.md',
+    'reject-involves-empty-string.md',
+    'reject-involves-whitespace.md',
+  ]) {
+    const result = validateSpecFrontmatter(loadFixture(name))
+    assert.equal(result.valid, false, name)
+    assert.ok(
+      result.errors.some((e) => e.includes('involves')),
+      name,
+    )
+  }
 })

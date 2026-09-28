@@ -71,6 +71,24 @@ export interface JiraTransport {
   addRemoteLink(issueKey: string, permalink: string): Promise<string>
 }
 
+/**
+ * Typed root-refusal error (P2b-i, extending P2a's Q4 per-package convention:
+ * `<Domain>RootUnresolvedError`). `root-not-absolute` (path-guard ruling /
+ * AC6): a relative root would silently anchor derived paths to
+ * `process.cwd()` (mechanism class 5) and is refused before any path is
+ * constructed.
+ */
+export class RegistrationRootUnresolvedError extends Error {
+  /** PCC-P0 usage exit code. */
+  readonly code = 2 as const
+  readonly reason: 'root-absent' | 'root-not-a-directory' | 'root-not-absolute'
+  constructor(reason: RegistrationRootUnresolvedError['reason'], message: string) {
+    super(message)
+    this.name = 'RegistrationRootUnresolvedError'
+    this.reason = reason
+  }
+}
+
 /** Thrown by `assertRegistrationGate` when a mechanical isolation condition fails. */
 export class RegistrationGateError extends Error {
   readonly violation: 'project-key' | 'label' | 'prefix'

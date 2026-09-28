@@ -1,0 +1,9 @@
+{
+  "contract": "test-fixture-contract",
+  "readers": [
+    {
+      "parcelId": "GSO-P2",
+      "files": ["plugins/foreman-line/contract-readers/src/touch-set.ts"]
+    }
+  ]
+}

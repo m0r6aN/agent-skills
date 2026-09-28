@@ -23,7 +23,13 @@ const srcDir = join(packageDir, 'src')
 test('AC8: the permalink binds the pushed post-key SHA (commit 1), not HEAD (commit 2)', async () => {
   const fx = singleStoryFixture()
   const adapter = new FakeAdapter()
-  const outcome = await register({ slug: fx.slug, repoRoot: fx.repoRoot, adapter, timestamp: TS })
+  const outcome = await register({
+    slug: fx.slug,
+    projectKey: 'KONE',
+    repoRoot: fx.repoRoot,
+    adapter,
+    timestamp: TS,
+  })
 
   const specRef = fx.specRefs[0] as string
   const backfillSha = git(fx.repoRoot, ['log', '-1', '--format=%H', '--', specRef]).trim()
@@ -44,6 +50,7 @@ test('AC8: back-fill edits ONLY the ticket: line (no status flip, no body change
 
   await register({
     slug: fx.slug,
+    projectKey: 'KONE',
     repoRoot: fx.repoRoot,
     adapter: new FakeAdapter(),
     timestamp: TS,
@@ -70,7 +77,7 @@ test('AC8: a post-create commit failure stops, reports what landed, and rolls th
 
   let landed: readonly string[] = []
   await assert.rejects(
-    register({ slug: fx.slug, repoRoot: fx.repoRoot, adapter, timestamp: TS }),
+    register({ slug: fx.slug, projectKey: 'KONE', repoRoot: fx.repoRoot, adapter, timestamp: TS }),
     (err: unknown) => {
       assert.ok(err instanceof RegistrationError)
       landed = err.landed
@@ -96,11 +103,19 @@ test('AC8: re-run after the failure is idempotent - search-first creates no dupl
   const adapter = new FakeAdapter()
 
   blockCommits(fx.repoRoot)
-  await assert.rejects(register({ slug: fx.slug, repoRoot: fx.repoRoot, adapter, timestamp: TS }))
+  await assert.rejects(
+    register({ slug: fx.slug, projectKey: 'KONE', repoRoot: fx.repoRoot, adapter, timestamp: TS }),
+  )
   assert.equal(adapter.createCalls.length, 2)
 
   unblockCommits(fx.repoRoot) // let the re-run complete
-  const outcome = await register({ slug: fx.slug, repoRoot: fx.repoRoot, adapter, timestamp: TS })
+  const outcome = await register({
+    slug: fx.slug,
+    projectKey: 'KONE',
+    repoRoot: fx.repoRoot,
+    adapter,
+    timestamp: TS,
+  })
 
   assert.equal(outcome.mode, 'first')
   assert.equal(adapter.createCalls.length, 2, 're-run must create NO duplicates')

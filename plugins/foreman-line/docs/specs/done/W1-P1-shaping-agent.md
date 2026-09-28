@@ -16,13 +16,15 @@ permission_profile: builder-deps   # new package needs an ajv install (network e
 
 # W1-P1 - Shaping Agent
 
+> **Repository identity migration (2026-09-06):** Repository identifiers and paths in this historical record were normalized to `m0r6aN/agent-skills`. Recorded commands were not rerun; all other historical outcomes remain as captured.
+
 ## Intent
 
 Ship Stage A of the Foreman Line: the capability that turns a raw idea into linted parcel **spec drafts** plus a schema-valid `ShapingResult` handed forward to W1-P2. The deliverable is a split - a deterministic TypeScript package (`plugins/foreman-line/shaping/`) that emits and validates the `ShapingResult` and self-checks each draft against SPEC-CONVENTION, plus a skill (`skills/foreman-shaping/SKILL.md`) and a reusable dispatch kickstarter template that productize the interactive-shaping role. This parcel defines the P1->P2 handoff contract that everything downstream of intake consumes; it emits `ShapingResult` with an **empty `epics`** array that W1-P2 fills (charter F6), writes drafts at `status: draft` only, and mints no receipts and registers nothing (the two human gates and the receipt chain stay downstream).
 
 ## Constraints
 
-- **Location:** `plugins/foreman-line/shaping/` in `kaseya-one-productivity-tools` (local: `C:\Repos\kaseya-one-productivity-tools`) - sibling to the frozen `plugins/foreman-line/contracts/` and the shipped W0 packages, same foundation tier. The skill ships at `skills/foreman-shaping/SKILL.md` (repo-level skills dir, matching the `/goal` skill precedent at `skills/goal/SKILL.md`); the reusable dispatch kickstarter template ships at `plugins/foreman-line/docs/kickstarters/foreman-shaping-template.md` (where shaping kickstarters already live).
+- **Location:** `plugins/foreman-line/shaping/` in `agent-skills` (local: `D:\Repos\agent-skills`) - sibling to the frozen `plugins/foreman-line/contracts/` and the shipped W0 packages, same foundation tier. The skill ships at `skills/foreman-shaping/SKILL.md` (repo-level skills dir, matching the `/goal` skill precedent at `skills/goal/SKILL.md`); the reusable dispatch kickstarter template ships at `plugins/foreman-line/docs/kickstarters/foreman-shaping-template.md` (where shaping kickstarters already live).
 - **Stack:** TypeScript, ESM-only. `engines.node >= 24.11.1` (repo-root precedent, defects_lessons #10 - NOT `>=22`; ratified Q2 correction). Tests via `node --test` (`npx tsx --test`). Lint/format with `biome`.
 - **Standing rule (binding):** ajv's `JSONSchemaType` is banned as a schema authority anywhere in this repo; every schema is standard JSON Schema draft-07 typed as ajv's `SchemaObject`. This parcel authors **no new stage schema** - it consumes the frozen `shapingResultSchema` (`plugins/foreman-line/contracts/src/stages/a-intake.ts`) as its emission authority.
 - **Runtime dependency allowlist:** exactly one runtime dependency - `ajv` (validation engine only). A test MUST assert `package.json`'s `dependencies` keys equal exactly `{ajv}`, machine-enforced per the W0-P3/W0-P4/SCAF-P1 pattern.

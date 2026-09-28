@@ -14,7 +14,7 @@
  */
 
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
-import { join } from 'node:path'
+import { isAbsolute, join } from 'node:path'
 import type { SkillInjectionMatrix, SkillName } from '../../../skill-injection/src/index.js'
 import {
   parseSkillInjectionMatrixYaml,
@@ -24,7 +24,11 @@ import {
 // ─── Error class ──────────────────────────────────────────────────────────────
 
 export class SkillResolverError extends Error {
-  readonly code: 'MATRIX_UNREADABLE' | 'MATRIX_INVALID' | 'RECEIPT_WRITE_FAILED'
+  readonly code:
+    | 'MATRIX_UNREADABLE'
+    | 'MATRIX_INVALID'
+    | 'RECEIPT_WRITE_FAILED'
+    | 'ROOT_NOT_ABSOLUTE'
 
   constructor(code: SkillResolverError['code'], message: string) {
     super(message)
@@ -51,33 +55,53 @@ export interface SkillResolverResult {
 
 export interface SkillResolverOptions {
   /**
-   * Absolute path to the repository root. All file operations (matrix read,
-   * receipt write) resolve relative to this path.
-   * Defaults to process.cwd(). Tests pass a tmp directory.
+   * Absolute path to the TARGET repository root. The receipt write resolves
+   * relative to this path. Required (P2a/D19): never derived from process.cwd().
    */
-  readonly repoRoot?: string
+  readonly repoRoot: string
+  /**
+   * Absolute path to the INSTALLED PLUGIN root (P2b-i ruling R1/Q3): the
+   * directory containing the plugin's own frozen
+   * `skill-injection/skill-injection.yaml`. Required, no default, no
+   * discovery. Its own explicit input per R2's no-shared-constant principle.
+   */
+  readonly pluginRoot: string
 }
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const MATRIX_REPO_PATH = 'plugins/foreman-line/skill-injection/skill-injection.yaml'
+/** Plugin-relative path of the frozen skill-injection matrix (P2b-i R1/Q3). */
+const MATRIX_PLUGIN_PATH = 'skill-injection/skill-injection.yaml'
 
 // ─── Resolution ───────────────────────────────────────────────────────────────
 
+/** Assert a root is absolute (P2b-i path-guard ruling) — typed refusal, mechanism class 5. */
+function assertAbsoluteRoot(root: string, name: string): void {
+  if (!isAbsolute(root)) {
+    throw new SkillResolverError(
+      'ROOT_NOT_ABSOLUTE',
+      `resolveSkills: ${name} '${root}' is not an absolute path; a relative root would silently anchor to the process cwd and is refused (P2b-i / D19)`,
+    )
+  }
+}
+
 export function resolveSkills(
   input: SkillResolverInput,
-  options: SkillResolverOptions = {},
+  options: SkillResolverOptions,
 ): SkillResolverResult {
-  const repoRoot = options.repoRoot ?? process.cwd()
+  const repoRoot = options.repoRoot
+  const pluginRoot = options.pluginRoot
+  assertAbsoluteRoot(repoRoot, 'repoRoot')
+  assertAbsoluteRoot(pluginRoot, 'pluginRoot')
 
-  // 1. Load the matrix YAML
+  // 1. Load the matrix YAML from the PLUGIN tree (R1/Q3)
   let rawYaml: string
   try {
-    rawYaml = readFileSync(join(repoRoot, MATRIX_REPO_PATH), 'utf8')
+    rawYaml = readFileSync(join(pluginRoot, ...MATRIX_PLUGIN_PATH.split('/')), 'utf8')
   } catch (err) {
     throw new SkillResolverError(
       'MATRIX_UNREADABLE',
-      `Cannot read skill-injection matrix at ${MATRIX_REPO_PATH}: ${String(err)}`,
+      `Cannot read skill-injection matrix at ${MATRIX_PLUGIN_PATH} under plugin root ${pluginRoot}: ${String(err)}`,
     )
   }
 
@@ -88,7 +112,7 @@ export function resolveSkills(
   } catch (err) {
     throw new SkillResolverError(
       'MATRIX_INVALID',
-      `Cannot parse skill-injection matrix YAML at ${MATRIX_REPO_PATH}: ${String(err)}`,
+      `Cannot parse skill-injection matrix YAML at ${MATRIX_PLUGIN_PATH}: ${String(err)}`,
     )
   }
 
@@ -141,7 +165,10 @@ export function resolveSkills(
     role: 'builder',
     surfaces: Array.from(input.surfaces),
     injectedSkills,
-    matrixRef: MATRIX_REPO_PATH,
+    // Q5's shape applied to the matrix (P2b-i R1/Q3): plugin-relative ref,
+    // with the root it resolves against recorded separately.
+    matrixRef: MATRIX_PLUGIN_PATH,
+    pluginRoot,
     timestamp: new Date().toISOString(),
   }
   try {

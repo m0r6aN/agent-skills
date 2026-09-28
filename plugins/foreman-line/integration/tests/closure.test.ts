@@ -145,6 +145,7 @@ test('AC8: prepareClosure raises CHAIN_INVALID on a correlation-perturbed chain'
           currentStatus: 'In Review',
           mergeSha: VALID_MERGE_SHA,
           specLifecycleMove: SPEC_MOVE,
+          repoRoot: 'virtual-repo-root',
         },
         { loadReceiptChainFn: () => toLoaded(perturbed) },
       ),
@@ -164,6 +165,7 @@ test('AC8: prepareClosure raises STAGE_E_TIP_INVALID when the tip is not stage E
           currentStatus: 'In Review',
           mergeSha: VALID_MERGE_SHA,
           specLifecycleMove: SPEC_MOVE,
+          repoRoot: 'virtual-repo-root',
         },
         { loadReceiptChainFn: () => toLoaded(chain) },
       ),
@@ -183,6 +185,7 @@ test('AC8: prepareClosure raises WORKFLOW_ID_INVALID before any chain read', asy
           currentStatus: 'In Review',
           mergeSha: VALID_MERGE_SHA,
           specLifecycleMove: SPEC_MOVE,
+          repoRoot: 'virtual-repo-root',
         },
         {
           loadReceiptChainFn: () => {
@@ -202,6 +205,7 @@ test('AC8: prepareClosure raises MERGE_SHA_INVALID / SPEC_MOVE_INVALID on bad in
     ticketKey: TICKET,
     targetStatus: 'Done',
     currentStatus: 'In Review',
+    repoRoot: 'virtual-repo-root',
   }
   const deps = { loadReceiptChainFn: () => toLoaded(makeStageEChain()) }
   await assert.rejects(
@@ -274,6 +278,7 @@ test('AC8: prepareClosure raises WORKFLOW_ID_INVALID on a workflowId containing 
             from: 'docs/specs/active/test.md',
             to: 'docs/specs/done/test.md',
           },
+          repoRoot: 'virtual-repo-root',
         },
         {
           loadReceiptChainFn: () => {
@@ -487,6 +492,7 @@ test('AC12b: retry with failedStep=comment does NOT re-fire the transition', asy
     transport,
     writeFn: fn,
     loadReceiptChainFn: () => toLoaded(chain),
+    repoRoot: 'virtual-repo-root',
   })
   assert.equal(result.kind, 'closed')
   assert.equal(transport.calls.transitionIssue.length, 0)
@@ -502,6 +508,7 @@ test('AC12c: retry after a seal exists returns closed with zero transport calls 
     transport,
     writeFn: fn,
     loadReceiptChainFn: () => toLoaded(chain),
+    repoRoot: 'virtual-repo-root',
   })
   assert.equal(result.kind, 'closed')
   if (result.kind !== 'closed') throw new Error('unreachable')
@@ -523,9 +530,33 @@ test('AC12d: retry with no half-closed and no seal raises CLOSURE_STATE_MISSING'
       retryHalfClosedClosure(WORKFLOW_ID, {
         transport,
         loadReceiptChainFn: () => toLoaded(makeStageEChain()),
+        repoRoot: 'virtual-repo-root',
       }),
     (err: unknown) => err instanceof ClosureError && err.code === 'CLOSURE_STATE_MISSING',
   )
+})
+
+test('P2a/D19: retryHalfClosedClosure reads the chain from the GIVEN repoRoot, not process.cwd()', async () => {
+  // Builder #15: a root the old default never held — a tmp dir with a sealed
+  // chain on disk that the invoking cwd does not contain. Uses the REAL
+  // default chain loader (no loadReceiptChainFn injection) so the repoRoot
+  // parameter must flow end-to-end into the filesystem read.
+  const repoRoot = makeTempRepoRoot()
+  try {
+    writeChainToDisk(repoRoot, [...makeStageEChain(), makeSeal()])
+    const transport = makeRecordingTransport({ throwOnAnyCall: true })
+    const { fn, written } = captureWriteFn()
+    const result = await retryHalfClosedClosure(WORKFLOW_ID, {
+      transport,
+      writeFn: fn,
+      repoRoot,
+    })
+    assert.equal(result.kind, 'closed')
+    assert.equal(written.length, 0)
+    assert.equal(transport.calls.transitionIssue.length, 0)
+  } finally {
+    rmSync(repoRoot, { recursive: true, force: true })
+  }
 })
 
 test('AC12e: a retry that fails again emits a further half-closed receipt and returns half-closed', async () => {
@@ -536,6 +567,7 @@ test('AC12e: a retry that fails again emits a further half-closed receipt and re
     transport,
     writeFn: fn,
     loadReceiptChainFn: () => toLoaded(chain),
+    repoRoot: 'virtual-repo-root',
   })
   assert.equal(result.kind, 'half-closed')
   const further = written[0] as ReceiptDocument

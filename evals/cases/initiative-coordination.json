@@ -1,0 +1,23 @@
+{
+  "skill_name": "initiative-coordination",
+  "trigger": {
+    "positive": [
+      { "prompt": "Coordinate this multi-agent initiative across two repositories and its integration gates", "top_k": 3 },
+      { "prompt": "Manage the release state across services, environments, and persisted coordinator records", "top_k": 3 },
+      { "prompt": "Build resumable cross-project delivery evidence for this initiative", "top_k": 3 }
+    ],
+    "negative": [
+      { "prompt": "Assess an existing application for launch readiness", "owner": "go-live-readiness" },
+      { "prompt": "Write a detailed feature specification before implementation", "owner": "spec-driven-development" }
+    ]
+  },
+  "evals": [
+    {
+      "id": 1,
+      "kind": "dialogue",
+      "prompt": "Coordinate an initiative spanning repositories, services, environments, and release gates.",
+      "expected_output": "A resumable coordination plan with ownership, integration boundaries, evidence, and release gates.",
+      "expectations": ["The response tracks cross-project dependencies", "The response defines durable state and release evidence"]
+    }
+  ]
+}
