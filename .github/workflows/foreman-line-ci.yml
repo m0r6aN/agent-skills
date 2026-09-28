@@ -14,19 +14,23 @@ jobs:
     runs-on: windows-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - name: Preserve repository LF bytes
+        shell: pwsh
+        run: git config --global core.autocrlf false
+
+      - uses: actions/checkout@v6
         with:
           persist-credentials: false
           fetch-depth: 0
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: '24.19.0'
 
       - name: Test the package runner without subprocess effects
         run: node --test scripts/foreman-line-ci.test.mjs
 
-      - name: Install all 14 packages, then aggregate every check
+      - name: Install all 20 packages, then aggregate every check
         if: ${{ success() || failure() }}
         shell: pwsh
         run: |
