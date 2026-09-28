@@ -113,6 +113,20 @@
         "src/τ.ts"
       ],
       "repairedOutcome": "ok"
+    },
+    {
+      "id": "EQUIV-09",
+      "kind": "entry-list",
+      "input": [
+        "src/𐒰.ts",
+        "src/𐓘.ts"
+      ],
+      "expectedCode": "ENTRY_EQUIVALENT",
+      "repaired": [
+        "src/𐒰.ts",
+        "src/q.ts"
+      ],
+      "repairedOutcome": "ok"
     }
   ]
 }

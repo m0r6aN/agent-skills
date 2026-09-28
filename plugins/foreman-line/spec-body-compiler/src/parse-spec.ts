@@ -114,11 +114,14 @@ const FORMAT_CHAR = /\p{Cf}/u
 
 /**
  * Unicode SIMPLE case folding (C+S) for equivalence and conflict keying
- * (rework R2/R3): NFC first, then per-code-point folding. The table covers the
- * C+S divergences from `toLowerCase`; no multi-char expansions are ever
- * produced (SIMPLE folding: 'ß' does NOT equal 'ss'; U+0130 folds to 'i').
- * U+212A KELVIN and U+212B ANGSTROM are non-NFC and die at step 8 post-R1 —
- * they never reach this keying.
+ * (rework R2/R3): NFC first, then folding BY CODE POINT (surrogate pairs fold
+ * as single characters — astral 1:1 case pairs such as Osage U+104B0/U+104D8,
+ * Adlam U+1E900/U+1E922, Warang Citi, Medefaidrin and Vithkuqi fold via
+ * per-code-point `toLowerCase`, restoring whole-string-toLowerCase strength).
+ * The table below carries ONLY the C+S divergences from `toLowerCase`; no
+ * multi-char expansions are ever produced (SIMPLE folding: 'ß' does NOT equal
+ * 'ss'; U+0130 folds to 'i'). U+212A KELVIN and U+212B ANGSTROM are non-NFC
+ * and die at step 8 post-R1 — they never reach this keying.
  */
 const SIMPLE_FOLD: Record<string, string> = {
   ς: 'σ', // U+03C2 final sigma -> U+03C3 sigma
@@ -137,10 +140,13 @@ const SIMPLE_FOLD: Record<string, string> = {
 function foldSimple(value: string): string {
   const nfc = value.normalize('NFC')
   let out = ''
-  for (let i = 0; i < nfc.length; i += 1) {
-    const unit = nfc.charAt(i)
+  for (let i = 0; i < nfc.length; ) {
+    const cp = nfc.codePointAt(i)
+    if (cp === undefined) break
+    const unit = String.fromCodePoint(cp)
     const mapped = SIMPLE_FOLD[unit]
     out += mapped !== undefined ? mapped : unit.toLowerCase()
+    i += unit.length
   }
   return out
 }

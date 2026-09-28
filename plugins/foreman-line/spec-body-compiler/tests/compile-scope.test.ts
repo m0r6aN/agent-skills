@@ -90,6 +90,7 @@ const EQUIV_INDEX: Record<string, number> = {
   'EQUIV-06': 1,
   'EQUIV-07': 0,
   'EQUIV-08': 1,
+  'EQUIV-09': 1,
 }
 
 for (const c of equivalent.cases) {
