@@ -15,18 +15,22 @@ import {
   type StoryNode,
   shapingResultSchema,
 } from '../../contracts/src/index.js'
+import { assertAbsoluteRoot } from './errors.js'
 import { assertSemanticGuards } from './guards.js'
 import { deriveEpicKey, specFilenameStem } from './keys.js'
 import { assertSafeSlug } from './path-guard.js'
-import { DEFAULT_REPO_ROOT } from './paths.js'
 import { readSpecTitle } from './title.js'
 
 const ajv = new Ajv({ allErrors: true })
 const validateShapingResult = ajv.compile(shapingResultSchema)
 
 export interface ProjectOptions {
-  /** Repo root each `parcelSpecRef` is resolved against. Defaults to the real repo root. */
-  readonly repoRoot?: string
+  /**
+   * Absolute repo root each `parcelSpecRef` is resolved against. Required
+   * (P2b-i/R3, extending P2a/D19): never derived from this module's own
+   * location or from process.cwd().
+   */
+  readonly repoRoot: string
 }
 
 /**
@@ -41,9 +45,10 @@ export function projectShapingResult(
   input: ShapingResult,
   epicTitle: string,
   slug: string,
-  options: ProjectOptions = {},
+  options: ProjectOptions,
 ): ShapingResult {
-  const repoRoot = options.repoRoot ?? DEFAULT_REPO_ROOT
+  const repoRoot = options.repoRoot
+  assertAbsoluteRoot(repoRoot, 'projectShapingResult')
 
   if (typeof epicTitle !== 'string' || epicTitle.trim().length === 0) {
     throw new Error(

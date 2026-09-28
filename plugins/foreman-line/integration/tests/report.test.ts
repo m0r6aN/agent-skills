@@ -19,7 +19,7 @@ const GOVERNING: ActiveSpecDescriptor = {
 }
 
 test('AC9: triggered + drift case — annotations reflect state, exit code 0', () => {
-  const result = runReport({
+  const result = runReport('/repo', '/plugin', {
     getChangedPaths: () => ['services/auth/login.ts'], // security → derived elevated
     loadActiveSpecs: () => [], // no governing spec → declared low
   })
@@ -39,7 +39,7 @@ test('AC9: triggered + drift case — annotations reflect state, exit code 0', (
 })
 
 test('AC9: benign case — not triggered, no drift, exit code 0, notice summary', () => {
-  const result = runReport({
+  const result = runReport('/repo', '/plugin', {
     getChangedPaths: () => ['docs/notes.md'],
     loadActiveSpecs: () => [GOVERNING],
   })
@@ -58,7 +58,7 @@ test('AC9: benign case — not triggered, no drift, exit code 0, notice summary'
 
 test('AC9: triggered without drift (declared already high) still exits 0', () => {
   const highSpec: ActiveSpecDescriptor = { ...GOVERNING, risk: 'critical' }
-  const result = runReport({
+  const result = runReport('/repo', '/plugin', {
     getChangedPaths: () => ['plugins/foreman-line/integration/src/report.ts'], // benign → derived low
     loadActiveSpecs: () => [highSpec],
   })
@@ -71,7 +71,7 @@ test('AC9: triggered without drift (declared already high) still exits 0', () =>
 })
 
 test('AC9 (RA-3): a throwing changed-paths seam → warning + exit 0 (non-blocking)', () => {
-  const result = runReport({
+  const result = runReport('/repo', '/plugin', {
     getChangedPaths: () => {
       throw new Error('fatal: bad object BASE_SHA (shallow clone)')
     },

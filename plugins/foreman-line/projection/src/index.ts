@@ -7,10 +7,10 @@
  */
 export { type WriteProjectedResultOptions, writeProjectedResult } from './api.js'
 export { discoverProjectableInputs, PROJECTED_SUFFIX } from './discover.js'
+export { assertAbsoluteRoot, ProjectionRootUnresolvedError } from './errors.js'
 export { assertSemanticGuards } from './guards.js'
 export { deriveEpicKey, slugFromInputPath, specFilenameStem } from './keys.js'
 export { assertContainedPath, assertSafeSlug } from './path-guard.js'
-export { DEFAULT_REPO_ROOT } from './paths.js'
 export { type ProjectOptions, projectShapingResult } from './project.js'
 export { readSpecTitle } from './title.js'
 export {

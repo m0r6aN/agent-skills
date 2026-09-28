@@ -10,7 +10,7 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { Ajv } from 'ajv'
 import { type ShapingResult, shapingResultSchema } from '../../contracts/src/index.js'
-import { ACTIVE_SPECS_DIR, DEFAULT_REPO_ROOT } from './emit.js'
+import { assertAbsoluteRoot } from './errors.js'
 
 const ajv = new Ajv({ allErrors: true })
 const validateShapingResult = ajv.compile(shapingResultSchema)
@@ -44,11 +44,18 @@ export function readShapingResult(filePath: string): ShapingResult {
 
 /**
  * Discovery fallback: list every `*.shaping-result.json` artifact under
- * `active/`, beneath the given repo root. Returns absolute filesystem paths,
- * sorted. Returns `[]` when the directory does not exist.
+ * `active/`, beneath the given repo root. `repoRoot` is required and absolute
+ * (P2b-i/R3); `specsDir` is the specs directory relative to it (P2b-i/R2,
+ * foreign default `docs/specs/active` — the home repo passes
+ * `plugins/foreman-line/docs/specs/active` explicitly). Returns absolute
+ * filesystem paths, sorted. Returns `[]` when the directory does not exist.
  */
-export function discoverShapingResults(repoRoot: string = DEFAULT_REPO_ROOT): string[] {
-  const activeDir = join(repoRoot, ...ACTIVE_SPECS_DIR.split('/'))
+export function discoverShapingResults(
+  repoRoot: string,
+  specsDir: string = 'docs/specs/active',
+): string[] {
+  assertAbsoluteRoot(repoRoot, 'discoverShapingResults')
+  const activeDir = join(repoRoot, ...specsDir.split('/'))
   if (!existsSync(activeDir)) return []
   return readdirSync(activeDir)
     .filter((name) => name.endsWith(ARTIFACT_SUFFIX))

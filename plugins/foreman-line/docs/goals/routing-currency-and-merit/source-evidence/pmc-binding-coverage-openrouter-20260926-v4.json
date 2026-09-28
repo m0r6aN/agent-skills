@@ -1,0 +1,322 @@
+{
+  "evidenceVersion": "rcm-openrouter-pmc-binding-coverage-v3",
+  "status": "supplemental-proposal-evidence-not-canonical-snapshot",
+  "generatedAtUtc": "2026-09-26T14:16:13.4809038Z",
+  "supersedes": [
+    "rcm-openrouter-pmc-binding-coverage-v2"
+  ],
+  "sourceScope": {
+    "provider": "openrouter",
+    "endpoint": "https://openrouter.ai/api/v1/models",
+    "requestedIds": [
+      "openai/gpt-6-astra",
+      "anthropic/claude-opus-5.5",
+      "anthropic/claude-sonnet-5",
+      "openai/gpt-5.6-sol",
+      "openai/gpt-5.6-terra",
+      "google/gemini-3.8-flash",
+      "anthropic/claude-haiku-4.5"
+    ],
+    "requestedIdCount": 7,
+    "fullCatalogClaim": false,
+    "responseRuns": [
+      {
+        "run": 1,
+        "observedRequestStartedAtUtc": "2026-09-26T14:08:43.9834979Z",
+        "observedResponseReceivedAtUtc": "2026-09-26T14:08:44.2998628Z",
+        "canonicalRequestStartedAtUtc": "2026-09-26T14:08:43.983Z",
+        "canonicalResponseReceivedAtUtc": "2026-09-26T14:08:44.299Z",
+        "status": 200,
+        "responseByteLength": 751088,
+        "responseBytesSha256": "73b9f09e1d64a72ba8042cae0c1379a544617d012314c945ca9c6ed76aedec9e",
+        "modelCount": 458,
+        "httpDate": "2026-09-26T14:08:45Z",
+        "lastModified": null,
+        "etag": null,
+        "authSent": false,
+        "inferenceCalled": false
+      },
+      {
+        "run": 2,
+        "observedRequestStartedAtUtc": "2026-09-26T14:08:44.4677095Z",
+        "observedResponseReceivedAtUtc": "2026-09-26T14:08:44.5298097Z",
+        "canonicalRequestStartedAtUtc": "2026-09-26T14:08:44.467Z",
+        "canonicalResponseReceivedAtUtc": "2026-09-26T14:08:44.529Z",
+        "status": 200,
+        "responseByteLength": 751088,
+        "responseBytesSha256": "73b9f09e1d64a72ba8042cae0c1379a544617d012314c945ca9c6ed76aedec9e",
+        "modelCount": 458,
+        "httpDate": "2026-09-26T14:08:45Z",
+        "lastModified": null,
+        "etag": null,
+        "authSent": false,
+        "inferenceCalled": false
+      }
+    ],
+    "exactResponseDigestStableAcrossRepeat": true,
+    "providerDeclaredTime": null
+  },
+  "ratifiedBindingSource": {
+    "file": "plugins/foreman-line/docs/specs/active/PMC-P0-pi-capability-and-catalogue-baseline.md",
+    "table": "AC2",
+    "rows": 15,
+    "catalogueResolvedSuccessful": 12,
+    "catalogueResolvedRefused": 1,
+    "catalogueRefusedBindingNumbers": [
+      7
+    ],
+    "ownerAttested": 2,
+    "ownerAttestedBindingNumbers": [
+      1,
+      10
+    ],
+    "accounting": "12 successful catalogue resolutions + 1 documented binding-7 zero-match refusal + 2 owner-attested = 15",
+    "excluded": [
+      "openrouter/typesafe/jev-1.13"
+    ]
+  },
+  "sealedProjection": {
+    "file": "openrouter-rcm-v1-conservative-projection-20260926.json",
+    "sha256": "abb09a4078348433e6ebb9c84b2d7a6fe3f83ff4500977ef2de5ce913a384d96",
+    "byteLength": 13348,
+    "rowCount": 6,
+    "excludedRefusalCount": 1,
+    "sourceResponseSha256": "73b9f09e1d64a72ba8042cae0c1379a544617d012314c945ca9c6ed76aedec9e",
+    "sourceProfile": "openrouter-conservative-rcm-v1-intersection-v2",
+    "serialization": "UTF-8 JSON bytes of this projection file; exact digest above"
+  },
+  "mappingProfile": {
+    "id": "openrouter-conservative-rcm-v1-intersection-v2",
+    "status": "proposed-not-ratified",
+    "inputRule": "project source modalities intersect text|image; preserve residuals",
+    "reasoningRule": "reasoning=true is a reviewed profile inference from nonempty live supported_efforts, not a documented per-model schema claim; empty/absent supported_efforts -> unknown/refusal",
+    "thinkingRule": "exact max/xhigh/high/medium/low map same; exact none maps off; minimal is not invented",
+    "factMapOnly": true,
+    "piConfig": false,
+    "unobservedLevels": "deny explicitly",
+    "mandatoryReasoningOff": "refuse",
+    "runtimeCompatibilityLimitation": "Pi 0.87.1 may treat omitted levels as supported and send none for omitted off; production bridge must not rely on defaults or clamp"
+  },
+  "bindings": [
+    {
+      "bindingNumber": 1,
+      "provider": "opencode",
+      "id": "claude-opus-5-5",
+      "laneRoles": "L1 primary; L2 fallback",
+      "resolutionClass": "owner-attested",
+      "sourceStatus": "SOURCE_PROFILE_MISMATCH_REFUSED",
+      "correctedProjectionStatus": "NOT_APPLICABLE",
+      "correctedProjectionRcmV1": null,
+      "refusalCodes": [
+        "SOURCE_PROFILE_MISMATCH_REFUSED",
+        "CROSS_PROVIDER_EQUIVALENCE_REFUSED"
+      ]
+    },
+    {
+      "bindingNumber": 2,
+      "provider": "opencode",
+      "id": "gpt-6-astra",
+      "laneRoles": "L1 fallback; L2 primary",
+      "resolutionClass": "catalogue-resolved",
+      "sourceStatus": "SOURCE_PROFILE_MISMATCH_REFUSED",
+      "correctedProjectionStatus": "NOT_APPLICABLE",
+      "correctedProjectionRcmV1": null,
+      "refusalCodes": [
+        "SOURCE_PROFILE_MISMATCH_REFUSED",
+        "CROSS_PROVIDER_EQUIVALENCE_REFUSED"
+      ]
+    },
+    {
+      "bindingNumber": 3,
+      "provider": "opencode",
+      "id": "gpt-5.6-sol",
+      "laneRoles": "L3 primary",
+      "resolutionClass": "catalogue-resolved",
+      "sourceStatus": "SOURCE_PROFILE_MISMATCH_REFUSED",
+      "correctedProjectionStatus": "NOT_APPLICABLE",
+      "correctedProjectionRcmV1": null,
+      "refusalCodes": [
+        "SOURCE_PROFILE_MISMATCH_REFUSED",
+        "CROSS_PROVIDER_EQUIVALENCE_REFUSED"
+      ]
+    },
+    {
+      "bindingNumber": 4,
+      "provider": "opencode",
+      "id": "claude-sonnet-5",
+      "laneRoles": "L3 fallback",
+      "resolutionClass": "catalogue-resolved",
+      "sourceStatus": "SOURCE_PROFILE_MISMATCH_REFUSED",
+      "correctedProjectionStatus": "NOT_APPLICABLE",
+      "correctedProjectionRcmV1": null,
+      "refusalCodes": [
+        "SOURCE_PROFILE_MISMATCH_REFUSED",
+        "CROSS_PROVIDER_EQUIVALENCE_REFUSED"
+      ]
+    },
+    {
+      "bindingNumber": 5,
+      "provider": "opencode",
+      "id": "deepseek-v4-pro",
+      "laneRoles": "L4 primary",
+      "resolutionClass": "catalogue-resolved",
+      "sourceStatus": "SOURCE_PROFILE_MISMATCH_REFUSED",
+      "correctedProjectionStatus": "NOT_APPLICABLE",
+      "correctedProjectionRcmV1": null,
+      "refusalCodes": [
+        "SOURCE_PROFILE_MISMATCH_REFUSED",
+        "CROSS_PROVIDER_EQUIVALENCE_REFUSED"
+      ]
+    },
+    {
+      "bindingNumber": 6,
+      "provider": "opencode",
+      "id": "gpt-5.6-terra",
+      "laneRoles": "L4 fallback",
+      "resolutionClass": "catalogue-resolved",
+      "sourceStatus": "SOURCE_PROFILE_MISMATCH_REFUSED",
+      "correctedProjectionStatus": "NOT_APPLICABLE",
+      "correctedProjectionRcmV1": null,
+      "refusalCodes": [
+        "SOURCE_PROFILE_MISMATCH_REFUSED",
+        "CROSS_PROVIDER_EQUIVALENCE_REFUSED"
+      ]
+    },
+    {
+      "bindingNumber": 7,
+      "provider": "opencode",
+      "id": "qwen3.8-flash",
+      "laneRoles": "L5 primary; L6 recommendation-only primary",
+      "resolutionClass": "catalogue-resolved",
+      "sourceStatus": "SOURCE_PROFILE_MISMATCH_REFUSED",
+      "correctedProjectionStatus": "NOT_APPLICABLE",
+      "correctedProjectionRcmV1": null,
+      "refusalCodes": [
+        "SOURCE_PROFILE_MISMATCH_REFUSED",
+        "CROSS_PROVIDER_EQUIVALENCE_REFUSED"
+      ]
+    },
+    {
+      "bindingNumber": 8,
+      "provider": "opencode",
+      "id": "glm-5.3-flash",
+      "laneRoles": "L5 fallback; L6 recommendation-only fallback",
+      "resolutionClass": "catalogue-resolved",
+      "sourceStatus": "SOURCE_PROFILE_MISMATCH_REFUSED",
+      "correctedProjectionStatus": "NOT_APPLICABLE",
+      "correctedProjectionRcmV1": null,
+      "refusalCodes": [
+        "SOURCE_PROFILE_MISMATCH_REFUSED",
+        "CROSS_PROVIDER_EQUIVALENCE_REFUSED"
+      ]
+    },
+    {
+      "bindingNumber": 9,
+      "provider": "openrouter",
+      "id": "openai/gpt-6-astra",
+      "laneRoles": "L1 primary; L2 fallback",
+      "resolutionClass": "catalogue-resolved",
+      "sourceStatus": "OBSERVED_AND_CONSERVATIVELY_PROJECTED",
+      "correctedProjectionStatus": "SEALED_CONSERVATIVE_PROJECTION",
+      "correctedProjectionRcmV1": "see sealed projection row",
+      "sourceRowLocator": "data[id='openai/gpt-6-astra']",
+      "reasoningStatus": "reviewed_profile_inference_from_nonempty_live_supported_efforts",
+      "projectionRowLocator": "rows[provider='openrouter',id='openai/gpt-6-astra']"
+    },
+    {
+      "bindingNumber": 10,
+      "provider": "openrouter",
+      "id": "anthropic/claude-opus-5.5",
+      "laneRoles": "L1 fallback; L2 primary",
+      "resolutionClass": "owner-attested",
+      "sourceStatus": "OBSERVED_AND_CONSERVATIVELY_PROJECTED",
+      "correctedProjectionStatus": "SEALED_CONSERVATIVE_PROJECTION",
+      "correctedProjectionRcmV1": "see sealed projection row",
+      "sourceRowLocator": "data[id='anthropic/claude-opus-5.5']",
+      "reasoningStatus": "reviewed_profile_inference_from_nonempty_live_supported_efforts",
+      "projectionRowLocator": "rows[provider='openrouter',id='anthropic/claude-opus-5.5']"
+    },
+    {
+      "bindingNumber": 11,
+      "provider": "openrouter",
+      "id": "anthropic/claude-sonnet-5",
+      "laneRoles": "L3 primary",
+      "resolutionClass": "catalogue-resolved",
+      "sourceStatus": "OBSERVED_AND_CONSERVATIVELY_PROJECTED",
+      "correctedProjectionStatus": "SEALED_CONSERVATIVE_PROJECTION",
+      "correctedProjectionRcmV1": "see sealed projection row",
+      "sourceRowLocator": "data[id='anthropic/claude-sonnet-5']",
+      "reasoningStatus": "reviewed_profile_inference_from_nonempty_live_supported_efforts",
+      "projectionRowLocator": "rows[provider='openrouter',id='anthropic/claude-sonnet-5']"
+    },
+    {
+      "bindingNumber": 12,
+      "provider": "openrouter",
+      "id": "openai/gpt-5.6-sol",
+      "laneRoles": "L3 fallback",
+      "resolutionClass": "catalogue-resolved",
+      "sourceStatus": "OBSERVED_AND_CONSERVATIVELY_PROJECTED",
+      "correctedProjectionStatus": "SEALED_CONSERVATIVE_PROJECTION",
+      "correctedProjectionRcmV1": "see sealed projection row",
+      "sourceRowLocator": "data[id='openai/gpt-5.6-sol']",
+      "reasoningStatus": "reviewed_profile_inference_from_nonempty_live_supported_efforts",
+      "projectionRowLocator": "rows[provider='openrouter',id='openai/gpt-5.6-sol']"
+    },
+    {
+      "bindingNumber": 13,
+      "provider": "openrouter",
+      "id": "openai/gpt-5.6-terra",
+      "laneRoles": "L4 primary",
+      "resolutionClass": "catalogue-resolved",
+      "sourceStatus": "OBSERVED_AND_CONSERVATIVELY_PROJECTED",
+      "correctedProjectionStatus": "SEALED_CONSERVATIVE_PROJECTION",
+      "correctedProjectionRcmV1": "see sealed projection row",
+      "sourceRowLocator": "data[id='openai/gpt-5.6-terra']",
+      "reasoningStatus": "reviewed_profile_inference_from_nonempty_live_supported_efforts",
+      "projectionRowLocator": "rows[provider='openrouter',id='openai/gpt-5.6-terra']"
+    },
+    {
+      "bindingNumber": 14,
+      "provider": "openrouter",
+      "id": "google/gemini-3.8-flash",
+      "laneRoles": "L4 fallback; L5 primary",
+      "resolutionClass": "catalogue-resolved",
+      "sourceStatus": "OBSERVED_AND_CONSERVATIVELY_PROJECTED",
+      "correctedProjectionStatus": "SEALED_CONSERVATIVE_PROJECTION",
+      "correctedProjectionRcmV1": "see sealed projection row",
+      "sourceRowLocator": "data[id='google/gemini-3.8-flash']",
+      "reasoningStatus": "reviewed_profile_inference_from_nonempty_live_supported_efforts",
+      "projectionRowLocator": "rows[provider='openrouter',id='google/gemini-3.8-flash']"
+    },
+    {
+      "bindingNumber": 15,
+      "provider": "openrouter",
+      "id": "anthropic/claude-haiku-4.5",
+      "laneRoles": "L5 fallback",
+      "resolutionClass": "catalogue-resolved",
+      "sourceStatus": "OBSERVED_AND_CONSERVATIVELY_PROJECTED",
+      "correctedProjectionStatus": "REFUSED",
+      "correctedProjectionRcmV1": null,
+      "refusalCodes": [
+        "REASONING_UNKNOWN_REFUSED"
+      ],
+      "projectionRowLocator": "excludedRefusals[provider='openrouter',id='anthropic/claude-haiku-4.5']"
+    }
+  ],
+  "correctionMap": [
+    "Haiku projectedRcmV1 is null with REASONING_UNKNOWN_REFUSED; no reasoning:false emitted",
+    "Nonempty supported_efforts to reasoning:true is labeled reviewed profile inference, not documented provider schema",
+    "contextWindow and maxTokens carry exact source field locators in sealed projection",
+    "Sealed projection digest binds profile and retained source response digest",
+    "Historical AC2 accounting corrected to 12 successful catalogue resolutions + 1 binding-7 refusal + 2 owner-attested"
+  ],
+  "assessment": {
+    "totalBindings": 15,
+    "openrouterScopedBindings": 7,
+    "openrouterConservativelyProjectedRcmV1Ready": 6,
+    "haikuRefused": true,
+    "openCodeRowsRefused": 8,
+    "residualModalitiesPreserved": true,
+    "jev": "excluded optional-disabled L6; not part of AC2"
+  }
+}

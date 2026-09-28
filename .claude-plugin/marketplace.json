@@ -8,6 +8,13 @@
   },
   "plugins": [   
     {
+      "name": "agent-skills",
+      "source": "./",
+      "version": "0.6.9",
+      "description": "Production-grade engineering skills covering every phase of software development: spec, plan, build, verify, review, and ship.",
+      "keywords": ["engineering", "spec", "plan", "build", "verify", "review", "ship"]
+    },
+    {
       "name": "foreman-line",
       "source": "./plugins/foreman-line",
       "version": "0.6.9",
