@@ -4,10 +4,11 @@
  * proving no driver text/host path/credential can leak (AC11).
  */
 import assert from 'node:assert/strict'
-import { mkdtempSync, rmSync } from 'node:fs'
+import { mkdtempSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { test } from 'node:test'
+import { removeRoot } from './helpers/child-worker.js'
 import {
   closeStorage,
   fixedClock,
@@ -500,17 +501,17 @@ test('one tested refusal per code (fault-injection matrix)', () => {
       )
       assert.deepEqual(closedError.diagnostic, { storageCode: 'STORAGE_CLOSED' })
     } finally {
-      rmSync(closedRoot, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+      removeRoot(closedRoot)
     }
   } finally {
     // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
-    // and turns rmSync's EPERM into the reported failure, masking the real one.
+    // and removeRoot retries EPERM without ever masking the test verdict (R3).
     try {
       closeStorage(storage)
     } catch {
       // Best-effort close; cleanup proceeds.
     }
-    rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+    removeRoot(root)
   }
 })
 
@@ -563,13 +564,13 @@ test('safe diagnostics carry only declared shapes (ids/revision/field paths — 
     }
   } finally {
     // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
-    // and turns rmSync's EPERM into the reported failure, masking the real one.
+    // and removeRoot retries EPERM without ever masking the test verdict (R3).
     try {
       closeStorage(storage)
     } catch {
       // Best-effort close; cleanup proceeds.
     }
-    rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+    removeRoot(root)
   }
 })
 
@@ -616,13 +617,13 @@ test('fault injection: a driver error carrying secrets surfaces STORAGE_FAILURE 
     assert.ok(!failure.message.includes('hunter2'))
   } finally {
     // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
-    // and turns rmSync's EPERM into the reported failure, masking the real one.
+    // and removeRoot retries EPERM without ever masking the test verdict (R3).
     try {
       closeStorage(storage)
     } catch {
       // Best-effort close; cleanup proceeds.
     }
-    rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+    removeRoot(root)
   }
 })
 

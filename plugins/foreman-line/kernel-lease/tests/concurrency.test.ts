@@ -10,10 +10,11 @@
  */
 import assert from 'node:assert/strict'
 import { type ChildProcess, spawn } from 'node:child_process'
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { test } from 'node:test'
+import { removeRoot } from './helpers/child-worker.js'
 import {
   closeStorage,
   exportStorage,
@@ -81,36 +82,39 @@ function binding(
 }
 
 /**
- * Wait for a racer's first stdout chunk (its READY announcement). A racer that
- * exits before announcing is a NAMED failure carrying its raw stderr — never a
- * silent stall (error-laundering discipline).
+ * Barrier via ready-marker polling (R1): children write `ready-${racer}` before
+ * waiting for go, so polling the markers cannot lose a chunk the way a
+ * late-attached stdout listener does. A racer that dies before its marker (or a
+ * marker deadline) is a NAMED failure carrying its raw stderr.
  */
-function awaitReady(
-  child: ChildProcess,
-  collect: () => { stdout: string; stderr: string },
+async function awaitReadyMarkers(
+  barrierDir: string,
+  entries: Array<{ racer: number; child: ChildProcess; collect: () => { stdout: string; stderr: string } }>,
 ): Promise<void> {
-  const { promise, resolve, reject } = Promise.withResolvers<void>()
-  if (child.exitCode !== null || child.signalCode !== null) {
-    reject(new Error(`racer exited before READY; raw cause: ${collect().stderr}`))
-    return promise
+  const deadline = Date.now() + 45_000
+  for (;;) {
+    const missing = entries.filter(
+      (entry) => !existsSync(join(barrierDir, `ready-${entry.racer}`)),
+    )
+    if (missing.length === 0) return
+    const dead = entries.find(
+      (entry) => entry.child.exitCode !== null || entry.child.signalCode !== null,
+    )
+    if (dead !== undefined) {
+      throw new Error(`racer ${dead.racer} exited before READY; raw cause: ${dead.collect().stderr}`)
+    }
+    if (Date.now() > deadline) {
+      const causes = entries.map((entry) => `racer ${entry.racer}: ${entry.collect().stderr}`)
+      throw new Error(
+        `barrier timeout waiting for ready markers [${missing.map((entry) => entry.racer).join(', ')}]; raw causes: ${causes.join(' | ')}`,
+      )
+    }
+    // Real delay: polling external child-process readiness cannot be driven by
+    // fake timers (the awaited condition lives in other OS processes).
+    const { promise, resolve } = Promise.withResolvers<void>()
+    setTimeout(resolve, 25)
+    await promise
   }
-  let settled = false
-  child.stdout?.once('data', () => {
-    if (settled) return
-    settled = true
-    resolve()
-  })
-  child.once('close', () => {
-    if (settled) return
-    settled = true
-    reject(new Error(`racer exited before READY; raw cause: ${collect().stderr}`))
-  })
-  child.once('error', (error) => {
-    if (settled) return
-    settled = true
-    reject(error)
-  })
-  return promise
 }
 
 /** Wait for exit; resolves immediately when the child has already exited. */
@@ -159,10 +163,12 @@ function runRace(
       })
       return { child, collect: () => ({ stdout, stderr }) }
     })
-    // Both racers announce READY before the go-signal (barrier, binding #2).
-    for (const entry of children) {
-      await awaitReady(entry.child, entry.collect)
-    }
+    // All racers must publish ready-markers before the go-signal (barrier,
+    // binding #2).
+    await awaitReadyMarkers(
+      barrierDir,
+      children.map((entry, index) => ({ racer: racers[index]?.racer ?? -1, ...entry })),
+    )
     writeFileSync(join(barrierDir, `go-${scenarioId}`), 'go')
     for (const entry of children) {
       await waitClosed(entry.child)
@@ -314,7 +320,7 @@ test('CN-01 two-process claim race: exactly one winner, one event, one binding, 
       projection_cursors: 1,
     })
   } finally {
-    rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+    removeRoot(root)
   }
 })
 
@@ -378,7 +384,7 @@ test('CN-02 claim/release race: exactly the two named serializations; never two 
       })
     }
   } finally {
-    rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+    removeRoot(root)
   }
 })
 
@@ -427,7 +433,7 @@ test('CN-03 expired-takeover race: one takeover wins, peer LEASE_HELD; prior row
       projection_cursors: 1,
     })
   } finally {
-    rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+    removeRoot(root)
   }
 })
 
@@ -479,7 +485,7 @@ test('CN-04 same-binding apply race: one applies, the peer replays the recorded 
       projection_cursors: 1,
     })
   } finally {
-    rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+    removeRoot(root)
   }
 })
 
@@ -525,7 +531,7 @@ test('CN-05 same-key different-binding apply race: one applies, the peer IDEMPOT
       projection_cursors: 1,
     })
   } finally {
-    rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+    removeRoot(root)
   }
 })
 
@@ -571,7 +577,7 @@ test('CN-06 stale-CAS apply race: one applies, the peer STATE_REVISION_STALE', a
       projection_cursors: 1,
     })
   } finally {
-    rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+    removeRoot(root)
   }
 })
 
@@ -617,6 +623,6 @@ test('CN-07 pending-request race: one pending transition wins, the peer TRANSITI
       projection_cursors: 1,
     })
   } finally {
-    rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+    removeRoot(root)
   }
 })

@@ -3,10 +3,11 @@
  * check (AC9), and the L3 stop-report record.
  */
 import assert from 'node:assert/strict'
-import { mkdtempSync, readFileSync, rmSync } from 'node:fs'
+import { mkdtempSync, readFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { test } from 'node:test'
+import { removeRoot } from './helpers/child-worker.js'
 import {
   closeStorage,
   exportStorage,
@@ -104,13 +105,13 @@ function withSeeded(row: FixtureRow, fn: (engine: ReturnType<typeof createEngine
     fn(createEngine({ storage, clock: fixedClock(T0), toolVersion: 'kernel-lease-test' }))
   } finally {
     // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
-    // and turns rmSync's EPERM into the reported failure, masking the real one.
+    // and removeRoot retries EPERM without ever masking the test verdict (R3).
     try {
       closeStorage(storage)
     } catch {
       // Best-effort close; cleanup proceeds.
     }
-    rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+    removeRoot(root)
   }
 }
 
@@ -307,13 +308,13 @@ test('AC9: every emitted effect validates against schemas/effect-result.schema.j
     assert.ok(validateEffect(schemaText, broken).length > 0)
   } finally {
     // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
-    // and turns rmSync's EPERM into the reported failure, masking the real one.
+    // and removeRoot retries EPERM without ever masking the test verdict (R3).
     try {
       closeStorage(storage)
     } catch {
       // Best-effort close; cleanup proceeds.
     }
-    rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+    removeRoot(root)
   }
 })
 
@@ -359,13 +360,13 @@ test('L3 record: a transition toward awaiting-human carries the F05.8 stop-repor
     assert.equal(typeof stopReport.transitionDescription, 'string')
   } finally {
     // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
-    // and turns rmSync's EPERM into the reported failure, masking the real one.
+    // and removeRoot retries EPERM without ever masking the test verdict (R3).
     try {
       closeStorage(storage)
     } catch {
       // Best-effort close; cleanup proceeds.
     }
-    rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+    removeRoot(root)
   }
 })
 
@@ -438,13 +439,13 @@ test('decide re-validates the edge from the CURRENT status at decide time (scena
     )
   } finally {
     // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
-    // and turns rmSync's EPERM into the reported failure, masking the real one.
+    // and removeRoot retries EPERM without ever masking the test verdict (R3).
     try {
       closeStorage(storage)
     } catch {
       // Best-effort close; cleanup proceeds.
     }
-    rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+    removeRoot(root)
   }
 })
 
@@ -507,12 +508,12 @@ test('decide reject records transition.rejected and leaves status unchanged', ()
     void (result as EngineResult<unknown>)
   } finally {
     // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
-    // and turns rmSync's EPERM into the reported failure, masking the real one.
+    // and removeRoot retries EPERM without ever masking the test verdict (R3).
     try {
       closeStorage(storage)
     } catch {
       // Best-effort close; cleanup proceeds.
     }
-    rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+    removeRoot(root)
   }
 })

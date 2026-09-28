@@ -4,10 +4,11 @@
  * legal-edge controls (T2 bound to one source: src/state-machine.ts).
  */
 import assert from 'node:assert/strict'
-import { mkdtempSync, readFileSync, rmSync } from 'node:fs'
+import { mkdtempSync, readFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { test } from 'node:test'
+import { removeRoot } from './helpers/child-worker.js'
 import {
   closeStorage,
   fixedClock,
@@ -177,13 +178,13 @@ function withSeeded(row: FixtureRow, fn: (engine: ReturnType<typeof createEngine
     fn(createEngine({ storage, clock: fixedClock(T0), toolVersion: 'kernel-lease-test' }))
   } finally {
     // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
-    // and turns rmSync's EPERM into the reported failure, masking the real one.
+    // and removeRoot retries EPERM without ever masking the test verdict (R3).
     try {
       closeStorage(storage)
     } catch {
       // Best-effort close; cleanup proceeds.
     }
-    rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+    removeRoot(root)
   }
 }
 

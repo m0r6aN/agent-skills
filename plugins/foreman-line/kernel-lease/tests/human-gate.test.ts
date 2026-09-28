@@ -3,10 +3,11 @@
  * rows GTW-01..12 and the AC6 residual statement check.
  */
 import assert from 'node:assert/strict'
-import { mkdtempSync, readFileSync, rmSync } from 'node:fs'
+import { mkdtempSync, readFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { test } from 'node:test'
+import { removeRoot } from './helpers/child-worker.js'
 import {
   closeStorage,
   exportStorage,
@@ -162,13 +163,13 @@ for (const row of GTW.filter(
       )
     } finally {
       // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
-      // and turns rmSync's EPERM into the reported failure, masking the real one.
+      // and removeRoot retries EPERM without ever masking the test verdict (R3).
       try {
         closeStorage(storage)
       } catch {
         // Best-effort close; cleanup proceeds.
       }
-      rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+      removeRoot(root)
     }
   })
 }
@@ -198,13 +199,13 @@ test('GTW-10 substrate-seeded gate-ish status refuses on read (defense in depth)
     )
   } finally {
     // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
-    // and turns rmSync's EPERM into the reported failure, masking the real one.
+    // and removeRoot retries EPERM without ever masking the test verdict (R3).
     try {
       closeStorage(storage)
     } catch {
       // Best-effort close; cleanup proceeds.
     }
-    rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+    removeRoot(root)
   }
 })
 
@@ -230,13 +231,13 @@ test('GTW-11 a wider-than-ceiling consumer policy refuses at construction', () =
     )
   } finally {
     // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
-    // and turns rmSync's EPERM into the reported failure, masking the real one.
+    // and removeRoot retries EPERM without ever masking the test verdict (R3).
     try {
       closeStorage(storage)
     } catch {
       // Best-effort close; cleanup proceeds.
     }
-    rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+    removeRoot(root)
   }
 })
 
@@ -285,13 +286,13 @@ test('AC6: supplied refs are bound into the recorded event (satisfaction derivab
     assert.deepEqual(record.gateEvidenceRefs, refs)
   } finally {
     // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
-    // and turns rmSync's EPERM into the reported failure, masking the real one.
+    // and removeRoot retries EPERM without ever masking the test verdict (R3).
     try {
       closeStorage(storage)
     } catch {
       // Best-effort close; cleanup proceeds.
     }
-    rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+    removeRoot(root)
   }
 })
 
@@ -365,12 +366,12 @@ test('gate rejection does not write anything (a refusal is not an effect)', () =
     assert.equal(snapshot.exportDocument.payload.tables.idempotency_keys.length, 0)
   } finally {
     // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
-    // and turns rmSync's EPERM into the reported failure, masking the real one.
+    // and removeRoot retries EPERM without ever masking the test verdict (R3).
     try {
       closeStorage(storage)
     } catch {
       // Best-effort close; cleanup proceeds.
     }
-    rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+    removeRoot(root)
   }
 })

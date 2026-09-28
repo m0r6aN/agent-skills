@@ -3,10 +3,11 @@
  * replay-verbatim zero-delta assertions (risk (c); standing #32).
  */
 import assert from 'node:assert/strict'
-import { mkdtempSync, readFileSync, rmSync } from 'node:fs'
+import { mkdtempSync, readFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { test } from 'node:test'
+import { removeRoot } from './helpers/child-worker.js'
 import {
   closeStorage,
   exportStorage,
@@ -155,13 +156,13 @@ for (const row of IDP.filter((candidate) => candidate.expectedCode !== undefined
       )
     } finally {
       // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
-      // and turns rmSync's EPERM into the reported failure, masking the real one.
+      // and removeRoot retries EPERM without ever masking the test verdict (R3).
       try {
         closeStorage(storage)
       } catch {
         // Best-effort close; cleanup proceeds.
       }
-      rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+      removeRoot(root)
     }
   })
 }
@@ -242,13 +243,13 @@ for (const row of IDP.filter((candidate) => candidate.expectedOutcome === 'repla
       )
     } finally {
       // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
-      // and turns rmSync's EPERM into the reported failure, masking the real one.
+      // and removeRoot retries EPERM without ever masking the test verdict (R3).
       try {
         closeStorage(storage)
       } catch {
         // Best-effort close; cleanup proceeds.
       }
-      rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+      removeRoot(root)
     }
   })
 }
@@ -281,13 +282,13 @@ test('IDP precedence: same-key/different-payload conflicts even for an in-flight
     )
   } finally {
     // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
-    // and turns rmSync's EPERM into the reported failure, masking the real one.
+    // and removeRoot retries EPERM without ever masking the test verdict (R3).
     try {
       closeStorage(storage)
     } catch {
       // Best-effort close; cleanup proceeds.
     }
-    rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+    removeRoot(root)
   }
 })
 
@@ -335,12 +336,12 @@ test('a refused operation records no binding row (a refusal is not an effect)', 
     assert.equal(retry.effect.code, 'EFFECT_APPLIED')
   } finally {
     // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
-    // and turns rmSync's EPERM into the reported failure, masking the real one.
+    // and removeRoot retries EPERM without ever masking the test verdict (R3).
     try {
       closeStorage(storage)
     } catch {
       // Best-effort close; cleanup proceeds.
     }
-    rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+    removeRoot(root)
   }
 })

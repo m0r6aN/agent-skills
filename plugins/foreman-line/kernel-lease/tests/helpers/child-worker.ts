@@ -13,8 +13,9 @@
  * never kill a racer; every participant's output is printed before the parent
  * asserts anything.
  */
-import { existsSync, readFileSync, writeFileSync } from 'node:fs'
+import { existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { pathToFileURL } from 'node:url'
 import {
   type Clock,
   closeStorage,
@@ -411,20 +412,46 @@ function skewGrantMode(argv: string[]): void {
   }
 }
 
-const [, , mode, ...rest] = process.argv
-switch (mode) {
-  case 'crash':
-    crashMode(rest)
-    break
-  case 'race':
-    raceMode(rest)
-    break
-  case 'contention':
-    contentionMode(rest)
-    break
-  case 'skew-grant':
-    skewGrantMode(rest)
-    break
-  default:
-    harnessFault('dispatch', new Error(`unknown mode ${String(mode)}`))
+/**
+ * Windows-safe test cleanup (R3): EPERM on a just-closed SQLite tree is
+ * transient — retry with backoff; a cleanup failure is reported, never thrown,
+ * so it can never mask the test verdict.
+ */
+export function removeRoot(root: string): void {
+  for (let attempt = 0; attempt < 6; attempt += 1) {
+    try {
+      rmSync(root, { recursive: true, force: true })
+      return
+    } catch {
+      // Transient lock; back off below and retry.
+    }
+    // Real backoff: Windows file-lock release is OS state; fake timers cannot
+    // advance it.
+    const parking = new Int32Array(new SharedArrayBuffer(4))
+    Atomics.wait(parking, 0, 0, 25 * 2 ** attempt)
+  }
+  console.error(`cleanup: could not remove ${root} after retries`)
+}
+
+// Dispatch only when executed as the worker; importing the module for helpers
+// must never run a mode.
+const entry = process.argv[1]
+if (entry !== undefined && import.meta.url === pathToFileURL(entry).href) {
+  const [, , mode, ...rest] = process.argv
+  switch (mode) {
+    case 'crash':
+      crashMode(rest)
+      break
+    case 'race':
+      raceMode(rest)
+      break
+    case 'contention':
+      contentionMode(rest)
+      break
+    case 'skew-grant':
+      skewGrantMode(rest)
+      break
+    default:
+      harnessFault('dispatch', new Error(`unknown mode ${String(mode)}`))
+  }
 }

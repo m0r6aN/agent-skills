@@ -6,10 +6,11 @@
  */
 import assert from 'node:assert/strict'
 import { type ChildProcess, spawn } from 'node:child_process'
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { test } from 'node:test'
+import { removeRoot } from './helpers/child-worker.js'
 import {
   closeStorage,
   exportStorage,
@@ -272,7 +273,7 @@ for (const row of CR) {
         assert.deepEqual(afterRetry, afterKill, `${row.id}: replay writes nothing (zero deltas)`)
       }
     } finally {
-      rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+      removeRoot(root)
     }
   })
 }
