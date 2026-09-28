@@ -231,6 +231,9 @@ export function readAppliedMigrations(driver: MigrationDriver): AppliedMigration
   } catch (error) {
     // The ledger table exists only after 0001; an empty read is the pre-0001 state.
     if (isMissingTableError(error)) return []
+    // Test-seam harness failures (branded HARNESS_*) must never launder into
+    // product-shaped errors: rethrow across the seam boundary unwrapped.
+    if (error instanceof Error && error.message.startsWith('HARNESS_')) throw error
     throw fromDriverError(error, { fallback: 'os-error' })
   }
   return rows.map((row) => {
