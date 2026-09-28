@@ -1,0 +1,4 @@
+{
+  "contract": "test-fixture-contract",
+  "readers": [" plugins/foreman-line/spec-linter/x.ts"]
+}

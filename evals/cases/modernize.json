@@ -1,0 +1,23 @@
+{
+  "skill_name": "modernize",
+  "trigger": {
+    "positive": [
+      { "prompt": "Modernize this legacy system with contract-first behavioral equivalence", "top_k": 3 },
+      { "prompt": "Rebuild the old application while proving the target matches its observed behavior", "top_k": 3 },
+      { "prompt": "Extract contracts, validate them with humans, and reconcile the modernization", "top_k": 3 }
+    ],
+    "negative": [
+      { "prompt": "Inventory what this application currently does before a rewrite", "owner": "get-app-specs" },
+      { "prompt": "Review the security of this deployed service", "owner": "security-review" }
+    ]
+  },
+  "evals": [
+    {
+      "id": 1,
+      "kind": "dialogue",
+      "prompt": "Modernize this legacy system while preserving its verified behavior.",
+      "expected_output": "A contract-first modernization path with human validation and reconciliation evidence.",
+      "expectations": ["The response prioritizes behavioral contracts", "The response includes parity verification"]
+    }
+  ]
+}
