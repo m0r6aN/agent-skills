@@ -185,7 +185,7 @@ test('AC3a: pkg.priorCorrelationId equals the Stage-B receipt correlation.correl
     const candidate = makeCandidate({ priorReceiptLocator: locator })
     const pkg = await prepareDispatch(
       { candidate, specPath, compressFn: makeMockCompressFn(), worktreePath: '/tmp/wt' },
-      { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
+      { repoRoot },
     )
     assert.equal(pkg.priorCorrelationId, SHARED_CORRELATION_ID)
   } finally {
@@ -212,7 +212,7 @@ test('AC3b: PRIOR_CORRELATION_MISSING when Stage-B receipt has no correlation ob
       () =>
         prepareDispatch(
           { candidate, specPath, compressFn: makeMockCompressFn(), worktreePath: '/tmp/wt' },
-          { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
+          { repoRoot },
         ),
       (err: unknown) => {
         assert.ok(err instanceof DispatchError)
@@ -255,7 +255,7 @@ test('AC3c: PRIOR_CORRELATION_MISSING when correlationId is empty / missing / no
         () =>
           prepareDispatch(
             { candidate, specPath, compressFn: makeMockCompressFn(), worktreePath: '/tmp/wt' },
-            { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
+            { repoRoot },
           ),
         (err: unknown) => {
           assert.ok(err instanceof DispatchError)
@@ -295,7 +295,7 @@ test('AC3d: PRIOR_CORRELATION_MISSING when prior correlationId is whitespace-onl
       () =>
         prepareDispatch(
           { candidate, specPath, compressFn: makeMockCompressFn(), worktreePath: '/tmp/wt' },
-          { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
+          { repoRoot },
         ),
       (err: unknown) => {
         assert.ok(err instanceof DispatchError)
@@ -318,11 +318,10 @@ test('AC4: Stage-C receipt inherits correlationId; sessionId/runId freshly minte
     const candidate = makeCandidate({ priorReceiptLocator: locator })
     const pkg = await prepareDispatch(
       { candidate, specPath, compressFn: makeMockCompressFn(), worktreePath: '/tmp/wt' },
-      { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
+      { repoRoot },
     )
     await executeDispatch(pkg, join(repoRoot, 'worktrees', 'wt'), {
       repoRoot,
-      pluginRoot: join(repoRoot, 'plugins', 'foreman-line'),
       dispatchWorktreeFn: successWorktreeFn,
     })
     const receiptAbsPath = join(
@@ -360,11 +359,10 @@ test('RB4-1: Stage-C sessionId/runId are NOT inherited from Stage B (freshly min
     const candidate = makeCandidate({ priorReceiptLocator: locator })
     const pkg = await prepareDispatch(
       { candidate, specPath, compressFn: makeMockCompressFn(), worktreePath: '/tmp/wt' },
-      { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
+      { repoRoot },
     )
     await executeDispatch(pkg, join(repoRoot, 'worktrees', 'wt'), {
       repoRoot,
-      pluginRoot: join(repoRoot, 'plugins', 'foreman-line'),
       dispatchWorktreeFn: successWorktreeFn,
     })
     const receiptAbsPath = join(
@@ -406,11 +404,10 @@ test('AC5: validateChain([A, B, C]) is valid and C inherits B correlationId', as
     // Run the REAL fixed executeDispatch to produce Stage C on disk.
     const pkg = await prepareDispatch(
       { candidate, specPath, compressFn: makeMockCompressFn(), worktreePath: '/tmp/wt' },
-      { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
+      { repoRoot },
     )
     await executeDispatch(pkg, join(repoRoot, 'worktrees', 'wt'), {
       repoRoot,
-      pluginRoot: join(repoRoot, 'plugins', 'foreman-line'),
       dispatchWorktreeFn: successWorktreeFn,
     })
 

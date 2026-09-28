@@ -1,0 +1,1367 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://foreman-line.local/schemas/provider-binding-policy-v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "compatibility",
+    "provenance",
+    "candidates",
+    "bindings",
+    "lanes",
+    "laneBindings"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "pmc-provider-binding-policy/v1"
+    },
+    "compatibility": {
+      "const": "additive-v0-preserved"
+    },
+    "provenance": {
+      "$ref": "#/$defs/provenance"
+    },
+    "candidates": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/candidate"
+      },
+      "maxItems": 256,
+      "uniqueItems": true
+    },
+    "bindings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/binding"
+      },
+      "maxItems": 256,
+      "uniqueItems": true
+    },
+    "lanes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/lanePolicy"
+      },
+      "maxItems": 6,
+      "uniqueItems": true,
+      "minItems": 6
+    },
+    "laneBindings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/laneBinding"
+      },
+      "maxItems": 1536,
+      "uniqueItems": true
+    }
+  },
+  "$defs": {
+    "unknown": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "reason"
+      ],
+      "properties": {
+        "status": {
+          "const": "unknown"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048
+        }
+      }
+    },
+    "stringEvidence": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/unknown"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "value",
+            "evidenceRef"
+          ],
+          "properties": {
+            "status": {
+              "const": "recorded"
+            },
+            "value": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2048
+            },
+            "evidenceRef": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2048
+            }
+          }
+        }
+      ]
+    },
+    "booleanEvidence": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/unknown"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "value",
+            "evidenceRef"
+          ],
+          "properties": {
+            "status": {
+              "const": "recorded"
+            },
+            "value": {
+              "type": "boolean"
+            },
+            "evidenceRef": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2048
+            }
+          }
+        }
+      ]
+    },
+    "integerEvidence": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/unknown"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "value",
+            "evidenceRef"
+          ],
+          "properties": {
+            "status": {
+              "const": "recorded"
+            },
+            "value": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            "evidenceRef": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2048
+            }
+          }
+        }
+      ]
+    },
+    "candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "logicalCandidateId",
+        "family"
+      ],
+      "properties": {
+        "logicalCandidateId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048
+        },
+        "family": {
+          "$ref": "#/$defs/stringEvidence"
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sourceRef",
+        "sourceRevision",
+        "contentSha256",
+        "catalogVersion",
+        "mappingVersion",
+        "policySchemaVersion",
+        "roleMapVersion",
+        "foremanRevision",
+        "piRuntimeVersion",
+        "acquiredAtUtc",
+        "evidenceState",
+        "freshnessAcceptance"
+      ],
+      "properties": {
+        "sourceRef": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048
+        },
+        "sourceRevision": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048
+        },
+        "contentSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "catalogVersion": {
+          "$ref": "#/$defs/stringEvidence"
+        },
+        "mappingVersion": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048
+        },
+        "policySchemaVersion": {
+          "const": "pmc-provider-binding-policy/v1"
+        },
+        "roleMapVersion": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048
+        },
+        "foremanRevision": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048
+        },
+        "piRuntimeVersion": {
+          "$ref": "#/$defs/stringEvidence"
+        },
+        "acquiredAtUtc": {
+          "$ref": "#/$defs/stringEvidence"
+        },
+        "evidenceState": {
+          "enum": [
+            "static-conformance",
+            "live-availability",
+            "model-quality"
+          ]
+        },
+        "freshnessAcceptance": {
+          "enum": [
+            "not-accepted",
+            "owner-accepted"
+          ]
+        }
+      }
+    },
+    "transport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "data_collection",
+        "zdr"
+      ],
+      "properties": {
+        "data_collection": {
+          "enum": [
+            "allow",
+            "deny"
+          ]
+        },
+        "zdr": {
+          "type": "boolean"
+        }
+      }
+    },
+    "rates": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "input",
+        "output",
+        "unit"
+      ],
+      "properties": {
+        "input": {
+          "type": "number",
+          "minimum": 0
+        },
+        "output": {
+          "type": "number",
+          "minimum": 0
+        },
+        "unit": {
+          "const": "USD per 1M tokens"
+        }
+      }
+    },
+    "availability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "available",
+        "checkedAtUtc",
+        "attestationRef",
+        "evidenceState"
+      ],
+      "properties": {
+        "available": {
+          "type": "boolean"
+        },
+        "checkedAtUtc": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048
+        },
+        "attestationRef": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048
+        },
+        "evidenceState": {
+          "const": "live-availability"
+        }
+      }
+    },
+    "quality": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "lane",
+        "score",
+        "evidenceRef",
+        "evidenceState"
+      ],
+      "properties": {
+        "lane": {
+          "enum": [
+            "L1",
+            "L2",
+            "L3",
+            "L4",
+            "L5",
+            "L6"
+          ]
+        },
+        "score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "evidenceRef": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048
+        },
+        "evidenceState": {
+          "const": "model-quality"
+        }
+      }
+    },
+    "eligibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dataClasses",
+        "transportRequirements",
+        "toolUse",
+        "structuredOutput",
+        "reasoning",
+        "inputModalities",
+        "thinkingLevels",
+        "contextWindow",
+        "maxTokens",
+        "rates",
+        "enabled",
+        "availability",
+        "qualityByLane"
+      ],
+      "properties": {
+        "dataClasses": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/unknown"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "status",
+                "value",
+                "evidenceRef"
+              ],
+              "properties": {
+                "status": {
+                  "const": "recorded"
+                },
+                "value": {
+                  "type": "array",
+                  "items": {
+                    "enum": [
+                      "public",
+                      "internal",
+                      "restricted"
+                    ]
+                  },
+                  "maxItems": 3,
+                  "uniqueItems": true
+                },
+                "evidenceRef": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 2048
+                }
+              }
+            }
+          ]
+        },
+        "transportRequirements": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/unknown"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "status",
+                "value",
+                "evidenceRef"
+              ],
+              "properties": {
+                "status": {
+                  "const": "recorded"
+                },
+                "value": {
+                  "$ref": "#/$defs/transport"
+                },
+                "evidenceRef": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 2048
+                }
+              }
+            }
+          ]
+        },
+        "toolUse": {
+          "$ref": "#/$defs/booleanEvidence"
+        },
+        "structuredOutput": {
+          "$ref": "#/$defs/booleanEvidence"
+        },
+        "reasoning": {
+          "$ref": "#/$defs/booleanEvidence"
+        },
+        "inputModalities": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/unknown"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "status",
+                "value",
+                "evidenceRef"
+              ],
+              "properties": {
+                "status": {
+                  "const": "recorded"
+                },
+                "value": {
+                  "type": "array",
+                  "items": {
+                    "enum": [
+                      "text",
+                      "image"
+                    ]
+                  },
+                  "maxItems": 2,
+                  "uniqueItems": true
+                },
+                "evidenceRef": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 2048
+                }
+              }
+            }
+          ]
+        },
+        "thinkingLevels": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/unknown"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "status",
+                "value",
+                "evidenceRef"
+              ],
+              "properties": {
+                "status": {
+                  "const": "recorded"
+                },
+                "value": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 2048
+                  },
+                  "maxItems": 256,
+                  "uniqueItems": true
+                },
+                "evidenceRef": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 2048
+                }
+              }
+            }
+          ]
+        },
+        "contextWindow": {
+          "$ref": "#/$defs/integerEvidence"
+        },
+        "maxTokens": {
+          "$ref": "#/$defs/integerEvidence"
+        },
+        "rates": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/unknown"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "status",
+                "value",
+                "evidenceRef"
+              ],
+              "properties": {
+                "status": {
+                  "const": "recorded"
+                },
+                "value": {
+                  "$ref": "#/$defs/rates"
+                },
+                "evidenceRef": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 2048
+                }
+              }
+            }
+          ]
+        },
+        "enabled": {
+          "$ref": "#/$defs/booleanEvidence"
+        },
+        "availability": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/unknown"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "status",
+                "value",
+                "evidenceRef"
+              ],
+              "properties": {
+                "status": {
+                  "const": "recorded"
+                },
+                "value": {
+                  "$ref": "#/$defs/availability"
+                },
+                "evidenceRef": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 2048
+                }
+              }
+            }
+          ]
+        },
+        "qualityByLane": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/unknown"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "status",
+                "value",
+                "evidenceRef"
+              ],
+              "properties": {
+                "status": {
+                  "const": "recorded"
+                },
+                "value": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/$defs/quality"
+                  },
+                  "maxItems": 6,
+                  "uniqueItems": true
+                },
+                "evidenceRef": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 2048
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "bindingId",
+        "logicalCandidateId",
+        "provider",
+        "providerModelId",
+        "piHostModelId",
+        "protocol",
+        "catalogBaseUrl",
+        "identityState",
+        "identityRefusalCodes",
+        "eligibility"
+      ],
+      "properties": {
+        "bindingId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048
+        },
+        "logicalCandidateId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048
+        },
+        "provider": {
+          "enum": [
+            "opencode",
+            "openrouter"
+          ]
+        },
+        "providerModelId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048
+        },
+        "piHostModelId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048
+        },
+        "protocol": {
+          "$ref": "#/$defs/stringEvidence"
+        },
+        "catalogBaseUrl": {
+          "$ref": "#/$defs/stringEvidence"
+        },
+        "identityState": {
+          "enum": [
+            "catalog-recorded",
+            "owner-attested",
+            "held"
+          ]
+        },
+        "identityRefusalCodes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2048
+          },
+          "maxItems": 128,
+          "uniqueItems": true
+        },
+        "eligibility": {
+          "$ref": "#/$defs/eligibility"
+        }
+      }
+    },
+    "lanePolicy": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "lane",
+            "roleFamily",
+            "subRoles",
+            "routingClasses",
+            "authorityCap",
+            "frontierOnly",
+            "independence",
+            "humanGates",
+            "providerRule",
+            "qualityTolerance",
+            "enabled",
+            "rankingRequirements",
+            "budgetPolicyRef"
+          ],
+          "properties": {
+            "lane": {
+              "const": "L1"
+            },
+            "roleFamily": {
+              "const": "coordinator"
+            },
+            "subRoles": {
+              "const": [
+                "coordinator",
+                "shaper",
+                "architect"
+              ]
+            },
+            "routingClasses": {
+              "const": [
+                "architecture/risk"
+              ]
+            },
+            "authorityCap": {
+              "const": "coordinate-shape-no-ratification-gates-self-review-approval-merge-release-bypass"
+            },
+            "frontierOnly": {
+              "const": true
+            },
+            "independence": {
+              "const": "distinct-instance-family-where-required-unknown-refuses"
+            },
+            "humanGates": {
+              "const": [
+                "owner-gate-1",
+                "dispatch-gate-2",
+                "owner-gate-3",
+                "owner-only-break-glass"
+              ]
+            },
+            "providerRule": {
+              "const": {
+                "mode": "pin",
+                "providers": [
+                  "opencode"
+                ],
+                "offPin": "historical-nonselectable"
+              }
+            },
+            "qualityTolerance": {
+              "const": 0
+            },
+            "enabled": {
+              "const": true
+            },
+            "rankingRequirements": {
+              "const": {
+                "hardFilters": [
+                  "R1",
+                  "R2",
+                  "R3",
+                  "R4",
+                  "R6"
+                ],
+                "budgetFilter": "R5",
+                "qualityEvidence": "R7-per-lane",
+                "unknownRequiredFacts": "refuse",
+                "missingEstimates": "unit-price-comparison-does-not-waive-budget",
+                "order": [
+                  "pinned-provider-partition",
+                  "quality-descending",
+                  "primary-before-fallback",
+                  "provider-code-point",
+                  "model-id-code-point"
+                ]
+              }
+            },
+            "budgetPolicyRef": {
+              "const": [
+                {
+                  "routingClass": "architecture/risk",
+                  "status": "existing-policy",
+                  "sourceRef": "routing-policy.yaml#classes.architecture/risk"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "lane",
+            "roleFamily",
+            "subRoles",
+            "routingClasses",
+            "authorityCap",
+            "frontierOnly",
+            "independence",
+            "humanGates",
+            "providerRule",
+            "qualityTolerance",
+            "enabled",
+            "rankingRequirements",
+            "budgetPolicyRef"
+          ],
+          "properties": {
+            "lane": {
+              "const": "L2"
+            },
+            "roleFamily": {
+              "const": "verifier"
+            },
+            "subRoles": {
+              "const": [
+                "adversarial-reviewer",
+                "verifier",
+                "security-auditor"
+              ]
+            },
+            "routingClasses": {
+              "const": [
+                "architecture/risk",
+                "review/security"
+              ]
+            },
+            "authorityCap": {
+              "const": "verdict-recommendation-no-edit-self-acceptance-approval-merge-release-bypass"
+            },
+            "frontierOnly": {
+              "const": true
+            },
+            "independence": {
+              "const": "distinct-instance-family-where-required-unknown-refuses-primary-and-fallback"
+            },
+            "humanGates": {
+              "const": [
+                "owner-gate-1",
+                "dispatch-gate-2",
+                "owner-gate-3",
+                "owner-only-break-glass",
+                "coordinator-acceptance"
+              ]
+            },
+            "providerRule": {
+              "const": {
+                "mode": "pin",
+                "providers": [
+                  "opencode"
+                ],
+                "offPin": "historical-nonselectable"
+              }
+            },
+            "qualityTolerance": {
+              "const": 0
+            },
+            "enabled": {
+              "const": true
+            },
+            "rankingRequirements": {
+              "const": {
+                "hardFilters": [
+                  "R1",
+                  "R2",
+                  "R3",
+                  "R4",
+                  "R6"
+                ],
+                "budgetFilter": "R5",
+                "qualityEvidence": "R7-per-lane",
+                "unknownRequiredFacts": "refuse",
+                "missingEstimates": "unit-price-comparison-does-not-waive-budget",
+                "order": [
+                  "pinned-provider-partition",
+                  "quality-descending",
+                  "primary-before-fallback",
+                  "provider-code-point",
+                  "model-id-code-point"
+                ]
+              }
+            },
+            "budgetPolicyRef": {
+              "const": [
+                {
+                  "routingClass": "architecture/risk",
+                  "status": "existing-policy",
+                  "sourceRef": "routing-policy.yaml#classes.architecture/risk"
+                },
+                {
+                  "routingClass": "review/security",
+                  "status": "unresolved-non-dispatching",
+                  "sourceRef": "PMC-P2-approved-budget-required"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "lane",
+            "roleFamily",
+            "subRoles",
+            "routingClasses",
+            "authorityCap",
+            "frontierOnly",
+            "independence",
+            "humanGates",
+            "providerRule",
+            "qualityTolerance",
+            "enabled",
+            "rankingRequirements",
+            "budgetPolicyRef"
+          ],
+          "properties": {
+            "lane": {
+              "const": "L3"
+            },
+            "roleFamily": {
+              "const": "builder"
+            },
+            "subRoles": {
+              "const": [
+                "builder-complex"
+              ]
+            },
+            "routingClasses": {
+              "const": [
+                "implementation/complex"
+              ]
+            },
+            "authorityCap": {
+              "const": "scoped-execution-no-self-review-approval-merge-release-bypass"
+            },
+            "frontierOnly": {
+              "const": false
+            },
+            "independence": {
+              "const": "independent-reviewer-family-required-unknown-refuses"
+            },
+            "humanGates": {
+              "const": [
+                "owner-gate-1",
+                "dispatch-gate-2",
+                "owner-gate-3",
+                "owner-only-break-glass"
+              ]
+            },
+            "providerRule": {
+              "const": {
+                "mode": "prefer",
+                "providers": [
+                  "openrouter",
+                  "opencode"
+                ]
+              }
+            },
+            "qualityTolerance": {
+              "const": 0
+            },
+            "enabled": {
+              "const": true
+            },
+            "rankingRequirements": {
+              "const": {
+                "hardFilters": [
+                  "R1",
+                  "R2",
+                  "R3",
+                  "R4",
+                  "R6"
+                ],
+                "budgetFilter": "R5",
+                "qualityEvidence": "R7-per-lane",
+                "unknownRequiredFacts": "refuse",
+                "missingEstimates": "unit-price-comparison-does-not-waive-budget",
+                "order": [
+                  "provider-preference",
+                  "quality-descending",
+                  "primary-before-fallback",
+                  "provider-code-point",
+                  "model-id-code-point"
+                ]
+              }
+            },
+            "budgetPolicyRef": {
+              "const": [
+                {
+                  "routingClass": "implementation/complex",
+                  "status": "unresolved-non-dispatching",
+                  "sourceRef": "PMC-P2-approved-budget-required"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "lane",
+            "roleFamily",
+            "subRoles",
+            "routingClasses",
+            "authorityCap",
+            "frontierOnly",
+            "independence",
+            "humanGates",
+            "providerRule",
+            "qualityTolerance",
+            "enabled",
+            "rankingRequirements",
+            "budgetPolicyRef"
+          ],
+          "properties": {
+            "lane": {
+              "const": "L4"
+            },
+            "roleFamily": {
+              "const": "builder"
+            },
+            "subRoles": {
+              "const": [
+                "builder-standard"
+              ]
+            },
+            "routingClasses": {
+              "const": [
+                "standard-feature",
+                "implementation/standard"
+              ]
+            },
+            "authorityCap": {
+              "const": "scoped-execution-no-self-review-approval-merge-release-bypass"
+            },
+            "frontierOnly": {
+              "const": false
+            },
+            "independence": {
+              "const": "independent-reviewer-where-risk-requires-unknown-refuses"
+            },
+            "humanGates": {
+              "const": [
+                "owner-gate-1",
+                "dispatch-gate-2",
+                "owner-gate-3",
+                "owner-only-break-glass"
+              ]
+            },
+            "providerRule": {
+              "const": {
+                "mode": "prefer",
+                "providers": [
+                  "openrouter",
+                  "opencode"
+                ]
+              }
+            },
+            "qualityTolerance": {
+              "const": 0
+            },
+            "enabled": {
+              "const": true
+            },
+            "rankingRequirements": {
+              "const": {
+                "hardFilters": [
+                  "R1",
+                  "R2",
+                  "R3",
+                  "R4",
+                  "R6"
+                ],
+                "budgetFilter": "R5",
+                "qualityEvidence": "R7-per-lane",
+                "unknownRequiredFacts": "refuse",
+                "missingEstimates": "unit-price-comparison-does-not-waive-budget",
+                "order": [
+                  "provider-preference",
+                  "quality-descending",
+                  "primary-before-fallback",
+                  "provider-code-point",
+                  "model-id-code-point"
+                ]
+              }
+            },
+            "budgetPolicyRef": {
+              "const": [
+                {
+                  "routingClass": "standard-feature",
+                  "status": "existing-policy",
+                  "sourceRef": "routing-policy.yaml#classes.standard-feature"
+                },
+                {
+                  "routingClass": "implementation/standard",
+                  "status": "existing-policy",
+                  "sourceRef": "routing-policy.yaml#classes.implementation/standard"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "lane",
+            "roleFamily",
+            "subRoles",
+            "routingClasses",
+            "authorityCap",
+            "frontierOnly",
+            "independence",
+            "humanGates",
+            "providerRule",
+            "qualityTolerance",
+            "enabled",
+            "rankingRequirements",
+            "budgetPolicyRef"
+          ],
+          "properties": {
+            "lane": {
+              "const": "L5"
+            },
+            "roleFamily": {
+              "const": "builder"
+            },
+            "subRoles": {
+              "const": [
+                "builder-economy"
+              ]
+            },
+            "routingClasses": {
+              "const": [
+                "boilerplate"
+              ]
+            },
+            "authorityCap": {
+              "const": "scoped-execution-no-security-self-review-approval-merge-release-final-verification-bypass"
+            },
+            "frontierOnly": {
+              "const": false
+            },
+            "independence": {
+              "const": "parcel-review-required-never-verifier"
+            },
+            "humanGates": {
+              "const": [
+                "owner-gate-1",
+                "dispatch-gate-2",
+                "owner-gate-3",
+                "owner-only-break-glass"
+              ]
+            },
+            "providerRule": {
+              "const": {
+                "mode": "cheapest",
+                "providers": [
+                  "opencode",
+                  "openrouter"
+                ]
+              }
+            },
+            "qualityTolerance": {
+              "const": 0
+            },
+            "enabled": {
+              "const": true
+            },
+            "rankingRequirements": {
+              "const": {
+                "hardFilters": [
+                  "R1",
+                  "R2",
+                  "R3",
+                  "R4",
+                  "R6"
+                ],
+                "budgetFilter": "R5",
+                "qualityEvidence": "R7-per-lane",
+                "unknownRequiredFacts": "refuse",
+                "missingEstimates": "unit-price-comparison-does-not-waive-budget",
+                "order": [
+                  "projected-cost-ascending-or-output-then-input-unit-price",
+                  "quality-descending",
+                  "primary-before-fallback",
+                  "provider-code-point",
+                  "model-id-code-point"
+                ]
+              }
+            },
+            "budgetPolicyRef": {
+              "const": [
+                {
+                  "routingClass": "boilerplate",
+                  "status": "existing-policy",
+                  "sourceRef": "routing-policy.yaml#classes.boilerplate"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "lane",
+            "roleFamily",
+            "subRoles",
+            "routingClasses",
+            "authorityCap",
+            "frontierOnly",
+            "independence",
+            "humanGates",
+            "providerRule",
+            "qualityTolerance",
+            "enabled",
+            "rankingRequirements",
+            "budgetPolicyRef"
+          ],
+          "properties": {
+            "lane": {
+              "const": "L6"
+            },
+            "roleFamily": {
+              "const": "classifier"
+            },
+            "subRoles": {
+              "const": [
+                "routing-classifier"
+              ]
+            },
+            "routingClasses": {
+              "const": [
+                "routing/classification"
+              ]
+            },
+            "authorityCap": {
+              "const": "recommend-only-no-prose-execution-review-approval-merge-release-verification-control-plane-promotion"
+            },
+            "frontierOnly": {
+              "const": false
+            },
+            "independence": {
+              "const": "no-authority"
+            },
+            "humanGates": {
+              "const": [
+                "owner-gate-1",
+                "dispatch-gate-2",
+                "owner-gate-3",
+                "owner-only-break-glass",
+                "ratified-amendment-before-reenablement"
+              ]
+            },
+            "providerRule": {
+              "const": {
+                "mode": "disabled-before-filters-no-hop",
+                "providers": [
+                  "opencode"
+                ]
+              }
+            },
+            "qualityTolerance": {
+              "const": 0
+            },
+            "enabled": {
+              "const": false
+            },
+            "rankingRequirements": {
+              "const": {
+                "hardFilters": [
+                  "R1",
+                  "R2",
+                  "R3",
+                  "R4",
+                  "R6"
+                ],
+                "budgetFilter": "R5",
+                "qualityEvidence": "R7-per-lane",
+                "unknownRequiredFacts": "refuse",
+                "missingEstimates": "unit-price-comparison-does-not-waive-budget",
+                "order": []
+              }
+            },
+            "budgetPolicyRef": {
+              "const": [
+                {
+                  "routingClass": "routing/classification",
+                  "status": "unresolved-non-dispatching",
+                  "sourceRef": "PMC-P2-approved-budget-required"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "laneBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "lane",
+        "bindingId",
+        "matrixRole",
+        "fallbackBindingId"
+      ],
+      "properties": {
+        "lane": {
+          "enum": [
+            "L1",
+            "L2",
+            "L3",
+            "L4",
+            "L5",
+            "L6"
+          ]
+        },
+        "bindingId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048
+        },
+        "matrixRole": {
+          "enum": [
+            "primary",
+            "fallback"
+          ]
+        },
+        "fallbackBindingId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2048
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    }
+  }
+}
