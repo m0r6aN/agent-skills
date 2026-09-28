@@ -1,0 +1,143 @@
+import assert from 'node:assert/strict'
+import { join } from 'node:path'
+import { test } from 'node:test'
+import { run } from './foreman-line-ci.mjs'
+
+// Deliberately independent of the runner's allowlist. Every spawn is injected.
+const packages = [
+  'approval', 'contract-readers', 'contracts', 'dispatch', 'foreman-config', 'hybrid-routing',
+  'integration', 'mutation-scope-guard', 'permission-profiles', 'projection',
+  'receipts', 'registration', 'role-authority', 'routing-policy',
+  'schema-scaffold', 'shaping', 'skill-injection', 'spec-linter', 'verification',
+  'worker-envelopes',
+]
+const root = process.cwd()
+const npmCli = join(root, 'fake npm', 'npm-cli.js')
+
+test('all 20 installs precede all 60 checks, using explicit Node/npm without a shell', () => {
+  const calls = []
+  const result = run({ root, npmCli, spawn: (...args) => {
+    calls.push(args)
+    return { status: 0 }
+  } })
+  const expected = [
+    ...packages.map((pkg) => [pkg, ['ci', '--ignore-scripts', '--no-audit', '--no-fund']]),
+    ...packages.flatMap((pkg) => ['test', 'typecheck', 'lint'].map((check) =>
+      [pkg, ['run', check, '--ignore-scripts']])),
+  ]
+  assert.equal(calls.length, 80)
+  for (const [index, [pkg, args]] of expected.entries()) {
+    assert.deepEqual(calls[index], [process.execPath, [npmCli, ...args], {
+      cwd: join(root, 'plugins', 'foreman-line', pkg),
+      stdio: ['inherit', 'pipe', 'pipe'], shell: false,
+      encoding: 'utf8', maxBuffer: 256 * 1024 * 1024,
+    }])
+  }
+  assert.equal(result.exitCode, 0)
+  assert.deepEqual(result.outcomes, packages.map((pkg) => ({
+    package: pkg, ci: 'pass', test: 'pass', typecheck: 'pass', lint: 'pass',
+  })))
+})
+
+test('offline installs never retry online; failed install prevents every check', () => {
+  const calls = []
+  const result = run({ root, npmCli, offline: true, spawn: (...args) => {
+    calls.push(args)
+    return { status: calls.length === 2 ? 1 : 0 }
+  } })
+  assert.equal(result.exitCode, 1)
+  assert.equal(calls.length, 20)
+  for (const [index, [, args, options]] of calls.entries()) {
+    assert.deepEqual(args, [npmCli, 'ci', '--ignore-scripts', '--no-audit', '--no-fund', '--offline'])
+    assert.equal(options.cwd, join(root, 'plugins', 'foreman-line', packages[index]))
+  }
+  assert.deepEqual(result.outcomes, packages.map((pkg, index) => ({
+    package: pkg, ci: index === 1 ? 'fail' : 'pass',
+    test: 'skipped', typecheck: 'skipped', lint: 'skipped',
+  })))
+})
+
+for (const [index, check] of ['test', 'typecheck', 'lint'].entries()) {
+  test(`${check} failure remains nonzero after all later checks succeed`, () => {
+    let calls = 0
+    const result = run({ root, npmCli, spawn: () => ({ status: calls++ === 20 + index ? 2 : 0 }) })
+    assert.equal(calls, 80)
+    assert.equal(result.exitCode, 1)
+    assert.equal(result.outcomes[0][check], 'fail')
+    assert.deepEqual(result.outcomes.at(-1), {
+      package: 'worker-envelopes', ci: 'pass', test: 'pass', typecheck: 'pass', lint: 'pass',
+    })
+  })
+}
+
+for (const [label, failure] of [
+  ['throw', () => { throw new Error('untrusted\n::error::text') }],
+  ['spawn error', () => ({ status: 0, error: new Error('ENOENT') })],
+  ['signal', () => ({ status: 0, signal: 'SIGTERM' })],
+  ['null status', () => ({ status: null })],
+  ['missing result', () => undefined],
+]) {
+  for (const phase of ['install', 'check']) {
+    test(`${label} during ${phase} fails closed and retains outcomes`, () => {
+      let calls = 0
+      const result = run({ root, npmCli, spawn: () => {
+        calls++
+        return calls === (phase === 'install' ? 1 : 21) ? failure() : { status: 0 }
+      } })
+      assert.equal(result.exitCode, 1)
+      assert.equal(calls, phase === 'install' ? 20 : 80)
+      assert.equal(result.outcomes[0][phase === 'install' ? 'ci' : 'test'], 'fail')
+      assert.equal(result.outcomes.at(-1).lint, phase === 'install' ? 'skipped' : 'pass')
+      assert.equal(JSON.stringify(result).includes('::error::'), false)
+    })
+  }
+}
+
+test('multiple failures are all retained rather than overwritten by later success', () => {
+  let calls = 0
+  const result = run({ root, npmCli, spawn: () => ({
+    status: [20, 24, 28].includes(calls++) ? 1 : 0,
+  }) })
+  assert.equal(calls, 80)
+  assert.equal(result.exitCode, 1)
+  assert.equal(result.outcomes[0].test, 'fail')
+  assert.equal(result.outcomes[1].typecheck, 'fail')
+  assert.equal(result.outcomes[2].lint, 'fail')
+  assert.equal(result.outcomes.at(-1).lint, 'pass')
+})
+
+test('a hybrid-routing check failure propagates to the aggregate result', () => {
+  let calls = 0
+  const result = run({ root, npmCli, spawn: () => ({ status: calls++ === 35 ? 1 : 0 }) })
+  assert.equal(calls, 80)
+  assert.equal(result.exitCode, 1)
+  assert.equal(result.outcomes[5].test, 'fail')
+})
+
+test('a failing check re-emits its complete captured stdout and stderr in a failure section', () => {
+  let calls = 0
+  const chunks = []
+  const stderrWrite = process.stderr.write
+  const stdoutWrite = process.stdout.write
+  process.stderr.write = (chunk) => { chunks.push(String(chunk)); return true }
+  process.stdout.write = (chunk) => { chunks.push(String(chunk)); return true }
+  let result
+  try {
+    result = run({ root, npmCli, spawn: () => (++calls === 21 ? {
+      status: 1,
+      stdout: '✖ named failing assertion\nAssertionError: boom\n    at tests/example.test.ts:7:3\n',
+      stderr: 'stderr tail\n',
+    } : { status: 0 }) })
+  } finally {
+    process.stderr.write = stderrWrite
+    process.stdout.write = stdoutWrite
+  }
+  assert.equal(result.exitCode, 1)
+  const emitted = chunks.join('')
+  assert.match(emitted, /--- approval\/test failed \(exit code 1\) ---/)
+  assert.match(emitted, /✖ named failing assertion/)
+  assert.match(emitted, /AssertionError: boom/)
+  assert.match(emitted, / {4}at tests\/example\.test\.ts:7:3/)
+  assert.match(emitted, /stderr tail/)
+  assert.deepEqual(result.failures, [{ package: 'approval', check: 'test', detail: 'exit code 1' }])
+})
