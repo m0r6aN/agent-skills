@@ -515,6 +515,136 @@ test('one tested refusal per code (fault-injection matrix)', () => {
   }
 })
 
+test('R2: one transient substrate failure mid-operation is retried (the operation still lands)', () => {
+  const root = mkdtempSync(join(tmpdir(), 'fk-p10-err-'))
+  const storage = openStorage(configFor(root))
+  try {
+    insertGoal(storage, { goalId: 'goal-1', revision: 2, status: 'active', updatedAtMicros: T0 })
+    insertLease(storage, {
+      leaseId: 'lease-1',
+      goalId: 'goal-1',
+      ownerPrincipalRef: 'principal-a',
+      casRevision: 2,
+      acquiredAtMicros: T0 - 10,
+      expiresAtMicros: T0 + 60_000_000,
+      releasedAtMicros: null,
+    })
+    // The first UPDATE goals trips a SQLITE_BUSY-class driver error; the
+    // rolled-back attempt is retried (R2), so the operation still applies with
+    // its named outcome instead of a degraded STORAGE_FAILURE.
+    let attempts = 0
+    const driver = storage.driver
+    const flaky = {
+      exec: (sql: string) => {
+        driver.exec(sql)
+      },
+      prepare: (sql: string) => {
+        const statement = driver.prepare(sql)
+        return {
+          run: (...args: unknown[]) => {
+            if (sql.includes('UPDATE goals')) {
+              attempts += 1
+              if (attempts === 1) {
+                const busy = new Error('database is locked') as Error & { code: string }
+                busy.code = 'SQLITE_BUSY'
+                throw busy
+              }
+            }
+            return statement.run(...args)
+          },
+          get: (...args: unknown[]) => statement.get(...args),
+          all: (...args: unknown[]) => statement.all(...args),
+        }
+      },
+      pragma: (source: string) => driver.pragma(source),
+    }
+    const engine = createEngine({
+      storage: { ...storage, driver: flaky } as unknown as Storage,
+      clock: fixedClock(T0),
+      toolVersion: 'kernel-lease-test',
+    })
+    const applied = applyTransition(engine, {
+      goalId: 'goal-1',
+      targetStatus: 'cancelled',
+      expectedRevision: 2,
+      idempotencyKey: bind('r2-transient'),
+    })
+    assert.equal(applied.effect.code, 'EFFECT_APPLIED')
+    assert.equal(attempts, 2, 'exactly one transient failure, one retry')
+  } finally {
+    try {
+      closeStorage(storage)
+    } catch {
+      // Best-effort close; cleanup proceeds.
+    }
+    removeRoot(root)
+  }
+})
+
+test('R2: non-transient substrate failures are never retried (true failures surface)', () => {
+  const root = mkdtempSync(join(tmpdir(), 'fk-p10-err-'))
+  const storage = openStorage(configFor(root))
+  try {
+    insertGoal(storage, { goalId: 'goal-1', revision: 2, status: 'active', updatedAtMicros: T0 })
+    insertLease(storage, {
+      leaseId: 'lease-1',
+      goalId: 'goal-1',
+      ownerPrincipalRef: 'principal-a',
+      casRevision: 2,
+      acquiredAtMicros: T0 - 10,
+      expiresAtMicros: T0 + 60_000_000,
+      releasedAtMicros: null,
+    })
+    let attempts = 0
+    const driver = storage.driver
+    const corrupt = {
+      exec: (sql: string) => {
+        driver.exec(sql)
+      },
+      prepare: (sql: string) => {
+        const statement = driver.prepare(sql)
+        return {
+          run: (...args: unknown[]) => {
+            if (sql.includes('UPDATE goals')) {
+              attempts += 1
+              const broken = new Error('database disk image is malformed') as Error & { code: string }
+              broken.code = 'SQLITE_CORRUPT'
+              throw broken
+            }
+            return statement.run(...args)
+          },
+          get: (...args: unknown[]) => statement.get(...args),
+          all: (...args: unknown[]) => statement.all(...args),
+        }
+      },
+      pragma: (source: string) => driver.pragma(source),
+    }
+    const engine = createEngine({
+      storage: { ...storage, driver: corrupt } as unknown as Storage,
+      clock: fixedClock(T0),
+      toolVersion: 'kernel-lease-test',
+    })
+    expectCode(
+      () =>
+        applyTransition(engine, {
+          goalId: 'goal-1',
+          targetStatus: 'cancelled',
+          expectedRevision: 2,
+          idempotencyKey: bind('r2-corrupt'),
+        }),
+      'STORAGE_FAILURE',
+    )
+    assert.equal(attempts, 1, 'a true failure is attempted exactly once')
+  } finally {
+    try {
+      closeStorage(storage)
+    } catch {
+      // Best-effort close; cleanup proceeds.
+    }
+    removeRoot(root)
+  }
+})
+
 test('safe diagnostics carry only declared shapes (ids/revision/field paths — no free text)', () => {
   const root = mkdtempSync(join(tmpdir(), 'fk-p10-err-'))
   const storage = openStorage(configFor(root))

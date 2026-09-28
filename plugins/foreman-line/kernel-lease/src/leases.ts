@@ -45,7 +45,13 @@ import {
   eventPayloadDigest,
 } from './canonical.js'
 import { TrustedClock } from './clock.js'
-import { EngineError, engineError, guardingStorage, wrapStorageFailure } from './errors.js'
+import {
+  EngineError,
+  engineError,
+  guardingStorage,
+  withTransientRetry,
+  wrapStorageFailure,
+} from './errors.js'
 import {
   buildEffectCore,
   type EffectResult,
@@ -279,7 +285,7 @@ export function runEffectful<T>(
   const replayOf = (executedFromRow: Executed<T>): EngineResult<T> => wrap(executedFromRow, true)
 
   // Idempotency pre-check (read-only; pure replays never reach the clock).
-  const preState = lookupBinding(engine.storage, binding)
+  const preState = withTransientRetry(() => lookupBinding(engine.storage, binding))
   if (preState.state === 'completed') {
     const outcome = reconstructRecordedOutcome(
       engine.storage,
@@ -299,44 +305,52 @@ export function runEffectful<T>(
   // its callback into a `StorageError` (fromDriverError fallback), which would
   // destroy the typed refusal code. So the refusal is stashed here and
   // re-raised after the substrate has rolled the transaction back; genuine
-  // substrate failures are wrapped as `STORAGE_FAILURE` (standing #1).
-  let refusal: EngineError | null = null
+  // substrate failures are wrapped as `STORAGE_FAILURE` (standing #1), and
+  // transient lock/OS classes are retried (R2) — a typed refusal always wins
+  // and is never retried.
   let outcome: { executed: Executed<T>; replay: boolean }
   try {
-    outcome = withTransaction(engine.storage, () => {
+    outcome = withTransientRetry(() => {
+      let refusal: EngineError | null = null
       try {
-        // In-transaction binding re-check: the correctness gate for same-binding
-        // racers (CN-04/CN-05) and for retries after a committed-but-unreturned
-        // result (CR-04 replay).
-        const state = lookupBinding(engine.storage, binding)
-        if (state.state === 'completed') {
-          const replayed = reconstructRecordedOutcome(
-            engine.storage,
-            binding,
-            state.row,
-            engine.toolVersion,
-            goalId,
-          )
-          return {
-            executed: { effect: replayed.effect, result: replayed.result as T },
-            replay: true,
+        return withTransaction(engine.storage, () => {
+          try {
+            // In-transaction binding re-check: the correctness gate for
+            // same-binding racers (CN-04/CN-05) and for retries after a
+            // committed-but-unreturned result (CR-04 replay).
+            const state = lookupBinding(engine.storage, binding)
+            if (state.state === 'completed') {
+              const replayed = reconstructRecordedOutcome(
+                engine.storage,
+                binding,
+                state.row,
+                engine.toolVersion,
+                goalId,
+              )
+              return {
+                executed: { effect: replayed.effect, result: replayed.result as T },
+                replay: true,
+              }
+            }
+            return { executed: execute({ now, binding }), replay: false }
+          } catch (error) {
+            if (error instanceof EngineError) {
+              refusal = error
+              // Sentinel throw: the substrate rolls the transaction back, then
+              // converts this into a StorageError that is discarded in favor of
+              // the stashed typed refusal.
+              throw new Error('fk-p10-transaction-abort')
+            }
+            throw error
           }
-        }
-        return { executed: execute({ now, binding }), replay: false }
+        })
       } catch (error) {
-        if (error instanceof EngineError) {
-          refusal = error
-          // Sentinel throw: the substrate rolls the transaction back, then
-          // converts this into a StorageError that is discarded below in favor
-          // of the stashed typed refusal.
-          throw new Error('fk-p10-transaction-abort')
-        }
+        if (refusal !== null) throw refusal
         throw error
       }
     })
   } catch (error) {
-    if (refusal !== null) throw refusal
-    throw wrapStorageFailure(error)
+    throw error instanceof EngineError ? error : wrapStorageFailure(error)
   }
 
   return wrap(outcome.executed, outcome.replay)
