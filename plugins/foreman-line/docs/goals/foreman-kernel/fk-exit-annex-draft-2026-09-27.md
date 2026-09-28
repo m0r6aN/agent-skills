@@ -27,6 +27,7 @@
 | INF-7 revision-bound corpus manifest binding | FK-P19/FK-P21 | NOT satisfied |
 | INF-1/INF-2/INF-3/INF-6 residual assembly (matrix binding, exact-placement proof, measured build reporting, baseline assembly) | FK-P14/FK-P20/FK-P21 | NOT satisfied (named rows in §16 annotated per RS-2.2) |
 | U1 backstop-independence evidence chain (protected verifier/workflow control, runner lifecycle identity, independent negative controls, evidence identities/retention, bounded unsupported outcomes) | FK-P18 production / FK-P19 verification / FK-P21 retention | NOT satisfied — §14 pre-FK-P18′ contract dependency stands (E7); concrete U1 choices still open |
+| INF-8 RPO/RTO numeric objectives (extension per FK-P9 OQ-1 ruling 2026-09-28) | FK-P9 backup/restore mechanics | NOT satisfied — numeric recovery-point/recovery-time objectives remain an unresolved owner-policy gap; no objective claimed met (FK-P15 measures) |
 
 ## 3. §8 scenario gaps (RS-2.3 item 2)
 
