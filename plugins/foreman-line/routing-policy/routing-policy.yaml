@@ -71,7 +71,7 @@ data_classification:
       data_collection: allow
       zdr: false
     eligible_models:
-      - anthropic/claude-opus-5
+      - anthropic/claude-opus-5.5
       - anthropic/claude-fable-5.1
       - openai/gpt-5.6-sol
       - google/gemini-3.1-pro-preview
@@ -94,7 +94,7 @@ data_classification:
       data_collection: deny # required by invariant (g)
       zdr: true # required by invariant (g)
     eligible_models:
-      - anthropic/claude-opus-5
+      - anthropic/claude-opus-5.5
       - anthropic/claude-fable-5.1
       - openai/gpt-5.6-sol
       - google/gemini-3.1-pro-preview
@@ -117,7 +117,7 @@ data_classification:
       data_collection: deny # required by invariant (g)
       zdr: true # required by invariant (g)
     eligible_models:
-      - anthropic/claude-opus-5
+      - anthropic/claude-opus-5.5
       - anthropic/claude-fable-5.1
       - openai/gpt-5.6-sol
       - google/gemini-3.1-pro-preview
@@ -163,7 +163,7 @@ model_tiers:
     # Coordinator, Adversarial Reviewer, and the security-audit hard override.
     # Two vendors on purpose: a verifier drawn from a different vendor than the
     # coordinator makes distinct-instance independence more than nominal.
-    - anthropic/claude-opus-5 # $5 / $25 — primary coordinator
+    - anthropic/claude-opus-5.5 # confirmed Opus 5.5 frontier route
     - openai/gpt-5.6-sol # $2 / $10 — preferred verifier
     - google/gemini-3.1-pro-preview # $2 / $12 — third-vendor fallback (no GA slug on OpenRouter)
     - anthropic/claude-fable-5.1 # $10 / $50 — escalation only; 2x Opus 5

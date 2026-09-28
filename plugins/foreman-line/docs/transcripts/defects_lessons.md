@@ -103,3 +103,87 @@ and the live working tree at intake AND again at dispatch.
 **Disposition:** narrative-only coordinator judgment; the `/goal` skill
 already mandates the canon/INDEX check at Stage Zero; the live re-check is the
 coordinator's own discipline (PRAC-P0).
+
+## #45 — A refusal gate must name its comparator, and a shaped spec's example query must run against the real data shape
+
+AC2a listed "URL mismatch" as a refusal without saying what the `baseUrl` was
+compared against; under the plausible catalogue-vs-settings reading, 8 of 12
+otherwise-resolving bindings refused and the mandated "counts: 13 under AC2a"
+collapsed. Separately the Verification Plan's `$cat.models | Where-Object …`
+returned nothing because the real top level is `providers[].models[]` — run
+literally it emits a false `AC2A_ZERO_MATCH` for every binding. Both survived
+the advisory drafting self-check, which never executed the example query. Rules:
+have the shaping/verification step execute a spec's example command against the
+real data shape before promotion, and make every "mismatch"/"absent"/"zero-match"
+refusal name exactly what it is compared against (here: catalogue-internal only,
+per Amendment 04 D-a1).
+
+**Disposition:** the correct operand is now in the spec body (Amendment 04 D-c1,
+`providers[].models[]`) and the comparator is fixed (D-a1). Open disposition: the
+draft self-check is advisory-only and did not catch the field bug — extend it to
+execute spec example queries when the shaping package is next touched (PMC-P0).
+
+## #46 — Identity-resolution "present"/"absent" claims must match on provider AND id, never id alone
+
+Coordinator-lint L5 reported `qwen3.8-flash` "present" by matching the id anywhere
+in the catalogue. The id exists only under `opencode-go`, `qwen-token-plan`, and
+`openrouter/qwen/…` — never under the `opencode` provider the AC2 matrix requires,
+so binding 7 (`opencode/qwen3.8-flash`) is a real `AC2A_ZERO_MATCH`. A
+provider-blind presence claim falsified a locked matrix row and only surfaced when
+a builder resolved it literally. Rule: any catalogue presence/vendor/id claim is
+matched on `provider` + `id` together, case-sensitively, and a per-provider
+absence is never asserted as a cross-provider absence (the export is not an
+absence proof).
+
+**Disposition:** mechanically installed in the builder brief (literal
+`provider`+`id` resolution, the 12+1 / `AC2A_ZERO_MATCH` trap, and
+`AC2A_WRONG_PROVIDER`/`AC2A_PREFIX_ALIAS_REFUSED` diagnostics); the coordinator
+lint should match on the paired key too (PMC-P0).
+
+## RCM-P1 integration — historical fixture identity is not current policy identity
+
+Reconciliation retained the reviewed P0-derived Opus 5 fixture while main policy correctly names Opus 5.5. Replacing historical evidence to match current policy would falsify provenance. Integration review confirmed source/test identity and all399 tests.
+
+**Disposition:** installed in the bounded RCM integration handoff and review mandate; no general policy rule or automatic identifier rewrite is added.
+
+## HRO-P1a integration — package CI and audit enrollment are separate
+
+Adding a package to the CI runner did not enroll it in D19's independent
+ratified-package allowlist. Full combined CI exposed the omission through the
+existing mutation-scope audit test. The correction added only the ratified
+package name; no waiver or weakened test was needed. Future package additions
+must inspect both lists rather than equating their counts (D19 also includes Jev).
+
+**Disposition:** scoped A2 ratification, one-line registration, independent audit
+review and corrected full green CI recorded in HRO-P1a's review triage. Resource
+boundaries are likewise tested before forbidden enumeration/descriptor reads,
+not merely by eventual refusal after unbounded work.
+
+## PMC-P1a boundaries — count values, not skipped array metadata
+
+Counting an array's length property against the visited-value ceiling caused
+exact-limit valid policies to refuse depending on object insertion order.
+The repaired validator counts actual children and accepts the inclusive limit
+in either order. Boundary evidence must distinguish array elements from total
+visited values, including the root.
+
+**Disposition:** permanent regression and two independent schema-valid exact-limit
+probes; corrected handoff terminology and unchanged seven legacy schemas recorded
+in PMC-P1a acceptance. Static conformance still establishes no live authority.
+
+## RCM-P1A — classify hostile failures without inspecting them
+
+An arbitrary thrown proxy can throw again during instanceof or property reads.
+Identify internally created refusals by private identity, and treat all other
+thrown values as opaque. Memoize completed caller-object captures separately
+from active-cycle detection, while charging expanded owned aliases against every
+resource budget. Two independent final reviews verified these repairs and exact
+limits; combined integration retained both PMC and RCM public exports.
+## RCM producer — prove exact integer source values before binary conversion
+
+SafeInteger(Number(token)) cannot establish mathematical integrality: a retained
+fraction can round to an integer. Validate bounded exact decimal/exponent tokens
+before conversion for metadata counts/status/byte lengths as well as model facts.
+Independently repinned source negatives ensure digest rejection does not hide the
+semantic check. The corrected producer retains equivalent integral encodings and
+original canonical bytes; two final reviews tested rounding and large-token cases.

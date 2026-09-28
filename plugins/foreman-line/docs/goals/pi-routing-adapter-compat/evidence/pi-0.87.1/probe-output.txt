@@ -1,7 +1,7 @@
 node v24.7.0
 pkgRoot D:\nvm\v24.7.0\node_modules\@earendil-works\pi-coding-agent
 installedVersion 0.87.1 (pinned 0.87.1) MATCH
-inspectedFiles 329
+inspectedFiles 330
 {
   "proposal names": {
     "beforeLLMTurn": "absent-from-enumerated-surface",

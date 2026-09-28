@@ -27,7 +27,7 @@ export const sampleClassEntry: ClassEntry = {
  * requirements differ between public and non-public.
  */
 const sampleModels: readonly string[] = [
-  'anthropic/claude-opus-5',
+  'anthropic/claude-opus-5.5',
   'anthropic/claude-fable-5.1',
   'openai/gpt-5.6-sol',
   'google/gemini-3.1-pro-preview',
@@ -102,7 +102,7 @@ export const sampleRoutingPolicy: RoutingPolicy = {
   model_tiers: {
     // Order is the dispatcher's selection rule (first eligible wins).
     frontier: [
-      'anthropic/claude-opus-5',
+      'anthropic/claude-opus-5.5',
       'openai/gpt-5.6-sol',
       'google/gemini-3.1-pro-preview',
       'anthropic/claude-fable-5.1',

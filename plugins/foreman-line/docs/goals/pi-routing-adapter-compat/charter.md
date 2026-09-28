@@ -4,7 +4,7 @@
 **Created:** 2026-09-24
 **Owner:** Clinton Morgan
 **Coordinator:** this `/goal` session (Pi); ownership recorded in `loop-directive.md` after plan review
-**Status:** SHIPPED — PRAC-P0 delivered 2026-09-24 (memo + probe + evidence); two-round adversarial review APPROVE WITH NITS resolved; merge `b1d3e39`; exit criterion met; loop stopped
+**Status:** STAGE ZERO CLOSED — Gate 1 fully ratified (D1–D11 incl. plan-review amendments, 0.87.1 pin, PMC scope-guard); ownership confirmed as a **separate queue** by the owner 2026-09-24; entering the PRAC-P0 loop
 **Mode:** repo-local documentation + evidence parcel (no routing authority, no code shipped outside the goal directory)
 **Source directive:** `C:/Users/clint/Documents/Codex/2026-09-23/pl/.audit/directive.md` (3-seat council verdict on frontmatter-driven Pi model routing)
 
@@ -74,10 +74,10 @@ docs/examples and, where a deterministic check is possible, a read-only probe.
 2. `~/.pi/agent/extensions/` **exists** and already contains one extension,
    `pi-jev-budget-guard` (dated 2026-09-21) — prior Foreman/RCM work on this exact
    boundary. This goal does not touch it.
-3. *(0.86.1-epoch, superseded — see coordinator-lint L2/L3.)* The 0.86.1 `docs/extensions.md`
-   named **`pi.setModel(model)`** and **`pi.setThinkingLevel()`** in prose. In 0.87.1 those
-   names are absent from the prose and survive only in the shipped type declarations
-   (`setModel`, `setThinkingLevel`, `setActiveTools` in `extensions/types.d.ts`).
+3. `docs/extensions.md` exposes **`pi.setModel(model)`** (session-scoped, recorded in
+   session history, restored on resume, does not change `defaultProvider`/`defaultModel`; returns
+   `false` when auth is not configured for the provider) and **`pi.setThinkingLevel()`**
+   (same session-scoped semantics).
 4. No **`beforeLLMTurn`**, **`ctx.session.updateModel`**, or
    **`ctx.session.updateThinkingLevel`** API name was found in `docs/extensions.md`. The
    hook surface is provider-level (e.g. a per-provider-request hook) and session-scoped
