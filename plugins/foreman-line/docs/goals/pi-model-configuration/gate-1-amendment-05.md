@@ -114,6 +114,7 @@ P2A is candidate-ready only after P1 acceptance and API freeze; all drafts remai
 non-dispatchable until their own readiness conditions are met. A fake transport
 pass cannot close P2D terminal coverage or P2E actual caller/activation evidence.
 
+
 ## V8: explicit governed entry and durable intent custody — 2026-09-26
 
 Ratified by the HRO coordinator under the user's blanket decision authority and

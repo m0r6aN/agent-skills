@@ -35,7 +35,6 @@ import {
   collectChain,
   makeTempRepoRoot,
   mintStageCReceipt,
-  normalizeMaintainedConfig,
   PACKAGE_ROOT,
   readReceipt,
   type StageCFixture,
@@ -162,7 +161,7 @@ const hasOriginVerificationBaseline =
     { cwd: PACKAGE_ROOT, stdio: 'ignore' },
   ).status === 0
 
-test('AC-1: src/pipeline exists; package configs remain frozen and verification roots are explicit', {
+test('AC-1: src/pipeline exists; configs and every src/harness + src/adversarial file are byte-unchanged from origin/main', {
   skip: !hasOriginVerificationBaseline,
 }, () => {
   assert.ok(existsSync(join(PACKAGE_ROOT, 'src', 'pipeline', 'index.ts')))
@@ -175,13 +174,14 @@ test('AC-1: src/pipeline exists; package configs remain frozen and verification 
     return result.stdout
   }
   for (const name of ['package.json', 'tsconfig.json', 'biome.json']) {
-    assert.deepEqual(
-      normalizeMaintainedConfig(name, readFileSync(join(PACKAGE_ROOT, name), 'utf8')),
-      normalizeMaintainedConfig(name, gitShow(`plugins/foreman-line/verification/${name}`)),
-      `${name} must preserve its frozen shape relative to origin/main`,
+    assert.equal(
+      readFileSync(join(PACKAGE_ROOT, name), 'utf8'),
+      gitShow(`plugins/foreman-line/verification/${name}`),
+      `${name} must be byte-identical to origin/main`,
     )
   }
   for (const dir of ['harness', 'adversarial']) {
+    const treePath = `plugins/foreman-line/verification/src/${dir}`
     const lsTree = spawnSync('git', ['ls-tree', '--name-only', 'origin/main', `src/${dir}/`], {
       cwd: PACKAGE_ROOT,
       encoding: 'utf8',
@@ -196,16 +196,10 @@ test('AC-1: src/pipeline exists; package configs remain frozen and verification 
     const localNames = readdirSync(join(PACKAGE_ROOT, 'src', dir)).sort()
     assert.deepEqual(localNames, mainNames, `src/${dir} file set must match origin/main`)
     for (const name of mainNames) {
-      const source = readFileSync(join(PACKAGE_ROOT, 'src', dir, name), 'utf8')
       assert.equal(
-        source.includes('process.cwd()'),
-        false,
-        `src/${dir}/${name} must not infer roots from cwd`,
-      )
-      assert.equal(
-        source.includes("'plugins/foreman-line/"),
-        false,
-        `src/${dir}/${name} must not hardcode plugin identity`,
+        readFileSync(join(PACKAGE_ROOT, 'src', dir, name), 'utf8'),
+        gitShow(`${treePath}/${name}`),
+        `src/${dir}/${name} must be byte-identical to origin/main`,
       )
     }
   }
@@ -1235,10 +1229,49 @@ test('AC-21: src/pipeline performs no process spawn, git operation, Jira call, s
     'headroom_compress',
     'Skill(',
   ]
+  const driverName = 'stage-d-finalization.ts'
+  const permittedDriverOwnerTokens = new Set([
+    'runHarness(',
+    'dispatchReview',
+    'collectAdversarialFindings',
+  ])
+  const violations = (name: string, text: string): string[] => {
+    const tokens =
+      name === driverName
+        ? forbidden.filter((token) => !permittedDriverOwnerTokens.has(token))
+        : forbidden
+    return tokens.filter((token) => text.includes(token))
+  }
   for (const name of readdirSync(dir)) {
     const text = readFileSync(join(dir, name), 'utf8')
-    for (const token of forbidden) {
-      assert.ok(!text.includes(token), `src/pipeline/${name} contains forbidden token '${token}'`)
+    for (const token of violations(name, text)) {
+      assert.fail(`src/pipeline/${name} contains forbidden token '${token}'`)
+    }
+    if (name === driverName) {
+      for (const token of permittedDriverOwnerTokens) {
+        assert.ok(text.includes(token), `${name} must transparently name owner token '${token}'`)
+      }
+    } else {
+      for (const token of permittedDriverOwnerTokens) {
+        assert.ok(!text.includes(token), `${name} must not import offline owner token '${token}'`)
+      }
+    }
+  }
+
+  const driverSource = readFileSync(join(dir, driverName), 'utf8')
+  for (const token of forbidden.filter((candidate) => !permittedDriverOwnerTokens.has(candidate))) {
+    assert.ok(
+      violations(driverName, driverSource + token).includes(token),
+      `driver negative control failed to inject forbidden token '${token}'`,
+    )
+  }
+  for (const name of readdirSync(dir).filter((candidate) => candidate !== driverName)) {
+    const source = readFileSync(join(dir, name), 'utf8')
+    for (const token of permittedDriverOwnerTokens) {
+      assert.ok(
+        violations(name, source + token).includes(token),
+        `${name} negative control failed to inject legacy-forbidden token '${token}'`,
+      )
     }
   }
 })

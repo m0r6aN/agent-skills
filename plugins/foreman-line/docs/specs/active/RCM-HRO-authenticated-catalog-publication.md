@@ -1,7 +1,7 @@
 ---
 ticket: RCM-HRO
 title: Private authenticated public catalog publication
-status: draft
+status: active
 owner: clinton.morgan
 created: 2026-09-26
 updated: 2026-09-26
@@ -9,6 +9,7 @@ supersedes: null
 superseded_by: null
 risk: critical
 surfaces:
+  - plugins/foreman-line/routing-policy/
   - plugins/foreman-line/docs/
 routing_class: architecture/risk
 permission_profile: builder-architecture
@@ -148,9 +149,11 @@ readCatalogSnapshot validation. Share private pure helpers only under the explic
 RCM amendment; do not implement a competing catalog reader or copied price math.
 Preserve observed text/image intersection and residual modalities. The reviewed
 reasoning inference requires nonempty observed supported_efforts; absent/empty
-remains unknown and cannot become false. Exact effort mappings preserve the
-accepted conservative semantics; missing levels and mandatory-reasoning off
-refuse. No Pi defaults or clamping supply metadata. New shape/profile changes
+remains unknown and cannot become false. The new raw v1 profile deliberately
+narrows effort mapping as specified below: it never emits off, even when none is
+observed. The retained-artifact API's existing reviewed none-to-off mapping and
+fixtures remain unchanged. Missing levels and mandatory-reasoning off refuse.
+No Pi defaults or clamping supply metadata. New shape/profile changes
 require review, not runtime widening.
 
 Retain exact captured response bytes or a bounded lossless allowlisted field
@@ -467,6 +470,342 @@ generation reset or recreated owner may reset the workflow admission/refresh
 budget. A new process can publish only under separately valid workflow admission;
 otherwise it refuses. This parcel cannot grant such admission.
 
+### Checkpoint N materializer disposition — 2026-09-26
+
+This docs-only amendment starts at c4f1e22b0d15f53b0ac600b940748225d54cf720.
+Root accepted the genuine read-only checkpoint N Step0 and disposed the following
+details. Runtime implementation is not released; independent amended-design
+review and explicit root release remain required.
+
+materializePublicModelResponseV1 accepts unknown and validates the existing closed
+MaterializerInput/MaterializerResult contract above. Reuse the exact InventoryRow
+union and imported ModelRecord/AcceptedCatalogSource; add no result keys or
+unsupported inventory variant. Unsupported requested providers return
+PROFILE_REFUSED before raw materialization. Missing/malformed non-domain required
+facts produce incomplete/REQUIRED_FACT_MISSING after coverage is proven. Malformed
+identity, duplicate identity or missing/malformed text-domain membership anywhere
+in the response returns COMPLETENESS_UNPROVEN for both candidate variants. Missing
+or invalid whole-response envelope metadata has the same coverage refusal.
+Incomplete-only scope returns INCOMPLETE_SCOPE. Mixed facts/incomplete/absence
+retains every original requested identity; absentIdentities equals all and only
+absent-in-domain rows. No incomplete row becomes absence or a partial catalog.
+
+The new source profile declaration is exactly:
+
+- profileId: openrouter-public-text-materialization
+- profileVersion: v1
+- sourceEvidenceRef and canonical sourceRef: the literal prefix
+  `openrouter-public-text-materialization/v1:sha256:` followed immediately by
+  the lowercase 64-character SHA-256 of the exact raw response bytes
+- sourceEvidenceSha256: that raw-byte digest
+- canonicalSha256: SHA-256 of the actual generated canonical bytes
+- requestedIdentities: the complete original requested scope
+- canonical provider checkedAtUtc: completeReceivedAtUtc, never request start,
+  evaluation time, publication time or a provider-created timestamp
+
+Choose the raw-byte retention branch: the publisher retains the actual captured
+raw response bytes unchanged, with its captured timestamps/profile and private
+provenance. The pure materializer defensively copies input bytes for computation;
+its return schema does not grow raw-byte or fabricated manifest fields. The source
+reference is reproducible evidence, not custody or acceptance authority. No
+historical filenames, refusal binding 7, baseline counts or ratification labels
+are generated. Caller-supplied complete/times/profile declarations remain
+evidenceOnly until the separately installed publisher authenticates acquisition.
+
+Field locations are exact JSON Pointers into the retained response, using the
+actual zero-based row index: /data/<index>/id,
+/data/<index>/architecture/input_modalities,
+/data/<index>/architecture/output_modalities,
+/data/<index>/context_length, /data/<index>/top_provider/max_completion_tokens,
+/data/<index>/pricing/prompt, /data/<index>/pricing/completion and
+/data/<index>/reasoning/supported_efforts. These define the extraction profile;
+they do not add fields to ModelRecord or the result union. Extra request fees,
+other rates/modalities and unprojected observations remain in the retained raw
+bytes. Prompt/completion price projection proves only those observed rates, never
+zero request fees, account billing completeness, an execution ceiling or entitlement.
+Missing required observations cannot be replaced by defaults or inferred from
+names, Pi configuration, context length or another row.
+
+Raw reasoning mapping is explicitly narrower than retained v2. Accept only an
+own reasoning.supported_efforts array of unique known strings from
+max/xhigh/high/medium/low/none. Require at least one positive effort from
+max/xhigh/high/medium/low; emit reasoning:true only as the reviewed profile
+inference and map each observed positive effort identically in that fixed order.
+Never emit off or minimal. Observed none is retained only in the original raw
+evidence and is omitted from the canonical map. None-only, missing, empty,
+malformed, duplicate or unknown efforts make the row incomplete. No verified
+general raw mandatory-reasoning signal exists here: do not invent mandatory:false,
+recognize a guessed mandatory flag, or treat none as authorization for off.
+This deliberate new-profile restriction does not modify retained producer v2's
+none-to-off behavior or its byte-pinned fixtures.
+
+Share private pure decimal-price and positive-effort projection helpers where
+semantically compatible; do not copy price arithmetic or manufacture a retained
+projection object to pass historical-profile validation. The sole canonical
+reader must validate every generated catalog, and the existing adapter must
+consume its exact new AcceptedCatalogSource in tests. No new reader or authority
+constructor is permitted. New raw parsing enforces 4,096 UTF-8 bytes per decoded
+string and 1 MiB aggregate retained strings, with existing depth/value/body bounds;
+retained parsing keeps its existing UTF-16 behavior unchanged. Use an explicit
+private parsing mode, not a silent limit change to the old public entry point.
+
+Checkpoint N controls additionally pair catalog/absence full-envelope success with
+each coverage refusal; exact source references/digests/timestamps and JSON Pointer
+mapping; decimal conversion; positive-only effort mapping and none-only refusal;
+malformed/incomplete versus absent rows; exact scope; hostile capture/bytes and
+UTF-8 versus retained UTF-16 boundary cases. Mutate raw bytes/profile/time/identity
+independently. Retained producer canonical bytes, historical artifacts and public
+API behavior must remain unchanged. Tests and report distinguish synthetic raw
+fixture conformance from actual endpoint compatibility or authenticated acquisition.
+
+### Checkpoint P construction amendment — offline implementation boundary
+
+Root accepted the genuine read-only P Step0 at
+c96569e9b8695a4cdfb120110f95cc45f582bde2 and released only this spec and its
+existing shaping notes to freeze construction. No P implementation is released.
+The following closes missing constructor/scope/runtime signatures; it preserves
+all existing Refresh/Read/Cancel unions, four-slot accounting, shared generation
+CAS, cancellation ordering and ORIGINAL transport-promise cleanup protocol.
+
+The production factory is deliberately unavailable in this checkpoint:
+
+```ts
+function createProductionCatalogPublicationOwnerV1(input:unknown):
+  {ok:false;code:'INSTALLATION_REFUSED'};
+
+type OfflinePublicationInputV1 = {
+  domain:'offline-fixture/v1'; fixtureId:string;
+  workflowId:string; generationId:string;
+  scopes:readonly {
+    scopeId:string; trustScopeId:string;
+    requestedIdentities:readonly Identity[]; policyExpiresAtUtc:string;
+  }[];
+};
+type ClockReadingV1 = {utc:string;monoMs:number};
+type OfflinePublicationRuntimeV1 = {
+  readClock:()=>unknown;
+  scheduleWake:(delayMs:number,wake:()=>void)=>unknown;
+  clearWake:(timer:object)=>unknown;
+  requestDriver:OfflineMetadataDriverV1;
+};
+type ScopeRegistrationV1 = {scopeId:string};
+type ScopeRegistrationResultV1 =
+  | {ok:true;scope:object}
+  | {ok:false;code:'INPUT_REFUSED'|'CAPACITY_REFUSED'|'INSTALLATION_REFUSED'};
+type CatalogPublicationOwnerV1 = {
+  domain:'offline-fixture/v1';
+  registerCatalogScopeV1:(input:unknown)=>ScopeRegistrationResultV1;
+  registerRefreshOperationV1:(input:unknown)=>OperationRegistrationResult;
+  requestCatalogRefreshV1:(input:unknown)=>Promise<RefreshResult>;
+  cancelRefreshOperationV1:(input:unknown)=>CancelResult;
+  acquirePublishedCatalogV1:(input:unknown)=>CatalogRead;
+  verifyAbsenceV1:(input:unknown)=>AbsenceRead;
+};
+function createOfflineCatalogPublicationOwnerV1(input:unknown,runtime:unknown):
+  | {ok:true;owner:CatalogPublicationOwnerV1}
+  | {ok:false;code:'INPUT_REFUSED'|'INSTALLATION_REFUSED'};
+```
+
+Production returns the stated refusal unconditionally, without reading even a
+hostile input, clock, environment, admission object or transport. No mode switch,
+generic public factory or production issuer accepting offline callbacks exists.
+The private module exports these named factories/types only for reviewed internal
+composition/tests; no dispatch barrel change. Domain on the offline owner is a
+label, not its authority: actual private registry membership establishes custody,
+and another owner/consumer may not authenticate it from the label or matching JSON.
+Offline fixture publication exercises mechanics, not operational workflow admission,
+production profile acceptance or a restartable preparation budget. No P4A broker
+or production C installation may be bootstrapped from it.
+
+Construction captures the closed ordinary input and closed runtime's own enumerable
+method descriptors once. No accessors, symbols, extras, thenables or caller-selected
+module/URL/profile are accepted. Never freeze caller functions, timer objects or
+capabilities. Runtime and low-level driver are an explicit offline TCB, not a
+sandbox for arbitrary callback code; their ordinary returns/events remain unknown
+until bounded validation. Node native clocks/timers and the statically imported
+HTTPS request function are the native implementations delivered in P; only their
+production owner activation remains separately gated.
+No callback supplied to the offline factory can be promoted to that production path.
+
+fixtureId is 1..64 ASCII letters/digits/hyphens. workflowId, generationId, scopeId
+and trustScopeId are nonempty 1..128 ASCII letters/digits/dot/underscore/colon/hyphen.
+Scopes number 1..128 with unique scopeId. Each identity list is 1..256 unique
+OpenRouter identities under N's existing exact identity rules; require canonical
+provider/id lexical order rather than silently sorting caller input. Different
+scopeIds may intentionally have equal identities and trustScopeId; they still get
+distinct scope capabilities. All ordinary construction/registration data retain
+depth16,262144 expanded values,4096 UTF-8 bytes per string and1MiB aggregate string
+bounds; opaque trusted runtime/capability objects are not traversed as ordinary data.
+
+The constructor retains every scope declaration immutably before any scope can be
+registered. The installation fixes endpoint/profile/domain to the reviewed constants;
+input cannot supply alternatives. registerCatalogScopeV1 accepts only {scopeId},
+selects that exact captured declaration and creates one frozen empty identity.
+Unknown or already-registered scopeId returns INPUT_REFUSED; no replacement,
+extension, deregistration or scope eviction exists. Initial generation is zero.
+Scope capacity is never shared by equal labels or arrays. Registration methods are
+retained by trusted offline installation, not handed to task payloads. Operation
+registration still requires the issued scope identity and its existing closed input.
+A failed construction or scope registration issues no capability and starts no I/O.
+
+Clock returns are exactly ClockReadingV1. utc and policyExpiresAtUtc are canonical
+UTC millisecond strings (YYYY-MM-DDTHH:mm:ss.sssZ), valid by round-trip date check.
+monoMs and operation deadlineMonoMs are finite, nonnegative and
+<=Number.MAX_SAFE_INTEGER; fractions are allowed. Effective operation deadlines
+retain the existing min(requested, registration time +10000ms) bound and must be
+strictly after registration time before allocation.
+Owner clock readings must not decrease in either UTC milliseconds or monotonic time.
+Unknown, malformed, throwing or backward readings refuse INSTALLATION_REFUSED.
+Construction requires every policy expiry strictly after the captured current UTC.
+Subsequent registration/refresh/read verifies the same immutable profile and relevant
+scope expiry; expiration cannot be repaired by editing a caller record. Publication
+validUntilUtc is min(policy expiry, complete receipt UTC +24h for catalog/+30s for
+absence). UTC receipt ordering is request start <=complete receipt <=evaluation;
+provider dates and publication time never replace these captured times. Acquire/
+verify refuse EXPIRED at or after validUntilUtc or policy expiry. Trusted clock
+reads are allowed synchronously there; no task callback, await, fetch or refresh is.
+
+scheduleWake receives a finite delay in0..10000ms and the owner's bound wake closure,
+returning exactly {timer:object}; timer identity is opaque. clearWake receives that
+same timer and must return undefined. Capture these functions once; catch all throws
+without inspecting thrown values. A wake can only recheck the captured operation's
+clock/deadline/latch, never extend it or select another operation. Record operation
+ownership before scheduling so synchronous/reentrant fixture callbacks cannot race
+unregistered state. A timer failure maps INSTALLATION_REFUSED and latches refusal;
+if I/O might exist, keep capacity until the original transport acknowledges cleanup.
+Native production scheduling is not replaceable by fixture functions. Cleared or
+late wakeups are harmless under the existing terminal/weak-identity rules.
+After a terminal outcome is fixed, including acknowledged CAS, timer-clear failure
+cannot rewrite it or roll publication back. Late wakeups first check terminal state
+without reading a clock. Slot release still follows actual transport cleanup, not
+timer-clear success or failure.
+
+### Shared fixed transport and closed offline driver
+
+This is the only shipped offline seam; no injected fetch, readMetadata success
+record, materializer, source verifier or independently resolved cleanup promise.
+The actual transport state machine receives the following finite interface:
+
+```ts
+type FixedMetadataRequestV1 = {
+  method:'GET';url:'https://openrouter.ai/api/v1/models';
+  headers:{Accept:'application/json';'Accept-Encoding':'identity'};
+  agent:false;rejectUnauthorized:true;maxHeaderSize:16384;
+};
+type MetadataResponseHeadV1 = {statusCode:number;rawHeaders:readonly string[]};
+type MetadataEventsV1 = {
+  socketAssigned:()=>void;
+  socketConnected:()=>void;
+  response:(head:unknown)=>void;
+  data:(chunk:unknown)=>void;
+  responseEnded:()=>void;
+  responseClosed:()=>void;
+  requestClosed:()=>void;
+  socketClosed:()=>void;
+  error:()=>void;
+};
+type MetadataRequestControlV1 = {end:()=>unknown;destroy:()=>unknown};
+type OfflineMetadataDriverV1 = {
+  open:(request:FixedMetadataRequestV1,events:MetadataEventsV1)=>unknown;
+};
+```
+
+open returns exactly MetadataRequestControlV1 with captured callable own data
+methods; end/destroy must return undefined. Shared code constructs the fixed request
+record internally, calls open at most once and end at most once, and owns destruction.
+It installs callbacks before start and tolerates synchronous/reentrant fixture
+events. Fixture closures never receive publisher maps, publication capabilities or
+materialization authority. P must implement the actual native bridge; it statically
+binds actual node:https and translates its owned ClientRequest/IncomingMessage/socket
+events into this same finite interface. It maps response aborted/error to error
+and requires actual IncomingMessage.complete before emitting responseEnded; owned
+request/socket/response close events supply their corresponding acknowledgements.
+Destroy covers all owned request/response/socket resources and is never itself an
+acknowledgement. It does not cast fixture objects as Node
+instances. No TLS/socket connection is made in this checkpoint's tests. Tests prove
+the shared parser/event path, not TLS, DNS, live compatibility or production custody.
+
+Production request construction uses agent:false (no shared pool/warming/reuse),
+TLS verification and maxHeaderSize16384. No custom lookup, proxy/environment routing,
+credential, query, body, redirect, fallback or retry is accepted. The two explicit
+headers above are fixed; Node's necessary protocol-generated Host/Connection headers
+are not caller authority. All received header data are bounded before copying:
+rawHeaders is an even dense array of at most256 name/value pairs; each string and
+the sum of UTF-8 name/value bytes plus four separator bytes per pair are <=16384.
+Native parser maxHeaderSize also enforces the16KiB wire-header bound. The retained
+header budget is a conservative secondary bound, not a claim that reconstructed
+rawHeaders reproduce wire whitespace or status-line bytes exactly.
+
+Names must be HTTP token text; values refuse CR/LF/NUL/control characters except
+horizontal tab. Duplicate Content-Type, Content-Encoding or Content-Length refuses.
+Content-Type is required: application/json with optional sole charset=utf-8 parameter
+(case-insensitive tokens, surrounding HTTP whitespace permitted). Content-Encoding
+must be absent or identity; absence denotes HTTP identity encoding, not a model fact
+default. Content-Length, if present, is an unsigned decimal <=8MiB and must equal
+captured body bytes at end; it never proves response/domain completeness. Other
+bounded headers are informational and discarded. Non-200, redirects, malformed
+headers or excess bounds latch transport refusal and destroy owned I/O.
+
+Chunks must be genuine fixed, nonshared/nonresizable Uint8Array byte views, copied
+without caller iteration. Charge the8MiB aggregate before retaining each chunk.
+Fatal UTF-8 decoding is required; N remains the sole raw JSON/profile materializer,
+including duplicate-key and full-coverage checks. Header/framing/UTF-8 parser
+failures belong to transport; N JSON/profile refusal follows fulfilled transport
+cleanup during synchronous candidate processing, with the slot still retained.
+It cannot retroactively reject the already-settled transport promise. Only one socket assignment and
+one response are permitted. Shared event state requires response end/close, request
+close and owned socket close before success; error/premature close refuses. On failure
+require request close and, if assigned, socket close, plus response close if a response
+exists. No-request prevalidation failure may reject immediately. Once open was invoked,
+a throw/malformed control never proves no I/O: await the owned close acknowledgements,
+or retain the original promise pending if cleanup is uncertain. Late/duplicate events
+cannot settle twice, issue evidence or release a slot twice.
+
+requestStartedAtUtc and completeReceivedAtUtc come from the captured trusted clock
+at owned start and complete body receipt, not at cleanup completion. readMetadataV1's
+success record remains exactly the existing seven-key shape; no extra proof/cleanup
+API is introduced. Its original promise is observed from creation. The owner supplies
+its own AbortSignal and races only the outward caller result; timeout/cancel and parser
+refusal cannot convert destroy/error/abort into a terminal-close acknowledgement.
+
+### Failure mapping, prerequisites and paired controls
+
+Malformed/bounded construction or registration input maps INPUT_REFUSED; capacity
+uses the existing CAPACITY_REFUSED. Missing installation, invalid captured runtime,
+clock/timer failure or invalid current authority maps INSTALLATION_REFUSED. Transport
+status/header/body/UTF-8/driver failures map TRANSPORT_REFUSED unless an earlier
+CANCELLED or DEADLINE_EXCEEDED latch already wins. Existing typed read failures and
+scope-before-generation precedence remain unchanged. N's COMPLETENESS_UNPROVEN is
+forwarded; its other refusals map MATERIALIZATION_REFUSED, retaining bounded original
+code privately without adding result keys. No N refusal publishes a generation.
+
+N is called by its actual static module export, never an injected implementation.
+Preserve its exact MaterializerResultV1 inventory, source/profile/raw-byte/canonical
+bindings and original scope. Retain the captured raw bytes privately as already
+chosen. Catalog success must pass the sole reader; C composition uses the actual
+adapter and genuine request-bound fixture custody, not copied successful JSON.
+Publication supplies neither C's whole acquire record nor quality/billing/account/
+budget/intent authority. Missing those claims remains refusal with no inference.
+
+Before P runtime release integrate reviewed/accepted N implementation and accepted
+C source into this checkout. Neither is present at P's c96569e Step0. P4A1's ratified
+48aab911484722a47ea2291e8a26fdb9fafd904f design has no production admission constructor
+that succeeds and no transferable admission verifier; do not invent one here. Future
+operational P4A composition must directly obtain its genuine admission/claim and
+installation custody under its own release. The offline factory is not that bridge.
+
+Permanent paired controls add: hostile production input with zero reads/effects;
+closed constructor/runtime/driver rejection; exact scope registration and duplicate/
+unknown/foreign scope refusal; equal-label scopes with distinct authority; immutable
+expiry/profile; monotonic/UTC rollback and timer faults;16KiB header boundary/+1 and
+all fixed request fields; fragmented byte/multibyte limits; late/duplicate events;
+open/end/destroy throws; and both successful and refused original promises settling
+only after actual shared-adapter close events. Keep all existing catalog/absence CAS,
+four-slot delayed-cleanup, coalesced-waiter, cancellation and scope-binding controls.
+Do not substitute a fake finished promise for the driver event sequence. Import real
+N/reader/adapter and actual C in offline integration tests after prerequisite merges.
+Fixtures cannot establish operational workflow admission or enable a production path.
+
 ### C composition and activation boundary
 
 C acquire remains synchronous and runs after B1 begin. Refresh/publication must
@@ -547,7 +886,7 @@ completeness; modifying B1, C, D or E contracts; new receipts or production laun
 - [Catalog adapter](../../../routing-policy/src/catalog-eligibility-adapter.ts)
 - [Accepted source semantics](../../goals/routing-currency-and-merit/source-observation-amendment-20260926.md)
 - [Accepted extraction profile](../../goals/routing-currency-and-merit/openrouter-source-profile-20260926.md)
-- [C design](PMC-P2C-same-process-launch-controller.md)
+- [C design](../done/PMC-P2C-same-process-launch-controller.md)
 - [Official models reference](https://openrouter.ai/docs/api/api-reference/models/list-all-models-and-their-properties)
 - [Standing constraints](../../kickstarters/STANDING-CONSTRAINTS.md)
 
@@ -561,14 +900,21 @@ Current release permits exactly these documents:
 Future source proposals, NOT current authorization: checkpoint N would amend
 `plugins/foreman-line/routing-policy/src/public-observation-producer.ts` and
 `plugins/foreman-line/routing-policy/tests/public-observation-producer.test.ts`,
-adding `plugins/foreman-line/routing-policy/tests/fixtures/public-model-response-v1.json`.
+adding `plugins/foreman-line/routing-policy/tests/fixtures/public-model-response-v1.json`
+and `plugins/foreman-line/docs/goals/hybrid-routing-optimization/hro-rcm-materializer-verification.md`.
+These are exactly four future checkpoint N files; no barrel, reader, adapter,
+dependency, retained artifact or publisher file changes. This docs-only amendment
+changes only this spec and the existing shaping notes; the four runtime/report
+paths remain unreleased pending independent design review and root release.
 Checkpoint P would add `plugins/foreman-line/dispatch/src/pmc-launch/catalog-publication.ts`,
 `plugins/foreman-line/dispatch/src/pmc-launch/catalog-publication-types.ts` and
 `plugins/foreman-line/dispatch/tests/pmc-catalog-publication.test.ts`.
 Checkpoint P additionally proposes
 `plugins/foreman-line/dispatch/src/pmc-launch/catalog-metadata-transport.ts` and
 `plugins/foreman-line/dispatch/tests/pmc-catalog-metadata-transport.test.ts`.
-These five P paths freeze proposed publisher/types/fixed-transport ownership;
+Checkpoint P also proposes
+`plugins/foreman-line/docs/goals/hybrid-routing-optimization/hro-rcm-publication-verification.md`.
+These exactly six P paths freeze proposed publisher/types/fixed-transport/report ownership;
 checkpoint N owns the raw response profile and materialization types. No barrel
 change or generic injected production fetch is proposed. Independent review and
 an explicit implementation amendment remain necessary before either checkpoint;
@@ -588,3 +934,165 @@ Do both candidate variants share atomic generation invalidation? Can an incomple
 row enter the absent set or a failed episode quietly reuse old positive data?
 Can equal identity/generation values let one registered scope's absence handle
 verify for another scope under the same owner?
+
+## Checkpoint N implementation release — 2026-09-26
+
+Root accepts the builder's genuine final Step0 atdd0425852c0b7d5a2af9660aa1fe992c27da5599.
+Amended design8dca233 has two independent approvals and delegated ratification.
+Exactly the four checkpoint N source/test/fixture/report paths above are released;
+this supersedes prior docs-only wording solely for checkpoint N. Checkpoint P and
+all production acquisition/activation remain unreleased.
+
+Module-local exports are MaterializerInputV1, MaterializerInventoryRowV1,
+MaterializerRefusalCodeV1, MaterializerResultV1 and
+materializePublicModelResponseV1(input:unknown):MaterializerResultV1. They implement
+the existing reviewed closed unions and actual owner types; no barrel expansion.
+Use explicit UTF-8 parser mode and shared pure price/effort helpers while preserving
+legacy default UTF-16 behavior, retained v2 none-to-off mapping, old public API and
+byte-pinned canonical outputs. No copied reader, price arithmetic or fabricated
+historical validation objects. Literal independently authored expected bytes,
+source references, rates, effort maps and exact full scopes precede code.
+
+Preserve genuine RED/GREEN, full routing regression/typecheck/lint and actual
+reader/adapter compatibility plus hostile/limit/refusal controls. No dependencies,
+network/provider/Pi/credential/configuration effects. Freeze a clean exact-scope
+source/report commit and stop for two independent source reviews; combined main
+integration and remote checks still precede merge. Fixtures and digests remain
+evidence only, never production custody or live endpoint compatibility.
+
+### P native bridge delivery and conservative DNS cleanup
+
+P includes the actual statically wired node:https bridge and shared transport engine
+in catalog-metadata-transport.ts. Implementation is not deferred until activation.
+Freeze these internal module exports, with types owned by catalog-publication-types.ts:
+
+```ts
+type FixedMetadataTransportV1 = {
+  readMetadataV1:(input:{deadlineMonoMs:number;signal:AbortSignal})=>Promise<unknown>;
+};
+function createFixedMetadataTransportV1():FixedMetadataTransportV1;
+function createOfflineMetadataTransportV1(runtime:unknown):
+  | {ok:true;transport:FixedMetadataTransportV1}
+  | {ok:false;code:'INSTALLATION_REFUSED'};
+```
+
+Both factories live in the transport module; native translator and shared engine
+remain unexported. No barrel, dependency, extra file or generic requester is added.
+The fixed factory captures native Date/performance clock reads and timers, binds
+statically imported HTTPS request, and accepts no driver, clock or mode. Construction
+performs no I/O. Only readMetadataV1 can start the fixed request after validation;
+its clocks/timers obey the existing validity rules. The separate offline factory
+captures exactly OfflinePublicationRuntimeV1 under the existing closed-runtime rules.
+The offline publication owner uses only that offline factory. The production owner
+still returns INSTALLATION_REFUSED without inspecting input or constructing either
+transport. Internal export accessibility does not establish publication authority.
+No live invocation is authorized. The existing seven-key success remains unchanged.
+
+The existing transport test file must exercise the actual fixed factory and native
+translator in an isolated child. Install test-only built-in request interception
+before importing the actual module; synchronize built-in ESM exports. Guard original
+HTTP/HTTPS requests, net/TLS connections and DNS entry points against accidental
+network access. Instrumentation stays entirely in that test file, with no shipped
+test flag or substitution port. Synthetic Node event/stream primitives are identified
+as synthetic; do not cast fixture objects as genuine request/socket instances.
+Drive the bridge's attached socket/response/data/end/aborted/error/close listeners.
+Assert actual fixed request arguments, end/destroy calls, real complete-property
+translation, and all owned resource destruction. Paired normal/error tests must
+withhold each applicable close and prove original-promise retention, then complete
+acknowledgements and prove single settlement. Complete=false/missing, invalid input,
+duplicate/reordered events and abort/error/destroy without close are required.
+Offline-driver-only tests cannot satisfy these native bridge obligations. Existing
+offline publisher tests retain four-slot/CAS/outward-cancellation coverage against
+the shared engine; neither test family proves live TLS or production custody.
+
+Close events alone do not acknowledge outstanding DNS. Local read-only evidence:
+Node v24.19.0, process.binding('natives').net SHA-256
+eba05bb24bdd1e208632a1df0fdeeb8e4bdf6ffc062cb19e92f0e7a8c37f60af.
+lookupAndConnectMultiple's DNS callback returns when !self.connecting before emitting
+lookup; its comment explicitly notes the lookup cannot be cancelled. An early
+destroy therefore can close a socket while its lookup remains unobserved. P keeps
+default native address selection and adds no custom/task-selected lookup.
+
+The minimal additional finite driver event is socketConnected, emitted by the native
+translator only on its owned socket's actual connect event. A completed connection
+proves that the preceding default lookup has completed. Require this event in
+addition to all previously specified close acknowledgements before settling any
+original transport promise after request creation. This deliberately conservative
+rule also holds failed lookups or failed connections forever when no connection was
+observed, even if other events suggest completion; no fabricated lookup completion,
+reset, eviction or timeout releases that slot. Caller timeout/refusal remains bounded
+and separate. Pre-open validation still rejects immediately. The earlier failure
+close checklist is necessary but not sufficient: unobserved connection/lookup
+completion keeps cleanup uncertain. Normal success necessarily observes connection.
+Guarded bridge and shared-engine tests must pair connect-then-close completion with
+early-close-without-connect permanent hold, including late error/lookup events that
+cannot manufacture socketConnected. These are synthetic event controls grounded in
+the pinned Node source, not claims of actual DNS execution or cancellation.
+
+## Checkpoint N combined string-budget clarification — 2026-09-26
+
+Root review of frozen source7c9003a identified an ambiguity in the structured
+capture limit. The 1 MiB UTF-8 aggregate is ONE per materializer invocation; scope
+capture and response parsing do not each replenish it. This is bounded accounting
+clarification, not a claim that the existing separate limits are unbounded.
+
+Charge the decoded UTF-8 byte lengths of all closed MaterializerInputV1 object
+keys, its profile/endpoint/domain and three timestamp string values, and each
+expanded requested identity's provider/id keys and string values. Repeated values
+are charged at every occurrence. Arrays do not add string index keys; booleans,
+numbers and structural JSON punctuation do not count toward this STRING budget.
+The bytes field's key is charged, but the raw byte buffer uses its separate8MiB
+limit. Seed raw response parsing with the already charged capture total, then
+charge every decoded response object key and string value to the same counter.
+Exact1,048,576 combined bytes is allowed, one more returns BOUNDS_REFUSED before
+retaining the excess decoded string. Existing per-string, depth/value, scope,
+body and schema limits still apply independently. Output copies/canonical artifacts
+retain their separate reviewed limits; they are not a second source-capture pass.
+
+Preserve the historical parser's default UTF-16 accounting and retained producer
+API/bytes. A narrowly scoped helper parameter may supply the initial raw UTF-8
+counter; no global mutable budget or duplicated parser. Tests must independently
+calculate closed-input overhead and pair exact/one-over combined scope+response
+cases, including two individually sub-limit captures whose sum exceeds1MiB.
+Existing tests that permit a full1MiB scope plus additional response strings must
+change to assert the combined bound, rather than preserving that interpretation.
+
+This paragraph records the root decision. Runtime repair remains stopped pending
+the builder's genuine read-only repair Step0 and an explicit repair release.
+Two independent final source reviews and combined integration remain required.
+## Checkpoint N repair release — 2026-09-26
+
+Root accepts the genuine read-only repair Step0 at4a7e599 from the reassigned
+frontier builder. Release exactly the existing producer, producer test and
+hro-rcm-materializer-verification.md for the combined-budget repair above; the
+raw fixture and all other sources remain frozen. Capture the independently
+calculated exact/one-over failure before code, then focused/full regression,
+typecheck/lint, actual D19 and source-preservation evidence. Freeze clean and stop.
+The repair author will not independently approve this source; root and a different
+frontier reviewer must complete final independent reviews before integration.
+No provider/network, dependency, configuration, push or merge operation is granted.
+
+## Checkpoint P implementation release — 2026-09-26
+
+Root accepts frontier A's genuine read-only Step0 at
+585891033e6502fe8e7e66058d08142a1daa067e, following D's earlier independent
+actual-source check. N is accepted on main98bf162 through PR67 with all12 remote
+checks; accepted C and N are present. Construction773daa has root/A reviews and
+ratification7c10eee. Root releases exactly the six P source/test/report paths in
+the construction amendment, with no owner/barrel/dependency changes.
+
+Implement actual fixed native HTTPS bridge now, shared finite offline engine,
+closed construction/capabilities, four retained transport slots, connected-plus-
+close cleanup acknowledgement, full-scope N catalog/absence, one cancellation-
+checked generation CAS, expiry and synchronous acquisition. Production constructor
+still unconditionally refuses with zero input reads/effects. Do not replace the
+native bridge with a stub or claim close alone completes hidden DNS work.
+Actual N/reader/adapter/C composition and guarded native-event tests are required;
+fixture source claims remain explicitly unauthenticated production evidence.
+
+Use supplied19 matched-lock dependency junctions without installs or donor writes.
+Test-first, full affected checks and actual D19, then freeze a clean six-file
+source/report commit and STOP for root plus an independent frontier review.
+Any actual audit enrollment discovered remains a separate bounded follow-up;
+no detection evasion, broad waiver, live metadata/inference call, credential or
+host configuration action is included. This is delegated Gate2 for P only.

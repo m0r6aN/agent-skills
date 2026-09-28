@@ -1,35 +1,4 @@
 export type {
-  AcceptedCatalogSource,
-  CatalogAdapterRefusalCode,
-  CatalogEligibilityInput,
-  CatalogEligibilityResult,
-  CatalogIdentity,
-} from './catalog-eligibility-adapter.js'
-export { evaluateCatalogEligibility } from './catalog-eligibility-adapter.js'
-export type {
-  CatalogSnapshot,
-  CostSide,
-  ModelRecord,
-  ProviderRecord,
-  SnapshotReadResult,
-  SnapshotRefusalCode,
-} from './catalog-snapshot.js'
-export { readCatalogSnapshot } from './catalog-snapshot.js'
-export type {
-  EligibilityFacts,
-  IdentityRefusalCode,
-  IdentityResult,
-  InputModality,
-  ProjectionLevel,
-  ProjectionResult,
-  Provenance,
-  RateFact,
-  RequestedIdentity,
-  SnapshotLevelRefusalCode,
-  ThinkingLevels,
-} from './eligibility.js'
-export { projectEligibility } from './eligibility.js'
-export type {
   PiOpenRouterAuthority,
   PiOpenRouterCapability,
   PiOpenRouterLane,
@@ -44,16 +13,6 @@ export {
   piOpenRouterRoutingSchema,
   validatePiOpenRouterRouting,
 } from './pi-openrouter.js'
-export { resolvePmcRouteV1 } from './pmc-resolver.js'
-export type * from './pmc-resolver-types.js'
-export type {
-  ProviderBindingProjectionResult,
-  ProviderBindingProjectionV1,
-} from './provider-binding-projection.js'
-export {
-  projectProviderBindingsV1,
-  providerBindingProjectionV1Schema,
-} from './provider-binding-projection.js'
 export { PMC_LANE_POLICIES_V1, providerBindingPolicyV1Schema } from './provider-binding-schemas.js'
 export type {
   BindingEvidenceV1,
@@ -73,17 +32,6 @@ export type {
   ProviderBindingValidationResultV1,
 } from './provider-bindings.js'
 export { validateProviderBindingPolicyV1 } from './provider-bindings.js'
-export type {
-  FactField,
-  InventoryCode,
-  InventoryEntry,
-  InventoryStatus,
-  ProducerCandidate,
-  ProducerRefusalCode,
-  ProducerTrust,
-  ProductionResult,
-} from './public-observation-producer.js'
-export { producePublicObservationSnapshot } from './public-observation-producer.js'
 export {
   classEntrySchema,
   dataClassificationRuleSchema,
