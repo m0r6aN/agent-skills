@@ -13,12 +13,12 @@ param(
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
-$script:R2Root = 'D:/Repos/keon-omega-preserve/provisional-patent-readiness-w0-p01r-r2-fixture-proof-20260913'
+$script:R3Root = 'D:/Repos/keon-omega-preserve/provisional-patent-readiness-w0-p01r-r3-fixture-proof-20260913'
 $script:SRoot = 'D:/Repos/keon-omega-preserve/provisional-patent-readiness-20260913-w0-p01r-source-capture-01'
 $script:Patent = 'D:/Repos/keon-omega/keon-docs-internal/patents'
 $script:Doctrine = 'D:/Repos/keon-omega/keon-doctrine'
-$script:ReviewA = 'D:/Repos/agent-skills-worktrees/provisional-patent-readiness-20260813/plugins/foreman-line/docs/goals/provisional-patent-readiness/handoffs/W0-P01R-R2-F-review-A-accept.json'
-$script:ReviewB = 'D:/Repos/agent-skills-worktrees/provisional-patent-readiness-20260813/plugins/foreman-line/docs/goals/provisional-patent-readiness/handoffs/W0-P01R-R2-F-review-B-accept.json'
+$script:ReviewA = 'D:/Repos/agent-skills-worktrees/provisional-patent-readiness-20260813/plugins/foreman-line/docs/goals/provisional-patent-readiness/handoffs/W0-P01R-R3-F-review-A-accept.json'
+$script:ReviewB = 'D:/Repos/agent-skills-worktrees/provisional-patent-readiness-20260813/plugins/foreman-line/docs/goals/provisional-patent-readiness/handoffs/W0-P01R-R3-F-review-B-accept.json'
 $script:A1Names = @('node_modules','bin','obj','.next','.artifacts','.vs','.venv','dist','packages','.turbo','.nuget','TestResults')
 
 function Get-CanonicalPath([string]$Path) {
@@ -100,6 +100,16 @@ function Write-TextOnce([string]$Path,[string]$Text,[string]$AuthorizedRoot) {
 }
 function Write-JsonOnce([string]$Path,[object]$Value,[string]$AuthorizedRoot) {
     Write-TextOnce $Path ($Value | ConvertTo-Json -Depth 40) $AuthorizedRoot
+}
+function Read-Utf8Text([string]$Path) {
+    # PS 5.1's bare Get-Content may decode BOM-less UTF-8 as the local ANSI page.
+    # Throw on malformed UTF-8 instead of replacing bytes and accepting false paths.
+    Assert-SourcePath $Path
+    $encoding = [Text.UTF8Encoding]::new($false,$true)
+    return [IO.File]::ReadAllText($Path,$encoding)
+}
+function Read-Utf8Json([string]$Path) {
+    return (Read-Utf8Text $Path | ConvertFrom-Json)
 }
 function Get-Sha256([string]$Path) { return (Get-FileHash -LiteralPath $Path -Algorithm SHA256).Hash.ToUpperInvariant() }
 function Get-TextSha256([string]$Text) {
@@ -289,7 +299,7 @@ function Assert-Preflight {
     $chain = @(Get-AncestorChain 'D:/synthetic-proof')
     if ($chain.Count -lt 2 -or -not $chain[-1].Equals('D:\',[StringComparison]::OrdinalIgnoreCase) -or $chain -contains 'D:') { throw 'Drive-root ancestor regression' }
     if (Test-WithinRoot 'D:/synthetic-proof-outside' 'D:/synthetic-proof') { throw 'Output prefix escape regression' }
-    if ([string]::IsNullOrWhiteSpace($env:R2_BUILDER_TASK_ID) -or [string]::IsNullOrWhiteSpace($env:R2_BUILDER_SESSION_ID)) { throw 'Builder task/session identity missing' }
+    if ([string]::IsNullOrWhiteSpace($env:R3_BUILDER_TASK_ID) -or [string]::IsNullOrWhiteSpace($env:R3_BUILDER_SESSION_ID)) { throw 'Builder task/session identity missing' }
     if ($Mode -eq 'SourceCapture') {
         if ($FixtureRoot -or $SourceRoot) { throw 'SourceCapture forbids FixtureRoot/SourceRoot arguments' }
         foreach ($x in @($PatentRoot,$DoctrineRoot,$CaptureRoot,$ExpectedToolSha256)) { if ([string]::IsNullOrWhiteSpace($x)) { throw 'Missing SourceCapture argument' } }
@@ -440,7 +450,8 @@ function Initialize-Fixture([string]$Attempt) {
         $success = Join-Path $Attempt 'fixture-success-source'
         $internal = Join-Path $Attempt 'fixture-internal-link-source'
         $referents = Join-Path $Attempt 'referents'
-        Write-TextOnce (Join-Path $success 'regular.txt') "synthetic success regular`n" $Attempt
+        $unicodeName = 'caf' + [char]0x00E9 + ' plan.txt'
+        Write-TextOnce (Join-Path $success $unicodeName) "synthetic success regular`n" $Attempt
         Ensure-Directory (Join-Path $success 'nested') $Attempt
         Write-TextOnce (Join-Path $success 'nested/nested.txt') "synthetic nested regular`n" $Attempt
         Ensure-Directory (Join-Path $success 'empty-directory') $Attempt
@@ -458,22 +469,23 @@ function Initialize-Fixture([string]$Attempt) {
         $externalItem = Get-Item -LiteralPath $externalLink -Force
         $internalItem = Get-Item -LiteralPath $internalLink -Force
         if ((($externalItem.Attributes -band [IO.FileAttributes]::ReparsePoint) -eq 0) -or (($internalItem.Attributes -band [IO.FileAttributes]::ReparsePoint) -eq 0)) { throw 'Synthetic junction prerequisite failed' }
-        $receipt = [ordered]@{schemaVersion='w0-p01r-r2-layout-v1'; attemptRoot=$Attempt; subroots=$names; externalJunction=$externalLink; internalJunction=$internalLink; layoutSha256=(Get-LayoutDigest $Attempt)}
+        $receipt = [ordered]@{schemaVersion='w0-p01r-r3-layout-v1'; attemptRoot=$Attempt; subroots=$names; rootRegularFile=$unicodeName; replacedR2Slot='regular.txt'; externalJunction=$externalLink; internalJunction=$internalLink; layoutSha256=(Get-LayoutDigest $Attempt)}
         Write-JsonOnce $receiptPath $receipt $Attempt
     } else {
         foreach ($name in $names) { if (-not [IO.Directory]::Exists((Join-Path $Attempt $name))) { throw "Fixture layout subroot missing: $name" } }
-        $receipt = Get-Content -LiteralPath $receiptPath -Raw | ConvertFrom-Json
+        $receipt = Read-Utf8Json $receiptPath
+        if ($receipt.schemaVersion -ne 'w0-p01r-r3-layout-v1' -or $receipt.rootRegularFile -cne ('caf' + [char]0x00E9 + ' plan.txt') -or $receipt.replacedR2Slot -cne 'regular.txt') { throw 'R3 Unicode fixture layout receipt mismatch' }
         if ($receipt.layoutSha256 -ne (Get-LayoutDigest $Attempt)) { throw 'Fixture layout digest mismatch' }
     }
 }
 function New-Envelope([string]$InvocationMode,[string]$Attempt,[string]$InputRoot,[string]$OutputRoot) {
     return [ordered]@{
-        schemaVersion='w0-p01r-r2-v1'; mode=$InvocationMode; toolSha256=(Get-Sha256 $PSCommandPath)
+        schemaVersion='w0-p01r-r3-v1'; mode=$InvocationMode; toolSha256=(Get-Sha256 $PSCommandPath)
         fixtureRoot=$Attempt; sourceRoot=$InputRoot; captureRoot=$OutputRoot
         startedAtUtc=[DateTime]::UtcNow.ToString('o'); completedAtUtc=$null
         remoteOperations=$false; sourceStability=$null; counts=[ordered]@{}
         entries=@(); assertions=[ordered]@{}
-        builderSessionIdentity=[ordered]@{taskId=$env:R2_BUILDER_TASK_ID;sessionId=$env:R2_BUILDER_SESSION_ID}
+        builderSessionIdentity=[ordered]@{taskId=$env:R3_BUILDER_TASK_ID;sessionId=$env:R3_BUILDER_SESSION_ID}
         outputParentAclOwner=$null
     }
 }
@@ -481,9 +493,26 @@ function Write-SidecarAndVerify([string]$Manifest,[string]$AuthorizedRoot) {
     $sidecar = "$Manifest.sha256"
     $digest = Get-Sha256 $Manifest
     Write-TextOnce $sidecar "$digest  $([IO.Path]::GetFileName($Manifest))" $AuthorizedRoot
-    $recorded = ((Get-Content -LiteralPath $sidecar -Raw) -split ' ')[0]
+    $recorded = ((Read-Utf8Text $sidecar) -split ' ')[0]
     if ($recorded -ne (Get-Sha256 $Manifest)) { throw 'Sidecar verification failed' }
     return [ordered]@{manifestSha256=$digest;sidecarSha256=(Get-Sha256 $sidecar);sidecarPath=$sidecar}
+}
+function Assert-PersistedEntries([object[]]$Expected,[object[]]$Persisted,[string]$Label) {
+    if ($Expected.Count -ne $Persisted.Count) { throw "$Label entry-count mismatch" }
+    $seen = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
+    $fields = @('relativePath','entryType','classification','traversed','byteLength','sourceSha256','payloadSha256','copyResult','reason','immediateEntryCount','enumerationError','linkType','resolvedTarget','targetWithinRoot')
+    for ($i=0; $i -lt $Expected.Count; $i++) {
+        $left = $Expected[$i]
+        $right = $Persisted[$i]
+        foreach ($field in $fields) {
+            if ($null -eq $right.PSObject.Properties[$field]) { throw "$Label entry $i missing $field" }
+        }
+        if ([string]$left['relativePath'] -cne [string]$right.relativePath) { throw "$Label entry $i path identity mismatch" }
+        if (-not $seen.Add([string]$right.relativePath)) { throw "$Label duplicate path: $($right.relativePath)" }
+        $leftJson = ConvertTo-Json -InputObject $left -Depth 15 -Compress
+        $rightJson = ConvertTo-Json -InputObject $right -Depth 15 -Compress
+        if ($leftJson -cne $rightJson) { throw "$Label entry $i persisted-field mismatch" }
+    }
 }
 function Invoke-CustodyCapture([string]$InvocationMode,[string]$InputRoot,[string]$OutputRoot,[string]$AuthorizedRoot,[string]$Attempt,[string]$EscapeCandidate) {
     $outputParent = [IO.Path]::GetDirectoryName((Get-CanonicalPath $OutputRoot))
@@ -582,28 +611,32 @@ function Invoke-CustodyCapture([string]$InvocationMode,[string]$InputRoot,[strin
     if (-not $envelope['assertions']['fileCountsEqual'] -or -not $envelope['assertions']['directoryCountsEqual'] -or -not $envelope['assertions']['aggregateHashesEqual']) { throw 'Source/payload count or aggregate hash mismatch' }
     if ($InvocationMode -eq 'FixtureSuccess') {
         if ($excluded.Count -ne 12 -or $opaque.Count -ne 1) { throw 'Synthetic exclusion/link classification mismatch' }
+        $unicodeName = 'caf' + [char]0x00E9 + ' plan.txt'
+        if ($files.Count -ne 2 -or $dirs.Count -ne 2 -or @($files | Where-Object { [string]$_['relativePath'] -ceq $unicodeName }).Count -ne 1 -or @($files | Where-Object { [string]$_['relativePath'] -ceq 'regular.txt' }).Count -ne 0) { throw 'R3 two-file Unicode fixture substitution mismatch' }
         if (-not [IO.Directory]::Exists((Join-Path $payload 'empty-directory'))) { throw 'Empty directory not copied' }
     }
     $envelope['completedAtUtc'] = [DateTime]::UtcNow.ToString('o')
     $manifestPath = Join-Path $OutputRoot 'manifest.json'
     Write-JsonOnce $manifestPath $envelope $AuthorizedRoot
     $sidecar = Write-SidecarAndVerify $manifestPath $AuthorizedRoot
-    $reloaded = Get-Content -LiteralPath $manifestPath -Raw | ConvertFrom-Json
+    $reloaded = Read-Utf8Json $manifestPath
     if ($reloaded.entries.Count -ne $entries.Count -or -not $reloaded.assertions.acceptedCapture -or -not $reloaded.sourceStability.stable -or $reloaded.counts.payloadFiles -ne $files.Count) { throw 'Final persisted manifest differs from reviewed in-memory assertions' }
     foreach ($record in $reloaded.entries) { if ($null -eq $record.PSObject.Properties['payloadSha256']) { throw 'Persisted manifest omitted payloadSha256' } }
-    return [ordered]@{stopped=$false;manifestPath=$manifestPath;manifestSha256=$sidecar['manifestSha256'];sidecarSha256=$sidecar['sidecarSha256'];sourceInventory=$post;counts=$envelope['counts']}
+    Assert-PersistedEntries $entries.ToArray() @($reloaded.entries) "${InvocationMode} manifest"
+    if ((ConvertTo-Json -InputObject $envelope['counts'] -Depth 10 -Compress) -cne (ConvertTo-Json -InputObject $reloaded.counts -Depth 10 -Compress)) { throw 'Persisted capture counts differ from in-memory counts' }
+    return [ordered]@{stopped=$false;manifestPath=$manifestPath;manifestSha256=$sidecar['manifestSha256'];sidecarSha256=$sidecar['sidecarSha256'];sourceInventory=$post;inMemoryEntries=$entries.ToArray();counts=$envelope['counts']}
 }
 function Write-DeterminismReport([string]$Attempt) {
     $aPath = Join-Path $Attempt 'captures/success-a/manifest.json'
     $bPath = Join-Path $Attempt 'captures/success-b/manifest.json'
-    $a = Get-Content -LiteralPath $aPath -Raw | ConvertFrom-Json
-    $b = Get-Content -LiteralPath $bPath -Raw | ConvertFrom-Json
+    $a = Read-Utf8Json $aPath
+    $b = Read-Utf8Json $bPath
     foreach ($m in @($a,$b)) { $m.startedAtUtc=$null; $m.completedAtUtc=$null; $m.captureRoot=$null }
     $normalizedA = $a | ConvertTo-Json -Depth 40 -Compress
     $normalizedB = $b | ConvertTo-Json -Depth 40 -Compress
     $matches = $normalizedA -ceq $normalizedB
     $report = [ordered]@{
-        schemaVersion='w0-p01r-r2-determinism-v1'; matches=$matches
+        schemaVersion='w0-p01r-r3-determinism-v1'; matches=$matches
         normalizedASha256=(Get-TextSha256 $normalizedA);normalizedBSha256=(Get-TextSha256 $normalizedB)
         successAManifestSha256=(Get-Sha256 $aPath);successBManifestSha256=(Get-Sha256 $bPath)
         successASidecarSha256=(Get-Sha256 "$aPath.sha256");successBSidecarSha256=(Get-Sha256 "$bPath.sha256")
@@ -645,7 +678,7 @@ function Assert-FReviews([string]$Attempt,[string]$Digest) {
     $reviews = @()
     $evidenceFields = @(
         'harnessSha256','fixtureLayoutReceiptSha256','preflightReceiptSha256',
-        'deletedPresenceMatrixReceiptSha256',
+        'deletedPresenceMatrixReceiptSha256','unicodeRoundTripReceiptSha256',
         'commandContractSha256','commandReceiptSha256','successReceiptSha256',
         'successAManifestSha256','successASidecarSha256',
         'successBManifestSha256','successBSidecarSha256',
@@ -653,7 +686,7 @@ function Assert-FReviews([string]$Attempt,[string]$Digest) {
     )
     foreach ($path in @($script:ReviewA,$script:ReviewB)) {
         if (-not [IO.File]::Exists($path)) { throw "Missing F ACCEPT record: $path" }
-        $review = Get-Content -LiteralPath $path -Raw | ConvertFrom-Json
+        $review = Read-Utf8Json $path
         if ($review.verdict -ne 'ACCEPT' -or $review.scriptSnapshotSha256 -ne $Digest -or $review.selectedAttempt -ne ([IO.Path]::GetFileName($Attempt))) { throw 'F review binding mismatch' }
         if (-not $review.reviewerTaskId -or -not $review.reviewedAtUtc -or -not $review.underlyingMessageReference -or -not $review.actualDispatchMetadata) { throw 'Incomplete F reviewer identity/message/dispatch evidence' }
         $reviewTime = [DateTime]::MinValue
@@ -680,7 +713,7 @@ function Invoke-SourceCapture {
     $actual = Get-Sha256 $PSCommandPath
     if ($actual -ne $ExpectedToolSha256.ToUpperInvariant()) { throw 'S tool digest mismatch' }
     $attempt = [IO.Path]::GetDirectoryName((Get-CanonicalPath $PSCommandPath))
-    Assert-ExactPath $attempt (Join-Path $script:R2Root 'attempt-01') 'accepted R2 attempt'
+    Assert-ExactPath $attempt (Join-Path $script:R3Root 'attempt-01') 'accepted R3 attempt'
     Assert-ExactPath $PSCommandPath (Join-Path $attempt 'script-snapshot.ps1') 'S script snapshot'
     $reviews = @(Assert-FReviews $attempt $actual)
     if (Test-Path -LiteralPath $CaptureRoot) { throw 'S output root is not initially absent' }
@@ -710,8 +743,12 @@ function Invoke-SourceCapture {
     $postGitPatent = Get-GitBaseline $PatentRoot
     $postGitDoctrine = Get-GitBaseline $DoctrineRoot
     if (($gitPatent | ConvertTo-Json -Depth 20 -Compress) -cne ($postGitPatent | ConvertTo-Json -Depth 20 -Compress) -or ($gitDoctrine | ConvertTo-Json -Depth 20 -Compress) -cne ($postGitDoctrine | ConvertTo-Json -Depth 20 -Compress)) { throw 'S Git classification drift' }
-    $patentManifest = Get-Content -LiteralPath $patentCapture.manifestPath -Raw | ConvertFrom-Json
-    $doctrineManifest = Get-Content -LiteralPath $doctrineCapture.manifestPath -Raw | ConvertFrom-Json
+    $patentManifest = Read-Utf8Json $patentCapture.manifestPath
+    $doctrineManifest = Read-Utf8Json $doctrineCapture.manifestPath
+    Assert-PersistedEntries @($patentCapture['inMemoryEntries']) @($patentManifest.entries) 'S patent track'
+    Assert-PersistedEntries @($doctrineCapture['inMemoryEntries']) @($doctrineManifest.entries) 'S doctrine track'
+    if ((ConvertTo-Json -InputObject $patentCapture['counts'] -Depth 10 -Compress) -cne (ConvertTo-Json -InputObject $patentManifest.counts -Depth 10 -Compress) -or
+        (ConvertTo-Json -InputObject $doctrineCapture['counts'] -Depth 10 -Compress) -cne (ConvertTo-Json -InputObject $doctrineManifest.counts -Depth 10 -Compress)) { throw 'S reloaded track counts mismatch' }
     $allEntries = New-Object 'System.Collections.Generic.List[object]'
     foreach ($track in @(@{name='patents';manifest=$patentManifest},@{name='doctrine';manifest=$doctrineManifest})) {
         foreach ($entry in $track.manifest.entries) {
@@ -732,7 +769,8 @@ function Invoke-SourceCapture {
                 $allEntries.Add($absent)
             } elseif ($decision['disposition'] -eq 'COPIED_FILE') {
                 if ($matches.Count -ne 1 -or $matches[0].entryType -ne 'REGULAR_FILE' -or
-                    $matches[0].copyResult -ne 'COPIED' -or $matches[0].sourceSha256 -ne $matches[0].payloadSha256) {
+                    [string]$matches[0].relativePath -cne $relative -or $matches[0].copyResult -ne 'COPIED' -or
+                    $matches[0].sourceSha256 -ne $matches[0].payloadSha256) {
                     throw "Recreated deletion path not copied exactly once: $relative"
                 }
             } elseif ($decision['disposition'] -eq 'BOUNDARY_PRESERVED') {
@@ -748,7 +786,7 @@ function Invoke-SourceCapture {
     $payloadDirs = [int]$patentManifest.counts.payloadDirectories + [int]$doctrineManifest.counts.payloadDirectories
     if ($sourceFiles -ne $payloadFiles -or $sourceDirs -ne $payloadDirs -or -not $patentManifest.assertions.aggregateHashesEqual -or -not $doctrineManifest.assertions.aggregateHashesEqual) { throw 'S combined count/hash mismatch' }
     $combined = [ordered]@{
-        schemaVersion='w0-p01r-r2-source-v1';mode='SourceCapture';toolSha256=$actual
+        schemaVersion='w0-p01r-r3-source-v1';mode='SourceCapture';toolSha256=$actual
         fixtureRoot=$null;sourceRoot=[ordered]@{patent=$PatentRoot;doctrine=$DoctrineRoot};captureRoot=$CaptureRoot
         startedAtUtc=$started;completedAtUtc=[DateTime]::UtcNow.ToString('o')
         remoteOperations=$false
@@ -759,6 +797,7 @@ function Invoke-SourceCapture {
         selectedAttempt=[IO.Path]::GetFileName($attempt)
         expectedToolSha256=$ExpectedToolSha256.ToUpperInvariant();actualToolSha256=$actual
         deletedPresenceMatrixReceiptSha256=$reviews[0].record.deletedPresenceMatrixReceiptSha256
+        unicodeRoundTripReceiptSha256=$reviews[0].record.unicodeRoundTripReceiptSha256
         patentSourceRoot=$PatentRoot;doctrineSourceRoot=$DoctrineRoot
         fReviewASha256=$reviews[0].sha256;fReviewBSha256=$reviews[1].sha256
         sourceInventoryPre=[ordered]@{patent=$prePatent;doctrine=$preDoctrine}
@@ -767,20 +806,23 @@ function Invoke-SourceCapture {
         deletionReconciliation=[ordered]@{patent=$patentDeleted;doctrine=$doctrineDeleted;patentObservations=$patentObservations;doctrineObservations=$doctrineObservations}
         trackResults=[ordered]@{patent=$patentCapture;doctrine=$doctrineCapture}
         outputParentAclOwner=$parentAcl
-        builderSessionIdentity=[ordered]@{taskId=$env:R2_BUILDER_TASK_ID;sessionId=$env:R2_BUILDER_SESSION_ID}
+        builderSessionIdentity=[ordered]@{taskId=$env:R3_BUILDER_TASK_ID;sessionId=$env:R3_BUILDER_SESSION_ID}
     }
     $combinedPath = Join-Path $CaptureRoot 'combined-manifest.json'
     Write-JsonOnce $combinedPath $combined $CaptureRoot
     $combinedSidecar = Write-SidecarAndVerify $combinedPath $CaptureRoot
-    $reloaded = Get-Content -LiteralPath $combinedPath -Raw | ConvertFrom-Json
-    foreach ($field in @('schemaVersion','mode','toolSha256','fixtureRoot','sourceRoot','captureRoot','startedAtUtc','completedAtUtc','remoteOperations','sourceStability','counts','entries','assertions','expectedToolSha256','actualToolSha256','deletedPresenceMatrixReceiptSha256','fReviewASha256','fReviewBSha256','gitBaseline','deletionReconciliation','outputParentAclOwner','builderSessionIdentity')) {
+    $reloaded = Read-Utf8Json $combinedPath
+    foreach ($field in @('schemaVersion','mode','toolSha256','fixtureRoot','sourceRoot','captureRoot','startedAtUtc','completedAtUtc','remoteOperations','sourceStability','counts','entries','assertions','expectedToolSha256','actualToolSha256','deletedPresenceMatrixReceiptSha256','unicodeRoundTripReceiptSha256','fReviewASha256','fReviewBSha256','gitBaseline','deletionReconciliation','outputParentAclOwner','builderSessionIdentity')) {
         if ($null -eq $reloaded.PSObject.Properties[$field]) { throw "Persisted combined S manifest missing $field" }
     }
-    if ($reloaded.schemaVersion -ne 'w0-p01r-r2-source-v1' -or $reloaded.mode -ne 'SourceCapture' -or $reloaded.toolSha256 -ne $actual -or $reloaded.expectedToolSha256 -ne $actual -or $reloaded.actualToolSha256 -ne $actual) { throw 'Persisted S tool binding mismatch' }
+    if ($reloaded.schemaVersion -ne 'w0-p01r-r3-source-v1' -or $reloaded.mode -ne 'SourceCapture' -or $reloaded.toolSha256 -ne $actual -or $reloaded.expectedToolSha256 -ne $actual -or $reloaded.actualToolSha256 -ne $actual) { throw 'Persisted S tool binding mismatch' }
     if ($reloaded.fReviewASha256 -ne $reviews[0].sha256 -or $reloaded.fReviewBSha256 -ne $reviews[1].sha256) { throw 'Persisted S F-review binding mismatch' }
     if ($reloaded.deletedPresenceMatrixReceiptSha256 -ne $reviews[0].record.deletedPresenceMatrixReceiptSha256) { throw 'Persisted S matrix-receipt binding mismatch' }
+    if ($reloaded.unicodeRoundTripReceiptSha256 -ne $reviews[0].record.unicodeRoundTripReceiptSha256) { throw 'Persisted S Unicode-receipt binding mismatch' }
     if (-not $reloaded.assertions.acceptedCapture -or -not $reloaded.assertions.sourceStable -or -not $reloaded.assertions.gitStable -or -not $reloaded.assertions.fileCountsEqual -or -not $reloaded.assertions.directoryCountsEqual -or -not $reloaded.assertions.patentAggregateHashesEqual -or -not $reloaded.assertions.doctrineAggregateHashesEqual -or -not $reloaded.sourceStability.stable -or $reloaded.remoteOperations) { throw 'Persisted combined S assertions failed' }
     if ($reloaded.entries.Count -ne $allEntries.Count -or $reloaded.counts.sourceFiles -ne $sourceFiles -or $reloaded.counts.payloadFiles -ne $payloadFiles -or $reloaded.counts.trackedDeleted -ne ([int]$patentDeleted['counts']['absentTracked'] + [int]$doctrineDeleted['counts']['absentTracked'])) { throw 'Persisted combined S entry/count mismatch' }
+    Assert-PersistedEntries $allEntries.ToArray() @($reloaded.entries) 'S combined'
+    if ((ConvertTo-Json -InputObject $combined['counts'] -Depth 10 -Compress) -cne (ConvertTo-Json -InputObject $reloaded.counts -Depth 10 -Compress)) { throw 'Persisted combined S counts mismatch' }
     if ([string]::IsNullOrWhiteSpace($reloaded.outputParentAclOwner.sddl) -or [string]::IsNullOrWhiteSpace($reloaded.builderSessionIdentity.taskId) -or [string]::IsNullOrWhiteSpace($reloaded.builderSessionIdentity.sessionId)) { throw 'Persisted combined S ACL or identity missing' }
     foreach ($entry in $reloaded.entries) {
         foreach ($field in @('relativePath','entryType','classification','traversed','byteLength','sourceSha256','payloadSha256','copyResult')) {
@@ -792,7 +834,7 @@ function Invoke-SourceCapture {
 
 Assert-Preflight
 if ($Mode -eq 'SourceCapture') { Invoke-SourceCapture; return }
-Assert-ExactPath $FixtureRoot (Join-Path $script:R2Root 'attempt-01') 'R2 F attempt root'
+Assert-ExactPath $FixtureRoot (Join-Path $script:R3Root 'attempt-01') 'R3 F attempt root'
 $attemptRoot = Get-CanonicalPath $FixtureRoot
 Assert-FInput $SourceRoot $attemptRoot
 Assert-FInput $CaptureRoot $attemptRoot
@@ -812,7 +854,7 @@ $expectedCapture = switch ($Mode) {
 }
 Assert-ExactPath $CaptureRoot $expectedCapture 'F capture'
 Initialize-Fixture $attemptRoot
-$escape = if ($Mode -eq 'ExpectedPathEscape') { Join-Path $script:R2Root 'outside-attempt-path-escape' } else { $null }
+$escape = if ($Mode -eq 'ExpectedPathEscape') { Join-Path $script:R3Root 'outside-attempt-path-escape' } else { $null }
 $result = Invoke-CustodyCapture $Mode $SourceRoot $CaptureRoot $attemptRoot $attemptRoot $escape
 if ($Mode -eq 'FixtureSuccess') {
     if ($result.stopped) { throw 'Success mode yielded a stop' }
