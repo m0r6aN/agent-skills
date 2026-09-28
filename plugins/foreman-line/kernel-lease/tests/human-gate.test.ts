@@ -26,6 +26,7 @@ import {
   EngineError,
   getGoalState,
 } from '../src/index.js'
+import { CLAIM_BOUNDARY, scanForBannedClaims } from '../src/measure.js'
 
 const T0 = 1_700_000_000_000_000
 const FIXTURES = join(import.meta.dirname, 'fixtures')
@@ -308,6 +309,20 @@ test('AC6 residual statement is present and no genuineness claim exists in shipp
   for (const phrase of banned) {
     assert.ok(!readme.toLowerCase().includes(phrase), `README must not claim: ${phrase}`)
   }
+})
+
+test('AC13: the banned-claim scan flags claim-shaped phrases', () => {
+  const flagged = scanForBannedClaims(['the baseline shows a speedup'])
+  assert.equal(flagged.result, 'FAIL')
+  assert.ok(flagged.bannedMatches >= 1)
+})
+
+test('AC13: the shipped claim-boundary prose is itself scan-clean', () => {
+  // The scan is literal-substring based and cannot see negation, so the
+  // boundary statement must name its limits without the banned substrings.
+  const clean = scanForBannedClaims([CLAIM_BOUNDARY])
+  assert.equal(clean.bannedMatches, 0)
+  assert.equal(clean.result, 'PASS')
 })
 
 test('gate rejection does not write anything (a refusal is not an effect)', () => {
