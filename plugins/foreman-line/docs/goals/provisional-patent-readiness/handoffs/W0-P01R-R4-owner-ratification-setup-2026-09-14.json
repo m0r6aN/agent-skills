@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "w0-p01r-r4-owner-ratification-setup-v1",
+  "recordedAtUtc": "2026-09-14T13:38:12Z",
+  "status": "R4_RATIFIED_COORDINATOR_SETUP_COMPLETE_BUILDER_STEP0_ONLY",
+  "ownerTaskHumanRatificationVerbatim": "Ratify W0-P01R-R4 at SHA-256 AAB0287430977DEDE42936E3FC573BE44530E3FA072AE8E06B676587DA3C50CD exactly as specified. Authorize only its new isolated source-free attempt-01 with the actual-candidate final-payload-identity regression and all inherited R2/R3 gates, actual-frontier builder and Coordinator checkpoints, two new independent R4 F ACCEPTs, then unchanged digest-bound copy-only S only after its separate Coordinator S Step 0 ACK and two new independent S ACCEPTs. Preserve all R0/R1/R2/R3 and prior partial roots, fixtures, verdicts and evidence unchanged. No protected-source or source-Git access before those F accepts and S ACK; no staging, commit, merge, push, fetch, pull, remote, package drafting, counsel transmission, disclosure, signature, payment, or filing by this ratification. Existing W0–W4 preparation resumes only after S acceptance and within its prior scope; external action requires my approval of the exact final filing decision packet.",
+  "coordinatorTaskId": "01a09553-cb66-7013-987f-e6659d1a5eb6",
+  "coordinatorTaskHumanRatificationVerbatim": "Ratify W0-P01R-R4 at SHA-256 AAB0287430977DEDE42936E3FC573BE44530E3FA072AE8E06B676587DA3C50CD exactly as specified, including its bounded recovery, preservation requirements, Coordinator checkpoints, and two independent F and S acceptance gates. All external actions remain subject to my approval of the exact final filing decision packet.",
+  "ratifiedPacketPath": "D:/Repos/agent-skills-worktrees/provisional-patent-readiness-20260813/plugins/foreman-line/docs/goals/provisional-patent-readiness/amendments/W0-P01R-R4-proposed-final-payload-identity-recovery.md",
+  "ratifiedPacketSha256": "AAB0287430977DEDE42936E3FC573BE44530E3FA072AE8E06B676587DA3C50CD",
+  "coordinatorRootEvidence": {
+    "ratificationReceipt": {
+      "path": "C:/Users/clint/Documents/Codex/2026-09-14/keon-patent-readiness/r4-ratification-receipt.json",
+      "sha256": "1A80AECE19BCE729606945D685ED16B2570F57C452B306E69E4472A101A994DA"
+    },
+    "preSetupObservation": {
+      "path": "C:/Users/clint/Documents/Codex/2026-09-14/keon-patent-readiness/r4-root-pre-setup-observation.json",
+      "sha256": "B66A528251CEC7F62B0BCB8E14DAF4D37106BC6C1954BD8E401F9AB1B51BC28F",
+      "verifiedHistoricalRegularFiles": 113,
+      "protectedSourceOpenedByOwnerTask": false
+    },
+    "setupObservation": {
+      "path": "C:/Users/clint/Documents/Codex/2026-09-14/keon-patent-readiness/r4-root-setup-observation.json",
+      "sha256": "B256F9994A5334A8514C5AF178C41B95CDDB27E00C42487C93134CE52DBBBB87"
+    }
+  },
+  "ownerReadOnlySetupVerification": {
+    "worktree": "D:/Repos/agent-skills-worktrees/provisional-patent-readiness-w0-p01r-r4-fixture-20260914",
+    "branch": "codex/w0-p01r-r4-fixture-20260914",
+    "head": "cced8e20c8deb2eb21fb5ac242e65cebd3b2c322",
+    "porcelain": "",
+    "candidateAbsent": true,
+    "proofRootAbsent": true,
+    "conditionalSRootAbsent": true,
+    "ownerPerformedSetup": false
+  },
+  "mainPolicyAtStep0Dispatch": {
+    "ref": "main:plugins/foreman-line/routing-policy/routing-policy.yaml",
+    "blobSha1": "83370d6142ae381fa068469f01e3ddc86edd031a",
+    "architectureRiskAllowlist": [
+      "frontier"
+    ],
+    "frontierModel": "openai/gpt-5.6-sol",
+    "shadowRoutesEmpty": true,
+    "note": "Main ref read in full immediately before Step0 dispatch; a different checked-out feature branch is not the main routing policy."
+  },
+  "nextAuthorizedAction": "One new distinct native gpt-5.6-sol/xhigh builder, fork_turns none, READ-ONLY R4 Step 0; builder stops for separate Coordinator ACK. No implementation or attempt before subsequent checkpoints.",
+  "closedGates": [
+    "candidate edit",
+    "harness edit",
+    "fixture/proof creation",
+    "candidate probe or AST execution",
+    "protected-source or source-Git access",
+    "S capture",
+    "downstream package drafting",
+    "staging or commit",
+    "remote operation",
+    "counsel transmission",
+    "disclosure",
+    "signature",
+    "payment",
+    "filing"
+  ]
+}

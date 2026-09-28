@@ -1,0 +1,62 @@
+The four other council seats produced nothing: every seat log is empty. Codex failed because it read the prompt text `review.` as a subcommand (`codex-err.txt`). What follows is my own architecture, taken from `brief.md` and `own-verdict.txt`. No other model has checked it.
+
+## Pi routing inside Foreman Line: architecture
+
+**Main rule:** Foreman decides who is allowed to work and how much risk is allowed. Pi chooses a model only inside the limits Foreman sets. Routing makes execution cheaper and faster. It never grants authority.
+
+```
+┌──────────── Foreman control plane (never routed) ─────────────┐
+│ Coordinator · Approval · Merge · Security gate                 │
+│ Parcel → role + risk + data class + budget ──► Lane assignment │
+└───────────────────────────────┬────────────────────────────────┘
+                                │ worker envelope (lane, allowlist,
+                                │ budget, pins, receipt sink)
+┌───────────────────────────────▼────────────────────────────────┐
+│ Pi worker session                                              │
+│  pi-model-auto  (routes ONLY within envelope allowlist)        │
+│   Low → fast   Medium → coder   High → deep   Ultra → blocked* │
+│  sticky per session, upgrade-only, exact pins honored          │
+└───────────────────────────────┬────────────────────────────────┘
+                                │ every selection/upgrade
+┌───────────────────────────────▼────────────────────────────────┐
+│ Receipts: model, provider, mode, reason, tokens, cost, latency │
+│ → Foreman evidence store (reviewer sees builder's model)       │
+└────────────────────────────────────────────────────────────────┘
+* Ultra = manual frontier lane; needs Foreman approval, not auto-escalation
+```
+
+### Lanes, set by Foreman and enforced by Pi
+
+| Lane | Foreman roles | Pi modes allowed | Thinking level | Routing |
+|---|---|---|---|---|
+| L0 fast | trivial/low-risk builder | Low | minimal | auto |
+| L1 standard | builder | Low–Medium | low/medium | auto |
+| L2 deep | complex builder, analysis | Medium–High | high | auto, with a starting floor |
+| L3 reviewer/verifier | reviewer, verifier | pinned | high | **pinned**, and the provider or model family must differ from the builder's for elevated risk |
+| L4 frontier | coordinator, security, approval | pinned | max | **manual only** |
+
+### Where each setting belongs
+
+- **Pi `models.json`:** provider and model definitions (OpenRouter, OpenCode) with plain `baseUrl` strings and env vars such as `OPENROUTER_API_KEY`. The draft has two errors to fix here: its URLs are written as Markdown links, and its env-var names have backslashes before the underscores.
+- **Pi `settings.json`:** the default provider and model, per-model thinking levels keyed by `provider/modelId`, and `enabledModels`. `enabledModels` is only the list for manual model cycling; it does not route anything.
+- **`pi-model-auto` config:** mode-to-model pins and the allowlist. Foreman writes both **per session from the envelope**, so there is no global config.
+- **Foreman worker envelope:** a new `lane` field plus `modelAllowlist`, `budget`, and `pins`. Mutation-scope guards reject any session whose model falls outside the allowlist.
+
+### Integration rules
+
+1. Foreman sets the lane before Pi starts. Pi cannot move a session up past the lane's highest mode. Hitting that ceiling becomes an escalation request to the coordinator.
+2. The router never picks the model for coordinator, reviewer, verifier, approval, security, or merge work.
+3. Every routing decision and upgrade is written to the parcel's receipts. A parcel with no routing record fails verification.
+4. Sessions only ever move up to stronger models, so each parcel gets a budget cap and a new session per parcel. That stops an expensive model staying active across parcels.
+5. Build this into the **standalone** `D:\Repos\foreman-line` first, because it already has worker envelopes and scope guards. Don't build it into the packaged version: it defaults to `process.cwd()` and hardcodes coordinator and operator identity.
+
+### Rollout
+
+1. Fix the draft config and move the provider definitions into `models.json`.
+2. Run a bake-off on representative parcels with routing in shadow mode: log what the router would choose, but use a fixed model. Measure cost, latency, quality and errors.
+3. Turn on `pi-model-auto` for L0 and L1.
+4. Add L2 once the metrics hold up.
+5. Consider `pi-auto-router` for failover and budgets only after that baseline exists.
+6. Before choosing models, check each one against the current provider catalogs. Claude 3.5 Sonnet and GPT-4o-mini are old identifiers. DeepSeek R1 Distill is a reasoning model and shouldn't be assumed to be good at tool-using coding work.
+
+To get the real council result, fix `launch-seats.ps1` so the Codex prompt goes through stdin or comes after `--`, then run the seats again.

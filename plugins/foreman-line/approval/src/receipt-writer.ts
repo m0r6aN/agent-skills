@@ -7,15 +7,13 @@
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import type { ReceiptDocument } from '../../receipts/src/index.js'
-import { assertAbsoluteRoot } from './errors.js'
+import { DEFAULT_REPO_ROOT } from './paths.js'
 
 export function writeReceiptDocument(
   document: ReceiptDocument,
   locator: string,
-  repoRoot: string,
+  repoRoot: string = DEFAULT_REPO_ROOT,
 ): string {
-  // Required + absolute (P2b-i/R3 + path-guard ruling).
-  assertAbsoluteRoot(repoRoot, 'writeReceiptDocument')
   const absPath = join(repoRoot, ...locator.split('/'))
   mkdirSync(dirname(absPath), { recursive: true })
   writeFileSync(absPath, `${JSON.stringify(document, null, 2)}\n`, 'utf8')

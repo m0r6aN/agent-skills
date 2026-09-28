@@ -4,7 +4,7 @@ import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const packages = Object.freeze([
-  'approval', 'contract-readers', 'contracts', 'dispatch', 'foreman-config',
+  'approval', 'contract-readers', 'contracts', 'dispatch', 'foreman-config', 'hybrid-routing',
   'integration', 'mutation-scope-guard', 'permission-profiles', 'projection',
   'receipts', 'registration', 'role-authority', 'routing-policy',
   'schema-scaffold', 'shaping', 'skill-injection', 'spec-linter', 'verification',

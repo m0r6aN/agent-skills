@@ -54,7 +54,6 @@ function makeFixture(options: FixtureOptions = {}): {
     },
     matrixChecks: options.matrixChecks ?? { 'test-coverage.check': passCheck },
     repoRoot,
-    pluginRoot: join(repoRoot, 'plugins/foreman-line'),
   }
   return { repoRoot, workflowId, input }
 }
