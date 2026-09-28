@@ -13,26 +13,26 @@
     "complete": true
   },
   "outcomeCounts": {
-    "LEASE_HELD": 476,
-    "EFFECT_APPLIED": 120,
+    "LEASE_HELD": 437,
+    "EFFECT_APPLIED": 159,
     "EFFECT_NOOP": 2,
     "STATE_REVISION_STALE": 2
   },
   "percentiles": {
     "elapsedMicros": {
-      "p50": 176,
-      "p90": 1332,
-      "p99": 73593,
-      "p100": 142600
+      "p50": 232,
+      "p90": 1950,
+      "p99": 111746,
+      "p100": 268033
     },
     "lockWaitMicros": {
-      "p50": 7,
-      "p90": 12,
-      "p99": 60068,
-      "p100": 140505
+      "p50": 8,
+      "p90": 19,
+      "p99": 109166,
+      "p100": 264306
     }
   },
-  "contentionJsonlDigest": "sha256:b80fe0cb6eab5a39d2ccbe6a6da82c37ce33e77dd50c8e1940f8de4299249f3a",
+  "contentionJsonlDigest": "sha256:b434d3f4a8b5e54f5c0a05e60b92db73797bea9198c1b1a4d13badc39f6aa2a7",
   "bannedClaimScan": {
     "performed": true,
     "scope": [
