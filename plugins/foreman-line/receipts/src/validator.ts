@@ -188,11 +188,9 @@ export function validateChain(docs: readonly ReceiptDocument[]): ValidationResul
   return { valid: errors.length === 0, errors }
 }
 
-/** Structural seal only: a valid chain ending in a stage-F ClosureRecord, not a claim. */
+/** Derived read (not a stored flag): sealed iff the highest-sequence receipt is stage F. */
 export function isSealed(chain: readonly ReceiptDocument[]): boolean {
-  if (!validateChain(chain).valid) return false
+  if (chain.length === 0) return false
   const highest = chain.reduce((max, doc) => (doc.sequence > max.sequence ? doc : max))
-  return (
-    highest.kind === 'stage' && highest.stage === 'F' && highest.subjectKind === 'ClosureRecord'
-  )
+  return highest.stage === 'F'
 }

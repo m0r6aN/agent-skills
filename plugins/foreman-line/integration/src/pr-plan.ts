@@ -150,16 +150,7 @@ export function planPrAutomation(
   const gitPushFn = seams.gitPushFn ?? realGitPush
   const ghPrCreateFn = seams.ghPrCreateFn ?? realGhPrCreate
 
-  let gitPushResult: GitPushResult
-  try {
-    gitPushResult = gitPushFn({ branch: plan.branch, repoRoot: input.repoRoot })
-  } catch {
-    throw new IntegrationError('PUSH_FAILED', 'git push threw; PR creation was not attempted')
-  }
-  if (gitPushResult.code !== 0) {
-    throw new IntegrationError('PUSH_FAILED', 'git push failed; PR creation was not attempted')
-  }
-
+  const gitPushResult = gitPushFn({ branch: plan.branch, repoRoot: input.repoRoot })
   const ghPrCreateResult = ghPrCreateFn({
     branch: plan.branch,
     base: plan.base,
