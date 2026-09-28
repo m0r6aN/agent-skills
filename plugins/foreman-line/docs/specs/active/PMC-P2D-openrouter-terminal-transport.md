@@ -1,7 +1,7 @@
 ---
 ticket: PMC-P2D
 title: Owned OpenRouter chat terminal transport
-status: draft
+status: active
 owner: clinton.morgan
 created: 2026-09-26
 updated: 2026-09-26
@@ -35,8 +35,7 @@ implementation remain predecessors. Read actual types rather than copying them.
 Pi source root is development evidence only:
 `D:/nvm/v24.7.0/node_modules/@earendil-works/pi-coding-agent`, version 0.87.1.
 Exact additional hashes and official sources are in the preflight and composition
-notes. Node executable is 24.19.0; existing dependencies only. No vendor edits,
-package installation, absolute shipped import, network experiment or host settings.
+notes. Node executable is 24.19.0. This docs-only amendment performs no package installation. A later explicitly released runtime slice may install only the pinned development dependencies below in its isolated checkout. No vendor edits, absolute shipped import, provider experiment or host settings.
 
 Provider is exactly openrouter; API exactly openai-completions; URL exactly
 `https://openrouter.ai/api/v1/chat/completions`; POST only, public L3..L5 only.
@@ -54,7 +53,7 @@ functions in the three allowed source files, not a generic service framework:
 type TransportCode = 'PAYLOAD_REFUSED' | 'PROFILE_REFUSED' | 'PI_REFUSED'
   | 'HEADERS_REFUSED' | 'BOUND_REFUSED' | 'HOOK_REFUSED' | 'ABORTED'
   | 'CREDENTIAL_REFUSED' | 'HTTP_UNCERTAIN' | 'STREAM_UNCERTAIN'
-  | 'USAGE_UNKNOWN' | 'COST_PRECISION_UNKNOWN' | 'PROOF_REFUSED';
+  | 'USAGE_UNKNOWN' | 'COST_PRECISION_UNKNOWN' | 'PROOF_REFUSED' | 'OUTPUT_TRUNCATED';
 type Charge = {kind:'unknown'; reason:'missing'|'malformed'|'precision'|'incomplete'}
   | {kind:'known'; actualMicroUsd:number};
 type Observation = {kind:'no-send'; code:TransportCode}
@@ -111,17 +110,24 @@ verify compares EVERY RevalidationV1 field to its retained authenticated profile
 and request/decision/wire, checks expiry synchronously, and returns only C's
 accepted union. Repeated verify of the same pending proof is allowed because C
 verifies both before reserve and at final revalidation; send consumes it once.
-Failure invalidates it. Exact wire identity and all bytes/claims must match.
+Failure invalidates it. C ownWire captures a fresh owned wire object while retaining
+boundProof; do not require the preparation object's identity. At the first direct
+call from the installed C verify path, authenticate private boundProof membership,
+all retained wire bytes/fields and every RevalidationV1 field before binding that
+exact C-owned wire object. Bind only after every check succeeds. Subsequent verify,
+send and observation registration require that same C-owned object plus unchanged
+proof/fields/claims; a structurally equal clone, preparation object, foreign proof
+or attempted rebinding refuses. A failed first verification permanently invalidates
+that invocation's proof. No task-callable wire-adoption or binding API is added.
 
 
 The finite private factory result is exactly
 `{terminal:TerminalPortV1, finishInvocation:(result:LaunchResultV1|null)=>Promise<InvocationOutput>}`.
 `InvocationOutput` is the owned closed union
-`{kind:'completed',text:string,finish:'stop'|'length'}` or
+`{kind:'completed',text:string,finish:'stop'}` or
 `{kind:'failed',code:TransportCode}`. Text is at most the same 1 MiB UTF-8
 response bound; it is copied from the private captured response, never a caller
-field. Only acknowledged successful semantic reconciliation and completed Pi
-prompt drainage can produce completed. No partial text is returned on failure.
+field. Only semantic stop, C receipt disposition succeeded, acknowledged reconciliation and completed Pi prompt drainage can produce completed. No partial text is returned on failure.
 Provisional Pi text events remain private and must not be presented as completed.
 finishInvocation accepts only the result delivered directly by its installed C
 wrapper for that invocation; null denotes that wrapper's caught unexpected C
@@ -455,8 +461,14 @@ attest excluded billing components. Count overruns are semantic failure; a compl
 valid account charge can still reconcile exactly. No retries to repair parsing.
 
 Emit pinned Pi events start, text_start(index 0), text_delta*, text_end, then done
-(reason stop or length) only after complete stream AND C's acknowledged successful
-semantic reconciliation. Setup failure must emit error directly if a stream exists;
+(reason stop only) after complete stream AND C's acknowledged successful semantic
+reconciliation. Preserve length in the Observation semantic sent to C. Actual C
+maps known-charge length to terminal-failed-settled, so after that reconciliation
+emit private Pi error with OUTPUT_TRUNCATED and return failed OUTPUT_TRUNCATED;
+never done(length), completed partial text or a rewritten succeeded receipt.
+Unknown-charge length remains uncertain with the full existing liability and owner
+block; truncation must not synthesize a known charge or supersede reconciliation/
+unknown-liability refusal. Existing failure/cleanup precedence still applies. Setup failure must emit error directly if a stream exists;
 otherwise its retained failure terminalizes any late stream. Post-start failures emit
 error reason error/aborted and end stream once. No thinking/tool/deferred events.
 Partial content is provisional, never an execution receipt. Pi AssistantMessage
@@ -471,11 +483,58 @@ usage they are zero-valued NOT-YET-OBSERVED placeholders. Always attach diagnost
 accountingAuthority:'pmc-ledger',usageObserved:boolean}}`. Estimated total is sum
 of estimated components, never a fabricated split of account cost. Unknown detail
 counts remain represented by diagnostic evidence, not a claim of measured zero.
-Do not expose Pi usage totals as actual spend; P2E presents only reconciled receipt
-and output text. If the actual pinned session cannot preserve this distinction,
-refuse integration rather than claim numeric placeholders are actual accounting.
+Do not expose Pi usage totals as actual spend. The pinned getSessionStats path calls
+addUsageToTotals, which sums usage.cost.total without inspecting diagnostics.
+This internal accumulation is permitted only inside the private one-shot session:
+it is compatibility estimation, never accounting. Do not change Pi's accumulator.
+Retain and test the diagnostic on the actual assistant message/session; the
+accumulator itself is not required to interpret it. No session, statistics, usage
+object or estimate is exported to callers or used for permit, ledger, liability,
+actual-spend metrics or savings. P2E presents only C's reconciled receipt and bounded
+output text. If diagnostics are lost from the actual session or private estimates
+escape this boundary, refuse integration rather than relabel them as actual cost.
 Ledger proof uses only the separate Charge union above. Unknown settlement emits
 error even if all text arrived; no successful done before owner/ledger closure.
+
+### Portable pinned Pi dependency boundary
+
+This amendment from 343250e08eaee72581d7b925a7b9b6796f9e3536 changes documentation
+only. Independent design review and a fresh builder Step 0 precede runtime release.
+Future dispatch devDependencies are exactly @earendil-works/pi-coding-agent:0.87.1
+and @earendil-works/pi-ai:0.87.1 for the directly imported nominal declarations.
+If an actual direct pi-agent-core type import is required, the builder's Step 0
+must name that symbol/import and declare @earendil-works/pi-agent-core:0.87.1 before
+install; otherwise omit that direct dependency. No floating version/range or
+runtime-selected version. This does not authorize arbitrary extra dependencies.
+
+The coding-agent root package exports ModelRuntime, createAgentSession,
+SettingsManager, SessionManager, ResourceLoader and createExtensionRuntime; pi-ai
+exports the model/context/options/event-stream types through its declared exports.
+Use portable package specifiers and exact actual types. Production adapter modules
+use type-only Pi imports until reviewed private installation supplies the genuine
+constructors/functions. No ts-ignore, absolute local import, structural class cast,
+copy of Pi class types or donor node_modules resolution satisfies this contract.
+
+Install only in the future runtime checkout's own real dependency directory,
+never through an existing dependency junction or into a donor/global installation.
+The builder must inspect the target first and stop for an isolated setup if it is
+a junction; do not mutate its target or replace another owner's dependencies.
+Commit normal package.json/package-lock.json changes and run normal CI typecheck
+plus real Pi tests from that locked installation. Check all 35 existing source
+hashes against the actual resolved package files, including nested/hoisted pi-ai
+and pi-agent-core resolution. Version equality alone is insufficient. A mismatch
+or incompatible nominal duplicate resolution holds for an approved amendment;
+never silently repin, downgrade or cast it away. Existing 35 inspection pins stay
+unchanged. Guarded dynamic import and private actual-runtime construction are
+required tests, not claims established by inspecting installed declarations.
+
+Additional actual-composition controls must start from C's genuine ownWire clone,
+prove two verifies and one send on that object, and reject original/clone/cross-wire
+substitution. Real known-charge length must settle through unchanged C/B1/ledger
+and return OUTPUT_TRUNCATED with no completed text; stop succeeds, unknown-cost
+length stays unknown and failed cleanup cannot become success. Actual Pi session
+retains the diagnostic while its internal numeric accumulator remains private;
+assert external output has only the reviewed receipt/text or failure contract.
 
 ## Acceptance Criteria
 
@@ -493,15 +552,15 @@ error even if all text arrived; no successful done before owner/ledger closure.
 ## Out of Scope
 
 Other protocols/providers, built-in sender delegation, tools/images/multiturn
-agents, real calls/probes/spend, credentials/host settings, extra dependencies,
+agents, real calls/probes/spend, credentials/host settings, dependencies beyond the pinned development set below,
 ledger/controller/owner rewrites, ranking/model map changes, raw receipt storage,
 IPC/HMAC, generic extension support, production activation and full HRO exit.
 
 ## Context & References
 
 - [Amendment 05](../../goals/pi-model-configuration/gate-1-amendment-05.md)
-- [P2C](PMC-P2C-same-process-launch-controller.md)
-- [P2B1](PMC-P2B1-durable-intent-custody.md)
+- [P2C](../done/PMC-P2C-same-process-launch-controller.md)
+- [P2B1](../done/PMC-P2B1-durable-intent-custody.md)
 - [Source preflight](../../goals/pi-model-configuration/pmc-p2d-terminal-preflight.md)
 - [Composition notes](../../goals/pi-model-configuration/pmc-p2d-composition-notes.md)
 
@@ -516,8 +575,10 @@ Future implementation only after reviewed contract and explicit dispatch:
 - plugins/foreman-line/dispatch/tests/pmc-owned-sender.test.ts
 - plugins/foreman-line/dispatch/tests/pmc-pi-runtime.test.ts
 - plugins/foreman-line/docs/goals/pi-model-configuration/pmc-p2d-verification.md
+- plugins/foreman-line/dispatch/package.json
+- plugins/foreman-line/dispatch/package-lock.json
 
-No barrel, dependency/lock/config, C/B/B1/A/RCM changes. This shaping task writes
+Exactly nine future implementation files are listed above. No barrel, other dependency/lock/config, C/B/B1/A/RCM changes. This shaping task writes
 ONLY this draft, terminal-preflight and composition-notes; no ShapingResult under
 the coordinator's explicit three-document envelope.
 
@@ -527,9 +588,7 @@ Shaping: existing frozen donor spec-linter; required body/local-link checks;
 git diff --check and exact three-file diff. No source execution or inference.
 Future runtime: Node24.19.0; from plugins/foreman-line/dispatch run `npm.cmd test`,
 `npm.cmd run typecheck`, `npm.cmd run lint` and check exit codes. Temporary actual
-Pi module typecheck harness resolves the pinned installed declarations; shipped
-imports remain injected/portable and package dependencies unchanged. Network is
-blocked before actual-code tests import approved modules; inspect imports first.
+Pi typecheck must resolve the isolated checkout's locked portable package declarations as part of normal dispatch CI typecheck, not an absolute-path-only side harness. Network, ambient-auth/file and subprocess guards are installed before dynamic imports in actual-code tests; inspect imports first.
 Fake streams prove parser/controller logic, not actual Pi initialization, TLS,
 provider identity, endpoint pricing or paid bounds. Live evidence requires its
 own future authorization, authoritative profile and nonzero accepted reserve.
@@ -550,3 +609,112 @@ ratified useful lane and source-map level; independent quality/privacy/availabil
 evidence. No real production certificate is present. Offline implementation may
 be released only with an explicit reviewed refusal-only production limitation;
 that release cannot count as public activation or full HRO completion.
+
+## Offline runtime/setup release — 2026-09-26
+
+The frontier PMC builder completed fresh actual Step0 and stopped at572f395,
+rechecking all35 inspection hashes, actual predecessor sources and portable
+package exports. Root accepts that Step0 under delegated prerequisite authority.
+Exactly the nine implementation paths above are released. Direct new development
+dependencies are only coding-agent0.87.1 and pi-ai0.87.1; no direct pi-agent-core
+import/dependency is needed or authorized without a concrete follow-up disposition.
+
+Use only this isolated checkout's real dependency directories, inspecting every
+target before setup. Installing the two exact packages and existing sibling lock
+closures is authorized with scripts disabled, normal lock generation for dispatch
+only and no changes to sibling manifests/locks. Empty task-owned npm user/global
+configuration and a hygienic child environment prevent ambient credential/proxy
+use. Necessary public npm-registry retrieval of locked dependencies is authorized
+if the local cache is insufficient; this is package setup, never a provider API
+call. Do not use an alternate registry or run package install scripts. Recheck all
+35 actual resolved pins and nominal compatibility before dynamic Pi import.
+Mismatch holds for review; never silently repin, cast or suppress errors.
+
+Preserve guards-before-import and genuine RED/GREEN, actual Pi/C/B1/ledger offline
+composition, exact wire identity, stop-only completion and private diagnostic
+retention. Production remains refusal-only before reserve, credential supplier or
+HTTPS without genuine production evidence. No provider call, host configuration,
+credential read, new dependency outside the frozen set or predecessor edit.
+C reader/audit/main acceptance remains a shipping gate. Freeze a clean source/report
+handoff after focused and appropriate regression/typecheck/lint checks; two source
+reviews, combined checks and remote CI still precede merge or activation.
+
+### Reassigned completion release — 2026-09-26
+
+The separate PMC app task's latest user instruction limits it to a draft response;
+that scope is honored. Under the HRO user's explicit prerequisite-completion
+and blanket decision authority, root reassigns this unfinished nine-file parcel
+to frontier D inside HRO. Existing eight in-progress paths are preserved, not
+reset or treated as accepted source. D's genuine read-only Step0 ate56b756 found
+all35 local inspection hashes matching, actual direct/nested Pi0.87.1 directories,
+old lock entries/versions/integrities preserved, and53 parser/sender tests passing.
+Typecheck currently fails on missing composition/profile exports; the Pi port is
+only a production-refusal stub and the verification report does not yet exist.
+
+Root explicitly releases completion in the same nine-file envelope above. Existing
+spec, custody, nominal Pi types, bounds and no-live restrictions remain. Complete
+the real private Pi rendezvous and actual guarded Pi/C/B1/ledger composition,
+including stop/known and unknown truncation, no-send, replay, failure and cleanup.
+The seed test's missing exported offline composer/makeSender shape is not an
+approved runtime API: replace that unfinished assumption with the reviewed
+installation-private statically owned sender and test-only guarded native-boundary
+substitution. No shipped generic fake sender/factory, mode flag or structural Pi
+class substitution. No other source/package change is authorized.
+
+Existing installation execution provenance is reported as prior builder evidence;
+D's direct hash/directory/lock checks are independent evidence of the resulting
+packages, not a claim that contents prove install flags. Do not reinstall or touch
+global packages/credentials/configuration. Run genuine missing-case RED/GREEN,
+full affected checks, freeze the exact nine-file source/report commit and STOP
+for root plus another independent frontier review. No push/merge/provider call.
+
+### Combined scaffold compatibility amendment — proposed 2026-09-26
+
+Combined head be38c5a passes dispatch567, routing964, readers72, mutation44 and
+applicable checks, but full verification is 657/658: W3-P1 scaffold AC1 currently
+requires its devDependencies map to equal dispatch's whole map. The two previously
+reviewed exact Pi0.87.1 development dependencies are dispatch-only conformance
+fixtures, not verification tooling. Adding them to unrelated packages would expand
+dependency scope without a runtime need. This is a real failed integration gate.
+
+Amend that one static scaffold assertion to retain exact shared tooling membership
+(@biomejs/biome, @types/node, tsx, typescript) and exact version parity, while allowing
+only dispatch's two explicitly named SDK additions, each exactly0.87.1. Verification
+must have exactly its shared four keys; dispatch must have exactly those four plus
+@earendil-works/pi-coding-agent and @earendil-works/pi-ai. No arbitrary extras,
+missing tools, version drift, range pins, waived assertion or broad subset test.
+Keep every engine/export/script/runtime-dependency/config assertion unchanged.
+This is a narrow current-scope clarification of the historical W3-P1 sibling pattern,
+not a change to any package manifest, lockfile, runtime or production dependency.
+
+Proposed implementation envelope: existing verification/tests/scaffold.test.ts and
+this parcel's existing verification report only. A test-local assertion helper may
+support real positive manifests plus synthetic negative controls: shared version
+drift, each missing shared key, unexpected extras on either side, either missing
+SDK addition and either changed SDK version/range. Do not mutate repository
+manifests in tests. Run focused scaffold and full verification, verification
+ typecheck/lint and actual D19; preserve source/lock identity and all prior checks.
+
+Root records the failure and proposes this amendment under delegated prerequisite
+authority. Independent contract review, genuine stopped Step0 and explicit release
+precede edits; two independent fix reviews and all combined/remote gates still
+precede merge. PR70 remains draft and cannot merge with the current failure.
+
+### Scaffold amendment ratification and repair release — 2026-09-26
+
+Root ratifies the amendment after independent frontier D approval and Luna's
+stopped read-only Step 0 at d9f2e65. The actual clean integration checkout is
+D:/Repos/agent-skills-worktrees/hro-pmc-p2d-runtime-20260926 on
+codex/hro-pmc-d-integration-20260926. Focused reproduction is 7/8 with only AC1
+failing. Shared tools are exactly pinned (2.5.14, 26.6.2, 4.23.15, 7.0.2 in the
+order named above), with the two dispatch-only SDK packages each 0.87.1.
+
+Luna is explicitly released to edit only verification/tests/scaffold.test.ts and
+docs/goals/pi-model-configuration/pmc-p2d-verification.md. Shared tool versions
+must match and be exact numeric x.y.z pins; even equal range strings on both sides
+must fail. Include each missing tool on each side, extras on either side, drift,
+equal ranges, either missing SDK and either changed/ranged SDK as negative
+controls. Keep all remaining assertions. No manifests, locks, runtime changes,
+installs or provider activity. Run focused and full verification, applicable
+typecheck/lint and actual D19. Freeze clean for root and independent A review;
+PR70 stays draft until both approvals and exact-head CI pass.

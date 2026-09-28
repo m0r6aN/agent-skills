@@ -1,7 +1,7 @@
 ---
 ticket: PMC-P2B
 title: Durable micro-USD budget ledger and attempt state
-status: active
+status: done
 owner: clinton.morgan
 created: 2026-09-26
 updated: 2026-09-26
@@ -186,7 +186,7 @@ new budget amounts, host configuration, caller migration and activation.
 
 - [Amendment 05](../../goals/pi-model-configuration/gate-1-amendment-05.md)
 - [P2 inventory](../../goals/pi-model-configuration/pmc-p2-design-inventory.md)
-- [P2A](PMC-P2A-owner-resolver.md)
+- [P2A](../done/PMC-P2A-owner-resolver.md)
 - [Node 24 SQLite API](https://nodejs.org/download/release/v24.14.0/docs/api/sqlite.html)
 - [SQLite transactions](https://www.sqlite.org/lang_transaction.html)
 - [SQLite durability settings](https://www.sqlite.org/pragma.html#pragma_synchronous)
@@ -523,3 +523,38 @@ implementation reviews will verify actual behavior, not merely design acceptance
 Two fresh frontier reviews plus green full remote CI are required before merge.
 No real ledger initialization, budget provisioning, provider spend or activation
 is authorized by this implementation parcel; tests use isolated temporary roots.
+## Integration audit amendment — 2026-09-26
+
+The HRO coordinator ratifies this narrow amendment under the user's delegated
+prerequisite authority. Combined head f43098e fails D19 on exactly ten existing
+ledger sites: two guarded resolve(root) calls and eight SQLite db.exec calls.
+Independent integration review reproduced these classifications, found no new
+ledger implementation defect, and accepted a bounded audit repair design.
+The reviewed ledger and money implementation stay unchanged.
+
+Additional allowed repair files, and no others:
+- plugins/foreman-line/verification/src/d19-audit.ts
+- plugins/foreman-line/verification/tests/pmc-ledger-audit.test.ts
+- plugins/foreman-line/docs/goals/pi-model-configuration/pmc-p2b-audit-repair.md
+
+Enroll only these reviewed sites by exact relative file identity, token-normalized
+AST owner/provenance fingerprints, per-call roles and exact cardinalities. Pin
+path, settings, transaction, initializeLocalPmcLedger, connection construction and
+relevant import provenance. The complete guarded function/body fingerprints can
+serve as reviewed structural values; this is not a general dataflow analyzer.
+Never exempt an entire file, arbitrary DatabaseSync annotation, receiver named db,
+or any guard-looking root. Root guard must precede its resolve sites. Missing,
+extra, changed or relocated owners/sites/provenance fail whenever the file is
+swept. Keep other existing D19 classifications and registry/provenance pins intact.
+
+Permanent positive and negative controls must cover every pinned owner/site,
+guard polarity/operand/order/control flow, import/constructor/receiver substitution,
+assignment/shadowing, SQL argument changes, optionality/wrappers, same-name owners
+in other files, under/over cardinality, and a real subprocess exec in the ledger
+file. Formatting/comments may pass. Record AST fingerprint algorithm, scope and
+its syntactic limitation; do not claim general flow or runtime integrity proof.
+
+Builder begins at a real Step0 and stops for release. Run focused audit tests,
+full verification and mutation-scope suites, typecheck/lint, real-tree D19 and
+unchanged ledger checks. Return a local commit and handoff; no push or merge.
+Two independent repair approvals and complete green remote CI remain required.
