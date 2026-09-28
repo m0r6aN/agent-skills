@@ -667,3 +667,54 @@ packages, not a claim that contents prove install flags. Do not reinstall or tou
 global packages/credentials/configuration. Run genuine missing-case RED/GREEN,
 full affected checks, freeze the exact nine-file source/report commit and STOP
 for root plus another independent frontier review. No push/merge/provider call.
+
+### Combined scaffold compatibility amendment — proposed 2026-09-26
+
+Combined head be38c5a passes dispatch567, routing964, readers72, mutation44 and
+applicable checks, but full verification is 657/658: W3-P1 scaffold AC1 currently
+requires its devDependencies map to equal dispatch's whole map. The two previously
+reviewed exact Pi0.87.1 development dependencies are dispatch-only conformance
+fixtures, not verification tooling. Adding them to unrelated packages would expand
+dependency scope without a runtime need. This is a real failed integration gate.
+
+Amend that one static scaffold assertion to retain exact shared tooling membership
+(@biomejs/biome, @types/node, tsx, typescript) and exact version parity, while allowing
+only dispatch's two explicitly named SDK additions, each exactly0.87.1. Verification
+must have exactly its shared four keys; dispatch must have exactly those four plus
+@earendil-works/pi-coding-agent and @earendil-works/pi-ai. No arbitrary extras,
+missing tools, version drift, range pins, waived assertion or broad subset test.
+Keep every engine/export/script/runtime-dependency/config assertion unchanged.
+This is a narrow current-scope clarification of the historical W3-P1 sibling pattern,
+not a change to any package manifest, lockfile, runtime or production dependency.
+
+Proposed implementation envelope: existing verification/tests/scaffold.test.ts and
+this parcel's existing verification report only. A test-local assertion helper may
+support real positive manifests plus synthetic negative controls: shared version
+drift, each missing shared key, unexpected extras on either side, either missing
+SDK addition and either changed SDK version/range. Do not mutate repository
+manifests in tests. Run focused scaffold and full verification, verification
+ typecheck/lint and actual D19; preserve source/lock identity and all prior checks.
+
+Root records the failure and proposes this amendment under delegated prerequisite
+authority. Independent contract review, genuine stopped Step0 and explicit release
+precede edits; two independent fix reviews and all combined/remote gates still
+precede merge. PR70 remains draft and cannot merge with the current failure.
+
+### Scaffold amendment ratification and repair release — 2026-09-26
+
+Root ratifies the amendment after independent frontier D approval and Luna's
+stopped read-only Step 0 at d9f2e65. The actual clean integration checkout is
+D:/Repos/agent-skills-worktrees/hro-pmc-p2d-runtime-20260926 on
+codex/hro-pmc-d-integration-20260926. Focused reproduction is 7/8 with only AC1
+failing. Shared tools are exactly pinned (2.5.14, 26.6.2, 4.23.15, 7.0.2 in the
+order named above), with the two dispatch-only SDK packages each 0.87.1.
+
+Luna is explicitly released to edit only verification/tests/scaffold.test.ts and
+docs/goals/pi-model-configuration/pmc-p2d-verification.md. Shared tool versions
+must match and be exact numeric x.y.z pins; even equal range strings on both sides
+must fail. Include each missing tool on each side, extras on either side, drift,
+equal ranges, either missing SDK and either changed/ranged SDK as negative
+controls. Keep all remaining assertions. No manifests, locks, runtime changes,
+installs or provider activity. Run focused and full verification, applicable
+typecheck/lint and actual D19. Freeze clean for root and independent A review;
+PR70 stays draft until both approvals and exact-head CI pass.

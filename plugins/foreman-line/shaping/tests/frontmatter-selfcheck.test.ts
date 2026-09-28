@@ -1,26 +1,19 @@
 /**
  * AC8: the frontmatter self-check REUSES the imported parseFrontmatter +
- * validateSpecFrontmatter from spec-linter. A valid v0.2 draft passes; a draft
- * missing a required field (`risk`) is rejected with the linter's own
- * violation surfaced. The linter is an intentional integration surface for
- * foreman-config, so this test no longer treats its source as frozen.
+ * validateSpecFrontmatter from frozen spec-linter (relative ESM specifier, no
+ * modification). A valid v0.2 draft passes; a draft missing a required field
+ * (`risk`) is rejected with the linter's own violation surfaced. A git check
+ * confirms no file under spec-linter/ is modified by this parcel.
  */
 import assert from 'node:assert/strict'
-import { readFileSync } from 'node:fs'
+import { execFileSync } from 'node:child_process'
 import { dirname, join } from 'node:path'
 import { test } from 'node:test'
 import { fileURLToPath } from 'node:url'
 import { checkFrontmatter } from '../src/index.js'
 import { CONFORMANT_DRAFT, DRAFT_MISSING_RISK } from './helpers.js'
 
-const specLinterCliPath = join(
-  dirname(fileURLToPath(import.meta.url)),
-  '..',
-  '..',
-  'spec-linter',
-  'src',
-  'cli.ts',
-)
+const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..')
 
 test('AC8: a valid v0.2 draft passes the frontmatter self-check', () => {
   const result = checkFrontmatter(CONFORMANT_DRAFT)
@@ -36,10 +29,14 @@ test('AC8: a draft missing the required `risk` field is rejected with the linter
   )
 })
 
-test('AC8: spec-linter integration is present for the config-aware boundary', () => {
-  const out = readFileSync(specLinterCliPath, 'utf8')
-  assert.ok(
-    out.includes('foreman-config'),
-    'expected the config-aware linter integration to be present',
+test('AC8: no file under spec-linter/ is modified by this parcel', () => {
+  const out = execFileSync(
+    'git',
+    ['diff', 'HEAD', '--stat', '--', 'plugins/foreman-line/spec-linter'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
   )
+  assert.equal(out.trim(), '')
 })

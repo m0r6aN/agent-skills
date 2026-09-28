@@ -7,7 +7,7 @@
  */
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
-import { dirname, join, relative } from 'node:path'
+import { dirname, join } from 'node:path'
 import { test } from 'node:test'
 import { fileURLToPath } from 'node:url'
 import { parseFrontmatter, validateSpecFrontmatter } from '../src/validate.js'
@@ -15,10 +15,6 @@ import { parseFrontmatter, validateSpecFrontmatter } from '../src/validate.js'
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..')
 const doneDir = join(repoRoot, 'plugins', 'foreman-line', 'docs', 'specs', 'done')
 const parcelCompilerDoneDir = join(repoRoot, 'skills', 'parcel-compiler', 'docs', 'specs', 'done')
-
-function documentRef(filePath: string): string {
-  return relative(repoRoot, filePath).split('\\').join('/')
-}
 
 const doneSpecs = [
   'W0-P1-pipeline-stage-contracts.md',
@@ -31,9 +27,7 @@ for (const specFile of doneSpecs) {
     const content = readFileSync(join(doneDir, specFile), 'utf8')
     const doc = parseFrontmatter(content)
     assert.notEqual(doc, null, `${specFile}: no parsable frontmatter`)
-    const result = validateSpecFrontmatter(doc, {
-      documentRef: documentRef(join(doneDir, specFile)),
-    })
+    const result = validateSpecFrontmatter(doc)
     assert.deepEqual(result.errors, [], `${specFile}: unexpected violations`)
     assert.equal(result.valid, true)
   })
@@ -44,9 +38,7 @@ test('live corpus: PCC-P0-pcc-cli-scaffold.md has zero schema/semantic violation
   const content = readFileSync(join(parcelCompilerDoneDir, specFile), 'utf8')
   const doc = parseFrontmatter(content)
   assert.notEqual(doc, null, `${specFile}: no parsable frontmatter`)
-  const result = validateSpecFrontmatter(doc, {
-    documentRef: documentRef(join(parcelCompilerDoneDir, specFile)),
-  })
+  const result = validateSpecFrontmatter(doc)
   assert.deepEqual(result.errors, [], `${specFile}: unexpected violations`)
   assert.equal(result.valid, true)
 })

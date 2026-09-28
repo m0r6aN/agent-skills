@@ -28,7 +28,7 @@ function makeEmptyReport(): DocSpineAuditReport {
 function mockSeams(report: DocSpineAuditReport): DocSpineHookSeams {
   return {
     runVerifyFn: async () => report,
-    repoRoot: '/repo',
+    getRepoRoot: () => '/repo',
   }
 }
 
@@ -301,7 +301,7 @@ test('AC9: runVerifyFn throws synchronously → 1 warning annotation, exitCode 0
     runVerifyFn: () => {
       throw new Error('runVerify exploded')
     },
-    repoRoot: '/repo',
+    getRepoRoot: () => '/repo',
   }
 
   const result = await runDocSpineHook(seams)
@@ -318,7 +318,7 @@ test('AC9: runVerifyFn throws synchronously → 1 warning annotation, exitCode 0
 test('AC9: runVerifyFn rejects (async) → 1 warning annotation, exitCode 0', async () => {
   const seams: DocSpineHookSeams = {
     runVerifyFn: () => Promise.reject(new Error('async rejection')),
-    repoRoot: '/repo',
+    getRepoRoot: () => '/repo',
   }
 
   const result = await runDocSpineHook(seams)

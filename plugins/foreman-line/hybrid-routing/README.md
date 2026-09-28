@@ -1,16 +1,10 @@
-# HRO offline consumer compatibility
+# HRO mapping proposal validator
 
 This package validates an HRO-local mapping proposal against separately
-injected, pinned static evidence, then checks an injected eligibility snapshot
-and offline evaluator envelope. `validateConsumerCompatibility` accepts only
-the closed P1b request shape and returns an owned, frozen
-`evidenceOnly: true` proposal/result pair. Every adapter result is treated as
-unknown; malformed, stale, refused, throwing, or thenable values fail closed.
-
-The compatibility harness never authorizes, selects, executes, or discovers a
+injected, pinned static evidence. It returns an owned, frozen proposal marked
+`evidenceOnly: true`; it never authorizes, selects, executes, or discovers a
 route. It does not read host files, call providers, use ambient time, write
-receipts or configuration, or import PMC/RCM internals. Dispatch access is
-type-only and the production evaluator is never called.
+configuration, or import PMC/RCM internals.
 
 ## Verification
 
@@ -25,4 +19,5 @@ npm run lint
 
 The package has no runtime dependencies. Fixtures in the test suite are
 synthetic and are not production catalog or route authority.
+
 

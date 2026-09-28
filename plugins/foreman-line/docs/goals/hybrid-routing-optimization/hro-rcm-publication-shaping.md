@@ -184,97 +184,18 @@ close/error controls prove the event path, not an unrelated fake promise. All ot
 bounds, source pins, scope/generation rules, completeness predicates and production
 gates remain unchanged. Frozen lint/body/link/whitespace checks precede handoff;
 fresh app-PMC/root review remains required. No runtime or provider effect occurred.
+## Delegated final design ratification — 2026-09-26
 
-## Checkpoint N concrete materializer disposition
+Coordinator and independent PMC reviewer APPROVEc4f1e22b0d15f53b0ac600b940748225d54cf720.
+Both reviewed the complete final contract and cleanup-acknowledgement correction;
+retained producer20af5e8f3fc0c857ce5569ebdcb28ad504c0aed8 and adapter
+39347c4018a3dbf1c0cd9abf0a6e2e9da262bdf8 remain unchanged. No remaining required
+finding. Root ratifies the strict complete-envelope profile, additive pure
+materializer, exact scope/generation custody, operation-owned cancellation and
+original-promise terminal-cleanup protocol under delegated prerequisite authority.
 
-Read-only Step0 at c4f1e22b0d15f53b0ac600b940748225d54cf720 inspected the actual
-producer, canonical reader, adapter and retained producer tests. Root released
-only this note and the existing publication spec to freeze the remaining N details.
-No runtime implementation, dependency setup, endpoint/Pi/configuration call or
-production authority follows from this amendment.
-
-The exact future N envelope is existing public-observation-producer.ts and its
-existing test, new tests/fixtures/public-model-response-v1.json under routing-policy,
-and docs/goals/hybrid-routing-optimization/hro-rcm-materializer-verification.md.
-No barrel, reader, adapter, retained evidence, dependency or publisher changes.
-Two independent amended-design reviews and explicit root release precede coding.
-
-New AcceptedCatalogSource uses profileId openrouter-public-text-materialization,
-profileVersion v1, sourceEvidenceRef/sourceRef exactly
-`openrouter-public-text-materialization/v1:sha256:` plus lowercase raw SHA-256,
-sourceEvidenceSha256 of those raw bytes, canonicalSha256 of actual canonical bytes,
-and the full requested scope. Provider checkedAtUtc is completeReceivedAtUtc.
-The publisher retains actual raw bytes unchanged; pure results gain no new keys.
-Exact index-based JSON Pointers in the spec bind each projected observation back
-to those bytes. No synthetic historical manifest or self-authenticating hash.
-
-The new raw profile intentionally never maps none to off. It accepts only unique
-known supported_efforts and requires a positive max/xhigh/high/medium/low effort;
-observed positive levels map identically. None survives only in retained raw
-evidence. None-only/missing/empty/malformed/duplicate/unknown effort observations
-are incomplete, not reasoning:false. There is no reviewed general mandatory-off
-signal, so no invented boolean or guessed mandatory field. Old retained v2 mapping,
-historical fixtures and canonical bytes remain unchanged, including none-to-off.
-
-Missing/malformed non-domain required facts are incomplete; unsupported requested
-provider is PROFILE_REFUSED; malformed coverage is COMPLETENESS_UNPROVEN for both
-variants. The reviewed InventoryRow union stays closed. New parsing uses explicit
-UTF-8 string limits while retained parsing preserves UTF-16 behavior. Pure price
-and effort helpers may be shared only without changing old semantics. Raw request
-fees and extra observed rates remain evidence, never implied zero or complete
-account tariff. Actual sole-reader and adapter tests prove representation
-compatibility; they cannot prove production acquisition or endpoint compatibility.
-
-Future RED/GREEN covers paired full-envelope variants, independent coverage and
-binding mutations, unknown facts, decimal/effort mapping, hostile inputs and exact
-bounds. Full routing tests/typecheck/lint and retained-output checks remain future
-runtime acceptance. This amendment is checked by frozen linter, body/local links,
-exact two-document whitespace/scope checks and a clean local handoff commit.
-
-## Checkpoint N amended-design acceptance — 2026-09-26
-
-Full publication designc4f1e22 received independent coordinator/PMC approvals and
-ratificationf2dcb7c in its retained shaping checkout. Coordinator and independent
-reviewer D now APPROVE the concrete checkpoint N amendment8dca233ce21d9083cc0368cabff5b7104d932f85.
-The source binding, raw-byte retention, positive-only effort map, typed refusal
-categories and explicit UTF-8 mode fit the actual sole reader/adapter/producer.
-Old retained v2 semantics and byte-pinned output remain mandatory invariants.
-Frozen lint/link/diff checks pass; no remaining design finding.
-
-Root ratifies that deliberate narrower new profile and the exact four-file N
-runtime/report envelope under delegated prerequisite authority. This is design
-acceptance; builder must restate the final amended source plan and stop for explicit
-runtime release. Checkpoint P transport/publication, live endpoint compatibility,
-authentic production acquisition and all downstream launch evidence remain separate.
-
-## Checkpoint N combined string-budget clarification — 2026-09-26
-
-Root review of frozen source7c9003a identified an ambiguity in the structured
-capture limit. The 1 MiB UTF-8 aggregate is ONE per materializer invocation; scope
-capture and response parsing do not each replenish it. This is bounded accounting
-clarification, not a claim that the existing separate limits are unbounded.
-
-Charge the decoded UTF-8 byte lengths of all closed MaterializerInputV1 object
-keys, its profile/endpoint/domain and three timestamp string values, and each
-expanded requested identity's provider/id keys and string values. Repeated values
-are charged at every occurrence. Arrays do not add string index keys; booleans,
-numbers and structural JSON punctuation do not count toward this STRING budget.
-The bytes field's key is charged, but the raw byte buffer uses its separate8MiB
-limit. Seed raw response parsing with the already charged capture total, then
-charge every decoded response object key and string value to the same counter.
-Exact1,048,576 combined bytes is allowed, one more returns BOUNDS_REFUSED before
-retaining the excess decoded string. Existing per-string, depth/value, scope,
-body and schema limits still apply independently. Output copies/canonical artifacts
-retain their separate reviewed limits; they are not a second source-capture pass.
-
-Preserve the historical parser's default UTF-16 accounting and retained producer
-API/bytes. A narrowly scoped helper parameter may supply the initial raw UTF-8
-counter; no global mutable budget or duplicated parser. Tests must independently
-calculate closed-input overhead and pair exact/one-over combined scope+response
-cases, including two individually sub-limit captures whose sum exceeds1MiB.
-Existing tests that permit a full1MiB scope plus additional response strings must
-change to assert the combined bound, rather than preserving that interpretation.
-
-This paragraph records the root decision. Runtime repair remains stopped pending
-the builder's genuine read-only repair Step0 and an explicit repair release.
-Two independent final source reviews and combined integration remain required.
+This accepts design only. Checkpoint N pure materialization and checkpoint P
+publisher/fixed metadata transport each require their own concrete implementation
+amendment, actual Step0 and release. No runtime, live endpoint compatibility,
+production bootstrap, provider/account evidence, billing bound or model launch
+is inferred. Frozen lint/link/diff checks pass; no runtime tests were claimed.

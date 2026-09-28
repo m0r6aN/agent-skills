@@ -52,9 +52,9 @@ export interface KompressOptions {
   /**
    * Absolute path to the repository root. Receipt is written under
    * <repoRoot>/docs/receipts/<workflowId>/kompress.json.
-   * Required (P2a/D19): never derived from process.cwd().
+   * Defaults to process.cwd(). Tests pass a tmpDir.
    */
-  readonly repoRoot: string
+  readonly repoRoot?: string
 }
 
 // ─── Error class ──────────────────────────────────────────────────────────────
@@ -74,9 +74,9 @@ export class KompressError extends Error {
 export async function kompressContext(
   input: KompressInput,
   compressFn: KompressFn,
-  options: KompressOptions,
+  options: KompressOptions = {},
 ): Promise<KompressResult> {
-  const repoRoot = options.repoRoot
+  const repoRoot = options.repoRoot ?? process.cwd()
 
   // 1. Assemble content — empty chain: parcelSpecText only; with chain: join with separator
   const assembled =
