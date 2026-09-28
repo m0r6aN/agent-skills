@@ -10,7 +10,6 @@ import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { test } from 'node:test'
-import { removeRoot } from './helpers/child-worker.js'
 import {
   closeStorage,
   exportStorage,
@@ -21,6 +20,7 @@ import {
   openStorage,
 } from '@foreman-line/kernel-state'
 import { applyTransition, claimLease, createEngine, requestTransition } from '../src/index.js'
+import { removeRoot } from './helpers/child-worker.js'
 
 const T0 = 1_700_000_000_000_000
 const FIXTURES = join(import.meta.dirname, 'fixtures')

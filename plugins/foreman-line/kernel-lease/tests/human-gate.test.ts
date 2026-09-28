@@ -7,7 +7,6 @@ import { mkdtempSync, readFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { test } from 'node:test'
-import { removeRoot } from './helpers/child-worker.js'
 import {
   closeStorage,
   exportStorage,
@@ -28,6 +27,7 @@ import {
   getGoalState,
 } from '../src/index.js'
 import { CLAIM_BOUNDARY, scanForBannedClaims } from '../src/measure.js'
+import { removeRoot } from './helpers/child-worker.js'
 
 const T0 = 1_700_000_000_000_000
 const FIXTURES = join(import.meta.dirname, 'fixtures')

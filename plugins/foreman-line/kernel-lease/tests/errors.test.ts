@@ -8,7 +8,6 @@ import { mkdtempSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { test } from 'node:test'
-import { removeRoot } from './helpers/child-worker.js'
 import {
   closeStorage,
   fixedClock,
@@ -37,6 +36,7 @@ import {
   requestTransition,
   TrustedClock,
 } from '../src/index.js'
+import { removeRoot } from './helpers/child-worker.js'
 
 const T0 = 1_700_000_000_000_000
 
@@ -91,6 +91,8 @@ const bind = (op: string, who = 'principal-a') => ({
   payloadDigest: `sha256:${Buffer.from(op).toString('hex').padEnd(64, '0').slice(0, 64)}`,
 })
 
+const observedRefusalCodes = new Set<string>()
+
 function expectCode(fn: () => unknown, code: string): EngineError {
   let caught: unknown
   try {
@@ -100,12 +102,13 @@ function expectCode(fn: () => unknown, code: string): EngineError {
   }
   assert.ok(caught instanceof EngineError, `expected EngineError ${code}, got ${String(caught)}`)
   assert.equal(caught.code, code)
+  observedRefusalCodes.add(caught.code)
   return caught
 }
 
-test('registry is closed by derivation: 22 codes, type/table agreement, dispositions complete', () => {
-  assert.equal(ENGINE_ERROR_CODE_COUNT, 22)
-  assert.equal(ENGINE_ERROR_CODES.length, 22)
+test('registry is closed by derivation: 23 codes, type/table agreement, dispositions complete', () => {
+  assert.equal(ENGINE_ERROR_CODE_COUNT, 23)
+  assert.equal(ENGINE_ERROR_CODES.length, 23)
   for (const code of ENGINE_ERROR_CODES) {
     assert.ok(ENGINE_ERROR_REGISTRY[code].invariant.length > 0)
     assert.ok(code in ENGINE_ERROR_DISPOSITIONS)
@@ -503,6 +506,32 @@ test('one tested refusal per code (fault-injection matrix)', () => {
     } finally {
       removeRoot(closedRoot)
     }
+    // 23 IDEMPOTENCY_RESULT_UNAVAILABLE (legacy completed binding without
+    // recorded bytes: never invented, never re-executed)
+    insertIdempotencyKey(storage, {
+      principalRef: 'principal-a',
+      operationId: 'op-legacy',
+      repositoryRef: 'repo-1',
+      worktreeRef: 'wt-1',
+      payloadDigest: `sha256:${Buffer.from('op-legacy').toString('hex').padEnd(64, '0').slice(0, 64)}`,
+      effectDigest: `sha256:${'ab'.repeat(32)}`,
+      recordedAtMicros: T0 - 10,
+      completedAtMicros: T0 - 10,
+    })
+    expectCode(
+      () =>
+        claimLease(engine, {
+          goalId: 'goal-1',
+          leaseId: 'lease-x',
+          durationMicros: 5_000_000,
+          expectedRevision: 0,
+          idempotencyKey: bind('op-legacy'),
+        }),
+      'IDEMPOTENCY_RESULT_UNAVAILABLE',
+    )
+    // R8 (review F7): mechanical per-code coverage map — every registry code
+    // is observed here (AC1 inventory-map pattern).
+    assert.deepEqual([...observedRefusalCodes].sort(), [...ENGINE_ERROR_CODES].sort())
   } finally {
     // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
     // and removeRoot retries EPERM without ever masking the test verdict (R3).
@@ -607,7 +636,9 @@ test('R2: non-transient substrate failures are never retried (true failures surf
           run: (...args: unknown[]) => {
             if (sql.includes('UPDATE goals')) {
               attempts += 1
-              const broken = new Error('database disk image is malformed') as Error & { code: string }
+              const broken = new Error('database disk image is malformed') as Error & {
+                code: string
+              }
               broken.code = 'SQLITE_CORRUPT'
               throw broken
             }

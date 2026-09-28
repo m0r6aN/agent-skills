@@ -134,7 +134,6 @@ export function requestTransition(
     engine,
     'requestTransition',
     { expectedRevision, idempotencyKey: record.idempotencyKey },
-    goalId,
     ({ now, binding }) => {
       const goal = readGoalChecked(engine.storage, goalId)
       const lease = requireStateWriteLease(engine.storage, goalId, binding, now)
@@ -246,7 +245,6 @@ export function decideTransition(
     engine,
     'decideTransition',
     { expectedRevision, idempotencyKey: record.idempotencyKey },
-    goalId,
     ({ now, binding }) => {
       const goal = readGoalChecked(engine.storage, goalId)
       const lease = requireStateWriteLease(engine.storage, goalId, binding, now)
@@ -364,7 +362,6 @@ export function applyTransition(
     engine,
     'applyTransition',
     { expectedRevision, idempotencyKey: record.idempotencyKey },
-    goalId,
     ({ now, binding }) => {
       const goal = readGoalChecked(engine.storage, goalId)
       const lease = requireStateWriteLease(engine.storage, goalId, binding, now)

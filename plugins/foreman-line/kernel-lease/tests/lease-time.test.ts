@@ -8,7 +8,6 @@ import { mkdtempSync, readFileSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { test } from 'node:test'
-import { removeRoot } from './helpers/child-worker.js'
 import {
   closeStorage,
   fixedClock,
@@ -25,6 +24,7 @@ import {
   renewLease,
   TrustedClock,
 } from '../src/index.js'
+import { removeRoot } from './helpers/child-worker.js'
 
 const T0 = 1_700_000_000_000_000
 const FIXTURES = join(import.meta.dirname, 'fixtures')
@@ -185,6 +185,43 @@ for (const id of ['CLK-05', 'CLK-06']) {
     }
   })
 }
+
+test('R7: createEngine refuses unknown option members (exact set; evidenceKindPolicy optional)', () => {
+  const root = mkdtempSync(join(tmpdir(), 'fk-p10-clk-'))
+  const storage = openStorage(configFor(root))
+  try {
+    for (const smuggled of ['nowMicros', 'expiresAtMicros', 'now', 'timestamp']) {
+      assert.throws(
+        () =>
+          createEngine({
+            storage,
+            clock: sequenceClock([T0]),
+            toolVersion: 'kernel-lease-test',
+            [smuggled]: 1,
+          } as never),
+        (error: unknown) => {
+          assert.ok(error instanceof EngineError, smuggled)
+          assert.equal(error.code, 'ENGINE_ARGUMENT_INVALID', smuggled)
+          assert.deepEqual(error.diagnostic, { fieldPath: `createEngine.${smuggled}` }, smuggled)
+          return true
+        },
+      )
+    }
+    // Positive control: the exact member set (optional member omitted) works.
+    assert.ok(
+      createEngine({ storage, clock: sequenceClock([T0]), toolVersion: 'kernel-lease-test' }),
+    )
+  } finally {
+    // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
+    // and removeRoot retries EPERM without ever masking the test verdict (R3).
+    try {
+      closeStorage(storage)
+    } catch {
+      // Best-effort close; cleanup proceeds.
+    }
+    removeRoot(root)
+  }
+})
 
 test('CLK-07 forward-skewed child-process grant is judged from stored micros vs local trusted now', () => {
   const root = mkdtempSync(join(tmpdir(), 'fk-p10-clk-'))

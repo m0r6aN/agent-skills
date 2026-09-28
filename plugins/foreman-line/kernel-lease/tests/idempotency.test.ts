@@ -7,7 +7,6 @@ import { mkdtempSync, readFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { test } from 'node:test'
-import { removeRoot } from './helpers/child-worker.js'
 import {
   closeStorage,
   exportStorage,
@@ -30,6 +29,7 @@ import {
   renewLease,
   requestTransition,
 } from '../src/index.js'
+import { removeRoot } from './helpers/child-worker.js'
 
 const T0 = 1_700_000_000_000_000
 const FIXTURES = join(import.meta.dirname, 'fixtures')
@@ -253,6 +253,64 @@ for (const row of IDP.filter((candidate) => candidate.expectedOutcome === 'repla
     }
   })
 }
+
+test('R5: replay returns the recorded outcome VERBATIM across an intervening revision change', () => {
+  const root = mkdtempSync(join(tmpdir(), 'fk-p10-idp-'))
+  const storage = openStorage(configFor(root))
+  try {
+    insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'active', updatedAtMicros: T0 })
+    const engine = createEngine({
+      storage,
+      clock: fixedClock(T0),
+      toolVersion: 'kernel-lease-test',
+    })
+    const bind = (op: string, digest: string) => ({
+      principalRef: 'principal-a',
+      operationId: op,
+      repositoryRef: 'repo-1',
+      worktreeRef: 'wt-1',
+      payloadDigest: `sha256:${digest}`,
+    })
+    const first = claimLease(engine, {
+      goalId: 'goal-1',
+      leaseId: 'lease-1',
+      durationMicros: 5_000_000,
+      expectedRevision: 0,
+      idempotencyKey: bind('r5-claim', '11'.repeat(32)),
+    })
+    // Intervening revision-bumping operation (renew bumps to revision 2).
+    const renewed = renewLease(engine, {
+      goalId: 'goal-1',
+      leaseId: 'lease-1',
+      durationMicros: 5_000_000,
+      expectedRevision: 1,
+      idempotencyKey: bind('r5-renew', '22'.repeat(32)),
+    })
+    assert.equal(renewed.effect.goalRevision, 2)
+    const replay = claimLease(engine, {
+      goalId: 'goal-1',
+      leaseId: 'lease-1',
+      durationMicros: 5_000_000,
+      expectedRevision: 0,
+      idempotencyKey: bind('r5-claim', '11'.repeat(32)),
+    })
+    assert.equal(replay.replay, true)
+    // VERBATIM against the originally captured values — including
+    // goalRevision as ORIGINALLY recorded (1), never the current revision (2).
+    assert.deepEqual(replay.effect, first.effect, 'effect verbatim across intervening change')
+    assert.deepEqual(replay.result, first.result, 'result verbatim across intervening change')
+    assert.equal(replay.effect.goalRevision, 1)
+  } finally {
+    // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
+    // and removeRoot retries EPERM without ever masking the test verdict (R3).
+    try {
+      closeStorage(storage)
+    } catch {
+      // Best-effort close; cleanup proceeds.
+    }
+    removeRoot(root)
+  }
+})
 
 test('IDP precedence: same-key/different-payload conflicts even for an in-flight record shape', () => {
   // T6's conflict rule is "regardless of completion state": a completed row

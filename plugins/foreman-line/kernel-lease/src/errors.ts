@@ -42,6 +42,7 @@ export interface EngineErrorDiagnostics {
   GATE_STATE_NOT_WRITABLE: { fieldPath: string }
   IDEMPOTENCY_CONFLICT: { principalRef: string; operationId: string }
   IDEMPOTENCY_IN_FLIGHT: { principalRef: string; operationId: string }
+  IDEMPOTENCY_RESULT_UNAVAILABLE: { principalRef: string; operationId: string }
   STATE_REVISION_STALE: { expectedRevision: number; actualRevision: number }
   CLOCK_REGRESSION: Record<string, never>
   CLOCK_UNTRUSTED: Record<string, never>
@@ -117,6 +118,11 @@ export const ENGINE_ERROR_REGISTRY = {
     invariant: 'an incomplete binding is never re-executed',
     diagnosticMembers: ['principalRef', 'operationId'],
   },
+  IDEMPOTENCY_RESULT_UNAVAILABLE: {
+    invariant:
+      'a completed binding without a safely replayable record is never invented and never re-executed',
+    diagnosticMembers: ['principalRef', 'operationId'],
+  },
   STATE_REVISION_STALE: {
     invariant: 'every effectful operation is CAS-guarded on goals.revision',
     diagnosticMembers: ['expectedRevision', 'actualRevision'],
@@ -175,6 +181,7 @@ export const ENGINE_ERROR_DISPOSITIONS: Record<
   GATE_STATE_NOT_WRITABLE: 'REFUSE',
   IDEMPOTENCY_CONFLICT: 'CONFLICT',
   IDEMPOTENCY_IN_FLIGHT: 'CONFLICT',
+  IDEMPOTENCY_RESULT_UNAVAILABLE: 'CONFLICT',
   STATE_REVISION_STALE: 'CONFLICT',
   CLOCK_REGRESSION: 'KERNEL_FAILURE',
   CLOCK_UNTRUSTED: 'KERNEL_FAILURE',

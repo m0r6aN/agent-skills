@@ -13,8 +13,7 @@ import { type ChildProcess, spawn } from 'node:child_process'
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { test, type TestContext } from 'node:test'
-import { removeRoot } from './helpers/child-worker.js'
+import { type TestContext, test } from 'node:test'
 import {
   closeStorage,
   exportStorage,
@@ -24,6 +23,7 @@ import {
   type OpenStorageConfig,
   openStorage,
 } from '@foreman-line/kernel-state'
+import { removeRoot } from './helpers/child-worker.js'
 
 const T0 = 1_700_000_000_000_000
 const FIXTURES = join(import.meta.dirname, 'fixtures')
@@ -89,19 +89,23 @@ function binding(
  */
 async function awaitReadyMarkers(
   barrierDir: string,
-  entries: Array<{ racer: number; child: ChildProcess; collect: () => { stdout: string; stderr: string } }>,
+  entries: Array<{
+    racer: number
+    child: ChildProcess
+    collect: () => { stdout: string; stderr: string }
+  }>,
 ): Promise<void> {
   const deadline = Date.now() + 45_000
   for (;;) {
-    const missing = entries.filter(
-      (entry) => !existsSync(join(barrierDir, `ready-${entry.racer}`)),
-    )
+    const missing = entries.filter((entry) => !existsSync(join(barrierDir, `ready-${entry.racer}`)))
     if (missing.length === 0) return
     const dead = entries.find(
       (entry) => entry.child.exitCode !== null || entry.child.signalCode !== null,
     )
     if (dead !== undefined) {
-      throw new Error(`racer ${dead.racer} exited before READY; raw cause: ${dead.collect().stderr}`)
+      throw new Error(
+        `racer ${dead.racer} exited before READY; raw cause: ${dead.collect().stderr}`,
+      )
     }
     if (Date.now() > deadline) {
       const causes = entries.map((entry) => `racer ${entry.racer}: ${entry.collect().stderr}`)

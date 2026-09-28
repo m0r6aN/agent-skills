@@ -8,24 +8,28 @@ import { mkdtempSync, readFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { test } from 'node:test'
-import { removeRoot } from './helpers/child-worker.js'
 import {
   closeStorage,
   fixedClock,
   insertGoal,
   insertLease,
+  insertTransition,
   type OpenStorageConfig,
   openStorage,
+  updateGoalRow,
 } from '@foreman-line/kernel-state'
 import {
   applyTransition,
   createEngine,
+  decideTransition,
   EDGES,
   EngineError,
   EVIDENCE_KINDS,
   GOAL_STATUSES,
   type GoalStatus,
+  requestTransition,
 } from '../src/index.js'
+import { removeRoot } from './helpers/child-worker.js'
 
 const T0 = 1_700_000_000_000_000
 const FIXTURES = join(import.meta.dirname, 'fixtures')
@@ -212,6 +216,86 @@ for (const row of CTL_ROWS) {
     })
   })
 }
+
+// R6 (review F4): ILLEGAL_TRANSITION is pinned on EVERY write path —
+// requestTransition and decideTransition as well as applyTransition.
+for (const row of X_ROWS.slice(0, 3)) {
+  test(`${row.id} illegal edge also refuses ILLEGAL_TRANSITION through requestTransition`, () => {
+    withSeeded(row, (engine) => {
+      assert.throws(
+        () => requestTransition(engine, row.input as never),
+        (error: unknown) => {
+          assert.ok(error instanceof EngineError, row.id)
+          assert.equal(error.code, 'ILLEGAL_TRANSITION', row.id)
+          return true
+        },
+      )
+    })
+  })
+}
+
+test('X05 illegal edge refuses ILLEGAL_TRANSITION through decideTransition (edge re-validated at decide)', () => {
+  const root = mkdtempSync(join(tmpdir(), 'fk-p10-sm-'))
+  const storage = openStorage(configFor(root))
+  try {
+    insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'active', updatedAtMicros: T0 })
+    insertLease(storage, {
+      leaseId: 'lease-1',
+      goalId: 'goal-1',
+      ownerPrincipalRef: 'principal-a',
+      casRevision: 0,
+      acquiredAtMicros: T0 - 10,
+      expiresAtMicros: T0 + 60_000_000,
+      releasedAtMicros: null,
+    })
+    insertTransition(storage, {
+      transitionId: 'tr-illegal',
+      goalId: 'goal-1',
+      status: 'proposed',
+      requestedBy: 'principal-a',
+      operationId: 'op-r6-decide',
+      payloadDigest: `sha256:${'5e'.repeat(32)}`,
+      createdAtMicros: T0 - 10,
+      decidedAtMicros: null,
+    })
+    updateGoalRow(storage, 'goal-1', { goalId: 'goal-1' }, { pendingTransitionId: 'tr-illegal' })
+    const engine = createEngine({
+      storage,
+      clock: fixedClock(T0),
+      toolVersion: 'kernel-lease-test',
+    })
+    assert.throws(
+      () =>
+        decideTransition(engine, {
+          goalId: 'goal-1',
+          transitionId: 'tr-illegal',
+          decision: 'apply',
+          expectedRevision: 0,
+          idempotencyKey: {
+            principalRef: 'principal-a',
+            operationId: 'op-r6-decide-apply',
+            repositoryRef: 'repo-1',
+            worktreeRef: 'wt-1',
+            payloadDigest: `sha256:${'66'.repeat(32)}`,
+          },
+        }),
+      (error: unknown) => {
+        assert.ok(error instanceof EngineError)
+        assert.equal(error.code, 'ILLEGAL_TRANSITION')
+        return true
+      },
+    )
+  } finally {
+    // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
+    // and removeRoot retries EPERM without ever masking the test verdict (R3).
+    try {
+      closeStorage(storage)
+    } catch {
+      // Best-effort close; cleanup proceeds.
+    }
+    removeRoot(root)
+  }
+})
 
 test('every status literal is reachable as a from-status and a to-status across the product', () => {
   for (const status of GOAL_STATUSES) {

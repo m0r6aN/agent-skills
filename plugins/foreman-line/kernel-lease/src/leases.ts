@@ -106,6 +106,19 @@ export function createEngine(options: CreateEngineOptions): Engine {
   if (options === null || typeof options !== 'object') {
     throw engineError('ENGINE_ARGUMENT_INVALID', { fieldPath: 'createEngine' })
   }
+  const members = options as unknown as Record<string, unknown>
+  // R7: fail closed on unknown option members (exact set; evidenceKindPolicy
+  // optional) like every other input surface.
+  for (const key of Object.keys(members)) {
+    if (!['storage', 'clock', 'toolVersion', 'evidenceKindPolicy'].includes(key)) {
+      throw engineError('ENGINE_ARGUMENT_INVALID', { fieldPath: `createEngine.${key}` })
+    }
+  }
+  for (const key of ['storage', 'clock', 'toolVersion']) {
+    if (!(key in members)) {
+      throw engineError('ENGINE_ARGUMENT_INVALID', { fieldPath: `createEngine.${key}` })
+    }
+  }
   const toolVersion = options.toolVersion
   const toolVersionBytes =
     typeof toolVersion === 'string' ? new TextEncoder().encode(toolVersion) : null
@@ -266,7 +279,6 @@ export function runEffectful<T>(
   engine: Engine,
   operation: OperationName,
   request: { expectedRevision: number; idempotencyKey: unknown },
-  goalId: string,
   execute: (context: { now: number; binding: IdempotencyBinding }) => Executed<T>,
 ): EngineResult<T> {
   // Structural validation runs first even for pure replays (first-failure
@@ -287,13 +299,7 @@ export function runEffectful<T>(
   // Idempotency pre-check (read-only; pure replays never reach the clock).
   const preState = withTransientRetry(() => lookupBinding(engine.storage, binding))
   if (preState.state === 'completed') {
-    const outcome = reconstructRecordedOutcome(
-      engine.storage,
-      binding,
-      preState.row,
-      engine.toolVersion,
-      goalId,
-    )
+    const outcome = reconstructRecordedOutcome(binding, preState.row)
     return replayOf({ effect: outcome.effect, result: outcome.result as T })
   }
 
@@ -320,13 +326,7 @@ export function runEffectful<T>(
             // committed-but-unreturned result (CR-04 replay).
             const state = lookupBinding(engine.storage, binding)
             if (state.state === 'completed') {
-              const replayed = reconstructRecordedOutcome(
-                engine.storage,
-                binding,
-                state.row,
-                engine.toolVersion,
-                goalId,
-              )
+              const replayed = reconstructRecordedOutcome(binding, state.row)
               return {
                 executed: { effect: replayed.effect, result: replayed.result as T },
                 replay: true,
@@ -370,9 +370,10 @@ export function commitEffectApplied<T>(
   const core = buildEffectCore(toolVersion, 'APPLIED', binding, goalRevision)
   const payload = { ...payloadFields, effect: core }
   const written = writeEvent(storage, eventKind, payload, binding, now)
-  recordCompletedBinding(storage, binding, written.effectDigest, now)
+  const effect = finalizeEffect(core, written.effectDigest)
+  recordCompletedBinding(storage, binding, written.effectDigest, { effect, result }, now)
   advanceGoalStateCursor(storage, payloadFields.goalId as string, written.seq, now)
-  return { effect: finalizeEffect(core, written.effectDigest), result }
+  return { effect, result }
 }
 
 /** Assemble a NOOP outcome (OQ-6: same-principal re-claim only). */
@@ -385,9 +386,11 @@ export function commitEffectNoop<T>(
   now: number,
 ): Executed<T> {
   const core = buildEffectCore(toolVersion, 'NOOP', binding, goalRevision)
-  // T7 claim (no-op): the completed binding row is the only write.
-  recordCompletedBinding(storage, binding, null, now)
-  return { effect: finalizeEffect(core, null), result }
+  const effect = finalizeEffect(core, null)
+  // T7 claim (no-op): the completed binding row (with its recorded outcome) is
+  // the only write.
+  recordCompletedBinding(storage, binding, null, { effect, result }, now)
+  return { effect, result }
 }
 
 // --- T3 lease operations ---------------------------------------------------
@@ -444,7 +447,6 @@ export function claimLease(
     engine,
     'claimLease',
     { expectedRevision, idempotencyKey: record.idempotencyKey },
-    goalId,
     ({ now, binding }) => {
       const goal = readGoalChecked(engine.storage, goalId)
       if (isTerminalStatus(goal.status)) throw engineError('GOAL_TERMINAL', { goalId })
@@ -645,7 +647,6 @@ export function renewLease(
     engine,
     'renewLease',
     { expectedRevision, idempotencyKey: record.idempotencyKey },
-    goalId,
     ({ now, binding }) => {
       const goal = readGoalChecked(engine.storage, goalId)
       const lease = requireNamedLease(engine.storage, goalId, leaseId, binding, now)
@@ -717,7 +718,6 @@ export function releaseLease(
     engine,
     'releaseLease',
     { expectedRevision, idempotencyKey: record.idempotencyKey },
-    goalId,
     ({ now, binding }) => {
       const goal = readGoalChecked(engine.storage, goalId)
       const lease = requireNamedLease(engine.storage, goalId, leaseId, binding, now)

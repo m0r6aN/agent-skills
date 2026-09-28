@@ -27,21 +27,15 @@
  * `EffectResult`.
  */
 import {
-  type EventRow,
-  getGoal,
   getIdempotencyKey,
-  getLease,
-  getUnreleasedLease,
   type IdempotencyKeyRow,
-  insertIdempotencyKey,
   isDigest,
   isId,
   isSafeInt,
-  type LeaseRow,
-  queryEvents,
   type Storage,
+  recordCompletedBinding as storeCompletedBindingRow,
 } from '@foreman-line/kernel-state'
-import { type Digest, isDigestLiteral } from './canonical.js'
+import { canonicalBytes, type Digest, isDigestLiteral } from './canonical.js'
 import { engineError, guardingStorage } from './errors.js'
 import { type GoalStatus, isGoalStatus, isReservedGateLiteral } from './state-machine.js'
 
@@ -306,23 +300,26 @@ export function lookupBinding(storage: Storage, binding: IdempotencyBinding): Bi
 
 /**
  * Record the completed binding row (T6/T7: exactly one per accepted operation,
- * in the same transaction as the effect; `effect_digest` = the event's
- * `payload_digest` for APPLIED, null for NOOP).
+ * in the same transaction as the effect) carrying the recorded outcome's
+ * canonical bytes (R4/A1d) — both APPLIED and NOOP completions store their
+ * result, so replay never re-derives anything.
  */
-export function recordCompletedBinding(
+export function recordCompletedBinding<T>(
   storage: Storage,
   binding: IdempotencyBinding,
   effectDigest: Digest | null,
+  outcome: { effect: EffectResult; result: T },
   nowMicros: number,
 ): void {
   guardingStorage(() => {
-    insertIdempotencyKey(storage, {
+    storeCompletedBindingRow(storage, {
       principalRef: binding.principalRef,
       operationId: binding.operationId,
       repositoryRef: binding.repositoryRef,
       worktreeRef: binding.worktreeRef,
       payloadDigest: binding.payloadDigest,
       effectDigest,
+      recordedResult: canonicalBytes(outcome),
       recordedAtMicros: nowMicros,
       completedAtMicros: nowMicros,
     })
@@ -365,145 +362,56 @@ export interface RecordedOutcome {
   result: unknown
 }
 
-function eventPayload(row: EventRow): Record<string, unknown> {
-  const parsed: unknown = guardingStorage(() => JSON.parse(row.payload))
-  if (parsed === null || typeof parsed !== 'object' || Array.isArray(parsed)) {
+/**
+ * Decode the recorded outcome from its stored canonical bytes (R4/A1d:
+ * coordinator ruling 2026-09-28). The bytes are recorded engine output —
+ * decoded linear-time and shape-checked (standing #19/#2) and never
+ * re-derived.
+ */
+function decodeRecordedOutcome(bytes: Uint8Array): RecordedOutcome {
+  let parsed: unknown
+  try {
+    parsed = JSON.parse(new TextDecoder().decode(bytes))
+  } catch (error) {
+    throw engineError('STORAGE_FAILURE', { storageCode: 'STORAGE_IO_FAILURE' }, { cause: error })
+  }
+  const doc = parsed as { effect?: unknown; result?: unknown } | null
+  const effect = doc?.effect as EffectResult | null | undefined
+  if (
+    effect === null ||
+    effect === undefined ||
+    typeof effect !== 'object' ||
+    effect.resultKind !== 'effect-result' ||
+    effect.apiVersion !== '0.1.0' ||
+    (effect.decision !== 'APPLIED' && effect.decision !== 'NOOP') ||
+    (effect.code !== 'EFFECT_APPLIED' && effect.code !== 'EFFECT_NOOP') ||
+    (effect.decision === 'APPLIED') !== (effect.code === 'EFFECT_APPLIED') ||
+    !isSafeInt(effect.goalRevision) ||
+    (effect.effectDigest !== null && !isDigestLiteral(effect.effectDigest))
+  ) {
     throw engineError('STORAGE_FAILURE', { storageCode: 'STORAGE_IO_FAILURE' })
   }
-  return parsed as Record<string, unknown>
-}
-
-function descriptorFromLeaseRow(row: LeaseRow, casRevision: number): LeaseCasDescriptor {
-  return {
-    leaseId: row.leaseId,
-    leaseOwnerPrincipalRef: row.ownerPrincipalRef,
-    casRevision,
-    leaseExpiresAtMicros: row.expiresAtMicros,
-  }
+  return { effect, result: doc?.result }
 }
 
 /**
- * Rebuild the operation result payload from the recorded event (T8 fields).
- * Every rebuild member comes from immutable recorded bytes except
- * `LeaseCasDescriptor.leaseExpiresAtMicros` of a `lease.released` event, which
- * is read from the (post-release immutable) lease row.
- */
-export function rebuildResult(
-  kind: string,
-  payload: Record<string, unknown>,
-  principalRef: string,
-  releasedLeaseExpiry: number | null,
-): unknown {
-  const resultingRevision = payload.resultingRevision as number
-  switch (kind) {
-    case 'lease.claimed':
-    case 'lease.takeover':
-    case 'lease.renewed':
-      return {
-        leaseId: payload.leaseId as string,
-        leaseOwnerPrincipalRef: principalRef,
-        casRevision: resultingRevision,
-        leaseExpiresAtMicros: payload.expiresAtMicros as number,
-      } satisfies LeaseCasDescriptor
-    case 'lease.released':
-      return {
-        leaseId: payload.leaseId as string,
-        leaseOwnerPrincipalRef: principalRef,
-        casRevision: resultingRevision,
-        leaseExpiresAtMicros: releasedLeaseExpiry,
-      } satisfies LeaseCasDescriptor
-    case 'transition.requested':
-      return {
-        transitionId: payload.transitionId as string,
-        targetStatus: payload.targetStatus as GoalStatus,
-      } satisfies PendingTransition
-    case 'transition.applied':
-    case 'transition.rejected':
-      return {
-        goalId: payload.goalId as string,
-        transitionId: payload.transitionId as string,
-        fromStatus: payload.fromStatus as GoalStatus,
-        targetStatus: payload.targetStatus as GoalStatus,
-        resultingRevision,
-      } satisfies DecidedTransitionResult
-    default:
-      throw engineError('STORAGE_FAILURE', { storageCode: 'STORAGE_IO_FAILURE' })
-  }
-}
-
-/**
- * Locate the recorded event for a completed APPLIED binding: the binding's
- * `effect_digest` IS the event's `payload_digest` (three-way equality), so the
- * lookup is a digest match over the event stream (linear-time decode, #19).
- */
-export function findRecordedEvent(storage: Storage, effectDigest: Digest): EventRow | null {
-  const rows = guardingStorage(() => queryEvents(storage))
-  for (const row of rows) {
-    if (row.payloadDigest === effectDigest) return row
-  }
-  return null
-}
-
-/**
- * Reconstruct the recorded outcome for a completed binding.
- *
- * APPLIED replay: exact reconstruction from recorded bytes (the event payload
- * embeds the effect document minus `effectDigest`; the digest comes from the
- * binding row). NOOP replay: T7's NOOP transaction records the binding row
- * only (no event), so `code`/`decision`/`effectDigest`/`idempotencyKey` are
- * verbatim from that row while `goalRevision` and the result payload are
- * re-derived from current state — equal to the recorded values while the goal
- * is unchanged since the NOOP (recorded residual; see README).
+ * Reconstruct the recorded outcome for a completed binding (R4): the outcome
+ * is replayed VERBATIM from the canonical bytes stored at completion (both
+ * APPLIED and NOOP) — re-derivation is structurally impossible. A completed
+ * binding without stored bytes (legacy record) is never invented and never
+ * re-executed: it refuses `IDEMPOTENCY_RESULT_UNAVAILABLE` (coordinator
+ * ruling 2026-09-28, rework R4 flag 1).
  */
 export function reconstructRecordedOutcome(
-  storage: Storage,
   binding: IdempotencyBinding,
   row: IdempotencyKeyRow,
-  toolVersion: string,
-  goalId: string,
 ): RecordedOutcome {
-  if (row.effectDigest !== null) {
-    const digest = row.effectDigest
-    if (!isDigestLiteral(digest)) {
-      throw engineError('STORAGE_FAILURE', { storageCode: 'STORAGE_IO_FAILURE' })
-    }
-    const eventRow = findRecordedEvent(storage, digest)
-    if (eventRow === null) {
-      throw engineError('STORAGE_FAILURE', { storageCode: 'STORAGE_IO_FAILURE' })
-    }
-    const payload = eventPayload(eventRow)
-    const coreValue: unknown = payload.effect
-    // The embedded effect document is recorded engine output (not external
-    // input); the digest member is supplied from the row (F01), never taken
-    // from the embedded value.
-    const core = coreValue as EffectCore
-    // `lease.released` payloads omit the stored expiry; the lease row is
-    // immutable after release, so the re-read reproduces the recorded value.
-    let releasedLeaseExpiry: number | null = null
-    if (eventRow.kind === 'lease.released') {
-      const leaseId = requireIdValue(payload.leaseId, 'replay.leaseId')
-      const leaseRow = guardingStorage(() => getLease(storage, leaseId))
-      releasedLeaseExpiry = leaseRow?.expiresAtMicros ?? null
-    }
-    return {
-      effect: finalizeEffect(core, digest),
-      result: rebuildResult(eventRow.kind, payload, eventRow.principalRef, releasedLeaseExpiry),
-    }
+  const bytes = row.recordedResult
+  if (bytes === null) {
+    throw engineError('IDEMPOTENCY_RESULT_UNAVAILABLE', {
+      principalRef: binding.principalRef,
+      operationId: binding.operationId,
+    })
   }
-  // NOOP replay (documented residual above): the binding row is the only
-  // recorded artifact of a NOOP, so the two state-derived members are
-  // re-derived from current rows (identical to the recorded values while the
-  // goal is unchanged since the NOOP).
-  const current = guardingStorage(() => {
-    const goal = getGoal(storage, goalId)
-    const lease = getUnreleasedLease(storage, goalId)
-    return {
-      revision: goal === null ? 0 : goal.revision,
-      descriptor: lease === null ? null : descriptorFromLeaseRow(lease, lease.casRevision),
-    }
-  })
-  return {
-    effect: finalizeEffect(buildEffectCore(toolVersion, 'NOOP', binding, current.revision), null),
-    result: current.descriptor,
-  }
+  return decodeRecordedOutcome(bytes)
 }
