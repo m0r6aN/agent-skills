@@ -1,0 +1,90 @@
+/**
+ * AC2: proves type<->schema parity and no drift.
+ *  - Every committed `schemas/*.json` is byte-identical to what the typed source
+ *    serializes to (drift is impossible without a failing test).
+ *  - Every canonical sample (typed against `types.ts`) validates against its schema.
+ */
+import assert from 'node:assert/strict'
+import { readFileSync } from 'node:fs'
+import { dirname, join } from 'node:path'
+import { test } from 'node:test'
+import { fileURLToPath } from 'node:url'
+import { Ajv, type SchemaObject } from 'ajv'
+import {
+  registerNoDriftTests,
+  registerSampleValidationTests,
+} from '../../schema-scaffold/src/test-scaffold.js'
+import {
+  type ProviderBindingPolicyV1,
+  type ProviderBindingProjectionV1,
+  projectProviderBindingsV1,
+  validateProviderBindingPolicyV1,
+} from '../src/index.js'
+import { allSchemaFiles } from '../src/registry.js'
+import { shadowRouteSchema } from '../src/schemas.js'
+import {
+  sampleClassEntry,
+  sampleDataClassificationRule,
+  samplePiOpenRouterRouting,
+  sampleRoleAssignment,
+  sampleRoutingPolicy,
+  sampleShadowRoute,
+  sampleStrictTransport,
+} from '../src/testing.js'
+import type { ShadowRoute } from '../src/types.js'
+
+const schemasDir = join(dirname(fileURLToPath(import.meta.url)), '..', 'schemas')
+const pmcResult = validateProviderBindingPolicyV1(
+  JSON.parse(
+    readFileSync(
+      new URL('./fixtures/pmc-provider-binding-policy-v1.json', import.meta.url),
+      'utf8',
+    ),
+  ),
+)
+assert.equal(pmcResult.valid, true)
+if (!pmcResult.valid) throw new Error('Invalid PMC parity sample')
+const sampleProviderBindingPolicy: ProviderBindingPolicyV1 = pmcResult.value
+const projectionResult = projectProviderBindingsV1(sampleProviderBindingPolicy)
+assert.ok(projectionResult.ok)
+const sampleProviderBindingProjection: ProviderBindingProjectionV1 = projectionResult.projection
+
+const samplesByName: ReadonlyMap<string, unknown> = new Map<string, unknown>([
+  ['routing-policy', sampleRoutingPolicy],
+  ['class-entry', sampleClassEntry],
+  ['data-classification-rule', sampleDataClassificationRule],
+  ['transport-requirements', sampleStrictTransport],
+  ['role-assignment', sampleRoleAssignment],
+  ['shadow-route', sampleShadowRoute],
+  ['pi-openrouter-routing', samplePiOpenRouterRouting],
+  ['provider-binding-policy-v1', sampleProviderBindingPolicy],
+  ['provider-binding-projection-v1', sampleProviderBindingProjection],
+])
+
+registerNoDriftTests(allSchemaFiles, schemasDir)
+registerSampleValidationTests(allSchemaFiles, samplesByName)
+
+test('every exported routing-policy type has a committed schema file', () => {
+  assert.equal(allSchemaFiles.length, 9)
+})
+
+test('shadow prohibited_roles type and schema accept either exact role order', () => {
+  const validate = new Ajv({ allErrors: true }).compile(shadowRouteSchema as SchemaObject)
+  const reverseOrder: ShadowRoute = {
+    ...sampleShadowRoute,
+    prohibited_roles: ['verifier', 'coordinator'],
+  }
+
+  assert.equal(validate(sampleShadowRoute), true, JSON.stringify(validate.errors))
+  assert.equal(validate(reverseOrder), true, JSON.stringify(validate.errors))
+})
+
+test('shadow prohibited_roles schema rejects missing or duplicate roles', () => {
+  const validate = new Ajv({ allErrors: true }).compile(shadowRouteSchema as SchemaObject)
+
+  assert.equal(validate({ ...sampleShadowRoute, prohibited_roles: ['coordinator'] }), false)
+  assert.equal(
+    validate({ ...sampleShadowRoute, prohibited_roles: ['coordinator', 'coordinator'] }),
+    false,
+  )
+})
