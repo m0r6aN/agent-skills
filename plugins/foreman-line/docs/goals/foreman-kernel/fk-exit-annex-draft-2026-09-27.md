@@ -47,6 +47,7 @@ Scenarios 5, 10, 13, 14: no exit demand under RS-1.4(e); evidence NOT satisfied 
 - FK-P2 schema-patterns P3 residual (dual review L2-1): mid-string per-segment trailing dot/space (`a./b`) passes `compiled-scope.schema.json` though the compiler rejects it (`ENTRY_TRAILING_DOT_SPACE`) — accept-as-documented; full per-segment exactness in the schema is a named optional tightening.
 - FK-P9 gap records (per its spec): file-symlink cases skip-and-record where privilege is unavailable (junction cases hard-fail otherwise) and CTRL-01 (real non-WAL filesystem refusal) is `blocked: no non-WAL filesystem in the test environment` — never counted passed; named as FK-P18′-lane evidence obligations.
 - **Pin-integrity lesson (2026-09-28, FK-P17 F1):** three shaping-time pins bound stale/uncommitted sibling bytes and were corrected by coordinator amendment before code; the normative rule now in the FK-P17 spec ("uncommitted sibling state is never pinnable") applies to all future parcels' pin tables.
+- **Legacy status-vocabulary mapping (FK-P9 amendment A1/A2 boundary, 2026-09-28):** databases carrying out-of-vocab `goals.status` rows REFUSE the 0002 migration fail-closed (STORAGE_MIGRATION_FAILED, DB stays v1, rows intact) — the old→new vocabulary mapping is FK-P10-class semantics, never silently rewritten. Any deployment with legacy rows needs a recorded mapping decision before migration; named NOT-satisfied until such a mapping exists (FK-P10 defines the engine vocab, not a legacy translator).
 
 ## 6. Completeness rule
 
