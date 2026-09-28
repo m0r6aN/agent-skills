@@ -1,7 +1,7 @@
 {
   "probe": "PRAC-P0 check-api-surface.mjs",
   "command": "node probe/check-api-surface.mjs",
-  "generatedAt": "2026-09-24T20:12:18.146Z",
+  "generatedAt": "2026-09-24T20:24:46.858Z",
   "node": "v24.7.0",
   "pkgRoot": "D:\\nvm\\v24.7.0\\node_modules\\@earendil-works\\pi-coding-agent",
   "pinnedVersion": "0.87.1",
