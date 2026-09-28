@@ -10,8 +10,11 @@
  */
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
-import { ACTIVE_SPECS_DIR, DEFAULT_REPO_ROOT } from './paths.js'
+import { assertAbsoluteRoot } from './errors.js'
 import { assertSafeSlug } from './slug-guard.js'
+
+/** Foreign-repo default specs dir, relative to `repoRoot` (P2b-i R2/A1.3 — not a root fallback). */
+const DEFAULT_SPECS_DIR = 'docs/specs/active'
 
 export const REJECTION_RECORD_SUFFIX = '.rejection.json'
 
@@ -28,19 +31,25 @@ export interface RejectionRecord {
  * item 1) BEFORE any path is constructed from it - a slug containing `../`,
  * `/`, `\`, or uppercase is refused, naming the offending slug.
  */
-export function rejectionRecordPath(slug: string, repoRoot: string = DEFAULT_REPO_ROOT): string {
+export function rejectionRecordPath(
+  slug: string,
+  repoRoot: string,
+  specsDir: string = DEFAULT_SPECS_DIR,
+): string {
   assertSafeSlug(slug)
-  const activeDir = join(repoRoot, ...ACTIVE_SPECS_DIR.split('/'))
+  assertAbsoluteRoot(repoRoot, 'rejectionRecordPath')
+  const activeDir = join(repoRoot, ...specsDir.split('/'))
   return join(activeDir, `${slug}${REJECTION_RECORD_SUFFIX}`)
 }
 
 export function writeRejectionRecord(
   slug: string,
   record: RejectionRecord,
-  repoRoot: string = DEFAULT_REPO_ROOT,
+  repoRoot: string,
+  specsDir: string = DEFAULT_SPECS_DIR,
 ): string {
-  const filePath = rejectionRecordPath(slug, repoRoot)
-  mkdirSync(join(repoRoot, ...ACTIVE_SPECS_DIR.split('/')), { recursive: true })
+  const filePath = rejectionRecordPath(slug, repoRoot, specsDir)
+  mkdirSync(join(repoRoot, ...specsDir.split('/')), { recursive: true })
   writeFileSync(filePath, `${JSON.stringify(record, null, 2)}\n`, 'utf8')
   return filePath
 }

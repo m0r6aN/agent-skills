@@ -32,9 +32,10 @@ export interface PerformApprovalResult {
 export function performApproval(
   resolved: ResolvedArtifact,
   approver: string,
-  repoRoot?: string,
+  repoRoot: string,
+  specsDir?: string,
 ): PerformApprovalResult {
-  const recordPath = approvalRecordPath(resolved.slug, repoRoot)
+  const recordPath = approvalRecordPath(resolved.slug, repoRoot, specsDir)
   if (existsSync(recordPath)) {
     throw new Error(
       `performApproval: refusing to overwrite existing approval record at ${recordPath}`,
@@ -58,7 +59,7 @@ export function performApproval(
   }
 
   // Durability ordering (rework item 2): record first, receipt second.
-  const writtenRecordPath = writeApprovalRecord(resolved.slug, record, repoRoot)
+  const writtenRecordPath = writeApprovalRecord(resolved.slug, record, repoRoot, specsDir)
   try {
     const writtenReceiptPath = writeReceiptDocument(document, ref.locator, repoRoot)
     return { record, recordPath: writtenRecordPath, receiptPath: writtenReceiptPath }

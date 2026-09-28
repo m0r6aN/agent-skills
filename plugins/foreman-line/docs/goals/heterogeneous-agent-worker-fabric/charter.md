@@ -3,7 +3,7 @@
 **Goal slug:** `heterogeneous-agent-worker-fabric`
 **Created:** 2026-09-03 (current-instance intake)
 **Owner:** Clinton Morgan
-**Status:** PROPOSED — explicitly queued for completion; current-instance Gate 1 pending
+**Status:** SUPERSEDED — routing work is governed by `../foreman-line-boundary-routing/charter.md`; this goal is retained only as historical provenance and is not dispatchable.
 **Coordinator:** unassigned — claim through `loop-directive.md`
 **Mode:** repo-local architecture, worker-routing, evaluation, and promotion goal
 **Historical source:** `historical-charter-source.md`, SHA-256
@@ -11,12 +11,12 @@
 
 ## Objective
 
-Complete a governed heterogeneous worker fabric for Foreman Line: retain frontier models
+The former proposal was to complete a governed heterogeneous worker fabric for Foreman Line: retain frontier models
 for coordination, integration, and adversarial judgment while routing eligible routine and
 specialist work to explicitly registered worker lanes with bounded authority, cost,
 parallelism, evidence, verification, escalation, fallback, and rollback.
 
-This is an implementation goal, not an archival import. It is not complete when the
+This document is now an archival import. It is not an implementation authorization, and it is not complete when the
 historical charter is copied, when schemas exist, when provider calls work, or when a test
 corpus is green. Completion requires current-instance integration evidence and the human
 promotion decision required by the ratified charter.

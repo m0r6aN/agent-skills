@@ -15,13 +15,15 @@ routing_class: architecture/risk   # W0 contract work routes frontier per policy
 
 # W0-P1 - Pipeline Stage Contracts
 
+> **Repository identity migration (2026-09-06):** Repository identifiers and paths in this historical record were normalized to `m0r6aN/agent-skills`. Recorded commands were not rerun; all other historical outcomes remain as captured.
+
 ## Intent
 
 Define the frozen, typed contracts between the Foreman Line's six stages (A Intake → B Registration → C Dispatch & Build → D Verification → E Integration → F Closure), including correlation-identity propagation per ADR-069. Every downstream wave (W1–W5) builds against these interfaces; freezing them first is what lets later parcels be dispatched in parallel without collision. No runtime behavior ships in this parcel - types, schemas, and their tests only.
 
 ## Constraints
 
-- **Location:** `plugins/foreman-line/contracts/` in `kaseya-one-productivity-tools` (local: `C:\Repos\kaseya-one-productivity-tools`). The Line is a plugin composed of skills; it lives with them. Override at approval if you want it in `kaseya-forge` instead - decide once, here.
+- **Location:** `plugins/foreman-line/contracts/` in `agent-skills` (local: `D:\Repos\agent-skills`). The Line is a plugin composed of skills; it lives with them. Override at approval if you want it in `kaseya-forge` instead - decide once, here.
 - **Stack:** TypeScript, Node ≥22, ESM-only. Tests via `node --test` (`npx tsx --test`). Lint/format with `biome`. Minimal pinned deps - schema validation may add exactly one runtime dependency (`ajv` or equivalent); nothing else.
 - **Dual representation:** every contract ships as (1) a TypeScript type and (2) a JSON Schema, with a test asserting they agree. Agents consume schemas; humans and compilers consume types. Neither is allowed to drift.
 - **Correlation identity (grounded in platform reality):** `CorrelationContext` adopts the vocabulary observed in `kaseya-one-ai@dev` — the shipped `EventHubMessage<T>` envelope and executor tracing keys — NOT the unratified ADR-069 draft. Four required fields, UUID-format strings on the wire (branded types in TS for compile-time safety; branding does not change serialization): `correlationId` (end-to-end key; matches `EventHubMessage<T>.CorrelationId`), `sessionId`, `workflowId` (stable across re-runs of the same workflow), `runId` (unique per execution attempt, including rework retries). One optional Line-scoped extension: `agentId?` (needed by dispatch semantics; documented as a Line field, not a platform claim). Explicitly excluded until ADR-069 is ratified: `WorkloadId` (unadopted rename of the incumbent `CorrelationId`) and `ContextId` (unimplemented anywhere; deferred even by the draft ADR itself). No additions without a ratified ADR.

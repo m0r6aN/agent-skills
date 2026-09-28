@@ -1,8 +1,10 @@
 # Builder Kickstarter — W3-P4 Human Review Gate + Jira Ticket Update
 
+> **Repository identity migration (2026-09-06):** Repository identifiers and paths in this historical record were normalized to `m0r6aN/agent-skills`. Recorded commands were not rerun; all other historical outcomes remain as captured.
+
 You are the Builder for Foreman Line parcel W3-P4 — the Human Review Gate + Jira Ticket Update. Your spec — the sole source of truth — is `plugins/foreman-line/docs/specs/active/W3-P4-human-gate-jira.md` (status: active). Read it in full, then every file its Context & References section names.
 
-**Where you stand (non-negotiable):** worktree `C:\Repos\foreman-line-w3-p4-human-gate`, branch `feat/foreman-line-W3-P4` (created by the permission-profiles dispatch emitter — verify with `git branch --show-current` before anything else). You never touch `C:\Repos\kaseya-one-productivity-tools`'s working tree, never check out another branch, never push. All work is committed on this branch in this worktree.
+**Where you stand (non-negotiable):** worktree `C:\Repos\foreman-line-w3-p4-human-gate`, branch `feat/foreman-line-W3-P4` (created by the permission-profiles dispatch emitter). You never touch `D:\Repos\agent-skills`'s working tree, never check out another branch, never push. All work is committed on this branch in this worktree.
 
 **What you are building:** the `src/human-gate/` sub-module inside the existing `plugins/foreman-line/verification/` package (do NOT rescaffold — package.json, tsconfig.json, biome.json are frozen). Extend `src/index.ts` only; `src/harness/`, `src/adversarial/`, and `src/pipeline/` sources are frozen for this parcel. Four public functions: `prepareHumanGate` (Phase 1: validate + pre-draft summary), `executeHumanGate` (Phase 2: side-effectful approve/decline + Jira), `retryHalfClosed` (PRF-12c idempotent retry), `createHumanGateJiraAdapter` (production adapter). Plus exported error class `HumanGateError` and all public types.
 

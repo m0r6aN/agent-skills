@@ -42,6 +42,7 @@ test('AC6: register() refuses a post-approval edit on the first-registration pat
   await assert.rejects(
     register({
       slug: fx.slug,
+      projectKey: 'KONE',
       repoRoot: fx.repoRoot,
       adapter: new FakeAdapter(),
       timestamp: '2026-07-22T12:00:00Z',
