@@ -55,7 +55,7 @@ function configFor(
 }
 
 function seed(storage: ReturnType<typeof openStorage>): void {
-  insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'open', updatedAtMicros: T0 })
+  insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'active', updatedAtMicros: T0 })
 }
 
 // A racer: opens storage on a shared root and prints the applied ledger. A
@@ -243,7 +243,7 @@ test('CONC-03: two processes genuinely race open + migrate; loser observes migra
   const ledger = storage.driver.prepare('SELECT version FROM schema_migrations').all() as {
     version: number
   }[]
-  assert.equal(ledger.length, 1, 'each version is applied exactly once')
+  assert.equal(ledger.length, 2, 'each version is applied exactly once')
   closeStorage(storage)
   rmSync(root, { recursive: true, force: true })
   rmSync(rendezvous, { recursive: true, force: true })

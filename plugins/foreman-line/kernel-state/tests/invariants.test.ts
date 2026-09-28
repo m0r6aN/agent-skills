@@ -46,7 +46,7 @@ function withStorage<T>(fn: (storage: Storage) => T): T {
 }
 
 function seedGoalAndEvent(storage: Storage): void {
-  insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'open', updatedAtMicros: T0 })
+  insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'active', updatedAtMicros: T0 })
   insertEvent(storage, {
     eventId: 'evt-1',
     goalId: 'goal-1',
@@ -90,6 +90,33 @@ const INV = (id: string) => {
   assert.ok(fixture, `${id} fixture declaration missing`)
   return fixture
 }
+
+test('A1: goals.status CHECK refuses out-of-vocab values as a typed constraint violation', () => {
+  withStorage((storage) => {
+    // Default-deny on the closed five-value vocab (FK-P10 OQ-1 ruling):
+    // an Id-shaped but out-of-vocab status must refuse at the DB CHECK.
+    assert.throws(
+      () =>
+        insertGoal(storage, {
+          goalId: 'goal-legacy',
+          revision: 0,
+          status: 'legacy-open',
+          updatedAtMicros: T0,
+        }),
+      (error: unknown) => {
+        assert.ok(error instanceof StorageError)
+        assert.equal(error.code, 'STORAGE_CONSTRAINT_VIOLATION')
+        assert.equal(error.diagnostic.reasonCode, 'check')
+        return true
+      },
+    )
+    assert.equal(getGoal(storage, 'goal-legacy'), null, 'the refused row must not persist')
+    // Failing-when-broken: a vocab value inserts cleanly (the CHECK is what
+    // refuses, not the insert path).
+    insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'active', updatedAtMicros: T0 })
+    assert.equal(getGoal(storage, 'goal-1')?.status, 'active')
+  })
+})
 
 test('INV-01: event with unknown goal_id refuses (foreign-key)', () => {
   const expected = INV('INV-01')
@@ -222,7 +249,7 @@ test('idempotency tuple: same key with different payload_digest fails the unique
 
 test('lease partial unique index: at most one active lease per goal (substrate invariant)', () => {
   withStorage((storage) => {
-    insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'open', updatedAtMicros: T0 })
+    insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'active', updatedAtMicros: T0 })
     storage.driver
       .prepare(
         `INSERT INTO leases (lease_id, goal_id, owner_principal_ref, cas_revision, acquired_at_micros, expires_at_micros, released_at_micros)
@@ -246,24 +273,24 @@ test('lease partial unique index: at most one active lease per goal (substrate i
 
 test('guarded writes: empty guards refuse; no-match update touches zero rows', () => {
   withStorage((storage) => {
-    insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'open', updatedAtMicros: T0 })
+    insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'active', updatedAtMicros: T0 })
     assert.throws(
-      () => updateGoalRow(storage, 'goal-1', {}, { status: 'closed' }),
+      () => updateGoalRow(storage, 'goal-1', {}, { status: 'completed' }),
       (error: unknown) => {
         assert.ok(error instanceof StorageError)
         assert.equal(error.code, 'STORAGE_ARGUMENT_INVALID')
         return true
       },
     )
-    const changed = updateGoalRow(storage, 'goal-1', { revision: 99 }, { status: 'closed' })
+    const changed = updateGoalRow(storage, 'goal-1', { revision: 99 }, { status: 'completed' })
     assert.equal(changed, 0)
-    assert.equal(getGoal(storage, 'goal-1')?.status, 'open')
+    assert.equal(getGoal(storage, 'goal-1')?.status, 'active')
   })
 })
 
 test('payload byte cap is a protocol error, never truncation', () => {
   withStorage((storage) => {
-    insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'open', updatedAtMicros: T0 })
+    insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'active', updatedAtMicros: T0 })
     // 65,536 bytes exactly passes; one byte more refuses.
     const atLimit = 'x'.repeat(65_536)
     insertEvent(storage, {
@@ -299,7 +326,7 @@ test('payload byte cap is a protocol error, never truncation', () => {
 
 test('consume wakeup is a guarded write (second consume touches zero rows)', () => {
   withStorage((storage) => {
-    insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'open', updatedAtMicros: T0 })
+    insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'active', updatedAtMicros: T0 })
     insertWakeupHandoff(storage, {
       wakeupId: 'wk-1',
       goalId: 'goal-1',
@@ -315,10 +342,13 @@ test('consume wakeup is a guarded write (second consume touches zero rows)', () 
 
 test('guarded writes: unknown patch member refuses with STORAGE_ARGUMENT_INVALID (F2)', () => {
   withStorage((storage) => {
-    insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'open', updatedAtMicros: T0 })
+    insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'active', updatedAtMicros: T0 })
     assert.throws(
       () =>
-        updateGoalRow(storage, 'goal-1', { revision: 0 }, { status: 'closed', bogus: 1 } as never),
+        updateGoalRow(storage, 'goal-1', { revision: 0 }, {
+          status: 'completed',
+          bogus: 1,
+        } as never),
       (error: unknown) => {
         assert.ok(error instanceof StorageError)
         assert.equal(error.code, 'STORAGE_ARGUMENT_INVALID')
@@ -327,13 +357,13 @@ test('guarded writes: unknown patch member refuses with STORAGE_ARGUMENT_INVALID
       },
     )
     // Failing-when-broken: without the unknown member the update applies.
-    assert.equal(updateGoalRow(storage, 'goal-1', { revision: 0 }, { status: 'closed' }), 1)
+    assert.equal(updateGoalRow(storage, 'goal-1', { revision: 0 }, { status: 'completed' }), 1)
   })
 })
 
 test('guarded writes: wrong-shape patch value refuses pre-write (F2)', () => {
   withStorage((storage) => {
-    insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'open', updatedAtMicros: T0 })
+    insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'active', updatedAtMicros: T0 })
     assert.throws(
       () => updateGoalRow(storage, 'goal-1', { revision: 0 }, { status: 'not a valid id!!' }),
       (error: unknown) => {
@@ -344,19 +374,19 @@ test('guarded writes: wrong-shape patch value refuses pre-write (F2)', () => {
       },
     )
     // Pre-write refusal: nothing poisoned the row (a raw TEXT bind would have).
-    assert.equal(getGoal(storage, 'goal-1')?.status, 'open')
+    assert.equal(getGoal(storage, 'goal-1')?.status, 'active')
     // Failing-when-broken: a shape-valid value passes.
-    assert.equal(updateGoalRow(storage, 'goal-1', { revision: 0 }, { status: 'closed' }), 1)
+    assert.equal(updateGoalRow(storage, 'goal-1', { revision: 0 }, { status: 'completed' }), 1)
   })
 })
 
 test('guarded writes: wrong-type guard refuses pre-write (F2)', () => {
   withStorage((storage) => {
-    insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'open', updatedAtMicros: T0 })
+    insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'active', updatedAtMicros: T0 })
     assert.throws(
       () =>
         updateGoalRow(storage, 'goal-1', { updatedAtMicros: 'soon' } as never, {
-          status: 'closed',
+          status: 'completed',
         }),
       (error: unknown) => {
         assert.ok(error instanceof StorageError)
@@ -365,15 +395,18 @@ test('guarded writes: wrong-type guard refuses pre-write (F2)', () => {
         return true
       },
     )
-    assert.equal(getGoal(storage, 'goal-1')?.status, 'open')
+    assert.equal(getGoal(storage, 'goal-1')?.status, 'active')
     // Failing-when-broken: a type-correct guard passes.
-    assert.equal(updateGoalRow(storage, 'goal-1', { updatedAtMicros: T0 }, { status: 'closed' }), 1)
+    assert.equal(
+      updateGoalRow(storage, 'goal-1', { updatedAtMicros: T0 }, { status: 'completed' }),
+      1,
+    )
   })
 })
 
 test('guarded writes: identity members cannot be patched', () => {
   withStorage((storage) => {
-    insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'open', updatedAtMicros: T0 })
+    insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'active', updatedAtMicros: T0 })
     assert.throws(
       () => updateGoalRow(storage, 'goal-1', { revision: 0 }, { goalId: 'goal-renamed' } as never),
       (error: unknown) => {
@@ -404,7 +437,7 @@ test('nested withTransaction refuses (STORAGE_ARGUMENT_INVALID)', () => {
 
 test('a throwing transaction body rolls back every write', () => {
   withStorage((storage) => {
-    insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'open', updatedAtMicros: T0 })
+    insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'active', updatedAtMicros: T0 })
     assert.throws(() =>
       withTransaction(storage, (inner) => {
         insertEvent(inner, {

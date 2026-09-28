@@ -96,7 +96,7 @@ const CHILD_SOURCE = [
   '    })',
   '  })',
   '}',
-  "insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'open', updatedAtMicros: 1 })",
+  "insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'active', updatedAtMicros: 1 })",
   "if (scenario === 'evt1-cp-evt2') {",
   "  event('evt-1', 1)",
   "  checkpoint(storage, 'TRUNCATE')",

@@ -24,6 +24,7 @@ import {
   openStorage,
   openStorageWithDriver,
 } from '../src/open.js'
+import { getGoal, insertGoal } from '../src/rows.js'
 
 const HERE = dirname(fileURLToPath(import.meta.url))
 const PKG_ROOT = resolve(HERE, '..')
@@ -363,7 +364,7 @@ test('POS-01: fresh create migrates to head', () => {
   }[]
   assert.deepEqual(
     versions.map((row) => row.version),
-    [1],
+    [1, 2],
   )
   closeStorage(storage)
   rmSync(root, { recursive: true, force: true })
@@ -379,7 +380,7 @@ test('POS-02: reopen at head lands at head', () => {
   const applied = second.driver.prepare('SELECT count(*) AS c FROM schema_migrations').get() as {
     c: number
   }
-  assert.equal(applied.c, 1)
+  assert.equal(applied.c, 2)
   closeStorage(second)
   rmSync(root, { recursive: true, force: true })
 })
@@ -424,6 +425,127 @@ test('comment-only disallowed words do not refuse; live ones do', () => {
   const set = loadMigrationSet(dir)
   assert.equal(set.length, 1)
   rmSync(dir, { recursive: true, force: true })
+})
+
+test('A1: the five-value status vocab is exactly enforced (default-deny)', () => {
+  const root = mkdtempSync(join(tmpdir(), 'fkp9-a1vocab-'))
+  const storage = openStorage(configFor(root))
+  for (const status of ['proposed', 'active', 'awaiting-human', 'completed', 'cancelled']) {
+    insertGoal(storage, { goalId: `goal-${status}`, revision: 0, status, updatedAtMicros: 1 })
+    assert.equal(getGoal(storage, `goal-${status}`)?.status, status)
+  }
+  expectCode(
+    () =>
+      insertGoal(storage, {
+        goalId: 'goal-bad',
+        revision: 0,
+        status: 'legacy-open',
+        updatedAtMicros: 1,
+      }),
+    'STORAGE_CONSTRAINT_VIOLATION',
+  )
+  closeStorage(storage)
+  rmSync(root, { recursive: true, force: true })
+})
+
+test('A1: prior-schema databases migrate forward transactionally', () => {
+  const root = mkdtempSync(join(tmpdir(), 'fkp9-a1fwd-'))
+  const setOne = mkdtempSync(join(tmpdir(), 'fkp9-a1fwds-'))
+  // Byte-identical packaged 0001 under its packaged name: a genuine
+  // prior-schema (version 1) database.
+  writeSet(setOne, [{ name: '0001-initial.sql', sql: PACKAGED_0001 }])
+  const first = openStorageWithDriver(configFor(root), undefined, { migrationDir: setOne })
+  first.driver
+    .prepare(
+      "INSERT INTO goals (goal_id, revision, status, pending_transition_id, updated_at_micros) VALUES ('goal-keep', 3, 'proposed', NULL, 7)",
+    )
+    .run()
+  closeStorage(first)
+  // Forward with the packaged set (0001 + 0002): lands at version 2 with the
+  // row preserved and the A1 CHECK live.
+  const head = openStorage(configFor(root))
+  const versions = head.driver
+    .prepare('SELECT version FROM schema_migrations ORDER BY version')
+    .all() as {
+    version: number
+  }[]
+  assert.deepEqual(
+    versions.map((row) => row.version),
+    [1, 2],
+  )
+  const kept = head.driver
+    .prepare("SELECT status, revision FROM goals WHERE goal_id = 'goal-keep'")
+    .get() as {
+    status: string
+    revision: number
+  }
+  assert.equal(kept.status, 'proposed')
+  assert.equal(kept.revision, 3)
+  expectCode(
+    () =>
+      insertGoal(head, {
+        goalId: 'goal-bad',
+        revision: 0,
+        status: 'legacy-open',
+        updatedAtMicros: 1,
+      }),
+    'STORAGE_CONSTRAINT_VIOLATION',
+  )
+  closeStorage(head)
+  rmSync(root, { recursive: true, force: true })
+  rmSync(setOne, { recursive: true, force: true })
+})
+
+test('A1: out-of-vocab legacy rows refuse the 0002 migration fail-closed', () => {
+  const root = mkdtempSync(join(tmpdir(), 'fkp9-a1legacy-'))
+  const setOne = mkdtempSync(join(tmpdir(), 'fkp9-a1legacys-'))
+  writeSet(setOne, [{ name: '0001-initial.sql', sql: PACKAGED_0001 }])
+  const first = openStorageWithDriver(configFor(root), undefined, { migrationDir: setOne })
+  first.driver
+    .prepare(
+      "INSERT INTO goals (goal_id, revision, status, pending_transition_id, updated_at_micros) VALUES ('goal-legacy', 0, 'legacy-open', NULL, 1)",
+    )
+    .run()
+  closeStorage(first)
+  // The vocabulary mapping is FK-P10 semantics, not FK-P9's: the migration
+  // refuses rather than silently rewriting status values.
+  expectCode(() => openStorage(configFor(root)), 'STORAGE_MIGRATION_FAILED')
+  // Fail-closed: the database remains at version 1 with its row intact.
+  const inspect = openStorageWithDriver(configFor(root), undefined, { migrationDir: setOne })
+  const versions = inspect.driver.prepare('SELECT version FROM schema_migrations').all() as {
+    version: number
+  }[]
+  assert.deepEqual(
+    versions.map((row) => row.version),
+    [1],
+  )
+  const kept = inspect.driver
+    .prepare("SELECT status FROM goals WHERE goal_id = 'goal-legacy'")
+    .get() as { status: string }
+  assert.equal(kept.status, 'legacy-open')
+  closeStorage(inspect)
+  rmSync(root, { recursive: true, force: true })
+  rmSync(setOne, { recursive: true, force: true })
+})
+
+test('A2: events(goal_id, operation_id) lookup index exists and binds query plans', () => {
+  const root = mkdtempSync(join(tmpdir(), 'fkp9-a2-'))
+  const storage = openStorage(configFor(root))
+  const planOf = (): string =>
+    JSON.stringify(
+      storage.driver
+        .prepare(
+          "EXPLAIN QUERY PLAN SELECT * FROM events WHERE goal_id = 'g' AND operation_id = 'o'",
+        )
+        .all(),
+    )
+  // Lookup-bound (FK-P10 OQ-8 — performance-only): the plan must name the
+  // index; failing-when-broken: dropping the index unbinds the plan.
+  assert.ok(planOf().includes('events_goal_operation_idx'), planOf())
+  storage.driver.exec('DROP INDEX events_goal_operation_idx')
+  assert.ok(!planOf().includes('events_goal_operation_idx'), planOf())
+  closeStorage(storage)
+  rmSync(root, { recursive: true, force: true })
 })
 
 test('migration digests are file-bytes digests and drift when bytes change', () => {

@@ -304,6 +304,14 @@ export interface MigrationHooks {
  * skips). Any failure rolls back; capacity exhaustion surfaces
  * `STORAGE_DISK_FULL`, everything else refuses with `STORAGE_MIGRATION_FAILED`
  * (version literal only). The database stays at the last committed version.
+ *
+ * SQLite's documented ALTER TABLE procedure applies: schema rebuilds (0002
+ * adds the goals status CHECK) cannot drop a foreign-key-referenced table with
+ * enforcement on, and the toggle is a no-op inside a transaction. Enforcement
+ * is therefore disabled across the migration transaction, the commit is gated
+ * on `PRAGMA foreign_key_check` (violations refuse and roll back), and
+ * enforcement is restored immediately after (the post-open assertion re-reads
+ * it).
  */
 export function applyMigration(
   driver: MigrationDriver,
@@ -312,58 +320,78 @@ export function applyMigration(
   hooks: MigrationHooks = {},
 ): void {
   try {
-    driver.exec('BEGIN IMMEDIATE')
+    driver.pragma('foreign_keys=OFF')
   } catch (error) {
     if (error instanceof StorageError) throw error
     throw storageError('STORAGE_MIGRATION_FAILED', { version: migration.version })
   }
-  let committed = false
   try {
-    // Single-apply under the write lock (CONC-03).
-    let alreadyApplied = false
     try {
-      const row = driver
-        .prepare('SELECT 1 AS present FROM schema_migrations WHERE version = ?')
-        .get(migration.version)
-      alreadyApplied = row !== undefined && row !== null
-    } catch {
-      // The ledger table does not exist before the first migration applies.
+      driver.exec('BEGIN IMMEDIATE')
+    } catch (error) {
+      if (error instanceof StorageError) throw error
+      throw storageError('STORAGE_MIGRATION_FAILED', { version: migration.version })
     }
-    if (alreadyApplied) {
+    let committed = false
+    try {
+      // Single-apply under the write lock (CONC-03).
+      let alreadyApplied = false
+      try {
+        const row = driver
+          .prepare('SELECT 1 AS present FROM schema_migrations WHERE version = ?')
+          .get(migration.version)
+        alreadyApplied = row !== undefined && row !== null
+      } catch {
+        // The ledger table does not exist before the first migration applies.
+      }
+      if (alreadyApplied) {
+        driver.exec('COMMIT')
+        committed = true
+        return
+      }
+      const statements = splitSqlStatements(migration.sql)
+      for (let i = 0; i < statements.length; i += 1) {
+        hooks.beforeStatement?.({
+          version: migration.version,
+          statementIndex: i,
+          statement: statements[i] as string,
+        })
+        driver.exec(statements[i] as string)
+      }
+      driver
+        .prepare(
+          'INSERT INTO schema_migrations (version, name, digest, applied_at_micros) VALUES (?, ?, ?, ?)',
+        )
+        .run(migration.version, migration.name, migration.digest, clock.nowMicros())
+      // Fail-closed gate standing in for the toggled-off enforcement: any
+      // foreign-key violation introduced by the migration refuses the commit.
+      const violations = driver.pragma('foreign_key_check')
+      if (Array.isArray(violations) && violations.length > 0) {
+        throw storageError('STORAGE_MIGRATION_FAILED', { version: migration.version })
+      }
       driver.exec('COMMIT')
       committed = true
-      return
-    }
-    const statements = splitSqlStatements(migration.sql)
-    for (let i = 0; i < statements.length; i += 1) {
-      hooks.beforeStatement?.({
-        version: migration.version,
-        statementIndex: i,
-        statement: statements[i] as string,
-      })
-      driver.exec(statements[i] as string)
-    }
-    driver
-      .prepare(
-        'INSERT INTO schema_migrations (version, name, digest, applied_at_micros) VALUES (?, ?, ?, ?)',
-      )
-      .run(migration.version, migration.name, migration.digest, clock.nowMicros())
-    driver.exec('COMMIT')
-    committed = true
-  } catch (error) {
-    if (!committed) {
-      try {
-        driver.exec('ROLLBACK')
-      } catch {
-        // The rollback is best-effort; WAL recovery restores the last
-        // committed version regardless (startup step 7).
+    } catch (error) {
+      if (!committed) {
+        try {
+          driver.exec('ROLLBACK')
+        } catch {
+          // The rollback is best-effort; WAL recovery restores the last
+          // committed version regardless (startup step 7).
+        }
       }
+      if (error instanceof StorageError) throw error
+      if (driverCodeOf(error) === 'SQLITE_FULL') {
+        throw storageError('STORAGE_DISK_FULL', { driverCode: 'SQLITE_FULL' })
+      }
+      throw storageError('STORAGE_MIGRATION_FAILED', { version: migration.version })
     }
-    if (error instanceof StorageError) throw error
-    if (driverCodeOf(error) === 'SQLITE_FULL') {
-      throw storageError('STORAGE_DISK_FULL', { driverCode: 'SQLITE_FULL' })
+  } finally {
+    try {
+      driver.pragma('foreign_keys=ON')
+    } catch {
+      // Best-effort restore; the post-open assertion re-reads the value.
     }
-    throw storageError('STORAGE_MIGRATION_FAILED', { version: migration.version })
   }
 }
 

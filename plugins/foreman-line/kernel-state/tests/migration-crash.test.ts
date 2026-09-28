@@ -17,11 +17,14 @@ import { dirname, join, resolve } from 'node:path'
 import { test } from 'node:test'
 import { fileURLToPath } from 'node:url'
 import { fixedClock } from '../src/clock.js'
+import { StorageError } from '../src/errors.js'
 import { closeStorage, type OpenStorageConfig, openStorageWithDriver } from '../src/open.js'
+import { insertGoal } from '../src/rows.js'
 
 const HERE = dirname(fileURLToPath(import.meta.url))
 const PKG_ROOT = resolve(HERE, '..')
 const PACKAGED_0001 = readFileSync(join(PKG_ROOT, 'migrations', '0001-initial.sql'))
+const PACKAGED_0002 = readFileSync(join(PKG_ROOT, 'migrations', '0002-goal-status-checks.sql'))
 
 const MIGRATION = JSON.parse(
   readFileSync(join(HERE, 'fixtures', 'hostile', 'migration.json'), 'utf8'),
@@ -93,11 +96,10 @@ test('MIG-02: real child-process kill mid-migration leaves no half-applied schem
   const root = mkdtempSync(join(tmpdir(), 'fkp9-mig2-'))
   const set = mkdtempSync(join(tmpdir(), 'fkp9-mig2s-'))
   const marker = join(root, 'fault-marker')
+  // The crash now covers the REAL packaged 0002 (A1/A2): the kill lands
+  // between its first DDL and its copy statement, mid-transaction.
   writeFileSync(join(set, '0001-a.sql'), PACKAGED_0001)
-  writeFileSync(
-    join(set, '0002-b.sql'),
-    'CREATE TABLE t_two (x INTEGER NOT NULL); CREATE TABLE t_two_more (x INTEGER NOT NULL)',
-  )
+  writeFileSync(join(set, '0002-b.sql'), PACKAGED_0002)
   writeFileSync(join(root, 'child.mts'), CHILD_SOURCE)
 
   const child = spawn(
@@ -132,7 +134,7 @@ test('MIG-02: real child-process kill mid-migration leaves no half-applied schem
     'the interrupted migration must leave the ledger at the last committed version',
   )
   const objects = inspect.driver
-    .prepare("SELECT name FROM sqlite_master WHERE name IN ('t_two', 't_two_more')")
+    .prepare("SELECT name FROM sqlite_master WHERE name = 'goals_v2'")
     .all()
   assert.equal(objects.length, 0, 'no half-applied schema may be observable')
   closeStorage(inspect)
@@ -148,6 +150,30 @@ test('MIG-02: real child-process kill mid-migration leaves no half-applied schem
     after.map((row) => row.version),
     [1, 2],
   )
+  // The real 0002 landed intact: the status CHECK is live (A1) and the
+  // lookup-bound events(goal_id, operation_id) index exists (A2).
+  assert.throws(
+    () =>
+      insertGoal(rerun, {
+        goalId: 'goal-bogus',
+        revision: 0,
+        status: 'legacy-open',
+        updatedAtMicros: 1,
+      }),
+    (error: unknown) => {
+      assert.ok(error instanceof StorageError)
+      assert.equal(error.code, 'STORAGE_CONSTRAINT_VIOLATION')
+      assert.equal(error.diagnostic.reasonCode, 'check')
+      return true
+    },
+  )
+  insertGoal(rerun, { goalId: 'goal-ok', revision: 0, status: 'active', updatedAtMicros: 1 })
+  const index = rerun.driver
+    .prepare(
+      "SELECT name FROM sqlite_master WHERE type = 'index' AND name = 'events_goal_operation_idx'",
+    )
+    .all()
+  assert.equal(index.length, 1, 'A2 lookup-bound index must exist')
   closeStorage(rerun)
 
   rmSync(root, { recursive: true, force: true })

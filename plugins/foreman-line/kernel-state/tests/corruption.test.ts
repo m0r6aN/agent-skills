@@ -42,7 +42,7 @@ function makeValidDatabase(root: string, rows: number): void {
   const storage = openStorage(configFor(root))
   storage.driver
     .prepare(
-      `INSERT INTO goals (goal_id, revision, status, pending_transition_id, updated_at_micros) VALUES ('goal-1', 0, 'open', NULL, 1)`,
+      `INSERT INTO goals (goal_id, revision, status, pending_transition_id, updated_at_micros) VALUES ('goal-1', 0, 'active', NULL, 1)`,
     )
     .run()
   for (let i = 0; i < rows; i += 1) {
