@@ -17,7 +17,7 @@ from an index row.
 | Goal | State | Entry | Current authority |
 |---|---|---|---|
 | [hierarchical-coordination-sidecars](hierarchical-coordination-sidecars/charter.md) | `awaiting_coordinator_claim` | `/goal resume hierarchical-coordination-sidecars` | Goal intake requested; Gate 1/2 absent; Gate 3 human |
-| [heterogeneous-agent-worker-fabric](heterogeneous-agent-worker-fabric/charter.md) | `awaiting_coordinator_claim` | `/goal resume heterogeneous-agent-worker-fabric` | Completion requested; Gate 1/2 absent; default-route Gate 3 human |
+| [heterogeneous-agent-worker-fabric](heterogeneous-agent-worker-fabric/charter.md) | `active — WF-P0 shaping` | `/goal resume heterogeneous-agent-worker-fabric` | Owned by a Claude Code coordinator (transferred from Codex `/root` pre-dispatch, 2026-09-03); Gate 1 closed incl. amendment A1; **Gate 2 granted for WF-P0 only**; Gate 3 not delegated — every merge and default-route activation human |
 
 ## Active goals awaiting a human gate
 

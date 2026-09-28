@@ -269,3 +269,12 @@ pass (one unchanged routing informational suggestion). Actual D19 passes21 packa
 202 source files, zero unruled instances. Diff/scope clean. This is acceptance of
 the pure disabled planner checkpoint, not the unfinished E2 entry/CLI/installation
 or production apply. Exact-head remote checks and merge still follow.
+
+## E2 checkpoint 1 accepted on main — 2026-09-26
+
+PR68 merged at 2026-09-26T22:58:18Z as
+04dfd9f1ff3811b3da8c686dee1ee61a0dc9dbda. All twelve remote checks passed on
+reviewed head 4e0d1d7fc36b9bc93f9e11cccf36327d4df05644 before the delegated merge.
+The pure disabled planner checkpoint is complete. Parent E2 remains active:
+entry, CLI and installation require accepted D and their separate release.
+No caller migration, configuration apply or production activation is claimed.
