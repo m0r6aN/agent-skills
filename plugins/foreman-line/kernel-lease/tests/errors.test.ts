@@ -39,6 +39,39 @@ import {
 
 const T0 = 1_700_000_000_000_000
 
+/**
+ * Read-path defense seam (standing #2: rows are `unknown` until normalized).
+ * FK-P9's DB-level status CHECKs (A1a/A1b) make a genuinely out-of-vocabulary
+ * `goals.status` row unwritable, so the engine's `GOAL_STATUS_UNKNOWN` read
+ * refusal is exercised by patching the row at the driver boundary — the shape
+ * of a legacy row arriving through an otherwise trusted substrate.
+ */
+function poisonGoalStatus(storage: Storage, goalId: string, status: string): Storage {
+  const driver = storage.driver
+  const patch = (row: unknown): unknown => {
+    const record = row as Record<string, unknown> | null
+    if (record !== null && record.goal_id === goalId && 'status' in record) {
+      return { ...record, status }
+    }
+    return row
+  }
+  const poisoned = {
+    exec: (sql: string) => {
+      driver.exec(sql)
+    },
+    prepare: (sql: string) => {
+      const statement = driver.prepare(sql)
+      return {
+        run: (...args: unknown[]) => statement.run(...args),
+        get: (...args: unknown[]) => patch(statement.get(...args)),
+        all: (...args: unknown[]) => (statement.all(...args) as unknown[]).map(patch),
+      }
+    },
+    pragma: (source: string) => driver.pragma(source),
+  }
+  return { ...storage, driver: poisoned } as unknown as Storage
+}
+
 function configFor(root: string): OpenStorageConfig {
   return {
     storageRoot: root,
@@ -94,7 +127,9 @@ test('one tested refusal per code (fault-injection matrix)', () => {
   try {
     insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'active', updatedAtMicros: T0 })
     insertGoal(storage, { goalId: 'goal-term', revision: 0, status: 'completed', updatedAtMicros: T0 })
-    insertGoal(storage, { goalId: 'goal-weird', revision: 0, status: 'gate.satisfied', updatedAtMicros: T0 })
+    // The A1a CHECK makes an invalid status unwritable; seeded valid and
+    // poisoned at the driver seam below (GOAL_STATUS_UNKNOWN case).
+    insertGoal(storage, { goalId: 'goal-weird', revision: 0, status: 'active', updatedAtMicros: T0 })
     insertLease(storage, {
       leaseId: 'lease-1',
       goalId: 'goal-1',
@@ -244,8 +279,14 @@ test('one tested refusal per code (fault-injection matrix)', () => {
         }),
       'GOAL_TERMINAL',
     )
-    // 7 GOAL_STATUS_UNKNOWN
-    expectCode(() => getGoalState(engine, 'goal-weird'), 'GOAL_STATUS_UNKNOWN')
+    // 7 GOAL_STATUS_UNKNOWN (read-path defense; the poisoned row stands in for
+    // a legacy row the A1a CHECK can no longer admit).
+    const weirdEngine = createEngine({
+      storage: poisonGoalStatus(storage, 'goal-weird', 'gate.satisfied'),
+      clock: fixedClock(T0),
+      toolVersion: 'kernel-lease-test',
+    })
+    expectCode(() => getGoalState(weirdEngine, 'goal-weird'), 'GOAL_STATUS_UNKNOWN')
     // 8 TRANSITION_ABSENT
     expectCode(
       () =>
@@ -437,6 +478,15 @@ test('safe diagnostics carry only declared shapes (ids/revision/field paths — 
   const storage = openStorage(configFor(root))
   try {
     insertGoal(storage, { goalId: 'goal-1', revision: 2, status: 'active', updatedAtMicros: T0 })
+    insertLease(storage, {
+      leaseId: 'lease-1',
+      goalId: 'goal-1',
+      ownerPrincipalRef: 'principal-a',
+      casRevision: 2,
+      acquiredAtMicros: T0 - 10,
+      expiresAtMicros: T0 + 60_000_000,
+      releasedAtMicros: null,
+    })
     const engine = createEngine({ storage, clock: fixedClock(T0), toolVersion: 'kernel-lease-test' })
     const stale = expectCode(
       () =>

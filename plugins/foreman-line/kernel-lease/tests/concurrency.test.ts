@@ -65,9 +65,14 @@ interface RaceRun {
   tables: Record<string, number>
 }
 
-function binding(racer: number, op: string, digestHex: string): Record<string, unknown> {
+function binding(
+  racer: number,
+  op: string,
+  digestHex: string,
+  principalRef = `racer-${racer}`,
+): Record<string, unknown> {
   return {
-    principalRef: `racer-${racer}`,
+    principalRef,
     operationId: `op-${op}-${racer}`,
     repositoryRef: 'repo-1',
     worktreeRef: 'wt-1',
@@ -335,7 +340,7 @@ test('CN-02 claim/release race: exactly the two named serializations; never two 
           goalId: 'goal-1',
           leaseId: 'lease-2',
           durationMicros: 60_000_000,
-          expectedRevision: 1,
+          expectedRevision: 2,
           idempotencyKey: binding(1, 'cn-02', 'b2'),
         },
       },
@@ -542,7 +547,7 @@ test('CN-06 stale-CAS apply race: one applies, the peer STATE_REVISION_STALE', a
           goalId: 'goal-1',
           targetStatus: 'cancelled',
           expectedRevision: 1,
-          idempotencyKey: binding(1, 'cn-06', 'f6'),
+          idempotencyKey: binding(1, 'cn-06', 'f6', 'racer-0'),
         },
       },
     ])
@@ -588,7 +593,7 @@ test('CN-07 pending-request race: one pending transition wins, the peer TRANSITI
           goalId: 'goal-1',
           targetStatus: 'awaiting-human',
           expectedRevision: 0,
-          idempotencyKey: binding(1, 'cn-07', '97'),
+          idempotencyKey: binding(1, 'cn-07', '97', 'racer-0'),
         },
       },
     ])

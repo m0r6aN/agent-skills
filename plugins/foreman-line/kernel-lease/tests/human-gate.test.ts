@@ -16,6 +16,8 @@ import {
   insertTransition,
   openStorage,
   type OpenStorageConfig,
+  type Storage,
+  updateGoalRow,
 } from '@foreman-line/kernel-state'
 import {
   applyTransition,
@@ -48,6 +50,39 @@ const parsedFixture: unknown = JSON.parse(
 const fixtureTable = parsedFixture as { records: FixtureRow[] }
 const GTW = fixtureTable.records
 
+/**
+ * Read-path defense seam (standing #2: rows are `unknown` until normalized).
+ * FK-P9's DB-level status CHECKs (A1a/A1b) make a genuinely out-of-vocabulary
+ * `goals.status` row unwritable, so the engine's `GOAL_STATUS_UNKNOWN` read
+ * refusal is exercised by patching the row at the driver boundary — the shape
+ * of a legacy row arriving through an otherwise trusted substrate.
+ */
+function poisonGoalStatus(storage: Storage, goalId: string, status: string): Storage {
+  const driver = storage.driver
+  const patch = (row: unknown): unknown => {
+    const record = row as Record<string, unknown> | null
+    if (record !== null && record.goal_id === goalId && 'status' in record) {
+      return { ...record, status }
+    }
+    return row
+  }
+  const poisoned = {
+    exec: (sql: string) => {
+      driver.exec(sql)
+    },
+    prepare: (sql: string) => {
+      const statement = driver.prepare(sql)
+      return {
+        run: (...args: unknown[]) => statement.run(...args),
+        get: (...args: unknown[]) => patch(statement.get(...args)),
+        all: (...args: unknown[]) => (statement.all(...args) as unknown[]).map(patch),
+      }
+    },
+    pragma: (source: string) => driver.pragma(source),
+  }
+  return { ...storage, driver: poisoned } as unknown as Storage
+}
+
 function configFor(root: string): OpenStorageConfig {
   return {
     storageRoot: root,
@@ -76,11 +111,14 @@ for (const row of GTW.filter(
         goalId: 'goal-1',
         revision: goal.revision,
         status: goal.status,
-        pendingTransitionId: row.setup.pendingTransitionId ?? null,
         updatedAtMicros: T0,
       })
       if (row.setup.lease !== null && row.setup.lease !== undefined) {
-        insertLease(storage, { ...(row.setup.lease as object), acquiredAtMicros: T0 - 10 } as never)
+        insertLease(storage, {
+          goalId: 'goal-1',
+          ...(row.setup.lease as object),
+          acquiredAtMicros: T0 - 10,
+        } as never)
       }
       for (const transition of row.setup.transitions ?? []) {
         insertTransition(storage, {
@@ -93,6 +131,16 @@ for (const row of GTW.filter(
           createdAtMicros: T0 - 10,
           decidedAtMicros: transition.decidedAtMicros,
         })
+      }
+      // The goal's pending pointer FKs the transitions table: set it only once
+      // the transition rows exist (an inline value at insertGoal violates the FK).
+      if (row.setup.pendingTransitionId != null) {
+        updateGoalRow(
+          storage,
+          'goal-1',
+          { revision: goal.revision },
+          { pendingTransitionId: row.setup.pendingTransitionId },
+        )
       }
       const engine = createEngine({
         storage,
@@ -130,8 +178,15 @@ test('GTW-10 substrate-seeded gate-ish status refuses on read (defense in depth)
   const root = mkdtempSync(join(tmpdir(), 'fk-p10-gtw-'))
   const storage = openStorage(configFor(root))
   try {
-    insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'gate.satisfied', updatedAtMicros: T0 })
-    const engine = createEngine({ storage, clock: fixedClock(T0), toolVersion: 'kernel-lease-test' })
+    // FK-P9's DB-level status CHECK (A1a) makes an out-of-vocabulary status
+    // row unwritable; the engine's read-path refusal (T1 defense in depth) is
+    // exercised by poisoning the row at the driver boundary (standing #2).
+    insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'active', updatedAtMicros: T0 })
+    const engine = createEngine({
+      storage: poisonGoalStatus(storage, 'goal-1', 'gate.satisfied'),
+      clock: fixedClock(T0),
+      toolVersion: 'kernel-lease-test',
+    })
     assert.throws(
       () => getGoalState(engine, row.input.goalId),
       (error: unknown) => {

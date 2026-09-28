@@ -159,12 +159,15 @@ function crashMode(argv: string[]): void {
   const [dbRoot, faultJson, markerDir] = argv
   const plan = JSON.parse(readFileSync(faultJson as string, 'utf8')) as FaultPlan
   plan.markerDir = markerDir as string
+  // Fixture scenarios name the OPERATION in fixture vocabulary; the engine
+  // surface names it in API vocabulary ('claim' is claimLease).
+  const op = plan.scenario === 'claim' ? 'claimLease' : plan.scenario
   try {
     const storage = openStorage({
       storageRoot: dbRoot as string,
       databaseFileName: 'state.db',
       createIfMissing: false,
-      clock: systemClock(),
+      clock: fixedSeam(),
       backupPolicy: { root: dbRoot as string, retentionDescriptor: null },
     })
     const engine = createEngine({
@@ -172,18 +175,18 @@ function crashMode(argv: string[]): void {
         ...storage,
         driver: wrapDriverForFault(storage.driver, plan),
       } as Engine['storage'],
-      clock: systemClock(),
+      clock: fixedSeam(),
       toolVersion: 'child-worker-0.1.0',
     })
     if (plan.kill === 'post-commit-pre-result') {
       // CR-04: the transaction commits; the process dies before the result
       // returns to the caller.
-      runOperation(engine, plan.scenario, plan.request)
+      runOperation(engine, op, plan.request)
       writeFileSync(join(plan.markerDir, 'fault-reached'), 'post-commit\n')
       process.stdout.write('fault-reached\n')
       blockForever()
     }
-    runOperation(engine, plan.scenario, plan.request)
+    runOperation(engine, op, plan.request)
     // No fault fired — the scenario is misconfigured; say so loudly.
     writeFileSync(join(plan.markerDir, 'fault-missed'), plan.afterStatement)
   } catch (error) {

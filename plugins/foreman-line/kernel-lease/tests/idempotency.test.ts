@@ -17,6 +17,7 @@ import {
   insertTransition,
   openStorage,
   type OpenStorageConfig,
+  updateGoalRow,
 } from '@foreman-line/kernel-state'
 import {
   applyTransition,
@@ -68,11 +69,14 @@ function seedRow(storage: ReturnType<typeof openStorage>, row: FixtureRow): void
     goalId: 'goal-1',
     revision: row.setup.goal.revision,
     status: row.setup.goal.status,
-    pendingTransitionId: row.setup.pendingTransitionId ?? null,
     updatedAtMicros: T0,
   })
   if (row.setup.lease !== null && row.setup.lease !== undefined) {
-    insertLease(storage, { ...(row.setup.lease as object), acquiredAtMicros: T0 - 10 } as never)
+    insertLease(storage, {
+      goalId: 'goal-1',
+      ...(row.setup.lease as object),
+      acquiredAtMicros: T0 - 10,
+    } as never)
   }
   for (const transition of row.setup.transitions ?? []) {
     insertTransition(storage, {
@@ -85,6 +89,16 @@ function seedRow(storage: ReturnType<typeof openStorage>, row: FixtureRow): void
       createdAtMicros: T0 - 10,
       decidedAtMicros: transition.decidedAtMicros,
     })
+  }
+  // The goal's pending pointer FKs the transitions table: set it only once the
+  // transition rows exist (an inline value at insertGoal time violates the FK).
+  if (row.setup.pendingTransitionId != null) {
+    updateGoalRow(
+      storage,
+      'goal-1',
+      { revision: row.setup.goal.revision },
+      { pendingTransitionId: row.setup.pendingTransitionId },
+    )
   }
   if (row.setup.bindingRow !== undefined) {
     insertIdempotencyKey(storage, row.setup.bindingRow as never)

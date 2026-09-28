@@ -162,8 +162,8 @@ function runEdge(row: FixtureRow, engine: ReturnType<typeof createEngine>): void
 
 function withSeeded(row: FixtureRow, fn: (engine: ReturnType<typeof createEngine>) => void): void {
   const root = mkdtempSync(join(tmpdir(), 'fk-p10-sm-'))
+  const storage = openStorage(configFor(root))
   try {
-    const storage = openStorage(configFor(root))
     insertGoal(storage, {
       goalId: 'goal-1',
       revision: row.setup.goal.revision,
@@ -171,12 +171,22 @@ function withSeeded(row: FixtureRow, fn: (engine: ReturnType<typeof createEngine
       updatedAtMicros: T0,
     })
     if (row.setup.lease !== null) {
-      insertLease(storage, { ...(row.setup.lease as object), acquiredAtMicros: T0 - 10 } as never)
+      insertLease(storage, {
+        goalId: 'goal-1',
+        ...(row.setup.lease as object),
+        acquiredAtMicros: T0 - 10,
+      } as never)
     }
     fn(createEngine({ storage, clock: fixedClock(T0), toolVersion: 'kernel-lease-test' }))
-    closeStorage(storage)
   } finally {
-    rmSync(root, { recursive: true, force: true })
+    // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
+    // and turns rmSync's EPERM into the reported failure, masking the real one.
+    try {
+      closeStorage(storage)
+    } catch {
+      // Best-effort close; cleanup proceeds.
+    }
+    rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
   }
 }
 

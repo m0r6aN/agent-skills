@@ -17,12 +17,15 @@ import {
   type OpenStorageConfig,
 } from '@foreman-line/kernel-state'
 import {
+  applyTransition,
   claimLease,
   createEngine,
+  decideTransition,
   EngineError,
   getLeaseCasDescriptor,
   releaseLease,
   renewLease,
+  requestTransition,
 } from '../src/index.js'
 
 const T0 = 1_700_000_000_000_000
@@ -101,6 +104,12 @@ function runOp(engine: ReturnType<typeof createEngine>, op: string, input: Recor
       return renewLease(engine, input as never)
     case 'releaseLease':
       return releaseLease(engine, input as never)
+    case 'requestTransition':
+      return requestTransition(engine, input as never)
+    case 'decideTransition':
+      return decideTransition(engine, input as never)
+    case 'applyTransition':
+      return applyTransition(engine, input as never)
     default:
       throw new Error(`unsupported op ${op}`)
   }

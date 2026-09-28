@@ -16,6 +16,7 @@ import {
   insertTransition,
   openStorage,
   type OpenStorageConfig,
+  updateGoalRow,
 } from '@foreman-line/kernel-state'
 import {
   applyTransition,
@@ -63,21 +64,25 @@ function configFor(root: string): OpenStorageConfig {
 function withSeeded(row: FixtureRow, fn: (engine: ReturnType<typeof createEngine>) => void): void {
   const root = mkdtempSync(join(tmpdir(), 'fk-p10-tr-'))
   const storage = openStorage(configFor(root))
+  const seedGoalId = row.input.goalId === 'goal-absent' ? 'goal-1' : (row.input.goalId as string)
   try {
     insertGoal(storage, {
-      goalId: row.input.goalId === 'goal-absent' ? 'goal-1' : (row.input.goalId as string),
+      goalId: seedGoalId,
       revision: row.setup.goal.revision,
       status: row.setup.goal.status,
-      pendingTransitionId: row.setup.pendingTransitionId ?? null,
       updatedAtMicros: T0,
     })
     if (row.setup.lease !== null && row.setup.lease !== undefined) {
-      insertLease(storage, { ...(row.setup.lease as object), acquiredAtMicros: T0 - 10 } as never)
+      insertLease(storage, {
+        goalId: seedGoalId,
+        ...(row.setup.lease as object),
+        acquiredAtMicros: T0 - 10,
+      } as never)
     }
     for (const transition of row.setup.transitions ?? []) {
       insertTransition(storage, {
         transitionId: transition.transitionId,
-        goalId: 'goal-1',
+        goalId: seedGoalId,
         status: transition.status,
         requestedBy: 'principal-a',
         operationId: `op-seed-${transition.transitionId}`,
@@ -85,6 +90,16 @@ function withSeeded(row: FixtureRow, fn: (engine: ReturnType<typeof createEngine
         createdAtMicros: T0 - 10,
         decidedAtMicros: transition.decidedAtMicros,
       })
+    }
+    // The goal's pending pointer FKs the transitions table: set it only once
+    // the transition rows exist (an inline value at insertGoal violates the FK).
+    if (row.setup.pendingTransitionId != null) {
+      updateGoalRow(
+        storage,
+        seedGoalId,
+        { revision: row.setup.goal.revision },
+        { pendingTransitionId: row.setup.pendingTransitionId },
+      )
     }
     fn(createEngine({ storage, clock: fixedClock(T0), toolVersion: 'kernel-lease-test' }))
   } finally {
@@ -230,7 +245,10 @@ function validateEffect(schemaText: string, effect: unknown): string[] {
 }
 
 test('AC9: every emitted effect validates against schemas/effect-result.schema.json', () => {
-  const schemaText = readFileSync(join(FIXTURES, '..', 'schemas', 'effect-result.schema.json'), 'utf8')
+  const schemaText = readFileSync(
+    join(FIXTURES, '..', '..', 'schemas', 'effect-result.schema.json'),
+    'utf8',
+  )
   const root = mkdtempSync(join(tmpdir(), 'fk-p10-tr-'))
   const storage = openStorage(configFor(root))
   try {
@@ -241,7 +259,7 @@ test('AC9: every emitted effect validates against schemas/effect-result.schema.j
       operationId: op,
       repositoryRef: 'repo-1',
       worktreeRef: 'wt-1',
-      payloadDigest: `sha256:${op.replace(/[^0-9a-z]/g, '').padEnd(64, '0').slice(0, 64)}`,
+      payloadDigest: `sha256:${Buffer.from(op).toString('hex').padEnd(64, '0').slice(0, 64)}`,
     })
     const claimed = claimLease(engine, {
       goalId: 'goal-1',
@@ -286,6 +304,15 @@ test('L3 record: a transition toward awaiting-human carries the F05.8 stop-repor
   const storage = openStorage(configFor(root))
   try {
     insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'active', updatedAtMicros: T0 })
+    insertLease(storage, {
+      leaseId: 'lease-1',
+      goalId: 'goal-1',
+      ownerPrincipalRef: 'principal-a',
+      casRevision: 0,
+      acquiredAtMicros: T0 - 10,
+      expiresAtMicros: T0 + 60_000_000,
+      releasedAtMicros: null,
+    })
     const engine = createEngine({ storage, clock: fixedClock(T0), toolVersion: 'kernel-lease-test' })
     requestTransition(engine, {
       goalId: 'goal-1',
