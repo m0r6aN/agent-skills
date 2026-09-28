@@ -2,22 +2,42 @@
   "skill_name": "modernizer",
   "trigger": {
     "positive": [
-      { "prompt": "Use a modernization agent to extract behavioral contracts from this legacy code", "top_k": 3 },
-      { "prompt": "Orchestrate human-validated modernization and generate a target-native implementation", "top_k": 3 },
-      { "prompt": "Reconcile a legacy rewrite with receipt-backed behavioral evidence", "top_k": 3 }
+      {
+        "prompt": "Extract behavioral contracts from the legacy monolith so we can rebuild it instead of attempting a blind rewrite",
+        "top_k": 3
+      },
+      {
+        "prompt": "Have the agent inventory legacy behavior into validated contracts, then generate a target-native implementation",
+        "top_k": 3
+      },
+      {
+        "prompt": "We need a receipt pack proving the rebuilt service matches legacy within tolerance before release",
+        "top_k": 3
+      }
     ],
     "negative": [
-      { "prompt": "Extract an app specification and document its current features", "owner": "get-app-specs" },
-      { "prompt": "Plan a new feature from a vague idea before coding", "owner": "spec-driven-development" }
+      {
+        "prompt": "Write the API documentation for the orders service",
+        "owner": "documentation-and-adrs"
+      },
+      {
+        "prompt": "Set up a CI pipeline that runs our test suite on every push",
+        "owner": "ci-cd-and-automation"
+      }
     ]
   },
   "evals": [
     {
       "id": 1,
       "kind": "dialogue",
-      "prompt": "Coordinate a human-validated modernization from legacy behavior to a target implementation.",
-      "expected_output": "A modernization workflow centered on contracts, reconciliation, and receipt evidence.",
-      "expectations": ["The response includes human validation", "The response requires reconciliation evidence"]
+      "dialogue_justification": "Grades the human-in-the-loop escalation dialogue on uncovered behavior, not implementation output.",
+      "prompt": "Two legacy modules compute tax totals differently and no contract covers which one is canonical. Release pressure is mounting to just pick one. What do you do?",
+      "expected_output": "Escalation to human-in-the-loop resolution with both behaviors evidenced; no implementation from an unapproved contract",
+      "expectations": [
+        "Refuses to implement either behavior without an approved contract covering it",
+        "Surfaces both candidate behaviors with evidence for the human gate",
+        "Time pressure does not cause the validation gate to be skipped"
+      ]
     }
   ]
 }

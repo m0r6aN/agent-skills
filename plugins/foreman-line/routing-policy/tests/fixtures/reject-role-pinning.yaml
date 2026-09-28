@@ -17,14 +17,11 @@ classes:
 
 data_classification:
   public:
-    transport_requirements: { data_collection: allow, zdr: false }
-    eligible_models: [anthropic/claude-haiku-4.5, anthropic/claude-sonnet-5, anthropic/claude-opus-5]
+    eligible_models: [claude-haiku-4-5, claude-sonnet-5, claude-opus-4-8]
   internal:
-    transport_requirements: { data_collection: deny, zdr: true }
-    eligible_models: [anthropic/claude-haiku-4.5, anthropic/claude-sonnet-5, anthropic/claude-opus-5]
+    eligible_models: [claude-haiku-4-5, claude-sonnet-5, claude-opus-4-8]
   restricted:
-    transport_requirements: { data_collection: deny, zdr: true }
-    eligible_models: [anthropic/claude-haiku-4.5, anthropic/claude-sonnet-5, anthropic/claude-opus-5]
+    eligible_models: [claude-haiku-4-5, claude-sonnet-5, claude-opus-4-8]
 
 roles:
   coordinator: standard
@@ -32,8 +29,6 @@ roles:
   builder: per-class
 
 model_tiers:
-  frontier: [anthropic/claude-opus-5]
-  standard: [anthropic/claude-sonnet-5]
-  economy: [anthropic/claude-haiku-4.5]
-
-shadow_routes: {}
+  frontier: [claude-opus-4-8]
+  standard: [claude-sonnet-5]
+  economy: [claude-haiku-4-5]
