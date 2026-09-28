@@ -6,7 +6,11 @@ import { dirname, join } from 'node:path'
 import { test as nodeTest } from 'node:test'
 import { fileURLToPath } from 'node:url'
 import { parse } from 'yaml'
-import { R32_ITEM_MIGRATIONS, R32_RULE_STATEMENT_MIGRATIONS } from '../src/r32-migrations.js'
+import {
+  R32_ANCHOR_MIGRATIONS,
+  R32_ITEM_MIGRATIONS,
+  R32_RULE_STATEMENT_MIGRATIONS,
+} from '../src/r32-migrations.js'
 import type {
   AuthorityEnforcementRegistry,
   AuthorityQuery,
@@ -6143,6 +6147,67 @@ test('R31 independently prescribed successor counts and source snapshot are adop
     [18, 1766, 546, 200, 22],
   )
   assert.ok(full.rules.some((r) => r.ruleId === 'rule.standing-constraints.constraint-14'))
+})
+
+test('R32 reconciliation disposition counts derive from the typed migration tables', () => {
+  // W2c (F1): the frozen summary (the head record's scopedDisposition, pinned by
+  // R32_RECORD_DIGEST) must state EXACTLY the typed-table counts - re-derived here from
+  // R32_ITEM_MIGRATIONS and R32_ANCHOR_MIGRATIONS, never taken from the summary - so the
+  // summary, record section R32.2 and r32-migrations.ts agree triple-wise. Predecessor: the
+  // pre-W2c summary hand-typed "269 typed item entries … 235 locator re-anchors … 20 same-anchor
+  // re-values … 14 spec-linter structural constructs retire" against tables holding 275/252/19.
+  const disposition = headOf(full).scopedDisposition
+  const adoptedIds = new Set(
+    R32_ITEM_MIGRATIONS.filter((entry) => entry.disposition === 'adopted').map(
+      (entry) => entry.itemId,
+    ),
+  )
+  const entries = R32_ITEM_MIGRATIONS.length
+  const preserved = R32_ITEM_MIGRATIONS.filter(
+    (entry) => entry.disposition !== 'retired' && entry.disposition !== 'adopted',
+  ).length
+  const reAnchored = R32_ITEM_MIGRATIONS.filter(
+    (entry) => entry.disposition === 're-anchored',
+  ).length
+  const reValued = R32_ITEM_MIGRATIONS.filter((entry) => entry.disposition === 're-valued').length
+  const combined = R32_ITEM_MIGRATIONS.filter(
+    (entry) => entry.disposition === 're-anchored-and-re-valued',
+  ).length
+  const retired = R32_ITEM_MIGRATIONS.filter((entry) => entry.disposition === 'retired').length
+  const specLinterRetired = R32_ITEM_MIGRATIONS.filter(
+    (entry) => entry.disposition === 'retired' && entry.sourceId.startsWith('spec-linter'),
+  ).length
+  const planRetired = R32_ITEM_MIGRATIONS.filter(
+    (entry) => entry.disposition === 'retired' && entry.sourceId === 'foreman-line-plan',
+  ).length
+  const anchorRows = R32_ANCHOR_MIGRATIONS.length
+  const anchorRenames = R32_ANCHOR_MIGRATIONS.filter(
+    (entry) => !adoptedIds.has(entry.itemId),
+  ).length
+  const planRevalueId = R32_ITEM_MIGRATIONS.find(
+    (entry) => entry.sourceId === 'foreman-line-plan' && entry.disposition !== 'retired',
+  )?.itemId
+  ok(disposition.includes(`${entries} typed item entries`))
+  ok(disposition.includes(`${preserved} preserved identities`))
+  ok(
+    disposition.includes(
+      `(${reAnchored} re-anchored, ${reValued} re-valued, ${combined} re-anchored-and-re-valued`,
+    ),
+  )
+  ok(
+    disposition.includes(
+      `${anchorRows} anchor rows recording ${anchorRenames} identity-preserving locator renames plus the ${adoptedIds.size} adoption anchors`,
+    ),
+  )
+  ok(disposition.includes(`${retired} retirements`))
+  ok(disposition.includes(`${specLinterRetired} spec-linter structural constructs`))
+  ok(disposition.includes(`${planRetired} FOREMAN-LINE-PLAN.md §5 rows`))
+  ok(disposition.includes(`re-valued row ${planRevalueId}`))
+  ok(disposition.includes(`${adoptedIds.size} rule-bearing adoptions`))
+  // W2c (F3): the false "coordinator commits with this amendment" clause is gone; the residual
+  // carries the R32.1 provenance wording (uncommitted worktree state, commit SHA unknown).
+  ok(!disposition.includes('that the coordinator commits with this amendment'))
+  ok(disposition.includes('uncommitted 2026-09-27 schema-v0.4 worktree state, commit SHA unknown'))
 })
 
 // R32 migration (test-side adoption pin): the four rule-bearing adoptions R32 introduced (the

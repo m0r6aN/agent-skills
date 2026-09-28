@@ -1,5 +1,5 @@
 import type { SchemaFile } from '../../schema-scaffold/src/registry.js'
-import { R32_ANCHOR_MIGRATIONS } from './r32-migrations.js'
+import { R32_ANCHOR_MIGRATIONS, R32_ITEM_MIGRATIONS } from './r32-migrations.js'
 import { authorityEnforcementRegistrySchema } from './schemas.js'
 import type {
   AuthorityRule,
@@ -5761,15 +5761,49 @@ export const R32_BINDING_MANIFEST =
   // derivation: registryBindingManifestDigest over the corrected corpus, asserted live by
   // generate.ts and by validate's chain walk.
   'd7b9d84157186891595a56a631b6a1d6b5bcd71c9137f216c0871b8caf4ea218'
-// W2b rework: advances with R32_BINDING_MANIFEST - the corrected head record's
-// superseding-binding-manifest-r32 command binds the corrected manifest, so the record's
-// canonical digest moves. Prior value c178a7d5599d8b7589378acbcae5d688c715c0b619e0f0439f4d13fbab87fa18
-// (pre-W2b R32 head record); derivation: sha256(canonicalJson(the constructed R32 record)),
-// asserted by generate.ts and pinned as validate's SHIPPED_CHAIN_HEAD_RECORD_DIGEST.
-export const R32_RECORD_DIGEST = 'd827f55cc873589d0cbec3c3bf9cbcee38542280e038dc97f90fa99d3937d9a3'
+// W2c rework: advances with the disposition-summary corrections (F1 recount + F3 provenance
+// clause) — the head record's scopedDisposition is the summary, so the record's canonical digest
+// moves while the binding manifest stays (rules untouched). Prior W2b value
+// d827f55cc873589d0cbec3c3bf9cbcee38542280e038dc97f90fa99d3937d9a3; derivation:
+// sha256(canonicalJson(the constructed R32 record)), asserted by generate.ts and pinned as
+// validate's SHIPPED_CHAIN_HEAD_RECORD_DIGEST.
+export const R32_RECORD_DIGEST = 'fe5725f99ee36e89c9e07b9be59e302a2b0c0de55eb28c0ab65cfb8bc2240c36'
 export const R32_RECONCILIATION_TOPIC =
   'R31 registry bindings superseded by the FK-P0 corpus/contract amendment R32 re-pin to the live consolidated charter and the RS-1/RS-2-era canon.'
-export const R32_RECONCILIATION_DISPOSITION = `R32 re-pins the unchanged eighteen-source corpus to the live consolidated charter and the RS-1/RS-2-era canon through this typed prior-to-new migration, never a silent rewrite. The charter's heading paths rename (H1 "Goal Charter — Foreman Kernel" to "Foreman Kernel Development Charter", heading separators normalized to "  -  ") and its structure grows (Read this first, §15 dispatch readiness, §16 completion accounting rewrite, §17 source record, §4.1 rows L6/L7); the COORDINATOR-PATTERN dispatch-table value (commit 497ae69) and the SPEC-CONVENTION/spec-linter schema-v0.4 stream are adopted as source values. 269 typed item entries bind the change: identities are preserved across 235 locator re-anchors (item ids pinned to their prior derivations), 20 same-anchor re-values and 47 combined re-anchor/re-value rows record every prior and new locator/value digest, 14 spec-linter structural constructs retire with their final digests pinned here and in R32_ITEM_MIGRATIONS, and 4 rule-bearing adoptions enter (L6, L7, the §9 exit-supersession paragraph, the §16 opening sentence). Gate-3 authority is re-baselined per RS-2.1 (ledger L7): the live Gate-3 claims become "gate3-human-owned-for-main-pr-settings-deployment-and-destructive-cleanup-with-green-chain-integration-merge-step-delegation-voided-by-any-red-step" — Gate 3 human-owned for main/PR merges, repository-settings changes, deployment and destructive cleanup; the coordinator holds the COORDINATOR-PATTERN "merge it" delegation for the merge git step of a fully-green verification chain into the goal's integration branch; any red step voids the delegation for that chain — covering rule.fk-charter.d9's amended clause, the §10 Gate 3 body, §13 item 11, §9 item 1 (goal.exit-merge), loop standing authorization 6 and the Ratified-authority Gate-3 item. The historical plan Stage F rule (rule.foreman-line-plan.c92333c21e64) keeps claim "human-owned-nondelegated" as historical-only narrative of its unchanged source text. Ten R30-pinned rule statements are re-stated against their new source clauses (the RS-2.2 INF carrier annotations, the INF-5 measurement retarget to FK-P17′, the deleted worker-fabric record, and the INF traceability-labels sentence); every other rule shape, every rule identity outside the named retirements, and every item identity outside them is preserved. History pins stay byte-stable: RECONCILIATION_RECORD_DIGESTS values, R30_SOURCE_ITEMS, R30_RULE_SHAPES, R31_SOURCE_ITEMS, R31_RULE_SHAPES and R31_RECONCILIATION are untouched, and the demoted R31 head is pinned at its existing record digest. The source baseline advances to commit 6356bca419b4a139528ceb3de38fb51aabb989d3 with a stated residual: five sources (SPEC-CONVENTION.md, spec-linter README/schema/cli, permission-profiles types.ts) hash the final 2026-09-27 schema-v0.4 worktree stream that the coordinator commits with this amendment.`
+// W2c (F1): every migration count stated in the disposition summary derives from the typed
+// tables — never hand-typed (the W2-3 lesson). semantic-invariants.test.ts re-derives the same
+// counts and asserts the summary carries them, so summary, record §R32.2 and r32-migrations.ts
+// agree triple-wise.
+const r32AdoptedIds = new Set(
+  R32_ITEM_MIGRATIONS.filter((entry) => entry.disposition === 'adopted').map(
+    (entry) => entry.itemId,
+  ),
+)
+const r32DispositionCounts = {
+  entries: R32_ITEM_MIGRATIONS.length,
+  preserved: R32_ITEM_MIGRATIONS.filter(
+    (entry) => entry.disposition !== 'retired' && entry.disposition !== 'adopted',
+  ).length,
+  reAnchored: R32_ITEM_MIGRATIONS.filter((entry) => entry.disposition === 're-anchored').length,
+  reValued: R32_ITEM_MIGRATIONS.filter((entry) => entry.disposition === 're-valued').length,
+  combined: R32_ITEM_MIGRATIONS.filter((entry) => entry.disposition === 're-anchored-and-re-valued')
+    .length,
+  retired: R32_ITEM_MIGRATIONS.filter((entry) => entry.disposition === 'retired').length,
+  specLinterRetired: R32_ITEM_MIGRATIONS.filter(
+    (entry) => entry.disposition === 'retired' && entry.sourceId.startsWith('spec-linter'),
+  ).length,
+  planRetired: R32_ITEM_MIGRATIONS.filter(
+    (entry) => entry.disposition === 'retired' && entry.sourceId === 'foreman-line-plan',
+  ).length,
+  adopted: r32AdoptedIds.size,
+  anchorRows: R32_ANCHOR_MIGRATIONS.length,
+  anchorRenames: R32_ANCHOR_MIGRATIONS.filter((entry) => !r32AdoptedIds.has(entry.itemId)).length,
+  planRevalueId:
+    R32_ITEM_MIGRATIONS.find(
+      (entry) => entry.sourceId === 'foreman-line-plan' && entry.disposition !== 'retired',
+    )?.itemId ?? 'unrecorded',
+}
+export const R32_RECONCILIATION_DISPOSITION = `R32 re-pins the unchanged eighteen-source corpus to the live consolidated charter and the RS-1/RS-2-era canon through this typed prior-to-new migration, never a silent rewrite. The charter's heading paths rename (H1 "Goal Charter — Foreman Kernel" to "Foreman Kernel Development Charter", heading separators normalized to "  -  ") and its structure grows (Read this first, §15 dispatch readiness, §16 completion accounting rewrite, §17 source record, §4.1 rows L6/L7); the COORDINATOR-PATTERN dispatch-table value (commit 497ae69) and the SPEC-CONVENTION/spec-linter schema-v0.4 stream are adopted as source values. ${r32DispositionCounts.entries} typed item entries bind the change: ${r32DispositionCounts.preserved} preserved identities (${r32DispositionCounts.reAnchored} re-anchored, ${r32DispositionCounts.reValued} re-valued, ${r32DispositionCounts.combined} re-anchored-and-re-valued — every item id pinned to its prior derivation, never re-learned), ${r32DispositionCounts.anchorRows} anchor rows recording ${r32DispositionCounts.anchorRenames} identity-preserving locator renames plus the ${r32DispositionCounts.adopted} adoption anchors, ${r32DispositionCounts.retired} retirements with their final digests pinned here and in R32_ITEM_MIGRATIONS (${r32DispositionCounts.specLinterRetired} spec-linter structural constructs whose ts paths/imports changed; ${r32DispositionCounts.planRetired} FOREMAN-LINE-PLAN.md §5 rows, with the plan's surviving re-valued row ${r32DispositionCounts.planRevalueId} completing the plan accounting), and ${r32DispositionCounts.adopted} rule-bearing adoptions enter (L6, L7, the §9 exit-supersession paragraph, the §16 opening sentence). Gate-3 authority is re-baselined per RS-2.1 (ledger L7): the live Gate-3 claims become "gate3-human-owned-for-main-pr-settings-deployment-and-destructive-cleanup-with-green-chain-integration-merge-step-delegation-voided-by-any-red-step" — Gate 3 human-owned for main/PR merges, repository-settings changes, deployment and destructive cleanup; the coordinator holds the COORDINATOR-PATTERN "merge it" delegation for the merge git step of a fully-green verification chain into the goal's integration branch; any red step voids the delegation for that chain — covering rule.fk-charter.d9's amended clause, the §10 Gate 3 body, §13 item 11, §9 item 1 (goal.exit-merge), loop standing authorization 6 and the Ratified-authority Gate-3 item. The historical plan Stage F rule (rule.foreman-line-plan.c92333c21e64) keeps claim "human-owned-nondelegated" as historical-only narrative of its unchanged source text. Ten R30-pinned rule statements are re-stated against their new source clauses (the RS-2.2 INF carrier annotations, the INF-5 measurement retarget to FK-P17′, the deleted worker-fabric record, and the INF traceability-labels sentence); every other rule shape, every rule identity outside the named retirements, and every item identity outside them is preserved. History pins stay byte-stable: RECONCILIATION_RECORD_DIGESTS values, R30_SOURCE_ITEMS, R30_RULE_SHAPES, R31_SOURCE_ITEMS, R31_RULE_SHAPES and R31_RECONCILIATION are untouched, and the demoted R31 head is pinned at its existing record digest. The source baseline advances to commit 6356bca419b4a139528ceb3de38fb51aabb989d3 with a stated residual: five sources (SPEC-CONVENTION.md, spec-linter README/schema/cli, permission-profiles types.ts) hash uncommitted 2026-09-27 schema-v0.4 worktree state, commit SHA unknown — the corpus does not claim those values as committed canon, and a follow-on corpus refresh is required when that delta lands or is reverted.`
 export const R32_RECONCILIATION_CONSEQUENCE =
   'Future binding changes require another typed prior-to-new migration; human Gate 3, complete verification, independent review and exact source/authority boundaries remain mandatory. No diagnostic, source annotation, record membership or claim value grants operational authority, manufactures a gate, or claims any historical command was rerun.'
 export const R32_RECORD_REF_ITEM_IDS: readonly { sourceId: string; itemId: string }[] = [
