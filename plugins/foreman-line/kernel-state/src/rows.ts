@@ -143,6 +143,33 @@ function nullableStringField(record: Record<string, unknown>, key: string): stri
   return record[key] === null ? null : stringField(record, key)
 }
 
+function normalizeTransitionRow(row: unknown): TransitionRow {
+  const record = normalizedRecord(row)
+  return {
+    transitionId: stringField(record, 'transition_id'),
+    goalId: stringField(record, 'goal_id'),
+    status: stringField(record, 'status'),
+    requestedBy: stringField(record, 'requested_by'),
+    operationId: stringField(record, 'operation_id'),
+    payloadDigest: stringField(record, 'payload_digest'),
+    createdAtMicros: numberField(record, 'created_at_micros'),
+    decidedAtMicros: nullableNumberField(record, 'decided_at_micros'),
+  }
+}
+
+function normalizeLeaseRow(row: unknown): LeaseRow {
+  const record = normalizedRecord(row)
+  return {
+    leaseId: stringField(record, 'lease_id'),
+    goalId: stringField(record, 'goal_id'),
+    ownerPrincipalRef: stringField(record, 'owner_principal_ref'),
+    casRevision: numberField(record, 'cas_revision'),
+    acquiredAtMicros: numberField(record, 'acquired_at_micros'),
+    expiresAtMicros: nullableNumberField(record, 'expires_at_micros'),
+    releasedAtMicros: nullableNumberField(record, 'released_at_micros'),
+  }
+}
+
 function normalizeGoalRow(row: unknown): GoalRow {
   const record = normalizedRecord(row)
   return {
@@ -620,6 +647,20 @@ export function updateTransitionRow(
   )
 }
 
+/**
+ * Read one transition row by id, normalized at the boundary (A1c): the T3/T4
+ * decide preconditions (`TRANSITION_ABSENT` / `ALREADY_DECIDED` / `NOT_PENDING`)
+ * are decided by FK-P10 from this row state, never from raw SQL.
+ */
+export function getTransition(storage: Storage, transitionId: string): TransitionRow | null {
+  return readOne(
+    storage,
+    'SELECT * FROM transitions WHERE transition_id = ?',
+    [requireId(transitionId, 'transitionId')],
+    normalizeTransitionRow,
+  )
+}
+
 // --- leases (shape only — semantics are FK-P10) ----------------------------
 
 export interface NewLeaseRow {
@@ -671,6 +712,35 @@ export function updateLeaseRow(
     guards as Record<string, unknown>,
     patch as Record<string, unknown>,
     'leases_guarded_update',
+  )
+}
+
+/**
+ * Read one lease row by id, normalized at the boundary (A1c): T4's
+ * `leaseId`-unused and owner-check preconditions are decided by FK-P10 from
+ * this row state (the FK-P1 `LeaseCasDescriptor` fields carried verbatim).
+ */
+export function getLease(storage: Storage, leaseId: string): LeaseRow | null {
+  return readOne(
+    storage,
+    'SELECT * FROM leases WHERE lease_id = ?',
+    [requireId(leaseId, 'leaseId')],
+    normalizeLeaseRow,
+  )
+}
+
+/**
+ * Read the goal's unreleased lease (`released_at_micros IS NULL`), normalized
+ * at the boundary (A1c): T4's "no active lease" precondition reads exactly
+ * this row. At most one can exist per goal (the `leases_single_active` partial
+ * unique index), so a present row is THE active lease.
+ */
+export function getUnreleasedLease(storage: Storage, goalId: string): LeaseRow | null {
+  return readOne(
+    storage,
+    'SELECT * FROM leases WHERE goal_id = ? AND released_at_micros IS NULL',
+    [requireId(goalId, 'goalId')],
+    normalizeLeaseRow,
   )
 }
 

@@ -14,11 +14,17 @@ import { closeStorage, type OpenStorageConfig, openStorage } from '../src/open.j
 import {
   consumeWakeupHandoff,
   getGoal,
+  getLease,
+  getTransition,
+  getUnreleasedLease,
   insertEvent,
   insertGoal,
   insertIdempotencyKey,
+  insertLease,
+  insertTransition,
   insertWakeupHandoff,
   updateGoalRow,
+  updateLeaseRow,
 } from '../src/rows.js'
 import { type Storage, withTransaction } from '../src/transactions.js'
 
@@ -432,6 +438,157 @@ test('nested withTransaction refuses (STORAGE_ARGUMENT_INVALID)', () => {
         },
       )
     })
+  })
+})
+
+test('A1c: getLease distinguishes absent vs present exactly; normalized shape binds', () => {
+  withStorage((storage) => {
+    // Absent is exactly null — never a partial row.
+    assert.equal(getLease(storage, 'lease-1'), null)
+    insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'active', updatedAtMicros: T0 })
+    insertLease(storage, {
+      leaseId: 'lease-1',
+      goalId: 'goal-1',
+      ownerPrincipalRef: 'principal-1',
+      casRevision: 3,
+      acquiredAtMicros: T0,
+      expiresAtMicros: null,
+      releasedAtMicros: null,
+    })
+    const row = getLease(storage, 'lease-1')
+    assert.ok(row !== null)
+    assert.equal(row.leaseId, 'lease-1')
+    assert.equal(row.goalId, 'goal-1')
+    assert.equal(row.ownerPrincipalRef, 'principal-1')
+    assert.equal(row.casRevision, 3)
+    assert.equal(row.acquiredAtMicros, T0)
+    assert.equal(row.expiresAtMicros, null)
+    assert.equal(row.releasedAtMicros, null)
+    // Failing-when-broken: mutate the row and the normalized shape binds to
+    // the mutated values (the read reflects real row state, not a cached copy).
+    storage.driver
+      .prepare('UPDATE leases SET cas_revision = 42, expires_at_micros = 7 WHERE lease_id = ?')
+      .run('lease-1')
+    const mutated = getLease(storage, 'lease-1')
+    assert.ok(mutated !== null)
+    assert.equal(mutated.casRevision, 42)
+    assert.equal(mutated.expiresAtMicros, 7)
+    // Shape binding is enforced: a poisoned value refuses at normalization
+    // instead of leaking through as a wrong-typed row.
+    storage.driver
+      .prepare("UPDATE leases SET cas_revision = 'soon' WHERE lease_id = ?")
+      .run('lease-1')
+    assert.throws(
+      () => getLease(storage, 'lease-1'),
+      (error: unknown) => {
+        assert.ok(error instanceof StorageError)
+        assert.equal(error.code, 'STORAGE_IO_FAILURE')
+        assert.equal(error.diagnostic.driverCode, 'row-normalization')
+        return true
+      },
+    )
+  })
+})
+
+test('A1c: getUnreleasedLease ignores released leases and respects single-active', () => {
+  withStorage((storage) => {
+    insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'active', updatedAtMicros: T0 })
+    // A released lease is invisible to the active-lease read.
+    insertLease(storage, {
+      leaseId: 'lease-old',
+      goalId: 'goal-1',
+      ownerPrincipalRef: 'principal-1',
+      casRevision: 1,
+      acquiredAtMicros: T0,
+      expiresAtMicros: null,
+      releasedAtMicros: T0 + 5,
+    })
+    assert.equal(getUnreleasedLease(storage, 'goal-1'), null)
+    // The unreleased row is THE active lease (leases_single_active bound).
+    insertLease(storage, {
+      leaseId: 'lease-live',
+      goalId: 'goal-1',
+      ownerPrincipalRef: 'principal-2',
+      casRevision: 2,
+      acquiredAtMicros: T0 + 6,
+      expiresAtMicros: null,
+      releasedAtMicros: null,
+    })
+    const active = getUnreleasedLease(storage, 'goal-1')
+    assert.equal(active?.leaseId, 'lease-live')
+    assert.equal(active?.releasedAtMicros, null)
+    // Single-active constraint: a second unreleased lease refuses.
+    assert.throws(
+      () =>
+        insertLease(storage, {
+          leaseId: 'lease-second',
+          goalId: 'goal-1',
+          ownerPrincipalRef: 'principal-3',
+          casRevision: 3,
+          acquiredAtMicros: T0 + 7,
+          expiresAtMicros: null,
+          releasedAtMicros: null,
+        }),
+      (error: unknown) => {
+        assert.ok(error instanceof StorageError)
+        assert.equal(error.code, 'STORAGE_CONSTRAINT_VIOLATION')
+        assert.equal(error.diagnostic.reasonCode, 'unique-constraint')
+        return true
+      },
+    )
+    // Failing-when-broken: releasing the active lease empties the read again.
+    assert.equal(
+      updateLeaseRow(
+        storage,
+        'lease-live',
+        { releasedAtMicros: null },
+        { releasedAtMicros: T0 + 9 },
+      ),
+      1,
+    )
+    assert.equal(getUnreleasedLease(storage, 'goal-1'), null)
+  })
+})
+
+test('A1c: getTransition distinguishes absent vs present exactly; normalized shape binds', () => {
+  withStorage((storage) => {
+    assert.equal(getTransition(storage, 'tr-1'), null)
+    insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'active', updatedAtMicros: T0 })
+    insertTransition(storage, {
+      transitionId: 'tr-1',
+      goalId: 'goal-1',
+      status: 'completed',
+      requestedBy: 'principal-1',
+      operationId: 'op-1',
+      payloadDigest: `sha256:${'a'.repeat(64)}`,
+      createdAtMicros: T0,
+      decidedAtMicros: null,
+    })
+    const row = getTransition(storage, 'tr-1')
+    assert.ok(row !== null)
+    assert.equal(row.transitionId, 'tr-1')
+    assert.equal(row.status, 'completed')
+    assert.equal(row.requestedBy, 'principal-1')
+    assert.equal(row.payloadDigest, `sha256:${'a'.repeat(64)}`)
+    assert.equal(row.decidedAtMicros, null)
+    // Failing-when-broken: mutation binds the normalized shape to row state.
+    storage.driver
+      .prepare('UPDATE transitions SET decided_at_micros = 7 WHERE transition_id = ?')
+      .run('tr-1')
+    const decided = getTransition(storage, 'tr-1')
+    assert.equal(decided?.decidedAtMicros, 7)
+    storage.driver
+      .prepare("UPDATE transitions SET decided_at_micros = 'soon' WHERE transition_id = ?")
+      .run('tr-1')
+    assert.throws(
+      () => getTransition(storage, 'tr-1'),
+      (error: unknown) => {
+        assert.ok(error instanceof StorageError)
+        assert.equal(error.code, 'STORAGE_IO_FAILURE')
+        assert.equal(error.diagnostic.driverCode, 'row-normalization')
+        return true
+      },
+    )
   })
 })
 
