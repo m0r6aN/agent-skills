@@ -15,7 +15,7 @@
  * (search-first guarantees no duplicate creates).
  */
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
-import { dirname, isAbsolute, join } from 'node:path'
+import { dirname, join } from 'node:path'
 import { Ajv, type SchemaObject } from 'ajv'
 import type { ApprovalRecord } from '../../approval/src/index.js'
 import { approvalRecordPath } from '../../approval/src/index.js'
@@ -26,7 +26,6 @@ import type {
   StoryNode,
 } from '../../contracts/src/index.js'
 import { registrationResultSchema } from '../../contracts/src/index.js'
-import type { ForemanConfig } from '../../foreman-config/src/index.js'
 import { specFilenameStem } from '../../projection/src/index.js'
 import { backfillTicketLine, type FileSnapshot, restoreSnapshots } from './backfill.js'
 import { GatedTransport } from './gated-transport.js'
@@ -41,36 +40,17 @@ import {
   stageBReceiptLocator,
 } from './prior-registration.js'
 import { mintStageBReceipt } from './receipt.js'
-import {
-  type IssueCreatePayload,
-  type JiraTransport,
-  RegistrationError,
-  RegistrationRootUnresolvedError,
-} from './types.js'
+import { type IssueCreatePayload, type JiraTransport, RegistrationError } from './types.js'
+
+/** The sole allowed destination project (the gate enforces membership independently). */
+export const PROJECT_KEY = 'KONE'
 
 /** Slug charset guard applied at the entry point (^[a-z0-9-]+$) - linear-time, no backtracking. */
 const SLUG_RE = /^[a-z0-9-]+$/
 
 export interface RegisterOptions {
   readonly slug: string
-  /**
-   * The destination Jira project key, caller-declared (P1b: the former
-   * `PROJECT_KEY = 'KONE'` library constant is deleted — this repo's value is
-   * the CALLER's explicit argument, its durable home being `foreman/config.yaml`
-   * once P6 lands it). Guarded by assertJqlSafeToken at the JQL boundary; the
-   * gate's independent allowlist membership enforcement is unchanged.
-   */
-  readonly projectKey?: string
-  /** Optional validated foreman/config.yaml declaration used as the identity source. */
-  readonly foremanConfig?: ForemanConfig
   readonly repoRoot: string
-  /**
-   * Specs `active/` directory relative to `repoRoot` (P2b-i/R2). Foreign
-   * default `docs/specs/active`; the home repo passes
-   * `plugins/foreman-line/docs/specs/active` explicitly (A1.3 — a relative
-   * path within a caller-supplied root, not a root fallback).
-   */
-  readonly specsDir?: string
   readonly adapter: JiraTransport
   readonly timestamp: string
   readonly gitAuthor?: string
@@ -85,55 +65,7 @@ export interface RegisterOutcome {
   readonly landed: readonly string[]
 }
 
-/**
- * Foreign-repo default for the specs `active/` directory, RELATIVE to the
- * caller-supplied `repoRoot` (P2b-i ruling R2 / A1.3). NOT a class-1 root
- * fallback: a relative path within a root the caller supplied explicitly. The
- * home repo passes `plugins/foreman-line/docs/specs/active` explicitly at
- * call sites. Declared per-package by ruling — no shared constant.
- */
-const DEFAULT_SPECS_DIR = 'docs/specs/active'
-
-function resolveProjectKey(
-  projectKey: string | undefined,
-  foremanConfig: ForemanConfig | undefined,
-): string {
-  const configProjectKey = foremanConfig?.identity.project_key
-  if (configProjectKey === null) {
-    throw new RegistrationError(
-      'foreman/config.yaml declares identity.project_key: null; registration is not available for this repository',
-      [],
-    )
-  }
-  if (
-    projectKey !== undefined &&
-    configProjectKey !== undefined &&
-    projectKey !== configProjectKey
-  ) {
-    throw new RegistrationError(
-      `registration project key '${projectKey}' does not match foreman/config.yaml identity.project_key '${configProjectKey}'`,
-      [],
-    )
-  }
-  const resolved = projectKey ?? configProjectKey
-  if (typeof resolved !== 'string' || resolved.length === 0) {
-    throw new RegistrationError(
-      'registration requires projectKey or a validated foreman/config.yaml identity.project_key',
-      [],
-    )
-  }
-  return resolved
-}
-
-/** Assert `root` is absolute (P2b-i path-guard ruling) — typed refusal, mechanism class 5. */
-function assertAbsoluteRoot(root: string, seam: string): void {
-  if (!isAbsolute(root)) {
-    throw new RegistrationRootUnresolvedError(
-      'root-not-absolute',
-      `${seam}: repoRoot '${root}' is not an absolute path; a relative root would silently anchor to the process cwd and is refused (P2b-i / D19)`,
-    )
-  }
-}
+const ACTIVE_SPECS_DIR = 'plugins/foreman-line/docs/specs/active'
 
 const ajv = new Ajv({ allErrors: true })
 const validateRegistrationResult = ajv.compile(registrationResultSchema as SchemaObject)
@@ -167,8 +99,8 @@ function bindSpecsToStories(
   })
 }
 
-function sidecarPathFor(slug: string, repoRoot: string, specsDir: string): string {
-  return join(repoRoot, ...specsDir.split('/'), `${slug}.registration.json`)
+function sidecarPathFor(slug: string, repoRoot: string): string {
+  return join(repoRoot, ...ACTIVE_SPECS_DIR.split('/'), `${slug}.registration.json`)
 }
 
 function writeJsonFile(absPath: string, value: unknown): void {
@@ -198,12 +130,11 @@ function linkPair(ticketKey: string, commitSha: string, permalink: string): Regi
 /** Search-first upsert (create-or-update keyed off the stable id in the summary). */
 async function upsertIssue(
   gt: GatedTransport,
-  projectKey: string,
   payload: IssueCreatePayload,
   stableId: string,
   landed: string[],
 ): Promise<string> {
-  const matches = await gt.search(buildIdempotencyJql(projectKey, stableId))
+  const matches = await gt.search(buildIdempotencyJql(PROJECT_KEY, stableId))
   if (matches.length > 1) {
     throw new RegistrationError(
       `register: ${matches.length} issues match stable id ${JSON.stringify(stableId)} (${matches.join(', ')}) - stop and report, never guess`,
@@ -222,23 +153,12 @@ async function upsertIssue(
 }
 
 export async function register(opts: RegisterOptions): Promise<RegisterOutcome> {
-  const {
-    slug,
-    projectKey: declaredProjectKey,
-    foremanConfig,
-    repoRoot,
-    specsDir = DEFAULT_SPECS_DIR,
-    adapter,
-    timestamp,
-    gitAuthor,
-  } = opts
-  const projectKey = resolveProjectKey(declaredProjectKey, foremanConfig)
+  const { slug, repoRoot, adapter, timestamp, gitAuthor } = opts
 
   // Step 0/1: entry guard + load approval record.
   assertRegistrationSlug(slug)
-  assertAbsoluteRoot(repoRoot, 'register')
   const record = JSON.parse(
-    readFileSync(approvalRecordPath(slug, repoRoot, specsDir), 'utf8'),
+    readFileSync(approvalRecordPath(slug, repoRoot), 'utf8'),
   ) as ApprovalRecord
 
   const projected = record.subject.projectedResult
@@ -255,23 +175,12 @@ export async function register(opts: RegisterOptions): Promise<RegisterOutcome> 
 
   const gt = new GatedTransport(adapter)
   if (mode === 'reconcile') {
-    return reconcile(gt, projectKey, record, repoRoot, specsDir, epic, bindings, slug)
+    return reconcile(gt, record, repoRoot, epic, bindings, slug)
   }
 
   // Step 3: F7 hash-refusal (first-registration precondition only).
   assertApprovedHashMatches(record, repoRoot)
-  return firstRegistration(
-    gt,
-    projectKey,
-    record,
-    repoRoot,
-    specsDir,
-    epic,
-    bindings,
-    slug,
-    timestamp,
-    gitAuthor,
-  )
+  return firstRegistration(gt, record, repoRoot, epic, bindings, slug, timestamp, gitAuthor)
 }
 
 export interface PreviewResult {
@@ -292,27 +201,13 @@ export interface PreviewResult {
  */
 export function preview(opts: {
   slug: string
-  /** The destination Jira project key, caller-declared (or supplied by config). */
-  projectKey?: string
-  /** Optional validated foreman/config.yaml declaration used as the identity source. */
-  foremanConfig?: ForemanConfig
   repoRoot: string
-  /** Specs dir relative to `repoRoot` (P2b-i/R2); foreign default applies. */
-  specsDir?: string
   adapter?: JiraTransport
 }): PreviewResult {
-  const {
-    slug,
-    projectKey: declaredProjectKey,
-    foremanConfig,
-    repoRoot,
-    specsDir = DEFAULT_SPECS_DIR,
-  } = opts
-  const projectKey = resolveProjectKey(declaredProjectKey, foremanConfig)
+  const { slug, repoRoot } = opts
   assertRegistrationSlug(slug)
-  assertAbsoluteRoot(repoRoot, 'preview')
   const record = JSON.parse(
-    readFileSync(approvalRecordPath(slug, repoRoot, specsDir), 'utf8'),
+    readFileSync(approvalRecordPath(slug, repoRoot), 'utf8'),
   ) as ApprovalRecord
   const projected = record.subject.projectedResult
   if (projected.epics.length !== 1) {
@@ -325,14 +220,14 @@ export function preview(opts: {
   const mode = detectRegistrationMode(record, repoRoot)
 
   const epicPayload = buildCreatePayload({
-    projectKey,
+    projectKey: PROJECT_KEY,
     issuetypeId: EPIC_ISSUETYPE_ID,
     title: epic.title,
     stableId: epic.key,
   })
   const storyPayloads = bindings.map((b) =>
     buildCreatePayload({
-      projectKey,
+      projectKey: PROJECT_KEY,
       issuetypeId: STORY_ISSUETYPE_ID,
       title: b.story.title,
       stableId: b.story.key,
@@ -341,11 +236,11 @@ export function preview(opts: {
   )
 
   const plannedActions: string[] = [
-    `[${mode}] search ${projectKey} for stable id ${JSON.stringify(epic.key)}; create Epic if absent, update if present`,
+    `[${mode}] search KONE for stable id ${JSON.stringify(epic.key)}; create Epic if absent, update if present`,
   ]
   for (const b of bindings) {
     plannedActions.push(
-      `[${mode}] search ${projectKey} for stable id ${JSON.stringify(b.story.key)}; create Story (parent=Epic) if absent, update if present`,
+      `[${mode}] search KONE for stable id ${JSON.stringify(b.story.key)}; create Story (parent=Epic) if absent, update if present`,
     )
   }
   for (const b of bindings) {
@@ -359,10 +254,8 @@ export function preview(opts: {
 
 async function firstRegistration(
   gt: GatedTransport,
-  projectKey: string,
   record: ApprovalRecord,
   repoRoot: string,
-  specsDir: string,
   epic: EpicNode,
   bindings: readonly SpecBinding[],
   slug: string,
@@ -374,12 +267,12 @@ async function firstRegistration(
   // Step 4: create Epic, then Stories (search-first idempotent; Story->Epic via
   // parent). Sequential (awaited in order) so creates are ordered + deterministic.
   const epicPayload = buildCreatePayload({
-    projectKey,
+    projectKey: PROJECT_KEY,
     issuetypeId: EPIC_ISSUETYPE_ID,
     title: epic.title,
     stableId: epic.key,
   })
-  const epicKey = await upsertIssue(gt, projectKey, epicPayload, epic.key, landed)
+  const epicKey = await upsertIssue(gt, epicPayload, epic.key, landed)
 
   const storyRecords: Array<{
     binding: SpecBinding
@@ -388,13 +281,13 @@ async function firstRegistration(
   }> = []
   for (const binding of bindings) {
     const payload = buildCreatePayload({
-      projectKey,
+      projectKey: PROJECT_KEY,
       issuetypeId: STORY_ISSUETYPE_ID,
       title: binding.story.title,
       stableId: binding.story.key,
       parentKey: epicKey,
     })
-    const key = await upsertIssue(gt, projectKey, payload, binding.story.key, landed)
+    const key = await upsertIssue(gt, payload, binding.story.key, landed)
     storyRecords.push({ binding, payload, key })
   }
 
@@ -456,11 +349,11 @@ async function firstRegistration(
     const minted = mintStageBReceipt(record.correlation, record.receipt.hash, result, timestamp)
     const receiptAbs = join(repoRoot, ...minted.locator.split('/'))
     writeJsonFile(receiptAbs, minted.document)
-    const sidecarAbs = sidecarPathFor(slug, repoRoot, specsDir)
+    const sidecarAbs = sidecarPathFor(slug, repoRoot)
     writeJsonFile(sidecarAbs, result)
     git.addAndCommit(
       repoRoot,
-      [minted.locator, `${specsDir}/${slug}.registration.json`],
+      [minted.locator, `${ACTIVE_SPECS_DIR}/${slug}.registration.json`],
       `chore(foreman-line): stage-B receipt + registration result for ${slug} [W1-P4]`,
       gitAuthor,
     )
@@ -492,10 +385,8 @@ async function firstRegistration(
 
 async function reconcile(
   gt: GatedTransport,
-  projectKey: string,
   record: ApprovalRecord,
   repoRoot: string,
-  specsDir: string,
   epic: EpicNode,
   bindings: readonly SpecBinding[],
   slug: string,
@@ -504,7 +395,7 @@ async function reconcile(
 
   // Find existing keys by the stable id - create nothing, update nothing on the issues.
   const findKey = async (stableId: string): Promise<string> => {
-    const matches = await gt.search(buildIdempotencyJql(projectKey, stableId))
+    const matches = await gt.search(buildIdempotencyJql(PROJECT_KEY, stableId))
     if (matches.length !== 1) {
       throw new RegistrationError(
         `reconcile: expected exactly one existing issue for stable id ${JSON.stringify(stableId)}, found ${matches.length}`,
@@ -538,7 +429,7 @@ async function reconcile(
     const commitSha = receipted?.commitSha ?? git.lastCommitTouching(repoRoot, binding.ref)
     const permalink = receipted?.permalink ?? buildPermalink(ownerRepo, commitSha, binding.ref)
     const gateFields = buildCreatePayload({
-      projectKey,
+      projectKey: PROJECT_KEY,
       issuetypeId: STORY_ISSUETYPE_ID,
       title: binding.story.title,
       stableId: binding.story.key,
@@ -555,7 +446,7 @@ async function reconcile(
     result: receiptedResult,
     ticketKeys: receiptedResult.ticketKeys,
     receiptLocator,
-    sidecarPath: sidecarPathFor(slug, repoRoot, specsDir),
+    sidecarPath: sidecarPathFor(slug, repoRoot),
     landed,
   }
 }

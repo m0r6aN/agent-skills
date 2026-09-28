@@ -1,4 +1,6 @@
 import test from "node:test";
+import * as barrel from "../src/index.ts";
+import * as direct from "../src/runtime.ts";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
@@ -177,97 +179,45 @@ async function input(
   };
 }
 
-async function withKey<T>(key: string | undefined, action: () => Promise<T>): Promise<T> {
-  const previous = process.env.OPENROUTER_API_KEY;
-  if (key === undefined) delete process.env.OPENROUTER_API_KEY;
-  else process.env.OPENROUTER_API_KEY = key;
-  try {
-    return await action();
-  } finally {
-    if (previous === undefined) delete process.env.OPENROUTER_API_KEY;
-    else process.env.OPENROUTER_API_KEY = previous;
-  }
+function retired(error: unknown): boolean {
+  assert.equal(typeof barrel.LegacyDecisionRetiredError, "function");
+  assert.ok(error instanceof barrel.LegacyDecisionRetiredError);
+  assert.equal(error.code, "LEGACY_EXECUTION_RETIRED");
+  assert.equal(error.message, "Legacy governed inference is retired.");
+  return true;
 }
 
-function reason(result: Awaited<ReturnType<typeof executeDecision>>): string {
-  assert.equal(result.ok, false);
-  if (result.ok) throw new Error("expected a closed result");
-  return result.record.reason_code;
+test("barrel and direct runtime expose identical retired executor and error", async () => {
+  assert.equal(executeDecision, direct.executeDecision);
+  assert.equal(barrel.LegacyDecisionRetiredError, direct.LegacyDecisionRetiredError);
+  await assert.rejects(executeDecision(null as unknown as RuntimeInput), retired);
+});
+
+for (const scenario of [
+  { name: "previous provider success", body: "provider-success" },
+  { name: "malformed provider", body: "provider-malformed" },
+  { name: "cost above cap", body: "provider-over-cap" },
+  { name: "malformed transport", body: "provider-success", options: { responseOverride: { authority: undefined } } },
+  { name: "timeout", body: "provider-success", options: { rejectWith: new Error("synthetic timeout") } },
+  { name: "redirect", body: "provider-success", options: { authority: { redirects: "follow" as const } } },
+  { name: "unverified TLS", body: "provider-success", options: { authority: { tls: "unverified" as const } } },
+]) {
+  test("retired before former P4 scenario: " + scenario.name, async () => {
+    const calls: string[] = [];
+    const value = await input(fixture(scenario.body), calls, scenario.options);
+    // The former provider fixture stays intact, but none of the runtime seams may run.
+    const guarded = { ...value,
+      clock: { now() { calls.push("clock"); throw new Error("no clock or credentials"); } },
+      lease_port: { ...value.lease_port, claim: async () => { calls.push("claim"); return "occupied" as const; } },
+    };
+    await assert.rejects(executeDecision(guarded), retired);
+    assert.deepEqual(calls, []);
+  });
 }
 
-test("missing credential refuses before the synthetic transport opens", async () => {
-  const calls: string[] = [];
-  const result = await withKey(undefined, async () => executeDecision(await input(fixture("provider-success"), calls)));
-  assert.equal(reason(result), "evidence:R06");
-  assert.deepEqual(calls, ["consume", "terminal"]);
-});
-
-test("malformed provider and transport results fail closed", async () => {
-  const malformedProvider = await withKey("p4-test-key", async () => executeDecision(await input(fixture("provider-malformed"))));
-  assert.equal(reason(malformedProvider), "evidence:R10");
-
-  const malformedTransport = await withKey("p4-test-key", async () => executeDecision(await input(fixture("provider-success"), [], { responseOverride: { authority: undefined } })));
-  assert.equal(reason(malformedTransport), "evidence:R04");
-});
-
-test("timeout and lease refusal never permit a live call", async () => {
-  const timeoutCalls: string[] = [];
-  const timeout = await withKey("p4-test-key", async () => executeDecision(await input(fixture("provider-success"), timeoutCalls, { rejectWith: new Error("synthetic timeout detail") })));
-  assert.equal(reason(timeout), "evidence:R04");
-  assert.deepEqual(timeoutCalls, ["consume", "transport", "terminal"]);
-
-  const calls: string[] = [];
-  const base = await input(fixture("provider-success"), calls);
-  const refused = await withKey("p4-test-key", async () => executeDecision({
-    ...base,
-    lease_port: {
-      claim: async () => "occupied",
-      consume: async () => true,
-      terminal: async () => { calls.push("terminal"); },
-    },
-  }));
-  assert.equal(reason(refused), "evidence:R16");
-  assert.deepEqual(calls, []);
-});
-
-test("provider cost above the hard cap becomes a bounded hold", async () => {
-  const calls: string[] = [];
-  const result = await withKey("p4-test-key", async () => executeDecision(await input(fixture("provider-over-cap"), calls)));
-  assert.equal(reason(result), "evidence:R13");
-  assert.deepEqual(calls, ["consume", "transport", "terminal"]);
-});
-
-test("redirect and unverified TLS authorities are rejected", async () => {
-  for (const authority of [
-    { redirects: "follow" as const },
-    { tls: "unverified" as const },
-  ]) {
-    const result = await withKey("p4-test-key", async () => executeDecision(await input(fixture("provider-success"), [], { authority })));
-    assert.equal(reason(result), "evidence:R04");
-  }
-});
-
-test("synthetic success returns a redacted observation and never discloses the credential", async () => {
-  const secret = "p4-secret-must-not-escape";
-  const calls: string[] = [];
-  let authorization = "";
-  const base = await input(fixture("provider-success"), calls);
-  const result = await withKey(secret, async () => executeDecision({
-    ...base,
-    transport: {
-      post: async (request) => {
-        authorization = request.headers.Authorization;
-        return transport(fixture("provider-success"), calls).post(request);
-      },
-    },
-  }));
-  assert.equal(result.ok, true);
-  assert.equal(authorization, `Bearer ${secret}`);
-  assert.deepEqual(calls, ["consume", "transport", "terminal"]);
-  assert.equal(JSON.stringify(result).includes(secret), false);
-  if (result.ok) {
-    assert.equal(result.observation.endpoint, DECISIONS_ENDPOINT);
-    assert.equal(result.observation.served_identity.model, "typesafe/jev-1.13-20260917");
-    assert.equal(result.observation.cost.amount, 0.000017934);
-  }
+test("missing or hostile credential supply is irrelevant: input is never inspected", async () => {
+  let reads = 0;
+  const value = new Proxy({}, { get() { reads += 1; throw new Error("no input reads"); } });
+  await assert.rejects(executeDecision(value as RuntimeInput), retired);
+  assert.equal(reads, 0);
 });

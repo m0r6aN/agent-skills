@@ -1,9 +1,11 @@
 # PMC-P1 design and compatibility inventory
 
-Status: revised draft; coordinator accepted D1-D5 and independent review fixes,
-2026-09-26. Docs-only shaping; not
-implementation verification, Gate 2, PMC-P2 enablement or a production contract.
-Base: 5d5716d8dc65d05f821bb3c21238ad6c9fda530c (PR49 merged).
+Status: accepted design with PMC-P1b implementation inventory, 2026-09-26.
+D1-D5 and shaping review fixes are accepted; P1b implementation reviews remain
+separate gates. No PMC-P2 enablement or production authority is granted here.
+Shaping base: 5d5716d8dc65d05f821bb3c21238ad6c9fda530c (PR49 merged).
+Reconciled P1b build/inventory base: 552142a5b96184c9c7ab57301091afa29341c86c
+(accepted PMC-P1a PR55 and RCM-P1A PR56, followed by coordinator spec correction).
 
 ## Canon and reconciled requirements
 
@@ -132,9 +134,76 @@ scoped acceptance criteria pass.
 | D4 concurrent RCM changes | Reconciled RCM base first, P1a shared edits second, accepted P1a/P1b shared edits third. Neither imports/mutates RCM internals. | Coordinator records exact base and shared-file handoff before each dispatch. |
 
 Drafts:
-- [PMC-P1a](../../specs/active/PMC-P1a-provider-binding-contract.md)
+- [PMC-P1a](../../specs/done/PMC-P1a-provider-binding-contract.md)
 - [PMC-P1b](../../specs/active/PMC-P1b-provider-binding-projection.md)
 
 The former combined draft was uncommitted and is replaced by these two drafts;
 there is no competing PMC-P1 dispatch spec. This review-fix closure records
 shaping corrections only, not the future implementation review results.
+
+## Reconciled inventory closure — PMC-P1b
+
+Repeated on the exact reconciled base above with repository-wide tracked-file
+search (including hidden paths): `git grep -l -E
+'routing-policy|PI_OPENROUTER_ROUTING|CLASS_NAMES|pi-openrouter-routing|pi-routing-directive|ProviderBindingPolicyV1|HroBindingProjectionDraftV1|evaluateCatalogEligibility'
+552142a5b96184c9c7ab57301091afa29341c86c`, excluding lockfiles and generated
+schemas. Additional working-tree `rg` checks covered source imports, schema
+references, and Pi template names. Generated schemas were checked separately
+for byte preservation. This is a repository inventory, not a claim to discover
+untracked host configuration or external deployments.
+
+The original table remains the path-level inventory. The following register
+closes its ownership/version/removal conditions and adds every newly discovered
+group. Paths are relative to plugins/foreman-line unless marked repository-root.
+Owners below name accountable parcel/package roles, not authorization to edit.
+
+| Consumer path/group | Compatibility version and owner | Named PMC-P4 removal condition |
+|---|---|---|
+| routing-policy/src/{types,schemas,validator,testing,cli}.ts; routing-policy.yaml; tests/{cli,schema-validation,semantic-invariants,pi-openrouter}.test.ts | Existing RoutingPolicy v0 and Pi registry retained; PMC-P2E owns caller migration | P4-CORE: all v0 callers migrated with reviewed input/result/refusal equivalence and rollback; historical fixtures remain attributable |
+| routing-policy/src/pi-openrouter.ts and its committed schema; templates/pi-openrouter-routing.json | Legacy Pi registry with Jev/L6 debt; PMC-P2C launch controller and PMC-P2E callers | P4-PI: replaced registry/template consumers and migration regression evidence. **Before any activation, P2 must refuse L6 at both legacy and v1 launch boundaries; P3/P4 cannot postpone this** |
+| routing-policy/src/{index,registry,generate,provider-bindings,provider-binding-schemas}.ts; package.json; tests/{parity,provider-bindings}.test.ts; tests/fixtures/pmc-provider-binding-policy-v1.json | Additive policy/v1 and projection/v1 beside v0; PMC-P1 public contract owner | P4-EXPORT: audited replacement consumers and explicit public deprecation; P1a/v1 retained; no blanket barrel removal |
+| dispatch/src/{index,routing-eval/index,routing-eval/shadow}.ts; dispatch/tests/{routing-eval,approval-cli,shadow-routing,w4-p0-correlation-lineage,dependency-allowlist}.test.ts | v0 dispatch contracts and receipts unchanged; PMC-P2E with dispatch owner | P4-DISPATCH: versioned migration proves result/error/receipt compatibility and both launch refusal paths before retiring old entry points |
+| contract-readers/src/registry-data.ts; tests/touch-set.test.ts; spec-linter/src/schemas.ts; tests/schema-validation.test.ts; docs/SPEC-CONVENTION.md | v0 four-class vocabulary retained; PMC-P2A/P2E and contract-reader/spec-linter owners | P4-VOCAB: approved budgets for new classes, synchronized registries/lint/docs, no remaining old enum callers |
+| verification/src/{d19-audit,ratified-packages}.ts; repository-root scripts/{foreman-line-ci.mjs,foreman-line-ci.test.mjs} | Existing audit/package discovery, no v1 eligibility; verification/tooling owner | P4-TOOLING: audit and CI discover replacement public contracts; package presence is not evidence of route authority |
+| hooks/{model-gate.policy.json,README.md}; templates/{pi-routing-directive.md,AGENTS.md} | Legacy model gate and Pi instruction consumers; PMC-P2E/P3 | P4-GATES: reviewed hooks/templates use ratified resolver interface and preserve independent gates; P2 L6 refusal already enforced |
+| skills/{goal,parcel-driven-development}/SKILL.md; docs/{COORDINATOR-PATTERN,FOREMAN-LINE-PLAN}.md | Existing session/canon contracts; PMC-P3 | P4-CANON: active session guidance migrated after reviewed P2 interface without granting new authority |
+| routing-policy/README.md; dispatch/README.md; permission-profiles/README.md; plugin README.md | Legacy public documentation; PMC-P3 and package owners | P4-DOCS: active docs identify explicit contract versions and approved replacement paths |
+| routing-policy/src/{catalog-snapshot,eligibility,catalog-eligibility-adapter}.ts and corresponding tests, including catalog-purity.test.ts | Accepted RCM snapshot/projector/wrapper on this base; RCM-P1A/P1B owner | P4-RCM: no v0 removal by P1b; stable RCM exports remain, later adapter consumes supported contracts without deep imports |
+| hybrid-routing/src/{index,mapping-proposal}.ts; tests/mapping-proposal.test.ts | HroBindingProjectionDraftV1 remains distinct from PMC projection/v1; HRO-P1b adapter owner | P4-HRO: explicit injected adapter with refusal tests for required unknown evidence and no implicit cast or execution capability |
+| worker-envelopes/src/{routing,result-envelope}.ts | Opaque registry-key commentary/deferred WF-P3 integration, no direct v1 reader; worker-fabric/WF-P3 owner | P4-WORKER: explicit versioned registry-key mapping and migrated consumers before retiring referenced legacy registry |
+| role-authority/src/{roles,data-classification}.ts; role-authority/README.md | Boundary commentary only: routing owns model choice; role-authority owner | P4-ROLE: preserve role authority and update active references when routing interface retires; no new resolver here |
+| approval/src/{index,cli}.ts; approval/README.md; skill-injection/src/cli.ts; skill-injection/README.md; schema-scaffold/README.md | CLI/scaffold precedent and docs, no policy-value consumer; package owners with PMC-P3 | P4-PRECEDENT: update active examples if named CLI/schema paths retire; keep shared schema machinery and approval behavior |
+| spec-linter/src/grandfather.ts; docs/specs/done/**; docs/transcripts/**; docs/kickstarters/** | Historical references, grandfathered spec paths and dispatch evidence; spec-linter/archive owners | P4-HISTORY: preserve historical records; distinguish superseded instructions from active callers, never rewrite old evidence as v1 |
+| docs/specs/active/{PMC-P2*,HRO-P1b*,RCM-P1B*,PRAC-P0*,SUPERCHARGE-P1*,SUPERCHARGE-P2*,KONE-TBD-cerebras*}; docs/goals/** | Active plans/deferred integrations and retained review evidence; respective goal coordinators, PMC-P3 coordinating canon | P4-PLANS: each active dependency names its replacement version and owner; historical review/probe/catalogue evidence is retained |
+| repository-root .audit/**; docs/INITIATIVES/foreman-line-completion-20260905/EVIDENCE.md; docs/receipts/a5b1975a-7497-4200-bac2-5d8a6fd6c749/{000002-C-dispatch-order.json,routing-decision.json} | Historical audit/receipt consumers, not live eligibility; archive/receipt custodians | P4-ARCHIVE: immutable provenance remains readable under its original version; never recast historical selection as v1 eligibility |
+
+P4 requires **all applicable conditions above**, the earlier A5.5 global cutover
+conditions, independent review and recorded rollback. None is satisfied merely
+by producing this projection. In particular P4-PI is cleanup after P2's mandatory
+legacy/v1 L6 refusal, not the owner of that pre-activation safety obligation.
+
+## Stable injected-consumption handoff
+
+Use routing-policy's public barrel exports `projectProviderBindingsV1`,
+`ProviderBindingProjectionV1`, `ProviderBindingProjectionResult`, and
+`providerBindingProjectionV1Schema`. The input policy is
+`pmc-provider-binding-policy/v1`; the envelope is
+`pmc-provider-binding-projection/v1`. Success is `ok:true, projection` and
+contains the accepted validator's full `valid:true, value` snapshot as `policy`.
+Failure is `ok:false, errors`, forwarding `ProviderBindingValidationErrorV1`
+without partial policy/projection. The schema embeds the unchanged P1a schema;
+JSON Schema conformance alone does not replace its semantic validator.
+
+HRO-P1b receives this object by injection across a separately reviewed adapter.
+It must check explicit versions and preserve unknown protocol/family/budget and
+unavailable evidence, refusing whenever its consumer requires a known value.
+HroBindingProjectionDraftV1 is not this envelope; casts and invented defaults
+cannot bridge it. RCM producer additions follow projection integration and must
+retain the reconciled public barrel. No RCM internals are imported here.
+
+Success proves owned, immutable structural evidence only. Provider/model/protocol
+strings, order, all declarations (even unused), held refusals, terminal fallback
+pairs, off-pin restrictions, authority/independence/gates, unresolved budgets and
+zero-tolerance ranking constraints survive unchanged. Availability, quality,
+capability, privacy, authenticity and freshness remain unproven by projection,
+even when a caller supplies recorded claims. No route is selected or enabled.

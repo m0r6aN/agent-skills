@@ -21,6 +21,7 @@ export const RATIFIED_PACKAGES = [
   'contracts',
   'dispatch',
   'foreman-config',
+  'hybrid-routing',
   'integration',
   'jev-decisions',
   'mutation-scope-guard',
