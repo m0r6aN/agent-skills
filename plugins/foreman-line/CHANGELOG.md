@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+
+- The CI aggregation now captures each package check's complete stdout/stderr and
+  re-emits every failing check in a failure section before the summary matrix, so
+  the failing assertion is always visible in the job log.
+- `verification` scaffold parity (AC-1) now covers the shared toolchain pins only;
+  package-specific dev dependencies (dispatch's `@earendil-works/*` Pi runtime
+  port) are no longer mirrored into the verification manifest.
+
 ## 0.6.10 — 2026-09-19
 
 - Ported explicit repository/plugin roots and caller/config identity injection.

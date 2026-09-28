@@ -353,6 +353,33 @@ Stop and return to the owner if:
 - both members of a declared fallback pair fail or the requested action would
   require an unlisted third fallback.
 
+## Amendment 05 — accepted prerequisite review rulings, 2026-09-26
+
+The coordinator accepted the independent P2 design-review corrections under the
+user's authorization to complete necessary prerequisites. The governing text is
+[Amendment 05](gate-1-amendment-05.md), recorded now before PMC-P2A dispatch.
+It takes precedence over conflicting earlier implementation instructions:
+
+- Legacy v0 preserves RCM tier order; explicit PMC v1 owns the ratified PMC
+  ranking/L5 price semantics. No implicit upgrade or parallel HRO resolver.
+- Initial A1 authorization is a same-process, registry-authenticated, opaque
+  one-use permit. Serialized receipts/restarts cannot authorize; durable budget
+  liabilities survive. HMAC/IPC keys are deferred until an actual IPC need.
+- Freeze and verify final post-hook wire bytes; durably consume immediately
+  before the sole owned sender. Subsequent failures are uncertain absent sender
+  no-send proof. No hidden retries or auxiliary inference.
+- Ledger units are integer micro-USD; rate lexemes are exact bounded decimals
+  (maximum 18 fractional digits); sum the conservative rational bound then ceil.
+- P2A resolver, P2B ledger, P2C controller, P2D one OpenRouter chat transport and
+  P2E configuration/caller migration are distinct parcels. Initial entry is
+  public-only; internal/restricted and unsupported providers/protocols refuse.
+- Disabled L6 refuses on every governed v0/v1 launch path. The initial break-glass
+  bypass set is empty; requests refuse. Full HRO live exit is unchanged.
+
+Synthetic offline conformance is a distinct milestone, never live activation
+evidence. This amendment records design authority, not fabricated provider facts,
+implementation completion, configuration mutation or provider spend.
+
 ## Gate 1 record
 
 The owner ratified D1–D8, the parcels, and the exit criterion on 2026-09-23,

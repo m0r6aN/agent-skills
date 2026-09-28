@@ -21,6 +21,8 @@
     "yaml": "2.9.1"
   },
   "devDependencies": {
+    "@earendil-works/pi-coding-agent": "0.87.1",
+    "@earendil-works/pi-ai": "0.87.1",
     "@biomejs/biome": "2.5.14",
     "@types/node": "26.6.2",
     "tsx": "4.23.15",
