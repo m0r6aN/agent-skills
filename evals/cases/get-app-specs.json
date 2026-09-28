@@ -2,22 +2,42 @@
   "skill_name": "get-app-specs",
   "trigger": {
     "positive": [
-      { "prompt": "Inventory this codebase's application features, business rules, and dependencies", "top_k": 3 },
-      { "prompt": "Extract an evidence-backed app specification before we rewrite this system", "top_k": 3 },
-      { "prompt": "Archaeologize this standalone app and document what actually gets triggered", "top_k": 3 }
+      {
+        "prompt": "We inherited this undocumented codebase - take inventory of what it actually does before we rewrite anything",
+        "top_k": 3
+      },
+      {
+        "prompt": "Which parts of this app are actually still used, and what is dead code we can delete",
+        "top_k": 3
+      },
+      {
+        "prompt": "I am new to this repo - map its features and business rules so I can onboard",
+        "top_k": 3
+      }
     ],
     "negative": [
-      { "prompt": "Modernize this legacy system with behavioral equivalence", "owner": "modernize" },
-      { "prompt": "Plan a multi-repository delivery across services", "owner": "initiative-coordination" }
+      {
+        "prompt": "Simplify this working function for readability",
+        "owner": "code-simplification"
+      },
+      {
+        "prompt": "Write the API documentation for the orders service",
+        "owner": "documentation-and-adrs"
+      }
     ]
   },
   "evals": [
     {
       "id": 1,
       "kind": "dialogue",
-      "prompt": "Produce a canonical application specification from this repository.",
-      "expected_output": "An evidence-backed inventory of features, rules, dependencies, liveness, confidence, and open questions.",
-      "expectations": ["The response distinguishes observed behavior from inference", "The response identifies open questions"]
+      "dialogue_justification": "Grades the Phase-III human-elicitation questioning, which the skill defines as conversational stakeholder dialogue.",
+      "prompt": "You inventoried our billing service from code and found a yearly renewal job with no telemetry hits in the last 30 days. The schedule config shows it runs every January. What do you ask the stakeholders, and how do you label it?",
+      "expected_output": "Targeted elicitation questions about seasonal or periodic operations plus a cadence-reconciled liveness label, not a silent dead verdict",
+      "expectations": [
+        "Asks about seasonal, year-end, or periodic operations that would not appear in recent telemetry",
+        "Reconciles the 30-day telemetry silence against the yearly declared cadence instead of marking the job dead",
+        "Records the uncertainty as an open question rather than dropping the item"
+      ]
     }
   ]
 }

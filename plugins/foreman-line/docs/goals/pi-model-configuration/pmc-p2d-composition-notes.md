@@ -174,7 +174,7 @@ compatibility only and separate exact Charge for ledger proof. Placeholder zeros
 before observed usage are labeled as unobserved. Public P2E output must not present
 those figures as actual spend. This is a reviewable limitation, not an invisible
 approximation in the exact-money path. If actual runtime consumers discard the
-diagnostic distinction, the integration must be revised or refused.
+diagnostic evidence on the actual private session or expose those figures as accounting, the integration must be revised or refused. Internal numeric accumulation need not inspect diagnostics.
 
 Raw usage.cost is account USD. Fractional microUSD is common in principle and
 cannot enter integer-only P2B as exact charge. The chosen honest disposition is
@@ -253,3 +253,56 @@ bounded output/finalization. These are C-composition approvals only; D's indepen
 72dea approvals are recorded separately above. No source implementation release
 occurs here. B1 capture repair/final reviews/audit integration and accepted C
 implementation remain predecessors to actual D runtime conformance.
+
+## Four actual-source corrections — docs-only amendment
+
+Root accepted Step 0 at 343250e08eaee72581d7b925a7b9b6796f9e3536 and released exactly
+spec, terminal-preflight and these notes. Future runtime envelope is now exactly
+nine files: previous seven plus dispatch/package.json and package-lock.json. Pinned
+direct devDependencies are coding-agent and pi-ai 0.87.1; pi-agent-core 0.87.1 is
+conditional only on a concrete direct type import declared before install in fresh
+builder Step 0. No dependency is installed by this amendment. Independent design
+reviews and fresh builder Step 0 remain required before runtime resumption.
+
+Actual portable nominal types must resolve in an isolated real local dependency
+installation, never a donor/junction/global tree. Existing 35 pins remain exact and
+must match fresh resolution; mismatch holds for review. No structural class cast,
+absolute import or type-error suppression. Production modules import Pi types only
+until the private installation supplies actual runtime capabilities. Tests guard
+network/ambient auth/subprocess effects before dynamic Pi import.
+
+Prepare retains exact fields/proof, while first successful trusted C verification
+binds C's captured wire object. That exact object is used for subsequent verification,
+send and observation. Caller-supplied lookalikes and rebinding refuse. This matches
+actual C copying and requires no controller change.
+
+Completed output now means stop only. Known-charge length reconciles as actual C's
+terminal-failed-settled and finalizes failed OUTPUT_TRUNCATED with private Pi error;
+partial text never becomes completed output. Unknown cost keeps its existing
+unknown liability and refusal; neither length nor diagnostics fabricate settlement.
+
+The private Pi session may internally sum compatibility estimates without reading
+the diagnostic. Its actual messages must retain the diagnostic, and no session,
+stats, estimate or placeholder is exported or used for money/permit/savings claims.
+External output is the reviewed bounded text/C-receipt or failure contract. No Pi
+accumulator rewrite or production accounting claim is made.
+
+Frozen linter, required-body/local-link checks and exact three-document whitespace
+inspection precede handoff. All runtime conformance/installation tests remain future
+requirements. No package install, runtime edit, provider call or credential access.
+## Amended design acceptance — 2026-09-26
+
+Coordinator and independent B1 reviewer APPROVE8a2a322c2278994b502f046a91f7a6033fe43e2d
+following actual C/Pi source inspection, exact three-document comparison and
+frozen lint/link/diff checks. Root ratifies the four corrections and exact nine-file
+future envelope under the user's delegated prerequisite authority. Fixed development
+dependencies, C-owned wire binding, stop-only completion and private nonaccounting
+Pi totals are accepted; no production certificate or live conformance is inferred.
+
+C source93f8021 has two independent final source approvals and is frozen here.
+Its separately scoped reader/audit enrollment and main integration remain shipping
+gates, not authorization to alter C. D may prepare an isolated offline build against
+that frozen accepted source; actual Step0 restatement and explicit runtime release
+still precede edits. Production construction/preparation must refuse absent genuine
+billing/installation evidence before reserve, credential supplier or HTTPS. Synthetic
+private tests cannot unlock production. No provider calls/configuration are released.

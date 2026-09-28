@@ -179,3 +179,102 @@ the preserved endpoint constant, and the documented lab call. It does not prove
 absence of external host importers. E1 must receive independent review and audit
 integration before being described as chain-green; E2 and full HRO live acceptance
 remain separate. No push, merge, provider call or activation occurred here.
+
+## E2 pure-planner checkpoint preparation — 2026-09-26
+
+Frontier A completed read-only Step0 at1e6c676. Root separates the planner from
+D-dependent entry/installation/CLI work using the amended active E2 spec. Three
+future files only: config-plan.ts, its test, and this inventory. Real owners stay
+mandatory; isolated child module substitution is only for defensive result shapes
+those owners reject before projection and explicit call-count controls. No runtime
+injection, source-custody claim, Pi/config apply or production activation follows.
+Implementation remains stopped until independent amendment review and root release.
+
+## E2 checkpoint 1 pure planner implementation handoff
+
+Release base: d9088c2d10cabf5a86c089fc507cac7a402322b1. This checkpoint adds only
+config-plan.ts and pmc-config-plan.test.ts plus this existing inventory report.
+Entry, CLI, installation and actual C/D composition remain unreleased. No caller
+was migrated by adding this internal pure function; this does not complete E2 or
+any HRO live/production gate.
+
+planPmcPiConfigurationV1 calls the real provider-binding projection and public
+catalog adapter once each, preserving both complete owned result unions. It uses
+policy binding order and exact requested provider/id joins. The new records/maps
+are frozen; real owner results already provide deep owned/frozen evidence. All
+entries remain disabled, all eight missing claims remain, off stays null, and both
+patches are empty. No filesystem/clock/network/configuration or Pi runtime is
+imported by the planner. Owner validation and its bounds remain authoritative.
+
+RED/GREEN: the first focused command ran after writing the tests but before the
+planner existed and exited 1 for the missing config-plan module. This is the
+new-function test-first RED, not a reproduced existing runtime bug or an assertion
+failure in a prior implementation. After implementation, six focused tests pass.
+An initial test type-inference error and test formatting failure were corrected;
+they are not counted as behavioral RED. The purity child's initial inline command
+exceeded the Windows command argument capacity; feeding its source on stdin fixed
+the test harness without changing production code or the module-mock mechanism.
+
+| Planner acceptance | Executed evidence |
+|---|---|
+| Owner result preservation | Real policy fixture and independently authored canonical catalog fixture; full deep equality against both direct owners for success, adapter, reader, snapshot and policy refusals. |
+| Identity mapping | Actual owner absent/refused/facts results and exact provider distinction; binding order retained. Ambiguous mixed facts/refusal rows use the separately labelled defensive-unit child. |
+| Effort semantics | Actual seven-key exact provider values, sparse/unknown/null maps, unknown extra level, reasoning true/false, unconditional null off and no inferred clamping. Duplicate known levels use defensive-unit substitution and produce all-null maps. |
+| Ownership and authority | Frozen complete real-owner output; caller policy/byte mutation leaves prior output unchanged; disabled flags, all missing claims and empty patches asserted. |
+| Bounds and hostile input | Getters never called; real 256-binding positive/257 refusal; real 2048-unit positive/2049 refusal; oversized catalog bytes preserve the real typed adapter refusal. Existing owner suites cover their remaining limits. |
+| Call counts | Isolated Node module mocks installed before planner import count exactly one call to each owner per invocation, including policy refusal. No runtime injection port/helper is exported. |
+| Purity | A separate child imports the actual planner, installs filesystem/HTTP/HTTPS/process/fetch/Date.now traps with synchronized built-in exports, then executes a successful real-owner plan with zero trap calls. This covers invocation, not an assertion that module loading uses no filesystem. |
+
+The defensive child uses Node 24.19.0 --experimental-test-module-mocks with TSX
+and mock.module exports. It passed on the pinned loader. Its fabricated owner
+results prove defensive mapping only, not real RCM acceptance or authenticity.
+No task input can select that facility. Both child sources live within the one
+authorized permanent test file and run from stdin; no extra committed fixtures.
+
+Verification with D:/nvm/v24.19.0/node.exe and existing matched-lock dependencies:
+
+- Focused planner: six tests, all pass, zero skipped.
+- Full dispatch: 479 tests, all pass, zero skipped.
+- Full routing-policy: 944 tests, all pass, zero skipped.
+- Both package typechecks and full lints: exit 0. Routing retains its existing
+  catalog-snapshot literal-key informational diagnostic; no unrelated fix applied.
+- Actual D19 audit: exit 0, 21 packages / 202 source files, no unruled instances.
+- Scope/preservation review: exactly these three paths; approval-cli, dispatch
+  barrel, v0, routing owners, money, manifest/lock/dependencies and other callers
+  unchanged. No provider, credentials, config write, install, push or merge.
+
+Package commands: pinned Node runs node_modules/tsx/dist/cli.mjs --test with the
+focused file or tests/*.test.ts, node_modules/typescript/bin/tsc --noEmit, and
+node_modules/@biomejs/biome/bin/biome check . . D19 uses verification's TSX loader
+from the repo root and this checkout's plugin root. Local TEMP logs use the prefix
+e2-planner-: red.log, focused.log, dispatch-full.log, routing-policy-full.log,
+dispatch-tc.log, routing-policy-tc.log, dispatch-lint.log, routing-policy-lint.log
+and d19.log.
+
+Builder verification is not independent acceptance. Freeze for two source reviews;
+accepted D and separately released entry/installation/CLI work remain prerequisites
+for later E2 checkpoints. No host apply or production-enablement claim is made.
+
+## E2 planner source and combined acceptance
+
+Root and independent frontier D approve sourcec6b5bd31f05a5031009b74c23adec49f46c9b2ce
+and combined739cbaaabc0651936bc6446e16b3cac33e8205af with accepted main N/C and
+N closure4477c0a. Planner runtime is unchanged from the frozen author handoff.
+Root and D each ran all6 planner tests successfully. D's first invocation from
+repo root caused test-child loader-resolution failures; the documented dispatch
+working directory passes, and that corrected run is the recorded result.
+
+Root combined dispatch479 and routing964 pass; both package typechecks/full lints
+pass (one unchanged routing informational suggestion). Actual D19 passes21 packages,
+202 source files, zero unruled instances. Diff/scope clean. This is acceptance of
+the pure disabled planner checkpoint, not the unfinished E2 entry/CLI/installation
+or production apply. Exact-head remote checks and merge still follow.
+
+## E2 checkpoint 1 accepted on main — 2026-09-26
+
+PR68 merged at 2026-09-26T22:58:18Z as
+04dfd9f1ff3811b3da8c686dee1ee61a0dc9dbda. All twelve remote checks passed on
+reviewed head 4e0d1d7fc36b9bc93f9e11cccf36327d4df05644 before the delegated merge.
+The pure disabled planner checkpoint is complete. Parent E2 remains active:
+entry, CLI and installation require accepted D and their separate release.
+No caller migration, configuration apply or production activation is claimed.

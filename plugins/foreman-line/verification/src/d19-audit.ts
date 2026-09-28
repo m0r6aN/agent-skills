@@ -1487,6 +1487,176 @@ function pmcIntentPins(sf: SourceFile, errors: string[]): Map<CallExpression, st
   return errors.length === startErrors ? calls : new Map()
 }
 
+// HRO-P4A1: six reviewed SQLite calls in the exact recovery-admission owner.
+// This set is independently enrolled from the accepted runtime source; it does
+// not broaden the ledger or intent-custody pins above.
+const PMC_RECOVERY_FILE = 'dispatch/src/pmc-launch/recovery-admission.ts'
+const PMC_RECOVERY_OWNER_NAMES = new Set([
+  'fail',
+  'nativeCode',
+  'rows',
+  'settings',
+  'transaction',
+  'expectedMeta',
+  'validateRows',
+  'writeAdmission',
+])
+const PMC_RECOVERY_VARIABLE_NAMES = new Set([
+  'ADMISSION_FILE',
+  'DB_LIMIT',
+  'JOURNAL_LIMIT',
+  'schema',
+])
+const PMC_RECOVERY_DECLARATIONS = new Map<string, string>([
+  ['import:node:crypto', '4e4a7b05ef4a93dd8c3808d4fdc416418d11334f8188e8b1c7a106b9251874f6'],
+  ['import:node:fs', '4839e1c2f688728b6b3e08eda4ba0eee7c990d2292449cff40470c867e17c6c9'],
+  ['import:node:os', 'f0bdf2d35030dfda07dd78291e8e353d30b5d5c2986c3b957d9eea44698d79f0'],
+  ['import:node:path', '4009a16c33c152a07701539b1fc418f85bdaa32caba1a51da11da606e2c70110'],
+  ['import:node:sqlite', '10dffce406a49a8a94305c6b842c5b70fea547e34c7f99e92f1f8efee2a894f2'],
+  ['import:node:url', '5153148ad1c2e7c5daff67d72a1dba70214a73023eb135e2482164ad1af1bf80'],
+  [
+    'import:./intent-custody.js',
+    'ff313add4ef64383c6ff38f802baf22270fc6c9d9b71f20729b1f55a97bed7cb',
+  ],
+  [
+    'import:./intent-custody-types.js',
+    '5130ce3c1a0a27f75a001e48cd351cc32998b821aed3b89c79f6878cb0bc45e3',
+  ],
+  [
+    'import:./recovery-admission-types.js',
+    '6bb361774eb75911f1287d5ffa423ce145d299afea219ede0eec529c5ff4c8ee',
+  ],
+  ['ADMISSION_FILE', 'a272abc9f0179647e34d32de67c2d8c596a562d586fa647d593b6329ce27b55e'],
+  ['DB_LIMIT', 'f7e3c0ce9824296cf778abfd0de3e3d5ec3a11493b5556aa297033da8a6544fc'],
+  ['JOURNAL_LIMIT', '0d272242314ce37697ac5c92e54be89f64f4b33f04315f207eb48e0c7442136b'],
+  ['schema', 'ec70610a4eb4bed1a896ee37b65c489100c3023e7387417c0af3d7d2e08e65df'],
+  ['fail', '6ee0e45440bccc2e1207564ba807d6a4ec364453df453c4b132f065816395087'],
+  ['nativeCode', '432a6bc00aa5734ef4dfc3f3dea494ceaf8b33692599231daa8c0a26705610ba'],
+  ['rows', '20eda4c4e4f4f06475d6f5ef3f60826753b6e6e8a8e6828f9e3a0420c39e3e1b'],
+  ['settings', '920f890ea73d2fa6de55162f1ab45b3fd9274df35da69453e6cc0b45a23c166c'],
+  ['transaction', '5b06d413abdd0dfadfe09e645b104d5440ad815f7885a5bfc5fc06829c2fa2b4'],
+  ['expectedMeta', '8f982c28cbba7dc2088e07d43c12ee21bee2e68d0af7affdaebc49c45a99cee4'],
+  ['validateRows', 'bf978236325efa39d493d0563f0b6f4e50db0e430104901a891709def19f27b3'],
+  ['writeAdmission', '5a86f8ed26c6c7a0bbd200d96266dd4aff359093be39be949ea8805b0991b9e3'],
+])
+const PMC_RECOVERY_CALLS = new Map<string, readonly [string, string]>([
+  [
+    'settings:0',
+    ['settings/page-size', 'd3c9d937a6fd6eeb5d7acee81cd502dc9d3f9b94b600da6f883cde3e33442fef'],
+  ],
+  [
+    'settings:1',
+    ['settings/pragmas', '7fa6f4166292b60f8ec9d7ef41b95a1c1ba637b5f22945bcda2112553a8d2c2b'],
+  ],
+  [
+    'transaction:0',
+    ['transaction/begin', '111a02d7b2431c5dd45835f1f5997497cd4a62a7821d6b507f4c4d95e007b036'],
+  ],
+  [
+    'transaction:1',
+    ['transaction/commit', '79fba6428b2efa15bdc3b6dce08a3e58c3e3c05d8fd7830071f737291baed710'],
+  ],
+  [
+    'transaction:2',
+    ['transaction/rollback', 'a89ab9db5111a0c2755290a8edcff23f10559ba805a64a316810451dd457ba9b'],
+  ],
+  [
+    'writeAdmission:0',
+    ['initialize/schema', '395518982624315c4d8cdd88c9a01b2121e74095c1feee58776342a04534fbc9'],
+  ],
+])
+const PMC_RECOVERY_PROVENANCE_NAMES = new Set([
+  ...PMC_RECOVERY_OWNER_NAMES,
+  ...PMC_RECOVERY_VARIABLE_NAMES,
+  'DatabaseSync',
+  'closeSync',
+  'lstatSync',
+  'openSync',
+  'readdirSync',
+  'realpathSync',
+  'statSync',
+  'tmpdir',
+  'basename',
+  'dirname',
+  'isAbsolute',
+  'join',
+  'parse',
+  'resolve',
+  'pathToFileURL',
+  'createHash',
+])
+const PMC_RECOVERY_REFERENCE_DIGEST =
+  'fda9b3dae1622547928e7b2945b706406eb819c66e4ba2cd78eddc3050a99f92'
+
+function pmcRecoveryPins(sf: SourceFile, errors: string[]): Map<CallExpression, string> {
+  const selected = new Set<Node>()
+  const counts = new Map<string, number>()
+  const calls = new Map<CallExpression, string>()
+  const callCounts = new Map<string, number>()
+  const fingerprint = (node: Node): string => pmcDigest(pmcAstValue(node, sf))
+  const startErrors = errors.length
+  for (const node of sf.statements) {
+    const key =
+      isFunctionDeclaration(node) && node.name && PMC_RECOVERY_OWNER_NAMES.has(node.name.text)
+        ? node.name.text
+        : isImportDeclaration(node) && isStringLiteral(node.moduleSpecifier)
+          ? `import:${node.moduleSpecifier.text}`
+          : isVariableStatement(node)
+            ? (node.declarationList.declarations
+                .map((declaration) => (isIdentifier(declaration.name) ? declaration.name.text : ''))
+                .find((name) => PMC_RECOVERY_VARIABLE_NAMES.has(name)) ?? null)
+            : null
+    if (key === null) continue
+    selected.add(node)
+    counts.set(key, (counts.get(key) ?? 0) + 1)
+    if (fingerprint(node) !== PMC_RECOVERY_DECLARATIONS.get(key))
+      errors.push(`PMC recovery admission declaration fingerprint: ${key}`)
+    if (!isFunctionDeclaration(node)) continue
+    let ordinal = 0
+    const visit = (child: Node): void => {
+      if (isCallExpression(child) && calleeName(child) === 'exec') {
+        const callKey = `${key}:${ordinal++}`
+        const expected = PMC_RECOVERY_CALLS.get(callKey)
+        callCounts.set(callKey, (callCounts.get(callKey) ?? 0) + 1)
+        if (!expected || fingerprint(child) !== expected[1])
+          errors.push(`PMC recovery admission call fingerprint: ${callKey}`)
+        else calls.set(child, expected[0])
+      }
+      child.forEachChild(visit)
+    }
+    node.forEachChild(visit)
+  }
+  for (const key of PMC_RECOVERY_DECLARATIONS.keys()) {
+    if (counts.get(key) !== 1)
+      errors.push(
+        'PMC recovery admission declaration cardinality: ' +
+          key +
+          '; expected 1, observed ' +
+          (counts.get(key) ?? 0),
+      )
+  }
+  for (const key of PMC_RECOVERY_CALLS.keys()) {
+    if (callCounts.get(key) !== 1)
+      errors.push(
+        'PMC recovery admission call cardinality: ' +
+          key +
+          '; expected 1, observed ' +
+          (callCounts.get(key) ?? 0),
+      )
+  }
+  const references: unknown[] = []
+  const visitReferences = (node: Node, ancestors: readonly number[]): void => {
+    if (selected.has(node)) return
+    if (isIdentifier(node) && PMC_RECOVERY_PROVENANCE_NAMES.has(node.text))
+      references.push([ancestors, fingerprint(node.parent)])
+    node.forEachChild((child) => visitReferences(child, [...ancestors, node.kind]))
+  }
+  visitReferences(sf, [])
+  if (pmcDigest(references) !== PMC_RECOVERY_REFERENCE_DIGEST)
+    errors.push('PMC recovery admission external reference provenance fingerprint')
+  return errors.length === startErrors ? calls : new Map()
+}
+
 // ─── Per-file sweep ──────────────────────────────────────────────────────────
 
 interface SweepSink {
@@ -1494,6 +1664,8 @@ interface SweepSink {
   readonly pmcIntentSites: (Site & { role: string })[]
   readonly pmcErrors: string[]
   readonly pmcSites: (Site & { role: string })[]
+  readonly pmcRecoveryErrors: string[]
+  readonly pmcRecoverySites: (Site & { role: string })[]
   readonly violations: Finding[]
   readonly e1Sites: Site[]
   readonly e2Sites: Site[]
@@ -1537,7 +1709,9 @@ function sweepFile(
       ? pmcLedgerPins(sf, sink.pmcErrors)
       : rel === PMC_INTENT_FILE
         ? pmcIntentPins(sf, sink.pmcIntentErrors)
-        : new Map<CallExpression, string>()
+        : rel === PMC_RECOVERY_FILE
+          ? pmcRecoveryPins(sf, sink.pmcRecoveryErrors)
+          : new Map<CallExpression, string>()
 
   const site = (node: Node): Site => {
     const { line } = sf.getLineAndCharacterOfPosition(node.getStart(sf))
@@ -1691,8 +1865,15 @@ function sweepFile(
     }
   }
 
-  for (const [call, role] of pmcPins)
-    (rel === PMC_INTENT_FILE ? sink.pmcIntentSites : sink.pmcSites).push({ ...site(call), role })
+  for (const [call, role] of pmcPins) {
+    const sites =
+      rel === PMC_INTENT_FILE
+        ? sink.pmcIntentSites
+        : rel === PMC_RECOVERY_FILE
+          ? sink.pmcRecoverySites
+          : sink.pmcSites
+    sites.push({ ...site(call), role })
+  }
 
   const e1SeenPerFile = { count: 0 }
   const e4Handled = new Set<number>()
@@ -2036,6 +2217,8 @@ function main(argv: readonly string[]): number {
     pmcIntentSites: [],
     pmcErrors: [],
     pmcSites: [],
+    pmcRecoveryErrors: [],
+    pmcRecoverySites: [],
     violations: [],
     e1Sites: [],
     e2Sites: [],
@@ -2128,7 +2311,11 @@ function main(argv: readonly string[]): number {
   // count per pinned file and FAILS on mismatch, over or under, whenever the
   // pinned file was actually swept. A pinned file absent from the tree (a
   // synthetic fixture) leaves that pin vacuous, not failed. ──
-  const pinMismatches: string[] = [...sink.pmcErrors, ...sink.pmcIntentErrors]
+  const pinMismatches: string[] = [
+    ...sink.pmcErrors,
+    ...sink.pmcIntentErrors,
+    ...sink.pmcRecoveryErrors,
+  ]
   const pmcIntentExpected = sink.sweptFiles.has(PMC_INTENT_FILE) ? PMC_INTENT_CALLS.size : 0
   if (sink.pmcIntentSites.length !== pmcIntentExpected)
     pinMismatches.push(
@@ -2138,6 +2325,11 @@ function main(argv: readonly string[]): number {
   if (sink.pmcSites.length !== pmcExpected)
     pinMismatches.push(
       `PMC ledger site cardinality: expected ${pmcExpected}, observed ${sink.pmcSites.length}`,
+    )
+  const pmcRecoveryExpected = sink.sweptFiles.has(PMC_RECOVERY_FILE) ? PMC_RECOVERY_CALLS.size : 0
+  if (sink.pmcRecoverySites.length !== pmcRecoveryExpected)
+    pinMismatches.push(
+      `PMC recovery admission site cardinality: expected ${pmcRecoveryExpected}, observed ${sink.pmcRecoverySites.length}`,
     )
   if (!sink.sweptFiles.has(RCM_PROVENANCE_FILE)) {
     pinMismatches.push(`RCM provenance DATA: required exact file ${RCM_PROVENANCE_FILE} is absent`)
@@ -2294,6 +2486,11 @@ function main(argv: readonly string[]): number {
     `PMC intent custody: ${sink.pmcIntentSites.length} observed; expected ${pmcIntentExpected}`,
   )
   for (const site of sink.pmcIntentSites)
+    console.log(`  ${site.role}: ${site.file}:${site.line}: ${site.text}`)
+  console.log(
+    `PMC recovery admission: ${sink.pmcRecoverySites.length} observed; expected ${pmcRecoveryExpected}`,
+  )
+  for (const site of sink.pmcRecoverySites)
     console.log(`  ${site.role}: ${site.file}:${site.line}: ${site.text}`)
   console.log(
     '  disposition: exact reviewed guarded-root and SQLite calls; AST owners, import/connection/reference provenance and call roles/counts pinned. Syntactic only; no general dataflow or runtime integrity claim.',

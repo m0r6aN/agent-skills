@@ -172,3 +172,35 @@ Additional final trace pins (pi-agent-core also 0.87.1):
 | `node_modules/@earendil-works/pi-agent-core/package.json` | `26f991ea26187d52978c303811f32032c9fcdaec197d4dcf08d793bedffdb87c` |
 | `node_modules/@earendil-works/pi-agent-core/dist/agent.js` | `3a890712a7a02fc29754a2af61b758cba43eec97d289e446cd7e432ed0093085` |
 | `node_modules/@earendil-works/pi-agent-core/dist/agent-loop.js` | `75da7290cd348c070328de834a810503d00fd5ff1ea2cc204786fb498bd046df` |
+
+## Actual-source mismatch amendment — 2026-09-26
+
+Read-only Step 0 at 343250e08eaee72581d7b925a7b9b6796f9e3536 verified all 35 table
+rows against the installed inspection tree: no hash mismatches. No Pi module was
+imported, dependency installed or runtime executed. These remain inspection pins;
+the future isolated runtime checkout must reproduce them on its actual resolution.
+
+Dispatch currently has no Pi dependencies. Package exports support portable root
+imports of coding-agent constructors/types and pi-ai model/context/options/stream
+types. The revised spec permits exact 0.87.1 coding-agent/pi-ai devDependencies
+and normal package/lock changes in the future nine-file envelope. A direct
+pi-agent-core dependency is also exact 0.87.1 only if its concrete direct import
+is declared during builder Step 0 before installation. No donor/junction/global
+mutation, absolute shipped imports, structural class casts or ignored type errors.
+Normal package CI typecheck and actual Pi tests must use the isolated locked tree;
+network/auth/subprocess guards precede dynamic import. Fresh install compatibility
+has not been demonstrated by this docs-only task.
+
+Actual C ownWire captures a new object, preserving boundProof. First trusted C
+verify must bind that owned object after proof and all fields/claims validate;
+subsequent verify/send/observation require its identity. Actual C maps only stop
+to succeeded; known length is terminal-failed-settled. The revised finalizer returns
+OUTPUT_TRUNCATED/error for that length outcome and never completed partial text.
+Unknown account cost stays unknown; no C/B1/accounting rewrite is proposed.
+
+Actual agent-session getSessionStats calls addUsageToTotals; usage-totals.js sums
+numeric usage.cost.total without consulting diagnostics. The private compatibility
+accumulator is not account spend. Retain diagnostics on the actual private session,
+test that retention and prohibit session/stats/estimate export. External output
+remains bounded completed stop text and C receipt, or the reviewed failure result.
+No change to Pi internals or claim of diagnostic-aware internal aggregation.

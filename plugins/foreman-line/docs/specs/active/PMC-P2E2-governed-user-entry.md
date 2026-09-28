@@ -296,3 +296,96 @@ covered rather than only a helper? Does a lifecycle failure preserve successful
 accounting without exposing provisional text? Are private capability inputs finite
 and compatible with accepted C/D? Are source-map unknowns still denied? Does the
 unavailable production bootstrap remain a named gap in HRO's original live exit?
+
+## E2 checkpoint 1: pure planner release boundary — 2026-09-26
+
+The read-only actual-source Step0 at 1e6c676fffc2f8ca078699c2dbc6cd554261e0ff
+confirms that the pure planner depends only on the accepted provider-binding
+projection and public catalog-eligibility adapter. It does not depend on D's
+transport implementation. Checkpoint 1 may therefore be released separately after
+review of this amendment. The entry, installation and CLI checkpoints still need
+accepted actual D and their own read-only Step0/release. This does not close E2.
+
+Checkpoint 1 has exactly three permitted implementation/report paths:
+
+- plugins/foreman-line/dispatch/src/pmc-launch/config-plan.ts
+- plugins/foreman-line/dispatch/tests/pmc-config-plan.test.ts
+- plugins/foreman-line/docs/goals/pi-model-configuration/pmc-p2-caller-inventory.md
+
+Use the exact existing planner contract above. Invoke each real owner once even
+when the other refuses. Preserve both actual typed results. Successful entries
+follow policy binding order, never inferred aliases or ranking; all remain disabled.
+The seven-key map and eight missing claims remain fixed; both patches stay empty.
+Deep ownership/freezing applies to newly constructed result records, without
+freezing caller objects or introducing runtime dependency injection.
+
+Actual owner validation rejects duplicate requested identities before projection;
+actual canonical reader data cannot contain duplicate known effort keys. Thus the
+ambiguous-row and duplicate-known-level defensive branches cannot honestly be
+claimed as real-owner integration coverage. Cover normal, absent, refused, facts,
+unknown/null/clamp and mutation behavior with actual owner fixtures. Cover those
+unreachable defensive branches with isolated test-local owner-result substitution
+in a child using Node's module-mock facility, installed before planner import.
+If that facility is incompatible with the pinned Node/loader, stop for a bounded
+test-mechanism decision; do not export a helper or add a shipped injection seam.
+Mark substituted cases explicitly as defensive-unit coverage, including duplicate
+mixed facts/refusal rows and duplicate known effort levels. Owner-call counting
+may use the same test-local facility; it must not replace the real-owner controls.
+
+Supply only absent node_modules junctions whose same-package lockfile hashes
+match the existing E1 integration donor. No dependency/manifest changes or writes
+through donor links. RED/GREEN planner tests, full dispatch and routing-policy
+checks, typecheck/lint, scope/diff review and two independent source reviews precede
+integration. This amendment is a reviewable boundary, not implementation release.
+
+### Checkpoint 1 ratification and implementation release
+
+Root and independent frontier D approve amendment
+ ae3fb1296cfeaecbab58ae893710f79d714efdbd. Root accepts A's genuine read-only
+Step0 and releases exactly the three checkpoint-1 paths above, test-first, against
+this checkout's real accepted projection/adapter. All19 absent same-package
+node_modules junctions were supplied after matching lock hashes; no installs or
+donor writes occurred. Run the bounded and full affected checks, freeze source
+and inventory evidence in one clean commit, then STOP for two independent source
+reviews. Do not implement entry/CLI/installation or import Pi. Module-mock failure
+remains a test-mechanism checkpoint, never permission for a runtime injection seam.
+This delegated Gate2 covers pure evidence planning only; parent E2 stays active.
+
+### Remaining entry contract clarification — proposed 2026-09-26
+
+Accepted planner code and tests remain unchanged. Independent frontier A's actual
+D/C/B1 preflight identifies one naming correction: D exposes its private Output
+union through composePmcTerminalV1().finishInvocation; it does not export a type
+named InvocationOutput. E2 shall derive its internal alias using a type-only
+import of composePmcTerminalV1 and
+Awaited<ReturnType<ReturnType<typeof composePmcTerminalV1>['finishInvocation']>>.
+Import TransportCode from its actual owner openrouter-chat-stream.ts and OwnerCode
+from intent-custody-types.ts. Do not copy unions, amend D exports or change barrels.
+
+Remaining implementation is five new paths: dispatch/src/pmc-launch/governed-entry.ts,
+entry-cli.ts and installation.ts in that same directory; dispatch/tests/pmc-governed-entry.test.ts
+and pmc-entry-cli.test.ts. The existing docs/goals/pi-model-configuration/pmc-p2-caller-inventory.md
+is the sixth touched path. All paths are beneath plugins/foreman-line. No planner,
+predecessor, package or lockfile changes are released by this clarification.
+
+Actual lifecycle remains C custody creation, genuine B1 open with its authenticators,
+one-time binding, C launch, D finalization with that direct result (or null on
+unexpected rejection), then closing that B1 instance once. B1 close cannot refund,
+reconcile or clear pending/unknown liability. Preserve reserved-before-consume,
+unknown liability and cleanup-failure test cases. CLI requires its own bounded
+2 MiB structural framing scanner; D's 1 MiB parser cannot be reused unchanged.
+Production bootstrap remains unconditional zero-read refusal until separately
+reviewed genuine installation/billing authority exists.
+
+This is a proposed contract clarification only. PR70 must be accepted, another
+independent reviewer must approve this clarification, and the selected builder
+must complete fresh stopped Step 0 before root explicitly releases implementation.
+
+### Remaining entry clarification accepted — 2026-09-26
+
+Root ratifies aa8eff57670e13d515faeb1f41e7ff8404efbabe after frontier A's preflight
+and independent frontier D approval against actual D/C/B1 source. D confirmed
+that the private release wrapper calls closeIntentOwnerV1(owner), not an invented
+owner.close method. The actual owner type imports and return-derived D union
+require no predecessor changes. All six touched paths above are retained.
+PR70 acceptance, a fresh builder Step 0 and explicit runtime release remain pending.
