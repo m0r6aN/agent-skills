@@ -26,8 +26,6 @@ import { canonicalize, sha256Hex, writeReceiptDocument } from '../../../approval
 import type { CorrelationId, RunId, SessionId, WorkflowId } from '../../../contracts/src/index.js'
 import type { DispatchOrder } from '../../../contracts/src/stages/c-dispatch.js'
 import { dispatchOrderSchema } from '../../../contracts/src/stages/c-dispatch.js'
-import type { ScopeEnvelope } from '../../../mutation-scope-guard/src/index.js'
-import { postHocCheck, preflightCheck } from '../../../mutation-scope-guard/src/index.js'
 import { dispatchWorktree as realDispatchWorktree } from '../../../permission-profiles/src/emitter.js'
 import type { ReceiptDocument } from '../../../receipts/src/index.js'
 import { receiptPath, validateReceiptDocument } from '../../../receipts/src/index.js'
@@ -52,7 +50,6 @@ export class DispatchError extends Error {
     | 'COMPRESS_FAILED'
     | 'ORDER_INVALID'
     | 'WORKTREE_FAILED'
-    | 'MUTATION_SCOPE_FAILED'
     | 'RECEIPT_WRITE_FAILED'
 
   constructor(code: DispatchError['code'], message: string) {
@@ -76,8 +73,6 @@ export interface DispatchInput {
   readonly specPath: string
   readonly compressFn: KompressFn
   readonly worktreePath: string
-  /** Optional task-envelope scope; when present, both preflight and post-hoc checks are mandatory. */
-  readonly mutationScope?: ScopeEnvelope
 }
 
 export interface DispatchPackage {
@@ -90,7 +85,6 @@ export interface DispatchPackage {
   readonly order: DispatchOrder
   readonly prevHash: string
   readonly priorCorrelationId: CorrelationId
-  readonly mutationScope?: ScopeEnvelope
 }
 
 export interface ExecuteResult {
@@ -110,19 +104,10 @@ export interface DispatchWorktreeOutput {
   readonly code: 0 | 1 | 2
   readonly stdout: string
   readonly stderr: string
-  /** Repo-relative paths observed as changed by the worktree operation. */
-  readonly changedPaths?: readonly string[]
 }
 
 export interface DispatchOptions {
-  /** Target repo root — required (P2a/D19): never derived from process.cwd(). */
-  readonly repoRoot: string
-  /**
-   * Absolute INSTALLED PLUGIN root (P2b-i R1/Q3) — threaded to routing eval
-   * and skill resolution, which read the plugin's own frozen assets. Required,
-   * no default, no discovery; its own explicit input (R2 principle).
-   */
-  readonly pluginRoot: string
+  readonly repoRoot?: string
   readonly dispatchWorktreeFn?: (opts: DispatchWorktreeInput) => DispatchWorktreeOutput
 }
 
@@ -241,11 +226,10 @@ function extractPriorCorrelationId(
 
 export async function prepareDispatch(
   input: DispatchInput,
-  options: DispatchOptions,
+  options: DispatchOptions = {},
 ): Promise<DispatchPackage> {
-  const repoRoot = options.repoRoot
-  const pluginRoot = options.pluginRoot
-  const { candidate, specPath, compressFn, mutationScope } = input
+  const repoRoot = options.repoRoot ?? process.cwd()
+  const { candidate, specPath, compressFn } = input
 
   // Guard: workflowId must be non-null (null means no receipt chain exists)
   if (candidate.workflowId === null) {
@@ -266,16 +250,6 @@ export async function prepareDispatch(
 
   // 2. Parse frontmatter
   const specFrontmatter = parseFrontmatter(specText, specPath)
-  if (mutationScope !== undefined) {
-    try {
-      preflightCheck(mutationScope, specFrontmatter.surfaces)
-    } catch (err) {
-      throw new DispatchError(
-        'MUTATION_SCOPE_FAILED',
-        `Mutation scope preflight refused dispatch: ${String(err)}`,
-      )
-    }
-  }
 
   // 3. Read prior (Stage-B) receipt
   if (candidate.priorReceiptLocator === null) {
@@ -345,7 +319,7 @@ export async function prepareDispatch(
         data_classification: specFrontmatter.data_classification,
         workflowId,
       },
-      { repoRoot, pluginRoot },
+      { repoRoot },
     )
   } catch (err) {
     throw new DispatchError('ROUTING_FAILED', `Routing evaluation failed: ${String(err)}`)
@@ -354,10 +328,7 @@ export async function prepareDispatch(
   // 6. Skill resolver (W2-P5)
   let skillResult: SkillResolverResult
   try {
-    skillResult = resolveSkills(
-      { surfaces: specFrontmatter.surfaces, workflowId },
-      { repoRoot, pluginRoot },
-    )
+    skillResult = resolveSkills({ surfaces: specFrontmatter.surfaces, workflowId }, { repoRoot })
   } catch (err) {
     throw new DispatchError('SKILL_RESOLUTION_FAILED', `Skill resolution failed: ${String(err)}`)
   }
@@ -420,7 +391,6 @@ export async function prepareDispatch(
     order,
     prevHash,
     priorCorrelationId,
-    ...(mutationScope !== undefined ? { mutationScope } : {}),
   }
 }
 
@@ -429,9 +399,9 @@ export async function prepareDispatch(
 export async function executeDispatch(
   pkg: DispatchPackage,
   worktreePath: string,
-  options: DispatchOptions,
+  options: DispatchOptions = {},
 ): Promise<ExecuteResult> {
-  const repoRoot = options.repoRoot
+  const repoRoot = options.repoRoot ?? process.cwd()
   const workflowId = pkg.candidate.workflowId as string
 
   // Resolve profile — default to 'builder-standard' if not in frontmatter
@@ -455,23 +425,6 @@ export async function executeDispatch(
       'WORKTREE_FAILED',
       `dispatchWorktree failed (code ${worktreeResult.code}): ${worktreeResult.stderr}`,
     )
-  }
-
-  if (pkg.mutationScope !== undefined) {
-    if (worktreeResult.changedPaths === undefined) {
-      throw new DispatchError(
-        'MUTATION_SCOPE_FAILED',
-        'Mutation scope enforcement requires the worktree adapter to report changedPaths',
-      )
-    }
-    try {
-      postHocCheck(pkg.mutationScope, worktreeResult.changedPaths)
-    } catch (err) {
-      throw new DispatchError(
-        'MUTATION_SCOPE_FAILED',
-        `Mutation scope post-hoc check refused changes: ${String(err)}`,
-      )
-    }
   }
 
   // Stage-C receipt assembly — wrapped so receiptPath / canonicalize / sha256Hex

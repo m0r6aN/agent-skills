@@ -35,10 +35,7 @@ test('AC4: writes active/<slug>.approval.json at the expected path, valid parsea
   writeSpecDraft(repoRoot, 'plugins/foreman-line/docs/specs/active/example.md', 'Example')
   const record = makeRecord(repoRoot)
 
-  // Home-repo shape: the plugin-prefixed specsDir is passed EXPLICITLY
-  // (P2b-i R2 — the old ACTIVE_SPECS_DIR constant is retired).
-  const specsDir = 'plugins/foreman-line/docs/specs/active'
-  const written = writeApprovalRecord('example', record, repoRoot, specsDir)
+  const written = writeApprovalRecord('example', record, repoRoot)
 
   const expected = join(
     repoRoot,
@@ -50,7 +47,7 @@ test('AC4: writes active/<slug>.approval.json at the expected path, valid parsea
     'example.approval.json',
   )
   assert.equal(written, expected)
-  assert.equal(approvalRecordPath('example', repoRoot, specsDir), expected)
+  assert.equal(approvalRecordPath('example', repoRoot), expected)
   assert.ok(existsSync(written))
 
   const parsed = JSON.parse(readFileSync(written, 'utf8'))
