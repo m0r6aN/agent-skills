@@ -1,0 +1,24 @@
+{
+  "schema": "spec-body-compiler/hostile-fixtures/v1",
+  "note": "H3 Windows-specific forms.",
+  "cases": [
+    { "id": "WIN-01", "kind": "entry", "input": "C:/x", "expectedCode": "ENTRY_ABSOLUTE", "repaired": "src/x", "repairedOutcome": "ok" },
+    { "id": "WIN-02", "kind": "entry", "input": "C:x", "expectedCode": "ENTRY_ABSOLUTE", "repaired": "ab:x", "repairedOutcome": "ENTRY_ADS_COLON" },
+    { "id": "WIN-03", "kind": "entry", "input": "\\\\server\\share\\x", "expectedCode": "ENTRY_ABSOLUTE", "repaired": "x/y", "repairedOutcome": "ok" },
+    { "id": "WIN-04", "kind": "entry", "input": "//server/share/x", "expectedCode": "ENTRY_ABSOLUTE", "repaired": "src/x", "repairedOutcome": "ok" },
+    { "id": "WIN-05", "kind": "entry", "input": "//?/C:/x", "expectedCode": "ENTRY_ABSOLUTE", "repaired": "src/x", "repairedOutcome": "ok" },
+    { "id": "WIN-06", "kind": "entry", "input": "//./NUL", "expectedCode": "ENTRY_ABSOLUTE", "repaired": "NUL", "repairedOutcome": "ENTRY_RESERVED_NAME" },
+    { "id": "WIN-07", "kind": "entry", "input": "src/a.txt:stream", "expectedCode": "ENTRY_ADS_COLON", "repaired": "src/a.txt", "repairedOutcome": "ok" },
+    { "id": "WIN-08", "kind": "entry", "input": "src/a.txt::$DATA", "expectedCode": "ENTRY_ADS_COLON", "repaired": "src/a.txt", "repairedOutcome": "ok" },
+    { "id": "WIN-09", "kind": "entry", "input": "src/a.", "expectedCode": "ENTRY_TRAILING_DOT_SPACE", "repaired": "src/a", "repairedOutcome": "ok" },
+    { "id": "WIN-10", "kind": "entry", "input": "src/a ", "expectedCode": "ENTRY_TRAILING_DOT_SPACE", "repaired": "src/a", "repairedOutcome": "ok" },
+    { "id": "WIN-11", "kind": "entry", "input": "src/a.../b", "expectedCode": "ENTRY_TRAILING_DOT_SPACE", "repaired": "src/a/b", "repairedOutcome": "ok" },
+    { "id": "WIN-12", "kind": "entry", "input": "src/aux.txt", "expectedCode": "ENTRY_RESERVED_NAME", "repaired": "src/auxx.txt", "repairedOutcome": "ok" },
+    { "id": "WIN-13", "kind": "entry", "input": "PROGRA~1/x", "expectedCode": "ENTRY_SHORT_NAME", "repaired": "PROGRA1/x", "repairedOutcome": "ok" },
+    { "id": "WIN-14", "kind": "entry", "input": "src/FI~1.TXT", "expectedCode": "ENTRY_SHORT_NAME", "repaired": "src/FI1.TXT", "repairedOutcome": "ok" },
+    { "id": "WIN-15", "kind": "entry", "input": "CON", "expectedCode": "ENTRY_RESERVED_NAME", "repaired": "CONx", "repairedOutcome": "ok" },
+    { "id": "WIN-16", "kind": "entry", "input": "src/NUL.txt", "expectedCode": "ENTRY_RESERVED_NAME", "repaired": "src/NULx.txt", "repairedOutcome": "ok" },
+    { "id": "WIN-17", "kind": "entry", "input": "src/COM1/y", "expectedCode": "ENTRY_RESERVED_NAME", "repaired": "src/COM10/y", "repairedOutcome": "ok" },
+    { "id": "WIN-18", "kind": "entry", "input": "src/LPT9", "expectedCode": "ENTRY_RESERVED_NAME", "repaired": "src/LPT10", "repairedOutcome": "ok" }
+  ]
+}

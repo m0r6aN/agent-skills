@@ -1,0 +1,128 @@
+{
+  "schema": "spec-body-compiler/encoder-vectors/v1",
+  "note": "Byte-bound F05.5 canonical-encoder vectors (values produced by an independent implementation of the rule text; cross-checked in-suite against FK-P1 golden fixtures, OQ-3).",
+  "vectors": [
+    {
+      "id": "VEC-01-key-order",
+      "value": {
+        "b": 2,
+        "a": 1
+      },
+      "canonical": "{\"a\":1,\"b\":2}"
+    },
+    {
+      "id": "VEC-02-nested-arrays",
+      "value": {
+        "b": 2,
+        "a": {
+          "d": 4,
+          "c": 3
+        },
+        "z": [
+          3,
+          2,
+          1
+        ],
+        "A": 1
+      },
+      "canonical": "{\"A\":1,\"a\":{\"c\":3,\"d\":4},\"b\":2,\"z\":[3,2,1]}"
+    },
+    {
+      "id": "VEC-03-escapes",
+      "value": {
+        "k": "a\"b\\c\u0001\u001f/é"
+      },
+      "canonical": "{\"k\":\"a\\\"b\\\\c\\u0001\\u001f/é\"}"
+    },
+    {
+      "id": "VEC-04-atoms",
+      "value": {
+        "t": true,
+        "f": false,
+        "n": null
+      },
+      "canonical": "{\"f\":false,\"n\":null,\"t\":true}"
+    },
+    {
+      "id": "VEC-05-integers",
+      "value": {
+        "small": 0,
+        "big": 9007199254740991,
+        "ten": 10
+      },
+      "canonical": "{\"big\":9007199254740991,\"small\":0,\"ten\":10}"
+    },
+    {
+      "id": "VEC-06-surrogate-pair",
+      "value": {
+        "e": "😀"
+      },
+      "canonical": "{\"e\":\"😀\"}"
+    },
+    {
+      "id": "VEC-07-empty-containers",
+      "value": {
+        "o": {},
+        "a": []
+      },
+      "canonical": "{\"a\":[],\"o\":{}}"
+    },
+    {
+      "id": "VEC-08-unicode-key-order",
+      "value": {
+        " ": 2,
+        "A": 1,
+        "a": 3
+      },
+      "canonical": "{\"A\":1,\"a\":3,\" \":2}"
+    },
+    {
+      "id": "VEC-09-control-only",
+      "value": "\u0000\b\t\n\u001f",
+      "canonical": "\"\\u0000\\u0008\\u0009\\u000a\\u001f\""
+    },
+    {
+      "id": "VEC-10-flat-ascii",
+      "value": "plugins/foreman-line/spec-body-compiler/src/index.ts",
+      "canonical": "\"plugins/foreman-line/spec-body-compiler/src/index.ts\""
+    }
+  ],
+  "digests": [
+    {
+      "id": "DIG-01-compiled-scope-domain",
+      "domain": "foreman-line.spec-body-compiler.compiled-scope",
+      "payload": {
+        "x": 1
+      },
+      "canonicalPreimage": "{\"apiVersion\":\"0.1.0\",\"domain\":\"foreman-line.spec-body-compiler.compiled-scope\",\"payload\":{\"x\":1}}",
+      "digest": "sha256:bd0eb00b36c1f6141048159d7fd575ed1d6c68bcfdf7e5a0ad6dbaa2e7d70682"
+    },
+    {
+      "id": "DIG-02-nested-payload",
+      "domain": "foreman-line.spec-body-compiler.compiled-scope",
+      "payload": {
+        "allowedFiles": [
+          "b.ts",
+          "a.ts"
+        ],
+        "authorityState": "empty",
+        "z": [
+          null,
+          true
+        ]
+      },
+      "canonicalPreimage": "{\"apiVersion\":\"0.1.0\",\"domain\":\"foreman-line.spec-body-compiler.compiled-scope\",\"payload\":{\"allowedFiles\":[\"b.ts\",\"a.ts\"],\"authorityState\":\"empty\",\"z\":[null,true]}}",
+      "digest": "sha256:54ec0ca8746bdb7bf247089369e030150db3cdf1dc8d2b3c338202e4bcb16ed0"
+    },
+    {
+      "id": "DIG-03-request-domain-cross",
+      "domain": "foreman-line.kernel-contracts.request",
+      "payload": {
+        "apiVersion": "0.1.0",
+        "event": "preToolUse"
+      },
+      "canonicalPreimage": "{\"apiVersion\":\"0.1.0\",\"domain\":\"foreman-line.kernel-contracts.request\",\"payload\":{\"apiVersion\":\"0.1.0\",\"event\":\"preToolUse\"}}",
+      "digest": "sha256:03d2cb9d40df5410dc6e3c1b1fc8e43cef65bcb6dc6a86acffce8b351dd34f3d"
+    }
+  ]
+}

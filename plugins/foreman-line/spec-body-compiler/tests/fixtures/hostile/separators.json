@@ -1,0 +1,12 @@
+{
+  "schema": "spec-body-compiler/hostile-fixtures/v1",
+  "note": "H2 mixed separators.",
+  "cases": [
+    { "id": "SEP-01", "kind": "entry", "input": "a\\b", "expectedCode": "ENTRY_BACKSLASH", "repaired": "a/b", "repairedOutcome": "ok" },
+    { "id": "SEP-02", "kind": "entry", "input": "a/b\\c", "expectedCode": "ENTRY_BACKSLASH", "repaired": "a/b/c", "repairedOutcome": "ok" },
+    { "id": "SEP-03", "kind": "entry", "input": "a//b", "expectedCode": "ENTRY_EMPTY_SEGMENT", "repaired": "a/b", "repairedOutcome": "ok" },
+    { "id": "SEP-04", "kind": "entry", "input": "a/", "expectedCode": "ENTRY_EMPTY_SEGMENT", "repaired": "a", "repairedOutcome": "ok" },
+    { "id": "SEP-05", "kind": "entry", "input": "a///b", "expectedCode": "ENTRY_EMPTY_SEGMENT", "repaired": "a/b", "repairedOutcome": "ok" },
+    { "id": "SEP-06", "kind": "entry", "input": "a\\/b", "expectedCode": "ENTRY_BACKSLASH", "repaired": "a/b", "repairedOutcome": "ok" }
+  ]
+}

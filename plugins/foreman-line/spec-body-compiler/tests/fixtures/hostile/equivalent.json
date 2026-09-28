@@ -1,0 +1,104 @@
+{
+  "schema": "spec-body-compiler/hostile-fixtures/v1",
+  "note": "H5 equivalent paths (normalization collisions). kind=entry-list: input is the Allowed Files entry list in body order. Every case: compile rejects, no partial authority.",
+  "cases": [
+    {
+      "id": "EQUIV-01",
+      "kind": "entry-list",
+      "input": [
+        "src/File.ts",
+        "src/file.ts"
+      ],
+      "expectedCode": "ENTRY_EQUIVALENT",
+      "repaired": [
+        "src/File.ts",
+        "src/other.ts"
+      ],
+      "repairedOutcome": "ok"
+    },
+    {
+      "id": "EQUIV-02",
+      "kind": "entry-list",
+      "input": [
+        "café/x",
+        "café/x"
+      ],
+      "expectedCode": "ENTRY_NON_NFC",
+      "repaired": [
+        "café/x",
+        "café/x"
+      ],
+      "repairedOutcome": "ENTRY_DUPLICATE"
+    },
+    {
+      "id": "EQUIV-03",
+      "kind": "entry-list",
+      "input": [
+        "x.",
+        "x"
+      ],
+      "expectedCode": "ENTRY_TRAILING_DOT_SPACE",
+      "repaired": [
+        "x",
+        "x"
+      ],
+      "repairedOutcome": "ENTRY_DUPLICATE"
+    },
+    {
+      "id": "EQUIV-04",
+      "kind": "entry-list",
+      "input": [
+        "x ",
+        "x"
+      ],
+      "expectedCode": "ENTRY_TRAILING_DOT_SPACE",
+      "repaired": [
+        "x",
+        "x"
+      ],
+      "repairedOutcome": "ENTRY_DUPLICATE"
+    },
+    {
+      "id": "EQUIV-05",
+      "kind": "entry-list",
+      "input": [
+        "a/b",
+        "a/b"
+      ],
+      "expectedCode": "ENTRY_DUPLICATE",
+      "repaired": [
+        "a/b",
+        "a/c"
+      ],
+      "repairedOutcome": "ok"
+    },
+    {
+      "id": "EQUIV-06",
+      "kind": "entry-list",
+      "input": [
+        "a/b",
+        "a\\b"
+      ],
+      "expectedCode": "ENTRY_BACKSLASH",
+      "repaired": [
+        "a/b",
+        "a/c"
+      ],
+      "repairedOutcome": "ok"
+    },
+    {
+      "id": "EQUIV-07",
+      "kind": "entry-list",
+      "input": [
+        "src/K.ts",
+        "src/k.ts"
+      ],
+      "expectedCode": "ENTRY_EQUIVALENT",
+      "repaired": [
+        "src/K.ts",
+        "src/q.ts"
+      ],
+      "repairedOutcome": "ok"
+    }
+  ]
+}
