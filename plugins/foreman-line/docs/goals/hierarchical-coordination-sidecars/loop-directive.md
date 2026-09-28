@@ -2,12 +2,13 @@
 
 ## COORDINATOR OWNERSHIP — claim before substantive work
 
-> **Queue owner: UNCLAIMED.** A coordinator claims this goal by replacing this sentence
-> with its exact task/session identity and timestamp in the goal's isolated worktree before
-> doing substantive Stage Zero work. One goal has one root coordinator. If another live
-> owner is named or ownership is ambiguous, stop and report.
+> **Queue owner: `/root` (Codex coordinator), claimed 2026-09-03 America/New_York.**
+> This claim is confined to goal worktree
+> `D:/Repos/agent-skills-worktrees/hierarchical-coordination-sidecars-20260903`, based on
+> merged intake commit `24378419243e1098e57f72407fadbeedfdad2e85`. One goal has one root
+> coordinator. If another live owner is named or ownership is ambiguous, stop and report.
 
-**State:** `awaiting_coordinator_claim`
+**State:** `stopped_awaiting_foreman_kernel_owner_and_gate3_resolution`
 
 **Pickup precondition:** claim from a dedicated goal worktree after this intake commit is
 merged, or from a dedicated worktree based on the exact intake commit. Do not run either
@@ -49,6 +50,37 @@ records the ratified standing authorizations verbatim.
 - Gate 2 is not granted.
 - Gate 3 is not delegated.
 - No Foreman Kernel ownership transfer is granted.
+
+## Stop record — 2026-09-03
+
+The required source and target anchors were reconciled from their named worktrees:
+
+- `source-proposed-amendment-A3.md` SHA-256 is
+  `a5d9196c994d3215cd1966a234764174c1421f888d3cf68b901d31f07d221695`, matching this
+  goal's charter exactly.
+- The named target worktree
+  `D:/Repos/agent-skills-worktrees/foreman-kernel-stage0-20260830` is at the pinned
+  `197185bd2e9236b58cb3e9b4d2764b4c996878fb`; its 435-line `charter.md` SHA-256 is
+  `c19359374480b03c39ce04316f94007fbb87e3be2b5be39bca8dd4072164234d`, also matching
+  the source proposal's anchor claim.
+- That target's ownership block names a different live Claude Code coordinator. Its state
+  says FK-P0 is at human Gate 3, unmerged, and that its current owner is running. The
+  target's standing Gate 2 covers only FK-P0–FK-P21; it grants neither this goal nor the
+  proposed D23–D25 amendment any authority.
+- D22 remains retired and unclaimed; the target's locked decision table ends at D21, so
+  the proposal's D23–D25 reservation has not collided. This does not make the target
+  available for mutation.
+
+**Stop condition fired:** the live Foreman Kernel owner controls the sole declared A3
+landing surface, and FK-P0's nondelegated Gate 3 is unresolved. No Foreman Kernel file,
+branch, worktree, serialization point, implementation surface, dispatch, or gate was
+changed by this goal.
+
+**Required human direction before resumption:** obtain either (a) an explicit parcel-boundary
+handoff from the Foreman Kernel owner that names the charter-amendment landing sequence and
+the relevant serialization points, or (b) confirmation that FK-P0's Gate 3 has been resolved
+and the live owner has reconciled the target's post-merge state. Then resume this goal and
+repeat target ownership, decision-row, digest, and collision checks before presenting Gate 1.
 
 ## Stop conditions
 
