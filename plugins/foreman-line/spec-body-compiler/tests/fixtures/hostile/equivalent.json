@@ -1,6 +1,6 @@
 {
   "schema": "spec-body-compiler/hostile-fixtures/v1",
-  "note": "H5 equivalent paths (normalization collisions). kind=entry-list: input is the Allowed Files entry list in body order. Every case: compile rejects, no partial authority.",
+  "note": "H5 equivalent paths (normalization collisions). kind=entry-list: input is the Allowed Files entry list in body order. Every case: compile rejects, no partial authority. Provenance (R31): EQUIV-07 expectedCode corrected 2026-09-28 — strict NFC per rework R1; the pre-flip ENTRY_EQUIVALENT expectation was unreachable (U+212A KELVIN is non-NFC and dies at precedence step 8). EQUIV-08 added 2026-09-28 as the all-NFC-stable final-sigma simple-case-fold pair (rework R2).",
   "cases": [
     {
       "id": "EQUIV-01",
@@ -93,10 +93,24 @@
         "src/K.ts",
         "src/k.ts"
       ],
+      "expectedCode": "ENTRY_NON_NFC",
+      "repaired": [
+        "src/k.ts",
+        "src/q.ts"
+      ],
+      "repairedOutcome": "ok"
+    },
+    {
+      "id": "EQUIV-08",
+      "kind": "entry-list",
+      "input": [
+        "src/Σ.ts",
+        "src/ς.ts"
+      ],
       "expectedCode": "ENTRY_EQUIVALENT",
       "repaired": [
-        "src/K.ts",
-        "src/q.ts"
+        "src/Σ.ts",
+        "src/τ.ts"
       ],
       "repairedOutcome": "ok"
     }

@@ -49,30 +49,30 @@
       }
     },
     "allowedFiles": {
-      "description": "Exact canonical repo-relative paths (Entry). May be empty; never globs; no scope syntax of any kind (grants are exact non-glob — D10).",
+      "description": "Exact canonical repo-relative paths (Entry). May be empty; never globs; no scope syntax of any kind (grants are exact non-glob — D10). The pattern rejects every glob metacharacter (* ? [ ] { }), any '.'/'..' segment, empty segments, absolute/UNC/drive/ADS forms, backslashes, and trailing dot/space (F05 Entry exactness).",
       "type": "array",
       "items": {
         "type": "string",
         "minLength": 1,
-        "pattern": "^(?!/)(?!.*\\\\)(?!.*//)(?!.*\\*\\?\\[\\]\\{\\})(?!.*:$)(?!.*\\.$)(?!.* $)(?!.*//)(?!.*\\*).*[^/]$"
+        "pattern": "^(?! )(?!/)(?!.*//)(?!.*[\\\\:*?\\[\\]{}])(?!(?:.*/)?\\.\\.?(?:/|$))(?!.*\\.$)(?!.* $)[^*]*[^*/ ]$"
       }
     },
     "frozenSurfaces": {
-      "description": "Negative authority (ScopeRef). Exact paths or the deny-only `path/**` directory-scope form. Sources: entries annotated `frozen` in the `**Forbidden surfaces (exact):**` paragraph (Step-0 flag C ruling).",
+      "description": "Negative authority (ScopeRef). Exact paths or the deny-only `path/**` directory-scope form — the ONLY permitted glob shape. Sources: entries annotated `frozen` in the `**Forbidden surfaces (exact):**` paragraph (Step-0 flag C ruling). The pattern rejects every other glob metacharacter and all traversal/absolute/ADS forms, including in the scope base.",
       "type": "array",
       "items": {
         "type": "string",
         "minLength": 1,
-        "pattern": "^(?!/)(?!.*\\\\)(?!.*//)(?!.*:$)(?!.*\\.$)(?!.* $).*(/\\*\\*|[^/])$"
+        "pattern": "^(?! )(?!/)(?!.*//)(?!.*[\\\\:?\\[\\]{}])(?!(?:.*/)?\\.\\.?(?:/|$))(?!.*\\.$)(?!.* $)(?:[^*]*[^*/ ]/\\*\\*|[^*]*[^*/ ])$"
       }
     },
     "forbiddenSurfaces": {
-      "description": "Negative authority (ScopeRef). Exact paths or the deny-only `path/**` directory-scope form. Sources: entries not annotated `frozen` in the `**Forbidden surfaces (exact):**` paragraph.",
+      "description": "Negative authority (ScopeRef). Exact paths or the deny-only `path/**` directory-scope form — the ONLY permitted glob shape. Sources: entries not annotated `frozen` in the `**Forbidden surfaces (exact):**` paragraph. Same exactness constraints as frozenSurfaces.",
       "type": "array",
       "items": {
         "type": "string",
         "minLength": 1,
-        "pattern": "^(?!/)(?!.*\\\\)(?!.*//)(?!.*:$)(?!.*\\.$)(?!.* $).*(/\\*\\*|[^/])$"
+        "pattern": "^(?! )(?!/)(?!.*//)(?!.*[\\\\:?\\[\\]{}])(?!(?:.*/)?\\.\\.?(?:/|$))(?!.*\\.$)(?!.* $)(?:[^*]*[^*/ ]/\\*\\*|[^*]*[^*/ ])$"
       }
     },
     "authorityState": {

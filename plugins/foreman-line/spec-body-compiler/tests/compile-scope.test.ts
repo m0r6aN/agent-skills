@@ -88,7 +88,8 @@ const EQUIV_INDEX: Record<string, number> = {
   'EQUIV-04': 0,
   'EQUIV-05': 1,
   'EQUIV-06': 1,
-  'EQUIV-07': 1,
+  'EQUIV-07': 0,
+  'EQUIV-08': 1,
 }
 
 for (const c of equivalent.cases) {
@@ -103,11 +104,28 @@ for (const c of equivalent.cases) {
 }
 
 for (const c of conflicts.cases) {
-  test(`${c.id}: rejects with ${c.expectedCode}`, () => {
+  test(`${c.id}: rejects with ${c.expectedCode} and maps its negative per array (ruling C)`, () => {
     assert.equal(outcome(specWith(c.input.entries, c.input.paragraph)).code, c.expectedCode, c.id)
     const repaired = outcome(specWith(c.repaired.entries, c.repaired.paragraph))
     assert.equal(repaired.code, c.repairedOutcome, `${c.id} repaired`)
     assert.notEqual(repaired.code, c.expectedCode, `${c.id} repair must not fire the named code`)
+    // R6: ruling C requires asserting EACH mapped array. The repaired variant
+    // compiles; its paragraph ref must land in exactly one array per the flag
+    // C mapping (annotated `frozen` -> frozenSurfaces, else forbiddenSurfaces)
+    // with the sibling array empty. Failing-when-broken: swapping the
+    // annotation swaps the arrays and fails these assertions.
+    const { artifact } = compileScope(specWith(c.repaired.entries, c.repaired.paragraph), {
+      specPath: 'p.md',
+    })
+    const scopeRef = (c.repaired.paragraph.split(' ')[0] ?? '').replaceAll('`', '')
+    const mapped = c.repaired.paragraph.includes('frozen')
+      ? artifact.frozenSurfaces
+      : artifact.forbiddenSurfaces
+    const sibling = c.repaired.paragraph.includes('frozen')
+      ? artifact.forbiddenSurfaces
+      : artifact.frozenSurfaces
+    assert.deepEqual(mapped, [scopeRef], `${c.id} mapped array`)
+    assert.deepEqual(sibling, [], `${c.id} sibling array empty`)
   })
 }
 
@@ -244,4 +262,82 @@ test('precedence edge 10->11: the count cap fires before cross-entry checks', ()
 test('precedence edge 11-intra: duplicate fires before allow/deny conflict', () => {
   const result = outcome(specWith(['src/a.ts', 'src/a.ts'], '`src/a.ts` (contested)'))
   assert.equal(result.code, 'ENTRY_DUPLICATE')
+})
+
+// Tricky code units via String.fromCharCode so the test source stays ASCII.
+const S = String.fromCharCode
+
+test('R2 simple case folding: sigma variants collide, ß does not equal ss, İ folds to i', () => {
+  const SIGMA_CAP = `src/${S(0x03a3)}.ts`
+  const SIGMA_SMALL = `src/${S(0x03c3)}.ts`
+  const SIGMA_FINAL = `src/${S(0x03c2)}.ts`
+  assert.equal(outcome(specWith([SIGMA_CAP, SIGMA_SMALL])).code, 'ENTRY_EQUIVALENT')
+  assert.equal(outcome(specWith([SIGMA_FINAL, SIGMA_SMALL])).code, 'ENTRY_EQUIVALENT')
+  assert.equal(outcome(specWith([SIGMA_CAP, SIGMA_FINAL, SIGMA_SMALL])).code, 'ENTRY_EQUIVALENT')
+  // SIMPLE folding: no multi-char expansions — ß must NOT collide with 'ss'.
+  assert.equal(outcome(specWith([`src/${S(0x00df)}.ts`, 'src/ss.ts'])).code, 'ok')
+  // U+0130 folds to i (C+S), not to i + U+0307.
+  assert.equal(outcome(specWith([`src/${S(0x0130)}.ts`, 'src/i.ts'])).code, 'ENTRY_EQUIVALENT')
+  // ASCII case folding keeps working.
+  assert.equal(outcome(specWith(['src/File.ts', 'src/file.ts'])).code, 'ENTRY_EQUIVALENT')
+})
+
+test('R3 folded conflicts: case-variant grant vs frozen exact ref is refused', () => {
+  assert.equal(
+    outcome(specWith(['src/a.ts'], '`src/A.ts` (contested seam)')).code,
+    'ENTRY_CONFLICTS_WITH_FORBIDDEN',
+  )
+})
+
+test('R5 schema patterns: Entry/ScopeRef exactness rejects every glob and traversal shape', () => {
+  const schema = JSON.parse(
+    readFileSync(join(here, '..', 'schemas', 'compiled-scope.schema.json'), 'utf8'),
+  ) as {
+    properties: {
+      allowedFiles: { items: { pattern: string } }
+      frozenSurfaces: { items: { pattern: string } }
+    }
+  }
+  const grant = new RegExp(schema.properties.allowedFiles.items.pattern)
+  const scope = new RegExp(schema.properties.frozenSurfaces.items.pattern)
+  for (const bad of [
+    'src/[a-z]/x',
+    'src/{a,b}/x',
+    'src/../x',
+    'src/./x',
+    'src/a?b.ts',
+    'src/*',
+    'src/**',
+    'src/a**',
+    'a\\b',
+    '/x',
+    'a:b',
+    'a.',
+    'a ',
+    ' src/a',
+    'x//y',
+  ]) {
+    assert.equal(grant.test(bad), false, `grant must reject ${bad}`)
+  }
+  for (const ok of ['src/a.ts', 'a', 'src/very/deep/path.ts', 'a.b/c']) {
+    assert.equal(grant.test(ok), true, `grant must accept ${ok}`)
+  }
+  for (const bad of [
+    'src/*',
+    'src/**/x',
+    'src/**/**',
+    'src/../x',
+    'src/[a-z]',
+    'src/{a,b}',
+    'src/a?b.ts',
+    'a\\b',
+    '/x',
+    'a:',
+    '**',
+  ]) {
+    assert.equal(scope.test(bad), false, `scope must reject ${bad}`)
+  }
+  for (const ok of ['src/a.ts', 'src/**', 'a/**', 'src/A.ts']) {
+    assert.equal(scope.test(ok), true, `scope must accept ${ok}`)
+  }
 })

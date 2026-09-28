@@ -88,9 +88,14 @@ entry line shape (`MALFORMED_ENTRY`, `ENTRY_EMPTY`, `ENTRY_WHITESPACE`); (3)
 charset (null/control/format/unpaired surrogate); (4) `ENTRY_ENCODED_ESCAPE`;
 (5) `ENTRY_ABSOLUTE`; (6) `ENTRY_BACKSLASH`; (7) `GLOB_ENTRY`; (8) per segment
 in segment order (traversal, empty, ADS colon, 8.3 short name, reserved device
-name, trailing dot/space, segment cap, NFC); (9) entry caps — segment count
-before byte length; (10) entry count caps; (11) cross-entry duplicates,
-equivalents (case-fold/NFC collisions), then `ENTRY_CONFLICTS_WITH_FORBIDDEN`.
+name, trailing dot/space, segment cap, **strict NFC** — every non-NFC segment,
+mixed-form spellings included, is `ENTRY_NON_NFC`); (9) entry caps — segment
+count before byte length; (10) entry count caps; (11) cross-entry duplicates,
+equivalents (NFC + Unicode SIMPLE case-fold collisions: Σ/ς/σ collide; `ß` ≠
+`ss`; `İ` folds to `i`), then `ENTRY_CONFLICTS_WITH_FORBIDDEN` compared on
+folded forms — case/fold spellings of a frozen/forbidden ref resolve to one
+physical file on NTFS, so the overlap check folds equality, base equality and
+scoped-prefix containment including scope base components.
 The error registry (`src/errors.ts`) is closed at 35 named codes.
 
 Input caps (OQ-4): body 1 MiB / entry 512 B / segment 128 B / ≤64 segments /
@@ -103,7 +108,10 @@ validation, canonicalization), plus an O(k log k) sort (k ≤ 256).
 `stats.bytesExamined` counts the content-inspecting passes; output
 construction (copying decided bytes) is not an examination. No regular
 expression with nested quantifiers or unbounded backtracking exists in the
-parser. LIMIT-06/07/08 assert the bound on hostile input at 1x/2x/4x.
+parser. LIMIT-06/07/08 assert the bound on hostile input at 1x/2x/4x against
+an external byte-accounting floor (floor = input bytes + 2x entry-content
+bytes + forbidden-paragraph remainder bytes), so deleting any counting phase
+fails the suite.
 
 ## Grammar pin and the known-base gap (Step-0 flag A)
 

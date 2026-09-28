@@ -112,6 +112,39 @@ const RESERVED_NAMES: Record<string, true> = {
 }
 const FORMAT_CHAR = /\p{Cf}/u
 
+/**
+ * Unicode SIMPLE case folding (C+S) for equivalence and conflict keying
+ * (rework R2/R3): NFC first, then per-code-point folding. The table covers the
+ * C+S divergences from `toLowerCase`; no multi-char expansions are ever
+ * produced (SIMPLE folding: 'ß' does NOT equal 'ss'; U+0130 folds to 'i').
+ * U+212A KELVIN and U+212B ANGSTROM are non-NFC and die at step 8 post-R1 —
+ * they never reach this keying.
+ */
+const SIMPLE_FOLD: Record<string, string> = {
+  ς: 'σ', // U+03C2 final sigma -> U+03C3 sigma
+  ſ: 's', // U+017F long s -> s
+  İ: 'i', // U+0130 -> i (toLowerCase would expand to i + U+0307)
+  µ: 'μ', // U+00B5 micro sign -> U+03BC greek mu
+  'ͅ': 'ι', // U+0345 -> U+03B9
+  ι: 'ι', // U+1FBE prosgegrammeni -> U+03B9
+  ϐ: 'β', // U+03D0 -> U+03B2
+  ϑ: 'θ', // U+03D1 -> U+03B8
+  ϰ: 'κ', // U+03F0 -> U+03BA
+  ϱ: 'ρ', // U+03F1 -> U+03C1
+  ẛ: 'ṡ', // U+1E9B -> U+1E61
+}
+
+function foldSimple(value: string): string {
+  const nfc = value.normalize('NFC')
+  let out = ''
+  for (let i = 0; i < nfc.length; i += 1) {
+    const unit = nfc.charAt(i)
+    const mapped = SIMPLE_FOLD[unit]
+    out += mapped !== undefined ? mapped : unit.toLowerCase()
+  }
+  return out
+}
+
 interface Range {
   start: number
   end: number
@@ -226,6 +259,7 @@ function scanForbiddenParagraph(
   end: number,
   result: ScanResult,
   nextIndex: () => number,
+  stats: ParseStats,
 ): void {
   let depth = 0
   let itemStart = start
@@ -252,7 +286,12 @@ function scanForbiddenParagraph(
     }
     result.entries.push(record)
   }
-  for (let i = start; i < end; i += 1) {
+  // The item walk is an inspecting pass over the paragraph remainder and is
+  // counted 1x (rework R4): worst-case negative-entry bytes reach exactly the
+  // 4-examination cap (boundary scan + item walk + entry lex + segment walk).
+  for (let i = start; i < end; ) {
+    const step = utf8CostAt(text, i)
+    stats.bytesExamined += step.cost
     const unit = text.charCodeAt(i)
     if (unit === 0x28) depth += 1
     else if (unit === 0x29) depth = depth > 0 ? depth - 1 : 0
@@ -260,6 +299,7 @@ function scanForbiddenParagraph(
       closeItem(i)
       itemStart = i + 1
     }
+    i += step.width
   }
   closeItem(end)
 }
@@ -380,6 +420,7 @@ function scanStructure(text: string, stats: ParseStats): ScanResult {
             lineEnd,
             result,
             captureIndex,
+            stats,
           )
         } else if (
           text.charCodeAt(cursor) === 0x2d &&
@@ -613,12 +654,12 @@ function segmentChecks(
       firstFailing = fail('SEGMENT_TOO_LONG', 'segment exceeds 128 bytes')
       return
     }
-    // ENTRY_NON_NFC targets decomposed (NFD-form) input — the UNI-01/EQUIV-02
-    // shape. Single code points with a canonical decomposition (U+212A KELVIN
-    // SIGN vs `k`) are the equivalence-collision machinery's job at step 11
-    // (EQUIV-07), where case folding is used for collision detection only.
-    if (seg.normalize('NFD') === seg && seg.normalize('NFC') !== seg) {
-      firstFailing = fail('ENTRY_NON_NFC', 'segment in decomposed (NFD) form')
+    // Every non-NFC segment is ENTRY_NON_NFC (precedence step 8; rework R1):
+    // strict NFC — mixed-form spellings and singleton-decomposition spellings
+    // (U+212A KELVIN) included. Such spellings die here and never reach the
+    // step-11 equivalence machinery.
+    if (seg.normalize('NFC') !== seg) {
+      firstFailing = fail('ENTRY_NON_NFC', 'segment not in NFC')
     }
   }
   for (let i = start; i < effectiveEnd; ) {
@@ -685,7 +726,7 @@ function crossEntryChecks(allowed: string[], negative: string[]): ScopeCompileEr
     const folded = new Map<string, number>()
     for (let i = 0; i < items.length; i += 1) {
       const item = items[i] ?? ''
-      const key = item.toLowerCase()
+      const key = foldSimple(item)
       const prev = folded.get(key)
       if (prev !== undefined) {
         return new ScopeCompileError('ENTRY_EQUIVALENT', `equivalent entry (first at ${prev})`, {
@@ -702,13 +743,29 @@ function crossEntryChecks(allowed: string[], negative: string[]): ScopeCompileEr
   return scanEquivalent(negative, 'forbidden')
 }
 
+/**
+ * Allow/deny overlap (step 11c) compares folded forms (rework R3): on the
+ * case-insensitive D20/NTFS platform a grant and a frozen/forbidden ref that
+ * differ only by case or fold spelling resolve to the SAME physical file, so
+ * byte-exact comparison would bypass negative authority. Equality, base
+ * equality and scoped-prefix containment all compare on foldSimple(NFC(...))
+ * INCLUDING scope base components. (Post-R1 pure-NFC-variant overlap is
+ * unreachable — NFC-equal NFC-stable spellings are byte-identical — so the
+ * reachable variants are case/fold spellings.)
+ */
 function conflictCheck(allowed: string[], negative: string[]): ScopeCompileError | null {
   for (let i = 0; i < allowed.length; i += 1) {
-    const entry = allowed[i] ?? ''
+    const entryFold = foldSimple(allowed[i] ?? '')
     for (const scope of negative) {
       const scoped = scope.endsWith('/**')
       const base = scoped ? scope.slice(0, -3) : scope
-      if (entry === scope || entry === base || (scoped && entry.startsWith(`${base}/`))) {
+      const baseFold = foldSimple(base)
+      const scopeFold = foldSimple(scope)
+      if (
+        entryFold === scopeFold ||
+        entryFold === baseFold ||
+        (scoped && entryFold.startsWith(`${baseFold}/`))
+      ) {
         return new ScopeCompileError(
           'ENTRY_CONFLICTS_WITH_FORBIDDEN',
           `entry overlaps declared negative surface ${scope}`,

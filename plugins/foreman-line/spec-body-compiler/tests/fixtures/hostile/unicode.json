@@ -1,6 +1,6 @@
 {
   "schema": "spec-body-compiler/hostile-fixtures/v1",
-  "note": "H6 Unicode. All tricky code points are JSON escapes so the fixture file stays plain ASCII. UNI-09 is raw bytes (kind=bytes).",
+  "note": "H6 Unicode. All tricky code points are JSON escapes so the fixture file stays plain ASCII. UNI-09 is raw bytes (kind=bytes). UNI-10 added 2026-09-28 (rework R1): mixed-form segment — precomposed and decomposed spellings in one segment — strict NFC fires ENTRY_NON_NFC.",
   "cases": [
     {
       "id": "UNI-01",
@@ -89,6 +89,14 @@
         62
       ],
       "repairedOutcome": "SPEC_SECTION_MISSING"
+    },
+    {
+      "id": "UNI-10",
+      "kind": "entry",
+      "input": "xéyéz",
+      "expectedCode": "ENTRY_NON_NFC",
+      "repaired": "xéyéz",
+      "repairedOutcome": "ok"
     }
   ]
 }
