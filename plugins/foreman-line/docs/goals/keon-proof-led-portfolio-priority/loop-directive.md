@@ -12,35 +12,45 @@ and the triaged plan review at
 > at a parcel boundary through this block and a session handoff. If ownership
 > is ambiguous or another coordinator is live, stop and report; never assume.
 
-### Current ownership and stop state — 2026-08-01
+### Current ownership and stop state — 2026-08-02
 
-The primary Codex coordinator resumed ownership at the post-plan-review parcel
-boundary. WGT-D1 through WGT-D10 and WGT-A1 through WGT-A6 are ratified, and
-the mandatory repaired-plan follow-up review passed. The loop is stopped at
-WGT-P0A preflight because the Foreman plugin is untracked and absent from all
-available `agent-skills` base branches while the containing checkout is dirty.
-No builder is live. Resume only after the owner chooses tracked-plugin
-bootstrap or explicitly ratifies a local-only coordinator-ledger exception.
+The primary Codex coordinator owns the separately recorded WGT-R1 Foreman
+current-state reconciliation boundary in the named isolated worktree. WGT-P0A
+is archived and merged; WGT-P0B, WGT-P0C, WGT-P1, WGT-P3A, and WGT-P3B are
+recorded as completed/reconciled in the verified initiative state. The current
+website remediation is WGT-P2A in a separate `keon-systems-web` worktree; its
+focused redirect and Runtime E2E checks are green, but its production build is
+environment-blocked, so it is not publishable or mergeable.
+
+WGT-D1 through WGT-D10 and WGT-A1 through WGT-A6 remain ratified. The old
+missing-source preflight stop is historical and was resolved by the merged
+tracked-plugin bootstrap. It is not the current stop state and does not
+authorize external action. WGT-R1 is docs-only control-plane reconciliation;
+no product, package, test, contract, external-control, outreach, publication,
+payment, customer-data, deployment, Gmail, or Kaseya action is authorized in
+this parcel.
 
 ## Standing authorizations
 
-1. **Gate 2 — dispatch is granted** exactly for P0-P2, P3A-P3E, P4-P7, and
-   BA1-BA2, subject to the charter dependency order, exact Allowed Files, one
-   branch/worktree per repo parcel, and every dispatch's Step 0
-   restate-and-stop gate. Clint Morgan additionally granted parcel-specific
-   Gate 2 authorization for bounded P0V on 2026-07-29, before P0 Gate 3.
-2. **Gate 3 — merge is withheld by default.** Clint Morgan granted and consumed
-   parcel-specific Gate 3 for P1 through PR #22, P2 through PR #23, and P5A
-   through PR #173 on 2026-07-30. A complete green deterministic and
-   adversarial evidence chain produces a merge-decision request; it never
-   authorizes merge. No merge, squash merge, rebase merge, or equivalent
-   integration action occurs without Clint's parcel-specific approval.
-3. **External actions are not authorized.** H0-H4, customer contact, public
-   publication, payment enablement or acceptance, invoices, legal acceptance,
-   production deployment, and customer-data handling always stop for explicit
-   approval.
-4. Push and draft-PR creation are permitted only when a parcel spec explicitly
-   includes them and all pre-PR checks are green. They do not imply Gate 3.
+1. **Gate 2 — parcel-scoped standing dispatch only.** The current exact queue is
+   `WGT-P0A -> WGT-P0B -> WGT-P0C`, subject to each parcel's exact spec,
+   Allowed Files, isolated branch/worktree, dependency order, and fresh Step 0.
+   Gate 2 does not grant portfolio-wide implementation authority.
+2. **Gate 3 — withheld.** A complete green deterministic and adversarial
+   evidence chain produces a parcel-specific decision request; it never
+   authorizes merge, push, PR creation, or equivalent integration action.
+3. **Current gate state remains held.** G2 is open; G4 is not established; and
+   H5, H6A, H6B, H7P, H7, and H8 are human/external gates open and not
+   performed. Payment, publication, customer-data handling, outreach, Gmail
+   reply monitoring, and Kaseya work remain NO-GO.
+4. Push, draft-PR creation, Linear mutation, and other external actions remain
+   outside this P0A parcel and require later explicit authority.
+
+## Historical authorization record — retained for audit
+
+The following 2026-07-30 authorization amendment is preserved as historical
+record. It is superseded for the current P0A parcel by the parcel-scoped gate
+state above and must not be read as current authority.
 
 ## Authorization amendment — 2026-07-30
 
@@ -63,7 +73,7 @@ non-dependency rules remain: BrowseAhead stays WIP one and may not delay the
 Review-first revenue path. A failed release gate is a finding to repair, not a
 revived authorization hold.
 
-## Active release sequence
+## Historical release sequence — retained for audit
 
 1. Publish and merge BA1, then shape BA2 against its frozen contract in the
    bounded BrowseAhead lane.
@@ -86,7 +96,52 @@ Follow `docs/COORDINATOR-PATTERN.md`,
 `skills/parcel-driven-development/SKILL.md`, `docs/SPEC-CONVENTION.md`, and the
 standing constraints referenced by each kickstarter.
 
-## Queue and dependency order
+## Current queue and dependency order
+
+The originally staged reconciliation chain is complete and remains preserved in
+the historical sections below:
+
+1. **WGT-P0A — DONE / archived.** Durable locator:
+   `plugins/foreman-line/docs/specs/done/WGT-P0A-foreman-record-reconciliation.md`;
+   the verified merge is `1ada3cc429668d7e57e070fd1a43a15b961ee3df`.
+2. **WGT-P0B — DONE / reconciled.** The coordinator's current initiative
+   snapshot records the separate `keon-docs` reconciliation as complete; no
+   durable P0B locator is present in this repository, so this statement is
+   held/unverified here and is not used as authorization.
+3. **WGT-P0C — DONE / reconciled.** The coordinator's current Linear snapshot
+   records existing-state reconciliation without a duplicate WGT record; no
+   durable P0C locator is present in this repository, so this statement is
+   held/unverified here and is not used as authorization.
+
+The verified downstream state is:
+
+4. **WGT-P1 — DONE / merged.** Coordinator snapshot only; no durable locator
+   is present in this repository, so this state is held/unverified here.
+5. **WGT-P3A — DONE / merged.** Coordinator snapshot only; no durable locator
+   is present in this repository, so this state is held/unverified here.
+6. **WGT-P3B — DONE / merged and Stage F archived.** Durable external evidence
+   locator: Linear comment `67d70532-9d14-4386-a4e7-12c8914eb8f3` on P3B; the
+   website remains prelaunch and non-purchasable.
+7. **WGT-P2A — CURRENT / RED-UNMERGED; P2 STATE CONTRADICTORY.** Durable
+   locator:
+   `D:/Repos/keon-systems-web-worktrees/wgt-p2a-redirect-e2e-remediation-20260802/docs/INITIATIVES/keon-proof-led-commercial-entry/WGT-P2A-redirect-e2e-remediation.md`;
+   current Linear evidence is comment `12008bf6-5551-4a61-ab40-335ac44aa93c`
+   on KEO-158. Focused redirect is 20/20 and Runtime-specific E2E is 3/3,
+   but the isolated production build is environment-blocked. The in-tree
+   ratified amendment says P2 is merged/closed, while the current Linear
+   evidence says P2 remains red/unmerged; WGT-R1 does not resolve that
+   contradiction. No publication or merge may occur until the contradiction,
+   build, and full required verification are resolved green.
+8. **WGT-P4 — BLOCKED.** Do not dispatch across the unresolved P2/P2A
+   dependency or the P2 state contradiction. Payment, intake, legal,
+   deployment, and customer-data gates remain preserved.
+
+No dependent parcel crosses a red or unknown gate. The ratified dependency
+graph and human/external milestones remain authoritative after this current
+state correction. WGT-R1 made no Linear mutation, Gmail search, outreach,
+payment, intake, deployment, or Kaseya action.
+
+## Historical queue and dependency order — retained for audit
 
 1. P0V — claims-validation repair, now the sole prerequisite to resuming P0
    Gate 3 evidence.
@@ -109,6 +164,35 @@ standing constraints referenced by each kickstarter.
 
 No dependent parcel may be shaped as active implementation before its required
 predecessor is merged or explicitly deferred by an amended charter.
+
+## WGT-P0A rework provenance — 2026-08-01
+
+The exact read-only Linear snapshot observed at
+`2026-08-01T13:18:39.9237092Z` is durable record evidence:
+
+| Issue | Status | Linear `updatedAt` | Existing URL |
+|---|---|---|---|
+| `KEO-59` | `In Progress` | `2026-07-31T21:15:06.582Z` | <https://linear.app/keonsystems/issue/KEO-59/workflow-evidence-review-first-paid-commercial-slice> |
+| `KEO-145` | `In Progress` | `2026-07-31T21:15:08.637Z` | <https://linear.app/keonsystems/issue/KEO-145/run-customer-discovery-and-design-partner-campaign> |
+| `KEO-156` | `In Progress` | `2026-07-31T20:17:19.672Z` | <https://linear.app/keonsystems/issue/KEO-156/specify-the-workflow-evidence-review-method-and-auditor-grade> |
+| `KEO-157` | `In Progress` | `2026-07-31T20:16:26.942Z` | <https://linear.app/keonsystems/issue/KEO-157/evaluate-a-conditional-agent-harness-binding-module-for-the-paid> |
+| `KEO-158` | `In Progress` | `2026-07-31T21:15:11.150Z` | <https://linear.app/keonsystems/issue/KEO-158/design-the-public-website-stripe-checkout-and-neon-commercial-state> |
+| `KEO-197` | `In Progress` | `2026-07-31T20:16:37.925Z` | <https://linear.app/keonsystems/issue/KEO-197/browseahead-detect-domainpath-slop-squatting-before-agent-navigation> |
+
+The query was read-only and caused no Linear mutation. `discovery.md` is
+historical and outside the exact six-file P0A scope; it is not edited or used
+as current-state authority.
+
+KPM-06, the exact ten-recipient Gmail Sent result, and the absence of a KPM-07
+actual-send receipt are inherited from the user-authorized verified starting
+state, but remain unverified/held because no durable repo receipt is available
+in agent-skills. P0A did not re-search Gmail or mint a receipt because reply
+monitoring is prohibited.
+
+The two independent review dispositions are **HOLD**, not **PASS**: the first
+required durable timestamped provenance for live Linear claims, and the second
+required exact handoff command results plus a pinned content commit. Gate 3
+remains withheld.
 
 ## Per-parcel loop
 
