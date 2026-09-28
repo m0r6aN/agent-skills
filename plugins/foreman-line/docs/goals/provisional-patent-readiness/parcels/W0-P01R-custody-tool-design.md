@@ -9,7 +9,7 @@ Purpose: replace the tripped W0-P01 implementation path without reading a preser
 - Preservation-critical sources: `D:/Repos/keon-omega/keon-docs-internal/patents/` and `D:/Repos/keon-omega/keon-doctrine/`.
 - Protected sources remain read-only. This design neither reads their content nor permits a source-capture execution.
 - The existing W0-P01 tripwire remains in force. W0-P01, W0-P02, and every downstream parcel remain blocked.
-- No remote operation, disclosure, filing, payment, counsel transmission, source mutation, Git mutation, cleanup, or alteration of prior partial roots is authorized.
+- This design-only artifact authorizes no remote operation, disclosure, filing, payment, counsel transmission, source mutation, source-Git mutation, cleanup, or alteration of prior partial roots. A prospective ratification may permit only the named coordinator `git worktree add` administration for the exact fixture worktree; it never permits staging, commits, merges, pushes, fetches, pulls, or changes to protected-source Git state.
 
 ## Known partial-output custody locators
 
@@ -30,7 +30,7 @@ Prove one custody implementation against a synthetic, local fixture before the i
 
 ### Proposed isolated locations and branch
 
-- Base: the ratified `codex/provisional-patent-readiness-20260813` control branch at the design-revision commit recorded in the metadata receipt below.
+- Base: `cced8e20c8deb2eb21fb5ac242e65cebd3b2c322` on `codex/provisional-patent-readiness-20260813`. The builder reads this separately hash-pinned design from the control worktree; it does not infer its base from a later receipt revision.
 - Builder branch: `codex/w0-p01r-fixture-20260913`.
 - Builder worktree: `D:/Repos/agent-skills-worktrees/provisional-patent-readiness-w0-p01r-fixture-20260913/`.
 - Fixture root: `D:/Repos/keon-omega-preserve/provisional-patent-readiness-w0-p01r-fixture-proof-20260913/`.
@@ -40,7 +40,14 @@ Prove one custody implementation against a synthetic, local fixture before the i
 - Success capture outputs: `<fixture-root>/captures/success-a/` and `<fixture-root>/captures/success-b/`.
 - Controlled-stop outputs: `<fixture-root>/expected/internal-link-stop/` and `<fixture-root>/expected/path-escape-stop.json`.
 
-The worktree and fixture root must be initially absent at Step 0. The fixture root must not be placed inside a source repository, a prior partial-output root, or a cloud-synced location.
+### Setup and Step 0 sequence
+
+1. **Coordinator pre-setup check:** before `git worktree add`, verify and record that the exact builder branch, builder-worktree path, fixture root, and conditional S source-output root are absent. This check performs no source enumeration or source/Git read.
+2. **Permitted setup:** only after that record, the coordinator may create the named branch/worktree with `git worktree add`.
+3. **Builder Step 0:** inside the newly created worktree, verify the exact worktree path, base commit `cced8e20c8deb2eb21fb5ac242e65cebd3b2c322`, and builder branch; verify fixture root and conditional S source-output root remain absent; restate the source-free F boundary and stop for coordinator ACK. This check performs no source enumeration or source/Git read.
+4. **S Step 0:** after F has two accepts, but before any source traversal, recheck only the source-output root's absence, the script's actual/expected digest equality, the two recorded F accepts, unchanged invocation/source-root arguments, and all prior-partial-root preservation. Restate and stop for coordinator ACK. Source enumeration begins only after that ACK.
+
+The fixture root must not be placed inside a source repository, a prior partial-output root, or a cloud-synced location.
 
 ### Exact write scopes
 
@@ -50,7 +57,7 @@ The worktree and fixture root must be initially absent at Step 0. The fixture ro
 | Builder | `tools/w0-p01r-fixture.ps1` in the named builder worktree; every synthetic fixture, capture, manifest, sidecar, and result beneath the exact fixture root | Any protected source, its `.git`, prior partial root, control worktree, remote, or other repository path |
 | Reviewers | None; read-only inspection only | Any write, commit, staging, worktree setup, remote operation, or fixture rerun |
 
-The builder does not commit, stage, merge, push, fetch, pull, or alter Git state. The fixture root is the only builder output area other than its one permitted script file.
+The builder does not commit, stage, merge, push, fetch, pull, or alter Git state. Its only permitted write outside the fixture root is its one script file in the named worktree. Coordinator setup administration is limited to the exact worktree creation above.
 
 ### Implementation contract
 
@@ -58,11 +65,11 @@ The builder does not commit, stage, merge, push, fetch, pull, or alter Git state
 2. Canonicalize a source root once. Derive a relative path only by case-insensitive prefix comparison against that exact root plus a separator; reject the path if it is equal to neither the root nor a child of the root. Do not compute a relative path by `Replace()`.
 3. Create each manifest entry as an `[ordered]` dictionary with every field initialized, including `payloadSha256 = $null`; assign post-copy values via dictionary keys, not dynamic object properties.
 4. Before fixture traversal, perform an in-memory schema test that creates a regular-file entry, assigns a known hash string to `payloadSha256`, reads it back, and asserts all required fields exist.
-5. Before fixture traversal, parse the script with PowerShell's parser API and fail if parser errors exist.
+5. Before fixture traversal, parse the complete script with PowerShell's parser API and fail if parser errors exist. The complete `SourceCapture` mode and the same copy/classification/manifest/stability core that it invokes must already be present in this reviewed script.
 6. Construct three separate synthetic test inputs. `fixture-success-source` contains regular files, an empty directory, every A1 excluded-leaf directory, and one external junction to `referents/external-target`. `fixture-internal-link-source` contains the internal junction to its own `authored-internal-target`. The path-escape case is an explicit helper invocation with a candidate outside its asserted root. Junctions may point only to synthetic fixture paths. If junction creation is unavailable, record a failed prerequisite rather than substituting a source link.
 7. The two success captures process only `fixture-success-source`. Assert: excluded leaves produce nonrecursive `EXCLUDED` / `BUILD_EPHEMERA` entries; the external junction produces `LINK_OPAQUE` without target traversal; copied regular-file hashes match; empty directories persist; manifest and sidecar hashes verify. The success tree contains no internal link and no path-escape candidate.
 8. The internal-link mode processes only `fixture-internal-link-source`. It must emit a `LINK_INTERNAL` stop record in `expected/internal-link-stop/` and must not create an accepted capture. The path-escape mode must reject the outside candidate and write its controlled result only to `expected/path-escape-stop.json`. Neither expected-failure mode may make success-capture determinism impossible.
-9. Run the success mode twice against the two initially absent success capture output subroots. Both result manifests must match apart from explicit run timestamps and output-root fields. No mode may read `keon-docs-internal/patents/`, `keon-doctrine/`, their `.git` directories, or any prior partial root.
+9. `FixtureSuccess`, `ExpectedInternalLink`, and `ExpectedPathEscape` modes run the same `Invoke-CustodyCapture` copy/classification/manifest/stability core that `SourceCapture` will later invoke, differing only in synthetic inputs and expected result. Run success mode twice against the two initially absent success capture output subroots. Both result manifests must match apart from explicit run timestamps and output-root fields. Fixture modes only may not read `keon-docs-internal/patents/`, `keon-doctrine/`, their `.git` directories, or any prior partial root. The prospective conditional `SourceCapture` mode is separately bounded below and is never runnable before F acceptance.
 
 ### Deterministic invocations
 
@@ -89,7 +96,7 @@ Every success manifest must be JSON with these required fields: `schemaVersion`,
 - Pre-copy in-memory schema test result.
 - Each expected classification and assertion result, including the controlled internal-link stop.
 - Both fixture manifest hashes, sidecar verification results, and a deterministic comparison report.
-- Command ledger proving the only writes occurred under the fixture root and no source/Git/remote operation occurred.
+- Command ledger proving builder writes were limited to the named worktree script file and the fixture root, coordinator setup writes were limited to named worktree administration, and no protected-source/Git/remote operation occurred.
 - **Two independent, fresh, read-only adversarial reviews**. Each must reproduce script/manifest hashes, output classifications, expected-stop behavior, and write-scope checks; reviewers never fix, commit, or rerun the fixture. The dual-review requirement supersedes the earlier single-review wording because this is an architecture/risk parcel.
 
 ### Failure rule
@@ -114,7 +121,7 @@ Accordingly, the owner may ratify the following serial F/S option in one decisio
 
 ### Source-capture write scope and invocation
 
-The builder may write only its already-authorized script file in the named builder worktree and paths below the new source-output root. It may read only the two exact source roots and their local Git metadata for classification. It may not read any prior partial root, mutate a source or Git state, contact a remote, create a commit, or write elsewhere.
+S uses the script exactly as reviewed in F; **all script edits are forbidden after F review acceptance**. During S the builder may write only paths below the new source-output root. It may read only the two exact source roots and their local Git metadata for classification. It may not read any prior partial root, mutate a source or Git state, contact a remote, create a commit, or write elsewhere.
 
 The following is a proposed future command, not executed under this design. Replace `<accepted-fixture-script-sha256>` only with the digest recorded in both F review acceptances:
 
@@ -129,6 +136,8 @@ The S manifest uses the required schema above and additionally records `expected
 `LINK_INTERNAL`, a source-inventory drift, a hash/count mismatch, script-digest mismatch, pre-existing output root, command outside write scope, Git/source mutation, or remote operation stops S and preserves its output. Only a complete manifest plus sidecar, per-track stable inventory, successful hash comparisons, and both independent S `ACCEPT` reviews satisfy W0-P01's custody evidence requirement. Existing W0-P02 through W0-P06 remain blocked until then.
 
 The earlier F-only option remains available: it authorizes only fixture proof and reviews, not S. Neither option authorizes package drafting, counsel transmission, disclosure, filing, payment, or a change to the patent corpus.
+
+Once S has both required independent acceptances and the existing W0 dependency gate clears, the already-ratified standing authorization for post-custody W0–W4 preparation governs within its original boundaries. This replacement neither starts that work early nor introduces a new blanket human gate after custody evidence is accepted.
 
 ## Metadata-only patent-record locators (content not reviewed in this parcel)
 
@@ -148,4 +157,10 @@ These locators establish only that local artifacts exist. They do not establish 
 
 ## Owner decision requested
 
-Ratify **W0-P01R-F only**: a source-free, synthetic-fixture proof under the exact contract above. Keep W0-P01R-S source capture, any package drafting, counsel decision, filing, payment, and disclosure action gated for later owner approval.
+### Preferred: combined conditional W0-P01R-F/S
+
+Ratify **W0-P01R-F/S** exactly as specified above. This permits only coordinator setup of the named fixture worktree, fixture F, two independent F accepts, then unchanged digest-bound S, and two independent S accepts. It authorizes no protected-source access before F accepts; no source mutation, source-Git mutation, staging, commit, merge, push, fetch, pull, remote operation, package drafting, counsel transmission, disclosure, filing, payment, or alteration of any prior partial root. After S acceptance, existing W0–W4 standing preparation authority resumes only within its already-ratified scope.
+
+### Alternative: F-only
+
+Ratify **W0-P01R-F only**: a source-free synthetic-fixture proof and two independent read-only reviews under the exact contract above. It authorizes no protected-source read or source capture and does not alter the existing later gate structure.

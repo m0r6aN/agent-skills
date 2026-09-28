@@ -1,0 +1,23 @@
+{
+  "skill_name": "get-app-specs",
+  "trigger": {
+    "positive": [
+      { "prompt": "Inventory this codebase's application features, business rules, and dependencies", "top_k": 3 },
+      { "prompt": "Extract an evidence-backed app specification before we rewrite this system", "top_k": 3 },
+      { "prompt": "Archaeologize this standalone app and document what actually gets triggered", "top_k": 3 }
+    ],
+    "negative": [
+      { "prompt": "Modernize this legacy system with behavioral equivalence", "owner": "modernize" },
+      { "prompt": "Plan a multi-repository delivery across services", "owner": "initiative-coordination" }
+    ]
+  },
+  "evals": [
+    {
+      "id": 1,
+      "kind": "dialogue",
+      "prompt": "Produce a canonical application specification from this repository.",
+      "expected_output": "An evidence-backed inventory of features, rules, dependencies, liveness, confidence, and open questions.",
+      "expectations": ["The response distinguishes observed behavior from inference", "The response identifies open questions"]
+    }
+  ]
+}
