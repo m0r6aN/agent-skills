@@ -151,13 +151,168 @@ Two rules follow. **A goal branch based on another coordinator's tip inherits th
 spots, not the repository's current state.** And **a coordinator lint must name the checkout it
 ran in** — "verified on disk" is not a location.
 
+## Never write into a live agent's worktree (earned 2026-09-04 — the coordinator broke this)
+
+The coordinator ratified the WF-P0 spec by editing and committing **inside the shaping
+agent's worktree while that agent was still active** — flipping `status:`, repairing two
+stale lines, and landing two amendment commits on `claude/hwf-wf-p0-shaping-20260903`. One
+worktree, one writer, is the rule that existed precisely to prevent this, and the coordinator
+is not exempt from it.
+
+**The collision actually happened, and a mechanism — not discipline — is what held the line.**
+The first account of this said "harmless by luck." The shaping agent then supplied the detail
+that makes it precise: during its final pass, two of its `Edit` calls failed with *"File has
+been modified since read"* on content byte-identical to what it held. That was the
+coordinator's write landing between the agent's read and its write. The harness's stale-read
+guard fired, refused the write, and produced a visible signal. Nothing was lost because the
+guard caught it, not because either writer was careful.
+
+Two rules come out of that, and the second is the one that would have caught it sooner:
+
+1. **The guard is the backstop, never the plan.** It protects a single file against a
+   read-write straddle. It would not have protected a `git add`/commit sequence, a file the
+   other writer had not read, or an edit routed through a shell command.
+2. **"The file changed under me and I don't know why" is a stop condition, not a re-read.**
+   The agent attributed the failures to a linter touching mtime and re-read past them — a
+   reasonable guess that was wrong, and that discarded the only live signal either writer got.
+   A future dual-writer collision will announce itself exactly this way. Any agent seeing an
+   unexplained stale-read failure stops and reports it rather than retrying through it.
+
+Had the agent committed between the coordinator's read and write, its fix would have been
+clobbered silently — the same shape as the incident that produced the one-goal-one-coordinator
+rule (`491fb80`, also benign, also only by luck).
+
+The rule, and how to satisfy it: **when a document inside a live agent's worktree needs to
+change, route the change through that agent.** Send the exact replacement text and have the
+agent commit it, identified as a coordinator-ratified amendment per SPEC-CONVENTION §11. If
+the agent is gone, take ownership of the worktree explicitly — confirm it is idle, say so in
+the commit message — before touching it. Applied correctly the same day: the builder's
+one-word `## Allowed Files` count amendment was routed *to* the builder rather than edited
+into its worktree.
+
+Corollary for ratification specifically: `status: draft` → `active` is the coordinator's
+decision, but it need not be the coordinator's *keystroke*. Prefer ruling and having the
+shaping session commit the flip.
+
+## Dispatch artifacts must live on the branch you dispatch from (earned 2026-09-04)
+
+**Root cause of three of WF-P0's defects, all the coordinator's.** This goal ran two divergent
+branches — a coordinator branch (`claude/heterogeneous-agent-worker-fabric-coordinator-20260903`)
+holding the charter, loop directive, kickstarters, and lint records, and a parcel branch
+(`claude/hwf-wf-p0-shaping-20260903`, then `claude/hwf-wf-p0-20260904`) holding the spec and the
+shaping report. The coordinator wrote artifacts to the first and dispatched agents from the
+second, with cross-references pointing between them. Consequences, each found by the builder
+rather than the coordinator:
+
+1. **The builder's own dispatch directive was absent from its worktree.** The kickstarter was
+   committed to the coordinator branch (`bda734d`), which is not an ancestor of the builder's
+   base (`b9f4e1a`). The dispatch message asserted the file was "committed in your worktree at
+   …" and it was not. The builder located it in the coordinator worktree and read it read-only,
+   which was the correct recovery.
+2. **The ratified spec cites a file its own branch does not contain** — `wf-p0-shaping-lint.md`,
+   written to the coordinator branch (`2ef49df`).
+3. **AC12 became unsatisfiable.** Its check is `git diff --name-only origin/main...HEAD`, which
+   returns nine paths on the parcel base because the base moved to a branch tip carrying the
+   coordinator's and shaping session's own commits. Measured correctly — against the parcel's
+   own base SHA — the builder changed exactly one file, so the criterion's *intent* held while
+   its wording failed.
+
+**The rules.** Before dispatching: (a) verify every path the directive names actually exists in
+the target worktree — `git -C <worktree> cat-file -e <base>:<path>` or simply read it there,
+because asserting a location is the same defect class as asserting a lint's checkout; (b) keep
+one lineage per goal, or consolidate before dispatch — the parcel branch is based on the
+coordinator branch, and the coordinator merges its own artifacts down before an agent needs
+them; (c) any acceptance criterion whose check names a diff base must name **the parcel's base
+SHA**, never `origin/main`, unless the two are provably identical.
+
+Defect 3 deserves its own note: it is an instance of the failure mode named in the next
+section, committed by the coordinator **in the same document, one turn after naming it** — the
+base was corrected in the Constraints bullet and left stale in AC12. That the author of the
+lesson immediately reproduced the lesson is the strongest available argument that the
+countermeasure has to be structural rather than attentional.
+
+## Verify the verifier: the deterministic pass is not exempt (earned 2026-09-04)
+
+The coordinator's own citation-resolution check — deterministic-pass step 5, the step whose
+whole purpose is catching Blockers — **reported 38 out-of-range citations in a map that had
+none.** Had it been believed, it would have sent a clean artifact into a full rework cycle,
+which is the most expensive mistake available at closure and one that also teaches every agent
+downstream that the checks lie.
+
+Two independent bugs, both silent:
+
+1. **`(Get-Content $f | Measure-Object -Line).Lines` does not count blank lines.** It
+   under-reports every prose file by roughly its paragraph count —
+   `COORDINATOR-PATTERN.md` measured 60 against an actual 89. Use `(Get-Content $f).Count`,
+   which is the array length and counts every line. This belongs beside "PowerShell only,
+   `node -v` first" as a shell-discipline rule, because it fails green-adjacent: it produces
+   a plausible number rather than an error.
+2. **Resolving a partial path by basename silently binds to an arbitrary same-named file.**
+   Citations like `dispatch/src/routing-eval/index.ts:140` were resolved by searching for
+   `index.ts` and taking the first hit, so eight distinct files all became one 55-line
+   stranger. The tell was the repeated "file has 55 lines" across unrelated modules.
+   Either resolve a path from the repo root or report it as **not mechanically checkable** —
+   never guess and then report the guess as a finding.
+
+**The rule that actually caught it, and the one to carry:** the broken check contradicted a
+fact the coordinator had personally verified an hour earlier — that `routing-policy.yaml:169`
+reads `shadow_routes: {}`. It claimed the file had 164 lines. **When a check contradicts
+something you verified by hand, suspect the check before the artifact.** A tool disagreeing
+with direct observation is a hypothesis about the tool, not a finding about the work.
+
+Corrected result, for the record: of 206 citation-shaped strings in the map, 36 resolve from
+the repo root and **all 36 are in range**; 170 are context-relative and not checkable by
+root resolution, of which the load-bearing ones (`types.ts:87-90` → the `PROFILE_NAMES` tail,
+`permission-profiles.yaml:174-176`, `routing-policy.schema.json:170` →
+`"additionalProperties": false`) were confirmed by hand to resolve **and to contain the
+content cited for**. Zero Blockers.
+
+Two process points follow. A check's *first* run is unvalidated code, so validate it against a
+known-good and a known-bad case before trusting either verdict. And a mechanical check that
+cannot resolve most of its inputs — 170 of 206 here — should report that coverage honestly
+rather than presenting the checkable minority as a complete pass.
+
+## The parcel's dominant failure mode: a local fix, left unpropagated
+
+Six defects surfaced on WF-P0 before a line of the map was written; five were the
+coordinator's. Four of them are **one** mode, and the shaping agent named it more precisely
+than the coordinator first did. It is not "a smoothing phrase substituting for a recount."
+It is:
+
+> **A fact established once is assumed to stay established at its other instances.**
+
+The instances:
+
+| Defect | The fact | The unpropagated copy |
+|---|---|---|
+| Six-versus-seven | The exclusion list held seven names | The "six excluded" sentence above it — the count was *already known* to be off and was papered over with a parenthetical |
+| Gate spelled two ways | The base gate's SHA, corrected to 40 chars | Deterministic-pass step 2, left at the short form |
+| "Verified on disk" | The lint's checks, run in the `main` checkout | The charter sentence asserting them, on a branch where the file was v0.1 |
+| Allowed Files count | The grant, widened to three paths | The Verification Plan's Step 0 sentence, still saying "two" |
+
+Every one is a correct local edit whose siblings were left standing, and **not one was caught
+by its author.** The countermeasure is structural, not attentional: **make the invariant state
+a total that fails loudly when one side drifts.** AC8 requires the map to state `8 + 7 = 15`
+rather than merely be internally consistent, because a stated sum breaks visibly while two
+quietly disagreeing sentences do not. Prefer that shape — a stated total, a single named
+authority, a citation that must resolve — over any instruction to be careful.
+
 ## Open items carried by the coordinator (not gates)
 
 1. **Routing-class cost.** The ratified graph prices 15 of 18 parcels `architecture/risk`,
    which means a frontier builder plus two independent reviews each. The developer declined to
    re-rule classes at ratification. You may propose a scoped demotion amendment for specific
-   parcels — WF-P16, and possibly WF-P13 — once their shaping makes the cost concrete. Until
-   ratified, the recorded classes bind.
+   parcels once their shaping makes the cost concrete. Until ratified, the recorded classes
+   bind.
+
+   **WF-P0 is settled: do not demote it.** Its shaping session argued the case and the
+   coordinator accepts it. The document carries roughly sixty individually falsifiable claims
+   that seventeen parcels inherit, its entire value is citation accuracy, and claim-checking
+   against disk is exactly what a second independent reviewer catches that a first misses —
+   the provenance of the dual-review rule itself being two frontier reviews of W0-P4 that
+   agreed on every focus question while only one found the blocker. A frontier builder plus
+   two frontier reviews for one Markdown file is the right price here. **WF-P16 and WF-P13
+   remain the demotion candidates.**
 2. **The lessons ledger does not exist in this repository.** Both `STANDING-CONSTRAINTS.md`
    and `foreman-line-coordinator-carryover.md` cite `docs/transcripts/defects_lessons.md` for
    the provenance of lessons #1–#36, but that path is absent here (`docs/transcripts/` does

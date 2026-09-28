@@ -3,7 +3,8 @@
 **Goal slug:** `heterogeneous-agent-worker-fabric`
 **Created:** 2026-09-03 (current-instance intake)
 **Owner:** Clinton Morgan
-**Status:** Gate 1 closed 2026-09-03 including amendment A1 — Gate 2 granted for WF-P0 only
+**Status:** Gate 1 closed — amendments A1 (2026-09-03) and A2 (2026-09-04) ratified; Gate 2
+granted for WF-P0 only; WF-P0 in build
 **Coordinator:** Claude Code coordinator session (`/goal resume`), 2026-09-03 — see
 `loop-directive.md`. Transferred from the stopped Codex `/root` coordinator at a pre-dispatch
 boundary by explicit developer ruling; that coordinator's Stage Zero work is preserved on
@@ -62,7 +63,7 @@ plan review closes and an exact Gate 2 grant identifies its permitted dispatch s
 | Wave | Parcel | Deliverable | Dependencies | Risk | Routing class |
 |---|---|---|---|---|---|
 | 0 | WF-P0 — topology and authority inventory | Current three-role topology, trust-boundary, package, and rollback-path map. | none | critical | architecture/risk |
-| 0 | WF-P1 — role, authority, and envelope contracts | Versioned worker roles and task/result envelopes, including evidence, uncertainty, budgets, and escalation. | WF-P0 | critical | architecture/risk |
+| 0 | WF-P1 — role, authority, and envelope contracts | Versioned worker roles and task/result envelopes, including evidence, uncertainty, budgets, and escalation. **(A2)** Additionally defines what "the current three-role path" denotes operationally — in particular what the registry's `verifier` role denotes, and whether it is the same thing as the dispatch table's "adversarial reviewer" and the `reviewer-readonly` permission profile — so WF-P11 consumes a resolved definition rather than discovering an ambiguity. | WF-P0 | critical | architecture/risk |
 | 0 | WF-P2 — canonical registry and classification migration | Compatible extension of the sole routing-policy registry for actual model identity, capability, eligibility, fallback, and evaluation state. | WF-P0, WF-P1 | critical | architecture/risk |
 | 0 | WF-P3 — provider-neutral invocation seam | Injected transport with credential-by-name, timeout, retry, cancellation, and usage normalization; no live provider call absent separate authorization. | WF-P1, WF-P2 | critical | architecture/risk |
 | 0 | WF-P4 — mutation-scope and tool-operation guard | Enforcement that actual actions and mutations remain within declared scope and authority. | WF-P1 | critical | architecture/risk |
@@ -118,6 +119,14 @@ The goal exits only when:
 9. rollback and model/version upgrade gates are exercised; and
 10. the developer performs the human Gate 3 production/default-route promotion after the
     coordinator presents a green, digest-bound evidence manifest.
+
+**Exit item 1 ownership (A2).** Item 1's second clause — *"remains a tested rollback path"* —
+is discharged by **WF-P16**, whose row reads *"exercised rollback path"*. **"Tested" and
+"exercised" denote the same bar** across items 1 and 9 and WF-P16's row; the three ratified
+sentences used two words for one requirement and this settles them as one. WF-P0 discharges
+item 1's *`mapped`* clause only. Recorded because the owner previously existed only by
+inference: the charter named no parcel for the clause, and a goal exit criterion whose owner
+must be derived by reading is not ratified, it is assumed.
 
 **Exit-evidence clarification (A1).** The final manifest's digest domain is the complete
 canonical descriptor set for its charter/graph revision, implementation SHA, registry/policy
@@ -192,8 +201,34 @@ reviews each. The developer declined to re-rule classes at ratification; the coo
 propose a scoped demotion amendment for specific parcels (WF-P16 and possibly WF-P13 are the
 candidates) when their shaping makes the cost concrete. Until then the ratified classes bind.
 
-Neither this record nor A1 grants provider spend, secret access, an external effect, a merge,
-or default-route promotion. Dispatch authority is exactly the Gate 2 scope recorded above.
+**2026-09-04 — amendment A2 ratification (WF-P0 shaping findings).** WF-P0's shaping session
+surfaced two Gate 1 matters that neither it nor the coordinator could resolve. Clinton Morgan
+ratified both:
+
+- **A2(a) — exit item 1's owner.** WF-P16 discharges the second clause, and "tested" equals
+  "exercised" as one bar. Folded into the exit criterion above. This converts a coordinator
+  *inference* into ratified text: the Q1 ruling during shaping lint reached the same
+  conclusion, but by reading three sentences that never equated their terms, which is not the
+  same as the charter saying so.
+- **A2(b) — what "the current three-role path" denotes.** WF-P1's deliverable is extended to
+  define it operationally, including what the registry's `verifier` role denotes and whether
+  it is the dispatch table's "adversarial reviewer" and the `reviewer-readonly` profile.
+  Verified on disk at ratification (builder worktree `hwf-wf-p0-20260904`, base
+  `b9f4e1ac…`): `permission-profiles/src/types.ts:69-75` declares exactly six profiles —
+  `coordinator`, `builder-standard`, `builder-architecture`, `reviewer-readonly`,
+  `shaping-agent`, `builder-deps` — **none named `verifier`**, so the registry role has no
+  profile and its equation to the reviewer is mechanically unbacked. Settled at WF-P1 rather
+  than at WF-P11, which would have met the ambiguity mid-build in a parcel chartered to
+  measure rather than to define.
+
+Neither A2 item was a blocker for WF-P0, which documents both ambiguities under AC3 and AC9
+rather than resolving them, so WF-P0's build continued through this ratification under the
+existing Gate 2 grant (scoped re-open: work orthogonal to the re-opened elements proceeds).
+
+Neither this record, A1, nor A2 grants provider spend, secret access, an external effect, a
+merge, or default-route promotion. Dispatch authority is exactly the Gate 2 scope recorded
+above — still WF-P0 only. **A2(b) extends WF-P1's deliverable; it does not make WF-P1
+dispatchable.**
 
 ## Amendment A1 — superseded section
 

@@ -1,0 +1,15 @@
+{
+  "workflowId": "a5b1975a-7497-4200-bac2-5d8a6fd6c749",
+  "role": "builder",
+  "surfaces": [
+    "plugins/audit-suite/",
+    "plugins/foreman-line/",
+    "skills/parcel-compiler/",
+    "docs/receipts/"
+  ],
+  "injectedSkills": [
+    "test-coverage"
+  ],
+  "matrixRef": "plugins/foreman-line/skill-injection/skill-injection.yaml",
+  "timestamp": "2026-09-06T12:22:45.564Z"
+}
