@@ -16,7 +16,11 @@ test('AC8: the projected artifact is written to active/<slug>.projected.shaping-
   const inputPath = writeShapingResultFixture(root, 'out-slug', [
     'plugins/foreman-line/docs/specs/active/w1-p2.md',
   ])
-  const { artifactPath, artifactRef } = writeProjectedResult(inputPath, 'Epic', { repoRoot: root })
+  // Home-repo shape: plugin-prefixed specsDir passed EXPLICITLY (P2b-i R2).
+  const { artifactPath, artifactRef } = writeProjectedResult(inputPath, 'Epic', {
+    repoRoot: root,
+    specsDir: 'plugins/foreman-line/docs/specs/active',
+  })
   const expected = join(
     root,
     'plugins',

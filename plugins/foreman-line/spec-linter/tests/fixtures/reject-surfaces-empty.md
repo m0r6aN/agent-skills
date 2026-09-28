@@ -10,6 +10,7 @@ superseded_by: null
 risk: standard
 surfaces: []
 routing_class: standard-feature
+verification_class: judgment-required
 permission_profile: standard-build
 ---
 

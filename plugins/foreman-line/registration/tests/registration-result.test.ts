@@ -20,6 +20,7 @@ test('AC11: the emitted RegistrationResult validates against the frozen schema',
   const fx = singleStoryFixture()
   const outcome = await register({
     slug: fx.slug,
+    projectKey: 'KONE',
     repoRoot: fx.repoRoot,
     adapter: new FakeAdapter(),
     timestamp: TS,
@@ -31,6 +32,7 @@ test('AC11: links carry BOTH directions, each with non-empty fields', async () =
   const fx = singleStoryFixture()
   const outcome = await register({
     slug: fx.slug,
+    projectKey: 'KONE',
     repoRoot: fx.repoRoot,
     adapter: new FakeAdapter(),
     timestamp: TS,
@@ -53,6 +55,7 @@ test('AC11: one link-pair per spec-bearing Story (2 stories => 4 links)', async 
   ])
   const outcome = await register({
     slug: fx.slug,
+    projectKey: 'KONE',
     repoRoot,
     adapter: new FakeAdapter(),
     timestamp: TS,

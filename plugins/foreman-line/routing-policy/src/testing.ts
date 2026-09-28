@@ -2,6 +2,8 @@
  * Canonical sample values, typed against `types.ts`, used by the parity test to
  * prove each schema actually accepts values of the shape its type describes.
  */
+
+import { PI_OPENROUTER_ROUTING, type PiOpenRouterRouting } from './pi-openrouter.js'
 import type {
   ClassEntry,
   DataClassificationRule,
@@ -10,6 +12,8 @@ import type {
   ShadowRoute,
   TransportRequirements,
 } from './types.js'
+
+export const samplePiOpenRouterRouting: PiOpenRouterRouting = PI_OPENROUTER_ROUTING
 
 export const sampleClassEntry: ClassEntry = {
   allowlist: ['economy'],
@@ -23,7 +27,7 @@ export const sampleClassEntry: ClassEntry = {
  * requirements differ between public and non-public.
  */
 const sampleModels: readonly string[] = [
-  'anthropic/claude-opus-5',
+  'anthropic/claude-opus-5.5',
   'anthropic/claude-fable-5.1',
   'openai/gpt-5.6-sol',
   'google/gemini-3.1-pro-preview',
@@ -98,7 +102,7 @@ export const sampleRoutingPolicy: RoutingPolicy = {
   model_tiers: {
     // Order is the dispatcher's selection rule (first eligible wins).
     frontier: [
-      'anthropic/claude-opus-5',
+      'anthropic/claude-opus-5.5',
       'openai/gpt-5.6-sol',
       'google/gemini-3.1-pro-preview',
       'anthropic/claude-fable-5.1',

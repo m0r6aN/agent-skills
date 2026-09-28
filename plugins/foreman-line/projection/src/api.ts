@@ -8,7 +8,10 @@ import { projectShapingResult } from './project.js'
 import { type WriteResult, writeProjectedArtifact } from './write.js'
 
 export interface WriteProjectedResultOptions {
-  readonly repoRoot?: string
+  /** Absolute TARGET repo root. Required (P2b-i/R3, extending P2a/D19). */
+  readonly repoRoot: string
+  /** Specs dir relative to `repoRoot` (P2b-i/R2); foreign default applies. */
+  readonly specsDir?: string
 }
 
 /**
@@ -20,10 +23,13 @@ export interface WriteProjectedResultOptions {
 export function writeProjectedResult(
   inputPath: string,
   epicTitle: string,
-  options: WriteProjectedResultOptions = {},
+  options: WriteProjectedResultOptions,
 ): WriteResult {
   const slug = slugFromInputPath(inputPath)
   const input = readShapingResult(inputPath)
   const payload = projectShapingResult(input, epicTitle, slug, { repoRoot: options.repoRoot })
-  return writeProjectedArtifact(slug, payload, { repoRoot: options.repoRoot })
+  return writeProjectedArtifact(slug, payload, {
+    repoRoot: options.repoRoot,
+    specsDir: options.specsDir,
+  })
 }
