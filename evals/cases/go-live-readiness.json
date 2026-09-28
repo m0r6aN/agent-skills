@@ -2,22 +2,42 @@
   "skill_name": "go-live-readiness",
   "trigger": {
     "positive": [
-      { "prompt": "Run a go-live readiness assessment for this existing system", "top_k": 3 },
-      { "prompt": "Check whether this release candidate is ready to launch", "top_k": 3 },
-      { "prompt": "Perform a pre-launch audit and report the gates that still block release", "top_k": 3 }
+      {
+        "prompt": "We are promoting to production Friday - are we actually ready to go live",
+        "top_k": 3
+      },
+      {
+        "prompt": "The RC is cut - run the release readiness gates before we ship",
+        "top_k": 3
+      },
+      {
+        "prompt": "Run a pre-launch audit with release gates and tell us if this system is ready to go live",
+        "top_k": 3
+      }
     ],
     "negative": [
-      { "prompt": "Perform a defensive security review of this Dockerfile", "owner": "security-review" },
-      { "prompt": "Coordinate implementation across several repositories", "owner": "initiative-coordination" }
+      {
+        "prompt": "Simplify this working function for readability",
+        "owner": "code-simplification"
+      },
+      {
+        "prompt": "Break this release into ordered implementable tasks",
+        "owner": "planning-and-task-breakdown"
+      }
     ]
   },
   "evals": [
     {
       "id": 1,
       "kind": "dialogue",
-      "prompt": "Assess this existing system for go-live readiness without building new features.",
-      "expected_output": "A sequenced readiness assessment with evidence, failed gates, and remediation boundaries.",
-      "expectations": ["The response distinguishes assessment from remediation", "The response names release-blocking gates"]
+      "dialogue_justification": "The skill's deliverable is an assessment verdict (ship/hold/ship-with-constraints) - assessment-shaped, with no build output.",
+      "prompt": "Staging scenarios pass but the payment surface review found one open High finding and two scenarios were never run in staging. What is your verdict?",
+      "expected_output": "A hold verdict naming the blocking finding, the unverified scenarios, and their owners",
+      "expectations": [
+        "Returns hold rather than ship while a High finding is open",
+        "Treats the never-run scenarios as unverified blockers, not implicit passes",
+        "Names owners for each blocker instead of issuing a vague not-ready"
+      ]
     }
   ]
 }

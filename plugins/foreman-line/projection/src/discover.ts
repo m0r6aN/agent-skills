@@ -16,8 +16,7 @@ export const PROJECTED_SUFFIX = '.projected.shaping-result.json'
  * that is NOT this package's own projected output. Not the primary interface -
  * callers should prefer an explicit input path.
  */
-export function discoverProjectableInputs(repoRoot: string, specsDir?: string): string[] {
-  // `repoRoot` is required (P2b-i/R3); the shipped reader asserts it absolute.
-  const all = discoverShapingResults(repoRoot, specsDir)
+export function discoverProjectableInputs(repoRoot?: string): string[] {
+  const all = repoRoot === undefined ? discoverShapingResults() : discoverShapingResults(repoRoot)
   return all.filter((p) => !p.endsWith(PROJECTED_SUFFIX))
 }
