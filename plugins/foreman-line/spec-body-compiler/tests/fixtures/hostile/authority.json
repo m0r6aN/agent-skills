@@ -1,0 +1,104 @@
+{
+  "schema": "spec-body-compiler/hostile-fixtures/v1",
+  "note": "H8 missing authority. kind=spec rows are full spec texts.",
+  "cases": [
+    {
+      "id": "AUTH-01",
+      "kind": "spec",
+      "input": "---\nticket: FK-T0\nstatus: active\nsurfaces: [plugins/]\n---\n## Intent\nx\n\n## Constraints\nx\n\n## Acceptance Criteria\nx\n\n## Out of Scope\nx\n\n## Context & References\nx\n\n",
+      "expectedCode": "MISSING_AUTHORITY",
+      "repaired": "---\nticket: FK-T0\nstatus: active\nsurfaces: [plugins/]\n---\n## Intent\nx\n\n## Constraints\nx\n\n## Acceptance Criteria\nx\n\n## Out of Scope\nx\n\n## Context & References\nx\n\n## Allowed Files\n- src/a.ts\n\n",
+      "repairedOutcome": "ok"
+    },
+    {
+      "id": "AUTH-02",
+      "kind": "spec",
+      "input": "---\nticket: FK-T0\nstatus: active\nsurfaces: [plugins/]\n---\n## Constraints\nx\n\n## Acceptance Criteria\nx\n\n## Out of Scope\nx\n\n## Context & References\nx\n\n## Allowed Files\n- src/a.ts\n\n",
+      "expectedCode": "SPEC_SECTION_MISSING",
+      "repaired": "---\nticket: FK-T0\nstatus: active\nsurfaces: [plugins/]\n---\n## Intent\nx\n\n## Constraints\nx\n\n## Acceptance Criteria\nx\n\n## Out of Scope\nx\n\n## Context & References\nx\n\n## Allowed Files\n- src/a.ts\n\n",
+      "repairedOutcome": "ok"
+    },
+    {
+      "id": "AUTH-03",
+      "kind": "spec",
+      "input": "---\nticket: FK-T0\nstatus: active\nsurfaces: [plugins/]\n---\n## Intent\nx\n\n## Acceptance Criteria\nx\n\n## Out of Scope\nx\n\n## Context & References\nx\n\n## Allowed Files\n- src/a.ts\n\n",
+      "expectedCode": "SPEC_SECTION_MISSING",
+      "repaired": "---\nticket: FK-T0\nstatus: active\nsurfaces: [plugins/]\n---\n## Intent\nx\n\n## Constraints\nx\n\n## Acceptance Criteria\nx\n\n## Out of Scope\nx\n\n## Context & References\nx\n\n## Allowed Files\n- src/a.ts\n\n",
+      "repairedOutcome": "ok"
+    },
+    {
+      "id": "AUTH-04",
+      "kind": "spec",
+      "input": "---\nticket: FK-T0\nstatus: active\nsurfaces: [plugins/]\n---\n## Intent\nx\n\n## Constraints\nx\n\n## Out of Scope\nx\n\n## Context & References\nx\n\n## Allowed Files\n- src/a.ts\n\n",
+      "expectedCode": "SPEC_SECTION_MISSING",
+      "repaired": "---\nticket: FK-T0\nstatus: active\nsurfaces: [plugins/]\n---\n## Intent\nx\n\n## Constraints\nx\n\n## Acceptance Criteria\nx\n\n## Out of Scope\nx\n\n## Context & References\nx\n\n## Allowed Files\n- src/a.ts\n\n",
+      "repairedOutcome": "ok"
+    },
+    {
+      "id": "AUTH-05",
+      "kind": "spec",
+      "input": "---\nticket: FK-T0\nstatus: active\nsurfaces: [plugins/]\n---\n## Intent\nx\n\n## Constraints\nx\n\n## Acceptance Criteria\nx\n\n## Context & References\nx\n\n## Allowed Files\n- src/a.ts\n\n",
+      "expectedCode": "SPEC_SECTION_MISSING",
+      "repaired": "---\nticket: FK-T0\nstatus: active\nsurfaces: [plugins/]\n---\n## Intent\nx\n\n## Constraints\nx\n\n## Acceptance Criteria\nx\n\n## Out of Scope\nx\n\n## Context & References\nx\n\n## Allowed Files\n- src/a.ts\n\n",
+      "repairedOutcome": "ok"
+    },
+    {
+      "id": "AUTH-06",
+      "kind": "spec",
+      "input": "---\nticket: FK-T0\nstatus: active\nsurfaces: [plugins/]\n---\n## Intent\nx\n\n## Constraints\nx\n\n## Acceptance Criteria\nx\n\n## Out of Scope\nx\n\n## Allowed Files\n- src/a.ts\n\n",
+      "expectedCode": "SPEC_SECTION_MISSING",
+      "repaired": "---\nticket: FK-T0\nstatus: active\nsurfaces: [plugins/]\n---\n## Intent\nx\n\n## Constraints\nx\n\n## Acceptance Criteria\nx\n\n## Out of Scope\nx\n\n## Context & References\nx\n\n## Allowed Files\n- src/a.ts\n\n",
+      "repairedOutcome": "ok"
+    },
+    {
+      "id": "AUTH-07",
+      "kind": "spec",
+      "input": "---\nticket: FK-T0\nstatus: active\nsurfaces: [plugins/]\n---\n## Intent\n\n## Constraints\nx\n\n## Acceptance Criteria\nx\n\n## Out of Scope\nx\n\n## Context & References\nx\n\n## Allowed Files\n- src/a.ts\n\n",
+      "expectedCode": "SPEC_SECTION_EMPTY",
+      "repaired": "---\nticket: FK-T0\nstatus: active\nsurfaces: [plugins/]\n---\n## Intent\nx\n\n## Constraints\nx\n\n## Acceptance Criteria\nx\n\n## Out of Scope\nx\n\n## Context & References\nx\n\n## Allowed Files\n- src/a.ts\n\n",
+      "repairedOutcome": "ok"
+    },
+    {
+      "id": "AUTH-08",
+      "kind": "spec",
+      "input": "---\nticket: FK-T0\nstatus: active\nsurfaces: [plugins/]\n---\n## Intent\nx\n\n## Constraints\n\n## Acceptance Criteria\nx\n\n## Out of Scope\nx\n\n## Context & References\nx\n\n## Allowed Files\n- src/a.ts\n\n",
+      "expectedCode": "SPEC_SECTION_EMPTY",
+      "repaired": "---\nticket: FK-T0\nstatus: active\nsurfaces: [plugins/]\n---\n## Intent\nx\n\n## Constraints\nx\n\n## Acceptance Criteria\nx\n\n## Out of Scope\nx\n\n## Context & References\nx\n\n## Allowed Files\n- src/a.ts\n\n",
+      "repairedOutcome": "ok"
+    },
+    {
+      "id": "AUTH-09",
+      "kind": "spec",
+      "input": "---\nticket: FK-T0\nstatus: active\nsurfaces: [plugins/]\n---\n## Intent\nx\n\n## Constraints\nx\n\n## Acceptance Criteria\n\n## Out of Scope\nx\n\n## Context & References\nx\n\n## Allowed Files\n- src/a.ts\n\n",
+      "expectedCode": "SPEC_SECTION_EMPTY",
+      "repaired": "---\nticket: FK-T0\nstatus: active\nsurfaces: [plugins/]\n---\n## Intent\nx\n\n## Constraints\nx\n\n## Acceptance Criteria\nx\n\n## Out of Scope\nx\n\n## Context & References\nx\n\n## Allowed Files\n- src/a.ts\n\n",
+      "repairedOutcome": "ok"
+    },
+    {
+      "id": "AUTH-10",
+      "kind": "spec",
+      "input": "---\nticket: FK-T0\nstatus: active\nsurfaces: [plugins/]\n---\n## Intent\nx\n\n## Constraints\nx\n\n## Acceptance Criteria\nx\n\n## Out of Scope\n\n## Context & References\nx\n\n## Allowed Files\n- src/a.ts\n\n",
+      "expectedCode": "SPEC_SECTION_EMPTY",
+      "repaired": "---\nticket: FK-T0\nstatus: active\nsurfaces: [plugins/]\n---\n## Intent\nx\n\n## Constraints\nx\n\n## Acceptance Criteria\nx\n\n## Out of Scope\nx\n\n## Context & References\nx\n\n## Allowed Files\n- src/a.ts\n\n",
+      "repairedOutcome": "ok"
+    },
+    {
+      "id": "AUTH-11",
+      "kind": "spec",
+      "input": "---\nticket: FK-T0\nstatus: active\nsurfaces: [plugins/]\n---\n## Intent\nx\n\n## Constraints\nx\n\n## Acceptance Criteria\nx\n\n## Out of Scope\nx\n\n## Context & References\n\n## Allowed Files\n- src/a.ts\n\n",
+      "expectedCode": "SPEC_SECTION_EMPTY",
+      "repaired": "---\nticket: FK-T0\nstatus: active\nsurfaces: [plugins/]\n---\n## Intent\nx\n\n## Constraints\nx\n\n## Acceptance Criteria\nx\n\n## Out of Scope\nx\n\n## Context & References\nx\n\n## Allowed Files\n- src/a.ts\n\n",
+      "repairedOutcome": "ok"
+    },
+    {
+      "id": "AUTH-12",
+      "kind": "spec",
+      "input": "---\nticket: FK-T0\nstatus: active\nsurfaces: [plugins/]\n---\n## Intent\nx\n\n## Constraints\nx\n\n## Acceptance Criteria\nx\n\n## Out of Scope\nx\n\n## Context & References\nx\n\n## Allowed Files\n\n",
+      "expectedCode": "MISSING_AUTHORITY",
+      "via": "assertDispatchable",
+      "repaired": "---\nticket: FK-T0\nstatus: active\nsurfaces: [plugins/]\n---\n## Intent\nx\n\n## Constraints\nx\n\n## Acceptance Criteria\nx\n\n## Out of Scope\nx\n\n## Context & References\nx\n\n## Allowed Files\n- src/a.ts\n\n",
+      "repairedOutcome": "ok",
+      "repairedVia": "assertDispatchable"
+    }
+  ]
+}

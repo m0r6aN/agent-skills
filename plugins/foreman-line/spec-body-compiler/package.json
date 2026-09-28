@@ -1,0 +1,24 @@
+{
+  "name": "@foreman-line/spec-body-compiler",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "FK-P2 spec-body compiler: parses the pinned SPEC-CONVENTION spec sections and compiles exact non-glob Allowed Files grants plus frozen/forbidden surfaces into a deterministic, digest-bound compiled-scope artifact. Never derives mutation authority from surfaces: (D10). Contract-only: no evaluator, no policy logic, no cross-package imports.",
+  "engines": {
+    "node": ">=22"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test tests/*.test.ts",
+    "lint": "biome check ."
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.14",
+    "@types/node": "26.6.2",
+    "tsx": "4.23.15",
+    "typescript": "7.0.2"
+  }
+}
