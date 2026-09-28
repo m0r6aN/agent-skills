@@ -1,0 +1,11 @@
+# W0-P01R-R1 Attempt-01 Runtime Correction
+
+Status: **append-only correction to the external stop receipt and control-lane diagnosis; attempt-01 remains failed and preserved.** The earlier artifacts and failed attempt bytes were not rewritten for this correction.
+
+The company coordinator inspected the builder's actual rollout call `call_2S8YPQikkARyMXN2dxeE92LG` at `2026-09-13T13:50:02.465Z`. It called `tools.exec_command` with `yield_time_ms: 30000`, then forwarded only `r.output` through `text(r.output)`. That wrapper discarded the returned `exit_code` and `session_id` fields from the model-visible result. The displayed `Script completed` described the outer JavaScript wrapper, **not** completion of the PowerShell candidate. Earlier statements that the candidate timed out, terminated, or had no newly running process must not be relied upon.
+
+The builder's `13:50:42Z` process list did include newly created PowerShell PID `174076`, started locally at `09:50:03` (`13:50:03Z`). The company coordinator queried only that PID through CIM and verified its command line was the exact attempt-01 `script-snapshot.ps1` `FixtureSuccess` invocation, with the approved synthetic source and `captures/success-a` arguments. Its creation timestamp was `2026-09-13T13:50:03.113151Z`. The process was still running when checked.
+
+To enforce the existing halt, the company coordinator rechecked the same PID, name, command line, and creation timestamp, then stopped only that identified owned process. A fresh CIM query confirmed PID `174076` absent afterward; `captures/success-a/` remained absent. The coordinator reported no fixture-file or protected-source mutation and no candidate rerun from this process-control action.
+
+The durable failure is unchanged: the frozen attempt had no harness-generated `failure-receipt.json` or `success-receipt.json`, while the harness offered no child-execution wrapper or outcome writer. Attempt-01 is not an accepted F proof and cannot authorize S. Any future harness must own the child process, bound its runtime, preserve the full execution result including `session_id` and `exit_code`, wait for its own child, and create a truthful immutable outcome. A tool wrapper's empty output or completion is not a child-process exit observation.
