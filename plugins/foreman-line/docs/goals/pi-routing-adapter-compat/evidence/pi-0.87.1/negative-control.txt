@@ -1,0 +1,6 @@
+NEGATIVE-CONTROL PASS
+  - proposal APIs absent in snapshot AND memo, dispositions matched
+  - present APIs backed by snapshot and flagged not-an-authorization
+  - no unbounded "does not exist"; no routing-design content
+  - governance names routing-policy, pointer-only, no adapter authorized
+  - directive-excerpt sha256 recorded
