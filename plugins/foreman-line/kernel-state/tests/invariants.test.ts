@@ -14,7 +14,9 @@ import { closeStorage, type OpenStorageConfig, openStorage } from '../src/open.j
 import {
   consumeWakeupHandoff,
   getGoal,
+  getIdempotencyKey,
   getLease,
+  getRecordedResult,
   getTransition,
   getUnreleasedLease,
   insertEvent,
@@ -23,6 +25,7 @@ import {
   insertLease,
   insertTransition,
   insertWakeupHandoff,
+  recordCompletedBinding,
   updateGoalRow,
   updateLeaseRow,
 } from '../src/rows.js'
@@ -589,6 +592,112 @@ test('A1c: getTransition distinguishes absent vs present exactly; normalized sha
         return true
       },
     )
+  })
+})
+
+test('A1d: recordCompletedBinding stores result bytes and getRecordedResult returns them exactly', () => {
+  withStorage((storage) => {
+    const key = {
+      principalRef: 'principal-1',
+      operationId: 'op-1',
+      repositoryRef: 'repo-1',
+      worktreeRef: 'wt-1',
+    }
+    // Absent binding reads null — never an invented result.
+    assert.equal(getRecordedResult(storage, key), null)
+    const result = new TextEncoder().encode('{"code":"EFFECT_APPLIED","goalRevision":7}')
+    recordCompletedBinding(storage, {
+      ...key,
+      payloadDigest: `sha256:${'a'.repeat(64)}`,
+      effectDigest: `sha256:${'b'.repeat(64)}`,
+      recordedResult: result,
+      recordedAtMicros: T0,
+      completedAtMicros: T0 + 1,
+    })
+    const stored = getRecordedResult(storage, key)
+    assert.ok(stored !== null)
+    assert.deepEqual(Array.from(stored), Array.from(result))
+    // Failing-when-broken: the stored bytes bind literally — mutating the row
+    // changes exactly what the read returns (verbatim, not re-derived).
+    const mutated = new TextEncoder().encode('{"code":"EFFECT_APPLIED","goalRevision":2}')
+    storage.driver
+      .prepare(
+        'UPDATE idempotency_keys SET recorded_result = ? WHERE principal_ref = ? AND operation_id = ? AND repository_ref = ? AND worktree_ref = ?',
+      )
+      .run(mutated, key.principalRef, key.operationId, key.repositoryRef, key.worktreeRef)
+    const after = getRecordedResult(storage, key)
+    assert.ok(after !== null)
+    assert.deepEqual(Array.from(after), Array.from(mutated))
+    // The full binding row also carries the stored result.
+    const row = getIdempotencyKey(storage, key)
+    assert.deepEqual(Array.from(row?.recordedResult ?? []), Array.from(mutated))
+    assert.equal(row?.completedAtMicros, T0 + 1)
+  })
+})
+
+test('A1d: legacy bindings without stored results read null; consumers must not invent one', () => {
+  withStorage((storage) => {
+    const key = {
+      principalRef: 'principal-1',
+      operationId: 'op-1',
+      repositoryRef: 'repo-1',
+      worktreeRef: 'wt-1',
+    }
+    // The request-time path writes no result (pre-A1d shape).
+    insertIdempotencyKey(storage, {
+      ...key,
+      payloadDigest: `sha256:${'a'.repeat(64)}`,
+      recordedAtMicros: T0,
+      completedAtMicros: T0 + 1,
+    })
+    assert.equal(getRecordedResult(storage, key), null)
+    const row = getIdempotencyKey(storage, key)
+    assert.equal(row?.recordedResult, null)
+  })
+})
+
+test('A1d: APPLIED and NOOP completions both store their result (unified invariant)', () => {
+  withStorage((storage) => {
+    const applied = new TextEncoder().encode('{"code":"EFFECT_APPLIED","goalRevision":2}')
+    const noop = new TextEncoder().encode('{"code":"EFFECT_NOOP","goalRevision":1}')
+    recordCompletedBinding(storage, {
+      principalRef: 'principal-1',
+      operationId: 'op-applied',
+      repositoryRef: 'repo-1',
+      worktreeRef: 'wt-1',
+      payloadDigest: `sha256:${'a'.repeat(64)}`,
+      effectDigest: `sha256:${'b'.repeat(64)}`,
+      recordedResult: applied,
+      completedAtMicros: T0 + 1,
+    })
+    recordCompletedBinding(storage, {
+      principalRef: 'principal-1',
+      operationId: 'op-noop',
+      repositoryRef: 'repo-1',
+      worktreeRef: 'wt-1',
+      payloadDigest: `sha256:${'c'.repeat(64)}`,
+      effectDigest: null,
+      recordedResult: noop,
+      completedAtMicros: T0 + 2,
+    })
+    const appliedStored = getRecordedResult(storage, {
+      principalRef: 'principal-1',
+      operationId: 'op-applied',
+      repositoryRef: 'repo-1',
+      worktreeRef: 'wt-1',
+    })
+    const noopStored = getRecordedResult(storage, {
+      principalRef: 'principal-1',
+      operationId: 'op-noop',
+      repositoryRef: 'repo-1',
+      worktreeRef: 'wt-1',
+    })
+    assert.ok(appliedStored !== null, 'APPLIED completions store their result')
+    assert.ok(
+      noopStored !== null,
+      'NOOP completions store their result too (no event exists to re-derive from)',
+    )
+    assert.deepEqual(Array.from(noopStored), Array.from(noop))
   })
 })
 

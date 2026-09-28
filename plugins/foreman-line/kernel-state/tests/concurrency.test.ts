@@ -300,7 +300,7 @@ test('CONC-03: two processes genuinely race open + migrate; loser observes migra
   const ledger = storage.driver.prepare('SELECT version FROM schema_migrations').all() as {
     version: number
   }[]
-  assert.equal(ledger.length, 3, 'each version is applied exactly once')
+  assert.equal(ledger.length, 4, 'each version is applied exactly once')
   closeStorage(storage)
   rmSync(root, { recursive: true, force: true })
   rmSync(rendezvous, { recursive: true, force: true })
