@@ -47,7 +47,20 @@ test('AC-1: verification package scaffold matches the W1/W2 sibling pattern', ()
   const dispatchDeps = dispatchPkg.dependencies as Record<string, string>
   assert.equal(deps.ajv, dispatchDeps.ajv)
   assert.equal(deps.yaml, dispatchDeps.yaml)
-  assert.deepEqual(pkg.devDependencies, dispatchPkg.devDependencies)
+  // Scaffold parity covers the shared toolchain pins only; a sibling may carry
+  // package-specific dev dependencies (dispatch's PMC Pi runtime port needs
+  // @earendil-works/*) that are not part of the scaffold and must not be
+  // mirrored into this deliberately minimal package.
+  const dispatchDev = dispatchPkg.devDependencies as Record<string, string>
+  assert.deepEqual(
+    pkg.devDependencies,
+    Object.fromEntries(
+      ['@biomejs/biome', '@types/node', 'tsx', 'typescript'].map((name) => [
+        name,
+        dispatchDev[name],
+      ]),
+    ),
+  )
   assert.ok(existsSync(join(PACKAGE_ROOT, 'src', 'index.ts')))
   assert.ok(existsSync(join(PACKAGE_ROOT, 'src', 'harness', 'index.ts')))
 })
@@ -76,7 +89,7 @@ test('AC-4: src/index.ts exports the three functions, VerificationError, and AC_
   assert.equal(typeof api.allocateSequence, 'function')
   assert.equal(typeof api.runHarness, 'function')
   assert.equal(typeof api.VerificationError, 'function')
-  assert.equal(api.AC_CONVENTION_PATH, 'plugins/foreman-line/verification/AC-CONVENTION.md')
+  assert.equal(api.AC_CONVENTION_PATH, 'verification/AC-CONVENTION.md')
   // Type exports are proven by compilation: these annotations fail tsc if absent.
   const testResults: api.TestResults = { passed: [], failed: [] }
   const checkResult: api.MatrixCheckResult = { passed: true, evidence: 'x' }

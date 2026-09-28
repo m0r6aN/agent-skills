@@ -1,0 +1,101 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "provider",
+    "baseUrl",
+    "enabledModels",
+    "models"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "minLength": 1
+    },
+    "provider": {
+      "const": "openrouter"
+    },
+    "baseUrl": {
+      "const": "https://openrouter.ai/api/v1"
+    },
+    "enabledModels": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9-]+/[a-z0-9.-]+$"
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "models": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "capabilities",
+          "allowedLanes",
+          "prohibitedLanes",
+          "authority"
+        ],
+        "properties": {
+          "capabilities": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "routing",
+                "classification",
+                "structured-decision",
+                "prose-generation",
+                "implementation"
+              ]
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "allowedLanes": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "routing",
+                "classification",
+                "builder",
+                "prose-generation",
+                "implementation",
+                "approval",
+                "merge",
+                "policy-bypass"
+              ]
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "prohibitedLanes": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "routing",
+                "classification",
+                "builder",
+                "prose-generation",
+                "implementation",
+                "approval",
+                "merge",
+                "policy-bypass"
+              ]
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "authority": {
+            "enum": [
+              "recommend-only",
+              "execution"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

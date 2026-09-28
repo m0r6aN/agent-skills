@@ -217,6 +217,7 @@ test('AC-19: workflowId is validated before any filesystem access and every exte
     surfaces: [],
     worktreePath: join(repoRoot, 'wt'),
     repoRoot,
+    pluginRoot: join(repoRoot, 'plugins/foreman-line'),
   }
   const isInvalidId = (err: unknown): boolean =>
     err instanceof api.AdversarialError && err.code === 'WORKFLOW_ID_INVALID'
@@ -237,6 +238,7 @@ test('AC-19: workflowId is validated before any filesystem access and every exte
         surfaces: [],
         worktreePath: join(fixture.repoRoot, 'wt'),
         repoRoot: fixture.repoRoot,
+        pluginRoot: join(fixture.repoRoot, 'plugins/foreman-line'),
       }),
     (err: unknown) => err instanceof api.AdversarialError && err.code === 'SPEC_UNREADABLE',
   )
@@ -251,6 +253,7 @@ test('AC-19: workflowId is validated before any filesystem access and every exte
     surfaces: [],
     worktreePath: join(fixture.repoRoot, 'wt'),
     repoRoot: fixture.repoRoot,
+    pluginRoot: join(fixture.repoRoot, 'plugins/foreman-line'),
   }
   assert.throws(
     () =>

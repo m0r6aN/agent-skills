@@ -1,0 +1,25 @@
+# AC10 reject (D28b, document half): an unknown `profile:` value is invalid.
+# (Disk-existence checks on declared layout paths are P4's semantics, not
+# this validator's.)
+identity:
+  project_key: KONE
+  base_branch: main
+  branch_prefix: feat/
+  worktree_root: ../worktrees
+  dispatch_queue: foreman-line-dispatch
+
+stack:
+  profile: svelte-kit
+  layout:
+    route_roots: ["src/routes"]
+    style_roots: ["src"]
+    component_roots: ["src/lib"]
+    theme_files: ["src/app.css"]
+    ui_primitives: ["src/lib/ui"]
+  surfaces_present: []
+
+capabilities: {}
+
+policy:
+  audit:
+    require_security_audit_at: [elevated]
