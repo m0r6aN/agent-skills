@@ -1,0 +1,192 @@
+{
+  "acceptanceStatus": {
+    "downstreamAuthority": "existing complete:false snapshot remains authoritative until fresh verification passes",
+    "freshnessBound": "not-accepted-by-coordinator",
+    "liveEvidence": "not-yet-accepted",
+    "sideEffectsAuthorized": false
+  },
+  "catalogCoverage": {
+    "duplicateProviderModelIdentities": [],
+    "mode": "full Pi models-store catalog projection",
+    "openrouterMissingRequiredIdentities": [
+      "typesafe/jev-1.13"
+    ],
+    "openrouterObservedRequiredIdentities": [
+      "anthropic/claude-fable-5.1",
+      "anthropic/claude-haiku-4.5",
+      "anthropic/claude-opus-5",
+      "anthropic/claude-sonnet-5",
+      "google/gemini-3.1-flash-lite",
+      "google/gemini-3.1-pro-preview",
+      "google/gemini-3.8-flash",
+      "meta/muse-spark-1.3",
+      "nvidia/nemotron-3.5-lightning",
+      "openai/gpt-5.6-luna",
+      "openai/gpt-5.6-sol",
+      "openai/gpt-5.6-terra",
+      "openai/gpt-6-astra",
+      "x-ai/grok-4.6",
+      "z-ai/glm-5.3"
+    ],
+    "openrouterRequiredIdentities": [
+      "anthropic/claude-fable-5.1",
+      "anthropic/claude-haiku-4.5",
+      "anthropic/claude-opus-5",
+      "anthropic/claude-sonnet-5",
+      "google/gemini-3.1-flash-lite",
+      "google/gemini-3.1-pro-preview",
+      "google/gemini-3.8-flash",
+      "meta/muse-spark-1.3",
+      "nvidia/nemotron-3.5-lightning",
+      "openai/gpt-5.6-luna",
+      "openai/gpt-5.6-sol",
+      "openai/gpt-5.6-terra",
+      "openai/gpt-6-astra",
+      "typesafe/jev-1.13",
+      "x-ai/grok-4.6",
+      "z-ai/glm-5.3"
+    ],
+    "separateOpenCodeExportRequired": false
+  },
+  "generatedAtUtc": "2026-09-20T17:01:26.485Z",
+  "manifestVersion": 1,
+  "projections": [
+    {
+      "acquisitionTimeUtc": "2026-09-20T17:01:26.402Z",
+      "byteFormat": {
+        "bom": false,
+        "byteLength": 443195,
+        "encoding": "UTF-8",
+        "lineEndings": "LF"
+      },
+      "exactSourceBinding": {
+        "disclosure": "coordinator-only when needed; contains no credential material",
+        "kind": "host-owner-retained-local-binding",
+        "retainedByOwner": true,
+        "value": "pi-agent/models-store.json"
+      },
+      "explicitOmissions": [
+        "name",
+        "lastModified",
+        "etag",
+        "headers",
+        "compat",
+        "cacheRead cost",
+        "cacheWrite cost",
+        "all non-allowlisted fields"
+      ],
+      "extractionMethod": {
+        "exclusionBeforeBoundary": true,
+        "implementation": "tools/rcm-p0-export.mjs",
+        "name": "host-owner allowlist projection",
+        "version": "rcm-p0-host-owner-export-v1"
+      },
+      "fieldCoverage": {
+        "included": [
+          "id",
+          "provider",
+          "baseUrl",
+          "api",
+          "input",
+          "reasoning",
+          "contextWindow",
+          "maxTokens",
+          "cost.input",
+          "cost.output",
+          "thinkingLevelMap"
+        ],
+        "inventory": "fieldCounts are counts of safe allowlisted fields present across each provider's model records",
+        "modelRecords": 608,
+        "providerRecords": 13
+      },
+      "file": "catalog-projection.json",
+      "owner": "host-owner",
+      "safeLocator": "pi-agent/models-store.json",
+      "sha256": "b0c2dc8cf1412773b4ed4f17fcba10634a997f3b2b2b960d6dca200bdbb171fe",
+      "sourceCheckedAt": {},
+      "sourceRole": "H02",
+      "sourceStability": {
+        "after": {
+          "byteLength": 465793,
+          "lastWriteTimeUtc": "2026-09-20T14:25:18.753Z"
+        },
+        "before": {
+          "byteLength": 465793,
+          "lastWriteTimeUtc": "2026-09-20T14:25:18.753Z"
+        },
+        "evidence": "pre-read and post-read size/mtime match; source bytes were not hashed",
+        "stable": true
+      }
+    },
+    {
+      "acquisitionTimeUtc": "2026-09-20T17:01:26.406Z",
+      "byteFormat": {
+        "bom": false,
+        "byteLength": 568,
+        "encoding": "UTF-8",
+        "lineEndings": "LF"
+      },
+      "exactSourceBinding": {
+        "disclosure": "coordinator-only when needed; contains no credential material",
+        "kind": "host-owner-retained-local-binding",
+        "retainedByOwner": true,
+        "value": "pi-agent/settings.json"
+      },
+      "explicitOmissions": [
+        "headers",
+        "apiKey values",
+        "credential references",
+        "auth-file data",
+        "private endpoints",
+        "URL userinfo/query/fragment",
+        "packages",
+        "unrelated UI settings",
+        "PII"
+      ],
+      "extractionMethod": {
+        "exclusionBeforeBoundary": true,
+        "implementation": "tools/rcm-p0-export.mjs",
+        "name": "host-owner allowlist projection",
+        "version": "rcm-p0-host-owner-export-v1"
+      },
+      "fieldCoverage": {
+        "included": [
+          "defaultProvider",
+          "defaultModel",
+          "enabledModels",
+          "defaultThinkingLevel",
+          "provider keys",
+          "public baseUrl values"
+        ],
+        "providerCount": 2
+      },
+      "file": "settings-projection.json",
+      "owner": "host-owner",
+      "safeLocator": "pi-agent/settings.json",
+      "sha256": "1024154d7245a52fb3cb82b3c8105a2249d5406daee03498f99cbed8ed137d1e",
+      "sourceCheckedAt": {},
+      "sourceRole": "H03",
+      "sourceStability": {
+        "after": {
+          "byteLength": 786,
+          "lastWriteTimeUtc": "2026-09-20T14:36:02.955Z"
+        },
+        "before": {
+          "byteLength": 786,
+          "lastWriteTimeUtc": "2026-09-20T14:36:02.955Z"
+        },
+        "evidence": "pre-read and post-read size/mtime match; source bytes were not hashed",
+        "stable": true
+      }
+    }
+  ],
+  "purpose": "RCM-P0 host-owner sanitized export",
+  "sourceBoundary": {
+    "credentialValuesExported": false,
+    "hashedBytes": "sanitized projection bytes only",
+    "note": "No credentials, headers, auth-file data, environment dumps, private endpoints, URL userinfo/query/fragment, arbitrary compat payloads, PII, or raw mixed-document bytes were exported or hashed.",
+    "rawMixedDocumentBytesExported": false,
+    "rawSourceBytesHashed": false,
+    "secretUrlsExported": false
+  }
+}

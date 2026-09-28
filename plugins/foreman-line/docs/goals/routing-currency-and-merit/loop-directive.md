@@ -22,11 +22,14 @@
 Gate 2, builder rework, deterministic closure, two fresh post-rework adversarial
 reviews, and the bounded human Gate 3 merge are complete. RCM-P0 is accepted only
 as an incomplete evidence handoff; its spec is in `docs/specs/done/` and its four
-evidence files are merged. RCM-P1 remains held because the live-source boundary is
-unresolved and the queue is re-gated on accepted RCM-P0 evidence. The selected
-recovery path is the host-owner sanitized export defined in
-`host-owner-export-request.md`. The bounded Gate 3 grant is explicitly extended to
+evidence files are merged. The bounded Gate 3 grant is explicitly extended to
 refreshes of these same four evidence artifacts under the completed P0 spec only.
+
+**Updated 2026-09-22:** `RCM-P1-released`. Clinton Morgan accepted the P0 evidence
+as design input only, set a 24-hour freshness bound, ruled that endpoint mismatches
+refuse without aliasing, and re-granted Gate 2 for RCM-P1. The full ruling is in
+the charter's "RCM-P0 evidence-boundary ruling" section. RCM-P1 is next in the
+queue. RCM-P2 onward still need a new exact Gate 2 grant.
 
 ## Standing authorizations and limits
 
@@ -120,6 +123,31 @@ claim.
 
 ## Current iteration
 
+**2026-09-22, loop stopped at Gate 3:** RCM-P1 is built and its verification
+chain is green. The parcel sits on branch `codex/rcm-p1-builder` at `7faa46a`,
+with 399 of 399 tests passing. The spec is
+`docs/specs/done/RCM-P1-models-store-eligibility-projector.md`, with amendments
+A1–A3. Four fresh reviews and three rework rounds are recorded in
+`rcm-p1-review-triage.md`. The final review returned APPROVE WITH NITS with no
+blocker. Nothing has been merged, pushed, or opened as a pull request.
+
+The following are human decisions:
+
+1. Gate 3: whether to merge RCM-P1.
+2. Whether the charter's HAWF/INDEX ownership sentence blocks that merge. The
+   coordinator let building and review proceed because P1 is an unwired library
+   that creates no routing or ownership authority.
+3. The integration route: a direct merge or a pull request.
+
+After Gate 3, Stage F moves the spec to `docs/specs/done/`, cleans up the P1
+worktrees and branches if authorized, and appends lessons. RCM-P2 onward needs a
+new exact Gate 2 grant. Open disposition: RCM-P5 shaping must consider a
+per-string length cap (review finding S1).
+
+**2026-09-22, earlier:** RCM-P1 was released under the evidence-boundary ruling
+and Gate 2 re-grant recorded in the charter. The history below is kept as the
+record of how P1 was held.
+
 Gate 2 is satisfied for RCM-P0 and RCM-P1. The bounded Gate 3 extension was used only
 for the same four RCM-P0 evidence artifacts: the host-owner export refresh was merged
 as `37d9ecb` after two fresh independent reviews and coordinator hash/closure checks.
@@ -139,3 +167,38 @@ authorization creates no alpha eligibility exception and authorizes no further c
 provider spend, Gate 1 reopening, host correction, policy or Pi mutation, HAWF action,
 Helmholtz handoff, or downstream consumption. A future alpha-routing proposal must
 return through a separately named Gate 1 eligibility annex and its own evidence chain.
+
+## Scoped prerequisite delegation and P1 closure — 2026-09-26
+
+The user explicitly authorized HRO coordinator task 01a0ddb6-5fed-7d82-b2f0-075315440dc1 to coordinate and approve necessary RCM/PMC prerequisites, subject to independent review. This overrides historical P1 gate holds below for this bounded work; it does not transfer unrelated RCM or Jev queues. The former named RCM owner was not active during the collision audit. PR51 merged as 700beba5e6387a9471ecea7a8757b226930ba925 after fresh independent integration approval, 399 tests/typecheck/lint on Node24.19.0, and green CI. P1 is done. The HRO coordinator owns the next scoped adapter/source prerequisite parcels; their concrete reviewed specs control dispatch. Actual runtime/goal acceptance remains open.
+
+## RCM-P1A Stage F closure — 2026-09-26
+
+PR56 merged as e6daf7e8cd3bc7b7ae61f9646465f8cea60de2c9 after both independent
+final reviews approved 4201ac4edf8069efa0857d9841341d62b2429648. Independent
+combined integration passed 498 routing tests, typecheck, lint and spec validation;
+the public barrel preserved the 75-export union. Complete remote twenty-package
+CI passed at final PR head e23a9251b0365aeaf68302f36bb259a4a59a9ed3. The spec is
+moved to done; original reviewed branches remain retained without destructive
+cleanup. The wrapper confers no authority on caller-declared source evidence.
+
+PMC-P1b now owns the next shared-file integration. The isolated RCM producer
+may build concurrently but lands after the accepted projection. Live routing,
+provider configuration and paid inference have not been activated.
+
+## RCM-P1B Stage F closure — 2026-09-26
+
+PR58 merged as 326e958fd536093f76ebcc9c6d3032bcc2f7e736 at17:12:34Z,
+with final head ea4027a1c61cecd7a8d327f75a14f0c9feeec871. Producer source
+d8dda8f had two independent approvals and combined owner verification at653
+routing tests. Full CI exposed the provenance DATA audit integration gap; its
+exact AST/value/location/cardinality repair received two final independent
+approvals, including three optional-chain negative controls. Both complete
+remote CI runs and all ancillary checks passed at the exact merged head.
+
+The active spec is moved to done and current adapter-design reference updated.
+The six-model canonical artifact remains4359 bytes with digest
+5901c16ed192870d53952375392710b514f37b18a5451da6c4a5966aa7e916bb.
+Incomplete identities remain explicit refusals. This closes only the bounded
+producer prerequisite; it does not establish live eligibility, authentication,
+activation, quality, provider spend or full RCM/HRO completion.

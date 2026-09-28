@@ -1,0 +1,8 @@
+{
+  "model": "typesafe/jev-1.13-20260917",
+  "response_id": "p4-malformed-001",
+  "server_timestamp_utc": "2026-09-21T12:00:02.000Z",
+  "answers": {},
+  "usage": { "input_tokens": 1, "output_tokens": 1, "total_tokens": 2 },
+  "cost": { "amount": 0.000001, "currency": "USD" }
+}

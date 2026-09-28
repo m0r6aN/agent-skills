@@ -232,6 +232,8 @@ known review observations; they are not silently reclassified as resolved.
 
 ## Follow-up disposition before JEV-P1
 
+CoordinatorTargetSha: 2fe8b456b397e2f8f0731f51788a0c5b7b795b4a
+
 The coordinator retains the nine-review observations as an explicit P0 risk
 register. They must be closed by a bounded same-file P0 rework or accepted by
 an explicit human disposition before JEV-P1 implementation is dispatched; the
@@ -239,3 +241,300 @@ P0 Gate 3 acceptance does not itself authorize that rework or authorize JEV-P1.
 The shaped JEV-P1 spec is therefore `status: draft` and is not dispatchable.
 The next human decision is an exact Gate 2 grant for JEV-P1 after the P0
 observation disposition is recorded.
+
+## Tenth review disposition
+
+Two fresh independent reviews of `e907663be491c4d5765b5b8279116a2633c81b4b`
+returned **REQUEST CHANGES / Gate 3 not ready**. The bounded Gate 2 rework
+continues on the same three JEV-P0 artifacts; no merge or Gate 3 acceptance is
+authorized for this rework yet.
+
+| Finding | Disposition |
+|---|---|
+| Complete-fixture equality does not bind a manifest-entry schema version. | Fix in next same-file rework; add the exact manifest-entry schema-version field and equality. |
+| Manifest custody remains wrapper/provenance self-consistency without an independent coordinator trust anchor. | Fix in next same-file rework; define the external coordinator-controlled manifest receipt/resolution contract and fail closed when it is absent or mismatched. |
+| Receipt parsing accepts the first matching line and permits ambiguous newline/duplicate declarations. | Fix in next same-file rework; require one unambiguous closed receipt declaration and reject duplicates or malformed line structure. |
+| The verification table records receipt/target evidence as absent even though the coordinator can supply it. | Fix in next same-file rework; record the exact supplied receipt path, target SHA, and successful execution result without deriving the target from `HEAD`. |
+| Custody path/ref literals do not cover the planned JEV-P1 fixture paths. | Fix in next same-file rework; add the finite approved JEV-P1 fixture paths/ref to the contract without opening arbitrary paths. |
+| Missing live cost/currency can map to either hold or refusal. | Fix in next same-file rework; preserve deterministic `hold` for missing cost/currency and reserve refusal for malformed/unauthorized conditions. |
+| Invalid replay custody cannot be represented by the fixture class/status matrix. | Fix in next same-file rework; route untrusted/malformed custody to generic `evidence:R18/R19` refusal/hold records and reserve `fixture:*` for validated custody. |
+| Retention anchors can be future-dated. | Fix in next same-file rework; bind anchors to the trusted capture/recording clock and reject future anchors. |
+
+The exact three-file scope, clean worktree, `M` statuses, whitespace checks, and
+boundary compliance passed. The review findings are reproduced and accepted as
+rework items; Gate 3 remains closed until a fresh commit receives two passing
+independent reviews.
+
+## Coordinator proof for fresh rework
+
+The coordinator supplied receipt
+`D:\Repos\jev-p0-triage-receipt-round3.txt` with
+`target_sha=9380955cc6b16c4a4a9533113e02eb16429d4989`. Against base
+`369207585812dcdfcd237d5241b83c61accbad5b`, the proof opened the strict UTF-8
+receipt, matched the target, asserted `HEAD`, enumerated the unfiltered diff,
+confirmed exactly the three allowed paths with `M` statuses, and passed
+whitespace/native exit checks. No independent review or Gate 3 approval is
+implied by this coordinator proof.
+
+## Eleventh review disposition
+
+Two fresh independent reviews of `9380955cc6b16c4a4a9533113e02eb16429d4989`
+returned **REQUEST CHANGES / Gate 3 not ready**. The findings are reproduced
+and accepted for another same-three-file rework; the bounded Gate 2 grant does
+not authorize merge or Gate 3 acceptance while they remain open.
+
+| Finding | Disposition |
+|---|---|
+| Budget acknowledgement freshness was lost when the next rework branched from the coordinator branch rather than the prior rework commit. | Restore deterministic run-start, acknowledgement-age/expiry, trusted-clock, lease, and transmission-order rules on top of the full prior rework chain. |
+| R12 and R15 can still be emitted as either hold or refusal. | Define a closed reason-code/status partition with deterministic mappings and update the field matrices/refusal table consistently. |
+| The coordinator proof passes externally but the execution table still records receipt, target, head, scope, whitespace, and status as pending. | Record the supplied proof result and exact reviewed SHA in the three-file verification record without self-approval. |
+| Complete replay equality omits wrapper requested identity versus response requested identity and top-level source metadata versus provenance. | Add the missing equalities and fail-closed mismatch rule. |
+| The documented verification working directory is stale and not reproducible for the current candidate. | Parameterize or correct the repository-root instruction in the same verification artifact. |
+
+Scope and external-boundary compliance passed for `9380955`; no network,
+credential, spend, host/Pi, parent, HAWF, Helmholtz, or downstream action
+occurred.
+
+## Coordinator proof for round-3 rework
+
+The coordinator supplied receipt
+`D:\Repos\jev-p0-triage-receipt-round4.txt` with
+`target_sha=2fe8b456b397e2f8f0731f51788a0c5b7b795b4a`. Using repository root
+`C:\Repos\foreman-line-jev-p0-rework4` and base
+`9380955cc6b16c4a4a9533113e02eb16429d4989`, the proof opened the strict UTF-8
+receipt, matched the target, asserted `HEAD`, enumerated exactly the three
+allowed paths, confirmed `M` statuses, and passed whitespace/native checks.
+No independent review or Gate 3 approval is implied by this coordinator proof.
+
+## Twelfth review disposition
+
+Two fresh independent reviews of `2fe8b456b397e2f8f0731f51788a0c5b7b795b4a`
+returned **REQUEST CHANGES / Gate 3 not ready**. The coordinator proof passed,
+but the following deterministic contract and record gaps require another
+same-three-file rework under the existing bounded Gate 2 grant:
+
+| Finding | Disposition |
+|---|---|
+| R09 and R12 both cover a present response-ID conflict. | Make the conditions mutually exclusive: R09 owns served-model/identity conflict; R12 owns missing provider-complete metadata only. |
+| R14/R15/R16 overlap on budget acknowledgement reuse, lease contention, and retry/concurrency. | Define one explicit precedence and mutually exclusive condition/status mapping for each code. |
+| Freshness clock samples lack complete grammar and monotonic ordering. | Add exact timestamp grammar and require `run_started_at_utc <= acknowledged_at_utc <= transmission_started_at_utc <= socket_opened_at_utc`. |
+| R20 matrix emits `evidence:R18`. | Align the matrix and partition rule so the emitted reason code is deterministic and consistent. |
+| The current verification table still records the latest proof as pending. | Record the exact coordinator receipt, target, head, scope, whitespace, and status results for the reviewed implementation head; keep builder review counts at `0/2`. |
+
+Scope and external-boundary compliance passed for `2fe8b456`; no network,
+credential, spend, host/Pi, parent, HAWF, Helmholtz, or downstream action
+occurred.
+
+## Thirteenth review disposition
+
+Two fresh independent reviews of `c71bdbfa0f9597eb44d0c3a01aa853f1f33989a8`
+returned **REQUEST CHANGES / Gate 3 not ready**. The coordinator proof passed,
+but the following findings require another same-three-file rework under the
+existing bounded Gate 2 grant:
+
+| Finding | Disposition |
+|---|---|
+| The documented scope proof still hardcodes the prior base `9380955...` instead of the actual rework base `2fe8b456...`. | Parameterize and record the current round base as `c71bdbf`'s parent `2fe8b456...`; do not scope proof from an older base. |
+| R14/R15/R16 still overlap because losing claimants, contested claims, concurrent calls, and retry states are described by inconsistent predicates. | Define disjoint observable lease states and one total precedence; remove circular “not an R16” guards and contradictory generic claimant language. |
+| Timestamp rules are repeated inconsistently: three-way vs four-way ordering and parseable-vs-exact grammar. | Declare one exact millisecond-`Z` grammar and repeat the same four-field ordering and freshness rule everywhere. |
+| R09 appears in both refusal-only and explicit-split partitions; R09/R10 malformed-identity ownership lacks precedence. | Make the partition closed and exclusive; assign malformed shape/schema to one code and present valid-but-conflicting identity to the other, consistently. |
+| Verification retains stale round labels. | Correct the round references while preserving the prior-candidate proof scope and `0/2` review count. |
+
+Scope and external-boundary compliance passed for `c71bdbfa`; no network,
+credential, spend, host/Pi, parent, HAWF, Helmholtz, or downstream action
+occurred.
+
+## Fourteenth review disposition
+
+Two fresh independent reviews of `18becc881b5ebd663aa62b994aa20e5d0338131a`
+returned **REQUEST CHANGES / Gate 3 not ready**. The coordinator proof passed,
+but the following bounded contract/evidence gaps require another same-three-file
+rework:
+
+| Finding | Disposition |
+|---|---|
+| Lease vocabulary is incomplete: `claimed` is not mapped to the `in-flight`/`consumed`/`terminal` decision states, and `lease_id` is not bound to the claimed/consumed record. | Define canonical lease states and transitions, and bind live evidence plus budget acknowledgement to the exact lease record/`lease_id`. |
+| Operational timestamps have no schema owner because only `acknowledged_at_utc` appears in the closed budget acknowledgement and the other fields are absent from the live field set. | Declare ownership explicitly: either add all four to the closed live record (with the exact grammar/order) or state they are ephemeral and never evidence; keep one consistent rule. |
+| Status/reason field schemas allow broad `R01`–`R25` ranges despite the closed partition. | Make valid status/reason pairs authoritative in the field sets; reserve `R20` exclusively for generic `evidence:R20`. |
+| Generic R10 schema wording can still capture missing provider metadata owned by R12. | Explicitly exempt missing `model`, `response_id`, and `server_timestamp_utc` from generic R10 and retain R12 ownership. |
+| Verification prose overstates a two-commit proof and omits some explicit prior-candidate proof rows. | Correct the proof description and record receipt-open, target-match, unfiltered-scope, whitespace, status, and native results explicitly. |
+| `live-observation` permits refused/hold records without provider observations. | Clarify the evidence-class model so only complete records are live observations, or use a distinct attempted-call class with closed fields. |
+| Semantic tables are currently manual prose rather than executable checks. | Label them as manual review requirements unless a deterministic dependency-free checker can be embedded within the same verification artifact. |
+
+Scope and external-boundary compliance passed for `18becc88`; no network,
+credential, spend, host/Pi, parent, HAWF, Helmholtz, or downstream action
+occurred.
+
+## Fifteenth review disposition
+
+Two fresh independent reviews of `eb88b65426c5e37893ac0591be83eef8c91da123`
+returned **REQUEST CHANGES / Gate 3 not ready**. The coordinator proof passed,
+but the following findings require another same-three-file rework under the
+existing bounded Gate 2 grant:
+
+| Finding | Disposition |
+|---|---|
+| The current verification procedure names `c71bdbf` as its base, but the audited commit's actual direct parent is `18becc88`; round metadata is consequently stale. | Use `18becc881b5ebd663aa62b994aa20e5d0338131a` as the current proof base and retain `c71bdbf` only as historical prior-candidate evidence. |
+| The evidence-boundary pre-transmission recheck omits `lease_id`. | Recheck `lease_id` together with run, capability, schema, request digest, and the exact durable lease record before consume/socket open. |
+| Top-level live `acknowledged_at_utc` and nested `budget_ack.acknowledged_at_utc` lack an explicit equality. | Require exact equality or remove the duplicate; freshness must have one authoritative value. |
+| Complete-only fixture schemas coexist with stale prose for non-complete fixture provenance and R21. | Remove impossible non-complete fixture branches and align R21/provenance text to generic evidence records. |
+| Claim/consume evidence is required but has no closed schema. | Define claim/consume as internal durable lease records with explicit fields/equalities, or document their closed representation without adding a new external evidence class. |
+
+Scope and external-boundary compliance passed for `eb88b654`; no network,
+credential, spend, host/Pi, parent, HAWF, Helmholtz, or downstream action
+occurred.
+
+## Sixteenth review disposition
+
+The fresh review pair for `dbc2db5f5dbae7b3df142a22230d69ed6584e5c6` was mixed:
+one **PASS**, one **REQUEST CHANGES / Gate 3 not ready**. The coordinator proof
+passed, but the following findings require another same-three-file rework:
+
+| Finding | Disposition |
+|---|---|
+| Internal lease `run_id`/`request_digest` grammar is broader than the evidence grammar, and claim/consume transition timestamps are not explicitly linked to live samples or declared internal-only. | Use the same strict generated-ID/digest grammars in the internal record; bind `claimed_at_utc` to `run_started_at_utc` and `consumed_at_utc` to `transmission_started_at_utc`, with terminal timestamp explicitly internal-only if not emitted. |
+| R19 custody hold overlaps R22 finite-allowlist refusal; R18 provenance-schema refusal overlaps R23 out-of-schema refusal. | Define validation stages and precedence: pre-custody finite allowlist/schema violations map to R22/R23; only allowlisted, schema-valid inputs reaching custody resolution can map to R19/R18. |
+| R12 matrix still says “class-prefixed” despite generic `evidence:R12` field sets. | Replace the stale serialization phrase with the exact generic code. |
+| Canonical provenance permits live/review source kinds and `authenticated_response_id: none`, although only complete sanitized fixtures embed it. | Narrow the stored fixture provenance schema to `source_kind: sanitized-fixture` and a non-`none` provider response ID, or explicitly separate non-fixture internal provenance from the complete fixture object. |
+
+Scope and external-boundary compliance passed for `dbc2db5f`; no network,
+credential, spend, host/Pi, parent, HAWF, Helmholtz, or downstream action
+occurred.
+
+## Seventeenth review disposition
+
+Two fresh independent reviews of cumulative head
+`cf79819848c129581b13ff1289920f4cace2beca` returned **REQUEST CHANGES / Gate 3
+not ready**. The cumulative coordinator proof passed, but the following
+traceability and predicate gaps require another same-three-file rework:
+
+| Finding | Disposition |
+|---|---|
+| Verification calls parcel base `eb88...` the direct parent even though the cumulative head has an intervening chain, and retains fifteenth-review labels. | Distinguish the declared cumulative parcel proof base `eb88...` from the immediate prior candidate `d439...`; update current review ordinal/round labels without changing the intended full-scope proof. |
+| R23 refers to undefined logs/reports. | Restrict R23 to the closed evidence wrapper/retained record schemas defined in this parcel, or define those surfaces explicitly; no unbounded log/report schema. |
+| R17, R20, and R21 can describe the same digest/identity failure. | Add a closed post-custody precedence and narrow predicates: R17 request/response JCS digest procedure only; R20 custody-resolved committed-byte/manifest mismatch only; R21 post-custody identity/provenance equality only. Remove identity-unbound/digest overlap. |
+
+Scope and external-boundary compliance passed for `cf798198`; no network,
+credential, spend, host/Pi, parent, HAWF, Helmholtz, or downstream action
+occurred.
+
+## Eighteenth review disposition
+
+Two fresh independent reviews of `a83930eb174cc7afedcf3cd06c6d6bf63ab68b8a`
+returned **REQUEST CHANGES / Gate 3 not ready**. The coordinator proof passed,
+but the following same-three-file fixes remain:
+
+| Finding | Disposition |
+|---|---|
+| R22/R23 can both match combined value/structure/unsafe failures. | Define a first-failure validation order: structural closed-wrapper/retained-record violations are R23; only after structure passes do recognized-field vocabulary/allowlist/generated-ID/numeric/minimization violations become R22. State that the first failing stage owns the record. |
+| R19 custody-tuple difference overlaps R20 resolved manifest/bytes mismatch. | Restrict R19 to custody resolution unavailable/unverified/unapproved before a resolved tuple exists; assign any mismatch after successful resolution exclusively to R20. |
+| R21 names only a subset of field-for-field replay equalities. | Enumerate the complete post-custody semantic equality set in R21, excluding only R17 digest procedure and R20 custody-byte/tuple mismatches. |
+| Round-5 historical proof is still called “immediately prior,” and cumulative base wording remains inconsistent. | Label c71 proof historical, cf798 the immediate prior candidate, and eb88 the cumulative parcel proof base; update current round metadata consistently. |
+
+Scope and external-boundary compliance passed for `a83930eb`; no network,
+credential, spend, host/Pi, parent, HAWF, Helmholtz, or downstream action
+occurred.
+
+## Nineteenth review disposition
+
+Two fresh independent reviews of `dc9d6a76772097be07832a2fe2b2653fb81fdf87`
+returned **REQUEST CHANGES / Gate 3 not ready**. The coordinator proof passed,
+but the following same-three-file fixes remain:
+
+| Finding | Disposition |
+|---|---|
+| R17 still includes missing/malformed digest conditions owned by R23/R22. | Restrict R17 to present, validly shaped request/response digest inputs whose canonicalization/computation/reproducibility fails. |
+| R19 still includes unapproved custody language that can overlap R22 allowlist failure. | Restrict R19 to unresolved coordinator custody after structural/value validation and allowlist success; invalid ref/path remains R22. |
+| R21 remains open-ended and missing/one-sided/sentinel values can enter it. | Route missing/invalid values to R23/R22 and replace “every other” wording with a finite path-level equality table for valid post-custody fields. |
+| Nested `manifest_entry` lacks an explicit closed recursive field set. | Declare exactly its listed fields and reject nested extras as R23. |
+| Cumulative proof does not assert ancestry. | Add `git merge-base --is-ancestor $base $head` before scope comparison and describe the proof as a single cumulative base-to-head range. |
+| Two prior boundary statements were lost. | Restore the no-credential/raw-header prohibition for logs/review reports and the rule that replay fixtures do not prove fresh live origin absent provenance. |
+
+Scope and external-boundary compliance passed for `dc9d6a76`; no network,
+credential, spend, host/Pi, parent, HAWF, Helmholtz, or downstream action
+occurred.
+
+## Twentieth review disposition
+
+Two fresh independent reviews of `d18d08ba12e5b06d08a6c4ccf11875d0bc77cfda`
+returned **REQUEST CHANGES / Gate 3 not ready**. The cumulative coordinator
+proof passed, but the following same-three-file fixes remain:
+
+| Finding | Disposition |
+|---|---|
+| The finite R21 path set is inconsistent with the closed replay schema: it includes absent `fixture.capability`/`fixture.endpoint` and omits required `fixture.provenance.manifest_id`; `captured_at_utc` and nested request/response equality ownership are ambiguous. | Reconcile the finite path set with the closed schema and equality chains. Include only present, valid paths; explicitly own `fixture.provenance.manifest_id`, nested request/response fields, and `fixture.provenance.captured_at_utc` with a stated comparison rule. Keep missing/one-sided/empty/sentinel values in R23/R22. |
+| Verification scope comparisons use case-insensitive PowerShell sorting/comparison, so case-variant paths could pass the claimed exact three-file/M-status proof. | Use ordinal/case-sensitive path and status comparisons for the exact scope proof, and retain the three-file and all-`M` assertions. |
+
+Scope and external-boundary compliance passed for `d18d08ba`; no network,
+credential, spend, host/Pi, parent, HAWF, Helmholtz, or downstream action
+occurred.
+
+## Twenty-first review disposition
+
+Two fresh independent reviews of `60f9d72c4191167082fd96db8bf3b6eacc6e5bac`
+returned **REQUEST CHANGES / Gate 3 not ready**. The cumulative coordinator
+proof passed, but the following same-three-file fixes remain:
+
+| Finding | Disposition |
+|---|---|
+| Verification metadata still identifies round 12/rework21, `dc9d6a76`, and the nineteenth-review closure instead of candidate `60f9d72c`, branch `codex/jev-p0-rework22`, immediate prior `d18d08ba`, and the current review ordinal. | Update all current-round metadata, proof narrative, and review labels consistently while retaining earlier candidates only as historical evidence. |
+| The finite R21 blocks omit valid nested request/response paths from the closed schema, including request state/questions and response answers, distributions, and served-identity fields. | Enumerate the complete valid nested schema path set and equality chains consistently in every duplicated R21 block across all three artifacts; retain missing/one-sided/empty/sentinel/invalid routing to R23/R22. |
+
+Scope and external-boundary compliance passed for `60f9d72`; no network,
+credential, spend, host/Pi, parent, HAWF, Helmholtz, or downstream action
+occurred.
+
+## Twenty-second review disposition
+
+Two fresh independent reviews of `95e41e589771f4620547eb51b723f0be5a31a118`
+returned **REQUEST CHANGES / Gate 3 not ready**. The cumulative coordinator
+proof passed, but one same-three-file consistency fix remains:
+
+| Finding | Disposition |
+|---|---|
+| The contract's R21 equality block requires `fixture.request.capability == fixture.response.capability`, but the duplicated R21 equality blocks in the evidence-boundary and verification artifacts omit that chain despite listing both paths. | Add the capability equality chain to every duplicated R21 block and verify the blocks remain identical in semantic ownership. |
+
+Scope and external-boundary compliance passed for `95e41e5`; no network,
+credential, spend, host/Pi, parent, HAWF, Helmholtz, or downstream action
+occurred.
+
+## Twenty-third review disposition
+
+Two fresh independent reviews of `3814ade05abc940bf4c4dabc6dccb271720fd8fe`
+returned **REQUEST CHANGES / Gate 3 not ready**. The cumulative coordinator
+proof passed and the R21 blocks were consistent, but one metadata correction
+remains:
+
+| Finding | Disposition |
+|---|---|
+| Round-13 verification metadata labels `60f9d72c` as the immediate prior candidate and lists an outdated intervening chain; the current candidate follows `95e41e589`, while `eb88b654` remains the cumulative base. | Set `95e41e589771f4620547eb51b723f0be5a31a118` as the immediate prior, list `60f9d72c` as an intervening candidate, and keep historical `c71bdbfa` distinct. |
+
+Scope and external-boundary compliance passed for `3814ade`; no network,
+credential, spend, host/Pi, parent, HAWF, Helmholtz, or downstream action
+occurred.
+
+## Twenty-fourth review disposition
+
+Two fresh independent reviews of `981bb6d05d89926a2ce558ae8a66a7ddc73235c0`
+returned **PASS / Gate 3 decision-ready**. The cumulative coordinator proof
+passed, and both reviewers confirmed the round-13 metadata, complete shared
+126-path R21 schema, capability/identity/answer/digest equality chains,
+first-failure boundaries, safety controls, and ancestry-first ordinal scope
+proof.
+
+This is a readiness record only. It does not grant Gate 3, merge the candidate,
+push the candidate branch, authorize live calls, or expand the bounded parcel.
+
+Scope and external-boundary compliance passed for `981bb6d`; no network,
+credential, spend, host/Pi, parent, HAWF, Helmholtz, or downstream action
+occurred.
+
+## Gate 3 closure
+
+The developer granted Gate 3 for the bounded JEV-P0 handoff after confirming
+there were no open PRs. The reviewed head `981bb6d05d89926a2ce558ae8a66a7ddc73235c0`
+was merged into `codex/refresh-actions-and-packages` as merge commit
+`cf6c5536c7f7e4d0b6d92dd7ea570f44d49d961e`. This closure covers only the same
+three JEV-P0 artifacts and does not authorize JEV-P1, live provider calls,
+credential use, spend, host/Pi correction, HAWF/Helmholtz action, or general
+Gate 3 beyond this bounded handoff.

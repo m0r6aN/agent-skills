@@ -1,6 +1,6 @@
 # Routing Currency and Merit — Jev Alpha Decisions
 
-**Status:** RATIFIED — Gate 1 complete; bounded JEV-P0 Gate 3 accepted after merge on 2026-09-21
+**Status:** RATIFIED — Gate 1 complete; JEV-P0, JEV-P1, and JEV-P2 Gate 3 accepted after merge; Gate 2 granted for JEV-P2–P5 on 2026-09-21
 **Prepared:** 2026-09-21
 **Parent context:** `routing-currency-and-merit`
 **Coordinator:** Foreman Line coordinator session
@@ -82,10 +82,11 @@ were not changed.
 
 - **Gate 1:** granted for the original J1–J10 and the plan-review replacement
   decisions recorded below. Later parcel authority remains ungranted.
-- **Gate 2:** granted only for the exact parcel `JEV-P0` by the record below.
-  JEV-P1–JEV-P5 remain ungranted and require a later exact parcel-set grant.
+- **Gate 2:** granted for the exact JEV-P2–P5 parcel set recorded below, in
+  strict dependency order; no later parcel dispatches before the predecessor
+  is accepted at Gate 3.
 - **Gate 3:** accepted only for the bounded JEV-P0 handoff at merged commit
-  `ef921b65ee59c1c6aaef230383c51450dfc4de42`; it does not grant JEV-P1–P5,
+  `cf6c5536c7f7e4d0b6d92dd7ea570f44d49d961e`; it does not grant JEV-P1–P5,
   live Jev execution, spend, host/Pi action, parent mutation, HAWF, Helmholtz,
   or general Gate 3.
 
@@ -128,11 +129,101 @@ host/Pi or parent-goal change, and no HAWF, Helmholtz, or downstream action.
 
 ## Gate 3 record
 
-**ACCEPTED 2026-09-21 after merge and local refresh:** Pull request [#38](https://github.com/m0r6aN/agent-skills/pull/38)
-merged at `ef921b65ee59c1c6aaef230383c51450dfc4de42`, and the local coordinator
-branch was refreshed to that same commit. This accepts the bounded JEV-P0
-handoff only. The independent-review observations remain recorded in the P0
-triage; they are not reclassified as resolved by this acceptance.
+**ACCEPTED 2026-09-21 after merge and local refresh:** The reviewed JEV-P0
+head `981bb6d05d89926a2ce558ae8a66a7ddc73235c0` merged as
+`cf6c5536c7f7e4d0b6d92dd7ea570f44d49d961e`; the local coordinator branch was
+then refreshed to `1d4a857e7aa128fd6557dc160e9b9f4da3295843`. This accepts the
+bounded JEV-P0 handoff only. The independent-review observations remain
+recorded in the P0 triage; they are not reclassified as resolved by this
+acceptance.
+
+## JEV-P1 Gate 2 record
+
+**GRANTED 2026-09-21 by Clinton Morgan:** “Gate 2 grant for JEV-P1 confirmed.
+Proceed with blanket authority to execute any non-destructive actions.” This
+authorizes exactly JEV-P1: the pure, offline typed validator, canonical JCS
+digest implementation, deterministic sanitized-fixture replay, fixtures, and
+tests named by the JEV-P1 spec. It authorizes no network, credentials, live
+provider call, spend, runtime adapter, consumer wiring, general routing,
+parent-surface mutation, host/Pi action, HAWF, Helmholtz, or downstream action.
+Non-destructive authority does not expand the JEV-P1 allowed-file list or
+replace a later exact Gate 3 grant.
+
+**P1 amendment A1 approved 2026-09-21 by Clinton Morgan:** The P1 replay API
+is `replayFixture(fixture, manifestReceipt)`. The receipt is supplied as a
+separate closed value and validated offline; the sanitized fixture schema and
+all JEV-P0 artifacts remain unchanged.
+
+## JEV-P1 Gate 3 record
+
+**ACCEPTED 2026-09-21 by Clinton Morgan:** “Explicit approval is granted for
+all remaining steps.” Following merge of PR #41 and local coordinator refresh,
+the bounded JEV-P1 handoff is accepted at merge commit
+`bd9707a1f7ae7052204c5b06fc75977677216232`. This closes JEV-P1 only: the pure
+offline validator, canonical digest implementation, deterministic fixture
+replay, independent manifest-receipt binding, fixtures, and tests. It does not
+grant JEV-P2–P5, live provider execution, spend, credentials, host/Pi action,
+parent-surface mutation, HAWF, Helmholtz, downstream action, or general
+routing.
+
+Closure evidence: PR #41 merged from `codex/jev-p1-validator`; the refreshed
+coordinator branch is `codex/refresh-actions-and-packages` at the same merge
+commit; `npm test` passed with 8 tests; no unrelated dirty workspace files
+were changed.
+
+## JEV-P2–P5 Gate 2 record
+
+**GRANTED 2026-09-21 by Clinton Morgan:** “JEV-P2–P5 gate granted.” This
+authorizes the exact remaining parcel set in strict dependency order: JEV-P2
+secret-safe bounded runtime adapter and redacted receipt capture; JEV-P3 named
+recommendation-only consumer contract; JEV-P4 environment and provider-boundary
+scenarios; and JEV-P5 release closure and non-change proof. Each parcel still
+requires its own spec, deterministic verification, required review, and human
+Gate 3 closure before the next parcel is dispatched.
+
+This grant does not authorize general routing, parent RCM/D13 or D10 mutation,
+Pi/host changes, HAWF, Helmholtz, downstream effects, standing credentials, or
+unbounded spend. Any P2 live call remains limited to the ratified J10 bound:
+one call per authorized run, zero retries, concurrency one, 30-second timeout,
+64-KiB request limit, and aggregate cap $0.01 USD per run.
+
+**P2 amendment A1 recorded 2026-09-21 by the coordinator:** The P2 public
+runtime API must be exported from the existing JEV package entrypoint. The P2
+allowed-file set therefore includes an export-only change to
+`plugins/foreman-line/jev-decisions/src/index.ts`; no P1 behavior or export is
+changed.
+
+## JEV-P2 merge record
+
+**MERGED 2026-09-22 UTC:** PR #42 (`JEV-P2: add bounded secret-safe Jev
+runtime adapter`) merged into `codex/refresh-actions-and-packages` at commit
+`34fc2f54cb39b22faed576fc3460cba1d3631745`. The local integration branch was
+refreshed to that commit. Post-merge verification passed with 19 tests and the
+configured syntax checks. Two independent architecture reviews and the
+independent security review all returned PASS before merge.
+
+**ACCEPTED 2026-09-22 by Clinton Morgan:** “explicit JEV-P2 Gate 3 acceptance
+granter”. This accepts the bounded JEV-P2 handoff at the merged commit above;
+it does not expand authority to JEV-P4/P5, parent or shared routing surfaces,
+host/Pi, HAWF, Helmholtz, or general routing.
+
+JEV-P3 is now the next dispatchable parcel under the already-granted strict-
+sequence Gate 2 authorization. JEV-P4 and JEV-P5 remain blocked until their
+predecessors receive their own Gate 3 acceptance.
+
+## JEV-P3 dispatch record
+
+**DISPATCHED 2026-09-22:** The bounded P3 builder completed Step 0 in dedicated
+worktree `C:\Repos\foreman-line-jev-p3` on branch `codex/jev-p3-consumer`.
+PR #44 is open against `codex/refresh-actions-and-packages` at branch HEAD
+`6313489`. The implementation emits the exact six-key
+`support-triage-advisory/v1` object from a canonical validated P1 response;
+27 package tests pass, the configured checks pass, and both independent
+architecture/risk reviews returned PASS.
+
+P3 remains pending merge, local refresh, and human Gate 3 acceptance. No P4/P5
+dispatch, live call, spend, routing, host/Pi, parent, HAWF, Helmholtz, or
+downstream action is authorized by this record.
 
 ## Plan-review Gate 1 reopening
 

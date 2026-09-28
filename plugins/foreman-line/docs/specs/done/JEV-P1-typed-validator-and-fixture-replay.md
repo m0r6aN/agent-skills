@@ -1,7 +1,7 @@
 ---
 ticket: JEV-P1
 title: Jev typed validator and deterministic fixture replay
-status: draft
+status: done
 owner: clinton.morgan
 created: 2026-09-21
 updated: 2026-09-21
@@ -10,7 +10,7 @@ superseded_by: null
 risk: standard
 surfaces:
   - plugins/foreman-line/jev-decisions/
-  - plugins/foreman-line/docs/specs/active/JEV-P1-typed-validator-and-fixture-replay.md
+  - plugins/foreman-line/docs/specs/done/JEV-P1-typed-validator-and-fixture-replay.md
   - plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/
 routing_class: implementation/standard
 permission_profile: builder-standard
@@ -31,9 +31,19 @@ logical request/response envelopes and the sanitized replay evidence classes
 defined by the merged JEV-P0 contract, returning closed refusal results rather
 than normalizing or guessing malformed data.
 
-This is a shaped work order only. It is not dispatchable until the coordinator
-closes or obtains an explicit human disposition for the preserved JEV-P0 review
-observations and a later exact Gate 2 grant names `JEV-P1`.
+This parcel is dispatchable under the exact JEV-P1 Gate 2 grant recorded in the
+JEV alpha charter. The merged JEV-P0 contract and evidence boundary are the
+authoritative inputs; no unresolved P0 review observation blocks this parcel.
+
+### Ratified P1 amendment A1
+
+The coordinator identified that complete replay requires an independent
+coordinator manifest receipt, while the original single-argument replay API
+provided no receipt input. Clinton Morgan approved the recommended amendment:
+`replayFixture(fixture, manifestReceipt)`. The fixture schema remains unchanged;
+the second argument is a separately supplied closed receipt value validated
+offline against the P0 manifest-receipt schema. This amendment changes only the
+P1 implementation contract and does not alter JEV-P0.
 
 ## Constraints
 
@@ -78,7 +88,8 @@ observations and a later exact Gate 2 grant names `JEV-P1`.
 - [ ] **AC5 — Fixture replay:** `replayFixture` validates complete,
   refused, and hold sanitized fixtures, including exact field sets, status and
   reason partitions, provenance custody, complete-fixture response-ID equality,
-  request/response digest equality, retention timestamps, and manifest binding.
+  request/response digest equality, retention timestamps, and manifest binding
+  against the separately supplied independent coordinator manifest receipt.
 - [ ] **AC6 — Fail closed:** Every invalid fixture class has a stable P0 reason
   code; rejected input is not serialized into the result, logged, echoed, or
   used to synthesize missing provider metadata.
@@ -151,7 +162,10 @@ validateResponse(
   value: unknown,
 ): ValidationResult<ValidatedResponse>;
 canonicalDigest(value: CanonicalDigestInput): string;
-replayFixture(value: unknown): ReplayResult;
+replayFixture(
+  fixture: unknown,
+  manifestReceipt: unknown,
+): ReplayResult;
 ```
 
 The exact field names, literal values, closed sets, identity equalities,
@@ -167,7 +181,8 @@ provider payloads/raw diagnostics.
   missing, extra, reordered, duplicate, malformed, and split-brain answers.
 - Exact JCS request and response vectors from P0.
 - Complete, refused, and hold fixture acceptance/rejection with each required
-  custody, provenance, digest, status, reason, and retention invariant.
+  custody, provenance, digest, status, reason, and retention invariant,
+  including valid, missing, malformed, and mismatched manifest receipts.
 - Mutation tests for response ID, served identity, digest, provenance,
   manifest entry, unknown field, reason partition, and timestamp failures.
 - Isolation test proving no network, environment, filesystem, timer, or external
@@ -227,15 +242,17 @@ are forbidden.
 
 ## Session Handoff
 
-- Starting commit: to be recorded at Gate 2 dispatch
-- Ending commit: to be recorded by builder
-- Files changed: only Allowed Files
-- Commands run: to be recorded by builder
-- Tests passed: to be recorded by coordinator from builder evidence
-- Tests failed: to be recorded
-- Decisions needed: any contract gap becomes a coordinator amendment
-- Blockers: P0 review-observation disposition and exact Gate 2 grant
-- Next safe action: coordinator requests human Gate 2 for JEV-P1 after P0 disposition
+- Starting commit: `6283e292d7dad50d00466073e816988fdfa5856d`
+- Ending commit: `bd9707a1f7ae7052204c5b06fc75977677216232` (merge of PR #41)
+- Files changed: only the JEV-P1 Allowed Files
+- Commands run: `node -v`; `npm test`; `npm run typecheck`; `npm run lint`;
+  scope, whitespace, and credential scans
+- Tests passed: 8 tests; frozen JCS vectors and replay mutation matrix passed
+- Tests failed: native TypeScript compiler unavailable; Node native syntax
+  validation used by the package scripts passed
+- Decisions needed: none; Gate 3 accepted 2026-09-21
+- Blockers: none
+- Next safe action: request a separate exact Gate 2 grant before JEV-P2
 - Do not touch: all Forbidden Files and Effects
 
 ## Stop-and-Report Rule
