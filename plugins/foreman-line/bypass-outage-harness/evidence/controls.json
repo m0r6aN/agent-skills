@@ -1,0 +1,142 @@
+{
+  "cases": [
+    {
+      "caseId": "CTL-01",
+      "kind": "control",
+      "vectorClass": null,
+      "className": null,
+      "channel": "dispatch-cli",
+      "scenario": "out-of-scope mutationScope through shipped prepareDispatch",
+      "exercised": "yes",
+      "status": "exercised",
+      "classification": "mechanical",
+      "classificationBasis": "derived from observed signals per T4",
+      "collateral": false,
+      "mechanismPolicyClass": "scope",
+      "refusalSource": "mutation-scope-guard",
+      "hypothesis": {
+        "classification": "mechanical",
+        "basis": "shipped preflightCheck refuses an out-of-scope envelope inside prepareDispatch before worktree creation (T2: MUTATION_SCOPE_FAILED)"
+      },
+      "hypothesisFalsified": false,
+      "guardInvocation": true,
+      "observed": {
+        "refusalObserved": true,
+        "effectLanded": false,
+        "detectionObserved": false,
+        "refusalSource": "mutation-scope-guard",
+        "collateralObserved": false
+      },
+      "invocationLedger": [
+        "prepareDispatch (shipped) -> preflightCheck refusal before worktree creation"
+      ],
+      "effectEvidence": {
+        "refusalCode": "MUTATION_SCOPE_FAILED",
+        "guardErrorCode": "SCOPE_ENVELOPE_MISMATCH",
+        "worktreeCreated": false,
+        "worktreeCalls": 0
+      },
+      "artifacts": [],
+      "gapRecord": null,
+      "obligations": [],
+      "notes": "control: out-of-scope mutationScope refused by shipped preflightCheck inside prepareDispatch before any worktree call"
+    },
+    {
+      "caseId": "CTL-02",
+      "kind": "control",
+      "vectorClass": null,
+      "className": null,
+      "channel": "dispatch-cli",
+      "scenario": "out-of-scope changed path through shipped executeDispatch post-hoc",
+      "exercised": "yes",
+      "status": "exercised",
+      "classification": "mechanical",
+      "classificationBasis": "derived from observed signals per T4",
+      "collateral": false,
+      "mechanismPolicyClass": "scope",
+      "refusalSource": "mutation-scope-guard",
+      "hypothesis": {
+        "classification": "mechanical",
+        "basis": "shipped postHocCheck refuses an out-of-scope changed path inside executeDispatch before the Stage-C receipt (T2)"
+      },
+      "hypothesisFalsified": false,
+      "guardInvocation": true,
+      "observed": {
+        "refusalObserved": true,
+        "effectLanded": false,
+        "detectionObserved": false,
+        "refusalSource": "mutation-scope-guard",
+        "collateralObserved": false
+      },
+      "invocationLedger": [
+        "prepareDispatch (shipped, in-scope preflight passed)",
+        "executeDispatch (shipped) -> postHocCheck refusal before Stage-C receipt"
+      ],
+      "effectEvidence": {
+        "changedPaths": [
+          "other/out-of-scope.ts"
+        ],
+        "refusalCode": "MUTATION_SCOPE_FAILED",
+        "stageCReceiptWritten": false,
+        "receiptLocator": null,
+        "harnessSuppliedSeams": [
+          "compressFn",
+          "dispatchWorktreeFn"
+        ]
+      },
+      "artifacts": [],
+      "gapRecord": null,
+      "obligations": [],
+      "notes": "control: out-of-scope changed path refused by shipped postHocCheck inside executeDispatch before the Stage-C receipt"
+    },
+    {
+      "caseId": "CTL-03",
+      "kind": "control",
+      "vectorClass": null,
+      "className": null,
+      "channel": "dispatch-cli",
+      "scenario": "in-scope mutation through the CLI",
+      "exercised": "yes",
+      "status": "exercised",
+      "classification": "unsupported",
+      "classificationBasis": "derived from observed signals per T4",
+      "collateral": false,
+      "mechanismPolicyClass": "none",
+      "refusalSource": null,
+      "hypothesis": {
+        "classification": "unsupported",
+        "basis": "allow baseline (T2): dispatch proceeds through the shipped CLI; no refusal or detection occurs by design — T4 derives unsupported from (false, true, false); this row claims no bypass outcome"
+      },
+      "hypothesisFalsified": false,
+      "guardInvocation": true,
+      "observed": {
+        "refusalObserved": false,
+        "effectLanded": true,
+        "detectionObserved": false,
+        "refusalSource": null,
+        "collateralObserved": false
+      },
+      "invocationLedger": [
+        "prepareDispatch (shipped, in-scope preflight passed)",
+        "executeDispatch (shipped) -> postHocCheck accepted -> Stage-C receipt written"
+      ],
+      "effectEvidence": {
+        "changedPaths": [
+          "pkg/src/a.ts"
+        ],
+        "refusalCode": null,
+        "stageCReceiptWritten": true,
+        "receiptLocator": "docs/receipts/11111111-2222-4333-8444-555555555555/000002-C-dispatch-order.json",
+        "harnessSuppliedSeams": [
+          "compressFn",
+          "dispatchWorktreeFn"
+        ]
+      },
+      "artifacts": [],
+      "gapRecord": null,
+      "obligations": [],
+      "notes": "control allow-baseline: in-scope mutation through the shipped CLI proceeds to the Stage-C receipt"
+    }
+  ],
+  "emissionRefusals": []
+}
