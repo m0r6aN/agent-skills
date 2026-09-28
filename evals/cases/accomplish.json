@@ -1,0 +1,23 @@
+{
+  "skill_name": "accomplish",
+  "trigger": {
+    "positive": [
+      { "prompt": "Drive this uncertain multi-step outcome to done with guardrails and a clear stop condition", "top_k": 3 },
+      { "prompt": "Get this project working end to end and keep checking it until the finish line is verified", "top_k": 3 },
+      { "prompt": "Babysit the deployment and notify me when a meaningful change or failure needs action", "top_k": 3 }
+    ],
+    "negative": [
+      { "prompt": "Write a PRD with objectives and boundaries before coding", "owner": "spec-driven-development" },
+      { "prompt": "Review this pull request for security and correctness", "owner": "code-review-and-quality" }
+    ]
+  },
+  "evals": [
+    {
+      "id": 1,
+      "kind": "dialogue",
+      "prompt": "Turn this vague outcome into a verified plan with boundaries and a stop condition.",
+      "expected_output": "A clarified outcome, verification plan, boundaries, and explicit stop conditions.",
+      "expectations": ["The response identifies the finish line", "The response surfaces missing constraints before acting"]
+    }
+  ]
+}

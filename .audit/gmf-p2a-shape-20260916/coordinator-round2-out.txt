@@ -1,0 +1,8 @@
+TOP 3 BRUTAL FINDINGS
+1. The revised draft now makes the table and migration decisions explicit, so a future builder can be judged against a defined storage contract rather than filling in its own schema.
+2. The boundary remains load-bearing: P2A may create persistence shape but must not create effect-time transaction, terminal, settlement, or authority behavior; reviewers must reject any wiring that crosses that line.
+3. The separate-test-host initializer proof is technically demanding but bounded to the allowed test file; if it cannot be made deterministic with the existing test host, the builder must stop for an amendment rather than substitute a weaker in-process analogue.
+TOP 3 MOVES
+1. Verify every revised DDL relation and migration state against frozen P1 clauses, including foreign-key enforcement and the no-redundant-index rule.
+2. Verify the base-tree evidence catches staged, unstaged, and untracked scope escape while every effect-path anchor is byte-identical to base.
+3. Keep this spec draft-only and require two explicit PASS reviews before coordinator lint and a P2A-only Gate-2 request.
