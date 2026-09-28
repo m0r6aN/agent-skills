@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "w0-p01r-r3-f-final-review-verdicts-v1",
+  "recordedAtUtc": "2026-09-14 11:54:30 UTC",
+  "source": "Codex app read_thread final_answer items; text preserved verbatim without verdict harmonization",
+  "humanRatifiedR3ProposalSha256": "E2315C046D0F57BDA27BE4FACAE3E0899E04A3CC2A714437D24017BA9767A751",
+  "selectedAttempt": "attempt-01",
+  "scriptSnapshotSha256": "4DA71D15D87F2C95AEB4D6D848504600FE808B2314761BF8CBC9C9210469C9A8",
+  "harnessSha256": "CEB254B65589D76AEDE08410FB12C5683A75943B2CD716D2D3E37FC88E0265F0",
+  "successReceiptSha256": "66DEFD229AF12358DF0B2A0B3EDAE467C5F841718B69BDD086628DADCAD7655D",
+  "unicodeRoundTripReceiptSha256": "7908957317635B319AEF0BB2AE845F548F4359A331C1ACC2A925B9D243EB1558",
+  "fGate": "FAILED_MIXED_VERDICTS",
+  "fAcceptRecordAExists": false,
+  "fAcceptRecordBExists": false,
+  "sAuthorized": false,
+  "reviewers": [
+    {
+      "lane": "A",
+      "agentPath": "/root/r3_attempt01_f_review_a",
+      "taskSessionId": "01a09fac-a98b-7280-9834-00ada9e4e5f8",
+      "turnContextId": "01a09fac-ab5e-7fe0-bf6c-5d62d3acdfe3",
+      "finalMessageId": "msg_0453f74894a0c788016aa7db90e42c87d18c15606f6c4a3e83",
+      "actualModel": "gpt-5.6-sol",
+      "actualReasoningEffort": "xhigh",
+      "actualMetadataSource": "independently inspected local rollout session_meta and turn_context",
+      "verdict": "REJECT",
+      "finalTextVerbatim": "**F reviewer A verdict: REJECT** for the frozen R3 attempt-01. The synthetic evidence is internally consistent, but the prospective S copier can accept a stale payload hash.\n\nIn [script-snapshot.ps1](D:/Repos/keon-omega-preserve/provisional-patent-readiness-w0-p01r-r3-fixture-proof-20260913/attempt-01/script-snapshot.ps1:579), each payload file is hashed immediately after copying. Lines 593–595 later inventory and hash the payload again, but lines 596–609 use that inventory **only for counts**. Both aggregate hashes are calculated from the earlier manifest-entry values. If a payload file changes after its initial hash and before finalization, the current inventory detects its bytes but discards that hash; `acceptedCapture: true` and a valid sidecar can still result. S then trusts those track assertions at lines 783–787. Final payload paths and current hashes must be reconciled against source and manifest entries before acceptance. This is a static code finding; I did not run an additional probe.\n\nI directly read and SHA-256-hashed all 21 inherited contract files; the R3 packet is `E2315C046D0F57BDA27BE4FACAE3E0899E04A3CC2A714437D24017BA9767A751`. The execution clearance and root observation hash to `F4F330E2E42EBF96EAF3A787B73F254105BB81CAF316697E2FC711FC9EB72C4E` and `EB9EE8760E9CC45E2A1177B523D7AB1DCBB24F0DC213A337330EE0BD15C1DE5A`. My direct fixed-artifact hashes matched:\n\n| Artifact | SHA-256 |\n|---|---|\n| script snapshot | `4DA71D15D87F2C95AEB4D6D848504600FE808B2314761BF8CBC9C9210469C9A8` |\n| harness | `CEB254B65589D76AEDE08410FB12C5683A75943B2CD716D2D3E37FC88E0265F0` |\n| deletion matrix | `EFE9549D40D2A692C4549AFB3521D8E0A01E20A6604A0590AEF89028C0A34D15` |\n| command contract / preflight / command receipt | `99367BE2F4E25FBE8F7A8C37676C77F27ECA147780046617AC0E0A256E1449B9` / `6BF0AD42E1518313C398B3058D90F04E2ED134FFC65BA89F5903BBABC80E0E1F` / `728E29DE44E494C0E7BABE43B04529EFE7567F6DBE2DA9D7A4BAE1FF85CCBF4B` |\n| fixture layout / determinism | `CB54DD968C7E6E6F24EB9A8AD0C3E77853D53901F327082E6BCF1023213B1914` / `7915D7915DC455BC31B5EC4332397C89DD6E35F7CE0A32467D9847AF5D8C2BB7` |\n| Unicode receipt | `7908957317635B319AEF0BB2AE845F548F4359A331C1ACC2A925B9D243EB1558` |\n| success-a manifest / sidecar | `5EEDD567A5AD955B6BC154E8D74B6597A2942E1750EF68E55060349326A06530` / `FE4EF65C7525240520B7B02E75063B431031E1C3427EF289284C04354BEE60B9` |\n| success-b manifest / sidecar | `7FA06A91B040BACE597B682E91EB0E9A5725D878C6876BB3FD2CFE94318EDA3B` / `2122447AEFA492C198F3E74DACFDBC54903F4CAF1B343C26A68ED7894557DFF6` |\n| internal-link / path-escape stops | `A0125219A51099DDD99250F71212ECEB6E38FE116F21B8065097C40D8E04F625` / `4F264E7ED6CDC0A37BB381DE35E316E627A0B63899A858FE758A7BE7071EE841` |\n| success receipt | `66DEFD229AF12358DF0B2A0B3EDAE467C5F841718B69BDD086628DADCAD7655D` |\n\nThe actual helper AST text hashes match the matrix receipt; its six cases and quoted Unicode guard passed. Both persisted manifests have exactly two copied files, two ordinary directories, 12 exclusions, and one opaque external junction. Both sidecars and direct source/payload hashes match; `café plan.txt` reloads with code points `99,97,102,233,32,112,108,97,110,46,116,120,116`, once per capture and with no absent entry. The internal junction and path escape yield non-accepted stops. Normalized manifests match. Four child results record observed numeric exit code zero; all eight stdout/stderr files are empty and each directly hashes to `E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855`. I did not independently observe the outer tool result; the root reports exit code zero without a session.\n\nMy task identity is `/root/r3_attempt01_f_review_a`. Actual turn model/effort and final message ID are not exposed to me here; the owner must verify dispatch metadata independently. This REJECT does not authorize S, package work, or filing. No candidate, harness, matrix, or fixture was rerun; no protected source or source Git was read or changed."
+    },
+    {
+      "lane": "B",
+      "agentPath": "/root/r3_attempt01_f_review_b",
+      "taskSessionId": "01a09fad-2e45-77d1-86c7-727f021fc13e",
+      "turnContextId": "01a09fad-2f72-7073-a6bd-2763c38d0307",
+      "finalMessageId": "msg_053e8fab6e3e1cf3016aa7dbc09d6c87d1b3ea86eac069c2ca",
+      "actualModel": "gpt-5.6-sol",
+      "actualReasoningEffort": "xhigh",
+      "actualMetadataSource": "independently inspected local rollout session_meta and turn_context",
+      "verdict": "ACCEPT",
+      "finalTextVerbatim": "**ACCEPT — R3 attempt-01 F only.** I read and directly hashed all 21 inherited controls, the complete frozen snapshot and harness, all 16 fixed artifacts, and all eight child streams. The snapshot and harness match `4DA71D15…69C9A8` and `CEB254B6…265F0`; the matrix, Unicode receipt, and success outcome match their pinned hashes. The six AST-helper cases and quoted UTF-8-octal identity guard passed. Both captures independently verify two file hashes, two directories, 12 exclusions, one untraversed external junction, and the exact `café plan.txt` code points after persisted UTF-8 reload. Both stops are non-accepted; normalized manifests match. The four recorded children match the command contract and each has an observed numeric exit code of 0 with hash-matched empty streams. The owner separately supplied the completed outer result (`exit_code: 0`, no `session_id`); I did not directly observe that original tool result.\n\nStatic S review found the R2 persistence defect repaired: strict UTF-8 reload, field-and-exact-path reconciliation for track and combined manifests, physical-versus-Git deletion handling, no-follow boundaries, and digest-bound two-record F gating are present. I found no material latent defect in the reviewed snapshot. S still requires both new F ACCEPTs, independent metadata verification, and its separate Step 0 ACK. This verdict authorizes neither S nor filing.\n\nReviewer task: `/root/r3_attempt01_f_review_b`. My native model, effort, turn ID, and final message ID are not self-observable here; the owner must verify them independently."
+    }
+  ]
+}

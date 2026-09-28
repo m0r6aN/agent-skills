@@ -17,7 +17,6 @@ verifier_harness:
 
 adversarial_reviewer:
   '*': [code-review]
-  'contracts/*': [code-review, ai-council]
 
 coordinator:
   rework_first: [build-fix-loop]
