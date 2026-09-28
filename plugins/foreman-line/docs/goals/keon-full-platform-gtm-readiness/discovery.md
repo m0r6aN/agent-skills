@@ -3,6 +3,9 @@
 **Status:** Grounded Stage Zero record; not authorization to implement or act externally
 **Observed:** 2026-08-18
 **Coordinator:** Primary Codex session designated by Clint Morgan, subject to Gate 1
+**Operational ownership:** superseded — see the ownership block in
+[loop-directive.md](./loop-directive.md) §1, which is the live record. The line
+above is a pre-loop designation of intent, not a current ownership record.
 **Mode:** Multi-repository umbrella initiative
 
 ## Purpose
@@ -153,9 +156,21 @@ GTM and must be reused.
 
 This discovery snapshot originally preceded Gate 1 ratification. Clint Morgan
 ratified the associated charter on 2026-08-18. The mandatory fresh plan review
-then reopened Gate 1 only for the corrective Revision 1 amendment. The current
-gate state is recorded in `charter.md` and `goal-charter-amendment-r1.md`.
+then reopened Gate 1 only for the corrective Revision 1 amendment, which was
+ratified on 2026-08-18 and cleared by two fresh follow-up reviews. GTM-R2
+followed on 2026-09-19. The current gate state is recorded in `charter.md`,
+`goal-charter-amendment-r1.md`, and `goal-charter-amendment-r2.md`.
 
 Implementation, Linear mutation, submission, outreach, publication, legal
 acceptance, filing, payment, production deployment, and customer-data handling
-remain unauthorized while that amendment is open.
+**remain unauthorized unconditionally.** These holds are not contingent on any
+amendment being open: Gate 3 and every external action are withheld in their own
+right, and each requires explicit authority at its applicable milestone.
+
+> **Correction of record (GTM-R2 C-3).** This paragraph previously ended "remain
+> unauthorized while that amendment is open", which became stale once GTM-R1 was
+> ratified and Gate 1 closed — it implied the holds lapse with the amendment.
+> GTM-P0A deliberately shipped that wording byte-identical under coordinator
+> ruling F4, because `discovery.md` was outside that parcel's Allowed Files. The
+> repair is now authorized and applied. The holds themselves are preserved in
+> full; only the false precondition was removed.

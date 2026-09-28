@@ -1,0 +1,43 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "role",
+    "category"
+  ],
+  "properties": {
+    "role": {
+      "type": "string",
+      "enum": [
+        "judge",
+        "coordinator",
+        "integrator",
+        "builder",
+        "operator",
+        "scout",
+        "verifier",
+        "deepAnalyst",
+        "multimodal",
+        "documentExtractor",
+        "utilityFallback"
+      ]
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "build",
+        "verify",
+        "integrate",
+        "accept"
+      ]
+    },
+    "registryKey": {
+      "type": "string",
+      "minLength": 1
+    },
+    "modelFamily": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}
