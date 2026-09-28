@@ -3,7 +3,7 @@
  * rows GTW-01..12 and the AC6 residual statement check.
  */
 import assert from 'node:assert/strict'
-import { readFileSync, mkdtempSync, rmSync } from 'node:fs'
+import { mkdtempSync, readFileSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { test } from 'node:test'
@@ -14,8 +14,8 @@ import {
   insertGoal,
   insertLease,
   insertTransition,
-  openStorage,
   type OpenStorageConfig,
+  openStorage,
   type Storage,
   updateGoalRow,
 } from '@foreman-line/kernel-state'
@@ -253,7 +253,11 @@ test('AC6: supplied refs are bound into the recorded event (satisfaction derivab
       expiresAtMicros: T0 + 5_000_000,
       releasedAtMicros: null,
     })
-    const engine = createEngine({ storage, clock: fixedClock(T0), toolVersion: 'kernel-lease-test' })
+    const engine = createEngine({
+      storage,
+      clock: fixedClock(T0),
+      toolVersion: 'kernel-lease-test',
+    })
     const refs = [
       { evidenceKind: 'commit-ref', gitIdentity: 'HEAD', digest: `sha256:${'11'.repeat(32)}` },
       { evidenceKind: 'signature', gitIdentity: 'sig-abc', digest: `sha256:${'22'.repeat(32)}` },
@@ -295,7 +299,12 @@ test('AC6 residual statement is present and no genuineness claim exists in shipp
   assert.match(readme, /fabricated/i)
   assert.match(readme, /BY DESIGN/i)
   // The claim-honesty sweep: shipped text never claims refs are verified genuine.
-  const banned = ['verified genuine', 'genuineness verified', 'gate verified', 'gate verification passed']
+  const banned = [
+    'verified genuine',
+    'genuineness verified',
+    'gate verified',
+    'gate verification passed',
+  ]
   for (const phrase of banned) {
     assert.ok(!readme.toLowerCase().includes(phrase), `README must not claim: ${phrase}`)
   }
@@ -315,7 +324,11 @@ test('gate rejection does not write anything (a refusal is not an effect)', () =
       expiresAtMicros: T0 + 5_000_000,
       releasedAtMicros: null,
     })
-    const engine = createEngine({ storage, clock: fixedClock(T0), toolVersion: 'kernel-lease-test' })
+    const engine = createEngine({
+      storage,
+      clock: fixedClock(T0),
+      toolVersion: 'kernel-lease-test',
+    })
     assert.throws(() =>
       applyTransition(engine, {
         goalId: 'goal-1',

@@ -71,7 +71,11 @@ function requireRequestRecord(
   return record
 }
 
-function requestMembers(op: string, value: unknown, base: readonly string[]): Record<string, unknown> {
+function requestMembers(
+  op: string,
+  value: unknown,
+  base: readonly string[],
+): Record<string, unknown> {
   const members =
     value !== null && typeof value === 'object' && 'gateEvidenceRefs' in value
       ? [...base, 'gateEvidenceRefs']
@@ -249,7 +253,8 @@ export function decideTransition(
       checkCas(goal, expectedRevision)
       const transition = guardingStorage(() => getTransition(engine.storage, transitionId))
       if (transition === null) throw engineError('TRANSITION_ABSENT', { transitionId })
-      if (transition.goalId !== goalId) throw engineError('TRANSITION_NOT_PENDING', { transitionId })
+      if (transition.goalId !== goalId)
+        throw engineError('TRANSITION_NOT_PENDING', { transitionId })
       if (transition.decidedAtMicros !== null) {
         throw engineError('TRANSITION_ALREADY_DECIDED', { transitionId })
       }
@@ -310,7 +315,13 @@ export function decideTransition(
         engine.toolVersion,
         binding,
         revision,
-        { goalId, transitionId, fromStatus: goal.status, targetStatus, resultingRevision: revision },
+        {
+          goalId,
+          transitionId,
+          fromStatus: goal.status,
+          targetStatus,
+          resultingRevision: revision,
+        },
         applied ? 'transition.applied' : 'transition.rejected',
         payloadFields,
         now,
@@ -412,7 +423,13 @@ export function applyTransition(
         engine.toolVersion,
         binding,
         revision,
-        { goalId, transitionId, fromStatus: goal.status, targetStatus, resultingRevision: revision },
+        {
+          goalId,
+          transitionId,
+          fromStatus: goal.status,
+          targetStatus,
+          resultingRevision: revision,
+        },
         'transition.applied',
         payloadFields,
         now,

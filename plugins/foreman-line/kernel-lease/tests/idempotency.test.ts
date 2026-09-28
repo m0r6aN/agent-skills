@@ -3,7 +3,7 @@
  * replay-verbatim zero-delta assertions (risk (c); standing #32).
  */
 import assert from 'node:assert/strict'
-import { readFileSync, mkdtempSync, rmSync } from 'node:fs'
+import { mkdtempSync, readFileSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { test } from 'node:test'
@@ -15,8 +15,8 @@ import {
   insertIdempotencyKey,
   insertLease,
   insertTransition,
-  openStorage,
   type OpenStorageConfig,
+  openStorage,
   updateGoalRow,
 } from '@foreman-line/kernel-state'
 import {
@@ -105,7 +105,11 @@ function seedRow(storage: ReturnType<typeof openStorage>, row: FixtureRow): void
   }
 }
 
-function runOp(engine: ReturnType<typeof createEngine>, op: string, input: Record<string, unknown>): unknown {
+function runOp(
+  engine: ReturnType<typeof createEngine>,
+  op: string,
+  input: Record<string, unknown>,
+): unknown {
   switch (op) {
     case 'claimLease':
       return claimLease(engine, input as never)
@@ -136,7 +140,11 @@ for (const row of IDP.filter((candidate) => candidate.expectedCode !== undefined
     const storage = openStorage(configFor(root))
     try {
       seedRow(storage, row)
-      const engine = createEngine({ storage, clock: fixedClock(T0), toolVersion: 'kernel-lease-test' })
+      const engine = createEngine({
+        storage,
+        clock: fixedClock(T0),
+        toolVersion: 'kernel-lease-test',
+      })
       assert.throws(
         () => runOp(engine, row.op, row.input),
         (error: unknown) => {
@@ -173,7 +181,8 @@ function tableDeltas(
   const deltas: Record<string, number> = {}
   for (const name of names) {
     deltas[name] =
-      after.exportDocument.payload.tables[name].length - before.exportDocument.payload.tables[name].length
+      after.exportDocument.payload.tables[name].length -
+      before.exportDocument.payload.tables[name].length
   }
   return deltas
 }
@@ -184,7 +193,11 @@ for (const row of IDP.filter((candidate) => candidate.expectedOutcome === 'repla
     const storage = openStorage(configFor(root))
     try {
       seedRow(storage, row)
-      const engine = createEngine({ storage, clock: fixedClock(T0), toolVersion: 'kernel-lease-test' })
+      const engine = createEngine({
+        storage,
+        clock: fixedClock(T0),
+        toolVersion: 'kernel-lease-test',
+      })
       const first = runOp(engine, row.op, row.input) as {
         effect: unknown
         result: unknown
@@ -249,7 +262,11 @@ test('IDP precedence: same-key/different-payload conflicts even for an in-flight
   const storage = openStorage(configFor(root))
   try {
     seedRow(storage, row)
-    const engine = createEngine({ storage, clock: fixedClock(T0), toolVersion: 'kernel-lease-test' })
+    const engine = createEngine({
+      storage,
+      clock: fixedClock(T0),
+      toolVersion: 'kernel-lease-test',
+    })
     assert.throws(
       () => runOp(engine, row.op, row.input),
       (error: unknown) => {
@@ -279,7 +296,11 @@ test('a refused operation records no binding row (a refusal is not an effect)', 
   const storage = openStorage(configFor(root))
   try {
     insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'active', updatedAtMicros: T0 })
-    const engine = createEngine({ storage, clock: fixedClock(T0), toolVersion: 'kernel-lease-test' })
+    const engine = createEngine({
+      storage,
+      clock: fixedClock(T0),
+      toolVersion: 'kernel-lease-test',
+    })
     assert.throws(() =>
       claimLease(engine, {
         goalId: 'goal-1',

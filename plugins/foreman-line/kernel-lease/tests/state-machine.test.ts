@@ -4,7 +4,7 @@
  * legal-edge controls (T2 bound to one source: src/state-machine.ts).
  */
 import assert from 'node:assert/strict'
-import { readFileSync, mkdtempSync, rmSync } from 'node:fs'
+import { mkdtempSync, readFileSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { test } from 'node:test'
@@ -13,15 +13,15 @@ import {
   fixedClock,
   insertGoal,
   insertLease,
-  openStorage,
   type OpenStorageConfig,
+  openStorage,
 } from '@foreman-line/kernel-state'
 import {
   applyTransition,
   createEngine,
   EDGES,
-  EVIDENCE_KINDS,
   EngineError,
+  EVIDENCE_KINDS,
   GOAL_STATUSES,
   type GoalStatus,
 } from '../src/index.js'
@@ -143,10 +143,7 @@ test('AC1: the 25-edge product is complete and single-sourced in state-machine.t
 test('AC1: every illegal edge has exactly one X fixture row and every legal edge a control', () => {
   assert.equal(X_ROWS.length, 18)
   const illegalIds = EDGES.filter((edge) => edge.verdict === 'ILLEGAL').map((edge) => edge.edgeId)
-  assert.deepEqual(
-    X_ROWS.map((row) => row.id).sort(),
-    illegalIds.slice().sort(),
-  )
+  assert.deepEqual(X_ROWS.map((row) => row.id).sort(), illegalIds.slice().sort())
   assert.equal(CTL_ROWS.length, 7)
   assert.deepEqual(
     CTL_ROWS.map((row) => row.edgeId).sort(),

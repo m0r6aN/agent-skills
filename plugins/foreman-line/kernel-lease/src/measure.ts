@@ -29,12 +29,7 @@ import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import {
-  closeStorage,
-  insertGoal,
-  openStorage,
-  systemClock,
-} from '@foreman-line/kernel-state'
+import { closeStorage, insertGoal, openStorage, systemClock } from '@foreman-line/kernel-state'
 import { digestBytes } from './canonical.js'
 import { elapsedMicros, monotonicStartMicros } from './clock.js'
 import { EngineError, engineError } from './errors.js'

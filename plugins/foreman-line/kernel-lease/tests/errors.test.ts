@@ -15,8 +15,8 @@ import {
   insertIdempotencyKey,
   insertLease,
   insertTransition,
-  openStorage,
   type OpenStorageConfig,
+  openStorage,
   type Storage,
 } from '@foreman-line/kernel-state'
 import {
@@ -24,8 +24,8 @@ import {
   claimLease,
   createEngine,
   decideTransition,
-  ENGINE_ERROR_CODES,
   ENGINE_ERROR_CODE_COUNT,
+  ENGINE_ERROR_CODES,
   ENGINE_ERROR_DISPOSITIONS,
   ENGINE_ERROR_REGISTRY,
   EngineError,
@@ -126,10 +126,20 @@ test('one tested refusal per code (fault-injection matrix)', () => {
   const storage = openStorage(configFor(root))
   try {
     insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'active', updatedAtMicros: T0 })
-    insertGoal(storage, { goalId: 'goal-term', revision: 0, status: 'completed', updatedAtMicros: T0 })
+    insertGoal(storage, {
+      goalId: 'goal-term',
+      revision: 0,
+      status: 'completed',
+      updatedAtMicros: T0,
+    })
     // The A1a CHECK makes an invalid status unwritable; seeded valid and
     // poisoned at the driver seam below (GOAL_STATUS_UNKNOWN case).
-    insertGoal(storage, { goalId: 'goal-weird', revision: 0, status: 'active', updatedAtMicros: T0 })
+    insertGoal(storage, {
+      goalId: 'goal-weird',
+      revision: 0,
+      status: 'active',
+      updatedAtMicros: T0,
+    })
     insertLease(storage, {
       leaseId: 'lease-1',
       goalId: 'goal-1',
@@ -199,7 +209,11 @@ test('one tested refusal per code (fault-injection matrix)', () => {
       recordedAtMicros: T0 - 10,
       completedAtMicros: T0 - 10,
     })
-    const engine = createEngine({ storage, clock: fixedClock(T0), toolVersion: 'kernel-lease-test' })
+    const engine = createEngine({
+      storage,
+      clock: fixedClock(T0),
+      toolVersion: 'kernel-lease-test',
+    })
 
     // 1 LEASE_HELD
     expectCode(
@@ -514,7 +528,11 @@ test('safe diagnostics carry only declared shapes (ids/revision/field paths — 
       expiresAtMicros: T0 + 60_000_000,
       releasedAtMicros: null,
     })
-    const engine = createEngine({ storage, clock: fixedClock(T0), toolVersion: 'kernel-lease-test' })
+    const engine = createEngine({
+      storage,
+      clock: fixedClock(T0),
+      toolVersion: 'kernel-lease-test',
+    })
     const stale = expectCode(
       () =>
         applyTransition(engine, {

@@ -189,16 +189,19 @@ export class EngineError extends Error {
 
   constructor(code: EngineErrorCode, diagnostic: Record<string, string | number> = {}) {
     const allowed: readonly string[] = ENGINE_ERROR_REGISTRY[code].diagnosticMembers
-  const keys = Object.keys(diagnostic)
-  if (keys.length !== allowed.length || keys.some((key) => !allowed.includes(key))) {
-    throw new Error(`diagnostic shape mismatch for ${code}`)
-  }
+    const keys = Object.keys(diagnostic)
+    if (keys.length !== allowed.length || keys.some((key) => !allowed.includes(key))) {
+      throw new Error(`diagnostic shape mismatch for ${code}`)
+    }
     for (const member of allowed) {
       if (!(member in diagnostic)) throw new Error(`diagnostic member '${member}' missing`)
     }
     if (code === 'LEASE_NOT_ACTIVE') {
       const reason = diagnostic.reason
-      if (typeof reason !== 'string' || !(LEASE_NOT_ACTIVE_REASONS as readonly string[]).includes(reason)) {
+      if (
+        typeof reason !== 'string' ||
+        !(LEASE_NOT_ACTIVE_REASONS as readonly string[]).includes(reason)
+      ) {
         throw new Error(`'${String(reason)}' is not a closed lease-not-active reason`)
       }
     }

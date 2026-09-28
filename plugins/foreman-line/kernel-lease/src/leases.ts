@@ -23,16 +23,16 @@
  */
 import {
   type Clock,
+  type GoalRow,
   getGoal,
   getLease,
   getUnreleasedLease,
-  type GoalRow,
-  type LeaseRow,
   insertEvent,
   insertLease,
+  type LeaseRow,
   queryEvents,
-  setProjectionCursor,
   type Storage,
+  setProjectionCursor,
   updateGoalRow,
   updateLeaseRow,
   withTransaction,
@@ -44,6 +44,8 @@ import {
   digestBytes,
   eventPayloadDigest,
 } from './canonical.js'
+import { TrustedClock } from './clock.js'
+import { EngineError, engineError, guardingStorage, wrapStorageFailure } from './errors.js'
 import {
   buildEffectCore,
   type EffectResult,
@@ -53,15 +55,13 @@ import {
   type LeaseCasDescriptor,
   lookupBinding,
   type OperationName,
-  recordCompletedBinding,
   reconstructRecordedOutcome,
+  recordCompletedBinding,
   requireExactMembers,
   requireIdValue,
   requireSafeIntValue,
   validateBinding,
 } from './idempotency.js'
-import { TrustedClock } from './clock.js'
-import { EngineError, engineError, guardingStorage, wrapStorageFailure } from './errors.js'
 import {
   type EvidenceKind,
   type EvidenceKindNarrowing,
@@ -101,12 +101,14 @@ export function createEngine(options: CreateEngineOptions): Engine {
     throw engineError('ENGINE_ARGUMENT_INVALID', { fieldPath: 'createEngine' })
   }
   const toolVersion = options.toolVersion
+  const toolVersionBytes =
+    typeof toolVersion === 'string' ? new TextEncoder().encode(toolVersion) : null
   if (
-    typeof toolVersion !== 'string' ||
+    toolVersionBytes === null ||
     toolVersion.length === 0 ||
-    new TextEncoder().encode(toolVersion).length > 128 ||
-    // Bytes<128> ASCII (F05.11).
-    /^[\x00-\x7f]*$/.test(toolVersion) === false
+    toolVersionBytes.length > 128 ||
+    // Bytes<128> ASCII (F05.11): every UTF-8 byte below 0x80.
+    toolVersionBytes.some((byte) => byte > 0x7f)
   ) {
     throw engineError('ENGINE_ARGUMENT_INVALID', { fieldPath: 'toolVersion' })
   }
@@ -217,7 +219,8 @@ export function writeEvent(
   })
   const events = guardingStorage(() => queryEvents(storage, { goalId: payload.goalId as string }))
   const last = events[events.length - 1]
-  if (last === undefined) throw engineError('STORAGE_FAILURE', { storageCode: 'STORAGE_IO_FAILURE' })
+  if (last === undefined)
+    throw engineError('STORAGE_FAILURE', { storageCode: 'STORAGE_IO_FAILURE' })
   return { seq: last.eventSeq, effectDigest }
 }
 
@@ -260,7 +263,9 @@ export function runEffectful<T>(
   goalId: string,
   execute: (context: { now: number; binding: IdempotencyBinding }) => Executed<T>,
 ): EngineResult<T> {
-  const expectedRevision = requireSafeIntValue(request.expectedRevision, 'expectedRevision')
+  // Structural validation runs first even for pure replays (first-failure
+  // order); the operations re-derive their own typed copy from the request.
+  requireSafeIntValue(request.expectedRevision, 'expectedRevision')
   const binding = validateBinding(request.idempotencyKey, 'idempotencyKey')
 
   const wrap = (executed: Executed<T>, replay: boolean): EngineResult<T> => ({
@@ -312,7 +317,10 @@ export function runEffectful<T>(
             engine.toolVersion,
             goalId,
           )
-          return { executed: { effect: replayed.effect, result: replayed.result as T }, replay: true }
+          return {
+            executed: { effect: replayed.effect, result: replayed.result as T },
+            replay: true,
+          }
         }
         return { executed: execute({ now, binding }), replay: false }
       } catch (error) {
@@ -386,7 +394,11 @@ function requireDuration(value: unknown, fieldPath: string): number {
   return duration
 }
 
-function requireRequestRecord(value: unknown, members: readonly string[], op: string): Record<string, unknown> {
+function requireRequestRecord(
+  value: unknown,
+  members: readonly string[],
+  op: string,
+): Record<string, unknown> {
   if (value === null || typeof value !== 'object' || Array.isArray(value)) {
     throw engineError('ENGINE_ARGUMENT_INVALID', { fieldPath: op })
   }
@@ -400,7 +412,10 @@ function requireRequestRecord(value: unknown, members: readonly string[], op: st
  * the trusted reading — stamped `released_at_micros` under a guarded update),
  * or NOOP (same principal already holds an unexpired lease).
  */
-export function claimLease(engine: Engine, request: ClaimLeaseRequest): EngineResult<LeaseCasDescriptor> {
+export function claimLease(
+  engine: Engine,
+  request: ClaimLeaseRequest,
+): EngineResult<LeaseCasDescriptor> {
   const record = requireRequestRecord(
     request,
     ['goalId', 'leaseId', 'durationMicros', 'expectedRevision', 'idempotencyKey'],
@@ -454,7 +469,11 @@ export function claimLease(engine: Engine, request: ClaimLeaseRequest): EngineRe
             { revision: goal.revision },
             { revision, updatedAtMicros: now },
           )
-          if (changed !== 1) throw engineError('STATE_REVISION_STALE', { expectedRevision, actualRevision: goal.revision })
+          if (changed !== 1)
+            throw engineError('STATE_REVISION_STALE', {
+              expectedRevision,
+              actualRevision: goal.revision,
+            })
         })
         return commitEffectApplied<LeaseCasDescriptor>(
           engine.storage,
@@ -526,7 +545,11 @@ export function claimLease(engine: Engine, request: ClaimLeaseRequest): EngineRe
           { revision: goal.revision },
           { revision, updatedAtMicros: now },
         )
-        if (changed !== 1) throw engineError('STATE_REVISION_STALE', { expectedRevision, actualRevision: goal.revision })
+        if (changed !== 1)
+          throw engineError('STATE_REVISION_STALE', {
+            expectedRevision,
+            actualRevision: goal.revision,
+          })
       })
       return commitEffectApplied<LeaseCasDescriptor>(
         engine.storage,
@@ -590,7 +613,10 @@ function requireNamedLease(
 }
 
 /** `renewLease` (T4): extends the owner's unexpired lease. */
-export function renewLease(engine: Engine, request: RenewLeaseRequest): EngineResult<LeaseCasDescriptor> {
+export function renewLease(
+  engine: Engine,
+  request: RenewLeaseRequest,
+): EngineResult<LeaseCasDescriptor> {
   const record = requireRequestRecord(
     request,
     ['goalId', 'leaseId', 'durationMicros', 'expectedRevision', 'idempotencyKey'],
@@ -627,7 +653,10 @@ export function renewLease(engine: Engine, request: RenewLeaseRequest): EngineRe
           { revision, updatedAtMicros: now },
         )
         if (goalChanged !== 1) {
-          throw engineError('STATE_REVISION_STALE', { expectedRevision, actualRevision: goal.revision })
+          throw engineError('STATE_REVISION_STALE', {
+            expectedRevision,
+            actualRevision: goal.revision,
+          })
         }
       })
       return commitEffectApplied<LeaseCasDescriptor>(
@@ -695,7 +724,10 @@ export function releaseLease(
           { revision, updatedAtMicros: now },
         )
         if (goalChanged !== 1) {
-          throw engineError('STATE_REVISION_STALE', { expectedRevision, actualRevision: goal.revision })
+          throw engineError('STATE_REVISION_STALE', {
+            expectedRevision,
+            actualRevision: goal.revision,
+          })
         }
       })
       return commitEffectApplied<LeaseCasDescriptor>(
@@ -722,11 +754,15 @@ export function releaseLease(
  * FK-P12 — the goal's unreleased lease row projected into the F05.4 shape, or
  * null when no active lease exists. Reads take no binding and no CAS.
  */
-export function getLeaseCasDescriptor(engine: Engine, goalIdValue: unknown): LeaseCasDescriptor | null {
+export function getLeaseCasDescriptor(
+  engine: Engine,
+  goalIdValue: unknown,
+): LeaseCasDescriptor | null {
   const goalId = requireIdValue(goalIdValue, 'goalId')
-  const goal = readGoalChecked(engine.storage, goalId)
+  // Read-checks the goal first (GOAL_ABSENT / GOAL_STATUS_UNKNOWN defense).
+  readGoalChecked(engine.storage, goalId)
   const lease = guardingStorage(() => getUnreleasedLease(engine.storage, goalId))
   return lease === null ? null : descriptorFromLeaseRow(lease)
 }
 
-export type { EngineResult, EffectResult, IdempotencyBinding, LeaseCasDescriptor }
+export type { EffectResult, EngineResult, IdempotencyBinding, LeaseCasDescriptor }

@@ -20,8 +20,8 @@ import {
   fixedClock,
   insertGoal,
   insertLease,
-  openStorage,
   type OpenStorageConfig,
+  openStorage,
 } from '@foreman-line/kernel-state'
 
 const T0 = 1_700_000_000_000_000
@@ -458,8 +458,12 @@ test('CN-04 same-binding apply race: one applies, the peer replays the recorded 
         },
       },
     ])
-    const applied = run.outputs.filter((output) => output.outcome === 'result' && output.replay === false)
-    const replayed = run.outputs.filter((output) => output.outcome === 'result' && output.replay === true)
+    const applied = run.outputs.filter(
+      (output) => output.outcome === 'result' && output.replay === false,
+    )
+    const replayed = run.outputs.filter(
+      (output) => output.outcome === 'result' && output.replay === true,
+    )
     assert.equal(applied.length, 1, 'exactly one winner applies')
     assert.equal(replayed.length, 1, 'the peer replays')
     assert.equal(replayed[0]?.code, applied[0]?.code)

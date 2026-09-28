@@ -4,7 +4,7 @@
  */
 import assert from 'node:assert/strict'
 import { spawnSync } from 'node:child_process'
-import { readFileSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { test } from 'node:test'
@@ -13,8 +13,8 @@ import {
   fixedClock,
   insertGoal,
   insertLease,
-  openStorage,
   type OpenStorageConfig,
+  openStorage,
 } from '@foreman-line/kernel-state'
 import {
   claimLease,
@@ -44,7 +44,9 @@ interface ClockRow {
   expectedOutcome?: string
 }
 
-const parsedFixture: unknown = JSON.parse(readFileSync(join(FIXTURES, 'hostile', 'clock.json'), 'utf8'))
+const parsedFixture: unknown = JSON.parse(
+  readFileSync(join(FIXTURES, 'hostile', 'clock.json'), 'utf8'),
+)
 const fixtureTable = parsedFixture as { records: ClockRow[] }
 const CLK = fixtureTable.records
 

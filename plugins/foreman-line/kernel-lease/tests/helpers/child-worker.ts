@@ -16,23 +16,23 @@
 import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import {
+  type Clock,
   closeStorage,
   fixedClock,
   openStorage,
   systemClock,
-  type Clock,
 } from '@foreman-line/kernel-state'
 import {
   applyTransition,
   claimLease,
   createEngine,
   decideTransition,
+  type Engine,
   EngineError,
   getGoalState,
   releaseLease,
   renewLease,
   requestTransition,
-  type Engine,
 } from '../../src/index.js'
 
 const T0 = 1_700_000_000_000_000
@@ -348,7 +348,10 @@ function contentionMode(argv: string[]): void {
       } catch (error) {
         if (error instanceof EngineError) {
           outcomeCode = error.code
-          if (error.code === 'STORAGE_FAILURE' && error.diagnostic.storageCode === 'STORAGE_LOCK_TIMEOUT') {
+          if (
+            error.code === 'STORAGE_FAILURE' &&
+            error.diagnostic.storageCode === 'STORAGE_LOCK_TIMEOUT'
+          ) {
             busyTimeoutsObserved += 1
           }
         } else {

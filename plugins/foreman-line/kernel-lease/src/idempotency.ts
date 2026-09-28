@@ -41,7 +41,7 @@ import {
   queryEvents,
   type Storage,
 } from '@foreman-line/kernel-state'
-import { eventPayloadDigest, type Digest, isDigestLiteral } from './canonical.js'
+import { type Digest, isDigestLiteral } from './canonical.js'
 import { engineError, guardingStorage } from './errors.js'
 import { type GoalStatus, isGoalStatus, isReservedGateLiteral } from './state-machine.js'
 
@@ -221,7 +221,9 @@ export function validateGateRef(value: unknown, fieldPath: string): GitGateEvide
   const kind = record.evidenceKind
   if (
     typeof kind !== 'string' ||
-    !(['commit-ref', 'signature', 'status-check', 'merge-record'] as readonly string[]).includes(kind)
+    !(['commit-ref', 'signature', 'status-check', 'merge-record'] as readonly string[]).includes(
+      kind,
+    )
   ) {
     // Unknown evidenceKind is a structural failure (GTW-08).
     throw engineError('ENGINE_ARGUMENT_INVALID', { fieldPath: `${fieldPath}.evidenceKind` })
@@ -261,10 +263,7 @@ function hasUnpairedSurrogate(value: string): boolean {
  * or empty means "no refs supplied"; over-limit or any malformed member is a
  * structural refusal.
  */
-export function validateGateRefs(
-  value: unknown,
-  fieldPath: string,
-): GitGateEvidenceRef[] | null {
+export function validateGateRefs(value: unknown, fieldPath: string): GitGateEvidenceRef[] | null {
   if (value === undefined) return null
   if (!Array.isArray(value)) throw engineError('ENGINE_ARGUMENT_INVALID', { fieldPath })
   if (value.length > 64) throw engineError('ENGINE_ARGUMENT_INVALID', { fieldPath })

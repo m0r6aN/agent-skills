@@ -3,7 +3,7 @@
  * the failing-when-broken invariant probes (AC2/AC3, standing #32).
  */
 import assert from 'node:assert/strict'
-import { readFileSync, mkdtempSync, rmSync } from 'node:fs'
+import { mkdtempSync, readFileSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { test } from 'node:test'
@@ -13,8 +13,8 @@ import {
   fixedClock,
   insertGoal,
   insertLease,
-  openStorage,
   type OpenStorageConfig,
+  openStorage,
 } from '@foreman-line/kernel-state'
 import {
   applyTransition,
@@ -49,7 +49,9 @@ interface FixtureRow {
   expectedReasonCode?: string
 }
 
-const parsedFixture: unknown = JSON.parse(readFileSync(join(FIXTURES, 'hostile', 'leases.json'), 'utf8'))
+const parsedFixture: unknown = JSON.parse(
+  readFileSync(join(FIXTURES, 'hostile', 'leases.json'), 'utf8'),
+)
 const fixtureTable = parsedFixture as { records: FixtureRow[] }
 const LSE = fixtureTable.records
 
@@ -63,10 +65,7 @@ function configFor(root: string): OpenStorageConfig {
   }
 }
 
-function withSeeded(
-  row: FixtureRow,
-  fn: (engine: ReturnType<typeof createEngine>) => void,
-): void {
+function withSeeded(row: FixtureRow, fn: (engine: ReturnType<typeof createEngine>) => void): void {
   const root = mkdtempSync(join(tmpdir(), 'fk-p10-lse-'))
   const storage = openStorage(configFor(root))
   try {
@@ -96,7 +95,11 @@ function withSeeded(
   }
 }
 
-function runOp(engine: ReturnType<typeof createEngine>, op: string, input: Record<string, unknown>): unknown {
+function runOp(
+  engine: ReturnType<typeof createEngine>,
+  op: string,
+  input: Record<string, unknown>,
+): unknown {
   switch (op) {
     case 'claimLease':
       return claimLease(engine, input as never)
@@ -148,7 +151,11 @@ test('CTL-08 claim→renew→release cycle applies cleanly with one event per op
   const storage = openStorage(configFor(root))
   try {
     insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'active', updatedAtMicros: T0 })
-    const engine = createEngine({ storage, clock: fixedClock(T0), toolVersion: 'kernel-lease-test' })
+    const engine = createEngine({
+      storage,
+      clock: fixedClock(T0),
+      toolVersion: 'kernel-lease-test',
+    })
     const bind = (op: string) => ({
       principalRef: 'principal-a',
       operationId: op,
@@ -218,7 +225,11 @@ test('CTL-09 expired-lease takeover stamps the prior row and inserts the new lea
       expiresAtMicros: T0 - 1,
       releasedAtMicros: null,
     })
-    const engine = createEngine({ storage, clock: fixedClock(T0), toolVersion: 'kernel-lease-test' })
+    const engine = createEngine({
+      storage,
+      clock: fixedClock(T0),
+      toolVersion: 'kernel-lease-test',
+    })
     const taken = claimLease(engine, {
       goalId: 'goal-1',
       leaseId: 'lease-new',
@@ -256,7 +267,11 @@ test('CTL-10 same-principal re-claim is EFFECT_NOOP with null effectDigest and n
   const storage = openStorage(configFor(root))
   try {
     insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'active', updatedAtMicros: T0 })
-    const engine = createEngine({ storage, clock: fixedClock(T0), toolVersion: 'kernel-lease-test' })
+    const engine = createEngine({
+      storage,
+      clock: fixedClock(T0),
+      toolVersion: 'kernel-lease-test',
+    })
     const bind = (op: string) => ({
       principalRef: 'principal-a',
       operationId: op,
@@ -356,7 +371,11 @@ test('AC2 mutation probe: stale expectedRevision never silently writes (guard is
       expiresAtMicros: T0 + 5_000_000,
       releasedAtMicros: null,
     })
-    const engine = createEngine({ storage, clock: fixedClock(T0), toolVersion: 'kernel-lease-test' })
+    const engine = createEngine({
+      storage,
+      clock: fixedClock(T0),
+      toolVersion: 'kernel-lease-test',
+    })
     assert.throws(
       () =>
         renewLease(engine, {
@@ -399,7 +418,11 @@ test('precedence: structural input beats idempotency beats clock beats goal beat
   const storage = openStorage(configFor(root))
   try {
     insertGoal(storage, { goalId: 'goal-1', revision: 5, status: 'active', updatedAtMicros: T0 })
-    const engine = createEngine({ storage, clock: fixedClock(T0), toolVersion: 'kernel-lease-test' })
+    const engine = createEngine({
+      storage,
+      clock: fixedClock(T0),
+      toolVersion: 'kernel-lease-test',
+    })
     const goodBind = {
       principalRef: 'principal-a',
       operationId: 'op-prec-1',

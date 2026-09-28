@@ -3,7 +3,7 @@
  * check (AC9), and the L3 stop-report record.
  */
 import assert from 'node:assert/strict'
-import { readFileSync, mkdtempSync, rmSync } from 'node:fs'
+import { mkdtempSync, readFileSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { test } from 'node:test'
@@ -14,8 +14,8 @@ import {
   insertGoal,
   insertLease,
   insertTransition,
-  openStorage,
   type OpenStorageConfig,
+  openStorage,
   updateGoalRow,
 } from '@foreman-line/kernel-state'
 import {
@@ -23,8 +23,8 @@ import {
   claimLease,
   createEngine,
   decideTransition,
-  type EngineResult,
   EngineError,
+  type EngineResult,
   requestTransition,
 } from '../src/index.js'
 
@@ -114,7 +114,11 @@ function withSeeded(row: FixtureRow, fn: (engine: ReturnType<typeof createEngine
   }
 }
 
-function runOp(engine: ReturnType<typeof createEngine>, op: string, input: Record<string, unknown>): unknown {
+function runOp(
+  engine: ReturnType<typeof createEngine>,
+  op: string,
+  input: Record<string, unknown>,
+): unknown {
   switch (op) {
     case 'requestTransition':
       return requestTransition(engine, input as never)
@@ -204,7 +208,11 @@ function validateAgainst(node: SchemaNode, value: unknown, root: SchemaNode): st
     }
   }
   if (node.type === 'string' && typeof value !== 'string') failures.push('type string')
-  if (typeof value === 'string' && node.pattern !== undefined && !new RegExp(node.pattern).test(value)) {
+  if (
+    typeof value === 'string' &&
+    node.pattern !== undefined &&
+    !new RegExp(node.pattern).test(value)
+  ) {
     failures.push(`pattern ${node.pattern}`)
   }
   if (typeof value === 'string' && node.minLength !== undefined && value.length < node.minLength) {
@@ -238,7 +246,13 @@ function validateEffect(schemaText: string, effect: unknown): string[] {
     const record = effect as Record<string, unknown>
     const probe = validateAgainst({ ...condition, type: 'object' }, record, root)
     if (probe.length === 0) {
-      failures.push(...validateAgainst({ ...consequent, type: 'object', additionalProperties: true }, record, root))
+      failures.push(
+        ...validateAgainst(
+          { ...consequent, type: 'object', additionalProperties: true },
+          record,
+          root,
+        ),
+      )
     }
   }
   return failures
@@ -253,7 +267,11 @@ test('AC9: every emitted effect validates against schemas/effect-result.schema.j
   const storage = openStorage(configFor(root))
   try {
     insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'active', updatedAtMicros: T0 })
-    const engine = createEngine({ storage, clock: fixedClock(T0), toolVersion: 'kernel-lease-test' })
+    const engine = createEngine({
+      storage,
+      clock: fixedClock(T0),
+      toolVersion: 'kernel-lease-test',
+    })
     const bind = (op: string) => ({
       principalRef: 'principal-a',
       operationId: op,
@@ -313,7 +331,11 @@ test('L3 record: a transition toward awaiting-human carries the F05.8 stop-repor
       expiresAtMicros: T0 + 60_000_000,
       releasedAtMicros: null,
     })
-    const engine = createEngine({ storage, clock: fixedClock(T0), toolVersion: 'kernel-lease-test' })
+    const engine = createEngine({
+      storage,
+      clock: fixedClock(T0),
+      toolVersion: 'kernel-lease-test',
+    })
     requestTransition(engine, {
       goalId: 'goal-1',
       targetStatus: 'awaiting-human',
@@ -379,7 +401,11 @@ test('decide re-validates the edge from the CURRENT status at decide time (scena
     // The goal's pending pointer FKs the transitions table: set it only once
     // the transition row exists (an inline value at insertGoal violates the FK).
     updateGoalRow(storage, 'goal-1', { goalId: 'goal-1' }, { pendingTransitionId: 'tr-1' })
-    const engine = createEngine({ storage, clock: fixedClock(T0), toolVersion: 'kernel-lease-test' })
+    const engine = createEngine({
+      storage,
+      clock: fixedClock(T0),
+      toolVersion: 'kernel-lease-test',
+    })
     // active→completed (L4) was legal when requested; awaiting-human→completed
     // (X08) is illegal from the current status.
     assert.throws(
@@ -389,7 +415,11 @@ test('decide re-validates the edge from the CURRENT status at decide time (scena
           transitionId: 'tr-1',
           decision: 'apply',
           gateEvidenceRefs: [
-            { evidenceKind: 'commit-ref', gitIdentity: 'HEAD', digest: `sha256:${'11'.repeat(32)}` },
+            {
+              evidenceKind: 'commit-ref',
+              gitIdentity: 'HEAD',
+              digest: `sha256:${'11'.repeat(32)}`,
+            },
           ],
           expectedRevision: 2,
           idempotencyKey: {
@@ -450,7 +480,11 @@ test('decide reject records transition.rejected and leaves status unchanged', ()
     // The goal's pending pointer FKs the transitions table: set it only once
     // the transition row exists (an inline value at insertGoal violates the FK).
     updateGoalRow(storage, 'goal-1', { goalId: 'goal-1' }, { pendingTransitionId: 'tr-1' })
-    const engine = createEngine({ storage, clock: fixedClock(T0), toolVersion: 'kernel-lease-test' })
+    const engine = createEngine({
+      storage,
+      clock: fixedClock(T0),
+      toolVersion: 'kernel-lease-test',
+    })
     const result = decideTransition(engine, {
       goalId: 'goal-1',
       transitionId: 'tr-1',
