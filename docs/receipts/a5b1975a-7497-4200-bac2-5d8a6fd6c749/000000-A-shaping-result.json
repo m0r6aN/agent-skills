@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "1",
+  "kind": "stage",
+  "stage": "A",
+  "claimRef": null,
+  "correlation": {
+    "correlationId": "4f145582-9c9c-423c-92e9-9d4f5a88a71a",
+    "sessionId": "392ca0ac-717c-4fc4-a985-5bd3cbb6eadf",
+    "workflowId": "a5b1975a-7497-4200-bac2-5d8a6fd6c749",
+    "runId": "9ebde928-daeb-421f-ac6d-e732f70e5c73"
+  },
+  "sequence": 0,
+  "prevHash": null,
+  "timestamp": "2026-09-06T12:05:28.272Z",
+  "subjectKind": "ShapingResult",
+  "subject": {
+    "projectedResult": {
+      "parcelSpecRefs": [
+        "plugins/foreman-line/docs/specs/active/E6-R1-current-repository-identity-and-evidence-rerun.md"
+      ],
+      "epics": [
+        {
+          "key": "epic-e6-r1-current-repository-identity-and-evidence-rerun",
+          "title": "E6-R1 Current-repository identity and evidence rerun",
+          "stories": [
+            {
+              "key": "E6-R1-current-repository-identity-and-evidence-rerun",
+              "title": "Current-repository identity normalization and observable A-to-F evidence rerun"
+            }
+          ]
+        }
+      ]
+    },
+    "specSet": [
+      {
+        "ref": "plugins/foreman-line/docs/specs/active/E6-R1-current-repository-identity-and-evidence-rerun.md",
+        "contentHash": "6518081a7e5d2eacbb17a236acd368f3b595b3a033b2953f5f4c8ab749cc3408"
+      }
+    ],
+    "approvedHash": "7eb61b2c3bec196ec2dae81bae5a2459dc365a2addcf5609ea522fa3a24cad55"
+  },
+  "signature": null,
+  "hash": "c4a77c5e9e87d43d8a060a64f87e8cce46a644769ecaa9adc0938afa58ab9077"
+}
