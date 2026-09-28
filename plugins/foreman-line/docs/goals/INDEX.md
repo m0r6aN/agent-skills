@@ -13,7 +13,7 @@ Deleted records are recoverable in git history.
 
 | Goal | State | Entry | Current authority |
 |---|---|---|---|
-| [foreman-kernel](foreman-kernel/charter.md) | `fk_p9_merged_p17_closure_pending` | `/goal resume foreman-kernel` | **FK-P9 MERGED** (Gate-3 delegated RS-2.1; 149/149; `fk-p9-stage-f-closure-2026-09-28.md`). Earlier: FK-P2 + FK-P1 merged; R32 accepted (752/752). **FK-P17′ in final closure** (build `7b706dd5`, 71/71, both rework rounds proven; 3 of 4 closures verified — `FkP17Review1Matrix` pending). Next: FK-P10 (dep FK-P9 now merged) and FK-P17′ Stage F; FK-P3/FK-P2B remain window-gated (holding FK-P4–P8 transitively); FK-P18′ holds on the §14 U1 contract. Exit annex tracks all named gaps |
+| [foreman-kernel](foreman-kernel/charter.md) | `fk_p17_merged_wave3a_ready` | `/goal resume foreman-kernel` | **FK-P17′ MERGED** (Gate-3 delegated RS-2.1 + closure fix `0d3bff0`; 72/72 clean-checkout reproducible; **[INFERENCE] row RESOLVED — CONFIRMED** (mutations outside the dispatch CLI bypass all scope checks, proven two-sided); `fk-p17-stage-f-closure-2026-09-28.md`). Session merges: FK-P1 `fed2298`, FK-P2 `a1b948c`, FK-P9, FK-P17′; R32 accepted (752/752). Next dispatchable: **FK-P10** (lease/transition engine, dep FK-P9 merged) and **FK-P11** after it; FK-P3/FK-P2B window-gated (holding FK-P4–P8 transitively); FK-P18′ holds on the §14 U1 contract. Exit annex tracks all named gaps |
 | [hierarchical-coordination-sidecars](hierarchical-coordination-sidecars/charter.md) | `hcs_p0_accepted` | `/goal resume hierarchical-coordination-sidecars` | Claimed 2026-09-26; Stage Zero + Gate 1 + P0 records dual-approved (`hcs-p0-acceptance-2026-09-26.md`); next HCS-P1 (RB-01 pin carried) — HCS-P7 stays gated on the FK merge |
 
 ## Active goals

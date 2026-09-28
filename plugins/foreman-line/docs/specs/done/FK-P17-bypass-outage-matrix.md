@@ -1,7 +1,7 @@
 ---
 ticket: FK-P17
 title: Foreman Kernel - bypass and outage matrix harness
-status: draft
+status: done
 owner: clinton.morgan
 created: 2026-09-28
 updated: 2026-09-28
@@ -263,7 +263,9 @@ Related records: [loop directive](../../goals/foreman-kernel/loop-directive.md),
 
 ## Verification Plan
 
-**Pending, not run.** Deterministic chain, run by the coordinator on the sequential Node lane (Windows rule preserved), cwd the isolated `bypass-outage-harness` package, full output and direct exit codes retained: `node -v` (>=22); `npm ci`; `npm run typecheck`; `npm test` (registry completeness, channel tests against real surfaces in temp workspaces, measure determinism + warm/cold separation, record canonicality + sanitization, hypothesis-binding #32, three-state pin tests); `npm run lint`; `npm run matrix` (emits `evidence/` matrix artifacts; asserts read-only pre/post digests); `npm run measure` (emits `measurements.jsonl` + summary; refuses the claim on `MEASUREMENT_INCOMPLETE` while retaining records). Script names are required package interfaces, not claims existing commands already run. Hostile cases: every V1–V10 case runs its named dimension only; mutation of a fixture in its named dimension must flip its named test (#32). Live-host protocol (operator-run, evidence captured into the same record shapes): V3-live MCP tool session, V5 subagent sessions, V7 real non-enrollment shapes, RST-01 real host restart — unrun cases become `not-exercised` gap records (D13 rule 4) and are named here as FK-P18′-lane evidence obligations.
+**Environment prerequisite (coordinator amendment 2026-09-28, closure fix `f6a0575`):** the channel tests exercise the REAL shipped surfaces; their dependency trees must be installed first — `npm ci` in `plugins/foreman-line/dispatch/` FIRST, then the real-surface dependency packages (runtime closure: permission-profiles, receipts, routing-policy, skill-injection, projection, shaping, spec-linter; typecheck closure additionally: contracts, foreman-config, role-authority, schema-scaffold, worker-envelopes — 13 total per the README "Environment provisioning"), then `npm ci` in the harness (lockfile unchanged). A missing tree fails with one named environment-prerequisite error — never skipped, never passed (preflight test asserts it first).
+
+Deterministic chain, run by the coordinator on the sequential Node lane (Windows rule preserved), after the environment provisioning above, cwd the isolated `bypass-outage-harness` package, full output and direct exit codes retained: `node -v` (>=22); `npm ci`; `npm run typecheck`; `npm test` (registry completeness, channel tests against real surfaces in temp workspaces, measure determinism + warm/cold separation, record canonicality + sanitization, hypothesis-binding #32, three-state pin tests); `npm run lint`; `npm run matrix` (emits `evidence/` matrix artifacts; asserts read-only pre/post digests); `npm run measure` (emits `measurements.jsonl` + summary; refuses the claim on `MEASUREMENT_INCOMPLETE` while retaining records). Script names are required package interfaces, not claims existing commands already run. Hostile cases: every V1–V10 case runs its named dimension only; mutation of a fixture in its named dimension must flip its named test (#32). Live-host protocol (operator-run, evidence captured into the same record shapes): V3-live MCP tool session, V5 subagent sessions, V7 real non-enrollment shapes, RST-01 real host restart — unrun cases become `not-exercised` gap records (D13 rule 4) and are named here as FK-P18′-lane evidence obligations.
 
 **Mandated reviewer focus questions** (field-by-field assessment, not generic linting):
 
