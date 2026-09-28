@@ -1,0 +1,127 @@
+{
+  "head": "1747c1df7dfa4677d345390ac673c3d15c82b980",
+  "utc": "2026-09-07T18:44:41.732823+00:00",
+  "manifestEntries": 159,
+  "manifestSha256": "ac3a1e42e9a6706eca632533f496a199fa75b3bf4040bd1a4354824f5495adb3",
+  "changedPackageFiles": [
+    "plugins/foreman-line/authority-registry/README.md",
+    "plugins/foreman-line/authority-registry/authority-enforcement-registry.yaml",
+    "plugins/foreman-line/authority-registry/src/generate.ts",
+    "plugins/foreman-line/authority-registry/src/registry.ts",
+    "plugins/foreman-line/authority-registry/src/validate.ts",
+    "plugins/foreman-line/authority-registry/tests/corpus-sweep.test.ts",
+    "plugins/foreman-line/authority-registry/tests/fixtures/pass-minimal.yaml",
+    "plugins/foreman-line/authority-registry/tests/parity.test.ts",
+    "plugins/foreman-line/authority-registry/tests/semantic-invariants.test.ts"
+  ],
+  "sourceBytesMatched": 18,
+  "changedSources": [
+    "standing-constraints",
+    "foreman-line-plan"
+  ],
+  "items": 1585,
+  "affectedRows": 176,
+  "semanticChanges": [
+    [
+      "foreman-line-plan",
+      "item.two-gate-thesis"
+    ],
+    [
+      "foreman-line-plan",
+      "item.483a4914f57e"
+    ]
+  ],
+  "navigationOrLocatorChanges": 162,
+  "reciprocalEdges": 609,
+  "historicalPins": [
+    {
+      "id": "gate-namespace-count",
+      "sha256": "23f3549859f81eddfd5645dc3de3ffe07997c624cd75d61d3410645b710968d3"
+    },
+    {
+      "id": "gate3-delegation",
+      "sha256": "13f5094dc781381ad5c1124f094af5f6f57b462c73df3fd3925e2b844c3f53c6"
+    },
+    {
+      "id": "spec-linter-profile-behavior",
+      "sha256": "48c147ae850d5779e763c187ee9381bc2b824e299764eeb15869f57dce2e553c"
+    },
+    {
+      "id": "surfaces-allowed-files",
+      "sha256": "c7addc8070757f6da21ae15354139d2a39c6f5db2dc164d2534305e0f944d7c1"
+    },
+    {
+      "id": "permission-profile-enforcement-bound",
+      "sha256": "6558689b94ae965d85c60cef8cc7d9086278f38c755276b74953d2613440eda2"
+    },
+    {
+      "id": "missing-provenance-reference",
+      "sha256": "ed49c8796d80a450fbb272d7aaba9c1159225e54bbf5d96e0a441cf757135b80"
+    },
+    {
+      "id": "registry-rework-6eb1c25",
+      "sha256": "c2b4971fd67a81df51ab33931fda17122c06de67ce5cc6ef857380704348fd6d"
+    },
+    {
+      "id": "registry-rework-9285945",
+      "sha256": "fc10cc1e7f98635521a8fbc65ba34895415b8901d62c49790b8b3e7337fd3fb1"
+    },
+    {
+      "id": "registry-rework-6f45963",
+      "sha256": "3954ba2fc23122f82f6d68e294a180b8dc789983e2bb3da0198c79f8550513d9"
+    },
+    {
+      "id": "registry-rework-b414d06",
+      "sha256": "8a7c1fdd61cbb664d6c9b1b0aefcba1dc35dc26873eff711bbfada8480247d7f"
+    },
+    {
+      "id": "registry-rework-00b41b7",
+      "sha256": "7113ebbad6811a3dfd4f14302f736ac11074c04943686eea28a1de820c75e9c9"
+    },
+    {
+      "id": "registry-rework-37afc65",
+      "sha256": "5f3bba04f9177884da88d21a8535d3ebc04557252aa27b30cbb191824e0b0f17"
+    },
+    {
+      "id": "registry-rework-91145d7",
+      "sha256": "6b6e2dbd3b009428c647ed8947ba5d7008445dabdcccdde7d135466b9f46f3e3"
+    },
+    {
+      "id": "registry-rework-1b42f4b",
+      "sha256": "14bb9b5739d37281619e6ace7ea9e5d0f6fd0febeecf3facc892e1a606795a56"
+    },
+    {
+      "id": "registry-rework-ee29973",
+      "sha256": "b9a3ed7f9eaa25468df8557fb812ae343910a481450411928b8abe5d4e216bb3"
+    },
+    {
+      "id": "registry-rework-544d8a3",
+      "sha256": "d04e710f14c6f7b9978662161c1bba011a11fe862138dd73e5e477594751fd9d"
+    },
+    {
+      "id": "registry-rework-0683bc0",
+      "sha256": "f1a7ee84cb618300079786833537fef4494e093970cffc1ead8d1d66e2bd6aa9"
+    },
+    {
+      "id": "registry-rework-df8155a",
+      "sha256": "ca5015f0446edbc5e1d7055357dac8d60cc87b4d283f0bba9ce26c15b40d88d2"
+    },
+    {
+      "id": "registry-rework-40394be",
+      "sha256": "307a1b563240107c5a12610e18b340e66f3be0621e6bc30b438ae79af91b4bfd"
+    },
+    {
+      "id": "registry-rework-66a514d",
+      "sha256": "6d39f17f70b25ce44030e729c62d975b45a8597b99af8c22f19c6a3cbfba92d7"
+    }
+  ],
+  "fullRunCounts": {
+    "tests": 751,
+    "pass": 751,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  "clean": true
+}

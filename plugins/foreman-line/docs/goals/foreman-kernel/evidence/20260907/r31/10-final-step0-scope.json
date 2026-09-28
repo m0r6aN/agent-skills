@@ -1,0 +1,13 @@
+{
+  "recordedUtc": "2026-09-07T16:49:01.5003729Z",
+  "head": "99c8f1c19ffc5dcba1fcebd0fdf4abadb5e9ef23",
+  "packageTrackedFileCount": 22,
+  "packageChanges": [],
+  "sourceFilesMatched": 18,
+  "mappingSha256": "668dee6e73c6c527ac3ea9c4fb31c3373d78a9bb618b50726ee78b3f6b01a370",
+  "indexPaths": [],
+  "noGeneratorWrites": true,
+  "noPackageTests": true,
+  "noBuilderCommits": true,
+  "metadataAdvancement": "Coordinator five-file integration99c8f1c, source8d unchanged"
+}

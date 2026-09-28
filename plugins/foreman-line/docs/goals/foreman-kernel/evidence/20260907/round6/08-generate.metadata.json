@@ -1,0 +1,15 @@
+{
+  "stderrSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+  "head": "0ee165720f8d1e3a91eb283cb770400b23f61bf5",
+  "elapsedMs": 6268,
+  "endedUtc": "2026-09-07T14:14:21.0429568Z",
+  "directExit": 0,
+  "stdoutSha256": "C50DB9951C7202B43F3824702E827E7F0B3FDF7D8D7E4F6058480FD42B2477E1",
+  "startedUtc": "2026-09-07T14:14:14.7733677Z",
+  "step": "08-generate",
+  "command": [
+    "npm.cmd",
+    "run",
+    "generate"
+  ]
+}

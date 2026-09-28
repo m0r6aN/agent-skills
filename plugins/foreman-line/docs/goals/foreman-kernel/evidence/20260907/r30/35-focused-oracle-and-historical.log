@@ -1,0 +1,41 @@
+TAP version 13
+# Subtest: R4 corroborating source ref cannot promote a rule above its authority basis
+ok 1 - R4 corroborating source ref cannot promote a rule above its authority basis
+  ---
+  duration_ms: 759.2581
+  type: 'test'
+  ...
+# Subtest: R5 every authority basis is substantive source text rather than a heading
+ok 2 - R5 every authority basis is substantive source text rather than a heading
+  ---
+  duration_ms: 463.6069
+  type: 'test'
+  ...
+# Subtest: R22 O6 refuses rewriting the head IN PLACE under the same id
+ok 3 - R22 O6 refuses rewriting the head IN PLACE under the same id
+  ---
+  duration_ms: 688.8755
+  type: 'test'
+  ...
+# Subtest: R30 all 72 complete published shapes agree with the independent source mapping
+ok 4 - R30 all 72 complete published shapes agree with the independent source mapping
+  ---
+  duration_ms: 33.5561
+  type: 'test'
+  ...
+# Subtest: R30 corroboration adds exactly 67 reciprocal edges without changing the designated bases
+ok 5 - R30 corroboration adds exactly 67 reciprocal edges without changing the designated bases
+  ---
+  duration_ms: 473.6128
+  type: 'test'
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4056.6273
+DIRECT_EXIT=0

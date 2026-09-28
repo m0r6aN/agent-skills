@@ -1,0 +1,7 @@
+{
+  "command": "npm ci",
+  "startUtc": "2026-09-07T16:31:45.1336958Z",
+  "endUtc": "2026-09-07T16:31:54.0231205Z",
+  "elapsedSeconds": 8.8920424,
+  "directExit": 0
+}

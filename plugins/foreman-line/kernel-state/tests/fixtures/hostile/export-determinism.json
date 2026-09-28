@@ -1,0 +1,20 @@
+{
+  "class": "C9",
+  "records": [
+    {
+      "id": "EXPD-01",
+      "input": { "scenario": "same-rows-different-insertion-order" },
+      "expectedOutcome": "byte-identical-export-and-digest"
+    },
+    {
+      "id": "EXPD-02",
+      "input": { "scenario": "back-to-back-exports-live-clock" },
+      "expectedOutcome": "byte-identical-export-and-digest"
+    },
+    {
+      "id": "EXPD-03",
+      "input": { "scenario": "in-memory-objects-different-member-order" },
+      "expectedOutcome": "byte-identical-export-and-digest"
+    }
+  ]
+}

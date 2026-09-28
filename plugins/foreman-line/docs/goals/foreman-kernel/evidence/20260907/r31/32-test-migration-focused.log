@@ -1,0 +1,503 @@
+TAP version 13
+# Subtest: R13 normative Markdown audit has exactly 145 source-authored records
+ok 1 - R13 normative Markdown audit has exactly 145 source-authored records
+  ---
+  duration_ms: 416.1542
+  type: 'test'
+  ...
+# Subtest: R13 normative Markdown audit binds every candidate to its exact item and value
+ok 2 - R13 normative Markdown audit binds every candidate to its exact item and value
+  ---
+  duration_ms: 7.7659
+  type: 'test'
+  ...
+# Subtest: R13 audit publishes conflict stop
+ok 3 - R13 audit publishes conflict stop
+  ---
+  duration_ms: 8.6082
+  type: 'test'
+  ...
+# Subtest: R13 audit publishes secret persistence
+ok 4 - R13 audit publishes secret persistence
+  ---
+  duration_ms: 5.9587
+  type: 'test'
+  ...
+# Subtest: R13 audit publishes unenrolled detected-only posture
+ok 5 - R13 audit publishes unenrolled detected-only posture
+  ---
+  duration_ms: 7.1815
+  type: 'test'
+  ...
+# Subtest: R13 audit publishes generic mint prohibition
+ok 6 - R13 audit publishes generic mint prohibition
+  ---
+  duration_ms: 8.5728
+  type: 'test'
+  ...
+# Subtest: R13 audit publishes agent gate prohibition
+ok 7 - R13 audit publishes agent gate prohibition
+  ---
+  duration_ms: 7.9011
+  type: 'test'
+  ...
+# Subtest: R13 audit publishes external-write prohibition
+ok 8 - R13 audit publishes external-write prohibition
+  ---
+  duration_ms: 8.1454
+  type: 'test'
+  ...
+# Subtest: R13 audit publishes isolated worktrees
+ok 9 - R13 audit publishes isolated worktrees
+  ---
+  duration_ms: 6.9689
+  type: 'test'
+  ...
+# Subtest: R13 audit publishes serialization ownership
+ok 10 - R13 audit publishes serialization ownership
+  ---
+  duration_ms: 5.3656
+  type: 'test'
+  ...
+# Subtest: R13 audit publishes pinned policy
+ok 11 - R13 audit publishes pinned policy
+  ---
+  duration_ms: 5.9316
+  type: 'test'
+  ...
+# Subtest: R13 audit publishes host evidence
+ok 12 - R13 audit publishes host evidence
+  ---
+  duration_ms: 5.8774
+  type: 'test'
+  ...
+# Subtest: R13 audit publishes PDD environment release boundary
+ok 13 - R13 audit publishes PDD environment release boundary
+  ---
+  duration_ms: 5.4366
+  type: 'test'
+  ...
+# Subtest: R13 audit publishes PDD security release boundary
+ok 14 - R13 audit publishes PDD security release boundary
+  ---
+  duration_ms: 6.8913
+  type: 'test'
+  ...
+# Subtest: R13 every excluded audit candidate has one item-specific rationale
+ok 15 - R13 every excluded audit candidate has one item-specific rationale
+  ---
+  duration_ms: 586.1466
+  type: 'test'
+  ...
+# Subtest: R13 normative audit rejects append mutation
+ok 16 - R13 normative audit rejects append mutation
+  ---
+  duration_ms: 127.0541
+  type: 'test'
+  ...
+# Subtest: R13 normative audit rejects remove mutation
+ok 17 - R13 normative audit rejects remove mutation
+  ---
+  duration_ms: 87.2539
+  type: 'test'
+  ...
+# Subtest: R13 normative audit rejects duplicate mutation
+ok 18 - R13 normative audit rejects duplicate mutation
+  ---
+  duration_ms: 90.8
+  type: 'test'
+  ...
+# Subtest: R13 normative audit rejects disposition mutation
+ok 19 - R13 normative audit rejects disposition mutation
+  ---
+  duration_ms: 114.5139
+  type: 'test'
+  ...
+# Subtest: R13 normative audit rejects rule set mutation
+ok 20 - R13 normative audit rejects rule set mutation
+  ---
+  duration_ms: 90.1286
+  type: 'test'
+  ...
+# Subtest: R13 normative audit rejects value mutation
+ok 21 - R13 normative audit rejects value mutation
+  ---
+  duration_ms: 89.5772
+  type: 'test'
+  ...
+# Subtest: R13 normative audit rejects rationale mutation
+ok 22 - R13 normative audit rejects rationale mutation
+  ---
+  duration_ms: 146.405
+  type: 'test'
+  ...
+# Subtest: AC4 O4 rejects a head whose git-commit reference is repointed at another commit
+ok 23 - AC4 O4 rejects a head whose git-commit reference is repointed at another commit
+  ---
+  duration_ms: 213.3711
+  type: 'test'
+  ...
+# Subtest: AC4 O4 rejects a head whose bound git-commit evidence is deleted
+ok 24 - AC4 O4 rejects a head whose bound git-commit evidence is deleted
+  ---
+  duration_ms: 187.2858
+  type: 'test'
+  ...
+# Subtest: AC4 O4 hermetic residual remains explicit for a generic nonreserved successor Git digest
+ok 25 - AC4 O4 hermetic residual remains explicit for a generic nonreserved successor Git digest
+  ---
+  duration_ms: 773.9825
+  type: 'test'
+  ...
+# Subtest: R22 O7 ADMITS a properly chained appended head and preserves the demoted head
+ok 26 - R22 O7 ADMITS a properly chained appended head and preserves the demoted head
+  ---
+  duration_ms: 114.6568
+  type: 'test'
+  ...
+# Subtest: R22 O7 refuses an append that also rewrites the demoted former head
+ok 27 - R22 O7 refuses an append that also rewrites the demoted former head
+  ---
+  duration_ms: 239.0468
+  type: 'test'
+  ...
+# Subtest: R22 O7 limit, stated exactly: the append path is one deep, and the second is refused
+ok 28 - R22 O7 limit, stated exactly: the append path is one deep, and the second is refused
+  ---
+  duration_ms: 255.9305
+  type: 'test'
+  ...
+# Subtest: R31 independently prescribed successor counts and source snapshot are adopted
+ok 29 - R31 independently prescribed successor counts and source snapshot are adopted
+  ---
+  duration_ms: 6.5078
+  type: 'test'
+  ...
+# Subtest: R31 full source-authored rule shapes, designated bases and ordered references are exact
+ok 30 - R31 full source-authored rule shapes, designated bases and ordered references are exact
+  ---
+  duration_ms: 5.2639
+  type: 'test'
+  ...
+# Subtest: R31 complete prior-item correspondence and exact reciprocal sets include every current item
+ok 31 - R31 complete prior-item correspondence and exact reciprocal sets include every current item
+  ---
+  duration_ms: 700.7593
+  type: 'test'
+  ...
+# Subtest: R31 twenty canonical historical records and exact independently pinned append are preserved
+ok 32 - R31 twenty canonical historical records and exact independently pinned append are preserved
+  ---
+  duration_ms: 707.389
+  type: 'test'
+  ...
+# Subtest: R31 reserved M01 shape rejects subject
+ok 33 - R31 reserved M01 shape rejects subject
+  ---
+  duration_ms: 230.8496
+  type: 'test'
+  ...
+# Subtest: R31 reserved M01 shape rejects claim
+ok 34 - R31 reserved M01 shape rejects claim
+  ---
+  duration_ms: 177.3731
+  type: 'test'
+  ...
+# Subtest: R31 reserved M01 shape rejects decision
+ok 35 - R31 reserved M01 shape rejects decision
+  ---
+  duration_ms: 158.6499
+  type: 'test'
+  ...
+# Subtest: R31 reserved M01 shape rejects owner
+ok 36 - R31 reserved M01 shape rejects owner
+  ---
+  duration_ms: 166.8904
+  type: 'test'
+  ...
+# Subtest: R31 reserved M01 shape rejects legacy assurance fallback
+ok 37 - R31 reserved M01 shape rejects legacy assurance fallback
+  ---
+  duration_ms: 150.6698
+  type: 'test'
+  ...
+# Subtest: R31 reserved M01 shape rejects classification
+ok 38 - R31 reserved M01 shape rejects classification
+  ---
+  duration_ms: 163.8143
+  type: 'test'
+  ...
+# Subtest: R31 reserved M01 shape rejects severity
+ok 39 - R31 reserved M01 shape rejects severity
+  ---
+  duration_ms: 158.1623
+  type: 'test'
+  ...
+# Subtest: R31 reserved M01 shape rejects goals
+ok 40 - R31 reserved M01 shape rejects goals
+  ---
+  duration_ms: 153.2254
+  type: 'test'
+  ...
+# Subtest: R31 reserved M01 shape rejects roles
+ok 41 - R31 reserved M01 shape rejects roles
+  ---
+  duration_ms: 194.9245
+  type: 'test'
+  ...
+# Subtest: R31 reserved M01 shape rejects stages
+ok 42 - R31 reserved M01 shape rejects stages
+  ---
+  duration_ms: 151.3235
+  type: 'test'
+  ...
+# Subtest: R31 reserved M01 shape rejects operations
+ok 43 - R31 reserved M01 shape rejects operations
+  ---
+  duration_ms: 170.6747
+  type: 'test'
+  ...
+# Subtest: R31 reserved M01 shape rejects hosts
+ok 44 - R31 reserved M01 shape rejects hosts
+  ---
+  duration_ms: 150.2363
+  type: 'test'
+  ...
+# Subtest: R31 reserved M01 shape rejects retirement
+ok 45 - R31 reserved M01 shape rejects retirement
+  ---
+  duration_ms: 141.9757
+  type: 'test'
+  ...
+# Subtest: R31 reserved M01 shape rejects basis substitution
+ok 46 - R31 reserved M01 shape rejects basis substitution
+  ---
+  duration_ms: 156.7124
+  type: 'test'
+  ...
+# Subtest: R31 reserved M01 shape rejects missing reference
+ok 47 - R31 reserved M01 shape rejects missing reference
+  ---
+  duration_ms: 106.6855
+  type: 'test'
+  ...
+# Subtest: R31 reserved M01 shape rejects extra reference
+ok 48 - R31 reserved M01 shape rejects extra reference
+  ---
+  duration_ms: 250.435
+  type: 'test'
+  ...
+# Subtest: R31 complete M01 duty rejects repaired parcel condition mutation
+ok 49 - R31 complete M01 duty rejects repaired parcel condition mutation
+  ---
+  duration_ms: 153.2818
+  type: 'test'
+  ...
+# Subtest: R31 complete M01 duty rejects repaired every living identifier mutation
+ok 50 - R31 complete M01 duty rejects repaired every living identifier mutation
+  ---
+  duration_ms: 157.1356
+  type: 'test'
+  ...
+# Subtest: R31 complete M01 duty rejects repaired marketplace entry mutation
+ok 51 - R31 complete M01 duty rejects repaired marketplace entry mutation
+  ---
+  duration_ms: 144.0498
+  type: 'test'
+  ...
+# Subtest: R31 complete M01 duty rejects repaired source existence mutation
+ok 52 - R31 complete M01 duty rejects repaired source existence mutation
+  ---
+  duration_ms: 138.7661
+  type: 'test'
+  ...
+# Subtest: R31 complete M01 duty rejects repaired nested manifest equality mutation
+ok 53 - R31 complete M01 duty rejects repaired nested manifest equality mutation
+  ---
+  duration_ms: 144.5196
+  type: 'test'
+  ...
+# Subtest: R31 complete M01 duty rejects repaired URL insufficiency mutation
+ok 54 - R31 complete M01 duty rejects repaired URL insufficiency mutation
+  ---
+  duration_ms: 151.6207
+  type: 'test'
+  ...
+# Subtest: R31 finite source identity rejects remove M01
+ok 55 - R31 finite source identity rejects remove M01
+  ---
+  duration_ms: 141.4629
+  type: 'test'
+  ...
+# Subtest: R31 finite source identity rejects substitute alias
+ok 56 - R31 finite source identity rejects substitute alias
+  ---
+  duration_ms: 122.2533
+  type: 'test'
+  ...
+# Subtest: R31 finite source identity rejects note takes thesis
+ok 57 - R31 finite source identity rejects note takes thesis
+  ---
+  duration_ms: 111.7042
+  type: 'test'
+  ...
+# Subtest: R31 finite source identity rejects thesis old location
+ok 58 - R31 finite source identity rejects thesis old location
+  ---
+  duration_ms: 104.0245
+  type: 'test'
+  ...
+# Subtest: R31 finite source identity rejects historical name reversion
+ok 59 - R31 finite source identity rejects historical name reversion
+  ---
+  duration_ms: 106.9569
+  type: 'test'
+  ...
+# Subtest: R31 finite source identity rejects extra raw alias
+ok 60 - R31 finite source identity rejects extra raw alias
+  ---
+  duration_ms: 98.8737
+  type: 'test'
+  ...
+# Subtest: R31 decision diagnostic rejects repaired commandId substitution
+ok 61 - R31 decision diagnostic rejects repaired commandId substitution
+  ---
+  duration_ms: 117.9931
+  type: 'test'
+  ...
+# Subtest: R31 decision diagnostic rejects repaired inputDigest substitution
+ok 62 - R31 decision diagnostic rejects repaired inputDigest substitution
+  ---
+  duration_ms: 149.1215
+  type: 'test'
+  ...
+# Subtest: R31 decision diagnostic rejects repaired resultDigest substitution
+ok 63 - R31 decision diagnostic rejects repaired resultDigest substitution
+  ---
+  duration_ms: 101.1122
+  type: 'test'
+  ...
+# Subtest: R31 decision diagnostic rejects repaired actorClass substitution
+ok 64 - R31 decision diagnostic rejects repaired actorClass substitution
+  ---
+  duration_ms: 118.6674
+  type: 'test'
+  ...
+# Subtest: R31 decision diagnostic rejects repaired tool substitution
+ok 65 - R31 decision diagnostic rejects repaired tool substitution
+  ---
+  duration_ms: 110.8838
+  type: 'test'
+  ...
+# Subtest: R31 decision diagnostic rejects repaired toolVersion substitution
+ok 66 - R31 decision diagnostic rejects repaired toolVersion substitution
+  ---
+  duration_ms: 136.3482
+  type: 'test'
+  ...
+# Subtest: R31 decision diagnostic rejects repaired exitCode substitution
+ok 67 - R31 decision diagnostic rejects repaired exitCode substitution
+  ---
+  duration_ms: 101.1572
+  type: 'test'
+  ...
+# Subtest: R31 M01 resolves as source-intent review duty on every host without granting installation
+ok 68 - R31 M01 resolves as source-intent review duty on every host without granting installation
+  ---
+  duration_ms: 1206.7234
+  type: 'test'
+  ...
+# Subtest: R31 relocated thesis preserves its complete historical effect and never controls current queries
+ok 69 - R31 relocated thesis preserves its complete historical effect and never controls current queries
+  ---
+  duration_ms: 201.053
+  type: 'test'
+  ...
+# Subtest: R31 exact migration rejects repaired input path
+ok 70 - R31 exact migration rejects repaired input path
+  ---
+  duration_ms: 115.604
+  type: 'test'
+  ...
+# Subtest: R31 exact migration rejects repaired input commit
+ok 71 - R31 exact migration rejects repaired input commit
+  ---
+  duration_ms: 112.4126
+  type: 'test'
+  ...
+# Subtest: R31 exact migration rejects repaired Git commit evidence
+ok 72 - R31 exact migration rejects repaired Git commit evidence
+  ---
+  duration_ms: 102.1681
+  type: 'test'
+  ...
+# Subtest: R31 exact migration rejects repaired missing diagnostic
+ok 73 - R31 exact migration rejects repaired missing diagnostic
+  ---
+  duration_ms: 97.9474
+  type: 'test'
+  ...
+# Subtest: R31 required complete shape rejects rule removal
+ok 74 - R31 required complete shape rejects rule removal
+  ---
+  duration_ms: 101.4323
+  type: 'test'
+  ...
+# Subtest: R31 required complete shape rejects rule identity substitution
+ok 75 - R31 required complete shape rejects rule identity substitution
+  ---
+  duration_ms: 106.0403
+  type: 'test'
+  ...
+# Subtest: R31 required complete shape rejects thesis classification
+ok 76 - R31 required complete shape rejects thesis classification
+  ---
+  duration_ms: 101.5027
+  type: 'test'
+  ...
+# Subtest: R31 required complete shape rejects thesis decision
+ok 77 - R31 required complete shape rejects thesis decision
+  ---
+  duration_ms: 103.2235
+  type: 'test'
+  ...
+# Subtest: R31 required complete shape rejects thesis assurance
+ok 78 - R31 required complete shape rejects thesis assurance
+  ---
+  duration_ms: 129.4206
+  type: 'test'
+  ...
+# Subtest: R31 required complete shape rejects thesis retirement
+ok 79 - R31 required complete shape rejects thesis retirement
+  ---
+  duration_ms: 120.4715
+  type: 'test'
+  ...
+# Subtest: R31 required complete shape rejects M01 paired rules
+ok 80 - R31 required complete shape rejects M01 paired rules
+  ---
+  duration_ms: 125.4784
+  type: 'test'
+  ...
+# Subtest: R31 required complete shape rejects M01 refusal code
+ok 81 - R31 required complete shape rejects M01 refusal code
+  ---
+  duration_ms: 148.3447
+  type: 'test'
+  ...
+# Subtest: R31 alias duplication remains refused after repairing links and appending a successor
+ok 82 - R31 alias duplication remains refused after repairing links and appending a successor
+  ---
+  duration_ms: 100.822
+  type: 'test'
+  ...
+1..82
+# tests 82
+# suites 0
+# pass 82
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 14803.2821
+DIRECT_EXIT=0

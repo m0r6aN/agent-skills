@@ -1,0 +1,26 @@
+{
+  "all_tree_delta_count": 153,
+  "bare_refs_unchanged": true,
+  "ended_utc": "2026-09-07T18:56:29.779259+00:00",
+  "fixture_parent": "C:\\Users\\clint\\AppData\\Local\\Temp\\fk-r31-integration-h7vdnawi",
+  "inert_symlink_paths": [
+    ".opencode/skills",
+    "debug/latest"
+  ],
+  "inputs": {
+    "bare": "C:/Users/clint/AppData/Local/Temp/fk-remote-verify-20260907.git",
+    "main": "476b8df6efe6c9974879957147449f61c34cd9a0",
+    "output": "C:/Users/clint/AppData/Local/Temp/fk-r31-main-integration-final-attempt03",
+    "r31": "1747c1df7dfa4677d345390ac673c3d15c82b980",
+    "review": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31-main-integration/review-input.json",
+    "source_commit": "8d500704c9e3d6d8b652bbe838aa3623f88203fc",
+    "source_manifest": "plugins/foreman-line/docs/goals/foreman-kernel/R31-source-integration-20260907.json",
+    "source_tree": "8607bd69b51e9fd84244b1837b9e75814ba2d00f",
+    "timeout": 900
+  },
+  "meaning": "Pinned hypothetical tree input equivalence + CLI validate/sweep + byte idempotence; no merge, CI, Gate3 or unrelated runtime verification.",
+  "merge_tree": "a9df33c71d0e34ddae277d312a04f7a97dd66480",
+  "node_sha256": "c1b274a8d0a23e060fc42ce71c3cdfa1569b83d91ba82cc59fa907da97a425e9",
+  "started_utc": "2026-09-07T18:55:45.251044+00:00",
+  "status": "pass"
+}

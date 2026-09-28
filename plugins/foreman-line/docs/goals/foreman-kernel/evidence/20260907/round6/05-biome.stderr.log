@@ -1,0 +1,105 @@
+tests\semantic-invariants.test.ts:4677:5 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Template literals are preferred over string concatenation.
+  
+    4675 │       message.includes('does not declare both binding-manifest chain commands as issued by'),
+    4676 │     ),
+  > 4677 │     'expected the chain-command refusal; observed ' + messagesFor(mutated).join(' | '),
+         │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    4678 │   )
+    4679 │ })
+  
+  i Unsafe fix: Use a template literal.
+  
+    4675 4675 │         message.includes('does not declare both binding-manifest chain commands as issued by'),
+    4676 4676 │       ),
+    4677      │ - ····'expected·the·chain-command·refusal;·observed·'·+·messagesFor(mutated).join('·|·'),
+         4677 │ + ····`expected·the·chain-command·refusal;·observed·${messagesFor(mutated).join('·|·')}`,
+    4678 4678 │     )
+    4679 4679 │   })
+  
+
+tests\semantic-invariants.test.ts:4755:5 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Template literals are preferred over string concatenation.
+  
+    4753 │   ok(
+    4754 │     messagesFor(mutated).some((message) => message.includes('repeats a git-commit reference')),
+  > 4755 │     'expected the distinctness refusal; observed ' + messagesFor(mutated).join(' | '),
+         │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    4756 │   )
+    4757 │ })
+  
+  i Unsafe fix: Use a template literal.
+  
+    4753 4753 │     ok(
+    4754 4754 │       messagesFor(mutated).some((message) => message.includes('repeats a git-commit reference')),
+    4755      │ - ····'expected·the·distinctness·refusal;·observed·'·+·messagesFor(mutated).join('·|·'),
+         4755 │ + ····`expected·the·distinctness·refusal;·observed·${messagesFor(mutated).join('·|·')}`,
+    4756 4756 │     )
+    4757 4757 │   })
+  
+
+tests\semantic-invariants.test.ts:4773:30 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Template literals are preferred over string concatenation.
+  
+    4771 │   const mutated = withMutatedHead((record) => {
+    4772 │     const fabricated = 'feedface'.repeat(5)
+  > 4773 │     const secondFabricated = '0'.repeat(39) + '1'
+         │                              ^^^^^^^^^^^^^^^^^^^^
+    4774 │     assert.notEqual(fabricated, secondFabricated, 'the two fabrications must be DISTINCT')
+    4775 │     let index = 0
+  
+  i Unsafe fix: Use a template literal.
+  
+    4771 4771 │     const mutated = withMutatedHead((record) => {
+    4772 4772 │       const fabricated = 'feedface'.repeat(5)
+    4773      │ - ····const·secondFabricated·=·'0'.repeat(39)·+·'1'
+         4773 │ + ····const·secondFabricated·=·`${'0'.repeat(39)}1`
+    4774 4774 │       assert.notEqual(fabricated, secondFabricated, 'the two fabrications must be DISTINCT')
+    4775 4775 │       let index = 0
+  
+
+tests\semantic-invariants.test.ts:4957:14 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Template literals are preferred over string concatenation.
+  
+    4955 │       (command) => typeof command.commandId === 'string' && command.commandId.startsWith(prefix),
+    4956 │     )
+  > 4957 │   ok(parsed, 'the record must declare a ' + prefix + ' command')
+         │              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    4958 │   return parsed
+    4959 │ }
+  
+  i Unsafe fix: Use a template literal.
+  
+    4955 4955 │         (command) => typeof command.commandId === 'string' && command.commandId.startsWith(prefix),
+    4956 4956 │       )
+    4957      │ - ··ok(parsed,·'the·record·must·declare·a·'·+·prefix·+·'·command')
+         4957 │ + ··ok(parsed,·`the·record·must·declare·a·${prefix}·command`)
+    4958 4958 │     return parsed
+    4959 4959 │   }
+  
+
+tests\semantic-invariants.test.ts:5077:26 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Template literals are preferred over string concatenation.
+  
+    5075 │   assert.notEqual(mutated.reconciliations.length, before, 'the record must actually be removed')
+    5076 │   expectMessage(mutated, 'do not lie on the single genesis-to-head chain')
+  > 5077 │   expectMessage(mutated, "required rework migration '" + victimId + "' is missing")
+         │                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    5078 │ })
+    5079 │ 
+  
+  i Unsafe fix: Use a template literal.
+  
+    5075 5075 │     assert.notEqual(mutated.reconciliations.length, before, 'the record must actually be removed')
+    5076 5076 │     expectMessage(mutated, 'do not lie on the single genesis-to-head chain')
+    5077      │ - ··expectMessage(mutated,·"required·rework·migration·'"·+·victimId·+·"'·is·missing")
+         5077 │ + ··expectMessage(mutated,·`required·rework·migration·'${victimId}'·is·missing`)
+    5078 5078 │   })
+    5079 5079 │   
+  
+

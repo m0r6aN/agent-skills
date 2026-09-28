@@ -1,0 +1,12 @@
+{
+  "status": "running",
+  "head": "0ee165720f8d1e3a91eb283cb770400b23f61bf5",
+  "command": [
+    "git.exe",
+    "status",
+    "--porcelain=v1"
+  ],
+  "wrapperPid": 456236,
+  "startedUtc": "2026-09-07T14:14:37.5347465Z",
+  "step": "09-status"
+}

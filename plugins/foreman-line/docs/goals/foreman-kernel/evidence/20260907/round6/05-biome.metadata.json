@@ -1,0 +1,16 @@
+{
+  "step": "05-biome",
+  "head": "0ee165720f8d1e3a91eb283cb770400b23f61bf5",
+  "directExit": 0,
+  "elapsedMs": 1421,
+  "command": [
+    "npx.cmd",
+    "biome",
+    "check",
+    "."
+  ],
+  "endedUtc": "2026-09-07T14:13:11.3037359Z",
+  "startedUtc": "2026-09-07T14:13:09.8807782Z",
+  "stdoutSha256": "C7043C7646D072FC398EAF7A02E2204F4D79E08B0067569DBD777479C2FBF86C",
+  "stderrSha256": "EF44C102C594B376A538F066BA167DE589C3FF7BDFBFA76C930B7A411EBD8A17"
+}

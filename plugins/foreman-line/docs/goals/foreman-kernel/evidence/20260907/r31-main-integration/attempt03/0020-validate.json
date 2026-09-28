@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "D:\\nodejs_symlinks\\node.exe",
+    "C:\\Users\\clint\\AppData\\Local\\Temp\\fk-r31-integration-h7vdnawi\\tree\\plugins\\foreman-line\\authority-registry\\node_modules\\tsx\\dist\\cli.mjs",
+    "C:\\Users\\clint\\AppData\\Local\\Temp\\fk-r31-integration-h7vdnawi\\tree\\plugins\\foreman-line\\authority-registry\\src\\cli.ts",
+    "validate",
+    "C:\\Users\\clint\\AppData\\Local\\Temp\\fk-r31-integration-h7vdnawi\\tree\\plugins\\foreman-line\\authority-registry\\authority-enforcement-registry.yaml",
+    "--repo-root",
+    "C:\\Users\\clint\\AppData\\Local\\Temp\\fk-r31-integration-h7vdnawi\\tree"
+  ],
+  "cwd": "C:\\Users\\clint\\AppData\\Local\\Temp\\fk-r31-integration-h7vdnawi\\tree\\plugins\\foreman-line\\authority-registry",
+  "ended_utc": "2026-09-07T18:56:05.900578+00:00",
+  "exit": 0,
+  "pid": 488780,
+  "seconds": 6.654531699954532,
+  "started_utc": "2026-09-07T18:55:59.246046+00:00",
+  "stderr": "0020-validate.stderr",
+  "stdout": "0020-validate.stdout"
+}

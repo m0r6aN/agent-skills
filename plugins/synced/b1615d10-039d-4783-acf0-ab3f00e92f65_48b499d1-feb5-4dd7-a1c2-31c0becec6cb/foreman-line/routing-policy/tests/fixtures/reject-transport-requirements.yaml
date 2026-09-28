@@ -1,0 +1,44 @@
+# Rejecting fixture (invariant g): `internal` declares the permissive transport
+# requirements (`data_collection: allow`, `zdr: false`) that only `public` may
+# carry, and `restricted` relaxes just one of the two (`zdr: false`). Both must
+# be reported. Every other invariant (a-f) and the schema are satisfied
+# unchanged from the shipped policy, so this fixture isolates (g) alone: the
+# model lists are identical and every id is first-party, but the document has
+# declared that non-public prompts may reach providers that store or train on
+# inputs — exactly the loophole a multi-provider gateway opens.
+classes:
+  boilerplate:
+    allowlist: [economy]
+    ceiling_usd: 0.50
+  standard-feature:
+    allowlist: [standard]
+    ceiling_usd: 5.00
+  architecture/risk:
+    allowlist: [frontier]
+    ceiling_usd: 25.00
+  implementation/standard:
+    allowlist: [standard]
+    ceiling_usd: 5.00
+
+data_classification:
+  public:
+    transport_requirements: { data_collection: allow, zdr: false }
+    eligible_models: [anthropic/claude-haiku-4.5, anthropic/claude-sonnet-5, anthropic/claude-opus-5]
+  internal:
+    transport_requirements: { data_collection: allow, zdr: false }
+    eligible_models: [anthropic/claude-haiku-4.5, anthropic/claude-sonnet-5, anthropic/claude-opus-5]
+  restricted:
+    transport_requirements: { data_collection: deny, zdr: false }
+    eligible_models: [anthropic/claude-haiku-4.5, anthropic/claude-sonnet-5, anthropic/claude-opus-5]
+
+roles:
+  coordinator: frontier
+  verifier: frontier
+  builder: per-class
+
+model_tiers:
+  frontier: [anthropic/claude-opus-5]
+  standard: [anthropic/claude-sonnet-5]
+  economy: [anthropic/claude-haiku-4.5]
+
+shadow_routes: {}

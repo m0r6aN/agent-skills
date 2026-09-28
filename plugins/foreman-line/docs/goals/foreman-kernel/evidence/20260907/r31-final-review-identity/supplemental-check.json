@@ -1,0 +1,10 @@
+{
+  "decisionBlobSha256": "974c26657ef1cfab3c7a72cdb552e1e979ac9534832acb7009d5d0f74c776e9f",
+  "gitObjectEvidenceMatched": 2,
+  "diagnosticTupleMatched": true,
+  "priorNamedControls": 686,
+  "newNamedControls": 65,
+  "completePassMarkers": 751,
+  "idempotencePasses": 2,
+  "clean": true
+}

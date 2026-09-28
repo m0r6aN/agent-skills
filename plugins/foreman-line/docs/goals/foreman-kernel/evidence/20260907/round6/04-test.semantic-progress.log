@@ -1,0 +1,440 @@
+1	normalization is exact and stable across Unicode/line-ending/whitespace forms
+2	canonical digest helpers bind identity, location, and value independently
+3	each of the six classifications is accepted and summarized independently
+4	pre-action refusal requires a stable refusal code
+5	pre-action refusal decision cannot be widened to ALLOW
+6	classification matrix rejects post-action-detection assurance widening
+7	classification matrix rejects ci-static-check owner widening
+8	classification matrix rejects independent-review decision widening
+9	classification matrix rejects narrative-provenance owner widening
+10	classification matrix rejects unsupported assurance widening
+11	loaded permission-profile refusals are owned by the host adapter at mediated assurance
+12	loaded permission-profile refusal cannot be mislabeled as structural kernel enforcement
+13	retirement requires four correctly typed evidence references
+14	every protected operation rejects agent/control/tool authority escalation
+15	Gate 2 state may record consumption but cannot mint authority
+16	Gate 2 rejects anonymous admission even with Git-shaped evidence
+17	protected operation evidence resolves locator and value digests, not only item identity
+18	protected operation evidence cannot be replaced by a different fully resolved canon ref
+19	builder cannot issue closure authority
+20	generic receipt minting has no admitted principal
+21	external writes have no admitted principal
+22	builder cannot be inserted as generic receipt mint principal
+23	every required reconciliation is mandatory
+24	deleting the chain head invalidates rather than promoting a pinned record
+25	reconciliation IDs are unique
+26	reconciliation observed refs bind full identity location and value
+27	required reconciliation topics and statuses are immutable
+28	reconciliation evidence digests cannot be self-asserted placeholders
+29	charter source cannot be downgraded below goal-charter authority
+30	stale explanatory source cannot be promoted to binding authority
+31	operation-disjoint rules do not conflict
+32	role stage operation and host axes can make active rules scope-disjoint
+33	all-foreman-goals applicability overlaps foreman-kernel applicability
+34	higher-tier active authority controls a lower-tier in-scope contradiction
+35	historical-only and stale-effect rules cannot create active authority conflicts
+36	rule normalized statement must equal its referenced normalized excerpt
+37	coordinated identity location and value replacement requires typed migration evidence
+38	full-registry coordinated rule ID and binding replacement cannot rewrite the baseline
+39	rework migration binds the prior registry commit source snapshot and superseding manifest
+40	removing the coordinator-ratified rework migration fails closed
+41	forged prior-commit migration evidence fails even when internally rehashed
+42	classification mutation control: pre-action-refusal cannot be widened
+43	classification mutation control: post-action-detection cannot be widened
+44	classification mutation control: ci-static-check cannot be widened
+45	classification mutation control: independent-review-human-judgment cannot be widened
+46	classification mutation control: narrative-provenance cannot be widened
+47	classification mutation control: unsupported cannot be widened
+48	authority-tier mutation control: developer-ratification cannot be widened
+49	authority-tier mutation control: goal-charter cannot be widened
+50	authority-tier mutation control: ratified-contract cannot be widened
+51	authority-tier mutation control: coordinator-pattern cannot be widened
+52	authority-tier mutation control: parcel-spec cannot be widened
+53	authority-tier mutation control: standing-role cannot be widened
+54	authority-tier mutation control: generated-advisory cannot be widened
+55	authority-effect mutation control: binding cannot be widened
+56	authority-effect mutation control: corroborating cannot be widened
+57	authority-effect mutation control: superseded-in-scope cannot be widened
+58	authority-effect mutation control: historical cannot be widened
+59	authority-effect mutation control: stale-explanation cannot be widened
+60	authority-effect mutation control: advisory-only cannot be widened
+61	retirement mutation control: missing predicate evidence refuses retirement
+62	retirement mutation control: missing negativeRefusalTest evidence refuses retirement
+63	retirement mutation control: missing corpusSweep evidence refuses retirement
+64	retirement mutation control: missing independentBypassAttempt evidence refuses retirement
+65	migration mutation control: open cannot carry superseding evidence
+66	migration mutation control: resolved-for-fk cannot carry superseding evidence
+67	migration mutation control: blocked cannot carry superseding evidence
+68	migration mutation control: superseded-by-amendment requires superseding evidence
+69	uncovered inventory items and orphaned rule mappings fail closed independently
+70	source snapshot and caller-asserted authority mutations fail closed
+71	set-valued arrays and protected operation rows require schema-enum order
+72	R3 exact source contract rejects a missing eighteenth source
+73	R3 exact source contract rejects an unknown nineteenth source
+74	R3 exact source contract rejects a known ID with a substituted path
+75	R3 exact source contract rejects a substituted source ID at cardinality eighteen
+76	R3 D10 semantic downgrade requires typed prior-manifest migration
+77	R3 D10 applicability downgrade requires typed prior-manifest migration
+78	R3 D10 retirement downgrade requires typed prior-manifest migration
+79	R3 authority subject replacement is bound by the complete manifest
+80	R3 authority claim replacement is bound by the complete manifest
+81	R3 complete binding digest includes applicability retirement and assurance
+82	R3 resolver returns exact controlling claim and sorted IDs
+83	R3 resolver rejects any-valued query scope
+84	R3 resolver rejects all-foreman-goals query scope
+85	R3 resolver returns no-applicable-authority instead of silently allowing
+86	R3 resolver detects naturally worded equal-tier conflicting claims
+87	R3 resolver keeps lower-tier rules considered but non-controlling
+88	R3 resolver excludes stale explanatory sources from control
+89	R3 Gate 2 refuses a revoked standing-grant evidence set
+90	R3 protected evidence rejects a fully resolved but irrelevant canon reference
+91	R3 fake migration cannot authorize an exact-source-set substitution
+92	R3 public rule uses assurance and rejects parallel assuranceLevel
+93	R3 manifest detects a fully rehashed coordinated semantic replacement
+94	R3 one README cannot satisfy all four retirement evidence kinds
+95	R4 exact D2 D3 D18 and D19 semantic identities are shipped
+96	R4 every rule has one basis ref contained in its source refs
+97	R4 shipped reconciliation rules retain repeated current semantic subjects
+98	R4 shipped Gate 3 competitors resolve without test-time subject rewriting
+99	R4 shipped-data resolver vector gate.namespace
+100	R4 shipped-data resolver vector gate3.merge-authority
+101	R4 shipped-data resolver vector permission-profile.registry-state
+102	R4 shipped-data resolver vector spec.mutation-authority
+103	R4 shipped-data resolver vector permission-profile.enforcement-bound
+104	R4 shipped-data resolver vector standing.provenance
+105	R4 corroborating source ref cannot promote a rule above its authority basis
+106	R4 retired-from-agent-reading rules never control authority
+107	R4 reconciliation disposition and consequence are immutable
+108	R4 missing-path evidence uses commit-bound canonical JSON
+109	R4 source-derived applicability vector rule.standing-constraints.constraint-1
+110	R4 source-derived applicability vector rule.standing-constraints.constraint-2
+111	R4 source-derived applicability vector rule.standing-constraints.constraint-3
+112	R4 source-derived applicability vector rule.standing-constraints.constraint-4
+113	R4 source-derived applicability vector rule.standing-constraints.constraint-5
+114	R4 source-derived applicability vector rule.standing-constraints.constraint-6
+115	R4 source-derived applicability vector rule.standing-constraints.constraint-7
+116	R4 source-derived applicability vector rule.standing-constraints.constraint-8
+117	R4 source-derived applicability vector rule.standing-constraints.constraint-9
+118	R4 source-derived applicability vector rule.standing-constraints.constraint-10
+119	R4 source-derived applicability vector rule.standing-constraints.constraint-11
+120	R4 source-derived applicability vector rule.standing-constraints.constraint-12
+121	R4 source-derived applicability vector rule.standing-constraints.constraint-13
+122	R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-1
+123	R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-2
+124	R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-3
+125	R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-4
+126	R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-5
+127	R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-6
+128	R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-7
+129	R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-8
+130	R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-9
+131	R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-10
+132	R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-11
+133	R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-12
+134	R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-13
+135	R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-14
+136	R4 source-derived applicability vector rule.parcel-driven-development.hard-rule-15
+137	R4 PDD hard rule 10 applies to ordinary builder build repo mutation
+138	R5 standing rules have thirteen distinct operative semantic subjects
+139	R5 every authority basis is substantive source text rather than a heading
+140	R5 permission-profile reconciliation is grounded in charter D7 not D9
+141	R5 reconciliation gate-namespace-count binds its exact observedEvidence set
+142	R5 reconciliation gate3-delegation binds its exact observedEvidence set
+143	R5 reconciliation spec-linter-profile-behavior binds its exact observedEvidence set
+144	R5 reconciliation surfaces-allowed-files binds its exact observedEvidence set
+145	R5 reconciliation permission-profile-enforcement-bound binds its exact observedEvidence set
+146	R5 reconciliation missing-provenance-reference binds its exact observedEvidence set
+147	R5 missing provenance evidence uses the exact repository-relative absent path
+148	R5 source baseline manifest rejects a recomputed snapshot hash mutation
+149	R5 complete five-axis resolver applicability rule.standing-constraints.constraint-1
+150	R5 complete five-axis resolver applicability rule.standing-constraints.constraint-2
+151	R5 complete five-axis resolver applicability rule.standing-constraints.constraint-3
+152	R5 complete five-axis resolver applicability rule.standing-constraints.constraint-4
+153	R5 complete five-axis resolver applicability rule.standing-constraints.constraint-5
+154	R5 complete five-axis resolver applicability rule.standing-constraints.constraint-6
+155	R5 complete five-axis resolver applicability rule.standing-constraints.constraint-7
+156	R5 complete five-axis resolver applicability rule.standing-constraints.constraint-8
+157	R5 complete five-axis resolver applicability rule.standing-constraints.constraint-9
+158	R5 complete five-axis resolver applicability rule.standing-constraints.constraint-10
+159	R5 complete five-axis resolver applicability rule.standing-constraints.constraint-11
+160	R5 complete five-axis resolver applicability rule.standing-constraints.constraint-12
+161	R5 complete five-axis resolver applicability rule.standing-constraints.constraint-13
+162	R5 complete five-axis resolver applicability rule.parcel-driven-development.hard-rule-1
+163	R5 complete five-axis resolver applicability rule.parcel-driven-development.hard-rule-2
+164	R5 complete five-axis resolver applicability rule.parcel-driven-development.hard-rule-3
+165	R5 complete five-axis resolver applicability rule.parcel-driven-development.hard-rule-4
+166	R5 complete five-axis resolver applicability rule.parcel-driven-development.hard-rule-5
+167	R5 complete five-axis resolver applicability rule.parcel-driven-development.hard-rule-6
+168	R5 complete five-axis resolver applicability rule.parcel-driven-development.hard-rule-7
+169	R5 complete five-axis resolver applicability rule.parcel-driven-development.hard-rule-8
+170	R5 complete five-axis resolver applicability rule.parcel-driven-development.hard-rule-9
+171	R5 complete five-axis resolver applicability rule.parcel-driven-development.hard-rule-10
+172	R5 complete five-axis resolver applicability rule.parcel-driven-development.hard-rule-11
+173	R5 complete five-axis resolver applicability rule.parcel-driven-development.hard-rule-12
+174	R5 complete five-axis resolver applicability rule.parcel-driven-development.hard-rule-13
+175	R5 complete five-axis resolver applicability rule.parcel-driven-development.hard-rule-14
+176	R5 complete five-axis resolver applicability rule.parcel-driven-development.hard-rule-15
+177	R6 published rules never expose hash-derived or fallback semantic identities
+178	R6 every inventory item is either curated into rules or explicitly excluded
+179	R6 structural TypeScript coverage items are exclusions, not pseudo-authority
+180	R6 coordinated fallback semantic replacement is rejected as uncurated
+181	R6 reconciliation gate-namespace-count rejects appended evidence
+182	R6 reconciliation gate-namespace-count rejects removed evidence
+183	R6 reconciliation gate-namespace-count rejects duplicated evidence
+184	R6 reconciliation gate-namespace-count rejects substituted evidence
+185	R6 reconciliation gate3-delegation rejects appended evidence
+186	R6 reconciliation gate3-delegation rejects removed evidence
+187	R6 reconciliation gate3-delegation rejects duplicated evidence
+188	R6 reconciliation gate3-delegation rejects substituted evidence
+189	R6 reconciliation spec-linter-profile-behavior rejects appended evidence
+190	R6 reconciliation spec-linter-profile-behavior rejects removed evidence
+191	R6 reconciliation spec-linter-profile-behavior rejects duplicated evidence
+192	R6 reconciliation spec-linter-profile-behavior rejects substituted evidence
+193	R6 reconciliation surfaces-allowed-files rejects appended evidence
+194	R6 reconciliation surfaces-allowed-files rejects removed evidence
+195	R6 reconciliation surfaces-allowed-files rejects duplicated evidence
+196	R6 reconciliation surfaces-allowed-files rejects substituted evidence
+197	R6 reconciliation permission-profile-enforcement-bound rejects appended evidence
+198	R6 reconciliation permission-profile-enforcement-bound rejects removed evidence
+199	R6 reconciliation permission-profile-enforcement-bound rejects duplicated evidence
+200	R6 reconciliation permission-profile-enforcement-bound rejects substituted evidence
+201	R6 reconciliation missing-provenance-reference rejects appended evidence
+202	R6 reconciliation missing-provenance-reference rejects removed evidence
+203	R6 reconciliation missing-provenance-reference rejects duplicated evidence
+204	R6 reconciliation missing-provenance-reference rejects substituted evidence
+205	R6 reconciliation registry-rework-6eb1c25 rejects appended evidence
+206	R6 reconciliation registry-rework-6eb1c25 rejects removed evidence
+207	R6 reconciliation registry-rework-6eb1c25 rejects duplicated evidence
+208	R6 reconciliation registry-rework-6eb1c25 rejects substituted evidence
+209	R6 reconciliation registry-rework-9285945 rejects appended evidence
+210	R6 reconciliation registry-rework-9285945 rejects removed evidence
+211	R6 reconciliation registry-rework-9285945 rejects duplicated evidence
+212	R6 reconciliation registry-rework-9285945 rejects substituted evidence
+213	R6 reconciliation registry-rework-6f45963 rejects appended evidence
+214	R6 reconciliation registry-rework-6f45963 rejects removed evidence
+215	R6 reconciliation registry-rework-6f45963 rejects duplicated evidence
+216	R6 reconciliation registry-rework-6f45963 rejects substituted evidence
+217	R6 reconciliation registry-rework-b414d06 rejects appended evidence
+218	R6 reconciliation registry-rework-b414d06 rejects removed evidence
+219	R6 reconciliation registry-rework-b414d06 rejects duplicated evidence
+220	R6 reconciliation registry-rework-b414d06 rejects substituted evidence
+221	R6 reconciliation registry-rework-00b41b7 rejects appended evidence
+222	R6 reconciliation registry-rework-00b41b7 rejects removed evidence
+223	R6 reconciliation registry-rework-00b41b7 rejects duplicated evidence
+224	R6 reconciliation registry-rework-00b41b7 rejects substituted evidence
+225	R6 natural applicability query: standing rule 12 coordinator Stage E repository read
+226	R6 natural applicability query: PDD rule 1 shaper shaping source inventory
+227	R6 natural applicability query: PDD rule 7 builder build verification read
+228	R6 natural applicability query: PDD rule 12 reviewer merge security transition
+229	R6 natural applicability query: PDD rule 10 operator runtime external write
+230	R13 normative Markdown audit has exactly 145 source-authored records
+231	R13 normative Markdown audit binds every candidate to its exact item and value
+232	R13 audit publishes conflict stop
+233	R13 audit publishes secret persistence
+234	R13 audit publishes unenrolled detected-only posture
+235	R13 audit publishes generic mint prohibition
+236	R13 audit publishes agent gate prohibition
+237	R13 audit publishes external-write prohibition
+238	R13 audit publishes isolated worktrees
+239	R13 audit publishes serialization ownership
+240	R13 audit publishes pinned policy
+241	R13 audit publishes host evidence
+242	R13 audit publishes PDD environment release boundary
+243	R13 audit publishes PDD security release boundary
+244	R13 every excluded audit candidate has one item-specific rationale
+245	R13 normative audit rejects append mutation
+246	R13 normative audit rejects remove mutation
+247	R13 normative audit rejects duplicate mutation
+248	R13 normative audit rejects disposition mutation
+249	R13 normative audit rejects rule set mutation
+250	R13 normative audit rejects value mutation
+251	R13 normative audit rejects rationale mutation
+252	R14 resolveAuthority fails closed on null instead of throwing
+253	R14 resolveAuthority fails closed on undefined instead of throwing
+254	R14 resolveAuthority fails closed on a number instead of throwing
+255	R14 resolveAuthority fails closed on a string instead of throwing
+256	R14 resolveAuthority fails closed on an array instead of throwing
+257	R14 resolveAuthority fails closed on an empty object instead of throwing
+258	R14 resolveAuthority fails closed on a proto-polluted object instead of throwing
+259	R14 resolveAuthority refuses a non-string authoritySubject rather than coercing it
+260	R14 resolveAuthority refuses a non-string goal rather than coercing it
+261	R14 resolveAuthority refuses a non-string role rather than coercing it
+262	R14 resolveAuthority refuses a non-string stage rather than coercing it
+263	R14 resolveAuthority refuses a non-string operation rather than coercing it
+264	R14 resolveAuthority refuses a non-string host rather than coercing it
+265	R13 public resolver rejects a schema-invalid raw registry
+266	R13 public resolver rejects widened Gate 2 applicability before resolution
+267	R13 public resolver rejects an unapproved ALLOW before resolution
+268	R13 public resolver rejects stale-source promotion before resolution
+269	R13 public resolver rejects recomputed-digest semantic mutation before resolution
+270	R13 public resolver resolves only a completely validated registry
+271	R13 permission YAML has exactly 34 path-keyed structural containers
+272	R13 permission YAML excludes all six empty ask containers
+273	R13 permission YAML publishes exactly 54 mediated restrictions
+274	R13 permission YAML publishes exactly 51 narrative documentation rules
+275	R13 permission YAML publishes zero CI rules
+276	R13 permission YAML publishes all 49 allow leaves as nonbinding documentation
+277	R13 builder-deps allowlist and note remain advisory documentation
+278	R13 every permission rule has exact YAML basis and profile-scoped applicability
+279	R13 preserves every R1-R12 reconciliation record byte-semantically
+280	R13 ships an exact typed migration from the rejected R12 registry snapshot
+281	R13 registry-rework-0683bc0 rejects append evidence
+282	R13 registry-rework-0683bc0 rejects remove evidence
+283	R13 registry-rework-0683bc0 rejects duplicate evidence
+284	R13 registry-rework-0683bc0 rejects substitute evidence
+285	R10 goal skill Gate 1 is an operative nondelegable coordinator refusal
+286	R10 goal skill verification custody is an operative coordinator refusal
+287	R10 goal skill human-gate hook condition requires an agent-completable stop report
+288	R10 goal skill stop rule is operative and coordinator-scoped
+289	R10 coordinator commentary cannot mutate ratified authority
+290	R10 coordinator Gate 1 rule is nondelegable and precisely scoped
+291	R10 coordinator Gate 2 prose is superseded by the R12 advisory non-grant
+292	R10 coordinator verification custody cannot be narrative advice
+293	R10 coordinator ownership rule is an operative state-transition refusal
+294	R10 scoped Gate 1 reopening is operative rather than blanket narrative advice
+295	R10 every operative goal and coordinator rule has a source-derived positive resolver vector
+296	R10 every operative goal and coordinator rule has a source-derived negative resolver vector
+297	R10 Gate 3 resolves the coordinator merge repo mutation refusal
+298	R10 Gate 3 resolves the coordinator merge state transition refusal
+299	R10 Gate 3 does not resolve for builder runtime external writes
+300	R10 Gate 3 does not resolve for CI deterministic read queries
+301	R10 ships an exact typed migration from the R9 registry snapshot
+302	R10 registry-rework-91145d7 rejects append evidence
+303	R10 registry-rework-91145d7 rejects remove evidence
+304	R10 registry-rework-91145d7 rejects duplicate evidence
+305	R10 registry-rework-91145d7 rejects substitute evidence
+306	R11 preserves every R1-R10 reconciliation record exactly
+307	R11 compound coordinator paragraph publishes ownership independently
+308	R11 compound coordinator ownership has an explicit source-authored positive query
+309	R11 compound coordinator ownership has an explicit source-authored negative query
+310	R11 compound coordinator paragraph publishes frozen-contract independently
+311	R11 compound coordinator frozen-contract has an explicit source-authored positive query
+312	R11 compound coordinator frozen-contract has an explicit source-authored negative query
+313	R11 compound coordinator paragraph publishes tripwire independently
+314	R11 compound coordinator tripwire has an explicit source-authored positive query
+315	R11 compound coordinator tripwire has an explicit source-authored negative query
+316	R11 compound coordinator paragraph publishes security-boundary independently
+317	R11 compound coordinator security-boundary has an explicit source-authored positive query
+318	R11 compound coordinator security-boundary has an explicit source-authored negative query
+319	R11 compound coordinator paragraph publishes external-capability independently
+320	R11 compound coordinator external-capability has an explicit source-authored positive query
+321	R11 compound coordinator external-capability has an explicit source-authored negative query
+322	R11 compound coordinator paragraph publishes empty-queue independently
+323	R11 compound coordinator empty-queue has an explicit source-authored positive query
+324	R11 compound coordinator empty-queue has an explicit source-authored negative query
+325	R11 publishes the complete protected block: SPEC-CONVENTION exact Allowed Files block
+326	R11 publishes the complete protected block: SPEC-CONVENTION stop and no-self-expansion block
+327	R11 publishes the complete protected block: PDD approved-contract mutation block
+328	R11 publishes the complete protected block: PDD mandatory session-handoff block
+329	R11 protected normative blocks reject exclusion
+330	R11 protected normative blocks reject first-line truncation
+331	R11 protected normative blocks reject a nearby-item authority-basis substitution
+332	R11 all 54 permission-profile restrictions have precise mediated loaded-host scope
+333	R11 loaded builder profile denial resolves only through mediated host authority
+334	R11 permission-profile authority excludes unenrolled host
+335	R11 permission-profile authority excludes unsupported host
+336	R11 permission-profile authority excludes CI host
+337	R11 permission-profile authority excludes wrong role
+338	R12 exact three binding Gate 2 rules use ALLOW with no refusal code
+339	R11 resolver propagates the controlling Gate 2 ALLOW decision
+340	R11 resolver returns conflict for same highest-tier claim with different decisions
+341	R11 validator rejects any unapproved ALLOW rule
+342	R12 the complete ALLOW set contains exactly the three binding Gate 2 grants
+343	R12 coordinator-pattern delegation guidance remains an advisory non-grant
+344	R12 a fourth corroborating or unratified ALLOW is rejected
+345	R12 every permission-profile header and container is structural excluded inventory
+346	R12 obsolete builder-architecture profile-header rule is absent
+347	R12 reviewer git-commit denial binds only its canonical YAML rule item
+348	R12 a permission-profile claim based on a structural header is rejected
+349	R12 rejects a content-derived legacy item ID on a published Markdown rule
+350	R12 preserves every R1-R11 reconciliation record byte-semantically
+351	R12 ships an exact typed migration from the R11 registry snapshot
+352	R12 registry-rework-544d8a3 rejects append evidence
+353	R12 registry-rework-544d8a3 rejects remove evidence
+354	R12 registry-rework-544d8a3 rejects duplicate evidence
+355	R12 registry-rework-544d8a3 rejects substitute evidence
+356	R11 ships an exact typed migration from the R10 registry snapshot
+357	R11 registry-rework-ee29973 rejects append evidence
+358	R11 registry-rework-ee29973 rejects remove evidence
+359	R11 registry-rework-ee29973 rejects duplicate evidence
+360	R11 registry-rework-ee29973 rejects substitute evidence
+361	R10 source-derived registry-rework loop rejects append evidence
+362	R10 source-derived registry-rework loop rejects remove evidence
+363	R10 source-derived registry-rework loop rejects duplicate evidence
+364	R10 source-derived registry-rework loop rejects substitute evidence
+365	R9 publishes all thirteen charter integration scenarios individually
+366	R9 publishes all five charter refusal-class rows individually
+367	R9 publishes all twenty-two charter parcel contracts individually
+368	R9 gives every published item one literal curated classification entry
+369	R9 classification curation has no source-wide keyword or terminal fallback
+370	R9 loop Gate 2 shares the charter subject with precise dispatch applicability
+371	R9 loop Gate 3 shares the charter subject with coordinator merge refusal scope
+372	R9 exact coordinator verification custody is an operative refusal on the shared subject
+373	R9 loop stop and completion rules retain operative classifications and narrow scope
+374	R7 Gate 1 binds original ratification scoped re-ratification and nondelegability
+375	R7 Gate 2 binds the standing charter grant and operative loop authorization
+376	R7 every exclusion uses the closed item-specific code vocabulary
+377	R9 shared semantic identities are limited to the exact curated equivalent claims
+378	R7 all charter decisions D1 through D20 publish active non-narrative authority
+379	R8 publishes all nine charter goal-exit requirements individually
+380	R8 publishes all seventeen charter stop-condition bullets individually
+381	R8 publishes all five literal charter wave-exit contracts individually
+382	R8 loop completion and gate requirement bodies remain independently published
+383	R8 generation has no classification or default applicability fallback
+384	R8 Gate 2 grant is out of scope for builder runtime external write on unsupported host
+385	R8 unrelated linter return remains structural and cannot publish absence authority
+386	R8 Allowed Files absence is carried only by exact reconciliation evidence
+387	R8 verification operation binds exact anti-self-production canon
+388	R8 verification evidence resolves the exact independent-review meaning
+389	R8 verification evidence rejects a corroborative two-review substitution
+390	R8 RULE_SEMANTICS_UNCURATED is a closed ratified result code
+391	R8 ships a typed migration from the R7 registry snapshot
+392	R9 ships an exact typed migration from the R8 registry snapshot
+393	R8 migration rejects append evidence
+394	R8 migration rejects remove evidence
+395	R8 migration rejects duplicate evidence
+396	R8 migration rejects substitute evidence
+397	R7 natural resolution: D2 canon and operational authority split
+398	R7 natural resolution: D18 provider-neutral authorizeAction owner
+399	R7 natural resolution: PDD6 builder pre-PR rebase
+400	R14 a resolved result exposes classification, assurance, enforcement owner and severity
+401	R14 a resolved result reports the assurance of its controlling rules, not a default
+402	R14 a Gate 2 ALLOW whose source no longer matches the ratified grant is refused
+403	R14 a Gate 2 ALLOW whose item no longer matches the ratified grant is refused
+404	R14 a Gate 2 ALLOW whose value digest no longer matches the ratified grant is refused
+405	R14 a Gate 2 ALLOW whose authority claim no longer matches the ratified grant is refused
+406	R14 a new rule wearing an approved Gate 2 rule name cannot inherit its ALLOW
+407	AC4 head floor: the shipped registry is valid, so each refusal below is caused by its mutation
+408	AC4 O1 rejects a head declaring two superseding binding-manifest commands
+409	AC4 O1 rejects a head declaring two prior binding-manifest commands
+410	AC4 O1 rejects a head declaring no superseding binding-manifest command
+411	AC4 O1 rejects a head declaring no prior binding-manifest command
+412	AC4 O2 refuses a pinned record promoted into the head exemption by deletion
+413	AC4 O3 rejects a head that does not declare superseded-by-amendment with superseding evidence
+414	AC4 O3 rejects a head carrying no forty-hex lowercase git-commit evidence
+415	AC4 O3 rejects a head whose command evidence is not coordinator-issued with exit code 0
+416	AC4 O4 rejects a head whose git-commit reference is repointed at another commit
+417	AC4 O4 rejects a head whose bound git-commit evidence is deleted
+418	AC4 O4 residual, stated and not disguised: a head git-commit digest is not independently checkable
+419	AC4 O5 rejects a record carrying the same attestation twice
+420	AC4 R19 route A: a shadow link declaring the manifest of a tampered registry is refused
+421	R22 control: the shipped registry is valid, so every refusal below is caused by its mutation
+422	R22 O6 refuses deleting the head and substituting a copy under a fresh unpinned id
+423	R22 O6 refuses rewriting the head IN PLACE under the same id
+424	R22 O6 refuses rewriting the head attestation even with no payload at all
+425	R22 O7 ADMITS a properly chained appended head and preserves the demoted head
+426	R22 O7 refuses an append that also rewrites the demoted former head
+427	R22 O3 refuses gutted chain commands that a coordinator decoy would have excused
+428	R22 O5 refuses deleting the unbound second git-commit entry from the head
+429	R22 O5 refuses a fabricated extra git-commit entry on the head
+430	R22 O5 refuses the bound git-commit reference repeated under a differing digest
+431	R23 O5 refuses a head whose entire Git provenance is fabricated (G6)
+432	R23 O5 refuses repointing the head UNBOUND git-commit reference (was a stated residual)
+433	R22 O7 limit, stated exactly: the append path is one deep, and the second is refused
+434	chain topology: an off-path migration record is refused as an orphan
+435	chain topology: a self-looping head is refused as a cycle
+436	chain topology: two records chaining from one predecessor are refused as a fork
+437	chain topology: a chain that does not start at the genesis anchor is refused
+438	chain topology: removing a middle record truncates the chain and orphans its successors
+439	chain topology: a record chaining from the wrong predecessor is refused
+440	chain topology: renaming a record out of the chain prefix does not let it escape

@@ -1,0 +1,5 @@
+{
+  "command": "git diff --cached --check",
+  "directExit": 2,
+  "reason": "Raw Windows stdout/stderr transcripts and PowerShell JSON retain CRLF; Git default whitespace checker treats those carriage returns as trailing whitespace. Preserve original full streams; apply format checks to authored documentation separately."
+}

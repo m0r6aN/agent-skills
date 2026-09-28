@@ -1,0 +1,11 @@
+{
+  "status": "running",
+  "command": [
+    "node.exe",
+    "-v"
+  ],
+  "startedUtc": "2026-09-07T13:49:38.1256414Z",
+  "step": "01-node",
+  "head": "0ee165720f8d1e3a91eb283cb770400b23f61bf5",
+  "wrapperPid": 409632
+}
