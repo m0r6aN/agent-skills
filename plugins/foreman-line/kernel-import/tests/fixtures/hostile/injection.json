@@ -1,0 +1,93 @@
+{
+  "class": "F9",
+  "records": [
+    {
+      "id": "INJ-01",
+      "input": {
+        "value": "goal-1\nfake-row\r\npath/to/cell\r\ntrailing\r"
+      },
+      "expectedOutcome": "sanitized",
+      "expectedSanitized": "goal-1 fake-row path/to/cell trailing"
+    },
+    {
+      "id": "INJ-02",
+      "input": {
+        "value": "start ```\nfence-break\n```stop"
+      },
+      "expectedOutcome": "sanitized",
+      "expectedSanitized": "start \\`\\`\\` fence-break \\`\\`\\`stop"
+    },
+    {
+      "id": "INJ-03",
+      "input": {
+        "value": "a\u0000b\u001fcd"
+      },
+      "expectedOutcome": "sanitized",
+      "expectedSanitized": "a�b�c�d"
+    },
+    {
+      "id": "INJ-04",
+      "input": {
+        "value": "A‮B​C‎D﻿Z"
+      },
+      "expectedOutcome": "sanitized",
+      "expectedSanitized": "A�B�C�D�Z"
+    },
+    {
+      "id": "INJ-05",
+      "input": {
+        "value": "# heading\n- item\n> quote\n1. step | cell"
+      },
+      "expectedOutcome": "sanitized",
+      "expectedSanitized": "\\# heading - item \\> quote 1. step \\| cell"
+    },
+    {
+      "id": "INJ-06",
+      "input": {
+        "value": "<script>alert(1)</script><img src=x onerror=alert(1)>"
+      },
+      "expectedOutcome": "sanitized",
+      "expectedSanitized": "\\<script\\>alert(1)\\</script\\>\\<img src=x onerror=alert(1)\\>"
+    },
+    {
+      "id": "INJ-07",
+      "input": {
+        "value": "escape\u001b[2J\u0000eof"
+      },
+      "expectedOutcome": "sanitized",
+      "expectedSanitized": "escape�[2J�eof"
+    },
+    {
+      "id": "INJ-08",
+      "input": {
+        "value": "\\|"
+      },
+      "expectedOutcome": "sanitized",
+      "expectedSanitized": "\\\\\\|"
+    },
+    {
+      "id": "INJ-09",
+      "input": {
+        "value": "\\`"
+      },
+      "expectedOutcome": "sanitized",
+      "expectedSanitized": "\\\\\\`"
+    },
+    {
+      "id": "INJ-10",
+      "input": {
+        "value": "\\<tag\\>"
+      },
+      "expectedOutcome": "sanitized",
+      "expectedSanitized": "\\\\\\<tag\\\\\\>"
+    },
+    {
+      "id": "INJ-11",
+      "input": {
+        "value": "\\\\|"
+      },
+      "expectedOutcome": "sanitized",
+      "expectedSanitized": "\\\\\\\\\\|"
+    }
+  ]
+}

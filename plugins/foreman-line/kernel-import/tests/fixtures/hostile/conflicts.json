@@ -1,0 +1,1166 @@
+[
+  {
+    "id": "CON-01",
+    "input": {
+      "mode": "import",
+      "lineage": {
+        "commits": [
+          {
+            "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa0001",
+            "parents": []
+          },
+          {
+            "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0001",
+            "parents": [
+              "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa0001"
+            ]
+          }
+        ],
+        "blobs": [
+          {
+            "commitId": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0001",
+            "sourcePath": "docs/goals/con-01-a.md",
+            "text": "CON-01 legacy goal-x record A\n"
+          },
+          {
+            "commitId": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0001",
+            "sourcePath": "docs/goals/con-01-b.md",
+            "text": "CON-01 legacy goal-x record B\n"
+          }
+        ]
+      },
+      "seed": {
+        "goals": [],
+        "leases": [],
+        "idempotencyKeys": [],
+        "events": []
+      },
+      "document": {
+        "apiVersion": "0.1.0",
+        "documentKind": "legacy-import",
+        "corpusDigest": "sha256:da5764d7b08a18064ae2a0c0a8580282aa26a5626fb952158e14efdb2bdde2eb",
+        "sourceLineage": {
+          "rootCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa0001",
+          "tipCommit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0001"
+        },
+        "corpusManifest": {
+          "manifestKind": "legacy-corpus-manifest",
+          "sourceRevision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0001",
+          "items": [
+            {
+              "sourcePath": "docs/goals/con-01-a.md",
+              "sourceDigest": "sha256:9638a2f13824ebedf062b49bf61f2a33c73dff4faa25eeaba8dbce4ae226aecc",
+              "disposition": "import",
+              "reason": "legacy corpus extraction"
+            },
+            {
+              "sourcePath": "docs/goals/con-01-b.md",
+              "sourceDigest": "sha256:40057c4ad5cb529e64715c761964614d25ad489fe738ecaf5c6e45cbeb79dcc9",
+              "disposition": "import",
+              "reason": "legacy corpus extraction"
+            }
+          ]
+        },
+        "rows": [
+          {
+            "goalId": "goal-x",
+            "claimedStatus": "active",
+            "source": {
+              "sourcePath": "docs/goals/con-01-a.md",
+              "sourceDigest": "sha256:9638a2f13824ebedf062b49bf61f2a33c73dff4faa25eeaba8dbce4ae226aecc",
+              "sourceCommit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0001"
+            },
+            "claimedRatificationRefs": [],
+            "claimedApprovals": [],
+            "claimedOperationalFacts": {
+              "claimedRevision": null,
+              "claimedLeaseHolderPrincipalRef": null,
+              "claimedPendingTransitionTarget": null,
+              "claimedWakeupCount": null,
+              "claimedHandoffCount": null,
+              "claimedBinding": null
+            }
+          },
+          {
+            "goalId": "goal-x",
+            "claimedStatus": "awaiting-human",
+            "source": {
+              "sourcePath": "docs/goals/con-01-b.md",
+              "sourceDigest": "sha256:40057c4ad5cb529e64715c761964614d25ad489fe738ecaf5c6e45cbeb79dcc9",
+              "sourceCommit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0001"
+            },
+            "claimedRatificationRefs": [],
+            "claimedApprovals": [],
+            "claimedOperationalFacts": {
+              "claimedRevision": null,
+              "claimedLeaseHolderPrincipalRef": null,
+              "claimedPendingTransitionTarget": null,
+              "claimedWakeupCount": null,
+              "claimedHandoffCount": null,
+              "claimedBinding": null
+            }
+          }
+        ]
+      },
+      "request": {
+        "principalRef": "operator-1",
+        "operationId": "op-0001"
+      }
+    },
+    "expectedCode": "DIVERGENCE_STOP",
+    "expectedReasonCode": "status"
+  },
+  {
+    "id": "CON-02",
+    "input": {
+      "mode": "import",
+      "lineage": {
+        "commits": [
+          {
+            "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa0002",
+            "parents": []
+          },
+          {
+            "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0002",
+            "parents": [
+              "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa0002"
+            ]
+          }
+        ],
+        "blobs": [
+          {
+            "commitId": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0002",
+            "sourcePath": "docs/goals/con-02-a.md",
+            "text": "CON-02 legacy goal-x record A\n"
+          },
+          {
+            "commitId": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0002",
+            "sourcePath": "docs/refs/con-02-r1.md",
+            "text": "CON-02 ratified spec bytes v1\n"
+          },
+          {
+            "commitId": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0002",
+            "sourcePath": "docs/goals/con-02-b.md",
+            "text": "CON-02 legacy goal-x record B\n"
+          },
+          {
+            "commitId": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0002",
+            "sourcePath": "docs/refs/con-02-r2.md",
+            "text": "CON-02 ratified spec bytes v2\n"
+          }
+        ]
+      },
+      "seed": {
+        "goals": [],
+        "leases": [],
+        "idempotencyKeys": [],
+        "events": []
+      },
+      "document": {
+        "apiVersion": "0.1.0",
+        "documentKind": "legacy-import",
+        "corpusDigest": "sha256:7e1c07ab9024ac710a8ca6c59cd39bcfcac2f36aa3e431112257cc12f55da50a",
+        "sourceLineage": {
+          "rootCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa0002",
+          "tipCommit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0002"
+        },
+        "corpusManifest": {
+          "manifestKind": "legacy-corpus-manifest",
+          "sourceRevision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0002",
+          "items": [
+            {
+              "sourcePath": "docs/goals/con-02-a.md",
+              "sourceDigest": "sha256:b093b1e32874a782822f09fc05fda54f86decf2053bc52757d8d3585483b580c",
+              "disposition": "import",
+              "reason": "legacy corpus extraction"
+            },
+            {
+              "sourcePath": "docs/goals/con-02-b.md",
+              "sourceDigest": "sha256:ce8a7c802f4318e483a06d6819c00b9032bcdca786930eb23f0cbd3ef255bc85",
+              "disposition": "import",
+              "reason": "legacy corpus extraction"
+            },
+            {
+              "sourcePath": "docs/refs/con-02-r1.md",
+              "sourceDigest": "sha256:cc51cefbb6aa4910878d2c0e7196373c7aaa16e27cc8158e18269e2d6fc3a65f",
+              "disposition": "import",
+              "reason": "legacy corpus extraction"
+            },
+            {
+              "sourcePath": "docs/refs/con-02-r2.md",
+              "sourceDigest": "sha256:097fa339f36a2cf3a5ebe0a76a0a712b5aedeb499fc7ff5d487a79102a52bf0d",
+              "disposition": "import",
+              "reason": "legacy corpus extraction"
+            }
+          ]
+        },
+        "rows": [
+          {
+            "goalId": "goal-x",
+            "claimedStatus": "active",
+            "source": {
+              "sourcePath": "docs/goals/con-02-a.md",
+              "sourceDigest": "sha256:b093b1e32874a782822f09fc05fda54f86decf2053bc52757d8d3585483b580c",
+              "sourceCommit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0002"
+            },
+            "claimedRatificationRefs": [
+              {
+                "gitIdentity": "refs/legacy/spec-1",
+                "digest": "sha256:cc51cefbb6aa4910878d2c0e7196373c7aaa16e27cc8158e18269e2d6fc3a65f",
+                "provenance": {
+                  "sourcePath": "docs/refs/con-02-r1.md",
+                  "sourceDigest": "sha256:cc51cefbb6aa4910878d2c0e7196373c7aaa16e27cc8158e18269e2d6fc3a65f",
+                  "sourceCommit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0002"
+                }
+              }
+            ],
+            "claimedApprovals": [],
+            "claimedOperationalFacts": {
+              "claimedRevision": null,
+              "claimedLeaseHolderPrincipalRef": null,
+              "claimedPendingTransitionTarget": null,
+              "claimedWakeupCount": null,
+              "claimedHandoffCount": null,
+              "claimedBinding": null
+            }
+          },
+          {
+            "goalId": "goal-x",
+            "claimedStatus": "active",
+            "source": {
+              "sourcePath": "docs/goals/con-02-b.md",
+              "sourceDigest": "sha256:ce8a7c802f4318e483a06d6819c00b9032bcdca786930eb23f0cbd3ef255bc85",
+              "sourceCommit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0002"
+            },
+            "claimedRatificationRefs": [
+              {
+                "gitIdentity": "refs/legacy/spec-1",
+                "digest": "sha256:097fa339f36a2cf3a5ebe0a76a0a712b5aedeb499fc7ff5d487a79102a52bf0d",
+                "provenance": {
+                  "sourcePath": "docs/refs/con-02-r2.md",
+                  "sourceDigest": "sha256:097fa339f36a2cf3a5ebe0a76a0a712b5aedeb499fc7ff5d487a79102a52bf0d",
+                  "sourceCommit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0002"
+                }
+              }
+            ],
+            "claimedApprovals": [],
+            "claimedOperationalFacts": {
+              "claimedRevision": null,
+              "claimedLeaseHolderPrincipalRef": null,
+              "claimedPendingTransitionTarget": null,
+              "claimedWakeupCount": null,
+              "claimedHandoffCount": null,
+              "claimedBinding": null
+            }
+          }
+        ]
+      },
+      "request": {
+        "principalRef": "operator-1",
+        "operationId": "op-0001"
+      }
+    },
+    "expectedCode": "DIVERGENCE_STOP",
+    "expectedReasonCode": "ratification-fact"
+  },
+  {
+    "id": "CON-03",
+    "input": {
+      "mode": "import",
+      "lineage": {
+        "commits": [
+          {
+            "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa0003",
+            "parents": []
+          },
+          {
+            "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0003",
+            "parents": [
+              "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa0003"
+            ]
+          }
+        ],
+        "blobs": [
+          {
+            "commitId": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0003",
+            "sourcePath": "docs/goals/con-03-a.md",
+            "text": "CON-03 legacy goal-x record A\n"
+          },
+          {
+            "commitId": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0003",
+            "sourcePath": "docs/refs/con-03-c1.md",
+            "text": "CON-03 approval evidence bytes v1\n"
+          },
+          {
+            "commitId": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0003",
+            "sourcePath": "docs/goals/con-03-b.md",
+            "text": "CON-03 legacy goal-x record B\n"
+          },
+          {
+            "commitId": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0003",
+            "sourcePath": "docs/refs/con-03-c2.md",
+            "text": "CON-03 approval evidence bytes v2\n"
+          }
+        ]
+      },
+      "seed": {
+        "goals": [],
+        "leases": [],
+        "idempotencyKeys": [],
+        "events": []
+      },
+      "document": {
+        "apiVersion": "0.1.0",
+        "documentKind": "legacy-import",
+        "corpusDigest": "sha256:6be0cb29f7a3df763fbaa41f15639c56be81ad1d872e20c13e4388c57803cb21",
+        "sourceLineage": {
+          "rootCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa0003",
+          "tipCommit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0003"
+        },
+        "corpusManifest": {
+          "manifestKind": "legacy-corpus-manifest",
+          "sourceRevision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0003",
+          "items": [
+            {
+              "sourcePath": "docs/goals/con-03-a.md",
+              "sourceDigest": "sha256:0f3492278505defa2e63d915e9d140e3e86c4fa49c9aedd2a629c88bc4b69694",
+              "disposition": "import",
+              "reason": "legacy corpus extraction"
+            },
+            {
+              "sourcePath": "docs/goals/con-03-b.md",
+              "sourceDigest": "sha256:8c22b736e66ef218de905b3a1db1a38553705d9c2aad653113a8915046766853",
+              "disposition": "import",
+              "reason": "legacy corpus extraction"
+            },
+            {
+              "sourcePath": "docs/refs/con-03-c1.md",
+              "sourceDigest": "sha256:70cc4eea1437968dd0cee75688567afcfad6d25c09431e1244e0f517dd5547db",
+              "disposition": "import",
+              "reason": "legacy corpus extraction"
+            },
+            {
+              "sourcePath": "docs/refs/con-03-c2.md",
+              "sourceDigest": "sha256:8bb34693f73fbf4af03eac81123b6c5efc04ee7b0f1f93f98cd9374c80c6774f",
+              "disposition": "import",
+              "reason": "legacy corpus extraction"
+            }
+          ]
+        },
+        "rows": [
+          {
+            "goalId": "goal-x",
+            "claimedStatus": "active",
+            "source": {
+              "sourcePath": "docs/goals/con-03-a.md",
+              "sourceDigest": "sha256:0f3492278505defa2e63d915e9d140e3e86c4fa49c9aedd2a629c88bc4b69694",
+              "sourceCommit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0003"
+            },
+            "claimedRatificationRefs": [],
+            "claimedApprovals": [
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "refs/legacy/approval-1",
+                "digest": "sha256:70cc4eea1437968dd0cee75688567afcfad6d25c09431e1244e0f517dd5547db",
+                "provenance": {
+                  "sourcePath": "docs/refs/con-03-c1.md",
+                  "sourceDigest": "sha256:70cc4eea1437968dd0cee75688567afcfad6d25c09431e1244e0f517dd5547db",
+                  "sourceCommit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0003"
+                }
+              }
+            ],
+            "claimedOperationalFacts": {
+              "claimedRevision": null,
+              "claimedLeaseHolderPrincipalRef": null,
+              "claimedPendingTransitionTarget": null,
+              "claimedWakeupCount": null,
+              "claimedHandoffCount": null,
+              "claimedBinding": null
+            }
+          },
+          {
+            "goalId": "goal-x",
+            "claimedStatus": "active",
+            "source": {
+              "sourcePath": "docs/goals/con-03-b.md",
+              "sourceDigest": "sha256:8c22b736e66ef218de905b3a1db1a38553705d9c2aad653113a8915046766853",
+              "sourceCommit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0003"
+            },
+            "claimedRatificationRefs": [],
+            "claimedApprovals": [
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "refs/legacy/approval-1",
+                "digest": "sha256:8bb34693f73fbf4af03eac81123b6c5efc04ee7b0f1f93f98cd9374c80c6774f",
+                "provenance": {
+                  "sourcePath": "docs/refs/con-03-c2.md",
+                  "sourceDigest": "sha256:8bb34693f73fbf4af03eac81123b6c5efc04ee7b0f1f93f98cd9374c80c6774f",
+                  "sourceCommit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0003"
+                }
+              }
+            ],
+            "claimedOperationalFacts": {
+              "claimedRevision": null,
+              "claimedLeaseHolderPrincipalRef": null,
+              "claimedPendingTransitionTarget": null,
+              "claimedWakeupCount": null,
+              "claimedHandoffCount": null,
+              "claimedBinding": null
+            }
+          }
+        ]
+      },
+      "request": {
+        "principalRef": "operator-1",
+        "operationId": "op-0001"
+      }
+    },
+    "expectedCode": "DIVERGENCE_STOP",
+    "expectedReasonCode": "human-gate-fact"
+  },
+  {
+    "id": "CON-04",
+    "input": {
+      "mode": "import",
+      "lineage": {
+        "commits": [
+          {
+            "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa0004",
+            "parents": []
+          },
+          {
+            "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0004",
+            "parents": [
+              "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa0004"
+            ]
+          }
+        ],
+        "blobs": [
+          {
+            "commitId": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0004",
+            "sourcePath": "docs/goals/con-04-a.md",
+            "text": "CON-04 legacy goal-x record claiming revision 5\n"
+          }
+        ]
+      },
+      "seed": {
+        "goals": [
+          {
+            "goalId": "goal-x",
+            "revision": 1,
+            "status": "active"
+          }
+        ],
+        "leases": [],
+        "idempotencyKeys": [],
+        "events": []
+      },
+      "document": {
+        "apiVersion": "0.1.0",
+        "documentKind": "legacy-import",
+        "corpusDigest": "sha256:3e0fd194b9e9dad03dc1bc4778ede5e1b05282f1a6a450e92c96db1ef1fef414",
+        "sourceLineage": {
+          "rootCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa0004",
+          "tipCommit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0004"
+        },
+        "corpusManifest": {
+          "manifestKind": "legacy-corpus-manifest",
+          "sourceRevision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0004",
+          "items": [
+            {
+              "sourcePath": "docs/goals/con-04-a.md",
+              "sourceDigest": "sha256:e3d182cd61fcf3ac4e66420f2a7428dce0c9049ffcff813634ef8427e0d5e8bb",
+              "disposition": "import",
+              "reason": "legacy corpus extraction"
+            }
+          ]
+        },
+        "rows": [
+          {
+            "goalId": "goal-x",
+            "claimedStatus": "active",
+            "source": {
+              "sourcePath": "docs/goals/con-04-a.md",
+              "sourceDigest": "sha256:e3d182cd61fcf3ac4e66420f2a7428dce0c9049ffcff813634ef8427e0d5e8bb",
+              "sourceCommit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0004"
+            },
+            "claimedRatificationRefs": [],
+            "claimedApprovals": [],
+            "claimedOperationalFacts": {
+              "claimedRevision": 5,
+              "claimedLeaseHolderPrincipalRef": null,
+              "claimedPendingTransitionTarget": null,
+              "claimedWakeupCount": null,
+              "claimedHandoffCount": null,
+              "claimedBinding": null
+            }
+          }
+        ]
+      },
+      "request": {
+        "principalRef": "operator-1",
+        "operationId": "op-0001"
+      }
+    },
+    "expectedCode": "DIVERGENCE_STOP",
+    "expectedReasonCode": "revision"
+  },
+  {
+    "id": "CON-05",
+    "input": {
+      "mode": "import",
+      "lineage": {
+        "commits": [
+          {
+            "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa0005",
+            "parents": []
+          },
+          {
+            "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0005",
+            "parents": [
+              "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa0005"
+            ]
+          }
+        ],
+        "blobs": [
+          {
+            "commitId": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0005",
+            "sourcePath": "docs/goals/con-05-a.md",
+            "text": "CON-05 legacy goal-x record claiming holder op-1\n"
+          },
+          {
+            "commitId": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0005",
+            "sourcePath": "docs/goals/con-05-b.md",
+            "text": "CON-05 legacy goal-x record claiming holder op-2\n"
+          }
+        ]
+      },
+      "seed": {
+        "goals": [],
+        "leases": [],
+        "idempotencyKeys": [],
+        "events": []
+      },
+      "document": {
+        "apiVersion": "0.1.0",
+        "documentKind": "legacy-import",
+        "corpusDigest": "sha256:4eecff0502c037a0b32604675157842fd6629dff283b8ae399f98cf9dc577fcd",
+        "sourceLineage": {
+          "rootCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa0005",
+          "tipCommit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0005"
+        },
+        "corpusManifest": {
+          "manifestKind": "legacy-corpus-manifest",
+          "sourceRevision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0005",
+          "items": [
+            {
+              "sourcePath": "docs/goals/con-05-a.md",
+              "sourceDigest": "sha256:a3373fe3dda31907cec57bb6afb0038c0048690bb30b6dbe4bb92063b2021249",
+              "disposition": "import",
+              "reason": "legacy corpus extraction"
+            },
+            {
+              "sourcePath": "docs/goals/con-05-b.md",
+              "sourceDigest": "sha256:2771cf8d3652417a220ba2dfccf3eabfa5bc13aaaa6bc9fb6d7ad3d4d951dff6",
+              "disposition": "import",
+              "reason": "legacy corpus extraction"
+            }
+          ]
+        },
+        "rows": [
+          {
+            "goalId": "goal-x",
+            "claimedStatus": "active",
+            "source": {
+              "sourcePath": "docs/goals/con-05-a.md",
+              "sourceDigest": "sha256:a3373fe3dda31907cec57bb6afb0038c0048690bb30b6dbe4bb92063b2021249",
+              "sourceCommit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0005"
+            },
+            "claimedRatificationRefs": [],
+            "claimedApprovals": [],
+            "claimedOperationalFacts": {
+              "claimedRevision": null,
+              "claimedLeaseHolderPrincipalRef": "op-1",
+              "claimedPendingTransitionTarget": null,
+              "claimedWakeupCount": null,
+              "claimedHandoffCount": null,
+              "claimedBinding": null
+            }
+          },
+          {
+            "goalId": "goal-x",
+            "claimedStatus": "active",
+            "source": {
+              "sourcePath": "docs/goals/con-05-b.md",
+              "sourceDigest": "sha256:2771cf8d3652417a220ba2dfccf3eabfa5bc13aaaa6bc9fb6d7ad3d4d951dff6",
+              "sourceCommit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0005"
+            },
+            "claimedRatificationRefs": [],
+            "claimedApprovals": [],
+            "claimedOperationalFacts": {
+              "claimedRevision": null,
+              "claimedLeaseHolderPrincipalRef": "op-2",
+              "claimedPendingTransitionTarget": null,
+              "claimedWakeupCount": null,
+              "claimedHandoffCount": null,
+              "claimedBinding": null
+            }
+          }
+        ]
+      },
+      "request": {
+        "principalRef": "operator-1",
+        "operationId": "op-0001"
+      }
+    },
+    "expectedCode": "DIVERGENCE_STOP",
+    "expectedReasonCode": "lease"
+  },
+  {
+    "id": "CON-06",
+    "input": {
+      "mode": "import",
+      "lineage": {
+        "commits": [
+          {
+            "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa0006",
+            "parents": []
+          },
+          {
+            "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0006",
+            "parents": [
+              "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa0006"
+            ]
+          }
+        ],
+        "blobs": [
+          {
+            "commitId": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0006",
+            "sourcePath": "docs/goals/con-06-a.md",
+            "text": "CON-06 legacy goal-x record targeting active\n"
+          },
+          {
+            "commitId": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0006",
+            "sourcePath": "docs/goals/con-06-b.md",
+            "text": "CON-06 legacy goal-x record targeting completed\n"
+          }
+        ]
+      },
+      "seed": {
+        "goals": [],
+        "leases": [],
+        "idempotencyKeys": [],
+        "events": []
+      },
+      "document": {
+        "apiVersion": "0.1.0",
+        "documentKind": "legacy-import",
+        "corpusDigest": "sha256:b8f1154dfbb27da1b8a4929b4dcae89b96b87c168ce9d565e7ce45ca75ecfc17",
+        "sourceLineage": {
+          "rootCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa0006",
+          "tipCommit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0006"
+        },
+        "corpusManifest": {
+          "manifestKind": "legacy-corpus-manifest",
+          "sourceRevision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0006",
+          "items": [
+            {
+              "sourcePath": "docs/goals/con-06-a.md",
+              "sourceDigest": "sha256:f9bbf8b519907426270228ee6c201402fee4b7bec67e5c9974686372776af73b",
+              "disposition": "import",
+              "reason": "legacy corpus extraction"
+            },
+            {
+              "sourcePath": "docs/goals/con-06-b.md",
+              "sourceDigest": "sha256:97f23cd57a825b7412aed8a483fae35b186bf61aba75855232b577f5f695e498",
+              "disposition": "import",
+              "reason": "legacy corpus extraction"
+            }
+          ]
+        },
+        "rows": [
+          {
+            "goalId": "goal-x",
+            "claimedStatus": "active",
+            "source": {
+              "sourcePath": "docs/goals/con-06-a.md",
+              "sourceDigest": "sha256:f9bbf8b519907426270228ee6c201402fee4b7bec67e5c9974686372776af73b",
+              "sourceCommit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0006"
+            },
+            "claimedRatificationRefs": [],
+            "claimedApprovals": [],
+            "claimedOperationalFacts": {
+              "claimedRevision": null,
+              "claimedLeaseHolderPrincipalRef": null,
+              "claimedPendingTransitionTarget": "active",
+              "claimedWakeupCount": null,
+              "claimedHandoffCount": null,
+              "claimedBinding": null
+            }
+          },
+          {
+            "goalId": "goal-x",
+            "claimedStatus": "active",
+            "source": {
+              "sourcePath": "docs/goals/con-06-b.md",
+              "sourceDigest": "sha256:97f23cd57a825b7412aed8a483fae35b186bf61aba75855232b577f5f695e498",
+              "sourceCommit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0006"
+            },
+            "claimedRatificationRefs": [],
+            "claimedApprovals": [],
+            "claimedOperationalFacts": {
+              "claimedRevision": null,
+              "claimedLeaseHolderPrincipalRef": null,
+              "claimedPendingTransitionTarget": "completed",
+              "claimedWakeupCount": null,
+              "claimedHandoffCount": null,
+              "claimedBinding": null
+            }
+          }
+        ]
+      },
+      "request": {
+        "principalRef": "operator-1",
+        "operationId": "op-0001"
+      }
+    },
+    "expectedCode": "DIVERGENCE_STOP",
+    "expectedReasonCode": "pending-transition"
+  },
+  {
+    "id": "CON-07",
+    "input": {
+      "mode": "import",
+      "lineage": {
+        "commits": [
+          {
+            "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa0007",
+            "parents": []
+          },
+          {
+            "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0007",
+            "parents": [
+              "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa0007"
+            ]
+          }
+        ],
+        "blobs": [
+          {
+            "commitId": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0007",
+            "sourcePath": "docs/goals/con-07-a.md",
+            "text": "CON-07 legacy goal-x record with wakeup count 2\n"
+          },
+          {
+            "commitId": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0007",
+            "sourcePath": "docs/goals/con-07-b.md",
+            "text": "CON-07 legacy goal-x record with wakeup count 3\n"
+          }
+        ]
+      },
+      "seed": {
+        "goals": [],
+        "leases": [],
+        "idempotencyKeys": [],
+        "events": []
+      },
+      "document": {
+        "apiVersion": "0.1.0",
+        "documentKind": "legacy-import",
+        "corpusDigest": "sha256:c7f9378e0366c5237e4ecdf5b55316ee9ab82c95fbff4c7fb1594548cbc047f2",
+        "sourceLineage": {
+          "rootCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa0007",
+          "tipCommit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0007"
+        },
+        "corpusManifest": {
+          "manifestKind": "legacy-corpus-manifest",
+          "sourceRevision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0007",
+          "items": [
+            {
+              "sourcePath": "docs/goals/con-07-a.md",
+              "sourceDigest": "sha256:99e001483eb9883fa41b2e80eaf187d98b46bbe1f714495361c3d413a2aa2961",
+              "disposition": "import",
+              "reason": "legacy corpus extraction"
+            },
+            {
+              "sourcePath": "docs/goals/con-07-b.md",
+              "sourceDigest": "sha256:3cb1ca25c38f4ff6ac72044b8c413cba3762d6d20f0e73bae27f271726bd2e0f",
+              "disposition": "import",
+              "reason": "legacy corpus extraction"
+            }
+          ]
+        },
+        "rows": [
+          {
+            "goalId": "goal-x",
+            "claimedStatus": "active",
+            "source": {
+              "sourcePath": "docs/goals/con-07-a.md",
+              "sourceDigest": "sha256:99e001483eb9883fa41b2e80eaf187d98b46bbe1f714495361c3d413a2aa2961",
+              "sourceCommit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0007"
+            },
+            "claimedRatificationRefs": [],
+            "claimedApprovals": [],
+            "claimedOperationalFacts": {
+              "claimedRevision": null,
+              "claimedLeaseHolderPrincipalRef": null,
+              "claimedPendingTransitionTarget": null,
+              "claimedWakeupCount": 2,
+              "claimedHandoffCount": null,
+              "claimedBinding": null
+            }
+          },
+          {
+            "goalId": "goal-x",
+            "claimedStatus": "active",
+            "source": {
+              "sourcePath": "docs/goals/con-07-b.md",
+              "sourceDigest": "sha256:3cb1ca25c38f4ff6ac72044b8c413cba3762d6d20f0e73bae27f271726bd2e0f",
+              "sourceCommit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0007"
+            },
+            "claimedRatificationRefs": [],
+            "claimedApprovals": [],
+            "claimedOperationalFacts": {
+              "claimedRevision": null,
+              "claimedLeaseHolderPrincipalRef": null,
+              "claimedPendingTransitionTarget": null,
+              "claimedWakeupCount": 3,
+              "claimedHandoffCount": null,
+              "claimedBinding": null
+            }
+          }
+        ]
+      },
+      "request": {
+        "principalRef": "operator-1",
+        "operationId": "op-0001"
+      }
+    },
+    "expectedCode": "DIVERGENCE_STOP",
+    "expectedReasonCode": "wakeup-handoff"
+  },
+  {
+    "id": "CON-08",
+    "input": {
+      "mode": "import",
+      "lineage": {
+        "commits": [
+          {
+            "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa0008",
+            "parents": []
+          },
+          {
+            "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0008",
+            "parents": [
+              "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa0008"
+            ]
+          }
+        ],
+        "blobs": [
+          {
+            "commitId": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0008",
+            "sourcePath": "docs/goals/con-08-a.md",
+            "text": "CON-08 legacy goal-x record claiming a recorded binding\n"
+          }
+        ]
+      },
+      "seed": {
+        "goals": [],
+        "leases": [],
+        "idempotencyKeys": [
+          {
+            "principalRef": "op-1",
+            "operationId": "op-bind-1",
+            "repositoryRef": "repo-1",
+            "worktreeRef": "wt-1",
+            "payloadDigest": "sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+          }
+        ],
+        "events": []
+      },
+      "document": {
+        "apiVersion": "0.1.0",
+        "documentKind": "legacy-import",
+        "corpusDigest": "sha256:a66ccce9d9293e24b2f12f49a94a8771d321900db9ee25413242819c24b7cc63",
+        "sourceLineage": {
+          "rootCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa0008",
+          "tipCommit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0008"
+        },
+        "corpusManifest": {
+          "manifestKind": "legacy-corpus-manifest",
+          "sourceRevision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0008",
+          "items": [
+            {
+              "sourcePath": "docs/goals/con-08-a.md",
+              "sourceDigest": "sha256:a21c3acdaacdb01c2cf42fa880228079a63dca5182d5d9c0c56a27eccdccae5f",
+              "disposition": "import",
+              "reason": "legacy corpus extraction"
+            }
+          ]
+        },
+        "rows": [
+          {
+            "goalId": "goal-x",
+            "claimedStatus": "active",
+            "source": {
+              "sourcePath": "docs/goals/con-08-a.md",
+              "sourceDigest": "sha256:a21c3acdaacdb01c2cf42fa880228079a63dca5182d5d9c0c56a27eccdccae5f",
+              "sourceCommit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0008"
+            },
+            "claimedRatificationRefs": [],
+            "claimedApprovals": [],
+            "claimedOperationalFacts": {
+              "claimedRevision": null,
+              "claimedLeaseHolderPrincipalRef": null,
+              "claimedPendingTransitionTarget": null,
+              "claimedWakeupCount": null,
+              "claimedHandoffCount": null,
+              "claimedBinding": {
+                "principalRef": "op-1",
+                "operationId": "op-bind-1",
+                "repositoryRef": "repo-1",
+                "worktreeRef": "wt-1"
+              }
+            }
+          }
+        ]
+      },
+      "request": {
+        "principalRef": "operator-1",
+        "operationId": "op-0001"
+      }
+    },
+    "expectedCode": "DIVERGENCE_STOP",
+    "expectedReasonCode": "idempotency"
+  },
+  {
+    "id": "CON-09",
+    "input": {
+      "mode": "import",
+      "lineage": {
+        "commits": [
+          {
+            "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa0009",
+            "parents": []
+          },
+          {
+            "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0009",
+            "parents": [
+              "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa0009"
+            ]
+          }
+        ],
+        "blobs": [
+          {
+            "commitId": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0009",
+            "sourcePath": "docs/goals/con-09-a.md",
+            "text": "CON-09 legacy goal-x record colliding with existing state\n"
+          }
+        ]
+      },
+      "seed": {
+        "goals": [
+          {
+            "goalId": "goal-x",
+            "revision": 1,
+            "status": "active"
+          }
+        ],
+        "leases": [],
+        "idempotencyKeys": [],
+        "events": []
+      },
+      "document": {
+        "apiVersion": "0.1.0",
+        "documentKind": "legacy-import",
+        "corpusDigest": "sha256:74a173e2278f37fc344fb7a7dc1053ba2911bf188e38272565299738f2e93e24",
+        "sourceLineage": {
+          "rootCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa0009",
+          "tipCommit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0009"
+        },
+        "corpusManifest": {
+          "manifestKind": "legacy-corpus-manifest",
+          "sourceRevision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0009",
+          "items": [
+            {
+              "sourcePath": "docs/goals/con-09-a.md",
+              "sourceDigest": "sha256:1da760e4393cbdd9d853cc2d520b5e9216db8f9cef34575f7a17826536d0de21",
+              "disposition": "import",
+              "reason": "legacy corpus extraction"
+            }
+          ]
+        },
+        "rows": [
+          {
+            "goalId": "goal-x",
+            "claimedStatus": "active",
+            "source": {
+              "sourcePath": "docs/goals/con-09-a.md",
+              "sourceDigest": "sha256:1da760e4393cbdd9d853cc2d520b5e9216db8f9cef34575f7a17826536d0de21",
+              "sourceCommit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0009"
+            },
+            "claimedRatificationRefs": [],
+            "claimedApprovals": [],
+            "claimedOperationalFacts": {
+              "claimedRevision": null,
+              "claimedLeaseHolderPrincipalRef": null,
+              "claimedPendingTransitionTarget": null,
+              "claimedWakeupCount": null,
+              "claimedHandoffCount": null,
+              "claimedBinding": null
+            }
+          }
+        ]
+      },
+      "request": {
+        "principalRef": "operator-1",
+        "operationId": "op-0001"
+      }
+    },
+    "expectedCode": "DIVERGENCE_STOP",
+    "expectedReasonCode": "existing-state-collision"
+  },
+  {
+    "id": "CON-10",
+    "input": {
+      "mode": "render-drift",
+      "lineage": {
+        "commits": [
+          {
+            "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa0010",
+            "parents": []
+          },
+          {
+            "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0010",
+            "parents": [
+              "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa0010"
+            ]
+          }
+        ],
+        "blobs": [
+          {
+            "commitId": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0010",
+            "sourcePath": "docs/goals/con-10-a.md",
+            "text": "CON-10 legacy goal-x record\n"
+          },
+          {
+            "commitId": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0010",
+            "sourcePath": "docs/refs/con-10-rat.md",
+            "text": "CON-10 ratified spec bytes v1\n"
+          },
+          {
+            "commitId": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0010",
+            "sourcePath": "docs/refs/con-10-app.md",
+            "text": "CON-10 approval evidence bytes v1\n"
+          }
+        ]
+      },
+      "seed": {
+        "goals": [],
+        "leases": [],
+        "idempotencyKeys": [],
+        "events": []
+      },
+      "document": {
+        "apiVersion": "0.1.0",
+        "documentKind": "legacy-import",
+        "corpusDigest": "sha256:4748b03931157604fe5dd18ca553e8d76cdabba6cf3006f2aff65586eeb349c3",
+        "sourceLineage": {
+          "rootCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa0010",
+          "tipCommit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0010"
+        },
+        "corpusManifest": {
+          "manifestKind": "legacy-corpus-manifest",
+          "sourceRevision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0010",
+          "items": [
+            {
+              "sourcePath": "docs/goals/con-10-a.md",
+              "sourceDigest": "sha256:0ac08c1d2ca2ba3c875532cef289f4a53fb919fbe0ad421d65547fecc0f2faf5",
+              "disposition": "import",
+              "reason": "legacy corpus extraction"
+            },
+            {
+              "sourcePath": "docs/refs/con-10-app.md",
+              "sourceDigest": "sha256:7a97207dc21664717d718e80c16b2123ebfa154eb4fe01a35f806853c4f928b0",
+              "disposition": "import",
+              "reason": "legacy corpus extraction"
+            },
+            {
+              "sourcePath": "docs/refs/con-10-rat.md",
+              "sourceDigest": "sha256:93b4c531f4018b11c7a2b57f0c7c388fc595a5ffc743c8a19062a92934c7c75c",
+              "disposition": "import",
+              "reason": "legacy corpus extraction"
+            }
+          ]
+        },
+        "rows": [
+          {
+            "goalId": "goal-x",
+            "claimedStatus": "active",
+            "source": {
+              "sourcePath": "docs/goals/con-10-a.md",
+              "sourceDigest": "sha256:0ac08c1d2ca2ba3c875532cef289f4a53fb919fbe0ad421d65547fecc0f2faf5",
+              "sourceCommit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0010"
+            },
+            "claimedRatificationRefs": [
+              {
+                "gitIdentity": "refs/legacy/spec-1",
+                "digest": "sha256:93b4c531f4018b11c7a2b57f0c7c388fc595a5ffc743c8a19062a92934c7c75c",
+                "provenance": {
+                  "sourcePath": "docs/refs/con-10-rat.md",
+                  "sourceDigest": "sha256:93b4c531f4018b11c7a2b57f0c7c388fc595a5ffc743c8a19062a92934c7c75c",
+                  "sourceCommit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0010"
+                }
+              }
+            ],
+            "claimedApprovals": [
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "refs/legacy/approval-1",
+                "digest": "sha256:7a97207dc21664717d718e80c16b2123ebfa154eb4fe01a35f806853c4f928b0",
+                "provenance": {
+                  "sourcePath": "docs/refs/con-10-app.md",
+                  "sourceDigest": "sha256:7a97207dc21664717d718e80c16b2123ebfa154eb4fe01a35f806853c4f928b0",
+                  "sourceCommit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0010"
+                }
+              }
+            ],
+            "claimedOperationalFacts": {
+              "claimedRevision": null,
+              "claimedLeaseHolderPrincipalRef": null,
+              "claimedPendingTransitionTarget": null,
+              "claimedWakeupCount": null,
+              "claimedHandoffCount": null,
+              "claimedBinding": null
+            }
+          }
+        ]
+      },
+      "request": {
+        "principalRef": "operator-1",
+        "operationId": "op-0001"
+      },
+      "drift": [
+        {
+          "kind": "ratification-ref",
+          "commitId": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0010",
+          "sourcePath": "docs/refs/con-10-rat.md",
+          "newText": "CON-10 ratified spec bytes v2 (drifted post-cutover)\n",
+          "goalId": "goal-x",
+          "fieldId": "claimedRatificationRefs.digest",
+          "expectedClassReasonCode": "ratification-fact"
+        },
+        {
+          "kind": "approval",
+          "commitId": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0010",
+          "sourcePath": "docs/refs/con-10-app.md",
+          "newText": "CON-10 approval evidence bytes v2 (drifted post-cutover)\n",
+          "goalId": "goal-x",
+          "fieldId": "claimedApprovals.digest",
+          "expectedClassReasonCode": "human-gate-fact"
+        }
+      ]
+    },
+    "expectedCode": "DIVERGENCE_STOP",
+    "expectedReasonCode": "projection-source-drift"
+  }
+]
