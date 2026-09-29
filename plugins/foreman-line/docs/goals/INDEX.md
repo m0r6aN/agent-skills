@@ -4,46 +4,50 @@ This file is a discovery projection. Each goal's `charter.md` and `loop-directiv
 remain authoritative for status, ownership, gates, and next action. Never infer authority
 from an index row.
 
+**Post-audit state (2026-09-26/27):** the goal tree was pruned per owner-directed criteria
+(real value / duplicate / extractable features). 12 records were deleted; verdicts and the
+dispatch log live in [goal-status-report-2026-09-26.md](goal-status-report-2026-09-26.md).
+Deleted records are recoverable in git history.
+
 ## Coordinator pickup queue
 
 | Goal | State | Entry | Current authority |
 |---|---|---|---|
-| [hierarchical-coordination-sidecars](hierarchical-coordination-sidecars/charter.md) | `awaiting_coordinator_claim` | `/goal resume hierarchical-coordination-sidecars` | Goal intake requested; Gate 1/2 absent; Gate 3 human |
-| [heterogeneous-agent-worker-fabric](heterogeneous-agent-worker-fabric/charter.md) | `awaiting_coordinator_claim` | `/goal resume heterogeneous-agent-worker-fabric` | Completion requested; Gate 1/2 absent; default-route Gate 3 human |
+| [foreman-kernel](foreman-kernel/charter.md) | `fk_p17_merged_wave3a_ready` | `/goal resume foreman-kernel` | **FK-P17′ MERGED** (Gate-3 delegated RS-2.1 + closure fix `0d3bff0`; 72/72 clean-checkout reproducible; **[INFERENCE] row RESOLVED — CONFIRMED** (mutations outside the dispatch CLI bypass all scope checks, proven two-sided); `fk-p17-stage-f-closure-2026-09-28.md`). Session merges: FK-P1 `fed2298`, FK-P2 `a1b948c`, FK-P9, FK-P17′; R32 accepted (752/752). Next dispatchable: **FK-P10** (lease/transition engine, dep FK-P9 merged) and **FK-P11** after it; FK-P3/FK-P2B window-gated (holding FK-P4–P8 transitively); FK-P18′ holds on the §14 U1 contract. Exit annex tracks all named gaps |
+| [hierarchical-coordination-sidecars](hierarchical-coordination-sidecars/charter.md) | `hcs_p0_accepted` | `/goal resume hierarchical-coordination-sidecars` | Claimed 2026-09-26; Stage Zero + Gate 1 + P0 records dual-approved (`hcs-p0-acceptance-2026-09-26.md`); next HCS-P1 (RB-01 pin carried) — HCS-P7 stays gated on the FK merge |
 
-## Active goals awaiting a human gate
-
-| Goal | Owner | State | Current authority |
-|---|---|---|---|
-| [governed-model-fleet](governed-model-fleet/charter.md) | /root | gmf_p1_landed_p2a_awaiting_shape | D1-D24 plus A1/P0-P9 ratified; P0 + P1 evidence landed (PRs #28, #33); P1 closure READY; P2A shaping next, no Gate 2 yet |
-| [foreman-ops-console](foreman-ops-console/charter.md) | current session | `gate_1_ratified_plan_review_pending` | Charter ratified 2026-09-16 (OQ1–OQ5 decided); D8 standing Gate 2 (FOC-P0–P4) + contingent Gate 3 granted; plan-level adversarial review is the mandatory next step |
-
-## Frozen or stopped goals
+## Active goals
 
 | Goal | State | Current authority |
 |---|---|---|
-| [model-fleet-v1](model-fleet-v1/charter.md) | `stopped_at_mf_p0_no_go` | Frozen predecessor evidence; MF-P1–MF-P4 not dispatched; no active implementation authority |
+| [foreman-line-boundary-routing](foreman-line-boundary-routing/charter.md) | `items_1_7_complete` | **DONE 2026-09-27** — items 1–7 delivered; all nine acceptance bullets PASS (`items-*-status-*` + `items-7-gates-2026-09-27.md`); full sweep 22 pkgs 1997/1997, D19 PASS; goal-level remainders (live Jev smoke, version-agreement test) recorded in the gates record |
+| [foreman-ops-console](foreman-ops-console/charter.md) | `foc_p1_p4_implemented` | FOC-P0 shaped (spec-linter clean) + FOC-P1–P4 library delivered (`ops-console/`, 78/78 green, localhost 8081 smoke); Phase 2 (FOC-P5–P8) needs a scoped Gate 1 amendment; D19 audit green after coordinator enrollments |
+| [hybrid-routing-optimization](hybrid-routing-optimization/charter.md) | `hro_p0_p1_done` | HRO-P0 contract + HRO-P1 mapping/typed-refusal demos delivered (routing-policy 206/0; `hro-p1-mapping-contract-2026-09-27.md`); HRO-P2–P4c (cache, telemetry, recovery, config proposals) remain |
+| [pi-model-configuration](pi-model-configuration/charter.md) | `wave_1_released_p3_p4_next` | PMC-P0–P2 complete + dual-approved (`pmc-wave1-release-2026-09-27.md`); Window P released; Gate-3 merge decision approved (git step = owner's); P3 (human-facing canon) + P4 (legacy removal) remain; L1–L4/DELTA_L fail-closed pending owner-authorized evidence |
+| [plugin-packaging-and-scaffolder](plugin-packaging-and-scaffolder/charter.md) | `p5_p6_done_p7_trial_recorded` | P1–P7 reconciled (`p1-p7-reconciliation-2026-09-26.md`); `project-scaffold/` generator 41/41; P7 clean-room trial recorded (`p7-clean-room-trial-2026-09-26.md`); P3/P4 residual deferred under Window-P template rules |
+| [routing-currency-and-merit](routing-currency-and-merit/loop-directive.md) | `rcm_p2_p3_built` | RCM-P1 built (399/399) + Gate 3 merge approved (owner does the git step); Window R exercised: RCM-P2/P3 built 2026-09-27 (routing-policy 198→206 after HRO, spec-linter 137, foreman-config 62; `rcm-p2-scope-reconciliation-2026-09-27.md`); RCM-P4A–P10 remain |
+| [routing-currency-and-merit-jev-alpha](routing-currency-and-merit-jev-alpha/loop-directive.md) | `p5_offline_boundary_reached` | JEV-P4 suite green (44/44 incl. env-scenario block); JEV-P5 checklist fully dispositioned — Docker rows CHECKED with real build/scan evidence (`jev-p5-docker-evidence-2026-09-26.md`), remainder BLOCKED on registry push/attestations/CVE tooling + human Gate 3 |
+| [w4-closeout](w4-closeout/loop-directive.md) | `w4_closeout_complete` | GOAL COMPLETE 2026-09-26 — closure record filed, PR #21 merged state reconciled, predecessor items dispositioned |
+| [governed-model-fleet](governed-model-fleet/charter.md) | `gmf_p1_landed_p2a_awaiting_shape` | RESTORED 2026-09-27 by explicit owner directive ("Proceed with the completion of governed-model-fleet"); the 2026-09-26 C1 deletion is superseded for this goal only. Coordinator ownership transferred 2026-09-27 at a parcel boundary. GMF-P0 (PR #28) + GMF-P1 (PR #33) landed; GMF-P2A shaping in progress → exact Gate 2 request. Work lands in external Keon repos (`keon-systems` first); `keon-fleet-executor`/`keon-model-gateway` remain absent pending human gate GMF-HG-R1 |
 
 These are separate goals and require separate owning coordinators. A coordinator may own
 only one of these queues at a time unless a future ratified hierarchy explicitly permits a
-subordinate arrangement. Shared serialization points are sequenced, never co-owned.
+subordinate arrangement. Shared serialization points are sequenced, never co-owned — see
+[`pi-model-configuration/rcm-sequencing-decision-2026-09-26.md`](pi-model-configuration/rcm-sequencing-decision-2026-09-26.md)
+(Window P = PMC-P1/P2 on `routing-policy/**` + `templates/**`; Window R = RCM-P2+ on
+`routing-policy/**` + `dispatch/**`; six scaffolder-owned template files excepted).
 
-## Existing goal directories
+## Deleted records (2026-09-26)
 
-The following goal records predate this index. Read their charter and loop directive, when
-present, rather than projecting status from their directory name:
+`heterogeneous-agent-worker-fabric`, `w1-intake-registration`, `w2-dispatch`,
+`w3-verification`, `w4-ci-integration`, `permission-profile-registry`,
+`pi-routing-adapter-compat`, `governed-model-fleet`, `model-fleet-v1`,
+`keon-full-platform-gtm-readiness`, `keon-proof-led-portfolio-priority`, `ledgerline-v1`.
+Verdicts and extraction targets: [goal-status-report-2026-09-26.md](goal-status-report-2026-09-26.md) §6.
 
-- `foreman-kernel` (present in a separate active goal worktree at intake time, not on this
-  branch's base);
-- [keon-full-platform-gtm-readiness](keon-full-platform-gtm-readiness/charter.md);
-- [keon-proof-led-portfolio-priority](keon-proof-led-portfolio-priority/charter.md);
-- [permission-profile-registry](permission-profile-registry/charter.md);
-- [plugin-packaging-and-scaffolder](plugin-packaging-and-scaffolder/charter.md);
-- [w1-intake-registration](w1-intake-registration/charter.md);
-- [w2-dispatch](w2-dispatch/charter.md);
-- [w3-verification](w3-verification/charter.md);
-- [w4-ci-integration](w4-ci-integration/charter.md); and
-- [w4-closeout](w4-closeout/charter.md).
+**2026-09-27 update:** `governed-model-fleet` was restored by explicit owner directive
+("Proceed with the completion of governed-model-fleet") and is active again — see its row
+under Active goals. The other 11 deletions stand.
 
 ## Update rule
 

@@ -1,0 +1,15 @@
+{
+  "endedUtc": "2026-09-07T13:50:27.1591442Z",
+  "directExit": 0,
+  "elapsedMs": 2194,
+  "head": "0ee165720f8d1e3a91eb283cb770400b23f61bf5",
+  "stderrSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+  "step": "03-typecheck",
+  "startedUtc": "2026-09-07T13:50:24.9637100Z",
+  "stdoutSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+  "command": [
+    "npx.cmd",
+    "tsc",
+    "--noEmit"
+  ]
+}

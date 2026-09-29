@@ -1,0 +1,855 @@
+{
+  "records": [
+    {
+      "id": "X01",
+      "op": "applyTransition",
+      "setup": {
+        "goal": {
+          "status": "proposed",
+          "revision": 0
+        },
+        "lease": {
+          "leaseId": "lease-1",
+          "ownerPrincipalRef": "principal-a",
+          "expiresAtMicros": 1700000005000000,
+          "releasedAtMicros": null,
+          "casRevision": 0
+        }
+      },
+      "input": {
+        "goalId": "goal-1",
+        "targetStatus": "proposed",
+        "expectedRevision": 0,
+        "idempotencyKey": {
+          "principalRef": "principal-a",
+          "operationId": "op-x0",
+          "repositoryRef": "repo-1",
+          "worktreeRef": "wt-1",
+          "payloadDigest": "sha256:0000000000000000000000000000000000000000000000000000000000000064"
+        }
+      },
+      "expectedCode": "ILLEGAL_TRANSITION"
+    },
+    {
+      "id": "X02",
+      "op": "applyTransition",
+      "setup": {
+        "goal": {
+          "status": "proposed",
+          "revision": 0
+        },
+        "lease": {
+          "leaseId": "lease-1",
+          "ownerPrincipalRef": "principal-a",
+          "expiresAtMicros": 1700000005000000,
+          "releasedAtMicros": null,
+          "casRevision": 0
+        }
+      },
+      "input": {
+        "goalId": "goal-1",
+        "targetStatus": "awaiting-human",
+        "expectedRevision": 0,
+        "idempotencyKey": {
+          "principalRef": "principal-a",
+          "operationId": "op-x1",
+          "repositoryRef": "repo-1",
+          "worktreeRef": "wt-1",
+          "payloadDigest": "sha256:0000000000000000000000000000000000000000000000000000000000000065"
+        }
+      },
+      "expectedCode": "ILLEGAL_TRANSITION"
+    },
+    {
+      "id": "X03",
+      "op": "applyTransition",
+      "setup": {
+        "goal": {
+          "status": "proposed",
+          "revision": 0
+        },
+        "lease": {
+          "leaseId": "lease-1",
+          "ownerPrincipalRef": "principal-a",
+          "expiresAtMicros": 1700000005000000,
+          "releasedAtMicros": null,
+          "casRevision": 0
+        }
+      },
+      "input": {
+        "goalId": "goal-1",
+        "targetStatus": "completed",
+        "expectedRevision": 0,
+        "idempotencyKey": {
+          "principalRef": "principal-a",
+          "operationId": "op-x2",
+          "repositoryRef": "repo-1",
+          "worktreeRef": "wt-1",
+          "payloadDigest": "sha256:0000000000000000000000000000000000000000000000000000000000000066"
+        }
+      },
+      "expectedCode": "ILLEGAL_TRANSITION"
+    },
+    {
+      "id": "X04",
+      "op": "applyTransition",
+      "setup": {
+        "goal": {
+          "status": "active",
+          "revision": 0
+        },
+        "lease": {
+          "leaseId": "lease-1",
+          "ownerPrincipalRef": "principal-a",
+          "expiresAtMicros": 1700000005000000,
+          "releasedAtMicros": null,
+          "casRevision": 0
+        }
+      },
+      "input": {
+        "goalId": "goal-1",
+        "targetStatus": "active",
+        "expectedRevision": 0,
+        "idempotencyKey": {
+          "principalRef": "principal-a",
+          "operationId": "op-x3",
+          "repositoryRef": "repo-1",
+          "worktreeRef": "wt-1",
+          "payloadDigest": "sha256:0000000000000000000000000000000000000000000000000000000000000067"
+        }
+      },
+      "expectedCode": "ILLEGAL_TRANSITION"
+    },
+    {
+      "id": "X05",
+      "op": "applyTransition",
+      "setup": {
+        "goal": {
+          "status": "active",
+          "revision": 0
+        },
+        "lease": {
+          "leaseId": "lease-1",
+          "ownerPrincipalRef": "principal-a",
+          "expiresAtMicros": 1700000005000000,
+          "releasedAtMicros": null,
+          "casRevision": 0
+        }
+      },
+      "input": {
+        "goalId": "goal-1",
+        "targetStatus": "proposed",
+        "expectedRevision": 0,
+        "idempotencyKey": {
+          "principalRef": "principal-a",
+          "operationId": "op-x4",
+          "repositoryRef": "repo-1",
+          "worktreeRef": "wt-1",
+          "payloadDigest": "sha256:0000000000000000000000000000000000000000000000000000000000000068"
+        }
+      },
+      "expectedCode": "ILLEGAL_TRANSITION"
+    },
+    {
+      "id": "X06",
+      "op": "applyTransition",
+      "setup": {
+        "goal": {
+          "status": "awaiting-human",
+          "revision": 0
+        },
+        "lease": {
+          "leaseId": "lease-1",
+          "ownerPrincipalRef": "principal-a",
+          "expiresAtMicros": 1700000005000000,
+          "releasedAtMicros": null,
+          "casRevision": 0
+        }
+      },
+      "input": {
+        "goalId": "goal-1",
+        "targetStatus": "awaiting-human",
+        "expectedRevision": 0,
+        "idempotencyKey": {
+          "principalRef": "principal-a",
+          "operationId": "op-x5",
+          "repositoryRef": "repo-1",
+          "worktreeRef": "wt-1",
+          "payloadDigest": "sha256:0000000000000000000000000000000000000000000000000000000000000069"
+        }
+      },
+      "expectedCode": "ILLEGAL_TRANSITION"
+    },
+    {
+      "id": "X07",
+      "op": "applyTransition",
+      "setup": {
+        "goal": {
+          "status": "awaiting-human",
+          "revision": 0
+        },
+        "lease": {
+          "leaseId": "lease-1",
+          "ownerPrincipalRef": "principal-a",
+          "expiresAtMicros": 1700000005000000,
+          "releasedAtMicros": null,
+          "casRevision": 0
+        }
+      },
+      "input": {
+        "goalId": "goal-1",
+        "targetStatus": "proposed",
+        "expectedRevision": 0,
+        "idempotencyKey": {
+          "principalRef": "principal-a",
+          "operationId": "op-x6",
+          "repositoryRef": "repo-1",
+          "worktreeRef": "wt-1",
+          "payloadDigest": "sha256:000000000000000000000000000000000000000000000000000000000000006a"
+        }
+      },
+      "expectedCode": "ILLEGAL_TRANSITION"
+    },
+    {
+      "id": "X08",
+      "op": "applyTransition",
+      "setup": {
+        "goal": {
+          "status": "awaiting-human",
+          "revision": 0
+        },
+        "lease": {
+          "leaseId": "lease-1",
+          "ownerPrincipalRef": "principal-a",
+          "expiresAtMicros": 1700000005000000,
+          "releasedAtMicros": null,
+          "casRevision": 0
+        }
+      },
+      "input": {
+        "goalId": "goal-1",
+        "targetStatus": "completed",
+        "expectedRevision": 0,
+        "idempotencyKey": {
+          "principalRef": "principal-a",
+          "operationId": "op-x7",
+          "repositoryRef": "repo-1",
+          "worktreeRef": "wt-1",
+          "payloadDigest": "sha256:000000000000000000000000000000000000000000000000000000000000006b"
+        }
+      },
+      "expectedCode": "ILLEGAL_TRANSITION"
+    },
+    {
+      "id": "X09",
+      "op": "applyTransition",
+      "setup": {
+        "goal": {
+          "status": "completed",
+          "revision": 0
+        },
+        "lease": {
+          "leaseId": "lease-1",
+          "ownerPrincipalRef": "principal-a",
+          "expiresAtMicros": 1700000005000000,
+          "releasedAtMicros": null,
+          "casRevision": 0
+        }
+      },
+      "input": {
+        "goalId": "goal-1",
+        "targetStatus": "proposed",
+        "expectedRevision": 0,
+        "idempotencyKey": {
+          "principalRef": "principal-a",
+          "operationId": "op-x8",
+          "repositoryRef": "repo-1",
+          "worktreeRef": "wt-1",
+          "payloadDigest": "sha256:000000000000000000000000000000000000000000000000000000000000006c"
+        }
+      },
+      "expectedCode": "ILLEGAL_TRANSITION"
+    },
+    {
+      "id": "X10",
+      "op": "applyTransition",
+      "setup": {
+        "goal": {
+          "status": "completed",
+          "revision": 0
+        },
+        "lease": {
+          "leaseId": "lease-1",
+          "ownerPrincipalRef": "principal-a",
+          "expiresAtMicros": 1700000005000000,
+          "releasedAtMicros": null,
+          "casRevision": 0
+        }
+      },
+      "input": {
+        "goalId": "goal-1",
+        "targetStatus": "active",
+        "expectedRevision": 0,
+        "idempotencyKey": {
+          "principalRef": "principal-a",
+          "operationId": "op-x9",
+          "repositoryRef": "repo-1",
+          "worktreeRef": "wt-1",
+          "payloadDigest": "sha256:000000000000000000000000000000000000000000000000000000000000006d"
+        }
+      },
+      "expectedCode": "ILLEGAL_TRANSITION"
+    },
+    {
+      "id": "X11",
+      "op": "applyTransition",
+      "setup": {
+        "goal": {
+          "status": "completed",
+          "revision": 0
+        },
+        "lease": {
+          "leaseId": "lease-1",
+          "ownerPrincipalRef": "principal-a",
+          "expiresAtMicros": 1700000005000000,
+          "releasedAtMicros": null,
+          "casRevision": 0
+        }
+      },
+      "input": {
+        "goalId": "goal-1",
+        "targetStatus": "awaiting-human",
+        "expectedRevision": 0,
+        "idempotencyKey": {
+          "principalRef": "principal-a",
+          "operationId": "op-x10",
+          "repositoryRef": "repo-1",
+          "worktreeRef": "wt-1",
+          "payloadDigest": "sha256:000000000000000000000000000000000000000000000000000000000000006e"
+        }
+      },
+      "expectedCode": "ILLEGAL_TRANSITION"
+    },
+    {
+      "id": "X12",
+      "op": "applyTransition",
+      "setup": {
+        "goal": {
+          "status": "completed",
+          "revision": 0
+        },
+        "lease": {
+          "leaseId": "lease-1",
+          "ownerPrincipalRef": "principal-a",
+          "expiresAtMicros": 1700000005000000,
+          "releasedAtMicros": null,
+          "casRevision": 0
+        }
+      },
+      "input": {
+        "goalId": "goal-1",
+        "targetStatus": "completed",
+        "expectedRevision": 0,
+        "idempotencyKey": {
+          "principalRef": "principal-a",
+          "operationId": "op-x11",
+          "repositoryRef": "repo-1",
+          "worktreeRef": "wt-1",
+          "payloadDigest": "sha256:000000000000000000000000000000000000000000000000000000000000006f"
+        }
+      },
+      "expectedCode": "ILLEGAL_TRANSITION"
+    },
+    {
+      "id": "X13",
+      "op": "applyTransition",
+      "setup": {
+        "goal": {
+          "status": "completed",
+          "revision": 0
+        },
+        "lease": {
+          "leaseId": "lease-1",
+          "ownerPrincipalRef": "principal-a",
+          "expiresAtMicros": 1700000005000000,
+          "releasedAtMicros": null,
+          "casRevision": 0
+        }
+      },
+      "input": {
+        "goalId": "goal-1",
+        "targetStatus": "cancelled",
+        "expectedRevision": 0,
+        "idempotencyKey": {
+          "principalRef": "principal-a",
+          "operationId": "op-x12",
+          "repositoryRef": "repo-1",
+          "worktreeRef": "wt-1",
+          "payloadDigest": "sha256:0000000000000000000000000000000000000000000000000000000000000070"
+        }
+      },
+      "expectedCode": "ILLEGAL_TRANSITION"
+    },
+    {
+      "id": "X14",
+      "op": "applyTransition",
+      "setup": {
+        "goal": {
+          "status": "cancelled",
+          "revision": 0
+        },
+        "lease": {
+          "leaseId": "lease-1",
+          "ownerPrincipalRef": "principal-a",
+          "expiresAtMicros": 1700000005000000,
+          "releasedAtMicros": null,
+          "casRevision": 0
+        }
+      },
+      "input": {
+        "goalId": "goal-1",
+        "targetStatus": "proposed",
+        "expectedRevision": 0,
+        "idempotencyKey": {
+          "principalRef": "principal-a",
+          "operationId": "op-x13",
+          "repositoryRef": "repo-1",
+          "worktreeRef": "wt-1",
+          "payloadDigest": "sha256:0000000000000000000000000000000000000000000000000000000000000071"
+        }
+      },
+      "expectedCode": "ILLEGAL_TRANSITION"
+    },
+    {
+      "id": "X15",
+      "op": "applyTransition",
+      "setup": {
+        "goal": {
+          "status": "cancelled",
+          "revision": 0
+        },
+        "lease": {
+          "leaseId": "lease-1",
+          "ownerPrincipalRef": "principal-a",
+          "expiresAtMicros": 1700000005000000,
+          "releasedAtMicros": null,
+          "casRevision": 0
+        }
+      },
+      "input": {
+        "goalId": "goal-1",
+        "targetStatus": "active",
+        "expectedRevision": 0,
+        "idempotencyKey": {
+          "principalRef": "principal-a",
+          "operationId": "op-x14",
+          "repositoryRef": "repo-1",
+          "worktreeRef": "wt-1",
+          "payloadDigest": "sha256:0000000000000000000000000000000000000000000000000000000000000072"
+        }
+      },
+      "expectedCode": "ILLEGAL_TRANSITION"
+    },
+    {
+      "id": "X16",
+      "op": "applyTransition",
+      "setup": {
+        "goal": {
+          "status": "cancelled",
+          "revision": 0
+        },
+        "lease": {
+          "leaseId": "lease-1",
+          "ownerPrincipalRef": "principal-a",
+          "expiresAtMicros": 1700000005000000,
+          "releasedAtMicros": null,
+          "casRevision": 0
+        }
+      },
+      "input": {
+        "goalId": "goal-1",
+        "targetStatus": "awaiting-human",
+        "expectedRevision": 0,
+        "idempotencyKey": {
+          "principalRef": "principal-a",
+          "operationId": "op-x15",
+          "repositoryRef": "repo-1",
+          "worktreeRef": "wt-1",
+          "payloadDigest": "sha256:0000000000000000000000000000000000000000000000000000000000000073"
+        }
+      },
+      "expectedCode": "ILLEGAL_TRANSITION"
+    },
+    {
+      "id": "X17",
+      "op": "applyTransition",
+      "setup": {
+        "goal": {
+          "status": "cancelled",
+          "revision": 0
+        },
+        "lease": {
+          "leaseId": "lease-1",
+          "ownerPrincipalRef": "principal-a",
+          "expiresAtMicros": 1700000005000000,
+          "releasedAtMicros": null,
+          "casRevision": 0
+        }
+      },
+      "input": {
+        "goalId": "goal-1",
+        "targetStatus": "completed",
+        "expectedRevision": 0,
+        "idempotencyKey": {
+          "principalRef": "principal-a",
+          "operationId": "op-x16",
+          "repositoryRef": "repo-1",
+          "worktreeRef": "wt-1",
+          "payloadDigest": "sha256:0000000000000000000000000000000000000000000000000000000000000074"
+        }
+      },
+      "expectedCode": "ILLEGAL_TRANSITION"
+    },
+    {
+      "id": "X18",
+      "op": "applyTransition",
+      "setup": {
+        "goal": {
+          "status": "cancelled",
+          "revision": 0
+        },
+        "lease": {
+          "leaseId": "lease-1",
+          "ownerPrincipalRef": "principal-a",
+          "expiresAtMicros": 1700000005000000,
+          "releasedAtMicros": null,
+          "casRevision": 0
+        }
+      },
+      "input": {
+        "goalId": "goal-1",
+        "targetStatus": "cancelled",
+        "expectedRevision": 0,
+        "idempotencyKey": {
+          "principalRef": "principal-a",
+          "operationId": "op-x17",
+          "repositoryRef": "repo-1",
+          "worktreeRef": "wt-1",
+          "payloadDigest": "sha256:0000000000000000000000000000000000000000000000000000000000000075"
+        }
+      },
+      "expectedCode": "ILLEGAL_TRANSITION"
+    },
+    {
+      "id": "TR-01",
+      "op": "applyTransition",
+      "setup": {
+        "goal": {
+          "status": "active",
+          "revision": 3
+        },
+        "lease": {
+          "leaseId": "lease-1",
+          "ownerPrincipalRef": "principal-a",
+          "expiresAtMicros": 1700000005000000,
+          "releasedAtMicros": null,
+          "casRevision": 3
+        }
+      },
+      "input": {
+        "goalId": "goal-1",
+        "targetStatus": "cancelled",
+        "expectedRevision": 2,
+        "idempotencyKey": {
+          "principalRef": "principal-a",
+          "operationId": "op-tr-01",
+          "repositoryRef": "repo-1",
+          "worktreeRef": "wt-1",
+          "payloadDigest": "sha256:00000000000000000000000000000000000000000000000000000000000000c9"
+        }
+      },
+      "expectedCode": "STATE_REVISION_STALE"
+    },
+    {
+      "id": "TR-02",
+      "op": "applyTransition",
+      "setup": {
+        "goal": {
+          "status": "active",
+          "revision": 3
+        },
+        "lease": {
+          "leaseId": "lease-1",
+          "ownerPrincipalRef": "principal-a",
+          "expiresAtMicros": 1700000005000000,
+          "releasedAtMicros": null,
+          "casRevision": 3
+        }
+      },
+      "input": {
+        "goalId": "goal-1",
+        "targetStatus": "cancelled",
+        "expectedRevision": 4,
+        "idempotencyKey": {
+          "principalRef": "principal-a",
+          "operationId": "op-tr-02",
+          "repositoryRef": "repo-1",
+          "worktreeRef": "wt-1",
+          "payloadDigest": "sha256:00000000000000000000000000000000000000000000000000000000000000ca"
+        }
+      },
+      "expectedCode": "STATE_REVISION_STALE"
+    },
+    {
+      "id": "TR-03",
+      "op": "decideTransition",
+      "setup": {
+        "goal": {
+          "status": "active",
+          "revision": 3
+        },
+        "lease": {
+          "leaseId": "lease-1",
+          "ownerPrincipalRef": "principal-a",
+          "expiresAtMicros": 1700000005000000,
+          "releasedAtMicros": null,
+          "casRevision": 3
+        },
+        "transitions": [
+          {
+            "transitionId": "tr-1",
+            "status": "cancelled",
+            "decidedAtMicros": null
+          }
+        ],
+        "pendingTransitionId": "tr-1"
+      },
+      "input": {
+        "goalId": "goal-1",
+        "transitionId": "tr-1",
+        "decision": "apply",
+        "expectedRevision": 2,
+        "idempotencyKey": {
+          "principalRef": "principal-a",
+          "operationId": "op-tr-03",
+          "repositoryRef": "repo-1",
+          "worktreeRef": "wt-1",
+          "payloadDigest": "sha256:00000000000000000000000000000000000000000000000000000000000000cb"
+        }
+      },
+      "expectedCode": "STATE_REVISION_STALE"
+    },
+    {
+      "id": "TR-04",
+      "op": "decideTransition",
+      "setup": {
+        "goal": {
+          "status": "active",
+          "revision": 0
+        },
+        "lease": {
+          "leaseId": "lease-1",
+          "ownerPrincipalRef": "principal-a",
+          "expiresAtMicros": 1700000005000000,
+          "releasedAtMicros": null,
+          "casRevision": 0
+        },
+        "transitions": [
+          {
+            "transitionId": "tr-1",
+            "status": "cancelled",
+            "decidedAtMicros": 1699999999900000
+          }
+        ],
+        "pendingTransitionId": null
+      },
+      "input": {
+        "goalId": "goal-1",
+        "transitionId": "tr-1",
+        "decision": "apply",
+        "expectedRevision": 0,
+        "idempotencyKey": {
+          "principalRef": "principal-a",
+          "operationId": "op-tr-04",
+          "repositoryRef": "repo-1",
+          "worktreeRef": "wt-1",
+          "payloadDigest": "sha256:00000000000000000000000000000000000000000000000000000000000000cc"
+        }
+      },
+      "expectedCode": "TRANSITION_ALREADY_DECIDED"
+    },
+    {
+      "id": "TR-05",
+      "op": "requestTransition",
+      "setup": {
+        "goal": {
+          "status": "active",
+          "revision": 0
+        },
+        "lease": {
+          "leaseId": "lease-1",
+          "ownerPrincipalRef": "principal-a",
+          "expiresAtMicros": 1700000005000000,
+          "releasedAtMicros": null,
+          "casRevision": 0
+        },
+        "transitions": [
+          {
+            "transitionId": "tr-0",
+            "status": "awaiting-human",
+            "decidedAtMicros": null
+          }
+        ],
+        "pendingTransitionId": "tr-0"
+      },
+      "input": {
+        "goalId": "goal-1",
+        "targetStatus": "awaiting-human",
+        "expectedRevision": 0,
+        "idempotencyKey": {
+          "principalRef": "principal-a",
+          "operationId": "op-tr-05",
+          "repositoryRef": "repo-1",
+          "worktreeRef": "wt-1",
+          "payloadDigest": "sha256:00000000000000000000000000000000000000000000000000000000000000cd"
+        }
+      },
+      "expectedCode": "TRANSITION_PENDING_EXISTS"
+    },
+    {
+      "id": "TR-06",
+      "op": "decideTransition",
+      "setup": {
+        "goal": {
+          "status": "active",
+          "revision": 0
+        },
+        "lease": {
+          "leaseId": "lease-1",
+          "ownerPrincipalRef": "principal-a",
+          "expiresAtMicros": 1700000005000000,
+          "releasedAtMicros": null,
+          "casRevision": 0
+        },
+        "transitions": [
+          {
+            "transitionId": "tr-1",
+            "status": "cancelled",
+            "decidedAtMicros": null
+          },
+          {
+            "transitionId": "tr-2",
+            "status": "awaiting-human",
+            "decidedAtMicros": null
+          }
+        ],
+        "pendingTransitionId": "tr-2"
+      },
+      "input": {
+        "goalId": "goal-1",
+        "transitionId": "tr-1",
+        "decision": "apply",
+        "expectedRevision": 0,
+        "idempotencyKey": {
+          "principalRef": "principal-a",
+          "operationId": "op-tr-06",
+          "repositoryRef": "repo-1",
+          "worktreeRef": "wt-1",
+          "payloadDigest": "sha256:00000000000000000000000000000000000000000000000000000000000000ce"
+        }
+      },
+      "expectedCode": "TRANSITION_NOT_PENDING"
+    },
+    {
+      "id": "TR-07",
+      "op": "applyTransition",
+      "setup": {
+        "goal": {
+          "status": "active",
+          "revision": 0
+        },
+        "lease": {
+          "leaseId": "lease-1",
+          "ownerPrincipalRef": "principal-a",
+          "expiresAtMicros": 1700000005000000,
+          "releasedAtMicros": null,
+          "casRevision": 0
+        }
+      },
+      "input": {
+        "goalId": "goal-absent",
+        "targetStatus": "cancelled",
+        "expectedRevision": 0,
+        "idempotencyKey": {
+          "principalRef": "principal-a",
+          "operationId": "op-tr-07",
+          "repositoryRef": "repo-1",
+          "worktreeRef": "wt-1",
+          "payloadDigest": "sha256:00000000000000000000000000000000000000000000000000000000000000cf"
+        }
+      },
+      "expectedCode": "GOAL_ABSENT"
+    },
+    {
+      "id": "TR-08",
+      "op": "decideTransition",
+      "setup": {
+        "goal": {
+          "status": "active",
+          "revision": 0
+        },
+        "lease": {
+          "leaseId": "lease-1",
+          "ownerPrincipalRef": "principal-a",
+          "expiresAtMicros": 1700000005000000,
+          "releasedAtMicros": null,
+          "casRevision": 0
+        }
+      },
+      "input": {
+        "goalId": "goal-1",
+        "transitionId": "tr-absent",
+        "decision": "apply",
+        "expectedRevision": 0,
+        "idempotencyKey": {
+          "principalRef": "principal-a",
+          "operationId": "op-tr-08",
+          "repositoryRef": "repo-1",
+          "worktreeRef": "wt-1",
+          "payloadDigest": "sha256:00000000000000000000000000000000000000000000000000000000000000d0"
+        }
+      },
+      "expectedCode": "TRANSITION_ABSENT"
+    },
+    {
+      "id": "TR-09",
+      "op": "requestTransition",
+      "setup": {
+        "goal": {
+          "status": "active",
+          "revision": 0
+        },
+        "lease": {
+          "leaseId": "lease-1",
+          "ownerPrincipalRef": "principal-a",
+          "expiresAtMicros": 1700000005000000,
+          "releasedAtMicros": null,
+          "casRevision": 0
+        }
+      },
+      "input": {
+        "goalId": "goal-1",
+        "targetStatus": "bogus-status",
+        "expectedRevision": 0,
+        "idempotencyKey": {
+          "principalRef": "principal-a",
+          "operationId": "op-tr-09",
+          "repositoryRef": "repo-1",
+          "worktreeRef": "wt-1",
+          "payloadDigest": "sha256:00000000000000000000000000000000000000000000000000000000000000d1"
+        }
+      },
+      "expectedCode": "TRANSITION_STATUS_UNKNOWN"
+    }
+  ]
+}

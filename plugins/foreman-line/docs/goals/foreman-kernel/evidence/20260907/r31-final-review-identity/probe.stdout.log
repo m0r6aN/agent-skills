@@ -1,0 +1,15 @@
+baseline hermetic valid
+finite projection current positive and two source drift refusals
+{"name":"raw-thesis-alias","valid":false,"matched":[{"code":"AUTHORITY_ESCALATION","message":"R31 reserved source unit 'M02-note' differs from its complete reviewed source binding"},{"code":"AUTHORITY_ESCALATION","message":"R31 reserved source unit 'M02-thesis' differs from its complete reviewed source binding"},{"code":"AUTHORITY_ESCALATION","message":"R31 reserved source unit 'M03' differs from its complete reviewed source binding"}]}
+{"name":"duplicate-note-anchor","valid":false,"matched":[{"code":"AUTHORITY_ESCALATION","message":"R31 reserved source unit 'M02-note' differs from its complete reviewed source binding"}]}
+{"name":"source-version","valid":false,"matched":[{"code":"AUTHORITY_ESCALATION","message":"R31 reserved source unit 'M02-note' differs from its complete reviewed source binding"},{"code":"AUTHORITY_ESCALATION","message":"R31 reserved source unit 'M02-thesis' differs from its complete reviewed source binding"},{"code":"AUTHORITY_ESCALATION","message":"R31 reserved source unit 'M03' differs from its complete reviewed source binding"}]}
+{"name":"note-live-rule","valid":false,"matched":[{"code":"AUTHORITY_ESCALATION","message":"R31 reserved source unit 'M02-note' differs from its complete reviewed source binding"}]}
+{"name":"thesis-stale-locator","valid":false,"matched":[{"code":"AUTHORITY_ESCALATION","message":"R31 reserved source unit 'M02-note' differs from its complete reviewed source binding"},{"code":"AUTHORITY_ESCALATION","message":"R31 reserved source unit 'M02-thesis' differs from its complete reviewed source binding"}]}
+{"name":"M03-live-rule","valid":false,"matched":[{"code":"AUTHORITY_ESCALATION","message":"R31 reserved source unit 'M03' differs from its complete reviewed source binding"}]}
+valid generic successor preserves prior 21 records
+generic hermetic digest residual remains explicit
+{"name":"R31 future demotion canonical pin","valid":false,"matched":[{"code":"MIGRATION_EVIDENCE_INVALID","message":"R31 exact migration diagnostic, source references and custody tuple changed"},{"code":"MIGRATION_EVIDENCE_INVALID","message":"reconciliation 'registry-rework-446700d' differs from its complete canonical record manifest"}]}
+{"name":"R30 demoted canonical pin","valid":false,"matched":[{"code":"MIGRATION_EVIDENCE_INVALID","message":"reconciliation 'registry-rework-66a514d' differs from its complete canonical record manifest"}]}
+{"name":"repaired diagnostic duplicate","valid":false,"matched":[{"code":"MIGRATION_EVIDENCE_INVALID","message":"R31 exact migration diagnostic, source references and custody tuple changed"}]}
+{"name":"repaired diagnostic path-claim","valid":false,"matched":[{"code":"MIGRATION_EVIDENCE_INVALID","message":"R31 exact migration diagnostic, source references and custody tuple changed"}]}
+ALL BOUNDED IDENTITY PROBES PASSED

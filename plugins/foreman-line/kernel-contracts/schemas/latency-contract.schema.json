@@ -1,0 +1,191 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://foreman-line.local/schemas/kernel-contracts/latency-contract.schema.json",
+  "$defs": {
+    "LatencyContract": {
+      "type": "object",
+      "properties": {
+        "spans": {
+          "type": "object",
+          "properties": {
+            "kernelDecisionLatency": {
+              "type": "object",
+              "properties": {
+                "start": {
+                  "const": "decision-surface-request-received"
+                },
+                "end": {
+                  "const": "response-written"
+                },
+                "clock": {
+                  "const": "kernel-monotonic"
+                }
+              },
+              "required": [
+                "start",
+                "end",
+                "clock"
+              ],
+              "additionalProperties": false
+            },
+            "mediatedActionLatency": {
+              "type": "object",
+              "properties": {
+                "start": {
+                  "const": "host-lifecycle-entry"
+                },
+                "end": {
+                  "const": "hook-exit"
+                },
+                "clock": {
+                  "const": "adapter-monotonic"
+                }
+              },
+              "required": [
+                "start",
+                "end",
+                "clock"
+              ],
+              "additionalProperties": false
+            },
+            "firstCallObservation": {
+              "type": "object",
+              "properties": {
+                "start": {
+                  "const": "initial-lifecycle-invocation"
+                },
+                "end": {
+                  "const": "hook-exit"
+                },
+                "clock": {
+                  "const": "adapter-monotonic"
+                },
+                "includesStartup": {
+                  "const": true
+                }
+              },
+              "required": [
+                "start",
+                "end",
+                "clock",
+                "includesStartup"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "kernelDecisionLatency",
+            "mediatedActionLatency",
+            "firstCallObservation"
+          ],
+          "additionalProperties": false
+        },
+        "budgetsMicros": {
+          "type": "object",
+          "properties": {
+            "kernelWarmP50": {
+              "const": 5000
+            },
+            "kernelWarmP95": {
+              "const": 20000
+            },
+            "kernelWarmP99": {
+              "const": 50000
+            },
+            "mediatedP99": {
+              "const": 150000
+            },
+            "firstCallMax": {
+              "const": 2000000
+            }
+          },
+          "required": [
+            "kernelWarmP50",
+            "kernelWarmP95",
+            "kernelWarmP99",
+            "mediatedP99",
+            "firstCallMax"
+          ],
+          "additionalProperties": false
+        },
+        "decisionDeadlineMicros": {
+          "const": 1000000
+        },
+        "deadlineDisposition": {
+          "enum": [
+            "evaluate-completed-response-at-or-under-deadline",
+            "terminal-unreachable-when-none-completed"
+          ]
+        },
+        "lateResponsePolicy": {
+          "const": "ignore-terminal-outcome"
+        },
+        "warmPopulation": {
+          "const": "completed-governed-mutation-decision-attempts-after-readiness-and-initial-invocation"
+        },
+        "exclusionReporting": {
+          "const": "failed-deadline-and-excluded-attempts-reported-separately"
+        },
+        "percentileMethod": {
+          "const": "nearest-rank"
+        },
+        "cache": {
+          "$ref": "#/$defs/CacheDescriptor"
+        }
+      },
+      "required": [
+        "spans",
+        "budgetsMicros",
+        "decisionDeadlineMicros",
+        "deadlineDisposition",
+        "lateResponsePolicy",
+        "warmPopulation",
+        "exclusionReporting",
+        "percentileMethod",
+        "cache"
+      ],
+      "additionalProperties": false
+    },
+    "CacheDescriptor": {
+      "type": "object",
+      "properties": {
+        "authorizationCache": {
+          "const": "disabled"
+        },
+        "bindings": {
+          "const": [
+            "goalRevision",
+            "policyDigest",
+            "compiledScopeDigest"
+          ]
+        },
+        "matchSufficiency": {
+          "const": "necessary-not-sufficient"
+        },
+        "freshnessRevalidation": {
+          "const": [
+            "effective-action-request",
+            "principal-capability-generation",
+            "repository-worktree",
+            "lease-gate-freshness"
+          ]
+        },
+        "ttlAuthority": {
+          "const": "none"
+        },
+        "latencyEligibility": {
+          "const": "none-granted"
+        }
+      },
+      "required": [
+        "authorizationCache",
+        "bindings",
+        "matchSufficiency",
+        "freshnessRevalidation",
+        "ttlAuthority",
+        "latencyEligibility"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

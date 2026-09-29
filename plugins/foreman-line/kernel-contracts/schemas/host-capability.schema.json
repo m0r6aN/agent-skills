@@ -1,0 +1,108 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://foreman-line.local/schemas/kernel-contracts/host-capability.schema.json",
+  "$defs": {
+    "HostCapability": {
+      "type": "object",
+      "properties": {
+        "hostAdapterRef": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9._-]+$"
+        },
+        "hostPostureClaim": {
+          "enum": [
+            "provider-neutral",
+            "claude-windows-docker-loaded",
+            "claude-windows-docker-unenrolled",
+            "unsupported-host",
+            "ci"
+          ]
+        },
+        "platformProbe": {
+          "type": "object",
+          "properties": {
+            "probeName": {
+              "type": "string",
+              "maxLength": 128
+            },
+            "probeVersion": {
+              "type": "string",
+              "maxLength": 128
+            }
+          },
+          "required": [
+            "probeName",
+            "probeVersion"
+          ],
+          "additionalProperties": false
+        },
+        "rawHostPaths": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "rawPath": {
+                "type": "string",
+                "maxLength": 4096
+              },
+              "pathForm": {
+                "enum": [
+                  "windows-drive",
+                  "windows-unc",
+                  "posix-absolute",
+                  "other"
+                ]
+              }
+            },
+            "required": [
+              "rawPath",
+              "pathForm"
+            ],
+            "additionalProperties": false
+          },
+          "maxItems": 64
+        },
+        "normalizationEvidence": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "normalizationRef": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9._-]+$"
+            },
+            "normalizerParcel": {
+              "enum": [
+                "FK-P16",
+                "FK-P20"
+              ]
+            },
+            "digest": {
+              "type": "string",
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "normalizationRef",
+            "normalizerParcel",
+            "digest"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "hostAdapterRef",
+        "hostPostureClaim",
+        "platformProbe",
+        "rawHostPaths",
+        "normalizationEvidence"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

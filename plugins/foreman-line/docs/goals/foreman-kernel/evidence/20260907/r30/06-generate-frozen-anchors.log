@@ -1,0 +1,24 @@
+
+> @foreman-line/authority-registry@0.1.0 generate
+> tsx src/generate.ts
+
+generated 1 schema files in D:\Repos\agent-skills-worktrees\fk-p0-r30-adoption-20260907\plugins\foreman-line\authority-registry\schemas
+D:\Repos\agent-skills-worktrees\fk-p0-r30-adoption-20260907\plugins\foreman-line\authority-registry\src\generate.ts:11862
+        throw new Error(`R30 reviewed source mapping drift: ${r30Item.unit}`)
+              ^
+
+
+Error: R30 reviewed source mapping drift: L01
+    at <anonymous> (D:\Repos\agent-skills-worktrees\fk-p0-r30-adoption-20260907\plugins\foreman-line\authority-registry\src\generate.ts:11862:15)
+    at Array.map (<anonymous>)
+    at buildSource (D:\Repos\agent-skills-worktrees\fk-p0-r30-adoption-20260907\plugins\foreman-line\authority-registry\src\generate.ts:11819:34)
+    at Array.map (<anonymous>)
+    at buildRegistry (D:\Repos\agent-skills-worktrees\fk-p0-r30-adoption-20260907\plugins\foreman-line\authority-registry\src\generate.ts:12886:36)
+    at main (D:\Repos\agent-skills-worktrees\fk-p0-r30-adoption-20260907\plugins\foreman-line\authority-registry\src\generate.ts:13008:20)
+    at <anonymous> (D:\Repos\agent-skills-worktrees\fk-p0-r30-adoption-20260907\plugins\foreman-line\authority-registry\src\generate.ts:13020:72)
+    at ModuleJob.run (node:internal/modules/esm/module_job:371:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:683:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+
+Node.js v24.7.0
+DIRECT_EXIT=1

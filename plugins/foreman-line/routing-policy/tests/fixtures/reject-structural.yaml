@@ -18,16 +18,16 @@ classes:
 data_classification:
   public:
     transport_requirements: { data_collection: allow, zdr: false }
-    eligible_models: [anthropic/claude-haiku-4.5, anthropic/claude-sonnet-5, anthropic/claude-opus-5]
+    eligible_models: [anthropic/claude-haiku-4.5, anthropic/claude-sonnet-5, anthropic/claude-opus-5.5]
   internal:
     transport_requirements: { data_collection: deny, zdr: true }
-    eligible_models: [anthropic/claude-haiku-4.5, anthropic/claude-sonnet-5, anthropic/claude-opus-5]
+    eligible_models: [anthropic/claude-haiku-4.5, anthropic/claude-sonnet-5, anthropic/claude-opus-5.5]
   restricted:
     transport_requirements: { data_collection: deny, zdr: true }
-    eligible_models: [anthropic/claude-haiku-4.5, anthropic/claude-sonnet-5, anthropic/claude-opus-5]
+    eligible_models: [anthropic/claude-haiku-4.5, anthropic/claude-sonnet-5, anthropic/claude-opus-5.5]
 
 model_tiers:
-  frontier: [anthropic/claude-opus-5]
+  frontier: [anthropic/claude-opus-5.5]
   standard: [anthropic/claude-sonnet-5]
   economy: [anthropic/claude-haiku-4.5]
 

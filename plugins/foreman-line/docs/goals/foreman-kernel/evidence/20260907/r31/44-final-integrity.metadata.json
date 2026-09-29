@@ -1,0 +1,8 @@
+{
+  "command": "npx tsx evidence/r31/final-integrity.ts 2fc39405988df4d7073f20d69b65a276329be83d",
+  "checkpoint": "2fc39405988df4d7073f20d69b65a276329be83d",
+  "startUtc": "2026-09-07T18:31:57.8856674Z",
+  "endUtc": "2026-09-07T18:32:05.1880239Z",
+  "elapsedSeconds": 7.3052675,
+  "directExit": 0
+}

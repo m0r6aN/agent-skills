@@ -1,0 +1,11 @@
+{
+  "command": "npm",
+  "arguments": [
+    "run",
+    "typecheck"
+  ],
+  "startUtc": "2026-09-07T15:38:55.7257845Z",
+  "endUtc": "2026-09-07T15:38:57.7330291Z",
+  "elapsedSeconds": 1.9788219,
+  "directExit": 0
+}

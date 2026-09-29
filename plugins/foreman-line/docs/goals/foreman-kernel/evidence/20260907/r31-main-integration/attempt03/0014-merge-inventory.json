@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "C:\\Program Files\\Git\\cmd\\git.EXE",
+    "--git-dir=C:\\Users\\clint\\AppData\\Local\\Temp\\fk-remote-verify-20260907.git",
+    "ls-tree",
+    "-rz",
+    "--full-tree",
+    "a9df33c71d0e34ddae277d312a04f7a97dd66480"
+  ],
+  "cwd": null,
+  "ended_utc": "2026-09-07T18:55:46.409355+00:00",
+  "exit": 0,
+  "pid": 475484,
+  "seconds": 0.051895099924877286,
+  "started_utc": "2026-09-07T18:55:46.357440+00:00",
+  "stderr": "0014-merge-inventory.stderr",
+  "stdout": "0014-merge-inventory.stdout"
+}

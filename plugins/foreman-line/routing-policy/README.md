@@ -58,6 +58,16 @@ evaluation and the optional shadow-route execution boundary live in
   the Parcel supplies the exact public inputs.
   `tests/fixtures/accept-shadow-route.yaml` is the canonical valid example.
 
+## Pi/OpenRouter structured-decision registry
+
+`templates/pi-openrouter-routing.json` is the Pi execution-plane configuration
+template. Its base URL is `https://openrouter.ai/api/v1`, and its enabled list
+contains the exact OpenRouter model id `typesafe/jev-1.13`. The capability
+validator keeps Jev limited to `routing` and `classification` lanes with
+`recommend-only` authority; it cannot be used for prose generation,
+implementation, approval, merge, or policy bypass. No credential is stored in
+the template.
+
 Types live in `src/types.ts`; schemas in `schemas/*.json` (hand-authored as
 `SchemaObject`, never ajv's `JSONSchemaType`); `tests/parity.test.ts` proves
 the two never drift.
@@ -175,7 +185,7 @@ silently gutting D4's pinning and the §5 security hard-override in one edit.
 
 `src/validator.ts` therefore carries `KNOWN_FRONTIER_MODELS` — v0.3
 (September 2026, OpenRouter slugs):
-`['anthropic/claude-opus-5', 'anthropic/claude-fable-5.1', 'openai/gpt-6-astra', 'openai/gpt-5.6-sol', 'openai/gpt-5.5', 'google/gemini-3.1-pro-preview']`
+`['anthropic/claude-opus-5.5', 'anthropic/claude-fable-5.1', 'openai/gpt-6-astra', 'openai/gpt-5.6-sol', 'openai/gpt-5.5', 'google/gemini-3.1-pro-preview']`
 (`openai/gpt-6-astra` added by SUPERCHARGE-P1, verified 2026-09-14)
 — as a constant in reviewed, tested code, not as policy content. Invariant 5
 rejects any `model_tiers.frontier` entry absent from this registry. This is

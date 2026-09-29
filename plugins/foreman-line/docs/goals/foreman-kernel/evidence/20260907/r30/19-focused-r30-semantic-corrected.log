@@ -1,0 +1,39 @@
+TAP version 13
+# node:internal/modules/run_main:107
+#     triggerUncaughtException(
+#     ^
+# Error [TransformError]: Transform failed with 1 error:
+# D:\\Repos\\agent-skills-worktrees\\fk-p0-r30-adoption-20260907\\plugins\\foreman-line\\authority-registry\\tests\\semantic-invariants.test.ts:5199:45: ERROR: Expected ";" but found "if"
+#     at failureErrorWithLog (D:\\Repos\\agent-skills-worktrees\\fk-p0-r30-adoption-20260907\\plugins\\foreman-line\\authority-registry\\node_modules\\esbuild\\lib\\main.js:1752:15)
+#     at D:\\Repos\\agent-skills-worktrees\\fk-p0-r30-adoption-20260907\\plugins\\foreman-line\\authority-registry\\node_modules\\esbuild\\lib\\main.js:1019:50
+#     at responseCallbacks.<computed> (D:\\Repos\\agent-skills-worktrees\\fk-p0-r30-adoption-20260907\\plugins\\foreman-line\\authority-registry\\node_modules\\esbuild\\lib\\main.js:886:9)
+#     at handleIncomingPacket (D:\\Repos\\agent-skills-worktrees\\fk-p0-r30-adoption-20260907\\plugins\\foreman-line\\authority-registry\\node_modules\\esbuild\\lib\\main.js:941:12)
+#     at Socket.readFromStdout (D:\\Repos\\agent-skills-worktrees\\fk-p0-r30-adoption-20260907\\plugins\\foreman-line\\authority-registry\\node_modules\\esbuild\\lib\\main.js:864:7)
+#     at Socket.emit (node:events:508:28)
+#     at addChunk (node:internal/streams/readable:559:12)
+#     at readableAddChunkPushByteMode (node:internal/streams/readable:510:3)
+#     at Readable.push (node:internal/streams/readable:390:5)
+#     at Pipe.onStreamRead (node:internal/stream_base_commons:189:23)
+# Node.js v24.7.0
+# Subtest: tests\\semantic-invariants.test.ts
+not ok 1 - tests\\semantic-invariants.test.ts
+  ---
+  duration_ms: 342.1899
+  type: 'test'
+  location: 'D:\\Repos\\agent-skills-worktrees\\fk-p0-r30-adoption-20260907\\plugins\\foreman-line\\authority-registry\\tests\\semantic-invariants.test.ts:1:1'
+  failureType: 'testCodeFailure'
+  exitCode: 1
+  signal: ~
+  error: 'test failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 348.6095
+DIRECT_EXIT=1

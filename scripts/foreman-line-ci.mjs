@@ -4,9 +4,11 @@ import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const packages = Object.freeze([
-  'approval', 'contracts', 'dispatch', 'integration', 'permission-profiles',
-  'projection', 'receipts', 'registration', 'routing-policy', 'schema-scaffold',
-  'shaping', 'skill-injection', 'spec-linter', 'verification',
+  'approval', 'contract-readers', 'contracts', 'dispatch', 'foreman-config',
+  'integration', 'mutation-scope-guard', 'permission-profiles', 'projection',
+  'receipts', 'registration', 'role-authority', 'routing-policy',
+  'schema-scaffold', 'shaping', 'skill-injection', 'spec-linter', 'verification',
+  'worker-envelopes',
 ])
 
 class ForemanCiError extends Error {

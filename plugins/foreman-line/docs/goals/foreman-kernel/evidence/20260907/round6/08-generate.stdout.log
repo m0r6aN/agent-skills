@@ -1,0 +1,6 @@
+
+> @foreman-line/authority-registry@0.1.0 generate
+> tsx src/generate.ts
+
+generated 1 schema files in D:\Repos\agent-skills-worktrees\fk-p0-recovery-20260907\plugins\foreman-line\authority-registry\schemas
+{"items":1525,"rules":469,"sources":18}

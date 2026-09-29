@@ -3,8 +3,9 @@
 **Prepared:** 2026-09-07
 **Goal:** `foreman-kernel`
 **Owner:** Clinton Morgan
-**Status:** Development consolidation of the recovered ratified charter and the ratified September 7 infrastructure recommendations. Pending live-source adoption and review of the incorporated changes.
-**Coordinator:** The current owner in the authoritative goal loop directive; no transfer claimed here.
+**Status (living state — updated 2026-09-27):** Development consolidation of the recovered ratified charter and the ratified September 7 infrastructure recommendations, adopted into the live tree 2026-09-14 via PR #22 (`8b3733b`). Live-owner reconciliation completed 2026-09-26 (`fk-reconciliation-2026-09-26.md`). FK-P0 executed in the live tree 2026-09-26 as the canon-authority and enforcement registry at docs level (`fk-p0-canon-authority-enforcement-registry.md`); the code-level registry is accepted at R31 on `codex/fk-p0-r31-source-adoption-20260907` (`1747c1d`, 751/751, two APPROVE reviews). FK-P1 Stage A is shaped on `codex/foreman-kernel-resume-20260908`; FK-P1–FK-P21 are not dispatched (`fk-p1-p21-dispatch-plan.md`). Gate 3 remains human-owned for main/PR merges and destructive acts; the merge git step of a fully-green chain is delegated (RS-2.1, L7).
+**Coordinator:** the coordinator session named in `loop-directive.md`; owner-of-record handoff reconciled 2026-09-27 (RS-1.5).
+**Status note (2026-09-27):** FK-P0 Gate-3 merges complete on integration branch `reconcile/refresh-actions` (`a986b45` R31 registry, `609c97f` preparation packet) — performed and retroactively confirmed under RS-2.1; ledger §4.1 (L1–L7) is live; amendments RS-1 (`fk-rescope-RS1-2026-09-27.md`) and RS-2 (`fk-rs2-gate1-reratification-2026-09-27.md`) are in force; §15.2 plan review completed 2026-09-27 (`plan-review-findings.md`).
 **Mode:** Repo-Local Parcel Mode
 **Suggested companion path:** `plugins/foreman-line/docs/goals/foreman-kernel/FOREMAN-KERNEL-DEVELOPMENT-CHARTER.md`
 
@@ -26,7 +27,7 @@ charter and later amendments. Do not overwrite the current `charter.md` with an
 older snapshot. Existing Gate 1 and Gate 2 grants need reconciliation, not blanket
 reapproval. Unratified changes to locked decisions, the parcel graph, or exit
 criteria receive scoped Gate 1.
-Gate 3 remains human-owned.
+Gate 3 remains human-owned for main/PR merges and destructive acts; the merge git step of a fully-green chain is delegated (RS-2.1, L7).
 
 Quick navigation: section 6 contains the parcel graph; section 14 maps the eight
 ratified recommendations; section 15 specifies dispatch and the launch prompt;
@@ -94,7 +95,9 @@ dispatches.” D1–D17 were ratified. The required fresh plan review returned
 SHOULD-FIX findings; D3, D7–D9, D13–D17, new D18–D20, the parcel graph, and affected
 exit criteria were placed under a scoped Gate 1 re-open. The developer explicitly
 re-ratified them on 2026-08-31 with: “Re-ratify Gate 1 amendments R1–R13 and resume
-Gate 2.” D1–D20 and the amended graph/exits are binding.
+Gate 2.” Subsequent amendments are ratified individually. **The binding set is the
+ledger in §4.1, not a range restated in prose:** every ratification event appends a row
+there, so no prose sentence in this charter needs editing when a decision is added.
 
 | ID | Decision | Reasoning |
 |---|---|---|
@@ -106,7 +109,7 @@ Gate 2.” D1–D20 and the amended graph/exits are binding.
 | D6 | Receipt tools exposed in the first release are explicitly labeled structural. Authoritative stage-specific issuance is a follow-on goal gated on canonical hash recomputation, trusted-key verification, legal-transition checks, evidence-derived subjects, atomic append, and live source-control binding. | Tool names and assurance labels must not overclaim what existing validators prove. |
 | D7 | One portable MCP contract is primary. Claude Code on the declared Windows/Docker Desktop matrix receives the first lifecycle adapter. Codex and other hosts receive an adapter only where a real capability probe demonstrates equivalent mediation. Bypass attempts visible to a loaded adapter may be refused; hook absence or non-enrollment is detected by enrollment heartbeat and CI and is never claimed as a hook refusal. | The repo documents that some plugin/session surfaces ignore hooks, MCP, or permission frontmatter. Portability belongs in the protocol and capability matrix, not in a universal enforcement claim. |
 | D8 | Hooks begin in shadow mode. After negative tests, mediated-bypass probes, enrollment detection, and corpus reconciliation, governed mutations fail closed when the loaded adapter cannot reach the kernel. Read-only work may continue only in an explicit degraded mode that records the missing assurance. Enforcement cannot be promoted before independent CI backstops are green. | Failing open makes enforcement claims false; failing every operation closed makes Docker a development-wide outage; promoting before CI leaves unmediated channels without the promised detector. |
-| D9 | Human authority is preserved: Gate 1 is nondelegable; Gate 2 may be delegated only by an explicit charter-scoped standing authorization; Gate 3 remains human-owned unless a distinct agent identity is mechanically authorized and verified live. Human-gate satisfaction is derived from canonical, digest-bound Git artifacts and cannot be written as ordinary operational state. | Hooks, MCP, leases, and a local control capability are enforcement mechanisms, not new authority sources. Human-only conditions produce `awaiting_human` stop reports rather than unfinishable stop-hook loops. |
+| D9 | Human authority is preserved: Gate 1 is nondelegable; Gate 2 may be delegated only by an explicit charter-scoped standing authorization; Gate 3 remains human-owned for main/PR merges, repository-settings changes, deployment, and destructive cleanup; under the standing RS-2.1 "merge it" authorization the coordinator may perform the merge git step of a fully-green verification chain into the goal's integration branch — any red step voids it. Human-gate satisfaction is derived from canonical, digest-bound Git artifacts and cannot be written as ordinary operational state. (Gate-3 clause amended by RS-2, L7.) | Hooks, MCP, leases, and a local control capability are enforcement mechanisms, not new authority sources. Human-only conditions produce `awaiting_human` stop reports rather than unfinishable stop-hook loops. |
 | D10 | Exact `Allowed Files` is compiled from the spec body before path refusal is implemented. `surfaces:` remains routing/audit metadata and never substitutes for mutation authority. | The existing frontmatter linter does not provide the exact path contract needed by hooks. Enforcing a different field would mechanize the wrong rule. |
 | D11 | A defect class is retired from the agent reading path only after: a deterministic predicate exists, a negative test proves refusal, the existing corpus is swept, and an independent bypass attempt fails. Provenance and rationale remain in the lessons record. | Removing prose before enforcement is proven merely hides the rule. Installing a future rule without reconciling existing instances leaves the class alive. |
 | D12 | Hooks are adapters, not policy engines. They normalize lifecycle events, call `authorizeAction`, honor the structured decision, and report observed effects. All policy IDs, refusal codes, state transitions, and evidence rules live in the kernel contract. | This prevents host-specific shell scripts from becoming a second, drifting policy implementation. |
@@ -118,6 +121,29 @@ Gate 2.” D1–D20 and the amended graph/exits are binding.
 | D18 | `authorizeAction` is a dedicated provider-neutral policy engine, not a hook or control-handler implementation detail. It combines authenticated principal, repository/worktree identity, compiled Allowed Files, role posture, leases/revisions, gate evidence, outage mode, and post-diff obligations against golden lifecycle vectors. | Without an owning engine parcel, thin adapters or the control catalog would have to reimplement policy and violate D12. |
 | D19 | Public read APIs are content-only by default. Any repository read uses an admission-bound `repoId` plus exact relative path resolved inside one mounted read-only root, with canonical containment, symlink/reparse refusal, regular-file checks, and byte limits. Arbitrary host paths are forbidden. | Read-only access can still disclose unrelated source, secrets, container files, or the SQLite volume. Mutation authority and read confidentiality are separate boundaries. |
 | D20 | First-release enforcement is claimed only for Claude Code on Windows 11 with Docker Desktop and the tested plugin/launcher shape. The MCP protocol and Linux container image remain provider-neutral; native-Linux-host or Codex enforcement is not claimed until separate process-boundary evidence exists. | Two harness shapes do not prove host, path, filesystem, or lifecycle parity. The claim must match the demonstrated platform matrix. |
+| D21 | The kernel's decision path carries a stated latency budget, measured on the D20 platform matrix. Two spans are distinguished: `kernelDecisionLatency` (request received at the decision surface → response written) is kernel-owned and budgeted at p50 ≤ 5 ms, p95 ≤ 20 ms, p99 ≤ 50 ms warm; `mediatedActionLatency` (host lifecycle entry → hook exit, inclusive of adapter and transport) is budgeted at p99 ≤ 150 ms. First-call-after-start cost is reported separately against a ≤ 2000 ms allowance and is never folded into a warm percentile. Exceeding a budget is a recorded obligation, not a refusal. Exceeding the hard deadline of 1000 ms on a single decision is treated as kernel-unreachable and inherits the D8 outage posture unchanged. Authorization results may be cached only when bound to `goalRevision`, `policyDigest`, and compiled-scope digest; a cache entry whose binding no longer matches produces `STATE_REVISION_STALE` rather than a stale ALLOW. | D8's enforcement claim depends on adapters that remain loaded and enabled. Latency is the most probable cause of an operator disabling one, which converts a claimed mechanical control into an undetected gap. The measured D20 budgets constrain transport choice and prevent unsound caching; they do not establish a universal claim that every network round trip necessarily exceeds the budget. |
+
+### 4.1 Ratification ledger
+
+Authoritative record of what is binding and when it became binding. Any statement
+elsewhere in this charter that appears to enumerate the binding set is a convenience
+restatement; this table governs. A decision is in force only if a row below puts it there.
+
+Each row carries a unique ledger entry id. Ids are stable, assigned in order, and never
+reused or renumbered; amendments and the authority registry reference a ratification event
+by its id rather than by its date or its position.
+
+| Entry | Date | Instrument | Scope ratified | Record |
+|---|---|---|---|---|
+| L1 | 2026-08-31 | Original Gate 1 | D1–D17, the FK-P0–FK-P21 graph, wave exits, scenarios, goal exit criteria | “Ratify Gate 1 and authorize Gate 2 dispatches.” |
+| L2 | 2026-08-31 | Scoped Gate 1 re-open, plan-review amendments R1–R13 | D3, D7–D9, D13–D17, new D18–D20, amended graph and affected exit criteria | “Re-ratify Gate 1 amendments R1–R13 and resume Gate 2.” |
+| L3 | 2026-09-01 | Amendment A1 — decision-path latency budget | D21; FK-P1 and FK-P17 scope; Wave 0 exit; integration scenario 14; §13 items 7 and 9 | `proposed-amendment-A1-decision-path-latency-budget.md`, ratification record at foot |
+| L4 | 2026-09-07 | Amendment A1.8 — ratification ledger (with A1.9, its Entry-id keying) | §4.1 itself; header status line, §4 preamble, and §10 Gate 1 restatements replaced by pointers to §4.1; ledger rows keyed by stable Entry id. Adds no locked decision, changes no gate, alters no parcel, scenario, or exit criterion. | `amendment-A1.8-ratification-ledger.md`; A1.9 at `7e7dc7d`; `authorization-20260907-unattended.md`. This is the instruments' own required row. |
+| L5 | 2026-09-07 | Infrastructure adoption INF-1–INF-8 | §14 and its detailed carrier mapping; D21 rationale/cold-deadline clarification; U1 assigned to coordinator contract resolution, FK-P18 production, FK-P19 verification and FK-P21 retention. No parcel added or dependency removed. | `amendment-A4-infrastructure-adoption-20260907.md`; developer recommendations ratified September 7 and continuation authorization in `authorization-20260907-unattended.md`. |
+| L6 | 2026-09-27 | Amendment RS-1 — program re-scope + Gate-3 delegation | Wave 3 split (FK-P9–P11 in scope; FK-P12–P15 deferred to a post-Wave-3a value check); Wave 4 reduced (FK-P17′/FK-P18′ in scope and retargeted to the shipped mediated surfaces; FK-P16/FK-P19/FK-P21 deferred to a post-P17′/P18′ value check; FK-P20 dropped); FK-P2 elevated to head of Wave 0 after FK-P1; exit criterion amended (RS-1.4); Gate-3 merge git step delegated to the coordinator session under owner blanket authority for green chains (RS-1.5); owner-of-record handoff reconciled. | `fk-rescope-RS1-2026-09-27.md`; owner direction 2026-09-27 (blanket authority + “Proceed with your recommendations”); evidence `fk-wave3-4-marginal-value-2026-09-27.md`. |
+| L7 | 2026-09-27 | Amendment RS-2 — Gate-1 scoped re-ratification + RS-1 propagation | Gate-3 delegated merge git step for fully-green chains (D9 Gate-3 clause amended; §10/§13/loop SA6 restated; a986b45/609c97f retroactively confirmed); INF carriers reassigned/stranded (INF-5 → FK-P17′; INF-8 in-scope fragments FK-P9/FK-P11; rest named in exit annex); RS-1.4 (a)–(f) sole binding exit with annex; FK-P2 narrowed to compiler+fixtures, rewiring deferred to negotiated FK-P2B; corpus amendment R32 required before verification claims cover new content. | `fk-rs2-gate1-reratification-2026-09-27.md`; owner rulings 2026-09-27 in the §15.2 Gate-1 re-open. |
+
+**Appending a row is the only way to change the binding set.** Any amendment document that changes this charter must produce a row here, whether or not it changes the binding set. An unrowed amendment is a proposal; stable rows record actual ratification events, not inferred approvals.
 
 ## 5. First-release architecture
 
@@ -178,12 +204,14 @@ reviews.
 | Parcel | Outcome | Risk / routing | Dependencies |
 |---|---|---|---|
 | FK-P0  -  Canon authority and enforcement registry | Reconciles operative gate/authority statements; defines the structured constraint taxonomy and operation authority matrix; inventories every standing rule by enforcement destination. | critical / architecture-risk | none |
-| FK-P1  -  Lifecycle, admission, and decision contracts | Versioned lifecycle event, authenticated-principal/local-capability admission, `authorizeAction`, decision envelope, refusal-code, assurance-level, repository identity, content/read-capability boundary, host-path normalization split, and golden vectors. | critical / architecture-risk | FK-P0 |
+| FK-P1 — Lifecycle, admission, and decision contracts | Versioned lifecycle event, authenticated-principal/local-capability admission, `authorizeAction`, decision envelope, refusal-code, assurance-level, repository identity, content/read-capability boundary, host-path normalization split, golden vectors, and the D21 decision-path latency contract — the two measured spans and their observation points, the hard-deadline-to-outage mapping, and the revision-bound caching rule whose violation yields `STATE_REVISION_STALE`. | critical / architecture-risk | FK-P0 |
 | FK-P2  -  Spec-body compiler | Parses required spec sections and compiles exact non-glob Allowed Files plus frozen/forbidden surfaces; rejects ambiguity, traversal, equivalent-path, symlink/reparse escape, and missing authority. | critical / architecture-risk | FK-P0, FK-P1 |
 
 **Wave 0 exit:** contracts and fixtures are merged; exact path authority can be compiled
-without reading `surfaces:` as mutation permission; plan-level contradictions have no
-unresolved implementation consequence.
+without reading `surfaces:` as mutation permission; the D21 latency contract is specified
+with both measured spans, their observation points, the hard-deadline-to-outage mapping,
+and the revision-bound caching rule; and plan-level contradictions have no unresolved
+implementation consequence.
 
 ### Wave 1  -  Pure trust core
 
@@ -210,6 +238,8 @@ launch without package-local installation.
 
 ### Wave 3  -  Durable operational state
 
+> **RS-1 in force (ledger L6):** FK-P9–FK-P11 are Wave 3a (in scope); FK-P12–FK-P15 are deferred to a post-Wave-3a value check — `fk-rescope-RS1-2026-09-27.md`.
+
 | Parcel | Outcome | Risk / routing | Dependencies |
 |---|---|---|---|
 | FK-P9  -  SQLite storage and migration ABI | Owns schema migrations, events/goals/artifact tables, WAL/busy policy, transactional migration startup, newer-schema/corruption refusal, online backup/checkpoint recovery, and the storage package exports. | critical / architecture-risk | FK-P1 |
@@ -227,10 +257,12 @@ field-level Git/SQLite authority matrix stops on divergence rather than overwrit
 
 ### Wave 4  -  Hook adapter and enforcement promotion
 
+> **RS-1 in force (ledger L6):** FK-P17′/FK-P18′ are in scope and retargeted to the shipped mediated surfaces (FK-P17′ no longer depends on FK-P16); FK-P16, FK-P19, FK-P21 are deferred to a post-FK-P17′/FK-P18′ value check; FK-P20 is dropped — `fk-rescope-RS1-2026-09-27.md`.
+
 | Parcel | Outcome | Risk / routing | Dependencies |
 |---|---|---|---|
 | FK-P16  -  Claude lifecycle adapter, shadow mode | Capability-preflighted SessionStart/PreToolUse/PostToolUse/Stop adapter for the D20 matrix; enrollment heartbeat; host-path normalization; calls FK-P12 and records would-allow/would-refuse/detected-only results. Owns Claude hook registration, not Codex or shared Docker files. | critical / architecture-risk | FK-P12, FK-P13, FK-P15 |
-| FK-P17  -  Bypass and outage harness | Exercises shell, subprocess, custom-tool/MCP, symlink/reparse, subagent, mediated bypass, hook non-enrollment, stale state, service timeout, and restart; produces the mechanical/detected/unsupported matrix. | critical / architecture-risk | FK-P16 |
+| FK-P17 — Bypass and outage harness | Exercises shell, subprocess, custom-tool/MCP, symlink/reparse, subagent, mediated bypass, hook non-enrollment, stale state, service timeout, and restart; produces the mechanical/detected/unsupported matrix; and produces the D21 latency profile on the D20 platform — warm percentiles for both measured spans, the first-call-after-start figure, and a hard-deadline case proving the unreachable path inherits the D8 outage posture rather than failing open. | critical / architecture-risk | FK-P16 |
 | FK-P18  -  CI scope and state-evidence backstops | Mirrors exact-scope, enrollment, state/evidence, and dirty-reviewer invariants in CI; negative control intentionally bypasses the hook and must fail CI before enforcement can promote. Owns only its named workflow/CI integration points. | critical / architecture-risk | FK-P17 |
 | FK-P19  -  High-confidence refusal enforcement | Promotes only the five mediated classes whose negative controls, corpus sweeps, authorization-engine vectors, and FK-P18 CI backstops pass; implements degraded read-only mode and fail-closed governed mutation. | critical / architecture-risk | FK-P17, FK-P18 |
 | FK-P20  -  Second-host feasibility and host registration | Probes Codex lifecycle capabilities; either ships a thin adapter with process-boundary parity or records the unsupported gap. Owns Codex manifest changes; no Claude-hook or Docker-file edits. | elevated / architecture-risk | FK-P19 |
@@ -263,6 +295,8 @@ after this kernel demonstrates evaluator, state, and enforcement boundaries safe
 
 The goal is not complete until all scenarios have durable evidence:
 
+As amended by RS-2.3 (L7): under the binding RS-1.4 exit the required scenario set is items 1, 2, 3, 4, 8, 9 where attributable to in-scope parcels; scenario 14 (D21 latency) and scenarios 5, 10, 13 ride the exit annex as named stranded obligations and are never claimed satisfied at goal exit.
+
 1. **Clean-room lint:** an unrelated repository submits valid and invalid specs; exact
    Allowed Files compile; traversal and ambiguous authority refuse.
 2. **Read confidentiality:** an anonymous verifier can submit bounded content but cannot
@@ -292,9 +326,19 @@ The goal is not complete until all scenarios have durable evidence:
     probe on its declared host/filesystem matrix; unsupported lifecycle events are
     reported as gaps.
 
+14. **Decision-path latency:** on the D20 platform, a warm kernel serves a
+    representative governed-mutation decision within the D21 budget for both measured
+    spans; the first-call-after-start figure is recorded separately; a decision
+    exceeding the hard deadline is reported as kernel-unreachable and inherits the D8
+    outage posture without failing open; and an authorization cache entry whose
+    `goalRevision`, `policyDigest`, or compiled-scope digest no longer matches produces
+    `STATE_REVISION_STALE` rather than a stale ALLOW.
+
 ## 9. Goal exit criterion
 
-This goal exits only when:
+This goal exits only when (as amended by RS-1, ledger L6 — RS-1.4 in `fk-rescope-RS1-2026-09-27.md` is the binding amended criterion; deferred fragments FK-P12–FK-P16, FK-P19, FK-P21 are follow-on-goal candidates named at exit, never claimed satisfied):
+
+**Superseded as exit tests by RS-2.3 (L7).** The sole binding exit is RS-1.4 (a)–(f) as amended by RS-2.3, including its exit annex (every deferred parcel FK-P12–FK-P16/FK-P19/FK-P21, the dropped FK-P20, and every stranded obligation named in RS-2.2 — listed as NOT satisfied, as follow-on-goal candidates). The numbered items below are retained as historical text only.
 
 1. Waves 0–4 and FK-P0 through FK-P21 are merged through the required human Gate 3
    process.
@@ -325,10 +369,11 @@ This goal exits only when:
 
 ### Gate 1  -  charter ratification
 
-**RE-CLEARED 2026-08-31  -  nondelegable developer re-ratification recorded.** The
+**RE-CLEARED 2026-08-31 — nondelegable developer re-ratification recorded.** The
 original Gate 1 was cleared, the fresh plan review returned six decision-changing
-BLOCKERs, and the resulting scoped re-open for R1–R13 was explicitly re-ratified. D1–D20,
-FK-P0–FK-P21, the amended wave exits, scenarios, and goal exit criteria are in force.
+BLOCKERs, and the resulting scoped re-open for R1–R13 was explicitly re-ratified. The
+set in force — including every amendment ratified after this date — is the ledger in
+§4.1. Gate 1 remains nondelegable for each amendment individually.
 
 ### Gate 2  -  parcel dispatch
 
@@ -339,9 +384,7 @@ Allowed Files.
 
 ### Gate 3  -  merge
 
-Not delegated. Every merge remains human-owned for this goal. The coordinator may prepare
-branches, commits, verification evidence, reviews, and PR material, but must stop and
-present the green chain for the human merge action.
+Human-owned for main/PR merges, repository-settings changes, deployment, and destructive cleanup. Under the standing RS-2.1 authorization (L7; the COORDINATOR-PATTERN "merge it" rule) the coordinator may perform the merge git step of a fully-green verification chain into the goal's integration branch; any red step voids it. The coordinator prepares branches, commits, verification evidence, reviews, and PR material; delegation never manufactures a gate's satisfaction.
 
 ## 11. Stop conditions
 
@@ -408,11 +451,16 @@ Ratifying this charter confirms:
 5. the Allowed-Files compiler and rule-retirement standard (D10–D13);
 6. durable field-authoritative SQLite state, local control capability, read-volume
    isolation, and pure/effect separation (D14–D16);
-7. versioned typed tool contracts plus the read-confidentiality boundary (D17, D19);
+7. versioned typed tool contracts, the read-confidentiality boundary, and the
+   decision-path latency contract with its revision-bound caching rule
+   (D17, D19, D21);
 8. the FK-P0 through FK-P21 dependency graph and Wave 0–4 exit criteria;
-9. the explicit out-of-scope list and thirteen integration scenarios;
+9. the explicit out-of-scope list and fourteen integration scenarios;
 10. standing Gate-2 dispatch authorization under the stated contingencies; and
-11. nondelegated human Gate 3 for every merge.
+11. human-owned Gate 3 for main/PR merges, repository-settings changes, deployment,
+    and destructive cleanup, with the coordinator-authorized merge git step of a
+    fully-green verification chain into the goal's integration branch, any red step
+    voiding it (as amended by RS-2, L7).
 
 **Gate 1 record:** Clinton Morgan explicitly ratified the original list and authorized
 the contingent Gate 2 dispatch grant on 2026-08-31, then explicitly re-ratified plan-review
@@ -424,10 +472,8 @@ proceed in dependency order under the stated contingencies.
 
 ## 14. Ratified infrastructure adoption, 2026-09-07
 
-This section carries the eight ADR review recommendations Clint ratified with
-"Your recommendations are ratified, as written." It assigns those requirements
-to the existing FK parcels without adding parcels, changing dependencies, or
-renumbering D1-D20. `INF-1` through `INF-8` are traceability labels local to this
+This section adopts the eight September 7 ratified recommendations into the live charter under L5. The detailed Carriers paragraphs assign obligations without adding parcels or dependency edges. The preserved companion is provenance; its older sections 1-13 do not replace this charter. Amendments A1 and A1.8/A1.9 stand as recorded in L3/L4. Newly adopted normative source content requires a separately reviewed FK-P0 corpus/contract amendment before an implementation verification claim can cover it. The unchanged Round 6 candidate remains a distinct baseline, not evidence for this adopted corpus.
+`INF-1` through `INF-8` are traceability labels local to this
 section, not claims to unused global D numbers. The implementation mapping and
 launch procedure are a reviewable consolidation of ratified intent, not evidence
 that this text has already landed in the live goal worktree.
@@ -442,9 +488,12 @@ direction. Do not claim every filesystem operation in remote development crosses
 the network or that every network hop necessarily exceeds a latency budget.
 
 Future coordinator, sidecar, retrieval, and worker hosting stays open to separately
-ratified designs. The `hierarchical-coordination-sidecars` and
-`heterogeneous-agent-worker-fabric` goals retain their own owners, charters, and
-gates. This kernel release creates neither hierarchical commissioning nor a
+ratified designs. The `hierarchical-coordination-sidecars` goal retains its own
+owner, charter, and gates. The former `heterogeneous-agent-worker-fabric` record was
+deleted 2026-09-26 per the coordinator audit (goal-status-report-2026-09-26.md); its
+extractable design lives in
+`foreman-line-boundary-routing/hawf-extract-worker-lane-contracts.md`.
+This kernel release creates neither hierarchical commissioning nor a
 distributed execution fabric by implication. HCS's A3 proposal is not imported
 as ratified authority. Preserve neutral kernel contracts for those future consumers
 without assigning this goal their implementation work.
@@ -452,7 +501,7 @@ without assigning this goal their implementation work.
 **Carriers:** FK-P1 records environment/assurance semantics; FK-P7/FK-P14 implement
 the local deployment direction; FK-P16/FK-P17 prove Windows mediation; FK-P20
 reports only the additional host capabilities actually demonstrated; FK-P21 binds
-the resulting matrix to evidence.
+the resulting matrix to evidence. (RS-2.2: carrier deferred/dropped by RS-1; obligation named in the RS-2.3 exit annex, never claimed satisfied)
 
 ### INF-2: Scope storage and hosting decisions to their actual contracts
 
@@ -471,7 +520,7 @@ credentials inside the kernel; actual admitted identities and capabilities gover
 that boundary.
 
 **Carriers:** FK-P9 owns storage and backup contracts; FK-P14 owns deployment and
-operator lifecycle; FK-P15 proves recovery and concurrency on the exact placement.
+operator lifecycle; FK-P15 proves recovery and concurrency on the exact placement. (RS-2.2: carrier deferred/dropped by RS-1; obligation named in the RS-2.3 exit annex, never claimed satisfied)
 
 ### INF-3: Measure workstation optimization without blanket exclusions
 
@@ -491,7 +540,7 @@ installation, dirty worktrees, and untracked work.
 **Carriers:** FK-P0 records the applicable operational rules; FK-P7/FK-P14 own
 their respective build/launcher configuration and benchmark evidence; FK-P21
 reports the measured outcome. This does not grant cross-package lockfile edits
-or create a new workstation-tuning implementation parcel.
+or create a new workstation-tuning implementation parcel. (RS-2.2: carrier deferred/dropped by RS-1; obligation named in the RS-2.3 exit annex, never claimed satisfied)
 
 ### INF-4: Prove verification independence and retain evidence
 
@@ -511,37 +560,25 @@ reviewed CI contract. A mutable runner label or image tag is not a tested identi
 **Carriers:** FK-P5/FK-P8/FK-P15 define clean-environment proof; FK-P18 owns the
 independently controlled CI backstop; FK-P21 owns the retained evidence manifest.
 Publishing images, changing repository rules, or provisioning runners requires
-the actual external-effect authority; this document grants none automatically.
+the actual external-effect authority; this document grants none automatically. (RS-2.2: carrier deferred/dropped by RS-1; obligation named in the RS-2.3 exit annex, never claimed satisfied)
 
 ### INF-5: Reconcile A1 and measure both latency spans
 
-The recovered adjacent A1 text identifies D21, names FK-P1 and FK-P17, distinguishes
-kernel decision latency from lifecycle-entry-to-hook-exit latency, and separately
-reports cold start. It records ratification on 2026-09-01 while retaining
-contradictory language saying it is not in force. The saved August 31 charter
-predates A1. Reconcile the current charter, amendment ledger, and exact adoption
-before changing a latency contract or assigning any decision ID.
+A1 is ratified and already adopted as D21 and ledger entry L3. Its numerical budgets, both latency spans, revision-bound cache rule and D8 outage mapping remain binding. The source artifact's old not-yet-landed wording is historical and has been corrected.
 
-Recovered A1 values, provided only as reconciliation anchors, are:
-
-| Span or condition | Value in the recovered A1 |
+| Span or condition | Adopted D21 budget |
 |---|---|
 | Warm kernel decision | p50 <= 5 ms; p95 <= 20 ms; p99 <= 50 ms |
 | End-to-end mediated action | p99 <= 150 ms |
 | First call after startup | separately reported allowance <= 2000 ms |
 | Per-decision hard deadline | 1000 ms, mapped to the existing outage posture |
 
-Do not implement those anchors merely because they appear here. Confirm the live
-adopted text and any later amendment, including how cold-start accounting relates
-to the hard deadline and which observations participate in each percentile.
-Do not invent a new authorization-cache policy, widen existing cache eligibility,
-or use cached decisions to manufacture authority. Resolve a genuine contract gap
-through a narrowly scoped amendment before implementing that gap.
+The first-call allowance is an observation budget and does not extend the 1000 ms decision deadline or permit a late ALLOW. FK-P1 specifies the observation points and which startup work lies outside the decision span. Budget overruns remain recorded obligations; hard-deadline overruns inherit D8. No cache eligibility is broadened to satisfy a performance target.
 
 **Carriers:** FK-P0 records reconciliation; FK-P1 owns the adopted decision-path
 contract; FK-P16 implements the adapter; FK-P17 measures both spans, cold start,
 and the hard-deadline failure behavior on D20; FK-P18 may carry only the coarse
-CI regression checks authorized by the adopted A1; FK-P21 records evidence.
+CI regression checks authorized by the adopted A1; FK-P21 records evidence. (RS-2.2: measurement carrier retargeted to FK-P17′ on the shipped mediated surfaces; FK-P1 adopts the contract only)
 
 ### INF-6: Use a reproducible performance and cost baseline
 
@@ -569,7 +606,7 @@ before/after evidence. This charter adds no unmeasured percentage target.
 **Carriers:** the coordinator records end-to-end parcel/review economics from
 available evidence; FK-P7/FK-P14 measure their build paths; FK-P10/FK-P15 measure
 contention; FK-P17 measures decision latency; FK-P21 assembles the baseline and
-the documented measurement gaps. Keep instrumentation out of authority semantics.
+the documented measurement gaps. Keep instrumentation out of authority semantics. (RS-2.2: carrier deferred/dropped by RS-1; obligation named in the RS-2.3 exit annex, never claimed satisfied)
 
 ### INF-7: Exhaustive corpus manifests; retrieval remains advisory
 
@@ -588,7 +625,7 @@ first-release implementation unless a separate scope decision admits it.
 
 **Carriers:** FK-P0 inventories rules and corpus obligations; FK-P3 covers every
 read-surface-reachable mixed evaluator; FK-P19 requires complete sweep evidence
-before retirement/promotion; FK-P21 binds manifest identities, counts, and outcomes.
+before retirement/promotion; FK-P21 binds manifest identities, counts, and outcomes. (RS-2.2: carrier deferred/dropped by RS-1; obligation named in the RS-2.3 exit annex, never claimed satisfied)
 
 ### INF-8: Demonstrate recovery and define measured revisit conditions
 
@@ -611,7 +648,15 @@ recovery needs, or cost per accepted parcel justifies it. Revisit triggers do no
 automatically choose Azure, authorize spend, or widen D20.
 
 **Carriers:** FK-P9/FK-P14 define backup and restore; FK-P15 proves recovery;
-FK-P21 records limitations, objectives, results, and revisit evidence.
+FK-P21 records limitations, objectives, results, and revisit evidence. (RS-2.2: in-scope fragments FK-P9/FK-P11; process-boundary recovery proof stranded in the exit annex)
+
+### Adoption dependencies and evidence ownership
+
+- U1 (backstop independence) now has a named contract-resolution owner: this goal's coordinator. FK-P18 implements the reviewed producer contract and supplies evidence; FK-P19 independently verifies that evidence at promotion; FK-P21 consolidates and retains evidence that must already exist before promotion. FK-P21 cannot be the first producer of promotion prerequisites.
+- Before FK-P18 implementation dispatch, a concrete independently reviewed contract must bind protected verifier/workflow control, builder-input limits, credentials and runner lifecycle, independent negative controls, evidence identities/retention, and bounded unsupported/unavailable outcomes. Missing or invalid evidence refuses promotion. This is an affected-parcel dependency, not a hold on upstream evaluator work. No old A2 draft is revived by this assignment.
+- The coordinator owns an observation-window baseline now: an accepted parcel means a parcel accepted through its required green chain and human merge gate; record elapsed times, queue delay, included cost components and unknowns. With no accepted parcels, report zero accepted and undefined cost per accepted parcel. Do not manufacture billing telemetry.
+- FK-P9/FK-P14 define backup/restore boundaries and objectives before their affected acceptance gates; FK-P15 measures recovery. Unknown numeric objectives do not block orthogonal work, and no objective is claimed met without measurement.
+- The detailed INF carrier paragraphs govern. The companion's section 16 is a convenience summary and cannot narrow them. Existing packaging, HCS and worker-fabric serialization ownership is checked before affected edits; no foreign goal scope is imported.
 
 ## 15. Dispatch readiness and operating sequence
 
@@ -665,7 +710,7 @@ ratified work does not.
 No blanket implementation dispatch is implied by this charter alone. An eligible
 parcel needs the existing Gate 2 grant, satisfied dependencies, a reviewed spec
 with exact Allowed Files, an isolated named branch/worktree, and confirmed Step 0.
-Gate 3 remains human-owned. There is no new approval request for read-only
+Gate 3 remains human-owned for main/PR merges and destructive acts; the merge git step of a fully-green chain is delegated (RS-2.1, L7). There is no new approval request for read-only
 reconciliation or preparation already authorized by the user's request.
 
 ### 15.3 Per-parcel dispatch contract
@@ -755,7 +800,7 @@ environment, or human-gate blocker. Do not infer missing authority from silence.
 
 ## 16. Completion accounting for the infrastructure requirements
 
-The inherited nine goal exit conditions in section 9 remain required in full.
+The inherited nine goal exit conditions in section 9 are superseded as exit tests by RS-1.4 as amended by RS-2.3 (L6/L7); they remain historical text, and the RS-2.3 exit annex names every stranded obligation.
 These rows explain how the ratified infrastructure recommendations must be traced
 through the existing evidence, without replacing an integration proof with prose.
 

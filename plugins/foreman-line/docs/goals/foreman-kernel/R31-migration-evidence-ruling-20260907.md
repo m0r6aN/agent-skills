@@ -1,0 +1,7 @@
+# R31 migration evidence ruling — September 7, 2026
+
+Ratify R31.5 under the developer's recorded non-destructive decision authority, after independent approval of proposal57b2667e89dc4b5319b48353142ec82b1e27d34f. Adopt every exact diagnostic-custody and decision-scope condition in R31-migration-evidence-review-20260907.md and the incorporated amendment text. This is a Step0 contract clarification, not implementation dispatch.
+
+Use five observed references (four mapped subjects plus existing L01 delegation provenance), two relevant requirement/delegation rule IDs, and M01 as representative changed-corpus evidence. L01 remains noncontrolling, the historical thesis remains historical, and no L5 reuse or new ALLOW occurs. Bind the exact plan-decision Git blob already present in source8d using honest typed supporting diagnostics and prior/new Git/manifest evidence. Add finite complete-tuple validation plus actual Git-blob correspondence checks; repaired substitutions cannot pass generic envelope validation. The existing schema, corpus source count and global authority behavior remain unchanged.
+
+The old source8d decision ratifies the finite plan106fd58 and retains mapping/dispatch prerequisites. This later clarification and subsequent mapping ruling are recorded independently. Do not claim the old decision blob contains or ratifies future mapping text. Finish exact Step0 and independent mapping review before code. Governed source8d bytes and the R30 candidate remain unchanged.

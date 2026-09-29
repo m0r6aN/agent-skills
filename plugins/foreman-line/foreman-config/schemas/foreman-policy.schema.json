@@ -1,0 +1,29 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "audit"
+  ],
+  "properties": {
+    "audit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "require_security_audit_at"
+      ],
+      "properties": {
+        "require_security_audit_at": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "low",
+              "standard",
+              "elevated",
+              "critical"
+            ]
+          }
+        }
+      }
+    }
+  }
+}
