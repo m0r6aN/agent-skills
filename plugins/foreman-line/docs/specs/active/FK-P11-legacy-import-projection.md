@@ -59,7 +59,12 @@ text here claims dispatch.
   `@foreman-line/kernel-lease` package at `plugins/foreman-line/kernel-lease/`
   (through `file:../kernel-lease`, integrity-pinned) **for data only**: the exported T1
   goal-status vocabulary and T2 transition edge table (`src/state-machine.ts`), so
-  FK-P11 never re-decides a status or an edge. FK-P11 calls **no engine operation**
+  FK-P11 never re-decides a status or an edge. Import route (coordinator ruling F-3,
+  2026-09-29): the data is consumed through kernel-lease's PUBLIC `src/index.ts`
+  export surface via the deep specifier `@foreman-line/kernel-lease/src/index.ts`
+  (`kernel-lease/package.json` carries no `exports` map) — internal-layout
+  coupling, read-only, recorded; a future kernel-lease export-map change is a
+  named break point. FK-P11 calls **no engine operation**
   (no `createEngine`, no claim/renew/release/request/decide/apply), creates **no
   `leases`, `transitions`, or `idempotency_keys` rows**, and emits **no FK-P10 engine
   event kinds** (T12/A1e registers its own import kinds). `projection_id = 'goal-state'`
@@ -186,12 +191,12 @@ truncation.
 |---|---|
 | `CorpusManifest` | `manifestKind` (literal `legacy-corpus-manifest`), `sourceRevision: CommitId`, `items: CorpusItem[]` |
 | `CorpusItem` | `sourcePath: Bytes<4096>`, `sourceDigest: Digest`, `disposition: 'import' \| 'excluded'`, `reason: Bytes<256>` (non-empty) |
-| `ImportDocument` | `apiVersion` (literal `0.1.0`), `documentKind` (literal `legacy-import`), `sourceLineage { rootCommit: CommitId, tipCommit: CommitId }`, `corpusManifest: CorpusManifest`, `rows: LegacyGoalRecord[]` |
+| `ImportDocument` | `apiVersion` (literal `0.1.0`), `documentKind` (literal `legacy-import`), `corpusDigest: Digest` (F-2: canonical digest over the rows' `SourceProvenance` tuples sorted by canonical key order, domain `foreman-line.kernel-import.corpus`), `sourceLineage { rootCommit: CommitId, tipCommit: CommitId }`, `corpusManifest: CorpusManifest`, `rows: LegacyGoalRecord[]` |
 | `LegacyGoalRecord` | `goalId: Id`, `claimedStatus: <T1 vocab literal>`, `source: SourceProvenance`, `claimedRatificationRefs: RatificationRef[]` (may be empty), `claimedApprovals: ApprovalClaim[]` (may be empty), `claimedOperationalFacts: OperationalFacts` |
 | `SourceProvenance` | `sourcePath: Bytes<4096>` (repo-relative form only — traversal, absolute, backslash, ADS, reserved-name, trailing dot-space, control/format-char forms refuse; no host path is ever echoed), `sourceDigest: Digest`, `sourceCommit: CommitId` |
 | `RatificationRef` | `gitIdentity: Bytes<256>`, `digest: Digest`, `provenance: SourceProvenance` |
 | `ApprovalClaim` | `evidenceKind: 'commit-ref' \| 'signature' \| 'status-check' \| 'merge-record'` (the F05.4 closed union verbatim), `gitIdentity: Bytes<256>`, `digest: Digest`, `provenance: SourceProvenance` — i.e. the F05.4 `GitGateEvidenceRef` members verbatim **plus provenance** ("imported approvals arrive with their provenance") |
-| `OperationalFacts` | `claimedRevision: SafeInt \| null`, `claimedLeaseHolderPrincipalRef: Id \| null`, `claimedPendingTransitionTarget: <T1 vocab literal> \| null`, `claimedWakeupCount: SafeInt \| null`, `claimedHandoffCount: SafeInt \| null` — **provenance-only** per T2; these members can never reach `goals.revision`, `leases`, `transitions`, `wakeup_handoffs`, or `idempotency_keys` |
+| `OperationalFacts` | `claimedRevision: SafeInt \| null`, `claimedLeaseHolderPrincipalRef: Id \| null`, `claimedPendingTransitionTarget: <T1 vocab literal> \| null`, `claimedWakeupCount: SafeInt \| null`, `claimedHandoffCount: SafeInt \| null`, `claimedBinding: { principalRef: Id, operationId: Id, repositoryRef: Id, worktreeRef: Id } \| null` (F-5: the legacy binding claim; a 4-tuple colliding with a recorded `idempotency_keys` binding stops (CON-08)) — **provenance-only** per T2; these members can never reach `goals.revision`, `leases`, `transitions`, `wakeup_handoffs`, or `idempotency_keys` |
 
 **Corpus-manifest contract (OQ-1 ruling; INF-7).** The corpus is defined by the
 manifest — exact input paths, source digests, and a named source revision;
@@ -218,7 +223,14 @@ field at all** (a smuggle such as `gateSatisfied: true` is an unknown-field refu
 Import-time failure precedence (documented first-failure order; one precedence-edge
 fixture per family): structural → corpus-manifest consistency → limits → lineage
 membership → digest match → approval-evidenced-ness → field-conflict
-(`DIVERGENCE_STOP`) → epoch.
+(`DIVERGENCE_STOP`) → epoch. Same-lineage exemption (coordinator ruling F-7,
+2026-09-29): goals imported by a recorded epoch of the SAME lineage root are
+exempt from the field-conflict family's vs-recorded checks — re-import of an
+imported lineage is the epoch's refusal (`IMPORT_EPOCH_EXISTS`, forever), and
+`existing-state-collision` protects against ALIEN pre-existing goals only
+(CTL-08: collision only for the same `goalId`). Field-conflict sub-order (T5
+table order): status → ratification-fact → human-gate-fact → revision → lease →
+pending-transition → wakeup-handoff → idempotency → existing-state-collision.
 
 ### T2 Field-level authority matrix (D2/D14 — per-field winner + conflict behavior)
 
@@ -421,7 +433,7 @@ injected FK-P9 `Clock` (importer only), and the lineage reader (the shipped
 | Export | Kind | Result |
 |---|---|---|
 | `runImport(importer, { importDocument, principalRef, operationId })` | effectful (exactly one `withTransaction`) | `{ epoch: EpochRecord, importedGoalIds, recordedEventSeqs }` |
-| `getEpoch(importer)` | read | the single recorded `EpochRecord` or `null` |
+| `getEpoch(importer, { rootCommit })` | read | the `EpochRecord` recorded for ONE source lineage, or `null` — keyed by lineage root (coordinator clarification 2026-09-29: T9's "single recorded EpochRecord" is per lineage under OQ-7; a missing/ambiguous query refuses). `getAllEpochs(importer)` returns the full recorded set |
 | `checkDivergence(importer \| projector)` | read + reader | passes or throws `DIVERGENCE_STOP` (T5) |
 | `renderProjection(projector, { projectionId })` | read + reader (pure render; no writes) | `{ markdownBytes, projectionDigest, renderedThroughEventSeq }` |
 | `publishProjection(projector, { projectionId })` | effectful (one `withTransaction`: cursor advance) | as `renderProjection` + `{ cursorBefore, cursorAfter }` |
@@ -432,13 +444,14 @@ clock is a constructor seam; hostile rows assert the request shapes admit no tim
 source). No export writes `leases`, `transitions`, or `idempotency_keys`, and none
 calls an FK-P10 engine operation. No export mutates the repository or git state.
 
-### T10 Closed error registry (`ImportError`; 13 codes; F05.10 safe diagnostics)
+### T10 Closed error registry (`ImportError`; 14 codes — the T10 thirteen + `IMPORT_SOURCE_BLOB_ABSENT` per coordinator ruling F-6, 2026-09-29; F05.10 safe diagnostics)
 
 | Code | Raised when | Safe diagnostic |
 |---|---|---|
 | `IMPORT_ARGUMENT_INVALID` | structural input failure (unknown/missing field, bad Id/Digest/CommitId/Micros shape, reserved gate literal outside `claimedStatus`, inverted lineage at document level, malformed cursor id, corpus-manifest structural violation: row outside the manifest, missing disposition/reason, duplicate item, excluded item with a row) | field path only |
 | `IMPORT_LIMIT_EXCEEDED` | named bound exceeded (rows, corpus items, ref array, path length, payload bytes) | field name + bound value only |
 | `IMPORT_SOURCE_DIGEST_MISMATCH` | a claimed digest contradicts bytes that DO resolve (row source, ratification ref, approval ref, a manifest-item/row disagreement, or the document's own `corpusDigest`) | row/field id only |
+| `IMPORT_SOURCE_BLOB_ABSENT` | the claimed digest cannot be established because the blob does not exist at `sourceCommit`/`sourcePath` (F-6: distinct cause from `IMPORT_SOURCE_DIGEST_MISMATCH` — bytes never resolved; different operator response) | row/field id only |
 | `IMPORT_COMMIT_OUT_OF_LINEAGE` | a claimed commit — or the manifest's `sourceRevision` — lies outside the lineage closure (unknown, sibling lineage, or beyond root..tip) | commit id only |
 | `IMPORT_EPOCH_EXISTS` | re-import of an imported source lineage | root commit + epoch id only |
 | `IMPORT_APPROVAL_UNEVIDENCED` | approval claim that cannot be established as committed lineage evidence (provenance absent, blob absent, or no claim where one is required) | row id + reason literal only |
@@ -450,13 +463,14 @@ calls an FK-P10 engine operation. No export mutates the repository or git state.
 | `LINEAGE_READER_FAILURE` | lineage-reader failure or nonconforming return (shipped git reader or injected seam; HARNESS_*-branded seam errors rethrow unwrapped — never laundered) | reader code literal only |
 | `STORAGE_FAILURE` | wrapped FK-P9 `StorageError` at a substrate seam | FK-P9 `StorageErrorCode` literal only |
 
-13 codes, closed. No driver message text, host path, row content, credential, seam
+14 codes, closed (coordinator ruling F-6 adds `IMPORT_SOURCE_BLOB_ABSENT`; provenance
+"coordinator rulings F-1/F-2/F-3/F-5/F-6/F-7, 2026-09-29"). No driver message text, host path, row content, credential, seam
 message text, or unbounded value can reach a caller (fault-injection test per code).
 The named refusal codes fire as themselves across every boundary: a boundary fallback
 never erases a named refusal into `STORAGE_FAILURE` (the three-instance
 error-laundering class; ERR-03 failing-when-broken).
 
-### T11 Hostile-fixture inventory (dominant hostile space; 84 fixture records)
+### T11 Hostile-fixture inventory (dominant hostile space; 85 fixture records — derived from the fixture rows)
 
 Records live in `tests/fixtures/`; hostile cases are JSON tables of
 `{ id, input, expectedCode | expectedOutcome, expectedReasonCode? }`, canonical cases
@@ -469,7 +483,7 @@ precedence-edge row (the documented first-failure order is what fires).
 | Class | IDs | Count | Expected |
 |---|---|---|---|
 | F1 Fabricated approval | FAB-01 approval claim with no provenance (evidence-missing); FAB-02 well-formed ref, blob absent at claimed commit/path; FAB-03 `completed` row with zero claims; FAB-04 `completed` row mixing one valid + one invalid claim; FAB-05 unknown `evidenceKind`; FAB-06 malformed ref digest; FAB-07 malformed `gitIdentity`; FAB-08 gate-state smuggle field (`gateSatisfied: true`); FAB-09/FAB-10 reserved gate status literals (`gate.satisfied`, `human.approved`); FAB-11 refs array at 65 entries; FAB-12 resume-claim row (awaiting-human→active narrative) claiming an unevidenced approval | 12 | FAB-01/02/03/04/12 `IMPORT_APPROVAL_UNEVIDENCED`; FAB-05/06/07/08 `IMPORT_ARGUMENT_INVALID`; FAB-09/10 `IMPORT_STATUS_UNKNOWN`; FAB-11 `IMPORT_LIMIT_EXCEEDED`; nothing imported in any case (whole-import abort) |
-| F2 Digest mismatch | DIG-01 row `sourceDigest` ≠ computed committed-bytes digest; DIG-02 ratification ref digest ≠ committed bytes; DIG-03 approval ref digest ≠ committed blob bytes (blob resolves); DIG-04 document `corpusDigest` ≠ canonical digest of row provenance tuples | 4 | `IMPORT_SOURCE_DIGEST_MISMATCH` per row |
+| F2 Digest mismatch | DIG-01 row `sourceDigest` ≠ computed committed-bytes digest (or — the DIG-01 family's F-6 absent case — the source blob is absent at `sourceCommit`/`sourcePath` → `IMPORT_SOURCE_BLOB_ABSENT`, carried as a named case inside the closed 67-record count); DIG-02 ratification ref digest ≠ committed bytes; DIG-03 approval ref digest ≠ committed blob bytes (blob resolves); DIG-04 document `corpusDigest` ≠ canonical digest of row provenance tuples | 4 | `IMPORT_SOURCE_DIGEST_MISMATCH` per row (absent-blob case: `IMPORT_SOURCE_BLOB_ABSENT`) |
 | F3 Commit-boundary | CMT-01 unknown claimed commit; CMT-02 claimed commit in a sibling lineage; CMT-03 approval/ratification provenance commit outside root..tip though the blob resolves; CMT-04 `tipCommit` not a descendant of `rootCommit`; CMT-05 `sourcePath` escaping repo-relative form (traversal/host path); CMT-06 malformed commit-id length (neither 40 nor 64 hex) | 6 | CMT-01/02/03 `IMPORT_COMMIT_OUT_OF_LINEAGE`; CMT-04/05/06 `IMPORT_ARGUMENT_INVALID`; no host path echoed |
 | F4 Re-import | REI-01 second run, same lineage; REI-02 same root, different tip/document; REI-03 re-import after package rollback (rows still present); REI-04 recovery-positive: kill mid-import then rerun | 4 | REI-01/02/03 `IMPORT_EPOCH_EXISTS` (the epoch is history and refuses forever); REI-04 completes exactly once with one epoch record |
 | F5 Field conflicts → divergence-stop | CON-01 status; CON-02 ratification-fact; CON-03 human-gate-fact; CON-04 revision; CON-05 lease; CON-06 pending-transition; CON-07 wakeup/handoff; CON-08 idempotency; CON-09 existing-state-collision (goal already in ledger); CON-10 projection-source-drift (post-cutover Git byte change) | 10 | `DIVERGENCE_STOP` with the named reasonCode per row (each conflict class its own fixture); import rows: nothing imported; CON-10: render refuses with cursor unmoved |
@@ -482,8 +496,8 @@ precedence-edge row (the documented first-failure order is what fires).
 | Controls | CTL-01 full import on a fresh ledger (2 goals: `active` with provenance; `completed` with one evidenced approval) — epoch recorded once, rows exact; CTL-02 reopen reconstructs identical state (in-suite evidence, never the FK-P15 proof); CTL-03 `md-goals-index` golden bytes; CTL-04 `md-goal-ledger` golden bytes; CTL-05 publish advances the cursor 0→N transactionally and a republish of unchanged state is byte-identical with no cursor movement; CTL-06 `checkDivergence` passes on a clean matrix (non-vacuous); CTL-07 evidenced approval renders through the projection sanitized; CTL-08 import alongside pre-existing engine-created goals (collision only for the same `goalId`); CTL-09 the synthetic TEST corpus manifest imports cleanly (manifest consumed exactly; `excluded` items produce no rows but keep their dispositions); CTL-10 both commit-id shapes accepted (40-hex and 64-hex), each its own fixture row | 10 | each passes as named; CTL rows prove the suite can observe success |
 | Canonical | 8 byte-rule vectors (key order UTF-16, array order, escape set, digits-only integer lexemes, Unicode non-normalization, no path case folding, empty containers, unpaired-surrogate rejection) | 8 | byte-exact re-derivation by the local F05.5 encoder + read-only cross-check against FK-P1 golden fixtures |
 
-Counts: 12+4+6+4+10+7+4+4+7+3+6 = **66 hostile** + 10 controls + 8 canonical = **84
-fixture records**. Hostile classes dominate (~79%).
+Counts (derived from the fixture rows; coordinator ruling F-1, 2026-09-29): 12+4+6+4+10+7+4+4+7+3+6 = **67 hostile** + 10 controls + 8 canonical = **85
+fixture records** (derived from the fixture rows). Hostile classes dominate (~79%).
 
 ### T12 Recorded amendment predecessor: FK-P9 amendment A1e (must land before Step-0)
 
@@ -756,7 +770,7 @@ lanes are concurrent), after provisioning above, cwd the isolated `kernel-import
 package, full output and direct exit codes retained, in this exact order: `node -v`
 (>=22); `npm ci` (kernel-state); `npm ci` (kernel-lease); `npm ci` (kernel-import);
 `npm run typecheck`; `npm test` (which MUST include the fixture inventory map proving
-84 records with one pre-declared expected outcome each; the T2 conflict-class coverage
+85 records (derived from the fixture rows, never a hand-typed literal) with one pre-declared expected outcome each; the T2 conflict-class coverage
 map (one fixture per `DIVERGENCE_STOP` reasonCode + one precedence-edge row per refusal
 family); the corpus-manifest consumption tests (manifest-only, never globs; CM rows);
 the real child-process kill suite with asserted-reached kill points; the
@@ -989,3 +1003,38 @@ stand as the review mandate.
 - **OQ-9 — RULED:** refuse-at-import for out-of-vocab legacy statuses (typed refusal;
   rows never rewritten); the exit-annex vocabulary-mapping row stays NOT-satisfied
   (consistent with the A1d legacy-null precedent). (Normative: Out of Scope row.)
+
+### Amendment — coordinator rulings F-1/F-2/F-3/F-5/F-6/F-7 (2026-09-29)
+
+Build-time derived resolutions incorporated at their normative sites above
+(provenance: coordinator rulings F-1/F-2/F-3/F-5/F-6/F-7, 2026-09-29; inline
+authorization, one amendment commit at chain end):
+
+1. **F-1 — fixture counts:** the T11 totals are 67 hostile / 10 controls / 8
+   canonical = **85 fixture records**, DERIVED from the fixture rows (the class
+   count columns + ID enums are the source of truth); the inventory-map test
+   derives the count from the rows and asserts set-equality with the ID enums,
+   never a hand-typed literal (dropping a row fails the map).
+2. **F-2 — `ImportDocument.corpusDigest`:** REQUIRED member; canonical digest
+   over the rows' `SourceProvenance` tuples sorted by canonical key order,
+   domain `foreman-line.kernel-import.corpus`.
+3. **F-3 — kernel-lease import route:** public `src/index.ts` export surface via
+   the deep specifier (no `exports` map in kernel-lease); internal-layout
+   coupling, read-only, recorded; a future kernel-lease export-map change is a
+   named break point.
+4. **F-5 — `OperationalFacts.claimedBinding`:** REQUIRED sixth member
+   (`{ principalRef, operationId, repositoryRef, worktreeRef } | null`), the
+   legacy binding claim; CON-08 = a claimed 4-tuple colliding with a recorded
+   `idempotency_keys` binding → `DIVERGENCE_STOP(idempotency)`.
+5. **F-6 — `IMPORT_SOURCE_BLOB_ABSENT`:** the 14th closed registry code (the
+   claimed digest cannot be established because the blob does not exist —
+   distinct from `IMPORT_SOURCE_DIGEST_MISMATCH`, where bytes resolve and
+   differ); the DIG-01 fixture family gains its absent case as a named case
+   inside the closed 67-record count (F-1's totals stand).
+6. **F-7 — same-lineage exemption:** goals imported by a recorded epoch of the
+   same lineage root are exempt from the field-conflict family's vs-recorded
+   checks; `IMPORT_EPOCH_EXISTS` is the rerun's refusal and
+   `existing-state-collision` protects ALIEN pre-existing goals only.
+7. **getEpoch clarification:** keyed by lineage root
+   (`getEpoch(importer, { rootCommit })`; `getAllEpochs` returns the full set) —
+   T9's "single recorded EpochRecord" reads as per-lineage under OQ-7.
