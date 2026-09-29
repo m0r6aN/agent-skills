@@ -1,6 +1,6 @@
 /**
  * FK-P11 typed error surface (T10): one closed `ImportError` registry of
- * exactly 13 codes with bounded safe diagnostics (F05.10).
+ * exactly 14 codes with bounded safe diagnostics (F05.10).
  *
  * Safe-diagnostic discipline: no driver message text, host path, row content,
  * credential, seam message text, or unbounded value can reach a caller. Each
@@ -33,7 +33,7 @@ export const IMPORT_ERROR_CODES = [
 
 export type ImportErrorCode = (typeof IMPORT_ERROR_CODES)[number]
 
-/** Derived registry size (the 13-code claim is derived, never hand-typed). */
+/** Derived registry size (the 14-code claim is derived, never hand-typed). */
 export const IMPORT_ERROR_CODE_COUNT: number = IMPORT_ERROR_CODES.length
 
 /** Closed `DIVERGENCE_STOP` reasonCode enum (T5). */

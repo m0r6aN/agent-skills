@@ -1468,5 +1468,138 @@
       }
     },
     "expectedOutcome": "imports-grouped"
+  },
+  {
+    "id": "CTL-12",
+    "input": {
+      "mode": "dual-lineage-prefix-collision",
+      "lineage": {
+        "commits": [
+          {
+            "id": "aaaaaaaaaaaa1111111111111111111111111111",
+            "parents": []
+          },
+          {
+            "id": "aaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "parents": [
+              "aaaaaaaaaaaa1111111111111111111111111111"
+            ]
+          },
+          {
+            "id": "aaaaaaaaaaaa2222222222222222222222222222",
+            "parents": []
+          },
+          {
+            "id": "aaaaaaaaaaaacccccccccccccccccccccccccccc",
+            "parents": [
+              "aaaaaaaaaaaa2222222222222222222222222222"
+            ]
+          }
+        ],
+        "blobs": [
+          {
+            "commitId": "aaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "sourcePath": "docs/goals/goal-0001.md",
+            "text": "legacy goal state: goal-0001\nstatus: active\n"
+          },
+          {
+            "commitId": "aaaaaaaaaaaacccccccccccccccccccccccccccc",
+            "sourcePath": "docs/goals/goal-0002.md",
+            "text": "legacy goal state: goal-0002\nstatus: completed\n"
+          }
+        ]
+      },
+      "documents": [
+        {
+          "apiVersion": "0.1.0",
+          "documentKind": "legacy-import",
+          "corpusDigest": "sha256:3df2bd85e944c6c5a6a5bd58b53a5a52beea3093740a79cac01143234e8f1cec",
+          "sourceLineage": {
+            "rootCommit": "aaaaaaaaaaaa1111111111111111111111111111",
+            "tipCommit": "aaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          },
+          "corpusManifest": {
+            "manifestKind": "legacy-corpus-manifest",
+            "sourceRevision": "aaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "items": [
+              {
+                "sourcePath": "docs/goals/goal-0001.md",
+                "sourceDigest": "sha256:05df77b5dfae47ae392ee379d17d8d8240d5d9f4f3df091defbab269420a9e48",
+                "disposition": "import",
+                "reason": "legacy record"
+              }
+            ]
+          },
+          "rows": [
+            {
+              "goalId": "goal-0001",
+              "claimedStatus": "active",
+              "source": {
+                "sourcePath": "docs/goals/goal-0001.md",
+                "sourceDigest": "sha256:05df77b5dfae47ae392ee379d17d8d8240d5d9f4f3df091defbab269420a9e48",
+                "sourceCommit": "aaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+              },
+              "claimedRatificationRefs": [],
+              "claimedApprovals": [],
+              "claimedOperationalFacts": {
+                "claimedRevision": null,
+                "claimedLeaseHolderPrincipalRef": null,
+                "claimedPendingTransitionTarget": null,
+                "claimedWakeupCount": null,
+                "claimedHandoffCount": null,
+                "claimedBinding": null
+              }
+            }
+          ]
+        },
+        {
+          "apiVersion": "0.1.0",
+          "documentKind": "legacy-import",
+          "corpusDigest": "sha256:fa95e0de3f415dee14162499ffc4a64235a00b8b9770ca293ca0cbeb3d71146a",
+          "sourceLineage": {
+            "rootCommit": "aaaaaaaaaaaa2222222222222222222222222222",
+            "tipCommit": "aaaaaaaaaaaacccccccccccccccccccccccccccc"
+          },
+          "corpusManifest": {
+            "manifestKind": "legacy-corpus-manifest",
+            "sourceRevision": "aaaaaaaaaaaacccccccccccccccccccccccccccc",
+            "items": [
+              {
+                "sourcePath": "docs/goals/goal-0002.md",
+                "sourceDigest": "sha256:91e8fcaa27b9fdb6acf6cc1897f559dcdd72e38e856a084ff3c1e2a76627a256",
+                "disposition": "import",
+                "reason": "legacy record"
+              }
+            ]
+          },
+          "rows": [
+            {
+              "goalId": "goal-0002",
+              "claimedStatus": "active",
+              "source": {
+                "sourcePath": "docs/goals/goal-0002.md",
+                "sourceDigest": "sha256:91e8fcaa27b9fdb6acf6cc1897f559dcdd72e38e856a084ff3c1e2a76627a256",
+                "sourceCommit": "aaaaaaaaaaaacccccccccccccccccccccccccccc"
+              },
+              "claimedRatificationRefs": [],
+              "claimedApprovals": [],
+              "claimedOperationalFacts": {
+                "claimedRevision": null,
+                "claimedLeaseHolderPrincipalRef": null,
+                "claimedPendingTransitionTarget": null,
+                "claimedWakeupCount": null,
+                "claimedHandoffCount": null,
+                "claimedBinding": null
+              }
+            }
+          ]
+        }
+      ],
+      "request": {
+        "principalRef": "operator-1",
+        "operationId": "op-0001"
+      }
+    },
+    "expectedOutcome": "imports-two-lineages-prefix-collision"
   }
 ]

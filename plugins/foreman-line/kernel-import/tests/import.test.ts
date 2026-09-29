@@ -120,7 +120,7 @@ function assertInventoryComplete(rows: FixtureRow[]): void {
   const hostileExpected = Object.values(HOSTILE_ENUMS).reduce((total, count) => total + count, 0)
   const expectedIds = [
     ...Object.entries(HOSTILE_ENUMS).flatMap(([prefix, count]) => rangeIds(prefix, count)),
-    ...rangeIds('CTL', 11),
+    ...rangeIds('CTL', 12),
     ...rangeIds('CAN', 8),
   ]
   const hostileCount = Object.values(HOSTILE_FILES)
@@ -898,7 +898,7 @@ function contextFromState(state: GoldenFile['state']): FixtureContext {
   return contextFor({ lineage: state.lineage, document: state.document })
 }
 
-describe('Controls (CTL-01..10)', () => {
+describe('Controls (CTL-01..12)', () => {
   test('CTL-01 full import on a fresh ledger: epoch once, rows exact', () => {
     const row = loadRows('controls.json').find((entry) => entry.id === 'CTL-01')
     assert.ok(row !== undefined)
@@ -1160,6 +1160,43 @@ describe('Controls (CTL-01..10)', () => {
             (claim) => claim.source.sourcePath === item.sourcePath,
           ),
           'excluded disposition produces no row',
+        )
+      }
+    } finally {
+      closeStorage(ctx.storage)
+    }
+  })
+
+  test('CTL-12 two lineages with colliding 48-bit prefixes both land (R5, OQ-7 promise)', () => {
+    const row = loadRows('controls.json').find((entry) => entry.id === 'CTL-12')
+    assert.ok(row !== undefined)
+    const ctx = contextFor(row.input)
+    try {
+      const documents = row.input.documents as Record<string, unknown>[]
+      const first = runImportOf(ctx, { ...row.input, document: documents[0] })
+      const second = runImportOf(ctx, {
+        ...row.input,
+        document: documents[1],
+        request: { ...REQUEST, operationId: 'op-0002' },
+      })
+      // The fixture really exercises prefix collision (failing-when-broken:
+      // truncated ids would collide on impevt-<prefix>-0 and the second import
+      // would die untyped).
+      assert.equal(
+        first.epoch.rootCommit.slice(0, 12),
+        second.epoch.rootCommit.slice(0, 12),
+        'roots collide on their 48-bit prefix',
+      )
+      assert.notEqual(first.epoch.rootCommit, second.epoch.rootCommit)
+      const events = readAllEvents(ctx.storage)
+      const eventIds = events.map((event) => event.eventId)
+      assert.equal(new Set(eventIds).size, eventIds.length, 'event ids disjoint across lineages')
+      assert.equal(events.length, 4, 'two import.recorded + one import.epoch per lineage')
+      assert.equal(getAllEpochs(ctx.importer).length, 2, 'both lineages landed (OQ-7)')
+      for (const eventId of eventIds) {
+        assert.ok(
+          eventId.includes(first.epoch.rootCommit) || eventId.includes(second.epoch.rootCommit),
+          'ids embed the FULL rootCommit (no truncation)',
         )
       }
     } finally {

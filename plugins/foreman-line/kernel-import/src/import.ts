@@ -804,7 +804,10 @@ function writePhase(
   identities: { principalRef: string; operationId: string },
   recordedAtMicros: number,
 ): void {
-  const root12 = document.sourceLineage.rootCommit.slice(0, 12)
+  // Full-root id derivation (coordinator rework R5): event/artifact ids embed
+  // the COMPLETE rootCommit (40|64 per the named constants) so any two distinct
+  // lineages land regardless of prefix collisions — no truncation.
+  const root = document.sourceLineage.rootCommit
   // Group-keyed goal materialization (coordinator rework R2): the T5 goal-group
   // shape allows multi-row-per-goal documents; exactly one goals row is written
   // per goal group while events + evidence artifacts stay per ROW (T8: one
@@ -831,7 +834,7 @@ function writePhase(
       materialized[row.goalId] = true
     }
     insertEvent(storage, {
-      eventId: `impevt-${root12}-${index}`,
+      eventId: `impevt-${root}-${index}`,
       goalId: row.goalId,
       kind: IMPORT_RECORDED_KIND,
       payload: plan.rowPayloads[index] ?? '',
@@ -843,7 +846,7 @@ function writePhase(
     const refLocators = plan.refLocators[index] ?? []
     for (const [refIndex, ref] of row.claimedRatificationRefs.entries()) {
       insertArtifact(storage, {
-        artifactId: `impart-${root12}-r${index}-${refIndex}`,
+        artifactId: `impart-${root}-r${index}-${refIndex}`,
         goalId: row.goalId,
         kind: ARTIFACT_KIND_RATIFICATION_REF,
         digest: ref.digest,
@@ -855,7 +858,7 @@ function writePhase(
     const approvalLocators = plan.approvalLocators[index] ?? []
     for (const [claimIndex, claim] of row.claimedApprovals.entries()) {
       insertArtifact(storage, {
-        artifactId: `impart-${root12}-a${index}-${claimIndex}`,
+        artifactId: `impart-${root}-a${index}-${claimIndex}`,
         goalId: row.goalId,
         kind: ARTIFACT_KIND_APPROVAL,
         digest: claim.digest,
@@ -869,7 +872,7 @@ function writePhase(
     setProjectionCursor(storage, { projectionId, lastAppliedEventSeq: 0 })
   }
   insertEvent(storage, {
-    eventId: `impepoch-${root12}`,
+    eventId: `impepoch-${root}`,
     goalId: document.rows[0]?.goalId ?? 'imp-epoch',
     kind: IMPORT_EPOCH_KIND,
     payload: plan.epochPayload,
@@ -879,7 +882,7 @@ function writePhase(
     recordedAtMicros,
   })
   insertArtifact(storage, {
-    artifactId: `impart-${root12}-epoch`,
+    artifactId: `impart-${root}-epoch`,
     goalId: null,
     kind: ARTIFACT_KIND_EPOCH,
     digest: epochRecord.documentDigest,
