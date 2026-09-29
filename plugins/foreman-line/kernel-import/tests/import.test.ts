@@ -107,6 +107,7 @@ const HOSTILE_ENUMS: Record<string, number> = {
   INJ: 11,
   ERR: 3,
   CM: 6,
+  PSC: 6,
 }
 
 function allFixtureRows(): FixtureRow[] {
@@ -278,6 +279,10 @@ function assertRefusal(ctx: FixtureContext, row: FixtureRow, error: unknown): vo
       typed.code === 'IMPORT_SOURCE_BLOB_ABSENT'
     ) {
       assert.equal(diagnostic.fieldId, expected)
+    } else if (typed.code === 'IMPORT_ARGUMENT_INVALID') {
+      // Precedence rows pin the exact refusal family via the structural or
+      // corpus-consistency field path (same-code families).
+      assert.equal(diagnostic.fieldPath, expected)
     } else if (typed.code === 'IMPORT_COMMIT_OUT_OF_LINEAGE') {
       assert.equal(diagnostic.commitId, expected)
     } else if (typed.code === 'IMPORT_EPOCH_EXISTS') {
@@ -314,8 +319,8 @@ function reopenAfterKill(config: OpenStorageConfig, deadlineMs = 5_000): Storage
 
 // --- row-driven hostile suites (F2/F3/F4/F11) --------------------------------
 
-function driveRefusalRows(file: string): void {
-  for (const row of loadRows(file)) {
+function driveRefusalRows(file: string, idPrefix = ''): void {
+  for (const row of loadRows(file).filter((entry) => entry.id.startsWith(idPrefix))) {
     test(`${row.id} refuses exactly as pre-declared`, () => {
       const ctx = contextFor(row.input)
       try {
@@ -515,7 +520,134 @@ describe('F4 re-import (REI-01..03 refuse; REI-04 below)', () => {
     })
   }
 })
-describe('F11 corpus manifest (CM-01..06)', () => driveRefusalRows('hostile/corpus.json'))
+describe('F11 corpus manifest (CM-01..06)', () => driveRefusalRows('hostile/corpus.json', 'CM-'))
+
+// --- precedence-edge rows (PSC-01..06) + the derived precedence map ---------
+// The three previously-unrowed families (structural, corpus-manifest-
+// consistency, lineage-membership) join the suite as two-failure documents:
+// each row fails in TWO families at once and must refuse with the FIRST
+// family's code per the documented chain.
+
+const FAMILY_CHAIN = [
+  'structural',
+  'corpus',
+  'limits',
+  'lineage',
+  'digest',
+  'approval',
+  'conflict',
+  'epoch',
+] as const
+
+const FAMILY_RANK: Record<string, number> = {
+  structural: 0,
+  corpus: 1,
+  limits: 2,
+  lineage: 3,
+  digest: 4,
+  approval: 5,
+  conflict: 6,
+  epoch: 7,
+}
+
+const FAMILY_EXPECTED_CODE: Record<string, string> = {
+  structural: 'IMPORT_ARGUMENT_INVALID',
+  corpus: 'IMPORT_ARGUMENT_INVALID',
+  limits: 'IMPORT_LIMIT_EXCEEDED',
+  lineage: 'IMPORT_COMMIT_OUT_OF_LINEAGE',
+  digest: 'IMPORT_SOURCE_DIGEST_MISMATCH',
+  approval: 'IMPORT_APPROVAL_UNEVIDENCED',
+  conflict: 'DIVERGENCE_STOP',
+  epoch: 'IMPORT_EPOCH_EXISTS',
+}
+
+interface PscRow extends FixtureRow {
+  input: { familyPair: [string, string] }
+}
+
+function pscRows(): PscRow[] {
+  return loadRows('hostile/corpus.json').filter((row) => row.id.startsWith('PSC-')) as PscRow[]
+}
+
+function assertPrecedenceMap(rows: PscRow[]): void {
+  // Completeness pin (coordinator round 2): the FULL 8-family chain order is
+  // pinned as a rank sequence even where a pair has no row — swapping any two
+  // ranks fails this map (the mandated swap proof).
+  assert.deepEqual(
+    Object.keys(FAMILY_RANK).sort((a, b) => (FAMILY_RANK[a] ?? 0) - (FAMILY_RANK[b] ?? 0)),
+    [...FAMILY_CHAIN],
+  )
+  for (const [index, family] of FAMILY_CHAIN.entries()) {
+    assert.equal(FAMILY_RANK[family], index, `${family}: rank map pins the documented chain`)
+    assert.ok(FAMILY_EXPECTED_CODE[family] !== undefined, `${family}: first-failure code declared`)
+  }
+  // Covered ordered pairs derive FROM the rows (never hand-typed totals).
+  const normalizedPair = (pair: [string, string]): string =>
+    [...pair].sort((a, b) => (FAMILY_RANK[a] ?? 0) - (FAMILY_RANK[b] ?? 0)).join('>')
+  const covered = rows.map((row) => normalizedPair(row.input.familyPair))
+  assert.equal(new Set(covered).size, covered.length, 'duplicate covered pair')
+  const declaredPairs: [string, string][] = [
+    ['structural', 'corpus'],
+    ['structural', 'limits'],
+    ['structural', 'lineage'],
+    ['corpus', 'limits'],
+    ['corpus', 'lineage'],
+    ['lineage', 'digest'],
+  ]
+  assert.deepEqual(
+    [...covered].sort(),
+    declaredPairs.map((pair) => normalizedPair(pair)).sort(),
+    'covered ordered pairs equal the declared pair set',
+  )
+  for (const row of rows) {
+    const [first, second] = row.input.familyPair
+    assert.ok(
+      (FAMILY_RANK[first] ?? -1) < (FAMILY_RANK[second] ?? -1),
+      `${row.id}: pair must be rank-ordered per the chain`,
+    )
+    // Expected code DERIVES from the lower-ranked family: swapping two ranks
+    // flips the derivation and fails this row's pre-declared expectation.
+    assert.equal(
+      row.expectedCode,
+      FAMILY_EXPECTED_CODE[first],
+      `${row.id}: first-failure code derives from familyPair[0]`,
+    )
+    assert.equal(
+      FAMILY_EXPECTED_CODE[first] === FAMILY_EXPECTED_CODE[second],
+      row.expectedCode === FAMILY_EXPECTED_CODE[second],
+      `${row.id}: same-code families must pin the family via expectedReasonCode`,
+    )
+  }
+}
+
+describe('precedence-edge rows (PSC-01..06: two-failure documents, first family fires)', () => {
+  for (const row of pscRows()) {
+    test(`${row.id} refuses with ${row.input.familyPair[0]}'s code before ${row.input.familyPair[1]}`, () => {
+      const ctx = contextFor(row.input)
+      try {
+        runImportOf(ctx, row.input)
+        assert.fail(`${row.id} must refuse`)
+      } catch (error) {
+        if ((error as Error).message?.includes('must refuse')) throw error
+        assertRefusal(ctx, row, error)
+      } finally {
+        closeStorage(ctx.storage)
+      }
+    })
+  }
+
+  test('precedence map: the full 8-family chain is pinned and covered pairs derive from the rows', () => {
+    assertPrecedenceMap(pscRows())
+  })
+
+  test('deleting any PSC row fails the precedence map (drop-row proof)', () => {
+    const rows = pscRows()
+    for (let index = 0; index < rows.length; index += 1) {
+      const dropped = rows.filter((_, position) => position !== index)
+      assert.throws(() => assertPrecedenceMap(dropped), assert.AssertionError)
+    }
+  })
+})
 
 // --- REI-04: real kill mid-import, then rerun completes exactly once ---------
 
