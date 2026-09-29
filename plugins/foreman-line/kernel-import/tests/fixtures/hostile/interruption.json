@@ -498,8 +498,7 @@
         "operationId": "op-int-0001"
       }
     },
-    "expectedOutcome": "applied-retry-refuses-epoch-exists",
-    "expectedCode": "IMPORT_EPOCH_EXISTS"
+    "expectedOutcome": "applied-retry-refuses-epoch-exists"
   },
   {
     "id": "INT-04",

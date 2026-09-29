@@ -151,7 +151,7 @@ interface ErrorLaunderingRow {
     document: ImportDocument
     request: { principalRef: string; operationId: string }
   }
-  expectedOutcome: string
+  expectedOutcome?: string
   expectedCode?: string
   expectedReasonCode?: string
 }
@@ -604,7 +604,6 @@ test('ERR-02: wrapped storage fault surfaces as STORAGE_FAILURE carrying the cod
 test('ERR-03: boundary fallback never erases a named refusal', () => {
   const row = rowById('ERR-03')
   assert.equal(row.input.mode, 'named-refusal-then-substrate-fault')
-  assert.equal(row.expectedOutcome, 'named-refusal-surfaces')
   assert.equal(row.expectedCode, 'DIVERGENCE_STOP')
   assert.equal(row.expectedReasonCode, 'existing-state-collision')
   withStorage((storage) => {

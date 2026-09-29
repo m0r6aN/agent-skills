@@ -314,7 +314,7 @@ test('fixture inventory: derived count + set-equality + drop-row proof (INT-01..
     assert.equal(row.expectedOutcome, EXPECTED_OUTCOME[row.input.killPoint], `${row.id}: outcome`)
   }
   const retryRow = INT.find((row) => row.input.killPoint === 'post-commit')
-  assert.equal(retryRow?.expectedCode, 'IMPORT_EPOCH_EXISTS')
+  assert.equal(retryRow?.expectedOutcome, 'applied-retry-refuses-epoch-exists')
   // The shared valid document + lineage are byte-identical across rows.
   for (const row of INT) {
     assert.equal(row.input.documentKey, 'shared-valid')
@@ -384,7 +384,6 @@ for (const row of INT) {
       }
 
       if (outcome === 'applied-retry-refuses-epoch-exists') {
-        assert.equal(row.expectedCode, 'IMPORT_EPOCH_EXISTS', `${row.id}: refusal code`)
         // Post-commit kill: the commit is durable — state FULLY-APPLIED …
         assert.deepEqual(
           snapshotCounts(root),

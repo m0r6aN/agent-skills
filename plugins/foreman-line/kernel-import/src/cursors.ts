@@ -10,10 +10,10 @@
  * refuses `CURSOR_ID_UNREGISTERED(reserved)`.
  */
 import {
-  getProjectionCursor as substrateGetCursor,
-  setProjectionCursor as substrateSetCursor,
   type ProjectionCursorRow,
   type Storage,
+  getProjectionCursor as substrateGetCursor,
+  setProjectionCursor as substrateSetCursor,
 } from '@foreman-line/kernel-state'
 import { importError, rethrowSubstrate } from './errors.js'
 

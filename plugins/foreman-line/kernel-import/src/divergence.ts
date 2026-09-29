@@ -14,7 +14,7 @@
  */
 import type { Storage } from '@foreman-line/kernel-state'
 import { importError } from './errors.js'
-import { readImportedGoalClaims, type ImportedGoalClaims } from './import.js'
+import { type ImportedGoalClaims, readImportedGoalClaims } from './import.js'
 import type { LineageGateway } from './lineage.js'
 
 /** Any handle carrying the ledger + lineage (importer or projector; T9). */

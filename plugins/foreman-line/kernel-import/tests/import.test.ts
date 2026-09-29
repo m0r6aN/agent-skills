@@ -27,29 +27,28 @@ import {
   insertGoal,
   type OpenStorageConfig,
   openStorage,
-  getProjectionCursor as substrateCursor,
   type Storage,
+  getProjectionCursor as substrateCursor,
 } from '@foreman-line/kernel-state'
+import { digestText } from '../src/canonical.js'
 import {
   checkDivergence,
+  corpusDigestOf,
   createImporter,
   createProjector,
-  type EpochRecord,
   FK_P11_PROJECTION_IDS,
-  type Importer,
   getAllEpochs,
   getEpoch,
-  type ImportError,
   IMPORT_ERROR_REGISTRY,
+  type ImportError,
+  type Importer,
   type ImportResult,
-  corpusDigestOf,
   publishProjection,
   readAllEvents,
   readImportedGoalClaims,
   renderProjection,
   runImport,
 } from '../src/index.js'
-import { digestText } from '../src/canonical.js'
 import { FakeLineage } from './helpers/fake-lineage.js'
 
 const HERE = dirname(fileURLToPath(import.meta.url))
@@ -87,7 +86,10 @@ const HOSTILE_FILES: Record<string, string> = {
 }
 
 function rangeIds(prefix: string, count: number): string[] {
-  return Array.from({ length: count }, (_, index) => `${prefix}-${String(index + 1).padStart(2, '0')}`)
+  return Array.from(
+    { length: count },
+    (_, index) => `${prefix}-${String(index + 1).padStart(2, '0')}`,
+  )
 }
 
 /** The declared ID enums (per-class counts live here; totals are DERIVED). */
@@ -210,9 +212,7 @@ function applySeed(storage: Storage, seed: SeedDescription | undefined): void {
 function contextFor(input: Record<string, unknown>): FixtureContext {
   const { dir, storage } = openTemp()
   applySeed(storage, input.seed as SeedDescription | undefined)
-  const lineage = new FakeLineage(
-    input.lineage as ConstructorParameters<typeof FakeLineage>[0],
-  )
+  const lineage = new FakeLineage(input.lineage as ConstructorParameters<typeof FakeLineage>[0])
   return {
     dir,
     storage,
@@ -231,7 +231,8 @@ const REQUEST = { principalRef: 'operator-1', operationId: 'op-0001' }
 function runImportOf(ctx: FixtureContext, input: Record<string, unknown>): ImportResult {
   return runImport(ctx.importer, {
     importDocument: input.document,
-    principalRef: (input.request as { principalRef?: string })?.principalRef ?? REQUEST.principalRef,
+    principalRef:
+      (input.request as { principalRef?: string })?.principalRef ?? REQUEST.principalRef,
     operationId: (input.request as { operationId?: string })?.operationId ?? REQUEST.operationId,
   })
 }
@@ -262,11 +263,18 @@ function assertRefusal(ctx: FixtureContext, row: FixtureRow, error: unknown): vo
   const declared = (IMPORT_ERROR_REGISTRY[typed.code].diagnosticMembers as string[])
     .map((member) => member)
     .sort()
-  assert.deepEqual(Object.keys(typed.diagnostic).sort(), declared, 'diagnostic is the declared shape')
+  assert.deepEqual(
+    Object.keys(typed.diagnostic).sort(),
+    declared,
+    'diagnostic is the declared shape',
+  )
   const expected = row.expectedReasonCode
   if (expected !== undefined) {
     const diagnostic = typed.diagnostic as Record<string, string | number>
-    if (typed.code === 'IMPORT_SOURCE_DIGEST_MISMATCH' || typed.code === 'IMPORT_SOURCE_BLOB_ABSENT') {
+    if (
+      typed.code === 'IMPORT_SOURCE_DIGEST_MISMATCH' ||
+      typed.code === 'IMPORT_SOURCE_BLOB_ABSENT'
+    ) {
       assert.equal(diagnostic.fieldId, expected)
     } else if (typed.code === 'IMPORT_COMMIT_OUT_OF_LINEAGE') {
       assert.equal(diagnostic.commitId, expected)
@@ -319,7 +327,11 @@ function driveRefusalRows(file: string): void {
             } catch (error) {
               const typed = error as ImportError
               assert.equal(typed.code, row.expectedCode)
-              assert.equal(readAllEvents(reopened).length, eventsAfterFirst, 'second run writes nothing')
+              assert.equal(
+                readAllEvents(reopened).length,
+                eventsAfterFirst,
+                'second run writes nothing',
+              )
             } finally {
               closeStorage(reopened)
             }
@@ -337,7 +349,11 @@ function driveRefusalRows(file: string): void {
                 row.expectedReasonCode,
               )
             }
-            assert.equal(readAllEvents(ctx.storage).length, eventsAfterFirst, 'second run writes nothing')
+            assert.equal(
+              readAllEvents(ctx.storage).length,
+              eventsAfterFirst,
+              'second run writes nothing',
+            )
           }
           return
         }
@@ -353,7 +369,63 @@ function driveRefusalRows(file: string): void {
   }
 }
 
-describe('F2 digest mismatch (DIG-01..04)', () => driveRefusalRows('hostile/digest-mismatch.json'))
+describe('F2 digest mismatch (DIG-01..04)', () => {
+  driveRefusalRows('hostile/digest-mismatch.json')
+  test('DIG-01 absent case (F-6): source blob absent refuses IMPORT_SOURCE_BLOB_ABSENT', () => {
+    // Coordinator ruling F-6: the DIG-01 fixture family gains its absent case;
+    // it is carried as a named case inside the closed 67-record count (the F-1
+    // ruled totals stay 67/85 — no new record id is minted).
+    const source = loadRows('hostile/digest-mismatch.json')
+    const ctx = contextFor(source[0]?.input ?? {})
+    try {
+      const base = source[0]?.input.document as {
+        rows: Record<string, unknown>[]
+        corpusDigest: string
+        corpusManifest: { items: Record<string, unknown>[] }
+      }
+      const ghostPath = 'docs/goals/ghost.md'
+      const ghostDigest = `sha256:${'0'.repeat(64)}`
+      const document = {
+        ...base,
+        corpusManifest: {
+          ...base.corpusManifest,
+          items: [
+            ...base.corpusManifest.items,
+            {
+              sourcePath: ghostPath,
+              sourceDigest: ghostDigest,
+              disposition: 'import',
+              reason: 'legacy record',
+            },
+          ],
+        },
+        rows: [
+          {
+            ...(base.rows[0] as Record<string, unknown>),
+            source: {
+              sourcePath: ghostPath,
+              sourceDigest: ghostDigest,
+              sourceCommit: '2222222222222222222222222222222222222222',
+            },
+          },
+        ],
+      }
+      document.corpusDigest = corpusDigestOf(document.rows as never)
+      runImport(ctx.importer, {
+        importDocument: document,
+        principalRef: REQUEST.principalRef,
+        operationId: REQUEST.operationId,
+      })
+      assert.fail('must refuse')
+    } catch (error) {
+      const typed = error as ImportError
+      assert.equal(typed.code, 'IMPORT_SOURCE_BLOB_ABSENT')
+      assert.deepEqual(Object.keys(typed.diagnostic).sort(), ['fieldId', 'rowId'])
+    } finally {
+      closeStorage(ctx.storage)
+    }
+  })
+})
 describe('F3 commit boundary (CMT-01..06)', () => driveRefusalRows('hostile/commit-boundary.json'))
 describe('F4 re-import (REI-01..03 refuse; REI-04 below)', () => {
   for (const row of loadRows('hostile/reimport.json').filter((entry) => entry.id !== 'REI-04')) {
@@ -389,7 +461,11 @@ describe('F4 re-import (REI-01..03 refuse; REI-04 below)', () => {
             assert.fail(`${row.id} must refuse`)
           } catch (error) {
             assert.equal((error as ImportError).code, row.expectedCode)
-            assert.equal(readAllEvents(reopened).length, eventsAfterFirst, 'second run writes nothing')
+            assert.equal(
+              readAllEvents(reopened).length,
+              eventsAfterFirst,
+              'second run writes nothing',
+            )
           } finally {
             closeStorage(reopened)
           }
@@ -399,8 +475,16 @@ describe('F4 re-import (REI-01..03 refuse; REI-04 below)', () => {
           runImportOf(ctx, { ...row.input, document: documents[1] })
           assert.fail(`${row.id} must refuse`)
         } catch (error) {
-          assert.equal((error as ImportError).code, row.expectedCode, `${row.id} fires its named code`)
-          assert.equal(readAllEvents(ctx.storage).length, eventsAfterFirst, 'second run writes nothing')
+          assert.equal(
+            (error as ImportError).code,
+            row.expectedCode,
+            `${row.id} fires its named code`,
+          )
+          assert.equal(
+            readAllEvents(ctx.storage).length,
+            eventsAfterFirst,
+            'second run writes nothing',
+          )
         }
       } finally {
         closeStorage(ctx.storage)
@@ -417,7 +501,10 @@ function spawnWorkerToKill(
 ): Promise<{ killed: boolean; reached: string[] }> {
   const jobPath = join(String(job.dbPath), '..', 'job.json')
   writeFileSync(jobPath, JSON.stringify(job), 'utf8')
-  const { promise, resolve: resolvePromise } = Promise.withResolvers<{ killed: boolean; reached: string[] }>()
+  const { promise, resolve: resolvePromise } = Promise.withResolvers<{
+    killed: boolean
+    reached: string[]
+  }>()
   const child = spawn(
     process.execPath,
     ['--import', 'tsx', join(PKG_ROOT, 'tests', 'helpers', 'child-worker.ts'), jobPath],
@@ -476,7 +563,9 @@ describe('F4 recovery-positive (REI-04)', () => {
       clock: fixedClock(1_700_000_000_000_000),
       backupPolicy: { root: join(dir, 'backups'), retentionDescriptor: null },
     })
-    const lineage = new FakeLineage(row.input.lineage as ConstructorParameters<typeof FakeLineage>[0])
+    const lineage = new FakeLineage(
+      row.input.lineage as ConstructorParameters<typeof FakeLineage>[0],
+    )
     const importer = createImporter({
       storage: reopened,
       clock: fixedClock(1_700_000_000_000_000),
@@ -550,7 +639,10 @@ describe('import precedence edges (the documented first-failure order is what fi
     const source = loadRows('hostile/digest-mismatch.json')
     const ctx = contextFor(source[0]?.input ?? {})
     try {
-      const base = source[0]?.input.document as { rows: Record<string, unknown>[]; corpusDigest: string }
+      const base = source[0]?.input.document as {
+        rows: Record<string, unknown>[]
+        corpusDigest: string
+      }
       const second = {
         ...(base.rows[0] as Record<string, unknown>),
         goalId: 'goal-0002',
@@ -684,13 +776,21 @@ describe('Controls (CTL-01..10)', () => {
       assert.equal(goal2?.revision, 1)
       const events = readAllEvents(ctx.storage)
       assert.equal(events.filter((event) => event.kind === 'import.recorded').length, 2)
-      assert.equal(events.filter((event) => event.kind === 'import.epoch').length, 1, 'epoch recorded once')
+      assert.equal(
+        events.filter((event) => event.kind === 'import.epoch').length,
+        1,
+        'epoch recorded once',
+      )
       assert.equal(getAllEpochs(ctx.importer).length, 1)
       assert.equal(result.epoch.rowCount, 2)
       const claims = readImportedGoalClaims(ctx.storage)
       assert.equal(claims.length, 2)
       const completed = claims.find((claim) => claim.goalId === 'goal-0002')
-      assert.equal(completed?.claimedApprovals.length, 1, 'evidence records only, never conclusions')
+      assert.equal(
+        completed?.claimedApprovals.length,
+        1,
+        'evidence records only, never conclusions',
+      )
     } finally {
       closeStorage(ctx.storage)
     }
@@ -702,7 +802,11 @@ describe('Controls (CTL-01..10)', () => {
     const ctx = contextFor(row.input)
     runImportOf(ctx, row.input)
     const before = {
-      events: readAllEvents(ctx.storage).map((event) => [event.eventSeq, event.kind, event.payload]),
+      events: readAllEvents(ctx.storage).map((event) => [
+        event.eventSeq,
+        event.kind,
+        event.payload,
+      ]),
       claims: readImportedGoalClaims(ctx.storage),
       goal1: getGoal(ctx.storage, 'goal-0001'),
     }
@@ -787,11 +891,12 @@ describe('Controls (CTL-01..10)', () => {
       checkDivergence(projector)
       // Non-vacuous: the same matrix stops once committed Git-winner bytes
       // drift (a ratification-ref provenance blob changes after the epoch).
-      const rows = (file.state.document.rows as {
-        claimedRatificationRefs: {
-          provenance: { sourcePath: string; sourceCommit: string }
-        }[]
-      }[]) ?? []
+      const rows =
+        (file.state.document.rows as {
+          claimedRatificationRefs: {
+            provenance: { sourcePath: string; sourceCommit: string }
+          }[]
+        }[]) ?? []
       const firstRef = rows[0]?.claimedRatificationRefs[0]
       assert.ok(firstRef !== undefined, 'golden state carries a ratification ref')
       ctx.lineage.addBlob(
@@ -857,7 +962,9 @@ describe('Controls (CTL-01..10)', () => {
       assert.equal(result.importedGoalIds.length, 2, 'excluded items produce no rows')
       for (const item of excluded) {
         assert.ok(
-          !readImportedGoalClaims(ctx.storage).some((claim) => claim.source.sourcePath === item.sourcePath),
+          !readImportedGoalClaims(ctx.storage).some(
+            (claim) => claim.source.sourcePath === item.sourcePath,
+          ),
           'excluded disposition produces no row',
         )
       }
@@ -874,7 +981,11 @@ describe('Controls (CTL-01..10)', () => {
       const documents = row.input.documents as Record<string, unknown>[]
       const first = runImportOf(ctx, { ...row.input, document: documents[0] })
       assert.equal(first.epoch.rootCommit.length, 40)
-      const second = runImportOf(ctx, { ...row.input, document: documents[1], request: { ...REQUEST, operationId: 'op-0002' } })
+      const second = runImportOf(ctx, {
+        ...row.input,
+        document: documents[1],
+        request: { ...REQUEST, operationId: 'op-0002' },
+      })
       assert.equal(second.epoch.rootCommit.length, 64)
       assert.equal(getAllEpochs(ctx.importer).length, 2, 'one epoch per lineage (OQ-7)')
       const keyed = getEpoch(ctx.importer, { rootCommit: first.epoch.rootCommit })
@@ -896,7 +1007,11 @@ describe('T3 zero-row invariants (a write would break these named tests)', () =>
       runImportOf(ctx, row.input)
       for (const goalId of ['goal-0001', 'goal-0002']) {
         assert.equal(getUnreleasedLease(ctx.storage, goalId), null, 'zero leases rows')
-        assert.equal(getGoal(ctx.storage, goalId)?.pendingTransitionId, null, 'zero transitions rows')
+        assert.equal(
+          getGoal(ctx.storage, goalId)?.pendingTransitionId,
+          null,
+          'zero transitions rows',
+        )
       }
       assert.equal(
         getIdempotencyKey(ctx.storage, {

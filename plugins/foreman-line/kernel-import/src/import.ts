@@ -28,14 +28,14 @@ import {
   type Clock,
   type EventRow,
   type GoalRow,
-  type IdempotencyKeyRow,
-  insertArtifact,
-  insertEvent,
-  insertGoal,
   getGoal,
   getIdempotencyKey,
   getTransition,
   getUnreleasedLease,
+  type IdempotencyKeyRow,
+  insertArtifact,
+  insertEvent,
+  insertGoal,
   queryEvents,
   type Storage,
   type TransitionRow,
@@ -44,7 +44,6 @@ import {
 import { canonicalEncode, digestDocument, digestText } from './canonical.js'
 import { FK_P11_PROJECTION_IDS, setProjectionCursor } from './cursors.js'
 import {
-  type ImportError,
   importError,
   isHarnessFailure,
   isImportError,
@@ -53,25 +52,21 @@ import {
 } from './errors.js'
 import {
   type ApprovalClaim,
-  type ImportDocument,
+  CORPUS_MAX_ITEMS,
+  CORPUS_REASON_MAX_BYTES,
+  GIT_IDENTITY_MAX_BYTES,
   IMPORT_DIGEST_DOMAINS,
   IMPORT_MAX_ROWS,
-  CORPUS_MAX_ITEMS,
-  ROW_REF_ARRAY_MAX,
-  SOURCE_PATH_MAX_BYTES,
-  GIT_IDENTITY_MAX_BYTES,
-  CORPUS_REASON_MAX_BYTES,
+  type ImportDocument,
   type LegacyGoalRecord,
   type OperationalFacts,
   parseImportDocument,
   type RatificationRef,
+  ROW_REF_ARRAY_MAX,
+  SOURCE_PATH_MAX_BYTES,
   type SourceProvenance,
 } from './import-document.js'
-import {
-  createLineageGateway,
-  type LineageGateway,
-  type SourceLineageReader,
-} from './lineage.js'
+import { createLineageGateway, type LineageGateway, type SourceLineageReader } from './lineage.js'
 
 /** FK-P11-owned event kinds (A1e-registered; T8). */
 export const IMPORT_RECORDED_KIND = 'import.recorded'
@@ -322,7 +317,9 @@ function corpusConsistencyPhase(document: ImportDocument): void {
   for (const [index, row] of document.rows.entries()) {
     const item = itemByPath.get(row.source.sourcePath)
     if (item === undefined || item.disposition !== 'import') {
-      throw importError('IMPORT_ARGUMENT_INVALID', { fieldPath: `rows[${index}].source.sourcePath` })
+      throw importError('IMPORT_ARGUMENT_INVALID', {
+        fieldPath: `rows[${index}].source.sourcePath`,
+      })
     }
   }
 }
@@ -386,7 +383,10 @@ function limitsPhase(document: ImportDocument, plan: ImportPlan): void {
     }
     pathBytes(row.source.sourcePath, `rows[${index}].source.sourcePath`)
     for (const ref of row.claimedRatificationRefs) {
-      pathBytes(ref.provenance.sourcePath, `rows[${index}].claimedRatificationRefs.provenance.sourcePath`)
+      pathBytes(
+        ref.provenance.sourcePath,
+        `rows[${index}].claimedRatificationRefs.provenance.sourcePath`,
+      )
       identityBytes(ref.gitIdentity, `rows[${index}].claimedRatificationRefs.gitIdentity`)
     }
     for (const claim of row.claimedApprovals) {
@@ -451,7 +451,10 @@ function bytesDigestOrAbsent(
 
 function digestPhase(document: ImportDocument, gateway: LineageGateway): void {
   if (document.corpusDigest !== corpusDigestOf(document.rows)) {
-    throw importError('IMPORT_SOURCE_DIGEST_MISMATCH', { rowId: 'document', fieldId: 'corpusDigest' })
+    throw importError('IMPORT_SOURCE_DIGEST_MISMATCH', {
+      rowId: 'document',
+      fieldId: 'corpusDigest',
+    })
   }
   const itemByPath = new Map<string, (typeof document.corpusManifest.items)[number]>()
   for (const item of document.corpusManifest.items) itemByPath.set(item.sourcePath, item)
@@ -510,7 +513,10 @@ function approvalPhase(document: ImportDocument, gateway: LineageGateway): void 
       }
       const claimBytes = bytesDigestOrAbsent(gateway, claim.provenance)
       if (claimBytes.absent) {
-        throw importError('IMPORT_APPROVAL_UNEVIDENCED', { rowId: row.goalId, reason: 'blob-absent' })
+        throw importError('IMPORT_APPROVAL_UNEVIDENCED', {
+          rowId: row.goalId,
+          reason: 'blob-absent',
+        })
       }
     }
     if (row.claimedStatus === 'completed' && row.claimedApprovals.length === 0) {
@@ -636,7 +642,11 @@ function conflictPhase(storage: Storage, document: ImportDocument, rootCommit: s
       const target = row.claimedOperationalFacts.claimedPendingTransitionTarget
       if (target === null) continue
       if (targets.size > 0 && !targets.has(target)) {
-        divergence('pending-transition', goalId, 'claimedOperationalFacts.claimedPendingTransitionTarget')
+        divergence(
+          'pending-transition',
+          goalId,
+          'claimedOperationalFacts.claimedPendingTransitionTarget',
+        )
       }
       targets.add(target)
     }
@@ -648,7 +658,11 @@ function conflictPhase(storage: Storage, document: ImportDocument, rootCommit: s
         rethrowSubstrate(value)
       }
       if (pending !== null && !targets.has(pending.status)) {
-        divergence('pending-transition', goalId, 'claimedOperationalFacts.claimedPendingTransitionTarget')
+        divergence(
+          'pending-transition',
+          goalId,
+          'claimedOperationalFacts.claimedPendingTransitionTarget',
+        )
       }
     }
 
@@ -751,7 +765,10 @@ function buildPlan(
     rowPayloads: document.rows.map((row) => canonicalEncode(importRecordedPayload(row, context))),
     refLocators: document.rows.map((row) =>
       row.claimedRatificationRefs.map((ref) =>
-        canonicalEncode({ sourceCommit: ref.provenance.sourceCommit, sourcePath: ref.provenance.sourcePath }),
+        canonicalEncode({
+          sourceCommit: ref.provenance.sourceCommit,
+          sourcePath: ref.provenance.sourcePath,
+        }),
       ),
     ),
     approvalLocators: document.rows.map((row) =>
@@ -855,7 +872,10 @@ function epochExistencePhase(storage: Storage, document: ImportDocument): void {
   const rootCommit = document.sourceLineage.rootCommit
   for (const epoch of readEpochRecords(storage)) {
     if (epoch.rootCommit === rootCommit) {
-      throw importError('IMPORT_EPOCH_EXISTS', { rootCommit: epoch.rootCommit, epochId: epoch.epochId })
+      throw importError('IMPORT_EPOCH_EXISTS', {
+        rootCommit: epoch.rootCommit,
+        epochId: epoch.epochId,
+      })
     }
   }
 }
@@ -910,7 +930,14 @@ export function runImport(
 
         const eventsBefore = readAllEvents(storage)
         const maxSeqBefore = eventsBefore[eventsBefore.length - 1]?.eventSeq ?? 0
-        writePhase(storage, plan, document, epochRecord, { principalRef, operationId }, recordedAtMicros)
+        writePhase(
+          storage,
+          plan,
+          document,
+          epochRecord,
+          { principalRef, operationId },
+          recordedAtMicros,
+        )
         const recordedEventSeqs = readAllEvents(storage)
           .filter((event) => event.eventSeq > maxSeqBefore)
           .map((event) => event.eventSeq)
@@ -944,7 +971,9 @@ export function runImport(
  */
 export function getEpoch(importer: Importer, query: { rootCommit: unknown }): EpochRecord | null {
   const rootCommit = requireRequestId(query.rootCommit, 'rootCommit')
-  const matches = readEpochRecords(importer.storage).filter((epoch) => epoch.rootCommit === rootCommit)
+  const matches = readEpochRecords(importer.storage).filter(
+    (epoch) => epoch.rootCommit === rootCommit,
+  )
   if (matches.length > 1) throw importError('PROJECTION_STATE_INVALID', {})
   return matches[0] ?? null
 }

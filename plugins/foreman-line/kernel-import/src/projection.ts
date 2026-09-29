@@ -17,33 +17,36 @@
  * cursor unmoved. Concurrent publishes of one stream serialize under the
  * storage write lock; both renders are byte-identical either way.
  */
+
+import { isGoalStatus } from '@foreman-line/kernel-lease/src/index.ts'
 import {
   type EventRow,
+  type GoalRow,
   getGoal,
   getTransition,
   getUnreleasedLease,
-  type GoalRow,
   type LeaseRow,
   type Storage,
   type TransitionRow,
   withTransaction,
 } from '@foreman-line/kernel-state'
-import { isGoalStatus } from '@foreman-line/kernel-lease/src/index.ts'
 import { digestBytes } from './canonical.js'
 import {
   type FkP11ProjectionId,
-  getProjectionCursor as readCursorRow,
   type RegisteredProjectionId,
-  setProjectionCursor as writeCursorRow,
+  getProjectionCursor as readCursorRow,
   resolveWritableProjectionId,
+  setProjectionCursor as writeCursorRow,
 } from './cursors.js'
 import { verifyGitWinnerFacts } from './divergence.js'
-import { importError, isHarnessFailure, isImportError, isStorageClassFault, rethrowSubstrate } from './errors.js'
 import {
-  type ImportedGoalClaims,
-  readAllEvents,
-  readImportedGoalClaims,
-} from './import.js'
+  importError,
+  isHarnessFailure,
+  isImportError,
+  isStorageClassFault,
+  rethrowSubstrate,
+} from './errors.js'
+import { type ImportedGoalClaims, readAllEvents, readImportedGoalClaims } from './import.js'
 import { createLineageGateway, type LineageGateway, type SourceLineageReader } from './lineage.js'
 import { sanitizeForMarkdown } from './sanitize.js'
 
@@ -87,8 +90,6 @@ interface GoalViewState {
   claims: ImportedGoalClaims | null
 }
 
-const UNPAIRED_SURROGATE_FIELD = 'storedString'
-
 function decodeStoredString(value: unknown, field: string): string {
   if (typeof value !== 'string') {
     throw importError('PROJECTION_INPUT_NONCANONICAL', { field })
@@ -112,7 +113,10 @@ function codeUnitLess(a: string, b: string): number {
   return a < b ? -1 : a > b ? 1 : 0
 }
 
-function collectGoalIds(events: readonly EventRow[], claims: readonly ImportedGoalClaims[]): string[] {
+function collectGoalIds(
+  events: readonly EventRow[],
+  claims: readonly ImportedGoalClaims[],
+): string[] {
   const seen: Record<string, true> = {}
   const ids: string[] = []
   for (const event of events) {
@@ -160,9 +164,12 @@ function buildState(
       goalId: decodeStoredString(goal.goalId, 'goals.goalId'),
       status: decodeStoredString(goal.status, 'goals.status'),
       revision: goal.revision,
-      pendingTransition: pending === null ? '-' : decodeStoredString(pending.status, 'transitions.status'),
+      pendingTransition:
+        pending === null ? '-' : decodeStoredString(pending.status, 'transitions.status'),
       leaseHolder:
-        lease === null ? '-' : decodeStoredString(lease.ownerPrincipalRef, 'leases.ownerPrincipalRef'),
+        lease === null
+          ? '-'
+          : decodeStoredString(lease.ownerPrincipalRef, 'leases.ownerPrincipalRef'),
       claims: claimsByGoal.get(goalId) ?? null,
     }
   })
@@ -177,7 +184,10 @@ function renderHeader(projectionId: FkP11ProjectionId, renderedThroughEventSeq: 
   ]
 }
 
-function renderGoalsIndex(state: readonly GoalViewState[], renderedThroughEventSeq: number): string {
+function renderGoalsIndex(
+  state: readonly GoalViewState[],
+  renderedThroughEventSeq: number,
+): string {
   const lines = renderHeader('md-goals-index', renderedThroughEventSeq)
   lines.push(
     '',
@@ -198,10 +208,17 @@ function renderGoalsIndex(state: readonly GoalViewState[], renderedThroughEventS
   return `${lines.join('\n')}\n`
 }
 
-function renderGoalLedger(state: readonly GoalViewState[], renderedThroughEventSeq: number): string {
+function renderGoalLedger(
+  state: readonly GoalViewState[],
+  renderedThroughEventSeq: number,
+): string {
   const lines = renderHeader('md-goal-ledger', renderedThroughEventSeq)
   for (const row of state) {
-    lines.push('', `## ${sanitizeForMarkdown(row.goalId)}`, `status: ${sanitizeForMarkdown(row.status)}`)
+    lines.push(
+      '',
+      `## ${sanitizeForMarkdown(row.goalId)}`,
+      `status: ${sanitizeForMarkdown(row.status)}`,
+    )
     lines.push(`revision: ${row.revision}`)
     lines.push(`pendingTransition: ${sanitizeForMarkdown(row.pendingTransition)}`)
     lines.push(`leaseHolder: ${sanitizeForMarkdown(row.leaseHolder)}`)
@@ -211,10 +228,18 @@ function renderGoalLedger(state: readonly GoalViewState[], renderedThroughEventS
     }
     const source = row.claims.source
     lines.push('import:')
-    lines.push(`  sourcePath: ${sanitizeForMarkdown(decodeStoredString(source.sourcePath, 'source.sourcePath'))}`)
-    lines.push(`  sourceDigest: ${sanitizeForMarkdown(decodeStoredString(source.sourceDigest, 'source.sourceDigest'))}`)
-    lines.push(`  sourceCommit: ${sanitizeForMarkdown(decodeStoredString(source.sourceCommit, 'source.sourceCommit'))}`)
-    lines.push(`  epochId: ${sanitizeForMarkdown(decodeStoredString(row.claims.epochId, 'epochId'))}`)
+    lines.push(
+      `  sourcePath: ${sanitizeForMarkdown(decodeStoredString(source.sourcePath, 'source.sourcePath'))}`,
+    )
+    lines.push(
+      `  sourceDigest: ${sanitizeForMarkdown(decodeStoredString(source.sourceDigest, 'source.sourceDigest'))}`,
+    )
+    lines.push(
+      `  sourceCommit: ${sanitizeForMarkdown(decodeStoredString(source.sourceCommit, 'source.sourceCommit'))}`,
+    )
+    lines.push(
+      `  epochId: ${sanitizeForMarkdown(decodeStoredString(row.claims.epochId, 'epochId'))}`,
+    )
     lines.push('evidence:')
     for (const claim of row.claims.claimedApprovals) {
       const provenance = claim.provenance
@@ -239,10 +264,7 @@ function renderGoalLedger(state: readonly GoalViewState[], renderedThroughEventS
   return `${lines.join('\n')}\n`
 }
 
-function renderState(
-  projector: Projector,
-  projectionId: FkP11ProjectionId,
-): ProjectionRender {
+function renderState(projector: Projector, projectionId: FkP11ProjectionId): ProjectionRender {
   // T6 rule 5: Git-winner facts render only after reader confirmation.
   verifyGitWinnerFacts(projector, 'projection-source-drift')
   const events = readAllEvents(projector.storage)

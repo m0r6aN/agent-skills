@@ -5,144 +5,15 @@
       "mode": "harness-reader",
       "lineage": {
         "commits": [
-          { "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa01", "parents": [] },
+          {
+            "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa01",
+            "parents": []
+          },
           {
             "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa02",
-            "parents": ["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa01"]
-          }
-        ],
-        "blobs": [
-          {
-            "commitId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa01",
-            "sourcePath": "docs/goals/a.md",
-            "text": "# Legacy goal A\n"
-          }
-        ]
-      },
-      "seed": { "goals": [], "leases": [], "idempotencyKeys": [], "events": [] },
-      "document": {
-        "apiVersion": "0.1.0",
-        "documentKind": "legacy-import",
-        "corpusDigest": "sha256:60394ecd8a0a040959e71b2affd82adf0bb3b165b564292b1b60a9bef4bcba58",
-        "sourceLineage": {
-          "rootCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa01",
-          "tipCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa02"
-        },
-        "corpusManifest": {
-          "manifestKind": "legacy-corpus-manifest",
-          "sourceRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa02",
-          "items": [
-            {
-              "sourcePath": "docs/goals/a.md",
-              "sourceDigest": "sha256:b0080954af2e53c80143bc7ae68dbd42380580c8b869413b32cc7c448321f1a7",
-              "disposition": "import",
-              "reason": "legacy goal record"
-            }
-          ]
-        },
-        "rows": [
-          {
-            "goalId": "goal-x",
-            "claimedStatus": "active",
-            "source": {
-              "sourcePath": "docs/goals/a.md",
-              "sourceDigest": "sha256:b0080954af2e53c80143bc7ae68dbd42380580c8b869413b32cc7c448321f1a7",
-              "sourceCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa01"
-            },
-            "claimedRatificationRefs": [],
-            "claimedApprovals": [],
-            "claimedOperationalFacts": {
-              "claimedRevision": null,
-              "claimedLeaseHolderPrincipalRef": null,
-              "claimedPendingTransitionTarget": null,
-              "claimedWakeupCount": null,
-              "claimedHandoffCount": null,
-              "claimedBinding": null
-            }
-          }
-        ]
-      },
-      "request": { "principalRef": "operator-1", "operationId": "op-0001" }
-    },
-    "expectedOutcome": "harness-error-surfaces-as-itself"
-  },
-  {
-    "id": "ERR-02",
-    "input": {
-      "mode": "storage-fault",
-      "lineage": {
-        "commits": [
-          { "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa01", "parents": [] },
-          {
-            "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa02",
-            "parents": ["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa01"]
-          }
-        ],
-        "blobs": [
-          {
-            "commitId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa01",
-            "sourcePath": "docs/goals/a.md",
-            "text": "# Legacy goal A\n"
-          }
-        ]
-      },
-      "seed": { "goals": [], "leases": [], "idempotencyKeys": [], "events": [] },
-      "document": {
-        "apiVersion": "0.1.0",
-        "documentKind": "legacy-import",
-        "corpusDigest": "sha256:60394ecd8a0a040959e71b2affd82adf0bb3b165b564292b1b60a9bef4bcba58",
-        "sourceLineage": {
-          "rootCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa01",
-          "tipCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa02"
-        },
-        "corpusManifest": {
-          "manifestKind": "legacy-corpus-manifest",
-          "sourceRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa02",
-          "items": [
-            {
-              "sourcePath": "docs/goals/a.md",
-              "sourceDigest": "sha256:b0080954af2e53c80143bc7ae68dbd42380580c8b869413b32cc7c448321f1a7",
-              "disposition": "import",
-              "reason": "legacy goal record"
-            }
-          ]
-        },
-        "rows": [
-          {
-            "goalId": "goal-x",
-            "claimedStatus": "active",
-            "source": {
-              "sourcePath": "docs/goals/a.md",
-              "sourceDigest": "sha256:b0080954af2e53c80143bc7ae68dbd42380580c8b869413b32cc7c448321f1a7",
-              "sourceCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa01"
-            },
-            "claimedRatificationRefs": [],
-            "claimedApprovals": [],
-            "claimedOperationalFacts": {
-              "claimedRevision": null,
-              "claimedLeaseHolderPrincipalRef": null,
-              "claimedPendingTransitionTarget": null,
-              "claimedWakeupCount": null,
-              "claimedHandoffCount": null,
-              "claimedBinding": null
-            }
-          }
-        ]
-      },
-      "request": { "principalRef": "operator-1", "operationId": "op-0001" }
-    },
-    "expectedOutcome": "storage-failure-code-literal-only"
-  },
-  {
-    "id": "ERR-03",
-    "input": {
-      "mode": "named-refusal-then-substrate-fault",
-      "lineage": {
-        "commits": [
-          { "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa01", "parents": [] },
-          {
-            "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa02",
-            "parents": ["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa01"]
+            "parents": [
+              "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa01"
+            ]
           }
         ],
         "blobs": [
@@ -154,7 +25,7 @@
         ]
       },
       "seed": {
-        "goals": [{ "goalId": "goal-x", "revision": 1, "status": "active" }],
+        "goals": [],
         "leases": [],
         "idempotencyKeys": [],
         "events": []
@@ -201,9 +72,177 @@
           }
         ]
       },
-      "request": { "principalRef": "operator-1", "operationId": "op-0001" }
+      "request": {
+        "principalRef": "operator-1",
+        "operationId": "op-0001"
+      }
     },
-    "expectedOutcome": "named-refusal-surfaces",
+    "expectedOutcome": "harness-error-surfaces-as-itself"
+  },
+  {
+    "id": "ERR-02",
+    "input": {
+      "mode": "storage-fault",
+      "lineage": {
+        "commits": [
+          {
+            "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa01",
+            "parents": []
+          },
+          {
+            "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa02",
+            "parents": [
+              "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa01"
+            ]
+          }
+        ],
+        "blobs": [
+          {
+            "commitId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa01",
+            "sourcePath": "docs/goals/a.md",
+            "text": "# Legacy goal A\n"
+          }
+        ]
+      },
+      "seed": {
+        "goals": [],
+        "leases": [],
+        "idempotencyKeys": [],
+        "events": []
+      },
+      "document": {
+        "apiVersion": "0.1.0",
+        "documentKind": "legacy-import",
+        "corpusDigest": "sha256:60394ecd8a0a040959e71b2affd82adf0bb3b165b564292b1b60a9bef4bcba58",
+        "sourceLineage": {
+          "rootCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa01",
+          "tipCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa02"
+        },
+        "corpusManifest": {
+          "manifestKind": "legacy-corpus-manifest",
+          "sourceRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa02",
+          "items": [
+            {
+              "sourcePath": "docs/goals/a.md",
+              "sourceDigest": "sha256:b0080954af2e53c80143bc7ae68dbd42380580c8b869413b32cc7c448321f1a7",
+              "disposition": "import",
+              "reason": "legacy goal record"
+            }
+          ]
+        },
+        "rows": [
+          {
+            "goalId": "goal-x",
+            "claimedStatus": "active",
+            "source": {
+              "sourcePath": "docs/goals/a.md",
+              "sourceDigest": "sha256:b0080954af2e53c80143bc7ae68dbd42380580c8b869413b32cc7c448321f1a7",
+              "sourceCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa01"
+            },
+            "claimedRatificationRefs": [],
+            "claimedApprovals": [],
+            "claimedOperationalFacts": {
+              "claimedRevision": null,
+              "claimedLeaseHolderPrincipalRef": null,
+              "claimedPendingTransitionTarget": null,
+              "claimedWakeupCount": null,
+              "claimedHandoffCount": null,
+              "claimedBinding": null
+            }
+          }
+        ]
+      },
+      "request": {
+        "principalRef": "operator-1",
+        "operationId": "op-0001"
+      }
+    },
+    "expectedOutcome": "storage-failure-code-literal-only"
+  },
+  {
+    "id": "ERR-03",
+    "input": {
+      "mode": "named-refusal-then-substrate-fault",
+      "lineage": {
+        "commits": [
+          {
+            "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa01",
+            "parents": []
+          },
+          {
+            "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa02",
+            "parents": [
+              "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa01"
+            ]
+          }
+        ],
+        "blobs": [
+          {
+            "commitId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa01",
+            "sourcePath": "docs/goals/a.md",
+            "text": "# Legacy goal A\n"
+          }
+        ]
+      },
+      "seed": {
+        "goals": [
+          {
+            "goalId": "goal-x",
+            "revision": 1,
+            "status": "active"
+          }
+        ],
+        "leases": [],
+        "idempotencyKeys": [],
+        "events": []
+      },
+      "document": {
+        "apiVersion": "0.1.0",
+        "documentKind": "legacy-import",
+        "corpusDigest": "sha256:60394ecd8a0a040959e71b2affd82adf0bb3b165b564292b1b60a9bef4bcba58",
+        "sourceLineage": {
+          "rootCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa01",
+          "tipCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa02"
+        },
+        "corpusManifest": {
+          "manifestKind": "legacy-corpus-manifest",
+          "sourceRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa02",
+          "items": [
+            {
+              "sourcePath": "docs/goals/a.md",
+              "sourceDigest": "sha256:b0080954af2e53c80143bc7ae68dbd42380580c8b869413b32cc7c448321f1a7",
+              "disposition": "import",
+              "reason": "legacy goal record"
+            }
+          ]
+        },
+        "rows": [
+          {
+            "goalId": "goal-x",
+            "claimedStatus": "active",
+            "source": {
+              "sourcePath": "docs/goals/a.md",
+              "sourceDigest": "sha256:b0080954af2e53c80143bc7ae68dbd42380580c8b869413b32cc7c448321f1a7",
+              "sourceCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa01"
+            },
+            "claimedRatificationRefs": [],
+            "claimedApprovals": [],
+            "claimedOperationalFacts": {
+              "claimedRevision": null,
+              "claimedLeaseHolderPrincipalRef": null,
+              "claimedPendingTransitionTarget": null,
+              "claimedWakeupCount": null,
+              "claimedHandoffCount": null,
+              "claimedBinding": null
+            }
+          }
+        ]
+      },
+      "request": {
+        "principalRef": "operator-1",
+        "operationId": "op-0001"
+      }
+    },
     "expectedCode": "DIVERGENCE_STOP",
     "expectedReasonCode": "existing-state-collision"
   }
