@@ -823,7 +823,11 @@ describe('import precedence edges (the documented first-failure order is what fi
         assert.fail('must refuse')
       } catch (error) {
         const typed = error as ImportError
-        assert.equal(typed.code, 'IMPORT_EPOCH_EXISTS', 'the epoch refusal — never DIVERGENCE_STOP(lease)')
+        assert.equal(
+          typed.code,
+          'IMPORT_EPOCH_EXISTS',
+          'the epoch refusal — never DIVERGENCE_STOP(lease)',
+        )
       }
     } finally {
       closeStorage(ctx.storage)
@@ -945,7 +949,11 @@ describe('Controls (CTL-01..12)', () => {
       assert.equal(goal?.revision, 1)
       assert.equal(goal?.status, 'active')
       const events = readAllEvents(ctx.storage)
-      assert.equal(events.filter((event) => event.kind === 'import.recorded').length, 2, 'one event per ROW')
+      assert.equal(
+        events.filter((event) => event.kind === 'import.recorded').length,
+        2,
+        'one event per ROW',
+      )
       assert.equal(events.filter((event) => event.kind === 'import.epoch').length, 1)
       assert.equal(result.recordedEventSeqs.length, 3)
       assert.equal(result.epoch.rowCount, 2, 'rowCount counts rows, not groups')

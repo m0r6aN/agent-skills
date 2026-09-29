@@ -816,7 +816,9 @@ function writePhase(
   for (const [index, row] of document.rows.entries()) {
     if (materialized[row.goalId] !== true) {
       const statuses = new Set(
-        document.rows.filter((member) => member.goalId === row.goalId).map((member) => member.claimedStatus),
+        document.rows
+          .filter((member) => member.goalId === row.goalId)
+          .map((member) => member.claimedStatus),
       )
       if (statuses.size > 1) {
         // Typed fallback guard (R2): a genuine group-invariant break can never
