@@ -1,0 +1,41 @@
+[
+  {
+    "id": "CUR-01",
+    "input": {
+      "mode": "cursor-write",
+      "projectionId": "md-other-stream",
+      "request": { "principalRef": "operator-1", "operationId": "op-0001" }
+    },
+    "expectedCode": "CURSOR_ID_UNREGISTERED",
+    "expectedReasonCode": "unregistered"
+  },
+  {
+    "id": "CUR-02",
+    "input": {
+      "mode": "cursor-write",
+      "projectionId": "goal-state",
+      "request": { "principalRef": "operator-1", "operationId": "op-0001" }
+    },
+    "expectedCode": "CURSOR_ID_UNREGISTERED",
+    "expectedReasonCode": "reserved"
+  },
+  {
+    "id": "CUR-03",
+    "input": {
+      "mode": "cursor-write",
+      "projectionId": "bad id!!",
+      "request": { "principalRef": "operator-1", "operationId": "op-0001" }
+    },
+    "expectedCode": "IMPORT_ARGUMENT_INVALID"
+  },
+  {
+    "id": "CUR-04",
+    "input": {
+      "mode": "cursor-write",
+      "projectionId": "md-goal-detail.goal-0001",
+      "request": { "principalRef": "operator-1", "operationId": "op-0001" }
+    },
+    "expectedCode": "CURSOR_ID_UNREGISTERED",
+    "expectedReasonCode": "unregistered"
+  }
+]

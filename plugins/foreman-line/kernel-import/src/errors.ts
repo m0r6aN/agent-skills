@@ -13,11 +13,12 @@
  * `STORAGE_FAILURE` (ERR-01..03 are failing-when-broken).
  */
 
-/** The closed 13-code registry (T10 order). */
+/** The closed 14-code registry (T10 order; `IMPORT_SOURCE_BLOB_ABSENT` per F-6). */
 export const IMPORT_ERROR_CODES = [
   'IMPORT_ARGUMENT_INVALID',
   'IMPORT_LIMIT_EXCEEDED',
   'IMPORT_SOURCE_DIGEST_MISMATCH',
+  'IMPORT_SOURCE_BLOB_ABSENT',
   'IMPORT_COMMIT_OUT_OF_LINEAGE',
   'IMPORT_EPOCH_EXISTS',
   'IMPORT_APPROVAL_UNEVIDENCED',
@@ -70,6 +71,8 @@ export interface ImportDiagnosticMembers {
   IMPORT_ARGUMENT_INVALID: { fieldPath: string }
   IMPORT_LIMIT_EXCEEDED: { field: string; bound: number }
   IMPORT_SOURCE_DIGEST_MISMATCH: { rowId: string; fieldId: string }
+  /** F-6: the claimed digest cannot be established — the blob does not exist. */
+  IMPORT_SOURCE_BLOB_ABSENT: { rowId: string; fieldId: string }
   IMPORT_COMMIT_OUT_OF_LINEAGE: { commitId: string }
   IMPORT_EPOCH_EXISTS: { rootCommit: string; epochId: string }
   IMPORT_APPROVAL_UNEVIDENCED: { rowId: string; reason: ApprovalRefusalReason }
@@ -93,6 +96,7 @@ export const IMPORT_ERROR_REGISTRY: {
   IMPORT_ARGUMENT_INVALID: { diagnosticMembers: ['fieldPath'] },
   IMPORT_LIMIT_EXCEEDED: { diagnosticMembers: ['field', 'bound'] },
   IMPORT_SOURCE_DIGEST_MISMATCH: { diagnosticMembers: ['rowId', 'fieldId'] },
+  IMPORT_SOURCE_BLOB_ABSENT: { diagnosticMembers: ['rowId', 'fieldId'] },
   IMPORT_COMMIT_OUT_OF_LINEAGE: { diagnosticMembers: ['commitId'] },
   IMPORT_EPOCH_EXISTS: { diagnosticMembers: ['rootCommit', 'epochId'] },
   IMPORT_APPROVAL_UNEVIDENCED: { diagnosticMembers: ['rowId', 'reason'] },
@@ -106,7 +110,7 @@ export const IMPORT_ERROR_REGISTRY: {
 }
 
 const ID_LIKE_RE = /^[A-Za-z0-9._:-]{1,128}$/
-const FIELD_PATH_RE = /^[A-Za-z0-9._[\]-]{1,128}$/
+const FIELD_PATH_RE = /^[A-Za-z0-9._[\]()$-]{1,128}$/
 const READER_CODE_RE = /^[A-Za-z0-9_-]{1,64}$/
 
 /**
@@ -164,11 +168,12 @@ function assertDiagnostic(
       break
     }
     case 'IMPORT_SOURCE_DIGEST_MISMATCH':
+    case 'IMPORT_SOURCE_BLOB_ABSENT':
       if (
         !ID_LIKE_RE.test(String(diagnostic.rowId)) ||
         !FIELD_PATH_RE.test(String(diagnostic.fieldId))
       ) {
-        throw new Error('ImportError(IMPORT_SOURCE_DIGEST_MISMATCH): unbounded diagnostic')
+        throw new Error(`ImportError(${code}): unbounded diagnostic`)
       }
       break
     case 'IMPORT_COMMIT_OUT_OF_LINEAGE':
@@ -248,6 +253,17 @@ export function isHarnessFailure(value: unknown): boolean {
     'code' in value &&
     typeof (value as { code: unknown }).code === 'string' &&
     (value as { code: string }).code.startsWith('HARNESS_')
+  )
+}
+
+/** Narrowing guard: a substrate StorageError-shaped fault (`STORAGE_*` code). */
+export function isStorageClassFault(value: unknown): boolean {
+  return (
+    value !== null &&
+    typeof value === 'object' &&
+    'code' in value &&
+    typeof (value as { code: unknown }).code === 'string' &&
+    (value as { code: string }).code.startsWith('STORAGE_')
   )
 }
 

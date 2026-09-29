@@ -1,0 +1,197 @@
+{
+  "state": {
+    "lineage": {
+      "commits": [
+        {
+          "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa01",
+          "parents": []
+        },
+        {
+          "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb02",
+          "parents": [
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa01"
+          ]
+        }
+      ],
+      "blobs": [
+        {
+          "commitId": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb02",
+          "sourcePath": "docs/goals/goal-0001.md",
+          "text": "legacy goal state: goal-0001\nstatus: active\n"
+        },
+        {
+          "commitId": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb02",
+          "sourcePath": "docs/goals/goal-0002.md",
+          "text": "legacy goal state: goal-0002\nstatus: completed\n"
+        },
+        {
+          "commitId": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb02",
+          "sourcePath": "docs/goals/goal-0003.md",
+          "text": "legacy goal state: goal-0003\nstatus: proposed\n"
+        },
+        {
+          "commitId": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb02",
+          "sourcePath": "docs/proof/approval-1.md",
+          "text": "approval evidence for goal-0001\n"
+        },
+        {
+          "commitId": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb02",
+          "sourcePath": "docs/proof/approval-2.md",
+          "text": "approval evidence for goal-0002 v2\n"
+        },
+        {
+          "commitId": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb02",
+          "sourcePath": "docs/ratify/canon-1.md",
+          "text": "ratified canon bytes v1\n"
+        }
+      ]
+    },
+    "document": {
+      "apiVersion": "0.1.0",
+      "documentKind": "legacy-import",
+      "corpusDigest": "sha256:c5642d3184f6b61f649392e40532817d9fa6c97165df8e640ddea7612779bd60",
+      "sourceLineage": {
+        "rootCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa01",
+        "tipCommit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb02"
+      },
+      "corpusManifest": {
+        "manifestKind": "legacy-corpus-manifest",
+        "sourceRevision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb02",
+        "items": [
+          {
+            "sourcePath": "docs/goals/goal-0001.md",
+            "sourceDigest": "sha256:05df77b5dfae47ae392ee379d17d8d8240d5d9f4f3df091defbab269420a9e48",
+            "disposition": "import",
+            "reason": "legacy record"
+          },
+          {
+            "sourcePath": "docs/goals/goal-0002.md",
+            "sourceDigest": "sha256:91e8fcaa27b9fdb6acf6cc1897f559dcdd72e38e856a084ff3c1e2a76627a256",
+            "disposition": "import",
+            "reason": "legacy record"
+          },
+          {
+            "sourcePath": "docs/goals/goal-0003.md",
+            "sourceDigest": "sha256:2e7745bf019b39edba1681d4a6270f70b6c4702d14730cec57b29bcd7f3e8d2e",
+            "disposition": "import",
+            "reason": "legacy record"
+          },
+          {
+            "sourcePath": "docs/proof/approval-1.md",
+            "sourceDigest": "sha256:5b7e2131a7397b8f7a38c4584d368dc9ba89194db206c06c1c0f2d33f891bad0",
+            "disposition": "import",
+            "reason": "legacy record"
+          },
+          {
+            "sourcePath": "docs/proof/approval-2.md",
+            "sourceDigest": "sha256:6e033a03d9c4d3c5c58c61b59bcbe66da4e060574c9326ee495069bce27cacb2",
+            "disposition": "import",
+            "reason": "legacy record"
+          },
+          {
+            "sourcePath": "docs/ratify/canon-1.md",
+            "sourceDigest": "sha256:8382b3f5c9d0a46101dfa905aca2260036c47f6133c93fd5e90911b9dc1bbf69",
+            "disposition": "import",
+            "reason": "legacy record"
+          }
+        ]
+      },
+      "rows": [
+        {
+          "goalId": "goal-0001",
+          "claimedStatus": "active",
+          "source": {
+            "sourcePath": "docs/goals/goal-0001.md",
+            "sourceDigest": "sha256:05df77b5dfae47ae392ee379d17d8d8240d5d9f4f3df091defbab269420a9e48",
+            "sourceCommit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb02"
+          },
+          "claimedRatificationRefs": [
+            {
+              "gitIdentity": "refs/tags/canon-v1",
+              "digest": "sha256:8382b3f5c9d0a46101dfa905aca2260036c47f6133c93fd5e90911b9dc1bbf69",
+              "provenance": {
+                "sourcePath": "docs/ratify/canon-1.md",
+                "sourceDigest": "sha256:8382b3f5c9d0a46101dfa905aca2260036c47f6133c93fd5e90911b9dc1bbf69",
+                "sourceCommit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb02"
+              }
+            }
+          ],
+          "claimedApprovals": [
+            {
+              "evidenceKind": "commit-ref",
+              "gitIdentity": "refs/heads/main",
+              "digest": "sha256:5b7e2131a7397b8f7a38c4584d368dc9ba89194db206c06c1c0f2d33f891bad0",
+              "provenance": {
+                "sourcePath": "docs/proof/approval-1.md",
+                "sourceDigest": "sha256:5b7e2131a7397b8f7a38c4584d368dc9ba89194db206c06c1c0f2d33f891bad0",
+                "sourceCommit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb02"
+              }
+            }
+          ],
+          "claimedOperationalFacts": {
+            "claimedRevision": null,
+            "claimedLeaseHolderPrincipalRef": null,
+            "claimedPendingTransitionTarget": null,
+            "claimedWakeupCount": null,
+            "claimedHandoffCount": null,
+            "claimedBinding": null
+          }
+        },
+        {
+          "goalId": "goal-0002",
+          "claimedStatus": "completed",
+          "source": {
+            "sourcePath": "docs/goals/goal-0002.md",
+            "sourceDigest": "sha256:91e8fcaa27b9fdb6acf6cc1897f559dcdd72e38e856a084ff3c1e2a76627a256",
+            "sourceCommit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb02"
+          },
+          "claimedRatificationRefs": [],
+          "claimedApprovals": [
+            {
+              "evidenceKind": "commit-ref",
+              "gitIdentity": "refs/heads/main",
+              "digest": "sha256:6e033a03d9c4d3c5c58c61b59bcbe66da4e060574c9326ee495069bce27cacb2",
+              "provenance": {
+                "sourcePath": "docs/proof/approval-2.md",
+                "sourceDigest": "sha256:6e033a03d9c4d3c5c58c61b59bcbe66da4e060574c9326ee495069bce27cacb2",
+                "sourceCommit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb02"
+              }
+            }
+          ],
+          "claimedOperationalFacts": {
+            "claimedRevision": null,
+            "claimedLeaseHolderPrincipalRef": null,
+            "claimedPendingTransitionTarget": null,
+            "claimedWakeupCount": null,
+            "claimedHandoffCount": null,
+            "claimedBinding": null
+          }
+        },
+        {
+          "goalId": "goal-0003",
+          "claimedStatus": "proposed",
+          "source": {
+            "sourcePath": "docs/goals/goal-0003.md",
+            "sourceDigest": "sha256:2e7745bf019b39edba1681d4a6270f70b6c4702d14730cec57b29bcd7f3e8d2e",
+            "sourceCommit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb02"
+          },
+          "claimedRatificationRefs": [],
+          "claimedApprovals": [],
+          "claimedOperationalFacts": {
+            "claimedRevision": null,
+            "claimedLeaseHolderPrincipalRef": null,
+            "claimedPendingTransitionTarget": null,
+            "claimedWakeupCount": null,
+            "claimedHandoffCount": null,
+            "claimedBinding": null
+          }
+        }
+      ]
+    }
+  },
+  "bytes": {
+    "md-goals-index": "<!-- projection: md-goals-index -->\nprojectionFormatVersion: 0.1.0\nprojectionId: md-goals-index\nrenderedThroughEventSeq: 4\n\ngoalId | status | revision | pendingTransition | leaseHolder\n--- | --- | --- | --- | ---\ngoal-0001 | active | 1 | \\- | \\-\ngoal-0002 | completed | 1 | \\- | \\-\ngoal-0003 | proposed | 1 | \\- | \\-\n",
+    "md-goal-ledger": "<!-- projection: md-goal-ledger -->\nprojectionFormatVersion: 0.1.0\nprojectionId: md-goal-ledger\nrenderedThroughEventSeq: 4\n\n## goal-0001\nstatus: active\nrevision: 1\npendingTransition: \\-\nleaseHolder: \\-\nimport:\n  sourcePath: docs/goals/goal-0001.md\n  sourceDigest: sha256:05df77b5dfae47ae392ee379d17d8d8240d5d9f4f3df091defbab269420a9e48\n  sourceCommit: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb02\n  epochId: imp-epoch-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa01\nevidence:\n  - import.approval commit-ref refs/heads/main sha256:5b7e2131a7397b8f7a38c4584d368dc9ba89194db206c06c1c0f2d33f891bad0\n    at bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb02:docs/proof/approval-1.md\n  - import.ratification-ref refs/tags/canon-v1 sha256:8382b3f5c9d0a46101dfa905aca2260036c47f6133c93fd5e90911b9dc1bbf69\n    at bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb02:docs/ratify/canon-1.md\n\n## goal-0002\nstatus: completed\nrevision: 1\npendingTransition: \\-\nleaseHolder: \\-\nimport:\n  sourcePath: docs/goals/goal-0002.md\n  sourceDigest: sha256:91e8fcaa27b9fdb6acf6cc1897f559dcdd72e38e856a084ff3c1e2a76627a256\n  sourceCommit: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb02\n  epochId: imp-epoch-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa01\nevidence:\n  - import.approval commit-ref refs/heads/main sha256:6e033a03d9c4d3c5c58c61b59bcbe66da4e060574c9326ee495069bce27cacb2\n    at bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb02:docs/proof/approval-2.md\n\n## goal-0003\nstatus: proposed\nrevision: 1\npendingTransition: \\-\nleaseHolder: \\-\nimport:\n  sourcePath: docs/goals/goal-0003.md\n  sourceDigest: sha256:2e7745bf019b39edba1681d4a6270f70b6c4702d14730cec57b29bcd7f3e8d2e\n  sourceCommit: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb02\n  epochId: imp-epoch-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa01\nevidence:\n",
+    "renderedThroughEventSeq": 4
+  }
+}

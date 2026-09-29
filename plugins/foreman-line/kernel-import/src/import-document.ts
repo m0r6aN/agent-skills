@@ -85,6 +85,14 @@ export interface ApprovalClaim {
   provenance: SourceProvenance | null
 }
 
+/** A legacy binding claim (F-5): provenance-only; never reaches idempotency_keys. */
+export interface ClaimedBinding {
+  principalRef: string
+  operationId: string
+  repositoryRef: string
+  worktreeRef: string
+}
+
 /** Legacy operational facts — PROVENANCE-ONLY (never reach state; T2). */
 export interface OperationalFacts {
   claimedRevision: number | null
@@ -92,6 +100,8 @@ export interface OperationalFacts {
   claimedPendingTransitionTarget: string | null
   claimedWakeupCount: number | null
   claimedHandoffCount: number | null
+  /** F-5: absent-tolerant `null`; a colliding recorded binding stops (CON-08). */
+  claimedBinding: ClaimedBinding | null
 }
 
 /** One legacy goal record (T1). */
@@ -367,6 +377,21 @@ function parseApprovalClaim(value: unknown, fieldPath: string): ApprovalClaim {
   }
 }
 
+function parseClaimedBinding(value: unknown, fieldPath: string): ClaimedBinding {
+  const record = requireRecord(value, fieldPath)
+  const members = ['principalRef', 'operationId', 'repositoryRef', 'worktreeRef']
+  requireExactKeys(record, members, fieldPath)
+  for (const member of members) {
+    if (!(member in record)) structurallyInvalid(`${fieldPath}.${member}`)
+  }
+  return {
+    principalRef: requireIdValue(record.principalRef, `${fieldPath}.principalRef`),
+    operationId: requireIdValue(record.operationId, `${fieldPath}.operationId`),
+    repositoryRef: requireIdValue(record.repositoryRef, `${fieldPath}.repositoryRef`),
+    worktreeRef: requireIdValue(record.worktreeRef, `${fieldPath}.worktreeRef`),
+  }
+}
+
 function parseOperationalFacts(value: unknown, fieldPath: string): OperationalFacts {
   const record = requireRecord(value, fieldPath)
   const members = [
@@ -375,6 +400,7 @@ function parseOperationalFacts(value: unknown, fieldPath: string): OperationalFa
     'claimedPendingTransitionTarget',
     'claimedWakeupCount',
     'claimedHandoffCount',
+    'claimedBinding',
   ]
   requireExactKeys(record, members, fieldPath)
   for (const member of members) {
@@ -398,6 +424,10 @@ function parseOperationalFacts(value: unknown, fieldPath: string): OperationalFa
       record.claimedHandoffCount,
       `${fieldPath}.claimedHandoffCount`,
     ),
+    claimedBinding:
+      record.claimedBinding === null
+        ? null
+        : parseClaimedBinding(record.claimedBinding, `${fieldPath}.claimedBinding`),
   }
 }
 
