@@ -336,6 +336,7 @@ test('CN-01 two-process claim race: exactly one winner, one event, one binding, 
     assert.equal(winners[0]?.code, 'EFFECT_APPLIED')
     assert.equal(losers.length, 1)
     if (namedLoserOrSkip(t, losers[0]?.code, 'LEASE_HELD', losers[0])) return
+    assert.equal(losers[0]?.code, 'LEASE_HELD')
     assert.deepEqual(run.tables, {
       events: 1,
       goals: 1,
@@ -449,6 +450,7 @@ test('CN-03 expired-takeover race: one takeover wins, peer LEASE_HELD; prior row
     assert.equal(winners[0]?.code, 'EFFECT_APPLIED')
     assert.equal(losers.length, 1)
     if (namedLoserOrSkip(t, losers[0]?.code, 'LEASE_HELD', losers[0])) return
+    assert.equal(losers[0]?.code, 'LEASE_HELD')
     assert.deepEqual(run.tables, {
       events: 1,
       goals: 1,
@@ -547,6 +549,7 @@ test('CN-05 same-key different-binding apply race: one applies, the peer IDEMPOT
     assert.equal(winners.length, 1)
     assert.equal(losers.length, 1)
     if (namedLoserOrSkip(t, losers[0]?.code, 'IDEMPOTENCY_CONFLICT', losers[0])) return
+    assert.equal(losers[0]?.code, 'IDEMPOTENCY_CONFLICT')
     assert.deepEqual(run.tables, {
       events: 1,
       goals: 1,
@@ -593,6 +596,7 @@ test('CN-06 stale-CAS apply race: one applies, the peer STATE_REVISION_STALE', a
     assert.equal(winners.length, 1)
     assert.equal(losers.length, 1)
     if (namedLoserOrSkip(t, losers[0]?.code, 'STATE_REVISION_STALE', losers[0])) return
+    assert.equal(losers[0]?.code, 'STATE_REVISION_STALE')
     assert.deepEqual(run.tables, {
       events: 1,
       goals: 1,
@@ -639,6 +643,7 @@ test('CN-07 pending-request race: one pending transition wins, the peer TRANSITI
     assert.equal(winners.length, 1)
     assert.equal(losers.length, 1)
     if (namedLoserOrSkip(t, losers[0]?.code, 'TRANSITION_PENDING_EXISTS', losers[0])) return
+    assert.equal(losers[0]?.code, 'TRANSITION_PENDING_EXISTS')
     assert.deepEqual(run.tables, {
       events: 1,
       goals: 1,
