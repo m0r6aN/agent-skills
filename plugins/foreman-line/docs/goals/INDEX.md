@@ -13,7 +13,7 @@ Deleted records are recoverable in git history.
 
 | Goal | State | Entry | Current authority |
 |---|---|---|---|
-| [foreman-kernel](foreman-kernel/charter.md) | `fk_p10_merged_wave3a_near_complete` | `/goal resume foreman-kernel` | **FK-P10 MERGED** (Gate-3 delegated RS-2.1; 158/158 + 16/16 loaded soak; two tripwire bookkeeping events owner-ruled; `fk-p10-stage-f-closure-2026-09-28.md`). Session merges: FK-P1, FK-P2, FK-P9 (+A1/A2/A1b/A1c/A1d amendments), FK-P10, FK-P17′; R32 accepted. **[INFERENCE] RESOLVED CONFIRMED**. Next: **FK-P11** (import/projection engine — Wave 3a tail; dep FK-P9/P10 merged) then FK-P18′ (U1-gated); FK-P3/FK-P2B window-gated (holding FK-P4–P8 transitively). Exit annex tracks all named gaps |
+| [foreman-kernel](foreman-kernel/charter.md) | `fk_p11_merged_wave3a_complete` | `/goal resume foreman-kernel` | **FK-P11 MERGED** (Gate-3 delegated RS-2.1; 206/206; **Wave-3a exit fragment (c) CLOSED**; `fk-p11-stage-f-closure-2026-09-29.md`). Session merges: FK-P0 (+R32), FK-P1, FK-P2, FK-P9 (+A1–A1e), FK-P10, FK-P11, FK-P17′ — **[INFERENCE] RESOLVED CONFIRMED**. Remaining in-scope: **FK-P18′** (U1-gated; evidence landed). FK-P3/FK-P2B window-gated (FK-P4–P8 transitively). Deferred P12–P16/P19/P21 + dropped P20 + all stranded obligations named in the exit annex |
 | [hierarchical-coordination-sidecars](hierarchical-coordination-sidecars/charter.md) | `hcs_p0_accepted` | `/goal resume hierarchical-coordination-sidecars` | Claimed 2026-09-26; Stage Zero + Gate 1 + P0 records dual-approved (`hcs-p0-acceptance-2026-09-26.md`); next HCS-P1 (RB-01 pin carried) — HCS-P7 stays gated on the FK merge |
 
 ## Active goals

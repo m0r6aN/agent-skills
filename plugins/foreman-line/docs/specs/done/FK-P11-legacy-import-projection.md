@@ -1,7 +1,7 @@
 ---
 ticket: FK-P11
 title: Foreman Kernel - legacy import and projection engine
-status: draft
+status: done
 owner: clinton.morgan
 created: 2026-09-29
 updated: 2026-09-29
