@@ -1014,6 +1014,89 @@ describe('Controls (CTL-01..10)', () => {
   })
 })
 
+// --- T1 machine-readable schemas (closed shapes) -----------------------------
+
+describe('T1 machine-readable schemas (both files closed-shape conformant)', () => {
+  interface SchemaNode {
+    additionalProperties?: boolean
+    required?: string[]
+    properties?: Record<string, SchemaNode>
+    $defs?: Record<string, SchemaNode>
+  }
+
+  function loadSchema(file: string): SchemaNode {
+    return JSON.parse(
+      readFileSync(join(FIXTURES, '..', '..', 'schemas', file), 'utf8'),
+    ) as SchemaNode
+  }
+
+  function collectObjectDefs(node: SchemaNode, found: SchemaNode[]): void {
+    if (node.additionalProperties !== undefined) found.push(node)
+    for (const member of Object.values(node.properties ?? {})) collectObjectDefs(member, found)
+    for (const def of Object.values(node.$defs ?? {})) collectObjectDefs(def, found)
+  }
+
+  test('every object definition is closed (additionalProperties: false)', () => {
+    for (const file of ['legacy-import.schema.json', 'import-epoch.schema.json']) {
+      const objects: SchemaNode[] = []
+      collectObjectDefs(loadSchema(file), objects)
+      assert.ok(objects.length > 0, `${file} carries object definitions`)
+      for (const object of objects) {
+        assert.equal(
+          object.additionalProperties,
+          false,
+          `${file}: object definition must be closed`,
+        )
+      }
+    }
+  })
+
+  test('required member sets match the T1 parser contract exactly', () => {
+    const legacy = loadSchema('legacy-import.schema.json')
+    assert.deepEqual([...(legacy.required ?? [])].sort(), [
+      'apiVersion',
+      'corpusDigest',
+      'corpusManifest',
+      'documentKind',
+      'rows',
+      'sourceLineage',
+    ])
+    const facts = legacy.$defs?.OperationalFacts
+    assert.deepEqual(
+      [...(facts?.required ?? [])].sort(),
+      [
+        'claimedBinding',
+        'claimedHandoffCount',
+        'claimedLeaseHolderPrincipalRef',
+        'claimedPendingTransitionTarget',
+        'claimedRevision',
+        'claimedWakeupCount',
+      ],
+      'F-5 claimedBinding is a required facts member',
+    )
+    const claim = legacy.$defs?.ApprovalClaim
+    assert.deepEqual(
+      [...(claim?.required ?? [])].sort(),
+      ['digest', 'evidenceKind', 'gitIdentity'],
+      'provenance is absent-tolerant (FAB-01); the F05.4 trio is required',
+    )
+    const epoch = loadSchema('import-epoch.schema.json')
+    assert.deepEqual([...(epoch.required ?? [])].sort(), [
+      'corpusDigest',
+      'corpusSourceRevision',
+      'documentDigest',
+      'epochId',
+      'operationId',
+      'principalRef',
+      'recordedAtMicros',
+      'rootCommit',
+      'rowCount',
+      'tipCommit',
+      'toolVersion',
+    ])
+  })
+})
+
 // --- T3 zero-row invariants (failing-when-broken) ----------------------------
 
 describe('T3 zero-row invariants (a write would break these named tests)', () => {
