@@ -799,14 +799,31 @@ function writePhase(
   recordedAtMicros: number,
 ): void {
   const root12 = document.sourceLineage.rootCommit.slice(0, 12)
+  // Group-keyed goal materialization (coordinator rework R2): the T5 goal-group
+  // shape allows multi-row-per-goal documents; exactly one goals row is written
+  // per goal group while events + evidence artifacts stay per ROW (T8: one
+  // import.recorded per imported goal row).
+  const materialized: Record<string, true> = {}
   for (const [index, row] of document.rows.entries()) {
-    insertGoal(storage, {
-      goalId: row.goalId,
-      revision: 1,
-      status: row.claimedStatus,
-      pendingTransitionId: null,
-      updatedAtMicros: recordedAtMicros,
-    })
+    if (materialized[row.goalId] !== true) {
+      const statuses = new Set(
+        document.rows.filter((member) => member.goalId === row.goalId).map((member) => member.claimedStatus),
+      )
+      if (statuses.size > 1) {
+        // Typed fallback guard (R2): a genuine group-invariant break can never
+        // reach the substrate as an untyped write failure. Unreachable after
+        // the conflict phase (which refuses such groups typed, earlier).
+        throw importError('IMPORT_ARGUMENT_INVALID', { fieldPath: 'rows[].goalId' })
+      }
+      insertGoal(storage, {
+        goalId: row.goalId,
+        revision: 1,
+        status: row.claimedStatus,
+        pendingTransitionId: null,
+        updatedAtMicros: recordedAtMicros,
+      })
+      materialized[row.goalId] = true
+    }
     insertEvent(storage, {
       eventId: `impevt-${root12}-${index}`,
       goalId: row.goalId,
@@ -943,7 +960,7 @@ export function runImport(
           .map((event) => event.eventSeq)
         return {
           epoch: epochRecord,
-          importedGoalIds: document.rows.map((row) => row.goalId),
+          importedGoalIds: [...new Set(document.rows.map((row) => row.goalId))],
           recordedEventSeqs,
         }
       } catch (value) {

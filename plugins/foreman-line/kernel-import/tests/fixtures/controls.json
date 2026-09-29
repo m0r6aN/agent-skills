@@ -1226,5 +1226,247 @@
       }
     },
     "expectedOutcome": "imports-both-commit-shapes"
+  },
+  {
+    "id": "CTL-11",
+    "input": {
+      "mode": "imports-grouped",
+      "lineage": {
+        "commits": [
+          {
+            "id": "1111111111111111111111111111111111111111",
+            "parents": []
+          },
+          {
+            "id": "3333333333333333333333333333333333333333",
+            "parents": [
+              "1111111111111111111111111111111111111111"
+            ]
+          },
+          {
+            "id": "2222222222222222222222222222222222222222",
+            "parents": [
+              "3333333333333333333333333333333333333333"
+            ]
+          },
+          {
+            "id": "4444444444444444444444444444444444444444",
+            "parents": [
+              "1111111111111111111111111111111111111111"
+            ]
+          },
+          {
+            "id": "5555555555555555555555555555555555555555555555555555555555555555",
+            "parents": []
+          },
+          {
+            "id": "6666666666666666666666666666666666666666666666666666666666666666",
+            "parents": [
+              "5555555555555555555555555555555555555555555555555555555555555555"
+            ]
+          }
+        ],
+        "blobs": [
+          {
+            "commitId": "2222222222222222222222222222222222222222",
+            "sourcePath": "docs/goals/goal-0001.md",
+            "text": "legacy goal state: goal-0001\nstatus: active\n"
+          },
+          {
+            "commitId": "2222222222222222222222222222222222222222",
+            "sourcePath": "docs/goals/goal-0002.md",
+            "text": "legacy goal state: goal-0002\nstatus: completed\n"
+          },
+          {
+            "commitId": "2222222222222222222222222222222222222222",
+            "sourcePath": "docs/goals/goal-0003.md",
+            "text": "legacy goal state: goal-0003\nstatus: proposed\n"
+          },
+          {
+            "commitId": "2222222222222222222222222222222222222222",
+            "sourcePath": "docs/proof/approval-1.md",
+            "text": "approval evidence for goal-0001\n"
+          },
+          {
+            "commitId": "2222222222222222222222222222222222222222",
+            "sourcePath": "docs/proof/approval-2.md",
+            "text": "approval evidence for goal-0002\n"
+          },
+          {
+            "commitId": "2222222222222222222222222222222222222222",
+            "sourcePath": "docs/ratify/canon-1.md",
+            "text": "ratified canon bytes v1\n"
+          },
+          {
+            "commitId": "2222222222222222222222222222222222222222",
+            "sourcePath": "docs/legacy/skipped.md",
+            "text": "legacy record intentionally skipped\n"
+          },
+          {
+            "commitId": "3333333333333333333333333333333333333333",
+            "sourcePath": "docs/goals/goal-0001.md",
+            "text": "legacy goal state: goal-0001\nstatus: active\n"
+          },
+          {
+            "commitId": "3333333333333333333333333333333333333333",
+            "sourcePath": "docs/goals/goal-0002.md",
+            "text": "legacy goal state: goal-0002\nstatus: completed\n"
+          },
+          {
+            "commitId": "3333333333333333333333333333333333333333",
+            "sourcePath": "docs/goals/goal-0003.md",
+            "text": "legacy goal state: goal-0003\nstatus: proposed\n"
+          },
+          {
+            "commitId": "3333333333333333333333333333333333333333",
+            "sourcePath": "docs/proof/approval-1.md",
+            "text": "approval evidence for goal-0001\n"
+          },
+          {
+            "commitId": "3333333333333333333333333333333333333333",
+            "sourcePath": "docs/proof/approval-2.md",
+            "text": "approval evidence for goal-0002\n"
+          },
+          {
+            "commitId": "3333333333333333333333333333333333333333",
+            "sourcePath": "docs/ratify/canon-1.md",
+            "text": "ratified canon bytes v1\n"
+          },
+          {
+            "commitId": "3333333333333333333333333333333333333333",
+            "sourcePath": "docs/legacy/skipped.md",
+            "text": "legacy record intentionally skipped\n"
+          },
+          {
+            "commitId": "4444444444444444444444444444444444444444",
+            "sourcePath": "docs/proof/approval-1.md",
+            "text": "approval evidence for goal-0001\n"
+          },
+          {
+            "commitId": "6666666666666666666666666666666666666666666666666666666666666666",
+            "sourcePath": "docs/goals/goal-0001.md",
+            "text": "legacy goal state: goal-0001\nstatus: active\n"
+          },
+          {
+            "commitId": "6666666666666666666666666666666666666666666666666666666666666666",
+            "sourcePath": "docs/goals/goal-0002.md",
+            "text": "legacy goal state: goal-0002\nstatus: completed\n"
+          },
+          {
+            "commitId": "6666666666666666666666666666666666666666666666666666666666666666",
+            "sourcePath": "docs/goals/goal-0003.md",
+            "text": "legacy goal state: goal-0003\nstatus: proposed\n"
+          },
+          {
+            "commitId": "6666666666666666666666666666666666666666666666666666666666666666",
+            "sourcePath": "docs/proof/approval-1.md",
+            "text": "approval evidence for goal-0001\n"
+          },
+          {
+            "commitId": "6666666666666666666666666666666666666666666666666666666666666666",
+            "sourcePath": "docs/proof/approval-2.md",
+            "text": "approval evidence for goal-0002\n"
+          },
+          {
+            "commitId": "6666666666666666666666666666666666666666666666666666666666666666",
+            "sourcePath": "docs/ratify/canon-1.md",
+            "text": "ratified canon bytes v1\n"
+          },
+          {
+            "commitId": "6666666666666666666666666666666666666666666666666666666666666666",
+            "sourcePath": "docs/legacy/skipped.md",
+            "text": "legacy record intentionally skipped\n"
+          }
+        ]
+      },
+      "document": {
+        "apiVersion": "0.1.0",
+        "documentKind": "legacy-import",
+        "corpusDigest": "sha256:d47b6d132ba82a37be9e0c608b0b15d096b2aeb6388e7820a3804f07d2851316",
+        "sourceLineage": {
+          "rootCommit": "1111111111111111111111111111111111111111",
+          "tipCommit": "2222222222222222222222222222222222222222"
+        },
+        "corpusManifest": {
+          "manifestKind": "legacy-corpus-manifest",
+          "sourceRevision": "2222222222222222222222222222222222222222",
+          "items": [
+            {
+              "sourcePath": "docs/goals/goal-0001.md",
+              "sourceDigest": "sha256:05df77b5dfae47ae392ee379d17d8d8240d5d9f4f3df091defbab269420a9e48",
+              "disposition": "import",
+              "reason": "legacy record"
+            },
+            {
+              "sourcePath": "docs/goals/goal-0002.md",
+              "sourceDigest": "sha256:91e8fcaa27b9fdb6acf6cc1897f559dcdd72e38e856a084ff3c1e2a76627a256",
+              "disposition": "import",
+              "reason": "legacy record"
+            },
+            {
+              "sourcePath": "docs/proof/approval-2.md",
+              "sourceDigest": "sha256:5cf7d80b3b25b0d4f8fc541930c30c0b4ee366449741488d51960e54899d43c0",
+              "disposition": "import",
+              "reason": "legacy record"
+            }
+          ]
+        },
+        "rows": [
+          {
+            "goalId": "goal-0001",
+            "claimedStatus": "active",
+            "source": {
+              "sourcePath": "docs/goals/goal-0001.md",
+              "sourceDigest": "sha256:05df77b5dfae47ae392ee379d17d8d8240d5d9f4f3df091defbab269420a9e48",
+              "sourceCommit": "2222222222222222222222222222222222222222"
+            },
+            "claimedRatificationRefs": [
+              {
+                "gitIdentity": "charter.md",
+                "digest": "sha256:8382b3f5c9d0a46101dfa905aca2260036c47f6133c93fd5e90911b9dc1bbf69",
+                "provenance": {
+                  "sourcePath": "docs/ratify/canon-1.md",
+                  "sourceDigest": "sha256:8382b3f5c9d0a46101dfa905aca2260036c47f6133c93fd5e90911b9dc1bbf69",
+                  "sourceCommit": "2222222222222222222222222222222222222222"
+                }
+              }
+            ],
+            "claimedApprovals": [],
+            "claimedOperationalFacts": {
+              "claimedRevision": null,
+              "claimedLeaseHolderPrincipalRef": null,
+              "claimedPendingTransitionTarget": null,
+              "claimedWakeupCount": null,
+              "claimedHandoffCount": null,
+              "claimedBinding": null
+            }
+          },
+          {
+            "goalId": "goal-0001",
+            "claimedStatus": "active",
+            "source": {
+              "sourcePath": "docs/goals/goal-0001.md",
+              "sourceDigest": "sha256:05df77b5dfae47ae392ee379d17d8d8240d5d9f4f3df091defbab269420a9e48",
+              "sourceCommit": "2222222222222222222222222222222222222222"
+            },
+            "claimedRatificationRefs": [],
+            "claimedApprovals": [],
+            "claimedOperationalFacts": {
+              "claimedRevision": null,
+              "claimedLeaseHolderPrincipalRef": null,
+              "claimedPendingTransitionTarget": null,
+              "claimedWakeupCount": null,
+              "claimedHandoffCount": null,
+              "claimedBinding": null
+            }
+          }
+        ]
+      },
+      "request": {
+        "principalRef": "operator-1",
+        "operationId": "op-0001"
+      }
+    },
+    "expectedOutcome": "imports-grouped"
   }
 ]

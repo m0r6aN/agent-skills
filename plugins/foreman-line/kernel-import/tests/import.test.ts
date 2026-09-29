@@ -118,7 +118,7 @@ function assertInventoryComplete(rows: FixtureRow[]): void {
   const hostileExpected = Object.values(HOSTILE_ENUMS).reduce((total, count) => total + count, 0)
   const expectedIds = [
     ...Object.entries(HOSTILE_ENUMS).flatMap(([prefix, count]) => rangeIds(prefix, count)),
-    ...rangeIds('CTL', 10),
+    ...rangeIds('CTL', 11),
     ...rangeIds('CAN', 8),
   ]
   const hostileCount = Object.values(HOSTILE_FILES)
@@ -830,6 +830,62 @@ describe('Controls (CTL-01..10)', () => {
         1,
         'evidence records only, never conclusions',
       )
+    } finally {
+      closeStorage(ctx.storage)
+    }
+  })
+
+  test('CTL-11 valid 2-row same-goalId group imports cleanly (group-keyed write, R2)', () => {
+    const row = loadRows('controls.json').find((entry) => entry.id === 'CTL-11')
+    assert.ok(row !== undefined)
+    const ctx = contextFor(row.input)
+    try {
+      const result = runImportOf(ctx, row.input)
+      assert.deepEqual(result.importedGoalIds, ['goal-0001'], 'distinct group goals')
+      const goal = getGoal(ctx.storage, 'goal-0001')
+      assert.equal(goal?.revision, 1)
+      assert.equal(goal?.status, 'active')
+      const events = readAllEvents(ctx.storage)
+      assert.equal(events.filter((event) => event.kind === 'import.recorded').length, 2, 'one event per ROW')
+      assert.equal(events.filter((event) => event.kind === 'import.epoch').length, 1)
+      assert.equal(result.recordedEventSeqs.length, 3)
+      assert.equal(result.epoch.rowCount, 2, 'rowCount counts rows, not groups')
+      const claims = readImportedGoalClaims(ctx.storage)
+      assert.equal(claims.length, 2, 'per-row claims recorded')
+      const withRefs = claims.filter((claim) => claim.claimedRatificationRefs.length > 0)
+      assert.equal(withRefs.length, 1, 'evidence artifacts recorded per row')
+    } finally {
+      closeStorage(ctx.storage)
+    }
+  })
+
+  test('R2 failing-when-broken: a group-invariant break refuses TYPED (never an untyped write failure)', () => {
+    const row = loadRows('controls.json').find((entry) => entry.id === 'CTL-11')
+    assert.ok(row !== undefined)
+    const ctx = contextFor(row.input)
+    try {
+      const base = row.input.document as {
+        rows: Record<string, unknown>[]
+        corpusDigest: string
+      }
+      const disagreeing = {
+        ...(base.rows[1] as Record<string, unknown>),
+        claimedStatus: 'cancelled',
+      }
+      const document = { ...base, rows: [base.rows[0], disagreeing] }
+      document.corpusDigest = corpusDigestOf(document.rows as never)
+      runImport(ctx.importer, {
+        importDocument: document,
+        principalRef: REQUEST.principalRef,
+        operationId: REQUEST.operationId,
+      })
+      assert.fail('must refuse')
+    } catch (error) {
+      const typed = error as ImportError
+      assert.equal(typed.name, 'ImportError', 'typed refusal — never StorageError')
+      assert.equal(typed.code, 'DIVERGENCE_STOP')
+      assert.equal((typed.diagnostic as Record<string, string>).reasonCode, 'status')
+      assertNothingImported(ctx, ['goal-0001'])
     } finally {
       closeStorage(ctx.storage)
     }
