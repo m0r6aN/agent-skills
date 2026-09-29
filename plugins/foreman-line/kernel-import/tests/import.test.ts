@@ -11,7 +11,7 @@
  * rows — failing-when-broken).
  */
 import assert from 'node:assert/strict'
-import { spawn } from 'node:child_process'
+import { spawn, spawnSync } from 'node:child_process'
 import { mkdtempSync, readFileSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
@@ -518,20 +518,38 @@ function spawnWorkerToKill(
     settled = true
     resolvePromise({ killed, reached })
   }
+  // Hard kill is asynchronous: the reopen must not race the OS releasing the
+  // killed worker's SQLite handle (the interruption suite's hardKill/
+  // waitClosed convention — the close event is the awaited condition, with
+  // taskkill as the force fallback). The timer below is only a FAILURE BOUND on
+  // OS process termination (integration exception: no fake timer can drive
+  // TerminateProcess deterministically) so a weak SIGKILL cannot hang the suite.
+  const killAndWaitClosed = (): void => {
+    if (killed) return
+    killed = true
+    const pid = child.pid
+    child.kill()
+    const failureBound = setTimeout(() => {
+      if (pid !== undefined) spawnSync('taskkill', ['/PID', String(pid), '/T', '/F'])
+      settle()
+    }, 10_000)
+    child.once('close', () => {
+      clearTimeout(failureBound)
+      settle()
+    })
+  }
   child.stdout.on('data', (chunk: Buffer) => {
     for (const line of chunk.toString('utf8').split('\n')) {
       if (line.startsWith('REACHED:')) {
         reached.push(line.trim())
-        if (line.includes('mid-row-insert') && !killed) {
-          killed = true
-          child.kill()
-          settle()
-        }
+        if (line.includes('mid-row-insert')) killAndWaitClosed()
       }
-      if (line.includes('DONE')) settle()
+      if (line.includes('DONE') && !killed) settle()
     }
   })
-  child.on('exit', settle)
+  child.on('exit', () => {
+    if (!killed) settle()
+  })
   child.on('error', settle)
   return promise
 }
