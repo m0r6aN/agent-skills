@@ -49,7 +49,7 @@ function makeValidDatabase(root: string, rows: number): void {
     storage.driver
       .prepare(
         `INSERT INTO events (event_id, goal_id, kind, payload, payload_digest, principal_ref, operation_id, recorded_at_micros)
-         VALUES (?, 'goal-1', 'created', ?, '${`sha256:${'a'.repeat(64)}`}', 'principal-1', ?, ?)`,
+         VALUES (?, 'goal-1', 'transition.requested', ?, '${`sha256:${'a'.repeat(64)}`}', 'principal-1', ?, ?)`,
       )
       .run(`evt-${i}`, 'x'.repeat(2000), `op-${i}`, i)
   }

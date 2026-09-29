@@ -80,7 +80,7 @@ test('FULL-01: insert past max_page_count is STORAGE_DISK_FULL with clean rollba
       insertEvent(storage, {
         eventId: `evt-${i}`,
         goalId: 'goal-1',
-        kind: 'created',
+        kind: 'transition.requested',
         payload: 'x'.repeat(2000),
         payloadDigest: `sha256:${'a'.repeat(64)}`,
         principalRef: 'principal-1',

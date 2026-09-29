@@ -188,7 +188,7 @@ test('CONC-02: readers during a writer transaction observe the pre-transaction s
   insertEvent(storage, {
     eventId: 'evt-1',
     goalId: 'goal-1',
-    kind: 'created',
+    kind: 'transition.requested',
     payload: '{}',
     payloadDigest: `sha256:${'a'.repeat(64)}`,
     principalRef: 'principal-1',
@@ -199,7 +199,7 @@ test('CONC-02: readers during a writer transaction observe the pre-transaction s
     insertEvent(inner, {
       eventId: 'evt-2',
       goalId: 'goal-1',
-      kind: 'updated',
+      kind: 'transition.applied',
       payload: '{}',
       payloadDigest: `sha256:${'b'.repeat(64)}`,
       principalRef: 'principal-1',
@@ -300,7 +300,7 @@ test('CONC-03: two processes genuinely race open + migrate; loser observes migra
   const ledger = storage.driver.prepare('SELECT version FROM schema_migrations').all() as {
     version: number
   }[]
-  assert.equal(ledger.length, 4, 'each version is applied exactly once')
+  assert.equal(ledger.length, 5, 'each version is applied exactly once')
   closeStorage(storage)
   rmSync(root, { recursive: true, force: true })
   rmSync(rendezvous, { recursive: true, force: true })
@@ -316,7 +316,7 @@ test('CONC-04: backupTo under concurrent write attempts yields a consistent snap
   insertEvent(storage, {
     eventId: 'evt-1',
     goalId: 'goal-1',
-    kind: 'created',
+    kind: 'transition.requested',
     payload: '{}',
     payloadDigest: `sha256:${'a'.repeat(64)}`,
     principalRef: 'principal-1',
@@ -334,7 +334,7 @@ test('CONC-04: backupTo under concurrent write attempts yields a consistent snap
         writer
           .prepare(
             `INSERT INTO events (event_id, goal_id, kind, payload, payload_digest, principal_ref, operation_id, recorded_at_micros)
-             VALUES ('evt-concurrent', 'goal-1', 'created', '{}', '${`sha256:${'c'.repeat(64)}`}', 'principal-1', 'op-9', ${T0})`,
+             VALUES ('evt-concurrent', 'goal-1', 'transition.requested', '{}', '${`sha256:${'c'.repeat(64)}`}', 'principal-1', 'op-9', ${T0})`,
           )
           .run()
       } catch {

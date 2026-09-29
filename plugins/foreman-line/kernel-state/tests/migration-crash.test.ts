@@ -31,6 +31,7 @@ const PACKAGED_0003 = readFileSync(
 const PACKAGED_0004 = readFileSync(
   join(PKG_ROOT, 'migrations', '0004-idempotency-recorded-result.sql'),
 )
+const PACKAGED_0005 = readFileSync(join(PKG_ROOT, 'migrations', '0005-events-kind-checks.sql'))
 
 const MIGRATION = JSON.parse(
   readFileSync(join(HERE, 'fixtures', 'hostile', 'migration.json'), 'utf8'),
@@ -106,6 +107,7 @@ async function runKillScenario(faultVersion: number): Promise<void> {
   writeFileSync(join(set, '0002-b.sql'), PACKAGED_0002)
   writeFileSync(join(set, '0003-c.sql'), PACKAGED_0003)
   writeFileSync(join(set, '0004-d.sql'), PACKAGED_0004)
+  writeFileSync(join(set, '0005-e.sql'), PACKAGED_0005)
   writeFileSync(join(root, 'child.mts'), CHILD_SOURCE)
 
   const child = spawn(
@@ -157,7 +159,7 @@ async function runKillScenario(faultVersion: number): Promise<void> {
   }[]
   assert.deepEqual(
     after.map((row) => row.version),
-    [1, 2, 3, 4],
+    [1, 2, 3, 4, 5],
   )
   // The real migrations landed intact: the A1 goals CHECK, the A1b
   // transitions CHECK, and the A2 lookup-bound index are all live.

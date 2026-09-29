@@ -87,7 +87,7 @@ const CHILD_SOURCE = [
   '    insertEvent(s, {',
   '      eventId: id,',
   "      goalId: 'goal-1',",
-  "      kind: 'created',",
+  "      kind: 'transition.requested',",
   "      payload: JSON.stringify({ n: n, pad: 'x'.repeat(12000) }),",
   "      payloadDigest: 'sha256:' + 'a'.repeat(64),",
   "      principalRef: 'principal-1',",

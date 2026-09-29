@@ -48,6 +48,7 @@ const PACKAGED_0003 = readFileSync(
 const PACKAGED_0004 = readFileSync(
   join(PKG_ROOT, 'migrations', '0004-idempotency-recorded-result.sql'),
 )
+const PACKAGED_0005 = readFileSync(join(PKG_ROOT, 'migrations', '0005-events-kind-checks.sql'))
 const T0 = 1_700_000_000_000_000
 
 interface ConcRecord {
@@ -76,7 +77,7 @@ function seedWithEvents(root: string, backupRoot: string): void {
   insertEvent(storage, {
     eventId: 'evt-1',
     goalId: 'goal-1',
-    kind: 'created',
+    kind: 'transition.requested',
     payload: '{"n":1}',
     payloadDigest: `sha256:${'a'.repeat(64)}`,
     principalRef: 'principal-1',
@@ -97,7 +98,7 @@ test('POS-04: backupTo -> verifyBackup -> operator restore sequence in-process',
   insertEvent(storage, {
     eventId: 'evt-2',
     goalId: 'goal-1',
-    kind: 'updated',
+    kind: 'transition.applied',
     payload: '{"n":2}',
     payloadDigest: `sha256:${'b'.repeat(64)}`,
     principalRef: 'principal-1',
@@ -111,7 +112,7 @@ test('POS-04: backupTo -> verifyBackup -> operator restore sequence in-process',
   closeStorage(storage)
   // (b) verify the chosen backup independently of the producing process.
   const verified = verifyBackup(join(backupRoot, 'restore-point.db'))
-  assert.equal(verified.schemaVersion, 4)
+  assert.equal(verified.schemaVersion, 5)
   // (c) checkpoint the live database and move the prior file aside
   //     (never overwrite without a retained prior copy).
   const live = openStorage(configFor(root, backupRoot))
@@ -232,14 +233,15 @@ test('verifyBackup: a backup newer than the packaged maximum refuses like STORAG
   writeFileSync(join(set, '0002-b.sql'), PACKAGED_0002)
   writeFileSync(join(set, '0003-c.sql'), PACKAGED_0003)
   writeFileSync(join(set, '0004-d.sql'), PACKAGED_0004)
-  writeFileSync(join(set, '0005-e.sql'), 'CREATE TABLE t_five (x INTEGER NOT NULL)')
+  writeFileSync(join(set, '0005-e.sql'), PACKAGED_0005)
+  writeFileSync(join(set, '0006-f.sql'), 'CREATE TABLE t_six (x INTEGER NOT NULL)')
   const storage = openStorageWithDriver(configFor(root, backupRoot), undefined, {
     migrationDir: set,
   })
   const manifest = await backupTo(storage, 'future.db')
-  assert.equal(manifest.schemaVersion, 5)
+  assert.equal(manifest.schemaVersion, 6)
   closeStorage(storage)
-  // The packaged maximum is 4: this backup refuses exactly like SCHEMA_AHEAD.
+  // The packaged maximum is 5: this backup refuses exactly like SCHEMA_AHEAD.
   assert.throws(
     () => verifyBackup(join(backupRoot, 'future.db')),
     (error: unknown) => {
