@@ -364,7 +364,10 @@ Render contract (byte-stability invariant):
    render a guess.
 4. **Sanitization (#31) + linear-time (#19):** every interpolated external string
    (goal ids, source paths, `gitIdentity`, any legacy text) passes the deterministic
-   `sanitizeForMarkdown` before it enters the template: `\r` removed; embedded newlines
+   `sanitizeForMarkdown` before it enters the template: **backslash escapes first**
+   (coordinator rework R1 — the escaper escapes itself: every `\` becomes `\\`
+   before any other escape, so a raw input backslash can never re-mark a
+   delimiter as live); `\r` removed; embedded newlines
    collapsed to a single line; control chars U+0000–U+001F/U+007F and format chars
    (U+200B, U+200E/F, U+202A–U+202E, U+FEFF) replaced with a fixed literal;
    Markdown structural delimiters escaped deterministically (backtick runs, `|`,
@@ -1038,3 +1041,8 @@ authorization, one amendment commit at chain end):
 7. **getEpoch clarification:** keyed by lineage root
    (`getEpoch(importer, { rootCommit })`; `getAllEpochs` returns the full set) —
    T9's "single recorded EpochRecord" reads as per-lineage under OQ-7.
+8. **R1 escaper-first (coordinator rework R1, 2026-09-29):** T6 rule 4's
+   sanitizer escapes `\` → `\\` BEFORE all other escapes (the escaper escapes
+   itself first); structural-delimiter escapes are parity-escaped end to end.
+   Contract semantics of T6 rule 4 / F9 unchanged — the prior implementation
+   was wrong (a raw `\` could re-mark an escaped delimiter live).

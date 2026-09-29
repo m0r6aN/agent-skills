@@ -102,7 +102,7 @@ const HOSTILE_ENUMS: Record<string, number> = {
   PRJ: 7,
   CUR: 4,
   INT: 4,
-  INJ: 7,
+  INJ: 11,
   ERR: 3,
   CM: 6,
 }

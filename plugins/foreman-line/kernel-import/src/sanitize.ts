@@ -8,16 +8,20 @@
  *  3. each control char U+0000–U+001F remaining after rules 1–2, U+007F, each
  *     format/bidi char (U+200B, U+200E, U+200F, U+202A–U+202E, U+FEFF), and
  *     each unpaired surrogate (lone high or low) becomes U+FFFD;
- *  4. Markdown structural delimiters escape deterministically: every backtick
- *     becomes backslash+backtick, every `|` becomes `\|`, every `<` becomes
- *     `\<`, every `>` becomes `\>` (HTML-ish payloads render inert);
+ *  4. Markdown structural delimiters escape deterministically, ESCAPER-FIRST
+ *     (coordinator rework R1): every backslash becomes `\\` before any other
+ *     escape, then every backtick becomes backslash+backtick, every `|` becomes
+ *     `\|`, every `<` becomes `\<`, every `>` becomes `\>` (HTML-ish payloads
+ *     render inert; a raw input backslash can never re-mark a delimiter as
+ *     live — `\\` renders one literal backslash and the next char stays
+ *     escaped);
  *  5. the single line start (newlines are already collapsed) escapes its
  *     structural prefix: a leading `>` is already escaped by rule 4 and is
  *     never double-escaped; a leading `#` or `-` gets one prefixed backslash;
  *     a leading digit run followed by `.` gets that dot escaped
  *     (`12.` -> `12\.`);
  *  6. everything else passes through byte-for-byte (no Unicode normalization,
- *     no case folding).
+ *     no case folding; backslashes are NOT raw — see rule 4).
  *
  * Linearity (#19): one bounded pass emits an array of chunks joined exactly
  * once; rule 5 touches only the output prefix. No regexes; no loop-time string
@@ -27,6 +31,8 @@
 const UFFFD = '\ufffd'
 
 const DELIMITER_ESCAPES: Record<string, string> = {
+  // Escaper-first (R1): the escaper escapes ITSELF before all other escapes.
+  '\\': '\\\\',
   '`': '\\`',
   '|': '\\|',
   '<': '\\<',
