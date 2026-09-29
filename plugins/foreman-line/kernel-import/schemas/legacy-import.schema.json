@@ -29,6 +29,7 @@
     "corpusManifest": { "$ref": "#/$defs/CorpusManifest" },
     "rows": {
       "type": "array",
+      "minItems": 1,
       "maxItems": 1024,
       "items": { "$ref": "#/$defs/LegacyGoalRecord" }
     }

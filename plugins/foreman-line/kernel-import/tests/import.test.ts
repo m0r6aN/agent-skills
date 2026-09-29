@@ -289,6 +289,27 @@ function assertRefusal(ctx: FixtureContext, row: FixtureRow, error: unknown): vo
   assertNothingImported(ctx, rowGoalIds(row.input))
 }
 
+/**
+ * Reopen after a hard kill. Windows can briefly deny the next open of the
+ * killed process's SQLite sidecar files (the WAL pragma step races the OS
+ * handle release). A bounded retry waits out that release — the same
+ * integration-exception class as the kill failure bound (no deterministic
+ * clock models TerminateProcess handle release). The bound failing is a loud
+ * test failure, never a skip. `Atomics.wait` parks without a timer handle.
+ */
+function reopenAfterKill(config: OpenStorageConfig, deadlineMs = 5_000): Storage {
+  const started = Date.now()
+  const park = new Int32Array(new SharedArrayBuffer(4))
+  for (;;) {
+    try {
+      return openStorage(config)
+    } catch (error) {
+      if (Date.now() - started > deadlineMs) throw error
+      Atomics.wait(park, 0, 0, 25)
+    }
+  }
+}
+
 // --- row-driven hostile suites (F2/F3/F4/F11) --------------------------------
 
 function driveRefusalRows(file: string): void {
@@ -574,7 +595,7 @@ describe('F4 recovery-positive (REI-04)', () => {
       outcome.reached.some((line) => line.includes('mid-row-insert')),
       'asserted-reached point observed before the kill',
     )
-    const reopened = openStorage({
+    const reopened = reopenAfterKill({
       storageRoot: dir,
       databaseFileName: 'state.db',
       createIfMissing: true,
@@ -1100,6 +1121,32 @@ describe('T1 machine-readable schemas (both files closed-shape conformant)', () 
 // --- T3 zero-row invariants (failing-when-broken) ----------------------------
 
 describe('T3 zero-row invariants (a write would break these named tests)', () => {
+  test('an empty corpus refuses typed (the epoch event must bind a real goal)', () => {
+    const source = loadRows('hostile/digest-mismatch.json')
+    const base = source[0]?.input.document as {
+      rows: Record<string, unknown>[]
+      corpusDigest: string
+    }
+    const ctx = contextFor(source[0]?.input ?? {})
+    try {
+      const document = { ...base, rows: [] }
+      document.corpusDigest = corpusDigestOf(document.rows as never)
+      runImport(ctx.importer, {
+        importDocument: document,
+        principalRef: REQUEST.principalRef,
+        operationId: REQUEST.operationId,
+      })
+      assert.fail('must refuse')
+    } catch (error) {
+      const typed = error as ImportError
+      assert.equal(typed.code, 'IMPORT_ARGUMENT_INVALID')
+      assert.deepEqual(typed.diagnostic, { fieldPath: '$.rows' })
+      assertNothingImported(ctx, [])
+    } finally {
+      closeStorage(ctx.storage)
+    }
+  })
+
   test('import creates zero leases / zero transitions / zero idempotency_keys rows', () => {
     const row = loadRows('controls.json').find((entry) => entry.id === 'CTL-01')
     assert.ok(row !== undefined)

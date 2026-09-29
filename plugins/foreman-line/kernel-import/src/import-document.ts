@@ -543,9 +543,16 @@ export function parseImportDocument(value: unknown): ImportDocument {
       tipCommit: requireCommitId(lineage.tipCommit, '$.sourceLineage.tipCommit'),
     },
     corpusManifest: parseCorpusManifest(record.corpusManifest, '$.corpusManifest'),
-    rows: requireArray(record.rows, '$.rows').map((member, index) =>
-      parseLegacyGoalRecord(member, `$.rows[${index}]`),
-    ),
+    // A cutover import carries at least one legacy record: the epoch event must
+    // bind a real goal (substrate events.goal_id FK) — an empty corpus refuses
+    // typed rather than surfacing later as an untyped substrate fault (#1).
+    rows: (() => {
+      const rows = requireArray(record.rows, '$.rows').map((member, index) =>
+        parseLegacyGoalRecord(member, `$.rows[${index}]`),
+      )
+      if (rows.length === 0) structurallyInvalid('$.rows')
+      return rows
+    })(),
   }
 }
 
