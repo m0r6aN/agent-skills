@@ -25,6 +25,8 @@ import {
   getUnreleasedLease,
   insertEvent,
   insertGoal,
+  insertIdempotencyKey,
+  insertLease,
   type OpenStorageConfig,
   openStorage,
   type Storage,
@@ -777,6 +779,103 @@ describe('import precedence edges (the documented first-failure order is what fi
         assert.fail('must refuse')
       } catch (error) {
         assert.equal((error as ImportError).code, 'IMPORT_EPOCH_EXISTS')
+      }
+    } finally {
+      closeStorage(ctx.storage)
+    }
+  })
+
+  test('F-7 lease trigger: same-lineage rerun with a live-lease claim refuses IMPORT_EPOCH_EXISTS (R3)', () => {
+    const ctl01 = loadRows('controls.json').find((entry) => entry.id === 'CTL-01')
+    assert.ok(ctl01 !== undefined)
+    const ctx = contextFor(ctl01.input)
+    try {
+      runImportOf(ctx, ctl01.input)
+      // Post-cutover a live lease exists on the imported goal (FK-P10 claim).
+      insertLease(ctx.storage, {
+        leaseId: 'lease-f7-1',
+        goalId: 'goal-0001',
+        ownerPrincipalRef: 'op-live',
+        casRevision: 1,
+      })
+      assert.ok(getUnreleasedLease(ctx.storage, 'goal-0001') !== null, 'live lease seeded')
+      const base = ctl01.input.document as {
+        rows: Record<string, unknown>[]
+        corpusDigest: string
+      }
+      // Fixture documents are parsed JSON: named one-line casts (boundary data).
+      const firstRow = base.rows[0] as { claimedOperationalFacts: Record<string, unknown> }
+      const rerun = {
+        ...(base.rows[0] as Record<string, unknown>),
+        claimedOperationalFacts: {
+          ...firstRow.claimedOperationalFacts,
+          claimedLeaseHolderPrincipalRef: 'op-rerun',
+        },
+      }
+      const document = { ...base, rows: [rerun] }
+      document.corpusDigest = corpusDigestOf(document.rows as never)
+      try {
+        runImport(ctx.importer, {
+          importDocument: document,
+          principalRef: REQUEST.principalRef,
+          operationId: 'op-rerun-1',
+        })
+        assert.fail('must refuse')
+      } catch (error) {
+        const typed = error as ImportError
+        assert.equal(typed.code, 'IMPORT_EPOCH_EXISTS', 'the epoch refusal — never DIVERGENCE_STOP(lease)')
+      }
+    } finally {
+      closeStorage(ctx.storage)
+    }
+  })
+
+  test('F-7 binding trigger: same-lineage rerun with a recorded-binding claim refuses IMPORT_EPOCH_EXISTS (R4)', () => {
+    const ctl01 = loadRows('controls.json').find((entry) => entry.id === 'CTL-01')
+    assert.ok(ctl01 !== undefined)
+    const ctx = contextFor(ctl01.input)
+    try {
+      runImportOf(ctx, ctl01.input)
+      const binding = {
+        principalRef: 'op-bind',
+        operationId: 'op-bind-1',
+        repositoryRef: 'repo-1',
+        worktreeRef: 'wt-1',
+      }
+      insertIdempotencyKey(ctx.storage, {
+        ...binding,
+        payloadDigest: `sha256:${'0'.repeat(64)}`,
+      })
+      assert.ok(getIdempotencyKey(ctx.storage, binding) !== null, 'recorded binding seeded')
+      const base = ctl01.input.document as {
+        rows: Record<string, unknown>[]
+        corpusDigest: string
+      }
+      // Fixture documents are parsed JSON: named one-line casts (boundary data).
+      const firstRow = base.rows[0] as { claimedOperationalFacts: Record<string, unknown> }
+      const rerun = {
+        ...(base.rows[0] as Record<string, unknown>),
+        claimedOperationalFacts: {
+          ...firstRow.claimedOperationalFacts,
+          claimedBinding: binding,
+        },
+      }
+      const document = { ...base, rows: [rerun] }
+      document.corpusDigest = corpusDigestOf(document.rows as never)
+      try {
+        runImport(ctx.importer, {
+          importDocument: document,
+          principalRef: REQUEST.principalRef,
+          operationId: 'op-rerun-2',
+        })
+        assert.fail('must refuse')
+      } catch (error) {
+        const typed = error as ImportError
+        assert.equal(
+          typed.code,
+          'IMPORT_EPOCH_EXISTS',
+          'the epoch refusal — never DIVERGENCE_STOP(idempotency)',
+        )
       }
     } finally {
       closeStorage(ctx.storage)

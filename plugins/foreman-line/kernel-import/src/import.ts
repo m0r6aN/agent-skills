@@ -632,7 +632,9 @@ function conflictPhase(storage: Storage, document: ImportDocument, rootCommit: s
       }
       holders.add(holder)
     }
-    if (holders.size > 0 && goalHasLiveLease(storage, goalId)) {
+    // F-7 gate (coordinator rework R3): a same-lineage rerun is the epoch's
+    // refusal — the claim-vs-live-lease check never fires for exempt goals.
+    if (!exempt && holders.size > 0 && goalHasLiveLease(storage, goalId)) {
       divergence('lease', goalId, 'claimedOperationalFacts.claimedLeaseHolderPrincipalRef')
     }
 
@@ -686,17 +688,21 @@ function conflictPhase(storage: Storage, document: ImportDocument, rootCommit: s
     }
 
     // 8. idempotency (a legacy binding claim colliding with a recorded binding)
-    for (const row of rows) {
-      const binding = row.claimedOperationalFacts.claimedBinding
-      if (binding === null) continue
-      let recordedBinding: IdempotencyKeyRow | null = null
-      try {
-        recordedBinding = getIdempotencyKey(storage, binding)
-      } catch (value) {
-        rethrowSubstrate(value)
-      }
-      if (recordedBinding !== null) {
-        divergence('idempotency', goalId, 'claimedOperationalFacts.claimedBinding')
+    // F-7 gate (coordinator rework R4): exempt same-lineage goals rerun to the
+    // epoch refusal; the ALIEN direction stays DIVERGENCE_STOP(idempotency).
+    if (!exempt) {
+      for (const row of rows) {
+        const binding = row.claimedOperationalFacts.claimedBinding
+        if (binding === null) continue
+        let recordedBinding: IdempotencyKeyRow | null = null
+        try {
+          recordedBinding = getIdempotencyKey(storage, binding)
+        } catch (value) {
+          rethrowSubstrate(value)
+        }
+        if (recordedBinding !== null) {
+          divergence('idempotency', goalId, 'claimedOperationalFacts.claimedBinding')
+        }
       }
     }
 
