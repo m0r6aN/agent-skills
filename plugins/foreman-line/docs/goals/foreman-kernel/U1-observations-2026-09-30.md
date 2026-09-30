@@ -76,6 +76,12 @@ The contract's "a producer-authored status is never accepted as the verification
 
 Operational notes: the repo rulesets API `update` rule is parameterless (allow-list = ruleset bypass actors, not rule params); `reviewers` on environments appear under `protection_rules` in GET responses; the design §6.2's "path-scoped ruleset" is enforced as CODEOWNERS + required code-owner review (GitHub rulesets target refs, not paths). Still owner-pending: `U1-verifier-pin.json` pin record + pointing the `u1-verifier-pin` tag at the pinned commit (both AFTER the workflows are placed and their commit SHA exists).
 
+## Workflow placement (2026-09-30, owner direction "proceed")
+
+- Extracted **byte-exact** from the design's fenced blocks (design sha `0d8816eb…`): `u1-produce.yml` = doc lines 160–584 (425 lines), `u1-verify.yml` = doc lines 604–1489 (886 lines) — fence content untouched by the §6.6 prose edit; YAML parse PASS both files.
+- Placed in an isolated worktree off `origin/main` (`D:/Repos/agent-skills-worktrees/u1-workflow-placement`, branch `u1-workflow-placement`, base `e5dce4d`) alongside `.github/CODEOWNERS` — the ambient `dev` checkout's user-owned dirty state untouched.
+- **PR #123** (`m0r6aN/agent-skills`, `u1-workflow-placement` → `main`) opened 2026-09-30 — first live exercise of the new ruleset gate. Owner merge is the remaining mechanical step; then the §6.4 pin procedure (pin record + `u1-verifier-pin` tag at the merge SHA).
+
 ## Coordinator posture notes (analysis, not observation)
 
 - The account already satisfies three of the contract's hard clauses: TLS1.2+, no shared-key/SAS root of trust (OAuth/Entra only), no anonymous blob access. The Azure side's integrity story is good at the account level.
