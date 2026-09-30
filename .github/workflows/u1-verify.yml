@@ -80,6 +80,7 @@ jobs:
       - name: Resolve promotion request (manual by ID, event-driven by producer run ID)
         id: resolve
         env:
+          GH_TOKEN: ${{ github.token }}
           PROMOTION_REQUEST_ID: ${{ inputs.promotion-request-id }}
           PROMOTION_REQUEST_DIGEST: ${{ inputs.promotion-request-digest }}
           WORKFLOW_RUN_ID: ${{ github.event.workflow_run.id }}
@@ -309,6 +310,8 @@ jobs:
           echo "pinned=$RECORDED_SHA" >> "$GITHUB_OUTPUT"
           echo "file-digest=$ACTUAL" >> "$GITHUB_OUTPUT"
       - name: Fetch promotion request (data; digest-bound by the resolver)
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           DIR="plugins/foreman-line/docs/goals/foreman-kernel/promotion-requests"
