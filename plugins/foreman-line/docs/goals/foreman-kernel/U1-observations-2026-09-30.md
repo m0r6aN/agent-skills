@@ -64,6 +64,18 @@ The contract's "a producer-authored status is never accepted as the verification
 - Semantics (verified against Azure provider-operations/ABAC references): `add/action` creates new blobs; excluding `blobs/write` prevents overwriting any existing blob; WORM time-based retention is the write-once backstop for everything committed. The verifier identity can therefore create decision/observation objects and never modify or delete evidence.
 - Lane summary: verifier = read-all + create-decisions-only; producer = create/write new evidence (delete attempts physically fail under retention); custodian = administers controls.
 
+## GitHub protection evidence (2026-09-30, owner-authorized gh/API acts — design §6.1–6.3)
+
+| Control | Configured | Evidence |
+|---|---|---|
+| Ruleset `agent-skills-default` (branch, `~DEFAULT_BRANCH`, active) | `pull_request` **count=1**, `require_code_owner_review=true`, `dismiss_stale_reviews_on_push=true`; `deletion` + `non_fast_forward` blocked; owner's pre-existing `code_scanning`/`code_quality`/`copilot_code_review` rules preserved; bypass = `m0r6aN` only (sole bypass actor, `always`) | ruleset id 24257508, PUT 2026-09-30 (was count=0/codeowners=false — populated but weaker than design §6.2 row 1) |
+| Ruleset `u1-verifier-pin` (tag, `refs/tags/u1-verifier-pin`, active) | `update` + `deletion` restricted; bypass = `m0r6aN` only | ruleset id 24258920, created 2026-09-30 |
+| Environment `u1-verifier` (attended) | RequiredReviewers = `m0r6aN` (protection_rules confirmed via GET); `prevent_self_review=false` (solo-operator necessity — the owner dispatches and approves); deployment refs = `main` + `u1-verifier-pin` (custom policies 61546414/61546415); no secrets | environment GET/PUT 2026-09-30 |
+| Environment `u1-producer` (unattended) | no reviewers, `protected_branches` deployment policy (protected refs only); no secrets | environment PUT 2026-09-30 |
+| CODEOWNERS | `.github/CODEOWNERS` covers both U1 workflows + `U1-verifier-pin.json` + `promotion-requests/` → `@m0r6aN` (design §6.3 verbatim); combined with code-owner review requirement this is the path-scoped review gate (rulesets cannot target paths) | committed 2026-09-30 |
+
+Operational notes: the repo rulesets API `update` rule is parameterless (allow-list = ruleset bypass actors, not rule params); `reviewers` on environments appear under `protection_rules` in GET responses; the design §6.2's "path-scoped ruleset" is enforced as CODEOWNERS + required code-owner review (GitHub rulesets target refs, not paths). Still owner-pending: `U1-verifier-pin.json` pin record + pointing the `u1-verifier-pin` tag at the pinned commit (both AFTER the workflows are placed and their commit SHA exists).
+
 ## Coordinator posture notes (analysis, not observation)
 
 - The account already satisfies three of the contract's hard clauses: TLS1.2+, no shared-key/SAS root of trust (OAuth/Entra only), no anonymous blob access. The Azure side's integrity story is good at the account level.
