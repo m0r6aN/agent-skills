@@ -1,3 +1,7 @@
+export type { CatalogEligibilityInput, CatalogEligibilityResult } from './catalog-eligibility-adapter.js'
+export { evaluateCatalogEligibility } from './catalog-eligibility-adapter.js'
+export type { EligibilityFacts, IdentityRefusalCode, Provenance } from './eligibility.js'
+export { IDENTITY_REFUSAL_CODES, projectEligibility, readCatalogSnapshot } from './eligibility.js'
 export type {
   PiOpenRouterAuthority,
   PiOpenRouterCapability,
@@ -13,6 +17,29 @@ export {
   piOpenRouterRoutingSchema,
   validatePiOpenRouterRouting,
 } from './pi-openrouter.js'
+export { resolvePmcRouteV1 } from './pmc-resolver.js'
+export type {
+  BindingClaims,
+  CatalogClaim,
+  Claim,
+  Digest,
+  EvidenceRef,
+  Id,
+  PmcResolverContextV1,
+  PmcRouteDecisionV1,
+  PmcRouteRequestV1,
+  Text,
+  UInt,
+  Utc,
+} from './pmc-resolver-types.js'
+export type {
+  ProviderBindingProjectionResult,
+  ProviderBindingProjectionV1,
+} from './provider-binding-projection.js'
+export {
+  projectProviderBindingsV1,
+  providerBindingProjectionV1Schema,
+} from './provider-binding-projection.js'
 export { PMC_LANE_POLICIES_V1, providerBindingPolicyV1Schema } from './provider-binding-schemas.js'
 export type {
   BindingEvidenceV1,
@@ -32,6 +59,7 @@ export type {
   ProviderBindingValidationResultV1,
 } from './provider-bindings.js'
 export { validateProviderBindingPolicyV1 } from './provider-bindings.js'
+export { producePublicObservationSnapshot } from './public-observation-producer.js'
 export {
   classEntrySchema,
   dataClassificationRuleSchema,
@@ -55,27 +83,3 @@ export type {
 export { CLASS_NAMES, DATA_CLASSIFICATION_TIERS } from './types.js'
 export type { ValidationResult } from './validator.js'
 export { KNOWN_FRONTIER_MODELS, validatePolicy } from './validator.js'
-export type { EligibilityFacts, IdentityRefusalCode, Provenance } from './eligibility.js'
-export { IDENTITY_REFUSAL_CODES, projectEligibility, readCatalogSnapshot } from './eligibility.js'
-export { evaluateCatalogEligibility } from './catalog-eligibility-adapter.js'
-export { resolvePmcRouteV1 } from './pmc-resolver.js'
-export type {
-  BindingClaims,
-  CatalogClaim,
-  Claim,
-  Digest,
-  EvidenceRef,
-  Id,
-  PmcResolverContextV1,
-  PmcRouteDecisionV1,
-  PmcRouteRequestV1,
-  Text,
-  UInt,
-  Utc,
-} from './pmc-resolver-types.js'
-export type { ProviderBindingProjectionV1 } from './provider-binding-projection.js'
-export {
-  projectProviderBindingsV1,
-  providerBindingProjectionV1Schema,
-} from './provider-binding-projection.js'
-export { producePublicObservationSnapshot } from './public-observation-producer.js'
