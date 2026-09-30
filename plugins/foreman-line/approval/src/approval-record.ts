@@ -59,14 +59,15 @@ export function writeApprovalRecord(
   slug: string,
   record: ApprovalRecord,
   repoRoot: string = DEFAULT_REPO_ROOT,
+  specsDir: string = ACTIVE_SPECS_DIR,
 ): string {
-  const filePath = approvalRecordPath(slug, repoRoot)
+  const filePath = approvalRecordPath(slug, repoRoot, specsDir)
   if (existsSync(filePath)) {
     throw new Error(
       `writeApprovalRecord: refusing to overwrite existing approval record at ${filePath}`,
     )
   }
-  mkdirSync(join(repoRoot, ...ACTIVE_SPECS_DIR.split('/')), { recursive: true })
+  mkdirSync(join(repoRoot, ...specsDir.split('/')), { recursive: true })
   writeFileSync(filePath, `${JSON.stringify(record, null, 2)}\n`, 'utf8')
   return filePath
 }

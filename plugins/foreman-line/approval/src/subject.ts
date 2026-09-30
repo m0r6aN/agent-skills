@@ -22,6 +22,7 @@ import { isAbsolute, join } from 'node:path'
 import type { ShapingResult } from '../../contracts/src/index.js'
 import { assertContainedPath } from '../../projection/src/index.js'
 import { canonicalize, type JsonValue } from './canonical.js'
+import { ApprovalRootUnresolvedError } from './errors.js'
 import { sha256Hex } from './hash.js'
 import { DEFAULT_REPO_ROOT } from './paths.js'
 
@@ -50,6 +51,12 @@ export function computeSpecSet(
   parcelSpecRefs: readonly string[],
   repoRoot: string = DEFAULT_REPO_ROOT,
 ): SpecSetEntry[] {
+  if (!isAbsolute(repoRoot)) {
+    throw new ApprovalRootUnresolvedError(
+      'root-not-absolute',
+      `computeSpecSet: repoRoot ${JSON.stringify(repoRoot)} must be absolute — a relative root would silently anchor derived paths to process.cwd() (mechanism class 5)`,
+    )
+  }
   return parcelSpecRefs.map((ref) => {
     const absPath = isAbsolute(ref) ? ref : join(repoRoot, ...ref.split('/'))
     assertContainedPath(repoRoot, absPath, ref)
