@@ -1,0 +1,43 @@
+{
+  "skill_name": "synced",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "The skills/synced manifest lists a skill but its snapshot subdirectory is missing after the last sync run - how do I reconcile it",
+        "top_k": 3
+      },
+      {
+        "prompt": "Someone hand-edited a mirrored SKILL.md inside the synced bucket and the change disappeared on the next sync - what happened",
+        "top_k": 3
+      },
+      {
+        "prompt": "Which skills did the last skill-sync run capture into this repository and where is that recorded",
+        "top_k": 3
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "Create a brand-new skill that automates changelog updates",
+        "owner": "using-agent-skills"
+      },
+      {
+        "prompt": "Simplify this working function for readability",
+        "owner": "code-simplification"
+      }
+    ]
+  },
+  "evals": [
+    {
+      "id": 1,
+      "kind": "dialogue",
+      "dialogue_justification": "Grades the reconciliation response over generated sync state - judgment about source-of-truth discipline, not a build.",
+      "prompt": "manifest.json in skills/synced lists the goal skill but there is no matching subdirectory, and a teammate says they fixed a typo by editing a mirrored SKILL.md in the snapshot directly. What do you do?",
+      "expected_output": "Treat the snapshot as generated sync state: fix content at the source skill, reconcile the manifest/subdirectory mismatch through a sync run, and never hand-edit the mirror",
+      "expectations": [
+        "Directs content fixes to the source skill rather than the mirrored copy",
+        "Treats manifest.json as a capture record of one sync run, not the canonical skill list",
+        "Reconciles the missing subdirectory through a sync run instead of creating or deleting snapshot paths manually"
+      ]
+    }
+  ]
+}
