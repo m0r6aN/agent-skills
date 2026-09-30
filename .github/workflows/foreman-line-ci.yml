@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: read
+  actions: read
 
 jobs:
   test:
@@ -27,15 +28,39 @@ jobs:
         with:
           node-version: '24.19.0'
 
-      - name: Test the package runner without subprocess effects
-        run: node --test scripts/foreman-line-ci.test.mjs
+      - name: Test the package runner and reuse core without subprocess effects
+        run: |
+          node --test scripts/foreman-line-ci.test.mjs
+          node --test scripts/ci-reuse.test.mjs
+
+      # CI-P1: sole decision point, completes before any sweep work (spec C12).
+      - name: Decide reuse or fallback from Actions-API evidence
+        id: decide
+        if: ${{ success() || failure() }}
+        shell: pwsh
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node scripts/ci-reuse.mjs decide
 
       - name: Install all 20 packages, then aggregate every check
-        if: ${{ success() || failure() }}
+        if: ${{ (success() || failure()) && steps.decide.outputs.decision == 'fallback' }}
         shell: pwsh
         run: |
           $npmCli = Join-Path (Split-Path (Get-Command node).Source) 'node_modules/npm/bin/npm-cli.js'
           node scripts/foreman-line-ci.mjs "$npmCli"
+          exit $LASTEXITCODE
+
+      # Reused head: re-verify the evidence; on any flip run the full sweep in
+      # its place and exit with the sweep's code (spec AC4/AC5).
+      - name: Verify reuse evidence or run the sweep in its place
+        if: ${{ (success() || failure()) && steps.decide.outputs.decision == 'reuse' }}
+        shell: pwsh
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          CI_REUSE_EVIDENCE: ${{ steps.decide.outputs.evidence_record }}
+        run: |
+          $npmCli = Join-Path (Split-Path (Get-Command node).Source) 'node_modules/npm/bin/npm-cli.js'
+          node scripts/ci-reuse.mjs verify --sweep node scripts/foreman-line-ci.mjs "$npmCli"
           exit $LASTEXITCODE
 
   integration-report:
