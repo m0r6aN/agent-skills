@@ -78,6 +78,20 @@ Operational notes: the repo rulesets API `update` rule is parameterless (allow-l
 
 | Ruleset `main-pr-gate` (branch, `~DEFAULT_BRANCH`, active) | pre-existing ruleset requiring status checks `test` + `integration-report` (`strict_required_status_checks_policy`), pre-existing `pull_request` rule (count 0, thread resolution) — **bypass was EMPTY**, so every merge was blocked while those checks are red | id 22369510, PUT 2026-09-30: added sole bypass actor `m0r6aN` (`always`) per the solo-repo deviation ruling; rules unchanged. Context: `test` = the foreman-line 20-package matrix, red on `main` since 2026-09-28 (pre-existing baseline: 12/20 packages fail Test/Typecheck, e.g. TS2353 `projectKey` type drift); `integration-report` mirrors `test`'s outcome. Required checks gate again for any non-bypass actor once the baseline is green. |
 
+## Package-matrix repair (2026-09-30, owner-directed fix order; PR #123 branch `u1-workflow-placement`, commit `6793317`)
+
+The `test` job's 498 failures decomposed into five root causes (owner's triage named three; two more surfaced in execution):
+
+| # | Root cause | Fix | Verified |
+|---|---|---|---|
+| 1 | D19 audit refuses extension-less `Dockerfile` (`jev-decisions/container/Dockerfile`) | `BUILD_DEFINITION_BASENAMES` registered in `verification/src/d19-audit.ts` (ports the JEV-P3 fix from the goal tree) | audit suites unblocked |
+| 2 | `routing-policy` contract surface missing (6 exports + 2 shape extensions: `transport_requirements`, `shadow_routes`) | types/schemas restored to the shape its own fixtures, validator, and testing samples demand; schema artifacts regenerated | **940/940 tests + clean typecheck locally** |
+| 3 | `pluginRoot` missing from input bags | added to `HarnessInput`, `ReviewDispatchInput`, `DispatchOptions`, + discovered `RoutingOptions`; `evaluateRouting` resolves the policy from the explicit plugin root and carries `transportRequirements` into result + receipt | dispatch typecheck clean |
+| 4 | Stale barrels (owner's "stale barrel exports" class, larger than reported): `routing-policy` missing17 re-exports (pmc-launch/catalog/observation consumers), `dispatch` missing the shadow-routing surface | barrels restored; `executeShadowRoute` identity-stable across all three import paths (test asserts identity) | typecheck clean |
+| 5 | `dispatch` imports `@earendil-works/pi-ai`/`pi-coding-agent` undeclared (type-only) | pinned `0.99.2` in devDependencies — outside the runtime dependency allowlist (`dependency-allowlist.test.ts` governs `dependencies` only) | module resolution clean |
+
+**Environment note (evidence-bound):** the `pmc-*` suites pin `process.version === 'v24.19.0'` (`intent-custody.ts` `SETTINGS_REFUSED`) and CI pins `node-version: 24.19.0` exactly — the local v24.7.0 workstation cannot exercise them; CI's matrix is the authoritative verification for those suites. Local verification: routing-policy suite green, all touched packages typecheck clean, schema parity artifacts regenerated via `generate.ts`.
+
 ## Workflow placement (2026-09-30, owner direction "proceed")
 
 - Extracted **byte-exact** from the design's fenced blocks (design sha `0d8816eb…`): `u1-produce.yml` = doc lines 160–584 (425 lines), `u1-verify.yml` = doc lines 604–1489 (886 lines) — fence content untouched by the §6.6 prose edit; YAML parse PASS both files.
