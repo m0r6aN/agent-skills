@@ -60,7 +60,7 @@ Design notes: environment-scoped OIDC subjects mean the FK-P18′/verifier workf
 
 The contract's "a producer-authored status is never accepted as the verification decision" makes the stored decision's authorship load-bearing — producer-transported bytes are still producer-written. Provisioned a **create-only custom role** at the `u1-evidence` container scope:
 
-- **`U1 Verifier Decision Writer`** (roleDefId `c2e8b1ab-cef8-4a4f-ae44-37cc74aaccdd`): DataActions `blobs/read` + `blobs/add/action` (create new / append), NotDataActions `blobs/write` + `blobs/delete` + `blobs/permanentDelete/action`. Assigned to `u1-verifier-mi` (principalId `9f31b12b-…`, created 2026-09-30T11:32:45Z).
+- **`u1-verifier-evidence-creator`** (roleDefId `c2e8b1ab-cef8-4a4f-ae44-37cc74aaccdd`; renamed in place from `U1 Verifier Decision Writer` to match the workflow design's spec — same GUID, so the assignment carries over): DataActions `blobs/read` + `blobs/add/action` (create new / append), NotDataActions `blobs/write` + `blobs/delete` + `blobs/permanentDelete/action`. Assigned to `u1-verifier-mi` (principalId `9f31b12b-…`, created 2026-09-30T11:32:45Z).
 - Semantics (verified against Azure provider-operations/ABAC references): `add/action` creates new blobs; excluding `blobs/write` prevents overwriting any existing blob; WORM time-based retention is the write-once backstop for everything committed. The verifier identity can therefore create decision/observation objects and never modify or delete evidence.
 - Lane summary: verifier = read-all + create-decisions-only; producer = create/write new evidence (delete attempts physically fail under retention); custodian = administers controls.
 
