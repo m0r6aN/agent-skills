@@ -108,6 +108,8 @@ export interface DispatchWorktreeOutput {
 
 export interface DispatchOptions {
   readonly repoRoot?: string
+  /** Absolute installed plugin root; threaded to plugin-local asset resolution. */
+  readonly pluginRoot: string
   readonly dispatchWorktreeFn?: (opts: DispatchWorktreeInput) => DispatchWorktreeOutput
 }
 
@@ -226,7 +228,7 @@ function extractPriorCorrelationId(
 
 export async function prepareDispatch(
   input: DispatchInput,
-  options: DispatchOptions = {},
+  options: DispatchOptions,
 ): Promise<DispatchPackage> {
   const repoRoot = options.repoRoot ?? process.cwd()
   const { candidate, specPath, compressFn } = input
@@ -319,7 +321,7 @@ export async function prepareDispatch(
         data_classification: specFrontmatter.data_classification,
         workflowId,
       },
-      { repoRoot },
+      { repoRoot, pluginRoot: options.pluginRoot },
     )
   } catch (err) {
     throw new DispatchError('ROUTING_FAILED', `Routing evaluation failed: ${String(err)}`)
@@ -399,7 +401,7 @@ export async function prepareDispatch(
 export async function executeDispatch(
   pkg: DispatchPackage,
   worktreePath: string,
-  options: DispatchOptions = {},
+  options: DispatchOptions,
 ): Promise<ExecuteResult> {
   const repoRoot = options.repoRoot ?? process.cwd()
   const workflowId = pkg.candidate.workflowId as string

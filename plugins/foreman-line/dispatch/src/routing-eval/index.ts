@@ -21,6 +21,7 @@ import type {
   ClassName,
   DataClassificationTier,
   RoutingPolicy,
+  TransportRequirements,
 } from '../../../routing-policy/src/index.js'
 import {
   CLASS_NAMES,
@@ -64,6 +65,8 @@ export interface RoutingResult {
   readonly resolvedTier: string
   /** Repo-relative path to the written routing receipt JSON. */
   readonly routingDecisionRef: string
+  /** The resolved data tier's declared gateway transport obligations. */
+  readonly transportRequirements: TransportRequirements
 }
 
 export interface RoutingOptions {
@@ -73,6 +76,8 @@ export interface RoutingOptions {
    * Defaults to process.cwd(). Tests pass a tmp directory.
    */
   readonly repoRoot?: string
+  /** Absolute installed plugin root; the frozen policy is a plugin-local asset. */
+  readonly pluginRoot: string
 }
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -81,13 +86,14 @@ const POLICY_REPO_PATH = 'plugins/foreman-line/routing-policy/routing-policy.yam
 
 // ─── Evaluation ──────────────────────────────────────────────────────────────
 
-export function evaluateRouting(input: RoutingInput, options: RoutingOptions = {}): RoutingResult {
+export function evaluateRouting(input: RoutingInput, options: RoutingOptions): RoutingResult {
   const repoRoot = options.repoRoot ?? process.cwd()
 
-  // 1. Load the frozen policy YAML
+  // 1. Load the frozen policy YAML (a plugin-local asset; resolved from the
+  //    explicit plugin root, never from a project identity literal)
   let rawYaml: string
   try {
-    rawYaml = readFileSync(join(repoRoot, POLICY_REPO_PATH), 'utf8')
+    rawYaml = readFileSync(join(options.pluginRoot, 'routing-policy', 'routing-policy.yaml'), 'utf8')
   } catch (err) {
     throw new RoutingError(
       'POLICY_UNREADABLE',
@@ -155,6 +161,7 @@ export function evaluateRouting(input: RoutingInput, options: RoutingOptions = {
     )
   }
   const eligible = new Set(dataClassRule.eligible_models)
+  const transportRequirements: TransportRequirements = dataClassRule.transport_requirements
 
   // 7. Walk allowlist tiers in policy order; find first eligible model
   let resolvedModelId: string | undefined
@@ -189,6 +196,7 @@ export function evaluateRouting(input: RoutingInput, options: RoutingOptions = {
     data_classification: input.data_classification,
     resolvedTier,
     resolvedModelId,
+    transportRequirements,
     timestamp: new Date().toISOString(),
     policyRef: POLICY_REPO_PATH,
   }
@@ -206,5 +214,24 @@ export function evaluateRouting(input: RoutingInput, options: RoutingOptions = {
     resolvedModelId,
     resolvedTier,
     routingDecisionRef: `docs/receipts/${input.workflowId}/routing-decision.json`,
+    transportRequirements,
   }
 }
+
+// Shadow-route execution lives in ./shadow.js; re-exported here so consumers of
+// the routing-eval seam reach it through one entry (identity-stable bindings).
+export {
+  executeShadowRoute,
+  hashShadowPublicInput,
+  SHADOW_LIMITS,
+  ShadowRoutingError,
+} from './shadow.js'
+export type {
+  ParcelShadowAuthorization,
+  ResolvedParcelShadowAuthorization,
+  ShadowInvocationRequest,
+  ShadowRoutingDependencies,
+  ShadowRoutingInput,
+  ShadowRoutingOptions,
+  ShadowRoutingResult,
+} from './shadow.js'

@@ -118,6 +118,8 @@ export interface HarnessInput {
   readonly matrixChecks: MatrixCheckSet
   /** Defaults to process.cwd(); tests pass a tmp dir. */
   readonly repoRoot?: string
+  /** Explicit plugin root for plugin-local contracts and templates. */
+  readonly pluginRoot: string
 }
 
 export interface HarnessResult {

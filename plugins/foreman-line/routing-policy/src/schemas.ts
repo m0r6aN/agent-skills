@@ -29,15 +29,64 @@ export const classEntrySchema: SchemaObject = {
   },
 }
 
+export const transportRequirementsSchema: SchemaObject = {
+  type: 'object',
+  additionalProperties: false,
+  required: ['data_collection', 'zdr'],
+  properties: {
+    data_collection: { enum: ['allow', 'deny'] },
+    zdr: { type: 'boolean' },
+  },
+}
+
 export const dataClassificationRuleSchema: SchemaObject = {
   type: 'object',
   additionalProperties: false,
-  required: ['eligible_models'],
+  required: ['eligible_models', 'transport_requirements'],
   properties: {
     eligible_models: {
       type: 'array',
       items: { type: 'string', minLength: 1 },
       minItems: 1,
+    },
+    transport_requirements: transportRequirementsSchema,
+  },
+}
+
+export const shadowRouteSchema: SchemaObject = {
+  type: 'object',
+  additionalProperties: false,
+  required: [
+    'adapter_id',
+    'data_classification',
+    'allowed_task_types',
+    'requires_live_discovery',
+    'candidate_only',
+    'authority',
+    'tools_granted',
+    'effect_capability',
+    'prohibited_roles',
+  ],
+  properties: {
+    adapter_id: { type: 'string', minLength: 1 },
+    data_classification: { const: 'public' },
+    allowed_task_types: {
+      type: 'array',
+      items: { enum: ['spec_lint', 'evidence_index', 'review_triage'] },
+      minItems: 1,
+      uniqueItems: true,
+    },
+    requires_live_discovery: { const: true },
+    candidate_only: { const: true },
+    authority: { const: 'none' },
+    tools_granted: { type: 'array', maxItems: 0 },
+    effect_capability: { const: 'none' },
+    prohibited_roles: {
+      type: 'array',
+      items: { enum: ['coordinator', 'verifier'] },
+      minItems: 2,
+      maxItems: 2,
+      uniqueItems: true,
     },
   },
 }
@@ -89,6 +138,10 @@ export const routingPolicySchema: SchemaObject = {
           minItems: 1,
         },
       },
+    },
+    shadow_routes: {
+      type: 'object',
+      additionalProperties: shadowRouteSchema,
     },
   },
 }

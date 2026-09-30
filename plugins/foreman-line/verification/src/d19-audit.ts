@@ -197,6 +197,15 @@ const DECLARATION_SUFFIXES = ['.d.ts', '.d.mts', '.d.cts']
  * from here.
  */
 const DATA_EXTENSIONS = ['.json', '.md', '.yaml', '.yml', '.txt', '.env', '.example']
+/**
+ * Extension-less build-definition basenames deliberately registered per the
+ * A2.6/A3.5 refusal remedy ("add its extension to the audit deliberately or
+ * move the file"). `Dockerfile` is tracked container-release evidence
+ * (JEV-P3, `jev-decisions/container/Dockerfile`, PR #44 merged 2026-09-22):
+ * it carries no JS/TS root-guard call sites, so it is classified like data —
+ * listed here so the skip is explicit and inventory-checked, never silent.
+ */
+const BUILD_DEFINITION_BASENAMES = ['Dockerfile', '.dockerignore']
 
 // The ratified package allowlist (A1.1/A2.2) is imported at the top of this
 // file from './ratified-packages.js' — declared there so the audit and its
@@ -735,6 +744,8 @@ function listSourceFiles(dir: string, out: string[]): void {
       out.push(p)
     } else if (DATA_EXTENSIONS.some((s) => name.endsWith(s))) {
       // data files carry no code; listed here so the skip is deliberate
+    } else if (BUILD_DEFINITION_BASENAMES.includes(name)) {
+      // extension-less build definitions (see BUILD_DEFINITION_BASENAMES)
     } else {
       throw new UsageError(
         `unrecognized file extension in a ratified package — '${p}' would be silently unswept ` +

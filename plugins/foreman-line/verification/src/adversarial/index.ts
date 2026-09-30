@@ -123,6 +123,8 @@ export interface ReviewDispatchInput {
   readonly worktreePath: string
   /** Defaults to process.cwd(); tests pass a tmp dir. */
   readonly repoRoot?: string
+  /** Explicit plugin root for plugin-local contracts and templates. */
+  readonly pluginRoot: string
 }
 
 /** Result of one git-seam invocation (child-process-shaped result). */
