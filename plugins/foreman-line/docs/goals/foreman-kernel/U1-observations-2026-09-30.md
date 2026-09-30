@@ -76,6 +76,8 @@ The contract's "a producer-authored status is never accepted as the verification
 
 Operational notes: the repo rulesets API `update` rule is parameterless (allow-list = ruleset bypass actors, not rule params); `reviewers` on environments appear under `protection_rules` in GET responses; the design §6.2's "path-scoped ruleset" is enforced as CODEOWNERS + required code-owner review (GitHub rulesets target refs, not paths). Still owner-pending: `U1-verifier-pin.json` pin record + pointing the `u1-verifier-pin` tag at the pinned commit (both AFTER the workflows are placed and their commit SHA exists).
 
+| Ruleset `main-pr-gate` (branch, `~DEFAULT_BRANCH`, active) | pre-existing ruleset requiring status checks `test` + `integration-report` (`strict_required_status_checks_policy`), pre-existing `pull_request` rule (count 0, thread resolution) — **bypass was EMPTY**, so every merge was blocked while those checks are red | id 22369510, PUT 2026-09-30: added sole bypass actor `m0r6aN` (`always`) per the solo-repo deviation ruling; rules unchanged. Context: `test` = the foreman-line 20-package matrix, red on `main` since 2026-09-28 (pre-existing baseline: 12/20 packages fail Test/Typecheck, e.g. TS2353 `projectKey` type drift); `integration-report` mirrors `test`'s outcome. Required checks gate again for any non-bypass actor once the baseline is green. |
+
 ## Workflow placement (2026-09-30, owner direction "proceed")
 
 - Extracted **byte-exact** from the design's fenced blocks (design sha `0d8816eb…`): `u1-produce.yml` = doc lines 160–584 (425 lines), `u1-verify.yml` = doc lines 604–1489 (886 lines) — fence content untouched by the §6.6 prose edit; YAML parse PASS both files.
