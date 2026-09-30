@@ -114,3 +114,19 @@ export class RegistrationError extends Error {
     this.landed = landed
   }
 }
+
+/**
+ * Typed root-refusal error (P2b-i, extending P2a's Q4 per-package convention:
+ * `<Domain>RootUnresolvedError`). `root-not-absolute` (path-guard ruling /
+ * AC6): a relative root would silently anchor derived paths to
+ * `process.cwd()` (mechanism class 5) and is refused before any path is
+ * constructed.
+ */
+export class RegistrationRootUnresolvedError extends Error {
+  readonly reason: 'root-absent' | 'root-not-a-directory' | 'root-not-absolute'
+  constructor(reason: RegistrationRootUnresolvedError['reason'], message: string) {
+    super(message)
+    this.name = 'RegistrationRootUnresolvedError'
+    this.reason = reason
+  }
+}
