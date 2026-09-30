@@ -646,25 +646,31 @@ function withBestEffortHashes(ctx, record) {
  */
 async function evaluateChain(ctx, pinnedSourceRunId) {
   const { api, git, eventName, event, runId, repo, apiBase } = ctx
-  const ev = normalizeEvent(eventName, event)
-  const baseSha = ev.baseSha
   const recordInputHashes = { ...EMPTY_INPUT_HASHES }
-  const hashOnce = (sha) => {
+  const hashOnce = (sha, baseRef, baseSha) => {
     const hashes = computeTreeClassHashes(git, sha)
     recordInputHashes.code = hashes.code
     recordInputHashes.specifications = hashes.specifications
     recordInputHashes.workflow = hashes.workflow
     recordInputHashes.dependency_inputs = hashes.dependency_inputs
-    recordInputHashes.merge_context = mergeContextHash(ev.baseRef, ev.baseSha)
+    recordInputHashes.merge_context = mergeContextHash(baseRef, baseSha)
     return { ...recordInputHashes }
   }
 
-  // rule 0 (A1): only pull_request-class runs are ever eligible
+  // rule 0 (A1): only pull_request-class runs are ever eligible; this refusal
+  // is answerable from the event NAME alone, before any payload parsing
   if (eventName !== 'pull_request') {
-    const headSha = ev.headSha ?? ctx.headShaFallback
-    try { if (headSha) hashOnce(headSha) } catch { /* best-effort record hashes */ }
-    return { record: failFallback(REASON_TEMPLATES.EVENT_CLASS_INELIGIBLE, headSha, baseSha, recordInputHashes), sourceRun: null }
+    let headSha = ctx.headShaFallback ?? null
+    try {
+      const pushed = normalizeEvent(eventName, event)
+      headSha = pushed.headSha ?? headSha
+    } catch { /* display-only fields stay best-effort */ }
+    try { if (headSha) hashOnce(headSha, null, null) } catch { /* best-effort record hashes */ }
+    return { record: failFallback(REASON_TEMPLATES.EVENT_CLASS_INELIGIBLE, headSha, null, recordInputHashes), sourceRun: null }
   }
+
+  const ev = normalizeEvent(eventName, event)
+  const baseSha = ev.baseSha
 
   const headSha = ev.headSha
   const currentRun = validateRunEntry(await apiGet(api, `${apiBase}/repos/${repo}/actions/runs/${runId}`))
@@ -754,7 +760,7 @@ async function evaluateChain(ctx, pinnedSourceRunId) {
   }
 
   // rule 5: five-class equivalence from git bytes at the attested SHAs
-  const currentHashes = hashOnce(headSha)
+  const currentHashes = hashOnce(headSha, ev.baseRef, ev.baseSha)
   const sourceHashes = {
     ...computeTreeClassHashes(git, candidate.headSha),
     merge_context: sourceMergeContext(candidate, ev.prNumber),

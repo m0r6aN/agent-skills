@@ -555,6 +555,12 @@ test('hostile: fetch timeout => fallback api-error + sweep', async () => {
   assert.equal(row.decided.record.fallback_reason, 'api-error')
   assertSweepRan(row)
 })
+test('hostile: push-class with a garbage event payload still refuses event-class-ineligible (rule 0 first)', async () => {
+  const { ctx } = makeCtx(greenWorld(), { eventName: 'push', event: 'not-an-object' })
+  const decided = await decideCore(ctx)
+  assert.equal(decided.record.decision, 'fallback')
+  assert.equal(decided.record.fallback_reason, 'event-class-ineligible')
+})
 test('hostile: untrusted strings never emit raw control chars or ::-sequences', async () => {
   const hostileBranch = 'br\nanch::error::\x1b[200Eb\u202Ez'
   const world = greenWorld({
