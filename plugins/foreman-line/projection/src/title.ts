@@ -7,6 +7,7 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { parseFrontmatter } from '../../spec-linter/src/index.js'
+import { assertAbsoluteRoot } from './errors.js'
 import { assertContainedPath } from './path-guard.js'
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -20,6 +21,8 @@ function isRecord(value: unknown): value is Record<string, unknown> {
  * has a missing/empty `title`. Never fabricates or defaults a title.
  */
 export function readSpecTitle(repoRoot: string, specRef: string): string {
+  // P2b-i AC6b seam refusal before any path is constructed from repoRoot.
+  assertAbsoluteRoot(repoRoot, 'readSpecTitle')
   const absPath = join(repoRoot, ...specRef.split('/'))
   assertContainedPath(repoRoot, absPath, specRef)
   if (!existsSync(absPath)) {

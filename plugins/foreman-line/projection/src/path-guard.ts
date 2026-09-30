@@ -4,6 +4,7 @@
  * index walks - no regex, lesson #19).
  */
 import { isAbsolute, relative, resolve } from 'node:path'
+import { assertAbsoluteRoot } from './errors.js'
 
 /**
  * Reject a `slug` containing `/`, `\`, or `..` before any path is
@@ -28,6 +29,11 @@ export function assertSafeSlug(slug: string): void {
  * resolved path.
  */
 export function assertContainedPath(repoRoot: string, absPath: string, ref: string): void {
+  // P2b-i AC6 seam refusal: a non-absolute repoRoot would silently re-anchor
+  // the containment comparison base to process.cwd() (mechanism class 5), so
+  // it is refused with the typed error BEFORE any comparison - closing the
+  // mis-comparison demonstrated in root-conflation.test.ts.
+  assertAbsoluteRoot(repoRoot, 'assertContainedPath')
   const rel = relative(resolve(repoRoot), resolve(absPath))
   // `..` (or a leading `..` segment) means the target climbed out of repoRoot;
   // an absolute `rel` (e.g. a different Windows drive) escapes it too.
