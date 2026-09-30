@@ -1523,6 +1523,13 @@ committed evidence).
 1. Protect the default branch (`main`): require pull requests + ≥1 approving review;
    require review from Code Owners; dismiss stale approvals on change; block force-pushes
    and branch deletion; require the FK-P18′ CI status checks once they exist.
+   **Deviation (owner-reported 2026-09-30):** with a single write-access identity,
+   GitHub's "authors cannot approve their own PRs" rule makes the ≥1-approval and
+   code-owner-review fields unsatisfiable and blocks every PR; the deployed ruleset uses
+   `required_approving_review_count=0` / `require_code_owner_review=false` /
+   `require_extra_approval_for_unattributed_changes=false` (PR-required, stale-dismissal,
+   deletion + force-push blocks, sole bypass = the custodian). Restore the approval fields
+   when a second write-access identity exists.
 2. Add a ruleset scoped to **workflow and U1 record paths** with `restrict updates` +
    `restrict deletions`, reviewed by the control custodian:
    `.github/workflows/u1-verify.yml`, `.github/workflows/u1-produce.yml`,
