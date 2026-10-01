@@ -25,7 +25,11 @@
  * STANDING-CONSTRAINTS #12), so silent growth or re-scoping fails the suite.
  */
 
-export const WAIVER_KINDS = ['permission-profile-legacy', 'routing-class-legacy'] as const
+export const WAIVER_KINDS = [
+  'permission-profile-legacy',
+  'routing-class-legacy',
+  'verification-class-missing',
+] as const
 export type WaiverKind = (typeof WAIVER_KINDS)[number]
 
 /** The only frontmatter fields a waiver may ever reach. */
@@ -77,6 +81,66 @@ export const GRANDFATHER_ALLOWLIST: Readonly<Record<string, readonly Grandfather
   'SCAF-P4-exit-vehicle.md': [PROFILE_BUILDER],
   'W1-P2-epic-story-projection.md': [ROUTING_STANDARD],
   'W1-P3-human-approval-flow.md': [ROUTING_STANDARD],
+}
+
+/**
+ * Exact repository-relative identities of the parseable pre-v0.3 done-spec
+ * corpus that omits the newly-required verification_class field. This is a
+ * source-frozen compatibility boundary: membership is reconciled against disk
+ * in both directions by grandfather.test.ts. Unlike the legacy basename
+ * waivers above, this waiver is keyed only by the complete canonical identity.
+ */
+export const VERIFICATION_CLASS_MISSING_WAIVER_KIND: WaiverKind = 'verification-class-missing'
+
+export const GRANDFATHER_VERIFICATION_CLASS_MISSING_INVENTORY = [
+  'plugins/foreman-line/docs/specs/done/CLOSE-P1-minted-chain-exit-vehicle.md',
+  'plugins/foreman-line/docs/specs/done/CLOSE-P2-spec-linter-corpus-reconciliation.md',
+  'plugins/foreman-line/docs/specs/done/CLOSE-P3-biome-ci-always-report.md',
+  'plugins/foreman-line/docs/specs/done/E6-R1-current-repository-identity-and-evidence-rerun.md',
+  'plugins/foreman-line/docs/specs/done/KEO-155-P1-review-sprint-packaging-closure.md',
+  'plugins/foreman-line/docs/specs/done/KEO-156-P2-minimum-verifier-compatibility-canon-freeze.md',
+  'plugins/foreman-line/docs/specs/done/KEO-59-P0V-claims-validation-repair.md',
+  'plugins/foreman-line/docs/specs/done/KEO-59-proof-led-control-plane-reconciliation.md',
+  'plugins/foreman-line/docs/specs/done/P1-permission-profile-registry-schema.md',
+  'plugins/foreman-line/docs/specs/done/P2-dispatch-order-permission-profile-field.md',
+  'plugins/foreman-line/docs/specs/done/P3-dispatch-time-emitter.md',
+  'plugins/foreman-line/docs/specs/done/P4-spec-linter-permission-profile-enum.md',
+  'plugins/foreman-line/docs/specs/done/SCAF-P1-shared-schema-scaffold-extraction.md',
+  'plugins/foreman-line/docs/specs/done/SCAF-P2-shared-test-scaffold-extraction.md',
+  'plugins/foreman-line/docs/specs/done/SCAF-P3-receipt-chain-walker.md',
+  'plugins/foreman-line/docs/specs/done/SCAF-P4-exit-vehicle.md',
+  'plugins/foreman-line/docs/specs/done/W0-P1-pipeline-stage-contracts.md',
+  'plugins/foreman-line/docs/specs/done/W0-P2-parcel-schema-v02.md',
+  'plugins/foreman-line/docs/specs/done/W0-P3-routing-policy-schema-validator.md',
+  'plugins/foreman-line/docs/specs/done/W0-P4-receipt-chain-schema-validator.md',
+  'plugins/foreman-line/docs/specs/done/W0-P5-skill-injection-matrix-schema-validator.md',
+  'plugins/foreman-line/docs/specs/done/W1-P1-shaping-agent.md',
+  'plugins/foreman-line/docs/specs/done/W1-P2-epic-story-projection.md',
+  'plugins/foreman-line/docs/specs/done/W1-P3-human-approval-flow.md',
+  'plugins/foreman-line/docs/specs/done/W1-P4-jira-registration.md',
+  'plugins/foreman-line/docs/specs/done/W2-P1-jira-query-ranking.md',
+  'plugins/foreman-line/docs/specs/done/W2-P2-dispatch-approval-cli.md',
+  'plugins/foreman-line/docs/specs/done/W2-P3-routing-eval-engine.md',
+  'plugins/foreman-line/docs/specs/done/W2-P4-kompress-integration.md',
+  'plugins/foreman-line/docs/specs/done/W2-P5-skill-injection-engine.md',
+  'plugins/foreman-line/docs/specs/done/W3-P1-verification-harness.md',
+  'plugins/foreman-line/docs/specs/done/W3-P2-adversarial-reviewer.md',
+  'plugins/foreman-line/docs/specs/done/W3-P3-pipeline-rework.md',
+  'plugins/foreman-line/docs/specs/done/W3-P4-human-gate-jira.md',
+  'plugins/foreman-line/docs/specs/done/W4-P0-correlation-lineage-fix.md',
+  'plugins/foreman-line/docs/specs/done/W4-P1-integration-stage-e.md',
+  'plugins/foreman-line/docs/specs/done/W4-P2-docspine-ci-hook.md',
+  'plugins/foreman-line/docs/specs/done/W4-P3-risk-driven-audit-triggers.md',
+  'plugins/foreman-line/docs/specs/done/W4-P4-github-gate-stage-f-closure.md',
+  'plugins/foreman-line/docs/specs/done/WGT-P0A-foreman-record-reconciliation.md',
+  'plugins/foreman-line/docs/specs/done/WGT-P0BOOT-tracked-foreman-bootstrap.md',
+  'skills/parcel-compiler/docs/specs/done/PCC-P0-pcc-cli-scaffold.md',
+] as const
+
+export function isGrandfatheredVerificationClassMissing(documentRef: string): boolean {
+  return GRANDFATHER_VERIFICATION_CLASS_MISSING_INVENTORY.includes(
+    documentRef as (typeof GRANDFATHER_VERIFICATION_CLASS_MISSING_INVENTORY)[number],
+  )
 }
 
 /** Returns the waivers for a basename, or an empty list if not grandfathered. */

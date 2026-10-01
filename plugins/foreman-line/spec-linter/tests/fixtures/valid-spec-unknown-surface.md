@@ -10,6 +10,7 @@ superseded_by: null
 risk: standard
 surfaces: [contracts/some-contract]
 routing_class: standard-feature
+verification_class: judgment-required
 permission_profile: builder-standard
 ---
 
