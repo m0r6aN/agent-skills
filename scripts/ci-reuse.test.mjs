@@ -8,6 +8,8 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
+import { readFileSync } from 'node:fs'
+import { fileURLToPath } from 'node:url'
 import {
   CLASS,
   EMPTY_CLASS_HASH,
@@ -989,4 +991,90 @@ test('R3: standalone run without any output channel keeps working', async () => 
   // the record still reaches stdout; no channel writes are attempted
   assert.equal(events.filter(([kind]) => kind === 'stdout').length, 1)
   assert.equal(events.filter(([kind]) => kind === 'append').length, 0)
+})
+
+// ─── R5 harness-step wiring pin (C-F1) ─────────────────────────────────────
+// The invariant lives in the workflow's pwsh block (step exit = last command's
+// without propagation); no local runtime test can reach the step, so the pin
+// binds the wiring shape of the file that actually ships (SC #12: shape, never
+// bytes). This suite's one intentional read of a real repo file.
+
+test('R5: harness step propagates each test command exit code (either suite failing reds the step)', () => {
+  const workflowPath = fileURLToPath(new URL('../.github/workflows/foreman-line-ci.yml', import.meta.url))
+  const text = readFileSync(workflowPath, 'utf8')
+  const marker = '- name: Test the package runner and reuse core without subprocess effects'
+  const start = text.indexOf(marker)
+  assert.ok(start >= 0, 'the harness step must exist')
+  const rest = text.slice(start + marker.length)
+  const end = rest.indexOf('\n      - ')
+  const block = end < 0 ? rest : rest.slice(0, end)
+  const lines = block
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0 && !line.startsWith('#'))
+  const first = lines.indexOf('node --test scripts/foreman-line-ci.test.mjs')
+  const second = lines.indexOf('node --test scripts/ci-reuse.test.mjs')
+  assert.ok(first >= 0 && second > first, 'both test commands must run, runner harness first')
+  const between = lines.slice(first + 1, second).join(' ')
+  assert.ok(
+    between.includes('$LASTEXITCODE') && between.includes('exit'),
+    'the first suite failing must exit the step before the second suite runs',
+  )
+  const after = lines.slice(second + 1).join(' ')
+  assert.ok(
+    after.includes('$LASTEXITCODE') && after.includes('exit'),
+    'the second suite failing must exit the step',
+  )
+})
+
+// ─── R6 scan-derived selection (D-P3) ──────────────────────────────────────
+
+test('R6: verify re-derives newest-first — a forged pin on an older green run cannot outrank a newer failed lineage run', async () => {
+  const decided = await positiveRecord() // truthful hashes, pin targets run 9002
+  const world = greenWorld({
+    listing: [selfRun(), runEntry({ id: 9003, conclusion: 'failure' }), runEntry()],
+    byId: { [SOURCE_RUN_ID]: runEntry() }, // the forged pin would still validate
+  })
+  const { ctx, spawnCalls } = makeCtx(world, { evidence: decided.json })
+  const verified = await verifyCore(ctx)
+  assert.equal(verified.record.decision, 'fallback')
+  assert.equal(verified.record.fallback_reason, 'prior-run-inconclusive:failure')
+  assert.equal(spawnCalls.length, 1)
+  assert.equal(verified.exitCode, SWEEP_EXIT)
+})
+
+test('R6: pins agree => reuse, and the candidate was scan-derived (listing consulted)', async () => {
+  const decided = await positiveRecord()
+  const { ctx, apiCalls, spawnCalls } = makeCtx(greenWorld(), { evidence: decided.json })
+  const verified = await verifyCore(ctx)
+  assert.equal(verified.record.decision, 'reuse')
+  assert.equal(verified.exitCode, 0)
+  assert.equal(spawnCalls.length, 0)
+  assert.ok(
+    apiCalls.some((url) => url.includes('/runs?')),
+    'verify must consult the lineage listing, not trust the pin',
+  )
+})
+
+test('R6: scan-derived fallback reason surfaces even when the pin would pass', async () => {
+  const decided = await positiveRecord() // pin targets run 9002, served green byId
+  const world = greenWorld({ listing: [selfRun()] }) // but 9002 is not in the lineage listing
+  const { ctx, spawnCalls } = makeCtx(world, { evidence: decided.json })
+  const verified = await verifyCore(ctx)
+  assert.equal(verified.record.decision, 'fallback')
+  assert.equal(verified.record.fallback_reason, 'no-prior-run')
+  assert.equal(spawnCalls.length, 1)
+})
+
+test('R6: derived reuse from a newer source than the pin => evidence-unverifiable + sweep', async () => {
+  const decided = await positiveRecord() // pin targets run 9002
+  const world = greenWorld({
+    listing: [selfRun(), runEntry({ id: 9003 })], // newest lineage run 9003, green, same head
+    byId: { [SOURCE_RUN_ID]: runEntry() },
+  })
+  const { ctx, spawnCalls } = makeCtx(world, { evidence: decided.json })
+  const verified = await verifyCore(ctx)
+  assert.equal(verified.record.decision, 'fallback')
+  assert.equal(verified.record.fallback_reason, 'evidence-unverifiable')
+  assert.equal(spawnCalls.length, 1)
 })
