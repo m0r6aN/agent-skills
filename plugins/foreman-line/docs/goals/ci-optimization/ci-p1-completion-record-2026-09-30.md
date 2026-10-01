@@ -86,6 +86,24 @@ Seed push (paper-trail head `4819c0acea51688818066df217ed7b5cb7502727`, PR #124)
 
 Demo cases 2–6 remain held behind the red base (case 2 needs a GREEN seed — the seed sweep is red on the 13 pre-existing package failures, exactly the F9 valve).
 
+## AC6 demo complete (2026-10-01, post-merge demo PR #125)
+
+Base greened (package-matrix fixes `6793317` et al. + PR #123 merged); PR #124 merged by the human (`91d708b`). Demos ran on PR #125 (`demo/ci-p1-reuse-evidence` → `main`) as the faithful substitute for the merged parcel PR. **Every fallback class and the positive path now have live records:**
+
+| Case | Head / run (pull_request-class) | `decision` | `fallback_reason` | Sweep | Notes |
+| --- | --- | --- | --- | --- | --- |
+| 4 missing evidence | `4819c0ac` / 36812259542 | `fallback` | `no-prior-run` | ran (red, pre-fix base) | seed-era record |
+| A1 canary | `4819c0ac` / 36812254813 (push twin) | `fallback` | `event-class-ineligible` | ran | E9 null-pair `base_sha` live |
+| b prior-run inconclusive | `801c379` / 36812806672 | `fallback` | `prior-run-inconclusive:failure` | ran | **docs-only delta refused on failed candidate** — input hashes byte-identical to the seed record (`code=83ccd856…`, `specifications=e1665fb9…`, `workflow=a4e55c33…`), the falsifiable negative |
+| b rule-order semantics | `cce81e0` / 36858064053 | `fallback` | `prior-run-inconclusive:failure` | ran (green) | merge delta was test-relevant but rule 2 fires first — first failing rule wins (E4) |
+| seed (post-fix base) | `adf2ff2` / 36904893417 | `fallback` | `no-prior-run` | ran **GREEN** (10m41s) | lineage seeded |
+| **a ELIGIBLE REUSE** | `5eeef34` / 36906342345 | **`reuse`** | `null` | **SKIPPED** | `source_run` = 36904893417 `success`, five-class hashes equal; verify step consumed the S1 channel and re-verified from API+git; both contexts green; ~2 min vs 10m41s |
+| c test-relevant | `dad0e0d` / 36907397272 | `fallback` | `test-relevant-change` | ran | `specifications` hash `e1665fb9→65c69b24`, all other classes byte-equal — class isolation live; sweep caught the incomplete Stage F move (spec-linter corpus pins) |
+
+Not demonstrated live: case 5 `merge-context-mismatch` (would require `main` advancing mid-demo; pinned by unit tests + covered retroactively by the two different `base_sha`s across the lineage) and case 6 history-rewrite (`source-head-unreachable`/`not-ancestor`, pinned by unit tests) — force pushes are outside the standing authorizations.
+
+**Side-effect caught by the gate (recorded, not papered over):** the Stage F spec→`done/` move initially red-ed spec-linter (done-corpus: `cli.test.ts` hard schema error on missing `verification_class` + GSO-P1 frozen-inventory rejection). Fixed by adding `verification_class: equivalence-provable` to the spec (NOT by grandfathering a new spec into the historical waiver inventory — SC #13). A live20-minute demonstration of why `specifications` is test-relevant: spec-linter validates the done-corpus.
+
 ## What remains for full closure
 
 1. Green base (developer action — stop-report options A/B).
