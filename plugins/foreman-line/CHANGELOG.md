@@ -2,6 +2,20 @@
 
 ## Unreleased
 
+- Verification package: ratified the six FK packages (`authority-registry`,
+  `bypass-outage-harness`, `kernel-contracts`, `kernel-lease`, `kernel-state`,
+  `spec-body-compiler`) into the D19 allowlist (STANDING #34), and adjudicated
+  their 93 unruled instances into the audit's pin tables: FK generator/harness
+  self-location enrolled in E4 on verified identity with the ratified
+  generate-writer precedent, the authority generator's four-hop `repoRoot`
+  derivation as the ruled class-2 walk, the canon-source catalogs /
+  evidence-reference labels / `git show` pathspec / message prose as ruled
+  class-3 DATA (identity + location + value + cardinality + value digests),
+  the harness/measurement spawns and kernel-state SQLite statement exec as
+  scoped class-4 rulings, and the FK seams' required-input root normalization
+  as scoped class-5 rulings. The A2.3 tripwire is unchanged: any new
+  spelling, name, file, nested declaration, or filesystem-argument position
+  remains a refusal.
 - Verification package: repaired the D19 mechanism audit (`src/d19-audit.ts`)
   ruling to reconcile with the live tree — enrolled the reviewed, spec'd
   root-resolution mechanisms (optional `repoRoot ?? process.cwd()` defaults,
