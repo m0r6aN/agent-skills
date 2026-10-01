@@ -67,8 +67,8 @@
  * server; the audit passes it the plugin root as its working directory
  * EXPLICITLY — the checker obeys its own enumeration.)
  *
- * A2.2: package discovery is DISK-DRIVEN. The ratified fifteen-package list is
- * an allowlist with a completeness check in both directions: an on-disk
+ * A2.2: package discovery is DISK-DRIVEN. The ratified-package list is an
+ * allowlist with a completeness check in both directions: an on-disk
  * package absent from the allowlist refuses the run (exit 2, named), and a
  * ratified package missing from disk refuses the run. A count never again
  * determines what gets swept.
@@ -308,6 +308,20 @@ const E4_SHIPPED_REGISTRY =
 const E4_SELF_URL = 'import.meta.url'
 
 const E4_GENERATE_FORMS = [E4_SELF_DIR, E4_SELF_FILE]
+/**
+ * The `invokedDirectly()` comparison when both sides are normalized first
+ * (kernel-lease's measure CLI): still self-identification — the entry path is
+ * compared to the module's own file, zero path derivation.
+ */
+const E4_SELF_RESOLVE = `resolve(${E4_SELF_FILE})`
+/**
+ * D19-FK (STANDING #34) module-relative lookup forms: package root via one
+ * `..` join, and the foreman-line plugin root via the dirname chain. Each is a
+ * LESSER self-location (<= 1 `..` hop, never a >= 3-segment walk — A3.1).
+ */
+const E4_PACKAGE_ROOT_HOP = `join(${E4_SELF_DIR},'..')`
+const E4_PACKAGE_ROOT_DIRNAME = `dirname(${E4_SELF_DIR})`
+const E4_PLUGIN_ROOT_DIRNAME = `dirname(dirname(${E4_SELF_DIR}))`
 
 /**
  * A4.1 — E4's asserted CARDINALITY per pinned file: the exact number of
@@ -316,6 +330,28 @@ const E4_GENERATE_FORMS = [E4_SELF_DIR, E4_SELF_FILE]
  * defect); now any swept pinned file whose observed count differs FAILS.
  */
 const E4_PINNED_COUNTS: Record<string, number> = {
+  // D19-FK ratification (STANDING #34, 2026-09-30): the six FK packages'
+  // self-location sites, enrolled on verified identity with the ratified
+  // precedent, never on shape alone (A2.3). `const here =
+  // dirname(fileURLToPath(import.meta.url))` is BYTE-IDENTICAL to
+  // role-authority/src/generate.ts:8 (the ratified precedent line), verified
+  // line-by-line at authority-registry/src/generate.ts:212,
+  // kernel-contracts/src/generate.ts:15, and kernel-lease/src/measure.ts:204
+  // (same line, indented); kernel-state/src/open.ts:64 binds the same
+  // expression to `HERE`. The rest are self-IDENTIFICATION guards (entry path
+  // compared to the module's own file — the R4 `invokedDirectly()`/
+  // E4_SELF_URL precedent) or module-relative lookup of shipped read-only
+  // inputs (the E4_GATE_ALLOWLIST/E4_SHIPPED_REGISTRY precedent).
+  'authority-registry/src/generate.ts': 2,
+  'bypass-outage-harness/src/channels/fixtures.ts': 1,
+  'bypass-outage-harness/src/channels/gate.ts': 1,
+  'bypass-outage-harness/src/channels/outage.ts': 1,
+  'bypass-outage-harness/src/index.ts': 2,
+  'bypass-outage-harness/src/surface-refs.ts': 1,
+  'bypass-outage-harness/src/vectors.ts': 1,
+  'kernel-contracts/src/generate.ts': 1,
+  'kernel-lease/src/measure.ts': 2,
+  'kernel-state/src/open.ts': 1,
   // A7(b): byte-identical to role-authority/src/generate.ts:8,11 (the
   // ratified precedent) — verified diff, not shape:
   //   contract-readers/src/generate.ts:14 `const here = dirname(fileURLToPath(import.meta.url))`
@@ -342,6 +378,30 @@ const E4_PINNED_COUNTS: Record<string, number> = {
 }
 
 const E4_PINNED: ReadonlyMap<string, readonly string[]> = new Map([
+  // D19-FK (STANDING #34): see the verified-identity comment on
+  // E4_PINNED_COUNTS above. authority-registry's generator carries the same
+  // two generate forms; measure.ts adds its `invokedDirectly()` resolve form;
+  // the harness entries locate shipped read-only inputs (hook, control spec,
+  // fixtures) relative to the module — never a discovered root.
+  ['authority-registry/src/generate.ts', E4_GENERATE_FORMS],
+  [
+    'bypass-outage-harness/src/channels/fixtures.ts',
+    [`join(${E4_PLUGIN_ROOT_DIRNAME},'tests','fixtures','link-trees.json',)`],
+  ],
+  [
+    'bypass-outage-harness/src/channels/gate.ts',
+    [`join(${E4_PLUGIN_ROOT_DIRNAME},CONTROL_SPEC_RELATIVE)`],
+  ],
+  [
+    'bypass-outage-harness/src/channels/outage.ts',
+    [`join(${E4_PLUGIN_ROOT_DIRNAME},'tests','fixtures','specs','divergence-fixture-spec.md',)`],
+  ],
+  ['bypass-outage-harness/src/index.ts', [E4_PACKAGE_ROOT_HOP, E4_SELF_URL]],
+  ['bypass-outage-harness/src/surface-refs.ts', [E4_PLUGIN_ROOT_DIRNAME]],
+  ['bypass-outage-harness/src/vectors.ts', [`join(${E4_PACKAGE_ROOT_DIRNAME},'tests','fixtures')`]],
+  ['kernel-contracts/src/generate.ts', [E4_SELF_DIR]],
+  ['kernel-lease/src/measure.ts', [E4_SELF_DIR, E4_SELF_RESOLVE]],
+  ['kernel-state/src/open.ts', [E4_SELF_DIR]],
   // A7(b): see the byte-identity comment on E4_PINNED_COUNTS above.
   ['contract-readers/src/generate.ts', E4_GENERATE_FORMS],
   ['contracts/src/generate.ts', E4_GENERATE_FORMS],
@@ -392,28 +452,50 @@ const RULED_REPORT_SPECS_DIR = `${REPO_LITERAL}/docs/specs/active`
 const RULED_CONTRACTS_SURFACE = `${REPO_LITERAL}/contracts`
 
 /**
- * Ruled class-2 non-instances: the three `DEFAULT_REPO_ROOT` repo-root
- * derivations — module-self-location walked exactly four `..` hops
- * (src -> <pkg> -> foreman-line -> plugins -> root), one per declaring file.
- * Each file's own docstring states the derivation ("Repo root, resolved from
- * this module's location … Mirrors the shipped `shaping`/`projection`
- * packages' `DEFAULT_REPO_ROOT` derivation (same directory depth)"), and the
- * P2b-i R3 retirement keeps them only as legacy defaults behind a required,
- * absolute root. Pinned by identity (these three files) + location (a named
- * top-level `DEFAULT_REPO_ROOT` declaration) + value (this exact stripped
- * call text); a second derivation, a deeper walk, or the same form under any
- * other name remains class 2.
+ * Ruled class-2 non-instances: the pinned repo-root derivation walks —
+ * module-self-location walked exactly four `..` hops
+ * (src -> <pkg> -> foreman-line -> plugins -> root), one named top-level
+ * declaration per declaring file (A4.1). Two ruled forms live here: the
+ * three `DEFAULT_REPO_ROOT` derivations, whose files' own docstrings state
+ * the derivation ("Repo root, resolved from this module's location … Mirrors
+ * the shipped `shaping`/`projection` packages' `DEFAULT_REPO_ROOT` derivation
+ * (same directory depth)") and which the P2b-i R3 retirement keeps only as
+ * legacy defaults behind a required, absolute root; and the D19-FK authority
+ * generator's `repoRoot` derivation (see the form comment below). Pinned by
+ * identity (the declaring file) + location (the named top-level declaration)
+ * + value (this exact stripped call text); a second derivation, a deeper
+ * walk, or the same form under any other name remains class 2.
  */
 const RULED_ROOT_DERIVATION_FORM =
   "join(dirname(fileURLToPath(import.meta.url)),'..','..','..','..',)"
+/**
+ * D19-FK (STANDING #34): the FK authority generator's repo-root derivation —
+ * the same four-`..`-hop module-self-location depth as the three
+ * `DEFAULT_REPO_ROOT` walks (src -> <pkg> -> foreman-line -> plugins -> root),
+ * split across its `packageRoot` intermediate binding (generate.ts:212-214:
+ * `here` is the pinned E4 self-location, `packageRoot = join(here,'..')`, and
+ * `repoRoot = join(packageRoot,'..','..','..')`). The generator states the
+ * derivation in its own docstring and uses the root only as the explicit
+ * `cwd:` of its reviewed `git show` build step (an explicit build operation —
+ * the generate-writer precedent). Pinned by identity (this file) + location
+ * (a named top-level `repoRoot` declaration) + value (this exact stripped
+ * call text); a second derivation, a deeper walk, or the same form under any
+ * other name remains class 2.
+ */
+const RULED_FK_ROOT_DERIVATION_FORM = "join(packageRoot,'..','..','..')"
 const RULED_ROOT_DERIVATIONS: Record<string, { readonly name: string; readonly form: string }> = {
   'approval/src/paths.ts': { name: 'DEFAULT_REPO_ROOT', form: RULED_ROOT_DERIVATION_FORM },
+  'authority-registry/src/generate.ts': {
+    name: 'repoRoot',
+    form: RULED_FK_ROOT_DERIVATION_FORM,
+  },
   'projection/src/paths.ts': { name: 'DEFAULT_REPO_ROOT', form: RULED_ROOT_DERIVATION_FORM },
   'shaping/src/emit.ts': { name: 'DEFAULT_REPO_ROOT', form: RULED_ROOT_DERIVATION_FORM },
 }
 /** A4.1: the derivation pin's asserted cardinality per pinned file. */
 const RULED_ROOT_DERIVATION_COUNTS: Record<string, number> = {
   'approval/src/paths.ts': 1,
+  'authority-registry/src/generate.ts': 1,
   'projection/src/paths.ts': 1,
   'shaping/src/emit.ts': 1,
 }
@@ -424,8 +506,10 @@ const RULED_ROOT_DERIVATION_COUNTS: Record<string, number> = {
  * data; home-repo call sites pass it explicitly), the frozen skill-injection
  * matrix path (W3-P2 lists `plugins/foreman-line/skill-injection/
  * skill-injection.yaml` among its frozen inputs), and `AC_CONVENTION_PATH`
- * (W3-P1 AC-4: "the string constant `AC_CONVENTION_PATH` (equal to
- * `plugins/foreman-line/verification/AC-CONVENTION.md`)"). DATA, never a
+ * (W3-P1 AC-4: "the string constant `AC_CONVENTION_PATH` (equal to `plugins/foreman-line/verification/AC-CONVENTION.md`)"), and the
+ * D19-FK `R31_DECISION_PATH` label (registry.ts's transcribed R31 Step-0
+ * mapping: the coordinator-decision doc path paired with its frozen blob
+ * digest — reference identity DATA). DATA, never a
  * root: where a consumer resolves one it is joined beneath a REQUIRED,
  * absolute, caller-supplied root. Pinned by identity (these files) + location
  * (a named top-level declaration initializer) + value (this exact folded
@@ -435,8 +519,12 @@ const RULED_ROOT_DERIVATION_COUNTS: Record<string, number> = {
  */
 const RULED_DATA_MATRIX_VALUE = `${REPO_LITERAL}/skill-injection/skill-injection.yaml`
 const RULED_DATA_AC_CONVENTION_VALUE = `${REPO_LITERAL}/verification/AC-CONVENTION.md`
+const RULED_FK_R31_DECISION_VALUE = `${REPO_LITERAL}/docs/goals/foreman-kernel/R31-coordinator-decision-20260907.md`
 const RULED_DATA_PATH_CONSTANTS: Record<string, readonly { name: string; value: string }[]> = {
   'approval/src/paths.ts': [{ name: 'ACTIVE_SPECS_DIR', value: RULED_REPORT_SPECS_DIR }],
+  'authority-registry/src/registry.ts': [
+    { name: 'R31_DECISION_PATH', value: RULED_FK_R31_DECISION_VALUE },
+  ],
   'integration/src/governing-spec.ts': [
     { name: 'ACTIVE_SPECS_DIR', value: RULED_REPORT_SPECS_DIR },
   ],
@@ -475,6 +563,312 @@ const RULED_CLASS5_GUARD_SITES: Record<
     { form: 'resolve(repoRoot)', count: 1 },
   ],
   buildContext: [{ form: 'resolve(repoRoot)', count: 1 }],
+}
+
+// ─── D19-FK scoped rulings (STANDING #34 ratification, 2026-09-30) ────────────
+// The six ratified FK packages carry reviewed mechanisms the classes above
+// enumerate but did not yet rule: canon-source catalog DATA, registry
+// evidence-reference DATA, harness subprocess / SQLite statement exec, and
+// required-input root normalization. Each set pins identity + location +
+// value + cardinality (A4.1) with its evidence; nothing here self-populates
+// (A2.3), and any new spelling, name, file, nested declaration, or
+// filesystem-argument position of these values stays a class violation.
+
+/** Class-4 pin call-name fragments (concatenated like EXEC_FILE_SYNC_NAME — AC-17). */
+const SPAWN_SYNC_NAME = ['spawn', 'Sync'].join('')
+const SPAWN_ASYNC_NAME = ['spawn'].join('')
+
+/**
+ * Ruled class-3 DATA: the FK-P0 canon-source catalogs — `path` property
+ * initializers inside the named top-level declarations (the generator's
+ * SOURCE_DEFINITIONS array, the validator's SOURCE_CONTRACTS record). These
+ * are sourceId -> repo-relative doc-path LABELS for the FK canon corpus:
+ * compared as labels, and where one is resolved it is joined beneath the
+ * generator's module-derived repo root (the ruled derivation above) or the
+ * validator's canonical-verified repoRoot (typed REPO_ROOT_INVALID when the
+ * root is not the exact root of a real Git worktree) — never against process
+ * cwd. Pinned by identity (these two files) + location (a `path` property of
+ * an object literal inside the named top-level declaration) + value (this
+ * exact 18-label set) + cardinality (18 per file; digest over all 36). A
+ * respelling, another property, another declaration, a nested declaration,
+ * or a filesystem ARGUMENT position remains class 3 (STANDING #18).
+ */
+const RULED_CANON_SOURCE_DECLARATIONS: Record<string, string> = {
+  'authority-registry/src/generate.ts': 'SOURCE_DEFINITIONS',
+  'authority-registry/src/validate.ts': 'SOURCE_CONTRACTS',
+}
+const RULED_CANON_SOURCE_PATH_VALUES: readonly string[] = [
+  `${REPO_LITERAL}/docs/goals/foreman-kernel/charter.md`,
+  `${REPO_LITERAL}/docs/goals/foreman-kernel/plan-review-findings.md`,
+  `${REPO_LITERAL}/docs/goals/foreman-kernel/loop-directive.md`,
+  `${REPO_LITERAL}/docs/SPEC-CONVENTION.md`,
+  `${REPO_LITERAL}/docs/COORDINATOR-PATTERN.md`,
+  `${REPO_LITERAL}/skills/goal/SKILL.md`,
+  `${REPO_LITERAL}/docs/kickstarters/STANDING-CONSTRAINTS.md`,
+  `${REPO_LITERAL}/skills/parcel-driven-development/SKILL.md`,
+  `${REPO_LITERAL}/docs/FOREMAN-LINE-PLAN.md`,
+  `${REPO_LITERAL}/approval/README.md`,
+  `${REPO_LITERAL}/spec-linter/schemas/spec-frontmatter.schema.json`,
+  `${REPO_LITERAL}/spec-linter/src/validate.ts`,
+  `${REPO_LITERAL}/spec-linter/src/cli.ts`,
+  `${REPO_LITERAL}/spec-linter/README.md`,
+  `${REPO_LITERAL}/permission-profiles/permission-profiles.yaml`,
+  `${REPO_LITERAL}/permission-profiles/src/types.ts`,
+  `${REPO_LITERAL}/permission-profiles/src/validator.ts`,
+  `${REPO_LITERAL}/permission-profiles/README.md`,
+]
+/** A4.1: per-file pinned site cardinality (each catalog carries each label once). */
+const RULED_CANON_SOURCE_COUNTS: Record<string, number> = {
+  'authority-registry/src/generate.ts': 18,
+  'authority-registry/src/validate.ts': 18,
+}
+const RULED_CANON_SOURCE_LITERAL_COUNT = 36
+/** SHA-256 of JSON.stringify([...values].sort()) encoded as UTF-8. */
+const RULED_CANON_SOURCE_DIGEST = 'dd0eb385aa003bb630b566bea35351401f7a78927179bcc14b57ac31e36a5364'
+
+/**
+ * Ruled class-3 DATA: the `missing-provenance-reference` reconciliation's
+ * missing-ledger path — the declared path of a provenance ledger that is
+ * ABSENT by definition (validate.ts records it as evidence kind
+ * `missing-path`), i.e. reference-identity evidence metadata, never a path
+ * resolved against any root. Pinned by identity (these two files) + location
+ * (the evidence-ref position of the `missing-provenance-reference` record:
+ * the last `reconciliationMany` argument in generate.ts, the `path` property
+ * of the `canonicalJson` evidence object in validate.ts) + value (this exact
+ * string) + cardinality (1 per file). The same string in another position,
+ * another record, or a filesystem ARGUMENT position remains class 3.
+ */
+const RULED_EVIDENCE_REF_GENERATE_FILE = 'authority-registry/src/generate.ts'
+const RULED_EVIDENCE_REF_VALIDATE_FILE = 'authority-registry/src/validate.ts'
+const RULED_EVIDENCE_REF_VALUE = `${REPO_LITERAL}/docs/transcripts/defects_lessons.md`
+const RULED_EVIDENCE_REF_COUNTS: Record<string, number> = {
+  [RULED_EVIDENCE_REF_GENERATE_FILE]: 1,
+  [RULED_EVIDENCE_REF_VALIDATE_FILE]: 1,
+}
+const RULED_EVIDENCE_REF_LITERAL_COUNT = 2
+/** SHA-256 of JSON.stringify([...values].sort()) encoded as UTF-8. */
+const RULED_EVIDENCE_REF_DIGEST = 'e6d917d4109c32a0e18ec714c045274671ef94e3ca9b76291139e41b29f13daf'
+
+/**
+ * Ruled class-3 DATA: the git pathspec the FK generator passes to its
+ * reviewed `git show` build step (`registryAtCommit`) — a `commit:path` object
+ * name for the frozen registry YAML in git history, never a path resolved
+ * against a local root (the JEV custody-path precedent). Pinned by identity
+ * (this file) + location (inside `registryAtCommit`, as an argument-array
+ * element of the `git` file-exec) + value (these exact template chunks) +
+ * cardinality (1). A respelling, another position, or any other template
+ * remains class 3.
+ */
+const RULED_GIT_PATHSPEC_FILE = 'authority-registry/src/generate.ts'
+const RULED_GIT_PATHSPEC_SCOPE = 'registryAtCommit'
+const RULED_GIT_PATHSPEC_VALUE = `:${REPO_LITERAL}/authority-registry/authority-enforcement-registry.yaml`
+const RULED_GIT_PATHSPEC_COUNT = 1
+/** SHA-256 of JSON.stringify([...values].sort()) encoded as UTF-8. */
+const RULED_GIT_PATHSPEC_DIGEST = '7430dca3b12d1f547b613291ecd9ec2ae924b41b1cea200f104f5cca864b01d1'
+
+/**
+ * Ruled class-3 DATA: repo-shaped mentions inside a named top-level MESSAGE
+ * constant's prose (the registration/backlog-run.mts ticket-description
+ * precedent) — operator-facing text posted with a typed error, never resolved
+ * against a root. Pinned by identity (this file) + location (initializer of
+ * the named top-level constant) + value (this exact path-mention set) +
+ * cardinality (1 per entry). Any other repo-shaped mention in the file, or
+ * under any other name, is a class-3 violation.
+ */
+const RULED_PROSE_MENTION_DATA: Record<
+  string,
+  readonly { readonly name: string; readonly mentions: readonly string[] }[]
+> = {
+  'bypass-outage-harness/src/channels/gate.ts': [
+    { name: 'ENV_PREREQ_MESSAGE', mentions: [`${REPO_LITERAL}/dispatch/`] },
+  ],
+}
+const RULED_PROSE_MENTION_LITERAL_COUNT = 1
+/** SHA-256 of JSON.stringify([...mentions].sort()) encoded as UTF-8. */
+const RULED_PROSE_MENTION_DIGEST =
+  '0ee5e6365f331cfef5a7a68d87727ffc3cebfc65723bf31a9b8fc6ed1029ecb2'
+
+/**
+ * A scoped ruling entry: identity (the file) + location (the named enclosing
+ * scope) + value (the exact whitespace-stripped call text) + cardinality.
+ */
+interface ScopedPin {
+  readonly role: string
+  readonly form: string
+  readonly count: number
+}
+
+/**
+ * Ruled class-4 non-instances: scoped subprocess and SQLite statement exec.
+ * Two reviewed mechanisms are pinned here, each by identity + location +
+ * value + cardinality (the ledger/custody pin discipline, in its scoped
+ * form):
+ *
+ * (1) Harness/measurement actor spawns (bypass-outage-harness, kernel-lease):
+ * every spawned script receives ABSOLUTE paths as argv, built from the
+ * caller's temp workspace or the module-relative shipped-input lookups pinned
+ * in E4 above — nothing in the child resolves against the inherited cwd, so
+ * the "inherits cwd" mechanism (a child resolving relative paths against the
+ * process's directory) is absent. The hook spawn (gate.ts) hands the shipped
+ * hook its payload on stdin with a scrubbed env.
+ *
+ * (2) SQLite statement exec (kernel-state): `exec` on the connection returned
+ * by the path-gate-verified open (FK-P9 startup step 1 + the opened-target
+ * re-verify) — transaction control (`'BEGIN IMMEDIATE'`/`'COMMIT'`/
+ * `'ROLLBACK'`) and the frozen migration DDL text. Not a subprocess at all:
+ * A3.3's receiver disambiguation cannot see that from the spelling, so the
+ * reviewed calls are pinned instead (the ledger's `settings`/`transaction`
+ * role pins' character).
+ *
+ * Residual coverage: every OTHER process-anchored spawn call, every other
+ * command/args shape, every unpinned file/scope, and every occurrence beyond
+ * the pinned cardinality remains a class-4 violation.
+ */
+const FORM_BYPASS_ACTOR =
+  SPAWN_SYNC_NAME + "(process.execPath,[script,target],{encoding:'utf8',timeout:30_000,})"
+const FORM_MCP_ACTOR =
+  SPAWN_ASYNC_NAME + "(process.execPath,[scriptPath],{stdio:['pipe','pipe','pipe']})"
+const FORM_MKLINK_JUNCTION =
+  EXEC_FILE_SYNC_NAME + "('cmd',['/c','mklink','/J',linkPath,targetPath],{stdio:'pipe'})"
+const FORM_MKLINK_SYMLINK =
+  EXEC_FILE_SYNC_NAME + "('cmd',['/c','mklink',linkPath,targetPath],{stdio:'pipe'})"
+const FORM_SHELL_WRITE =
+  SPAWN_SYNC_NAME +
+  "(process.execPath,['-e',NODE_WRITE_SCRIPT,target,content],{encoding:'utf8',timeout:30_000,})"
+const FORM_SHELL_DELETE =
+  SPAWN_SYNC_NAME +
+  "(process.execPath,['-e',\"require('node:fs').rmSync(process.argv[1],{force:true})\",target],{encoding:'utf8',timeout:30_000},)"
+const FORM_SHELL_RENAME =
+  SPAWN_SYNC_NAME +
+  "(process.execPath,['-e',\"require('node:fs').renameSync(process.argv[1],process.argv[2])\",from,to],{encoding:'utf8',timeout:30_000},)"
+const FORM_POWERSHELL_WRITE =
+  SPAWN_SYNC_NAME +
+  "('powershell.exe',['-NoProfile','-NonInteractive','-Command',command],{encoding:'utf8',timeout:60_000,},)"
+const FORM_ACTOR_SCRIPT =
+  SPAWN_SYNC_NAME + "(process.execPath,[scriptPath,...args],{encoding:'utf8',timeout:30_000,})"
+const FORM_HOOK_SYNC =
+  SPAWN_SYNC_NAME +
+  "(process.execPath,[hookScriptPath(),mode],{input:JSON.stringify(payload),encoding:'utf8',timeout:30_000,env:hookEnv(env),})"
+const FORM_HOOK_ASYNC =
+  SPAWN_ASYNC_NAME +
+  "(process.execPath,[hookScriptPath(),mode],{env:hookEnv(env),stdio:['pipe','pipe','pipe'],})"
+const FORM_RACER =
+  SPAWN_ASYNC_NAME +
+  "(process.execPath,['--import','tsx',workerPath,'contention',dbRoot,barrierDir,String(racer),String(repeat),String(CONTENTION_PLAN.attemptsPerRacer),],{stdio:['ignore','pipe','pipe']},)"
+const RULED_CLASS4_SCOPED_SITES: Record<string, Record<string, readonly ScopedPin[]>> = {
+  'bypass-outage-harness/src/channels/bypass.ts': {
+    runBypSp01: [{ role: 'spawn/tool-call-actor', form: FORM_BYPASS_ACTOR, count: 1 }],
+    runBypSp02: [{ role: 'spawn/detached-actor', form: FORM_BYPASS_ACTOR, count: 1 }],
+    mcpCall: [{ role: 'spawn/mcp-actor', form: FORM_MCP_ACTOR, count: 1 }],
+    runBypMc02: [{ role: 'spawn/custom-command-actor', form: FORM_BYPASS_ACTOR, count: 1 }],
+    runSubagentCase: [{ role: 'spawn/subagent-actor', form: FORM_BYPASS_ACTOR, count: 1 }],
+  },
+  'bypass-outage-harness/src/channels/fixtures.ts': {
+    materializeLinkTree: [
+      { role: 'spawn/mklink-junction', form: FORM_MKLINK_JUNCTION, count: 1 },
+      { role: 'spawn/mklink-symlink', form: FORM_MKLINK_SYMLINK, count: 1 },
+    ],
+    shellWrite: [{ role: 'spawn/mutation-actor', form: FORM_SHELL_WRITE, count: 1 }],
+    shellDelete: [{ role: 'spawn/mutation-actor', form: FORM_SHELL_DELETE, count: 1 }],
+    shellRename: [{ role: 'spawn/mutation-actor', form: FORM_SHELL_RENAME, count: 1 }],
+    powershellWrite: [{ role: 'spawn/mutation-actor', form: FORM_POWERSHELL_WRITE, count: 1 }],
+    runActorScript: [{ role: 'spawn/mutation-actor', form: FORM_ACTOR_SCRIPT, count: 1 }],
+  },
+  'bypass-outage-harness/src/channels/gate.ts': {
+    runHookSync: [{ role: 'spawn/model-gate-hook', form: FORM_HOOK_SYNC, count: 1 }],
+    runHookAsync: [{ role: 'spawn/model-gate-hook', form: FORM_HOOK_ASYNC, count: 1 }],
+  },
+  'kernel-lease/src/measure.ts': {
+    runRacer: [{ role: 'spawn/contention-racer', form: FORM_RACER, count: 1 }],
+  },
+  'kernel-state/src/backup.ts': {
+    backupTo: [
+      { role: 'db/transaction-begin', form: "lockDriver.exec('BEGINIMMEDIATE')", count: 1 },
+      { role: 'db/transaction-commit', form: "lockDriver.exec('COMMIT')", count: 1 },
+      { role: 'db/transaction-rollback', form: "lockDriver.exec('ROLLBACK')", count: 1 },
+    ],
+  },
+  'kernel-state/src/migrations.ts': {
+    applyMigration: [
+      { role: 'db/transaction-begin', form: "driver.exec('BEGINIMMEDIATE')", count: 1 },
+      { role: 'db/transaction-commit', form: "driver.exec('COMMIT')", count: 2 },
+      { role: 'db/migration-statement', form: 'driver.exec(statements[i]asstring)', count: 1 },
+      { role: 'db/transaction-rollback', form: "driver.exec('ROLLBACK')", count: 1 },
+    ],
+  },
+  'kernel-state/src/open.ts': {
+    realConnect: [{ role: 'db/statement-exec', form: 'db.exec(sql)', count: 1 }],
+  },
+  'kernel-state/src/transactions.ts': {
+    withTransaction: [
+      {
+        role: 'db/transaction-begin',
+        form: "storage.driver.exec('BEGINIMMEDIATE')",
+        count: 1,
+      },
+      { role: 'db/transaction-rollback', form: "storage.driver.exec('ROLLBACK')", count: 2 },
+      { role: 'db/transaction-commit', form: "storage.driver.exec('COMMIT')", count: 1 },
+    ],
+  },
+}
+
+/**
+ * Ruled class-5 non-instances: required-input root normalization in the FK
+ * seams. `resolve()` here normalizes a REQUIRED root input — never a
+ * discovered or defaulted root — and each seam is fail-closed on a wrong
+ * root: authority-registry canonical-verifies the root is the exact root of a
+ * real Git worktree (typed REPO_ROOT_INVALID/IO_ERROR) before any source or
+ * evidence is read; kernel-state resolves the operator-configured
+ * `storageRoot`/`backupRoot` once at the seam (missing/empty refused with
+ * typed STORAGE_ARGUMENT_INVALID) and then admits only well-formed relative
+ * forms below it (FK-P9's closed path-gate reasonCodes — `absolute`,
+ * `traversal`, link forms refused); spec-body-compiler's tree check refuses a
+ * reparse-point root (LINK_IN_ROOT) and absolute entries (ENTRY_ABSOLUTE);
+ * the harness's `relativePosix` normalizes workspace-internal absolute paths
+ * for a display spelling only. Pinned by identity (these files) + location
+ * (the named enclosing scope) + value (this exact stripped call text) +
+ * cardinality. The same spelling in another scope, feeding anything but the
+ * ruled normalization, or beyond the pinned cardinality remains class 5.
+ */
+const RULED_CLASS5_NORMALIZATION_SITES: Record<string, Record<string, readonly ScopedPin[]>> = {
+  'authority-registry/src/validate.ts': {
+    repoRootCheck: [
+      { role: 'root/canonical-worktree-comparison', form: 'resolve(repoRoot)', count: 1 },
+    ],
+    sweepRegistrySources: [
+      { role: 'root/required-input-normalization', form: 'resolve(repoRoot)', count: 1 },
+    ],
+    retirementVerificationViolations: [
+      { role: 'root/required-input-normalization', form: 'resolve(repoRoot)', count: 1 },
+    ],
+  },
+  'bypass-outage-harness/src/channels/fixtures.ts': {
+    relativePosix: [
+      { role: 'root/workspace-display-normalization', form: 'resolve(root)', count: 1 },
+    ],
+  },
+  'kernel-state/src/backup.ts': {
+    checkBackupDestination: [
+      { role: 'config-root/normalization', form: 'resolve(storage.backupRoot)', count: 1 },
+    ],
+    pruneBackups: [
+      { role: 'config-root/normalization', form: 'resolve(policy.backupRoot)', count: 1 },
+    ],
+  },
+  'kernel-state/src/open.ts': {
+    openStorageWithDriver: [
+      { role: 'config-root/normalization', form: 'resolve(config.storageRoot)', count: 1 },
+      { role: 'config-root/normalization', form: 'resolve(backupPolicy.root)', count: 1 },
+    ],
+    storagePathFor: [
+      { role: 'config-root/normalization', form: 'resolve(config.storageRoot)', count: 1 },
+    ],
+  },
+  'spec-body-compiler/src/compile-scope.ts': {
+    verifyCompiledPaths: [
+      { role: 'root/tree-check-normalization', form: 'resolve(root)', count: 1 },
+    ],
+  },
 }
 
 // RCM-P1B: a retained manifest provenance comparison, never a filesystem input.
@@ -851,6 +1245,213 @@ function isJevPathDataLiteral(node: Expression, sf: SourceFile, rel: string): bo
     statement.parent === sf &&
     declarationList.getText(sf).startsWith('const ')
   )
+}
+
+// ─── D19-FK scoped-ruling predicates (STANDING #34) ───────────────────────────
+
+/**
+ * The named top-level `const` declaration whose direct initializer is
+ * `initializer`, or null. The JEV declaration-identity discipline: `let`/
+ * nested declarations never satisfy it.
+ */
+function topLevelConstNameOf(initializer: Node, sf: SourceFile): string | null {
+  const decl = initializer.parent
+  if (
+    decl === undefined ||
+    !isVariableDeclaration(decl) ||
+    decl.initializer !== initializer ||
+    !isIdentifier(decl.name)
+  ) {
+    return null
+  }
+  const list = decl.parent
+  if (
+    list === undefined ||
+    !isVariableDeclarationList(list) ||
+    !list.getText(sf).startsWith('const ') ||
+    !isTopLevelVariableDeclaration(decl)
+  ) {
+    return null
+  }
+  return decl.name.text
+}
+
+/**
+ * D19-FK canon-source catalog DATA (the SF-2 DIRECT-property discipline): a
+ * `path` property assignment whose own enclosing object literal is either
+ * (i) a direct element of the pinned top-level catalog array, or (ii) the
+ * initializer of a property of the pinned top-level catalog record — in the
+ * exact file, under the exact pinned declaration name, and at a pinned
+ * value. Anything one level deeper, under another property or declaration,
+ * or respelled stays class 3 (STANDING #18).
+ */
+function isCanonSourcePathLiteral(
+  node: Expression,
+  rel: string,
+  value: string,
+  sf: SourceFile,
+): boolean {
+  const declarationName = RULED_CANON_SOURCE_DECLARATIONS[rel]
+  if (declarationName === undefined || !isStringLiteral(node)) return false
+  if (!RULED_CANON_SOURCE_PATH_VALUES.includes(value)) return false
+  const property = node.parent
+  if (
+    property === undefined ||
+    !isPropertyAssignment(property) ||
+    property.initializer !== node ||
+    !isIdentifier(property.name) ||
+    property.name.text !== 'path'
+  ) {
+    return false
+  }
+  const objectLiteral = property.parent
+  if (objectLiteral === undefined || !isObjectLiteralExpression(objectLiteral)) return false
+  const container = objectLiteral.parent
+  if (container === undefined) return false
+  // (i) a direct element of the top-level catalog array (SOURCE_DEFINITIONS).
+  if (isArrayLiteralExpression(container) && container.elements.includes(objectLiteral)) {
+    return topLevelConstNameOf(container, sf) === declarationName
+  }
+  // (ii) the initializer of a property of the top-level catalog record
+  // (SOURCE_CONTRACTS) — never a property nested inside another property.
+  if (isPropertyAssignment(container) && container.initializer === objectLiteral) {
+    const record = container.parent
+    return (
+      record !== undefined &&
+      isObjectLiteralExpression(record) &&
+      topLevelConstNameOf(record, sf) === declarationName
+    )
+  }
+  return false
+}
+
+/**
+ * D19-FK evidence-reference DATA: the missing-ledger path of the
+ * `missing-provenance-reference` record — the LAST `reconciliationMany`
+ * argument in the generator, or the `path` property of the direct
+ * `canonicalJson` evidence object in the validator. Both are reference
+ * identity (the ledger is absent by definition), never a resolved path.
+ */
+function isEvidenceRefDataLiteral(node: Expression, rel: string): boolean {
+  if (!isStringLiteral(node) || node.text !== RULED_EVIDENCE_REF_VALUE) return false
+  const parent = node.parent
+  if (parent === undefined) return false
+  if (rel === RULED_EVIDENCE_REF_GENERATE_FILE) {
+    if (!isCallExpression(parent) || parent.arguments[parent.arguments.length - 1] !== node) {
+      return false
+    }
+    if (calleeName(parent) !== 'reconciliationMany') return false
+    const first = parent.arguments[0]
+    return first !== undefined && constantString(first) === 'missing-provenance-reference'
+  }
+  if (rel === RULED_EVIDENCE_REF_VALIDATE_FILE) {
+    if (
+      !isPropertyAssignment(parent) ||
+      parent.initializer !== node ||
+      !isIdentifier(parent.name) ||
+      parent.name.text !== 'path'
+    ) {
+      return false
+    }
+    const objectLiteral = parent.parent
+    if (objectLiteral === undefined || !isObjectLiteralExpression(objectLiteral)) return false
+    const call = objectLiteral.parent
+    return (
+      call !== undefined &&
+      isCallExpression(call) &&
+      call.arguments[0] === objectLiteral &&
+      calleeName(call) === 'canonicalJson'
+    )
+  }
+  return false
+}
+
+/**
+ * D19-FK git pathspec DATA: a template whose static chunks fold to the pinned
+ * `commit:path` object name, sitting in the argument array of the reviewed
+ * `git` file-exec inside `registryAtCommit` (identity + location + value).
+ * A respelled template, another call, or another scope stays class 3.
+ */
+function isGitPathspecTemplate(node: Expression, rel: string, joined: string): boolean {
+  if (rel !== RULED_GIT_PATHSPEC_FILE || joined !== RULED_GIT_PATHSPEC_VALUE) return false
+  if (enclosingScopeName(node) !== RULED_GIT_PATHSPEC_SCOPE) return false
+  const array = node.parent
+  if (array === undefined || !isArrayLiteralExpression(array) || !array.elements.includes(node)) {
+    return false
+  }
+  const call = array.parent
+  if (call === undefined || !isCallExpression(call) || call.arguments[1] !== array) return false
+  if (calleeName(call) !== EXEC_FILE_SYNC_NAME) return false
+  const first = call.arguments[0]
+  return first !== undefined && constantString(first) === 'git'
+}
+
+/**
+ * D19-FK message-prose DATA (the backlog-run.mts description precedent): a
+ * repo-shaped mention inside the initializer of a pinned named top-level
+ * constant in the pinned file, where every mention is in the pinned set. A
+ * new mention, another name, or another position stays class 3.
+ */
+function isProseMentionConstantLiteral(
+  node: Expression,
+  rel: string,
+  value: string,
+  sf: SourceFile,
+): boolean {
+  const pins = RULED_PROSE_MENTION_DATA[rel]
+  if (pins === undefined || !isStringLiteral(node)) return false
+  const mentions = repoPathMentions(value)
+  if (mentions.length === 0) return false
+  const decl = node.parent
+  if (decl === undefined || !isVariableDeclaration(decl) || decl.initializer !== node) return false
+  const name = decl.name
+  if (!isIdentifier(name)) return false
+  const pin = pins.find((p) => p.name === name.text)
+  if (pin === undefined) return false
+  if (topLevelConstNameOf(decl.initializer, sf) !== name.text) return false
+  return mentions.every((m) => pin.mentions.includes(m))
+}
+
+/**
+ * The scoped pins' position key: the nearest enclosing NAMED function-like
+ * scope. Arrow functions are transparent (an arrow is a call shape, not a
+ * declaration identity — kernel-state's `exec:` wrapper property lives in
+ * one); a NAMED nested declaration still keys on its OWN name, so a
+ * nested-declaration respelling cannot enroll under the outer scope.
+ */
+function enclosingScopeName(node: Node): string | null {
+  let n: Node | undefined = node.parent
+  while (n !== undefined) {
+    if (isFunctionDeclaration(n) || isFunctionExpression(n)) return n.name?.text ?? null
+    if (isMethodDeclaration(n)) return isIdentifier(n.name) ? n.name.text : null
+    n = n.parent
+  }
+  return null
+}
+
+/**
+ * Scoped-pin enrollment with its A4.1 cap: identity (file) + location (named
+ * scope) + value (exact stripped form) must all match, and an occurrence
+ * beyond the pinned cardinality never enrolls (it stays a class violation).
+ */
+function scopedPinAt(
+  table: Record<string, Record<string, readonly ScopedPin[]>>,
+  rel: string,
+  scope: string | null,
+  form: string,
+  counts: Map<string, number>,
+): ScopedPin | null {
+  const scopes = table[rel]
+  if (scopes === undefined || scope === null) return null
+  const pins = scopes[scope]
+  if (pins === undefined) return null
+  const pin = pins.find((p) => p.form === form)
+  if (pin === undefined) return null
+  const key = `${scope}|${form}`
+  const seen = counts.get(key) ?? 0
+  if (seen >= pin.count) return null
+  counts.set(key, seen + 1)
+  return pin
 }
 
 // ─── Result records ──────────────────────────────────────────────────────────
@@ -2001,6 +2602,22 @@ interface SweepSink {
   readonly ruledDataPathSites: (Site & { name: string })[]
   /** Ruled class-5 non-instances: pinned root-normalization comparison guards. */
   readonly ruledClass5Sites: (Site & { fn: string; form: string })[]
+  /** Ruled class-3 non-instances: D19-FK canon-source catalog DATA. */
+  readonly canonSourceSites: Site[]
+  readonly canonSourceValues: string[]
+  /** Ruled class-3 non-instances: D19-FK registry evidence-reference DATA. */
+  readonly evidenceRefSites: Site[]
+  readonly evidenceRefValues: string[]
+  /** Ruled class-3 non-instances: D19-FK git pathspec template DATA. */
+  readonly gitPathspecSites: Site[]
+  readonly gitPathspecValues: string[]
+  /** Ruled class-3 non-instances: D19-FK message-prose path mentions. */
+  readonly proseMentionSites: Site[]
+  readonly proseMentionValues: string[]
+  /** Ruled class-4 non-instances: D19-FK scoped subprocess/SQLite statement exec. */
+  readonly ruledClass4Sites: (Site & { role: string; scope: string; form: string })[]
+  /** Ruled class-5 non-instances: D19-FK required-input root normalization. */
+  readonly ruledClass5NormSites: (Site & { role: string; scope: string; form: string })[]
   /** A4.1: every swept file (rel path) — pins reconcile only over swept files. */
   readonly sweptFiles: Set<string>
   /** A4.1: observed pinned-site counts per file, per pinned set. */
@@ -2158,6 +2775,36 @@ function sweepFile(
       sink.ruledDataPathSites.push({ ...site(node), name: dataPathPin.name })
       return
     }
+    // D19-FK (STANDING #34) ruled class-3 DATA: canon-source catalogs,
+    // registry evidence-reference labels, and message-prose path mentions —
+    // identity + location + value + cardinality, with the A4.1 cap (an
+    // occurrence beyond the pinned cardinality falls through and violates).
+    const canonCap = RULED_CANON_SOURCE_COUNTS[rel] ?? 0
+    const canonSeen = scopedClass3Seen.get(`canon|${rel}`) ?? 0
+    if (canonSeen < canonCap && isCanonSourcePathLiteral(node, rel, value, sf)) {
+      scopedClass3Seen.set(`canon|${rel}`, canonSeen + 1)
+      sink.canonSourceSites.push(site(node))
+      sink.canonSourceValues.push(value)
+      return
+    }
+    const evidenceCap = RULED_EVIDENCE_REF_COUNTS[rel] ?? 0
+    const evidenceSeen = scopedClass3Seen.get(`evidence|${rel}`) ?? 0
+    if (evidenceSeen < evidenceCap && isEvidenceRefDataLiteral(node, rel)) {
+      scopedClass3Seen.set(`evidence|${rel}`, evidenceSeen + 1)
+      sink.evidenceRefSites.push(site(node))
+      sink.evidenceRefValues.push(value)
+      return
+    }
+    const proseSeen = scopedClass3Seen.get(`prose|${rel}`) ?? 0
+    if (
+      proseSeen < RULED_PROSE_MENTION_LITERAL_COUNT &&
+      isProseMentionConstantLiteral(node, rel, value, sf)
+    ) {
+      scopedClass3Seen.set(`prose|${rel}`, proseSeen + 1)
+      sink.proseMentionSites.push(site(node))
+      sink.proseMentionValues.push(...repoPathMentions(value))
+      return
+    }
     const isRuledReportSite =
       rel === 'integration/src/report.ts' &&
       value === RULED_REPORT_SPECS_DIR &&
@@ -2203,6 +2850,10 @@ function sweepFile(
   const e4Handled = new Set<number>()
   /** Literals already accounted to a flagged walk expression (A3.1 dedup). */
   const walkHandled = new Set<number>()
+  /** A4.1 enrollment caps for the D19-FK scoped sets — excess never enrolls. */
+  const scopedClass3Seen = new Map<string, number>()
+  const scopedClass4Seen = new Map<string, number>()
+  const scopedClass5Seen = new Map<string, number>()
 
   /** A3.4: a bare `cwd()` call when `cwd` is imported from node:process. */
   const isBareCwdImportCall = (node: Node): node is CallExpression => {
@@ -2328,7 +2979,17 @@ function sweepFile(
       const chunks = [node.head.text, ...node.templateSpans.map((s) => s.literal.text)]
       const joined = chunks.join('')
       if (joined.includes(REPO_LITERAL)) {
-        violate(3, node)
+        // D19-FK (STANDING #34): the generator's `git show` pathspec is ruled
+        // reference DATA at its pinned position (identity + location + value +
+        // cardinality); every other repo-shaped template stays class 3.
+        const pathspecSeen = scopedClass3Seen.get('pathspec') ?? 0
+        if (pathspecSeen < RULED_GIT_PATHSPEC_COUNT && isGitPathspecTemplate(node, rel, joined)) {
+          scopedClass3Seen.set('pathspec', pathspecSeen + 1)
+          sink.gitPathspecSites.push(site(node))
+          sink.gitPathspecValues.push(joined)
+        } else {
+          violate(3, node)
+        }
       }
       // A3.1: a walk spelled across template chunks is class 2 too.
       let dots = 0
@@ -2428,7 +3089,27 @@ function sweepFile(
           sink.e1Sites.push(site(node))
           sink.e1CountsByFile.set(rel, (sink.e1CountsByFile.get(rel) ?? 0) + 1)
         } else {
-          violate(4, node)
+          // D19-FK (STANDING #34): the scoped reviewed subprocess/SQLite
+          // statement exec (identity + location + value + cardinality); every
+          // other process-anchored call stays a class-4 violation.
+          const scope = enclosingScopeName(node)
+          const scoped = scopedPinAt(
+            RULED_CLASS4_SCOPED_SITES,
+            rel,
+            scope,
+            strippedText(node, sf),
+            scopedClass4Seen,
+          )
+          if (scoped !== null && scope !== null) {
+            sink.ruledClass4Sites.push({
+              ...site(node),
+              role: scoped.role,
+              scope,
+              form: scoped.form,
+            })
+          } else {
+            violate(4, node)
+          }
         }
       } else {
         // an explicitly SUPPLIED root/path — compliant; reported (A2.9).
@@ -2445,10 +3126,30 @@ function sweepFile(
           // COMPARISON guard (see RULED_CLASS5_GUARD_SITES).
           sink.ruledClass5Sites.push({ ...site(node), fn: guardPin.fn, form: guardPin.form })
         } else {
-          const pinned =
-            (rel === 'projection/src/path-guard.ts' && guardedByAbsoluteRootAssertion(node)) ||
-            pmcPins.has(node)
-          if (!pinned) violate(5, node)
+          // D19-FK (STANDING #34): required-input root normalization in the
+          // FK seams (identity + location + value + cardinality); anything
+          // else stays a class-5 violation.
+          const scope = enclosingScopeName(node)
+          const normPin = scopedPinAt(
+            RULED_CLASS5_NORMALIZATION_SITES,
+            rel,
+            scope,
+            strippedText(node, sf),
+            scopedClass5Seen,
+          )
+          if (normPin !== null && scope !== null) {
+            sink.ruledClass5NormSites.push({
+              ...site(node),
+              role: normPin.role,
+              scope,
+              form: normPin.form,
+            })
+          } else {
+            const pinned =
+              (rel === 'projection/src/path-guard.ts' && guardedByAbsoluteRootAssertion(node)) ||
+              pmcPins.has(node)
+            if (!pinned) violate(5, node)
+          }
         }
       }
     }
@@ -2591,6 +3292,16 @@ function main(argv: readonly string[]): number {
     rootDerivationSites: [],
     ruledDataPathSites: [],
     ruledClass5Sites: [],
+    canonSourceSites: [],
+    canonSourceValues: [],
+    evidenceRefSites: [],
+    evidenceRefValues: [],
+    gitPathspecSites: [],
+    gitPathspecValues: [],
+    proseMentionSites: [],
+    proseMentionValues: [],
+    ruledClass4Sites: [],
+    ruledClass5NormSites: [],
     sweptFiles: new Set<string>(),
     e1CountsByFile: new Map<string, number>(),
     e4CountsByFile: new Map<string, number>(),
@@ -2670,6 +3381,7 @@ function main(argv: readonly string[]): number {
     ...sink.pmcIntentErrors,
     ...sink.pmcRecoveryErrors,
   ]
+  const digestMismatches: string[] = []
   const pmcIntentExpected = sink.sweptFiles.has(PMC_INTENT_FILE) ? PMC_INTENT_CALLS.size : 0
   if (sink.pmcIntentSites.length !== pmcIntentExpected)
     pinMismatches.push(
@@ -2775,12 +3487,141 @@ function main(argv: readonly string[]): number {
     }
   }
 
+  // D19-FK scoped sets assert their cardinality the same way (A4.1): per
+  // pinned identity/location slot, over the pinned files actually swept.
+  const reconcileScoped = (
+    setName: string,
+    table: Record<string, Record<string, readonly ScopedPin[]>>,
+    sites: readonly (Site & { role: string; scope: string; form: string })[],
+  ): { expected: number; observed: number } => {
+    let expectedTotal = 0
+    let observedTotal = 0
+    for (const [file, scopes] of Object.entries(table)) {
+      if (!sink.sweptFiles.has(file)) continue
+      for (const [scope, pins] of Object.entries(scopes)) {
+        for (const pin of pins) {
+          const got = sites.filter(
+            (s) => s.file === file && s.scope === scope && s.form === pin.form,
+          ).length
+          expectedTotal += pin.count
+          observedTotal += got
+          if (got !== pin.count) {
+            pinMismatches.push(
+              `${setName}: ${file}#${scope} — ${got} pinned site(s) observed at form '${pin.form}', the pin asserts exactly ${pin.count}`,
+            )
+          }
+        }
+      }
+    }
+    return { expected: expectedTotal, observed: observedTotal }
+  }
+  const class4Card = reconcileScoped(
+    'class-4 scoped exec',
+    RULED_CLASS4_SCOPED_SITES,
+    sink.ruledClass4Sites,
+  )
+  const class5NormCard = reconcileScoped(
+    'class-5 root normalization',
+    RULED_CLASS5_NORMALIZATION_SITES,
+    sink.ruledClass5NormSites,
+  )
+  let canonExpected = 0
+  let canonObserved = 0
+  for (const [file, want] of Object.entries(RULED_CANON_SOURCE_COUNTS)) {
+    if (!sink.sweptFiles.has(file)) continue
+    const got = sink.canonSourceSites.filter((s) => s.file === file).length
+    canonExpected += want
+    canonObserved += got
+    if (got !== want) {
+      pinMismatches.push(
+        `class-3 canon-source catalog DATA: ${file} — ${got} pinned site(s) observed, the pin asserts exactly ${want}`,
+      )
+    }
+  }
+  if (sink.canonSourceSites.length !== RULED_CANON_SOURCE_LITERAL_COUNT) {
+    pinMismatches.push(
+      `class-3 canon-source catalog DATA — ${sink.canonSourceSites.length} pinned site(s) observed, the pin asserts exactly ${RULED_CANON_SOURCE_LITERAL_COUNT}`,
+    )
+  }
+  const canonSortedValues = [...sink.canonSourceValues].sort()
+  const canonObservedDigest = createHash('sha256')
+    .update(JSON.stringify(canonSortedValues), 'utf8')
+    .digest('hex')
+  if (canonExpected > 0 && canonObservedDigest !== RULED_CANON_SOURCE_DIGEST) {
+    digestMismatches.push(
+      `class-3 canon-source catalog DATA: expected ${RULED_CANON_SOURCE_DIGEST}, observed ${canonObservedDigest}`,
+    )
+  }
+  let evidenceExpected = 0
+  let evidenceObserved = 0
+  for (const [file, want] of Object.entries(RULED_EVIDENCE_REF_COUNTS)) {
+    if (!sink.sweptFiles.has(file)) continue
+    const got = sink.evidenceRefSites.filter((s) => s.file === file).length
+    evidenceExpected += want
+    evidenceObserved += got
+    if (got !== want) {
+      pinMismatches.push(
+        `class-3 evidence-reference DATA: ${file} — ${got} pinned site(s) observed, the pin asserts exactly ${want}`,
+      )
+    }
+  }
+  if (sink.evidenceRefSites.length !== RULED_EVIDENCE_REF_LITERAL_COUNT) {
+    pinMismatches.push(
+      `class-3 evidence-reference DATA — ${sink.evidenceRefSites.length} pinned site(s) observed, the pin asserts exactly ${RULED_EVIDENCE_REF_LITERAL_COUNT}`,
+    )
+  }
+  const evidenceSortedValues = [...sink.evidenceRefValues].sort()
+  const evidenceObservedDigest = createHash('sha256')
+    .update(JSON.stringify(evidenceSortedValues), 'utf8')
+    .digest('hex')
+  if (evidenceExpected > 0 && evidenceObservedDigest !== RULED_EVIDENCE_REF_DIGEST) {
+    digestMismatches.push(
+      `class-3 evidence-reference DATA: expected ${RULED_EVIDENCE_REF_DIGEST}, observed ${evidenceObservedDigest}`,
+    )
+  }
+  const pathspecExpected = sink.sweptFiles.has(RULED_GIT_PATHSPEC_FILE)
+    ? RULED_GIT_PATHSPEC_COUNT
+    : 0
+  if (sink.gitPathspecSites.length !== pathspecExpected) {
+    pinMismatches.push(
+      `class-3 git pathspec DATA: ${sink.gitPathspecSites.length} pinned site(s) observed, the pin asserts exactly ${pathspecExpected}`,
+    )
+  }
+  const pathspecSortedValues = [...sink.gitPathspecValues].sort()
+  const pathspecObservedDigest = createHash('sha256')
+    .update(JSON.stringify(pathspecSortedValues), 'utf8')
+    .digest('hex')
+  if (pathspecExpected > 0 && pathspecObservedDigest !== RULED_GIT_PATHSPEC_DIGEST) {
+    digestMismatches.push(
+      `class-3 git pathspec DATA: expected ${RULED_GIT_PATHSPEC_DIGEST}, observed ${pathspecObservedDigest}`,
+    )
+  }
+  let proseExpected = 0
+  for (const [file, pins] of Object.entries(RULED_PROSE_MENTION_DATA)) {
+    if (!sink.sweptFiles.has(file)) continue
+    proseExpected += pins.length * RULED_PROSE_MENTION_LITERAL_COUNT
+  }
+  const proseObserved = sink.proseMentionSites.length
+  if (proseObserved !== proseExpected) {
+    pinMismatches.push(
+      `class-3 prose-mention DATA: ${proseObserved} pinned site(s) observed, the pin asserts exactly ${proseExpected}`,
+    )
+  }
+  const proseSortedValues = [...sink.proseMentionValues].sort()
+  const proseObservedDigest = createHash('sha256')
+    .update(JSON.stringify(proseSortedValues), 'utf8')
+    .digest('hex')
+  if (proseExpected > 0 && proseObservedDigest !== RULED_PROSE_MENTION_DIGEST) {
+    digestMismatches.push(
+      `class-3 prose-mention DATA: expected ${RULED_PROSE_MENTION_DIGEST}, observed ${proseObservedDigest}`,
+    )
+  }
+
   const grandfatherInventoryFileSwept = sink.sweptFiles.has(GRANDFATHER_INVENTORY_DATA_FILE)
   const grandfatherInventorySortedValues = [...sink.grandfatherInventoryDataValues].sort()
   const grandfatherInventoryObservedDigest = createHash('sha256')
     .update(JSON.stringify(grandfatherInventorySortedValues), 'utf8')
     .digest('hex')
-  const digestMismatches: string[] = []
   if (!grandfatherInventoryFileSwept) {
     pinMismatches.push(
       `GSO-P1 inventory DATA declaration: required exact file ${GRANDFATHER_INVENTORY_DATA_FILE} is absent from the sweep`,
@@ -2936,6 +3777,18 @@ function main(argv: readonly string[]): number {
   )
   console.log('')
   console.log(
+    `D19-FK ruled class-4 scoped exec (harness/measurement spawns + SQLite statement exec, identity+location+value+cardinality): ${class4Card.observed} of ${class4Card.expected} pinned`,
+  )
+  for (const s of sink.ruledClass4Sites)
+    console.log(`  ${s.role}: ${s.scope}#${s.form}: ${s.file}:${s.line}: ${s.text}`)
+  console.log(
+    "  disposition: harness/measurement actor spawns receive ABSOLUTE paths as argv (temp workspace or the E4-pinned shipped-input lookups) — nothing in the child resolves against the inherited cwd, so the cwd-inheritance mechanism is absent; the hook spawn hands the shipped hook its payload on stdin with a scrubbed env; kernel-state's `exec(...)` calls are SQLite statement execution on the path-gate-verified connection (FK-P9 startup step 1 + opened-target re-verify) — transaction control and frozen migration DDL, never a subprocess.",
+  )
+  console.log(
+    '  residual coverage: every OTHER process-anchored spawn call, every other command/args shape, every unpinned file/scope, and every occurrence beyond the pinned cardinality remains a class-4 violation.',
+  )
+  console.log('')
+  console.log(
     `E2 — cross-package src/ import class (class 6), deferred to P5/D22: ${sink.e2Sites.length}`,
   )
   for (const s of sink.e2Sites) console.log(`  ${s.file}:${s.line}: ${s.text}`)
@@ -2981,7 +3834,12 @@ function main(argv: readonly string[]): number {
   )
   for (const s of sink.rootDerivationSites) console.log(`  ${s.file}:${s.line}: ${s.text}`)
   console.log(
-    "  disposition: the three `DEFAULT_REPO_ROOT` module-self-location walks (exactly four '..' hops, one named top-level declaration per file) — each file's own docstring states the derivation and the mirrored same-depth precedent; P2b-i R3 keeps them only as legacy defaults behind a required, absolute root.",
+    '  disposition: the `DEFAULT_REPO_ROOT` module-self-location walks (exactly four ' +
+      "'..' hops, one named top-level declaration per file) — each file's own docstring " +
+      'states the derivation and the mirrored same-depth precedent; P2b-i R3 keeps them only ' +
+      'as legacy defaults behind a required, absolute root — plus the D19-FK authority ' +
+      "generator's `repoRoot` derivation (same four-hop depth, split across its `packageRoot` " +
+      'binding), used only as the explicit `cwd:` of its reviewed `git show` build step.',
   )
   console.log(
     '  residual coverage: a second derivation, a deeper walk, the same form under any other name, or the same spelling in any other file remains a class-2 violation.',
@@ -3007,10 +3865,54 @@ function main(argv: readonly string[]): number {
   for (const s of sink.ruledDataPathSites)
     console.log(`  ${s.name}: ${s.file}:${s.line}: ${s.text}`)
   console.log(
-    '  disposition: repo-relative REFERENCE labels — the `active/` specs dir, the frozen skill-injection matrix path (W3-P2 frozen inputs), and `AC_CONVENTION_PATH` (W3-P1 AC-4 pins its exact value). DATA, never a root: where a consumer resolves one it is joined beneath a REQUIRED, absolute, caller-supplied root.',
+    '  disposition: repo-relative REFERENCE labels — the `active/` specs dir, the frozen skill-injection matrix path (W3-P2 frozen inputs), `AC_CONVENTION_PATH` (W3-P1 AC-4 pins its exact value), and the D19-FK `R31_DECISION_PATH` decision-doc label (registry.ts). DATA, never a root: where a consumer resolves one it is joined beneath a REQUIRED, absolute, caller-supplied root.',
   )
   console.log(
     '  residual coverage: the same value under another name or file, a nested declaration, a template/`+`-chain respelling of the pinned literal, or a filesystem ARGUMENT position remains a class-3 violation.',
+  )
+  console.log('')
+  console.log(
+    `D19-FK canon-source catalog DATA (path property initializers inside the named canon catalogs): ${canonObserved} of ${canonExpected} pinned`,
+  )
+  for (const s of sink.canonSourceSites) console.log(`  ${s.file}:${s.line}: ${s.text}`)
+  console.log(
+    `  SHA-256(JSON.stringify(sorted values)): expected ${RULED_CANON_SOURCE_DIGEST}; observed ${canonObservedDigest}`,
+  )
+  console.log(
+    "  disposition: FK-P0 canon-corpus sourceId -> repo-relative doc-path LABELS (generate.ts's SOURCE_DEFINITIONS, validate.ts's SOURCE_CONTRACTS); compared as labels and resolved only beneath the generator's module-derived repo root or the validator's canonical-verified repoRoot (typed REPO_ROOT_INVALID), never against process cwd. Pinned to the `path` property of those named top-level declarations only — a respelling, another property or declaration, a nested declaration, or a filesystem ARGUMENT position remains class 3 (STANDING #18).",
+  )
+  console.log('')
+  console.log(
+    `D19-FK registry evidence-reference DATA (missing-provenance-reference ledger label): ${evidenceObserved} of ${evidenceExpected} pinned`,
+  )
+  for (const s of sink.evidenceRefSites) console.log(`  ${s.file}:${s.line}: ${s.text}`)
+  console.log(
+    `  SHA-256(JSON.stringify(sorted values)): expected ${RULED_EVIDENCE_REF_DIGEST}; observed ${evidenceObservedDigest}`,
+  )
+  console.log(
+    "  disposition: the declared path of a provenance ledger ABSENT by definition (evidence kind 'missing-path') — reference-identity evidence metadata, never resolved against any root. Pinned to the `missing-provenance-reference` record's evidence position in each file (the last `reconciliationMany` argument; the `path` property of the `canonicalJson` evidence object); the same string in another position, another record, or a filesystem ARGUMENT position remains class 3.",
+  )
+  console.log('')
+  console.log(
+    `D19-FK git pathspec DATA (registryAtCommit's \`git show\` object name): ${sink.gitPathspecSites.length} of ${pathspecExpected} pinned`,
+  )
+  for (const s of sink.gitPathspecSites) console.log(`  ${s.file}:${s.line}: ${s.text}`)
+  console.log(
+    `  SHA-256(JSON.stringify(sorted values)): expected ${RULED_GIT_PATHSPEC_DIGEST}; observed ${pathspecObservedDigest}`,
+  )
+  console.log(
+    "  disposition: a `commit:path` object name for the frozen registry YAML in git history — custody/reference DATA for the generator's reviewed `git show` build step, never a path resolved against a local root (the JEV custody-path precedent). Pinned to the template inside `registryAtCommit`'s `git` file-exec argument array; a respelling, another call, or another scope remains class 3.",
+  )
+  console.log('')
+  console.log(
+    `D19-FK message-prose path mentions (named top-level message constants): ${proseObserved} of ${proseExpected} pinned`,
+  )
+  for (const s of sink.proseMentionSites) console.log(`  ${s.file}:${s.line}: ${s.text}`)
+  console.log(
+    `  SHA-256(JSON.stringify(sorted values)): expected ${RULED_PROSE_MENTION_DIGEST}; observed ${proseObservedDigest}`,
+  )
+  console.log(
+    '  disposition: repo-shaped mentions inside operator-facing message PROSE (the backlog-run.mts ticket-description precedent) — posted with a typed error, never resolved against a root. Pinned by file + named top-level constant + exact path-mention set; any other repo-shaped mention in the file, or under any other name, is a class-3 violation.',
   )
   console.log('')
   console.log(
@@ -3023,6 +3925,18 @@ function main(argv: readonly string[]): number {
   )
   console.log(
     '  residual coverage: the same spelling anywhere else, in another function, feeding anything but the refusal-guard comparison, or beyond the pinned per-form cardinality remains a class-5 violation.',
+  )
+  console.log('')
+  console.log(
+    `D19-FK ruled class-5 root-normalization sites (required-input normalization, identity+location+value+cardinality): ${class5NormCard.observed} of ${class5NormCard.expected} pinned`,
+  )
+  for (const s of sink.ruledClass5NormSites)
+    console.log(`  ${s.role}: ${s.scope}#${s.form}: ${s.file}:${s.line}: ${s.text}`)
+  console.log(
+    '  disposition: `resolve()` of a REQUIRED root input, never a discovered or defaulted root, and fail-closed on a wrong root — authority-registry canonical-verifies the root is the exact root of a real Git worktree (typed REPO_ROOT_INVALID/IO_ERROR) before reading; kernel-state resolves the operator-configured `storageRoot`/`backupRoot` once at the seam (typed STORAGE_ARGUMENT_INVALID on missing/empty) and admits only well-formed relative forms below it (FK-P9 closed path-gate reasonCodes); spec-body-compiler refuses a reparse-point root (LINK_IN_ROOT) and absolute entries (ENTRY_ABSOLUTE); the harness normalizes workspace-internal absolute paths for a display spelling only.',
+  )
+  console.log(
+    '  residual coverage: the same spelling in another named scope, feeding anything but the ruled normalization, or beyond the pinned cardinality remains a class-5 violation.',
   )
   console.log(
     `JEV path DATA (exact declarations + direct array elements): ${sink.jevPathDataSites.length} observed; expected ${JEV_PATH_DATA_LITERAL_COUNT}`,
@@ -3104,7 +4018,13 @@ function main(argv: readonly string[]): number {
         `E4: ${e4Card.observed} of ${e4Card.expected}; ` +
         `class-2 root derivations: ${rootDerivationObserved} of ${rootDerivationExpected}; ` +
         `class-3 DATA path constants: ${dataPathObserved} of ${dataPathExpected}; ` +
-        `class-5 root-normalization guards: ${class5GuardObserved} of ${class5GuardExpected}`,
+        `class-5 root-normalization guards: ${class5GuardObserved} of ${class5GuardExpected}; ` +
+        `D19-FK canon-source catalog: ${canonObserved} of ${canonExpected}; ` +
+        `D19-FK evidence-reference: ${evidenceObserved} of ${evidenceExpected}; ` +
+        `D19-FK git pathspec: ${sink.gitPathspecSites.length} of ${pathspecExpected}; ` +
+        `D19-FK prose mentions: ${proseObserved} of ${proseExpected}; ` +
+        `D19-FK class-4 scoped exec: ${class4Card.observed} of ${class4Card.expected}; ` +
+        `D19-FK class-5 root normalization: ${class5NormCard.observed} of ${class5NormCard.expected}`,
     )
   } else {
     for (const m of pinMismatches) console.log(`  PIN CARDINALITY MISMATCH: ${m}`)
