@@ -111,10 +111,58 @@ const ENUMERATED_CODE_PREFIXES = Object.freeze(['plugins/foreman-line/', 'script
 const ENUMERATED_CODE_BASENAMES = Object.freeze(['tsconfig.json', 'biome.json'])
 
 /**
+ * A3 measured read-sweep reader set: every path that any check of the frozen-20
+ * sweep (or the runner/harness) reads inside the ordinary-documentation shapes.
+ * Measured, not asserted (A3-C9); pinned by regression fixtures. Exact
+ * repo-relative paths; a trailing '/' marks an excluded subtree. Such paths are
+ * never ordinary (A3-R1) and always fall back (`test-relevant-change`, E2).
+ * Shrink-only under CI-P2: new readers are added, never removed (C9).
+ */
+export const READER_SET = Object.freeze([
+  'plugins/foreman-line/approval/README.md',
+  'plugins/foreman-line/contract-readers/README.md',
+  'plugins/foreman-line/contracts/README.md',
+  'plugins/foreman-line/dispatch/README.md',
+  'plugins/foreman-line/docs/FOREMAN-LINE-PLAN.md',
+  'plugins/foreman-line/docs/goals/routing-currency-and-merit/rcm-p0-catalog-snapshot.v1.json',
+  'plugins/foreman-line/docs/goals/routing-currency-and-merit/source-evidence/openrouter-rcm-v1-conservative-projection-20260926.json',
+  'plugins/foreman-line/docs/goals/routing-currency-and-merit/source-evidence/pmc-binding-coverage-openrouter-20260926-v4.json',
+  'plugins/foreman-line/docs/kickstarters/foreman-shaping-template.md',
+  'plugins/foreman-line/foreman-config/README.md',
+  'plugins/foreman-line/hybrid-routing/README.md',
+  'plugins/foreman-line/permission-profiles/README.md',
+  'plugins/foreman-line/projection/README.md',
+  'plugins/foreman-line/receipts/README.md',
+  'plugins/foreman-line/registration/README.md',
+  'plugins/foreman-line/role-authority/README.md',
+  'plugins/foreman-line/routing-policy/README.md',
+  'plugins/foreman-line/schema-scaffold/README.md',
+  'plugins/foreman-line/shaping/README.md',
+  'plugins/foreman-line/skill-injection/README.md',
+  'plugins/foreman-line/skills/foreman-shaping/SKILL.md',
+  'plugins/foreman-line/spec-linter/README.md',
+  'plugins/foreman-line/worker-envelopes/README.md',
+])
+
+function inReaderSet(path, readers = READER_SET) {
+  for (const entry of readers) {
+    if (entry.endsWith('/')) {
+      if (path.startsWith(entry)) return true
+    } else if (path === entry) {
+      return true
+    }
+  }
+  return false
+}
+
+/**
  * Repo-relative path -> exactly one class. Unknown paths classify `code`
  * (default-deny). Paths are byte strings (latin1-preserving); rules are ASCII.
+ * AC2 table as amended by A3: only `*.md` paths may be ordinary, never
+ * README/AGENTS inside `plugins/foreman-line/**` or `skills/**`, and never a
+ * path in the measured reader set (A3-R1).
  */
-export function classifyPath(path) {
+export function classifyPath(path, readers = READER_SET) {
   if (typeof path !== 'string' || path.length === 0) return CLASS.CODE
   const segs = path.split('/')
   const base = segs[segs.length - 1]
@@ -126,29 +174,57 @@ export function classifyPath(path) {
   for (let i = 0; i + 1 < segs.length; i += 1) {
     if (segs[i] === 'docs' && segs[i + 1] === 'specs') return CLASS.SPECIFICATIONS
   }
-  // 4 ordinary_documentation (rules 4a-4d)
-  if (ORDINARY_BASENAMES.includes(base)) return CLASS.ORDINARY
-  if (path.startsWith('plugins/foreman-line/docs/goals/')) return CLASS.ORDINARY
-  if (path.startsWith('plugins/foreman-line/docs/transcripts/')) return CLASS.ORDINARY
-  if (segs[0] === 'docs' && segs.length > 1 && !segs[1].startsWith('specs')) return CLASS.ORDINARY
+  // 4 ordinary_documentation (rules 4a-4d as amended by A3)
+  // reader-set exclusion first (A3-R1): measured readers fall to `code` no
+  // matter which ordinary rule would have claimed them (safe direction)
+  if (inReaderSet(path, readers)) return CLASS.CODE
+  // 4a: README/AGENTS NOT under plugins/foreman-line/** and NOT under skills/**
+  if (ORDINARY_BASENAMES.includes(base) &&
+      !path.startsWith('plugins/foreman-line/') && !path.startsWith('skills/')) {
+    return CLASS.ORDINARY
+  }
+  // 4b/4c/4d: Markdown-only (A3-R1); every non-Markdown path falls to `code`
+  if (path.endsWith('.md')) {
+    if (path.startsWith('plugins/foreman-line/docs/goals/')) return CLASS.ORDINARY
+    if (path.startsWith('plugins/foreman-line/docs/transcripts/')) return CLASS.ORDINARY
+    if (segs[0] === 'docs' && segs.length > 1 && !segs[1].startsWith('specs')) return CLASS.ORDINARY
+  }
   // 5 code: default-deny bucket, including unknown paths
   return CLASS.CODE
+}
+
+/**
+ * True for `code`-bucket paths the amended table names explicitly (A3 rule
+ * cell fall-throughs + the pre-existing enumerated shapes). E2 split: these
+ * get `test-relevant-change`; unenumerated code paths get `unknown-path`.
+ */
+function isNamedCodeShape(path, segs, base, readers = READER_SET) {
+  if (ENUMERATED_CODE_PREFIXES.some((prefix) => path.startsWith(prefix))) return true
+  if (ENUMERATED_CODE_BASENAMES.includes(base)) return true
+  if (inReaderSet(path, readers)) return true // A3-R1 excluded-reader
+  if (ORDINARY_BASENAMES.includes(base) && segs[0] === 'skills') return true // A3 row 5 named shape
+  const underOrdinaryRule =
+    path.startsWith('plugins/foreman-line/docs/goals/') ||
+    path.startsWith('plugins/foreman-line/docs/transcripts/') ||
+    (segs[0] === 'docs' && segs.length > 1 && !segs[1].startsWith('specs'))
+  if (underOrdinaryRule && !path.endsWith('.md')) return true // A3-R1 non-Markdown fall-through
+  if (segs[0] === 'docs' && segs.length > 1 && segs[1].startsWith('specs')) return true // A1-E1 near-miss
+  return false
 }
 
 /**
  * Fallback reason for a changed path (E2 split inside the `code` bucket);
  * null when the path is ordinary documentation.
  */
-export function deltaFallbackReason(path) {
-  const cls = classifyPath(path)
+export function deltaFallbackReason(path, readers = READER_SET) {
+  const cls = classifyPath(path, readers)
   if (cls === CLASS.ORDINARY) return null
   if (cls !== CLASS.CODE) return REASON_TEMPLATES.TEST_RELEVANT_CHANGE
   const segs = path.split('/')
   const base = segs[segs.length - 1]
-  const enumerated =
-    ENUMERATED_CODE_PREFIXES.some((prefix) => path.startsWith(prefix)) ||
-    ENUMERATED_CODE_BASENAMES.includes(base)
-  return enumerated ? REASON_TEMPLATES.TEST_RELEVANT_CHANGE : REASON_TEMPLATES.UNKNOWN_PATH
+  return isNamedCodeShape(path, segs, base, readers)
+    ? REASON_TEMPLATES.TEST_RELEVANT_CHANGE
+    : REASON_TEMPLATES.UNKNOWN_PATH
 }
 
 // ─── canonical hashing (AC2 equivalence table) ───────────────────────────────
