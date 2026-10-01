@@ -102,6 +102,24 @@ The `test` job's 498 failures decomposed into five root causes (owner's triage n
 - Protected tag `refs/tags/u1-verifier-pin` → `be3e3de3…` (pushed; tag ruleset 24258920 restricts its update/deletion to the custodian).
 - End-to-end verified: the workflow's own read path (`raw.githubusercontent.com/.../main/plugins/foreman-line/docs/goals/foreman-kernel/U1-verifier-pin.json`) serves both fields exactly as the in-run pin check consumes them (`sha256:`-prefixed digest comparison); `git ls-remote` confirms the tag. In-run enforcement (manual path: ref+SHA+byte-digest; event-driven: byte-equality + ruleset) is live for all future runs. **Remaining: §8 independent review (owner commissions) → FK-P18′ dispatchable → immutability lock flip on first real evidence.**
 
+## §8 FINDINGS + F-18 principal inventory (2026-10-01)
+
+§8 review (anthropic/claude-sonnet-5-5, verdict file `U1-8-review-verdict-2026-10-01.json`): **FINDINGS — 5 blockers (F-1..F-5), 9 major, 4 minor**. Blockers are workflow-mechanism defects (undeclared job outputs; domain-wrapped-vs-plain digest mismatch in read-back; event-driven pinning vs the ratified clause; ACCEPT possible while the policy is Unlocked / §5 fields unrecorded; not-exercised rows passing with a producer-sourced oracle). Closure campaign in flight (amendments drafted by `U1ClosureAmendments`; workflow rewrite + re-pin next; re-review after closure).
+
+**F-18 storage-plane principal inventory (observed 2026-10-01, `az role assignment list`):**
+
+| Principal | Role | Scope | Power over the evidence store |
+|---|---|---|---|
+| `clintemorgan_gmail.com#EXT#@morganfindings.onmicrosoft.com` (owner, User) | **Owner** | subscription (inherited) | full: policy change while Unlocked, shared-key re-enable, RBAC |
+| `silent-apply-deploy` (SP `89a63f46-c9af-48c7-a651-0aeabf5814f1`) | **Contributor** | subscription | policy change while Unlocked, shared-key re-enable, resource writes |
+| `biostack-github-actions` (SP `059e4070-981a-4d94-98da-e568bc06706d`) | **Contributor** | RG `biostack-rg` | same within the RG |
+| owner (same as row 1) | Storage Blob Data Contributor | account | all blob data incl. delete, every container in the shared account |
+| `u1-verifier-mi` | Reader (management plane) | account | policy observation only — **added 2026-10-01T16:31:47Z** (F-4 closure) |
+| `u1-verifier-mi` | `u1-verifier-evidence-creator` (read + create-only) + Blob Data Reader | container `u1-evidence` | create decision/observation objects; never overwrite/delete |
+| `u1-producer-mi` | Storage Blob Data Contributor | container `u1-evidence` | create/write new evidence; delete physically blocked by retention |
+
+**Exposure analysis:** three principals (owner + 2 service principals) can modify the immutability policy and re-enable shared-key access **while the policy is Unlocked**; the owner's account-scope Data Contributor spans the whole shared account `bs2jhgwvduljfdwdp`. The lock flip is the strong mitigator (post-lock, policy shortening is refused even to Owner/Support; retained blobs resist key-based access). Detection posture pending the F-18 decision block: periodic `allowSharedKeyAccess` + policy-state rechecks recorded with the verifier's management-plane read.
+
 ## Workflow placement (2026-09-30, owner direction "proceed")
 
 - Extracted **byte-exact** from the design's fenced blocks (design sha `0d8816eb…`): `u1-produce.yml` = doc lines 160–584 (425 lines), `u1-verify.yml` = doc lines 604–1489 (886 lines) — fence content untouched by the §6.6 prose edit; YAML parse PASS both files.
