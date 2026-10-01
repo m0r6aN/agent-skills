@@ -39,9 +39,13 @@ export interface ApprovalRecord {
  * item 1) BEFORE any path is constructed from it - a slug containing `../`,
  * `/`, `\`, or uppercase is refused, naming the offending slug.
  */
-export function approvalRecordPath(slug: string, repoRoot: string = DEFAULT_REPO_ROOT): string {
+export function approvalRecordPath(
+  slug: string,
+  repoRoot: string = DEFAULT_REPO_ROOT,
+  specsDir: string = ACTIVE_SPECS_DIR,
+): string {
   assertSafeSlug(slug)
-  const activeDir = join(repoRoot, ...ACTIVE_SPECS_DIR.split('/'))
+  const activeDir = join(repoRoot, ...specsDir.split('/'))
   return join(activeDir, `${slug}${APPROVAL_RECORD_SUFFIX}`)
 }
 
@@ -55,14 +59,15 @@ export function writeApprovalRecord(
   slug: string,
   record: ApprovalRecord,
   repoRoot: string = DEFAULT_REPO_ROOT,
+  specsDir: string = ACTIVE_SPECS_DIR,
 ): string {
-  const filePath = approvalRecordPath(slug, repoRoot)
+  const filePath = approvalRecordPath(slug, repoRoot, specsDir)
   if (existsSync(filePath)) {
     throw new Error(
       `writeApprovalRecord: refusing to overwrite existing approval record at ${filePath}`,
     )
   }
-  mkdirSync(join(repoRoot, ...ACTIVE_SPECS_DIR.split('/')), { recursive: true })
+  mkdirSync(join(repoRoot, ...specsDir.split('/')), { recursive: true })
   writeFileSync(filePath, `${JSON.stringify(record, null, 2)}\n`, 'utf8')
   return filePath
 }

@@ -1,0 +1,5 @@
+# U1 evidence chain — verifier/producer workflows and pin/selection records
+/.github/workflows/u1-verify.yml                 @m0r6aN
+/.github/workflows/u1-produce.yml                @m0r6aN
+/plugins/foreman-line/docs/goals/foreman-kernel/U1-verifier-pin.json        @m0r6aN
+/plugins/foreman-line/docs/goals/foreman-kernel/promotion-requests/         @m0r6aN

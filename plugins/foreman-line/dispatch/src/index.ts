@@ -50,6 +50,17 @@ export type {
   RoutingResult,
 } from './routing-eval/index.js'
 export { evaluateRouting, RoutingError } from './routing-eval/index.js'
+export type {
+  ShadowRoutingDependencies,
+  ShadowRoutingInput,
+  ShadowRoutingOptions,
+} from './routing-eval/shadow.js'
+export {
+  executeShadowRoute,
+  hashShadowPublicInput,
+  SHADOW_LIMITS,
+  ShadowRoutingError,
+} from './routing-eval/shadow.js'
 // W2-P5: skill-resolver
 export type {
   SkillResolverInput,

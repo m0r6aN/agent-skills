@@ -21,6 +21,7 @@
  * `DEFAULT_REPO_ROOT`). Purely a filesystem-location override - it never
  * touches approval authorization, the TTY check, or the confirmation check.
  */
+import { isAbsolute } from 'node:path'
 import { performApproval } from './approve-flow.js'
 import { confirmationMatches, isInteractiveTty, promptForConfirmation } from './confirm.js'
 import { type RejectionRecord, writeRejectionRecord } from './rejection-record.js'
@@ -146,12 +147,23 @@ async function main(argv: readonly string[]): Promise<number> {
   const [command, arg, ...rest] = argv
   if (arg === undefined || (command !== 'show' && command !== 'approve' && command !== 'reject')) {
     process.stderr.write(
-      'usage: approval <show|approve|reject> <slug|path> [--epic-title <title>] [--approver <name>] [--reason <text>] [--repo-root <path>]\n',
+      'usage: approval <show|approve|reject> <slug|path> --repo-root <absolute path> [--epic-title <title>] [--approver <name>] [--reason <text>]\n',
     )
     return 2
   }
 
   const flags = parseFlags(rest)
+  const repoRoot = flags['repo-root']
+  if (repoRoot === undefined || repoRoot === '') {
+    process.stderr.write(
+      'usage error: --repo-root <absolute path> is required (explicit input; no default, no discovery)\n',
+    )
+    return 2
+  }
+  if (!isAbsolute(repoRoot)) {
+    process.stderr.write(`error: --repo-root ${JSON.stringify(repoRoot)} is not an absolute path\n`)
+    return 2
+  }
   if (command === 'show') return runShow(arg, flags)
   if (command === 'approve') return runApprove(arg, flags)
   return runReject(arg, flags)

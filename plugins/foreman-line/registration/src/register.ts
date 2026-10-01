@@ -15,7 +15,7 @@
  * (search-first guarantees no duplicate creates).
  */
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
-import { dirname, join } from 'node:path'
+import { dirname, isAbsolute, join } from 'node:path'
 import { Ajv, type SchemaObject } from 'ajv'
 import type { ApprovalRecord } from '../../approval/src/index.js'
 import { approvalRecordPath } from '../../approval/src/index.js'
@@ -40,7 +40,12 @@ import {
   stageBReceiptLocator,
 } from './prior-registration.js'
 import { mintStageBReceipt } from './receipt.js'
-import { type IssueCreatePayload, type JiraTransport, RegistrationError } from './types.js'
+import {
+  type IssueCreatePayload,
+  type JiraTransport,
+  RegistrationError,
+  RegistrationRootUnresolvedError,
+} from './types.js'
 
 /** The sole allowed destination project (the gate enforces membership independently). */
 export const PROJECT_KEY = 'KONE'
@@ -51,6 +56,10 @@ const SLUG_RE = /^[a-z0-9-]+$/
 export interface RegisterOptions {
   readonly slug: string
   readonly repoRoot: string
+  /** The destination Jira project key, caller-declared (P1b: used, not merely accepted). */
+  readonly projectKey?: string
+  /** Specs dir relative to `repoRoot` (P2b-i/R2); the legacy default applies when absent. */
+  readonly specsDir?: string
   readonly adapter: JiraTransport
   readonly timestamp: string
   readonly gitAuthor?: string
@@ -99,8 +108,12 @@ function bindSpecsToStories(
   })
 }
 
-function sidecarPathFor(slug: string, repoRoot: string): string {
-  return join(repoRoot, ...ACTIVE_SPECS_DIR.split('/'), `${slug}.registration.json`)
+function sidecarPathFor(
+  slug: string,
+  repoRoot: string,
+  specsDir: string = ACTIVE_SPECS_DIR,
+): string {
+  return join(repoRoot, ...specsDir.split('/'), `${slug}.registration.json`)
 }
 
 function writeJsonFile(absPath: string, value: unknown): void {
@@ -134,7 +147,7 @@ async function upsertIssue(
   stableId: string,
   landed: string[],
 ): Promise<string> {
-  const matches = await gt.search(buildIdempotencyJql(PROJECT_KEY, stableId))
+  const matches = await gt.search(buildIdempotencyJql(payload.fields.project.key, stableId))
   if (matches.length > 1) {
     throw new RegistrationError(
       `register: ${matches.length} issues match stable id ${JSON.stringify(stableId)} (${matches.join(', ')}) - stop and report, never guess`,
@@ -153,12 +166,19 @@ async function upsertIssue(
 }
 
 export async function register(opts: RegisterOptions): Promise<RegisterOutcome> {
-  const { slug, repoRoot, adapter, timestamp, gitAuthor } = opts
+  const { slug, repoRoot, adapter, timestamp, gitAuthor, specsDir } = opts
+  const projectKey = opts.projectKey ?? PROJECT_KEY
 
-  // Step 0/1: entry guard + load approval record.
+  // Step 0/1: entry guards + load approval record.
   assertRegistrationSlug(slug)
+  if (!isAbsolute(repoRoot)) {
+    throw new RegistrationRootUnresolvedError(
+      'root-not-absolute',
+      `register: repoRoot ${JSON.stringify(repoRoot)} must be absolute — a relative root would silently anchor derived paths to process.cwd() (mechanism class 5)`,
+    )
+  }
   const record = JSON.parse(
-    readFileSync(approvalRecordPath(slug, repoRoot), 'utf8'),
+    readFileSync(approvalRecordPath(slug, repoRoot, specsDir), 'utf8'),
   ) as ApprovalRecord
 
   const projected = record.subject.projectedResult
@@ -175,12 +195,23 @@ export async function register(opts: RegisterOptions): Promise<RegisterOutcome> 
 
   const gt = new GatedTransport(adapter)
   if (mode === 'reconcile') {
-    return reconcile(gt, record, repoRoot, epic, bindings, slug)
+    return reconcile(gt, record, repoRoot, epic, bindings, slug, projectKey, specsDir)
   }
 
   // Step 3: F7 hash-refusal (first-registration precondition only).
   assertApprovedHashMatches(record, repoRoot)
-  return firstRegistration(gt, record, repoRoot, epic, bindings, slug, timestamp, gitAuthor)
+  return firstRegistration(
+    gt,
+    record,
+    repoRoot,
+    epic,
+    bindings,
+    slug,
+    timestamp,
+    gitAuthor,
+    projectKey,
+    specsDir,
+  )
 }
 
 export interface PreviewResult {
@@ -202,12 +233,23 @@ export interface PreviewResult {
 export function preview(opts: {
   slug: string
   repoRoot: string
+  /** The destination Jira project key, caller-declared (P1b: used, not merely accepted). */
+  projectKey?: string
+  /** Specs dir relative to `repoRoot` (P2b-i/R2); the legacy default applies when absent. */
+  specsDir?: string
   adapter?: JiraTransport
 }): PreviewResult {
-  const { slug, repoRoot } = opts
+  const { slug, repoRoot, specsDir } = opts
+  const projectKey = opts.projectKey ?? PROJECT_KEY
   assertRegistrationSlug(slug)
+  if (!isAbsolute(repoRoot)) {
+    throw new RegistrationRootUnresolvedError(
+      'root-not-absolute',
+      `preview: repoRoot ${JSON.stringify(repoRoot)} must be absolute — a relative root would silently anchor derived paths to process.cwd() (mechanism class 5)`,
+    )
+  }
   const record = JSON.parse(
-    readFileSync(approvalRecordPath(slug, repoRoot), 'utf8'),
+    readFileSync(approvalRecordPath(slug, repoRoot, specsDir), 'utf8'),
   ) as ApprovalRecord
   const projected = record.subject.projectedResult
   if (projected.epics.length !== 1) {
@@ -220,14 +262,14 @@ export function preview(opts: {
   const mode = detectRegistrationMode(record, repoRoot)
 
   const epicPayload = buildCreatePayload({
-    projectKey: PROJECT_KEY,
+    projectKey,
     issuetypeId: EPIC_ISSUETYPE_ID,
     title: epic.title,
     stableId: epic.key,
   })
   const storyPayloads = bindings.map((b) =>
     buildCreatePayload({
-      projectKey: PROJECT_KEY,
+      projectKey,
       issuetypeId: STORY_ISSUETYPE_ID,
       title: b.story.title,
       stableId: b.story.key,
@@ -236,11 +278,11 @@ export function preview(opts: {
   )
 
   const plannedActions: string[] = [
-    `[${mode}] search KONE for stable id ${JSON.stringify(epic.key)}; create Epic if absent, update if present`,
+    `[${mode}] search ${projectKey} for stable id ${JSON.stringify(epic.key)}; create Epic if absent, update if present`,
   ]
   for (const b of bindings) {
     plannedActions.push(
-      `[${mode}] search KONE for stable id ${JSON.stringify(b.story.key)}; create Story (parent=Epic) if absent, update if present`,
+      `[${mode}] search ${projectKey} for stable id ${JSON.stringify(b.story.key)}; create Story (parent=Epic) if absent, update if present`,
     )
   }
   for (const b of bindings) {
@@ -261,13 +303,15 @@ async function firstRegistration(
   slug: string,
   timestamp: string,
   gitAuthor: string | undefined,
+  projectKey: string,
+  specsDir?: string,
 ): Promise<RegisterOutcome> {
   const landed: string[] = []
 
   // Step 4: create Epic, then Stories (search-first idempotent; Story->Epic via
   // parent). Sequential (awaited in order) so creates are ordered + deterministic.
   const epicPayload = buildCreatePayload({
-    projectKey: PROJECT_KEY,
+    projectKey,
     issuetypeId: EPIC_ISSUETYPE_ID,
     title: epic.title,
     stableId: epic.key,
@@ -281,7 +325,7 @@ async function firstRegistration(
   }> = []
   for (const binding of bindings) {
     const payload = buildCreatePayload({
-      projectKey: PROJECT_KEY,
+      projectKey,
       issuetypeId: STORY_ISSUETYPE_ID,
       title: binding.story.title,
       stableId: binding.story.key,
@@ -349,7 +393,7 @@ async function firstRegistration(
     const minted = mintStageBReceipt(record.correlation, record.receipt.hash, result, timestamp)
     const receiptAbs = join(repoRoot, ...minted.locator.split('/'))
     writeJsonFile(receiptAbs, minted.document)
-    const sidecarAbs = sidecarPathFor(slug, repoRoot)
+    const sidecarAbs = sidecarPathFor(slug, repoRoot, specsDir)
     writeJsonFile(sidecarAbs, result)
     git.addAndCommit(
       repoRoot,
@@ -390,12 +434,14 @@ async function reconcile(
   epic: EpicNode,
   bindings: readonly SpecBinding[],
   slug: string,
+  projectKey: string,
+  specsDir?: string,
 ): Promise<RegisterOutcome> {
   const landed: string[] = []
 
   // Find existing keys by the stable id - create nothing, update nothing on the issues.
   const findKey = async (stableId: string): Promise<string> => {
-    const matches = await gt.search(buildIdempotencyJql(PROJECT_KEY, stableId))
+    const matches = await gt.search(buildIdempotencyJql(projectKey, stableId))
     if (matches.length !== 1) {
       throw new RegistrationError(
         `reconcile: expected exactly one existing issue for stable id ${JSON.stringify(stableId)}, found ${matches.length}`,
@@ -429,7 +475,7 @@ async function reconcile(
     const commitSha = receipted?.commitSha ?? git.lastCommitTouching(repoRoot, binding.ref)
     const permalink = receipted?.permalink ?? buildPermalink(ownerRepo, commitSha, binding.ref)
     const gateFields = buildCreatePayload({
-      projectKey: PROJECT_KEY,
+      projectKey,
       issuetypeId: STORY_ISSUETYPE_ID,
       title: binding.story.title,
       stableId: binding.story.key,
@@ -446,7 +492,7 @@ async function reconcile(
     result: receiptedResult,
     ticketKeys: receiptedResult.ticketKeys,
     receiptLocator,
-    sidecarPath: sidecarPathFor(slug, repoRoot),
+    sidecarPath: sidecarPathFor(slug, repoRoot, specsDir),
     landed,
   }
 }

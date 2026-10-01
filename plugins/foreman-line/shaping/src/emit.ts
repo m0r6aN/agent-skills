@@ -18,6 +18,7 @@ import { Ajv } from 'ajv'
 // re-declared here. Relative ESM specifier (W0-P4 precedent); the bare scoped
 // specifier does not resolve across plugins/foreman-line/* and is banned (see README).
 import { type ShapingResult, shapingResultSchema } from '../../contracts/src/index.js'
+import { assertAbsoluteRoot } from './errors.js'
 
 /** Repo root, resolved from this module's location: src -> shaping -> foreman-line -> plugins -> root. */
 export const DEFAULT_REPO_ROOT = join(
@@ -80,6 +81,13 @@ export interface EmitOptions {
   readonly parcelSpecRefs: readonly string[]
   /** Repo root to write beneath. Defaults to the real repo root. */
   readonly repoRoot?: string
+  /**
+   * Repo-relative POSIX directory the artifact is written beneath. Defaults to
+   * the legacy `ACTIVE_SPECS_DIR` value (`plugins/foreman-line/docs/specs/active`)
+   * when omitted - the constant itself is retired from the public surface
+   * (P2b-i AC2) and home-repo call sites pass the directory explicitly.
+   */
+  readonly specsDir?: string
 }
 
 export interface EmitResult {
@@ -97,7 +105,17 @@ export interface EmitResult {
  * refuses to overwrite an existing artifact (collision policy).
  */
 export function emitShapingResult(options: EmitOptions): EmitResult {
-  const { sessionSlug, parcelSpecRefs, repoRoot = DEFAULT_REPO_ROOT } = options
+  const {
+    sessionSlug,
+    parcelSpecRefs,
+    repoRoot = DEFAULT_REPO_ROOT,
+    specsDir = ACTIVE_SPECS_DIR,
+  } = options
+
+  // P2b-i AC6b seam refusal: a non-absolute repoRoot would silently re-anchor
+  // every derived path to process.cwd() (mechanism class 5), so it is refused
+  // with the typed error before any path is constructed.
+  assertAbsoluteRoot(repoRoot, 'emitShapingResult')
 
   // Semantic guard: schema-valid != semantically complete. `parcelSpecRefs: []`
   // passes the frozen schema (no minItems) but is meaningless for Stage A.
@@ -136,8 +154,8 @@ export function emitShapingResult(options: EmitOptions): EmitResult {
     throw new Error(`emitShapingResult: payload failed shapingResultSchema validation: ${detail}`)
   }
 
-  const artifactRef = `${ACTIVE_SPECS_DIR}/${sessionSlug}.shaping-result.json`
-  const activeDir = join(repoRoot, ...ACTIVE_SPECS_DIR.split('/'))
+  const artifactRef = `${specsDir}/${sessionSlug}.shaping-result.json`
+  const activeDir = join(repoRoot, ...specsDir.split('/'))
   const artifactPath = join(activeDir, `${sessionSlug}.shaping-result.json`)
 
   // Collision policy: never silently overwrite; the caller picks a distinct slug.

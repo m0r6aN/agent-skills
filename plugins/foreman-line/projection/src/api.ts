@@ -9,6 +9,11 @@ import { type WriteResult, writeProjectedArtifact } from './write.js'
 
 export interface WriteProjectedResultOptions {
   readonly repoRoot?: string
+  /**
+   * Repo-relative POSIX directory the artifact is written beneath. Defaults to
+   * the legacy `ACTIVE_SPECS_DIR` value when omitted (see `WriteOptions`).
+   */
+  readonly specsDir?: string
 }
 
 /**
@@ -25,5 +30,8 @@ export function writeProjectedResult(
   const slug = slugFromInputPath(inputPath)
   const input = readShapingResult(inputPath)
   const payload = projectShapingResult(input, epicTitle, slug, { repoRoot: options.repoRoot })
-  return writeProjectedArtifact(slug, payload, { repoRoot: options.repoRoot })
+  return writeProjectedArtifact(slug, payload, {
+    repoRoot: options.repoRoot,
+    specsDir: options.specsDir,
+  })
 }

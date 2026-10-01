@@ -83,7 +83,7 @@ test('AC3: architecture/risk/public resolves to anthropic/claude-opus-5.5/fronti
       },
       { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
     )
-  assert.equal(result.resolvedModelId, 'anthropic/claude-opus-5.5')
+    assert.equal(result.resolvedModelId, 'anthropic/claude-opus-5.5')
     assert.equal(result.resolvedTier, 'frontier')
     assert.equal(result.routingDecisionRef, 'docs/receipts/test-wf-002/routing-decision.json')
   } finally {

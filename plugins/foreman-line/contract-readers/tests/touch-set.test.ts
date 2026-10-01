@@ -571,6 +571,29 @@ test('A2(b)(2)/(4) Contract B — every surfaced file is adjudicated; both signa
   //                                      only inside a prose status-line string ("the routing
   //                                      policy's boilerplate class"); nothing reads or branches on
   //                                      the value, so it need not change if a class is added/removed.
+  //   authority-registry/src/generate.ts — NOT declared (LOCKSTEP-negative): the value signal matches
+  //                                      only inside a frozen normalized-excerpt locator key
+  //                                      ('coordinator-pattern:md-block:...table-row:Builder
+  //                                      (architecture/risk)', `:2087`) — generated audit-inventory
+  //                                      data quoting a source document's prose, never read as a live
+  //                                      vocabulary. ADD a class and this file is unchanged (the same
+  //                                      frozen-data basis that ruled out Contract A's
+  //                                      verification/src/d19-audit.ts).
+  //   authority-registry/src/validate.ts — NOT declared (LOCKSTEP-negative): the value signal matches
+  //                                      only inside a frozen `normalizedExcerpt` reconciliation
+  //                                      string (`:779`) — inventoried evidence data, not a
+  //                                      vocabulary consumer. ADD a class and this file is unchanged
+  //                                      (identical frozen-data basis).
+  //   verification/src/pipeline/stage-d-finalization.ts — NOT declared (LOCKSTEP-negative): 'routing_class'
+  //                                      appears only as a FIELD name — the structural `exact()` key
+  //                                      list of the routing-decision capture (`:1213`) and a
+  //                                      cross-artifact field-value comparison (`:1240`) — no class
+  //                                      literal, no ROUTING_CLASSES import. ADD a class and this file
+  //                                      is unchanged — fails the additive counterfactual under the
+  //                                      same reading that ruled out dispatch/src/routing-eval/index.ts
+  //                                      (A5(b)) and spec-linter/src/validate.ts. A5(c)'s field-level
+  //                                      reading was explicitly left open and NOT adopted (the
+  //                                      grandfather.ts ruling above states this too).
   //
   // A3(a)/A4(a) also re-adjudicated (outside the sweep's pathspec, absent from
   // `surfaced`, not asserted against here): shaping/tests/helpers.ts,
@@ -579,6 +602,8 @@ test('A2(b)(2)/(4) Contract B — every surfaced file is adjudicated; both signa
   // Contract A ruling table above for the identical reasoning; the same four
   // files were reconsidered for both contracts).
   const expectedUndeclared = [
+    'plugins/foreman-line/authority-registry/src/generate.ts',
+    'plugins/foreman-line/authority-registry/src/validate.ts',
     'plugins/foreman-line/dispatch/src/approval-cli/index.ts',
     'plugins/foreman-line/dispatch/src/routing-eval/index.ts',
     'plugins/foreman-line/skill-injection/src/cli.ts',
@@ -586,6 +611,7 @@ test('A2(b)(2)/(4) Contract B — every surfaced file is adjudicated; both signa
     'plugins/foreman-line/spec-linter/src/index.ts',
     'plugins/foreman-line/spec-linter/src/testing.ts',
     'plugins/foreman-line/verification/src/pipeline/index.ts',
+    'plugins/foreman-line/verification/src/pipeline/stage-d-finalization.ts',
   ].sort()
   assert.deepEqual(
     undeclared,

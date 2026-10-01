@@ -10,15 +10,9 @@ import { dirname, join } from 'node:path'
 import { test } from 'node:test'
 import { fileURLToPath } from 'node:url'
 import { discoverProjectableInputs, writeProjectedResult } from '../src/index.js'
-import {
-  diffStatSinceMergeBase,
-  makeTempRepoRoot,
-  writeShapingResultFixture,
-  writeSpecDraft,
-} from './helpers.js'
+import { makeTempRepoRoot, writeShapingResultFixture, writeSpecDraft } from './helpers.js'
 
 const packageDir = join(dirname(fileURLToPath(import.meta.url)), '..')
-const repoRootOfMonorepo = join(packageDir, '..', '..', '..')
 const srcDir = join(packageDir, 'src')
 
 test('AC3: readShapingResult and discoverShapingResults are imported from ../../shaping/src/index.js', () => {
@@ -29,11 +23,17 @@ test('AC3: readShapingResult and discoverShapingResults are imported from ../../
   assert.match(text, /discoverShapingResults/)
 })
 
-test('AC3: no file under shaping/ is modified by this parcel since the branch fork point', () => {
-  // Diffed from the merge-base with origin/main (rework item 2), not HEAD.
-  const out = diffStatSinceMergeBase(repoRootOfMonorepo, 'plugins/foreman-line/shaping')
-  assert.equal(out.trim(), '')
-})
+// RETIRED (same class and ruling as the frozen-surface freeze retired in
+// frozen-surface.test.ts - CLOSE-P2 coordinator amendment A6;
+// STANDING-CONSTRAINTS Builder #12): the "AC3: no file under shaping/ is
+// modified by this parcel since the branch fork point" git-diff freeze that
+// lived here was W1-P2's parcel-time drift control shipped as a permanent
+// suite member - it redded any later PR legitimately touching `shaping/`
+// (it fired on the P2b-i root-conflation changes shaping's own suite
+// requires). Parcel-time freezes belong in the coordinator's Stage-D/E
+// git-diff checks, not the shipped suite. The shipped half of AC3 - the
+// import-consumption pin above (readers are imported from
+// `../../shaping/src/index.js`, never re-implemented) - stays.
 
 test("AC3: the fallback discovery filters out this package's own projected artifact", () => {
   const root = makeTempRepoRoot()

@@ -39,19 +39,23 @@ not exist at shaping time.
 ## Artifact location / naming and the P1→P2 contract
 
 Exactly one artifact per shaping session at
-`plugins/foreman-line/docs/specs/active/<session-slug>.shaping-result.json`
-(a sibling `.json` in `active/` never trips the spec-linter, which collects only
-`.md`). The `<session-slug>` is caller-chosen; `deriveSessionSlug(raw)` produces
+`<specsDir>/<session-slug>.shaping-result.json` beneath `repoRoot` (the
+legacy default `specsDir` is `plugins/foreman-line/docs/specs/active`; the
+constant itself is retired from the public surface — P2b-i AC2 — and callers
+pass the directory explicitly). A sibling `.json` in the specs directory never
+trips the spec-linter, which collects only `.md`. The `<session-slug>` is caller-chosen; `deriveSessionSlug(raw)` produces
 a filesystem-safe slug (lowercase, trim, collapse non-alphanumeric runs to a
 single `-`, strip leading/trailing `-`, throw on empty). The emitter **refuses
 to overwrite** an existing artifact, so two sessions can never silently collide.
+A non-absolute `repoRoot` is refused with `ShapingRootUnresolvedError`
+(`reason: 'root-not-absolute'`) before any path is constructed.
 
 - **Primary interface:** `readShapingResult(path)` — the **explicit path handoff
   is the contract**. W1-P2 is handed the artifact path and reads the parsed,
   schema-validated payload.
-- **Fallback:** `discoverShapingResults(repoRoot)` — the documented
-  `active/*.shaping-result.json` glob discovery helper, not the primary
-  interface.
+- **Fallback:** `discoverShapingResults(repoRoot, specsDir?)` — the documented
+  `*.shaping-result.json` glob discovery helper beneath `specsDir`, not the
+  primary interface.
 
 ## Two-layer advisory self-check
 

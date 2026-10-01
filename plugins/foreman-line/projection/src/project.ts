@@ -15,6 +15,7 @@ import {
   type StoryNode,
   shapingResultSchema,
 } from '../../contracts/src/index.js'
+import { assertAbsoluteRoot } from './errors.js'
 import { assertSemanticGuards } from './guards.js'
 import { deriveEpicKey, specFilenameStem } from './keys.js'
 import { assertSafeSlug } from './path-guard.js'
@@ -44,6 +45,9 @@ export function projectShapingResult(
   options: ProjectOptions = {},
 ): ShapingResult {
   const repoRoot = options.repoRoot ?? DEFAULT_REPO_ROOT
+
+  // P2b-i AC6b seam refusal before any path is constructed from repoRoot.
+  assertAbsoluteRoot(repoRoot, 'projectShapingResult')
 
   if (typeof epicTitle !== 'string' || epicTitle.trim().length === 0) {
     throw new Error(
