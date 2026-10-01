@@ -32,6 +32,36 @@ The tradeoff is stated openly: both-class reuse would take the reuse unit to 0 s
 
    > `push`-class decision ⇒ `decision: fallback`, `fallback_reason: event-class-ineligible`, sweep invoked (A1).
 
-## Coordinator note on the npm phrasing (not part of A1; cross-spec lint item)
+6. **AC7 — replace the phrase** "no network, no npm — the contract forbids `npm ci`/`npm install` anywhere in this goal's agent work" **with:**
 
-Spec AC7 currently reads "the contract forbids `npm ci`/`npm install` anywhere in this goal's agent work" — over-broad (it originated as protection of the developer's main-checkout `node_modules`, which `npm ci` would wipe). Precise scope: **no npm invocations inside the developer's main checkout `D:/Repos/agent-skills`; npm inside a disposable parcel worktree is permitted and is governed by the parcel spec (CI-P2's measured pre-flight requires it).** This wording fix rides the cross-spec lint note when CI-P2's spec lands (A2 if it needs amendment text), and the builder of each parcel applies it to its own spec file.
+   > no network, no npm (A1-placement-6: no npm invocations inside the developer's main checkout `D:/Repos/agent-skills`, where `npm ci` would wipe installed state; this suite needs none regardless — it is pure node with injected seams. npm inside a disposable parcel worktree is permitted and is governed by each parcel's spec — CI-P2's measured pre-flight requires it.)
+
+7. **AC2 classification table, row 4 — replace** "(d) repo-root `docs/**` after rule 3" **with:**
+
+   > (d) repo-root `docs/**` after rule 3, EXCEPT any path whose first segment under `docs/` begins with `specs` (spec-corpus near-misses — e.g. `docs/specs-extra/x.md` — fall to `code`, A1-E1)
+
+8. **AC5 — append:**
+
+   > **Pinned `fallback_reason` vocabulary (A1-E3; every emitted reason is exactly one of):** `no-prior-run`, `prior-run-inconclusive:<conclusion>` (conclusion string or `null`), `hash-mismatch:code|specifications|workflow|dependency_inputs`, `merge-context-mismatch`, `merge-base-mismatch`, `not-ancestor`, `source-head-unreachable`, `candidate-cap-truncation`, `event-class-ineligible`, `test-relevant-change`, `unknown-path`, `unsupported-entry`, `classification-error`, `api-error`, `evidence-unverifiable`.
+
+9. **Current Behavior Record — replace** the substring "a frozen list of **19 packages** under `plugins/foreman-line/` (approval, contract-readers, contracts, dispatch, foreman-config, integration, mutation-scope-guard, permission-profiles, projection, receipts, registration, role-authority, routing-policy, schema-scaffold, shaping, skill-injection, spec-linter, verification, worker-envelopes)" **with:**
+
+   > a frozen list of **20 packages** under `plugins/foreman-line/` (approval, contract-readers, contracts, dispatch, foreman-config, hybrid-routing, integration, mutation-scope-guard, permission-profiles, projection, receipts, registration, role-authority, routing-policy, schema-scaffold, shaping, skill-injection, spec-linter, verification, worker-envelopes) — 20 at `origin/main` @ `e5dce4d0` (workflow step reads "Install all 20 packages"); the `origin/dev` line (PR #122) freezes 19, having deleted `hybrid-routing` (record correction A1-E5; 19/20 membership reconciliation is CI-P2's F4 subject)
+
+   and replace "including all 19 `npm ci` installs" with "including all 20 `npm ci` installs".
+
+10. **AC3 rule 6 — replace** "**push-class strengthening**: equal resolved `git merge-base`" **with:**
+
+   > **merge-base strengthening (A1: applies to `pull_request`-class eligibility)**: equal resolved `git merge-base`
+
+## Step-0 derivation rulings (recorded 2026-09-30, pinned by tests, no spec text change)
+
+- **E2:** `code` bucket splits into `test-relevant-change` (enumerated test-relevant shapes) vs `unknown-path` (unenumerated); both class `code`, both fall back.
+- **E4:** scan newest-first, lineage-filtered, 10 scanned entries; FIRST lineage-eligible candidate evaluated against rules 2–6 only; first failing rule wins; exhausted ⇒ `no-prior-run`; bound ⇒ `candidate-cap-truncation`.
+- **E8:** current `head_sha` = `pull_request.head.sha` from the event payload (never `GITHUB_SHA`), and MUST equal this run's API run-record `head_sha` (disagreement ⇒ `evidence-unverifiable`); source side = API run record; push side = `after`.
+- **E9:** absent base ⇒ hash bytes `null\0null`.
+- **E10:** `verify` receives source-run id + expected hashes via the `evidence_record` step output (C12 sanctioned; C2 bans log scraping only) and re-validates all from primary sources.
+
+## Coordinator note on the npm phrasing
+
+The over-broad phrase originated as protection of the developer's main-checkout `node_modules`. Placement 6 above narrows it. CI-P2's spec carries no such blanket ban (its pre-flight and shards install by design); the event-class propagation to CI-P2's spec is `ci-p2-amendment-a2-2026-09-30.md`.
