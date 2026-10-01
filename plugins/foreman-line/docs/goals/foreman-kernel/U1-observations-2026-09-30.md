@@ -92,6 +92,8 @@ The `test` job's 498 failures decomposed into five root causes (owner's triage n
 
 **Environment note (evidence-bound):** the `pmc-*` suites pin `process.version === 'v24.19.0'` (`intent-custody.ts` `SETTINGS_REFUSED`) and CI pins `node-version: 24.19.0` exactly — the local v24.7.0 workstation cannot exercise them; CI's matrix is the authoritative verification for those suites. Local verification: routing-policy suite green, all touched packages typecheck clean, schema parity artifacts regenerated via `generate.ts`.
 
+**Toolchain split (recorded 2026-09-30, deferred owner decision):** the 27 on-disk packages carry two devDependency camps — 15 at `@biomejs/biome 2.5.3` / `@types/node 26.1.1` / `tsx 4.23.1` / `typescript 7.0.2`, 11 at `2.5.14` / `26.6.2` / `4.23.15` / `7.0.2`, `jev-decisions` none. A `SHARED_DEV_DEPENDENCIES` golden pinning the Camp-B values entered via recovery-merge `6843cb4` and never matched its own target pair (verification+dispatch, both Camp A since introduction); the golden was corrected to the pair's Camp-A values with a citing comment (test = sibling agreement of that pair only). **Unifying the camps is a separate toolchain decision (Option B: bump the 15 Camp-A packages vs downgrade the 11)** — reserved for the owner; not this campaign's scope.
+
 ## Workflow placement (2026-09-30, owner direction "proceed")
 
 - Extracted **byte-exact** from the design's fenced blocks (design sha `0d8816eb…`): `u1-produce.yml` = doc lines 160–584 (425 lines), `u1-verify.yml` = doc lines 604–1489 (886 lines) — fence content untouched by the §6.6 prose edit; YAML parse PASS both files.
