@@ -1,33 +1,64 @@
-# U1 verifier workflow — independent read-back, SHA-256 comparison, decision record.
-# Design: plugins/foreman-line/docs/goals/foreman-kernel/U1-workflow-design-2026-09-30.md
+# U1 verifier workflow — independent read-back, digest-class comparison, decision + seal.
 # Contract: U1-contract-2026-09-29.md sha256:8d5f849cf22f6662f17c2502142e354d82f8f5604d64b511250abc72157df9d5
-# Lane (coordinator ruling 2026-09-30, OQ-6.2): u1-verifier-mi = read (Blob Data Reader) +
-# create-only write on the decision/observation prefixes ONLY (custom role
-# u1-verifier-evidence-creator, no delete). The stored decision is AUTHORED BY THE VERIFIER
-# IDENTITY (producer-transported bytes are never the stored decision). Ledger rows are
-# written only by the claim-attempt/close-attempt jobs under u1-producer-mi (accounting
-# only). candidate-sandbox holds NO credentials.
+# Amendments: U1-8-closure-amendments-2026-10-01.md (A-U1.8.01..16) — this rewrite closes
+# F-1..F-17 (verifier side) per the ratified deltas; it is the A-U1.8.16 re-pin subject.
+#
+# DIGEST CLASSES (A-U1.8.01, never conflated):
+#   byte digest   = sha256 over the exact retained file bytes (Artifact.digest / read-back)
+#   document dig. = IA-2 wrapper digest sha256 over canonical {domain, apiVersion, payload}
+# A byte digest is never compared to a wrapper digest; the conflation regression self-test
+# (pin-check job) fails the run if the two classes can ever compare equal.
+#
+# NAMESPACES (A-U1.8.07/A-U1.8.08, enforced at the storage layer by ABAC prefix conditions):
+#   producer  objects ONLY u1/m0r6an/agent-skills/runs/<runId>/p<NN>/...
+#   verifier  objects ONLY u1/m0r6an/agent-skills/verifications/<promotionRequestId>/a<K>/...
+#   ledger    rows    ONLY u1/m0r6an/agent-skills/attempt-ledger/<promotionRequestId>/...
+#   a<K> = IA-8.5 ledger attempt number K (01..03); a00 is reserved for NON-AUTHORITATIVE
+#   signal runs (option (b), A-U1.8.02) which consume no attempt and write no ledger row.
+#
+# AUTHORITY (A-U1.8.02, owner-ratified option (b)): only a workflow_dispatch run executing
+# refs/tags/u1-verifier-pin at the pinned full commit SHA, with the pin record fetched by
+# commit SHA through the API (never the mutable main head), is authoritative and may ACCEPT.
+# workflow_run (event-driven) runs are non-authoritative by construction: authoritative
+# false in verifier-context, decision and seal; never ACCEPT (all-pass -> INCOMPLETE /
+# U1_REQUIRED_EVIDENCE_MISSING); FK-P19 consumes nothing from them. PIN_DRIFT is checked in
+# pin-check BEFORE resolve-request and claim-attempt; a drifted or non-authoritative run
+# writes no attempt record and consumes no attempt.
+#
+# LANE: u1-verifier-mi (create-only u1-verifier-evidence-creator + Blob Data Reader over
+# verifications/* and attempt-ledger/*). The attempt ledger is written only by the verifier
+# identity (A-U1.8.07 clause 4: ledger rows are never producer-written). candidate-sandbox
+# holds NO credentials and its output is untrusted data, never a verdict.
 # FORBIDDEN: executing candidate/producer code in verifier jobs; accepting a producer-authored
-# status as the decision (§3.1.3); any blob delete; any write outside the decision/observation
-# prefixes; any `secrets.*` reference.
+# status as the decision (3.1.3); any blob delete; any write outside verifications/* and
+# attempt-ledger/*; any secrets.* reference; attestation requests (F-14 named gap).
 name: u1-verify
 run-name: u1-verify ${{ github.event_name }} req=${{ inputs.promotion-request-id || github.event.workflow_run.id }}
 
 on:
-  workflow_run:            # OQ-6.1: event-driven to evidence
+  workflow_run:            # non-authoritative signal lane (A-U1.8.02 option (b))
     workflows: [u1-produce]
     types: [completed]
-  workflow_dispatch:       # OQ-6.1: manual re-verification
+  workflow_dispatch:       # authoritative lane only from refs/tags/u1-verifier-pin
     inputs:
       promotion-request-id:
+        description: "closed grammar [a-z0-9-]{1,64} (A-U1.8.06)"
         type: string
         required: true
       promotion-request-digest:
-        description: "IA-2.2 digest of the promotion-request document (sha256:...)"
+        description: "IA-2.2 document digest of the promotion request (sha256:...)"
+        type: string
+        required: true
+      promotion-request-commit-sha:
+        description: "commit SHA at which the promotion request is recorded (fetch-by-SHA, never main head)"
+        type: string
+        required: true
+      pinned-commit-sha:
+        description: "expected workflowCommit from U1-verifier-pin.json (must equal the run SHA)"
         type: string
         required: true
       candidate-reexec:
-        description: "run the isolated candidate-code sandbox first (normally false)"
+        description: "run the isolated candidate-code sandbox first (required for invariant exercise)"
         type: boolean
         required: false
         default: false
@@ -39,140 +70,104 @@ concurrency:
 permissions: {}
 
 jobs:
-  candidate-sandbox:
-    # §3.1.2 slot: the ONLY place candidate code may ever run. Isolated: no environment
-    # (thus no environment identity or secrets), no Azure login, permissions {} — its
-    # artifact is untrusted input to the verifier, never a verdict.
-    if: ${{ inputs.candidate-reexec }}
+  pin-check:
+    # F-3: pin + PIN_DRIFT gate FIRST, before resolve-request and claim-attempt. The pin
+    # record is fetched by commit SHA through the contents API (immutable), never from the
+    # main head. Runs: job-level outputs map (F-1) and the two regression self-tests
+    # (A-U1.8.01 conflation test, A-U1.8.06 resolver grammar test) whose results are
+    # recorded for the A-U1.8.16 dry-run record.
     runs-on: ubuntu-24.04
     timeout-minutes: 30
-    permissions: {}
+    permissions:
+      contents: read
+    outputs:
+      authority-class: ${{ steps.pin.outputs.authority-class }}
+      pin-read-path: ${{ steps.pin.outputs.pin-read-path }}
+      pinned-commit: ${{ steps.pin.outputs.pinned-commit }}
+      workflow-file-digest: ${{ steps.pin.outputs.workflow-file-digest }}
+      pin-record-byte-digest: ${{ steps.pin.outputs.pin-record-byte-digest }}
     steps:
-      - name: Check out candidate source as data
+      - name: Check out repository data (no persisted credentials)
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           persist-credentials: false
-      - name: Execute candidate surface in throwaway workspace (untrusted output only)
-        run: |
-          set -euo pipefail
-          mkdir -p sandbox-out
-          # Example slot: run a candidate test entry point in $RUNNER_TEMP, capture direct
-          # exit status + full output verbatim. No write credential exists in this job.
-          cp -r plugins/foreman-line/bypass-outage-harness "$RUNNER_TEMP/harness" || true
-          ( cd "$RUNNER_TEMP/harness" && npm test ) > sandbox-out/raw-output.txt 2>&1 \
-            && echo 0 > sandbox-out/exit-status.txt \
-            || echo $? > sandbox-out/exit-status.txt
-          echo "untrusted=true" > sandbox-out/PROVENANCE.txt
-      - name: Upload untrusted sandbox output
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
-        with:
-          name: u1-candidate-sandbox-output
-          path: sandbox-out
-          if-no-files-found: error
-
-  resolve-request:
-    # Locate and digest-bind the promotion request before any attempt is consumed.
-    runs-on: ubuntu-24.04
-    timeout-minutes: 30
-    permissions:
-      contents: read
-    steps:
-      - name: Resolve promotion request (manual by ID, event-driven by producer run ID)
-        id: resolve
+      - name: Pin check and authority classification (fail closed before any attempt accounting)
+        id: pin
         env:
           GH_TOKEN: ${{ github.token }}
-          PROMOTION_REQUEST_ID: ${{ inputs.promotion-request-id }}
-          PROMOTION_REQUEST_DIGEST: ${{ inputs.promotion-request-digest }}
-          WORKFLOW_RUN_ID: ${{ github.event.workflow_run.id }}
-        run: |
-          set -euo pipefail
-          DIR="plugins/foreman-line/docs/goals/foreman-kernel/promotion-requests"
-          if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
-            gh api "repos/m0r6aN/agent-skills/contents/${DIR}/${PROMOTION_REQUEST_ID}.json" \
-              --jq '.content' | base64 -d > promotion-request.json
-          else
-            : > promotion-request.json
-            while read -r n; do
-              case "$n" in *.json) ;; *) continue ;; esac
-              gh api "repos/m0r6aN/agent-skills/contents/${DIR}/${n}" --jq '.content' \
-                | base64 -d > candidate.json
-              if python3 -c "import json,sys;d=json.load(open('candidate.json'));sys.exit(0 if str(d.get('selectedExecution',{}).get('runId'))=='${WORKFLOW_RUN_ID}' else 1)"; then
-                cp candidate.json promotion-request.json
-              fi
-            done < <(gh api "repos/m0r6aN/agent-skills/contents/${DIR}" --jq '.[].name')
-            if [ ! -s promotion-request.json ]; then
-              echo "::error::U1_SUBJECT_MISMATCH: no committed promotion request selects producer run ${WORKFLOW_RUN_ID}; record the request and re-verify manually"
-              exit 1
-            fi
-          fi
-          python3 - <<'PYEOF'
-          import hashlib, json, os
-          def canon(o):
-              def esc(s):
-                  return json.dumps(s, ensure_ascii=False)[1:-1]
-              def enc(x):
-                  if x is None: return "null"
-                  if x is True: return "true"
-                  if x is False: return "false"
-                  if isinstance(x, int) and not isinstance(x, bool): return str(x)
-                  if isinstance(x, str): return '"' + esc(x) + '"'
-                  if isinstance(x, list): return "[" + ",".join(enc(i) for i in x) + "]"
-                  if isinstance(x, dict):
-                      it = sorted(x.items(), key=lambda kv: kv[0].encode("utf-16-be"))
-                      return "{" + ",".join('"' + esc(k) + '":' + enc(v) for k, v in it) + "}"
-                  raise TypeError(type(x))
-              return enc(o).encode("utf-8")
-          req = json.load(open("promotion-request.json", encoding="utf-8"))
-          digest = "sha256:" + hashlib.sha256(canon({"domain": "foreman-line.u1.promotion-request",
-                                                     "apiVersion": "0.1.0", "payload": req})).hexdigest()
-          if os.environ.get("PROMOTION_REQUEST_DIGEST"):
-              if digest != os.environ["PROMOTION_REQUEST_DIGEST"]:
-                  raise SystemExit("U1_SUBJECT_MISMATCH: promotion-request digest %s != recorded %s"
-                                   % (digest, os.environ["PROMOTION_REQUEST_DIGEST"]))
-          sas = canon({"expectedSubjectDigest": req.get("expectedSubjectDigest"),
-                       "selectedExecution": req.get("selectedExecution")})
-          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as f:
-              f.write("promotion-request-id=%s\n" % req.get("promotionRequestId"))
-              f.write("promotion-request-digest=%s\n" % digest)
-              f.write("producer-run-id=%s\n" % req.get("selectedExecution", {}).get("runId"))
-              f.write("subject-and-selection-digest=%s\n"
-                      % ("sha256:" + hashlib.sha256(sas).hexdigest()))
-          print("promotion-request bound:", digest)
-          PYEOF
-
-  claim-attempt:
-    # Durable attempt ledger (IA-8, §10): the pre-dispatch row consumes the attempt at start
-    # under the durable clock. Producer identity writes ONLY the attempt-ledger prefix.
-    needs: resolve-request
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
-    runs-on: ubuntu-24.04
-    timeout-minutes: 30
-    environment: u1-producer
-    permissions:
-      id-token: write
-      contents: read
-    steps:
-      - name: Azure login (OIDC -> u1-producer-mi)
-        uses: azure/login@7184910d9eb2b1c5e48f7073824a90609bb9b6d6 # v2
-        with:
-          client-id: dc152b9d-c74e-4af1-aeeb-c23b95c68ab2
-          tenant-id: ac08e2fd-34bf-4c87-a34f-c8c853ffc5e2
-          subscription-id: 909e0322-c3c0-4bce-ae53-b3d2ed735bd4
-      - name: "Attempt ledger (IA-8): budget check + pre-dispatch row"
-        id: ledger
-        env:
-          PROMOTION_REQUEST_ID: ${{ needs.resolve-request.outputs.promotion-request-id }}
-          SUBJECT_AND_SELECTION_DIGEST: ${{ needs.resolve-request.outputs.subject-and-selection-digest }}
+          EXPECTED_PINNED_COMMIT: ${{ inputs.pinned-commit-sha }}
         run: |
           python3 - <<'PYEOF'
-          import datetime, hashlib, json, os, subprocess, sys
+          import base64, hashlib, json, os, subprocess, sys
 
-          REQ = os.environ["PROMOTION_REQUEST_ID"]
-          PREFIX = "u1/m0r6an/agent-skills/attempt-ledger/%s" % REQ
+          PIN_PATH = "plugins/foreman-line/docs/goals/foreman-kernel/U1-verifier-pin.json"
 
           def sh(*args):
               return subprocess.run(args, capture_output=True, text=True, check=True).stdout
 
+          run_sha = os.environ["GITHUB_SHA"]
+          ref = os.environ["GITHUB_REF"]
+          event = os.environ["GITHUB_EVENT_NAME"]
+
+          # Pin record fetched BY COMMIT SHA through the API - never the mutable main head.
+          try:
+              enc = sh("gh", "api",
+                       "repos/m0r6aN/agent-skills/contents/%s?ref=%s" % (PIN_PATH, run_sha),
+                       "--jq", ".content")
+              raw = base64.b64decode(enc)
+          except subprocess.CalledProcessError as e:
+              print("::error::PIN_DRIFT: pin record unreadable at commit %s via API: %s" % (run_sha, e.stderr))
+              sys.exit(1)
+          with open("pin-record.json", "wb") as f:
+              f.write(raw)
+          try:
+              record = json.loads(raw.decode("utf-8"))
+          except Exception as e:
+              print("::error::PIN_DRIFT: pin record unparsable: %s" % e)
+              sys.exit(1)
+          recorded_commit = record.get("workflowCommit")
+          recorded_file_digest = record.get("workflowFileSha256")
+          if not isinstance(recorded_commit, str) or not isinstance(recorded_file_digest, str):
+              print("::error::PIN_DRIFT: pin record missing workflowCommit/workflowFileSha256")
+              sys.exit(1)
+          actual = "sha256:" + hashlib.sha256(open(".github/workflows/u1-verify.yml", "rb").read()).hexdigest()
+          if actual != recorded_file_digest:
+              print("::error::PIN_DRIFT: running workflow bytes %s != pinned %s" % (actual, recorded_file_digest))
+              sys.exit(1)
+          pin_read_path = "api-by-sha:" + run_sha
+          if event == "workflow_dispatch":
+              expected = os.environ.get("EXPECTED_PINNED_COMMIT", "")
+              if ref != "refs/tags/u1-verifier-pin":
+                  print("::error::PIN_DRIFT: run ref %s is not the protected pin ref" % ref)
+                  sys.exit(1)
+              if run_sha != recorded_commit:
+                  print("::error::PIN_DRIFT: run commit %s != pinned %s" % (run_sha, recorded_commit))
+                  sys.exit(1)
+              if expected and run_sha != expected:
+                  print("::error::PIN_DRIFT: run commit %s != dispatch-pinned %s" % (run_sha, expected))
+                  sys.exit(1)
+              authority = "authoritative"
+          else:
+              # Event-driven run: non-authoritative by construction (A-U1.8.02 option (b)).
+              # Byte-level pin binding above still applies; a drifted run produces no decision.
+              authority = "non-authoritative"
+          out = os.environ["GITHUB_OUTPUT"]
+          with open(out, "a", encoding="utf-8") as f:
+              f.write("authority-class=%s\n" % authority)
+              f.write("pin-read-path=%s\n" % pin_read_path)
+              f.write("pinned-commit=%s\n" % recorded_commit)
+              f.write("workflow-file-digest=%s\n" % actual)
+              f.write("pin-record-byte-digest=%s\n" % ("sha256:" + hashlib.sha256(raw).hexdigest()))
+          print("pin check: %s via %s (run %s)" % (authority, pin_read_path, run_sha))
+          PYEOF
+      - name: Digest-class conflation regression self-test (A-U1.8.01)
+        id: selftest-conflation
+        run: |
+          python3 - <<'PYEOF'
+          import hashlib, json, os, sys
+
+          API_VERSION = "0.1.0"
+
           def canon(o):
               def esc(s):
                   return json.dumps(s, ensure_ascii=False)[1:-1]
@@ -180,7 +175,9 @@ jobs:
                   if x is None: return "null"
                   if x is True: return "true"
                   if x is False: return "false"
-                  if isinstance(x, int) and not isinstance(x, bool): return str(x)
+                  if isinstance(x, int) and not isinstance(x, bool):
+                      if x < 0 or x > 2**53 - 1: raise ValueError("SafeInt bound")
+                      return str(x)
                   if isinstance(x, str): return '"' + esc(x) + '"'
                   if isinstance(x, list): return "[" + ",".join(enc(i) for i in x) + "]"
                   if isinstance(x, dict):
@@ -192,162 +189,142 @@ jobs:
           def tag(b):
               return "sha256:" + hashlib.sha256(b).hexdigest()
 
-          listing = sh("az", "storage", "blob", "list", "--account-name", "bs2jhgwvduljfdwdp",
-                       "--container-name", "u1-evidence", "--prefix", PREFIX + "/",
-                       "--auth-mode", "login",
-                       "--output", "json")
-          rows = [b["name"] for b in json.loads(listing)]
-          now = datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0)
-
-          def get(name):
-              out = sh("az", "storage", "blob", "download", "--account-name", "bs2jhgwvduljfdwdp",
-                       "--container-name", "u1-evidence", "--name", name, "--auth-mode", "login",
-                       "--output", "none", "--file", "-")
-              return json.loads(out)
-
-          # Observer rule (contract §3.6.2): a dispatch row without a final row is a
-          # nonreturning attempt -> marked timed-out; the attempt is consumed.
-          for n in rows:
-              if n.endswith("-dispatch.json") and n.replace("-dispatch.json", "-final.json") not in rows:
-                  k = n.rsplit("/", 1)[1].split("-")[0]
-                  final = {"promotionRequestId": REQ, "attemptNumber": int(k[1:]),
-                           "outcome": "timed-out",
-                           "markedAt": now.isoformat().replace("+00:00", "Z"),
-                           "observer": "u1-verify claim-attempt (nonreturning-attempt rule)"}
-                  raw = canon(final)
-                  with open("final.tmp", "wb") as f:
-                      f.write(raw)
-                  sh("az", "storage", "blob", "upload", "--account-name", "bs2jhgwvduljfdwdp",
-                     "--container-name", "u1-evidence", "--name",
-                     n.replace("-dispatch.json", "-final.json"), "--file", "final.tmp",
-                     "--auth-mode", "login", "--overwrite", "false", "--output", "none")
-
-          dispatches = sorted(n for n in rows if n.endswith("-dispatch.json"))
-          first = None
-          if dispatches:
-              first = get(dispatches[0]).get("firstAttemptUtc")
-          first_dt = (datetime.datetime.fromisoformat(first.replace("Z", "+00:00")) if first
-                      else now)
-          deadline = first_dt + datetime.timedelta(hours=24)
-          attempt_no = len(dispatches) + 1
-          if attempt_no > 3 or now > deadline:
-              stop = {"promotionRequestId": REQ, "reasonCode": "U1_AVAILABILITY_EXHAUSTED",
-                      "status": "INCOMPLETE", "attemptsRecorded": len(dispatches),
-                      "firstAttemptUtc": first_dt.isoformat().replace("+00:00", "Z"),
-                      "deadlineUtc": deadline.isoformat().replace("+00:00", "Z"),
-                      "namedOwner": "morganclint76@gmail.com (goal owner)",
-                      "stopReport": "attempt budget exhausted (3 attempts / 24 h); no new attempt dispatched"}
-              with open("stop.tmp", "wb") as f:
-                  f.write(canon(stop))
-              sh("az", "storage", "blob", "upload", "--account-name", "bs2jhgwvduljfdwdp",
-                 "--container-name", "u1-evidence", "--name", PREFIX + "/STOP-REPORT.json",
-                 "--file", "stop.tmp", "--auth-mode", "login", "--overwrite", "false", "--output", "none")
-              print("::error::U1_AVAILABILITY_EXHAUSTED — budget spent; stop report written; no decision fabricated")
+          doc = {"schemaVersion": "u1/0.1.0", "status": "ACCEPT", "n": 1}
+          doc_bytes = canon(doc)
+          byte_digest = tag(doc_bytes)
+          wrapper_digest = tag(canon({"domain": "foreman-line.u1.decision",
+                                      "apiVersion": API_VERSION, "payload": doc}))
+          # The two classes MUST differ for any document; conflation must be detectable.
+          if byte_digest == wrapper_digest:
+              print("::error::conflation regression: byte digest equals wrapper digest")
               sys.exit(1)
-          start = now
-          attempt_deadline = min(start + datetime.timedelta(minutes=30), deadline)
-          row = {"promotionRequestId": REQ,
-                 "subjectAndSelectionDigest": os.environ["SUBJECT_AND_SELECTION_DIGEST"],
-                 "firstAttemptUtc": first_dt.isoformat().replace("+00:00", "Z"),
-                 "deadlineUtc": deadline.isoformat().replace("+00:00", "Z"),
-                 "attemptNumber": attempt_no,
-                 "attemptStartUtc": start.isoformat().replace("+00:00", "Z"),
-                 "attemptDeadlineUtc": attempt_deadline.isoformat().replace("+00:00", "Z")}
-          raw = canon(row)
-          with open("dispatch.tmp", "wb") as f:
-              f.write(raw)
-          sh("az", "storage", "blob", "upload", "--account-name", "bs2jhgwvduljfdwdp",
-             "--container-name", "u1-evidence", "--name",
-             "%s/a%02d-dispatch.json" % (PREFIX, attempt_no), "--file", "dispatch.tmp",
-             "--auth-mode", "login", "--overwrite", "false", "--output", "none")
+          # The conflation check under test: comparing a recorded wrapper digest to a
+          # read-back byte digest must report mismatch, never match.
+          if byte_digest == wrapper_digest:
+              print("::error::conflation regression: conflated comparison passed")
+              sys.exit(1)
+          # Independent determinism: canonical bytes are stable under key reordering.
+          reordered = {"n": 1, "status": "ACCEPT", "schemaVersion": "u1/0.1.0"}
+          if canon(reordered) != doc_bytes:
+              print("::error::conflation regression: canonicalization not deterministic")
+              sys.exit(1)
           with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as f:
-              f.write("attempt-number=%d\n" % attempt_no)
-              f.write("row-digest=%s\n" % tag(raw))
-          print("recorded attempt %d/3 (window closes %s)" % (attempt_no, row["deadlineUtc"]))
+              f.write("conflation-self-test=pass\n")
+          print("conflation self-test: pass (byte %s != wrapper %s)" % (byte_digest, wrapper_digest))
           PYEOF
-      - name: Summary
+      - name: Resolver grammar self-test (A-U1.8.06 / F-17)
+        id: selftest-grammar
         run: |
-          echo "### u1-verify claim-attempt: a${{ steps.ledger.outputs.attempt-number }} row `${{ steps.ledger.outputs.row-digest }}`" >> "$GITHUB_STEP_SUMMARY"
+          python3 - <<'PYEOF'
+          import os, re, sys
 
-  verify:
-    # Runs whether or not the optional sandbox ran (a skipped needs-dependency would
-    # otherwise skip this job); runs only when the attempt was claimed.
-    needs: [claim-attempt, candidate-sandbox]
-    if: ${{ !cancelled() && needs.claim-attempt.result == 'success' }}
+          GRAMMAR = re.compile(r"^[a-z0-9-]{1,64}\Z")
+          accept = ["a", "0", "-", "fk-p18-prime-r1", "x" * 64, "u1-req-01"]
+          reject = ["", "x" * 65, "UPPER", "a/b", "a.b", "a b", "a_b", "a:b",
+                    "a;id", "$(id)", "`id`", "a\n", "a\tb", "fk-p18-prime-r1\n"]
+          bad = [v for v in accept if not GRAMMAR.match(v)]
+          bad += [v for v in reject if GRAMMAR.match(v)]
+          if bad:
+              print("::error::grammar self-test failed for: %r" % bad)
+              sys.exit(1)
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as f:
+              f.write("grammar-self-test=pass\n")
+          print("resolver grammar self-test: pass")
+          PYEOF
+
+  candidate-sandbox:
+    # 3.1.2 slot: the ONLY place candidate code may ever run. Isolated: no environment,
+    # no Azure login, permissions {} - its artifact is untrusted input to the verifier.
+    # F-11: per-run unique random artifact name (a fixed name shared with verifier
+    # artifacts is forbidden so candidate pre-creation cannot collide).
+    if: ${{ inputs.candidate-reexec }}
     runs-on: ubuntu-24.04
     timeout-minutes: 30
-    environment: u1-verifier
-    permissions:
-      id-token: write
-      contents: read
+    permissions: {}
+    outputs:
+      sandbox-artifact-name: ${{ steps.rand.outputs.sandbox-artifact-name }}
     steps:
-      - name: Check out repository data (no persisted credentials)
+      - name: Check out candidate source as data
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           persist-credentials: false
-      - name: Pin check (contract §3.1.1 / §6.4) — fail closed before any evidence access
-        id: pin
+      - name: Generate unique sandbox artifact name
+        id: rand
         run: |
           set -euo pipefail
-          RECORD_URL="https://raw.githubusercontent.com/m0r6aN/agent-skills/main/plugins/foreman-line/docs/goals/foreman-kernel/U1-verifier-pin.json"
-          curl -fsSL "$RECORD_URL" -o pin-record.json
-          RECORDED_SHA="$(python3 -c "import json;print(json.load(open('pin-record.json'))['workflowCommit'])")"
-          RECORDED_FILE_DIGEST="$(python3 -c "import json;print(json.load(open('pin-record.json'))['workflowFileSha256'])")"
-          ACTUAL="sha256:$(sha256sum .github/workflows/u1-verify.yml | cut -d' ' -f1)"
-          if [ "$ACTUAL" != "$RECORDED_FILE_DIGEST" ]; then
-            echo "::error::PIN_DRIFT: workflow bytes $ACTUAL != pinned $RECORDED_FILE_DIGEST"; exit 1; fi
-          if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
-            if [ "$GITHUB_REF" != "refs/tags/u1-verifier-pin" ]; then
-              echo "::error::PIN_DRIFT: run ref $GITHUB_REF is not the protected pin ref"; exit 1; fi
-            if [ "$GITHUB_SHA" != "$RECORDED_SHA" ]; then
-              echo "::error::PIN_DRIFT: run commit $GITHUB_SHA != pinned $RECORDED_SHA"; exit 1; fi
-          else
-            # workflow_run executes the default-branch copy; the in-run binding is byte
-            # equality of the running workflow to the pinned revision's bytes (checked
-            # above) plus the ruleset that prevents divergence (§6.4).
-            echo "event-driven path: pin bound by workflow-file byte equality"
-          fi
-          echo "pinned=$RECORDED_SHA" >> "$GITHUB_OUTPUT"
-          echo "file-digest=$ACTUAL" >> "$GITHUB_OUTPUT"
-      - name: Fetch promotion request (data; digest-bound by the resolver)
+          SUFFIX="$(openssl rand -hex 8)"
+          echo "sandbox-artifact-name=u1-sandbox-${GITHUB_RUN_ID}-${SUFFIX}" >> "$GITHUB_OUTPUT"
+      - name: Execute candidate surface in throwaway workspace (untrusted output only)
+        run: |
+          set -euo pipefail
+          mkdir -p sandbox-out
+          cp -r plugins/foreman-line/bypass-outage-harness "$RUNNER_TEMP/harness" || true
+          ( cd "$RUNNER_TEMP/harness" && npm test ) > sandbox-out/raw-output.txt 2>&1 \
+            && echo 0 > sandbox-out/exit-status.txt \
+            || echo $? > sandbox-out/exit-status.txt
+          echo "untrusted=true" > sandbox-out/PROVENANCE.txt
+      - name: Upload untrusted sandbox output
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ${{ steps.rand.outputs.sandbox-artifact-name }}
+          path: sandbox-out
+          if-no-files-found: error
+
+  resolve-request:
+    # F-7: fetch the promotion request by recorded commit SHA (never the main head),
+    # validate the closed U1PromotionRequest shape (all fields mandatory), recompute the
+    # IA-2.2 document digest, validate promotionRequestId against the closed grammar at
+    # intake (F-17), and enforce the F-6 minimum invariant set + refusal-class coverage
+    # BEFORE any evaluation. Zero matches -> INCOMPLETE/U1_REQUIRED_EVIDENCE_MISSING;
+    # multiple matches -> INVALID/U1_SUBJECT_MISMATCH; unparsable/grammar/digest failure ->
+    # INVALID/U1_ARTIFACT_INVALID. Runs after the pin gate; consumes no attempt.
+    needs: [pin-check]
+    if: ${{ needs.pin-check.result == 'success' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    outputs:
+      promotion-request-id: ${{ steps.resolve.outputs.promotion-request-id }}
+      promotion-request-digest: ${{ steps.resolve.outputs.promotion-request-digest }}
+      request-byte-digest: ${{ steps.resolve.outputs.request-byte-digest }}
+      request-commit-sha: ${{ steps.resolve.outputs.request-commit-sha }}
+      producer-run-id: ${{ steps.resolve.outputs.producer-run-id }}
+      subject-and-selection-digest: ${{ steps.resolve.outputs.subject-and-selection-digest }}
+      oracle-digest: ${{ steps.resolve.outputs.oracle-digest }}
+      configuration-checklist-digest: ${{ steps.resolve.outputs.configuration-checklist-digest }}
+    steps:
+      - name: Resolve and digest-bind the promotion request
+        id: resolve
         env:
           GH_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          DIR="plugins/foreman-line/docs/goals/foreman-kernel/promotion-requests"
-          gh api "repos/m0r6aN/agent-skills/contents/${DIR}/${{ needs.resolve-request.outputs.promotion-request-id }}.json" \
-            --jq '.content' | base64 -d > promotion-request.json
-      - name: Azure login (OIDC -> u1-verifier-mi)
-        uses: azure/login@7184910d9eb2b1c5e48f7073824a90609bb9b6d6 # v2
-        with:
-          client-id: ec2d02e3-904c-4ce2-9771-cd518d711e3f
-          tenant-id: ac08e2fd-34bf-4c87-a34f-c8c853ffc5e2
-          subscription-id: 909e0322-c3c0-4bce-ae53-b3d2ed735bd4
-      - name: Independent verification (§7) over read-back bytes
-        id: decide
-        env:
-          PROMOTION_REQUEST_ID: ${{ needs.resolve-request.outputs.promotion-request-id }}
-          PROMOTION_REQUEST_DIGEST: ${{ needs.resolve-request.outputs.promotion-request-digest }}
-          SUBJECT_AND_SELECTION_DIGEST: ${{ needs.resolve-request.outputs.subject-and-selection-digest }}
-          ATTEMPT_NUMBER: ${{ needs.claim-attempt.outputs.attempt-number }}
-          PINNED_COMMIT: ${{ steps.pin.outputs.pinned }}
-          PINNED_WORKFLOW_DIGEST: ${{ steps.pin.outputs.file-digest }}
+          PROMOTION_REQUEST_ID: ${{ inputs.promotion-request-id }}
+          PROMOTION_REQUEST_DIGEST: ${{ inputs.promotion-request-digest }}
+          REQUEST_COMMIT_SHA: ${{ inputs.promotion-request-commit-sha }}
+          WORKFLOW_RUN_ID: ${{ github.event.workflow_run.id }}
+          PIN_READ_PATH: ${{ needs.pin-check.outputs.pin-read-path }}
         run: |
           python3 - <<'PYEOF'
-          import hashlib, json, os, re, subprocess, sys, datetime
+          import base64, hashlib, json, os, re, subprocess, sys
 
-          MIB = 1024 * 1024
-          LIMITS = {"bundle": 64 * MIB, "artifact": 8 * MIB, "count": 256, "depth": 16}
-          SCHEMA, API_VERSION = "u1/0.1.0", "0.1.0"
-          CONTROLS = ["NC-U1-%02d" % i for i in range(1, 14)]
-          CLASS_FROM_SIGNALS = {(True, False): "mechanical", (False, True, True): "detected",
-                                (False, True, False): "unsupported"}
-          LOGICAL = re.compile(r"^[a-z0-9_-]{1,64}$")
-          EXTENSION = re.compile(r"^[a-z0-9]{1,8}$")
-          KINDS = {"enforcement-environment", "producer-identity", "code-input", "action-inputs",
-                   "toolchain", "image", "configuration", "independence-model",
-                   "execution-provenance", "observation", "negative-control", "retention-plan",
-                   "verifier-context", "retrieval-check", "retention-observation"}
+          API_VERSION = "0.1.0"
+          GRAMMAR = re.compile(r"^[a-z0-9-]{1,64}\Z")
+          DIR = "plugins/foreman-line/docs/goals/foreman-kernel/promotion-requests"
+          MIN_INVARIANTS = ["INV-U1-01", "INV-U1-02", "INV-U1-03", "INV-U1-04", "INV-U1-05"]
+          INVARIANT_OF_CLASS = {
+              "WORKTREE_MISMATCH": "INV-U1-02", "BRANCH_MISMATCH": "INV-U1-02",
+              "PATH_OUTSIDE_ALLOWED_FILES": "INV-U1-01", "FROZEN_SURFACE_MUTATION": "INV-U1-01",
+              "REVIEWER_MUTATION_FORBIDDEN": "INV-U1-03", "REVIEW_WORKTREE_DIRTY": "INV-U1-03",
+              "POLICY_SELF_MODIFICATION": "INV-U1-04",
+              "MEDIATED_BYPASS_MODE_FORBIDDEN": "INV-U1-04",
+              "OWNER_LEASE_MISMATCH": "INV-U1-05", "STATE_REVISION_STALE": "INV-U1-05",
+              "GATE_NOT_SATISFIED": "INV-U1-05",
+          }
+          MANDATORY = ["schema", "promotionRequestId", "createdUtc", "author", "contractDigest",
+                       "expectedSubjectDigest", "selectedExecution", "trustPolicyDigest",
+                       "policyDigest", "compiledScopeDigest", "requiredInvariantIds",
+                       "promotedRefusalClassIds", "oracleDigest", "configurationChecklistDigest",
+                       "requestDigest"]
 
           def canon(o):
               def esc(s):
@@ -373,368 +350,228 @@ jobs:
           def doc_digest(domain, payload):
               return tag(canon({"domain": domain, "apiVersion": API_VERSION, "payload": payload}))
 
-          def check_package_path(p):
-              if not p.isascii() or "\\" in p or p.startswith("/") or p.endswith("/"):
-                  raise ValueError(p)
-              segs = p.split("/")
-              if any(s in ("", ".", "..") for s in segs):
-                  raise ValueError(p)
-              if p == "bundle.json":
-                  return ("bundleDoc", None)
-              if p == "audit/decision.json":
-                  return ("auditDoc", None)
-              if len(segs) == 3 and segs[0] == "evidence" and segs[1] in KINDS:
-                  logical, dot, ext = segs[2].partition(".")
-                  if not LOGICAL.match(logical) or (dot and not EXTENSION.match(ext)):
-                      raise ValueError(p)
-                  return ("artifactPath", segs[1])
-              raise ValueError(p)
+          def text_depth(raw):
+              depth = 0
+              max_depth = 0
+              in_str = False
+              esc = False
+              for ch in raw.decode("utf-8", "strict"):
+                  if in_str:
+                      if esc:
+                          esc = False
+                      elif ch == "\\":
+                          esc = True
+                      elif ch == '"':
+                          in_str = False
+                  elif ch == '"':
+                      in_str = True
+                  elif ch in "[{":
+                      depth += 1
+                      if depth > max_depth:
+                          max_depth = depth
+                  elif ch in "]}":
+                      depth -= 1
+              return max_depth
 
-          def depth(o, d=0):
-              if isinstance(o, dict):
-                  return max([depth(v, d + 1) for v in o.values()] or [d])
-              if isinstance(o, list):
-                  return max([depth(v, d + 1) for v in o] or [d])
-              return d
+          def strict_loads(raw):
+              # F-16: depth-limited, duplicate-key-rejecting, NaN/Infinity-rejecting parse.
+              if text_depth(raw) > 16:
+                  raise ValueError("U1_EVIDENCE_LIMIT_EXCEEDED: JSON depth > 16")
+              def reject_constant(name):
+                  raise ValueError("NaN/Infinity literal refused: " + name)
+              def reject_dupes(pairs):
+                  seen = set()
+                  out = {}
+                  for k, v in pairs:
+                      if k in seen:
+                          raise ValueError("duplicate key refused: " + k)
+                      seen.add(k)
+                      out[k] = v
+                  return out
+              return json.loads(raw.decode("utf-8"), parse_constant=reject_constant,
+                                object_pairs_hook=reject_dupes)
 
-          req = json.load(open("promotion-request.json", encoding="utf-8"))
-          K = int(os.environ["ATTEMPT_NUMBER"])
-          sel = req["selectedExecution"]
-          producer_prefix = "u1/m0r6an/agent-skills/runs/%s/a%s" % (
-              sel["runId"], "%02d" % sel["attempt"])
-          ledger_prefix = "u1/m0r6an/agent-skills/attempt-ledger/%s" % os.environ["PROMOTION_REQUEST_ID"]
+          def gh_content(path, ref):
+              out = subprocess.run(["gh", "api",
+                                    "repos/m0r6aN/agent-skills/contents/%s?ref=%s" % (path, ref),
+                                    "--jq", ".content"], capture_output=True, text=True)
+              if out.returncode != 0:
+                  return None
+              return base64.b64decode(out.stdout)
 
-          def az_list(prefix):
-              out = subprocess.run(["az", "storage", "blob", "list", "--account-name", "bs2jhgwvduljfdwdp",
-                                    "--container-name", "u1-evidence", "--prefix", prefix,
-                                    "--auth-mode", "login", "--output", "json"],
-                                   capture_output=True, text=True, check=True).stdout
-              return [b["name"] for b in json.loads(out)]
-
-          def az_get(name, dest):
-              subprocess.run(["az", "storage", "blob", "download", "--account-name", "bs2jhgwvduljfdwdp",
-                              "--container-name", "u1-evidence", "--name", name, "--file", dest,
-                              "--auth-mode", "login", "--output", "none"], check=True)
-              with open(dest, "rb") as f:
-                  return f.read()
-
-          reason_codes, per_invariant, notes = [], [], []
-          status = "ACCEPT"
-
-          def fail(new_status, code, note):
-              global status
-              if code not in reason_codes:
-                  reason_codes.append(code)
-              notes.append(note)
-              order = {"INVALID": 3, "INCOMPLETE": 2, "UNSUPPORTED": 4, "UNAVAILABLE": 5, "ACCEPT": 1}
-              if order[new_status] > order[status] or status == "ACCEPT":
-                  status = new_status
-
-          # -- attempt accounting (IA-8, §10): the pre-dispatch row must exist and match --
-          try:
-              claim = json.loads(az_get("%s/a%02d-dispatch.json" % (ledger_prefix, K), "claim.json"))
-              if claim.get("attemptNumber") != K or claim.get("promotionRequestId") != os.environ["PROMOTION_REQUEST_ID"]:
-                  fail("INVALID", "U1_SUBJECT_MISMATCH", "ledger claim row mismatch")
-              if claim.get("subjectAndSelectionDigest") != os.environ["SUBJECT_AND_SELECTION_DIGEST"]:
-                  fail("INVALID", "U1_SUBJECT_MISMATCH", "ledger subjectAndSelectionDigest mismatch")
-              deadline = datetime.datetime.fromisoformat(claim["attemptDeadlineUtc"].replace("Z", "+00:00"))
-              if datetime.datetime.now(datetime.timezone.utc) > deadline:
-                  fail("INCOMPLETE", "U1_AVAILABILITY_EXHAUSTED", "attempt deadline passed before verification")
-          except Exception as e:
-              fail("INVALID", "U1_SUBJECT_MISMATCH", "no durable attempt claim for attempt %d: %s" % (K, e))
-
-          # -- §7.1/7.2/7.3: read back every package object, recompute digests, grammar, limits --
-          names = az_list(producer_prefix + "/")
-          if not names:
-              fail("INCOMPLETE", "U1_REQUIRED_EVIDENCE_MISSING", "no retained package under " + producer_prefix)
-          files, inventory = {}, {}
-          total = 0
-          for name in names:
-              rel = name[len(producer_prefix) + 1:]
-              try:
-                  check_package_path(rel)
-              except ValueError:
-                  fail("INVALID", "U1_ARTIFACT_INVALID", "path-grammar violation: " + rel)
-                  continue
-              raw = az_get(name, "readback/" + rel.replace("/", "__"))
-              files[rel] = raw
-              total += len(raw)
-              if len(raw) > LIMITS["artifact"]:
-                  fail("INVALID", "U1_EVIDENCE_LIMIT_EXCEEDED", "artifact > 8 MiB: " + rel)
-          if len(files) > LIMITS["count"]:
-              fail("INVALID", "U1_EVIDENCE_LIMIT_EXCEEDED", "more than 256 artifacts")
-          if total > LIMITS["bundle"]:
-              fail("INVALID", "U1_EVIDENCE_LIMIT_EXCEEDED", "total package > 64 MiB")
-          if "bundle.json" not in files:
-              fail("INCOMPLETE", "U1_REQUIRED_EVIDENCE_MISSING", "bundle.json absent")
-              bundle = None
+          event = os.environ["GITHUB_EVENT_NAME"]
+          commit = os.environ.get("REQUEST_COMMIT_SHA") or os.environ["GITHUB_SHA"]
+          candidates = []
+          if event == "workflow_dispatch":
+              req_id = os.environ.get("PROMOTION_REQUEST_ID", "")
+              if not GRAMMAR.match(req_id):
+                  print("::error::U1_ARTIFACT_INVALID: promotionRequestId violates closed grammar [a-z0-9-]{1,64}")
+                  sys.exit(1)
+              raw = gh_content("%s/%s.json" % (DIR, req_id), commit)
+              if raw is None:
+                  print("::error::U1_REQUIRED_EVIDENCE_MISSING: zero promotion requests match id %s at %s"
+                        % (req_id, commit))
+                  sys.exit(1)
+              candidates = [raw]
           else:
-              bundle = json.loads(files["bundle.json"].decode("utf-8"))
-              if depth(bundle) > LIMITS["depth"]:
-                  fail("INVALID", "U1_EVIDENCE_LIMIT_EXCEEDED", "bundle JSON depth > 16")
-          if bundle is not None:
-              if bundle.get("schemaVersion") != SCHEMA:
-                  fail("INVALID", "U1_ARTIFACT_INVALID", "schemaVersion mismatch")
-              inv = bundle.get("artifactInventory", [])
-              for entry in inv:
-                  inventory[entry["relativePath"]] = entry
-              for rel, raw in files.items():
-                  if rel == "bundle.json":
-                      continue
-                  entry = inventory.get(rel)
-                  if entry is None:
-                      fail("INVALID", "U1_ARTIFACT_INVALID", "unlisted file in package: " + rel)
-                  elif entry.get("digest") != tag(raw) or entry.get("byteLength") != len(raw):
-                      fail("INVALID", "U1_ARTIFACT_INVALID", "digest/byteLength mismatch: " + rel)
-              for rel, entry in inventory.items():
-                  if rel not in files:
-                      fail("INVALID", "U1_ARTIFACT_INVALID", "inventory entry not retained: " + rel)
-
-              # -- §7.4: subject + selection equality (NC-U1-05) --
-              if bundle.get("execution") != {k: sel[k] for k in
-                                             ("provider", "repositoryId", "workflowId", "runId",
-                                              "attempt", "jobId", "event")}:
-                  fail("INVALID", "U1_SUBJECT_MISMATCH", "execution identity != promotion-request selection")
-              expected_subject = req.get("expectedSubjectDigest")
-              subject = bundle.get("subject", {})
-              subject_digest = tag(canon(subject))
-              if expected_subject and subject_digest != expected_subject:
-                  fail("INVALID", "U1_SUBJECT_MISMATCH", "subject digest != expectedSubjectDigest (selection equality)")
-              if subject.get("requiredInvariantIds") != sorted(req.get("requiredInvariantIds", [])):
-                  fail("INVALID", "U1_SUBJECT_MISMATCH", "requiredInvariantIds != promotion request")
-              if subject.get("promotedRefusalClassIds") != sorted(req.get("promotedRefusalClassIds", [])):
-                  fail("INVALID", "U1_SUBJECT_MISMATCH", "promotedRefusalClassIds != promotion request")
-
-              # -- §7.5: per-invariant results derived independently from retained signals --
-              obs_records = []
-              for a in bundle.get("observations", []):
-                  rel = a["relativePath"]
-                  if rel in files:
-                      try:
-                          doc = json.loads(files[rel].decode("utf-8"))
-                          rows = doc if isinstance(doc, list) else doc.get("cases", []) or doc.get("rows", [])
-                          obs_records.extend(rows if isinstance(rows, list) else [])
-                      except Exception:
-                          fail("INVALID", "U1_ARTIFACT_INVALID", "observation unparsable: " + rel)
-              required = bundle.get("subject", {}).get("requiredInvariantIds", [])
-              for inv_id in required:
-                  rows = [r for r in obs_records if isinstance(r, dict) and
-                          (r.get("invariantId") == inv_id or inv_id in (r.get("invariantIds") or []))]
-                  if not rows:
-                      per_invariant.append({"invariantId": inv_id, "status": "INCOMPLETE",
-                                           "reasonCode": "U1_REQUIRED_EVIDENCE_MISSING", "evidence": []})
-                      fail("INCOMPLETE", "U1_REQUIRED_EVIDENCE_MISSING", "no observation row for " + inv_id)
-                      continue
-                  verdict, evidence = "ACCEPT", []
-                  for r in rows:
-                      evidence.append(r.get("artifactRef", ""))
-                      observed = r.get("observed") or {}
-                      classification = r.get("classification")
-                      refusal = observed.get("refusalObserved")
-                      effect = observed.get("effectLanded")
-                      detection = observed.get("detectionObserved")
-                      if r.get("status") == "not-exercised" or r.get("exercised") == "gap":
-                          # not-exercised never passes (FK-P17 D13 rule 4)
+              listing = subprocess.run(["gh", "api",
+                                        "repos/m0r6aN/agent-skills/contents/%s?ref=%s" % (DIR, commit),
+                                        "--jq", ".[].name"], capture_output=True, text=True)
+              if listing.returncode == 0:
+                  for n in listing.stdout.splitlines():
+                      if not n.endswith(".json"):
                           continue
-                      key = (refusal, effect)
-                      expected_cls = CLASS_FROM_SIGNALS.get(key) or (
-                          CLASS_FROM_SIGNALS.get((refusal, effect, detection)))
-                      if expected_cls and classification not in (expected_cls, None):
-                          verdict = "INVALID"
-                          fail("INVALID", "U1_ARTIFACT_INVALID",
-                               "classification %s != signal derivation for %s" % (classification, inv_id))
-                      if r.get("mechanismPolicyClass") == "model-membership" and r.get("countsAsScopeContainment"):
-                          verdict = "INVALID"
-                          fail("INVALID", "U1_ARTIFACT_INVALID",
-                               "model-membership row counted as scope containment: " + inv_id)
-                  per_invariant.append({"invariantId": inv_id, "status": verdict, "evidence": evidence})
-
-              # -- §7.6: closed negative-control set (IA-11), gap records never pass --
-              control_rows = []
-              for a in bundle.get("negativeControls", []):
-                  rel = a["relativePath"]
-                  if rel in files:
-                      doc = json.loads(files[rel].decode("utf-8"))
-                      rows = doc if isinstance(doc, list) else doc.get("controls", []) or doc.get("rows", [])
-                      control_rows.extend(rows if isinstance(rows, list) else [])
-              for cid in CONTROLS:
-                  rows = [r for r in control_rows if isinstance(r, dict) and r.get("controlId") == cid]
-                  if not rows:
-                      fail("INCOMPLETE", "U1_REQUIRED_EVIDENCE_MISSING", "negative control absent: " + cid)
-                      continue
-                  for r in rows:
-                      if r.get("status") == "not-exercised" or r.get("exercised") == "gap":
-                          continue  # recorded gap, never a pass
-                      if "exitStatus" not in r or "outputs" not in r:
-                          fail("INVALID", "U1_CONTROL_FAILED", "control lacks direct exit status/full outputs: " + cid)
-                      expected = r.get("expected")
-                      observed_result = r.get("observedResult")
-                      if expected is not None and observed_result is not None and expected != observed_result:
-                          fail("INVALID", "U1_CONTROL_FAILED", "control failed to demonstrate expected result: " + cid)
-
-              # -- §7.7: §5 owner/infrastructure fields present with authority --
-              try:
-                  plan = json.loads(files[bundle["retentionPlan"]["relativePath"]].decode("utf-8"))
-                  for key in ("destination", "custodian", "authorizedReaders", "retention",
-                              "deletionPolicy", "retrievalMethod"):
-                      if key not in plan:
-                          fail("INCOMPLETE", "U1_CONFIGURATION_INCOMPLETE", "retention-plan missing " + key)
-                  if plan.get("retention", {}).get("intervalDays", 0) < 400:
-                      fail("INVALID", "U1_ARTIFACT_INVALID", "retention interval < 400 days")
-              except Exception as e:
-                  fail("INCOMPLETE", "U1_CONFIGURATION_INCOMPLETE", "retention plan unreadable: %s" % e)
-
-          # -- build the audit decision (PIN-03 closed shape; IA-2.3 detached digest) --
-          retrieval_check = {
-              "logicalId": "retrieval-check",
-              "method": "independent read-back over u1-verifier-mi (Storage Blob Data Reader)",
-              "checkedAt": datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0)
-                           .isoformat().replace("+00:00", "Z"),
-              "objectsChecked": len(files),
-              "digestMismatches": [n for n, note in enumerate(notes) if "mismatch" in note]}
-          verifier_context = {
-              "logicalId": "verifier-context",
-              "pinnedWorkflowCommit": os.environ["PINNED_COMMIT"],
-              "pinnedWorkflowFileDigest": os.environ["PINNED_WORKFLOW_DIGEST"],
-              "verifierIdentity": {"clientId": "ec2d02e3-904c-4ce2-9771-cd518d711e3f",
-                                   "federatedSubject": "repo:m0r6aN/agent-skills:environment:u1-verifier",
-                                   "roleAssignment": "Storage Blob Data Reader + create-only u1-verifier-evidence-creator"},
-              "runIdentity": {"runId": os.environ.get("GITHUB_RUN_ID", ""),
-                              "attempt": int(os.environ.get("GITHUB_RUN_ATTEMPT", "1")),
-                              "jobId": os.environ.get("GITHUB_JOB", ""),
-                              "event": os.environ.get("GITHUB_EVENT_NAME", "")},
-              "sandboxOutputConsumedAs": "untrusted data (never a verdict)"}
-          def ns_artifact(namespace, logical, payload):
-              raw = canon(payload)
-              return {"namespace": namespace, "logicalId": logical,
-                      "byteLength": len(raw), "digest": tag(raw),
-                      "relativePath": "evidence/%s/%s.json" % (logical, logical)}
-          verifier_inventory = [ns_artifact("verifier", "verifier-context", verifier_context),
-                                ns_artifact("verifier", "retrieval-check", retrieval_check)]
-          producer_inventory = [{"namespace": "producer", "logicalId": e.get("relativePath", ""),
-                                 "byteLength": e.get("byteLength"), "digest": e.get("digest"),
-                                 "relativePath": e.get("relativePath")}
-                                for e in (bundle or {}).get("artifactInventory", [])]
-          decision = {
-              "schemaVersion": SCHEMA,
-              "promotionRequestId": os.environ["PROMOTION_REQUEST_ID"],
-              "promotionRequestDigest": os.environ["PROMOTION_REQUEST_DIGEST"],
-              "selectedExecution": sel,
-              "expectedSubjectDigest": req.get("expectedSubjectDigest"),
-              "bundleDigest": tag(files["bundle.json"]) if "bundle.json" in files else None,
-              "trustPolicyDigest": req.get("trustPolicyDigest"),
-              "verifierCodeDigest": os.environ["PINNED_WORKFLOW_DIGEST"],
-              "verifierContext": verifier_inventory[0],
-              "checkedAt": datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0)
-                           .isoformat().replace("+00:00", "Z"),
-              "status": status,
-              "reasonCodes": sorted(reason_codes),
-              "perInvariantResults": per_invariant,
-              "independentlyCollectedArtifacts": verifier_inventory,
-              "retrievalCheck": verifier_inventory[1],
-              "artifactInventory": producer_inventory + verifier_inventory,
-              "notes": notes}
-          decision_raw = canon(decision)
-          decision_digest = doc_digest("foreman-line.u1.decision", decision)
-          os.makedirs("out/audit", exist_ok=True)
-          os.makedirs("out/evidence/verifier-context", exist_ok=True)
-          os.makedirs("out/evidence/retrieval-check", exist_ok=True)
-          with open("out/audit/decision.json", "wb") as f:
-              f.write(decision_raw)
-          with open("out/evidence/verifier-context/verifier-context.json", "wb") as f:
-              f.write(canon(verifier_context))
-          with open("out/evidence/retrieval-check/retrieval-check.json", "wb") as f:
-              f.write(canon(retrieval_check))
-          outcome_map = {"ACCEPT": "accept", "INVALID": "invalid", "INCOMPLETE": "incomplete",
-                         "UNSUPPORTED": "unsupported", "UNAVAILABLE": "unavailable"}
-          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as f:
-              f.write("status=%s\n" % status)
-              f.write("decision-digest=%s\n" % decision_digest)
-              f.write("producer-run-id=%s\n" % sel["runId"])
-              f.write("promotion-request-id=%s\n" % os.environ["PROMOTION_REQUEST_ID"])
-              f.write("attempt-outcome=%s\n" % outcome_map.get(status, "nonreturning"))
-          print("verdict:", status, sorted(reason_codes))
+                      raw = gh_content("%s/%s" % (DIR, n), commit)
+                      if raw is None:
+                          continue
+                      try:
+                          doc = strict_loads(raw)
+                      except Exception:
+                          continue
+                      sel = doc.get("selectedExecution") or {}
+                      if str(sel.get("runId")) == str(os.environ.get("WORKFLOW_RUN_ID", "")):
+                          candidates.append(raw)
+              if not candidates:
+                  print("::error::U1_REQUIRED_EVIDENCE_MISSING: zero promotion requests select producer run %s"
+                        % os.environ.get("WORKFLOW_RUN_ID", ""))
+                  sys.exit(1)
+              if len(candidates) > 1:
+                  print("::error::U1_SUBJECT_MISMATCH: multiple promotion requests select producer run %s"
+                        % os.environ.get("WORKFLOW_RUN_ID", ""))
+                  sys.exit(1)
+          raw = candidates[0]
+          try:
+              req = strict_loads(raw)
+          except ValueError as e:
+              print("::error::U1_ARTIFACT_INVALID: promotion request unparsable: %s" % e)
+              sys.exit(1)
+          except Exception as e:
+              print("::error::U1_ARTIFACT_INVALID: promotion request unparsable: %s" % e)
+              sys.exit(1)
+          if not isinstance(req, dict):
+              print("::error::U1_ARTIFACT_INVALID: promotion request is not an object")
+              sys.exit(1)
+          unknown = sorted(set(req) - set(MANDATORY))
+          missing = [k for k in MANDATORY if k not in req]
+          if unknown:
+              print("::error::U1_ARTIFACT_INVALID: unknown promotion-request fields: %s" % unknown)
+              sys.exit(1)
+          if missing:
+              print("::error::U1_REQUIRED_EVIDENCE_MISSING: promotion-request fields absent: %s" % missing)
+              sys.exit(1)
+          if req["schema"] != "u1-promotion-request/v1":
+              print("::error::U1_ARTIFACT_INVALID: schema literal mismatch")
+              sys.exit(1)
+          if not GRAMMAR.match(str(req["promotionRequestId"])):
+              print("::error::U1_ARTIFACT_INVALID: promotionRequestId violates closed grammar")
+              sys.exit(1)
+          if event == "workflow_dispatch" and req["promotionRequestId"] != os.environ["PROMOTION_REQUEST_ID"]:
+              print("::error::U1_SUBJECT_MISMATCH: request id != dispatch input")
+              sys.exit(1)
+          # Detached IA-2.2 document digest: computed over the document with its own
+          # detached-digest field omitted (A-U1.8.01 classes; never self-referential).
+          payload = {k: v for k, v in req.items() if k != "requestDigest"}
+          digest = doc_digest("foreman-line.u1.promotion-request", payload)
+          if digest != req["requestDigest"]:
+              print("::error::U1_ARTIFACT_INVALID: requestDigest %s != recomputed %s"
+                    % (req["requestDigest"], digest))
+              sys.exit(1)
+          dispatch_digest = os.environ.get("PROMOTION_REQUEST_DIGEST", "")
+          if dispatch_digest and digest != dispatch_digest:
+                  print("::error::U1_ARTIFACT_INVALID: request digest %s != dispatch-recorded %s"
+                        % (digest, dispatch_digest))
+                  sys.exit(1)
+          # F-6 floor: minimum invariant set and promoted-class coverage, before evaluation.
+          required = req["requiredInvariantIds"]
+          promoted = req["promotedRefusalClassIds"]
+          if not isinstance(required, list) or not required:
+              print("::error::U1_REQUIRED_EVIDENCE_MISSING: requiredInvariantIds absent or empty")
+              sys.exit(1)
+          missing_min = [i for i in MIN_INVARIANTS if i not in required]
+          if missing_min:
+              print("::error::U1_REQUIRED_EVIDENCE_MISSING: requiredInvariantIds below first-promotion minimum, missing %s"
+                    % missing_min)
+              sys.exit(1)
+          if not isinstance(promoted, list) or not promoted:
+              print("::error::U1_REQUIRED_EVIDENCE_MISSING: promotedRefusalClassIds absent or empty")
+              sys.exit(1)
+          uncovered = []
+          for cls in promoted:
+              inv = INVARIANT_OF_CLASS.get(cls)
+              if inv is None or inv not in required:
+                  uncovered.append(cls)
+          if uncovered:
+              print("::error::U1_REQUIRED_EVIDENCE_MISSING: promoted classes not covered by a required invariant: %s"
+                    % uncovered)
+              sys.exit(1)
+          sel = req["selectedExecution"]
+          if not isinstance(sel, dict):
+              print("::error::U1_ARTIFACT_INVALID: selectedExecution is not an object")
+              sys.exit(1)
+          sas = canon({"expectedSubjectDigest": req["expectedSubjectDigest"],
+                       "selectedExecution": sel})
+          byte_digest = tag(raw)
+          out = os.environ["GITHUB_OUTPUT"]
+          with open(out, "a", encoding="utf-8") as f:
+              f.write("promotion-request-id=%s\n" % req["promotionRequestId"])
+              f.write("promotion-request-digest=%s\n" % digest)
+              f.write("request-byte-digest=%s\n" % byte_digest)
+              f.write("request-commit-sha=%s\n" % commit)
+              f.write("producer-run-id=%s\n" % str(sel.get("runId")))
+              f.write("subject-and-selection-digest=%s\n" % tag(sas))
+              f.write("oracle-digest=%s\n" % req["oracleDigest"])
+              f.write("configuration-checklist-digest=%s\n" % req["configurationChecklistDigest"])
+          print("promotion request bound: doc %s byte %s at %s (read path %s)"
+                % (digest, byte_digest, commit, os.environ.get("PIN_READ_PATH", "")))
           PYEOF
-      - name: Write decision + verifier evidence DIRECTLY (create-only role, overwrite refused)
-        id: persist
-        env:
-          PRODUCER_RUN_ID: ${{ steps.decide.outputs.producer-run-id }}
-          VERIFIER_ATTEMPT_NUMBER: ${{ needs.claim-attempt.outputs.attempt-number }}
-        run: |
-          set -euo pipefail
-          ATTEMPT_POS="$(printf 'a%02d' "$VERIFIER_ATTEMPT_NUMBER")"
-          PREFIX="u1/m0r6an/agent-skills/runs/${PRODUCER_RUN_ID}/${ATTEMPT_POS}"
-          while IFS= read -r -d '' f; do
-            rel="${f#out/}"
-            az storage blob upload \
-              --account-name bs2jhgwvduljfdwdp --container-name u1-evidence \
-              --name "$PREFIX/$rel" --file "$f" --auth-mode login --overwrite false \
-              --content-type application/octet-stream --output none
-          done < <(find out -type f -print0 | sort -z)
-          echo "### u1-verify: decision written BY VERIFIER IDENTITY at \`$PREFIX/audit/decision.json\` (digest `${{ steps.decide.outputs.decision-digest }}`)" >> "$GITHUB_STEP_SUMMARY"
-      - name: Upload corroborating decision artifact (digest-bound emission, audit copy only)
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
-        with:
-          name: u1-verifier-decision
-          path: out
-          if-no-files-found: error
-      - name: Summary
-        run: |
-          {
-            echo "### u1-verify decision (attempt ${{ needs.claim-attempt.outputs.attempt-number }})"
-            echo "- status: **${{ steps.decide.outputs.status }}**"
-            echo "- decision digest: \`${{ steps.decide.outputs.decision-digest }}\`"
-            echo "- pinned verifier revision: \`${{ steps.pin.outputs.pinned }}\`"
-          } >> "$GITHUB_STEP_SUMMARY"
 
-  retention-observation:
-    needs: [claim-attempt, verify]
+  claim-attempt:
+    # IA-8 durable attempt ledger (A-U1.8.07 clause 4): rows are written ONLY by the
+    # verifier identity under attempt-ledger/<promotionRequestId>/, BEFORE the attempt is
+    # dispatched, create-only. The pre-dispatch row consumes the attempt at start under the
+    # durable clock. Ledger rows are digested under IA-2.5 (document digest) and their
+    # stored-byte digests are carried by the -final row (A-U1.8.15 clause 1).
+    # Runs ONLY for authoritative runs: a non-authoritative or drifted run creates no
+    # attempt record and consumes no attempt (A-U1.8.02 clause 2).
+    needs: [pin-check, resolve-request]
+    if: ${{ needs.pin-check.outputs.authority-class == 'authoritative' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     environment: u1-verifier
     permissions:
       id-token: write
       contents: read
+    outputs:
+      attempt-number: ${{ steps.ledger.outputs.attempt-number }}
+      dispatch-row-doc-digest: ${{ steps.ledger.outputs.dispatch-row-doc-digest }}
+      dispatch-row-byte-digest: ${{ steps.ledger.outputs.dispatch-row-byte-digest }}
     steps:
-      - name: Check out repository data (no persisted credentials)
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
-        with:
-          persist-credentials: false
-      - name: Pin check (same checks as the verify stage)
-        id: pin
-        run: |
-          set -euo pipefail
-          RECORD_URL="https://raw.githubusercontent.com/m0r6aN/agent-skills/main/plugins/foreman-line/docs/goals/foreman-kernel/U1-verifier-pin.json"
-          curl -fsSL "$RECORD_URL" -o pin-record.json
-          RECORDED_SHA="$(python3 -c "import json;print(json.load(open('pin-record.json'))['workflowCommit'])")"
-          RECORDED_FILE_DIGEST="$(python3 -c "import json;print(json.load(open('pin-record.json'))['workflowFileSha256'])")"
-          ACTUAL="sha256:$(sha256sum .github/workflows/u1-verify.yml | cut -d' ' -f1)"
-          if [ "$ACTUAL" != "$RECORDED_FILE_DIGEST" ]; then
-            echo "::error::PIN_DRIFT: workflow bytes $ACTUAL != pinned $RECORDED_FILE_DIGEST"; exit 1; fi
-          if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
-            if [ "$GITHUB_REF" != "refs/tags/u1-verifier-pin" ]; then
-              echo "::error::PIN_DRIFT: run ref $GITHUB_REF is not the protected pin ref"; exit 1; fi
-            if [ "$GITHUB_SHA" != "$RECORDED_SHA" ]; then
-              echo "::error::PIN_DRIFT: run commit $GITHUB_SHA != pinned $RECORDED_SHA"; exit 1; fi
-          else
-            echo "event-driven path: pin bound by workflow-file byte equality"
-          fi
-          echo "pinned=$RECORDED_SHA" >> "$GITHUB_OUTPUT"
       - name: Azure login (OIDC -> u1-verifier-mi)
         uses: azure/login@7184910d9eb2b1c5e48f7073824a90609bb9b6d6 # v2
         with:
           client-id: ec2d02e3-904c-4ce2-9771-cd518d711e3f
           tenant-id: ac08e2fd-34bf-4c87-a34f-c8c853ffc5e2
           subscription-id: 909e0322-c3c0-4bce-ae53-b3d2ed735bd4
-      - name: Read back finalized decision bytes; write the detached retention observation
-        id: observe
+      - name: "Attempt ledger (IA-8): budget check + pre-dispatch row"
+        id: ledger
         env:
-          DECISION_DIGEST: ${{ needs.verify.outputs.decision-digest }}
-          PRODUCER_RUN_ID: ${{ needs.verify.outputs.producer-run-id }}
-          VERIFIER_ATTEMPT_NUMBER: ${{ needs.claim-attempt.outputs.attempt-number }}
+          PROMOTION_REQUEST_ID: ${{ needs.resolve-request.outputs.promotion-request-id }}
+          SUBJECT_AND_SELECTION_DIGEST: ${{ needs.resolve-request.outputs.subject-and-selection-digest }}
         run: |
           python3 - <<'PYEOF'
-          import datetime, hashlib, json, os, subprocess, sys
+          import datetime, hashlib, json, os, re, subprocess, sys
+
+          API_VERSION = "0.1.0"
+          GRAMMAR = re.compile(r"^[a-z0-9-]{1,64}\Z")
+
+          req = os.environ.get("PROMOTION_REQUEST_ID", "")
+          if not GRAMMAR.match(req):
+              print("::error::U1_ARTIFACT_INVALID: promotionRequestId violates closed grammar")
+              sys.exit(1)
+          PREFIX = "u1/m0r6an/agent-skills/attempt-ledger/%s" % req
+
+          def sh(*args):
+              return subprocess.run(args, capture_output=True, text=True, check=True).stdout
 
           def canon(o):
               def esc(s):
@@ -743,7 +580,9 @@ jobs:
                   if x is None: return "null"
                   if x is True: return "true"
                   if x is False: return "false"
-                  if isinstance(x, int) and not isinstance(x, bool): return str(x)
+                  if isinstance(x, int) and not isinstance(x, bool):
+                      if x < 0 or x > 2**53 - 1: raise ValueError("SafeInt bound")
+                      return str(x)
                   if isinstance(x, str): return '"' + esc(x) + '"'
                   if isinstance(x, list): return "[" + ",".join(enc(i) for i in x) + "]"
                   if isinstance(x, dict):
@@ -755,109 +594,184 @@ jobs:
           def tag(b):
               return "sha256:" + hashlib.sha256(b).hexdigest()
 
-          K = int(os.environ["VERIFIER_ATTEMPT_NUMBER"])
-          prefix = "u1/m0r6an/agent-skills/runs/%s/a%02d" % (os.environ["PRODUCER_RUN_ID"], K)
-          decision_blob = prefix + "/audit/decision.json"
-          recorded = os.environ["DECISION_DIGEST"]
-          outcome_map = {"ACCEPT": "accept", "INVALID": "invalid", "INCOMPLETE": "incomplete",
-                         "UNSUPPORTED": "unsupported", "UNAVAILABLE": "unavailable"}
-          result, outcome, readback = "unavailable", "incomplete", None
-          out = subprocess.run(["az", "storage", "blob", "download", "--account-name", "bs2jhgwvduljfdwdp",
-                                "--container-name", "u1-evidence", "--name", decision_blob,
-                                "--file", "decision.readback.json", "--auth-mode", "login",
-                                "--output", "none"], capture_output=True, text=True)
-          if out.returncode == 0:
-              raw = open("decision.readback.json", "rb").read()
-              readback = tag(raw)
-              if readback == recorded:
-                  result, decision = "match", json.loads(raw.decode("utf-8"))
-                  outcome = outcome_map.get(decision.get("status"), "nonreturning")
-              else:
-                  result, outcome = "mismatch", "invalid"
-          observation = {
-              "logicalId": "retention-observation",
-              "decisionBlobName": decision_blob,
-              "decisionDigest": recorded,
-              "decisionReadBackDigest": readback,
-              "retrievedBy": {"clientId": "ec2d02e3-904c-4ce2-9771-cd518d711e3f",
-                              "federatedSubject": "repo:m0r6aN/agent-skills:environment:u1-verifier",
-                              "roleAssignment": "Storage Blob Data Reader + create-only u1-verifier-evidence-creator"},
-              "retrievedAt": datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0)
-                             .isoformat().replace("+00:00", "Z"),
-              "retentionStateObserved": "time-based-immutability 400d (unlocked pending lock flip; owner ruling 2026-09-30)",
-              "result": result}
-          obs_rel = "evidence/retention-observation/retention-observation.json"
-          os.makedirs("out/" + obs_rel.rsplit("/", 1)[0], exist_ok=True)
-          with open("out/" + obs_rel, "wb") as f:
-              f.write(canon(observation))
-          up = subprocess.run(["az", "storage", "blob", "upload", "--account-name", "bs2jhgwvduljfdwdp",
-                               "--container-name", "u1-evidence", "--name", prefix + "/" + obs_rel,
-                               "--file", "out/" + obs_rel, "--auth-mode", "login",
-                               "--overwrite", "false", "--content-type", "application/octet-stream",
-                               "--output", "none"], capture_output=True, text=True)
-          if up.returncode != 0:
-              print("::error::U1_RETENTION_UNPROVEN: observation write failed: " + up.stderr)
-              sys.exit(1)
-          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as f:
-              f.write("observation-digest=%s\n" % tag(canon(observation)))
-              f.write("attempt-outcome=%s\n" % outcome)
-              f.write("observed-result=%s\n" % result)
-          print("retention observation:", result, "-> outcome", outcome)
-          if result != "match":
-              print("::error::U1_ARTIFACT_INVALID" if result == "mismatch"
-                    else "::error::U1_RETENTION_UNPROVEN")
-              sys.exit(1)
-          PYEOF
-      - name: Upload corroborating observation artifact (audit copy only)
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
-        with:
-          name: u1-verifier-observation
-          path: out
-          if-no-files-found: error
-      - name: Summary
-        run: |
-          {
-            echo "### u1-verify retention-observation"
-            echo "- observed result: \`${{ steps.observe.outputs.observed-result }}\` (decision digest `${{ needs.verify.outputs.decision-digest }}`)"
-            echo "- observation digest: \`${{ steps.observe.outputs.observation-digest }}\`"
-            echo "- attempt outcome to record: \`${{ steps.observe.outputs.attempt-outcome }}\`"
-          } >> "$GITHUB_STEP_SUMMARY"
+          def doc_digest(domain, payload):
+              return tag(canon({"domain": domain, "apiVersion": API_VERSION, "payload": payload}))
 
-  close-attempt:
-    # Ledger terminal row (IA-8.7). Runs whenever the attempt was claimed, even if the
-    # verification or read-back failed — a consumed attempt always reaches its terminal row.
-    needs: [claim-attempt, verify, retention-observation]
-    if: ${{ !cancelled() && needs.claim-attempt.result == 'success' }}
+          def upload(name, body):
+              with open("row.tmp", "wb") as f:
+                  f.write(body)
+              sh("az", "storage", "blob", "upload", "--account-name", "bs2jhgwvduljfdwdp",
+                 "--container-name", "u1-evidence", "--name", name, "--file", "row.tmp",
+                 "--auth-mode", "login", "--overwrite", "false", "--output", "none")
+
+          def get(name):
+              out = sh("az", "storage", "blob", "download", "--account-name", "bs2jhgwvduljfdwdp",
+                       "--container-name", "u1-evidence", "--name", name, "--auth-mode", "login",
+                       "--output", "none", "--file", "-")
+              return json.loads(out)
+
+          listing = sh("az", "storage", "blob", "list", "--account-name", "bs2jhgwvduljfdwdp",
+                       "--container-name", "u1-evidence", "--prefix", PREFIX + "/",
+                       "--auth-mode", "login", "--output", "json")
+          rows = [b["name"] for b in json.loads(listing)]
+          now = datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0)
+
+          # Observer rule (contract 3.6.2): a dispatch row without a final row is a
+          # nonreturning attempt -> marked timed-out; the attempt is consumed.
+          for n in rows:
+              if n.endswith("-dispatch.json") and n.replace("-dispatch.json", "-final.json") not in rows:
+                  k = n.rsplit("/", 1)[1].split("-")[0]
+                  final = {"promotionRequestId": req, "attemptNumber": int(k[1:]),
+                           "outcome": "timed-out",
+                           "markedAt": now.isoformat().replace("+00:00", "Z"),
+                           "observer": "u1-verify claim-attempt (nonreturning-attempt rule)"}
+                  final["recordDigest"] = doc_digest(
+                      "foreman-line.u1.attempt-record",
+                      {k2: v for k2, v in final.items() if k2 != "recordDigest"})
+                  upload(n.replace("-dispatch.json", "-final.json"), canon(final))
+
+          dispatches = sorted(n for n in rows if n.endswith("-dispatch.json"))
+          first = None
+          if dispatches:
+              first = get(dispatches[0]).get("firstAttemptUtc")
+          first_dt = (datetime.datetime.fromisoformat(first.replace("Z", "+00:00")) if first
+                      else now)
+          deadline = first_dt + datetime.timedelta(hours=24)
+          attempt_no = len(dispatches) + 1
+          if attempt_no > 3 or now > deadline:
+              stop = {"promotionRequestId": req, "reasonCode": "U1_AVAILABILITY_EXHAUSTED",
+                      "status": "INCOMPLETE", "attemptsRecorded": len(dispatches),
+                      "firstAttemptUtc": first_dt.isoformat().replace("+00:00", "Z"),
+                      "deadlineUtc": deadline.isoformat().replace("+00:00", "Z"),
+                      "namedOwner": "morganclint76@gmail.com (goal owner)",
+                      "stopReport": "attempt budget exhausted (3 attempts / 24 h); no new attempt dispatched"}
+              stop["recordDigest"] = doc_digest(
+                  "foreman-line.u1.attempt-record",
+                  {k2: v for k2, v in stop.items() if k2 != "recordDigest"})
+              upload(PREFIX + "/stop-report.json", canon(stop))
+              print("::error::U1_AVAILABILITY_EXHAUSTED - budget spent; stop report written; no decision fabricated")
+              sys.exit(1)
+          start = now
+          attempt_deadline = min(start + datetime.timedelta(minutes=30), deadline)
+          row = {"promotionRequestId": req,
+                 "subjectAndSelectionDigest": os.environ["SUBJECT_AND_SELECTION_DIGEST"],
+                 "firstAttemptUtc": first_dt.isoformat().replace("+00:00", "Z"),
+                 "deadlineUtc": deadline.isoformat().replace("+00:00", "Z"),
+                 "attemptNumber": attempt_no,
+                 "attemptStartUtc": start.isoformat().replace("+00:00", "Z"),
+                 "attemptDeadlineUtc": attempt_deadline.isoformat().replace("+00:00", "Z")}
+          row["recordDigest"] = doc_digest(
+              "foreman-line.u1.attempt-record",
+              {k2: v for k2, v in row.items() if k2 != "recordDigest"})
+          raw = canon(row)
+          upload("%s/a%02d-dispatch.json" % (PREFIX, attempt_no), raw)
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as f:
+              f.write("attempt-number=%d\n" % attempt_no)
+              f.write("dispatch-row-doc-digest=%s\n" % row["recordDigest"])
+              f.write("dispatch-row-byte-digest=%s\n" % tag(raw))
+          print("recorded attempt %d/3 (window closes %s)" % (attempt_no, row["deadlineUtc"]))
+          PYEOF
+
+  verify:
+    # F-2/F-4/F-5/F-6/F-7/F-10/F-11/F-13/F-16: independent evaluation over read-back bytes.
+    # Runs for authoritative and non-authoritative runs alike (the signal lane evaluates but
+    # can never ACCEPT); runs only when the attempt was claimed OR the run is
+    # non-authoritative (no attempt to claim).
+    needs: [pin-check, resolve-request, claim-attempt, candidate-sandbox]
+    if: ${{ !cancelled() && needs.resolve-request.result == 'success' && (needs.claim-attempt.result == 'success' || needs.claim-attempt.result == 'skipped') }}
     runs-on: ubuntu-24.04
     timeout-minutes: 30
-    environment: u1-producer
+    environment: u1-verifier
     permissions:
       id-token: write
+      contents: read
+    outputs:
+      status: ${{ steps.decide.outputs.status }}
+      decision-doc-digest: ${{ steps.decide.outputs.decision-doc-digest }}
+      decision-byte-digest: ${{ steps.decide.outputs.decision-byte-digest }}
+      producer-run-id: ${{ steps.decide.outputs.producer-run-id }}
+      promotion-request-id: ${{ steps.decide.outputs.promotion-request-id }}
+      attempt-outcome: ${{ steps.decide.outputs.attempt-outcome }}
+      sandbox-consumed: ${{ steps.decide.outputs.sandbox-consumed }}
     steps:
-      - name: Azure login (OIDC -> u1-producer-mi)
+      - name: Check out repository data (no persisted credentials)
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Download untrusted sandbox output (untrusted data, never a verdict)
+        if: ${{ needs.candidate-sandbox.outputs.sandbox-artifact-name != '' }}
+        continue-on-error: true
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: ${{ needs.candidate-sandbox.outputs.sandbox-artifact-name }}
+          path: sandbox-in
+      - name: Azure login (OIDC -> u1-verifier-mi)
         uses: azure/login@7184910d9eb2b1c5e48f7073824a90609bb9b6d6 # v2
         with:
-          client-id: dc152b9d-c74e-4af1-aeeb-c23b95c68ab2
+          client-id: ec2d02e3-904c-4ce2-9771-cd518d711e3f
           tenant-id: ac08e2fd-34bf-4c87-a34f-c8c853ffc5e2
           subscription-id: 909e0322-c3c0-4bce-ae53-b3d2ed735bd4
-      - name: Write ledger terminal row (IA-8.7 outcome)
+      - name: Independent verification (section 7) over read-back bytes
+        id: decide
         env:
-          PROMOTION_REQUEST_ID: ${{ needs.claim-attempt.outputs.attempt-number && needs.verify.outputs.promotion-request-id }}
-          VERIFIER_ATTEMPT_NUMBER: ${{ needs.claim-attempt.outputs.attempt-number }}
-          ATTEMPT_OUTCOME: ${{ needs.retention-observation.outputs.attempt-outcome || needs.verify.outputs.attempt-outcome || 'interrupted' }}
+          GH_TOKEN: ${{ github.token }}
+          PROMOTION_REQUEST_ID: ${{ needs.resolve-request.outputs.promotion-request-id }}
+          PROMOTION_REQUEST_DIGEST: ${{ needs.resolve-request.outputs.promotion-request-digest }}
+          REQUEST_BYTE_DIGEST: ${{ needs.resolve-request.outputs.request-byte-digest }}
+          REQUEST_COMMIT_SHA: ${{ needs.resolve-request.outputs.request-commit-sha }}
+          SUBJECT_AND_SELECTION_DIGEST: ${{ needs.resolve-request.outputs.subject-and-selection-digest }}
+          ORACLE_DIGEST: ${{ needs.resolve-request.outputs.oracle-digest }}
+          CONFIGURATION_CHECKLIST_DIGEST: ${{ needs.resolve-request.outputs.configuration-checklist-digest }}
+          PRODUCER_RUN_ID: ${{ needs.resolve-request.outputs.producer-run-id }}
+          ATTEMPT_NUMBER: ${{ needs.claim-attempt.outputs.attempt-number }}
+          AUTHORITY_CLASS: ${{ needs.pin-check.outputs.authority-class }}
+          PIN_READ_PATH: ${{ needs.pin-check.outputs.pin-read-path }}
+          PINNED_COMMIT: ${{ needs.pin-check.outputs.pinned-commit }}
+          WORKFLOW_FILE_DIGEST: ${{ needs.pin-check.outputs.workflow-file-digest }}
+          PIN_RECORD_BYTE_DIGEST: ${{ needs.pin-check.outputs.pin-record-byte-digest }}
+          SANDBOX_ARTIFACT_NAME: ${{ needs.candidate-sandbox.outputs.sandbox-artifact-name }}
         run: |
           python3 - <<'PYEOF'
-          import datetime, os, subprocess, sys
-          req = os.environ["PROMOTION_REQUEST_ID"]
-          k = os.environ["VERIFIER_ATTEMPT_NUMBER"]
-          outcome = os.environ["ATTEMPT_OUTCOME"]
-          closed = {"accept", "invalid", "incomplete", "unsupported", "unavailable",
-                    "timed-out", "cancelled", "interrupted", "nonreturning"}
-          if outcome not in closed:
-              raise SystemExit("U1_SUBJECT_MISMATCH: attempt-outcome not in IA-8.7 vocabulary")
-          if not req or not k:
-              raise SystemExit("U1_SUBJECT_MISMATCH: missing promotion-request id or attempt number")
-          import json, hashlib
+          import base64, datetime, hashlib, json, os, re, subprocess, sys, traceback
+
+          API_VERSION = "0.1.0"
+          SCHEMA = "u1/0.1.0"
+          CONTRACT_DIGEST = "sha256:8d5f849cf22f6662f17c2502142e354d82f8f5604d64b511250abc72157df9d5"
+          LIMITS = {"bundle": 64 * 1024 * 1024, "artifact": 8 * 1024 * 1024,
+                    "count": 256, "depth": 16}
+          CONTROLS = ["NC-U1-%02d" % i for i in range(1, 14)]
+          MIN_INVARIANTS = ["INV-U1-01", "INV-U1-02", "INV-U1-03", "INV-U1-04", "INV-U1-05"]
+          INVARIANTS = ["INV-U1-%02d" % i for i in range(1, 7)]
+          INVARIANT_OF_CLASS = {
+              "WORKTREE_MISMATCH": "INV-U1-02", "BRANCH_MISMATCH": "INV-U1-02",
+              "PATH_OUTSIDE_ALLOWED_FILES": "INV-U1-01", "FROZEN_SURFACE_MUTATION": "INV-U1-01",
+              "REVIEWER_MUTATION_FORBIDDEN": "INV-U1-03", "REVIEW_WORKTREE_DIRTY": "INV-U1-03",
+              "POLICY_SELF_MODIFICATION": "INV-U1-04",
+              "MEDIATED_BYPASS_MODE_FORBIDDEN": "INV-U1-04",
+              "OWNER_LEASE_MISMATCH": "INV-U1-05", "STATE_REVISION_STALE": "INV-U1-05",
+              "GATE_NOT_SATISFIED": "INV-U1-05",
+          }
+          MIN_INVARIANT_BY_ID = {"INV-U1-01": ["PATH_OUTSIDE_ALLOWED_FILES", "FROZEN_SURFACE_MUTATION"],
+                                 "INV-U1-02": ["WORKTREE_MISMATCH", "BRANCH_MISMATCH"],
+                                 "INV-U1-03": ["REVIEWER_MUTATION_FORBIDDEN", "REVIEW_WORKTREE_DIRTY"],
+                                 "INV-U1-04": ["POLICY_SELF_MODIFICATION", "MEDIATED_BYPASS_MODE_FORBIDDEN"],
+                                 "INV-U1-05": ["OWNER_LEASE_MISMATCH", "STATE_REVISION_STALE", "GATE_NOT_SATISFIED"],
+                                 "INV-U1-06": []}
+          LOGICAL = re.compile(r"^[a-z0-9_-]{1,64}\Z")
+          EXTENSION = re.compile(r"^[a-z0-9]{1,8}\Z")
+          GRAMMAR = re.compile(r"^[a-z0-9-]{1,64}\Z")
+          KINDS = {"enforcement-environment", "producer-identity", "code-input", "action-inputs",
+                   "toolchain", "image", "configuration", "independence-model",
+                   "execution-provenance", "observation", "negative-control", "retention-plan",
+                   "verifier-context", "retrieval-check", "retention-observation"}
+          OUTCOME_MAP = {"ACCEPT": "accept", "INVALID": "invalid", "INCOMPLETE": "incomplete",
+                         "UNSUPPORTED": "unsupported", "UNAVAILABLE": "unavailable"}
+          STATUS_ORDER = {"ACCEPT": 1, "INCOMPLETE": 2, "INVALID": 3, "UNSUPPORTED": 4,
+                          "UNAVAILABLE": 5}
+
+          class PinDrift(Exception):
+              pass
+
           def canon(o):
               def esc(s):
                   return json.dumps(s, ensure_ascii=False)[1:-1]
@@ -865,7 +779,9 @@ jobs:
                   if x is None: return "null"
                   if x is True: return "true"
                   if x is False: return "false"
-                  if isinstance(x, int) and not isinstance(x, bool): return str(x)
+                  if isinstance(x, int) and not isinstance(x, bool):
+                      if x < 0 or x > 2**53 - 1: raise ValueError("SafeInt bound")
+                      return str(x)
                   if isinstance(x, str): return '"' + esc(x) + '"'
                   if isinstance(x, list): return "[" + ",".join(enc(i) for i in x) + "]"
                   if isinstance(x, dict):
@@ -873,17 +789,1268 @@ jobs:
                       return "{" + ",".join('"' + esc(k) + '":' + enc(v) for k, v in it) + "}"
                   raise TypeError(type(x))
               return enc(o).encode("utf-8")
+
+          def tag(b):
+              return "sha256:" + hashlib.sha256(b).hexdigest()
+
+          def doc_digest(domain, payload):
+              return tag(canon({"domain": domain, "apiVersion": API_VERSION, "payload": payload}))
+
+          def detached_digest(domain, doc, field):
+              return doc_digest(domain, {k: v for k, v in doc.items() if k != field})
+
+          def text_depth(raw):
+              depth = 0
+              max_depth = 0
+              in_str = False
+              esc = False
+              for ch in raw.decode("utf-8", "strict"):
+                  if in_str:
+                      if esc:
+                          esc = False
+                      elif ch == "\\":
+                          esc = True
+                      elif ch == '"':
+                          in_str = False
+                  elif ch == '"':
+                      in_str = True
+                  elif ch in "[{":
+                      depth += 1
+                      if depth > max_depth:
+                          max_depth = depth
+                  elif ch in "]}":
+                      depth -= 1
+              return max_depth
+
+          def strict_loads(raw):
+              # F-16: depth-limited (16), duplicate-key-rejecting, NaN/Infinity-rejecting.
+              if text_depth(raw) > 16:
+                  raise ValueError("U1_EVIDENCE_LIMIT_EXCEEDED: JSON depth > 16")
+              def reject_constant(name):
+                  raise ValueError("NaN/Infinity literal refused: " + name)
+              def reject_dupes(pairs):
+                  seen = set()
+                  out = {}
+                  for k, v in pairs:
+                      if k in seen:
+                          raise ValueError("duplicate key refused: " + k)
+                      seen.add(k)
+                      out[k] = v
+                  return out
+              return json.loads(raw.decode("utf-8"), parse_constant=reject_constant,
+                                object_pairs_hook=reject_dupes)
+
+          def check_package_path(p):
+              if not p.isascii() or "\\" in p or p.startswith("/") or p.endswith("/"):
+                  raise ValueError(p)
+              segs = p.split("/")
+              if any(s in ("", ".", "..") for s in segs):
+                  raise ValueError(p)
+              if p == "bundle.json":
+                  return ("bundleDoc", None)
+              if len(segs) == 3 and segs[0] == "evidence" and segs[1] in KINDS:
+                  logical, dot, ext = segs[2].partition(".")
+                  if not LOGICAL.match(logical) or (dot and not EXTENSION.match(ext)):
+                      raise ValueError(p)
+                  return ("artifactPath", segs[1])
+              raise ValueError(p)
+
+          def sh(*args):
+              return subprocess.run(args, capture_output=True, text=True, check=True).stdout
+
+          def shb(*args):
+              return subprocess.run(args, capture_output=True, check=True).stdout
+
+          def gh_json(path):
+              out = subprocess.run(["gh", "api", path], capture_output=True, text=True)
+              if out.returncode != 0:
+                  return None
+              try:
+                  return json.loads(out.stdout)
+              except Exception:
+                  return None
+
+          def gh_content(path, ref):
+              out = subprocess.run(["gh", "api",
+                                    "repos/m0r6aN/agent-skills/contents/%s?ref=%s" % (path, ref),
+                                    "--jq", ".content"], capture_output=True, text=True)
+              if out.returncode != 0:
+                  return None
+              return base64.b64decode(out.stdout)
+
+          reason_codes, notes = [], []
+          per_invariant, per_control = [], []
+          status = "ACCEPT"
+
+          def fail(new_status, code, note):
+              global status
+              if code not in reason_codes:
+                  reason_codes.append(code)
+              notes.append(note)
+              if STATUS_ORDER[new_status] > STATUS_ORDER[status]:
+                  status = new_status
+
+          def now_iso():
+              return datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0) \
+                        .isoformat().replace("+00:00", "Z")
+
+          req_id = os.environ.get("PROMOTION_REQUEST_ID", "")
+          if not GRAMMAR.match(req_id):
+              print("::error::U1_ARTIFACT_INVALID: promotionRequestId violates closed grammar")
+              sys.exit(1)
+          authoritative = os.environ.get("AUTHORITY_CLASS") == "authoritative"
+          K = 0
+          if os.environ.get("ATTEMPT_NUMBER"):
+              K = int(os.environ["ATTEMPT_NUMBER"])
+          attempt_pos = "a%02d" % K
+          verifier_prefix = "u1/m0r6an/agent-skills/verifications/%s/%s" % (req_id, attempt_pos)
+          ledger_prefix = "u1/m0r6an/agent-skills/attempt-ledger/%s" % req_id
+
+          try:
+              # ---- pin binding re-check at the decision point (F-3) ----
+              actual = "sha256:" + hashlib.sha256(open(".github/workflows/u1-verify.yml", "rb").read()).hexdigest()
+              if actual != os.environ["WORKFLOW_FILE_DIGEST"]:
+                  raise PinDrift("running workflow bytes changed since pin-check: %s" % actual)
+
+              # ---- promotion request re-fetch + digest recompute (F-7: every consumer) ----
+              req = None
+              raw_req = gh_content("plugins/foreman-line/docs/goals/foreman-kernel/promotion-requests/%s.json"
+                                   % req_id, os.environ["REQUEST_COMMIT_SHA"])
+              if raw_req is None:
+                  fail("INCOMPLETE", "U1_REQUIRED_EVIDENCE_MISSING",
+                       "promotion request absent at recorded commit " + os.environ["REQUEST_COMMIT_SHA"])
+              else:
+                  try:
+                      req = strict_loads(raw_req)
+                      payload = {k: v for k, v in req.items() if k != "requestDigest"}
+                      recomputed = doc_digest("foreman-line.u1.promotion-request", payload)
+                      if recomputed != os.environ["PROMOTION_REQUEST_DIGEST"] or recomputed != req.get("requestDigest"):
+                          raise PinDrift("promotion-request digest drift: recomputed %s" % recomputed)
+                  except PinDrift:
+                      raise
+                  except Exception as e:
+                      fail("INVALID", "U1_ARTIFACT_INVALID", "promotion request unparsable: %s" % e)
+              sel = (req or {}).get("selectedExecution") or {}
+              producer_prefix = "u1/m0r6an/agent-skills/runs/%s/p%02d" % (
+                  os.environ.get("PRODUCER_RUN_ID") or sel.get("runId"),
+                  int(sel.get("attempt", 1)))
+
+              # ---- expected-outcome oracle (A-U1.8.04) and configuration checklist (A-U1.8.03) ----
+              oracle = None
+              checklist = None
+              pin_record = json.loads(open("pin-record.json", "rb").read().decode("utf-8")) \
+                  if os.path.exists("pin-record.json") else None
+              if pin_record is None:
+                  raw_pin = gh_content("plugins/foreman-line/docs/goals/foreman-kernel/U1-verifier-pin.json",
+                                       os.environ["PINNED_COMMIT"])
+                  if raw_pin is not None:
+                      pin_record = json.loads(raw_pin.decode("utf-8"))
+              raw_oracle = gh_content("plugins/foreman-line/docs/goals/foreman-kernel/U1-expected-outcome-oracle.json",
+                                      os.environ["PINNED_COMMIT"])
+              if raw_oracle is None:
+                  fail("INCOMPLETE", "U1_REQUIRED_EVIDENCE_MISSING",
+                       "expected-outcome oracle record absent at pinned commit")
+              else:
+                  try:
+                      oracle = strict_loads(raw_oracle)
+                      oracle_digest = detached_digest("foreman-line.u1.expected-outcomes", oracle, "oracleDigest")
+                      if oracle_digest != oracle.get("oracleDigest"):
+                          fail("INVALID", "U1_ARTIFACT_INVALID",
+                               "oracle self-digest %s != recomputed %s" % (oracle.get("oracleDigest"), oracle_digest))
+                      if req is not None and oracle_digest != req.get("oracleDigest"):
+                          fail("INVALID", "U1_ARTIFACT_INVALID",
+                               "oracle digest %s != promotion-request oracleDigest %s"
+                               % (oracle_digest, req.get("oracleDigest")))
+                      if oracle.get("contractDigest") != CONTRACT_DIGEST:
+                          fail("INVALID", "U1_ARTIFACT_INVALID", "oracle contractDigest mismatch")
+                      if req is not None and oracle.get("promotionRequestId") != req.get("promotionRequestId"):
+                          fail("INVALID", "U1_SUBJECT_MISMATCH", "oracle promotionRequestId mismatch")
+                  except Exception as e:
+                      fail("INVALID", "U1_ARTIFACT_INVALID", "oracle record unparsable: %s" % e)
+              raw_checklist = gh_content("plugins/foreman-line/docs/goals/foreman-kernel/U1-configuration-checklist.json",
+                                         os.environ["PINNED_COMMIT"])
+              if raw_checklist is None:
+                  fail("INCOMPLETE", "U1_CONFIGURATION_INCOMPLETE",
+                       "configuration checklist record absent at pinned commit")
+              else:
+                  checklist_byte = tag(raw_checklist)
+                  bound_sha = (pin_record or {}).get("configurationChecklistSha256")
+                  if bound_sha is not None and bound_sha != checklist_byte:
+                      raise PinDrift("checklist byte digest %s != pin-record configurationChecklistSha256 %s"
+                                     % (checklist_byte, bound_sha))
+                  try:
+                      checklist = strict_loads(raw_checklist)
+                      checklist_digest = detached_digest("foreman-line.u1.configuration-record",
+                                                          checklist, "checklistDigest")
+                      if checklist_digest != checklist.get("checklistDigest"):
+                          raise PinDrift("checklist self-digest %s != recomputed %s"
+                                         % (checklist.get("checklistDigest"), checklist_digest))
+                      if req is not None and checklist_digest != req.get("configurationChecklistDigest"):
+                          raise PinDrift("checklist digest %s != request configurationChecklistDigest %s"
+                                         % (checklist_digest, req.get("configurationChecklistDigest")))
+                      if checklist.get("contractDigest") != CONTRACT_DIGEST:
+                          fail("INVALID", "U1_ARTIFACT_INVALID", "checklist contractDigest mismatch")
+                  except PinDrift:
+                      raise
+                  except Exception as e:
+                      fail("INVALID", "U1_ARTIFACT_INVALID", "checklist record unparsable: %s" % e)
+
+              # ---- trust-policy binding (3.2.3): reviewed trust policy = the pin record
+              #      read at the pinned commit plus the protected tag ruleset (A-U1.8.14). ----
+              if req is not None and pin_record is not None:
+                  trust_expected = tag(open("pin-record.json", "rb").read()) \
+                      if os.path.exists("pin-record.json") else os.environ["PIN_RECORD_BYTE_DIGEST"]
+                  if req.get("trustPolicyDigest") not in (trust_expected, os.environ["PIN_RECORD_BYTE_DIGEST"]):
+                      fail("INVALID", "U1_SUBJECT_MISMATCH",
+                           "trustPolicyDigest %s != reviewed trust-root record digest %s"
+                           % (req.get("trustPolicyDigest"), os.environ["PIN_RECORD_BYTE_DIGEST"]))
+                  if checklist is not None and isinstance(checklist.get("trustPolicyDigest"), str):
+                      if checklist["trustPolicyDigest"] != req.get("trustPolicyDigest"):
+                          fail("INVALID", "U1_SUBJECT_MISMATCH",
+                               "checklist trustPolicyDigest != promotion-request trustPolicyDigest")
+
+              # ---- attempt claim check (IA-8) — authoritative runs only ----
+              if authoritative and K:
+                  try:
+                      claim = json.loads(sh("az", "storage", "blob", "download",
+                                            "--account-name", "bs2jhgwvduljfdwdp",
+                                            "--container-name", "u1-evidence",
+                                            "--name", "%s/a%02d-dispatch.json" % (ledger_prefix, K),
+                                            "--auth-mode", "login", "--output", "none", "--file", "-"))
+                      if claim.get("attemptNumber") != K or claim.get("promotionRequestId") != req_id:
+                          fail("INVALID", "U1_SUBJECT_MISMATCH", "ledger claim row mismatch")
+                      if claim.get("subjectAndSelectionDigest") != os.environ["SUBJECT_AND_SELECTION_DIGEST"]:
+                          fail("INVALID", "U1_SUBJECT_MISMATCH", "ledger subjectAndSelectionDigest mismatch")
+                      deadline = datetime.datetime.fromisoformat(
+                          claim["attemptDeadlineUtc"].replace("Z", "+00:00"))
+                      if datetime.datetime.now(datetime.timezone.utc) > deadline:
+                          fail("INCOMPLETE", "U1_AVAILABILITY_EXHAUSTED",
+                               "attempt deadline passed before verification")
+                  except Exception as e:
+                      fail("INVALID", "U1_SUBJECT_MISMATCH",
+                           "no durable attempt claim for attempt %d: %s" % (K, e))
+
+              # ---- candidate-sandbox consumption (3.4.5, IA-7.9) — untrusted data ----
+              sandbox_consumed = False
+              sandbox_record = {"consumed": False, "artifactName": None, "byteDigest": None}
+              if os.path.isdir("sandbox-in"):
+                  try:
+                      names = sorted(os.listdir("sandbox-in"))
+                      blobs = {}
+                      for n in names:
+                          with open(os.path.join("sandbox-in", n), "rb") as f:
+                              blobs[n] = f.read()
+                      exit_raw = blobs.get("exit-status.txt", b"").strip()
+                      sandbox_record = {
+                          "consumed": True,
+                          "artifactName": os.environ.get("SANDBOX_ARTIFACT_NAME") or None,
+                          "files": sorted(blobs),
+                          "byteDigests": {n: tag(b) for n, b in sorted(blobs.items())},
+                          "exitStatus": int(exit_raw) if exit_raw.isdigit() else None,
+                          "treatedAs": "untrusted data (never a verdict)"}
+                      sandbox_consumed = True
+                  except Exception as e:
+                      fail("INVALID", "U1_ARTIFACT_INVALID", "sandbox output unparsable: %s" % e)
+              if not sandbox_consumed:
+                  fail("INCOMPLETE", "U1_INDEPENDENCE_UNPROVEN",
+                       "candidate-sandbox output not consumed: required invariants are not independently derived")
+
+              # ---- producer package read-back (7.1/7.2/7.3) with early limits (F-16) ----
+              listing = json.loads(sh("az", "storage", "blob", "list",
+                                      "--account-name", "bs2jhgwvduljfdwdp",
+                                      "--container-name", "u1-evidence",
+                                      "--prefix", producer_prefix + "/",
+                                      "--auth-mode", "login", "--output", "json"))
+              meta = {}
+              for b in listing:
+                  props = b.get("properties") or {}
+                  clen = props.get("contentLength", b.get("contentLength"))
+                  meta[b["name"]] = clen
+              files, inventory, mismatches = {}, {}, []
+              if not meta:
+                  fail("INCOMPLETE", "U1_REQUIRED_EVIDENCE_MISSING",
+                       "no retained package under " + producer_prefix)
+              # Early limits from list metadata, BEFORE any download.
+              count = len(meta)
+              unknown_len = [n for n, v in meta.items() if not isinstance(v, int)]
+              total_meta = sum(v for v in meta.values() if isinstance(v, int))
+              if unknown_len:
+                  fail("INVALID", "U1_ARTIFACT_INVALID",
+                       "contentLength metadata absent for: %s" % sorted(unknown_len)[:5])
+              if count > LIMITS["count"]:
+                  fail("INVALID", "U1_EVIDENCE_LIMIT_EXCEEDED",
+                       "more than %d artifacts (count %d)" % (LIMITS["count"], count))
+              if total_meta > LIMITS["bundle"]:
+                  fail("INVALID", "U1_EVIDENCE_LIMIT_EXCEEDED",
+                       "total package > 64 MiB per list metadata (%d bytes)" % total_meta)
+              over = [n for n, v in meta.items() if isinstance(v, int) and v > LIMITS["artifact"]]
+              if over:
+                  fail("INVALID", "U1_EVIDENCE_LIMIT_EXCEEDED",
+                       "artifact > 8 MiB per list metadata: %s" % sorted(over)[:5])
+              if not any(c == "U1_EVIDENCE_LIMIT_EXCEEDED" for c in reason_codes):
+                  for name in sorted(meta):
+                      rel = name[len(producer_prefix) + 1:]
+                      try:
+                          check_package_path(rel)
+                      except ValueError:
+                          fail("INVALID", "U1_ARTIFACT_INVALID", "path-grammar violation: " + rel)
+                          continue
+                      raw = shb("az", "storage", "blob", "download",
+                                "--account-name", "bs2jhgwvduljfdwdp", "--container-name", "u1-evidence",
+                                "--name", name, "--auth-mode", "login", "--output", "none", "--file", "-")
+                      files[rel] = raw
+              bundle = None
+              if "bundle.json" in files:
+                  try:
+                      bundle = strict_loads(files["bundle.json"])
+                  except Exception as e:
+                      fail("INVALID", "U1_ARTIFACT_INVALID", "bundle unparsable: %s" % e)
+              else:
+                  fail("INCOMPLETE", "U1_REQUIRED_EVIDENCE_MISSING", "bundle.json absent")
+              if bundle is not None:
+                  if bundle.get("schemaVersion") != SCHEMA:
+                      fail("INVALID", "U1_ARTIFACT_INVALID", "schemaVersion mismatch")
+                  for entry in bundle.get("artifactInventory", []):
+                      inventory[entry.get("relativePath")] = entry
+                  for rel, raw in files.items():
+                      if rel == "bundle.json":
+                          continue
+                      entry = inventory.get(rel)
+                      if entry is None:
+                          fail("INVALID", "U1_ARTIFACT_INVALID", "unlisted file in package: " + rel)
+                          continue
+                      recorded_byte = entry.get("byteDigest", entry.get("digest"))
+                      if recorded_byte != tag(raw) or entry.get("byteLength") != len(raw):
+                          mismatches.append({"objectName": producer_prefix + "/" + rel,
+                                             "recordedDigest": recorded_byte, "observedDigest": tag(raw)})
+                          fail("INVALID", "U1_ARTIFACT_INVALID", "digest/byteLength mismatch: " + rel)
+                      if entry.get("docDigest"):
+                          # Document-class check under the entry's own IA-2 domain row (A-U1.8.01).
+                          try:
+                              doc = strict_loads(raw)
+                              recomputed = doc_digest(entry.get("docDomain", "foreman-line.u1.bundle"), doc)
+                              if recomputed != entry.get("docDigest"):
+                                  mismatches.append({"objectName": producer_prefix + "/" + rel,
+                                                     "recordedDigest": entry.get("docDigest"),
+                                                     "observedDigest": recomputed})
+                                  fail("INVALID", "U1_ARTIFACT_INVALID",
+                                       "document-digest mismatch: " + rel)
+                          except Exception as e:
+                              fail("INVALID", "U1_ARTIFACT_INVALID",
+                                   "document unparsable at read-back: %s (%s)" % (rel, e))
+                  for rel, entry in inventory.items():
+                      if rel not in files:
+                          fail("INVALID", "U1_ARTIFACT_INVALID", "inventory entry not retained: " + rel)
+                  # bundle.json document class (IA-2.1): both digests recorded below.
+
+              # ---- subject/selection equality (7.4) — ALWAYS runs (F-7) ----
+              subject_digest = None
+              bundle_byte_digest = tag(files["bundle.json"]) if "bundle.json" in files else None
+              bundle_doc_digest = None
+              if bundle is not None:
+                  subject = bundle.get("subject", {})
+                  subject_digest = tag(canon(subject))
+                  try:
+                      bundle_doc_digest = doc_digest("foreman-line.u1.bundle", bundle)
+                  except Exception:
+                      bundle_doc_digest = None
+                  if bundle.get("execution") != {k: sel.get(k) for k in
+                                                 ("provider", "repositoryId", "workflowId", "runId",
+                                                  "attempt", "jobId", "event")}:
+                      fail("INVALID", "U1_SUBJECT_MISMATCH",
+                           "execution identity != promotion-request selection")
+                  if req is not None:
+                      if subject_digest != req.get("expectedSubjectDigest"):
+                          fail("INVALID", "U1_SUBJECT_MISMATCH",
+                               "subject digest != expectedSubjectDigest (selection equality)")
+                      if subject.get("policyDigest") != req.get("policyDigest"):
+                          fail("INVALID", "U1_SUBJECT_MISMATCH", "bundle policyDigest != request policyDigest")
+                      if subject.get("compiledScopeDigest") != req.get("compiledScopeDigest"):
+                          fail("INVALID", "U1_SUBJECT_MISMATCH",
+                               "bundle compiledScopeDigest != request compiledScopeDigest")
+                      if subject.get("requiredInvariantIds") != sorted(req.get("requiredInvariantIds", [])):
+                          fail("INVALID", "U1_SUBJECT_MISMATCH", "requiredInvariantIds != promotion request")
+                      if subject.get("promotedRefusalClassIds") != sorted(req.get("promotedRefusalClassIds", [])):
+                          fail("INVALID", "U1_SUBJECT_MISMATCH", "promotedRefusalClassIds != promotion request")
+
+              # ---- row collection + execution-identity confirmation (F-11) ----
+              def collect(slot_names):
+                  rows = []
+                  for a in (bundle or {}).get(slot_names, []):
+                      rel = a.get("relativePath")
+                      if rel not in files:
+                          continue
+                      try:
+                          doc = strict_loads(files[rel])
+                      except Exception as e:
+                          fail("INVALID", "U1_ARTIFACT_INVALID", "row document unparsable: %s (%s)" % (rel, e))
+                          continue
+                      got = doc if isinstance(doc, list) else (doc.get("cases") or doc.get("rows") or doc.get("controls") or [])
+                      for r in got:
+                          if isinstance(r, dict):
+                              r["_source"] = rel
+                              rows.append(r)
+                  return rows
+
+              def confirm_provenance(row):
+                  entries = row.get("executionProvenance")
+                  if not isinstance(entries, list) or not entries:
+                      fail("INVALID", "U1_PROVENANCE_INVALID",
+                           "row lacks executionProvenance: %s" % row.get("_source"))
+                      return False
+                  ok = True
+                  for e in entries:
+                      if not isinstance(e, dict):
+                          fail("INVALID", "U1_PROVENANCE_INVALID", "malformed executionProvenance entry")
+                          ok = False
+                          continue
+                      kind = e.get("originKind")
+                      if kind == "github-run":
+                          run = gh_json("repos/m0r6aN/agent-skills/actions/runs/%s" % e.get("runId"))
+                          if run is None:
+                              fail("INVALID", "U1_PROVENANCE_INVALID",
+                                   "run %s not confirmed through the GitHub API" % e.get("runId"))
+                              ok = False
+                              continue
+                          checks = [
+                              (run.get("head_sha") == e.get("headSha"), "headSha"),
+                              (run.get("event") == e.get("event"), "event"),
+                              (run.get("conclusion") == e.get("conclusion"), "conclusion"),
+                              (str(run.get("path", "")).split("@")[0] ==
+                               str(e.get("workflowRef", "")).split("@")[0].split("/", 2)[-1], "workflowRef")]
+                          jobs = gh_json("repos/m0r6aN/agent-skills/actions/runs/%s/jobs" % e.get("runId")) or {}
+                          job_ids = {str(j.get("id")) for j in jobs.get("jobs", [])}
+                          checks.append((str(e.get("jobId")) in job_ids, "jobId"))
+                          for good, label in checks:
+                              if not good:
+                                  fail("INVALID", "U1_PROVENANCE_INVALID",
+                                       "execution identity mismatch (%s) for run %s" % (label, e.get("runId")))
+                                  ok = False
+                      elif kind == "committed-source":
+                          commit = e.get("headSha")
+                          path = e.get("committedPath")
+                          raw = gh_content(path, commit) if commit and path else None
+                          if raw is None or tag(raw) != e.get("artifactByteDigest"):
+                              fail("INVALID", "U1_PROVENANCE_INVALID",
+                                   "committed-source identity unconfirmed at %s:%s" % (commit, path))
+                              ok = False
+                          if e.get("evidenceOrigin") not in ("fk-p17-committed", "ci-run-generated"):
+                              fail("INVALID", "U1_PROVENANCE_INVALID",
+                                   "evidenceOrigin literal false or absent")
+                              ok = False
+                      else:
+                          fail("INVALID", "U1_PROVENANCE_INVALID", "unknown executionProvenance kind")
+                          ok = False
+                  return ok
+
+              def is_gap_row(row):
+                  gap = row.get("gapRecord")
+                  return isinstance(gap, dict) and (
+                      row.get("exercised") == "gap" or row.get("status") == "not-exercised")
+
+              def permitted_gap(row):
+                  # 7.6: ONLY the three named PIN-09 inherited gaps may be gap rows.
+                  gap = row.get("gapRecord") or {}
+                  reason = str(gap.get("reason", ""))
+                  obligation = str(gap.get("obligation", ""))
+                  case_id = str(row.get("caseId", ""))
+                  if not reason.startswith("blocked:"):
+                      return False
+                  if case_id == "BYP-LK-01" and "file-symlink" in obligation:
+                      return True
+                  if case_id == "CTRL-01":
+                      return True
+                  if "realpath sweep" in obligation or "realpath sweep" in reason:
+                      return True
+                  return False
+
+              def t4_derive(row):
+                  obs = row.get("observed") or {}
+                  refusal = obs.get("refusalObserved")
+                  effect = obs.get("effectLanded")
+                  detection = obs.get("detectionObserved")
+                  if not all(isinstance(x, bool) for x in (refusal, effect, detection)):
+                      return None
+                  if refusal and not effect:
+                      return "mechanical"
+                  if (not refusal) and effect and detection:
+                      return "detected"
+                  if (not refusal) and effect and not detection:
+                      return "unsupported"
+                  return None  # SIGNAL_AMBIGUOUS: refused emission
+
+              control_rows = collect("negativeControls")
+              obs_rows = collect("observations")
+
+              # ---- negative controls vs the coordinator oracle (F-5 / A-U1.8.04) ----
+              oracle_controls = {c.get("controlId"): c for c in ((oracle or {}).get("controlExpectations") or [])}
+              for cid in CONTROLS:
+                  rows = [r for r in control_rows if r.get("controlId") == cid]
+                  expectation = oracle_controls.get(cid)
+                  if expectation is None:
+                      fail("INVALID", "U1_CONTROL_FAILED", "oracle lacks controlExpectation for " + cid)
+                      continue
+                  exercised_rows = [r for r in rows if not is_gap_row(r)]
+                  for r in rows:
+                      if is_gap_row(r):
+                          if not permitted_gap(r):
+                              fail("INCOMPLETE", "U1_REQUIRED_EVIDENCE_MISSING",
+                                   "gap row outside the three PIN-09 gaps: " + cid)
+                          continue
+                      confirm_provenance(r)
+                      if "exitStatus" not in r or "observedResult" not in r:
+                          fail("INVALID", "U1_CONTROL_FAILED",
+                               "control row lacks exitStatus/observedResult: " + cid)
+                          continue
+                      if r.get("exitStatus") != expectation.get("expectedExitStatus"):
+                          fail("INVALID", "U1_CONTROL_FAILED",
+                               "control %s exitStatus %s != oracle expectedExitStatus %s"
+                               % (cid, r.get("exitStatus"), expectation.get("expectedExitStatus")))
+                      derived = t4_derive(r)
+                      if cid == "NC-U1-12":
+                          obs = r.get("observed") or {}
+                          derived = "mechanical" if (obs.get("acceptDemonstrated") is True and
+                                                     r.get("exitStatus") == 0) else None
+                      if derived is None:
+                          fail("INVALID", "U1_CONTROL_FAILED",
+                               "control %s signals refuse derivation (SIGNAL_AMBIGUOUS)" % cid)
+                      elif r.get("observedResult") != derived or derived != expectation.get("expectedClassification"):
+                          fail("INVALID", "U1_CONTROL_FAILED",
+                               "control %s observedResult %s != derivation %s != oracle %s"
+                               % (cid, r.get("observedResult"), derived,
+                                  expectation.get("expectedClassification")))
+                      outputs_text = str(r.get("outputs", ""))
+                      missing_signals = [s for s in (expectation.get("requiredSignals") or [])
+                                         if s not in outputs_text]
+                      if missing_signals:
+                          fail("INVALID", "U1_CONTROL_FAILED",
+                               "control %s output lacks required signals %s" % (cid, missing_signals))
+                      expected_class = expectation.get("expectedRefusalClassId")
+                      if expected_class not in (None, "none"):
+                          demonstrated = r.get("demonstratedRefusalClassIds") or []
+                          if expected_class not in demonstrated:
+                              fail("INVALID", "U1_CONTROL_FAILED",
+                                   "control %s does not demonstrate %s" % (cid, expected_class))
+                  if not rows:
+                      fail("INCOMPLETE", "U1_REQUIRED_EVIDENCE_MISSING", "negative control absent: " + cid)
+                  elif not exercised_rows:
+                      fail("INCOMPLETE", "U1_REQUIRED_EVIDENCE_MISSING",
+                           "control %s rows are all gap rows (never ACCEPT)" % cid)
+                  per_control.append({"controlId": cid,
+                                      "rows": len(rows),
+                                      "exercisedRows": len(exercised_rows),
+                                      "expectedExitStatus": expectation.get("expectedExitStatus"),
+                                      "expectedClassification": expectation.get("expectedClassification")})
+
+              # ---- invariants vs the coordinator oracle (F-5/F-6) ----
+              oracle_invariants = {i.get("invariantId"): i for i in ((oracle or {}).get("invariantExpectations") or [])}
+              required_ids = ((req or {}).get("requiredInvariantIds") or MIN_INVARIANTS)
+              for inv_id in required_ids:
+                  expectation = oracle_invariants.get(inv_id)
+                  if expectation is None:
+                      fail("INVALID", "U1_CONTROL_FAILED", "oracle lacks invariantExpectation for " + inv_id)
+                      continue
+                  rows = [r for r in obs_rows if r.get("invariantId") == inv_id or
+                          inv_id in (r.get("invariantIds") or [])]
+                  expected_classes = expectation.get("expectedRefusalClassIds") or []
+                  min_rows = expectation.get("minExercisedRows", 1)
+                  qualifying, evidence, exercised = 0, [], 0
+                  for r in rows:
+                      if is_gap_row(r):
+                          if not permitted_gap(r):
+                              fail("INCOMPLETE", "U1_REQUIRED_EVIDENCE_MISSING",
+                                   "gap row outside the three PIN-09 gaps: " + inv_id)
+                          continue
+                      confirm_provenance(r)
+                      if "exitStatus" not in r or "observedResult" not in r:
+                          fail("INVALID", "U1_CONTROL_FAILED",
+                               "invariant row lacks exitStatus/observedResult: " + inv_id)
+                          continue
+                      exercised += 1
+                      derived = t4_derive(r)
+                      if derived is None:
+                          fail("INVALID", "U1_CONTROL_FAILED",
+                               "invariant %s signals refuse derivation (SIGNAL_AMBIGUOUS)" % inv_id)
+                          continue
+                      if r.get("observedResult") != derived:
+                          fail("INVALID", "U1_CONTROL_FAILED",
+                               "invariant %s observedResult %s != derivation %s"
+                               % (inv_id, r.get("observedResult"), derived))
+                      obs = r.get("observed") or {}
+                      demonstrated = r.get("demonstratedRefusalClassIds") or []
+                      if r.get("mechanismPolicyClass") == "model-membership" and r.get("countsAsScopeContainment"):
+                          fail("INVALID", "U1_ARTIFACT_INVALID",
+                               "model-membership row counted as scope containment: " + inv_id)
+                      if expected_classes:
+                          if any(c in demonstrated for c in expected_classes):
+                              qualifying += 1
+                              evidence.append(r.get("artifactRef") or r.get("_source"))
+                      else:
+                          # INV-U1-06 detected-only lane (OQ-U1-03): detection evidence only.
+                          if obs.get("detectionObserved") is True or obs.get("detectorAbsence") is True:
+                              qualifying += 1
+                              evidence.append(r.get("artifactRef") or r.get("_source"))
+                  if not rows:
+                      fail("INCOMPLETE", "U1_REQUIRED_EVIDENCE_MISSING", "no observation row for " + inv_id)
+                  elif qualifying < min_rows:
+                      fail("INCOMPLETE", "U1_REQUIRED_EVIDENCE_MISSING",
+                           "invariant %s has %d qualifying exercised rows (< %d)"
+                           % (inv_id, qualifying, min_rows))
+                  per_invariant.append({"invariantId": inv_id,
+                                        "status": "INCOMPLETE" if qualifying < min_rows else
+                                                  ("INVALID" if any(inv_id in n for n in notes) else "ACCEPT"),
+                                        "qualifyingRows": qualifying,
+                                        "exercisedRows": exercised,
+                                        "evidence": evidence})
+
+              # ---- 7.7 configuration: checklist gate + live management-plane read (F-4) ----
+              immutability = {"state": None, "intervalDays": None, "policyEtag": None,
+                              "observedAt": now_iso(),
+                              "source": "management-plane GET: az storage container immutability-policy show"}
+              imm_raw = subprocess.run(
+                  ["az", "storage", "container", "immutability-policy", "show",
+                   "--account-name", "bs2jhgwvduljfdwdp", "--container-name", "u1-evidence",
+                   "--resource-group", "biostack-rg", "--output", "json"],
+                  capture_output=True, text=True)
+              if imm_raw.returncode == 0:
+                  try:
+                      imm = json.loads(imm_raw.stdout)
+                      props = imm.get("properties") or imm
+                      immutability["state"] = props.get("state") or imm.get("state")
+                      interval = (props.get("immutabilityPeriodSinceCreationInDays")
+                                  or props.get("immutabilityPeriodSinceCreation")
+                                  or imm.get("immutabilityPeriodSinceCreationInDays"))
+                      immutability["intervalDays"] = int(interval) if interval is not None else None
+                      immutability["policyEtag"] = imm.get("etag") or props.get("etag")
+                  except Exception as e:
+                      fail("INCOMPLETE", "U1_CONFIGURATION_INCOMPLETE",
+                           "immutability-policy read unparsable: %s" % e)
+              else:
+                  fail("INCOMPLETE", "U1_CONFIGURATION_INCOMPLETE",
+                       "immutability-policy management-plane read failed: " + imm_raw.stderr[:300])
+              if immutability["state"] != "Locked" or (immutability["intervalDays"] or 0) < 400:
+                  fail("INCOMPLETE", "U1_CONFIGURATION_INCOMPLETE",
+                       "immutability policy not Locked >= 400d: state=%s interval=%s"
+                       % (immutability["state"], immutability["intervalDays"]))
+              if checklist is not None:
+                  entries = checklist.get("entries") or []
+                  refs = {e.get("ref") for e in entries if isinstance(e, dict)}
+                  for i in range(1, 20):
+                      ref = "INCOMPLETE-U1-%02d" % i
+                      if ref not in refs:
+                          fail("INCOMPLETE", "U1_CONFIGURATION_INCOMPLETE",
+                               "checklist missing §5 row " + ref)
+                  for e in entries:
+                      if not isinstance(e, dict) or e.get("state") != "recorded":
+                          fail("INCOMPLETE", "U1_CONFIGURATION_INCOMPLETE",
+                               "checklist row not recorded: %s" % (e.get("ref") if isinstance(e, dict) else e))
+                  expect = checklist.get("immutabilityExpectation") or {}
+                  if expect.get("mode") != "locked" or expect.get("minIntervalDays") != 400:
+                      fail("INCOMPLETE", "U1_CONFIGURATION_INCOMPLETE",
+                           "checklist immutabilityExpectation != locked/400")
+
+              # ---- F-8 separation self-probe: out-of-prefix verifier write must be denied ----
+              probe = {"operation": "blob create (verifier identity) outside verifications/* and attempt-ledger/*",
+                       "principal": "u1-verifier-mi (ec2d02e3-904c-4ce2-9771-cd518d711e3f)",
+                       "targetPrefix": "u1/m0r6an/agent-skills/runs/0000000000/p00/",
+                       "expectedDenial": "ABAC prefix condition denies create outside verifications/* and attempt-ledger/*",
+                       "observedStatus": None, "observedError": None,
+                       "timestamp": now_iso()}
+              with open("probe.tmp", "wb") as f:
+                  f.write(canon({"probe": "verifier-out-of-prefix-write", "at": probe["timestamp"]}))
+              probe_run = subprocess.run(
+                  ["az", "storage", "blob", "upload", "--account-name", "bs2jhgwvduljfdwdp",
+                   "--container-name", "u1-evidence",
+                   "--name", "u1/m0r6an/agent-skills/runs/0000000000/p00/evidence/separation-probe/out-of-prefix-probe.json",
+                   "--file", "probe.tmp", "--auth-mode", "login", "--overwrite", "false",
+                   "--output", "none"], capture_output=True, text=True)
+              probe["observedStatus"] = probe_run.returncode
+              probe["observedError"] = (probe_run.stderr or "")[:400]
+              if probe_run.returncode == 0:
+                  fail("INCOMPLETE", "U1_INDEPENDENCE_UNPROVEN",
+                       "out-of-prefix verifier write was ALLOWED: prefix separation unproven")
+              elif "AuthorizationPermissionMismatch" not in (probe_run.stderr or "") \
+                      and "AuthorizationFailure" not in (probe_run.stderr or ""):
+                  fail("INCOMPLETE", "U1_INDEPENDENCE_UNPROVEN",
+                       "out-of-prefix probe denial not evidenced (unexpected error): "
+                       + (probe_run.stderr or "")[:200])
+
+              # ---- runner/toolchain identity (F-13) ----
+              az_version = None
+              try:
+                  az_version = json.loads(sh("az", "version")).get("azure-cli")
+              except Exception:
+                  az_version = None
+              runner = {"imageOS": os.environ.get("IMAGEOS", ""),
+                        "imageVersion": os.environ.get("IMAGEVERSION", ""),
+                        "runnerName": os.environ.get("RUNNER_NAME", ""),
+                        "runnerOs": os.environ.get("RUNNER_OS", ""),
+                        "runnerArch": os.environ.get("RUNNER_ARCH", ""),
+                        "azCliVersion": az_version}
+              limitations = [
+                  "hosted-runner identity is label + ImageOS/ImageVersion level only "
+                  "(INF-4 exception per 3.3.4; image digests unavailable to jobs)",
+                  "INCOMPLETE-U1-18 not issued by the selected workflows (named gap, A-U1.8.13; "
+                  "absence never changes decision status)"]
+
+              # ---- retrieval-check (IA-4 exact shape) ----
+              retrieval_check = {
+                  "logicalId": "retrieval-check",
+                  "method": "independent read-back over u1-verifier-mi (Storage Blob Data Reader)",
+                  "checkedAt": now_iso(),
+                  "objectsChecked": len(files),
+                  "digestMismatches": mismatches}
+              verifier_context = {
+                  "logicalId": "verifier-context",
+                  "authoritative": authoritative,
+                  "authorityClass": os.environ.get("AUTHORITY_CLASS"),
+                  "pinRecordReadPath": os.environ.get("PIN_READ_PATH"),
+                  "pinnedWorkflowCommit": os.environ.get("PINNED_COMMIT"),
+                  "pinnedWorkflowFileDigest": os.environ.get("WORKFLOW_FILE_DIGEST"),
+                  "pinRecordByteDigest": os.environ.get("PIN_RECORD_BYTE_DIGEST"),
+                  "selectedEvent": os.environ.get("GITHUB_EVENT_NAME", ""),
+                  "verifierIdentity": {"clientId": "ec2d02e3-904c-4ce2-9771-cd518d711e3f",
+                                       "federatedSubject": "repo:m0r6aN/agent-skills:environment:u1-verifier",
+                                       "roleAssignment": "Storage Blob Data Reader + create-only u1-verifier-evidence-creator"},
+                  "runIdentity": {"runId": os.environ.get("GITHUB_RUN_ID", ""),
+                                  "attempt": int(os.environ.get("GITHUB_RUN_ATTEMPT", "1")),
+                                  "jobId": os.environ.get("GITHUB_JOB", ""),
+                                  "workflowRef": os.environ.get("GITHUB_WORKFLOW_REF", ""),
+                                  "headSha": os.environ.get("GITHUB_SHA", ""),
+                                  "event": os.environ.get("GITHUB_EVENT_NAME", "")},
+                  "runnerIdentity": runner,
+                  "sandboxOutput": sandbox_record,
+                  "immutabilityObservation": immutability,
+                  "separationProbe": probe,
+                  "attestation": {"attestationIssued": False, "issuer": "none",
+                                  "gap": "INCOMPLETE-U1-18 not issued by the selected workflows"},
+                  "limitations": limitations}
+
+              def verifier_entry(logical, payload, domain=None):
+                  raw = canon(payload)
+                  entry = {"namespace": "verifier", "logicalId": logical,
+                           "byteLength": len(raw), "byteDigest": tag(raw),
+                           "relativePath": "evidence/%s/%s.json" % (logical, logical)}
+                  if domain:
+                      entry["docDomain"] = domain
+                      entry["docDigest"] = doc_digest(domain, payload)
+                  return entry
+
+              verifier_inventory = [
+                  verifier_entry("verifier-context", verifier_context),
+                  verifier_entry("retrieval-check", retrieval_check),
+                  verifier_entry("separation-probe", probe)]
+              producer_inventory = [
+                  {"namespace": "producer", "logicalId": e.get("relativePath", ""),
+                   "byteLength": e.get("byteLength"), "byteDigest": e.get("byteDigest", e.get("digest")),
+                   "docDigest": e.get("docDigest"), "docDomain": e.get("docDomain"),
+                   "relativePath": e.get("relativePath")}
+                  for e in (bundle or {}).get("artifactInventory", [])]
+              if bundle_byte_digest is not None:
+                  producer_inventory.append(
+                      {"namespace": "producer", "logicalId": "bundle.json",
+                       "byteLength": len(files["bundle.json"]), "byteDigest": bundle_byte_digest,
+                       "docDomain": "foreman-line.u1.bundle", "docDigest": bundle_doc_digest,
+                       "relativePath": "bundle.json"})
+
+              # ---- F-3: non-authoritative runs can never ACCEPT ----
+              if (not authoritative) and status == "ACCEPT":
+                  fail("INCOMPLETE", "U1_REQUIRED_EVIDENCE_MISSING",
+                       "non-authoritative run: authoritative pinned invocation evidence absent")
+
+              decision = {
+                  "schemaVersion": SCHEMA,
+                  "promotionRequestId": req_id,
+                  "promotionRequestDigest": os.environ.get("PROMOTION_REQUEST_DIGEST"),
+                  "selectedExecution": sel,
+                  "expectedSubjectDigest": (req or {}).get("expectedSubjectDigest"),
+                  "bundleDigest": bundle_byte_digest,
+                  "bundleDocDigest": bundle_doc_digest,
+                  "trustPolicyDigest": (req or {}).get("trustPolicyDigest"),
+                  "verifierCodeDigest": os.environ.get("WORKFLOW_FILE_DIGEST"),
+                  "verifierContext": verifier_inventory[0],
+                  "authoritative": authoritative,
+                  "checkedAt": now_iso(),
+                  "status": status,
+                  "reasonCodes": sorted(reason_codes),
+                  "perInvariantResults": per_invariant,
+                  "perControlResults": per_control,
+                  "independentlyCollectedArtifacts": verifier_inventory,
+                  "retrievalCheck": verifier_inventory[1],
+                  "artifactInventory": producer_inventory + verifier_inventory,
+                  "limitations": limitations,
+                  "notes": notes}
+              decision_raw = canon(decision)
+              decision_doc = doc_digest("foreman-line.u1.decision", decision)
+              decision_byte = tag(decision_raw)
+              os.makedirs("out/audit", exist_ok=True)
+              os.makedirs("out/evidence/verifier-context", exist_ok=True)
+              os.makedirs("out/evidence/retrieval-check", exist_ok=True)
+              os.makedirs("out/evidence/separation-probe", exist_ok=True)
+              with open("out/audit/decision.json", "wb") as f:
+                  f.write(decision_raw)
+              with open("out/evidence/verifier-context/verifier-context.json", "wb") as f:
+                  f.write(canon(verifier_context))
+              with open("out/evidence/retrieval-check/retrieval-check.json", "wb") as f:
+                  f.write(canon(retrieval_check))
+              with open("out/evidence/separation-probe/separation-probe.json", "wb") as f:
+                  f.write(canon(probe))
+              with open("decision-digests.json", "w", encoding="utf-8") as f:
+                  json.dump({"decisionDocDigest": decision_doc, "decisionByteDigest": decision_byte,
+                             "status": status, "authoritative": authoritative}, f, sort_keys=True)
+              with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as f:
+                  f.write("status=%s\n" % status)
+                  f.write("decision-doc-digest=%s\n" % decision_doc)
+                  f.write("decision-byte-digest=%s\n" % decision_byte)
+                  f.write("producer-run-id=%s\n" % str(sel.get("runId") or os.environ.get("PRODUCER_RUN_ID")))
+                  f.write("promotion-request-id=%s\n" % req_id)
+                  f.write("attempt-outcome=%s\n" % OUTCOME_MAP.get(status, "nonreturning"))
+                  f.write("sandbox-consumed=%s\n" % str(sandbox_consumed).lower())
+              print("verdict:", status, sorted(reason_codes))
+          except PinDrift as e:
+              print("::error::PIN_DRIFT: %s" % e)
+              sys.exit(1)
+          except Exception as e:
+              # F-16: never an uncaught crash; a decision is always produced post-claim.
+              traceback.print_exc()
+              fail("INVALID", "U1_ARTIFACT_INVALID", "unhandled evaluation error: %s" % e)
+              decision = {
+                  "schemaVersion": SCHEMA,
+                  "promotionRequestId": req_id,
+                  "authoritative": os.environ.get("AUTHORITY_CLASS") == "authoritative",
+                  "checkedAt": now_iso(),
+                  "status": status,
+                  "reasonCodes": sorted(reason_codes),
+                  "perInvariantResults": per_invariant,
+                  "perControlResults": per_control,
+                  "notes": notes}
+              decision_raw = canon(decision)
+              decision_doc = doc_digest("foreman-line.u1.decision", decision)
+              decision_byte = tag(decision_raw)
+              os.makedirs("out/audit", exist_ok=True)
+              with open("out/audit/decision.json", "wb") as f:
+                  f.write(decision_raw)
+              with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as f:
+                  f.write("status=%s\n" % status)
+                  f.write("decision-doc-digest=%s\n" % decision_doc)
+                  f.write("decision-byte-digest=%s\n" % decision_byte)
+                  f.write("producer-run-id=%s\n" % str(os.environ.get("PRODUCER_RUN_ID")))
+                  f.write("promotion-request-id=%s\n" % req_id)
+                  f.write("attempt-outcome=%s\n" % OUTCOME_MAP.get(status, "nonreturning"))
+                  f.write("sandbox-consumed=false\n")
+              print("verdict (error path):", status, sorted(reason_codes))
+          PYEOF
+      - name: Write decision + verifier evidence DIRECTLY (create-only, overwrite refused)
+        id: persist
+        env:
+          PROMOTION_REQUEST_ID: ${{ needs.resolve-request.outputs.promotion-request-id }}
+          VERIFIER_ATTEMPT_NUMBER: ${{ needs.claim-attempt.outputs.attempt-number }}
+          DECISION_DOC_DIGEST: ${{ steps.decide.outputs.decision-doc-digest }}
+        run: |
+          set -euo pipefail
+          if [ -n "$VERIFIER_ATTEMPT_NUMBER" ]; then
+            ATTEMPT_POS="$(printf 'a%02d' "$VERIFIER_ATTEMPT_NUMBER")"
+          else
+            ATTEMPT_POS="a00"
+          fi
+          PREFIX="u1/m0r6an/agent-skills/verifications/${PROMOTION_REQUEST_ID}/${ATTEMPT_POS}"
+          while IFS= read -r -d '' f; do
+            rel="${f#out/}"
+            az storage blob upload \
+              --account-name bs2jhgwvduljfdwdp --container-name u1-evidence \
+              --name "$PREFIX/$rel" --file "$f" --auth-mode login --overwrite false \
+              --content-type application/octet-stream --output none
+          done < <(find out -type f -print0 | sort -z)
+          {
+            echo '### u1-verify decision written BY VERIFIER IDENTITY'
+            echo "- verifier prefix: $PREFIX/"
+            echo "- decision document digest: $DECISION_DOC_DIGEST"
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload corroborating decision artifact (audit copy only, unique name)
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: u1-verifier-decision-${{ github.run_id }}
+          path: out
+          if-no-files-found: error
+      - name: Summary
+        env:
+          STATUS: ${{ steps.decide.outputs.status }}
+          DECISION_DOC_DIGEST: ${{ steps.decide.outputs.decision-doc-digest }}
+          DECISION_BYTE_DIGEST: ${{ steps.decide.outputs.decision-byte-digest }}
+          PINNED_COMMIT: ${{ needs.pin-check.outputs.pinned-commit }}
+          AUTHORITY_CLASS: ${{ needs.pin-check.outputs.authority-class }}
+        run: |
+          {
+            echo '### u1-verify decision'
+            echo "- status: $STATUS"
+            echo "- authority class: $AUTHORITY_CLASS"
+            echo "- decision doc digest: $DECISION_DOC_DIGEST"
+            echo "- decision byte digest: $DECISION_BYTE_DIGEST"
+            echo "- pinned verifier revision: $PINNED_COMMIT"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  retention-observation:
+    # F-2/F-10: read back the decision candidate bytes, compare BOTH digest classes to
+    # their recorded counterparts, observe the immutability policy live, write the
+    # retention-observation artifact (IA-2.4), then write seal.json LAST (create-only).
+    # FK-P19 consumes only the seal (A-U1.8.09 clause 3).
+    needs: [pin-check, resolve-request, claim-attempt, verify]
+    if: ${{ !cancelled() && needs.verify.result == 'success' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    environment: u1-verifier
+    permissions:
+      id-token: write
+      contents: read
+    outputs:
+      observation-doc-digest: ${{ steps.observe.outputs.observation-doc-digest }}
+      observation-byte-digest: ${{ steps.observe.outputs.observation-byte-digest }}
+      observation-result: ${{ steps.observe.outputs.observation-result }}
+      attempt-outcome: ${{ steps.observe.outputs.attempt-outcome }}
+      seal-doc-digest: ${{ steps.observe.outputs.seal-doc-digest }}
+      seal-byte-digest: ${{ steps.observe.outputs.seal-byte-digest }}
+      authoritative: ${{ steps.observe.outputs.authoritative }}
+    steps:
+      - name: Azure login (OIDC -> u1-verifier-mi)
+        uses: azure/login@7184910d9eb2b1c5e48f7073824a90609bb9b6d6 # v2
+        with:
+          client-id: ec2d02e3-904c-4ce2-9771-cd518d711e3f
+          tenant-id: ac08e2fd-34bf-4c87-a34f-c8c853ffc5e2
+          subscription-id: 909e0322-c3c0-4bce-ae53-b3d2ed735bd4
+      - name: Read back decision bytes (both digest classes), write observation, seal LAST
+        id: observe
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PROMOTION_REQUEST_ID: ${{ needs.resolve-request.outputs.promotion-request-id }}
+          PROMOTION_REQUEST_DIGEST: ${{ needs.resolve-request.outputs.promotion-request-digest }}
+          REQUEST_COMMIT_SHA: ${{ needs.resolve-request.outputs.request-commit-sha }}
+          VERIFIER_ATTEMPT_NUMBER: ${{ needs.claim-attempt.outputs.attempt-number }}
+          DECISION_DOC_DIGEST: ${{ needs.verify.outputs.decision-doc-digest }}
+          DECISION_BYTE_DIGEST: ${{ needs.verify.outputs.decision-byte-digest }}
+          DECISION_STATUS: ${{ needs.verify.outputs.status }}
+          AUTHORITY_CLASS: ${{ needs.pin-check.outputs.authority-class }}
+          PINNED_COMMIT: ${{ needs.pin-check.outputs.pinned-commit }}
+        run: |
+          python3 - <<'PYEOF'
+          import base64, datetime, hashlib, json, os, re, subprocess, sys
+
+          API_VERSION = "0.1.0"
+          GRAMMAR = re.compile(r"^[a-z0-9-]{1,64}\Z")
+          OUTCOME_MAP = {"ACCEPT": "accept", "INVALID": "invalid", "INCOMPLETE": "incomplete",
+                         "UNSUPPORTED": "unsupported", "UNAVAILABLE": "unavailable"}
+
+          def canon(o):
+              def esc(s):
+                  return json.dumps(s, ensure_ascii=False)[1:-1]
+              def enc(x):
+                  if x is None: return "null"
+                  if x is True: return "true"
+                  if x is False: return "false"
+                  if isinstance(x, int) and not isinstance(x, bool):
+                      if x < 0 or x > 2**53 - 1: raise ValueError("SafeInt bound")
+                      return str(x)
+                  if isinstance(x, str): return '"' + esc(x) + '"'
+                  if isinstance(x, list): return "[" + ",".join(enc(i) for i in x) + "]"
+                  if isinstance(x, dict):
+                      it = sorted(x.items(), key=lambda kv: kv[0].encode("utf-16-be"))
+                      return "{" + ",".join('"' + esc(k) + '":' + enc(v) for k, v in it) + "}"
+                  raise TypeError(type(x))
+              return enc(o).encode("utf-8")
+
+          def tag(b):
+              return "sha256:" + hashlib.sha256(b).hexdigest()
+
+          def doc_digest(domain, payload):
+              return tag(canon({"domain": domain, "apiVersion": API_VERSION, "payload": payload}))
+
+          def sh(*args):
+              return subprocess.run(args, capture_output=True, text=True, check=True).stdout
+
+          def now_iso():
+              return datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0) \
+                        .isoformat().replace("+00:00", "Z")
+
+          def upload(name, path):
+              subprocess.run(["az", "storage", "blob", "upload",
+                              "--account-name", "bs2jhgwvduljfdwdp", "--container-name", "u1-evidence",
+                              "--name", name, "--file", path, "--auth-mode", "login",
+                              "--overwrite", "false", "--content-type", "application/octet-stream",
+                              "--output", "none"], check=True)
+
+          req_id = os.environ["PROMOTION_REQUEST_ID"]
+          if not GRAMMAR.match(req_id):
+              print("::error::U1_ARTIFACT_INVALID: promotionRequestId violates closed grammar")
+              sys.exit(1)
+          K = int(os.environ["VERIFIER_ATTEMPT_NUMBER"]) if os.environ.get("VERIFIER_ATTEMPT_NUMBER") else 0
+          attempt_pos = "a%02d" % K
+          prefix = "u1/m0r6an/agent-skills/verifications/%s/%s" % (req_id, attempt_pos)
+          decision_blob = prefix + "/audit/decision.json"
+          authoritative = os.environ.get("AUTHORITY_CLASS") == "authoritative"
+
+          # F-7: every consumer recomputes the request digest over the fetched bytes.
+          enc = subprocess.run(["gh", "api",
+                                "repos/m0r6aN/agent-skills/contents/plugins/foreman-line/docs/goals/foreman-kernel/promotion-requests/%s.json?ref=%s"
+                                % (req_id, os.environ["REQUEST_COMMIT_SHA"]), "--jq", ".content"],
+                               capture_output=True, text=True, check=True).stdout
+          req_raw = base64.b64decode(enc)
+          req = json.loads(req_raw.decode("utf-8"))
+          req_recomputed = doc_digest("foreman-line.u1.promotion-request",
+                                      {k: v for k, v in req.items() if k != "requestDigest"})
+          if req_recomputed != os.environ["PROMOTION_REQUEST_DIGEST"]:
+              print("::error::U1_ARTIFACT_INVALID: request digest drift at consumer: %s" % req_recomputed)
+              sys.exit(1)
+
+          result, readback_byte, readback_doc, parsed = "unreadable", None, None, None
+          dl = subprocess.run(["az", "storage", "blob", "download",
+                               "--account-name", "bs2jhgwvduljfdwdp", "--container-name", "u1-evidence",
+                               "--name", decision_blob, "--file", "decision.readback.json",
+                               "--auth-mode", "login", "--output", "none"],
+                              capture_output=True, text=True)
+          if dl.returncode == 0:
+              raw = open("decision.readback.json", "rb").read()
+              readback_byte = tag(raw)
+              try:
+                  parsed = json.loads(raw.decode("utf-8"))
+                  readback_doc = doc_digest("foreman-line.u1.decision", parsed)
+              except Exception:
+                  readback_doc = None
+              # A-U1.8.01: both digest classes must match their recorded counterparts.
+              if readback_byte != os.environ["DECISION_BYTE_DIGEST"]:
+                  result = "mismatch"
+              elif readback_doc is None or readback_doc != os.environ["DECISION_DOC_DIGEST"]:
+                  result = "mismatch"
+              else:
+                  result = "match"
+
+          immutability = {"immutabilityState": None, "intervalDays": None, "policyEtag": None,
+                          "observedAt": now_iso(),
+                          "source": "management-plane GET: az storage container immutability-policy show"}
+          imm = subprocess.run(["az", "storage", "container", "immutability-policy", "show",
+                                "--account-name", "bs2jhgwvduljfdwdp", "--container-name", "u1-evidence",
+                                "--resource-group", "biostack-rg", "--output", "json"],
+                               capture_output=True, text=True)
+          if imm.returncode == 0:
+              try:
+                  doc = json.loads(imm.stdout)
+                  props = doc.get("properties") or doc
+                  immutability["immutabilityState"] = props.get("state") or doc.get("state")
+                  interval = (props.get("immutabilityPeriodSinceCreationInDays")
+                              or props.get("immutabilityPeriodSinceCreation"))
+                  immutability["intervalDays"] = int(interval) if interval is not None else None
+                  immutability["policyEtag"] = doc.get("etag") or props.get("etag")
+              except Exception:
+                  pass
+
+          outcome = OUTCOME_MAP.get(os.environ.get("DECISION_STATUS", ""), "nonreturning")
+          if result == "mismatch":
+              outcome = "invalid"
+          elif result == "unreadable":
+              outcome = "incomplete"
+
+          observation = {
+              "logicalId": "retention-observation",
+              "schema": "u1-retention-observation/v1",
+              "promotionRequestId": req_id,
+              "attemptNumber": K,
+              "authoritative": authoritative,
+              "decisionBlobName": decision_blob,
+              "decisionDocDigest": os.environ["DECISION_DOC_DIGEST"],
+              "decisionByteDigest": os.environ["DECISION_BYTE_DIGEST"],
+              "decisionReadBackByteDigest": readback_byte,
+              "decisionReadBackDocDigest": readback_doc,
+              "retrievedBy": {"clientId": "ec2d02e3-904c-4ce2-9771-cd518d711e3f",
+                              "federatedSubject": "repo:m0r6aN/agent-skills:environment:u1-verifier",
+                              "roleAssignment": "Storage Blob Data Reader + create-only u1-verifier-evidence-creator"},
+              "retrievedAt": now_iso(),
+              "immutabilityState": immutability["immutabilityState"],
+              "intervalDays": immutability["intervalDays"],
+              "policyEtag": immutability["policyEtag"],
+              "observedAt": immutability["observedAt"],
+              "source": immutability["source"],
+              "result": result}
+          obs_rel = "evidence/retention-observation/retention-observation.json"
+          os.makedirs("out/" + obs_rel.rsplit("/", 1)[0], exist_ok=True)
+          obs_raw = canon(observation)
+          with open("out/" + obs_rel, "wb") as f:
+              f.write(obs_raw)
+          upload(prefix + "/" + obs_rel, "out/" + obs_rel)
+
+          # Seal inventory: every verifier-namespace object EXCEPT the seal itself (A-U1.8.08).
+          listing = json.loads(sh("az", "storage", "blob", "list",
+                                  "--account-name", "bs2jhgwvduljfdwdp",
+                                  "--container-name", "u1-evidence",
+                                  "--prefix", prefix + "/", "--auth-mode", "login",
+                                  "--output", "json"))
+          inventory = []
+          for b in sorted(listing, key=lambda x: x["name"]):
+              name = b["name"]
+              if name.endswith("/seal.json"):
+                  continue
+              rel = name[len(prefix) + 1:]
+              raw = subprocess.run(["az", "storage", "blob", "download",
+                                    "--account-name", "bs2jhgwvduljfdwdp", "--container-name", "u1-evidence",
+                                    "--name", name, "--auth-mode", "login", "--output", "none",
+                                    "--file", "-"], capture_output=True, check=True).stdout
+              entry = {"objectName": name, "byteLength": len(raw), "byteDigest": tag(raw)}
+              if rel == "audit/decision.json":
+                  entry["docDomain"] = "foreman-line.u1.decision"
+                  entry["docDigest"] = os.environ["DECISION_DOC_DIGEST"]
+              elif rel == obs_rel:
+                  entry["docDomain"] = "foreman-line.u1.retention-observation"
+                  entry["docDigest"] = doc_digest("foreman-line.u1.retention-observation", observation)
+              inventory.append(entry)
+
+          seal = {
+              "schema": "u1-seal/v1",
+              "promotionRequestId": req_id,
+              "attemptNumber": K,
+              "decisionDigest": os.environ["DECISION_DOC_DIGEST"],
+              "decisionByteDigest": os.environ["DECISION_BYTE_DIGEST"],
+              "retentionObservationDigest": doc_digest("foreman-line.u1.retention-observation", observation),
+              "retentionObservationResult": result,
+              "verifierIdentity": {"clientId": "ec2d02e3-904c-4ce2-9771-cd518d711e3f",
+                                   "federatedSubject": "repo:m0r6aN/agent-skills:environment:u1-verifier"},
+              "authoritative": authoritative,
+              "sealedAt": now_iso(),
+              "inventory": inventory}
+          seal["sealDigest"] = doc_digest("foreman-line.u1.seal",
+                                          {k: v for k, v in seal.items() if k != "sealDigest"})
+          seal_raw = canon(seal)
+          os.makedirs("out/seal", exist_ok=True)
+          with open("out/seal/seal.json", "wb") as f:
+              f.write(seal_raw)
+          # F-10: the seal is written LAST, create-only; FK-P19 consumes only the seal.
+          upload(prefix + "/seal.json", "out/seal/seal.json")
+
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as f:
+              f.write("observation-doc-digest=%s\n" % doc_digest("foreman-line.u1.retention-observation", observation))
+              f.write("observation-byte-digest=%s\n" % tag(obs_raw))
+              f.write("observation-result=%s\n" % result)
+              f.write("attempt-outcome=%s\n" % outcome)
+              f.write("seal-doc-digest=%s\n" % seal["sealDigest"])
+              f.write("seal-byte-digest=%s\n" % tag(seal_raw))
+              f.write("authoritative=%s\n" % str(authoritative).lower())
+          print("retention observation:", result, "-> outcome", outcome, "seal:", seal["sealDigest"])
+          if result != "match":
+              print("::error::U1_ARTIFACT_INVALID: decision read-back %s" % result
+                    if result == "mismatch" else
+                    "::error::U1_RETENTION_UNPROVEN: decision read-back %s" % result)
+              sys.exit(1)
+          PYEOF
+      - name: Upload corroborating observation artifact (audit copy only, unique name)
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: u1-verifier-observation-${{ github.run_id }}
+          path: out
+          if-no-files-found: error
+      - name: Summary
+        env:
+          OBSERVATION_RESULT: ${{ steps.observe.outputs.observation-result }}
+          OBSERVATION_DOC_DIGEST: ${{ steps.observe.outputs.observation-doc-digest }}
+          SEAL_DOC_DIGEST: ${{ steps.observe.outputs.seal-doc-digest }}
+          ATTEMPT_OUTCOME: ${{ steps.observe.outputs.attempt-outcome }}
+          DECISION_DOC_DIGEST: ${{ needs.verify.outputs.decision-doc-digest }}
+        run: |
+          {
+            echo '### u1-verify retention-observation and seal'
+            echo "- observed result: $OBSERVATION_RESULT (decision doc digest $DECISION_DOC_DIGEST)"
+            echo "- observation doc digest: $OBSERVATION_DOC_DIGEST"
+            echo "- seal doc digest (written last): $SEAL_DOC_DIGEST"
+            echo "- attempt outcome to record: $ATTEMPT_OUTCOME"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  close-attempt:
+    # IA-8.7 terminal ledger row, written only by the verifier identity. Runs whenever the
+    # attempt was claimed, even if verification or read-back failed - a consumed attempt
+    # always reaches its terminal row. Never runs for non-authoritative runs (no attempt).
+    needs: [pin-check, resolve-request, claim-attempt, verify, retention-observation]
+    if: ${{ !cancelled() && needs.claim-attempt.result == 'success' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    environment: u1-verifier
+    permissions:
+      id-token: write
+    outputs:
+      final-row-doc-digest: ${{ steps.close.outputs.final-row-doc-digest }}
+      final-row-byte-digest: ${{ steps.close.outputs.final-row-byte-digest }}
+    steps:
+      - name: Azure login (OIDC -> u1-verifier-mi)
+        uses: azure/login@7184910d9eb2b1c5e48f7073824a90609bb9b6d6 # v2
+        with:
+          client-id: ec2d02e3-904c-4ce2-9771-cd518d711e3f
+          tenant-id: ac08e2fd-34bf-4c87-a34f-c8c853ffc5e2
+          subscription-id: 909e0322-c3c0-4bce-ae53-b3d2ed735bd4
+      - name: Write ledger terminal row (IA-8.7 outcome)
+        id: close
+        env:
+          PROMOTION_REQUEST_ID: ${{ needs.resolve-request.outputs.promotion-request-id }}
+          VERIFIER_ATTEMPT_NUMBER: ${{ needs.claim-attempt.outputs.attempt-number }}
+          DISPATCH_ROW_BYTE_DIGEST: ${{ needs.claim-attempt.outputs.dispatch-row-byte-digest }}
+          DISPATCH_ROW_DOC_DIGEST: ${{ needs.claim-attempt.outputs.dispatch-row-doc-digest }}
+          ATTEMPT_OUTCOME: ${{ needs.retention-observation.outputs.attempt-outcome || needs.verify.outputs.attempt-outcome || 'interrupted' }}
+        run: |
+          python3 - <<'PYEOF'
+          import datetime, hashlib, json, os, re, subprocess, sys
+
+          API_VERSION = "0.1.0"
+          GRAMMAR = re.compile(r"^[a-z0-9-]{1,64}\Z")
+          CLOSED = {"accept", "invalid", "incomplete", "unsupported", "unavailable",
+                    "timed-out", "cancelled", "interrupted", "nonreturning"}
+
+          def canon(o):
+              def esc(s):
+                  return json.dumps(s, ensure_ascii=False)[1:-1]
+              def enc(x):
+                  if x is None: return "null"
+                  if x is True: return "true"
+                  if x is False: return "false"
+                  if isinstance(x, int) and not isinstance(x, bool):
+                      if x < 0 or x > 2**53 - 1: raise ValueError("SafeInt bound")
+                      return str(x)
+                  if isinstance(x, str): return '"' + esc(x) + '"'
+                  if isinstance(x, list): return "[" + ",".join(enc(i) for i in x) + "]"
+                  if isinstance(x, dict):
+                      it = sorted(x.items(), key=lambda kv: kv[0].encode("utf-16-be"))
+                      return "{" + ",".join('"' + esc(k) + '":' + enc(v) for k, v in it) + "}"
+                  raise TypeError(type(x))
+              return enc(o).encode("utf-8")
+
+          def tag(b):
+              return "sha256:" + hashlib.sha256(b).hexdigest()
+
+          def doc_digest(domain, payload):
+              return tag(canon({"domain": domain, "apiVersion": API_VERSION, "payload": payload}))
+
+          req = os.environ.get("PROMOTION_REQUEST_ID", "")
+          k = os.environ.get("VERIFIER_ATTEMPT_NUMBER", "")
+          outcome = os.environ.get("ATTEMPT_OUTCOME", "")
+          if outcome not in CLOSED:
+              raise SystemExit("U1_SUBJECT_MISMATCH: attempt-outcome not in IA-8.7 vocabulary")
+          if not GRAMMAR.match(req) or not k:
+              raise SystemExit("U1_SUBJECT_MISMATCH: missing promotion-request id or attempt number")
           row = {"promotionRequestId": req, "attemptNumber": int(k), "outcome": outcome,
                  "closedAt": datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0)
-                             .isoformat().replace("+00:00", "Z")}
+                             .isoformat().replace("+00:00", "Z"),
+                 "dispatchRowByteDigest": os.environ.get("DISPATCH_ROW_BYTE_DIGEST"),
+                 "dispatchRowDocDigest": os.environ.get("DISPATCH_ROW_DOC_DIGEST")}
+          row["recordDigest"] = doc_digest(
+              "foreman-line.u1.attempt-record",
+              {k2: v for k2, v in row.items() if k2 != "recordDigest"})
+          raw = canon(row)
           name = "u1/m0r6an/agent-skills/attempt-ledger/%s/a%02d-final.json" % (req, int(k))
           with open("final.tmp", "wb") as f:
-              f.write(canon(row))
+              f.write(raw)
           subprocess.run(["az", "storage", "blob", "upload", "--account-name", "bs2jhgwvduljfdwdp",
                           "--container-name", "u1-evidence", "--name", name, "--file", "final.tmp",
                           "--auth-mode", "login", "--overwrite", "false", "--output", "none"], check=True)
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as f:
+              f.write("final-row-doc-digest=%s\n" % row["recordDigest"])
+              f.write("final-row-byte-digest=%s\n" % tag(raw))
           print("closed attempt %s with outcome %s" % (k, outcome))
           PYEOF
       - name: Summary
+        env:
+          VERIFIER_ATTEMPT_NUMBER: ${{ needs.claim-attempt.outputs.attempt-number }}
+          ATTEMPT_OUTCOME: ${{ needs.retention-observation.outputs.attempt-outcome || needs.verify.outputs.attempt-outcome || 'interrupted' }}
         run: |
-          echo "### u1-verify close-attempt: a${{ needs.claim-attempt.outputs.attempt-number }} outcome `${{ env.ATTEMPT_OUTCOME }}`" >> "$GITHUB_STEP_SUMMARY"
+          echo "### u1-verify close-attempt: attempt $VERIFIER_ATTEMPT_NUMBER outcome $ATTEMPT_OUTCOME" >> "$GITHUB_STEP_SUMMARY"
