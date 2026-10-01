@@ -1,11 +1,21 @@
 # U1 producer workflow — FK-P18′ evidence packaging and submission (unattended lane).
 # Design: plugins/foreman-line/docs/goals/foreman-kernel/U1-workflow-design-2026-09-30.md
 # Contract: U1-contract-2026-09-29.md sha256:8d5f849cf22f6662f17c2502142e354d82f8f5604d64b511250abc72157df9d5
+# Amendments: U1-8-closure-amendments-2026-10-01.md (A-U1.8.08/A-U1.8.10/A-U1.8.12/
+# A-U1.8.13/A-U1.8.15/A-U1.8.16 mechanism notes).
+#
 # Lane: evidence submission only. The verification decision is NEVER produced, transported,
-# or persisted here (coordinator ruling 2026-09-30, OQ-6.2 — the stored decision is authored
-# by the verifier identity itself).
-# FORBIDDEN anywhere in this workflow (contract §2/§3.3): `az storage immutability-policy`,
-# `az storage blob delete`, `--overwrite true`, account keys, SAS URLs, `secrets.*` references.
+# or persisted here (the stored decision is authored by the verifier identity itself).
+# NAMESPACE (A-U1.8.08): producer objects land ONLY under
+#   u1/m0r6an/agent-skills/runs/<runId>/p<NN>/...
+# where p<NN> is the provider GITHUB_RUN_ATTEMPT (2 digits). The producer NEVER touches the
+# decision, ledger or verification namespaces (runs/* is producer-scoped at the storage
+# layer by ABAC prefix conditions; verifications/* and attempt-ledger/* are
+# verifier-create-only).
+# FORBIDDEN anywhere in this workflow (contract 2/3.3): `az storage immutability-policy`,
+# `az storage blob delete`, `--overwrite true`, account keys, SAS URLs, `secrets.*` references,
+# `attestations` permissions (F-14: INCOMPLETE-U1-18 is the named gap "not issued by the
+# selected workflows"; absence never changes decision status).
 # Authentication is GitHub OIDC -> u1-producer-mi only (environment u1-producer, unattended).
 name: u1-produce
 run-name: u1-produce submit run=${{ github.run_id }}
@@ -22,11 +32,11 @@ on:
         type: string
         required: true
       required-invariant-ids:
-        description: "CSV of IA-5 IDs required for this promotion"
+        description: "CSV of IA-5 IDs required for this promotion (first promotion: INV-U1-01..05)"
         type: string
         required: true
       promoted-refusal-class-ids:
-        description: "CSV of IA-6 IDs (owner/FK-P19 parameter)"
+        description: "CSV of IA-6 IDs (owner/FK-P19 parameter; never empty)"
         type: string
         required: true
       evidence-dir:
@@ -46,12 +56,17 @@ jobs:
     timeout-minutes: 30
     permissions:
       contents: read
+    outputs:
+      bundle-byte-digest: ${{ steps.package.outputs.bundle-byte-digest }}
+      bundle-doc-digest: ${{ steps.package.outputs.bundle-doc-digest }}
+      artifact-count: ${{ steps.package.outputs.artifact-count }}
+      evidence-origin: ${{ steps.package.outputs.evidence-origin }}
     steps:
       - name: Check out repository data (no persisted credentials)
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           persist-credentials: false
-      - name: Package evidence (limits, IA-3 grammar, IA-2 digests, bundle)
+      - name: Package evidence (early limits, strict parsing, IA-3 grammar, IA-2 digests)
         id: package
         env:
           EVIDENCE_DIR: ${{ inputs.evidence-dir }}
@@ -61,6 +76,7 @@ jobs:
           PROMOTED_REFUSAL_CLASS_IDS: ${{ inputs.promoted-refusal-class-ids }}
         run: |
           python3 - <<'PYEOF'
+          import glob as _glob
           import hashlib, json, os, re, subprocess, sys
 
           MIB = 1024 * 1024
@@ -70,6 +86,7 @@ jobs:
           CONTRACT_DIGEST = "sha256:8d5f849cf22f6662f17c2502142e354d82f8f5604d64b511250abc72157df9d5"
           OWNER_SEGMENT = "m0r6an"
           REPO_SEGMENT = "agent-skills"
+          REPOSITORY_ID = "m0r6aN/agent-skills"
 
           class LimitExceeded(Exception):
               pass
@@ -106,15 +123,57 @@ jobs:
           def doc_digest(domain, payload):
               return tag(canon({"domain": domain, "apiVersion": API_VERSION, "payload": payload}))
 
-          LOGICAL = re.compile(r"^[a-z0-9_-]{1,64}$")
-          EXTENSION = re.compile(r"^[a-z0-9]{1,8}$")
+          def text_depth(raw):
+              depth = 0
+              max_depth = 0
+              in_str = False
+              esc = False
+              for ch in raw.decode("utf-8", "strict"):
+                  if in_str:
+                      if esc:
+                          esc = False
+                      elif ch == "\\":
+                          esc = True
+                      elif ch == '"':
+                          in_str = False
+                  elif ch == '"':
+                      in_str = True
+                  elif ch in "[{":
+                      depth += 1
+                      if depth > max_depth:
+                          max_depth = depth
+                  elif ch in "]}":
+                      depth -= 1
+              return max_depth
+
+          def strict_loads(raw):
+              # F-16: depth-limited (16), duplicate-key-rejecting, NaN/Infinity-rejecting.
+              if text_depth(raw) > LIMITS["depth"]:
+                  raise LimitExceeded("U1_EVIDENCE_LIMIT_EXCEEDED: JSON depth > 16")
+              def reject_constant(name):
+                  raise ValueError("NaN/Infinity literal refused: " + name)
+              def reject_dupes(pairs):
+                  seen = set()
+                  out = {}
+                  for k, v in pairs:
+                      if k in seen:
+                          raise ValueError("duplicate key refused: " + k)
+                      seen.add(k)
+                      out[k] = v
+                  return out
+              return json.loads(raw.decode("utf-8"), parse_constant=reject_constant,
+                                object_pairs_hook=reject_dupes)
+
+          LOGICAL = re.compile(r"^[a-z0-9_-]{1,64}\Z")
+          EXTENSION = re.compile(r"^[a-z0-9]{1,8}\Z")
           KINDS = {"enforcement-environment", "producer-identity", "code-input", "action-inputs",
                    "toolchain", "image", "configuration", "independence-model",
                    "execution-provenance", "observation", "negative-control", "retention-plan",
                    "verifier-context", "retrieval-check", "retention-observation"}
 
           def check_package_path(p):
-              # IA-3 grammar, default-deny (ASCII only, "/" sole separator, exact depths).
+              # IA-3 grammar for the PRODUCER package (A-U1.8.08: audit/decision.json and all
+              # verifier objects are never part of the producer package), default-deny.
               if not p.isascii() or "\\" in p or p.startswith("/") or p.endswith("/"):
                   raise ValueError("path-grammar: %r" % p)
               segs = p.split("/")
@@ -123,8 +182,10 @@ jobs:
               if p == "bundle.json":
                   return ("bundleDoc", None, None)
               if p == "audit/decision.json":
-                  return ("auditDoc", None, None)
+                  raise ValueError("path-grammar: verifier/audit objects never in producer package")
               if len(segs) == 3 and segs[0] == "evidence" and segs[1] in KINDS:
+                  if segs[1] in ("verifier-context", "retrieval-check", "retention-observation"):
+                      raise ValueError("path-grammar: verifier namespace kind never in producer package")
                   fname = segs[2]
                   logical, dot, ext = fname.partition(".")
                   if not LOGICAL.match(logical):
@@ -134,33 +195,25 @@ jobs:
                   return ("artifactPath", segs[1], logical)
               raise ValueError("path-grammar: %r" % p)
 
-          def json_depth(o, d=0):
-              if isinstance(o, dict):
-                  return max([json_depth(v, d + 1) for v in o.values()] or [d])
-              if isinstance(o, list):
-                  return max([json_depth(v, d + 1) for v in o] or [d])
-              return d
+          def load_json(path, raw):
+              if len(raw) > LIMITS["artifact"]:
+                  raise LimitExceeded("U1_EVIDENCE_LIMIT_EXCEEDED: artifact > 8 MiB: %s" % path)
+              try:
+                  obj = strict_loads(raw)
+              except LimitExceeded:
+                  raise
+              except Exception as e:
+                  raise ValueError("U1_ARTIFACT_INVALID: %s unparsable: %s" % (path, e))
+              return obj
 
-          def load_json(path):
-              with open(path, "rb") as f:
-                  raw = f.read()
-              obj = json.loads(raw.decode("utf-8"))
-              if json_depth(obj) > LIMITS["depth"]:
-                  raise LimitExceeded("U1_EVIDENCE_LIMIT_EXCEEDED: JSON depth > 16: %s" % path)
-              return obj, raw
-
-          def add_artifact(store, rel, kind, logical, media, source=None):
+          def add_artifact(store, rel, kind, logical, media, raw):
               if logical in store["logicalIds"]:
                   raise ValueError("duplicate logicalId: %s" % logical)
               store["logicalIds"].add(logical)
-              raw = store["files"][rel]
               if len(raw) > LIMITS["artifact"]:
                   raise LimitExceeded("U1_EVIDENCE_LIMIT_EXCEEDED: artifact > 8 MiB: %s" % rel)
               art = {"logicalId": logical, "mediaType": media, "byteLength": len(raw),
-                     "digest": tag(raw), "relativePath": rel}
-              if source is not None:
-                  entry = {"logicalId": logical, "source": source, "path": rel, "digest": tag(raw)}
-                  store.setdefault("codeInputs", []).append(entry)
+                     "byteDigest": tag(raw), "relativePath": rel}
               store["artifacts"].append(art)
               return art
 
@@ -168,7 +221,75 @@ jobs:
               check_package_path(rel)
               raw = canon(payload)
               store["files"][rel] = raw
-              return add_artifact(store, rel, kind, logical, media)
+              return add_artifact(store, rel, kind, logical, media, raw)
+
+          # ---- F-11: true evidenceOrigin literals, per feed file, from git state ----
+          def feed_origin(path):
+              tracked = subprocess.run(["git", "ls-files", "--error-unmatch", "--", path],
+                                       capture_output=True).returncode == 0
+              if not tracked:
+                  return "ci-run-generated"
+              dirty = subprocess.run(["git", "diff", "--quiet", "HEAD", "--", path],
+                                     capture_output=True).returncode != 0
+              return "ci-run-generated" if dirty else "fk-p17-committed"
+
+          def row_provenance(origin, path, raw):
+              base = {"artifactByteDigest": tag(raw), "evidenceOrigin": origin,
+                      "repositoryId": REPOSITORY_ID}
+              if origin == "fk-p17-committed":
+                  base.update({"originKind": "committed-source",
+                               "headSha": os.environ.get("GITHUB_SHA", ""),
+                               "committedPath": path})
+              else:
+                  base.update({"originKind": "github-run",
+                               "runId": os.environ.get("GITHUB_RUN_ID", ""),
+                               "jobId": os.environ.get("GITHUB_JOB", ""),
+                               "workflowRef": os.environ.get("GITHUB_WORKFLOW_REF", ""),
+                               "headSha": os.environ.get("GITHUB_SHA", ""),
+                               "event": os.environ.get("GITHUB_EVENT_NAME", ""),
+                               "conclusion": "success"})
+              return base
+
+          # IA-5 FK-P17 anchors (contract IA-5 column 6): caseId -> required invariants.
+          ANCHORS = {
+              "CTL-01": ["INV-U1-01"], "CTL-02": ["INV-U1-01"],
+              "BYP-SH-01": ["INV-U1-01"], "BYP-SH-02": ["INV-U1-01"], "BYP-SH-03": ["INV-U1-01"],
+              "BYP-SP-01": ["INV-U1-01"], "BYP-SP-02": ["INV-U1-01"],
+              "BYP-MC-01": ["INV-U1-01"], "BYP-MC-02": ["INV-U1-01"],
+              "BYP-LK-01": ["INV-U1-01"], "BYP-LK-02": ["INV-U1-01"],
+              "BYP-LK-03": ["INV-U1-01", "INV-U1-02"], "BYP-LK-04": ["INV-U1-01", "INV-U1-02"],
+              "BYP-MB-01": ["INV-U1-01"], "BYP-MB-02": ["INV-U1-01", "INV-U1-04"],
+              "BYP-MB-03": ["INV-U1-01"],
+              "SST-01": ["INV-U1-05"], "SST-02": ["INV-U1-05"], "SST-03": ["INV-U1-05"],
+              "RST-01": ["INV-U1-05"], "RST-02": ["INV-U1-05"],
+              "NRE-01": ["INV-U1-06"], "NRE-02": ["INV-U1-06"], "NRE-03": ["INV-U1-06"],
+          }
+
+          def enrich_rows(doc, origin, source_path, source_raw, row_kinds):
+              # A-U1.8.10: every observation/negative-control row records its producing
+              # execution identity. Classifications and signals are carried verbatim -
+              # never re-derived, never softened. observedResult is copied from the row's
+              # own recorded classification; exitStatus is never invented.
+              def enrich_row(row):
+                  if not isinstance(row, dict):
+                      return row
+                  out = dict(row)
+                  out.setdefault("executionProvenance", [row_provenance(origin, source_path, source_raw)])
+                  if "observedResult" not in out and isinstance(out.get("classification"), str):
+                      out["observedResult"] = out["classification"]
+                  case_id = out.get("caseId")
+                  if case_id in ANCHORS:
+                      out.setdefault("invariantIds", ANCHORS[case_id])
+                  return out
+              if isinstance(doc, list):
+                  return [enrich_row(r) for r in doc]
+              if isinstance(doc, dict):
+                  out = dict(doc)
+                  for key in row_kinds:
+                      if isinstance(out.get(key), list):
+                          out[key] = [enrich_row(r) for r in out[key]]
+                  return out
+              return doc
 
           evidence_dir = os.environ["EVIDENCE_DIR"]
           for name, val in (("POLICY_DIGEST", os.environ.get("POLICY_DIGEST")),
@@ -179,52 +300,82 @@ jobs:
                   raise SystemExit("missing required input: %s" % name)
           required_invariants = sorted({x for x in os.environ["REQUIRED_INVARIANT_IDS"].split(",") if x})
           promoted_classes = sorted({x for x in os.environ["PROMOTED_REFUSAL_CLASS_IDS"].split(",") if x})
+          if not required_invariants or not promoted_classes:
+              raise SystemExit("U1_REQUIRED_EVIDENCE_MISSING: empty invariant or refusal-class set")
 
           store = {"files": {}, "artifacts": [], "logicalIds": set()}
+          origins = {}
 
-          # ---- FK-P17-shaped evidence feed (IA-10 mapping), carried never re-derived ----
+          # ---- FK-P17-shaped evidence feed (IA-10 mapping) ----
           feed = []
-          def feed_file(name, kind, logical):
+
+          def feed_file(name, kind, logical, row_kinds):
               p = os.path.join(evidence_dir, name)
-              obj, raw = load_json(p) if name.endswith(".json") else (None, open(p, "rb").read())
+              with open(p, "rb") as f:
+                  raw = f.read()
+              if len(raw) > LIMITS["artifact"]:
+                  raise LimitExceeded("U1_EVIDENCE_LIMIT_EXCEEDED: artifact > 8 MiB: %s" % p)
+              origin = feed_origin(p)
+              origins[p] = origin
+              if name.endswith(".json"):
+                  obj = load_json(p, raw)
+                  doc = enrich_rows(obj, origin, p, raw, row_kinds)
+                  raw = canon(doc)
               rel = "evidence/%s/%s" % (kind, logical + (".json" if name.endswith(".json") else ".jsonl"))
               check_package_path(rel)
               store["files"][rel] = raw
               art = add_artifact(store, rel, kind, logical,
-                                 "application/json" if name.endswith(".json") else "application/x-ndjson")
+                                 "application/json" if name.endswith(".json") else "application/x-ndjson", raw)
               feed.append(art)
-              return art, obj
+              return art, obj if name.endswith(".json") else None
 
           observation_arts = []
-          for n, logical in (("matrix.json", "matrix"), ("summary.json", "run-summary"),
-                             ("manifest.json", "run-manifest"),
+          art, _ = feed_file("matrix.json", "observation", "matrix", ("rows", "cases"))
+          observation_arts.append(art)
+          for n, logical in (("summary.json", "run-summary"), ("manifest.json", "run-manifest"),
                              ("measurement-summary.json", "measurement-summary")):
-              art, _ = feed_file(n, "observation" if n in ("matrix.json",) else
-                                    ("execution-provenance" if n in ("summary.json", "manifest.json") else "observation"),
-                                 logical)
+              art, _ = feed_file(n, "execution-provenance" if n in ("summary.json", "manifest.json")
+                                    else "observation", logical, ("rows", "cases", "gapRecords"))
               observation_arts.append(art)
-          import glob as _glob
           for p in sorted(_glob.glob(os.path.join(evidence_dir, "vectors", "V*.json"))):
               base = os.path.basename(p)[:-5].lower()
-              obj, raw = load_json(p)
+              with open(p, "rb") as f:
+                  raw = f.read()
+              origin = feed_origin(p)
+              origins[p] = origin
+              obj = load_json(p, raw)
+              doc = enrich_rows(obj, origin, p, raw, ("cases", "rows"))
+              raw = canon(doc)
               rel = "evidence/observation/%s.json" % base
               check_package_path(rel)
               store["files"][rel] = raw
-              observation_arts.append(add_artifact(store, rel, "observation", base, "application/json"))
+              observation_arts.append(add_artifact(store, rel, "observation", base,
+                                                   "application/json", raw))
           if os.path.exists(os.path.join(evidence_dir, "measurements.jsonl")):
-              feed_file("measurements.jsonl", "observation", "measurements")
-          ctl_art, _ = feed_file("controls.json", "negative-control", "controls")
+              feed_file("measurements.jsonl", "observation", "measurements", ("rows",))
+          ctl_art, _ = feed_file("controls.json", "negative-control", "controls", ("cases", "controls", "rows"))
 
-          # ---- Generated contract artifacts (each a real retained JSON document) ----
+          # F-11: the aggregate evidenceOrigin literal names the TRUE origin of the feed.
+          # A mixed feed cannot be named by one literal without mislabelling -> refuse.
+          distinct = sorted(set(origins.values()))
+          if len(distinct) != 1:
+              raise SystemExit("U1_PROVENANCE_INVALID: mixed evidence origin %s cannot be named by one literal"
+                               % distinct)
+          evidence_origin = distinct[0]
+
+          # ---- Generated contract artifacts ----
           commit = os.environ.get("GITHUB_SHA", "")
           tree_bytes = subprocess.run(["git", "ls-tree", "-r", "HEAD"], capture_output=True,
                                       check=True).stdout
-          source = {"repositoryId": "m0r6aN/agent-skills", "commit": commit, "treeDigest": tag(tree_bytes)}
+          source = {"repositoryId": REPOSITORY_ID, "commit": commit, "treeDigest": tag(tree_bytes)}
           run_id = os.environ.get("GITHUB_RUN_ID", "")
           run_attempt = os.environ.get("GITHUB_RUN_ATTEMPT", "1")
-          execution = {"provider": "github-actions", "repositoryId": "m0r6aN/agent-skills",
+          execution = {"provider": "github-actions", "repositoryId": REPOSITORY_ID,
                        "workflowId": "u1-produce", "runId": run_id, "attempt": int(run_attempt),
-                       "jobId": os.environ.get("GITHUB_JOB", ""), "event": os.environ.get("GITHUB_EVENT_NAME", "")}
+                       "jobId": os.environ.get("GITHUB_JOB", ""),
+                       "workflowRef": os.environ.get("GITHUB_WORKFLOW_REF", ""),
+                       "headSha": commit,
+                       "event": os.environ.get("GITHUB_EVENT_NAME", "")}
 
           write_artifact(store, "evidence/producer-identity/producer-identity.json", "producer-identity",
                          "producer-identity", {
@@ -233,27 +384,47 @@ jobs:
                                  "kind": "azure-managed-identity",
                                  "clientId": "dc152b9d-c74e-4af1-aeeb-c23b95c68ab2",
                                  "federatedSubject": "repo:m0r6aN/agent-skills:environment:u1-producer",
-                                 "roleAssignment": "Storage Blob Data Contributor (container u1-evidence)",
+                                 "roleAssignment": "Storage Blob Data Contributor (container u1-evidence, runs/* prefix)",
                                  "issuanceScope": "GitHub OIDC, per-run, environment-gated"},
-                             "evidenceOrigin": execution})
+                             "evidenceOrigin": evidence_origin,
+                             "evidenceOriginPerFeed": [{"path": k, "origin": v}
+                                                       for k, v in sorted(origins.items())],
+                             "execution": execution})
           write_artifact(store, "evidence/action-inputs/action-inputs.json", "action-inputs", "action-inputs", {
               "actions": [
                   {"uses": "actions/checkout", "revision": "11d5960a326750d5838078e36cf38b85af677262",
                    "resolvedInputs": {"persist-credentials": False}},
+                  {"uses": "actions/upload-artifact", "revision": "ea165f8d65b6e75b540449e92b4886f43607fa02",
+                   "resolvedInputs": {"if-no-files-found": "error"}},
+                  {"uses": "actions/download-artifact", "revision": "d3f86a106a0bac45b974a628896c90dbdf5c8093",
+                   "resolvedInputs": {}},
                   {"uses": "azure/login", "revision": "7184910d9eb2b1c5e48f7073824a90609bb9b6d6",
                    "resolvedInputs": {"client-id": "dc152b9d-c74e-4af1-aeeb-c23b95c68ab2",
                                       "tenant-id": "ac08e2fd-34bf-4c87-a34f-c8c853ffc5e2",
                                       "subscription-id": "909e0322-c3c0-4bce-ae53-b3d2ed735bd4"}}]})
+          az_version = None
+          try:
+              az_version = json.loads(subprocess.run(["az", "version"], capture_output=True,
+                                                     text=True, check=True).stdout).get("azure-cli")
+          except Exception:
+              az_version = None
           write_artifact(store, "evidence/toolchain/toolchain.json", "toolchain", "toolchain", {
               "runner": {"labels": ["ubuntu-24.04"], "group": "github-hosted",
-                         "runnerName": os.environ.get("RUNNER_NAME", ""), "os": os.environ.get("RUNNER_OS", ""),
-                         "arch": os.environ.get("RUNNER_ARCH", "")},
+                         "runnerName": os.environ.get("RUNNER_NAME", ""),
+                         "runnerOs": os.environ.get("RUNNER_OS", ""),
+                         "runnerArch": os.environ.get("RUNNER_ARCH", ""),
+                         "imageOS": os.environ.get("IMAGEOS", ""),
+                         "imageVersion": os.environ.get("IMAGEVERSION", "")},
               "runtime": {"python": subprocess.run(["python3", "--version"], capture_output=True,
-                                                   text=True).stdout.strip()},
+                                                   text=True).stdout.strip(),
+                          "azCliVersion": az_version},
               "dependencyLocks": [],
-              "unavailableIdentityGranularity": {
+              "runnerIdentityGranularity": {
                   "reason": "hosted-runner image digest is not exposed to jobs",
-                  "consequence": "toolchain identity is label-level; limitation recorded (OQ-6.12)"}})
+                  "exception": "INF-4 exception per 3.3.4: hosted ubuntu-24.04 accepted at label level",
+                  "compensatingRecords": ["imageOS", "imageVersion", "runnerName",
+                                          "runnerOs", "runnerArch", "azCliVersion"],
+                  "consequence": "limitation recorded (INCOMPLETE-U1-17 closure criterion A-U1.8.12)"}})
           write_artifact(store, "evidence/image/image.json", "image", "image", {
               "status": "not-used",
               "typedReason": "U1 CI runs on hosted runner images directly; no OCI container is promoted",
@@ -263,11 +434,15 @@ jobs:
               "credentialEnvelope": {"kind": "oidc-federated", "retainedCredential": None},
               "network": {"egress": "github-hosted default", "azureDataPlane": "TLS1.2+, OAuth"},
               "environmentAllowlist": ["u1-producer"],
+              "attestation": {"requested": False,
+                              "gap": "INCOMPLETE-U1-18 not issued by the selected workflows"},
               "mutableExternalVariables": [{"name": "inputs.evidence-dir", "value": os.environ.get("EVIDENCE_DIR", "")}]})
           write_artifact(store, "evidence/enforcement-environment/enforcement-environment.json",
                          "enforcement-environment", "enforcement-environment", {
                              "hostIdentity": {"runnerLabels": ["ubuntu-24.04"],
-                                              "runnerName": os.environ.get("RUNNER_NAME", "")},
+                                              "runnerName": os.environ.get("RUNNER_NAME", ""),
+                                              "imageOS": os.environ.get("IMAGEOS", ""),
+                                              "imageVersion": os.environ.get("IMAGEVERSION", "")},
                              "pinnedImageToolPolicyConfigurationDigests": {
                                  "u1-produce.yml": tag(open(".github/workflows/u1-produce.yml", "rb").read()) if
                                      os.path.exists(".github/workflows/u1-produce.yml") else None},
@@ -275,8 +450,8 @@ jobs:
           write_artifact(store, "evidence/independence-model/independence-model.json", "independence-model",
                          "independence-model", {
                              "perInvariantOwnership": {
-                                 i: {"verifier": "u1-verify read-back + structural checks",
-                                     "oracle": "source-authored FK-P17 expectations (carried)"}
+                                 i: {"verifier": "u1-verify read-back + independent derivation",
+                                     "oracle": "coordinator-owned expected-outcome oracle record (A-U1.8.04)"}
                                  for i in required_invariants},
                              "builderControlledInputs": [
                                  {"input": "evidence/** (FK-P17 harness output)", "failureConsequence": "U1_ARTIFACT_INVALID"},
@@ -287,7 +462,7 @@ jobs:
                              "trustRoots": ["GitHub OIDC issuer token.actions.githubusercontent.com",
                                             "Entra tenant ac08e2fd-34bf-4c87-a34f-c8c853ffc5e2"],
                              "changeControl": "workflow files custodian-protected (CODEOWNERS + ruleset + pin record)",
-                             "hostileInputExposure": "producer parses FK-P17 files as data (json.loads, linear); no candidate execution"})
+                             "hostileInputExposure": "producer parses FK-P17 files as data (strict, linear); no candidate execution"})
           write_artifact(store, "evidence/retention-plan/retention-plan.json", "retention-plan", "retention-plan", {
               "destination": {"provider": "azure-blob", "tenant": "ac08e2fd-34bf-4c87-a34f-c8c853ffc5e2",
                               "subscription": "909e0322-c3c0-4bce-ae53-b3d2ed735bd4",
@@ -298,7 +473,7 @@ jobs:
                                      "clientId": "ec2d02e3-904c-4ce2-9771-cd518d711e3f",
                                      "roleAssignment": "Storage Blob Data Reader + create-only u1-verifier-evidence-creator"}],
               "retention": {"mode": "time-based-immutability", "intervalDays": 400,
-                            "state": "unlocked-pending-first-real-evidence (flip to locked after first verifier read-back; owner ruling 2026-09-30)"},
+                            "state": "producer-authored plan only: never an observation (7.7); the verifier observes Locked/interval live"},
               "deletionPolicy": "none-permitted-during-retention",
               "retrievalMethod": "az storage blob download --auth-mode login (OAuth, no shared keys)",
               "lastRetrievalCheck": {"record": "U1-observations-2026-09-30.md retrieval test 2026-09-30",
@@ -312,7 +487,9 @@ jobs:
                   check_package_path(rel)
                   raw = open(wf, "rb").read()
                   store["files"][rel] = raw
-                  add_artifact(store, rel, "code-input", logical, "application/yaml", source=source)
+                  add_artifact(store, rel, "code-input", logical, "application/yaml", raw)
+                  store.setdefault("codeInputs", []).append(
+                      {"logicalId": logical, "source": source, "path": rel, "digest": tag(raw)})
 
           # ---- bundle.json ----
           def slot(name):
@@ -362,27 +539,43 @@ jobs:
               os.makedirs(os.path.dirname(dest), exist_ok=True)
               with open(dest, "wb") as f:
                   f.write(raw)
-          manifest = {"bundleDigest": tag(bundle_raw),
+          manifest = {"bundleByteDigest": tag(bundle_raw),
+                      "bundleDocDigest": doc_digest("foreman-line.u1.bundle", bundle),
                       "artifactCount": len(store["artifacts"]) + 1,
                       "totalBytes": total,
+                      "evidenceOrigin": evidence_origin,
                       "limits": {"bundle": LIMITS["bundle"], "artifact": LIMITS["artifact"],
                                  "count": LIMITS["count"], "depth": LIMITS["depth"]}}
           with open("out/manifest.json", "w", encoding="utf-8") as f:
               json.dump(manifest, f, sort_keys=True)
           with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as f:
-              f.write("bundle-digest=%s\n" % manifest["bundleDigest"])
+              f.write("bundle-byte-digest=%s\n" % manifest["bundleByteDigest"])
+              f.write("bundle-doc-digest=%s\n" % manifest["bundleDocDigest"])
               f.write("artifact-count=%s\n" % manifest["artifactCount"])
-          print("packaged: %s bytes, %s objects" % (total, manifest["artifactCount"]))
+              f.write("evidence-origin=%s\n" % evidence_origin)
+          print("packaged: %s bytes, %s objects, evidenceOrigin %s"
+                % (total, manifest["artifactCount"], evidence_origin))
           PYEOF
       - name: Upload package handoff artifact (transport copy, not the retained store)
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: u1-producer-package
+          name: u1-producer-package-${{ github.run_id }}
           path: out/package
           if-no-files-found: error
       - name: Summary
+        env:
+          BUNDLE_BYTE_DIGEST: ${{ steps.package.outputs.bundle-byte-digest }}
+          BUNDLE_DOC_DIGEST: ${{ steps.package.outputs.bundle-doc-digest }}
+          ARTIFACT_COUNT: ${{ steps.package.outputs.artifact-count }}
+          EVIDENCE_ORIGIN: ${{ steps.package.outputs.evidence-origin }}
         run: |
-          echo "### u1-produce assemble: bundle `${{ steps.package.outputs.bundle-digest }}` (${{ steps.package.outputs.artifact-count }} objects)" >> "$GITHUB_STEP_SUMMARY"
+          {
+            echo '### u1-produce assemble'
+            echo "- bundle byte digest: $BUNDLE_BYTE_DIGEST"
+            echo "- bundle doc digest: $BUNDLE_DOC_DIGEST"
+            echo "- objects: $ARTIFACT_COUNT"
+            echo "- evidenceOrigin: $EVIDENCE_ORIGIN"
+          } >> "$GITHUB_STEP_SUMMARY"
 
   submit:
     needs: assemble
@@ -392,11 +585,14 @@ jobs:
     permissions:
       id-token: write
       contents: read
+    outputs:
+      uploaded-count: ${{ steps.upload.outputs.uploaded-count }}
+      producer-prefix: ${{ steps.upload.outputs.producer-prefix }}
     steps:
       - name: Download package handoff
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
-          name: u1-producer-package
+          name: u1-producer-package-${{ github.run_id }}
           path: package
       - name: Azure login (OIDC -> u1-producer-mi)
         uses: azure/login@7184910d9eb2b1c5e48f7073824a90609bb9b6d6 # v2
@@ -404,14 +600,20 @@ jobs:
           client-id: dc152b9d-c74e-4af1-aeeb-c23b95c68ab2
           tenant-id: ac08e2fd-34bf-4c87-a34f-c8c853ffc5e2
           subscription-id: 909e0322-c3c0-4bce-ae53-b3d2ed735bd4
-      - name: Upload run-qualified blobs (IA-9; overwrite refused)
+      - name: Upload run-qualified blobs under runs/<runId>/p<NN>/ (overwrite refused)
+        id: upload
         run: |
           set -euo pipefail
-          ATTEMPT_POS="$(printf 'a%02d' "$GITHUB_RUN_ATTEMPT")"
+          ATTEMPT_POS="$(printf 'p%02d' "$GITHUB_RUN_ATTEMPT")"
           PREFIX="u1/m0r6an/agent-skills/runs/${GITHUB_RUN_ID}/${ATTEMPT_POS}"
           COUNT=0
           while IFS= read -r -d '' f; do
             rel="${f#package/}"
+            case "$rel" in
+              audit/*|verifications/*|attempt-ledger/*)
+                echo "refusing object outside the producer namespace: $rel" >&2
+                exit 1 ;;
+            esac
             name="$PREFIX/$rel"
             # IA-9: overwriting an existing object name is refused -> IA-7.3 on collision.
             az storage blob upload \
@@ -420,6 +622,6 @@ jobs:
               --content-type application/octet-stream --output none
             COUNT=$((COUNT+1))
           done < <(find package -type f -print0 | sort -z)
-          echo "uploaded=$COUNT" >> "$GITHUB_OUTPUT"
-          echo "prefix=$PREFIX" >> "$GITHUB_OUTPUT"
-          echo "### u1-produce submit: $COUNT objects at \`$PREFIX/\` (overwrite=false; no policy/delete commands)" >> "$GITHUB_STEP_SUMMARY"
+          echo "uploaded-count=$COUNT" >> "$GITHUB_OUTPUT"
+          echo "producer-prefix=$PREFIX" >> "$GITHUB_OUTPUT"
+          echo "### u1-produce submit: $COUNT objects at $PREFIX/ (overwrite=false; no policy/delete commands)" >> "$GITHUB_STEP_SUMMARY"
