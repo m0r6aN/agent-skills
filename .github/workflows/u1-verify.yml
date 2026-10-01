@@ -147,10 +147,20 @@ jobs:
               # ancestor of the run commit — so the recorded full-SHA identity (contract
               # 3.1.1) transitively names this run's revision. A drifted workflow at any
               # descendant commit still fails the byte check.
-              anc = subprocess.run(["git", "merge-base", "--is-ancestor", recorded_commit, run_sha])
-              if anc.returncode != 0:
-                  print("::error::PIN_DRIFT: pinned commit %s is not an ancestor of run commit %s"
-                        % (recorded_commit, run_sha))
+              # Ancestry is checked through the API, never git merge-base: the runner's
+              # shallow clone cannot see deep history and would false-refuse.
+              try:
+                  cmp_raw = sh("gh", "api",
+                               "repos/m0r6aN/agent-skills/compare/%s...%s" % (recorded_commit, run_sha),
+                               "--jq", ".status")
+                  cmp_status = cmp_raw.strip()
+              except subprocess.CalledProcessError as e:
+                  print("::error::PIN_DRIFT: ancestry compare failed for %s...%s: %s"
+                        % (recorded_commit, run_sha, e.stderr))
+                  sys.exit(1)
+              if cmp_status not in ("ahead", "identical"):
+                  print("::error::PIN_DRIFT: pinned commit %s is not an ancestor of run commit %s (compare status %s)"
+                        % (recorded_commit, run_sha, cmp_status))
                   sys.exit(1)
               if expected and run_sha != expected:
                   print("::error::PIN_DRIFT: run commit %s != dispatch-pinned %s" % (run_sha, expected))
