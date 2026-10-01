@@ -107,8 +107,13 @@ export interface DispatchWorktreeOutput {
 }
 
 export interface DispatchOptions {
-  readonly repoRoot?: string
-  /** Absolute installed plugin root; threaded to plugin-local asset resolution. */
+  /** Target repo root — required (P2a/D19): never derived from process.cwd(). */
+  readonly repoRoot: string
+  /**
+   * Absolute INSTALLED PLUGIN root (P2b-i R1/Q3) — threaded to routing eval
+   * and skill resolution, which read the plugin's own frozen assets. Required,
+   * no default, no discovery; its own explicit input (R2 principle).
+   */
   readonly pluginRoot: string
   readonly dispatchWorktreeFn?: (opts: DispatchWorktreeInput) => DispatchWorktreeOutput
 }
@@ -230,7 +235,7 @@ export async function prepareDispatch(
   input: DispatchInput,
   options: DispatchOptions,
 ): Promise<DispatchPackage> {
-  const repoRoot = options.repoRoot ?? process.cwd()
+  const repoRoot = options.repoRoot
   const { candidate, specPath, compressFn } = input
 
   // Guard: workflowId must be non-null (null means no receipt chain exists)
@@ -330,7 +335,10 @@ export async function prepareDispatch(
   // 6. Skill resolver (W2-P5)
   let skillResult: SkillResolverResult
   try {
-    skillResult = resolveSkills({ surfaces: specFrontmatter.surfaces, workflowId }, { repoRoot })
+    skillResult = resolveSkills(
+      { surfaces: specFrontmatter.surfaces, workflowId },
+      { repoRoot, pluginRoot: options.pluginRoot },
+    )
   } catch (err) {
     throw new DispatchError('SKILL_RESOLUTION_FAILED', `Skill resolution failed: ${String(err)}`)
   }
@@ -403,7 +411,7 @@ export async function executeDispatch(
   worktreePath: string,
   options: DispatchOptions,
 ): Promise<ExecuteResult> {
-  const repoRoot = options.repoRoot ?? process.cwd()
+  const repoRoot = options.repoRoot
   const workflowId = pkg.candidate.workflowId as string
 
   // Resolve profile — default to 'builder-standard' if not in frontmatter

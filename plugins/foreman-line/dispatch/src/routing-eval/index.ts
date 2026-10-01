@@ -15,7 +15,7 @@
  */
 
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
-import { join } from 'node:path'
+import { isAbsolute, join } from 'node:path'
 import { parse } from 'yaml'
 import type {
   ClassName,
@@ -39,6 +39,7 @@ export class RoutingError extends Error {
     | 'POLICY_INVALID'
     | 'POLICY_UNREADABLE'
     | 'RECEIPT_WRITE_FAILED'
+    | 'ROOT_NOT_ABSOLUTE'
 
   constructor(code: RoutingError['code'], message: string) {
     super(message)
@@ -73,31 +74,44 @@ export interface RoutingOptions {
   /**
    * Absolute path to the repository root. All file operations (policy read,
    * receipt write) resolve relative to this path.
-   * Defaults to process.cwd(). Tests pass a tmp directory.
+   * Required. Never derived from process.cwd().
    */
-  readonly repoRoot?: string
-  /** Absolute installed plugin root; the frozen policy is a plugin-local asset. */
+  readonly repoRoot: string
+  /**
+   * Absolute path to the installed plugin root. Frozen policy assets are read
+   * from here, while receipts are always written under repoRoot.
+   */
   readonly pluginRoot: string
 }
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const POLICY_REPO_PATH = 'plugins/foreman-line/routing-policy/routing-policy.yaml'
+const POLICY_PLUGIN_PATH = 'routing-policy/routing-policy.yaml'
+
+function assertAbsoluteRoot(root: string, name: string): void {
+  if (!isAbsolute(root)) {
+    throw new RoutingError(
+      'ROOT_NOT_ABSOLUTE',
+      `evaluateRouting: ${name} '${root}' is not an absolute path; refusing cwd-relative resolution`,
+    )
+  }
+}
 
 // ─── Evaluation ──────────────────────────────────────────────────────────────
 
 export function evaluateRouting(input: RoutingInput, options: RoutingOptions): RoutingResult {
-  const repoRoot = options.repoRoot ?? process.cwd()
+  const { repoRoot, pluginRoot } = options
+  assertAbsoluteRoot(repoRoot, 'repoRoot')
+  assertAbsoluteRoot(pluginRoot, 'pluginRoot')
 
-  // 1. Load the frozen policy YAML (a plugin-local asset; resolved from the
-  //    explicit plugin root, never from a project identity literal)
+  // 1. Load the frozen policy YAML
   let rawYaml: string
   try {
-    rawYaml = readFileSync(join(options.pluginRoot, 'routing-policy', 'routing-policy.yaml'), 'utf8')
+    rawYaml = readFileSync(join(pluginRoot, ...POLICY_PLUGIN_PATH.split('/')), 'utf8')
   } catch (err) {
     throw new RoutingError(
       'POLICY_UNREADABLE',
-      `Cannot read routing policy at ${POLICY_REPO_PATH}: ${String(err)}`,
+      `Cannot read routing policy at ${POLICY_PLUGIN_PATH} under ${pluginRoot}: ${String(err)}`,
     )
   }
 
@@ -108,7 +122,7 @@ export function evaluateRouting(input: RoutingInput, options: RoutingOptions): R
   } catch (err) {
     throw new RoutingError(
       'POLICY_INVALID',
-      `Cannot parse routing policy YAML at ${POLICY_REPO_PATH}: ${String(err)}`,
+      `Cannot parse routing policy YAML at ${POLICY_PLUGIN_PATH}: ${String(err)}`,
     )
   }
 
@@ -198,7 +212,7 @@ export function evaluateRouting(input: RoutingInput, options: RoutingOptions): R
     resolvedModelId,
     transportRequirements,
     timestamp: new Date().toISOString(),
-    policyRef: POLICY_REPO_PATH,
+    policyRef: POLICY_PLUGIN_PATH,
   }
   try {
     mkdirSync(receiptDir, { recursive: true })
@@ -218,14 +232,6 @@ export function evaluateRouting(input: RoutingInput, options: RoutingOptions): R
   }
 }
 
-// Shadow-route execution lives in ./shadow.js; re-exported here so consumers of
-// the routing-eval seam reach it through one entry (identity-stable bindings).
-export {
-  executeShadowRoute,
-  hashShadowPublicInput,
-  SHADOW_LIMITS,
-  ShadowRoutingError,
-} from './shadow.js'
 export type {
   ParcelShadowAuthorization,
   ResolvedParcelShadowAuthorization,
@@ -234,4 +240,12 @@ export type {
   ShadowRoutingInput,
   ShadowRoutingOptions,
   ShadowRoutingResult,
+} from './shadow.js'
+// Shadow-route execution lives in ./shadow.js; re-exported here so consumers of
+// the routing-eval seam reach it through one entry (identity-stable bindings).
+export {
+  executeShadowRoute,
+  hashShadowPublicInput,
+  SHADOW_LIMITS,
+  ShadowRoutingError,
 } from './shadow.js'

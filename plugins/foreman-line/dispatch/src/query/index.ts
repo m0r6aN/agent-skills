@@ -56,10 +56,10 @@ export interface QueryOptions {
   clientFactory?: McpClientFactory
   /**
    * Absolute path to the repo root for receipt scanning.
-   * Defaults to process.cwd(). W2-P2 (the integrating CLI) passes the actual
-   * repo root.
+   * Required (P2a/D19): never derived from process.cwd(); the integrating
+   * CLI passes the actual repo root.
    */
-  repoRoot?: string
+  repoRoot: string
 }
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -285,9 +285,9 @@ interface JiraSearchResult {
  * Read-only: this function calls only searchJiraIssuesUsingJql and
  * getAccessibleAtlassianResources. No mutating tools are reachable.
  */
-export async function queryAndRankCandidates(options?: QueryOptions): Promise<RankedCandidateList> {
-  const factory = options?.clientFactory ?? defaultClientFactory
-  const repoRoot = options?.repoRoot ?? process.cwd()
+export async function queryAndRankCandidates(options: QueryOptions): Promise<RankedCandidateList> {
+  const factory = options.clientFactory ?? defaultClientFactory
+  const repoRoot = options.repoRoot
 
   let mcpClient: McpToolClient | undefined
   let cachedCloudId: string | undefined

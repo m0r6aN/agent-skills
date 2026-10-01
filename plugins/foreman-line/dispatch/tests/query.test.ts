@@ -205,7 +205,7 @@ test('queryAndRankCandidates: empty issues array returns empty list', async () =
 test('queryAndRankCandidates: search tool error propagates', async () => {
   const stub = makeStub({ searchError: true })
   await assert.rejects(
-    queryAndRankCandidates({ clientFactory: stub.factory }),
+    queryAndRankCandidates({ clientFactory: stub.factory, repoRoot: tmpdir() }),
     (err: unknown) => err instanceof Error && err.message.includes('search gateway error'),
   )
 })
@@ -213,7 +213,7 @@ test('queryAndRankCandidates: search tool error propagates', async () => {
 test('queryAndRankCandidates: cloudId discovery failure when kaseya site is absent', async () => {
   const stub = makeStub({ includeKaseya: false })
   await assert.rejects(
-    queryAndRankCandidates({ clientFactory: stub.factory }),
+    queryAndRankCandidates({ clientFactory: stub.factory, repoRoot: tmpdir() }),
     (err: unknown) => err instanceof Error && err.message.includes(SITE_URL),
   )
 })
@@ -341,7 +341,7 @@ test('queryAndRankCandidates: client is closed after successful query', async ()
 
 test('queryAndRankCandidates: client is closed even when search throws', async () => {
   const stub = makeStub({ searchError: true })
-  await assert.rejects(queryAndRankCandidates({ clientFactory: stub.factory }))
+  await assert.rejects(queryAndRankCandidates({ clientFactory: stub.factory, repoRoot: tmpdir() }))
   assert.ok(stub.isClosed(), 'MCP client must be closed even after a thrown error')
 })
 
