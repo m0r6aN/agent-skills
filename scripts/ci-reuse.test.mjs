@@ -1017,12 +1017,12 @@ test('R5: harness step propagates each test command exit code (either suite fail
   assert.ok(first >= 0 && second > first, 'both test commands must run, runner harness first')
   const between = lines.slice(first + 1, second).join(' ')
   assert.ok(
-    between.includes('$LASTEXITCODE') && between.includes('exit'),
+    /\bif\s*\(\s*\$LASTEXITCODE\b[^]*\bexit\s+\$LASTEXITCODE\b/.test(between),
     'the first suite failing must exit the step before the second suite runs',
   )
   const after = lines.slice(second + 1).join(' ')
   assert.ok(
-    after.includes('$LASTEXITCODE') && after.includes('exit'),
+    /\bexit\s+\$LASTEXITCODE\b/.test(after),
     'the second suite failing must exit the step',
   )
 })
