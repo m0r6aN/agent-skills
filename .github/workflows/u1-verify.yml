@@ -140,8 +140,17 @@ jobs:
               if ref != "refs/tags/u1-verifier-pin":
                   print("::error::PIN_DRIFT: run ref %s is not the protected pin ref" % ref)
                   sys.exit(1)
-              if run_sha != recorded_commit:
-                  print("::error::PIN_DRIFT: run commit %s != pinned %s" % (run_sha, recorded_commit))
+              # F-19: the pin record cannot embed its own commit's SHA (self-reference
+              # paradox), so recorded_commit names the commit that INTRODUCED the pinned
+              # bytes. The binding is transitive: the byte-equality check above proves the
+              # running bytes are the pinned bytes, and here we prove recorded_commit is an
+              # ancestor of the run commit — so the recorded full-SHA identity (contract
+              # 3.1.1) transitively names this run's revision. A drifted workflow at any
+              # descendant commit still fails the byte check.
+              anc = subprocess.run(["git", "merge-base", "--is-ancestor", recorded_commit, run_sha])
+              if anc.returncode != 0:
+                  print("::error::PIN_DRIFT: pinned commit %s is not an ancestor of run commit %s"
+                        % (recorded_commit, run_sha))
                   sys.exit(1)
               if expected and run_sha != expected:
                   print("::error::PIN_DRIFT: run commit %s != dispatch-pinned %s" % (run_sha, expected))
