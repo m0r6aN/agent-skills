@@ -31,7 +31,9 @@ jobs:
       - name: Test the package runner and reuse core without subprocess effects
         run: |
           node --test scripts/foreman-line-ci.test.mjs
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           node --test scripts/ci-reuse.test.mjs
+          exit $LASTEXITCODE
 
       # CI-P1: sole decision point, completes before any sweep work (spec C12).
       - name: Decide reuse or fallback from Actions-API evidence
