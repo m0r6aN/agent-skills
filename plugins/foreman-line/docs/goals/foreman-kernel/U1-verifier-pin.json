@@ -16,12 +16,12 @@
     "verifier": "pending at record time; the authoritative shakedown dispatch (promotion request u1-shakedown-2026-10-01) is recorded in the closure report",
     "note": "A-U1.8.03: the first evidence cycle is a non-ACCEPT shakedown; the Unlocked policy must refuse ACCEPT via the F-4 gate"
   },
-  "configurationChecklistSha256": "sha256:39c966ce86959a63511bb03bae47db1fc03f6c5126c7f4ca1545a9176d667e9d",
+  "configurationChecklistSha256": "sha256:f6ce063326c79e70633e29bc1a3d3a87dea271708427cd6362f6fbcb8d0a1998",
   "oracleDigest": "sha256:ca3d30bdf07d6bc37dbb24b882c35ed0235f1b83a2e3b4536aa33a28eb6d20e3",
   "custodian": {
     "login": "m0r6aN",
     "objectId": "461a4112-8e91-41cb-afef-6889b8f48ff0"
   },
   "recordedAt": "2026-10-01T21:15:00Z",
-  "note": "workflowCommit is the commit that INTRODUCED the pinned bytes (F-19: a record cannot embed its own commit's SHA). The run-time binding is transitive and fail-closed: byte-equality at the run commit (immutable API fetch) + recorded-commit ancestor-of run-commit + protected-tag ref + dispatch pinned-commit-sha input. Any pin change is a contract amendment (standing #34) recorded in the review trail."
+  "note": "workflowCommit is the commit that INTRODUCED the pinned bytes (F-19: a record cannot embed its own commit's SHA). The run-time binding is transitive and fail-closed: byte-equality at the run commit (immutable API fetch) + recorded-commit ancestor-of run-commit + protected-tag ref + dispatch pinned-commit-sha input. Any pin change is a contract amendment (standing #34) recorded in the review trail. configurationChecklistSha256 is the checklist BYTE digest (F-2 class semantics: byte digests for stored bytes, document digests for identities); the earlier document-digest value was a shakedown-found conflation."
 }
