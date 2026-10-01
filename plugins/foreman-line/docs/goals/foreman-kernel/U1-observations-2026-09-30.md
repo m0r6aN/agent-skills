@@ -96,6 +96,12 @@ The `test` job's 498 failures decomposed into five root causes (owner's triage n
 
 **CLOSURE (2026-09-30/10-01): package matrix GREEN.** CI run `36812944266` on `u1-workflow-placement@db3c463` = `test` + `integration-report` SUCCESS — all 20 packages pass Install/Test/Typecheck/Lint on the CI toolchain (Node 24.19.0). Campaign shape: five parallel repair waves + one ratification wave (roots: stale barrels, tests-ahead-of-src parameterization + root-discipline, merge-regression path shapes, undeclared type deps, stale goldens/adjudication lists, D19 ruling/pin reconciliation of 93 instances, 6-package STANDING-#34 ratification). Three parcel-time git-diff freezes retired under the established A6/STANDING-CONSTRAINTS-#12 precedent (projection AC3, shaping AC8, verification AC-1) — each with the citing comment; every substantive pin kept. Remaining for the U1 lane: owner merges PR #123 → `U1-verifier-pin.json` + `u1-verifier-pin` tag → §8 independent review → FK-P18′ dispatchable → lock flip on first real evidence.
 
+## U1 pin procedure COMPLETE (2026-10-01, design §6.4 steps 1-2; PR #123 merged as `be3e3de3dfcf6159d4ffb265aa39847aac5f0814`)
+
+- `U1-verifier-pin.json` committed to `main` (`75d718b`, custodian push): `workflowCommit = be3e3de3dfcf6159d4ffb265aa39847aac5f0814`, `workflowFileSha256 = sha256:b7952e1e52f0144e7632fc73d8d04e9564184dfcf4c5af978c71592514cc4bbe` (u1-verify.yml bytes at that commit).
+- Protected tag `refs/tags/u1-verifier-pin` → `be3e3de3…` (pushed; tag ruleset 24258920 restricts its update/deletion to the custodian).
+- End-to-end verified: the workflow's own read path (`raw.githubusercontent.com/.../main/plugins/foreman-line/docs/goals/foreman-kernel/U1-verifier-pin.json`) serves both fields exactly as the in-run pin check consumes them (`sha256:`-prefixed digest comparison); `git ls-remote` confirms the tag. In-run enforcement (manual path: ref+SHA+byte-digest; event-driven: byte-equality + ruleset) is live for all future runs. **Remaining: §8 independent review (owner commissions) → FK-P18′ dispatchable → immutability lock flip on first real evidence.**
+
 ## Workflow placement (2026-09-30, owner direction "proceed")
 
 - Extracted **byte-exact** from the design's fenced blocks (design sha `0d8816eb…`): `u1-produce.yml` = doc lines 160–584 (425 lines), `u1-verify.yml` = doc lines 604–1489 (886 lines) — fence content untouched by the §6.6 prose edit; YAML parse PASS both files.
