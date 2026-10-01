@@ -161,9 +161,7 @@ async function main(argv: readonly string[]): Promise<number> {
     return 2
   }
   if (!isAbsolute(repoRoot)) {
-    process.stderr.write(
-      `error: --repo-root ${JSON.stringify(repoRoot)} is not an absolute path\n`,
-    )
+    process.stderr.write(`error: --repo-root ${JSON.stringify(repoRoot)} is not an absolute path\n`)
     return 2
   }
   if (command === 'show') return runShow(arg, flags)

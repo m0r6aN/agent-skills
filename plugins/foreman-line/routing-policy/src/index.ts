@@ -1,4 +1,7 @@
-export type { CatalogEligibilityInput, CatalogEligibilityResult } from './catalog-eligibility-adapter.js'
+export type {
+  CatalogEligibilityInput,
+  CatalogEligibilityResult,
+} from './catalog-eligibility-adapter.js'
 export { evaluateCatalogEligibility } from './catalog-eligibility-adapter.js'
 export type { EligibilityFacts, IdentityRefusalCode, Provenance } from './eligibility.js'
 export { IDENTITY_REFUSAL_CODES, projectEligibility, readCatalogSnapshot } from './eligibility.js'
