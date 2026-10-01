@@ -27,6 +27,7 @@ export const specFrontmatterSchema: SchemaObject = {
     'risk',
     'surfaces',
     'routing_class',
+    'verification_class',
   ],
   properties: {
     ticket: { type: 'string', minLength: 1 },
@@ -47,10 +48,25 @@ export const specFrontmatterSchema: SchemaObject = {
       type: 'string',
       enum: ['boilerplate', 'standard-feature', 'architecture/risk', 'implementation/standard'],
     },
+    verification_class: {
+      type: 'string',
+      enum: ['equivalence-provable', 'judgment-required'],
+    },
     permission_profile: { type: 'string', pattern: '\\S', enum: [...PROFILE_NAMES] },
     // CLOSE-P2 (W4-P5 ruling): optional, non-empty, non-whitespace-only string.
     // Deliberately no enum — no controlled vocabulary is ratified yet; adding
     // one later is a non-breaking additive change (permission_profile pattern).
     data_classification: { type: 'string', pattern: '\\S' },
+    // P1a (SPEC-CONVENTION §4.6/§4.8): OPTIONAL, deliberately NOT in
+    // `required`, no minItems — `involves: []` is legal and equivalent to
+    // absence (locked D14: optional, advisory, never a gate). Entries must
+    // be non-empty, non-whitespace-only strings; deliberately no enum —
+    // vocabulary membership is ADVISORY (validate.ts), never a schema
+    // rejection, and the vocabulary is extensible per-project via
+    // foreman/config.yaml `capabilities:` keys.
+    involves: {
+      type: 'array',
+      items: { type: 'string', pattern: '\\S' },
+    },
   },
 }

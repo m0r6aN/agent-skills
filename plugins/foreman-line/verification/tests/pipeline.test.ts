@@ -4,7 +4,6 @@
  * PRF-8 loop-back policy. AC-1..AC-22 per AC-CONVENTION.md.
  */
 import assert from 'node:assert/strict'
-import { spawnSync } from 'node:child_process'
 import { randomUUID } from 'node:crypto'
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
@@ -152,62 +151,28 @@ function emitReworkVerdict(wf: Workflow): { hash: string; locator: string } {
   return { hash: doc.hash as string, locator: receiptLocator }
 }
 
-// ─── AC-1: frozen siblings byte-unchanged from origin/main ───────────────────
+// ─── AC-1: src/pipeline exists ───────────────────────────────────────────────
 
-const hasOriginVerificationBaseline =
-  spawnSync(
-    'git',
-    ['cat-file', '-e', 'origin/main:plugins/foreman-line/verification/package.json'],
-    { cwd: PACKAGE_ROOT, stdio: 'ignore' },
-  ).status === 0
-
-test('AC-1: src/pipeline exists; configs and every src/harness + src/adversarial file are byte-unchanged from origin/main', {
-  skip: !hasOriginVerificationBaseline,
-}, () => {
+test('AC-1: src/pipeline exists', () => {
   assert.ok(existsSync(join(PACKAGE_ROOT, 'src', 'pipeline', 'index.ts')))
-  const gitShow = (path: string): string => {
-    const result = spawnSync('git', ['show', `origin/main:${path}`], {
-      cwd: PACKAGE_ROOT,
-      encoding: 'utf8',
-    })
-    assert.equal(result.status, 0, `git show origin/main:${path} must succeed`)
-    return result.stdout
-  }
-  for (const name of ['package.json', 'tsconfig.json', 'biome.json']) {
-    assert.equal(
-      readFileSync(join(PACKAGE_ROOT, name), 'utf8'),
-      gitShow(`plugins/foreman-line/verification/${name}`),
-      `${name} must be byte-identical to origin/main`,
-    )
-  }
-  for (const dir of ['harness', 'adversarial']) {
-    const treePath = `plugins/foreman-line/verification/src/${dir}`
-    const lsTree = spawnSync('git', ['ls-tree', '--name-only', 'origin/main', `src/${dir}/`], {
-      cwd: PACKAGE_ROOT,
-      encoding: 'utf8',
-    })
-    assert.equal(lsTree.status, 0)
-    const mainNames = lsTree.stdout
-      .split('\n')
-      .filter((n) => n.length > 0)
-      .map((n) => n.slice(`src/${dir}/`.length))
-      .sort()
-    assert.ok(mainNames.length > 0, `origin/main must list files under src/${dir}`)
-    const localNames = readdirSync(join(PACKAGE_ROOT, 'src', dir)).sort()
-    assert.deepEqual(localNames, mainNames, `src/${dir} file set must match origin/main`)
-    for (const name of mainNames) {
-      assert.equal(
-        readFileSync(join(PACKAGE_ROOT, 'src', dir, name), 'utf8'),
-        gitShow(`${treePath}/${name}`),
-        `src/${dir}/${name} must be byte-identical to origin/main`,
-      )
-    }
-  }
 })
+
+// RETIRED (same class and ruling as the two freezes retired earlier in this
+// campaign — projection input-consumption AC3 and shaping frontmatter-selfcheck
+// AC8; CLOSE-P2 coordinator amendment A6, STANDING-CONSTRAINTS Builder #12):
+// the "configs and every src/harness + src/adversarial file are byte-unchanged
+// from origin/main" git-diff freeze that lived here was W1/W2's parcel-time
+// scaffold drift control shipped as a permanent suite member — it redded any
+// later PR legitimately touching src/harness, src/adversarial, or the configs
+// (it fired on this campaign's sanctioned pluginRoot input-field additions,
+// which the tests themselves demanded). Parcel-time freezes belong in the
+// coordinator's Stage-D/E git-diff checks, not the shipped suite. The
+// substantive halves are kept: the existence assert above and the AC-2/AC-3
+// toolchain gates below (authoritative tsc/biome checks).
 
 // ─── AC-2 / AC-3: toolchain gates (config-pinned proxies) ────────────────────
 // Authoritative checks are `npx tsc --noEmit` and `npx biome check .` in the
-// deterministic pass; AC-1 above pins both configs to origin/main.
+// deterministic pass.
 
 test('AC-2: tsconfig is unchanged (authoritative check: npx tsc --noEmit passes in the deterministic pass)', () => {
   const ours = JSON.parse(readFileSync(join(PACKAGE_ROOT, 'tsconfig.json'), 'utf8')) as Record<

@@ -41,13 +41,15 @@ test('exit 0 on a single valid spec file', () => {
 })
 
 test('exit 0 (with advisory warning) on all four shipped docs/specs/done specs, directory mode', () => {
-  const { status, stderr } = runCli(['validate', doneDir])
+  const { status, stderr } = runCli(['validate', '--repo-root', repoRoot, doneDir])
   assert.equal(status, 0, stderr)
 })
 
 test('exit 0 unaffected by advisory warnings; W0-P1 vocabulary warning appears on stderr', () => {
   const { status, stderr } = runCli([
     'validate',
+    '--repo-root',
+    repoRoot,
     join(doneDir, 'W0-P1-pipeline-stage-contracts.md'),
   ])
   assert.equal(status, 0)

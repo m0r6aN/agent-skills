@@ -17,6 +17,8 @@
  */
 export const RATIFIED_PACKAGES = [
   'approval',
+  'authority-registry',
+  'bypass-outage-harness',
   'contract-readers',
   'contracts',
   'dispatch',
@@ -24,6 +26,9 @@ export const RATIFIED_PACKAGES = [
   'hybrid-routing',
   'integration',
   'jev-decisions',
+  'kernel-contracts',
+  'kernel-lease',
+  'kernel-state',
   'mutation-scope-guard',
   'permission-profiles',
   'projection',
@@ -34,6 +39,7 @@ export const RATIFIED_PACKAGES = [
   'schema-scaffold',
   'shaping',
   'skill-injection',
+  'spec-body-compiler',
   'spec-linter',
   'verification',
   'worker-envelopes',

@@ -7,8 +7,12 @@ import { existsSync, mkdirSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import type { ShapingResult } from '../../contracts/src/index.js'
 // Read-only reference to the shipped emitter's directory constant - reused,
-// never redefined, so both packages agree on where `active/` is.
-import { ACTIVE_SPECS_DIR } from '../../shaping/src/index.js'
+// never redefined, so both packages agree on where `active/` is. Since P2b-i
+// AC2 the constant is retired from `shaping`'s public surface and exists only
+// as the documented legacy default for an omitted `specsDir`, so it is read
+// from the emitter module directly.
+import { ACTIVE_SPECS_DIR } from '../../shaping/src/emit.js'
+import { assertAbsoluteRoot } from './errors.js'
 import { assertSafeSlug } from './path-guard.js'
 import { DEFAULT_REPO_ROOT } from './paths.js'
 
@@ -16,6 +20,12 @@ export const PROJECTED_ARTIFACT_SUFFIX = '.projected.shaping-result.json'
 
 export interface WriteOptions {
   readonly repoRoot?: string
+  /**
+   * Repo-relative POSIX directory the artifact is written beneath. Defaults to
+   * the legacy `ACTIVE_SPECS_DIR` value (`plugins/foreman-line/docs/specs/active`)
+   * when omitted - home-repo call sites pass the directory explicitly.
+   */
+  readonly specsDir?: string
 }
 
 export interface WriteResult {
@@ -40,10 +50,15 @@ export function writeProjectedArtifact(
 ): WriteResult {
   assertSafeSlug(slug)
   const repoRoot = options.repoRoot ?? DEFAULT_REPO_ROOT
-  const activeDir = join(repoRoot, ...ACTIVE_SPECS_DIR.split('/'))
+  // P2b-i AC6b seam refusal: a non-absolute repoRoot would silently re-anchor
+  // every derived path to process.cwd() (mechanism class 5), so it is refused
+  // with the typed error before any path is constructed.
+  assertAbsoluteRoot(repoRoot, 'writeProjectedArtifact')
+  const specsDir = options.specsDir ?? ACTIVE_SPECS_DIR
+  const activeDir = join(repoRoot, ...specsDir.split('/'))
   const fileName = `${slug}${PROJECTED_ARTIFACT_SUFFIX}`
   const artifactPath = join(activeDir, fileName)
-  const artifactRef = `${ACTIVE_SPECS_DIR}/${fileName}`
+  const artifactRef = `${specsDir}/${fileName}`
 
   if (existsSync(artifactPath)) {
     throw new Error(
