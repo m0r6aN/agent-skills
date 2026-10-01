@@ -1,14 +1,14 @@
 {
   "schema": "u1-verifier-pin/v2",
   "workflow": ".github/workflows/u1-verify.yml",
-  "workflowCommit": "b76869ca279ee2a42c1da095be758e8245e7f3e1",
-  "workflowFileSha256": "sha256:e148639581926e0bbba56302f1c21cf80f703dec68e3364cb4eceafd25d7fbde",
+  "workflowCommit": "dc5617924379a5a574fddb2c71cce1647a74ba04",
+  "workflowFileSha256": "sha256:8329f858ec5de48d6a55cb7254c16c871d40875fc01b0ae4f4409e025ed2a661",
   "tag": "refs/tags/u1-verifier-pin",
   "producerWorkflow": ".github/workflows/u1-produce.yml",
   "supersedes": {
-    "workflowCommit": "be3e3de3dfcf6159d4ffb265aa39847aac5f0814",
-    "workflowFileSha256": "sha256:b7952e1e52f0144e7632fc73d8d04e9564184dfcf4c5af978c71592514cc4bbe",
-    "reason": "A-U1.8.16 re-pin after the 2026-10-01 closure of 8 review findings (F-1..F-18) plus F-19 pin-identity fix; standing #34 recorded amendment"
+    "workflowCommit": "b76869ca279ee2a42c1da095be758e8245e7f3e1",
+    "workflowFileSha256": "sha256:e148639581926e0bbba56302f1c21cf80f703dec68e3364cb4eceafd25d7fbde",
+    "reason": "ancestry check moved to the compare API (shallow-clone false-refusal); byte-identical record semantics otherwise"
   },
   "actionlint": "not-available-on-ci-or-workstation; substituted: PyYAML parse PASS both workflows + machine-checked outputs wiring (7/7 job maps) + zero raw expression interpolation of file-derived values (recorded in U1-closure-implementation-notes-2026-10-01.md)",
   "dryRun": {
