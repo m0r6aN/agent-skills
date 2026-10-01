@@ -11,3 +11,8 @@
 4. Push 4 (docs-only after push 3's green run) → expected `reuse` again (source = push 3's run) — plus the full evidence addendum and Stage F closure docs.
 
 `merge-context-mismatch` (case 5) fires organically if `main` advances between a green run and the following docs-only push — captured as evidence if it happens; force-push case 6 is authorization-blocked (standing authorization #4 forbids force pushes) and remains unit-covered (suite tests pin `source-head-unreachable`/`not-ancestor`).
+
+## Results
+
+- **Push 1 (seed, `adf2ff2`):** run `36904893417` (pull_request) — `decision: fallback`, expected `no-prior-run`; full sweep executed and **GREEN** (test job 10m41s, `integration-report` ✓). Seed planted. (Push twin `36904883714` = `event-class-ineligible` canary.)
+- **Push 2 (this commit):** expected `decision: reuse`, `source_run` = `36904893417`, five-class hashes equal (this delta touches only `plugins/foreman-line/docs/goals/ci-optimization/**`), sweep NOT executed, both contexts green.
