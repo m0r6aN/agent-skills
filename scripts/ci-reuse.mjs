@@ -894,7 +894,10 @@ export async function decideCore(ctx) {
     record = failFallback(reasonOf(error), ctx.headShaFallback ?? null, null, null)
   }
   record = withBestEffortHashes(ctx, record)
-  return { record, exitCode: 0, ...buildEmission(record) }
+  const emission = buildEmission(record)
+  // R2: all emission writes complete before any sweep work (AC0 "on every run")
+  if (typeof ctx.emit === 'function') ctx.emit(record, emission)
+  return { record, exitCode: 0, ...emission }
 }
 
 // ─── verification (AC4) ──────────────────────────────────────────────────────
@@ -967,7 +970,10 @@ export async function verifyCore(ctx) {
   }
   record = withBestEffortHashes(ctx, record)
   const emission = buildEmission(record)
-  // the effective decision is emitted BEFORE any sweep work (C12)
+  // R2: the effective decision's emission — stdout record, GITHUB_STEP_SUMMARY,
+  // and ALL GITHUB_OUTPUT writes — completes BEFORE the fallback-sweep spawn
+  // (AC0 "on every run"; C12 seam ordering)
+  if (typeof ctx.emit === 'function') ctx.emit(record, emission)
   const sweep = ctx.sweep ?? null
   if (record.decision === 'fallback' && sweep !== null) {
     let exitCode = 1
@@ -1003,8 +1009,47 @@ function envString(env, name) {
   return typeof value === 'string' ? value : ''
 }
 
-async function main(argv, env) {
+/**
+ * Real emission side (audit-only): stdout record line, GITHUB_STEP_SUMMARY,
+ * and the step outputs — in that order, all of it (R2). Write failures are
+ * configuration failures and red the head visibly (C7).
+ */
+function realEmitter(env, stdoutWrite, appendFile) {
+  return (record, emission) => {
+    try {
+      stdoutWrite(emission.logText)
+      const summaryPath = envString(env, 'GITHUB_STEP_SUMMARY')
+      const outputPath = envString(env, 'GITHUB_OUTPUT')
+      if (summaryPath) appendFile(summaryPath, emission.summaryText)
+      if (outputPath) {
+        appendFile(outputPath, [
+          `decision=${record.decision}`,
+          `fallback_reason=${record.fallback_reason ?? ''}`,
+          `base_sha=${record.base_sha ?? ''}`,
+          `head_sha=${record.head_sha ?? ''}`,
+          `evidence_record=${emission.json}`,
+          '',
+        ].join('\n'))
+      }
+    } catch (cause) {
+      throw new CiReuseError(REASON_TEMPLATES.CLASSIFICATION_ERROR, 'could not write decision outputs', cause)
+    }
+  }
+}
+
+/**
+ * Thin CLI boundary (C12): `decide` and `verify` share one wiring path. Every
+ * external effect flows through an injected seam (`deps`), normalized at this
+ * boundary (SC #1/#2); production defaults use fetch/spawnSync/node:fs.
+ */
+export async function runCli(argv, env, deps = {}) {
   const { verb, sweep } = parseArgs(argv)
+  // R3: inside Actions a missing output channel is a configuration failure —
+  // refuse loudly (C7) instead of silently green-lighting unvalidated heads.
+  // Standalone runs keep working without the channel.
+  if (envString(env, 'GITHUB_ACTIONS') === 'true' && !envString(env, 'GITHUB_OUTPUT')) {
+    throw new CiReuseError(REASON_TEMPLATES.CLASSIFICATION_ERROR, 'GITHUB_ACTIONS is set but GITHUB_OUTPUT is missing')
+  }
   const repo = envString(env, 'GITHUB_REPOSITORY')
   const runIdText = envString(env, 'GITHUB_RUN_ID')
   const eventName = envString(env, 'GITHUB_EVENT_NAME')
@@ -1014,58 +1059,50 @@ async function main(argv, env) {
   }
   let event
   try {
-    event = JSON.parse(readFileSync(envString(env, 'GITHUB_EVENT_PATH'), 'utf8'))
+    const read = deps.readFile ?? readFileSync
+    event = JSON.parse(read(envString(env, 'GITHUB_EVENT_PATH'), 'utf8'))
   } catch (cause) {
     event = null // decided as evidence-unverifiable downstream
     void cause
   }
   const token = envString(env, 'GITHUB_TOKEN')
   const apiBase = envString(env, 'GITHUB_API_URL') || 'https://api.github.com'
-  const api = async (url, init) => {
+  const api = deps.api ?? (async (url, init) => {
     const response = await fetch(url, {
       ...init,
       headers: { ...init.headers, ...(token ? { Authorization: `Bearer ${token}` } : {}) },
       signal: AbortSignal.timeout(15000),
     })
     return { status: response.status, text: await response.text() }
-  }
-  const root = fileURLToPath(new URL('../', import.meta.url))
-  const git = (args, opts) => spawnSync('git', args, {
-    cwd: root, encoding: 'buffer', maxBuffer: 1 << 28, input: opts?.input,
   })
+  const root = fileURLToPath(new URL('../', import.meta.url))
+  const git = deps.git ?? ((args, opts) => spawnSync('git', args, {
+    cwd: root, encoding: 'buffer', maxBuffer: 1 << 28, input: opts?.input,
+  }))
   const ctx = {
     api, git, eventName, event,
     runId: Number(runIdText), repo, apiBase,
     headShaFallback: HEX40_RE.test(headShaFallback) ? headShaFallback : null,
     sweep,
-    spawn: (cmd, args, opts) => spawnSync(cmd, args, { ...opts, cwd: root }),
+    spawn: deps.spawn ?? ((cmd, args, opts) => spawnSync(cmd, args, { ...opts, cwd: root })),
+    emit: deps.emit ?? realEmitter(
+      env,
+      deps.stdoutWrite ?? ((text) => process.stdout.write(text)),
+      deps.appendFile ?? appendFileSync,
+    ),
+    // E10: verify re-validates the decide step's evidence_record output
+    // (C12-sanctioned channel; never logs)
+    evidence: envString(env, 'CI_REUSE_EVIDENCE'),
   }
-  const result = verb === 'decide' ? await decideCore(ctx) : await verifyCore(ctx)
-  process.stdout.write(result.logText)
-  const summaryPath = envString(env, 'GITHUB_STEP_SUMMARY')
-  const outputPath = envString(env, 'GITHUB_OUTPUT')
-  try {
-    if (summaryPath) appendFileSync(summaryPath, result.summaryText)
-    if (outputPath) {
-      const record = result.record
-      appendFileSync(outputPath, [
-        `decision=${record.decision}`,
-        `fallback_reason=${record.fallback_reason ?? ''}`,
-        `base_sha=${record.base_sha ?? ''}`,
-        `head_sha=${record.head_sha ?? ''}`,
-        `evidence_record=${result.json}`,
-        '',
-      ].join('\n'))
-    }
-  } catch (cause) {
-    throw new CiReuseError(REASON_TEMPLATES.CLASSIFICATION_ERROR, 'could not write decision outputs', cause)
-  }
-  process.exitCode = result.exitCode
+  return verb === 'decide' ? await decideCore(ctx) : await verifyCore(ctx)
 }
 
 if (import.meta.main) {
-  main(process.argv.slice(2), process.env).catch(() => {
-    console.error('ci-reuse failed; inspect the decision inputs and invocation arguments.')
+  runCli(process.argv.slice(2), process.env).then((result) => {
+    process.exitCode = result.exitCode
+  }).catch((error) => {
+    const reason = error instanceof CiReuseError ? error.reason : 'error'
+    console.error(`ci-reuse failed (${sanitizeUntrusted(String(reason), 64)}); inspect the decision inputs and invocation arguments.`)
     process.exitCode = 1
   })
 }
