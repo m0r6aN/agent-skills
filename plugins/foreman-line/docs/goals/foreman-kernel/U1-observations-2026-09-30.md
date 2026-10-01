@@ -120,6 +120,22 @@ The `test` job's 498 failures decomposed into five root causes (owner's triage n
 
 **Exposure analysis:** three principals (owner + 2 service principals) can modify the immutability policy and re-enable shared-key access **while the policy is Unlocked**; the owner's account-scope Data Contributor spans the whole shared account `bs2jhgwvduljfdwdp`. The lock flip is the strong mitigator (post-lock, policy shortening is refused even to Owner/Support; retained blobs resist key-based access). Detection posture pending the F-18 decision block: periodic `allowSharedKeyAccess` + policy-state rechecks recorded with the verifier's management-plane read.
 
+## §8 closure — owner decisions + provisioning (2026-10-01)
+
+**Owner decision batch (recorded verbatim in `U1-8-closure-amendments-2026-10-01.md` authority bases; doc now RATIFIED, sha256 `895fbe0e6de1cd8966e309cc834eb5f580b4cbda5bb7866d3121b39a398360e1`):** F-3 = option (b) non-authoritative event runs; F-8 = ABAC prefix conditions now; F-14 = option (a) attestation named gap, never status-affecting; F-18 = Allow + hardening + shared-key detection; all remaining amendments ratified as drafted.
+
+**F-8 provisioning (A-U1.8.07) — observed configuration:**
+
+| Act | State |
+|---|---|
+| Producer `u1-producer-mi` role assignment | replaced: `Storage Blob Data Contributor` at `u1-evidence` scope **conditioned** `@Resource[Microsoft.Storage/storageAccounts/blobServices/containers/blobs:path] StringLike 'runs/*'` (v2.0, created 2026-10-01T17:21:48Z; prior unconditioned assignment deleted) |
+| Verifier `u1-verifier-mi` create-only role assignment | replaced: `u1-verifier-evidence-creator` **conditioned** `blobs:path StringLike 'verifications/*' OR StringLike 'attempt-ledger/*'` (v2.0, created 2026-10-01T17:22:25Z); read-all remains via the unconditioned `Storage Blob Data Reader` assignment |
+| Ledger authority (A-U1.8.07 §3.3.3) | attempt ledger written ONLY by the verifier identity (no builder-reachable workflow federates to it) |
+| Diagnostic logging (A-U1.8.07) | Log Analytics workspace `u1-evidence-audit` created in `biostack-rg`; diagnostic setting `u1-audit` on the blob service with `StorageRead`/`StorageWrite`/`StorageDelete` categories — requester-identity logs retained OUTSIDE the evidence container |
+| Denied-operation probes | implementation-side: the rewritten workflows self-probe (out-of-prefix verifier write, producer decision-namespace write) and record denials as first-run evidence (F-8 evidence gate) |
+
+Network posture (F-18 decision): **Allow + hardening + shared-key detection** — `allowSharedKeyAccess` and policy-state rechecks fold into every verification via the verifier's management-plane Reader.
+
 ## Workflow placement (2026-09-30, owner direction "proceed")
 
 - Extracted **byte-exact** from the design's fenced blocks (design sha `0d8816eb…`): `u1-produce.yml` = doc lines 160–584 (425 lines), `u1-verify.yml` = doc lines 604–1489 (886 lines) — fence content untouched by the §6.6 prose edit; YAML parse PASS both files.
