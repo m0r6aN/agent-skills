@@ -16,10 +16,20 @@ function readJson(path: string): Record<string, unknown> {
 
 type DependencyMap = Record<string, string>
 
+// Pins the verification+dispatch W1/W2 SIBLING AGREEMENT only (the exact pair this
+// test compares). Both packages have shipped @biomejs/biome 2.5.3 / @types/node
+// 26.1.1 / tsx 4.23.1 / typescript 7.0.2 since inception (git log -S over
+// verification/dispatch package.json shows only 2.5.3 additions across 23fa60b/
+// 48d1db7/1fc26f5 — no 2.5.14). Provenance: the prior golden (2.5.14/26.6.2/4.23.15)
+// was introduced by recovery-merge 6843cb4 and NEVER matched the pair it checks, so
+// it was stale. SEPARATE concern, NOT this test's business: the wider tree carries a
+// Camp A / Camp B devDependency split (15 packages at 2.5.3/26.1.1/4.23.1 vs 11 at
+// 2.5.14/26.6.2/4.23.15, jev-decisions none); that toolchain-unification question is
+// tracked separately and is out of scope for this sibling-agreement pin.
 const SHARED_DEV_DEPENDENCIES: DependencyMap = {
-  '@biomejs/biome': '2.5.14',
-  '@types/node': '26.6.2',
-  tsx: '4.23.15',
+  '@biomejs/biome': '2.5.3',
+  '@types/node': '26.1.1',
+  tsx: '4.23.1',
   typescript: '7.0.2',
 }
 

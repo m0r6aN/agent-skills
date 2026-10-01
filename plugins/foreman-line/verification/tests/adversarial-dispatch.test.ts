@@ -33,6 +33,7 @@ function makeFixture(specBody = 'AC-1: fixture criterion\n'): Fixture {
     surfaces: ['plugins/foreman-line/verification'],
     worktreePath: join(repoRoot, 'reviewer-wt'),
     repoRoot,
+    pluginRoot: repoRoot,
   }
   return { repoRoot, workflowId, input }
 }

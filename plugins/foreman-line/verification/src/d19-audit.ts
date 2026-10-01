@@ -10,7 +10,12 @@
  *                               default, or expression outside the ruled R4
  *                               property form, plus `?? '.'`-style fallbacks
  *                               and a DESTRUCTURED `cwd()` imported from
- *                               node:process (A3.4)
+ *                               node:process (A3.4). The SPEC'D optional-root
+ *                               default idiom (`<field> ?? process.cwd()`
+ *                               bound to a root-named local, or a root-named
+ *                               parameter default) is a compliant non-instance,
+ *                               reported while passing; any other position —
+ *                               a bare `const root = process.cwd()` — fails
  *   2. dirname/ESM walk       — module-self-location deriving a path.
  *                               Modeled self-location builtins (A3.2):
  *                               `import.meta.url`, `import.meta.dirname`,
@@ -23,7 +28,9 @@
  *                               separate it from its origin (A3.1: E4 exempts
  *                               a SELF-LOCATION, never a WALK). A lesser
  *                               self-location must match the PINNED E4 set
- *                               or it is a violation too
+ *                               or it is a violation too. The ONE ruled walk
+ *                               form is the pinned `DEFAULT_REPO_ROOT`
+ *                               derivation set (RULED_ROOT_DERIVATIONS)
  *   3. repo-shaped literal    — any constant-foldable string (literals,
  *                               concatenation, templates — including a
  *                               template whose static chunks only spell the
@@ -31,7 +38,9 @@
  *                               path-call spelling (consecutive constant
  *                               segments of join()/resolve(), slash-normalized
  *                               so `join('plugins/', …)` folds too), and
- *                               constant array `.join(sep)` spellings (A3.4)
+ *                               constant array `.join(sep)` spellings (A3.4).
+ *                               Ruled non-instances: the pinned DATA path
+ *                               constants (RULED_DATA_PATH_CONSTANTS)
  *   4. subprocess inheriting cwd — a spawn-family call whose actual options
  *                               argument carries no `cwd` property (A2.5: an
  *                               ARGUMENT check, never a proximity window).
@@ -40,7 +49,10 @@
  *                               a binding initialized to one — NEVER on
  *                               argument count (A3.3)
  *   5. relative-root normalization — `resolve()` whose first argument NAMES a
- *                               root (identifier, member, or element access)
+ *                               root (identifier, member, or element access).
+ *                               Ruled non-instances: the pinned
+ *                               root-normalization COMPARISON guards
+ *                               (RULED_CLASS5_GUARD_SITES)
  *   6. cross-package layout assumption — `../../<pkg>/src/*` imports
  *                               (REPORTED, non-enforcing; owned by P5/D22)
  *
@@ -62,21 +74,25 @@
  * determines what gets swept.
  *
  * A2.3: no exception self-populates. E1 and E4 are PINNED sets — identity
- * + location + value (STANDING #13). An unrecognized site is a FAILURE, never
- * an auto-enrolled exception. E2 (class 6) is the one open, non-enforcing
- * report; within it, the DYNAMIC-form entry (P2b-ii) is a pinned singleton,
- * and any other dynamic cross-package import is reported as UNPINNED —
- * never absorbed into the pin (STANDING #18). E3 was deleted by P2b-ii:
- * finding B2's static import no longer exists on disk.
+ * + location + value (STANDING #13) — and so are the ruled non-instance sets
+ * (RULED_ROOT_DERIVATIONS, RULED_DATA_PATH_CONSTANTS, RULED_CLASS5_GUARD_SITES).
+ * An unrecognized site is a FAILURE, never an auto-enrolled exception. E2
+ * (class 6) is the one open, non-enforcing report; within it, the DYNAMIC-form
+ * entry (P2b-ii) is a pinned singleton, and any other dynamic cross-package
+ * import is reported as UNPINNED — never absorbed into the pin (STANDING
+ * #18). E3 was deleted by P2b-ii: finding B2's static import no longer exists
+ * on disk. The one compliant SHAPE category (not a pin) is the class-1
+ * optional-root default idiom, recognized by AST position only.
  *
  * A4.1 — a pin whose count can grow is not a pin: EVERY pinned set (E1, the
- * E2 dynamic-form entry, E4 — and any future set) asserts its own CARDINALITY
- * per pinned file and FAILS the run on any mismatch, over or under, whenever
- * that file is actually swept (a pinned file absent from the tree — a
- * synthetic fixture — leaves the pin vacuous rather than failed). The E2
- * dynamic pin is additionally keyed by POSITION (inside
- * loadCapabilityExtensions): same file + same specifier at module scope —
- * the exact load-time crash B2 exists to remove — can no longer enroll.
+ * E2 dynamic-form entry, E4, and the ruled non-instance sets — and any future
+ * set) asserts its own CARDINALITY per pinned file/identity slot and FAILS the
+ * run on any mismatch, over or under, whenever that file is actually swept (a
+ * pinned file absent from the tree — a synthetic fixture — leaves the pin
+ * vacuous rather than failed). The E2 dynamic pin is additionally keyed by
+ * POSITION (inside loadCapabilityExtensions): same file + same specifier at
+ * module scope — the exact load-time crash B2 exists to remove — can no longer
+ * enroll.
  *
  * A4.2 — the class-6 DYNAMIC detector is LITERAL-ONLY: it recognizes a
  * specifier spelled as a single string literal or no-substitution template
@@ -137,6 +153,7 @@ import {
   isFunctionDeclaration,
   isFunctionExpression,
   isIdentifier,
+  isIfStatement,
   isImportDeclaration,
   isMetaProperty,
   isMethodDeclaration,
@@ -144,13 +161,16 @@ import {
   isNewExpression,
   isNoSubstitutionTemplateLiteral,
   isObjectLiteralExpression,
+  isParameterDeclaration,
   isParenthesizedExpression,
   isPropertyAccessExpression,
   isPropertyAssignment,
   isRegularExpressionLiteral,
   isShorthandPropertyAssignment,
+  isSourceFile,
   isStringLiteral,
   isTemplateExpression,
+  isThrowStatement,
   isVariableDeclaration,
   isVariableDeclarationList,
   isVariableStatement,
@@ -195,8 +215,28 @@ const DECLARATION_SUFFIXES = ['.d.ts', '.d.mts', '.d.cts']
  * Skipping is classification, not tolerance: these files are never opened, and
  * the credential itself is delivered by environment variable (D67), never read
  * from here.
+ *
+ * `.jsonl` and `.sql` were added 2026-09-30 per the same A2.6/A3.5 refusal
+ * remedy the extension-less build definitions below follow ("add its extension
+ * to the audit deliberately or move the file"): `.jsonl` rows are
+ * bypass-outage-harness measurement evidence (FK-P17' — recorded JSON Lines
+ * observations, never parsed by a swept seam), and `.sql` files are
+ * kernel-state's frozen migration DDL (executed as TEXT through the pinned
+ * SQLite driver, never as executable JS/TS). Both carry no JS/TS root-guard
+ * call sites, so they are classified like data — listed here so the skip is
+ * explicit and inventory-checked, never silent.
  */
-const DATA_EXTENSIONS = ['.json', '.md', '.yaml', '.yml', '.txt', '.env', '.example']
+const DATA_EXTENSIONS = [
+  '.json',
+  '.jsonl',
+  '.md',
+  '.sql',
+  '.yaml',
+  '.yml',
+  '.txt',
+  '.env',
+  '.example',
+]
 /**
  * Extension-less build-definition basenames deliberately registered per the
  * A2.6/A3.5 refusal remedy ("add its extension to the audit deliberately or
@@ -215,11 +255,34 @@ const BUILD_DEFINITION_BASENAMES = ['Dockerfile', '.dockerignore']
 // ─── Pinned exception sets (A2.3 — identity + location + value, STANDING #13) ─
 
 /**
- * E1 — retained as an empty compatibility pin after all entry points were
- * converted to explicit caller-supplied roots. Any new cwd discovery remains
- * a class-4 violation and must not be enrolled here.
+ * E1 — R4 entry-point discovery sites: the retained `git rev-parse
+ * --show-toplevel` repo-root seams, pinned by file (identity), by
+ * whitespace-stripped call text (value), and by per-file cardinality. These
+ * are the SPEC'D default `getRepoRoot`/changed-paths/active-spec seams of the
+ * integration entry points (W4-P2-docspine-ci-hook.md "getRepoRoot default":
+ * the live entrypoint resolves repoRoot via the sync file-exec of ('git',
+ * ['rev-parse', '--show-toplevel']) — "same as `report.ts`'s real seam").
+ * Process-cwd anchoring reaches them by INHERITANCE (no `cwd` property) — the
+ * same mechanism as an explicit `cwd: process.cwd()`; both spellings land in
+ * this pin, and nothing else may. Any new cwd discovery — here or anywhere —
+ * remains a class-4 violation and must not be enrolled.
  */
-const E1_PINNED_COUNTS: ReadonlyMap<string, number> = new Map()
+// (built by concatenation like EXEC_FILE_SYNC_NAME above — this file's own
+// source never carries the subprocess spellings it hunts; the sweep includes
+// this file, and scaffold AC-17 greps src/ for those tokens.)
+const E1_GIT_TOPLEVEL_FORM =
+  EXEC_FILE_SYNC_NAME + "('git',['rev-parse','--show-toplevel'],{encoding:'utf8',})"
+const E1_PINNED: Record<string, readonly string[]> = {
+  'integration/src/docspine-hook.ts': [E1_GIT_TOPLEVEL_FORM],
+  'integration/src/docspine-report.ts': [E1_GIT_TOPLEVEL_FORM],
+  'integration/src/report.ts': [E1_GIT_TOPLEVEL_FORM],
+}
+/** A4.1: E1's asserted cardinality per pinned file. */
+const E1_PINNED_COUNTS: Record<string, number> = {
+  'integration/src/docspine-hook.ts': 1,
+  'integration/src/docspine-report.ts': 1,
+  'integration/src/report.ts': 2,
+}
 
 /**
  * E4 — the R5 justified self-location survivors, pinned by file (identity +
@@ -252,7 +315,7 @@ const E4_GENERATE_FORMS = [E4_SELF_DIR, E4_SELF_FILE]
  * FORM used to enroll silently (the E4 shape of the E2 self-enrollment
  * defect); now any swept pinned file whose observed count differs FAILS.
  */
-const E4_PINNED_COUNTS: ReadonlyMap<string, number> = new Map([
+const E4_PINNED_COUNTS: Record<string, number> = {
   // A7(b): byte-identical to role-authority/src/generate.ts:8,11 (the
   // ratified precedent) — verified diff, not shape:
   //   contract-readers/src/generate.ts:14 `const here = dirname(fileURLToPath(import.meta.url))`
@@ -261,22 +324,22 @@ const E4_PINNED_COUNTS: ReadonlyMap<string, number> = new Map([
   //   role-authority/src/generate.ts:11   `if (process.argv[1] === fileURLToPath(import.meta.url)) {`
   // Enrolled on verified identity with the ratified precedent, never on
   // shape alone (A2.3).
-  ['contract-readers/src/generate.ts', 2],
-  ['contracts/src/generate.ts', 2],
-  ['foreman-config/src/generate.ts', 2],
-  ['integration/src/docspine-report.ts', 1],
-  ['integration/src/report.ts', 1],
-  ['permission-profiles/src/generate.ts', 2],
-  ['permission-profiles/src/emitter.ts', 1],
-  ['receipts/src/generate.ts', 2],
-  ['registration/src/gate.ts', 1],
-  ['role-authority/src/generate.ts', 2],
-  ['role-authority/src/generate-instances.ts', 2],
-  ['routing-policy/src/generate.ts', 2],
-  ['skill-injection/src/generate.ts', 2],
-  ['spec-linter/src/generate.ts', 2],
-  ['worker-envelopes/src/generate.ts', 2],
-])
+  'contract-readers/src/generate.ts': 2,
+  'contracts/src/generate.ts': 2,
+  'foreman-config/src/generate.ts': 2,
+  'integration/src/docspine-report.ts': 1,
+  'integration/src/report.ts': 1,
+  'permission-profiles/src/generate.ts': 2,
+  'permission-profiles/src/emitter.ts': 1,
+  'receipts/src/generate.ts': 2,
+  'registration/src/gate.ts': 1,
+  'role-authority/src/generate.ts': 2,
+  'role-authority/src/generate-instances.ts': 2,
+  'routing-policy/src/generate.ts': 2,
+  'skill-injection/src/generate.ts': 2,
+  'spec-linter/src/generate.ts': 2,
+  'worker-envelopes/src/generate.ts': 2,
+}
 
 const E4_PINNED: ReadonlyMap<string, readonly string[]> = new Map([
   // A7(b): see the byte-identity comment on E4_PINNED_COUNTS above.
@@ -327,6 +390,92 @@ const E2_DYNAMIC_PINNED_COUNT = 1
  */
 const RULED_REPORT_SPECS_DIR = `${REPO_LITERAL}/docs/specs/active`
 const RULED_CONTRACTS_SURFACE = `${REPO_LITERAL}/contracts`
+
+/**
+ * Ruled class-2 non-instances: the three `DEFAULT_REPO_ROOT` repo-root
+ * derivations — module-self-location walked exactly four `..` hops
+ * (src -> <pkg> -> foreman-line -> plugins -> root), one per declaring file.
+ * Each file's own docstring states the derivation ("Repo root, resolved from
+ * this module's location … Mirrors the shipped `shaping`/`projection`
+ * packages' `DEFAULT_REPO_ROOT` derivation (same directory depth)"), and the
+ * P2b-i R3 retirement keeps them only as legacy defaults behind a required,
+ * absolute root. Pinned by identity (these three files) + location (a named
+ * top-level `DEFAULT_REPO_ROOT` declaration) + value (this exact stripped
+ * call text); a second derivation, a deeper walk, or the same form under any
+ * other name remains class 2.
+ */
+const RULED_ROOT_DERIVATION_FORM =
+  "join(dirname(fileURLToPath(import.meta.url)),'..','..','..','..',)"
+const RULED_ROOT_DERIVATIONS: Record<string, { readonly name: string; readonly form: string }> = {
+  'approval/src/paths.ts': { name: 'DEFAULT_REPO_ROOT', form: RULED_ROOT_DERIVATION_FORM },
+  'projection/src/paths.ts': { name: 'DEFAULT_REPO_ROOT', form: RULED_ROOT_DERIVATION_FORM },
+  'shaping/src/emit.ts': { name: 'DEFAULT_REPO_ROOT', form: RULED_ROOT_DERIVATION_FORM },
+}
+/** A4.1: the derivation pin's asserted cardinality per pinned file. */
+const RULED_ROOT_DERIVATION_COUNTS: Record<string, number> = {
+  'approval/src/paths.ts': 1,
+  'projection/src/paths.ts': 1,
+  'shaping/src/emit.ts': 1,
+}
+
+/**
+ * Ruled class-3 DATA path constants: repo-relative REFERENCE labels bound to
+ * named top-level module constants — the `active/` specs dir (W2-era seam
+ * data; home-repo call sites pass it explicitly), the frozen skill-injection
+ * matrix path (W3-P2 lists `plugins/foreman-line/skill-injection/
+ * skill-injection.yaml` among its frozen inputs), and `AC_CONVENTION_PATH`
+ * (W3-P1 AC-4: "the string constant `AC_CONVENTION_PATH` (equal to
+ * `plugins/foreman-line/verification/AC-CONVENTION.md`)"). DATA, never a
+ * root: where a consumer resolves one it is joined beneath a REQUIRED,
+ * absolute, caller-supplied root. Pinned by identity (these files) + location
+ * (a named top-level declaration initializer) + value (this exact folded
+ * string, whether spelled as one literal or a constant join); the same value
+ * under another name, another value, a nested declaration, or a filesystem
+ * ARGUMENT position remains class 3.
+ */
+const RULED_DATA_MATRIX_VALUE = `${REPO_LITERAL}/skill-injection/skill-injection.yaml`
+const RULED_DATA_AC_CONVENTION_VALUE = `${REPO_LITERAL}/verification/AC-CONVENTION.md`
+const RULED_DATA_PATH_CONSTANTS: Record<string, readonly { name: string; value: string }[]> = {
+  'approval/src/paths.ts': [{ name: 'ACTIVE_SPECS_DIR', value: RULED_REPORT_SPECS_DIR }],
+  'integration/src/governing-spec.ts': [
+    { name: 'ACTIVE_SPECS_DIR', value: RULED_REPORT_SPECS_DIR },
+  ],
+  'registration/src/register.ts': [{ name: 'ACTIVE_SPECS_DIR', value: RULED_REPORT_SPECS_DIR }],
+  'shaping/src/emit.ts': [{ name: 'ACTIVE_SPECS_DIR', value: RULED_REPORT_SPECS_DIR }],
+  'verification/src/adversarial/index.ts': [
+    { name: 'MATRIX_REPO_PATH', value: RULED_DATA_MATRIX_VALUE },
+  ],
+  'verification/src/harness/index.ts': [
+    { name: 'AC_CONVENTION_PATH', value: RULED_DATA_AC_CONVENTION_VALUE },
+    { name: 'MATRIX_REPO_PATH', value: RULED_DATA_MATRIX_VALUE },
+  ],
+}
+
+/**
+ * Ruled class-5 non-instances (A2.4 structural guard pin): the
+ * root-normalization COMPARISON guards in the HRO-P3A offline finalizer —
+ * `resolve()` of a named root whose result is only COMPARED inside a refusal
+ * guard (`if (…) throw new Refusal()`), never fed to a filesystem read or
+ * write ("Root custody is rechecked before every owner write/publication/
+ * finalization; replacement roots and symlinked path components refuse before
+ * writes" — hro-p3a-verification.md). Pinned by identity (this file) +
+ * location (named enclosing function) + value (this exact stripped call
+ * text) + position (a refusal-guard condition) + per-form cardinality; the
+ * same spelling anywhere else, or feeding anything but the comparison,
+ * remains class 5.
+ */
+const RULED_CLASS5_GUARD_FILE = 'verification/src/pipeline/stage-d-finalization.ts'
+const RULED_CLASS5_GUARD_SITES: Record<
+  string,
+  readonly { readonly form: string; readonly count: number }[]
+> = {
+  verifyInitial: [
+    { form: 'resolve(repoRoot,specEntry.ref)', count: 1 },
+    { form: 'resolve(input.registration.repoRoot)', count: 1 },
+    { form: 'resolve(repoRoot)', count: 1 },
+  ],
+  buildContext: [{ form: 'resolve(repoRoot)', count: 1 }],
+}
 
 // RCM-P1B: a retained manifest provenance comparison, never a filesystem input.
 // Only this direct AST position and value are ruled; absence also fails below.
@@ -978,6 +1127,155 @@ function guardedByAbsoluteRootAssertion(resolveCall: CallExpression): boolean {
   }
   visit(fn)
   return found
+}
+
+/**
+ * The SPEC'D optional-root default idiom (W2-P4: "`KompressOptions.repoRoot?:
+ * string` defaults to `process.cwd()`. Tests pass a tmpDir."; W3-P1:
+ * `readonly repoRoot?: string // defaults to process.cwd(); tests pass a tmp
+ * dir`): a cwd call that is ONLY the default of an optional root input —
+ * `<field> ?? process.cwd()` bound to a root-named local, or a root-named
+ * parameter default. A cwd call in any other position — a bare
+ * `const root = process.cwd()`, a spawn `cwd:` property value, a computed
+ * fallback — is the genuine conflation and stays a violation.
+ */
+function isOptionalRootDefaultCwd(node: Node): boolean {
+  const parent: Node | undefined = node.parent
+  if (parent === undefined) return false
+  // Form A: `const repoRoot = input.repoRoot ?? process.cwd()`.
+  if (
+    isBinaryExpression(parent) &&
+    parent.operatorToken.kind === SyntaxKind.QuestionQuestionToken &&
+    parent.right === node
+  ) {
+    const left = stripParens(parent.left)
+    const readsOptionalRoot =
+      isPropertyAccessExpression(left) && (left.name.text === 'cwd' || namesARoot(left.name.text))
+    const decl = parent.parent
+    if (
+      !readsOptionalRoot ||
+      decl === undefined ||
+      !isVariableDeclaration(decl) ||
+      decl.initializer !== parent
+    ) {
+      return false
+    }
+    const bound = decl.name
+    return isIdentifier(bound) && (bound.text === 'cwd' || namesARoot(bound.text))
+  }
+  // Form B: `repoRoot: string = process.cwd()` parameter default.
+  if (!isParameterDeclaration(parent) || parent.initializer !== node) return false
+  const parameter = parent.name
+  return isIdentifier(parameter) && (parameter.text === 'cwd' || namesARoot(parameter.text))
+}
+
+/** True for `throw new Refusal()` — the finalizer's typed refusal clause. */
+function throwsRefusal(statement: Node): boolean {
+  if (!isThrowStatement(statement)) return false
+  const thrown = statement.expression
+  if (thrown === undefined) return false
+  const ctor = stripParens(thrown)
+  return (
+    isNewExpression(ctor) && isIdentifier(ctor.expression) && ctor.expression.text === 'Refusal'
+  )
+}
+
+/**
+ * A2.4 structural guard position: the node sits in the CONDITION of an
+ * `if (…) throw new Refusal()` guard — a root normalization whose result is
+ * only COMPARED and cannot reach a filesystem operation without passing the
+ * refusal.
+ */
+function isInsideRefusalGuardCondition(node: Node): boolean {
+  let child: Node = node
+  let n: Node | undefined = node.parent
+  while (n !== undefined) {
+    if (isIfStatement(n)) return n.expression === child && throwsRefusal(n.thenStatement)
+    child = n
+    n = n.parent
+  }
+  return false
+}
+
+/**
+ * The class-5 A2.4 guard pin: `{ fn, form }` when this `resolve()` is one of
+ * the ruled root-normalization comparison guards, else null. Identity (the
+ * one file) + location (named enclosing function) + value (stripped call
+ * text) + position (refusal-guard condition) all hold before enrollment.
+ */
+function class5GuardPin(
+  node: CallExpression,
+  rel: string,
+  sf: SourceFile,
+): { readonly fn: string; readonly form: string } | null {
+  if (rel !== RULED_CLASS5_GUARD_FILE) return null
+  const fn = enclosingFunctionName(node)
+  if (fn === null || !Object.hasOwn(RULED_CLASS5_GUARD_SITES, fn)) return null
+  const pins = RULED_CLASS5_GUARD_SITES[fn]
+  if (pins === undefined) return null
+  const form = strippedText(node, sf)
+  if (!pins.some((pin) => pin.form === form)) return null
+  if (!isInsideRefusalGuardCondition(node)) return null
+  return { fn, form }
+}
+
+/** A declaration is TOP-LEVEL only as a direct SourceFile statement. */
+function isTopLevelVariableDeclaration(decl: Node): boolean {
+  const list = decl.parent
+  if (list === undefined || !isVariableDeclarationList(list)) return false
+  const statement = list.parent
+  if (statement === undefined || !isVariableStatement(statement)) return false
+  const source = statement.parent
+  return source !== undefined && isSourceFile(source)
+}
+
+/** Ruled class-2 root derivation: a named top-level `DEFAULT_REPO_ROOT` walk at the pinned form. */
+function isRuledRootDerivation(node: Node, rel: string, sf: SourceFile): boolean {
+  const pin = RULED_ROOT_DERIVATIONS[rel]
+  if (pin === undefined || !isCallExpression(node)) return false
+  if (strippedText(node, sf) !== pin.form) return false
+  const decl = node.parent
+  return (
+    decl !== undefined &&
+    isVariableDeclaration(decl) &&
+    decl.initializer === node &&
+    isIdentifier(decl.name) &&
+    decl.name.text === pin.name &&
+    isTopLevelVariableDeclaration(decl)
+  )
+}
+
+/**
+ * Ruled class-3 DATA path constant: this node is the initializer of a pinned
+ * named top-level declaration in a pinned file, at exactly the pinned folded
+ * value. Only the literal and constant join/resolve-fold spellings are ruled
+ * (the shapes the class-3 detector models at declaration initializers) — a
+ * template or `+`-chain respelling breaks the pin and stays unruled, the same
+ * brittleness the JEV/RCM value pins enforce.
+ */
+function dataPathConstantPin(
+  node: Node,
+  rel: string,
+  value: string,
+): { readonly name: string } | null {
+  const pins = RULED_DATA_PATH_CONSTANTS[rel]
+  if (pins === undefined) return null
+  const folded =
+    isStringLiteral(node) ||
+    (isCallExpression(node) && (calleeName(node) === 'join' || calleeName(node) === 'resolve'))
+  if (!folded) return null
+  const decl = node.parent
+  if (
+    decl === undefined ||
+    !isVariableDeclaration(decl) ||
+    decl.initializer !== node ||
+    !isTopLevelVariableDeclaration(decl)
+  ) {
+    return null
+  }
+  const name = decl.name
+  if (!isIdentifier(name)) return null
+  return pins.find((pin) => pin.name === name.text && pin.value === value) ?? null
 }
 
 /** True when an expression is syntactically a RegExp value: a regex literal or a `new`-constructed RegExp. */
@@ -1695,6 +1993,14 @@ interface SweepSink {
   readonly jevPathDataValues: string[]
   readonly backlogDataSites: Site[]
   readonly suppliedCwdSites: Site[]
+  /** Compliant class-1 non-instances: the SPEC'D optional-root default idiom. */
+  readonly optionalRootDefaultSites: Site[]
+  /** Ruled class-2 non-instances: pinned `DEFAULT_REPO_ROOT` derivations. */
+  readonly rootDerivationSites: Site[]
+  /** Ruled class-3 non-instances: pinned DATA path constants. */
+  readonly ruledDataPathSites: (Site & { name: string })[]
+  /** Ruled class-5 non-instances: pinned root-normalization comparison guards. */
+  readonly ruledClass5Sites: (Site & { fn: string; form: string })[]
   /** A4.1: every swept file (rel path) — pins reconcile only over swept files. */
   readonly sweptFiles: Set<string>
   /** A4.1: observed pinned-site counts per file, per pinned set. */
@@ -1845,6 +2151,13 @@ function sweepFile(
         return
       }
     }
+    // Ruled class-3 DATA path constants: named top-level module constants at
+    // the pinned value (see RULED_DATA_PATH_CONSTANTS).
+    const dataPathPin = dataPathConstantPin(node, rel, value)
+    if (dataPathPin !== null) {
+      sink.ruledDataPathSites.push({ ...site(node), name: dataPathPin.name })
+      return
+    }
     const isRuledReportSite =
       rel === 'integration/src/report.ts' &&
       value === RULED_REPORT_SPECS_DIR &&
@@ -1899,9 +2212,19 @@ function sweepFile(
   }
 
   const visit = (node: Node): void => {
+    // Ruled class-2 non-instances: the pinned `DEFAULT_REPO_ROOT` derivations
+    // are recorded here (once per node) and exempted from both class-2 rules
+    // below; every other >= 3-`..` walk and unpinned self-location still fails.
+    if (isRuledRootDerivation(node, rel, sf)) {
+      sink.rootDerivationSites.push(site(node))
+    }
     // ── class 1: cwd defaults / cwd acquisition ──
     if (isCwdCall(node) || isBareCwdImportCall(node)) {
-      if (!cwdCallIsRuledR4Form(node)) {
+      if (isOptionalRootDefaultCwd(node)) {
+        // Compliant non-instance: the SPEC'D `repoRoot?` seam default idiom —
+        // reported while passing (below), never silently absorbed.
+        sink.optionalRootDefaultSites.push(site(node))
+      } else if (!cwdCallIsRuledR4Form(node)) {
         violate(1, node)
       }
       // (the R4 property form is adjudicated by the class-4 pass on the
@@ -1936,9 +2259,11 @@ function sweepFile(
         if (dots < 3 && pinnedForms.includes(stripped)) {
           sink.e4Sites.push(site(outer))
           sink.e4CountsByFile.set(rel, (sink.e4CountsByFile.get(rel) ?? 0) + 1)
-        } else {
+        } else if (!isRuledRootDerivation(outer, rel, sf)) {
           // >= 3 segments is a walk beyond the package's own files; anything
-          // else unpinned FAILS — A2.3: E4 never self-populates.
+          // else unpinned FAILS — A2.3: E4 never self-populates. (The pinned
+          // DEFAULT_REPO_ROOT derivations are the ONE ruled walk form — see
+          // RULED_ROOT_DERIVATIONS.)
           violate(2, outer)
         }
       }
@@ -1953,7 +2278,7 @@ function sweepFile(
       if (name === 'join' || name === 'resolve') {
         let dots = 0
         for (const a of node.arguments) dots += countDotDotSegments(a)
-        if (dots >= 3) {
+        if (dots >= 3 && !isRuledRootDerivation(node, rel, sf)) {
           violate(2, node)
           // account the contained literals to this walk (dedup)
           const mark = (n: Node): void => {
@@ -2014,6 +2339,8 @@ function sweepFile(
     }
     if (isCallExpression(node)) {
       const name = calleeName(node)
+      // (narrowed alias: nested closures below feed the class-3 adjudicator)
+      const foldedCall: Expression = node
       // A3.4: fold CONSECUTIVE constant segments of join()/resolve() with '/'
       // and normalize duplicate slashes, so `join('plugins/', '<pkg>')` and
       // n-ary segment splits fold to the repo prefix. Only cross-argument
@@ -2024,7 +2351,9 @@ function sweepFile(
         let joined = run.join('/')
         while (joined.includes('//')) joined = joined.split('//').join('/')
         if (joined.includes(REPO_LITERAL) && !run.some((p) => p.includes(REPO_LITERAL))) {
-          violate(3, node)
+          // Constant folds adjudicate like literals — a ruled DATA constant
+          // may be spelled as a constant join (RULED_DATA_PATH_CONSTANTS).
+          adjudicateClass3(foldedCall, joined)
         }
       }
       const foldRuns = (parts: readonly (string | null)[]): void => {
@@ -2059,7 +2388,7 @@ function sweepFile(
                   let joined = run.join(sep)
                   while (joined.includes('//')) joined = joined.split('//').join('/')
                   if (joined.includes(REPO_LITERAL) && !run.some((p) => p.includes(REPO_LITERAL))) {
-                    violate(3, node)
+                    adjudicateClass3(foldedCall, joined)
                   }
                 }
                 run = []
@@ -2078,39 +2407,49 @@ function sweepFile(
     // ── class 4 / E1: subprocess cwd, decided from the actual argument (A2.5) ──
     if (isCallExpression(node) && !pmcPins.has(node) && isSpawnFamilyCall(node, regexBindings)) {
       const options = optionsArgument(node)
-      if (options === null) {
-        violate(4, node)
-      } else {
-        const cwd = cwdProperty(options)
-        if (!cwd.present) {
-          violate(4, node)
-        } else if (
-          cwd.value !== null &&
-          (isCwdCall(stripParens(cwd.value)) || isBareCwdImportCall(stripParens(cwd.value)))
+      const cwd = options === null ? { present: false, value: null } : cwdProperty(options)
+      const processAnchored =
+        !cwd.present ||
+        (cwd.value !== null &&
+          (isCwdCall(stripParens(cwd.value)) || isBareCwdImportCall(stripParens(cwd.value))))
+      if (processAnchored) {
+        // process-cwd anchoring — explicit `cwd: process.cwd()` OR plain
+        // inheritance (no `cwd` property): only the pinned R4 discovery sites
+        // may, and only at the pinned form (identity + location + value) and
+        // within the pinned per-file cardinality.
+        const pinnedForms = E1_PINNED[rel] ?? []
+        const pinnedMax = E1_PINNED_COUNTS[rel] ?? 0
+        if (
+          isPinnedE1Shape(node) &&
+          pinnedForms.includes(strippedText(node, sf)) &&
+          e1SeenPerFile.count < pinnedMax
         ) {
-          // process-cwd anchoring: only the pinned R4 discovery sites may.
-          const pinnedMax = E1_PINNED_COUNTS.get(rel) ?? 0
-          if (isPinnedE1Shape(node) && e1SeenPerFile.count < pinnedMax) {
-            e1SeenPerFile.count += 1
-            sink.e1Sites.push(site(node))
-            sink.e1CountsByFile.set(rel, (sink.e1CountsByFile.get(rel) ?? 0) + 1)
-          } else {
-            violate(4, node)
-          }
+          e1SeenPerFile.count += 1
+          sink.e1Sites.push(site(node))
+          sink.e1CountsByFile.set(rel, (sink.e1CountsByFile.get(rel) ?? 0) + 1)
         } else {
-          // an explicitly SUPPLIED root/path — compliant; reported (A2.9).
-          sink.suppliedCwdSites.push(site(node))
+          violate(4, node)
         }
+      } else {
+        // an explicitly SUPPLIED root/path — compliant; reported (A2.9).
+        sink.suppliedCwdSites.push(site(node))
       }
     }
 
     // ── class 5: resolve() of a named root ──
     if (isCallExpression(node) && calleeName(node) === 'resolve') {
       if (namesARoot(firstArgumentName(node))) {
-        const pinned =
-          (rel === 'projection/src/path-guard.ts' && guardedByAbsoluteRootAssertion(node)) ||
-          pmcPins.has(node)
-        if (!pinned) violate(5, node)
+        const guardPin = class5GuardPin(node, rel, sf)
+        if (guardPin !== null) {
+          // Ruled class-5 non-instance: a pinned root-normalization
+          // COMPARISON guard (see RULED_CLASS5_GUARD_SITES).
+          sink.ruledClass5Sites.push({ ...site(node), fn: guardPin.fn, form: guardPin.form })
+        } else {
+          const pinned =
+            (rel === 'projection/src/path-guard.ts' && guardedByAbsoluteRootAssertion(node)) ||
+            pmcPins.has(node)
+          if (!pinned) violate(5, node)
+        }
       }
     }
 
@@ -2248,6 +2587,10 @@ function main(argv: readonly string[]): number {
     jevPathDataValues: [],
     backlogDataSites: [],
     suppliedCwdSites: [],
+    optionalRootDefaultSites: [],
+    rootDerivationSites: [],
+    ruledDataPathSites: [],
+    ruledClass5Sites: [],
     sweptFiles: new Set<string>(),
     e1CountsByFile: new Map<string, number>(),
     e4CountsByFile: new Map<string, number>(),
@@ -2352,12 +2695,12 @@ function main(argv: readonly string[]): number {
   }
   const reconcilePins = (
     setName: string,
-    expectedByFile: ReadonlyMap<string, number>,
+    expectedByFile: Readonly<Record<string, number>>,
     observedByFile: ReadonlyMap<string, number>,
   ): { expected: number; observed: number } => {
     let expected = 0
     let observed = 0
-    for (const [file, want] of expectedByFile) {
+    for (const [file, want] of Object.entries(expectedByFile)) {
       if (!sink.sweptFiles.has(file)) continue
       const got = observedByFile.get(file) ?? 0
       expected += want
@@ -2379,6 +2722,57 @@ function main(argv: readonly string[]): number {
     pinMismatches.push(
       `E2-dynamic: ${E2_DYNAMIC_PINNED_FILE} — ${sink.e2DynamicPinnedSites.length} pinned site(s) observed, the pin asserts exactly ${E2_DYNAMIC_PINNED_COUNT}`,
     )
+  }
+
+  // The ruled non-instance sets assert their cardinality the same way (A4.1):
+  // per pinned identity slot, over the pinned files actually swept.
+  let rootDerivationExpected = 0
+  let rootDerivationObserved = 0
+  for (const [file, want] of Object.entries(RULED_ROOT_DERIVATION_COUNTS)) {
+    if (!sink.sweptFiles.has(file)) continue
+    const got = sink.rootDerivationSites.filter((site) => site.file === file).length
+    rootDerivationExpected += want
+    rootDerivationObserved += got
+    if (got !== want) {
+      pinMismatches.push(
+        `class-2 root derivation: ${file} — ${got} pinned site(s) observed, the pin asserts exactly ${want}`,
+      )
+    }
+  }
+  let dataPathExpected = 0
+  let dataPathObserved = 0
+  for (const [file, pins] of Object.entries(RULED_DATA_PATH_CONSTANTS)) {
+    if (!sink.sweptFiles.has(file)) continue
+    for (const pin of pins) {
+      const got = sink.ruledDataPathSites.filter(
+        (site) => site.file === file && site.name === pin.name,
+      ).length
+      dataPathExpected += 1
+      dataPathObserved += got
+      if (got !== 1) {
+        pinMismatches.push(
+          `class-3 DATA path constant: ${file}#${pin.name} — ${got} pinned site(s) observed, the pin asserts exactly 1`,
+        )
+      }
+    }
+  }
+  let class5GuardExpected = 0
+  let class5GuardObserved = 0
+  if (sink.sweptFiles.has(RULED_CLASS5_GUARD_FILE)) {
+    for (const [fn, pins] of Object.entries(RULED_CLASS5_GUARD_SITES)) {
+      for (const pin of pins) {
+        const got = sink.ruledClass5Sites.filter(
+          (site) => site.fn === fn && site.form === pin.form,
+        ).length
+        class5GuardExpected += pin.count
+        class5GuardObserved += got
+        if (got !== pin.count) {
+          pinMismatches.push(
+            `class-5 root-normalization guard: ${RULED_CLASS5_GUARD_FILE}#${fn} — ${got} pinned site(s) observed at form '${pin.form}', the pin asserts exactly ${pin.count}`,
+          )
+        }
+      }
+    }
   }
 
   const grandfatherInventoryFileSwept = sink.sweptFiles.has(GRANDFATHER_INVENTORY_DATA_FILE)
@@ -2512,14 +2906,25 @@ function main(argv: readonly string[]): number {
   console.log('an unrecognized site is a class violation above, never an auto-enrolled exception.')
   console.log('')
   console.log(
-    `E1 — R4 entry-point discovery sites (class 4), pinned explicit process-cwd form: ${sink.e1Sites.length} of ${e1Card.expected} pinned`,
+    `E1 — R4 entry-point discovery sites (class 4), pinned process-cwd anchored git-toplevel form: ${sink.e1Sites.length} of ${e1Card.expected} pinned`,
   )
   for (const s of sink.e1Sites) console.log(`  ${s.file}:${s.line}: ${s.text}`)
   console.log(
-    '  disposition: accounted-for by R4 — a guarded entry point may discover the target root with the working directory written explicitly; libraries never default.',
+    '  disposition: accounted-for by R4 — a guarded entry point may discover the target root from the working directory (an explicit `cwd: process.cwd()` and plain inheritance are the same mechanism; W4-P2 names these `getRepoRoot`/seam defaults); libraries never default.',
   )
   console.log(
-    '  residual coverage: the check still covers every LIBRARY path in all fifteen packages, and all other classes at these four entry points.',
+    '  residual coverage: every OTHER process-anchored spawn call, every other command/args shape, every unpinned file, and every occurrence beyond the pinned per-file cardinality remains a class-4 violation.',
+  )
+  console.log('')
+  console.log(
+    `class-1 optional-root default sites (compliant — the SPEC'D \`repoRoot?\` seam default idiom): ${sink.optionalRootDefaultSites.length}`,
+  )
+  for (const s of sink.optionalRootDefaultSites) console.log(`  ${s.file}:${s.line}: ${s.text}`)
+  console.log(
+    '  disposition (W2-P4: "`KompressOptions.repoRoot?: string` defaults to `process.cwd()`"; W3-P1: `readonly repoRoot?: string // defaults to process.cwd(); tests pass a tmp dir`): these are ONLY the default of an optional root input — `<field> ?? process.cwd()` bound to a root-named local, or a root-named parameter default. Reported, never silent.',
+  )
+  console.log(
+    '  residual coverage: a cwd call in any other position — a bare `const root = process.cwd()`, a spawn `cwd:` property value, a computed fallback — is the genuine conflation and remains a class-1 violation.',
   )
   console.log('')
   console.log(
@@ -2568,7 +2973,18 @@ function main(argv: readonly string[]): number {
     '  disposition: justified in writing at each site and relocation-proven (AC7) — never trusted by comment, never enrolled by shape alone (A2.3).',
   )
   console.log(
-    "  residual coverage: every self-location expression NOT in the pinned set — and every walk of >= 3 '..' segments, counted inside single literals too — is a violation.",
+    "  residual coverage: every self-location expression NOT in the pinned set — and every walk of >= 3 '..' segments, counted inside single literals too — is a violation (the pinned DEFAULT_REPO_ROOT derivations below are the ONE ruled walk form).",
+  )
+  console.log('')
+  console.log(
+    `Ruled class-2 non-instances (pinned repo-root derivations, identity+location+value+cardinality): ${rootDerivationObserved} of ${rootDerivationExpected} pinned`,
+  )
+  for (const s of sink.rootDerivationSites) console.log(`  ${s.file}:${s.line}: ${s.text}`)
+  console.log(
+    "  disposition: the three `DEFAULT_REPO_ROOT` module-self-location walks (exactly four '..' hops, one named top-level declaration per file) — each file's own docstring states the derivation and the mirrored same-depth precedent; P2b-i R3 keeps them only as legacy defaults behind a required, absolute root.",
+  )
+  console.log(
+    '  residual coverage: a second derivation, a deeper walk, the same form under any other name, or the same spelling in any other file remains a class-2 violation.',
   )
   console.log('')
   console.log(
@@ -2583,6 +2999,30 @@ function main(argv: readonly string[]): number {
   for (const s of sink.ruledClass3Sites) console.log(`  ${s.file}:${s.line}: ${s.text}`)
   console.log(
     "  dispositions: R2 — the home repo passes its plugin-prefixed specs dir explicitly at the report entry-point call site; and contracts' frozen fixture surface label is DATA, never resolved against a root (STANDING #13 pins).",
+  )
+  console.log('')
+  console.log(
+    `Ruled class-3 DATA path constants (named top-level module constants, identity+location+value+cardinality): ${dataPathObserved} of ${dataPathExpected} pinned`,
+  )
+  for (const s of sink.ruledDataPathSites)
+    console.log(`  ${s.name}: ${s.file}:${s.line}: ${s.text}`)
+  console.log(
+    '  disposition: repo-relative REFERENCE labels — the `active/` specs dir, the frozen skill-injection matrix path (W3-P2 frozen inputs), and `AC_CONVENTION_PATH` (W3-P1 AC-4 pins its exact value). DATA, never a root: where a consumer resolves one it is joined beneath a REQUIRED, absolute, caller-supplied root.',
+  )
+  console.log(
+    '  residual coverage: the same value under another name or file, a nested declaration, a template/`+`-chain respelling of the pinned literal, or a filesystem ARGUMENT position remains a class-3 violation.',
+  )
+  console.log('')
+  console.log(
+    `Ruled class-5 root-normalization comparison guards (A2.4 structural guard pin): ${class5GuardObserved} of ${class5GuardExpected} pinned`,
+  )
+  for (const s of sink.ruledClass5Sites)
+    console.log(`  ${s.fn}#${s.form}: ${s.file}:${s.line}: ${s.text}`)
+  console.log(
+    '  disposition: HRO-P3A root custody — `resolve()` of a named root whose result is only COMPARED inside an `if (…) throw new Refusal()` guard ("Root custody is rechecked before every owner write/publication/finalization; replacement roots and symlinked path components refuse before writes" — hro-p3a-verification.md). Pinned by file + named enclosing function + exact stripped call text + refusal-guard position + per-form cardinality.',
+  )
+  console.log(
+    '  residual coverage: the same spelling anywhere else, in another function, feeding anything but the refusal-guard comparison, or beyond the pinned per-form cardinality remains a class-5 violation.',
   )
   console.log(
     `JEV path DATA (exact declarations + direct array elements): ${sink.jevPathDataSites.length} observed; expected ${JEV_PATH_DATA_LITERAL_COUNT}`,
@@ -2661,7 +3101,10 @@ function main(argv: readonly string[]): number {
       `  reconciled — E1: ${e1Card.observed} of ${e1Card.expected}; E2-dynamic: ` +
         `${sink.e2DynamicPinnedSites.length} of ${sink.sweptFiles.has(E2_DYNAMIC_PINNED_FILE) ? E2_DYNAMIC_PINNED_COUNT : 0} ` +
         `(pinned file ${sink.sweptFiles.has(E2_DYNAMIC_PINNED_FILE) ? 'swept' : 'absent — vacuous'}); ` +
-        `E4: ${e4Card.observed} of ${e4Card.expected}`,
+        `E4: ${e4Card.observed} of ${e4Card.expected}; ` +
+        `class-2 root derivations: ${rootDerivationObserved} of ${rootDerivationExpected}; ` +
+        `class-3 DATA path constants: ${dataPathObserved} of ${dataPathExpected}; ` +
+        `class-5 root-normalization guards: ${class5GuardObserved} of ${class5GuardExpected}`,
     )
   } else {
     for (const m of pinMismatches) console.log(`  PIN CARDINALITY MISMATCH: ${m}`)
