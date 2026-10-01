@@ -73,6 +73,19 @@ Each demo records run IDs, head/base SHAs, and the emitted evidence records; cos
 5. **OQ3 (developer lever):** dropping/filtering the `on: push` duplicate runs is the largest remaining structural CI waste — out of charter scope.
 6. **Trust boundary (stated in-spec):** the PR author controls `scripts/ci-reuse.mjs` and the workflow at the validated head — same class as today's runner; the chain's claims are scoped to evidence-source forgery.
 
+## Live evidence captured (2026-10-01) — demo case 1 records
+
+Seed push (paper-trail head `4819c0acea51688818066df217ed7b5cb7502727`, PR #124) produced both expected records, verbatim from the decide-step logs (runs `36812259542` pull_request / `36812254813` push):
+
+| Run | `decision` | `fallback_reason` | `base_sha` | `source_run` |
+| --- | --- | --- | --- | --- |
+| `36812259542` (pull_request) | `fallback` | `no-prior-run` | `e5dce4d03c4b83b8646c9517967c1554204e2db3` | `null` |
+| `36812254813` (push twin) | `fallback` | `event-class-ineligible` (A1 canary) | `null` (E9 null-pair, push payload) | `null` |
+
+`head_sha=4819c0ac…` and the `code`/`specifications`/`workflow` input hashes are **identical across both runs** (e.g. `code=83ccd8560cf7…`, `specifications=e1665fb9689d…`, `workflow=a4e55c3318ea…`) — same head, same git-bytes derivation, two event classes. Full `CI_REUSE_EVIDENCE` JSON emitted to log + step summary in both runs; `Actions: read` visible in both token permission blocks (F2 live); harness step green with the full 138+17 suites (R5 live); sweep executed on both (fallback wiring), verify step skipped on fallback; `integration-report` mirrored the failure unmasked. Sweep tables match the recorded 13/20 base red exactly. Both runs ≈5m40s test job (queue ≈0 at this hour).
+
+Demo cases 2–6 remain held behind the red base (case 2 needs a GREEN seed — the seed sweep is red on the 13 pre-existing package failures, exactly the F9 valve).
+
 ## What remains for full closure
 
 1. Green base (developer action — stop-report options A/B).
