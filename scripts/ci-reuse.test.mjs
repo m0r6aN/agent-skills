@@ -11,6 +11,7 @@ import { createHash } from 'node:crypto'
 import {
   CLASS,
   EMPTY_CLASS_HASH,
+  READER_SET,
   classifyPath,
   computeTreeClassHashes,
   decideCore,
@@ -18,6 +19,7 @@ import {
   isPinnedReason,
   parseLsTreeZ,
   parseNameStatusZ,
+  runCli,
   sanitizeUntrusted,
   verifyCore,
 } from './ci-reuse.mjs'
@@ -366,6 +368,101 @@ test('boundary: plugins/foreman-line/docs/goals/ci-optimization/x.md => ordinary
   assert.equal(classifyPath('plugins/foreman-line/docs/goals/ci-optimization/x.md'), CLASS.ORDINARY)
 })
 
+// ─── A3 positive controls: the shrink keeps its ordinary core ordinary ─────
+
+test('A3: plugins/foreman-line/docs/transcripts/*.md stays ordinary', () => {
+  assert.equal(classifyPath('plugins/foreman-line/docs/transcripts/defects_lessons.md'), CLASS.ORDINARY)
+  assert.equal(deltaFallbackReason('plugins/foreman-line/docs/transcripts/defects_lessons.md'), null)
+})
+test('A3: repo-root docs/**/*.md (non-specs first segment) stays ordinary', () => {
+  assert.equal(classifyPath('docs/getting-started.md'), CLASS.ORDINARY)
+  assert.equal(deltaFallbackReason('docs/getting-started.md'), null)
+})
+test('A3: repo-root README.md / AGENTS.md stay ordinary (rule 4a core)', () => {
+  assert.equal(classifyPath('README.md'), CLASS.ORDINARY)
+  assert.equal(classifyPath('AGENTS.md'), CLASS.ORDINARY)
+})
+test('A3: reader-set exclusion is per-path — sibling goal .md files stay ordinary', () => {
+  assert.equal(classifyPath('plugins/foreman-line/docs/goals/routing-currency-and-merit/charter.md'), CLASS.ORDINARY)
+  assert.equal(classifyPath('plugins/foreman-line/docs/goals/routing-currency-and-merit/source-evidence/rcm-host-cache-source-contract-v4-proposal.md'), CLASS.ORDINARY)
+})
+
+// ─── A3 reader-set mechanics (SC #11/#13: every axis refusable) ────────────
+
+test('A3 reader-set mechanics: excluded paths fall to code; each SC #13 axis refuses independently', () => {
+  const synthetic = ['docs/getting-started.md']
+  assert.equal(classifyPath('docs/getting-started.md'), CLASS.ORDINARY)
+  assert.equal(classifyPath('docs/getting-started.md', synthetic), CLASS.CODE)
+  assert.equal(deltaFallbackReason('docs/getting-started.md', synthetic), 'test-relevant-change')
+  // basename axis: same location family, different basename
+  assert.equal(classifyPath('docs/getting-started2.md', synthetic), CLASS.ORDINARY)
+  // location axis: same basename, different parent directory
+  assert.equal(classifyPath('docs/sub/getting-started.md', synthetic), CLASS.ORDINARY)
+  // value axis: same basename+location family, different pinned literal
+  assert.equal(classifyPath('docs/getting-started.md', ['docs/getting-started2.md']), CLASS.ORDINARY)
+  // subtree entries exclude their whole subtree (mandate: exclude its subtree)
+  const subtree = ['plugins/foreman-line/docs/goals/foreman-kernel/']
+  assert.equal(classifyPath('plugins/foreman-line/docs/goals/foreman-kernel/charter.md', subtree), CLASS.CODE)
+  assert.equal(classifyPath('plugins/foreman-line/docs/goals/ci-optimization/charter.md', subtree), CLASS.ORDINARY)
+})
+test('A3 reader set pins exactly the measured read-sweep inventory (identity + location + value)', () => {
+  assert.deepEqual(READER_SET, [
+    'plugins/foreman-line/approval/README.md',
+    'plugins/foreman-line/contract-readers/README.md',
+    'plugins/foreman-line/contracts/README.md',
+    'plugins/foreman-line/dispatch/README.md',
+    'plugins/foreman-line/docs/FOREMAN-LINE-PLAN.md',
+    'plugins/foreman-line/docs/goals/routing-currency-and-merit/rcm-p0-catalog-snapshot.v1.json',
+    'plugins/foreman-line/docs/goals/routing-currency-and-merit/source-evidence/openrouter-rcm-v1-conservative-projection-20260926.json',
+    'plugins/foreman-line/docs/goals/routing-currency-and-merit/source-evidence/pmc-binding-coverage-openrouter-20260926-v4.json',
+    'plugins/foreman-line/docs/kickstarters/foreman-shaping-template.md',
+    'plugins/foreman-line/foreman-config/README.md',
+    'plugins/foreman-line/hybrid-routing/README.md',
+    'plugins/foreman-line/permission-profiles/README.md',
+    'plugins/foreman-line/projection/README.md',
+    'plugins/foreman-line/receipts/README.md',
+    'plugins/foreman-line/registration/README.md',
+    'plugins/foreman-line/role-authority/README.md',
+    'plugins/foreman-line/routing-policy/README.md',
+    'plugins/foreman-line/schema-scaffold/README.md',
+    'plugins/foreman-line/shaping/README.md',
+    'plugins/foreman-line/skill-injection/README.md',
+    'plugins/foreman-line/skills/foreman-shaping/SKILL.md',
+    'plugins/foreman-line/spec-linter/README.md',
+    'plugins/foreman-line/worker-envelopes/README.md',
+  ])
+})
+
+// ─── E2 reason split (A1-E2 as sharpened by A3-R1) ─────────────────────────
+
+test('E2 split: named-shape code => test-relevant-change; unenumerated code => unknown-path', () => {
+  assert.equal(deltaFallbackReason('skills/parcel-compiler/README.md'), 'test-relevant-change')
+  assert.equal(deltaFallbackReason('docs/specs-extra/x.md'), 'test-relevant-change')
+  assert.equal(deltaFallbackReason('skills/foo/SKILL.md'), 'unknown-path')
+  assert.equal(deltaFallbackReason('zz/mystery.bin'), 'unknown-path')
+})
+
+// ─── A3 end-to-end exploit regression (the dual-review exploit stays dead) ──
+
+test('A3 exploit regression: README-only delta with all five class hashes equal => fallback test-relevant-change + sweep', async () => {
+  const readmeEntry = ['plugins/foreman-line/role-authority/README.md', '| D1 | x |']
+  const world = greenWorld({
+    trees: {
+      [HEAD]: [...BASE_TREE, readmeEntry],
+      [SOURCE]: [...BASE_TREE, readmeEntry],
+    },
+    diffRaw: Buffer.from('M\0plugins/foreman-line/role-authority/README.md\0', 'latin1'),
+  })
+  const row = await runPipeline(world)
+  assert.equal(row.decided.record.decision, 'fallback')
+  assert.equal(row.decided.record.fallback_reason, 'test-relevant-change')
+  assertSweepRan(row)
+  // the fixture condition is real: all five class hashes are equal — the
+  // README-only delta alone is what forces the fallback
+  const g = makeGit(world)
+  assert.deepEqual(computeTreeClassHashes(g.git, HEAD), computeTreeClassHashes(g.git, SOURCE))
+})
+
 // ─── F3 under-detect fixtures (SC #6) — never ordinary_documentation ────────
 
 const underDetect = [
@@ -385,6 +482,40 @@ const underDetect = [
   ['plugins/foreman-line/contracts/src/schema.ts', CLASS.CODE, 'test-relevant-change'],
   ['plugins/foreman-line/approval/tsconfig.json', CLASS.CODE, 'test-relevant-change'],
   ['biome.json', CLASS.CODE, 'test-relevant-change'],
+  // ── A3 measured read-sweep regression fixtures (one row per reader path;
+  //    A3 rows 1-3: every measured reader is code + test-relevant-change) ──
+  ['plugins/foreman-line/role-authority/README.md', CLASS.CODE, 'test-relevant-change'],
+  ['plugins/foreman-line/receipts/README.md', CLASS.CODE, 'test-relevant-change'],
+  ['plugins/foreman-line/spec-linter/README.md', CLASS.CODE, 'test-relevant-change'],
+  ['plugins/foreman-line/approval/README.md', CLASS.CODE, 'test-relevant-change'],
+  ['plugins/foreman-line/contract-readers/README.md', CLASS.CODE, 'test-relevant-change'],
+  ['plugins/foreman-line/contracts/README.md', CLASS.CODE, 'test-relevant-change'],
+  ['plugins/foreman-line/dispatch/README.md', CLASS.CODE, 'test-relevant-change'],
+  ['plugins/foreman-line/foreman-config/README.md', CLASS.CODE, 'test-relevant-change'],
+  ['plugins/foreman-line/hybrid-routing/README.md', CLASS.CODE, 'test-relevant-change'],
+  ['plugins/foreman-line/permission-profiles/README.md', CLASS.CODE, 'test-relevant-change'],
+  ['plugins/foreman-line/projection/README.md', CLASS.CODE, 'test-relevant-change'],
+  ['plugins/foreman-line/registration/README.md', CLASS.CODE, 'test-relevant-change'],
+  ['plugins/foreman-line/routing-policy/README.md', CLASS.CODE, 'test-relevant-change'],
+  ['plugins/foreman-line/schema-scaffold/README.md', CLASS.CODE, 'test-relevant-change'],
+  ['plugins/foreman-line/shaping/README.md', CLASS.CODE, 'test-relevant-change'],
+  ['plugins/foreman-line/skill-injection/README.md', CLASS.CODE, 'test-relevant-change'],
+  ['plugins/foreman-line/worker-envelopes/README.md', CLASS.CODE, 'test-relevant-change'],
+  ['plugins/foreman-line/docs/goals/routing-currency-and-merit/source-evidence/pmc-binding-coverage-openrouter-20260926-v4.json', CLASS.CODE, 'test-relevant-change'],
+  ['plugins/foreman-line/docs/goals/routing-currency-and-merit/source-evidence/openrouter-rcm-v1-conservative-projection-20260926.json', CLASS.CODE, 'test-relevant-change'],
+  ['plugins/foreman-line/docs/goals/routing-currency-and-merit/rcm-p0-catalog-snapshot.v1.json', CLASS.CODE, 'test-relevant-change'],
+  ['plugins/foreman-line/docs/FOREMAN-LINE-PLAN.md', CLASS.CODE, 'test-relevant-change'],
+  ['plugins/foreman-line/docs/kickstarters/foreman-shaping-template.md', CLASS.CODE, 'test-relevant-change'],
+  ['plugins/foreman-line/skills/foreman-shaping/SKILL.md', CLASS.CODE, 'test-relevant-change'],
+  // ── A3 row 5: skill trees' README/AGENTS (rule 4a no longer reaches in) ──
+  ['skills/parcel-compiler/README.md', CLASS.CODE, 'test-relevant-change'],
+  ['skills/parcel-compiler/AGENTS.md', CLASS.CODE, 'test-relevant-change'],
+  // ── A3-R1 named shape fall-throughs ──
+  ['plugins/foreman-line/AGENTS.md', CLASS.CODE, 'test-relevant-change'],
+  ['plugins/foreman-line/docs/goals/ci-optimization/notes.txt', CLASS.CODE, 'test-relevant-change'],
+  ['plugins/foreman-line/docs/transcripts/archive.json', CLASS.CODE, 'test-relevant-change'],
+  ['docs/receipts/x/000000-A.json', CLASS.CODE, 'test-relevant-change'],
+  ['docs/specs-extra/x.md', CLASS.CODE, 'test-relevant-change'],
 ]
 
 for (const [path, expectedClass, expectedReason] of underDetect) {
@@ -752,4 +883,110 @@ test('A1: push-class decision => fallback event-class-ineligible, sweep invoked'
   const row = await runPipeline(greenWorld(), { eventName: 'push', event: { after: HEAD } })
   assert.equal(row.decided.record.fallback_reason, 'event-class-ineligible')
   assertSweepRan(row)
+})
+
+// ─── R2 emission ordering + R3 fail-closed output channel (A-F2/A-F3) ───────
+
+function cliEnv(overrides = {}) {
+  return {
+    GITHUB_REPOSITORY: REPO,
+    GITHUB_RUN_ID: String(RUN_ID),
+    GITHUB_EVENT_NAME: 'pull_request',
+    GITHUB_EVENT_PATH: 'event.json',
+    GITHUB_SHA: HEAD,
+    ...overrides,
+  }
+}
+
+test('R2: verifyCore emits before spawning the fallback sweep (injected seam observes order)', async () => {
+  const { ctx, spawnCalls } = makeCtx(greenWorld(), { evidence: undefined })
+  const events = []
+  ctx.emit = () => events.push('emit')
+  const inner = ctx.spawn
+  ctx.spawn = (...args) => {
+    events.push('spawn')
+    return inner(...args)
+  }
+  const verified = await verifyCore(ctx)
+  assert.equal(verified.record.decision, 'fallback')
+  assert.deepEqual(events, ['emit', 'spawn'])
+  assert.equal(spawnCalls.length, 1)
+  assert.equal(verified.exitCode, SWEEP_EXIT)
+})
+
+test('R2: runCli writes stdout + step summary + GITHUB_OUTPUT before the sweep spawn runs', async () => {
+  const events = []
+  const written = { stdout: '', summary: '', output: '' }
+  const g = makeGit(greenWorld())
+  const deps = {
+    git: g.git,
+    api: async () => { throw new Error('api must not be reached') },
+    readFile: () => JSON.stringify(prEvent()),
+    stdoutWrite: (text) => {
+      events.push('stdout')
+      written.stdout += text
+    },
+    appendFile: (path, text) => {
+      if (path === '/sum') {
+        events.push('summary')
+        written.summary += text
+      } else {
+        events.push('output')
+        written.output += text
+      }
+    },
+    spawn: () => {
+      events.push('spawn')
+      // R2: the full record is already written everywhere when the sweep starts
+      assert.ok(written.stdout.includes('CI_REUSE_EVIDENCE'))
+      assert.ok(written.summary.includes('## CI Reuse Decision'))
+      assert.ok(written.output.includes('decision=fallback'))
+      assert.ok(written.output.includes('evidence_record='))
+      return { status: SWEEP_EXIT }
+    },
+  }
+  const result = await runCli(
+    ['verify', '--sweep', 'node', 'sweep.js'],
+    cliEnv({ GITHUB_ACTIONS: 'true', GITHUB_STEP_SUMMARY: '/sum', GITHUB_OUTPUT: '/out' }),
+    deps,
+  )
+  assert.equal(result.exitCode, SWEEP_EXIT)
+  assert.deepEqual(events, ['stdout', 'summary', 'output', 'spawn'])
+})
+
+test('R3: decide throws classification-error in Actions without GITHUB_OUTPUT', async () => {
+  await assert.rejects(
+    runCli(['decide'], cliEnv({ GITHUB_ACTIONS: 'true', GITHUB_OUTPUT: '' }), {}),
+    (error) => error.reason === 'classification-error' && error.message.includes('GITHUB_OUTPUT'),
+  )
+})
+
+test('R3: verify throws classification-error in Actions without GITHUB_OUTPUT', async () => {
+  await assert.rejects(
+    runCli(['verify'], cliEnv({ GITHUB_ACTIONS: 'true' }), {}),
+    (error) => error.reason === 'classification-error' && error.message.includes('GITHUB_OUTPUT'),
+  )
+})
+
+test('R3: standalone run without any output channel keeps working', async () => {
+  const events = []
+  const g = makeGit(greenWorld())
+  const deps = {
+    git: g.git,
+    api: async () => { throw new Error('api must not be reached') },
+    readFile: () => JSON.stringify({ after: HEAD }),
+    stdoutWrite: (text) => events.push(['stdout', text]),
+    appendFile: (path) => events.push(['append', path]),
+  }
+  const result = await runCli(
+    ['decide'],
+    cliEnv({ GITHUB_ACTIONS: '', GITHUB_OUTPUT: '', GITHUB_STEP_SUMMARY: '', GITHUB_EVENT_NAME: 'push' }),
+    deps,
+  )
+  assert.equal(result.record.decision, 'fallback')
+  assert.equal(result.record.fallback_reason, 'event-class-ineligible')
+  assert.equal(result.exitCode, 0)
+  // the record still reaches stdout; no channel writes are attempted
+  assert.equal(events.filter(([kind]) => kind === 'stdout').length, 1)
+  assert.equal(events.filter(([kind]) => kind === 'append').length, 0)
 })
