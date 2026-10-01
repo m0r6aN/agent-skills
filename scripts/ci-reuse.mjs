@@ -954,17 +954,30 @@ export async function verifyCore(ctx) {
   let record
   try {
     const record0 = parseEvidenceRecord(ctx.evidence)
-    const result = await evaluateChain(ctx, record0.source_run.run_id)
-    record = result.record
-    if (record.decision === 'reuse') {
-      // the recomputed current head must also match the record it verifies
-      const mismatch = compareInputHashes(record.input_hashes, record0.input_hashes)
-      if (mismatch !== null) {
-        record = failFallback(mismatch, record0.head_sha, record0.base_sha, record.input_hashes)
-      } else if (record.head_sha !== record0.head_sha || record.base_sha !== record0.base_sha) {
-        record = failFallback(REASON_TEMPLATES.EVIDENCE_UNVERIFIABLE, record.head_sha, record.base_sha, record.input_hashes)
+    // R6 (D-P3): candidate selection is re-derived through the same E4
+    // newest-first scan the decide path uses; the channel's pinned run_id is
+    // cross-checked against the derived source, never trusted to select it
+    const derived = await evaluateChain(ctx, undefined)
+    record = derived.record
+    if (record.decision === 'reuse' && record.source_run.run_id !== record0.source_run.run_id) {
+      record = failFallback(REASON_TEMPLATES.EVIDENCE_UNVERIFIABLE, record.head_sha, record.base_sha, record.input_hashes)
+    } else if (record.decision === 'reuse') {
+      // pins agree: re-validate the pinned facts themselves from primary
+      // sources (AC4 defense in depth — the pinned chain re-fetches the
+      // source run's conclusion and recomputes both heads' input_hashes)
+      const revalidated = await evaluateChain(ctx, record0.source_run.run_id)
+      record = revalidated.record
+      if (record.decision === 'reuse') {
+        // the recomputed current head must also match the record it verifies
+        const mismatch = compareInputHashes(record.input_hashes, record0.input_hashes)
+        if (mismatch !== null) {
+          record = failFallback(mismatch, record0.head_sha, record0.base_sha, record.input_hashes)
+        } else if (record.head_sha !== record0.head_sha || record.base_sha !== record0.base_sha) {
+          record = failFallback(REASON_TEMPLATES.EVIDENCE_UNVERIFIABLE, record.head_sha, record.base_sha, record.input_hashes)
+        }
       }
     }
+    // a derived fallback keeps the DERIVED reason (R6 mapping)
   } catch (error) {
     record = failFallback(reasonOf(error), ctx.headShaFallback ?? null, null, null)
   }
