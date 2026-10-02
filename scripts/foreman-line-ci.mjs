@@ -144,8 +144,11 @@ export function discoverPackages({ root, readdir = readdirSync, readFile = readF
     let isDir = false
     try {
       isDir = stat(join(base, entry)).isDirectory()
-    } catch {
-      continue
+    } catch (cause) {
+      // R4 fail-closed: a vanished entry is not a package, but EACCES/dangling
+      // junction is NOT a non-package — it is a discovery error.
+      if (cause && cause.code === 'ENOENT') continue
+      throw new ForemanCiError(`Discovery failed: unstatable entry ${sanitizeField(entry)}`, cause)
     }
     if (!isDir) continue
     let rawManifest
@@ -163,6 +166,9 @@ export function discoverPackages({ root, readdir = readdirSync, readFile = readF
     names.push(entry)
   }
   names.sort()
+  // R4 fail-closed: an empty discovered set is a discovery error — never a
+  // green vacuous pass over nothing.
+  if (names.length === 0) throw new ForemanCiError('Discovery error: no packages found')
   return names
 }
 
@@ -205,48 +211,79 @@ export function assignShards(orderedNames, shardCount) {
 // ─── A2 placement 9: waived-exclusion set (run-then-waive, SC #13 axes) ─────
 
 /**
- * The amended expected-skip set (A2 placement 9). Each entry pins identity +
- * location + value: only the listed checks may be waived, only at the pinned
- * location, only when the failing output contains every pinned marker.
- * Grow-by-ratification only; dead entries expire at the next runner-touching
- * parcel's Stage-F bookkeeping.
- *
- * Marker values are the pin's semantic content from the ratified table,
- * disambiguated per check into concrete substrings of the measured failing
- * output (the minimum binding set from the ratified cell literals):
- *   authority-registry/test         -> "R31 reviewed source mapping drift: M02-note"
- *   bypass-outage-harness/test      -> "FK-P17-bypass-outage-matrix.md" + "CHANNEL_EXEC_FAILED"
- *                                      (the CTL-01/02 failures' code)
- *   bypass-outage-harness/typecheck -> "mutationScope" + "TS2353"
- *   jev-decisions/test              -> "LEGACY_EXECUTION_RETIRED" (x6)
- *   kernel-lease/test               -> "STORAGE_CONSTRAINT_VIOLATION" + "foreign-key"
- *   kernel-lease/lint               -> "biome" + "Found 32 errors"
+ * The amended expected-skip set (A2 placement 9; value pins strengthened per
+ * R2). Each entry pins identity + location + value. The VALUE binds three
+ * dimensions, all from the measured signature (counts and totals measured at
+ * node 24.19.0 — CI's pin — 2026-10-01, complete captured outputs):
+ *   markers    — every literal must appear in the failing output;
+ *   counts     — exact occurrence counts per literal (a co-occurring repeat or
+ *                a new same-shape failure miscounts => never waived);
+ *   failTotal  — the sum of the output's failure-summary lines (TAP `# fail N`
+ *                / spec `ℹ fail N`) must equal the pinned total exactly (a
+ *                co-occurring NEW failure bumps the total => never waived;
+ *                0 pins outputs that declare no summaries).
+ * Waiver additionally requires a clean numeric non-zero EXIT: a signalled or
+ * errored spawn NEVER waives (R2). Grow-by-ratification only; dead entries
+ * expire at the next runner-touching parcel's Stage-F bookkeeping.
  */
 export const WAIVED_EXCLUSIONS = Object.freeze([
   Object.freeze({
     identity: 'authority-registry',
     location: 'plugins/foreman-line/authority-registry/',
-    checks: Object.freeze({ test: Object.freeze(['R31 reviewed source mapping drift: M02-note']) }),
+    checks: Object.freeze({
+      test: Object.freeze({
+        markers: Object.freeze(['R31 reviewed source mapping drift: M02-note', 'MIGRATION_EVIDENCE_INVALID', 'generate.ts']),
+        counts: Object.freeze({ 'R31 reviewed source mapping drift: M02-note': 1, MIGRATION_EVIDENCE_INVALID: 29 }),
+        failTotal: 30,
+      }),
+    }),
   }),
   Object.freeze({
     identity: 'bypass-outage-harness',
     location: 'plugins/foreman-line/bypass-outage-harness/',
     checks: Object.freeze({
-      test: Object.freeze(['FK-P17-bypass-outage-matrix.md', 'CHANNEL_EXEC_FAILED']),
-      typecheck: Object.freeze(['mutationScope', 'TS2353']),
+      test: Object.freeze({
+        markers: Object.freeze(['FK-P17-bypass-outage-matrix.md', 'CHANNEL_EXEC_FAILED', 'CTL-01', 'CTL-02', 'surface-pins.test.ts']),
+        counts: Object.freeze({
+          'FK-P17-bypass-outage-matrix.md': 2,
+          'CHANNEL_EXEC_FAILED': 2,
+          'CTL-01': 3,
+          'CTL-02': 2,
+        }),
+        failTotal: 3,
+      }),
+      typecheck: Object.freeze({
+        markers: Object.freeze(['mutationScope', 'TS2353', 'src/channels/gate.ts']),
+        counts: Object.freeze({ mutationScope: 2, TS2353: 2, 'error TS': 2 }),
+        failTotal: 0,
+      }),
     }),
   }),
   Object.freeze({
     identity: 'jev-decisions',
     location: 'plugins/foreman-line/jev-decisions/',
-    checks: Object.freeze({ test: Object.freeze(['LEGACY_EXECUTION_RETIRED']) }),
+    checks: Object.freeze({
+      test: Object.freeze({
+        markers: Object.freeze(['LEGACY_EXECUTION_RETIRED', 'p4-boundary-scenarios.test.ts']),
+        counts: Object.freeze({ LEGACY_EXECUTION_RETIRED: 6 }),
+        failTotal: 6,
+      }),
+    }),
   }),
   Object.freeze({
     identity: 'kernel-lease',
     location: 'plugins/foreman-line/kernel-lease/',
     checks: Object.freeze({
-      test: Object.freeze(['STORAGE_CONSTRAINT_VIOLATION', 'foreign-key']),
-      lint: Object.freeze(['biome', 'Found 32 errors']),
+      test: Object.freeze({
+        markers: Object.freeze(['STORAGE_CONSTRAINT_VIOLATION', 'foreign-key', 'transitions.test.ts']),
+        counts: Object.freeze({ STORAGE_CONSTRAINT_VIOLATION: 20, 'foreign-key': 16 }),
+        failTotal: 75,
+      }),
+      lint: Object.freeze({
+        markers: Object.freeze(['biome', 'Found 32 errors', 'state-machine.test.ts']),
+        counts: Object.freeze({ biome: 1, 'Found 32 errors': 1 }),
+        failTotal: 0,
+      }),
     }),
   }),
 ])
@@ -256,25 +293,70 @@ export const WAIVED_EXCLUSIONS = Object.freeze([
 // status is unexpected (AC3 #6 / AC5 "unexpected skips").
 export const EXPECTED_SKIPS = Object.freeze([])
 
+/** Exact occurrence count of a literal (linear; untrusted text is input only). */
+export function countOccurrences(text, needle) {
+  if (typeof text !== 'string' || typeof needle !== 'string' || needle.length === 0) return 0
+  let count = 0
+  let at = 0
+  for (;;) {
+    const found = text.indexOf(needle, at)
+    if (found < 0) return count
+    count += 1
+    at = found + needle.length
+  }
+}
+
 /**
- * Run-then-waive (A2 placement 9): a failing check is waived only when the
- * identity, the location, and the pinned value all match — the output must
- * contain every pinned marker (bounded linear-time substring checks over
- * untrusted text). Anything else returns null (never waived).
+ * Sum of the output's failure-summary lines (TAP `# fail N` and the spec
+ * reporter's `ℹ fail N`); 0 when the output declares none. Malformed summary
+ * lines are ignored (they can only move the sum away from a pinned total and
+ * therefore fail closed).
+ */
+export function sumFailTotals(text) {
+  if (typeof text !== 'string') return 0
+  let sum = 0
+  for (const line of text.split('\n')) {
+    const trimmed = line.trim()
+    let digits = null
+    if (trimmed.startsWith('# fail ')) digits = trimmed.slice(7)
+    else if (trimmed.startsWith('\u2139 fail ')) digits = trimmed.slice(7)
+    if (digits !== null && /^[0-9]+$/.test(digits)) sum += Number(digits)
+  }
+  return sum
+}
+
+/**
+ * Run-then-waive (A2 placement 9, value pins per R2): a failing check is
+ * waived only when identity, location, and the full pinned value all match —
+ * every marker present, every occurrence count exact, and the failure total
+ * exact. Callers must not invoke this for signalled/errored spawns (only a
+ * clean numeric non-zero exit may waive). Anything else returns null.
  */
 export function waiverFor(identity, location, check, output, waivers = WAIVED_EXCLUSIONS) {
   for (const entry of waivers) {
     if (entry.identity !== identity) continue // identity axis
     if (entry.location !== location) continue // location axis
-    const markers = entry.checks[check]
-    if (markers === undefined) continue // only pinned checks are waivable
-    const text = typeof output === 'string' ? output : ''
-    const matched = []
-    for (const marker of markers) {
-      if (!text.includes(marker)) return null // value axis: non-matching => re-gate
-      matched.push(marker)
+    const pin = entry.checks ? entry.checks[check] : undefined
+    if (pin === undefined) continue // only pinned checks are waivable
+    // A malformed pin is never a waiver (fail closed): a well-formed pin is
+    // markers + counts object + numeric failTotal.
+    if (!Array.isArray(pin.markers) || typeof pin.counts !== 'object' || pin.counts === null || typeof pin.failTotal !== 'number') {
+      return null
     }
-    return { check, markers_matched: matched }
+    const text = typeof output === 'string' ? output : ''
+    for (const marker of pin.markers) {
+      if (!text.includes(marker)) return null // value axis: marker missing => re-gate
+    }
+    for (const [needle, expected] of Object.entries(pin.counts)) {
+      if (countOccurrences(text, needle) !== expected) return null // R2: count mismatch => re-gate
+    }
+    if (sumFailTotals(text) !== pin.failTotal) return null // R2: co-occurring new failures bump the total
+    return {
+      check,
+      markers_matched: [...pin.markers],
+      counts_verified: { ...pin.counts },
+      fail_total: pin.failTotal,
+    }
   }
   return null
 }
@@ -298,6 +380,8 @@ export function outcomeRecord(name, checks, waivers = []) {
     waivers: waivers.map((w) => ({
       check: w.check,
       markers_matched: [...w.markers_matched],
+      counts_verified: { ...(w.counts_verified ?? {}) },
+      fail_total: w.fail_total,
       output_sha256: w.output_sha256,
     })),
   }
@@ -363,16 +447,21 @@ export function runShard({
         shell: false,
         maxBuffer: 64 * 1024 * 1024,
       })
-      const status = result?.status === 0 && !result.error && !result.signal ? 'pass' : 'fail'
-      return { status, output: `${result?.stdout ?? ''}${result?.stderr ?? ''}` }
+      // R2: failure kind is recorded — only a clean numeric non-zero exit may
+      // ever be waived; signalled/errored spawns fail closed and re-gate.
+      let kind = 'exit'
+      if (result?.signal) kind = 'signal'
+      else if (result?.error || result === undefined || result === null || typeof result.status !== 'number') kind = 'error'
+      const status = kind === 'exit' && result.status === 0 ? 'pass' : 'fail'
+      return { status, kind, output: `${result?.stdout ?? ''}${result?.stderr ?? ''}` }
     } catch (cause) {
       // Failure classification contract (kept): a throwing spawn fails closed
       // as `fail`; the typed error stays attached to the seam result and no
       // untrusted error text ever reaches the outcomes or the report.
-      return { status: 'fail', output: '', cause: new ForemanCiError('Package process failed', cause) }
+      return { status: 'fail', kind: 'error', output: '', cause: new ForemanCiError('Package process failed', cause) }
     }
   }
-  function echoFailure(name, check, output) {
+  function echoCheck(name, check, output) {
     if (typeof echo === 'function') echo(name, check, sanitizeOutput(output))
   }
 
@@ -384,7 +473,7 @@ export function runShard({
     records.get(name).checks.ci = result.status
     if (result.status !== 'pass') {
       installsOk = false
-      echoFailure(name, 'ci', result.output)
+      echoCheck(name, 'ci', result.output)
     }
   }
   // Phase 2: this shard's checks only; a failed install stops every check.
@@ -396,15 +485,22 @@ export function runShard({
           records.get(name).checks[check] = 'pass'
           continue
         }
-        // Run-then-waive (A2 placement 9): only a failing output that carries
-        // the pinned markers is waived; anything else stays a normal failure.
-        const waiver = waiverFor(name, records.get(name).location, check, result.output, waivers)
+        // Run-then-waive (A2 placement 9; R2 value pins): only a clean numeric
+        // non-zero EXIT whose output matches the FULL pinned value (markers +
+        // counts + failure total) is waived. Signalled/errored spawns and any
+        // other red stay normal failures and re-gate.
+        const waiver = result.kind === 'exit'
+          ? waiverFor(name, records.get(name).location, check, result.output, waivers)
+          : null
         if (waiver !== null) {
           records.get(name).checks[check] = 'waived'
           records.get(name).waivers.push({ ...waiver, output_sha256: sha256Hex(result.output) })
+          // R2: the waived output is echoed (sanitized) — an audit trail, never
+          // a silent waiver.
+          echoCheck(name, `${check} [waived]`, result.output)
         } else {
           records.get(name).checks[check] = 'fail'
-          echoFailure(name, check, result.output)
+          echoCheck(name, check, result.output)
         }
       }
     }
@@ -454,6 +550,14 @@ export function reconcile({ root, shardCount, artifacts, waivers = WAIVED_EXCLUS
   }
   if (!Number.isInteger(shardCount) || shardCount < 1 || shardCount > MAX_SHARDS) {
     throw new ForemanCiError(`Refusing reconciliation: shardCount must be an integer in [1, ${MAX_SHARDS}]`)
+  }
+  // R4 fail-closed: an empty discovered set is a discovery error — never a
+  // green vacuous pass (the empty-artifacts path included).
+  if (!Array.isArray(discovered) || discovered.length === 0) {
+    return {
+      ok: false,
+      failures: [{ code: 'discovery-error', detail: 'no packages discovered' }],
+    }
   }
   const list = Array.isArray(artifacts) ? artifacts : []
 
@@ -533,17 +637,27 @@ export function reconcile({ root, shardCount, artifacts, waivers = WAIVED_EXCLUS
           // EXPECTED_SKIPS is empty: run-then-waive never skips (AC3 #6).
           failures.push({ code: 'unexpected-skip', detail: `${sanitizeField(name)}/${field}` })
         } else if (value === 'waived') {
-          // Placement 9: verify run-then-waive — exact three-axis entry and the
-          // recorded matched markers exactly the pinned value.
+          // Placement 9 + R2: verify run-then-waive — exact three-axis entry
+          // and the recorded verification equal to the full pinned value
+          // (markers + counts + failure total).
           const entry = waivers.find((w) => w.identity === name && w.location === pkg.location)
-          const pinned = entry?.checks ? entry.checks[field] : undefined
+          const pin = entry?.checks ? entry.checks[field] : undefined
           const record = Array.isArray(pkg.waivers) ? pkg.waivers.find((w) => w.check === field) : undefined
+          const countsMatch =
+            pin !== undefined &&
+            record !== undefined &&
+            typeof record.counts_verified === 'object' &&
+            record.counts_verified !== null &&
+            sameSet(Object.keys(record.counts_verified), Object.keys(pin.counts)) &&
+            Object.entries(pin.counts).every(([k, v]) => record.counts_verified[k] === v)
           const verified =
-            pinned !== undefined &&
+            pin !== undefined &&
             record !== undefined &&
             Array.isArray(record.markers_matched) &&
             record.output_sha256 !== undefined &&
-            sameSet(record.markers_matched, pinned)
+            record.fail_total === pin.failTotal &&
+            sameSet(record.markers_matched, pin.markers) &&
+            countsMatch
           if (!verified) failures.push({ code: 'waiver-mismatch', detail: `${sanitizeField(name)}/${field}` })
         }
       }
@@ -558,6 +672,39 @@ export function reconcile({ root, shardCount, artifacts, waivers = WAIVED_EXCLUS
     if (!seenNames.has(name)) failures.push({ code: 'omission', detail: sanitizeField(name) })
   }
   return { ok: failures.length === 0, failures, discovered }
+}
+
+// ─── R1: effective decision resolution + fail-closed verdict ───────────────
+
+/**
+ * R1 layer 1 — NO fallthrough. On the reuse branch the effective decision is
+ * the verify step's OWN output: an empty or non-successful verify resolves to
+ * `fallback`, never decide's `reuse` (a crashed/timeout/emit-failed verify can
+ * never green an unverified head). `fallback` passes through; anything absent
+ * or unrecognized resolves to '' (fail-closed downstream).
+ */
+export function effectiveDecision({ decide, verifyConclusion, verifyOutput }) {
+  if (decide === 'fallback') return 'fallback'
+  if (decide !== 'reuse') return ''
+  if (verifyConclusion === 'success' && verifyOutput === 'reuse') return 'reuse'
+  return 'fallback'
+}
+
+/**
+ * R1 layer 2 — the aggregation fails closed unless the gate job succeeded:
+ * any gate failure (decide/verify/resolve crash, timeout, emit failure) is a
+ * red verdict BEFORE the reuse branch is trusted — a failed verify step can
+ * never green the head (the pre-split propagation property, restored).
+ */
+export function verdict({ gateResult, decision, reconcileResult }) {
+  if (gateResult !== 'success') return { ok: false, code: 'gate-failed' }
+  if (decision === 'reuse') return { ok: true, code: 'reuse-verdict' }
+  if (decision === 'fallback') {
+    return reconcileResult?.ok
+      ? { ok: true, code: 'aggregate-ok' }
+      : { ok: false, code: 'aggregate-failed' }
+  }
+  return { ok: false, code: 'unknown-decision' }
 }
 
 // ─── reporting (fixed allowlist names + normalized statuses only) ──────────
@@ -584,7 +731,7 @@ export function buildSummary(artifacts) {
 // ─── CLI (thin): shard and aggregate ───────────────────────────────────────
 
 const USAGE =
-  'Usage: node scripts/foreman-line-ci.mjs shard <index> <count> <npm-cli.js> [outDir] [--offline] | aggregate <count> [inDir]'
+  'Usage: node scripts/foreman-line-ci.mjs resolve | shard <index> <count> <npm-cli.js> [outDir] [--offline] | aggregate <count> [inDir]'
 
 function loadArtifacts(inDir, readdir = readdirSync, readFile = readFileSync) {
   const artifacts = []
@@ -617,6 +764,37 @@ export async function runCli(argv, env = process.env, deps = {}) {
   const appendFile = deps.appendFile ?? appendFileSync
   const stdout = deps.stdout ?? ((text) => process.stdout.write(text))
   const mode = argv[0]
+  if (mode === 'resolve') {
+    if (argv.length > 1) throw new ForemanCiError(USAGE)
+    // R1 layer 1 + R6: one place resolves the effective decision (no || fall-
+    // through anywhere) and derives the shard layout from MAX_SHARDS.
+    const effective = effectiveDecision({
+      decide: env.DECIDE_DECISION,
+      verifyConclusion: env.VERIFY_CONCLUSION,
+      verifyOutput: env.VERIFY_DECISION,
+    })
+    const verifyOwns = env.VERIFY_CONCLUSION === 'success' && env.VERIFY_DECISION !== undefined && env.VERIFY_DECISION !== ''
+    const pick = (verifyField, decideField) => (verifyOwns ? verifyField : decideField)
+    const outputs = {
+      decision: effective,
+      fallback_reason: pick(env.VERIFY_FALLBACK_REASON, env.DECIDE_FALLBACK_REASON) ?? '',
+      base_sha: pick(env.VERIFY_BASE_SHA, env.DECIDE_BASE_SHA) ?? '',
+      head_sha: pick(env.VERIFY_HEAD_SHA, env.DECIDE_HEAD_SHA) ?? '',
+      evidence_record: pick(env.VERIFY_EVIDENCE_RECORD, env.DECIDE_EVIDENCE_RECORD) ?? '',
+      shard_count: String(MAX_SHARDS),
+      shards: JSON.stringify(Array.from({ length: MAX_SHARDS }, (_, i) => i)),
+    }
+    const target = env.GITHUB_OUTPUT
+    if (typeof target === 'string' && target.length > 0) {
+      try {
+        appendFile(target, `${Object.entries(outputs).map(([k, v]) => `${k}=${v}`).join('\n')}\n`)
+      } catch (cause) {
+        throw new ForemanCiError('Could not write decision outputs', cause)
+      }
+    }
+    stdout(`resolved effective decision: ${sanitizeField(effective, 20)} shards=${outputs.shards}\n`)
+    return 0
+  }
   if (mode === 'shard') {
     const [index, count, npmCli, outDir, ...extra] = argv.slice(1)
     const offline = extra.includes('--offline')
@@ -630,7 +808,7 @@ export async function runCli(argv, env = process.env, deps = {}) {
       shardCount,
       offline,
       headSha: env.GITHUB_SHA ?? null,
-      echo: (name, check, text) => stdout(`\n=== ${sanitizeField(name)} / ${check} output ===\n${text}\n`),
+      echo: (name, check, text) => stdout(`\n=== ${sanitizeField(name)} / ${sanitizeField(check, 40)} output ===\n${text}\n`),
     })
     const dir = outDir === undefined || outDir === '--offline' ? 'shard-outcomes' : outDir
     makeDir(dir, { recursive: true })
@@ -650,25 +828,41 @@ export async function runCli(argv, env = process.env, deps = {}) {
     const [count, inDir, ...extra] = argv.slice(1)
     if (extra.length) throw new ForemanCiError(USAGE)
     const shardCount = Number(count)
-    const artifacts = loadArtifacts(inDir ?? 'shard-outcomes')
-    const result = reconcile({
-      root: fileURLToPath(new URL('../', import.meta.url)),
-      shardCount,
-      artifacts,
-    })
-    const summary = buildSummary(artifacts)
-    stdout(`${summary}\n`)
-    for (const failure of result.failures) {
-      stdout(`aggregation failure: ${sanitizeField(failure.code, 60)}: ${sanitizeField(failure.detail, 200)}\n`)
+    const gateResult = env.GATE_RESULT ?? ''
+    const decision = env.DECISION ?? ''
+    // R1 layer 2: this CLI is the single verdict authority. Reuse never needs
+    // artifacts; fallback reconciles them; anything else is fail-closed.
+    if (decision === 'reuse') {
+      const v = verdict({ gateResult, decision, reconcileResult: { ok: true } })
+      stdout(`verdict: ${v.code}\n`)
+      return v.ok ? 0 : 1
     }
-    if (env.GITHUB_STEP_SUMMARY) {
-      try {
-        appendFile(env.GITHUB_STEP_SUMMARY, summary)
-      } catch (cause) {
-        throw new ForemanCiError('Could not write package summary', cause)
+    if (decision === 'fallback') {
+      const artifacts = loadArtifacts(inDir ?? 'shard-outcomes')
+      const result = reconcile({
+        root: fileURLToPath(new URL('../', import.meta.url)),
+        shardCount,
+        artifacts,
+      })
+      const summary = buildSummary(artifacts)
+      stdout(`${summary}\n`)
+      for (const failure of result.failures) {
+        stdout(`aggregation failure: ${sanitizeField(failure.code, 60)}: ${sanitizeField(failure.detail, 200)}\n`)
       }
+      if (env.GITHUB_STEP_SUMMARY) {
+        try {
+          appendFile(env.GITHUB_STEP_SUMMARY, summary)
+        } catch (cause) {
+          throw new ForemanCiError('Could not write package summary', cause)
+        }
+      }
+      const v = verdict({ gateResult, decision, reconcileResult: result })
+      stdout(`verdict: ${v.code}\n`)
+      return v.ok ? 0 : 1
     }
-    return result.ok ? 0 : 1
+    // Absent/unknown effective decision: never green (R1).
+    stdout('verdict: unknown-decision (fail closed)\n')
+    return 1
   }
   throw new ForemanCiError(USAGE)
 }
