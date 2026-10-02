@@ -420,9 +420,6 @@ test('A3 reader set pins exactly the measured read-sweep inventory (identity + l
     'plugins/foreman-line/dispatch/README.md',
     'plugins/foreman-line/docs/FOREMAN-LINE-PLAN.md',
     'plugins/foreman-line/docs/goals/foreman-kernel/',
-    'plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-contract.md',
-    'plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-evidence-boundary.md',
-    'plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-verification.md',
     'plugins/foreman-line/docs/goals/routing-currency-and-merit/rcm-p0-catalog-snapshot.v1.json',
     'plugins/foreman-line/docs/goals/routing-currency-and-merit/source-evidence/openrouter-rcm-v1-conservative-projection-20260926.json',
     'plugins/foreman-line/docs/goals/routing-currency-and-merit/source-evidence/pmc-binding-coverage-openrouter-20260926-v4.json',
@@ -1127,10 +1124,13 @@ const jevAlphaReaders = [
   'plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-evidence-boundary.md',
   'plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-verification.md',
 ]
-test('C9 readers (jev-decisions replay PATHS): every measured path is code + test-relevant-change', () => {
+test('R5 re-verification: jev-p0 goal docs have no check readers and stay ordinary (PATHS is an in-memory allowlist)', () => {
+  // measured, not asserted: jev-decisions/src/replay.ts keeps these paths in an
+  // in-memory allowlist (PATHS.includes) and no check reads them from disk —
+  // the three over-exclusions are dropped (contract-change delta, R5).
   for (const path of jevAlphaReaders) {
-    assert.equal(classifyPath(path), CLASS.CODE, path)
-    assert.equal(deltaFallbackReason(path), 'test-relevant-change', path)
+    assert.equal(classifyPath(path), CLASS.ORDINARY, path)
+    assert.equal(deltaFallbackReason(path), null, path)
   }
 })
 

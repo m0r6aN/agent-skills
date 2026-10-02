@@ -120,9 +120,11 @@ const ENUMERATED_CODE_BASENAMES = Object.freeze(['tsconfig.json', 'biome.json'])
  * CI-P2 additions (A2 placements 5/7) are the measured read-sweep inventory of
  * the newly-swept packages: the foreman-kernel goal corpus (read by
  * `authority-registry` corpus/generate/validate and pinned by
- * `bypass-outage-harness` surface refs — excluded as a subtree), the three
- * jev-p0 goal docs (`jev-decisions` replay PATHS), and `defects_lessons.md`
- * (`authority-registry` provenance evidence pins).
+ * `bypass-outage-harness` surface refs — excluded as a subtree), and
+ * `defects_lessons.md` (`authority-registry` provenance evidence pins).
+ * R5 re-verification: the three `jev-p0-*.md` docs were NOT excluded —
+ * `jev-decisions`' `PATHS` is an in-memory allowlist and no check reads those
+ * files (measured, not asserted); they stay ordinary.
  */
 export const READER_SET = Object.freeze([
   'plugins/foreman-line/approval/README.md',
@@ -131,9 +133,6 @@ export const READER_SET = Object.freeze([
   'plugins/foreman-line/dispatch/README.md',
   'plugins/foreman-line/docs/FOREMAN-LINE-PLAN.md',
   'plugins/foreman-line/docs/goals/foreman-kernel/',
-  'plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-contract.md',
-  'plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-evidence-boundary.md',
-  'plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-verification.md',
   'plugins/foreman-line/docs/goals/routing-currency-and-merit/rcm-p0-catalog-snapshot.v1.json',
   'plugins/foreman-line/docs/goals/routing-currency-and-merit/source-evidence/openrouter-rcm-v1-conservative-projection-20260926.json',
   'plugins/foreman-line/docs/goals/routing-currency-and-merit/source-evidence/pmc-binding-coverage-openrouter-20260926-v4.json',
