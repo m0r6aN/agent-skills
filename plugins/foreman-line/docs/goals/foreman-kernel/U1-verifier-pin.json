@@ -1,27 +1,39 @@
 {
-  "schema": "u1-verifier-pin/v2",
+  "schema": "u1-verifier-pin/v3",
   "workflow": ".github/workflows/u1-verify.yml",
-  "workflowCommit": "16a7e0fb0a5713bdfc7722e3227def6e6128cade",
-  "workflowFileSha256": "sha256:3301a0e4bb95a272c5110907b6bfe6e9d3c3c6111f321f4ce285c1ac085e4c10",
+  "workflowCommit": "73ad47a38572a9315fdbd3f7e5cfa9f401ff422b",
+  "workflowFileSha256": "sha256:8d6ee3bde16393c956cc7533d267a4d50a1b0a763f3525720d35eb4df3b3c337",
   "tag": "refs/tags/u1-verifier-pin",
   "producerWorkflow": ".github/workflows/u1-produce.yml",
-  "supersedes": {
-    "workflowCommit": "dc5617924379a5a574fddb2c71cce1647a74ba04",
-    "workflowFileSha256": "sha256:8329f858ec5de48d6a55cb7254c16c871d40875fc01b0ae4f4409e025ed2a661",
-    "reason": "four az-download --file - sites fixed to temp-file reads (stdout streaming is a no-op; shakedown-found)"
-  },
-  "actionlint": "not-available-on-ci-or-workstation; substituted: PyYAML parse PASS both workflows + machine-checked outputs wiring (7/7 job maps) + zero raw expression interpolation of file-derived values (recorded in U1-closure-implementation-notes-2026-10-01.md)",
-  "dryRun": {
-    "producer": "run 36926434897 SUCCESS against the UNLOCKED container; bundle at u1/m0r6an/agent-skills/runs/36926434897/p01/",
-    "verifier": "run 36944407315 full-pipeline SUCCESS; recorded decision status INVALID authoritative:true with reasonCodes [U1_CONFIGURATION_INCOMPLETE, U1_CONTROL_FAILED, U1_INDEPENDENCE_UNPROVEN, U1_REQUIRED_EVIDENCE_MISSING, U1_SUBJECT_MISMATCH]; seal.json written last (a02/) — non-ACCEPT as designed per A-U1.8.03",
-    "note": "shakedown-found defects F-19/checklist-digest/az-download x4/env-policy/schema-literal all fixed and recorded in U1-8-closure-report-2026-10-01.md"
-  },
-  "configurationChecklistSha256": "sha256:f6ce063326c79e70633e29bc1a3d3a87dea271708427cd6362f6fbcb8d0a1998",
-  "oracleDigest": "sha256:ca3d30bdf07d6bc37dbb24b882c35ed0235f1b83a2e3b4536aa33a28eb6d20e3",
   "custodian": {
     "login": "m0r6aN",
     "objectId": "461a4112-8e91-41cb-afef-6889b8f48ff0"
   },
-  "recordedAt": "2026-10-01T21:15:00Z",
-  "note": "workflowCommit is the commit that INTRODUCED the pinned bytes (F-19: a record cannot embed its own commit's SHA). The run-time binding is transitive and fail-closed: byte-equality at the run commit (immutable API fetch) + recorded-commit ancestor-of run-commit + protected-tag ref + dispatch pinned-commit-sha input. Any pin change is a contract amendment (standing #34) recorded in the review trail. configurationChecklistSha256 is the checklist BYTE digest (F-2 class semantics: byte digests for stored bytes, document digests for identities); the earlier document-digest value was a shakedown-found conflation."
+  "tagRulesetId": 24378879,
+  "supersedes": {
+    "workflowCommit": "16a7e0fb0a5713bdfc7722e3227def6e6128cade",
+    "workflowFileSha256": "sha256:3301a0e4bb95a272c5110907b6bfe6e9d3c3c6111f321f4ce285c1ac085e4c10",
+    "reason": "closure review round 2 (G-1..G-14): U1-8-closure2-amendments-2026-10-02.md A-U1.8.17..27",
+    "supersedes": {
+      "workflowCommit": "dc5617924379a5a574fddb2c71cce1647a74ba04",
+      "workflowFileSha256": "sha256:8329f858ec5de48d6a55cb7254c16c871d40875fc01b0ae4f4409e025ed2a661",
+      "reason": "four az-download --file - sites fixed to temp-file reads (shakedown-found)",
+      "supersedes": {
+        "workflowCommit": "be3e3de3dfcf6159d4ffb265aa39847aac5f0814",
+        "workflowFileSha256": "sha256:b7952e1e52f0144e7632fc73d8d04e9564184dfcf4c5af978c71592514cc4bbe",
+        "reason": "U1-8 closure amendments A-U1.8.01..16 (F-1, F-2, F-3, F-5, F-16, F-17)"
+      }
+    }
+  },
+  "amendment": "U1-8-closure2-amendments-2026-10-02.md",
+  "configurationChecklistSha256": "sha256:3119cfdaf24716c5502b3e2ef5533e3e08874c5464d2130212effaf47bb5c4f1",
+  "actionlint": {
+    "result": "pass",
+    "version": "1.7.12",
+    "runId": "37044777174",
+    "commit": "73ad47a38572a9315fdbd3f7e5cfa9f401ff422b",
+    "workflow": ".github/workflows/u1-lint.yml"
+  },
+  "recordedAt": "2026-10-02T18:34:12Z",
+  "note": "workflowCommit is the commit that INTRODUCED the pinned bytes (a record cannot embed its own commit SHA). An authoritative run executes at commit R = tag target = dispatch input, with workflowCommit R or an ancestor, workflow bytes at R equal to workflowFileSha256, and an active tag ruleset (A-U1.8.17). The trust-policy digest (IA-2.11) projects only workflow, workflowCommit, workflowFileSha256, tag, producerWorkflow and custodian, so record-only edits (dryRun, actionlint, recordedAt, note, supersedes) never move it. configurationChecklistSha256 is the checklist BYTE digest. The oracle is per request (A-U1.8.19), not in this record."
 }

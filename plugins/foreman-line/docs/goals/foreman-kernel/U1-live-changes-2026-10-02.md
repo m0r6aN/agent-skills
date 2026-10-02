@@ -54,3 +54,25 @@ u1-verifier policies `61546414 main` + `61684968 tag u1-verifier-pin`; verifier 
 
 After this addendum no branch ruleset lists a bypass actor; the only bypass is the custodian on the tag ruleset
 24378879 (needed to move the pin tag).
+
+## Addendum B (2026-10-02) - temporary pull-request-only bypass while the baseline is red
+
+Cause: after step 1 removed the owner bypass, PR #130 could not merge. The required checks `test` and
+`integration-report` were already red on `main` before this work (run 37033700779 at ebebea1: sweep (3), test,
+integration-report; the failures are in unrelated suites, e.g. a missing `docs/specs/active/FK-P17-bypass-outage-matrix.md`
+and the retired legacy governed-inference path), and ruleset `agent-skills-default` (24257508) requires code-scanning
+results while code scanning is `not-configured` (`code-scanning/analyses` 404, default setup `not-configured`), so that rule
+can never be satisfied.
+
+Authority: A-U1.8.11 clause 3 ("any future re-addition requires the same red-baseline condition and its own sunset
+record") and the owner's blanket authority of 2026-10-02.
+
+| Ruleset | Change | Mode |
+|---|---|---|
+| 22369510 `main-pr-gate` | bypass actor 35229880 (m0r6aN) re-added | `pull_request` (merging a PR only; no direct push) |
+| 24257508 `agent-skills-default` | bypass actor 35229880 (m0r6aN) re-added | `pull_request` |
+
+Sunset record: both bypass entries exist only to merge the pull requests of the A-U1.8.27 sequence (PR #130 merged as
+77e0d9e; the candidate-pin PR and the final-pin PR). They are removed again immediately after the final-pin merge and the tag
+move, or earlier if the baseline turns green and code scanning is configured. Removal is recorded as ruleset GET evidence
+in Addendum C.
