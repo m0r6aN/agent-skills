@@ -372,9 +372,14 @@ test('boundary: plugins/foreman-line/docs/goals/ci-optimization/x.md => ordinary
 
 // ─── A3 positive controls: the shrink keeps its ordinary core ordinary ─────
 
-test('A3: plugins/foreman-line/docs/transcripts/*.md stays ordinary', () => {
-  assert.equal(classifyPath('plugins/foreman-line/docs/transcripts/defects_lessons.md'), CLASS.ORDINARY)
-  assert.equal(deltaFallbackReason('plugins/foreman-line/docs/transcripts/defects_lessons.md'), null)
+test('C9: transcripts ordinary core survives the shrink; defects_lessons.md is a measured reader (A2 p5/p7)', () => {
+  // non-reader transcripts .md stays ordinary (rule 4c core)
+  assert.equal(classifyPath('plugins/foreman-line/docs/transcripts/other-lessons.md'), CLASS.ORDINARY)
+  assert.equal(deltaFallbackReason('plugins/foreman-line/docs/transcripts/other-lessons.md'), null)
+  // the measured reader flipped ordinary -> code (C9 shrink; A3 row 4: "Any
+  // additional reader path found by the sweep is excluded and pinned likewise")
+  assert.equal(classifyPath('plugins/foreman-line/docs/transcripts/defects_lessons.md'), CLASS.CODE)
+  assert.equal(deltaFallbackReason('plugins/foreman-line/docs/transcripts/defects_lessons.md'), 'test-relevant-change')
 })
 test('A3: repo-root docs/**/*.md (non-specs first segment) stays ordinary', () => {
   assert.equal(classifyPath('docs/getting-started.md'), CLASS.ORDINARY)
@@ -414,10 +419,12 @@ test('A3 reader set pins exactly the measured read-sweep inventory (identity + l
     'plugins/foreman-line/contracts/README.md',
     'plugins/foreman-line/dispatch/README.md',
     'plugins/foreman-line/docs/FOREMAN-LINE-PLAN.md',
+    'plugins/foreman-line/docs/goals/foreman-kernel/',
     'plugins/foreman-line/docs/goals/routing-currency-and-merit/rcm-p0-catalog-snapshot.v1.json',
     'plugins/foreman-line/docs/goals/routing-currency-and-merit/source-evidence/openrouter-rcm-v1-conservative-projection-20260926.json',
     'plugins/foreman-line/docs/goals/routing-currency-and-merit/source-evidence/pmc-binding-coverage-openrouter-20260926-v4.json',
     'plugins/foreman-line/docs/kickstarters/foreman-shaping-template.md',
+    'plugins/foreman-line/docs/transcripts/defects_lessons.md',
     'plugins/foreman-line/foreman-config/README.md',
     'plugins/foreman-line/hybrid-routing/README.md',
     'plugins/foreman-line/permission-profiles/README.md',
@@ -1077,4 +1084,88 @@ test('R6: derived reuse from a newer source than the pin => evidence-unverifiabl
   assert.equal(verified.record.decision, 'fallback')
   assert.equal(verified.record.fallback_reason, 'evidence-unverifiable')
   assert.equal(spawnCalls.length, 1)
+})
+
+// ─── CI-P2 C9 shrink (A2 placements 5/7): measured readers of the newly-swept
+// packages flip ordinary -> code; each pinned basename + location + value (SC #13)
+
+const authorityRegistryReaders = [
+  'plugins/foreman-line/docs/goals/foreman-kernel/charter.md',
+  'plugins/foreman-line/docs/goals/foreman-kernel/plan-review-findings.md',
+  'plugins/foreman-line/docs/goals/foreman-kernel/loop-directive.md',
+  'plugins/foreman-line/docs/goals/foreman-kernel/R31-coordinator-decision-20260907.md',
+  'plugins/foreman-line/docs/goals/foreman-kernel/R30-step0-mapping-20260907.md',
+  'plugins/foreman-line/docs/goals/foreman-kernel/R31-step0-mapping-20260907.md',
+  'plugins/foreman-line/docs/transcripts/defects_lessons.md',
+]
+test('C9 readers (authority-registry corpus/generate/validate): every measured path is code + test-relevant-change', () => {
+  for (const path of authorityRegistryReaders) {
+    assert.equal(classifyPath(path), CLASS.CODE, path)
+    assert.equal(deltaFallbackReason(path), 'test-relevant-change', path)
+  }
+})
+
+const bypassOutageReaders = [
+  'plugins/foreman-line/docs/goals/foreman-kernel/fk-p1-p21-dispatch-plan.md',
+  'plugins/foreman-line/docs/goals/foreman-kernel/fk-rs2-gate1-reratification-2026-09-27.md',
+  'plugins/foreman-line/docs/goals/foreman-kernel/fk-rescope-RS1-2026-09-27.md',
+  'plugins/foreman-line/docs/goals/foreman-kernel/fk-exit-annex-draft-2026-09-27.md',
+  'plugins/foreman-line/docs/goals/foreman-kernel/fk-wave3-4-marginal-value-2026-09-27.md',
+]
+test('C9 readers (bypass-outage-harness surface pins): every measured path is code + test-relevant-change', () => {
+  for (const path of bypassOutageReaders) {
+    assert.equal(classifyPath(path), CLASS.CODE, path)
+    assert.equal(deltaFallbackReason(path), 'test-relevant-change', path)
+  }
+})
+
+const jevAlphaReaders = [
+  'plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-contract.md',
+  'plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-evidence-boundary.md',
+  'plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-verification.md',
+]
+test('R5 re-verification: jev-p0 goal docs have no check readers and stay ordinary (PATHS is an in-memory allowlist)', () => {
+  // measured, not asserted: jev-decisions/src/replay.ts keeps these paths in an
+  // in-memory allowlist (PATHS.includes) and no check reads them from disk —
+  // the three over-exclusions are dropped (contract-change delta, R5).
+  for (const path of jevAlphaReaders) {
+    assert.equal(classifyPath(path), CLASS.ORDINARY, path)
+    assert.equal(deltaFallbackReason(path), null, path)
+  }
+})
+
+test('C9 subtree entry: the whole foreman-kernel corpus is excluded, sibling goal trees are not', () => {
+  // a foreman-kernel file outside the enumerated inventory is still excluded
+  // (the corpus sweep copies/mutates the whole subtree — measured, not asserted)
+  assert.equal(classifyPath('plugins/foreman-line/docs/goals/foreman-kernel/brand-new-doc.md'), CLASS.CODE)
+  assert.equal(deltaFallbackReason('plugins/foreman-line/docs/goals/foreman-kernel/brand-new-doc.md'), 'test-relevant-change')
+  // siblings stay ordinary — the shrink is exactly as wide as the measurement
+  assert.equal(classifyPath('plugins/foreman-line/docs/goals/routing-currency-and-merit/charter.md'), CLASS.ORDINARY)
+  assert.equal(classifyPath('plugins/foreman-line/docs/goals/ci-optimization/charter.md'), CLASS.ORDINARY)
+})
+
+test('C9 SC #13 axes bind independently against the real entries (basename / location / value)', () => {
+  // basename axis: same location family, different basename
+  assert.equal(classifyPath('plugins/foreman-line/docs/transcripts/other.md'), CLASS.ORDINARY)
+  // location axis: same basename, different parent directory
+  assert.equal(classifyPath('plugins/foreman-line/docs/goals/ci-optimization/defects_lessons.md'), CLASS.ORDINARY)
+  // value axis: a near-miss literal never matches the pinned one
+  assert.equal(classifyPath('plugins/foreman-line/docs/transcripts/defects_lessons-2.md'), CLASS.ORDINARY)
+  // the pinned literal itself is excluded
+  assert.equal(classifyPath('plugins/foreman-line/docs/transcripts/defects_lessons.md'), CLASS.CODE)
+})
+
+// ─── D-Q2 (A2 placement 8): spec-corpus near-miss segments matched case-insensitively
+
+test('D-Q2: docs/Specs* and docs/SPECS* case variants fall to code (never ordinary)', () => {
+  for (const path of ['docs/Specs/x.md', 'docs/SPECS/x.md', 'docs/sPeCs/x.md', 'docs/Specs/deep/y.md']) {
+    assert.equal(classifyPath(path), CLASS.CODE, path)
+    assert.equal(deltaFallbackReason(path), 'test-relevant-change', path)
+  }
+})
+test('D-Q2: the exact-lowercase spec segment keeps its classes (rule 3 + near-miss unchanged)', () => {
+  assert.equal(classifyPath('docs/specs/x.md'), CLASS.SPECIFICATIONS)
+  assert.equal(deltaFallbackReason('docs/specs/x.md'), 'test-relevant-change')
+  assert.equal(classifyPath('docs/specs-extra/x.md'), CLASS.CODE)
+  assert.equal(deltaFallbackReason('docs/specs-extra/x.md'), 'test-relevant-change')
 })

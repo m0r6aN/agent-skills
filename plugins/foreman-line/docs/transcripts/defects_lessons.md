@@ -151,3 +151,36 @@ propagation should be shape-pinned where the gate depends on it.
 (per-command guards) + `scripts/ci-reuse.test.mjs` (R5 semantic pin, both
 dimensions mutation-bound); other workflows narrative (OPEN debt: audit
 multi-command steps in `test-plugin-install.yml` at next touch).
+
+## #48 — A value pin must be measured where it runs; name the variance, don't average it
+
+CI-P2's waived-value pins were measured on the local machine, and every CI
+round surfaced a member the base never showed: the CN-01..CN-05 race flakes
+(each observed at least once in CI, never in the 16-run local base), two
+git-environment R31 corpus members (30 → 32 failures), and count drift from a
+racy suite. The matcher's SEMANTICS were correct throughout — the DATA was
+narrow. Measure value pins in the deployment environment, or exhaustively
+enumerate the family (the CN closure); prefer named present-or-absent members
+over totals; and keep a rejection-observability channel
+(`waiver_rejected: {layer, observed, expected, names}`) so the
+surface-and-ratify loop runs on data instead of guesses.
+
+**Disposition:** mechanically installed in `scripts/foreman-line-ci.mjs`
+(placements 11/12 pin data + the R18 rejection records) and the A2
+placements 11/12 named-residual clauses; general rule narrative-only (OPEN:
+candidate for STANDING-CONSTRAINTS at next touch).
+
+## #49 — A waiver must bind failure IDENTITY; counts and totals are slack
+
+The known-red waiver first pinned substrings (a new failure hiding behind an
+old marker waived), then exact totals (racy tests flaked the gate red), and
+only bound correctly at the failure-identity set plus the measured equality
+`failTotal === |distinct failing names|` — a duplicate-title, a marker-named
+test, and a control-char variant each bump the total without adding a
+distinct name, and the equality refuses all three. Slack in a waiver is
+exactly where new defects hide; run-then-waive with a clean-exit kind gate
+keeps killed output from laundering itself.
+
+**Disposition:** mechanically installed in `scripts/foreman-line-ci.mjs` +
+`.test.mjs` (the v3.1 pin shape + equality; the round-3 probe cases are
+tests); narrative-only otherwise.
