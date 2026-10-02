@@ -591,22 +591,26 @@ export function sumFailTotals(text) {
 }
 
 /**
- * R16: the full value evaluation with its rejection layer. Returns
- * `{ layer, record }` — `layer: null` with a populated `record` when the
- * pinned value matches (the check may waive); otherwise `layer` names the
- * FIRST failing layer (`kind-gate`, `no-pin`, `malformed-pin`, `marker-missing`,
- * `count-mismatch`, `range`, `set-subset`, `set-supersede`, `equality`) and
- * `record` is null. The layer is recorded and echoed so a non-waived failure
- * on a waived identity is never silent (the run-then-waive observability
- * contract).
+ * R16/R18: the full value evaluation with its rejection layer and evidence.
+ * Returns `{ layer, record, evidence }` — `layer: null` with a populated
+ * `record` when the pinned value matches (the check may waive); otherwise
+ * `layer` names the FIRST failing layer (`kind-gate`, `no-pin`, `malformed-pin`,
+ * `marker-missing`, `count-mismatch`, `range`, `set-subset`, `set-supersede`,
+ * `equality`) and `evidence` carries `{ observed, expected, names }` — the
+ * layer's actual compared values, the pinned side, and every observed failing
+ * name (the surface-and-ratify loop's data channel). All evidence is built
+ * linear-time and is sanitized by the caller before emission (SC #4/#5).
  */
 export function evaluateWaiver(identity, location, check, output, kind = 'exit', waivers = WAIVED_EXCLUSIONS) {
-  if (kind !== 'exit') return { layer: 'kind-gate', record: null } // signalled/errored spawns never waive
+  const text = typeof output === 'string' ? output : ''
+  const names = failingTestNames(text)
+  const pack = (layer, observed, expected) => ({ layer, record: null, evidence: { observed, expected, names } })
+  if (kind !== 'exit') return pack('kind-gate', { kind }, { kind: 'exit' }) // signalled/errored spawns never waive
   for (const entry of waivers) {
     if (entry.identity !== identity) continue // identity axis
     if (entry.location !== location) continue // location axis
     const pin = entry.checks ? entry.checks[check] : undefined
-    if (pin === undefined) return { layer: 'no-pin', record: null }
+    if (pin === undefined) return pack('no-pin', { identity, location, check }, { pinned: 'waived identity + check' })
     // A malformed pin is never a waiver (fail closed). Markers may be empty
     // only when the failing-set identity carries the value axis (R15).
     const pinOk =
@@ -620,36 +624,32 @@ export function evaluateWaiver(identity, location, check, output, kind = 'exit',
       pin.failTotal.every((n) => Number.isInteger(n) && n >= 0) &&
       pin.failTotal[0] <= pin.failTotal[1] &&
       (pin.markers.length > 0 || pin.failingSet.length + pin.flaky.length > 0)
-    if (!pinOk) return { layer: 'malformed-pin', record: null }
-    const text = typeof output === 'string' ? output : ''
+    if (!pinOk) return pack('malformed-pin', { shape: 'invalid pin' }, { shape: 'markers|names + counts + [min,max]' })
     for (const marker of pin.markers) {
-      if (!text.includes(marker)) return { layer: 'marker-missing', record: null } // value axis: marker missing
+      if (!text.includes(marker)) return pack('marker-missing', { missing: marker }, { markers: [...pin.markers] })
     }
     for (const [needle, expected] of Object.entries(pin.counts)) {
-      if (countOccurrences(text, needle) !== expected) return { layer: 'count-mismatch', record: null }
+      const found = countOccurrences(text, needle)
+      if (found !== expected) return pack('count-mismatch', { literal: needle, found }, { literal: needle, count: expected })
     }
     const observedTotal = sumFailTotals(text)
     if (observedTotal < pin.failTotal[0] || observedTotal > pin.failTotal[1]) {
-      return { layer: 'range', record: null } // outside the measured variance
+      return pack('range', { sum: observedTotal }, { failTotal: [...pin.failTotal] })
     }
     // R7: the failing-test SET is the deterministic failure identity.
-    const observed = failingTestNames(text)
-    const observedSet = new Set(observed)
+    const observedSet = new Set(names)
     const universe = new Set([...pin.failingSet, ...pin.flaky])
-    for (const name of observed) {
-      if (!universe.has(name)) return { layer: 'set-subset', record: null } // a NEW failure never waives
-    }
-    for (const name of pin.failingSet) {
-      if (!observedSet.has(name)) return { layer: 'set-supersede', record: null } // deterministic member missing
-    }
+    const intruders = names.filter((n) => !universe.has(n))
+    if (intruders.length > 0) return pack('set-subset', { intruders }, { failingSet: pin.failingSet.length, flaky: pin.flaky.length })
+    const missing = pin.failingSet.filter((n) => !observedSet.has(n))
+    if (missing.length > 0) return pack('set-supersede', { missing }, { failingSet: pin.failingSet.length })
     // R11: the measured invariant — whenever failing names parse, the declared
-    // failure total equals the number of DISTINCT failing names. This closes
-    // the slack exploit: a duplicate-title failure, a test named like a
-    // reporter marker, or a control-char variant each bumps the total without
-    // a new distinct name (or creates a name the set rejects). Where NO names
-    // parse (tsc/biome checks declare none), the pinned total range is the
-    // sole guard and is kept tight to measurement.
-    if (observed.length > 0 && observedTotal !== observed.length) return { layer: 'equality', record: null }
+    // failure total equals the number of DISTINCT failing names (closes the
+    // slack exploit). Where NO names parse (tsc/biome checks declare none),
+    // the pinned total range is the sole guard and is kept tight to measurement.
+    if (names.length > 0 && observedTotal !== names.length) {
+      return pack('equality', { sum: observedTotal, distinct: names.length }, { rule: 'sum === |distinct failing names|' })
+    }
     return {
       layer: null,
       record: {
@@ -657,11 +657,12 @@ export function evaluateWaiver(identity, location, check, output, kind = 'exit',
         markers_matched: [...pin.markers],
         counts_verified: { ...pin.counts },
         fail_total: observedTotal,
-        failing_set: observed,
+        failing_set: names,
       },
+      evidence: null,
     }
   }
-  return { layer: 'no-pin', record: null }
+  return pack('no-pin', { identity, location, check }, { pinned: 'waived identity + check' })
 }
 
 /** R16: the rejection layer for a refused waiver (null when it would waive). */
@@ -830,8 +831,17 @@ export function runShard({
           echoCheck(name, `${check} [waived]`, result.output)
         } else {
           records.get(name).checks[check] = 'fail'
-          records.get(name).waiver_rejected[check] = evaluation.layer
-          echoCheck(name, `${check} [rejected: ${sanitizeField(evaluation.layer, 40)}]`, result.output)
+          // R18: the exact layer with its compared values and the observed
+          // failing names — the surface-and-ratify loop's data channel. The
+          // payload rides the outcome record and the echo (sanitized).
+          records.get(name).waiver_rejected[check] = {
+            layer: evaluation.layer,
+            observed: evaluation.evidence.observed,
+            expected: evaluation.evidence.expected,
+            names: evaluation.evidence.names,
+          }
+          const payload = sanitizeField(JSON.stringify(records.get(name).waiver_rejected[check]), 8000)
+          echoCheck(name, `${check} [rejected: ${payload}]`, result.output)
         }
       }
     }

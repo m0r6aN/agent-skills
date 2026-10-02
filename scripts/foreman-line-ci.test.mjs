@@ -1572,16 +1572,34 @@ test('R15: cross-environment-unstable markers are dropped; names carry the axis'
 
 // ─── R16: every refusal records its exact layer (never silent) ─────────────
 
-for (const [label, mutate, expectedLayer] of [
-  ['kind-gate', (o) => o, 'kind-gate'],
-  ['marker-missing', (o) => o.split('PIN-MARKER-B').join('PIN-MARKER-C'), 'marker-missing'],
-  ['count-mismatch', (o) => `${o} PIN-MARKER-A`, 'count-mismatch'],
-  ['range', (o) => `${o}\n\u2139 fail 1`, 'range'],
-  ['set-subset', (o) => `${o.split('\n').filter((l) => !l.includes('flaky member')).join('\n')}\n\u2716 an intruder (1.0ms)`, 'set-subset'],
-  ['set-supersede', (o) => o.split('\n').filter((l) => !l.includes('failing two')).join('\n').split('fail 3').join('fail 2'), 'set-supersede'],
-  ['equality', (o) => o.split('\n').filter((l) => !l.includes('flaky member')).join('\n'), 'equality'],
+for (const [label, mutate, expectedLayer, assertPayload] of [
+  ['kind-gate', (o) => o, 'kind-gate', (e) => {
+    assert.equal(e.observed.kind, 'signal')
+    assert.deepEqual(e.expected, { kind: 'exit' })
+  }],
+  ['marker-missing', (o) => o.split('PIN-MARKER-B').join('PIN-MARKER-C'), 'marker-missing', (e) => {
+    assert.equal(e.observed.missing, 'PIN-MARKER-B')
+    assert.deepEqual(e.expected.markers, ['PIN-MARKER-A', 'PIN-MARKER-B'])
+  }],
+  ['count-mismatch', (o) => `${o} PIN-MARKER-A`, 'count-mismatch', (e) => {
+    assert.deepEqual(e.observed, { literal: 'PIN-MARKER-A', found: 3 })
+    assert.deepEqual(e.expected, { literal: 'PIN-MARKER-A', count: 2 })
+  }],
+  ['range', (o) => `${o}\n\u2139 fail 1`, 'range', (e) => {
+    assert.equal(e.observed.sum, 4)
+    assert.deepEqual(e.expected, { failTotal: [2, 3] })
+  }],
+  ['set-subset', (o) => `${o.split('\n').filter((l) => !l.includes('flaky member')).join('\n')}\n\u2716 an intruder (1.0ms)`, 'set-subset', (e) => {
+    assert.deepEqual(e.observed.intruders, ['an intruder'])
+  }],
+  ['set-supersede', (o) => o.split('\n').filter((l) => !l.includes('failing two')).join('\n').split('fail 3').join('fail 2'), 'set-supersede', (e) => {
+    assert.deepEqual(e.observed.missing, ['failing two'])
+  }],
+  ['equality', (o) => o.split('\n').filter((l) => !l.includes('flaky member')).join('\n'), 'equality', (e) => {
+    assert.deepEqual(e.observed, { sum: 3, distinct: 2 })
+  }],
 ]) {
-  test(`R16: a ${label} refusal is recorded with its layer and echoed`, () => {
+  test(`R16/R18: a ${label} refusal is recorded with its layer, evidence and echoed`, () => {
     const echoed = []
     const kind = label === 'kind-gate' ? 'signal' : 'exit'
     const result = runShard({
@@ -1603,8 +1621,14 @@ for (const [label, mutate, expectedLayer] of [
     })
     const alpha = result.outcomes.find((o) => o.name === 'alpha')
     assert.equal(alpha.checks.test, 'fail')
-    assert.equal(alpha.waiver_rejected.test, expectedLayer, `the ${label} layer must be recorded`)
-    assert.ok(echoed.some(([, check]) => check.includes(`[rejected: ${expectedLayer}]`)), 'the layer is echoed')
+    const rejection = alpha.waiver_rejected.test
+    assert.equal(rejection.layer, expectedLayer, `the ${label} layer must be recorded`)
+    // R18: the observed/expected payload and the failing names ride the record
+    assertPayload(rejection)
+    assert.ok(Array.isArray(rejection.names) && rejection.names.length > 0, 'the observed failing names are recorded')
+    assert.ok(echoed.some(([, check, text]) => check.includes('[rejected:') && text !== undefined), 'the payload is echoed')
+    const echoLine = echoed.find(([, check]) => check.includes('[rejected:'))
+    assert.ok(echoLine[1].includes(expectedLayer), 'the echoed payload names the layer')
   })
 }
 
