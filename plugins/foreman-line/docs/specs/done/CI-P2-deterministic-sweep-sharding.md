@@ -1,14 +1,15 @@
 ---
 ticket: CI-P2
 title: Deterministic full-sweep sharding
-status: active
+status: done
 owner: clinton.morgan
 created: 2026-09-30
-updated: 2026-09-30
+updated: 2026-10-02
 risk: elevated
 surfaces: [.github/workflows/foreman-line-ci.yml, scripts/foreman-line-ci.mjs, scripts/foreman-line-ci.test.mjs, plugins/foreman-line/docs/specs/active/CI-P2-deterministic-sweep-sharding.md]
 routing_class: architecture/risk
 permission_profile: builder-architecture
+verification_class: equivalence-provable
 ---
 
 # CI-P2 — Deterministic Full-Sweep Sharding
