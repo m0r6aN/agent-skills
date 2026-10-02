@@ -1,0 +1,34 @@
+{
+  "schema": "u1-promotion-request/v1",
+  "promotionRequestId": "u1-fixture-neg-trust-policy",
+  "createdUtc": "2026-10-02T18:34:12Z",
+  "author": "foreman-kernel-coordinator (owner-delegated); authority basis: owner 2026-10-02 'All five steps ratified as written'",
+  "contractDigest": "sha256:8d5f849cf22f6662f17c2502142e354d82f8f5604d64b511250abc72157df9d5",
+  "expectedSubjectDigest": "sha256:a8763dc17ed4c48e07625a7d2606741801d8ee1a9cc0d15d78261c4eb2e780c5",
+  "selectedExecution": {
+    "provider": "github-actions",
+    "repositoryId": "m0r6aN/agent-skills",
+    "workflowId": "u1-produce",
+    "runId": "37048104083",
+    "attempt": 1,
+    "jobId": "assemble",
+    "event": "workflow_dispatch"
+  },
+  "trustPolicyDigest": "sha256:3c468298d857f7ae185f5d705b6e28b3e3ab0adff0aaf3001b5926601b69fd00",
+  "policyDigest": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+  "compiledScopeDigest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+  "requiredInvariantIds": [
+    "INV-U1-01",
+    "INV-U1-02",
+    "INV-U1-03",
+    "INV-U1-04",
+    "INV-U1-05"
+  ],
+  "promotedRefusalClassIds": [
+    "FROZEN_SURFACE_MUTATION",
+    "PATH_OUTSIDE_ALLOWED_FILES"
+  ],
+  "oracleDigest": "sha256:fcdf23ec7575b785a0f5d27f7492fa7d267a79f1b7fad15b650efb3e0383d6e3",
+  "configurationChecklistDigest": "sha256:7519bc6a16fa5384c28374eb6368080fba2e3539123d5999680d1b9fcb032d87",
+  "requestDigest": "sha256:f0c07effb46ebbc3c2393f28279696a3d441d4df5cc8a123e2475dbf3e4a16ad"
+}

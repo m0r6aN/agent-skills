@@ -1,7 +1,7 @@
 {
   "schema": "u1-expected-outcome-oracle/v1",
   "contractDigest": "sha256:8d5f849cf22f6662f17c2502142e354d82f8f5604d64b511250abc72157df9d5",
-  "promotionRequestId": "fk-p18-prime-r1",
+  "promotionRequestId": "u1-fixture-neg-trust-policy",
   "controlExpectations": [
     {
       "controlId": "NC-U1-01",
@@ -204,6 +204,6 @@
       "description": "PIN-09 inherited gap: the outage.ts realpath sweep (matched by gap-record obligation/reason naming the sweep)"
     }
   ],
-  "oracleDigestNote": "Self-consistency and reading notes (deliverable-required field of this coordinator record). (1) oracleDigest is the detached IA-2.8 document digest: sha256 over the canonical {domain: 'foreman-line.u1.expected-outcomes', apiVersion: '0.1.0', payload} wrapper where payload is THIS document with the oracleDigest field omitted entirely; it is never computed over the stored bytes and never self-referential (A-U1.8.01 digest classes). (2) The promotion request binds this record: request.oracleDigest equals this oracleDigest value, and the request's own detached IA-2.2 requestDigest covers that binding. The verifier fetches this file at the pinned commit by API-by-SHA, recomputes oracleDigest, and refuses on any mismatch (INVALID/U1_ARTIFACT_INVALID). (3) expectedExitStatus is the DIRECT exit status of the exercised control surface (coordinator authority from the PIN-03 control definitions): a demonstrated refusal or rejection carries 1, an unrefused execution (landed effect or allow path) carries 0, and NC-U1-12 (the positive control) carries 0 per A-U1.8.04. (4) expectedRefusalClassId is exactly one IA-6 id or the literal 'none'; 'none' means the control demonstrates no IA-6 refusal class (its refusal is a decision-level IA-7 condition, named in requiredSignals). NC-U1-02 spans several classes; STATE_REVISION_STALE is the required representative and requiredSignals names the other demonstrations. (5) expectedClassification is the T4 derivation the row's observed signals must yield (refusal+no-effect = mechanical; no-refusal+effect+detection = detected; no-refusal+effect+no-detection = unsupported). NC-U1-12 is the one non-mutation control (PIN-03 #12): its derivation is acceptDemonstrated with exitStatus 0 -> mechanical. (6) permittedGaps is exactly the three named PIN-09 inherited gaps (7.6): no other not-exercised/gap row is admitted anywhere. (7) promotionRequestId binds this record to the first promotion request: that request MUST use promotionRequestId 'fk-p18-prime-r1' (closed grammar [a-z0-9-]{1,64}); any other request re-authors this record under its own id as a recorded coordinator act. (8) The byte digest of these committed bytes is recorded separately where byte class is cited (pin record, inventory entries); it is never compared to oracleDigest.",
-  "oracleDigest": "sha256:ca3d30bdf07d6bc37dbb24b882c35ed0235f1b83a2e3b4536aa33a28eb6d20e3"
+  "oracleDigestNote": "Fixture oracle (A-U1.8.20 clause 7): coordinator-owned expectations for the u1-fixture feed; never a promotion subject. oracleDigest is the detached IA-2.8 document digest (the oracleDigest field omitted).",
+  "oracleDigest": "sha256:fcdf23ec7575b785a0f5d27f7492fa7d267a79f1b7fad15b650efb3e0383d6e3"
 }

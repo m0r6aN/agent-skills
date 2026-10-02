@@ -1,32 +1,31 @@
 {
   "schema": "u1-configuration-checklist/v1",
   "contractDigest": "sha256:8d5f849cf22f6662f17c2502142e354d82f8f5604d64b511250abc72157df9d5",
-  "trustPolicyDigest": "sha256:c1b6613801232db38747239af732cb1fa942876cbbd92b270f7ed442043f132e",
   "entries": [
     {
       "ref": "INCOMPLETE-U1-01",
       "state": "recorded",
-      "recordDigest": "sha256:8bd33a0b06b2e2600fd12b150cfd88faf7f808c17619f3f91991c1642e904f22",
-      "observedAt": "2026-10-01T00:00:00Z",
-      "observer": "coordinator (U1-8 closure batch 2026-10-01)",
+      "recordDigest": "sha256:40a837cf4573701fd78cb59cf9f9a7d6f0c15e2eca209f1a74e1fd0e43a5f685",
+      "observedAt": "2026-10-02T18:34:12Z",
+      "observer": "coordinator session (owner-delegated), re-observed 2026-10-02 against the cited evidence",
       "evidenceLocation": ".github/workflows/u1-produce.yml retention-plan.destination.tenant (tenant ac08e2fd-34bf-4c87-a34f-c8c853ffc5e2)",
       "unrecordedReason": null
     },
     {
       "ref": "INCOMPLETE-U1-02",
       "state": "recorded",
-      "recordDigest": "sha256:8bd33a0b06b2e2600fd12b150cfd88faf7f808c17619f3f91991c1642e904f22",
-      "observedAt": "2026-10-01T00:00:00Z",
-      "observer": "coordinator (U1-8 closure batch 2026-10-01)",
+      "recordDigest": "sha256:40a837cf4573701fd78cb59cf9f9a7d6f0c15e2eca209f1a74e1fd0e43a5f685",
+      "observedAt": "2026-10-02T18:34:12Z",
+      "observer": "coordinator session (owner-delegated), re-observed 2026-10-02 against the cited evidence",
       "evidenceLocation": ".github/workflows/u1-produce.yml retention-plan.destination.subscription (subscription 909e0322-c3c0-4bce-ae53-b3d2ed735bd4)",
       "unrecordedReason": null
     },
     {
       "ref": "INCOMPLETE-U1-03",
       "state": "recorded",
-      "recordDigest": "sha256:8bd33a0b06b2e2600fd12b150cfd88faf7f808c17619f3f91991c1642e904f22",
-      "observedAt": "2026-10-01T00:00:00Z",
-      "observer": "coordinator (U1-8 closure batch 2026-10-01)",
+      "recordDigest": "sha256:40a837cf4573701fd78cb59cf9f9a7d6f0c15e2eca209f1a74e1fd0e43a5f685",
+      "observedAt": "2026-10-02T18:34:12Z",
+      "observer": "coordinator session (owner-delegated), re-observed 2026-10-02 against the cited evidence",
       "evidenceLocation": ".github/workflows/u1-produce.yml retention-plan.destination.resourceGroup (biostack-rg)",
       "unrecordedReason": null
     },
@@ -42,36 +41,36 @@
     {
       "ref": "INCOMPLETE-U1-05",
       "state": "recorded",
-      "recordDigest": "sha256:8bd33a0b06b2e2600fd12b150cfd88faf7f808c17619f3f91991c1642e904f22",
-      "observedAt": "2026-10-01T00:00:00Z",
-      "observer": "coordinator (U1-8 closure batch 2026-10-01)",
+      "recordDigest": "sha256:40a837cf4573701fd78cb59cf9f9a7d6f0c15e2eca209f1a74e1fd0e43a5f685",
+      "observedAt": "2026-10-02T18:34:12Z",
+      "observer": "coordinator session (owner-delegated), re-observed 2026-10-02 against the cited evidence",
       "evidenceLocation": ".github/workflows/u1-produce.yml retention-plan.destination.container (u1-evidence, dedicated private)",
       "unrecordedReason": null
     },
     {
       "ref": "INCOMPLETE-U1-06",
       "state": "recorded",
-      "recordDigest": "sha256:c1b6613801232db38747239af732cb1fa942876cbbd92b270f7ed442043f132e",
-      "observedAt": "2026-10-01T00:00:00Z",
-      "observer": "coordinator (U1-8 closure batch 2026-10-01)",
+      "recordDigest": "sha256:79524aaad71a1a7a0a910558ddeca88aaa0afea3289f9ccfeaef7ee99e6af0ee",
+      "observedAt": "2026-10-02T18:34:12Z",
+      "observer": "coordinator session (owner-delegated), re-observed 2026-10-02 against the cited evidence",
       "evidenceLocation": "U1-verifier-pin.json custodian identity (m0r6aN / 461a4112-8e91-41cb-afef-6889b8f48ff0) + authorization-20260907-unattended.md owner authority basis",
       "unrecordedReason": null
     },
     {
       "ref": "INCOMPLETE-U1-07",
       "state": "recorded",
-      "recordDigest": "sha256:8bd33a0b06b2e2600fd12b150cfd88faf7f808c17619f3f91991c1642e904f22",
-      "observedAt": "2026-10-01T00:00:00Z",
-      "observer": "coordinator (U1-8 closure batch 2026-10-01)",
+      "recordDigest": "sha256:40a837cf4573701fd78cb59cf9f9a7d6f0c15e2eca209f1a74e1fd0e43a5f685",
+      "observedAt": "2026-10-02T18:34:12Z",
+      "observer": "coordinator session (owner-delegated), re-observed 2026-10-02 against the cited evidence",
       "evidenceLocation": ".github/workflows/u1-produce.yml producer-identity.authenticatedPrincipal (u1-producer-mi dc152b9d-c74e-4af1-aeeb-c23b95c68ab2)",
       "unrecordedReason": null
     },
     {
       "ref": "INCOMPLETE-U1-08",
       "state": "recorded",
-      "recordDigest": "sha256:b78e405ef4926695f701508889787833b6dc01b5908507f7cd0e5f17ed1117df",
-      "observedAt": "2026-10-01T00:00:00Z",
-      "observer": "coordinator (U1-8 closure batch 2026-10-01)",
+      "recordDigest": "sha256:8d6ee3bde16393c956cc7533d267a4d50a1b0a763f3525720d35eb4df3b3c337",
+      "observedAt": "2026-10-02T18:34:12Z",
+      "observer": "coordinator session (owner-delegated), re-observed 2026-10-02 against the cited evidence",
       "evidenceLocation": ".github/workflows/u1-verify.yml verifier-context.verifierIdentity (u1-verifier-mi ec2d02e3-904c-4ce2-9771-cd518d711e3f, separate from producer)",
       "unrecordedReason": null
     },
@@ -106,18 +105,18 @@
       "ref": "INCOMPLETE-U1-12",
       "state": "recorded",
       "recordDigest": "sha256:802d413ae32f2905a56388e178b59c642f7e61f5cd7f30be5cfbef605c9aa530",
-      "observedAt": "2026-09-30T00:00:00Z",
-      "observer": "control custodian",
+      "observedAt": "2026-10-02T18:34:12Z",
+      "observer": "coordinator session (owner-delegated), re-observed 2026-10-02 against the cited evidence",
       "evidenceLocation": "U1-observations-2026-09-30.md retrieval test 2026-09-30 (cited by producer retention-plan.lastRetrievalCheck); each run re-demonstrates retrieval via its retention-observation artifact",
       "unrecordedReason": null
     },
     {
       "ref": "INCOMPLETE-U1-13",
       "state": "recorded",
-      "recordDigest": "sha256:c1b6613801232db38747239af732cb1fa942876cbbd92b270f7ed442043f132e",
-      "observedAt": "2026-10-01T00:00:00Z",
-      "observer": "coordinator (U1-8 closure batch 2026-10-01)",
-      "evidenceLocation": "U1-verifier-pin.json workflow + workflowCommit (be3e3de3dfcf6159d4ffb265aa39847aac5f0814, superseded by the A-U1.8.16 re-pin record; the re-pin refreshes this entry)",
+      "recordDigest": "sha256:79524aaad71a1a7a0a910558ddeca88aaa0afea3289f9ccfeaef7ee99e6af0ee",
+      "observedAt": "2026-10-02T18:34:12Z",
+      "observer": "coordinator session (owner-delegated), re-observed 2026-10-02 against the cited evidence",
+      "evidenceLocation": "U1-verifier-pin.json (u1-verifier-pin/v3) workflow + workflowCommit; supersedes chain be3e3de3 -> dc561792 -> 16a7e0fb; recordDigest is the IA-2.11 trust-policy digest",
       "unrecordedReason": null
     },
     {
@@ -159,9 +158,9 @@
     {
       "ref": "INCOMPLETE-U1-18",
       "state": "recorded",
-      "recordDigest": "sha256:b78e405ef4926695f701508889787833b6dc01b5908507f7cd0e5f17ed1117df",
-      "observedAt": "2026-10-01T00:00:00Z",
-      "observer": "owner decision batch 2026-10-01 (A-U1.8.13)",
+      "recordDigest": "sha256:8d6ee3bde16393c956cc7533d267a4d50a1b0a763f3525720d35eb4df3b3c337",
+      "observedAt": "2026-10-02T18:34:12Z",
+      "observer": "coordinator session (owner-delegated), re-observed 2026-10-02 against the cited evidence",
       "evidenceLocation": "named gap: not issued by the selected workflows; u1-verify.yml verifier-context.attestation records attestationIssued=false, issuer none, gap literal; absence never changes decision status (F-14 option (a))",
       "unrecordedReason": null
     },
@@ -179,5 +178,5 @@
     "mode": "locked",
     "minIntervalDays": 400
   },
-  "checklistDigest": "sha256:39c966ce86959a63511bb03bae47db1fc03f6c5126c7f4ca1545a9176d667e9d"
+  "checklistDigest": "sha256:7519bc6a16fa5384c28374eb6368080fba2e3539123d5999680d1b9fcb032d87"
 }
