@@ -535,11 +535,17 @@ test('assignShards refusal: non-number counts are refused (typed)', () => {
 })
 
 test('assignShards refusal: duplicate names are refused (typed)', () => {
-  assert.throws(() => assignShards(['a', 'a'], 2), (e) => e instanceof ForemanCiError)
+  assert.throws(
+    () => assignShards(['a', 'a'], 2),
+    (e) => e instanceof ForemanCiError && /duplicate/.test(e.message),
+  )
 })
 
 test('assignShards refusal: unsorted input is refused (typed)', () => {
-  assert.throws(() => assignShards(['b', 'a'], 2), (e) => e instanceof ForemanCiError)
+  assert.throws(
+    () => assignShards(['b', 'a'], 2),
+    (e) => e instanceof ForemanCiError && /sorted/.test(e.message),
+  )
 })
 
 // ─── AC3: reconcile contract tests (one failing-when-broken per mode) ──────
