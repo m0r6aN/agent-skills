@@ -851,8 +851,12 @@ export function runShard({
             expected: evaluation.evidence.expected,
             names: evaluation.evidence.names,
           }
-          const payload = sanitizeField(JSON.stringify(records.get(name).waiver_rejected[check]), 8000)
-          echoCheck(name, `${check} [rejected: ${payload}]`, result.output)
+          // The log label carries the same payload as the artifact (parity):
+          // capped at 4k with an ellipsis marker; the check NAME keeps its
+          // 40-char cap for names in general emission.
+          const json = JSON.stringify(records.get(name).waiver_rejected[check])
+          const payload = json.length > 4000 ? `${sanitizeField(json, 3999)}…` : sanitizeField(json, 4000)
+          echoCheck(name, `${sanitizeField(check, 40)} [rejected: ${payload}]`, result.output)
         }
       }
     }
@@ -1173,7 +1177,9 @@ export async function runCli(argv, env = process.env, deps = {}) {
       shardCount,
       offline,
       headSha: env.GITHUB_SHA ?? null,
-      echo: (name, check, text) => stdout(`\n=== ${sanitizeField(name)} / ${sanitizeField(check, 40)} output ===\n${text}\n`),
+      // The rejection label carries its 4k payload (artifact parity, the
+      // ruling's cap); plain check names are composed capped at 40 upstream.
+      echo: (name, check, text) => stdout(`\n=== ${sanitizeField(name)} / ${sanitizeField(check, 4200)} output ===\n${text}\n`),
     })
     const dir = outDir === undefined || outDir === '--offline' ? 'shard-outcomes' : outDir
     makeDir(dir, { recursive: true })

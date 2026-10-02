@@ -1750,3 +1750,42 @@ test('R19: the 5-flake kernel closure waives at 75..80 (equality at each) and re
   const missing = `${pin.failingSet.slice(1).map((n) => `\u2716 ${n} (1.0ms)`).join('\n')}\n\u2139 fail 74\n`
   assert.equal(waiverFor(entry.identity, entry.location, 'test', missing, [entry]), null)
 })
+
+// ─── ruling: the rejection label carries its payload (artifact parity) ─────
+
+test('the [rejected] log label carries the payload (artifact parity), truncating at 4k with an ellipsis', () => {
+  const echoed = []
+  const longName = 'x'.repeat(100) // under the parser's 200-char untrusted-name cap
+  const bigPin = {
+    identity: 'alpha',
+    location: 'plugins/foreman-line/alpha/',
+    checks: { test: { markers: ['PIN-MARKER-A'], counts: {}, failTotal: [0, 0], failingSet: [], flaky: [] } },
+  }
+  const result = runShard({
+    root,
+    npmCli,
+    spawn: (cmd, args, options) => {
+      if (args.includes('test') && basename(options.cwd) === 'alpha') {
+        // a rejection whose names channel is huge -> the JSON exceeds 4k
+        return { status: 1, stdout: Array.from({ length: 40 }, (_, i) => `\u2716 ${longName}${i} (1.0ms)`).join('\n') }
+      }
+      return { status: 0 }
+    },
+    shardIndex: 0,
+    shardCount: 2,
+    discover: () => [...NAMES],
+    waivers: [bigPin],
+    echo: (name, check, text) => echoed.push([name, check, text]),
+  })
+  assert.equal(result.outcomes.find((o) => o.name === 'alpha').checks.test, 'fail')
+  const label = echoed.find(([, check]) => check.includes('[rejected:'))[1]
+  // the artifact record carries the FULL payload...
+  const record = result.outcomes.find((o) => o.name === 'alpha').waiver_rejected.test
+  assert.equal(record.names.length, 40)
+  // ...and the log label carries the same payload, truncated at 4k with the
+  // ellipsis marker when longer
+  const payload = label.slice(label.indexOf('[rejected: ') + '[rejected: '.length, label.lastIndexOf(']'))
+  assert.ok(payload.length <= 4000, 'the payload is capped at 4k')
+  assert.ok(payload.endsWith('…'), 'an overlong payload carries the ellipsis marker')
+  assert.ok(payload.includes('"layer":"marker-missing"'), 'the label carries the layer')
+})
