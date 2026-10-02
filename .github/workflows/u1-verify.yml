@@ -1922,10 +1922,13 @@ jobs:
               if name.endswith("/seal.json"):
                   continue
               rel = name[len(prefix) + 1:]
-              raw = subprocess.run(["az", "storage", "blob", "download",
-                                    "--account-name", "bs2jhgwvduljfdwdp", "--container-name", "u1-evidence",
-                                    "--name", name, "--auth-mode", "login", "--output", "none",
-                                    "--file", "-"], capture_output=True, check=True).stdout
+              inv_tmp = os.environ.get("RUNNER_TEMP", "/tmp") + "/u1-inv.bin"
+              subprocess.run(["az", "storage", "blob", "download",
+                              "--account-name", "bs2jhgwvduljfdwdp", "--container-name", "u1-evidence",
+                              "--name", name, "--auth-mode", "login", "--output", "none",
+                              "--file", inv_tmp], capture_output=True, check=True)
+              with open(inv_tmp, "rb") as fh:
+                  raw = fh.read()
               entry = {"objectName": name, "byteLength": len(raw), "byteDigest": tag(raw)}
               if rel == "audit/decision.json":
                   entry["docDomain"] = "foreman-line.u1.decision"
