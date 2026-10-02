@@ -12,9 +12,9 @@
   },
   "actionlint": "not-available-on-ci-or-workstation; substituted: PyYAML parse PASS both workflows + machine-checked outputs wiring (7/7 job maps) + zero raw expression interpolation of file-derived values (recorded in U1-closure-implementation-notes-2026-10-01.md)",
   "dryRun": {
-    "producer": "run 36926434897 SUCCESS (assemble+submit) against the UNLOCKED container; bundle at u1/m0r6an/agent-skills/runs/36926434897/p01/; subjectDigest sha256:f03722878fbcf459c37e936a2e76f6b07420b9d7a3d5a78e0faa31a5a6dfcf3b",
-    "verifier": "pending at record time; the authoritative shakedown dispatch (promotion request u1-shakedown-2026-10-01) is recorded in the closure report",
-    "note": "A-U1.8.03: the first evidence cycle is a non-ACCEPT shakedown; the Unlocked policy must refuse ACCEPT via the F-4 gate"
+    "producer": "run 36926434897 SUCCESS against the UNLOCKED container; bundle at u1/m0r6an/agent-skills/runs/36926434897/p01/",
+    "verifier": "run 36944407315 full-pipeline SUCCESS; recorded decision status INVALID authoritative:true with reasonCodes [U1_CONFIGURATION_INCOMPLETE, U1_CONTROL_FAILED, U1_INDEPENDENCE_UNPROVEN, U1_REQUIRED_EVIDENCE_MISSING, U1_SUBJECT_MISMATCH]; seal.json written last (a02/) — non-ACCEPT as designed per A-U1.8.03",
+    "note": "shakedown-found defects F-19/checklist-digest/az-download x4/env-policy/schema-literal all fixed and recorded in U1-8-closure-report-2026-10-01.md"
   },
   "configurationChecklistSha256": "sha256:f6ce063326c79e70633e29bc1a3d3a87dea271708427cd6362f6fbcb8d0a1998",
   "oracleDigest": "sha256:ca3d30bdf07d6bc37dbb24b882c35ed0235f1b83a2e3b4536aa33a28eb6d20e3",
