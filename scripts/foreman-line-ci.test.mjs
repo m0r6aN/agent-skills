@@ -14,7 +14,7 @@
 // launches npm.
 
 import assert from 'node:assert/strict'
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { lstatSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { basename, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -29,9 +29,11 @@ import {
   assignShards,
   discoverPackages,
   effectiveDecision,
+  failingTestNames,
   reconcile,
   runCli,
   runShard,
+  sumFailTotals,
   verdict,
   waiverFor,
 } from './foreman-line-ci.mjs'
@@ -330,34 +332,23 @@ test('run-then-waive: a pinned failing check is recorded waived with matched mar
     npmCli,
     spawn: (cmd, args, options) => {
       if (args.includes('test') && basename(options.cwd) === 'alpha') {
-        return { status: 1, stdout: 'Error: STORAGE_CONSTRAINT_VIOLATION {"reasonCode":"foreign-key"}' }
+        return { status: 1, stdout: pinnedOutput(PINNED.checks.test) }
       }
       return { status: 0 }
     },
     shardIndex: 0,
     shardCount: 2,
     discover: () => [...NAMES],
-    waivers: [
-      {
-        identity: 'alpha',
-        location: 'plugins/foreman-line/alpha/',
-        checks: {
-          test: {
-            markers: ['STORAGE_CONSTRAINT_VIOLATION', 'foreign-key'],
-            counts: { STORAGE_CONSTRAINT_VIOLATION: 1, 'foreign-key': 1 },
-            failTotal: 0,
-          },
-        },
-      },
-    ],
+    waivers: [PINNED],
   })
   const alpha = result.outcomes.find((o) => o.name === 'alpha')
   assert.equal(alpha.checks.test, 'waived')
   assert.equal(alpha.waivers.length, 1)
   assert.equal(alpha.waivers[0].check, 'test')
-  assert.deepEqual(alpha.waivers[0].markers_matched, ['STORAGE_CONSTRAINT_VIOLATION', 'foreign-key'])
-  assert.deepEqual(alpha.waivers[0].counts_verified, { STORAGE_CONSTRAINT_VIOLATION: 1, 'foreign-key': 1 })
-  assert.equal(alpha.waivers[0].fail_total, 0)
+  assert.deepEqual(alpha.waivers[0].markers_matched, ['PIN-MARKER-A', 'PIN-MARKER-B'])
+  assert.deepEqual(alpha.waivers[0].counts_verified, { 'PIN-MARKER-A': 2, 'PIN-MARKER-B': 1 })
+  assert.equal(alpha.waivers[0].fail_total, 3)
+  assert.deepEqual(alpha.waivers[0].failing_set, ['failing one', 'failing two', 'flaky member'])
   assert.match(alpha.waivers[0].output_sha256, /^[0-9a-f]{64}$/)
   assert.equal(result.exitCode, 0, 'a fully-waived shard is green')
 })
@@ -368,22 +359,14 @@ test('run-then-waive: a DIFFERENT red on a waived identity re-gates as fail (nev
     npmCli,
     spawn: (cmd, args, options) => {
       if (args.includes('test') && basename(options.cwd) === 'alpha') {
-        return { status: 1, stdout: 'some entirely different failure' }
+        return { status: 1, stdout: '\u2716 some entirely different failure (1.0ms)\n\u2139 fail 1' }
       }
       return { status: 0 }
     },
     shardIndex: 0,
     shardCount: 2,
     discover: () => [...NAMES],
-    waivers: [
-      {
-        identity: 'alpha',
-        location: 'plugins/foreman-line/alpha/',
-        checks: {
-          test: { markers: ['STORAGE_CONSTRAINT_VIOLATION'], counts: { STORAGE_CONSTRAINT_VIOLATION: 1 }, failTotal: 0 },
-        },
-      },
-    ],
+    waivers: [PINNED],
   })
   const alpha = result.outcomes.find((o) => o.name === 'alpha')
   assert.equal(alpha.checks.test, 'fail')
@@ -398,65 +381,106 @@ test('run-then-waive: a green pass on a waived identity is recorded pass (the wa
     shardIndex: 0,
     shardCount: 2,
     discover: () => [...NAMES],
-    waivers: [
-      {
-        identity: 'alpha',
-        location: 'plugins/foreman-line/alpha/',
-        checks: {
-          test: { markers: ['STORAGE_CONSTRAINT_VIOLATION'], counts: { STORAGE_CONSTRAINT_VIOLATION: 1 }, failTotal: 0 },
-        },
-      },
-    ],
+    waivers: [PINNED],
   })
   const alpha = result.outcomes.find((o) => o.name === 'alpha')
   assert.equal(alpha.checks.test, 'pass')
   assert.deepEqual(alpha.waivers, [])
 })
 
-// ─── R2: value pins bind counts and failure totals (never substring-only) ───
+// ─── R7: the value axis binds DETERMINISTIC FAILURE IDENTITY ───────────────
+// (pin shape v3: stable markers + deterministic counts + measured-variance
+// total range + the failing-test SET with named flaky members)
 
 const PINNED = {
   identity: 'alpha',
   location: 'plugins/foreman-line/alpha/',
   checks: {
-    test: { markers: ['PIN-MARKER-A', 'PIN-MARKER-B'], counts: { 'PIN-MARKER-A': 2, 'PIN-MARKER-B': 1 }, failTotal: 2 },
+    test: {
+      markers: ['PIN-MARKER-A', 'PIN-MARKER-B'],
+      counts: { 'PIN-MARKER-A': 2, 'PIN-MARKER-B': 1 },
+      failTotal: [2, 3],
+      failingSet: ['failing one', 'failing two'],
+      flaky: ['flaky member'],
+    },
   },
 }
 
-test('R2 count-bound waiver: exact markers + counts + failTotal waives (positive control)', () => {
-  const output = 'PIN-MARKER-A PIN-MARKER-A PIN-MARKER-B\n# fail 2\n'
-  const w = waiverFor('alpha', 'plugins/foreman-line/alpha/', 'test', output, [PINNED])
+function pinnedOutput(pin, { omitNames = [], extraNames = [], extraLines = [], total = null, dupName = null } = {}) {
+  const counted = Object.entries(pin.counts).flatMap(([needle, n]) => Array(n).fill(needle))
+  const presenceOnly = pin.markers.filter((m) => !(m in pin.counts))
+  const names = [...pin.failingSet, ...pin.flaky].filter((n) => !omitNames.includes(n))
+  const sum = total ?? pin.failTotal[1]
+  return [
+    ...counted.filter((needle) => presenceOnly.length === 0 || true),
+    ...presenceOnly,
+    ...names.map((n) => `\u2716 ${n} (1.0ms)`),
+    ...(dupName === null ? [] : [`\u2716 ${dupName} (1.0ms)`]),
+    ...extraNames.map((n) => `\u2716 ${n} (1.0ms)`),
+    ...extraLines,
+    `\u2139 fail ${sum}`,
+  ].join('\n')
+}
+
+test('R7: the exact pinned value waives (markers + counts + total + failing-set)', () => {
+  const w = waiverFor('alpha', 'plugins/foreman-line/alpha/', 'test', pinnedOutput(PINNED.checks.test), [PINNED])
   assert.ok(w !== null)
-  assert.equal(w.fail_total, 2)
+  assert.deepEqual(w.markers_matched, ['PIN-MARKER-A', 'PIN-MARKER-B'])
+  assert.equal(w.fail_total, 3)
+  assert.deepEqual(w.failing_set, ['failing one', 'failing two', 'flaky member'])
 })
 
-test('R2 count-bound waiver: an occurrence-count mismatch re-gates', () => {
-  // one PIN-MARKER-A instead of the pinned two
-  const output = 'PIN-MARKER-A PIN-MARKER-B\n# fail 2\n'
-  assert.equal(waiverFor('alpha', 'plugins/foreman-line/alpha/', 'test', output, [PINNED]), null)
-  // and an extra repeat (a co-occurring same-shape failure) also re-gates
-  const extra = 'PIN-MARKER-A PIN-MARKER-A PIN-MARKER-A PIN-MARKER-B\n# fail 2\n'
-  assert.equal(waiverFor('alpha', 'plugins/foreman-line/alpha/', 'test', extra, [PINNED]), null)
+test('R7: a NEW failing test outside the set NEVER waives (set subsumes counts)', () => {
+  const out = pinnedOutput(PINNED.checks.test, { extraNames: ['an entirely new failure'] })
+  assert.equal(waiverFor('alpha', 'plugins/foreman-line/alpha/', 'test', out, [PINNED]), null)
 })
 
-test('R2 count-bound waiver: a co-occurring NEW failure re-gates (failure total)', () => {
-  // markers + counts exact, but the suite total is the reviewers' probe shape:
-  // a new failure bumped the failure count past the pinned total
-  const output = 'PIN-MARKER-A PIN-MARKER-A PIN-MARKER-B\n# fail 300\n'
-  assert.equal(waiverFor('alpha', 'plugins/foreman-line/alpha/', 'test', output, [PINNED]), null)
-  // multiple summary streams must SUM to the pinned total
-  const split = 'PIN-MARKER-A PIN-MARKER-A PIN-MARKER-B\n# fail 1\n# fail 1\n'
-  assert.ok(waiverFor('alpha', 'plugins/foreman-line/alpha/', 'test', split, [PINNED]) !== null)
+test('R7: the named flaky member is tolerated present-or-absent', () => {
+  const absent = pinnedOutput(PINNED.checks.test, { omitNames: ['flaky member'], total: 2 })
+  assert.ok(waiverFor('alpha', 'plugins/foreman-line/alpha/', 'test', absent, [PINNED]) !== null, 'flaky absent still waives')
+  const present = pinnedOutput(PINNED.checks.test)
+  assert.ok(waiverFor('alpha', 'plugins/foreman-line/alpha/', 'test', present, [PINNED]) !== null, 'flaky present still waives')
+})
+
+test('R7: a DETERMINISTIC member missing re-gates (marker-variation class)', () => {
+  const out = pinnedOutput(PINNED.checks.test, { omitNames: ['failing two'], total: 2 })
+  assert.equal(waiverFor('alpha', 'plugins/foreman-line/alpha/', 'test', out, [PINNED]), null)
+})
+
+test('R7: the failure total accepts exactly the measured variance and nothing more', () => {
+  // [2,3]: 2 (flaky out), 3 (flaky in) — both ends waive
+  assert.ok(waiverFor('alpha', 'plugins/foreman-line/alpha/', 'test', pinnedOutput(PINNED.checks.test, { omitNames: ['flaky member'], total: 2 }), [PINNED]) !== null)
+  assert.ok(waiverFor('alpha', 'plugins/foreman-line/alpha/', 'test', pinnedOutput(PINNED.checks.test, { total: 3 }), [PINNED]) !== null)
+  // outside the variance: never
+  assert.equal(waiverFor('alpha', 'plugins/foreman-line/alpha/', 'test', pinnedOutput(PINNED.checks.test, { total: 4 }), [PINNED]), null)
+  assert.equal(waiverFor('alpha', 'plugins/foreman-line/alpha/', 'test', pinnedOutput(PINNED.checks.test, { total: 1 }), [PINNED]), null)
+})
+
+test('R7: an occurrence-count mismatch re-gates (stable markers stay bound)', () => {
+  const out = `${pinnedOutput(PINNED.checks.test)} PIN-MARKER-A`
+  assert.equal(waiverFor('alpha', 'plugins/foreman-line/alpha/', 'test', out, [PINNED]), null)
+  const missing = pinnedOutput(PINNED.checks.test).split('PIN-MARKER-B').join('')
+  assert.equal(waiverFor('alpha', 'plugins/foreman-line/alpha/', 'test', missing, [PINNED]), null)
+})
+
+test('R7: duplicate name lines are set-deduplicated (the spec reporter prints twice) but a total bump still re-gates', () => {
+  // a duplicated failure line (the reporter's in-run + summary double print)
+  // is the same failure identity — the set dedupes and the waiver stands...
+  const dupInVariance = pinnedOutput(PINNED.checks.test, { dupName: 'failing one' })
+  assert.ok(waiverFor('alpha', 'plugins/foreman-line/alpha/', 'test', dupInVariance, [PINNED]) !== null, 'double-printed failure dedupes')
+  // ...but a summary total outside the measured variance never waives
+  const dup = pinnedOutput(PINNED.checks.test, { dupName: 'failing one', total: 4 })
+  assert.equal(waiverFor('alpha', 'plugins/foreman-line/alpha/', 'test', dup, [PINNED]), null)
 })
 
 for (const [label, failure] of [
   ['throw', () => { throw new Error('untrusted') }],
-  ['spawn error', () => ({ status: 0, error: new Error('ENOENT'), stdout: 'PIN-MARKER-A PIN-MARKER-A PIN-MARKER-B\n# fail 2\n' })],
-  ['signal', () => ({ status: 0, signal: 'SIGTERM', stdout: 'PIN-MARKER-A PIN-MARKER-A PIN-MARKER-B\n# fail 2\n' })],
-  ['null status', () => ({ status: null, stdout: 'PIN-MARKER-A PIN-MARKER-A PIN-MARKER-B\n# fail 2\n' })],
+  ['spawn error', () => ({ status: 0, error: new Error('ENOENT'), stdout: pinnedOutput(PINNED.checks.test) })],
+  ['signal', () => ({ status: 0, signal: 'SIGTERM', stdout: pinnedOutput(PINNED.checks.test) })],
+  ['null status', () => ({ status: null, stdout: pinnedOutput(PINNED.checks.test) })],
   ['missing result', () => undefined],
 ]) {
-  test(`R2 waiver refusal: a ${label} failure NEVER waives even when the output carries the pinned value`, () => {
+  test(`R2/R7 waiver refusal: a ${label} failure NEVER waives even when the output carries the pinned value`, () => {
     const result = runShard({
       root,
       npmCli,
@@ -478,10 +502,13 @@ for (const [label, failure] of [
 
 test('R2 count-bound waiver: a malformed pin never waives (fail closed)', () => {
   for (const malformed of [
-    { markers: ['PIN-A'], counts: null, failTotal: 0 },
-    { markers: ['PIN-A'], counts: { 'PIN-A': 1 } },
-    { markers: 'PIN-A', counts: { 'PIN-A': 1 }, failTotal: 0 },
-    { markers: ['PIN-A'], counts: { 'PIN-A': 1 }, failTotal: '0' },
+    { markers: ['PIN-A'], counts: null, failTotal: [0, 0], failingSet: [], flaky: [] },
+    { markers: ['PIN-A'], counts: { 'PIN-A': 1 }, failingSet: [], flaky: [] },
+    { markers: 'PIN-A', counts: { 'PIN-A': 1 }, failTotal: [0, 0], failingSet: [], flaky: [] },
+    { markers: ['PIN-A'], counts: { 'PIN-A': 1 }, failTotal: [1], failingSet: [], flaky: [] },
+    { markers: ['PIN-A'], counts: { 'PIN-A': 1 }, failTotal: [0, 0], failingSet: 'x', flaky: [] },
+    { markers: ['PIN-A'], counts: { 'PIN-A': 1 }, failTotal: [0, 0], failingSet: [], flaky: null },
+    { markers: ['PIN-A'], counts: { 'PIN-A': 1 }, failTotal: ['a', 'b'], failingSet: [], flaky: [] },
   ]) {
     const w = waiverFor('alpha', 'plugins/foreman-line/alpha/', 'test', 'PIN-A', [
       { identity: 'alpha', location: 'plugins/foreman-line/alpha/', checks: { test: malformed } },
@@ -497,7 +524,7 @@ test('R2: waived output is echoed to the log (sanitized audit trail, never silen
     npmCli,
     spawn: (cmd, args, options) => {
       if (args.includes('test') && basename(options.cwd) === 'alpha') {
-        return { status: 1, stdout: 'PIN-MARKER-A PIN-MARKER-A PIN-MARKER-B\n# fail 2\n::error::spoofed annotation\n' }
+        return { status: 1, stdout: `${pinnedOutput(PINNED.checks.test)}\n::error::spoofed annotation\n` }
       }
       return { status: 0 }
     },
@@ -517,23 +544,17 @@ test('R2: waived output is echoed to the log (sanitized audit trail, never silen
 // ─── SC #13: three refusal tests bind the waiver axes independently ────────
 
 test('waiver axis refusal: same identity + different location is NOT excluded', () => {
-  const w = waiverFor('alpha', 'plugins/foreman-line/elsewhere/', 'test', 'PIN-A', [
-    { identity: 'alpha', location: 'plugins/foreman-line/alpha/', checks: { test: { markers: ['PIN-A'], counts: { 'PIN-A': 1 }, failTotal: 0 } } },
-  ])
+  const w = waiverFor('alpha', 'plugins/foreman-line/elsewhere/', 'test', pinnedOutput(PINNED.checks.test), [PINNED])
   assert.equal(w, null)
 })
 
 test('waiver axis refusal: different identity + same location is NOT excluded', () => {
-  const w = waiverFor('impostor', 'plugins/foreman-line/alpha/', 'test', 'PIN-A', [
-    { identity: 'alpha', location: 'plugins/foreman-line/alpha/', checks: { test: { markers: ['PIN-A'], counts: { 'PIN-A': 1 }, failTotal: 0 } } },
-  ])
+  const w = waiverFor('impostor', 'plugins/foreman-line/alpha/', 'test', pinnedOutput(PINNED.checks.test), [PINNED])
   assert.equal(w, null)
 })
 
 test('waiver axis refusal: same identity + same location + non-matching value is NOT excluded', () => {
-  const w = waiverFor('alpha', 'plugins/foreman-line/alpha/', 'test', 'completely unrelated output', [
-    { identity: 'alpha', location: 'plugins/foreman-line/alpha/', checks: { test: { markers: ['PIN-A'], counts: { 'PIN-A': 1 }, failTotal: 0 } } },
-  ])
+  const w = waiverFor('alpha', 'plugins/foreman-line/alpha/', 'test', 'completely unrelated output', [PINNED])
   assert.equal(w, null)
 })
 
@@ -826,23 +847,17 @@ test('reconcile failure: a schema-invalid artifact fails', () => {
 
 // ─── A2 placement 9: reconcile verifies run-then-waive ─────────────────────
 
-const waiverFixtures = [
-  {
-    identity: 'alpha',
-    location: 'plugins/foreman-line/alpha/',
-    checks: {
-      test: { markers: ['PIN-MARKER-A', 'PIN-MARKER-B'], counts: { 'PIN-MARKER-A': 1, 'PIN-MARKER-B': 1 }, failTotal: 1 },
-    },
-  },
-]
+const waiverFixtures = [PINNED]
 
 function waivedPackage(name, location, markers) {
+  const pin = PINNED.checks.test
   const record = pkg(name, { ...passChecks(), test: 'waived' }, [
     {
       check: 'test',
       markers_matched: markers,
-      counts_verified: { 'PIN-MARKER-A': 1, 'PIN-MARKER-B': 1 },
-      fail_total: 1,
+      counts_verified: { 'PIN-MARKER-A': 2, 'PIN-MARKER-B': 1 },
+      fail_total: 3,
+      failing_set: ['failing one', 'failing two', 'flaky member'],
       output_sha256: 'c'.repeat(64),
     },
   ])
@@ -889,6 +904,42 @@ test('reconcile waiver: a waived package outside the set fails the gate', () => 
   assert.ok(codes(verdict).includes('waiver-mismatch'))
 })
 
+test('reconcile waiver: a wrong fail_total in the record fails (R9)', () => {
+  const pkgRecord = waivedPackage('alpha', 'plugins/foreman-line/alpha/', ['PIN-MARKER-A', 'PIN-MARKER-B'])
+  pkgRecord.waivers[0].fail_total = 999
+  const artifacts = [
+    artifact(0, 2, [pkgRecord, pkg('delta')]),
+    artifact(1, 2, [pkg('beta'), pkg('gamma')]),
+  ]
+  const verdict = reconcile({ root, shardCount: 2, artifacts, waivers: waiverFixtures, discover: fixedDiscover })
+  assert.equal(verdict.ok, false)
+  assert.ok(codes(verdict).includes('waiver-mismatch'))
+})
+
+test('reconcile waiver: wrong counts_verified in the record fails (R9)', () => {
+  const pkgRecord = waivedPackage('alpha', 'plugins/foreman-line/alpha/', ['PIN-MARKER-A', 'PIN-MARKER-B'])
+  pkgRecord.waivers[0].counts_verified = { 'PIN-MARKER-A': 7 }
+  const artifacts = [
+    artifact(0, 2, [pkgRecord, pkg('delta')]),
+    artifact(1, 2, [pkg('beta'), pkg('gamma')]),
+  ]
+  const verdict = reconcile({ root, shardCount: 2, artifacts, waivers: waiverFixtures, discover: fixedDiscover })
+  assert.equal(verdict.ok, false)
+  assert.ok(codes(verdict).includes('waiver-mismatch'))
+})
+
+test('reconcile waiver: a wrong failing_set in the record fails (R7 record check)', () => {
+  const pkgRecord = waivedPackage('alpha', 'plugins/foreman-line/alpha/', ['PIN-MARKER-A', 'PIN-MARKER-B'])
+  pkgRecord.waivers[0].failing_set = ['failing one', 'an intruder']
+  const artifacts = [
+    artifact(0, 2, [pkgRecord, pkg('delta')]),
+    artifact(1, 2, [pkg('beta'), pkg('gamma')]),
+  ]
+  const verdict = reconcile({ root, shardCount: 2, artifacts, waivers: waiverFixtures, discover: fixedDiscover })
+  assert.equal(verdict.ok, false)
+  assert.ok(codes(verdict).includes('waiver-mismatch'))
+})
+
 test('the shipped WAIVED_EXCLUSIONS bind identity + location + value for every ratified entry', () => {
   assert.equal(WAIVED_EXCLUSIONS.length, 4)
   for (const entry of WAIVED_EXCLUSIONS) {
@@ -896,42 +947,52 @@ test('the shipped WAIVED_EXCLUSIONS bind identity + location + value for every r
     assert.equal(entry.location, `plugins/foreman-line/${entry.identity}/`)
     assert.ok(Object.keys(entry.checks).length >= 1)
     for (const [check, pin] of Object.entries(entry.checks)) {
+      // shape v3 well-formedness (the R7 value layers)
       assert.ok(pin.markers.length >= 1)
-      assert.equal(typeof pin.failTotal, 'number')
-      // positive control: a captured output carrying exactly the pinned value
-      // (markers at their pinned counts + presence-only markers + the pinned
-      // failure total) waives...
-      const counted = Object.entries(pin.counts).flatMap(([needle, n]) => Array(n).fill(needle)).join(' ')
-      const presenceOnly = pin.markers.filter((m) => !(m in pin.counts))
-      const exact = `${[...counted.split(' ').filter(Boolean), ...presenceOnly].join(' ')}\n# fail ${pin.failTotal}\n`
-      const w = waiverFor(entry.identity, entry.location, check, exact, WAIVED_EXCLUSIONS)
-      assert.ok(w !== null, `${entry.identity}/${check}`)
-      assert.deepEqual(w.markers_matched, pin.markers)
-      assert.deepEqual(w.counts_verified, { ...pin.counts })
-      assert.equal(w.fail_total, pin.failTotal)
-      // the presence layer is load-bearing on its own: a missing presence-only
-      // marker re-gates even with counts and total exact
-      for (const m of presenceOnly) {
-        assert.equal(
-          waiverFor(entry.identity, entry.location, check, `${counted}\n# fail ${pin.failTotal}\n`, WAIVED_EXCLUSIONS),
-          null,
-          `${entry.identity}/${check} must re-gate without the presence marker ${m}`,
-        )
+      assert.equal(typeof pin.counts, 'object')
+      assert.ok(Array.isArray(pin.failTotal) && pin.failTotal.length === 2)
+      assert.ok(Array.isArray(pin.failingSet))
+      assert.ok(Array.isArray(pin.flaky))
+      if (check === 'test') {
+        assert.ok(pin.failingSet.length + pin.flaky.length > 0, `${entry.identity}/test needs a pinned failing universe`)
       }
-      // ...and a count drift on any pinned literal never waives (R2)
+      // positive control: an output carrying exactly the pinned value waives —
+      // the measured variance closure: flaky present AND flaky absent
+      const build = (names, total, extraLines = []) => [
+        ...Object.entries(pin.counts).flatMap(([needle, n]) => Array(n).fill(needle)),
+        ...pin.markers.filter((m) => !(m in pin.counts)),
+        ...names.map((n) => `\u2716 ${n} (1.0ms)`),
+        ...extraLines,
+        `\u2139 fail ${total}`,
+      ].join('\n')
+      for (const withFlaky of [true, false]) {
+        const names = withFlaky ? [...pin.failingSet, ...pin.flaky] : [...pin.failingSet]
+        const total = pin.failTotal[withFlaky ? 1 : 0]
+        const w = waiverFor(entry.identity, entry.location, check, build(names, total), WAIVED_EXCLUSIONS)
+        assert.ok(w !== null, `${entry.identity}/${check} flaky=${withFlaky}`)
+        assert.deepEqual(w.markers_matched, pin.markers)
+        assert.equal(w.fail_total, total)
+      }
+      // every layer binds on its own:
+      // 1. a NEW failing name never waives
+      const withNew = build([...pin.failingSet, ...pin.flaky], pin.failTotal[1], ['\u2716 intruder failure (1.0ms)'])
+      assert.equal(waiverFor(entry.identity, entry.location, check, withNew, WAIVED_EXCLUSIONS), null, `${entry.identity}/${check} new-name`)
+      // 2. a missing deterministic member re-gates (total kept in variance so
+      //    the SET check is what rejects)
+      if (pin.failingSet.length > 0) {
+        const missingOne = build(pin.failingSet.slice(1), Math.min(pin.failTotal[1], pin.failingSet.length - 1 + pin.flaky.length))
+        assert.equal(waiverFor(entry.identity, entry.location, check, missingOne, WAIVED_EXCLUSIONS), null, `${entry.identity}/${check} missing-deterministic`)
+      }
+      // 3. count drift on any counted literal re-gates
       for (const needle of Object.keys(pin.counts)) {
-        assert.equal(
-          waiverFor(entry.identity, entry.location, check, `${exact} ${needle}`, WAIVED_EXCLUSIONS),
-          null,
-          `${entry.identity}/${check} must re-gate on an extra ${needle}`,
-        )
+        const base = build([...pin.failingSet, ...pin.flaky], pin.failTotal[1])
+        assert.equal(waiverFor(entry.identity, entry.location, check, `${base}\n${needle}`, WAIVED_EXCLUSIONS), null, `${entry.identity}/${check} count-drift ${needle}`)
       }
-      // ...and a bumped failure total never waives (R2)
-      assert.equal(
-        waiverFor(entry.identity, entry.location, check, `${exact}\n# fail 999\n`, WAIVED_EXCLUSIONS),
-        null,
-        `${entry.identity}/${check} must re-gate on a bumped failure total`,
-      )
+      // 4. a presence marker missing re-gates
+      for (const m of pin.markers.filter((m) => !(m in pin.counts))) {
+        const without = build([...pin.failingSet, ...pin.flaky], pin.failTotal[1]).split(m).join('')
+        assert.equal(waiverFor(entry.identity, entry.location, check, without, WAIVED_EXCLUSIONS), null, `${entry.identity}/${check} missing-marker ${m}`)
+      }
     }
   }
 })
@@ -1089,4 +1150,192 @@ test('sweep edge: when discovered < shardCount, empty shards pass reconciliation
   const artifacts = [artifact(0, 4, [pkg('alpha')]), artifact(1, 4, [pkg('beta')]), artifact(2, 4, []), artifact(3, 4, [])]
   const v = reconcile({ root, shardCount: 4, artifacts, discover: () => ['alpha', 'beta'] })
   assert.equal(v.ok, true, JSON.stringify(v.failures))
+})
+
+// ─── R8: the R1 workflow wiring pinned as TEXT (the round-1 blocker surface) ─
+
+test('R8 wiring: gate outputs read steps.effective.outputs with NO || fallthrough', () => {
+  const workflowPath = fileURLToPath(new URL('../.github/workflows/foreman-line-ci.yml', import.meta.url))
+  const text = readFileSync(workflowPath, 'utf8')
+  const gateOutputsBlock = text.slice(text.indexOf('    outputs:'), text.indexOf('    steps:'))
+  assert.ok(gateOutputsBlock.includes('decision: ${{ steps.effective.outputs.decision }}'))
+  assert.ok(!gateOutputsBlock.includes('||'), 'no || fallthrough may remain in the gate outputs')
+  assert.ok(!/verify\.outputs\.decision\s*\|\|/.test(text))
+})
+
+test('R8 wiring: GATE_RESULT and VERIFY_CONCLUSION come from the contexts, never literals', () => {
+  const workflowPath = fileURLToPath(new URL('../.github/workflows/foreman-line-ci.yml', import.meta.url))
+  const text = readFileSync(workflowPath, 'utf8')
+  assert.ok(text.includes('GATE_RESULT: ${{ needs.gate.result }}'), 'aggregate binds needs.gate.result')
+  assert.ok(text.includes('VERIFY_CONCLUSION: ${{ steps.verify.conclusion }}'), 'resolve binds the verify conclusion')
+  assert.ok(!text.includes("VERIFY_CONCLUSION: 'success'"), 'no hard-coded conclusion')
+  assert.ok(!text.includes("GATE_RESULT: 'success'"), 'no hard-coded gate result')
+})
+
+test('R8 wiring: resolve runs unless cancelled and the aggregate step runs unless cancelled', () => {
+  const workflowPath = fileURLToPath(new URL('../.github/workflows/foreman-line-ci.yml', import.meta.url))
+  const text = readFileSync(workflowPath, 'utf8')
+  const resolveAt = text.indexOf('id: effective')
+  assert.ok(resolveAt > 0)
+  const resolveIf = text.slice(resolveAt, resolveAt + 400)
+  assert.ok(resolveIf.includes("if: ${{ !cancelled() }}"), 'resolve step runs unless cancelled')
+  const aggregateAt = text.indexOf('node scripts/foreman-line-ci.mjs aggregate')
+  const aggregateStepStart = text.lastIndexOf('      - name:', aggregateAt)
+  const aggregateStep = text.slice(aggregateStepStart, aggregateAt)
+  assert.ok(aggregateStep.includes("if: ${{ !cancelled() }}"), 'the verdict step runs unless cancelled')
+})
+
+// ─── R7: failing-name parser (TAP + spec; names untrusted) ─────────────────
+
+test('R7 parser: TAP `not ok … - name` and spec `✖ name` lines yield the failing set', () => {
+  const tap = [
+    'TAP version 13',
+    'not ok 1 - alpha breaks here',
+    'not ok 2 - beta breaks here',
+    '# fail 2',
+  ].join('\n')
+  assert.deepEqual(failingTestNames(tap), ['alpha breaks here', 'beta breaks here'])
+  const spec = [
+    '\u2716 alpha breaks here (12.5ms)',
+    '\u2716 beta breaks here (1.20s)',
+    '\u2139 fail 2',
+  ].join('\n')
+  assert.deepEqual(failingTestNames(spec), ['alpha breaks here', 'beta breaks here'])
+  // the spec reporter section marker is not a name; names are de-duplicated
+  const dupe = '\u2716 failing tests:\n\u2716 alpha breaks here (1ms)\n\u2716 alpha breaks here (1ms)\n'
+  assert.deepEqual(failingTestNames(dupe), ['alpha breaks here'])
+  // hostile names are sanitized (SC #4/#5) and never carry protocol delimiters
+  const hostile = 'not ok 1 - evil\n::error::injected name\nnot ok 2 - plain name'
+  for (const name of failingTestNames(hostile)) {
+    assert.equal(name.includes('::'), false)
+    assert.equal(/[\u0000-\u001F]/.test(name), false)
+  }
+})
+
+// ─── R10: lstat-first discovery (dangling junction is a discovery error) ──
+
+test('R10: an entry that lstats but fails stat (dangling junction) is a typed discovery error', () => {
+  const dir = fixtureTree({ alpha: '{}' })
+  try {
+    assert.throws(
+      () => discoverPackages({
+        root: dir,
+        lstat: () => ({ isDirectory: () => true }),
+        stat: () => {
+          const err = new Error('ENOENT on the junction target')
+          err.code = 'ENOENT'
+          throw err
+        },
+      }),
+      (e) => e instanceof ForemanCiError && /unstatable entry/.test(e.message),
+    )
+  } finally {
+    rmSync(dir, { recursive: true, force: true })
+  }
+})
+
+test('R10: an entry that fails lstat with ENOENT is a vanished non-package (skipped, not an error)', () => {
+  const dir = fixtureTree({ alpha: '{}', beta: '{}' })
+  try {
+    const names = discoverPackages({
+      root: dir,
+      lstat: (p) => {
+        if (p.endsWith('alpha')) {
+          const err = new Error('vanished')
+          err.code = 'ENOENT'
+          throw err
+        }
+        return lstatSync(p)
+      },
+    })
+    assert.deepEqual(names, ['beta'], 'the vanished entry is skipped silently; discovery is not an error')
+  } finally {
+    rmSync(dir, { recursive: true, force: true })
+  }
+})
+
+// ─── R9: golden fixtures of REAL captured outputs (measured values pinned
+// literally — the value axis is independently bound, ready for the
+// placement-10 alignment edit) ─────────────────────────────────────────────
+
+// Golden SPEC-reporter excerpt — verbatim lines from the measured
+// jev-decisions/test capture (node 24.19.0, 2026-10-01).
+const GOLDEN_SPEC = [
+  '✖ missing credential refuses before the synthetic transport opens (2.2331ms)',
+  '✖ malformed provider and transport results fail closed (0.6959ms)',
+  '✖ timeout and lease refusal never permit a live call (0.5281ms)',
+  '✖ provider cost above the hard cap becomes a bounded hold (0.5805ms)',
+  '✖ redirect and unverified TLS authorities are rejected (0.5406ms)',
+  '✖ synthetic success returns a redacted observation and never discloses the credential (0.5426ms)',
+  'ℹ tests 47',
+  'ℹ pass 41',
+  'ℹ fail 6',
+  '✖ failing tests:',
+  '✖ missing credential refuses before the synthetic transport opens (2.2331ms)',
+  '✖ malformed provider and transport results fail closed (0.6959ms)',
+  '✖ timeout and lease refusal never permit a live call (0.5281ms)',
+  '✖ provider cost above the hard cap becomes a bounded hold (0.5805ms)',
+  '✖ redirect and unverified TLS authorities are rejected (0.5406ms)',
+  '✖ synthetic success returns a redacted observation and never discloses the credential (0.5426ms)',
+].join('\n')
+
+test('R9 golden: the spec-reporter fixture parses to the measured failing set and the ℹ-fail total literally', () => {
+  assert.deepEqual(failingTestNames(GOLDEN_SPEC), [
+    'malformed provider and transport results fail closed',
+    'missing credential refuses before the synthetic transport opens',
+    'provider cost above the hard cap becomes a bounded hold',
+    'redirect and unverified TLS authorities are rejected',
+    'synthetic success returns a redacted observation and never discloses the credential',
+    'timeout and lease refusal never permit a live call',
+  ])
+  assert.equal(sumFailTotals(GOLDEN_SPEC), 6, 'the ℹ fail N branch (the real node-24 format) is covered')
+})
+
+// Golden TAP excerpt — verbatim lines from the measured authority-registry
+// test captures (node 24.19.0, multi-stream TAP).
+const GOLDEN_TAP = [
+  '# Subtest: a passing stream',
+  'ok 1 - runtime dependency set and versions are exact',
+  '1..1',
+  '# tests 1',
+  '# pass 1',
+  '# fail 0',
+  '# Subtest: the semantic stream',
+  'not ok 9 - shipped registry sweeps the complete pinned corpus with no gaps or conflicts',
+  'not ok 18 - unrelated bytes outside every registered locator stay green',
+  '1..148',
+  '# tests 148',
+  '# pass 119',
+  '# fail 29',
+  '# Subtest: the schema stream',
+  'not ok 1 - committed draft-07 schema is byte-identical to the hand-authored schema source',
+  '1..5',
+  '# tests 5',
+  '# pass 4',
+  '# fail 1',
+].join('\n')
+
+test('R9 golden: the TAP fixture parses `not ok … - name` lines and multi-stream fail sums literally', () => {
+  assert.deepEqual(failingTestNames(GOLDEN_TAP), [
+    'committed draft-07 schema is byte-identical to the hand-authored schema source',
+    'shipped registry sweeps the complete pinned corpus with no gaps or conflicts',
+    'unrelated bytes outside every registered locator stay green',
+  ])
+  assert.equal(sumFailTotals(GOLDEN_TAP), 30, 'multi-stream # fail N lines sum (0 + 29 + 1)')
+})
+
+test('R9: the value axis is independently pinned — golden values do not derive from WAIVED_EXCLUSIONS', () => {
+  // the golden's measured values are asserted literally above; the failure
+  // detail lines below are the real `code:` lines carrying the pinned marker
+  // (6 occurrences, one per failure block, as measured). The shipped pin must
+  // accept the measured golden output itself — the golden stands alone if the
+  // pin is later edited by the placement-10 alignment.
+  const measured = [
+    ...Array(6).fill("    code: 'LEGACY_EXECUTION_RETIRED'"),
+    GOLDEN_SPEC,
+  ].join('\n')
+  const entry = WAIVED_EXCLUSIONS.find((e) => e.identity === 'jev-decisions')
+  const w = waiverFor('jev-decisions', 'plugins/foreman-line/jev-decisions/', 'test', measured, [entry])
+  assert.ok(w !== null, 'the measured golden output waives under the shipped pin')
+  assert.equal(w.fail_total, 6)
 })
