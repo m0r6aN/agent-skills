@@ -904,7 +904,9 @@ jobs:
               return datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0) \
                         .isoformat().replace("+00:00", "Z")
 
-          probe_principal = "u1-verifier-mi (ec2d02e3-904c-4ce2-9771-cd518d711e3f)"
+          # No client id in this record: azure/login masks the client id, and GitHub drops a job
+          # output that contains a masked value (the record is passed to evaluate as an output).
+          probe_principal = "u1-verifier-mi"
           probes = []
           try:
               token = storage_token()
