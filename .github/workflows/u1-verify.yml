@@ -479,7 +479,7 @@ jobs:
               return max_depth
 
           def strict_loads(raw):
-              # F-16: depth-limited, duplicate-key-rejecting, NaN/Infinity-rejecting parse.
+              # F-16: depth-limited (16), duplicate-key-rejecting, NaN/Infinity-rejecting.
               if text_depth(raw) > 16:
                   raise ValueError("U1_EVIDENCE_LIMIT_EXCEEDED: JSON depth > 16")
               def reject_constant(name):
