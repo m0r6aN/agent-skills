@@ -36,7 +36,7 @@ jobs:
           tar xzf actionlint.tgz actionlint
           ./actionlint -version
       - name: actionlint over the U1 workflows
-        run: ./actionlint -color=never .github/workflows/u1-verify.yml .github/workflows/u1-produce.yml .github/workflows/u1-lint.yml
+        run: ./actionlint -no-color .github/workflows/u1-verify.yml .github/workflows/u1-produce.yml .github/workflows/u1-lint.yml
       - name: Embedded python blocks - syntax and pyflakes
         run: |
           python3 -m pip install --quiet pyflakes==3.4.0
