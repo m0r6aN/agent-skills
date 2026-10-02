@@ -1537,15 +1537,15 @@ test('R13: the hostile-name fixture is a real failing-NAME line and sanitizeFiel
 
 // ─── R14: the CI-era flake universes (variance-base correction) ────────────
 
-test('R14: kernel-lease flake combinations all waive (75..78 = the named-flake closure)', () => {
+test('R14: kernel-lease flake combinations all waive (75..80 = the named-flake closure)', () => {
   const entry = WAIVED_EXCLUSIONS.find((e) => e.identity === 'kernel-lease')
   const pin = entry.checks.test
   assert.equal(pin.failingSet.length, 75)
-  assert.deepEqual(pin.flaky.map((n) => n.slice(0, 5)).sort(), ['CN-01', 'CN-02', 'CN-05'])
-  assert.deepEqual(pin.failTotal, [75, 78])
-  // every combination of the three named flakes is measured-variance waivable
+  assert.deepEqual(pin.flaky.map((n) => n.slice(0, 5)).sort(), ['CN-01', 'CN-02', 'CN-03', 'CN-04', 'CN-05'])
+  assert.deepEqual(pin.failTotal, [75, 80])
+  // every combination of the three originally-measured flakes stays waivable
   for (let mask = 0; mask < 8; mask += 1) {
-    const present = pin.flaky.filter((_, i) => (mask >> i) % 2 === 1)
+    const present = [pin.flaky[0], pin.flaky[1], pin.flaky[4]].filter((_, i) => (mask >> i) % 2 === 1)
     const names = [...pin.failingSet, ...present]
     const out = `${names.map((n) => `\u2716 ${n} (1.0ms)`).join('\n')}\n\u2139 fail ${names.length}\n`
     const w = waiverFor(entry.identity, entry.location, 'test', out, [entry])
@@ -1701,4 +1701,52 @@ test('R17: the real table balances the 27-package sweep (partition + determinism
   for (const s of shards) {
     assert.ok(!(s.includes('authority-registry') && s.includes('verification')), 'the two heaviest suites are separated')
   }
+})
+
+// ─── R19: variance closure 2 (placement 12) — the CI-environment members ───
+
+test('R19: authority 2-member era waives at 32/31/30 (equality at each end)', () => {
+  const entry = WAIVED_EXCLUSIONS.find((e) => e.identity === 'authority-registry')
+  const pin = entry.checks.test
+  assert.equal(pin.failingSet.length, 30)
+  assert.deepEqual(pin.flaky, [
+    'R31 actual decision blob correspondence detects Git replacement despite an unchanged diagnostic',
+    'R31 historical positive uses the pinned R30 implementation and its exact source subject',
+  ])
+  assert.deepEqual(pin.failTotal, [30, 32])
+  const both = [...pin.failingSet, ...pin.flaky]
+  for (const [names, total] of [[both, 32], [[...pin.failingSet, pin.flaky[0]], 31], [[...pin.failingSet, pin.flaky[1]], 31], [[...pin.failingSet], 30]]) {
+    const out = [
+      ...names.map((n) => `\u2716 ${n} (1.0ms)`),
+      'R31 reviewed source mapping drift: M02-note',
+      `\u2139 fail ${total}`,
+    ].join('\n')
+    const w = waiverFor(entry.identity, entry.location, 'test', out, [entry])
+    assert.ok(w !== null, `total ${total} must waive`)
+    assert.equal(w.fail_total, total)
+    assert.deepEqual(w.failing_set, [...names].sort())
+  }
+})
+
+test('R19: the 5-flake kernel closure waives at 75..80 (equality at each) and refuses intruders/missing members', () => {
+  const entry = WAIVED_EXCLUSIONS.find((e) => e.identity === 'kernel-lease')
+  const pin = entry.checks.test
+  assert.equal(pin.failingSet.length, 75)
+  assert.deepEqual(pin.flaky.map((n) => n.slice(0, 5)).sort(), ['CN-01', 'CN-02', 'CN-03', 'CN-04', 'CN-05'])
+  assert.deepEqual(pin.failTotal, [75, 80])
+  // all 32 flake combinations waive (75..80 with the equality holding at each)
+  for (let mask = 0; mask < 32; mask += 1) {
+    const present = pin.flaky.filter((_, i) => (mask >> i) % 2 === 1)
+    const names = [...pin.failingSet, ...present]
+    const out = `${names.map((n) => `\u2716 ${n} (1.0ms)`).join('\n')}\n\u2139 fail ${names.length}\n`
+    const w = waiverFor(entry.identity, entry.location, 'test', out, [entry])
+    assert.ok(w !== null, `mask ${mask} (${present.length} flakes) must waive`)
+    assert.equal(w.fail_total, names.length)
+  }
+  // a non-CN intruder still refuses
+  const intruder = `${[...pin.failingSet, ...pin.flaky].map((n) => `\u2716 ${n} (1.0ms)`).join('\n')}\n\u2716 CR-99 an unmeasured failure (1.0ms)\n\u2139 fail 81\n`
+  assert.equal(waiverFor(entry.identity, entry.location, 'test', intruder, [entry]), null)
+  // a missing deterministic member still refuses
+  const missing = `${pin.failingSet.slice(1).map((n) => `\u2716 ${n} (1.0ms)`).join('\n')}\n\u2139 fail 74\n`
+  assert.equal(waiverFor(entry.identity, entry.location, 'test', missing, [entry]), null)
 })

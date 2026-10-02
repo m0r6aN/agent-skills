@@ -427,7 +427,10 @@ const AUTHORITY_REGISTRY_TEST_FAILING = Object.freeze([
   'shipped registry sweeps the complete pinned corpus with no gaps or conflicts',
   'unrelated bytes outside every registered locator stay green',
 ])
-const AUTHORITY_REGISTRY_TEST_FLAKY = Object.freeze([])
+const AUTHORITY_REGISTRY_TEST_FLAKY = Object.freeze([
+  'R31 actual decision blob correspondence detects Git replacement despite an unchanged diagnostic',
+  'R31 historical positive uses the pinned R30 implementation and its exact source subject',
+])
 
 export const WAIVED_EXCLUSIONS = Object.freeze([
   Object.freeze({
@@ -485,13 +488,18 @@ export const WAIVED_EXCLUSIONS = Object.freeze([
         // (EPERM / HARNESS_FAULT barrier timeouts). Not proven constant across
         // environments => dropped (determinism anchor); the failing-set identity,
         // the equality and the range carry the value axis here.
+        // R19 (placement 12): the concurrency race family is fully enumerated —
+        // CN-01..CN-05 each observed flaky (evidence: CN-01 diagnostic run; CN-02
+        // 16+ runs; CN-03/CN-04 run 37011944112; CN-05 run 37007827805).
         markers: Object.freeze([]),
         counts: Object.freeze({}),
-        failTotal: Object.freeze([75, 78]),
+        failTotal: Object.freeze([75, 80]),
         failingSet: KERNEL_LEASE_TEST_FAILING,
         flaky: Object.freeze([
           'CN-01 two-process claim race: exactly one winner, one event, one binding, one bump; loser LEASE_HELD',
           'CN-02 claim/release race: exactly the two named serializations; never two active leases',
+          'CN-03 expired-takeover race: one takeover wins, peer LEASE_HELD; prior row stamped exactly once',
+          'CN-04 same-binding apply race: one applies, the peer replays the recorded result with zero duplicate effects',
           'CN-05 same-key different-binding apply race: one applies, the peer IDEMPOTENCY_CONFLICT',
         ]),
       }),
@@ -513,10 +521,13 @@ export const WAIVED_EXCLUSIONS = Object.freeze([
         // run 36993326583 and all 10 local runs) — kept. MIGRATION_EVIDENCE_INVALID
         // is not proven constant across environments (its region was beyond the
         // truncated CI echo) => dropped (determinism anchor). The 30-name set +
-        // equality + [30,30] carry the identity.
+        // equality + [30,32] carry the identity.
+        // R19 (placement 12): the two CI-environment members (git-sensitive
+        // corpus tests, R18 evidence from run 37011944112) join as named
+        // present-or-absent members.
         markers: Object.freeze(['R31 reviewed source mapping drift: M02-note']),
         counts: Object.freeze({}),
-        failTotal: Object.freeze([30, 30]),
+        failTotal: Object.freeze([30, 32]),
         failingSet: AUTHORITY_REGISTRY_TEST_FAILING,
         flaky: AUTHORITY_REGISTRY_TEST_FLAKY,
       }),
