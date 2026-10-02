@@ -431,7 +431,10 @@ test('R7: the exact pinned value waives (markers + counts + total + failing-set)
 })
 
 test('R7: a NEW failing test outside the set NEVER waives (set subsumes counts)', () => {
-  const out = pinnedOutput(PINNED.checks.test, { extraNames: ['an entirely new failure'] })
+  // the intruder takes the flaky member's slot: distinct 3, total 3 (inside the
+  // range), equality holds, the deterministic members are present — only the
+  // universe (set-membership) check rejects
+  const out = pinnedOutput(PINNED.checks.test, { omitNames: ['flaky member'], extraNames: ['an entirely new failure'], total: 3 })
   assert.equal(waiverFor('alpha', 'plugins/foreman-line/alpha/', 'test', out, [PINNED]), null)
 })
 
@@ -1291,37 +1294,117 @@ test('R9 golden: the spec-reporter fixture parses to the measured failing set an
   assert.equal(sumFailTotals(GOLDEN_SPEC), 6, 'the ℹ fail N branch (the real node-24 format) is covered')
 })
 
-// Golden TAP excerpt — verbatim lines from the measured authority-registry
-// test captures (node 24.19.0, multi-stream TAP).
+// Golden TAP fixture — the VERBATIM captured output lines of a real
+// authority-registry/test run at node 24.19.0 (2026-10-01; re-captured for
+// this fixture). These are literal capture bytes: the real `not ok … - name`
+// lines (30), the real multi-stream `# tests/# pass/# fail` summary lines, and
+// the real marker lines (the R31 drift error and the MIGRATION code subtest).
+// Nothing here is invented. It must feed the shipped authority-registry pin
+// (below) and every perturbation of it must fail.
 const GOLDEN_TAP = [
-  '# Subtest: a passing stream',
-  'ok 1 - runtime dependency set and versions are exact',
-  '1..1',
+  'not ok 9 - shipped registry sweeps the complete pinned corpus with no gaps or conflicts',
+  'not ok 18 - unrelated bytes outside every registered locator stay green',
+  'not ok 33 - multiple corpus violations are deterministically ordered by path, locator, rule, then code',
+  'not ok 34 - R5 Markdown numbered-item locators survive physical line wrapping',
+  'not ok 36 - R5 fenced Markdown prose cannot impersonate a live authority binding',
+  'not ok 47 - R5 TypeScript semantic inventory ignores benign comment changes',
+  'not ok 48 - R5 TypeScript semantic inventory ignores benign whitespace changes',
+  'not ok 49 - R5 TypeScript semantic inventory ignores benign import-order changes',
+  'not ok 54 - R6 comment-only Markdown remains non-operative',
+  'not ok 58 - R6 additive TypeScript type-only import remains non-operative',
+  'not ok 63 - R9 valid fenced standing-constraint number is ignored by the shared Markdown map',
+  'not ok 64 - R8 valid fenced heading is ignored by every Markdown discovery layer',
+  'not ok 65 - R8 valid fenced D row is ignored by every Markdown discovery layer',
+  'not ok 66 - R8 valid fenced R row is ignored by every Markdown discovery layer',
+  'not ok 67 - R8 valid fenced numbered hard rule is ignored by every Markdown discovery layer',
+  'not ok 68 - R7 mixed fence delimiters do not close a correctly paired fence',
+  'not ok 69 - R7 mixed type and value import order is semantically stable',
+  'not ok 70 - R7 ambient declarations remain non-operative',
+  'not ok 113 - R14 an added heading stays inert while a paragraph beneath it does not',
+  'not ok 117 - R27 control (a) volatile appends and byte changes preserve the sweep and governed siblings',
+  'not ok 124 - R27 control (e) generator output is byte-identical under mutation of every volatile region',
+  'not ok 138 - R31 approved annotation and thesis have distinct source-bound identities',
+  'not ok 139 - R31 actual M01 source rejects parcel condition mutation',
+  'not ok 140 - R31 actual M01 source rejects living identifier mutation',
+  'not ok 141 - R31 actual M01 source rejects marketplace entry mutation',
+  'not ok 142 - R31 actual M01 source rejects source existence mutation',
+  'not ok 143 - R31 actual M01 source rejects nested manifest equality mutation',
+  'not ok 144 - R31 actual M01 source rejects URL insufficiency mutation',
+  'not ok 146 - R31 source-bound aliases reject displaced or substituted historical note and thesis',
+  'not ok 4 - CLI validate and sweep return exit 0 with machine-readable summaries',
   '# tests 1',
   '# pass 1',
   '# fail 0',
-  '# Subtest: the semantic stream',
-  'not ok 9 - shipped registry sweeps the complete pinned corpus with no gaps or conflicts',
-  'not ok 18 - unrelated bytes outside every registered locator stay green',
-  '1..148',
   '# tests 148',
   '# pass 119',
   '# fail 29',
-  '# Subtest: the schema stream',
-  'not ok 1 - committed draft-07 schema is byte-identical to the hand-authored schema source',
-  '1..5',
+  '# tests 1',
+  '# pass 1',
+  '# fail 0',
   '# tests 5',
-  '# pass 4',
+  '# pass 5',
+  '# fail 0',
+  '# tests 23',
+  '# pass 22',
   '# fail 1',
+  '# tests 574',
+  '# pass 574',
+  '# fail 0',
+  '# Error: R31 reviewed source mapping drift: M02-note',
+  '# Subtest: reject-stale-binding-digest rejects with MIGRATION_EVIDENCE_INVALID',
 ].join('\n')
 
-test('R9 golden: the TAP fixture parses `not ok … - name` lines and multi-stream fail sums literally', () => {
+test('R12 golden: the TAP fixture is the verbatim capture — 30 real names and the real multi-stream sum', () => {
   assert.deepEqual(failingTestNames(GOLDEN_TAP), [
-    'committed draft-07 schema is byte-identical to the hand-authored schema source',
+    'CLI validate and sweep return exit 0 with machine-readable summaries',
+    'R14 an added heading stays inert while a paragraph beneath it does not',
+    'R27 control (a) volatile appends and byte changes preserve the sweep and governed siblings',
+    'R27 control (e) generator output is byte-identical under mutation of every volatile region',
+    'R31 actual M01 source rejects URL insufficiency mutation',
+    'R31 actual M01 source rejects living identifier mutation',
+    'R31 actual M01 source rejects marketplace entry mutation',
+    'R31 actual M01 source rejects nested manifest equality mutation',
+    'R31 actual M01 source rejects parcel condition mutation',
+    'R31 actual M01 source rejects source existence mutation',
+    'R31 approved annotation and thesis have distinct source-bound identities',
+    'R31 source-bound aliases reject displaced or substituted historical note and thesis',
+    'R5 Markdown numbered-item locators survive physical line wrapping',
+    'R5 TypeScript semantic inventory ignores benign comment changes',
+    'R5 TypeScript semantic inventory ignores benign import-order changes',
+    'R5 TypeScript semantic inventory ignores benign whitespace changes',
+    'R5 fenced Markdown prose cannot impersonate a live authority binding',
+    'R6 additive TypeScript type-only import remains non-operative',
+    'R6 comment-only Markdown remains non-operative',
+    'R7 ambient declarations remain non-operative',
+    'R7 mixed fence delimiters do not close a correctly paired fence',
+    'R7 mixed type and value import order is semantically stable',
+    'R8 valid fenced D row is ignored by every Markdown discovery layer',
+    'R8 valid fenced R row is ignored by every Markdown discovery layer',
+    'R8 valid fenced heading is ignored by every Markdown discovery layer',
+    'R8 valid fenced numbered hard rule is ignored by every Markdown discovery layer',
+    'R9 valid fenced standing-constraint number is ignored by the shared Markdown map',
+    'multiple corpus violations are deterministically ordered by path, locator, rule, then code',
     'shipped registry sweeps the complete pinned corpus with no gaps or conflicts',
     'unrelated bytes outside every registered locator stay green',
   ])
-  assert.equal(sumFailTotals(GOLDEN_TAP), 30, 'multi-stream # fail N lines sum (0 + 29 + 1)')
+  assert.equal(sumFailTotals(GOLDEN_TAP), 30, 'the real multi-stream sums (0 + 29 + 0 + 0 + 1 + 0)')
+})
+
+test('R12 golden: the verbatim capture FEEDS the shipped authority-registry pin (and perturbations fail)', () => {
+  const entry = WAIVED_EXCLUSIONS.find((e) => e.identity === 'authority-registry')
+  const w = waiverFor('authority-registry', 'plugins/foreman-line/authority-registry/', 'test', GOLDEN_TAP, [entry])
+  assert.ok(w !== null, 'the real capture waives under the shipped pin')
+  assert.equal(w.fail_total, 30)
+  assert.equal(w.failing_set.length, 30)
+  // perturbation 1: drop one name line (missing deterministic member)
+  const dropped = GOLDEN_TAP.split('\n').filter((l) => !l.startsWith('not ok 9 - ')).join('\n')
+  assert.equal(waiverFor('authority-registry', 'plugins/foreman-line/authority-registry/', 'test', dropped, [entry]), null)
+  // perturbation 2: add an intruder failure name
+  const intruder = `${GOLDEN_TAP}\nnot ok 999 - an intruder failure appears`
+  assert.equal(waiverFor('authority-registry', 'plugins/foreman-line/authority-registry/', 'test', intruder, [entry]), null)
+  // perturbation 3: bump a declared summary (equality + range both reject)
+  const bumped = `${GOLDEN_TAP}\n# fail 1`
+  assert.equal(waiverFor('authority-registry', 'plugins/foreman-line/authority-registry/', 'test', bumped, [entry]), null)
 })
 
 test('R9: the value axis is independently pinned — golden values do not derive from WAIVED_EXCLUSIONS', () => {
@@ -1338,4 +1421,114 @@ test('R9: the value axis is independently pinned — golden values do not derive
   const w = waiverFor('jev-decisions', 'plugins/foreman-line/jev-decisions/', 'test', measured, [entry])
   assert.ok(w !== null, 'the measured golden output waives under the shipped pin')
   assert.equal(w.fail_total, 6)
+})
+
+// ─── R11: the measured equality closes the slack exploit ──────────────────
+// Invariant (measured, >=10 runs per check): whenever failing names parse,
+// the declared failure total === the number of DISTINCT failing names.
+
+test('R11: a duplicate of a pinned title never waives (the equality, inside the range slack)', () => {
+  // flaky out (distinct 2) + a NEW failure titled exactly like a pinned one:
+  // the name set dedups unchanged, the declared total becomes 3 — INSIDE the
+  // pinned [2,3] slack — only the equality re-gates
+  const out = pinnedOutput(PINNED.checks.test, { omitNames: ['flaky member'], total: 3, dupName: 'failing one' })
+  assert.equal(waiverFor('alpha', 'plugins/foreman-line/alpha/', 'test', out, [PINNED]), null)
+})
+
+test('R11: a test named like the reporter marker never waives (the equality)', () => {
+  // '✖ failing tests: (1.0ms)' is not a name (the section marker is filtered)
+  // but its failure counts in the total -> sum 3 vs distinct 2 -> re-gate
+  const out = pinnedOutput(PINNED.checks.test, { omitNames: ['flaky member'], total: 3, extraLines: ['\u2716 failing tests: (1.0ms)'] })
+  assert.equal(waiverFor('alpha', 'plugins/foreman-line/alpha/', 'test', out, [PINNED]), null)
+})
+
+test('R11: a control-char variant of a pinned name never waives (sanitize-collide or set-reject)', () => {
+  // the variant sanitizes onto the pinned name -> dedup -> sum 3 vs distinct 2
+  const out = pinnedOutput(PINNED.checks.test, { omitNames: ['flaky member'], total: 3, extraLines: ['\u2716 failing\u0000one (1.0ms)'] })
+  assert.equal(waiverFor('alpha', 'plugins/foreman-line/alpha/', 'test', out, [PINNED]), null)
+  // a variant that sanitizes OUTSIDE the set is rejected by the set rules
+  const out2 = pinnedOutput(PINNED.checks.test, { extraNames: ['failing\u0000three'], total: 4 })
+  assert.equal(waiverFor('alpha', 'plugins/foreman-line/alpha/', 'test', out2, [PINNED]), null)
+})
+
+test('R11: the equality holds at both measured ends (flaky out and in)', () => {
+  const flakyOut = pinnedOutput(PINNED.checks.test, { omitNames: ['flaky member'], total: 2 })
+  assert.ok(waiverFor('alpha', 'plugins/foreman-line/alpha/', 'test', flakyOut, [PINNED]) !== null, 'sum 2 === |distinct 2|')
+  const flakyIn = pinnedOutput(PINNED.checks.test, { total: 3 })
+  assert.ok(waiverFor('alpha', 'plugins/foreman-line/alpha/', 'test', flakyIn, [PINNED]) !== null, 'sum 3 === |distinct 3|')
+  // a nameless bump inside the range slack violates the equality
+  const bump = pinnedOutput(PINNED.checks.test, { omitNames: ['flaky member'], total: 3, extraLines: ['some nameless noise line'] })
+  assert.equal(waiverFor('alpha', 'plugins/foreman-line/alpha/', 'test', bump, [PINNED]), null)
+})
+
+test('R11: where NO failing names parse, the total range is the sole guard (named path)', () => {
+  // the tsc/biome shape: markers + totals only, no name lines at all
+  const pin = {
+    markers: ['TS2353'],
+    counts: { 'error TS': 2 },
+    failTotal: [0, 0],
+    failingSet: [],
+    flaky: [],
+  }
+  const entry = { identity: 'alpha', location: 'plugins/foreman-line/alpha/', checks: { typecheck: pin } }
+  const out = 'TS2353 TS2353\nerror TS\nerror TS\n'
+  assert.ok(waiverFor('alpha', 'plugins/foreman-line/alpha/', 'typecheck', out, [entry]) !== null, 'the range-only path waives within measurement')
+  // a declared total outside the tight range re-gates on the range alone
+  assert.equal(waiverFor('alpha', 'plugins/foreman-line/alpha/', 'typecheck', `${out}\n\u2139 fail 1\n`, [entry]), null)
+  // a single unparseable name line engages the equality (0 names vs 1 total)
+  assert.equal(waiverFor('alpha', 'plugins/foreman-line/alpha/', 'typecheck', `${out}\n\u2716 some failure (1ms)\n`, [entry]), null)
+})
+
+// ─── R13: restored test sides (the round-3 survivors all bind) ─────────────
+
+test('R13: fewer-than-pinned occurrences re-gate (both directions bound)', () => {
+  // one PIN-MARKER-A instead of the pinned two, marker still present
+  const fewer = [
+    'PIN-MARKER-A',
+    'PIN-MARKER-B',
+    ...[...PINNED.checks.test.failingSet, ...PINNED.checks.test.flaky].map((n) => `\u2716 ${n} (1.0ms)`),
+    '\u2139 fail 3',
+  ].join('\n')
+  assert.equal(waiverFor('alpha', 'plugins/foreman-line/alpha/', 'test', fewer, [PINNED]), null)
+  // and the extra direction stays bound
+  const more = `${pinnedOutput(PINNED.checks.test, { total: 3 })}\nPIN-MARKER-A`
+  assert.equal(waiverFor('alpha', 'plugins/foreman-line/alpha/', 'test', more, [PINNED]), null)
+})
+
+test('R13 reconcile: counts_verified with right KEYS but wrong VALUES fails', () => {
+  const pkgRecord = waivedPackage('alpha', 'plugins/foreman-line/alpha/', ['PIN-MARKER-A', 'PIN-MARKER-B'])
+  pkgRecord.waivers[0].counts_verified = { 'PIN-MARKER-A': 2, 'PIN-MARKER-B': 7 }
+  const artifacts = [artifact(0, 2, [pkgRecord, pkg('delta')]), artifact(1, 2, [pkg('beta'), pkg('gamma')])]
+  const verdict = reconcile({ root, shardCount: 2, artifacts, waivers: waiverFixtures, discover: fixedDiscover })
+  assert.equal(verdict.ok, false)
+  assert.ok(codes(verdict).includes('waiver-mismatch'))
+})
+
+test('R13 reconcile: fail_total BELOW the lower bound fails (both bounds bound)', () => {
+  const pkgRecord = waivedPackage('alpha', 'plugins/foreman-line/alpha/', ['PIN-MARKER-A', 'PIN-MARKER-B'])
+  pkgRecord.waivers[0].fail_total = 1
+  const artifacts = [artifact(0, 2, [pkgRecord, pkg('delta')]), artifact(1, 2, [pkg('beta'), pkg('gamma')])]
+  const verdict = reconcile({ root, shardCount: 2, artifacts, waivers: waiverFixtures, discover: fixedDiscover })
+  assert.equal(verdict.ok, false)
+  assert.ok(codes(verdict).includes('waiver-mismatch'))
+})
+
+test('R13 reconcile: a failing_set MISSING a deterministic member fails (both set halves bound)', () => {
+  const pkgRecord = waivedPackage('alpha', 'plugins/foreman-line/alpha/', ['PIN-MARKER-A', 'PIN-MARKER-B'])
+  pkgRecord.waivers[0].failing_set = ['failing one']
+  const artifacts = [artifact(0, 2, [pkgRecord, pkg('delta')]), artifact(1, 2, [pkg('beta'), pkg('gamma')])]
+  const verdict = reconcile({ root, shardCount: 2, artifacts, waivers: waiverFixtures, discover: fixedDiscover })
+  assert.equal(verdict.ok, false)
+  assert.ok(codes(verdict).includes('waiver-mismatch'))
+})
+
+test('R13: the hostile-name fixture is a real failing-NAME line and sanitizeField is exercised', () => {
+  // the name line itself carries the hostility (control chars, ::, bidi)
+  const hostile = 'not ok 1 - evil\u0000name with ::error:: and \u202Eoverride'
+  const parsed = failingTestNames(hostile)
+  assert.equal(parsed.length, 1)
+  assert.equal(parsed[0].includes('::'), false, 'the protocol delimiter is neutralized')
+  assert.equal(/[\u0000-\u001F\u007F]/.test(parsed[0]), false, 'control chars are stripped')
+  assert.equal(/[\u202A-\u202E\u2066-\u2069]/.test(parsed[0]), false, 'bidi overrides are neutralized')
+  assert.ok(parsed[0].startsWith('evil name with : :error'), 'the sanitized shape is deterministic')
 })

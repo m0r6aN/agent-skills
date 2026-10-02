@@ -230,17 +230,25 @@ export function assignShards(orderedNames, shardCount) {
  *   flaky      — named measured-variance failures (CN-02/CN-06 class),
  *                tolerated present-or-absent.
  * A failing test outside failingSet+flaky NEVER waives (the set subsumes
- * counts and catches new failures totals would hide). Waiver additionally
- * requires a clean numeric non-zero EXIT: signalled/errored spawns never waive.
- * Grow-by-ratification only; dead entries expire at the next runner-touching
- * parcel's Stage-F bookkeeping.
+ * counts and catches new failures totals would hide). R11: whenever failing
+ * names parse, the declared failure total must equal the number of DISTINCT
+ * failing names (the measured invariant — closes the duplicate-title /
+ * marker-named-test / control-char-variant slack). Where NO failing names
+ * parse (tsc/biome checks declare none), the pinned total range is the sole
+ * guard and is kept tight to measurement. Waiver additionally requires a clean
+ * numeric non-zero EXIT: signalled/errored spawns never waive. Waived output
+ * is echoed (sanitized) — the run-then-waive audit trail. Grow-by-ratification
+ * only; dead entries expire at the next runner-touching parcel's Stage-F
+ * bookkeeping.
  */
-// R7 measured data (>=10 consecutive runs at node 24.19.0, 2026-10-01): the
-// deterministic failing identity of kernel-lease/test. The two ruling-named
-// flaky members (CN-02/CN-06) are NOT here — they live in the entry's `flaky`.
+// R7 measured data (>=10 consecutive runs at node 24.19.0, 2026-10-01; CN-06
+// deterministic-present per 16/16 combined runs — 10 local + 6 reviewer): the
+// deterministic failing identity of kernel-lease/test. The single named flaky
+// member (CN-02) is NOT here — it lives in the entry's `flaky`.
 const KERNEL_LEASE_TEST_FAILING = Object.freeze([
   'AC6 residual statement is present and no genuineness claim exists in shipped text',
   'AC9: every emitted effect validates against schemas/effect-result.schema.json',
+  'CN-06 stale-CAS apply race: one applies, the peer STATE_REVISION_STALE',
   'CN-07 pending-request race: one pending transition wins, the peer TRANSITION_PENDING_EXISTS',
   "CR-01 kill at 'INSERT INTO events' leaves state fully-absent; retry applies",
   "CR-02 kill at 'UPDATE goals' leaves state fully-absent; retry applies",
@@ -404,11 +412,10 @@ export const WAIVED_EXCLUSIONS = Object.freeze([
       test: Object.freeze({
         markers: Object.freeze(['STORAGE_CONSTRAINT_VIOLATION', 'foreign-key']),
         counts: Object.freeze({}),
-        failTotal: Object.freeze([74, 76]),
+        failTotal: Object.freeze([75, 76]),
         failingSet: KERNEL_LEASE_TEST_FAILING,
         flaky: Object.freeze([
           'CN-02 claim/release race: exactly the two named serializations; never two active leases',
-          'CN-06 stale-CAS apply race: one applies, the peer STATE_REVISION_STALE',
         ]),
       }),
       lint: Object.freeze({
@@ -554,6 +561,14 @@ export function waiverFor(identity, location, check, output, waivers = WAIVED_EX
     for (const name of pin.failingSet) {
       if (!observedSet.has(name)) return null // a deterministic member missing => re-gate
     }
+    // R11: the measured invariant — whenever failing names parse, the declared
+    // failure total equals the number of DISTINCT failing names. This closes
+    // the slack exploit: a duplicate-title failure, a test named like a
+    // reporter marker, or a control-char variant each bumps the total without
+    // a new distinct name (or creates a name the set rejects). Where NO names
+    // parse (tsc/biome checks declare none), the pinned total range is the
+    // sole guard and is kept tight to measurement.
+    if (observed.length > 0 && observedTotal !== observed.length) return null
     return {
       check,
       markers_matched: [...pin.markers],
