@@ -6,7 +6,7 @@
       "ref": "INCOMPLETE-U1-01",
       "state": "recorded",
       "recordDigest": "sha256:40a837cf4573701fd78cb59cf9f9a7d6f0c15e2eca209f1a74e1fd0e43a5f685",
-      "observedAt": "2026-10-02T18:34:12Z",
+      "observedAt": "2026-10-02T20:22:16Z",
       "observer": "coordinator session (owner-delegated), re-observed 2026-10-02 against the cited evidence",
       "evidenceLocation": ".github/workflows/u1-produce.yml retention-plan.destination.tenant (tenant ac08e2fd-34bf-4c87-a34f-c8c853ffc5e2)",
       "unrecordedReason": null
@@ -15,7 +15,7 @@
       "ref": "INCOMPLETE-U1-02",
       "state": "recorded",
       "recordDigest": "sha256:40a837cf4573701fd78cb59cf9f9a7d6f0c15e2eca209f1a74e1fd0e43a5f685",
-      "observedAt": "2026-10-02T18:34:12Z",
+      "observedAt": "2026-10-02T20:22:16Z",
       "observer": "coordinator session (owner-delegated), re-observed 2026-10-02 against the cited evidence",
       "evidenceLocation": ".github/workflows/u1-produce.yml retention-plan.destination.subscription (subscription 909e0322-c3c0-4bce-ae53-b3d2ed735bd4)",
       "unrecordedReason": null
@@ -24,7 +24,7 @@
       "ref": "INCOMPLETE-U1-03",
       "state": "recorded",
       "recordDigest": "sha256:40a837cf4573701fd78cb59cf9f9a7d6f0c15e2eca209f1a74e1fd0e43a5f685",
-      "observedAt": "2026-10-02T18:34:12Z",
+      "observedAt": "2026-10-02T20:22:16Z",
       "observer": "coordinator session (owner-delegated), re-observed 2026-10-02 against the cited evidence",
       "evidenceLocation": ".github/workflows/u1-produce.yml retention-plan.destination.resourceGroup (biostack-rg)",
       "unrecordedReason": null
@@ -42,7 +42,7 @@
       "ref": "INCOMPLETE-U1-05",
       "state": "recorded",
       "recordDigest": "sha256:40a837cf4573701fd78cb59cf9f9a7d6f0c15e2eca209f1a74e1fd0e43a5f685",
-      "observedAt": "2026-10-02T18:34:12Z",
+      "observedAt": "2026-10-02T20:22:16Z",
       "observer": "coordinator session (owner-delegated), re-observed 2026-10-02 against the cited evidence",
       "evidenceLocation": ".github/workflows/u1-produce.yml retention-plan.destination.container (u1-evidence, dedicated private)",
       "unrecordedReason": null
@@ -50,8 +50,8 @@
     {
       "ref": "INCOMPLETE-U1-06",
       "state": "recorded",
-      "recordDigest": "sha256:79524aaad71a1a7a0a910558ddeca88aaa0afea3289f9ccfeaef7ee99e6af0ee",
-      "observedAt": "2026-10-02T18:34:12Z",
+      "recordDigest": "sha256:dc8d2a24fcaa4f998d94005d9770c2b7ef3d5727a1ff42267940a03f3640a6ec",
+      "observedAt": "2026-10-02T20:22:16Z",
       "observer": "coordinator session (owner-delegated), re-observed 2026-10-02 against the cited evidence",
       "evidenceLocation": "U1-verifier-pin.json custodian identity (m0r6aN / 461a4112-8e91-41cb-afef-6889b8f48ff0) + authorization-20260907-unattended.md owner authority basis",
       "unrecordedReason": null
@@ -60,7 +60,7 @@
       "ref": "INCOMPLETE-U1-07",
       "state": "recorded",
       "recordDigest": "sha256:40a837cf4573701fd78cb59cf9f9a7d6f0c15e2eca209f1a74e1fd0e43a5f685",
-      "observedAt": "2026-10-02T18:34:12Z",
+      "observedAt": "2026-10-02T20:22:16Z",
       "observer": "coordinator session (owner-delegated), re-observed 2026-10-02 against the cited evidence",
       "evidenceLocation": ".github/workflows/u1-produce.yml producer-identity.authenticatedPrincipal (u1-producer-mi dc152b9d-c74e-4af1-aeeb-c23b95c68ab2)",
       "unrecordedReason": null
@@ -68,8 +68,8 @@
     {
       "ref": "INCOMPLETE-U1-08",
       "state": "recorded",
-      "recordDigest": "sha256:8d6ee3bde16393c956cc7533d267a4d50a1b0a763f3525720d35eb4df3b3c337",
-      "observedAt": "2026-10-02T18:34:12Z",
+      "recordDigest": "sha256:a5576d3451651d3451821cacb9d95aca389e9bd04cf87cbd9440d04d8f781208",
+      "observedAt": "2026-10-02T20:22:16Z",
       "observer": "coordinator session (owner-delegated), re-observed 2026-10-02 against the cited evidence",
       "evidenceLocation": ".github/workflows/u1-verify.yml verifier-context.verifierIdentity (u1-verifier-mi ec2d02e3-904c-4ce2-9771-cd518d711e3f, separate from producer)",
       "unrecordedReason": null
@@ -105,7 +105,7 @@
       "ref": "INCOMPLETE-U1-12",
       "state": "recorded",
       "recordDigest": "sha256:802d413ae32f2905a56388e178b59c642f7e61f5cd7f30be5cfbef605c9aa530",
-      "observedAt": "2026-10-02T18:34:12Z",
+      "observedAt": "2026-10-02T20:22:16Z",
       "observer": "coordinator session (owner-delegated), re-observed 2026-10-02 against the cited evidence",
       "evidenceLocation": "U1-observations-2026-09-30.md retrieval test 2026-09-30 (cited by producer retention-plan.lastRetrievalCheck); each run re-demonstrates retrieval via its retention-observation artifact",
       "unrecordedReason": null
@@ -113,8 +113,8 @@
     {
       "ref": "INCOMPLETE-U1-13",
       "state": "recorded",
-      "recordDigest": "sha256:79524aaad71a1a7a0a910558ddeca88aaa0afea3289f9ccfeaef7ee99e6af0ee",
-      "observedAt": "2026-10-02T18:34:12Z",
+      "recordDigest": "sha256:dc8d2a24fcaa4f998d94005d9770c2b7ef3d5727a1ff42267940a03f3640a6ec",
+      "observedAt": "2026-10-02T20:22:16Z",
       "observer": "coordinator session (owner-delegated), re-observed 2026-10-02 against the cited evidence",
       "evidenceLocation": "U1-verifier-pin.json (u1-verifier-pin/v3) workflow + workflowCommit; supersedes chain be3e3de3 -> dc561792 -> 16a7e0fb; recordDigest is the IA-2.11 trust-policy digest",
       "unrecordedReason": null
@@ -158,8 +158,8 @@
     {
       "ref": "INCOMPLETE-U1-18",
       "state": "recorded",
-      "recordDigest": "sha256:8d6ee3bde16393c956cc7533d267a4d50a1b0a763f3525720d35eb4df3b3c337",
-      "observedAt": "2026-10-02T18:34:12Z",
+      "recordDigest": "sha256:a5576d3451651d3451821cacb9d95aca389e9bd04cf87cbd9440d04d8f781208",
+      "observedAt": "2026-10-02T20:22:16Z",
       "observer": "coordinator session (owner-delegated), re-observed 2026-10-02 against the cited evidence",
       "evidenceLocation": "named gap: not issued by the selected workflows; u1-verify.yml verifier-context.attestation records attestationIssued=false, issuer none, gap literal; absence never changes decision status (F-14 option (a))",
       "unrecordedReason": null
@@ -178,5 +178,5 @@
     "mode": "locked",
     "minIntervalDays": 400
   },
-  "checklistDigest": "sha256:7519bc6a16fa5384c28374eb6368080fba2e3539123d5999680d1b9fcb032d87"
+  "checklistDigest": "sha256:ad9ee3cbf89e2657628755e828e4fefa2070a5f261354614c549e0ea889dd4db"
 }
