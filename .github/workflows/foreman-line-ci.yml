@@ -9,11 +9,116 @@ permissions:
   contents: read
   actions: read
 
+# shardCount is pinned as an explicit constant (AC2; lower after AC6
+# measurement if install cost dominates, never higher than 4).
+env:
+  SHARD_COUNT: 4
+
 jobs:
+  # Pre-shard decision seam (spec C12 / AC7(1)): decide (and verify on reuse)
+  # complete before any shard work; the shard matrix is gated on the EFFECTIVE
+  # decision == 'fallback'. The gate invokes verify WITHOUT a sweep source —
+  # the shard matrix is the single fallback branch; a verify flip emits
+  # decision: fallback and exits 0 (no hidden non-matrix sweep anywhere).
+  gate:
+    name: gate
+    runs-on: windows-latest
+    timeout-minutes: 15
+    outputs:
+      decision: ${{ steps.verify.outputs.decision || steps.decide.outputs.decision }}
+      fallback_reason: ${{ steps.verify.outputs.fallback_reason || steps.decide.outputs.fallback_reason }}
+      base_sha: ${{ steps.verify.outputs.base_sha || steps.decide.outputs.base_sha }}
+      head_sha: ${{ steps.verify.outputs.head_sha || steps.decide.outputs.head_sha }}
+      evidence_record: ${{ steps.verify.outputs.evidence_record || steps.decide.outputs.evidence_record }}
+    steps:
+      - name: Preserve repository LF bytes
+        shell: pwsh
+        run: git config --global core.autocrlf false
+
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24.19.0'
+
+      # CI-P1: sole reuse-decision point (spec C12). Outputs: decision,
+      # fallback_reason, base_sha, head_sha, evidence_record.
+      - name: Decide reuse or fallback from Actions-API evidence
+        id: decide
+        if: ${{ success() || failure() }}
+        shell: pwsh
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node scripts/ci-reuse.mjs decide
+
+      # Reused head: re-verify the evidence (no sweep source here — AC7 seam).
+      # Any flip emits decision: fallback and exits 0; the matrix sweeps.
+      - name: Verify reuse evidence (no sweep source — the matrix is the only fallback branch)
+        id: verify
+        if: ${{ (success() || failure()) && steps.decide.outputs.decision == 'reuse' }}
+        shell: pwsh
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          CI_REUSE_EVIDENCE: ${{ steps.decide.outputs.evidence_record }}
+        run: node scripts/ci-reuse.mjs verify
+
+  # AC4: one shard job per matrix entry; each shard installs dependencies for
+  # ALL discovered packages (the per-shard barrier: every install completes
+  # before any check in the shard — relative sibling imports load sibling
+  # source), then runs exactly test/typecheck/lint for its assigned packages.
+  sweep:
+    name: sweep
+    needs: gate
+    if: ${{ (needs.gate.result == 'success' || needs.gate.result == 'failure') && needs.gate.outputs.decision == 'fallback' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3]
+    runs-on: windows-latest
+    timeout-minutes: 45
+    steps:
+      - name: Preserve repository LF bytes
+        shell: pwsh
+        run: git config --global core.autocrlf false
+
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24.19.0'
+
+      - name: Run shard ${{ matrix.shard }} — install all packages, then the shard's checks
+        shell: pwsh
+        run: |
+          $npmCli = Join-Path (Split-Path (Get-Command node).Source) 'node_modules/npm/bin/npm-cli.js'
+          node scripts/foreman-line-ci.mjs shard ${{ matrix.shard }} 4 "$npmCli" shard-outcomes
+          exit $LASTEXITCODE
+
+      - name: Upload shard outcomes
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: shard-outcomes-${{ matrix.shard }}
+          path: shard-outcomes/shard-outcomes.json
+          if-no-files-found: error
+
+  # AC5: ONE aggregation verdict surfaces through the required `test` context.
+  # On fallback it re-derives discovery+assignment and reconciles the shard
+  # artifacts (AC3); on reuse the evidence record IS the passing verdict
+  # (AC5/AC7) and zero shard jobs run. The evidence record is re-emitted
+  # verbatim from the gate output on EVERY run (never log-scraped).
   test:
     name: test
+    needs: [gate, sweep]
+    if: ${{ !cancelled() }}
     runs-on: windows-latest
-    timeout-minutes: 30
+    timeout-minutes: 20
     steps:
       - name: Preserve repository LF bytes
         shell: pwsh
@@ -35,35 +140,36 @@ jobs:
           node --test scripts/ci-reuse.test.mjs
           exit $LASTEXITCODE
 
-      # CI-P1: sole decision point, completes before any sweep work (spec C12).
-      - name: Decide reuse or fallback from Actions-API evidence
-        id: decide
-        if: ${{ success() || failure() }}
+      - name: Download shard outcomes
+        if: ${{ !cancelled() && needs.gate.outputs.decision == 'fallback' }}
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          pattern: shard-outcomes-*
+          path: shard-outcomes
+
+      - name: Aggregate shard outcomes or report the reuse verdict
+        if: ${{ !cancelled() }}
         shell: pwsh
         env:
-          GITHUB_TOKEN: ${{ github.token }}
-        run: node scripts/ci-reuse.mjs decide
-
-      - name: Install all 20 packages, then aggregate every check
-        if: ${{ (success() || failure()) && steps.decide.outputs.decision == 'fallback' }}
-        shell: pwsh
+          DECISION: ${{ needs.gate.outputs.decision }}
+          EVIDENCE_RECORD: ${{ needs.gate.outputs.evidence_record }}
         run: |
-          $npmCli = Join-Path (Split-Path (Get-Command node).Source) 'node_modules/npm/bin/npm-cli.js'
-          node scripts/foreman-line-ci.mjs "$npmCli"
-          exit $LASTEXITCODE
-
-      # Reused head: re-verify the evidence; on any flip run the full sweep in
-      # its place and exit with the sweep's code (spec AC4/AC5).
-      - name: Verify reuse evidence or run the sweep in its place
-        if: ${{ (success() || failure()) && steps.decide.outputs.decision == 'reuse' }}
-        shell: pwsh
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-          CI_REUSE_EVIDENCE: ${{ steps.decide.outputs.evidence_record }}
-        run: |
-          $npmCli = Join-Path (Split-Path (Get-Command node).Source) 'node_modules/npm/bin/npm-cli.js'
-          node scripts/ci-reuse.mjs verify --sweep node scripts/foreman-line-ci.mjs "$npmCli"
-          exit $LASTEXITCODE
+          # AC7(2): emit the evidence record verbatim on every run — from the
+          # gate output, never log-scraped.
+          if ($env:EVIDENCE_RECORD) {
+            Write-Output $env:EVIDENCE_RECORD
+            $env:EVIDENCE_RECORD >> $env:GITHUB_STEP_SUMMARY
+          }
+          if ($env:DECISION -eq 'reuse') {
+            'Reuse verdict: the evidence record above is the passing verdict (AC5/AC7).' >> $env:GITHUB_STEP_SUMMARY
+            exit 0
+          }
+          if ($env:DECISION -eq 'fallback') {
+            node scripts/foreman-line-ci.mjs aggregate 4 shard-outcomes
+            exit $LASTEXITCODE
+          }
+          # Fail closed: an absent/unknown effective decision never greens.
+          exit 1
 
   integration-report:
     name: integration-report
