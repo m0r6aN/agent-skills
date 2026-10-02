@@ -1,14 +1,27 @@
 {
-  "schema": "u1-verifier-pin/v1",
+  "schema": "u1-verifier-pin/v2",
   "workflow": ".github/workflows/u1-verify.yml",
-  "workflowCommit": "be3e3de3dfcf6159d4ffb265aa39847aac5f0814",
-  "workflowFileSha256": "sha256:b7952e1e52f0144e7632fc73d8d04e9564184dfcf4c5af978c71592514cc4bbe",
+  "workflowCommit": "16a7e0fb0a5713bdfc7722e3227def6e6128cade",
+  "workflowFileSha256": "sha256:3301a0e4bb95a272c5110907b6bfe6e9d3c3c6111f321f4ce285c1ac085e4c10",
   "tag": "refs/tags/u1-verifier-pin",
   "producerWorkflow": ".github/workflows/u1-produce.yml",
+  "supersedes": {
+    "workflowCommit": "dc5617924379a5a574fddb2c71cce1647a74ba04",
+    "workflowFileSha256": "sha256:8329f858ec5de48d6a55cb7254c16c871d40875fc01b0ae4f4409e025ed2a661",
+    "reason": "four az-download --file - sites fixed to temp-file reads (stdout streaming is a no-op; shakedown-found)"
+  },
+  "actionlint": "not-available-on-ci-or-workstation; substituted: PyYAML parse PASS both workflows + machine-checked outputs wiring (7/7 job maps) + zero raw expression interpolation of file-derived values (recorded in U1-closure-implementation-notes-2026-10-01.md)",
+  "dryRun": {
+    "producer": "run 36926434897 SUCCESS against the UNLOCKED container; bundle at u1/m0r6an/agent-skills/runs/36926434897/p01/",
+    "verifier": "run 36944407315 full-pipeline SUCCESS; recorded decision status INVALID authoritative:true with reasonCodes [U1_CONFIGURATION_INCOMPLETE, U1_CONTROL_FAILED, U1_INDEPENDENCE_UNPROVEN, U1_REQUIRED_EVIDENCE_MISSING, U1_SUBJECT_MISMATCH]; seal.json written last (a02/) — non-ACCEPT as designed per A-U1.8.03",
+    "note": "shakedown-found defects F-19/checklist-digest/az-download x4/env-policy/schema-literal all fixed and recorded in U1-8-closure-report-2026-10-01.md"
+  },
+  "configurationChecklistSha256": "sha256:f6ce063326c79e70633e29bc1a3d3a87dea271708427cd6362f6fbcb8d0a1998",
+  "oracleDigest": "sha256:ca3d30bdf07d6bc37dbb24b882c35ed0235f1b83a2e3b4536aa33a28eb6d20e3",
   "custodian": {
     "login": "m0r6aN",
     "objectId": "461a4112-8e91-41cb-afef-6889b8f48ff0"
   },
-  "recordedAt": "2026-10-01T00:00:00Z",
-  "note": "workflowCommit is the protected verifier revision's full commit SHA (contract 3.1.1 - identity is the commit, never a branch/tag name); workflowFileSha256 pins the u1-verify.yml bytes at that commit. In-run enforcement: manual path checks run-ref == refs/tags/u1-verifier-pin, run-SHA == workflowCommit, and running-workflow bytes == workflowFileSha256; the event-driven path binds by workflow-file byte equality plus the ruleset. Any pin change is a contract amendment (standing #34) recorded in the review trail."
+  "recordedAt": "2026-10-01T21:15:00Z",
+  "note": "workflowCommit is the commit that INTRODUCED the pinned bytes (F-19: a record cannot embed its own commit's SHA). The run-time binding is transitive and fail-closed: byte-equality at the run commit (immutable API fetch) + recorded-commit ancestor-of run-commit + protected-tag ref + dispatch pinned-commit-sha input. Any pin change is a contract amendment (standing #34) recorded in the review trail. configurationChecklistSha256 is the checklist BYTE digest (F-2 class semantics: byte digests for stored bytes, document digests for identities); the earlier document-digest value was a shakedown-found conflation."
 }
