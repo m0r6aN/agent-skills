@@ -1,14 +1,14 @@
 {
   "schema": "u1-verifier-pin/v2",
   "workflow": ".github/workflows/u1-verify.yml",
-  "workflowCommit": "dc5617924379a5a574fddb2c71cce1647a74ba04",
-  "workflowFileSha256": "sha256:8329f858ec5de48d6a55cb7254c16c871d40875fc01b0ae4f4409e025ed2a661",
+  "workflowCommit": "16a7e0fb0a5713bdfc7722e3227def6e6128cade",
+  "workflowFileSha256": "sha256:3301a0e4bb95a272c5110907b6bfe6e9d3c3c6111f321f4ce285c1ac085e4c10",
   "tag": "refs/tags/u1-verifier-pin",
   "producerWorkflow": ".github/workflows/u1-produce.yml",
   "supersedes": {
-    "workflowCommit": "b76869ca279ee2a42c1da095be758e8245e7f3e1",
-    "workflowFileSha256": "sha256:e148639581926e0bbba56302f1c21cf80f703dec68e3364cb4eceafd25d7fbde",
-    "reason": "ancestry check moved to the compare API (shallow-clone false-refusal); byte-identical record semantics otherwise"
+    "workflowCommit": "dc5617924379a5a574fddb2c71cce1647a74ba04",
+    "workflowFileSha256": "sha256:8329f858ec5de48d6a55cb7254c16c871d40875fc01b0ae4f4409e025ed2a661",
+    "reason": "four az-download --file - sites fixed to temp-file reads (stdout streaming is a no-op; shakedown-found)"
   },
   "actionlint": "not-available-on-ci-or-workstation; substituted: PyYAML parse PASS both workflows + machine-checked outputs wiring (7/7 job maps) + zero raw expression interpolation of file-derived values (recorded in U1-closure-implementation-notes-2026-10-01.md)",
   "dryRun": {
