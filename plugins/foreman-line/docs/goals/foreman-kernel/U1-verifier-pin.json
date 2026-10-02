@@ -1,8 +1,8 @@
 {
   "schema": "u1-verifier-pin/v3",
   "workflow": ".github/workflows/u1-verify.yml",
-  "workflowCommit": "73ad47a38572a9315fdbd3f7e5cfa9f401ff422b",
-  "workflowFileSha256": "sha256:8d6ee3bde16393c956cc7533d267a4d50a1b0a763f3525720d35eb4df3b3c337",
+  "workflowCommit": "fcb5afdfda05369c837be50f1e26084e1690de12",
+  "workflowFileSha256": "sha256:a5576d3451651d3451821cacb9d95aca389e9bd04cf87cbd9440d04d8f781208",
   "tag": "refs/tags/u1-verifier-pin",
   "producerWorkflow": ".github/workflows/u1-produce.yml",
   "custodian": {
@@ -26,14 +26,14 @@
     }
   },
   "amendment": "U1-8-closure2-amendments-2026-10-02.md",
-  "configurationChecklistSha256": "sha256:3119cfdaf24716c5502b3e2ef5533e3e08874c5464d2130212effaf47bb5c4f1",
+  "configurationChecklistSha256": "sha256:0e723585cc43b7b8c156eb271fde3e9bbb8796c1ff6545dadc6f4f5834f4f168",
   "actionlint": {
     "result": "pass",
     "version": "1.7.12",
-    "runId": "37044777174",
-    "commit": "73ad47a38572a9315fdbd3f7e5cfa9f401ff422b",
+    "runId": "37060090384",
+    "commit": "fcb5afdfda05369c837be50f1e26084e1690de12",
     "workflow": ".github/workflows/u1-lint.yml"
   },
-  "recordedAt": "2026-10-02T18:34:12Z",
+  "recordedAt": "2026-10-02T20:22:16Z",
   "note": "workflowCommit is the commit that INTRODUCED the pinned bytes (a record cannot embed its own commit SHA). An authoritative run executes at commit R = tag target = dispatch input, with workflowCommit R or an ancestor, workflow bytes at R equal to workflowFileSha256, and an active tag ruleset (A-U1.8.17). The trust-policy digest (IA-2.11) projects only workflow, workflowCommit, workflowFileSha256, tag, producerWorkflow and custodian, so record-only edits (dryRun, actionlint, recordedAt, note, supersedes) never move it. configurationChecklistSha256 is the checklist BYTE digest. The oracle is per request (A-U1.8.19), not in this record."
 }

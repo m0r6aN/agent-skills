@@ -1,7 +1,7 @@
 {
   "schema": "u1-promotion-request/v1",
   "promotionRequestId": "u1-fixture-neg-sandbox-mismatch",
-  "createdUtc": "2026-10-02T18:34:12Z",
+  "createdUtc": "2026-10-02T20:22:16Z",
   "author": "foreman-kernel-coordinator (owner-delegated); authority basis: owner 2026-10-02 'All five steps ratified as written'",
   "contractDigest": "sha256:8d5f849cf22f6662f17c2502142e354d82f8f5604d64b511250abc72157df9d5",
   "expectedSubjectDigest": "sha256:a8763dc17ed4c48e07625a7d2606741801d8ee1a9cc0d15d78261c4eb2e780c5",
@@ -14,7 +14,7 @@
     "jobId": "assemble",
     "event": "workflow_dispatch"
   },
-  "trustPolicyDigest": "sha256:79524aaad71a1a7a0a910558ddeca88aaa0afea3289f9ccfeaef7ee99e6af0ee",
+  "trustPolicyDigest": "sha256:dc8d2a24fcaa4f998d94005d9770c2b7ef3d5727a1ff42267940a03f3640a6ec",
   "policyDigest": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
   "compiledScopeDigest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
   "requiredInvariantIds": [
@@ -29,6 +29,6 @@
     "PATH_OUTSIDE_ALLOWED_FILES"
   ],
   "oracleDigest": "sha256:9b4c2aa59a339c1a1c23a94ba0684674ec05d88788b8df30bce26f47c6b999ff",
-  "configurationChecklistDigest": "sha256:7519bc6a16fa5384c28374eb6368080fba2e3539123d5999680d1b9fcb032d87",
-  "requestDigest": "sha256:b9b854a6f2eb901b5b62be3e6cb6a18584a3eb63b161b60bc01c8fac37850060"
+  "configurationChecklistDigest": "sha256:ad9ee3cbf89e2657628755e828e4fefa2070a5f261354614c549e0ea889dd4db",
+  "requestDigest": "sha256:f787af1f0f42df897cc9495876d3c2967fa968848f5d76329313c37e7c137873"
 }
