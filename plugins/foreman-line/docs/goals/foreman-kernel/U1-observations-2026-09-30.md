@@ -136,6 +136,13 @@ The `test` job's 498 failures decomposed into five root causes (owner's triage n
 
 Network posture (F-18 decision): **Allow + hardening + shared-key detection** — `allowSharedKeyAccess` and policy-state rechecks fold into every verification via the verifier's management-plane Reader.
 
+## §8 closure + A-U1.8.16 dry-run COMPLETE (2026-10-01) — re-review pending
+
+- **All 18 findings closed** per the ratified amendments — closure map with evidence: `U1-8-closure-report-2026-10-01.md` (on `main` at `27323ec`). Pin record re-cut (`workflowCommit 16a7e0fb0a5713bdfc7722e3227def6e6128cade`, `workflowFileSha256 sha256:3301a0e4bb95a272c5110907b6bfe6e9d3c3c6111f321f4ce285c1ac085e4c10`, supersedes `be3e3de3…` via `dc561792…`); protected tag `u1-verifier-pin` → `27323ec87880c53e300418ee24b1497e94f2261f`.
+- **Shakedown (A-U1.8.16 dry-run):** producer run `36926434897` SUCCESS against the Unlocked container (bundle at `u1/m0r6an/agent-skills/runs/36926434897/p01/`); verifier run `36944407315` full-pipeline SUCCESS (all 6 executed jobs; candidate-sandbox skipped). **Recorded decision: `INVALID` / `authoritative: true`** with `U1_CONFIGURATION_INCOMPLETE` + 4 further codes — the F-4 gate refusing ACCEPT while Unlocked, exactly the ratified non-ACCEPT first cycle. `seal.json` written last; observer consumed the crashed earlier attempt 1 as `timed-out`.
+- **Shakedown-found defects (5, all fixed in the re-pin chain):** F-19 pin self-reference paradox + shallow-clone ancestry false-refusal (transitive byte+ancestor binding via compare API); `configurationChecklistSha256` document-vs-byte conflation; `az storage blob download --file -` silently empty at 4 sites (temp-file reads); environment deployment policy typed `branch` unable to match the tag (tag-type policy 61684968); request `schema` literal (`u1-promotion-request/v1`).
+- **Re-review:** closure re-review dossier `U1-8-closure-rereview-dossier-2026-10-01.md` (sha256 `9093511c…`) handed to the owner for relay to `anthropic/claude-sonnet-5-5` (the §8 reviewer of record). **Verdict pending.** On ACCEPT: FK-P18′ dispatchable (F-12 dispatch preconditions checked at dispatch) → first real evidence cycle → lock flip (owner ruling 2026-09-30).
+
 ## Workflow placement (2026-09-30, owner direction "proceed")
 
 - Extracted **byte-exact** from the design's fenced blocks (design sha `0d8816eb…`): `u1-produce.yml` = doc lines 160–584 (425 lines), `u1-verify.yml` = doc lines 604–1489 (886 lines) — fence content untouched by the §6.6 prose edit; YAML parse PASS both files.
