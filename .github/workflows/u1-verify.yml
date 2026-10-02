@@ -624,9 +624,16 @@ jobs:
                  "--auth-mode", "login", "--overwrite", "false", "--output", "none")
 
           def get(name):
-              out = sh("az", "storage", "blob", "download", "--account-name", "bs2jhgwvduljfdwdp",
-                       "--container-name", "u1-evidence", "--name", name, "--auth-mode", "login",
-                       "--output", "none", "--file", "-")
+              # az storage blob download --file - does NOT stream to stdout (it writes
+              # nothing there); download to a temp file and read the bytes back.
+              tmp = os.environ.get("RUNNER_TEMP", "/tmp") + "/u1-ledger-get.bin"
+              sh("az", "storage", "blob", "download", "--account-name", "bs2jhgwvduljfdwdp",
+                 "--container-name", "u1-evidence", "--name", name, "--auth-mode", "login",
+                 "--output", "none", "--file", tmp)
+              with open(tmp, "rb") as fh:
+                  out = fh.read()
+              if not out:
+                  raise ValueError("U1_ARTIFACT_INVALID: empty ledger object %s" % name)
               return json.loads(out)
 
           listing = sh("az", "storage", "blob", "list", "--account-name", "bs2jhgwvduljfdwdp",
@@ -1031,11 +1038,17 @@ jobs:
               # ---- attempt claim check (IA-8) — authoritative runs only ----
               if authoritative and K:
                   try:
-                      claim = json.loads(sh("az", "storage", "blob", "download",
-                                            "--account-name", "bs2jhgwvduljfdwdp",
-                                            "--container-name", "u1-evidence",
-                                            "--name", "%s/a%02d-dispatch.json" % (ledger_prefix, K),
-                                            "--auth-mode", "login", "--output", "none", "--file", "-"))
+                      claim_tmp = os.environ.get("RUNNER_TEMP", "/tmp") + "/u1-claim-check.bin"
+                      sh("az", "storage", "blob", "download",
+                         "--account-name", "bs2jhgwvduljfdwdp",
+                         "--container-name", "u1-evidence",
+                         "--name", "%s/a%02d-dispatch.json" % (ledger_prefix, K),
+                         "--auth-mode", "login", "--output", "none", "--file", claim_tmp)
+                      with open(claim_tmp, "rb") as fh:
+                          claim_bytes = fh.read()
+                      if not claim_bytes:
+                          fail("INVALID", "U1_ARTIFACT_INVALID", "empty ledger claim row")
+                      claim = json.loads(claim_bytes)
                       if claim.get("attemptNumber") != K or claim.get("promotionRequestId") != req_id:
                           fail("INVALID", "U1_SUBJECT_MISMATCH", "ledger claim row mismatch")
                       if claim.get("subjectAndSelectionDigest") != os.environ["SUBJECT_AND_SELECTION_DIGEST"]:
@@ -1114,9 +1127,12 @@ jobs:
                       except ValueError:
                           fail("INVALID", "U1_ARTIFACT_INVALID", "path-grammar violation: " + rel)
                           continue
-                      raw = shb("az", "storage", "blob", "download",
-                                "--account-name", "bs2jhgwvduljfdwdp", "--container-name", "u1-evidence",
-                                "--name", name, "--auth-mode", "login", "--output", "none", "--file", "-")
+                      raw_tmp = os.environ.get("RUNNER_TEMP", "/tmp") + "/u1-raw-%d.bin" % len(files)
+                      sh("az", "storage", "blob", "download",
+                         "--account-name", "bs2jhgwvduljfdwdp", "--container-name", "u1-evidence",
+                         "--name", name, "--auth-mode", "login", "--output", "none", "--file", raw_tmp)
+                      with open(raw_tmp, "rb") as fh:
+                          raw = fh.read()
                       files[rel] = raw
               bundle = None
               if "bundle.json" in files:
