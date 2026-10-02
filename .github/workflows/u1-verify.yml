@@ -1969,7 +1969,8 @@ jobs:
 
               # ---- F-8 separation probes (A-U1.8.23): denial classified by HTTP status + error code ----
               DENY_CREATE = {(403, "AuthorizationPermissionMismatch"), (403, "AuthorizationFailure")}
-              DENY_EXISTING = DENY_CREATE | {(409, "BlobImmutableDueToPolicy"),
+              DENY_EXISTING = DENY_CREATE | {(403, "UnauthorizedBlobOverwrite"),
+                                             (409, "BlobImmutableDueToPolicy"),
                                              (409, "BlobImmutableDueToLegalHold")}
 
               def probe_denied(p):
