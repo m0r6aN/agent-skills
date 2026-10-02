@@ -77,9 +77,11 @@ export function sanitizeField(value, cap = 200) {
 /**
  * Captured output re-emitted into the job log: same stripping, newlines and
  * tabs kept as structure, `::` neutralized so output can never mint
- * annotations; bounded.
+ * annotations. Bounded at 200k chars — wide enough that a full suite's
+ * failing evidence reaches the log (the 20k cap truncated run 36993326583's
+ * authority evidence and cost a full diagnosis cycle).
  */
-export function sanitizeOutput(value, cap = 20000) {
+export function sanitizeOutput(value, cap = 200000) {
   if (typeof value !== 'string') return ''
   let out = ''
   for (const ch of value) {
