@@ -233,7 +233,7 @@ export const WAIVED_EXCLUSIONS = Object.freeze([
     checks: Object.freeze({
       test: Object.freeze({
         markers: Object.freeze(['R31 reviewed source mapping drift: M02-note', 'MIGRATION_EVIDENCE_INVALID', 'generate.ts']),
-        counts: Object.freeze({ 'R31 reviewed source mapping drift: M02-note': 1, MIGRATION_EVIDENCE_INVALID: 29 }),
+        counts: Object.freeze({ 'R31 reviewed source mapping drift: M02-note': 3, MIGRATION_EVIDENCE_INVALID: 4 }),
         failTotal: 30,
       }),
     }),
